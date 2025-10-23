@@ -1,210 +1,156 @@
-Return-Path: <linux-kernel+bounces-866878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3737FC00EA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:54:34 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA6BC00EB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3694500C43
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:54:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C63E9359D67
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACEE30EF9B;
-	Thu, 23 Oct 2025 11:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39FD30EF9D;
+	Thu, 23 Oct 2025 11:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dsXB9ZTF"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PO19t8ZW"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105DE30EF7D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79E229BDA3
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761220466; cv=none; b=Ep/aCa2GBmUFNnqVHUwQ0AML08OTdXFvyckZd/ftjSgHD5TLJfwWO2nuCH6JuF3H8tOAFvu+BcbTaKhFe/V52fx9uzP8S87CXR9WaRgujUVtDiP4FCZZDQ+yOK552d9HPIDHR1WEnVtYQ1d/WrD/ryK6Vc4NDE9fWWbGMTuSXVk=
+	t=1761220548; cv=none; b=fIl2RkuNo1U2G2Gcgyv4L92+UIQT1SL08Wf6Xhtq417/hc73WG6sw/mc38OlmjtVLI7dWOzmjv7IHxYeOZtHRFLk8TstkLJ/kMRK05EoDn9L6pK/T+u92J7tw6tOlN39+hpSu7qajs7jhAOMw2vWBTCK58tqrqJlNqEFVkDUTIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761220466; c=relaxed/simple;
-	bh=WRt/DcHFyVQCUj2nKIuiHXnnK3ayNkXOxmMkACYehvs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MlUKD0fP8TatD6SeeAwkgbfqNw/8vxVdlRWzfBY7h7tPSNAMdSi4CZU3daAt/Ek/NBUuGxOwjK3002q4Tfp+zqS33eLepntIZGL5ZHg/mDeNNUlGoO3phe2v7wSR6h5JSfb7y8C+AUItoR8FXM1nWkdxJdqAKsDywhM+Myx+mE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dsXB9ZTF; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4e8850b09eeso7597491cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:54:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761220464; x=1761825264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vcRTFIsNfqtqINMSUqvwdCmpc1Pr0XIO2OTRxxjhVa4=;
-        b=dsXB9ZTFf15YF3uA6FNCCLIO0UnPvTuokC0IFcAHhKTQ0ZpkNt6fFtd22JaQSY2egd
-         TPvpOyO9cYTvbE4GOt65qFWMQkDPnxAdpVA7fd7oEjf18+fo1stVsQ3y3N/d5MsyPRin
-         n8qBWloP6Lu6QRAjCl8WcKa21GUc3rSMdkrcLVnWKsJwcCj9cQ4AU+RJ7crWGbLoiAhX
-         7GrM52jkFytivp0cSOfuUqsXQANuKGvEILH3zYKVumseTL7R7po5+UXhugJnEDVHonsA
-         tvHarb8PhM3Sqd2sXBNGMKab19EKWvhWd4zQlPRXFzdhuzG0cKdham1qQ90r4QzebayC
-         kepw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761220464; x=1761825264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vcRTFIsNfqtqINMSUqvwdCmpc1Pr0XIO2OTRxxjhVa4=;
-        b=M4R/0gzJ3kgPAAHcZm2QpZ1v8uKb6cTWWxeYKUFYj8515zUj9LV0vKzDQNCpD8PpKW
-         dHmsEb4lOLXB3Y/y19H8V5szpa5w9A1188koWKQnJ5WySxrW0tbjIddY4GzZ2qsNFxKX
-         BvcgYpnILxvxSdB+wxvnDqvrJLbbKhlfMd6XyvdasbLgoMXHXURg7A9ILpRtzjunnlM4
-         LSCJPEvXhTolWc9f/NmolKxM+mu3uACo9DbCzej2V9hUXNJ4LwGBCz3dUCjjHpN7AoxX
-         zfRFTSQFYx9Qu7ZZhuAAB1YvE2G/ZX/LPe07vJ/4BQR0cGgp0cW4VLw8LM4Cj7jZhcjw
-         NjVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkukSA8R8hf5KoyUNbYph0Md1oewXa2laK3y+KtMrKZU1qliKxYXFUdKQNEePJBOzDTr2rx8ZyJZMuM4I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoQwL/wk22IbpgRK98DdrpONkjNEmZ3sWuHieHA8ThkTkt2Ph6
-	mW3th1yjOIWiFkAiWu2jHVfFNTkUTF1hABtOhdAru1iQUFoL9h8qCD9kuPj3D7zdj9G91W87bN4
-	AD7JYm2jqk3OCHv2Rm5KCUugc1yb1t99sRKKwKHkN
-X-Gm-Gg: ASbGncuk97KSYrtHQfG1LLC6B7ru8EMCltYOgJl5yABx+OE6i14T/UCRlEHkuqqe26s
-	j8OdRUgfGs816bG1ELGFnRLDUgUaGA1CoKU5hnN29Iu4gMrhXjfDfYXunqyLL35apE4gT8Yhp64
-	GnucTHvImKQnYDFAZpKJTqt34e7dBC9jrQUHtHGx8UgNPl+8jfXlzMI6AYHwj1xmlERbgJN9C01
-	rtGCiOFK8wPhGKGodbnw4WCF1lMLyrxrJOu6cqoaHc3cXn1Crm3jVInVBU5
-X-Google-Smtp-Source: AGHT+IFwRsjXFwOVquH93Ov+wkUcdOodRX9YBEt002vnoRNK+OjJBZ8/zDqB/x6qABeRz/8ZEZIGvRrfcxa4bm43FmM=
-X-Received: by 2002:ac8:5a88:0:b0:4b3:119b:ce78 with SMTP id
- d75a77b69052e-4e89d215680mr277950761cf.6.1761220463337; Thu, 23 Oct 2025
- 04:54:23 -0700 (PDT)
+	s=arc-20240116; t=1761220548; c=relaxed/simple;
+	bh=jpqlOQFQ0lCsBU/ukJf92pGlz0eJx9vhQf0m3jE70sM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=RwZOmoaCqGsqoFdfvXupljpKal5rVaz0SkJGEXAih3hVrdjFxNBuLZG0AzWkUUKRIPwtcz7u0wMcKIc6tN6Wv4r2vgBAt7EgTuFlqrstz8kMqkIgfA/UMHxNW9sRUByM6raNkQVxYH3k+2/nj/iOPigTb1Q5fw3o0cLzZimqHNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PO19t8ZW; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251023115544euoutp02188ad5ab17d82fc950606f78103d1c90~xHMDwl-8Q0657406574euoutp02o
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:55:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251023115544euoutp02188ad5ab17d82fc950606f78103d1c90~xHMDwl-8Q0657406574euoutp02o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1761220544;
+	bh=hkfNeWXTF4q43g0m16pkbTb1R8n6c2a48SB9tENaQRE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=PO19t8ZWx9P6e1iyt+TiwyFwiTHTv3qKCJVUJxsEkC1q6RHjk9xMZTBZ5HnGBZ7vt
+	 2yxkdN757SIm7iSxK58aszxb10N1G4XN6ktmTKpALXIebRPA0rA8i6q8K8sc7pwEx2
+	 vBDuDwZEEukJH4xGjv6cNis/2nVuVlnfgFiGjoiE=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251023115543eucas1p2fa905f7a756b96653fd64f0692d1e23e~xHMDZpWj53189131891eucas1p2Z;
+	Thu, 23 Oct 2025 11:55:43 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251023115542eusmtip1ec5d85b05192ce23dd62b70994d5b0a9~xHMCaM8Ie0113301133eusmtip1b;
+	Thu, 23 Oct 2025 11:55:42 +0000 (GMT)
+Message-ID: <85aa56ff-098b-4db1-9de5-05b0f306623f@samsung.com>
+Date: Thu, 23 Oct 2025 13:55:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aPcp_xemzpDuw-MW@stanley.mountain> <20251021083505.3049794-1-lizhi.xu@windriver.com>
- <7232849d-cf15-47e1-9ffb-ed0216358be8@redhat.com>
-In-Reply-To: <7232849d-cf15-47e1-9ffb-ed0216358be8@redhat.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 23 Oct 2025 04:54:12 -0700
-X-Gm-Features: AS18NWAbKgVO0Sapt_HB1jGQJt1BlcGe-9cCoPLe451vSidlOu-GnSXxYRPeOSI
-Message-ID: <CANn89i+td+wS2=VpCB6Jb6m6arR5qv+PTkJ6G1Sc6y7ZBY2q-w@mail.gmail.com>
-Subject: Re: [PATCH V3] netrom: Prevent race conditions between neighbor operations
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Lizhi Xu <lizhi.xu@windriver.com>, dan.carpenter@linaro.org, davem@davemloft.net, 
-	horms@kernel.org, kuba@kernel.org, linux-hams@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	syzbot+2860e75836a08b172755@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v3] media: videobuf2: forbid remove_bufs when legacy
+ fileio is active
+To: Hans Verkuil <hverkuil+cisco@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Hans Verkuil
+	<hverkuil@kernel.org>, stable@vger.kernel.org, Shuangpeng Bai
+	<SJB7183@psu.edu>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <81a46647-c666-4475-893b-d4af043c90ea@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20251023115543eucas1p2fa905f7a756b96653fd64f0692d1e23e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251023113101eucas1p2c227985b0198d888564cab00aeb94f01
+X-EPHeader: CA
+X-CMS-RootMailID: 20251023113101eucas1p2c227985b0198d888564cab00aeb94f01
+References: <CGME20251023113101eucas1p2c227985b0198d888564cab00aeb94f01@eucas1p2.samsung.com>
+	<20251023113052.1303082-1-m.szyprowski@samsung.com>
+	<81a46647-c666-4475-893b-d4af043c90ea@kernel.org>
 
-On Thu, Oct 23, 2025 at 4:44=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wro=
-te:
+On 23.10.2025 13:36, Hans Verkuil wrote:
+> On 23/10/2025 13:30, Marek Szyprowski wrote:
+>> vb2_ioctl_remove_bufs() call manipulates queue internal buffer list,
+>> potentially overwriting some pointers used by the legacy fileio access
+>> mode. Add a vb2_verify_memory_type() check symmetrical to
+>> vb2_ioctl_create_bufs() to forbid that ioctl when fileio is active to
+>> protect internal queue state between subsequent read/write calls.
+>>
+>> CC: stable@vger.kernel.org
+>> Fixes: a3293a85381e ("media: v4l2: Add REMOVE_BUFS ioctl")
+>> Reported-by: Shuangpeng Bai<SJB7183@psu.edu>
+>> Suggested-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   drivers/media/common/videobuf2/videobuf2-v4l2.c | 8 +++++---
+>>   1 file changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>> index d911021c1bb0..a8a5b42a42d0 100644
+>> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>> @@ -1000,13 +1000,15 @@ int vb2_ioctl_remove_bufs(struct file *file, void *priv,
+>>   			  struct v4l2_remove_buffers *d)
+>>   {
+>>   	struct video_device *vdev = video_devdata(file);
+>> -
+>> -	if (vdev->queue->type != d->type)
+>> -		return -EINVAL;
+>> +	int res;
+>>   
+>>   	if (d->count == 0)
+>>   		return 0;
+> Ah, no. This should still check d->type. So:
 >
-> On 10/21/25 10:35 AM, Lizhi Xu wrote:
-> > The root cause of the problem is that multiple different tasks initiate
-> > SIOCADDRT & NETROM_NODE commands to add new routes, there is no lock
-> > between them to protect the same nr_neigh.
-> >
-> > Task0 can add the nr_neigh.refcount value of 1 on Task1 to routes[2].
-> > When Task2 executes nr_neigh_put(nr_node->routes[2].neighbour), it will
-> > release the neighbour because its refcount value is 1.
-> >
-> > In this case, the following situation causes a UAF on Task2:
-> >
-> > Task0                                 Task1                            =
-               Task2
-> > =3D=3D=3D=3D=3D                                 =3D=3D=3D=3D=3D        =
-                                   =3D=3D=3D=3D=3D
-> > nr_add_node()
-> > nr_neigh_get_dev()                    nr_add_node()
-> >                                       nr_node_lock()
-> >                                       nr_node->routes[2].neighbour->cou=
-nt--
-> >                                       nr_neigh_put(nr_node->routes[2].n=
-eighbour);
-> >                                       nr_remove_neigh(nr_node->routes[2=
-].neighbour)
-> >                                       nr_node_unlock()
-> > nr_node_lock()
-> > nr_node->routes[2].neighbour =3D nr_neigh
-> > nr_neigh_hold(nr_neigh);                                               =
-               nr_add_node()
-> >                                                                        =
-               nr_neigh_put()
-> >                                                                        =
-               if (nr_node->routes[2].neighbour->count
-> > Description of the UAF triggering process:
-> > First, Task 0 executes nr_neigh_get_dev() to set neighbor refcount to 3=
-.
-> > Then, Task 1 puts the same neighbor from its routes[2] and executes
-> > nr_remove_neigh() because the count is 0. After these two operations,
-> > the neighbor's refcount becomes 1. Then, Task 0 acquires the nr node
-> > lock and writes it to its routes[2].neighbour.
-> > Finally, Task 2 executes nr_neigh_put(nr_node->routes[2].neighbour) to
-> > release the neighbor. The subsequent execution of the neighbor->count
-> > check triggers a UAF.
-> >
-> > The solution to the problem is to use a lock to synchronize each add a
-> > route to node, but for rigor, I'll add locks to related ioctl and route
-> > frame operations to maintain synchronization.
->
-> I think that adding another locking mechanism on top of an already
-> complex and not well understood locking and reference infra is not the
-> right direction.
->
-> Why reordering the statements as:
->
->         if (nr_node->routes[2].neighbour->count =3D=3D 0 &&
-> !nr_node->routes[2].neighbour->locked)
->                 nr_remove_neigh(nr_node->routes[2].neighbour);
->         nr_neigh_put(nr_node->routes[2].neighbour);
->
-> is not enough?
->
-> > syzbot reported:
-> > BUG: KASAN: slab-use-after-free in nr_add_node+0x25db/0x2c00 net/netrom=
-/nr_route.c:248
-> > Read of size 4 at addr ffff888051e6e9b0 by task syz.1.2539/8741
-> >
-> > Call Trace:
-> >  <TASK>
-> >  nr_add_node+0x25db/0x2c00 net/netrom/nr_route.c:248
-> >
-> > Reported-by: syzbot+2860e75836a08b172755@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D2860e75836a08b172755
-> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
->
->
->
-> > ---
-> > V1 -> V2: update comments for cause uaf
-> > V2 -> V3: sync neighbor operations in ioctl and route frame, update com=
-ments
-> >
-> >  net/netrom/nr_route.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/net/netrom/nr_route.c b/net/netrom/nr_route.c
-> > index b94cb2ffbaf8..debe3e925338 100644
-> > --- a/net/netrom/nr_route.c
-> > +++ b/net/netrom/nr_route.c
-> > @@ -40,6 +40,7 @@ static HLIST_HEAD(nr_node_list);
-> >  static DEFINE_SPINLOCK(nr_node_list_lock);
-> >  static HLIST_HEAD(nr_neigh_list);
-> >  static DEFINE_SPINLOCK(nr_neigh_list_lock);
-> > +static DEFINE_MUTEX(neighbor_lock);
-> >
-> >  static struct nr_node *nr_node_get(ax25_address *callsign)
-> >  {
-> > @@ -633,6 +634,8 @@ int nr_rt_ioctl(unsigned int cmd, void __user *arg)
-> >       ax25_digi digi;
-> >       int ret;
-> >
-> > +     guard(mutex)(&neighbor_lock);
->
-> See:
->
-> https://elixir.bootlin.com/linux/v6.18-rc1/source/Documentation/process/m=
-aintainer-netdev.rst#L395
->
+> 	if (d->count == 0)
+> 		return d->type == vdev->queue->type ? 0 : -EINVAL;
 
-I would also try to use a single spinlock : ie fuse together
-nr_node_list_lock and nr_neigh_list_lock
+Then frankly speaking lets get back to v1 limited to 
+vb2_ioctl_remove_bufs(), as using vb2_verify_memory_type() in this 
+context only makes things harder to understand:
 
-Having two locks for something that is primarily used by fuzzers
-nowadays is wasting our time.
+diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c 
+b/drivers/media/common/videobuf2/videobuf2-v4l2.c index 
+d911021c1bb0..f4104d5971dd 100644 --- 
+a/drivers/media/common/videobuf2/videobuf2-v4l2.c +++ 
+b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+
+@@ -1010,6 +1015,11 @@ int vb2_ioctl_remove_bufs(struct file *file, void 
+*priv, if (vb2_queue_is_busy(vdev->queue, file)) return -EBUSY; + if 
+(vb2_fileio_is_active(vdev->queue)) { + dprintk(vdev->queue, 1, "file io 
+in progress\n"); + return -EBUSY; + } + return 
+vb2_core_remove_bufs(vdev->queue, d->index, d->count); } 
+EXPORT_SYMBOL_GPL(vb2_ioctl_remove_bufs);
+
+
+> Regards,
+>
+> 	Hans
+>
+>>   
+>> +	res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
+>> +	if (res)
+>> +		return res;
+>> +
+>>   	if (vb2_queue_is_busy(vdev->queue, file))
+>>   		return -EBUSY;
+>>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
