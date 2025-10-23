@@ -1,122 +1,95 @@
-Return-Path: <linux-kernel+bounces-867602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB2CEC03169
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:52:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF91EC03178
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66D23503F21
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:52:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E32BA3A541C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB4834B689;
-	Thu, 23 Oct 2025 18:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8D835B120;
+	Thu, 23 Oct 2025 18:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHAgocqv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5QoS1dF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA792299AB5;
-	Thu, 23 Oct 2025 18:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D633130E83A;
+	Thu, 23 Oct 2025 18:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761245522; cv=none; b=kBZXJFd7iTEtXtNGSP8Lpgkxzwwki/tKa3ljRLzwEUnlhmb8hHSg9laFDwIx+Pg26LXUsVPY0k5ut+GUbFPs0GrtF03FUZF1UtLgM4WMgJvgFkWyA0Ge5tJQg7xiekXSPL3JoIDovTmHAyDtCrHGfWvql9iWqF1fX2hleHlhhbY=
+	t=1761245543; cv=none; b=Kn4HJq4rLGYvfp0acIP11L9rYwQw5DJ+QJErtw6EbtOQ22lmAkm9SDH42unyhPEL09vB7CiNNPwn8Jw2cdyQd7lQ8ywQAO7F0W2habSA/NwDdJeZ7I1ueT0B1KAPf1iUAaar0qwk3mRoHVX4H8AiuaME7c8iwzf/cmSLtJpQNY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761245522; c=relaxed/simple;
-	bh=TzuSpoSx+aRz2N22AvJ60oOVpKuOmgU6VTbYs84YpwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EzIEotKm0+gmSgPC5nfjb9WervNKNjMxlSL2GMFE4CZK7URfb5hf91JhPu7cvqFroxjtDvH9X6PQM61GibgNW91krnfjqfMBow8Oc4B6fRPcYk7kyqYgfS6cBYbOUAC0OYxvU4WirDriZ/fB1Jz5Vv8R3dY9uBsMi7C+RWTGvyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DHAgocqv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA85AC4CEFD;
-	Thu, 23 Oct 2025 18:51:58 +0000 (UTC)
+	s=arc-20240116; t=1761245543; c=relaxed/simple;
+	bh=iNwcnFlrFMVa5EKGN1iC6ANOgbWoVEcUG/+IRxZZob4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tcZcS0JqCSCTi8yTTEscPcehe8a38rwdbDRg0yV05lYnSU9A3S2cjorq+df2rAJZDQos1iA88sPUHeQMMlgMOjHs6KZGZUMNlncDRFJB/t3CSG0C2FOLbyfAaSGrz+XyuGrloghTvs6s+NRwpntF6Q7TFoE0no2Id8Z6HdiDMV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5QoS1dF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B07C4CEE7;
+	Thu, 23 Oct 2025 18:52:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761245521;
-	bh=TzuSpoSx+aRz2N22AvJ60oOVpKuOmgU6VTbYs84YpwA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DHAgocqvom9faaoZnBqXY9bpIXCHSMm6EZRtvYa4GmcXBaNFZFfF2iku9bU5bq4a5
-	 8NmhdJJwnYB6Fr4deS5y8sbVfErRNvEehuLJ+l3MZlGmsR7mRdIZ6aWue617Gn90w6
-	 NNCj3qE4eliaHP/mbumm1aaez6lzTu1iUZdkziD65tQgz8uSi3wrO7GEUQTsZMFxv7
-	 skBa7LygbdLgqmbq/L0AG3+9vk/uB7smdAVnMofzbt+mOGMNgGY1ClCPT9u988OtsO
-	 j6oz4XyZI35kihLU4ZqxC551vYdv4IxDf+RKwrQ25KlXrP7sFkRhzuLF66+PjUXopV
-	 Z1jLgzkkvK+6A==
-Message-ID: <171e631f-c463-4dfc-aa04-b8a82a82f00b@kernel.org>
-Date: Thu, 23 Oct 2025 20:51:57 +0200
+	s=k20201202; t=1761245542;
+	bh=iNwcnFlrFMVa5EKGN1iC6ANOgbWoVEcUG/+IRxZZob4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U5QoS1dF3wNe9aYKaLnjUxCs6RBEWGey7PVz9UvpoJmaC2/M8pHXD6ZC9avAI8I4X
+	 ThyuWU/EzNKKFk1a4hV7Zp7ZEt3Qi077JzUJP7mPjS3fwcm3i1Lh2vJpM6qn5OXd9q
+	 GQkqIXy0Cnj1Zhpg+T4D/widXCB81gA/PrZ+/eLiPFES7VSteD9cLLnZ+Ijhn5t/9B
+	 OnK71GEVrk+Dw7lrY48B+BwR92AilDmCjJZhT7aVJOfKK+q2a0tuPLc6rdHSgVkOlQ
+	 0mVfMRw2QHz9smL9twoyIwG7V4n/c3Yp/PoEWNKNWNPdX7R6Kd6VFqhy2txWA8r7aL
+	 eAWFPa+43qXcQ==
+Date: Thu, 23 Oct 2025 19:52:17 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	han.xu@nxp.com, broonie@kernel.org, dlan@gentoo.org,
+	Frank.li@nxp.com, guodong@riscstar.com, linux-spi@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/9] dt-bindings: spi: fsl-qspi: add optional resets
+Message-ID: <20251023-feline-fanciness-c4d0a91a010e@spud>
+References: <20251023175922.528868-1-elder@riscstar.com>
+ <20251023175922.528868-3-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: qcom,pdc: document Kaanapali Power Domain
- Controller
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
- trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20251021-knp-pdc-v2-1-a38767f5bb8e@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251021-knp-pdc-v2-1-a38767f5bb8e@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/ETu37CKt9FSwtQo"
+Content-Disposition: inline
+In-Reply-To: <20251023175922.528868-3-elder@riscstar.com>
 
-On 22/10/2025 08:00, Jingyi Wang wrote:
-> Add a compatible for the Power Domain Controller on Kaanapali platforms.
-> 
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+
+--/ETu37CKt9FSwtQo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Oct 23, 2025 at 12:59:14PM -0500, Alex Elder wrote:
+> Allow two resets to be defined to support the SpacemiT K1 SoC QSPI IP.
+>=20
+> Signed-off-by: Alex Elder <elder@riscstar.com>
 > ---
+> v2: - The "reset" property now only applies to spacemit,k1-qspi compatible
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-Best regards,
-Krzysztof
+--/ETu37CKt9FSwtQo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPp5YQAKCRB4tDGHoIJi
+0otQAQCK3NvE/Tm38AIhpEtP6S7mkv0RqwsNSoSYOHCFHH4WfwEAiuXWhjAfdkH1
+sM3n+P4Y+mZbEkMAfgQGPWp2lHTSSwk=
+=eqg5
+-----END PGP SIGNATURE-----
+
+--/ETu37CKt9FSwtQo--
 
