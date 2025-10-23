@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-866239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AA2BFF44E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:46:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64A4BFF454
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E16EE189DD67
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:46:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 557D44E0709
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B741DC9B3;
-	Thu, 23 Oct 2025 05:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A40C23AE9A;
+	Thu, 23 Oct 2025 05:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FF2lS5TN"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcaJqiR0"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CADC35B13C
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAF01F5EA
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761198386; cv=none; b=bNUGg+oXPWGD+eYcSOSLISFIsaJ5jyb76IXi05fQB7waRobZmvW6w5XrC5e4Jr74ISAfOwv7PgDDStXRoM3fEwZ4orwiJz62XXSL2Rd3Z5aoWiYkZuLIvm8m0sD1IgLTzbQnjKXTenL7FCnrlu75qKFDAy02QGZBoNMmS3GpcFc=
+	t=1761198388; cv=none; b=eDkYlC64kMlu4Al7emMzW9ibr1EAxCCl+Pd8MCOriawcD7s2L/w8OZ6DqncMeh3kZJxhGQwPvmdvWbVwtaGLO/n+FhmNEBfzOxzM2C80Sw7NjIiuqW1uotJwgF0EYSVH4/lcY5G0dubv6ogqVgb9P2syp4SqaXBWk/j4il3sU4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761198386; c=relaxed/simple;
-	bh=Zl+2ISN6qzMat1JVzZWIK7uayDhQf0iUrjQgMrexcJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QdQbdC87b8I9XN8WVl2uaArkEshJnawiPV5K8aG09UCo3nCu7M7hLqSaN9y7Ze0UCAsRNajUcz2zcn3AJ1LkjnSYSRLD1YZyPUr3IdhGKe6oGjk9HZHdi6AfJwWfDziYywexVLuIQxrX5Z+FZMZoPA53bvBqO89U0meU5B+dC+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FF2lS5TN; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1761198388; c=relaxed/simple;
+	bh=mQtnE/Pk78fbCaWrJaquJiBun1a+J2wllq95qqjv6VU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HXna8T3EYur5rRiqCRLGgXf6158XUYEnGL+mYnLgPhKHSoMMM5pD97XUFN8qGFBXt5hSXXO8Hh+Y9HCf3cAkbOpz5HCWvVKyO0pxJ0TLuMcyoWE4mW4VHcxExqxVBO0mkon+V5o/eYmxC4HmhWGb9SZtERi6Oyrkl4+ArSrY7qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcaJqiR0; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-475c9881821so3218635e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:46:24 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-471191ac79dso3834185e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:46:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761198383; x=1761803183; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=s+fuNZVjOzBfehguINbliZJdnuGZFQWDcRhaGc8hzwM=;
-        b=FF2lS5TNcRlkXHdBnjqifsWCzhpO8V3heWFpYc1chko0/k2Jxm/Q9BurEzgR82w+cj
-         Kyk9c8kGApyB+3WliB4SYtzMeT8WswljDBpvs7rIcG1Fbrvg1Al3uYGjoAb7SDU9oA+L
-         L9lfv/PGY3cA6dRzvy0UtJOXpel2mlRKXEt1tgmJnAFQeNar8363PuFhyY9cvoSskIDN
-         n8CECq9mdm477lyDoupwMCVuTHlLV3K1YutSq7waqq/b5sJFzeekIH4wq1JXodQoIWXB
-         k7VaVVsBwTFaQqiXSi9by+bbbv00RkCmilJCYOv9JqbEtZvYZ78g0TIO8CiVf47BstXC
-         CYjA==
+        d=gmail.com; s=20230601; t=1761198385; x=1761803185; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IwnxFDhqj/zOYumjR/NIec/9OkBezJdyMG3IFuZVCHs=;
+        b=jcaJqiR0929zazLZNG+nJSXbrTaxjvT+9I7rKeE7fD/AYEsDmFEBq4O9qAGGBmhW84
+         qUZs5SBFbmCmrhccZppofR+0nBsdd4Uh++AoAOIL5w7a7vnDkM3pZhJARgHTqx2ql4k2
+         zSbFKKaj+De1OJV6AaYMb3Uojhb8Cpbsc+gqSJyCY+cJQwRE2a2xWmjxI+oH7FMAPlio
+         G92RBsOa0i+c8oU7xvNISbv+p9mnvDj9J5hzSBxV24LbCfbQFQMmctdlz2zNNm++WCxG
+         JisMPeFJ/1W0LHN5tDUtfEfNcdUbX3cTZT1BIROomMXbbCEWmnfYWnv5oTu8a4nkZVP3
+         aHpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761198383; x=1761803183;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s+fuNZVjOzBfehguINbliZJdnuGZFQWDcRhaGc8hzwM=;
-        b=PFz5S+xnLGsAtEW5XZDvtZzI6xHEZOEx38LiHrTYfWQUlhWTJ+QHEkesaVfOkzSjbl
-         tEU+HBV/Zzu7qJiA5AJ/E5reWaM7piNJgnNwfMQOcwEuEwWof7XO7q7ljHphKy05Pkf3
-         ksClkcd4OcHGj/fCNQcQ5g84zKb9qIXXDqtY/jKkO40UPTc4DwNLLz3ZO0U2n+RDfwwS
-         fNgFZWVgDoG9PyzPLXV9LyMHx/sjD2joL0csmfX7TZxwRU6Si1sWq0bThCn8IZ2FHQBf
-         LlIkq94HfV4w1V9rXkrlbSQahYkSX6mkeVxkO8s5qUzwOsAB35GxvAs0KqCUwGhM0Xkj
-         NvRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXafGNWqzyuSUSn5DrMVOEjAhoRWR6NROhc+0h2yXvWIfr4Tvp9UVGPQh+v/MCjHl2aNfvz6xrE+9/EU5Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMF9wMHBSbkBkgo9hO+VzANSr69O3UuEFABHx8vO7lY9uOl6vC
-	esIrgDtJ3rKb7APz0mbKhfUvGS0FcLo81yIn7lHJEqxXsEtrMKJIiexh
-X-Gm-Gg: ASbGncuu5rJ4m/VABVL3iAE2b8msfBIMYca/OlxTIxkGr2AKJR/OG3XosCpHoNe56Z4
-	dJVlpDZuLIfsG4woesYY+sqn/U5xEb6ewdwKIh442ira+76atTezKhL2aiyRAame5ud/kUHoS9S
-	0GpApGbPJ7PVsvOmIrGXtkwEjmcpN4uHwyuetjfKDH6+TrI3+Pvyh2nPyj/CtQ72RChsYhwybcr
-	sqXrRDgVlvTx1ff/TOjb08qh47m52zBHgVe8K+6IsdJuq3eoXmkO0jHIKwZ8QgXZfFjC+/6hTd6
-	9PSh2zc+N072xcrERs0kQypvWvUdN2YoSJ6y7fHEZOTYXyhrTwaXk7W5S1uhyR+WU2huq3pftoF
-	wWV1uM/5i4Iyeki5cBYU51Dxa4+F9Lgg/lyRjNMgHa9PKTnpI5ri9hJRplsggR/lDc9cOzSQ7t1
-	gr/SMOrUdWyg==
-X-Google-Smtp-Source: AGHT+IExgoQzmmle3sIN1LH12hgZAmIRTnFnwVZCgFRS0GsdJQL5qbeVch7bnMJqPYEKU6bE9Moc+w==
-X-Received: by 2002:a5d:584e:0:b0:407:d776:4434 with SMTP id ffacd0b85a97d-42856a89d28mr3012068f8f.30.1761198382987;
-        Wed, 22 Oct 2025 22:46:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761198385; x=1761803185;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IwnxFDhqj/zOYumjR/NIec/9OkBezJdyMG3IFuZVCHs=;
+        b=h6PyVY43LrFS4qSzYYm3ZwoaqPK1+9R65Cr+X2lpFFN4gGO/9nWcpcEqsM2ABknROi
+         Awovm5fNS6p6bAp+xkv8Rq38nZ4RZQoJLQgd4aY1pzzsnghv6wl0dJBCjFzrPodgdN2R
+         BWdJjFAm4/xeQZBSf0VPegA3MI9+yeBL/rR16UIOc1w0LfYH9RNyy0Xh8nc1IiJcZr4J
+         u1W/PrghAXb4uTzqOOCSUOn+wUZFaZJ2bWi/X4h/roYYoYV4aZYtOnwX4CNmxibX/7AC
+         KRML5IpuLEi1EGNZOB5uB1Zd+MlV+Up0PqtkSO/fQfBQjccrwvLPouV6VzpZtVz271v8
+         t0uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6xubR/viUes386YWZGj8PC6dVK4ytuqbG8gpyhtH3Tw0iOzbW8u/c4QZ35aDNKZHAystRyesLCQT0lhE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLZqf97A4S2KvhLl0KwaQyEULZSvsramRuFkbSpzGRo9Qe2xGa
+	293BmcGyuloXJqD62TdBIj1pgfWsviu/q0kEQiuYzfv7ZFTIq2sMpZvq
+X-Gm-Gg: ASbGncvq/SRQJzGu4gUvI/nB5VFWIqYZ/6gcCHCLlNmvY4rgzeFDmy2vT1bBLvrlXnu
+	0AWkr0aNMOX3YlUa4fXaHVxZMPCQ4xzwHPyZktbHqTh9RvUV5d+6Ro8TWQNlXyYb/RRRFPqIHRd
+	KAVe/BRMXOb3AlIFHByvKt4SMaZulgfdK0D/EXjFNoIbeWZ2NHOJLu5xm0TEWxlaMhsZOdp9S7H
+	Lm5pqUB8v8lqKbQtOxmfHTVR03kwhMsXUs7JTPApEiwd3RwgAEnxqYJ0uNOQy7XyMAqBEbOsFNX
+	6+9JYTkrY2oP29WWsPrlQAWXxdh2tPNwjdIoKSRsfd2zCxwjUvJtLL/VW3eJ+0yFLFTWhqw8QFt
+	wBHg6CecbSlEh5Ly8Szwp+JuPhDhmN7CoBjs3ewYbKce31kBvSewOoRNvNI8T7DoB+DkqAyjyhE
+	8YNTqG4pqT5A==
+X-Google-Smtp-Source: AGHT+IHQc98eHStc6B7n1NtnALjErZ0PHeJrg9rNrymTkb6GNxWx6MBsyxvF0dpH1vuKnppid6VE9Q==
+X-Received: by 2002:a05:600c:548c:b0:46d:5189:3583 with SMTP id 5b1f17b1804b1-471177bad0dmr162359495e9.0.1761198384454;
+        Wed, 22 Oct 2025 22:46:24 -0700 (PDT)
 Received: from fedora ([94.73.33.104])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496cf3b51sm50414785e9.9.2025.10.22.22.46.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496cf3b51sm50414785e9.9.2025.10.22.22.46.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 22:46:22 -0700 (PDT)
+        Wed, 22 Oct 2025 22:46:23 -0700 (PDT)
 From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
 To: quic_jesszhan@quicinc.com
 Cc: maarten.lankhorst@linux.intel.com,
@@ -84,10 +86,12 @@ Cc: maarten.lankhorst@linux.intel.com,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [PATCH 1/2] drm/tests: Handle EDEADLK in drm_test_check_valid_clones()
-Date: Thu, 23 Oct 2025 07:46:05 +0200
-Message-ID: <20251023054614.6267-1-jose.exposito89@gmail.com>
+Subject: [PATCH 2/2] drm/tests: Handle EDEADLK in set_up_atomic_state()
+Date: Thu, 23 Oct 2025 07:46:06 +0200
+Message-ID: <20251023054614.6267-2-jose.exposito89@gmail.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251023054614.6267-1-jose.exposito89@gmail.com>
+References: <20251023054614.6267-1-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,67 +102,91 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Fedora/CentOS/RHEL CI is reporting intermittent failures while running
-the drm_test_check_valid_clones() KUnit test.
+the drm_validate_modeset test [1]:
 
-The error log can be either [1]:
-
-    # drm_test_check_valid_clones: ASSERTION FAILED at
-    # drivers/gpu/drm/tests/drm_atomic_state_test.c:295
-    Expected ret == param->expected_result, but
+    # drm_test_check_connector_changed_modeset: EXPECTATION FAILED at
+    # drivers/gpu/drm/tests/drm_atomic_state_test.c:162
+    Expected ret == 0, but
         ret == -35 (0xffffffffffffffdd)
-        param->expected_result == 0 (0x0)
 
-Or [2] depending on the test case:
+Change the set_up_atomic_state() helper function to return on error and
+restart the atomic sequence when the returned error is EDEADLK.
 
-    # drm_test_check_valid_clones: ASSERTION FAILED at
-    # drivers/gpu/drm/tests/drm_atomic_state_test.c:295
-    Expected ret == param->expected_result, but
-        ret == -35 (0xffffffffffffffdd)
-        param->expected_result == -22 (0xffffffffffffffea)
-
-Restart the atomic sequence when EDEADLK is returned.
-
-[1] https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-artifacts/2113057246/test_x86_64/11802139999/artifacts/jobwatch/logs/recipes/19824965/tasks/204347800/results/946112713/logs/dmesg.log
-[2] https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-artifacts/2106744297/test_aarch64/11762450907/artifacts/jobwatch/logs/recipes/19797942/tasks/204139727/results/945094561/logs/dmesg.log
-Fixes: 88849f24e2ab ("drm/tests: Add test for drm_atomic_helper_check_modeset()")
+[1] https://s3.amazonaws.com/arr-cki-prod-trusted-artifacts/trusted-artifacts/2106744096/test_x86_64/11762450343/artifacts/jobwatch/logs/recipes/19797909/tasks/204139142/results/945095586/logs/dmesg.log
+Fixes: 73d934d7b6e3 ("drm/tests: Add test for drm_atomic_helper_commit_modeset_disables()")
 Closes: https://datawarehouse.cki-project.org/issue/4004
 Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 ---
- drivers/gpu/drm/tests/drm_atomic_state_test.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/gpu/drm/tests/drm_atomic_state_test.c | 27 +++++++++++++++----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/tests/drm_atomic_state_test.c b/drivers/gpu/drm/tests/drm_atomic_state_test.c
-index 2f6ac7a09f44..1e857d86574c 100644
+index 1e857d86574c..bc27f65b2823 100644
 --- a/drivers/gpu/drm/tests/drm_atomic_state_test.c
 +++ b/drivers/gpu/drm/tests/drm_atomic_state_test.c
-@@ -283,7 +283,14 @@ static void drm_test_check_valid_clones(struct kunit *test)
- 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+@@ -156,24 +156,29 @@ static int set_up_atomic_state(struct kunit *test,
  
-+retry:
- 	crtc_state = drm_atomic_get_crtc_state(state, priv->crtc);
-+	if (PTR_ERR(crtc_state) == -EDEADLK) {
-+		drm_atomic_state_clear(state);
-+		ret = drm_modeset_backoff(&ctx);
-+		if (!ret)
-+			goto retry;
-+	}
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc_state);
+ 	if (connector) {
+ 		conn_state = drm_atomic_get_connector_state(state, connector);
+-		KUNIT_ASSERT_NOT_ERR_OR_NULL(test, conn_state);
++		if (IS_ERR(conn_state))
++			return PTR_ERR(conn_state);
  
- 	crtc_state->encoder_mask = param->encoder_mask;
-@@ -292,6 +299,12 @@ static void drm_test_check_valid_clones(struct kunit *test)
- 	crtc_state->mode_changed = true;
+ 		ret = drm_atomic_set_crtc_for_connector(conn_state, crtc);
+-		KUNIT_EXPECT_EQ(test, ret, 0);
++		if (ret)
++			return ret;
+ 	}
  
- 	ret = drm_atomic_helper_check_modeset(drm, state);
+ 	crtc_state = drm_atomic_get_crtc_state(state, crtc);
+-	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, crtc_state);
++	if (IS_ERR(crtc_state))
++		return PTR_ERR(crtc_state);
+ 
+ 	ret = drm_atomic_set_mode_for_crtc(crtc_state, &drm_atomic_test_mode);
+-	KUNIT_EXPECT_EQ(test, ret, 0);
++	if (ret)
++		return ret;
+ 
+ 	crtc_state->enable = true;
+ 	crtc_state->active = true;
+ 
+ 	if (connector) {
+ 		ret = drm_atomic_commit(state);
+-		KUNIT_ASSERT_EQ(test, ret, 0);
++		if (ret)
++			return ret;
+ 	} else {
+ 		// dummy connector mask
+ 		crtc_state->connector_mask = DRM_TEST_CONN_0;
+@@ -206,7 +211,13 @@ static void drm_test_check_connector_changed_modeset(struct kunit *test)
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
+ 	// first modeset to enable
++retry_set_up:
+ 	ret = set_up_atomic_state(test, priv, old_conn, &ctx);
 +	if (ret == -EDEADLK) {
-+		drm_atomic_state_clear(state);
 +		ret = drm_modeset_backoff(&ctx);
 +		if (!ret)
-+			goto retry;
++			goto retry_set_up;
 +	}
- 	KUNIT_ASSERT_EQ(test, ret, param->expected_result);
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
  
- 	drm_modeset_drop_locks(&ctx);
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+@@ -277,7 +288,13 @@ static void drm_test_check_valid_clones(struct kunit *test)
+ 
+ 	drm_modeset_acquire_init(&ctx, 0);
+ 
++retry_set_up:
+ 	ret = set_up_atomic_state(test, priv, NULL, &ctx);
++	if (ret == -EDEADLK) {
++		ret = drm_modeset_backoff(&ctx);
++		if (!ret)
++			goto retry_set_up;
++	}
+ 	KUNIT_ASSERT_EQ(test, ret, 0);
+ 
+ 	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
 -- 
 2.51.0
 
