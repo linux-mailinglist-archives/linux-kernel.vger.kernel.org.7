@@ -1,185 +1,142 @@
-Return-Path: <linux-kernel+bounces-866320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C0CBFF75D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:08:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8ECBBFF766
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:08:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F1B64EA3CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:08:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BE3E19A75F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AE12BEFF3;
-	Thu, 23 Oct 2025 07:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A2B2BCF43;
+	Thu, 23 Oct 2025 07:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rs6Ym6T7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lbkC7Nqi"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8862BDC15;
-	Thu, 23 Oct 2025 07:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B39239E80
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761203290; cv=none; b=RDOBSM49LG/4mcnNvYKA2Rzqhfez3dG4PIIKsEgVHpZL0HevGzaykquIjS5WHyGXw7uYZvJvxHzAXF0M49eT458+MgXbu3ZmEh0MOU0vqijaCK8yz/1aGZso+IiJEKXKdwNpfQxVbfykMoMO6TNUmOknm682Q+PNiIalCTaR7PE=
+	t=1761203324; cv=none; b=ViBkroNI+BAiS0MDHHC2Jw1RjqDqnHZsQyNzgNJmsLzYHhDspg/hI/L3ENLU3CNeaU5niCxi7f/dbk0WuCcj1ptCOmswQ7HOgjKH8lgkReHB7P1ZdysN7X8U1MOs8M6b0OnrDylEx5nCkIOyVUWZd5rLMnogrS8IYcp+P32p+kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761203290; c=relaxed/simple;
-	bh=/EbgptFjltHpGE9hJH8u5LNNSpy34GESNrMM1A23qrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MjbefJdGVTZt2Gs/Ym3B8i6w2lW593k+I6q8A28yAvmIvLJH6vyO3UTIHIKpTOAhFFuijyGT87OOBFy+XgyS5Y8Noee26u7Ns1V3DfW0Apic8KLrcMfkPNU+wpQ7PxHnVfT2HfjL+eR3EkuzZEH6DmojRnoaMcy5/D9YZ3zUcwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rs6Ym6T7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E66C4CEE7;
-	Thu, 23 Oct 2025 07:08:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761203290;
-	bh=/EbgptFjltHpGE9hJH8u5LNNSpy34GESNrMM1A23qrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rs6Ym6T7BbcLd2KezItSx+fYibGUohW2Oc/YROMvNUgniEYdltGFzwokK/M4/FMV/
-	 FBB1t3/NKq91hyVRGvn7THYbYlRWMw1fT1ww2KiqLAPobMlwXaLN1xK6xNT5sccFlp
-	 6Dmm+2s9jDQ6rAfygOUGJh2JtgSg6iEq0duU/jfdNb5+oKnkftxztWtbzoTDoQ0l92
-	 ZsByAGWMX0IcXKLN2h+2i4Xhj+bXBVd/GwhHruCuVhF3KF4TfBlYYtP0HFZzZoL4so
-	 ++JATIn7/Ez/asIWL0x1QTXGBThusMEMem1VF5Fud9HZCgQLB39GcfgWwqhJMJoC4B
-	 MAQEfT4m+nAyw==
-Date: Thu, 23 Oct 2025 10:07:57 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
-	Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v7 2/8] mm: Add a ptdesc flag to mark kernel page tables
-Message-ID: <aPnUTfMXD7qReWUl@kernel.org>
-References: <20251022082635.2462433-1-baolu.lu@linux.intel.com>
- <20251022082635.2462433-3-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1761203324; c=relaxed/simple;
+	bh=7NwiN/K8SGK+Ygyet595Hy+1Nxn5KCZoHo1ul8wBViA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CnAxFnx8RG+swVewYOPh6dh+GNoTr9XMwC0uxEe5K/5z6mBjh0PWqxhDnSlQpg1vEP84mOFgv1nWmCE2TYPrY2A4XJNE7iNMEpjUTgJg92pd3v2Gm9oyucsyC9f0Nx2Z8JhhhV3YQMlACemWSgno5JsP/M13fyLaEKuydyA1qMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lbkC7Nqi; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-475c696ab23so2108775e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:08:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761203321; x=1761808121; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AM6QKcwomZS5ILh9rEXNjcNyg7KgGv74b4bvo9G7Kp8=;
+        b=lbkC7NqifFyc1F3EZAzZLywqG5Ulb5RgbsqnN9jklPfeat5M+70OY0CYWU9Nnj81UK
+         R/Kg73vTXWX2+XRALzinluRJFwSYyLtKE9wrsq7GJC1MLRZVgndtEpKYHR68OkmEt4tg
+         vyzoh5a3C3JD3EmCbY0vLk6fLo+RkvHQOAQ6fOuVP0NlsrxH9H7aW0hwZ5PE9pIsgXNe
+         cj+TLjZCopvWCWmQbXpw7tdau0i/SOdABvaWaNpzZ6pgXnHFKG+gjnTYmSL29O//jDmk
+         ntEzsa/UsYPtNUTYj0Y1447wfZ8fhoGjWFkLuDg37Y46BOHk8V0TAl2nWFD6/3Buewka
+         N75w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761203321; x=1761808121;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AM6QKcwomZS5ILh9rEXNjcNyg7KgGv74b4bvo9G7Kp8=;
+        b=PsQ/zdl+QnjJ96+QKB9HD76CwD0Br5q0zz4CdfAZmiROM9HQmwa+fFuY9kp8PoZElk
+         2pL3IGloroQn68MiLis2TKC3JHpTK0BdY0ZxygSOmI8HHJeOsJ9dHHyqikTCBWg9xzMX
+         l3dHJz4dRSwJo7DiJ98s2TLGsRsVcDbBbmp86e4/Az6QmFuTZaZmAgW5zpx78PofsV2+
+         iu9cEoKr9kvSlzBTT/Cm7SUMRwGjC7ullFGYJRfV0j6FYXn51SDi1Pgj0C7T6VG5OCR8
+         vX4OtHxFbQrbxUFU1RG5emou7BIgZ8wLg1OzfRjwmcHyiqXLb8MOWl/WQoZVoa/ZkZ72
+         Cj/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVXDKCht+8G8LMNbt0ohKGW00+vDma/cypV6E1sR0MFJvzJLzo2F1Hsdtzs9AYvzKf2pX9pRW/XNZzOeBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFSUBOQ9lTTSveLblYG7RQZwTfoY58UW/eQ8rsxSgw8/6UqNjb
+	iRdTY+7uw/PZiAFHqY19SwZANsCvQtXhcFo9JE37+oo9DlBqLpWe2+kf
+X-Gm-Gg: ASbGncsXP9VGz4VsiVZU5qO/C0fEcH4psz3pEbj6gTu4fx5NYXVUvt/Z+MfzkspcI3A
+	AWOTehUErAP0NHXNYV+/rCoguXAkrV7ls8W72F4Mc7o4NtDfnWMcD+70xCMQOU+WZ9Nw/QgRkqO
+	w9yT3NAIP6MSr+0fsjXDeMT6+KPSnP4NndwW+9IuE3Z0tKd7riPYUvNWfEpPgx2tB6K2bhvoV31
+	AiVf4pnyNXhNBSIWEgs06HURQUBGJz/Dl/W05Z0/3wk/OBrGts4PNFgQcA/CqJ/FzBgxXjax5x1
+	R4yOxqsYLEr0ZcT7ISmjWfscbVAwxO4YeGtQPbZMV90IMHKkcFTNPUcKh/d7x/w8gI3I3/ctHKV
+	b4B1txHC90q8n42hc4Rnyhug1gbGTPK6OVw9v1A8ysG2FOg9m2s2G/OVIoqhCM0oFUjw4h3P/N5
+	lgOc6AJHJjwQWRuihj/np4pSo=
+X-Google-Smtp-Source: AGHT+IENim35HOxVARbSDioYu5EEQEHmf8ELuhvz8cK4iifEtwKu94+xGBpW12KkX7avks399OoeFQ==
+X-Received: by 2002:a05:600d:416b:b0:46e:45f7:34f3 with SMTP id 5b1f17b1804b1-47117874b06mr185455635e9.8.1761203321082;
+        Thu, 23 Oct 2025 00:08:41 -0700 (PDT)
+Received: from [10.221.206.54] ([165.85.126.46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496d4b923sm50682035e9.14.2025.10.23.00.08.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 00:08:40 -0700 (PDT)
+Message-ID: <efab6280-a27b-4ba8-b744-9d1e12bd418e@gmail.com>
+Date: Thu, 23 Oct 2025 10:08:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022082635.2462433-3-baolu.lu@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] driver core: auxiliary bus: Fix sysfs creation on
+ bind
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Tariq Toukan <tariqt@nvidia.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+ Mark Bloch <mbloch@nvidia.com>, Gal Pressman <gal@nvidia.com>,
+ Aya Levin <ayal@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, Simon Horman <horms@kernel.org>,
+ Shay Drory <shayd@nvidia.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Parav Pandit <parav@nvidia.com>,
+ Amir Tzin <amirtz@nvidia.com>
+References: <1761200367-922346-1-git-send-email-tariqt@nvidia.com>
+ <2025102355-abstract-subgroup-aa97@gregkh>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <2025102355-abstract-subgroup-aa97@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 22, 2025 at 04:26:28PM +0800, Lu Baolu wrote:
-> From: Dave Hansen <dave.hansen@linux.intel.com>
-> 
-> The page tables used to map the kernel and userspace often have very
-> different handling rules. There are frequently *_kernel() variants of
-> functions just for kernel page tables. That's not great and has lead
-> to code duplication.
-> 
-> Instead of having completely separate call paths, allow a 'ptdesc' to
-> be marked as being for kernel mappings. Introduce helpers to set and
-> clear this status.
-> 
-> Note: this uses the PG_referenced bit. Page flags are a great fit for
-> this since it is truly a single bit of information.  Use PG_referenced
-> itself because it's a fairly benign flag (as opposed to things like
-> PG_lock). It's also (according to Willy) unlikely to go away any time
-> soon.
-> 
-> PG_referenced is not in PAGE_FLAGS_CHECK_AT_FREE. It does not need to
-> be cleared before freeing the page, and pages coming out of the
-> allocator should have it cleared. Regardless, introduce an API to
-> clear it anyway. Having symmetry in the API makes it easier to change
-> the underlying implementation later, like if there was a need to move
-> to a PAGE_FLAGS_CHECK_AT_FREE bit.
-> 
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-> ---
->  include/linux/mm.h | 41 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
+On 23/10/2025 9:47, Greg Kroah-Hartman wrote:
+> On Thu, Oct 23, 2025 at 09:19:27AM +0300, Tariq Toukan wrote:
+>> From: Amir Tzin <amirtz@nvidia.com>
+>>
+>> In case an auxiliary device with IRQs directory is unbinded, the
+>> directory is released, but auxdev->sysfs.irq_dir_exists remains true.
+>> This leads to a failure recreating the directory on bind [1].
+>>
+>> Using the attributes group visibility interface, expose the IRQs
+>> attributes group if"f the xarray storing IRQs entries is not empty. Now
+>> irq_dir_exists field is redundant and can be removed.
+>>
+>> [1]
+>> [] mlx5_core.sf mlx5_core.sf.2: mlx5_irq_affinity_request:167:(pid 1939):
+>>     Failed to create sysfs entry for irq 56, ret = -2
+>> [] mlx5_core.sf mlx5_core.sf.2: mlx5_eq_table_create:1195:(pid 1939):
+>>     Failed to create async EQs
+>> [] mlx5_core.sf mlx5_core.sf.2: mlx5_load:1362:(pid 1939):
+>>     Failed to create EQs
+>>
+>> Fixes: a808878308a8 ("driver core: auxiliary bus: show auxiliary device IRQs")
+>> Signed-off-by: Amir Tzin <amirtz@nvidia.com>
+>> Reviewed-by: Mark Bloch <mbloch@nvidia.com>
+>> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+>> ---
+>>   drivers/base/auxiliary.c       |  13 +++-
+>>   drivers/base/auxiliary_sysfs.c | 117 +++++++++++++++++++++++++--------
+>>   include/linux/auxiliary_bus.h  |  26 ++++++--
 > 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index d16b33bacc32..354d7925bf77 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2940,6 +2940,7 @@ static inline pmd_t *pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long a
->  #endif /* CONFIG_MMU */
->  
->  enum pt_flags {
-> +	PT_kernel = PG_referenced,
->  	PT_reserved = PG_reserved,
->  	/* High bits are used for zone/node/section */
->  };
-> @@ -2965,6 +2966,46 @@ static inline bool pagetable_is_reserved(struct ptdesc *pt)
->  	return test_bit(PT_reserved, &pt->pt_flags.f);
->  }
->  
-> +/**
-> + * ptdesc_set_kernel - Mark a ptdesc used to map the kernel
-> + * @ptdesc: The ptdesc to be marked
-> + *
-> + * Kernel page tables often need special handling. Set a flag so that
-> + * the handling code knows this ptdesc will not be used for userspace.
-> + */
-> +static inline void ptdesc_set_kernel(struct ptdesc *ptdesc)
-> +{
-> +	set_bit(PT_kernel, &ptdesc->pt_flags.f);
-> +}
-> +
-> +/**
-> + * ptdesc_clear_kernel - Mark a ptdesc as no longer used to map the kernel
-> + * @ptdesc: The ptdesc to be unmarked
-> + *
-> + * Use when the ptdesc is no longer used to map the kernel and no longer
-> + * needs special handling.
-> + */
-> +static inline void ptdesc_clear_kernel(struct ptdesc *ptdesc)
-> +{
-> +	/*
-> +	 * Note: the 'PG_referenced' bit does not strictly need to be
-> +	 * cleared before freeing the page. But this is nice for
-> +	 * symmetry.
-> +	 */
-> +	clear_bit(PT_kernel, &ptdesc->pt_flags.f);
-> +}
-> +
-> +/**
-> + * ptdesc_test_kernel - Check if a ptdesc is used to map the kernel
-> + * @ptdesc: The ptdesc being tested
-> + *
-> + * Call to tell if the ptdesc used to map the kernel.
-> + */
-> +static inline bool ptdesc_test_kernel(const struct ptdesc *ptdesc)
-> +{
-> +	return test_bit(PT_kernel, &ptdesc->pt_flags.f);
-> +}
-> +
->  /**
->   * pagetable_alloc - Allocate pagetables
->   * @gfp:    GFP flags
-> -- 
-> 2.43.0
+> Why would auxbus patches go through the net tree?
 > 
 
--- 
-Sincerely yours,
-Mike.
+It shouldn't...
+Honest mistake passing the argument to my script.
+
 
