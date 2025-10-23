@@ -1,250 +1,105 @@
-Return-Path: <linux-kernel+bounces-866071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7ADDBFED3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:21:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5539DBFED48
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7CDC4F1173
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E1B919C5DEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11441A073F;
-	Thu, 23 Oct 2025 01:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597EA1E47CC;
+	Thu, 23 Oct 2025 01:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="MpdTQTdo"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aIRX/LnA"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC0C17A305;
-	Thu, 23 Oct 2025 01:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9FD19CC28
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761182506; cv=none; b=hc7z3x1MdhfrS+XnvZE4TUNGbIwYWISxZKQ8T+DfKTxZYn2sfaxf0h9Bhk6Rn6mkz6CXNt6FEblmrCgiaGgkSmPxGEpRD+SkG0vCi7bPcdlyUOt9qD+TRtI6etamr4qMvySnJDnvXVOoAC602ftB+SNzBFaZEjpta2QhEVZjsGA=
+	t=1761182545; cv=none; b=N+WnfYOCCEEB7YIfE/yXUI4+fMHO3dEAOGHNAJuwSLka7YsqLkqQh+ChxDbkza+bYKGap5voemJer2Lhif9E3AkoRwWpgrhOQzHrbmVOYzgZ9brWCG3HKa2dPPN5+pSfBWW44AZLjvuJZj1/f1taRb+gcsoBh3b/A1nCh5eTx9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761182506; c=relaxed/simple;
-	bh=Cs26bGL6gNj5ycTNgxztit3bcAxl7FrFqDQSQ5lmzXg=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=Kp8q+vpkRMeBVsloyz/g+U11CANZ3OkCXEGb2j5fzIyvSZf8w9nKtF8UAQnMFzw/MUSpXh7dQy+QCiCtqhsOBWhpr31jRQfz4VLXImb/PSgDLAgaZA2gfIyUm1L8ChD8C9rGpGMMaiiSyz1AUt0PaKR+BO/Ne6WNpBnYd0Axkwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=MpdTQTdo; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from smtpclient.apple ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 59N1KrWM2539646
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 22 Oct 2025 18:20:54 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 59N1KrWM2539646
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025092201; t=1761182455;
-	bh=ZLUQ1JiNvlWhkPedHh+yb6CE80AdTaykCyDusRDhtkQ=;
-	h=From:Subject:Date:References:Cc:In-Reply-To:To:From;
-	b=MpdTQTdoe9MfSH9nzvYLcxz2vAPOoqDD2H4PKD4R46mf2YdM7mx6xYN4sOFT4fv74
-	 e+zNPD3GDVGzv1dm3RzmqHmPl00ojskaYqAdjSlHJWvxNL1NF+h2k+om2lkbgA75F+
-	 PP846aVH3U2MOoWSVPxOG7O30+eXw0mS6LW6n3p4NSQEdUxQnQ8Pf+6IjLghToPe8f
-	 DlcSqLB4lgDwZ/zhbTLQhxYlC3yyCdpYokpuuGsRnQ/QAIBLqP69NqO+n34uuS94B4
-	 RvCOsP1gp4jGv8L49W90L+qR7DID+b6nHefKqlP2d7JYPL6IoTQLoPiQb1sbgDYs2B
-	 LCf38gVLXtxWQ==
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Xin Li <xin@zytor.com>
+	s=arc-20240116; t=1761182545; c=relaxed/simple;
+	bh=gFkuFBYwfXjWA+JokwbpcI+zh7N26aE7upFroO/KxXM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WGIxy0yx29Dmdi+MZJsu5fok0Z8KM84ZwrwmwXfBM+yuGQ5p7W0D6h9LtjxSue0S74OEEVB796tvilLvVhXOl7SesF8VwEyVx02nYpE2SkJ8btjtlFj4vXiX5PXVhlVhx/AeuKQX/QwRwL5e/9gki7Q9on7gIORZLPewLDS/oCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aIRX/LnA; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761182530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lS0mhQ5R43bGQo27SjH0eAhLsgCq0WUEHmFOE5SKzxw=;
+	b=aIRX/LnASeyDPiwS8a8wyOgL5oKFWk9ymcuT75gnJ0IZOacm3dSpZH/R38T3ReMFFQ40uZ
+	YTSnRX+CgIa/HmXPWYBgk26GFQnodLiOWZUrN0yWnumG744hcTGdK1gW1qKEFdtFIcbgPu
+	4TDa5R6gAwW0HHQ2ZhxTRUnlAtZ7YEo=
+From: Hao Ge <hao.ge@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@gentwo.org>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH] slab: Fix obj_ext is mistakenly considered NULL due to race condition
+Date: Thu, 23 Oct 2025 09:21:17 +0800
+Message-Id: <20251023012117.890883-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v8 05/21] x86/cea: Export API for per-CPU exception stacks for KVM
-Date: Wed, 22 Oct 2025 18:20:43 -0700
-Message-Id: <6596E9D7-E0B9-4AEA-BC39-2A637B401DC1@zytor.com>
-References: <20251014010950.1568389-6-xin@zytor.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, corbet@lwn.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com,
-        chao.gao@intel.com, hch@infradead.org
-In-Reply-To: <20251014010950.1568389-6-xin@zytor.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>
-X-Mailer: iPhone Mail (23A355)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+From: Hao Ge <gehao@kylinos.cn>
 
-> =EF=BB=BFConvert the __this_cpu_ist_{top,bottom}_va() macros into proper f=
-unctions,
-> and export __this_cpu_ist_top_va() to allow KVM to retrieve the top of the=
+If two competing threads enter alloc_slab_obj_exts(), and the
+thread that failed to allocate the object extension vector exits
+after the one that succeeded, it will mistakenly assume slab->obj_ext
+is still empty due to its own allocation failure. This will then trigger
+warnings enforced by CONFIG_MEM_ALLOC_PROFILING_DEBUG checks in
+the subsequent free path.
 
-> per-CPU exception stack.
->=20
-> FRED introduced new fields in the host-state area of the VMCS for stack
-> levels 1->3 (HOST_IA32_FRED_RSP[123]), each respectively corresponding to
-> per-CPU exception stacks for #DB, NMI and #DF.  KVM must populate these
-> fields each time a vCPU is loaded onto a CPU.
->=20
-> To simplify access to the exception stacks in struct cea_exception_stacks,=
+Therefore, let's add an additional check when alloc_slab_obj_exts fails.
 
-> a union is used to create an array alias, enabling array-style indexing of=
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+---
+ mm/slub.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-> the stack entries.
->=20
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-
-Dave, can you please help to review patch 4 & 5?
-
-Thanks!
-Xin
-
-> ---
->=20
-> Change in v7:
-> * Remove Suggested-bys (Dave Hansen).
-> * Move rename code in a separate patch (Dave Hansen).
-> * Access cea_exception_stacks using array indexing (Dave Hansen).
-> * Use BUILD_BUG_ON(ESTACK_DF !=3D 0) to ensure the starting index is 0
->  (Dave Hansen).
->=20
-> Change in v5:
-> * Export accessor instead of data (Christoph Hellwig).
-> * Add TB from Xuelian Guo.
->=20
-> Change in v4:
-> * Rewrite the change log and add comments to the export (Dave Hansen).
-> ---
-> arch/x86/include/asm/cpu_entry_area.h | 51 +++++++++++++--------------
-> arch/x86/mm/cpu_entry_area.c          | 25 +++++++++++++
-> 2 files changed, 50 insertions(+), 26 deletions(-)
->=20
-> diff --git a/arch/x86/include/asm/cpu_entry_area.h b/arch/x86/include/asm/=
-cpu_entry_area.h
-> index d0f884c28178..58cd71144e5e 100644
-> --- a/arch/x86/include/asm/cpu_entry_area.h
-> +++ b/arch/x86/include/asm/cpu_entry_area.h
-> @@ -16,6 +16,19 @@
-> #define VC_EXCEPTION_STKSZ    0
-> #endif
->=20
-> +/*
-> + * The exception stack ordering in [cea_]exception_stacks
-> + */
-> +enum exception_stack_ordering {
-> +    ESTACK_DF,
-> +    ESTACK_NMI,
-> +    ESTACK_DB,
-> +    ESTACK_MCE,
-> +    ESTACK_VC,
-> +    ESTACK_VC2,
-> +    N_EXCEPTION_STACKS
-> +};
-> +
-> /* Macro to enforce the same ordering and stack sizes */
-> #define ESTACKS_MEMBERS(guardsize, optional_stack_size)        \
->    char    ESTACK_DF_stack_guard[guardsize];        \
-> @@ -39,37 +52,29 @@ struct exception_stacks {
->=20
-> /* The effective cpu entry area mapping with guard pages. */
-> struct cea_exception_stacks {
-> -    ESTACKS_MEMBERS(PAGE_SIZE, EXCEPTION_STKSZ)
-> -};
-> -
-> -/*
-> - * The exception stack ordering in [cea_]exception_stacks
-> - */
-> -enum exception_stack_ordering {
-> -    ESTACK_DF,
-> -    ESTACK_NMI,
-> -    ESTACK_DB,
-> -    ESTACK_MCE,
-> -    ESTACK_VC,
-> -    ESTACK_VC2,
-> -    N_EXCEPTION_STACKS
-> +    union{
-> +        struct {
-> +            ESTACKS_MEMBERS(PAGE_SIZE, EXCEPTION_STKSZ)
-> +        };
-> +        struct {
-> +            char stack_guard[PAGE_SIZE];
-> +            char stack[EXCEPTION_STKSZ];
-> +        } event_stacks[N_EXCEPTION_STACKS];
-> +    };
-> };
->=20
-> #define CEA_ESTACK_SIZE(st)                    \
->    sizeof(((struct cea_exception_stacks *)0)->st## _stack)
->=20
-> -#define CEA_ESTACK_BOT(ceastp, st)                \
-> -    ((unsigned long)&(ceastp)->st## _stack)
-> -
-> -#define CEA_ESTACK_TOP(ceastp, st)                \
-> -    (CEA_ESTACK_BOT(ceastp, st) + CEA_ESTACK_SIZE(st))
-> -
-> #define CEA_ESTACK_OFFS(st)                    \
->    offsetof(struct cea_exception_stacks, st## _stack)
->=20
-> #define CEA_ESTACK_PAGES                    \
->    (sizeof(struct cea_exception_stacks) / PAGE_SIZE)
->=20
-> +extern unsigned long __this_cpu_ist_top_va(enum exception_stack_ordering s=
-tack);
-> +extern unsigned long __this_cpu_ist_bottom_va(enum exception_stack_orderi=
-ng stack);
-> +
-> #endif
->=20
-> #ifdef CONFIG_X86_32
-> @@ -144,10 +149,4 @@ static __always_inline struct entry_stack *cpu_entry_=
-stack(int cpu)
->    return &get_cpu_entry_area(cpu)->entry_stack_page.stack;
-> }
->=20
-> -#define __this_cpu_ist_top_va(name)                    \
-> -    CEA_ESTACK_TOP(__this_cpu_read(cea_exception_stacks), name)
-> -
-> -#define __this_cpu_ist_bottom_va(name)                    \
-> -    CEA_ESTACK_BOT(__this_cpu_read(cea_exception_stacks), name)
-> -
-> #endif
-> diff --git a/arch/x86/mm/cpu_entry_area.c b/arch/x86/mm/cpu_entry_area.c
-> index 9fa371af8abc..595c2e03ddd5 100644
-> --- a/arch/x86/mm/cpu_entry_area.c
-> +++ b/arch/x86/mm/cpu_entry_area.c
-> @@ -18,6 +18,31 @@ static DEFINE_PER_CPU_PAGE_ALIGNED(struct entry_stack_p=
-age, entry_stack_storage)
-> static DEFINE_PER_CPU_PAGE_ALIGNED(struct exception_stacks, exception_stac=
-ks);
-> DEFINE_PER_CPU(struct cea_exception_stacks*, cea_exception_stacks);
->=20
-> +/*
-> + * FRED introduced new fields in the host-state area of the VMCS for
-> + * stack levels 1->3 (HOST_IA32_FRED_RSP[123]), each respectively
-> + * corresponding to per CPU stacks for #DB, NMI and #DF.  KVM must
-> + * populate these each time a vCPU is loaded onto a CPU.
-> + *
-> + * Called from entry code, so must be noinstr.
-> + */
-> +noinstr unsigned long __this_cpu_ist_bottom_va(enum exception_stack_order=
-ing stack)
-> +{
-> +    struct cea_exception_stacks *s;
-> +
-> +    BUILD_BUG_ON(ESTACK_DF !=3D 0);
-> +
-> +    s =3D __this_cpu_read(cea_exception_stacks);
-> +
-> +    return (unsigned long)&s->event_stacks[stack].stack;
-> +}
-> +
-> +noinstr unsigned long __this_cpu_ist_top_va(enum exception_stack_ordering=
- stack)
-> +{
-> +    return __this_cpu_ist_bottom_va(stack) + EXCEPTION_STKSZ;
-> +}
-> +EXPORT_SYMBOL(__this_cpu_ist_top_va);
-> +
-> static DEFINE_PER_CPU_READ_MOSTLY(unsigned long, _cea_offset);
->=20
-> static __always_inline unsigned int cea_offset(unsigned int cpu)
-> --
-> 2.51.0
->=20
->=20
+diff --git a/mm/slub.c b/mm/slub.c
+index d4403341c9df..42276f0cc920 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -2227,9 +2227,12 @@ prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
+ 	slab = virt_to_slab(p);
+ 	if (!slab_obj_exts(slab) &&
+ 	    alloc_slab_obj_exts(slab, s, flags, false)) {
+-		pr_warn_once("%s, %s: Failed to create slab extension vector!\n",
+-			     __func__, s->name);
+-		return NULL;
++		/* Recheck if a racing thread has successfully allocated slab->obj_exts. */
++		if (!slab_obj_exts(slab)) {
++			pr_warn_once("%s, %s: Failed to create slab extension vector!\n",
++				     __func__, s->name);
++			return NULL;
++		}
+ 	}
+ 
+ 	return slab_obj_exts(slab) + obj_to_index(s, slab, p);
+-- 
+2.25.1
 
 
