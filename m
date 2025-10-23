@@ -1,144 +1,287 @@
-Return-Path: <linux-kernel+bounces-866197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB19BFF23A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:38:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B19FBFF243
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CEAB19A1E72
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:38:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1EDE24EECB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AC41E7C27;
-	Thu, 23 Oct 2025 04:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3207D245014;
+	Thu, 23 Oct 2025 04:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LbxndL5F"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HDpLWlXU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AF515E97
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD1242056;
+	Thu, 23 Oct 2025 04:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761194305; cv=none; b=DB+7txrvu8fjW3EofmaOinpivvyBlbMSeN6o6jKsS0+wGjrtQ2R2SA9Xre+bpxN9xUoIsgqWRgUTB96Mmx9j4h2L8j6zvbIebi2ahfTzZPOYAE8G83zbdZDCVdgnfmog2bZWUH8inwvtQbwqwJB/HcHqZw+uyqeh2oOqg8NB5uo=
+	t=1761194344; cv=none; b=L1BJ3rUJtzFjgqSnosKSxgpPS2Ec2QCn+R0W8YIv/EhDqLGYNnPvlwdg9+nJdHGfkhgi5z+rMW1QHw4urTxOpk+xeBxh2NFeoFkTpCbCAckSI7VmevcLTz2rBxiDWEV00l6UOyoQqMI9a6+wgkGxDg+rgsrt6x6SVC8HpC+5e9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761194305; c=relaxed/simple;
-	bh=U7/ku0a0DkHgaVRKKYi9AcIHz/S4r3e0Ujc9Z7ce5FQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KZEAbBLYv31rhBOWnyKQ6H7tHoWDivySc2TzQ7f0vONjmVlwl+me25NenoaISqvsVydOk407CjI5a5k9lwFMCNxZIHTkkRFVosy07Enmx1xRh6JP7J12Dl9ikPxkNn/Y7EmiTvFas7Mm040gxeH18y1rOy9+cKRSjrBwk7bj5O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LbxndL5F; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59N4cFcf437476;
-	Wed, 22 Oct 2025 23:38:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1761194295;
-	bh=U7/ku0a0DkHgaVRKKYi9AcIHz/S4r3e0Ujc9Z7ce5FQ=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=LbxndL5FPPmJw/w8f07IBoI+/ufdk7EZtLrdN7tU56XHBHI4lUXaGK2iD3P2OdPDK
-	 Mzd8W1EEhiPk7pFHWANzeH9djbxxaA2gPRbqusk+h7M9HZXrF2SDv9GZOjCs6leQeB
-	 m4IXfJjSpNU3G2/EuTngpZjk/yrF2vTq+/6rUORI=
-Received: from DLEE206.ent.ti.com (dlee206.ent.ti.com [157.170.170.90])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59N4cFw22124550
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 22 Oct 2025 23:38:15 -0500
-Received: from DLEE206.ent.ti.com (157.170.170.90) by DLEE206.ent.ti.com
- (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Oct
- 2025 23:38:15 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE206.ent.ti.com
- (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 22 Oct 2025 23:38:15 -0500
-Received: from [172.24.234.212] (uda0510294.dhcp.ti.com [172.24.234.212])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59N4cDGv2281762;
-	Wed, 22 Oct 2025 23:38:14 -0500
-Message-ID: <e71ec0d8-300a-4e43-9e67-15828f11ccb4@ti.com>
-Date: Thu, 23 Oct 2025 10:08:12 +0530
+	s=arc-20240116; t=1761194344; c=relaxed/simple;
+	bh=XaI9oEtVDcABxtMUoxY982wQK2o3k7e4KuAE4QIQtR0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L+wWtfJGwj1oxmHPuwUEE5G9eFwPoG8mplXQ/vT1IBuJNEHVbExzDB/mUte0+90dt1l4kwN8y5+6hdHn1so13PZhzW4atp758fJa3EO/B1fSncEWX5AGLgoB/vxazrlUaVbUKbzNYtkT6Z+UmdUZii4Rt8WJYhRyqmdVZQEhYv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HDpLWlXU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MIenZ0005711;
+	Thu, 23 Oct 2025 04:38:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=9pGU6c2Wo7pZp1Bqgbo7MV
+	MH5RLYhNqDyhOre8cd1+o=; b=HDpLWlXUYEutuBOZbiQgGXpvl7HaCE/YaR+elf
+	+VFQakmQ5DptolewPHe+8ios3AWoMM/qF6H9gSzsZd0stBhqjytYahxIk/nBxPaM
+	GiVYd/BmnInRow6MDU5sWMr3/J/uoOQttJiHnH1Z+9hesAYoKS0bO/f7fH2HTPDa
+	xwZZZauhZkN9+clvKLuf3deVPq7OUDCNpo5Du2ZTMVyjK9kO/jg5Yp187ZSSedpl
+	FLHmPrpJOHXNS8tapzT/ZBWex/GuCPcNkTeVqrU8rJfzNUYZNR51wcFrLAqOmMNG
+	uj0zGpHc1xr1SztkzT6REwFnALI6jl9JD40pNNg3vrV5WMFw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v27j6xbw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 Oct 2025 04:38:56 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59N4ctl9001823
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 Oct 2025 04:38:55 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Wed, 22 Oct 2025 21:38:52 -0700
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
+        <kathiravan.thirumoorthy@oss.qualcomm.com>
+Subject: [PATCH v1] arm64: dts: qcom: ipq5424: add cooling maps for CPU thermal zones
+Date: Thu, 23 Oct 2025 10:08:38 +0530
+Message-ID: <20251023043838.1603673-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mailbox: omap-mailbox: Flush out pending msgs before
- entering suspend
-To: Andrew Davis <afd@ti.com>, <jassisinghbrar@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-CC: <hiagofranco@gmail.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>
-References: <20251022102015.1345696-1-b-padhi@ti.com>
- <40726a57-35a9-450d-ba0f-879313f60732@ti.com>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <40726a57-35a9-450d-ba0f-879313f60732@ti.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxOCBTYWx0ZWRfX9FBQOrKINDBP
+ p+Q0xXQW5b4zzpsFfkgcFqiMgNKG+FQYea9SkMrpuDBCawD4xVfmiVynh5qtHUtXNAuxGypSrEb
+ iRYLSYnBSB+oVz/YvmazIyKIhUbeSOtPejRqjidR2nq0O/LF5N/IqTrVjKkf3JOP78GgW6IPmS/
+ uavAyqJO6xTyXTp6OySzJSemu2/JW763VDDj2ztuKe+iAKvuo9EXhimYIVxm7SSloptg2+hciko
+ xQgZWftAoYXoURXwNgNh/11w5k6TVH98NsVEEecdmNJSWAunsZ/BFp2uzTlVMtDidscAaVCaUxz
+ 7oshwfTR6WwQa5nseRXiiNVdfwl7b4i33iBcAUwimpQ0Al0DylqLdSWmZlPjxR4g0FRxs3lU4fG
+ yZU5CACayxvVr34hecI5JmVtbK2LAQ==
+X-Authority-Analysis: v=2.4 cv=G4UR0tk5 c=1 sm=1 tr=0 ts=68f9b160 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=COk6AnOGAAAA:8 a=NSMuZBBFxk7u4BXGUtQA:9 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: rPjwKx2VqyLWQXxKCafMdV_k_Ku_18-A
+X-Proofpoint-ORIG-GUID: rPjwKx2VqyLWQXxKCafMdV_k_Ku_18-A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 clxscore=1015
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510180018
 
-Hi Andrew,
+Add cooling-maps to the cpu1, cpu2, and cpu3 thermal zones to associate
+passive trip points with CPU cooling devices. This enables proper
+thermal mitigation by allowing the thermal framework to throttle CPUs
+based on temperature thresholds. Also, label the trip points to allow
+referencing them in the cooling maps.
 
-On 22/10/25 21:37, Andrew Davis wrote:
-> On 10/22/25 5:20 AM, Beleswar Padhi wrote:
->> There may be pending messages in the mailbox FIFO that are not consumed
->> by the remote processor for various reasons; the remote processor may
->> already be powered off or may be in a bad state. Instead of aborting
->> suspend because of these pending messages, flush the FIFOs and proceed
->> with suspend. Pending messages could also be restored in the resume
->> context, but since remote processors are typically rebooted during
->> suspend/resume today, there is no point in restoring stale messages.
->>
->> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
->> ---
->>   drivers/mailbox/omap-mailbox.c | 11 ++++-------
->>   1 file changed, 4 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
->> index 680243751d62..5e6373911630 100644
->> --- a/drivers/mailbox/omap-mailbox.c
->> +++ b/drivers/mailbox/omap-mailbox.c
->> @@ -341,13 +341,10 @@ static int omap_mbox_suspend(struct device *dev)
->>       if (pm_runtime_status_suspended(dev))
->>           return 0;
->>   -    for (fifo = 0; fifo < mdev->num_fifos; fifo++) {
->> -        if (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo))) {
->> -            dev_err(mdev->dev, "fifo %d has unexpected unread messages\n",
->> -                fifo);
->> -            return -EBUSY;
->> -        }
->> -    }
->> +    /* Flush out pending mbox messages before entering suspend */
->> +    for (fifo = 0; fifo < mdev->num_fifos; fifo++)
->> +        while (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo)) != 0)
->> +            mbox_read_reg(mdev, MAILBOX_MESSAGE(fifo));
->
-> I'm still not convinced just throwing out messages is the correct thing
-> to do here, but for now at very least let's print some warning here when
-> messages get zapped.
+Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+---
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi | 61 +++++++++++++++++++++++----
+ 1 file changed, 53 insertions(+), 8 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+index ef2b52f3597d..e4a51eeefeac 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+@@ -13,6 +13,7 @@
+ #include <dt-bindings/reset/qcom,ipq5424-gcc.h>
+ #include <dt-bindings/interconnect/qcom,ipq5424.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/thermal/thermal.h>
+ 
+ / {
+ 	#address-cells = <2>;
+@@ -57,6 +58,7 @@ cpu0: cpu@0 {
+ 			clock-names = "cpu";
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			interconnects = <&apss_clk MASTER_CPU &apss_clk SLAVE_L3>;
++			#cooling-cells = <2>;
+ 
+ 			l2_0: l2-cache {
+ 				compatible = "cache";
+@@ -82,6 +84,7 @@ cpu1: cpu@100 {
+ 			clock-names = "cpu";
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			interconnects = <&apss_clk MASTER_CPU &apss_clk SLAVE_L3>;
++			#cooling-cells = <2>;
+ 
+ 			l2_100: l2-cache {
+ 				compatible = "cache";
+@@ -101,6 +104,7 @@ cpu2: cpu@200 {
+ 			clock-names = "cpu";
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			interconnects = <&apss_clk MASTER_CPU &apss_clk SLAVE_L3>;
++			#cooling-cells = <2>;
+ 
+ 			l2_200: l2-cache {
+ 				compatible = "cache";
+@@ -120,6 +124,7 @@ cpu3: cpu@300 {
+ 			clock-names = "cpu";
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			interconnects = <&apss_clk MASTER_CPU &apss_clk SLAVE_L3>;
++			#cooling-cells = <2>;
+ 
+ 			l2_300: l2-cache {
+ 				compatible = "cache";
+@@ -1235,18 +1240,28 @@ cpu0-thermal {
+ 			thermal-sensors = <&tsens 14>;
+ 
+ 			trips {
+-				cpu-critical {
++				cpu0_crit: cpu-critical {
+ 					temperature = <120000>;
+ 					hysteresis = <9000>;
+ 					type = "critical";
+ 				};
+ 
+-				cpu-passive {
++				cpu0_alert: cpu-passive {
+ 					temperature = <110000>;
+ 					hysteresis = <9000>;
+ 					type = "passive";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu0_alert>;
++					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu1-thermal {
+@@ -1254,18 +1269,28 @@ cpu1-thermal {
+ 			thermal-sensors = <&tsens 12>;
+ 
+ 			trips {
+-				cpu-critical {
++				cpu1_crit: cpu-critical {
+ 					temperature = <120000>;
+ 					hysteresis = <9000>;
+ 					type = "critical";
+ 				};
+ 
+-				cpu-passive {
++				cpu1_alert: cpu-passive {
+ 					temperature = <110000>;
+ 					hysteresis = <9000>;
+ 					type = "passive";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu1_alert>;
++					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu2-thermal {
+@@ -1273,18 +1298,28 @@ cpu2-thermal {
+ 			thermal-sensors = <&tsens 11>;
+ 
+ 			trips {
+-				cpu-critical {
++				cpu2_crit: cpu-critical {
+ 					temperature = <120000>;
+ 					hysteresis = <9000>;
+ 					type = "critical";
+ 				};
+ 
+-				cpu-passive {
++				cpu2_alert: cpu-passive {
+ 					temperature = <110000>;
+ 					hysteresis = <9000>;
+ 					type = "passive";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu2_alert>;
++					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu3-thermal {
+@@ -1292,18 +1327,28 @@ cpu3-thermal {
+ 			thermal-sensors = <&tsens 13>;
+ 
+ 			trips {
+-				cpu-critical {
++				cpu3_crit: cpu-critical {
+ 					temperature = <120000>;
+ 					hysteresis = <9000>;
+ 					type = "critical";
+ 				};
+ 
+-				cpu-passive {
++				cpu3_alert: cpu-passive {
+ 					temperature = <110000>;
+ 					hysteresis = <9000>;
+ 					type = "passive";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu3_alert>;
++					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
++							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		wcss-tile2-thermal {
 
-I am also considering:
-1. Mailbox queues for RTOS-RTOS communication could be
-firewalled for safety/FFI usecases. In that case, the above flush
-would result in an exception.
-2. This driver is common to OMAP SoCs which supported proper
-suspend/resume, meaning those rprocs could consume pending
-messages in resume. So clearing out messages from Linux
-might not be the best thing to do here.
+base-commit: fe45352cd106ae41b5ad3f0066c2e54dbb2dfd70
+-- 
+2.34.1
 
-What else can we do here? Should we just fallback to letting
-Linux see only it's required queues for IPC? By setting
-"ti,mbox-num-fifos = <4>"?
-
-Thanks,
-Beleswar
-
->
-> Andrew
->
->>         for (usr = 0; usr < mdev->num_users; usr++) {
->>           reg = MAILBOX_IRQENABLE(mdev->intr_type, usr);
->
 
