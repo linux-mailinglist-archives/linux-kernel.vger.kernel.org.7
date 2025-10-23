@@ -1,207 +1,121 @@
-Return-Path: <linux-kernel+bounces-867699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC2CC034ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:02:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A73DEC03650
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96F334F645D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:02:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 29B624EE550
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149BD34B664;
-	Thu, 23 Oct 2025 20:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1B917A2FA;
+	Thu, 23 Oct 2025 20:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZcO4Injm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R+iqC5+F";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qKV61hF2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xm/iPv/T"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7akVhzN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20992C21EA
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4196218AD4;
+	Thu, 23 Oct 2025 20:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761249765; cv=none; b=qj3iKmIcL1KpKw23qc4CNvR/eXSfaZzaFBAXB0QD3Z6JC3ZfJB9lmaH3zYwKPiPNm3Ma6FmYZ/ZHMz6aoPH6XJA7rR7f1dTEHHKDdGSW4QUyA1b/YcdPOBfyGFnsKCUFJvjJcGyjTUJnuH8s0Stn3P/mAXhTzMJJqO/tejDWnMQ=
+	t=1761251503; cv=none; b=F4hpP6rMzid9L+ENbGSgmoXl/qOQeL9dybqfDDC7KxPTZvwwABP9vWMxW5byybkAmJMXHjECibSq2+3RAJssEJwc5zFWQoY3RuOtPeXsdcyscki6ZEwF5QVNFhD/2L/p0a8PEWecfNlbUiTi1yfBdT7oUi2AoxM4hC8L6+spwt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761249765; c=relaxed/simple;
-	bh=LulGrsvuQHHRUckW5n9m0iIQV7lVfYvpx4KBlcjJZoY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BZgbIlmm7nG3dbkqHihDQFSUgoGOHB0J0rA3kCKn5YriiHEtgvJotr0UorDC0v7gZs5GagOaLsPDQYcCWKa2h8OYafyvEO9e97idMAitR2hzL3sk8EPZcYxBhQxlq7bcGzPp++vT/KLPVklKZP8iLLphh26k4cP0K9vTftD4E5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZcO4Injm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R+iqC5+F; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qKV61hF2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xm/iPv/T; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D2073211C8;
-	Thu, 23 Oct 2025 20:02:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761249756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H4JDNZhRiPwyWEYFhKSyRh4BLLaCKF97jtf+7yMjZR4=;
-	b=ZcO4InjmOJYb7+pJOgxVbEblkxS1VHeM/GdoDbhiXh4BKse+ts+lijr8S2yHdv9D+GtkQB
-	fRDocDi2bcH1IKNn0W1Du1S1oJWDfV0cHSIFhlLwyJT7ZNpOTcLeMsbyTMLSEUdTL4KmGj
-	Q6mT7oq5tqZ+HHvMaLu6XHL8wlcQqg0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761249756;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H4JDNZhRiPwyWEYFhKSyRh4BLLaCKF97jtf+7yMjZR4=;
-	b=R+iqC5+F5JRiOVdme1BnKWItT+UbVpTrog5loP1kTp84jIxdpMBozQrDJViX4xQDqrAsWc
-	g+keTx6PaQpK7TAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qKV61hF2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="xm/iPv/T"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761249752; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H4JDNZhRiPwyWEYFhKSyRh4BLLaCKF97jtf+7yMjZR4=;
-	b=qKV61hF2EmCTw58oGSViB9Mp42S7eJoHfRghZgni6LGuabFjcm8n9MFhQ01DEK6B2vxGsl
-	c44xT2j5QDI4l7n6/YVj7DxYeNq+OY0nRiocE1wWzzAVoBCcJ326BfwlAi8b1cwdmeRn8B
-	C2hjOENL4y93A4g73CmymZJkUo3Aed0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761249752;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H4JDNZhRiPwyWEYFhKSyRh4BLLaCKF97jtf+7yMjZR4=;
-	b=xm/iPv/TMIYR9IZjlFhdxqOzO9ZKjnTSc/ayyIQ7/upn0y5ZCor5n0H8k52q9Up46O1J+p
-	rhsO661BlUsSV+Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A5B58139D2;
-	Thu, 23 Oct 2025 20:02:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ihVMJ9iJ+mgDHwAAD6G6ig
-	(envelope-from <akumar@suse.de>); Thu, 23 Oct 2025 20:02:32 +0000
-From: Avinesh Kumar <akumar@suse.de>
-To: ltp@lists.linux.it, Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: arnd@kernel.org, brauner@kernel.org, jack@suse.cz,
- regressions@lists.linux.dev, arnd@arndb.de, linux-kernel@vger.kernel.org,
- lkft-triage@lists.linaro.org, viro@zeniv.linux.org.uk,
- benjamin.copeland@linaro.org, linux-fsdevel@vger.kernel.org,
- aalbersh@kernel.org, lkft@linaro.org, dan.carpenter@linaro.org
-Subject:
- Re: [LTP] [PATCH v2] ioctl_pidfd05: accept both EINVAL and ENOTTY as valid
- errors
-Date: Thu, 23 Oct 2025 22:02:32 +0200
-Message-ID: <12786420.O9o76ZdvQC@thinkpad>
-In-Reply-To: <20251023164401.302967-1-naresh.kamboju@linaro.org>
-References: <20251023164401.302967-1-naresh.kamboju@linaro.org>
+	s=arc-20240116; t=1761251503; c=relaxed/simple;
+	bh=obi+9q/lEBxOXwCnktkr7trvGNzVMJhHXXAGuAHJGbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=abIr9lyUDqypydKbkqTvEDghhS2CruunaYuUXo6uW+b1kiloaJ8w7kPswNEyLhw1td18s6kH9/lHRH4lqUYLS5tfPAq1kAQKGi3ngcwdTnXNsrTx8sXi45EzI0WZqphzVuD38krn/NYjkkgY993cadMy/RZGsy3nqGNteUPNqkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7akVhzN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11136C4CEFB;
+	Thu, 23 Oct 2025 20:31:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761251503;
+	bh=obi+9q/lEBxOXwCnktkr7trvGNzVMJhHXXAGuAHJGbg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N7akVhzNCzMKgcGktAsxWTNgCUFOrGrcwCPTPoDb2Rf4RGM8hdNQAQMuPYD40A5bc
+	 gBtu/kQ0VzV0l8/DbfavWDrcyL4c3WRl/Fu5wcmNqFlCQjsB7hu2jo4oZuymd4QFmy
+	 8TdpPN2ewoB9iwAmAr2tbXyPfaQRBu7iVRx38PYO4itM8BHC5AXAFSPsqF1iaLSE38
+	 Td/vqnQzLX3NlcYcvzkyzAijdRLr6A0MsVNvs9zGl/13+Dwk6NvvHEmfPwLIJTrw0Z
+	 lgI3aOChOmnNXvvu/mjsXlc9ZcajTF+lY6pmX4Q764PwdCOKsaN12Wwvf0uWMe0H09
+	 91dMVYO+bdysw==
+Date: Thu, 23 Oct 2025 21:50:34 +0200
+From: Nicolas Schier <nsc@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>, Kees Cook <kees@kernel.org>,
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] KMSAN: Restore dynamic check for
+ '-fsanitize=kernel-memory'
+Message-ID: <aPqHCrC0JPwQynWd@levanger>
+References: <20251023-fix-kmsan-check-s390-clang-v1-1-4e6df477a4cc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: D2073211C8
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	CTE_CASE(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.51
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023-fix-kmsan-check-s390-clang-v1-1-4e6df477a4cc@kernel.org>
 
-Hi,
-
-
-On Thursday, October 23, 2025 6:44:01 PM CEST Naresh Kamboju wrote:
-> Newer kernels (since ~v6.18-rc1) return ENOTTY instead of EINVAL when
-> invoking ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid). Update the
-> test to accept both EINVAL and ENOTTY as valid errors to ensure
-> compatibility across different kernel versions.
+On Thu, Oct 23, 2025 at 09:01:29PM +0200, Nathan Chancellor wrote:
+> Commit 5ff8c11775c7 ("KMSAN: Remove tautological checks") changed
+> CONFIG_HAVE_KMSAN_COMPILER from a dynamic check for
+> '-fsanitize=kernel-memory' to just being true for CONFIG_CC_IS_CLANG.
+> This missed the fact that not all architectures supported
+> '-fsanitize=kernel-memory' at the same time. For example, SystemZ / s390
+> gained support for KMSAN in clang-18 [1], so builds with clang-15
+> through clang-17 can select KMSAN but they error with:
 > 
-> Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-
-Tested-by: Avinesh Kumar <akumar@suse.de>
-Reviewed-by: Avinesh Kumar <akumar@suse.de>
-
-Regards,
-Avinesh
-
+>   clang-16: error: unsupported option '-fsanitize=kernel-memory' for target 's390x-unknown-linux-gnu'
+> 
+> Restore the cc-option check for '-fsanitize=kernel-memory' to make sure
+> the compiler target properly supports '-fsanitize=kernel-memory'. The
+> check for '-msan-disable-checks=1' does not need to be restored because
+> all supported clang versions for building the kernel support it.
+> 
+> Fixes: 5ff8c11775c7 ("KMSAN: Remove tautological checks")
+> Link: https://github.com/llvm/llvm-project/commit/a3e56a8792ffaf3a3d3538736e1042b8db45ab89 [1]
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/r/202510220236.AVuXXCYy-lkp@intel.com/
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 > ---
->  testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
+> I plan to take this via kbuild-fixes for 6.18-rc3 or -rc4.
+> ---
+>  lib/Kconfig.kmsan | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
-> index d20c6f074..744f7def4 100644
-> --- a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
-> +++ b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
-> @@ -4,8 +4,8 @@
->   */
+> diff --git a/lib/Kconfig.kmsan b/lib/Kconfig.kmsan
+> index 7251b6b59e69..cae1ddcc18e1 100644
+> --- a/lib/Kconfig.kmsan
+> +++ b/lib/Kconfig.kmsan
+> @@ -3,7 +3,7 @@ config HAVE_ARCH_KMSAN
+>  	bool
 >  
->  /*\
-> - * Verify that ioctl() raises an EINVAL error when PIDFD_GET_INFO is used. This
-> - * happens when:
-> + * Verify that ioctl() raises an EINVAL or ENOTTY (since ~v6.18-rc1) error when
-> + * PIDFD_GET_INFO is used. This happens when:
->   *
->   * - info parameter is NULL
->   * - info parameter is providing the wrong size
-> @@ -14,6 +14,7 @@
->  #include "tst_test.h"
->  #include "lapi/pidfd.h"
->  #include "lapi/sched.h"
-> +#include <errno.h>
->  #include "ioctl_pidfd.h"
+>  config HAVE_KMSAN_COMPILER
+> -	def_bool CC_IS_CLANG
+> +	def_bool $(cc-option,-fsanitize=kernel-memory)
 >  
->  struct pidfd_info_invalid {
-> @@ -43,7 +44,12 @@ static void run(void)
->  		exit(0);
->  
->  	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO, NULL), EINVAL);
-> -	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid), EINVAL);
-> +
-> +	/* Expect ioctl to fail; accept either EINVAL or ENOTTY (~v6.18-rc1) */
-> +	int exp_errnos[] = {EINVAL, ENOTTY};
-> +
-> +	TST_EXP_FAIL_ARR(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid),
-> +			exp_errnos, ARRAY_SIZE(exp_errnos));
->  
->  	SAFE_CLOSE(pidfd);
->  }
+>  config KMSAN
+>  	bool "KMSAN: detector of uninitialized values use"
+> 
+> ---
+> base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+> change-id: 20251023-fix-kmsan-check-s390-clang-190d37bbcff3
+> 
+> Best regards,
+> --  
+> Nathan Chancellor <nathan@kernel.org>
 > 
 
+Thanks!
+
+Acked-by: Nicolas Schier <nsc@kernel.org>
 
 
-
+-- 
+Nicolas
 
