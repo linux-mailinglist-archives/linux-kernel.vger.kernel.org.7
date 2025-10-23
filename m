@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-867806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5364C03897
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:26:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C32BC0389E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F7A119C6AB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:27:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 232444EDD59
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95B02C2363;
-	Thu, 23 Oct 2025 21:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9072D061C;
+	Thu, 23 Oct 2025 21:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JsoZVmgB"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NhvLM3We"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9185429DB61
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813F1292B2E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761254779; cv=none; b=fKSpJ0kaRjrXHoWWiPdow+9vdptGILtWMwBjx1Komkj0U3E94Ciu3Ah3vR+lKYb6ox2lEloeNvZ9MZ7GOWarMAUe9Fp//ye0iPA23PczkcLDiChtG6+PkABjCjjYRG6+VH36NJVaUwYEEMF2xTVGQJDUetLTe7yBBwZ5hddAxSc=
+	t=1761254786; cv=none; b=VXd/l1NhNICldd7VS2g4JBWou6q+2/F0EskPxuhS+R/kRQNYyf41bnqKWQ9y2j2IdJI5DEZ/GZ/nTbwHf01ve/ijSrJoZerS70kKTXpSLi4oPToPDggMyoLW5DWpU0bkBBnHpkHG61nYydFchSv0kO866GaRlGRDIj7oowIb4iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761254779; c=relaxed/simple;
-	bh=8IH6u17Bf6UMu+UJoSDGO6p0qZjeVFKihLao9s658Po=;
+	s=arc-20240116; t=1761254786; c=relaxed/simple;
+	bh=VqxoTE/YG4alKlsCQm0qmglo0PmWMRVx2BhkMcpqMrE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DuIp8WYRBUjl1KYkwIqtB2ktLw4S/Bd//yZ5zzmBuRK2XzH728NykLN4sb9k3JsIK5EPP1B2Hj9JrT4X4/zLZNaRNNa1UV/azv3EE7pYFp1Z2ZZ4OZFQuTAw6QveajMrf7ERSzY8mxmI8/Edgx5pIb8u1dAbSyHYpQQUjoHmKbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JsoZVmgB; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=nlmfwafA4H9OjNgFwfpNc0M7NHXjD2LGibhofD/jlVlZxjgElLlUBC9cqhYN1TXjFEpDw41VBDpPDT2ybXi3DNfUkSxgGqCgfCaYY0aqz4trN21jrYISIhJKMG3JTqWuK/l9jBSKcvGokjF8BlQH7f7nZRsMcnUuo6pjv51EyYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NhvLM3We; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761254776;
+	s=mimecast20190719; t=1761254783;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YJB3O0IxSeB2TEy9+wLYaow+jm2Lp5gpdA5YwObW84Q=;
-	b=JsoZVmgBkUHf1q2FDwJk9c/fiDLSOXjWZy4lQIKCXl7VCi/aGRidARDfKHVNjmLmaOJ1nV
-	DEA1g810zbWzSk7fShtT+qxumm2mGZXYTr1GnkCs/IMo9a88zKqVnrLXkv3wWsg9NA1JPL
-	fMYMyNOdh5hKKE08ZGnahKARAFAdI/A=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=qfraVObzTsQp66zjzlSBba4zEC8R0p7WTc8r0hvFWO8=;
+	b=NhvLM3WeTBHZTD24SB/+ON+qcRAgWguEMZoET7e8cyrBIJQAaZ01+2CISgpbIVwjyEeqiB
+	B0gweDRj3FrNKS5mhyKMeIJKEa6+u+qQdOsRgIbIZ4cIoVuZcMZHHu2lcAFdVKrYiM0EoR
+	o0XqcMUTNhYDjNzTqJeTGhJyqMftALo=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-395-qtjIiVRXNGCD4PYf4KBpOQ-1; Thu,
- 23 Oct 2025 17:26:12 -0400
-X-MC-Unique: qtjIiVRXNGCD4PYf4KBpOQ-1
-X-Mimecast-MFC-AGG-ID: qtjIiVRXNGCD4PYf4KBpOQ_1761254769
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-313-2f0XLN9lO7aoKLT1ALMJ7A-1; Thu,
+ 23 Oct 2025 17:26:20 -0400
+X-MC-Unique: 2f0XLN9lO7aoKLT1ALMJ7A-1
+X-Mimecast-MFC-AGG-ID: 2f0XLN9lO7aoKLT1ALMJ7A_1761254777
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F3ADF1956089;
-	Thu, 23 Oct 2025 21:26:08 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 556ED18001E3;
+	Thu, 23 Oct 2025 21:26:17 +0000 (UTC)
 Received: from chopper.lan (unknown [10.22.64.235])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7E63C30002E1;
-	Thu, 23 Oct 2025 21:26:03 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1CF1530002DB;
+	Thu, 23 Oct 2025 21:26:11 +0000 (UTC)
 From: Lyude Paul <lyude@redhat.com>
 To: dri-devel@lists.freedesktop.org,
 	rust-for-linux@vger.kernel.org,
@@ -63,7 +63,8 @@ To: dri-devel@lists.freedesktop.org,
 	Daniel Almeida <daniel.almeida@collabora.com>,
 	Danilo Krummrich <dakr@kernel.org>,
 	linux-kernel@vger.kernel.org
-Cc: Asahi Lina <lina@asahilina.net>,
+Cc: David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
 	Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
 	Boqun Feng <boqun.feng@gmail.com>,
@@ -74,16 +75,13 @@ Cc: Asahi Lina <lina@asahilina.net>,
 	Trevor Gross <tmgross@umich.edu>,
 	Sumit Semwal <sumit.semwal@linaro.org>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Asahi Lina <lina+kernel@asahilina.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Krishna Ketan Rai <prafulrai522@gmail.com>,
+	Shankari Anand <shankari.ak0208@gmail.com>,
 	linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
 	linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b)
-Subject: [PATCH v5 2/8] rust: helpers: Add bindings/wrappers for dma_resv_lock
-Date: Thu, 23 Oct 2025 17:22:04 -0400
-Message-ID: <20251023212540.1141999-3-lyude@redhat.com>
+Subject: [PATCH v5 3/8] rust: drm: gem: Add raw_dma_resv() function
+Date: Thu, 23 Oct 2025 17:22:05 -0400
+Message-ID: <20251023212540.1141999-4-lyude@redhat.com>
 In-Reply-To: <20251023212540.1141999-1-lyude@redhat.com>
 References: <20251023212540.1141999-1-lyude@redhat.com>
 Precedence: bulk
@@ -95,65 +93,39 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-From: Asahi Lina <lina@asahilina.net>
+For retrieving a pointer to the struct dma_resv for a given GEM object. We
+also introduce it in a new trait, BaseObjectPrivate, which we automatically
+implement for all gem objects and don't expose to users outside of the
+crate.
 
-This is just for basic usage in the DRM shmem abstractions for implied
-locking, not intended as a full DMA Reservation abstraction yet.
-
-Signed-off-by: Asahi Lina <lina@asahilina.net>
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
- rust/bindings/bindings_helper.h |  1 +
- rust/helpers/dma-resv.c         | 13 +++++++++++++
- rust/helpers/helpers.c          |  1 +
- 3 files changed, 15 insertions(+)
- create mode 100644 rust/helpers/dma-resv.c
+ rust/kernel/drm/gem/mod.rs | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 2e43c66635a2c..07f79e125c329 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -48,6 +48,7 @@
- #include <linux/cpumask.h>
- #include <linux/cred.h>
- #include <linux/debugfs.h>
-+#include <linux/dma-resv.h>
- #include <linux/device/faux.h>
- #include <linux/dma-direction.h>
- #include <linux/dma-mapping.h>
-diff --git a/rust/helpers/dma-resv.c b/rust/helpers/dma-resv.c
-new file mode 100644
-index 0000000000000..05501cb814513
---- /dev/null
-+++ b/rust/helpers/dma-resv.c
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/dma-resv.h>
-+
-+int rust_helper_dma_resv_lock(struct dma_resv *obj, struct ww_acquire_ctx *ctx)
-+{
-+	return dma_resv_lock(obj, ctx);
+diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
+index 32bff2e8463f4..67813cfb0db42 100644
+--- a/rust/kernel/drm/gem/mod.rs
++++ b/rust/kernel/drm/gem/mod.rs
+@@ -200,6 +200,18 @@ fn create_mmap_offset(&self) -> Result<u64> {
+ 
+ impl<T: IntoGEMObject> BaseObject for T {}
+ 
++/// Crate-private base operations shared by all GEM object classes.
++#[expect(unused)]
++pub(crate) trait BaseObjectPrivate: IntoGEMObject {
++    /// Return a pointer to this object's dma_resv.
++    fn raw_dma_resv(&self) -> *mut bindings::dma_resv {
++        // SAFETY: `as_gem_obj()` always returns a valid pointer to the base DRM gem object
++        unsafe { (*self.as_raw()).resv }
++    }
 +}
 +
-+void rust_helper_dma_resv_unlock(struct dma_resv *obj)
-+{
-+	dma_resv_unlock(obj);
-+}
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index 551da6c9b5064..36d40f911345c 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -25,6 +25,7 @@
- #include "cred.c"
- #include "device.c"
- #include "dma.c"
-+#include "dma-resv.c"
- #include "drm.c"
- #include "err.c"
- #include "irq.c"
++impl<T: IntoGEMObject> BaseObjectPrivate for T {}
++
+ /// A base GEM object.
+ ///
+ /// Invariants
 -- 
 2.51.0
 
