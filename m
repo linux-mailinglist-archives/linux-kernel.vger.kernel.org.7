@@ -1,97 +1,217 @@
-Return-Path: <linux-kernel+bounces-867746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 252A1C036CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:49:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6BBC036DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83F701A66D6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:49:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A1BA4E908F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703EA25D1F5;
-	Thu, 23 Oct 2025 20:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830C8277CB3;
+	Thu, 23 Oct 2025 20:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="zCYlvIKk"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/6vLuiD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64D3184;
-	Thu, 23 Oct 2025 20:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AC5221DB1;
+	Thu, 23 Oct 2025 20:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761252554; cv=none; b=N8LQpaCeA0w1zz3Y3KIbeA9KSXqYxeAAYfTdV130zzFkWrXtbBYlaiYClyFajvT6QGB1ISJNfjzAsNHvvHHtnYAmyGhFKQe5/XpdN8IScV6WRnK3RQYqIUuSzMUj0HyrvF/KCQpY8fkfGRJL1qia4IJZOEbmAmTYghpJEYuQk4w=
+	t=1761252558; cv=none; b=eF4JFHPozXFO22LqM9cxMd0PzGwokZ2YuLJKgmrWvnziV9WoNkLikMQfLfnyFyLVQgGSU3gQxgf2YiKyQR1wppY52LgLOYyEfRPQ7VWtUAOQ+6VxVWcVrjdaj3XY6nt629/qMfpx0Lcti3Vp0fzF9CsYHNYhAh2FyeusRmjgvZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761252554; c=relaxed/simple;
-	bh=q2PlpbC6DOPQ9Ag/NqmWzOb39YBV/wCJHBS+fST6+60=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ar8rDr5LEpLz9va2+9d1DudgCjHxbz8gB6Iaw5hmFrLORv7GTkvmgJlcEK6zKS/+j4Cu5FCpqSEtX422SXulda2seg8Kqha7RoAFLiW7Kkwj4IaFAWN8fZN94D/hTM5uIYnQ3jSO3wvlesnRldwPrSJbk5LoDqDGzUAodU3qF7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=zCYlvIKk; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=q2PlpbC6DOPQ9Ag/NqmWzOb39YBV/wCJHBS+fST6+60=; b=zCYlvIKkaYPMPFlwDGw2mH+kHy
-	ji2uFpc/zpY93YkSDpu9FoEHpcDKIgoLk3d1IJTG/hzYq/5XO3MmKUS6f9fNoEikBVPAWc5Vl+lzi
-	3KhZBG2O91EzgXVm5p5so1G2MAY6t1oR5MkW/QY7Q+PkYFd1kqWnH7pSywWjMkvdujQQA/Plf79ZQ
-	s8/pC2lPPs0WO2E9So/gzntHoL0cOf1DvFa/GswS6M03aMshumLFP2Rg20GIgpDkmUlsfJMQVKeT2
-	EEjPhtFv8LuUNwN3Mpyt/p9Ic1TzdZuGW2dLOV41Xqm5dFDtBS8sJvd3R9ulA+lEZn/3nY1h0MZwH
-	H48fS6tw==;
-Received: from i53875a07.versanet.de ([83.135.90.7] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vC2Ey-00069O-2v; Thu, 23 Oct 2025 22:48:56 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, jonas@kwiboo.se
-Subject:
- Re: [PATCH v2 5/5] MAINTAINERS: add dwmac-rk glue driver to the main Rockchip
- entry
-Date: Thu, 23 Oct 2025 22:48:55 +0200
-Message-ID: <4664419.8F6SAcFxjW@phil>
-In-Reply-To: <35567cda-0f49-4784-b873-97e378fcee16@lunn.ch>
-References:
- <20251023111213.298860-1-heiko@sntech.de>
- <20251023111213.298860-6-heiko@sntech.de>
- <35567cda-0f49-4784-b873-97e378fcee16@lunn.ch>
+	s=arc-20240116; t=1761252558; c=relaxed/simple;
+	bh=rTnxbfw78lgnyUm0E2PF8Vgl+6eU7Ji3n5U9PshCkZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VewiRMl6OVUzfs3ekXkqcxeWrlLleTTIVDZlSsF+ppDn3VtTMpv3IPvOXWsQfPs3voUyyyqhXdeVyiudD8i91yptk4lztzWtP4OAyLV/iLXCLtcMIzEFdnrj1eXKn3IdewbL75s0O1bzQadVUZQbLg2BfW0Ih898j7YKoe+DO5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/6vLuiD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B02CFC4CEE7;
+	Thu, 23 Oct 2025 20:49:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761252557;
+	bh=rTnxbfw78lgnyUm0E2PF8Vgl+6eU7Ji3n5U9PshCkZM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=T/6vLuiDda8wdXfAaqDeo6kJVlaQNYkpvw9SgAUUi1vpPcgU+olmHDdmvQqsScnpc
+	 5QSOl4nLYE23eixIZJV/rNfTLabBES6pT69Q4XhhP+F6xy0vjt+TCILbTHp6dBVInP
+	 bMe+tiYwatAO7yzvhvPIpqIhXC+tzzzf2acvv2lOsjyPG9QixndcnrAVHBR6H3wSc5
+	 AT+B6J1baHrlilynl999eFA830Si28I3NBCMbgzLS1LNb26p+jpTplSk9vRvVK2gbG
+	 IsHJ8HcAiWcA1DuchcPPjQZ+KmiaF6J1HiOG+aofJZHYObJzpc2itCs44ZFgcZEway
+	 yL6rtfxoNtvrg==
+Message-ID: <8efdeaad-4f69-44d5-90d7-f5af005d8abf@kernel.org>
+Date: Thu, 23 Oct 2025 13:49:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] ata: stop disk on restart if ACPI power resources
+ are found
+To: Markus Probst <markus.probst@posteo.de>, Niklas Cassel
+ <cassel@kernel.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251023165151.722252-1-markus.probst@posteo.de>
+ <20251023165151.722252-3-markus.probst@posteo.de>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20251023165151.722252-3-markus.probst@posteo.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Andrew,
+On 2025/10/23 9:52, Markus Probst wrote:
+> Some embedded devices have the ability to control whether power is
+> provided to the disks via the SATA power connector or not. ACPI power
+> resources are usually off by default, thus making it unclear if the
+> specific power resource will retain its state after a restart. If power
+> resources are defined on ATA ports / devices in ACPI, we should stop the
+> disk on SYSTEM_RESTART, to ensure the disk will not lose power while
+> active.
+> 
+> Add a new function, ata_acpi_dev_manage_restart(), that will be used to
+> determine if a disk should be stopped before restarting the system. If a
+> usable ACPI power resource has been found, it is assumed that the disk
+> will lose power after a restart and should be stopped to avoid a power
+> failure.
+> 
+> Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> ---
+>  drivers/ata/libata-acpi.c | 28 ++++++++++++++++++++++++++++
+>  drivers/ata/libata-scsi.c |  1 +
+>  drivers/ata/libata.h      |  2 ++
+>  3 files changed, 31 insertions(+)
+> 
+> diff --git a/drivers/ata/libata-acpi.c b/drivers/ata/libata-acpi.c
+> index f2140fc06ba0..f05c247d25bc 100644
+> --- a/drivers/ata/libata-acpi.c
+> +++ b/drivers/ata/libata-acpi.c
+> @@ -245,6 +245,34 @@ void ata_acpi_bind_dev(struct ata_device *dev)
+>  				   ata_acpi_dev_uevent);
+>  }
+>  
+> +/**
+> + * ata_acpi_dev_manage_restart - if the disk should be stopped (spun down) on
+> + * system restart.
 
-Am Donnerstag, 23. Oktober 2025, 20:57:50 Mitteleurop=C3=A4ische Sommerzeit=
- schrieb Andrew Lunn:
-> On Thu, Oct 23, 2025 at 01:12:12PM +0200, Heiko Stuebner wrote:
-> > The dwmac-rk glue driver is currently not caught by the general maintai=
-ner
-> > entry for Rockchip SoCs, so add it explicitly, similar to the i2c drive=
-r.
-> >=20
-> > The binding document in net/rockchip-dwmac.yaml already gets caught by
-> > the wildcard match.
-> >=20
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->=20
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Please align "system restart" to the "if" above.
 
-just mentioning, I wasn't sure if your review for patch4 was still
-valid after I adapted the change to Jonas' suggestions, so only added
-the R-b's from v1 to patches 1-3 .
+> + * @dev: target ATA device
+> + *
+> + * RETURNS:
+> + * 1 if the disk should be stopped, otherwise 0
 
-Heiko
+s/1/true
+s/0/false
+
+And please terminate sentences with a period.
+
+> + */
+> +bool ata_acpi_dev_manage_restart(struct ata_device *dev)
+> +{
+> +	/* If the device is power manageable, we assume the disk loses power on
+> +	 * reboot.
+> +	 */
+
+And then ? This seems incomplete...
+Also please adhere to the normal multi-line comment style by starting the
+multi-line comment block with "/*".
+
+	/*
+	 * If the device is power manageable, we assume the disk loses power on
+	 * reboot.
+	 */
+
+> +
+> +	/* If `ATA_FLAG_ACPI_SATA` is set, the acpi fwnode is attached to the
+> +	 * `ata_device` instead of the `ata_port`.
+> +	 */
+
+No need for all the quote marks here.
+
+> +	if (dev->link->ap->flags & ATA_FLAG_ACPI_SATA) {
+> +		if (!is_acpi_device_node(dev->tdev.fwnode))
+> +			return 0;
+
+			return false;
+
+> +		return acpi_bus_power_manageable(ACPI_HANDLE(&dev->tdev));
+> +	}
+> +
+> +	if (!is_acpi_device_node(dev->link->ap->tdev.fwnode))
+> +		return 0;
+
+		return false;
+
+> +	return acpi_bus_power_manageable(ACPI_HANDLE(&dev->link->ap->tdev));
+> +}
+
+Overall, I think the following is cleaner and simpler as it doe not repeat code:
+
+bool ata_acpi_dev_manage_restart(struct ata_device *dev)
+{
+	struct device *tdev;
+
+	/*
+	 * If ATA_FLAG_ACPI_SATA is set, the acpi fwnode is attached to the
+	 * ATA device instead of the port.
+	 */
+	if (dev->link->ap->flags & ATA_FLAG_ACPI_SATA)
+		tdev = &dev->tdev;
+	else
+		tdev = &dev->link->ap->tdev;
+
+	if (!is_acpi_device_node(tdev->fwnode))
+		return false;
+
+	return acpi_bus_power_manageable(ACPI_HANDLE(tdev));
+}
+
+> +
+>  /**
+>   * ata_acpi_dissociate - dissociate ATA host from ACPI objects
+>   * @host: target ATA host
+> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> index b43a3196e2be..026122bb6f2f 100644
+> --- a/drivers/ata/libata-scsi.c
+> +++ b/drivers/ata/libata-scsi.c
+> @@ -1095,6 +1095,7 @@ int ata_scsi_dev_config(struct scsi_device *sdev, struct queue_limits *lim,
+>  		 */
+>  		sdev->manage_runtime_start_stop = 1;
+>  		sdev->manage_shutdown = 1;
+> +		sdev->manage_restart = ata_acpi_dev_manage_restart(dev);
+>  		sdev->force_runtime_start_on_system_start = 1;
+>  	}
+>  
+> diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
+> index e5b977a8d3e1..af08bb9b40d0 100644
+> --- a/drivers/ata/libata.h
+> +++ b/drivers/ata/libata.h
+> @@ -130,6 +130,7 @@ extern void ata_acpi_on_disable(struct ata_device *dev);
+>  extern void ata_acpi_set_state(struct ata_port *ap, pm_message_t state);
+>  extern void ata_acpi_bind_port(struct ata_port *ap);
+>  extern void ata_acpi_bind_dev(struct ata_device *dev);
+> +extern bool ata_acpi_dev_manage_restart(struct ata_device *dev);
+>  extern acpi_handle ata_dev_acpi_handle(struct ata_device *dev);
+>  #else
+>  static inline void ata_acpi_dissociate(struct ata_host *host) { }
+> @@ -140,6 +141,7 @@ static inline void ata_acpi_set_state(struct ata_port *ap,
+>  				      pm_message_t state) { }
+>  static inline void ata_acpi_bind_port(struct ata_port *ap) {}
+>  static inline void ata_acpi_bind_dev(struct ata_device *dev) {}
+> +static inline bool ata_acpi_dev_manage_restart(struct ata_device *dev) { return 0; }
+>  #endif
+>  
+>  /* libata-scsi.c */
 
 
+-- 
+Damien Le Moal
+Western Digital Research
 
