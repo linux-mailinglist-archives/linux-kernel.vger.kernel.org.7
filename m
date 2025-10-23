@@ -1,76 +1,51 @@
-Return-Path: <linux-kernel+bounces-866334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A945BFF7F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:20:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53675BFF7E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A40B3AA323
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:19:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 180C34EF22D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CB52E0417;
-	Thu, 23 Oct 2025 07:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="plQG8p3L";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="dg8o9OGs"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9C12DF6F4
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3591E2C3262;
+	Thu, 23 Oct 2025 07:17:23 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (l-sdnproxy.icoremail.net [20.188.111.126])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9302D249A;
+	Thu, 23 Oct 2025 07:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.188.111.126
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761203820; cv=none; b=BXmxG3OsT+INxPP/w4xBhrHNYupTN0fG6+tARNhEEtYzXPS1Mtb1ZS6FSd1apl7lOA9FQ44A8BKkhW3HyRTFRajrvCyJ2RcHwqaCKDpUQJ1mz5cg5VF92xxRzhL0ZvYf6Y6P8tHedx+rEwzE4laOt2kWBnW3U2LdM9vg6caFlCw=
+	t=1761203842; cv=none; b=VkTi/VBVhtNNfnbBBGaxUcr9Qg2mY02uzYKWAuSXRLNeQifMPOW6mEIJMfPPF/tX3HcdWXiquBcp0MSsLL/T04z/XRsahFw2oIPadTDA7U/SP0qIMPsFaevXnVmaOFlF7J6j+2j9Hlt+tEHZ7/OWhqdA8HEZiZR161DvKAtJ/v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761203820; c=relaxed/simple;
-	bh=ypSJqeekZgf5O+2c4uKMeyWNcaUMCSwrdj4Z4jmFTB4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NCRoVqrnHJcdKR8umOpf4XA2ccruD0ibRvZiV3PtUATI7f9du0COLha6/qnPmhZ3Flf1NHduHwXqVX4r+839VuKFtgvlDkXyckvpdWna0njvO3fVGmsib7B60drLl9zvYzxORwD4Wy2DM7/AdNiKetZQS6O61Uo1i7HM4STtaoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=plQG8p3L; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=dg8o9OGs; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1593B1F38D;
-	Thu, 23 Oct 2025 07:16:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1761203806; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ljXa6fFm6MKyoAZiWZm7qbUvg2RgHW5M1AdCNJCtXoM=;
-	b=plQG8p3LNqRwYwraFXOYYU/x6KcHF2k1JYSbTbVfdbGX7TwWf0SJoQgBghHgSAsmIvql7S
-	N3w92ljMS7uXMeNfp8i+TJvgvnuNAEv7IIYC7NQEIQKL9VzWv7FFS6Wr/xiJGQ/aplQrum
-	XRLVV2U4vJjqu5ZaPbDNS979JKZGomc=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=dg8o9OGs
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1761203802; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=ljXa6fFm6MKyoAZiWZm7qbUvg2RgHW5M1AdCNJCtXoM=;
-	b=dg8o9OGsxIb7QFrZLj362y1TOfAjbsnXMgTVYNrdhnpHs+rAHYw4SU4uyuH50xGzquAacw
-	fFoHInsoPenlEhVbwjBiTWjIVHXAbZYzulitPElTNrwdmyeZp2fLk5+PXiNlJ2CM2QHdBG
-	wUXpKFHcHOEDOkXQdNoLOEHkSNjCjiY=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 082F6136CF;
-	Thu, 23 Oct 2025 07:16:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Wru1AVrW+Wh0QQAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Thu, 23 Oct 2025 07:16:42 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
+	s=arc-20240116; t=1761203842; c=relaxed/simple;
+	bh=f0RUkU6cFnw97PgQYKe+y3HOxH+j8eOcBq6Fvb+2d10=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nkeQSmB+SlpIcEgDlOzi6clsdxnsg3IsKWXky8ylKDCLZhgU6mupA0tOED5yXdkdWDaoRmsWhgsMA0u0Pm1EUEqYSfds0rCzC4GqqqzgRPt5q5DdGbCd8tZvQQDniruDPx+fbU4eEfGz2S04jcsJf1EYTEzTAMsctr+ZCD7ILEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=20.188.111.126
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
+	by app2 (Coremail) with SMTP id TQJkCgA3yJFu1vlo5pkqAQ--.23242S2;
+	Thu, 23 Oct 2025 15:17:04 +0800 (CST)
+From: dongxuyang@eswincomputing.com
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes for 6.18-rc3
-Date: Thu, 23 Oct 2025 09:16:23 +0200
-Message-ID: <cover.1761202410.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.51.0
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	huangyifeng@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Xuyang Dong <dongxuyang@eswincomputing.com>
+Subject: [PATCH v7 0/2] Add driver support for ESWIN eic700 SoC clock controller
+Date: Thu, 23 Oct 2025 15:16:58 +0800
+Message-Id: <20251023071658.455-1-dongxuyang@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,80 +53,160 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 1593B1F38D
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:mid,suse.com:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Spam-Level: 
+X-CM-TRANSID:TQJkCgA3yJFu1vlo5pkqAQ--.23242S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3JFy8ZrW5JFyDCr17AF1xAFb_yoWxJrW8pF
+	4kGr98AFn0gryxXan7ta4IgF93XanxJFWjkryxXw1jva45C34vyr4FvFy5AFZrAr1fAw1D
+	JFnrWa1jkF4UZaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmjgxUUUUU=
+X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
 
-Hi,
+From: Xuyang Dong <dongxuyang@eswincomputing.com>
 
-please pull a few btrfs fixes. Thanks.
+Updates:
+  Changes in v7:
+  - Updated YAML file
+    - Added "Acked-by: Conor Dooley <conor.dooley@microchip.com>" for bindings.
+  - Updated driver file
+    - Added description for clk of eswin_calc_pll().
+    - Added macro EIC7700_MUX_TBL to manage mux clock-tree.
+    - Added eswin_clk_register_mux_tbl() to register mux clocks with
+      discontinuous parent indexes.
 
-- in send, fix duplicated rmdir operations when using extrefs
-  (hardlinks), receive can fail with ENOENT
+  - Link to v6: https://lore.kernel.org/all/20251009092029.140-1-dongxuyang@eswincomputing.com/
 
-- fixup of error check when reading extent root in ref-verify and
-  damaged roots are allowed by mount option (found by smatch)
+  Changes in v6:
+  - Removed config option patch dependency from cover letter, because the patch
+    was applied.
+  - Updated YAML file
+    - Added an oscillator as the clock input, named xtal24m.
+    - Added clocks property.
+  - Updated driver file
+    - Replaced fixed_rate_clk_xtal_24m with xtal24m.
+    - Dropped fixed_rate_clk_xtal_24m from driver. Because clock xtal24m was
+      registered by fixed-clock as oscillator.
 
-- fix freeing partially initialized fs info (found by syzkaller)
+  - Link to v5: https://lore.kernel.org/all/20250923084637.1223-1-dongxuyang@eswincomputing.com/
 
-- fix use-after-free when printing ref_tracking status of delayed inodes
+  Changes in v5:
+  - Removed vendor prefix patch dependency from cover letter, because the patch
+    was applied.
+  - Updated YAML file
+    - Placed the required after all properties.
+    - Removed patternProperties. Also removed compatible of eswin,pll-clock,
+      eswin,mux-clock, eswin,divider-clock and eswin,gate-clock as we have moved
+      clock tree from DTS to Linux driver.
+    - Removed the clock tree from DTS. Used clock-controller to manage all
+      clock. Removed all child nodes in clock-controller.
+    - Removed '#address-cells' and '#size-cells' properties, because the clock
+      controller did not need to define these properties.
+    - Removed eic7700-clocks.dtsi.
+    - Added dt-bindings header for clock IDs. Because used the IDs to register
+      clocks.
+  - Updated driver file
+    - Modified the commit for clock driver. Dropped indentation in commit.
+    - Removed CLK_OF_DECLARE(). Used *clk_hw_register* to register clocks. Used
+      devm_of_clk_add_hw_provider.
+    - Dropped singletons.
+    - Checked the value right after obtaining it.
+    - Removed the definitions of macro frequency in clk.h like CLK_FREQ_24M.
+    - Modified description of help in Kconfig.
+    - Added COMPILE_TEST. Added COMMON_CLK_ESWIN for clk.o. And added
+      "select COMMON_CLK_ESWIN" for clk-eic7700.c. Without COMMON_CLK_EIC7700,
+      clk.c could not be compiled.
+    - Used .determined_rate.
+    - Added macro definitions of EIC7700_DIV, EIC7700_FIXED, EIC7700_FACTOR,
+      EIC7700_MUX and EIC7700_PLL to manage clock tree.
+    - Added clk-eic7700.h to place eic7700 SoC clock registers.
+    - Removed refdiv_val and postdiv1_val from clk_pll_recalc_rate(). Because
+      these values were unused.
 
-----------------------------------------------------------------
-The following changes since commit 8aec9dbf2db2e958de5bd20e23b8fbb8f2aa1fa6:
+  - Link to v4: https://lore.kernel.org/all/20250815093539.975-1-dongxuyang@eswincomputing.com/
 
-  btrfs: send: fix -Wflex-array-member-not-at-end warning in struct send_ctx (2025-10-13 22:36:38 +0200)
+  Changes in v4:
+  - Updated YAML file
+    - Changed name from cpu-default-frequency to cpu-default-freq-hz.
+    - Dropped $ref of cpu-default-frequency.
+    - Added cpu-default-frequency for required.
+    - Removed cpu-default-frequency in updated file, because there was no
+      need to add cpu-default-frequency.
+    - Moved DIVIDER to DIV.
+    - Arranged the IDs in order.
+    - Dropped EIC7700_NR_CLKS.
+    - Removed dt-bindings eswin,eic7700-clock.h. Because IDs was not used,
+      and used clock device nodes.
+    - According to the updated driver codes, the YAML has been updated.
+  - Updated driver file
+    - Remove undocumented parameters "cpu_no_boost_1_6ghz" and
+      "cpu-default-frequency".
+    - Modified the comment and used the correct Linux coding style.
+    - Removed codes of voltage, because it was not the clock driver.
+    - Updated the formula of clock frequency calculation. Removed the logic
+      that only used register selection.
+    - Used CLK_OF_DECLARE() to register clocks. Registered pll-clock,
+      mux-clock, divider-clock, and gate-clock in clk-eic7700.c.
+      The specific implementation of clock registration was in clk.c.
+    - Added eic7700-clocks.dtsi.
+    - Moved device information to DTS. Put all clocks' node in the
+      eic7700-clocks.dtsi.
 
-are available in the Git repository at:
+  - Link to v3: https://lore.kernel.org/all/20250624103212.287-1-dongxuyang@eswincomputing.com/
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.18-rc2-tag
+  Changes in v3:
+  - Update example, drop child node and add '#clock-cells' to the parent
+    node.
+  - Change parent node from sys-crg to clock-controller for this yaml.
+  - Drop "syscon", "simple-mfd" to clear warnings/errors by using "make
+    dt_binding_check". And these are not necessary.
+  - Add "cpu-default-frequency" definition in yaml for "undocumented ABI".
+  - Drop Reviewed-by, this is misunderstanding. We have not received such
+    an email.
+  - Link to v2: https://lore.kernel.org/all/20250523090747.1830-1-dongxuyang@eswincomputing.com/
 
-for you to fetch changes up to ada7d45b568abe4f1fd9c53d66e05fbea300674b:
+  Changes in v2:
+  - Update example, drop child node.
+  - Clear warnings/errors for using "make dt_binding_check".
+  - Change to the correct format.
+  - Drop some non-stanard code.
+  - Use dev_err_probe() in probe functions.
+  - Link to v1: https://lore.kernel.org/all/20250514002233.187-1-dongxuyang@eswincomputing.com/
 
-  btrfs: ref-verify: fix IS_ERR() vs NULL check in btrfs_build_ref_tree() (2025-10-22 09:40:07 +0200)
+Xuyang Dong (2):
+  dt-bindings: clock: eswin: Documentation for eic7700 SoC
+  clock: eswin: Add eic7700 clock driver
 
-----------------------------------------------------------------
-Amit Dhingra (1):
-      btrfs: ref-verify: fix IS_ERR() vs NULL check in btrfs_build_ref_tree()
+ .../bindings/clock/eswin,eic7700-clock.yaml   |   46 +
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/eswin/Kconfig                     |   15 +
+ drivers/clk/eswin/Makefile                    |    8 +
+ drivers/clk/eswin/clk-eic7700.c               | 1033 +++++++++++++++++
+ drivers/clk/eswin/clk-eic7700.h               |  122 ++
+ drivers/clk/eswin/clk.c                       |  481 ++++++++
+ drivers/clk/eswin/clk.h                       |  256 ++++
+ .../dt-bindings/clock/eswin,eic7700-clock.h   |  280 +++++
+ 10 files changed, 2243 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
+ create mode 100644 drivers/clk/eswin/Kconfig
+ create mode 100644 drivers/clk/eswin/Makefile
+ create mode 100644 drivers/clk/eswin/clk-eic7700.c
+ create mode 100644 drivers/clk/eswin/clk-eic7700.h
+ create mode 100644 drivers/clk/eswin/clk.c
+ create mode 100644 drivers/clk/eswin/clk.h
+ create mode 100644 include/dt-bindings/clock/eswin,eic7700-clock.h
 
-Dewei Meng (1):
-      btrfs: directly free partially initialized fs_info in btrfs_check_leaked_roots()
+--
+2.43.0
 
-Leo Martins (1):
-      btrfs: fix delayed_node ref_tracker use after free
-
-Ting-Chang Hou (1):
-      btrfs: send: fix duplicated rmdir operations when using extrefs
-
- fs/btrfs/delayed-inode.c |  2 +-
- fs/btrfs/delayed-inode.h |  7 ++++++
- fs/btrfs/ref-verify.c    |  2 +-
- fs/btrfs/send.c          | 56 +++++++++++++++++++++++++++++++++++++++++-------
- fs/btrfs/super.c         |  8 ++++++-
- 5 files changed, 64 insertions(+), 11 deletions(-)
 
