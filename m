@@ -1,124 +1,129 @@
-Return-Path: <linux-kernel+bounces-867581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7DFC0306D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:37:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7504BC03094
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423B81A66395
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:38:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD05F5013F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA0F28643A;
-	Thu, 23 Oct 2025 18:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D1C27FB12;
+	Thu, 23 Oct 2025 18:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/LqlZOg"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z1Q2pcq8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C221AC88A
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7349627AC4D;
+	Thu, 23 Oct 2025 18:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761244649; cv=none; b=nCJhU9jfm2k1wCTPFIhKUGE4zHXaIW/KUk4FZWyedpCm9RMsr9fGqLaf2xOFAYwERHzcVhxhFrQHAyShALQYqn6S01PqqkozUuELZBjZR+kv+3cqMhQ/B5zJ4l7Z2N9j1+dqJBQgtGMhr/NrAcCxGcw97rOtuL0qKQGAlNhB85A=
+	t=1761244685; cv=none; b=mOPGFcdoHMeSwUD6YRqgWE9J7B0Eg76i+8l6NdYxLyxXVAsYBh8FxYgGYgtxEn4azmv4934LGiXImvS4wCQpdIGRFMMfR8oFtvaez5MO4IKVJWAKL7GHjqxXFbSbKZy+Qe77PJq+njwPEuPtfPur7UBHWnmVYOlt3GKhMT5ZXpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761244649; c=relaxed/simple;
-	bh=KRqUaIay42zUMMR+WlaGSAv3YkSsKZdFS0QWLd9/5XI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tyAHBPfTtDYZI3rtviAHGeLMT5YUPbG7BDDN4kUnTJngyKzoHWknUiXeUi+VoSgqNcceeBWvLptkmo1rb7FVPLU417t3Z/Ga/ePIdGPHdoQ+Xk+3ds4cn0n4B4fxaJ2KbXNKe8+v2LTT5zD+Xp/ZBUB65vVG6Agvl9Git6RqwzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/LqlZOg; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ee130237a8so728933f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:37:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761244646; x=1761849446; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KRqUaIay42zUMMR+WlaGSAv3YkSsKZdFS0QWLd9/5XI=;
-        b=A/LqlZOgWhu+5tlrat+DsKQTP3ghnDp2jz2ng2mErFCLf006sjZU18Of1HEoaBuJOm
-         HumY1iESQ6oEqoFkdbcfxp7Qz4+W0JjB2u16aqv9z0pXpfmtTrmSQyHUc/LaQ3oXZJpS
-         NeQKO+djHhTbJ4V9Vl8z2x40hSDlKApi4o+YwaA2cZPjlATGTQuOqCQFwce2QEzp7qnE
-         UCzHz9BsYBO15EgvSjAEGrIB0u+69e8wLNAXKaOWRsFuZAjtQbyTfbp2k06qfAPDZ5ta
-         c01tUZDtZCku+h/gmJ9TnLE4X+Mz6OhV2oI9t5Q5JcvCz/HS+BWJwMFX7aORfiEuba/c
-         mwTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761244646; x=1761849446;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KRqUaIay42zUMMR+WlaGSAv3YkSsKZdFS0QWLd9/5XI=;
-        b=PGvEACZN+FIqsjj8VmRRztCB6Hd6DaXW0G+Qp09WgbmOdP6TQkgqs1/ymERVijjiIa
-         FZvNqzrBKxhjFmm0fLMpC9iA0qOQ5qnP7wY/fiT2mcdBazD+tYa52gZgSpEwnZJv5D5M
-         I8W+orOLqJ5bTtstSBSfUQl5J/kgtbYklFnl/ZXunFYQwUJ3d4l64O0GI9w8vWNftCfF
-         1T+yubsfE1kIAwUODlrQTmMglDGRoR0ONxJ9yeTC/74nHYoSLem/u1cR23p8TvwlfBlI
-         zQQYkfR/mclCpnjrjJazETVzn1X6DNMnO7nbNG196swCo/2ot6LlOnO7RM+Q7Cm+/EZi
-         KKFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQYKz45nb6c4Q4sm7ZyZFTKEW1GRFgj/32ACI4ro2OQC+qW1DP5FW/t/EXVcZ1JdCfYArDFijV+XBXBY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl+xD6rm0hFSSuSCBHC9PW6c1P6wb5AE3Ei557mgGNXRO3LqEx
-	2BIA9J9Qj4eL9JW8+7XENRmFOr65pV5u0muqiAB5jKxEgw6hWpm+IpxNMO3L+duwK9+WGa7uYf+
-	NsVdQn0BtzXOS7ets8Ee1/rFCXM0Ex0s=
-X-Gm-Gg: ASbGnctfLnHlL55UMgMxH0EKriEzu2p/nqAw3bawaaJFGfD+WwguhtcxhSwJY1T9MQW
-	UrFRE9/bPb3zqhZ5K1NW/UhDGtMLjJXYgRLiTQU4GaQ7GWggizJRtTtwoj+FWHspfRsTasuns5D
-	GtxhVWc7HZpkv1dvhoTOgnr3vF9btg25utg+1cp6WhG3Y1kz/rzWu2DZVZnZjzKGc0enMDLcWY9
-	+Ptz9e7xX727wsd48AYq4z+MoeMH9nDk+Do1Ey4b7nekCcvCfH2DY9Z86zpMtioA1pVHWDAtxd6
-X-Google-Smtp-Source: AGHT+IH4qsxJ7mUIL9zboxFt4pG9B3IJms50YZNQUEES4nrTzidPaOReyuWCPuy05NT2kA3v8XjMqzGJKcdLVVEvPMM=
-X-Received: by 2002:a05:6000:24c9:b0:3ee:15b4:8470 with SMTP id
- ffacd0b85a97d-42704e07b7amr18102377f8f.45.1761244645680; Thu, 23 Oct 2025
- 11:37:25 -0700 (PDT)
+	s=arc-20240116; t=1761244685; c=relaxed/simple;
+	bh=jFr4xShDGQKlComnou2o80VctOUNsQv0T6YGPfBQUoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YV1WQ3UzjQzkJSXUR0NJczOc1PPfj2EnOVJq8OId5+lmXMerL53aSVItSILF7o+s+AYvaPcdMT14X1WRLnrFnglbpYG6AoYD3G9xT8hUdv+meMjkOpp5qtBwcwUzbS1BaGQMBwGJvKEUTgCMz7l9x1DdBWl2cV4PMZsVgD98dLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z1Q2pcq8; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761244683; x=1792780683;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=jFr4xShDGQKlComnou2o80VctOUNsQv0T6YGPfBQUoQ=;
+  b=Z1Q2pcq8Xc63+WBRlkv/kDnIdoOkMQ29nPIERR6dEh6zrR8tss/uGIUa
+   tBhwjMOIAtt1LFnHtKvG7w/QYOlTySkBtsFvYT0DCt6Cd0LdFF5Y08Z7N
+   2XTU5J63kSt2IMxzzJ1c0m+T2etULcPysx3CEsZG8tk2IhHdGCpXSOzhL
+   z4nTx6bTF/ryWaNKcSIB2XWoIfiCR0N5sKCRB2P4xPD+8rqQiIjwlQLYs
+   1H4H9s158zVrNh6GXL4RBHm+ZsD0FsbkCXsdyJKcWrROW3HouCU7rMtWi
+   cDH0ZhUEV/PvQLeb1WZ39nB1prJVNID9R7JfrSgT4bWn/XyD768JB2N5D
+   w==;
+X-CSE-ConnectionGUID: rq8I0zChRfSV5PiubmdJrg==
+X-CSE-MsgGUID: JNBNwR0LTGykbbk07w4waw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63573129"
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="63573129"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:38:03 -0700
+X-CSE-ConnectionGUID: Q06e3c34TgmL0Zx1SbB7uw==
+X-CSE-MsgGUID: PzTvBSmrQhyrGlieA0m7Zg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="184615898"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:38:00 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vC0CE-000000020wR-0E1k;
+	Thu, 23 Oct 2025 21:37:58 +0300
+Date: Thu, 23 Oct 2025 21:37:57 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Petre Rodan <petre.rodan@subdimension.ro>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] iio: accel: bma220: move set_wdt() out of bma220_core
+Message-ID: <aPp2BeNqFJABsAkg@smile.fi.intel.com>
+References: <20251021-bma220_set_wdt_move-v1-1-6c99f6fd951c@subdimension.ro>
+ <aPjE-n0wKNIJd2-M@smile.fi.intel.com>
+ <20251023182318.00004319@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020093941.548058-1-dolinux.peng@gmail.com>
- <20251020093941.548058-3-dolinux.peng@gmail.com> <174642a334760af39a5e7bacdd8b977b392a82c7.camel@gmail.com>
- <CAErzpmusSgOaROhEO25fKenvxQJU1oSPKKzUA4h67ptdQxWM7A@mail.gmail.com>
- <7651ac9cc74e135f04ecfee8660bea0a0d3883ab.camel@gmail.com>
- <CAErzpmtWLLYuFk3npTiOgGOKcEcH1QUGGEHLvPncVT+z261C1A@mail.gmail.com>
- <CAADnVQKU0MnQHxxvnp9WCu_UO4fEtd_D6ckNmOd7pLg90ecF4A@mail.gmail.com> <CAEf4Bzajdv3Rd1xAxm_UZWBxPc8M0=VuUkfjJvOFSObOs19GbQ@mail.gmail.com>
-In-Reply-To: <CAEf4Bzajdv3Rd1xAxm_UZWBxPc8M0=VuUkfjJvOFSObOs19GbQ@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 23 Oct 2025 11:37:11 -0700
-X-Gm-Features: AWmQ_bmQyKMJs6G-0_Lgj-Xl1X1ye0IBGPVkDkUPwvrDh9KvDzOfdTPLybE8VS4
-Message-ID: <CAADnVQJG_tK18oxmjW37cbrxF2zPKPk_dvqXUTnOjUue7J0tLQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/5] btf: sort BTF types by kind and name to enable
- binary search
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Donglin Peng <dolinux.peng@gmail.com>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, 
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251023182318.00004319@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Oct 23, 2025 at 9:28=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
->
-> Speaking of flags, though. I think adding BTF_F_SORTED flag to
-> btf_header->flags seems useful, as that would allow libbpf (and user
-> space apps working with BTF in general) to use more optimal
-> find_by_name implementation. The only gotcha is that old kernels
-> enforce this btf_header->flags to be zero, so pahole would need to
-> know not to emit this when building BTF for old kernels (or, rather,
-> we'll just teach pahole_flags in kernel build scripts to add this
-> going forward). This is not very important for kernel, because kernel
-> has to validate all this anyways, but would allow saving time for user
-> space.
+On Thu, Oct 23, 2025 at 06:23:18PM +0100, Jonathan Cameron wrote:
+> On Wed, 22 Oct 2025 14:50:18 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, Oct 21, 2025 at 01:31:49PM +0300, Petre Rodan wrote:
+> > > Move bma220_set_wdt() into bma220_i2c.c instead of using a conditional
+> > > based on i2c_verify_client() in bma220_core.c that would make core
+> > > always depend on the i2c module.  
+> > 
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > 
+> > But Kconfig for this driver is a bit strange. Usually we do other way around,
+> > i.e. make user visible selection of the glue drivers, while core is selected if
+> > at least one of the leaf driver selected by the user.
+> > 
+> This comes up from time to time.  There kind of isn't a right answer
+> to my mind in the trade off between complexity of configuration 
+> and desire for minimum useful set of Kconfig symbols and people wanting
+> to build only exactly what they want.  So we've ended up with a mix.
+> 
+> I don't mind setting a policy on this for new code going forwards, but
+> that means we need to decide which approach we prefer and document
+> it somewhere.
 
-Thinking more about it... I don't think it's worth it.
-It's an operational headache. I'd rather have newer pahole sort it
-without on/off flags and detection, so that people can upgrade
-pahole and build older kernels.
-Also BTF_F_SORTED doesn't spell out the way it's sorted.
-Things may change and we will need a new flag and so on.
-I think it's easier to check in the kernel and libbpf whether
-BTF is sorted the way they want it.
-The check is simple, fast and done once. Then both (kernel and libbpf) can
-set an internal flag and use different functions to search
-within a given BTF.
+One immediate thing from top of my mind why current approach worse than
+proposed by me.
+
+- when you have an SPI or I²C enabled the glue driver will be silently build.
+As a used on the embedded system with smaller resources (flash/ROM) I prefer
+the opposite behaviour, i.e. when _I_ control what SPI/I²C component driver is
+needed even if the subsystem is present.
+
+But let's give a time to gather other opinions and justifications.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
