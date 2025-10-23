@@ -1,95 +1,85 @@
-Return-Path: <linux-kernel+bounces-866087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B6EBFED9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:31:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA788BFEDB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 517744F401E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:31:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99A4D3A42D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C611DF248;
-	Thu, 23 Oct 2025 01:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C37D21D6194;
+	Thu, 23 Oct 2025 01:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="Ip85pdkU"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D+vpVHtO"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD3C1A9F86;
-	Thu, 23 Oct 2025 01:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1D31C6FE5
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761183065; cv=none; b=Qa9wntbnZx+IxjS/f0vvHIVpfYZQk1yzwvhpE6bfVBc1+cb6SWnG41XOqMJqp0n5KUGddEZ/p6L2/5WeMZ4hshnVPrzimHSfRo4u8Wblnawu9CRWKntSuEKgGrhK66HULc0n9D3dUgo+RmXydH25o3l1BbRzqmZh+FHkKZy39xE=
+	t=1761183299; cv=none; b=D0DygZFa0/dCILCRqH/w+SByM0tXaVsj6tCNZjG/S1kjnUZIKW64OnU1BPiR/W8AJspfq3IJ7jVIl29eAWz7RjefKGfzTYRcvHyxfHQPnaFbgyWQdAkmtM90JCN4qrLHSwL7/x/BNcr7Ku6RGn5172xpLF/TNrYBTbBTjMtD9s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761183065; c=relaxed/simple;
-	bh=59DyMv2/kaUFuprY4Ty/bOg9HiLiF4WHMxqPfGF1CTQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ADmM2DwX/2GwoXMxrMkXiyUFFyZ+Epbj1mjyQYDbi9FD7zHivs5VLzGPCOBtHjzxn30asVxHDmqr/vGA4F32wJoASmmoDiAbMq36spBv7uD/tzvXE1owCHDHnLYFEELygVUj+hhHtA4keSleZzh1IS6BuniqHYMeSKkRFMXkjRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=Ip85pdkU; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=4xqZkbTQiHBUFbXKjuMKH2VrZh0pCiCiOZb19TYigo0=;
-  b=Ip85pdkUKkIBf1IVBVuKNZRbTnYVvFXwWy6Mbr00r7NtjUYJucwEuEPb
-   0WSxET6KAPykpoog5NcvVmSxAllU6zSLY3Q8Wtdp2Xuqs8ooiAo8K0cP0
-   3tnxhbjpeiMD8bgWOYylrUfAaa+jtXDAH/GVS2gyLod0D/S4N79SNLONJ
-   8=;
-X-CSE-ConnectionGUID: nnJZ0l1ISVCMoaINK6ilKg==
-X-CSE-MsgGUID: sG08PjC1TQyhxodYa+3gGg==
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.19,248,1754949600"; 
-   d="scan'208";a="245734728"
-Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.102.196])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 03:30:55 +0200
-From: Julia Lawall <Julia.Lawall@inria.fr>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: kernel-janitors@vger.kernel.org,
-	kexinsun@smail.nju.edu.cn,
-	ratnadiraw@smu.edu.sg,
-	yunbolyu@smu.edu.sg,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] strparser: fix typo in comment
-Date: Thu, 23 Oct 2025 03:30:51 +0200
-Message-Id: <20251023013051.1728388-1-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1761183299; c=relaxed/simple;
+	bh=UliQeU7ADJZ0T4heCcW3UFjf09ZGZKTQYPq2dS65w7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mQqxgBks1bG2VBo07L4NtOhZK5XA7rDElsDxpuG5Yl+xuPuFHkcXaCTGzYBn8xhltNb8bwKZImwpPjg/cMfc93CjFSRXF2evFKD8KjYvqKd2qEs18kZcmQtCms5DFfFMf2LwvUrCkA0GeygYEv8hYsV236OEeiGnsiD1ueEHH5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D+vpVHtO; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f7d685d6-fd1a-4de5-ab55-da01ee4a18ca@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761183294;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H8M2621n27/ekFNZHN/+RLt0wU0H18xOlFXGSJsZgBU=;
+	b=D+vpVHtOWYWYbEj1lvsMrAQBrhqJmfOWjQHLFmjZwaPgaOHog8Ho75gc9fdwAjQCRjWj3N
+	X2gouqOXFe8NRUoT9S3egEOZQ69SAEzMxxMMP3s3ov/tnJmr/3qKmwbiWcnCNE5SeoP5rM
+	mvfxz9Py52vOcaoO7BOD+PAFq0NrExQ=
+Date: Thu, 23 Oct 2025 09:34:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: Where can I find nfs-utils?
+To: Jeff Layton <jlayton@kernel.org>, chuck.lever@oracle.com,
+ trondmy@kernel.org, anna@kernel.org
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <39c67bcd-5369-44e7-9c7e-e9702ff95d53@linux.dev>
+ <f2b76db28f459720ccbb7fb584e530b31485de3f.camel@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
+In-Reply-To: <f2b76db28f459720ccbb7fb584e530b31485de3f.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-The name frags_list doesn't appear in the kernel.
-It should be frag_list as in the next sentence.
+Thanks for your reply.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+On 10/22/25 6:16 PM, Jeff Layton wrote:
+> On Wed, 2025-10-22 at 15:51 +0800, ChenXiaoSong wrote:
+>> Greetings,
+>>
+>> Previously, the nfs-utils repository could be found at
+>> https://web.git.kernel.org/ , but it can no longer be found there. Where
+>> can I find the nfs-utils repository now?
+> 
+> The canonical repo is here:
+> 
+> http://git.linux-nfs.org/?p=steved/nfs-utils.git
+> 
+> Cheers,
 
----
- net/strparser/strparser.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/strparser/strparser.c b/net/strparser/strparser.c
-index 43b1f558b33d..b929c1cd85e0 100644
---- a/net/strparser/strparser.c
-+++ b/net/strparser/strparser.c
-@@ -127,7 +127,7 @@ static int __strp_recv(read_descriptor_t *desc, struct sk_buff *orig_skb,
- 		}
- 
- 		if (!strp->skb_nextp) {
--			/* We are going to append to the frags_list of head.
-+			/* We are going to append to the frag_list of head.
- 			 * Need to unshare the frag_list.
- 			 */
- 			err = skb_unclone(head, GFP_ATOMIC);
+-- 
+Thanks,
+ChenXiaoSong.
 
 
