@@ -1,279 +1,273 @@
-Return-Path: <linux-kernel+bounces-866672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F277FC00689
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:13:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F53DC0068C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3FF184E5900
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:13:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACBD63AC05B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77709309DB5;
-	Thu, 23 Oct 2025 10:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7AF309DD2;
+	Thu, 23 Oct 2025 10:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y5f4IG/v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SdyLAsYB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBEB2D9ECD;
-	Thu, 23 Oct 2025 10:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761214405; cv=fail; b=iN/so4MVlxyTVcbjpctdFQcvqd2CIn5kyGednza2mbtXGbwFeVFux6lBN7OeYvwu766yo8bPGfh8WToeS3vxXHyabQ6PcbiGZXNCcP5ldxei1bSkMFRw0b28SIpRxbw8VimpIgLIuRdQr//0iKhDBrf47+c9dHooCENm5ATusew=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761214405; c=relaxed/simple;
-	bh=dwbwGUK9eCQlnx38FkoiN7YuKzc8BewCWMYBCNB3rdQ=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ATkI2kXEXw2HoDZ4d+Ja5uoaknyrLv9aAQHptj3D2OZphfmCO20KUwMY1TYFamvcAvP2I0LwI7HfUzUg5k2l+MH5Dbfk8FKQWjMWDgz7ND+iHN5CmUhZd9QKeu8ugUyzpuvOHZB00vt+spqAvz1zlWltgBHLfvNXxXB37oXXSDE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y5f4IG/v; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761214404; x=1792750404;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=dwbwGUK9eCQlnx38FkoiN7YuKzc8BewCWMYBCNB3rdQ=;
-  b=Y5f4IG/vpZ5pujk9VzvWYpuUSD2oAgATlnMakd0kIyQ3A7i72hym3eWr
-   EeQ2INMMuR+dJ8wWvWJ3F4ejqQDVGKhpGhRHA0kW37HvH6b3OwqbRtR3A
-   ijnoXYSQe2PBp6gIQZDeZUioOb2FJjg3ZqO9dtfpfICCGbLYeMJyFb19+
-   4oTju4WFWQPuw+nKtRRWGNrr2fVTZ6/Fxyu2GHOqNXfVDLeUKVl6WEpvd
-   YT7O38lQshNvEtQB4vknyF3knptGE94MSQLOpl9F6JnYJ31yGHzbCpDHJ
-   yuDsTDZg0TfJMlhql6W4lMcH4L5oAysK5DKoZklMGXJ7/5WbyDkup9+Xz
-   Q==;
-X-CSE-ConnectionGUID: lu59YzGLStem228c2VgrBQ==
-X-CSE-MsgGUID: aeTW5FFrSSK39yRPz2J76w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65995427"
-X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
-   d="scan'208";a="65995427"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 03:13:23 -0700
-X-CSE-ConnectionGUID: l5MeRoitQHKo1bh8OxOe5A==
-X-CSE-MsgGUID: jKDuFmQbQgmu0ddmYpjMQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
-   d="scan'208";a="214775212"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 03:13:23 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 23 Oct 2025 03:13:22 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 23 Oct 2025 03:13:22 -0700
-Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.9) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 23 Oct 2025 03:13:21 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sQholhKZW4zKCK8P0zlMwc3Mwy6TOBSaRyi2nPhf3Z+YNvj9jP8AiLyS5z+CEhA5DdnZPpIG/xF4KMRMsjXtEYEZmylDZG4ZHA+4tk+Pt2LkR6X3CHCa8q8x8/Q2nnrxsUsd6SufMV/N6PpzfnjhKwUVDtAcPy2b64fbovQYr17z2BDCXoUGsFJpUZz9XKcffbd8BrLzTN6sAMcyM1rJAo2cjHK7u+bjY2ogTqGCqbmJ3NjVO350eJu4+weRO1ggANE049RhKt3qpI6jXhr18w5D7iqTeOjpk+M94csbOOkj0YHc3jDF7QB7lZQ9PipBFJmuQLLdsJIKTGz/R06ipw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IUEoG/8IfhcIT6E74yTmAW/99P27+4qOtR1/GSH9t9Q=;
- b=HQk5xQmxLiHSt864cLfFEvx+sTtwfMA4F/Uh5gB35wrzqnxWzxHBGvxjKJjcEIEkeVaseO7x2mshM8hoK+6VVSX+1A4t9jnsftIbO7h8uPd+Qz7nxBGDvuYi5SlrUe0fKXlsPe9B16DT89+LVfQkCgx/Sz1prE+rNFG4isZd5Zy6CfQZn83MPVNGQ5yhIe+ibqvpWptCPxHyVPY07IEgnz35p8RlHSkxg73sFL6tsHbrXqtP3OoWXVjNoGXI5VP1r/+L8mpmQHIJTfjRpfnPfnkyIXFq82lSdrnnuJmR4ZUTqugQC3EnxzaQe4vnOZLDSS2O27NqlrvBvHwwz7d9Lg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
- by CH0PR11MB5252.namprd11.prod.outlook.com (2603:10b6:610:e3::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
- 2025 10:13:12 +0000
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::eeac:69b0:1990:4905]) by IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::eeac:69b0:1990:4905%7]) with mapi id 15.20.9228.016; Thu, 23 Oct 2025
- 10:13:12 +0000
-Message-ID: <8eec7ae4-c02f-4099-b5ec-065c8ea06f90@intel.com>
-Date: Thu, 23 Oct 2025 13:13:07 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mmc: sdhci-of-dwcmshc: Add command queue support for
- rockchip SOCs
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-CC: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, <linux-mmc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-rockchip@lists.infradead.org>, <kernel@collabora.com>, Yifeng Zhao
-	<yifeng.zhao@rock-chips.com>
-References: <20251014-rockchip-emmc-cqe-support-v1-0-918f03de0cb1@collabora.com>
- <20251014-rockchip-emmc-cqe-support-v1-1-918f03de0cb1@collabora.com>
- <70cca930-29ac-40a9-8e3d-fba1aace9156@intel.com>
- <7bxs6nw5fnjq22p7gxrmjqjtw3g5nt6cacwpfjihxv5jk765si@ho3odkyxpi7m>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
- 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
- 4, Domiciled in Helsinki
-In-Reply-To: <7bxs6nw5fnjq22p7gxrmjqjtw3g5nt6cacwpfjihxv5jk765si@ho3odkyxpi7m>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU6P191CA0014.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:540::15) To IA1PR11MB7198.namprd11.prod.outlook.com
- (2603:10b6:208:419::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5326C303CB2
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761214422; cv=none; b=tp2VuOdNa3f4eT7HaWnKUK7RXxt76WjjSueRbdHVHqFuDqMOgop9m4bl1/Pz8FR2on1uIrEYxrzk3c1+ZXTttuc66uTgcnBNFNyjVOVVePa5xAmIVcm3ZY/xqaX2e9iNVWdDiW2jJ2qwb5Rz4/UxDGRJvcAH8lm0twEDbj1+rpw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761214422; c=relaxed/simple;
+	bh=EKSPlmCEBkTDZ5NGBaXPaeS31CG+/vurTMFkgP0CNz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CEbnqd0va29/zhc4eI4Cvs0+Ltkps4DpQxhdEpi14MWNBBvFoiSV2/MXH/3FVrLbUkccPbi9lq8ImmDcOmqOUy2WXVb4fL2tQgVoaZbcOsXe3+NrcujFUoO+Bpa61D3fBviuH8gsP9BBNalvaWDgx8fF+D/4Owk3Nb6X05BFAa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SdyLAsYB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761214419;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=aHktMWgkA59NOlbjgywzEkURdk61yMcemvhRwsjXSDE=;
+	b=SdyLAsYBduSuF4EkQQ3EhayCtmB8kxMyPIi64PIBDFn4GtnmItAAfeOccIm2kQsLgskxE2
+	Gw+gx7mqLbfrxtbgtwbAZ99Y/RF+MWNhRxVLBmVoUBRivth+Cmqc52RHV1EPz41Inzy3Go
+	knrPGBmiGO/yY0Hva7GjPJHA+aco6/8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-340-s3eBviagNBW9sjaRfAQ7Bw-1; Thu, 23 Oct 2025 06:13:35 -0400
+X-MC-Unique: s3eBviagNBW9sjaRfAQ7Bw-1
+X-Mimecast-MFC-AGG-ID: s3eBviagNBW9sjaRfAQ7Bw_1761214415
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3ece0fd841cso288005f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:13:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761214414; x=1761819214;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aHktMWgkA59NOlbjgywzEkURdk61yMcemvhRwsjXSDE=;
+        b=f4s3Cj9ZHiS1KD09Zc0+8OChUD675xELCAMTrNOXq4tmdivw9/CdQXBokaD9E+n01j
+         o25OEJJswHYZa/UXvgfKNJEVCA4rf352enMOCSCiLzrTBL96Y284cCC7kVKU7qzicaT4
+         7Spa7X+pNjzJb5EoLboulvEnzNqLEEH/UvWkNg+D9Pl3t4TtZxzMDZrLRxZ3HLoYYbmf
+         F0xrdrvIbLMeLBqiLOmvnD6MCdhPn+qzNDL7SsqlJSb4TNknJNcVEKfVcLuxpLwhemsE
+         Mo1wWRKwOqIHwO+R5+ZxWkqnfduvb8gi+GGmuKSlJAfybk8BPZSPZjxjjjysH9mhi3Oy
+         eH3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVF+ivoYtkyDQLaXEjS0C0U1iRDbNgmq+HfXjm5E1O7hgEwPSRWAeu6EyJh9tfIB9syN+ApMwcUktgcxaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycmNVWfPA943tKUO4c0H04SarZTSiWp4Gcx0ci0q1gizuk0//u
+	kF3AKCaahu19eTS/khtuOCmEw++NaXA2twXrQ9qIrMc0uErXmBtg0oLUtsINUiCsuba7+cWzdCZ
+	MEhRMcJ0QT/LfjzrecCPlbf+xmUkrddZAQzIwKWzkore8Ur8kI4bWwjZoXipJOHge0pUzddkX3A
+	==
+X-Gm-Gg: ASbGncsDlP8PRV0CslAhg14s1FKI5WZxVyxF9kJlY9XTmZF6CXW/OQtAVyZKqGAXrlI
+	fO566OD6jJARnRGkmki6D6xrQjmCs7l2ghJSgphFP/dj8vJZJAg+lQIM9mOcYFHePTtYk5WhhCj
+	B41n02z1D3mF4JIWgsyRM1C1yTGXm0nNPIBw84K+800pN7wYzTS74lsxPC+XKm1GkdmSMtIdTSG
+	pHgoOWhNfG47Fobe2gdjj7h7/+30uHEf3BuXeqNG/U4DvN56+9sg/O5agQoQSN4L7cy2csWVsve
+	p31uDS+ZCQSu4UIP69F3SZxOXru6sAdch92QNdNnxt17d8+9/uSekf1u4ykFFh0QuJnywBWT0Wu
+	/UOn7JI8LtwqT5B9MGrJXWINyPwdvbuy8swokJpSOEE7vrTUQ1bqhTXIkHEoNpAa2Vz7IU9mJyE
+	JJHjySYHkNsVyEFIPBDBxxoNQHG0I=
+X-Received: by 2002:a05:6000:400d:b0:3ee:1461:1659 with SMTP id ffacd0b85a97d-42704d98980mr15581858f8f.31.1761214414547;
+        Thu, 23 Oct 2025 03:13:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFdOK/ndovI7ZRSucl6tmxIKATOgZ2nsBavhyiYYvBwP2HJKnKsVN3z8PcSUoWmo7SG+ASR4w==
+X-Received: by 2002:a05:6000:400d:b0:3ee:1461:1659 with SMTP id ffacd0b85a97d-42704d98980mr15581828f8f.31.1761214414042;
+        Thu, 23 Oct 2025 03:13:34 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897f57cesm3220279f8f.17.2025.10.23.03.13.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 03:13:33 -0700 (PDT)
+Message-ID: <e0886fdf-d198-4130-bd9a-be276c59da37@redhat.com>
+Date: Thu, 23 Oct 2025 12:13:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|CH0PR11MB5252:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae6e27c0-9da9-4003-bdcd-08de121cc5aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?cmwzNlJuZHl2R0I0ZGRlQWNQQzdWWFdPUUZmSWw5Zk5HczNQMTEwRVFGS0ZE?=
- =?utf-8?B?Y2IvY0ZSSmhPNHV1K2ZpS1JkN2h5U2tYNkk0YUZnaHJCV1dqUW1SNWNFUDRM?=
- =?utf-8?B?TnZmd2ozNnU0ZUQrbjV5dDBRcjdVSzBBYlliU0pLUDRHc21aRDR3dU11V0dS?=
- =?utf-8?B?OXB1MDVHeG05WnJVRFFxbEdieS96TldiUythZDVNVy9vY3BIT2IrdENpRVlS?=
- =?utf-8?B?SVdyalVVQzhDZ2IwMUE0cVp6a04rSGR6eXNCSWZiRHhQRGVBazU5d2tyVkNI?=
- =?utf-8?B?WDMybTFBTnJESU42bzVER3dLd2ZxNTRRUjd5THdRYTNSRGxFUkt2UTE1c00x?=
- =?utf-8?B?eFNndUJmM1NRbzR2SmxLRG5tdGsxbGJ3YXN6cmxEQWJ4ZjBqOWpOTU9RbVZ1?=
- =?utf-8?B?NForVTZRNDV2aWtUaElwUXZTV01qczhHekNEZXR6bXAyTlhKaVVOK1hRMkhW?=
- =?utf-8?B?RHhPb0ZkaG1FRkZ1eGRsVDdGWE5SQlJQRk9TUlBDY3lOVVd6czVza1dNMWhv?=
- =?utf-8?B?QXB4VEpGbEtFUXV0QmR6QXNkT2lPalNCWndONU02NGZQemJ0NWxlU242OUh2?=
- =?utf-8?B?Rlc2VHA5YTAwcTdqM0RUT2V1b2hqK0FVZ3V6UUJFSk1aaEMrZzBXWHNpQ2tX?=
- =?utf-8?B?VnhYcVRQZXcxVWpXU2ZLY0c4Q1NCeXpHUDk5T2IvbGF0SmdJeGZ3TlowbkVi?=
- =?utf-8?B?SXNlQWhKTStJRWEwMjVHMmlBd2VMM2d5RTNvM2pJUVFqVzA5ZTliR1hCNWVs?=
- =?utf-8?B?eElVaWNSdXZlRk1xK2ZuYzJjeG1oQ1JFczBzRzIrQWY2M2FRS3dmTXBZcWxR?=
- =?utf-8?B?OUpUVkt2TW44bFgweG1md3pMMWlBZ1VkUEdZN1JUWWdQcGZoSG04d2ZpcWxm?=
- =?utf-8?B?MEZPTEE5SnZaL3I2T3d1OURpTGpzS1Y2MVkzK0srRFJ3bTJqTHlhdTExWXVr?=
- =?utf-8?B?T0VaYWJ1UEN4YnA0NVpOUmpOUFpXeExDVzkrbzY2MUFONGMwcHFYUEZ0aDMv?=
- =?utf-8?B?eWFUanBjUkFPQlcvOHJXT1owckwzblh2N1dPYUtwUVJibytJZzNBL1p0OVpl?=
- =?utf-8?B?WCt3NWdoVHhLSitQVnAyNUQ0emJkOTFmdW9waU5CYmZURCs2aTlKWExSZC9n?=
- =?utf-8?B?YmtJODdFakdxOVM3TjVSa25hZ0dpOTQwekRKYlhNZXVlVkEvcXA3NFlMRU9W?=
- =?utf-8?B?MDdnZHMrci95cEI2ZTdYZHBiMFVxaTBHVWV6R1pPaTVXWkN5enFnRUVwRk9o?=
- =?utf-8?B?WTE0SnBYRUlRYWI1U1VDNEM1YlAzekhOejVXVytOaWx3ZHBsRkdIOEQ0ZzUx?=
- =?utf-8?B?SStMNnB0OEVWRXZHYndzM1VuSmUxVmVlVURvMGpTbnpYZWVlOTVINTFEakhO?=
- =?utf-8?B?Y2ZEaC96Q2swQ1VCRG92U2t2SVBDR2V0ODkxdExXV2ovNVFaa3JmUFh2YXRT?=
- =?utf-8?B?eUxlTVptSUQwNXZ3RGl6eVdPYktMTkFJbW9qY281QTVnM25UTW9hbDlnNUQw?=
- =?utf-8?B?a1hpQVVNTFFCeDNkNjFodEtyODAwN0hqOWdNT1pVM3o0VkVlcWdhSUp6MlpM?=
- =?utf-8?B?eFRORkNKdmUyV296eDdXRk1IQXVTN2xjWkR0VmlVM2VBckZNMkQreXcrZDFG?=
- =?utf-8?B?OFNlMGRYUy9xL3cwTzQ1SzN6UFB5azdJcXZOa3dqNVoxNUZvNDZTb2lVNFV3?=
- =?utf-8?B?ZUNPbVc3WUpjbGpSNXc4b0VlUEFGci9LSXFlVVRyTE83bzNaYUhScngrdjho?=
- =?utf-8?B?QWYvaHFPWXNNSXQwK2plU3QwbGVRdi91UUowaWJWWFluZFRzQWd1TTVkUEVq?=
- =?utf-8?B?cUxUVy83cGcxWFh6QWltdGpFUFl3THhzM3hyRnp6WWk0eGFXTUQvQlpzWEht?=
- =?utf-8?B?OWlxaXY0OGY5M1plbWhCZ1dTMUdDZ1hZano3YVc3ZVNhRXkyOVo3a0xRTkxL?=
- =?utf-8?Q?p66MKqTKnD+WUzUoe0DHevMsKfDvolTn?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?enhCWTFmMVBob2h1V0hORzc3dzhZUHpNUnkvTnB4QVgxRVVpWUk4SUZ4cm5P?=
- =?utf-8?B?ZjlieEV2OXd3ODM4eTBsQkJYakQzamhVRUxqWTdyK2tnVEVSOG5Od3lwRktH?=
- =?utf-8?B?b2tsWWR3NFd4SWFZczdNUXdiUHZIZG02Qnh3bVk1bUYvYU9XWGJLM1Bmc203?=
- =?utf-8?B?NVEzdnpoc280L3EvOVNaeWVMYW9RMndVUzdDdUlRMmJLbU5oV3NZK2ljS2ZG?=
- =?utf-8?B?RkFlVi9vWlFaNXpwckpUR2JtMHdXWFBmUHU5cG9NajQ1bHZ6TzU4YlMxUzJC?=
- =?utf-8?B?QjRQb1dLLy9INXBUTEZ5NlV1Zk16MHdiTUpFaVd0K1JGOCtwMndVR2VwN2Q1?=
- =?utf-8?B?WUY5ZDJxdW5EUEJ1QlRIZ3lWVUhnaVd6dkc3cDAzdlVuU2VMaDlQelJ6c1Ew?=
- =?utf-8?B?cVY5ZGtUaGdtSFJjKzV6WkhtVWdqSlNyZkpXcXkwbUlUSTNPLzc2VXg4bytV?=
- =?utf-8?B?aXVCcWdkRjEyN2dkQlVZUk5UcGhRaGdFQ2J5M1d6dHZraEg3UERpTER6THpz?=
- =?utf-8?B?ZjNRN1JvZUlva2xtVjBLMkxIa0lEaHNueDlXMVI4Q1VIUHV3QkxNZHNqMVRH?=
- =?utf-8?B?S0xub1NrNitXdzZFTzFHMSszdW9kbWJCSDBMcGVaZWVjZDVvaHlvd09yT1Rh?=
- =?utf-8?B?UHBkUlVYeFJQN09GY0pZK2tnVlhpTmhnTnFrOGJQSDhqR2hObVg0ZmU3TGRT?=
- =?utf-8?B?Z2x1T3VFUGpZWkdpcDlWcEJzWnlTK3gzK2xpdGpFTlA0b25UdkFXczBrQk9v?=
- =?utf-8?B?NkRyaUxYNkJtQVpDbHE3UGNFRzN5aTdkcVB1MVRjRTZCVk5nZTVTMDNPK3Bp?=
- =?utf-8?B?WVVYbi9VL2pHNTltdThUckdTTnpDeUdEZC9NaWlMYnRaZjEvL3ZiUTEwMnl1?=
- =?utf-8?B?cFhSNzRSL0hESHBaczVzQ2NaU1VMeWJRaGhyaTZTRWNva3lSMWVhT0phWDRD?=
- =?utf-8?B?M0c5bkxjSDZOODFIOGRqOTJMaHF4OXAyRVdIM3RLWnBIb25aMURKUFpkYzMz?=
- =?utf-8?B?WVh6SFZBendJbGQwd2xBckE4cE1IZmpwR0lqZlA2VHQzbG5ZMmh2dnBqbXk1?=
- =?utf-8?B?OElFYSttdnd0eWkwNng5Z0NiajlFb3AvNXFSS3lNYUxXZnpJMUhxNVpoUGgv?=
- =?utf-8?B?QUJkeFM5ald2YU1lcUgwWWpVZXlWQjBDQ0I1TzJieDRVaHIybWhaYUdVd1I2?=
- =?utf-8?B?QlZEdzdJeW10R0xVWUVwejJXbFd3a0ZuZUg5OUxYekxkYU9xa1BpZ2MrTTcr?=
- =?utf-8?B?YUZBNXgvcVJJSktxTG82K2w3eld5eXZpR1hscmh3Q0NSS204NVFIb0ROZzNM?=
- =?utf-8?B?MFkwOGdkU3JFNTRrTm5lbE95dkVTbm5McFpFbXYzdlhaZVR2SUk0U3ltMDVl?=
- =?utf-8?B?c1g1NEJKZXBIU3Byc04zazdKT1ExQUNRa1ZnZ3R1MER5NENtR0FVbG85K1lE?=
- =?utf-8?B?eC8xL2hUbmQrQ3A1TTZvamRuUDErRUx6dmZjczBHNlVyRVlRN25oenRzTGZi?=
- =?utf-8?B?YU9JT00vUXBXLytKZm4zRlF0QTNuMW0zQVlmaCtxQU92SmR5VWY1R252RGJ1?=
- =?utf-8?B?SVlMbzNCNTJ2a0xjZEkzN3JQQ2x2dUhLNkxhSWdwMDlZZ29nT2EzdWdRWDll?=
- =?utf-8?B?dE1td3NoN1lQMkgyS2tXdi96Q3NOamh1bXpLWXlpZ3ZzSnlRQnFuQ05FaW45?=
- =?utf-8?B?OWtNcGtweWxuMVIzaVl5NkJxc1dOUm9WK3duUU5qbW9RbHhsNlNEdXRkNXN0?=
- =?utf-8?B?czZab1V0czZ1RlBZcUdMdWlwenFIRlo2R3pBUDMwS2JxSUU2elMrYjlSQXQv?=
- =?utf-8?B?S3BxVjJKWkJ6cXlUMTQrT1VtM1pycVZ4b25Ga20wSnhTb2xyQkRTa25IdnhB?=
- =?utf-8?B?QjU5TVRhY2RBZ3ptRmJLMFh6Q1pueTVRQ0RGNUg5Z04xd2FOV3MrNXM1eDAv?=
- =?utf-8?B?Y2NvUW9OV2dkVENrR1NZcSt1NFBhbXdxbjA1aXUyTzZRYi9sL3Q1SHpKSS9w?=
- =?utf-8?B?ZVVxZHV6NG9GZnA1R3NFdXp3enNLaGRxY29yTWFhQk80dlhROFFvZ094RjhI?=
- =?utf-8?B?cnk3N01SVlk4c09aRG5BemFMejNvdEZyVFZQckloMVpjS2NiOGpEaEwrWXJJ?=
- =?utf-8?B?K0xYSGtBL3QyZ1U4bHdpb2pBRGc5Q2swUDZoZktlcThhVkRvRVNLVkJjV3dz?=
- =?utf-8?B?SEE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae6e27c0-9da9-4003-bdcd-08de121cc5aa
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 10:13:12.1680
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TcxglaL2XfPH8lxGQ5wtR7Qz0dPAu2V1Mac8WbO3zcRw9W0YxuFTlSTW6gYMWUGqk7D9D54y8/P80xQRzRFzXA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5252
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] ksm: use range-walk function to jump over holes in
+ scan_get_next_rmap_item
+To: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ craftfever <craftfever@airmail.cc>
+References: <20251023035841.41406-1-pedrodemargomes@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251023035841.41406-1-pedrodemargomes@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 16/10/2025 20:09, Sebastian Reichel wrote:
-> Hi,
+On 23.10.25 05:58, Pedro Demarchi Gomes wrote:
+> Currently, scan_get_next_rmap_item() walks every page address in a VMA
+> to locate mergeable pages. This becomes highly inefficient when scanning
+> large virtual memory areas that contain mostly unmapped regions, causing
+> ksmd to use large amount of cpu without deduplicating much pages.
 > 
-> I will fix the typo in the commit message in PATCHv2.
+> This patch replaces the per-address lookup with a range walk using
+> walk_page_range(). The range walker allows KSM to skip over entire
+> unmapped holes in a VMA, avoiding unnecessary lookups.
+> This problem was previously discussed in [1].
 > 
-> On Thu, Oct 16, 2025 at 10:42:29AM +0300, Adrian Hunter wrote:
->>> +static void rk35xx_sdhci_cqe_enable(struct mmc_host *mmc)
->>> +{
->>> +	struct sdhci_host *host = mmc_priv(mmc);
->>> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->>> +	struct dwcmshc_priv *dwc_priv = sdhci_pltfm_priv(pltfm_host);
->>> +	u32 reg;
->>> +
->>> +	reg = sdhci_readl(host, dwc_priv->vendor_specific_area2 + CQHCI_CFG);
->>> +	reg |= CQHCI_ENABLE;
->>> +	sdhci_writel(host, reg, dwc_priv->vendor_specific_area2 + CQHCI_CFG);
->>> +
->>> +	reg = sdhci_readl(host, SDHCI_PRESENT_STATE);
->>> +	while (reg & SDHCI_DATA_AVAILABLE) {
->>> +		sdhci_readl(host, SDHCI_BUFFER);
->>> +		reg = sdhci_readl(host, SDHCI_PRESENT_STATE);
->>> +	}
->>> +
->>> +	sdhci_writew(host, DWCMSHC_SDHCI_CQE_TRNS_MODE, SDHCI_TRANSFER_MODE);
->>> +
->>> +	sdhci_cqe_enable(mmc);
->>> +
->>> +	sdhci_writew(host, DWCMSHC_SDHCI_CQE_TRNS_MODE, SDHCI_TRANSFER_MODE);
->>
->> Transfer mode was set already 2 lines up
+> Consider the following test program which creates a 32 TiB mapping in
+> the virtual address space but only populates a single page:
 > 
-> Indeed. I was not sure if this is an intentional quirk from Yifeng
-> Zhao and thus kept this dual write.
+> #include <unistd.h>
+> #include <stdio.h>
+> #include <sys/mman.h>
 > 
->>> +}
->>> +
->>> +static void rk35xx_sdhci_cqe_disabled(struct mmc_host *mmc, bool recovery)
->>
->> As mentioned elsewhere "disabled" -> "disable"
+> /* 32 TiB */
+> const size_t size = 32ul * 1024 * 1024 * 1024 * 1024;
 > 
-> Ack, will fix in PATCHv2.
+> int main() {
+>          char *area = mmap(NULL, size, PROT_READ | PROT_WRITE,
+>                            MAP_NORESERVE | MAP_PRIVATE | MAP_ANON, -1, 0);
 > 
->>> +{
->>> +	struct sdhci_host *host = mmc_priv(mmc);
->>> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->>> +	struct dwcmshc_priv *dwc_priv = sdhci_pltfm_priv(pltfm_host);
->>> +	unsigned long flags;
->>> +	u32 ctrl;
->>> +
->>> +	mmc->cqe_ops->cqe_wait_for_idle(mmc);
->>
->> Is this necessary?  If so, it seems more like something that should be done by
->> cqhci itself.
+>          if (area == MAP_FAILED) {
+>                  perror("mmap() failed\n");
+>                  return -1;
+>          }
 > 
-> The RK3588 TRM says that the software needs to verify that the eMMC
-> controller is in idle state without any ongoing commands or data
-> transfers before disabling the CQ_EN bit (CQHCI_ENABLE in the kernel).
+>          /* Populate a single page such that we get an anon_vma. */
+>          *area = 0;
+> 
+>          /* Enable KSM. */
+>          madvise(area, size, MADV_MERGEABLE);
+>          pause();
+>          return 0;
+> }
+> 
+> $ ./ksm-sparse  &
+> $ echo 1 > /sys/kernel/mm/ksm/run
+> 
+> Without this patch ksmd uses 100% of the cpu for a long time (more then
+> 1 hour in my test machine) scanning all the 32 TiB virtual address space
+> that contain only one mapped page. This makes ksmd essentially deadlocked
+> not able to deduplicate anything of value.
+> With this patch ksmd walks only the one mapped page and skips the rest of
+> the 32 TiB virtual address space, making the scan fast using little cpu.
+> 
+> [1] https://lore.kernel.org/linux-mm/423de7a3-1c62-4e72-8e79-19a6413e420c@redhat.com/
+> 
+> ---
+> v5:
+>    - Improve patch description
+> 
+> v4: https://lore.kernel.org/linux-mm/20251022153059.22763-1-pedrodemargomes@gmail.com/
+>    - Make minimal changes to replace folio_walk by walk_page_range_vma
+> 
+> v3: https://lore.kernel.org/all/20251016012236.4189-1-pedrodemargomes@gmail.com/
+>    - Treat THPs in ksm_pmd_entry
+>    - Update ksm_scan.address outside walk_page_range
+>    - Change goto to while loop
+> 
+> v2: https://lore.kernel.org/all/20251014151126.87589-1-pedrodemargomes@gmail.com/
+>    - Use pmd_entry to walk page range
+>    - Use cond_resched inside pmd_entry()
+>    - walk_page_range returns page+folio
+> 
+> v1: https://lore.kernel.org/all/20251014055828.124522-1-pedrodemargomes@gmail.com/
+> 
+> Reported-by: craftfever <craftfever@airmail.cc>
+> Closes: https://lkml.kernel.org/r/020cf8de6e773bb78ba7614ef250129f11a63781@murena.io
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Co-developed-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Fixes: 31dbd01f3143 ("ksm: Kernel SamePage Merging")
+> Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
 
-Leave out cqe_wait_for_idle() but make use of ->pre_enable() and
-->post_disable(), refer for example msdc_cqe_pre_enable() /
-msdc_cqe_post_disable() or sdhci_tegra_cqe_pre_enable() /
-sdhci_tegra_cqe_post_disable()
+I think we really want to
+
+	Cc: stable@vger.kernel.org
+
+Andrew can do that when applying.
+
+Acked-by: David Hildenbrand <david@redhat.com>
+
+
+As a note, we have similar code that should probably be doing a range 
+walk instead: unmerge_ksm_pages()->break_ksm().
+
+It can be triggered on a range through unmerge_ksm_pages(), which gets 
+called from:
+
+* ksm_madvise() through madvise(MADV_UNMERGEABLE).  There are not a lot 
+of users of that function.
+
+* __ksm_del_vma() through ksm_del_vmas(). Effectively called when 
+disabling KSM for a process either through the sysctl or from s390x gmap 
+code when enabling storage keys for a VM.
+
+In both cases, it's not ksmd that's blocked, it's just that the 
+operation (trigger by the app) takes longer.
+
+So both are not as critical as this thing here, but likely we should 
+take care of it at some point.
+
+Interestingly, I converted that from a walk_page_range_vma() to 
+folio_walk_start() after converting it from follow_page() to 
+walk_page_range_vma().
+
+But we never did a range walk, we just walked individual addresses, 
+because that's what break_ksm() does.
+
+We could effectively revert e317a8d8b4f600fc7ec9725e26417030ee594f52 and 
+adjust it to perform an actual range walk by passing a range to break_ksm().
+
+-- 
+Cheers
+
+David / dhildenb
 
 
