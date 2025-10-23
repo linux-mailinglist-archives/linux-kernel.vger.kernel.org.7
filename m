@@ -1,161 +1,123 @@
-Return-Path: <linux-kernel+bounces-867616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DF9C031D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:59:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F456C031FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC18719C4BFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:59:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 484314E6D2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6485434C143;
-	Thu, 23 Oct 2025 18:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09AB2F691B;
+	Thu, 23 Oct 2025 19:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Or2B9GkW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KdmDjyF4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636CE3431E2;
-	Thu, 23 Oct 2025 18:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583112571D4;
+	Thu, 23 Oct 2025 19:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761245935; cv=none; b=mw9s/bQoz/ovcIcKHq0x4H0i/dd02Y75oI1xPZ7rGBItFZagKYAisTsdVWSviZZZBX5roAv8M7TUOUKd9aM776DNPXTBsFmC9998QwFl6Wc4EHVHyRIXd3lTQVKwQKkx+r8JbORkApZbfdaqSjjmWQod1OQU4wxw67dxS6xinvE=
+	t=1761246100; cv=none; b=qXuJgASUS+T7yoFk91zQRjm359D/2XvSLW+B0YwfIT3+1NGGJojhPc/prJrEwTMPDBiI5T4TpGBp+a6DyTpVU+yDBgS/feS4lCL6l6YX1gTp8ad5vbiwYRB6U0/IfyB13Sq5trkYVNjU9BiKEGOM3L2hesfKZZheeBBaIIMTRNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761245935; c=relaxed/simple;
-	bh=hK3K5Gzeg2JY/s9NsO/6Gk0B3y2knjEROaamIYrBoVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3w9M9SXXHW/M1R0+7wEQzZH5809GcBSjQSzB/udnNAtQLH3qrIyWqrJSHTkdWE3c2I0Uve6SA6HH5LyoixAbX5xRs+jjUU5On+hSWOuNoKLC0bhm8b0DAWi/sxujnV7v6f6hwmXxIwj2abp35o0wC22djIC2/y7g2crGTNpkto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Or2B9GkW; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761245933; x=1792781933;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=hK3K5Gzeg2JY/s9NsO/6Gk0B3y2knjEROaamIYrBoVo=;
-  b=Or2B9GkWYoORLrmFN183Z28gQmiFpz1QAn/cULSsrNtpMsnx2hgmDx9T
-   uzehwejclBqEm6V7UwmTCtgyQSRO0aXEFJ4VTwfaY+Be8q+5DSepdW+da
-   CmXfx3t/I9XmlHVrqmNgfg+/oEo4BMUrffeVGyyjM5tl7PHp4+gco/Nun
-   pkU3/NyCxFNBU5o8ZmwCs6mKqsUBGA24OvFBhuWznkH+r8heZqCBCvHEZ
-   bcDd8NHEgg2XUsLmp273PTGdMV1MIlmwOra8QZfWnVhIBmOd4m8myO0X+
-   VqvCnq6n4fnNPk22H6i2lqyltC3P5IJJJjQUBicqmfDA9L6PYiSJ3/fNI
-   Q==;
-X-CSE-ConnectionGUID: O14/w7oeRLmfBDpuGxdv1A==
-X-CSE-MsgGUID: 9uN6LVWxSSWyBZN1qD+fNw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63350268"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63350268"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:58:52 -0700
-X-CSE-ConnectionGUID: wgrtrZS3TjWza+BE0gQl3A==
-X-CSE-MsgGUID: NFRSOuszT1GX2YbffD7r+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="184130975"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:58:49 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vC0WM-0000000213t-0B1z;
-	Thu, 23 Oct 2025 21:58:46 +0300
-Date: Thu, 23 Oct 2025 21:58:45 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, jic23@kernel.org,
-	dlechner@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, andy@kernel.org,
-	marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
-	salah.triki@gmail.com, skhan@linuxfoundation.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, akhileshpatilvnit@gmail.com
-Subject: Re: [PATCH 2/2] iio: pressure: adp810: Add driver for adp810 sensor
-Message-ID: <aPp65bmTGk1qfPSE@smile.fi.intel.com>
-References: <cover.1760184859.git.akhilesh@ee.iitb.ac.in>
- <8c202e7ccd332b26217d529a7a73b7a3ef0726ea.1760184859.git.akhilesh@ee.iitb.ac.in>
- <CAHp75VdGJfMALGOFvkOW=JZ0yHE2QbRSzNs2Xd42-Weec1GmQw@mail.gmail.com>
- <20251013-144614-1551316@bhairav-test.ee.iitb.ac.in>
+	s=arc-20240116; t=1761246100; c=relaxed/simple;
+	bh=Rl/OP3FUtJNNdUtSALnXRPKL3CMR9JuwjVxR8uU0OvA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hdyNnbmEQIN02kgNe4wS1Qf8mkMbOIwhUyrMVp9Kj6oKr7F9tmZFAqKt5mP5GTkyQ7hQcl8/X6Ut8QmBiEx+lQ1Ec0+qni25ev6LCNrUNgDzUfn+QzJf6EcezRFnsHvhro00m4O09gJFFehGn9NbWqEWfO/QB1mEEGSv3dS0ubg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KdmDjyF4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9F97C4CEE7;
+	Thu, 23 Oct 2025 19:01:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761246099;
+	bh=Rl/OP3FUtJNNdUtSALnXRPKL3CMR9JuwjVxR8uU0OvA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=KdmDjyF4mvdZ/KlLwBcAWfYN+cmsezIappNMctorGGbd+64oe3Xbv2d8bFQf0w+Ca
+	 7OxtqMf3GUxC1pvHSHD9HF/hg5KZMjK4hmL++1GSp665lcTl8kljxzYpsFxfREs+yU
+	 S5Uyd/fk63E4NkxE+wmeZXJUJpQYwMP29dHaRXf7MKNU5Z5jUcCL7Hguu2orA8gZhk
+	 ba3XYKBWlQM+mO8mJY6fJC5JD9rjpSnIOAWDGlGtzqb4VW4mBtWHiAfL/2dlnyQB++
+	 INZS0sprULDtDZuJlt1lp2uN2p0GimKrQNv4J2qc7CGFidlu8nQXqbhh+z9vf7KEse
+	 EKd+MPjxvfo4A==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Thu, 23 Oct 2025 21:01:29 +0200
+Subject: [PATCH] KMSAN: Restore dynamic check for
+ '-fsanitize=kernel-memory'
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251013-144614-1551316@bhairav-test.ee.iitb.ac.in>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251023-fix-kmsan-check-s390-clang-v1-1-4e6df477a4cc@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAIh7+mgC/x3MTQqDQAxA4atI1gbmBynTqxQXGjM1TDvKBKQg3
+ r3B5YOPd4JyE1Z4dic0PkRlqxa+74DWqb4ZZbGG4MLgXYiY5Yflq1NFWpkKakwO6WMUfXJLfMw
+ z5RzBBntj0/f8NV7XH/7mBb1sAAAA
+X-Change-ID: 20251023-fix-kmsan-check-s390-clang-190d37bbcff3
+To: Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, 
+ Dmitry Vyukov <dvyukov@google.com>
+Cc: Nicolas Schier <nsc@kernel.org>, Kees Cook <kees@kernel.org>, 
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+ llvm@lists.linux.dev, kernel test robot <lkp@intel.com>, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1869; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=Rl/OP3FUtJNNdUtSALnXRPKL3CMR9JuwjVxR8uU0OvA=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDBm/qiced1v7d/lK5Smz3a4c4Np8yvxnmv2BiNWeplO29
+ S3fdbaov6OUhUGMi0FWTJGl+rHqcUPDOWcZb5yaBDOHlQlkCAMXpwBM5PxpRoaT+72Ltly+qla7
+ +8WsD+m/dlx7eObXHXWJN7PuOvL89xUpZfifuvvo8lWik+0Kf687Kbsi4Gthn6lF+u3d5+ZWyW7
+ 5fMuHHQA=
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Mon, Oct 13, 2025 at 08:16:14PM +0530, Akhilesh Patil wrote:
-> On Sat, Oct 11, 2025 at 05:10:58PM +0300, Andy Shevchenko wrote:
-> > On Sat, Oct 11, 2025 at 3:25 PM Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
+Commit 5ff8c11775c7 ("KMSAN: Remove tautological checks") changed
+CONFIG_HAVE_KMSAN_COMPILER from a dynamic check for
+'-fsanitize=kernel-memory' to just being true for CONFIG_CC_IS_CLANG.
+This missed the fact that not all architectures supported
+'-fsanitize=kernel-memory' at the same time. For example, SystemZ / s390
+gained support for KMSAN in clang-18 [1], so builds with clang-15
+through clang-17 can select KMSAN but they error with:
 
-...
+  clang-16: error: unsupported option '-fsanitize=kernel-memory' for target 's390x-unknown-linux-gnu'
 
-> > > +struct adp810_read_buf {
-> > > +       u8 dp_msb;
-> > > +       u8 dp_lsb;
-> > > +       u8 dp_crc;
-> > > +       u8 tmp_msb;
-> > > +       u8 tmp_lsb;
-> > > +       u8 tmp_crc;
-> > > +       u8 sf_msb;
-> > > +       u8 sf_lsb;
-> > > +       u8 sf_crc;
-> > > +} __packed;
-> > 
-> > Why __packed?
-> 
-> Yes. This is the structure used as a buffer to store sensor values read.
-> Each entry in this structure should be contiguous in the memory because
-> reference of this structure will be passed to i2c_master_recv() to
-> receive and fill the data.
-> __packed will avoid any compiler generated paddings in the structure to
-> force alignments on certain architectures. We do not want these paddings
-> and want our struct members to be sequentially ordered as shown, with
-> no padding and size of the struct should also be 9 bytes as only 9 bytes of
-> data should be read from the sensor as per the specification.
-> 
-> I could have used array here. But I preferred strcture for better
-> readability of the code as one can easily see what values are expected
-> from sensor while reading and in which order.
+Restore the cc-option check for '-fsanitize=kernel-memory' to make sure
+the compiler target properly supports '-fsanitize=kernel-memory'. The
+check for '-msan-disable-checks=1' does not need to be restored because
+all supported clang versions for building the kernel support it.
 
-Right, but in this form packed only affects the last member size (due to
-alignment), in any case since it's HW mandated requirement, perhaps add a
-comment. (Since we also going to use __be16 types, the __packed is required
-for that to be properly placed in the memory.)
+Fixes: 5ff8c11775c7 ("KMSAN: Remove tautological checks")
+Link: https://github.com/llvm/llvm-project/commit/a3e56a8792ffaf3a3d3538736e1042b8db45ab89 [1]
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/r/202510220236.AVuXXCYy-lkp@intel.com/
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+I plan to take this via kbuild-fixes for 6.18-rc3 or -rc4.
+---
+ lib/Kconfig.kmsan | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/lib/Kconfig.kmsan b/lib/Kconfig.kmsan
+index 7251b6b59e69..cae1ddcc18e1 100644
+--- a/lib/Kconfig.kmsan
++++ b/lib/Kconfig.kmsan
+@@ -3,7 +3,7 @@ config HAVE_ARCH_KMSAN
+ 	bool
+ 
+ config HAVE_KMSAN_COMPILER
+-	def_bool CC_IS_CLANG
++	def_bool $(cc-option,-fsanitize=kernel-memory)
+ 
+ config KMSAN
+ 	bool "KMSAN: detector of uninitialized values use"
 
-...
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251023-fix-kmsan-check-s390-clang-190d37bbcff3
 
-> > > +struct adp810_data {
-> > > +       struct i2c_client *client;
-> > > +       /* Use lock to synchronize access to device during read sequence */
-> > > +       struct mutex lock;
-> > > +};
-> > 
-> > Is there a deliberate choice to not use regmap I²C APIs?
-> 
-> Yes. I explored that possibility. However this sensor follows simple I2C
-> client protocol. It does not expose the concept of I2C registers. It
-> does not follow smbus. Specifically, while reading the measurement from
-> the sensor, we need to only send the device address with read bit on the bus,
-> and start reading 9 bytes following that. That is, no register address
-> should be sent. I am not sure if regmap API has some hack to achive
-> similar because these APIs expect register addresses to read/write which
-> this sensor does not follow. Hence using raw i2c functions. I also
-> thought regmap abstraction is not needed here as this sensor has very
-> limited commands to send and not many command/configurations.
-
-Ah, makes sense.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Best regards,
+--  
+Nathan Chancellor <nathan@kernel.org>
 
 
