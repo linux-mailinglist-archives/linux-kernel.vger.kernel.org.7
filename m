@@ -1,115 +1,127 @@
-Return-Path: <linux-kernel+bounces-867795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D30C03834
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:20:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76982C0382B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EBCA3B372E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0E619A6CE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB62326F467;
-	Thu, 23 Oct 2025 21:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D01246798;
+	Thu, 23 Oct 2025 21:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyfkBUm1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VjqIvMH6"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D89635B138;
-	Thu, 23 Oct 2025 21:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2FF1DB375
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761254431; cv=none; b=B4NZHXKOea9cp3f+yZt+2zMKK/1sB0PrsEYwBQO/Wzi0Wrb22CcyfnjIBikkXu2NuwBzU1faHxhEctq6tu4O32SIzBQBEVr5X3RoKrDvEqib9IGF31v0ScbFFBOyWE/MJWOWMF7AQV47/llRwckY4U1YqV0OlnGHvCLd+oKgLu0=
+	t=1761254381; cv=none; b=am+q4eFOzXZIq/w83n0NbaBf1HE+VzyVddlgII9yhrAGGtEcHsYNkdsuDTsOhsjug8kV0EWKiR2WeAx7RsImpisACyqF77IN/L/Sc3fV0wOZwDk5LkRzn4uZHWO1MlGw7N6bt6vOkHR7mGf9sMr3FoTUSGhsf5qWBrNKrKPFCfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761254431; c=relaxed/simple;
-	bh=CnOMQMjrqhKtD/EhlScExXFn3jDF3wbOMnBmzOuuz8s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sKbqg+4YxW1wz1vufHDvm/L1vlyYkjwV0093SvMTTSW+pkZtdXHhfno/g3Uqo2PfrrciA5ruLUqMRdjhjT1BM35nksMn+a74DhTQ4lvP1j3G6d2tSq2rdANCimca0gor2VFcQOL/IdwN6DiU/ot8i2wYs6OGiQTK+OvHuRzHSMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyfkBUm1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE34FC4CEFB;
-	Thu, 23 Oct 2025 21:20:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761254431;
-	bh=CnOMQMjrqhKtD/EhlScExXFn3jDF3wbOMnBmzOuuz8s=;
-	h=From:Date:Subject:To:Cc:From;
-	b=PyfkBUm1aFy2wRFZV4lD8D0CNFOxRgPgft1bZRCvlbGHjiTDOEDRSHPeaxJ4hs8mL
-	 Q0jiKSY7lNBab/qIAnfhp5rZzKA3f/XjXM+lKbDCV2QcQZ0uzMRt+fSLULsluNrdvK
-	 agcvDqY7q5cJVJYUSF4Wh2HIyZS5qjcZFTr9r52jHnmnQ1IUKhkoNA6X8gExYpe82b
-	 7HrKWlXLgLsgYDSdZhu4tSjag0qtLicxp3osJDmoAZQhJl0qxWInHWojzf4CsZ7mdJ
-	 BVSszA1Ve/HeM+IWLqL8P4gUyQumpvN6PSIrfDlICimkA0AuhZIN17BmGV8vgSunAq
-	 Cm5E2RJPk7d1A==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 23 Oct 2025 22:19:29 +0100
-Subject: [PATCH] KVM: arm64: selftests: Add SCTLR2_EL2 to get-reg-list
+	s=arc-20240116; t=1761254381; c=relaxed/simple;
+	bh=Ei9tWnP6+7R+pnEA92XXsitmlozCSw49trfMXT8LTVk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jRUtz6da4dJo3qbGRnpSHXfiPZNw6fyWwP2cJp8X5gOwP/o7vChiz6N11oYpjsbjPUtj3qC12rOzm4NgR+4rLB1UVC5UQvckC0ifgKOBdH2TFN9MSPCDeikPc3eXvkcYhhm6eql+LyY/bBOZv547OVXtDvzULPcEz4c57o3poqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VjqIvMH6; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b6d53684cfdso304248866b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:19:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761254378; x=1761859178; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ei9tWnP6+7R+pnEA92XXsitmlozCSw49trfMXT8LTVk=;
+        b=VjqIvMH6EV5ydfWgtn/qIAFbrCsx5duAPkWliqBfVrOZcHVYpDdXDPS1nkbDOdnEcT
+         EOJHvqyDUpyrRJo3ckLvzjrecb2tLw8VMymPGjibfeobz1uj+fszCjoj1NNve0Hjy/Bw
+         XVvVTlifi5oEXnVTo7KzJS1wNdvPizUxyN4YKtGWXLCdECDOCukCxmFr2S1kZcy4CWS4
+         fl8eEoGd/VgvwfAyP2irsq4+TTLQ97+GABnTYfRwuenCMQTZotSA6c/DuVxePW/oHyI6
+         MRImOjxpM3Ih/I1OGS4Dc2LbxZ6YLcBSz/447vrU35QcK3Yf/JXVOTi/kI/1QGVbOIQK
+         SDVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761254378; x=1761859178;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ei9tWnP6+7R+pnEA92XXsitmlozCSw49trfMXT8LTVk=;
+        b=VecFGFL/orw2sT8IdGTR+X0zYCebuuTzPX0aKxTekCXTARBrDMQL0ISU0JzTtbBOx6
+         k9i4CQDhiSffRT4D3agPVYGryVgqVS1q8NjGICyfd3D/TCJL1jIJ4Q9J6mCBsgTTHZnp
+         Rb1bJ4WkInm5wGkM/PJp281YQcptDDE4TUmczQ3oVXzkxJtSnrT7lN6uBA2mYLkNhRAQ
+         nzyH6jfxjWLJ9i3VtwqwRsfCZSy7yz8SOu66/76NmQADenJLCy9z8FE0f4PtIlqa6id3
+         1QzBdP0S/WWdBZmBAo9ay3jkH/OYSldJP8vF92kKEGyOlwqjgQwsi5VEe7WZsH3txUCq
+         1qbg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1fXexFExA+jJMSPBnQYYxogFzJ6vCATy82dkSMxFxU4gZczQ+kLGJOyeHbazvb0ha1TEuWc/ylWUFa9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxokIsn96fnayWA32bCIkEIvMPJaFMPf2QcSaJOVkId8NrThkTk
+	i5o3s/afwP4RfOnvVNeGOpiA0gvGS8DObQcSJvHLmd5k1Vi1wFGnozEg
+X-Gm-Gg: ASbGncvQOY3091P1Ck37b75XqVMWd+GLIYONw2vJ5K5zL8kEUEeZhgAeS/ycUjW1Uu7
+	xpM3TOL6DLW6rmeCa6QNC6NwGKRszctGuxLhOUNNrW9/g7VA1/1IvhbgK7heX7eDI4qvTOhHkbR
+	ixaP7MPxccWfVg+4QVKZ72iapkTF2qnlpTK+V1aT04ImrU5Agg4rm3rIr2ckoG1CzWf+I3NqqXm
+	n4F++GNECEfW25BLKGPiYXFrn8nYPTlM1o7g3EUuN0NtDdJsWAqUUcjYd1tLrGCK8VtuRF4vBsN
+	K7ofjdCozZFzSUszhhe+iZGvul5NmREzreodL+Pq/dkMiQXmhweIoPk4w/fqd8vJsx8k6EpxPXX
+	YofrTiMuz0Bd0lXjZ66PgGBaFPAx9EYVAe+rkJl1fZdaVNbnGL59E4XcKYPvZTDv8cAxOyJoZmg
+	NjPfZnLzvh8kIlLU9kkx9157ako3OWdydm4w6osBWXRYbFkUlbqBL1XGLx
+X-Google-Smtp-Source: AGHT+IH0ilIhNZdTBWk7XhboQCM74tx7jK8m/eLziXPEBEYUaJoG0DUF30XGDfE2ZBdmNNzQKYsHEQ==
+X-Received: by 2002:a17:907:9810:b0:b6d:6b56:bd7d with SMTP id a640c23a62f3a-b6d6b56c15cmr55871566b.16.1761254377896;
+        Thu, 23 Oct 2025 14:19:37 -0700 (PDT)
+Received: from 0.1.2.1.2.0.a.2.dynamic.cust.swisscom.net ([2a02:1210:8642:2b00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d5144f786sm308476866b.59.2025.10.23.14.19.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 14:19:37 -0700 (PDT)
+Message-ID: <d0af71bf7db6743dfcd0c53c2eacd32c56fa5b6e.camel@gmail.com>
+Subject: Re: [PATCH v2 3/3] riscv: dts: sophgo: Add USB support for cv18xx
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Longbin Li <looong.bin@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen Wang	 <unicorn_wang@outlook.com>, Inochi Amaoto
+ <inochiama@gmail.com>, Paul Walmsley	 <pjw@kernel.org>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou	 <aou@eecs.berkeley.edu>, Alexandre Ghiti
+ <alex@ghiti.fr>, Thomas Bonnefille	 <thomas.bonnefille@bootlin.com>, Ze
+ Huang <huangze@whut.edu.cn>
+Cc: devicetree@vger.kernel.org, sophgo@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Date: Thu, 23 Oct 2025 23:19:37 +0200
+In-Reply-To: <20251020083838.67522-4-looong.bin@gmail.com>
+References: <20251020083838.67522-1-looong.bin@gmail.com>
+	 <20251020083838.67522-4-looong.bin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-b4-kvm-arm64-get-reg-list-sctlr-el2-v1-1-088f88ff992a@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAOGb+mgC/x3NQQrCQAxG4auUrP2hTcciXkVcjDUdg9MqyVAKp
- Xd3cPlt3tvJxVScrs1OJqu6fpaK7tTQ+IpLEuizmrjlc9dyj0fAe50RbR4CkhSYJGT1Ah9LNkh
- mMLOEoZdLjBPV0tdk0u1/ud2P4weLEUR6dQAAAA==
-X-Change-ID: 20251023-b4-kvm-arm64-get-reg-list-sctlr-el2-222e463e8aaf
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-88d78
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1429; i=broonie@kernel.org;
- h=from:subject:message-id; bh=CnOMQMjrqhKtD/EhlScExXFn3jDF3wbOMnBmzOuuz8s=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBo+pwbFbGYn/J+XnOrZGFvXgcvTyRkw0UD8ItGS
- HcdNtUNIyuJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaPqcGwAKCRAk1otyXVSH
- 0KyIB/9Hifq35A9damYTTSqJ1l1r/u0aFiu0nLatsjdRqqy5ohdrChk54+ZgkggtTGEhEgfUmpR
- c1KDMeSzsd0gkcrIH2V6OxPvd6q0uBkzZhdy/rfOakWyasCWU1jT1ecCVopPQvnSBMqAROgqOcK
- /DADf3whJVgNl2m1Vbt9NWO5VDsygGuZKyXxm2dc+HoeWCB5HTh9tLNszdX1gUgDKn4YYFD+ty7
- HMkuYLOKJiP6zCoAbwbW7/ZTZ4R3qqPxgvmIhkm01Stka/J+btGZ6SwvIPF9Crs+1N3O66Jyjig
- IVjVSM2/9MCzdxXyL+rfw61UAeqmauigvno1wNf/XARiKQhb
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-We recently added support for SCTLR2_EL2 to the kernel but did not add it
-to get-reg-list, resulting in it reporting the missing register when it
-is available. Add it.
+Hi Longbin,
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/kvm/arm64/get-reg-list.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Mon, 2025-10-20 at 16:38 +0800, Longbin Li wrote:
+> Add USB controller node for cv18xx and enable it for Huashan Pi, milkv-du=
+o.
+>=20
+> Co-authored-by: Inochi Amaoto <inochiama@gmail.com>
+> Signed-off-by: Longbin Li <looong.bin@gmail.com>
 
-diff --git a/tools/testing/selftests/kvm/arm64/get-reg-list.c b/tools/testing/selftests/kvm/arm64/get-reg-list.c
-index c9b84eeaab6b..2abef0a86d46 100644
---- a/tools/testing/selftests/kvm/arm64/get-reg-list.c
-+++ b/tools/testing/selftests/kvm/arm64/get-reg-list.c
-@@ -63,6 +63,7 @@ static struct feature_id_reg feat_id_regs[] = {
- 	REG_FEAT(HDFGWTR2_EL2,	ID_AA64MMFR0_EL1, FGT, FGT2),
- 	REG_FEAT(ZCR_EL2,	ID_AA64PFR0_EL1, SVE, IMP),
- 	REG_FEAT(SCTLR2_EL1,	ID_AA64MMFR3_EL1, SCTLRX, IMP),
-+	REG_FEAT(SCTLR2_EL2,	ID_AA64MMFR3_EL1, SCTLRX, IMP),
- 	REG_FEAT(VDISR_EL2,	ID_AA64PFR0_EL1, RAS, IMP),
- 	REG_FEAT(VSESR_EL2,	ID_AA64PFR0_EL1, RAS, IMP),
- 	REG_FEAT(VNCR_EL2,	ID_AA64MMFR4_EL1, NV_frac, NV2_ONLY),
-@@ -718,6 +719,7 @@ static __u64 el2_regs[] = {
- 	SYS_REG(VMPIDR_EL2),
- 	SYS_REG(SCTLR_EL2),
- 	SYS_REG(ACTLR_EL2),
-+	SYS_REG(SCTLR2_EL2),
- 	SYS_REG(HCR_EL2),
- 	SYS_REG(MDCR_EL2),
- 	SYS_REG(CPTR_EL2),
+Successfully tested in host mode on Milk-V Duo Module 01 EVB:
 
----
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-change-id: 20251023-b4-kvm-arm64-get-reg-list-sctlr-el2-222e463e8aaf
+Tested-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+(please don't forget to take this tag into your v4 if it still will apply)
 
-Best regards,
---  
-Mark Brown <broonie@kernel.org>
+> ---
+> =C2=A0arch/riscv/boot/dts/sophgo/cv1800b-milkv-duo.dts |=C2=A0 5 +++++
+> =C2=A0arch/riscv/boot/dts/sophgo/cv180x.dtsi=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 16 ++++++++++++++++
+> =C2=A0.../riscv/boot/dts/sophgo/cv1812h-huashan-pi.dts |=C2=A0 5 +++++
+> =C2=A0.../boot/dts/sophgo/sg2002-licheerv-nano-b.dts=C2=A0=C2=A0 |=C2=A0 =
+5 +++++
+> =C2=A04 files changed, 31 insertions(+)
 
+--=20
+Alexander Sverdlin.
 
