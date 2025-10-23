@@ -1,123 +1,106 @@
-Return-Path: <linux-kernel+bounces-867363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB9B1C0268C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:20:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC8AC026A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 279211AA6AAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0097D1AA6C36
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6C72BDC0F;
-	Thu, 23 Oct 2025 16:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7D42C159E;
+	Thu, 23 Oct 2025 16:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouN94J5y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MY69QPay"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F14026E6EB;
-	Thu, 23 Oct 2025 16:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691D12BD5AF;
+	Thu, 23 Oct 2025 16:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761236408; cv=none; b=NVna9HPTEUhn0di7oydQjutxF2u1EH+u8Nguw7+FktU4DTZf/05WWC6sDkvyFQkJtRmQsg5FIM2xiG3GUqVgY7bLE/jMigGTd0N7zH9ozwZoDf2mRIzYYed2CF3AeHQhuEBIfxHMNMd7pmcd/ymOHR6GDza333sqE8LJ7c+t+XU=
+	t=1761236417; cv=none; b=IdADC3oZoMRiszgEjw3nMNFs/0326smlaMPaZlNPTrytfTKyCJo7td/GrI0U616xbty/IyOWkM2ge+yEgDHwjY6foSK9pPeR2lAJTsFeH1lSuKKDfXpWuLVHj6ehHd2w2czt0kcIUpXAlMLdcUh4S76Icl4IwbzGS22zMYU+V9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761236408; c=relaxed/simple;
-	bh=RCMpf5k0vKyOi28zOMikq6SuumaOxpGBZ43eRqkUaFY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=PNmzftYuHwWglcpPrsWaC8gSr+GC3+kZ+ZFlCXw4CGacEQPUeqrDjyqlF5T24oy6xAlSs+snLc8uL2qxk9+DFyEPfB8FdVA4IOIIDG8PBdDi5pZm9NSMHPHTUdj1GkUHSSUHVofVp9HnZRT8bZvziAShDzTM3D4yvqzM8W1Cvv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouN94J5y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF2C3C4CEE7;
-	Thu, 23 Oct 2025 16:20:04 +0000 (UTC)
+	s=arc-20240116; t=1761236417; c=relaxed/simple;
+	bh=fFVUi40XDCK9B7HixvDHQwpkFgo3/dBfhOzbpBXTDTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YeJKmqlmIb5EP/YdtJ3Z6eNO2D4ArkG9w2Noil+MGxuYsucZ//btTMGEF1X6lzwvi6p89Ih+OolDI0SUGx/HvCgl6IRQpT+UmFOmvfuW53cskiVnGL69hk6CSuB6fR1R3OSaVGR2PbEX1+ZQDBpEXKohRQPxJgFfmraDW1JtxOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MY69QPay; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3260C4CEE7;
+	Thu, 23 Oct 2025 16:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761236407;
-	bh=RCMpf5k0vKyOi28zOMikq6SuumaOxpGBZ43eRqkUaFY=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=ouN94J5yzRIPyysjXVyJhG42R/fhm2bqspj7rmd99NQXp9V3XtD/hbhOJLrgLl8yW
-	 IwxMxlo2YeGglYuu+DrdZ2h+pEEoPvGwNbFDtXBBjTtDGxPiO1PfZWpXVIGu8IShCH
-	 SWHRx1hT7L+vgeNuR5eHouBDX1osHpreSEuirIDoR7IAe0OwS+G/L+nvGDd9wpsgKX
-	 Xy/qWmCkh5SATThn3uUwNUd7yocANiTEkiVxTk1E4+EpQjyJMGsnuIubTwlr+vJsLQ
-	 y0Vcn1/htl0br68bwokjCIfrhVrxjdYJMnDcyX8AHWA5Zh0cVhGKc1Hp0eMOUpT/gC
-	 dVO7b5XG2eQRw==
+	s=k20201202; t=1761236417;
+	bh=fFVUi40XDCK9B7HixvDHQwpkFgo3/dBfhOzbpBXTDTk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MY69QPayrEeVsAOYAfDxnBHKtP4LY+mIEf+kykRLRh7UrmCItw9ch0v/IfnubidB3
+	 s+kE1VPjFfaUbpcfVYRMloqK1T89N0DGPN3sts5gjubAHfhcfasWlrnwYZ/5k+KvTq
+	 mx18RRSLyACPAY4NOAcn9CHoIJOuEprnSvtvco8f/jw9KZCYN/EGwEW9pzTQ/ZqNjq
+	 QYXzsVq/yfETa04aVZ04g67p6vXJVFUKrb7pVEeunSFQHnnkUfi0OOzgkOSE56OJ9l
+	 v/b9wZL6lmUWKVwMW5NdLKwINBfzlrUFZSWms9nq7nXIE7O4NWxJwZFatipEjGDmbQ
+	 gcg/+LfnF7w5g==
+Date: Thu, 23 Oct 2025 09:20:16 -0700
+From: Kees Cook <kees@kernel.org>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 1/9] net: Add struct sockaddr_unspec for sockaddr of
+ unknown length
+Message-ID: <202510230918.AFE383F9E0@keescook>
+References: <20251020212125.make.115-kees@kernel.org>
+ <20251020212639.1223484-1-kees@kernel.org>
+ <980907a1-255d-4aa4-ad49-0fba79fe8edc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 Oct 2025 18:20:02 +0200
-Message-Id: <DDPU75QB8MQ6.3HZ5N0GYKQ9QU@kernel.org>
-Subject: Re: [PATCH v5 5/7] revocable: Add fops replacement
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Tzung-Bi Shih"
- <tzungbi@kernel.org>, "Benson Leung" <bleung@chromium.org>, "Rafael J .
- Wysocki" <rafael@kernel.org>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah
- Khan" <shuah@kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <chrome-platform@lists.linux.dev>,
- <linux-kselftest@vger.kernel.org>, "Laurent Pinchart"
- <laurent.pinchart@ideasonboard.com>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>, "Simona Vetter"
- <simona.vetter@ffwll.ch>, "Dan Williams" <dan.j.williams@intel.com>
-To: "Jason Gunthorpe" <jgg@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251017134916.GK3901471@nvidia.com>
- <aPJp3hP44n96Rug9@tzungbi-laptop> <20251017162116.GA316284@nvidia.com>
- <aPT-7TTgW_Xop99j@tzungbi-laptop> <20251020115734.GH316284@nvidia.com>
- <aPcQ99MZse5zmv3o@google.com> <20251021121536.GG316284@nvidia.com>
- <aPo6CZyT_IGWmu-O@tzungbi-laptop> <20251023145131.GI262900@nvidia.com>
- <2025102321-struggle-fraying-52ff@gregkh>
- <20251023155746.GL262900@nvidia.com>
-In-Reply-To: <20251023155746.GL262900@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <980907a1-255d-4aa4-ad49-0fba79fe8edc@redhat.com>
 
-On Thu Oct 23, 2025 at 5:57 PM CEST, Jason Gunthorpe wrote:
-> IMHO the rust code does it principally because the sync unregister
-> life cycle model does not fit naturally into rust.
+On Thu, Oct 23, 2025 at 12:59:59PM +0200, Paolo Abeni wrote:
+> On 10/20/25 11:26 PM, Kees Cook wrote:
+> > Add flexible sockaddr structure to support addresses longer than the
+> > traditional 14-byte struct sockaddr::sa_data limitation without
+> > requiring the full 128-byte sa_data of struct sockaddr_storage. This
+> > allows the network APIs to pass around a pointer to an object that
+> > isn't lying to the compiler about how big it is, but must be accompanied
+> > by its actual size as an additional parameter.
+> > 
+> > It's possible we may way to migrate to including the size with the
+> > struct in the future, e.g.:
+> > 
+> > struct sockaddr_unspec {
+> > 	u16 sa_data_len;
+> > 	u16 sa_family;
+> > 	u8  sa_data[] __counted_by(sa_data_len);
+> > };
+> > 
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> 
+> Another side note: please include the 'net-next' subj prefix in next
+> submissions, otherwise patchwork could be fouled, and the patches will
+> not be picked by our CI - I guess we need all the possible testing done
+> here ;)
 
-That's not the case.
+Okay, I've tweaked my workflow automation to attempt this now. I had a
+bit of a catch-22 in that I generated the CC list after "git
+format-patch" (and format-patch is what has the --prefix option, so I
+couldn't see if netdev@ was in the CC list yet...) Anyway, it should be
+part of my automation now...
 
-In fact, we try to give as much "sync" guarantees as possible. For instance=
-,
-when a driver registers an IRQ the irq::Registration API enforces that the =
-IRQ
-is unregistered before the registering device is unbound.
-
-As a consequence, the IRQ callback can provide a &Device<Bound>, which acts=
- as a
-"cookie" that proves that for this scope (IRQ callback) the device is guara=
-nteed
-to be bound.
-
-With this "cookie" we can then directly access device resources (such as I/=
-O
-memory) that is within a Devres (and hence a Revocable) container directly,
-*without* any locking. I.e. we can safely bypass the Revocable and hence it=
-s
-overhead.
-
-The idea is to utilize this pattern for every applicable scope, e.g. workqu=
-eues /
-work items, timers, IRQs, substems callbacks, IOCTLs, etc.
-
-Only for scopes where no such guarantee can be given upheld, the caller act=
-ually
-has to go through the Revocable. And this is good, because it means the cal=
-ler
-is indeed in a scope where there is no guarantee that the device is not unb=
-ound
-concurrently.
-
-So, what the Rust code aims at, is to guarantee correctness in either case.=
- But
-in order to achieve that without unnecessary overhead, all the other APIs (=
-e.g.
-IRQ, workqueue, etc.) have to provide specific "sync" APIs playing along th=
-e
-driver model.
-
-The difference between C and Rust here is mostly that the "safely bypass
-Revocable" trick is only possible due to Rust's type system (and hence the
-compiler) stopping people from doing it in an unsafe way. In C that's not
-possible unfortunately.
+-- 
+Kees Cook
 
