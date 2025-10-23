@@ -1,80 +1,93 @@
-Return-Path: <linux-kernel+bounces-867377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97BC4C02725
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:28:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B612C02713
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C65F3AF4EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:27:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E5324E4478
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815482DC320;
-	Thu, 23 Oct 2025 16:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476DA2D739C;
+	Thu, 23 Oct 2025 16:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="WlOenW9l"
-Received: from pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.42.203.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQEz05TZ"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111012D46A7;
-	Thu, 23 Oct 2025 16:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.42.203.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7212D592B
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761236846; cv=none; b=GT1wwpavC+QEWjH9uiD7mTGyhhKpM0wmaCAAvMPuyIgwIOxCHyfenFd1wmQ04ZkDPP8iExppwtRZBzsYsHp9aoYHvxQfAahhfqWLlSOXGoKSMPEYGcZwKWmRIKRFGjuz7ER/Bu4bzfFm2kcDSUc4qPf5tv4e4N5PZVHuUkHOEmU=
+	t=1761236841; cv=none; b=s6s5S5L/Yfkxcl+m/WM0Pq+Z3XkTOlyZNEYeWf1i8cpz4sH/Rz5RN/Azc5nnCitIOO8w56w7ry4NbiXnDFHJUdNXUgVqh21XCuaOGIwTBUe4Jpp6e4xsxdGmflJNADIdB9oLuXpcF/cQrkaBuBjNvQCWHwqlLyVk5fy9q3IsoqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761236846; c=relaxed/simple;
-	bh=Grs0gM9dzqfJn35R0W9gZX6wLE9dzv8v3TtYtjxwN38=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wyqm1qSRGXNEiyJJEyF6ZGH/DxycLuI7QChmrYA7SBlNcZaHsx760W7xd3xNtqb9PxcAQm7LLZVgOkboEWhUpcVUo953mvdUUI3sg3FvYD9WBC9uXF4poOU/11oENwxLw8yQ8gYcSfi4k0CMDs8PFCrB+PNfPQl0vLv1l0gq3lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=WlOenW9l; arc=none smtp.client-ip=52.42.203.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1761236841; c=relaxed/simple;
+	bh=eIKrqlXU/8n9AqT0k1+v3qjg2Q9CMZzbVJvOLiJgpEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nm79U7t0cgxbAtrCHp1Sipx27PWm4Bhl8aFoMBW7gEG0bvKcDmSrrlldLOx3XCDV8eIqsV9qs7WtYdF8Coyy1QgjLsTjk4FFwrRusZfPMOmAN6kmUjovi1FRpJFKr+lDX2uICcNXS9aXPzCRAtolFdzSU2tWmVTgLJnQ9CmVRZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQEz05TZ; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-87c20106cbeso13945126d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:27:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1761236845; x=1792772845;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2lBkDsdUPck2BkjmBB98y45Ia11Tv+czovWMGGK0xbU=;
-  b=WlOenW9l1lxRKm1tsARaU42w+BfCrASyqYJS50zecnFcdsZ+/PHVot+C
-   Yr0a1jnkHVWEtJbuLdZirwe+hdGsoVdsXtkXe5DhVyJ8MFBlxDZTVXxDK
-   MftfWeJqFTGFLIpm+JQPBnQg9BE31k/kOl1W3OdO6pIWF1hg2jNIyfv9W
-   c4obKXTbtYs32sCli22NXOd7zxu6EnY7gXcf4e5GnUriEiaNHHG+usY6i
-   dQrP+3rZIpNHffkKY9M/r8VFlK3Jhillht5lvicofKPH9UY7TfETFyZDa
-   RPr23vvIEllz1MEwRq1pJpsVhzqAhgYvFZLYeiVNskoL70S6fEAy4R0s0
-   g==;
-X-CSE-ConnectionGUID: 13dYSAKUR5iCcQWCEwQOCA==
-X-CSE-MsgGUID: FTESq6ZuRNqRxO6Pwk4pSw==
-X-IronPort-AV: E=Sophos;i="6.19,250,1754956800"; 
-   d="scan'208";a="5573970"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
-  by internal-pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 16:27:22 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [205.251.233.236:31281]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.58.51:2525] with esmtp (Farcaster)
- id 8f5bdf07-dcf1-41c5-b591-846f69aa12e2; Thu, 23 Oct 2025 16:27:22 +0000 (UTC)
-X-Farcaster-Flow-ID: 8f5bdf07-dcf1-41c5-b591-846f69aa12e2
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Thu, 23 Oct 2025 16:27:22 +0000
-Received: from b0be8375a521.amazon.com (10.37.244.11) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Thu, 23 Oct 2025 16:27:19 +0000
-From: Kohei Enju <enjuk@amazon.com>
-To: <kuba@kernel.org>
-CC: <aleksander.lobakin@intel.com>, <andrew+netdev@lunn.ch>,
-	<anthony.l.nguyen@intel.com>, <corbet@lwn.net>, <davem@davemloft.net>,
-	<edumazet@google.com>, <enjuk@amazon.com>, <horms@kernel.org>,
-	<jacob.e.keller@intel.com>, <jiri@resnulli.us>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <przemyslaw.kitszel@intel.com>, <sx.rinitha@intel.com>
-Subject: Re: [PATCH net-next v2 13/14] ixgbe: preserve RSS indirection table across admin down/up
-Date: Fri, 24 Oct 2025 01:26:38 +0900
-Message-ID: <20251023162711.97625-2-enjuk@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251022172649.0faa0548@kernel.org>
-References: <20251022172649.0faa0548@kernel.org>
+        d=gmail.com; s=20230601; t=1761236838; x=1761841638; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2imvIwdo3P7V8AuAbuO7jvkCgPpqmVrl6exJRyM00DU=;
+        b=KQEz05TZ80Z8FaTDYpyks3wM809T9FmSZ1mAadKM0nn8RCiyzsFyl4JwFTCxpuz1pe
+         kheMGCswjGQEbyByrZL1bnUknNblylIJ5P2BrCjwu4dkcDgDdNkYga1jK9UrwhPHhZJJ
+         QWwQaVEidby/f+FG4HkV+/UCH3naPtF1+z5VIe+Ai3u3o1guq2xok/dTJ0Jujc0N3FkQ
+         5d2sPQxUWpJrcr2cqr57SGYHjkBv7Nz67SWNm9IDM0soVQrA+IqNE0WzQWArhjZLqUjl
+         hb/n1WBFnAKdNZ+i5b3/eqTcm6Jqg6KZiBJexKlrSfYPsFj9Chr5vmdawaKuKancynmU
+         71Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761236838; x=1761841638;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2imvIwdo3P7V8AuAbuO7jvkCgPpqmVrl6exJRyM00DU=;
+        b=PzR/RRlzd8ZBiA8AU001dvB9Y1xR1FSVjpEz9X/xF9f/qSoBW8zE64Y0kDaCOuYZ6s
+         wnMZefXv+eQqQhgYy1on8OYt7lG8K9kwu7uD0wV9k895hXGaE6T+7ASmEwQVBF6mJ+WB
+         40xTnJejQIhoUJMqxHmnQfSdMbhhhGwR5bNsLA1Ag2gJD3eGzB8O4MFDTBl8U2nk9KHb
+         n/frSwO4s5b6D2Hpu1QTAeKgf/RMy1/09YVmjw6jepURqsDmOcRxotoQ5Cj16N69O7qz
+         ABny3bP1JgG6Hr/1FpSWw5bB+fJ2MuC9d35nT/HUS87Hyht6v+amuNgbTMSkuW789Xkk
+         mWbw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2yGHLEUK3qrEZjFTzSeWp3zP+4OhOz3CNCMgybLHbxyU9k/xqCmgt6xPVRCmxti/F25qQ5wsqjkZcs34=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1tIGoqf1RK5SEf+fM5j+UWGxy5BJhl1veOzEFE5bvUyTt4TYG
+	mPxXGALw49lDRAwmye+/+cn1imp4oj1vbYYK4rCJTKoeMILm+Kz9TNYv
+X-Gm-Gg: ASbGnctqvOIanOBmfvar8b5XuJOYUGB9AkMJXdRfhwuRGmhE0RCO/FXPB20sZ08I4WO
+	0Zk+6XZEG0EJ4tWSMpUou2mVEkoKIANX9CgWJHJp/N+syOs2a28ZGQN9JsbelV6Z/lvMMjhYv6p
+	uAgZlD8xd4VstXvdH+NQdRt/TkMkfzWqi3t3cpW8mBZT9iUeWt4K3HhuamD6Y3w3TND6d63zECu
+	Ofj3cYEY1GucJj+1FmTY5x2kDEv5p6LOLCAg4PUHzJM//SbDDrLQNB2bnUj/zSmuTPc9jflguOJ
+	1Cxfa1QR3hRhJoXtFcwOm5iV42IHdLjBa6Wa4nyjsaVbMw9OJoS+aX3IbH5EKOXGwWJ/MEf1oIg
+	E+cBisEt6lBH+HKehz8ckXBgOsPPFiEWu/L6Ui8FdpKlFN9sVfjZeVpn5/IaAkkIQ0bsN8fqoaD
+	RoIqI6TXZa0Z+UYPquMC667qJWfDck3dbTk3h5hDgwQbbDuuDKLDLLAA1nVjwdy+HAf96EXdKi4
+	R+dt5olCt83LMyddRlHtZNPnSUQKFlv2OpDSpg+ZPs=
+X-Google-Smtp-Source: AGHT+IG/t8sPFUNbEssBw0o8EJ7IDLcRUAqafB6jh5jOeBHVSLTybCLKZLOZDFW2qLfhUheRhw2XiQ==
+X-Received: by 2002:a05:6214:260a:b0:87c:2919:7db3 with SMTP id 6a1803df08f44-87c291981c2mr239330876d6.51.1761236837786;
+        Thu, 23 Oct 2025 09:27:17 -0700 (PDT)
+Received: from seungjin-HP-ENVY-Desktop-TE02-0xxx.dartmouth.edu ([129.170.197.114])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87f9e7fc743sm18286456d6.52.2025.10.23.09.27.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 09:27:17 -0700 (PDT)
+From: pip-izony <eeodqql09@gmail.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol@kernel.org>
+Cc: Seungjin Bae <eeodqql09@gmail.com>,
+	Kyungtae Kim <Kyungtae.Kim@dartmouth.edu>,
+	Jimmy Assarsson <extja@kvaser.com>,
+	linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] can: kvaser_usb: leaf: Fix potential infinite loop in command parsers
+Date: Thu, 23 Oct 2025 12:27:09 -0400
+Message-ID: <20251023162709.348240-1-eeodqql09@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAAsoPpV7Kzap1Sn8QFtBbvwW-DJMTTcU_bBOUDYYC286Uaddtg@mail.gmail.com>
+References: <CAAsoPpV7Kzap1Sn8QFtBbvwW-DJMTTcU_bBOUDYYC286Uaddtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,96 +95,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D036UWB004.ant.amazon.com (10.13.139.170) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Wed, 22 Oct 2025 17:26:49 -0700, Jakub Kicinski wrote:
+From: Seungjin Bae <eeodqql09@gmail.com>
 
->On Wed, 22 Oct 2025 12:40:45 +0900 Kohei Enju wrote:
->> On Tue, 21 Oct 2025 16:10:06 -0700, Jakub Kicinski wrote:
->> >On Tue, 21 Oct 2025 12:59:34 +0900 Kohei Enju wrote:  
->> >> For example, consider a scenario where the queue count is 8 with user
->> >> configuration containing values from 0 to 7. When queue count changes
->> >> from 8 to 4 and we skip the reinitialization in this scenario, entries
->> >> pointing to queues 4-7 become invalid. The same issue applies when the
->> >> RETA table size changes.  
->> >
->> >Core should reject this. See ethtool_check_max_channel()  
->> 
->> Indeed, you're right that the situation above will be rejected. I missed
->> it.
->> 
->> BTW, I think reinitializing the RETA table when queue count changes or
->> RETA table size changes is reasonable for predictability and safety.
->> Does this approach make sense to you?
->
->Yes, if !netif_is_rxfh_configured() re-initializing is expected.
+The `kvaser_usb_leaf_wait_cmd()` and `kvaser_usb_leaf_read_bulk_callback`
+functions contain logic to zero-length commands. These commands are used
+to align data to the USB endpoint's wMaxPacketSize boundary.
 
-I got it.
+The driver attempts to skip these placeholders by aligning the buffer
+position `pos` to the next packet boundary using `round_up()` function.
 
->
->> >> Furthermore, IIUC, adding netif_is_rxfh_configured() to the current
->> >> condition wouldn't provide additional benefit. When parameters remain
->> >> unchanged, regardless of netif_is_rxfh_configured(), we already preserve
->> >> the RETA entries which might be user-configured or default values,   
->> >
->> >User may decide to "isolate" (take out of RSS) a lower queue,
->> >to configure it for AF_XDP or other form of zero-copy. Install
->> >explicit rules to direct traffic to that queue. If you reset
->> >the RSS table random traffic will get stranded in the ZC queue
->> >(== dropped).
->> 
->> You're correct about the ZC queue scenario. The original implementation
->> (before this patch) would indeed cause this problem by unconditionally
->> reinitializing.
->> 
->> I believe this patch addresses that issue - it preserves the user
->> configuration since neither queue count nor RETA table size changes in
->> that case. If I'm misunderstanding your scenario, please let me know.
->> 
->> I could update the logic to explicitly check netif_is_rxfh_configured()
->> as in [1], though the actual behavior would be the same as [2] since
->> the default RETA table is a deterministic function of (rss_indices,
->> reta_entries):
->> 
->> [1] Check user configuration explicitly:
->>     if (!netif_is_rxfh_configured(adapter->netdev) ||
->>         adapter->last_rss_indices != rss_i ||
->>         adapter->last_reta_entries != reta_entries) {
->>         // reinitialize
->>     }
->> 
->> [2] Current patch:
->>     if (adapter->last_rss_indices != rss_i ||
->>         adapter->last_reta_entries != reta_entries) {
->>         // reinitialize
->>     }
->> 
->> Do you have any preference between these approaches, or would you
->> recommend a different solution?
->
->I was expecting something like:
->
->if (netif_is_rxfh_configured(adapter->netdev)) {
->	if (!check_that_rss_is_okay()) {
->		/* This should never happen, barring FW errors etc */
->		warn("user configuration lost due to XYZ");
->		reinit();
->	}
->} else if (...rss_ind != rss_id ||
->           ...reta_entries != reta_entries) {
->	reinit();
->}
+However, if zero-length command is found exactly on a packet boundary
+(i.e., `pos` is a multiple of wMaxPacketSize, including 0), `round_up`
+function will return the unchanged value of `pos`. This prevents `pos`
+to be increased, causing an infinite loop in the parsing logic.
 
-Thank you for clarification. 
+This patch fixes this in the function by using `pos + 1` instead.
+This ensures that even if `pos` is on a boundary, the calculation is
+based on `pos + 1`, forcing `round_up()` to always return the next
+aligned boundary.
 
-At first glance, noting that check_that_rss_is_okay() would return false
-when the RETA table size is larger than the previous one, since
-user-configuration doesn't exist for the expanded portion of the RETA
-table. This should happen in realistic scenarios even though there are
-no hardware-related or HW errors.
+Fixes: 7259124eac7d ("can: kvaser_usb: Split driver into kvaser_usb_core.c and kvaser_usb_leaf.c")
+Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
+---
+ v1 -> v2: Apply the same infinite loop fix to kvaser_usb_leaf_wait_cmd()
+ 
+ drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Anyway I'll refine the patch using netif_is_rxfh_configured() and then
-submit to iwl-next first.
+diff --git a/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c b/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c
+index c29828a94ad0..1167d38344f1 100644
+--- a/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c
++++ b/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c
+@@ -685,7 +685,7 @@ static int kvaser_usb_leaf_wait_cmd(const struct kvaser_usb *dev, u8 id,
+ 			 * for further details.
+ 			 */
+ 			if (tmp->len == 0) {
+-				pos = round_up(pos,
++				pos = round_up(pos + 1,
+ 					       le16_to_cpu
+ 						(dev->bulk_in->wMaxPacketSize));
+ 				continue;
+@@ -1732,7 +1732,7 @@ static void kvaser_usb_leaf_read_bulk_callback(struct kvaser_usb *dev,
+ 		 * number of events in case of a heavy rx load on the bus.
+ 		 */
+ 		if (cmd->len == 0) {
+-			pos = round_up(pos, le16_to_cpu
++			pos = round_up(pos + 1, le16_to_cpu
+ 						(dev->bulk_in->wMaxPacketSize));
+ 			continue;
+ 		}
+-- 
+2.43.0
+
 
