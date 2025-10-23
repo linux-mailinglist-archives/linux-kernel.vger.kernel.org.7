@@ -1,194 +1,154 @@
-Return-Path: <linux-kernel+bounces-867132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA452C019D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:03:11 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 440F7C019EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09DC319A00D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:02:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7D89134AB67
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D346932C957;
-	Thu, 23 Oct 2025 14:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A112B31A54A;
+	Thu, 23 Oct 2025 14:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FvgvWu7l"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kHUSZG/d"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CA932AAA8
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694E7315778
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761228078; cv=none; b=F7L9LaFx5fMejnDOKJ/b8Te8Tf+JMHNn5ezBEZ+/PJI2fze62iLNd0mZR0zylmoI37dO/RTtSHQ3pJzgoiKTBF6js466AC6PwcYtTUmn79W22zukfqcQJzvkJlviPEDbrRh08OdByiP5Ox2tHffb2fX5s7P5QSuBAAnb4Bd43Bg=
+	t=1761228218; cv=none; b=b0q7VMM/jOb09Ue0RunMa1bQoSC00HpQ27clbaxCMeGTi90QrdCH0bQ0XhRTsCzElXoMVqH8pFr2wionFkPX/eb7Kbk+Z5LvxIRPb005+GWjW9ZBlT/Y7vOFqXIgLHH45IOL8kP4CWdcLmizIZLJeYzezrVf0iVvsbs+dQSQKH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761228078; c=relaxed/simple;
-	bh=nf2ne/DcUThRcyjkcAtbjjiK8XPQU5PLVC7WSh7jfZU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hsmlktkvVed/rKcb9EL3dzKhRWRQU0kAfQB6fLewr7oz+l4IdI05I92sTRglZTE+YunF/X1jfRIRNJUbXn0xZpQMyoTZ7jqRFdMGNZlc35V5DQ3y5SIvLfWhdyY22DZj61LmQWdvf3dAXv+9NMU7oc9fN+4yam6ZCQ1fSc8bEyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FvgvWu7l; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e2e60221fso1761566b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:01:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761228075; x=1761832875; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=inXfddpf6Feyogc8n8Jl5cqVWZOSr51ivnMHY9v0Ey4=;
-        b=FvgvWu7lfkFsFHXEZtj4lw7glbTHzzUEGsEFkLBSyj5lOlrLDU1oghGofvy5n8eOsf
-         hNVds9VXo38wQYB6NTIGzXHSQxJqYajWlPt7009pp2gIii3hh6WwEU9ZD/I4QT7d2bea
-         WCWA56SQxCTKKATjTNzT+lP8oUtynF4+UfwgKPQjst0Xh/ycZHGg8SpB0lZqE/5jPJp6
-         CFTvHYr2ydcrrce3Dm0itC9rIq2bP6EIsKxFqfTiJrJTlg+JsT7q3befgm83FU6T6yNe
-         NI15GlfmkS+YcZs/EH0m47+UgRKGlt6IVvi766TFbKBUkqMBdAj7OK5mBSQiizp6e0mx
-         bTcw==
+	s=arc-20240116; t=1761228218; c=relaxed/simple;
+	bh=0CzaTzlypWUkajfo0TGMzn+PrE2vSGgKyweMD9vFNVc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=B/iuCr+/zlmXwLPLPOQrZMJ6941lsbRB3xmEvKOVVVCGpTrOiueyb65xQMbci/Fzh0jHtD/AR4PDKBb39Qa7P3G7/Hr4gGqy7VLiw2aLIHqfTKbYxHEM5q0bd/Xbbxeenr599G0Ex1swx9FyONEGlL8faVyn5u0MufV7HZr00hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kHUSZG/d; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6xovk007442
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:03:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RyLhRpTfWJSWp2k1SpRF7RM3OwZDTZ2/ogv70cQxLHE=; b=kHUSZG/dvXoiuiBp
+	PtGQHMFpZVdCOtaivIad7rXBtbNZ1MO9+x6wsULjtXFCcVjGRjMR7I54O12TyxZ1
+	zySkt4An/Kexb4rO4YJjGiOrMhLqgOLakdaVp4fc+H/KatzdH/GSFNq9snAvvo7S
+	YHp5JEOVz78lXSlf8e3Eq9WpKOHafLmls+ZYpV3yPeHxG92GmlmjJvgjVHqT7+sa
+	mE3L8gxy8jUB6YvCKjFG9VKAjigAfP7NZXW26S4AkLbzZ/zuoAg+duy8k266ajJL
+	39xPdctXD4YT9otrlRe79XKyfwzdBlM9VJQoDKVBuXyaHiWWSEqylTerhBCKxmdv
+	o1k2ZQ==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v3448q4g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:03:35 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-33d75897745so2020110a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:03:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761228075; x=1761832875;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=inXfddpf6Feyogc8n8Jl5cqVWZOSr51ivnMHY9v0Ey4=;
-        b=wGm1ji8t0OA5Ry5F3qk+sqHlhFNB39AdGLc3yfYeJEk+2t0w054v2CkN6aqc6FT660
-         Qd4i7sAi16MVCFwdJZybUh24eksXsSWlMMhys3sb98dBGMHYjgfdhTbBwAOHVIcqQLr/
-         W4XMGFagn668498VARoTJeCsdYCaKS+Pn1kJmyODjuI8Bwtk64sV47l9kbHgELftfFam
-         Sn8Qys8zG7g/HKUBb+pXGhd7f1wyA/SD+8ijein6q3Ge0vd/fHCntwoI2jM+sfrFVEI/
-         66D5CSjPjLbfJomK7Evz5VLmkvYACimiO5DGVAFtaJjsF9rcGJHxcCEwqgjjl81XGTyn
-         DO6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUBSJ+IWqLXyph01BqGIT+nMSqaX+bbgwLRHbOPekMt5Yj0d3GJqLiDnXxNbdzGW68GQvQu+Hs2pXy5tzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyvy4mV7ZjSpH01BUj8qc6vgvSVXcg9bzIsT6ygEeKlbBlLM1Xu
-	ThgvTbW8x2O4oJevebtYgEiZaICQxWk0ISDBdgXcDO+fpIfJDoEX05K6tndTU3EAFq7iAmo+x9J
-	lKDwtnlpiDcZrEeyxV9dRRXP1gQ==
-X-Google-Smtp-Source: AGHT+IFIN8uFRC6EtqcEGeMEkYd8inzutN6W/XJij2WhQjtYZx5ArSxhlm3XOqfP/3yjcqmWzVtyJ1fSE/ev6eLgRw==
-X-Received: from pjnu4.prod.google.com ([2002:a17:90a:8904:b0:339:dc19:ae5d])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:3956:b0:334:91ab:f182 with SMTP id adf61e73a8af0-334a85286f8mr35842433637.10.1761228074886;
- Thu, 23 Oct 2025 07:01:14 -0700 (PDT)
-Date: Thu, 23 Oct 2025 07:01:13 -0700
-In-Reply-To: <aPlpKbHGea90IebS@google.com>
+        d=1e100.net; s=20230601; t=1761228215; x=1761833015;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RyLhRpTfWJSWp2k1SpRF7RM3OwZDTZ2/ogv70cQxLHE=;
+        b=ZzDXLPGR+2AOg+z9l1vIgnfy3hBd3exHNxLXa52ZJ5BwjpSP/VS2a8P/BDiyxz+goX
+         Y8Tm+fk5lEdertenBtHFCnCFeFEhJaQ67mCgJ5HzwHQkinho7ioXju3V+J906+XmIvVR
+         DTZhu6797OCTPPLlVoWTO44t0DS9VeDtcq1yNCY390Z4M1VGMQqvykWLqkAmt6+mwSBh
+         L8Q5ONYouutWOHT6ClWjHupJX3NUI7a6FbF0pJNJsyJIFhyILKmR8vp5ttUg34AdmHMg
+         e64y+kBxbfN8FkEjSiNP88Ky9b7VCdK8E5Olpc03oQEAGqdoqC6Pu7wwkiY0N7Aw2DHe
+         pXxA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0RzMmsATS85aEy8lto3+L7JpoMp7Emz27vLlpKfMqeUfjITcw7IVmp+o8gfKoE1u28TTsD6xtayaLDl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFxqgGb+8DcFevYz1KSrifUnOEx8hG6JRXcsRUiQBkVQ4BTy9E
+	UPP+20fxlfUFUwzuq4SKAUKeVqLcA4d8FjzhakjyF66JbJb3cxC/sGdeWKkGQEw7d0/TSzXCzbs
+	AP2vf3n0mfeKIp3u3K7NEtrKT1+LA3Hor0clSRUEcVWDhe7vD/M5MHXDeuUHqebXD2vo=
+X-Gm-Gg: ASbGncuOHpGZX8BcsdqFcZz16JiD4RdvFArdeFNzPoabUZYsxDdwnyPvhgrvjZ07VAi
+	DtAcP5cw2kLReq95Q3cEc68JpsAgt1LWggxSWfkORC3pm5ydib+WhcBVVFFt7daqzTyc0mgLLwQ
+	Ln9SejxdKzjplkH8UEJSYJ1D2vFFoa3HDTc5JJOaTFC0I/amf0IEiLnDUCruffk4YSLPgvn87M+
+	2ju4a2PmSMKlBQOOyM3lXOqIBkSLTGndtdgqOGUQ1l4pFtlccVGtSx/I9s3IqEZiUKkovCovEaU
+	AZX+7MypZyMh52zJKRHS0whJY/dN/emwgtJjlhz5TNz3Z7Msx8wej3/t/9VcBxQ3nrpLjp3RfeG
+	haQFR2rG8oziMzgX6qNHBBC3n88iMdTy0N/U=
+X-Received: by 2002:a17:90b:5386:b0:32e:9281:7c7b with SMTP id 98e67ed59e1d1-33bcf85da05mr25992951a91.3.1761228214513;
+        Thu, 23 Oct 2025 07:03:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnb09lMyHjX9OqhelwjDoLEOgHgOk+r/wUnfm+suG+1NvsV4vsi/W9hqLuhO6WQZAo8O1nAA==
+X-Received: by 2002:a17:90b:5386:b0:32e:9281:7c7b with SMTP id 98e67ed59e1d1-33bcf85da05mr25992713a91.3.1761228212310;
+        Thu, 23 Oct 2025 07:03:32 -0700 (PDT)
+Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33dff3c1f8csm4250708a91.4.2025.10.23.07.03.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 07:03:31 -0700 (PDT)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: Jeff Johnson <jjohnson@kernel.org>,
+        Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+Cc: linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20251017-add_tx_power_insertion_support-v1-0-f08feacfca93@oss.qualcomm.com>
+References: <20251017-add_tx_power_insertion_support-v1-0-f08feacfca93@oss.qualcomm.com>
+Subject: Re: [PATCH ath-next 0/4] wifi: ath11k: add support for Tx Power
+ insertion
+Message-Id: <176122821156.3033388.10937600819458906745.b4-ty@oss.qualcomm.com>
+Date: Thu, 23 Oct 2025 07:03:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1760731772.git.ackerleytng@google.com> <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
- <2457cb3b-5dde-4ca1-b75d-174b5daee28a@arm.com> <diqz4irqg9qy.fsf@google.com>
- <diqzy0p2eet3.fsf@google.com> <aPlpKbHGea90IebS@google.com>
-Message-ID: <diqzv7k5emza.fsf@google.com>
-Subject: Re: [RFC PATCH v1 07/37] KVM: Introduce KVM_SET_MEMORY_ATTRIBUTES2
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Steven Price <steven.price@arm.com>, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
-	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
-	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
-	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
-	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
-	keirf@google.com, kent.overstreet@linux.dev, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
-	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
-	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
-	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
-	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
-	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
-	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, 
-	shakeel.butt@linux.dev, shuah@kernel.org, suzuki.poulose@arm.com, 
-	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	vkuznets@redhat.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-
-Sean Christopherson <seanjc@google.com> writes:
-
-> On Wed, Oct 22, 2025, Ackerley Tng wrote:
->> Ackerley Tng <ackerleytng@google.com> writes:
->> 
->> Found another issue with KVM_CAP_MEMORY_ATTRIBUTES2.
->> 
->> KVM_CAP_MEMORY_ATTRIBUTES2 was defined to do the same thing as
->> KVM_CAP_MEMORY_ATTRIBUTES, but that's wrong since
->> KVM_CAP_MEMORY_ATTRIBUTES2 should indicate the presence of
->> KVM_SET_MEMORY_ATTRIBUTES2 and struct kvm_memory_attributes2.
->
-> No?  If no attributes are supported, whether or not KVM_SET_MEMORY_ATTRIBUTES2
-> exists is largely irrelevant.
-
-That's true.
-
-> We can even provide the same -ENOTTY errno by
-> checking that _any_ attributes are supported, i.e. so that doing
-> KVM_SET_MEMORY_ATTRIBUTES2 on KVM without any support whatsoever fails in the
-> same way that KVM with code support but no attributes fails.
->
-
-IIUC KVM_SET_MEMORY_ATTRIBUTES doesn't fail with -ENOTTY now when there
-are no valid attributes.
-
-Even if there's no valid attributes (as in
-kvm_supported_mem_attributes() returns 0), it's possible to call
-KVM_SET_MEMORY_ATTRIBUTES with .attributes set to 0, which will be a
-no-op, but will return 0.
-
-I think this is kind of correct behavior since .attributes = 0 is
-actually a valid expression for "I want this range to be shared", and
-for a VM that doesn't support private memory, it's a valid expression.
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
+X-Proofpoint-GUID: X0qxgySJlakcp9J9VVJ2VDQRK9b9NFRW
+X-Proofpoint-ORIG-GUID: X0qxgySJlakcp9J9VVJ2VDQRK9b9NFRW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMyBTYWx0ZWRfX0ddp2aSkLghc
+ qhk/MbSd6SS/2jNA82QkOKV8eoe16FYJIuKX5qIbFelTINCnCw2o2hoeRL5U/B62iQ5tscnehDo
+ TW12wlxx37XZVbhF1FSFfGNfIiIAHvSXlP8eXEWN4/wZWvhKnaZN2ZeA2ILsnuGpnMWdZe3B0QP
+ w98tGJpq5OoU6Lc22isdAQiFiBETuargpwfdQ0cctvHTqglwNh39uLIQtJGtzEFgGQXek/HchkV
+ xLjH97yMNXUt9+hT0Qn94xfQ2uuOgY4ZWU37VRSuihFIt5M48IRJtIidBHGbqSwXLyD8Huufk4n
+ EelXgA30s1VE3ZWKYrI5Y4sfUjzWnLmxlqawuAMrTV2mOEGpV4zMEKBIXSSs4NjXXNY2dkdggpl
+ HyMeT2SiFxZzfEP34Yel0e6fXVzGfA==
+X-Authority-Analysis: v=2.4 cv=E/vAZKdl c=1 sm=1 tr=0 ts=68fa35b7 cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=9jhMNZ7qWXdoG8tHMgQA:9 a=QEXdDO2ut3YA:10
+ a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-23_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180023
 
 
-The other way that there are "no attributes" would be if there are no
-/VM/ attributes, in which case KVM_SET_MEMORY_ATTRIBUTES, sent to as a
-vm ioctl, will return -ENOTTY.
+On Fri, 17 Oct 2025 09:37:56 +0530, Aditya Kumar Singh wrote:
+> For certain action frames like the TPC Report IE in the spectrum management
+> TPC Report action frame, and in the Radio Measurement Link Measurement
+> Report action frame there is a requirement to fill in the current
+> and max Tx power of the device in the packet.
+> 
+> Add support to populate these fields in the relevant packets. Advertise
+> this capability from the driver using the feature flag
+> NL80211_FEATURE_TX_POWER_INSERTION.
+> 
+> [...]
 
-> In other words, I don't see why it can't do both.  Even if we can't massage the
-> right errno, I would much rather KVM_SET_MEMORY_ATTRIBUTES2 enumerate the set of
+Applied, thanks!
 
-Did you mean KVM_CAP_MEMORY_ATTRIBUTES2 in the line above?
+[1/4] wifi: ath11k: relocate some Tx power related functions in mac.c
+      commit: 66887282233d281cd9109dabfdad5d86b709acc0
+[2/4] wifi: ath11k: wrap ath11k_mac_op_get_txpower() with lock-aware internal helper
+      commit: c243d5e44f6ecbb29bf55b82e6dd92bca4fde0b1
+[3/4] wifi: ath11k: add support for Tx Power insertion in RRM action frame
+      commit: 722015690f52d046ae609e1b90cd3f018644d93d
+[4/4] wifi: ath11k: advertise NL80211_FEATURE_TX_POWER_INSERTION
+      commit: 998c68e96c03f10dec19b65279ade9d4000d1ae9
 
-> supported attributes than simply '1'.  E.g. we have no plans to support
-> KVM_SET_MEMORY_ATTRIBUTES on guest_memfd, and so returning simply '1' creates an
-> unwanted and unnecessary dependency.
->
+Best regards,
+-- 
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 
-Okay I'll switch this back to what it was.
-
->> @@ -1617,4 +1618,15 @@ struct kvm_pre_fault_memory {
->>  	__u64 padding[5];
->>  };
->>  
->> +/* Available with KVM_CAP_MEMORY_ATTRIBUTES2 */
->> +#define KVM_SET_MEMORY_ATTRIBUTES2              _IOWR(KVMIO,  0xd6, struct kvm_memory_attributes2)
->
-> Please use the same literal number, 0xd2, as
->
->   #define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd2, struct kvm_memory_attributes)
->
-> The "final" ioctl number that userspace sees incorporates the directionality and
-> the size of the struct, i.e. KVM_SET_MEMORY_ATTRIBUTES and KVM_SET_MEMORY_ATTRIBUTES2
-> are guaranteed to be distinct even if they both use 0xd2 as the "minor" number.
->
-
-Will do.
-
->> +
->> +struct kvm_memory_attributes2 {
->> +	__u64 address;
->> +	__u64 size;
->> +	__u64 attributes;
->> +	__u64 flags;
->> +	__u64 reserved[4];
->
-> Maybe be paranoid and reserve 12 u64s?
-
-Will do.
 
