@@ -1,166 +1,304 @@
-Return-Path: <linux-kernel+bounces-867892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB53C03D47
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:24:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD5C2C03D50
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9539219A5501
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:24:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B373B54CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B548C27B324;
-	Thu, 23 Oct 2025 23:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACC32BEC2D;
+	Thu, 23 Oct 2025 23:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FvsOtUTY"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="hwY4+GRc"
+Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A26E184
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 23:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A321D6DA9
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 23:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761261854; cv=none; b=uAll4UNSQ8U3hg8EBwXaSvbjAszmzhg0SEXVLeAP0HSzn60q6xSbh6ciKbIdGg3G9nukDVeYbj+h36Fw+MVDab4QwZKQGTOWXf7vod/zTwbqpceVHSt3iEhaZr/jDyeV9Y5t1HjLP7Iwmivp2OpkiHOPKNIlticINoZvqBld0hw=
+	t=1761261929; cv=none; b=BKHyznmZ4rRn4kLe8DYK+91X3Pbpkan64sJikZtIrzQVcSehv75BmqR3mOIgFjiFjDmT1q+RZX8SEEi+qoweuhM9FXeC7ceYw7NTOkNvw623RNVLY6JPqBDTcJET2Yf/mVDjVxQDhyv34FsjFlzhXA6NFavnRX+1u6LjTwe/Dgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761261854; c=relaxed/simple;
-	bh=FCH5BsmTJldF4szkqMwFaaN6TkKxH+k98j7Pz/lqrYg=;
+	s=arc-20240116; t=1761261929; c=relaxed/simple;
+	bh=hrLyJFPmnWBxE5nTE4WopA6jSWRmOX1QoQXXQUd3/6I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ci/rDwzFZZgEalmX1fjD7Y07/otO/MocSIrFsMzu586pPLYWN/BcBBCy3rqk4IfkHEJIqJJU0pobxk9rD/oMDaVmz0NmehF2qtNjbQSXLffmOeLVxJ+G4wSRPDCf+mdof4XWx9aN9dzFAT6VJaJBbeWPE0l0PJjl9bc5meQ/dCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FvsOtUTY; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-63c44ea68f6so4521a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:24:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761261851; x=1761866651; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qhisYMy3Vpthsrdn+jl2i6ral8f0eTdW1jXrFk49/xA=;
-        b=FvsOtUTYyKfpLUUnm4RMv5e3EafNW1owSuwhZZHPUj4ZzSe1/St+1+5YC0Kn7B59tQ
-         ZoB6vcORQrhU0gIyzGKDY4TVVRBLJlbaZqomH2QMhN2TeCW3kK6LLW/V8aCNsXqqr7oJ
-         Xz8Tt5mNljYhh9lrD6HHQTkYi+tPe4oo4961IieCA6XQDF7ioxELOo0GN9IDYciR2TlL
-         r+Sod12L2AdLTYmTg++Cw/ZmtRtWoiG0vc7ak1wh4q3mz4BJ8uKaZVAExe3f13nyby0W
-         2WBK9rnwVEvr60SCohmDfaqgRPe0h65gu9LcFkYhKyb+87KN7RIaubkR/9ImvP21RZy2
-         /U8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761261851; x=1761866651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qhisYMy3Vpthsrdn+jl2i6ral8f0eTdW1jXrFk49/xA=;
-        b=BJILrS+o2Jh4SAtUpYV9ZWRthXmS4yBSo7zsM+TCvshO7U7tr4KDVX3vX/fPpBoL2A
-         9pAFVZ9QjpmyA7NnUFKeqxaEdJ8zbXkE1RLx7+NTQVYUtOep3+hxROk9iOeup9dzPrd5
-         MOlHK9TF8IdLwNZrIVZ7Bw8i5aR+oFY1/uGfSoz1pgrjdYOSYZwHow1+/G8hoyz5lAmx
-         N2npQsM2Yad4QNaCeJblGSOWdPiJMZKLiszu9MZr213eED8aKQ9Ygp8HQgj+kgPx9wII
-         Ye9KY9zRhV680yeopchsIF2RzQZ6Ei2lXpDXI3d5L0YniuH6KzG9V8hVimnYVjPgN8nS
-         WBww==
-X-Forwarded-Encrypted: i=1; AJvYcCX2v3OaGFpxJ7wPc5DX4VfVu5TADOQP2lIRP1p27wJBD/1ff1To/2N7b4Gs6/v6pveoVhj3sH95oLP8qdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjfzdbB6ppJq/NOjvoS5Pqsm66dUfSp1Nk9autv2vNOp7k6X/w
-	y9o/GznSZ7Yn5cUJPNrL0KHUQ8smGALkd7OoZyx4nCoAhQZnq4VfdmQBst4Rprzlb/554U2xWmE
-	qH0+pbMmOZUsg5dFLrEQ0hvPLBiS/5m1Yc7BaWvnY
-X-Gm-Gg: ASbGnctqQisXd1A/d7pAxIi37YEfEEchqhbJ7VkyYstOAYpmZ5lxlIq6sUjx56hT/N9
-	vuk4GeNk/11Q94I7NHKXzVfYC3UsR+U5Zpe6wFxoBljsW0CL7L+yh2lpyr5N0Qj9nbhPIzUbKAy
-	F1JhBrtlFjS3VgN0MIGeXIgMLSGJ2UCdGIGCSPRjzPUw5AGQ28ikYfVhwJ3+7edsQxX7Q/x+f0l
-	Zyoi37kuWAs8K/gxer4/QE8ep/1NhOnyq8JJkMA1qO+6s4cmYLtC4XA3DnLtiJ6nog2Chf5lkqs
-	zl1sqMZLCTHHsrgmNhYS982x
-X-Google-Smtp-Source: AGHT+IFpBQfJrmD1BAdbhlCnwLoQ7nYjkNyT3BaeXpttJtR94D2fYixRL9GehTWkRgXSCenzZ7PlMiPZWEM6PSBUdgU=
-X-Received: by 2002:a05:6402:c9b:b0:63c:1167:3a96 with SMTP id
- 4fb4d7f45d1cf-63e6009cd85mr16334a12.5.1761261850463; Thu, 23 Oct 2025
- 16:24:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=n3NsSCMjSNv/jvfeMzWKgWouE7hoj3v/NMXtNSdLRnZmIbj3q99R3KwZdMDPL/cUWpkz9mshNB3JPr0jeBBGDZK4XWRBia9PggejRvg9TPpzF52DD8S0yLArg1cJmrw4nYfDeiredYkfSo0vNYIplu/skX/irB+9CgaF1Yz5qVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=hwY4+GRc; arc=none smtp.client-ip=88.99.38.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay12 (localhost [127.0.0.1])
+	by relay12.grserver.gr (Proxmox) with ESMTP id AF1DEBDBFB
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:25:23 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay12.grserver.gr (Proxmox) with ESMTPS id A886CBBEE2
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:25:22 +0300 (EEST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 0176E1FEFED
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:25:21 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1761261922;
+	bh=v30uSgyRvLGD4h/9YY0+I2qmVjiP5xKTJlor6KYP1f0=;
+	h=Received:From:Subject:To;
+	b=hwY4+GRc3IdnihON2LjQKWaBQCc+se7lqLBkG2thUVYkZbIHIhKFWORP3Ho6r3OZD
+	 A9/9/DiRalPmZ1QqNXKXvIC+KxYOy7HpnDBH83VQKJSAnW9kLPpkpR6qsl7HfkoSyN
+	 BRjXOJya1tI7dkZ0f4eYBVzclMZgxoXG0npb+ccQedOk+BrPoJhOoVQJHM9F+f+BRN
+	 St9eW/WB7qV9S2XKz2DSuQhTeKE1uIYnhgnXqyjTl8lx8FXgP6ON8dldvCE7IMiTYQ
+	 skFv6ik4Z4tQZWn5h05KXT5cHDYoJRuqcZip8Xry067qzR0dXDCn11KXklOz+uFqja
+	 9Ww5o6f95jKCQ==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.171) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f171.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f171.google.com with SMTP id
+ 38308e7fff4ca-378cfbf83f2so16741841fa.1
+        for <linux-kernel@vger.kernel.org>;
+ Thu, 23 Oct 2025 16:25:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXNshqhetN2KGjeHYP9/TsvemEI3A5x+NlK4xNAJhExqKdBg8ijoNljyuukcHv4o/kZZ2VedR6vY7FBk2M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpsQMum5mrb0naXs2ZV+FOTLK9TM/SRsqDsMk/KViSIvdi/b9Z
+	N4wAgAKKskAXbZ5rMTmtgODNQ3d212GgRLyp8yAzttt6lM3+vtnJJaDJClaRLwpj2JODQuwACiJ
+	1GYnssTQ9tzbcr+AaZp+fpkA1nNyIoNo=
+X-Google-Smtp-Source: 
+ AGHT+IE21eJXwjonfat/KYGvmOxis/GubMW/f1l1oPQ785t9zs98VU+0ZeRAQDSlH38l92mFVFEiBBfoGTSrXLuFn6U=
+X-Received: by 2002:a2e:a10e:0:b0:36c:f394:2ad6 with SMTP id
+ 38308e7fff4ca-37797826435mr90559571fa.6.1761261921419; Thu, 23 Oct 2025
+ 16:25:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022233743.1134103-1-mclapinski@google.com> <6bd76106-339f-4204-a418-738b7ee545ab@intel.com>
-In-Reply-To: <6bd76106-339f-4204-a418-738b7ee545ab@intel.com>
-From: =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>
-Date: Thu, 23 Oct 2025 16:23:58 -0700
-X-Gm-Features: AS18NWB0aMiZQqeW0CH8D8CYZOJxSLu62F0lK0CwgwoxAU9TYuVymbrZAoBKA4A
-Message-ID: <CAAi7L5fxqiMMGJi2xB42L+A-xVQwx=10TBG_kU15=q=i=6kcbw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] x86/boot/compressed: Fix avoiding memmap in
- physical KASLR
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Chris Li <chrisl@kernel.org>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>, Dan Williams <dan.j.williams@intel.com>, 
-	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org
+References: <20251018101759.4089-1-lkml@antheas.dev>
+ <20251018101759.4089-2-lkml@antheas.dev>
+ <e6328da3-8099-4540-9cb0-4fc28b359ee7@gmail.com>
+ <CAGwozwG+gf09PQf9o9YkKFYVgVn-1w5CDVrpOe4uFavVYCNijQ@mail.gmail.com>
+ <3947f772-691b-46a2-af68-15825e7f4939@gmail.com>
+ <CAGwozwFbQWyuQB6EwLMLon5muff2WudR+oVL62DqP_MXGW+p-Q@mail.gmail.com>
+ <b91de7c7-74b8-4cf5-82a4-f3d4eaf418d4@gmail.com>
+In-Reply-To: <b91de7c7-74b8-4cf5-82a4-f3d4eaf418d4@gmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Fri, 24 Oct 2025 01:25:10 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGj-yXHXBan38_NV7G5T66bnjm7om2bz_Bha35AHhtCJQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bnH9vzGS9MG63MCgYyqrmvack8iJRT1nnk78qV6caMk6j2vxZBFGhkg1HE
+Message-ID: 
+ <CAGwozwGj-yXHXBan38_NV7G5T66bnjm7om2bz_Bha35AHhtCJQ@mail.gmail.com>
+Subject: Re: [PATCH v7 1/9] HID: asus: simplify RGB init sequence
+To: Denis Benato <benato.denis96@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <176126192230.2462168.4095538604928339757@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-On Thu, Oct 23, 2025 at 1:29=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
- wrote:
+On Fri, 24 Oct 2025 at 00:53, Denis Benato <benato.denis96@gmail.com> wrote:
 >
-> On 10/22/25 16:37, Michal Clapinski wrote:
-> ...
-> > But it would not disable physical KASLR for:
-> > memmap=3D1G!4G memmap=3D1G!5G memmap=3D1G!6G memmap=3D1G!7G memmap=3D1G=
-!8G
-> > since the whole function would be called 5 times and the last `if`
-> > would never trigger.
 >
-> I'm missing something about how this works.
+> On 10/23/25 23:30, Antheas Kapenekakis wrote:
+> > On Thu, 23 Oct 2025 at 22:05, Denis Benato <benato.denis96@gmail.com> wrote:
+> >>
+> >> On 10/23/25 20:06, Antheas Kapenekakis wrote:
+> >>> On Thu, 23 Oct 2025 at 19:38, Denis Benato <benato.denis96@gmail.com> wrote:
+> >>>> On 10/18/25 12:17, Antheas Kapenekakis wrote:
+> >>>>> Currently, RGB initialization forks depending on whether a device is
+> >>>>> NKEY. Then, NKEY devices are initialized using 0x5a, 0x5d, 0x5e
+> >>>>> endpoints, and non-NKEY devices with 0x5a and then a
+> >>>>> backlight check, which is omitted for NKEY devices.
+> >>>>>
+> >>>>> Remove the fork, using a common initialization sequence for both,
+> >>>>> where they are both only initialized with 0x5a, then checked for
+> >>>>> backlight support. This patch should not affect existing functionality.
+> >>>>>
+> >>>>> 0x5d and 0x5e endpoint initializations are performed by Windows
+> >>>>> userspace programs associated with different usages that reside under
+> >>>>> the vendor HID. Specifically, 0x5d is used by Armoury Crate, which
+> >>>>> controls RGB and 0x5e by an animation program for certain Asus laptops.
+> >>>>> Neither is used currently in the driver.
+> >>>> What benefits do we get from removing the unused initialization?
+> >>>>
+> >>>> If this has never caused any troubles I don't see the reason for removing
+> >>>> them. Moreover the lighting protocol is known and I might as well add
+> >>>> support for it in the near future,
+> >>> I already have a patch that adds RGB and delay inits that endpoint. It
+> >>> got removed to make this easier to merge. See [1].
+> >>>
+> >>> [1] https://lore.kernel.org/lkml/20250324210151.6042-10-lkml@antheas.dev/
+> >> I have to main concerns about this:
+> >>
+> >> 1. taking away initialization commands in one patchset to make it
+> >> easier to merge another unrelated patch doesn't seem the right thing
+> >> to do if the other patch it's not in the same series.
+> >>
+> >> I can see [1] has been removed from the set for a later moment in time,
+> >> it's fine if it needs more work, just send something that function in the
+> >> same way and do not remove initialization commands when unnecessary,
+> >> especially since there will be for sure future development.
+> > The initialization was removed as part of general cleanup. Not to make
+> > it easier to merge the RGB patch. In addition, the RGB patch only runs
+> > the init in a lazy fashion, so if nobody uses the RGB sysfs the init
+> > does not run and the behavior is the same.
+> There are a few problems here:
+> 1. sope creep: either do a cleanup or solve bugs. The fact that your flow z13
+> doesn't load hid-asus correctly has nothing to do with the initialization of anime.
+> The fact that hid-asus is driving leds instead of asus-wmi has nothing to do with
+> anime matrix initialization either.
+> 2. not sending the initialization can get hardware misbehave because it
+> is left in an uninitialized state.
+> 3. there are absolutely zero reasons to do that. There are even less reasons
+> as to do it as part of this patchset.
 >
-> The:
+> >> 2. Your patchset resolves around keyboard backlight control and how
+> >> the keyboard device is exposed to userspace: it's fine but I do not see
+> >> the point in removing initialization commands that has nothing to do
+> >> with the issue we are trying to solve here.
+> >>
+> >> Please leave 0x5E and 0x5D initialization commands where they are now.
+> > I mean the second part of the patchset does that. The first part is a
+> > cleanup. What would be the reason for keeping 0x5E and 0x5D? They are
+> > only used when initializing those endpoints to write further commands
+> > to them and for identification. The current driver does not write
+> > commands to those endpoints and identifies itself over 0x5A.
+> There are no bugs opened that ties initialization of devices to bugs.
+> Quite the opposite: I can guarantee you that removing part of the
+> init will introduce regressions.
 >
->         static int i;
+> The onus is on you to provide strong evidence that the removal is
+> a necessary act.
 >
-> is static so should be keeping state across function calls. For the
-> purposes of checking 'i', why does it matter if the function is called
-> one time with 5 arguments or 5 times with 1? Doesn't 'i' end up at the
-> same value either way?
+> Regardless it is not in the scope of this patchset: remove it.
+> > I do get that it is a bit risky as some laptops might be hardcoded to
+> > wait for 0x5D to turn on RGB. Which is why we had the last patch until
+> > V4. But we have yet to find a laptop that has this problem, so I find
+> > it difficult to justify keeping the init.
+> Yes it's risky to remove initialization sequences for a device that is
+> in every modern ASUS laptop and is tied to the EC.
+> > Do note that you might need to add the 0x5D init to your userspace
+> > program for certain laptops if you haven't already. But that is ok,
+> > since in doing so you are also validating you are speaking to an Asus
+> > device, which is important.
+> This doesn't make much sense: why would anyone remove
+> a command from the kernel, that can be very well essential to some models
+> (sleep can break, for example) just to add it back in a userspace program?
+>
+> What does it mean I have to validate I am speaking to an asus device?
+> Software selects devices by known attribute, one of them is the vid:pid....
+> Beside what does this have to do with the removal of initialization commands
+> from the kernel?
+>
+> Even late initializing devices can lead to problems. Windows doesn't do that:
+> as soon as asus drivers are loaded all relevant initialization sequences are
+> sent; Windows is the only officially supported OS: do not introduce commands
+> flow divergence without strong reasons backing it up.
 
-Sorry for not explaining it better (again).
+If you think keeping 0x5D init is that important, I can spin patch [1]
+into this series. But then this quirk will stay in the kernel forever.
+I can even add 0x5E since that does not affect newer devices, which I
+care for simplifying the sequence.
 
-Let's look at the original function:
-static void mem_avoid_memmap(char *str)
-{
-        static int i;
+Luke said these two pairs are the important ones to keep.
 
-        if (i >=3D MAX_MEMMAP_REGIONS)
-                return;
+I'm not sure what to do.
 
-        while (str && (i < MAX_MEMMAP_REGIONS)) {
-                int rc;
-                u64 start, size;
-                char *k =3D strchr(str, ',');
+Antheas
 
-                if (k)
-                        *k++ =3D 0;
+[1] https://lore.kernel.org/all/20250325184601.10990-12-lkml@antheas.dev/
 
-                rc =3D parse_memmap(str, &start, &size);
-                if (rc < 0)
-                        break;
-                str =3D k;
+> > Antheas
+> >
+> Denis
+> >>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> >>>>> ---
+> >>>>>  drivers/hid/hid-asus.c | 56 ++++++++++++++----------------------------
+> >>>>>  1 file changed, 19 insertions(+), 37 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> >>>>> index a444d41e53b6..7ea1037c3979 100644
+> >>>>> --- a/drivers/hid/hid-asus.c
+> >>>>> +++ b/drivers/hid/hid-asus.c
+> >>>>> @@ -638,50 +638,32 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+> >>>>>       unsigned char kbd_func;
+> >>>>>       int ret;
+> >>>>>
+> >>>>> -     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+> >>>>> -             /* Initialize keyboard */
+> >>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> >>>>> -             if (ret < 0)
+> >>>>> -                     return ret;
+> >>>>> -
+> >>>>> -             /* The LED endpoint is initialised in two HID */
+> >>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
+> >>>>> -             if (ret < 0)
+> >>>>> -                     return ret;
+> >>>>> -
+> >>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2);
+> >>>>> -             if (ret < 0)
+> >>>>> -                     return ret;
+> >>>>> -
+> >>>>> -             if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> >>>>> -                     ret = asus_kbd_disable_oobe(hdev);
+> >>>>> -                     if (ret < 0)
+> >>>>> -                             return ret;
+> >>>>> -             }
+> >>>>> -
+> >>>>> -             if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+> >>>>> -                     intf = to_usb_interface(hdev->dev.parent);
+> >>>>> -                     udev = interface_to_usbdev(intf);
+> >>>>> -                     validate_mcu_fw_version(hdev,
+> >>>>> -                             le16_to_cpu(udev->descriptor.idProduct));
+> >>>>> -             }
+> >>>>> +     ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> >>>>> +     if (ret < 0)
+> >>>>> +             return ret;
+> >>>>>
+> >>>>> -     } else {
+> >>>>> -             /* Initialize keyboard */
+> >>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> >>>>> -             if (ret < 0)
+> >>>>> -                     return ret;
+> >>>>> +     /* Get keyboard functions */
+> >>>>> +     ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> >>>>> +     if (ret < 0)
+> >>>>> +             return ret;
+> >>>>>
+> >>>>> -             /* Get keyboard functions */
+> >>>>> -             ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> >>>>> +     if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> >>>>> +             ret = asus_kbd_disable_oobe(hdev);
+> >>>>>               if (ret < 0)
+> >>>>>                       return ret;
+> >>>>> +     }
+> >>>>>
+> >>>>> -             /* Check for backlight support */
+> >>>>> -             if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> >>>>> -                     return -ENODEV;
+> >>>>> +     if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+> >>>>> +             intf = to_usb_interface(hdev->dev.parent);
+> >>>>> +             udev = interface_to_usbdev(intf);
+> >>>>> +             validate_mcu_fw_version(
+> >>>>> +                     hdev, le16_to_cpu(udev->descriptor.idProduct));
+> >>>>>       }
+> >>>>>
+> >>>>> +     /* Check for backlight support */
+> >>>>> +     if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> >>>>> +             return -ENODEV;
+> >>>>> +
+> >>>>>       drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
+> >>>>>                                             sizeof(struct asus_kbd_leds),
+> >>>>>                                             GFP_KERNEL);
+>
 
-                if (start =3D=3D 0) {
-                        /* Store the specified memory limit if size > 0 */
-                        if (size > 0 && size < mem_limit)
-                                mem_limit =3D size;
-
-                        continue;
-                }
-
-                mem_avoid[MEM_AVOID_MEMMAP_BEGIN + i].start =3D start;
-                mem_avoid[MEM_AVOID_MEMMAP_BEGIN + i].size =3D size;
-                i++;
-        }
-
-        /* More than 4 memmaps, fail kaslr */
-        if ((i >=3D MAX_MEMMAP_REGIONS) && str)
-                memmap_too_large =3D true;
-}
-
-If called once, the `i` gets to 4 and the while loop exits. Then the
-last if executes, since `i` is equal to MAX_MEMMAP_REGIONS and `str`
-is non-null (if there are more than 4 memmap regions provided). So
-memmap_too_large is set and kaslr is disabled.
-
-If called 5 times, on the 4th time `i` will indeed be also equal to 4
-but the last `if` never executes since `str` is null. On the 5th time,
-we exit the function via the first `if` and memmap_too_large never
-gets set.
 
