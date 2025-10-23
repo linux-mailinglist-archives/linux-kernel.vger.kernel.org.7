@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-867192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5377C01CB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:33:56 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7413C01CCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1132734CFF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:33:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 840113583E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBE432D431;
-	Thu, 23 Oct 2025 14:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABD7324B39;
+	Thu, 23 Oct 2025 14:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ARAU11sL"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="omPdSohL"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3634326D42
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0830313287
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761230011; cv=none; b=WCFinUn/W+9iO3hdiSG38HU3CJ21uBEhlByD/R3u8i+2m1gKaMu5SCQxHmVYDQJ5eA6hyNqqeFM/HR1ph++WHhgfBtU2fSaR0njzMJcCLD1fn4KiaCSbVfDBaCEHgRjI5Tq89lEkbUYQA3gcAgLUhvTXXnEEd78FZT1pIL5bW6Y=
+	t=1761230052; cv=none; b=tVGaakGPYPu4mNxtr53bJUyz8LsvDNsNZZYgE1IbWIWKKvfs11noUUzdyHmvBobbDVJaJjwxI+/4ea8rVAWh8g9Cnv0OO8yY+eEB0/oxhJmiDYVJHvWDr3t1BfNfJz7W9l8lxGbjvLZapZcyxg+ijjJ/tSawVF+8Ac+5XGY0zFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761230011; c=relaxed/simple;
-	bh=q1noXuVmhs6IzlRRMFuZy58aKYcPzSJFmQpmGkuDL18=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ibOuRCXC4TFGLZuAgaK82m3IzqfZRZahfjzZp2I8H8bCGvCtYjB0Dcg4EYaKW5d0/+jSAiXtZrfRPqjR68vM1PJ4hFFPT4H5AgWIU39pLfEUVXi3siba2mQuI+HBHCFDFA5/efLm82IAz2MlJPTP91y/tyk9cyKlmmWUNRRF5Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ARAU11sL; arc=none smtp.client-ip=91.218.175.179
+	s=arc-20240116; t=1761230052; c=relaxed/simple;
+	bh=fKtkOGATFw31nxooggIopymhc6Iuy04VSz9XlJStxTU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OjIB5IzhsvbcLUOXV6KmRh6D6ELohmwZPJlP65CTREJPNfojF+mMFc8BWdUI2Wk3WdDVaNco4w2Yb0GjhyQim2Kw8Qj6Xn0vOzjz4CMoNBZeAhAD6C/4FYbT2koFGGUBc/WHWvwkq9MrDM6BmBnT3gogHsVU+a+7AhwSxiJCyo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=omPdSohL; arc=none smtp.client-ip=91.218.175.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761230008;
+	t=1761230048;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cI5x2xe0LgJrlOJDS01Ib8lu2qcPZVA4kvnCx2FtvEk=;
-	b=ARAU11sLfSlto6LfgVIvpg8VCG786XBRpbRUGlpOnhdSTI3veQOPtRMbwqdkrvU6iU2De8
-	ZCHpG4ThiWZ8OuV/qbIil8iw5kSYtEyvVFH88Q+sVDf0KDHfc3pihX3+5lzkf9dn4VdmjS
-	u46a48AJdtQRJqI0LSUJBwtA3X8OlQk=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] keys: Remove unnecessary local variable from proc_keys_show
-Date: Thu, 23 Oct 2025 16:32:33 +0200
-Message-ID: <20251023143231.2086-4-thorsten.blum@linux.dev>
-In-Reply-To: <20251023143231.2086-2-thorsten.blum@linux.dev>
-References: <20251023143231.2086-2-thorsten.blum@linux.dev>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6+PDu1BKpeekQuNXNoUHSooGzAkk2JG8H4zonFnyfOo=;
+	b=omPdSohLRvyzB0wgHZjOYuoN/Sn8Xiq4qDJvMpEU6zK2LjG1wybI/5t1+xPCS0Uge4TRN6
+	+Hiu659NVfrHAcTfx+amzmScXnMpSYNZIbbVW5FTgOc8AoUK42k2vD9LcouSEIAaigp+a0
+	uU8yjl8J5d+neUeFd0EBsbi2qzma0m0=
+From: Hao Ge <hao.ge@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@gentwo.org>,
+	David Rientjes <rientjes@google.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH v2] slab: Fix obj_ext is mistakenly considered NULL due to race condition
+Date: Thu, 23 Oct 2025 22:33:13 +0800
+Message-Id: <20251023143313.1327968-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,38 +63,69 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-The local variable 'rc' is only used to temporary store the result of
-calling key_task_permission(). Use the result directly and remove the
-local variable.
+From: Hao Ge <gehao@kylinos.cn>
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+If two competing threads enter alloc_slab_obj_exts(), if the process
+that allocates the vector wins cmpxchg(), and the other thread mistakenly
+assume slab->obj_ext is still empty due to its own allocation failure. This
+will then trigger warnings enforced by CONFIG_MEM_ALLOC_PROFILING_DEBUG
+checks in the subsequent free path.
+
+Therefore, let's add an additional check when the process that allocates
+the vector loses the cmpxchg()
+
+Suggested-by: Harry Yoo <harry.yoo@oracle.com>
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
 ---
- security/keys/proc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+v2: Revise the solution according to Harry's suggestion.
+    Add Suggested-by: Harry Yoo <harry.yoo@oracle.com>
+---
+ mm/slub.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/security/keys/proc.c b/security/keys/proc.c
-index 4f4e2c1824f1..39af57af2aad 100644
---- a/security/keys/proc.c
-+++ b/security/keys/proc.c
-@@ -160,7 +160,6 @@ static int proc_keys_show(struct seq_file *m, void *v)
- 	char xbuf[16];
- 	short state;
- 	u64 timo;
--	int rc;
- 
- 	struct keyring_search_context ctx = {
- 		.index_key		= key->index_key,
-@@ -188,8 +187,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
+diff --git a/mm/slub.c b/mm/slub.c
+index d4403341c9df..d7bfec6c0171 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -2052,9 +2052,9 @@ static inline void mark_objexts_empty(struct slabobj_ext *obj_exts)
  	}
+ }
  
- 	/* check whether the current task is allowed to view the key */
--	rc = key_task_permission(key_ref, ctx.cred, KEY_NEED_VIEW);
--	if (rc < 0)
-+	if (key_task_permission(key_ref, ctx.cred, KEY_NEED_VIEW) < 0)
- 		return 0;
+-static inline void mark_failed_objexts_alloc(struct slab *slab)
++static inline bool mark_failed_objexts_alloc(struct slab *slab)
+ {
+-	cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
++	return cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL) == 0;
+ }
  
- 	now = ktime_get_real_seconds();
+ static inline void handle_failed_objexts_alloc(unsigned long obj_exts,
+@@ -2076,7 +2076,7 @@ static inline void handle_failed_objexts_alloc(unsigned long obj_exts,
+ #else /* CONFIG_MEM_ALLOC_PROFILING_DEBUG */
+ 
+ static inline void mark_objexts_empty(struct slabobj_ext *obj_exts) {}
+-static inline void mark_failed_objexts_alloc(struct slab *slab) {}
++static inline bool mark_failed_objexts_alloc(struct slab *slab) { return false; }
+ static inline void handle_failed_objexts_alloc(unsigned long obj_exts,
+ 			struct slabobj_ext *vec, unsigned int objects) {}
+ 
+@@ -2124,8 +2124,14 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+ 				   slab_nid(slab));
+ 	}
+ 	if (!vec) {
+-		/* Mark vectors which failed to allocate */
+-		mark_failed_objexts_alloc(slab);
++		/*
++		 * Try to mark vectors which failed to allocate
++		 * If this operation fails, there may be a racing process
++		 * that has already completed the allocation.
++		 */
++		if (!mark_failed_objexts_alloc(slab) &&
++		    slab_obj_exts(slab))
++			return 0;
+ 
+ 		return -ENOMEM;
+ 	}
 -- 
-2.51.0
+2.25.1
 
 
