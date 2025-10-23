@@ -1,129 +1,137 @@
-Return-Path: <linux-kernel+bounces-867282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61B3C02185
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:25:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E0F0C02191
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFCD14EF037
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:25:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6FA91A67811
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22F83385BB;
-	Thu, 23 Oct 2025 15:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D853385A0;
+	Thu, 23 Oct 2025 15:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s86T8EFh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxN2EgeH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3ED33711B;
-	Thu, 23 Oct 2025 15:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F32338590
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761233103; cv=none; b=jfUyBVGH2n4NOqMdgyX2cBPybLrW5BQYsqqNr3vWzYZaF437+n5COuyOzOT3zwCs1ugpeKZJOg0Tc4SS/7cFXxLs77oTuQd29MMHqDjHN86eXO6NbOa5FsyW1Xagydig4LGRu4zTfMX+YR48S1djKkSALQg/Zggly9YqB+j1uGo=
+	t=1761233122; cv=none; b=KvmcB4nmj8Nuc5ihvaXnx18ZdUj1e0a/zDaMtxByP9feC+6Hhf+ApsAvleJ4HahqEvV/Rz8VMii3YaH9g5Mnwtmnfs7NDojZNUIfLBvvdBZbJoBJOQdJzBvnls4VPljfGMOUT7TstP3GefnKEEr37zM+HZno5nPxzpQPjqnqElQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761233103; c=relaxed/simple;
-	bh=c0Ecb9W5wfVFnq1RzoxHPXPGZkX8equV3asyENLGYx4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o2olSqUfmnw9pMw3KzThJJzn1U3ycQ5iT5ofb6HGTIF2MVNB1Ic8aXkIUF2sKTOfsRFPnT1CtRqqCdWyRcRJbF2nXsfmq6rWZ/OqJU/DrwCSy6obd/r28xV//y7+KhxdeSQ/5VbebLOdNKOluH5HaLVw/xFJUmWi8e++g0iod5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s86T8EFh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E9CC4CEF7;
-	Thu, 23 Oct 2025 15:24:57 +0000 (UTC)
+	s=arc-20240116; t=1761233122; c=relaxed/simple;
+	bh=/fuW8JOKGNq/+xHFQYhCJv4acRMjcPWVd+bBDSrzccE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nc/Ylq3WLIjexVrW63a7x+7vm2FUY/8TsDLnIAIvqlHTxyV/XChYvgyzpJWtZuwXMxpAIHv9w6GPYaJnMv1S6f9egd/5vxVuSqZrNyUSI9fGoc9d8Z2xBGyMAGpMGhAfsmqaORP24YYOuvuWV2l5qHnGQX2y7/VcfmcQaZJEtxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxN2EgeH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62410C113D0;
+	Thu, 23 Oct 2025 15:25:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761233102;
-	bh=c0Ecb9W5wfVFnq1RzoxHPXPGZkX8equV3asyENLGYx4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=s86T8EFh+TjANy91aoBOSuJfPEcWwGiqZwZWa+/ErcSOxShkIAdK6wEUqAVS1lclJ
-	 aYpM2Fr9L4nj1FeDEFnIk5dVmWASBGPnjFrtVvoLsGIRvISho7xeHcaDAFkf0Hm5oR
-	 +8RsdU9BuZKrisjOfGBVXRfDUiVv2yBqUDyIbCF8oeC/JxqvtqQ27QoWwTZVMwylgK
-	 YLHmRkk4IchflHDmi9v89MKgHDT3pxevKdNCvkiy34avOZUS54VxxLfZk3TPlnKZFS
-	 nij1mxZc3KjkjPqY2+n/xxZIJt2xWcPpJ+UrZdQqhEYgQzeAdX7+dxdMYwMcOGAZeN
-	 CTVZ+X/mQUM/A==
-Message-ID: <aad7ce22-9c82-44b2-809c-7d8711ff4e26@kernel.org>
-Date: Thu, 23 Oct 2025 17:24:56 +0200
+	s=k20201202; t=1761233121;
+	bh=/fuW8JOKGNq/+xHFQYhCJv4acRMjcPWVd+bBDSrzccE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pxN2EgeHWMEu5kXgYfNjZ9KE6sH6xNy26FE47VDZH0/XkWyysEyWKFZV6Kx2x0LLt
+	 klFur1yR0nxm+e4MsiW5R8V/gECRfpb8roxnwVhHI0WMl7bBbLMmzdAx+ORiAFwsh8
+	 WqdatNyrmgKXfhlFC9yJ1fGyiNeZwvqwNDX7zy7TDs07yezvmGaFsjYQ8zKqVlv44Z
+	 Np4neRWq1BgpbX/4d0gQDlEoK+Z/t5pnR+96KeelEri4gNj4xGUk3QiJ1wLd/7K0py
+	 yAl5b/Rs8IeS4ShiKeCODfywzC32F4txKu4c4MKVd/nTcHe1xbjeRmvYbd2xZInyuI
+	 kcGxBc7/PYOew==
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 879B3F40066;
+	Thu, 23 Oct 2025 11:25:20 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Thu, 23 Oct 2025 11:25:20 -0400
+X-ME-Sender: <xms:4Ej6aNjLrhqPTgtnpQY4rRXXTR1Di6JrIPbPG5PizXKkUWH68jU1dQ>
+    <xme:4Ej6aBR8rQEgYdNn0iDUldy9qaXnt8EWsVqkg-NB5um6TZ6gx1e7HUldcgdbtLbsC
+    wvOuqcuFUEWZfeh5wfndcNoNubqLoxu7-JdBCiorsOo-0wAVGby8kQ>
+X-ME-Received: <xmr:4Ej6aJRhKI081fEmM226qGxV-mDSNAdpgg0YH1GrMQ7mXvA6cB4YL_vJl5LDJQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeikeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkrghssehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepheeikeeuveduheevtddvffekhfeufefhvedtudehheektdfhtdehjeevleeuffeg
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirh
+    hilhhlodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieduudeivdeiheeh
+    qddvkeeggeegjedvkedqkhgrsheppehkvghrnhgvlhdrohhrghesshhhuhhtvghmohhvrd
+    hnrghmvgdpnhgspghrtghpthhtohepfeeipdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopegurghvvgdrhhgrnhhsvghnsehinhhtvghlrdgtohhmpdhrtghpthhtohepuhhsrg
+    hmrggrrhhifheigedvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepugifmhifsegrmhgr
+    iihonhdrtghordhukhdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
+    dprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopegsphes
+    rghlihgvnhekrdguvgdprhgtphhtthhopegurghvvgdrhhgrnhhsvghnsehlihhnuhigrd
+    hinhhtvghlrdgtohhmpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehhphgrseiihihtohhrrdgtohhm
+X-ME-Proxy: <xmx:4Ej6aNC8PUr4qxXXKW6-UVKsTape-5umBvX8jKUj7EXy-RZASbAq1g>
+    <xmx:4Ej6aNzw8IArV8kTvm_6tDG4iDH3nabcJz1--0pCJDH3uiR271Okuw>
+    <xmx:4Ej6aIpUC1BjKS7N6VUt3kEDpJBnKD2tIv6x8ISMRTwwJO-v0DIHBQ>
+    <xmx:4Ej6aAsBsAo88VF4BJnQiz_Q47undDobXK66YlT9ZkPZ8ttZ6ibKVw>
+    <xmx:4Ej6aHSbb6G1GBOa_p8Iix_c0ZIMKIegLIVDIl_-zRPEPD9ri6ZENjEV>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 Oct 2025 11:25:19 -0400 (EDT)
+Date: Thu, 23 Oct 2025 16:25:17 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Usama Arif <usamaarif642@gmail.com>, dwmw@amazon.co.uk, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
+	ardb@kernel.org, hpa@zytor.com, x86@kernel.org, apopple@nvidia.com, 
+	thuth@redhat.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org, 
+	linux-efi@vger.kernel.org, kernel-team@meta.com, 
+	Michael van der Westhuizen <rmikey@meta.com>, Tobias Fleig <tfleig@meta.com>
+Subject: Re: [PATCH 3/3] x86/mm: Move _PAGE_BIT_NOPTISHADOW from bit 58 to
+ bit 9
+Message-ID: <hlcz5xsxko5aprmuzaodny45cpnfygz7axsn7muqpsbfhr56h2@kbiinejkqw6e>
+References: <20251022220755.1026144-1-usamaarif642@gmail.com>
+ <20251022220755.1026144-4-usamaarif642@gmail.com>
+ <98bc658f-2ec6-43f5-a7e1-e9424450a850@intel.com>
+ <797c78f4-1a90-42da-9fed-e87682456a43@gmail.com>
+ <90047889-3b90-4c6a-90ed-f155c92f7ce1@intel.com>
+ <yv2sjut5urpzz426z4wmufshbron35ohwtqk6jzun46elbcqtf@3z54nh33yl4m>
+ <49769803-ad4a-4e15-a691-fd512b667ade@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] dt-bindings: i2c: qcom-cci: Document Kaanapali
- compatible
-To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
- Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss
- <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Atiya Kailany <atiya.kailany@oss.qualcomm.com>
-References: <20251023-add-support-for-camss-on-kaanapali-v3-0-02abc9a107bf@oss.qualcomm.com>
- <20251023-add-support-for-camss-on-kaanapali-v3-1-02abc9a107bf@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251023-add-support-for-camss-on-kaanapali-v3-1-02abc9a107bf@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <49769803-ad4a-4e15-a691-fd512b667ade@intel.com>
 
-On 23/10/2025 11:14, Hangxiang Ma wrote:
-> Add Kaanapali compatible consistent with CAMSS CCI interfaces.
+On Thu, Oct 23, 2025 at 08:12:32AM -0700, Dave Hansen wrote:
+> On 10/23/25 07:24, Kiryl Shutsemau wrote:
+> > The last patch allows us to only update the kernel that has 5-level
+> > paging enabled, making it much easier logistically.
+> > 
+> > The fix seems trivial, and I don't see any downsides.
 > 
-> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-> ---
+> What I'm hearing is: Please change mainline so $COMPANY can do fewer
+> backports.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Or you can read it as: without the fix 5-level paging deployment is
+harder.
 
-Best regards,
-Krzysztof
+One other point is that crashkernels tend to be older and update less
+frequently than the main kernel. And one would only discover that
+crashdump doesn't work when the crash happens.
+
+> Yeah, it's pretty trivial. But I'm worried about the precedent, and I'm
+> worried that the change doesn't do a thing for mainline. It's pure
+> churn. Churn has inherent downsides.
+
+You don't consider kexec to older kernels useful for mainline?
+
+> I'd urge you to kick this out of the series and focus on the bug fixes
+> that are unambiguously good for everyone. Let's have a nice big flamewar
+> in another thread.
+
+Oh, well... Okay.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
