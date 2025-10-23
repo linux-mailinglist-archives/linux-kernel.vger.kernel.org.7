@@ -1,276 +1,123 @@
-Return-Path: <linux-kernel+bounces-867546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0259FC02E75
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:23:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E19BC02E8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89BB1AA6BAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:24:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 872C03AD0A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB812773DD;
-	Thu, 23 Oct 2025 18:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA5C3233EE;
+	Thu, 23 Oct 2025 18:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VtrM9pMu"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z8kabk/Z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2DE2749C0
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BC715E8B;
+	Thu, 23 Oct 2025 18:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761243810; cv=none; b=Pz6JRQwljJ6eAMJxtErYZsoNXHLGRGFlSmPrNUdoXR1Knx9XpWy6a9oVBtor+9rOK7+6ILziYwaihG3aiSchnxShxYCmIl+DcbDfGgJtUnhi2Z2wGN+GdnG9k5e0XtpZebj6MdvP73bPWZrd4Gu+raleYxeO5CjI5gcnouDIQIM=
+	t=1761243909; cv=none; b=Nkjuk2kIt9Jgb1MZU4JmPR3zrhVgEVaR3TK+uxgWYZNvbpzKvFoCldLWU1IC/NOHsI5q9Ocy9ONaCfcGjQZCo7QRQiOOuSD3tJAoKpYKlokEsgpizoqxavySC0zstse2SVq03XFJKlDhD9ANWgs5RtUwzQVNKnMj70X6C0qAN3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761243810; c=relaxed/simple;
-	bh=mf1LQh7ouiwPaJE2sZ45By6xciJ0dNZeGEtPZDKnwkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TQ0pUbzOvnH+bqwz/qniskLhN+EYb9SoTQunwaniCzN04jxnP+Xp2o41jNer1o36rLd78QBg+X1j7KdKbg4fGqIhlExAkaEgzEnEgWJ+DDP1yalrgh4OMyg0J22W/TYXaxu3aulHWwfYPU2OFIzexmS3aOfVJHfTZJ+z3d6zmmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VtrM9pMu; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4710683a644so9793425e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:23:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761243807; x=1761848607; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q/mzxglGhgwN7XjEzEvKWOF5ciu2kQBemisXVTIYesc=;
-        b=VtrM9pMuskCbwBAevr9fc/G7+F6fBJZfPQZD3Q/21sw0Uf6cKdIGihjhJya+P7hXY3
-         1T3wLdJ5RAJ4VHClZ2LZaCD340S9DCdlkfKDLEFIPc8FBgL2LWofEZtdcPhgSj2XdYSt
-         S0kgHtpDIS+IWO4hhOq7Yt0SnRK2UjhNuumQCIuhGbCR3h4LLTrhJkQfPShoVkvsp4gu
-         Y9HXVwBXUlT8VM2WNyUAXTOH4Kf6kcj2Fny5++gUZyx/AVH8KSmaYor1sjcsfiCtSxei
-         wxNXUDt7sNu60WeMhjhz/UK/WuksHcrZjjV9NKjJqJp6hqmfNaYD/YcTierKYiZf9EyT
-         Vntg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761243807; x=1761848607;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q/mzxglGhgwN7XjEzEvKWOF5ciu2kQBemisXVTIYesc=;
-        b=TFOjyq0L4RzYDyjwK446MzDK/Ib2c9nM53eYYpMVM6UK9wp3oJ7FN2unJ7H+Q7y8UI
-         o7gl+FBWo7nkVtMRhAoN0JlFQ8GOPo69tkiLsg+ap6PKiRaq149CHum9RTmBtgaFVHUI
-         /aOuuRe84wnoodVdxkSDq4pGIRAJFSCAwvxnsVRGw/LbGWJN5H/2UKRCH+oFrV+29Fuw
-         MffggS/X5PTSVhGQrOhYjGgXnk1YhEALcNGKaycz42AKJIk5j/+q7mDqBzJPE75E5By5
-         oJjFPmUJAMz+BZxxvzW2MR0EPFi5Et+eaICiH99BA1Kg0g+5/Pd0poeDHhGDG9kR8IWj
-         sRUA==
-X-Gm-Message-State: AOJu0Yw1LE07UhfU5dGOflCptcwYgcfM+8jC+Uz77wd+UV3NZANrcE4B
-	Vf6AP3XPwfnWGLqArUtLDy5lb3MhqE6RyDJkLLS+VFCJjIvGSzd6chKPLww6Fg==
-X-Gm-Gg: ASbGncsqeDEWK+oAKSZ1N3DeFZCHe+7ihV2p5H58zmSdDmF0TWxpMdx5uXpaG1Y4qVN
-	exuPUW4IDgFB57bvd7B7zQVHqVCe/78SuNpCH9EWljnN2DDXMlTMFau6uuWCUh8ZrwbmnOU7EIy
-	8qaOdep43c/Adld0l5vALMUz/W1RgzIY1ihWxM+ztEBNnuyqzAix8bxMKEq6jvxoJpRcerwbLuL
-	sn6aN66e6Z3ugVUVlnUvulKjiGo3dn7nHavbhoCwXFQOk/MlxwnQZNWZq8t9l1DXXfXYZ15uLV6
-	pfPsNj7XAZZ39Bd2LWxNZt/dhDmknOfE78Dn4TWh2FgIjMaHC9H8359A69+zq2vGYKhu5LzE2b2
-	fjq8V2T4Tes1RtD0BJrPsuW9A/Odjpr8zawgQj5wG0Stp+ip09Tn5CKJFVH3LbT1NkSWQoTR4sN
-	EdxiVPmipzmMCElx2n6eQkBA==
-X-Google-Smtp-Source: AGHT+IHQwmwFvaNe5JBDv0W3vPG6Nj+7QvXR/M86n/O9p3aQHOz7ugIePPe6RhVUkuxoFYu5OG17EQ==
-X-Received: by 2002:a05:600c:3e8c:b0:46f:a8fd:c0dc with SMTP id 5b1f17b1804b1-475c3f96944mr72318045e9.3.1761243806792;
-        Thu, 23 Oct 2025 11:23:26 -0700 (PDT)
-Received: from [192.168.1.121] ([151.49.75.135])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4342946sm109377795e9.10.2025.10.23.11.23.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 11:23:26 -0700 (PDT)
-Message-ID: <f1d2dece-6e51-4092-9f2e-58dc93508a25@gmail.com>
-Date: Thu, 23 Oct 2025 20:23:25 +0200
+	s=arc-20240116; t=1761243909; c=relaxed/simple;
+	bh=zwCmN86sqMbHXrITH7YOhA0fPI1EnrI6nXVZagQBh7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jt+MWIeBsqlG1bUz5nRNyCpTTKwmLTZfzYTcA2FlYyphUBUGaK9YhnuarkW8ODFylOpr3eg9bSsGYSkwbapvlNgPZGSpzaDLnsbKXHKmBMMVAeXx9nxjN1Mltjvc4u1ERFRVmRRLeGmS+jANyeZSZII/zQJ5EgxQ5p4MWpV2ZqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z8kabk/Z; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761243908; x=1792779908;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zwCmN86sqMbHXrITH7YOhA0fPI1EnrI6nXVZagQBh7I=;
+  b=Z8kabk/ZGD6/R7JpRbFPhyCXA0PdcAWNNDdXgwgcxV3zmXXqa0SAi54c
+   jAxiVJaYmHSbx1kj7byGHbObV3Iu1BhMDBZzgmZOv4Llhue9olG+6F+ku
+   /Q5X8rhG30JMzBsthRAKGZ7CTLB41tgfocmXy8zJRD5g0mj+DfDPh8TCi
+   X2AstZmMkoC18PW+8sFuGhEUkmJNGTwNi7JLJthl5a1kVkd+nMmynTR8o
+   wGPCr/fxDcGhBNnJAI43OP1NNaJ7C9FbCGJjz2icfnwVuJwfKOB0edX4o
+   E08fgmId00TNC9ChtKAZjNATvt29zysZqMMzsrl5aZ0aqSmQT48A3vFl5
+   g==;
+X-CSE-ConnectionGUID: qNKq2PLNRVilgGcdqZar+w==
+X-CSE-MsgGUID: nt0mLNHCRR+E7DQWHvbxXw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74544223"
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="74544223"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:25:07 -0700
+X-CSE-ConnectionGUID: rZGXvA+rTRisloNEidpLPA==
+X-CSE-MsgGUID: 4eRJcodlREGrhOmUXQuDVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="214884102"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:25:04 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vBzzg-000000020qc-1HGR;
+	Thu, 23 Oct 2025 21:25:00 +0300
+Date: Thu, 23 Oct 2025 21:25:00 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
+	devicetree@vger.kernel.org, Carlos Song <carlos.song@nxp.com>
+Subject: Re: [PATCH v6 3/5] i3c: master: svc: Add basic HDR mode support
+Message-ID: <aPpy_FNh0DB_1x-w@smile.fi.intel.com>
+References: <20251014-i3c_ddr-v6-0-3afe49773107@nxp.com>
+ <20251014-i3c_ddr-v6-3-3afe49773107@nxp.com>
+ <aPnngQdwEqHgPc7R@smile.fi.intel.com>
+ <aPpIkqjeWsi7xAAn@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/9] HID: asus: prevent binding to all HID devices on
- ROG
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20251018101759.4089-1-lkml@antheas.dev>
- <20251018101759.4089-5-lkml@antheas.dev>
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <20251018101759.4089-5-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPpIkqjeWsi7xAAn@lizhi-Precision-Tower-5810>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
+
+On Thu, Oct 23, 2025 at 11:24:02AM -0400, Frank Li wrote:
+> On Thu, Oct 23, 2025 at 11:29:53AM +0300, Andy Shevchenko wrote:
+> > On Tue, Oct 14, 2025 at 12:40:02PM -0400, Frank Li wrote:
+
+...
+
+> > > +	readl_poll_timeout(master->regs + SVC_I3C_MSTATUS, reg,
+> > > +			   SVC_I3C_MSTATUS_MCTRLDONE(reg), 0, 1000);
+> >
+> > No error checks? Why is it okay?
+> > Why is the first parameter 0 while it's not an _atomic() call?
+> >
+> > > +	udelay(1);
+> >
+> > No explanations given. Also is it really need to be atomic? If not, use
+> > fsleep() and it will choose the best suitable API under the hood.
+> 
+> It is in atomic context. I will add comments.
+
+Not only, the call that's used in the code from iopoll.h is wrong in such a
+case. Haven't you tested this with debug atomic context?
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-On 10/18/25 12:17, Antheas Kapenekakis wrote:
-> Currently, when hid-asus is not loaded, NKEY keyboards load as ~6
-> event devices with a pretty ASUSTEK name. When it loads, it concatenates
-> all applications per HID endpoint, renames them, and prints errors
-> when some of them do not have an input device.
->
-> Therefore, change probe so that this is no longer the case. Stop
-> renaming the devices, omit the check for .input which causes errors on
-the devices -> devices
-> e.g., the Z13 for some hiddev only devices, and add
-> HID_QUIRK_INPUT_PER_APP so that each application gets its own event.
-
-event -> event device (or evdev?)
-
-It is not clear from the message what HID_QUIRK_INPUT_PER_APP has to do with
-renaming the devices/having one evdev vs multiple: please make
-it explicit in the commit message (and perhaps make explicit if (and how),
-in case it could make any difference, how programs might change
-theirs behavior as a consequence).
-
-I like the fact that userspace only sees one keyboard for what is,
-effectively, one keyboard device.
-
-The code looks good to me: make the commit message more
-explanatory and I'll include my reviewed-by.
-
-Thanks,
-Denis
-
-> When this is done, the probes are called multiple times. Due to this,
-> the rgb check needs to be moved into probe, and the report fixup should
-> be skipped for non-vendor endpoints (prevents multiple prints).
->
-> Reviewed-by: Luke D. Jones <luke@ljones.dev>
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->  drivers/hid/hid-asus.c | 59 +++++++++++++++++++++++++++---------------
->  1 file changed, 38 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> index 03f0d86936fc..bbbac98f76c6 100644
-> --- a/drivers/hid/hid-asus.c
-> +++ b/drivers/hid/hid-asus.c
-> @@ -47,6 +47,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
->  #define T100CHI_MOUSE_REPORT_ID 0x06
->  #define FEATURE_REPORT_ID 0x0d
->  #define INPUT_REPORT_ID 0x5d
-> +#define HID_USAGE_PAGE_VENDOR 0xff310000
->  #define FEATURE_KBD_REPORT_ID 0x5a
->  #define FEATURE_KBD_REPORT_SIZE 64
->  #define FEATURE_KBD_LED_REPORT_ID1 0x5d
-> @@ -89,6 +90,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
->  #define QUIRK_ROG_NKEY_KEYBOARD		BIT(11)
->  #define QUIRK_ROG_CLAYMORE_II_KEYBOARD BIT(12)
->  #define QUIRK_ROG_ALLY_XPAD		BIT(13)
-> +#define QUIRK_SKIP_REPORT_FIXUP		BIT(14)
->  
->  #define I2C_KEYBOARD_QUIRKS			(QUIRK_FIX_NOTEBOOK_REPORT | \
->  						 QUIRK_NO_INIT_REPORTS | \
-> @@ -125,7 +127,6 @@ struct asus_drvdata {
->  	struct input_dev *tp_kbd_input;
->  	struct asus_kbd_leds *kbd_backlight;
->  	const struct asus_touchpad_info *tp;
-> -	bool enable_backlight;
->  	struct power_supply *battery;
->  	struct power_supply_desc battery_desc;
->  	int battery_capacity;
-> @@ -316,7 +317,7 @@ static int asus_e1239t_event(struct asus_drvdata *drvdat, u8 *data, int size)
->  static int asus_event(struct hid_device *hdev, struct hid_field *field,
->  		      struct hid_usage *usage, __s32 value)
->  {
-> -	if ((usage->hid & HID_USAGE_PAGE) == 0xff310000 &&
-> +	if ((usage->hid & HID_USAGE_PAGE) == HID_USAGE_PAGE_VENDOR &&
->  	    (usage->hid & HID_USAGE) != 0x00 &&
->  	    (usage->hid & HID_USAGE) != 0xff && !usage->type) {
->  		hid_warn(hdev, "Unmapped Asus vendor usagepage code 0x%02x\n",
-> @@ -931,11 +932,6 @@ static int asus_input_configured(struct hid_device *hdev, struct hid_input *hi)
->  
->  	drvdata->input = input;
->  
-> -	if (drvdata->enable_backlight &&
-> -	    !asus_kbd_wmi_led_control_present(hdev) &&
-> -	    asus_kbd_register_leds(hdev))
-> -		hid_warn(hdev, "Failed to initialize backlight.\n");
-> -
->  	return 0;
->  }
->  
-> @@ -1008,15 +1004,6 @@ static int asus_input_mapping(struct hid_device *hdev,
->  			return -1;
->  		}
->  
-> -		/*
-> -		 * Check and enable backlight only on devices with UsagePage ==
-> -		 * 0xff31 to avoid initializing the keyboard firmware multiple
-> -		 * times on devices with multiple HID descriptors but same
-> -		 * PID/VID.
-> -		 */
-> -		if (drvdata->quirks & QUIRK_USE_KBD_BACKLIGHT)
-> -			drvdata->enable_backlight = true;
-> -
->  		set_bit(EV_REP, hi->input->evbit);
->  		return 1;
->  	}
-> @@ -1133,8 +1120,10 @@ static int __maybe_unused asus_reset_resume(struct hid_device *hdev)
->  
->  static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
->  {
-> -	int ret;
-> +	struct hid_report_enum *rep_enum;
->  	struct asus_drvdata *drvdata;
-> +	struct hid_report *rep;
-> +	int ret, is_vendor = 0;
->  
->  	drvdata = devm_kzalloc(&hdev->dev, sizeof(*drvdata), GFP_KERNEL);
->  	if (drvdata == NULL) {
-> @@ -1218,18 +1207,42 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
->  		return ret;
->  	}
->  
-> +	/* Check for vendor for RGB init and handle generic devices properly. */
-> +	rep_enum = &hdev->report_enum[HID_INPUT_REPORT];
-> +	list_for_each_entry(rep, &rep_enum->report_list, list) {
-> +		if ((rep->application & HID_USAGE_PAGE) == HID_USAGE_PAGE_VENDOR)
-> +			is_vendor = true;
-> +	}
-> +
-> +	/*
-> +	 * For ROG keyboards, make them HID/hiddev compliant by creating one
-> +	 * input per application. For interfaces other than the vendor one,
-> +	 * disable report fixups.
-> +	 */
-> +	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
-> +		if (!is_vendor)
-> +			drvdata->quirks |= QUIRK_SKIP_REPORT_FIXUP;
-> +		hdev->quirks |= HID_QUIRK_INPUT_PER_APP;
-> +	}
-> +
->  	ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT);
->  	if (ret) {
->  		hid_err(hdev, "Asus hw start failed: %d\n", ret);
->  		return ret;
->  	}
->  
-> +	if (is_vendor && (drvdata->quirks & QUIRK_USE_KBD_BACKLIGHT) &&
-> +	    !asus_kbd_wmi_led_control_present(hdev) &&
-> +	    asus_kbd_register_leds(hdev))
-> +		hid_warn(hdev, "Failed to initialize backlight.\n");
-> +
->  	/*
-> -	 * Check that input registration succeeded. Checking that
-> -	 * HID_CLAIMED_INPUT is set prevents a UAF when all input devices
-> -	 * were freed during registration due to no usages being mapped,
-> -	 * leaving drvdata->input pointing to freed memory.
-> +	 * For ROG keyboards, skip rename for consistency and ->input check as
-> +	 * some devices do not have inputs.
->  	 */
-> +	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD)
-> +		return 0;
-> +
->  	if (!drvdata->input || !(hdev->claimed & HID_CLAIMED_INPUT)) {
->  		hid_err(hdev, "Asus input not registered\n");
->  		ret = -ENOMEM;
-> @@ -1352,6 +1365,10 @@ static const __u8 *asus_report_fixup(struct hid_device *hdev, __u8 *rdesc,
->  		rdesc = new_rdesc;
->  	}
->  
-> +	/* Vendor fixups should only apply to NKEY vendor devices. */
-> +	if (drvdata->quirks & QUIRK_SKIP_REPORT_FIXUP)
-> +		return rdesc;
-> +
->  	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD &&
->  			*rsize == 331 && rdesc[190] == 0x85 && rdesc[191] == 0x5a &&
->  			rdesc[204] == 0x95 && rdesc[205] == 0x05) {
 
