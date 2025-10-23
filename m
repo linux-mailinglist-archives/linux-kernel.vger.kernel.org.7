@@ -1,207 +1,249 @@
-Return-Path: <linux-kernel+bounces-867213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B71FC01E00
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:47:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66090C01E8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B99711A62C3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:47:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0EC3A632B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FBE32ED45;
-	Thu, 23 Oct 2025 14:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B69832ED45;
+	Thu, 23 Oct 2025 14:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PUReZj06"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012052.outbound.protection.outlook.com [52.101.66.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="DOa9pBJR"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC03A1D6DA9;
-	Thu, 23 Oct 2025 14:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761230809; cv=fail; b=Y96Pojs5oF+HvJfMeSC6PeGq2AcVpNj5brpjKW4oXxxXzCYSite5BaotXOI3ZRoGA/r3NxNRk2v5QqlKs8ZrbwIKb4c5Y06BjmsXZI2irrkydIxDxBCHAFhZZ7ePPyE1hev+ftTT1914mnu1I2A23ET9mnkN4K0ulBiYvd6bmxk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761230809; c=relaxed/simple;
-	bh=iIsk5my5VCBFqIeaw4+t+afMYDUccpxiQ6jeb6JpX30=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fvQkH8scbQqDIvDnLZetmNXt8SpZTu3RzB19mQmvCnVzmAiDYba9j9WHJOUZpRB4zpCWZWmRY9mTwyIy00xY4/RAlDqmYlgFhCtTuXo0arIjc8Sfo9S2JkquvanpaR8ymBaFiA7Ic2j6kPsR3sAT2ZSEFfajFpW2eUK0KUbvHO0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PUReZj06; arc=fail smtp.client-ip=52.101.66.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eAYWQ8gn8TES7nXoyNKIPNKh1L9vGJc9oy1WUgEoCygvZMrNCWfPIMW7/MxM5eZi/HQCRl8I9UIfPvPnnuN59S1bJCVNtozCDr4MIPhevxI5ZjpszV3GDoQjsYCXSYqvZl+b/aHYSBK+lf9MEwBf/dTxHVIKT5k8x+1M2BEh/HHztMa8g8Rj4hSi/vX73X/VzmKbwI6g66AfKf1sOqzQ4PVPb7tL019I7xWlHTn/zDIrL2nTn8WF1bjTG1ejYaSOE+pWLCV3D0dwXVVlgQTu/8PXyWXLp5VFhDGFHk4GpM1trducE0a51OjBES1AVgRt9rG5uxyDYwiyN2woKiZ35g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iIsk5my5VCBFqIeaw4+t+afMYDUccpxiQ6jeb6JpX30=;
- b=Fm09i2cehZA9d2A4jkqU2C2J/Oeb/HMr0CcLX+IdJkHo8L/BBs9Vzi2IbUZhpz7BqfsO3zPa8UAgpgVBiSRueqPOvB1vFTkqolMVy/iLU6JVggFfYB+/dpaL2FSbLnS7SEKie7+qFYK9DG3k4ei/mOF6AozgQSBBvAwVkZEq8Rhb/lv+5jdPVu8THgsCK2mB/Ah1tA2ewJxJ1zmhR3MJX6mRoKnrwjMKpobXXo2naXGNq26b/rEjCHyzCR2s0Kwlp6cTu9p6ZoCeA8iMrw3DsyrJ8r/IsdW5lTWOVJpXZqJYtxIRGL3vDHtikZRKeUBccFFQ3v7uTKp7mKj6d6MiLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iIsk5my5VCBFqIeaw4+t+afMYDUccpxiQ6jeb6JpX30=;
- b=PUReZj06MhZhA5656OubmdRwljuRlA6Imt3VrCpQsQdJFpcMXYkqaJZ6fXVFI4TDuiTtIE0/qutY/xhKKt9WieUSPkO+p6MZq8xt5q4Yi/FfNo36Okj/i9+EzNKbqBoak3cQNW3St4TopzXLwuaFDHeJsC+nFlcGsJpOFTZMlB8XQJeQvfOpfevEBylWJvTSAT/LY31QdGeFThRay4RM2C3riXSVavdTVWM81EajVv1NTdl0qyFsD0VLZ1nzpQ/rLFMiMmFHw4HDgC0oipQRRCxPmXTdI+4Fv6+FCWLIWrJURtDD8tbH1NjfBXtbUztDliThDc/s7YA1APfmN0Utdw==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PAXPR04MB8405.eurprd04.prod.outlook.com (2603:10a6:102:1c2::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
- 2025 14:46:42 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 14:46:36 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sudeep Holla
-	<sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, Sebin
- Francis <sebin.francis@ti.com>, Brian Masney <bmasney@redhat.com>, Dan
- Carpenter <dan.carpenter@linaro.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "arm-scmi@vger.kernel.org"
-	<arm-scmi@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v5 6/6] clk: scmi: Add i.MX95 OEM extension support for
- SCMI clock driver
-Thread-Topic: [PATCH v5 6/6] clk: scmi: Add i.MX95 OEM extension support for
- SCMI clock driver
-Thread-Index: AQHcOM+l7sFcrdl8hEKQrktlH0f/Y7TP2KCAgAAK2lA=
-Date: Thu, 23 Oct 2025 14:46:36 +0000
-Message-ID:
- <PAXPR04MB8459BC290B855BFCA1C3D15E88F0A@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20251009-clk-ssc-v5-1-v5-0-d6447d76171e@nxp.com>
- <20251009-clk-ssc-v5-1-v5-6-d6447d76171e@nxp.com>
- <CAMuHMdU-UkzLnrPpBVyMH0DtgubxE_spUYbxtpO+5dmkFFqdcQ@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdU-UkzLnrPpBVyMH0DtgubxE_spUYbxtpO+5dmkFFqdcQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|PAXPR04MB8405:EE_
-x-ms-office365-filtering-correlation-id: 95bdb4b3-8b17-473e-ca9d-08de1242f7c9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|19092799006|376014|1800799024|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?U3JmQndpWFpweTg4UlA4bEkvREh4N0dLQXc5OGVvenlDWllIekZqdGsxRVcz?=
- =?utf-8?B?SlNOcXdmVDdPTUx1UmZmc01tTFRJZ09ZL2NWMHNtNnZXeFZVREVCbU9oQVkx?=
- =?utf-8?B?K3hueTZqLzN4UGJaMEx0bWZFeE5Ba1dhbXM3S1pIMnkyeG9TSFpKNlBiZnVJ?=
- =?utf-8?B?NWEwa1B2TG1YTHdRS3FzWEVmMEVKYnc0VzRhQWc3enRBVjR3VmZJeXBRRnZV?=
- =?utf-8?B?eWphM3ZkMjlrcW1IZElpQloyNk8xOGJkTmk5U09uYzhqWjRQMVZQbDBFUVBs?=
- =?utf-8?B?bEpLd3ZFNG9KaEJNcWFqK1RVbktEVmNFNUxLRVFqek5EditHdXVVRGtkTFo1?=
- =?utf-8?B?clg1aGY4VEdSTXpXK2o3N09wNWJ5RTI4dmpVVFVIT3k5N0hGTWkyRzdhRjVH?=
- =?utf-8?B?QjBLMVlBNjNzM25IaFFlbGxMY2E5L2VNNFV6YTdDRU8vdjE5bGxpUVUxaXZ2?=
- =?utf-8?B?MW1oSEZYRFUzOFBxQ094b2JiY3lZV2VFTVlqaDBjVy9YSEw5aUF3dlZsS3FQ?=
- =?utf-8?B?WUN4Tm5kY2N1SmZUK3JqYnlnOVRDUG10Q0FVQ0RRdmUxMVJveStYbksybXVo?=
- =?utf-8?B?dURzYWJxTnlwNGdUQkNSWGdMVUx1ZkZnNUZlUWZEakFiUjBsa1pjbEJqUWFL?=
- =?utf-8?B?UUhQTlR3WEZwQ1UzcXc0N3g5eUJ5d0ZOV2NpRndZdHZtRVd2Z00yVmp0V2g3?=
- =?utf-8?B?b1hXQXYyTS9qcHQyNHA4K29FZ1kvSGljTWtVU21UWHlrWitxaURQenFXd0p6?=
- =?utf-8?B?WmFiaktwSlhyejEwajBBQ1lCQjZqOGZwN3ZkdHlqUElSeVdkL1ZlVElBc0xM?=
- =?utf-8?B?NGxkdVJIVlI4cVE2Y2xFWkFGcGQwSmVhQWdJRFZjc0FlV0NCT2RQYzdOUDRy?=
- =?utf-8?B?ZVRXMjV4NkhDeUlvbXRnSUF3dUhYOXVuL1pvNHJRUndicGJCR0VScTByaGRK?=
- =?utf-8?B?OThVOG10VGRjMEp1Zk1MUkY4T2RsZ0kzSlN1YnJtS2xMYW8xUUVnMURubllW?=
- =?utf-8?B?ZENWWHp5akZtcFRyakVLNUxINGVlU05PbW00MW9icjJjVExVeUlzYmczbjNv?=
- =?utf-8?B?MmUvNVhvUkt2N3dzaWFYNXI1TFRFc2RyTmJBMzZjRy8wTVBPSWFDTTk4Smtz?=
- =?utf-8?B?SVAxTUVtSTk4NXBuNlgxRFlhdi96Y3BVcUEybVBpVEwwYzllU2tRd1VqZ2RN?=
- =?utf-8?B?N2lwMVVvWDRNQzV3T21iMzBnMzlPU241VWNTV1JabmNWV0FBbVgzNFhIK3Vy?=
- =?utf-8?B?ZS9ieDZqUEtPcSthSnV5SDlUNjIxMktXamJXZVVwRUU1ZzM4dDRrdE0xV2Jn?=
- =?utf-8?B?UStqRG44TDRDTjhrT0h4RlNSZ3BVSitwYytFZ1RtUDhOM0tCS0FmRnhNc0Vt?=
- =?utf-8?B?MlNyWjVYZWVEVFZNRG1vZlBxMHF6NVJHRkVoT2N2RmlSeVhWc2xjV01FSWRY?=
- =?utf-8?B?MXR4aiszc3NVRUxLWHF4dmNhSDJpa0dkeVFpSG5FdTJTVWJ2eG9pR1NKNGp0?=
- =?utf-8?B?NldJWTVnME84b0FlbU1TYlJLa2tQUTgwRDc3azh6MFc5L0hBRjgrVGhzWTFG?=
- =?utf-8?B?S2hidlZzTjBOSlV1QldPOVRkSWlLdXZjS0UwbTQ2S0xvSG8rMkU1QUE0ZnRW?=
- =?utf-8?B?K3ZnakMyTUdIZ3J4T09tWHVYejVuWERnQTJ4RXhHWm1zcDF0VDczME1FZzhY?=
- =?utf-8?B?bXdKQnRvT1V0YnpJdFFBRG5PYys1T2RlRm4xZnc4Y1E5MDljU0R1VitGc3RM?=
- =?utf-8?B?MUZkaWVCaGI5c2N4WnFTcE0wcEtkblljZitoOHREdjJSQVd0UzY4bFhRa2t3?=
- =?utf-8?B?N2VJc1pnbWd1Y2F5OHRpVmQ0dGlGMmJiUEQ0MmVVVk1oY2kxZlFleFpoRFRw?=
- =?utf-8?B?TjVNYi9rcEpEc2hPMzZiaWwydjQwM2dWM1kxMUdpQUp1MllFM20vdUZhM2Ro?=
- =?utf-8?B?Q2hzTmM4N1Z5UFcxYlZZaTR3S1hHd2FBYXo0OXZjT3NBRTB5Ym84RWJyRXhM?=
- =?utf-8?B?cEVrNjIwRWxhdWJjUStkanFicnMxZEE1ME9wSUpvKzF3WFJlc1ZRR0pRVURF?=
- =?utf-8?Q?bSa02i?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(19092799006)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?bzNpWEk4ajNEeVRZOEJoRUlLc05aZDhSZTlvWlQ1MVJQMDdNcFpJaEVDUFFL?=
- =?utf-8?B?Q0dUbDdzZjhCTE45SmtXS3RJc3Q2MG5MSnNvUXpmc3hHbDdPdjBwNTZhK25h?=
- =?utf-8?B?amIzc0trY2tFYTJ3bmpyMnUrV0pJaGZKdXRlcFFHSHhZdWFlMTNXOSt4WXBa?=
- =?utf-8?B?UjE4R0h4OHRCcUhMMnh3S3JhWEFEVklwblRhZzJLTnVsVnJHTldiaWt5ZzE2?=
- =?utf-8?B?OWZ1Z0d3c2pCYjFsM0ZrSkNBM1hPNGM5NDZYQVF1ekNFZklqV1g5MHVkK3JD?=
- =?utf-8?B?eER2ODY1MDMzbHozN3pRRGw2SkxSdWc2aEF1dTBVLzRIQXhDRlI1UDNjb2U2?=
- =?utf-8?B?OExWRW9FRTRRMitIVmI2SlBIOHMxSCtJL3ZqalFzbVJZNEhQN3lGMUZrRlJq?=
- =?utf-8?B?SWNqL251QUZMMlAxNHRvaFBDM2RxZk9DWEFudFFEamdOL1EvM0YzU3VVWmNE?=
- =?utf-8?B?WkZuWk90ZEl4MkF3OHdFUXFsNXJUeHhCYjJoYzRiTWxBZnNDZElwVjFHeDRC?=
- =?utf-8?B?VEhWWFh0MGVLbTlsVE9nV2d3clNTMDdoSXU2TC9KbW5qOU9oNm0yQ0kyV0dz?=
- =?utf-8?B?clVjVGlkNVBNSTNEelJ3VE1Qa0xtbzhtMDQzVWRicnJ4RExCNGltT2RDYXZi?=
- =?utf-8?B?QThLSFlsa1RPNmw4YnpPZUFhUlhKV0xUOGN5MXVLdFBuZXgyb3A4ZDNORHlU?=
- =?utf-8?B?bVo5RXJLYjE2QVFjTHBDYVpHdHA2d2xJYWR4dkxveWxuemh0OGI2ejhHTkVo?=
- =?utf-8?B?SHM1T1NpdVNqRytOdExoSTZOdldIZFFza1REMW9hdWVoZ3l2Z2NodC9xdnhU?=
- =?utf-8?B?djdudmtqWHNPenFPbXRPdE43OUVjOWwweGNlUFlLZWp4OWRaQVNKTGFYYlRC?=
- =?utf-8?B?YzB3d1BqY2ZIYjlsUG9xb1JIaXFRNVlxZnRwQm5yRUtTZmJOZjFYcG5Ta2Fr?=
- =?utf-8?B?b2pDVG16NUREcWZVSTdBMUVhNDR6QlRtaEhmTGJkQytGV1VOTE1kS29KUlE0?=
- =?utf-8?B?MkIrWU9jSjBLTFFQSEFONGZUL05pWmhMbXRKbzFDMDJIZVZTUzl1SUYwVFdt?=
- =?utf-8?B?bFZvYTVaVXovRHRVOUp5dTJpL0gwZUlkZTRRVTJTVmRFd0x3aWFMY2plVVEy?=
- =?utf-8?B?dTJhUG9zQ0xEZWh0dUcyRE9kUEhkdTZmWnRFYzljcm9CdnhUbTVDWCtoSjRl?=
- =?utf-8?B?dHZ3VWdUcHlKRlRNUzhKdk45aEswdldNVG1iSWlaK3p6cnFmcVlRdTdnVDQx?=
- =?utf-8?B?bmRPd29rcDQyM3N0elAwQmZ0V0NVZWlTQ0Z6ZHM5VTE2VTZCOFRpWHJOU2Rt?=
- =?utf-8?B?Mnl0S3MwQWdOdDhzL2sxeHhPSUI1U1hia0I3OUIvN0J4SDJlcmJoK1ppaFdF?=
- =?utf-8?B?RkY4RXZUTDFUVFZTQ0dOelVleEZHeDBLQmMrTDRsWjlFbDhTRGRiTjByU2dE?=
- =?utf-8?B?Q0crVEdoVU9pTXVCOWJIWWtlNXlIQWNldExYZ1pCZzdza0h3RzE1VVRDbFpD?=
- =?utf-8?B?T3E4OTBkQXJlVjZKTDNGbGNaYlU0SUlDSC93YUErUzNEcHVGU2xXSnJWdHY3?=
- =?utf-8?B?b1puaEU0d052ZEdRZVJvYmwwVVdqSVFzKzhtdXVtL21DWG1vNmdIVEcvSFFm?=
- =?utf-8?B?MnhPUU9uMlNieFVkTWdjOHVySThxaFFudzB4bDN3c3ZCWi8vNmkvL3RFQVlv?=
- =?utf-8?B?VjlXSGpXYzFqRkxRQSsrcTA4bEl5VG1YWTJnbHF5bnlabFduWWd4cUNiTjVu?=
- =?utf-8?B?aW5TTHRWYmJZaUZFYnVNZXZodDZsbytkR250WTBIY0h3c1BKQUdpb2o3YmhH?=
- =?utf-8?B?cThGNXJtSURzM3ZWT21JUnR5Z1dWaVhLMGhscTI4KzB1RHNBcy8zcVp6RUlH?=
- =?utf-8?B?bHJzNkN4OCtyaFUvYncvdVZFV0JZc0JwNi8wQlEydWFHcnlRM2hZSUJ6Z1RQ?=
- =?utf-8?B?VFRGcndpN3dXb1JFQ0pmb2xNUGVMUHJJUmJ6QmovMkhiQ0J5NEdKa2twelZw?=
- =?utf-8?B?SUYvZmV3OW5oRHdlRGtlS1pUeS9ibzVvVnF0RzEyRVhXeEQ5ckw0Zk5hckJF?=
- =?utf-8?B?dTVuODM4K2NzYm1tRWNFb1ZWMGVOU0dKSjRQeUxOVEM4aHdJY3lKT1FrQkY2?=
- =?utf-8?Q?+t2w=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76F2322DC0
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761230887; cv=none; b=TyN5s9rbXVy9Bn4NmvDtMfVIjSSOREsdXGAJ367h5o2eGsrRCHGFsmgJH6us8KMdoA2+AtOUvaz6NIKUajnZiFCPHMuKhTaR4uieguURnVrQntIOKu/QamyvdfWS5gLZ0vZ4kBhd043R3e0VEuiR0RqnEDLO9y+Z4VjXv0sHvLI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761230887; c=relaxed/simple;
+	bh=yCbQ9XxHJbLX+gMA3bCythVrgdQkz4B5n1RY+AXyRAo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RliBuzYh9RLlY6msgMLNR9fVRG9zzDyfCSQR11TJsfCw8xlWyuQv1IY1+QquN07JnsTNiObrZYhCy7qyVEzSfLtSZFeIEZF6tdVTvHlvQhcs+TSrNz09gV6ZMC90ATOPESu/McoTgy41GV6BxOTE6dBfz37VgfzvRjlbM5AG4K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=DOa9pBJR; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-3c9a2fa38c1so321310fac.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:48:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=google; t=1761230885; x=1761835685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yCbQ9XxHJbLX+gMA3bCythVrgdQkz4B5n1RY+AXyRAo=;
+        b=DOa9pBJRFx+knEeb/Ywo9K/L2kURf/jMx9uFfTCQKlI2cPVdLzwIgv7VO0eN6AlZOU
+         /XBjNsoWcJhwfhMKP8NDBHqyzHCNoovr6dDZccXJc21UXnSzp83x+okJ9IwRWmIshIGl
+         kYycEBLb+ohLHMI5HewOSLfxSWHRO8QnZ+uDFkZnmUO+zrX2DuEz7sEwveT33oCwNTek
+         93nwKwVIZ4KsTTqfLmtRP3yPuZjrYfuQ6AX+DH6rhQpYoEDfuYAXCEk5JBh90vyp/90N
+         X7dLWwDXGr709BpwUCVWScWMueCx6hlZWIfHNe4mswuodnzTGRiU+IFkCt5wOdBFjEL4
+         2MjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761230885; x=1761835685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yCbQ9XxHJbLX+gMA3bCythVrgdQkz4B5n1RY+AXyRAo=;
+        b=PH71vc1mgcjaQ0GvhiCG/GK29eJZ/n0xQfezu4VmDbKXGlouhNLWbO06wX+WjH5J1b
+         BpL9PPFgAAecRtY5X5gmrPSsaTq5LAc+LxzVuWpL7aKt40ejThSB90qzzwpHzTiAl9w+
+         3X92XoMtHOYoIXYIAOOdyoFeeCPjsjofalPJAK1ZtRKl/vTwAb7vcBNaDjVjhdq9QYXS
+         X6VOlbuF4PqX4DYSxTcLP0X90LLLKpfs1KFkR1sC4SeKNB9jMEjG7NXeNf1bFXReQKkB
+         CE0KvFZ6eDDlBSPBiiEhbrl9pgyaqBcxuSkASt4V+KyzqStJArtOEjgqR+DmQ9p4jwIH
+         lxVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUig/BmL78Rbb+D8O2GbzEFryDe+lzOFLgfZTnAF4rDMLEATsrn6otX+4J0dR11NlwAlkoI0Rqbba63Bic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjfMmSPzsloO8hTdmf1reAwewlottllpmXhe4LorBcf6/pIvht
+	pVrkczMgNIa5S91IjpdPxBEGQfnSt5FAlwtzAtwxtndrZ1YxYH+bMD1BgPdMBd+hQPYIyoLK5LG
+	V710HruJxn4l7C/zK3SDOQ4RspO5iE38HPGoNLhzK
+X-Gm-Gg: ASbGnctqpSxLJdTUdr/yf1Qemh2q2RqSwK5rM5eHrX6bcEM05QyqGkQozVxdRBKO5JR
+	abgFOL+QhBtJeFY+WO9YLMP4aK6XKLssha4dhRBQDexu86kEPbhqFGO0s17M9XWIOFEqjjxoTvE
+	EppA/wDCLNVsKD8nSkYzcgPdUfMfd/NdyqVqN0CEJxla2MYjckK+Bmc3oM3n9AgQ01ktnFnKoSt
+	mNS0u+cDziO0HGTDGUGJHWOD9hALX6TfK3efSbt7eay6ZNnh0nXpgLNMzAj0B9+6fJf48RpoMCB
+	QHvbgoYWB8JVBFj++voQ/R07pt+ftg==
+X-Google-Smtp-Source: AGHT+IFvw0XTgABjFJsYXYpUudxoEkAHEEP01CdUdwp3L8Qx0ZBVOSdQx/inF8LNyXBTTOZmTqpehickro9B2Kz6m7g=
+X-Received: by 2002:a05:6871:d10b:b0:345:ecd6:8b7 with SMTP id
+ 586e51a60fabf-3cd88db4df9mr2532709fac.11.1761230884387; Thu, 23 Oct 2025
+ 07:48:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95bdb4b3-8b17-473e-ca9d-08de1242f7c9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2025 14:46:36.6905
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OrOdLLcq70As2bioEkxD+ydCCfnIAFk7k4gDZEQvS/oR+qqLfn/g3kazCV8bg4E/ujCMHDNX5BtgCkwxIRE+zA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8405
+References: <0f006338-e69b-4b3f-b91f-0cc683544011@kernel.org>
+ <20251022114527.618908-1-adriana@arista.com> <20251022201953.GA206947-robh@kernel.org>
+ <CAERbo5z6BzHqQxXdxPxmxE_eDR7GGGbt3A8kB0gQiWFBE-28Ug@mail.gmail.com>
+ <CAMj1kXGYinTKiyYhNYWJvoJeUJScCGnyq=ozLgjKAm7_wzG8QA@mail.gmail.com>
+ <CAERbo5waY-=6BLZ2SiJSFAXzvU57mJdM9q05vAZw8zR2yExQ5w@mail.gmail.com> <CAMj1kXHin5YacS98ttzHqFqy6HMukXKoLZtr-+bLwVRsWZUugQ@mail.gmail.com>
+In-Reply-To: <CAMj1kXHin5YacS98ttzHqFqy6HMukXKoLZtr-+bLwVRsWZUugQ@mail.gmail.com>
+From: Adriana Nicolae <adriana@arista.com>
+Date: Thu, 23 Oct 2025 17:47:53 +0300
+X-Gm-Features: AWmQ_bmwEubJ_qHzUAOArVDKuoamgdMa0FuM6IkzPxP77akzotjC48951wOss6E
+Message-ID: <CAERbo5zgS8XoGcFB3wejqDpx14-SBr5oWn7pu3=PE0djRiKZqg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] DMI: Scan for DMI table from DTS info
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, krzk@kernel.org, jdelvare@suse.com, 
+	frowand.list@gmail.com, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, vasilykh@arista.com, arm.ebbr-discuss@arm.com, 
+	boot-architecture@lists.linaro.org, linux-efi@vger.kernel.org, 
+	uefi-discuss@lists.uefi.org, linux-arm-kernel@lists.infradead.org, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgR2VlcnQNCg0KVGhhbmtzIGZvciB5b3VyIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0ggdjUgNi82XSBjbGs6IHNjbWk6IEFkZCBpLk1YOTUgT0VNIGV4dGVuc2lvbg0KPiBzdXBw
-b3J0IGZvciBTQ01JIGNsb2NrIGRyaXZlcg0KPiA+ICsNCj4gPiArICAgICAgIC8qDQo+ID4gKyAg
-ICAgICAgKiBleHRDb25maWdWYWx1ZVs3OjBdICAgLSBzcHJlYWQgcGVyY2VudGFnZSAoJSkNCj4g
-PiArICAgICAgICAqIGV4dENvbmZpZ1ZhbHVlWzIzOjhdICAtIE1vZHVsYXRpb24gRnJlcXVlbmN5
-DQo+IA0KPiBXaGF0IGlzIHRoZSB1bml0IG9mIHRoaXM/DQo+IEFjY29yZGluZyB0byB0aGUgY29k
-ZSBiZWxvdywgaXQgaXMgaW4gSHosIHNvIGl0IGlzIGxpbWl0ZWQgdG8gNjU1MzUgSHouDQoNCkl0
-IGlzIEh6LCB0aGUgbW9kdWxhdGlvbiBmcmVxIHRvIGkuTVg5NSBpcyBpbiByYW5nZSAzMEtIeiAt
-IDY0S0h6Lg0KDQo+IA0KPiA+ICsgICAgICAgICogZXh0Q29uZmlnVmFsdWVbMjRdICAgIC0gRW5h
-YmxlL0Rpc2FibGUNCj4gPiArICAgICAgICAqIGV4dENvbmZpZ1ZhbHVlWzMxOjI1XSAtIFJlc2Vy
-dmVkDQo+IA0KPiBDZW50ZXIsIHVwLCBkb3duLCBjb3VsZCBiZSBzdG9yZWQgaGVyZSwgSSBhc3N1
-bWU/DQoNCk91ciBmaXJtd2FyZSBkb2VzIG5vdCBwcm92aWRlIG1vZHVsYXRpb24gbWV0aG9kDQpo
-ZXJlLiBIZXJlIEkganVzdCBmb2xsb3cgd2hhdCBvdXIgZmlybXdhcmUgZGVmaW5lcy4NCkJpdFsz
-MToyNV0gaXMgcmVzZXJ2ZWQgaW4gY3VycmVudCBmaXJtd2FyZS4gSXQgbWF5DQpiZSBleHRlbmRl
-ZCB0byBzdXBwb3J0IG1vZHVsYXRpb24gbWV0aG9kLCBidXQgSSANCmFtIG5vdCBzdXJlLg0KDQpU
-aGFua3MNClBlbmcNCg==
+On Thu, Oct 23, 2025 at 4:54=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
+>
+> (cc Ilias)
+>
+> On Thu, 23 Oct 2025 at 15:34, Adriana Nicolae <adriana@arista.com> wrote:
+> >
+> > On Thu, Oct 23, 2025 at 11:21=E2=80=AFAM Ard Biesheuvel <ardb@kernel.or=
+g> wrote:
+> > >
+> > > On Thu, 23 Oct 2025 at 04:21, Adriana Nicolae <adriana@arista.com> wr=
+ote:
+> > > >
+> > > > On Wed, Oct 22, 2025 at 11:19=E2=80=AFPM Rob Herring <robh@kernel.o=
+rg> wrote:
+> > > > >
+> > > > > On Wed, Oct 22, 2025 at 04:45:25AM -0700, adriana wrote:
+> > > > > > Some bootloaders like U-boot, particularly for the ARM architec=
+ture,
+> > > > > > provide SMBIOS/DMI tables at a specific memory address. However=
+, these
+> > > > > > systems often do not boot using a full UEFI environment, which =
+means the
+> > > > > > kernel's standard EFI DMI scanner cannot find these tables.
+> > > > >
+> > > > > I thought u-boot is a pretty complete UEFI implementation now. If
+> > > > > there's standard way for UEFI to provide this, then that's what w=
+e
+> > > > > should be using. I know supporting this has been discussed in con=
+text of
+> > > > > EBBR spec, but no one involved in that has been CC'ed here.
+> > > >
+> > > > Regarding the use of UEFI, the non UEFI boot is used on Broadcom iP=
+roc which
+> > > > boots initially into a Hardware Security Module which validates U-b=
+oot and then
+> > > > loads it. This specific path does not utilize U-Boot's UEFI
+> > > > implementation or the
+> > > > standard UEFI boot services to pass tables like SMBIOS.
+> > > >
+> > >
+> > > What prevents this HSM validated copy of u-boot from loading the kern=
+el via EFI?
+> > The vendor's U-Boot configuration for this specific secure boot path
+> > (involving the
+> > HSM) explicitly disables the CMD_BOOTEFI option due to security
+> > mitigations, only
+> > a subset of U-boot commands are whitelisted. We could patch the U-boot
+> > to include
+> > that but it is preferable to follow the vendor's recommandations and
+> > just patch U-boot
+> > to fill that memory location with SMBIOS address or directly with the
+> > entry point.
+>
+> And what security mitigations are deemed needed for the EFI code? You
+> are aware that avoiding EFI boot means that the booting kernel keeps
+> all memory protections disabled for longer than it would otherwise. Is
+> this allowlisting based on simply minimizing the code footprint?
+>
+From the information I have, it might be just minimizing the footprint
+but the vendor's U-Boot configuration for this specific path
+explicitly disables the CMD_BOOTEFI option. While the vendor cites
+security mitigations for this configuration, the specific details
+could be a set of mitigation removing different boot methods and some
+memory access commands.
+
+The core issue is that this non-EFI boot path is the vendor-validated
+configuration. Enabling EFI would deviate from this setup, require
+significant revalidation, and could impact vendor support. Modifying
+U-Boot to populate the DT is a contained change without modifying the
+U-boot vendor configuration.
+
+Beyond our specific vendor constraints, this DT method might be used
+by any other non-UEFI arm system needing to expose SMBIOS tables to
+the kernel.
+
+> Introducing a non-standard mechanism means that others will now have
+> to maintain it and coexist with it, rather than simply using the
+> existing code which already fully supports what you are trying to
+> accomplish (both on the bootloader and the kernel side)
+>
+> IOW, in my opinion, simply enabling CMD_BOOTEFI for your bootloader is
+> a much better choice here. I'm not a u-boot expert but as I understand
+> it, loading/authenticating the image and booting it in EFI mode are
+> two separate things, and so the secure boot path would change very
+> little.
+>
+> > > > Because there's no UEFI configuration table available in this boot =
+mode, we need
+> > > > an alternative mechanism to pass the SMBIOS table address to the ke=
+rnel. The
+> > > > /chosen node seemed like the most straightforward way for the bootl=
+oader to
+> > > > communicate this non-discoverable information.
+> > > >
+> > > > I wasn't aware of the EBBR discussions covering this. I've added th=
+e
+> > > > boot-architecture and arm.ebbr-discuss lists to the Cc. If there's =
+a preferred
+> > > > EBBR-compliant way to handle this for non-UEFI boots, I'm happy to =
+adapt
+> > > > the approach.
+> > > >
+> > >
+> > > For the record, I don't see a huge problem with accepting SMBIOS
+> > > tables in this manner, but it would be better if a description of thi=
+s
+> > > method was contributed to the DMTF spec, which currently states that
+> > > the only way to discover SMBIOS tables on non-x86 systems is via the
+> > > SMBIOS/SMBIOS3 EFI configuration tables. Doing so should prevent othe=
+r
+> > > folks from inventing their own methods for their own vertically
+> > > integrated systems. (Other OSes exist, and from a boot arch PoV, we
+> > > try to avoid these Linux-only shortcuts)
+> > >
+> > > However, the DT method should *only* be used when not booting via
+> > > UEFI, to avoid future surprises, and to ensure that existing OSes
+> > > (including older Linux) can always find the SMBIOS tables when bootin=
+g
+> > > via UEFI.
+> > >
+> > > Also, I would suggest to pull the entire entrypoint into DT, rather
+> > > than the address in memory of either/both entrypoint(s). Both just
+> > > carry some version fields, and the address of the actual SMBIOS data
+> > > in memory, and the only difference between SMBIOS and SMBIOS3 is the
+> > > size of the address field (32 vs 64 bits)
+> > I understand the points raised about UEFI taking precedence and the
+> > preference for standardization (DMTF). If this DT method is accepted
+> > as a fallback only for non-UEFI boots like this one, the kernel impleme=
+ntation
+> > will respect that precedence.
+> >
+> > Regarding the alternative to place the full SMBIOS entry point structur=
+e into
+> > a DT property (as a byte array) instead of just its memory address. Bot=
+h
+> > approaches seem feasible from the U-Boot side. I opted initially for pa=
+ssing
+> > the address to reuse the existing kernel functions (dmi_smbios3_present=
+ and
+> > dmi_present) which already handle mapping and validation of the entry p=
+oint
+> > read from memory (as done for the EFI case).
+> >
+>
+> Actually, it appears that dmidecode expects the entrypoint data in
+> /sys/firmware/dmi/tables/smbios_entry_point, and so you will need to
+> populate that file in any case, and so pulling it into the DT node is
+> not as useful. But having both SMBIOS and SMBIOS3 is pointless, so
+> please only bother with the latter.
 
