@@ -1,359 +1,191 @@
-Return-Path: <linux-kernel+bounces-866881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3F0C00EE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:57:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA31EC00EEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:58:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F2B29503436
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:57:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 643693A33E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23D530F534;
-	Thu, 23 Oct 2025 11:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBCE30EF9E;
+	Thu, 23 Oct 2025 11:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nh7K/qyJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PfF/D/7P"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A4330EF87
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6154430C620
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761220616; cv=none; b=PCbgPOLDH6u0C2cc6U18sbWX9T54qAkxX/350+BAMF364NP9EoGmylDFJqCAxPbIUlQ3TdyMv635tV/VGZJNyXsEIETFW9ysIGIGALw8O5JIxfwPcsCqPEhT/qrCE2vhOZlSNrUlOsxya7KCatHnKE5vUmGln2u2L8b8CQfamQ8=
+	t=1761220709; cv=none; b=GfTcnVMTRDqh45hNLYObxO0uWICJpCDWuW6JAM2282h3fJ+26SFzGvYH7+TNYTo8ht3wmRZyGDsTJryO+xuXZK+w6BGAuLsW6tr2fNIicNOw9h6QiydnkzumfPISXUkcKyIDaCg/mHlUs54HiNGKNpRrGg1kMguXYpkOOBRawEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761220616; c=relaxed/simple;
-	bh=3HSCXxirCNI7SUTzPQe1kFW4XWgi5QOO3iHmjKkEolM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VxdswEDc9LvE5nB0p8rnngNzlBxg2TDBuVK5ZR2FvoRw4Dht2ZnrLW47xA+DW9AytoCaNhLzVI5+O/dUPXKnyv6NZmcleznQ7L49xpd2sWlqpwTCqh+iHyb9+as5qfMOzVR/9Dxt801qDORgMjMRFmGDgQ/Hgvocx2IW4bDHNaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nh7K/qyJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N7DMin018119
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:56:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=tpPdsaEHauFXuOQ3FeVM21QS
-	oHXPkB2nkIlmQ3pOO0A=; b=nh7K/qyJsRELc5X2b3aQMPjE71LfYVHj/5XjCm/7
-	E61pBj+4HxpY0mdkO3KDAdkb9AHseSodFeP8MTqBtJHdkFs65C/IXXQiQJzZm+ir
-	TdEtWM0KUIz5whwnY8fQncaRLLfim5etOaMa2yp9kWMmtKT9yaXXOurDtph513YK
-	E7O+O8hlt4aaTzbofBuOFc5bG11X9LGWDlFlYgKaHlERY0xhQfkWA9RnY6I8OO5k
-	pAkNy1Us6XOijCFQ1NH5ZfGKsa6tYg8xOW/rvHaJJccEecesLa95y4Ga1WzCwQkC
-	RhBfTOmV3v7mUzuegMahnE4CcO7pbY7Y2n9C73YtjSms2g==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xhe0p6xd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:56:53 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4e8a13eedecso19992961cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:56:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761220613; x=1761825413;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1761220709; c=relaxed/simple;
+	bh=4CjGKPAq1W37+N36djPYAbOeKd0dVmX3F1YsS0DBKtI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nV5Gc7TZ5/L2K31lIS8YRxH+X92VF0wst81djtJIuahAHsCkz8fB4hUpW347oDj9V0myA4lFn+M+LbGsh3nfCKqjfQsqGXkmDTnmoaOOlcsmRiZGTIChKbQR3m+KO0uO+YisFnXy5lS45KQ2EsaQv6EEw0rdLjqI4WeR8kclUnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PfF/D/7P; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-33bcf228ee4so767881a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761220708; x=1761825508; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tpPdsaEHauFXuOQ3FeVM21QSoHXPkB2nkIlmQ3pOO0A=;
-        b=vOPxERyxClU8WuZYx1tmYN6Z3pgR4bVWMvjp1rfba5/tHysHzKSjLbvoEFhfWr8TKl
-         z7BY8zg1/CvhIbdDDL5sHmVeuTjnW+ITYP+B5VM2x6WhOTzZy0a5xetMEOmGcTaKdBbe
-         +l0MNsOLS4UCfxKsUjGm2BYf7MJaGYLIdgfux0epSZxJM4fEctjkjteXKamP6uJ0q2OM
-         vZvDE2cJKTGwRWMu7oB6SaaarElfHflAQjfAKK8c1dSBBSEDaE/99V8r5vsTP+2phDz1
-         OFx91hgje7nX0G0OJcs9+JUVElqr4jBYJY9FoB2hLvukoZA1RFoeYjFvGQj3VvqC8qsp
-         OtbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU75M4W3pO1fGXrq23759+ByUXU1qJWkndUSIkCkOl9bkwlOrobZ1JXC9a3Uyn89jGV6EhYYDBsUKGAEaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+G3hBXreKfsIqCdkOmJjufYeVeXMnrvA/6dlxgRHPw1WFa84o
-	jSiU2hZedhnmee7gOvuonrOmOvGnDkRaYRBjBWgdQvt7k652NLGAKH3dGOjzezfYSNkko/BOmJI
-	Vc2B+ECrb+Kd20Nt3BI+4aGCUOiLfyDpRLPlVyKehDNE6XhttWWtwBfyeMxd871a+eSM=
-X-Gm-Gg: ASbGncvqGGkvCDZMnCcYCCA8w4xPR2p7JwDcMWQBdDLuIQDYPm0zmUyUmDEcavHzptn
-	GBWa7bS7oCfhiUhdDGyHp+OzMCO0Tja250PYDzkLpucRFnOBJzU3VnrBgWZvC58elOIKsNyMnQq
-	XC4a8oq3VlGdpPOd4xNw3Oz1oCoRhRU4oZZc+WE/rhNoaZn5s0dZbEBLkZl43PHevaIobCNFgu1
-	m4eFCrbi1oTU9zIqEoOrgAlg2cLntnBetBmkDqGwzl4fs2QxcRNl2JMzBKhzE/okcRSLRIvGJut
-	MT2pejk+qQIQf9/SJAt3tWEoQAOoyviKWSB9pQzx0cvRUEpgNWWFWZErPKoFQSa1Jac2mXdDazB
-	HrAZZCLHl5GxzkXNe3ooRBZlxnijq1jxkkh80prpj7etv3XAoDdpjRTJDbJjcgWHC3lC7UmkZP5
-	/+I7/d0XsBDQv2
-X-Received: by 2002:ac8:5993:0:b0:4e8:a6ca:8cc4 with SMTP id d75a77b69052e-4e8a6ca8ea4mr254047761cf.36.1761220612851;
-        Thu, 23 Oct 2025 04:56:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgWRY2Y+KuaUK4SaF+veOHZGIibqiY86yAk63PT8Vh9Dhaal9wVpNbOjWFt3nfEIC/E7BYNA==
-X-Received: by 2002:ac8:5993:0:b0:4e8:a6ca:8cc4 with SMTP id d75a77b69052e-4e8a6ca8ea4mr254047291cf.36.1761220612307;
-        Thu, 23 Oct 2025 04:56:52 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4cd5db4sm676385e87.48.2025.10.23.04.56.51
+        bh=oaz37uli6J484fxFDKJ7GFD9eSfiZc74ATY0uVGQ7Go=;
+        b=PfF/D/7P8iJZvjpA1yiTU7B+q/VL1Jkd+728KIb7Hcg6u1d471rOZ2ciagZk+5dOTW
+         Rdo4MO9N7ZRshAltRqR9ua2y/cia7y1cvcNSKba1QRwKraPA5CZvHDYyEmLYtJbiiiKs
+         FpEBLahKFlf9c4qKHdP1iajDEPhPPYsWZ2+EgtaecvyqV4fbstvno9W7j3sZaFwS/1AV
+         BkRDG6IFJb+L4+M0dbqhcBeLphkI9StOzyASvfopqM2Oy4wPoNhdgRNA5HDEmXVJyY1k
+         T1m7++QFrpEFJAdn9pUPGpT2ORgg2Tpg5EaKmR0CyrPbX2YerXpFEhT38B7gLRIOGnIy
+         WrtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761220708; x=1761825508;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oaz37uli6J484fxFDKJ7GFD9eSfiZc74ATY0uVGQ7Go=;
+        b=I0I2NpVbXkSI2W79clShPRmzBYZ1WOf/Pgpy03VKyag7P7HBqIhy8vWNOkakmEf4Xx
+         lfqjNBcQnf1tz+etTBQV9lj7AVkR1y9GE8X93H3U3QLO5Ep8NY1o/X43NhkVTGQL6R6l
+         zttPGu0AHSZO1K9nJkXO8zMgSDqFViFB9nsjPwJBcxHufy8C2x7MVO/o/MMeLQOGYeo/
+         Gl+M83qbp/jM4/IqG5HVAUiRFlOmfgzjGl7zCcYXe51+V8XfD3Zc0jZ01+jISyPyKpMT
+         k3UUtpNY1AIFrthNhLKKpUMoCHMSwsvYKK9arL5snUdTIAigyKKIZTsjlHMPQTmJbqzh
+         Kh5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVZY6MEmjuMsTpKte8BnxOwI8kkhzkirFdF+9Zw7KFNXx9983DMaliCZSszUV3seWmChbYnIkeghKEwXYg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhRww3LR9OuSQSIhOwsYdnMEIRZcDZBQfBQH2ClL0wA4wDUjyt
+	gzVrEXIfNHdcJxD3cH5ODd9Cesy2um+vah6alRqbf3jc5E/QNiR6FF2PQH0DmWZr
+X-Gm-Gg: ASbGncsGO8Uk+n4FYib99USMl6ogkqTTd0Ow69pHCx02uUby5f9uCPzdOANFJHKOcQ9
+	QliEOyx6mU+ORTkW+17+f49t4nDUs0ndLSV7PUg6KYYdty4IgpwHpqlL4uUl1ARtjqKd8N+0IrK
+	TkT8eFENjycj00OcHuVCNhFhKLGc8jMs1urY1eFlxj/0S/K3EXetOAmyKZWLMOrzWpJRUz0d2zs
+	V9fMQiCtHD8gy46WbXUWrUIqxEwg+EVwu8DTlaooLbq0vJ1Z1hHRlaRsP8Z2Pz08cZYBXwpR8o2
+	gq1SGcNivbw6oguu8jCgdDDzNZlvK8NFHpQuQpOtIjXKsO3o8cF1tMf185/geuuYzKdJS+rG5jc
+	aYeU8O/5mavbF4cihPO+XaLAmFBOcLFW0fjBh47Dy/84xhRRgeaHn4qBVORSdnepJHJ1rq1363x
+	MvTP5EGi+2a6+QY4RWGg==
+X-Google-Smtp-Source: AGHT+IGz00O6KaHXIzzRCHXCrtBw16lzTqxkkQ/sun9CtpCWlM1f0PPU+ZDXb1kY+gRHfHRjuOVsug==
+X-Received: by 2002:a17:90b:3909:b0:33b:bed8:891c with SMTP id 98e67ed59e1d1-33bcf8f7376mr33270394a91.23.1761220707433;
+        Thu, 23 Oct 2025 04:58:27 -0700 (PDT)
+Received: from rakuram-MSI.. ([2409:40f4:204e:d0b9:ba00:6f56:8250:ddb3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274b8b259sm2295936b3a.36.2025.10.23.04.58.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 04:56:51 -0700 (PDT)
-Date: Thu, 23 Oct 2025 14:56:49 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: yuanjie yang <yuanjie.yang@oss.qualcomm.com>
-Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
-        simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
-        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
-        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
-Subject: Re: [PATCH 02/12] drm/msm/dpu: Add support for Kaanapali DPU
-Message-ID: <b35l5nwswf6t4k32edqccytrfjbvaloqoh4hksfkqrqmrsx4ee@3aatdgwmxp4g>
-References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
- <20251023075401.1148-3-yuanjie.yang@oss.qualcomm.com>
+        Thu, 23 Oct 2025 04:58:26 -0700 (PDT)
+From: Rakuram Eswaran <rakuram.e96@gmail.com>
+To: u.kleine-koenig@baylibre.com
+Cc: chenhuacai@kernel.org,
+	dan.carpenter@linaro.org,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	lkp@intel.com,
+	rakuram.e96@gmail.com,
+	skhan@linuxfoundation.org,
+	ulf.hansson@linaro.org,
+	zhoubinbin@loongson.cn
+Subject: Re: [PATCH v2] mmc: pxamci: Simplify pxamci_probe() error handling using devm APIs
+Date: Thu, 23 Oct 2025 17:28:17 +0530
+Message-ID: <20251023115819.11094-1-rakuram.e96@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: opvid2ycmgbkbmegnnzwl4hyev6e2smusxk5olkuqxfwxzykz2e@jlvolirolrxl
+References: <pvid2ycmgbkbmegnnzwl4hyev6e2smusxk5olkuqxfwxzykz2e@jlvolirolrxl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023075401.1148-3-yuanjie.yang@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE2NyBTYWx0ZWRfX7b+O+ZV1QmWS
- 08gcSn+FjhIS630mtMcEq/IhV96/N+f/WoRcC6K6Dr+JAoiZKGsOfPW0ABrbYnYSADWZa/acbyV
- qCu3Yz3bv4j44VyEVRmnQbEh8Vb49LyEGRtqoPdlICuyP55i+ZN+ULWn4y4wWbV8RJUJCjGrzWc
- Z4q7zRHCy0aPN/Z4UZV/WazIbf/B4IsmWvGcKai1fxMi1Kxo9utRXUfg1R6/sbX8dqQEJ470uqE
- VIpy+6lUTZSv3YFM9WjQD2Zz91QTZdPJxxaTOD2p7H7MuAIueIkdF7Fnuo6zL9FxmJ+Y/TUX6pj
- K5R2yKWxTb04W8z1XP6mmW1fSu+8pf8IdvxlyLPTc5QFDuZYQSAWQAPkCwN9gXPHKa6ntYYFBa9
- Rj17BolWDDHynUqWBl2mcHeWJN3m9A==
-X-Proofpoint-ORIG-GUID: ORgpPeeF0hL1vHY3OGOLcF3JwtwU9Szg
-X-Authority-Analysis: v=2.4 cv=WYUBqkhX c=1 sm=1 tr=0 ts=68fa1805 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=3f62vzWW0BdxBdE7m60A:9 a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-GUID: ORgpPeeF0hL1vHY3OGOLcF3JwtwU9Szg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 bulkscore=0 impostorscore=0 spamscore=0
- priorityscore=1501 clxscore=1015 malwarescore=0 lowpriorityscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510210167
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 23, 2025 at 03:53:51PM +0800, yuanjie yang wrote:
-> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> 
-> Add support for Display Processing Unit (DPU) version 13.0
-> on the Kaanapali platform. This version introduces changes
-> to the SSPP sub-block structure. Add common block and rectangle
-> blocks to accommodate these structural modifications for compatibility.
+On Tue, 21 Oct 2025 at 14:01, Uwe Kleine-König <u.kleine-koenig@baylibre.com> wrote:
+>
+> Hello Rakuram,
+>
+> On Tue, Oct 21, 2025 at 12:02:07AM +0530, Rakuram Eswaran wrote:
+> > On Thu, 16 Oct 2025 at 14:20, Uwe Kleine-König <u.kleine-koenig@baylibre.com> wrote:
+> > > On Wed, Oct 15, 2025 at 12:16:57AM +0530, Rakuram Eswaran wrote:
+> > Sorry for the delayed reply as I was in vacation.
+>
+> I didn't hold my breath :-O
+>
+> > Ah, got it — I’ll drop the clk_get_rate() comment since it was only a reminder
+> > from your WIP suggestion.
+> >
+> > Just to confirm, are you referring to adding a call to clk_prepare_enable()
+> > before clk_get_rate()? I can move the clk_get_rate() call after
+> > clk_prepare_enable(), or drop the comment entirely.
+> >
+> > If my understanding is correct, I’ll keep v3 focused on the current set of
+> > fixes and handle the clk_get_rate() precondition (by moving it after
+> > clk_prepare_enable()) in a follow-up patch. That should keep the scope of each
+> > change clean and review-friendly.
+> >
+> > > > -out:
+> > > > -     if (host->dma_chan_rx)
+> > > > -             dma_release_channel(host->dma_chan_rx);
+> > > > -     if (host->dma_chan_tx)
+> > > > -             dma_release_channel(host->dma_chan_tx);
+> > >
+> > > I was lazy in my prototype patch and didn't drop the calls to
+> > > dma_release_channel() in pxamci_remove(). For a proper patch this is
+> > > required though.
+> > >
+> > > To continue the quest: Now that I looked at pxamci_remove(): `mmc` is
+> > > always non-NULL, so the respective check can be dropped.
+> > >
+> >
+> > Understood. Since pxamci_remove() is only called after successful allocation
+> > and initialization in probe(), mmc will always be a valid pointer. I’ll drop
+> > the if (mmc) check in v3 as it can never be NULL in normal operation, and
+> > remove the dma_release_channel() calls as well.
+>
+> Yes, I suggest to make restructuring .remote a separate patch. (But
+> removing dma_release_channel belongs into the patch that introduces devm
+> to allocate the dma channels.)
+>
 
-This needs to come up differently: first implement driver changes for
-the changed SSPP blocks, then add Kaananapali catalog entries.
+I believe ".remote" is a typo and you're referring to the _remove() function. 
+Removing if(mmc) condition check from pxamci_remove() can be handled in a 
+separate cleanup patch, while removing redundant dma_release_channel()
+will be included in v3. 
 
-> 
-> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> ---
->  .../disp/dpu1/catalog/dpu_13_0_kaanapali.h    | 492 ++++++++++++++++++
->  .../gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c    |  44 ++
->  .../gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h    |  29 +-
->  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |   1 +
->  4 files changed, 565 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_13_0_kaanapali.h
-> 
-> +
-> +static const struct dpu_cwb_cfg kaanapali_cwb[] = {
-> +	{
-> +		.name = "cwb_0", .id = CWB_0,
-> +		.base = 0x169200, .len = 0x20,
-> +	},
-> +	{
-> +		.name = "cwb_1", .id = CWB_1,
-> +		.base = 0x169600, .len = 0x20,
-> +	},
-> +	{
-> +		.name = "cwb_2", .id = CWB_2,
-> +		.base = 0x16A200, .len = 0x20,
-> +	},
-> +	{
-> +		.name = "cwb_3", .id = CWB_3,
-> +		.base = 0x16A600, .len = 0x20,
+Is my above understanding correct?
 
-lowercase hex
+> > I’ve prepared a preview of the v3 patch incorporating your previous comments.
+> > Before sending it out formally, I wanted to share it with you to confirm that
+> > the updates look good — especially the cleanup changes in pxamci_remove() and
+> > the dropped clk_get_rate() comment.
+> >
+> > static void pxamci_remove(struct platform_device *pdev)
+> > {
+> >       struct mmc_host *mmc = platform_get_drvdata(pdev);
+> >       struct pxamci_host *host = mmc_priv(mmc);
+> >
+> >       mmc_remove_host(mmc);
+> >
+> >       if (host->pdata && host->pdata->exit)
+> >               host->pdata->exit(&pdev->dev, mmc);
+> >
+> >       pxamci_stop_clock(host);
+> >       writel(TXFIFO_WR_REQ|RXFIFO_RD_REQ|CLK_IS_OFF|STOP_CMD|
+> >                       END_CMD_RES|PRG_DONE|DATA_TRAN_DONE,
+> >                       host->base + MMC_I_MASK);
+> >
+> >       dmaengine_terminate_all(host->dma_chan_rx);
+> >       dmaengine_terminate_all(host->dma_chan_tx);
+> > }
+>
+> Looks right.
+>
 
-> +	},
-> +};
-> +
+Thank you for the feedback.
 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-> index 6641455c4ec6..5a24ed0f818c 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
-> @@ -241,6 +241,25 @@ static const u32 wb2_formats_rgb_yuv[] = {
->  	.rotation_cfg = NULL, \
->  	}
->  
-> +/* kaanapali SSPP common configuration */
-> +#define _KAANAPALI_VIG_SBLK(scaler_ver) \
+Best Regards,
+Rakuram
 
-And then it gets reused for some other platform... No. Please come up
-with a generic enough name.
-
-
-> +	{ \
-> +	.cmn_blk = {.name = "cmn_blk", \
-> +		.base = 0, .len = 0x100,},	\
-
-No, sblks shouldn't have .base set to 0. It's the main block.
-
-> +	.sspp_rec0_blk = {.name = "sspp_rec0", \
-> +		.base = 0x1000, .len = 0x180,},	\
-> +	.csc_blk = {.name = "csc", \
-> +		.base = 0x1800, .len = 0x100,}, \
-> +	.scaler_blk = {.name = "scaler", \
-> +		.version = scaler_ver, \
-> +		.base = 0x2000, .len = 0xec,}, \
-> +	.sspp_rec1_blk = {.name = "sspp_rec1", \
-> +		.base = 0x3000, .len = 0x180,},	\
-> +	.format_list = plane_formats_yuv, \
-> +	.num_formats = ARRAY_SIZE(plane_formats_yuv), \
-> +	.rotation_cfg = NULL, \
-> +	}
-> +
->  #define _VIG_SBLK_ROT(scaler_ver, rot_cfg) \
->  	{ \
->  	.scaler_blk = {.name = "scaler", \
-> @@ -329,6 +348,9 @@ static const struct dpu_sspp_sub_blks dpu_vig_sblk_qseed3_3_3 =
->  static const struct dpu_sspp_sub_blks dpu_vig_sblk_qseed3_3_4 =
->  				_VIG_SBLK(SSPP_SCALER_VER(3, 4));
->  
-> +static const struct dpu_sspp_sub_blks dpu_vig_sblk_qseed3_3_5 =
-> +				_KAANAPALI_VIG_SBLK(SSPP_SCALER_VER(3, 5));
-> +
->  static const struct dpu_sspp_sub_blks dpu_rgb_sblk = _RGB_SBLK();
->  
->  static const struct dpu_sspp_sub_blks dpu_dma_sblk = _DMA_SBLK();
-> @@ -412,6 +434,11 @@ static const struct dpu_pingpong_sub_blks sc7280_pp_sblk = {
->  	.len = 0x20, .version = 0x20000},
->  };
->  
-> +static const struct dpu_pingpong_sub_blks kaanapali_pp_sblk = {
-> +	.dither = {.name = "dither", .base = 0xc0,
-> +	.len = 0x40, .version = 0x30000},
-> +};
-> +
->  /*************************************************************
->   * DSC sub blocks config
->   *************************************************************/
-> @@ -452,6 +479,13 @@ static const struct dpu_cdm_cfg dpu_cdm_5_x = {
->  	.base = 0x79200,
->  };
->  
-> +static const struct dpu_cdm_cfg dpu_cdm_kaanapali_x = {
-
-13_x
-
-> +	.name = "cdm_0",
-> +	.id = CDM_0,
-> +	.len = 0x240,
-> +	.base = 0x19e000,
-> +};
-> +
->  /*************************************************************
->   * VBIF sub blocks config
->   *************************************************************/
-> @@ -639,6 +673,10 @@ static const struct dpu_qos_lut_entry sc7180_qos_linear[] = {
->  	{.fl = 0, .lut = 0x0011222222335777},
->  };
->  
-> +static const struct dpu_qos_lut_entry kaanapali_qos_linear[] = {
-> +	{.fl = 0, .lut = 0x0011223344556666},
-> +};
-> +
->  static const struct dpu_qos_lut_entry sm6350_qos_linear_macrotile[] = {
->  	{.fl = 0, .lut = 0x0011223445566777 },
->  };
-> @@ -668,6 +706,10 @@ static const struct dpu_qos_lut_entry sc7180_qos_macrotile[] = {
->  	{.fl = 0, .lut = 0x0011223344556677},
->  };
->  
-> +static const struct dpu_qos_lut_entry kaanapali_qos_macrotile[] = {
-> +	{.fl = 0, .lut = 0x0011223344556666},
-> +};
-> +
->  static const struct dpu_qos_lut_entry sc8180x_qos_macrotile[] = {
->  	{.fl = 10, .lut = 0x0000000344556677},
->  };
-> @@ -726,3 +768,5 @@ static const struct dpu_qos_lut_entry sc7180_qos_nrt[] = {
->  
->  #include "catalog/dpu_10_0_sm8650.h"
->  #include "catalog/dpu_12_0_sm8750.h"
-> +#include "catalog/dpu_13_0_kaanapali.h"
-> +
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-> index f0768f54e9b3..99c81c24630f 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-> @@ -208,6 +208,30 @@ struct dpu_dsc_blk {
->  	u32 len;
->  };
->  
-> +/**
-> + * struct dpu_sspp_rec_blk - sspp rec sub-blk information
-
-SSPP, REC
-
-> + * @name: string name for debug purposes
-> + * @base: offset of this sub-block relative to the block offset
-> + * @len: register block length of this sub-block
-> + */
-> +struct dpu_sspp_rec_blk {
-> +	char name[DPU_HW_BLK_NAME_LEN];
-> +	u32 base;
-> +	u32 len;
-> +};
-> +
-> +/**
-> + * struct dpu_sspp_cmn_blk - sspp common sub-blk information
-> + * @name: string name for debug purposes
-> + * @base: offset of this sub-block relative to the block offset
-> + * @len: register block length of this sub-block
-> + */
-> +struct dpu_sspp_cmn_blk {
-> +	char name[DPU_HW_BLK_NAME_LEN];
-> +	u32 base;
-> +	u32 len;
-> +};
-> +
->  /**
->   * enum dpu_qos_lut_usage - define QoS LUT use cases
->   */
-> @@ -294,7 +318,9 @@ struct dpu_sspp_sub_blks {
->  	u32 qseed_ver;
->  	struct dpu_scaler_blk scaler_blk;
->  	struct dpu_pp_blk csc_blk;
-> -
-> +	struct dpu_sspp_cmn_blk cmn_blk;
-> +	struct dpu_sspp_rec_blk sspp_rec0_blk;
-> +	struct dpu_sspp_rec_blk sspp_rec1_blk;
->  	const u32 *format_list;
->  	u32 num_formats;
->  	const struct dpu_rotation_cfg *rotation_cfg;
-> @@ -778,6 +804,7 @@ extern const struct dpu_mdss_cfg dpu_sa8775p_cfg;
->  extern const struct dpu_mdss_cfg dpu_sm8550_cfg;
->  extern const struct dpu_mdss_cfg dpu_sm8650_cfg;
->  extern const struct dpu_mdss_cfg dpu_sm8750_cfg;
-> +extern const struct dpu_mdss_cfg dpu_kaanapali_cfg;
->  extern const struct dpu_mdss_cfg dpu_x1e80100_cfg;
->  
->  #endif /* _DPU_HW_CATALOG_H */
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-> index 4e5a8ecd31f7..15bec44324d5 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-> @@ -1505,6 +1505,7 @@ static const struct dev_pm_ops dpu_pm_ops = {
->  };
->  
->  static const struct of_device_id dpu_dt_match[] = {
-> +	{ .compatible = "qcom,kaanapali-dpu", .data = &dpu_kaanapali_cfg, },
->  	{ .compatible = "qcom,msm8917-mdp5", .data = &dpu_msm8917_cfg, },
->  	{ .compatible = "qcom,msm8937-mdp5", .data = &dpu_msm8937_cfg, },
->  	{ .compatible = "qcom,msm8953-mdp5", .data = &dpu_msm8953_cfg, },
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
 
