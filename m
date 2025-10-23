@@ -1,185 +1,175 @@
-Return-Path: <linux-kernel+bounces-867147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF834C01B66
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:19:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B53D4C01B99
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 605CD3B4BD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:11:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87AAB3B59DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE45F3254A4;
-	Thu, 23 Oct 2025 14:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA503148B7;
+	Thu, 23 Oct 2025 14:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ErQg4Paz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eS6cCU1Q"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23762C08D4;
-	Thu, 23 Oct 2025 14:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1A0314A89
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761228653; cv=none; b=eIPAqdCNtivXbaNRYOe28O/Mos3mUY08WLmPtXkO4YPBhhZ4DjN6r7Q8wFYiWRjc8lFu15G7pmCVpbU7Tks8CNCF25p+ItqAynu7u3r5jN6Pr755AnYTr2RBgDiRCXiPehGNBNJMJDl0z7gCzjFhnyYog01uGHbyBJSaduQnrn0=
+	t=1761228751; cv=none; b=hW/9uRHQbhKHnb+koAqD9lQoEJWHrTjqL95sPJ3tfwccd+G5mxXhqv2bJFmnzq4wutRQmAZmebav02dKmeyR9nUB9ccR5rdHNzEMzsnmX9RDegOR5lHaXA94lOVqFAt0RuubLky1tW0JSaxr8dNqSOpfc6qeHn3oZwAdPrjcZxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761228653; c=relaxed/simple;
-	bh=9j/Nj79fZM+lECIfYOli/ze3SV2mU/GUWdoAbKY6Buw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JZSRgND/JtsEhbwV4njA4dxX4icvGll89cmuYeX63Ok33o2RbnaKvpF9Veq8uaf1/gwQV8cTt3m02cV5ejnI66ecm5o8kqaw75yt7UpI2a9yn9uZwj8xrWCKFKcPoZvSBYGrqOcgm+F8ehJSAAo0WjeTqc+Vuq9KtysdB1KtCN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ErQg4Paz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33EEFC4CEE7;
-	Thu, 23 Oct 2025 14:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761228652;
-	bh=9j/Nj79fZM+lECIfYOli/ze3SV2mU/GUWdoAbKY6Buw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ErQg4Paz3kRBPlWuFBJhWREpNcYlrqM42mVImWxF51ZtNphxKiFWKubBtEqQUX68g
-	 vHlRrVz8lHY9SkBxlx/t+MMB2m0PcTjn3SRfAsJf+cmoUYkDIFvsrgYRi/tCcfD7m7
-	 7xlMXSbi5JZpO/qaMZdGOEXIhYtUPeC7k+AxXFM93nE0hwU/IfF9BlYdXRIWcor5Uu
-	 tKryLCFNLtUNA8yyZV/uQSezNnUKd7xE6ETEs/44TjtvpZChyxHx1y3H2akaHn2PGQ
-	 kjPTwrpTHH5zZr/ZpvzRccv6NC9xLVyxtwqBaNiEvDUm5CV3M2ty2rFFWiQOkHbgiR
-	 msA4vpFoWW8Ug==
-Message-ID: <cc923a56-cf2d-4c3a-b1bd-90dbc3075ef2@kernel.org>
-Date: Thu, 23 Oct 2025 16:10:41 +0200
+	s=arc-20240116; t=1761228751; c=relaxed/simple;
+	bh=iyqybZyY5bNHA9SGCguGT/BlJQnLxb0v/4db1Mh7q2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JThcapIg8GUaqe6mLAKaM84OQZN/M+S/yhtC4EQFrl4Fyqou+MNnlTkqpcKu+PEF36at+1YMV1Z5nXHNq3o+48S9bIY4m6Q9MY8u4M3M0GaJkbx5xvDpxDzH7pyaJM2k3Y+OF+4RB+pmdfh8Z8OOuSlQrGAxKjKFeGQcxDxHvoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eS6cCU1Q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59NDkOj2007418
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:12:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=qeoOcO1veesMqEcPVFZpMChT
+	izPuVR7yr4me7bFPRXU=; b=eS6cCU1Qe1GY8YuVesatReNHMV+5BoJ/qwZiQHW0
+	5WBaqZjCLHGpKUus6Q2sjxRr4eU2kGrcDTHvF31z2MNergVkd8wLS5ZRRuyznprL
+	c+qW08oBIrrUMrUTZ9SpAYenc+HcIi/cEOBHxoF0ByC/Vq7jiG8B7yslcVxoI0xC
+	a/r8Hx/QLMcQb46j+Oo9IbUSuVO6bn2Zb07We0GsojGZrnN0Tzc4aIwQxP8ZsD4J
+	8EPT4Jn+9zA7afzb52lN5FJ3ZqbK1xzRLqud+G955E3LjFGdyFXbQtJu9Af2WsPG
+	PZj3Rbr8kMfQ2K+YFiE8zkTbDK0hbBeq5d1YQnUb7oaJCg==
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v3448r0x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:12:29 +0000 (GMT)
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-557b7fb8755so1857279e0c.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:12:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761228748; x=1761833548;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qeoOcO1veesMqEcPVFZpMChTizPuVR7yr4me7bFPRXU=;
+        b=h7KaYH2QlZgxi/jS2NTIXOb9ZgH2ug4k8Fj71IRcq/jTM8lr60JdFp61cPI+6Mbkzr
+         3UaLY7wvtCLzS06LfVgwDvNQ2vx2Ue8cOHl4kyulLWhhX3cbrq56xg4/QVfCH8uw7qwu
+         jxr9LL/YEWgz6mTBjbpdqADwCx2za0ZEYsl3E16n5PpBqv5p+O86BCzoDlU6RE4732XY
+         WysfW4DXkFqGANyMVVHL3WGIZl6+nyCQHzZ+kX4gvl4tvnhZwyVK+tyL7vYjNN3OlY81
+         Ds1gVRVPgJ/xTSF8l8lvb3lcmIkikOTCut/J/cwEdfgiMqWmHSsKHJCc2T5V2Y8EviMi
+         mwFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWttnBIGJ5jga+y2eyIMOfY9IaU5N10VD15Hqf9QLrnrimTaBDYymj6zhvPkAZd9UgZvGrTzfwnEVg9zMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr2ydjkj9Vj7Y5ZZuONf9AAjDt/V9Nn9tRNtq2lTUoVjFORoO9
+	hZr12/UU6OfTYTqr55f8cgvqXU/FVc4Cs7O/dODxLa+x1TaNqysETrk1MSU+LYYtdy7X+DXP77g
+	g3nNQcWNrhBSnzvXjRi0se9nC3rAu9tB4SBPEJwK9mxspfH3hynt1K0c5oEJ/at5bFj8=
+X-Gm-Gg: ASbGncvhLJypMM+7cat+g8HqlhIKB8RXVe+fUxyaZXtGOVs0IimGgJ/ZvOwQIx3UUSP
+	cVOyJk5/ftHGXcH+cRF8Voqz77UgP+p7BWtFlHxoKN0UWP6h39FV1v4x2seIXNoHxsKuCML2qNV
+	lYT5CZ6Of7vobY284+CYxLlSBtOWDhNGuohfAWTHvwtxbYu97zlPfWQFJydimaUwIV6DU4Qhweu
+	KUuW52abUHD9aSXi56S0AAWd61M/GstM7GAArXRAdQZS4FvvyUeXwBuOyvYMiGGQTrHW//W0Nrt
+	Xdk4PAB8O1u6Ufu9tKclzVi39zlBUXAeRebb6rY69XBeuehWgyVsZmjCUbpiWifXm68fH/vyIiK
+	NbbF/zEPAFEqA2PMG1/2eiEXrlg3yk8ENSWnDmw32LiZt42o8WFbSLv2DRRqsMw3GABf9wmTc++
+	dc2rhxLwvge23U
+X-Received: by 2002:a05:6122:4885:b0:557:c743:e14c with SMTP id 71dfb90a1353d-557c743e201mr404446e0c.11.1761228747834;
+        Thu, 23 Oct 2025 07:12:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFgbKo41PqVd7TUv2vVkrbVSOh/K8cr27Fv5VDy+4ClPVzLmIu3ASP4QAwm/TtYKYA6F9LwQA==
+X-Received: by 2002:a05:6122:4885:b0:557:c743:e14c with SMTP id 71dfb90a1353d-557c743e201mr404318e0c.11.1761228745509;
+        Thu, 23 Oct 2025 07:12:25 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378d680322dsm4791451fa.47.2025.10.23.07.12.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 07:12:24 -0700 (PDT)
+Date: Thu, 23 Oct 2025 17:12:22 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_srichara@quicinc.com, quic_varada@quicinc.com,
+        kathiravan.thirumoorthy@oss.qualcomm.com
+Subject: Re: [PATCH v1] arm64: dts: qcom: ipq5424: add gpio regulator for cpu
+ power supply
+Message-ID: <3xxdcekqzn6hxc2zoavsge3s53czavpfs2evc3ot37aivw4rib@uee2g2mem3hx>
+References: <20251023040224.1485946-1-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3 1/3] net,mptcp: fix proto fallback detection with
- BPF sockmap
-Content-Language: en-GB, fr-BE
-To: Jiayuan Chen <jiayuan.chen@linux.dev>, mptcp@lists.linux.dev
-Cc: stable@vger.kernel.org, Jakub Sitnicki <jakub@cloudflare.com>,
- John Fastabend <john.fastabend@gmail.com>, Eric Dumazet
- <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, Mat Martineau <martineau@kernel.org>,
- Geliang Tang <geliang@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Florian Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20251023125450.105859-1-jiayuan.chen@linux.dev>
- <20251023125450.105859-2-jiayuan.chen@linux.dev>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20251023125450.105859-2-jiayuan.chen@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023040224.1485946-1-quic_mmanikan@quicinc.com>
+X-Proofpoint-GUID: kHllSw7O1c5UngNjHndBMqyyddm-IsgH
+X-Proofpoint-ORIG-GUID: kHllSw7O1c5UngNjHndBMqyyddm-IsgH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMyBTYWx0ZWRfX5LznQo1Derk7
+ YGqb2iIlTWJgYQfip1WPYiwbtZWz2phqrlu/0iy1IaDfVRVAzcyX2eXP4NMQmcR/KR8ChJ9kNOu
+ XfDgA3H9jD+lSfo8M9DgUutUPcLHhUu3yWw9T1Xvd0pCEX4jQUmAr06QXsCq7qZzY5d1tJswIXD
+ x0Mh5DNRDuyrb5TAo4PgEgNLIo3CAkIiiVTFZZ3wq8hRQiOoZfEs9D1FiLDqN66O76DZAHUlk2k
+ GV8CWcbr5dL3M5lPBAcqlfboQI+R/m95nljPyHmv8viZojN7WZ+7fKikyMyaOGZSxbaeK0x6qbp
+ D0FGRMqYOHhMmnl8/gaQX/E5ytm+7LBlIRRf+tg0v4gJsmUE6E7KP0kPnTisYqxxYSuqtAgaM1q
+ 0UELYx6eytMfL0JC2+lORnN6ZGMtUw==
+X-Authority-Analysis: v=2.4 cv=E/vAZKdl c=1 sm=1 tr=0 ts=68fa37cd cx=c_pps
+ a=+D9SDfe9YZWTjADjLiQY5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8
+ a=Mip_WMAhk2IpQyCGaMUA:9 a=CjuIK1q_8ugA:10 a=vmgOmaN-Xu0dpDh8OwbV:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-23_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180023
 
-Hi Jiayuan,
-
-On 23/10/2025 14:54, Jiayuan Chen wrote:
-> When the server has MPTCP enabled but receives a non-MP-capable request
-> from a client, it calls mptcp_fallback_tcp_ops().
+On Thu, Oct 23, 2025 at 09:32:24AM +0530, Manikanta Mylavarapu wrote:
+> Add a GPIO-controlled regulator node for the CPU rail on the
+> IPQ5424 RDP466 platform. This regulator supports two voltage
+> levels 850mV and 1000mV.
 > 
-> Since non-MPTCP connections are allowed to use sockmap, which replaces
-> sk->sk_prot, using sk->sk_prot to determine the IP version in
-> mptcp_fallback_tcp_ops() becomes unreliable. This can lead to assigning
-> incorrect ops to sk->sk_socket->ops.
+> Update CPU nodes to reference the regulator via the `cpu-supply`
+> property, and add the required pinctrl configuration for GPIO17.
 > 
-> Additionally, when BPF Sockmap modifies the protocol handlers, the
-> original WARN_ON_ONCE(sk->sk_prot != &tcp_prot) check would falsely
-> trigger warnings.
-> 
-> Fix this by using the more stable sk_family to distinguish between IPv4
-> and IPv6 connections, ensuring correct fallback protocol operations are
-> selected even when BPF Sockmap has modified the socket protocol handlers.
-> 
-> Fixes: 0b4f33def7bb ("mptcp: fix tcp fallback crash")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-> Reviewed-by: Jakub Sitnicki <jakub@cloudflare.com>
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 > ---
->  net/mptcp/protocol.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+>  arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 24 +++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/ipq5424.dtsi       |  4 ++++
+>  2 files changed, 28 insertions(+)
 > 
-> diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
-> index 0292162a14ee..2393741bc310 100644
-> --- a/net/mptcp/protocol.c
-> +++ b/net/mptcp/protocol.c
-> @@ -61,11 +61,16 @@ static u64 mptcp_wnd_end(const struct mptcp_sock *msk)
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> index 738618551203..6d14eb2fe821 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> +++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> @@ -46,6 +46,23 @@ led-0 {
+>  		};
+>  	};
 >  
->  static const struct proto_ops *mptcp_fallback_tcp_ops(const struct sock *sk)
->  {
-> +	/* When BPF sockmap is used, it may replace sk->sk_prot.
-> +	 * Using sk_family is a reliable way to determine the IP version.
-> +	 */
-> +	unsigned short family = READ_ONCE(sk->sk_family);
+> +	vreg_apc: regulator-vreg-apc {
+> +		compatible = "regulator-gpio";
+> +		regulator-name = "vreg_apc";
+> +		regulator-min-microvolt = <850000>;
+> +		regulator-max-microvolt = <1000000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +		regulator-ramp-delay = <250>;
 > +
->  #if IS_ENABLED(CONFIG_MPTCP_IPV6)
-> -	if (sk->sk_prot == &tcpv6_prot)
-> +	if (family == AF_INET6)
->  		return &inet6_stream_ops;
->  #endif
-> -	WARN_ON_ONCE(sk->sk_prot != &tcp_prot);
-> +	WARN_ON_ONCE(family != AF_INET);
->  	return &inet_stream_ops;
+> +		gpios = <&tlmm 17 GPIO_ACTIVE_HIGH>;
+> +		gpios-states = <1>;
+> +		states = <850000 0>, <1000000 1>;
+> +
+> +		pinctrl-0 = <&regulator_gpio_default>;
+> +		pinctrl-names = "default";
 
-Just to be sure: is there anything in BPF modifying sk->sk_socket->ops?
-Because that's what mptcp_fallback_tcp_ops() will do somehow.
+'vreg' > 'usb'
 
-In other words, is it always fine to set inet(6)_stream_ops? (I guess
-yes, but better to be sure while we are looking at that :) )
-
->  }
->  
-
-Cheers,
-Matt
+> +	};
+> +
+>  	vreg_misc_3p3: regulator-usb-3p3 {
+>  		compatible = "regulator-fixed";
+>  		regulator-min-microvolt = <3300000>;
 -- 
-Sponsored by the NGI0 Core fund.
-
+With best wishes
+Dmitry
 
