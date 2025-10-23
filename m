@@ -1,168 +1,179 @@
-Return-Path: <linux-kernel+bounces-866994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873CEC01493
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:14:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E469C014A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55FAF18C8807
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67BB3AD3AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103D0319848;
-	Thu, 23 Oct 2025 13:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB36E315764;
+	Thu, 23 Oct 2025 13:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7Hx349t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGKzAEma"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6945C314B84;
-	Thu, 23 Oct 2025 13:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD58314D1A;
+	Thu, 23 Oct 2025 13:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761225245; cv=none; b=piGtj0V5Ioi+iFaHUSlEiChOl9kpr1SPMzHLaxgJRV35Q96lhcV/3BRANdjIfgYRQGhOZgex7ORujRDyqpvOo7peEPNZwx/BCYIJbnRvPjUm3dJqWjkLz+XWuOcG7sYvZX2/EJPbk1oFo7okNM25HCDMe/UYusPdlfS3jTmleSs=
+	t=1761225274; cv=none; b=GWss3k0DvO55wphflPwajkSOr2pc7gM+GTsQyfug5zmDudzSGkc43uUD+Zjeg/2ZXBXiaef62o0q4D3e4NLOH32qGKir8j8giqp3/pXI/lewDZXpomT50o0mn8kT2pD5GPaHUbT6J6IPdYlujOTh+IHnY5f2776FBcfNnnKAVkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761225245; c=relaxed/simple;
-	bh=EGs1DZThEeB7T1bTJtu2VNgy+mH8lRG20Iswu4fXJbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NX1xkFM8MLLqqQih5LDr+3A8cDSXzl9FGGDqhVxXsceqIZuseP+DR+YezzjX/TmK1e2o/FWGdFOFJNtmCeXeV5gvDEn6tyoB4mMjG1xxiWkhYNlrA9dgvEsIKwfT53DcmAJGdndXx5AvD3vtkuvtzZmUqyWhxIf61gwGLwn2Fn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7Hx349t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C748C4CEF7;
-	Thu, 23 Oct 2025 13:14:02 +0000 (UTC)
+	s=arc-20240116; t=1761225274; c=relaxed/simple;
+	bh=PLd1NVzmQHGQzIcfZ9nEYp9jvBlKFleg3SJKD4eBeJk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=si8iQKpiyeKAx465uoQQkuLNR1GbRBF6yqmKdMiS1jalGcChHNrk0cqqnon3Fz++ECLPZU3yuBZ+SfqazLFkITTlZ85DcrKQNxd7KyzmtTyYL2z5Sz+R6JImKUjQTMnAOT1ddmrffxoQzP4zCH0cENZM72/KKmtRNfwlBVo1Z0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGKzAEma; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05F2DC4CEE7;
+	Thu, 23 Oct 2025 13:14:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761225243;
-	bh=EGs1DZThEeB7T1bTJtu2VNgy+mH8lRG20Iswu4fXJbY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k7Hx349trsWneBigD6xKiO6v0YXicg1MuJEYXO+cUmbK3iZbqRUa10G/T++X2fryo
-	 pVXFlZE9+3PDLUGp6N//z4HE1bfOjWYD6dMpXBYKcSCD1BmmOu5ZFqlZQtSE67x8a3
-	 AGxpF4b8umJSY4DX0A55FXG33qT+CFcQ5pQbO8wc5IgV59TSbLv+/SFI4XGvz80RrT
-	 cBj/quGKLje80vCZJGa5d9HKeL95ktEjkewAzn70OduOUFF5V1O05N2fZ0qdRzm8yF
-	 FVmC3taMoQAMJ3aLmH195PDB5Kye53f649to2WIkQdF4a2uXe6ZIptZ8Dh9PNHlgiC
-	 4x0jdLtPdblJQ==
-Date: Thu, 23 Oct 2025 15:14:00 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Lee Jones <lee@kernel.org>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
-Subject: Re: [PATCH v3 1/4] i2c: machxo2: new driver
-Message-ID: <unkntq6gtw7bbunzjj6av7icf6u4kyhommxwqvyaiozaotyzrq@a2n3vzfmvvrg>
-References: <bc9ce42883d10d54bc0954024d7e2312ff45fdb6.1761123080.git.matthias.schiffer@ew.tq-group.com>
+	s=k20201202; t=1761225274;
+	bh=PLd1NVzmQHGQzIcfZ9nEYp9jvBlKFleg3SJKD4eBeJk=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=LGKzAEmaTPH8NSmWkzzvonEk4IiDY4od3aVcr/pqvudYANDc7pn4sGOThnAQ1Smvc
+	 Gc0XLxiIhTg7qGIts/b38Gy1+zTRBDx9s3L7XR1JjsFuVLqiBX13YTl4ZZ0Xi1Mwao
+	 VCGmYiY3WRdfd+SCS6OpmMQBlIvUBodtL19N8j/rmnvFomyHl3RhgJRTKDDim8+MI5
+	 91gG+VNHHjuq30I56RTXJXMXOb4yZ0/6MdTpQFVD8aic3EskyYZfT4bLgEIuYLsWdz
+	 Ln+HBaTDVdjI9Uhzg6rFXNZazdT4ozE7JySm9ordYsdxIkUh37Id1z9okHS7znWD8e
+	 DjQTsfoXTC45A==
+Message-ID: <7fc65c85-f75e-419c-aa1b-0c85376373d4@kernel.org>
+Date: Thu, 23 Oct 2025 15:14:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bc9ce42883d10d54bc0954024d7e2312ff45fdb6.1761123080.git.matthias.schiffer@ew.tq-group.com>
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v3] media: v4l2-ctrls: add full AV1 profile validation in
+ validate_av1_sequence()
+To: jc@kynesim.co.uk
+Cc: opensource india <opensource206@gmail.com>, mchehab@kernel.org,
+ hverkuil@kernel.org, ribalda@chromium.org,
+ laurent.pinchart@ideasonboard.com, yunkec@google.com,
+ sakari.ailus@linux.intel.com, james.cowgill@blaize.com,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250913105252.26886-1-opensource206@gmail.com>
+ <8199bec4-b9e1-4d6e-98da-a4d7eb667437@kernel.org>
+ <CAKPKb8-s96v+Nh29Z5E0wgyXYgoFHJT2SHA_WpZshXspo0WY0w@mail.gmail.com>
+ <f9001f98-80d6-49d5-8665-d42fcef7b07d@kernel.org>
+ <CAFyCYyOFFMrDetScx_8_VgRpCVyTq_O0PGn1hDt7+UwMygqeXw@mail.gmail.com>
+Content-Language: en-US, nl
+In-Reply-To: <CAFyCYyOFFMrDetScx_8_VgRpCVyTq_O0PGn1hDt7+UwMygqeXw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Matthias,
+On 23/10/2025 15:03, John Cox wrote:
+> On Thu, 23 Oct 2025 at 11:44, Hans Verkuil <hverkuil+cisco@kernel.org> wrote:
+>>
+>> On 23/10/2025 12:32, opensource india wrote:
+>>> On Wed, Oct 22, 2025 at 12:44 PM Hans Verkuil <hverkuil+cisco@kernel.org> wrote:
+>>>>
+>>>> Hi Pavan,
+>>>>
+>>>> On 13/09/2025 12:52, Pavan Bobba wrote:
+>>>>> Complete the "TODO: PROFILES" by enforcing profile-specific and
+>>>>> monochrome constraints as defined by the AV1 specification
+>>>>> (Section 5.5.2, "Color config syntax").
+>>>>>
+>>>>> The validator now checks:
+>>>>>
+>>>>>  - Flags: reject any unknown bits set in sequence->flags
+>>>>>  - Profile range: only profiles 0..2 are valid
+>>>>>  - Profile 0: 8/10-bit only, subsampling must be 4:2:0 (sx=1, sy=1),
+>>>>>    monochrome allowed
+>>>>>  - Profile 1: 8/10-bit only, subsampling must be 4:4:4 (sx=0, sy=0),
+>>>>>    monochrome forbidden
+>>>>>  - Profile 2:
+>>>>>     * 8/10-bit: only 4:2:2 allowed (sx=1, sy=0)
+>>>>>     * 12-bit: 4:4:4 (sx=0, sy=0), 4:2:2 (sx=1, sy=0), or 4:2:0 (sx=1, sy=1)
+>>>>>       allowed
+>>>>>  - Monochrome path (all profiles except 1): forces subsampling_x=1,
+>>>>>    subsampling_y=1, separate_uv_delta_q=0
+>>>>>
+>>>>> These checks prevent userspace from providing invalid AV1 sequence
+>>>>> headers that would otherwise be accepted, leading to undefined driver
+>>>>> or hardware behavior.
+>>>>
+>>>> This patch was merged in our media-committers next branch, but I noticed that
+>>>> it now fails the v4l2-compliance test for the visl driver.
+>>>>
+>>>> The cause is that the new validation now fails with the default values for
+>>>> this control as set in std_init_compound().
+>>>>
+>>>> You can test this yourself by loading the visl driver and then running
+>>>> v4l2-compliance -d /dev/videoX -E --verbose
+>>>> (-E stops at the first error)
+>>>>
+>>>> Can you provide a patch to initialize this control with sane values?
+>>>>
+>>>> Apologies for not noticing this before: there are some issues with the automatic
+>>>> regression tests in our CI, so the tests weren't run.
+>>>>
+>>>> Regards,
+>>>>
+>>>>         Hans
+>>>>
+>>>
+>>> Hi Hans Verkuil,
+>>>
+>>> Thank you so much for the review.
+>>> yes, v4l2-compliance expected to fail indeed since it is sending
+>>> default values which, our newly added code rejects as per
+>>> specification
+>>>
+>>> when you say patch, you mean patch for v4l2-compliance tool with
+>>> proper values so that v4l2 core driver can accept?
+>>
+>> No, std_init_compound() in the kernel needs to be patched so the initial
+>> value of this control passes the new validation tests. The initial control
+>> values should always be sane.
+> 
+> Whilst that is a good principle it makes almost no sense in this
+> context. There is almost no chance that a given bitstream will decode
+> against a default sequence header and failing to set it explicitly is
+> going to be a mistake on the users part. It seems to me that it is
+> better to have something that is detectable as unset rather than
+> something that is valid but wrong.
+> 
+> I accept that it is the V4L2 way to require "valid" default values for
+> all supported ctrls, but it seems to me to be actively unhelpful for
+> things like SPS / VPS / Tile Group Entry where if not set correctly
+> from bits of the bitstream that the kernel doesn't get to see they
+> will break the stream decode.
 
-...
+I agree, but the V4L2 design (not just controls, but also formats etc.) is
+that they have valid values, even if it makes no sense in the bigger picture.
 
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index fedf5d31f9035..e270f7d9e0254 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -855,6 +855,16 @@ config I2C_LS2X
->  	  This driver can also be built as a module. If so, the module
->  	  will be called i2c-ls2x.
->  
-> +config I2C_MACHXO2
-> +	tristate "Lattice MachXO2 I2C Controller"
-> +	select REGMAP_MMIO
+Now, is that the right design or not? You could argue either way, but the
+fact is that that's how it was designed many years ago.
 
-do we need "depends on HAS_IOPORT" here?
+Changing this for just a single control is worse than just initing with the
+minimum you can get away with. Bonus points if it is somewhat sane :-)
 
-> +	help
-> +	  If you say yes to this option, support will be included for the
-> +	  "Hardened I2C" controller found on the Lattice MachXO2 PLD family.
-> +
-> +	  This driver can also be built as a module.  If so, the module
-> +	  will be called i2c-machxo2.
-> +
+The advantage of always reporting valid values is that the application never
+has to explicitly check if the format/control/etc. has invalid values.
 
-...
+Regards,
 
-> +static enum hrtimer_restart machxo2_restart_timer(struct machxo2_i2c *i2c)
-> +{
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&i2c->lock, flags);
-> +	if (!hrtimer_is_queued(&i2c->timer))
-> +		hrtimer_forward_now(&i2c->timer, i2c->timer_wait);
-> +	spin_unlock_irqrestore(&i2c->lock, flags);
-> +
-> +	/* Exponential backoff for timer */
-> +	i2c->timer_wait *= 2;
+	Hans
 
-you could use here
+> 
+> I'm not going to argue this point but I felt that I wanted to make it.
+> 
+> Regards
+> 
+> John Cox
+>> Regards,
+>>
+>>         Hans
+>>
+> 
 
-	i2c->timer_wait = ktime_add(i2c->timer_wait, i2c->timer_wait);
-
-> +
-> +	return HRTIMER_RESTART;
-> +}
-
-...
-
-> +static int machxo2_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
-> +{
-> +	struct machxo2_i2c *i2c = i2c_get_adapdata(adap);
-> +
-> +	machxo2_wait_not_busy(i2c, 1000, jiffies_to_usecs(adap->timeout) + 1);
-> +
-> +	dev_dbg(&adap->dev, "new msg: addr %02x, flags %x, nmsgs %d, len %d\n",
-> +		msgs->addr, msgs->flags, num, msgs[0].len);
-> +
-> +	i2c->msg = msgs;
-> +	i2c->pos = 0;
-> +	i2c->nmsgs = num;
-> +	i2c->error = 0;
-> +	i2c->state = MACHXO2_I2C_STATE_START;
-> +	/* Ensure that the hrtimer sees the state change */
-> +	smp_wmb();
-> +
-> +	spin_lock_irq(&i2c->lock);
-
-I would use here spin_lock_irq_irqsave()
-
-> +	hrtimer_start(&i2c->timer, 0, HRTIMER_MODE_REL);
-
-nitpick: '0' can be otherwise written as ktime_set(0, 0). Not
-important, as you wish.
-
-> +	spin_unlock_irq(&i2c->lock);
-> +
-> +	if (!wait_event_timeout(i2c->wait, i2c->state == MACHXO2_I2C_STATE_DONE,
-> +				adap->timeout)) {
-
-...
-
-> +
-> +	pdata = dev_get_platdata(&pdev->dev);
-> +	if (!pdata || !pdata->clock_khz)
-> +		return -EINVAL;
-> +
-> +	i2c->clock_khz = pdata->clock_khz;
-> +	i2c->bus_khz = pdata->bus_khz;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
-> +	if (IS_ERR(res))
-> +		return PTR_ERR(res);
-
-platform_get_resource() returns "a pointer to the resource or
-NULL on failure". So that you need to check for "!res" and return
--ENODEV in case.
-
-Thanks,
-Andi
-
-> +
-> +	if (!devm_request_region(&pdev->dev, res->start, resource_size(res),
-> +				 pdev->name))
-> +		return dev_err_probe(&pdev->dev, -EBUSY, "Can't get I/O resource.\n");
-> +
 
