@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-867796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA32C0383D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:21:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A8FC03840
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 805E1357E64
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:21:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660E03B3710
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362C226ED23;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2492741DA;
 	Thu, 23 Oct 2025 21:21:37 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0546F35B138
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A994239E97
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761254496; cv=none; b=q//maAIv9SOouvP7UF2qk4kG7Dgz+C3p/k8t+I8HjUxF+/YtWVNIfuslvhLbrVo0v+h/S+iykjqccUy3q6679SVlzmEjd68hIaBVjU3bT+Qiu4nbcNvA/RE0JHXfn9veGMTdCFZylcLsRQETL+ojZGw5xueNBqElKDX2JFrg0nc=
+	t=1761254496; cv=none; b=VLPctZpkVHHYA27xfE/X7hD/5sgqY6Bk2PKqh9LivpDWsObcg+5FYgMJGIJRxXCUS9LBEgr8p6v4H+IIYxOJazl8u/fSP4GSrVxNgq867Hm63ZR4Eo2ioOTB/B4RZx1zVW2tJLckiE9nzpzY6E4etto5NXsyAdY8CpAH3QlmmXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761254496; c=relaxed/simple;
-	bh=QJ4Ncd1l1a3EXBJZnjSI6trhLWKbGx9AJeaXGuy80eE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=budeKbm/JWaBy7+iyg7Hsi+5F2yIR4EMQVjwtYu4olBifh4ipsscqIFcI9XBavb26ANE4ewLelUucvNJsPNfLsYsaTpQeZz6XDVy0ZzzglAG0FMWFFRLR3KmlD7kbQAgxsAy70dwGY3g1U2eN5geEcsvHKGVXmr79h6aGvRPlEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+	bh=iVRTsi4B1jh3cOcWEoBqF5+JzXBosIRa9YmukIftfRM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DKrmTjt6H3hZkfL+qYUfmtNUHH338UdL79vNlx3JQ0Y8AB/MN375v+3hsTSQqyuTZnKR84WdlUh3iqTQdr2hXun4dy6gL6IZqwcJOFYCUbmU7BC28OIXNkmZnZaYbHtcfjOtDaH6TepcQWTdM+A1LvSpOeTmFUqjR3X/af+BkdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-430d003e87eso49949165ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:21:34 -0700 (PDT)
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-430c8321bc1so18915815ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:21:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1761254494; x=1761859294;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mJgfC9Kj5UQMZsm8dRwu+O4pwBoVzy6ZLOox70cQpM0=;
-        b=vu7CQ7z7Pu5uN4K0ifOCe05Y43gw/0PJOXotyq/zl0JxZd1a20eEPl0WKRMc1Rmf8R
-         ZxWuIkjurxZ8CQwXQwva2Nazn1yGrTMWKtpJUhOjWnwzxfycMO/ZhiDWGLzasREFDcmn
-         G8ZlgVwosF1b16Y+DpHmQbQp43MOS6W6Kt4clEUi73H6wxpzDT11Cj96B2BGq15X0o7C
-         U0knSP2NvnvZiPJ8PckTVFmCE/blQjnh/TgaURBkPFA14ZvuYu+BguSIXbXNEfFQrGKD
-         jl9GRmfmtw8ne3JCdzAZfSydESEnl2e0P0/dDviVQ/v0hHNyxQBzFXyMrjT0tG646GPa
-         nJGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUv5vSD9s5XHVc4hHm6mD1pR+hj1nyWK+h4q7wsJooAN2zzMAZ68Q7jI91RNDqz6PhUfMwrkvtw40q1D8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpXBFFnKimelTjjAVZpdH9WNGWtp0EYA3NIiGqCf9MH0+IXn5G
-	kSqeU28WrnMipIXy8Ml07ZLV2xCO/tI0858FmiXYo1IdsI7WLv6oFVGM1whkgveQ+HaiHKoazzC
-	SjXZcP/Xc4yFJoB8bQis6CEAvhHhQWlUM3i020Z593s7b94nLNJAFDBTD2ck=
-X-Google-Smtp-Source: AGHT+IFHUVZVOKKsGkFHUjX+mVLjoKCbdBi1O/OOmfMAVUKPpRDr67Q9/JoA0dbeDx6szZQDJTXYfUyz0yQHr9o2oEw0hupIiCnu
+        bh=AOksONKvXlOJL0U+M1alTbSSRb56wH0mYv1Iv86tjks=;
+        b=AoEvW+XD49Q/JpRCJQ4mXY/B0lkGE04Zha2FzgbYSLQKSBliDlhUwgi/EsNWVBH5LB
+         EMNM5Oxqy87Muuo7rHhbpca8ZWAe9Z9qGyVEOGGIeW6BugEsN3WjRH3stilU5IcIKWtH
+         lfwOHLkjoupYrHHCPBp5Kda1OcsraIK2AtRjuE3X2MAd5m2etSrcHO625X5mSMQUqm0j
+         dGkwV43KchKIuyCu2CU7u0jEPG98JSNh9nq+sSvAcn9uHzbEAnhFpK3x5qysBaKZivf1
+         dykVKI9/jyevzpooYuehom1sJ/3PE92kt4hrzlNLGtMaN7nzbRTRlzsZYtf+Z901a/KF
+         c8Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpG2fcRf9LA1x3fCBswrfWlVgX0bZEFVJBdIqQF+GuRsyTCTM65l2GOXS6zwhg9LiIN3DPrWTigSJOBdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK5xKpV0JocbU9OOuO5Dl6nuSNK3U3unsasq69rDiByYxj7sRB
+	wssWOcH7nDldYxl8TryGr/WhxgbeoM1U9JIUu+ZC2fA9NLGhZxcdy/3DCVsHqoxECqC7QleEiI2
+	4tWH7rWurlg8M31ULXv129RSwXEDIjx65KMJVhPXRxc+I7So4vNylgPTvrLo=
+X-Google-Smtp-Source: AGHT+IGq1ziE4QfwS05WZeuA/5dvup9r6hn+2TI+K69/pAA9DbdRAJPUknKxKhaDL/jrXKeGM0ECOcEPMJODOWAYk0pG62ASvf/e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3807:b0:430:c0cf:7920 with SMTP id
- e9e14a558f8ab-430c527bc73mr348783845ab.19.1761254494132; Thu, 23 Oct 2025
+X-Received: by 2002:a05:6e02:380f:b0:42e:72ee:cde6 with SMTP id
+ e9e14a558f8ab-430c525f609mr412692255ab.12.1761254494372; Thu, 23 Oct 2025
  14:21:34 -0700 (PDT)
 Date: Thu, 23 Oct 2025 14:21:34 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fa9c5e.a70a0220.3bf6c6.00c9.GAE@google.com>
-Subject: [syzbot] [io-uring?] general protection fault in io_uring_show_fdinfo (4)
-From: syzbot <syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, io-uring@vger.kernel.org, kbusch@kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <68fa9c5e.a70a0220.3bf6c6.00ca.GAE@google.com>
+Subject: [syzbot] [jfs?] INFO: task hung in dbAlloc
+From: syzbot <syzbot+a2bef7ebecf9cb8b880a@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
@@ -70,103 +70,115 @@ syzbot found the following issue on:
 
 HEAD commit:    aaa9c3550b60 Add linux-next specific files for 20251022
 git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11880c92580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16dd13e2580000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=c8b911aebadf6410
-dashboard link: https://syzkaller.appspot.com/bug?extid=a77f64386b3e1b2ebb51
+dashboard link: https://syzkaller.appspot.com/bug?extid=a2bef7ebecf9cb8b880a
 compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e73734580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=102f43e2580000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=120ecd2f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13506d42580000
 
 Downloadable assets:
 disk image: https://storage.googleapis.com/syzbot-assets/44f7af9b7ca1/disk-aaa9c355.raw.xz
 vmlinux: https://storage.googleapis.com/syzbot-assets/9d09b0a9994d/vmlinux-aaa9c355.xz
 kernel image: https://storage.googleapis.com/syzbot-assets/ae729ccb2c5c/bzImage-aaa9c355.xz
-
-The issue was bisected to:
-
-commit 31dc41afdef21f264364288a30013b538c46152e
-Author: Keith Busch <kbusch@kernel.org>
-Date:   Thu Oct 16 18:09:38 2025 +0000
-
-    io_uring: add support for IORING_SETUP_SQE_MIXED
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12eac614580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11eac614580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16eac614580000
+mounted in repro: https://storage.googleapis.com/syzbot-assets/7922e49d0401/mount_0.gz
+  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=16cba3cd980000)
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com
-Fixes: 31dc41afdef2 ("io_uring: add support for IORING_SETUP_SQE_MIXED")
+Reported-by: syzbot+a2bef7ebecf9cb8b880a@syzkaller.appspotmail.com
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 6032 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:__io_uring_show_fdinfo io_uring/fdinfo.c:103 [inline]
-RIP: 0010:io_uring_show_fdinfo+0x371/0x1840 io_uring/fdinfo.c:255
-Code: 0f 85 29 04 00 00 45 8b 36 44 89 f7 44 89 ee e8 a5 ec 94 00 45 39 ee 76 11 e8 db ea 94 00 45 89 fd 4c 8b 3c 24 e9 c9 03 00 00 <80> 3b 00 45 89 fd 0f 85 17 04 00 00 0f b6 2c 25 00 00 00 00 48 8b
-RSP: 0018:ffffc9000392f928 EFLAGS: 00010293
-RAX: ffffffff812b42ab RBX: dffffc0000000000 RCX: 0000000000000000
-RDX: ffff888026c65ac0 RSI: 00000000000001ff RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffff888069c000aa R09: 1ffff1100d380015
-R10: dffffc0000000000 R11: ffffed100d380016 R12: 0000000000000008
-R13: 00000000000001ff R14: 0000000000000000 R15: 0000000000000000
-FS:  000055556a027500(0000) GS:ffff888125f29000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30363fff CR3: 0000000076c50000 CR4: 00000000003526f0
+INFO: task syz.2.19:6102 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.2.19        state:D
+ stack:24744 pid:6102  tgid:6101  ppid:5966   task_flags:0x400140 flags:0x00080003
 Call Trace:
  <TASK>
- seq_show+0x5bc/0x730 fs/proc/fd.c:68
- seq_read_iter+0x4ef/0xe20 fs/seq_file.c:230
- seq_read+0x369/0x480 fs/seq_file.c:162
- vfs_read+0x200/0xa30 fs/read_write.c:570
- ksys_read+0x145/0x250 fs/read_write.c:715
+ context_switch kernel/sched/core.c:5254 [inline]
+ __schedule+0x17c4/0x4d60 kernel/sched/core.c:6862
+ __down_read_common kernel/locking/rwsem.c:1261 [inline]
+ __down_read kernel/locking/rwsem.c:1274 [inline]
+ down_read_nested+0x9a/0x2f0 kernel/locking/rwsem.c:1663
+ dbAlloc+0x3a7/0xba0 fs/jfs/jfs_dmap.c:790
+ diNewExt+0x9af/0x3150 fs/jfs/jfs_imap.c:2261
+ diAllocExt fs/jfs/jfs_imap.c:1952 [inline]
+ diAllocAG+0xe86/0x1df0 fs/jfs/jfs_imap.c:1669
+ diAlloc+0x1d5/0x1680 fs/jfs/jfs_imap.c:1590
+ ialloc+0x8c/0x8f0 fs/jfs/jfs_inode.c:56
+ jfs_mkdir+0x193/0xa70 fs/jfs/namei.c:225
+ vfs_mkdir+0x306/0x510 fs/namei.c:4453
+ do_mkdirat+0x247/0x590 fs/namei.c:4486
+ __do_sys_mkdirat fs/namei.c:4503 [inline]
+ __se_sys_mkdirat fs/namei.c:4501 [inline]
+ __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4501
  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f198c78efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffae1a3128 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 00007f198c9e5fa0 RCX: 00007f198c78efc9
-RDX: 0000000000002020 RSI: 00002000000040c0 RDI: 0000000000000004
-RBP: 00007f198c811f91 R08: 0000000000000000 R09: 0000000000000000
+RIP: 0033:0x7f8089b8efc9
+RSP: 002b:00007f808aa1e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
+RAX: ffffffffffffffda RBX: 00007f8089de5fa0 RCX: 00007f8089b8efc9
+RDX: 0000000000000408 RSI: 0000200000000300 RDI: 0000000000000004
+RBP: 00007f8089c11f91 R08: 0000000000000000 R09: 0000000000000000
 R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f198c9e5fa0 R14: 00007f198c9e5fa0 R15: 0000000000000003
+R13: 00007f8089de6038 R14: 00007f8089de5fa0 R15: 00007ffd7baf80e8
  </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__io_uring_show_fdinfo io_uring/fdinfo.c:103 [inline]
-RIP: 0010:io_uring_show_fdinfo+0x371/0x1840 io_uring/fdinfo.c:255
-Code: 0f 85 29 04 00 00 45 8b 36 44 89 f7 44 89 ee e8 a5 ec 94 00 45 39 ee 76 11 e8 db ea 94 00 45 89 fd 4c 8b 3c 24 e9 c9 03 00 00 <80> 3b 00 45 89 fd 0f 85 17 04 00 00 0f b6 2c 25 00 00 00 00 48 8b
-RSP: 0018:ffffc9000392f928 EFLAGS: 00010293
-RAX: ffffffff812b42ab RBX: dffffc0000000000 RCX: 0000000000000000
-RDX: ffff888026c65ac0 RSI: 00000000000001ff RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffff888069c000aa R09: 1ffff1100d380015
-R10: dffffc0000000000 R11: ffffed100d380016 R12: 0000000000000008
-R13: 00000000000001ff R14: 0000000000000000 R15: 0000000000000000
-FS:  000055556a027500(0000) GS:ffff888125f29000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30363fff CR3: 0000000076c50000 CR4: 00000000003526f0
-----------------
-Code disassembly (best guess):
-   0:	0f 85 29 04 00 00    	jne    0x42f
-   6:	45 8b 36             	mov    (%r14),%r14d
-   9:	44 89 f7             	mov    %r14d,%edi
-   c:	44 89 ee             	mov    %r13d,%esi
-   f:	e8 a5 ec 94 00       	call   0x94ecb9
-  14:	45 39 ee             	cmp    %r13d,%r14d
-  17:	76 11                	jbe    0x2a
-  19:	e8 db ea 94 00       	call   0x94eaf9
-  1e:	45 89 fd             	mov    %r15d,%r13d
-  21:	4c 8b 3c 24          	mov    (%rsp),%r15
-  25:	e9 c9 03 00 00       	jmp    0x3f3
-* 2a:	80 3b 00             	cmpb   $0x0,(%rbx) <-- trapping instruction
-  2d:	45 89 fd             	mov    %r15d,%r13d
-  30:	0f 85 17 04 00 00    	jne    0x44d
-  36:	0f b6 2c 25 00 00 00 	movzbl 0x0,%ebp
-  3d:	00
-  3e:	48                   	rex.W
-  3f:	8b                   	.byte 0x8b
+INFO: task syz.0.17:6104 blocked for more than 149 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.17        state:D stack:24584 pid:6104  tgid:6103  ppid:5962   task_flags:0x400140 flags:0x00080003
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5254 [inline]
+ __schedule+0x17c4/0x4d60 kernel/sched/core.c:6862
+ __schedule_loop kernel/sched/core.c:6944 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:6959
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7016
+ rwsem_down_read_slowpath+0x5fd/0x8f0 kernel/locking/rwsem.c:1086
+ __down_read_common kernel/locking/rwsem.c:1261 [inline]
+ __down_read kernel/locking/rwsem.c:1274 [inline]
+ down_read_nested+0x9a/0x2f0 kernel/locking/rwsem.c:1663
+ dbAlloc+0x3a7/0xba0 fs/jfs/jfs_dmap.c:790
+ diNewExt+0x9af/0x3150 fs/jfs/jfs_imap.c:2261
+ diAllocExt fs/jfs/jfs_imap.c:1952 [inline]
+ diAllocAG+0xe86/0x1df0 fs/jfs/jfs_imap.c:1669
+ diAlloc+0x1d5/0x1680 fs/jfs/jfs_imap.c:1590
+ ialloc+0x8c/0x8f0 fs/jfs/jfs_inode.c:56
+ jfs_mkdir+0x193/0xa70 fs/jfs/namei.c:225
+ vfs_mkdir+0x306/0x510 fs/namei.c:4453
+ do_mkdirat+0x247/0x590 fs/namei.c:4486
+ __do_sys_mkdirat fs/namei.c:4503 [inline]
+ __se_sys_mkdirat fs/namei.c:4501 [inline]
+ __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4501
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f54be18efc9
+RSP: 002b:00007f54bf04c038 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
+RAX: ffffffffffffffda RBX: 00007f54be3e5fa0 RCX: 00007f54be18efc9
+RDX: 0000000000000408 RSI: 0000200000000300 RDI: 0000000000000004
+RBP: 00007f54be211f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f54be3e6038 R14: 00007f54be3e5fa0 R15: 00007ffc81bd5328
+ </TASK>
+INFO: task syz.3.20:6107 blocked for more than 150 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.3.20        state:D stack:25064 pid:6107  tgid:6106  ppid:5970   task_flags:0x400140 flags:0x00080003
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5254 [inline]
+ __schedule+0x17c4/0x4d60 kernel/sched/core.c:6862
+ __schedule_loop kernel/sched/core.c:6944 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:6959
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7016
+ rwsem_down_read_slowpath+0x5fd/0x8f0 kernel/locking/rwsem.c:1086
+ __down_read_common kernel/locking/rwsem.c:1261 [inline]
+ __down_read kernel/locking/rwsem.c:1274 [inline]
+ down_read_nested+0x9a/0x2f0 kernel/locking/rwsem.c:1663
+ dbAlloc+0x3a7/0xba0 fs/jfs/jfs_dmap.c:790
+ diNewExt+0x9af/0x3150 fs/jfs/jfs_imap.c:2261
+ diAllocExt fs/jfs/jfs_imap.c:1952 [inline]
+ diAllocAG+0xe86/0x1df0 fs/jfs/jfs_imap.c:1669
 
 
 ---
@@ -176,7 +188,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
