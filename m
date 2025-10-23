@@ -1,288 +1,345 @@
-Return-Path: <linux-kernel+bounces-867552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDADC02EE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:28:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B08C02EF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A7A5E4FCFEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:27:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B14083B08FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E408034679E;
-	Thu, 23 Oct 2025 18:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7591C34C98C;
+	Thu, 23 Oct 2025 18:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="STR6h+9K"
-Received: from relay13.grserver.gr (relay13.grserver.gr [178.156.171.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpL9n6XP"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3E62C0287
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.156.171.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB6C2C0287
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761244071; cv=none; b=SZjSbyaaG5l2J2iLRc/Kh4gbkFe6RS+d4tYMBfJwpdyMPT1/xvQT1jkNuFhI+lljc1C6Q/cvfyLynZOxddODWy29L830uuPsR1M9s888rycr1W7gHSSItDKja4aQTqbT/E3wOTNBcHlEjjBh2xkWCbKbQHOOKrNnwzs6PgnQc+4=
+	t=1761244086; cv=none; b=XkeLZm0D8V25VZlPqkOJdIMOxPbJzxQon+JjMa3tGfhBNnU1WNz7mbzVVoFOlZnCMGhhp9VHdTrP3BuJrTovDGyaMY7cr/7KoqyIoxqvojfPivZDSdf7Hkz2iQysRVaP4GlbLWpY8KLv3DdxywOAJ11omJkwGsFMZvqjjFdYvwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761244071; c=relaxed/simple;
-	bh=Dqmhx2T8Z4PUBHkc0XnnJwfmL/y9EVJ2+HpMIXQjexM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rEeESvEnxAMHoaf/ZZy8noI7oLlW+vm/WFTgqBZepI6HMZHu/41E9Xa7Froszy+uFEOSQAcVqYi8Q8+E0dp/wbPwLX8Kx0enhyJyQ9tMWmhWAumj75xlx/Ri5WfoDU13HmD9/aUgmy/LVDrpubw5j2r9p0lo3T/DFNIt85L3lH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=STR6h+9K; arc=none smtp.client-ip=178.156.171.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay13 (localhost [127.0.0.1])
-	by relay13.grserver.gr (Proxmox) with ESMTP id 932495E58B
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:27:47 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay13.grserver.gr (Proxmox) with ESMTPS id 1C9785E69E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:27:46 +0300 (EEST)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id ADB021FF4AB
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:27:44 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1761244065;
-	bh=YS/72VHhH/g/YFNa4ff51+NZvroLJ77Vov5cSnMbTD4=;
-	h=Received:From:Subject:To;
-	b=STR6h+9KU33zjx6WcsZxbS8t20kUKaRCrgMth2qoyeW/q3VGgzPK+mzGr5256gFuP
-	 CjNpebttAm896jRpPbbdJ/BQl+ZuhccMqo1wCZqlEeqLg4EBCDvN+9cbF7qILw1RHW
-	 UftKx6YBEgtV+KiXcGKcBStFPjtK1h2D07k5p9hW+UlJDS+Zd1JuzONJHcqOFnOPFp
-	 9CmecZ7o4XwbAJg/eNIbYrKUw+V/GeN7URBXTFNP8R0F04NA8ONdkxN6mearoSVJbN
-	 4HkG7e4eEraRDJkcBsFaWTFIWI1LvZn6DWjZCWIAQyMuhhceUpMqnS2+9bPol1Fahs
-	 7kbZLg7GNeSdw==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.179) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f179.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f179.google.com with SMTP id
- 38308e7fff4ca-378d61ce75aso10498421fa.1
-        for <linux-kernel@vger.kernel.org>;
- Thu, 23 Oct 2025 11:27:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCXtLD3zq5KcOSncSyUfzzsglkIm1lobXoNh0GCc8SrkdGFr06pnqyxKyoyybz/JALT06DIHWEbc+BqTpOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Xx4SEWS3AxTsydN6PwQL/6xr3utD2CsdQODYHV1wvt1gJL6O
-	ZExO0HY+fjiE5QEF2b1Ec/15YyFnNQji8Ijg4yvkUff2Km8IwPQUewNXKSVvOst63L4xsdC4u4H
-	F4Xh8Mv4AH9cEIizLMnhlxge1FX+Ix0k=
-X-Google-Smtp-Source: 
- AGHT+IHilJ4ewlHSY4xggMhYaacCiDaa1aE1mkJY+Ltinfbu2Uaioj7vl798C2CEKwXIMBC7drdEmuXC3d2pPsrSukk=
-X-Received: by 2002:a05:651c:3136:b0:376:3792:1a9b with SMTP id
- 38308e7fff4ca-378cf944538mr19889991fa.21.1761244064142; Thu, 23 Oct 2025
- 11:27:44 -0700 (PDT)
+	s=arc-20240116; t=1761244086; c=relaxed/simple;
+	bh=E8zs7SOpm1dhtUHfmzGbH/EMBHlnGgv32b4JqVbEuLo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qUpw/epRGvvRZA4d6h8dlvOwVzHcq5mP1MfT8zeEoj/gcCnUcTZqLlhWF8nwlRyOFAMehlUwspxPeKNuD+9V72ET86SOdBVgz3gP5wXDYnkJWShM9LjaZXetQltOwpcl5/txnu2y1jFUcKApDWt2GEZyOatV+ODMPJjqyhKI+hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpL9n6XP; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b6ce806af3eso1041317a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:28:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761244084; x=1761848884; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vvFV8E+b7v3LABJUzfm2F4mViB8B92hiY0bikMbHgrc=;
+        b=cpL9n6XPkpWoQrAj2zkqUCOnEhjcEV7P5ZJupYA9kCmeg63KUffKuynNSgxitpycG7
+         qIR7bxTCFgvkb84o606oCKlsjWj/fgqqYs/QFa32AcVUi2108fTTl5259A5moFJIWXB9
+         iKiMwPsKd6QuRyGyAyNWwR+K8Tq0PXltxb8thmwqnc5BLXLYCU63UG3zeUFzspWsCpfZ
+         gsnoxyqWLucvcjoir316L/4/ndm1tZat6TRUrm0KpsIPwKEoR48893/noYkWPsM//+Ms
+         AGO/bLXlBo6AHuGxUYMieF/xLiy77a5S4x+uwZFhXu8+gdd9AGgI8meIR0vqoUN46xil
+         b6tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761244084; x=1761848884;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vvFV8E+b7v3LABJUzfm2F4mViB8B92hiY0bikMbHgrc=;
+        b=xO4MDgo4PA07JvHz8C4VfIlmT5GGoRgwhKgocB+UMbLNUVsrvsI8tC2nk5ylvLy+Ji
+         OGsRI5CJ/GKVR3s8RL2kjTzmO7MQo2k5BOnF6ijXvXlVdC2i+kyu3pYKvvv6Fa4meiBM
+         UWFrJmDMCuLFNXq87IjpRAcNK1uB6FibrHlCZvCqtInsRbSKFjOkOnKcPbIjP7//lppK
+         2lIXk7vZxaMOyn+cidWdk0D+ATE88QqlsNhxoz0tdSJ+1fN5tFoZ1Hiy1fsLWYKc7Y5o
+         sdBzLFwlyg8/cuxJF1mDdOq3OdybECDGE8XqE+YwrF1mA41v/GQkjKc8SDCPDXGmnIeW
+         3gRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvmMRiUshC4h8xImFfl3nfYFK5ehiJGNllCda1Z/vOYMPhvw2BiugDxJ4wnHsDHGcxXup8f1MiNwJcDME=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3kBNoh8TjcSotMfLsOezjQoHtyXoTEyOSKKPNu88v5ns/G6lz
+	vitwc7iLUIzloZP45poZcNA5TkoGEl/Yl64+mxsmzWGW4odl7/xqizmx
+X-Gm-Gg: ASbGncu5bubnTLcHzjv1G+aMcW8DwDVQuLrYZJINNP0J7hupnW0CQT+wFaw3P4uMsS3
+	/bMMahtrEbT8jL0TaMj29Gih+KUHdtW38foOaxETymoz/w8HUWcjhxPfQ48n53GrCwyqUIQNCdO
+	lXcqvuqNhyJ4UJXoYQAtFptrcqdEngMqO9eUaCqoNJL3hqpzpo7zPFxZNxxJvYOOtVsmcp6tyCU
+	fBL+J7xG3Oz1Z8V/FB1EL9V04803/u2eydBXSdOaDSh6R0G2tF4/eOfUdAwuieg8uCeIqKt+XLx
+	6xUucugxW6iAKGGcpW4yTkWhC5PZIrihOuGU/BfLcwDA/fZsofTNLOIT40YqrVZtUdlPjizTkWv
+	dv4Fpp4ewxpLZ9yH9OObw/TKS/BP+GQtyTLpj83hfzg8zH/8f0s2j/WiBuxSCytGyhvv5noskcB
+	sgvFccwrp6
+X-Google-Smtp-Source: AGHT+IGVmTvJcaaeium/CjIOh4QxM0abBhdJ4Oh9ByAkPzM+Q8M0uXOXPNdLcRH+7a1HhSHbc6Gzaw==
+X-Received: by 2002:a17:903:3546:b0:267:e097:7a9c with SMTP id d9443c01a7336-290cc6d4ba8mr332311835ad.53.1761244083585;
+        Thu, 23 Oct 2025 11:28:03 -0700 (PDT)
+Received: from localhost ([2a03:2880:2ff:74::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946e0f64f9sm30846755ad.86.2025.10.23.11.28.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 11:28:03 -0700 (PDT)
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+Subject: [PATCH net-next v8 00/14] vsock: add namespace support to
+ vhost-vsock
+Date: Thu, 23 Oct 2025 11:27:39 -0700
+Message-Id: <20251023-vsock-vmtest-v8-0-dea984d02bb0@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251018101759.4089-1-lkml@antheas.dev>
- <20251018101759.4089-5-lkml@antheas.dev>
- <f1d2dece-6e51-4092-9f2e-58dc93508a25@gmail.com>
-In-Reply-To: <f1d2dece-6e51-4092-9f2e-58dc93508a25@gmail.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Thu, 23 Oct 2025 20:27:32 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwGzN9Z5iQAVeYbmmAAf9jxhTw5Yy8f36BfwYdgN45kqNA@mail.gmail.com>
-X-Gm-Features: AWmQ_bms1zXHxIp5gYKbu1d_fiWt-GifAEGH7Jd-F-Qmm03vnpBn86iRp-VuEP8
-Message-ID: 
- <CAGwozwGzN9Z5iQAVeYbmmAAf9jxhTw5Yy8f36BfwYdgN45kqNA@mail.gmail.com>
-Subject: Re: [PATCH v7 4/9] HID: asus: prevent binding to all HID devices on
- ROG
-To: Denis Benato <benato.denis96@gmail.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <176124406495.1372877.8375875577423272325@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAJxz+mgC/5WS3WrbQBBGX0XstafMzP5pTSl5j+KL/RklopGUa
+ lWREvzuxapJXDk3vV7OOcPyvakqcy9VHZs3Ncva134a1bFpD43KT3F8FOiLOjaKkS1qtrDWKf+
+ AdVikLpB0ZCpMyJnVoVEvs3T966b7rkZZYJTXRZ0OjXrq6zLNv7fOStv7pjSE/ypXAoJO29hSi
+ Sm0+eFxiP3zlzwNm2jlW9jvYAYCHZAie61J2j2sb2Bud7AGAmopdo6c7rTsYfMBW9yXDRA44Rg
+ 8O87F3cCH6/e1aO8gBLRBsqWYiOhhkCV+BO1NkPSOtUBgxNtsorFZ0mdB9ncQAqZoW0xSxKZd0
+ N0G98c6IAixo5yRdUD8JBjI3UEI6ExhSZjbUHZB/x4kZNqxfmMdJZ9ch+3N71x7/8Wczn8HOsv
+ PX33tl+tKB6k1bjM/Nl+vUr5Kqzx3F22FbdUQxwL98DJPqwwyLvUyVgQpksiH4ozT77lvlxtTr
+ AJ5GoZ+OTbBccw2xxCizVq8cYHJps5469kYNMilKzao0/n8B79To5yXAwAA
+X-Change-ID: 20250325-vsock-vmtest-b3a21d2102c2
+To: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Stefan Hajnoczi <stefanha@redhat.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ "K. Y. Srinivasan" <kys@microsoft.com>, 
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+ Dexuan Cui <decui@microsoft.com>, Bryan Tan <bryan-bt.tan@broadcom.com>, 
+ Vishnu Dasa <vishnu.dasa@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kvm@vger.kernel.org, linux-hyperv@vger.kernel.org, berrange@redhat.com, 
+ Bobby Eshleman <bobbyeshleman@meta.com>
+X-Mailer: b4 0.14.3
 
-On Thu, 23 Oct 2025 at 20:23, Denis Benato <benato.denis96@gmail.com> wrote:
->
->
-> On 10/18/25 12:17, Antheas Kapenekakis wrote:
-> > Currently, when hid-asus is not loaded, NKEY keyboards load as ~6
-> > event devices with a pretty ASUSTEK name. When it loads, it concatenates
-> > all applications per HID endpoint, renames them, and prints errors
-> > when some of them do not have an input device.
-> >
-> > Therefore, change probe so that this is no longer the case. Stop
-> > renaming the devices, omit the check for .input which causes errors on
-> the devices -> devices
-> > e.g., the Z13 for some hiddev only devices, and add
-> > HID_QUIRK_INPUT_PER_APP so that each application gets its own event.
->
-> event -> event device (or evdev?)
->
-> It is not clear from the message what HID_QUIRK_INPUT_PER_APP has to do with
-> renaming the devices/having one evdev vs multiple: please make
-> it explicit in the commit message (and perhaps make explicit if (and how),
-> in case it could make any difference, how programs might change
-> theirs behavior as a consequence).
->
-> I like the fact that userspace only sees one keyboard for what is,
-> effectively, one keyboard device.
->
-> The code looks good to me: make the commit message more
-> explanatory and I'll include my reviewed-by.
+This series adds namespace support to vhost-vsock and loopback. It does
+not add namespaces to any of the other guest transports (virtio-vsock,
+hyperv, or vmci).
 
-If I respin the series to a v8 I will reword this patch subject.
+The current revision supports two modes: local and global. Local
+mode is complete isolation of namespaces, while global mode is complete
+sharing between namespaces of CIDs (the original behavior).
 
-Antheas
+The mode is set using /proc/sys/net/vsock/ns_mode.
 
-> Thanks,
-> Denis
->
-> > When this is done, the probes are called multiple times. Due to this,
-> > the rgb check needs to be moved into probe, and the report fixup should
-> > be skipped for non-vendor endpoints (prevents multiple prints).
-> >
-> > Reviewed-by: Luke D. Jones <luke@ljones.dev>
-> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > ---
-> >  drivers/hid/hid-asus.c | 59 +++++++++++++++++++++++++++---------------
-> >  1 file changed, 38 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> > index 03f0d86936fc..bbbac98f76c6 100644
-> > --- a/drivers/hid/hid-asus.c
-> > +++ b/drivers/hid/hid-asus.c
-> > @@ -47,6 +47,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
-> >  #define T100CHI_MOUSE_REPORT_ID 0x06
-> >  #define FEATURE_REPORT_ID 0x0d
-> >  #define INPUT_REPORT_ID 0x5d
-> > +#define HID_USAGE_PAGE_VENDOR 0xff310000
-> >  #define FEATURE_KBD_REPORT_ID 0x5a
-> >  #define FEATURE_KBD_REPORT_SIZE 64
-> >  #define FEATURE_KBD_LED_REPORT_ID1 0x5d
-> > @@ -89,6 +90,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
-> >  #define QUIRK_ROG_NKEY_KEYBOARD              BIT(11)
-> >  #define QUIRK_ROG_CLAYMORE_II_KEYBOARD BIT(12)
-> >  #define QUIRK_ROG_ALLY_XPAD          BIT(13)
-> > +#define QUIRK_SKIP_REPORT_FIXUP              BIT(14)
-> >
-> >  #define I2C_KEYBOARD_QUIRKS                  (QUIRK_FIX_NOTEBOOK_REPORT | \
-> >                                                QUIRK_NO_INIT_REPORTS | \
-> > @@ -125,7 +127,6 @@ struct asus_drvdata {
-> >       struct input_dev *tp_kbd_input;
-> >       struct asus_kbd_leds *kbd_backlight;
-> >       const struct asus_touchpad_info *tp;
-> > -     bool enable_backlight;
-> >       struct power_supply *battery;
-> >       struct power_supply_desc battery_desc;
-> >       int battery_capacity;
-> > @@ -316,7 +317,7 @@ static int asus_e1239t_event(struct asus_drvdata *drvdat, u8 *data, int size)
-> >  static int asus_event(struct hid_device *hdev, struct hid_field *field,
-> >                     struct hid_usage *usage, __s32 value)
-> >  {
-> > -     if ((usage->hid & HID_USAGE_PAGE) == 0xff310000 &&
-> > +     if ((usage->hid & HID_USAGE_PAGE) == HID_USAGE_PAGE_VENDOR &&
-> >           (usage->hid & HID_USAGE) != 0x00 &&
-> >           (usage->hid & HID_USAGE) != 0xff && !usage->type) {
-> >               hid_warn(hdev, "Unmapped Asus vendor usagepage code 0x%02x\n",
-> > @@ -931,11 +932,6 @@ static int asus_input_configured(struct hid_device *hdev, struct hid_input *hi)
-> >
-> >       drvdata->input = input;
-> >
-> > -     if (drvdata->enable_backlight &&
-> > -         !asus_kbd_wmi_led_control_present(hdev) &&
-> > -         asus_kbd_register_leds(hdev))
-> > -             hid_warn(hdev, "Failed to initialize backlight.\n");
-> > -
-> >       return 0;
-> >  }
-> >
-> > @@ -1008,15 +1004,6 @@ static int asus_input_mapping(struct hid_device *hdev,
-> >                       return -1;
-> >               }
-> >
-> > -             /*
-> > -              * Check and enable backlight only on devices with UsagePage ==
-> > -              * 0xff31 to avoid initializing the keyboard firmware multiple
-> > -              * times on devices with multiple HID descriptors but same
-> > -              * PID/VID.
-> > -              */
-> > -             if (drvdata->quirks & QUIRK_USE_KBD_BACKLIGHT)
-> > -                     drvdata->enable_backlight = true;
-> > -
-> >               set_bit(EV_REP, hi->input->evbit);
-> >               return 1;
-> >       }
-> > @@ -1133,8 +1120,10 @@ static int __maybe_unused asus_reset_resume(struct hid_device *hdev)
-> >
-> >  static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
-> >  {
-> > -     int ret;
-> > +     struct hid_report_enum *rep_enum;
-> >       struct asus_drvdata *drvdata;
-> > +     struct hid_report *rep;
-> > +     int ret, is_vendor = 0;
-> >
-> >       drvdata = devm_kzalloc(&hdev->dev, sizeof(*drvdata), GFP_KERNEL);
-> >       if (drvdata == NULL) {
-> > @@ -1218,18 +1207,42 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
-> >               return ret;
-> >       }
-> >
-> > +     /* Check for vendor for RGB init and handle generic devices properly. */
-> > +     rep_enum = &hdev->report_enum[HID_INPUT_REPORT];
-> > +     list_for_each_entry(rep, &rep_enum->report_list, list) {
-> > +             if ((rep->application & HID_USAGE_PAGE) == HID_USAGE_PAGE_VENDOR)
-> > +                     is_vendor = true;
-> > +     }
-> > +
-> > +     /*
-> > +      * For ROG keyboards, make them HID/hiddev compliant by creating one
-> > +      * input per application. For interfaces other than the vendor one,
-> > +      * disable report fixups.
-> > +      */
-> > +     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
-> > +             if (!is_vendor)
-> > +                     drvdata->quirks |= QUIRK_SKIP_REPORT_FIXUP;
-> > +             hdev->quirks |= HID_QUIRK_INPUT_PER_APP;
-> > +     }
-> > +
-> >       ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT);
-> >       if (ret) {
-> >               hid_err(hdev, "Asus hw start failed: %d\n", ret);
-> >               return ret;
-> >       }
-> >
-> > +     if (is_vendor && (drvdata->quirks & QUIRK_USE_KBD_BACKLIGHT) &&
-> > +         !asus_kbd_wmi_led_control_present(hdev) &&
-> > +         asus_kbd_register_leds(hdev))
-> > +             hid_warn(hdev, "Failed to initialize backlight.\n");
-> > +
-> >       /*
-> > -      * Check that input registration succeeded. Checking that
-> > -      * HID_CLAIMED_INPUT is set prevents a UAF when all input devices
-> > -      * were freed during registration due to no usages being mapped,
-> > -      * leaving drvdata->input pointing to freed memory.
-> > +      * For ROG keyboards, skip rename for consistency and ->input check as
-> > +      * some devices do not have inputs.
-> >        */
-> > +     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD)
-> > +             return 0;
-> > +
-> >       if (!drvdata->input || !(hdev->claimed & HID_CLAIMED_INPUT)) {
-> >               hid_err(hdev, "Asus input not registered\n");
-> >               ret = -ENOMEM;
-> > @@ -1352,6 +1365,10 @@ static const __u8 *asus_report_fixup(struct hid_device *hdev, __u8 *rdesc,
-> >               rdesc = new_rdesc;
-> >       }
-> >
-> > +     /* Vendor fixups should only apply to NKEY vendor devices. */
-> > +     if (drvdata->quirks & QUIRK_SKIP_REPORT_FIXUP)
-> > +             return rdesc;
-> > +
-> >       if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD &&
-> >                       *rsize == 331 && rdesc[190] == 0x85 && rdesc[191] == 0x5a &&
-> >                       rdesc[204] == 0x95 && rdesc[205] == 0x05) {
->
+Modes are per-netns and write-once. This allows a system to configure
+namespaces independently (some may share CIDs, others are completely
+isolated). This also supports future possible mixed use cases, where
+there may be namespaces in global mode spinning up VMs while there are
+mixed mode namespaces that provide services to the VMs, but are not
+allowed to allocate from the global CID pool (this mode not implemented
+in this series).
+
+If a socket or VM is created when a namespace is global but the
+namespace changes to local, the socket or VM will continue working
+normally. That is, the socket or VM assumes the mode behavior of the
+namespace at the time the socket/VM was created. The original mode is
+captured in vsock_create() and so occurs at the time of socket(2) and
+accept(2) for sockets and open(2) on /dev/vhost-vsock for VMs. This
+prevents a socket/VM connection from suddenly breaking due to a
+namespace mode change. Any new sockets/VMs created after the mode change
+will adopt the new mode's behavior.
+
+Additionally, added tests for the new namespace features:
+
+tools/testing/selftests/vsock/vmtest.sh
+1..30
+ok 1 vm_server_host_client
+ok 2 vm_client_host_server
+ok 3 vm_loopback
+ok 4 ns_host_vsock_ns_mode_ok
+ok 5 ns_host_vsock_ns_mode_write_once_ok
+ok 6 ns_global_same_cid_fails
+ok 7 ns_local_same_cid_ok
+ok 8 ns_global_local_same_cid_ok
+ok 9 ns_local_global_same_cid_ok
+ok 10 ns_diff_global_host_connect_to_global_vm_ok
+ok 11 ns_diff_global_host_connect_to_local_vm_fails
+ok 12 ns_diff_global_vm_connect_to_global_host_ok
+ok 13 ns_diff_global_vm_connect_to_local_host_fails
+ok 14 ns_diff_local_host_connect_to_local_vm_fails
+ok 15 ns_diff_local_vm_connect_to_local_host_fails
+ok 16 ns_diff_global_to_local_loopback_local_fails
+ok 17 ns_diff_local_to_global_loopback_fails
+ok 18 ns_diff_local_to_local_loopback_fails
+ok 19 ns_diff_global_to_global_loopback_ok
+ok 20 ns_same_local_loopback_ok
+ok 21 ns_same_local_host_connect_to_local_vm_ok
+ok 22 ns_same_local_vm_connect_to_local_host_ok
+ok 23 ns_mode_change_connection_continue_vm_ok
+ok 24 ns_mode_change_connection_continue_host_ok
+ok 25 ns_mode_change_connection_continue_both_ok
+ok 26 ns_delete_vm_ok
+ok 27 ns_delete_host_ok
+ok 28 ns_delete_both_ok
+ok 29 ns_loopback_global_global_late_module_load_ok
+ok 30 ns_loopback_local_local_late_module_load_fails
+SUMMARY: PASS=30 SKIP=0 FAIL=0
+
+Dependent on series:
+https://lore.kernel.org/all/20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com/
+
+Thanks again for everyone's help and reviews!
+
+Signed-off-by: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+To: Shuah Khan <shuah@kernel.org>
+To: David S. Miller <davem@davemloft.net>
+To: Eric Dumazet <edumazet@google.com>
+To: Jakub Kicinski <kuba@kernel.org>
+To: Paolo Abeni <pabeni@redhat.com>
+To: Simon Horman <horms@kernel.org>
+To: Stefan Hajnoczi <stefanha@redhat.com>
+To: Michael S. Tsirkin <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: Eugenio Pérez <eperezma@redhat.com>
+To: K. Y. Srinivasan <kys@microsoft.com>
+To: Haiyang Zhang <haiyangz@microsoft.com>
+To: Wei Liu <wei.liu@kernel.org>
+To: Dexuan Cui <decui@microsoft.com>
+To: Bryan Tan <bryan-bt.tan@broadcom.com>
+To: Vishnu Dasa <vishnu.dasa@broadcom.com>
+To: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: virtualization@lists.linux.dev
+Cc: netdev@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: kvm@vger.kernel.org
+Cc: linux-hyperv@vger.kernel.org
+Cc: berrange@redhat.com
+
+Changes in v8:
+- Break generic cleanup/refactoring patches into standalone series,
+  remove those from this series
+- Link to dependency: https://lore.kernel.org/all/20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com/
+- Link to v7: https://lore.kernel.org/r/20251021-vsock-vmtest-v7-0-0661b7b6f081@meta.com
+
+Changes in v7:
+- fix hv_sock build
+- break out vmtest patches into distinct, more well-scoped patches
+- change `orig_net_mode` to `net_mode`
+- many fixes and style changes in per-patch change sets (see individual
+  patches for specific changes)
+- optimize `virtio_vsock_skb_cb` layout
+- update commit messages with more useful descriptions
+- vsock_loopback: use orig_net_mode instead of current net mode
+- add tests for edge cases (ns deletion, mode changing, loopback module
+  load ordering)
+- Link to v6: https://lore.kernel.org/r/20250916-vsock-vmtest-v6-0-064d2eb0c89d@meta.com
+
+Changes in v6:
+- define behavior when mode changes to local while socket/VM is alive
+- af_vsock: clarify description of CID behavior
+- af_vsock: use stronger langauge around CID rules (dont use "may")
+- af_vsock: improve naming of buf/buffer
+- af_vsock: improve string length checking on proc writes
+- vsock_loopback: add space in struct to clarify lock protection
+- vsock_loopback: do proper cleanup/unregister on vsock_loopback_exit()
+- vsock_loopback: use virtio_vsock_skb_net() instead of sock_net()
+- vsock_loopback: set loopback to NULL after kfree()
+- vsock_loopback: use pernet_operations and remove callback mechanism
+- vsock_loopback: add macros for "global" and "local"
+- vsock_loopback: fix length checking
+- vmtest.sh: check for namespace support in vmtest.sh
+- Link to v5: https://lore.kernel.org/r/20250827-vsock-vmtest-v5-0-0ba580bede5b@meta.com
+
+Changes in v5:
+- /proc/net/vsock_ns_mode -> /proc/sys/net/vsock/ns_mode
+- vsock_global_net -> vsock_global_dummy_net
+- fix netns lookup in vhost_vsock to respect pid namespaces
+- add callbacks for vsock_loopback to avoid circular dependency
+- vmtest.sh loads vsock_loopback module
+- remove vsock_net_mode_can_set()
+- change vsock_net_write_mode() to return true/false based on success
+- make vsock_net_mode enum instead of u8
+- Link to v4: https://lore.kernel.org/r/20250805-vsock-vmtest-v4-0-059ec51ab111@meta.com
+
+Changes in v4:
+- removed RFC tag
+- implemented loopback support
+- renamed new tests to better reflect behavior
+- completed suite of tests with permutations of ns modes and vsock_test
+  as guest/host
+- simplified socat bridging with unix socket instead of tcp + veth
+- only use vsock_test for success case, socat for failure case (context
+  in commit message)
+- lots of cleanup
+
+Changes in v3:
+- add notion of "modes"
+- add procfs /proc/net/vsock_ns_mode
+- local and global modes only
+- no /dev/vhost-vsock-netns
+- vmtest.sh already merged, so new patch just adds new tests for NS
+- Link to v2:
+  https://lore.kernel.org/kvm/20250312-vsock-netns-v2-0-84bffa1aa97a@gmail.com
+
+Changes in v2:
+- only support vhost-vsock namespaces
+- all g2h namespaces retain old behavior, only common API changes
+  impacted by vhost-vsock changes
+- add /dev/vhost-vsock-netns for "opt-in"
+- leave /dev/vhost-vsock to old behavior
+- removed netns module param
+- Link to v1:
+  https://lore.kernel.org/r/20200116172428.311437-1-sgarzare@redhat.com
+
+Changes in v1:
+- added 'netns' module param to vsock.ko to enable the
+  network namespace support (disabled by default)
+- added 'vsock_net_eq()' to check the "net" assigned to a socket
+  only when 'netns' support is enabled
+- Link to RFC: https://patchwork.ozlabs.org/cover/1202235/
+
+---
+Bobby Eshleman (14):
+      vsock: a per-net vsock NS mode state
+      vsock/virtio: pack struct virtio_vsock_skb_cb
+      vsock: add netns to vsock skb cb
+      vsock: add netns to vsock core
+      vsock/loopback: add netns support
+      vsock/virtio: add netns to virtio transport common
+      vhost/vsock: add netns support
+      selftests/vsock: add namespace helpers to vmtest.sh
+      selftests/vsock: prepare vm management helpers for namespaces
+      selftests/vsock: add tests for proc sys vsock ns_mode
+      selftests/vsock: add namespace tests for CID collisions
+      selftests/vsock: add tests for host <-> vm connectivity with namespaces
+      selftests/vsock: add tests for namespace deletion and mode changes
+      selftests/vsock: add tests for module loading order
+
+ MAINTAINERS                             |    1 +
+ drivers/vhost/vsock.c                   |   48 +-
+ include/linux/virtio_vsock.h            |   47 +-
+ include/net/af_vsock.h                  |   70 ++-
+ include/net/net_namespace.h             |    4 +
+ include/net/netns/vsock.h               |   22 +
+ net/vmw_vsock/af_vsock.c                |  264 +++++++-
+ net/vmw_vsock/virtio_transport.c        |    7 +-
+ net/vmw_vsock/virtio_transport_common.c |   21 +-
+ net/vmw_vsock/vsock_loopback.c          |   89 ++-
+ tools/testing/selftests/vsock/vmtest.sh | 1044 ++++++++++++++++++++++++++++++-
+ 11 files changed, 1532 insertions(+), 85 deletions(-)
+---
+base-commit: 962ac5ca99a5c3e7469215bf47572440402dfd59
+change-id: 20250325-vsock-vmtest-b3a21d2102c2
+prerequisite-message-id: <20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com>
+prerequisite-patch-id: a2eecc3851f2509ed40009a7cab6990c6d7cfff5
+prerequisite-patch-id: 501db2100636b9c8fcb3b64b8b1df797ccbede85
+prerequisite-patch-id: ba1a2f07398a035bc48ef72edda41888614be449
+prerequisite-patch-id: fd5cc5445aca9355ce678e6d2bfa89fab8a57e61
+prerequisite-patch-id: 795ab4432ffb0843e22b580374782e7e0d99b909
+prerequisite-patch-id: 1499d263dc933e75366c09e045d2125ca39f7ddd
+prerequisite-patch-id: f92d99bb1d35d99b063f818a19dcda999152d74c
+prerequisite-patch-id: e3296f38cdba6d903e061cff2bbb3e7615e8e671
+prerequisite-patch-id: bc4662b4710d302d4893f58708820fc2a0624325
+prerequisite-patch-id: f8991f2e98c2661a706183fde6b35e2b8d9aedcf
+prerequisite-patch-id: 44bf9ed69353586d284e5ee63d6fffa30439a698
+prerequisite-patch-id: d50621bc630eeaf608bbaf260370c8dabf6326df
+
+Best regards,
+-- 
+Bobby Eshleman <bobbyeshleman@meta.com>
 
 
