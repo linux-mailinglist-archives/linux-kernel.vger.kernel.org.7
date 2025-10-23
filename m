@@ -1,177 +1,89 @@
-Return-Path: <linux-kernel+bounces-866999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D22FC0150C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:18:16 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7CCC014FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0BE150245C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:16:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2801D35A83F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8051A314A8B;
-	Thu, 23 Oct 2025 13:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C5D3019DA;
+	Thu, 23 Oct 2025 13:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gxmVdUOU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uuDUdsMd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uMNG8LmK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0402D8376;
-	Thu, 23 Oct 2025 13:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1901F28E00
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761225393; cv=none; b=mZS68TLLYAJmxODql3zyIgdHcApyDtJfmyjGFfEcY8RYF8Sws2rHsKDCC8Buos2tx32k2qMA5wQDrp/xBY+VkdrAZv2TQ6h7/ZZAqvKc2B8R0BYjrnt44hLk7WlaM0yoUVsLpG9Q7MSbGO9SJD7xBQU3zh32xo87Mnipr4eOcsM=
+	t=1761225438; cv=none; b=s0AzEiIRVYGo7eNPyWlLjOuSZ6tPw7lQhYBJu5n0YU58CXXahnwTVGnieimqfMy3T5xlfvGUcqcSLjhdWQ7ly6jtoMhT7cvimT2bKei55YxNg649HYIme5iLmIgHLJp17l8S/ZPSS+x9YKdfkyeLnwUMEG4Hv/kTgANrOYAMh+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761225393; c=relaxed/simple;
-	bh=YQDmoO4INHOfFm3/n0OrmMLsG8xMDbunxnfN1QKYRh0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=J0GJzkwniWVhWkw9ngjtu3dk0/yXSrxO/QBoMEkES65dkn+eFx9QdpL8a/HAvivZHcQz0DabkTF2WEpMXkJ6LsR3SjlMQxuBv5GQu1AlvihLeN9qZWxX7CSbOwXoniZk349Lm3MSxQ/udpxBEFpSVM9bvFLtZdemPUBUBlDeaDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gxmVdUOU; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761225392; x=1792761392;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=YQDmoO4INHOfFm3/n0OrmMLsG8xMDbunxnfN1QKYRh0=;
-  b=gxmVdUOURor/J1JDtQF5FSTiGqaz+SytYcfKw1aLBgdu7gMKxKrMJN9r
-   wmegRQ0g5y/EaqdiIcey8ZOYfL6T8v5sD/4E+1jsDJjZor547lV1kwzxZ
-   yvjp7J0/sLCxRH4juuXZz8kftzjperIj+a7l0cG+8m1i1k4QQKwDxPuMA
-   1X57j98XdtVQr1S2VeQ8waJRyoJv/L0pPX6R8cujQ7TwhJQTB8ayV2awi
-   QNM8Btt4D1B1G5SP6dlmgSSNHR9TAMQll6KTZGIk2ix4NQe5k0QHgP+Tc
-   bVyS4anPOCaO45LgLoQm4nUw//L9SRDA5Hhz+Ym6t+LRhbli1M8jmGNDO
-   A==;
-X-CSE-ConnectionGUID: wE2ufBbPQju95A4cJU9Jww==
-X-CSE-MsgGUID: cVk9qCBlSW2a9yqoDlUPKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="88859477"
-X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
-   d="scan'208";a="88859477"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 06:16:31 -0700
-X-CSE-ConnectionGUID: FhBWbybsRVqhCHzCIbEAog==
-X-CSE-MsgGUID: /zvWZUUrSkePbDxaWFkcDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
-   d="scan'208";a="184047125"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.225])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 06:16:28 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 23 Oct 2025 16:16:25 +0300 (EEST)
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-    Ulf Hansson <ulf.hansson@linaro.org>, 
-    Brian Norris <briannorris@chromium.org>, Lukas Wunner <lukas@wunner.de>
-Subject: Re: [PATCH v1] PM: runtime: docs: Update pm_runtime_allow/forbid()
- documentation
-In-Reply-To: <12780841.O9o76ZdvQC@rafael.j.wysocki>
-Message-ID: <ce2201d2-5c34-1cc9-9766-884f1f79e38c@linux.intel.com>
-References: <12780841.O9o76ZdvQC@rafael.j.wysocki>
+	s=arc-20240116; t=1761225438; c=relaxed/simple;
+	bh=jhWRGl8zuZQkBeFFZQuq/ayCm7CfpSMhiyrB1d/XAyU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=A7rNYQlgCswvWDaNlelcjbzyq2PqXV1LKCTQU5UhcO+d5eFuK0a31gfml3rc4kDqD8zrZ8tGggF0z9itmT2O07aFZg4L7PXKZ/isMDFuft+mccgjiJ75+4Zq5RbF+JHVBprjRO4mf4R3SwfcvItqPaAiUeGxOqkTxTEXxXeiPtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uuDUdsMd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uMNG8LmK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761225434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jhWRGl8zuZQkBeFFZQuq/ayCm7CfpSMhiyrB1d/XAyU=;
+	b=uuDUdsMdCQnJBFmTrlWk/MJkImvYmNYwCHRkzOH5Xs0hwvv14MtfO0QeUZthH7ZyUT4gq6
+	dLa+V/0Cq6Ideb8rRsCJgBfCyWnJZpTmjUU/cWI6WgSsJOl4Wd9niM4wwGIPYh81dsb52i
+	MwKBNy5rOIcEdHoJ3WORBlZRQUqSQOc518EIqnHQrxes8KDQrKrUwcu6xrxEbCyxMz9uXq
+	9FqggSX3qZj86+HzcPZSgpuKIC89GLgviM+ZMzig0H866VlG1L+nuqeIIccQqBsOYY9bhH
+	sPax7MHPwZBl9s4fEAefUCcYk8PSno78I5Yi7MEMNKDzcYkNQTHmbAVzw2pYew==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761225434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jhWRGl8zuZQkBeFFZQuq/ayCm7CfpSMhiyrB1d/XAyU=;
+	b=uMNG8LmKwq/unH46wThHgDe1yjdCeJX0QpueHJovZaEH5qm/2BnoiIu3GC9geXWdj3WnV/
+	93+lGo+n81TLtRCQ==
+To: Andrew Murray <amurray@thegoodpenguin.co.uk>, Petr Mladek
+ <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Andrew Murray <amurray@thegoodpenguin.co.uk>
+Subject: Re: [PATCH v3 1/3] printk: Introduce console_flush_one_record
+In-Reply-To: <20251020-printk_legacy_thread_console_lock-v3-1-00f1f0ac055a@thegoodpenguin.co.uk>
+References: <20251020-printk_legacy_thread_console_lock-v3-0-00f1f0ac055a@thegoodpenguin.co.uk>
+ <20251020-printk_legacy_thread_console_lock-v3-1-00f1f0ac055a@thegoodpenguin.co.uk>
+Date: Thu, 23 Oct 2025 15:23:14 +0206
+Message-ID: <875xc5dag5.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-643476600-1761225385=:1016"
+Content-Type: text/plain
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 2025-10-20, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
+> console_flush_all prints all remaining records to all usable consoles
+> whilst its caller holds console_lock. This can result in large waiting
+> times for those waiting for console_lock especially where there is a
+> large volume of records or where the console is slow (e.g. serial).
+>
+> Let's extract the parts of this function which print a single record
+> into a new function named console_flush_one_record. This can later
+> be used for functions that will release and reacquire console_lock
+> between records.
+>
+> This commit should not change existing functionality.
+>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> Signed-off-by: Andrew Murray <amurray@thegoodpenguin.co.uk>
 
---8323328-643476600-1761225385=:1016
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Wed, 22 Oct 2025, Rafael J. Wysocki wrote:
-
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->=20
-> Drop confusing descriptions of pm_runtime_allow() and pm_runtime_forbid()
-> from Documentation/power/runtime_pm.rst and update the kerneldoc comments
-> of these functions to better explain their purpose.
->=20
-> Link: https://lore.kernel.org/linux-pm/08976178-298f-79d9-1d63-cff5a4e56c=
-c3@linux.intel.com/
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  Documentation/power/runtime_pm.rst |   10 ----------
->  drivers/base/power/runtime.c       |   17 +++++++++++++----
->  2 files changed, 13 insertions(+), 14 deletions(-)
->=20
-> --- a/Documentation/power/runtime_pm.rst
-> +++ b/Documentation/power/runtime_pm.rst
-> @@ -480,16 +480,6 @@ drivers/base/power/runtime.c and include
->    `bool pm_runtime_status_suspended(struct device *dev);`
->      - return true if the device's runtime PM status is 'suspended'
-> =20
-> -  `void pm_runtime_allow(struct device *dev);`
-> -    - set the power.runtime_auto flag for the device and decrease its us=
-age
-> -      counter (used by the /sys/devices/.../power/control interface to
-> -      effectively allow the device to be power managed at run time)
-> -
-> -  `void pm_runtime_forbid(struct device *dev);`
-> -    - unset the power.runtime_auto flag for the device and increase its =
-usage
-> -      counter (used by the /sys/devices/.../power/control interface to
-> -      effectively prevent the device from being power managed at run tim=
-e)
-> -
->    `void pm_runtime_no_callbacks(struct device *dev);`
->      - set the power.no_callbacks flag for the device and remove the runt=
-ime
->        PM attributes from /sys/devices/.../power (or prevent them from be=
-ing
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -1664,9 +1664,12 @@ EXPORT_SYMBOL_GPL(devm_pm_runtime_get_no
->   * pm_runtime_forbid - Block runtime PM of a device.
->   * @dev: Device to handle.
->   *
-> - * Increase the device's usage count and clear its power.runtime_auto fl=
-ag,
-> - * so that it cannot be suspended at run time until pm_runtime_allow() i=
-s called
-> - * for it.
-> + * Resume @dev if already suspended and block runtime suspend of @dev in=
- such
-> + * a way that it can be unblocked via the /sys/devices/.../power/control
-> + * interface, or otherwise by calling pm_runtime_allow().
-> + *
-> + * Calling this function many times in a row has the same effect as call=
-ing it
-> + * once.
->   */
->  void pm_runtime_forbid(struct device *dev)
->  {
-> @@ -1687,7 +1690,13 @@ EXPORT_SYMBOL_GPL(pm_runtime_forbid);
->   * pm_runtime_allow - Unblock runtime PM of a device.
->   * @dev: Device to handle.
->   *
-> - * Decrease the device's usage count and set its power.runtime_auto flag=
-=2E
-> + * Unblock runtime suspend of @dev after it has been blocked by
-> + * pm_runtime_forbid() (for instance, if it has been blocked via the
-> + * /sys/devices/.../power/control interface), check if @dev can be
-> + * suspended and suspend it in that case.
-> + *
-> + * Calling this function many times in a row has the same effect as call=
-ing it
-> + * once.
->   */
->  void pm_runtime_allow(struct device *dev)
->  {
-
-FWIW,
-
-Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-
-(And I didn't check that "many times in a row" claim from the code but I=20
-assume you know things much better than I do. :-))
-
---=20
- i.
-
---8323328-643476600-1761225385=:1016--
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
