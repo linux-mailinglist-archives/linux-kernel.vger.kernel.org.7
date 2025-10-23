@@ -1,176 +1,78 @@
-Return-Path: <linux-kernel+bounces-866061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855EDBFECF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:06:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01ADABFECFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF8AD3A286F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:06:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D80A44EF05D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDE71922F5;
-	Thu, 23 Oct 2025 01:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565CD1D86FF;
+	Thu, 23 Oct 2025 01:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mzyvGlSC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZEou8pA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75B61459FA;
-	Thu, 23 Oct 2025 01:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27F529405;
+	Thu, 23 Oct 2025 01:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761181572; cv=none; b=CUL8N24aKPfDe/c7kYy32AGT8IU6Zv3qzbESWVGW1M+WAn+TG7w0aW3XQHVcARewPTKa61up0CzG/oHoMUalWD27AF+eOCgTQv/TUiGRlDBs9fBrYk/aZ/J/HVTOQ/9k5/WkeoI3bUq6QLStreHJE8rMdkNx/z5IbjZMnwbNueQ=
+	t=1761181794; cv=none; b=nZYUGpeE23J7g1TxjaTyJU/WNmTFcM6gyOdh9grDvLxiB+NfabnICpRuv5A9Cw5j3rZo/6IktR74kj8sbzxJjbGJZTSLI7TR1tps/jLXi/Pf+BUBfLMSYFFQcOzW9ZkPFyJ5+bvqBWZqyFCZCk1/tf2YIvW9qfxVaxFNXBir5lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761181572; c=relaxed/simple;
-	bh=ZX8m9kjrcUsYyQ4FD1d3RvxC2stOsNoYQXsteKbBNFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nIINTxlMAGBkiU83Btrxe+hycwQi41qRAisSVZNPnB2sP4YpCH95pnukPvvcu7UzLDgzzKrZ2N8+/GFbUgAZa9WiTgJZKEGLaHrvtZDtltdcgfXxzkR/8uTyofFKHG9d2vmwPCw8US0BXcW+6FmlIBFCdwdgWfua9V7vkxxT4ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mzyvGlSC; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761181571; x=1792717571;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ZX8m9kjrcUsYyQ4FD1d3RvxC2stOsNoYQXsteKbBNFY=;
-  b=mzyvGlSCPeGmMVmxUJ2REx/XsLw5azJeq4jAPmLH54M9oazLu8wZry0Q
-   6tl+onBYh8hJgoUESVHOq/3lbpJag+4AXnlJGefzVwgHPBi6s+o39+yzF
-   rrJWuZ+7OK9JgiPhELOpiZg8BGzelXdg2aMf9oEJh1LayJWPla2tyK8OJ
-   qElJpwg1pl19QPAKe/wzxvTCtGPRZp4HrYCeecQhX0b3biUMYjN+9F85U
-   4S/4uMy1fM68r5uyyMezHlUmOTKc9evLhLd3yhrMBUME2CVWr1xZ4sQRF
-   CzOClPBlDFrcs6SdttuoacXeQs7rsq2D5OtIcLjakTtGU1RoijMmUTTCv
-   w==;
-X-CSE-ConnectionGUID: 01QDCCPtTq+aqrLlfQ80/Q==
-X-CSE-MsgGUID: asjRoc7OR2ac6jZOra7JQQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74011897"
-X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="74011897"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 18:06:10 -0700
-X-CSE-ConnectionGUID: AXYumXuaSe6WYUf7DnY38A==
-X-CSE-MsgGUID: ELne1++VRIG5BqpWAxOnnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="188306021"
-Received: from unknown (HELO [10.238.3.234]) ([10.238.3.234])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 18:06:06 -0700
-Message-ID: <e9fd0e89-03ca-4c67-aee6-9d1d2937269c@linux.intel.com>
-Date: Thu, 23 Oct 2025 09:06:04 +0800
+	s=arc-20240116; t=1761181794; c=relaxed/simple;
+	bh=G0zO/gc9MN6KlY2clwE0hRQpkFOp+B6rix9cfRycwNw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Y+M3krpLLs5fpotOUn6zrBlLSbgki0IdU8mhri8u5XE83f0KFVo1bGmKuZKbvnB/Q1MCSWLCmxXFPXS0RJGIABlz8i7aTrHvc3rF+XOgNyQ2sC4/5MinopOHA8ZjFG0mCfkrv3iRqRxt7V3DFLmCU8Z5SCKWRNRUWEb4jev5JTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZEou8pA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81531C4CEE7;
+	Thu, 23 Oct 2025 01:09:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761181794;
+	bh=G0zO/gc9MN6KlY2clwE0hRQpkFOp+B6rix9cfRycwNw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=XZEou8pAzZph6RaP/px9DGaj9wzQQc7PRiwczqZxTJB/LCw8fpxiylSf4ejqXI4br
+	 xiycTQOUNmMLB9zR/boxz8raYOnd9CbfSoWK4nuxknmjkxME7j5HrOSiNRejJJ8Ahk
+	 CmU4dTDke+RL58d43bNFLo6mxbtlFzf4qHpQYjoF4JWcykYwRN2eF3+dudSCZ5DlEo
+	 JCNwHqcoxMsTHMgB/CrSXQ0RIwRHRSwvlQkMuIb9dNA7VWRXYaDNp2eidYCGA8H2bt
+	 5DGHDe5cMy+9dWObcwiFxLnqHpUT3DZFWJVwOGpjTIVHHIonRlASXJBaQ1cU2pJMRP
+	 KgdfaPQ8yQswg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7134A3809A00;
+	Thu, 23 Oct 2025 01:09:36 +0000 (UTC)
+Subject: Re: [GIT PULL]  hotfixes for 6.18-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20251022124548.a2bd1335de33d5d2b7b2fcb2@linux-foundation.org>
+References: <20251022124548.a2bd1335de33d5d2b7b2fcb2@linux-foundation.org>
+X-PR-Tracked-List-Id: <linux-mm.kvack.org>
+X-PR-Tracked-Message-Id: <20251022124548.a2bd1335de33d5d2b7b2fcb2@linux-foundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-10-22-12-43
+X-PR-Tracked-Commit-Id: 9aa12167ef1149d9980713b120ddcb31cf17222d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0f3ad9c6105f32d1755c0bd54a7f98c892f3ceb7
+Message-Id: <176118177496.2361762.8429864278657439386.pr-tracker-bot@kernel.org>
+Date: Thu, 23 Oct 2025 01:09:34 +0000
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v8 06/12] perf/x86/intel/ds: Factor out PEBS record
- processing code to functions
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>, Kan Liang <kan.liang@linux.intel.com>
-References: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
- <20251015064422.47437-7-dapeng1.mi@linux.intel.com>
- <20251022114917.GT3245006@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20251022114917.GT3245006@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+The pull request you sent on Wed, 22 Oct 2025 12:45:48 -0700:
 
-On 10/22/2025 7:49 PM, Peter Zijlstra wrote:
-> On Wed, Oct 15, 2025 at 02:44:16PM +0800, Dapeng Mi wrote:
->> Beside some PEBS record layout difference, arch-PEBS can share most of
->> PEBS record processing code with adaptive PEBS. Thus, factor out these
->> common processing code to independent inline functions, so they can be
->> reused by subsequent arch-PEBS handler.
->>
->> Suggested-by: Kan Liang <kan.liang@linux.intel.com>
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> ---
->>  arch/x86/events/intel/ds.c | 101 ++++++++++++++++++++++++-------------
->>  1 file changed, 66 insertions(+), 35 deletions(-)
->>
->> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
->> index a80881a20321..41acbf0a11c9 100644
->> --- a/arch/x86/events/intel/ds.c
->> +++ b/arch/x86/events/intel/ds.c
->> @@ -2629,6 +2629,64 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
->>  	}
->>  }
->>  
->> +static inline void __intel_pmu_handle_pebs_record(struct pt_regs *iregs,
->> +						  struct pt_regs *regs,
->> +						  struct perf_sample_data *data,
->> +						  void *at, u64 pebs_status,
->> +						  struct perf_event *events[],
->> +						  short *counts, void **last,
->> +						  setup_fn setup_sample)
->> +{
->> +	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
->> +	struct perf_event *event;
->> +	int bit;
->> +
->> +	for_each_set_bit(bit, (unsigned long *)&pebs_status, X86_PMC_IDX_MAX) {
->> +		event = cpuc->events[bit];
->> +
->> +		if (WARN_ON_ONCE(!event) ||
->> +		    WARN_ON_ONCE(!event->attr.precise_ip))
->> +			continue;
->> +
->> +		if (counts[bit]++)
->> +			__intel_pmu_pebs_event(event, iregs, regs, data,
->> +					       last[bit], setup_sample);
->> +
->> +		last[bit] = at;
->> +		/*
->> +		 * perf_event_overflow() called by below __intel_pmu_pebs_last_event()
->> +		 * could trigger interrupt throttle and clear all event pointers of
->> +		 * the group in cpuc->events[] to NULL. So snapshot the event[] before
->> +		 * it could be cleared. This avoids the possible NULL event pointer
->> +		 * access and PEBS record loss.
->> +		 */
->> +		if (counts[bit] && !events[bit])
->> +			events[bit] = cpuc->events[bit];
->> +	}
->> +}
->> +
->> +static inline void
->> +__intel_pmu_handle_last_pebs_record(struct pt_regs *iregs, struct pt_regs *regs,
->> +				    struct perf_sample_data *data, u64 mask,
->> +				    struct perf_event *events[],
->> +				    short *counts, void **last,
->> +				    setup_fn setup_sample)
->> +{
->> +	struct perf_event *event;
->> +	int bit;
->> +
->> +	for_each_set_bit(bit, (unsigned long *)&mask, X86_PMC_IDX_MAX) {
->> +		if (!counts[bit])
->> +			continue;
->> +
->> +		event = events[bit];
->> +
->> +		__intel_pmu_pebs_last_event(event, iregs, regs, data, last[bit],
->> +					    counts[bit], setup_sample);
->> +	}
->> +
->> +}
-> These need to be __always_inline, like the other functions that take
-> setup_fn. Otherwise the compiler might decide to not inline and then it
-> can't constant propagate this function and we get indirect calls.
+> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-10-22-12-43
 
-Indeed. Would change it. Thanks.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0f3ad9c6105f32d1755c0bd54a7f98c892f3ceb7
 
+Thank you!
 
->
->
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
