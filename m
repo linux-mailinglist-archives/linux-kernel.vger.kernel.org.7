@@ -1,118 +1,172 @@
-Return-Path: <linux-kernel+bounces-866540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F20F1C000C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:58:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3661BC000C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA0CA19A0D27
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:58:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AAFD54E3212
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF7D30498E;
-	Thu, 23 Oct 2025 08:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8522D3043BE;
+	Thu, 23 Oct 2025 08:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="k23t3nkw"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a3tAGKa0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="avQl5VNY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18EB3009DD
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF9C2F619F
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761209866; cv=none; b=gwct1ysImRxhWqEibie437FzC09+Xd7fL2hpYg8KKMB7XjLZBD0TMmD//WMDXZLKE+USTizvYYbnXCpug8YnfYyNyLYygHrJJhNhVCDVik4+TfzUF59ZkrlGPoBiGIU+8HIMW+Zh2hxWLOf0oxhU76oBxWa07rv40bCTj5F4anc=
+	t=1761209923; cv=none; b=edTggcGVCMPXsK4Z2vYGeVAX4B9ZlDkx7U0JE9o9KOPmV1saSJpjjzGVAeMk30loo0Kg99PN7wiryqOmZaaKsmjOKBSMmhWj+JNfUicUsUVp7ymTl23mI6fqbWO22I+BcifL/gm9+DzDl0MphQ6lsSbBxA6xwn/aCtbFf6lGSYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761209866; c=relaxed/simple;
-	bh=x727wb4gVGpsnRAl9GVfYJBsW0o01Yyxtev4lLfXK3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=baWueKhRnDmazKlhL9L8OB/stbsFC1XuyKIlaJfaO882MfFcaa9J2e8GBxh5apcxcvjTvgCqSOukkIoSb+15hjolGokdMxRNyhd1OLQPQnCtit/W22SW8YB0BytX/tJboh+Q12QSqntsaPDtDCr6TXZbwPFww27Itft3gOu7pr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=k23t3nkw; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=lbi5
-	8QaPic1LfjvTfz2JhctAgdDUIqwY+EH58Nv5UmM=; b=k23t3nkwhkz1oeDQytba
-	ne5W0mNuM/Er9edxfRgcGMvyKDbDUeMGQXWrLFVeQIhZWigl7ViSBi0aC7jdpXiA
-	IioIpoPqOORfEA0YifHAO2HPZPJ5HUq4ofXwtM3LAg9SgjoErZkwwUchWC+4vIza
-	+pDvZUzHDiUkAvhzUwybz8r5qF58WqbSnVbnOs5DO27Owginwo8IwU7cKqIIXYIC
-	NHL6i5fHjz3+bFwxojC3Eul3vwJ0gMazYyjmojsyjCJ3760wLnOHINTBV3s5xwAA
-	jRWgP73LmHkx3+dsWQwUqhaMsagpbyI1uVfzz5Ior7mUKqY2j7L02yqYYj3Xd3dU
-	VA==
-Received: (qmail 2136513 invoked from network); 23 Oct 2025 10:57:41 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Oct 2025 10:57:41 +0200
-X-UD-Smtp-Session: l3s3148p1@gW8eoM9B0m5tKPAY
-Date: Thu, 23 Oct 2025 10:57:40 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: Add the Renesas RZ/N1 ADC
-Message-ID: <aPnuBFARM4mqB7EG@shikoro>
-References: <20251015142816.1274605-1-herve.codina@bootlin.com>
- <20251015142816.1274605-2-herve.codina@bootlin.com>
- <aPEoqkdatl4G82co@shikoro>
- <20251017090742.49f2d628@bootlin.com>
- <20251023105445.1adb2e86@bootlin.com>
+	s=arc-20240116; t=1761209923; c=relaxed/simple;
+	bh=s1V5NUgfcVoe2np5LYt6jSvq/1Ih04uV56UMxAqRFR4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NSEQkwhOreexgrhROluvTUqEM5PwZLYu+UAV0Woaha4OmGNKR+/cd4fpARa7wfKOJt72AB0/yne7kcR2Epof5OT7qNs4Nnlmz568Ssm0W1y/tqkli2u5MiWD5B6GW4gArCCTY/QmUc6ZEXo+fHfKeRU3EEKv5zUOycXGUVZyYqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a3tAGKa0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=avQl5VNY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761209919;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QuwUZvHfyPsMgLdq4j63QT7s3TKZ7fMrWD55Nom5+gM=;
+	b=a3tAGKa0Z4F917CSuuvlgY1jNnNIFFjZaF+o/JH9WAmJ3pYXB4tUV777idSITF5+4zUGWv
+	qn+W95XYFSiEXYxgyN1s3YLmC3qGWL9edlvz1/3z4qENRrgLWEA+PkCoHod4lwbzBwIY6/
+	UR+b2ZrZfS1nYYYrDJET4Hequ6KwC/c4l6CH3wTc9KmcedrnBpjJSXyUNKTA911gSzyahu
+	6hS5lgw15LBaBZYF38utDLu93nnwdRf22s84pUtY9ESHbFn3h1z/I0jmDyExkEP+qooiuM
+	Jm6vIQ9hOw2HHQ2G7uhWfirOcXdeZUGaC505Cx1g8WhyrwQdOIyw1JUAm7zicg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761209919;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QuwUZvHfyPsMgLdq4j63QT7s3TKZ7fMrWD55Nom5+gM=;
+	b=avQl5VNYr2nyDaHg9Uu2U+nC+LL1m58N27s0I3cP3pdbUX3ghJQo4fQ13ZvNdmEn249XuK
+	8POyiEQNpMXb3xCw==
+To: Petr Mladek <pmladek@suse.com>, Oleg Nesterov <oleg@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printk_legacy_map: use LD_WAIT_CONFIG instead of
+ LD_WAIT_SLEEP
+In-Reply-To: <aPneEnDQmHhpvRkG@pathway.suse.cz>
+References: <20251022154115.GA22400@redhat.com>
+ <aPneEnDQmHhpvRkG@pathway.suse.cz>
+Date: Thu, 23 Oct 2025 11:04:38 +0206
+Message-ID: <87a51ic7up.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="m+/uSDtnyk5fnHyE"
-Content-Disposition: inline
-In-Reply-To: <20251023105445.1adb2e86@bootlin.com>
+Content-Type: text/plain
 
+On 2025-10-23, Petr Mladek <pmladek@suse.com> wrote:
+>> printk_legacy_map is used on !PREEMPT_RT to avoid false positives from
+>> CONFIG_PROVE_RAW_LOCK_NESTING about raw_spinlock/spinlock nesting.
+>> 
+>> However, LD_WAIT_SLEEP is not exactly right; it fools lockdep as if it
+>> is fine to acquire a sleeping lock.
+>> 
+>> Change DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map) to use LD_WAIT_CONFIG.
+>> 
+>> (We can also make printk_legacy_allow_spinlock_enter/exit() depend on
+>>  !PREEMPT_RT && CONFIG_PROVE_RAW_LOCK_NESTING)
+>
+> I do not have strong opinion about adding (&& CONFIG_PROVE_RAW_LOCK_NESTING).
+> This dependency is already handled in LD_WAIT_CONFIG definition.
 
---m+/uSDtnyk5fnHyE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I prefer avoiding CONFIG_PROVE_RAW_LOCK_NESTING since it is not necessary.
 
+>> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+>
+> Anyway, the change makes sense to me. It seems that this better fits
+> the purpose.
+>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+>
+> See a note below.
+>
+>> ---
+>>  kernel/printk/printk.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+>> index 5aee9ffb16b9..f11b2f31999b 100644
+>> --- a/kernel/printk/printk.c
+>> +++ b/kernel/printk/printk.c
+>> @@ -3007,7 +3007,7 @@ bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+>>   * false positive. For PREEMPT_RT the false positive condition does not
+>>   * occur.
+>
+> From the comment, it was not obvious to me why the condition does not
+> occur for PREEMPT_RT. I had to check the commit message from the
+> commit daeed1595b4ddf314b ("printk: Avoid false positive lockdep
+> report for legacy printing").
+>
+> <paste>
+>     However, on PREEMPT_RT the printing path from atomic context is
+>     always avoided and the console driver is always invoked from a
+>     dedicated thread. Thus the lockdep splat on !PREEMPT_RT is a
+>     false positive.
+>  </paste>
+>
+> This is much more clear. It might make sense to improve the comment,
+> for example:
+>
+> <proposal>
+> /*
+>  * Legacy console printing from printk() caller context does not respect
+>  * raw_spinlock/spinlock nesting. However, on PREEMPT_RT the printing
+>  * path from atomic context is always avoided and the console driver
+>  * is always invoked from a dedicated thread. Thus the lockdep splat
+>  * on !PREEMPT_RT is a false positive.
+>  *
+>  * This map is used to temporarily establish LD_WAIT_CONFIG context for the
+>  * console write() callback when legacy printing to avoid false positive
+>  * lockdep complaints, thus allowing lockdep to continue to function for
+>  * real issues.
+>  */
+> </proposal>
 
->     compatible:
->       items:
->         - const: renesas,r9a06g032-adc   # RZ/N1D
->         - const: renesas,rzn1-adc
+I am OK with this proposal.
 
-This. Just switch from a forever-single enum to a const for the first
-entry.
+> But it can be done in a separate patch...
+>
+>>   *
+>> - * This map is used to temporarily establish LD_WAIT_SLEEP context for the
+>> + * This map is used to temporarily establish LD_WAIT_CONFIG context for the
+>>   * console write() callback when legacy printing to avoid false positive
+>>   * lockdep complaints, thus allowing lockdep to continue to function for
+>>   * real issues.
+>> @@ -3016,7 +3016,7 @@ bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+>>  static inline void printk_legacy_allow_spinlock_enter(void) { }
+>>  static inline void printk_legacy_allow_spinlock_exit(void) { }
+>>  #else
+>> -static DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map, LD_WAIT_SLEEP);
+>> +static DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map, LD_WAIT_CONFIG);
+>>  
+>>  static inline void printk_legacy_allow_spinlock_enter(void)
+>>  {
+>
+> Best Regards,
+> Petr
+>
+> PS: I would take this patch via the printk tree. But I am going to wait
+>     for feedback from others (John, Sebastian, ...).
 
+AFAICT LD_WAIT_CONFIG would be an improvement by allowing detection of
+non-spinlock-sleeping.
 
---m+/uSDtnyk5fnHyE
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmj57gQACgkQFA3kzBSg
-KbZcWQ//a0QHTORdjgz22rHifjEMais0eU0NSHuHTfdjNW0KT3dCVeX/v9A/P0m0
-oEAMmA4r0pOAX91GrlYzJKJ3n/gEGowt2pOq0dSkDiSCooWhRUkBF4tBG9mXhg6k
-YljAEvisS6vP48uiHabi8fXdjQNTeX8PU8Z5R1OORdE47vpRY0my6/tHAvwTnx0/
-EeiN5I3N+YkgQ69EvvijbCXcoMtZXUIRg/+xRPgK+OIYCN2vFRdy/a1amdM9ahf9
-af+4U0BPyUNZg1IKPMJbin4RXRTB6831h+7O6aN0Q8ZhiCnmygdPi70NJVl8ivQr
-qht3R5+kQsITnIJdJYGgMBqI0N1uTZbUwX9LsIohwlVSEkC1EKgRzTJfyfgi0iiD
-0zrVyw8nuCZA432jH57+oYp/Za3yyOnFrSxU0f2lfhNFsIsvlTPvG5kxUOlDaiZC
-VsbQ22mzjE0OYxFXCjVJzKXt0/RoDjchaCE/1DQZAjCe366fU1aB5JHzmwIuMMYy
-ljsTbVYWmsONp/9//n0b8Fw/QMywZNbuPyFC1wyprEsL/f99DoAQf4TxsF9N5UBa
-4TtODQC+0taMXJOjdUyOBDD5UCOX+nCp4fScVq4ZUnXJa3IYGjqH28JVWy4Xz8vh
-JyOw5wEVbBSpPc1QYfy49RHpkSW3dYmfaKkd1Kyrkma5J6TllWA=
-=uRA0
------END PGP SIGNATURE-----
-
---m+/uSDtnyk5fnHyE--
+I would like to see an official ACK from Sebastian as well.
 
