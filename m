@@ -1,155 +1,293 @@
-Return-Path: <linux-kernel+bounces-867336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC3CC024E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:05:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D16AC02522
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25819188BA82
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:06:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E48FE3A4944
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD3926F292;
-	Thu, 23 Oct 2025 16:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E96F27F75C;
+	Thu, 23 Oct 2025 16:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g5aPT4d6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WoCuBe3c"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0591C246BDE
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C80257AC2;
+	Thu, 23 Oct 2025 16:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761235546; cv=none; b=HNxbNSaTh4ZLJ3KfpKu18DIwMurjftrzWqVV0C6NCr5Ds4Blna+HAa08N3l6p/7CNH2L9CcEEKSgTDztaFV57ZKPsPK0ExYRNhlcIjs9GmQeaclD6j+SWfy2MR28c0RoXd9y8Fd9q1BAt/WRsS1i4JRTKYFTjrFmM2NNAUjLhsU=
+	t=1761235618; cv=none; b=ayhJf59+eJhvJYMxBxDNrglEsgRo4fyp8pA5DnX111O1fXOEfh2AFNUDsy6xNqnrFckgj0k4vbCDNcjyD+Tls8d9oU0V1PDByG5rYpHG/gR7PbKr+3YMpFxDCz/P0D060CEyjqOSORikWkxwDJrGpQSTcSrPFxSSGx23HKqqD78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761235546; c=relaxed/simple;
-	bh=phyuaYePBz4CgtUQYs7gQvuXJrtd+w3jRA3NBQxo9VE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uVNXHQRJtPCNITPGY4bOUcEgxcfLd2gGDOh0byhlars7LLoileNQgDIV0VgVE/bwSgZdJ1lWJmVZD0c3ue4+vsdSlqR8Aj6muz4bU5YeVJ3CtvVYpuH9CDyl+QQHJaZJ5kHJ58iOs4yBLFT1bW4KhQYQQ6bdl0qLY3p1daKjk8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g5aPT4d6; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761235545; x=1792771545;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=phyuaYePBz4CgtUQYs7gQvuXJrtd+w3jRA3NBQxo9VE=;
-  b=g5aPT4d6KPBzlLS4dw/exYHeSgzGyBGPNOTZ6cI30Bj6aF6uDoLohHSo
-   39K5X6duZboJV9okgLZSWtSU9S4E5wKGrKCwHgT17MjyeDmWzteo1MFny
-   fEGKx6+/4WRORjhl2prV6Veyf6go2E3hlPrkiK8DUX/GMd+s2QlGdzCqn
-   w5gQ0o4i076+yAPBOQ6z0DOlL66pnCwsJ1emQvCm6u6ThpxIu2i4wr7Ml
-   E4sgjHYfMmF4OpsUVXY8KrHuzQhSwf37mKuqyU/Eyjc/1q5PB3kEG6vo/
-   qUd7d4I3mwfKQIjdi10mht/6tc8JvKqMkIQEbvPgfr5x1iyq7HFVnJAdg
-   Q==;
-X-CSE-ConnectionGUID: V9Cmxe96RGiKmkjBmPlMLg==
-X-CSE-MsgGUID: UHlkT95jTCW/jQsPrjMR+A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67055920"
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="67055920"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 09:05:44 -0700
-X-CSE-ConnectionGUID: 7rSzT6YNRuCwYMPRqNiTsA==
-X-CSE-MsgGUID: llJVmS/xSPeaTglCr6C88A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="214850528"
-Received: from jjgreens-desk21.amr.corp.intel.com (HELO desk) ([10.124.221.191])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 09:05:44 -0700
-Date: Thu, 23 Oct 2025 09:05:36 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Petr Tesarik <ptesarik@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] x86/tsx: Get the tsx= command line parameter with
- early_param()
-Message-ID: <20251023160536.sq57f5rtwlgrryqr@desk>
-References: <cover.1761127696.git.ptesarik@suse.com>
- <befa0b859777267a11c90aebde6a3bedce276b90.1761127696.git.ptesarik@suse.com>
- <20251022174603.mx7sze3w5e24obps@desk>
- <20251023084510.4b1cd2fe@mordecai>
+	s=arc-20240116; t=1761235618; c=relaxed/simple;
+	bh=aqzqxxofGyhxlHGNe9LcalvEY+qu8wDWjxshr6DpaZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DKi+a3b+8gIDsBhUDMpwUdc7uE3+B9djQ/FBGXntWAq6btzWQDz8G7NEc2x7yAQlqW9NRx/hZKGMNIQAISediHL2JYlwniYJQwz2MSUBA4wquwaLCBlccttWX0D+GVrigOuj3/+HF6m3xDv6cd/9A8pZS1a8DuGtzcE/MMuz090=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WoCuBe3c; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N8ag5n019834;
+	Thu, 23 Oct 2025 16:05:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=la21jHGyplFfY/WqI
+	0NwB81QN3IoQrvAGwqFdZz19w8=; b=WoCuBe3cdpv0Qp/Cy8XFOGFDzkt0Ykuu3
+	OZAzckUuuLSXH55hSI4ITdUli115G20GWbopyDB6DB+Zyodyx8D4aXrnMStNwf/8
+	aSdVJn+/LZmA3VxcpdhdqeOHQ9RZBwWkMe8v5KFxOlTQuFAzed3B+t98WBBs17v4
+	UkIOO83VkJ9i7b/bsebptCI1AysbQHJd0mEcBbWVRSzlHdO/qptf+p+KI5tKIHju
+	US10jWpxJ05AyvBpSuuCPkMATSISNnBmunkw2WR+FV0OMBxq8iN4AAU+hEybUaLH
+	Ax7j9iy+5faC221/iWcCt60nuZYsVCTrqf/38lxMuZxEHW3lHIDtQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v32737m0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 Oct 2025 16:05:55 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59NFquOD015411;
+	Thu, 23 Oct 2025 16:05:54 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v32737kx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 Oct 2025 16:05:54 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59NEZr49011075;
+	Thu, 23 Oct 2025 16:05:53 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqx1ebh0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 Oct 2025 16:05:52 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59NG5nBC41943430
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 23 Oct 2025 16:05:49 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EA21C2004B;
+	Thu, 23 Oct 2025 16:05:48 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 650F520043;
+	Thu, 23 Oct 2025 16:05:48 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 23 Oct 2025 16:05:48 +0000 (GMT)
+From: Jens Remus <jremus@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
+        Steven Rostedt <rostedt@kernel.org>
+Cc: Jens Remus <jremus@linux.ibm.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Florian Weimer <fweimer@redhat.com>, Kees Cook <kees@kernel.org>,
+        "Carlos O'Donell" <codonell@redhat.com>, Sam James <sam@gentoo.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: [RFC PATCH 1/2] fixup! unwind_user/sframe: Add support for reading .sframe contents
+Date: Thu, 23 Oct 2025 18:05:44 +0200
+Message-ID: <20251023160545.549532-1-jremus@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20251022144326.4082059-1-jremus@linux.ibm.com>
+References: <20251022144326.4082059-1-jremus@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023084510.4b1cd2fe@mordecai>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=EJELElZC c=1 sm=1 tr=0 ts=68fa5263 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8 a=-WfIxybQAAAA:8
+ a=X3WeMxAik4tzwCrV5JEA:9 a=KbVuYVxSu7xg536452LQ:22 a=DXsff8QfwkrTrK3sU8N1:22
+ a=poXaRoVlC6wW9_mwW8W4:22 a=p-dnK0njbqwfn1k4-x12:22 a=7aar8cbMflRChVwg8ngv:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX1kKTN45NkES8
+ O7kLYBREj69VgRgaSEQYHdwjj+Jj2/EzbR3pKk+u6gXqxZJVO/BP91uvQeTMR4GCD+n8V5A5zOP
+ Fovn+aZWpS6YQvUB3p57rWoGV1DQIsAkEworIw8+9UfKei7W0N2Jyw/kxaYUsXsk1YBK5VXxb9P
+ LOcius+HLl3TvCRHrQQduRJ9n6Mo5gxKJd4yRTXXMaScibLf0ZoHA6YCuuD8mQm0l7wZgXRYG3F
+ DBy/CmgR68z+gM3ZrKladsBtiP/G5ilNO0iBpPUNI2xAFOdc9kwNDkYaMZIDiy9aoB9YDk8vX0Z
+ mhaQNk5zrbeTmJKh4axANfMGx/YSgYqYI9DjQ9dWQx7jvpyyB66KwKLo5BOXUWkBOEKI0g65vDw
+ lyEXlZKBsNM1NwTAuZIBk5jOxU9wsg==
+X-Proofpoint-GUID: 9Msq37G1ETcHHt-9gnjmOS_imd65E8Mg
+X-Proofpoint-ORIG-GUID: LQ1J1-wRJ1EQj61I8t4Ke7MvJqOSujkD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-23_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-On Thu, Oct 23, 2025 at 08:45:10AM +0200, Petr Tesarik wrote:
-> On Wed, 22 Oct 2025 10:46:03 -0700
-> Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
-> 
-> > On Wed, Oct 22, 2025 at 12:26:13PM +0200, Petr Tesarik wrote:
-> > > Use early_param() to get the value of the tsx= command line parameter. It
-> > > is an early parameter, because it must be parsed before tsx_init(), which
-> > > is called long before kernel_init(), where normal parameters are parsed.
-> > > 
-> > > Although cmdline_find_option() from tsx_init() works fine, the option is
-> > > later reported as unknown and passed to user space. The latter is not a
-> > > real issue, but the former is confusing and makes people wonder if the tsx=
-> > > parameter had any effect and double-check for typos unnecessarily.
-> > > 
-> > > The behavior changes slightly if "tsx" is given without any argument (which
-> > > is invalid syntax). Prior to this patch, the kernel logged an error message
-> > > and disabled TSX. With this patch, the kernel still issues a warning
-> > > (Malformed early option 'tsx'), but TSX state is unchanged. The new
-> > > behavior is consistent with other parameters, e.g. "tsx_async_abort".
-> > > 
-> > > Suggested-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> > > Signed-off-by: Petr Tesarik <ptesarik@suse.com>
-> > > ---
-> > >  arch/x86/kernel/cpu/tsx.c | 52 ++++++++++++++++++++-------------------
-> > >  1 file changed, 27 insertions(+), 25 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/kernel/cpu/tsx.c b/arch/x86/kernel/cpu/tsx.c
-> > > index 8be08ece2214..74ba4abac7e9 100644
-> > > --- a/arch/x86/kernel/cpu/tsx.c
-> > > +++ b/arch/x86/kernel/cpu/tsx.c
-> > > @@ -20,13 +20,17 @@
-> > >  #define pr_fmt(fmt) "tsx: " fmt
-> > >  
-> > >  enum tsx_ctrl_states {
-> > > +	TSX_CTRL_AUTO,
-> > >  	TSX_CTRL_ENABLE,
-> > >  	TSX_CTRL_DISABLE,
-> > >  	TSX_CTRL_RTM_ALWAYS_ABORT,
-> > >  	TSX_CTRL_NOT_SUPPORTED,
-> > >  };
-> > >  
-> > > -static enum tsx_ctrl_states tsx_ctrl_state __ro_after_init = TSX_CTRL_NOT_SUPPORTED;
-> > > +static enum tsx_ctrl_states tsx_ctrl_state __ro_after_init =
-> > > +	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_AUTO) ? TSX_CTRL_AUTO :
-> > > +	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_OFF) ? TSX_CTRL_DISABLE :  
-> >                                                  ^
-> > 						 The extra space I had in
-> > 						 the version I sent was
-> > 						 intentional.
-> > 
-> > > +	TSX_CTRL_ENABLE;  
-> > 
-> > Also this can stay on the same line.
-> > 
-> > 	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_AUTO) ? TSX_CTRL_AUTO    :
-> > 	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_OFF)  ? TSX_CTRL_DISABLE : TSX_CTRL_ENABLE;
-> > 
-> > IMO, this is so much more easier to read.
-> 
-> Matter of taste if you ask me. I have no preference either way, so if you
-> do have an opinion, let's write it your way.
+This RFC fixup is POC to demonstrate how the SFrame reading code
+could benefit from introducing an internal FDE representation (struct
+sframe_fde_internal) similar to the used internal FRE representation
+(struct sframe_fre).  The goal is to eliminate the passing through of
+fde_start_base in many places as well as the various computations of the
+effective function start address (= *fde_start_base + fde->start_addr)
+throughout this module.  The internal FDE representation simply conveys
+the effective function start address via the "unsigned long
+func_start_addr" field.
 
-I would let the maintainers decide how they want it.
+Signed-off-by: Jens Remus <jremus@linux.ibm.com>
+---
+ kernel/unwind/sframe.c | 52 ++++++++++++++++++++++++++----------------
+ 1 file changed, 32 insertions(+), 20 deletions(-)
 
-> Do I have to resubmit, or can an x86 maintainer adjust it when applying
-> the patch?
+diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
+index 3d7ac4eaa8b7..f88fc2c92c58 100644
+--- a/kernel/unwind/sframe.c
++++ b/kernel/unwind/sframe.c
+@@ -17,6 +17,15 @@
+ #include "sframe.h"
+ #include "sframe_debug.h"
+ 
++struct sframe_fde_internal {
++	unsigned long	func_start_addr;
++	u32		func_size;
++	u32		fres_off;
++	u32		fres_num;
++	u8		info;
++	u8		rep_size;
++};
++
+ struct sframe_fre {
+ 	unsigned int	size;
+ 	u32		ip_off;
+@@ -45,20 +54,26 @@ static __always_inline unsigned char offset_size_enum_to_size(unsigned char off_
+ 
+ static __always_inline int __read_fde(struct sframe_section *sec,
+ 				      unsigned int fde_num,
+-				      struct sframe_fde *fde,
+-				      unsigned long *fde_start_base)
++				      struct sframe_fde_internal *fde)
+ {
+-	unsigned long fde_addr, ip;
++	unsigned long fde_addr, func_addr;
++	struct sframe_fde _fde;
+ 
+ 	fde_addr = sec->fdes_start + (fde_num * sizeof(struct sframe_fde));
+-	unsafe_copy_from_user(fde, (void __user *)fde_addr,
++	unsafe_copy_from_user(&_fde, (void __user *)fde_addr,
+ 			      sizeof(struct sframe_fde), Efault);
+ 
+-	ip = fde_addr + fde->start_addr;
+-	if (ip < sec->text_start || ip > sec->text_end)
++	func_addr = fde_addr + _fde.start_addr;
++	if (func_addr < sec->text_start || func_addr > sec->text_end)
+ 		return -EINVAL;
+ 
+-	*fde_start_base = fde_addr;
++	fde->func_start_addr	= func_addr;
++	fde->func_size		= _fde.func_size;
++	fde->fres_off		= _fde.fres_off;
++	fde->fres_num		= _fde.fres_num;
++	fde->info		= _fde.info;
++	fde->rep_size		= _fde.rep_size;
++
+ 	return 0;
+ 
+ Efault:
+@@ -67,8 +82,7 @@ static __always_inline int __read_fde(struct sframe_section *sec,
+ 
+ static __always_inline int __find_fde(struct sframe_section *sec,
+ 				      unsigned long ip,
+-				      struct sframe_fde *fde,
+-				      unsigned long *fde_start_base)
++				      struct sframe_fde_internal *fde)
+ {
+ 	unsigned long func_addr_low = 0, func_addr_high = ULONG_MAX;
+ 	struct sframe_fde __user *first, *low, *high, *found = NULL;
+@@ -109,13 +123,13 @@ static __always_inline int __find_fde(struct sframe_section *sec,
+ 	if (!found)
+ 		return -EINVAL;
+ 
+-	ret = __read_fde(sec, found - first, fde, fde_start_base);
++	ret = __read_fde(sec, found - first, fde);
+ 	if (ret)
+ 		return ret;
+ 
+ 	/* make sure it's not in a gap */
+-	if (ip < *fde_start_base + fde->start_addr ||
+-	    ip >= *fde_start_base + fde->start_addr + fde->func_size)
++	if (ip < fde->func_start_addr ||
++	    ip >= fde->func_start_addr + fde->func_size)
+ 		return -EINVAL;
+ 
+ 	return 0;
+@@ -165,7 +179,7 @@ static __always_inline int __find_fde(struct sframe_section *sec,
+ 		 s32:	UNSAFE_GET_USER_SIGNED_INC(to, from, size, label))
+ 
+ static __always_inline int __read_fre(struct sframe_section *sec,
+-				      struct sframe_fde *fde,
++				      struct sframe_fde_internal *fde,
+ 				      unsigned long fre_addr,
+ 				      struct sframe_fre *fre)
+ {
+@@ -244,8 +258,7 @@ static __always_inline int __read_fre(struct sframe_section *sec,
+ }
+ 
+ static __always_inline int __find_fre(struct sframe_section *sec,
+-				      struct sframe_fde *fde,
+-				      unsigned long fde_start_base,
++				      struct sframe_fde_internal *fde,
+ 				      unsigned long ip,
+ 				      struct unwind_user_frame *frame)
+ {
+@@ -257,7 +270,7 @@ static __always_inline int __find_fre(struct sframe_section *sec,
+ 	unsigned int i;
+ 	u32 ip_off;
+ 
+-	ip_off = ip - (fde_start_base + fde->start_addr);
++	ip_off = ip - fde->func_start_addr;
+ 
+ 	if (fde_type == SFRAME_FDE_TYPE_PCMASK)
+ 		ip_off %= fde->rep_size;
+@@ -306,8 +319,7 @@ int sframe_find(unsigned long ip, struct unwind_user_frame *frame)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct sframe_section *sec;
+-	struct sframe_fde fde;
+-	unsigned long fde_start_base;
++	struct sframe_fde_internal fde;
+ 	int ret;
+ 
+ 	if (!mm)
+@@ -323,11 +335,11 @@ int sframe_find(unsigned long ip, struct unwind_user_frame *frame)
+ 				    sec->sframe_end - sec->sframe_start))
+ 		return -EFAULT;
+ 
+-	ret = __find_fde(sec, ip, &fde, &fde_start_base);
++	ret = __find_fde(sec, ip, &fde);
+ 	if (ret)
+ 		goto end;
+ 
+-	ret = __find_fre(sec, &fde, fde_start_base, ip, frame);
++	ret = __find_fre(sec, &fde, ip, frame);
+ end:
+ 	user_read_access_end();
+ 
+-- 
+2.48.1
 
-Borislav, Dave?
 
