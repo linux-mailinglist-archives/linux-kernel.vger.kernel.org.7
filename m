@@ -1,149 +1,205 @@
-Return-Path: <linux-kernel+bounces-867529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E4C6C02D60
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:03:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AC8C02D4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C463B0CCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:03:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 004524FB863
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6623634CFCD;
-	Thu, 23 Oct 2025 18:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6948334B431;
+	Thu, 23 Oct 2025 18:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I16DAE8U"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cPOD1Keg"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2497B34C12E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F104A184
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761242527; cv=none; b=E5qpLBtmoaitQHWe38GZZRHlDCUKBzrn2YsYdooooHUMXoGI2CGOVsKt6/L8NvVzv16HBpjSVf4EWfIsIzZsIHAEcHnEgNnGOtweSzR+EziqwN3l47XhxBrmGiVNE8M/MkduMfd14zonytiVAfJjoEWAqkJQ/6hsGMLhSf5iS6o=
+	t=1761242501; cv=none; b=CeR3jTuZDtZUP8IZTlqvLpk+WBu/6pib8dubmDL+3Lo6+honwqXzmy4JjNXWGehc8bXEyAPmyrwZVGmm9ChEwWDiY4PtwKgkfTYaRA0NSDp5gEuPh5KUNaLIs6ZGzwe6ljEsInDxaou0RlMyNI/HQ88MPvR2EBgP/fCkLk1muzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761242527; c=relaxed/simple;
-	bh=9qn6zNWsfFcbHFESOoC9xd7aXwGd0GCzaR/zSa3kq58=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UBdiJdDHXluLODejwsiZeZf9UGy+IwN7Dc/DkD4Xc3re09ThQ8iUWqUjBoIdatzgi9ywcXM6a2h+lhLKPBxSbBDmNI+GdvaKrYy35FLOx+NqqNResitbK3ky5TKHzVl+8kH7x8yBL4fsILtSqNho60u35smq0HmQgA7hGZ84/TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I16DAE8U; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7a26b9a936aso741869b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:02:04 -0700 (PDT)
+	s=arc-20240116; t=1761242501; c=relaxed/simple;
+	bh=+11krxrYSQBIL8PS8v62mSeTP8oZ51XSj0cM3YuN+vU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KNvBH7h0TkBSI/Oto2qVSTG1IryLPZxWGa7BU2HI1TDAJqgiNxjV7tPSZXHwI+fCqtNMisgJPHlOXDewmfALMtK5wJaKS+fy5C2Q8Mk28H9USGJEKBYEPz4HEqw2WWoWgTt97vAYOxigymCXnE7jtEoypzlkzF830lmU3R7uoBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cPOD1Keg; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3304dd2f119so979121a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:01:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761242524; x=1761847324; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lk62vnASvkBxJgkC6Qb/LY2NePGcYntSkBsPsS8b6vw=;
-        b=I16DAE8UX/4v97BvG7mPRuHP5XwwHwKJleY9nKgjjCFlp7IucNJWpnO7U8LQHss8xe
-         kwAQAJCMPW/s96Vc1oXSaLgSpOUzQBotmsK8i8aZQeaZhLIfsr/oivyxh/PTQBNmtuJJ
-         31bY+YTOZRRF1zVJeS6hRf+1Ihq+TmWJjirVUBqiz9QbuKUoOTIVG3abxlh4iomsNkIa
-         8UaG4gmM+e/L/lsT3/5sKc1k/cowEQEbuL77VCsTNVbm3DCRtQt4zvdP32p2P9ciDJko
-         hUe9FcQtxk6Rfrs9VcTKSC5x8j+cvjqakt/nxRZ1tKbowvd8z8q1TYo6GIAQTwWkCyAY
-         3OIQ==
+        d=chromium.org; s=google; t=1761242498; x=1761847298; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2fVJOJqOl/DPUXtsK6eZUYyA/D6xvUpAsP3hFipiCWw=;
+        b=cPOD1KegM61aTrEPJxaRI9ZtHfLplA8R4BbE7ei2hOB1ghzLSxecOR2ToC6QybmS00
+         jhai4f6HXSEgAXDL/RKFnn1BuAJ5CYtepJFfA8Haw+z31+yKJmDB4kdFxbX4cVNAIlSc
+         HB1zQo4eQaf4mb41PEQTLRldGNzOFUcCkjne0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761242524; x=1761847324;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lk62vnASvkBxJgkC6Qb/LY2NePGcYntSkBsPsS8b6vw=;
-        b=UTMbrJg0hAqUB2h8MGJmW3fPy2ro4DjPUYCc+wXBBKtTHmJk2UQs68uVS3R/Sn/OiE
-         6OmlHTmSjEkzJ/pYGlJQam9RMWiYQgrgI8K88GgOVn5kf6VYZS4vDmzaTGcoQ2OYkTjf
-         fxSoftBohEwaeBkslaQVNiqEXEIr6Q/jIVrk1kXVB1VjU8TVRlLk1M348o5WOaVTEooT
-         Lr4hYsf73anp/FI3AhFs2V+a+5tB5XhbB2W4VqBpZCR8lzwiqjfUfF89vkL4Wc3tkDzP
-         vAE7C0m96lKAs7BCQzK654JAb5um7EpXu9XAAcqweTLXu6SBgTHMEGKrUeeNgH2oi4x5
-         2iNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgH+od6GxRPtld3kpIaznaQu1uCgV2TniEhA8iRe2aRfeiit9ZACUZtbhrh/6AasZS808G/1kgaAjldfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjfl4fEd4Iyh8VD4wiooFkLqfIsKzDWKnBjQWTndBfoxnOFaZV
-	SpbUyJEP5kExWydTwV1yGMRYM95Vbppq1Ge2PRTUAYkrjeBsGWu1pPuI
-X-Gm-Gg: ASbGncsA4fF+6JT82I8pkjU5ngz46ykyGh/6M39FK6oulb/rgP6fWgk6CZm+e4o1lIC
-	sMwP5hcltBs5Im8eNd1cTG1fo8I3DXP+SfYeT5nHLEBQyu9DyVsYmXMqSPaWm3yk6yPO7DS9FE/
-	I6MnB8pUPJbehI0/vBAfprOEF797D8lvOBPl3E0YLvXz4eGYEOhuhngVJBRSYcLoydevnCETFoS
-	Ia3y5L57l0d3yfaMvbrRurCQX0qv4ZSLfiunvCepCgKgKw8OQ8rCrI1XdKMdhkkaQczXrwDLmWY
-	njcrLLeefIQ6IbR3zKOlk6HyxMvfVHkcb+BNvlxrC8Yv/MWyoZfZEbl6mgkc3cFh3xMCqce58kT
-	H6ZapY9FRMPpI7WJNqCBWf7tyK0zSwT1wvz3zl1pH+fYafIs8cxt7/XuhWFvL8tcgDhh/GpN1op
-	ARBh0gRA==
-X-Google-Smtp-Source: AGHT+IFPUrlbvn8DuW25skZvpIHzGvxrGeq0n5tQxV88E3xMkZ9FaMz7plJmoiS9eWwPcZAFgSQvBw==
-X-Received: by 2002:a05:6a21:4613:b0:334:adbe:752a with SMTP id adf61e73a8af0-334adbe757emr30117578637.31.1761242523824;
-        Thu, 23 Oct 2025 11:02:03 -0700 (PDT)
-Received: from [127.0.0.1] ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4c4d83dsm2734532a12.18.2025.10.23.11.01.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 11:02:02 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-Date: Fri, 24 Oct 2025 02:00:43 +0800
-Subject: [PATCH v2 5/5] mm, swap: remove redundant argument for isolating a
- cluster
+        d=1e100.net; s=20230601; t=1761242498; x=1761847298;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2fVJOJqOl/DPUXtsK6eZUYyA/D6xvUpAsP3hFipiCWw=;
+        b=UMtqvwG1+UJqYM7c0GZfX8/GOaR6dkAiohFUE1ZbBVL46XyaiU26Acr26WWymsq2uJ
+         nqR7jVSdwc2ryPc15T0r4YR2BGH6TfQVBhGX9Wm+aKRYPXxZdqK/LLRojty3hylDb5A9
+         uxec+3spbc62mgVuIcJogiX0N+FGcS1vhNFl0TbjzC3cWHL1YGREXJoUWachXE67QgWY
+         KRPXbyki/g+yfk2HW8chzQKpviLRFl86/jsBmi6v6zaSKRNYVgGKy2bDhWO8Ob7be0ot
+         0HLaerGfCy04wF4dwsXeXldAbxuKC76qr2/lNm31iHq8tUH1iGu1qslsLQ7bV6RlLR1z
+         4cNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXY0wg6AVKsXr9H4YsAf/ij+cIF0G4ennLZSBtG17RTofdQjprI3KCVsKj5NqBGOxfIct5YJPo4fnyhYEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/s7EsaWAppGXlW/3gfr8O2emE8S4v70wwkELBeIpRF9wQs9DB
+	GBpTKUghbmxHD3buLj8ul8xak3vmQQuharWi/VO4GF87XerkQTm132DYdQ+izbIPYgf7yb6b5Do
+	ZuNs=
+X-Gm-Gg: ASbGncv2oUOTuPwJrn27jQX9wOE95aG0/wgkcXduiWZadVkYdSBOf3VxvFYEM65fvUb
+	ecQ7T/qUSydtUCyn9VZPF0EbtTxjB4a0FeyYgrO+n5IfxEX8aACv5mYHn8nszFnZ6d3IDLtfhks
+	dT5ZB4UfUlBefNIoKWbBTVJW0FNgcTyMnMkh/mC1l13ojrnvoklg232CvrCoq5TF8JPaWtrKB9U
+	szduSlAf43VK5i2OWX1akeRX6yESTShIV/UjTTXRDXysSrfkgDOIKiuob+43Mdl8z3fWVqQujah
+	YLYwmzNWeAbTKMyhbmQ/QtY5sZrIs9q2FYQMxsO3lXTUawXuBW+27j6oAc+RsZjV921QwaHnj3Z
+	kcuWKQasntRu75xhYJNxpPpRZCpJPymV4diny2Jly8dUA8FawpNXxTDNGD/qwYmPaoBzCCN6yb5
+	DTuNAZtIwDQUDkro3aPf3qpT2jo+jUD8LPELjicHP7fWu/bsdw
+X-Google-Smtp-Source: AGHT+IHMEl1/yOcEnK1WSum08iBEotApLa8nOZXGnnHDG0khuXHK2NNe5VrwxePf061sm8+ZE7PtOQ==
+X-Received: by 2002:a17:90b:1b4a:b0:32e:1b1c:f8b8 with SMTP id 98e67ed59e1d1-33bcf8f7cd5mr35772646a91.26.1761242498180;
+        Thu, 23 Oct 2025 11:01:38 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:839c:d3ee:bea4:1b90])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-33faff37afesm3047298a91.1.2025.10.23.11.01.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 11:01:37 -0700 (PDT)
+Date: Thu, 23 Oct 2025 11:01:35 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] PCI/PM: Ensure power-up succeeded before restoring MMIO
+ state
+Message-ID: <aPptf2gLpoWL3Ics@google.com>
+References: <20250821075812.1.I2dbf483156c328bc4a89085816b453e436c06eb5@changeid>
+ <20251023172547.GA1301778@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-swap-clean-after-swap-table-p1-v2-5-a709469052e7@tencent.com>
-References: <20251024-swap-clean-after-swap-table-p1-v2-0-a709469052e7@tencent.com>
-In-Reply-To: <20251024-swap-clean-after-swap-table-p1-v2-0-a709469052e7@tencent.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
- Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
- Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
- Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- David Hildenbrand <david@redhat.com>, 
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
- Ying Huang <ying.huang@linux.alibaba.com>, 
- YoungJun Park <youngjun.park@lge.com>, Kairui Song <ryncsn@gmail.com>, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023172547.GA1301778@bhelgaas>
 
-From: Kairui Song <kasong@tencent.com>
+Hi Bjorn,
 
-The order argument was introduced by an intermediate commit and was then
-never used, just remove it.
+On Thu, Oct 23, 2025 at 12:25:47PM -0500, Bjorn Helgaas wrote:
+> [+cc Mario, Rafael]
+> 
+> On Thu, Aug 21, 2025 at 07:58:12AM -0700, Brian Norris wrote:
+> > From: Brian Norris <briannorris@google.com>
+> > 
+> > As the comments in pci_pm_thaw_noirq() suggest, pci_restore_state() may
+> > need to restore MSI-X state in MMIO space. This is only possible if we
+> > reach D0; if we failed to power up, this might produce a fatal error
+> > when touching memory space.
+> > 
+> > Check for errors (as the "verify" in "pci_pm_power_up_and_verify_state"
+> > implies), and skip restoring if it fails.
+> > 
+> > This mitigates errors seen during resume_noirq, for example, when the
+> > platform did not resume the link properly.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Brian Norris <briannorris@google.com>
+> > Signed-off-by: Brian Norris <briannorris@chromium.org>
+> > ---
+> > 
+> >  drivers/pci/pci-driver.c | 12 +++++++++---
+> >  drivers/pci/pci.c        | 13 +++++++++++--
+> >  drivers/pci/pci.h        |  2 +-
+> >  3 files changed, 21 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> > index 302d61783f6c..d66d95bd0ca2 100644
+> > --- a/drivers/pci/pci-driver.c
+> > +++ b/drivers/pci/pci-driver.c
+> > @@ -557,7 +557,13 @@ static void pci_pm_default_resume(struct pci_dev *pci_dev)
+> >  
+> >  static void pci_pm_default_resume_early(struct pci_dev *pci_dev)
+> >  {
+> > -	pci_pm_power_up_and_verify_state(pci_dev);
+> > +	/*
+> > +	 * If we failed to reach D0, we'd better not touch MSI-X state in MMIO
+> > +	 * space.
+> > +	 */
+> > +	if (pci_pm_power_up_and_verify_state(pci_dev))
+> > +		return;
+> 
+> The MSI-X comment here seems oddly specific.
 
-Signed-off-by: Kairui Song <kasong@tencent.com>
----
- mm/swapfile.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+It's just as "oddly specific" as the existing comment in
+pci_pm_thaw_noirq(), as mentioned in the commit message :)
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 42e2b2759240..214ccd1f69cd 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -594,7 +594,7 @@ static void __free_cluster(struct swap_info_struct *si, struct swap_cluster_info
-  * this returns NULL for an non-empty list.
-  */
- static struct swap_cluster_info *isolate_lock_cluster(
--		struct swap_info_struct *si, struct list_head *list, int order)
-+		struct swap_info_struct *si, struct list_head *list)
- {
- 	struct swap_cluster_info *ci, *found = NULL;
- 
-@@ -957,7 +957,7 @@ static unsigned int alloc_swap_scan_list(struct swap_info_struct *si,
- 	unsigned int found = SWAP_ENTRY_INVALID;
- 
- 	do {
--		struct swap_cluster_info *ci = isolate_lock_cluster(si, list, order);
-+		struct swap_cluster_info *ci = isolate_lock_cluster(si, list);
- 		unsigned long offset;
- 
- 		if (!ci)
-@@ -982,7 +982,7 @@ static void swap_reclaim_full_clusters(struct swap_info_struct *si, bool force)
- 	if (force)
- 		to_scan = swap_usage_in_pages(si) / SWAPFILE_CLUSTER;
- 
--	while ((ci = isolate_lock_cluster(si, &si->full_clusters, 0))) {
-+	while ((ci = isolate_lock_cluster(si, &si->full_clusters))) {
- 		offset = cluster_offset(si, ci);
- 		end = min(si->max, offset + SWAPFILE_CLUSTER);
- 		to_scan--;
+The key point for MSI-X is that unlike the rest of pci_restore_state(),
+it requires touching memory space. While config registers are OK to
+touch in D3, memory space is not.
 
--- 
-2.51.0
+> On most platforms, config/mem/io accesses to a device not in D0 result
+> in an error being logged, writes being dropped, and reads returning ~0
+> data.
 
+On my arm64 / pcie-designware-based platforms, that is mostly similar,
+but there are some cases that are different. See below:
+
+> I don't know the details, but I assume the fatal error is a problem
+> specific to arm64.
+
+Maybe. See my response here also:
+
+  Re: [PATCH] PCI/sysfs: Ensure devices are powered for config reads
+  https://lore.kernel.org/all/aNMoMY17CTR2_jQz@google.com/
+
+In particular, when resuming the system in a case where the link was in
+L2 and failed to resume properly, the PCIe controller may not be alive
+enough even to emit completion timeouts. So it might hit case (a):
+
+  "PCIe HW is not powered [...] and this tends to be SError, and a
+  crash."
+
+Memory space is unique, because while config accesses can be
+intercepted/avoided by driver software, memory accesses cannot.
+
+> If the device is not in D0, we can avoid the problem here, but it
+> seems like we're just leaving a landmine for somebody else to hit
+> later.  The driver will surely access the device after resume, won't
+> it?
+
+It's a possible landmine, yes. Although in my case, the link can go
+through error recovery and restore itself later in the resume process.
+
+> Is it better to wait for a fatal error there?
+> 
+> Even if we avoid errors here, aren't we effectively claiming to have
+> restored the device state, which is now a lie?
+
+I'm not sure we claim that. The device will stay in PCI_D3cold, and
+pdev->state_saved will remain true.
+
+But yes, it's a tricky situation to decide what to do next. My basic
+assertion is that it's not OK to continue to restore state though.
+
+Alternatives: pci_dev_set_disconnected()? pcie_do_recovery() /
+pci_channel_io_frozen?
+
+> Even on other platforms, if the writes that are supposed to restore
+> the state are dropped because the device isn't in D0, the result is
+> also not what we expect, and something is probably broken.
+
+Sure. IMO, that's even more reason not to run pci_restore_state(),
+because that will erroneously drop the state, and we'll have zero chance
+of restoring it later.
+
+Brian
 
