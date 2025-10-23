@@ -1,220 +1,174 @@
-Return-Path: <linux-kernel+bounces-867881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D91C03B90
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 00:54:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD16C03B8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 00:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1B291AA471A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:54:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 497DD3A93DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9171F2C08B6;
-	Thu, 23 Oct 2025 22:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1189528A72B;
+	Thu, 23 Oct 2025 22:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V6TlFm0d"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="Ld0msfZ0"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2195E2BE644
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 22:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880C529D266
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 22:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761260025; cv=none; b=X1N0IPSkUhHpaYNWRA/NbSme3w1DMoH11C8CXw2E9EgfCJh8nnDBYfsIeIR5lzHhyvoowdwGyyKEBL2yf4dMeeLGusP9YBTxyXY/yRzX3kiyE3ZInHQ017yhDIE2G7uTYpItEFDkQyH3WMsPEJ01/2QOd+mt+LAz5G4kHlc4VFo=
+	t=1761260022; cv=none; b=heJs8IJQOYACMT2+tfo60IX/MPo15E7IxfR7uvZ9uzmPX2ozzV2DOtlbBl/8600JGDr9zXim5+unlVsDfAq2D0Sx68w8sxB+IXsdJcGINmgcckJkl2CYyBhzjlr8hK76TtJ4OOxceOg3Yz2wPloxJnHFZ5NXJch0CqLy2+gmRCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761260025; c=relaxed/simple;
-	bh=0QE8HvEHK4lycLqYEDfV2CS/pvTBWa9mkZGA2KfSSHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Llj8x88P4ZLeiQtyEL6IfJlyGW7h9nmSPlKU+Ln2+wQqFtmi30Yuvlg3GsPXnRBQsoE4zOzhtCa+0bzo6BWp17l7Wz2TYA1ZgwjYXGIOaRS5cg3TTqWwd1D7vbG8Fx6CxxdXxgIgda7VSmdzswq+AiPCxEzJbKtfubxUe3eWqf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V6TlFm0d; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761260024; x=1792796024;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=0QE8HvEHK4lycLqYEDfV2CS/pvTBWa9mkZGA2KfSSHQ=;
-  b=V6TlFm0dkgDsZtJ84kQFxs4ZIcZAqOQUYcf15NrlPe67wGuEb5XKE/o7
-   N4AfS76ZNN+JLXBV8yHwVLiahHhfp8Pq8CKvajfiuihCAdA7JyIbDMbEy
-   9ObfvqKlyvZMN0U3zv6obVzPE+nm3C9WaTtWoPkzxNNokEcd/MQ0sP6FW
-   vmiYH093Q6JOMSeA4dPbse/muFZR2DFBOTBHES+mcNon8KQJ9RAmRRysC
-   TqzOX+DlmGZz7AnXzVPc6awpjVGjA5+Ff4AiX4jTCInvfMRxOsgB0iDOw
-   MRHES9SDMbwt1YAmVghLOqsc2XEQekgwaFauzHVU6Gjri7GpfwF04HPG+
-   g==;
-X-CSE-ConnectionGUID: Q7aTGGuPRA+ShD8l306e8Q==
-X-CSE-MsgGUID: TZgw6Wm0QRWIU/BTeaeLPA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63590688"
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="63590688"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 15:53:44 -0700
-X-CSE-ConnectionGUID: PvghajoCTBme/3cRVLlAdA==
-X-CSE-MsgGUID: a9FEE0ZmSkSLJubWCsYzsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="185055696"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 23 Oct 2025 15:53:42 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vC4Bf-000DxJ-22;
-	Thu, 23 Oct 2025 22:53:39 +0000
-Date: Fri, 24 Oct 2025 06:52:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: arch/um/include/asm/kasan.h:29:2: error: UML does not work in
- KASAN_INLINE mode with STATIC_LINK enabled!
-Message-ID: <202510240649.RjPY0lml-lkp@intel.com>
+	s=arc-20240116; t=1761260022; c=relaxed/simple;
+	bh=DCAF7TtHftTvDj1OSSV058dCzxlVEwOr29KkxAHMvfQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fSoFIrrJVCmAhLvej8gExF97Kfy2yqm+pblMxGsnuIT1tsSzNR8Jyh3l463CjJ5scWhB8XoOjLdzWhOAJvET5CMiF5BRVzdY3z/XGebsZiKTALPKTwiyXRnEIewzZp1s1bTFUNKcaPCXHY4ETl5UTDTTrH6lWDH4VptYJP2t/M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=Ld0msfZ0; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1761260013;
+ bh=AG2rFEpBv1gq95qUgCmaFP4trd4HB0CSXHRiD4voN58=;
+ b=Ld0msfZ0tariHjuUPM5iQccX9hPHoj14dldgEM2PlnTKI8nVXvhZie8IjcLikHgbnEstYJ394
+ foawQkYy7GfJ0e6hHa6Uf85bf7hSUOJXEz3pHY3YhYjhTA2zCFLdnIGEIK3jHW+PFIDQjTIxgzH
+ B7rUxCOUJMaVty1rOLt5lIxDar4FgF8Z7UJ9oV36u/fpMh1i3UJOlBU+AK5sUvC4NkrZb5MxnUE
+ RztFEhIqdUQdvzaugZHS9+0hZE07AWiemB4lFv/wTxviRYZOlMofnRdnFPt4Y6K+kt4dcj7waDy
+ 4h5C3bmt7/9UfNpvlgQaRQDyFIXFI18nq8xExlJ5OX+A==
+X-Forward-Email-ID: 68fab1e82a3297951990cdf1
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.3.0
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <d28c81b0-3d50-46f7-876e-d634bcab2cd0@kwiboo.se>
+Date: Fri, 24 Oct 2025 00:53:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 12/15] media: rkvdec: Add H264 support for the VDPU381
+ variant
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Heiko Stuebner <heiko@sntech.de>, Ricardo Ribalda <ribalda@chromium.org>,
+ Hans Verkuil <hverkuil@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ Yunke Cao <yunkec@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ James Cowgill <james.cowgill@blaize.com>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com, Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Diederik de Haas <didi.debian@cknow.org>, linux-kernel@vger.kernel.org
+References: <20251023214247.459931-1-detlev.casanova@collabora.com>
+ <20251023214247.459931-13-detlev.casanova@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20251023214247.459931-13-detlev.casanova@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   266ee584e55eed108583ab4f45b5de734522502d
-commit: 1e338f4d99e6814ede16bad1db1cc463aad8032c kasan: introduce ARCH_DEFER_KASAN and unify static key across modes
-date:   5 weeks ago
-config: um-randconfig-r064-20251024 (https://download.01.org/0day-ci/archive/20251024/202510240649.RjPY0lml-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project e1ae12640102fd2b05bc567243580f90acb1135f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510240649.RjPY0lml-lkp@intel.com/reproduce)
+Hi Detlev,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510240649.RjPY0lml-lkp@intel.com/
+On 10/23/2025 11:42 PM, Detlev Casanova wrote:
+> This decoder variant is found in Rockchip RK3588 SoC family.
+> 
+> Like for rkvdec on rk3399, it supports the NV12, NV15, NV16 and NV20
+> output formats and level up to 5.1.
+> 
+> The maximum width and height have been significantly increased
+> supporting up to 65520 pixels for both.
+> 
+> Also make sure to only expose the first core and ignore the other
+> until mutli-core is supported.
+> 
+> Fluster score for JVT-AVC_V1 is 129/135.
+> 
+> Tested-by: Diederik de Haas <didi.debian@cknow.org>  # Rock 5B
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  .../media/platform/rockchip/rkvdec/Makefile   |   1 +
+>  .../rockchip/rkvdec/rkvdec-h264-common.h      |   2 +
+>  .../rockchip/rkvdec/rkvdec-vdpu381-h264.c     | 469 ++++++++++++++++++
+>  .../rockchip/rkvdec/rkvdec-vdpu381-regs.h     | 427 ++++++++++++++++
+>  .../media/platform/rockchip/rkvdec/rkvdec.c   | 127 +++++
+>  .../media/platform/rockchip/rkvdec/rkvdec.h   |   4 +
+>  6 files changed, 1030 insertions(+)
+>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-h264.c
+>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-regs.h
 
-All errors (new ones prefixed by >>):
+[snip]
 
-   In file included from arch/um/kernel/asm-offsets.c:1:
-   In file included from arch/x86/um/shared/sysdep/kernel-offsets.h:5:
-   In file included from include/linux/crypto.h:18:
-   In file included from include/linux/slab.h:260:
-   In file included from include/linux/kasan.h:21:
->> arch/um/include/asm/kasan.h:29:2: error: UML does not work in KASAN_INLINE mode with STATIC_LINK enabled!
-      29 | #error UML does not work in KASAN_INLINE mode with STATIC_LINK enabled!
-         |  ^
-   In file included from arch/um/kernel/asm-offsets.c:1:
-   In file included from arch/x86/um/shared/sysdep/kernel-offsets.h:7:
-   In file included from include/linux/audit.h:13:
-   In file included from include/linux/ptrace.h:7:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:98:11: warning: array index 3 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-      98 |                 return (set->sig[3] | set->sig[2] |
-         |                         ^        ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/um/kernel/asm-offsets.c:1:
-   In file included from arch/x86/um/shared/sysdep/kernel-offsets.h:7:
-   In file included from include/linux/audit.h:13:
-   In file included from include/linux/ptrace.h:7:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:98:25: warning: array index 2 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-      98 |                 return (set->sig[3] | set->sig[2] |
-         |                                       ^        ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/um/kernel/asm-offsets.c:1:
-   In file included from arch/x86/um/shared/sysdep/kernel-offsets.h:7:
-   In file included from include/linux/audit.h:13:
-   In file included from include/linux/ptrace.h:7:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:99:4: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-      99 |                         set->sig[1] | set->sig[0]) == 0;
-         |                         ^        ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/um/kernel/asm-offsets.c:1:
-   In file included from arch/x86/um/shared/sysdep/kernel-offsets.h:7:
-   In file included from include/linux/audit.h:13:
-   In file included from include/linux/ptrace.h:7:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:101:11: warning: array index 1 is past the end of the array (that has type 'unsigned long[1]') [-Warray-bounds]
-     101 |                 return (set->sig[1] | set->sig[0]) == 0;
-         |                         ^        ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/um/kernel/asm-offsets.c:1:
-   In file included from arch/x86/um/shared/sysdep/kernel-offsets.h:7:
-   In file included from include/linux/audit.h:13:
-   In file included from include/linux/ptrace.h:7:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:114:11: warning: array index 3 is past the end of the array (that has type 'const unsigned long[1]') [-Warray-bounds]
-     114 |                 return  (set1->sig[3] == set2->sig[3]) &&
-         |                          ^         ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/um/kernel/asm-offsets.c:1:
-   In file included from arch/x86/um/shared/sysdep/kernel-offsets.h:7:
-   In file included from include/linux/audit.h:13:
-   In file included from include/linux/ptrace.h:7:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:114:27: warning: array index 3 is past the end of the array (that has type 'const unsigned long[1]') [-Warray-bounds]
-     114 |                 return  (set1->sig[3] == set2->sig[3]) &&
-         |                                          ^         ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/um/kernel/asm-offsets.c:1:
-   In file included from arch/x86/um/shared/sysdep/kernel-offsets.h:7:
-   In file included from include/linux/audit.h:13:
-   In file included from include/linux/ptrace.h:7:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:115:5: warning: array index 2 is past the end of the array (that has type 'const unsigned long[1]') [-Warray-bounds]
-     115 |                         (set1->sig[2] == set2->sig[2]) &&
-         |                          ^         ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/um/kernel/asm-offsets.c:1:
-   In file included from arch/x86/um/shared/sysdep/kernel-offsets.h:7:
-   In file included from include/linux/audit.h:13:
-   In file included from include/linux/ptrace.h:7:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:115:21: warning: array index 2 is past the end of the array (that has type 'const unsigned long[1]') [-Warray-bounds]
-     115 |                         (set1->sig[2] == set2->sig[2]) &&
-         |                                          ^         ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from arch/um/kernel/asm-offsets.c:1:
-   In file included from arch/x86/um/shared/sysdep/kernel-offsets.h:7:
-   In file included from include/linux/audit.h:13:
-   In file included from include/linux/ptrace.h:7:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:116:5: warning: array index 1 is past the end of the array (that has type 'const unsigned long[1]') [-Warray-bounds]
-     116 |                         (set1->sig[1] == set2->sig[1]) &&
-         |                          ^         ~
-   arch/x86/include/asm/signal.h:24:2: note: array 'sig' declared here
-      24 |         unsigned long sig[_NSIG_WORDS];
+> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> index f043b07c8e7d..bc3e35b82a11 100644
+> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
 
+[snip]
 
-vim +29 arch/um/include/asm/kasan.h
+> +/*
+> + * Some SoCs, like RK3588 have multiple identical VDPU cores, but the
+> + * kernel is currently missing support for multi-core handling. Exposing
+> + * separate devices for each core to userspace is bad, since that does
+> + * not allow scheduling tasks properly (and creates ABI). With this workaround
+> + * the driver will only probe for the first core and early exit for the other
+> + * cores. Once the driver gains multi-core support, the same technique
+> + * for detecting the first core can be used to cluster all cores together.
+> + */
+> +static int rkvdec_disable_multicore(struct rkvdec_dev *rkvdec)
+> +{
+> +	struct device_node *node = NULL;
+> +	const char *compatible;
+> +	bool is_first_core;
+> +	int ret;
+> +
+> +	/* Intentionally ignores the fallback strings */
+> +	ret = of_property_read_string(rkvdec->dev->of_node, "compatible", &compatible);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* The first compatible and available node found is considered the main core */
+> +	do {
+> +		node = of_find_compatible_node(node, NULL, compatible);
+> +		if (of_device_is_available(node))
+> +			break;
+> +	} while (node);
+> +
+> +	if (!node)
+> +		return -EINVAL;
+> +
+> +	is_first_core = (rkvdec->dev->of_node == node);
+> +
+> +	of_node_put(node);
+> +
+> +	if (!is_first_core) {
+> +		dev_info(rkvdec->dev, "missing multi-core support, ignoring this instance\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	return 0;
+> +}
 
-    27	
-    28	#if defined(CONFIG_STATIC_LINK) && defined(CONFIG_KASAN_INLINE)
-  > 29	#error UML does not work in KASAN_INLINE mode with STATIC_LINK enabled!
-    30	#endif
-    31	#else
-    32	static inline void kasan_init(void) { }
-    33	#endif /* CONFIG_KASAN */
-    34	
+The addition of rkvdec_disable_multicore should probably be split into a
+separate patch.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Please leave some more time for review before sending next version. I
+will try to do a more in depth review of this series this weekend, more
+feedback will follow.
+
+Regards,
+Jonas
+
+[snip]
 
