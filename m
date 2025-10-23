@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-866141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50ABFBFEFD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:29:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF62BBFEFCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D493D3523D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:29:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65BA819A1960
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72DC21ABD0;
-	Thu, 23 Oct 2025 03:29:26 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A0E21A421;
+	Thu, 23 Oct 2025 03:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Jqx9qei2"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440F9215F4A
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72151ACEDA
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761190166; cv=none; b=lLAW0dOS9i+n/4qbuv4679V6FvioUPDC3WU8MJB/d3KUEl7AaQhs8lqMPUBQMNZTpAbQuEdAwSaU+Db3ndJqGwn/ZHf2KaKlezAdQba1zLqdGOMLX4PFA5qazAbxDARqnVJSY+REmBnKaRk3ewt4KbUK5obn8FPrAPP7h+2XdXM=
+	t=1761190089; cv=none; b=k5sMOmeBikj4XRtR18bchjowXJ5hTkR7AbF5UGIBQRI9Jwrxk195haEXddr2wwKU25yRkzJhsRP9VzY4OMSUGEpitDoE/GULEnX0tqNeWPa3FvvW5MsVoNkQUwAC5TDv8xOvXcBOps4ejfPTytJmsl48VQh0+UbompaELDEWkIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761190166; c=relaxed/simple;
-	bh=RCZSGh4PwVbnssGD0Ep99NURJjnoNcltfPOBel3L4UI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y6S0AzmE1439ObachmIwS5rV7YuUGlJRasHBk8+LO6lTFDHlimm6sncbgohrkjw1MQypuyX2lWpq7N/n+eRYlxmIZP3ITMXJEZonQXMsL7nEYZPMY3ZYnIJkUK/RuZIgw9VoPYPn5jWIWWUIUcJ2Vdgpa+xWR/2F1eo39+W8kYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
-	by Atcsqr.andestech.com with ESMTPS id 59N3Q4Bw097416
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
-	Thu, 23 Oct 2025 11:26:04 +0800 (+08)
-	(envelope-from minachou@andestech.com)
-Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
- (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 23 Oct
- 2025 11:26:04 +0800
-From: Hui Min Mina Chou <minachou@andestech.com>
-To: <anup@brainfault.org>, <atish.patra@linux.dev>, <pjw@kernel.org>,
-        <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>
-CC: <kvm@vger.kernel.org>, <kvm-riscv@lists.infradead.org>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <tim609@andestech.com>, <minachou@andestech.com>,
-        <ben717@andestech.com>, <az70021@gmail.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?=
-	<rkrcmar@ventanamicro.com>
-Subject: [PATCH v3] RISC-V: KVM: flush VS-stage TLB after VCPU migration to prevent stale entries
-Date: Thu, 23 Oct 2025 11:25:17 +0800
-Message-ID: <20251023032517.2527193-1-minachou@andestech.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761190089; c=relaxed/simple;
+	bh=HDvsJVerANB6k8ZYzF4IUiyGfN9gVazoO/auRD7zCq4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SHRi8XZKgJ4AcFuR6s0ui2EPAc6C2JMnC0/KHQkjvmH7fht7FErPE2MIBIAjBOiSvtUYmj8jzD3mlqz/H/bKsC1yNsXO2Bib+RHNJUprvMIjjNRYPvz7q2fX2Rtx3ibQAxDgHTpABZQZqnDBY0HXw/AwwpiQXIamacyJON9lQHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Jqx9qei2; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761190080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=AoeKjWwnaxUejuF8nD7wrOVnfoZCZt8LH0kxVtkpQJY=;
+	b=Jqx9qei2JfA4DYBsArsRFkV6WKvjQ5Y2ZXjogunLhi35O4h2vjHC3WaxYroYkkO3ZmQoQ9
+	rtNRmbJ9gpDqJPFyOOgRSvXW9c/htmZCe8WDZBxmuiLokvqwOUORqYK16InrqngY/rpw3D
+	fMLtyakARgEpQU1feVHtKdhrVozNDFM=
+From: Kunwu Chan <kunwu.chan@linux.dev>
+To: paulmck@kernel.org,
+	frederic@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com,
+	josh@joshtriplett.org,
+	boqun.feng@gmail.com,
+	urezki@gmail.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev
+Cc: rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kunwu Chan <chentao@kylinos.cn>
+Subject: [PATCH] rcu: Improve comments for RCU_FANOUT and RCU_FANOUT_LEAF
+Date: Thu, 23 Oct 2025 11:27:42 +0800
+Message-Id: <20251023032742.2850029-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
- ATCPCS34.andestech.com (10.0.1.134)
-X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 59N3Q4Bw097416
+X-Migadu-Flow: FLOW_OUT
 
-From: Hui Min Mina Chou <minachou@andestech.com>
+From: Kunwu Chan <chentao@kylinos.cn>
 
-If multiple VCPUs of the same Guest/VM run on the same Host CPU,
-hfence.vvma only flushes that Host CPU’s VS-stage TLB. Other Host CPUs
-may retain stale VS-stage entries. When a VCPU later migrates to a
-different Host CPU, it can hit these stale GVA to GPA mappings, causing
-unexpected faults in the Guest.
+The original comments introduced in commit 05c5df31afd1
+("rcu: Make RCU able to tolerate undefined CONFIG_RCU_FANOUT"),
+contained confusing annotations.
 
-To fix this, kvm_riscv_gstage_vmid_sanitize() is extended to flush both
-G-stage and VS-stage TLBs whenever a VCPU migrates to a different Host CPU.
-This ensures that no stale VS-stage mappings remain after VCPU migration.
+Specifically, the #else and #endif comments did not clearly reflect
+their corresponding condition blocks, hampering readability.
 
-Fixes: 92e450507d56 ("RISC-V: KVM: Cleanup stale TLB entries when host CPU changes")
-Signed-off-by: Hui Min Mina Chou <minachou@andestech.com>
-Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
-Reviewed-by: Radim Krčmář <rkrcmar@ventanamicro.com>
+Fixes condition branch comments. And adds explicit explanations of
+the overall purpose:
+defining middle/leaf fan-out parameters, their relation to Kconfig,
+and how they shape the RCU hierarchy based on CPU count.
+
+Make the hierarchical configuration logic of the RCU easier to understand.
+
+Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
 ---
-v3:
-- Resolved build warning; updated header declaration and call side to
-  kvm_riscv_local_tlb_sanitize
+ include/linux/rcu_node_tree.h | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-v2:
-- Updated Fixes commit to 92e450507d56
-- Renamed function to kvm_riscv_local_tlb_sanitize
-
- arch/riscv/include/asm/kvm_vmid.h | 2 +-
- arch/riscv/kvm/vcpu.c             | 2 +-
- arch/riscv/kvm/vmid.c             | 8 +++++++-
- 3 files changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/arch/riscv/include/asm/kvm_vmid.h b/arch/riscv/include/asm/kvm_vmid.h
-index ab98e1434fb7..75fb6e872ccd 100644
---- a/arch/riscv/include/asm/kvm_vmid.h
-+++ b/arch/riscv/include/asm/kvm_vmid.h
-@@ -22,6 +22,6 @@ unsigned long kvm_riscv_gstage_vmid_bits(void);
- int kvm_riscv_gstage_vmid_init(struct kvm *kvm);
- bool kvm_riscv_gstage_vmid_ver_changed(struct kvm_vmid *vmid);
- void kvm_riscv_gstage_vmid_update(struct kvm_vcpu *vcpu);
--void kvm_riscv_gstage_vmid_sanitize(struct kvm_vcpu *vcpu);
-+void kvm_riscv_local_tlb_sanitize(struct kvm_vcpu *vcpu);
+diff --git a/include/linux/rcu_node_tree.h b/include/linux/rcu_node_tree.h
+index 78feb8ba7358..b03c0ce91dec 100644
+--- a/include/linux/rcu_node_tree.h
++++ b/include/linux/rcu_node_tree.h
+@@ -25,26 +25,34 @@
+ /*
+  * Define shape of hierarchy based on NR_CPUS, CONFIG_RCU_FANOUT, and
+  * CONFIG_RCU_FANOUT_LEAF.
++ * - RCU_FANOUT: Controls fan-out of middle levels in the RCU hierarchy.
++ * - RCU_FANOUT_LEAF: Controls fan-out of the leaf level (directly managing CPUs).
++ *
++ * These parameters are determined by Kconfig options if configured; otherwise,
++ * they use sensible defaults based on system architecture (for RCU_FANOUT)
++ * or a fixed default (for RCU_FANOUT_LEAF).
+  * In theory, it should be possible to add more levels straightforwardly.
+  * In practice, this did work well going from three levels to four.
+  * Of course, your mileage may vary.
+  */
  
- #endif
-diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-index 3ebcfffaa978..796218e4a462 100644
---- a/arch/riscv/kvm/vcpu.c
-+++ b/arch/riscv/kvm/vcpu.c
-@@ -968,7 +968,7 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
- 		 * Note: This should be done after G-stage VMID has been
- 		 * updated using kvm_riscv_gstage_vmid_ver_changed()
- 		 */
--		kvm_riscv_gstage_vmid_sanitize(vcpu);
-+		kvm_riscv_local_tlb_sanitize(vcpu);
++/* Define RCU_FANOUT: middle-level fan-out parameter */
+ #ifdef CONFIG_RCU_FANOUT
+ #define RCU_FANOUT CONFIG_RCU_FANOUT
+-#else /* #ifdef CONFIG_RCU_FANOUT */
++#else /* #ifndef CONFIG_RCU_FANOUT */
+ # ifdef CONFIG_64BIT
+ # define RCU_FANOUT 64
+ # else
+ # define RCU_FANOUT 32
+ # endif
+-#endif /* #else #ifdef CONFIG_RCU_FANOUT */
++#endif
  
- 		trace_kvm_entry(vcpu);
++/* Define RCU_FANOUT_LEAF: leaf-level fan-out parameter (manages CPUs directly) */
+ #ifdef CONFIG_RCU_FANOUT_LEAF
+ #define RCU_FANOUT_LEAF CONFIG_RCU_FANOUT_LEAF
+-#else /* #ifdef CONFIG_RCU_FANOUT_LEAF */
++#else /* #ifndef CONFIG_RCU_FANOUT_LEAF */
+ #define RCU_FANOUT_LEAF 16
+-#endif /* #else #ifdef CONFIG_RCU_FANOUT_LEAF */
++#endif
  
-diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
-index 3b426c800480..6323f5383d36 100644
---- a/arch/riscv/kvm/vmid.c
-+++ b/arch/riscv/kvm/vmid.c
-@@ -125,7 +125,7 @@ void kvm_riscv_gstage_vmid_update(struct kvm_vcpu *vcpu)
- 		kvm_make_request(KVM_REQ_UPDATE_HGATP, v);
- }
- 
--void kvm_riscv_gstage_vmid_sanitize(struct kvm_vcpu *vcpu)
-+void kvm_riscv_local_tlb_sanitize(struct kvm_vcpu *vcpu)
- {
- 	unsigned long vmid;
- 
-@@ -146,4 +146,10 @@ void kvm_riscv_gstage_vmid_sanitize(struct kvm_vcpu *vcpu)
- 
- 	vmid = READ_ONCE(vcpu->kvm->arch.vmid.vmid);
- 	kvm_riscv_local_hfence_gvma_vmid_all(vmid);
-+
-+	/*
-+	 * Flush VS-stage TLBs entry after VCPU migration to avoid using
-+	 * stale entries.
-+	 */
-+	kvm_riscv_local_hfence_vvma_all(vmid);
- }
+ #define RCU_FANOUT_1	      (RCU_FANOUT_LEAF)
+ #define RCU_FANOUT_2	      (RCU_FANOUT_1 * RCU_FANOUT)
 -- 
-2.34.1
+2.25.1
 
 
