@@ -1,102 +1,155 @@
-Return-Path: <linux-kernel+bounces-867432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDEDC02A2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:04:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0751C02ABB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E421889828
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:01:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A60D6583B7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277FE340279;
-	Thu, 23 Oct 2025 16:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D698934573C;
+	Thu, 23 Oct 2025 16:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPZIU8bO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="iPjebUd6"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BD533F8DF
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5250E342C80
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761238331; cv=none; b=BlZo/ENw84q2S/TF1ZJOlBY7NEMhx6Q2WJeRAIBTnTtGJmETgUaA+x18lXev/m3eBxLUorqLAEtv7tW4HHsgeT1uXogFEYrRaT8NHaK7nORsatmdp/6p2AVSqhITHaJH5BDl/UKjAV6ScDCVTLZ4agS8FtIROwjop7nfSdXLYDU=
+	t=1761238342; cv=none; b=O2NVuHxMbYgC4tpfdxFLWDIbD9isFDVmJu4lX+hAhZ1+tKlWhKT9TrPRQtjGRoZs4w5K/zlMYo5vLzNZn26VVNZ+IO0eflt0ylbEDGgI2aWIBdUZUh9XdAyIeRK1WcdhL7kEW57dWGtf7iu08HWun+mx3E18Bn0+CmTvNEVItEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761238331; c=relaxed/simple;
-	bh=+xRBkG3Yznei7bfa+btKlosF8EF6f3qzPwRiGCSSb3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fDu+KU9LCQltwIdV4E6EIHxjyXkDX4OchQoSazF9wOTXJY6CKbNgWM/b05Mn+AOR4iuz2U2K9JITkTjFce3BE2F5FDfOlKGd+2/IY/0zIBQNQDAmwKF4LqDiU/9Njh/NdH0Deh9eRmX3FuXapl/qngBfDVHZ3ldDMFSjIJgLID4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPZIU8bO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2891BC4CEFF;
-	Thu, 23 Oct 2025 16:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761238330;
-	bh=+xRBkG3Yznei7bfa+btKlosF8EF6f3qzPwRiGCSSb3Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aPZIU8bOdrBTvimBJyVcMU+/In0iMQ5P6Wj1bUu6miPgDBd9Wxsh6puE7gYTDffOw
-	 nxEnXqPhPjTuqFKE1gy+JqJ39OaiR6S29lmQg6ObvZjqylBQqwflQr1W7aVsBPpKbC
-	 zmOI3B7yYIULLT+yKh5u3c4KHY39ii3TK0XBkKniaqNocgyofHO6F7l4BNp0341j3Y
-	 Bv6LxLxdS/hwvz0cTRy5kgLblQVjuC+VdOhoCKNSfOkkzFkdumst3nIbPTjtNACNjV
-	 N2MmGRVQEZwecoUIsmnYHVf4NHHjHg4U4ySR3cNE72dhB6tPuie/V5Og4uNTxEpD8T
-	 5bTLIfjc9ZSvA==
-Date: Thu, 23 Oct 2025 18:52:05 +0200
-From: Nathan Chancellor <nathan@kernel.org>
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Anshuman Gupta <anshuman.gupta@intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mei: late_bind: Fix
- -Wincompatible-function-pointer-types-strict
-Message-ID: <20251023165205.GD2090923@ax162>
-References: <20250920-drm-xe-fix-wifpts-v1-1-c89b5357c7ba@kernel.org>
- <qxvmx7nawbqjj5luzzken3psdei7pvgliieiv4vdxgumb2wpkx@p4ckdsds66ak>
+	s=arc-20240116; t=1761238342; c=relaxed/simple;
+	bh=MYsya6k0FMklTFgFGtkWPwZqZmzcxJGmInqsfxkrVak=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=frwo8U3lss2djg2BWEHFU0/s813LKddcPQK79Qskoaiydyj6N9JFup/vAHNJkfUz2D2oN+ISqeVwWoV7cpUHJDE4ATkgwxWmoDIZSRn2c+aDT086lOSX6Yya56HVdc4gAkBCUEPHVN36YD9m1qwwCyXycvgPreB8aGsTcaxi5nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=iPjebUd6; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 15189240103
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:52:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1761238331; bh=MLW5rBsuGqMhA8MEStZdhjex6YP9gBN8fGUV0QHuBzI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Autocrypt:OpenPGP:From;
+	b=iPjebUd60ANeTmiFaEpG3FQKh9dGVEvG/6fhT2G0wk70wzI9snXWJSgScnn76MPkt
+	 4cd0HpSmHgMMhbuaGTJBFiUXtiOGmrD91H0x8cCKj8622wu3vZ2m0B4ku06dtGEWbJ
+	 P68SVTwOhN9GDo8GOCaapPTEa5tfWnyorxpfVIa1klQxgXHK3c/s9/ZUD7pvoi+GBz
+	 b9jN97uqCnBBp6IIRTxEhdupBuywCbkoQWN2QmcX24e28HTO8u/JeH6UAVETs3In89
+	 IKzI2GRJVYE2kmrrfFhcNXQE3qO7xtyrXpZ+PLl47qVYIkgw24MvFbxWrUBWJqW/OS
+	 rsBIPc630Efgg==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cssWs6016z9rxD;
+	Thu, 23 Oct 2025 18:52:09 +0200 (CEST)
+From: Markus Probst <markus.probst@posteo.de>
+To: Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-ide@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Markus Probst <markus.probst@posteo.de>
+Subject: [PATCH v4 0/3] Support power resources defined in acpi on ata
+Date: Thu, 23 Oct 2025 16:52:10 +0000
+Message-ID: <20251023165151.722252-1-markus.probst@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <qxvmx7nawbqjj5luzzken3psdei7pvgliieiv4vdxgumb2wpkx@p4ckdsds66ak>
+Content-Transfer-Encoding: 8bit
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On Thu, Oct 23, 2025 at 09:27:03AM -0500, Lucas De Marchi wrote:
-> On Sat, Sep 20, 2025 at 04:17:50PM -0700, Nathan Chancellor wrote:
-> > When building with -Wincompatible-function-pointer-types-strict, a
-> > warning designed to catch kernel control flow integrity (kCFI) issues at
-> > build time, there is an instance in the new mei late binding code
-> > originating from the type parameter of mei_lb_push_payload():
-> > 
-> >  drivers/misc/mei/mei_lb.c:211:18: error: incompatible function pointer types initializing 'int (*)(struct device *, u32, u32, const void *, size_t)' (aka 'int (*)(struct device *, unsigned int, unsigned int, const void *, unsigned long)') with an expression of type 'int (struct device *, enum intel_lb_type, u32, const void *, size_t)' (aka 'int (struct device *, enum intel_lb_type, unsigned int, const void *, unsigned long)') [-Werror,-Wincompatible-function-pointer-types-strict]
-> >    211 |         .push_payload = mei_lb_push_payload,
-> >        |                         ^~~~~~~~~~~~~~~~~~~
-> > 
-> > While 'unsigned int' and 'enum intel_lb_type' are ABI compatible, hence
-> > no regular warning from -Wincompatible-function-pointer-types, the
-> > mismatch will trigger a kCFI violation when mei_lb_push_payload() is
-> > called indirectly.
-> > 
-> > Update the type parameter of mei_lb_push_payload() to be 'u32' to match
-> > the prototype in 'struct intel_lb_component_ops', clearing up the
-> > warning and kCFI violation.
-> > 
-> > Fixes: 741eeabb7c78 ("mei: late_bind: add late binding component driver")
-> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> 
-> Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
-> 
-> Sasha, is this fix something you are taking through char-misc since the
-> commits that added it already propagated through the 6.18-rc?
+This series adds support for power resources defined in acpi on ata
+ports/devices. A device can define a power resource in an ata port/device,
+which then gets powered on right before the port is probed. This can be
+useful for devices, which have sata power connectors that are:
+  a: powered down by default
+  b: can be individually powered on
+like in some synology nas devices. If thats the case it will be assumed,
+that the power resource won't survive reboots and therefore the disk will
+be stopped.
 
-It looks like Greg already took this via char-misc-linus:
+Changes since v3:
+- rename function from "ata_port_set_power_state"
+  to "ata_acpi_port_power_on" and remove enable argument
+- split "ata_acpi_port_power_on" and "ata_acpi_dev_manage_restart" into
+  two commits
+- improved commit messages
+- improved comments (style and new comments)
 
-https://git.kernel.org/gregkh/char-misc/c/98718e80af0bb1cd80f4bfe565dd60c57debad51
+Changes since v2:
+- improved commit messages
+- addressed warning from kernel test robot
 
-Cheers,
-Nathan
+Changes since v1:
+- improved commit messages
+- addressed style issues (too long lines and docs)
+- removed ata_dev_manage_restart() and ata_port_set_power_state()
+  methods
+- improved log messages in ata_acpi_port_set_power_state
+
+Markus Probst (3):
+  scsi: sd: Add manage_restart device attribute to scsi_disk
+  ata: stop disk on restart if ACPI power resources are found
+  ata: Use ACPI methods to power on disks
+
+ drivers/ata/libata-acpi.c  | 68 ++++++++++++++++++++++++++++++++++++++
+ drivers/ata/libata-core.c  |  2 ++
+ drivers/ata/libata-scsi.c  |  1 +
+ drivers/ata/libata.h       |  4 +++
+ drivers/scsi/sd.c          | 35 +++++++++++++++++++-
+ include/scsi/scsi_device.h |  6 ++++
+ 6 files changed, 115 insertions(+), 1 deletion(-)
+
+-- 
+2.51.0
+
 
