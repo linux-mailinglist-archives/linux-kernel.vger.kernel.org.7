@@ -1,149 +1,150 @@
-Return-Path: <linux-kernel+bounces-866480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C30BFFE22
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:23:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D524FBFFE41
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93BD64F9915
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CEEC1A606DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACD02F6563;
-	Thu, 23 Oct 2025 08:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF97C2F5A3F;
+	Thu, 23 Oct 2025 08:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="HXPa/5G4"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M3D/dYor"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C878F2F3C30
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31022FBE08
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761207711; cv=none; b=PvFI6B/jX8xb6LLBkO4WI5QZ2qSYEx3IO6E1qw63YNdkjq9jvp0unJ3HhpKyJB+1586t/6x6+9k78ypQVxrTPpNfa0U+Gp3VWC/dRwUg8gX/ufapEjhO/haWf1zGQyAC9oVwvin4EUpQCMIVCQxTW3/sar7MBUaA9EWU0bh5UYI=
+	t=1761207747; cv=none; b=F5jqGMkjQbj9EO3ys8GQEIOTP/Y2zMm2gIX/qYHAmLjr0rUA4PIWCSl30dx9hW74/6/jK7EzIZm2PJG7+uMCRmtwcX+PhgXNN7i2BQ3mLJvjlXXyxfUdj/ZUxaqoAAgAQ884IxsllirikINlrgaMdMBXEa9JaF5fJP33md6l4mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761207711; c=relaxed/simple;
-	bh=pgRaKIs6od0eFwYqqrJU6RY3VmvIaH4v1rOFEhr8j0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tphwuAka47TcoUherGJLK2lhAWJSaVnyUxjt+Gl33RVUZ7in4Leq1citnU8GpC25hsZpwTI4b9zKHq2h7SYrIH/zMefTTjGFBV5hyGbDkLY/eibFJ/+JYIchwTlzznenMDaK/1gGlrDWjoK445miRLnSzWFKYjxgTyhfBtw7kPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=HXPa/5G4; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-378d65d8184so6610311fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:21:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google; t=1761207707; x=1761812507; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TByexTGBy5Gp/RFWC94cXxG9Os7YYgZ+RwohhIq2r5M=;
-        b=HXPa/5G45sACGko3ijOusMNI2kznEwecri4PKOyPqiaTL0ftCfrVcPzDI5N3jfQB3h
-         r6YzGSDui88JzjVV/9k8kJOUsGXvl6E/eF3UGrcxlz9+3rjuRLkTiIj5duii4QYV8aL+
-         4iuvKeQGU2v3Q+8dlj14TeuoSyWktW8cN/3Ag=
+	s=arc-20240116; t=1761207747; c=relaxed/simple;
+	bh=S4vW/Rc/0VyuVVLJvAg90iQZN++icVTdUocdP09y+/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ARgB/M5diqu0+KHDMCl3aC2qXoXUvuJW56tBbEpfDEZTPPy4iHwUiw6G3BwNK52VFyKpbDRr3H140hn09XSgPfPHQJ9dZSwqW7/6h3ps7HdEuoIHb7qsnuRJtdFgr2e9fGjxrTXnVZLpKaOaEizi+wzVO45oRLM8l7tGN12MLvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M3D/dYor; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6tagN019818
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:22:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8FruMMDEn1euhlML1huGGXWeCVKOxK18le6bqpoMasM=; b=M3D/dYorK3RcIt7H
+	jJ55aYz/7RKPCryvULpMhjyJ9CHcFylvfk/9r8H9Tn2J8jtVr2TgatzdVW5ocAzz
+	KlFXjdcFtGC3bI4brJU+UxlgCUrsy5NCxQB6AFvK423OOVRf7+11JVVAhbuDANhJ
+	L2L0yPns8sRASb9lkySjZ9xkYdGQ37kadKwbrS0+vxDvNpJXaJq93zyvQhvMMlV2
+	Bzktpfq7R8KJtQyDbqDVqOjpjPsKyx+65fIbayk+NxEHOc+CbVMUjr0YnSCjgUfY
+	y/2yIXnKfwTbicUp8R09X6pNgtrzl6ZCx+riHFJkKiF4FLWyXcaqCqisfooJCSrT
+	FXqyfg==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xkpsd7ck-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:22:19 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-87dfd456d01so1848226d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:22:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761207707; x=1761812507;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TByexTGBy5Gp/RFWC94cXxG9Os7YYgZ+RwohhIq2r5M=;
-        b=ZI9AR8VoO25s+/dao9MxNPiLY3u7lCt1Ynl3KMpnsz3bzV9gfynEjbu5rFBg9wlSY6
-         1ZbSuboOKilhbTXO77EhpMLELUDOWgukKY1dDgQpfCAZi8Cxh3Kpe0kclFY307KD4vJd
-         lIYmPRw+8Z//wmHT3hXCumDz1EFZGfzVZZAwNJM8VdupJX4lQac4CVNvBjNwioFyif+A
-         hIsQ9iaxDQy5msYW1fmrlueEhFKOB6EP0RVjWnW7+iK+0hhELrhtvQssPv752/lVShX2
-         MLcJJIJISn7lapkyKT9Pk384k7o0Fso/cJgaBBIYL/P7RqL4ng4Fryln/uUoD4a6Flvv
-         B3oA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFaaFMmSScMpfTlp/mIvF4A1CNQTWlI4V2Zf3u/RF+qoC3QUrQa65tPRXCfyEW8yOziwxuzMubC0JtXYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQXCles9zjIdzgq/MAUsjhOPspIsmnhxmqJp96h2l1ipmiIg8w
-	rE6q94mbzcVSstX0YcuoB1GOFYWG4JIiLqsPnp/gBtlAbH+vJYUcv2naoR9bKjNPy18R9OPvKYD
-	ziFERQlw=
-X-Gm-Gg: ASbGnctl6z6ELJkhbn1If884mAYuqc+ZF3P2iLEDBXhYQDGRgW8VUKgefkxBEVcoiwy
-	fbL2RSxZ441vOkC5HMU2hWs+zNbSuMulSsMzUHfQ7ZVW0vjeT2KpwLt7Ek3KRNlQqaU45SFyszn
-	LEKF4mV2p0C2v06/CjsgeT8DUo6go7Z/PvTNAhVOsy32WzvQNUA8kNtFDpNbrr/i2Cb1JLziDRo
-	fXA0FgyBvp3dTWnmseJKYxxf5IQ2+kuPtJBT1wY71ODnrr+g8VCrNs4LXew8tBtdm6Gy71U1zdc
-	oz8vv4zyUr5OT7/hBxUyx7RPOZkr6YVHnMa/m+Sax1/87Dbg+16D9MmJtHZtyJ1UXakX8OGGsWL
-	6W0C8uHDpkhvgu+8YRyk22mm44TIKPAk9Zc6TM9iEMwuJXEdhiUTWYR2YOOrguJWeT/xEBModVC
-	XdWAr0HKCCZRk+6Q==
-X-Google-Smtp-Source: AGHT+IF5PkyzpJwpjSOJHc7K9JLi3coycHYDHHhCZspJ09bDYqz9X5m4UzYaiIOgYvkJOFHvN40npQ==
-X-Received: by 2002:a2e:bd83:0:b0:36d:4996:1c4d with SMTP id 38308e7fff4ca-37797831b7cmr67162081fa.9.1761207706694;
-        Thu, 23 Oct 2025 01:21:46 -0700 (PDT)
-Received: from localhost ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4d168d4sm534702e87.56.2025.10.23.01.21.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 01:21:46 -0700 (PDT)
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	David Sterba <dsterba@suse.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH] fs/pipe: stop duplicating union pipe_index declaration
-Date: Thu, 23 Oct 2025 10:21:42 +0200
-Message-ID: <20251023082142.2104456-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1761207738; x=1761812538;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8FruMMDEn1euhlML1huGGXWeCVKOxK18le6bqpoMasM=;
+        b=YYYKcHX12bRlmfFBUSgmm9nWKHnoTWmjkNlxnL0GP8BUx+v4zMl40F9JbhDLUjN5To
+         8r+3QZL6zm6CFSW2aLB8c3v1NlsFNUZECq8Ry7/tEFMD+ZVBRYYCvQy/DKIa2SYfohXi
+         X3ID7DuYOYSilPhYVAxaV27Rrtyo/xoYC4aLLtB/ltAg8ujGh8xoZYCRcnqVonvkaWCH
+         nLjzKvKpqomYBrpvUtZ2B0N99RtRjDQaGEo3VOWjTI/La7JINJnqGemXUtywe5mZgGLr
+         X7lDEv3iNTDKslv0+yLx/zOXZp5MEUVHOoEcbJK6ahM8MF/Jx1LPM8is4gcApaJ2yNXY
+         bABw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPFVpJGBktZLt22+EZLv9gO07tlYuz2SrF1YpPVc8l/egvqLuFE7SfG0R9tl/+5YyLfIjURPEqiSPe544=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzARi2tUJLc6eku1nCD86nKLBLzngFiIYFxMZuvQYeMFHKBEoTH
+	lLme2eBQIwUXvH/0eLL+NjQszcC+C9LP/uCRMNNBI38kFBx0VGeDuAb81Fd8O78i/2h7AaMFgM1
+	Kfh7R9FfYz9GcQwgbDA08v0Ll94SR52vXeWvE7C7c4f2Qcz4e6ARGZG7uNZHo1GWY7WE=
+X-Gm-Gg: ASbGncs2ZhpnIsmWD+CxHR+I+97xqZE29RuAgTE1IeGnATeQ4mw0y+y6IBgfzASj2DF
+	ouFuCsp9hJkVlPO9x6PA3p0ldcogTDQ9h6NrK/4vB3H+En/aT88XAnKxaAKXW/j3SQ0KRRhT//f
+	yuuKceqJoLqXzFINTPXjyC3NhnEnethkzIJ/8K39h4NePEb8XWr1/KM76VzwJSn6rCm2ZD92617
+	fNyclGk2iDIeZ33ekTmXmxWpQYLmr/KOzBk2550XYIsSYyFYr2bgKaO44kw35RvgVqLaCbfWv08
+	G+ZEzvLzIMOvvXHRNTxPyapo9skjBQc+Xox6vIOHAtGWAlnYjJhmKKz0E2Vw7TEfhMf8Ejii9xE
+	iV2X6iPml3vehJMTifLGh7QWkpEkzUsnEMt92bG27NJvp573BEMUt6ede
+X-Received: by 2002:a05:622a:20a:b0:4e8:9ed2:78fa with SMTP id d75a77b69052e-4ea116a2337mr82965451cf.1.1761207737721;
+        Thu, 23 Oct 2025 01:22:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2XIoSLrV1GTocr6bbATcJdQVR3JTJAVs0QtA04SjsNS+0NDII1q5KQNFmWxX0Qxq+jTp1XQ==
+X-Received: by 2002:a05:622a:20a:b0:4e8:9ed2:78fa with SMTP id d75a77b69052e-4ea116a2337mr82965141cf.1.1761207737193;
+        Thu, 23 Oct 2025 01:22:17 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d51471c24sm157607666b.75.2025.10.23.01.22.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 01:22:16 -0700 (PDT)
+Message-ID: <4f9573d3-41a4-4478-8c19-39716b29f587@oss.qualcomm.com>
+Date: Thu, 23 Oct 2025 10:22:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/12] drm/panel: Set sufficient voltage for panel nt37801
+To: yuanjie yang <yuanjie.yang@oss.qualcomm.com>, robin.clark@oss.qualcomm.com,
+        lumag@kernel.org, abhinav.kumar@linux.dev, sean@poorly.run,
+        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
+        quic_khsieh@quicinc.com, neil.armstrong@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
+        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
+References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
+ <20251023080609.1212-1-yuanjie.yang@oss.qualcomm.com>
+ <20251023080609.1212-2-yuanjie.yang@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251023080609.1212-2-yuanjie.yang@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE5MCBTYWx0ZWRfX3ePcvfLs15e5
+ VW5xbMc5IwRq5Jv8+LRUjmoLsYvyL7qYAzpRSJxadC38AKAL7iCCKKvC9dMVRjtZy0gXIJ7jtOE
+ ZFIpSQvUp9RorrnivCcw//fX2gQZvKpyWnYr5kj9SlF0p4ehdNKJOZc6bz1MI6pwHqsosePuixm
+ xspd7ur0w9ToJvjzfi3wgJi6uAoF2yaAGZFSvYWnD4FhhV63kKv+GsWa6ilU+YJgG1tdcW6kYv/
+ 0OfnAE+WizOfDgCN4GTJucfgy8Oe0qP6X1aWMaFsAwJuoESPdTCS4aX7ePsmjN0DtuiTJYGxVPN
+ 8FusjBoPW2CJaIjIst7jqM0hPYBFUREpQWO2PzvKzEndC0k9oGmbAmLU1bUM0NlBIVRIRG3hNUG
+ AuM9x+ipXEVYIuFj3lkP/yQsKa0lmw==
+X-Authority-Analysis: v=2.4 cv=FbM6BZ+6 c=1 sm=1 tr=0 ts=68f9e5bb cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=91DCyrf_GaaWAzlYtecA:9 a=QEXdDO2ut3YA:10
+ a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-GUID: MOMSnsmasSRrKaykezBqitsR1hy2uuBY
+X-Proofpoint-ORIG-GUID: MOMSnsmasSRrKaykezBqitsR1hy2uuBY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510210190
 
-Now that we build with -fms-extensions, union pipe_index can be
-included as an anonymous member in struct pipe_inode_info, avoiding
-the duplication.
+On 10/23/25 10:06 AM, yuanjie yang wrote:
+> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> 
+> The NT37801 Sepc V1.0 chapter "5.7.1 Power On Sequence" states
+> VDDI=1.65V~1.95V, so set sufficient voltage for panel nt37801.
+> 
+> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> ---
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
-Do we want to do this as well? At the very least it would give some
-more test coverage if this could be in -next for most of a cycle.
+This patch should have been sent separately as it's not at all
+related to extending the msm display driver to support Kaanapali
+*and* it goes through a different maintainer
 
-Context for new people:
-
-https://lore.kernel.org/lkml/CAHk-=wjeZwww6Zswn6F_iZTpUihTSNKYppLqj36iQDDhfntuEw@mail.gmail.com/
-https://lore.kernel.org/linux-kbuild/20251020142228.1819871-1-linux@rasmusvillemoes.dk/
-
- include/linux/pipe_fs_i.h | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
-
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 9d42d473d201..80539972e569 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -44,12 +44,6 @@ typedef unsigned int pipe_index_t;
- typedef unsigned short pipe_index_t;
- #endif
- 
--/*
-- * We have to declare this outside 'struct pipe_inode_info',
-- * but then we can't use 'union pipe_index' for an anonymous
-- * union, so we end up having to duplicate this declaration
-- * below. Annoying.
-- */
- union pipe_index {
- 	unsigned long head_tail;
- 	struct {
-@@ -87,14 +81,7 @@ struct pipe_inode_info {
- 	struct mutex mutex;
- 	wait_queue_head_t rd_wait, wr_wait;
- 
--	/* This has to match the 'union pipe_index' above */
--	union {
--		unsigned long head_tail;
--		struct {
--			pipe_index_t head;
--			pipe_index_t tail;
--		};
--	};
-+	union pipe_index;
- 
- 	unsigned int max_usage;
- 	unsigned int ring_size;
-
-base-commit: 778740ee2d00e5c04d0c8ffd9c3beea89b1ec554
--- 
-2.51.0
-
+Konrad
 
