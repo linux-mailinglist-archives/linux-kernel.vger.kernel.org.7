@@ -1,141 +1,163 @@
-Return-Path: <linux-kernel+bounces-866444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6A4BFFC55
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:05:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F51FBFFCE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C66B11A041A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:05:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492661A02355
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF082EAB70;
-	Thu, 23 Oct 2025 08:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C0F2EBDF4;
+	Thu, 23 Oct 2025 08:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGLCupcQ"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MYgfIPNv"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0663A2EA726
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366FB2EB849;
+	Thu, 23 Oct 2025 08:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761206712; cv=none; b=JWcpIhqEVlSQRdq+PP2eP0dxzQnp0Vw9WEj8d+4N8bKkMIqvxOSBPPyE6PQm2yVR57bBWWr0Vt0myB8DKBDRsfX9K0Gm8AIz4cQbBBB3ld9KqKTpO6AVhZXD77lZT73iz3TPsVBKzyv8jNTZ12TSvmC/Zv9RxEt+XTLMMWRvBjI=
+	t=1761207000; cv=none; b=jvFxrlmFLofFtAhALr3fnvzWAXkIhHiK9jg1VRdb9mt8Tiw6eUlb7U2beAwDVWZapmYmTABx1fcBywqDnN+tu4RBZBo2niTa8quQN66MCKO/Xqp8oOmEjQ0ubW1hxnvzSZ3ZapraZlJUyYOU7AP4NfxsAhWCjWFA52TBCterEM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761206712; c=relaxed/simple;
-	bh=uenJqlf3e66UMXFExS48wtCY8JhRvrFAkCESiVUPJRI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VRyqCJLxeFajPE5K07d/vnzrw/bpaYEduzaS/7mTuOa0km/yRb/joku9KfVwalwjsdEEZ1kL/XmV1n7K0XMAUxv19cWaxi+TgGXRh8qvXYxciVSm1JCKJWxvG/zNrKfVqm++quRrIM/BZmist0oh3EbXUAaUBBBFQsygAsm22Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MGLCupcQ; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-29476dc9860so2155875ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:05:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761206709; x=1761811509; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RCHm0KACniTLvgb3gmE8HVU4+2SySgaz3x9BwsInbnE=;
-        b=MGLCupcQYNru3F1CTgOBZerGa/BF3siZX+3IBxIE5jdG+XLnOBBBdSjfb70xp8zonE
-         PK8X3+mKSiCnWSaPqBHdrz9kOP2X8g8iZwfAfLCk4FLNRezAjgh1Mcu14DFfsu2rlQGC
-         fAa97XQQKZ9y+UjAIs55BDDxaNGnoKjqG8+lYJpheCa9sVUoAA+oxBy093P120B1PPMy
-         nExFFT9NG4hSZg9LL8JSZTDKDvR9xad6RZyCQ1lfqiVZI9RWPXoYCTKY9Zi0IQwHYDW4
-         wD2Tb8UhQwFG4AkfHi9/Ix1lWgeW2BuGhzwYK8JYU+YO/vPPs6I2C+KynUzPDmWZPZEo
-         jvVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761206709; x=1761811509;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RCHm0KACniTLvgb3gmE8HVU4+2SySgaz3x9BwsInbnE=;
-        b=QPRCZagkyKGc9bAcVD2o6ZyeNvBvr5twdK1f6icKunp6+7nSIx9zYS5V43+lzqyh5k
-         a4D/fnvN6k52G9lHkDr/wiU/6H5qev4sBF3nX4OQxnjuA4IHbkoq6Ye/D8XgcUehA4vm
-         fp4rXObdArOtwCy5rqhHYE3kgRMp1LHkKt0U6ZkhIMwuJV6xrWXIr70YgGlBLqymEhcB
-         NvWNae6k6owGJQy0iRmcSyajAjjpr6FdsoSEx8cyFEZ/3UsS0CCLReXCmEWvkvfo/oPv
-         7WFLK91Ig4Qqt6dZf3zM7ajWc0BWU6vwcprH3N/Hw/pNrX3NkYzRjxwystMU+FVkg4vC
-         2WMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhC6LirsvT19KRmqU6qWz9ynW2XKcTBZcJLqhr8U/f09XsxmsjnI1AlcbGj1WasIOormVddrHtWiWDo+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKy5KoTIqHdBI0ET3uavJRs9BeOKQHJto15Ju2NEnQJ8OCLvxU
-	BHMZZhNsur2ewA/+e+8ei6hyDocq3aGofIk7CBDxGfb1rv1HIIQZTSy9
-X-Gm-Gg: ASbGnctFH3Q5YcrPEETr1uKKrkUZ7dDwaVMee2ZKENao3x3K2drB8dDqLwpQjKg9IL0
-	9hAnSjB0E3wW23feDC1mUD3ErWUSsqBdqL2nGHHC/tdb056xKdQIhMa7W8FE+hWPT9V0AY91Q3F
-	kQL7s1sDQTJkJAtBBBMBRZhG0tguhM2fW1HN5ydxy85GicV7nUUJtOQLRq3FpC4CQbtjXGNUaIC
-	Uo8lAbA/MauiWLx/LRsr9QHaj07I4UUJfsU0KtyN7oHkMeiVTk7omHXP3utsho8BBaFF58WS9Th
-	TtR3Ie2sEfxD4s18JTfuTq1bE1IpAvlrpzdFSvhJlCohX9+FQ8iMHbuj4VPDsn03vIOD+JNTWuj
-	trH7JAjF6kbJ0KrkfH74pdPWaRTjJ1paZ2Dorh6VLzdrfTVxVnSikq7EJbGegOlQ+mI2l91Ra78
-	UYaCwY/vgqKg4QZ/Oc1UqMwxgdXkwchtA=
-X-Google-Smtp-Source: AGHT+IFJyW9aI17Ds63F5UcnrXm3r8U1d5XlNzVC7elX6HGJ4SlBhTj6fZB7wMcrSTEKSIld0vVEmg==
-X-Received: by 2002:a17:903:1a70:b0:274:5030:2906 with SMTP id d9443c01a7336-290cb27bcc3mr325069665ad.46.1761206708791;
-        Thu, 23 Oct 2025 01:05:08 -0700 (PDT)
-Received: from sw.. (220-128-98-63.hinet-ip.hinet.net. [220.128.98.63])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dfc1c8asm14952315ad.71.2025.10.23.01.05.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 01:05:08 -0700 (PDT)
-From: Szuying Chen <chensiying21@gmail.com>
-X-Google-Original-From: Szuying Chen <Chloe_Chen@asmedia.com.tw>
-To: akpm@linux-foundation.org,
-	andriy.shevchenko@linux.intel.com,
-	dan.j.williams@intel.com,
-	gourry@gourry.net,
-	jhubbard@nvidia.com,
-	akinobu.mita@gmail.com,
-	sumanthk@linux.ibm.com,
-	peterz@infradead.org,
-	huang.ying.caritas@gmail.com,
-	linux-kernel@vger.kernel.org
-Cc: Andrew_Su@asmedia.com.tw,
-	Yd_Tseng@asmedia.com.tw,
-	Ed_Huang@asmedia.com.tw,
-	Cindy1_Hsu@asmedia.com.tw,
-	Jesse1_Chang@asmedia.com.tw,
-	Richard_Hsu@asmedia.com.tw,
-	Chloe_Chen@asmedia.com.tw
-Subject: Re: [PATCH] kernel: resourse: Add conditional handling for ACPI device
-Date: Thu, 23 Oct 2025 16:04:55 +0800
-Message-Id: <20251023080455.19443-1-Chloe_Chen@asmedia.com.tw>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <aPPlVmJXKcMYmjXp@ashevche-desk.local>
-References: <aPPlVmJXKcMYmjXp@ashevche-desk.local>
+	s=arc-20240116; t=1761207000; c=relaxed/simple;
+	bh=UMHvqXKAXLDewNQALGomwABCwZxZfH+IN/9gnJya+fI=;
+	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To:
+	 Content-Type; b=ij/48k6s2I9fFVxIHUzbUKjvzhesU85f87w7CxguelYGICqkYGuJxFbmgrIjy8aWaUFWVNyX9sk32/S9/IrxS9jutRDvAjbEpwqgokMzjaIBNzk5fgNbCnTt/qoKG684LZzsJ1OkgfJSWRis0vozPRnbND0k1CPK1x4bnP3EJJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MYgfIPNv; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761206988; h=Message-ID:Subject:Date:From:To:Content-Type;
+	bh=0pwkfXQbGk5Oqq1wZCavhvUj7jR9C8by8Jut+zAJHnU=;
+	b=MYgfIPNvY1PihNggVFqC/poHpU3u8DaNEYW/1EoPFj1syMck3FRPHhlvTEdRWbOcVIqgNzauHSJzAQRf8KZ/dnZELxyWXoCNGN+KSQrW6clNxTu0VNy+zjTMS0+a4hGFDSjdxIKngnBlbnOUAyw3Eov8NC3XGvszBVqKyoVdAhk=
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WqqL4XV_1761206987 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 23 Oct 2025 16:09:47 +0800
+Message-ID: <1761206734.6182284-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH net v4] virtio-net: fix received length check in big packets
+Date: Thu, 23 Oct 2025 16:05:34 +0800
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: Bui Quang Minh <minhquangbui99@gmail.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>,
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Gavin Li <gavinl@nvidia.com>,
+ Gavi Teitz <gavi@nvidia.com>,
+ Parav Pandit <parav@nvidia.com>,
+ virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ Bui Quang Minh <minhquangbui99@gmail.com>,
+ stable@vger.kernel.org,
+ netdev@vger.kernel.org
+References: <20251022160623.51191-1-minhquangbui99@gmail.com>
+In-Reply-To: <20251022160623.51191-1-minhquangbui99@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 19, 2025 at 03:07AM, Andy Shevchenko wrote:
-> On Fri, Oct 17, 2025 at 10:35:31AM +0800, Szuying Chen wrote:
-> > To avoid address conflicts and related errors, specific checks for
-> > the ACPI device "AMDIF031" should be bypassed.
-> 
-> TL;DR: NAK.
-> 
-> No, this is not how we should do the quirks (besides the use of CamelCase).
-> Also, please provide more info why firmware may not be fixed properly at
-> the same time, so we won't need this on an updated version?
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+On Wed, 22 Oct 2025 23:06:23 +0700, Bui Quang Minh <minhquangbui99@gmail.co=
+m> wrote:
+> Since commit 4959aebba8c0 ("virtio-net: use mtu size as buffer length
+> for big packets"), when guest gso is off, the allocated size for big
+> packets is not MAX_SKB_FRAGS * PAGE_SIZE anymore but depends on
+> negotiated MTU. The number of allocated frags for big packets is stored
+> in vi->big_packets_num_skbfrags.
+>
+> Because the host announced buffer length can be malicious (e.g. the host
+> vhost_net driver's get_rx_bufs is modified to announce incorrect
+> length), we need a check in virtio_net receive path. Currently, the
+> check is not adapted to the new change which can lead to NULL page
+> pointer dereference in the below while loop when receiving length that
+> is larger than the allocated one.
+>
+> This commit fixes the received length check corresponding to the new
+> change.
+>
+> Fixes: 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big p=
+ackets")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+> ---
+> Changes in v4:
+> - Remove unrelated changes, add more comments
+> Changes in v3:
+> - Convert BUG_ON to WARN_ON_ONCE
+> Changes in v2:
+> - Remove incorrect give_pages call
+> ---
+>  drivers/net/virtio_net.c | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index a757cbcab87f..0ffe78b3fd8d 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -852,7 +852,7 @@ static struct sk_buff *page_to_skb(struct virtnet_inf=
+o *vi,
+>  {
+>  	struct sk_buff *skb;
+>  	struct virtio_net_common_hdr *hdr;
+> -	unsigned int copy, hdr_len, hdr_padded_len;
+> +	unsigned int copy, hdr_len, hdr_padded_len, max_remaining_len;
+>  	struct page *page_to_free =3D NULL;
+>  	int tailroom, shinfo_size;
+>  	char *p, *hdr_p, *buf;
+> @@ -915,13 +915,23 @@ static struct sk_buff *page_to_skb(struct virtnet_i=
+nfo *vi,
+>  	 * This is here to handle cases when the device erroneously
+>  	 * tries to receive more than is possible. This is usually
+>  	 * the case of a broken device.
+> +	 *
+> +	 * The number of allocated pages for big packet is
+> +	 * vi->big_packets_num_skbfrags + 1, the start of first page is
+> +	 * for virtio header, the remaining is for data. We need to ensure
+> +	 * the remaining len does not go out of the allocated pages.
+> +	 * Please refer to add_recvbuf_big for more details on big packet
+> +	 * buffer allocation.
+>  	 */
+> -	if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
+> +	BUG_ON(offset >=3D PAGE_SIZE);
+> +	max_remaining_len =3D (unsigned int)PAGE_SIZE - offset;
+> +	max_remaining_len +=3D vi->big_packets_num_skbfrags * PAGE_SIZE;
 
-The ACPI device AMDIF031 is a virtual (non-PCI) device located on the PCI
-upstream port. Its memory resource is assigned by the BIOS within the bridge
-windows of the PCI upstream port.
 
-When the kernel creates ACPI/AMDIF031 and verifies memory resources, it may
-detect an address conflict between AMDIF031 and the PCI upstream port. The
-kernel then attempts to reassign resources for the PCI upstream port tree,
-causing AMDIF031's memory resource to fall outside the bridge windows. This
-makes the device inaccessible.
+Could we perform this check inside `receive_big` to avoid computing
+`max_remaining_len` altogether? Instead, we could directly compare `len` ag=
+ainst
+`(vi->big_packets_num_skbfrags + 1) * PAGE_SIZE`.
 
-To prevent this and allow AMDIF031 to use the BIOS-assigned memory range,
-skip resource reallocation when an address conflict is detected for this 
-device.
+And I=E2=80=99d like to know if this check is necessary for other modes as =
+well.
 
-Thanks
-Chloe
+Thanks.
 
+
+
+> +	if (unlikely(len > max_remaining_len)) {
+>  		net_dbg_ratelimited("%s: too much data\n", skb->dev->name);
+>  		dev_kfree_skb(skb);
+>  		return NULL;
+>  	}
+> -	BUG_ON(offset >=3D PAGE_SIZE);
+> +
+>  	while (len) {
+>  		unsigned int frag_size =3D min((unsigned)PAGE_SIZE - offset, len);
+>  		skb_add_rx_frag(skb, skb_shinfo(skb)->nr_frags, page, offset,
+> --
+> 2.43.0
+>
 
