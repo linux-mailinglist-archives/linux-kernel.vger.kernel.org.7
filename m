@@ -1,97 +1,302 @@
-Return-Path: <linux-kernel+bounces-867141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4781C01B3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:18:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B045C01B42
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3057E3B2E36
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:07:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A8B3B6EB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2422A31D733;
-	Thu, 23 Oct 2025 14:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9AF31D758;
+	Thu, 23 Oct 2025 14:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjZSsazL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="AP8SnN0s"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5761430F544;
-	Thu, 23 Oct 2025 14:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761228450; cv=none; b=AgvGCVAwz62SauPlyJ0ptJoVdXzVoUYYENck/qZkdlrN50vTwtsEG7bD+7NtYJcUg1p4DiFp1wPfABmETSIaTc6ir4CilaQjf9391KCiTKSK2lbRAD5ccVAGqxuX62sU3SJb6RRmiHik08KLY1dgC6Ks/rvw7O0Bd3PW9MQYBSY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761228450; c=relaxed/simple;
-	bh=JwQLpCZil+iYyJLg+5cxLrOGFlc3x7C3P699NLnVNAw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=lYQMeM1kRvrApHIdAuD6neN7UQk088TU49OV0Bv+NzB3SXfCgWZFo/ULh+N9yKkY8RKD13ECYO9fJgH2LoaqBLf4Uq+3nddkFn83DrlPULV3VUc6E81WImgi3kVikY+oNTcQvKOmeC9k9JMY4yaNuCX/ammH/wi2TTK6vcsOCUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjZSsazL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95487C4CEE7;
-	Thu, 23 Oct 2025 14:07:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761228449;
-	bh=JwQLpCZil+iYyJLg+5cxLrOGFlc3x7C3P699NLnVNAw=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=OjZSsazLdapyeGKSNIxvnmSbyxj+os64UIaKEolDqwd/vD0Gp7AAi3ut/9LJ4wrE7
-	 cP77hQlMkP41nBf5j+s+H2pfeJFTTnkEW0hXQjy1HaQPJ3hz9+6drP7Gnn7BiYWYr4
-	 COUDWwbpUW+TNokbHzqmnHZGENHn2XX3SLf14Yv/SPKeA725IvzK7aSv1eITi+jJR1
-	 QMGzRuT2AzuyyxuXrPl/UymzOOWE0qXBjysaQfwaZjDVQfZqOHiU4x8AxYjp/aRjgl
-	 jVchVZDx88HuoGLSxRn7gZyqVpFImTw+PTQABisSkUjreWCr8CZAFo/JisxpR8q1d7
-	 TeNYiNnyOX4WA==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D7531BCB8;
+	Thu, 23 Oct 2025 14:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761228486; cv=pass; b=WirUK0WcLfrTMizc2CLBidNo/s5vcEWZuzA2As19Re7JyS6Tl0yJ4y2PO2uWONQiKkC4jOPTro/UIXd7IyhT/u7ZFOdI8DrY2of06AskjOn4nxusuTfrelNuQprwGUk/RfyHBo/6Flk66FP+NSXFOcNiRhcOuQk2jLqt2QAqdkk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761228486; c=relaxed/simple;
+	bh=GGx8e8MdSqy28KUToPNYLFH73/gYVKUsFzMFF8jI71E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KRboo0betGiwt4vaa4WZ/YgkARmYyKJ+247658WzeYm/nwuXbuxRdnuQ5lWMkZEk7ONZAiOIOuoza+wTA2J8hMCeZrnJzxeCtfdYeVzGCxGjD5LGCCUlkJ4v8xDH0fOOdybSMVwcJB71ri/UXXWHhRNugus9I+tXLfN2kFIS82w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=AP8SnN0s; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761228452; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QJTDz73q9ULElSJbe3UBcx+2Lh0bvt0HNsiJran5Vx51osYjS85rMDSnSIQ3D8wy4/5jWxUFB33nEv6gyOwj3VXh8p8BOzgzdIsQLkL2bgHCAcrqnBurjZdf9P7ar8l9Z18pFsADQr4gUEobSTfCMDZfk34f+CEs91kZGRTU20M=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761228452; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Zn87WStNUu8QnMPbdDiRsUi5A/QpkGCBEl8yDwMULUg=; 
+	b=LTpLW0BGhziv59wBl4U/yI/p/C7UWo1UnC0ZolcyfF7kM0SRjzxJpGPW1m0xAS/bNuMDSKdyjiqo5nCsc65riPiGB/oSsy7l4FaYkrsbgdOQgCq9fZwLMYyCAGU8hFgVW0XO/Zck5R2/XKbG1cEqQysrz3X3suS5DPMf8/a9JTg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761228452;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Zn87WStNUu8QnMPbdDiRsUi5A/QpkGCBEl8yDwMULUg=;
+	b=AP8SnN0sy9jK6LmZJPJ5zgN9OdYE/1DvKHCdkQNCHLsPQ1DZN3s027C/aUb+l4Wd
+	UhbHHc0zrptRAa8zRgFvAy5gpjv1rdRrdNbyqHYsX3MK8TbMgjBaNvH8/40DNlqtZwy
+	ZyStghdS8G1krBgZ694sxhxkSAyL0v2DCAYevoVI=
+Received: by mx.zohomail.com with SMTPS id 1761228449352726.4571148367125;
+	Thu, 23 Oct 2025 07:07:29 -0700 (PDT)
+Message-ID: <c7ea2422-cff3-46ad-8c46-20aa651a18d4@collabora.com>
+Date: Thu, 23 Oct 2025 10:07:27 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 Oct 2025 16:07:21 +0200
-Message-Id: <DDPRDKFEK3H3.2CE3YMXRTLGTI@kernel.org>
-Subject: Re: [PATCH v6 4/5] rust: Move register and bitfield macros out of
- Nova
-Cc: "Joel Fernandes" <joelagnelf@nvidia.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "rust-for-linux@vger.kernel.org"
- <rust-for-linux@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
- <dri-devel@lists.freedesktop.org>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- "joel@joelfernandes.org" <joel@joelfernandes.org>, "Elle Rhumsaa"
- <elle@weathered-steel.dev>, "Yury Norov" <yury.norov@gmail.com>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, "Andrea Righi"
- <arighi@nvidia.com>, "nouveau@lists.freedesktop.org"
- <nouveau@lists.freedesktop.org>
-To: "Beata Michalska" <beata.michalska@arm.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
- <20251003154748.1687160-5-joelagnelf@nvidia.com> <aPklNydcTdOeXtdU@arm.com>
- <ACAA327A-AE2B-4D21-B8C5-C66BB5E09B7C@nvidia.com>
- <aPozw8TGp85YdmNU@arm.com>
-In-Reply-To: <aPozw8TGp85YdmNU@arm.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/15] media: v4l2-ctrls: Add hevc_ext_sps_[ls]t_rps
+ controls
+To: Hans Verkuil <hverkuil+cisco@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Heiko Stuebner <heiko@sntech.de>, Ricardo Ribalda <ribalda@chromium.org>,
+ Hans Verkuil <hverkuil@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ Yunke Cao <yunkec@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ James Cowgill <james.cowgill@blaize.com>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com, Nicolas Dufresne <nicolas.dufresne@collabora.com>
+References: <20251022174508.284929-1-detlev.casanova@collabora.com>
+ <20251022174508.284929-3-detlev.casanova@collabora.com>
+ <6eaa8b26-edab-4bfa-9c6a-1fbb54c36b4e@kernel.org>
+Content-Language: en-US
+From: Detlev Casanova <detlev.casanova@collabora.com>
+In-Reply-To: <6eaa8b26-edab-4bfa-9c6a-1fbb54c36b4e@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Thu Oct 23, 2025 at 3:55 PM CEST, Beata Michalska wrote:
-> I guess everything that would use IoRequest::iomap(self), which generates
-> Io<SIZE=3D0> which is a game over for the macro.
+Hi Hans,
 
-To be honest, we may just want to remove this API. A driver that requires a=
- zero
-sized MMIO region with only optional runtime derived access offsets seems a=
- bit
-too exotic.
+On 10/23/25 04:04, Hans Verkuil wrote:
+> On 22/10/2025 19:44, Detlev Casanova wrote:
+>> The vdpu381 decoder found on newer Rockchip SoC need the information
+>> from the long term and short term ref pic sets from the SPS.
+>>
+>> So far, it wasn't included in the v4l2 API, so add it with new dynamic
+>> sized controls.
+>>
+>> Each element of the hevc_ext_sps_lt_rps array contains the long term ref
+>> pic set at that index.
+>> Each element of the hevc_ext_sps_st_rps contains the short term ref pic
+>> set at that index, as the raw data.
+>> It is the role of the drivers to calculate the reference sets values.
+>>
+>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+>> ---
+>>   drivers/media/v4l2-core/v4l2-ctrls-core.c | 18 +++++++
+>>   drivers/media/v4l2-core/v4l2-ctrls-defs.c | 10 ++++
+>>   include/uapi/linux/v4l2-controls.h        | 61 +++++++++++++++++++++++
+>>   include/uapi/linux/videodev2.h            |  2 +
+>>   4 files changed, 91 insertions(+)
+>>
+>> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-core.c b/drivers/media/v4l2-core/v4l2-ctrls-core.c
+>> index 7c660cd61e48..b330bd7719e9 100644
+>> --- a/drivers/media/v4l2-core/v4l2-ctrls-core.c
+>> +++ b/drivers/media/v4l2-core/v4l2-ctrls-core.c
+>> @@ -418,6 +418,12 @@ void v4l2_ctrl_type_op_log(const struct v4l2_ctrl *ctrl)
+>>   	case V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS:
+>>   		pr_cont("HEVC_SLICE_PARAMS");
+>>   		break;
+>> +	case V4L2_CTRL_TYPE_HEVC_EXT_SPS_ST_RPS:
+>> +		pr_cont("HEVC_EXT_SPS_ST_RPS");
+>> +		break;
+>> +	case V4L2_CTRL_TYPE_HEVC_EXT_SPS_LT_RPS:
+>> +		pr_cont("HEVC_EXT_SPS_LT_RPS");
+>> +		break;
+>>   	case V4L2_CTRL_TYPE_HEVC_SCALING_MATRIX:
+>>   		pr_cont("HEVC_SCALING_MATRIX");
+>>   		break;
+>> @@ -1248,6 +1254,12 @@ static int std_validate_compound(const struct v4l2_ctrl *ctrl, u32 idx,
+>>   	case V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS:
+>>   		break;
+>>   
+>> +	case V4L2_CTRL_TYPE_HEVC_EXT_SPS_ST_RPS:
+>> +		break;
+>> +
+>> +	case V4L2_CTRL_TYPE_HEVC_EXT_SPS_LT_RPS:
+>> +		break;
+>> +
+> There is nothing to validate here? Any value is fine? Just checking...
 
-That doesn't mean that occasionally we'll have drivers needing runtime offs=
-ets,
-so eventually we want to support that with the register!() macro, but it's =
-not
-*that* urgent.
+I don't think we can really validate anything here without more context: 
+e.g.: Cannot validate that a referenced frame is valid
+
+Even the num_negative_pics and num_positive_pics range ([0 16]) can't be 
+validated here without reconstructing the information, as it is done in 
+the driver (and I don't think that should be done twice).
+
+Maybe just the flags could be validated though.
+
+> Is this something that should be added to the visl driver so it is tested during regression
+> tests? Or does this not apply to visl?
+
+This could be added to visl indeed. Currently, the data is constructed 
+in the rkvdec driver as it is the only one using it, but if added to 
+visl, I'd add some v4l2 function to do the work and use it in rkvdec and 
+visl.
+
+Also, I think this should be part of another patchset, once this lands.
+
+>
+> I haven't looked in-depth into this, but I wondered about it.
+Detlev.
+>
+>>   	case V4L2_CTRL_TYPE_HDR10_CLL_INFO:
+>>   		break;
+>>   
+>> @@ -2000,6 +2012,12 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
+>>   	case V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS:
+>>   		elem_size = sizeof(struct v4l2_ctrl_hevc_slice_params);
+>>   		break;
+>> +	case V4L2_CTRL_TYPE_HEVC_EXT_SPS_ST_RPS:
+>> +		elem_size = sizeof(struct v4l2_ctrl_hevc_ext_sps_st_rps);
+>> +		break;
+>> +	case V4L2_CTRL_TYPE_HEVC_EXT_SPS_LT_RPS:
+>> +		elem_size = sizeof(struct v4l2_ctrl_hevc_ext_sps_lt_rps);
+>> +		break;
+>>   	case V4L2_CTRL_TYPE_HEVC_SCALING_MATRIX:
+>>   		elem_size = sizeof(struct v4l2_ctrl_hevc_scaling_matrix);
+>>   		break;
+>> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+>> index ad41f65374e2..167286c9e424 100644
+>> --- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+>> +++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+>> @@ -1233,6 +1233,8 @@ const char *v4l2_ctrl_get_name(u32 id)
+>>   	case V4L2_CID_STATELESS_HEVC_DECODE_MODE:		return "HEVC Decode Mode";
+>>   	case V4L2_CID_STATELESS_HEVC_START_CODE:		return "HEVC Start Code";
+>>   	case V4L2_CID_STATELESS_HEVC_ENTRY_POINT_OFFSETS:	return "HEVC Entry Point Offsets";
+>> +	case V4L2_CID_STATELESS_HEVC_EXT_SPS_ST_RPS:		return "HEVC Short Term Ref Sets";
+>> +	case V4L2_CID_STATELESS_HEVC_EXT_SPS_LT_RPS:		return "HEVC Long Term Ref Sets";
+>>   	case V4L2_CID_STATELESS_AV1_SEQUENCE:			return "AV1 Sequence Parameters";
+>>   	case V4L2_CID_STATELESS_AV1_TILE_GROUP_ENTRY:		return "AV1 Tile Group Entry";
+>>   	case V4L2_CID_STATELESS_AV1_FRAME:			return "AV1 Frame Parameters";
+>> @@ -1578,6 +1580,14 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+>>   		*type = V4L2_CTRL_TYPE_U32;
+>>   		*flags |= V4L2_CTRL_FLAG_DYNAMIC_ARRAY;
+>>   		break;
+>> +	case V4L2_CID_STATELESS_HEVC_EXT_SPS_ST_RPS:
+>> +		*type = V4L2_CTRL_TYPE_HEVC_EXT_SPS_ST_RPS;
+>> +		*flags |= V4L2_CTRL_FLAG_DYNAMIC_ARRAY;
+>> +		break;
+>> +	case V4L2_CID_STATELESS_HEVC_EXT_SPS_LT_RPS:
+>> +		*type = V4L2_CTRL_TYPE_HEVC_EXT_SPS_LT_RPS;
+>> +		*flags |= V4L2_CTRL_FLAG_DYNAMIC_ARRAY;
+>> +		break;
+>>   	case V4L2_CID_STATELESS_VP9_COMPRESSED_HDR:
+>>   		*type = V4L2_CTRL_TYPE_VP9_COMPRESSED_HDR;
+>>   		break;
+>> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+>> index 2d30107e047e..dd9e29afa155 100644
+>> --- a/include/uapi/linux/v4l2-controls.h
+>> +++ b/include/uapi/linux/v4l2-controls.h
+>> @@ -2093,6 +2093,8 @@ struct v4l2_ctrl_mpeg2_quantisation {
+>>   #define V4L2_CID_STATELESS_HEVC_DECODE_MODE	(V4L2_CID_CODEC_STATELESS_BASE + 405)
+>>   #define V4L2_CID_STATELESS_HEVC_START_CODE	(V4L2_CID_CODEC_STATELESS_BASE + 406)
+>>   #define V4L2_CID_STATELESS_HEVC_ENTRY_POINT_OFFSETS (V4L2_CID_CODEC_STATELESS_BASE + 407)
+>> +#define V4L2_CID_STATELESS_HEVC_EXT_SPS_ST_RPS  (V4L2_CID_CODEC_STATELESS_BASE + 408)
+>> +#define V4L2_CID_STATELESS_HEVC_EXT_SPS_LT_RPS  (V4L2_CID_CODEC_STATELESS_BASE + 409)
+>>   
+>>   enum v4l2_stateless_hevc_decode_mode {
+>>   	V4L2_STATELESS_HEVC_DECODE_MODE_SLICE_BASED,
+>> @@ -2548,6 +2550,65 @@ struct v4l2_ctrl_hevc_scaling_matrix {
+>>   	__u8	scaling_list_dc_coef_32x32[2];
+>>   };
+>>   
+>> +#define V4L2_HEVC_EXT_SPS_ST_RPS_FLAG_INTER_REF_PIC_SET_PRED	0x1
+>> +
+>> +/*
+>> + * struct v4l2_ctrl_hevc_ext_sps_st_rps - HEVC short term RPS parameters
+>> + *
+>> + * Dynamic size 1-dimension array for short term RPS. The number of elements
+>> + * is v4l2_ctrl_hevc_sps::num_short_term_ref_pic_sets. It can contain up to 65 elements.
+>> + *
+>> + * @delta_idx_minus1: Specifies the delta compare to the index. See details in section 7.4.8
+>> + *                    "Short-term reference picture set semantics" of the specification.
+>> + * @delta_rps_sign: Sign of the delta as specified in section 7.4.8 "Short-term reference picture
+>> + *                  set semantics" of the specification.
+>> + * @abs_delta_rps_minus1: Absolute delta RPS as specified in section 7.4.8 "Short-term reference
+>> + *                        picture set semantics" of the specification.
+>> + * @num_negative_pics: Number of short-term RPS entries that have picture order count values less
+>> + *                     than the picture order count value of the current picture.
+>> + * @num_positive_pics: Number of short-term RPS entries that have picture order count values
+>> + *                     greater than the picture order count value of the current picture.
+>> + * @used_by_curr_pic: Bit j specifies if short-term RPS j is used by the current picture.
+>> + * @use_delta_flag: Bit j equals to 1 specifies that the j-th entry in the source candidate
+>> + *                  short-term RPS is included in this candidate short-term RPS.
+>> + * @delta_poc_s0_minus1: Specifies the negative picture order count delta for the i-th entry in
+>> + *                       the short-term RPS. See details in section 7.4.8 "Short-term reference
+>> + *                       picture set semantics" of the specification.
+>> + * @delta_poc_s1_minus1: Specifies the positive picture order count delta for the i-th entry in
+>> + *                       the short-term RPS. See details in section 7.4.8 "Short-term reference
+>> + *                       picture set semantics" of the specification.
+>> + * @flags: See V4L2_HEVC_EXT_SPS_ST_RPS_FLAG_{}
+>> + */
+>> +struct v4l2_ctrl_hevc_ext_sps_st_rps {
+>> +	__u8	delta_idx_minus1;
+>> +	__u8	delta_rps_sign;
+>> +	__u16	abs_delta_rps_minus1;
+>> +	__u8	num_negative_pics;
+>> +	__u8	num_positive_pics;
+>> +	__u32	used_by_curr_pic;
+>> +	__u32	use_delta_flag;
+>> +	__u16	delta_poc_s0_minus1[16];
+>> +	__u16	delta_poc_s1_minus1[16];
+>> +	__u8	flags;
+>> +};
+>> +
+>> +#define V4L2_HEVC_EXT_SPS_LT_RPS_FLAG_USED_LT		0x1
+>> +
+>> +/*
+>> + * struct v4l2_ctrl_hevc_ext_sps_lt_rps - HEVC long term RPS parameters
+>> + *
+>> + * Dynamic size 1-dimension array for long term RPS. The number of elements
+>> + * is v4l2_ctrl_hevc_sps::num_long_term_ref_pics_sps. It can contain up to 65 elements.
+>> + *
+>> + * @lt_ref_pic_poc_lsb_sps: picture order count modulo MaxPicOrderCntLsb of the i-th candidate
+>> + *                          long-term reference picture.
+>> + * @flags: See V4L2_HEVC_EXT_SPS_LT_RPS_FLAG_{}
+>> + */
+>> +struct v4l2_ctrl_hevc_ext_sps_lt_rps {
+>> +	__u16	lt_ref_pic_poc_lsb_sps;
+>> +	__u8	flags;
+>> +};
+>> +
+>>   /* Stateless VP9 controls */
+>>   
+>>   #define V4L2_VP9_LOOP_FILTER_FLAG_DELTA_ENABLED	0x1
+>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+>> index becd08fdbddb..ae1d33fd37b7 100644
+>> --- a/include/uapi/linux/videodev2.h
+>> +++ b/include/uapi/linux/videodev2.h
+>> @@ -1981,6 +1981,8 @@ enum v4l2_ctrl_type {
+>>   	V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS	= 0x0272,
+>>   	V4L2_CTRL_TYPE_HEVC_SCALING_MATRIX	= 0x0273,
+>>   	V4L2_CTRL_TYPE_HEVC_DECODE_PARAMS	= 0x0274,
+>> +	V4L2_CTRL_TYPE_HEVC_EXT_SPS_ST_RPS	= 0x0275,
+>> +	V4L2_CTRL_TYPE_HEVC_EXT_SPS_LT_RPS	= 0x0276,
+>>   
+>>   	V4L2_CTRL_TYPE_AV1_SEQUENCE	    = 0x280,
+>>   	V4L2_CTRL_TYPE_AV1_TILE_GROUP_ENTRY = 0x281,
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
