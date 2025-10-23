@@ -1,106 +1,111 @@
-Return-Path: <linux-kernel+bounces-866299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DDFEBFF6A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:55:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D19A6BFF6A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A5C94E6BAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ABA73A5A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9FB2749CA;
-	Thu, 23 Oct 2025 06:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2F0285CB8;
+	Thu, 23 Oct 2025 06:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LajRDVY0"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhcVmyac"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E4426A08C
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1610C1EB193
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761202494; cv=none; b=s2M8logQUeWzYJ+aPu4RrTgFm5mCmUKgSwmTrl3mLkq4S0JGsvTzZjS6aLmVUctdTd5TIvOz+zgwsLzBhiV5H2NMe8iENXuku04F2eRZ2+TN6XIa7I1UxN8N5usM+/nQTkPQzuV79WOpT8tksfxptZQU9hcF+KdO4H+nsNU1Lxo=
+	t=1761202510; cv=none; b=Hbx5T+B5u5b+S37/JndV1FoW5IoiUNP3u+VGyDGsO4NQQ4ncBYSYm6MnQS+3PC6SBHcyKUu0UAlMxG6zT3w4NIdT0X+qgDkgPikrFL5ZDdUGaYAW11aWoaxWZsTVaN7Tq9mF9qfnHZf+iRFzFc3RdAhbNLa6vnojg3n5LwNEkSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761202494; c=relaxed/simple;
-	bh=yd7qFoK29VDAPrdMJ/zhOki4NmhFSyQsEwV9ZsTr1K4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uQ5StdV2Oe3jx5EHKPoQurYr1rcp2H/PyHB1u02qW6YCiIIYeHyGvYGJ9eeZt9GiwBgUGMZ54OWHDhmCtTb1hU9fafFnmdA7kX3jlVPKaDp8geHctOQJl2IOcA9bRgcKwMQGJJzI7RT8r4AmynMk12UEiYo/4pM2zdjZhmacRso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LajRDVY0; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id B904D4E41290
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:54:48 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 76C9D6062C;
-	Thu, 23 Oct 2025 06:54:48 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 72ED2102F2408;
-	Thu, 23 Oct 2025 08:54:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761202487; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=GS0cqy3g8XoZ9muADSAiYyE0/Ek9+J4x0l2wKijcgtA=;
-	b=LajRDVY0S65NQ81Ea8F94oP4KJOPMDu1SEEZi9hPC1F6ox7Dh1sCVe5esRWrY24hclUAyh
-	cp6qOoDQlwjJOInt3iolbOGexU6J5CTO7TCdX0bJv0omu6s7+c9V7IwRDVnXctvasVISgd
-	kcSy5CRf9Fku619uLxjLXf6L721U1Wnf68AdWzsFshWLBHkqwK6mX7jyaT5J49uzkKsx9G
-	QZ2nCtIzmZep3QFFzZRDcpJ3HMyeNewp7/NBfFTDOYtIkv7HsfnxiaAeUrlW1Jkw9PdVRD
-	NsAAA5fAxRK6WRAsBolngqtwRSR5njZIv3SoXdWsegg8TwYy/kNkGUFQH/p17A==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Jay Xu <jayxu1990@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  avnerkhan@utexas.edu,
-  rdlee.upstream@gmail.com,  kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2] mtd: core: Add nand_id sysfs attribute for NAND devices
-In-Reply-To: <CABcGJDxxGSDVc9TPcTMR_7abreBchHEKHsqtfZVQ5m+0nFhJ1A@mail.gmail.com>
-	(Jay Xu's message of "Wed, 22 Oct 2025 11:53:41 -0500")
-References: <20251007224049.2798233-1-jayxu1990@gmail.com>
-	<20251014192455.4007534-1-jayxu1990@gmail.com>
-	<874irrrpbp.fsf@bootlin.com>
-	<CABcGJDxxGSDVc9TPcTMR_7abreBchHEKHsqtfZVQ5m+0nFhJ1A@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Thu, 23 Oct 2025 08:54:39 +0200
-Message-ID: <87sefaqf9s.fsf@bootlin.com>
+	s=arc-20240116; t=1761202510; c=relaxed/simple;
+	bh=DAUepJfRVJxKkvnA4eaWnnSRchdj9qn0LAHm8hNmKnw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gwr0/Eb6y0is6qrkHSzHJF1bYe6AfUw4ZDXr06i65W5w/XmRUDMSonfHMgeQieefq/JMhz3hj5oj94+fSeaZY0gO2m3tI3hViH7zJtSdtPF6cTMuITootjBWw6Te7POa3o/WF++c/wywtTlMKyDV5wO0YphgR8dK4ageoouTkM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jhcVmyac; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-290ac2ef203so4159035ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:55:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761202508; x=1761807308; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tP5Z/HgAHKQmrP0IPt7675MCu9ilZEdEUaUFoUDjH54=;
+        b=jhcVmyacXEor+7je2afErkqqeTsunQbQT8zWsjdkNs1TfjZjXLg5g+kGTq8gxMcxEL
+         kv0e+xjdVrw9fr+xnkhoqDuroPvzCi+XhDFwiKxy7eJBCvUu/5YAqNI5oRzTNGIAv3uP
+         q0PA/B/xLGevjSQr5sjc+IzSvX0a2pXTHLJpNBXPJycxtWlCoutdGl8b2MLoghgmIAOc
+         QiXDY0Eq4c52lw5KrU+OwKWqS7FMjT9ihmD4c4HyjY7DYyU1yXrz44zg9KzbRcsBMdNZ
+         umUAmXU1uNGL42tdE1EoEI8xmb1Sf3BekUYNOtPIdJuA/AEddKTrWD9gQTKs00hCn83w
+         rRjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761202508; x=1761807308;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tP5Z/HgAHKQmrP0IPt7675MCu9ilZEdEUaUFoUDjH54=;
+        b=lm2FM6oT+NioTJg4XDJ17OVnGQH4zp371yL9AxHMVMCAm21JAqleu9/0NTpAXD0gPK
+         ZAmgU3wTiHczul6l+lZqxKPBLYERWo37IgdABhuVD76H9hBYEJE0qzx64mITx+zLOIDv
+         3QTjZWUKDoHHOT8HvcP/LATFWSVoaX98NEe4NbgSYcqgUFpKvSQPo83CvT5rrTJgB0OP
+         pVk5sl+AwYogqBH9DA+I7BO2U/NFsPnbLfigUfvq8xarA6yHUIaQFMtS6B2sCuKoEkqN
+         ZGW+5CJQ+qZUDD1NAAwxosWWvtokB47dCvC6IwSt0KqcIdPHkKqbi4fO8pWjF2uqZHv6
+         oFMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqen5eH8oGRH+MWbWWdkw0ltKjkXMQns2ylYI3VJqt9jEXXNkCZJeabvlFNcXlFLxaeZv339q9njMLpD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpeya9B1KF43aph17sUrsk7ZB3CPE/WNYgoeaCIZ0czzc56k/4
+	oILme1AoItFz8p+cEcwlday6PATWgJ20judVI762oBja0bNsEQ7m/kUQ
+X-Gm-Gg: ASbGncv4NACiC1Fm/LWce+MPNcp7Sk0iHFRqmZWZ7nML/WkLctfB0JPQsTNBOYDTj4P
+	x48q2Sv/ExBYQbaUqMW02aGAKOxCQokl0wNkhxYYX9Ii1LeUovv7dEYxspeAvM/kv/+sNT7HQaq
+	LHl0h2qIA92rJpOJOf5hQdJAe13YATdU7WoHJdzY3G/DimgPRr5fic46xRTjC/U/V5R/EctjTFk
+	ImaQZnCRe1MrKvV9tOLyuhYJXVtON0+eYgD1NQEr/WWt9rFaZLEZ1cAtbGYTydwnmt62IXsFjSP
+	S979G3mh/AVAcmQYFXNGQa1+7QX2lokFUbX4MARoaWAJV0bhULTkXzeivM411rLzx/uPSeETPcm
+	41Nk9XAWoqC69+rK0+e7STY5Z9clDeLP3RffXr5XQxUJfPCaEAft8iGmCNX611CEqqJ5FMIyGEc
+	zArk09ZVZNnbuipOyyGJ6xhWWZmRB1oi/72CSo
+X-Google-Smtp-Source: AGHT+IHr2gzxSyQALV9E+8m/brmHPQl4niYyUyZD3GGPKvCuyRW9JF9upqsoc9+MUaUg4LYABaSFQg==
+X-Received: by 2002:a17:902:f642:b0:28a:5b8b:1f6b with SMTP id d9443c01a7336-290c9cbbd49mr304163725ad.21.1761202508058;
+        Wed, 22 Oct 2025 23:55:08 -0700 (PDT)
+Received: from localhost.localdomain ([180.172.132.17])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fb016f865sm1335179a91.11.2025.10.22.23.55.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 23:55:07 -0700 (PDT)
+From: stephen.eta.zhou@gmail.com
+To: stephen.eta.zhou@gmail.com
+Cc: daniel.lezcano@linaro.org,
+	linux-kernel@vger.kernel.org,
+	tglx@linutronix.de
+Subject: RE: [PATCH v4] clocksource: timer-sp804: Fix read_current_timer() issue when clock source is not registered
+Date: Thu, 23 Oct 2025 14:55:03 +0800
+Message-Id: <20250525-sp804-fix-read_current_timer-v4-1-87a9201fa4ec@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250525-sp804-fix-read_current_timer-v4-1-87a9201fa4ec@gmail.com>
+References: <20250525-sp804-fix-read_current_timer-v4-1-87a9201fa4ec@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Jay,
+Hi,
 
-On 22/10/2025 at 11:53:41 -05, Jay Xu <jayxu1990@gmail.com> wrote:
+I wanted to follow up on my `[PATCH v4] clocksource: timer-sp804: Fix read_current_timer() issue when clock source is not registered` patch,
+which I submitted on Sun, 25 May 2025.
 
-> Hi Miqu=C3=A8l:
-> Thank you for the feedback and suggestions!
->
-> You're right that the current implementation is raw NAND specific. I can =
-look into extending this to support other NAND
-> types by moving the functionality to the NAND core=20
-> layer and ensure the ID is populated at probe time.
->
-> Let me know if you have any other suggestions/questions,
+I haven't received any feedback yet.
 
-Not at the moment, I'd like to gather feedback from other MTD folks
-before we go forward. Sysfs is part of the stable API, we must be
-careful.
+so just ping....
 
->  > Reported-by: kernel test robot <lkp@intel.com>
->  > Closes:
->  > https://lore.kernel.org/oe-kbuild-all/202510120356.STGKDkA5-lkp@intel.=
-com/
+If any updates or modifications are required, please let me know. 
 
-Just as an FYI, these do not make any sense in a contribution like
-yours. Include these tags if you are fixing something that is already in
-the tree. This is a new submission and it is not a fix so "reported-by"
-shall not be used.
+Thanks.
 
-Thanks,
-Miqu=C3=A8l
+Best regards,  
+Stephen
 
