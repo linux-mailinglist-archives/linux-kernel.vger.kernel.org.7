@@ -1,309 +1,213 @@
-Return-Path: <linux-kernel+bounces-867134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40DC6C01ABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:12:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C529CC01A4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BC933BB75E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:02:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F43756921D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BE231D758;
-	Thu, 23 Oct 2025 14:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6153191C8;
+	Thu, 23 Oct 2025 14:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jFS4KH6g"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVJ7yjgU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E7332B9B8
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B5628373;
+	Thu, 23 Oct 2025 14:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761228080; cv=none; b=RSDZKQicA5mzqvWJQRAkkm2WSK+unOd4rruMhF9x7XFipXNDboC7n2NtWJc4jkcVOnTjnz6v9xaOpaSvg0wL13lqKu2rnpnnTlOnjLYeIy0owbbJQbDNUNouhz1YXVKg1uM/YaOT1nsbZu7tGF2eC8cvqzaVLUBtstEDArZtiUg=
+	t=1761228064; cv=none; b=nv8J7knzdqJYfw+xMOha4he1gwnA5eRHW1Nel+zGySiPtvmlnxRFylC03zGnJMjcszuo0g3zFWXxDw3XZU74tSLysEaHmCafJY+Lv3I1Anu9eNeZtDO1mmypbtwHYhazM9bsl+pUk1VKsEtpWjDf5LqOhGaxwKKreSdawb31cyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761228080; c=relaxed/simple;
-	bh=K2HhgskP3H/4M/wjnZbsRyaDQCuBFj5Hdoc9ZE42YzU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ml+HbB3scCiBAj0aJtm9bp6jSwIrXyHyj91QfHLazMJnMtCvwg9WJoGP5r8bXYkgda3MES72yFq7PbnofFuYxNFLZWQQnVf4WpxkUtKU9BsC2dvjCQcUHT8gW+aahlsUJSUvJ+E5r3fjIbHn+XQRLTCv5x3sIIKhsQrQpZlUGCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jFS4KH6g; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761228077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5IT49IQx4naO1r1BdT6bWbCUaLMDI3v7xXAjUka+ohY=;
-	b=jFS4KH6gShwEA7kInyNDFlm+C8/6r4Ur0ex6Vjltgfk3Uz12fozLioBaX2JonuKwfedtY+
-	DBJ5Re2rXhglgP8HB8n7GVBvsYAXpsxcGG2z82OMI3Ye5l+vp4okn9KirPnxZeT3oaBMwZ
-	F+FZa4ma8jA6+ZRWVhDpwkuXshxx2Dc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-8ZaCEs6lP-mGYVIwWqA2Cg-1; Thu, 23 Oct 2025 10:01:15 -0400
-X-MC-Unique: 8ZaCEs6lP-mGYVIwWqA2Cg-1
-X-Mimecast-MFC-AGG-ID: 8ZaCEs6lP-mGYVIwWqA2Cg_1761228073
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-471168953bdso7196105e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:01:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761228073; x=1761832873;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5IT49IQx4naO1r1BdT6bWbCUaLMDI3v7xXAjUka+ohY=;
-        b=Nqlg7b/P1GDLnwhLZWybDwztWoSHTXWJcp5Mz1j+0SpUXsv62UtnowM3/BZ2ENcxNZ
-         5Q/ecBTUYIvbrWwIRc3rMKayo/EWPIEOhMp/Lyfl7+ZUgKpJPFzxUimV6AAcjQdBMEmd
-         Nq8wuKrD48HUyqDQlV0VYuyiWlgzcOdqvlXBtso8xN9gxskdopis1WRRzx2iKL7LH1yL
-         WlzdvVj5KxGurjdWMPFWxYk2z9nbHl6DGHgEyI63kHWUV+YHHX6s+4UfFevpJiU2+3vb
-         yFSFPG8z9E0QFSnJusrsHEBUD4x52MxnHhWjt9VVTeT8yu9ylUN+akY1Rk/V5czvLlLy
-         ogfQ==
-X-Gm-Message-State: AOJu0YzJF7AhmWtlXyD6yI2Kl/E0CAvYyUsylfWpLpCB/4+1dhakHqFF
-	Cql3n29NArsbBO1/SjrEz4KhrtibP6nPq08pZ5VQEdhIvx7KFYrNJm3DyDrNwNCbvx0Hnzse5IN
-	Uh1JJZbc3kgfWmBMksPB5wnZBQp0NNpSAAtJykS6IeKxndfX72690rfjevekV4ESX4YJWtc2Cuv
-	rvRUiGjfuUZF/6N6jm/WWtPB+67pY0H0o9bu8YIUDWVIV2kyzGdhEQ
-X-Gm-Gg: ASbGnct3ToD0zTuSPpuIhtNPwC+5R2ad4Mr2j1GrNqP9rF4eKwrKi1yOKJEhN9p7M18
-	38Feh/q/vNZ093A6x0B0kibYviFp9JagbQp9BpF3qKwEVJX0vL/fK6wAzAediS1exzhq88Fl/AP
-	CVp10M9nzaQd8YPykdH96/+Ui/yrGc3EN0OmYDmgI9E9HEE/oPNZ8okePCLWZtA3S1srOrHT9sy
-	WnQM786rxuonIgkSrIKt98WFDhoh3mhrWQcUboxSIYu+t1F2fdC42QnzQ1GKCPNDmd45OspYF0P
-	5IgZwgJgsnpKVXVV/dzFLp4bgudtFPi+zqLiRh2nVHti+x2bomNBbdjM5XlqK3UpEkYvTnzJzB4
-	nUKo=
-X-Received: by 2002:a05:600c:6c8e:b0:471:611:c1e2 with SMTP id 5b1f17b1804b1-475c6f183b0mr37332345e9.3.1761228073121;
-        Thu, 23 Oct 2025 07:01:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFbae4T7r1ZXH6ZnLz9LtKcRSlj8ttV3yrDM9CKplmHZhaoKpWNiXlFJi5xjQ8l5s4E2djLEg==
-X-Received: by 2002:a05:600c:6c8e:b0:471:611:c1e2 with SMTP id 5b1f17b1804b1-475c6f183b0mr37331065e9.3.1761228071672;
-        Thu, 23 Oct 2025 07:01:11 -0700 (PDT)
-Received: from holism.Home ([2a06:5900:814a:ab00:c1c7:2e09:633d:e94e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898add96sm4116154f8f.30.2025.10.23.07.01.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 07:01:09 -0700 (PDT)
-From: Lucas Zampieri <lzampier@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Charles Mirabile <cmirabil@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Vivian Wang <dramforever@live.com>,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Zhang Xincheng <zhangxincheng@ultrarisc.com>,
-	Lucas Zampieri <lzampier@redhat.com>
-Subject: [PATCH v6 4/4] irqchip/plic: add support for UltraRISC DP1000 PLIC
-Date: Thu, 23 Oct 2025 15:00:53 +0100
-Message-ID: <20251023140057.204439-5-lzampier@redhat.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251023140057.204439-1-lzampier@redhat.com>
-References: <20251023140057.204439-1-lzampier@redhat.com>
+	s=arc-20240116; t=1761228064; c=relaxed/simple;
+	bh=O1zDBPNEVxwsWDfD8fBlOO6EtkQk7ptwugbAO7JI3ws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bhmz02GMwbdw9bL1e9vvANRL9kvS6JN9aA8ClnP1mPooV3AxjAW3Mkw22iJHmM6qmjlXfo16lHsjwGb93a3/9HwnZ681aySUEKZ+bclFmikuhTFo1AIOoDiAEdpGb02TCJxbABzPuKAsToKdLXFfGpFQOGoAFyD4+97MTxR0t9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVJ7yjgU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E808FC4CEE7;
+	Thu, 23 Oct 2025 14:01:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761228064;
+	bh=O1zDBPNEVxwsWDfD8fBlOO6EtkQk7ptwugbAO7JI3ws=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HVJ7yjgUjLqerAfbJRb36HGkzDDAeBtOzh2Q8TVeV93k4DtYdlE+tfO+kNiHmGHGZ
+	 CKXKZid0O+x8qmfLh58coUP47zBR0PRlPuxhRGWb0U4oA7z9HkimteVg/oTWIpESfi
+	 UyJrEJXWxaG79d47hLXWFiPyMhM7pqtsxdmHW/fXsy10a3kX7vGnywc0ZU6AnvrHFK
+	 70RrXe0vbDcBKtiH/y7XsD1zRZn/DPX2AqKBRdMm5CJjcVuaPPZGXEXHz83zQFCcgd
+	 vVl30gqMmfVF7PuVr41zNaiW22ykducTOxeTE1I6FjISTebmggKpfW7spwkmZjs/au
+	 JvRfep9b23Ojg==
+Message-ID: <2f766fe8-374a-44ff-a912-b43190aee400@kernel.org>
+Date: Thu, 23 Oct 2025 16:00:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v1] mptcp: fix incorrect IPv4/IPv6 check
+Content-Language: en-GB, fr-BE
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Davide Caratti <dcaratti@redhat.com>,
+ netdev@vger.kernel.org, mptcp@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20251014122619.316463-1-jiayuan.chen@linux.dev>
+ <f046fdda-3bad-4f7f-8587-dca30d183f82@kernel.org>
+ <a0a2b87119a06c5ffaa51427a0964a05534fe6f1@linux.dev>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <a0a2b87119a06c5ffaa51427a0964a05534fe6f1@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Charles Mirabile <cmirabil@redhat.com>
+Hi Jiayuan,
 
-Add a new compatible for the plic found in UltraRISC DP1000 with a quirk to
-work around a known hardware bug with IRQ claiming in the UR-CP100 cores.
+Thank you for your reply (and sorry for the delay, I was unavailable for
+a few days).
 
-When claiming an interrupt on UR-CP100 cores, all other interrupts must be
-disabled before the claim register is accessed to prevent incorrect
-handling of the interrupt. This is a hardware bug in the CP100 core
-implementation, not specific to the DP1000 SoC.
+On 15/10/2025 16:16, Jiayuan Chen wrote:
+> October 14, 2025 at 23:27, "Matthieu Baerts" <matttbe@kernel.org> wrote:
+>> On 14/10/2025 14:26, Jiayuan Chen wrote:
+>>
+>>>
+>>> When MPTCP falls back to normal TCP, it needs to reset proto_ops. However,
+>>>  for sockmap and TLS, they have their own custom proto_ops, so simply
+>>>  checking sk->sk_prot is insufficient.
+>>>  
+>>>  For example, an IPv6 request might incorrectly follow the IPv4 code path,
+>>>  leading to kernel panic.
+>>>
+>> Did you experiment issues, or is it a supposition? If yes, do you have
+>> traces containing such panics (or just a WARN()?), and ideally the
+>> userspace code that was leading to this?
+>>
+> 
+> 
+> Thank you, Matthieu, for your suggestions. I spent some time revisiting the MPTCP logic.
+> 
+> 
+> Now I need to describe how sockmap/skmsg works to explain its conflict with MPTCP:
 
-When the PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM flag is present, a
-specialized handler (plic_handle_irq_cp100) saves the enable state of all
-interrupts, disables all interrupts except for the first pending one before
-reading the claim register, and then restores the interrupts before further
-processing of the claimed interrupt continues.
+OK, so the issue is only with sockmap, not TLS, right?
 
-This implementation leverages the enable_save optimization from the
-previous patch, which maintains the current interrupt enable state in
-memory, avoiding additional register reads during the workaround.
+> 1. skmsg works by replacing sk_data_ready, recvmsg, sendmsg operations and implementing
+> fast socket-level forwarding logic
+> 
+> 2. Users can obtain file descriptors through userspace socket()/accept() interfaces, then
+>    call BPF syscall to perform these replacements.
+> 3. Users can also use the bpf_sock_hash_update helper (in sockops programs) to replace
+>    handlers when TCP connections enter ESTABLISHED state (BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB or BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB)
 
-The driver matches on "ultrarisc,cp100-plic" to apply the quirk to all
-SoCs using UR-CP100 cores, regardless of the specific SoC implementation.
-This has no impact on other platforms.
+I appreciate these explanations. I will comment on the v3.
 
-Co-developed-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
-Signed-off-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
-Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
-Acked-by: Samuel Holland <samuel.holland@sifive.com>
-Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
----
- drivers/irqchip/irq-sifive-plic.c | 116 +++++++++++++++++++++++++++++-
- 1 file changed, 115 insertions(+), 1 deletion(-)
+> For MPTCP to work with sockmap, I believe we need to address the following points
+> (please correct me if I have any conceptual misunderstandings about MPTCP):
+> 
+> 1. From client perspective: When a user connects to a server via socket(), the kernel
+>    creates one master sk and at least two subflow sk's. Since the master sk doesn't participate
+>    in the three-way handshake, in the sockops flow we can only access the subflow sk's.
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index d518a8b468742..786be200248f9 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -49,6 +49,8 @@
- #define CONTEXT_ENABLE_BASE		0x2000
- #define     CONTEXT_ENABLE_SIZE		0x80
+To be a bit more precise, with MPTCP, you will deal with different
+socket types:
 
-+#define PENDING_BASE                    0x1000
-+
- /*
-  * Each hart context has a set of control registers associated with it.  Right
-  * now there's only two: a source priority threshold over which the hart will
-@@ -63,6 +65,7 @@
- #define	PLIC_ENABLE_THRESHOLD		0
+- the userspace facing one: it is an MPTCP socket (IPPROTO_MPTCP)
 
- #define PLIC_QUIRK_EDGE_INTERRUPT	0
-+#define PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM	1
+- the in-kernel subflow(s) (= path): they are TCP sockets, but not
+  exposed to the userspace.
 
- struct plic_priv {
- 	struct fwnode_handle *fwnode;
-@@ -388,6 +391,110 @@ static void plic_handle_irq(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
-+static u32 cp100_isolate_pending_irq(int nr_irq_groups, u32 ie[],
-+				      u32 __iomem *pending,
-+				      u32 __iomem *enable)
-+{
-+	u32 pending_irqs = 0;
-+	int i, j;
-+
-+	/* Look for first pending interrupt */
-+	for (i = 0; i < nr_irq_groups; i++) {
-+		/* Any pending interrupts would be annihilated, so skip checking them */
-+		if (!ie[i])
-+			continue;
-+
-+		pending_irqs = ie[i] & readl_relaxed(pending + i);
-+
-+		if (pending_irqs)
-+			break;
-+	}
-+
-+	if (!pending_irqs)
-+		return 0;
-+
-+	/* Isolate lowest set bit*/
-+	pending_irqs &= -pending_irqs;
-+
-+	/* Disable all interrupts but the first pending one */
-+	for (j = 0; j < nr_irq_groups; j++) {
-+		u32 new_mask = j == i ? pending_irqs : 0;
-+
-+		/* If the new mask does not differ, skip writing it */
-+		if (new_mask == ie[j])
-+			continue;
-+
-+		writel_relaxed(new_mask, enable + j);
-+	}
-+
-+	return pending_irqs;
-+}
-+
-+static irq_hw_number_t cp100_get_hwirq(struct plic_handler *handler,
-+					void __iomem *claim)
-+{
-+	int nr_irq_groups = DIV_ROUND_UP(handler->priv->nr_irqs, 32);
-+	u32 __iomem *pending = handler->priv->regs + PENDING_BASE;
-+	u32 __iomem *enable = handler->enable_base;
-+	irq_hw_number_t hwirq = 0;
-+	u32 iso_mask;
-+	int i;
-+
-+	guard(raw_spinlock)(&handler->enable_lock);
-+
-+	/* Existing enable state is already cached in enable_save */
-+	iso_mask = cp100_isolate_pending_irq(nr_irq_groups, handler->enable_save, pending, enable);
-+
-+	if (!iso_mask)
-+		return 0;
-+
-+	/*
-+	 * Interrupts delievered to hardware still become pending, but only
-+	 * interrupts that are both pending and enabled can be claimed.
-+	 * Clearing enable bit for all interrupts but the first pending one
-+	 * avoids hardware bug that occurs during read from claim register
-+	 * with more than one eligible interrupt.
-+	 */
-+	hwirq = readl(claim);
-+
-+	/* Restore previous state */
-+	for (i = 0; i < nr_irq_groups; i++) {
-+		u32 stored = handler->enable_save[i];
-+		u32 written = i == hwirq / 32 ? iso_mask : 0;
-+
-+		/* If we did not need to change the mask, no need to change it back */
-+		if (stored == written)
-+			continue;
-+
-+		writel_relaxed(stored, enable + i);
-+	}
-+
-+	return hwirq;
-+}
-+
-+static void plic_handle_irq_cp100(struct irq_desc *desc)
-+{
-+	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	void __iomem *claim = handler->hart_base + CONTEXT_CLAIM;
-+	irq_hw_number_t hwirq;
-+
-+	WARN_ON_ONCE(!handler->present);
-+
-+	chained_irq_enter(chip, desc);
-+
-+	while ((hwirq = cp100_get_hwirq(handler, claim))) {
-+		int err = generic_handle_domain_irq(handler->priv->irqdomain, hwirq);
-+
-+		if (unlikely(err)) {
-+			pr_warn_ratelimited("%pfwP: can't find mapping for hwirq %lu\n",
-+					    handler->priv->fwnode, hwirq);
-+		}
-+	}
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
- static void plic_set_threshold(struct plic_handler *handler, u32 threshold)
- {
- 	/* priority must be > threshold to trigger an interrupt */
-@@ -424,6 +531,8 @@ static const struct of_device_id plic_match[] = {
- 	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
- 	{ .compatible = "thead,c900-plic",
- 	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
-+	{ .compatible = "ultrarisc,cp100-plic",
-+	  .data = (const void *)BIT(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM) },
- 	{}
- };
- 
-@@ -658,12 +767,17 @@ static int plic_probe(struct fwnode_handle *fwnode)
- 		}
+There is no "master sk" (I hope you didn't look at the previous fork
+implementation that was using this name, before the upstreaming
+process), but yes, you will have the MPTCP socket, and at least one TCP
+socket for the subflow.
 
- 		if (global_setup) {
-+			void (*handler_fn)(struct irq_desc *) = plic_handle_irq;
-+
-+			if (test_bit(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM, &handler->priv->plic_quirks))
-+				handler_fn = plic_handle_irq_cp100;
-+
- 			/* Find parent domain and register chained handler */
- 			domain = irq_find_matching_fwnode(riscv_get_intc_hwnode(), DOMAIN_BUS_ANY);
- 			if (domain)
- 				plic_parent_irq = irq_create_mapping(domain, RV_IRQ_EXT);
- 			if (plic_parent_irq)
--				irq_set_chained_handler(plic_parent_irq, plic_handle_irq);
-+				irq_set_chained_handler(plic_parent_irq, handler_fn);
+>    In this case, we need to replace the handlers of mptcp_subflow_ctx(sk)->conn rather
+>    than the subflow sk itself.
+>> 2. From server perspective: In BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB,
+the sk is the MP_CAPABLE
+>    subflow sk, so similar to the client perspective, we need to replace the handlers of
+>    mptcp_subflow_ctx(sk)->conn.
 
- 			cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
- 					  "irqchip/sifive/plic:starting",
+On the userspace side, the socket after the 'accept()' is either an
+MPTCP socket (IPPROTO_MPTCP) or a TCP one (IPPROTO_TCP) depending on the
+request: if the SYN was containing the MP_CAPABLE option or not. If a
+plain TCP socket is returned, it is not an MPTCP subflow any more, it is
+a "classic" TCP connection.
+
+To get MPTCP support with sockmap, I guess you will need to act at the
+MPTCP level: you should never manipulate the data on the TCP subflows
+directly, because you will only get a part of the data when multiple
+paths are being used. Instead, you should wait for MPTCP to re-order the
+data, etc.
+
+> If the above description is correct, then my current patch is incorrect. I should focus on
+> handling the sockmap handler replacement flow properly instead.
+
+It would be really great to add MPTCP support in sockmap, but first, I
+guess we need a way to prevent issues like the one you saw.
+
+> Of course, this would require comprehensive selftests to validate.
+> 
+> Returning to the initial issue, the panic occurred on kernel 6.1, but when I tested with the
+> latest upstream test environment, it only triggered a WARN().
+> I suspect there have been significant changes in MPTCP during this period.
+
+Even if it was only triggering a WARN(), we will still need a fix for
+v6.1. Once the series will be ready, do you mind checking what needs to
+be done to have the solution working on v6.1? I guess the solution
+should be very close to what we will have on v6.18.
+
+Cheers,
+Matt
 -- 
-2.51.0
+Sponsored by the NGI0 Core fund.
 
 
