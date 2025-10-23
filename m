@@ -1,239 +1,282 @@
-Return-Path: <linux-kernel+bounces-866433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED6EEBFFC03
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:59:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B402DBFFC0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:59:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA1A94E38D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:59:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D32D1893733
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B272E282C;
-	Thu, 23 Oct 2025 07:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252B62E36EC;
+	Thu, 23 Oct 2025 07:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q5XU/NyV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7WYOY9iu";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UZ87einC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eiDd0Uc4"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lNfB5VzX"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011069.outbound.protection.outlook.com [40.107.130.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1D52E228D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761206364; cv=none; b=KHuIZD7XakfrbOD7RdFywWTIkMiqXlAPJ9ew4kNy8Vro7plDRj477EULXcnaB4TxSNWb+0JsO+g+ese+8CRvwBSPaEcGfiJcCz4J2GpG9OZ+02kS6SuYmmGIAsJo2ef9fqJ47OhRUPr1H1hlw8ehajElIkjUs3Ui144i8g4U3RU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761206364; c=relaxed/simple;
-	bh=h9L+3MVsfWqXkWgKfFaSz+emT304I/13ICnE9PDFfR8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YT2rOeN7RbnUZoY8FTXgBFmGnL0UqY4j9LkNDY8La8g5zGhmRKIlA5nUnGf76x/Y1N5IMWWBFGqqQNDJK2bADAoA4xWaf/rqqyQYRQCNIhn0ubU195b2GDljsaIclJZEFpBS4Rnaf0/QGLLJeEvHjEJjgkzTCBUB+OQaD5e5S34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q5XU/NyV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7WYOY9iu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UZ87einC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eiDd0Uc4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 95F751F445;
-	Thu, 23 Oct 2025 07:59:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761206356; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0BjVMY+y9vsTstYFa6ma+sphPLgyQjk9w3dI5GO2fh0=;
-	b=Q5XU/NyVuCe6wYCJ+yGhovcJxODFtjWWpBEPmyIg7MiJKzHpK8TDpQvzLX2fJtwhxfBcs1
-	lJzZHdlzmg7HrHisehmQJmNYCQckCWMD5JMdu9y2mpmj4hhxsPL08ftAUPJgUQLr467xxr
-	TZrRKUlGoPhgb9NQQt67Ang9YDoPkiU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761206356;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0BjVMY+y9vsTstYFa6ma+sphPLgyQjk9w3dI5GO2fh0=;
-	b=7WYOY9iuckh9s/rhCpPEtxguuhDEI/V6zL0eEaPyUGk5n2ove/t7y05cQzqFZ4RBAKPfWU
-	nm8iQQ2eKx8iroDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UZ87einC;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=eiDd0Uc4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761206352; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0BjVMY+y9vsTstYFa6ma+sphPLgyQjk9w3dI5GO2fh0=;
-	b=UZ87einC71rhEmuw8dkfjZoxvOBH0cI8AoOwr03avVxB12j63Dc5WPw1V3vSHK4F49PGK0
-	WQrzzXeWyTlCY3ueLI06JVeM84mJw8xZlxXgbY1FAqdSQbJ4/3H2AvVk/hKFzDHuVaW1ev
-	LIDTt9/Br7qzl8xc5um+kajcntRMP6o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761206352;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0BjVMY+y9vsTstYFa6ma+sphPLgyQjk9w3dI5GO2fh0=;
-	b=eiDd0Uc4B+OS0QQZFfQa0x/QY6GV88zG9StdwhTLgnLh8ur7HIzVl4Q30E+sPODorQKpbf
-	vdBwfucCDu6/VBDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 893A413285;
-	Thu, 23 Oct 2025 07:59:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hrh6IVDg+WgCaQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 23 Oct 2025 07:59:12 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 31640A28A6; Thu, 23 Oct 2025 09:59:12 +0200 (CEST)
-Date: Thu, 23 Oct 2025 09:59:12 +0200
-From: Jan Kara <jack@suse.cz>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>, 
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, 
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] jbd2: allocate lock_class_key for jbd2_handle
- dynamically
-Message-ID: <vgpy66rcs3mvitijmt2v2yfwuhkijh33z3s76ghlsqq6yjgmtw@prlpxdeoitif>
-References: <e42f1471-a88a-4938-8743-1d5b171c47ec@I-love.SAKURA.ne.jp>
- <fwsxrb7ugi5zeosugo6hyjdbhw36ppa5kekfi6n7we2vvi3r7m@ljrizqoagsg7>
- <93744126-237b-4e36-8a62-a33e1fb52051@I-love.SAKURA.ne.jp>
- <mjzb7q6juxndqtmoaee3con6xtma5vfzkgfcicjjmt7ltv2gtt@ps2np5r36vn3>
- <96c8fca1-7568-46c8-a5ad-af4699b95d5e@I-love.SAKURA.ne.jp>
- <doq4csrkuhpha7v5lunesdrscmqmjvt3flids3iai2gvpbhp3j@mxldi4yvvymw>
- <a6fcc693-42f0-4d70-a1af-fc1bfb328eb7@I-love.SAKURA.ne.jp>
- <rajbaoxp7zvaiftmuip4mxdvrdxthhgvbjvtuq3zrwijtdab2j@ouligqrqxyth>
- <987110fc-5470-457a-a218-d286a09dd82f@I-love.SAKURA.ne.jp>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B062E0920;
+	Thu, 23 Oct 2025 07:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761206369; cv=fail; b=Mbc5rcCtg4KoGJFHrFCeh/6qZvZgRisJ84qJQxWYikiSV06uMaABdJmhx89ISSXgYxLKTbb9Toa7iRAjqb6UFCrxo4Z+NDh3B1ADVY0xIzJFPI/NJVRUJcDKu3be10pkmcrASZZsQOoKvtz+DM/LeBvLIqNlvLkdcChrdpJPcbY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761206369; c=relaxed/simple;
+	bh=OrJbq/itHMz6N1tc7feUa79XgG+n6TDPK+KMl7TTT7M=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uorC3iFW7ZymQ/HGrK6Jv46CjRrinbBeZgqZrZX+Tg58Zb8n9N3r+podnawTJl2e5zVVcfJbwhGuF6TXC1Wgn0h18xcwnaBcOtXAlSjXOc+ko3TeiheKGjku/TX3KUftymqHv2/9E7hQrCtDIslEdKlvpAV4u9Nrxr4NAZA8/Xg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lNfB5VzX; arc=fail smtp.client-ip=40.107.130.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vDjUOM88M51kNFv6dPTGeaZKTNwK2/tUd5O0H8FMHeA5ugHHE0nSHUnrtSGHXys5h+y8z1cSLAg3TvFA40LF/RNsY+RqsPRu89+xPS07/8Ll+BN3V6HtlDpncrHT2eFoINA3cJBbTPleFGuwL/Yorjd1JOIY2QoL3kwBfM8hnA7wxvf4s6qp2eBLby5x93KKKj///4Tb8+HrLUWQqighSLLvdcUMCxUKyijOR29k+2lcSqOC7fukSFRoFR0tYHn5xkM6WfEk0RvT1y67uW/uDh3p0HN9RPQbIleV1ee3sdCY2WN9i+APpLCJBSSVPRO5LnjF2zJHtr+Xn5Q57VF5vQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mgIhGL0Uypu4Xk2X6bydRiGCnAy01bmn3kDvEYNTjwA=;
+ b=TeAePvWS8fJUcO/Fjo/bm9X1KmxQR2G4vVOtDscl4O+1GCtbXhsYg965q6ZtssTmxdH6L4XCsdrM7IsHTLRNyTlGiQl2lEeEP4fCOqdKL560iIicxd+4Wah2c0bLkoD2SqgCuWORawLhGhKHyo44U7k1USj78sJk/TWZGd/u5+nmSFfeT/NPBVMGcLnRRk46WkQeQls240XQHxq7m+kL2I0ce8G/kbvo0ezo/PPSmoOF9G2Z42sll8pea7fQbnmQ1tPC8cvwtWn9LCH56pbHItI87bd0kSjMxpYtAlzSTT57XtChzVsPTQfPZzlIalbxl/FBsUNVUnXMaiFC7er0LA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mgIhGL0Uypu4Xk2X6bydRiGCnAy01bmn3kDvEYNTjwA=;
+ b=lNfB5VzXeTxp7otqXzRwT0ex/DwxrjH9RKnzH8VztgoY9jdgLagNLf2vyqbLMFk4ZY47spexZZz9dLgZMGo3Clm/uRLaRBR780NKgvLH7STgKm5KN91tpDyXEJil9TspY/qSkW615QshJ6mleGeiD5xBsC3HNDjK4AShTfqOqLerjldadp+qmZ0RY4j7lJulrEDzFlyd+OiepBQCZAehKxbrHFGaJdmYm9kHmbnMiUjcw10LsvoMtNncpK+1sksQanDzIBPqvUMJoMVlXZ7FE2rWQz9XnCNNZjzyo+kf5BZ6KqNpkHE44gGp8rvOSqz+VQ8aUs/yHAPee1+lq6AcQw==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AS5PR04MB11444.eurprd04.prod.outlook.com (2603:10a6:20b:6c2::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.11; Thu, 23 Oct
+ 2025 07:59:23 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 07:59:23 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Laurentiu Mihalcea
+	<laurentiumihalcea111@gmail.com>
+CC: Abel Vesa <abelvesa@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam
+	<festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Daniel Baluta
+	<daniel.baluta@nxp.com>, "S.J. Wang" <shengjiu.wang@nxp.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>
+Subject: RE: [PATCH v2 3/8] clk: imx: add driver for imx8ulp's sim lpav
+Thread-Topic: [PATCH v2 3/8] clk: imx: add driver for imx8ulp's sim lpav
+Thread-Index: AQHcP1g+dKKPWpW5QkCQippvlTZ7Q7TOOoeAgAEsRSA=
+Date: Thu, 23 Oct 2025 07:59:23 +0000
+Message-ID:
+ <PAXPR04MB84599A2457B84474ED6FD3ED88F0A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20251017112025.11997-1-laurentiumihalcea111@gmail.com>
+ <20251017112025.11997-4-laurentiumihalcea111@gmail.com>
+ <20251022140315.GA11174@nxa18884-linux.ap.freescale.net>
+In-Reply-To: <20251022140315.GA11174@nxa18884-linux.ap.freescale.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AS5PR04MB11444:EE_
+x-ms-office365-filtering-correlation-id: 70482176-a559-4e91-1001-08de120a146d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|7416014|19092799006|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?RrqBqm71iKnnJOGWmhYK1MmyQQq6HGJHVQzEreW9k7qiDYL3XjoFITn6X2dC?=
+ =?us-ascii?Q?FuLri+wmgE9R2n69diEWUMOyzYVkCdYoJ4d9bFWXswvR2/y6oozy8Szhj9bC?=
+ =?us-ascii?Q?rZeH4K68EpKeJzXg+1qBaK5DbG8WOsuG3aTBltwp8JytZ+KG6Oj7+V6NjUIB?=
+ =?us-ascii?Q?QSoonUwRWUIddhQ9QeSXbWkFtb38EWWtcuIRFYpRs4D8kveQXbNYSJhtQhQD?=
+ =?us-ascii?Q?/SaGtISvBlAqVef9dPiQxM+iLybS88K1C5jvruwT+ie4z7qdFVKZl2Kvfy53?=
+ =?us-ascii?Q?3u+09ji1+Y0weKug+PRE08bnoTJV0egKIDL+gBdksSISDVR41vhuYVP2hXnu?=
+ =?us-ascii?Q?nX0SS0N5C6mkeA1ZeslntHe7KuLLx4P4UlOHNANv/VYS3NLzGXbYR1tQF+44?=
+ =?us-ascii?Q?OJ3Kz0aCIetEQBeJqFZE1/UAVglb4VuMGJdgeI6iL7o389DZQnFHnFq77EVG?=
+ =?us-ascii?Q?qwB5AtuuRRLuIxo56yQm1YVS0pdtNTSRp0yUvf5S+MyDxWsgZsU5QcW1ghYj?=
+ =?us-ascii?Q?3QbXj6Q1L8qPAdckolfTLbliv3tFC/qkT1wQoCT/Nq6uUsgcc+FPCzdwK6Tt?=
+ =?us-ascii?Q?9KfbP9JUrm8gruGuWcB0Gaq81Kqk/Gh59yPaJQFSJbQyoXpjyuNGvsFQ9WU+?=
+ =?us-ascii?Q?ZY8GqgR9wdybdWsQEcrm4pLQq0Z1W8wZUwW/awVmADyG+TNdIOTh1iyE7Zt0?=
+ =?us-ascii?Q?sMXKqHyUH6qJQheYSPdghu5oS1fY4zyCzqx9FLqyUhN3D39WMf8iJ0bioLGz?=
+ =?us-ascii?Q?3/bx8YK0EzTkQB/WEqqw3YcvNpIk8Z5BAqjl8CKtSIpmsL1qyIWa31Zyuqg1?=
+ =?us-ascii?Q?aR+EBFxHzF2weLKxLT+y7HC4VMq9CaubTCBpUFJMz+eoN7TimNlg5SshtCT5?=
+ =?us-ascii?Q?hN54LxqiHWy/zCOOc9qvK/MPd73gvefflbqrjuJIkX0fZbHwEPPqImdiGxCv?=
+ =?us-ascii?Q?NIg0wgUrP0KeespFk3W0e4Z1IxMz3um2sHK/luR+esgbnPiwDHtd5PlkkS4n?=
+ =?us-ascii?Q?UPm2emzscbpCCSGtqyWtn9xfJtnmKy9iwJ5BEnt6KLuuTcO6J6rnIhOrycMk?=
+ =?us-ascii?Q?n1d9Hcnv2zECETRyQHLRTgO8hPrr9MjDp4+vMpeFsFs4MIevtVVBjibM6m/L?=
+ =?us-ascii?Q?Bdq9xzUZ60ymua7AhvZXAdOQoNzeF+eSZQNuVBJjrKgkafPQKTYSh42EdeHK?=
+ =?us-ascii?Q?Gl2nOgMmmTgpvilK3f68z7fy257iUmu3lGKGRxGXoUe5lmStWekWzTK7KBRo?=
+ =?us-ascii?Q?m7A35Wl/NHwvHhoj6dUkQNGNuX+AAG6n70v49qMQL/McCGo6ZHECW7BTl4sR?=
+ =?us-ascii?Q?6jRKKNx4yt/qXbC+61rGNgAWrNWPuifACBab7Qxv1s5+Pbt1DIi/NtUw2GHz?=
+ =?us-ascii?Q?pGRJXuvWxq1VKxn+qq9UYx7BZLhHU6w7Zq07735MYcvyBjKfdyf6PrSID5bc?=
+ =?us-ascii?Q?K+x+SFJk3cUt5N4CqOBw67aIyHWhmVFca7rUlu9XQ0a41sqdGR4gtmCVIuRV?=
+ =?us-ascii?Q?2hw1YLw+CBM+s5jbeW4L6yfg7Ymc7excsFG3?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(19092799006)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?KL9TME6xqUFtli39nrglETRrYs+zKcM1YBbMPTRo85a3YydLEXlib3E0s2O1?=
+ =?us-ascii?Q?eR86FkKkNhVL/VKlYIBaGmU1i5CK4v3KIpYl3U6kU7SbWIae17xLIhqZSR2Q?=
+ =?us-ascii?Q?RF04oMqa3cPd3eGBlPbnfYnUyuqJu8Ji3DhyMr/AeSZ9A5kqTsE4kige2Pdx?=
+ =?us-ascii?Q?tE9y58PAFgBav25x6xGXuNAAz+xIJG4ZvdeGR7mCv1SE02g4LucsNFV3KQVR?=
+ =?us-ascii?Q?bwul4UYn6m6U2ZhV4NRUbbFfxnoufahDXWpr98G+62Z5Fcjei7sZgjg43MNu?=
+ =?us-ascii?Q?YL8DDIyk6BHw4mZNB0uNnKt4ZphPk0AduURq6q3uThD5WuWtZ4dOUOMZwaDq?=
+ =?us-ascii?Q?1d4nZOjG9fna3sO5U3qjrS5G85XsYTAHmBaAdKGljtjb0TvBTL3Gol+mn337?=
+ =?us-ascii?Q?+b108KRJptpblw3HEgMX6rKKpZukkma6W46xWr6ATPrjPS71sCd7Km7gOnRo?=
+ =?us-ascii?Q?2gIdZaTfEJP5snaGWSzRfiyJvaiDQiEizzIJ3Gj2QDpx7V6fPsnbROt5kFYS?=
+ =?us-ascii?Q?l5+btk/YbQ2Ls1jSk8vrQZJTSLLohUrvQGvnt0I2SlUxt27VrBDrmLWD/yUT?=
+ =?us-ascii?Q?lNoBwzbrk0rznETyBy5nc+ygPZWan0Tn3Jd7znAv/AvSUztNiRVAYAjgtlpI?=
+ =?us-ascii?Q?w/Ib0wV2eHHW9BUZbPpRakJcxY/TmPxPAu0V1UNKOwoECUaSaRAoawDVopqz?=
+ =?us-ascii?Q?N9IkIEc9DjPRujV7x8MZhYrpLzne2ubsGPjMBKb7efLqllT73mNaXqxxAhMv?=
+ =?us-ascii?Q?bnhnnj4qrYi5ErrVzHsMXZbyYD6PEQs0ftBKP+M1XAR2lM/pyy/HVteJifax?=
+ =?us-ascii?Q?GiDpEP5zBZOYpAjabQSOIHlsps7cKxPeR2YUw1+czWlUW71elJ1DuPXFpxFR?=
+ =?us-ascii?Q?G0hnu361LwhyAk1Y2SK+iuF/cVeMem+kyazmyMyM67zAgwLTFABcZmlH7riN?=
+ =?us-ascii?Q?N0XZJpVwwkKczz8HvkQ5uZqVjpy7AToke4qgQc1Yz9IOOD30npIRe0x9pYug?=
+ =?us-ascii?Q?/ydV1hE7UyzGgOZ2YeYO+UW+Rga69GNKgFmsd2Fw7+wF+3m/26tEkHm19BTo?=
+ =?us-ascii?Q?b1CuykMwbyNCzHNolqW/C2qXsv46tttdT/mtH8zj9MWYVWjZhtt4A/CJ9XUw?=
+ =?us-ascii?Q?GLGh9j4zLLykJWacCDZdfsPNr2Tm1Kiy4PHH0qCLbAUcEmxBWEvVdMVIhxuC?=
+ =?us-ascii?Q?1SsRTFVvf/XePmPVxh4cvw7Sgo5fFgQ1u3oVhAzGCS61LRkc05lwnWI1hFHw?=
+ =?us-ascii?Q?mWiZ5akV58IYCcnCgSWVm/DINIlwV8HOGieIBg51pxS+1cN6ZZYiUU8Mj3+U?=
+ =?us-ascii?Q?91irgwWNzKIe31hhCifqTqa8OgFi9vjKT9+Iv0qQLcLFz+WLHhflZIDFE27I?=
+ =?us-ascii?Q?Q+ScVmrP5O92DQnLNYZ87DMMiJWQtBbO0f2TaDk0acvRK/lkdtoAs/okjywl?=
+ =?us-ascii?Q?Ci5hfWaxTYntYNyuF4V7uZXRdGN3f06wWv03M7tJQQSnM8tUhXIwzG4XtZRA?=
+ =?us-ascii?Q?I1rZegOXhnV92IPb8HpeXDaUPoHGotZ/crMBWcreV+blkP2mTJ+2awVgC09j?=
+ =?us-ascii?Q?hj1UkF7HZVAmeWko8bE=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <987110fc-5470-457a-a218-d286a09dd82f@I-love.SAKURA.ne.jp>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 95F751F445
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70482176-a559-4e91-1001-08de120a146d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2025 07:59:23.4742
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ACzmy6SqCfMi/9xrosinKNFw4XQ9UngEsIAZBUBJF2Jkekxt16mvUbIogfrs5uNlaJgTIcwFmGV5gRFMWVTnUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB11444
 
-On Wed 22-10-25 20:11:37, Tetsuo Handa wrote:
-> syzbot is reporting possibility of deadlock due to sharing lock_class_key
-> for jbd2_handle across ext4 and ocfs2. But this is a false positive, for
-> one disk partition can't have two filesystems at the same time.
-> 
-> Reported-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Tested-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
+> Subject: Re: [PATCH v2 3/8] clk: imx: add driver for imx8ulp's sim lpav
+>=20
+> Hi Laurentiu,
+>=20
+> On Fri, Oct 17, 2025 at 04:20:20AM -0700, Laurentiu Mihalcea wrote:
+> >From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> >
+> >The i.MX8ULP System Integration Module (SIM) LPAV module is a
+> block
+> >control module found inside the LPAV subsystem, which offers some
+> clock
+> >gating options and reset line assertion/de-assertion capabilities.
+> >
+> >Therefore, the clock gate management is supported by registering the
+> >module's driver as a clock provider, while the reset capabilities are
+> >managed via the auxiliary device API to allow the DT node to act as a
+> >reset and clock provider.
+> >
+> >Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> >---
+> ....
+> >+struct clk_imx8ulp_sim_lpav_data {
+> >+	void __iomem *base;
+> >+	struct regmap *regmap;
+> >+	spinlock_t lock; /* shared by MUX, clock gate and reset */
+> >+	unsigned long flags; /* for spinlock usage */
+>=20
+> This does not need to be here, put it as function local variable should
+> be fine.
 
-Thanks! Tha patch looks good. Feel free to add:
+Ignore this comment. It should be in the structure.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Thanks,
+Peng.
 
-								Honza
-
-> ---
->  fs/jbd2/journal.c    | 6 ++++--
->  include/linux/jbd2.h | 6 ++++++
->  2 files changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index d480b94117cd..f43474002f50 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -1521,7 +1521,6 @@ static journal_t *journal_init_common(struct block_device *bdev,
->  			struct block_device *fs_dev,
->  			unsigned long long start, int len, int blocksize)
->  {
-> -	static struct lock_class_key jbd2_trans_commit_key;
->  	journal_t *journal;
->  	int err;
->  	int n;
-> @@ -1530,6 +1529,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
->  	if (!journal)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	lockdep_register_key(&journal->jbd2_trans_commit_key);
->  	journal->j_blocksize = blocksize;
->  	journal->j_dev = bdev;
->  	journal->j_fs_dev = fs_dev;
-> @@ -1560,7 +1560,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
->  	journal->j_max_batch_time = 15000; /* 15ms */
->  	atomic_set(&journal->j_reserved_credits, 0);
->  	lockdep_init_map(&journal->j_trans_commit_map, "jbd2_handle",
-> -			 &jbd2_trans_commit_key, 0);
-> +			 &journal->jbd2_trans_commit_key, 0);
->  
->  	/* The journal is marked for error until we succeed with recovery! */
->  	journal->j_flags = JBD2_ABORT;
-> @@ -1611,6 +1611,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
->  	kfree(journal->j_wbuf);
->  	jbd2_journal_destroy_revoke(journal);
->  	journal_fail_superblock(journal);
-> +	lockdep_unregister_key(&journal->jbd2_trans_commit_key);
->  	kfree(journal);
->  	return ERR_PTR(err);
->  }
-> @@ -2187,6 +2188,7 @@ int jbd2_journal_destroy(journal_t *journal)
->  		jbd2_journal_destroy_revoke(journal);
->  	kfree(journal->j_fc_wbuf);
->  	kfree(journal->j_wbuf);
-> +	lockdep_unregister_key(&journal->jbd2_trans_commit_key);
->  	kfree(journal);
->  
->  	return err;
-> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-> index 43b9297fe8a7..f5eaf76198f3 100644
-> --- a/include/linux/jbd2.h
-> +++ b/include/linux/jbd2.h
-> @@ -1253,6 +1253,12 @@ struct journal_s
->  	 */
->  	struct lockdep_map	j_trans_commit_map;
->  #endif
-> +	/**
-> +	 * @jbd2_trans_commit_key:
-> +	 *
-> +	 * "struct lock_class_key" for @j_trans_commit_map
-> +	 */
-> +	struct lock_class_key	jbd2_trans_commit_key;
->  
->  	/**
->  	 * @j_fc_cleanup_callback:
-> -- 
-> 2.47.3
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>=20
+> >+	struct clk_hw_onecell_data clk_data; /*  keep last */ };
+> >+
+> >+struct clk_imx8ulp_sim_lpav_gate {
+> >+	const char *name;
+> >+	int id;
+> >+	const struct clk_parent_data parent;
+> >+	u8 bit;
+> >+};
+> >+
+> >+static struct clk_imx8ulp_sim_lpav_gate gates[] =3D {
+> >+	IMX8ULP_HIFI_CLK_GATE("hifi_core", CORE, "hifi_core", 17),
+> >+	IMX8ULP_HIFI_CLK_GATE("hifi_pbclk", PBCLK, "lpav_bus", 18),
+> >+	IMX8ULP_HIFI_CLK_GATE("hifi_plat", PLAT, "hifi_plat", 19)
+>=20
+> For the parent name, my understanding is they should be the one from
+> clk-imx8ulp.c, but I not find them, or may I miss something?
+>=20
+> >+};
+> >+
+> >+#ifdef CONFIG_RESET_CONTROLLER
+> >+static void clk_imx8ulp_sim_lpav_aux_reset_release(struct device
+> *dev)
+> >+{
+> >+	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
+> >+
+> >+	kfree(adev);
+> >+}
+> >+
+> >+static void clk_imx8ulp_sim_lpav_unregister_aux_reset(void *data) {
+> >+	struct auxiliary_device *adev =3D data;
+> >+
+> >+	auxiliary_device_delete(adev);
+> >+	auxiliary_device_uninit(adev);
+> >+}
+> >+
+> >+static int clk_imx8ulp_sim_lpav_register_aux_reset(struct
+> >+platform_device *pdev) {
+> >+	struct auxiliary_device *adev __free(kfree) =3D NULL;
+> >+	int ret;
+> >+
+> >+	adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
+> >+	if (!adev)
+> >+		return -ENOMEM;
+> >+
+> >+	adev->name =3D "reset";
+> >+	adev->dev.parent =3D &pdev->dev;
+> >+	adev->dev.release =3D clk_imx8ulp_sim_lpav_aux_reset_release;
+> >+
+> >+	ret =3D auxiliary_device_init(adev);
+> >+	if (ret) {
+> >+		dev_err(&pdev->dev, "failed to initialize aux dev\n");
+> >+		return ret;
+> >+	}
+> >+
+> >+	ret =3D auxiliary_device_add(adev);
+> >+	if (ret) {
+> >+		auxiliary_device_uninit(adev);
+> >+		dev_err(&pdev->dev, "failed to add aux dev\n");
+> >+		return ret;
+> >+	}
+> >+
+> >+	return devm_add_action_or_reset(&pdev->dev,
+> >+
+> 	clk_imx8ulp_sim_lpav_unregister_aux_reset,
+> >+					no_free_ptr(adev));
+>=20
+> clk_imx8ulp_sim_lpav_unregister_aux_reset() clean up the resources, if
+> moving this before auxiliary_device_add(), then no need
+> auxiliary_device_uninit() when add fails?
+>=20
+> >+}
+>=20
+> Regards
+> Peng
 
