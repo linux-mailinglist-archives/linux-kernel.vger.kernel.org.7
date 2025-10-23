@@ -1,197 +1,287 @@
-Return-Path: <linux-kernel+bounces-866178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D0B5BFF15A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:16:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E098CBFF14B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF8A189107D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:16:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CD5C19A840D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B90221F00;
-	Thu, 23 Oct 2025 04:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEE215E97;
+	Thu, 23 Oct 2025 04:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WNR2LIJn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EhQTS3gT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8C415E97;
-	Thu, 23 Oct 2025 04:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761192977; cv=none; b=QHerxskjtFxb7eDy5oJ56OImv3qZP70LZNRzUkNvEWDspHbOutQuPmRndGmeVApGw0cLc3ScNaX7RsUpULhaEtD4hLyGlwkYqI1mL6sXPN45MT1T8dzFxEmrb4kGFocLsErFOOR7lXSG7YUisnwB8tA6Pcp8bBrRY4haqWyeSIc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761192977; c=relaxed/simple;
-	bh=6qjfKhCFpW3nxPdf3q9ksCTq53TGoLVq65HUGLHWQeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VWSZrbLiL072idt1GywkRqJWLDjYKLK7+KKBeHF2pGMQHpO40jI0V0OxXzU7jKZpz83FfqPSKNc+chPtB8K1HEHqvHQ5moQzCFVtIBwEKx9CW/6wsU0kPMjoeLQwnSw9iaB9NOfG3mjz+jFPyiJMKIT9xmwmjNY+S+pD/01Zgpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WNR2LIJn; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29B82BB13
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761192925; cv=fail; b=S1PvrikGz8S0YIYEicnNr86a2zhexJBIDIX9jQjwmN1tHspMpRyIUkE6g/To3pfvaceiTzV5AcpGVKowX8aNKo8bUbT3yFYb062/wmamnf87aTaIxrmtJM9kvaKLGuE5SbipS2oNvyIzIV02V7qJ2Vd20fgZ7VLS1WySTA9f7Kg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761192925; c=relaxed/simple;
+	bh=Ar53t4TKMiA3tehXgroExVuZx5cL+fsAscDexoTnMxE=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hK/yTXKqO6Zu5j3NXkAH5QwJrdeI0ws+QUnpQWKC9rQ2Olj1XKwc0yW/P/3pac0uAV1+K0eUY2yBe3yKDomTWrlnZG/EnJgrm3yWNEMrxUP5OhBZXqxpAY7rwaEru0qDDKp9DHZS++wCCeuRoHgv6H4Svc8Y5SIivLLdTPll4hQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EhQTS3gT; arc=fail smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761192975; x=1792728975;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6qjfKhCFpW3nxPdf3q9ksCTq53TGoLVq65HUGLHWQeQ=;
-  b=WNR2LIJnc/GrKN8Id9SKK2MoQGYPdCUain6UPPkABBzN7HsmQhWv/Gjb
-   Dd4T/WAZomqCX/zReqWyXz/H5kRj/oh9hKO9hKy/EH48QuCESQ9W6MGCD
-   nmZgH48l+9ZkJgnudRzVOvcGLj14q5FumcZ6De25LmhIBdkvDGts7Nuq/
-   QNidBq65tqi5r9OdCllT7U53Rms9xcKm2zhlfnBr93SGkAabyFTEjdEj8
-   IhBeJH/L8o72Co7345kbRErEF9Km1669CERhw5/1Mbocj7VwZzvYHTxRd
-   IL9J6kEke1PqpkvkcJ0nR2UrZxaxv9Px/nK0Kc0UXJg4I/nkHh5O9OWDn
-   A==;
-X-CSE-ConnectionGUID: ISKqG3O3Rc6sAPjtlyZWwA==
-X-CSE-MsgGUID: F3a2OoIQQCSt6YbtN68Hxw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="66996528"
+  t=1761192924; x=1792728924;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Ar53t4TKMiA3tehXgroExVuZx5cL+fsAscDexoTnMxE=;
+  b=EhQTS3gTgYnRQ8fXI+2liiAXaAsBt5Tj3I9abm+t3IgMC+sM6hFqjiVE
+   V4SwXEhRFaVbgTKcPZzx9m/CuvMTp+XFOHWLRUq1ZvW5u1RVxPG1IpwBa
+   2NY3GneVMu3oEzwHrOM5WinB9i2kD4FuTCpRq0blnVaksTMruwr1Zs30Z
+   62RZ1juv9fNBQaQWkXCRygQdAofpkrK1PBljNIX8K9326+I1b4yIAZGVR
+   OvNElrndcBKMJZINWfQvWlKNggmLUepAawSyYzZuHLYTn/+rTuK0ZLcfP
+   CPHdiRxGncQfX+xARLKwTLLFshcS8IfkDxsI6PgJFRQ3UbVi4L2LMzRTm
+   g==;
+X-CSE-ConnectionGUID: c/gyjAfkRamt/WZjmsu+5Q==
+X-CSE-MsgGUID: nZvHBHLRQuuh9MR2G1Mrgw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74790843"
 X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="66996528"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 21:16:15 -0700
-X-CSE-ConnectionGUID: NVNLIeA3SvKuDnsRXMUh8w==
-X-CSE-MsgGUID: cKr3VAJ2Q3OI8L/aitKNqQ==
+   d="scan'208";a="74790843"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 21:15:24 -0700
+X-CSE-ConnectionGUID: kdTJJ+X/R6KxmFCbmJm3PQ==
+X-CSE-MsgGUID: e8IIsGt5T8SCcqfgddRihw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="183945184"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 22 Oct 2025 21:16:10 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vBmjU-000D0j-3C;
-	Thu, 23 Oct 2025 04:15:34 +0000
-Date: Thu, 23 Oct 2025 12:12:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yingchao Deng <yingchao.deng@oss.qualcomm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Yingchao Deng <yingchao.deng@oss.qualcomm.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, quic_yingdeng@quicinc.com,
-	Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
-	Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>,
-	Jinlong Mao <jinlong.mao@oss.qualcomm.com>
-Subject: Re: [PATCH v3] stm: class: Add MIPI OST protocol support
-Message-ID: <202510231127.UFDSOpIQ-lkp@intel.com>
-References: <20251022071834.1658684-1-yingchao.deng@oss.qualcomm.com>
+   d="scan'208";a="207710035"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 21:15:22 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 22 Oct 2025 21:15:22 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 22 Oct 2025 21:15:22 -0700
+Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.36) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 22 Oct 2025 21:15:22 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rArRvlvum6let+h+j0AVmHndzfmqcpziPW6z+1PFjruJml8HtWWUqbGJsM1vTLh3olLcQAT/T8Jyeki/Pc4GjPVeuOIVRoJvFvqrvevhVD5g4LXJMQovAOs/TUxTpClniaUka2uLaSLkaiqWY0Alus6m+ct8IMUTjaHOeSI+RsFH/shpbasCmsn4+mHZyjQzMxceWYMEnYdVLEa+KXYdxS4IqqocB3fN8VpbX2fZrFU34SLwaT/frmk86M5opSKhy+zCrXu/iTpEzczu2ChTdVdNwFmtWO1gvT1GLR6iW9ruWpaYAI0cT7Smv6qoJOTklzujFH7Oeisi6WT4X206tA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vVzVmucTAFxGYkqBMjx1SeYzjbLfWZMJOZ/eMPWe+t4=;
+ b=sUzTAhwvDNuh650tzhKVg610MT7jA0h7mT5Q68T7I+8Ua1imA701+zF1FMdNu5RP3LpS726mlYK7lsuxXxngkN9nCn1afgoRBupvQ2id1QIvp6TliTBOEVvZnQV5k2/H2U2vJ3lAoTqWu0ebPdgQ3GF7dXTrWe4H5h8DrDKFE5/JXo77oKlVn/XP/TgR0CO0lLVHQUmiDoJADB/Q9rrQMnFluy0zgRcn4aZWxKtcCz7rMmExOdEAVlb4U4mR8Zhpb5ybVGqsfBRMOx94Ft83LQpMYkB7FzycFPanLKCSioFjgrV1XPR1dLOm5dCT0ldP7xHnvXlh+RC5CFwY9db1gA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by DS4PPF267298081.namprd11.prod.outlook.com (2603:10b6:f:fc02::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
+ 2025 04:15:19 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.9228.015; Thu, 23 Oct 2025
+ 04:15:19 +0000
+Message-ID: <224b358c-17e6-4e5d-935c-7559663ddf7d@intel.com>
+Date: Wed, 22 Oct 2025 21:15:17 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 05/31] x86,fs/resctrl: Refactor domain create/remove
+ using struct rdt_domain_hdr
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
+ Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>, Chen Yu <yu.c.chen@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20251013223348.103390-1-tony.luck@intel.com>
+ <20251013223348.103390-6-tony.luck@intel.com>
+Content-Language: en-US
+From: Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <20251013223348.103390-6-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0277.namprd03.prod.outlook.com
+ (2603:10b6:303:b5::12) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022071834.1658684-1-yingchao.deng@oss.qualcomm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DS4PPF267298081:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67f673cd-5c42-45f5-ae9d-08de11eac732
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?dTducW11K0ZlSWF2V1JGMno2S3JuclpXT1NvQlB5L25XMi84UmptZWlza2Vt?=
+ =?utf-8?B?aDdZTlVZaEw5aFBmMUx2MlRNbWk2NTBEbWVoOHhwWVdiNHNZajlHR2kvWnE5?=
+ =?utf-8?B?V013citHQUVjWElrSC9UQnNyWWJkTmEwR05ycXpDaW44SWl2Z08vS0E3Syt4?=
+ =?utf-8?B?aTFibE42V29jSmN4dHBTZHoycVVDcmhoS2lBTW1BbUNFMVBneDBIMGVqbElp?=
+ =?utf-8?B?NDJMMXM1OHd6REg3RzlJMk5zaTAyZlBpTFkweXRNS1gxSk5zS1FhVXdwVHoz?=
+ =?utf-8?B?RXE1UmhWc0RXS1ZIa05VN3ZaOFhNRTlrZWF4Znh3OForcktkU0xUWjg4aWZH?=
+ =?utf-8?B?TkVhQTRySGZ2OFp6QndDNldhczBRU1R6YmJOWS9PdW83eGZIYm5vSUhCMDc0?=
+ =?utf-8?B?TzRVTUJZWXh3K3ZsUjZsTzY2eEtHZE9oZEo5UlZMcjU1allqaG5ER2FCbXNz?=
+ =?utf-8?B?emJzdWRRc0FXdGQra2t4dnArYUIxN2pLUDhIRzRQUGJ2RFI0dWlKR3dTVytx?=
+ =?utf-8?B?RzhXd3VQajBxWU1FbG1iYnFDa0JKb2MweUdjQ0l4NXQyL3hmZXNpdEJRaXEw?=
+ =?utf-8?B?b3lQS2EwWDBtQVQzck5lODAzTFF4VDZhcDVvNlRObjVBeXhGZXZ1N0M3V09Q?=
+ =?utf-8?B?ZnJ6VlJmaXpickhLRmNsVExPZS9LdG53aUpoTCtTdVI5bTFTeXBHMGtzaHVX?=
+ =?utf-8?B?WS9ON3lQc2l0Y1Y1dEhsS1V4VDdjZGEzY3Y1YlI3Z1cyNzZPeHRzcVRobk5z?=
+ =?utf-8?B?eDk3RjR5OFYybzMrTWxoemZWZm94YkZ2RjRYK0FPcE5qMnE4Zk5yOXFzdzlR?=
+ =?utf-8?B?em43T1hxSXdTcENSb0tjVjUwWThIWCtLaGlGdU1nSkk3ZXVMYkpXaTZBaGhu?=
+ =?utf-8?B?czdqYXp0eTlrWkpZU1pIRzNzd1lJRWJZNUdRank0dERodXByTHN0Z3VvOHhk?=
+ =?utf-8?B?aXdzR0EvaEJ4d2lISkVOTnNDbFZrL3lQSEs1TTVNQVVwNVFZc0ZBNnBNTWJU?=
+ =?utf-8?B?MGJwRmJsRWVWcW9QbnF3STZFRXE0M1YrWVdPWHJWUFRXTTFJcUpBbnNhRkF2?=
+ =?utf-8?B?bWJTZ3I4aWxmVlBYeUpnQVRyK1M0UkFkSEZKQjZSYk1YQ3BlT2Jzd20rOXl4?=
+ =?utf-8?B?Q05jejllM1A3K0dtM1hQbDRMbkRkZ3lVRHBoci8rK1hFMjB1ekRESytuaHUz?=
+ =?utf-8?B?c1dQd3l6Y2psTk9hK2Q1Ym80QTJqUlhrRUFaYm5qL29ZN0VNOTdEbnhWR2Fi?=
+ =?utf-8?B?SlBjdTNibEFabUdPZGZpNFFDbDVFc3VSQW0zK2dmRG12cVhhYTJIenVOWmZv?=
+ =?utf-8?B?MUZPbFlPL1QxYitUa2VMK3Z2UExNdzdJODJ2bzdZQ3Y2aXJPKzBsNzN0Uy9a?=
+ =?utf-8?B?cVFhN2owOUxKNjRNclFqMVpqYTBiTit3MWFFdTVBZEEwMzYxbnVwTzhhTGE0?=
+ =?utf-8?B?TWNWNHdBOFR2WDZyRGI3L1M3SVNBMkxRTDV1OCt5S2xDalUza2JFT2Y2VW9x?=
+ =?utf-8?B?OUxsb3RTREZENTBzUGgvdTcvQktVbkdMdnduTGFEd2xTbE9wc1BFcXdTUVdZ?=
+ =?utf-8?B?TzNkMnM1MnZPOEFBKzBPUGt5R3hDMTB3NC9zV0RhV05ndUM3SnhJamFHajlW?=
+ =?utf-8?B?aEpTRm81ZlJIeTdRNUhuOUNTYW96UXRTaXlVOFBmeERVK25YdUEzNE5uRjAw?=
+ =?utf-8?B?bk1nTUNDN21jTUczVmF1UU5vci9kSGNqenllMm9pVXBTQU9JSUpiMmFxT1Yv?=
+ =?utf-8?B?ZE1oeFlZNGJkOVF3MHk4bjRYa3ZjOGRpZmxPZnRCSG1Ic0xtRFczRGZQUlVv?=
+ =?utf-8?B?eVVoK2pyQndhQzlaSmUvKzA0bHM4Sjl6MTlyQWF3eG1qeVY5dHF1SEFvdEo0?=
+ =?utf-8?B?c0h5UHdCVWlIcHJ3b0dRbDExUXRmMG1aSVVjckdFR0tRZkM3TVltcUFvdXRE?=
+ =?utf-8?Q?HUMbCrYRkLxZkN7HsvdBNBmIxcuN7ZCQ?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Nld5TmFPT1R4cFkrL051R1NJR0hNckVGQ2RaS3RTZjBhSHRDc2Z5elM1QzRE?=
+ =?utf-8?B?MjFTRlF6QVVPM1psK3grNGtBSWR5ZCtBb0pmSEpKZ1NDUW5CS1pYOG01R0Fr?=
+ =?utf-8?B?c2xBenFmT2lFQlV1a0xtc2xmSzcyZGNKcDRHdHlNb2EwMzEvVWJJMmRqQnpk?=
+ =?utf-8?B?UjFoUjA1Uk9oZWFaYm4wNGlzV0Rrc3EzSG8zYXJ1cTVxTzVIMm9WZEF5L2Z5?=
+ =?utf-8?B?Y0lwd054Y25tVHFHcVFIUDdPMURRNVFTc2NzTWhBdDlHVFVQM1BDQUtnTE9T?=
+ =?utf-8?B?TzNyZHNZWTVTV2pmekhVbW1jVktrR1NSUWIzZTdqR242UDBMaXJGNTArZ3o4?=
+ =?utf-8?B?T0w4c01BMXVwSXFySVhQeTBvckh1UWlXbzBWT2VxUXczY3BjaUNEU1N6czEv?=
+ =?utf-8?B?YmkvYUxSbEpTMGsxQW9NYlVyUmduNysxS3ZRanlHUDNVUDEwTWRPQXJmbUNn?=
+ =?utf-8?B?VTJKL3cyMnowMjlvdDJ3ZlJDVlcwQ2dpNFprWUlQbkpHenVzdW8zYkF1WmlR?=
+ =?utf-8?B?YUFlQ2NtSU5kNzhYZkwzdDkyemxKQndjV0R3cXJreE5nUkhMcGJaa2FWMUNF?=
+ =?utf-8?B?Y3RvYmxhQ3NkbHpaajE1Zm9hbSt2UGJKbmtuakt1R3ZuQWJ3R1dZZUZ0aU5n?=
+ =?utf-8?B?SWxwL2M3SUdRNVVlcThhRy8zeVNwYXlkYytRVFpCYTRIb1lvMkRpWHRyTTl3?=
+ =?utf-8?B?M2NYSGxVUjV0dEhhcUQ2RER4d2VnSjh3bHhCQ3VLUXhMTG50TWZiejFlcWJy?=
+ =?utf-8?B?cFBEb0xSR01DTDJHS0ZvdVJxOU50VXhEMXFDSy81RDByeDB3dzBlUmZ5c2M0?=
+ =?utf-8?B?U0NnOTNud3FxSVp2ZXBXMWpjNWovblFkZ2c0RnRjYno2R2RPaUx3L2ZocTNN?=
+ =?utf-8?B?RVFSOHkwVGttSEVUaFJHSFB2RUlSZExqRDBiMVNSbWZ4bWNsTU1vY1dxTmZO?=
+ =?utf-8?B?cm9xZTVydEtaL3lPUTY1OXVEUWd0eGhxNDZkUXRod09nSnFMR2VZdUFTWllR?=
+ =?utf-8?B?cEhZa0NlS0FtR29rQzBQdTdiNnV0U3EraG93UDJGWWg4YUg0QUZTbjhCNExq?=
+ =?utf-8?B?dDAvajczbnVvbE5WUTZleDZiekQrbFFmdGdMWVUzTHM3MlhtTVlFbWRGQVlD?=
+ =?utf-8?B?OWtCc1ZiOUx4YVRSU0lMTW5UaTlGYXhldnB2bWhuVmh2SkJITzFnTFhxemY0?=
+ =?utf-8?B?WGZmSU50WWtMbmg4ZFYrOVJvTVMzMEluTks3Wkd5cXZ2QXdPUU5rMmN5MktD?=
+ =?utf-8?B?dHIvODMvMVhtMXRQYXlGS0FiRWdZeXh6R2pGakxDalFoUktmSzhLUzZHN1Y2?=
+ =?utf-8?B?RSt5M29kZmhNMk9Sam5ZcGNGMndQQkRiQUFZU1BHSEZ5aE5CSnp0dXRjaEJI?=
+ =?utf-8?B?WTVaRlBrbXZFK1NZU01IVlpVZDJabWdiNURTQXJFN1BWblNTMWJXU044dmJh?=
+ =?utf-8?B?MW51dThjazl0MHlyOFBUbG5jVE1hUFRlc0s3NFpiYjNXdE5Cb0tDZHdMblhZ?=
+ =?utf-8?B?OHhrekZPcnNLTmQ1RytuRjF0TjZmZWEydXFmeGMvVzBvQTMxMjl1WnBSaDJv?=
+ =?utf-8?B?VHNrUFRnWHFOMENwU0x0Q3N2L3lXMUY4bVNsa3dvaG1uQnBZUnVjbUFTT08v?=
+ =?utf-8?B?QStESGZ2bEV4SXdRM3NyWFpXbTZMY045YnpUTEMyVmRNRnVOWkpEcWU5M0Fq?=
+ =?utf-8?B?WDlJRlhTOEFWSWFGcXU1VmJ5cUxFNWxvOWM0WW1nYXozb216V1ZZekJPYjV2?=
+ =?utf-8?B?UGtsYUsrWml0SVhxajJSci9vQVNFR2FibFA5eTZqYW5aRDJxZTdLQzNCTklT?=
+ =?utf-8?B?Y0JLZ21jcGYyOUFsMmMvbUJRMzNZRWNwTXZVRWRZbU1Jc2w1NkpBYU1ERXZp?=
+ =?utf-8?B?aDJSdWVMMUduUVRwVCtVNmRtTXRJa1RDRXNLK28vYmsrM1ZBNjNkczQwOW1T?=
+ =?utf-8?B?dWFibmFkcC9wYkl3c0duVUZSbGI1cDJmZEFaN0lEUFk4aUxKaVNydWxRYXNK?=
+ =?utf-8?B?UGt5UnpyRG1NVWxTQ2xlaW5IT0NYRXAwVDF0ZG1WR1E1TUZCOEF2cUJrNWxt?=
+ =?utf-8?B?Q1FpdWh3QVN5QkFTN1dXVWNwcmZJR1plS1hzazdHK0hudzBueXVjZnpHU2ZS?=
+ =?utf-8?B?THc4S3plOGFpQk5LaHdLd01yZFA0TFhMK204Sll4V1UyL0k2VVcrT2E4bnBV?=
+ =?utf-8?B?dmc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67f673cd-5c42-45f5-ae9d-08de11eac732
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 04:15:19.6583
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: u94EtxUIQMSNTLYVOvWZ6ChvLb1gqn+tbs+8cD/xkJVPKBM2zWdj0CdX93L3tPyeSOOdeCwZBuYEeQDJi6hUvqDZFnSE6J7AXINmVC/BK20=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPF267298081
+X-OriginatorOrg: intel.com
 
-Hi Yingchao,
+Hi Tony,
 
-kernel test robot noticed the following build errors:
+On 10/13/25 3:33 PM, Tony Luck wrote:
+> Up until now, all monitoring events were associated with the L3 resource and it
+> made sense to use the L3 specific "struct rdt_mon_domain *" argument to functions
+> operating on domains.
+> 
+> Telemetry events will be tied to a new resource with its instances represented
+> by a new domain structure that, just like struct rdt_mon_domain, starts with
+> the generic struct rdt_domain_hdr.
+> 
+> Prepare to support domains belonging to different resources by changing the
+> calling convention of functions operating on domains.  Pass the generic header
+> and use that to find the domain specific structure where needed.
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
 
-[auto build test ERROR on atorgue-stm32/stm32-next]
-[also build test ERROR on linus/master v6.18-rc2 next-20251022]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+...> diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
+> index f248eaf50d3c..8c07a9810706 100644
+> --- a/fs/resctrl/ctrlmondata.c
+> +++ b/fs/resctrl/ctrlmondata.c
+> @@ -547,11 +547,18 @@ struct rdt_domain_hdr *resctrl_find_domain(struct list_head *h, int id,
+>  }
+>  
+>  void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
+> -		    struct rdt_mon_domain *d, struct rdtgroup *rdtgrp,
+> +		    struct rdt_domain_hdr *hdr, struct rdtgroup *rdtgrp,
+>  		    cpumask_t *cpumask, int evtid, int first)
+>  {
+> +	struct rdt_mon_domain *d = NULL;
+>  	int cpu;
+>  
+> +	if (hdr) {
+> +		if (!domain_header_is_valid(hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
+> +			return;
+> +		d = container_of(hdr, struct rdt_mon_domain, hdr);
+> +	}
+> +
+>  	/* When picking a CPU from cpu_mask, ensure it can't race with cpuhp */
+>  	lockdep_assert_cpus_held();
+>  
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yingchao-Deng/stm-class-Add-MIPI-OST-protocol-support/20251022-152642
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/atorgue/stm32.git stm32-next
-patch link:    https://lore.kernel.org/r/20251022071834.1658684-1-yingchao.deng%40oss.qualcomm.com
-patch subject: [PATCH v3] stm: class: Add MIPI OST protocol support
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20251023/202510231127.UFDSOpIQ-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251023/202510231127.UFDSOpIQ-lkp@intel.com/reproduce)
+Please keep lockdep_assert_cpus_held() at beginning of the function.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510231127.UFDSOpIQ-lkp@intel.com/
+> @@ -598,7 +605,6 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
+>  	enum resctrl_event_id evtid;
+>  	struct rdt_domain_hdr *hdr;
+>  	struct rmid_read rr = {0};
+> -	struct rdt_mon_domain *d;
+>  	struct rdtgroup *rdtgrp;
+>  	int domid, cpu, ret = 0;
+>  	struct rdt_resource *r;
+> @@ -623,6 +629,8 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
+>  	r = resctrl_arch_get_resource(resid);
+>  
+>  	if (md->sum) {
+> +		struct rdt_mon_domain *d;
+> +
+>  		/*
+>  		 * This file requires summing across all domains that share
+>  		 * the L3 cache id that was provided in the "domid" field of the
 
-All errors (new ones prefixed by >>):
+This hunk is unlike any other in this patch. To me the pattern of changes found in this
+patch is that functions modified used to obtain struct rdt_mon_domain as parameter and
+after this change these functions obtain struct rdt_domain_hdr as parameter and need to
+use the container_of() to obtain the needed struct rdt_mon_domain. This hunk stands out
+in that it just blindly assumes that the domain obtained by traversing rdt_resource::mon_domains
+is an L3 domain.
 
-   drivers/hwtracing/stm/p_ost.c: In function 'ost_write':
->> drivers/hwtracing/stm/p_ost.c:201:27: error: implicit declaration of function 'task_tgid_nr' [-Wimplicit-function-declaration]
-     201 |         hdr.tgid        = task_tgid_nr(current);
-         |                           ^~~~~~~~~~~~
-   drivers/hwtracing/stm/p_ost.c:172:13: warning: unused variable 'i' [-Wunused-variable]
-     172 |         int i;
-         |             ^
+How is this hunk relevant to this patch? 
 
+From what I can tell the above two hunks need to be separated into a new patch and merged
+with the unrelated changes added to patch #13 after it was reviewed.
 
-vim +/task_tgid_nr +201 drivers/hwtracing/stm/p_ost.c
-
-   154	
-   155	static ssize_t
-   156	notrace ost_write(struct stm_data *data, struct stm_output *output,
-   157			  unsigned int chan, const char *buf, size_t count,
-   158			  struct stm_source_data *source)
-   159	{
-   160		unsigned int c = output->channel + chan;
-   161		unsigned int m = output->master;
-   162		const unsigned char nil = 0;
-   163		u32 header = DATA_HEADER;
-   164		struct trc_hdr {
-   165			u16 version;
-   166			u16 magic;
-   167			u32 cpu;
-   168			u64 timestamp;
-   169			u64 tgid;
-   170		} hdr;
-   171		ssize_t sz;
-   172		int i;
-   173		struct ost_output *op = output->pdrv_private;
-   174	
-   175		/*
-   176		 * Identify the source by entity type.
-   177		 * If entity type is not set, return error value.
-   178		 */
-   179		if (op->node.entity_type)
-   180			header |= ost_entity_value[op->node.entity_type];
-   181		else
-   182			return -EINVAL;
-   183	
-   184		/*
-   185		 * STP framing rules for OST frames:
-   186		 *   * the first packet of the OST frame is marked;
-   187		 *   * the last packet is a FLAG with timestamped tag.
-   188		 */
-   189		/* Message layout: HEADER / DATA / TAIL */
-   190		/* HEADER */
-   191		sz = data->packet(data, m, c, STP_PACKET_DATA, STP_PACKET_MARKED,
-   192				  4, (u8 *)&header);
-   193		if (sz <= 0)
-   194			return sz;
-   195	
-   196		/* DATA */
-   197		hdr.version	= STM_MAKE_VERSION(0, 3);
-   198		hdr.magic	= STM_HEADER_MAGIC;
-   199		hdr.cpu		= raw_smp_processor_id();
-   200		hdr.timestamp = sched_clock();
- > 201		hdr.tgid	= task_tgid_nr(current);
-   202		sz = stm_data_write(data, m, c, false, &hdr, sizeof(hdr));
-   203		if (sz <= 0)
-   204			return sz;
-   205	
-   206		sz = stm_data_write(data, m, c, false, buf, count);
-   207	
-   208		/* TAIL */
-   209		if (sz > 0)
-   210			data->packet(data, m, c, STP_PACKET_FLAG,
-   211				STP_PACKET_TIMESTAMPED, 0, &nil);
-   212	
-   213		return sz;
-   214	}
-   215	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reinette
 
