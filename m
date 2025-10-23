@@ -1,234 +1,162 @@
-Return-Path: <linux-kernel+bounces-866325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A42CBFF77E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:14:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D84BBFF781
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC318188E473
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 088EA189412B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0806423D288;
-	Thu, 23 Oct 2025 07:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE692BEFF3;
+	Thu, 23 Oct 2025 07:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OODg5w6E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mly662LS"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C56026F29B;
-	Thu, 23 Oct 2025 07:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF85C26E6E8
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761203638; cv=none; b=hM8vi0J7xDKrT6KLx7xMqiiQMbiH/I5psJzxwoJ7ZlO2VB5xe4Bb28Us5tJdc7CFQLyjiA7zzALO80eS4YUGGnZZ54ht6yTescULqG/zOtFM5KunZpIy8Zxw/HKilJ8hr/sPLjMCLXVL+ItR41XrLTsbqJkxhXRrDZxDgI+t3gM=
+	t=1761203672; cv=none; b=be6+JXrra0vd4QDg2iMg1pz2t9rRUVsy0b6iyvDCYm2CQJq9A/H+ss56AaCgRb0c5oQaOKRqct0KPV3kyyRrkwM32w8kxXIC4SgfNKUwzDPOAxeht5OiyRiDqoTeZH3Xw5/MnIb4GrBkNDLL63wLHuwoERsFkrv6JlRg9vvfmYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761203638; c=relaxed/simple;
-	bh=2Z6faUlpxxg8NJ99mOXDv3nxN6IIqbuwazngqBJ2agg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qmlv5X32U2mGQ3BGHQmieRcI/dP+DgvsSZpSNZ79TQyr/1CixSRuI+MHUoJN4SmXAsl3VuprpYNjqnyhW0NraabieaukomzitbF1Pc+lqmroQrGiGn5qHuFj5XbQzsp8KTY9yXToaHaaiytFY05prpgckLBdVb26KOy7SFm2gdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OODg5w6E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24502C4CEE7;
-	Thu, 23 Oct 2025 07:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761203637;
-	bh=2Z6faUlpxxg8NJ99mOXDv3nxN6IIqbuwazngqBJ2agg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OODg5w6EFB/hjsGbHVp2Vq9m7F+hBZgNtIuU5LNZe2mYTpdNyCVCbIXUA3Vdvyk52
-	 ErhoZo9K7Z89GKXdanMvWKrAWUrbXY67tNn6zxtWL+7BzQSgaPo52fDLmUpan2VWdD
-	 rE2qNVF+7AsYdvGZDRWtc/a8+uxAsg54+3aw866XKzV9gBQuY2ujGksVFsgziH3ktL
-	 opVRerWZOfIvj8VhNQRP2iKDKInrAtXVwvVYm96tdy08q1RKVcXFwAqP524kuC2LgX
-	 DtWdWbTC1YhHlmVgdTf6JFxr4NPdwQYSVh2DnnrfeRw81pRGpc9vwOUINW3WpTOZVf
-	 BlAC0rtfGtWXA==
-Date: Thu, 23 Oct 2025 10:13:49 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net,
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	masahiroy@kernel.org, ojeda@kernel.org, pratyush@kernel.org,
-	rdunlap@infradead.org, tj@kernel.org
-Subject: Re: [PATCHv7 1/7] kho: allow to drive kho from within kernel
-Message-ID: <aPnVrZC4Fz273lLn@kernel.org>
-References: <20251022005719.3670224-1-pasha.tatashin@soleen.com>
- <20251022005719.3670224-2-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1761203672; c=relaxed/simple;
+	bh=iy5HTtFm7dpN+Me6tHRDSQSZHt+q3XPJc6WhQo7w9dQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bjaMKQzurMcLPc8z1cydGz3luMMqAIocu5nqeZNgS/xOB87wqnrNkiV8qGXwHjnQQxWCDZWnsmSYBDJ/RADc9opOFDccPTFD0WClg/nYd+H1dBd47jSI3nbWNpqNS3USOebAF98wrbyJ0OSPlk5CkL8SlbabHHczcozWd67sJrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mly662LS; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47106fc51faso6824795e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:14:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761203669; x=1761808469; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FHZKwD0y2BSAHZQav3wChNXXRo6vZFDMSesZpxuz1Jo=;
+        b=mly662LSk7P5yuPcUihyelz3YNZsBMA9VZ680Xv+pO42aKSUWUzdtTgihkOpg5/nkF
+         QOsqqxso3R//HzyNUQERpYCr6XGgPxlbTD61qQwi7SYIbT6IkhSHPiq91zKvu+RptVb5
+         8aekYhRBAtrVDy9lQpax124NiN5dT/W39wR5b+zO8kVZyAB2WeCTS6i8dPfJwzqZzVQt
+         Q3q0eJ8lhmS+c2JQL66ayOXQkvVdjMI3A7CyeBg67WaVaHeE4siMk1L+Xe/zcxlqyNzL
+         i7VyYxa9+iy4gnFHb2JVr7mbu4IgAp9+4xtNV7mVIcfxfVpJ5Qshq/c+qwtKKGekk3hX
+         u6GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761203669; x=1761808469;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FHZKwD0y2BSAHZQav3wChNXXRo6vZFDMSesZpxuz1Jo=;
+        b=ljcHcKKrCj9UIcGa1xBDPIu8F2jbqF48Om9KXhbV/w6pcqL+Dy6NLRWgY01a+Fq0au
+         PHJFSXv/w6sHQ+/tcHIa1wQHd4K8/6t9Y1GsK/QF1NjF0HMTUtc+lcLNw9DYXGgNkhXn
+         RTaOA3V5WD5/Q66bJFMB33kSUtuSFVQFMB6LmZYTM1cnCifrC2LxEyOzmcg3PozhNmYd
+         vvODhraOUWiBDPeXEt5UfkTYxeHeAyAzPdzVokYtYFFEyl+jPmH2A7+QYW1cIEtgL468
+         VVv5ajnLNE27xvFTTQzZNYCPe8QKBQmbiDT2oV+3D6Lffpqhah+JTMPBCVnT44XC+NLx
+         dqVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrO3BsNWbfMSIs8XNB2biXE/hnbZx77vS3xR77dtaTFHjbAe8R0ssIMl8sHhDGhyMF3MJwwEFYWkMyPC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFAlawl0qaTIwM6XLV6lCLF6J85+jbjLFZXHHc0peoE7/KfhDV
+	uTqrMoXsMQ149NO0lI5ifUU2rNbbU2Pzvp5XWQbW9zYSvkin5p6N1U6m
+X-Gm-Gg: ASbGnctJmWcdihCPsgMNd0Uz4fuUnnAV6TVFULphKCiioYRx3STfdD+YDaBgVYM1ezP
+	SP1OnS9bH4U3R2kpUE6EzcfGSUdxRWg9khvVyJLG/wmses8LfFWYfhc04v3xlYLsNkEWhrmcsA0
+	CyEYswf9HNAZHVZUXFvl+CkqUuZSFXdVw8bQ7x40apzhBD/Zo7tirRbn/u0s+LosG5MA2HLBxMa
+	mwnx1RFJDPEjUl54Ok6sc9+oRSCLk966+RHSchaTaSuVezyb1emiDIFBQIk/IRafoj8tkRqJrw6
+	j7GEJgG/xsk0J9WLZ4gfp06CibeMka2eSGj9pejvpEGTV9pcg/ox2qICap87vIBtGnCl9gYqLCa
+	FzKmZy2qDRox5AqaKe3d6hWCHXOg+LxNgY19GF98JVIK0aAIOlXeRQO1b8RWfRHUZug9GjNbkg9
+	KFObxFZfOu33kqyCkHUNh9pR0lCit1XzLFlA==
+X-Google-Smtp-Source: AGHT+IHF3QpIBvHbO664dQtYn1vPzXqJe1fWVDo+5Z0XZfkV9YVe45fmMUl5EE7efd/FPw08qbICAg==
+X-Received: by 2002:a05:600c:871a:b0:471:14f5:124e with SMTP id 5b1f17b1804b1-4711791ef9bmr172539805e9.35.1761203668800;
+        Thu, 23 Oct 2025 00:14:28 -0700 (PDT)
+Received: from [10.221.206.54] ([165.85.126.46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475caf2f3bbsm20267125e9.16.2025.10.23.00.14.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 00:14:28 -0700 (PDT)
+Message-ID: <3450b913-d205-4b19-8690-d3191cb680a2@gmail.com>
+Date: Thu, 23 Oct 2025 10:14:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022005719.3670224-2-pasha.tatashin@soleen.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] driver core: auxiliary bus: Fix sysfs creation on
+ bind
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Tariq Toukan <tariqt@nvidia.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+ Mark Bloch <mbloch@nvidia.com>, Gal Pressman <gal@nvidia.com>,
+ Aya Levin <ayal@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, Simon Horman <horms@kernel.org>,
+ Shay Drory <shayd@nvidia.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Parav Pandit <parav@nvidia.com>,
+ Amir Tzin <amirtz@nvidia.com>
+References: <1761200367-922346-1-git-send-email-tariqt@nvidia.com>
+ <2025102347-fridge-happier-ea97@gregkh>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <2025102347-fridge-happier-ea97@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 08:57:13PM -0400, Pasha Tatashin wrote:
-> Allow kernel to drive finalize and abort without requiring triggers
-> from the userspace.
+
+
+On 23/10/2025 9:46, Greg Kroah-Hartman wrote:
+> On Thu, Oct 23, 2025 at 09:19:27AM +0300, Tariq Toukan wrote:
+>> From: Amir Tzin <amirtz@nvidia.com>
+>>
+>> In case an auxiliary device with IRQs directory is unbinded, the
+>> directory is released, but auxdev->sysfs.irq_dir_exists remains true.
+>> This leads to a failure recreating the directory on bind [1].
+>>
+>> Using the attributes group visibility interface, expose the IRQs
+>> attributes group if"f the xarray storing IRQs entries is not empty. Now
+>> irq_dir_exists field is redundant and can be removed.
+>>
+>> [1]
+>> [] mlx5_core.sf mlx5_core.sf.2: mlx5_irq_affinity_request:167:(pid 1939):
+>>     Failed to create sysfs entry for irq 56, ret = -2
+>> [] mlx5_core.sf mlx5_core.sf.2: mlx5_eq_table_create:1195:(pid 1939):
+>>     Failed to create async EQs
+>> [] mlx5_core.sf mlx5_core.sf.2: mlx5_load:1362:(pid 1939):
+>>     Failed to create EQs
+>>
+>> Fixes: a808878308a8 ("driver core: auxiliary bus: show auxiliary device IRQs")
+>> Signed-off-by: Amir Tzin <amirtz@nvidia.com>
+>> Reviewed-by: Mark Bloch <mbloch@nvidia.com>
+>> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+>> ---
+>>   drivers/base/auxiliary.c       |  13 +++-
+>>   drivers/base/auxiliary_sysfs.c | 117 +++++++++++++++++++++++++--------
+>>   include/linux/auxiliary_bus.h  |  26 ++++++--
+>>   3 files changed, 118 insertions(+), 38 deletions(-)
+>>
+>> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+>> index 04bdbff4dbe5..b0fb31279257 100644
+>> --- a/drivers/base/auxiliary.c
+>> +++ b/drivers/base/auxiliary.c
+>> @@ -225,7 +225,16 @@ static int auxiliary_bus_probe(struct device *dev)
+>>   		return ret;
+>>   	}
+>>   
+>> -	return auxdrv->probe(auxdev, auxiliary_match_id(auxdrv->id_table, auxdev));
+>> +	ret = auxiliary_bus_irq_dir_res_probe(auxdev);
+>> +	if  (ret)
+>> +		return ret;
 > 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
-
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
-> ---
->  include/linux/kexec_handover.h | 15 +++++++
->  kernel/kexec_handover.c        | 75 +++++++++++++++++++++-------------
->  2 files changed, 61 insertions(+), 29 deletions(-)
-> 
-> diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handover.h
-> index 25042c1d8d54..04d0108db98e 100644
-> --- a/include/linux/kexec_handover.h
-> +++ b/include/linux/kexec_handover.h
-> @@ -67,6 +67,10 @@ void kho_memory_init(void);
->  
->  void kho_populate(phys_addr_t fdt_phys, u64 fdt_len, phys_addr_t scratch_phys,
->  		  u64 scratch_len);
-> +
-> +int kho_finalize(void);
-> +int kho_abort(void);
-> +
->  #else
->  static inline bool kho_is_enabled(void)
->  {
-> @@ -139,6 +143,17 @@ static inline void kho_populate(phys_addr_t fdt_phys, u64 fdt_len,
->  				phys_addr_t scratch_phys, u64 scratch_len)
->  {
->  }
-> +
-> +static inline int kho_finalize(void)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static inline int kho_abort(void)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
->  #endif /* CONFIG_KEXEC_HANDOVER */
->  
->  #endif /* LINUX_KEXEC_HANDOVER_H */
-> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-> index de4466b47455..6458f369a346 100644
-> --- a/kernel/kexec_handover.c
-> +++ b/kernel/kexec_handover.c
-> @@ -1087,7 +1087,7 @@ static int kho_out_update_debugfs_fdt(void)
->  	return err;
->  }
->  
-> -static int kho_abort(void)
-> +static int __kho_abort(void)
->  {
->  	int err;
->  	unsigned long order;
-> @@ -1120,7 +1120,27 @@ static int kho_abort(void)
->  	return err;
->  }
->  
-> -static int kho_finalize(void)
-> +int kho_abort(void)
-> +{
-> +	int ret = 0;
-> +
-> +	if (!kho_enable)
-> +		return -EOPNOTSUPP;
-> +
-> +	guard(mutex)(&kho_out.lock);
-> +	if (!kho_out.finalized)
-> +		return -ENOENT;
-> +
-> +	ret = __kho_abort();
-> +	if (ret)
-> +		return ret;
-> +
-> +	kho_out.finalized = false;
-> +
-> +	return kho_out_update_debugfs_fdt();
-> +}
-> +
-> +static int __kho_finalize(void)
->  {
->  	int err = 0;
->  	u64 *preserved_mem_map;
-> @@ -1163,12 +1183,32 @@ static int kho_finalize(void)
->  abort:
->  	if (err) {
->  		pr_err("Failed to convert KHO state tree: %d\n", err);
-> -		kho_abort();
-> +		__kho_abort();
->  	}
->  
->  	return err;
->  }
->  
-> +int kho_finalize(void)
-> +{
-> +	int ret;
-> +
-> +	if (!kho_enable)
-> +		return -EOPNOTSUPP;
-> +
-> +	guard(mutex)(&kho_out.lock);
-> +	if (kho_out.finalized)
-> +		return -EEXIST;
-> +
-> +	ret = __kho_finalize();
-> +	if (ret)
-> +		return ret;
-> +
-> +	kho_out.finalized = true;
-> +
-> +	return kho_out_update_debugfs_fdt();
-> +}
-> +
->  static int kho_out_finalize_get(void *data, u64 *val)
->  {
->  	mutex_lock(&kho_out.lock);
-> @@ -1178,35 +1218,12 @@ static int kho_out_finalize_get(void *data, u64 *val)
->  	return 0;
->  }
->  
-> -static int kho_out_finalize_set(void *data, u64 _val)
-> +static int kho_out_finalize_set(void *data, u64 val)
->  {
-> -	int ret = 0;
-> -	bool val = !!_val;
-> -
-> -	mutex_lock(&kho_out.lock);
-> -
-> -	if (val == kho_out.finalized) {
-> -		if (kho_out.finalized)
-> -			ret = -EEXIST;
-> -		else
-> -			ret = -ENOENT;
-> -		goto unlock;
-> -	}
-> -
->  	if (val)
-> -		ret = kho_finalize();
-> +		return kho_finalize();
->  	else
-> -		ret = kho_abort();
-> -
-> -	if (ret)
-> -		goto unlock;
-> -
-> -	kho_out.finalized = val;
-> -	ret = kho_out_update_debugfs_fdt();
-> -
-> -unlock:
-> -	mutex_unlock(&kho_out.lock);
-> -	return ret;
-> +		return kho_abort();
->  }
->  
->  DEFINE_DEBUGFS_ATTRIBUTE(fops_kho_out_finalize, kho_out_finalize_get,
-> -- 
-> 2.51.0.915.g61a8936c21-goog
+> Please always use scripts/checkpatch.pl so that you don't get grumpy
+> maintainers asking you why you didn't use scripts/checkpatch.pl...
 > 
 
--- 
-Sincerely yours,
-Mike.
+Sure. Always running it before submissions.
+It passes for me. Anything I miss?
+
+
+total: 0 errors, 0 warnings, 258 lines checked
+patch has no obvious style problems and is ready for submission.
+
+
 
