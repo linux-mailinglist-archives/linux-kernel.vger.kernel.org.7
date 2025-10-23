@@ -1,343 +1,203 @@
-Return-Path: <linux-kernel+bounces-866662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631D9C005FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:02:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41FECC00629
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 133164F37A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:02:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACDD34F4F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08BF12B143;
-	Thu, 23 Oct 2025 10:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5636E2C325C;
+	Thu, 23 Oct 2025 10:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="tX5yKIBY";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qwZ/ApOf"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZQZI/bfu"
+Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57822EC0B1
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8602F2FF14C
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761213713; cv=none; b=JPrtVttInsBjDzo0CqrJ6v8kdjYwSGyubrbtRZGoWh0SynRW4DmXwym2kivTkUUNmxXEHB4dd6sy7Zb7dH9ILx7twjBwRgurknpDzaH9op+vI1uEk5EIggJm6fNHS8HI6MBqu/CHeycB59Ei3q8zpbsH2ohnZVX/+vXAVyoJbKI=
+	t=1761213807; cv=none; b=seBWVMs34cxAYZaIgMWWztkI5rpnAItlOWYE5LcDrX9pZ6Epy+dDnv4/CC5x1kKQhZUDhGwoseZHuKo/gwP7CH+ZbNX0R7VIgvi2LmrtOO6SyFcox3Hzd6fv/Cwz9l7FiDTuYn9L57KS8y6mWpS/BLA9jy4Sul4bFSwIxk8re0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761213713; c=relaxed/simple;
-	bh=i8iTFIpSYHr7NzE1lDkPHpkvPukENwJx5HMYBoh3o1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Htiu3Q9hbCvhixgXb/r+cOiX0opK1uwmoKS0dWZMneqVHa9540WLShMynj6HKQIAj/ZTW3lLTP7j7XbiQ9SbDEXOgPDgCatvybmwXMl2rnnTh0jZ99SIi0nVp+xruom5G8ntrnDj5DcLcPn15ZRlLyO7OkJgQnTW+CHa/yyBpa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=tX5yKIBY; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qwZ/ApOf; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B8FFC1F388;
-	Thu, 23 Oct 2025 10:01:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1761213703; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=8CphuBVHORvBwJQPcaj5D55Ah/F0BPK3ytrl067uAgA=;
-	b=tX5yKIBYzbBZj/BQYIXPh0+mjlAtOJmPNxvCaerMk9w09wmW9rpnjYghvOHFRZeoysy1qj
-	st15Muds/PAm9ZQzEbMD0xJ5g3B1LUokCAS2eE5eyZJgoXE1Xsvb+XVWLLgjHdGA7ni1V4
-	vVvUylnAE9jjqPcVB20U+NE+2p8nMtc=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b="qwZ/ApOf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1761213699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=8CphuBVHORvBwJQPcaj5D55Ah/F0BPK3ytrl067uAgA=;
-	b=qwZ/ApOfaf4ZA07/9ksOrwwVDhnolkyMDpZ1W6Oa3f+WLSnPUCeob/vbTebWKyuPMGlIDa
-	T79xELna0goXVq8/TIG1D4ab+udFBTlZJ/8QDrexwAMAfNm6jOh8+c7gqlonodFGdUXD4C
-	WyjXNHj3ej/UnND7Ot2eEZi9LBUAtJA=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 79A0713285;
-	Thu, 23 Oct 2025 10:01:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OSOWHAP9+WgvXwAAD6G6ig
-	(envelope-from <oneukum@suse.com>); Thu, 23 Oct 2025 10:01:39 +0000
-From: Oliver Neukum <oneukum@suse.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH net-next 1/1] net: usb: usbnet: coding style for functions
-Date: Thu, 23 Oct 2025 12:00:19 +0200
-Message-ID: <20251023100136.909118-1-oneukum@suse.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1761213807; c=relaxed/simple;
+	bh=+p1CXHiLaIPMryIwnOqeXs1RBYrS5XH1NSl8EPkHO8A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NnP4G6vOxSKbbKd1GwPi8ePtzUExuNVtL/bUE4W+aS334mLYfz4bBXC+S8JifH87sqOmRqvzpHQSa2RKHuNvsRjRF/anwPirjvnV+H+2r7lOPrYJ4RnuuA7n3K+rBOsPXJIjOLYk3GYKq9tM/k/W+I46AStxzNZyhV1sW/qRr+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZQZI/bfu; arc=none smtp.client-ip=74.125.224.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-63cf0df1abbso648759d50.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:03:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761213804; x=1761818604; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oWquFxQQ4MHJSF9//VvQ/C1WhYfIG1u7wl2C5TWDxwA=;
+        b=ZQZI/bfu4tN3zB/Za0uaqFtM7QQVYhpAmBbheuFuY/dFrppF09xN91WQDq9Q0xsdL0
+         iRxvtXLLWi3Pb3dyMFz5bK9ofdCHYNkAOBwQ8FvEiWGs22BYJGXPFiXU7kqTfr18OXoA
+         xpEOx3Gtan+qmmgc2CFATsIfIjfFuFzxobcO+lAAAj7wzIfDHNdqqV3fnv62xCiQipIr
+         v8kttkQuNCKPGkLm0TEvTc4NyequWjt9YuebMxjuIy7fSO1uu2hUp9gjPwhkIeXmUKhS
+         v0BJyV9yxxV19fN11HWseqfzei0R99RbUbzO1nrGjKNZZi2fOa9WlGGE/CINnuKYiVBI
+         H0xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761213804; x=1761818604;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oWquFxQQ4MHJSF9//VvQ/C1WhYfIG1u7wl2C5TWDxwA=;
+        b=Joef3InxO5w5upkFqQzjNSScauQv1QATuHWZg3Fvw14vsc8hhr4B0BPGk7HiU1Mwrp
+         jp7f2GZ23wrnbS7tTaQH9ORa8wUlFCybPNDuVs/Q/PcTIu63zG7IB6RrdNxXY00xOE9y
+         1sSQWApmp9TxPjBsTH6j7wMz2oUbg8RAKj9DLZreX/c3One0Op2ARPlrR0kheVQ6LnYW
+         aZpKshzAyjS3HBHuzhdt5cWyE1NMh0igW5TWZi0C9yQ/gOiQoRgxHFRWVtztaRGICcBh
+         P2k+hJpqwO4XQflyiD2t7sRi2fKEoXPZX/BW8tGOms5im3a7c50w3ClalodRzXy1+0MR
+         MvZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWX16rqFkDSLR0HFN8qFVgUaAFZNpUgrJlQAPtYqlAl709yZFT+O19WR7AtNQaIBXOtIv7KAquUSQ9aQ2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlIDBaeGOOAQNG9rpU2wCzqCbFDTln2MCD1sPUnocKsz08f32j
+	alEJMfzNS7+HsDR26agHTRGcATR3Z0/fBejfA5xWjRhb8457cYn050NcSlOHPrdIwKLy807p4wT
+	LdW0KIz1oy3+9mSNneo8lubZr2xHCcHtxGT79czZ7rQ==
+X-Gm-Gg: ASbGncsE8MT1Z+6m+T45OCzGgggHWr1x5RdrA02Mpvn8tssdmbwnM4SDu6O7TTH44Lu
+	BUU1gdFjGyN6TKLOlHArZUqpKUjwCEF6dVwopwOIUGjEKcCkHm84eCo0HeDAHfJzKBx2PPOk/UF
+	ralLSPgphh7spvBqnnLInnMVioQO4NbNffIrPua66M0c48QDuI1SFWmV3UZo/ficeAYgneou06U
+	Tds0HT2SBcHJn/vtjj1YtQ9GxCAYLqPP6SIUxKLEIjXbfCC0RqFSH7Kx2Crmw==
+X-Google-Smtp-Source: AGHT+IHYTuBS5tdkgCmTIC44x/jualH/JELvua1Z+qzp00tin6cE2MKOBedS1C2f62vL4/dVJ0lyn45HjIoQ+rR7MQ4=
+X-Received: by 2002:a05:690e:c42:b0:63e:33a7:cdf0 with SMTP id
+ 956f58d0204a3-63f377d2574mr1315040d50.14.1761213804328; Thu, 23 Oct 2025
+ 03:03:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: B8FFC1F388
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[netdev];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.com:mid,suse.com:dkim];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -1.51
-X-Spam-Level: 
+References: <20251016-gs101-pd-v3-0-7b30797396e7@linaro.org>
+ <20251016-gs101-pd-v3-8-7b30797396e7@linaro.org> <CGME20251022110738eucas1p2cee28096ca5c9c6a802e2190d88ccf21@eucas1p2.samsung.com>
+ <CAPDyKFq2esPos=D-eVz6w1VXq=4LYi6fx54K4TvsUi4JqUJOaQ@mail.gmail.com> <57bacc06-8a5e-4284-a520-c5d2a56545e9@samsung.com>
+In-Reply-To: <57bacc06-8a5e-4284-a520-c5d2a56545e9@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 23 Oct 2025 12:02:48 +0200
+X-Gm-Features: AS18NWDk2cnwAbu5KPIINOVhITzbpKKTXME95wNCKMMbO1h01gk_WEP7weXC8KQ
+Message-ID: <CAPDyKFrCS1PGwPeZd2ahZ=wKXCqPj93qAJ7V-ELELLA_OwgdSw@mail.gmail.com>
+Subject: Re: [PATCH v3 08/10] pmdomain: samsung: selectively handle enforced sync_state
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Rob Herring <robh@kernel.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+	kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Functions are not to have blanks between names
-and parameter lists. Remove them.
+On Wed, 22 Oct 2025 at 20:39, Marek Szyprowski <m.szyprowski@samsung.com> w=
+rote:
+>
+> On 22.10.2025 13:06, Ulf Hansson wrote:
+> > On Thu, 16 Oct 2025 at 17:58, Andr=C3=A9 Draszik <andre.draszik@linaro.=
+org> wrote:
+> >> Unconditionally calling of_genpd_sync_state() causes issues on
+> >> platforms with child domains as the parent domain will be turned off
+> >> before the child domain was even registered during boot.
+> >>
+> >> This in particular is an issue for the upcoming Google gs101 support -
+> >> all operations on child domains registered after the parent domain
+> >> misbehave.
+> >>
+> >> Add a flag to the probe data to be able to sync_state conditionally
+> >> only, and enable that flag on the two platforms currently supported by
+> >> this driver.
+> >>
+> >> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> >>
+> >> ---
+> >> v2:
+> >> * use bool for need_early_sync_state (Krzysztof)
+> >> ---
+> >>   drivers/pmdomain/samsung/exynos-pm-domains.c | 5 ++++-
+> >>   1 file changed, 4 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pm=
+domain/samsung/exynos-pm-domains.c
+> >> index 638d286b57f716140b2401092415644a6805870e..15a1582aa92103a07335eb=
+681600d9415369fefd 100644
+> >> --- a/drivers/pmdomain/samsung/exynos-pm-domains.c
+> >> +++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
+> >> @@ -20,6 +20,7 @@
+> >>   struct exynos_pm_domain_config {
+> >>          /* Value for LOCAL_PWR_CFG and STATUS fields for each domain =
+*/
+> >>          u32 local_pwr_cfg;
+> >> +       bool need_early_sync_state;
+> >>   };
+> >>
+> >>   /*
+> >> @@ -69,10 +70,12 @@ static int exynos_pd_power_off(struct generic_pm_d=
+omain *domain)
+> >>
+> >>   static const struct exynos_pm_domain_config exynos4210_cfg =3D {
+> >>          .local_pwr_cfg          =3D 0x7,
+> >> +       .need_early_sync_state  =3D true,
+> >>   };
+> >>
+> >>   static const struct exynos_pm_domain_config exynos5433_cfg =3D {
+> >>          .local_pwr_cfg          =3D 0xf,
+> >> +       .need_early_sync_state  =3D true,
+> >>   };
+> >>
+> >>   static const struct of_device_id exynos_pm_domain_of_match[] =3D {
+> >> @@ -179,7 +182,7 @@ static int exynos_pd_probe(struct platform_device =
+*pdev)
+> >>           * reset during boot. As a temporary hack to manage this, let=
+'s enforce
+> >>           * a sync_state.
+> >>           */
+> >> -       if (!ret)
+> >> +       if (pm_domain_cfg->need_early_sync_state && !ret)
+> >>                  of_genpd_sync_state(np);
+> > The call to of_genpd_sync_state() was intended as a temporary solution =
+here.
+> >
+> > Potentially, if we would be able to distinguish what PM domain that is
+> > causing the problem on the Exynos platforms, we could set
+> > GENPD_FLAG_NO_STAY_ON for that genpd instead.
+>
+> Well, this of_genpd_sync_state() "workaround" has to be applied only to
+> the power domain of the display controller device. It can be replaced by
+> the following check on the legacy Exynos systems:
+>
+> if (IS_ENABLED(CONFIG_ARM) &&
+> of_device_is_compatible(np, "samsung,exynos4210-pd") &&
+> (strstr(pd->pd.name, "LCD") || strstr(pd->pd.name, "DISP")))
+> pd->pd.flags =3D GENPD_FLAG_NO_STAY_ON;
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
----
- drivers/net/usb/usbnet.c | 49 ++++++++++++++++++++--------------------
- 1 file changed, 24 insertions(+), 25 deletions(-)
+Oh wait, perhaps better to just power-off these PM domains before
+calling pm_genpd_init(), if that can be done safely?
 
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index bf01f2728531..62a85dbad31a 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -189,7 +189,7 @@ static bool usbnet_needs_usb_name_format(struct usbnet *dev, struct net_device *
- 		 is_local_ether_addr(net->dev_addr));
- }
- 
--static void intr_complete (struct urb *urb)
-+static void intr_complete(struct urb *urb)
- {
- 	struct usbnet	*dev = urb->context;
- 	int		status = urb->status;
-@@ -221,7 +221,7 @@ static void intr_complete (struct urb *urb)
- 			  "intr resubmit --> %d\n", status);
- }
- 
--static int init_status (struct usbnet *dev, struct usb_interface *intf)
-+static int init_status(struct usbnet *dev, struct usb_interface *intf)
- {
- 	char		*buf = NULL;
- 	unsigned	pipe = 0;
-@@ -326,7 +326,7 @@ static void __usbnet_status_stop_force(struct usbnet *dev)
-  * Some link protocols batch packets, so their rx_fixup paths
-  * can return clones as well as just modify the original skb.
-  */
--void usbnet_skb_return (struct usbnet *dev, struct sk_buff *skb)
-+void usbnet_skb_return(struct usbnet *dev, struct sk_buff *skb)
- {
- 	struct pcpu_sw_netstats *stats64 = this_cpu_ptr(dev->net->tstats);
- 	unsigned long flags;
-@@ -396,7 +396,7 @@ EXPORT_SYMBOL_GPL(usbnet_update_max_qlen);
-  *
-  *-------------------------------------------------------------------------*/
- 
--int usbnet_change_mtu (struct net_device *net, int new_mtu)
-+int usbnet_change_mtu(struct net_device *net, int new_mtu)
- {
- 	struct usbnet	*dev = netdev_priv(net);
- 	int		ll_mtu = new_mtu + net->hard_header_len;
-@@ -472,7 +472,7 @@ static enum skb_state defer_bh(struct usbnet *dev, struct sk_buff *skb,
-  * NOTE:  annoying asymmetry:  if it's active, schedule_work() fails,
-  * but tasklet_schedule() doesn't.  hope the failure is rare.
-  */
--void usbnet_defer_kevent (struct usbnet *dev, int work)
-+void usbnet_defer_kevent(struct usbnet *dev, int work)
- {
- 	set_bit (work, &dev->flags);
- 	if (!usbnet_going_away(dev)) {
-@@ -489,9 +489,9 @@ EXPORT_SYMBOL_GPL(usbnet_defer_kevent);
- 
- /*-------------------------------------------------------------------------*/
- 
--static void rx_complete (struct urb *urb);
-+static void rx_complete(struct urb *urb);
- 
--static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
-+static int rx_submit(struct usbnet *dev, struct urb *urb, gfp_t flags)
- {
- 	struct sk_buff		*skb;
- 	struct skb_data		*entry;
-@@ -597,7 +597,7 @@ static inline int rx_process(struct usbnet *dev, struct sk_buff *skb)
- 
- /*-------------------------------------------------------------------------*/
- 
--static void rx_complete (struct urb *urb)
-+static void rx_complete(struct urb *urb)
- {
- 	struct sk_buff		*skb = (struct sk_buff *) urb->context;
- 	struct skb_data		*entry = (struct skb_data *) skb->cb;
-@@ -728,7 +728,7 @@ EXPORT_SYMBOL_GPL(usbnet_purge_paused_rxq);
- 
- // unlink pending rx/tx; completion handlers do all other cleanup
- 
--static int unlink_urbs (struct usbnet *dev, struct sk_buff_head *q)
-+static int unlink_urbs(struct usbnet *dev, struct sk_buff_head *q)
- {
- 	unsigned long		flags;
- 	struct sk_buff		*skb;
-@@ -823,7 +823,7 @@ static void usbnet_terminate_urbs(struct usbnet *dev)
- 	remove_wait_queue(&dev->wait, &wait);
- }
- 
--int usbnet_stop (struct net_device *net)
-+int usbnet_stop(struct net_device *net)
- {
- 	struct usbnet		*dev = netdev_priv(net);
- 	const struct driver_info *info = dev->driver_info;
-@@ -892,7 +892,7 @@ EXPORT_SYMBOL_GPL(usbnet_stop);
- 
- // precondition: never called in_interrupt
- 
--int usbnet_open (struct net_device *net)
-+int usbnet_open(struct net_device *net)
- {
- 	struct usbnet		*dev = netdev_priv(net);
- 	int			retval;
-@@ -1048,7 +1048,7 @@ int usbnet_set_link_ksettings_mii(struct net_device *net,
- }
- EXPORT_SYMBOL_GPL(usbnet_set_link_ksettings_mii);
- 
--u32 usbnet_get_link (struct net_device *net)
-+u32 usbnet_get_link(struct net_device *net)
- {
- 	struct usbnet *dev = netdev_priv(net);
- 
-@@ -1076,7 +1076,7 @@ int usbnet_nway_reset(struct net_device *net)
- }
- EXPORT_SYMBOL_GPL(usbnet_nway_reset);
- 
--void usbnet_get_drvinfo (struct net_device *net, struct ethtool_drvinfo *info)
-+void usbnet_get_drvinfo(struct net_device *net, struct ethtool_drvinfo *info)
- {
- 	struct usbnet *dev = netdev_priv(net);
- 
-@@ -1087,7 +1087,7 @@ void usbnet_get_drvinfo (struct net_device *net, struct ethtool_drvinfo *info)
- }
- EXPORT_SYMBOL_GPL(usbnet_get_drvinfo);
- 
--u32 usbnet_get_msglevel (struct net_device *net)
-+u32 usbnet_get_msglevel(struct net_device *net)
- {
- 	struct usbnet *dev = netdev_priv(net);
- 
-@@ -1095,7 +1095,7 @@ u32 usbnet_get_msglevel (struct net_device *net)
- }
- EXPORT_SYMBOL_GPL(usbnet_get_msglevel);
- 
--void usbnet_set_msglevel (struct net_device *net, u32 level)
-+void usbnet_set_msglevel(struct net_device *net, u32 level)
- {
- 	struct usbnet *dev = netdev_priv(net);
- 
-@@ -1166,7 +1166,7 @@ static void __handle_set_rx_mode(struct usbnet *dev)
-  * especially now that control transfers can be queued.
-  */
- static void
--usbnet_deferred_kevent (struct work_struct *work)
-+usbnet_deferred_kevent(struct work_struct *work)
- {
- 	struct usbnet		*dev =
- 		container_of(work, struct usbnet, kevent);
-@@ -1277,7 +1277,7 @@ usbnet_deferred_kevent (struct work_struct *work)
- 
- /*-------------------------------------------------------------------------*/
- 
--static void tx_complete (struct urb *urb)
-+static void tx_complete(struct urb *urb)
- {
- 	struct sk_buff		*skb = (struct sk_buff *) urb->context;
- 	struct skb_data		*entry = (struct skb_data *) skb->cb;
-@@ -1332,7 +1332,7 @@ static void tx_complete (struct urb *urb)
- 
- /*-------------------------------------------------------------------------*/
- 
--void usbnet_tx_timeout (struct net_device *net, unsigned int txqueue)
-+void usbnet_tx_timeout(struct net_device *net, unsigned int txqueue)
- {
- 	struct usbnet		*dev = netdev_priv(net);
- 
-@@ -1382,8 +1382,7 @@ static int build_dma_sg(const struct sk_buff *skb, struct urb *urb)
- 	return 1;
- }
- 
--netdev_tx_t usbnet_start_xmit (struct sk_buff *skb,
--				     struct net_device *net)
-+netdev_tx_t usbnet_start_xmit(struct sk_buff *skb, struct net_device *net)
- {
- 	struct usbnet		*dev = netdev_priv(net);
- 	unsigned int			length;
-@@ -1561,7 +1560,7 @@ static inline void usb_free_skb(struct sk_buff *skb)
- 
- // work (work deferred from completions, in_irq) or timer
- 
--static void usbnet_bh (struct timer_list *t)
-+static void usbnet_bh(struct timer_list *t)
- {
- 	struct usbnet		*dev = timer_container_of(dev, t, delay);
- 	struct sk_buff		*skb;
-@@ -1636,7 +1635,7 @@ static void usbnet_bh_work(struct work_struct *work)
- 
- // precondition: never called in_interrupt
- 
--void usbnet_disconnect (struct usb_interface *intf)
-+void usbnet_disconnect(struct usb_interface *intf)
- {
- 	struct usbnet		*dev;
- 	struct usb_device	*xdev;
-@@ -1700,7 +1699,7 @@ static const struct device_type wwan_type = {
- };
- 
- int
--usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
-+usbnet_probe(struct usb_interface *udev, const struct usb_device_id *prod)
- {
- 	struct usbnet			*dev;
- 	struct net_device		*net;
-@@ -1907,7 +1906,7 @@ EXPORT_SYMBOL_GPL(usbnet_probe);
-  * resume only when the last interface is resumed
-  */
- 
--int usbnet_suspend (struct usb_interface *intf, pm_message_t message)
-+int usbnet_suspend(struct usb_interface *intf, pm_message_t message)
- {
- 	struct usbnet		*dev = usb_get_intfdata(intf);
- 
-@@ -1940,7 +1939,7 @@ int usbnet_suspend (struct usb_interface *intf, pm_message_t message)
- }
- EXPORT_SYMBOL_GPL(usbnet_suspend);
- 
--int usbnet_resume (struct usb_interface *intf)
-+int usbnet_resume(struct usb_interface *intf)
- {
- 	struct usbnet		*dev = usb_get_intfdata(intf);
- 	struct sk_buff          *skb;
--- 
-2.51.1
+At least that would guarantee the reset to happen before the display
+driver gets probed. Instead of relying on genpd_power_off_unused()
+(late_initcall_sync) to do it.
 
+>
+> I assume that this information cannot be coded in device tree to make it
+> somehow generic...
+
+Right, in principle we would need a new DT property for a power-domain
+provider, like "broken-hw-reset", because we don't have a reset-line
+to pull.
+
+>
+> Best regards
+> --
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+>
+
+Kind regards
+Uffe
 
