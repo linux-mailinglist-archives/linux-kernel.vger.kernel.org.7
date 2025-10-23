@@ -1,254 +1,151 @@
-Return-Path: <linux-kernel+bounces-866269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07614BFF582
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:29:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3346BFF597
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 84C654E4303
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D9E13AA01C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D50728850E;
-	Thu, 23 Oct 2025 06:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59DD29A326;
+	Thu, 23 Oct 2025 06:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQAUXPLx"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iPyNKGv1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFAC26A1BB
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928DA28D8E8;
+	Thu, 23 Oct 2025 06:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761200941; cv=none; b=JSn+gho6ss2WYD0DJnnRXzD0TO2msXcoIJN3hOO4Sg77dnK14lSLSaGFGYp5rIXF4cX+yG9P8dFZApa7fps7hjzq/luZcwXdDRJdfHUdgbxohtQ/EkCEnvA3ErZvGe7rxXoEC/uJK5emLjEFyAFd1APuCOcFt/8N/yqP3qEMKSQ=
+	t=1761200951; cv=none; b=C4JIj0v/OT9BN45kPtYrHN+qx0SrAa0Atp2AW6PiowMnH5+YLKq5tEwFad7PtK6oYqvoIlRw5cAMWwYWIS2+tkz/XQKPrhM7AgAKD+a7EFabXXpKN8Vj+9aa5GoE3KplEEQCXD6Qr5Oo7i57bWXWTpcc5Jd+RMa05W0QHPshWYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761200941; c=relaxed/simple;
-	bh=fosxcRfm4IcPp2XyRa43blhpzgOGKZ7BZ6k6bvuh/k0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oqJTR3hhCt1LWBOeFORmEL/MJD9cStHcpsCMwTOivXcHF9Z4mr1taiTKAL0UtI4lfBAaqfzHAuoxIq4ht6892W3d6MJJpfhPU7HU3NywYyz0JbGvcLpYGUD2M7NLAPYn6gAy1Ujxro3cnB2w0o4HmbzOkgGbi5EkxQeMKe1Q1tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQAUXPLx; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so423786f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:28:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761200938; x=1761805738; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=cfXSNBJ3Lj8HMC9TG4zI26WPaoxL73AUzeIid3gj+Vk=;
-        b=UQAUXPLxGaQ3JIiVdYUdrATpty4kk/Z9z3E91wSmzMgugOkFu8e0KzyK4GpMaskD/e
-         qwbfgLjF4zKM7T/Jvndu3HlD9Ni5ypLSEBk8Nv7FsACmln67QlF+4NtuyvuG9LmfTz1J
-         QOx5mwOom7Zqy3OQR/WgptokT6lsyYfrq55L9eNcmvUGOxjGlVAlwUuDz4T639CYurWd
-         trSRj2LZyOzXBT88jnlckn9+xetqusl3IEYsSWXOHy0tahfNY9Bh4ocV+FAcotHj95oM
-         3VXgO1H9Lvc3t/zzi5wLt2HaC4x3kKnqyaAkWEMYr5k0mJYDsslcS4DNNEDSOUF3R54u
-         oNYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761200938; x=1761805738;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cfXSNBJ3Lj8HMC9TG4zI26WPaoxL73AUzeIid3gj+Vk=;
-        b=WvAwQ5yRoNvgN9XtRVmc+wDOJAwo/cn4deIU5RXNWCUUGrBsxvQnZbq8uwzBhP+Qif
-         TwM6R2CZoangxCq+xMiswuPRbnCKsT7A6sXbLkH1eTpjxyHrcdQ9FzPlvld8p9wIFe9u
-         MIRQN+fr2/GfaePN/FLkbF+WS+1J44za2ViOoj8ndcz2b//v44iXWlAcItsmbV637J6C
-         9ZTiAHZz215PEAzqLDK4xK5+j1YeVrQh1S9Dl4kAvJEx+geUsiAqZobBhVGQQWEcEWLA
-         kUyBOgcJJ1dUwBHHdfkOhsuwTn4PbBxGam5wnTO3/7yyX3Kb+qz411m20pT3U83GV8+T
-         7cFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVriJuGlZdNne0lZsS9omvTEhobS0nDnFWaUrYYaUrCPqFgtn2aYpMDvTWu0ooFlnk2g5Im7dKb/RNN7q4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywhwke/mKLTxfPWnVY2bozH/If6DtFXEIONxQwLUrfTOmu20x1k
-	LH2V0wa3e5rRtQApfDN3B93KboOg/T1yd0LOXNVmXKUPN0+iNUSUFbL+
-X-Gm-Gg: ASbGnctBmhGAw8NouPVhu7jUfwiB2n9e2a/KqaCsViwGHE/Yyz1lrUZFVhC2DeTQf7r
-	8bRLWXA2Ku0qer3mPJtWROW/5aJsrrw0R8/ylX6cLHCy0mM/GQawTsc8WxTXMXpI3GfGZ6H6LiB
-	1EbNgzSU3CGkndyATRcNNPZKGLuYY3QdzWw66VVbyiDEGoFVmiv0OjV+KXjivMRLY27yQu1YrT2
-	282tBjaOab500AbUxiGzTZov7BpkI4SicT0alPIX71kNNv1jWlLale8Lq1b4ci30fiQvWybeOZP
-	E0BEBs99L88xIFIMa0rcB4d2DL+RLuexDhckKwGxRHAAh2zoeFCwHq0vPM2SckYaXRak1ITgQWc
-	vXB5Zh9IJwkOEGjonR+/3vSkxT3PEvdMfeRRkiSe6OkowFm3/rI3OiBtKJ6WUqXgiRozftLwfOM
-	q+1RDUjIbSAB8WH5vZULs8zaiyzlz8ksOHtEswxQ2FbCf91fQTcdLKIpR+wXblJqi9ce3Qvkcrr
-	zsX0QXQwc6HACZs8epoAw==
-X-Google-Smtp-Source: AGHT+IGQYsYCoWv277/L1DZqnSFky9hUnqtHFEhUT8R9Ao9EsxWIgBx6V3qKm2hKAnUcCyUKYbX8NA==
-X-Received: by 2002:a05:6000:2911:b0:426:da92:d390 with SMTP id ffacd0b85a97d-42704d83ce7mr16609944f8f.10.1761200937708;
-        Wed, 22 Oct 2025 23:28:57 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-429897f52aasm2190315f8f.12.2025.10.22.23.28.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 23:28:56 -0700 (PDT)
-Message-ID: <c0e6b667-2e87-4419-81ad-3366ed56830e@gmail.com>
-Date: Thu, 23 Oct 2025 08:28:54 +0200
+	s=arc-20240116; t=1761200951; c=relaxed/simple;
+	bh=6bbBc8lHjgLup7P7rA+yun58lb5OL9HjWKU0yiOHpmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MvRctWl0RClzx3i9EIICYj/LCBGN+Sv8+xXWCbtVw9klOf/yfxvrFoflrEkthZuC1CR2N22LMX3J1AsI/pHO9hw7AlxWRdZZf0b1mQ/ZcngP+iT/C0e4pjnv62cpU4Q4/iVxr43PRkXoO0WMUl7x1hj36FXo+xHLhlB3yhdvskg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iPyNKGv1; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761200950; x=1792736950;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6bbBc8lHjgLup7P7rA+yun58lb5OL9HjWKU0yiOHpmg=;
+  b=iPyNKGv1s4IJ4FCIn98VqHonAdkUsDQTS5V/T/EaOMNaLcN/yIMO+7fV
+   8AUhXhIYF1fnWvcmHKPU7/OcGs7NJidzUjBNxS8BGtCcPLV0IOJ2LHo45
+   yADDRzgX8U59kDFnqZ6Dh5bafp/8uagXmk8mLBaJRndm54Pe0hVJZ4tal
+   XSrV7DvP/s/khcMR3ERk3hF+2SmmFGQIpMnTXnlNBKLdNjwOuB64SLe+U
+   wGANUa7J09kZ+OgR37WGKCNqpGSU5XKQSsOC7hGQyyvORxGBVyA0l/KBo
+   TC9yHln91zdcELXFP7e8yBMkg8kbt3V6faSCuysVDe19/8pbQ+1UAL6tO
+   Q==;
+X-CSE-ConnectionGUID: bcVci4KSSc6ly8zMniUZFw==
+X-CSE-MsgGUID: f8MggeQRR4i5trgxc7exPw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="50939263"
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="50939263"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 23:29:08 -0700
+X-CSE-ConnectionGUID: d+zolMI8SyWTNeARvxVw4g==
+X-CSE-MsgGUID: 0d8Y7nGqSuqTpLoKbfotEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="183773258"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 23:29:05 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vBooo-00000001raI-2Rzj;
+	Thu, 23 Oct 2025 09:29:02 +0300
+Date: Thu, 23 Oct 2025 09:29:02 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] i2c: designware: Remove i2c_dw_remove_lock_support()
+Message-ID: <aPnLLjv1cIOQdozV@smile.fi.intel.com>
+References: <20251013-dw_i2c_plat_remove-avoid-objtool-no-cfi-warning-v1-1-8cc4842967bf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] dt-bindings: remoteproc: qcom,sm8550-pas: Add
- Kaanapali CDSP
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com
-References: <20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com>
- <20250924-knp-remoteproc-v1-2-611bf7be8329@oss.qualcomm.com>
- <CAJKOXPc57_0pJ2ZWf2cKSKAcQMc3S_mHKQxJDzWH7t=mgim3CA@mail.gmail.com>
- <5820a9a9-4474-4c4d-905c-0efd9442e5e1@oss.qualcomm.com>
- <o6dzhmlicwiezmxlb5uqitx7e3pjpyuhbjqfumivbdkru42hvn@r4ksfa6m5nd2>
- <540b1de6-c959-4911-925f-8163f5fa5147@oss.qualcomm.com>
- <fdfzoemfxdz2p622hvixpaznh2n22hweit2e43plfu2kdd6kad@reulvi4vs5v4>
- <cdc01b6d-370d-45dd-a3fd-9866d2a5f36d@gmail.com>
- <7952ed3d-f019-4593-af43-b2df7f738d04@oss.qualcomm.com>
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-Content-Language: en-US
-Autocrypt: addr=k.kozlowski.k@gmail.com; keydata=
- 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
- PN9NZAOyb771QoVr8A==
-In-Reply-To: <7952ed3d-f019-4593-af43-b2df7f738d04@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013-dw_i2c_plat_remove-avoid-objtool-no-cfi-warning-v1-1-8cc4842967bf@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 23/10/2025 06:07, Jingyi Wang wrote:
+On Mon, Oct 13, 2025 at 06:05:03PM -0700, Nathan Chancellor wrote:
+> When building certain configurations with CONFIG_FINEIBT=y after
+> commit 894af4a1cde6 ("objtool: Validate kCFI calls"), there is a
+> warning due to an indirect call in dw_i2c_plat_remove():
 > 
+>   $ cat allno.config
+>   CONFIG_ACPI=y
+>   CONFIG_CFI=y
+>   CONFIG_COMMON_CLK=y
+>   CONFIG_CPU_MITIGATIONS=y
+>   CONFIG_I2C=y
+>   CONFIG_I2C_DESIGNWARE_BAYTRAIL=y
+>   CONFIG_I2C_DESIGNWARE_CORE=y
+>   CONFIG_I2C_DESIGNWARE_PLATFORM=y
+>   CONFIG_IOSF_MBI=y
+>   CONFIG_MITIGATION_RETPOLINE=y
+>   CONFIG_MODULES=y
+>   CONFIG_PCI=y
+>   CONFIG_X86_KERNEL_IBT=y
 > 
-> On 10/9/2025 6:29 PM, Krzysztof Kozlowski wrote:
->> On 29/09/2025 19:03, Dmitry Baryshkov wrote:
->>> On Mon, Sep 29, 2025 at 05:41:10PM +0800, Jingyi Wang wrote:
->>>>
->>>>
->>>> On 9/29/2025 5:34 PM, Dmitry Baryshkov wrote:
->>>>> On Mon, Sep 29, 2025 at 02:20:54PM +0800, Jingyi Wang wrote:
->>>>>>
->>>>>>
->>>>>> On 9/25/2025 9:48 AM, Krzysztof Kozłowski wrote:
->>>>>>> On Thu, 25 Sept 2025 at 08:37, Jingyi Wang <jingyi.wang@oss.qualcomm.com> wrote:
->>>>>>>>
->>>>>>>> Add remote processor PAS loader for Kaanapali CDSP processor, compatible
->>>>>>>> with earlier SM8550 with minor difference: one more sixth "shutdown-ack"
->>>>>>>> interrupt.
->>>>>>>>
->>>>>>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->>>>>>>> ---
->>>>>>>>  .../bindings/remoteproc/qcom,sm8550-pas.yaml          | 19 +++++++++++++++++++
->>>>>>>>  1 file changed, 19 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->>>>>>>> index be9e2a0bc060..031fdf36a66c 100644
->>>>>>>> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->>>>>>>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->>>>>>>> @@ -35,6 +35,9 @@ properties:
->>>>>>>>        - items:
->>>>>>>>            - const: qcom,sm8750-cdsp-pas
->>>>>>>>            - const: qcom,sm8650-cdsp-pas
->>>>>>>> +      - items:
->>>>>>>> +          - const: qcom,kaanapali-cdsp-pas
->>>>>>>> +          - const: qcom,sm8550-cdsp-pas
->>>>>>>
->>>>>>>
->>>>>>> This time maybe without HTML:
->>>>>>>
->>>>>>> This looks wrong. This is not compatible with SM8550.
->>>>>>
->>>>>> Could you point out what is the difference from your perspecetive?
->>>>>> it is the same as SM8550 except for there is one more interrupt,
->>>>>> which is also described in this patch.
->>>>>
->>>>> I'd second Krzysztof here. Your description points out that it is _not_
->>>>> compatible to SM8550.
->>>>>
->>>>
->>>> Here is the binding for sm8750 cdsp. Fallback to sm8650 but describe the
->>>> difference in interrupt:
->>>> https://lore.kernel.org/all/20250221160036.159557-1-krzysztof.kozlowski@linaro.org/
->>>
->>> Interesting. Let's wait for Krzysztof's response then.
->>>
->>
->>
->> Because it is evolution of sm8750, so it did not go back to old design.
->> from three generations ago. This is compatible with sm8750 or with sm8650.
->>
->>
->> Best regards,
->> Krzysztof
+>   $ make -skj"$(nproc)" ARCH=x86_64 LLVM=1 clean allnoconfig vmlinux
+>   vmlinux.o: warning: objtool: dw_i2c_plat_remove+0x3c: no-cfi indirect call!
 > 
-> Hi Krzysztof，
+> With this configuration, i2c_dw_semaphore_cb_table has the BAYTRAIL
+> member and the sentinel (i.e., 2 members), both of which have an
+> implicit
 > 
-> I tested with falling back to sm8650 cdsp but it will fail with:
-> [    4.739615] qcom_q6v5_pas 26300000.remoteproc: unable to resolve shareable memory-region index 0
+>   .remove = NULL,
 > 
-> sm8550 and kaanapali define 2 memory regions: 
-> "memory-region = <&cdsp_mem>, <&q6_cdsp_dtb_mem>;"
+> so Clang effectively turns i2c_dw_remove_lock_support(), which is later
+> inlined into dw_i2c_plat_remove(), into:
 > 
-> sm8650 and sm8750 define 3 memory regions:
-> "memory-region = <&cdsp_mem>, <&q6_cdsp_dtb_mem>, <&global_sync_mem>;"
-> with the driver:
+>   static void i2c_dw_remove_lock_support(struct dw_i2c_dev *dev)
+>   {
+>       if (dev->semaphore_idx > 2)
+>           (*NULL)(dev):
+>   }
 > 
-> static const struct qcom_pas_data sm8650_cdsp_resource = {
->         .crash_reason_smem = 601,
->         .firmware_name = "cdsp.mdt",
->         .dtb_firmware_name = "cdsp_dtb.mdt",
->          <...>
->         .region_assign_idx = 2,
->         .region_assign_count = 1,
->         .region_assign_shared = true,
->         .region_assign_vmid = QCOM_SCM_VMID_CDSP,
-> };
+> which is not necessarily problematic from a logic perspective (as the
+> code was not bounds checking semaphore_idx so an out of bounds index
+> could already crash) but objtool's new __nocfi indirect call checking
+> trips over Clang dropping the kCFI setup from a known NULL indirect
+> call.
 > 
-> When kaanapali fallback to sm8650 it cannot parse this region_assign_idx.
+> While it would be possible to fix this by transforming the initial check
+> into
 > 
-> So shall we still fallback to sm8550 or define a new node "kaanapali_cdsp_resource"
-> in the driver?
+>   if (dev->semaphore_idx < 0 || dev->semaphore_idx >= ARRAY_SIZE(i2c_dw_semaphore_cb_table))
+> 
+> the remove member is unused after commit 440da737cf8d ("i2c: designware:
+> Use PCI PSP driver for communication"), so i2c_dw_remove_lock_support()
+> can be removed altogether, as it will never actually do anything.
 
-And partially the point here is that you might need the third region, no?
-Best regards,
-Krzysztof
+Have you seen this attempt to refactor a bit that code?
+
+https://lore.kernel.org/linux-i2c/20231207141653.2785124-7-andriy.shevchenko@linux.intel.com/
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
