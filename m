@@ -1,273 +1,315 @@
-Return-Path: <linux-kernel+bounces-866813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2DDC00B61
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:26:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077F1C00B6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D4673A2CF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:26:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D99C04E41F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C06130AAD4;
-	Thu, 23 Oct 2025 11:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9CC30DD34;
+	Thu, 23 Oct 2025 11:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="EYNTJavl"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gzSWBXh2"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAFA30DD17
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF29430AAD4
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761218810; cv=none; b=AlHqPJdmqIz2ittul/fzMxoDU8+mIY9aj+CyjP+/1p7iSzMNuUubXAlwByXJxGC6TWC2D0fTYg45TgUDuGdkF+5mi/TtQ8GtsQwsF9a594im7aHOw+6sp3/amwWQPnoLcuMXYxihiXduTS3qE3kInbRKMj3hjQ6Cml54RegMYmY=
+	t=1761218841; cv=none; b=du5DcCYTybweim4Vkbig3hofuMb1Dh7j7gM2AfaVobs+Mtc3j7wFyoPiF9N1KQIVSqws6Ky/GbcILAKzSENefJkfIhJGihFyGWvylRIvpTKSQxy1wcMfhKVmMpS6Tevy5t4v1fjLPf6/XSFl1SHkOkLVWIGAEX/nt2HTbwAZQfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761218810; c=relaxed/simple;
-	bh=cBsPFp9W+Q9oKDbgi7i977uygBQhplB61mKGBpWy7Sg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UusPK1G6zjhChA8V9eubI2rU/5j0HB7zc0DmIIpglbm4/kuMs79zxImC68riMD4PA0kIpE3V6FTyBMy4FUQDdR4ty7gfSI6qjzz6VPaD0Ab3oPEDR2pBOC3aNTdsYZC2vL76dvJvQ0jR5x+qLtGkr6zxhof/N4OznNPmknpdqiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=EYNTJavl; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b67ae7e76abso493591a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:26:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1761218808; x=1761823608; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DBgNwyRHEUD9gkz7ICwjjnV74pCduntR89V9h8ouINg=;
-        b=EYNTJavlACgH+STTTHW4HSPaGAVgSuLaiFtjS5DyedqX7UryqkRJDmzYfnoO5i3+tT
-         Vzmbtym5EcUtRKq7wwM2TzxIz8B7xTN6LFXi2NKAhgieR4dijmbk1OA3j9YXk27tGqFp
-         LzNDp5Fh+aVp7bQj0mdzM7mqDdlfx7olr7NF9i5GwJidPaXuyzPEgqyJ0wl8Wuf+zF5D
-         uC/KI5aklA1xUzugT/7h1aQtkf8dCWBv4jLUpxlZAOclltaUfAXuH3r8LV7G23DNjvpz
-         hCNTP4TaTQfIxKdOf1wzWY0ZpJRT4vJXMD85Bs0Ul8BtnZeyowbGhGBpo3PVogR9F25a
-         c42w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761218808; x=1761823608;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DBgNwyRHEUD9gkz7ICwjjnV74pCduntR89V9h8ouINg=;
-        b=C2OWY0+ZZJoG3aNsFcrDwl3RX7xar++j3UBI/WNdMExWmRUJX1Tg1AwnZ5uHD5H/ol
-         vI7TUZ7HqCLg751iuBZoYRgqEsH7aZ0nsGfKg6r0+4yo7Q126/ydB/7Zh5uCpIm34ei5
-         L+7VooHyyfdphoKWN2+kKwH1MWJTefgtetIqeXA6ChlFUXbqen+MwA4ypUsrqwPYWz28
-         Ckq76U+H07gRBhQaNl42VVYJ5p0XbVf9OCfsj3GWyWC7Ms4MkCd/W9BK996I9r4P36NV
-         Zp59Wtih/0zwHSuKAa0PPWtiWa+I9SxdmnOqAv4lgrAp8+ATk4NsFZ9KRv01mGJOE/hB
-         s8mg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7TPveprA23lhRv4qVM9L7pidaUOE2IhoqlkisYd2m3chqrq+motNUSww7EIQ4KCCVRuBFsCDPjUqAG8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBrXwW3Fx/tnCSEI/jAOCsWjxI6BpeRhnjtNH4rxH0NZbR+SQH
-	MhDgpTEyuaYkx3VftEf3oWPv40OVERt0fekxqImt3Z6Qs29ftw5Mo194ika+cv6Dbg==
-X-Gm-Gg: ASbGncv8q5tQDFeNnEzniSLVDrwriS7SRbes10WZ/vZRin09VqqLqKOVNbOTdwfWg3V
-	gFLQgChJHkmocCj/fbQqIgok+T+2MHJB314tw6FgbX6t6hiM4Fx2BkUFxUHVJNKSqjFzUXFuoVa
-	sgw+gAP2M1Rvxf6DWHpWGjOT0ZG5IcozXMzVQGJ9fldt7j3H8Q86vXr5/1d1YoKbKDKlVfP0BxO
-	F3s7c0c/sbXJHjEwZ4FFhXEFtELzUNEVgfGVrJKkQdzQKkp6vdio1mzdO0AHGRYmL/HsFgyWnak
-	blLXDEJyoRwmnfaNlEGIwleFc1Gy7Dkq7KeHLc/0ya6nE+rblrjpYFo0cboPcT6tyaLHsUBXaG0
-	BLWitVsZwymTbbgoxYpNADBfv/ZBdaNU8gMgZhp5tt/RJscDc/XN7CIaiokHXajboMPV/ruOBKk
-	0s6UVT3kiPyUrAZ57PnKxo70eHJaT+w0pvBzLNJyqthiJOqIsawtn8NWyxCPcZ3FJq
-X-Google-Smtp-Source: AGHT+IEvc72FMuwVpezje+GLZail9JTB8KzUaMZe6RS9mvWmmCXpm6ZrLLn6LaNyoG1hAmpSo1VvRg==
-X-Received: by 2002:a17:903:2947:b0:290:bd91:d81a with SMTP id d9443c01a7336-290ca1219femr242415385ad.39.1761218807863;
-        Thu, 23 Oct 2025 04:26:47 -0700 (PDT)
-Received: from ?IPV6:2401:4900:8899:dde3:4f8a:da13:234c:6501? ([2401:4900:8899:dde3:4f8a:da13:234c:6501])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946e0f06d5sm20757475ad.82.2025.10.23.04.26.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 04:26:47 -0700 (PDT)
-Message-ID: <209656e6-efca-4a73-a5fc-cddde9e04a9a@beagleboard.org>
-Date: Thu, 23 Oct 2025 16:56:42 +0530
+	s=arc-20240116; t=1761218841; c=relaxed/simple;
+	bh=VQHXvxNXXieiyxAj+UPLqv6snrQ4UCOBTE8bOgiNP5E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fT8BUUn08DT1xCCU06qcgBamHXE8riXZn+v1tBEYOSPqkVJxu29jlMhJmlO+mC4i4PsQU33rNsE6lBdQQ2BApGqCOUVGmW5ptuZ4OX9Ez8T5eWETZRh6ouUaKKbiKs7bWx347e27833VfoBvSWBoi6cu6Ld5Js2LEIN2T8+XzKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gzSWBXh2; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0d267da41178f3ac4669621516888a06d6aa5665.camel@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761218824;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VQHXvxNXXieiyxAj+UPLqv6snrQ4UCOBTE8bOgiNP5E=;
+	b=gzSWBXh2alDmwuvqum2TWqS+NAdEmEqfbzMmm/1opvObvWcyvQvKmJ5FsmwgNB36AmNMEI
+	TVOUdvvi/GmliJmb400ulV/icT0kvcAW0Q9Bcq+WnEUt6qkhARrRVIkH7OfyReGBF4BUiB
+	MXR6/hnnIkaBMuStBl/kaO3TVfsyEvk=
+Subject: Re: [PATCH bpf-next 1/2] bpf: Skip bounds adjustment for
+ conditional jumps on same register
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: KaFai Wan <kafai.wan@linux.dev>
+To: Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov
+	 <alexei.starovoitov@gmail.com>
+Cc: Yonghong Song <yonghong.song@linux.dev>, Alexei Starovoitov
+ <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
+ <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
+ KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, KP Singh
+ <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
+ <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,  Shuah Khan
+ <shuah@kernel.org>, Paul Chaignon <paul.chaignon@gmail.com>, Matan Shachnai
+ <m.shachnai@gmail.com>, Luis Gerhorst <luis.gerhorst@fau.de>, 
+ colin.i.king@gmail.com, Harishankar Vishwanathan
+ <harishankar.vishwanathan@gmail.com>, bpf <bpf@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK"
+ <linux-kselftest@vger.kernel.org>, Kaiyan Mei <M202472210@hust.edu.cn>, 
+ Yinhao Hu <dddddd@hust.edu.cn>
+Date: Thu, 23 Oct 2025 19:26:48 +0800
+In-Reply-To: <abe1bd5def7494653d52425818815baa54a3628a.camel@gmail.com>
+References: <20251022164457.1203756-1-kafai.wan@linux.dev>
+	 <20251022164457.1203756-2-kafai.wan@linux.dev>
+	 <39af9321-fb9b-4cee-84f1-77248a375e85@linux.dev>
+	 <1d03174dfe2a7eab1166596c85a6b586a660dffc.camel@gmail.com>
+	 <CAADnVQKdMcOkkqNa3LbGWqsz9iHAODFSinokj6htbGi0N66h_Q@mail.gmail.com>
+	 <abe1bd5def7494653d52425818815baa54a3628a.camel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: greybus: fw-download: Fix find firmware req
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jason Kridner <jkridner@beagleboard.org>,
- Deepak Khatri <lorforlinux@beagleboard.org>,
- Robert Nelson <robertcnelson@beagleboard.org>, Dhruva Gole <d-gole@ti.com>,
- Viresh Kumar <vireshk@kernel.org>, Johan Hovold <johan@kernel.org>,
- Alex Elder <elder@kernel.org>, greybus-dev@lists.linaro.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20251022-gb-fw-v1-1-183b18500cd5@beagleboard.org>
- <2025102332-result-palace-789f@gregkh>
-Content-Language: en-US
-From: Ayush Singh <ayush@beagleboard.org>
-In-Reply-To: <2025102332-result-palace-789f@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 10/23/25 3:34 PM, Greg Kroah-Hartman wrote:
+On Wed, 2025-10-22 at 13:30 -0700, Eduard Zingerman wrote:
+> On Wed, 2025-10-22 at 13:12 -0700, Alexei Starovoitov wrote:
+> > On Wed, Oct 22, 2025 at 12:46=E2=80=AFPM Eduard Zingerman <eddyz87@gmai=
+l.com> wrote:
+> > >=20
+> > > On Wed, 2025-10-22 at 11:14 -0700, Yonghong Song wrote:
+> > > >=20
+> > > > On 10/22/25 9:44 AM, KaFai Wan wrote:
+> > > > > When conditional jumps are performed on the same register (e.g., =
+r0 <=3D
+> > > > > r0,
+> > > > > r0 > r0, r0 < r0) where the register holds a scalar with range, t=
+he
+> > > > > verifier
+> > > > > incorrectly attempts to adjust the register's min/max bounds. Thi=
+s
+> > > > > leads to
+> > > > > invalid range bounds and triggers a BUG warning:
+> > > > >=20
+> > > > > verifier bug: REG INVARIANTS VIOLATION (true_reg1): range bounds
+> > > > > violation u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, 0x0] s32=
+=3D[0x1, 0x0]
+> > > > > var_off=3D(0x0, 0x0)
+> > > > > WARNING: CPU: 0 PID: 93 at kernel/bpf/verifier.c:2731
+> > > > > reg_bounds_sanity_check+0x163/0x220
+> > > > > Modules linked in:
+> > > > > CPU: 0 UID: 0 PID: 93 Comm: repro-x-3 Tainted: G=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 W=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0
+> > > > > 6.18.0-rc1-ge7586577b75f-dirty #218 PREEMPT(full)
+> > > > > Tainted: [W]=3DWARN
+> > > > > Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS
+> > > > > 1.16.3-debian-1.16.3-2 04/01/2014
+> > > > > RIP: 0010:reg_bounds_sanity_check+0x163/0x220
+> > > > > Call Trace:
+> > > > > =C2=A0 <TASK>
+> > > > > =C2=A0 reg_set_min_max.part.0+0x1b1/0x360
+> > > > > =C2=A0 check_cond_jmp_op+0x1195/0x1a60
+> > > > > =C2=A0 do_check_common+0x33ac/0x33c0
+> > > > > =C2=A0 ...
+> > > > >=20
+> > > > > The issue occurs in reg_set_min_max() function where bounds adjus=
+tment
+> > > > > logic
+> > > > > is applied even when both registers being compared are the same.
+> > > > > Comparing a
+> > > > > register with itself should not change its bounds since the compa=
+rison
+> > > > > result
+> > > > > is always known (e.g., r0 =3D=3D r0 is always true, r0 < r0 is al=
+ways
+> > > > > false).
+> > > > >=20
+> > > > > Fix this by adding an early return in reg_set_min_max() when
+> > > > > false_reg1 and
+> > > > > false_reg2 point to the same register, skipping the unnecessary b=
+ounds
+> > > > > adjustment that leads to the verifier bug.
+> > > > >=20
+> > > > > Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
+> > > > > Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
+> > > > > Closes:
+> > > > > https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Coremail.k=
+aiyanm@hust.edu.cn/
+> > > > > Fixes: 0df1a55afa83 ("bpf: Warn on internal verifier errors")
+> > > > > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+> > > > > ---
+> > > > > =C2=A0 kernel/bpf/verifier.c | 4 ++++
+> > > > > =C2=A0 1 file changed, 4 insertions(+)
+> > > > >=20
+> > > > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > > > > index 6d175849e57a..420ad512d1af 100644
+> > > > > --- a/kernel/bpf/verifier.c
+> > > > > +++ b/kernel/bpf/verifier.c
+> > > > > @@ -16429,6 +16429,10 @@ static int reg_set_min_max(struct
+> > > > > bpf_verifier_env *env,
+> > > > > =C2=A0=C2=A0=C2=A0 if (false_reg1->type !=3D SCALAR_VALUE || fals=
+e_reg2->type !=3D
+> > > > > SCALAR_VALUE)
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 return 0;
+> > > > >=20
+> > > > > +=C2=A0=C2=A0 /* If conditional jumps on the same register, skip =
+the adjustment
+> > > > > */
+> > > > > +=C2=A0=C2=A0 if (false_reg1 =3D=3D false_reg2)
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
+urn 0;
+> > > >=20
+> > > > Your change looks good. But this is a special case and it should no=
+t
+> > > > happen for any compiler generated code. So could you investigate
+> > > > why regs_refine_cond_op() does not work? Since false_reg1 and false=
+_reg2
+> > > > is the same, so register refinement should keep the same. Probably
+> > > > some minor change in regs_refine_cond_op(...) should work?
+> > > >=20
+> > > > > +
+> > > > > =C2=A0=C2=A0=C2=A0 /* fallthrough (FALSE) branch */
+> > > > > =C2=A0=C2=A0=C2=A0 regs_refine_cond_op(false_reg1, false_reg2, re=
+v_opcode(opcode),
+> > > > > is_jmp32);
+> > > > > =C2=A0=C2=A0=C2=A0 reg_bounds_sync(false_reg1);
+> > >=20
+> > > I think regs_refine_cond_op() is not written in a way to handle same
+> > > registers passed as reg1 and reg2. E.g. in this particular case the
+> > > condition is reformulated as "r0 < r0", and then the following branch
+> > > is taken:
+> > >=20
+> > > =C2=A0=C2=A0 static void regs_refine_cond_op(struct bpf_reg_state *re=
+g1, struct
+> > > bpf_reg_state *reg2,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8 opcode, bool is_jmp32)
+> > > =C2=A0=C2=A0 {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ...
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case BPF_JLT: // con=
+dition is rephrased as r0 < r0
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (is_jmp32) {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ ...
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ reg1->umax_value =3D min(reg1->umax_value, reg2-
+> > > >umax_value - 1);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ reg2->umin_value =3D max(reg1->umin_value + 1,
+> > > reg2->umin_value);
+Yes, that's the root cause.
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ...
+> > > =C2=A0=C2=A0 }
+> > >=20
+> > > Note that intent is to adjust umax of the LHS (reg1) register and umi=
+n
+> > > of the RHS (reg2) register. But here it ends up adjusting the same
+> > > register.
+> > >=20
+> > > (a) before refinement: u64=3D[0x0, 0x80000000] s64=3D[0x0, 0x80000000=
+]
+> > > u32=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
+> > > (b) after=C2=A0 refinement: u64=3D[0x1, 0x7fffffff] s64=3D[0x0, 0x800=
+00000]
+> > > u32=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
+> > > (c) after=C2=A0 sync=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : u64=3D[0x1, 0x0]=
+ s64=3D[0x1, 0x0] u32=3D[0x1, 0x0]
+> > > s32=3D[0x1, 0x0]
+> > >=20
+> > > At (b) the u64 range translated to s32 is > 0, while s32 range is <=
+=3D 0,
+> > > hence the invariant violation.
+> > >=20
+> > > I think it's better to move the reg1 =3D=3D reg2 check inside
+> > > regs_refine_cond_op(), or to handle this case in is_branch_taken().
+> >=20
+> > hmm. bu then regs_refine_cond_op() will skip it, yet reg_set_min_max()
+> > will still be doing pointless work with reg_bounds_sync() and sanity ch=
+eck.
+> > The current patch makes more sense to me.
+>=20
+> Well, if we want to avoid useless work, we need something like:
+>=20
+> @@ -16173,6 +16173,25 @@ static int is_pkt_ptr_branch_taken(struct
+> bpf_reg_state *dst_reg,
+> =C2=A0static int is_branch_taken(struct bpf_reg_state *reg1, struct bpf_r=
+eg_state
+> *reg2,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 u8 opcode, bool is_jmp32)
+> =C2=A0{
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (reg1 =3D=3D reg2) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 switch (opcode) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 case BPF_JGE:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 case BPF_JLE:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 case BPF_JSGE:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 case BPF_JSLE:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 case BPF_JEQ:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 case BPF_JSET:
 
-> On Wed, Oct 22, 2025 at 12:57:57PM +0530, Ayush Singh wrote:
->> According to the Greybus Spec published here [0], the Greybus firmware
->> download find firmware request should have both tag and format as
->> request arguments. However, currently, the linux kernel seems to have
->> defined this request incorrectly since format is missing.
-> Odd, I don't remember that at all, but it was changed here:
-> 	https://github.com/projectara/greybus-spec/commit/773b9e0d6cc84a3c7a9f79ea353a552bd66d9de3
->
-> maybe we never actually implemented it?
->
->> The patch adds format to request and am using it as the file extension of
->> the firmware.
->>
->> [0]: https://github.com/projectara/greybus-spec/blob/ac47bc32dce1256489a82ff1f463fb979e9684ee/source/device_class/firmware.rst?plain=1#L152
->>
->> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
->> ---
->> According to the Greybus Spec published here [0], the Greybus firmware
->> download find firmware request should have both tag and format as
->> request arguments. However, currently, the linux kernel seems to have
->> defined this request incorrectly since format is missing.
->>
->> The patch adds format to request and am using it as the file extension of
->> the firmware.
->>
->> I came across the bug while working on greybus-for-zephyr [1], to get it
->> ready for upstreaming as zephyr module.
->>
->> Open Questions
->> ***************
->>
->> 1. Handle empty format
->>
->> Not sure what to do in case format is just NULL. Should the request
->> fail? There is no reason to not support firmware without extension. So
->> personally, I don't think it should be treated as error.
->>
->> [0]: https://github.com/projectara/greybus-spec/blob/ac47bc32dce1256489a82ff1f463fb979e9684ee/source/device_class/firmware.rst?plain=1#L152
->> [1]: https://github.com/Ayush1325/greybus-for-zephyr
-> As this is a AP-specific thing, it's whatever you want to do I think.
-> You can handle NULL there, or anything else, it's up to the firmware and
-> userspace to coordinate this, right?
->
->> ---
->>   drivers/staging/greybus/fw-download.c     | 31 ++++++++++++++++++++++++-------
->>   include/linux/greybus/greybus_protocols.h |  2 ++
->>   2 files changed, 26 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/staging/greybus/fw-download.c b/drivers/staging/greybus/fw-download.c
->> index 9a09bd3af79ba0dcf7efa683f4e86246bcd473a5..06f1be8f3121e29551ea8416d5ee2666339b2fe3 100644
->> --- a/drivers/staging/greybus/fw-download.c
->> +++ b/drivers/staging/greybus/fw-download.c
->> @@ -159,7 +159,7 @@ static int exceeds_release_timeout(struct fw_request *fw_req)
->>   
->>   /* This returns path of the firmware blob on the disk */
->>   static struct fw_request *find_firmware(struct fw_download *fw_download,
->> -					const char *tag)
->> +					const char *tag, const char *format)
->>   {
->>   	struct gb_interface *intf = fw_download->connection->bundle->intf;
->>   	struct fw_request *fw_req;
->> @@ -178,10 +178,17 @@ static struct fw_request *find_firmware(struct fw_download *fw_download,
->>   	}
->>   	fw_req->firmware_id = ret;
->>   
->> -	snprintf(fw_req->name, sizeof(fw_req->name),
->> -		 FW_NAME_PREFIX "%08x_%08x_%08x_%08x_%s.tftf",
->> -		 intf->ddbl1_manufacturer_id, intf->ddbl1_product_id,
->> -		 intf->vendor_id, intf->product_id, tag);
->> +	if (strnlen(format, GB_FIRMWARE_FORMAT_MAX_SIZE) == 0) {
->> +		snprintf(fw_req->name, sizeof(fw_req->name),
->> +			 FW_NAME_PREFIX "%08x_%08x_%08x_%08x_%s",
->> +			 intf->ddbl1_manufacturer_id, intf->ddbl1_product_id,
->> +			 intf->vendor_id, intf->product_id, tag);
->> +	} else {
->> +		snprintf(fw_req->name, sizeof(fw_req->name),
->> +			 FW_NAME_PREFIX "%08x_%08x_%08x_%08x_%s.%s",
->> +			 intf->ddbl1_manufacturer_id, intf->ddbl1_product_id,
->> +			 intf->vendor_id, intf->product_id, tag, format);
->> +	}
->>   
->>   	dev_info(fw_download->parent, "Requested firmware package '%s'\n",
->>   		 fw_req->name);
->> @@ -225,7 +232,7 @@ static int fw_download_find_firmware(struct gb_operation *op)
->>   	struct gb_fw_download_find_firmware_request *request;
->>   	struct gb_fw_download_find_firmware_response *response;
->>   	struct fw_request *fw_req;
->> -	const char *tag;
->> +	const char *tag, *format;
->>   
->>   	if (op->request->payload_size != sizeof(*request)) {
->>   		dev_err(fw_download->parent,
->> @@ -245,7 +252,17 @@ static int fw_download_find_firmware(struct gb_operation *op)
->>   		return -EINVAL;
->>   	}
->>   
->> -	fw_req = find_firmware(fw_download, tag);
->> +	format = (const char *)request->format;
->> +
->> +	/* firmware_format must be null-terminated */
->> +	if (strnlen(format, GB_FIRMWARE_FORMAT_MAX_SIZE) ==
->> +	    GB_FIRMWARE_FORMAT_MAX_SIZE) {
->> +		dev_err(fw_download->parent,
->> +			"firmware-format is not null-terminated\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	fw_req = find_firmware(fw_download, tag, format);
->>   	if (IS_ERR(fw_req))
->>   		return PTR_ERR(fw_req);
->>   
->> diff --git a/include/linux/greybus/greybus_protocols.h b/include/linux/greybus/greybus_protocols.h
->> index 820134b0105c2caf8cea3ff0985c92d48d3a2d4c..48d91154847dbc7d3c01081eadc69f96dbe41a9f 100644
->> --- a/include/linux/greybus/greybus_protocols.h
->> +++ b/include/linux/greybus/greybus_protocols.h
->> @@ -214,10 +214,12 @@ struct gb_apb_request_cport_flags {
->>   #define GB_FW_DOWNLOAD_TYPE_RELEASE_FIRMWARE	0x03
->>   
->>   #define GB_FIRMWARE_TAG_MAX_SIZE		10
->> +#define GB_FIRMWARE_FORMAT_MAX_SIZE		10
->>   
->>   /* firmware download find firmware request/response */
->>   struct gb_fw_download_find_firmware_request {
->>   	__u8			firmware_tag[GB_FIRMWARE_TAG_MAX_SIZE];
->> +	__u8			format[GB_FIRMWARE_FORMAT_MAX_SIZE];
-> Build issues asside (see the 0-day bot report), I am loath to change a
-> user api like this at the moment, without some sort of guarantee that
-> this isn't going to break anything.
->
-> But, these days, I think your implementation might be one of the few
-> "real" greybus users that is still alive.  The old phones that used the
-> protocol are no longer being sold from what I can tell, and the "greybus
-> over IP" stuff didn't actually get used anywhere outside of cool demos
-> that I know of.
->
-> So we might be ok?  Or, can you live without any such "format" need?
-> Have you handled downloading firmware already without this?
->
-> thanks,
->
-> greg k-h
+Others are fine, but BPF_JSET on the same register could be 0 (if value is =
+0).
+And it's unknown to take the branch if 0 within the range.
 
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 1;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 case BPF_JGT:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 case BPF_JLT:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 case BPF_JSGT:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 case BPF_JSLT:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 case BPF_JNE:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 default:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -1;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 }
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>=20
+> But that's too much code for an artificial case.
+> Idk, either way is fine with me.
 
-Well, I don't really need the format. It's a bit odd that that file 
-extension is currently hardcoded, but it's not like file extension needs 
-to mean anything. Just found that things were different from spec, hence 
-the patch. The fw-download and management implementation I have does not 
-care about the extension anyway.
+There is is_scalar_branch_taken() in is_branch_taken(), I missed it. I'll a=
+)
+check the opcode one by one in is_scalar_branch_taken(), and b) keep this p=
+atch
+for unknown BPF_JSET branch.
 
-As for downloading firmware. I have an implementation. It can transfer 
-30K of firmware. But then it runs out of networking packets. So I have 
-not yet done a complete OTA. The implementation is technically there for 
-the whole process, but can't promise it will work. I will look into 
-where zephyr seems to be leaking the networking packets, but until that 
-is fixed, it probably cannot do the complete firmware transfer (704K).
-
-I am planning to make the greybus module an official zephyr module. And 
-there are plans to use greybus for i2c based extension boards. 
-Hopefully, it will bring more eyes and hands to work greybus.
-
-
-I can make the patch not break old behavior as suggested by Dan. 
-Alternatively, I am also fine without it. However, we should probably 
-update the spec in that case.
-
-
-Best Regards,
-
-Ayush Singh
-
+--=20
+Thanks,
+KaFai
 
