@@ -1,49 +1,69 @@
-Return-Path: <linux-kernel+bounces-866968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC2EC01385
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:53:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5332CC0139A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CCAE9359062
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:53:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AE9019C78BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B6A272E41;
-	Thu, 23 Oct 2025 12:53:30 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BA93148B9;
+	Thu, 23 Oct 2025 12:55:01 +0000 (UTC)
+Received: from localhost.localdomain (unknown [147.136.157.0])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB252FC874
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7569030CD88;
+	Thu, 23 Oct 2025 12:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.136.157.0
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761224009; cv=none; b=FDepcJAy7zW2Uhevo8hp4nq06rUiSo0pas+iMsMBbf9ijWxNdK28OwqDIuALM/4moIU/O/Ke2sRdfgr2o4OHOlkkHGrwIA2zk/46XNW1jrg15nU9197vI4v9DvnpJY0bH2+rAlXHX3/7WZaXRohSE5IH1dVXnkWBu/vvWfCGn/o=
+	t=1761224101; cv=none; b=a83oZPxyYn5+J4/ME404qoJ0FAeBBfbhE2RF+KCd3B85oTCjZ8nttnbXAHtNbn4ToZYjIIP0bw0jeIbHbD8zLC3EtdsmPmIYh7v2KYJaVN76455qhUvlafhGfBWn7jeKNUH36T1vCUsdZGixiuvxGezOrPuLc+5c6+rqqNuIFQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761224009; c=relaxed/simple;
-	bh=sSFYMPI/OP2Ncb+inlZCNUvVSNih/IaTYlqEfIvEIos=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e4kItyAG3wpWBue7LDXEqGZZhcHmK2fMrxlqSjlPCHpwuAY4MisiBHCc6ugZltzRf1i+l2mK5luD94gq74gkErzJqNX9L9wVeF3AW7zWmA/x3oEEpd66JXD2cx9kbiFYTLeqvI13XsvN6ejW+fGeIGqmLVWtL3qymUM9VF+kaBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 23 Oct
- 2025 15:53:16 +0300
-Received: from localhost (10.0.253.101) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 23 Oct
- 2025 15:53:16 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten
-	<hsweeten@visionengravers.com>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>,
-	<syzbot+7811bb68a317954a0347@syzkaller.appspotmail.com>
-Subject: [PATCH v2] comedi: multiq3: sanitize config options in multiq3_attach()
-Date: Thu, 23 Oct 2025 15:53:02 +0300
-Message-ID: <20251023125304.390221-1-n.zhandarovich@fintech.ru>
+	s=arc-20240116; t=1761224101; c=relaxed/simple;
+	bh=7+HBsezobnLBCgzcgo/KsuyWscdJ+R6h13UrMG8hrVg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SK4VYwCorEA2JeXwiW1rN+L0QJauglYSqgF7h1n9NAqTeRObnEdZaC0WsF30WqIG2lq32M4ty+zGEjr23xEO5Q5RGLpnuDpYdoox8cG+GaIfmjAzNLAa6mPT8wQc/gIxc5+ftM3ajT3+fF0FiEUxn4PMm32tUVTmwC3VBcuMG2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=none smtp.mailfrom=localhost.localdomain; arc=none smtp.client-ip=147.136.157.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=localhost.localdomain
+Received: by localhost.localdomain (Postfix, from userid 1007)
+	id 7E40D9291F4; Thu, 23 Oct 2025 20:54:52 +0800 (+08)
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: mptcp@lists.linux.dev
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jakub Sitnicki <jakub@cloudflare.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Florian Westphal <fw@strlen.de>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH net v3 0/3] mptcp: Fix conflicts between MPTCP and sockmap
+Date: Thu, 23 Oct 2025 20:54:31 +0800
+Message-ID: <20251023125450.105859-1-jiayuan.chen@linux.dev>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,82 +72,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
 
-Syzbot identified an issue [1] in multiq3_attach() that induces a
-task timeout due to open() or COMEDI_DEVCONFIG ioctl operations,
-specifically, in the case of multiq3 driver.
+Overall, we encountered a warning [1] that can be triggered by running the
+selftest I provided.
 
-This problem arose when syzkaller managed to craft weird configuration
-options used to specify the number of channels in encoder subdevice.
-If a particularly great number is passed to s->n_chan in
-multiq3_attach() via it->options[2], then multiple calls to
-multiq3_encoder_reset() at the end of driver-specific attach() method
-will be running for minutes, thus blocking tasks and affected devices
-as well.
+MPTCP creates subflows for data transmission between two endpoints.
+However, BPF can use sockops to perform additional operations when TCP
+completes the three-way handshake. The issue arose because we used sockmap
+in sockops, which replaces sk->sk_prot and some handlers. Since subflows
+also have their own specialized handlers, this creates a conflict and leads
+to traffic failure. Therefore, we need to reject operations targeting
+subflows.
 
-While this issue is most likely not too dangerous for real-life
-devices, it still makes sense to sanitize configuration inputs. Enable
-a semi-arbitrary limit on the number of encoder chips to stop this
-behaviour from manifesting.
+This patchset simply prevents the combination of subflows and sockmap
+without changing any functionality.
 
-[1] Syzbot crash:
-INFO: task syz.2.19:6067 blocked for more than 143 seconds.
-...
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5254 [inline]
- __schedule+0x17c4/0x4d60 kernel/sched/core.c:6862
- __schedule_loop kernel/sched/core.c:6944 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6959
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7016
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
- comedi_open+0xc0/0x590 drivers/comedi/comedi_fops.c:2868
- chrdev_open+0x4cc/0x5e0 fs/char_dev.c:414
- do_dentry_open+0x953/0x13f0 fs/open.c:965
- vfs_open+0x3b/0x340 fs/open.c:1097
-...
+A complete integration of MPTCP and sockmap would require more effort, for
+example, we would need to retrieve the parent socket from subflows in
+sockmap and implement handlers like read_skb.
 
-Reported-by: syzbot+7811bb68a317954a0347@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=7811bb68a317954a0347
-Fixes: 77e01cdbad51 ("Staging: comedi: add multiq3 driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+If maintainers don't object, we can further improve this in subsequent
+work.
+
+[1] truncated warning:
+[   18.234652] ------------[ cut here ]------------
+[   18.234664] WARNING: CPU: 1 PID: 388 at net/mptcp/protocol.c:68 mptcp_stream_accept+0x34c/0x380
+[   18.234726] Modules linked in:
+[   18.234755] RIP: 0010:mptcp_stream_accept+0x34c/0x380
+[   18.234762] RSP: 0018:ffffc90000cf3cf8 EFLAGS: 00010202
+[   18.234800] PKRU: 55555554
+[   18.234806] Call Trace:
+[   18.234810]  <TASK>
+[   18.234837]  do_accept+0xeb/0x190
+[   18.234861]  ? __x64_sys_pselect6+0x61/0x80
+[   18.234898]  ? _raw_spin_unlock+0x12/0x30
+[   18.234915]  ? alloc_fd+0x11e/0x190
+[   18.234925]  __sys_accept4+0x8c/0x100
+[   18.234930]  __x64_sys_accept+0x1f/0x30
+[   18.234933]  x64_sys_call+0x202f/0x20f0
+[   18.234966]  do_syscall_64+0x72/0x9a0
+[   18.234979]  ? switch_fpu_return+0x60/0xf0
+[   18.234993]  ? irqentry_exit_to_user_mode+0xdb/0x1e0
+[   18.235002]  ? irqentry_exit+0x3f/0x50
+[   18.235005]  ? clear_bhb_loop+0x50/0xa0
+[   18.235022]  ? clear_bhb_loop+0x50/0xa0
+[   18.235025]  ? clear_bhb_loop+0x50/0xa0
+[   18.235028]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[   18.235066]  </TASK>
+[   18.235109] ---[ end trace 0000000000000000 ]---
+
 ---
-v1 -> v2: Lower limit to 8 channels instead of 16 per Ian Abbott's
-<abbotti@mev.co.uk> suggestion.
+v2: https://lore.kernel.org/bpf/20251020060503.325369-1-jiayuan.chen@linux.dev/T/#t
+    Some advice suggested by Jakub Sitnicki
 
- drivers/comedi/drivers/multiq3.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+v1: https://lore.kernel.org/mptcp/a0a2b87119a06c5ffaa51427a0964a05534fe6f1@linux.dev/T/#t
+    Some advice from Matthieu Baerts.
 
-diff --git a/drivers/comedi/drivers/multiq3.c b/drivers/comedi/drivers/multiq3.c
-index 07ff5383da99..08b812332a1a 100644
---- a/drivers/comedi/drivers/multiq3.c
-+++ b/drivers/comedi/drivers/multiq3.c
-@@ -67,6 +67,11 @@
- #define MULTIQ3_TRSFRCNTR_OL		0x10	/* xfer CNTR to OL (x and y) */
- #define MULTIQ3_EFLAG_RESET		0x06	/* reset E bit of flag reg */
- 
-+/*
-+ * Semi-arbitrary limit on the number of optional encoder chips
-+ */
-+#define MULTIQ3_MAX_ENC_CHIPS		8
-+
- static void multiq3_set_ctrl(struct comedi_device *dev, unsigned int bits)
- {
- 	/*
-@@ -312,6 +317,10 @@ static int multiq3_attach(struct comedi_device *dev,
- 	s->insn_read	= multiq3_encoder_insn_read;
- 	s->insn_config	= multiq3_encoder_insn_config;
- 
-+	/* sanity check for number of optional encoders */
-+	if (s->n_chan > MULTIQ3_MAX_ENC_CHIPS)
-+		s->n_chan = MULTIQ3_MAX_ENC_CHIPS;
-+
- 	for (i = 0; i < s->n_chan; i++)
- 		multiq3_encoder_reset(dev, i);
- 
+Jiayuan Chen (3):
+  net,mptcp: fix proto fallback detection with BPF sockmap
+  bpf,sockmap: disallow MPTCP sockets from sockmap
+  selftests/bpf: Add mptcp test with sockmap
+
+ net/core/sock_map.c                           |  27 ++++
+ net/mptcp/protocol.c                          |   9 +-
+ .../testing/selftests/bpf/prog_tests/mptcp.c  | 150 ++++++++++++++++++
+ .../selftests/bpf/progs/mptcp_sockmap.c       |  43 +++++
+ 4 files changed, 227 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/mptcp_sockmap.c
+
+-- 
+2.43.0
+
 
