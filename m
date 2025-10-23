@@ -1,397 +1,553 @@
-Return-Path: <linux-kernel+bounces-867196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC58BC01D16
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:38:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 762D2C01DB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:44:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9750F4F685C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:35:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4894A3BA8FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E6D2C11F0;
-	Thu, 23 Oct 2025 14:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B60B32D455;
+	Thu, 23 Oct 2025 14:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kc8JF6X5"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="r21gTSTj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1351431283D;
-	Thu, 23 Oct 2025 14:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C078324B39;
+	Thu, 23 Oct 2025 14:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761230142; cv=none; b=Dp8V8+EBoP6ni7MaQcJeVSoTcm7h7HtjYJ0GbZqVKZhA8sDjDyJpGPH4AgjypnE/iUFVyTAcbPmFIN3q+QbaOTiAJMM6V+MFzfKbqiwMHp2oMCDH++4kzp/sgjzpsgBLduImP0ntAc24ZoSwNMbyHJ5jDiWoiD6Cj/NsbKcyiBc=
+	t=1761230153; cv=none; b=umzf06ID2p+I82JRzyUHlkx3sPVtSd/YqLcvtHwLakBIrDN1REKTBDr0TPWpGSaAg59nCBLbi7xKM40PbETlIDKnwLpiP//M4qKwT8DBVMfvzd4BW6SW1m16khHSExDRskEGUThYjazgmmQu/CEPJTH2ZUMvIFSpuYSRTN/8Sd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761230142; c=relaxed/simple;
-	bh=W31ee+LSPBc48JwInpTAkFf3rkzG6FkIJHsCP3f6pzU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OsNizI9dfs/zXUwUvCDd8rR+bXYeUD0+rb7D4s0E7ax57LGIxUBBnlbu1N6dHPMEZrnsVn6xmifPAinktfDyYyjhh5a2OZL9b7U2Ue4ALNYfLdK2oCOinfx5qHmhrKFYCCHC6nkFHquuJuSj8yeyGQxMv3vOlqRp/K45HNa8bC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kc8JF6X5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 803C4C4CEE7;
-	Thu, 23 Oct 2025 14:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761230141;
-	bh=W31ee+LSPBc48JwInpTAkFf3rkzG6FkIJHsCP3f6pzU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Kc8JF6X5AeHh5taU5sSIj7fyuy99Tl51HER5dtnx1q1INETG51kIQie4LiG9EYj36
-	 yqkeF+sYrdqoLAXKabUnFYaWXrSXfiKDThIn8MYQ9+WutleklGr/i5wVSxwbYnyYOh
-	 JsGhf2BCWv/WL8qwSsB/7zQMtrvPeFpvVY2NhR0KDFjOPP1Y/op+2c1b+/beaUJI6f
-	 q9ot6MK7w3OAPbVOo9mlGPyzXUTvCGdR1Bs53VUmraSNXh4il4dCkHs3vY8TXHopyF
-	 UtAK63QbbK6gCZ5Eq6cTzAUWCkkTfYQ2Vjwg0sTQEhJ4psMElgXrkfhEoHCM2eqASm
-	 jvvFGlEHGYKsQ==
-Received: from 158.46.66.37.rev.sfr.net ([37.66.46.158] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1vBwPj-0000000GYfH-1GQw;
-	Thu, 23 Oct 2025 14:35:39 +0000
-Date: Thu, 23 Oct 2025 15:35:38 +0100
-Message-ID: <87v7k53cud.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	oliver.upton@linux.dev,
-	will@kernel.org,
-	catalin.marinas@arm.com,
-	suzuki.poulose@arm.com,
-	joey.gouly@arm.com,
-	yuzenghui@huawei.com,
-	darren@os.amperecomputing.com,
-	cl@gentwo.org,
-	scott@os.amperecomputing.com,
-	gklkml16@gmail.com
-Subject: Re: [PATCH v2] KVM: arm64: nv: Optimize unmapping of shadow S2-MMU tables
-In-Reply-To: <0345c510-5db4-462f-95fb-591e71468aca@os.amperecomputing.com>
-References: <20251013065125.767779-1-gankulkarni@os.amperecomputing.com>
-	<0345c510-5db4-462f-95fb-591e71468aca@os.amperecomputing.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1761230153; c=relaxed/simple;
+	bh=fgu80mYU5I6jOaU67bbspgeh0eqOCVaeD6WJ8yF0fPg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GSu4o9B/eYQwJdKm1ojZVcUvgyVS2FdT01BJyybOLOgF1aYJpfJIThNESC1GuYJaGpnQcq8SW5Ey4P2JVxSbUVCJF3tfxRJ5Q2ftjVhvnWdd6OURQApqRmzKYxVk8xTmAMY11CEuZuTgeh6qXubpQdGXjx4y4FcNFAjX8MjDtM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=r21gTSTj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 921E9C4CEE7;
+	Thu, 23 Oct 2025 14:35:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761230152;
+	bh=fgu80mYU5I6jOaU67bbspgeh0eqOCVaeD6WJ8yF0fPg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=r21gTSTjbK5iIy7k7jMeO8zo7TksnEI4PpirhDdh5EzPUDgn5TwnfvOq6KAlNwhli
+	 PRABAQBdA7//jAy3Z2pFfLM5eSWwxE4avAyhWztGLGpe//3xZGBSCJ+DcyrBm87jYu
+	 Top+gvevRVy5Q9Lo73IwMmH7i50yarsTh5liokdM=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	torvalds@linux-foundation.org,
+	stable@vger.kernel.org
+Cc: lwn@lwn.net,
+	jslaby@suse.cz,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Linux 6.12.55
+Date: Thu, 23 Oct 2025 16:35:44 +0200
+Message-ID: <2025102345-quiet-decorated-a417@gregkh>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 37.66.46.158
-X-SA-Exim-Rcpt-To: gankulkarni@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, will@kernel.org, catalin.marinas@arm.com, suzuki.poulose@arm.com, joey.gouly@arm.com, yuzenghui@huawei.com, darren@os.amperecomputing.com, cl@gentwo.org, scott@os.amperecomputing.com, gklkml16@gmail.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 23 Oct 2025 12:11:42 +0100,
-Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
-> 
-> 
-> Hi Marc, Oliver,
-> 
-> On 10/13/2025 12:21 PM, Ganapatrao Kulkarni wrote:
-> > As of commit ec14c272408a ("KVM: arm64: nv: Unmap/flush shadow
-> > stage 2 page tables"), an unmap of a canonical IPA range mapped at L1
-> > triggers invalidation in L1 S2-MMU and in all active shadow (L2) S2-MMU
-> > tables. Because there is no direct mapping to locate the corresponding
-> > shadow IPAs, the code falls back to a full S2-MMU page-table walk and
-> > invalidation across the entire L1 address space.
-> > 
-> > For 4K pages this causes roughly 256K loop iterations (about 8M for
-> > 64K pages) per unmap, which can severely impact performance on large
-> > systems and even cause soft lockups during NV (L1/L2) boots with many
-> > CPUs and large memory. It also causes long delays during L1 reboot.
-> > 
-> > This patch adds a maple-tree-based lookup that records canonical-IPA to
-> > shadow-IPA mappings whenever a page is mapped into any shadow (L2)
-> > table. On unmap, the lookup is used to target only those shadow IPAs
-> > which are fully or partially mapped in shadow S2-MMU tables, avoiding
-> > a full-address-space walk and unnecessary unmap/flush operations.
-> > 
-> > The lookup is updated on map/unmap operations so entries remain
-> > consistent with shadow table state. Use it during unmap to invalidate
-> > only affected shadow IPAs, avoiding unnecessary CPU work and reducing
-> > latency when shadow mappings are sparse.
-> > 
-> > Reviewed-by: Christoph Lameter (Ampere) <cl@gentwo.org>
-> > Signed-off-by: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-> > ---
-> > 
-> > Changes since v1:
-> > 		Rebased to 6.18-rc1.
-> > 		Fixed alignment issue while adding the shadow ipa range
-> > 		to lookup.	
-> > 
-> > Changes since RFC v1:
-> > 		Added maple tree based lookup and updated with review
-> > 		comments from [1].
-> > 
-> > [1] https://lkml.indiana.edu/2403.0/03801.html
-> > 
-> >   arch/arm64/include/asm/kvm_host.h   |   3 +
-> >   arch/arm64/include/asm/kvm_nested.h |   9 +++
-> >   arch/arm64/kvm/mmu.c                |  17 ++--
-> >   arch/arm64/kvm/nested.c             | 120 ++++++++++++++++++++++++++--
-> >   4 files changed, 138 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> > index b763293281c8..e774681c6ba4 100644
-> > --- a/arch/arm64/include/asm/kvm_host.h
-> > +++ b/arch/arm64/include/asm/kvm_host.h
-> > @@ -227,6 +227,9 @@ struct kvm_s2_mmu {
-> >   	 * >0: Somebody is actively using this.
-> >   	 */
-> >   	atomic_t refcnt;
-> > +
-> > +	/* For IPA to shadow IPA lookup */
-> > +	struct maple_tree nested_mmu_mt;
-> >   };
-> >     struct kvm_arch_memory_slot {
-> > diff --git a/arch/arm64/include/asm/kvm_nested.h b/arch/arm64/include/asm/kvm_nested.h
-> > index f7c06a840963..5b7c4e7ed18f 100644
-> > --- a/arch/arm64/include/asm/kvm_nested.h
-> > +++ b/arch/arm64/include/asm/kvm_nested.h
-> > @@ -69,6 +69,8 @@ extern void kvm_init_nested(struct kvm *kvm);
-> >   extern int kvm_vcpu_init_nested(struct kvm_vcpu *vcpu);
-> >   extern void kvm_init_nested_s2_mmu(struct kvm_s2_mmu *mmu);
-> >   extern struct kvm_s2_mmu *lookup_s2_mmu(struct kvm_vcpu *vcpu);
-> > +extern int add_to_shadow_ipa_lookup(struct kvm_pgtable *pgt, u64 shadow_ipa, u64 ipa,
-> > +		u64 size);
-> >     union tlbi_info;
-> >   @@ -95,6 +97,12 @@ struct kvm_s2_trans {
-> >   	u64 desc;
-> >   };
-> >   +struct shadow_ipa_map {
-> > +	u64 shadow_ipa;
-> > +	u64 ipa;
-> > +	u64 size;
-> > +};
-> > +
-> >   static inline phys_addr_t kvm_s2_trans_output(struct kvm_s2_trans *trans)
-> >   {
-> >   	return trans->output;
-> > @@ -132,6 +140,7 @@ extern int kvm_s2_handle_perm_fault(struct kvm_vcpu *vcpu,
-> >   extern int kvm_inject_s2_fault(struct kvm_vcpu *vcpu, u64 esr_el2);
-> >   extern void kvm_nested_s2_wp(struct kvm *kvm);
-> >   extern void kvm_nested_s2_unmap(struct kvm *kvm, bool may_block);
-> > +extern void kvm_nested_s2_unmap_range(struct kvm *kvm, u64 ipa, u64 size, bool may_block);
-> >   extern void kvm_nested_s2_flush(struct kvm *kvm);
-> >     unsigned long compute_tlb_inval_range(struct kvm_s2_mmu *mmu,
-> > u64 val);
-> > diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> > index 7cc964af8d30..27c120556e1b 100644
-> > --- a/arch/arm64/kvm/mmu.c
-> > +++ b/arch/arm64/kvm/mmu.c
-> > @@ -1872,6 +1872,10 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-> >   		ret = KVM_PGT_FN(kvm_pgtable_stage2_map)(pgt, fault_ipa, vma_pagesize,
-> >   					     __pfn_to_phys(pfn), prot,
-> >   					     memcache, flags);
-> > +
-> > +		/* Add to lookup, if canonical IPA range mapped to shadow mmu */
-> > +		if (nested)
-> > +			add_to_shadow_ipa_lookup(pgt, fault_ipa, ipa, vma_pagesize);
-> >   	}
-> >     out_unlock:
-> > @@ -2094,14 +2098,15 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
-> >     bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range
-> > *range)
-> >   {
-> > +	gpa_t start = range->start << PAGE_SHIFT;
-> > +	gpa_t end = (range->end - range->start) << PAGE_SHIFT;
-> > +	bool may_block = range->may_block;
-> > +
-> >   	if (!kvm->arch.mmu.pgt)
-> >   		return false;
-> >   -	__unmap_stage2_range(&kvm->arch.mmu, range->start <<
-> > PAGE_SHIFT,
-> > -			     (range->end - range->start) << PAGE_SHIFT,
-> > -			     range->may_block);
-> > -
-> > -	kvm_nested_s2_unmap(kvm, range->may_block);
-> > +	__unmap_stage2_range(&kvm->arch.mmu, start, end, may_block);
-> > +	kvm_nested_s2_unmap_range(kvm, start, end, may_block);
-> >   	return false;
-> >   }
-> >   @@ -2386,7 +2391,7 @@ void kvm_arch_flush_shadow_memslot(struct
-> > kvm *kvm,
-> >     	write_lock(&kvm->mmu_lock);
-> >   	kvm_stage2_unmap_range(&kvm->arch.mmu, gpa, size, true);
-> > -	kvm_nested_s2_unmap(kvm, true);
-> > +	kvm_nested_s2_unmap_range(kvm, gpa, size, true);
-> >   	write_unlock(&kvm->mmu_lock);
-> >   }
-> >   diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
-> > index 7a045cad6bdf..3a7035e7526a 100644
-> > --- a/arch/arm64/kvm/nested.c
-> > +++ b/arch/arm64/kvm/nested.c
-> > @@ -7,6 +7,7 @@
-> >   #include <linux/bitfield.h>
-> >   #include <linux/kvm.h>
-> >   #include <linux/kvm_host.h>
-> > +#include <linux/maple_tree.h>
-> >     #include <asm/fixmap.h>
-> >   #include <asm/kvm_arm.h>
-> > @@ -725,6 +726,7 @@ void kvm_init_nested_s2_mmu(struct kvm_s2_mmu *mmu)
-> >   	mmu->tlb_vttbr = VTTBR_CNP_BIT;
-> >   	mmu->nested_stage2_enabled = false;
-> >   	atomic_set(&mmu->refcnt, 0);
-> > +	mt_init_flags(&mmu->nested_mmu_mt, MM_MT_FLAGS);
-> >   }
-> >     void kvm_vcpu_load_hw_mmu(struct kvm_vcpu *vcpu)
-> > @@ -1067,6 +1069,99 @@ void kvm_nested_s2_wp(struct kvm *kvm)
-> >   	kvm_invalidate_vncr_ipa(kvm, 0, BIT(kvm->arch.mmu.pgt->ia_bits));
-> >   }
-> >   +/*
-> > + * Store range of canonical IPA mapped to a nested stage 2 mmu table.
-> > + * Canonical IPA used as pivot in maple tree for the lookup later
-> > + * while IPA unmap/flush.
-> > + */
-> > +int add_to_shadow_ipa_lookup(struct kvm_pgtable *pgt, u64 shadow_ipa,
-> > +		u64 ipa, u64 size)
-> > +{
-> > +	struct kvm_s2_mmu *mmu;
-> > +	struct shadow_ipa_map *entry;
-> > +	unsigned long start, end;
-> > +	int ret;
-> > +
-> > +	start = ALIGN_DOWN(ipa, size);
-> > +	end = start + size;
-> > +	mmu = pgt->mmu;
-> > +
-> > +	entry = kzalloc(sizeof(struct shadow_ipa_map), GFP_KERNEL_ACCOUNT);
-> > +
-> > +	if (!entry)
-> > +		return -ENOMEM;
-> > +
-> > +	entry->ipa = start;
-> > +	entry->shadow_ipa = ALIGN_DOWN(shadow_ipa, size);
-> > +	entry->size = size;
-> > +	ret = mtree_store_range(&mmu->nested_mmu_mt, start, end - 1, entry,
-> > +			  GFP_KERNEL_ACCOUNT);
-> > +	if (ret) {
-> > +		kfree(entry);
-> > +		WARN_ON(ret);
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static void nested_mtree_erase(struct maple_tree *mt, unsigned long start,
-> > +		unsigned long size)
-> > +{
-> > +	void *entry = NULL;
-> > +
-> > +	MA_STATE(mas, mt, start, start + size - 1);
-> > +
-> > +	mtree_lock(mt);
-> > +	entry = mas_erase(&mas);
-> > +	mtree_unlock(mt);
-> > +	kfree(entry);
-> > +}
-> > +
-> > +static void nested_mtree_erase_and_unmap_all(struct kvm_s2_mmu *mmu,
-> > +		unsigned long start, unsigned long end, bool may_block)
-> > +{
-> > +	struct shadow_ipa_map *entry;
-> > +
-> > +	mt_for_each(&mmu->nested_mmu_mt, entry, start, kvm_phys_size(mmu)) {
-> > +		kvm_stage2_unmap_range(mmu, entry->shadow_ipa, entry->size,
-> > +				may_block);
-> > +		kfree(entry);
-> > +	}
-> > +
-> > +	mtree_destroy(&mmu->nested_mmu_mt);
-> > +	mt_init_flags(&mmu->nested_mmu_mt, MM_MT_FLAGS);
-> > +}
-> > +
-> > +void kvm_nested_s2_unmap_range(struct kvm *kvm, u64 ipa, u64 size,
-> > +		bool may_block)
-> > +{
-> > +	int i;
-> > +	struct shadow_ipa_map *entry;
-> > +
-> > +	lockdep_assert_held_write(&kvm->mmu_lock);
-> > +
-> > +	for (i = 0; i < kvm->arch.nested_mmus_size; i++) {
-> > +		struct kvm_s2_mmu *mmu = &kvm->arch.nested_mmus[i];
-> > +		unsigned long start = ipa;
-> > +		unsigned long end = ipa + size;
-> > +
-> > +		if (!kvm_s2_mmu_valid(mmu))
-> > +			continue;
-> > +
-> > +		do {
-> > +			entry = mt_find(&mmu->nested_mmu_mt, &start, end - 1);
-> > +			if (!entry)
-> > +				break;
-> > +
-> > +			kvm_stage2_unmap_range(mmu, entry->shadow_ipa,
-> > +							entry->size, may_block);
-> > +			start = entry->ipa + entry->size;
-> > +			nested_mtree_erase(&mmu->nested_mmu_mt, entry->ipa,
-> > +							entry->size);
-> > +		} while (start < end);
-> > +	}
-> > +}
-> > +
-> >   void kvm_nested_s2_unmap(struct kvm *kvm, bool may_block)
-> >   {
-> >   	int i;
-> > @@ -1076,8 +1171,10 @@ void kvm_nested_s2_unmap(struct kvm *kvm, bool may_block)
-> >   	for (i = 0; i < kvm->arch.nested_mmus_size; i++) {
-> >   		struct kvm_s2_mmu *mmu = &kvm->arch.nested_mmus[i];
-> >   -		if (kvm_s2_mmu_valid(mmu))
-> > -			kvm_stage2_unmap_range(mmu, 0, kvm_phys_size(mmu), may_block);
-> > +		if (!kvm_s2_mmu_valid(mmu))
-> > +			continue;
-> > +
-> > +		nested_mtree_erase_and_unmap_all(mmu, 0, kvm_phys_size(mmu), may_block);
-> >   	}
-> >     	kvm_invalidate_vncr_ipa(kvm, 0,
-> > BIT(kvm->arch.mmu.pgt->ia_bits));
-> > @@ -1091,9 +1188,14 @@ void kvm_nested_s2_flush(struct kvm *kvm)
-> >     	for (i = 0; i < kvm->arch.nested_mmus_size; i++) {
-> >   		struct kvm_s2_mmu *mmu = &kvm->arch.nested_mmus[i];
-> > +		struct shadow_ipa_map *entry;
-> > +		unsigned long start = 0;
-> >   -		if (kvm_s2_mmu_valid(mmu))
-> > -			kvm_stage2_flush_range(mmu, 0, kvm_phys_size(mmu));
-> > +		if (!kvm_s2_mmu_valid(mmu))
-> > +			continue;
-> > +
-> > +		mt_for_each(&mmu->nested_mmu_mt, entry, start, kvm_phys_size(mmu))
-> > +			kvm_stage2_flush_range(mmu, entry->shadow_ipa, entry->size);
-> >   	}
-> >   }
-> >   @@ -1104,8 +1206,16 @@ void kvm_arch_flush_shadow_all(struct kvm
-> > *kvm)
-> >   	for (i = 0; i < kvm->arch.nested_mmus_size; i++) {
-> >   		struct kvm_s2_mmu *mmu = &kvm->arch.nested_mmus[i];
-> >   -		if (!WARN_ON(atomic_read(&mmu->refcnt)))
-> > +		if (!WARN_ON(atomic_read(&mmu->refcnt))) {
-> > +			struct shadow_ipa_map *entry;
-> > +			unsigned long start = 0;
-> > +
-> >   			kvm_free_stage2_pgd(mmu);
-> > +
-> > +			mt_for_each(&mmu->nested_mmu_mt, entry, start, kvm_phys_size(mmu))
-> > +				kfree(entry);
-> > +			mtree_destroy(&mmu->nested_mmu_mt);
-> > +		}
-> >   	}
-> >   	kvfree(kvm->arch.nested_mmus);
-> >   	kvm->arch.nested_mmus = NULL;
-> 
-> Any review comments or suggestions for this patch?
+I'm announcing the release of the 6.12.55 kernel.
 
-None. This patch is obviously lacking the basic requirements that such
-an "optimisation" should handle, such as dealing with multiple
-mappings to the same IPA in the shadow S2, hence will happily fail to
-correctly unmap stuff. There is no documentation, and no test.
+All users of the 6.12 kernel series must upgrade.
 
-I'm sorry, but I can't take this effort very seriously.
+The updated 6.12.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-6.12.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
 
-	M.
+thanks,
 
--- 
-Jazz isn't dead. It just smells funny.
+greg k-h
+
+------------
+
+ Documentation/arch/arm64/silicon-errata.rst          |    2 
+ Documentation/networking/seg6-sysctl.rst             |    3 
+ Makefile                                             |    2 
+ arch/Kconfig                                         |    1 
+ arch/arm64/Kconfig                                   |    1 
+ arch/arm64/include/asm/cputype.h                     |    2 
+ arch/arm64/kernel/cpu_errata.c                       |    1 
+ arch/riscv/kernel/probes/kprobes.c                   |   13 -
+ arch/x86/kernel/cpu/resctrl/monitor.c                |   44 ++-
+ drivers/accel/qaic/qaic.h                            |    2 
+ drivers/accel/qaic/qaic_control.c                    |    2 
+ drivers/accel/qaic/qaic_data.c                       |   12 -
+ drivers/accel/qaic/qaic_debugfs.c                    |    5 
+ drivers/accel/qaic/qaic_drv.c                        |    3 
+ drivers/base/power/runtime.c                         |   44 +++
+ drivers/cdx/cdx_msi.c                                |    5 
+ drivers/cpufreq/cppc_cpufreq.c                       |   14 +
+ drivers/dma/idxd/init.c                              |    2 
+ drivers/gpu/drm/amd/amdgpu/Makefile                  |    3 
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c     |    5 
+ drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c        |   48 +++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c              |    2 
+ drivers/gpu/drm/amd/amdgpu/cyan_skillfish_reg_init.c |   56 ++++
+ drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c                |    7 
+ drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c                |    7 
+ drivers/gpu/drm/amd/amdgpu/mes_v12_0.c               |    7 
+ drivers/gpu/drm/amd/amdgpu/nv.h                      |    1 
+ drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_hwmgr.c  |    3 
+ drivers/gpu/drm/bridge/lontium-lt9211.c              |    3 
+ drivers/gpu/drm/drm_draw.c                           |    2 
+ drivers/gpu/drm/drm_draw_internal.h                  |    2 
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c           |   98 ++------
+ drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c            |    9 
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c                |   28 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.h                |    6 
+ drivers/gpu/drm/panthor/panthor_fw.c                 |    1 
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c         |    2 
+ drivers/gpu/drm/scheduler/sched_main.c               |   13 -
+ drivers/gpu/drm/xe/xe_guc_submit.c                   |   13 +
+ drivers/hid/hid-input.c                              |    5 
+ drivers/hid/hid-multitouch.c                         |   28 +-
+ drivers/iio/imu/inv_icm42600/inv_icm42600_core.c     |   35 +-
+ drivers/md/md-linear.c                               |    1 
+ drivers/md/raid0.c                                   |   16 +
+ drivers/md/raid1.c                                   |   37 ++-
+ drivers/md/raid10.c                                  |   55 ++++
+ drivers/md/raid5.c                                   |    2 
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h  |    2 
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c    |    2 
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c   |  225 +++++++------------
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-pipe.c  |    2 
+ drivers/net/can/m_can/m_can.c                        |   84 ++++---
+ drivers/net/can/m_can/m_can.h                        |    1 
+ drivers/net/can/m_can/m_can_platform.c               |    2 
+ drivers/net/can/usb/gs_usb.c                         |   23 -
+ drivers/net/ethernet/amd/xgbe/xgbe-drv.c             |    1 
+ drivers/net/ethernet/amd/xgbe/xgbe-mdio.c            |    1 
+ drivers/net/ethernet/broadcom/tg3.c                  |    5 
+ drivers/net/ethernet/dlink/dl2k.c                    |   23 +
+ drivers/net/ethernet/intel/ixgbevf/defines.h         |    6 
+ drivers/net/ethernet/intel/ixgbevf/ipsec.c           |   10 
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf.h         |   13 +
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c    |   46 +++
+ drivers/net/ethernet/intel/ixgbevf/mbx.h             |    8 
+ drivers/net/ethernet/intel/ixgbevf/vf.c              |  194 +++++++++++++---
+ drivers/net/ethernet/intel/ixgbevf/vf.h              |    5 
+ drivers/net/ethernet/realtek/r8169_main.c            |    5 
+ drivers/net/netdevsim/netdev.c                       |    7 
+ drivers/net/usb/lan78xx.c                            |   38 ++-
+ drivers/net/usb/r8152.c                              |    7 
+ drivers/net/wireless/realtek/rtw89/core.c            |   39 +--
+ drivers/net/wireless/realtek/rtw89/core.h            |    6 
+ drivers/net/wireless/realtek/rtw89/mac80211.c        |    2 
+ drivers/net/wireless/realtek/rtw89/pci.c             |    2 
+ drivers/nvme/host/multipath.c                        |    6 
+ drivers/nvme/host/tcp.c                              |    3 
+ drivers/phy/cadence/cdns-dphy.c                      |  131 ++++++++---
+ drivers/usb/gadget/function/f_acm.c                  |   42 +--
+ drivers/usb/gadget/function/f_ecm.c                  |   48 +---
+ drivers/usb/gadget/function/f_ncm.c                  |   78 ++----
+ drivers/usb/gadget/function/f_rndis.c                |   85 ++-----
+ drivers/usb/gadget/udc/core.c                        |    3 
+ fs/btrfs/extent_io.c                                 |    2 
+ fs/btrfs/free-space-tree.c                           |   15 -
+ fs/btrfs/ioctl.c                                     |    2 
+ fs/btrfs/relocation.c                                |   13 -
+ fs/btrfs/zoned.c                                     |    2 
+ fs/dax.c                                             |    2 
+ fs/dcache.c                                          |   12 -
+ fs/ext4/ext4_jbd2.c                                  |   11 
+ fs/ext4/inode.c                                      |    8 
+ fs/f2fs/data.c                                       |    2 
+ fs/hfsplus/unicode.c                                 |   24 ++
+ fs/jbd2/transaction.c                                |   13 -
+ fs/nfsd/blocklayout.c                                |   33 +-
+ fs/nfsd/blocklayoutxdr.c                             |  171 ++++++++------
+ fs/nfsd/blocklayoutxdr.h                             |    8 
+ fs/nfsd/flexfilelayout.c                             |    8 
+ fs/nfsd/flexfilelayoutxdr.c                          |    3 
+ fs/nfsd/nfs4layouts.c                                |    1 
+ fs/nfsd/nfs4proc.c                                   |   36 +--
+ fs/nfsd/nfs4xdr.c                                    |   25 --
+ fs/nfsd/nfsd.h                                       |    1 
+ fs/nfsd/pnfs.h                                       |    1 
+ fs/nfsd/xdr4.h                                       |   39 +++
+ fs/smb/client/inode.c                                |    6 
+ fs/smb/client/misc.c                                 |   17 +
+ fs/smb/client/smb2ops.c                              |    8 
+ fs/smb/server/mgmt/user_session.c                    |    7 
+ fs/smb/server/smb2pdu.c                              |    9 
+ fs/smb/server/transport_ipc.c                        |   12 +
+ fs/xfs/libxfs/xfs_log_format.h                       |   30 ++
+ fs/xfs/libxfs/xfs_ondisk.h                           |    2 
+ fs/xfs/scrub/reap.c                                  |    9 
+ fs/xfs/xfs_log.c                                     |    8 
+ fs/xfs/xfs_log_priv.h                                |    4 
+ fs/xfs/xfs_log_recover.c                             |   34 ++
+ include/linux/mm.h                                   |    2 
+ include/linux/pci.h                                  |   14 +
+ include/linux/pm_runtime.h                           |    4 
+ include/linux/usb/gadget.h                           |   25 ++
+ include/net/dst.h                                    |   32 ++
+ include/net/inet6_hashtables.h                       |    2 
+ include/net/inet_connection_sock.h                   |    3 
+ include/net/inet_hashtables.h                        |    2 
+ include/net/ip.h                                     |   11 
+ include/net/ip_tunnels.h                             |   15 +
+ include/net/route.h                                  |    2 
+ io_uring/rw.c                                        |    2 
+ kernel/events/core.c                                 |    8 
+ kernel/padata.c                                      |    6 
+ kernel/sched/fair.c                                  |   26 +-
+ mm/slub.c                                            |    9 
+ net/core/dst.c                                       |    4 
+ net/core/sock.c                                      |   14 -
+ net/ipv4/icmp.c                                      |   24 +-
+ net/ipv4/igmp.c                                      |    2 
+ net/ipv4/ip_fragment.c                               |    2 
+ net/ipv4/ip_output.c                                 |   19 +
+ net/ipv4/ip_tunnel.c                                 |   14 -
+ net/ipv4/ip_vti.c                                    |    4 
+ net/ipv4/netfilter.c                                 |    4 
+ net/ipv4/route.c                                     |    8 
+ net/ipv4/tcp_fastopen.c                              |    4 
+ net/ipv4/tcp_input.c                                 |    3 
+ net/ipv4/tcp_ipv4.c                                  |   12 -
+ net/ipv4/tcp_metrics.c                               |    8 
+ net/ipv4/tcp_output.c                                |   19 +
+ net/ipv4/xfrm4_output.c                              |    2 
+ net/ipv6/ip6_tunnel.c                                |    3 
+ net/ipv6/tcp_ipv6.c                                  |   22 -
+ net/mptcp/ctrl.c                                     |    9 
+ net/tls/tls_main.c                                   |    7 
+ net/tls/tls_sw.c                                     |   31 ++
+ rust/bindings/bindings_helper.h                      |    1 
+ sound/firewire/amdtp-stream.h                        |    2 
+ sound/soc/amd/acp/acp-sdw-sof-mach.c                 |    2 
+ sound/soc/codecs/idt821034.c                         |   12 -
+ sound/soc/codecs/nau8821.c                           |   53 +++-
+ sound/usb/card.c                                     |   10 
+ tools/testing/selftests/bpf/prog_tests/arg_parsing.c |   12 -
+ 161 files changed, 1901 insertions(+), 955 deletions(-)
+
+Adrian Hunter (3):
+      perf/core: Fix address filter match with backing files
+      perf/core: Fix MMAP event path names with backing files
+      perf/core: Fix MMAP2 event device with backing files
+
+Akhil P Oommen (1):
+      drm/msm/a6xx: Fix PDC sleep sequence
+
+Al Viro (1):
+      d_alloc_parallel(): set DCACHE_PAR_LOOKUP earlier
+
+Alex Deucher (3):
+      drm/amdgpu: add ip offset support for cyan skillfish
+      drm/amdgpu: add support for cyan skillfish without IP discovery
+      drm/amdgpu: fix handling of harvesting for ip_discovery firmware
+
+Alexey Simakov (1):
+      tg3: prevent use of uninitialized remote_adv and local_adv variables
+
+Alok Tiwari (1):
+      drm/rockchip: vop2: use correct destination rectangle height check
+
+Amit Chaudhary (1):
+      nvme-multipath: Skip nr_active increments in RETRY disposition
+
+Andrii Nakryiko (1):
+      selftests/bpf: make arg_parsing.c more robust to crashes
+
+Babu Moger (2):
+      x86/resctrl: Refactor resctrl_arch_rmid_read()
+      x86/resctrl: Fix miscount of bandwidth event when reactivating previously unavailable RMID
+
+Bence Csókás (1):
+      PM: runtime: Add new devm functions
+
+Benjamin Tissoires (1):
+      HID: multitouch: fix sticky fingers
+
+Boris Burkov (1):
+      btrfs: fix incorrect readahead expansion length
+
+Breno Leitao (1):
+      netdevsim: set the carrier when the device goes up
+
+Celeste Liu (2):
+      can: gs_usb: gs_make_candev(): populate net_device->dev_port
+      can: gs_usb: increase max interface to U8_MAX
+
+Christoph Hellwig (2):
+      xfs: rename the old_crc variable in xlog_recover_process
+      xfs: fix log CRC mismatches between i386 and other architectures
+
+Christophe Leroy (1):
+      ASoC: codecs: Fix gain setting ranges for Renesas IDT821034 codec
+
+Chuck Lever (1):
+      NFSD: Define a proc_layoutcommit for the FlexFiles layout type
+
+Conor Dooley (1):
+      rust: cfi: only 64-bit arm and x86 support CFI_CLANG
+
+Cristian Ciocaltea (3):
+      ASoC: nau8821: Cancel jdet_work before handling jack ejection
+      ASoC: nau8821: Generalize helper to clear IRQ status
+      ASoC: nau8821: Add DMI quirk to bypass jack debounce circuit
+
+Darrick J. Wong (1):
+      xfs: use deferred intent items for reaping crosslinked blocks
+
+Deepanshu Kartikey (1):
+      ext4: detect invalid INLINE_DATA + EXTENTS flag combination
+
+Devarsh Thakkar (2):
+      phy: cadence: cdns-dphy: Fix PLL lock and O_CMN_READY polling
+      phy: cadence: cdns-dphy: Update calibration wait time for startup state machine
+
+Dmitry Safonov (1):
+      net/ip6_tunnel: Prevent perpetual tunnel growth
+
+Dmitry Torokhov (1):
+      HID: hid-input: only ignore 0 battery events for digitizers
+
+Eric Dumazet (5):
+      tcp: fix tcp_tso_should_defer() vs large RTT
+      tcp: convert to dev_net_rcu()
+      tcp: cache RTAX_QUICKACK metric in a hot cache line
+      net: dst: add four helpers to annotate data-races around dst->dev
+      ipv4: adopt dst_dev, skb_dst_dev and skb_dst_dev_net[_rcu]
+
+Eugene Korenevsky (1):
+      cifs: parse_dfs_referrals: prevent oob on malformed input
+
+Fabian Vogt (1):
+      riscv: kprobes: Fix probe address validation
+
+Fedor Pchelkin (1):
+      wifi: rtw89: avoid possible TX wait initialization race
+
+Filipe Manana (2):
+      btrfs: fix clearing of BTRFS_FS_RELOC_RUNNING if relocation already running
+      btrfs: do not assert we found block group item when creating free space tree
+
+Francesco Valla (1):
+      drm/draw: fix color truncation in drm_draw_fill24
+
+Greg Kroah-Hartman (1):
+      Linux 6.12.55
+
+Guenter Roeck (1):
+      dmaengine: Add missing cleanup on module unload
+
+Gui-Dong Han (1):
+      drm/amdgpu: use atomic functions with memory barriers for vm fault info
+
+Guoniu Zhou (1):
+      media: nxp: imx8-isi: m2m: Fix streaming cleanup on release
+
+Hao Ge (1):
+      slab: reset slab->obj_ext when freeing and it is OBJEXTS_ALLOC_FAIL
+
+I Viswanath (1):
+      net: usb: lan78xx: fix use of improperly initialized dev->chipid in lan78xx_reset
+
+Jaegeuk Kim (1):
+      f2fs: fix wrong block mapping for multi-devices
+
+Jakub Acs (1):
+      mm/ksm: fix flag-dropping behavior in ksm_madvise
+
+Jan Kara (1):
+      vfs: Don't leak disconnected dentries on umount
+
+Jedrzej Jagielski (2):
+      ixgbevf: fix getting link speed data for E610 devices
+      ixgbevf: fix mailbox API compatibility by negotiating supported features
+
+Jeffrey Hugo (1):
+      accel/qaic: Fix bootlog initialization ordering
+
+Jens Axboe (1):
+      Revert "io_uring/rw: drop -EOPNOTSUPP check in __io_complete_rw_common()"
+
+Jiaming Zhang (1):
+      ALSA: usb-audio: Fix NULL pointer deference in try_to_register_card
+
+Jiri Slaby (SUSE) (1):
+      irqdomain: cdx: Switch to of_fwnode_handle()
+
+John Garry (3):
+      md/raid0: Handle bio_split() errors
+      md/raid1: Handle bio_split() errors
+      md/raid10: Handle bio_split() errors
+
+Jonathan Kim (1):
+      drm/amdgpu: fix gfx12 mes packet status return check
+
+Kaustabh Chakraborty (3):
+      drm/exynos: exynos7_drm_decon: fix uninitialized crtc reference in functions
+      drm/exynos: exynos7_drm_decon: properly clear channels during bind
+      drm/exynos: exynos7_drm_decon: remove ctx->suspended
+
+Ketil Johnsen (1):
+      drm/panthor: Ensure MCU is disabled on suspend
+
+Kuen-Han Tsai (6):
+      usb: gadget: Store endpoint pointer in usb_request
+      usb: gadget: Introduce free_usb_request helper
+      usb: gadget: f_ncm: Refactor bind path to use __free()
+      usb: gadget: f_acm: Refactor bind path to use __free()
+      usb: gadget: f_ecm: Refactor bind path to use __free()
+      usb: gadget: f_rndis: Refactor bind path to use __free()
+
+Kuniyuki Iwashima (2):
+      mptcp: Call dst_release() in mptcp_active_enable().
+      mptcp: Use __sk_dst_get() and dst_dev_rcu() in mptcp_active_enable().
+
+Laurent Pinchart (1):
+      media: nxp: imx8-isi: Drop unused argument to mxc_isi_channel_chain()
+
+Li Qiang (1):
+      ASoC: amd/sdw_utils: avoid NULL deref when devm_kasprintf() fails
+
+Linmao Li (1):
+      r8169: fix packet truncation after S4 resume on RTL8168H/RTL8111H
+
+Marc Kleine-Budde (4):
+      can: m_can: m_can_plat_remove(): add missing pm_runtime_disable()
+      can: m_can: m_can_handle_state_errors(): fix CAN state transition to Error Active
+      can: m_can: m_can_chip_config(): bring up interface in correct state
+      can: m_can: fix CAN state in system PM
+
+Marek Vasut (1):
+      drm/bridge: lt9211: Drop check for last nibble of version register
+
+Mario Limonciello (1):
+      drm/amd: Check whether secure display TA loaded successfully
+
+Marios Makassikis (1):
+      ksmbd: fix recursive locking in RPC handle list access
+
+Mark Rutland (2):
+      arm64: cputype: Add Neoverse-V3AE definitions
+      arm64: errata: Apply workarounds for Neoverse-V3AE
+
+Matthieu Baerts (NGI0) (1):
+      mptcp: reset blackhole on success with non-loopback ifaces
+
+Miaoqian Lin (1):
+      cdx: Fix device node reference leak in cdx_msi_domain_init
+
+Miquel Sabaté Solà (2):
+      btrfs: fix memory leak on duplicated memory in the qgroup assign ioctl
+      btrfs: fix memory leaks when rejecting a non SINGLE data profile without an RST
+
+Nicolas Dichtel (1):
+      doc: fix seg6_flowlabel path
+
+Oleksij Rempel (1):
+      net: usb: lan78xx: Add error handling to lan78xx_init_mac_address
+
+Piotr Kwapulinski (2):
+      PCI: Add PCI_VDEVICE_SUB helper macro
+      ixgbevf: Add support for Intel(R) E610 device
+
+Pranjal Ramajor Asha Kanojiya (1):
+      accel/qaic: Synchronize access to DBC request queue head & tail pointer
+
+Rafael J. Wysocki (1):
+      cpufreq: CPPC: Avoid using CPUFREQ_ETERNAL as transition delay
+
+Raju Rangoju (1):
+      amd-xgbe: Avoid spurious link down messages during interface toggle
+
+Randy Dunlap (1):
+      ALSA: firewire: amdtp-stream: fix enum kernel-doc warnings
+
+Sabrina Dubroca (5):
+      tls: trim encrypted message to match the plaintext on short splice
+      tls: wait for async encrypt in case of error during latter iterations of sendmsg
+      tls: always set record_type in tls_process_cmsg
+      tls: wait for pending async decryptions if tls_strp_msg_hold fails
+      tls: don't rely on tx_work during send()
+
+Sean Nyekjaer (4):
+      can: m_can: add deinit callback
+      can: m_can: call deinit/init callback when going into suspend/resume
+      iio: imu: inv_icm42600: Simplify pm_runtime setup
+      iio: imu: inv_icm42600: Avoid configuring if already pm_runtime suspended
+
+Sergey Bashirov (6):
+      nfsd: Use correct error code when decoding extents
+      nfsd: Drop dprintk in blocklayout xdr functions
+      NFSD: Rework encoding and decoding of nfsd4_deviceid
+      NFSD: Minor cleanup in layoutcommit processing
+      NFSD: Implement large extent array support in pNFS
+      NFSD: Fix last write offset handling in layoutcommit
+
+Sharath Chandra Vurukala (1):
+      net: Add locking to protect skb->dev access in ip_output
+
+Shuhao Fu (1):
+      smb: client: Fix refcount leak for cifs_sb_tlink
+
+Shuicheng Lin (1):
+      drm/xe/guc: Check GuC running state before deregistering exec queue
+
+Thadeu Lima de Souza Cascardo (1):
+      HID: multitouch: fix name of Stylus input devices
+
+Timur Kristóf (1):
+      drm/amd/powerplay: Fix CIK shutdown temperature
+
+Tomi Valkeinen (1):
+      phy: cdns-dphy: Store hs_clk_rate and return it
+
+Tvrtko Ursulin (1):
+      drm/sched: Fix potential double free in drm_sched_job_add_resv_dependencies
+
+Viacheslav Dubeyko (1):
+      hfsplus: fix slab-out-of-bounds read in hfsplus_strcasecmp()
+
+Vincent Guittot (1):
+      sched/fair: Fix pelt lost idle time detection
+
+Wilfred Mallawa (1):
+      nvme/tcp: handle tls partially sent records in write_space()
+
+Xiao Liang (1):
+      padata: Reset next CPU when reorder sequence wraps around
+
+Xing Guo (1):
+      selftests: arg_parsing: Ensure data is flushed to disk before reading.
+
+Yeounsu Moon (1):
+      net: dlink: handle dma_map_single() failure properly
+
+Yi Cong (1):
+      r8152: add error handling in rtl8152_driver_init
+
+Youssef Samir (1):
+      accel/qaic: Treat remaining == 0 as error in find_and_map_user_pages()
+
+Yu Kuai (1):
+      md: fix mssing blktrace bio split events
+
+Yuezhang Mo (1):
+      dax: skip read lock assertion for read-only filesystems
+
+Zhang Yi (2):
+      jbd2: ensure that all ongoing I/O complete before freeing blocks
+      ext4: wait for ongoing I/O to complete before freeing blocks
+
+Zhanjun Dong (1):
+      drm/i915/guc: Skip communication warning on reset in progress
+
 
