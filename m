@@ -1,155 +1,232 @@
-Return-Path: <linux-kernel+bounces-866417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E79BFFB55
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:51:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F42BFFB70
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90BA83AE484
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:51:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9463188C670
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF58A2DCF5D;
-	Thu, 23 Oct 2025 07:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484F12DC77B;
+	Thu, 23 Oct 2025 07:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=reznichenko.net header.i=@reznichenko.net header.b="DdadXaCA"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XdTyzEaC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2eaYDE6s";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wpRNCXkM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yPd+PriJ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D282DCF65
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE542DAFDE
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761205857; cv=none; b=D39eHfIh39EThWBo7RVGQuu+TYgwLei2otUxu1Q0GR8pM/rebj14n0Yg4ByWFGznXQH3xv/2RUetevqXDb+/59ygWIm7eRDvuSKsF/q/scw8Td4HbZeMYIR3ZfIpItlcBIoBEadN1etKEQrPahnxpupYuGah5PYKJo0/TL1vEL0=
+	t=1761205880; cv=none; b=YbgJM3AYIJPZVofANIM62igY14f/Fgt/ez5QvzzVJC5q2NORf4UbqRw8p/qohaLUDHiLflbN5cx98zl4Q8qPTgocLTTRQ6WViJMvKKeqnMACSmIwLclKsv0SAp5E9xys/SCpjt1DWkClV5tPiJtteys8jnhPJSjJtCBeYPH/YkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761205857; c=relaxed/simple;
-	bh=1hywAO6OmglGEJDv4dlqj7DVBEZf4btWfqp6klm/+u0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jefVouPEbonqJ1ah0l4IrMFQlWqhDy4zlNP/yFEc37XPh3YGADQ6KurnkKV1LEhqq8+7Y22hTwy6c5PYe2SIeEDJeA5Du2wbh8/aWzJp7RSQUSKTri1i9qeXo6HJ05lW32B5WKuMGcdN5yQHdyXZSKVlQjbkwgkfejDL2n3aUq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=reznichenko.net; spf=none smtp.mailfrom=dpplabs.com; dkim=pass (2048-bit key) header.d=reznichenko.net header.i=@reznichenko.net header.b=DdadXaCA; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=reznichenko.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dpplabs.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-339c9bf3492so689352a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:50:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=reznichenko.net; s=google; t=1761205854; x=1761810654; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ckf+WA/vGci5TKMGOHLvpH1kq+z/6nk6A9B9djwZ1Vk=;
-        b=DdadXaCAsxeuRsSpN+Sdnn37yPc/OkFEl63jtTq/z8UFhC8nMrDu66q7IGiP/acqFV
-         yANWLN1mFfSLl64lqnzKWdnVpSkTIcvKWSKhuiE2HIyaorhgIPuRz7Hjd+vzbjT9fqZM
-         n15WKP7SOO/BoWlphq9F/IE/x+S1tZlnyQ3Zt1vtoBxo6nOfvoTs7k4dO7hrJeII6E9I
-         6wzEFkoRCV0JA9LIfkLH5fyj4kOIBIgLQZXr12cOdRjIwJrUvyUpwHq86VJQE+czGytL
-         TXY6aLh9GDUO9THRDwGPgcylt5FfsPu9apzDEhzanJS/goOHGiO8sBft1bwWUwOifoXX
-         4O0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761205854; x=1761810654;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ckf+WA/vGci5TKMGOHLvpH1kq+z/6nk6A9B9djwZ1Vk=;
-        b=TgnqiqOzdZNfx2SiW8F0GdhS2EWyinBVu7xWCaCvTMDYwsY71t4Z6w9hokepO+El+c
-         XQed6+TjXo/cLUJoFvb4JrjOqToKv/KuyWzRgI/BULSu8/n8t2wNl28JaHAUnj0ssrWf
-         9bUIKByHQpGj4oFHIMyavqSMZptzMbJL6IFLYUNkExpeYvIaHFyPNvTI2YANXdDvy3le
-         K435sFhgzOvvzAgHZRk7XtIqxTAsDGk5nqiJrUzBqHdMYVhxvyIl5+JEtrD+W56tZtGV
-         GTp7bcuXL6E/nP1ZjZyRM7twvzdTAmig5QFQTJqn41XvPHjevkDs8G+Tuz5N12t414cP
-         EEYg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/LE3vrXLkyx7pqkQdxjZ4fkMK/pJe++j6An0sTts3RVqYdLqPA8zxP2jzPUKf2UHog1Q9YM7tiFtVAAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf3nYV1X7URS8MNi6HlfO6a8dCjGG4uMhKzWgZMGqXQG+OfAKt
-	ZPRLn4WGo6fv8g9HAzTmxgnHesYoKc6bsYFz3WJo5lbZ6ObCMLrpIFukmqM8bddkZg0=
-X-Gm-Gg: ASbGncvvBH1FSRRIBeEzBIE9pemCkTIzX9+2z/UcTzWYLHrIW8RYrTOPV9XoMJwhzbT
-	tcp4/xicAdBhmApEay1AntWFGoFqqmEhdcK5J/ortQ0BPAXb0W3CA90LSYr4FReeV00OmoTs3So
-	/OHal4ZlyYZd9eAeMdqux6XvELLO4xWONYsseUBiUV0bX8+/Fd+FhTztqgchzntUfeO1uOspUdk
-	h0hWohf1pemS9ciX1RG/R/N/70eGwUXJEfybPkVUtdw+AmmCqXnVULA6/C0WrvF8tEJ85hh5PLa
-	CcalapZaXQg5dsbi6axl+83TBPlXr69fKQ3lNpDE0zUJ2t4Tk8w11k61djaBv9HevmXl6ZZDz3O
-	39NBA7M29leVMGh1n1JCJTCOwjJ4775tb7J44qcuewyl4/eJVaM8yO/Cq1duautD+A6RPLqo9Ei
-	i4lVuhSZd6d0ex/yb99w==
-X-Google-Smtp-Source: AGHT+IGxBmhQYX3R+zPm2DZoyJZbHJDy6/9CVQ6y+y0VxQf1BMG2L8qFAVrrjtQYPgaGrb29h3irDw==
-X-Received: by 2002:a17:90b:44:b0:32b:623d:ee91 with SMTP id 98e67ed59e1d1-33bcf8fd82dmr28272717a91.27.1761205854513;
-        Thu, 23 Oct 2025 00:50:54 -0700 (PDT)
-Received: from z440.. ([2601:1c0:4502:2d00:2035:6c3d:cc34:bc90])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33dfb1dbddbsm3809280a91.0.2025.10.23.00.50.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 00:50:53 -0700 (PDT)
-From: Igor Reznichenko <igor@reznichenko.net>
-To: linux@roeck-us.net
-Cc: conor+dt@kernel.org,
-	corbet@lwn.net,
-	david.hunter.linux@gmail.com,
-	devicetree@vger.kernel.org,
-	igor@reznichenko.net,
-	krzk+dt@kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh@kernel.org,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH 1/5] drivers/hwmon: Add TSC1641 I2C power monitor driver
-Date: Thu, 23 Oct 2025 00:50:50 -0700
-Message-ID: <20251023075050.254998-1-igor@reznichenko.net>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <be691214-bac6-43d4-be62-daa57c833fe7@roeck-us.net>
-References: <be691214-bac6-43d4-be62-daa57c833fe7@roeck-us.net>
+	s=arc-20240116; t=1761205880; c=relaxed/simple;
+	bh=VeRkAev6aEo7dMDsgGLqWeGIo2MpLiaJs93R1w5QBRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WOpmFEoDc1euCgLK+eo5Qraic86wmKt1/sl23v5kLt/4ZFmSwoKobht44KUXdtnLqOAjnjk+UYuIcLQHuSdeeOaukTYaCX+aEn/FZOaWnMZ+c1vVJuxlmBDpNBab0SBEm8lv/B2XB5hfIyTFocutXsOWl0L8IPg4utbl1asCNbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XdTyzEaC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2eaYDE6s; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wpRNCXkM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yPd+PriJ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3FAA71F445;
+	Thu, 23 Oct 2025 07:51:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761205871; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ZMNp2nOpN1XxaXWWIFL4YPLeaCGKanFBJUZI99Z/v0g=;
+	b=XdTyzEaCWS2zDUF+Lc2f1sMTxgzmsaNZ1kUKT4/Pb/zBLpk0TQr10I6IHRM1AbWhbU8cy5
+	RylBGbm4crac9k/xtijILnx+xZiqSf/5MRN2a7UwYqk5Q1AUj3RN83wyAw9dUBJEzGhqwt
+	BMZOhRZf/cXFRGRguFKB+0wiNQwSUlQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761205871;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ZMNp2nOpN1XxaXWWIFL4YPLeaCGKanFBJUZI99Z/v0g=;
+	b=2eaYDE6sHgQ3vmkc91N7TQG0Njuto48D8QuSlVOEJnjoa4ZlL8p/yGpRXMomNlM30Jbj47
+	z/826XfdUCS3t8Cg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761205867; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ZMNp2nOpN1XxaXWWIFL4YPLeaCGKanFBJUZI99Z/v0g=;
+	b=wpRNCXkMZioSnM/BRuZ8Segg7HdwttbAosM+ECful/zltkOGNtq6JjiOltm2M/T8bAlS6t
+	VpfcKJh8Vlw7IrTa4VnZuYuHMOe7nuLzyM4/Vk98UH1zLa5Dl6Vd+oSf/2Uov8Ch3Na4iJ
+	2gnCg/WfF72yrUZq+QRnlE/GwMvjPOk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761205867;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ZMNp2nOpN1XxaXWWIFL4YPLeaCGKanFBJUZI99Z/v0g=;
+	b=yPd+PriJqShk7m9RM9linS+Zc4AmVQZdPdbxBPyApa30REinu5jtEWyIi3E8TBGuvXqWbV
+	P5LmlRZW6EbXAaDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C893E13285;
+	Thu, 23 Oct 2025 07:51:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 94HPLmre+WhaYQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 23 Oct 2025 07:51:06 +0000
+Message-ID: <afefc748-c466-4697-b8e6-7791b9ebbfed@suse.de>
+Date: Thu, 23 Oct 2025 09:51:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm/vblank: downgrade vblank wait timeout from WARN to
+ error
+To: Chintan Patel <chintanlike@gmail.com>, maarten.lankhorst@linux.intel.com,
+ maxime.ripard@kernel.org, airlied@gmail.com, simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+References: <20251003032303.16518-1-chintanlike@gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20251003032303.16518-1-chintanlike@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[147ba789658184f0ce04];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
 
-Guenter,
-Thanks for the detailed feedback. I will address it.
+Hi
 
-> Please send a register dump.
+Am 03.10.25 um 05:23 schrieb Chintan Patel:
+> When wait_event_timeout() in drm_wait_one_vblank() times out, the
+> current WARN can cause unnecessary kernel panics in environments
+> with panic_on_warn set (e.g. CI, fuzzing). These timeouts can happen
+> under heavy scheduling pressure or in rare cases of delayed vblank
+> handling, and are not always a kernel bug.
+>
+> Replace the WARN with drm_err() messages that report the timeout
+> without crashing the system. Developers can still enable drm.debug
+> to diagnose genuine problems.
+>
+> Reported-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
+> Tested-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+> Signed-off-by: Chintan Patel <chintanlike@gmail.com>
 
-Here's register dump after init during run: 
+ From my side
 
-tsc1641 1-0040: 0x00: 0x003f
-tsc1641 1-0040: 0x01: 0x0253
-tsc1641 1-0040: 0x02: 0x0dc0
-tsc1641 1-0040: 0x03: 0x0053
-tsc1641 1-0040: 0x04: 0x0250
-tsc1641 1-0040: 0x05: 0x0033
-tsc1641 1-0040: 0x06: 0x0000
-tsc1641 1-0040: 0x07: 0x0000
-tsc1641 1-0040: 0x08: 0x01f4
-tsc1641 1-0040: 0x09: 0x0000
-tsc1641 1-0040: 0x0a: 0x0000
-tsc1641 1-0040: 0x0b: 0x0000
-tsc1641 1-0040: 0x0c: 0x0000
-tsc1641 1-0040: 0x0d: 0x0000
-tsc1641 1-0040: 0x0e: 0x0000
-tsc1641 1-0040: 0xfe: 0x0006
-tsc1641 1-0040: 0xff: 0x1000
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-> > +
-> > +	/*
-> > +	 * Disable alert mask first, then write the value and enable alert mask
-> Why ? 
+See [1] for another such report
 
-The idea was to prevent potential previous alert from propagating when changing 
-the value, plus to only enable alert when crit/lcrit value is non-zero. 
-But given your response below this is not the right thing to do.
+[1] 
+https://lore.kernel.org/virtualization/202510221555.8c60c069-lkp@intel.com/T/#u
 
-> Disabling alerts if the limit is 0 is wrong: The limit can be set
-> to 0 on purpose. Only unmasking the limit if a limit is set is just as wrong.
-> Either limits are enabled and reported, or they are disabled and the attributes
-> must not be generated. Mis-using the ABI to declare "If the limit value is
-> 0, mask the limit. Otherwise set the limit and unmask it" is unacceptable.
+If there's also a way to raise priority of the vblank timer, we should 
+explore that as well.
 
-Thanks for clarification. So would you recommend then that all alerts should 
-be always on/unmasked for this chip or to add custom sysfs attributes to control 
-them, since it has this capability?
+Best regards
+Thomas
 
-> Either report as standard voltage (in0_input) or drop entirely.
-> The shunt voltage can be calculated from the shunt resisor value and
-> the current. A non-standard attribute to report it does not add value.
+>
+> v2:
+>   - Drop unnecessary in-code comment (suggested by Thomas Zimmermann)
+>   - Remove else branch, only log timeout case
+>
+> v3:
+>   - Use drm_err() instead of drm_dbg_kms() (suggested by Ville Syrjälä)
+>   - Remove unnecessary curr = drm_vblank_count() (suggested by Thomas Zimmermann)
+>   - Fix commit message wording (“invalid userspace calls” → “delayed vblank handling”)
+> ---
+>   drivers/gpu/drm/drm_vblank.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> index 46f59883183d..0664aea1b924 100644
+> --- a/drivers/gpu/drm/drm_vblank.c
+> +++ b/drivers/gpu/drm/drm_vblank.c
+> @@ -1305,7 +1305,8 @@ void drm_wait_one_vblank(struct drm_device *dev, unsigned int pipe)
+>   				 last != drm_vblank_count(dev, pipe),
+>   				 msecs_to_jiffies(100));
+>   
+> -	drm_WARN(dev, ret == 0, "vblank wait timed out on crtc %i\n", pipe);
+> +	if (!ret)
+> +		drm_err(dev, "vblank wait timed out on crtc %i\n", pipe);
+>   
+>   	drm_vblank_put(dev, pipe);
+>   }
 
-I'll drop it since the shunt voltage resolution is 2.5uV and it won't give 
-accurate information to report it in mV.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-Thanks, Igor
+
 
