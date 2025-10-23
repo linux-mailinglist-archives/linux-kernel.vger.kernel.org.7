@@ -1,156 +1,105 @@
-Return-Path: <linux-kernel+bounces-866879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA6BC00EB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:55:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EA2C00ECA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C63E9359D67
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3064B18C7893
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39FD30EF9D;
-	Thu, 23 Oct 2025 11:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA23830F7EE;
+	Thu, 23 Oct 2025 11:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PO19t8ZW"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6MSL1sz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79E229BDA3
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B8230EF94;
+	Thu, 23 Oct 2025 11:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761220548; cv=none; b=fIl2RkuNo1U2G2Gcgyv4L92+UIQT1SL08Wf6Xhtq417/hc73WG6sw/mc38OlmjtVLI7dWOzmjv7IHxYeOZtHRFLk8TstkLJ/kMRK05EoDn9L6pK/T+u92J7tw6tOlN39+hpSu7qajs7jhAOMw2vWBTCK58tqrqJlNqEFVkDUTIU=
+	t=1761220557; cv=none; b=XnQLzpFWD26h7j4PtO2Xtd+iy5+ldG2HMbgwIi0qHr9OOW45H8n6lkum8xR7eWwd/YRyK2IMI2q01Vo1NRV8rOtp+3BolggdJvtw/G7IMcHKgV9wHeQE8q8+kIKhNVEizBFo1r53zdV2wvpPs8jjmyI80SfP8yX/0Oe3PhsqK34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761220548; c=relaxed/simple;
-	bh=jpqlOQFQ0lCsBU/ukJf92pGlz0eJx9vhQf0m3jE70sM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=RwZOmoaCqGsqoFdfvXupljpKal5rVaz0SkJGEXAih3hVrdjFxNBuLZG0AzWkUUKRIPwtcz7u0wMcKIc6tN6Wv4r2vgBAt7EgTuFlqrstz8kMqkIgfA/UMHxNW9sRUByM6raNkQVxYH3k+2/nj/iOPigTb1Q5fw3o0cLzZimqHNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PO19t8ZW; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251023115544euoutp02188ad5ab17d82fc950606f78103d1c90~xHMDwl-8Q0657406574euoutp02o
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:55:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251023115544euoutp02188ad5ab17d82fc950606f78103d1c90~xHMDwl-8Q0657406574euoutp02o
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761220544;
-	bh=hkfNeWXTF4q43g0m16pkbTb1R8n6c2a48SB9tENaQRE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=PO19t8ZWx9P6e1iyt+TiwyFwiTHTv3qKCJVUJxsEkC1q6RHjk9xMZTBZ5HnGBZ7vt
-	 2yxkdN757SIm7iSxK58aszxb10N1G4XN6ktmTKpALXIebRPA0rA8i6q8K8sc7pwEx2
-	 vBDuDwZEEukJH4xGjv6cNis/2nVuVlnfgFiGjoiE=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251023115543eucas1p2fa905f7a756b96653fd64f0692d1e23e~xHMDZpWj53189131891eucas1p2Z;
-	Thu, 23 Oct 2025 11:55:43 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251023115542eusmtip1ec5d85b05192ce23dd62b70994d5b0a9~xHMCaM8Ie0113301133eusmtip1b;
-	Thu, 23 Oct 2025 11:55:42 +0000 (GMT)
-Message-ID: <85aa56ff-098b-4db1-9de5-05b0f306623f@samsung.com>
-Date: Thu, 23 Oct 2025 13:55:42 +0200
+	s=arc-20240116; t=1761220557; c=relaxed/simple;
+	bh=Cz+i37Ja3afu19huL1DhVA1yCa+sVA2FSefg54htZH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bw80zCJk6xNe+fD0ibsICzf2Kt34vQMsgnrN0iU+gERptRaIg5IUceRE0Ag82/Rj/doXOlCF5BPV2Uh3hL7xqPj02bmJ6XJBhnbNh8rAn4s67yQGDFf8lGExLVkyU1ZpGRqP0WIA1rgBLKOuwxC9BBiBpKDSWYNn2Oc8m9NgeMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C6MSL1sz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F4D5C19421;
+	Thu, 23 Oct 2025 11:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761220556;
+	bh=Cz+i37Ja3afu19huL1DhVA1yCa+sVA2FSefg54htZH0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C6MSL1szBc3VuB2KDluYUHvoX7sNGh7TBnSNhh/RjVJr2Q+K3sPiW9xVGReow3ltX
+	 QUQoEIaUUIJEuGmkRCiwn4S5MyYepVNonX7KfgC2W0tMMoTzrFkW0yWw0GnroaFkYN
+	 fGRs3TmIvZA2Vnx1sUXz5ENkkGhCMVPrW9yhlUPzIufkDszVksY0oQWBqdUqUoMLDa
+	 Qj1p8KRV1Rwt6lQ/ieNAVTZIxQ6C+1dDsb5AjpEWistvOvUg0NkXjuXkkrFbSShhE8
+	 ZnXLtR1ZTgST0GMaZEY40ln8nSHgKb+QyFijVHZP/1gXLrVf3Y33qdzBOELWd9EYkA
+	 JYyCLC9ydwWfQ==
+Date: Thu, 23 Oct 2025 12:55:49 +0100
+From: Mark Brown <broonie@kernel.org>
+To: wangweidong.a@awinic.com
+Cc: alexey.klimov@linaro.org, ardb@kernel.org, arnd@arndb.de,
+	cy_huang@richtek.com, ebiggers@google.com, hangyi@everest-semi.com,
+	lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux@treblig.org,
+	nick.li@foursemi.com, niranjan.hy@ti.com, perex@perex.cz,
+	rf@opensource.cirrus.com, shenghao-ding@ti.com,
+	srinivas.kandagatla@oss.qualcomm.com, thorsten.blum@linux.dev,
+	tiwai@suse.com, yesanishhere@gmail.com, yijiangtao@awinic.com
+Subject: Re: [PATCH V2 1/7] ASoC: codecs:Rework the awinic driver lib
+Message-ID: <ad81a2b7-5df4-4e41-9bf1-6949723d43b8@sirena.org.uk>
+References: <72907b06-c7f8-455e-8dd9-f5b4041d4bde@sirena.org.uk>
+ <20251023115037.35553-1-wangweidong.a@awinic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v3] media: videobuf2: forbid remove_bufs when legacy
- fileio is active
-To: Hans Verkuil <hverkuil+cisco@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Hans Verkuil
-	<hverkuil@kernel.org>, stable@vger.kernel.org, Shuangpeng Bai
-	<SJB7183@psu.edu>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <81a46647-c666-4475-893b-d4af043c90ea@kernel.org>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251023115543eucas1p2fa905f7a756b96653fd64f0692d1e23e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251023113101eucas1p2c227985b0198d888564cab00aeb94f01
-X-EPHeader: CA
-X-CMS-RootMailID: 20251023113101eucas1p2c227985b0198d888564cab00aeb94f01
-References: <CGME20251023113101eucas1p2c227985b0198d888564cab00aeb94f01@eucas1p2.samsung.com>
-	<20251023113052.1303082-1-m.szyprowski@samsung.com>
-	<81a46647-c666-4475-893b-d4af043c90ea@kernel.org>
-
-On 23.10.2025 13:36, Hans Verkuil wrote:
-> On 23/10/2025 13:30, Marek Szyprowski wrote:
->> vb2_ioctl_remove_bufs() call manipulates queue internal buffer list,
->> potentially overwriting some pointers used by the legacy fileio access
->> mode. Add a vb2_verify_memory_type() check symmetrical to
->> vb2_ioctl_create_bufs() to forbid that ioctl when fileio is active to
->> protect internal queue state between subsequent read/write calls.
->>
->> CC: stable@vger.kernel.org
->> Fixes: a3293a85381e ("media: v4l2: Add REMOVE_BUFS ioctl")
->> Reported-by: Shuangpeng Bai<SJB7183@psu.edu>
->> Suggested-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/media/common/videobuf2/videobuf2-v4l2.c | 8 +++++---
->>   1 file changed, 5 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
->> index d911021c1bb0..a8a5b42a42d0 100644
->> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
->> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
->> @@ -1000,13 +1000,15 @@ int vb2_ioctl_remove_bufs(struct file *file, void *priv,
->>   			  struct v4l2_remove_buffers *d)
->>   {
->>   	struct video_device *vdev = video_devdata(file);
->> -
->> -	if (vdev->queue->type != d->type)
->> -		return -EINVAL;
->> +	int res;
->>   
->>   	if (d->count == 0)
->>   		return 0;
-> Ah, no. This should still check d->type. So:
->
-> 	if (d->count == 0)
-> 		return d->type == vdev->queue->type ? 0 : -EINVAL;
-
-Then frankly speaking lets get back to v1 limited to 
-vb2_ioctl_remove_bufs(), as using vb2_verify_memory_type() in this 
-context only makes things harder to understand:
-
-diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c 
-b/drivers/media/common/videobuf2/videobuf2-v4l2.c index 
-d911021c1bb0..f4104d5971dd 100644 --- 
-a/drivers/media/common/videobuf2/videobuf2-v4l2.c +++ 
-b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-
-@@ -1010,6 +1015,11 @@ int vb2_ioctl_remove_bufs(struct file *file, void 
-*priv, if (vb2_queue_is_busy(vdev->queue, file)) return -EBUSY; + if 
-(vb2_fileio_is_active(vdev->queue)) { + dprintk(vdev->queue, 1, "file io 
-in progress\n"); + return -EBUSY; + } + return 
-vb2_core_remove_bufs(vdev->queue, d->index, d->count); } 
-EXPORT_SYMBOL_GPL(vb2_ioctl_remove_bufs);
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zSaFTpnV73q1nzCn"
+Content-Disposition: inline
+In-Reply-To: <20251023115037.35553-1-wangweidong.a@awinic.com>
+X-Cookie: I've got a bad feeling about this.
 
 
-> Regards,
->
-> 	Hans
->
->>   
->> +	res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
->> +	if (res)
->> +		return res;
->> +
->>   	if (vb2_queue_is_busy(vdev->queue, file))
->>   		return -EBUSY;
->>
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+--zSaFTpnV73q1nzCn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Thu, Oct 23, 2025 at 07:50:37PM +0800, wangweidong.a@awinic.com wrote:
+> On Mon, Oct 20, 2025 at 02:40:32 +0100, broonie@kernel.org wrote:
+
+> > This doesn't apply against current code, please check and resend.
+
+> Thank you very much for your review.
+> Could you help me? What caused this?
+
+Whatever tree you used to base the patch on is different enough to my
+tree that the patches didn't apply.  My tree, as listed in MAINTAINERS,
+is:
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+--zSaFTpnV73q1nzCn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj6F8QACgkQJNaLcl1U
+h9C9Cgf/eBjYYc0/zGcUh3YCzE9bQbSTNsCEFPnKPkgr1n1uOPvPHJHdvY7eY2lU
+XulOB73erX/Jhs9MgkwHT1oTSgGqpKlMkQ+SmBjcydUtAFtt2RMhvI1e8egIwwN+
+m6xoIkXlu5ggcIpC4wO0OuVmNxhEj4eAoj30YmV4KTA+VPunAbjQGVDVt9XecngK
+ufmftHx/aONbXkbB2mJDxEktLBXb4FMET3KTrwShAvywtj9WdQpgLraofLdpyx/5
+9kP+O2IekXndYedGNmup3yH687vBIn3CsPxYkz1K/gyhuMNL65e5T28gee42NSkz
+XliosXO8SKwT5iYOl9hZcraX+glx5w==
+=eync
+-----END PGP SIGNATURE-----
+
+--zSaFTpnV73q1nzCn--
 
