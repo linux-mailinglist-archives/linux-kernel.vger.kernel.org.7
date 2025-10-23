@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-866727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00260C00849
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:35:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F72CC00840
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30D684F633A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:33:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F3141884CEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E49F30C352;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F59430C354;
 	Thu, 23 Oct 2025 10:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Mgg+BK/V"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="n44EJIIX"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B950A3074B1
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFB5309F1D
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761215568; cv=none; b=k9MlJSa+Fjho5OP7dL48sHiQ1JHAGjPj3w18+y5Ue0Du7fB1fzs5YKU/ElwowSzMa23ur+fls4/vNsrWNjB4f+f6h+YhRt0CSfPZMvVtXMa164mfUcI3Sv/mXZS4D9IG5TXwOMnFrZ4iel3/yTj/U/igm9oy5R8FFuKRdVEN+0Q=
+	t=1761215569; cv=none; b=mgN7G7k+TF26w7yB98MJ1jJzCAMRQiuqZtLiXt3GSvk3rLKjwE07HWYcKEIOgnib2L/KRjqzjKEXDhu7XuKN7oVSP2NzcnmPxuVXBCbHOVJgpS4wmoFOCeAgbYVwwsVJmWGc5Kj9t8UvfO4niQYBseAt0xFNz/4EFBqsCVMqFug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761215568; c=relaxed/simple;
-	bh=w4n9a/salkEEKluJYQOfyIQy0yuv7hx8mUa6k3VOwTQ=;
+	s=arc-20240116; t=1761215569; c=relaxed/simple;
+	bh=MQSK8eGfZb88NZ3j7UoADOEH321wqDKatMU6JULsmYg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AQDEtpTlylaQvqczMZN5hYmJ3rdWU0PRrvlGVTTzDiZ64Ap1gqW1Juohso+ZegDOCDNmN0O0d2XZR2TtmpeR/2zS/iB7DwH+3jNNWuycLlGTeD76wr2es2BAIp0v9GuSVVZj0VnvfQqFm6DlENTi4mbV40jFxf5KJY34Tx91csE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Mgg+BK/V; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=fS6baFMgS+PAGiqahtJleGRpew6I3tV1nnW8cMfg2kDnK0S+hle9HhotMitTKVxqN6HfqkaTltsOnoe6jL48Q+J2NwxI+1KIXsQjmYJ/s97ZuZxDwbyvLUEmDb0jxshxBdP7qME09iXAwA5bJJVEVjKcRGYyqdy1odePzWyXDX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=n44EJIIX; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761215563;
-	bh=w4n9a/salkEEKluJYQOfyIQy0yuv7hx8mUa6k3VOwTQ=;
+	s=mail; t=1761215564;
+	bh=MQSK8eGfZb88NZ3j7UoADOEH321wqDKatMU6JULsmYg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Mgg+BK/V64LlWD5QG1Ompp2iyNwg73uvWTmrcWtWGrz1AAkxsZSmIQ11D3C0IMv8Q
-	 Tth/AE02JKo/iTesUWJLmV07xJxHJNwMBRxwqbyXGIYcE0LamaHOCbfEpbzlY5twFS
-	 rE3PDSfXlQjMsRJxEPDB8mxElrbGHwMLPHzpJaC/M5svOJKnRQalLGt/xpJL4u9rQ6
-	 XDDan31Qe0WtfsxoMubutjmMqWnLeXA+7+MuWMXCkQJKndDeKgyFkX40lIumorEU83
-	 fZGgYtz2sufgoiHn3ZgNKzP2BPa1M3bc2qFEbFfD/SQzTZut3EhdCDwcnGNHE+Shjw
-	 7PZti7mB6Z+kA==
+	b=n44EJIIXeMlyRQO6GFwEtVAy8Yqx1E20uEFWIFb0rzsgl5roh3hbVOAH9ELifEV6c
+	 ufEoQxe41PfutgWhOjKD4Q4SSFVvhiJn9ff6SiruK3S2jlg081k1UZnzdk0gVPED9M
+	 KzYfw5bRFrAflxpPWTJ5hFpvE6zdeIu6+xP6WGjZJ6V6b46+NOpLsWbXk8FNOM6h23
+	 6JY5DC/8UExUyoUQv6tFwMm5z57xt9y86TFgIyqG1TdqiZAWrpjSM3uf9iapVnWRDB
+	 0m9rJXx0BWw8kxqtb/nnutlB3XYI8GBtoHeVdtOX36LWy66GyAJKf/L3AtC1KV82nD
+	 pyHu3DemrpGcA==
 Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: laeyraud)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3BC4F17E1418;
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E3BDC17E0CF8;
 	Thu, 23 Oct 2025 12:32:43 +0200 (CEST)
 From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Date: Thu, 23 Oct 2025 12:32:33 +0200
-Subject: [PATCH v11 07/11] drm/mediatek: mtk_hdmi_common: Add OP_HDMI if
- helper funcs assigned
+Date: Thu, 23 Oct 2025 12:32:34 +0200
+Subject: [PATCH v11 08/11] drm/mediatek: mtk_hdmi_common: Add var to enable
+ interlaced modes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-mediatek-drm-hdmi-v2-v11-7-7873ec4a1edf@collabora.com>
+Message-Id: <20251023-mediatek-drm-hdmi-v2-v11-8-7873ec4a1edf@collabora.com>
 References: <20251023-mediatek-drm-hdmi-v2-v11-0-7873ec4a1edf@collabora.com>
 In-Reply-To: <20251023-mediatek-drm-hdmi-v2-v11-0-7873ec4a1edf@collabora.com>
 To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
@@ -72,56 +72,52 @@ Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
  linux-arm-kernel@lists.infradead.org, 
  Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761215558; l=1902;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761215558; l=1712;
  i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
- bh=MmtKKEPK3SAo1T3vitymGts9yNll1+ssz6BWi4wYaAA=;
- b=g0mrAs0ZyzneTfRiB3MQVb0WMnrfMGm6tM1Nx4QLcfzYPqEE6pZ+HLrZO8kaboSnnf464hJ3c
- gvfzNotS+jCBVwaCy3xGHjxqSa3O0qIUA1D5mELo62Ctjxm+Gy4Nyck
+ bh=ooyxyCrBJchtLibasSNhjEb1Q7PQIVAYDmD7Jp6t8XU=;
+ b=KzQIqWedLyDZ6Bpa5QjWOcBPAqPgH0S4OcFpdkTeChXSy7obIj2+73rcLMaUNKtfechrnP/6c
+ nmsyG145JWSB/WLcAVhELKoxnAjG2WeuiDd7kBvpdDiP58ZgyuAlUba
 X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
  pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
 
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-In preparation for adding the HDMI TX v2 driver, and to allow
-a future modernization of the HDMI v1 one, perform changes
-that enable the usage of the HDMI Helpers provided by DRM.
-
-Check if the HDMI driver provides the function pointers to
-hdmi_{clear,write}_infoframe used by the HDMI Helper API and,
-if present, add DRM_BRIDGE_OP_HDMI to the drm_bridge ops,
-enabling the drm API to register the bridge as HDMI and to use
-the HDMI Helper functions.
-
-If the hdmi_{write,clear}_infoframe pointers are not assigned,
-vendor and product strings and HDMI helpers will not be used,
-hence this commit brings no functional changes to drivers that
-have not been refactored to use the new helpers.
-
-This also means that, in the current state, there is effectively
-no functional change to mtk_hdmi and its other components.
+Add an interlace_allowed bool member to struct mtk_hdmi_ver_conf
+which will be used to signal whether interlaced modes are supported
+by the bridge (in our case, the HDMI IP), and enable it for HDMIv2.
 
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 ---
- drivers/gpu/drm/mediatek/mtk_hdmi_common.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_hdmi_common.c | 1 +
+ drivers/gpu/drm/mediatek/mtk_hdmi_common.h | 1 +
+ 2 files changed, 2 insertions(+)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_common.c b/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
-index 3b589706d61b1e0e4aa66d0c81253b8aeb70c0d3..be63f33d39bfd4625a5f1edd83c873cc20ac0018 100644
+index be63f33d39bfd4625a5f1edd83c873cc20ac0018..38986ab61795c22b5b0659ad2ca258b923034a34 100644
 --- a/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
 +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
-@@ -413,6 +413,10 @@ struct mtk_hdmi *mtk_hdmi_common_probe(struct platform_device *pdev)
- 	hdmi->bridge.ops = DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID
- 			 | DRM_BRIDGE_OP_HPD;
- 
-+	if (ver_conf->bridge_funcs->hdmi_write_infoframe &&
-+	    ver_conf->bridge_funcs->hdmi_clear_infoframe)
-+		hdmi->bridge.ops |= DRM_BRIDGE_OP_HDMI;
-+
- 	hdmi->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
+@@ -421,6 +421,7 @@ struct mtk_hdmi *mtk_hdmi_common_probe(struct platform_device *pdev)
  	hdmi->bridge.ddc = hdmi->ddc_adpt;
  	hdmi->bridge.vendor = "MediaTek";
+ 	hdmi->bridge.product = "On-Chip HDMI";
++	hdmi->bridge.interlace_allowed = ver_conf->interlace_allowed;
+ 
+ 	ret = devm_drm_bridge_add(dev, &hdmi->bridge);
+ 	if (ret)
+diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_common.h b/drivers/gpu/drm/mediatek/mtk_hdmi_common.h
+index d3de8afff40f2b1a16e87b157859c04109b6da9f..38d1bdf4c77e4f6684473abec0e8c1e6ddc7db0f 100644
+--- a/drivers/gpu/drm/mediatek/mtk_hdmi_common.h
++++ b/drivers/gpu/drm/mediatek/mtk_hdmi_common.h
+@@ -131,6 +131,7 @@ struct mtk_hdmi_ver_conf {
+ 	const struct hdmi_codec_ops *codec_ops;
+ 	const char * const *mtk_hdmi_clock_names;
+ 	int num_clocks;
++	bool interlace_allowed;
+ };
+ 
+ struct mtk_hdmi_conf {
 
 -- 
 2.51.0
