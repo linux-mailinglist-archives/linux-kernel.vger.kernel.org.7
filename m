@@ -1,380 +1,180 @@
-Return-Path: <linux-kernel+bounces-867161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61005C01B54
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:19:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE357C01B81
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501F8188E574
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:19:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D891AA1939
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94779329C51;
-	Thu, 23 Oct 2025 14:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC7C32D0CA;
+	Thu, 23 Oct 2025 14:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JcJSoOdh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AJpXw72l"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A350E32A3E5;
-	Thu, 23 Oct 2025 14:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA5832C949
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761229129; cv=none; b=e7UKnl9nmFfNgwa2qQW0Ztym/WeeAZydlVAil20mJsBm1ij3frAjx7HUrtA76gFTTPVPi6y/ocv7Fj77XPwod/hImlIPYBnxBa3/Z+9HkxVh2y10dkPul0i64Uk4b0XwYnCCk2HBrzhXufDb/2devdZ8DhsnI1cm+RR3pXvtFSw=
+	t=1761229174; cv=none; b=jwbvqcO/hTYNlxyGpye2ujxanxRvGGzJdK9veQ1IPS7KgOnSxAYFAj4ERW/maQPoPhhJqywb/M4FDYEYhZViThS8v5WSbm6x779C9vRjLY0j9PRvCB4FGUg09a6cGAFG1hCuoVBIfM780un6oxHSMtYVwD3JHqyDSpBwUe5pi7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761229129; c=relaxed/simple;
-	bh=sxjYuJAOiSgP8WWUNYz5Ch+weQq8LvobXN7bvmNfSNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lAou+Lb4BiZAJSyJn1QCbnlS0qBGdOSk1oA3Va8jCidaFavEiY4HzTKImQu1mfhTiJcwvnu/CEDXGYmPORDgwl+22iJ/f5e50jVzs9qDEsJyieTmE8YZ6MPr+OsgdfCjf8zr9+9unHyiZKQiIKc/XPuG8uFpVlhLlMK/JpLZdzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JcJSoOdh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81A44C4CEE7;
-	Thu, 23 Oct 2025 14:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761229129;
-	bh=sxjYuJAOiSgP8WWUNYz5Ch+weQq8LvobXN7bvmNfSNI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JcJSoOdh0Vx1za9H9FvdB2ekZo4wxoUh4/x8cs0uAPN/jDiXq+cpqupAsz0BmXkj3
-	 b3m6AyW5SnjYJVMIKp3I/fgpm4KfcMG6yJob19yEnuA+Dmn5CYQfHnwzbFGxOAXQwF
-	 RlEgz+foQ8WmE/+3gjOpF0OzW2J7bQ2uuiVaazRSz4AqZv/Nkp6gSYRXpGT646uwY3
-	 yoQyTPCBIFoeCez7ju6hyuj/R3xPuW6CadMdWNtoPFAK/hWiBXRdXEzz7JIJsD+VnX
-	 ggy6arGsFrCKGe6OzbH8tJGbhX5gtfoZXDckcvJiOWS1f1jnnEMUP2yIPQsTP/Nqnf
-	 S4Pjx5NcV2r1g==
-Date: Thu, 23 Oct 2025 15:18:44 +0100
-From: Lee Jones <lee@kernel.org>
-To: Lukas Timmermann <linux@timmermann.space>
-Cc: pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 2/2] leds: as3668: Driver for the ams Osram 4-channel
- i2c LED driver
-Message-ID: <20251023141844.GP475031@google.com>
-References: <20251014152604.852487-1-linux@timmermann.space>
- <20251014152604.852487-3-linux@timmermann.space>
+	s=arc-20240116; t=1761229174; c=relaxed/simple;
+	bh=DD/LjVJ4r3VwFMI0i4ip+4b/PzWcEoqUe71F9KO39q0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MyvH76QxOCfqjSY/NB7PLR0uXpuMoFKysjujtGrAsmEt5qEo4Jz1A9wH5YWPSyVed/BTz44YLYOrgeipP86khHus2cuxepTX7nHz2E41y2B35TOwOVvdE4GYi/SB1/Yo4JWN4bbeyVfZnGasc3EdBIh6jJy2HVD3WD4hJ3FwLJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AJpXw72l; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59NEJ0L0546095;
+	Thu, 23 Oct 2025 09:19:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1761229140;
+	bh=e2yWPLePi+7T2QA9Hkta9aE8H47CbLmVkxnudVa+s5g=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=AJpXw72l3oDREStkT2ZjXSbX9litVmNi2n4afyeKq3BWlZQVDbzp4q1xj+Ks2SuZY
+	 pi5uJTUdvJF69nVAK173PCNAmfjrrTvMIGTxdPvxYOCBV7sYWZjkSh5l45Fx7xT2jR
+	 m5iWSvh/8S4t8is4TYYmKDt+xbXCGlgALpHElcfI=
+Received: from DFLE202.ent.ti.com (dfle202.ent.ti.com [10.64.6.60])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59NEIwVq2869668
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 23 Oct 2025 09:18:58 -0500
+Received: from DFLE208.ent.ti.com (10.64.6.66) by DFLE202.ent.ti.com
+ (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 23 Oct
+ 2025 09:18:58 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE208.ent.ti.com
+ (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 23 Oct 2025 09:18:58 -0500
+Received: from [172.24.233.62] (devarsh-precision-tower-3620.dhcp.ti.com [172.24.233.62])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59NEIqLK2983421;
+	Thu, 23 Oct 2025 09:18:53 -0500
+Message-ID: <e00495db-4cb0-4a24-ad58-39d22c6a36cc@ti.com>
+Date: Thu, 23 Oct 2025 19:48:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251014152604.852487-3-linux@timmermann.space>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm/bridge: sii902x: Fix HDMI detection with
+ DRM_BRIDGE_ATTACH_NO_CONNECTOR
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+        <rfoss@kernel.org>, <airlied@gmail.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <dri-devel@lists.freedesktop.org>,
+        <jani.nikula@intel.com>, <simona@ffwll.ch>,
+        <linux-kernel@vger.kernel.org>, <dmitry.baryshkov@oss.qualcomm.com>
+CC: <praneeth@ti.com>, <vigneshr@ti.com>, <aradhya.bhatia@linux.dev>,
+        <s-jain1@ti.com>, <s-wang12@ti.com>, <r-donadkar@ti.com>,
+        <h-shenoy@ti.com>
+References: <20251007112309.1103811-1-devarsht@ti.com>
+ <3f026b8c-d917-4197-b7f8-51ef3355aca7@ideasonboard.com>
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <3f026b8c-d917-4197-b7f8-51ef3355aca7@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, 14 Oct 2025, Lukas Timmermann wrote:
+Hi Tomi,
 
-> Since there were no existing drivers for the AS3668 or related devices,
-> a new driver was introduced in a separate file. Similar devices were
-> reviewed, but none shared enough characteristics to justify code reuse.
-> As a result, this driver is written specifically for the AS3668.
-> 
-> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
-> ---
->  MAINTAINERS                |   1 +
->  drivers/leds/Kconfig       |  13 +++
->  drivers/leds/Makefile      |   1 +
->  drivers/leds/leds-as3668.c | 188 +++++++++++++++++++++++++++++++++++++
->  4 files changed, 203 insertions(+)
->  create mode 100644 drivers/leds/leds-as3668.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 091206c54c63..945d78fef380 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3511,6 +3511,7 @@ M:	Lukas Timmermann <linux@timmermann.space>
->  L:	linux-leds@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/leds/ams,as3668.yaml
-> +F:	drivers/leds/leds-as3668.c
->  
->  ASAHI KASEI AK7375 LENS VOICE COIL DRIVER
->  M:	Tianshu Qiu <tian.shu.qiu@intel.com>
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index a104cbb0a001..8cfb423ddf82 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -100,6 +100,19 @@ config LEDS_ARIEL
->  
->  	  Say Y to if your machine is a Dell Wyse 3020 thin client.
->  
-> +config LEDS_AS3668
-
-LEDS_OSRAM_AMS_AS3668
-
-> +	tristate "LED support for AMS AS3668"
-
-"Osram"
-
-> +	depends on LEDS_CLASS
-> +	depends on I2C
-> +	help
-> +	  This option enables support for the AMS AS3668 LED controller.
-
-"Osram"
-
-> +	  The AS3668 provides up to four LED channels and is controlled via
-> +	  the I2C bus. This driver offers basic brightness control for each
-> +	  channel, without support for blinking or other advanced features.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called leds-as3668.
-> +
->  config LEDS_AW200XX
->  	tristate "LED support for Awinic AW20036/AW20054/AW20072/AW20108"
->  	depends on LEDS_CLASS
-> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> index 2f170d69dcbf..983811384fec 100644
-> --- a/drivers/leds/Makefile
-> +++ b/drivers/leds/Makefile
-> @@ -14,6 +14,7 @@ obj-$(CONFIG_LEDS_ADP5520)		+= leds-adp5520.o
->  obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
->  obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
->  obj-$(CONFIG_LEDS_ARIEL)		+= leds-ariel.o
-> +obj-$(CONFIG_LEDS_AS3668)		+= leds-as3668.o
->  obj-$(CONFIG_LEDS_AW200XX)		+= leds-aw200xx.o
->  obj-$(CONFIG_LEDS_AW2013)		+= leds-aw2013.o
->  obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
-> diff --git a/drivers/leds/leds-as3668.c b/drivers/leds/leds-as3668.c
-> new file mode 100644
-> index 000000000000..2b7b776fe2f5
-> --- /dev/null
-> +++ b/drivers/leds/leds-as3668.c
-> @@ -0,0 +1,188 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + *  Osram AMS AS3668 LED Driver IC
-> + *
-> + *  Copyright (C) 2025 Lukas Timmermann <linux@timmermann.space>
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/i2c.h>
-> +#include <linux/leds.h>
-> +#include <linux/module.h>
-> +#include <linux/uleds.h>
-> +
-> +#define AS3668_MAX_LEDS			4
-> +#define AS3668_EXPECTED_I2C_ADDR	0x42
-> +
-> +/* Chip Ident */
-> +
-> +#define AS3668_CHIP_ID1_REG		0x3e
-> +#define AS3668_CHIP_ID			0xa5
-> +
-> +/* Current Control */
-> +
-> +#define AS3668_CURRX_CONTROL_REG	0x01
-> +#define AS3668_CURR1_REG		0x02
-> +#define AS3668_CURR2_REG		0x03
-> +#define AS3668_CURR3_REG		0x04
-> +#define AS3668_CURR4_REG		0x05
-> +#define AS3668_CURRX_MODE_ON		0x1
-> +#define AS3668_CURRX_CURR1_MASK		GENMASK(1, 0)
-> +#define AS3668_CURRX_CURR2_MASK		GENMASK(3, 2)
-> +#define AS3668_CURRX_CURR3_MASK		GENMASK(5, 4)
-> +#define AS3668_CURRX_CURR4_MASK		GENMASK(7, 6)
-> +
-> +struct as3668_led {
-> +	struct led_classdev cdev;
-> +	struct as3668 *chip;
-> +	struct fwnode_handle *fwnode;
-> +	int led_id;
-> +};
-> +
-> +struct as3668 {
-> +	struct i2c_client *client;
-> +	struct as3668_led leds[AS3668_MAX_LEDS];
-> +};
-> +
-> +static enum led_brightness as3668_brightness_get(struct led_classdev *cdev)
-> +{
-> +	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
-> +
-> +	return i2c_smbus_read_byte_data(led->chip->client, AS3668_CURR1_REG + led->led_id);
-> +}
-> +
-> +static void as3668_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
-> +{
-> +	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
-> +
-> +	int err = i2c_smbus_write_byte_data(led->chip->client,
-> +					    AS3668_CURR1_REG + led->led_id,
-> +					    brightness);
-> +
-> +	if (err)
-> +		dev_err(&led->chip->client->dev, "error writing to reg 0x%02x, returned %d\n",
-
-The user isn't going to care about this stuff.
-
-"Failed to set brightness: %d"
-
-> +			AS3668_CURR1_REG + led->led_id, err);
-> +}
-> +
-> +static int as3668_dt_init(struct as3668 *as3668)
-> +{
-> +	struct device *dev = &as3668->client->dev;
-> +	struct as3668_led *led;
-> +	struct led_init_data init_data = {};
-> +	int err;
-> +	u32 reg;
-> +
-> +	for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
-> +		err = of_property_read_u32(child, "reg", &reg);
-> +		if (err)
-> +			return dev_err_probe(dev, err, "'reg' property missing from %s\n",
-
-"Failed to read 'reg' property"
-
-> +					     child->name);
-> +
-> +		if (reg < 0 || reg > AS3668_MAX_LEDS)
-> +			return dev_err_probe(dev, -EOPNOTSUPP,
-> +					     "'reg' property in %s is out of scope: %d\n",
-
-"Unsupported LED: %d"
-
-> +					     child->name, reg);
-> +
-> +		led = &as3668->leds[reg];
-> +		led->fwnode = of_fwnode_handle(child);
-> +
-> +		led->led_id = reg;
-> +		led->chip = as3668;
-> +
-> +		led->cdev.max_brightness = U8_MAX;
-> +		led->cdev.brightness_get = as3668_brightness_get;
-> +		led->cdev.brightness_set = as3668_brightness_set;
-> +
-> +		init_data.fwnode = led->fwnode;
-> +		init_data.default_label = ":";
-> +
-> +		err = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
-> +		if (err)
-> +			return dev_err_probe(dev, err, "failed to register LED %d\n", reg);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int as3668_probe(struct i2c_client *client)
-> +{
-> +	struct as3668 *as3668;
-> +	int err;
-> +	u8 chip_id;
-> +
-> +	if (client->addr != AS3668_EXPECTED_I2C_ADDR)
-
-Expected is weird.
-
-Why are we trying to catch-out the consumer?
-
-If you already know what the I2C address is, just use that.
-
-> +		return dev_err_probe(&client->dev, -EFAULT,
-> +				     "expected i2c address 0x%02x, got 0x%02x\n",
-> +				     AS3668_EXPECTED_I2C_ADDR, client->addr);
-> +
-> +	/* Read identifier from chip */
-
-This comment is superfluous IMHO.
-
-The register name should tell us everything.
-
-> +	chip_id = i2c_smbus_read_byte_data(client, AS3668_CHIP_ID1_REG);
-> +
-
-Remove this line.
-
-> +	if (chip_id != AS3668_CHIP_ID)
-> +		return dev_err_probe(&client->dev, -ENODEV,
-> +				     "expected chip id 0x%02x, got 0x%02x\n",
-
-"ID"
-
-> +				     AS3668_CHIP_ID, chip_id);
-> +
-> +	as3668 = devm_kzalloc(&client->dev, sizeof(*as3668), GFP_KERNEL);
-> +	if (!as3668)
-> +		return -ENOMEM;
-> +
-> +	as3668->client = client;
-> +
-> +	err = as3668_dt_init(as3668);
-> +	if (err)
-> +		return err;
-> +
-> +	/* Set all four channel modes to 'on' */
-
-Even if a specific LED wasn't requested?
-
-Are you sure that this doesn't have any drawbacks (power perhaps)?
-
-> +	err = i2c_smbus_write_byte_data(client, AS3668_CURRX_CONTROL_REG,
-> +					FIELD_PREP(AS3668_CURRX_CURR1_MASK, AS3668_CURRX_MODE_ON) |
-> +					FIELD_PREP(AS3668_CURRX_CURR2_MASK, AS3668_CURRX_MODE_ON) |
-> +					FIELD_PREP(AS3668_CURRX_CURR3_MASK, AS3668_CURRX_MODE_ON) |
-> +					FIELD_PREP(AS3668_CURRX_CURR4_MASK, AS3668_CURRX_MODE_ON));
-> +
-> +	/* Set initial currents to 0mA */
-> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR1_REG, 0);
-> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR2_REG, 0);
-> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR3_REG, 0);
-> +	err |= i2c_smbus_write_byte_data(client, AS3668_CURR4_REG, 0);
-> +
-> +	if (err)
-> +		return dev_err_probe(&client->dev, -EIO, "failed to write to the device\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static void as3668_remove(struct i2c_client *client)
-> +{
-> +	int err;
-
-'\n' here.
-
-> +	err = i2c_smbus_write_byte_data(client, AS3668_CURRX_CONTROL_REG, 0);
-> +	if (err)
-> +		dev_err(&client->dev, "couldn't remove the device\n");
-
-This does not remove the device.
-
-"Failed to turn off the LEDs"
-
-> +}
-> +
-> +static const struct i2c_device_id as3668_idtable[] = {
-> +	{ "as3668" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, as3668_idtable);
-> +
-> +static const struct of_device_id as3668_match_table[] = {
-> +	{ .compatible = "ams,as3668" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, as3668_match_table);
-> +
-> +static struct i2c_driver as3668_driver = {
-> +	.driver = {
-> +		.name = "leds_as3668",
-> +		.of_match_table = as3668_match_table,
-> +	},
-> +	.probe = as3668_probe,
-> +	.remove = as3668_remove,
-> +	.id_table = as3668_idtable,
-> +};
-> +module_i2c_driver(as3668_driver);
-> +
-> +MODULE_AUTHOR("Lukas Timmermann <linux@timmermann.space>");
-> +MODULE_DESCRIPTION("AS3668 LED driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.51.0
+On 22/10/25 12:19, Tomi Valkeinen wrote:
+> Hi,
 > 
 
--- 
-Lee Jones [李琼斯]
+Thanks for the review.
+
+> On 07/10/2025 14:23, Devarsh Thakkar wrote:
+>> The SII902x HDMI bridge driver wasn't working properly with drivers that
+>> use the newer bridge connector architecture with the
+>> DRM_BRIDGE_ATTACH_NO_CONNECTOR flag, like TIDSS.  This caused HDMI audio to
+>> fail since the driver wasn't properly setting the sink_is_hdmi flag when
+>> the bridge was attached without a connector since .get_modes() is never
+>> called in this case. Fix it by setting sink_is_hdmi flag when reading
+>> the EDID block itself.
+>>
+>> Fixes: 3de47e1309c2 ("drm/bridge: sii902x: use display info is_hdmi")
+>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+>> ---
+>> V3: Use drm_edid_connector_update without edid NULL check
+>> V2: Use drm_edid_connector_update to detect HDMI
+>>
+>> Link to V2:
+>> https://lore.kernel.org/all/20251006150714.3144368-1-devarsht@ti.com/
+>> Link to V1:
+>> https://lore.kernel.org/all/20251003143642.4072918-1-devarsht@ti.com/
+>>
+>>   drivers/gpu/drm/bridge/sii902x.c | 5 ++---
+>>   1 file changed, 2 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+>> index d537b1d036fb..bb613d4c281f 100644
+>> --- a/drivers/gpu/drm/bridge/sii902x.c
+>> +++ b/drivers/gpu/drm/bridge/sii902x.c
+>> @@ -296,6 +296,8 @@ static const struct drm_edid *sii902x_edid_read(struct sii902x *sii902x,
+>>   	mutex_lock(&sii902x->mutex);
+>>   
+>>   	drm_edid = drm_edid_read_ddc(connector, sii902x->i2cmux->adapter[0]);
+>> +	drm_edid_connector_update(connector, drm_edid);
+>> +	sii902x->sink_is_hdmi = connector->display_info.is_hdmi;
+>>   
+>>   	mutex_unlock(&sii902x->mutex);
+> 
+> I'm not sure if this is right. If I'm not mistaken, the
+> drm_bridge_connector.c calls sii902x_edid_read, and then does a
+> drm_edid_connector_update(). So drm_edid_connector_update() will be
+> called twice, and also, I don't think the bridge should be updating
+> connector's data when using DRM_BRIDGE_ATTACH_NO_CONNECTOR.
+> 
+
+Thanks for catching this!. I missed out to catch this while addressing 
+previous review comment.
+
+> Maybe either drop sink_is_hdmi, and just look at
+> connector->display_info.is_hdmi, or if that doesn't work for some
+> reason, just get the "is-hdmi" flag from the edid data directly.
+> 
+
+Yes I plan to drop sink_is_hdmi flag altogether and directly use 
+connector->display_info.is_hdmi in v4.
+
+I think we should be able to use 
+drm_atomic_get_new_connector_for_encoder in .atomic_enable to get the 
+connector->display_info.is_hdmi and this should work for both the legacy 
+and DISPLAY_BRIDGE_ATTACH_NO_CONNECTOR scenarios and set the output mode 
+accordingly. I will try out with this approach.
+
+Kindly let me know if any concerns with above approach.
+
+Regards
+Devarsh
+
+>   Tomi
+> 
+>> @@ -309,14 +311,11 @@ static int sii902x_get_modes(struct drm_connector *connector)
+>>   	int num = 0;
+>>   
+>>   	drm_edid = sii902x_edid_read(sii902x, connector);
+>> -	drm_edid_connector_update(connector, drm_edid);
+>>   	if (drm_edid) {
+>>   		num = drm_edid_connector_add_modes(connector);
+>>   		drm_edid_free(drm_edid);
+>>   	}
+>>   
+>> -	sii902x->sink_is_hdmi = connector->display_info.is_hdmi;
+>> -
+>>   	return num;
+>>   }
+>>   
+> 
+
 
