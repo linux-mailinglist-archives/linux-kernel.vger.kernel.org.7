@@ -1,53 +1,80 @@
-Return-Path: <linux-kernel+bounces-866656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CAF3C005CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:58:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCB79C005DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1C5319C7804
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:59:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8116E3AB908
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01C230ACFA;
-	Thu, 23 Oct 2025 09:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13DE30AD0D;
+	Thu, 23 Oct 2025 09:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MxclM3C+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YHSiU6tS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82CD30ACF3;
-	Thu, 23 Oct 2025 09:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9294230ACF4;
+	Thu, 23 Oct 2025 09:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761213520; cv=none; b=OeirTVlOiJ1uKbjLJ8i3UtBI2sf5DrXIy4O5w002WpaaKLr47Hk+dvO6PZSYSsjEuZP+ZgIdRe//Xn5yk3TVdpO3YRvh0nSmzyR7ucNGMsaAFrVN5/GwPTSH/GtEk68YBqGCkkFeSWN54WQOiQRfszpqfaJZw9GNLYb4BpfQtrA=
+	t=1761213547; cv=none; b=rWVSdyo/ZKjNzSlOzOBVvnDMeSKK9HCbrjZuB28XsyEIsc7U618k2LyJfcEu1FZPWSuEkvVsjxDM3M+ewVdx6myGVIZtkxkqr2dvdpckkxgVPUxSILiIN8H9cN5wutYV4I6ZD66yiM189aihoxJ82r4+88GDxepw30gh4PtuD6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761213520; c=relaxed/simple;
-	bh=C1e5zMU2FxmuvcmBblTzBCIpoY3f39ZeA/FwDmoe7+c=;
+	s=arc-20240116; t=1761213547; c=relaxed/simple;
+	bh=/1vXsibgr0QCdKMz0q52WspRgykJNsKRvxsy7+LuE3Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXmu7Ri7X8U8rsZH9Idx+5sxpJ1ADRqEJq9GNban5b6Ek1nHq11pAFVa8KUECMN78fXu5NoL+oGvKCR4imKFbQFosu5d+i2p5pFlUeiTm/6DFrIlRLDsEJJzz5mA1BbohkLp9AlLZvkrlwr8VmMDk9c79p9b8uMQR3O866WLC94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MxclM3C+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D377DC4CEE7;
-	Thu, 23 Oct 2025 09:58:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761213517;
-	bh=C1e5zMU2FxmuvcmBblTzBCIpoY3f39ZeA/FwDmoe7+c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MxclM3C+eb976gcoy28ohvAY9D6iqxv37gFlY9HgupWQEDwbsodVm3N+Bxu1CS6bD
-	 T79v1OGju+bWuqy9ws8w++a/xYUcB8poHaCVmzQvoestMBM+XnDLdhZhWcs0v9zOyM
-	 a3qSkvPvued4lg1YyAPKJ6LakUTZMGDNswpCpni8=
-Date: Thu, 23 Oct 2025 11:58:34 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Fokaz Chakma <fokazmchakma4427@gmail.com>
-Cc: dpenkler@gmail.com, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: gpib/pc2: convert explanatory comments to /*
- ... */ style
-Message-ID: <2025102341-playmate-angling-bdb5@gregkh>
-References: <20251014200727.206103-1-fokazmchakma4427@gmail.com>
- <2025102227-resisting-sudden-7f3d@gregkh>
- <CAMa_khZMv-8jmUf1wqhund_rWQ5Nkoox1mqUsHaHmVvS6PJwCQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Apbeli7vO4KW3kMNXxGnLyo5+H4ZeUqCLd+tnb0xxwbaf5yFcmjqskPa3rnJjhVz5M85EwPC5S+l6M81iG6qkXfv62wTT8YtiQDnpCvmaFh4pnab9gAHzfGydD+UT8oZRCvWG4vjonYDPRtCVG6JWkuizJDWSQEK7fjVegEiv60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YHSiU6tS; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761213546; x=1792749546;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/1vXsibgr0QCdKMz0q52WspRgykJNsKRvxsy7+LuE3Q=;
+  b=YHSiU6tS+Ik7KjEsX1hOy9GluHe7lhCe3vW50CSvY3IPGg8jPfuiBl62
+   S7ZnTV1wBnqbZHRZtI6joU6j1q7CvTdbmOg9OmoefKw8aqGrjXY4V9qty
+   5t2zhcM5txUvJ7n3gYmQQvDkCuxxxNdiT9fODFnaeL+7Nql4MaltF2Fre
+   stsMbUwK92Yyx28yFlaX/nCNZwVjCBUZvrrwBwa+u9pRPUpEiaIK5yVpa
+   5mwwf0cISu+tYWgK4pLj6vDqFRLh/C1oWU+k6OhcWqURh9Jbe+ktCfKIK
+   faDtOUl3yMZxw3AWTceN3gdGXtTU5Nc83VR5Hm6LbpMpZjWUQzbP1Ap3f
+   g==;
+X-CSE-ConnectionGUID: k/5PBaqaSym4GS8zHUN9ww==
+X-CSE-MsgGUID: kQBPidgsQT2YUHXE6Ive6Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67245151"
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="67245151"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 02:59:05 -0700
+X-CSE-ConnectionGUID: pe5qV8bDShWuRejZV4mvYw==
+X-CSE-MsgGUID: 9f8M9NSnQFetHxslRmvHIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="221308724"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 23 Oct 2025 02:59:02 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBs5s-000DKh-1R;
+	Thu, 23 Oct 2025 09:58:55 +0000
+Date: Thu, 23 Oct 2025 17:58:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dan Carpenter <error27@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: mtk_scp:  remove unnecessary checking
+Message-ID: <202510231714.dlrsh9El-lkp@intel.com>
+References: <aPi6eBlFLH43A4C0@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,32 +83,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMa_khZMv-8jmUf1wqhund_rWQ5Nkoox1mqUsHaHmVvS6PJwCQ@mail.gmail.com>
+In-Reply-To: <aPi6eBlFLH43A4C0@stanley.mountain>
 
-A: http://en.wikipedia.org/wiki/Top_post
-Q: Were do I find info about this thing called top-posting?
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
+Hi Dan,
 
-A: No.
-Q: Should I include quotations after my reply?
+kernel test robot noticed the following build warnings:
 
-http://daringfireball.net/2007/07/on_top
+[auto build test WARNING on remoteproc/rproc-next]
+[also build test WARNING on next-20251023]
+[cannot apply to linus/master v6.18-rc2]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Also, HTML email caused this to be rejected by the server :(
+url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Carpenter/remoteproc-mtk_scp-remove-unnecessary-checking/20251022-200619
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/aPi6eBlFLH43A4C0%40stanley.mountain
+patch subject: [PATCH] remoteproc: mtk_scp:  remove unnecessary checking
+config: arm-randconfig-003-20251023 (https://download.01.org/0day-ci/archive/20251023/202510231714.dlrsh9El-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251023/202510231714.dlrsh9El-lkp@intel.com/reproduce)
 
-On Wed, Oct 22, 2025 at 06:48:21PM +0530, Fokaz Chakma wrote:
-> The coding style guide in Documentation/process/coding-style.rst indicated
-> that single-line // comments should be converted to /* ... */ style when
-> describing  code or data.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510231714.dlrsh9El-lkp@intel.com/
 
-Yes, that's good, but we have learned to live with // comments for
-simple one line comments now, so there's no real need to change this
-driver for just that.
+All warnings (new ones prefixed by >>):
 
-thanks,
+   drivers/remoteproc/mtk_scp.c: In function 'scp_rproc_init':
+>> drivers/remoteproc/mtk_scp.c:1130:56: warning: '%1d' directive output may be truncated writing between 1 and 10 bytes into a region of size 2 [-Wformat-truncation=]
+      snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
+                                                           ^~~
+   drivers/remoteproc/mtk_scp.c:1130:50: note: directive argument in the range [0, 1073741824]
+      snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
+                                                     ^~~~~~~~~~
+   drivers/remoteproc/mtk_scp.c:1130:3: note: 'snprintf' output between 7 and 16 bytes into a destination of size 7
+      snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-greg k-h
+
+vim +1130 drivers/remoteproc/mtk_scp.c
+
+  1096	
+  1097	/**
+  1098	 * scp_get_default_fw_path() - Get default SCP firmware path
+  1099	 * @dev:     SCP Device
+  1100	 * @core_id: SCP Core number
+  1101	 *
+  1102	 * This function generates a path based on the following format:
+  1103	 *     mediatek/(soc_model)/scp(_cX).img; for multi-core or
+  1104	 *     mediatek/(soc_model)/scp.img for single core SCP HW
+  1105	 *
+  1106	 * Return: A devm allocated string containing the full path to
+  1107	 *         a SCP firmware or an error pointer
+  1108	 */
+  1109	static const char *scp_get_default_fw_path(struct device *dev, int core_id)
+  1110	{
+  1111		struct device_node *np = core_id < 0 ? dev->of_node : dev->parent->of_node;
+  1112		const char *compatible, *soc;
+  1113		char scp_fw_file[7];
+  1114		int ret;
+  1115	
+  1116		/* Use only the first compatible string */
+  1117		ret = of_property_read_string_index(np, "compatible", 0, &compatible);
+  1118		if (ret)
+  1119			return ERR_PTR(ret);
+  1120	
+  1121		/* If the compatible string's length is implausible bail out early */
+  1122		if (strlen(compatible) < strlen("mediatek,mtXXXX-scp"))
+  1123			return ERR_PTR(-EINVAL);
+  1124	
+  1125		/* If the compatible string starts with "mediatek,mt" assume that it's ok */
+  1126		if (!str_has_prefix(compatible, "mediatek,mt"))
+  1127			return ERR_PTR(-EINVAL);
+  1128	
+  1129		if (core_id >= 0)
+> 1130			snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
+  1131		else
+  1132			snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
+  1133	
+  1134		/* Not using strchr here, as strlen of a const gets optimized by compiler */
+  1135		soc = &compatible[strlen("mediatek,")];
+  1136	
+  1137		return devm_kasprintf(dev, GFP_KERNEL, "mediatek/%.*s/%s.img",
+  1138				      (int)strlen("mtXXXX"), soc, scp_fw_file);
+  1139	}
+  1140	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
