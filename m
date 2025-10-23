@@ -1,123 +1,186 @@
-Return-Path: <linux-kernel+bounces-866153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302D3BFF056
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:34:13 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB772BFF04D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14A814F4933
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:33:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 784C7343C47
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7268A2E092B;
-	Thu, 23 Oct 2025 03:32:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8378C2DEA7A
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3E32C11ED;
+	Thu, 23 Oct 2025 03:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="W5vDLq+m"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DD72BF3D7
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761190364; cv=none; b=FXnluqdHRpk5VaOY8DW8Dccr1LTvTAimJRaSDNjgeq2+raROEvP0S+wX6JH6dNMyCJjKr/o+akHMjoPnWjx4DfzvhpZEXxKxUc/ES51W7A0vjf3RzT1wP+QERvgrS0bCgUiJ+qLvHfbJuAK5znqG/Nq1+WeBtW1qAnXNih5T86A=
+	t=1761190403; cv=none; b=kAKRo3uTtt7vX49eHmzDKZOgGxFU88ebg0/pYD/C+D4notWm3lz1woFVdn1vb9w3f/dNpoLFN6O5G3zARiDifvSfq0VzJBokZcMfyySp4N/hz7y2QBEvbywoYLjEMncQx1w/bySMvJB83hiGo2lv9yjvw1KHEn//57kuifftuok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761190364; c=relaxed/simple;
-	bh=xWhL3+Dq6MSXsHvH7+WWuMbywvoryjin7C3sX75Ef8U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pb138fXaaihL3ijurgkRWye5xa/X/yvwb2gyXRY/bUtcTUtnG+UtrLpQtCmAvZvGrldmorb4z3jCwoF6WHvnbPIftPXNdvbo+NPtHN1bTMfH9LvYYOZhSKxaJzHRN+21t48amdQaIzyH6kyqUc39ZpyZVrcVJUcpiDFK6kqGi2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AAAD31516;
-	Wed, 22 Oct 2025 20:32:32 -0700 (PDT)
-Received: from [10.163.71.44] (unknown [10.163.71.44])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 930813F63F;
-	Wed, 22 Oct 2025 20:32:38 -0700 (PDT)
-Message-ID: <f9104ef2-8ff2-4111-9a44-33f4d361a416@arm.com>
-Date: Thu, 23 Oct 2025 09:02:35 +0530
+	s=arc-20240116; t=1761190403; c=relaxed/simple;
+	bh=rjXOwxRtxkk2oHYZHUep1sjCXyXRMdvcsnOVmsOF83w=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=UOcBGSK01V6GJ+sG6xV2WwpMO3JPm97Ao1+7QM5LCE7wmH+o5tMl2f7K72eHm5iC9rEOc9vc6R4tlgoeQ/PWfXVh9YL/6y5hbk9Dd98xkiWEoQr6P6eDrpfL4Dw6earSnWGHZ/vuysAyjMuVAU0PXUyjn0D8pKTyg+tw8kDxJ9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=W5vDLq+m; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] mm/debug_vm_pgtable: Add [pte|pmd]_mkwrite_novma()
- tests
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>
-References: <20251022032951.3498553-1-anshuman.khandual@arm.com>
- <87ms5i2z8t.fsf@DESKTOP-5N7EMDA>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <87ms5i2z8t.fsf@DESKTOP-5N7EMDA>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761190389;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fcpWG26LCI1Q1SU/KTO/Q6ZIE4Wpos0XpZBa+VH9Mfw=;
+	b=W5vDLq+mvn4Cf2BjUpu6YoWmJ0uPnK8nqz1hDwbfbvp6+lHECubTqRR5SYPhlpj6FSSD1I
+	xGaM0UhswEocZ7u9epOuUTZiA5YBB8GsRwEqsUGzNrlWUWQruVLYzwXab4ZDTdLz1M7koO
+	lUTcGBtO1j7k97Y2xL3V6trBqDNoqS4=
+Date: Thu, 23 Oct 2025 03:33:03 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Message-ID: <0643875cea56f4e4fd78c7e9222b24e269136155@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH bpf-next v1] selftests/bpf: Guard addr_space_cast code
+ with __BPF_FEATURE_ADDR_SPACE_CAST
+To: "Yonghong Song" <yonghong.song@linux.dev>, bpf@vger.kernel.org
+Cc: "Andrii Nakryiko" <andrii@kernel.org>, "Eduard Zingerman"
+ <eddyz87@gmail.com>, "Alexei Starovoitov" <ast@kernel.org>, "Daniel
+ Borkmann" <daniel@iogearbox.net>, "Martin KaFai Lau"
+ <martin.lau@linux.dev>, "Song Liu" <song@kernel.org>, "John Fastabend"
+ <john.fastabend@gmail.com>, "KP Singh" <kpsingh@kernel.org>, "Stanislav
+ Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>, "Jiri Olsa"
+ <jolsa@kernel.org>, "Shuah Khan" <shuah@kernel.org>, "Nathan Chancellor"
+ <nathan@kernel.org>, "Nick Desaulniers"
+ <nick.desaulniers+lkml@gmail.com>, "Bill Wendling" <morbo@google.com>,
+ "Justin Stitt" <justinstitt@google.com>, "Puranjay Mohan"
+ <puranjay@kernel.org>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+In-Reply-To: <6aa7fafd-30b1-4605-8b80-4a158934218d@linux.dev>
+References: <20251022071825.238909-1-jiayuan.chen@linux.dev>
+ <6aa7fafd-30b1-4605-8b80-4a158934218d@linux.dev>
+X-Migadu-Flow: FLOW_OUT
+
+October 22, 2025 at 23:33, "Yonghong Song" <yonghong.song@linux.dev mailt=
+o:yonghong.song@linux.dev?to=3D%22Yonghong%20Song%22%20%3Cyonghong.song%4=
+0linux.dev%3E > wrote:
 
 
+>=20
+>=20On 10/22/25 12:18 AM, Jiayuan Chen wrote:
+>=20
+>=20>=20
+>=20> When compiling the BPF selftests with Clang versions that do not su=
+pport
 
-On 23/10/25 6:47 AM, Huang, Ying wrote:
-> Anshuman Khandual <anshuman.khandual@arm.com> writes:
-> 
->> Add some [pte|pmd]_mkwrite_novma() relevant tests.
->>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Huang Ying <ying.huang@linux.alibaba.com>
->> Cc: linux-mm@kvack.org
->> Cc: linux-kernel@vger.kernel.org
->> Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->> These tests clear on arm64 platform after the following recent patch.
->>
->> https://lore.kernel.org/all/20251015023712.46598-1-ying.huang@linux.alibaba.com/
->>
->> Changes in V2:
->>
->> - Added a new test combination per Huang
->>
->> Changes in V1:
->>
->> https://lore.kernel.org/all/20251021024424.2390325-1-anshuman.khandual@arm.com/
->>
->>  mm/debug_vm_pgtable.c | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
->> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
->> index 830107b6dd08..def344bb4a32 100644
->> --- a/mm/debug_vm_pgtable.c
->> +++ b/mm/debug_vm_pgtable.c
->> @@ -102,6 +102,12 @@ static void __init pte_basic_tests(struct pgtable_debug_args *args, int idx)
->>  	WARN_ON(pte_write(pte_wrprotect(pte_mkwrite(pte, args->vma))));
->>  	WARN_ON(pte_dirty(pte_wrprotect(pte_mkclean(pte))));
->>  	WARN_ON(!pte_dirty(pte_wrprotect(pte_mkdirty(pte))));
->> +
->> +	WARN_ON(!pte_dirty(pte_mkwrite_novma(pte_mkdirty(pte))));
->> +	WARN_ON(pte_dirty(pte_mkwrite_novma(pte_mkclean(pte))));
->> +	WARN_ON(!pte_write(pte_mkdirty(pte_mkwrite_novma(pte))));
->> +	WARN_ON(!pte_write(pte_mkwrite_novma(pte_wrprotect(pte))));
->> +	WARN_ON(pte_write(pte_wrprotect(pte_mkwrite_novma(pte))));
->>  }
->>  
->>  static void __init pte_advanced_tests(struct pgtable_debug_args *args)
->> @@ -195,6 +201,12 @@ static void __init pmd_basic_tests(struct pgtable_debug_args *args, int idx)
->>  	WARN_ON(pmd_write(pmd_wrprotect(pmd_mkwrite(pmd, args->vma))));
->>  	WARN_ON(pmd_dirty(pmd_wrprotect(pmd_mkclean(pmd))));
->>  	WARN_ON(!pmd_dirty(pmd_wrprotect(pmd_mkdirty(pmd))));
->> +
->> +	WARN_ON(pmd_dirty(pmd_mkwrite_novma(pmd_mkclean(pmd))));
->> +	WARN_ON(!pmd_write(pmd_mkdirty(pmd_mkwrite_novma(pmd))));
->> +	WARN_ON(!pmd_write(pmd_mkwrite_novma(pmd_wrprotect(pmd))));
->> +	WARN_ON(pmd_write(pmd_wrprotect(pmd_mkwrite_novma(pmd))));
-> 
-> Why not add
-> 
->         WARN_ON(!pmd_dirty(pmd_mkwrite_novma(pmd_mkdirty(pte))));
-> 
-> too?
+> If=C2=A0you are really using llvm18, then I found there are some other
+> build failures as well, e.g.,
+>=20
 
-Sure will add the above test which will also be symmetrical with a
-similar PTE test being proposed here.
+Yes=20i'm using llvm18
+
+> /home/yhs/work/bpf-next/tools/testing/selftests/bpf/bpf_arena_common.h:=
+47:15: error: conflicting types for 'bpf_arena_alloc_pages'
+>  47 | void __arena* bpf_arena_alloc_pages(void *map, void __arena *addr=
+, __u32 page_cnt,
+>  | ^
+> /home/yhs/work/bpf-next/tools/testing/selftests/bpf/tools/include/vmlin=
+ux.h:160636:48: note: previous declaration is here
+>  160636 | extern void __attribute__((address_space(1))) *bpf_arena_allo=
+c_pages(void *p__map, void __attribute__((address_space(1))) *addr__ign, =
+u32 page_cnt, int node_id, u64 flags) __weak __ksym;
+>  | ^
+
+
+I hadn't encountered this error before, but it started appearing after I =
+upgraded LLVM to version 20.
+
+
+$ make V=3D1
+
+/home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tool=
+s/sbin/bpftool btf dump file /home/chenjiayuan/code/upstream/bpf-next/vml=
+inux format c > /home/chenjiayuan/code/upstream/bpf-next/tools/testing/se=
+lftests/bpf/tools/include/.vmlinux.h.tmp
+cmp -s /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/b=
+pf/tools/include/.vmlinux.h.tmp /home/chenjiayuan/code/upstream/bpf-next/=
+tools/testing/selftests/bpf/tools/include/vmlinux.h || mv /home/chenjiayu=
+an/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/include/.vmli=
+nux.h.tmp /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftest=
+s/bpf/tools/include/vmlinux.h
+clang  -g -Wall -Werror -D__TARGET_ARCH_x86 -mlittle-endian -I/home/chenj=
+iayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/include -=
+I/home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf -I/=
+home/chenjiayuan/code/upstream/bpf-next/tools/include/uapi -I/home/chenji=
+ayuan/code/upstream/bpf-next/tools/testing/selftests/usr/include -std=3Dg=
+nu11 -fno-strict-aliasing -Wno-compare-distinct-pointer-types -idirafter =
+/usr/lib/llvm-20/lib/clang/20/include -idirafter /usr/local/include -idir=
+after /usr/include/x86_64-linux-gnu -idirafter /usr/include    -DENABLE_A=
+TOMICS_TESTS   -O2 --target=3Dbpfel -c progs/stream.c -mcpu=3Dv3 -o /home=
+/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/stream.bp=
+f.o
+In file included from progs/stream.c:8:
+/home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/bpf_=
+arena_common.h:47:15: error: conflicting types for 'bpf_arena_alloc_pages=
+'
+   47 | void __arena* bpf_arena_alloc_pages(void *map, void __arena *addr=
+, __u32 page_cnt,
+      |               ^
+/home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tool=
+s/include/vmlinux.h:152158:14: note: previous declaration is here
+ 152158 | extern void *bpf_arena_alloc_pages(void *p__map, void *addr__ig=
+n, u32 page_cnt, int node_id, u64 flags) __weak __ksym;
+        |              ^
+In file included from progs/stream.c:8:
+/home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/bpf_=
+arena_common.h:49:5: error: conflicting types for 'bpf_arena_reserve_page=
+s'
+   49 | int bpf_arena_reserve_pages(void *map, void __arena *addr, __u32 =
+page_cnt) __ksym __weak;
+      |     ^
+/home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tool=
+s/include/vmlinux.h:152160:12: note: previous declaration is here
+ 152160 | extern int bpf_arena_reserve_pages(void *p__map, void *ptr__ign=
+, u32 page_cnt) __weak __ksym;
+        |            ^
+In file included from progs/stream.c:8:
+/home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/bpf_=
+arena_common.h:50:6: error: conflicting types for 'bpf_arena_free_pages'
+   50 | void bpf_arena_free_pages(void *map, void __arena *ptr, __u32 pag=
+e_cnt) __ksym __weak;
+      |      ^
+/home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tool=
+s/include/vmlinux.h:152159:13: note: previous declaration is here
+ 152159 | extern void bpf_arena_free_pages(void *p__map, void *ptr__ign, =
+u32 page_cnt) __weak __ksym;
+        |             ^
+3 errors generated.
+make: *** [Makefile:761: /home/chenjiayuan/code/upstream/bpf-next/tools/t=
+esting/selftests/bpf/stream.bpf.o] Error 1
+
+$ clang --version
+Ubuntu clang version 20.1.8 (++20250804090239+87f0227cb601-1~exp1~2025080=
+4210352.139)
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/lib/llvm-20/bin
+
+$ pahole --version
+v1.29
+
+
+I updated LLVM via https://apt.llvm.org/. Could this be caused by some bi=
+naries or libraries still using LLVM 18?
 
