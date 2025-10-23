@@ -1,145 +1,229 @@
-Return-Path: <linux-kernel+bounces-866156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF079BFF06E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:43:27 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6223CBFF074
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F7FA3A845C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:43:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D8788352B41
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCB813D2B2;
-	Thu, 23 Oct 2025 03:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB822BF016;
+	Thu, 23 Oct 2025 03:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dOCpIJxB"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com.cn header.i=@leica-geosystems.com.cn header.b="PcgwKKmO"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013019.outbound.protection.outlook.com [40.107.162.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02F4219A8E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761190998; cv=none; b=VNOjd+w36I9votJSelHArQEbZvN9ukh95uuwWIDtCjgSe11ip4C3oPgP9xzBQzGzeibnjYtxz9QHwMQbNZi1iC70b8fawdHAQx+Q+5vwzqLD/BUWkzf6cc0jGIRJ/nHCxkEoHqVir0erDewckerMkjOkf5ErsT618gF342xxRsQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761190998; c=relaxed/simple;
-	bh=056uXdqgwqieEClGZzofKTBO+ZAItkTj1Y/IlynwVNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LR0uacjywBcBFODJjlFok8Ou/V59VrP4+XLJnyFCUrdshJ3pj2oPxBHKlvzYbZNC6sKKBSgApN6O6lGG10CntjrgVvT4ot8S45QZ/6DVUVL74a6zWsVcR6aPrfXit8RTMDDZNOmMUAwY6e1fVKDslkpilvncq2j+NpTjeuQtaHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dOCpIJxB; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <84906f32-955d-4fda-b87d-56c052ddfd87@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761190983;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BEEdoiySbKRfhgdihnabhC19qOOy3rtiDBHXYSkJ3YI=;
-	b=dOCpIJxBMdnvIUuz8sWluoZcX+X3diKDhqv/8ORjgvDO6I+RdnZA0p4aufksxSdOYOJj5M
-	XXKNQSk0Bq1TIeRPOmw1mv8g4/+rM/UG2gvJUItceqfhV6Ah0x4O8nIwO10NUHfmN2cBOP
-	SS8kGyC2BCAAAGrHx3Lfr2ttul2Vkt8=
-Date: Wed, 22 Oct 2025 20:42:54 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CBE292B2E;
+	Thu, 23 Oct 2025 03:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761191074; cv=fail; b=gIJQ0dQHAKcRyXec/Ry4q9wvj5Xn6VZKNQVGsmwHIhRA0A101pbxCCHy1OCw4KfXIAeE5+bzpPBPOMGIbEPHU9tWejEZnfaxztYbkUyalfmigmdN0HCpJXKMb264lkJ70ebqFCurLi6DdWWnjEZZOZ9pnqfoO8ElBifN8+HEgpQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761191074; c=relaxed/simple;
+	bh=sctV2PiOPA+Onl6fN+jOQGH7cFHRZIVCT+1dAZXvGnM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZZlXO6jBpn7BW1tRmaWtqcCtNREAwqf4EhVdnoYKT3wh2n/v0KB8G3qpSWCyG8qi2P+cna7XmscxtsAH8/v5gHyJkjcFwjaz57wUSQ/WRatfohP7H/UR/B1DpFV6aBMEXnskBgTicAh2RG5Jl/RqfqMZ5jvtuPfLkU2YzeBNPSE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com.cn; spf=fail smtp.mailfrom=leica-geosystems.com.cn; dkim=pass (1024-bit key) header.d=leica-geosystems.com.cn header.i=@leica-geosystems.com.cn header.b=PcgwKKmO; arc=fail smtp.client-ip=40.107.162.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com.cn
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z6m0xDTilg0tNZ1ammOAhwWnLDKc8lgEPbpWDj0CCWZx/zqEi5xrVt/tg5WBr07J9SkTuuW8ljIPT7COjsCthFzzsRcR1nhbIK17NVP0wOAlGpqLsLvNiTcygTdXLB/EMlL1qxamV/TSrsFX/WA4XhiLrTAwNJevJNTlM1X+bmB92t6Y2YFR1OvIydYc6wQiN/L1KM+XYvttSx5tO+0HU4OLBGPmcfS5HVqlEbKi936P0Hy1sUKX7UcYvfU6Z7/cxmBIlfhAYK4j74+qscrkNHqcL7Z5ZlUO4xtw365iRvPcAFyglatFRCt3HqNBUOZLB1g9i+ZWiHleI1gqjlC/Rw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/ObdV4PyC0q2cQBPMFOQvIJxYSvjatg32c9StvJjinw=;
+ b=wM7+i/mRI5vUmah6WZKhOU0viP5S2rlnQqVTriGALLgP5dPBXvruwlBxMY9vNT+uMiBWeKQBqOxw8KU1WECsW+wzKvxs2SHiEozUYc6HwkkpkN36uuni/8WALFYOybaU0SoRooGgNf2+9rcY+sqRxpxi78+Av98zMbmoIJ4YUjhEJ336LHfyZUM92pinApXUO0P3fUXGSt/MkbbXI/+rDZrey0DBrtOHGqh1K5HjswsJVIBWji8AVd2FFPC+AF9alC3Pm7UMsIWS4/aNsxe8RQdDT88dCU3s3I+G0nWRn92bHbZK3oHTcsssrfGts1ob45ZXWypu49YygUd+vDFa2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 193.8.40.99) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=leica-geosystems.com.cn; dmarc=pass (p=reject sp=reject
+ pct=100) action=none header.from=leica-geosystems.com.cn; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=leica-geosystems.com.cn; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/ObdV4PyC0q2cQBPMFOQvIJxYSvjatg32c9StvJjinw=;
+ b=PcgwKKmO4s29B25dU21CEZV3Sj4IruVWd7yw5Efym+92xwJrPLD2VtXSv0czlxmAUGcYz5wKNvboNWj9j/NT2qFQcHSIKxVe8y7a8CkWfRPBK9VvQF/YUhOTQT+Q7Nhg3o736XUoci37HtwabKUgOE45w1Szvr5U6Mn8EVBsKp4=
+Received: from AM6P193CA0114.EURP193.PROD.OUTLOOK.COM (2603:10a6:209:85::19)
+ by AM0PR06MB6353.eurprd06.prod.outlook.com (2603:10a6:208:19d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
+ 2025 03:44:26 +0000
+Received: from AM3PEPF0000A790.eurprd04.prod.outlook.com
+ (2603:10a6:209:85:cafe::9b) by AM6P193CA0114.outlook.office365.com
+ (2603:10a6:209:85::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.17 via Frontend Transport; Thu,
+ 23 Oct 2025 03:44:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.99)
+ smtp.mailfrom=leica-geosystems.com.cn; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=leica-geosystems.com.cn;
+Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com.cn
+ designates 193.8.40.99 as permitted sender) receiver=protection.outlook.com;
+ client-ip=193.8.40.99; helo=hexagon.com; pr=C
+Received: from hexagon.com (193.8.40.99) by
+ AM3PEPF0000A790.mail.protection.outlook.com (10.167.16.119) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.7 via Frontend Transport; Thu, 23 Oct 2025 03:44:25 +0000
+Received: from aherlnxbspsrv01.lgs-net.com ([10.61.228.61]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
+	 Thu, 23 Oct 2025 05:44:25 +0200
+From: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+To: johan@kernel.org,
+	Qing-wu.Li@leica-geosystems.com.cn
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: serial: option: add Telit FN920C04 ECM compositions
+Date: Thu, 23 Oct 2025 03:44:22 +0000
+Message-ID: <20251023034423.3421068-1-Qing-wu.Li@leica-geosystems.com.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v1] selftests/bpf: Guard addr_space_cast code
- with __BPF_FEATURE_ADDR_SPACE_CAST
-Content-Language: en-GB
-To: Jiayuan Chen <jiayuan.chen@linux.dev>, bpf@vger.kernel.org
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Puranjay Mohan <puranjay@kernel.org>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20251022071825.238909-1-jiayuan.chen@linux.dev>
- <6aa7fafd-30b1-4605-8b80-4a158934218d@linux.dev>
- <0643875cea56f4e4fd78c7e9222b24e269136155@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <0643875cea56f4e4fd78c7e9222b24e269136155@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-OriginalArrivalTime: 23 Oct 2025 03:44:25.0240 (UTC) FILETIME=[537F1180:01DC43CF]
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM3PEPF0000A790:EE_|AM0PR06MB6353:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 46fe48aa-6992-43fe-5043-08de11e67620
+X-SET-LOWER-SCL-SCANNER: YES
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?evzfrb9KFj6GFYHd7AEY38F4Y+AWOiFHjCcnoYP8W3xYJE2jG1a9b8IX5fHi?=
+ =?us-ascii?Q?8KcgWiZ/4LLSZCEei0Yl1ttyBeuBVIvWJoNTZIbMcO5EYzshmWfPzOsdwhSy?=
+ =?us-ascii?Q?Ja8etyyQ4hrz7F5DZ+01NxMw5GOoEZ3nQzDbJff8Jlbef0fF9fEPdN+nIGeN?=
+ =?us-ascii?Q?ceFkQfLgY7LSbdJN63D8Qe6uJ0d2dyVJA0PS72T+oLmVOZyC1XTUDA9dCGV9?=
+ =?us-ascii?Q?0RpYPi4Q3sRnauikI2nufGWUomNe8kvLpcBLmRpWqUufRFHlSlAvyMPTljRA?=
+ =?us-ascii?Q?Flh0tHLPJhFdHSbp2THI81I8U9heFILesdDCiSCCXubBetjmdEMEpvZjsyii?=
+ =?us-ascii?Q?nDy1kOL1W2hEV/zgcRzkPkz/pIyR0D2bbuECacle+yyaL+1T7f9NRv7ypnxf?=
+ =?us-ascii?Q?HyVRDMqzws/Y3+w2KRp71c5wOlpXLUGekkG1EHJ8KGx7CTxroFp+7ZERz/9Z?=
+ =?us-ascii?Q?gXlIrWlqNnhD4ANPmnhVIlcbqnwXOjfew+lnX3xvQH587UoQf3MfSKik1iwg?=
+ =?us-ascii?Q?2FHi2Uqg5l+DicYhFQK0axlLnz6gxoMBXBr3mvNRYRYAztDY49MFQ5ltJxew?=
+ =?us-ascii?Q?CDpO994pJp9MEx6F0RcNdS5gtLRF9erVa6zM6tZkYuWD4n2IMskkRQnP4QGh?=
+ =?us-ascii?Q?jGRjtzWASdT9hxOA1Jtlstgdd/9cKz/F/5wP+IugDViOf2tjevh6W265+p7G?=
+ =?us-ascii?Q?j8tmHKWSZxA5TFOWpqWquOJ7bCDppAMxEQ7a+O/rPv/218K+UrZTU4hkt/Go?=
+ =?us-ascii?Q?qBYh0brU2uVid+HW/e6bNSozIJpHvnfhkDF2hwiVhUFOQAVMpqEwPIN2b33i?=
+ =?us-ascii?Q?wEaaepgBYVw1otFKFzCBBIpona2XaoiqpoHUG64rV/2WEd+EnX8X/AEnPDJC?=
+ =?us-ascii?Q?hfPwknRQcbxJE907p7o/WIe4cZ5tbUnOH6LLnn2rKOGlKBmxhJgVAhOBVuQq?=
+ =?us-ascii?Q?PuOTHF/FKXA5tksGDAGJbMW8oOqKc3r+1LI84qEyJaS1qpx3jhSU5j6DqHn0?=
+ =?us-ascii?Q?bEVPUM2ES2qIcWwvu2VpkW5sEAYwP45aeua9PgUgkIK8XQrSP3fPVK/LMeFR?=
+ =?us-ascii?Q?SSVp8kJZDou+FKU65mKn2pfiZkVTJn7r3ZNJGM4VIx3PVg/psHlaelwqBmRD?=
+ =?us-ascii?Q?4GLsCCjW/Chi23UcGvOmJTdZaZ86YqRWFKtwvk/ixgV/qaYaVshFEcrIoUvQ?=
+ =?us-ascii?Q?rnqXXbuOi11KvW1Njne8l4dPp+SWdMsArko8BAM3aLT6V1N+uaZK6WnQLdUq?=
+ =?us-ascii?Q?Wj/4YCRGEe+IV69jNNDQvLiWttE575cOBHwB1M/7rWCY4wGvgINzbrgtuFmg?=
+ =?us-ascii?Q?Wiv2cRPzeMYHB0IgGP5YwKtGdpESrwbBW4qF1NGhUwbN/V/QECjX7ptaJ1he?=
+ =?us-ascii?Q?7eSeE/CSdV4t1pIyPvGmMxlzJzAg4VcgQnNHTO9EZTyZyV2qdLKwjdC4Yaoz?=
+ =?us-ascii?Q?1eQQoWbT9wr1h4qwEIh9HdwoHMkxq+9AoszDh6A2rsX9qRMwtGAQEtcaZOPw?=
+ =?us-ascii?Q?tNVydDQvjVbEb1rLAh1TjPmQUEGyMgRBc9uqwypGt/1TFHHHj2TtiaJqD6lK?=
+ =?us-ascii?Q?mr+jNm8XFqapazwEtXU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:193.8.40.99;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom51.leica-geosystems.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: leica-geosystems.com.cn
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 03:44:25.4228
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46fe48aa-6992-43fe-5043-08de11e67620
+X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.99];Helo=[hexagon.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF0000A790.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR06MB6353
 
+Add support for the Telit Cinterion FN920C04 module when operating in
+ECM (Ethernet Control Model) mode. The following USB product IDs are
+used by the module when AT#USBCFG is set to 3 or 7.
 
+0x10A3: ECM + tty (NMEA) + tty (DUN) [+ tty (DIAG)]
+T:  Bus=01 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#=  3 Spd=480  MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=1bc7 ProdID=10a3 Rev= 5.15
+S:  Manufacturer=Telit Cinterion
+S:  Product=FN920
+S:  SerialNumber=76e7cb38
+C:* #Ifs= 5 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=06 Prot=00 Driver=cdc_ether
+E:  Ad=82(I) Atr=03(Int.) MxPS=  16 Ivl=32ms
+I:  If#= 1 Alt= 0 #EPs= 0 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
+I:* If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=60 Driver=option
+E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
+E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-On 10/22/25 8:33 PM, Jiayuan Chen wrote:
-> October 22, 2025 at 23:33, "Yonghong Song" <yonghong.song@linux.dev mailto:yonghong.song@linux.dev?to=%22Yonghong%20Song%22%20%3Cyonghong.song%40linux.dev%3E > wrote:
->
->
->> On 10/22/25 12:18 AM, Jiayuan Chen wrote:
->>
->>> When compiling the BPF selftests with Clang versions that do not support
->> If you are really using llvm18, then I found there are some other
->> build failures as well, e.g.,
->>
-> Yes i'm using llvm18
->
->> /home/yhs/work/bpf-next/tools/testing/selftests/bpf/bpf_arena_common.h:47:15: error: conflicting types for 'bpf_arena_alloc_pages'
->>   47 | void __arena* bpf_arena_alloc_pages(void *map, void __arena *addr, __u32 page_cnt,
->>   | ^
->> /home/yhs/work/bpf-next/tools/testing/selftests/bpf/tools/include/vmlinux.h:160636:48: note: previous declaration is here
->>   160636 | extern void __attribute__((address_space(1))) *bpf_arena_alloc_pages(void *p__map, void __attribute__((address_space(1))) *addr__ign, u32 page_cnt, int node_id, u64 flags) __weak __ksym;
->>   | ^
->
-> I hadn't encountered this error before, but it started appearing after I upgraded LLVM to version 20.
->
->
-> $ make V=1
->
-> /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/sbin/bpftool btf dump file /home/chenjiayuan/code/upstream/bpf-next/vmlinux format c > /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/include/.vmlinux.h.tmp
-> cmp -s /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/include/.vmlinux.h.tmp /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/include/vmlinux.h || mv /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/include/.vmlinux.h.tmp /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/include/vmlinux.h
-> clang  -g -Wall -Werror -D__TARGET_ARCH_x86 -mlittle-endian -I/home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/include -I/home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf -I/home/chenjiayuan/code/upstream/bpf-next/tools/include/uapi -I/home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/usr/include -std=gnu11 -fno-strict-aliasing -Wno-compare-distinct-pointer-types -idirafter /usr/lib/llvm-20/lib/clang/20/include -idirafter /usr/local/include -idirafter /usr/include/x86_64-linux-gnu -idirafter /usr/include    -DENABLE_ATOMICS_TESTS   -O2 --target=bpfel -c progs/stream.c -mcpu=v3 -o /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/stream.bpf.o
-> In file included from progs/stream.c:8:
-> /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/bpf_arena_common.h:47:15: error: conflicting types for 'bpf_arena_alloc_pages'
->     47 | void __arena* bpf_arena_alloc_pages(void *map, void __arena *addr, __u32 page_cnt,
->        |               ^
-> /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/include/vmlinux.h:152158:14: note: previous declaration is here
->   152158 | extern void *bpf_arena_alloc_pages(void *p__map, void *addr__ign, u32 page_cnt, int node_id, u64 flags) __weak __ksym;
->          |              ^
-> In file included from progs/stream.c:8:
-> /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/bpf_arena_common.h:49:5: error: conflicting types for 'bpf_arena_reserve_pages'
->     49 | int bpf_arena_reserve_pages(void *map, void __arena *addr, __u32 page_cnt) __ksym __weak;
->        |     ^
-> /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/include/vmlinux.h:152160:12: note: previous declaration is here
->   152160 | extern int bpf_arena_reserve_pages(void *p__map, void *ptr__ign, u32 page_cnt) __weak __ksym;
->          |            ^
-> In file included from progs/stream.c:8:
-> /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/bpf_arena_common.h:50:6: error: conflicting types for 'bpf_arena_free_pages'
->     50 | void bpf_arena_free_pages(void *map, void __arena *ptr, __u32 page_cnt) __ksym __weak;
->        |      ^
-> /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/include/vmlinux.h:152159:13: note: previous declaration is here
->   152159 | extern void bpf_arena_free_pages(void *p__map, void *ptr__ign, u32 page_cnt) __weak __ksym;
->          |             ^
-> 3 errors generated.
-> make: *** [Makefile:761: /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/stream.bpf.o] Error 1
->
-> $ clang --version
-> Ubuntu clang version 20.1.8 (++20250804090239+87f0227cb601-1~exp1~20250804210352.139)
-> Target: x86_64-pc-linux-gnu
-> Thread model: posix
-> InstalledDir: /usr/lib/llvm-20/bin
->
-> $ pahole --version
-> v1.29
+0x10A8: ECM + tty (DUN) + tty (AUX) [+ tty (DIAG)]
+T:  Bus=03 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#=  3 Spd=480  MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=1bc7 ProdID=10a8 Rev= 5.15
+S:  Manufacturer=Telit Cinterion
+S:  Product=FN920
+S:  SerialNumber=76e7cb38
+C:* #Ifs= 5 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=06 Prot=00 Driver=cdc_ether
+E:  Ad=82(I) Atr=03(Int.) MxPS=  16 Ivl=32ms
+I:  If#= 1 Alt= 0 #EPs= 0 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
+I:* If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
+E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
+E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-Please try pahole version 1.30.
+Adding these IDs allows the option driver to automatically create the
+corresponding /dev/ttyUSB* ports under ECM mode.
 
->
->
-> I updated LLVM via https://apt.llvm.org/. Could this be caused by some binaries or libraries still using LLVM 18?
+Tested with FN920C04 under ECM configuration (USBCFG=3 and 7).
+
+Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+---
+ drivers/usb/serial/option.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 27879cc57536..293e3e25e65d 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1381,10 +1381,14 @@ static const struct usb_device_id option_ids[] = {
+ 	  .driver_info = RSVD(0) | NCTRL(3) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x10a2, 0xff),	/* Telit FN920C04 (MBIM) */
+ 	  .driver_info = NCTRL(4) },
++	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x10a3, 0xff),	/* Telit FN920C04 (ECM) */
++	  .driver_info = NCTRL(4) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x10a4, 0xff),	/* Telit FN20C04 (rmnet) */
+ 	  .driver_info = RSVD(0) | NCTRL(3) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x10a7, 0xff),	/* Telit FN920C04 (MBIM) */
+ 	  .driver_info = NCTRL(4) },
++	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x10a8, 0xff),	/* Telit FN920C04 (ECM) */
++	  .driver_info = NCTRL(4) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x10a9, 0xff),	/* Telit FN20C04 (rmnet) */
+ 	  .driver_info = RSVD(0) | NCTRL(2) | RSVD(3) | RSVD(4) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x10aa, 0xff),	/* Telit FN920C04 (MBIM) */
+-- 
+2.43.0
 
 
