@@ -1,140 +1,99 @@
-Return-Path: <linux-kernel+bounces-867632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A7D0C0327A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:16:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4097C03268
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 262783B12AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:16:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F3A284E7CEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D04F34D4E6;
-	Thu, 23 Oct 2025 19:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DEB34C99A;
+	Thu, 23 Oct 2025 19:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UlE0riLV"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q/Jw9PuC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WioleC0j"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DE934CFD3;
-	Thu, 23 Oct 2025 19:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928EF309F1A
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761246963; cv=none; b=Vp5p3dNiecMzXqqu7GHNCc5j7veDyeAqkLz11AXix/FT20MzflfR7sGpDMCAX6GevAkt4QRYjGjCuemAgfW5npYJazDoFWpHQ+G8m6og+yuI/n7fNSZT9PmwxQMoeu8UM0HwWRG0Ohou0oJIGhdfsWtJY8rcHKuaduJ8ubbvEJE=
+	t=1761246887; cv=none; b=IsNCQq2kHHSfHHfQOguZ5Kah7Nw7Hcfbbg0N8zROul/NM9j3jyaKvyNAJpYZKgwvMdTpiEVaowDsjRplYvGLzTHPoWsKXGxTN/huviCJlTPDHksEuCGXWlxclDeBX4BGOuozw/7YY/FbxseXoWpIwhdWDbt5hIBYXWt38qB/B6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761246963; c=relaxed/simple;
-	bh=uh5+lqrS/SBTXR/rciPknKgV/zgEE2VyVIqvRo/hAGw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h1cZCsxsdR1MuRRCX3g8xbLANXwCXdm5RTbKfEMCfH4OnEysYMc5veeWtvi4DNi7BPCjmfCdPg76MjWmjU3RtF94SqUXlSflAkk3PMOcghQ6YKFY21++rG0+VCCCzXalL9yj1EardWLIxDIAyi2LqCOG5iA4KC3OJnLBlH+O2Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=UlE0riLV; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1761246961; x=1792782961;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=uh5+lqrS/SBTXR/rciPknKgV/zgEE2VyVIqvRo/hAGw=;
-  b=UlE0riLVJ/y+MHGYnF7S7wGUf/iGDfg6U6BFOUnyCyMhcJPcyS+DmXN9
-   gEOyiC7PWirMsUybWYn+OzFObBjcny4WBKkGO4LYkTHiweWKGZqW9e0G8
-   lWCpyb5x5aCakRQwlkRvjI9pGk62Q375LAuAi9O0KwR8UvTujKRaSk5se
-   5nS7V0BDPQW5EdTdRlbkh5ja/raFvsQ0KIlIkFVJfOr1sFvcwMGHNeQTB
-   M4GB8aUpGg6WW1BE5AqjEY6xIkj9pyaKAJ3qc7zvEVbluZDhexhIUjghL
-   YtOMm5H3wrL0H7XZcUVYtbVrUAShy/yK942hI5wXLDhDlP3zQXJzDRE40
-   Q==;
-X-CSE-ConnectionGUID: Bo16A/8xSLi5sWxfr2eeOg==
-X-CSE-MsgGUID: Z7o9yn77Q+KSRfPvVIZjQw==
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="215529397"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Oct 2025 12:16:00 -0700
-Received: from chn-vm-ex2.mchp-main.com (10.10.87.31) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Thu, 23 Oct 2025 12:15:20 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
- chn-vm-ex2.mchp-main.com (10.10.87.31) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.27; Thu, 23 Oct 2025 12:15:19 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 23 Oct 2025 12:15:16 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <vladimir.oltean@nxp.com>,
-	<vadim.fedorenko@linux.dev>, <rmk+kernel@armlinux.org.uk>,
-	<maxime.chevallier@bootlin.com>, <rosenp@gmail.com>,
-	<christophe.jaillet@wanadoo.fr>, <steen.hegelund@microchip.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Horatiu Vultur <horatiu.vultur@microchip.com>
-Subject: [PATCH net-next v5 2/2] phy: mscc: Fix PTP for VSC8574 and VSC8572
-Date: Thu, 23 Oct 2025 21:13:50 +0200
-Message-ID: <20251023191350.190940-3-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251023191350.190940-1-horatiu.vultur@microchip.com>
-References: <20251023191350.190940-1-horatiu.vultur@microchip.com>
+	s=arc-20240116; t=1761246887; c=relaxed/simple;
+	bh=iY/u9q2urvID4ix7PtW8nEVgxdvZp6QVq2U/HMK61nA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RN/joXci/OzzPHpwAg1/hTWiqgp5uoAJKplzFdATu0ja1o/J4H1BAKjG0NW2RtXM+qvfRwiqxNFHikSgobu4yhz9BBaxl1jEa+KigqRRJzviQ1hMiPrjI4WzF0jzmwkww8Zg/tDOcnj4FLVrXWRAdr5v2t8tkJHIgP261ljTbc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q/Jw9PuC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WioleC0j; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 23 Oct 2025 21:14:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761246883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ojxKnndrVEn98BhZnNwoeXfIjOsk8ogXgzUTxXorQWk=;
+	b=q/Jw9PuCORbTURdDNXTx4C7xGCG4OosKNk57L3wFzAT42yK95ntgvuXp5KHYWrMkdI5n8h
+	n+oaE/+tNgcceHKA+r/rRf/seFOdsBppZFT788V7/Phk0SJ2GtJfqKcz02W2/W4b8uRFBh
+	1loxXD1Op0uVAwWGM8e9brd91cDtKllQkIEQh+EXvQ72veL6r6O3fUj13WJlPy2bDZHCQQ
+	T5p5i9V5WvCvwGqU+uOv2Gaf9SjEoy+DQXqH7OdMSEG8QIb3NsmrpYiM9VYSpf142WEcX8
+	hZdt4CBRNRZDLrgmYVaA1q5XCZ9QdiTbnIqYk4NcMxOuLhf57xfefmygQV/hQQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761246883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ojxKnndrVEn98BhZnNwoeXfIjOsk8ogXgzUTxXorQWk=;
+	b=WioleC0jXukiw/yWV5+tkGx3H+RjjAUWTawRbrbwBF+RKg/Vhzj8JEq83kYPPXMofEPisu
+	sqdmKVZpyyD9o6Cg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] printk_legacy_map: use LD_WAIT_CONFIG instead of
+ LD_WAIT_SLEEP
+Message-ID: <20251023191442.Uu0mD_Nq@linutronix.de>
+References: <20251022154115.GA22400@redhat.com>
+ <20251023103234.GA27415@redhat.com>
+ <20251023142655.FvZkeSa-@linutronix.de>
+ <87wm4lbqt2.fsf@jogness.linutronix.de>
+ <20251023151112.goqBFQcM@linutronix.de>
+ <20251023154657.GD26461@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251023154657.GD26461@redhat.com>
 
-The PTP initialization is two-step. First part are the function
-vsc8584_ptp_probe_once() and vsc8584_ptp_probe() at probe time which
-initialize the locks, queues, creates the PTP device. The second part is
-the function vsc8584_ptp_init() at config_init() time which initialize
-PTP in the HW.
+On 2025-10-23 17:46:58 [+0200], Oleg Nesterov wrote:
+> Again, quite possibly I am wrong. please see my reply in another thread,
+> https://lore.kernel.org/all/20251023152942.GC26461@redhat.com/
+> 
+> On 10/23, Sebastian Andrzej Siewior wrote:
+> >
+> > This does not matter. My point is that there no need for this ifdefery.
+> 
+> I disagree. Rightly or not. To me this ifdefery in printk.c make the intent
+> more clear.
+> 
+> I am still thinking about the possible cleanup of the current usage of
+> DEFINE_WAIT_OVERRIDE_MAP(), but I think that, whatever we do, this cleanup
+> should take CONFIG_RT into account.
 
-For VSC8574 and VSC8572, the PTP initialization is incomplete. It is
-missing the first part but it makes the second part. Meaning that the
-ptp_clock_register() is never called.
+Right. Please just do s/SLEEP/CONFIG as discussed. Please leave
+PROVE_RAW_LOCK_NESTING out of it while arguing why this change is
+correct.
 
-There is no crash without the first part when enabling PTP but this is
-unexpected because some PHys have PTP functionality exposed by the
-driver and some don't even though they share the same PTP clock PTP.
+> Oleg.
 
-Fixes: 774626fa440e ("net: phy: mscc: Add PTP support for 2 more VSC PHYs")
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/net/phy/mscc/mscc_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/phy/mscc/mscc_main.c b/drivers/net/phy/mscc/mscc_main.c
-index 9343ed3b000d4..8678ebf89cca5 100644
---- a/drivers/net/phy/mscc/mscc_main.c
-+++ b/drivers/net/phy/mscc/mscc_main.c
-@@ -2613,7 +2613,7 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.suspend	= &genphy_suspend,
- 	.resume		= &genphy_resume,
- 	.remove		= &vsc85xx_remove,
--	.probe		= &vsc8574_probe,
-+	.probe		= &vsc8584_probe,
- 	.set_wol	= &vsc85xx_wol_set,
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
-@@ -2636,12 +2636,12 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_aneg    = &vsc85xx_config_aneg,
- 	.aneg_done	= &genphy_aneg_done,
- 	.read_status	= &vsc85xx_read_status,
--	.handle_interrupt = vsc85xx_handle_interrupt,
-+	.handle_interrupt = vsc8584_handle_interrupt,
- 	.config_intr    = &vsc85xx_config_intr,
- 	.suspend	= &genphy_suspend,
- 	.resume		= &genphy_resume,
- 	.remove		= &vsc85xx_remove,
--	.probe		= &vsc8574_probe,
-+	.probe		= &vsc8584_probe,
- 	.set_wol	= &vsc85xx_wol_set,
- 	.get_wol	= &vsc85xx_wol_get,
- 	.get_tunable	= &vsc85xx_get_tunable,
--- 
-2.34.1
-
+Sebastian
 
