@@ -1,115 +1,343 @@
-Return-Path: <linux-kernel+bounces-866661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0477AC005F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 631D9C005FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9BAF4EF712
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:00:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 133164F37A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C6A30B510;
-	Thu, 23 Oct 2025 09:59:57 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08BF12B143;
+	Thu, 23 Oct 2025 10:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="tX5yKIBY";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qwZ/ApOf"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828C92F5A1F;
-	Thu, 23 Oct 2025 09:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57822EC0B1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761213596; cv=none; b=uxa3mZcS7u1lTtZjcDKOYKqZ6X0nRRh3QQVEppjxs5t/kO04WREFl2rq7MAYn2Hq9DWwOIanuRv75gNT6nGvMUz49lTqq1/xi4iHM5Emn6y61BtTTuSGraPaZkRj4IDI4XXWbqIVCk215IRbB9nuNbG4Npm23DBhpPztm2zaXJE=
+	t=1761213713; cv=none; b=JPrtVttInsBjDzo0CqrJ6v8kdjYwSGyubrbtRZGoWh0SynRW4DmXwym2kivTkUUNmxXEHB4dd6sy7Zb7dH9ILx7twjBwRgurknpDzaH9op+vI1uEk5EIggJm6fNHS8HI6MBqu/CHeycB59Ei3q8zpbsH2ohnZVX/+vXAVyoJbKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761213596; c=relaxed/simple;
-	bh=9ZH0ly9d0T/MSQlVFerFTC1udKUb6QvB/Q1uo2YEAw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Bb3do73tOSFw9XoPXIrXsOmeSMMQKfz3WkPME1/5I5u1ivFXNs6sGWy0a4zcsYubkJF/oqNMnEJzHuoh5mMcDx1M7siMNrS1jg5tul9sKOAcZi8i8sGK0R1sn8J0llhRlpAHipwRI+yTgM+ZE+Rgfz6PYafFl0M/RWkLQO6n8p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4cshPb0bWNz11Wrv;
-	Thu, 23 Oct 2025 18:01:07 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id D6B431401E9;
-	Thu, 23 Oct 2025 17:59:50 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 23 Oct 2025 17:59:50 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 23 Oct
- 2025 17:59:50 +0800
-Message-ID: <5caae4ef-e259-47cc-b0b7-f383dce4a334@huawei.com>
-Date: Thu, 23 Oct 2025 17:59:49 +0800
+	s=arc-20240116; t=1761213713; c=relaxed/simple;
+	bh=i8iTFIpSYHr7NzE1lDkPHpkvPukENwJx5HMYBoh3o1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Htiu3Q9hbCvhixgXb/r+cOiX0opK1uwmoKS0dWZMneqVHa9540WLShMynj6HKQIAj/ZTW3lLTP7j7XbiQ9SbDEXOgPDgCatvybmwXMl2rnnTh0jZ99SIi0nVp+xruom5G8ntrnDj5DcLcPn15ZRlLyO7OkJgQnTW+CHa/yyBpa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=tX5yKIBY; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qwZ/ApOf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B8FFC1F388;
+	Thu, 23 Oct 2025 10:01:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1761213703; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=8CphuBVHORvBwJQPcaj5D55Ah/F0BPK3ytrl067uAgA=;
+	b=tX5yKIBYzbBZj/BQYIXPh0+mjlAtOJmPNxvCaerMk9w09wmW9rpnjYghvOHFRZeoysy1qj
+	st15Muds/PAm9ZQzEbMD0xJ5g3B1LUokCAS2eE5eyZJgoXE1Xsvb+XVWLLgjHdGA7ni1V4
+	vVvUylnAE9jjqPcVB20U+NE+2p8nMtc=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b="qwZ/ApOf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1761213699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=8CphuBVHORvBwJQPcaj5D55Ah/F0BPK3ytrl067uAgA=;
+	b=qwZ/ApOfaf4ZA07/9ksOrwwVDhnolkyMDpZ1W6Oa3f+WLSnPUCeob/vbTebWKyuPMGlIDa
+	T79xELna0goXVq8/TIG1D4ab+udFBTlZJ/8QDrexwAMAfNm6jOh8+c7gqlonodFGdUXD4C
+	WyjXNHj3ej/UnND7Ot2eEZi9LBUAtJA=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 79A0713285;
+	Thu, 23 Oct 2025 10:01:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OSOWHAP9+WgvXwAAD6G6ig
+	(envelope-from <oneukum@suse.com>); Thu, 23 Oct 2025 10:01:39 +0000
+From: Oliver Neukum <oneukum@suse.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH net-next 1/1] net: usb: usbnet: coding style for functions
+Date: Thu, 23 Oct 2025 12:00:19 +0200
+Message-ID: <20251023100136.909118-1-oneukum@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/9] ACPI: processor: idle: Return failure when get
- lpi_state->arch_flags failed
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <Sudeep.Holla@arm.com>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>
-References: <20250929093754.3998136-1-lihuisong@huawei.com>
- <20250929093754.3998136-4-lihuisong@huawei.com>
- <CAJZ5v0hNj817g=rr8+YTGaeBkkfNuuU7FGuZyyb1j61BMOKTGA@mail.gmail.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <CAJZ5v0hNj817g=rr8+YTGaeBkkfNuuU7FGuZyyb1j61BMOKTGA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+X-Rspamd-Queue-Id: B8FFC1F388
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[netdev];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.com:mid,suse.com:dkim];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -1.51
+X-Spam-Level: 
 
+Functions are not to have blanks between names
+and parameter lists. Remove them.
 
-在 2025/10/22 3:36, Rafael J. Wysocki 写道:
-> On Mon, Sep 29, 2025 at 11:38 AM Huisong Li <lihuisong@huawei.com> wrote:
->> The architecture specific context loss flags is important for ARM.
->> And this flag is used to control the execution of different code
->> flows in acpi_processor_ffh_lpi_enter().
->>
->> So it is better to return failure when get lpi_state->arch_flags
->> failed.
-> A failure means no idle states at all.
-Actually, I didn't know why driver should continue to do cpu idle 
-scaling if the idle state doesn't meet the developer's expectations.🙂
-> Wouldn't it be better to skip the state with invalid arch flags?
-This arch flags is important.  And acpi_processor_ffh_lpi_enter will use it.
-There is no other place to verify its validity. so here do it.
-This check is just to prevent potential issues in cpuidle scaling later.
->
->> Fixes: a36a7fecfe60 ("ACPI / processor_idle: Add support for Low Power Idle(LPI) states")
->> Signed-off-by: Huisong Li <lihuisong@huawei.com>
->> ---
->>   drivers/acpi/processor_idle.c | 7 +++++--
->>   1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
->> index 681587f2614b..f36f9514b6c7 100644
->> --- a/drivers/acpi/processor_idle.c
->> +++ b/drivers/acpi/processor_idle.c
->> @@ -984,8 +984,11 @@ static int acpi_processor_evaluate_lpi(acpi_handle handle,
->>                  if (obj_get_integer(pkg_elem + 2, &lpi_state->flags))
->>                          lpi_state->flags = 0;
->>
->> -               if (obj_get_integer(pkg_elem + 3, &lpi_state->arch_flags))
->> -                       lpi_state->arch_flags = 0;
->> +               if (obj_get_integer(pkg_elem + 3, &lpi_state->arch_flags)) {
->> +                       pr_err("Get architecture specific context loss flags failed.\n");
->> +                       ret = -EINVAL;
->> +                       goto end;
->> +               }
->>
->>                  if (obj_get_integer(pkg_elem + 4, &lpi_state->res_cnt_freq))
->>                          lpi_state->res_cnt_freq = 1;
->> --
->> 2.33.0
->>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+---
+ drivers/net/usb/usbnet.c | 49 ++++++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index bf01f2728531..62a85dbad31a 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -189,7 +189,7 @@ static bool usbnet_needs_usb_name_format(struct usbnet *dev, struct net_device *
+ 		 is_local_ether_addr(net->dev_addr));
+ }
+ 
+-static void intr_complete (struct urb *urb)
++static void intr_complete(struct urb *urb)
+ {
+ 	struct usbnet	*dev = urb->context;
+ 	int		status = urb->status;
+@@ -221,7 +221,7 @@ static void intr_complete (struct urb *urb)
+ 			  "intr resubmit --> %d\n", status);
+ }
+ 
+-static int init_status (struct usbnet *dev, struct usb_interface *intf)
++static int init_status(struct usbnet *dev, struct usb_interface *intf)
+ {
+ 	char		*buf = NULL;
+ 	unsigned	pipe = 0;
+@@ -326,7 +326,7 @@ static void __usbnet_status_stop_force(struct usbnet *dev)
+  * Some link protocols batch packets, so their rx_fixup paths
+  * can return clones as well as just modify the original skb.
+  */
+-void usbnet_skb_return (struct usbnet *dev, struct sk_buff *skb)
++void usbnet_skb_return(struct usbnet *dev, struct sk_buff *skb)
+ {
+ 	struct pcpu_sw_netstats *stats64 = this_cpu_ptr(dev->net->tstats);
+ 	unsigned long flags;
+@@ -396,7 +396,7 @@ EXPORT_SYMBOL_GPL(usbnet_update_max_qlen);
+  *
+  *-------------------------------------------------------------------------*/
+ 
+-int usbnet_change_mtu (struct net_device *net, int new_mtu)
++int usbnet_change_mtu(struct net_device *net, int new_mtu)
+ {
+ 	struct usbnet	*dev = netdev_priv(net);
+ 	int		ll_mtu = new_mtu + net->hard_header_len;
+@@ -472,7 +472,7 @@ static enum skb_state defer_bh(struct usbnet *dev, struct sk_buff *skb,
+  * NOTE:  annoying asymmetry:  if it's active, schedule_work() fails,
+  * but tasklet_schedule() doesn't.  hope the failure is rare.
+  */
+-void usbnet_defer_kevent (struct usbnet *dev, int work)
++void usbnet_defer_kevent(struct usbnet *dev, int work)
+ {
+ 	set_bit (work, &dev->flags);
+ 	if (!usbnet_going_away(dev)) {
+@@ -489,9 +489,9 @@ EXPORT_SYMBOL_GPL(usbnet_defer_kevent);
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+-static void rx_complete (struct urb *urb);
++static void rx_complete(struct urb *urb);
+ 
+-static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
++static int rx_submit(struct usbnet *dev, struct urb *urb, gfp_t flags)
+ {
+ 	struct sk_buff		*skb;
+ 	struct skb_data		*entry;
+@@ -597,7 +597,7 @@ static inline int rx_process(struct usbnet *dev, struct sk_buff *skb)
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+-static void rx_complete (struct urb *urb)
++static void rx_complete(struct urb *urb)
+ {
+ 	struct sk_buff		*skb = (struct sk_buff *) urb->context;
+ 	struct skb_data		*entry = (struct skb_data *) skb->cb;
+@@ -728,7 +728,7 @@ EXPORT_SYMBOL_GPL(usbnet_purge_paused_rxq);
+ 
+ // unlink pending rx/tx; completion handlers do all other cleanup
+ 
+-static int unlink_urbs (struct usbnet *dev, struct sk_buff_head *q)
++static int unlink_urbs(struct usbnet *dev, struct sk_buff_head *q)
+ {
+ 	unsigned long		flags;
+ 	struct sk_buff		*skb;
+@@ -823,7 +823,7 @@ static void usbnet_terminate_urbs(struct usbnet *dev)
+ 	remove_wait_queue(&dev->wait, &wait);
+ }
+ 
+-int usbnet_stop (struct net_device *net)
++int usbnet_stop(struct net_device *net)
+ {
+ 	struct usbnet		*dev = netdev_priv(net);
+ 	const struct driver_info *info = dev->driver_info;
+@@ -892,7 +892,7 @@ EXPORT_SYMBOL_GPL(usbnet_stop);
+ 
+ // precondition: never called in_interrupt
+ 
+-int usbnet_open (struct net_device *net)
++int usbnet_open(struct net_device *net)
+ {
+ 	struct usbnet		*dev = netdev_priv(net);
+ 	int			retval;
+@@ -1048,7 +1048,7 @@ int usbnet_set_link_ksettings_mii(struct net_device *net,
+ }
+ EXPORT_SYMBOL_GPL(usbnet_set_link_ksettings_mii);
+ 
+-u32 usbnet_get_link (struct net_device *net)
++u32 usbnet_get_link(struct net_device *net)
+ {
+ 	struct usbnet *dev = netdev_priv(net);
+ 
+@@ -1076,7 +1076,7 @@ int usbnet_nway_reset(struct net_device *net)
+ }
+ EXPORT_SYMBOL_GPL(usbnet_nway_reset);
+ 
+-void usbnet_get_drvinfo (struct net_device *net, struct ethtool_drvinfo *info)
++void usbnet_get_drvinfo(struct net_device *net, struct ethtool_drvinfo *info)
+ {
+ 	struct usbnet *dev = netdev_priv(net);
+ 
+@@ -1087,7 +1087,7 @@ void usbnet_get_drvinfo (struct net_device *net, struct ethtool_drvinfo *info)
+ }
+ EXPORT_SYMBOL_GPL(usbnet_get_drvinfo);
+ 
+-u32 usbnet_get_msglevel (struct net_device *net)
++u32 usbnet_get_msglevel(struct net_device *net)
+ {
+ 	struct usbnet *dev = netdev_priv(net);
+ 
+@@ -1095,7 +1095,7 @@ u32 usbnet_get_msglevel (struct net_device *net)
+ }
+ EXPORT_SYMBOL_GPL(usbnet_get_msglevel);
+ 
+-void usbnet_set_msglevel (struct net_device *net, u32 level)
++void usbnet_set_msglevel(struct net_device *net, u32 level)
+ {
+ 	struct usbnet *dev = netdev_priv(net);
+ 
+@@ -1166,7 +1166,7 @@ static void __handle_set_rx_mode(struct usbnet *dev)
+  * especially now that control transfers can be queued.
+  */
+ static void
+-usbnet_deferred_kevent (struct work_struct *work)
++usbnet_deferred_kevent(struct work_struct *work)
+ {
+ 	struct usbnet		*dev =
+ 		container_of(work, struct usbnet, kevent);
+@@ -1277,7 +1277,7 @@ usbnet_deferred_kevent (struct work_struct *work)
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+-static void tx_complete (struct urb *urb)
++static void tx_complete(struct urb *urb)
+ {
+ 	struct sk_buff		*skb = (struct sk_buff *) urb->context;
+ 	struct skb_data		*entry = (struct skb_data *) skb->cb;
+@@ -1332,7 +1332,7 @@ static void tx_complete (struct urb *urb)
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+-void usbnet_tx_timeout (struct net_device *net, unsigned int txqueue)
++void usbnet_tx_timeout(struct net_device *net, unsigned int txqueue)
+ {
+ 	struct usbnet		*dev = netdev_priv(net);
+ 
+@@ -1382,8 +1382,7 @@ static int build_dma_sg(const struct sk_buff *skb, struct urb *urb)
+ 	return 1;
+ }
+ 
+-netdev_tx_t usbnet_start_xmit (struct sk_buff *skb,
+-				     struct net_device *net)
++netdev_tx_t usbnet_start_xmit(struct sk_buff *skb, struct net_device *net)
+ {
+ 	struct usbnet		*dev = netdev_priv(net);
+ 	unsigned int			length;
+@@ -1561,7 +1560,7 @@ static inline void usb_free_skb(struct sk_buff *skb)
+ 
+ // work (work deferred from completions, in_irq) or timer
+ 
+-static void usbnet_bh (struct timer_list *t)
++static void usbnet_bh(struct timer_list *t)
+ {
+ 	struct usbnet		*dev = timer_container_of(dev, t, delay);
+ 	struct sk_buff		*skb;
+@@ -1636,7 +1635,7 @@ static void usbnet_bh_work(struct work_struct *work)
+ 
+ // precondition: never called in_interrupt
+ 
+-void usbnet_disconnect (struct usb_interface *intf)
++void usbnet_disconnect(struct usb_interface *intf)
+ {
+ 	struct usbnet		*dev;
+ 	struct usb_device	*xdev;
+@@ -1700,7 +1699,7 @@ static const struct device_type wwan_type = {
+ };
+ 
+ int
+-usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
++usbnet_probe(struct usb_interface *udev, const struct usb_device_id *prod)
+ {
+ 	struct usbnet			*dev;
+ 	struct net_device		*net;
+@@ -1907,7 +1906,7 @@ EXPORT_SYMBOL_GPL(usbnet_probe);
+  * resume only when the last interface is resumed
+  */
+ 
+-int usbnet_suspend (struct usb_interface *intf, pm_message_t message)
++int usbnet_suspend(struct usb_interface *intf, pm_message_t message)
+ {
+ 	struct usbnet		*dev = usb_get_intfdata(intf);
+ 
+@@ -1940,7 +1939,7 @@ int usbnet_suspend (struct usb_interface *intf, pm_message_t message)
+ }
+ EXPORT_SYMBOL_GPL(usbnet_suspend);
+ 
+-int usbnet_resume (struct usb_interface *intf)
++int usbnet_resume(struct usb_interface *intf)
+ {
+ 	struct usbnet		*dev = usb_get_intfdata(intf);
+ 	struct sk_buff          *skb;
+-- 
+2.51.1
+
 
