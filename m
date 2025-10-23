@@ -1,126 +1,74 @@
-Return-Path: <linux-kernel+bounces-866084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28B3BFED6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:26:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE00BBFED8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4C8718C2033
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:26:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206C23AB360
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC3424DCEF;
-	Thu, 23 Oct 2025 01:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA51D1E47CC;
+	Thu, 23 Oct 2025 01:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEC19Zx5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPHi4rNs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2BB19C54F;
-	Thu, 23 Oct 2025 01:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99745157A5A;
+	Thu, 23 Oct 2025 01:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761182746; cv=none; b=OPjKmKF2gW3mi6Diz9cxUvktGZWfQLrDksQQ1e+BKAAPf7kx6mOhRkAHQikBQPPGGZhHnvvdcuxLa+Nq8SNYGgvkZTEfsduEo+a8KaycU6xaBHDyhXle88mK0yR3KgfxCC/NiJQGcVyJ2Yt2y3vV1SHWozIDANf/BHqIPAb5dfk=
+	t=1761182795; cv=none; b=AyG+Y9GA9QZTLaAeMoMk9PFft7cwReJpYK8GjiFtFKDyncNw0JNX0WL3I+MzOrG4jssYVtx9iTvn8quA4ttfaSALq2oC4mRHL460OgoA1TbxqND9kNP1odzqjOlcAEEmBb0q7VSZPBRbKgeoF6P+SfNDKXz16rDnrsbId1r4vIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761182746; c=relaxed/simple;
-	bh=mizIUChAFsqpIHY6nU9Fx3Ot5p8OeQz4ge3WLnGs1IU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EL0FSzaLdrgsEwSd3jC0KXOCfW+Cp7hljXF1W961BSq00CswvKSaowAaGVarYu1Svp/pptBPvmasnzZCNFSKVqtc8Tg00sC5eKzZObM9qAU7idT5LAEWQUGZh7VnvTohbO0K6yRaNrZwXjjUi/fNUEVsUrzi7P537NuBhqQSy2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEC19Zx5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E9DEC4CEF5;
-	Thu, 23 Oct 2025 01:25:46 +0000 (UTC)
+	s=arc-20240116; t=1761182795; c=relaxed/simple;
+	bh=tWLpPoCH5+m0T9D8bTmmZrdgyYAjQrhj1vJe92xH2V4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=isnCiVFsgPwrUXsQxt7MDzirEErZ4aaNoPATJbCq8RR546g+mr4/hyWPeVCfbVZmXMM9CbJQGh0ek5wMbmxgcSuih41psAorkkekH7eLzohcgrur1f9JP9x43BSeNL80fE51q6x4jJ70YQfH28Ci+ke3wDProtehuG9BXG2txaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPHi4rNs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DF45C4CEE7;
+	Thu, 23 Oct 2025 01:26:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761182746;
-	bh=mizIUChAFsqpIHY6nU9Fx3Ot5p8OeQz4ge3WLnGs1IU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PEC19Zx5pg5krCxzuGcALpzBIgJ6qxXP6/2C8Uf6glMamZ7D9BRYKj115ySio1fuf
-	 L5wRsksk56d3RlbZEr/CGXziGLKEIglLy1r8XJz7BPIog3T9em2X7ycXDpkxA75XcX
-	 TuG1/kuGVN1WH6pJZHLeRAMwoa5mMed1mKlhtRW1c67mhQXzS6Wyslzg7phVLJtTpa
-	 FgVPQOwv8MTGvJYESIoeMPgl4vgVkE668l/Kptr7SZlfRsqGFhVA1yKwZLhRTO9wli
-	 HDkQvHDkgF67ccEGcxs/hDFYlGZ9qbeAsYTDc9m+pxhLsG9msCwHGOlgGaXVNpQKJ4
-	 E8BTvG3MYgalw==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Bijan Tabatabai <bijan311@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 9/9] selftests/damon/sysfs: add obsolete_target test
-Date: Wed, 22 Oct 2025 18:25:33 -0700
-Message-ID: <20251023012535.69625-10-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251023012535.69625-1-sj@kernel.org>
-References: <20251023012535.69625-1-sj@kernel.org>
+	s=k20201202; t=1761182795;
+	bh=tWLpPoCH5+m0T9D8bTmmZrdgyYAjQrhj1vJe92xH2V4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kPHi4rNsjNNgojJZjnHJvM3QdbWDXlEWQIABex9ix1ehpdbfQoaV1JqeGOKz7gQYg
+	 qzqewwiU8PN6M2/zcosndWhepuJ0vFVm1bk9yiJYNhYANfnKhbLNoUK5WY57YI8kgO
+	 zu/hkaKnx/m7BBWFlwWtq3VQoh4wObPDFJ2rNsdhHX0Nkf4Ou3Ajzt7qQF4HMJdOd3
+	 EjrMtpd5+cl6JA6a0pH73A9C3kHafjDr2574dhtDaXb+9oVUfX8pB/kaR1bFnwHgxE
+	 W6Y6H81pEqBJWJ7QyTvgAiWu35e9Nngojr0aLXiO7lcGZkpN5exjfEBONZ4NkCwP2M
+	 rHVqc247ZGMMQ==
+Date: Wed, 22 Oct 2025 18:26:33 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>
+Subject: Re: [PATCH 0/4] DWMAC support for Rockchip RK3506
+Message-ID: <20251022182633.77f2cbce@kernel.org>
+In-Reply-To: <20251021224357.195015-1-heiko@sntech.de>
+References: <20251021224357.195015-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-A new DAMON sysfs file for pin-point target removal, namely
-obsolete_target, has been added.  Add a test for the functionality.  It
-starts DAMON with three monitoring target processes, mark one in the
-middle as obsolete, commit it, and confirm the internal DAMON status is
-updated to remove the target in the middle.
+On Wed, 22 Oct 2025 00:43:53 +0200 Heiko Stuebner wrote:
+> Some cleanups to the DT binding for Rockchip variants of the dwmac
+> and adding the RK3506 support on top.
+> 
+> As well as the driver-glue needed for setting up the correct RMII
+> speed seitings.
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- tools/testing/selftests/damon/sysfs.py | 37 ++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
-
-diff --git a/tools/testing/selftests/damon/sysfs.py b/tools/testing/selftests/damon/sysfs.py
-index fd8d3698326e..b34aea0a6775 100755
---- a/tools/testing/selftests/damon/sysfs.py
-+++ b/tools/testing/selftests/damon/sysfs.py
-@@ -279,5 +279,42 @@ def main():
- 
-     kdamonds.stop()
- 
-+    # test obsolete_target.
-+    proc1 = subprocess.Popen(['sh'], stdout=subprocess.PIPE,
-+                             stderr=subprocess.PIPE)
-+    proc2 = subprocess.Popen(['sh'], stdout=subprocess.PIPE,
-+                             stderr=subprocess.PIPE)
-+    proc3 = subprocess.Popen(['sh'], stdout=subprocess.PIPE,
-+                             stderr=subprocess.PIPE)
-+    kdamonds = _damon_sysfs.Kdamonds(
-+            [_damon_sysfs.Kdamond(
-+                contexts=[_damon_sysfs.DamonCtx(
-+                    ops='vaddr',
-+                    targets=[
-+                        _damon_sysfs.DamonTarget(pid=proc1.pid),
-+                        _damon_sysfs.DamonTarget(pid=proc2.pid),
-+                        _damon_sysfs.DamonTarget(pid=proc3.pid),
-+                        ],
-+                    schemes=[_damon_sysfs.Damos()],
-+                    )])])
-+    err = kdamonds.start()
-+    if err is not None:
-+        print('kdamond start failed: %s' % err)
-+        exit(1)
-+    kdamonds.kdamonds[0].contexts[0].targets[1].obsolete = True
-+    kdamonds.kdamonds[0].commit()
-+
-+    status, err = dump_damon_status_dict(kdamonds.kdamonds[0].pid)
-+    if err is not None:
-+        print(err)
-+        kdamonds.stop()
-+        exit(1)
-+
-+    del kdamonds.kdamonds[0].contexts[0].targets[1]
-+
-+    assert_ctxs_committed(kdamonds.kdamonds[0].contexts, status['contexts'])
-+
-+    kdamonds.stop()
-+
- if __name__ == '__main__':
-     main()
--- 
-2.47.3
+Looks like its not your first contribution, feel free to add yourself
+as the maintainer for stmmac/dwmac-rk.c (anyone else who wants to be
+listed please raise a hand, Jonas?)
 
