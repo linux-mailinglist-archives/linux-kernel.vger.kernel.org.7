@@ -1,137 +1,125 @@
-Return-Path: <linux-kernel+bounces-866985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517EBC0144B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:09:23 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D93E8C01771
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEE5A3A7997
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:09:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 79565342FA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0174314B69;
-	Thu, 23 Oct 2025 13:09:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF07313544;
-	Thu, 23 Oct 2025 13:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D2832E6A7;
+	Thu, 23 Oct 2025 13:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oscillator.se header.i=@oscillator.se header.b="QLvKSlSb"
+Received: from sv9.manufrog.com (sv9.manufrog.com [46.246.119.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C8532E68B;
+	Thu, 23 Oct 2025 13:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.246.119.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761224954; cv=none; b=NkLhz2Q+ge0pMs3dvZ/2mbsl0BPtfnIAwjyjuin69dzYduXki/8ww44mJke9L+gbxLHPQc2BITPUCP101Ne5J+CS0ewDnkP+cfquKz+xl0iY93lTtBcId+wewSMIkx8n91zHgO7XqVp7+V1mgDleaAKifOg7l0B0Cig5szG66Xw=
+	t=1761226358; cv=none; b=QtFAWuhrlDGjZ+JWZtsv49rAjIpzjOcdBkOv+nvHVMlZjGRG6BlK582usaknxsy1PBykxdBrRwX63VJsb3k04tJQ80c9zNZGL1eImY20oWQ52/v28bq2/2TtQ4lyKhRGKBJs/OM4mvsKkrN2v/mzeTai5cQT08UC+2BQulNpMzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761224954; c=relaxed/simple;
-	bh=LY+i7YCMScinIDDvmpsQhev0bahRF1MSCvBZv/Dlh7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o5DPkCS0gCMMoEWsl4giOLBuzS9FyQYC15jhzcL4uMkWMAsE2sYCrSmADuTDDzUHq767dNbN4BY4I+x6psjktGKkcx5vJczNYeEyiUIOrac2axgjhSo8CPSyRu/mcEKDv39fF9066W4WuxR54drSLY+UY+Idu0D9Khwb5v+DTks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C6EF1516;
-	Thu, 23 Oct 2025 06:09:03 -0700 (PDT)
-Received: from [10.57.3.59] (unknown [10.57.3.59])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E65E83F63F;
-	Thu, 23 Oct 2025 06:09:08 -0700 (PDT)
-Message-ID: <eb9abe9d-3d12-4bf1-85da-deb38b8da321@arm.com>
-Date: Thu, 23 Oct 2025 14:09:36 +0100
+	s=arc-20240116; t=1761226358; c=relaxed/simple;
+	bh=Nfb/G2ti7GlBQkKzsnLi4YD9F7rDwDfm/IEVUFmtQYM=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=olTH6Ms2RO0Wrnssy3+YOc7mNXFe2gRJz5AqjnV4riQljdt2itFZfy8GF/f5b4GxUxoMOZDOhI7gUdPMdmRBYhSXmyRBQ0lsVDRVoHmByJsn4mU7zXCzgUc9OIi/Wd5qsyeYGQ9uczPJTjEloSVfUi4fko3fDDVmFIFSyrLA19E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oscillator.se; spf=pass smtp.mailfrom=oscillator.se; dkim=pass (2048-bit key) header.d=oscillator.se header.i=@oscillator.se header.b=QLvKSlSb; arc=none smtp.client-ip=46.246.119.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oscillator.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oscillator.se
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oscillator.se; s=default; h=Content-Transfer-Encoding:Content-Type:
+	Message-ID:References:In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=O5ZMIYN8ycDHNbzVlpkPmStoVZl4YoEN9X48sNv7hm8=; b=QLvKSlSbMqzwC84iZ1D2grsOdg
+	lBxt8/sRJCZ5RLRzlYomXC6oxCTOJCNBduNL2V/Bgny96xwbomFIdO1gp26eZ8Ltnpzgj0/jN594A
+	xdjQzzAanpa05Xg+w7u0COjwJgnNpcoo+LAMm9Vqs5ejbGbtNi6CKCSoZQo1/PA+bA/dkF3qnAPZb
+	wsOxgm9YEPgQ7eXLMHunCBwDLrPwrSngNdB5+91+XKw5Ow0n+3qeprqkwAKYZc0/FpJONYkNHb8fB
+	xLqv6WwE6ET1bXGv+nhM4Dn9diGntE1gs+R6ZGJqhX1fZnpwwtTbud2DUggrOEl4wOFTlu2bFMUlP
+	Tg/JoZ7g==;
+Received: from [::1] (port=39834 helo=sv9.manufrog.com)
+	by sv9.manufrog.com with esmtpa (Exim 4.98.2)
+	(envelope-from <staffan.melin@oscillator.se>)
+	id 1vBv52-0000000C1N5-0gAO;
+	Thu, 23 Oct 2025 15:10:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] PM QoS: Add CPU affinity latency QoS support and
- resctrl integration
-To: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Cc: linux-pm@vger.kernel.org, lenb@kernel.org, christian.loehle@arm.com,
- amit.kucheria@linaro.org, ulf.hansson@linaro.org, james.morse@arm.com,
- Dave.Martin@arm.com, reinette.chatre@intel.com, tony.luck@intel.com,
- pavel@kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org
-References: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Date: Thu, 23 Oct 2025 15:10:08 +0200
+From: Staffan Melin <staffan.melin@oscillator.se>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: zhangheng <zhangheng@kylinos.cn>, 1114557@bugs.debian.org, Linux Hid
+ <linuxhid@cosmicgizmosystems.com>, jikos@kernel.org, bentiss@kernel.org,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Bug#1114557: [PATCH v2] HID: quirks: Add device descriptor for
+ 4c4a:4155
+In-Reply-To: <aPhz5L-ECc8CzA0a@eldamar.lan>
+References: <20250923022445.3276026-1-zhangheng@kylinos.cn>
+ <e0dde746-3761-414e-8df1-eb8557cadbf8@cosmicgizmosystems.com>
+ <175716941557.2355.4359402692624340645.reportbug@debianduo>
+ <e605f642-c967-4d41-8145-a10e8f48fb1b@kylinos.cn>
+ <aPhz5L-ECc8CzA0a@eldamar.lan>
+User-Agent: Roundcube Webmail/1.6.11
+Message-ID: <638f3938581848a8ca0a6dcb981dfbdd@oscillator.se>
+X-Sender: staffan.melin@oscillator.se
+Organization: Oscillator
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - sv9.manufrog.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oscillator.se
+X-Get-Message-Sender-Via: sv9.manufrog.com: authenticated_id: staffan.melin@oscillator.se
+X-Authenticated-Sender: sv9.manufrog.com: staffan.melin@oscillator.se
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Hi Zhongqui,
+Thank you Salvatore, for moving this forward.
 
-My apologies for being a bit late with my comments...
+I can add that the issue has been reported by several users on a GPD DUO 
+channel on Discord -- all are on newer kernels but have different Linux 
+distributions.
 
-On 7/21/25 13:40, Zhongqiu Han wrote:
-> Hi all,
-> 
-> This patch series introduces support for CPU affinity-based latency
-> constraints in the PM QoS framework. The motivation is to allow
-> finer-grained power management by enabling latency QoS requests to target
-> specific CPUs, rather than applying system-wide constraints.
-> 
-> The current PM QoS framework supports global and per-device CPU latency
-> constraints. However, in many real-world scenarios, such as IRQ affinity
-> or CPU-bound kernel threads, only a subset of CPUs are
-> performance-critical. Applying global constraints in such cases
-> unnecessarily prevents other CPUs from entering deeper C-states, leading
-> to increased power consumption.
-> 
-> This series addresses that limitation by introducing a new interface that
-> allows latency constraints to be applied to a CPU mask. This is
-> particularly useful on heterogeneous platforms (e.g., big.LITTLE) and
-> embedded systems where power efficiency is critical for example:
-> 
->                          driver A       rt kthread B      module C
->    CPU IDs (mask):         0-3              2-5              6-7
->    target latency(us):     20               30               100
->                            |                |                |
->                            v                v                v
->                            +---------------------------------+
->                            |        PM  QoS  Framework       |
->                            +---------------------------------+
->                            |                |                |
->                            v                v                v
->    CPU IDs (mask):        0-3            2-3,4-5            6-7
->    runtime latency(us):   20             20, 30             100
-> 
-> The current implementation includes only cpu_affinity_latency_qos_add()
-> and cpu_affinity_latency_qos_remove() interfaces. An update interface is
-> planned for future submission, along with PM QoS optimizations in the UFS
-> subsystem.
-> 
-> Patch1 introduces the core support for CPU affinity latency QoS in the PM
-> QoS framework.
-> 
-> Patch2 removes redundant KERN_ERR prefixes in WARN() calls in the global
-> CPU PM QoS interface. This change addresses issues in existing code and is
-> not related to the new interface introduced in this patch series.
-> 
-> Patch3 adds documentation for the new interface.
-> 
-> Patch4 fixes a minor documentation issue related to the return type of
-> cpu_latency_qos_request_active(). This change addresses issues in existing
-> doc and is not related to the new interface introduced in this patch
-> series.
-> 
-> Patch5 updates the resctrl pseudo-locking logic to use the new CPU
-> affinity latency QoS helpers, improving clarity and consistency. The only
-> functional and beneficial change is that the new interface actively wakes
-> up CPUs whose latency QoS values have changed, ensuring the latency limit
-> takes effect immediately.
+I can also confirm that the patch does solve my problem. Looking forward 
+to some resolution of this, as it stops me from upgrading to Testing. :)
 
-Could you describe a bit more the big picture of this proposed design,
-please?
+Best regards,
 
-Ideally with some graph of connected frameworks & drivers and how they
-are going to work together.
+Staffan
 
-E.g.:
-1. what are the other components in the kernel which would use this
-feature?
-2. is there also a user-space interface planned for it so a HAL in
-the middle-ware would configure these "short-wake-up-CPU"?
-3. Is it possible to view/debug from the user-space which component
-requested this setting for some subsets of cpus?
 
-Regards,
-Lukasz
-
+On 2025-10-22 08:04, Salvatore Bonaccorso wrote:
+> Hi,
+> 
+> On Mon, Oct 13, 2025 at 04:32:39PM +0800, zhangheng wrote:
+>> It happened to be the holiday, so communication was a bit troublesome.
+>> 
+>> However, after a brief discussion with the microphone manufacturer,
+>> 
+>> it was found that the serial number was still 20201111000001 on 
+>> another
+>> 
+>> microphone device. So, should we add it?
+> 
+> As this issue still affects one of our users in Debian, is there
+> anything which can be done to unblock the situation? Does that mean
+> that the proposed patch is not good for the microphone device?
+> 
+> My understanding is that it fixes at least Staffan's case which
+> regressed from 1a8953f4f774 ("HID: Add IGNORE quirk for
+> SMARTLINKTECHNOLOGY").
+> 
+> Regards,
+> Salvatore
 
