@@ -1,161 +1,296 @@
-Return-Path: <linux-kernel+bounces-866896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0723C00F50
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:03:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59ACBC01091
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B53B1888FD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:03:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 53FA6561959
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2931030F950;
-	Thu, 23 Oct 2025 12:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hkYZzssF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9742A30FC3A;
+	Thu, 23 Oct 2025 12:11:28 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C583730F941
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A993830F947
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761220975; cv=none; b=rWPdYKlS2kfaTzqhzFT08xdGMGb+SOZdKmdlt6xdpgGjPCpC4XquxB4Qbw4mnYma7miLBIqlnFO04Tv2Rc+yVZlzWIp5o23JTWLaqllbrY4hccSp8abpJIfj++d5jvetpHej9w2EJHipLYUi2GNdlw2CcYIAh4uc2TpTmawiSg8=
+	t=1761221485; cv=none; b=j3U0y6AOECwP8jWpSUdpHAq6hTWV/5XESFS6fPJUZzsz+OBmSdqjnO3f5oc9XHOm6tQ2zRqEGp6ZkAOwFJwXp835YR/6pus6cUGQnkEAdWIUmBNw+Iq9P+1JZgGrsRblmiiJS3qeatzDJ4cfwSKYBNRuPX7N2/Upmi3DsWMQtIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761220975; c=relaxed/simple;
-	bh=hfHWyxVNGaqao+R4E2QG9ynbPUKwYD7iwQ9NJmtkuN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sTBagTPTUOrJTsa79P0/N18SoBUJq/iJEvmNN6DopqUdDYr27oQkFn+WMAhO2UWCspUS3Wh5z1GbeFAyBvqbndUMdVE5ozbrUmQa/Pc0+CMK8jAsdSjvDpwGe5V5eQ6eFQEJzUECZnb7HzPj+879n5bfvbeywJobTGV5PT5n5Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hkYZzssF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6eRMw024594
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:02:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	y0aZaieSuQfEQiaRXPzHRxz1LHJpL/jxRnElnXAHQ00=; b=hkYZzssFwV2Jk/VP
-	Or1UkHDtl+OCssWsyMXSrss8YPIrs8IQNa/xSLaFxmZpL459R13jJTjsil/n4/gz
-	qmDEFbNOVKHDFL0zZiduSekArgVsJVv7ingw2y1cM4EMdu8+8ziPdoNH6xKN6zP/
-	1qKNWfZEcFQNtNKA1KDOaFxMbg5P9ke3YTC+tlWVVMyDQd7531vcA8Enxm2ElCwY
-	8d/hsXzGHGtNMGvBtdGpzHqZjDUCj8TtGVvwUN8pFhcES70OEu6f+hgxgKWXb38Y
-	0HK8lhn06ZCpJ7t1tqdsKB/6B4Cdosd6YQU55wSm3w/xWBjfeEBQ7O4n3LANeX2V
-	+6F81g==
-Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v1w889v6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:02:52 +0000 (GMT)
-Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-5569bacec27so4265e0c.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:02:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761220972; x=1761825772;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y0aZaieSuQfEQiaRXPzHRxz1LHJpL/jxRnElnXAHQ00=;
-        b=AXS3NMIMDQsZF86N1jTy+yQhVwq8QhXA2ooWQcF+4pw+h9T5swOIqRXD17AbqBv2+G
-         vZi1DZv2lavo/78zjhe4BNCaOGNN+7vKQoCpQGyIl7xg1nbrbjaSdzPKW0nA2euxh5+t
-         WG7DYJYpSNIJI4EoZCJTR+Yvt86aOeB5hufCqPnt9V/yeSluHqEzyfpkx0qxj0q1QIn4
-         91RxCn/kokJGGiG0+9o4QinkVICtghjj7yvtAkeg2joy/AInMGYZklPwxeIiuLa+Ixnw
-         JOzsqkEd5vCevpxWA+2kW3XMiqo3SeWlQ2vnfRgXWexgJiu0kuK2UFGpC3ZTAzjT6M5Q
-         Cwgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgjRe3u5DNTh2gM+pmkSpDzIQ7ruPEtZ/IpO1CYrO/B/v4AVUbI1Z/cLJB3qDQU15yBr0Cctw40TTIaR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjCGmnSYA9qiLA56ElQEb2Ip+w0LtmXKTzOsHzpvtTx5MAjr1P
-	R3WY1z9G4asQGapk5Inail+0BlhDNuhaUteS8jkUw0026MjAzyZWN6kZMjJDvHoimSGsdiBZ465
-	Yx7QgkJDXyYWsCfFmjZ6wrgsziznXgdXv0fCJZyq9KFXgZ0mvQ/J2WJDHdP83Foq8hkM=
-X-Gm-Gg: ASbGncsMw/W3gT6dWnD6Eal07j8xXR3ChSJYYyD/Exepe2PH9k0Ag6UTTHT5D3O+C2L
-	nXPBQ6jFyzs3jleqx3215JsaQJ6eNjm0CEEXe9Eo1l7VCwVkyj/zwZexXOkZSLnGnNwAM7doHhf
-	FGlPiQOC6vggeSNY67+Hrbw3BWIyoEbn/v6M80XwHxySyCgIpdeYj5fLWidcTOHaFnmAv0xdjv9
-	AjEgYcLHeVH4WlwsQsA2JmbgG8R5mOM2Le47YeQHzIgN47ku46ze299iq82111vnGq7nKD9PwDb
-	6Amjiymwg3xCZKPsy3S5bF40UDPcS/cwKLDb9306diWCdMrnBLx9loFRQsGeHOuYviYNnprfNDW
-	qLrJM83jKHNfU976aXxEZpYe/X900xnoC0VQorUOHgj+yBFRDDYVdHEPQ
-X-Received: by 2002:a05:6122:82a3:b0:556:8d9b:70c3 with SMTP id 71dfb90a1353d-5568d9b7b78mr1297680e0c.0.1761220971144;
-        Thu, 23 Oct 2025 05:02:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGI7NlxxiPR1mSCsIzjh6laRe8aVKmqjEwN4VIQypjOlNUn1ZJqRFIU7gS95HufUjGblo+7VQ==
-X-Received: by 2002:a05:6122:82a3:b0:556:8d9b:70c3 with SMTP id 71dfb90a1353d-5568d9b7b78mr1297635e0c.0.1761220970676;
-        Thu, 23 Oct 2025 05:02:50 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e3f322e30sm1526903a12.27.2025.10.23.05.02.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 05:02:49 -0700 (PDT)
-Message-ID: <ad906eb5-c08f-4b66-9e37-aaba99889ad4@oss.qualcomm.com>
-Date: Thu, 23 Oct 2025 14:02:45 +0200
+	s=arc-20240116; t=1761221485; c=relaxed/simple;
+	bh=XezOgbQ+srumUHA4kLIdNcspHnKjgxXWSYFMXq/DO3Y=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PPPIBQZmOY+CyQLZTMXviXxgsN9bafrt3YP0008YZbEoV4zYc1C7vW9FxMg5KLzqlBknA1/o9+czMhZPXm270iuLTWoPd8mdwLsXkYRN71hLHqdyRI5PRSngGbKD/iugPbuAwdXn/Hxw98bEv6CwPuG3j+ClP20RgE/3gWr/qUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cskq62wcKz2CgpS;
+	Thu, 23 Oct 2025 19:49:54 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 31E2E14011B;
+	Thu, 23 Oct 2025 19:54:46 +0800 (CST)
+Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 23 Oct 2025 19:54:45 +0800
+Received: from [10.173.125.37] (10.173.125.37) by
+ kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 23 Oct 2025 19:54:45 +0800
+Subject: Re: [PATCH v2 1/1] mm/ksm: recover from memory failure on KSM page by
+ migrating to healthy duplicate
+To: Longlong Xia <xialonglong2025@163.com>
+CC: <markus.elfring@web.de>, <nao.horiguchi@gmail.com>,
+	<akpm@linux-foundation.org>, <wangkefeng.wang@huawei.com>,
+	<qiuxu.zhuo@intel.com>, <xu.xin16@zte.com.cn>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, Longlong Xia
+	<xialonglong@kylinos.cn>, <david@redhat.com>, <lance.yang@linux.dev>
+References: <20251016101813.484565-1-xialonglong2025@163.com>
+ <20251016101813.484565-2-xialonglong2025@163.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <af769443-e855-81d0-a44a-d5890f5d1d2f@huawei.com>
+Date: Thu, 23 Oct 2025 19:54:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/12] drm/msm/dsi/phy: Add support for Kaanapali
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        yuanjie yang <yuanjie.yang@oss.qualcomm.com>
-Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
-        simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
-        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
-        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
-References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
- <20251023075401.1148-2-yuanjie.yang@oss.qualcomm.com>
- <omlhiywjr46ik6bj2aiutgcf4aifen4vsvtlut7b44ayu4g4vl@zn4u3zkf6cqx>
+In-Reply-To: <20251016101813.484565-2-xialonglong2025@163.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <omlhiywjr46ik6bj2aiutgcf4aifen4vsvtlut7b44ayu4g4vl@zn4u3zkf6cqx>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxNSBTYWx0ZWRfX7qygrdw4yH2r
- Po4i4v7J5m718e4sCheZWcVKY8iIOVifqDz5nCk+xuMZ387IoUP6uv4dGIePFA4olUYPPsTK442
- QBzX0iBdnenk8j5RMc62ERCOxVBk1vJgRpMTrSf0tOVIaIGjhQWEMb9Vp4KirzUabTyDoiQF0Qi
- 8j2W8YEM27T9ssJSjxeb6OU6owq2d3e98S4POi9BYMV1vZItXilaYRF7OqX0vJHNwKXbxfnsE27
- i4HxczHVqzOKz7FX6DfQbvuNuNaZSuWIkKXVX5VBnyl6ASnH83hBr9woDQpvuH2e95Cqpsr1nHH
- AM1X2nbGgVKX/30QQaxkL7ioHSyacaJRPUMwtmbuEndGhNMhUxMO6/cPCVa05XXKysCDQod2qEY
- 68Ax6mxLNlGZ8Y6q3oJOFfhW1GuYkQ==
-X-Authority-Analysis: v=2.4 cv=bNUb4f+Z c=1 sm=1 tr=0 ts=68fa196c cx=c_pps
- a=JIY1xp/sjQ9K5JH4t62bdg==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=dMqN5BQ3aGG_qev9F4sA:9 a=QEXdDO2ut3YA:10
- a=tNoRWFLymzeba-QzToBc:22
-X-Proofpoint-GUID: vM64dQPEtdD7LlY2jfyi48MiVGApBFTP
-X-Proofpoint-ORIG-GUID: vM64dQPEtdD7LlY2jfyi48MiVGApBFTP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 adultscore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180015
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemq500010.china.huawei.com (7.202.194.235)
 
-On 10/23/25 1:48 PM, Dmitry Baryshkov wrote:
-> On Thu, Oct 23, 2025 at 03:53:50PM +0800, yuanjie yang wrote:
->> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
->>
->> Add DSI PHY support for the Kaanapali platform.
->>
->> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
->> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
->> ---
-
-[...]
-
->> +	.io_start = { 0x9ac1000, 0xae97000 },
+On 2025/10/16 18:18, Longlong Xia wrote:
+> From: Longlong Xia <xialonglong@kylinos.cn>
 > 
-> These two addresses are very strange. Would you care to explain? Other
-> than that there is no difference from SM8750 entry.
+> When a hardware memory error occurs on a KSM page, the current
+> behavior is to kill all processes mapping that page. This can
+> be overly aggressive when KSM has multiple duplicate pages in
+> a chain where other duplicates are still healthy.
+> 
+> This patch introduces a recovery mechanism that attempts to
+> migrate mappings from the failing KSM page to a newly
+> allocated KSM page or another healthy duplicate already
+> present in the same chain, before falling back to the
+> process-killing procedure.
+> 
+> The recovery process works as follows:
+> 1. Identify if the failing KSM page belongs to a stable node chain.
+> 2. Locate a healthy duplicate KSM page within the same chain.
+> 3. For each process mapping the failing page:
+>    a. Attempt to allocate a new KSM page copy from healthy duplicate
+>       KSM page. If successful, migrate the mapping to this new KSM page.
+>    b. If allocation fails, migrate the mapping to the existing healthy
+>       duplicate KSM page.
+> 4. If all migrations succeed, remove the failing KSM page from the chain.
+> 5. Only if recovery fails (e.g., no healthy duplicate found or migration
+>    error) does the kernel fall back to killing the affected processes.
+> 
+> Signed-off-by: Longlong Xia <xialonglong@kylinos.cn>
 
-They're correct.
-Although they correspond to DSI_0 and DSI_2..
+Thanks for your patch. Some comments below.
 
-Yuanjie, none of the DSI patches mention that v2.10.0 is packed with
-new features. Please provide some more context and how that impacts
-the hw description.
+> ---
+>  mm/ksm.c | 246 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 246 insertions(+)
+> 
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 160787bb121c..9099bad1ab35 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -3084,6 +3084,246 @@ void rmap_walk_ksm(struct folio *folio, struct rmap_walk_control *rwc)
+>  }
+>  
+>  #ifdef CONFIG_MEMORY_FAILURE
+> +static struct ksm_stable_node *find_chain_head(struct ksm_stable_node *dup_node)
+> +{
+> +	struct ksm_stable_node *stable_node, *dup;
+> +	struct rb_node *node;
+> +	int nid;
+> +
+> +	if (!is_stable_node_dup(dup_node))
+> +		return NULL;
+> +
+> +	for (nid = 0; nid < ksm_nr_node_ids; nid++) {
+> +		node = rb_first(root_stable_tree + nid);
+> +		for (; node; node = rb_next(node)) {
+> +			stable_node = rb_entry(node,
+> +					struct ksm_stable_node,
+> +					node);
+> +
+> +			if (!is_stable_node_chain(stable_node))
+> +				continue;
+> +
+> +			hlist_for_each_entry(dup, &stable_node->hlist,
+> +					hlist_dup) {
+> +				if (dup == dup_node)
+> +					return stable_node;
+> +			}
+> +		}
+> +	}
 
-Konrad
+Would above multiple loops take a long time in some corner cases?
+
+> +
+> +	return NULL;
+> +}
+> +
+> +static struct folio *find_healthy_folio(struct ksm_stable_node *chain_head,
+> +		struct ksm_stable_node *failing_node,
+> +		struct ksm_stable_node **healthy_dupdup)
+> +{
+> +	struct ksm_stable_node *dup;
+> +	struct hlist_node *hlist_safe;
+> +	struct folio *healthy_folio;
+> +
+> +	if (!is_stable_node_chain(chain_head) || !is_stable_node_dup(failing_node))
+> +		return NULL;
+> +
+> +	hlist_for_each_entry_safe(dup, hlist_safe, &chain_head->hlist, hlist_dup) {
+> +		if (dup == failing_node)
+> +			continue;
+> +
+> +		healthy_folio = ksm_get_folio(dup, KSM_GET_FOLIO_TRYLOCK);
+> +		if (healthy_folio) {
+> +			*healthy_dupdup = dup;
+> +			return healthy_folio;
+> +		}
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static struct page *create_new_stable_node_dup(struct ksm_stable_node *chain_head,
+> +		struct folio *healthy_folio,
+> +		struct ksm_stable_node **new_stable_node)
+> +{
+> +	int nid;
+> +	unsigned long kpfn;
+> +	struct page *new_page = NULL;
+> +
+> +	if (!is_stable_node_chain(chain_head))
+> +		return NULL;
+> +
+> +	new_page = alloc_page(GFP_HIGHUSER_MOVABLE | __GFP_ZERO);
+
+Why __GFP_ZERO is needed?
+
+> +	if (!new_page)
+> +		return NULL;
+> +
+> +	copy_highpage(new_page, folio_page(healthy_folio, 0));
+> +
+> +	*new_stable_node = alloc_stable_node();
+> +	if (!*new_stable_node) {
+> +		__free_page(new_page);
+> +		return NULL;
+> +	}
+> +
+> +	INIT_HLIST_HEAD(&(*new_stable_node)->hlist);
+> +	kpfn = page_to_pfn(new_page);
+> +	(*new_stable_node)->kpfn = kpfn;
+> +	nid = get_kpfn_nid(kpfn);
+> +	DO_NUMA((*new_stable_node)->nid = nid);
+> +	(*new_stable_node)->rmap_hlist_len = 0;
+> +
+> +	(*new_stable_node)->head = STABLE_NODE_DUP_HEAD;
+> +	hlist_add_head(&(*new_stable_node)->hlist_dup, &chain_head->hlist);
+> +	ksm_stable_node_dups++;
+> +	folio_set_stable_node(page_folio(new_page), *new_stable_node);
+> +	folio_add_lru(page_folio(new_page));
+> +
+> +	return new_page;
+> +}
+> +
+
+...
+
+> +
+> +static void migrate_to_target_dup(struct ksm_stable_node *failing_node,
+> +		struct folio *failing_folio,
+> +		struct folio *target_folio,
+> +		struct ksm_stable_node *target_dup)
+> +{
+> +	struct ksm_rmap_item *rmap_item;
+> +	struct hlist_node *hlist_safe;
+> +	int err;
+> +
+> +	hlist_for_each_entry_safe(rmap_item, hlist_safe, &failing_node->hlist, hlist) {
+> +		struct mm_struct *mm = rmap_item->mm;
+> +		unsigned long addr = rmap_item->address & PAGE_MASK;
+> +		struct vm_area_struct *vma;
+> +
+> +		if (!mmap_read_trylock(mm))
+> +			continue;
+> +
+> +		if (ksm_test_exit(mm)) {
+> +			mmap_read_unlock(mm);
+> +			continue;
+> +		}
+> +
+> +		vma = vma_lookup(mm, addr);
+> +		if (!vma) {
+> +			mmap_read_unlock(mm);
+> +			continue;
+> +		}
+> +
+> +		if (!folio_trylock(target_folio)) {
+
+Should we try to get the folio refcnt first?
+
+> +			mmap_read_unlock(mm);
+> +			continue;
+> +		}
+> +
+> +		err = replace_failing_page(vma, &failing_folio->page,
+> +				folio_page(target_folio, 0), addr);
+> +		if (!err) {
+> +			hlist_del(&rmap_item->hlist);
+> +			rmap_item->head = target_dup;
+> +			hlist_add_head(&rmap_item->hlist, &target_dup->hlist);
+> +			target_dup->rmap_hlist_len++;
+> +			failing_node->rmap_hlist_len--;
+> +		}
+> +
+> +		folio_unlock(target_folio);
+> +		mmap_read_unlock(mm);
+> +	}
+> +
+> +}
+> +
+> +static bool ksm_recover_within_chain(struct ksm_stable_node *failing_node)
+> +{
+> +	struct folio *failing_folio = NULL;
+> +	struct ksm_stable_node *healthy_dupdup = NULL;
+> +	struct folio *healthy_folio = NULL;
+> +	struct ksm_stable_node *chain_head = NULL;
+> +	struct page *new_page = NULL;
+> +	struct ksm_stable_node *new_stable_node = NULL;
+> +
+> +	if (!is_stable_node_dup(failing_node))
+> +		return false;
+> +
+> +	guard(mutex)(&ksm_thread_mutex);
+> +	failing_folio = ksm_get_folio(failing_node, KSM_GET_FOLIO_NOLOCK);
+> +	if (!failing_folio)
+> +		return false;
+> +
+> +	chain_head = find_chain_head(failing_node);
+> +	if (!chain_head)
+> +		return NULL;
+
+Should we folio_put(failing_folio) before return?
+
+Thanks.
+.
 
