@@ -1,852 +1,275 @@
-Return-Path: <linux-kernel+bounces-867066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C9BC017E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:42:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018BDC0143C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F01CA3B0AB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:40:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820311A035E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E919832C923;
-	Thu, 23 Oct 2025 13:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1B7314A7D;
+	Thu, 23 Oct 2025 13:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="NEirdvaC"
-Received: from smtp71.ord1d.emailsrvr.com (smtp71.ord1d.emailsrvr.com [184.106.54.71])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="teaeP64+"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010066.outbound.protection.outlook.com [40.93.198.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01B6328635
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.71
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761226608; cv=none; b=C4YGlPBgwBIYZO2lSsA5fsET0GyUQIgJ20P279wzCEC/sFSH/2Mlf507nHkcdbRYH5Xfi7I9n5ubBvXR2ZdCytfdrCGxY+NkWTDjiSFfS5t3IitAr6P2CtZxNQRnb4cYjiTM/pRKpcpft1uBowdjAgLEibXCPOPBJTuuVnz54qw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761226608; c=relaxed/simple;
-	bh=FmPZiT98w2k7d+SqTmblsmMypwu/9ii4PANd60nJCE8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=smeAsQtMgsXUMCE2devtOEO8vKzWZvREOBLeaJrFGJYVA/NohtKuULmCyS9LCCaSTiAUoYfBRj92C8QcLjpoo87pyOCaEsU8fUPZ1rMTe32+uHN4fDZqtX41Bun3eH+jhjXaaGKufiGXoVjH8yzR4Fyk41KfnO/vbrNXBlO2pos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=NEirdvaC; arc=none smtp.client-ip=184.106.54.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1761226058;
-	bh=FmPZiT98w2k7d+SqTmblsmMypwu/9ii4PANd60nJCE8=;
-	h=From:To:Subject:Date:From;
-	b=NEirdvaCqyjinKXRxVREvlvmjPzEVetGEZB4j+nkfwWPI64ghB5WegLe/jLqEm2Lo
-	 0bl+WyHxoxFdDhaVwWUSNOqOPYTO6LI3ExXw12vRTlBVcWs6Jozl6Joau1rkrTEIFi
-	 VY9bDkdzlXNQeU/NmdJ6Kmw0+5Ez/yvOjq0rfkjE=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp1.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 8B720402B1;
-	Thu, 23 Oct 2025 09:27:37 -0400 (EDT)
-From: Ian Abbott <abbotti@mev.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-	lvc-project@linuxtesting.org
-Subject: [PATCH 2/2] comedi: Use reference count for asynchronous command functions
-Date: Thu, 23 Oct 2025 14:06:46 +0100
-Message-ID: <20251023132706.7983-3-abbotti@mev.co.uk>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251023132706.7983-1-abbotti@mev.co.uk>
-References: <20251023132706.7983-1-abbotti@mev.co.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C488B3054EE
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761224922; cv=fail; b=gJfYKUFw587Jj2Y5b4J0+X4OIR3qkNtcQF5ttVcKS+5z19uqUX1KCQEKKX9NiG4wGLaIb7bPb70k3P+iDNgkLqgWrYcEyDzFK8f5jf7AY6Moq5EF7wcH1fESpfw3tx+CzqudEAVn3JLFLMVFzyih1oJhTcqzwkExV5oNd4Ycr7s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761224922; c=relaxed/simple;
+	bh=JLsSj/BzjWZEUXRcc/35nNK6ylrJHkH3iCcWMVpNdxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BiXEMphEFzo7I1bW39SnU+q0TN+tdOK4afsHmbPmEY2XL05zg7+8c7tRb3wcIluTdNdf5oZctofJhQ54KzCiBVL1zbTmOG7+1xLcgJkEwGUNwIIDvOCSws2JS7vpXjLY5V+olhtkMLV1R3iwUzVJHLiBSv9FND2mIT/UlZYPOb0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=teaeP64+; arc=fail smtp.client-ip=40.93.198.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a6wkJV+3+g2UHqa3gcG4cvKTv2fKlRFmZQNKxERvKzo7XeYU7OgQlZOEkyQnLPxKa5INs0Ijn2fqQ12qrVNRctMIVOcqFVyYE278jNkU3W1jm+UU+/BxZbq11J6Ft1jXF4uKa5a/9Pxr5A/3Ffh0q82vM0EfNX2wqj4W+mBgJtSKp86QBR50CcnoRXsD4h8T5t4qLa9gFxjOJgHj4CRKNuEiA19xeIqrjqQW0PxYyw0q9YmBKhdmsBljNWL6i8IXpEMaccGbw2ER7ObQcIYROaKFEbpqJ6e69lfy2bM/i0fF/2frwF+kBXWcALPK6mTmnTy3fr88Yi0goqtmRq90Ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cnQ5cAfwX2B0ej7moGQsyO9MgjGwr76bBn94K/WKZeo=;
+ b=PYdtB4d5W1JuA8bRzqVJh8FcGA6C6op5GkbD0R1YaMfLRDvvcl5uEMVoiZbFAxBIvkFacv2pVl9FdfmeGapRUeHhXDTf+/Z4EmWUlOyMEPY1WDKHp4r3m06AZNUK6sm+rRfuhjbqCkzVVusVZ5VpH5CiaNdaEOq4t3ed6lczBBQiHZxwo2eLvgGG68ON35X4P5UUoVJ/yqRV23vykzui9C5SCVV+jyXWjRYilakM5LPrl4xEXGFCwfveZrIC5V7obqHPUTqw88fB8ADeZy0slTAXixsm2OWloxF+6m4cYaA8SetopxtlU6rpPvduQFA3gpaCtmvbT0nJqG/kdGHcJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cnQ5cAfwX2B0ej7moGQsyO9MgjGwr76bBn94K/WKZeo=;
+ b=teaeP64+yWbKprQdb6xefgxE2hMq3KC/voXao2e/0+jPWvefRiugA0QPsbIZ5xHUUo1ICCIwveE0x9s5Yjk66zwjqYe9+DGEqFPS5apVcXeELfrKZJoApHdHDa7ms51erw+DG6yOftLkqT5HuLwNKhgFiAfv+Rk1mnsaVpmC5FtU6dM9J0t2ePIXdsks3P0YfTf0JgyQzKqAPxjTTf983OLPBFw4yZwpWTcwt4yMl3fuzikNhX5uPDykWZPFpFj3qBVBSnYfVCZCc8LqvVvkpZBvfmn21aDgF128luBrH+DX4hypUHq2ZDqfVbtsbRG6EtEhE2c29wkxi76bv0us0g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by MN2PR12MB4455.namprd12.prod.outlook.com (2603:10b6:208:265::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.16; Thu, 23 Oct
+ 2025 13:08:34 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 13:08:34 +0000
+Date: Thu, 23 Oct 2025 10:08:33 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: nicolinc@nvidia.com, linux-kernel@vger.kernel.org, robin.murphy@arm.com,
+	will@kernel.org, joro@8bytes.org, kevin.tian@intel.com,
+	jsnitsel@redhat.com, vasant.hegde@amd.com, iommu@lists.linux.dev,
+	santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
+	jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
+	wnliu@google.com, gptran@google.com, kpsingh@google.com,
+	joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
+Subject: Re: [PATCH v4 15/16] iommu/amd: Refactor logic to program the host
+ page table in DTE
+Message-ID: <20251023130833.GF262900@nvidia.com>
+References: <20251021014324.5837-1-suravee.suthikulpanit@amd.com>
+ <20251021014324.5837-16-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251021014324.5837-16-suravee.suthikulpanit@amd.com>
+X-ClientProxiedBy: YT4PR01CA0084.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:ff::9) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: a5f18e55-3fae-4f0c-8e4d-f1649ff649d1-3-1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|MN2PR12MB4455:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b369d1e-6edc-45e3-46c4-08de12354585
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?w+3Su7VgZ1g4qzmWEJ27CDgOKK14UNpXpaQfQIe6H1Dtz+SgHohC5TBSdlDs?=
+ =?us-ascii?Q?/f9zRHvIwP21hVzpVEEE/DJ7y3Vb1+31qHzRBLnpmR/61q8CuMaMlV0iGCdA?=
+ =?us-ascii?Q?lu2WhWYhgv86z6wpX2TDTiXyj8omRIAscXOgYqv/t6tHhElEyDBz0j0WZVqG?=
+ =?us-ascii?Q?0Lqjsh4pEdeG7slh9rjUhoQ/K46NLyY9cCwKANulS/40xbHZAmRbx07e/ebh?=
+ =?us-ascii?Q?IxtlVhqpGp8m8z4r83MnYxUz+qI/M3sBlUpRv7o/300pIdtvOElya1uTrpbf?=
+ =?us-ascii?Q?0CuUUJZWfGYJGYchKvuYWgFkVeBjEwpPVb9Xdv2fwSjYC6HcsSoIWY+Cq9MK?=
+ =?us-ascii?Q?j8ezW/AiZEyG2EvBYWGOMrKy9014CKHAH8uzTZeHZDn2SGxuUCZ0XfkeiBWn?=
+ =?us-ascii?Q?EgiXEy5Tg3KqTUI8e7jcg0nq0h0TbHf7eTI8d7rD19/+RLUCKbbBxyHfCZfg?=
+ =?us-ascii?Q?BI/ng7bqqwVx8+xVSmwvJk37lggAPBxTmu9O/KvWMcRW44Re0w5qE3CyljAS?=
+ =?us-ascii?Q?9QHz5a43qZgx/eDzPVfOZHml3Exbzk8vDDKvtrVPQXDhfvSsfiQfhIUEjfJj?=
+ =?us-ascii?Q?dR2p2DAsLQXxXjNzhI3jsNl4BmvlEl0EKF2jqr9MkeejGFXVe1JDGflJKwb6?=
+ =?us-ascii?Q?uxm5He73ntzZhtDg6KTigJoR+S5wDPujJ31RaJw/piOqkjsBVNf52geLlV3F?=
+ =?us-ascii?Q?hh8aa5se1pV0IoVwcD31fFFc7xWnNSbzHGEOkrr/YW+pZ2/jB/oiigZBOsHI?=
+ =?us-ascii?Q?pUq8tV7v5MeULVCgJafCqg11wS9+Nt7jnznShNKpDZoEr41yj6Jxfvd/lGiR?=
+ =?us-ascii?Q?s2L4Cj1zO6QnM65ysys28ZPn4aW8DYXEi6OY8UUN9sRpROuhoxAPu92gNrpY?=
+ =?us-ascii?Q?qv7xjBe0i1hb911vBOr38cwsJMk+E+h+RyHN12LhmHcSYA7mZ3HIDzAFLSJo?=
+ =?us-ascii?Q?SizcA4w6wwlflljJ6ll01vxj1RFGHSyNdhlBKtOicP1gJboaa3gIR0oU2XwM?=
+ =?us-ascii?Q?Z0HBhNhcr5YKILij6Yxv2QkZOi+Dm9SUMaJGpcx7aC9kNRbjoLJVxMowqSgd?=
+ =?us-ascii?Q?qMv/ZTzPXnmbsugJlebwZuEb6MQJklNBVhbFySO3orMWVrsEfHSV2gtZTgom?=
+ =?us-ascii?Q?h7AzrCDnxvPf9cT4ihXm8oIVt7Tb+3yQYwOAW9ZGzmbBDT6B6C4cEn3hZ6EU?=
+ =?us-ascii?Q?RASF+frvP4kMFizLzcpRglk9X4UFFkaCus72y7Tf5Vz4ZqBiFnq5OyUkDalK?=
+ =?us-ascii?Q?gPgqTR2fk6yZXF0lKExfkW8PoPfxomRI3STgJ6avzOjxDhsJ78whOxuG5bI3?=
+ =?us-ascii?Q?BoQgjKK5U+Qh3vfn+I4+O3s1Sn/xAKUS3l534xUELrI5DIB0r9wIeCtOvdsn?=
+ =?us-ascii?Q?kY5inYrij+gJ5P9ylfZVXY1ySlHd4AfeAUMKBcQFW/S4M7YZXSpgMoplkTBR?=
+ =?us-ascii?Q?JVYFCDFyTcBN7Ak/cEcrmDX521CvoG+f?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?RIH7qZ53MGIiQERgOEtc38kA75xAbzTLzg2iUIJ+kd4P0nKp6ExcgROtc6ib?=
+ =?us-ascii?Q?vJPFyJCJUs8AWtCyWYhGQXj1Vr4xNoL1RLMHLny7JvsfiJVsGndzCFdpPmio?=
+ =?us-ascii?Q?TGRxsc5+s8hWgnzQrc/X722BvwYJbu6KNtyp/BmOHPav/ooPjq1SQyz2QSpv?=
+ =?us-ascii?Q?1nHdDqir2o+yXaNh58P5oSnPF+H9HfvFvNwT6LkcCPvYGlIVqLP7NF8aWWzL?=
+ =?us-ascii?Q?PRuRplZX8uJ1Yh2nhtQYQPVa7GwmYU3GhxUaOgIHP0K7xybEVqIsxSQ/8Glh?=
+ =?us-ascii?Q?LcbhjruvKW4YQ6w5EcGptOfvFgASc0WXk4EzxMLoP2j8EJdJcYyP6JR2Zfxo?=
+ =?us-ascii?Q?2WxsDPKH+th7njLn8zkt/PCMp4zTMtMAAEg6obkFlfR13A6UqzhadMcOlq8g?=
+ =?us-ascii?Q?heBHux9VY38nvGTt9hvGr2dqjwup8rWtTtWVaf8gEv3cMQBbig1HNr5fwIE1?=
+ =?us-ascii?Q?snP65Lzk8iuaJy3Nj5raaIJIta7/cxf/r0uF6BTUqTeDXn1/6WyhoSgotXef?=
+ =?us-ascii?Q?ScOUqX0kvCXZvDBM6RjhUopSx6lfeM9KBPDfYcfprLppyJDGlqBZ7LrxKaaO?=
+ =?us-ascii?Q?T9LSWpyNq5896HhuVTGYDYT4E6pnqn0q9sJSETB8WjMeKVZIpgWMTAMjdJRW?=
+ =?us-ascii?Q?qeEpMl4kpf03q/n8hu7947Vfr/VRwPqwIQ0lmLj3lRmokTLcXDU/G75viCt7?=
+ =?us-ascii?Q?1Kqo7iYAaUq6QE9P5PRVXbAcTQDOkNIBQX7RtNDllvVJPckRwDStdK8mM3Br?=
+ =?us-ascii?Q?eAZ7CkQQ9Pr2I2M5xzCpXHJqHWF2/ona9gvQSrI/mNjt313sSNBizin9iDH+?=
+ =?us-ascii?Q?e7G6m5xZVC/o4JSAepTOjNcvK2mirZfbtIWDWve2RLDZujrSmauSFrLeGwSZ?=
+ =?us-ascii?Q?08e1AsLOCWAofC6VPVQK4VzIIcPSXaGCrn/YlTn4T6RFE7dGNu5cuat26ppN?=
+ =?us-ascii?Q?F57VbZ4m0S3o15IJLMjv1J4f+1R1gLQg2dNQAQKaPD5qCY9F7pxO56GnNjJK?=
+ =?us-ascii?Q?psoyQU0bjbGbyCuA9hSgmw9EVTgaVtcwcmS7wWWJ12hG3xqccnxMIQ62YJf3?=
+ =?us-ascii?Q?/flMnZ7rwdkTWucSEhsK1jfU9DnCU0k1oXg2/lulFoswarCbAkFNj0+Rhg1u?=
+ =?us-ascii?Q?TrV2Tsc+oJZHQ6pHLO2sk+1BjTm6Jhfg2dxnkWH4nv2tSU8WB9IJduZ/vbUy?=
+ =?us-ascii?Q?Eno5viFulFmEyh3nblWl0ZZj6JsdKyb5FvHoSeGkZRakC59ymjS9Loc6g9I2?=
+ =?us-ascii?Q?1rpj0eTvZUUIGibODdO0G0FsGFDtJ3iujsoJ8xPmpG4D2wdsf2QhzMXW/UIg?=
+ =?us-ascii?Q?rWxTc7lWERiyG6iZGY/x/ukypSKVjPXmS6h500p0dF2TCqP250yOMWEEwI1s?=
+ =?us-ascii?Q?cuuHOz1g/1lD79gBgbyCP8t0Wpym9kozrpKHZ5EGcSZOoI1vj9lj6MnK5NWZ?=
+ =?us-ascii?Q?aIxtPcyCQQ/F0lFe/6WSayTNCIeqqRlSXGWePNEM0dmcEyN4RMwAqKvbgiBT?=
+ =?us-ascii?Q?dsr9q3B1Iy7KD7tqxER0/s+bIfiQc9XTsx1Ek/pEImZ6NALNJwow0yktBrAa?=
+ =?us-ascii?Q?n85qjOSnNkSaJyOfgXk=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b369d1e-6edc-45e3-46c4-08de12354585
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 13:08:34.4507
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d9HCGI4yhAQrIvzCeBjOlwIr/oZn+URPY9MGBbTgsvFCMS7GQ1JuS09noQBqJoP8
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4455
 
-For interrupts from badly behaved hardware (as emulated by Syzbot), it
-is possible for the Comedi core functions that manage the progress of
-asynchronous data acquisition to be called from driver ISRs while no
-asynchronous command has been set up, which can cause problems such as
-invalid pointer dereferencing or dividing by zero.
+On Tue, Oct 21, 2025 at 01:43:23AM +0000, Suravee Suthikulpanit wrote:
+> @@ -2088,37 +2104,28 @@ static void set_dte_entry(struct amd_iommu *iommu,
+>  	else
+>  		domid = domain->id;
+>  
+>  	/*
+>  	 * When SNP is enabled, we can only support TV=1 with non-zero domain ID.
+>  	 * This is prevented by the SNP-enable and IOMMU_DOMAIN_IDENTITY check in
+>  	 * do_iommu_domain_alloc().
+>  	 */
+>  	WARN_ON(amd_iommu_snp_en && (domid == 0));
+>  
+> +	amd_iommu_make_clear_dte(dev_data, &new);
+>  
+> +	old_domid = READ_ONCE(dte->data[1]) & DTE_DOMID_MASK;
 
-Change those functions in the Comedi core to use this pattern: if
-`comedi_get_is_subdevice_running(s)` returns `true` then call a safe
-version of the function with the same name prefixed with an underscore,
-followed by a call to `comedi_put_is_subdevice_running(s)`, otherwise
-take some default action.
+This old_domid stuff doesn't make any sense. I think the commit that
+added it is bonkers: 36b7200f67df ("iommu/amd: Flush old domains in kdump kernel")
 
-`comedi_get_is_subdevice_running(s)` returning `true` ensures that the
-details of the asynchronous command will not be destroyed before the
-matching call to `comedi_put_is_subdevice_running(s)`.
+The problem is that the dom ids that are present in the re-used DTE
+table have to be reserved from the domain id alloctor at boot.
 
-Replace calls to those functions from elsewhere in the Comedi core with
-calls to the safe versions of the functions.
+If the kdump kernel tries to create new DTEs it MUST NOT re-use any
+IDs that are actively being using in DTEs already or you get data
+corruption. Randomly flushing IDs is just getting lucky..
 
-The modified functions are: `comedi_buf_read_alloc()`,
-`comedi_buf_read_free()`, `comedi_buf_read_n_available()`,
-`comedi_buf_read_samples()`, `comedi_buf_write_alloc()`,
-`comedi_buf_write_free()`, `comedi_buf_write_samples()`,
-`comedi_bytes_per_scan()`, `comedi_event()`, `comedi_handle_events()`,
-`comedi_inc_scan_progress()`, `comedi_nsamples_left()`,
-`comedi_nscans_left()`.
+Not for this series, but something to think about.
 
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
----
- drivers/comedi/comedi_buf.c      | 274 ++++++++++++++++++++-----------
- drivers/comedi/comedi_fops.c     |  56 ++++---
- drivers/comedi/comedi_internal.h |  12 ++
- drivers/comedi/drivers.c         | 133 +++++++++++----
- 4 files changed, 323 insertions(+), 152 deletions(-)
+> +	if (gcr3_info && gcr3_info->gcr3_tbl)
+> +		set_dte_gcr3_table(dev_data, &new);
+> +	else if (domain->iop.mode != PAGE_MODE_NONE)
+> +		amd_iommu_set_dte_v1(dev_data, domain, &new);
+>  
+> +	/* Note: The IR, IW, TV, DOMID are needed for both v1 and gcr3 table */
+> +	new.data[0] |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_TV;
+> +	new.data[1] |= FIELD_PREP(DTE_DOMID_MASK, domid);
+>  
+> +	if (dev_data->ats_enabled)
+> +		new.data[1] |= DTE_FLAG_IOTLB;
 
-diff --git a/drivers/comedi/comedi_buf.c b/drivers/comedi/comedi_buf.c
-index 002c0e76baff..37074225d590 100644
---- a/drivers/comedi/comedi_buf.c
-+++ b/drivers/comedi/comedi_buf.c
-@@ -273,19 +273,8 @@ unsigned int comedi_buf_write_n_available(struct comedi_subdevice *s)
- 	return free_end - async->buf_write_count;
- }
- 
--/**
-- * comedi_buf_write_alloc() - Reserve buffer space for writing
-- * @s: COMEDI subdevice.
-- * @nbytes: Maximum space to reserve in bytes.
-- *
-- * Reserve up to @nbytes bytes of space to be written in the COMEDI acquisition
-- * data buffer associated with the subdevice.  The amount reserved is limited
-- * by the space available.
-- *
-- * Return: The amount of space reserved in bytes.
-- */
--unsigned int comedi_buf_write_alloc(struct comedi_subdevice *s,
--				    unsigned int nbytes)
-+unsigned int _comedi_buf_write_alloc(struct comedi_subdevice *s,
-+				     unsigned int nbytes)
- {
- 	struct comedi_async *async = s->async;
- 	unsigned int unalloc = comedi_buf_write_n_unalloc(s);
-@@ -303,6 +292,29 @@ unsigned int comedi_buf_write_alloc(struct comedi_subdevice *s,
- 
- 	return nbytes;
- }
-+
-+/**
-+ * comedi_buf_write_alloc() - Reserve buffer space for writing
-+ * @s: COMEDI subdevice.
-+ * @nbytes: Maximum space to reserve in bytes.
-+ *
-+ * Reserve up to @nbytes bytes of space to be written in the COMEDI acquisition
-+ * data buffer associated with the subdevice.  The amount reserved is limited
-+ * by the space available.
-+ *
-+ * Return: The amount of space reserved in bytes.
-+ */
-+unsigned int comedi_buf_write_alloc(struct comedi_subdevice *s,
-+				    unsigned int nbytes)
-+{
-+	if (comedi_get_is_subdevice_running(s)) {
-+		nbytes = _comedi_buf_write_alloc(s, nbytes);
-+		comedi_put_is_subdevice_running(s);
-+	} else {
-+		nbytes = 0;
-+	}
-+	return nbytes;
-+}
- EXPORT_SYMBOL_GPL(comedi_buf_write_alloc);
- 
- /*
-@@ -362,6 +374,24 @@ unsigned int comedi_buf_write_n_allocated(struct comedi_subdevice *s)
- 	return async->buf_write_alloc_count - async->buf_write_count;
- }
- 
-+unsigned int _comedi_buf_write_free(struct comedi_subdevice *s,
-+				    unsigned int nbytes)
-+{
-+	struct comedi_async *async = s->async;
-+	unsigned int allocated = comedi_buf_write_n_allocated(s);
-+
-+	if (nbytes > allocated)
-+		nbytes = allocated;
-+
-+	async->buf_write_count += nbytes;
-+	async->buf_write_ptr += nbytes;
-+	comedi_buf_munge(s, async->buf_write_count - async->munge_count);
-+	if (async->buf_write_ptr >= async->prealloc_bufsz)
-+		async->buf_write_ptr %= async->prealloc_bufsz;
-+
-+	return nbytes;
-+}
-+
- /**
-  * comedi_buf_write_free() - Free buffer space after it is written
-  * @s: COMEDI subdevice.
-@@ -379,22 +409,35 @@ unsigned int comedi_buf_write_n_allocated(struct comedi_subdevice *s)
-  */
- unsigned int comedi_buf_write_free(struct comedi_subdevice *s,
- 				   unsigned int nbytes)
-+{
-+	if (comedi_get_is_subdevice_running(s)) {
-+		nbytes = _comedi_buf_write_free(s, nbytes);
-+		comedi_put_is_subdevice_running(s);
-+	} else {
-+		nbytes = 0;
-+	}
-+	return nbytes;
-+}
-+EXPORT_SYMBOL_GPL(comedi_buf_write_free);
-+
-+unsigned int _comedi_buf_read_n_available(struct comedi_subdevice *s)
- {
- 	struct comedi_async *async = s->async;
--	unsigned int allocated = comedi_buf_write_n_allocated(s);
-+	unsigned int num_bytes;
- 
--	if (nbytes > allocated)
--		nbytes = allocated;
-+	if (!async)
-+		return 0;
- 
--	async->buf_write_count += nbytes;
--	async->buf_write_ptr += nbytes;
--	comedi_buf_munge(s, async->buf_write_count - async->munge_count);
--	if (async->buf_write_ptr >= async->prealloc_bufsz)
--		async->buf_write_ptr %= async->prealloc_bufsz;
-+	num_bytes = async->munge_count - async->buf_read_count;
- 
--	return nbytes;
-+	/*
-+	 * ensure the async buffer 'counts' are read before we
-+	 * attempt to read data from the buffer
-+	 */
-+	smp_rmb();
-+
-+	return num_bytes;
- }
--EXPORT_SYMBOL_GPL(comedi_buf_write_free);
- 
- /**
-  * comedi_buf_read_n_available() - Determine amount of readable buffer space
-@@ -409,23 +452,38 @@ EXPORT_SYMBOL_GPL(comedi_buf_write_free);
-  */
- unsigned int comedi_buf_read_n_available(struct comedi_subdevice *s)
- {
--	struct comedi_async *async = s->async;
- 	unsigned int num_bytes;
- 
--	if (!async)
--		return 0;
-+	if (comedi_get_is_subdevice_running(s)) {
-+		num_bytes = _comedi_buf_read_n_available(s);
-+		comedi_put_is_subdevice_running(s);
-+	} else {
-+		num_bytes = 0;
-+	}
-+	return num_bytes;
-+}
-+EXPORT_SYMBOL_GPL(comedi_buf_read_n_available);
- 
--	num_bytes = async->munge_count - async->buf_read_count;
-+unsigned int _comedi_buf_read_alloc(struct comedi_subdevice *s,
-+				    unsigned int nbytes)
-+{
-+	struct comedi_async *async = s->async;
-+	unsigned int available;
-+
-+	available = async->munge_count - async->buf_read_alloc_count;
-+	if (nbytes > available)
-+		nbytes = available;
-+
-+	async->buf_read_alloc_count += nbytes;
- 
- 	/*
- 	 * ensure the async buffer 'counts' are read before we
--	 * attempt to read data from the buffer
-+	 * attempt to read data from the read-alloc'ed buffer space
- 	 */
- 	smp_rmb();
- 
--	return num_bytes;
-+	return nbytes;
- }
--EXPORT_SYMBOL_GPL(comedi_buf_read_n_available);
- 
- /**
-  * comedi_buf_read_alloc() - Reserve buffer space for reading
-@@ -445,21 +503,12 @@ EXPORT_SYMBOL_GPL(comedi_buf_read_n_available);
- unsigned int comedi_buf_read_alloc(struct comedi_subdevice *s,
- 				   unsigned int nbytes)
- {
--	struct comedi_async *async = s->async;
--	unsigned int available;
--
--	available = async->munge_count - async->buf_read_alloc_count;
--	if (nbytes > available)
--		nbytes = available;
--
--	async->buf_read_alloc_count += nbytes;
--
--	/*
--	 * ensure the async buffer 'counts' are read before we
--	 * attempt to read data from the read-alloc'ed buffer space
--	 */
--	smp_rmb();
--
-+	if (comedi_get_is_subdevice_running(s)) {
-+		nbytes = _comedi_buf_read_alloc(s, nbytes);
-+		comedi_put_is_subdevice_running(s);
-+	} else {
-+		nbytes = 0;
-+	}
- 	return nbytes;
- }
- EXPORT_SYMBOL_GPL(comedi_buf_read_alloc);
-@@ -469,21 +518,8 @@ static unsigned int comedi_buf_read_n_allocated(struct comedi_async *async)
- 	return async->buf_read_alloc_count - async->buf_read_count;
- }
- 
--/**
-- * comedi_buf_read_free() - Free buffer space after it has been read
-- * @s: COMEDI subdevice.
-- * @nbytes: Maximum space to free in bytes.
-- *
-- * Free up to @nbytes bytes of buffer space previously reserved for reading in
-- * the COMEDI acquisition data buffer associated with the subdevice.  The
-- * amount of space freed is limited to the amount that was reserved.
-- *
-- * The freed space becomes available for allocation by the writer.
-- *
-- * Return: The amount of space freed in bytes.
-- */
--unsigned int comedi_buf_read_free(struct comedi_subdevice *s,
--				  unsigned int nbytes)
-+unsigned int _comedi_buf_read_free(struct comedi_subdevice *s,
-+				   unsigned int nbytes)
- {
- 	struct comedi_async *async = s->async;
- 	unsigned int allocated;
-@@ -503,6 +539,31 @@ unsigned int comedi_buf_read_free(struct comedi_subdevice *s,
- 	async->buf_read_ptr %= async->prealloc_bufsz;
- 	return nbytes;
- }
-+
-+/**
-+ * comedi_buf_read_free() - Free buffer space after it has been read
-+ * @s: COMEDI subdevice.
-+ * @nbytes: Maximum space to free in bytes.
-+ *
-+ * Free up to @nbytes bytes of buffer space previously reserved for reading in
-+ * the COMEDI acquisition data buffer associated with the subdevice.  The
-+ * amount of space freed is limited to the amount that was reserved.
-+ *
-+ * The freed space becomes available for allocation by the writer.
-+ *
-+ * Return: The amount of space freed in bytes.
-+ */
-+unsigned int comedi_buf_read_free(struct comedi_subdevice *s,
-+				  unsigned int nbytes)
-+{
-+	if (comedi_get_is_subdevice_running(s)) {
-+		nbytes = _comedi_buf_read_free(s, nbytes);
-+		comedi_put_is_subdevice_running(s);
-+	} else {
-+		nbytes = 0;
-+	}
-+	return nbytes;
-+}
- EXPORT_SYMBOL_GPL(comedi_buf_read_free);
- 
- static void comedi_buf_memcpy_to(struct comedi_subdevice *s,
-@@ -558,6 +619,38 @@ static void comedi_buf_memcpy_from(struct comedi_subdevice *s,
- 	}
- }
- 
-+static unsigned int _comedi_buf_write_samples(struct comedi_subdevice *s,
-+					      const void *data,
-+					      unsigned int nsamples)
-+{
-+	unsigned int max_samples;
-+	unsigned int nbytes;
-+
-+	/*
-+	 * Make sure there is enough room in the buffer for all the samples.
-+	 * If not, clamp the nsamples to the number that will fit, flag the
-+	 * buffer overrun and add the samples that fit.
-+	 */
-+	max_samples = comedi_bytes_to_samples(s, comedi_buf_write_n_unalloc(s));
-+	if (nsamples > max_samples) {
-+		dev_warn(s->device->class_dev, "buffer overrun\n");
-+		s->async->events |= COMEDI_CB_OVERFLOW;
-+		nsamples = max_samples;
-+	}
-+
-+	if (nsamples == 0)
-+		return 0;
-+
-+	nbytes = comedi_samples_to_bytes(s, nsamples);
-+	nbytes = _comedi_buf_write_alloc(s, nbytes);
-+	comedi_buf_memcpy_to(s, data, nbytes);
-+	_comedi_buf_write_free(s, nbytes);
-+	_comedi_inc_scan_progress(s, nbytes);
-+	s->async->events |= COMEDI_CB_BLOCK;
-+
-+	return nbytes;
-+}
-+
- /**
-  * comedi_buf_write_samples() - Write sample data to COMEDI buffer
-  * @s: COMEDI subdevice.
-@@ -577,35 +670,43 @@ static void comedi_buf_memcpy_from(struct comedi_subdevice *s,
-  */
- unsigned int comedi_buf_write_samples(struct comedi_subdevice *s,
- 				      const void *data, unsigned int nsamples)
-+{
-+	unsigned int nbytes;
-+
-+	if (comedi_get_is_subdevice_running(s)) {
-+		nbytes = _comedi_buf_write_samples(s, data, nsamples);
-+		comedi_put_is_subdevice_running(s);
-+	} else {
-+		nbytes = 0;
-+	}
-+	return nbytes;
-+}
-+EXPORT_SYMBOL_GPL(comedi_buf_write_samples);
-+
-+static unsigned int _comedi_buf_read_samples(struct comedi_subdevice *s,
-+					    void *data, unsigned int nsamples)
- {
- 	unsigned int max_samples;
- 	unsigned int nbytes;
- 
--	/*
--	 * Make sure there is enough room in the buffer for all the samples.
--	 * If not, clamp the nsamples to the number that will fit, flag the
--	 * buffer overrun and add the samples that fit.
--	 */
--	max_samples = comedi_bytes_to_samples(s, comedi_buf_write_n_unalloc(s));
--	if (nsamples > max_samples) {
--		dev_warn(s->device->class_dev, "buffer overrun\n");
--		s->async->events |= COMEDI_CB_OVERFLOW;
-+	/* clamp nsamples to the number of full samples available */
-+	max_samples = comedi_bytes_to_samples(s,
-+					      _comedi_buf_read_n_available(s));
-+	if (nsamples > max_samples)
- 		nsamples = max_samples;
--	}
- 
- 	if (nsamples == 0)
- 		return 0;
- 
--	nbytes = comedi_buf_write_alloc(s,
-+	nbytes = _comedi_buf_read_alloc(s,
- 					comedi_samples_to_bytes(s, nsamples));
--	comedi_buf_memcpy_to(s, data, nbytes);
--	comedi_buf_write_free(s, nbytes);
--	comedi_inc_scan_progress(s, nbytes);
-+	comedi_buf_memcpy_from(s, data, nbytes);
-+	_comedi_buf_read_free(s, nbytes);
-+	_comedi_inc_scan_progress(s, nbytes);
- 	s->async->events |= COMEDI_CB_BLOCK;
- 
- 	return nbytes;
- }
--EXPORT_SYMBOL_GPL(comedi_buf_write_samples);
- 
- /**
-  * comedi_buf_read_samples() - Read sample data from COMEDI buffer
-@@ -624,25 +725,14 @@ EXPORT_SYMBOL_GPL(comedi_buf_write_samples);
- unsigned int comedi_buf_read_samples(struct comedi_subdevice *s,
- 				     void *data, unsigned int nsamples)
- {
--	unsigned int max_samples;
- 	unsigned int nbytes;
- 
--	/* clamp nsamples to the number of full samples available */
--	max_samples = comedi_bytes_to_samples(s,
--					      comedi_buf_read_n_available(s));
--	if (nsamples > max_samples)
--		nsamples = max_samples;
--
--	if (nsamples == 0)
--		return 0;
--
--	nbytes = comedi_buf_read_alloc(s,
--				       comedi_samples_to_bytes(s, nsamples));
--	comedi_buf_memcpy_from(s, data, nbytes);
--	comedi_buf_read_free(s, nbytes);
--	comedi_inc_scan_progress(s, nbytes);
--	s->async->events |= COMEDI_CB_BLOCK;
--
-+	if (comedi_get_is_subdevice_running(s)) {
-+		nbytes = _comedi_buf_read_samples(s, data, nsamples);
-+		comedi_put_is_subdevice_running(s);
-+	} else {
-+		nbytes = 0;
-+	}
- 	return nbytes;
- }
- EXPORT_SYMBOL_GPL(comedi_buf_read_samples);
-diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
-index 595723e24c74..95663b8f89b6 100644
---- a/drivers/comedi/comedi_fops.c
-+++ b/drivers/comedi/comedi_fops.c
-@@ -1206,15 +1206,15 @@ static int do_bufinfo_ioctl(struct comedi_device *dev,
- 	if (!(async->cmd.flags & CMDF_WRITE)) {
- 		/* command was set up in "read" direction */
- 		if (bi.bytes_read) {
--			comedi_buf_read_alloc(s, bi.bytes_read);
--			bi.bytes_read = comedi_buf_read_free(s, bi.bytes_read);
-+			_comedi_buf_read_alloc(s, bi.bytes_read);
-+			bi.bytes_read = _comedi_buf_read_free(s, bi.bytes_read);
- 		}
- 		/*
- 		 * If nothing left to read, and command has stopped, and
- 		 * {"read" position not updated or command stopped normally},
- 		 * then become non-busy.
- 		 */
--		if (comedi_buf_read_n_available(s) == 0 &&
-+		if (_comedi_buf_read_n_available(s) == 0 &&
- 		    !comedi_is_runflags_running(runflags) &&
- 		    (bi.bytes_read == 0 ||
- 		     !comedi_is_runflags_in_error(runflags))) {
-@@ -1231,9 +1231,9 @@ static int do_bufinfo_ioctl(struct comedi_device *dev,
- 			if (comedi_is_runflags_in_error(runflags))
- 				retval = -EPIPE;
- 		} else if (bi.bytes_written) {
--			comedi_buf_write_alloc(s, bi.bytes_written);
-+			_comedi_buf_write_alloc(s, bi.bytes_written);
- 			bi.bytes_written =
--			    comedi_buf_write_free(s, bi.bytes_written);
-+			    _comedi_buf_write_free(s, bi.bytes_written);
- 		}
- 		bi.bytes_read = 0;
- 	}
-@@ -2574,7 +2574,7 @@ static __poll_t comedi_poll(struct file *file, poll_table *wait)
- 		poll_wait(file, &s->async->wait_head, wait);
- 		if (s->busy != file || !comedi_is_subdevice_running(s) ||
- 		    (s->async->cmd.flags & CMDF_WRITE) ||
--		    comedi_buf_read_n_available(s) > 0)
-+		    _comedi_buf_read_n_available(s) > 0)
- 			mask |= EPOLLIN | EPOLLRDNORM;
- 	}
- 
-@@ -2707,7 +2707,7 @@ static ssize_t comedi_write(struct file *file, const char __user *buf,
- 			break;
- 
- 		/* Allocate all free buffer space. */
--		comedi_buf_write_alloc(s, async->prealloc_bufsz);
-+		_comedi_buf_write_alloc(s, async->prealloc_bufsz);
- 		m = comedi_buf_write_n_allocated(s);
- 		n = min_t(size_t, m, nbytes);
- 
-@@ -2735,7 +2735,7 @@ static ssize_t comedi_write(struct file *file, const char __user *buf,
- 			n -= m;
- 			retval = -EFAULT;
- 		}
--		comedi_buf_write_free(s, n);
-+		_comedi_buf_write_free(s, n);
- 
- 		count += n;
- 		nbytes -= n;
-@@ -2821,7 +2821,7 @@ static ssize_t comedi_read(struct file *file, char __user *buf, size_t nbytes,
- 	while (count == 0 && !retval) {
- 		set_current_state(TASK_INTERRUPTIBLE);
- 
--		m = comedi_buf_read_n_available(s);
-+		m = _comedi_buf_read_n_available(s);
- 		n = min_t(size_t, m, nbytes);
- 
- 		if (n == 0) {
-@@ -2861,8 +2861,8 @@ static ssize_t comedi_read(struct file *file, char __user *buf, size_t nbytes,
- 			retval = -EFAULT;
- 		}
- 
--		comedi_buf_read_alloc(s, n);
--		comedi_buf_read_free(s, n);
-+		_comedi_buf_read_alloc(s, n);
-+		_comedi_buf_read_free(s, n);
- 
- 		count += n;
- 		nbytes -= n;
-@@ -2896,7 +2896,7 @@ static ssize_t comedi_read(struct file *file, char __user *buf, size_t nbytes,
- 		    s == new_s && new_s->async == async && s->busy == file &&
- 		    !(async->cmd.flags & CMDF_WRITE) &&
- 		    !comedi_is_subdevice_running(s) &&
--		    comedi_buf_read_n_available(s) == 0)
-+		    _comedi_buf_read_n_available(s) == 0)
- 			do_become_nonbusy(dev, s);
- 		mutex_unlock(&dev->mutex);
- 	}
-@@ -3361,18 +3361,7 @@ static const struct file_operations comedi_fops = {
- 	.llseek = noop_llseek,
- };
- 
--/**
-- * comedi_event() - Handle events for asynchronous COMEDI command
-- * @dev: COMEDI device.
-- * @s: COMEDI subdevice.
-- * Context: in_interrupt() (usually), @s->spin_lock spin-lock not held.
-- *
-- * If an asynchronous COMEDI command is active on the subdevice, process
-- * any %COMEDI_CB_... event flags that have been set, usually by an
-- * interrupt handler.  These may change the run state of the asynchronous
-- * command, wake a task, and/or send a %SIGIO signal.
-- */
--void comedi_event(struct comedi_device *dev, struct comedi_subdevice *s)
-+void _comedi_event(struct comedi_device *dev, struct comedi_subdevice *s)
- {
- 	struct comedi_async *async = s->async;
- 	unsigned int events;
-@@ -3408,6 +3397,25 @@ void comedi_event(struct comedi_device *dev, struct comedi_subdevice *s)
- 	if (si_code)
- 		kill_fasync(&dev->async_queue, SIGIO, si_code);
- }
-+
-+/**
-+ * comedi_event() - Handle events for asynchronous COMEDI command
-+ * @dev: COMEDI device.
-+ * @s: COMEDI subdevice.
-+ * Context: in_interrupt() (usually), @s->spin_lock spin-lock not held.
-+ *
-+ * If an asynchronous COMEDI command is active on the subdevice, process
-+ * any %COMEDI_CB_... event flags that have been set, usually by an
-+ * interrupt handler.  These may change the run state of the asynchronous
-+ * command, wake a task, and/or send a %SIGIO signal.
-+ */
-+void comedi_event(struct comedi_device *dev, struct comedi_subdevice *s)
-+{
-+	if (comedi_get_is_subdevice_running(s)) {
-+		comedi_event(dev, s);
-+		comedi_put_is_subdevice_running(s);
-+	}
-+}
- EXPORT_SYMBOL_GPL(comedi_event);
- 
- /* Note: the ->mutex is pre-locked on successful return */
-diff --git a/drivers/comedi/comedi_internal.h b/drivers/comedi/comedi_internal.h
-index cf10ba016ebc..41a3b09f8f05 100644
---- a/drivers/comedi/comedi_internal.h
-+++ b/drivers/comedi/comedi_internal.h
-@@ -36,6 +36,18 @@ struct comedi_buf_map *
- comedi_buf_map_from_subdev_get(struct comedi_subdevice *s);
- unsigned int comedi_buf_write_n_available(struct comedi_subdevice *s);
- unsigned int comedi_buf_write_n_allocated(struct comedi_subdevice *s);
-+unsigned int _comedi_buf_write_alloc(struct comedi_subdevice *s,
-+				     unsigned int nbytes);
-+unsigned int _comedi_buf_write_free(struct comedi_subdevice *s,
-+				    unsigned int nbytes);
-+unsigned int _comedi_buf_read_n_available(struct comedi_subdevice *s);
-+unsigned int _comedi_buf_read_alloc(struct comedi_subdevice *s,
-+				    unsigned int nbytes);
-+unsigned int _comedi_buf_read_free(struct comedi_subdevice *s,
-+				   unsigned int nbytes);
-+void _comedi_inc_scan_progress(struct comedi_subdevice *s,
-+			       unsigned int num_bytes);
-+void _comedi_event(struct comedi_device *dev, struct comedi_subdevice *s);
- void comedi_device_cancel_all(struct comedi_device *dev);
- bool comedi_can_auto_free_spriv(struct comedi_subdevice *s);
- 
-diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
-index fd6e6cbe47ad..69cd2a253c66 100644
---- a/drivers/comedi/drivers.c
-+++ b/drivers/comedi/drivers.c
-@@ -441,6 +441,13 @@ unsigned int comedi_bytes_per_scan_cmd(struct comedi_subdevice *s,
- }
- EXPORT_SYMBOL_GPL(comedi_bytes_per_scan_cmd);
- 
-+static unsigned int _comedi_bytes_per_scan(struct comedi_subdevice *s)
-+{
-+	struct comedi_cmd *cmd = &s->async->cmd;
-+
-+	return comedi_bytes_per_scan_cmd(s, cmd);
-+}
-+
- /**
-  * comedi_bytes_per_scan() - Get length of asynchronous command "scan" in bytes
-  * @s: COMEDI subdevice.
-@@ -458,9 +465,16 @@ EXPORT_SYMBOL_GPL(comedi_bytes_per_scan_cmd);
-  */
- unsigned int comedi_bytes_per_scan(struct comedi_subdevice *s)
- {
--	struct comedi_cmd *cmd = &s->async->cmd;
-+	unsigned int num_bytes;
- 
--	return comedi_bytes_per_scan_cmd(s, cmd);
-+	if (comedi_get_is_subdevice_running(s)) {
-+		num_bytes = _comedi_bytes_per_scan(s);
-+		comedi_put_is_subdevice_running(s);
-+	} else {
-+		/* Use nomimal, single sample scan length. */
-+		num_bytes = comedi_samples_to_bytes(s, 1);
-+	}
-+	return num_bytes;
- }
- EXPORT_SYMBOL_GPL(comedi_bytes_per_scan);
- 
-@@ -482,6 +496,17 @@ static unsigned int __comedi_nscans_left(struct comedi_subdevice *s,
- 	return nscans;
- }
- 
-+static unsigned int _comedi_nscans_left(struct comedi_subdevice *s,
-+					unsigned int nscans)
-+{
-+	if (nscans == 0) {
-+		unsigned int nbytes = _comedi_buf_read_n_available(s);
-+
-+		nscans = nbytes / _comedi_bytes_per_scan(s);
-+	}
-+	return __comedi_nscans_left(s, nscans);
-+}
-+
- /**
-  * comedi_nscans_left() - Return the number of scans left in the command
-  * @s: COMEDI subdevice.
-@@ -499,25 +524,18 @@ static unsigned int __comedi_nscans_left(struct comedi_subdevice *s,
- unsigned int comedi_nscans_left(struct comedi_subdevice *s,
- 				unsigned int nscans)
- {
--	if (nscans == 0) {
--		unsigned int nbytes = comedi_buf_read_n_available(s);
--
--		nscans = nbytes / comedi_bytes_per_scan(s);
-+	if (comedi_get_is_subdevice_running(s)) {
-+		nscans = _comedi_nscans_left(s, nscans);
-+		comedi_put_is_subdevice_running(s);
-+	} else {
-+		nscans = 0;
- 	}
--	return __comedi_nscans_left(s, nscans);
-+	return nscans;
- }
- EXPORT_SYMBOL_GPL(comedi_nscans_left);
- 
--/**
-- * comedi_nsamples_left() - Return the number of samples left in the command
-- * @s: COMEDI subdevice.
-- * @nsamples: The expected number of samples.
-- *
-- * Returns the number of samples remaining to complete the command, or the
-- * specified expected number of samples (@nsamples), whichever is fewer.
-- */
--unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
--				  unsigned int nsamples)
-+static unsigned int _comedi_nsamples_left(struct comedi_subdevice *s,
-+					  unsigned int nsamples)
- {
- 	struct comedi_async *async = s->async;
- 	struct comedi_cmd *cmd = &async->cmd;
-@@ -538,24 +556,34 @@ unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
- 		return samples_left;
- 	return nsamples;
- }
--EXPORT_SYMBOL_GPL(comedi_nsamples_left);
- 
- /**
-- * comedi_inc_scan_progress() - Update scan progress in asynchronous command
-+ * comedi_nsamples_left() - Return the number of samples left in the command
-  * @s: COMEDI subdevice.
-- * @num_bytes: Amount of data in bytes to increment scan progress.
-+ * @nsamples: The expected number of samples.
-  *
-- * Increments the scan progress by the number of bytes specified by @num_bytes.
-- * If the scan progress reaches or exceeds the scan length in bytes, reduce
-- * it modulo the scan length in bytes and set the "end of scan" asynchronous
-- * event flag (%COMEDI_CB_EOS) to be processed later.
-+ * Returns the number of samples remaining to complete the command, or the
-+ * specified expected number of samples (@nsamples), whichever is fewer.
-  */
--void comedi_inc_scan_progress(struct comedi_subdevice *s,
--			      unsigned int num_bytes)
-+unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
-+				  unsigned int nsamples)
-+{
-+	if (comedi_get_is_subdevice_running(s)) {
-+		nsamples = _comedi_nsamples_left(s, nsamples);
-+		comedi_put_is_subdevice_running(s);
-+	} else {
-+		nsamples = 0;
-+	}
-+	return nsamples;
-+}
-+EXPORT_SYMBOL_GPL(comedi_nsamples_left);
-+
-+void _comedi_inc_scan_progress(struct comedi_subdevice *s,
-+			       unsigned int num_bytes)
- {
- 	struct comedi_async *async = s->async;
- 	struct comedi_cmd *cmd = &async->cmd;
--	unsigned int scan_length = comedi_bytes_per_scan(s);
-+	unsigned int scan_length = _comedi_bytes_per_scan(s);
- 
- 	/* track the 'cur_chan' for non-SDF_PACKED subdevices */
- 	if (!(s->subdev_flags & SDF_PACKED)) {
-@@ -576,8 +604,43 @@ void comedi_inc_scan_progress(struct comedi_subdevice *s,
- 		async->events |= COMEDI_CB_EOS;
- 	}
- }
-+
-+/**
-+ * comedi_inc_scan_progress() - Update scan progress in asynchronous command
-+ * @s: COMEDI subdevice.
-+ * @num_bytes: Amount of data in bytes to increment scan progress.
-+ *
-+ * Increments the scan progress by the number of bytes specified by @num_bytes.
-+ * If the scan progress reaches or exceeds the scan length in bytes, reduce
-+ * it modulo the scan length in bytes and set the "end of scan" asynchronous
-+ * event flag (%COMEDI_CB_EOS) to be processed later.
-+ */
-+void comedi_inc_scan_progress(struct comedi_subdevice *s,
-+			      unsigned int num_bytes)
-+{
-+	if (comedi_get_is_subdevice_running(s)) {
-+		_comedi_inc_scan_progress(s, num_bytes);
-+		comedi_put_is_subdevice_running(s);
-+	}
-+}
- EXPORT_SYMBOL_GPL(comedi_inc_scan_progress);
- 
-+static unsigned int _comedi_handle_events(struct comedi_device *dev,
-+					  struct comedi_subdevice *s)
-+{
-+	unsigned int events = s->async->events;
-+
-+	if (events == 0)
-+		return events;
-+
-+	if ((events & COMEDI_CB_CANCEL_MASK) && s->cancel)
-+		s->cancel(dev, s);
-+
-+	_comedi_event(dev, s);
-+
-+	return events;
-+}
-+
- /**
-  * comedi_handle_events() - Handle events and possibly stop acquisition
-  * @dev: COMEDI device.
-@@ -597,16 +660,14 @@ EXPORT_SYMBOL_GPL(comedi_inc_scan_progress);
- unsigned int comedi_handle_events(struct comedi_device *dev,
- 				  struct comedi_subdevice *s)
- {
--	unsigned int events = s->async->events;
--
--	if (events == 0)
--		return events;
--
--	if ((events & COMEDI_CB_CANCEL_MASK) && s->cancel)
--		s->cancel(dev, s);
--
--	comedi_event(dev, s);
-+	unsigned int events;
- 
-+	if (comedi_get_is_subdevice_running(s)) {
-+		events = _comedi_handle_events(dev, s);
-+		comedi_put_is_subdevice_running(s);
-+	} else {
-+		events = 0;
-+	}
- 	return events;
- }
- EXPORT_SYMBOL_GPL(comedi_handle_events);
--- 
-2.51.0
+These three should be merged into the two functions so they stand
+alone. These sets have to be made in the next patch, doesn't make
+sense to open code them in callers.
 
+Like this, it is simple and readable. It directly answers the question
+'what bits are set when the driver creates this kind of DTE'
+
+static void set_dte_gcr3_table(struct amd_iommu *iommu,
+			       struct iommu_dev_data *dev_data,
+			       struct dev_table_entry *target)
+{
+	struct gcr3_tbl_info *gcr3_info = &dev_data->gcr3_info;
+	u64 gcr3 = iommu_virt_to_phys(gcr3_info->gcr3_tbl);
+
+	target->data[0] |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_TV |
+			   DTE_FLAG_GV | FIELD_PREP(DTE_GLX, gcr3_info->glx) |
+			   FIELD_PREP(DTE_GCR3_14_12, gcr3 >> 12) |
+			   (dev_data->ats_enabled ? DTE_FLAG_IOTLB : 0) |
+			   (pdom_is_v2_pgtbl_mode(dev_data->domain) ?
+				    target->data[0] |= DTE_FLAG_GIOV :
+				    0);
+
+	target->data[1] |= FIELD_PREP(DTE_GCR3_30_15, gcr3 >> 15) |
+			   FIELD_PREP(DTE_GCR3_51_31, gcr3 >> 31) |
+			   FIELD_PREP(DTE_DOMID_MASK, dev_data->gcr3_info.domid);
+
+	/* Guest page table can only support 4 and 5 levels  */
+	if (amd_iommu_gpt_level == PAGE_MODE_5_LEVEL)
+		target->data[2] |= FIELD_PREP(DTE_GPT_LEVEL_MASK, GUEST_PGTABLE_5_LEVEL);
+	else
+		target->data[2] |= FIELD_PREP(DTE_GPT_LEVEL_MASK, GUEST_PGTABLE_4_LEVEL);
+}
+
+void amd_iommu_set_dte_v1(struct iommu_dev_data *dev_data,
+			  struct protection_domain *domain,
+			  struct dev_table_entry *new)
+{
+	u64 htrp = iommu_virt_to_phys(domain->iop.root);
+
+	new->data[0] |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_TV |
+			FIELD_PREP(DTE_MODE_MASK, domain->iop.mode) |
+			FIELD_PREP(DTE_HOST_TRP, htrp >> 12) |
+			(dev_data->ats_enabled ? DTE_FLAG_IOTLB : 0) |
+			(domain->dirty_tracking ? DTE_FLAG_HAD : 0);
+	new.data[1] |= FIELD_PREP(DTE_DOMID_MASK, domain->id);
+}
+
+(It is nice to sort the fields by the spec order, I didn't do that)
+
+Looks like an identity one is needed too:
+
+void set_dte_identity(struct dev_table_entry *new)
+{
+	new->data[0] |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_TV |
+			(dev_data->ats_enabled ? DTE_FLAG_IOTLB : 0);
+}
+
+Then the whole function is pretty much just:
+
+	amd_iommu_make_clear_dte(dev_data, &new);
+	if (gcr3_info && gcr3_info->gcr3_tbl)
+		set_dte_gcr3_table(dev_data, &new);
+	else if (domain->domain.type == IOMMU_DOMAIN_IDENTITY)
+		set_dte_identity(&new)
+	else if (domain->domain.type == IOMMU_DOMAIN_PAGING && io.mode == V1)
+		amd_iommu_set_dte_v1(dev_data, domain, &new);
+	else
+		WARN_ON(true);
+
+?
+
+(though how does IDENTITY on a device with a PASID installed work?)
+
+Jason
 
