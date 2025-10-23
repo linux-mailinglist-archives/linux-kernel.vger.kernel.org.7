@@ -1,227 +1,173 @@
-Return-Path: <linux-kernel+bounces-866520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F1DBFFFD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:45:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C46BFFFD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA07D188CD99
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:45:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01B09188B608
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E8C302149;
-	Thu, 23 Oct 2025 08:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E475E2F39C9;
+	Thu, 23 Oct 2025 08:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="k6mnvdMx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EXhO1lOU";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ruW/HzMQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/Z7/KBwY"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NacakziX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59463019B5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EF93019A1
 	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761209090; cv=none; b=OLs7sjw069QUJnpQf5VwMx18UaMXdlrz9LQFBokyDAsgVJXcDyxW8rqRe0zSwflqEMwCZmSvxALGk1FA8QDvHCz+M9PiRrkySmsLPdyUb5WgF/csniWRhQPoVxS16BxUB38Jxxyb+ulULmqbi57wb/1L0qvLcVF2wa63r9PSkNM=
+	t=1761209090; cv=none; b=rtH41CaLSrQOtY/+FbVQ24LijJQS+7w7INuWJa+gaX9JwudKtBpi0L1yPS7RtPqHXDvlu8Jzesa03MDl2khQgTyQl6U0zfC6J4hn7ERXDc1bR4fUwCV4UzJTpxEHxVPd8Xjh9EHUBEar4qysWJj6E+svQcUqIwVnFJdGfgTBI18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761209090; c=relaxed/simple;
-	bh=F3OTy4b16LzApbKeCK9CQdP9sQX2nXedga0zslOc0IU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i4JaiTs9Ro3eZ2idCt6OQ7UCwF/hnlAq4giPQhyk6NFhEklEsf2rcsvvrwimMktQ3o6TVtfUt5s7Wprd5D2Tf6GExP8+E7ZjF8yD2L6Xblt/rLllbYug0NGY2e3K7fTAwZ3HI4y3Rnq8L8tyNJohMyMChGoEIiHqvUhaCLN7zsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=k6mnvdMx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EXhO1lOU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ruW/HzMQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/Z7/KBwY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9B9691F750;
-	Thu, 23 Oct 2025 08:44:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761209082; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uT++X15nR02aN95TsJbUkl1xeZRDQ6iRqUBMrz4vKM0=;
-	b=k6mnvdMxOOpSPNL5d2igOGf95Zo+FrXzFx+SdSmGphG+ZFzpd7WoJd0t7wSiq6uGgzzaib
-	2RS6jcTkrBE92rra2+lLDAPXeti6l0f2JC1lX3OWZHpALMR4MvykmNvGU93fcQqeJ7cd76
-	vUDd+XLiizeNFG3q0FPqiJqFppDy+a0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761209082;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uT++X15nR02aN95TsJbUkl1xeZRDQ6iRqUBMrz4vKM0=;
-	b=EXhO1lOUUuQqZySuP3Sw8w+L8D1JUVHgTaNZ0BYilxnYXBf107whjOnl85sLulm9H32B2T
-	XzhJmc1lXOv0y7Dw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761209078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uT++X15nR02aN95TsJbUkl1xeZRDQ6iRqUBMrz4vKM0=;
-	b=ruW/HzMQZkLDzw9pPT9qqsgQ0l7ce1+1ZbobIqtCys0ORZcwxiPtXlWRt+qmWhfYSA2/ZJ
-	zal2xGJmEwKqxFVE5MS/6yG0/txhoZiFetZx8kukJC6lu40r9XguMB67JzdwxUi1nAWJuZ
-	EBtVK9GjJCJgcJVauxDyEq6BJ65mROU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761209078;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uT++X15nR02aN95TsJbUkl1xeZRDQ6iRqUBMrz4vKM0=;
-	b=/Z7/KBwYMiXRHJ6O62WTvJZr2cvlPQQC19KsgBcotqbmmsRxEzzGPTZl1eTKfPtYeZOtH/
-	Zs0dyQyvMc5H0ADQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A9F61136CF;
-	Thu, 23 Oct 2025 08:44:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fiJAJvPq+WhuFQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Thu, 23 Oct 2025 08:44:35 +0000
-Date: Thu, 23 Oct 2025 09:44:34 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	David Hildenbrand <david@redhat.com>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, 
-	Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-doc@vger.kernel.org, ziy@nvidia.com, 
-	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com, 
-	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org, 
-	willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com, 
-	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
-	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, kas@kernel.org, aarcange@redhat.com, 
-	raquini@redhat.com, anshuman.khandual@arm.com, catalin.marinas@arm.com, 
-	tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, 
-	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com, 
-	richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz, rppt@kernel.org, 
-	jannh@google.com, Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: Re: [PATCH v12 mm-new 15/15] Documentation: mm: update the admin
- guide for mTHP collapse
-Message-ID: <c62m3tyr6co7jqdrwhtp7exnewhogxtife7g6yh4gve7gqecz6@b5xpocyvifxp>
-References: <20251022183717.70829-1-npache@redhat.com>
- <20251022183717.70829-16-npache@redhat.com>
- <bba40f08-1b87-6b57-0e10-6e96e4d7bde6@gentwo.org>
- <ed0887eb-6124-44ab-9d1f-1e87e9640e14@redhat.com>
- <666ee834-396d-4a7c-be89-96c58b5c2ea8@lucifer.local>
+	bh=TzxMEAEvBvay0xnUwiJ4rg2i0h0+YPV0RGQEHFd6Xsw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=B0y1kgo2v1p35Cq2zfm1FMMNSottAyIYPcX5YzFVzANZKWB+I+nOAE+UOTuRopNXrJhjU98FebCChh2yPJRpsCSYqzL5oAxU44MogO+XEGjZbeJINdeZKNRdBwhp0SkcH2YWtRaoYQaSQzB+8qjzMutX3BogIHMR3IHC3qDENKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NacakziX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6UGt6018586
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:44:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=eAilDezzajor08e+n9AuRt
+	0YHOook8LfrgI0jRV38Qc=; b=NacakziX6eeQ/vHN2PjYgKzwr7Dfv0bBDI2Sqj
+	yN5f3mKZdDRmf2FWbQzPCAKsKTRE8ZCqWoXtIuwBrRpfJNIhhH7kVz71wlTFO7MR
+	gfGDmt+rTYBhhEAMW/tI/TEBrlo7tekb3f/QDGCWOfHUID9WMKuMm9RFheKx8nbL
+	KmryD+bB29247LS5m0f1uagsp1Z3MLc/jqliCN8U3b2d2HJ1s17BhnxqAdbMuJeB
+	AdUOcz9+c6+a2EUtA4Orm+7/ZyYKCG08sgvJorJg/dbRszd0c6Byuuo008+J+0jo
+	yUmZokCWG/U1Aqrr9FhhO5QAAyr291fbPBJA2UEU1rwTHrqw==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v08pqwje-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:44:47 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b62ebb4e7c7so449649a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:44:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761209086; x=1761813886;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eAilDezzajor08e+n9AuRt0YHOook8LfrgI0jRV38Qc=;
+        b=p2Hidi7ZbF7umM9dAfZEtZBipKFqr55837FdKkvqqEB0Tq3/1ao3BRBdGabbrZOGw1
+         hB4QcQ9ohOegeRnYCxXKxIG4TvRBtGYiduFyqr6mUdZMMyz+mpsLs2PoieagD46mavCB
+         0pKDqL9MXxYBakNFOCihoOMshASJWLryxsFl5C6BR9N+DEA+FeNWYc5cfvGc146oOW1j
+         u/LBCfojALOYI+GOVWKDbIIBXNibNZmfd20FQA4MITVTlbNskS+79u6f6I27CxPhj49a
+         MwJAaNxdqwhZdXxQjLAkBISFqrxFK94u9xMJQ6bSn9YCtVj/4J/+IxLOENaQRau7MXfR
+         3MZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVj34jIT6F6+xHaL+LNskOkZ+RhOTPAeotOr2Uz20DB+LqTmtFLJwT8f60o5O39gQAr4XTqswSrS2Z/yyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfSOaBllCyo1p1DLJr0Uiy+CgLFr1RvNUR4ZBIqC66oZZjj+Hl
+	FYJwO/+5H9btkh1HAe4k1fokXKdIKAk9sp+TCR3LS15TU+bY8Wn/+vsdpgEIzt5B56crQqEE5d4
+	yckMKlq+1idR56mZN8Ko92XUdX1MyjupfvT3ThnBCY1WuYw93qBCb6TAG7eV+qihdTezeEUm2fI
+	g=
+X-Gm-Gg: ASbGncvTuNAeawRg2BcOUpl5DrurcndzO3DjBAGKFIvnNqC8Dg4lkNidrJgO0YXBZhq
+	qAgZ+vwmAp+s7oJbjb+yHI3mq9Mqs/K9pmNx5uYGNRSeoPqb0BvFg1gdOh0Id1qOX7UzTRjqdyH
+	IJ9xwV9/A8mndRUtA3d+SopgP6LQOsZcahEGm7NUGft5VmPjR44mE80B6oprGtmqjO3eSzyXrSO
+	Qp67+C7hZDSIYHD7tCO7on9vHXgPLu2v39ChQhKcoCP9aGHomBzjWbD1R5bL78NmYbSuDwHlvUS
+	i/ovkis56+UACNjs4Ysx227i943pLep+JBb/XLcabuM9VUTI7TJXNGBG6/aozu1l0Zhg6/OZBry
+	stVwEhKySf0tOLpYFSHqtoSGsleKED3AoaQ==
+X-Received: by 2002:a17:90b:1e08:b0:32e:f1c:e778 with SMTP id 98e67ed59e1d1-33fafb9755cmr2113278a91.3.1761209085817;
+        Thu, 23 Oct 2025 01:44:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhmMIxVjdwZwB+RL6W4zlRgSWTS+YxPr19/elZcrqqzsvZ7foLK82FOM3+gPdgpiajIHnRSw==
+X-Received: by 2002:a17:90b:1e08:b0:32e:f1c:e778 with SMTP id 98e67ed59e1d1-33fafb9755cmr2113253a91.3.1761209085336;
+        Thu, 23 Oct 2025 01:44:45 -0700 (PDT)
+Received: from hu-jprakash-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4c056fbsm1391414a12.17.2025.10.23.01.44.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 01:44:44 -0700 (PDT)
+From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+Subject: [PATCH v2 0/2] Add rpmh regulator support for Kaanapali
+Date: Thu, 23 Oct 2025 14:14:35 +0530
+Message-Id: <20251023-pmr735d_regulator-v2-0-452e1b28cd38@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <666ee834-396d-4a7c-be89-96c58b5c2ea8@lucifer.local>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gentwo.org,redhat.com,vger.kernel.org,kvack.org,nvidia.com,linux.alibaba.com,oracle.com,arm.com,lwn.net,goodmis.org,kernel.org,efficios.com,linux-foundation.org,infradead.org,huawei.com,gmail.com,linux.intel.com,os.amperecomputing.com,suse.de,suse.cz,google.com,cmpxchg.org,suse.com,linux.dev];
-	R_RATELIMIT(0.00)[to_ip_from(RL9fy6bbe9bsqg6ca1r59pbo74)];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[50];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPTq+WgC/2WO3WrDMAxGXyX4eir+SZu4jLH3KGV4sZyYxUkqN
+ 6Gl9N2nJRcb7EbwCemc7yEyUsQsjsVDEC4xx3HgoF8K0XRuaBGi5yy01HsltYEpUWX2/oOwnXt
+ 3HQmC18GFSh+UCYL/JsIQbyvzdObcxcxn91WxqJ/tSpNWl/A1TPBLWhRI8LbxaJ2tXVm+jznvL
+ rPrmzGlHQ9xfm4GwsvMZa+bRiTM2a1lj8XrRlc1tP09zQQ0pe6PxVNckGWGZaouG2kPVf2J5p/
+ sjW3Pb0ytMOkiAQAA
+X-Change-ID: 20251023-pmr735d_regulator-fd2faf72613f
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
+        jingyi.wang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        kamal.wadhwa@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        dmitry.baryshkov@oss.qualcomm.com, aiqun.yu@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761209080; l=1248;
+ i=jishnu.prakash@oss.qualcomm.com; s=20251014; h=from:subject:message-id;
+ bh=TzxMEAEvBvay0xnUwiJ4rg2i0h0+YPV0RGQEHFd6Xsw=;
+ b=FMd18hiG+bzBkvhzRSFZlZ2mE3mYIpBjvVp3VRQdFwP4wrEovlSF7XYCV4RF5wR9KwBHbUjMJ
+ 7gqqS8lCcRTD5k97sRZbXs55k8+QKekmE7d+8cLUjyHZ00tbXnwHbiA
+X-Developer-Key: i=jishnu.prakash@oss.qualcomm.com; a=ed25519;
+ pk=g89pXdLVwRjdTeQ+uX1QzvBO346E3hQAc1N7fcTXgmk=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMCBTYWx0ZWRfX1p/3+g67n/Fh
+ sRwy1KzcAcBRqATJ2Zyf2D3oC/nqE7SC3agrjxfYIQnC869fdvegj9Fq4dU3SGzwuB5tBAV15I5
+ rgkeylsXHxFpSpuF4F+uKTiITj6TzT47oGNBcLPiD39fr+AQbn8iB4CU/KvtC70A9zHpLHwQuqQ
+ bZnMXWVvxeP79vVa8cGxTwgath2nleewK7YdueyQVRiXOpxaOicIfmRIr3EXactJrA708qG7YBp
+ vN2FxgUoDqfdTpF9wpR2hP/jdZETWSwpjUblbiWOzhFN/pc22h4og6HAR47C5t4bA3+aSaIL/SS
+ 7eJiOHHYgDL/R0W6xq8YT00+aEipqJuh+hIrr1+MdYKu5ZPN7uam+gyVVcL0bIcjoqIAecv8zv3
+ Yrtq1+Eo/K0gvPLcWyudxjmcenXYLA==
+X-Proofpoint-GUID: MBdFyrn0FrQNlh59L7owPHDsLZEN7SLL
+X-Authority-Analysis: v=2.4 cv=Up1u9uwB c=1 sm=1 tr=0 ts=68f9eaff cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=Qzm-_OucbfTBZaCAGHUA:9 a=QEXdDO2ut3YA:10
+ a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-ORIG-GUID: MBdFyrn0FrQNlh59L7owPHDsLZEN7SLL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180000
 
-On Thu, Oct 23, 2025 at 09:00:10AM +0100, Lorenzo Stoakes wrote:
-> On Wed, Oct 22, 2025 at 10:22:08PM +0200, David Hildenbrand wrote:
-> > On 22.10.25 21:52, Christoph Lameter (Ampere) wrote:
-> > > On Wed, 22 Oct 2025, Nico Pache wrote:
-> > >
-> > > > Currently, madvise_collapse only supports collapsing to PMD-sized THPs +
-> > > > and does not attempt mTHP collapses. +
-> > >
-> > > madvise collapse is frequently used as far as I can tell from the THP
-> > > loads being tested. Could we support madvise collapse for mTHP?
-> >
-> > The big question is still how user space can communicate the desired order,
-> > and how we can not break existing users.
->
+Add rpmh regulator support for Kaanapali by adding PMR735D RPMh
+regulators.
 
-Do we want to let userspace communicate order? It seems like an extremely
-specific thing to do. A more simple&sane semantic could be something like:
-"MADV_COLLAPSE collapses a given [addr, addr+len] range into the highest
-order THP it can/thinks it should.". The implementation details of PMD or
-contpte or <...> are lost by the time we get to userspace.
+Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+---
+Changes in v2:
+- Rebased series and updated dependencies to fix merge conflict in v1.
+- Link to v1: https://lore.kernel.org/r/20250924-knp-regulator-v1-0-d9cde9a98a44@oss.qualcomm.com
 
-The man page itself is pretty vaguely written to allow us to do whatever
-we want. It sounds to me that allowing userspace to create arbitrary order
-mTHPs would be another pandora's box we shouldn't get into.
+---
+Jishnu Prakash (2):
+      regulator: dt-bindings: qcom,rpmh: Add support for PMR735D
+      regulator: rpmh-regulator: Add RPMH regulator support for PMR735D
 
-> Yes, and let's go one step at a time, this series still needs careful scrutiny
-> and we need to ensure the _fundamentals_ are in place for khugepaged before we
-> get into MADV_COLLAPSE :)
->
-> >
-> > So I guess there will definitely be some support to trigger collapse to mTHP
-> > in the future, the big question is through which interface. So it will
-> > happen after this series.
-> 
-> Yes.
-> 
-> >
-> > Maybe through process_madvise() where we have an additional parameter, I
-> > think that was what people discussed in the past.
-> 
-> I wouldn't absolutely love us doing that, given it is a general parameter so
-> would seem applicable to any madvise() option and could lead to confusion, also
-> process_madvise() was originally for cross-process madvise vector operations.
+ .../bindings/regulator/qcom,rpmh-regulator.yaml           | 14 ++++++++++++++
+ drivers/regulator/qcom-rpmh-regulator.c                   | 15 +++++++++++++++
+ 2 files changed, 29 insertions(+)
+---
+base-commit: efb26a23ed5f5dc3554886ab398f559dcb1de96b
+change-id: 20251023-pmr735d_regulator-fd2faf72613f
+prerequisite-message-id: <20250918-glymur-rpmh-regulator-driver-v3-0-184c09678be3@oss.qualcomm.com>
+prerequisite-patch-id: 3f755a759b681ac610fab3a3ab78cc50a82996f8
+prerequisite-patch-id: 7f1f8d6f460a3032a7696290b5138da7d37bc6e0
+prerequisite-patch-id: 264b32da8d734e44e6833d3ad5e7807f5fb88b59
+prerequisite-patch-id: 0ebdc2319e0615065e1a0fe44008f2473e4bdb24
 
-For what it's worth, it would probably not be too hard to devise a generic
-separation there between "generic flags" and "behavior-specific flags".
-And then stuff the desired THP order into MADV_COLLAPSE-specific flags.
-
-> 
-> I expanded this to make it applicable to the current process (and introduced
-> PIDFD_SELF to make that more sane), and SJ has optimised it across vector
-> operations (thanks SJ! :), but in general - it seems very weird to have
-> madvise() provide an operation that process_madvise() providse another version
-> of that has an extra parameter.
-> 
-> As usual we've painted ourselves into a corner with an API... :)
-
-But yes, I agree it would feel weird.
-
-> 
-> Perhaps we'll to accept the process_madvise() compromise and add
-> MADV_COLLAPSE_MHTP that only works with it or something.
-> 
-> Of course adding a new syscall isn't impossible... madvise2() not very appealing
-> however...
-
-It is my impression that process_madvise() is already madvise2(), but
-poorly named.
-
-> 
-> TL;DR I guess we'll deal with that when we come to it :)
-
-Amen :)
-
+Best regards,
 -- 
-Pedro
+Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+
 
