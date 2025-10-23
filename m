@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-867072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01640C01863
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:47:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74913C0187C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744E31898BA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:45:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFB3C1881E70
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2E0314A70;
-	Thu, 23 Oct 2025 13:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A328C31579F;
+	Thu, 23 Oct 2025 13:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bPUQUojb"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqry/oZO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A64303A1E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5A2274B44;
+	Thu, 23 Oct 2025 13:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227101; cv=none; b=UaRFa/QBSAxOENs1cBPpi1/2VoqZb4g0vtjndhGFWdipwskXrB3mrX+SL7k/OhucU3CF+8RlkI6A0YrMBppkI5hJyQdUwilXasEdqJJDQIy/mUKk7G2TXKhlGY6uPPmIDUUt5tFzcrjLup4tjc8wStAZlb6c2kQRXGoE/esyb2k=
+	t=1761227134; cv=none; b=Cgp5gVp2i5SsHhJIficR8qHZgI1QS82yHlTZPqmBUzOLY3/BeRyLZP3Ql/YQfbKtCjzgXjOuVbNZRjAtyzOz9YTnw7yUcmxi/BX4zqcDav/muiov0bbOmcRPXSg1Gdr0XrsMeUXTNGad1LBO3coubvdEaaSRPqTOELjZS4T3dcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227101; c=relaxed/simple;
-	bh=fQGPL2wAp1su4DsErlG30e9PExo6Wj5zg3lLPe3cQYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=owRvATkRS/3wJMjRO/A9d37f3fmXAwiVcLD8JprQYVFcSa5R4fYfMXemu6dY2FnAr6Vjrx/vX6rRXzVN8xDpLPsheilWNfvHXO96NY3+yiM1nntd5sc5q/hlC5Skuxzev/AEZ2S9HRkA0an73QePvhv9wahF5mxDiIA7CDegbiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bPUQUojb; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-471b80b994bso11803275e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761227098; x=1761831898; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FZkEHZ6BvBqCRscatYxdEEZ9hCJa4XN3mU8tPMYldOM=;
-        b=bPUQUojbqNMf+pd7a8jp0Iq5T1YdHmEWH65BHLUcoEKzV/ZEkYDhNCobgUJiVSU8LR
-         hgIWgmPhJl4MpavoNKM7F+CxJNMDwpXQM8eZGR54YQAwwagoWvczqahdH/C082JPEZz3
-         4Ks3QKiSabs3FPt817A3TtXWuLokBL957krRxWAvhQieiJy57vGWleyQrrfomxoVrVNY
-         1cXh0+a7aCH0RPiOByzke4Hi6CFS92NkzDEKufP4YcA4aGFUiOQiNPAC/EyEkJMmILDS
-         KOxJnAlhijLvQ/tYql3+eXk8odU6vJsVc/DolSnH0LrnDnRYzQG+J/eTq8SaVd6ojM9S
-         2WuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761227098; x=1761831898;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FZkEHZ6BvBqCRscatYxdEEZ9hCJa4XN3mU8tPMYldOM=;
-        b=I1QbhgiCYM6h4NiCX8bmjd4IiQdTuiLmNZK3h4Th8ACtPTiuWAvsFro5Osv0t/4xfN
-         Yn/lYV3pAYmzfH3s23btWDZ4QTjetXAXC1puiH1pYPl0FSHRD7/7npkL1jr1xxI1qRuh
-         NnRrKKAOvQovgvT1JAeaFmnWgG2TT8JWhHRlzh4OtaezmcFSgo2wbTz5TfBmCHto9U41
-         ooPtttJNpHS3Nxy8czzz6DMHYX+6Ic12lWRbWJObsIZOhWi1jeFCM7mwsCWZ/StsQcH5
-         s/Fkrz3cgeZ8m99ipuJIol3hd8XO7Gf/FEFB1/2apCgDgndHvU99KKHfG7+Hm68TTfqc
-         u6Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBbnKorSztKPpWwciEJXTv04F1kDqfuEEK0W4U1AU0aTlYXJpm74wEflOolAEUB2pgcBHfNL4Q3cpQHek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx02UoOPAPkfzfDj9OLicY+moLEh8HVNO9zFxjeB6KDXaBBJQtc
-	hvR6YCFReR3Z29GAAI2XNsLt9cQHUW1br7qzfUfNm6SBbAZCRSn/vz2h87Mod5ml00w=
-X-Gm-Gg: ASbGnctG7X+WsB2VxRgvqxKVEEWmFRjBNMrUabEVLHg1XdrSL1TfC8ad+bb4tCRfa8M
-	MBuri4Up7DuyUCa2j9RoQdARLyGKSziycwYO32vp52vBL+RsrFCMEo87SMz3944buV3RCsm959I
-	4Ww0/t/qZHpXvmEgcCC2emkp3Q7cEP/TAh+Kf5Uk2MUJbzFLUfQ9QC3kfsKGso+CVN6GUtmGCQj
-	ChRoUBjYByFl1itAbB1ymhPEuy3foVllpYU9v3ePAj2kYIqPfSbHbghfAVWnjjI9kd5dhloHt2g
-	8zdd8LUxgzaUzaI0IwSRGCPnD6jRqIojEulh4k6fP0FNjkQxBIV72emMQKpiUcpYhn8Q/542g0D
-	oXbc2RhRX0MbKBLWnKhN90cgd6oUdd/RZRJ/ti0DJyfO26gZOpdP7wvaErkjwQpisJSUQS5FZBu
-	S7F5NQtQa6AAuhpgmozEYpjwCUMU4=
-X-Google-Smtp-Source: AGHT+IGPd+brTs/tr9uigSHWLaHZFIfinUl3f0FWfAgHyxWRy8RvOdRx08VMDoZTA6McwENXy6a00w==
-X-Received: by 2002:a05:600c:458b:b0:46e:39da:1195 with SMTP id 5b1f17b1804b1-471178784d9mr183926935e9.3.1761227098250;
-        Thu, 23 Oct 2025 06:44:58 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-475caf152absm46879295e9.9.2025.10.23.06.44.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 06:44:57 -0700 (PDT)
-Date: Thu, 23 Oct 2025 16:44:54 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: dan.j.williams@intel.com
-Cc: Ally Heev <allyheev@gmail.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Joe Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>,
-	Andy Whitcroft <apw@canonical.com>, workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Hunter <david.hunter.linux@gmail.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH] checkpatch: add uninitialized pointer with __free
- attribute check
-Message-ID: <aPoxVqxevopRpPu1@stanley.mountain>
-References: <20251021-aheev-checkpatch-uninitialized-free-v1-1-18fb01bc6a7a@gmail.com>
- <68f7b830ec21a_10e910070@dwillia2-mobl4.notmuch>
+	s=arc-20240116; t=1761227134; c=relaxed/simple;
+	bh=Qt0yuLtw66ZCq3MNXemX3SqZ1fs/KSoTjGU3m7F/lGU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Nz1Nds7wH4uRAkB/Y2qvCCLnAgsRAXfbcKAVjQh04crOcGSsUHK+66DVjwNd5ugGBVu8VOmQcOeu4exVLc0jBjEO2S8XwPLdzZ6d49yHVmU3I1jNgM6pzv3Ci6CcTPPSi5lhq9HaVHa1aTYgHOfQnRf78o26nttrSQzOGc6pcGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqry/oZO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AAE1C4CEE7;
+	Thu, 23 Oct 2025 13:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761227133;
+	bh=Qt0yuLtw66ZCq3MNXemX3SqZ1fs/KSoTjGU3m7F/lGU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=aqry/oZOTZd9CJW0T1mbAjhDHMQymTpNckh+GWm7OhJL7taGKQO86I6R/hOMTvSLY
+	 SLQwYmdq9UC6n9K9AkFm+Nvyzxi5b8e+9+osbpQX5BShUU9QdcQ+v8F6pSpG9PniuG
+	 oUZk0Y+fHvu/ZNQFQ7nocyD6QlSowiSBs9S9N1g3hRNqx8RojGuIxfVNmm+geOuAr4
+	 2O+c9VqjUcEZ7HLlt0a2npyasTsyO0GEn9wPHaJtwJXzedJENFwyp2ryhKgSO04KCY
+	 OA+CjmtFBeClA+d+2GHP2VgmjDM0CFOQCgp2oFwtauWtxYiGPFgRl+dtL6VRkp9oMW
+	 UZyY2aff/AhLg==
+Date: Thu, 23 Oct 2025 06:45:31 -0700
+From: Kees Cook <kees@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Marco Elver <elver@google.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Johannes Weiner <hannes@cmpxchg.org>, llvm@lists.linux.dev,
+ Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Nicolas Schier <nicolas.schier@linux.dev>, Shuah Khan <shuah@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ =?ISO-8859-1?Q?Thomas_Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+ Tamir Duberstein <tamird@gmail.com>, Michael Kelley <mhklinux@outlook.com>,
+ kernel test robot <lkp@intel.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Uros Bizjak <ubizjak@gmail.com>, Jan Hendrik Farr <kernel@jfarr.cc>,
+ Yafang Shao <laoar.shao@gmail.com>,
+ Marc Herbert <Marc.Herbert@linux.intel.com>,
+ Christopher Ferris <cferris@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>,
+ Jeff Xu <jeffxu@chromium.org>,
+ =?ISO-8859-1?Q?Michal_Koutn=FD?= <mkoutny@suse.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Randy Dunlap <rdunlap@infradead.org>,
+ Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/3] compiler_types: Introduce __counted_by_ptr()
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20251023080123.GU3245006@noisy.programming.kicks-ass.net>
+References: <20251020220005.work.095-kees@kernel.org> <20251020220118.1226740-1-kees@kernel.org> <20251021095447.GL3245006@noisy.programming.kicks-ass.net> <202510211210.84D670D1C@keescook> <202510221746.7C09BBE@keescook> <20251023080123.GU3245006@noisy.programming.kicks-ass.net>
+Message-ID: <1D53887A-B277-4813-A3E6-9367CCFC8759@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68f7b830ec21a_10e910070@dwillia2-mobl4.notmuch>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 09:43:28AM -0700, dan.j.williams@intel.com wrote:
-> I would go futher and suggest that the pattern of:
-> 
-> 	type foo __free(free_foo) = NULL;
-> 
-> ...be made into a warning because that easily leads to situations where
-> declaration order is out of sync with allocation order. I.e. can be made
-> technically correct, but at a level of cleverness that undermines the
-> benefit.
 
-To be honest, I'm not sure what you're saying here...
 
-I have written code like this.  There are 515 places which use this
-format.  I think it would be a controversial change.
+On October 23, 2025 1:01:23 AM PDT, Peter Zijlstra <peterz@infradead=2Eorg=
+> wrote:
+>On Wed, Oct 22, 2025 at 05:47:43PM -0700, Kees Cook wrote:
+>> On Tue, Oct 21, 2025 at 12:24:05PM -0700, Kees Cook wrote:
+>> > On Tue, Oct 21, 2025 at 11:54:47AM +0200, Peter Zijlstra wrote:
+>> > > > [=2E=2E=2E]
+>> > > > Unfortunately, this annotation cannot be used for "void *" member=
+s
+>> > > > (since such a member is considered a pointer to an incomplete typ=
+e,
+>> > > > and neither Clang nor GCC developers could be convinced otherwise=
+[1],
+>> > > > even in the face of the GNU extension that "void *" has size "1 b=
+yte"
+>> > > > for pointer arithmetic)=2E For "void *" members, we must use the =
+coming
+>> > > > "sized_by" attribute=2E
+>> > >=20
+>> > > So why do we need both __counted_by_ptr() and this __sized_by(), wo=
+n't
+>> > > one be good enough?
+>> > [=2E=2E=2E]
+>> > Let me take another stab at it=2E=2E=2E
+>>=20
+>> It seems this will be acceptable as long as it is gated by GNU
+>> extensions=2E
+>
+>Excellent!
+>
+>> GCC patch in progress=2E Clang PR here:
+>> https://github=2Ecom/llvm/llvm-project/pull/163698
+>
+>I think you've got your link mixed up, this appears to be arm-kcfi (also
+>good ofc)=2E Either that, or I need copy/paste lessons=2E
+>
+>This one?
+>
+>  https://github=2Ecom/llvm/llvm-project/pull/164737
 
-$ git grep __free | grep "= NULL"  | wc -l
-515
+Whoops, yes, that's the one! Seems I'm the one needing those lessons=2E ;)
 
-regards,
-dan carpenter
 
+--=20
+Kees Cook
 
