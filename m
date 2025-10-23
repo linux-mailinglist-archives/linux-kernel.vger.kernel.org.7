@@ -1,155 +1,134 @@
-Return-Path: <linux-kernel+bounces-867570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE72DC0304F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:36:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8F5DC03058
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C3F2567B1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:33:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6518C505ABD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF4834BA2D;
-	Thu, 23 Oct 2025 18:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB8227E7F0;
+	Thu, 23 Oct 2025 18:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkbTB+21"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8kh5zRd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D5634B198;
-	Thu, 23 Oct 2025 18:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC1129408;
+	Thu, 23 Oct 2025 18:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761244211; cv=none; b=YY0VsXFc5by16Prb4jwpdOSYI3nC1NneFRUtt6W0Yb6Lx6qT2JTzPAKB4l+M889M585RPDoI93lB7xObrSTxOdeM7Ft3LSVXcnk42rxfyNysF4itqeGskgFmcXL71GfpksqtpRBa7Ag2jAn9T+O1GJD8zjwwj6RY/y6ExXUVNBQ=
+	t=1761244253; cv=none; b=TRaWHBoxVLoWIY3vXlnQdK2kR/cmzjylYFgoCyWUayWlsUC+mT3UOuPlpWsp6v1jyDE2Z/YGCxkqQLnl8SQ6DliI6YN33H+9s4Ug7A7THn5MaA9ZRpmSww8vFgsFiTRcv9WqBLRAWTwGkPYjDV8VdUTN5QaxlH7p8fRieH4qu2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761244211; c=relaxed/simple;
-	bh=ctSOOTT2O05fA9DTO6U9cx0ctplKI+PVoY2b8nJ8W74=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=tZXaxKeuvx6g+SqG1QTr69oeukWiUGyKekTm0uifw3oRXxIpp5/CZMtOIXTu62g/7G0eOr2jzhv53Zxsm9dgdDIceFWD3D1ELoNPEwQLwSmnp6WzjQdRLZP5JFQEr/70npv73q8Wryluk6cUDq2X5RxTQ4lBuKiP/H6paCQgtN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkbTB+21; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A765C4CEE7;
-	Thu, 23 Oct 2025 18:30:05 +0000 (UTC)
+	s=arc-20240116; t=1761244253; c=relaxed/simple;
+	bh=4FMfhKfwT45zNZYWzsFfHSI11HycY9Zq+anG78kko6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A6yvoAcp7EJmxWeVMutIEqsGmTVkRmEXWv7G0dTaz0Wd9ReJdBJLLH7VCBvp+TxnLiDhWOSaeRBMTSYBB0UJVbyqqUxKpQcgwkwua201w39EWbkehcIcp2lK0lKq/j2+ZfgBJLhW+xEOMccaQU5NsrkdQ2xTQjX0007xVs/alQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8kh5zRd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9430C4CEE7;
+	Thu, 23 Oct 2025 18:30:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761244208;
-	bh=ctSOOTT2O05fA9DTO6U9cx0ctplKI+PVoY2b8nJ8W74=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=SkbTB+21ChSHJquQXaq6RbYVwUsFJfRA8wQP1H2henPAllrtScPaYRaryg1bQh/9r
-	 TByAFl0SQ1Z5JrXhGowt53T8lzFXaMvFPcTzPnst6KFSfJOIrfM9jV4dNAZK9AUnk6
-	 AYfz2WVelWcmFdSTJLAm74R6Fc+cVj2KHk4hjj5LS4BC1HG19fCJ+6j41qtNMpH79F
-	 HSP+aL6PVHarIt7rfQLC+X8IRtp0p8U9JoVw7yPoiX687Zn9P3JI0/9wmTJVpc9rJz
-	 bGZby/ILpu3Lv+VI+gqtRkoBdxrPbuCdegh4UJnmpHJpidyV0FAEU/scKEv4QTdLrN
-	 CY1u3UMETiJjA==
+	s=k20201202; t=1761244252;
+	bh=4FMfhKfwT45zNZYWzsFfHSI11HycY9Zq+anG78kko6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n8kh5zRdhJ8DfNXO+pXijXPP16eIKBATNaSTTwiBFAxn9OS6noJRgaeBoCnOom4QP
+	 2+Dq4jNtITFcanQIZ//0gbrUnkGrdf2K7y6+PGo+CNShe3uiN29vmhWJtM6+eOmpuY
+	 WT6JIfO45BRUmhm5mNCZr/iO80fNGjbTIAFGa2awQ94FLsr7VVYcVJE2hHaD+3oBjn
+	 ieSPZD2n64i50ERiYGpEjQlRvsToTaJgenqLfouNVgmvT+ZpyapzK4V6nUwsb0wgin
+	 rVm5pLztevxcCZtvnZIgAO401tIas/DjvqsBaxfLmWlnsNukE80qnpS21O181ltuIs
+	 2eI85t5rQWAZw==
+Date: Thu, 23 Oct 2025 19:30:47 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: michael.opdenacker@rootcommit.com, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Emil Renner Berthing <emil.renner.berthing@gmail.com>,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] riscv: dts: spacemit: add Ethernet and PDMA to
+ OrangePi RV2
+Message-ID: <20251023-lizard-sharpie-70f2a000327f@spud>
+References: <20251022201807.1474789-1-michael.opdenacker@rootcommit.com>
+ <20251022201807.1474789-2-michael.opdenacker@rootcommit.com>
+ <f8a55f89-2612-49e3-88c6-acb523ac74d3@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZhGqk7lYBtXKeshE"
+Content-Disposition: inline
+In-Reply-To: <f8a55f89-2612-49e3-88c6-acb523ac74d3@iscas.ac.cn>
+
+
+--ZhGqk7lYBtXKeshE
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 Oct 2025 20:30:03 +0200
-Message-Id: <DDPWYPG6IGBS.3K4HZRJN0UX0N@kernel.org>
-Subject: Re: [PATCH v5 5/7] revocable: Add fops replacement
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Tzung-Bi Shih"
- <tzungbi@kernel.org>, "Benson Leung" <bleung@chromium.org>, "Rafael J .
- Wysocki" <rafael@kernel.org>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah
- Khan" <shuah@kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <chrome-platform@lists.linux.dev>,
- <linux-kselftest@vger.kernel.org>, "Laurent Pinchart"
- <laurent.pinchart@ideasonboard.com>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>, "Simona Vetter"
- <simona.vetter@ffwll.ch>, "Dan Williams" <dan.j.williams@intel.com>
-To: "Jason Gunthorpe" <jgg@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251017162116.GA316284@nvidia.com>
- <aPT-7TTgW_Xop99j@tzungbi-laptop> <20251020115734.GH316284@nvidia.com>
- <aPcQ99MZse5zmv3o@google.com> <20251021121536.GG316284@nvidia.com>
- <aPo6CZyT_IGWmu-O@tzungbi-laptop> <20251023145131.GI262900@nvidia.com>
- <2025102321-struggle-fraying-52ff@gregkh>
- <20251023155746.GL262900@nvidia.com>
- <DDPU75QB8MQ6.3HZ5N0GYKQ9QU@kernel.org>
- <20251023164809.GN262900@nvidia.com>
-In-Reply-To: <20251023164809.GN262900@nvidia.com>
 
-On Thu Oct 23, 2025 at 6:48 PM CEST, Jason Gunthorpe wrote:
-> On Thu, Oct 23, 2025 at 06:20:02PM +0200, Danilo Krummrich wrote:
->> On Thu Oct 23, 2025 at 5:57 PM CEST, Jason Gunthorpe wrote:
->> > IMHO the rust code does it principally because the sync unregister
->> > life cycle model does not fit naturally into rust.
->>=20
->> That's not the case.
->>=20
->> In fact, we try to give as much "sync" guarantees as possible. For insta=
-nce,
->> when a driver registers an IRQ the irq::Registration API enforces that t=
-he IRQ
->> is unregistered before the registering device is unbound.
->>=20
->> As a consequence, the IRQ callback can provide a &Device<Bound>, which a=
-cts as a
->> "cookie" that proves that for this scope (IRQ callback) the device is gu=
-aranteed
->> to be bound.
->>=20
->> With this "cookie" we can then directly access device resources (such as=
- I/O
->> memory) that is within a Devres (and hence a Revocable) container direct=
-ly,
->> *without* any locking. I.e. we can safely bypass the Revocable and hence=
- its
->> overhead.
->
-> It is good news to hear it, but I think you are making the point I was
-> trying to make.
->
-> In rust if you have a Device<bound> and you skip the revocable
-> locking, I'd argue that you don't need "revocable" at all, just
-> enforcement of a Device<bound>.
->
-> IOW the presence of revocable in rust, with all the locking, is
-> because the sync life cycle model is not available.
+On Thu, Oct 23, 2025 at 01:58:22PM +0800, Vivian Wang wrote:
+> Thank you so much for the patch and testing results. Only some nitpicks
+> follow.
+>=20
+> On 10/23/25 04:18, michael.opdenacker@rootcommit.com wrote:
+> > From: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+> >
+> > The OrangePi RV2 board ships two RGMII ethernet ports.
+> > Each has an external Motorcomm YT8531C PHY attached, the PHY uses GPIO
+> > for reset pin control.
+> >
+> > Enable PDMA for the SpacemiT K1-based SoC in the OrangePi RV2 board.
+> >
+> > Signed-off-by: Michael Opdenacker <michael.opdenacker@rootcommit.com>
+> > CC: Emil Renner Berthing <emil.renner.berthing@gmail.com>
+> > CC: Yixun Lan <dlan@gentoo.org>
+> > CC: Vivian Wang <wangruikang@iscas.ac.cn>
+>=20
+> Firstly, it is usually spelt "Cc:", with one upper-case C and one
+> lower-case c.
 
-That's not the reason, it *is* available.
+I don't think this matters at all, the git tooling at least doesn't
+care.
 
-Requiring a &Device<Bound> "cookie" to be able to access a device resource
-directly is one part of it. The other one is to ensure that the device reso=
-urce
-is actually released once the device is unbound.
+> Secondly, "Cc:" should not be necessary in the patch/commit message.
+> From Documentation/process/submitting-patches.rst:
+>=20
+> =A0 =A0 If a person has had the opportunity to comment on a patch, but ha=
+s not
+> =A0 =A0 provided such comments, you may optionally add a ``Cc:`` tag to t=
+he patch.
+> =A0 =A0 This tag documents that potentially interested parties have been =
+included in
+> =A0 =A0 the discussion.
+>=20
+> If you look through the git logs of Linux, Cc tags are really not a
+> regular occurrence except those marking patches as suitable for
+> backporting to stable.
 
-When a device is unbound the Revocable within a Devres container automatica=
-lly
-drops the device resource (i.e. calls the destructor, which, for instance,
-unmaps and releases an MMIO memory region).
+If people want to handle CC lists by putting it in the patches (it's
+what I do when I have no cover letter) just put them after the --- line
+and git send-email will still pick the CCs up but they won't end up in
+the history.
 
-Subsequently, it also ensures that the device resources can't be accessed
-anymore, even if a driver would hold on to the corresponding object instanc=
-e:
 
-Obviously, it can't be accessed with a &Device<Bound> anymore, because it i=
-s
-impossible that the caller is within a scope where a &Device<Bound> is pres=
-ent.
+--ZhGqk7lYBtXKeshE
+Content-Type: application/pgp-signature; name="signature.asc"
 
-And an access with Revocable::try_access() will fail as well, because Revoc=
-able
-knows internally that the destructor of the wrapped object was called alrea=
-dy.
+-----BEGIN PGP SIGNATURE-----
 
-So, what we achieve is that as long as the driver uses safe code (i.e. no u=
-nsafe
-{}), there is no way for a driver to mess this up and produce a bug that af=
-fects
-the rest of the kernel.
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPp0VwAKCRB4tDGHoIJi
+0hv0AP9BsJs+SKApne1B/5qPw5tzPqgF8dkrHmZDpyswXTvZ1AD8CSR4yC0q1TNO
++DjxnBOkx44cBcpZmewCQVdDbx2apAo=
+=RpiQ
+-----END PGP SIGNATURE-----
 
-While at the same time there is zero overhead in "sync" scopes, and non-"sy=
-nc"
-scopes, which we unfortunately need in some rare cases, are still supported=
- in a
-safe way.
-
-> Sounds like the idea is that the sync model will be widely available
-> and the revocable lock will rarely be used?
-
-That is correct.
+--ZhGqk7lYBtXKeshE--
 
