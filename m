@@ -1,147 +1,119 @@
-Return-Path: <linux-kernel+bounces-866778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1C62C009FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:04:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A399C009ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2DC33AF444
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:04:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBD2B4EAF9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444B92FE573;
-	Thu, 23 Oct 2025 11:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F5D30BBAE;
+	Thu, 23 Oct 2025 11:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r1JINhMV"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hIiRUlId"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF50A30749B
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E15230B514
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761217438; cv=none; b=Yi7Y+cpaKvp6yrAMH3tr59zMkhuUcevek/qCTETLCTx4w+lQJvjNM3wRoOF9BIoRZ9+trcl2pRNpqNIvlt+pDgBoMFzZmJ7B+lDWAz5YqPF2KczBPatk8M1gpOa8IwtfoJMupE3rmBBrXwq7phDllbOh6Wxs46ggySF37O9p06Y=
+	t=1761217417; cv=none; b=loGeu7LsFE5txGDsDi81+kAwnGgkiUG481MSQPSeFui3euayTqFfmRwv83AvPj5c4vuizj0KbSXklvHAmkW9tWrlgcyTAZ1so1SpaXO5DYW5FyyKlDNNUMLicGQdcdT4ruEwYp8bfYzoS5G5WuTU20+qIoyHNBfoDQUe5+XFU3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761217438; c=relaxed/simple;
-	bh=kBsrJnbxBkr/fO6jx2/I7vg7Jb+qOy1iGAu9156yEwk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s+47LJu5TB11SB2SippwdhXZJD1jjDypRFu7yZpxGiIWu2rne9hnCZvTSKRj3u1YqW57FSzaaBR4fQQ5vTvn/S2C2ajdkEI/1sYSjT6/P2aHR94CbBVu/xLq3FJk+g91SxqFEhZml11B3DKz6Y+xdeDNfBnNuttZG7PQVNN+HD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r1JINhMV; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-785d3a5f641so2749147b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761217436; x=1761822236; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=s7kfTDQj4kvXnrctF0hqqEzRvRC3TedEvs2k0hyX+5Y=;
-        b=r1JINhMVuEvrTH0Y0mbR4JGF+rHZKQC6v67TL3rK0ZxlzdDALF2hVfF7qAstJh1Yfv
-         7L3eRrR7Egd8nBo1zAk5ep37v+VFAjK/9ytsTsgTOE5/cQA0Yl09QrRbAlQQF3bLUnQh
-         O9/A+zmrMOASiwM04zBi53L714qumG8OARQX/Bdd2JOTLWiDutgifqLGNNKqVGZWLFMk
-         NiBWril2NEzNZ23oyW3fsH+hdPx0ojf5KVaYiaHMbhDFZ2f0ScD0XkRew51oHiemU4wL
-         eodafF8WCrL0yEmhHT7RXjvkZHdtiMarU/MfrTyziJc6FilEQnibwaUCI4Y0HTZkVU4I
-         4HdA==
+	s=arc-20240116; t=1761217417; c=relaxed/simple;
+	bh=2/gABdtSagvvRvXcgYkvrUxlpN85FD7cuZAxp8ojVKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bEGJKsTXLCKiVSbini8xxqDgOOiXdxoVSkMuwNebh14aJmzmMHnVnEgXt4J2o02r7iQDoQ9oVBsKSp8gVaIV07ScXlokuhvgZVBZZsBRubfUs3VAjfLNhA6mC6JS/AB6xA67G60af4TsTCeB1atenRIL3yOEA9PiJQ0GTu8tBsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hIiRUlId; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761217415;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IffLhB/dtgzsB8Rx7XpZkACOwzSFp8CqfXzEdzYdCTE=;
+	b=hIiRUlIdxT6zC8UC+G0bRntzMC2tGcX+rcAMEgKhlTSN2ykp4frJeTIZBkVOWYjvjVD7Sq
+	d7a2tuaBkrvmmGxlxMCezYQDne2KJ13NqIh2Cpem0H6d5IlBDejJeRcRzeros/hUshvW7o
+	60G1N5sG5qaovRyilCDeVbXHPYWhz10=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-361-JxMmlIizNkWm0dc3fF_VOg-1; Thu, 23 Oct 2025 07:03:33 -0400
+X-MC-Unique: JxMmlIizNkWm0dc3fF_VOg-1
+X-Mimecast-MFC-AGG-ID: JxMmlIizNkWm0dc3fF_VOg_1761217413
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4711899ab0aso4766645e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:03:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761217436; x=1761822236;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s7kfTDQj4kvXnrctF0hqqEzRvRC3TedEvs2k0hyX+5Y=;
-        b=RjFV3OmLCK+vmgJQP8rNCr8MC8rylZPGDWIDeXzV5R843WLwdApew298B2F164hkyB
-         ibL76FuaL4Pa48zm5vBP9iGLKLnH/x9vMSOIvGCTlOm47o3XCMsYbEXafzpQpbTz9QQQ
-         H8WtJyKF68TVX+aF3dB3DN7Zya5EooqSW45n99e76p9d68D8UArpb3eWihUMGtI1HrPX
-         7f0VOlJXXto08fgX8fz2DrggkENkZoGzg5UrouMyBcMgtMRLtI8Yw8mPJsHVJeAoaDbW
-         yh73Pjn7Rzv5/A7MYXownQOJxSK1krncGROLZNifeafSIOpDX3bZsV53+fFSFwM5GChf
-         g/NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXk3ZXEy+MpAea/VCgZBA7y+xTZ09jZyDGmdKFyLy3ioQRhEb4XDCN5oln/lWSsjLHG7GAhiKkyoS1LCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHVwAT/mV5dNMX7trKgqVxSRfAScwRkbwgdjBMNikZtO0PXV+t
-	Ogi9Nt1sB/RSOMVrtYJLyI2tD5c3q9lUoVFsEEp0+x+0wuwBUvn2c7+yH39FZ4jmyez+lnMGv9m
-	qVZrFb59B4i0J22yX6Ykub6Iti3+mxWAPWu+yMbuZoA==
-X-Gm-Gg: ASbGncvEGufrcOtDRyhlYsgo4ltmAWN6vrORc7PxQYM/tv+4NONpQLNudtIBS7+ZeLY
-	3LwETG37IqIBrcOioQ0+VP0+IWS7Ua7CQ8PTDzZYijIuO25MyCgCQM1U/oVVDE/6BUKmJ9xaNIY
-	0u/V/BdGqJlFKgYLi2fl+MywAeynna/uJtRcyKKGtYXw1eDvQiybAuDhtnIk1IG4YHTtXviohcX
-	BdJ0dcyaTuZyPQVon/lKCl8TgJsiI6ZoSkrKBZEZiLRo73lLgWqyhXo92H2Wg==
-X-Google-Smtp-Source: AGHT+IGQU8iAL2oBx44YJmSWLgkrzJbNQnnv5TJU5QYU9Ll/NoUPEJP3VALvDA7MdFtXzoHgi4s3vJZ8kDBTes0TUhA=
-X-Received: by 2002:a05:690c:3203:b0:784:180e:fd4c with SMTP id
- 00721157ae682-784180f0adamr181008387b3.31.1761217435834; Thu, 23 Oct 2025
- 04:03:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761217412; x=1761822212;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IffLhB/dtgzsB8Rx7XpZkACOwzSFp8CqfXzEdzYdCTE=;
+        b=LLI11AsJM6aDEfUdIOJM3UQtflZ7+t58bQ0mOIrQGKzQ3wqzqpoi/BmINUsEcdLX9m
+         iaHFeAg63bv5PUmUxVoDG7wmB6BpZ7yWI6ICJ5lNBcdM+GjK3poMb0FS0zyg9D/QOELt
+         snxoX0DGDSQBCNmpmoddEbx9ngPhr/ZEkWRaiC8ErNDxs8deZloloh2swzzegWZ9IPTh
+         2aUiclF0LdIs5dzpka517DtWgyh9Dv6x56AU/o3ombzvRYfZ291+Qfag3jB+gnMZsoA6
+         WFXzn66Uc630OVKy6CDm+BqcGakMXhHB+5foseBl/K/j5q9A901t41zeMLyA44TZgxXh
+         jlHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUzn23hYm8RU+f/UK4LgAh8AhkF1sxIvDPGpjbEAd7RQn56m0X1F3BTCIusqpxbMkPgQk8Kg5bCOF0XZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8t8/LNMnKKlSzsYYCIJJ1xAxeSXPxKlEXwsnzIQ4y0URnCNxB
+	ExYhEMFcGkRxbRnvYiDRcNk49hdQiIqS+S+1Op2iTWs3rCiWUFUhSUUtzONMAyZjBQMD4q4Krl/
+	+pVPwfYlxow1GHXYkeynVNLSTPTLlAbeTO9LSw2Q8kYSk2Ti7OxY34t4lK8Y0bSr1wQ==
+X-Gm-Gg: ASbGncuYbHHiStLUt9oNnEjYb4J55JBzW770USyjNt88tfevT9KGBmYuXBhCKyqM0JF
+	xViWWLyIOlcxfoo1Wogj/h9ZgCi4MXuU+4R+gRtErd7bqunJjm1buKlYeNK4qa7b/ywscSVL4W3
+	ct9BkwYY7yOqTPJLcct+yerkbugQezMC/FXV0ldwel52Yl5MaQb3V5iEVODpM1mraYbPbrrQtUo
+	HnhGuXX1XVWt9U1mSUmOrq8kRkwsiWASCnW5TQPwYEuIi/0zMGzhE1yNrMlGAeFxyeagagpfmdH
+	oTAJ8dvpFlrekdRqWLjeu0GkDAGPO1Lf8OKLpCVfGt/9nV6Hs9+sGQ9m8rE6FSuZ3fdVxFP6OF7
+	Hs7MkPDESyRJamopf9hyqdZP21WjMZGw9kA05UzRkciC0M8s=
+X-Received: by 2002:a05:600c:64cf:b0:46e:3dcb:35b0 with SMTP id 5b1f17b1804b1-4711786d332mr203648575e9.2.1761217412548;
+        Thu, 23 Oct 2025 04:03:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcmAKT0d5E/+UDMPzD2Uu8sJN+s2YwSJhnRUKFlKICL+VtTqA3NDebN0QlDpDV/hBH/3a+iA==
+X-Received: by 2002:a05:600c:64cf:b0:46e:3dcb:35b0 with SMTP id 5b1f17b1804b1-4711786d332mr203648285e9.2.1761217412134;
+        Thu, 23 Oct 2025 04:03:32 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898ccc60sm3389854f8f.34.2025.10.23.04.03.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 04:03:31 -0700 (PDT)
+Message-ID: <1fb1a9dc-e4c0-40a0-9536-82653b5d0598@redhat.com>
+Date: Thu, 23 Oct 2025 13:03:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
-In-Reply-To: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 23 Oct 2025 13:03:20 +0200
-X-Gm-Features: AS18NWBVEatEe3gSBhE8qZaLai0zI0Dc2SVrRDXu7B4f5w61d7RxUXvBV6dUips
-Message-ID: <CAPDyKFprP1d-9Ojwz7QaVBbdFumPmRoVnifrP8v+eL6FHR3Unw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] PM QoS: Add CPU affinity latency QoS support and
- resctrl integration
-To: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Cc: rafael@kernel.org, lenb@kernel.org, pavel@kernel.org, tony.luck@intel.com, 
-	reinette.chatre@intel.com, Dave.Martin@arm.com, james.morse@arm.com, 
-	amit.kucheria@linaro.org, christian.loehle@arm.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: alteon: migrate to dma_map_phys instead of map_page
+To: Chu Guangqing <chuguangqing@inspur.com>, jes@trained-monkey.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.xn--org-o16s
+Cc: linux-acenic@sunsite.dk, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251021020939.1121-1-chuguangqing@inspur.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20251021020939.1121-1-chuguangqing@inspur.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 21 Jul 2025 at 14:41, Zhongqiu Han <quic_zhonhan@quicinc.com> wrote:
->
-> Hi all,
->
-> This patch series introduces support for CPU affinity-based latency
-> constraints in the PM QoS framework. The motivation is to allow
-> finer-grained power management by enabling latency QoS requests to target
-> specific CPUs, rather than applying system-wide constraints.
->
-> The current PM QoS framework supports global and per-device CPU latency
-> constraints. However, in many real-world scenarios, such as IRQ affinity
-> or CPU-bound kernel threads, only a subset of CPUs are
-> performance-critical. Applying global constraints in such cases
-> unnecessarily prevents other CPUs from entering deeper C-states, leading
-> to increased power consumption.
->
-> This series addresses that limitation by introducing a new interface that
-> allows latency constraints to be applied to a CPU mask. This is
-> particularly useful on heterogeneous platforms (e.g., big.LITTLE) and
-> embedded systems where power efficiency is critical for example:
->
->                         driver A       rt kthread B      module C
->   CPU IDs (mask):         0-3              2-5              6-7
->   target latency(us):     20               30               100
->                           |                |                |
->                           v                v                v
->                           +---------------------------------+
->                           |        PM  QoS  Framework       |
->                           +---------------------------------+
->                           |                |                |
->                           v                v                v
->   CPU IDs (mask):        0-3            2-3,4-5            6-7
->   runtime latency(us):   20             20, 30             100
->
-> The current implementation includes only cpu_affinity_latency_qos_add()
-> and cpu_affinity_latency_qos_remove() interfaces. An update interface is
-> planned for future submission, along with PM QoS optimizations in the UFS
-> subsystem.
+On 10/21/25 4:09 AM, Chu Guangqing wrote:
+> @@ -2362,9 +2359,8 @@ ace_map_tx_skb(struct ace_private *ap, struct sk_buff *skb,
+>  	dma_addr_t mapping;
+>  	struct tx_ring_info *info;
+>  
+> -	mapping = dma_map_page(&ap->pdev->dev, virt_to_page(skb->data),
+> -			       offset_in_page(skb->data), skb->len,
+> -			       DMA_TO_DEVICE);
+> +	mapping = dma_map_phys(&ap->pdev->dev, skb->data,
+> +			       skb->len, DMA_TO_DEVICE, 0);
 
-My apologies for the very late reply.
+It looks like here a virt_to_phys() is missing around skb->data.
 
-To fully understand how this new QoS interface is going to be used, I
-really think we need to include a user of it, as part of the $subject
-series.
+/P
 
-Besides the comments from Rafael and Christian, I also wonder how the
-user of the interface should know what CPU-mask it should use? For
-example, how does it know the CPU-mask for the big-cores and for the
-little-cores? In particular as I assume the user isn't a platform
-specific driver, but rather a generic driver that should work across
-various platforms.
-
-[...]
-
-Kind regards
-Uffe
 
