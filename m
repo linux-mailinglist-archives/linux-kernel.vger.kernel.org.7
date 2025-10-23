@@ -1,143 +1,177 @@
-Return-Path: <linux-kernel+bounces-867722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18465C035D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:22:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05444C0361A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34D493B43E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:22:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81AD71AA1F1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723CF2C11ED;
-	Thu, 23 Oct 2025 20:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B4B2D5938;
+	Thu, 23 Oct 2025 20:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c6ejnNLy"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ucVLIOJE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4881E2BFC60
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2151026D4E5;
+	Thu, 23 Oct 2025 20:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761250920; cv=none; b=hm33coMG5ie+JOw1cmgZw1M7ehB01Qld4jNPv+MeCNGwJIqx4ifDf7WjXGPCCQ3/spjD2fW08dc6dzduDG2PGDdJGP6D3LDztmqJfmcOqA6c8baq3gXtBCSJdTzU2UjaVhQ1z6dxwMc3hasQMRWSRur4reRwmn1IxSKfEkzKHQg=
+	t=1761251070; cv=none; b=IXuOrOVLnGuTw/1r1dPofSnq9KqrATaglBOr/6qC1ihHapsmu1Ce5CtQzGQCjZZ56C7lQcMTjcu6dliDICWDR6m36cv0zhYrJEnNSMG0CpufPBPHpi/dfSjVkGukB4jzPJ+uG4LopzQ7ZBkH6X4LKA50QJPrGGG3rs354UObHgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761250920; c=relaxed/simple;
-	bh=0deRAiZNqo43DCs6cJ6stmvrL1lZv3Xvisgmp/a5y6w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MfJm6KTIleseiYz6EGHS1b7MEbmPvwRyKSfFcvkPwdHgxR9qiPHNq17ea+vV4NlH/ktN14ocZbNC+yIthd6PhnULzhhpwFSEXBOaIxNQMLR/kTbVaYc2/cEDJRXS28FF3Iq5wRgQNxtq6AyN+NllXVoJA4nsakv6HP79vKX3M2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c6ejnNLy; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-586883eb9fbso1479404e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:21:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761250917; x=1761855717; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JWWlF7a8NkxPR0qV542zU2WOXGZPptylUFyt7ljt7lE=;
-        b=c6ejnNLytxDMJiXP4D7nUfIhk+lNb2Gt38lWpS/EqMqI+ZWSZh/E8CL+mtNAFIvFLb
-         wCzjMOKIQTE3x5G++tmxGkLyBmDqxdAuya/VYSUROUvjra8Fi7b87xE8wwpkrGZrgZOh
-         fN5PFu76yvjO6L1mXUX0RiyR3KOG4WbFq6ABYllprgCmR5Da0xfmMt3kfyQE5XHjPQxj
-         7S+aa9etbofwDZcA5dudqhYGiKN0NfSpjz6DaF71W8QtdCbfuwAeiiqP6+0UcfSR9Sfb
-         CfgzoGJMSAY4vPQMUAly6vaBBoC5NfUbe828SQh0t2ikrZ9WzzW7F/hAht0KekQezpYK
-         QJvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761250917; x=1761855717;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JWWlF7a8NkxPR0qV542zU2WOXGZPptylUFyt7ljt7lE=;
-        b=M4LeAyh8/ByrtDzhRdjAmRvbmVlNExStfa7Anvv+zmvQqkvzf+NdZYTVu+HvYQNI+l
-         zxSKmcJd/1Rx16wSRFlW5IVrqKldCVG6OV690enK5UfIiTb2CWZvQmQk7+A3xpY2aqNp
-         PCFQkOk0ZJQKZ0IVIgnChDv/VRBR5pKhaLj9/K3xHUVCzsbTi7+OZTc23EQ/kvD0d12d
-         Ow80AsbgxisVwmCVEt2sxobaqCI64Z2JiIxQPuCt1ooqdXRPuUfovnzVeyUu5/EWgOqB
-         +bHTOocLq4IRJWUXL/kCrc1Lx5AzS+fzmpMqJGeggL/ywuUbbJna5KK1LKFuxAB2hqb7
-         TExw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIpF5BtpoXJZOM8L4dU0ra9n7yMjKBNXt+2CXHV1/mmc2ZSt0ZVbJX53cWDUoXw2Y2lLmPtuYKi4VJZA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHQRMQg7ic5rll/r36KAFI/WEmXLKnG3p7XvMpjqMkf57oFMNH
-	ZdyekqWbjc+QaXTK2lfmBkNjzOmTH07GPV/ysRuAZmj9+4k4fkOuh30lTCO817Wu
-X-Gm-Gg: ASbGncs+Kr3A32E/1XUl+dgr34OTcqoYr/nC+vc6d1HLGQtt86kLMq0AyIauscuZcsI
-	QRyAnwvx4in+Ue6Bo31P5dNr3zvy2qjabMXw0053j0zBpxfTrrMVGleo+Rc1NEpvMyniPdyuON3
-	T0y9z89cc6dprPuqWEpRMfyBLdEl2dodLk0cY35MKRVyVarMBRulWg6TBD6gpdv3mA15Dm29RvQ
-	NzegLYEqyZ3nBS8RX+OTJ/NSQBwHCAhSgaqW1P4EFs6I05E4Ho0qd293LKb9Mr+GnHVrmCdcave
-	g0lIqNdYEHju5H0h2g+AgYogoMqebRwKB99OXmU7VvLxKXYVYgqWJu8TBImoOYZeJIfhFdaIsOz
-	zYlyzsJWr8Uo/KG+nBvcjRRPyKil22NguLVV/euS26In2dfqz2x54tr1SFPURNpZEggfdLJSzGn
-	ybz57K/yLfFU3vVe23Qudz83pRO1UDDygVWIdjwbU=
-X-Google-Smtp-Source: AGHT+IFOgC/A3kynZGTalg0DDaZm7NuA87OjJNy37bVaLvGsbYRVnJB1HXVotgPj69VJBT/wAeQz/A==
-X-Received: by 2002:a05:6512:4028:b0:592:fa1b:b96a with SMTP id 2adb3069b0e04-592fa1bbc75mr464709e87.33.1761250917337;
-        Thu, 23 Oct 2025 13:21:57 -0700 (PDT)
-Received: from NB-6746.corp.yadro.com ([188.243.183.84])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4d2cf30sm977522e87.97.2025.10.23.13.21.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 13:21:57 -0700 (PDT)
-From: Artem Shimko <a.shimko.dev@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: p.zabel@pengutronix.de,
-	dan.carpenter@linaro.org,
-	a.shimko.dev@gmail.com,
-	linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org
-Subject: [PATCH v5 3/3] dmaengine: dw-axi-dmac: fix inconsistent indentation in pause/resume functions
-Date: Thu, 23 Oct 2025 23:21:33 +0300
-Message-ID: <20251023202134.1291034-4-a.shimko.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251023202134.1291034-1-a.shimko.dev@gmail.com>
-References: <20251023202134.1291034-1-a.shimko.dev@gmail.com>
+	s=arc-20240116; t=1761251070; c=relaxed/simple;
+	bh=G79ir8utLb9umTKYTzv7I1+PuyJXEzDtEHANXl0nmDc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=a6Anu6O9IwBDvj1CelvPHdrTDhdymha7UnY/U/+52ycoNfEKR8+6Ex2caaiTPZb6RWQGvbWSM9+CbIkcBehQnE22SdBOAHS0N7LyvzxP1aaX78s7wdEwDJMpYpjOtJ+WUwIdFc6FWgewPraWnF/ICpolbHg3/IGhg/RntLabWlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ucVLIOJE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8A695C4CEE7;
+	Thu, 23 Oct 2025 20:24:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761251069;
+	bh=G79ir8utLb9umTKYTzv7I1+PuyJXEzDtEHANXl0nmDc=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ucVLIOJEus0Vpw0lfgQkbf4eBhq2tz8jBe5ROHCwOtL/JcXOHHRAGpFge1DQVbxOz
+	 Ec1rzKIiTM4wIeonmTql82Ur4Okg3ryJfdeaGFFYcfJ8KYL/ZdYYbDskMXLCmEBwTp
+	 JtAwEHQAAiqFG0CDPwUYg5PpWCGpN5sH4W/ZW6kLm++tgugitDSxRLWZEG+uj84GzJ
+	 sktXiMsIzIxzNaC3UsGpX3C3unr2LC4fIFwKTQ85Sd4p1WEC5qfN6NWAP4KE3eoZky
+	 P0euXTOn3r5DoGRmXoMENWneenRNexPd5P36zbqkND8G/PO4AfWRWM8pS/KgtYqRl3
+	 oT+Giqjg9FheA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 747EBCCF9E3;
+	Thu, 23 Oct 2025 20:24:29 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Subject: [PATCH v5 0/6] Add OnePlus 6T display (Samsung S6E3FC2X01 DDIC
+ with AMS641RW panel)
+Date: Thu, 23 Oct 2025 22:24:24 +0200
+Message-Id: <20251023-s6e3fc2x01-v5-0-8f8852e67417@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPmO+mgC/1XMQQ7CIBCF4asY1mJmBoeCK+9hXFQ6KBs1xTRV0
+ 7uLJmpZvpd8/1Nl6ZNktVk8VS9DyulyLoOXCxVO7fkoOnVlKwJi8GR0tmJioBFQR88MB0cUhVU
+ B115iGj+x3b7sU8q3S3//tAd8v98MzzMDatCevAG0jXWx2aYx3Vbhod6RgX4QAVwFqUBCCS12H
+ Mj5GpoZRFtBU2AQiIatPXgwNVzPIGEF1wWyGBHCYJ1r/3CaphdfAOU0TQEAAA==
+X-Change-ID: 20250923-s6e3fc2x01-f9550b822fe5
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Casey Connolly <casey.connolly@linaro.org>, 
+ Jessica Zhang <jesszhan0024@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ phone-devel@vger.kernel.org, David Heidelberg <david@ixit.cz>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3452; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=G79ir8utLb9umTKYTzv7I1+PuyJXEzDtEHANXl0nmDc=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBo+o77fC7m5Z0llmrkxux/zMuGv3Ru9hivzCwnc
+ S+ywSf8j0GJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaPqO+wAKCRBgAj/E00kg
+ cq5lD/4nIxT+jFu+qVETxI06L4ZmjZC3faaia8pMYt1ZpyV+gz3fTF0PPiat8BVCX5jZpbYAgXy
+ jDOgNUyC/10F8Gjt3Uh3hLuyNUwTUFSMTkS/JcCYZoEnb/0UtBrcOzBiFHoGvz6m0xfJtKZlIGD
+ 8DBNjSzKdvI2LQ9HHjwz30Bp2ga/IGkP3igGFol0fC7XzJFv6EwAqv7pX2u65XLS4Y+UHBNXM3D
+ ya0yuYnzycoTxZdHvCBn1/WI8q58xe6CuREExWj83NV2h48BpkKmDS1QJXREhXA0eKwl3qhJzf4
+ WIK1msdOiN6vCFUgcMjdPhu/ofRdS2MlUuL6EA99gSfyKpRI/nSvxAObkyTDoFkT60yMm0mpgcl
+ /c5pC0iwgGNY79uQ6nK2oPGzKeAaI+9BMr5PG6qY83isdw78GSNIbFEhXUAj7AEfvdQ5oBScNR7
+ nkVg7OLqaseZI0U7y9UXlyWF25FbkYpATKnyJqlkwWkOqMwjvaMRv9PZI/eQhEaT6nxrQSazaHr
+ VnMz85lgEW3Y6bd5NH956I2nK7X1hxdLGBK3BJ0NBrcXUcUzQsDZRdc3GTPeWqLV3MR4t0yBS24
+ OF8jtmjq3VaAwERi7kpwCoxCacEgrGvZjGW2kt18fPypp7omq2kUjmmUr8QFfc3UXJ7RAfORhya
+ Hi7m0PlPMqBbiCA==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-Fix smatch warnings about inconsistent indentation in dma_chan_pause()
-and axi_chan_resume() functions.
+This patchset enables the display on the OnePlus 6T smartphone.
 
-The issue was with misaligned closing braces and incorrect indentation
-of axi_dma_iowrite64() calls following if-else blocks.
+Patches 1-2 add the bindings and the panel driver.
+Patches 3-6 document the panel, pinctrls, and GPIOs.
 
-The changes address code style violations by correcting misaligned
-indentation in conditional blocks. Specifically, the closing braces
-in if-else statements were improperly aligned, and subsequent calls
-to axi_dma_iowrite64() had incorrect indentation levels.
+Since the display node is shared between the OnePlus 6 and 6T,
+the following warning appears:
 
-These fixes ensure consistent code formatting according to kernel coding
-standards while preserving the original functionality and improving
-overall code readability.
+..sdm845-oneplus-enchilada.dtb: panel@0 (samsung,sofef00): 'poc-supply', 'te-gpios', 'vci-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
 
-Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
+This will be addressed in a follow-up patch, as the SOFEF00 DDIC also
+requires additional overhaul to properly initialize and function in mainline.
+
+Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
- drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes in v5:
+- Squashed removal of compatible from simple DSI panel with introduction
+  of the panel definition. (Konrad)
+- Link to v4: https://lore.kernel.org/r/20251021-s6e3fc2x01-v4-0-5e3ee21c688a@ixit.cz
 
-diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-index 1496c52f47a6..7b07bf5ac72b 100644
---- a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-+++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-@@ -1234,7 +1234,7 @@ static int dma_chan_pause(struct dma_chan *dchan)
- 			val |= BIT(chan->id) << DMAC_CHAN_SUSP2_SHIFT |
- 			       BIT(chan->id) << DMAC_CHAN_SUSP2_WE_SHIFT;
- 			}
--			axi_dma_iowrite64(chan->chip, DMAC_CHSUSPREG, val);
-+		axi_dma_iowrite64(chan->chip, DMAC_CHSUSPREG, val);
- 	} else {
- 		if (chan->chip->dw->hdata->reg_map_8_channels) {
- 			val = axi_dma_ioread32(chan->chip, DMAC_CHEN);
-@@ -1281,7 +1281,7 @@ static inline void axi_chan_resume(struct axi_dma_chan *chan)
- 			val &= ~(BIT(chan->id) << DMAC_CHAN_SUSP2_SHIFT);
- 			val |=  (BIT(chan->id) << DMAC_CHAN_SUSP2_WE_SHIFT);
- 		}
--			axi_dma_iowrite64(chan->chip, DMAC_CHSUSPREG, val);
-+		axi_dma_iowrite64(chan->chip, DMAC_CHSUSPREG, val);
- 	} else {
- 		if (chan->chip->dw->hdata->reg_map_8_channels) {
- 			val = axi_dma_ioread32(chan->chip, DMAC_CHEN);
+Changes in v4:
+- Use refcounted allocation in place of devm_kzalloc()
+- Added include drm_probe_helper (Raihan)
+- Corrected te-gpio value from 30 to 10.
+- Removed legacy compatible samsung,s6e3fc2x01 from the driver (Dmitry)
+- Removed old compatible also from panel-simple-dsi enum.
+- Link to v3: https://lore.kernel.org/r/20251016-s6e3fc2x01-v3-0-ce0f3566b903@ixit.cz
+
+Changes in v3:
+- Use mipi_dsi_dcs_set_display_brightness_large (Konrad)
+- added legacy compatible samsung,s6e3fc2x01 into the driver (Dmitry)
+- extended compatible string to
+  "samsung,s6e3fc2x01-ams641rw", "samsung,s6e3fc2x01" (Dmitry)
+- Brought back
+  "dt-bindings: display: panel-simple-dsi: Remove Samsung S6E3FC2 compatible"
+- Link to v2: https://lore.kernel.org/r/20251008-s6e3fc2x01-v2-0-21eca1d5c289@ixit.cz
+
+Changes in v2:
+- Dropped the gpio reset polarity change as suggested (Jens and Dmitry).
+- Fixed unused warnings (kernel test robot).
+- Added a pinctrl config for the VCI and POC supply.
+- Removed patch "dt-bindings: display: panel-simple-dsi: Remove Samsung S6E3FC2 compatible"
+  while the compatible is used in device-tree, but without any driver
+  serving it, do not touch it (Rob)
+- Added more details into the device-tree about the OnePlus 6T panel properties
+- Put display gpio -pins into one -state block.
+- Link to v1: https://lore.kernel.org/r/20250925-s6e3fc2x01-v1-0-9293016768f7@ixit.cz
+
+---
+Casey Connolly (1):
+      arm64: dts: qcom: sdm845-oneplus: Update compatbible and add DDIC supplies
+
+David Heidelberg (5):
+      dt-bindings: panel: Add Samsung S6E3FC2X01 DDIC with panel
+      drm/panel: Add Samsung S6E3FC2X01 DDIC with AMS641RW panel
+      arm64: dts: qcom: sdm845-oneplus: Group panel pinctrl
+      arm64: dts: qcom: sdm845-oneplus: Implement panel sleep pinctrl
+      arm64: dts: qcom: sdm845-oneplus: Describe TE gpio
+
+ .../bindings/display/panel/panel-simple-dsi.yaml   |   3 -
+ .../bindings/display/panel/samsung,s6e3fc2x01.yaml |  81 +++++
+ MAINTAINERS                                        |   6 +
+ .../arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 113 ++++--
+ arch/arm64/boot/dts/qcom/sdm845-oneplus-fajita.dts |   2 +-
+ drivers/gpu/drm/panel/Kconfig                      |  13 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c   | 385 +++++++++++++++++++++
+ 8 files changed, 579 insertions(+), 25 deletions(-)
+---
+base-commit: 606da5bb165594c052ee11de79bf05bc38bc1aa6
+change-id: 20250923-s6e3fc2x01-f9550b822fe5
+
+Best regards,
 -- 
-2.43.0
+David Heidelberg <david@ixit.cz>
+
 
 
