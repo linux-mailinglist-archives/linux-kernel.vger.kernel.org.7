@@ -1,223 +1,231 @@
-Return-Path: <linux-kernel+bounces-866527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D2C8C00021
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:50:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4B7AC00054
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 025274E1BBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2311882E21
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4F4302776;
-	Thu, 23 Oct 2025 08:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F84A3054C3;
+	Thu, 23 Oct 2025 08:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EZVvmyj4"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jRs4eHh4"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4662F6563
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84013043A9
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761209422; cv=none; b=TdxkCqIk5UzfDpOzW/2QLgnsNxBaq3sWjTftY/Jd3iPAvdjdq4jlZNr+OmcKe5HjFRkEom/5lsWaeblv0Q4GA1mfb31MB3aipn5GvI7nallEg9SaB3hz6BRQKQFymMaJmFxO71d219w8bMCk4f546hTN/c8xw7ZyfXSHoAZnp84=
+	t=1761209444; cv=none; b=kiQmIFa9iwtg4EGuJJtjUHzmoAQ338qdC4LPE0TKnqdeprQBwLEe7ncV5hTgddK+iCmy8To5YUQWRrobP6xE3BVeknR8LoscXPK1CKc9AzCZu4bHDwlK4OvJFUo/ZaKZoWc5u76HVFpvyAkOzpq1KXjY5ELBY2qBSx2CPwcB0js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761209422; c=relaxed/simple;
-	bh=OMKnxUqr9ND8NblLPWP0eOPZ9cYwdnsAwoYbevDZ5+4=;
+	s=arc-20240116; t=1761209444; c=relaxed/simple;
+	bh=DcIZ+OIgf1s098RBDgUHrpmIMXeWvsYQYF0MMJfNfE4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cRlzt35bm/Nr2JxPkW+6wnvdsPW2kRwlKim/teElBvz62tI5lFQqFpim4GFDngq2Rb/At2huBMsUsYtgcA5hFQmFjYyTplnvidX25bzU9/jAbQzfgGdOp1ebQLk64LrXot5wo89RPwJR28bT+lq1zf4EUvETjgdYG6LoW3OtLGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EZVvmyj4; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=pPxsgcw5NYaPchMRmD61Zf9rccIU+Nt2zDA4EHrpTN9SdQ5K74wAXz797V4uu4XeEkEXNhfkQnSURm6d1whM86QLToLng1sAkxaSnwR8nlYbDF9nhhmgBxG4eR9VXdPGrOcTRRrYEhRej0maulLTP/Y+d7ErWyDYX1hi0Da0ffM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jRs4eHh4; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N7fR6e011853
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:50:20 GMT
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6NGVA016465
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:50:42 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OMKnxUqr9ND8NblLPWP0eOPZ9cYwdnsAwoYbevDZ5+4=; b=EZVvmyj4uFp0R2fV
-	JeJ9KNrnXx/83rEAEnhbduhhXJ99Kz9VB4IwkB44smUXQJ61Ej3uHLYIhjIfg+Ka
-	o20JMyUGs7c0tnD/nCdncT1JC0H+FFnLrKXrVoSrAMx3CDt9ZOaUX9HNlkKRy1iO
-	BULRdNblK2EJ+nquSe8IbbkIivsTwtz+mWS+MP28n3A7Ep6uKFWOMSuwNLk5TAU7
-	k6g1juL89YU+pgWjffzdYbirvq7TA6Lv2le6RLIPepwMfPHEdyiOSU80GcNxDfAQ
-	wVL1P9MRhAmwWeSakT9qRIXYNQwbijIVCTFHgNyu9pRAkQzp5Kd0veskwt1eVe2o
-	DTFQYg==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49y5249vje-1
+	Vy1YqsOZVuqc53Zk/keuj33ot9pS+RsiO564Vjjfgec=; b=jRs4eHh4WOkXyJqw
+	qmZN1s69k86zmAMUY3rZoSqjdgkmVxsDef6Ht200VOszBkfBcy0fZaYEOAxaPU/w
+	Slozyp4HwEqVPOQ+FQa0Ejfd1dIVPL8KHpciOBHQmv2RRF/NT1+NPJI55r2dVjfn
+	OdDEFAnNLzlIlvNuWYSX6TFzQ8/7/EkGI83LvTwqgrQSrRHvxF20twMj6cY+w5mY
+	pauTXXzEeHzqUydeCWnMx+R+2dCPjkm/DHIJQ9xNtLsk7HjaNqxrYmUL5w2bOCeB
+	DxFw7BMzf17lkr0WBFk2TX1z9l9HcKLI4y+d2aZ1LtGsUObnQNjFQ3a2a34j9Ujx
+	RPxqYg==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xkpsda8m-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:50:20 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7a272da5676so209327b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:50:20 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:50:41 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2930e6e2c03so6316615ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:50:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761209417; x=1761814217;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OMKnxUqr9ND8NblLPWP0eOPZ9cYwdnsAwoYbevDZ5+4=;
-        b=VZGZrUctrpGA5KFTv9TD15cbV4sMKcebmnTPlwayOEf7kDVTqhDGrdrqGsJGPiHytd
-         AI23tScjGtJl3lYuPCRpjr5N2BGMW9JVLSENqxPJ85TjdpLWUqJjS7bzz/Xb/2/V41/e
-         IQV15gEavwQ3OlfflOaraSKlI6696YsMGobBDiLpcJc55CYOSpnxcdGO++NcI8G0/VoT
-         zwA7DeA2c3lHiCPx8DmAi7ba6rhRNnV16jQ4IFOZXdhIpg88rj5uvi14UgZzHGMoKDOE
-         eGCZyPZpYhz593JDDRIi2jBFnzIU37UYMcFb/Cv5rsSQHl19Ug1kB+g1Ql1lRqMRaEAu
-         WnyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvjtyf9GP9fj46FqjDF12XH/NcocXtyk4dWd1NNw/qWPVaIdW4lK0MRIpYbqtSSxK+mkhI+33PmUSGpBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiDWMTf/YR7mPSPV3VL41wk6fyrmJ/DJ073kzFOeer02+FL+4I
-	tbpN94bxNSYSMWD+6LVcTzvuB6rRtsXw73RXGpAfy147fhgIBq42VbZ+ErHULim1T6SIOcNyhOK
-	CIq1i90L7Kt2/8FvuFmg3EULEYdSenqtMT8yipeCvj/LzsBcD4ZRx1GV2HpX45zQX9zQ=
-X-Gm-Gg: ASbGncsVfCwAWUSn8RVWCnx5Gex/GwPjAUlIKWG0x+ZIrWqwR1xcU1CwtJvlhufl1Ng
-	R04C5PzdIA2bd0kKHZMv31NUOPIxSI5fOkQBQscsp2hSMWTW1V7VKW5Bqw0V7pEHdYog6+rJFjv
-	FVRbFg90sazx4YEt4Tr/EER3+1X8AH4dPSHcDVim+auHy//J6RDkYQO0wYB1LP/phFRCtMJOgv3
-	c+L3o/HDTDThVAobdcRgqig5YHJOYJbOtI2Ta3d8EMLLggLqJ6SDWkCteaQMi1trecHM0ikUMRT
-	KQUxAegYApWAp9zVr1OBKtd/J7zNN6azHJxawF5E7lMHnbT6KtzON1+9PrhOQXqxRUhXcPdMmXo
-	4KXH9BcG4bZKKNQX9DHfylZARgqLEjSTnecUh83/gpGYA/YLDfSPwHDz+KEjQfaCAdzuvXA==
-X-Received: by 2002:a05:6a20:d80a:b0:2b0:ff55:f838 with SMTP id adf61e73a8af0-3393189436bmr6910803637.3.1761209417386;
-        Thu, 23 Oct 2025 01:50:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGMne+EgLkcUdrIkI1VqQAldalOI3LplCWH+quMwYft+tzjn4ldU/yUSpq3PbB/3w7ARbB6QA==
-X-Received: by 2002:a05:6a20:d80a:b0:2b0:ff55:f838 with SMTP id adf61e73a8af0-3393189436bmr6910774637.3.1761209416844;
-        Thu, 23 Oct 2025 01:50:16 -0700 (PDT)
-Received: from [10.133.33.163] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274a5fe26sm1800703b3a.2.2025.10.23.01.50.10
+        d=1e100.net; s=20230601; t=1761209441; x=1761814241;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vy1YqsOZVuqc53Zk/keuj33ot9pS+RsiO564Vjjfgec=;
+        b=KMpTOi6ZqiHUbkeQBkM9AeoSEQO1aAr39s6PM+esq8VsSCz+F208ZxC43RsWhL60KS
+         WAf2tZ/BqzmnLTRp+mNHNJgEN8sRIgdkJ5hSo8BSRxIzxm9UlYm33jOGOaqzLTSHqWim
+         RjnzMdmuEZsNerGfKnRRmCyTQN3q0DDD0xFECX8Qllno+O2q4ZnSbSDNwSn1b25B3tRD
+         fMuttCbsOzmDFZcGdLapovOP9Wy1vO9gZBK7cy3bjWTBcWfAH+IfoH9m96ZiTyhwHar2
+         1CkYac8gkLFIitGUtCYpx1ANXvQjv/pclwQEsaTU9bfdtLLU0Rd1Eb5BCS9jO6XH47BQ
+         2dJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtnoRraDwf+gMPNWtlZ0Lv5ImGp+6TDSFZumIHUTFrNyqGr6n6iy5rUZAWkfGtSxS/2olfDNJn7FuSGy8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+fsmg8oJo6rUNtctsqJHu6G+zY9m/uFQKltA9FM1RfMDDczI8
+	cEKHxuc+W1ojSFepz1imu4v4ZlDxIm/0dmKXDghpY3/hZ9nrn1End65lc5ZL2WbYVB00u3BprdO
+	Aj+14msBVMdpWpY25PzqeGplMeC8MkE+QFbAUeA1SraLl0G6M4/tKuOJEUSmsWHcwBlY=
+X-Gm-Gg: ASbGncvCi2+eknoeW0WgaFyo/Uxjb0T8O7/uHCgcLEQw9RBLScjkm7CpvuuzAY0+DHe
+	tu0tLEwvFxKAFEo34AhgNe9X5IciwKBNqnjx9BY8zzqixE3JSFxcx8JrTsMlBP7kmw+VdQBn0XH
+	YYmoWW0l2ZZlNu/uch0ZbOg7dZJx5zw/f8O+rpBUFs84saV5x1PmsR9PlL30Xa1kvL+bQ5PrRE7
+	oDBXtvRrUI89GGS4hURAraLwtQx5Ybym+KsvL1XbyfjDhIW1kCIMbMQLP7zznqEOvVMSfJEfrkY
+	f6YTAQotTcgE2kCgreQPam3BLT5ghyfWYSF5s27ZC+3KJT5gOiYJkFnjDzuUg+3cwy+gjtvogPU
+	tmB/qZ/E1w4FLQJ6V+8EKPtJAccQHLMs=
+X-Received: by 2002:a17:902:ce0e:b0:264:befb:829c with SMTP id d9443c01a7336-290c9c8a738mr274221905ad.9.1761209440902;
+        Thu, 23 Oct 2025 01:50:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGidsCk6SAkbG2Drko6l/0sE1wrtY1HWZZpy5Z8oS/toxjjM0pNrE2O5NGTnLarM5LV8vXQPw==
+X-Received: by 2002:a17:902:ce0e:b0:264:befb:829c with SMTP id d9443c01a7336-290c9c8a738mr274221655ad.9.1761209440428;
+        Thu, 23 Oct 2025 01:50:40 -0700 (PDT)
+Received: from [10.0.0.3] ([106.222.229.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946e0f5de1sm16235145ad.87.2025.10.23.01.50.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 01:50:16 -0700 (PDT)
-Message-ID: <d048a875-aaa7-4db2-9ef0-daab94bc123d@oss.qualcomm.com>
-Date: Thu, 23 Oct 2025 16:50:07 +0800
+        Thu, 23 Oct 2025 01:50:39 -0700 (PDT)
+Message-ID: <8c75296f-2cd7-b0cb-f7ae-d433d2834bdd@oss.qualcomm.com>
+Date: Thu, 23 Oct 2025 14:20:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] dt-bindings: display/msm: Add SM6150 DisplayPort
- controller
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
-        li.liu@oss.qualcomm.com
-References: <20251021-add-displayport-support-to-qcs615-devicetree-v5-0-92f0f3bf469f@oss.qualcomm.com>
- <20251021-add-displayport-support-to-qcs615-devicetree-v5-1-92f0f3bf469f@oss.qualcomm.com>
- <fh7daiy5p5taaz7ifymbivfktjqngs5oashhd3osrtzspsac2z@nswaeyh3kkhi>
- <8d4184a8-4e32-43ce-a487-a195e97fa874@oss.qualcomm.com>
- <1a787fe1-20ba-42b7-a94e-cd1bf465f16f@oss.qualcomm.com>
-From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-In-Reply-To: <1a787fe1-20ba-42b7-a94e-cd1bf465f16f@oss.qualcomm.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 3/6] media: iris: stop encoding PIPE value into fw_caps
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251019-iris-sc7280-v4-0-ee6dcee6e741@oss.qualcomm.com>
+ <20251019-iris-sc7280-v4-3-ee6dcee6e741@oss.qualcomm.com>
+Content-Language: en-US
+From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+In-Reply-To: <20251019-iris-sc7280-v4-3-ee6dcee6e741@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDE1NSBTYWx0ZWRfX9fi3/+eXJWmT
- 281Vc/yWfTPcXP6LwKEKmSbV8UgvO3nUhU5oYUiZ1vE/BRyIq4YghJ+gE8yclzF9Jiobs641yGK
- em5yVKCvua3j0HhpB8TVHc6ArvZQgdu6pKmiE81znjyM1rZF/h30hx+DBeF6ByRnG4gDVWRyZcW
- qgnu0UaxWhGRRiPXTcovleLFb+oJhDV5MSEnI/9eSvTcGt2zS/qWOJ3Xevgvb3Z7cHwdIeO1GLI
- vdC6pDFji7ppfEAmELIGpvs8dLBx4AnVmP2pdw7diWSXZ/gC0pSLwY3B0+rLdhGhbIfx/HuHAkT
- 84VKeXiB3n26tRsImmOEEefnTzbezz00H4tQO/3tQYFmbn/UXjZpLY9bPgj0n/JLwQh6AXk/RCB
- 5/RHPbGtqLp8XHlaa3ZWd/GW52jQog==
-X-Authority-Analysis: v=2.4 cv=Uotu9uwB c=1 sm=1 tr=0 ts=68f9ec4c cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE5MCBTYWx0ZWRfX/P2ZiHc1q3ye
+ PoGPXPyOzPF8X/KQtvX4EwVTXhJ2cXzt52dk6gFBnsS41UVDJIY+Rh0JGe9WahBZbL772xa7lra
+ g12OKD2aEutzNcN2tT5WfuGnUTTsAG0o0OLH4dJY/yt5JlmCRplSX9WhCzQbwI3BSTQwc/N07Bs
+ s7BCFXG9mi+aZwh1hTRtW9RsSl1rz3dcon8czbPOTgmjvb4NGZXpkihUyPappOA46LmaOM8fQYN
+ AiyIqdMAxoBTY1lV+xOtJTe7zn6IKRQeXqG8lsI2RoJmMBVanxX55FpxBN+/wWOT2QG5XZ1JSvM
+ b4kTWkM7Kr8tcrtJQamWISkNES4qN6xZMJvohxRMI/3UMR9wbNJ07JnUGVPCITQzQnwhgnU/M9i
+ PNMFSnNhF1KoGlR5tykNinaEVSvQ5g==
+X-Authority-Analysis: v=2.4 cv=FbM6BZ+6 c=1 sm=1 tr=0 ts=68f9ec61 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
  a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=Yf0QdHFY1VziTJGLG10A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-GUID: Mj5zokaBeHumYjcKxAtqHDVZlS6jW0Ba
-X-Proofpoint-ORIG-GUID: Mj5zokaBeHumYjcKxAtqHDVZlS6jW0Ba
+ a=EUspDBNiAAAA:8 a=SvJZJoMY8oi3fNviAK8A:9 a=QEXdDO2ut3YA:10
+ a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: tvyjgjWX4aY7DY2t5fUqHMLoMtL5rxQH
+X-Proofpoint-ORIG-GUID: tvyjgjWX4aY7DY2t5fUqHMLoMtL5rxQH
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 impostorscore=0 priorityscore=1501 clxscore=1015 spamscore=0
- adultscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ malwarescore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 impostorscore=0 clxscore=1015 adultscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510220155
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510210190
 
 
-On 10/23/2025 1:10 PM, Dmitry Baryshkov wrote:
-> On 23/10/2025 07:50, Xiangxu Yin wrote:
->>
->> On 10/22/2025 11:07 PM, Dmitry Baryshkov wrote:
->>> On Tue, Oct 21, 2025 at 11:18:07AM +0800, Xiangxu Yin via B4 Relay wrote:
->>>> From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
->>>>
->>>> SM6150 uses the same DisplayPort controller as SM8150, which is already
->>>> compatible with SM8350. Add the SM6150-specific compatible string and
->>>> update the binding example accordingly.
->>>>
->>>> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
->>>> ---
->>>>   .../devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml   | 13 ++++++++++++-
->>>>   1 file changed, 12 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml
->>>> index 9ac24f99d3ada1c197c9654dc9babebccae972ed..89852af70de97a9025079107b838de578778c049 100644
->>>> --- a/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml
->>>> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml
->>>> @@ -51,6 +51,16 @@ patternProperties:
->>>>         compatible:
->>>>           const: qcom,sm6150-dpu
->>>>   +  "^displayport-controller@[0-9a-f]+$":
->>>> +    type: object
->>>> +    additionalProperties: true
->>>> +    properties:
->>>> +      compatible:
->>>> +        items:
->>>> +          - const: qcom,sm6150-dp
->>>> +          - const: qcom,sm8150-dp
->>>> +          - const: qcom,sm8350-dp
->>>> +
->>>>     "^dsi@[0-9a-f]+$":
->>>>       type: object
->>>>       additionalProperties: true
->>>> @@ -132,13 +142,14 @@ examples:
->>>>                   port@0 {
->>>>                     reg = <0>;
->>>>                     dpu_intf0_out: endpoint {
->>>> +                    remote-endpoint = <&mdss_dp0_in>;
->>> Why?
->>
->>
->> Oh, I think I misunderstood the “messed up indentation” comment from Krzysztof.
->> It seems the two-space indentation under port@X and opp-x is the actual issue.
->>
->> However, that part was not introduced in this patch.
->> I will split a separate patch to fix the indentation there.
->
-> Note, you have two different chunks here. The first one is useless as it adds a graph arc to a node that is not a part of the example. 
->
 
-You’re right, I verified with CHECK_DTBS and it passes without it,
-so I’ll drop it in the next version.
+On 10/19/2025 1:26 PM, Dmitry Baryshkov wrote:
+> The value of the PIPE property depends on the number of pipes available
+> on the platform and is frequently the only difference between several
+> fw_caps. In order to reduce duplciation, use num_vpp_pipe from the
+> iris_platform_data rather than hardcoding the value into the fw_cap.
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_ctrls.c            | 16 +++++++++++++---
+>  drivers/media/platform/qcom/iris/iris_platform_gen2.c    |  3 +--
+>  drivers/media/platform/qcom/iris/iris_platform_qcs8300.h |  3 +--
+>  drivers/media/platform/qcom/iris/iris_platform_sm8250.c  |  3 +--
+>  4 files changed, 16 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> index 9da050aa1f7ce8152dfa46a706e2c27adfb5d6ce..c0b3a09ad3e3dfb0a47e3603a8089cf61390fda8 100644
+> --- a/drivers/media/platform/qcom/iris/iris_ctrls.c
+> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> @@ -313,13 +313,23 @@ void iris_session_init_caps(struct iris_core *core)
+>  			continue;
+>  
+>  		core->inst_fw_caps_dec[cap_id].cap_id = caps[i].cap_id;
+> -		core->inst_fw_caps_dec[cap_id].min = caps[i].min;
+> -		core->inst_fw_caps_dec[cap_id].max = caps[i].max;
+>  		core->inst_fw_caps_dec[cap_id].step_or_mask = caps[i].step_or_mask;
+> -		core->inst_fw_caps_dec[cap_id].value = caps[i].value;
+>  		core->inst_fw_caps_dec[cap_id].flags = caps[i].flags;
+>  		core->inst_fw_caps_dec[cap_id].hfi_id = caps[i].hfi_id;
+>  		core->inst_fw_caps_dec[cap_id].set = caps[i].set;
+> +
+> +		if (cap_id == PIPE) {
+> +			core->inst_fw_caps_dec[cap_id].value =
+> +				core->iris_platform_data->num_vpp_pipe;
+> +			core->inst_fw_caps_dec[cap_id].min =
+> +				core->iris_platform_data->num_vpp_pipe;
+> +			core->inst_fw_caps_dec[cap_id].max =
+> +				core->iris_platform_data->num_vpp_pipe;
+> +		} else {
+> +			core->inst_fw_caps_dec[cap_id].min = caps[i].min;
+> +			core->inst_fw_caps_dec[cap_id].max = caps[i].max;
+> +			core->inst_fw_caps_dec[cap_id].value = caps[i].value;
+> +		}
+>  	}
+>  
+>  	caps = core->iris_platform_data->inst_fw_caps_enc;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> index b444e816355624bca8248cce9da7adcd7caf6c5b..03ce5c259c8491ae6882128795d18569baea6241 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> @@ -161,9 +161,8 @@ static const struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
+>  	{
+>  		.cap_id = PIPE,
+>  		.min = PIPE_1,
 
+Do we still need min here?
 
->>
->>
->>>>                     };
->>>>                   };
->>>>                     port@1 {
->>>>                     reg = <1>;
->>>>                     dpu_intf1_out: endpoint {
->>>> -                      remote-endpoint = <&mdss_dsi0_in>;
->>>> +                    remote-endpoint = <&mdss_dsi0_in>;
->>> Why?
->>
->>
->> Ack.
->
-> Use YAML coding style (two-space indentation). For DTS examples in the schema, preferred is four-space indentation. 
->
-
-Ok, will add a new subpatch to fix DTS example indentation.
-
-
+Thanks,
+Dikshita
+> -		.max = PIPE_4,
+> +		/* .max, .min and .value are set via platform data */
+>  		.step_or_mask = 1,
+> -		.value = PIPE_4,
+>  		.hfi_id = HFI_PROP_PIPE,
+>  		.set = iris_set_pipe,
+>  	},
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h b/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h
+> index 87517361a1cf4b6fe53b8a1483188670df52c7e7..310c48958018ae724d01c87e7977096cd86e1bfd 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h
+> @@ -147,9 +147,8 @@ static const struct platform_inst_fw_cap inst_fw_cap_qcs8300_dec[] = {
+>  	{
+>  		.cap_id = PIPE,
+>  		.min = PIPE_1,
+> -		.max = PIPE_2,
+> +		/* .max, .min and .value are set via platform data */
+>  		.step_or_mask = 1,
+> -		.value = PIPE_2,
+>  		.hfi_id = HFI_PROP_PIPE,
+>  		.set = iris_set_pipe,
+>  	},
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> index 66a5bdd24d8a0e98b0554a019438bf4caa1dc43c..9cb9ddc86ad73daf75383b3253e851394235093d 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> @@ -21,9 +21,8 @@ static const struct platform_inst_fw_cap inst_fw_cap_sm8250_dec[] = {
+>  	{
+>  		.cap_id = PIPE,
+>  		.min = PIPE_1,
+> -		.max = PIPE_4,
+> +		/* .max, .min and .value are set via platform data */
+>  		.step_or_mask = 1,
+> -		.value = PIPE_4,
+>  		.hfi_id = HFI_PROPERTY_PARAM_WORK_ROUTE,
+>  		.set = iris_set_pipe,
+>  	},
+> 
 
