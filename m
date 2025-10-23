@@ -1,707 +1,266 @@
-Return-Path: <linux-kernel+bounces-867115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9396FC019F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:04:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BADCC01975
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3CDE7563C0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:57:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 551DC1A631B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C7A320CB1;
-	Thu, 23 Oct 2025 13:55:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7D4320CAA;
-	Thu, 23 Oct 2025 13:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC06D3191C8;
+	Thu, 23 Oct 2025 13:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="f4gdaOR2"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8C01F8724
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227732; cv=none; b=sjg2KGAOccSnn5HHq7ukhR/087PszAMOPiWmZzCeCy+6T/RyFpaAjw7KKgNfjhf2iM3EEBEmFcmrZiNA46dwOHZVEIi8ddPQg4xGftQHHfrBfID7U/nZ1P9PmuZgVf7m9+XBJa0vNW1IJO38u4C5N11gyHdwgHuAnv4jd1egGPg=
+	t=1761227907; cv=none; b=skIj1UPnlzd7WxC51gqVqvo5useUhPUc4ZJVVepmRgcnTnydUrSRVfUhUOuhaO29j4GNO1SA4si5XUswq8G4qKbecJ+915ZeeMMkr3M9yyhx5A7TPQDe7oCiG0291QBgo+mnKJcNxx6wjYOhZz2vCv1RdJIJtJsk8f3VjZL2uWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227732; c=relaxed/simple;
-	bh=E0GZyz93DnD/c/sbK/CGGle1Rx8J8HKlapvmza4Ttxg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D+bV2te57rOvMCuXG/zdjMlnCf0co75HpNkvVR74MtwmZ+gcJ5p4GIKrEJoSj0DnrUWQwAFXoo0ZFXnwmnAtQLHts64Fwt20DKfaT2XZ04HmKd9toEREe4EzcDxZEli3Mw36Lis/5tqFiECwkJYqIrZHu2SFE51GoJQozj4DEwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DC531516;
-	Thu, 23 Oct 2025 06:55:21 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 59CF03F59E;
-	Thu, 23 Oct 2025 06:55:21 -0700 (PDT)
-Date: Thu, 23 Oct 2025 15:55:15 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"dakr@kernel.org" <dakr@kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	"bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	"joel@joelfernandes.org" <joel@joelfernandes.org>,
-	Elle Rhumsaa <elle@weathered-steel.dev>,
-	Yury Norov <yury.norov@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	"nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>
-Subject: Re: [PATCH v6 4/5] rust: Move register and bitfield macros out of
- Nova
-Message-ID: <aPozw8TGp85YdmNU@arm.com>
-References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
- <20251003154748.1687160-5-joelagnelf@nvidia.com>
- <aPklNydcTdOeXtdU@arm.com>
- <ACAA327A-AE2B-4D21-B8C5-C66BB5E09B7C@nvidia.com>
+	s=arc-20240116; t=1761227907; c=relaxed/simple;
+	bh=g6CVHaLMWorkE5f1oYDzlb1AnPkj/bZHP6uxaos3Agw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q3nJ/gf3R82G7Y3jLdfi6vlXnnnqe2XL2lMcNiBI8YAXcaD/kZbjE9VYH6QbYdbAhLSZ4Vs2mUtuhZjDiLPKyC/T9DB3LUFRfNcHq0uVCRFuyQcgPQE9skGnJgnn7ZkYrWhRE67qmy/+LWKtdudZmR+v1RupaVNgzjzP1tkOctA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=f4gdaOR2; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b3d196b7eeeso178324866b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:58:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1761227903; x=1761832703; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k+CJA/yttcEWE329t4x7y0QQYUGKS/VYwA6kfJw1v8Y=;
+        b=f4gdaOR2/7qfM5MrqyRgVjap8rA431i1YrHPHLRnSOEdQrO3mBSiZxCMMnFBzYQ33F
+         b84yKDMayFhi0ca0jGpn2QZ/M/O+VuHDNBj7cTEQHpICnwkyDzTDA+IW3zE0Q4LUu5xU
+         JMsxbO7EPK/4WpDsllm0Up42cN59V1CtaCebAodjyIsAPUQ50Js6LBy2/bb731yz12L6
+         cuxnPoDIB1hMs3fTHWtldgSJLpLiI6paAzE0xxDcRDI7IZ3LU8yKSRA4H7WSVQcRUhh6
+         EGGmZ7ghEYqK7P0QeLe0Odk81kSnH61SbaLmgKdyJoVm3F7W10fIKCh7NV/aAbcOh7SG
+         PcsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761227903; x=1761832703;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k+CJA/yttcEWE329t4x7y0QQYUGKS/VYwA6kfJw1v8Y=;
+        b=N3bjhxXLBaKEvFueyPiES9kBpDu0WvCQOQs3BHIFyUjL9axyfxND4HC37muehl4ULD
+         FGZqmeXxPKEU7fv2IkIGn79F7gXSpH3UL/u2qTGwGGReY0m/BaE+M/yH5NrsG5DiVm4A
+         Fe178pH0lk41vGXYwSFxwbiLm82Z3SobYa7XccsL+1J1rPSvwo7Tyg+B//ONGcJ74gL9
+         MuBxvLrArfYlNiXwN7sLhj45gqh9DlvL8z796LpkCnc0cMhbGvuiPVGgS29N/LPkbDNQ
+         ovtuyLjMMsRBarh6cHKIryQezECPU9ZsdCUMZ6Z0AJeN1IFkmADv4NACoAM8WgE6XCYT
+         KAFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSgO+NUKieAgp9pfjReCgpca/oqRyakFffQdLZ+DhlGHnYDyetX2p03Hzue06CrD/c+Zl8rUSffCzVCw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+PMJKq2DAuyeIkwFxSjWrLK6ee8zT6xGTHs6L99jexy1lEuIy
+	n+b9s42z7RzCjB6Jxx3ZVeUkyU2S6DaQsmsMCq3CYevtBtmjmTtolQyInWR+pMFUTZo=
+X-Gm-Gg: ASbGncsduxXhCCGvsWKNQ8eksmMGtMJhzCRrnJaMRE6xPynZEEQa9cvGCDAq2dFY+PA
+	5ZYSLLEZUJ+9TKUMoLETj733unSIFQngDy9vSQcxzJbs04QqI4wP/a7d+aSA63kJm37B7JwTO2/
+	37o+UfjACee76QfnnvLdDuhcYgbvu3Tc0al4LgAz/G+sdQtxhR8VRgMwQoWyjMzs5vR/vVIX70f
+	gKC2OSHnCwRlid1JvsW/OnJqCmCnPkr7MRhZlyi0xilwDZoKgDQc9PxauqkoxXmGZx6joMSLLsm
+	zDws9/r91lIN5TBDzp2P0opEUCWEdxGMrarGVJyEq4aNJp8f+fFfpue3waWVaWpRRaGvYfky0pB
+	leq4xH4s9Wj546TlL3aUjxMK5Nn47tmxhYHu5TRn0ANVHpjby8ejfRMrJaK62gjrxbX/4kDqUPT
+	SlzkBqeu3U9Cpmnf8nWCYaIaV/G89WAVHxCS0Upia9
+X-Google-Smtp-Source: AGHT+IE0HOq8wtrB6PmzEqA/w7kF+MiVvfd/RggY6M/Zy5oz6h4QHBB/DlWWt/YaXvmWMvKZptSp0Q==
+X-Received: by 2002:a17:907:9622:b0:b6d:55ee:506d with SMTP id a640c23a62f3a-b6d55ee5232mr231552866b.65.1761227902719;
+        Thu, 23 Oct 2025 06:58:22 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.151])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d511f8634sm226114066b.29.2025.10.23.06.58.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 06:58:22 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	yoshihiro.shimoda.uh@renesas.com,
+	biju.das.jz@bp.renesas.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v8 0/7] Add initial USB support for the Renesas RZ/G3S SoC
+Date: Thu, 23 Oct 2025 16:58:03 +0300
+Message-ID: <20251023135810.1688415-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ACAA327A-AE2B-4D21-B8C5-C66BB5E09B7C@nvidia.com>
 
-On Wed, Oct 22, 2025 at 07:37:55PM +0000, Joel Fernandes wrote:
-> Hi Beata,
-> 
-> > On Oct 22, 2025, at 2:41 PM, Beata Michalska <beata.michalska@arm.com> wrote:
-> > 
-> > ﻿Hi Joel,
-> > 
-> > I know I'm chiming in a bit late, so apologies for that.
-> 
-> No problem.
-> 
-> > 
-> > The register! macro does seem to be a solid foundation for MMIO register
-> > definitions, thought there are few points that could be potentially
-> > [re]considered.
-> 
-> I agree. Just to clarify, Alexandre is the main developer of the register macro. I just
-> attempted to move the code and made some improvements :). I replied below:
-> 
-> > 
-> > The current design assumes a fixed, compile-time-known MMIO region size.
-> > It does not cover cases when the region size is known only at runtime.
-> > I do appreciate that in cases like that, we are loosing all the deliberate
-> > compile-time checks but it might be necessary to provide support for those as
-> > well (at some point at least).
-> 
-> Sure that could be useful if you have a use case.
-I guess everything that would use IoRequest::iomap(self), which generates
-Io<SIZE=0> which is a game over for the macro.
-> 
-> > 
-> > On the (potential) improvement side:
-> > 
-> > Allowing offsets to be expressions rather than literals would make the macro
-> > easier to use for regions defined at a fixed base offset, where subsequent
-> > offsets are derived from that base, i.e:
-> > 
-> > REG_1_BASE    -> 0x100
-> > REG_1_STATUS    -> REG_1_BASE + 0x0
-> > REG_1_CONTROL    -> REG_1_BASE + 0x04
-> 
-> This is already possible with the register macro using relative-registers (RegisterBase) right?
-Probably though the use case I had in mind is relative array of registers.
-It's fine to use the macro as is for few registers, having a significant number
-of those gets cumbersome though. Unless I am misreading things.
-> 
-> > ...
-> > 
-> > The alias mechanism is a nice touch. It might be worth allowing arrays of
-> > registers with explicit aliases to be defined in a single macro invocation,
-> > instead of repeating similar definitions, smth along the lines of:
-> > 
-> >  register!(
-> >      REG_STATUS @ 0x300[8; STRIDE] {
-> >          0:0 enabled as bool;
-> >          3:1 mode as u8;
-> >          7:4 flags as u8;
-> >      }
-> >      aliases {
-> >          REG_STATUS_ENABLED[0] {
-> >              0:0 enabled as bool;
-> >          }
-> >          REG_STATUS_MODE[0] {
-> >              3:1 mode as u8;
-> >          }
-> >          REG_STATUS_FLAGS[4] {
-> >              7:4 flags as u8;
-> >          }
-> >      }
-> 
-> The aliasing might be better do embed as syntax in the Bitfield itself,
-> instead of additional aliases{} blocks.
-> By the way, array of registers is also supported already as you may know.
-I was referring to aliasing having in mind array of registers.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-> 
-> >  );
-> > 
-> > 
-> > Finally, for runtime values such as indexes, it could be useful to verify once
-> > and then allow infallible reads/writes through some kind access token.
-> 
-> Why? The verification is already done at compile-time AFAICS.
-Well, that's the point. Those are runtime values, and as of now, the only
-support for those is for arrays of registers when one, when using try_xxx
-methods, ends up with check being performed each time the method is called.
+Hi,
 
----
-BR
-Beata
-> 
-> > That might make runtime-safe access patterns simpler and more efficient.
-> 
-> Because it is compile-time, it is already runtime efficient :)
-> 
-> > I'm still pondering on how that could look like though (implementation-wise)
-> 
-> Patches welcomed! For now this still lives in nova-core and Alex is working
-> on adding support for BoundedInt after which we can move it out.
-> 
-> Thanks,
-> 
->  - Joel
-> 
-> 
-> > ---
-> > BR
-> > Beata
-> > 
-> >> On Fri, Oct 03, 2025 at 11:47:47AM -0400, Joel Fernandes wrote:
-> >> Out of broad need for the register and bitfield macros in Rust, move
-> >> them out of nova into the kernel crate. Several usecases need them (Nova
-> >> is already using these and Tyr developers said they need them).
-> >> 
-> >> bitfield moved into kernel crate - defines bitfields in Rust.
-> >> register moved into io module - defines hardware registers and accessors.
-> >> 
-> >> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
-> >> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
-> >> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> >> ---
-> >> drivers/gpu/nova-core/falcon.rs               |  2 +-
-> >> drivers/gpu/nova-core/falcon/gsp.rs           |  4 +-
-> >> drivers/gpu/nova-core/falcon/sec2.rs          |  2 +-
-> >> drivers/gpu/nova-core/nova_core.rs            |  3 -
-> >> drivers/gpu/nova-core/regs.rs                 |  6 +-
-> >> .../gpu/nova-core => rust/kernel}/bitfield.rs | 27 ++++-----
-> >> rust/kernel/io.rs                             |  1 +
-> >> .../macros.rs => rust/kernel/io/register.rs   | 58 ++++++++++---------
-> >> rust/kernel/lib.rs                            |  1 +
-> >> 9 files changed, 54 insertions(+), 50 deletions(-)
-> >> rename {drivers/gpu/nova-core => rust/kernel}/bitfield.rs (91%)
-> >> rename drivers/gpu/nova-core/regs/macros.rs => rust/kernel/io/register.rs (93%)
-> >> 
-> >> diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falcon.rs
-> >> index 37e6298195e4..a15fa98c8614 100644
-> >> --- a/drivers/gpu/nova-core/falcon.rs
-> >> +++ b/drivers/gpu/nova-core/falcon.rs
-> >> @@ -6,6 +6,7 @@
-> >> use hal::FalconHal;
-> >> use kernel::device;
-> >> use kernel::dma::DmaAddress;
-> >> +use kernel::io::register::RegisterBase;
-> >> use kernel::prelude::*;
-> >> use kernel::sync::aref::ARef;
-> >> use kernel::time::Delta;
-> >> @@ -14,7 +15,6 @@
-> >> use crate::driver::Bar0;
-> >> use crate::gpu::Chipset;
-> >> use crate::regs;
-> >> -use crate::regs::macros::RegisterBase;
-> >> use crate::util;
-> >> 
-> >> pub(crate) mod gsp;
-> >> diff --git a/drivers/gpu/nova-core/falcon/gsp.rs b/drivers/gpu/nova-core/falcon/gsp.rs
-> >> index f17599cb49fa..cd4960e997c8 100644
-> >> --- a/drivers/gpu/nova-core/falcon/gsp.rs
-> >> +++ b/drivers/gpu/nova-core/falcon/gsp.rs
-> >> @@ -1,9 +1,11 @@
-> >> // SPDX-License-Identifier: GPL-2.0
-> >> 
-> >> +use kernel::io::register::RegisterBase;
-> >> +
-> >> use crate::{
-> >>     driver::Bar0,
-> >>     falcon::{Falcon, FalconEngine, PFalcon2Base, PFalconBase},
-> >> -    regs::{self, macros::RegisterBase},
-> >> +    regs::self,
-> >> };
-> >> 
-> >> /// Type specifying the `Gsp` falcon engine. Cannot be instantiated.
-> >> diff --git a/drivers/gpu/nova-core/falcon/sec2.rs b/drivers/gpu/nova-core/falcon/sec2.rs
-> >> index 815786c8480d..81717868a8a8 100644
-> >> --- a/drivers/gpu/nova-core/falcon/sec2.rs
-> >> +++ b/drivers/gpu/nova-core/falcon/sec2.rs
-> >> @@ -1,7 +1,7 @@
-> >> // SPDX-License-Identifier: GPL-2.0
-> >> 
-> >> use crate::falcon::{FalconEngine, PFalcon2Base, PFalconBase};
-> >> -use crate::regs::macros::RegisterBase;
-> >> +use kernel::io::register::RegisterBase;
-> >> 
-> >> /// Type specifying the `Sec2` falcon engine. Cannot be instantiated.
-> >> pub(crate) struct Sec2(());
-> >> diff --git a/drivers/gpu/nova-core/nova_core.rs b/drivers/gpu/nova-core/nova_core.rs
-> >> index 112277c7921e..fffcaee2249f 100644
-> >> --- a/drivers/gpu/nova-core/nova_core.rs
-> >> +++ b/drivers/gpu/nova-core/nova_core.rs
-> >> @@ -2,9 +2,6 @@
-> >> 
-> >> //! Nova Core GPU Driver
-> >> 
-> >> -#[macro_use]
-> >> -mod bitfield;
-> >> -
-> >> mod dma;
-> >> mod driver;
-> >> mod falcon;
-> >> diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-> >> index 206dab2e1335..1f08e6d4045a 100644
-> >> --- a/drivers/gpu/nova-core/regs.rs
-> >> +++ b/drivers/gpu/nova-core/regs.rs
-> >> @@ -4,15 +4,13 @@
-> >> // but are mapped to types.
-> >> #![allow(non_camel_case_types)]
-> >> 
-> >> -#[macro_use]
-> >> -pub(crate) mod macros;
-> >> -
-> >> use crate::falcon::{
-> >>     DmaTrfCmdSize, FalconCoreRev, FalconCoreRevSubversion, FalconFbifMemType, FalconFbifTarget,
-> >>     FalconModSelAlgo, FalconSecurityModel, PFalcon2Base, PFalconBase, PeregrineCoreSelect,
-> >> };
-> >> use crate::gpu::{Architecture, Chipset};
-> >> use kernel::prelude::*;
-> >> +use kernel::register;
-> >> 
-> >> // PMC
-> >> 
-> >> @@ -331,6 +329,7 @@ pub(crate) fn mem_scrubbing_done(self) -> bool {
-> >> 
-> >> pub(crate) mod gm107 {
-> >>     // FUSE
-> >> +    use kernel::register;
-> >> 
-> >>     register!(NV_FUSE_STATUS_OPT_DISPLAY @ 0x00021c04 {
-> >>         0:0     display_disabled as bool;
-> >> @@ -339,6 +338,7 @@ pub(crate) mod gm107 {
-> >> 
-> >> pub(crate) mod ga100 {
-> >>     // FUSE
-> >> +    use kernel::register;
-> >> 
-> >>     register!(NV_FUSE_STATUS_OPT_DISPLAY @ 0x00820c04 {
-> >>         0:0     display_disabled as bool;
-> >> diff --git a/drivers/gpu/nova-core/bitfield.rs b/rust/kernel/bitfield.rs
-> >> similarity index 91%
-> >> rename from drivers/gpu/nova-core/bitfield.rs
-> >> rename to rust/kernel/bitfield.rs
-> >> index cbedbb0078f6..09cd5741598c 100644
-> >> --- a/drivers/gpu/nova-core/bitfield.rs
-> >> +++ b/rust/kernel/bitfield.rs
-> >> @@ -9,7 +9,7 @@
-> >> /// # Syntax
-> >> ///
-> >> /// ```rust
-> >> -/// use nova_core::bitfield;
-> >> +/// use kernel::bitfield;
-> >> ///
-> >> /// #[derive(Debug, Clone, Copy, Default)]
-> >> /// enum Mode {
-> >> @@ -82,10 +82,11 @@
-> >> ///   the result.
-> >> /// - `as <type> ?=> <try_into_type>` calls `<try_into_type>`'s `TryFrom::<<type>>` implementation
-> >> ///   and returns the result. This is useful with fields for which not all values are valid.
-> >> +#[macro_export]
-> >> macro_rules! bitfield {
-> >>     // Main entry point - defines the bitfield struct with fields
-> >>     ($vis:vis struct $name:ident($storage:ty) $(, $comment:literal)? { $($fields:tt)* }) => {
-> >> -        bitfield!(@core $vis $name $storage $(, $comment)? { $($fields)* });
-> >> +        ::kernel::bitfield!(@core $vis $name $storage $(, $comment)? { $($fields)* });
-> >>     };
-> >> 
-> >>     // All rules below are helpers.
-> >> @@ -114,7 +115,7 @@ fn from(val: $name) -> $storage {
-> >>             }
-> >>         }
-> >> 
-> >> -        bitfield!(@fields_dispatcher $vis $name $storage { $($fields)* });
-> >> +        ::kernel::bitfield!(@fields_dispatcher $vis $name $storage { $($fields)* });
-> >>     };
-> >> 
-> >>     // Captures the fields and passes them to all the implementers that require field information.
-> >> @@ -130,7 +131,7 @@ fn from(val: $name) -> $storage {
-> >>         )*
-> >>     }
-> >>     ) => {
-> >> -        bitfield!(@field_accessors $vis $name $storage {
-> >> +        ::kernel::bitfield!(@field_accessors $vis $name $storage {
-> >>             $(
-> >>                 $hi:$lo $field as $type
-> >>                 $(?=> $try_into_type)?
-> >> @@ -139,8 +140,8 @@ fn from(val: $name) -> $storage {
-> >>             ;
-> >>             )*
-> >>         });
-> >> -        bitfield!(@debug $name { $($field;)* });
-> >> -        bitfield!(@default $name { $($field;)* });
-> >> +        ::kernel::bitfield!(@debug $name { $($field;)* });
-> >> +        ::kernel::bitfield!(@default $name { $($field;)* });
-> >>     };
-> >> 
-> >>     // Defines all the field getter/setter methods for `$name`.
-> >> @@ -155,13 +156,13 @@ fn from(val: $name) -> $storage {
-> >>         }
-> >>     ) => {
-> >>         $(
-> >> -            bitfield!(@check_field_bounds $hi:$lo $field as $type);
-> >> +            ::kernel::bitfield!(@check_field_bounds $hi:$lo $field as $type);
-> >>         )*
-> >> 
-> >>         #[allow(dead_code)]
-> >>         impl $name {
-> >>             $(
-> >> -            bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as $type
-> >> +            ::kernel::bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as $type
-> >>                 $(?=> $try_into_type)?
-> >>                 $(=> $into_type)?
-> >>                 $(, $comment)?
-> >> @@ -198,7 +199,7 @@ impl $name {
-> >>         @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as bool => $into_type:ty
-> >>             $(, $comment:literal)?;
-> >>     ) => {
-> >> -        bitfield!(
-> >> +        ::kernel::bitfield!(
-> >>             @leaf_accessor $vis $name $storage, $hi:$lo $field
-> >>             { |f| <$into_type>::from(if f != 0 { true } else { false }) }
-> >>             $into_type => $into_type $(, $comment)?;
-> >> @@ -209,7 +210,7 @@ impl $name {
-> >>     (
-> >>         @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as bool $(, $comment:literal)?;
-> >>     ) => {
-> >> -        bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as bool => bool $(, $comment)?;);
-> >> +        ::kernel::bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as bool => bool $(, $comment)?;);
-> >>     };
-> >> 
-> >>     // Catches the `?=>` syntax for non-boolean fields.
-> >> @@ -217,7 +218,7 @@ impl $name {
-> >>         @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt ?=> $try_into_type:ty
-> >>             $(, $comment:literal)?;
-> >>     ) => {
-> >> -        bitfield!(@leaf_accessor $vis $name $storage, $hi:$lo $field
-> >> +        ::kernel::bitfield!(@leaf_accessor $vis $name $storage, $hi:$lo $field
-> >>             { |f| <$try_into_type>::try_from(f as $type) } $try_into_type =>
-> >>             ::core::result::Result<
-> >>                 $try_into_type,
-> >> @@ -231,7 +232,7 @@ impl $name {
-> >>         @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt => $into_type:ty
-> >>             $(, $comment:literal)?;
-> >>     ) => {
-> >> -        bitfield!(@leaf_accessor $vis $name $storage, $hi:$lo $field
-> >> +        ::kernel::bitfield!(@leaf_accessor $vis $name $storage, $hi:$lo $field
-> >>             { |f| <$into_type>::from(f as $type) } $into_type => $into_type $(, $comment)?;);
-> >>     };
-> >> 
-> >> @@ -240,7 +241,7 @@ impl $name {
-> >>         @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt
-> >>             $(, $comment:literal)?;
-> >>     ) => {
-> >> -        bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as $type => $type $(, $comment)?;);
-> >> +        ::kernel::bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as $type => $type $(, $comment)?;);
-> >>     };
-> >> 
-> >>     // Generates the accessor methods for a single field.
-> >> diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
-> >> index 03b467722b86..a79b603604b1 100644
-> >> --- a/rust/kernel/io.rs
-> >> +++ b/rust/kernel/io.rs
-> >> @@ -8,6 +8,7 @@
-> >> use crate::{bindings, build_assert, ffi::c_void};
-> >> 
-> >> pub mod mem;
-> >> +pub mod register;
-> >> pub mod resource;
-> >> 
-> >> pub use resource::Resource;
-> >> diff --git a/drivers/gpu/nova-core/regs/macros.rs b/rust/kernel/io/register.rs
-> >> similarity index 93%
-> >> rename from drivers/gpu/nova-core/regs/macros.rs
-> >> rename to rust/kernel/io/register.rs
-> >> index c0a5194e8d97..c24d956f122f 100644
-> >> --- a/drivers/gpu/nova-core/regs/macros.rs
-> >> +++ b/rust/kernel/io/register.rs
-> >> @@ -17,7 +17,8 @@
-> >> /// The `T` generic argument is used to distinguish which base to use, in case a type provides
-> >> /// several bases. It is given to the `register!` macro to restrict the use of the register to
-> >> /// implementors of this particular variant.
-> >> -pub(crate) trait RegisterBase<T> {
-> >> +pub trait RegisterBase<T> {
-> >> +    /// The base address for the register.
-> >>     const BASE: usize;
-> >> }
-> >> 
-> >> @@ -26,7 +27,7 @@ pub(crate) trait RegisterBase<T> {
-> >> ///
-> >> /// Example:
-> >> ///
-> >> -/// ```no_run
-> >> +/// ```ignore
-> >> /// register!(BOOT_0 @ 0x00000100, "Basic revision information about the GPU" {
-> >> ///    3:0     minor_revision as u8, "Minor revision of the chip";
-> >> ///    7:4     major_revision as u8, "Major revision of the chip";
-> >> @@ -39,7 +40,7 @@ pub(crate) trait RegisterBase<T> {
-> >> /// significant bits of the register. Each field can be accessed and modified using accessor
-> >> /// methods:
-> >> ///
-> >> -/// ```no_run
-> >> +/// ```ignore
-> >> /// // Read from the register's defined offset (0x100).
-> >> /// let boot0 = BOOT_0::read(&bar);
-> >> /// pr_info!("chip revision: {}.{}", boot0.major_revision(), boot0.minor_revision());
-> >> @@ -61,7 +62,7 @@ pub(crate) trait RegisterBase<T> {
-> >> /// It is also possible to create a alias register by using the `=> ALIAS` syntax. This is useful
-> >> /// for cases where a register's interpretation depends on the context:
-> >> ///
-> >> -/// ```no_run
-> >> +/// ```ignore
-> >> /// register!(SCRATCH @ 0x00000200, "Scratch register" {
-> >> ///    31:0     value as u32, "Raw value";
-> >> /// });
-> >> @@ -111,7 +112,7 @@ pub(crate) trait RegisterBase<T> {
-> >> /// this register needs to implement `RegisterBase<Base>`. Here is the above example translated
-> >> /// into code:
-> >> ///
-> >> -/// ```no_run
-> >> +/// ```ignore
-> >> /// // Type used to identify the base.
-> >> /// pub(crate) struct CpuCtlBase;
-> >> ///
-> >> @@ -162,7 +163,7 @@ pub(crate) trait RegisterBase<T> {
-> >> /// compile-time or runtime bound checking. Simply define their address as `Address[Size]`, and add
-> >> /// an `idx` parameter to their `read`, `write` and `alter` methods:
-> >> ///
-> >> -/// ```no_run
-> >> +/// ```ignore
-> >> /// # fn no_run() -> Result<(), Error> {
-> >> /// # fn get_scratch_idx() -> usize {
-> >> /// #   0x15
-> >> @@ -211,7 +212,7 @@ pub(crate) trait RegisterBase<T> {
-> >> /// Combining the two features described in the sections above, arrays of registers accessible from
-> >> /// a base can also be defined:
-> >> ///
-> >> -/// ```no_run
-> >> +/// ```ignore
-> >> /// # fn no_run() -> Result<(), Error> {
-> >> /// # fn get_scratch_idx() -> usize {
-> >> /// #   0x15
-> >> @@ -273,28 +274,29 @@ pub(crate) trait RegisterBase<T> {
-> >> /// # Ok(())
-> >> /// # }
-> >> /// ```
-> >> +#[macro_export]
-> >> macro_rules! register {
-> >>     // Creates a register at a fixed offset of the MMIO space.
-> >>     ($name:ident @ $offset:literal $(, $comment:literal)? { $($fields:tt)* } ) => {
-> >> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >>         register!(@io_fixed $name @ $offset);
-> >>     };
-> >> 
-> >>     // Creates an alias register of fixed offset register `alias` with its own fields.
-> >>     ($name:ident => $alias:ident $(, $comment:literal)? { $($fields:tt)* } ) => {
-> >> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >>         register!(@io_fixed $name @ $alias::OFFSET);
-> >>     };
-> >> 
-> >>     // Creates a register at a relative offset from a base address provider.
-> >>     ($name:ident @ $base:ty [ $offset:literal ] $(, $comment:literal)? { $($fields:tt)* } ) => {
-> >> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >>         register!(@io_relative $name @ $base [ $offset ]);
-> >>     };
-> >> 
-> >>     // Creates an alias register of relative offset register `alias` with its own fields.
-> >>     ($name:ident => $base:ty [ $alias:ident ] $(, $comment:literal)? { $($fields:tt)* }) => {
-> >> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >>         register!(@io_relative $name @ $base [ $alias::OFFSET ]);
-> >>     };
-> >> 
-> >> @@ -305,7 +307,7 @@ macro_rules! register {
-> >>         }
-> >>     ) => {
-> >>         static_assert!(::core::mem::size_of::<u32>() <= $stride);
-> >> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >>         register!(@io_array $name @ $offset [ $size ; $stride ]);
-> >>     };
-> >> 
-> >> @@ -326,7 +328,7 @@ macro_rules! register {
-> >>             $(, $comment:literal)? { $($fields:tt)* }
-> >>     ) => {
-> >>         static_assert!(::core::mem::size_of::<u32>() <= $stride);
-> >> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >>         register!(@io_relative_array $name @ $base [ $offset [ $size ; $stride ] ]);
-> >>     };
-> >> 
-> >> @@ -348,7 +350,7 @@ macro_rules! register {
-> >>         }
-> >>     ) => {
-> >>         static_assert!($idx < $alias::SIZE);
-> >> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >>         register!(@io_relative $name @ $base [ $alias::OFFSET + $idx * $alias::STRIDE ] );
-> >>     };
-> >> 
-> >> @@ -357,7 +359,7 @@ macro_rules! register {
-> >>     // to avoid it being interpreted in place of the relative register array alias rule.
-> >>     ($name:ident => $alias:ident [ $idx:expr ] $(, $comment:literal)? { $($fields:tt)* }) => {
-> >>         static_assert!($idx < $alias::SIZE);
-> >> -        bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >> +        ::kernel::bitfield!(pub(crate) struct $name(u32) $(, $comment)? { $($fields)* } );
-> >>         register!(@io_fixed $name @ $alias::OFFSET + $idx * $alias::STRIDE );
-> >>     };
-> >> 
-> >> @@ -414,12 +416,12 @@ pub(crate) fn read<const SIZE: usize, T, B>(
-> >>                 base: &B,
-> >>             ) -> Self where
-> >>                 T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> >> -                B: crate::regs::macros::RegisterBase<$base>,
-> >> +                B: ::kernel::io::register::RegisterBase<$base>,
-> >>             {
-> >>                 const OFFSET: usize = $name::OFFSET;
-> >> 
-> >>                 let value = io.read32(
-> >> -                    <B as crate::regs::macros::RegisterBase<$base>>::BASE + OFFSET
-> >> +                    <B as ::kernel::io::register::RegisterBase<$base>>::BASE + OFFSET
-> >>                 );
-> >> 
-> >>                 Self(value)
-> >> @@ -435,13 +437,13 @@ pub(crate) fn write<const SIZE: usize, T, B>(
-> >>                 base: &B,
-> >>             ) where
-> >>                 T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> >> -                B: crate::regs::macros::RegisterBase<$base>,
-> >> +                B: ::kernel::io::register::RegisterBase<$base>,
-> >>             {
-> >>                 const OFFSET: usize = $name::OFFSET;
-> >> 
-> >>                 io.write32(
-> >>                     self.0,
-> >> -                    <B as crate::regs::macros::RegisterBase<$base>>::BASE + OFFSET
-> >> +                    <B as ::kernel::io::register::RegisterBase<$base>>::BASE + OFFSET
-> >>                 );
-> >>             }
-> >> 
-> >> @@ -455,7 +457,7 @@ pub(crate) fn alter<const SIZE: usize, T, B, F>(
-> >>                 f: F,
-> >>             ) where
-> >>                 T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> >> -                B: crate::regs::macros::RegisterBase<$base>,
-> >> +                B: ::kernel::io::register::RegisterBase<$base>,
-> >>                 F: ::core::ops::FnOnce(Self) -> Self,
-> >>             {
-> >>                 let reg = f(Self::read(io, base));
-> >> @@ -600,11 +602,11 @@ pub(crate) fn read<const SIZE: usize, T, B>(
-> >>                 idx: usize,
-> >>             ) -> Self where
-> >>                 T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> >> -                B: crate::regs::macros::RegisterBase<$base>,
-> >> +                B: ::kernel::io::register::RegisterBase<$base>,
-> >>             {
-> >>                 build_assert!(idx < Self::SIZE);
-> >> 
-> >> -                let offset = <B as crate::regs::macros::RegisterBase<$base>>::BASE +
-> >> +                let offset = <B as ::kernel::io::register::RegisterBase<$base>>::BASE +
-> >>                     Self::OFFSET + (idx * Self::STRIDE);
-> >>                 let value = io.read32(offset);
-> >> 
-> >> @@ -622,11 +624,11 @@ pub(crate) fn write<const SIZE: usize, T, B>(
-> >>                 idx: usize
-> >>             ) where
-> >>                 T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> >> -                B: crate::regs::macros::RegisterBase<$base>,
-> >> +                B: ::kernel::io::register::RegisterBase<$base>,
-> >>             {
-> >>                 build_assert!(idx < Self::SIZE);
-> >> 
-> >> -                let offset = <B as crate::regs::macros::RegisterBase<$base>>::BASE +
-> >> +                let offset = <B as ::kernel::io::register::RegisterBase<$base>>::BASE +
-> >>                     Self::OFFSET + (idx * Self::STRIDE);
-> >> 
-> >>                 io.write32(self.0, offset);
-> >> @@ -643,7 +645,7 @@ pub(crate) fn alter<const SIZE: usize, T, B, F>(
-> >>                 f: F,
-> >>             ) where
-> >>                 T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> >> -                B: crate::regs::macros::RegisterBase<$base>,
-> >> +                B: ::kernel::io::register::RegisterBase<$base>,
-> >>                 F: ::core::ops::FnOnce(Self) -> Self,
-> >>             {
-> >>                 let reg = f(Self::read(io, base, idx));
-> >> @@ -662,7 +664,7 @@ pub(crate) fn try_read<const SIZE: usize, T, B>(
-> >>                 idx: usize,
-> >>             ) -> ::kernel::error::Result<Self> where
-> >>                 T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> >> -                B: crate::regs::macros::RegisterBase<$base>,
-> >> +                B: ::kernel::io::register::RegisterBase<$base>,
-> >>             {
-> >>                 if idx < Self::SIZE {
-> >>                     Ok(Self::read(io, base, idx))
-> >> @@ -684,7 +686,7 @@ pub(crate) fn try_write<const SIZE: usize, T, B>(
-> >>                 idx: usize,
-> >>             ) -> ::kernel::error::Result where
-> >>                 T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> >> -                B: crate::regs::macros::RegisterBase<$base>,
-> >> +                B: ::kernel::io::register::RegisterBase<$base>,
-> >>             {
-> >>                 if idx < Self::SIZE {
-> >>                     Ok(self.write(io, base, idx))
-> >> @@ -707,7 +709,7 @@ pub(crate) fn try_alter<const SIZE: usize, T, B, F>(
-> >>                 f: F,
-> >>             ) -> ::kernel::error::Result where
-> >>                 T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
-> >> -                B: crate::regs::macros::RegisterBase<$base>,
-> >> +                B: ::kernel::io::register::RegisterBase<$base>,
-> >>                 F: ::core::ops::FnOnce(Self) -> Self,
-> >>             {
-> >>                 if idx < Self::SIZE {
-> >> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> >> index fcffc3988a90..8f8260090c02 100644
-> >> --- a/rust/kernel/lib.rs
-> >> +++ b/rust/kernel/lib.rs
-> >> @@ -63,6 +63,7 @@
-> >> pub mod alloc;
-> >> #[cfg(CONFIG_AUXILIARY_BUS)]
-> >> pub mod auxiliary;
-> >> +pub mod bitfield;
-> >> pub mod bits;
-> >> #[cfg(CONFIG_BLOCK)]
-> >> pub mod block;
-> >> --
-> >> 2.34.1
-> >> 
-> >> 
+Series adds initial USB support for the Renesas RZ/G3S SoC.
+
+Series is split as follows:
+- patches 1-2/7		- fixes on bindings and driver for USB PHY
+- patches 3-5/7		- updates the rzg2l-usbphy-ctrl driver and documentation
+			  with support for setting PWRRDY though SYSC
+- patches 6-7/7		- add device tree support
+
+Merge strategy, if any:
+- patches 1-2/7 can go through the PHY tree
+- patches 3-5/7 can go through the reset tree
+- patches 6-7/7 can go through Renesas tree
+
+Thank you,
+Claudiu Beznea
+
+Changes in v8:
+- use regmap_field in patch 4/7; as a result of this the support was
+  simplified
+- per-patch changes are described in each individual patch
+
+Changes in v7:
+- used proper regmap update value for PWRRDY
+- collected tags
+- dropped Tb tags from dt-bindings
+
+Changes in v6:
+- in patch 2/7 dropped the struct rcar_gen3_chan::rstc as it is not
+  used anymore
+- in patch 4/7 used syscon_regmap_lookup_by_phandle_args()
+- collected tags
+
+Changes in v5:
+- dropped patch "soc: renesas: rz-sysc: Add syscon/regmap support" as it
+  already modified and pubished also at [2] with the latest review comments
+  addressed
+- fixed the documentation
+
+Changes in v4:
+- replaced "renesas,sysc-signals" DT property with "renesas,sysc-pwrrdy"
+- dropped the "renesas,sysc-signals" property from USB PHY (as proposed
+  in v3) and let only the USB PHY CTRL driver to handle it as on RZ/G3S
+  the USB PHY CTRL driver needs to be probed before any other USB driver
+- dropped the signal abstraction from SYSC driver as there is no need
+  for reference counting it now
+- adjusted the "soc: renesas: rz-sysc: Add syscon/regmap support" to
+  comply with the latest review comments
+
+Changes in v3:
+- as the basics of the SYSC driver was integrated, only the signal support
+  was preserved in this series, in a separate patch; patch 01/12 was
+  adjusted (by addressing the review comments received at [1]) as it is
+  necessary to build the signal support on top of it
+- after long discussions with the internal HW team it has been confirmed
+  that the relation b/w individual USB specific HW blocks and signals
+  is like:
+
+                                   ┌──────────────────────────────┐
+                                   │                              │◄── CPG_CLKON_USB.CLK0_ON
+                                   │     USB CH0                  │
+    ┌──────────────────────────┐   │┌───────────────────────────┐ │◄── CPG_CLKON_USB.CLK2_ON
+    │                 ┌────────┐   ││host controller registers  │ │
+    │                 │        │   ││function controller registers│
+    │                 │ PHY0   │◄──┤└───────────────────────────┘ │
+    │     USB PHY     │        │   └────────────▲─────────────────┘
+    │                 └────────┘                │
+    │                          │    CPG_BUS_PERI_COM_MSTOP.MSTOP{6, 5}_ON
+    │┌──────────────┐ ┌────────┐
+    ││USBPHY control│ │        │
+    ││  registers   │ │ PHY1   │   ┌──────────────────────────────┐
+    │└──────────────┘ │        │◄──┤     USB CH1                  │
+    │                 └────────┘   │┌───────────────────────────┐ │◄── CPG_CLKON_USB.CLK1_ON
+    └─▲───────▲─────────▲──────┘   ││ host controller registers │ │
+      │       │         │          │└───────────────────────────┘ │
+      │       │         │          └────────────▲─────────────────┘
+      │       │         │                       │
+      │       │         │           CPG_BUS_PERI_COM_MSTOP.MSTOP7_ON
+      │PWRRDY │         │
+      │       │   CPG_CLK_ON_USB.CLK3_ON
+      │       │
+      │  CPG_BUS_PERI_COM_MSTOP.MSTOP4_ON
+      │
+    ┌────┐
+    │SYSC│
+    └────┘
+
+  where:
+  - CPG_CLKON_USB.CLK.CLKX_ON is the register bit controlling the clock X
+      of different USB blocks, X in {0, 1, 2, 3}
+  - CPG_BUS_PERI_COM_MSTOP.MSTOPX_ON is the register bit controlling the
+    MSTOP of different USB blocks, X in {4, 5, 6, 7}
+  - USB PHY is the USB PHY block exposing 2 ports, port0 and port1, used
+    by the USB CH0, USB CH1
+  - SYSC is the system controller block controlling the PWRRDY signal
+  - USB CHx are individual USB block with host and function capabilities
+    (USB CH0 have both host and function capabilities, USB CH1 has only
+    host capabilities)
+
+  Due to this, the PWRRDY signal was also passed to the reset-rzg2l-usbphy-ctrl
+  reset driver (as it controls the USBPHY control registers) and these
+  are in the USB PHY block controlled by PWRRDY signal.
+
+  The PWRRDY signal need to be de-asserted on probe before enabling the module
+  clocks and the module MSTOP. To avoid any violation of this configuration
+  sequence, the PWRRDY signal is now controlled by USB PHY driver and the
+  reset-rzg2l-usbphy-ctrl driver.
+
+  As the PHYs gets reset signals from the USB reset controller driver, the
+  reset-rzg2l-usbphy-ctrl is probed before the USB PHY driver and thus,
+  in theory, we can drop the signal support (reference counting of the
+  USB PWRRDY) and configure the USB PWRRDY just in the reset-rzg2l-usbphy-ctrl.
+
+  However, to have a proper description of the diagram described above in 
+  device tree and ensure the configuration sequence b/w PRWRDY, CLK and MSTOP
+  is preserved, the PWRRDY signal is controlled in this series in all the
+  drivers that work with registers from the USB PHY block.
+
+  Please provide your feedback on this solution.
+
+Thank you,
+Claudiu
+
+[1] https://lore.kernel.org/all/20250330214945.185725-2-john.madieu.xa@bp.renesas.com/
+[2] https://lore.kernel.org/all/20250818162859.9661-2-john.madieu.xa@bp.renesas.com/
+
+Changes in v2:
+- dropped v1 patches already applied
+- added fixes patches (07/14 and 09/14)
+- dropped the approach of handling the USB PWRRDY though a reset controller
+  driver and introduced the signal concept for the SYSC driver; because
+  of this, most of the work done in v1 was dropped
+- per patch changes are listed in individual patches, if any
+
+Christophe JAILLET (1):
+  phy: renesas: rcar-gen3-usb2: Fix an error handling path in
+    rcar_gen3_phy_usb2_probe()
+
+Claudiu Beznea (6):
+  dt-bindings: phy: renesas,usb2-phy: Mark resets as required for RZ/G3S
+  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3S support
+  reset: rzg2l-usbphy-ctrl: Add support for USB PWRRDY
+  reset: rzg2l-usbphy-ctrl: Add support for RZ/G3S SoC
+  arm64: dts: renesas: r9a08g045: Add USB support
+  arm64: dts: renesas: rzg3s-smarc: Enable USB support
+
+ .../bindings/phy/renesas,usb2-phy.yaml        |   1 +
+ .../reset/renesas,rzg2l-usbphy-ctrl.yaml      |  41 +++++-
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 118 ++++++++++++++++++
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |  57 +++++++++
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  20 ++-
+ drivers/reset/Kconfig                         |   1 +
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c       |  60 +++++++++
+ 7 files changed, 286 insertions(+), 12 deletions(-)
+
+-- 
+2.43.0
+
 
