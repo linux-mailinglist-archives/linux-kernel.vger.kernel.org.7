@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-867088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DC5C018B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:52:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95348C018F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C0D3835AAF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:52:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 636C6500AB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4551931E10F;
-	Thu, 23 Oct 2025 13:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F2932142E;
+	Thu, 23 Oct 2025 13:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0Ghzo5q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3vN6tmz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E47F30CDA9;
-	Thu, 23 Oct 2025 13:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C1F320A3E;
+	Thu, 23 Oct 2025 13:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227518; cv=none; b=JAFbYJjI84yExhvEYsyUiXYnvHx9ThU03PHcsJPsx2LfWqYSBaxSF7FNPi0RJFyZsB0SKgrvwlu0WiQQp74k0vgR44sAeUxUCylOA/tjFu/sTP/+tYecH0IEsJKUAAXb/1InprHyljb6pQAYGnlWT1U0N7idMILmNMti3e9xLJU=
+	t=1761227520; cv=none; b=OdaD6BzrCKoL/gwguYmtXpS+NbTUA59/6maQPRjDWef+/gaHZqhRCjbT9VBQYwkfomZRDJ1bPNuEp2J+p6kPwGXVdtM/SY1Q6YXs8NyUU3MK9CfpXZFRrL5/3OtyfzemROoKBCa7YQ8zXRCNkSnkFPpln6h9xXr7Vl9HuKkqv1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227518; c=relaxed/simple;
-	bh=T6Q2aEP5PbzrJSzaFyZjXRnYX5iQKPyJsLn+R8QxcLg=;
+	s=arc-20240116; t=1761227520; c=relaxed/simple;
+	bh=+aURh5XSJ5XQcVDuus3rnZXEl2bPZX3zTBjzeKoakHc=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=H5gpwuHBAyLffvNZw5Nzb6UBTSEUx9l1pdS2sSv04ghc0cblpxOTJxGawTWXlZ2LF9hWh8ZZJZt6xbm+w8bKGYGSStXqokvJQpnwYX3dN3kRhq1FlwpAayAVJv5W0Y/RSbwO00Kx1oHTmx6efUFu1wHdVdgEVnuWUYozVcpegng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0Ghzo5q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8300C4CEF7;
-	Thu, 23 Oct 2025 13:51:57 +0000 (UTC)
+	 Message-Id:Subject; b=C0vLFmtkCILd65rRdJyJmZLty6VoOt7FUnMoAZjitt+bfRxMFKC86Q4vVwVLBG8kqPgGMaPC6tp7xjBKHj/Q6yvcjgKgOfJiNt9XdmOz+Kb4r9XT6COtEa3H6lmwrlmRM3ERVTOe2aGSlQBaRX2Jy2hmpNVUDHKB6RVCuj1X8Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3vN6tmz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98D25C4CEE7;
+	Thu, 23 Oct 2025 13:51:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761227518;
-	bh=T6Q2aEP5PbzrJSzaFyZjXRnYX5iQKPyJsLn+R8QxcLg=;
+	s=k20201202; t=1761227519;
+	bh=+aURh5XSJ5XQcVDuus3rnZXEl2bPZX3zTBjzeKoakHc=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=t0Ghzo5qgQYwPXyP0oYkOO/O8+exGyUn//IoCTCfh9DNSzMI/nHti2h+v9O+FYjiA
-	 FYzc+3IPNFADvafz8atB6AuTDDH/mm7zlsoyXh65mgkTm+ia0/UAJZ45BPsZpXrmyz
-	 I+Wt9D7x2ziiwuVY7oZG+MmbgVDpAPyAiY103hrasBZ5R5dMLCnmPBeGPQG1Vw/5kC
-	 P4pHsOWhDI0lXHyUKRBnW6YGFrLqxG2Kstea6cV4lLuBZFcwbpDOzAgOrR5y3tYxIV
-	 rVOFFt/PFr/vfvFUoyxRBKLh2XShLaXyhClLDtoW3okHnojpVu8hdc0ihoAkf91f76
-	 63uioq58gMQgA==
-Date: Thu, 23 Oct 2025 08:51:56 -0500
+	b=C3vN6tmz64b32YiU9KV5tcYgLyT2HBEnKpNNHF1bUG79/0r/UxyZzaTZHd+DSxhYb
+	 bnZ8+IOrq/XlexDq8QYPlYVvvTDM0I4A3gHCWG4x0K8j/VLjb3p6gPwuKRB7+iV/yf
+	 CWExmGwSxFcFflbAE3puyOAVVZ+p35ABydHDGmZ2JTa/Y7UJonoQv2nGns4lM25HmJ
+	 pN8Gjv9czNRcNl84nWIM3UUZjee9iO+9xq3HBH8PFXp3TR9AvWvHvosHEjsk6ZHMpI
+	 /EDKLgoRHTFg0riEEFjQyZunPG5Kjvysegx6dICinCYL+uDxvk8qsfu531rjTG3iaP
+	 JdXjNHCcx/ssg==
+Date: Thu, 23 Oct 2025 08:51:58 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,85 +50,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-kernel@lists.infradead.org, Lei Xu <lei.xu@nxp.com>, 
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ imx@lists.linux.dev, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Daniel Baluta <daniel.baluta@nxp.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org, 
- Danwei Luo <danwei.luo@nxp.com>, Conor Dooley <conor+dt@kernel.org>, 
- linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
- Fabio Estevam <festevam@gmail.com>, Haidong Zheng <haidong.zheng@nxp.com>
-To: Fabian Pflug <f.pflug@pengutronix.de>
-In-Reply-To: <20251022-fpg-nxp-imx93-frdm-v3-0-03ec40a1ccc0@pengutronix.de>
-References: <20251022-fpg-nxp-imx93-frdm-v3-0-03ec40a1ccc0@pengutronix.de>
-Message-Id: <176122700666.2723251.16850924180146120380.robh@kernel.org>
-Subject: Re: [PATCH v3 0/2] Add devicetree for NXP i.MX93 FRDM board
+ Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+ Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org
+To: Frank Li <Frank.Li@nxp.com>
+In-Reply-To: <20251022-fsl-mpl3115-v1-0-93187d095efc@nxp.com>
+References: <20251022-fsl-mpl3115-v1-0-93187d095efc@nxp.com>
+Message-Id: <176122700723.2723267.1526103667842275891.robh@kernel.org>
+Subject: Re: [PATCH 0/2] dts: imx: cleanup warning cause by fsl,mpl3115
 
 
-On Wed, 22 Oct 2025 16:05:21 +0200, Fabian Pflug wrote:
-> I could not test all features of the board, therefore a lot of stuff is
-> omitted from the devicetree. but this is enough to have the board boot
-> via eMMC or SD-Card, debug via debug USB connector and have a network
-> connection.
+On Wed, 22 Oct 2025 16:43:20 -0400, Frank Li wrote:
+> After commit f11e4374b(dt-bindings: iio: pressure: add binding for mpl3115 )
+> vdd-supply and vddio-supply is required properties.
 > 
-> The FRDM i.MX 93 development board is a low-cost and compact development
-> board featuring the i.MX93 applications processor.
+> thread:
+> https://lore.kernel.org/imx/0e00bb14-19c7-493a-9629-354bac3a273e@baylibre.com/T/#t
+> not prefer change both to optional. So update dts to fix CHECK_DTB
+> warnings for both ARM and ARM64 platform.
 > 
-> It features:
-> - Dual Cortex-A55
-> - 2 GB LPDDR4X / LPDDR4
-> - 32 GB eMMC5.1
-> - MicroSD slot
-> - GbE RJ45 x 2
-> - USB2.0 1x Type C, 1x Type A
-> 
-> This file is based upon the one provided by nxp in their own kernel and
-> yocto meta layer for the device, but adapted for mainline.
-> 
-> Signed-off-by: Fabian Pflug <f.pflug@pengutronix.de>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
-> Changes in v3:
-> - Add Signed-off for original NXP contributors.
-> - Fixed whitespace errors (Thanks Francesco Valla)
-> - Added mu1 with status okay (Thanks Francesco Valla)
-> - Removed address cells from lpi2c3 (Thanks Frank Li)
-> - Configure pin for watchdog (Thanks Peng Fan)
-> - Updated regulator config
-> - Configure i2c0
-> - Link to v2: https://lore.kernel.org/r/20250526-fpg-nxp-imx93-frdm-v2-0-e5ad0efaec33@pengutronix.de
+> Frank Li (2):
+>       arm64: dts: imx8: add vdd-supply and vddio-supply for fsl,mpl3115
+>       ARM: dts: imx: add vdd-supply and vddio-supply for fsl,mpl3115
 > 
-> Changes in v2:
-> - 1/2: remove CAN node, as it has not been tested.
-> - 1/2: ran dt-format (Thanks Frank Li)
-> 	But also reordered some nodes afterwards again to have
-> 	regulator-min before regulator-max, have the pinmux at the end
-> 	of the file, and have the regulator-name as the first node
-> 	inside the regulators.
-> 	Re-added comments, that were deleted.
-> - 1/2: changes subjet to ar64:dts (Thanks Fabio Estevan)
-> - 1/2: removed reg_vdd_12v (Tanks Fabio Estevan)
-> - 1/2: added aliases for rtc, emmc, serial (Thanks Fabio Estevan)
-> - reordered the series to have documentation before dts. (Thanks
->   Krzystof Kozlowski)
-> - Link to v1: https://lore.kernel.org/r/20250523-fpg-nxp-imx93-frdm-v1-0-546b2d342855@pengutronix.de
-> 
+>  arch/arm/boot/dts/nxp/imx/imx53-ppd.dts         | 2 ++
+>  arch/arm/boot/dts/nxp/imx/imx6dl-b1x5v2.dtsi    | 3 ++-
+>  arch/arm/boot/dts/nxp/imx/imx6q-bx50v3.dtsi     | 4 ++++
+>  arch/arm/boot/dts/nxp/imx/imx6ul-pico-dwarf.dts | 2 ++
+>  arch/arm/boot/dts/nxp/imx/imx7d-pico-dwarf.dts  | 2 ++
+>  arch/arm/boot/dts/nxp/imx/imx7d-sdb.dts         | 2 ++
+>  arch/arm/boot/dts/nxp/imx/imx7s-warp.dts        | 9 +++++++++
+>  arch/arm64/boot/dts/freescale/imx8qm-mek.dts    | 9 +++++++++
+>  arch/arm64/boot/dts/freescale/imx8qxp-mek.dts   | 9 +++++++++
+>  9 files changed, 41 insertions(+), 1 deletion(-)
 > ---
-> Fabian Pflug (2):
->       dt-bindings: arm: fsl: add i.MX93 11x11 FRDM board
->       arm64: dts: freescale: add support for NXP i.MX93 FRDM
-> 
->  Documentation/devicetree/bindings/arm/fsl.yaml     |   1 +
->  arch/arm64/boot/dts/freescale/Makefile             |   1 +
->  arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 658 +++++++++++++++++++++
->  3 files changed, 660 insertions(+)
-> ---
-> base-commit: 552c50713f273b494ac6c77052032a49bc9255e2
-> change-id: 20250523-fpg-nxp-imx93-frdm-5cc180a1fda9
+> base-commit: c31b21db1c04ba719c3889a57873f0f7eff54670
+> change-id: 20251022-fsl-mpl3115-3bb541a56122
 > 
 > Best regards,
 > --
-> Fabian Pflug <f.pflug@pengutronix.de>
+> Frank Li <Frank.Li@nxp.com>
 > 
 > 
 > 
@@ -149,17 +115,42 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: 552c50713f273b494ac6c77052032a49bc9255e2 (use --merge-base to override)
+ Base: base-commit c31b21db1c04ba719c3889a57873f0f7eff54670 not known, ignoring
+ Base: attempting to guess base-commit...
+ Base: tags/v6.18-rc1-10-gc35cf4fe4b85 (exact match)
+ Base: tags/v6.18-rc1-10-gc35cf4fe4b85 (use --merge-base to override)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20251022-fpg-nxp-imx93-frdm-v3-0-03ec40a1ccc0@pengutronix.de:
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nxp/' for 20251022-fsl-mpl3115-v1-0-93187d095efc@nxp.com:
 
-arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dtb: hdmi@4c (ite,it6263): 'ports' is a required property
-	from schema $id: http://devicetree.org/schemas/display/bridge/ite,it6263.yaml
-arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dtb: hdmi@4c (ite,it6263): 'data-mapping' is a required property
-	from schema $id: http://devicetree.org/schemas/display/bridge/ite,it6263.yaml
+arch/arm/boot/dts/nxp/imx/imx6ul-pico-dwarf.dtb: pressure-sensor@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
+arch/arm/boot/dts/nxp/imx/imx6dl-b155v2.dtb: pressure-sensor@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
+arch/arm/boot/dts/nxp/imx/imx7d-sdb.dtb: mpl3115@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
+arch/arm/boot/dts/nxp/imx/imx6q-b850v3.dtb: mpl3115@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
+arch/arm/boot/dts/nxp/imx/imx6dl-b105v2.dtb: pressure-sensor@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
+arch/arm/boot/dts/nxp/imx/imx6q-b450v3.dtb: mpl3115@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
+arch/arm/boot/dts/nxp/imx/imx7d-sdb-reva.dtb: mpl3115@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
+arch/arm/boot/dts/nxp/imx/imx7s-warp.dtb: mpl3115@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
+arch/arm/boot/dts/nxp/imx/imx7d-pico-dwarf.dtb: pressure-sensor@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
+arch/arm/boot/dts/nxp/imx/imx7d-sdb-sht11.dtb: mpl3115@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
+arch/arm/boot/dts/nxp/imx/imx6q-b650v3.dtb: mpl3115@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
+arch/arm/boot/dts/nxp/imx/imx6dl-b125v2.dtb: pressure-sensor@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
+arch/arm/boot/dts/nxp/imx/imx53-ppd.dtb: pressure-sensor@60 (fsl,mpl3115): 'vdd-supply', 'vddio-supply' do not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml
 
 
 
