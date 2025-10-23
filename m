@@ -1,134 +1,103 @@
-Return-Path: <linux-kernel+bounces-867597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B884CC03130
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:51:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548A0C0313C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B89D13B0ADE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:51:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C5553B08C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B74929B20A;
-	Thu, 23 Oct 2025 18:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80F434B67A;
+	Thu, 23 Oct 2025 18:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXZjt/bQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unAoiFqn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFAC28B4E2
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C40634B198;
+	Thu, 23 Oct 2025 18:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761245478; cv=none; b=r5ls2IoRZogFLr+Y+a+z2F1l6K28LcXU7PQ2Ztx7kwGV+q0zPzSmuh/aVdhW9B/aQbRzHujj6iZjQMGuFpekEAQeMhF4G6reCuh1bocuHCmHepXVTXJ/qymn0LwjeHuTDTuZXlgCh87T3WPqqCnBuXn0grokxj0K1Xwas5T8BxU=
+	t=1761245481; cv=none; b=U1auBiLQCq9fo2Zr0BFoZqAnmIP/tIB4NEIrOgk0Osu4WYyb+ft4DuMDiA0KUcCLm8vscmWnbE8C9vi5WLnANh6Xn7i7ZoVXUZ/KsuceBbxFbgllFbp2IAJuD2aByk8bhCCnC08eoNsfRJmcgnn3b1XmwqXOYO3C40tSJqoMFyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761245478; c=relaxed/simple;
-	bh=yclZU/krkrcJNTHYs1a/Ose0CM2p4xAA1NpE1Z5NhIg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ncWS1HjuCaau4YlA9myFCLg6+T4uzemplLSSUjE/gwbPBUJ9sAfbxofSG2DwtrFAPP+eA63hreWfiCM4DMjYGJWqu8BEG66PWDvbV0lEYEuOa0qtEDUZID4EeIUwkPPDJooY1vRa8rhvg6AjlLwDa5FTK3rsC6vrxpoCTZlAyr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXZjt/bQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13115C116D0
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:51:18 +0000 (UTC)
+	s=arc-20240116; t=1761245481; c=relaxed/simple;
+	bh=yAejfUUJiZAgzUJl4W0A3yvw8RvHpqUlB31kTfBanNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JU4Zyw/MKjU5oevgJO5+uYuR4qig8LjjHeBLOCf+tmxYBQ8IZ9hGlrLc4ujPt98E+dhkmM2rQPB11GcrGZwX5h7RgBSwjkb1+8WKJvyAnQsWsJqePfWBAKR6aG88IVPqe03Ts8x3M23fj5VyeqA4/GjcQ0hmwyyWqepcgTJY1zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unAoiFqn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9DBAC4CEE7;
+	Thu, 23 Oct 2025 18:51:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761245478;
-	bh=yclZU/krkrcJNTHYs1a/Ose0CM2p4xAA1NpE1Z5NhIg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZXZjt/bQcijp/iwkSHhz6haAGaaTEjEJchi6p3p3jeheu64eEXBelfAzJ4rBxw8NR
-	 jR5UdRcGkgKDKPJEs5cFWVPwcRf13cfI3v8vxTzkg0O2/jjHgJMXV5tpjTxZ8oGD8O
-	 dupo+yPGCAv2mtae2bWCMhBtVlmnfzt77ZtFxwaZv5rRc19CrfQoMP3/RjWv+h/yCc
-	 2IfG6gbqucOj0qZ0DoxrapsG3ePjOXv+R5KP9KB7fdXruaWJz7A0M97/l1dVlnqdlE
-	 n+D49mLEfTaqfcEJlhNDaO1DLNmQSxhofIsuojvcgmnpSfylYe7w2VoSRgnRoLlthr
-	 qmN6dzuO0cHLA==
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-3c73e93eadfso389004fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:51:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBHDOZJg+TFZRXhIdkUR/PmmSdFvjkU7fzbf30azTcvpkuYJ0Hi9NZbrftzKJf4i+YbvRfnVBjBVhI+/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDpTY0MMVY6MPhCqUPOuYQjs/EOGoKMDJyKPZcF4YYJ30eV4Eu
-	/bi8jQ0jc5d8cNanR2Ptdu/FZWayL5yYmz3/G183Vg71ST8lkQxUYEhtA+Y4X2fSgenZHMcPQFP
-	G2Z1gvHb3Ukgf7WCqruPq8bsfKIJwKrQ=
-X-Google-Smtp-Source: AGHT+IEGlrA2tIZjRTjUxrWjNMeSXBMeR/3TmzD7/9IyoNmW9DR5dApIhJs1FEbo3ID9rck8DzYQhLSwBbOSCMybCuE=
-X-Received: by 2002:a05:6870:2b12:b0:36d:287c:694f with SMTP id
- 586e51a60fabf-3c98d0c76ffmr12646634fac.30.1761245477276; Thu, 23 Oct 2025
- 11:51:17 -0700 (PDT)
+	s=k20201202; t=1761245480;
+	bh=yAejfUUJiZAgzUJl4W0A3yvw8RvHpqUlB31kTfBanNc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=unAoiFqnIfbe471o7fJlWt0tAhvCj1MoRL5WGN0y+nI2rEaYyl92d3lqSkOBPLkJx
+	 E4v2EsiffVLRvDCUEm+PuXMOmN1Smby4jg9/3GF86ibNDRSwTDQ1TtgTFSBmJXFBNj
+	 BgCZ425F7QZN3aXLjcR6zgHXO1Po3s6/D/i0sXb0JZBX9RIL1PNaSHt0BEg9u9Mskd
+	 /rvqTOF/RDjTM0YEFtro72z1H4VVp5EMcJuwFMxsSs+zlVzqNm2zp+HHrczfMBNL1S
+	 Zs7wmGYy8OhMe+l1QE5dybFJYUhqwvZt8YX6z+GqiDxJUoBUD61Lq3O4cLO9qr0ZhK
+	 CwTBrW9V5bKFg==
+Date: Thu, 23 Oct 2025 19:51:15 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Antonio Borneo <antonio.borneo@foss.st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	Fabien Dessenne <fabien.dessenne@foss.st.com>,
+	Valentin Caron <valentin.caron@foss.st.com>
+Subject: Re: [PATCH v4 04/12] dt-bindings: pincfg-node: Add properties
+ 'skew-delay-{in,out}put-ps'
+Message-ID: <20251023-gab-applause-77043d499529@spud>
+References: <20251023132700.1199871-1-antonio.borneo@foss.st.com>
+ <20251023132700.1199871-5-antonio.borneo@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022200704.2655507-1-danisjiang@gmail.com> <83852558-0fdc-493c-8f44-95356480c8aa@kernel.org>
-In-Reply-To: <83852558-0fdc-493c-8f44-95356480c8aa@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 23 Oct 2025 20:51:06 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hZaOALPUB63zqSJt+3E82YM=oU6d08UitHWcuc2iMDSA@mail.gmail.com>
-X-Gm-Features: AS18NWDFl2L0oQKDod5Y7100pSGWoUy5AMpurCSHDpagcdmJhEBc9g6yX1gWlo4
-Message-ID: <CAJZ5v0hZaOALPUB63zqSJt+3E82YM=oU6d08UitHWcuc2iMDSA@mail.gmail.com>
-Subject: Re: [PATCH v3] ACPI: video: Fix use-after-free in acpi_video_switch_brightness()
-To: Hans de Goede <hansg@kernel.org>, Yuhao Jiang <danisjiang@gmail.com>
-Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="T0BViuTcQBVHwGVl"
+Content-Disposition: inline
+In-Reply-To: <20251023132700.1199871-5-antonio.borneo@foss.st.com>
+
+
+--T0BViuTcQBVHwGVl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 3:25=E2=80=AFPM Hans de Goede <hansg@kernel.org> wr=
-ote:
->
-> Hi,
->
-> On 22-Oct-25 10:07 PM, Yuhao Jiang wrote:
-> > The switch_brightness_work delayed work accesses device->brightness
-> > and device->backlight, which are freed by
-> > acpi_video_dev_unregister_backlight() during device removal.
-> >
-> > If the work executes after acpi_video_bus_unregister_backlight()
-> > frees these resources, it causes a use-after-free when
-> > acpi_video_switch_brightness() dereferences device->brightness or
-> > device->backlight.
-> >
-> > Fix this by calling cancel_delayed_work_sync() for each device's
-> > switch_brightness_work in acpi_video_bus_remove_notify_handler()
-> > after removing the notify handler that queues the work. This ensures
-> > the work completes before the memory is freed.
-> >
-> > Fixes: 8ab58e8e7e097 ("ACPI / video: Fix backlight taking 2 steps on a =
-brightness up/down keypress")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
-> > ---
-> > Changes in v3:
-> > - Move cancel_delayed_work_sync() to acpi_video_bus_remove_notify_handl=
-er()
-> >   instead of acpi_video_bus_unregister_backlight() for better logic pla=
-cement
-> > - Link to v2: https://lore.kernel.org/all/20251022042514.2167599-1-dani=
-sjiang@gmail.com/
->
-> Thanks, patch looks good to me:
->
-> Reviewed-by: Hans de Goede <hansg@kernel.org>
+On Thu, Oct 23, 2025 at 03:26:52PM +0200, Antonio Borneo wrote:
+> Add the properties 'skew-delay-input-ps' and 'skew-delay-output-ps'
+> to specify independent skew delay value for the two pin's directions.
+> Make the new properties unavailable when the existing property
+> 'skew-delay' is selected.
+>=20
+> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
 
-Applied as 6.18-rc material, thanks!
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-> > ---
-> >  drivers/acpi/acpi_video.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/acpi/acpi_video.c b/drivers/acpi/acpi_video.c
-> > index 103f29661576..be8e7e18abca 100644
-> > --- a/drivers/acpi/acpi_video.c
-> > +++ b/drivers/acpi/acpi_video.c
-> > @@ -1959,8 +1959,10 @@ static void acpi_video_bus_remove_notify_handler=
-(struct acpi_video_bus *video)
-> >       struct acpi_video_device *dev;
-> >
-> >       mutex_lock(&video->device_list_lock);
-> > -     list_for_each_entry(dev, &video->video_device_list, entry)
-> > +     list_for_each_entry(dev, &video->video_device_list, entry) {
-> >               acpi_video_dev_remove_notify_handler(dev);
-> > +             cancel_delayed_work_sync(&dev->switch_brightness_work);
-> > +     }
-> >       mutex_unlock(&video->device_list_lock);
-> >
-> >       acpi_video_bus_stop_devices(video);
->
+--T0BViuTcQBVHwGVl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPp5IwAKCRB4tDGHoIJi
+0pkRAQCj7Ijye/ExnUsIE49cWonr9m6YS7a4wxdPBucoJ2MlggD/cPri8HMwGWK7
+GGWHxrCWdfLHkTbJxCga1sVo8V4lJgU=
+=q/g5
+-----END PGP SIGNATURE-----
+
+--T0BViuTcQBVHwGVl--
 
