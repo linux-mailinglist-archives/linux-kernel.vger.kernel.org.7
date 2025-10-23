@@ -1,201 +1,349 @@
-Return-Path: <linux-kernel+bounces-866204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE95CBFF298
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:47:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1012BFF2AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33E1F1A02741
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:47:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2F11A026FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A05A221F39;
-	Thu, 23 Oct 2025 04:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA782441A6;
+	Thu, 23 Oct 2025 04:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iuESghfv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nPtSez/3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210C31F5851
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761194816; cv=none; b=pZbVS1lCvNgw2JUJMw5opI25R1UcAw3lf6N8QN1zM/sZRy/ymHRIMd2P+xhWvyxd52fDig55/S6qVWgvZUAHPu8SwR0uYwIJwdhFNVNEri0s0eKOyRpSvErWGievqS/7hPPSZ/9b4j3vIeUPoymo+wA9RbnUfJPGDbP+m+XQDK0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761194816; c=relaxed/simple;
-	bh=RQKtk6VRABQ+vBOTGNpTUlGbKB9xzSwEgDGBB7enF5M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GPTLTlmyFGdyNTyxMeOMu2mSe/fq92Rbds9wfoQzpNe0pwI7B6EDCbVTjANMfEX/RByT9rM0ur6kxIIaHuTANHaeZLIQRH7BOoz2K0k4KGwIxWESitQaoRPVjLu0ERsnC2hTwW+s5GBcIRBqdEIGEXrDkNDmFzc7/uhR86BxUHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iuESghfv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MIenQ5025819
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:46:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gk8IGEC2YqxXgoqIuJ14jd80rHVy4Sx5PMH+RdrI/zw=; b=iuESghfvwcO2UjYB
-	T+Vz8dJDuP/AdctHTIXWLfq2jmTl7/ARLFKyrTwRPQAVnIteBHxh7V0lUN2EpxVl
-	aRpFJW3fWh+jEw1VPPz6jHiLG8B6VTSyHbAVCyIx8JV8sZmvjt00984uJGiLyny6
-	DcAEDQNM6kZ1r2gSvpSEHpaoYSKDzvbgx5E2nPgBz3BB7dCHEuyRq0/c+Npaj8lA
-	ytNdYcx0/nElPsxjuYrlh6EaxXrEhprtkQIgceuYUVrzUbi8qVs6uYxkx1pCA64F
-	5iZ+0FFkR27vp8rKbLJ6rfM5ENoMRlki0ZjXnSkin2QU8cCBaIbOb+XRVEj6bK7/
-	9otZKQ==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v42keuq3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:46:54 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2697410e7f9so10128665ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 21:46:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761194813; x=1761799613;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gk8IGEC2YqxXgoqIuJ14jd80rHVy4Sx5PMH+RdrI/zw=;
-        b=ADHYfbUZ0nE5C4bciFZKuBM0Pp0i73Z9AptCBDwI81f3qYbPkfONInABzKk2myGOQe
-         jm7IiXtiFEJRgtaAP6/oP0jziIfma/Oq3mw7bvCd1r018nZgz6MJvAbbh07vmJtnZDUH
-         OMnYZ6Cr1O2833TKx9VQU0R+WYvwMJ61rLZQ/PAfYaDwE0clrrCxdPqH59DV3NeYDCYZ
-         fg3sgqffsSVy16NrJmkpy0PpzBr0jk9sT6Hq1Q8IBABqvKGftCWomaa9YRszoYgcB+WZ
-         EIm1ggQqQXjE8+oSOsxeY3T2EcN0n9cXwJeEhyM3gevySnWqQe6C6xdyCReEFEqnmNMT
-         U2+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUP8e/vrmUfE2RKW9L1nOEE1bil4blFNKuS4ur1AXNmVx/oR4ybhjl5sTepKLNL57i9/NN9Blhf0RkyKYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuKrWmX9lAXhnjc3WLw3cSNoYXSdCDWwmSdBikH8u2+qyvaRDS
-	n3xyHluQLul8gptV0aHBRSHvEM3SlvAyfTolD8cl4SnOhuZFJIC9SqP4CduZp4qs33c6Gzz3wjs
-	Hen6O/x5gjT8pB1Z6D78NGtLxeICy0k5eiR+sBijBhlbx0GFDTAx3BRSQZ9AriuqtW8Q=
-X-Gm-Gg: ASbGncuDaqfM2gJlOev2GEi4Dc5kmcXD5lquh4lyWCIgfyJzATxBG5MlbQDSOo+z89W
-	22P6prxsbReICGDFpSxQllhM182POpDokiRUQw939RaAn0Qv6I6OL3QATdN6+MJuj343rfq0v3R
-	3n+i2SOA1T7YxSjOgD7i57J9AnZmJ+BzYNjzwNRXAOjuKT+VTi0qCKTG596nJlLubXCybjFdhVP
-	Bqt6A+Y0LLqtk5MPX8pBlWwr0MC8kC50Wt/MbGXHKiUZMODiXZnPg5tPVw6BppKG1MzSqT5wEeM
-	SSi8+cGEd/zJIETTFp5p4/ZXkPVtsV1XXAQir4YOfMMUASaxjzKij5mXDF6jw+JAAs0+VISk2Fm
-	rjVrVxLXohgQxDvhphGnzcTc=
-X-Received: by 2002:a17:902:ecc1:b0:293:623:3265 with SMTP id d9443c01a7336-29306233761mr57706425ad.34.1761194813375;
-        Wed, 22 Oct 2025 21:46:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEtUb1Wy6VbMGMaIZJ2YrmZqxzkjXSfCmpKXsJsxh6/rcBZgAjsqgwz2PjE+JV6X78IUnifdw==
-X-Received: by 2002:a17:902:ecc1:b0:293:623:3265 with SMTP id d9443c01a7336-29306233761mr57706115ad.34.1761194812942;
-        Wed, 22 Oct 2025 21:46:52 -0700 (PDT)
-Received: from [10.217.199.21] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33dff383693sm3389881a91.3.2025.10.22.21.46.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Oct 2025 21:46:52 -0700 (PDT)
-Message-ID: <4831d12b-a42a-464a-a70f-e0e40cf4ae4b@oss.qualcomm.com>
-Date: Thu, 23 Oct 2025 10:16:48 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEBA1EA7DF
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761194879; cv=fail; b=uVfTdKVVHQ+TZUPSQzd13FKbL9GAlcZmDHOD/vIiiIsnrHPtUMieTKGjpMpL9VYKdoceJlVRJB2Ygvxrxrenug6029aOTjapXGHyTIH1o3aNqtLcKozs65zUB3c9DlQg22w7zcEy9Ny+WT/6bzVWmwikF4/M1iI8lrkl1+ItRh4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761194879; c=relaxed/simple;
+	bh=vz1QeIXep6xa7ALlVLRntrqYEATCBpLekYVMIWOAq5k=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=u+0eRpbhhi2K9NQyUpoNm5Iw5KwJPWXRxoaY8I4CI0Jgmwh3BEkCJP6nMIi3gAvpgvpNpjmFSXs5YuVJYYaYRFTMwClHKKc0wWhaVme6OC/Jlj4x4JA0dX6iuq0/fXUfj6ulD6JInI/NC4CRYwh58+ff8g3O84Vz2cCCoHUJekE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nPtSez/3; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761194878; x=1792730878;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=vz1QeIXep6xa7ALlVLRntrqYEATCBpLekYVMIWOAq5k=;
+  b=nPtSez/3KtzeYYcgr9QpH5jLV1N5CVDGO67PuvquLp/eCAWf/OLdjwZk
+   r83e15HEuKB5SQ7M53VPup1tIlQG+WRnfXmo95jLW9x9rAmJQL1NIciL2
+   hPf15p4Sburg+zvekuKmASXrLmXqggdklpiThyh1clWz70frMr5O+W0hD
+   gjefV4zJo5zK12yHw/IU0/43v7mUgc2EghGWM5mCGpOJ8ko5KyG7sRaow
+   Kl1WbvsJ08sFbkr9VsYlOc0rvEJ/H6xth7HtoT1IgVUHVe9JOOLr90zhw
+   Y5sDV8N0G5eIZaL+/XsfjukgDYK45KSmTuK5H0MUd/uTyweHd5qLqsw16
+   g==;
+X-CSE-ConnectionGUID: mKImszVvRgi0Cklr4C9gCA==
+X-CSE-MsgGUID: AvmCoTfeSzKiDMuY1abSDw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74023902"
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="74023902"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 21:47:57 -0700
+X-CSE-ConnectionGUID: 2H8bqWjxTo6UG7qk1IYb3A==
+X-CSE-MsgGUID: lAYEuhEuRB6pUHM90nc2Qg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="188102595"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 21:47:57 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 22 Oct 2025 21:47:56 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 22 Oct 2025 21:47:56 -0700
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.37) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 22 Oct 2025 21:47:56 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c2nOQYbCayWFnQ3lPKp76TWXJ+wFsLIcYvQk0PpgplHURhThovTS+a2d6jGHiFxC1D2E6AQhWCVp4j/Xf9EhkZ3JtkJxkq/UYFhhwOSa43QWtqdXqxQUMGTdOdLWUUUze60YWzqlAE5ADrpyC+w6XBzDGjGuIOy2pWhPthSwYsRjDBGQ/otv75syZA04zHSV5oQgjP+YhgdN+wA6d8Y+kpS2VPqLJ/NmcMdLryn1C6ow/gMSxrXTdW7nfDfXv9b/g4AX31yExe7hRhI5cBb8tIxJnIbMMwZ0QMO/7YXS5AjQ3ZClXS9asrdrrBm+ebwTmf2mFpoqVE2gsLdcqJDJew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QAqAdBNWPgTHFfBYQpbRiv1UqzY9imUiXULByl1Cm3c=;
+ b=cnpoQcd/n90V2IvOPRi3WISiVuFLkoA/WguiJWyG6zkRqjmMXxJrtRwyncOVy6tYvNgov6dQKjKpDF3UoXUrCa2L+Wjbz8ghC8XOAmeSe7lYfqi9ruwtmcQZVrcMwhOP0qGoX+ip5M/vw/rLLo8JcBeHyKPyG+Tqv6OIPWtJuRmZndphsZqIq8gS1Q0YlWLiKrvvVtvBpWVbuI7s/SBC9XD+0/f86uiMnLlVHhXdhiYaeuC8pabYHwv8uKLEVzEdfYFasJsfX7lq3djGw/ngpd9Lmb13xhAtmB0Dkeuyb0cM+KAbbWprFCw+G1LAK1sC+a/cF0QCc1ptjevEaoVQ1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by PH8PR11MB6878.namprd11.prod.outlook.com (2603:10b6:510:22a::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
+ 2025 04:47:53 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.9228.015; Thu, 23 Oct 2025
+ 04:47:53 +0000
+Message-ID: <a8ee6c4e-7390-4313-9b34-6133186d2f7a@intel.com>
+Date: Wed, 22 Oct 2025 21:47:51 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 19/31] x86/resctrl: Read telemetry events
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
+ Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>, Chen Yu <yu.c.chen@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20251013223348.103390-1-tony.luck@intel.com>
+ <20251013223348.103390-20-tony.luck@intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251013223348.103390-20-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0350.namprd03.prod.outlook.com
+ (2603:10b6:303:dc::25) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] soc: qcom: rpmh: Add support to read back resource
- settings
-To: Bjorn Andersson <andersson@kernel.org>,
-        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251022-add-rpmh-read-support-v2-0-5c7a8e4df601@oss.qualcomm.com>
- <20251022-add-rpmh-read-support-v2-2-5c7a8e4df601@oss.qualcomm.com>
- <litd6qcxuios7uwwcrz55ea24kj26onrjo2aekouynsce6wslj@vatjbulg64mb>
-Content-Language: en-US
-From: "Maulik Shah (mkshah)" <maulik.shah@oss.qualcomm.com>
-In-Reply-To: <litd6qcxuios7uwwcrz55ea24kj26onrjo2aekouynsce6wslj@vatjbulg64mb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: yvCLnqo1xOckf9NXdjkpRe1d-vLqkprl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzMSBTYWx0ZWRfX0//2g//DyKAP
- p/kaJPe96H3tf+0WJuXaoVsaoAROCRku9A9/LbzPbkUzL2wipqUls/v91OY0rQepdglE7aGMdbD
- +j0tVKzQ8dE0YZLHcR0WZWuDE0x5WEpHEji3n5YE97JP3IuYFoGvHJrUOCIRreXicrPUJGT4R9j
- nBM0LehaIOJA4qdlYbS3OrGo82gsKEXnYJmeX4jUcIps4dttY9UwmJSVMq55YEayk12VmyST8U9
- JBvkyvGDRVxdwMEjJ+PXtuWfMljONFFqfNd6+vWkE9ZGGfdoBdm17SwJlhXGFV++v0jjxEfpkNw
- ELU0+q2IF82M761M9+l2cew3+h/OrVY93UBIME0ORwUDnaHuPomVnsv29Im/urdP4mSpFG3Lvnr
- FKytCDz9ET+/8ZCNoaJJYWFeikvd7w==
-X-Authority-Analysis: v=2.4 cv=QYNrf8bv c=1 sm=1 tr=0 ts=68f9b33e cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=eVGerQaZic2NLa4W9s0A:9 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-ORIG-GUID: yvCLnqo1xOckf9NXdjkpRe1d-vLqkprl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- spamscore=0 bulkscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180031
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH8PR11MB6878:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0dc4ed38-5a89-4a2a-694c-08de11ef53d8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?SFZKK205Y2dKdWg0YTZFMlV5QUx5VHZ4Uk5JNW1QdUpiVW5HUGxIaVZid2VJ?=
+ =?utf-8?B?dUNUNGFHcTVXaGU4djhHNlhxejVNSndDbzgwamc3ZXAyUDl6U0lUSzIyWWc4?=
+ =?utf-8?B?NEtnMTlsSDZvYWh6QVFsc0pMdG1DcExTYlZsVHhTUUZsenZsMVMrdkVNb1Fz?=
+ =?utf-8?B?Y05kRHR3ZWkyQlNiSXcwQlhhYzN0Ni9Ca3pwVUNRQnErWUhCREdmZExPeEpG?=
+ =?utf-8?B?aGJQaGxKVkt4YlRuK2xCMEMya0liSExscThCOFYzQUhOV25YM3c0UzUxNWU1?=
+ =?utf-8?B?TTdONC9rdXpBTzduS3d3ZUVuRmNaNGxnejBHYXJQeUlRZlJYVzU0SFBNTHhn?=
+ =?utf-8?B?MHNINCtvQmoxSTFmS1ZLdDhCS2FyTXdaUjA1dHNMNUFxaWxXQlgrRnNzWjNa?=
+ =?utf-8?B?NzhFbUZqcHFnREwrZzBkVmgxTWkrc2hMQXlDdG8vMUJ4b29JZHJNOWNBM3Vp?=
+ =?utf-8?B?NkVtd3FXbUhjaW5uUmkzWU95R29XcGR0cE9ZZjZld0IyTW5uWjBHSG5tMzRE?=
+ =?utf-8?B?ckJJMnpGMXY1dmJIOVdzOGt3bkt1Vk1GaGlOOGRnVzBkdEpLVXRTNHJWcTQ0?=
+ =?utf-8?B?aWNUdzY0U1R3SmJZSEZJVnVQNjZ5SDNheSs3eXBhR3NaeEZYUlB6MHJOZGtV?=
+ =?utf-8?B?UDBqU3JnWXJjcnNqRnl1ODVVUnpYVG1mRWo3NUM4SmtWSmI2cmJsWkxZSWlx?=
+ =?utf-8?B?aVJnUGQ5M2NuZjMwaE5GSmEvdU5ab3VtdWlqU0REbHdEOFNvTVpyVnhNalZN?=
+ =?utf-8?B?K204b0RZMU9YNnc1NTh4T0QzaEpER1h5VG5MajlPc0RjSEx0RDZ5VFlhZE5O?=
+ =?utf-8?B?RTZQbmZZRUpJblc2T25HZlJHcUw4T2lOaWdOaW1VT3hhV3JWSngxQU1rWGdB?=
+ =?utf-8?B?M3ZheEx3UUZZc29vT3V1TkJSMHArK2V1Z1haeDRRVEU4a2NTc3dyN1ovOGxT?=
+ =?utf-8?B?eEZ2M1dIVWR5MzJNbzBBZkRDcTVWNlhGdDgwLzN2YjlnTWd5RzRqWjR1RmtG?=
+ =?utf-8?B?NEpzb3kvaHQxKythN0UyWTVSZE1pb0NWWElGUXZjSDdXS1NMRE5HWTVJWkFF?=
+ =?utf-8?B?ZnV2NWE2VGdDUUZRUDEvYWhtWFNRdllQczIzWUZ6UWlic1IranN6RG5mVCsr?=
+ =?utf-8?B?T09pMEdhdXZlQXcreE5HSXRmdE04TG1oZmY0MEV1V2N5d05WeXAyeUFyL0Rk?=
+ =?utf-8?B?RkdLMVVFM1ozTzJGaUhTeG9BVkhsdHJMWWNrUHQyZUQ0cnJoQzNCc1hyRkpa?=
+ =?utf-8?B?aHZRVGw2Z0NKcVVtcUxKUHBJR09zSkZtRGJDZG1jNVovMzJ0R05UVEVVZ1hT?=
+ =?utf-8?B?ZU9wY3Z4ZXZ1ZFNENEVSelJTSFUwTzVzMVVnKzRrUS9ITU9VU2tZNW1HSHRQ?=
+ =?utf-8?B?NjVaK04yMTZoVE0zZXI3VzNsTmVhRW1QV2xhdDhDTzY2eFBUMjY4cE5zMHVU?=
+ =?utf-8?B?d3Z2TzdwTWJNM3hEaTIrSzhZclRwTnhXbHJjSWhKQWlaSFd1VmdEUE1Jbm5Q?=
+ =?utf-8?B?SFVlVW1sZU5NVURYR3B2YW50clZ4UGJJK2p3RWxpQlI3ZUFDelRSUVlpS3Jw?=
+ =?utf-8?B?UWZLUjljNG9YQjlWdWN4Rm9GWlBlNFBVNzQwa0s2OFMySm03WWh5UU90RVZ6?=
+ =?utf-8?B?dG5mUlVTcXhjWVlVSjY2ZzlRQjlrQkNTaG9KbUZSWHF2T0RXdS9FdEJnQmlU?=
+ =?utf-8?B?UnJUTTBRbk94RVBqMzVvVHZmTTlSQmYxVnd1Si9YMzI2UWY0MzgrUnpsZmNI?=
+ =?utf-8?B?alEyUnNLYUNCNk04a0NVbmhJbnRJWUREelNhbEIrak5EVTBTT0J0aFdYYmNx?=
+ =?utf-8?B?bW1zTGRsYitOSzRoU1Zmcmd6aXBiZVoza3lRU2dmQWNLREF6VzNuaUJaVjZQ?=
+ =?utf-8?B?ZHR6MjJITEt6T09yZ1EzejYzWjkxT2NXMFdYaTRqTFkxSkFJZEFiR3N3OCtH?=
+ =?utf-8?Q?Mu8gLqQ8jJQ085EwOOwUNHLAzlJs3j9Y?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NVRpd20ya2N4N1R2VUhtNUVWczRHbXNycFNxQWE1ZFdBZ3hGMm1TOVFLS25i?=
+ =?utf-8?B?ZjV4WXpWOXViYzl2d0hOMGY1V0lTRUFrRkNEY0NqczZveVJGWXEvT3hWZ1JZ?=
+ =?utf-8?B?YU1WdWROazdINW5xODlBV1hzdjVjcWRxYnJlUklUc29IcXV3ZDdDM3oveU4z?=
+ =?utf-8?B?dkJVYVZsVmhoeDBhcVNmVUp5UHJ0TkZEdFplS3c2RXI4OWFROHppMUZDQ3N0?=
+ =?utf-8?B?RTZQenMrYURmV00wYW1hYSs5YW8za2Npb3QxVkt0L3A3OEhnRUZ3QUFZaG9B?=
+ =?utf-8?B?UHJlYVlqN1VaNzcycFprMkxIUnJNa3huMFpEVTBWQnB1MnliV3pNQnhUb2Rq?=
+ =?utf-8?B?ZFRMUEpVNUJCZTZEdHB0VENpK1pQRk43RjQ1Rk9DQVIveTdjSXEvQ2FhaUhS?=
+ =?utf-8?B?Ty92T2N0aUU4NWJPK1VQL2E3bHpzbytzREhTV2VjdjRqSnp3bC9zWFZsbE1m?=
+ =?utf-8?B?amR1Z2k1UHBFeEhsWjByS2hmNFROZ0lwYm1RWDFhU2h0MG83RzFWZFp1VTRI?=
+ =?utf-8?B?bW95SmRPaVpkdmhtamhIL3BtNDFnQ2RSamhLSkhtYk5QeXlET2JXcDJUQ09F?=
+ =?utf-8?B?TXlyd05TL1JOblJ4R1RwU3FaZ2xDSWx6b0RodVRyb3JmT2NldmdiNzFMVk5q?=
+ =?utf-8?B?cEJHNUVJZHFyRlRiRUFSZFdiS1dLdWVNN3FON0pyZm4xOFhBME83UmtjcTBp?=
+ =?utf-8?B?WWNadXNqUWo1Q09GYU9OeWpiRWlVUXVBcFJ0bjlHUnpaYUI4cE1jbFFEZDVR?=
+ =?utf-8?B?MzhrRHA2bS93dFBER0huUGxrL2ljbWd3SnpaSVN1NUZoZWZGNTlwcjFYOXdR?=
+ =?utf-8?B?ZExkVTVxdzM0S1N5VTVqdVEraXpvVnFsYzhrSnlqYVpLTWt5aEtUQ0s3NTNE?=
+ =?utf-8?B?U2RPSytOcXdyYmgxaFVxcTJFQklIM25uZU02WEVSUVFXOHpHd0tCRC9QM2NL?=
+ =?utf-8?B?M0JZR2dycXVZaGxVOVo4d1NJR3hCMk5VcWJYT0Njeis5SEdxQWx4YlpLWmlu?=
+ =?utf-8?B?dWQ3cjF0MWpIWVhWK2JoN1Mvay9taDBzanhrUTd5SUtsSEpVRFZvemdGa3Uv?=
+ =?utf-8?B?d1RoVG5XNTJKZENPL25qKy9DS3pwd2dmbzhTS090eTlGZTZsQVd3aE4ydTJr?=
+ =?utf-8?B?UDFPNWV1NlZ2VDdWbmJmL2FuSkRNc094TVorSmpuaXBHMEFJMkdDK2FCQ3Ar?=
+ =?utf-8?B?QWRoYTJqYTZ4RTdaeXAzWFQzMlVMemJTbk1WTnlJOFZCaUZhV2ZrSjhhdXZN?=
+ =?utf-8?B?bXFnRTlmbG5PM1VBU2Mwd0R1ZHgrV3EwNmQ4VURLOUtDZVBMS3Q2L044MzNM?=
+ =?utf-8?B?Rmw5QUE5d3RlYnM5K3ZuZmFNL0IwSTNtTXhMMHBpZ2w4MDRCSlFOeHlCMy9E?=
+ =?utf-8?B?ZlpOVUZwRVVCMTAzNHFaZFBobCtzNDRpamR6NklHblFURlZZWmVEUENOazFZ?=
+ =?utf-8?B?Nks0QS8waUYrTTN1SWVGQSt4MjBHYW51d1FBSG1WTmdoUHBwR0NTdFNJRktK?=
+ =?utf-8?B?bEc0SjliSDFUZklOL0RXSXVxVFhFakJoL0h4Y2dvcWI2WldxWFhqN1EwS1hE?=
+ =?utf-8?B?Q29NSW9WVWlnYm5ieUxMc1lMcjcyNk03OTQ5Lys1R25UbjMzRXFFYm5DZGZ2?=
+ =?utf-8?B?U1NqYVFpZ21KdzlHTGtNeDFPRmpENUJZTnRrZDhiRkwyaGVqK0pvRWs2eTJM?=
+ =?utf-8?B?ZTloZ1JpL1VqMFdUdFl2M2tIc0QzMFA4OTY1aWViRCtuQ3hVR2dzVlFnQnMv?=
+ =?utf-8?B?OTFMWXZpOG1GcU4zcDdpNnRKcXhoclUvYzNVeUJ3WTcrRjVBcG5US2JZN2w5?=
+ =?utf-8?B?cmdCZkhsQkVPUXM3OHdrMC9TN3J2cG1HbXlGK0FDeUNibXR5NHdZUTZmTTJy?=
+ =?utf-8?B?Ykllb3EwV3k4UlM0RFlFUk9uOHZNbGhkdE5RdEJ6SDZWSkw5UHVBOXY5SDVl?=
+ =?utf-8?B?QklLUzd4RTNac2xWMi93UE0wLy9sZmVrak9RWTYvTEFKbGUzUmVmYXE3ZG1L?=
+ =?utf-8?B?NnNQVEdaam5wYy9Ec1dlTzh0ak1aR3lRL3QrQXozSlh4cHFoMW1ldmVhSWo3?=
+ =?utf-8?B?VlV1a1BQWkg4NEMzVjA3SWx0TkJoZTZKazl2NXdWVFhnODNxRE1QZS91eXpt?=
+ =?utf-8?B?M0M3MjMyN2hZa3BzRkNHUEtpWVV3OE5oak9tbTdWajlrWjYxUUdYUWgwQkMv?=
+ =?utf-8?B?Q2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0dc4ed38-5a89-4a2a-694c-08de11ef53d8
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 04:47:53.6523
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QOjPFSGqpyZMi5yxan7CZTWkKrpj5sYcKBlQQ5rZAmAfLx59gXaxo2OGl9VwzieBifuD72GjBA10kHloIdBrZT4SlEx5ka8PEu5+jL6kOhA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6878
+X-OriginatorOrg: intel.com
 
+Hi Tony,
 
+On 10/13/25 3:33 PM, Tony Luck wrote:
+> Telemetry events are enabled during the first mount of the resctrl
+> file system.
 
-On 10/23/2025 2:51 AM, Bjorn Andersson wrote:
-> On Wed, Oct 22, 2025 at 02:38:54AM +0530, Kamal Wadhwa wrote:
->> From: Maulik Shah <maulik.shah@oss.qualcomm.com>
->>
->> All rpmh_*() APIs so far have supported placing votes for various
->> resource settings but the H/W also have option to read resource
->> settings.
->>
->> This change adds a new rpmh_read() API to allow clients
->> to read back resource setting from H/W. This will be useful for
->> clients like regulators, which currently don't have a way to know
->> the settings applied during bootloader stage.
->>
+Not clear how above is relevant to this patch?
+
 > 
-> Allow me to express my disappointment over the fact that you sat on this
-> for 7 years!
+> Mark telemetry regions that did not pass the sanity checks by
+> clearing their MMIO address fields so that they will not be
+> used when reading events.
 
-This was a dead API (even in downstream) with no user since SDM845/ 7 years.
-Read support was eventually removed from downstream driver too for the same reason.
-There were early discussions to remove read support from RSC H/W, due to lack of users.
-Its not realized yet and all SoCs still supports read.
-
-Now we have a regulator client requirement to read resource votes and reason to bring back this API.
+Above is definitely not relevant.
 
 > 
->> Link: https://lore.kernel.org/r/20250623-add-rpmh-read-support-v1-1-ae583d260195@oss.qualcomm.com
-> 
-> Why is there a Link here?
+> Introduce intel_aet_read_event() to read telemetry events for resource
+> RDT_RESOURCE_PERF_PKG. There may be multiple aggregators tracking each
+> package, so scan all of them and add up all counters. Aggregators may
+> return an invalid data indication if they have received no records for
+> a given RMID. Return success to the user if one or more aggregators
+> provide valid data.
 
-I will address this in next revision.
+"success" (via return code of 0) is always returned to the user. The
+difference is whether user will see event data, "Unavailable", or "Error".
 
 > 
->> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
->> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
->> ---
->>  drivers/soc/qcom/rpmh-rsc.c | 13 +++++++++++--
->>  drivers/soc/qcom/rpmh.c     | 47 +++++++++++++++++++++++++++++++++++++++++----
->>  include/soc/qcom/rpmh.h     |  5 +++++
->>  include/soc/qcom/tcs.h      |  2 ++
->>  4 files changed, 61 insertions(+), 6 deletions(-)
->>
-> [..]
->> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-> [..]
->> +/**
->> + * rpmh_read: Read a resource value
->> + *
->> + * @dev: The device making the request
->> + * @cmd: The payload having address of resource to read
->> + *
->> + * Reads the value for the resource address given in tcs_cmd->addr
->> + * and returns the tcs_cmd->data filled with same.
->> + *
->> + * May sleep. Do not call from atomic contexts.
+> Resctrl now uses readq() so depends on X86_64. Update Kconfig.
 > 
-> * Context: May sleep...
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
 
-I will address this in next revision.
+...
 
-Thanks,
-Maulik> 
-> Regards,
-> Bjorn
-> 
->> + *
->> + * Return: 0 on success, negative errno on failure
->> + */
->> +int rpmh_read(const struct device *dev, struct tcs_cmd *cmd)
+> @@ -230,3 +234,47 @@ void __exit intel_aet_exit(void)
+>  		(*peg)->pfg = NULL;
+>  	}
+>  }
+> +
+> +#define DATA_VALID	BIT_ULL(63)
+> +#define DATA_BITS	GENMASK_ULL(62, 0)
+> +
+> +/*
+> + * Read counter for an event on a domain (summing all aggregators
+> + * on the domain). If an aggregator hasn't received any data for a
+> + * specific RMID, the MMIO read indicates that data is not valid.
+> + * Return success if at least one aggregator has valid data.
+> + */
+> +int intel_aet_read_event(int domid, u32 rmid, enum resctrl_event_id eventid,
+> +			 void *arch_priv, u64 *val)
+> +{
+> +	struct pmt_event *pevt = arch_priv;
+> +	struct event_group *e;
+> +	bool valid = false;
+> +	u64 evtcount;
+> +	void *pevt0;
+> +	u32 idx;
+> +
+> +	pevt0 = pevt - pevt->idx;
+> +	e = container_of(pevt0, struct event_group, evts);
+> +	idx = rmid * e->num_events;
+> +	idx += pevt->idx;
+> +
+> +	if (idx * sizeof(u64) + sizeof(u64) > e->mmio_size) {
+> +		pr_warn_once("MMIO index %u out of range\n", idx);
+> +		return -EIO;
+> +	}
+> +
+> +	for (int i = 0; i < e->pfg->count; i++) {
+> +		if (!e->pfg->regions[i].addr)
+> +			continue;
+> +		if (e->pfg->regions[i].plat_info.package_id != domid)
+> +			continue;
+> +		evtcount = readq(e->pfg->regions[i].addr + idx * sizeof(u64));
+> +		if (!(evtcount & DATA_VALID))
+> +			continue;
+> +		*val += evtcount & DATA_BITS;
+
+I missed this before. This just blindly adds the event data to whichever variable the
+caller provides. Could you please instead use a local variable to do this addition and
+on success assign it to the provided val parameter?
+
+> +		valid = true;
+> +	}
+> +
+> +	return valid ? 0 : -EINVAL;
+> +}
+> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+> index 5565a8752266..6804b83934e8 100644
+> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
+> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+> @@ -252,6 +252,9 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_domain_hdr *hdr,
+>  
+>  	resctrl_arch_rmid_read_context_check();
+>  
+> +	if (r->rid == RDT_RESOURCE_PERF_PKG)
+> +		return intel_aet_read_event(hdr->id, rmid, eventid, arch_priv, val);
+> +
+>  	if (!domain_header_is_valid(hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
+>  		return -EINVAL;
+>  
+> diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+> index faaa2851c5c2..84a0cbe90748 100644
+> --- a/fs/resctrl/monitor.c
+> +++ b/fs/resctrl/monitor.c
+> @@ -526,12 +526,26 @@ static bool cpu_on_correct_domain(struct rmid_read *rr)
+>  
+>  static int __mon_event_count(struct rdtgroup *rdtgrp, struct rmid_read *rr)
+>  {
+> +	u64 tval = 0;
+
+please declare this variable local to the PERF_PKG block to help keep the
+different resource code separate.
+
+> +
+>  	if (!cpu_on_correct_domain(rr))
+>  		return -EINVAL;
+>  
+>  	switch (rr->r->rid) {
+>  	case RDT_RESOURCE_L3:
+>  		return __l3_mon_event_count(rdtgrp, rr);
+> +
+> +	case RDT_RESOURCE_PERF_PKG:
+> +		rr->err = resctrl_arch_rmid_read(rr->r, rr->hdr, rdtgrp->closid,
+> +						 rdtgrp->mon.rmid, rr->evt->evtid,
+> +						 rr->evt->arch_priv,
+> +						 &tval, rr->arch_mon_ctx);
+> +		if (rr->err)
+> +			return rr->err;
+> +
+> +		rr->val += tval;
+> +
+> +		return 0;
+>  	default:
+>  		return -EINVAL;
+>  	}
+
+Reinette
 
 
