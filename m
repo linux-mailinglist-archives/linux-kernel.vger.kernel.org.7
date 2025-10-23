@@ -1,182 +1,163 @@
-Return-Path: <linux-kernel+bounces-866394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB22FBFF9DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:32:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F9BEBFFA41
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3809235AC3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:32:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B7633B39ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CAE2D1F7E;
-	Thu, 23 Oct 2025 07:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677842C11E1;
+	Thu, 23 Oct 2025 07:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A5L0/6Mb"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HEFdjfkO"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCDE186E58
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635CC29BD96
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761204629; cv=none; b=mDZW43naJWpmkoUox8T36Zen6Yvudv+uRftnAkKCs8qrAG+AMhhnbKHL+ey4IXbqUVsi6wPN5++4ihq6uhLCTk40cv2wHjQOfuamH1jYEWqW7s0MqWgHrQPXXwxgUUqnNIlUif3CNqTHi1pOeroVCx5gqCgq9bh6sJveHYQbGhE=
+	t=1761204676; cv=none; b=U+2N/WEGap6Eu5UUL3cOZ5KODYwCWwz8fKb5t/qXOviT4ZZ6iIFto2lOybNQx4eIZD8zz1IJUpUAnCX58jWwA/wRruFi7nl9mjsrbmy3oRwTbWAr22tkRpO9vQtt4/oNJ+JrfHa3OUuz4QYF6xx4D3i2VU8pwLZvUXEwDlDmjz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761204629; c=relaxed/simple;
-	bh=F+Wm5uqQXLHzFrk1So+9Xz8MFgAla+tQ6p0qrW/l+qY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E1WHGY8GPH5TP+fBIm2fFYi81BnHqHBPZwBo5gHEX4xdA5M8FewKo6W1PrS++ORbu7NZc3m7eYJLFZzOwgse/z87srfzrNzA6wp3rtko2TK6zeyhe0S0xVUaEWjH8ypFGU+ZYxfZxbxos1dnwX7R4W9w5/KkVkuYElVR0jZtbJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A5L0/6Mb; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1761204676; c=relaxed/simple;
+	bh=aFRDzPkcK9NfGl8UTUu2FSysM7F5S+eQ7XxMTHyQQzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=EeaWk1cq8k0y7NbSEBN4uShx1YHj+Rb+DylFWG9Fxgl8BX9LOS9NCpr3EDzdlEhxotKedqyIhu6hyUwKKyR273mPZKRHLX3dmAoMHG5idTpRdmRqnITmLivcO6W6JXlQWhzr457SJnocsN9snzr7iyiviNNgUEnZkQDfUAF/h6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HEFdjfkO; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-471075c0a18so4760595e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:30:27 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-471b80b994bso5968465e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:31:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761204625; x=1761809425; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xU2+l2oWXaSdZaV2lCEesAap59k6WqOAEa+s1mYsl4k=;
-        b=A5L0/6Mbf/uWiuSbWyQM0uENXuJRt4UeSEoVuC7YgwZUe0Gn5do2XL974Q2Xbwu0pl
-         emsHoJHDC03wDUbLJ8yXVdaCMPsikmAJEbZsidydxru029RfXREMZweYeUlP80LnBhgd
-         em7/I+XPFEsSB/t49ClvVRRoFTf/M41ZGXzot3n4BRy1Z5gnhuSC9DTxE57cM7f4jGLj
-         sipveG9Vi8mSjSuQ7wDlKYc+Q+Zw55oG26U+hBxMg5//2RgA0DiUKKs7c23m+LlcTBX9
-         RMzmVOgBjiiz0ZDv5cO5wyLGtFj6WsQ7BLWYDyby+li82bGwJWhqZ/mYkZHAHB/O6V+3
-         HWNQ==
+        d=linaro.org; s=google; t=1761204672; x=1761809472; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A3Zl0NzO6dgztEpIBfhUUKoZHrDlf3kwSQWoMIJPwEA=;
+        b=HEFdjfkO7k87QHghfzIzojCtt0S0nv35/wt7CM/JFkqmB4Es5+y1zr+/2JWrELweTo
+         fLcjJ56OyDyw73tpkCXf0pEM/Ra/A1+QFheeRlogGers4ba1k8C/Dyuqe+07R13jiIgf
+         S56OzC6VhaegbcT0AH1f5Dii++gz/VSee72T4dnINMHd0r8QV24uQjkyIeAEvXrHvy7P
+         IU2yDTlhKd48cG0uyQUdxJZKMSYNwjQQTjVa/AI7oD2RxseZbfrzXAQsDmxKtm2kwZ1d
+         N9tYGgICibo5NcmuDC/WEZfBxUKznly8HL2DFYAD/LVI3H8FYa6Ns5CNiagf2qumJYnR
+         lbqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761204625; x=1761809425;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xU2+l2oWXaSdZaV2lCEesAap59k6WqOAEa+s1mYsl4k=;
-        b=v6FVwFytponNUkRDcxv9e6M3vbU2jACbb8JRUU6Ak8UKW36X91MOBoVykp7pedjhFp
-         8m/gtKUmEhTcl+QF+W/dLtiq98V/bRkJLLXvt+lW66KqmcU7Vdpx9mV45TP2TiIWp8Ss
-         /n5B5IOgW0U8C3extdT+ZqkCh8t/fbTxzz/WzhZgBDHNVqW4GH7QCnqf9guIj8TPpbEk
-         z2ShCDjJVqFokqeEWOksu00WpTS8pABNL1CTkddIO+vHNeADd7hfheUxyCBxbzyiu/Rp
-         AydrrccqCszThY4cKsRW/zadYAW9xgU8QXW+lPYxboeNfCHeJi7KQsn+RJbd+R6TAaxG
-         12mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNmK9Khl8zzoYd3t6NPZlX+0yqBp1TerAXSmBtddgM8rcovVqgV3xgv4CrNhKN1T/7vuQB/BcP21OzgEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2MjdP8tD8GZBQBDkki393Hl70CkKJwk1kayZVZoVCROo3/rqT
-	GxkmPt8OqCh/ZJzs7+K/lb+c+qIgMHdhGQY3s5QBjKcNHVTHGY+RotPsGgQa1+NfWhU=
-X-Gm-Gg: ASbGncsN/Pw1JZ15Q0Myi6SFprfd+bA7M77avkt6X+fo08NoXJX4DtSeok1C9FrILnd
-	+NwqruxylrrrYG8tvuBeYI7Yrw3La5JKtS0ojRdvDlZhtXtL7yF0LH97jBnkIQwHI1Ha4Q4oE1D
-	m7M4XO+MDGVsxzqiR1LrsE26wCtwWFEiw7Q2p6iRG6AQGdHLHZZOJxKGVfGzrX/wheQEZbtmNSW
-	Pk3dObvCEHJIm3ehwdH+ljGi+m4KYTdgOMu6bSFUqCIht7owfjxUkxDKSZ1g63rPYVHy2uhZnqO
-	l18lcxkrC/vsgxIwvLDoFkurLuLVOZ4lSUAthi7z8kZSDYKLKtRRsaeBoFw93+4XS5u0sEEH8LD
-	NSlGCGGb76CAmWjjKMt713PHCmrWUD6Poi5yY55RBDlotFEJ7Bf+A405gWXgcBXJwXogTmBe/4Q
-	tZGk7bBWuG
-X-Google-Smtp-Source: AGHT+IGdW6Zt/VmLDLhC0rSwjvMj4I4YzehzmiCpNFLtAN8Xf4TUyFOcY+/2y6jYWq6rNVFlPM38Xw==
-X-Received: by 2002:a05:600c:820b:b0:471:1717:40a with SMTP id 5b1f17b1804b1-471178a8245mr165146145e9.18.1761204625412;
-        Thu, 23 Oct 2025 00:30:25 -0700 (PDT)
-Received: from [10.11.12.107] ([79.115.63.145])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4369b33sm80778205e9.14.2025.10.23.00.30.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 00:30:24 -0700 (PDT)
-Message-ID: <b5f36114-f5d2-44c4-8902-f7d7e68b29d4@linaro.org>
-Date: Thu, 23 Oct 2025 08:30:23 +0100
+        d=1e100.net; s=20230601; t=1761204672; x=1761809472;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A3Zl0NzO6dgztEpIBfhUUKoZHrDlf3kwSQWoMIJPwEA=;
+        b=AK/IA6HDNoqoPilQXK+fDglBKl+6Evo+rlVI/YIMvxw+0tf/MgyA/Dq/7iJNE9fd28
+         4EVEzW7AoepsbN2Fb2x/9/EAKWQStjhbwPMBVuNt1ndciezA1GBQmzbqqwqcHINkHLZj
+         vghvsY00fksXM651z6mIaWeLws79hYv0G3IA3d5i10p/awWVYp8haFV/DTnYcgD0g07C
+         qQw1KC3eGPqwQeMOzDyXl9if4O0Q/hZBtWtaW/rJDXl3AqtSxITLRNghkUqqKwfFIMuD
+         z4DIGSV83WWgkLJmEbhUGzUpvoSJAifsOPZDsOTWj+DRxFziBXcMum1KINuWt7MbV5tu
+         jiOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxXqfuZNR3Oc5P9r525J7azoQEwF9EP84N2Bnw4wtDBCLxBrjUuvq5rTgdEh2YoQXIp9r96P8/oZv2yAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPc7DrtBiF/uoim7fbf+03iv0i+y86wFlQQYhGuymdZ8/YoyHH
+	qaMbAiORm9x9CW3Kk3YQaYjUlbva/JgPxnRztRQ4O8PpabpKqCo35RqmzqxXZRqmAkk=
+X-Gm-Gg: ASbGnct7EDbAhk9ZE6i1k5OBoH0JkjMnc47x1iLERnkA5z/VD1ottqIBJnFyZjlSCX9
+	pzGwmJUVwGLIlpY+uR0puoHmKThTnG78uj++MlbvwiUCt1Wi987sLJYMc+O3HfCpAWvHHDP7cFW
+	jpP0VTK1iMmE9yGMP0PF5ODj+vskHOhW2lILixe1fBaPCSRxjRROJv/2ol+CJ2ifhv3zNpuk684
+	96yyx/hcO/Vsi/pDXuP39ROwqT8iP0QE9bk4AL/Gn9cxYJ1zY8Kb+/Vi/xHknMa82Ob3HYIpCxd
+	PJzlL78eOVB/6FZ9cUVklwre1oB6RM8iaPbv6sfpl/iLsM/8mF7ttcyytU2oBH5X/ONpOi489df
+	MbOsFA2Kxxt47ttNiQVLmyiV1Nn/nGUpwiV+hVsteVvzmLIN8jRHiMEh9WbWxDTjN9ejAcdwVDb
+	JltPhggark4tw24aG1
+X-Google-Smtp-Source: AGHT+IGlhOgrTrFS3lTljK8PD6tgtfOcB8wV5TTCZ+KMjcR3xg+VWPl4LfT+6SvDqRlsNkBtYEe0Eg==
+X-Received: by 2002:a05:600c:45c9:b0:471:115e:87bd with SMTP id 5b1f17b1804b1-4711791c601mr162939935e9.26.1761204671516;
+        Thu, 23 Oct 2025 00:31:11 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-475c428dafesm80214005e9.6.2025.10.23.00.31.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 00:31:11 -0700 (PDT)
+Date: Thu, 23 Oct 2025 10:31:07 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Ariana Lazar <ariana.lazar@microchip.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ariana Lazar <ariana.lazar@microchip.com>
+Subject: Re: [PATCH 2/2] iio: adc: adding support for PAC1711
+Message-ID: <202510230847.CEW0lvJl-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] mtd: spi-nor: sfdp: introduce smpt_map_id fixup hook
-To: Takahiro Kuwano <tkuw584924@gmail.com>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
- Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
-References: <20251022-s25fs-s-smpt-fixup-v1-0-ce26d4084b2d@infineon.com>
- <20251022-s25fs-s-smpt-fixup-v1-2-ce26d4084b2d@infineon.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251022-s25fs-s-smpt-fixup-v1-2-ce26d4084b2d@infineon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251015-pac1711-v1-2-976949e36367@microchip.com>
 
+Hi Ariana,
 
+kernel test robot noticed the following build warnings:
 
-On 10/22/25 11:07 AM, Takahiro Kuwano wrote:
-> Some chips have inconsistency in SMPT that derives wrong map ID and
-> fails to detect correct sector map. Introduce smpt_map_id() into
-> struct spi_nor_fixups. That is called after map ID detection by SMPT
-> and chip specific implementation can correct map ID.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ariana-Lazar/dt-bindings-iio-adc-adding-support-for-PAC1711/20251016-002337
+base:   19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+patch link:    https://lore.kernel.org/r/20251015-pac1711-v1-2-976949e36367%40microchip.com
+patch subject: [PATCH 2/2] iio: adc: adding support for PAC1711
+config: loongarch-randconfig-r072-20251019 (https://download.01.org/0day-ci/archive/20251023/202510230847.CEW0lvJl-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 15.1.0
 
-You may reword the commit message a bit:
-Certain chips have inconsistent Serial Mapping Parameter Table (SMPT)
-data, which leads to the wrong map ID being identified, causing failures
-to detect the correct sector map.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202510230847.CEW0lvJl-lkp@intel.com/
 
-To fix this, introduce smpt_map_id() into the struct spi_nor_fixups.
-This function will be called after the initial SMPT-based detection,
-allowing chip-specific logic to correct the map ID.
+New smatch warnings:
+drivers/iio/adc/pac1711.c:473 pac1711_retrieve_data() error: uninitialized symbol 'ret'.
+drivers/iio/adc/pac1711.c:924 pac1711_read_raw() error: uninitialized symbol 'tmp'.
+drivers/iio/adc/pac1711.c:1124 pac1711_of_parse_channel_config() error: uninitialized symbol 'ret'.
 
-And maybe give an example which flash needs it.
+Old smatch warnings:
+drivers/iio/adc/pac1711.c:1079 pac1711_setup_vbus_range() warn: unsigned 'ret' is never less than zero.
+drivers/iio/adc/pac1711.c:1079 pac1711_setup_vbus_range() warn: error code type promoted to positive: 'ret'
+drivers/iio/adc/pac1711.c:1102 pac1711_setup_vsense_range() warn: unsigned 'ret' is never less than zero.
+drivers/iio/adc/pac1711.c:1102 pac1711_setup_vsense_range() warn: error code type promoted to positive: 'ret'
+drivers/iio/adc/pac1711.c:1377 pac1711_probe() warn: passing positive error code '1' to 'dev_err_probe'
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>> 
-> Co-developed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> Signed-off-by: Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
-> ---
->  drivers/mtd/spi-nor/core.h |  3 +++
->  drivers/mtd/spi-nor/sfdp.c | 12 ++++++++++++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/drivers/mtd/spi-nor/core.h b/drivers/mtd/spi-nor/core.h
-> index 5ad46d95d09cc9d527f71579a71eed210e726f68..16b382d4f04f207aa26190ed8bdf2d19885f7315 100644
-> --- a/drivers/mtd/spi-nor/core.h
-> +++ b/drivers/mtd/spi-nor/core.h
-> @@ -411,6 +411,8 @@ struct spi_nor_flash_parameter {
->   * @post_bfpt: called after the BFPT table has been parsed
->   * @smpt_read_dummy: called during SMPT table is being parsed. Used to fix the
->   *                   number of dummy cycles in read register ops.
-> + * @smpt_map_id: called after map ID in SMPT table has been determined for the
-> + *               case the map ID is wrong and needs to be fixed.
->   * @post_sfdp: called after SFDP has been parsed (is also called for SPI NORs
->   *             that do not support RDSFDP). Typically used to tweak various
->   *             parameters that could not be extracted by other means (i.e.
-> @@ -429,6 +431,7 @@ struct spi_nor_fixups {
->  			 const struct sfdp_parameter_header *bfpt_header,
->  			 const struct sfdp_bfpt *bfpt);
->  	void (*smpt_read_dummy)(const struct spi_nor *nor, u8 *read_dummy);
-> +	void (*smpt_map_id)(const struct spi_nor *nor, u8 *map_id);
->  	int (*post_sfdp)(struct spi_nor *nor);
->  	int (*late_init)(struct spi_nor *nor);
->  };
-> diff --git a/drivers/mtd/spi-nor/sfdp.c b/drivers/mtd/spi-nor/sfdp.c
-> index 9a47dcaca06ae2ad85ac8503658083b1d56d8b96..a8324c2da0acf2953a4a62e2a9f7ed31fcd8b4f2 100644
-> --- a/drivers/mtd/spi-nor/sfdp.c
-> +++ b/drivers/mtd/spi-nor/sfdp.c
-> @@ -730,6 +730,16 @@ static u8 spi_nor_smpt_read_dummy(const struct spi_nor *nor, const u32 settings)
->  	return read_dummy;
->  }
->  
-> +static void spi_nor_smpt_map_id_fixups(const struct spi_nor *nor, u8 *map_id)
-> +{
-> +	if (nor->manufacturer && nor->manufacturer->fixups &&
-> +	    nor->manufacturer->fixups->smpt_map_id)
-> +		nor->manufacturer->fixups->smpt_map_id(nor, map_id);
-> +
-> +	if (nor->info->fixups && nor->info->fixups->smpt_map_id)
-> +		nor->info->fixups->smpt_map_id(nor, map_id);
-> +}
-> +
->  /**
->   * spi_nor_get_map_in_use() - get the configuration map in use
->   * @nor:	pointer to a 'struct spi_nor'
-> @@ -783,6 +793,8 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt,
->  		map_id = map_id << 1 | !!(*buf & read_data_mask);
->  	}
->  
-> +	spi_nor_smpt_map_id_fixups(nor, &map_id);
-> +
->  	/*
->  	 * If command descriptors are provided, they always precede map
->  	 * descriptors in the table. There is no need to start the iteration
-> 
+vim +/ret +473 drivers/iio/adc/pac1711.c
+
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  450  static int pac1711_retrieve_data(struct pac1711_chip_info *info,
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  451  				 u32 wait_time)
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  452  {
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  453  	int ret;
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  454  
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  455  	/*
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  456  	 * check if the minimal elapsed time has passed and if so,
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  457  	 * re-read the chip, otherwise the cached info is just fine
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  458  	 */
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  459  	if (time_after(jiffies, info->chip_reg_data.jiffies_tstamp +
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  460  			msecs_to_jiffies(PAC1711_MIN_POLLING_TIME_MS))) {
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  461  		ret = pac1711_reg_snapshot(info, true, PAC1711_REFRESH_REG_ADDR,
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  462  					   wait_time);
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  463  
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  464  		/*
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  465  		 * Re-schedule the work for the read registers timeout
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  466  		 * (to prevent chip regs saturation)
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  467  		 */
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  468  		cancel_delayed_work_sync(&info->work_chip_rfsh);
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  469  		schedule_delayed_work(&info->work_chip_rfsh,
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  470  				      msecs_to_jiffies(PAC1711_MAX_RFSH_LIMIT_MS));
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  471  	}
+
+ret isn't initialized on the else path.
+
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  472  
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15 @473  	return ret;
+de2a3cdfd6e76b2 Ariana Lazar 2025-10-15  474  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
