@@ -1,172 +1,258 @@
-Return-Path: <linux-kernel+bounces-866740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E0BC00897
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2BD5C0089A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B527F501FBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:36:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 528EF50612C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E089930CD96;
-	Thu, 23 Oct 2025 10:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF6F30CDB6;
+	Thu, 23 Oct 2025 10:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJoP3JF4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQSKs/MK"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC6E30275C
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB43630CD89
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761215724; cv=none; b=FXCcVBb+E2Sy63CMpayhLClhLopaWdHi+VgvJC1DPlIDDW415Yoh0E27nk7jOWmtI9BPr7ePI3RjEmYX4vp25llRh3KI1zP7mp+pVGWXvYBXySM4nb4z2m+Mm4hTvJfU9Hz9M7qJrbfo6eT1fSNFCWkPH6qZekCQpbiLPZkDuwc=
+	t=1761215730; cv=none; b=LsEQU06IQ2bHDOZgUX+8RXo8nEXYWvVweNJ+0rOkBSdfQpAS0NLCXEAfQbhZKX0/zGbhheAW8KvufVRKyi+yXKYVJMlp2TSLrg2thW6j97XviGrR2BTlIlw/MEBJmsFMZKZaykqj1JjRPf3QyCU0ADvU/JkONLzH9GGMfYIkHsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761215724; c=relaxed/simple;
-	bh=KxNv26c3ElS+fE9HW43tqm+IB24ijiFXrt9FnLLIpZA=;
+	s=arc-20240116; t=1761215730; c=relaxed/simple;
+	bh=2OvdrGqTK5W015YbOl6ecdcmtrJ6uIZZ+8FUcPCO3yo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n+O03I9T7Vz+BLIYEkNI6Qk1Cu0qk9eIvCC60pKrjFNb1K9tU7tyIkv2qTI76o3FqAC7Zxwl/Pp011FeIbnHeHhoFAKLMf+yfQkr606szymSr9XYbAHaw+/huKxG2wu4B/ox94H/Y93+7VrNnbSwzIaUYBccSExDy/r/mG6Zipw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJoP3JF4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14E82C4CEF7
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:35:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761215724;
-	bh=KxNv26c3ElS+fE9HW43tqm+IB24ijiFXrt9FnLLIpZA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SJoP3JF4h3Zf1+HQLbTn2og3tBT0AbixF0vFapA68f2cwwnJhwEHU66ygtNFbtJnr
-	 IIOQDq/CxRiMM7gmt0iV6PfLD4mMlXBqRxAWn/WzHpKhEX/jL0+6pVMl5YuZ3Gx1bu
-	 6+6rbAZ0bP8L0f53NJFwNZVrDq42uPRynu7KDiOmRpMN4k9pY1zX5eO6vpNT3V9Yj9
-	 06fmvYWWMeH0UExFp9OppAgAqQvdRwogx92FBqhxJRNbUwSpZcX11J3bkHG+iRP3pc
-	 H0/tEy7yB0hlRZs08d9Bv7d0bTTQR0XQwCQf5M3+L4hAq20D8uSxKm8Eq+yNa7mTFV
-	 GDtnB7xT8AiDw==
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7c280d27ea7so365409a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:35:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXjODyRt/syLCU5X3oj9UJeRMB3pu94xSIXbWvY8qzUUvrKNVnZ0mik/npWKknQGzFUSHqLC9i9Bc+oZOo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtVVdQXWF5YQdm6uYy96lJno7WDqq2tcOeCBvHjyuO0accEVLp
-	A+jKz1TGRdSO3lFuatG+kVvNPGtObQcDG0igmxpyYYh2slFQMuvlOrtFNVq+BpqsieplyBIL7Ps
-	1n94oOeEZn0sfUadWWfVbcq7FEKepWwE=
-X-Google-Smtp-Source: AGHT+IGHGzbBhtCDjfjtiVBjF5gNR4L8YTOEGQA5cjswLcRfclq9EWvgPKLpoS+Zu+4iByCUL0E4qm2Om49lC0kIFfE=
-X-Received: by 2002:a05:6808:319b:b0:43f:1a5f:281f with SMTP id
- 5614622812f47-443a30d1eeemr9414038b6e.35.1761215722358; Thu, 23 Oct 2025
- 03:35:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=qOmRkeBaxxq4y/sHsI1AXW0DcUl7rGaKPRBswQOjFwUHeVNgzfw9QbO+Joo8PcDdianm4tIScbYn36DHZQgcgC9M5ZCiWouX0Qq5e8UF8w/d10wMvLAOQGYIIK3Q5wkvT8cFlgxyKZvWNxLC02TX1n9wodMP2tolp1o+UtAq/xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQSKs/MK; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c31c20b64so1184910a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:35:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761215727; x=1761820527; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x/NyBsDyPqxAs09AD04tT0GajFzhKoMJsLbCSMeMmfU=;
+        b=MQSKs/MK2p4UQnJwDsvFiGuux+hMnNJFx339pGQ8E+DGTEeBsMb2pNFNhhKNydqguz
+         gO647RzfgQw2u62X8N004Tw0uhWUBNfmxnJ5daQH2A8TjM3iW5rlOhK8MZVR0nfJGRWa
+         x1I/eSJAx7TwwpEMjomJEMSJp8NyNtKs4fvzMcx9Fprp7/2O2a8JamXKIZnnbjkQjQs2
+         xjr4isSvR0R8G3o6QJ5VQGV0Y8+3PAIAMMORU1QxIZQiPto74ucWgnuKSPH0m0fNa5Ts
+         F6sPLgapPOyhgCEnVBYjN0rmL4z+8OYd0mQ0RgM+VZACNiw3O+gzOIj8TZ/3m6Shm8nT
+         Jkgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761215727; x=1761820527;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x/NyBsDyPqxAs09AD04tT0GajFzhKoMJsLbCSMeMmfU=;
+        b=airavYxdN9uG8a0b2DC34UkXReaVod6NN/R/+i6KIyfqN0BGfKM6XOcdOmOPBQvXr3
+         Fq0qt84BVmeASZNuclTvI9SyKPCiSQ+bgxNZ/GXUASwKTnpOGu+4Oypir0ZAsK1DWYFR
+         SZgV9iIzKZmPzFL5UsYOymWtDijznrsP50m94FX2ppqJWYOA3yqXWOEsA2mm8vHLNkvK
+         3xxELgR+MxGtkKGNS1Pm65OUm7howUYSmnuv2e65gjE9o6s1bPcDlmUr95jdWkN6gyzy
+         YFdP/YNz2VDaXO3lB8nA2Jc15ppRGddC7zBGXKpchSb4Wp6S4p8IottbaWuvZ3bbsUlV
+         27nw==
+X-Gm-Message-State: AOJu0YwfoG0Rf1vVhn+XP+j6ibKwLXAHXkcss3/frN3oipgtjN1DKvQr
+	ibewR2O1S1ltKp1u1X8KbK9gFuohWnH6nSsP85in2ubKAs+lyoi3kt3PJpa0gUOnA9h9AVNnfnQ
+	86r/JDDtygux0mt3mWV/3OMt8yE7dsYk=
+X-Gm-Gg: ASbGncte3DC0MP/o+1RiYmp4VP22CE/fRwHYhB4h+Bo+qdmF/sIr8FEJnT/r5cYR0An
+	T+P7nIzNkM6aznDk13t9kdl6BFSqW0Ybo1wQTE4B8iiT39ua8VEXbzkaQwBMsLDWnx2XNFN8aM8
+	2qTx7H9tIBTHfwYq1yIULT/BEpl6JVwbCCs5OWf82eY1pJFHGrx/wifdd/iI0Eh7iXNxNqo8YDG
+	oA5xxMOEE/QQNWKHfftsdMbwOeCCVMgsW7J/Z/guEofag5WFIiq42bMrWgH864c0swVS4t2OBs+
+	nkCLDHg=
+X-Google-Smtp-Source: AGHT+IEJmrbFzD+rzvgNDjg2zEfsJzdSKfdpwtiErnDLZepRFN7K5+TUfy4JVtg5vUbQrfyWtWxnTDWKkviGHu+fz0w=
+X-Received: by 2002:a17:907:c1c:b0:b43:5c22:7e62 with SMTP id
+ a640c23a62f3a-b6475128cb3mr2821287066b.50.1761215726737; Thu, 23 Oct 2025
+ 03:35:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929093754.3998136-1-lihuisong@huawei.com>
- <20250929093754.3998136-6-lihuisong@huawei.com> <CAJZ5v0iLt7rnXBaTBv=-ztKro39h1hECQS_Ov9Cn1eBcfhXDaQ@mail.gmail.com>
- <92b1b431-9855-43fb-8bb3-801649064438@huawei.com>
-In-Reply-To: <92b1b431-9855-43fb-8bb3-801649064438@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 23 Oct 2025 12:35:11 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g0PgicTEAb3gAeF2D3ZqONNt+6odt2SfGE7XtY3zoPyg@mail.gmail.com>
-X-Gm-Features: AS18NWB9TrOOkLiktj8zwiGhxZR49Uy8Pwi4OIpXMDvXmZV6Dsr-BuGckXICdEI
-Message-ID: <CAJZ5v0g0PgicTEAb3gAeF2D3ZqONNt+6odt2SfGE7XtY3zoPyg@mail.gmail.com>
-Subject: Re: [PATCH v1 5/9] ACPI: processor: idle: Add the verification of
- processor FFH LPI state
-To: "lihuisong (C)" <lihuisong@huawei.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
-	yubowen8@huawei.com
+References: <20251020093941.548058-1-dolinux.peng@gmail.com>
+ <20251020093941.548058-3-dolinux.peng@gmail.com> <174642a334760af39a5e7bacdd8b977b392a82c7.camel@gmail.com>
+ <CAErzpmusSgOaROhEO25fKenvxQJU1oSPKKzUA4h67ptdQxWM7A@mail.gmail.com> <7651ac9cc74e135f04ecfee8660bea0a0d3883ab.camel@gmail.com>
+In-Reply-To: <7651ac9cc74e135f04ecfee8660bea0a0d3883ab.camel@gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Thu, 23 Oct 2025 18:35:13 +0800
+X-Gm-Features: AS18NWC2o8PUyH4u5SJ09KqPj_TFtkt5BxK4Lg6Pc77PCzynhAuS--UvvdPyMCA
+Message-ID: <CAErzpmtWLLYuFk3npTiOgGOKcEcH1QUGGEHLvPncVT+z261C1A@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/5] btf: sort BTF types by kind and name to enable
+ binary search
+To: Eduard Zingerman <eddyz87@gmail.com>, ast@kernel.org, 
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alan Maguire <alan.maguire@oracle.com>
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 12:17=E2=80=AFPM lihuisong (C) <lihuisong@huawei.co=
-m> wrote:
+On Thu, Oct 23, 2025 at 4:50=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.com=
+> wrote:
 >
+> On Wed, 2025-10-22 at 11:02 +0800, Donglin Peng wrote:
+> > On Wed, Oct 22, 2025 at 2:59=E2=80=AFAM Eduard Zingerman <eddyz87@gmail=
+.com> wrote:
+> > >
+> > > On Mon, 2025-10-20 at 17:39 +0800, Donglin Peng wrote:
+> > > > This patch implements sorting of BTF types by their kind and name,
+> > > > enabling the use of binary search for type lookups.
+> > > >
+> > > > To share logic between kernel and libbpf, a new btf_sort.c file is
+> > > > introduced containing common sorting functionality.
+> > > >
+> > > > The sorting is performed during btf__dedup() when the new
+> > > > sort_by_kind_name option in btf_dedup_opts is enabled.
+> > >
+> > > Do we really need this option?  Dedup is free to rearrange btf types
+> > > anyway, so why not sort always?  Is execution time a concern?
+> >
+> > The issue is that sorting changes the layout of BTF. Many existing self=
+tests
+> > rely on the current, non-sorted order for their validation checks. Intr=
+oducing
+> > this as an optional feature first allows us to run it without immediate=
+ly
+> > breaking the tests, giving us time to fix them incrementally.
 >
-> =E5=9C=A8 2025/10/22 3:42, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> > On Mon, Sep 29, 2025 at 11:38=E2=80=AFAM Huisong Li <lihuisong@huawei.c=
-om> wrote:
-> >> Both ARM64 and RISCV architecture would validate Entry Method of LPI
-> >> state and SBI HSM or PSCI cpu suspend. Driver should return failure
-> >> if FFH of LPI state are not ok.
-> > First of all, I cannot parse this changelog, so I don't know the
-> > motivation for the change.
-> Sorry for your confusion.
-> > Second, if _LPI is ever used on x86, the
-> > acpi_processor_ffh_lpi_probe() in acpi_processor_get_power_info() will
-> > get in the way.
-> AFAICS, it's also ok if X86 platform use LPI.
+> How many tests are we talking about?
+> The option is an API and it stays with us forever.
+> If the only justification for its existence is to avoid tests
+> modification, I don't think that's enough.
 
-No, because it returns an error by default as it stands today.
+I get your point, thanks. I wonder what others think?
 
+>
+> > >
+> > > > For vmlinux and kernel module BTF, btf_check_sorted() verifies
+> > > > whether the types are sorted and binary search can be used.
+> > >
+> > > [...]
+> > >
+> > > > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> > > > index c414cf37e1bd..11b05f4eb07d 100644
+> > > > --- a/kernel/bpf/btf.c
+> > > > +++ b/kernel/bpf/btf.c
+>
+> [...]
+>
+> > > > +s32 btf_find_by_name_kind(const struct btf *btf, const char *name,=
+ u8 kind)
+> > > > +{
+> > > > +     return find_btf_by_name_kind(btf, 1, name, kind);
+> > >                                          ^^^
+> > >                 nit: this will make it impossible to find "void" w/o =
+a special case
+> > >                      in the find_btf_by_name_kind(), why not start fr=
+om 0?
 > >
-> > Why does the evaluation in acpi_processor_setup_cpuidle_dev() not work?
-> The acpi_processor_ffh_lpi_probe does verify the validity of LPI for ARM
-> and RISCV.
-> But the caller of the acpi_processor_setup_cpuidle_dev()don't verify the
-> return value.
-> In addition, from the name of acpi_processor_setup_cpuidle_dev(), its
-> main purpose is to setup cpudile device rather than to verify LPI.
+> > Thanks. I referred to btf__find_by_name_kind in libbpf. In
+> > btf_find_by_name_kind,
+> > there is a special check for "void". Consequently, I've added a
+> > similar special check
+> > for "void" in find_btf_by_name_kind as well.
+>
+> Yes, I see the special case in the find_btf_by_name_kind.
+> But wouldn't starting from 0 here avoid the need for special case?
 
-That's fair enough.
+The start_id parameter here serves the same purpose as the one in
+libbpf's btf_find_by_name_kind. However, its implementation in
+find_btf_by_name_kind was incorrect. I will fix this in the next version.
 
-Also, the list of idle states belongs to the cpuidle driver, not to a
-cpuidle device.
-
-> So I move it to a more prominent position and redefine the
-> acpi_processor_setup_cpuidle_dev to void in patch 9/9.
-> >
-> >> Fixes: a36a7fecfe60 ("ACPI / processor_idle: Add support for Low Power=
- Idle(LPI) states")
-> >> Signed-off-by: Huisong Li <lihuisong@huawei.com>
-> >> ---
-> >>   drivers/acpi/processor_idle.c | 10 ++++++++--
-> >>   1 file changed, 8 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_id=
-le.c
-> >> index 5684925338b3..b0d6b51ee363 100644
-> >> --- a/drivers/acpi/processor_idle.c
-> >> +++ b/drivers/acpi/processor_idle.c
-> >> @@ -1264,7 +1264,7 @@ static int acpi_processor_setup_cpuidle_dev(stru=
-ct acpi_processor *pr,
-> >>
-> >>          dev->cpu =3D pr->id;
-> >>          if (pr->flags.has_lpi)
-> >> -               return acpi_processor_ffh_lpi_probe(pr->id);
-> >> +               return 0;
-> >>
-> >>          return acpi_processor_setup_cpuidle_cx(pr, dev);
-> >>   }
-> >> @@ -1275,7 +1275,13 @@ static int acpi_processor_get_power_info(struct=
- acpi_processor *pr)
-> >>
-> >>          ret =3D acpi_processor_get_lpi_info(pr);
-> >>          if (ret)
-
-So I think it would be better to check it here, that is
-
-if (!ret) {
-       ret =3D acpi_processor_ffh_lpi_probe(pr->id));
-       if (!ret)
-               return 0;
-
-       pr_info("CPU%d: FFH LPI state is invalid\n", pr->id);
-       pr->flags.has_lpi =3D 0;
+__s32 btf__find_by_name_kind_own(const struct btf *btf, const char *type_na=
+me,
+__u32 kind)
+{
+return btf_find_by_name_kind(btf, btf->start_id, type_name, kind);
 }
 
-return acpi_processor_get_cstate_info(pr);
+__s32 btf__find_by_name_kind(const struct btf *btf, const char *type_name,
+     __u32 kind)
+{
+return btf_find_by_name_kind(btf, 1, type_name, kind);
+}
 
-And the default acpi_processor_ffh_lpi_probe() needs to be changed to retur=
-n 0.
+static __s32 btf_find_by_name_kind(const struct btf *btf, int start_id,
+   const char *type_name, __u32 kind)
+{
+__u32 i, nr_types =3D btf__type_cnt(btf);
 
-> >> -               ret =3D acpi_processor_get_cstate_info(pr);
-> >> +               return acpi_processor_get_cstate_info(pr);
-> >> +
-> >> +       if (pr->flags.has_lpi) {
-> >> +               ret =3D acpi_processor_ffh_lpi_probe(pr->id);
-> >> +               if (ret)
-> >> +                       pr_err("Processor FFH LPI state is invalid.\n"=
-);
-> >> +       }
-> >>
-> >>          return ret;
-> >>   }
-> >> --
+if (kind =3D=3D BTF_KIND_UNKN || !strcmp(type_name, "void"))
+return 0;
+
+for (i =3D start_id; i < nr_types; i++) {
+const struct btf_type *t =3D btf__type_by_id(btf, i);
+const char *name;
+
+if (btf_kind(t) !=3D kind)
+continue;
+name =3D btf__name_by_offset(btf, t->name_off);
+if (name && !strcmp(type_name, name))
+return i;
+}
+
+return libbpf_err(-ENOENT);
+
+}
+
+>
+> [...]
+>
+> > > > diff --git a/tools/lib/bpf/btf_sort.c b/tools/lib/bpf/btf_sort.c
+> > > > new file mode 100644
+> > > > index 000000000000..2ad4a56f1c08
+> > > > --- /dev/null
+> > > > +++ b/tools/lib/bpf/btf_sort.c
+> > >
+> > > [...]
+> > >
+> > > > +/*
+> > > > + * Sort BTF types by kind and name in ascending order, placing nam=
+ed types
+> > > > + * before anonymous ones.
+> > > > + */
+> > > > +int btf_compare_type_kinds_names(const void *a, const void *b, voi=
+d *priv)
+> > > > +{
+> > > > +     struct btf *btf =3D (struct btf *)priv;
+> > > > +     struct btf_type *ta =3D btf_type_by_id(btf, *(__u32 *)a);
+> > > > +     struct btf_type *tb =3D btf_type_by_id(btf, *(__u32 *)b);
+> > > > +     const char *na, *nb;
+> > > > +     int ka, kb;
+> > > > +
+> > > > +     /* ta w/o name is greater than tb */
+> > > > +     if (!ta->name_off && tb->name_off)
+> > > > +             return 1;
+> > > > +     /* tb w/o name is smaller than ta */
+> > > > +     if (ta->name_off && !tb->name_off)
+> > > > +             return -1;
+> > > > +
+> > > > +     ka =3D btf_kind(ta);
+> > > > +     kb =3D btf_kind(tb);
+> > > > +     na =3D btf__str_by_offset(btf, ta->name_off);
+> > > > +     nb =3D btf__str_by_offset(btf, tb->name_off);
+> > > > +
+> > > > +     return cmp_btf_kind_name(ka, na, kb, nb);
+> > >
+> > > If both types are anonymous and have the same kind, this will lead to
+> > > strcmp(NULL, NULL). On kernel side that would lead to null pointer
+> > > dereference.
+> >
+> > Thanks, I've confirmed that for anonymous types, name_off is 0,
+> > so btf__str_by_offset returns a pointer to btf->strs_data (which
+> > contains a '\0' at index 0) rather than NULL. However, when name_off
+> > is invalid, btf__str_by_offset does return NULL. Using str_is_empty
+> > will correctly handle both scenarios. Unnamed types of the same kind
+> > shall be considered equal. I will fix it in the next version.
+>
+> I see, thank you for explaining.
+> Checking the usage of kernel/bpf/btf.c:btf_name_valid_identifier(),
+> it looks like kernel validates name_off for all types.
+> So, your implementation should be fine.
+>
+> [...]
 
