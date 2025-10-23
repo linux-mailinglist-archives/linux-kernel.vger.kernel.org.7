@@ -1,212 +1,130 @@
-Return-Path: <linux-kernel+bounces-866988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 093C6C0145D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:13:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5D3C01460
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F60F18C7CC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:13:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BDDC18C7BFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9122DC790;
-	Thu, 23 Oct 2025 13:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236962F6187;
+	Thu, 23 Oct 2025 13:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDiGlrfA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="v9aQQmSA"
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37180314B64;
-	Thu, 23 Oct 2025 13:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212A02F7461
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761225173; cv=none; b=F6tIn6tLpL8bWiNYbz1XazkuL9+KxE/rGulF/q7gAQmfZoev1bXIN6fMEsBqhOnTtCooHfw+kiI7uZswOFiSRkKMoo2yFqMShPkwpxArgrFdrZtpcdwM+mvzP5zSMz+SyI42d/9gQvl4DW1sZRN+ijp51kKzPVX7hdpoQFBUA9c=
+	t=1761225185; cv=none; b=L3WGXeE9c3WI8MIzF8HPdRIGUPirjJw72IQYCmUr/urPi4/1pUp162WZ8ocTX5gcQDH28Zrj9ixTOgVdc+2AL96jIuITunTcqXbZidYqsSXq04q3LAMQZk12PTxEsm3X+XMOxD+NmBT6nsXkJ3Y6DgzGz4kCkEiEtMcN7rHVxrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761225173; c=relaxed/simple;
-	bh=tzzuyli2FJUV4/l41vMHQUNLHoHIcr850IlfoNC0cBg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IaXzPVpi6xVk0MVTXuM4vQA6uNfJysQgqmq9sI3rkyrp0O5rUcbX4NLSfU18geq8sIV8bh5jiia5kUOCUwZqiwY3jt0X7OEUQ1uGhyf6RdiCkjBbcX3sjsROPipbunqB9B8uQPLLw9Qm6lzrCvBwm/SxM3VaZv2QjWV32VSrcao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDiGlrfA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDC30C4CEE7;
-	Thu, 23 Oct 2025 13:12:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761225172;
-	bh=tzzuyli2FJUV4/l41vMHQUNLHoHIcr850IlfoNC0cBg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=nDiGlrfA37aIAhGaVwA9zfzMIEgZkkjTmYDfMYYdQGKLA5oR9pTpbZqeMjmzAv72j
-	 Sxvz7ZnRUq0W85VGWd9G5K5w8vMC6aTOXrwdV2/HY5Uoa3WkmhxTLDUX7CbGlQzxFQ
-	 0FqkHTxgKPbd5kO1AcBpyz/ONDDQnfNM6U4qGQ5cJ0spzUEEEm15q93IfTU/vYvLV2
-	 J9HXoCLTJ7JNj3c7rCnEGNzzvE6JAyf18MGgoqXNz9i4uqKu3u50HJdPb7ekSXk3H2
-	 F1bsQlRd/JtlO7xSRWjF6ab+4J+uleDSli7qxsuV8mFyJmRe2V+ezCbiVKZLplX3Na
-	 aJJJAkln/0TVw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 23 Oct 2025 09:12:39 -0400
-Subject: [PATCH] lockd: don't allow locking on reexported NFSv2/3
+	s=arc-20240116; t=1761225185; c=relaxed/simple;
+	bh=llbnfOMyD81NXw2EcalQre+Lwdfs4auBXB+ClL6MjSs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ewTP+G/C7vDAxIJtZpPgrZEwTa2gEjlL1Rg/4mY+T+Xzt6TKzwj2mnabZMaez4gyfP6jLxs2CS+3duXudJ6Iur5Ogd0IxApvbIi2WRXmaPwZ0arHhRIyanBIFJhgHj/Rr057UKnVbZ1BCWsVuWDK5W3TNV5kB4zJTIFruk9OE64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=v9aQQmSA; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
+Received: from [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8] (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id AD21668C285;
+	Thu, 23 Oct 2025 15:13:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1761225180;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iSofLSF6r8eXmgKWVTiKlhq6YjPl7KjQf8QXfEfDH9s=;
+	b=v9aQQmSA0Crh+4iLonub3vzv1yRPoRHQUfn0YLOVJHcRiuVA6lSHc7QnTyeH80uVsV1oD9
+	gR8/KunrqsQ03YWZ6F8XJgNBOGv1SihNqNdq8s0DI0lH9YJPsKwDt2C3GToE2xEyL3VYfK
+	vlQwpJKOJ498kdja3qrV9qCHjScPY50HWmGx1G+AWV8T83l+tloQUescdoLwitd3JmhkMO
+	DN03gvCa44dDDvNOc1BkSL8v2z6woFvWk4+s6fUs/6XPDEa0cL0ZzO8AutOb2tsLgsK3L3
+	MrfuCluoVNV0+uIh25zBYx6Lrz0aAOk/vYJ7bcA+6cJOexx8gUdRbCIffRZSaw==
+Message-ID: <833a6495c2b16e1da90c19826839191eec21e6f2.camel@svanheule.net>
+Subject: Re: [PATCH v4 2/2] regmap: warn users about uninitialized flat cache
+From: Sander Vanheule <sander@svanheule.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+ Danilo Krummrich
+	 <dakr@kernel.org>
+Date: Thu, 23 Oct 2025 15:12:59 +0200
+In-Reply-To: <9b5eaedd-f068-4209-af4a-215716e279a7@sirena.org.uk>
+References: <20251022200408.63027-1-sander@svanheule.net>
+	 <20251022200408.63027-3-sander@svanheule.net>
+	 <9b5eaedd-f068-4209-af4a-215716e279a7@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-lockd-owner-v1-1-1d196b0183d1@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAMYp+mgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDAyNj3Zz85OwU3fzyvNQi3URTI8tUE9MUCzMjIyWgjoKi1LTMCrBp0bG
- 1tQDsxRhIXQAAAA==
-X-Change-ID: 20251023-lockd-owner-a529e45d8622
-To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
- Anna Schumaker <anna@kernel.org>
-Cc: Mike Snitzer <snitzer@kernel.org>, linux-nfs@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4793; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=tzzuyli2FJUV4/l41vMHQUNLHoHIcr850IlfoNC0cBg=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo+inO29Iw5bYLT5S/wQi/YVPrS4avOWRIR4TRu
- aYAWoNzahuJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaPopzgAKCRAADmhBGVaC
- FWPHD/9M8NDGWxtCAue2dXEEYlXiAlHhX8ndOk389s9w3onaFjNJD/vJQiTcHdWRj0qEqqZRL5B
- k4KGI+1gosKmazE3ncbkFjJQWo1qBCRHIYLKk4Ws17nzMWj0DzbALqjC/XOCWk1gqUdVNHR4ROZ
- rsILU6XrD1vEYYajPptLq6GPs10Cl73hfZ+hQoULsntK/CVTP43gm/FVIxgkN9cwAbYq0c+xg5f
- 7lsH4Cvvnejgn5g0z+qUPJW9R7/QX4BFBBNA8RQAOk/U3WPsIWT8i/th/gjEgcNxMDTHYksgX63
- iUhpaTM/kw3KCf/lBksMtdMxGmlrLaW3ZWTTxJNWu1qHUg8d4alfSnMtPeOi24lx5eqbRsH3tQY
- WUO+9etvJH5ruedoS2Lme3i//mtyh2+mGaaiNrpGR1tRG3v2ke6hAAkULzcWmOWb/rwAQBUdw/m
- W/9CYAZRnVNdv2zl7pXeVWIljVoGIFsSih2ugi0lnKXucGbsWegZMJhyWhSlIBviyBbEv9fgJif
- CEys/o8EsWC+feURj04ibbcbLJmY3JefOWjQCpB1fJNtbAdrtQUUGOpzG6h2PRs/O+E/PSWOcLp
- F7p0vBtxJqJw6qcFDCwsxiUy5RtjvYQu0sKdA2Biq7MekN/6LPxTkm/rgjYGivc61dUPO6YS5ab
- NKLCVd/I/5lH0oQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Since commit 9254c8ae9b81 ("nfsd: disallow file locking and delegations
-for NFSv4 reexport"), file locking when reexporting an NFS mount via
-NFSv4 is expressly prohibited by nfsd. Do the same in lockd:
+On Thu, 2025-10-23 at 14:00 +0100, Mark Brown wrote:
+> On Wed, Oct 22, 2025 at 10:04:08PM +0200, Sander Vanheule wrote:
+>=20
+> > +	if (unlikely(!__test_and_set_bit(index, cache->valid)))
+> > +		dev_warn(map->dev,
+> > +			 "using zero-initialized flat cache, "
+> > +			 "this may cause unexpected behavior");
+>=20
+> Please update this to have the error message on one line, it's better to
+> break the line length limit and have people easily able to grep for the
+> log message.
 
-Add a new  nlmsvc_file_cannot_lock() helper that will test whether file
-locking is allowed for a given file, and return nlm_lck_denied_nolocks
-if it isn't.
+Okay, I'll turn it into one line.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-Regardless of how we fix the bug that Olga found recently, I think we
-need to do this as well. We don't allow locking when reexporting via v4,
-and I don't think we want to allow it when reexporting via v2/3 either.
----
- fs/lockd/svclock.c          | 12 ++++++++++++
- fs/lockd/svcshare.c         |  6 ++++++
- include/linux/lockd/lockd.h |  9 ++++++++-
- 3 files changed, 26 insertions(+), 1 deletion(-)
+Regarding this warning, I've noticed it confuses the regmap KUnit tests par=
+ser.
+The sync tests with offset registers at 0x2000 read a lot of uncached regis=
+ters,
+so that results in 10's of thousands of log lines. The test itself is repor=
+ted
+as passing, so I only noticed this now:
 
-diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
-index c1315df4b350bbd753305b5c08550d50f67b92aa..cd42e480a7000f1b3ec7fca5ecc7fb8dc4755a09 100644
---- a/fs/lockd/svclock.c
-+++ b/fs/lockd/svclock.c
-@@ -495,6 +495,9 @@ nlmsvc_lock(struct svc_rqst *rqstp, struct nlm_file *file,
- 				(long long)lock->fl.fl_end,
- 				wait);
- 
-+	if (nlmsvc_file_cannot_lock(file))
-+		return nlm_lck_denied_nolocks;
-+
- 	if (!locks_can_async_lock(nlmsvc_file_file(file)->f_op)) {
- 		async_block = wait;
- 		wait = 0;
-@@ -621,6 +624,9 @@ nlmsvc_testlock(struct svc_rqst *rqstp, struct nlm_file *file,
- 				(long long)lock->fl.fl_start,
- 				(long long)lock->fl.fl_end);
- 
-+	if (nlmsvc_file_cannot_lock(file))
-+		return nlm_lck_denied_nolocks;
-+
- 	if (locks_in_grace(SVC_NET(rqstp))) {
- 		ret = nlm_lck_denied_grace_period;
- 		goto out;
-@@ -678,6 +684,9 @@ nlmsvc_unlock(struct net *net, struct nlm_file *file, struct nlm_lock *lock)
- 				(long long)lock->fl.fl_start,
- 				(long long)lock->fl.fl_end);
- 
-+	if (nlmsvc_file_cannot_lock(file))
-+		return nlm_lck_denied_nolocks;
-+
- 	/* First, cancel any lock that might be there */
- 	nlmsvc_cancel_blocked(net, file, lock);
- 
-@@ -715,6 +724,9 @@ nlmsvc_cancel_blocked(struct net *net, struct nlm_file *file, struct nlm_lock *l
- 				(long long)lock->fl.fl_start,
- 				(long long)lock->fl.fl_end);
- 
-+	if (nlmsvc_file_cannot_lock(file))
-+		return nlm_lck_denied_nolocks;
-+
- 	if (locks_in_grace(net))
- 		return nlm_lck_denied_grace_period;
- 
-diff --git a/fs/lockd/svcshare.c b/fs/lockd/svcshare.c
-index ade4931b2da247abd23bd16923f1d2388dc6ce00..88c81ce1148d92bd29ec580ac399ac944ba5ecf8 100644
---- a/fs/lockd/svcshare.c
-+++ b/fs/lockd/svcshare.c
-@@ -32,6 +32,9 @@ nlmsvc_share_file(struct nlm_host *host, struct nlm_file *file,
- 	struct xdr_netobj	*oh = &argp->lock.oh;
- 	u8			*ohdata;
- 
-+	if (nlmsvc_file_cannot_lock(file))
-+		return nlm_lck_denied_nolocks;
-+
- 	for (share = file->f_shares; share; share = share->s_next) {
- 		if (share->s_host == host && nlm_cmp_owner(share, oh))
- 			goto update;
-@@ -72,6 +75,9 @@ nlmsvc_unshare_file(struct nlm_host *host, struct nlm_file *file,
- 	struct nlm_share	*share, **shpp;
- 	struct xdr_netobj	*oh = &argp->lock.oh;
- 
-+	if (nlmsvc_file_cannot_lock(file))
-+		return nlm_lck_denied_nolocks;
-+
- 	for (shpp = &file->f_shares; (share = *shpp) != NULL;
- 					shpp = &share->s_next) {
- 		if (share->s_host == host && nlm_cmp_owner(share, oh)) {
-diff --git a/include/linux/lockd/lockd.h b/include/linux/lockd/lockd.h
-index c8f0f9458f2cc035fd9161f8f2486ba76084abf1..330e38776bb20d09c20697fc38a96c161ad0313a 100644
---- a/include/linux/lockd/lockd.h
-+++ b/include/linux/lockd/lockd.h
-@@ -12,6 +12,7 @@
- 
- /* XXX: a lot of this should really be under fs/lockd. */
- 
-+#include <linux/exportfs.h>
- #include <linux/in.h>
- #include <linux/in6.h>
- #include <net/ipv6.h>
-@@ -307,7 +308,7 @@ void		  nlmsvc_invalidate_all(void);
- int           nlmsvc_unlock_all_by_sb(struct super_block *sb);
- int           nlmsvc_unlock_all_by_ip(struct sockaddr *server_addr);
- 
--static inline struct file *nlmsvc_file_file(struct nlm_file *file)
-+static inline struct file *nlmsvc_file_file(const struct nlm_file *file)
- {
- 	return file->f_file[O_RDONLY] ?
- 	       file->f_file[O_RDONLY] : file->f_file[O_WRONLY];
-@@ -318,6 +319,12 @@ static inline struct inode *nlmsvc_file_inode(struct nlm_file *file)
- 	return file_inode(nlmsvc_file_file(file));
- }
- 
-+static inline bool
-+nlmsvc_file_cannot_lock(const struct nlm_file *file)
-+{
-+	return exportfs_cannot_lock(nlmsvc_file_file(file)->f_path.dentry->d_sb->s_export_op);
-+}
-+
- static inline int __nlm_privileged_request4(const struct sockaddr *sap)
- {
- 	const struct sockaddr_in *sin = (struct sockaddr_in *)sap;
+[15:07:47] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D cache_sync_m=
+arked_dirty  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D       =20
+[15:07:47] [PASSED] flat-default @0x0                                      =
+   =20
+[15:07:47] [PASSED] flat-default fast I/O @0x0                             =
+   =20
+[15:07:47] [PASSED] flat-default @0x2001                                   =
+   =20
+[15:07:47] [PASSED] flat-default @0x2002                                   =
+   =20
+[15:07:47] [PASSED] flat-default @0x2003                                   =
+   =20
+[15:07:47] [PASSED] flat-default @0x2004                                   =
+   =20
+[15:07:47] [ERROR] Test: flat-sparse-default fast I/O @0x0: Expected test n=
+umber
+7 but found 8
+[15:07:47] [PASSED] flat-sparse-default fast I/O @0x0
+[15:07:47] [ERROR] Test: flat-sparse-default @0x2001: Expected test number =
+8 but
+found 9
+...
+[15:07:47] [ERROR] Test: maple-default @0x2004: Expected test number 23 but
+found 24
+[15:07:47] [PASSED] maple-default @0x2004
+[15:07:47] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] cache_sync_mark=
+ed_dirty =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
----
-base-commit: 316f960d9ffb8439e0876dc2eab812e55f3ccb2a
-change-id: 20251023-lockd-owner-a529e45d8622
+If it's okay for you, I would change it back to a dev_warn_once() with a
+test_bit() check.
 
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Best,
+Sander
 
