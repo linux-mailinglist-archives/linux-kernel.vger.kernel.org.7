@@ -1,170 +1,252 @@
-Return-Path: <linux-kernel+bounces-866132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF13CBFEF55
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B347FBFEF73
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2981935174E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:50:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 43E113507CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3170E2045AD;
-	Thu, 23 Oct 2025 02:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3567C222587;
+	Thu, 23 Oct 2025 02:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pt58Rt1W"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013033.outbound.protection.outlook.com [40.93.201.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OozcGfgb"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2FC1DF248
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761187817; cv=fail; b=P2NnbZSvS1Q5xL+W/FqZSGCC/lUv+edmiH0q2M3+WBz8G4bpCenUgdSti2O17tVKHeAEWeXB/intJ7tfyujhOm84A6SEu/Wj5hH7KotvG2G4fgHBqfhW34dbYoHKfcgdCUa+3eDrB49yHuUgx3Az7TPOrJQE61teaIxoYN0CFo4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761187817; c=relaxed/simple;
-	bh=OpDPc9pnGfy1oYsmB1XuO9TPgCC1DOqlnsqxwtO6rcI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=et+yMNwci5mXKdQYPjkFV7VW58X0GUTT39/rbiPrHE+LYIe0FDe9dseBzi5/TKzIBBdfTtDG/KTqEcBEItJBAJR6jRBMBJ3LtcddOFfBvCZOW3lXec9vfdZ5G+RaLomSaUybg1/+9ZqDdZi/NZ+Rhu/3ZhnXC7D/qdBgeJ9BCfw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pt58Rt1W; arc=fail smtp.client-ip=40.93.201.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o5ZiYOLUi6P6X44f77UxUsYlFb3Vnavlb511SMHjHF1pb0JPybHctudz8sMrx/1zNA3Q4jSzVCMPItAxYDYWS3jr3C/RkbP91x83+LgirwxUz6IR6UgUW81pc3IwHSMUcBJsv1jD/JrfF7qYJXPXqdc7jX/3aS025cwaONp78+HVZcNRPwqEICXJzC/TuFPQAvYNnf1DxPu4usNZrxlipbgMg//Zn5qvu+NnV5mwHx1XuXV5u/pYAqKiVcHrwbm46K80r8N5zF2AaTFbAIKxTqzXLebwQ9ISUDmUsu8xtDoiS6AHHk2eCE+Kh8w28hQ0NlRVjvCQPFw5jQi5lg9Bbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A+4mt6FkVVhdR3277vak9ncSik3EXpfbLDmU70XT0C4=;
- b=Rj1kFnBvCtzick1Pk+O32ChzJtGFSLZlpZ7CdgjT4JNwdBjPj2ZEvEIEVbT0kWDulWxXzzhxUg4DlkRLvnBZvmdLkda2NWyek7J0OURbhWFoZZcK5y3ErmyrdIfVomaGfLW+t4Y8biulIHPp5bPYG2g4WahzZ+iDIb1zxMUi/qZqVUe0I50TjET9rt3tzCDcWL6WEW8b9ZuwXqA6sRtE8zxzLUPRE4zlFtadQ7jeg/TxU6jPJhBGito4u+SebZRvalzxDGPcSrlNTs/2oVmMu+Z7yhOFv28lae+ObFVD+2LCGRFKeu472kZvUrcbPTTNzjKGgv+MrYTzNltq4jRpLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A+4mt6FkVVhdR3277vak9ncSik3EXpfbLDmU70XT0C4=;
- b=pt58Rt1W+/K2jh5c0H86W6J+ZpJWIU9WQpcjEsuliPrpN1u0HYBzyLlByAHc7NngFbsCK9pkjVoRO5sR8Y/jEdwFwGe+nuR46QzZdKLclI+z5CAV8G7wQvJisSySrYs9nmsy15dFTqgUaar9lNZw6imQZNvCOvQteu/bHwrJuZFjCMnp2gmVa7ZYs6l0RAgO3Q/m7ixfDgdSXQgDuSD/EPBESWXA4izVLr/MgrNPI9F+Qd/aCrxW9A59kGkGxFHDhjyY1zVDw+//NUAWe3mX+iN/ivrTpnNWj48YUHOz5R6PDQDw7tPUIf1sJv/FC84vcJGkq5jyUelybVjgwwXH9g==
-Received: from CH5P220CA0016.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:1ef::22)
- by CH1PR12MB9622.namprd12.prod.outlook.com (2603:10b6:610:2b2::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
- 2025 02:50:11 +0000
-Received: from CH2PEPF0000009C.namprd02.prod.outlook.com
- (2603:10b6:610:1ef:cafe::7d) by CH5P220CA0016.outlook.office365.com
- (2603:10b6:610:1ef::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.13 via Frontend Transport; Thu,
- 23 Oct 2025 02:50:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CH2PEPF0000009C.mail.protection.outlook.com (10.167.244.24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Thu, 23 Oct 2025 02:50:11 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 22 Oct
- 2025 19:50:00 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Oct
- 2025 19:49:59 -0700
-Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 22 Oct 2025 19:49:58 -0700
-Date: Wed, 22 Oct 2025 19:49:57 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-CC: <jgg@nvidia.com>, <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>,
-	<will@kernel.org>, <joro@8bytes.org>, <kevin.tian@intel.com>,
-	<jsnitsel@redhat.com>, <vasant.hegde@amd.com>, <iommu@lists.linux.dev>,
-	<santosh.shukla@amd.com>, <sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
-	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
-	<gptran@google.com>, <kpsingh@google.com>, <joao.m.martins@oracle.com>,
-	<alejandro.j.jimenez@oracle.com>
-Subject: Re: [PATCH v4 14/16] iommu/amd: Refactor persistent DTE bits
- programming into amd_iommu_make_clear_dte()
-Message-ID: <aPmX1fKDtwr4seS0@Asurada-Nvidia>
-References: <20251021014324.5837-1-suravee.suthikulpanit@amd.com>
- <20251021014324.5837-15-suravee.suthikulpanit@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C60E20296C
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761188125; cv=none; b=Nk6zifvwWNR+8sbjWYUxrCS5k2DJ+Z2NQXwJGuzupLFK1dRBz6jS6E/wAPdag7TaL/1T/XH3JbFzVE1wKSUoxZslWbooj3L97aAXNKl/l+lbML6FTFNJiXWuIfqG6MDLU+uFwxPYQLYhuy6RoReHYIYnatagcfONsb4a8euQqjY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761188125; c=relaxed/simple;
+	bh=RTUk2WSlE0halvN9moYsr3H7Bj2oinnqonBwfh8+6Wo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NXVB8HfRdDu4vPtdrvbxsyrd+U35sJLYUXizHIzXOwpF1KBUNzqWTOMISWOJMh7qTwXltd94fau1yu54vF57UsDt6F/Kt34dY9/r7YKQ0JhYcMWCdFMA3HI/9/4iE/aDk7H5MV2JK/4DlNSsdF8Zs5TCkYT9qHc9AeuQXDqoRiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OozcGfgb; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-782a77b5ec7so340434b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 19:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761188123; x=1761792923; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7a6TkCx3t9Jt6uhfJfOsOowa2UNIpvCOCiP3SP22cv8=;
+        b=OozcGfgbZ/akCWzE3KuQNjePE2bGA67nHohMB6jf1IwuZIfFHXj6kzgpa5vCCzlj/K
+         OcCo9Pf+4BJLkiEcloalfeDrJqCCt43FpuJRrodT073aXGVC5ymlcEcufxrZVHyUnTtY
+         BJ+hbxcChUzuIvmkZRFoBTaj7gc4tIRNFu8C5MFkdIVou6LpbUwpT88gM9lanVt2VfBO
+         qbR3N0+uAbn0g3PLKGBG2/0YUsYUMfXoCAWqEveX2uKahNpi2x/iJ7zguiKzgq0aRqF8
+         K6PnKhBG2PuGH16LtSCW6IUnUIgn90FVv3Nj0tYhhGKjXtJHjqBZG5RCABia9YeUGA/p
+         nOqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761188123; x=1761792923;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7a6TkCx3t9Jt6uhfJfOsOowa2UNIpvCOCiP3SP22cv8=;
+        b=T6do6U4CmHOJKmWtygODkDhrSpFJCwRIOF+kBbJa11y3KKxqfs1Reupd/rsxQzhImd
+         QjxxY9c/XAUXWrsy9Ea8b97IjH+l0xuiZFchc8NYiFUyhOHor7VoSZYOzqSjok/iJ2Cx
+         rkzynyw4f5VG6AvTlnZ5foxIJIEnfYqti0nPLkq1onrp3iRXENp5L33e37f4YHUS8MWi
+         aVjVYyE6enMdHCE8megMAXJ+Yas66KbNRqUjuNPGqvJKf0HyANJREPJmM+XusJFfc6Iq
+         rbMoZqDoaiiDvWVaBEZJLwDHIz2cM+xfecjW9U/YDZg2ishh74A+G13xdJQ6uWaQSSx4
+         4a5w==
+X-Gm-Message-State: AOJu0YwuTlDEnpCe4SP5MFYWAZrctBGCJMxGxAO7jOl9VYEOJnh6m8bU
+	vqvuwHT85rVQvKpa+6sqvjZ/KDv+L1l31Skqma4pWAhoOT7VRw6XhRdC
+X-Gm-Gg: ASbGnctrk8lmIDlMgoF4CwtqDwQcD+N6OGmwxOIMAk+Z632VysOTqyE7qapvldATbu/
+	e+nyNuQYgNcjloH8kcpMrXangmgN2fDD6kzxgfm7Yibk/ymqHdSxEDHip+hRyqiflwRcVLrYW0q
+	o+Xub/ClDrYQ0YKV1y+RJnjc6XsJ8gGJFEJQ1mMnWTkSMI8K2GuHWHQGMsMEA5k1nbKSdfQbEsy
+	Av+pOkLy2ws1nKhT5MEHgkIj98EmGOkHBDoi9mHszqQxDPG7m7Rew0fTogS3R9udG2b4QHkQvPj
+	7Pb8XlvYIjtcLImPhgCMoFgEQ/oYctSi9vaTqTLo8MA26h2mK72m5GoS0m4euhEgzyTlU2ar8ZB
+	SEG2bwIKQPhtN6zSKb2OfjWlKwoT/KvUN2i2zn0pIT5tOdYWR7UChPPhCmia6oiDSC/d4x+l/b/
+	9HR+E=
+X-Google-Smtp-Source: AGHT+IEOQiYULCLq6q4ZVfIhojbHQnwTfEVVcHH2POX69CUfxseKjeD0bXzVVcovqZOKoBJphJtWfQ==
+X-Received: by 2002:a05:6a20:28a5:b0:334:a99f:6b83 with SMTP id adf61e73a8af0-334a99f6ed6mr21844436637.2.1761188122652;
+        Wed, 22 Oct 2025 19:55:22 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4c4d83dsm558850a12.18.2025.10.22.19.55.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 19:55:21 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 7A94D41E88E1; Thu, 23 Oct 2025 09:55:19 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Networking <netdev@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Grzeschik <m.grzeschik@pengutronix.de>,
+	Avery Pennarun <apenwarr@worldvisions.ca>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH net-next v2] Documentation: ARCnet: Update obsolete contact info
+Date: Thu, 23 Oct 2025 09:55:06 +0700
+Message-ID: <20251023025506.23779-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251021014324.5837-15-suravee.suthikulpanit@amd.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000009C:EE_|CH1PR12MB9622:EE_
-X-MS-Office365-Filtering-Correlation-Id: d209b8e8-4a05-4a3d-b914-08de11dee2b7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nJUf5AYrSM1V3ev0nvZqz2ppEwYh3nAlngkF1SbwlftQlgnrjP5CqltfcK6f?=
- =?us-ascii?Q?otSSJCzNJY7tutlVMhUmUlz9XW7eUfL8qep1yKqMh/C7bGA3vo+E0Cz12ONA?=
- =?us-ascii?Q?2IurAtky3izcEyPqqHgJBhqAlGMReSdu/Sp+BMJm50lyi7F2taEO513QbdkU?=
- =?us-ascii?Q?e747LL7Ck4MJsJPPCY4U2GXuNlnw98xqG1IPZVhhwpSOscEujpDUoN2K6tjO?=
- =?us-ascii?Q?3bVJ36pDDaa2fdJ4a7IVheTTCVPaQxNmlDEb57cgLO5syR/5Rc3uTp8OmkN0?=
- =?us-ascii?Q?BcocBDw6L3tUQmCbcFlk4UWOP8ly9cg21etFhUIdFDnbFgVfAMXiGDW2Sl0M?=
- =?us-ascii?Q?tW0pCsB1XpxVSqeEpATTkV42zZlqR9cdFrYjCWQJnrCxAEdSIQqoXqLcA5yD?=
- =?us-ascii?Q?wF1socM/srXAYPtOonOxHf2VuFEm3whR8ePJsZwWjyU/Xb+5ABeENMu1J+u0?=
- =?us-ascii?Q?ZLzM/ZwP3+rZ9b7Rr3afGqg3xwYJNkefLeyq8bmUd4eNzowEJhoU8I4t91hM?=
- =?us-ascii?Q?+jA7vSwlODo5auKQ7XLuhyCcL1oHjF2wDAHo0IWSlagvVuQbw7PLwtc5nKsa?=
- =?us-ascii?Q?o4eEAmsMfrLNzMV9wLpI3aPGwdgkQ96szHd2gP1oyBBUAZvCu7ab7sTFCcKS?=
- =?us-ascii?Q?u/auzI2qlInHN1y4v4NKUPipzmhqsVflFXw3fBnL1KAjbNXWcac5gXRJALul?=
- =?us-ascii?Q?ilrRCM5gCxnUOf+6P4ZViMzTdBvrCU545T8YqCmgazt29FZZ+W96Ym6nXzTz?=
- =?us-ascii?Q?i3h+oEr3mAXZoAWyThIg/Lz6GkuyDBoBPk43fzJ9uBi4YhObHkxMwUwSAsmC?=
- =?us-ascii?Q?2w0ArpXe2ccqfxdncb14tLCZLzaStBz4gKVLdPU+M8GtAzChMyDKxIRGrVSt?=
- =?us-ascii?Q?ZZFEUiZHovkTTvvFuLTfyJuCyw7F6yGXbl6EfeRp9WdokJfUjvS2nHThi6ip?=
- =?us-ascii?Q?Hh7U4x/bPTQw3cZyJGwLCC57J2jpVjPvJOCfB+gyRLheq6PDqeVY0U4B5aRZ?=
- =?us-ascii?Q?fpKFx/ufPcNijlz9l+pfI6CHbrO2Que//jyxkJhp7Y59UEPL1jesSQQhsiNd?=
- =?us-ascii?Q?Mu27dR4obmduQcE3eZ7lABwu8L8OdGCmDA9FQOb9D93BEK9xpq+9fJKUPdtY?=
- =?us-ascii?Q?wNLwHCCaAuM85lPyaZxcWn2eVoQMwe4RBjHsImwNNZbT6MdFt0z7xU5eiyTj?=
- =?us-ascii?Q?9eFm8fTR3tS6TzSHqTvKrLxQl2xdOZ8GNT43hgHT3j46wzAnB3Aez29O6TaG?=
- =?us-ascii?Q?IccfrCygMtqx6iCUj/PfLvH8T9LLyLzG4k6cdX/dZChicSViZ3cvWnOB7Px3?=
- =?us-ascii?Q?Kn/WPzDI1IE4EfhMRDEI/OJ/h1PU++FWSgLBuvRb3S/FDLmF7oX/yEhzzcev?=
- =?us-ascii?Q?ycqhmfrH/KdEQck+1ocjQPPGZbLTYylkXM9A7CE9hgoKc56+tQfrTW1XtuzE?=
- =?us-ascii?Q?7Pnd/JT5/UC2wwgN8JsL9JmAvViiN8j9uij0AJhhHUXxugHoBKY1JB78Lu5J?=
- =?us-ascii?Q?v90QZz9C26RGdhVL6wuVHY9y/SR3nsEyV6nEL7PcvDjVt6+tZYrtdPyk77FC?=
- =?us-ascii?Q?QS7HuOitJ1qlfZxhoOA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 02:50:11.5768
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d209b8e8-4a05-4a3d-b914-08de11dee2b7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000009C.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9622
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5672; i=bagasdotme@gmail.com; h=from:subject; bh=RTUk2WSlE0halvN9moYsr3H7Bj2oinnqonBwfh8+6Wo=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBk/p8Txv3y16+DXnd0XsxgdO461LeZx09BP2NnFsGq5t er1e9YLOkpZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjCRUxGMDB3fW/JPbZgY7dF3 svFTgF/0B+F8Rv5pf59O9uFsLLPiDWNk6NlTks2su+iNtcu12tfv3wp5F2UXX3w+9/yCA+1vlfX D2AE=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 21, 2025 at 01:43:22AM +0000, Suravee Suthikulpanit wrote:
-> To help avoid duplicate logic when programing DTE for nested translation.
-> 
-> Note that this commit changes behavior of when the IOMMU driver is
-> switching domain during attach and the blocking domain, where DTE bit
-> fields for interrupt pass-through (i.e. Lint0, Lint1, NMI, INIT, ExtInt)
-> and System management message could be affected. These DTE bits are
-> specified in the IVRS table for specific devices, and should be persistent.
-> 
-> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+ARCnet docs states that inquiries on the subsystem should be emailed to
+Avery Pennarun <apenwarr@worldvisions.ca>, for whom has been in CREDITS
+since the beginning of kernel git history and the subsystem is now
+maintained by Michael Grzeschik since c38f6ac74c9980 ("MAINTAINERS: add
+arcnet and take maintainership"). In addition, there used to be a
+dedicated ARCnet mailing list but its archive at epistolary.org has been
+shut down. ARCnet discussion nowadays take place in netdev list.
+
+Update contact information.
+
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+Changes since v1 [1]:
+
+  - s/hesistate/hesitate/ (Simon)
+
+netdev maintainers: Since there is no reply from Avery on v1, can this patch
+be acked and merged into net-next?
+
+[1]: https://lore.kernel.org/linux-doc/20250912042252.19901-1-bagasdotme@gmail.com/
+
+ Documentation/networking/arcnet-hardware.rst | 13 +++---
+ Documentation/networking/arcnet.rst          | 48 +++++---------------
+ 2 files changed, 17 insertions(+), 44 deletions(-)
+
+diff --git a/Documentation/networking/arcnet-hardware.rst b/Documentation/networking/arcnet-hardware.rst
+index 3bf7f99cd7bbf0..e75346f112920a 100644
+--- a/Documentation/networking/arcnet-hardware.rst
++++ b/Documentation/networking/arcnet-hardware.rst
+@@ -4,6 +4,8 @@
+ ARCnet Hardware
+ ===============
  
-Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
++:Author: Avery Pennarun <apenwarr@worldvisions.ca>
++
+ .. note::
+ 
+    1) This file is a supplement to arcnet.txt.  Please read that for general
+@@ -13,9 +15,9 @@ ARCnet Hardware
+ 
+ Because so many people (myself included) seem to have obtained ARCnet cards
+ without manuals, this file contains a quick introduction to ARCnet hardware,
+-some cabling tips, and a listing of all jumper settings I can find. Please
+-e-mail apenwarr@worldvisions.ca with any settings for your particular card,
+-or any other information you have!
++some cabling tips, and a listing of all jumper settings I can find. If you
++have any settings for your particular card, and/or any other information you
++have, do not hesitate to :ref:`email to netdev <arcnet-netdev>`.
+ 
+ 
+ Introduction to ARCnet
+@@ -3226,9 +3228,6 @@ Settings for IRQ Selection (Lower Jumper Line)
+ Other Cards
+ ===========
+ 
+-I have no information on other models of ARCnet cards at the moment.  Please
+-send any and all info to:
+-
+-	apenwarr@worldvisions.ca
++I have no information on other models of ARCnet cards at the moment.
+ 
+ Thanks.
+diff --git a/Documentation/networking/arcnet.rst b/Documentation/networking/arcnet.rst
+index 82fce606c0f0bc..cd43a18ad1494b 100644
+--- a/Documentation/networking/arcnet.rst
++++ b/Documentation/networking/arcnet.rst
+@@ -4,6 +4,8 @@
+ ARCnet
+ ======
+ 
++:Author: Avery Pennarun <apenwarr@worldvisions.ca>
++
+ .. note::
+ 
+    See also arcnet-hardware.txt in this directory for jumper-setting
+@@ -30,18 +32,7 @@ Come on, be a sport!  Send me a success report!
+ 
+ (hey, that was even better than my original poem... this is getting bad!)
+ 
+-
+-.. warning::
+-
+-   If you don't e-mail me about your success/failure soon, I may be forced to
+-   start SINGING.  And we don't want that, do we?
+-
+-   (You know, it might be argued that I'm pushing this point a little too much.
+-   If you think so, why not flame me in a quick little e-mail?  Please also
+-   include the type of card(s) you're using, software, size of network, and
+-   whether it's working or not.)
+-
+-   My e-mail address is: apenwarr@worldvisions.ca
++----
+ 
+ These are the ARCnet drivers for Linux.
+ 
+@@ -59,23 +50,14 @@ ARCnet 2.10 ALPHA, Tomasz's all-new-and-improved RFC1051 support has been
+ included and seems to be working fine!
+ 
+ 
++.. _arcnet-netdev:
++
+ Where do I discuss these drivers?
+ ---------------------------------
+ 
+-Tomasz has been so kind as to set up a new and improved mailing list.
+-Subscribe by sending a message with the BODY "subscribe linux-arcnet YOUR
+-REAL NAME" to listserv@tichy.ch.uj.edu.pl.  Then, to submit messages to the
+-list, mail to linux-arcnet@tichy.ch.uj.edu.pl.
+-
+-There are archives of the mailing list at:
+-
+-	http://epistolary.org/mailman/listinfo.cgi/arcnet
+-
+-The people on linux-net@vger.kernel.org (now defunct, replaced by
+-netdev@vger.kernel.org) have also been known to be very helpful, especially
+-when we're talking about ALPHA Linux kernels that may or may not work right
+-in the first place.
+-
++ARCnet discussions take place on netdev. Simply send your email to
++netdev@vger.kernel.org and make sure to Cc: maintainer listed in
++"ARCNET NETWORK LAYER" heading of Documentation/process/maintainers.rst.
+ 
+ Other Drivers and Info
+ ----------------------
+@@ -523,17 +505,9 @@ can set up your network then:
+ It works: what now?
+ -------------------
+ 
+-Send mail describing your setup, preferably including driver version, kernel
+-version, ARCnet card model, CPU type, number of systems on your network, and
+-list of software in use to me at the following address:
+-
+-	apenwarr@worldvisions.ca
+-
+-I do send (sometimes automated) replies to all messages I receive.  My email
+-can be weird (and also usually gets forwarded all over the place along the
+-way to me), so if you don't get a reply within a reasonable time, please
+-resend.
+-
++Send mail following :ref:`arcnet-netdev`. Describe your setup, preferably
++including driver version, kernel version, ARCnet card model, CPU type, number
++of systems on your network, and list of software in use.
+ 
+ It doesn't work: what now?
+ --------------------------
+
+base-commit: 26ab9830beabda863766be4a79dc590c7645f4d9
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
