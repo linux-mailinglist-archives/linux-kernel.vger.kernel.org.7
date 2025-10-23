@@ -1,202 +1,241 @@
-Return-Path: <linux-kernel+bounces-867333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C183C024DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:04:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EC8C024E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4693A1DEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:03:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 82FED4F297A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7A026ED42;
-	Thu, 23 Oct 2025 16:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A2E26F292;
+	Thu, 23 Oct 2025 16:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="h5gBVAcR"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="UrjEPilY"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010068.outbound.protection.outlook.com [52.101.46.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FE626E6F5
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761235382; cv=none; b=Bd008PmYjTxoZEkhftNJbpAbPTQv/eJcPCIPwNbCul8wn9RqnmDnI7EomF/0Wcr8ZjAsBJkWHujUVa1sUZFgldsVsZkQs+7yHIA7xVE6bSnC+aOIQQTkDZGQ5uQQ31AEoPTY4SZFkEv2uIC86/5j+7EQn0o+gU+o+zCQmTsXVC0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761235382; c=relaxed/simple;
-	bh=0T40hKL26YolCQLnSKyrMR+Bn6Jtsl61c5TdM8zx1cU=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bhp4zFHL3bplN9FugUR10vqBYnFyPcZOMhmNFcB8xYY7GP+1XpgphzNYkQou2IpvxCxfKnLElGDUh9T3sgqVOmEuFdfrtz9xc9cUyCR8pCtlWc/wjG691QUUEF7xJVo/7jcE6I2BaBCcJ8ypUDawGfu0AiTPNrbPi33A5aNay54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=telus.net; spf=pass smtp.mailfrom=telus.net; dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b=h5gBVAcR; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=telus.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=telus.net
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7a27bf4fbcbso659459b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:03:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=telus.net; s=google; t=1761235380; x=1761840180; darn=vger.kernel.org;
-        h=thread-index:content-language:content-transfer-encoding
-         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JH/e1IwTn9e6m+oKiv8OxIW1/g/8aOTw78lb+wUnrjs=;
-        b=h5gBVAcRfECI+2e7VzYBsITH7sOL8JUDpVx5uOgTdnG40wXbEblSR8v6v9ICxTCX6r
-         hucMxHUrcjaCV9oXVdEZUVC/tbglXsBY/F6aTnAE9XWijToJMXAsf1Yq/v98JCFMWy7w
-         Apgwa6jn1Kio5JiX9aVYrFhaMGRcOUMt1wLrl7w9deQqQJ6jagpGU9cqxiDDWztsJf+L
-         8bsHdLYiSQqEs+0qDUUC4sLPjfHUm+o9We3iZyI3KV2sestiIFwz7ZAIyT/d8sFtANfk
-         SjwXWNjy3Zjt90vCqO4+/K2Fl0KVvNuryxFQ6hRstLQL4etUVKc2Ns1KUZkOgJgTBQT+
-         J0CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761235380; x=1761840180;
-        h=thread-index:content-language:content-transfer-encoding
-         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JH/e1IwTn9e6m+oKiv8OxIW1/g/8aOTw78lb+wUnrjs=;
-        b=OgeH4jwaUZ0bfEk83U8pkG21FgeI7yJ3IRoV/b7nVsPLk9tISDDZPI2RbaUzuHIfvq
-         DEbpus+XM6YtCsDi2UNKB9NbEVBp8xMpHeW7XgGBBietGykvSKNn6ZCcwp85agsyn89S
-         YZkNE7mdbnHFAxc0Fhy+0/pEhyjBctLehPCj8FLaGLb6BoGxSMvqzwXw9/VoBY7RpAeC
-         0uxOParVIr79bop49tWODPl9Q53twf5qlWtfPUgXqoNc7uIfvfr8CGoNVPV+j+KE4VLR
-         N7w+3fDefRs9RO+amoFzWFXTs/2pAqiTSeGZ7Ab6YAfhuxiG5gu8K0H28afwC5bxFYgG
-         E0GA==
-X-Forwarded-Encrypted: i=1; AJvYcCXttheqgeKdxHKxJtvwCW4BeK7+eeOJtfxB2+PBXXbTBW4bug2PSDtkVirj+zZ0OUGN60Gudjys3cSqw/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5daKsFigwuhYWAB7ii0eWZT1lLCdu616VOJa2+2HGeREoxIGk
-	98akJKcs0FxgESU300zB7XRN5yaaQZCBkFIx2QZtHG1ktrjrFV/PWXToO36D/XZ+Xn8=
-X-Gm-Gg: ASbGncusxE85ORXiHkp/3o4wSelkjmYhVPNjaZIQQ6Lptq3xYPEaCOOAyCkJXoabj0j
-	kvpWlN56NPw2LDNCKcMqiOzBX6IjlZBJa5dU2zenG1ARV3HBayvUICwtL9iaewAg8I53LaSuLAp
-	y0SXu+Vz/0XkqX3jAmGIECcrnPSPtZb+GuNqOPiGX2Mh34RSoEgMaprxMFfUwVZAH8atEXL+WKe
-	n0ANQlbNmR3L58q2BoO7UDY84fyexJ+nKPQdx4qwXmIgoewoWip1ac2Y6J0Kce0+Nrm3gm0dX8x
-	Tq315SbFqGWtSPjLXxmJUzzxk+3EH6ej5tjSDCAIweOOOIGk6NQWIzh6mfrKbvCStpdfubFld10
-	wCPDXFMAox+vo4MXhe1kEdfCkDq5qYY9Fn2B3lS5TjkLaF3NWgz0diRZglP1/I9M5klr8aQlCnT
-	D82nbr6aJoXsLeVVdzYc9Wa/VoFQk0l/PvRmOj+Y2PKw8+
-X-Google-Smtp-Source: AGHT+IHa6CnmrO8xJXDnGny1Z43wB3uTWDalpzMKHlkKpTQZZnEYpOXUYPsP9QurSz3gT7q6oOes7g==
-X-Received: by 2002:a05:6a00:93d7:b0:7a2:6db4:4c81 with SMTP id d2e1a72fcca58-7a26db44de0mr4051337b3a.3.1761235378739;
-        Thu, 23 Oct 2025 09:02:58 -0700 (PDT)
-Received: from DougS18 (s66-183-142-209.bc.hsia.telus.net. [66.183.142.209])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274a9cec5sm2992577b3a.20.2025.10.23.09.02.57
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Oct 2025 09:02:58 -0700 (PDT)
-From: "Doug Smythies" <dsmythies@telus.net>
-To: "'Rafael J. Wysocki'" <rafael@kernel.org>
-Cc: "'Frederic Weisbecker'" <frederic@kernel.org>,
-	"'LKML'" <linux-kernel@vger.kernel.org>,
-	"'Peter Zijlstra'" <peterz@infradead.org>,
-	"'Christian Loehle'" <christian.loehle@arm.com>,
-	"'Linux PM'" <linux-pm@vger.kernel.org>,
-	"Doug Smythies" <dsmythies@telus.net>
-References: <2804546.mvXUDI8C0e@rafael.j.wysocki> <5043159.31r3eYUQgx@rafael.j.wysocki> <004501dc43c9$ec8aa930$c59ffb90$@telus.net> <5040239.GXAFRqVoOG@rafael.j.wysocki>
-In-Reply-To: <5040239.GXAFRqVoOG@rafael.j.wysocki>
-Subject: RE: [PATCH v1 1/3] cpuidle: governors: menu: Avoid selecting states with too much latency
-Date: Thu, 23 Oct 2025 09:02:57 -0700
-Message-ID: <001a01dc4436$80b80aa0$82281fe0$@telus.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDED2222B4;
+	Thu, 23 Oct 2025 16:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761235423; cv=fail; b=tsvCweGeYY6/FfmRhasXz6U+ggviwizhyjMD7lqg+f/Jbn22x+0P/VeR64leMcZch0jlw1tsVBjKf2lg2nCEfgdcO2UDUVXCjpIR55UXhBaGYnyfAFERKovPVKNREcOyvK2pqDVX2wy84pcr2BTkJQXCHSjTMPCidh+azUQkoWk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761235423; c=relaxed/simple;
+	bh=nmHsPtomk3VMB+WindzsLvqE2d/GCaA2MG/8i+MKi1E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MMp4LIamAG8+5b3PznbRLvEPKYlICNenUWNJv5ATLFFTuVVUZ46YtCJFNWZGidp5FaE9SVd7RTpQU3iq6Rc9cjVGLbEDUxQv9RSCkWxp7ntSpJsjA6IscZ0ik1482E0ASShGqoyjdaJcneTjWS3fhDc+DFzT8QUI4grBTywmdDE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=UrjEPilY; arc=fail smtp.client-ip=52.101.46.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N+GNETWHhOcVN7D91sUWSDwQDOa6La2vbmcMcMl7Mt8J9tFdXCxQkC0oticHpdYhrBurn6q86H5xwIWogGBd4Khx0UQ9qQFPjFHrdiqM2t5zIySGQD0rGdeOV+0lRt7bj2If5mnho/m14pyEIA9FLAKfcg8VUNnCnlVfr82l++Z1gqKLSNKCOLUkUEBLhXA4AQWj/6ph1vtoxlvFa9Kkh85Qsz3+UyerikNH9Ir8MSPERyvjKU9DUraA7NKNKtKV5qBHALy2JeG3s34Y4OSd00r7T5tleRqAjMsJsPF80Oh+jt+V67LzvQBT+Fzay1jzESPaGFjAj6hE+UaWf8vz8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IiQYlWzGxAzcmDxQx21R/s857ZIvlRsCxnCwp8B5EGA=;
+ b=tPXMPe9xvZNxxHZ96siw899xQbNWfUeB23TyuLW1BXA5pkeBxRWf+x9BbzxpFLLB51KZUmB3hOZFgjvdlDvFfLMuHpX/CIa5Buee7Y7CEK6FEhFOf2veIpgILS3RGVhl9ByHke2/4js8TgvTv2ZMQuRh8co/EO55Ai9MTTzO+cKggo1tU3+KJyTnN/Nr3F3NipHp1emmxYzj2CwbEnZcBqyvFj49MRZVNi5XufNiDSz5EnXN6EIelhlMFm30Tq466eON71mhzfYV4RQGJyUUijSxcgGqXx40QPHvSZNL0cmquOWC+wluMKmnKNV42nU/Tvrmdl1HlwCnxR2wz+Pv5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IiQYlWzGxAzcmDxQx21R/s857ZIvlRsCxnCwp8B5EGA=;
+ b=UrjEPilYie9qGp/jqmGGWXmDrsP4H/8nbqb+cISOVMmPPLdQ0FkLEXnad2ClBhow1nCb3XcZTgzgaeY+ktoZC/EtbLSiC3Hc/iqDBubZeWJfqGnFPp90Cb8ShEKXk65SiXpBsrUehtEUlQ97YBtwBzQw6RZVt3IdfdbhId3gA+3x8LSL1Elyp2i0DqhhLj5F8Q3C3wpGN5QG5gvZOlEd8V0ScpXor5viaUXrBxBUvC7BqSt+vaiXqBQXGzm3Jxf54XX4BTkapMELI2y4uziuE49toRJdWuK+2DF+8Xdh/bHEMG8QUs4+LyNiXFMT/BAzwtGgA7qD25CNVOglt2T2jQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from CH2PR03MB5368.namprd03.prod.outlook.com (2603:10b6:610:9d::22)
+ by SN7PR03MB7260.namprd03.prod.outlook.com (2603:10b6:806:2dd::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
+ 2025 16:03:38 +0000
+Received: from CH2PR03MB5368.namprd03.prod.outlook.com
+ ([fe80::ccdd:249f:7a8a:648]) by CH2PR03MB5368.namprd03.prod.outlook.com
+ ([fe80::ccdd:249f:7a8a:648%6]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 16:03:37 +0000
+Message-ID: <e24d26a4-8c3d-4673-97a7-eed23f54c08c@altera.com>
+Date: Thu, 23 Oct 2025 21:33:26 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3 2/3] net: stmmac: Consider Tx VLAN offload tag
+ length for maxSDU
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <Jose.Abreu@synopsys.com>,
+ Rohan G Thomas <rohan.g.thomas@intel.com>,
+ Boon Khai Ng <boon.khai.ng@altera.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Matthew Gerlach <matthew.gerlach@altera.com>
+References: <20251017-qbv-fixes-v3-0-d3a42e32646a@altera.com>
+ <20251017-qbv-fixes-v3-2-d3a42e32646a@altera.com>
+ <d7bbb7dd-ddc6-43d6-b234-53213bde71bd@altera.com>
+ <83ffc316-6711-4ae4-ad10-917f678de331@linux.dev>
+ <0d3a8abe-773c-4859-9d6f-d08c118ce610@altera.com>
+ <aPoKiREmRurn-Mle@shell.armlinux.org.uk>
+Content-Language: en-US
+From: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
+In-Reply-To: <aPoKiREmRurn-Mle@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA5P287CA0220.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:1b4::12) To CH2PR03MB5368.namprd03.prod.outlook.com
+ (2603:10b6:610:9d::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-ca
-Thread-Index: AQFe4hIXA7yjTyFTeu7yKR6UgyMZTANsg+YRAdzC7nACxm/pQLWKKQyg
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR03MB5368:EE_|SN7PR03MB7260:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2ab7bfe4-d2c7-424f-fbd0-08de124db9bd
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?KzVoSUgwSnVGMXdGZlNmODVXWnFINEFDTjZqNkE4TjY4Y3VHRmt4RStpbG95?=
+ =?utf-8?B?VVovMGFFYWZRUXlZai9xdlYyV2ZWYVYxQjhlK1hyODhKUVk0YzZ3SURuTjZD?=
+ =?utf-8?B?ZzF0Z2gzUDk0cVk0YUFERTRIRW8zcFRaTTZRcmNrTDNsT2t0TnRRa1JVVDly?=
+ =?utf-8?B?L0R6V0ZxbXd4Ris3aDNHNGpBVHNLTkVJZHlSemhvSXVUQ2ZTNjhnVmRFY1FU?=
+ =?utf-8?B?eVFTenpmWXRCZ3phVGtFaTdDVTNVNnBjQUtRMEZ0TlJicWo2RCs4dXRQY01L?=
+ =?utf-8?B?dlo1dDN1RVRoRWkwVkMzdENNUWtyQ3hZTVNKNTBHK0lVZjJWZUJ5TlR2VkxT?=
+ =?utf-8?B?dFhlQlR2ZFdIMExBcHMwTWQ0dTZOZ0dkdWs4cVpxSlRRQStOM2o0SkttNGFN?=
+ =?utf-8?B?c1BKaVd4VmJBV0ZUQW9GNXR4MTVJY2dFOVUrcmo1VXN5cWIyMzBjRklML2JP?=
+ =?utf-8?B?N3l4RjU4ZnFndTk5dTNFdHgyYTY4di9naUxyemdpSFRRZnZQT1padnNtTDJR?=
+ =?utf-8?B?TFlXa0J5T3JMQ1dCdU5VbzNqVEhFd3NQbThFNnNKaXltUHJsREZiVWFld3Yx?=
+ =?utf-8?B?N2UrWXorbEtKTnZ4Mk5ZUlRDaTd4S0lETzltZEs0TldvaHZ2L1ZCcWRZekc4?=
+ =?utf-8?B?OWo1a2NjMmhjMmxiY0V2NitKY3ZFeVBIaERGU2twZXkvb25UM1hBZklFUUdC?=
+ =?utf-8?B?L3RoQmNHZmc2eXlTejkvTUwwT05oeGxhVUswdFpuUmJJN2c1WTM5ZTh6RlRl?=
+ =?utf-8?B?MVJyNTdXUmpGMk5saXVSUFpsY3VsZXUxdkRPTVovWElnS2hHS0I5WEZKeE1s?=
+ =?utf-8?B?RHZPVW5JSzNVS1Q5aUUzNHpZK3hxOXAxNWwyR3h1RDRTbzMybVRDVTFIZGpx?=
+ =?utf-8?B?NGxCazBKQUJEa2pMclgyNUtkSUg2b1lzVVEwTWdxaUF1VjRJSzlVZjU4NHVa?=
+ =?utf-8?B?SmZsTGpKOWVuUjhhWVc5ejhETnRsV2l2QzZtTGxDbmpaeld2NjNab0k0QU1I?=
+ =?utf-8?B?TFJLVHRra0UvR0RRY3E0MndCeGp4RFZtR2cydWhJVUphVlJ0OEFkcnNWL3RT?=
+ =?utf-8?B?TUlBSkVXNitkVmlqTlNScnZSd1FKdlBqRWx1ZUx6NTNoQS9VaFhnbzJBa2dX?=
+ =?utf-8?B?WWg1aDlSOHczM2JQWmJ4Wit6cEdLSkJLMkJsNHoxY2JteEFucndGM3VMcEpH?=
+ =?utf-8?B?QUlyVWs5aithRGZFZ2hEb3VnbVZUdkptWnhsYXVPUVd3R2paZ29HTzZLbFZE?=
+ =?utf-8?B?TUZ3aDRPMWNuaXArQmgwK3dpdE9wWTBmMUZ1cUdQRHdybnI3NkN5WmxFUW5t?=
+ =?utf-8?B?Wm1xa2ZtRjFkN21hOTl6UTN1WW1XUDE1K1V0U3h2M2FVdWttdThZRk9YVjhW?=
+ =?utf-8?B?MThNRERxTmRJRlFOVU5hTmdYaDdnZVBNVko5UkRCeHo1TFdsVC9DV1BHb0Z4?=
+ =?utf-8?B?Rk9LR0ZqWmJKc09qcEw0V0ZoMWJmNWsrcWlGNkxqaW1YQjVSR1dWeVdORncx?=
+ =?utf-8?B?eXNkL2ZTVmIyL1hqMzhMaURROSt3T0NldkE1V0g2OXhVVXhBVFlkTU12RjlE?=
+ =?utf-8?B?a1JJdzJZQU9RSnRGNjhEbk5hNW8rWWQ2TUF2eTVMeHBPdUdYQjBQbENjRGg1?=
+ =?utf-8?B?eHREMzd1dktRd3JVb3lXSWV3TFZVWGFxaSt0U1ZkbGxwcDJZMFBDTG9nRUZR?=
+ =?utf-8?B?a0VjbHpUVHJlUWFCTlAxT2hIcUgvYzBLMDJUMFZmbFFmS28vRXZ3WlloUWJu?=
+ =?utf-8?B?UVZXdWc1T0piSUd1dXpkWlJJRjU3YmhqTFpaUVZwTXN6OXJjWlExQnp1bG16?=
+ =?utf-8?B?cmhkaUNnZ2M1L0Y4SjBCQlNubVdpYUhqSytyYXJtOUdYeUJMNW4zY2d4YmlG?=
+ =?utf-8?B?ek9rT0NUMUs2NlovSGZHTHlIUVZBRVlPeUFtS0RvaXlYOVdmaTArS3lkVjgx?=
+ =?utf-8?Q?lUU10KLEahlwake+fyyoqT6OXRb+mH5X?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR03MB5368.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UXMrRlBpY2k1WC9MVS80RE1oOUV4RnFGRHJzOTlXVVd4V1JtWk9GNWhQeTMv?=
+ =?utf-8?B?NDJJZzYvanlZR01vbk1ndzc5d1cvRk5pMnZmWllWdEtBV3g3Q2QrRS9Od3E5?=
+ =?utf-8?B?TnptK0hTWUkzai82UlZIMGtHWkVkb1dNTDNpYml4WmpMRnliMVNVek1OZ2Nh?=
+ =?utf-8?B?K2pJdVNJQys1cnpmWFRVellBUXhyZmtzNkd6NHdSanl3TUkweXBBSzF1eFZp?=
+ =?utf-8?B?K1ZGMXdocUNiUFpib1ZQRzAweUg3L1plMUw3b2xrakRVaytTOFJDdW94OENM?=
+ =?utf-8?B?NDBqREFFS3Z2UjN3VkJWd091WGN1ZVcvZkl5TWhFcGpjRXhsSUJBa2VaWUhz?=
+ =?utf-8?B?VmN3OVd2UnFuR01uN3UwcFZEOTFWTGNJNC9nK2IySW5zTjFrc203aG9maE5Q?=
+ =?utf-8?B?NTNRRWlRSm1GRkVoUU1COW5SWFhseCtFS05VaTZlUlh2d3E5UDFzTFJLNUph?=
+ =?utf-8?B?UjI0bTJWa3Z6NlFWR0NON3pGa1FqRkMzSVpGeEx4WUZ2K0Y4dE5RbkxVT1NW?=
+ =?utf-8?B?STBjRHU4WE5LaHBHOGlHWXNTVW5EMWVpZ1lkdG9GVVNzS0ljdm5qa1RNTkxM?=
+ =?utf-8?B?UmpjOTdMdmxTSVB3Wk5BRStOSGFvaDFOaUVicEZuS1NWbVYvcXdYSSt4Zlkz?=
+ =?utf-8?B?SWxJM3BnSEVhME9sNVdGM1FHR2tEcGIreVNyWWRRdHVwWU92UXpHaVBobTVu?=
+ =?utf-8?B?cmxROGxIWEpWSTZPYloweW10RmlpRW5vUnUxZVRGVUFTRk9xUnZ5MlgyM3Fz?=
+ =?utf-8?B?V2NNOEw1U1VPUTRmOUdXdCtIcS9UZTdVRngySCtYTGF2WHFuZVJjS09KRGJk?=
+ =?utf-8?B?OEJVUERvTWVvWmdvMnlEa1BmM1NSOWkyeHV3S0xOM0pXZHBGaGlkdGQvZUla?=
+ =?utf-8?B?aVpNbXBNSHFuUWNiNEMyMm5iT0NvNVpWd3FnVVo4ZUNEQXlab012QmpYY3dL?=
+ =?utf-8?B?WEc0ZWkvV1crZjh3ajI0aHNCblp2NFg4STREamJoK1hvTWJJTHZyNW5iM3h5?=
+ =?utf-8?B?a0FHZmd3bmtxblV0TTlaWGx0ek1rdWlYR2dyclpYQjV6bVZJUTRONEQvMkxn?=
+ =?utf-8?B?T2FsTlpPTC9aeEFUOWRrV0wvaGFyOG0wMlg5VFVSWnFDcTZ3VGdSNVd0dmNM?=
+ =?utf-8?B?V2tGK1k2QjNrcWg5L2lRMFlXaVZGTVBhM1RMSExOaSsxL0M4ZFg5dU1SSkdh?=
+ =?utf-8?B?UDF6ekMwd3crY1hEZG4xUlQwRkd4ajJJQ0JCMm1VSUlreDYxSkFEcS9iZ1NN?=
+ =?utf-8?B?L1NjTmxnRnVVZ2V4Vmh2cERKbmNLclZmNWNlSzZ0TzJWQWg3R01rSDVzVVRk?=
+ =?utf-8?B?VGVjdndBVVFQSHlMS2pvclNnTXE3cENpcVZnTUJyeFBna21LblBvYWd5VlFz?=
+ =?utf-8?B?d0d1bkZ0VFBMelU1Z3hWRTBHdzdrYitSU2JRRjZITmpPR1VndEhKNTNHNE5p?=
+ =?utf-8?B?MldweElOYmFveWhZL1g3emhGYnozMWlwdDE5dTZKdXBEcjZnOFhFSnR0dnV1?=
+ =?utf-8?B?clg3dllWaElHVmpET3NJYnNWL1d2UU9FeG5Uc3MwTHJ3UmNwZC9lWDRXbDl1?=
+ =?utf-8?B?SGxRYXhZT2RQWGVXSmlEVlJPUG9qajJocUU2YXRJWEEveENwdXdYK1lCL05j?=
+ =?utf-8?B?aXNnK2hYajJJSldLamlMNU91cEJPYkk0REc2VzJiSFV6MFc0eGdDZi9JK3Y5?=
+ =?utf-8?B?UlA1MVJvWGpnL0NSbHE5QUFyV0hpNmhxUmdCa0pZL0ZVcTVIQUREblQ3UERm?=
+ =?utf-8?B?R09PWDJGS3dkVXFGaFJsQ3lseGdqTkR3ZVh0M05XZHN5V2pQdGZ0RnE2Zm96?=
+ =?utf-8?B?SGd4dW1CK0hEZ1NnR0g0aW8wRGxDN2tLTEd6OHZyYU5zZkY1UGtidnVSMzZE?=
+ =?utf-8?B?QnFyTnBOYTExaktFM1RtTFJpQ25hYnJxN25IZzZ4bTRGa3JWd04yenEzWU9R?=
+ =?utf-8?B?NVh0TEcyRVpKcjVBMmc4TWFaTFpZaWh1aU9aWlh5MXJ5UmpZOHMwZE5uY0VW?=
+ =?utf-8?B?a1ZHanhxT3hDR1BOTnFhbzdiZ3R5cVcxUHp3UFZLeTA5UmhaNmdTMEpaT0do?=
+ =?utf-8?B?SXB5eGZWTTgzbk15QndUVzZ1Y2Q1S2FqQWoyeEc5OGc4SEx3b2k5Y2NhQVRx?=
+ =?utf-8?B?TnJEdW9EWXdtWmdVemZSU093bU9ickIxSEhvSUk1T0RIZzd6R1RCK2lzVGxm?=
+ =?utf-8?B?VHc9PQ==?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ab7bfe4-d2c7-424f-fbd0-08de124db9bd
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR03MB5368.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 16:03:37.7981
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: A86lRv6R1woUj9opZE/vWWX1jmoO+XrN4xKs4MRXfrgd24cN0bFwl8Y0+l+fFPNLILPBd3jc3+bRXjF9CP7Py4HzWcfq7g/GG1fHbQyKqTM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR03MB7260
 
-On 2025.10.23 07:51 Rafael wrote:
+Hi Russell,
 
-> Hi Doug,
->
-> On Thursday, October 23, 2025 5:05:44 AM CEST Doug Smythies wrote:
->> Hi Rafael,
->> 
->> Recent email communications about other patches had me
->> looking at this one again. 
->> 
->> On 2025.08.13 03:26 Rafael wrote:
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 10/23/2025 4:29 PM, Russell King (Oracle) wrote:
+> On Sat, Oct 18, 2025 at 07:20:03AM +0530, G Thomas, Rohan wrote:
+>> Hi Vadim,
+>>
+>> On 10/17/2025 5:51 PM, Vadim Fedorenko wrote:
+>>> On 17/10/2025 08:36, G Thomas, Rohan wrote:
+>>>> Hi All,
+>>>>
+>>>> On 10/17/2025 11:41 AM, Rohan G Thomas via B4 Relay wrote:
+>>>>> +    sdu_len = skb->len;
+>>>>>        /* Check if VLAN can be inserted by HW */
+>>>>>        has_vlan = stmmac_vlan_insert(priv, skb, tx_q);
+>>>>> +    if (has_vlan)
+>>>>> +        sdu_len += VLAN_HLEN;
+>>>>> +
+>>>>> +    if (priv->est && priv->est->enable &&
+>>>>> +        priv->est->max_sdu[queue] &&
+>>>>> +        skb->len > priv->est->max_sdu[queue]){
+>>>>
+>>>> I just noticed an issue with the reworked fix after sending the patch.
+>>>> The condition should be: sdu_len > priv->est->max_sdu[queue]
+>>>>
+>>>> I’ll send a corrected version, and will wait for any additional comments
+>>>> in the meantime.
 >>>
->> ... snip...
->> 
->>> However, after the above change, latency_req cannot take the predicted_ns
->>> value any more, which takes place after commit 38f83090f515 ("cpuidle:
->>> menu: Remove iowait influence"), because it may cause a polling state
->>> to be returned prematurely.
->>>
->>> In the context of the previous example say that predicted_ns is 3000 and
->>> the PM QoS latency limit is still 20 us.  Additionally, say that idle
->>> state 0 is a polling one.  Moving the exit_latency_ns check before the
->>> target_residency_ns one causes the loop to terminate in the second
->>> iteration, before the target_residency_ns check, so idle state 0 will be
->>> returned even though previously state 1 would be returned if there were
->>> no imminent timers.
->>>
->>> For this reason, remove the assignment of the predicted_ns value to
->>> latency_req from the code.
->> 
->> Which is okay for timer-based workflow,
->> but what about non-timer based, or interrupt driven, workflow?
->> 
->> Under conditions where idle state 0, or Polling, would be used a lot,
->> I am observing about a 11 % throughput regression with this patch
->> And idle state 0, polling, usage going from 20% to 0%. 
->> 
->> From my testing of kernels 6.17-rc1, rc2,rc3 in August and September
->> and again now. I missed this in August/September:
->> 
->> 779b1a1cb13a cpuidle: governors: menu: Avoid selecting states with too much latency - v6.17-rc3
->> fa3fa55de0d6 cpuidle: governors: menu: Avoid using invalid recent intervals data - v6.17-rc2
->> baseline reference: v6.17-rc1
->> 
->> teo was included also. As far as I can recall its response has always been similar to rc3. At least, recently.
->> 
->> Three graphs are attached:
->> Sampling data once per 20 seconds, the test is started after the first idle sample,
->> and at least one sample is taken after the system returns to idle after the test.
->> The faster the test runs the better.
->> 
->> Test computer:
->> Processor: Intel(R) Core(TM) i5-10600K CPU @ 4.10GHz
->> Distro: Ubuntu 24.04.3, server, no desktop GUI.
->> CPU frequency scaling driver: intel_pstate
->> HWP: disabled.
->> CPU frequency scaling governor: performance
->> Ilde driver: intel_idle
->> Idle governor: menu (except teo for one compare test run)
->> Idle states: 4: name : description:
->>   state0/name:POLL                desc:CPUIDLE CORE POLL IDLE
->>   state1/name:C1_ACPI          desc:ACPI FFH MWAIT 0x0
->>   state2/name:C2_ACPI          desc:ACPI FFH MWAIT 0x30
->>   state3/name:C3_ACPI          desc:ACPI FFH MWAIT 0x60
->
-> OK, so since the exit residency of an idle state cannot exceed its target
-> residency, the appended change (on top of 6.18-rc2) should make the throughput
-> regression go away.
-
-Indeed, the patch you appended below did make the
-throughput regression go away.
-
-Thank you.
-
->
-> ---
-> drivers/cpuidle/governors/menu.c |    7 +++++--
-> 1 file changed, 5 insertions(+), 2 deletions(-)
->
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -321,10 +321,13 @@ static int menu_select(struct cpuidle_dr
+>>> Well, even though it's a copy of original code, it would be good to
+>>> improve some formatting and add a space at the end of if statement to
+>>> make it look like 'if () {'>
+>>
+>> Thanks for pointing this out. I'll fix the formatting in the next version.
 > 
-> 		/*
-> 		 * Use a physical idle state, not busy polling, unless a timer
-> -		 * is going to trigger soon enough.
-> +		 * is going to trigger soon enough or the exit latency of the
-> +		 * idle state in question is greater than the predicted idle
-> +		 * duration.
-> 		 */
-> 		if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
-> -		    s->target_residency_ns <= data->next_timer_ns) {
-> +		    s->target_residency_ns <= data->next_timer_ns &&
-> +		    s->exit_latency_ns <= predicted_ns) {
-> 			predicted_ns = s->target_residency_ns;
-> 			idx = i;
-> 			break;
+> I suggest:
+> 
+> First patch - fix formatting.
+> Second patch - move the code.
+> 
+> We have a general rule that when code is moved, it should be moved with
+> no changes - otherwise it makes review much harder.
+> 
 
+Thanks for the suggestion. Will do it in separate patches.
+
+> Thanks.
+> 
+
+Best Regards,
+Rohan
 
 
