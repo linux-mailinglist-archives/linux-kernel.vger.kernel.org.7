@@ -1,169 +1,119 @@
-Return-Path: <linux-kernel+bounces-866800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59C6C00AD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:18:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD235C00ADA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D7B3A6D18
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:18:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 94E424E9CE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CD430CD95;
-	Thu, 23 Oct 2025 11:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4C030CDB7;
+	Thu, 23 Oct 2025 11:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Re47UxRs"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Tn+wXoL6"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098B93016F4;
-	Thu, 23 Oct 2025 11:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6994D30BB9D
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761218317; cv=none; b=Ps70vj1bhAXkH74CjA4lYL34teDI8i8AJc8U7ON6Q6KLGcooWYfCFVjfE2h4UQxxf5ZBtDkgXEH1sKZUQdprf+lbA/Gkljt03S9N9307yukhtTxvu86UrfW1Bu0vmp/C99Yv3Jp1lwXc+ieZReWD7ZzI61zC4Ant3mBBalOiP5k=
+	t=1761218338; cv=none; b=i+uIN6oF4oTCaeyTXAZgxD/UD/rMvGs6m1W0hs5BwkMUo7Jyj9QnE5FEXy4ir/ZrNmTyA1nJEq1RjsT1AEu+GZPKndT9yZihREX/GNTwfZOgERj7YZnRU/b/eF3Z9qbQU2mhtoxFP7tkjHhLtpCAGYvFyxCpXBBNN1G/SkffwI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761218317; c=relaxed/simple;
-	bh=9CvpWdqvzaj/P0ENgX97mYxkfRxYCC4erNvZIUPuT2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lQLxYJ2dVdilAK7GWI2GLVXXHrPSPuPle1O/0IKGx1ePbs7QnScuwPYybXOgDXxr+G9noZRyNbiUaGgqKuC/9ffhH8vkuxiFtgRzMNXJ9nVP8YcbagKzhTTg2UAdsFEEy7c0sleY/DbCXeRtvV2OspWYZx4wQLCGMw3Pa2XTEws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Re47UxRs; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=50CHd5Ukql2vTyZKQhH/988FqE+7up8mg+CD2up+Zus=; b=Re47UxRsfzq7vqoGEGRlmwscbL
-	AaqRdwtSzIsbrk0fJv3lBY3Vpyvrsicmx3QvUcC/uzwfviExSIiJxTaJnrlADTqGs0d19wWvs7Xvf
-	278vzIf7ziz1Fc1eVumo59jed6YQeevKEQpSAGaE8ougDb8aLyTFANfcVgCP/SyirfpcpEVE7aeJC
-	kYRHYNe6G/8rZWXRppOA53OpJ6z8Ni7FjYg6m2+lEYhZwzzuMYrfMd+ISQZg9CMwIYQcJQN0tqrJd
-	QtHgtajgk0UavtZq+wH7qPIevWoPE32K0fx/S1Q1vDGG5TWVbZYP3UbjIl13wn2FC50aJReyw6Ew6
-	vk4HELkA==;
-Received: from [90.242.12.242] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1vBtKk-00DaUJ-2L; Thu, 23 Oct 2025 13:18:18 +0200
-Message-ID: <a3c7b8f7-0f2c-4e0c-a55d-3e4433f795db@igalia.com>
-Date: Thu, 23 Oct 2025 12:18:16 +0100
+	s=arc-20240116; t=1761218338; c=relaxed/simple;
+	bh=c2Z0ZAfHOTIX/VnV8rwDoyuTKbIGnlTQvCu+31TN4jw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZMpsRmhZwsSJZYxbGDmFofuRGyMGRirbDSZoXoDpMh5KL+aJiXCwBkuxMSXekYq6O0uzjwf49cPff8alGuaqjNDDUw5Iqf/X+0fXpHisxdv6nXsSC61TH9Wb+12autFbGSzaP8IgzOgm94KY5LJfnxd3as6cwLsPCMIRMXUdqlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Tn+wXoL6; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=c2Z0
+	ZAfHOTIX/VnV8rwDoyuTKbIGnlTQvCu+31TN4jw=; b=Tn+wXoL6aRkQMSYpVLua
+	PI5yY8vZ3roZGa2Kw5R8pm0G/NG1B0IdZC96Chl7p446AeeL82PgAFGNHmIbWsDq
+	TD7cTTtpKh493L61d8lDzV39HNZwQh8AAZ3Dw8Pqc34MUWs2Ugq3nW9tQjv+fosi
+	Ta8llDWsMnRdCgJSNZ3HvC7F9Ot79GiPc8ZxzRhmnZlVOZiQ+Ht8WFOjfRjk3d7Z
+	JaF4BCxRBSS4wYyDooPxScrNCZRicdyaamedK9EYrvZ996CzKiYpRZof+BiSP2f6
+	3zYcmlXiupDMpGJxFTJIxs3dItaJ/RBFsapgD8OLsCIIUvWjW/6VZzSvnARswcFe
+	+w==
+Received: (qmail 2182918 invoked from network); 23 Oct 2025 13:18:50 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Oct 2025 13:18:50 +0200
+X-UD-Smtp-Session: l3s3148p1@oLrumNFBKQltKPAY
+Date: Thu, 23 Oct 2025 13:18:49 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if
+ possible
+Message-ID: <aPoPGauSQCoaonl8@shikoro>
+References: <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
+ <aPEAx8ZGHBcWZKJF@shikoro>
+ <CAMRc=McsbAirEYjoo455mbKU495VEvPmMEqBmZCq2hw113YHOg@mail.gmail.com>
+ <aPIfF-3SgzW5V_gs@shikoro>
+ <CAMRc=MfVPO292xmnXBWJzWuhNADA_u1yvpJ4kkK8TgZyQgaP+A@mail.gmail.com>
+ <aPInv9NELU7N9QDn@shikoro>
+ <CAMRc=MdWS2OSeJAkTRnAFMtXcVukwQ=JAWwJ3OHxogmgZnan6g@mail.gmail.com>
+ <5c9761d5a6a14d4c250df6cc4201bca72d963133.camel@pengutronix.de>
+ <aPnz6U-fcodRoobU@shikoro>
+ <CAMRc=MejA6DsnOW3hS+aFtecXn38UypJU2TUrAWPoo9Ly341uw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v8 00/21] DRM scheduling cgroup controller
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- kernel-dev@igalia.com, intel-xe@lists.freedesktop.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Leo Liu <Leo.Liu@amd.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Matthew Brost <matthew.brost@intel.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, =?UTF-8?Q?Michel_D=C3=A4nzer?=
- <michel.daenzer@mailbox.org>, Philipp Stanner <phasta@kernel.org>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Rob Clark <robdclark@gmail.com>, Tejun Heo <tj@kernel.org>,
- Alexandre Courbot <acourbot@nvidia.com>, Alistair Popple
- <apopple@nvidia.com>, John Hubbard <jhubbard@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqunf@netflix.com>,
- =?UTF-8?B?R3LDqWdvaXJlIFDDqWFu?= <gpean@netflix.com>
-References: <20250903152327.66002-1-tvrtko.ursulin@igalia.com>
- <DD5CCG4MIODH.1718JI1Z7GH8T@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <DD5CCG4MIODH.1718JI1Z7GH8T@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cgsYnhUh+Js5TNzp"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MejA6DsnOW3hS+aFtecXn38UypJU2TUrAWPoo9Ly341uw@mail.gmail.com>
 
 
-On 29/09/2025 15:07, Danilo Krummrich wrote:
-> On Wed Sep 3, 2025 at 5:23 PM CEST, Tvrtko Ursulin wrote:
->> This is another respin of this old work^1 which since v7 is a total rewrite and
->> completely changes how the control is done.
-> 
-> I only got some of the patches of the series, can you please send all of them
-> for subsequent submissions? You may also want to consider resending if you're
-> not getting a lot of feedback due to that. :)
+--cgsYnhUh+Js5TNzp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There is so many cc across the series that I am reluctant to copy 
-everyone on all patches. So I count on people being subscribed to 
-mailing lists and being able to look into the archives if all else fails.
 
-Regarding the luke warm response here is short video showing it in action:
+> > I see. That kind of spoils my assumption that it is a fallback supported
+> > by the core. Darn, I would still like to have it, but it seems more
+> > complicated than I have time for it :(
+> >
+>=20
+> As soon as my two other reset series land in next, I will finish my
+> work on converting the reset core to fwnode which should help.
 
-https://people.igalia.com/tursulin/drm_cgroup.mp4
+Cool! Then you bring back my argument, that it should be always compiled
+in because it is a core feature ;)
 
-Please ignore the typos made in the video commentary but I would say it 
-is worth a watch.
 
-Lets see if that helps to paint a picture to people on what this can do. 
-With some minimum imagination different use cases are obvious as well. 
-For example start a compute job in the background with the UI still 
-being responsive.
->> On the userspace interface side of things it is the same as before. We have
->> drm.weight as an interface, taking integers from 1 to 10000, the same as CPU and
->> IO cgroup controllers.
-> 
-> In general, I think it would be good to get GPU vendors to speak up to what kind
-> of interfaces they're heading to with firmware schedulers and potential firmware
-> APIs to control scheduling; especially given that this will be a uAPI.
-> 
-> (Adding a couple of folks to Cc.)
-> 
-> Having that said, I think the basic drm.weight interface is fine and should work
-> in any case; i.e. with the existing DRM GPU scheduler in both modes, the
-> upcoming DRM Jobqueue efforts and should be generic enough to work with
-> potential firmware interfaces we may see in the future.Yes, basic drm.weight should not be controversial at all.
+--cgsYnhUh+Js5TNzp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-For all drivers which use the DRM scheduler in the 1:N mode it is 
-trivial to wire the support up once the "fair" DRM scheduler lands. 
-Trivial because scheduling weight is directly compatible with virtual 
-GPU time accounting fair scheduler implements. This series has an 
-example how to do it for amdgpu and many other simple drivers could do 
-it exactly like with a few lines of boilerplate code.
+-----BEGIN PGP SIGNATURE-----
 
-For some 1:1 firmware scheduling drivers, like xe for example, patch 
-series also includes a sketch on how it could make use drm.weight by 
-giving firmware a hint what is the most important, and what is least 
-important. In practice that is also usable for some use cases. (In fact 
-the demo video above was made with xe! Results with amdgpu are pretty 
-similar but I hit some snags with screen recording on that device.)
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmj6DxUACgkQFA3kzBSg
+KbaHeQ/+MdvUnPLHM1qIlXU0X2n93eV3DFZ+c/jh6eNu8/4O/FtjF3sV3pOXDkKL
+ZkbycBv9jHaKmmUFv9cGd6cEIoxnyb9cQZs9/CD0IvTORqwqWtMPS6pMf3/mqYgt
+9tKvt4qqbVsoUosLt/2OdWymNk99TQ9M9hZ2BjKZ0ER7aCwXJAVA0DmMX2XkgBcp
+q1sIPfxtFaw+FxoJYhHxE7XllfPmBmnh6gsrV+ZhaPhGxuwB6QVukdOgURB5AB2j
+icDtwhRIbGo2mudv2F5JIfeKVLGA5dTKOVrKXjwRnJYoTqzwedpm1FQ76v/3J01X
+RxLsX0EVoJCZX1x9jg79tRbTx0qPDPk87R3DHAFRdl6r39kwY/wb0kwVmOPTQlnu
+U58BJ77X7I/owXUnUKa4dSu0uTyDvs36MX5riw1FwrAXKDUKtRhz1N0CwhbNrpOB
++EYpqZ8VtfyF4pBen3J5xYfMuD61Crp/dgYs3c06wIGq1zG2bbSiJUGOy95diFMX
+uZGDYbVgbVjOcj/XnAnV7ptGv/uP7IFc4OBjBDitYmnNnZM5Xoqel7BGm5mQ9brp
+0fc8w6DSVfMMfTow10RA1yHiijynKChqB8iKk5ryygBX6Ckv8nvbW2bAdbLABnZz
+BI0SYHRWZauj/uVGy5KNONVIaMW00MRkIMXxIFg2FMKQwzjNho0=
+=OvuC
+-----END PGP SIGNATURE-----
 
-Possibly the main problem causing the luke warm response, as far as I 
-understood during the XDC last month, is what to do about the drivers 
-where seemingly neither approach can be implemented.
-
-Like nouveau for example. Thinking seems to be it couldn't be wired up. 
-I don't know that driver nor hardware (firmware) so I cannot say.
-
-To satisfy that concern one idea I had is that perhaps I could expose a 
-new control file like drm.weight_supported or something, which could 
-have a semantics along the lines of:
-
-  + - all active client/drivers in the cgroup support the feature
-  ? - a mix of supported and unsupported
-  - - none support the drm.weight feature
-
-That would give visibility to the "Why is this thing not doing anything 
-on my system?" question. Then over time solutions on how to support even 
-those problematic drivers with closed firmware could be found. There 
-will certainly be motivation not to be the one with worse user experience.
-
-Regards,
-
-Tvrtko
-
+--cgsYnhUh+Js5TNzp--
 
