@@ -1,92 +1,112 @@
-Return-Path: <linux-kernel+bounces-866096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75193BFEDDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:45:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ACA6BFEDF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E10B33A50A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:45:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DFBD18C702C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845F51F0E3E;
-	Thu, 23 Oct 2025 01:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605E41D6DB5;
+	Thu, 23 Oct 2025 01:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wp0mT1xM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X4jImpxd"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10213AC1C;
-	Thu, 23 Oct 2025 01:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25CC19D07E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761183919; cv=none; b=nIvsKPVeCrVZ7MW/FXLY1YU4D77aJxGJFiC1s+qoj4vSXO7A00KKk6d/ncosGm03PdMRUEMbgEBxFIYTy8TqEChcV8MZfNhuAMqp0RD+qWwmRa07zRa2766v5Dd8NSlHrpDyxqUyBL25dnyOfO1XkCJdJ7I1w0S5JccNz5MX1fU=
+	t=1761184080; cv=none; b=DqDDjdLh7iIZmU+mSxqNgvO8m6yzdKKkKfQNceorjbSOKu+XoYJtWLdJZQfyEwxayoxwY5z3J+HSuouCedb1JgGXV1K1TZwzGw8J+srHSwx2vXlYL0UpzejlHbNgnbHf5a1fxXFutGd3WrNLaNnJp21MBVc/U5fKSlmb6ctYluc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761183919; c=relaxed/simple;
-	bh=ttnZlZqD9AOwVWY0BumPMO3jxsgOx+axuNso15oTxPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mUPq1w5Byi0oy0B5nhcN1nWmxBJefDHOBKHKISvecWUbQsHAnb48kwnl4yjaKtrCnc+Ju/jvcup3/vsjy3KXNo23OLEmIujIVKO5hSAh0HOm+lx8QLQS7bky40OR2xT2/eGG1TgdU3WzA3ysvCCB6kErNZEXtrNBxgA27L8VcaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wp0mT1xM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCE5CC4CEE7;
-	Thu, 23 Oct 2025 01:45:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761183919;
-	bh=ttnZlZqD9AOwVWY0BumPMO3jxsgOx+axuNso15oTxPQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Wp0mT1xMf13zTLvjPiHx+Hippwo2+RHMf+Jnzo43L43VLesc/Os6jufVCDCVpFXqD
-	 9oYfuVjvi89+zpFOf5pZ916b2wmMGAGZ99WvdCprYQrQ81wPwJP3MwZBAP/fJgCx2T
-	 AZIwkR5CAMtSVZLBMqw03tn+r4+4DJnFmyOKKXAjum8SmnwPn4dZVxVoSAhGF6ifuJ
-	 QUbnw4+ZRfm/FwA4L6Q2GD0gOB0c+rh2Dq5lh+x1f993Z5G4wQFpF536f++eD9s/z8
-	 wmfYpXsGzU/3Iz3gG7afkY1h6aECjrWjtbSqw0T+21atRbsEJwgMfZk2Czajqjq4iS
-	 g7mfULbqTyz8A==
-Date: Wed, 22 Oct 2025 18:45:17 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: =?UTF-8?B?QXNiasO4cm4=?= Sloth =?UTF-8?B?VMO4bm5lc2Vu?=
- <ast@fiberby.net>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Chia-Yu Chang
- <chia-yu.chang@nokia-bell-labs.com>, Chuck Lever <chuck.lever@oracle.com>,
- Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, Simon Horman
- <horms@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 0/7] ynl: add ignore-index flag for
- indexed-array
-Message-ID: <20251022184517.55b95744@kernel.org>
-In-Reply-To: <20251022182701.250897-1-ast@fiberby.net>
-References: <20251022182701.250897-1-ast@fiberby.net>
+	s=arc-20240116; t=1761184080; c=relaxed/simple;
+	bh=yl7ozpiKizLFtYd5EiA7Rh/uHMgVMv4GyscwVnwRkCA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bENprPWXAxQoa0vN4gn2mvmFxgbm4rMUcT9rXgNrAVNY8F6OC1eJnF/MXBPzszGe1lxtVrQ/Tmj3XlHlrXSr0xx6O6HVOMfmy8IjiSovZG4k4jow+BLFlHR0F63cCeUNZq2NPwXMi/egY/wqsfICu3DY7aNo2QjmyE+nPdDc0ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X4jImpxd; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761184065;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jPBHSIhisQYB9BOAqxE6p2j3YHbxjnfcV2vPoexza38=;
+	b=X4jImpxdfP/eaQ4Vt75iKwYNUOphmJJbwKZUq/CsVqk0mC6J0eOj/pMI6m6uC95+qqIiO5
+	G6NsT5+LdFGxSXv6W1AQkZCOkBhuQEmxirpnQ95l+4Xkn3I9LX3y9IuevZzzvbXZLEnvLC
+	rJGGWYtiCctl98tlz5TCW8mT0+neias=
+From: Leon Hwang <leon.hwang@linux.dev>
+To: stable@vger.kernel.org,
+	greg@kroah.com
+Cc: akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	lance.yang@linux.dev,
+	shuah@kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Leon Hwang <leon.hwang@linux.dev>
+Subject: [PATCH 6.1.y v2] Revert "selftests: mm: fix map_hugetlb failure on 64K page size systems"
+Date: Thu, 23 Oct 2025 09:47:32 +0800
+Message-ID: <20251023014732.73721-1-leon.hwang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 22 Oct 2025 18:26:53 +0000 Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
-> This patchset adds a way to mark if an indedex array is just an
-> array, and the index is uninteresting, as previously discussed[1].
->=20
-> Which is the case in most of the indexed-arrays in the current specs.
->=20
-> As the name indexed-array kinda implies that the index is interesting,
-> then I am using `ignore-index` to mark if the index is unused.
->=20
-> This adds some noise to YNL, and as it's only few indexed-arrays which
-> actually use the index, then if we can come up with some good naming,
-> it may be better to reverse it so it's the default behaviour.
+This reverts commit a584c7734a4dd050451fcdd65c66317e15660e81 to avoid
+the build error:
 
-C code already does this, right? We just collect the attributes
-completely ignoring the index. So why do we need to extend the
-spec.
+map_hugetlb.c: In function 'main':
+map_hugetlb.c:79:25: warning: implicit declaration of function 'default_huge_page_size' [-Wimplicit-function-declaration]
+79 |         hugepage_size = default_huge_page_size();
 
-Have you found any case where the index matters and can be
-non-contiguous (other than the known TC kerfuffle).
+Signed-off-by: Leon Hwang <leon.hwang@linux.dev>
+---
+v1 -> v2:
+  - Revert the commit instead of fixing the build error.
+  - https://lore.kernel.org/linux-mm/20251022055138.375042-1-leon.hwang@linux.dev/
 
-FWIW another concept is what TypeValue does.
-"Inject" the index into the child nest as an extra member.
-Most flexible but also prolly a PITA for user space to init those
-for requests.
+ tools/testing/selftests/vm/map_hugetlb.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/tools/testing/selftests/vm/map_hugetlb.c b/tools/testing/selftests/vm/map_hugetlb.c
+index c65c55b7a789..312889edb84a 100644
+--- a/tools/testing/selftests/vm/map_hugetlb.c
++++ b/tools/testing/selftests/vm/map_hugetlb.c
+@@ -15,7 +15,6 @@
+ #include <unistd.h>
+ #include <sys/mman.h>
+ #include <fcntl.h>
+-#include "vm_util.h"
+
+ #define LENGTH (256UL*1024*1024)
+ #define PROTECTION (PROT_READ | PROT_WRITE)
+@@ -71,16 +70,10 @@ int main(int argc, char **argv)
+ {
+ 	void *addr;
+ 	int ret;
+-	size_t hugepage_size;
+ 	size_t length = LENGTH;
+ 	int flags = FLAGS;
+ 	int shift = 0;
+
+-	hugepage_size = default_huge_page_size();
+-	/* munmap with fail if the length is not page aligned */
+-	if (hugepage_size > length)
+-		length = hugepage_size;
+-
+ 	if (argc > 1)
+ 		length = atol(argv[1]) << 20;
+ 	if (argc > 2) {
+--
+2.51.0
 
