@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-866030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E69FBFEAD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:05:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52990BFEAF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B6418948F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:06:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C68564FA9F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BE11EA84;
-	Thu, 23 Oct 2025 00:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E09735948;
+	Thu, 23 Oct 2025 00:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HBduTit1"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ipTQjsg0"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EDC1862
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15AA8821
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761177941; cv=none; b=r35YxBA9qW2GKYU4B+G2sOjA95m74K9+z2vxYTMIvPBZUOT/OMYPIx7M+gHHVgaHWsK/jS9jdasDZDcgDoUwEMJSyLIiRBh0+wkmjIftvg3A3lca8FT07kxgKA6dDMgHgEZaqoR9xpuqtj3ekwiG6k6Imfw/pu1P3s8VF9bdgAQ=
+	t=1761177943; cv=none; b=VxQH+5qAapGJ6aOCSFby5Zmp7tYMbKjlbtz2A6img1Sz44WmTdvXOu/HgosRFjxrrXufZk/LPa3IiYRRtx5hLIudmOHFq4nR43/jzSc/o+YhuLJ5GkyndDUItcHOyTygdNnbhQ8Mtt/RDRM4mVoxLdrXXUdpELkJ1O6nPhH37ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761177941; c=relaxed/simple;
-	bh=E7Ry0cXCsJ0OGXzsXLyPowVXmDu3+RjSRthyEbISNRI=;
+	s=arc-20240116; t=1761177943; c=relaxed/simple;
+	bh=C4HeaFoy/zWqeitmnTq8NmrMLvX9vxqSLhnk+TPRUks=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=s+0l9V93l8wcKsHWldCPqSxxrQIM/+P9g+P0X6LQ9+TQBZwCcERTlI8yWZl9JEYt0jSZoJod1gYE5uyVGi2qYN6PDUu3CS6rGhDgakuUxPVYPsfBXibW8Fx/4Of4DYHpTl2YhcY7O1LOsGtvUdmZi6v9dLJEna0NMNdh+fCFc6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HBduTit1; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=VGJMvc83jLJ21LWqekZY2II+iyVnRJeXhtQQ9RIw5+gxUQ+uTZdRse142ffuQ35ZurNqjTumuvNMwAqU+b1EWQR1TMMA5faS9z1cheOxMib4lenF6dStO/0Vziyk6Cg4y3zqhD4tfgWp2k6pATfvg08vP6PIl3thi8qKdkGm29o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ipTQjsg0; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b5533921eb2so86299a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:05:39 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33da1f30fdfso454363a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:05:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761177939; x=1761782739; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W/MB8s8c3Ez/o0yr7eHWLvYpTDaL3lC15NeH1OZAOxs=;
-        b=HBduTit1hgqupDTajVCARx3zbeNROvVhXAZgFtwRywUMIoQUamrMzKsyPIX5ot0ypT
-         Z/LiGV12Mon2LqOraKz7yHaAM08KKHjPSr9oHQRkYFRFCup3kBF6GBIfgMzzePdcDont
-         pg8H03fsVwZX7bZydJzfJUpRpuWmaTlLKbUvU8J0rClGMQ3yoSxDFjW96ZzyvErp5kdt
-         y8QhJO04HDWwAkblYWDArd5F7rY5F8wm1so5EfXoPykuf/ecTghJGFzsSoW/NPySZyxo
-         x9r85pCcoEmSd98ONEkuj9Lww2JsutR8DVSVFYTXVQofD57MnkATfvq/DIZF3CYLjcWC
-         w/uQ==
+        d=google.com; s=20230601; t=1761177941; x=1761782741; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lzZENSWUwrBhAA1CxL4i/AxbZEWI19mQXc700MJvOfI=;
+        b=ipTQjsg048qQbI7ojyGnqCzOf7V/VflbcNa7rLwUWS+kOwI21mNcT25TefzQ4oIb2g
+         HKA/+koDwMuystaNgDMw2G3jrSajey4wXDrlaukjB6LqtStH7nLTLPVtj7kZH4T7pMxB
+         IPaMbCR2rZpl14Ll9C7Of5M3K6Exav9v2GDeilIJ+MA+N7ifAxLFAbK11R7KoBfmRm6h
+         30ZdY9fWxRW2OtTjiTQeYXtn3SgAjcxdjjDrjpgK+p+CwWvy6ExFqs7yEqoJSjOgBUi6
+         i92inEQaeYQLK/rKvLL9MoYgfM0gsJk9XSBMufWK2j9hh3nJhq3gafhWimYkW/JTYln3
+         M5PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761177939; x=1761782739;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W/MB8s8c3Ez/o0yr7eHWLvYpTDaL3lC15NeH1OZAOxs=;
-        b=px7GwBxKu6GyKNNA3LrTDd9A5kRaN1th1uBwVoKbrlBbE6gkIHO79Wa+NwU6p4i8rL
-         MunIdzLqvPwR3SPMKFSqvnuGgu8X5ZJGIYkm5ptDgaqEciCFzqWIC2ZRFHC7izlNpw9f
-         y/K5bSxMrTeVNdK2ZWlfIkG7Wk5H5oAs/Rq88/V4xtR/Dgny3qfAp8sORgiiqSAOVQ4p
-         fozQ7w/erDTvHCQG6/H5DOBIF/jPwPjKmEY20iAVzyO7sK6xY9lVE0sTKBFGiCfWaaqe
-         2oXdKeVtqjWbcLHxJy8Cs++wCxeMZ4EjQ5sU5H8iyYIcF5JWKhup7D8oaC0uXWFocIXM
-         oLjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWuIDrklXWTxlK1UQFqIFaWag7fCY6/ZHnZsoxnat9SdCfOdNlY+1P2aTL+zrkLMe6kg3pRDjDynzthoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0IZqYP61g4m19rZeJxb/I+dtjvuVJc6d8UgNNsk5CodzpzPJc
-	HBIhM+9mqrWNOo37ufOTI03hjbxLCezOgUxVRR1OsSIaPZMPQ0pZ7GfBWOqQ1z1o6U0mDH05F1L
-	BBJjVyw==
-X-Google-Smtp-Source: AGHT+IHd943MEU/q3sfmeNkNkm5n04WovhTQk4e5Fqu5kHZgqjXBaWuFFpabxZxMuUt+TzoW6CCUrGaxrt8=
-X-Received: from pjbgk8.prod.google.com ([2002:a17:90b:1188:b0:32e:a549:83e3])
- (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:4b0d:b0:250:643e:c947
- with SMTP id d9443c01a7336-290ca30e401mr284211495ad.28.1761177939351; Wed, 22
- Oct 2025 17:05:39 -0700 (PDT)
-Date: Thu, 23 Oct 2025 00:04:43 +0000
+        d=1e100.net; s=20230601; t=1761177941; x=1761782741;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lzZENSWUwrBhAA1CxL4i/AxbZEWI19mQXc700MJvOfI=;
+        b=uxl6/qtriOYg3gV+c/6Iwitd5T5z0Mtakq+Tu/2o0MoLf3RRkas/OSx8JNKY+ZQkOQ
+         eq93d3b3Owso8M0+NekJUtf+9tl71+onx6/lRBwlfKv6a+k6qMJWHLsDb2mMcLfeGJaA
+         yokcbV0FTyYqIVFY+9PkJsCq0V/7bgbDLoR3YHJah7aOSiQmHN5PVWjm56/GX0gcK4YG
+         wm1sCnPRF54xbnZJHlP5C+0izdRe1+sltUEYAPwrWeljACIIY4fKPeFp/FCs9NnXw6gU
+         +2dGzyCG3gfvWPfjiFODa2MIYrbt+a6LOlfYYQbWMn95gy/Oa+0MZfY5lUsAWhJPo2XC
+         8rHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOn5+H7qJqK+x8ovuqxzgsl5rvlYq9xlE2C0tlzM8kHFfmnsFJcQnV36Dh76QUlcKqAVIw+CwrcdsKGLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfLs1XkVttFaFKmqKlnSKZ7yHDGW2blE9pGC217A7kSh3JQB1a
+	Wouv3Tealytg9CW21v4IsKmvWif+JdkF8g59CgASltJq272qOjnVxjjinOx+RXeOsOshCxySURr
+	BVB+tPw==
+X-Google-Smtp-Source: AGHT+IGd6U9IlxxZkQUE9in6Tsw30xR2bnzy7O0+0w49jme5smP7pCaW5imecIRz7OgZNwNV7y77C8X4JZs=
+X-Received: from pjbco18.prod.google.com ([2002:a17:90a:fe92:b0:33b:51fe:1a83])
+ (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c05:b0:339:ec9c:b275
+ with SMTP id 98e67ed59e1d1-33bcf84e181mr33310671a91.6.1761177941265; Wed, 22
+ Oct 2025 17:05:41 -0700 (PDT)
+Date: Thu, 23 Oct 2025 00:04:44 +0000
 In-Reply-To: <20251023000535.2897002-1-kuniyu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251023000535.2897002-1-kuniyu@google.com>
 X-Mailer: git-send-email 2.51.1.814.gb8fa24458f-goog
-Message-ID: <20251023000535.2897002-2-kuniyu@google.com>
-Subject: [PATCH v1 1/2] uaccess: Add __user_write_access_begin().
+Message-ID: <20251023000535.2897002-3-kuniyu@google.com>
+Subject: [PATCH v1 2/2] epoll: Use __user_write_access_begin() and
+ unsafe_put_user() in epoll_put_uevent().
 From: Kuniyuki Iwashima <kuniyu@google.com>
 To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
 	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Walmsley <pjw@kernel.org>, 
@@ -88,109 +91,79 @@ Cc: Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgr
 	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
 	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In epoll_wait(2), ep_check_params() performs a bulk check for
-the passed user address:
+epoll_put_uevent() calls __put_user() twice, which are inlined
+to two calls of out-of-line functions, __put_user_nocheck_4()
+and __put_user_nocheck_8().
 
-  if (!access_ok(evs, maxevents * sizeof(struct epoll_event)))
+Both functions wrap mov with a stac/clac pair, which is expensive
+on an AMD EPYC 7B12 64-Core Processor platform.
 
-And later, epoll_put_uevent() uses __put_user() twice to copy
-2 data into the region.
+  __put_user_nocheck_4  /proc/kcore [Percent: local period]
+  Percent =E2=94=82
+    89.91 =E2=94=82      stac
+     0.19 =E2=94=82      mov  %eax,(%rcx)
+     0.15 =E2=94=82      xor  %ecx,%ecx
+     9.69 =E2=94=82      clac
+     0.06 =E2=94=82    =E2=86=90 retq
 
-unsafe_put_user() can be used to save a stac/clac pair, but
-masked_user_access_begin() or user_access_begin() introduces
-an unnecessary address masking or access_ok().
+This was remarkable while testing neper/tcp_rr with 1000 flows per
+thread.
 
-Add a low-level helper for such a use case.
+  Overhead  Shared O  Symbol
+    10.08%  [kernel]  [k] _copy_to_iter
+     7.12%  [kernel]  [k] ip6_output
+     6.40%  [kernel]  [k] sock_poll
+     5.71%  [kernel]  [k] move_addr_to_user
+     4.39%  [kernel]  [k] __put_user_nocheck_4
+     ...
+     1.06%  [kernel]  [k] ep_try_send_events
+     ...                  ^- epoll_put_uevent() was inlined
+     0.78%  [kernel]  [k] __put_user_nocheck_8
 
+Use __user_write_access_begin() and unsafe_put_user() in
+epoll_put_uevent().
+
+We see 1% improvement on tcp_rr throughput by just saving a single
+stac/clac pair.
+
+Another option would be to use can_do_masked_user_access()
+and masked_user_access_begin(), but we saw ~5% regression with
+unnecessary 3 operations for address masking, which is already
+checked by ep_check_params().
+
+Suggested-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: Kuniyuki Iwashima <kuniyu@google.com>
 ---
- arch/arm64/include/asm/uaccess.h   |  1 +
- arch/powerpc/include/asm/uaccess.h | 13 ++++++++++---
- arch/riscv/include/asm/uaccess.h   |  1 +
- arch/x86/include/asm/uaccess.h     |  1 +
- include/linux/uaccess.h            |  1 +
- 5 files changed, 14 insertions(+), 3 deletions(-)
+ include/linux/eventpoll.h | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 1aa4ecb73429..30726ce182cb 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -422,6 +422,7 @@ static __must_check __always_inline bool user_access_begin(const void __user *pt
- }
- #define user_access_begin(a,b)	user_access_begin(a,b)
- #define user_access_end()	uaccess_ttbr0_disable()
-+#define __user_write_access_begin(a,b)	uaccess_ttbr0_enable()
- #define unsafe_put_user(x, ptr, label) \
- 	__raw_put_mem("sttr", x, uaccess_mask_ptr(ptr), label, U)
- #define unsafe_get_user(x, ptr, label) \
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index 4f5a46a77fa2..910bf469128d 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -437,15 +437,22 @@ user_read_access_begin(const void __user *ptr, size_t len)
- #define user_read_access_begin	user_read_access_begin
- #define user_read_access_end		prevent_current_read_from_user
- 
-+static __always_inline void
-+__user_write_access_begin(const void __user *ptr, size_t len)
-+{
-+	might_fault();
-+
-+	allow_write_to_user((void __user *)ptr, len);
-+}
-+#define __user_write_access_begin	__user_write_access_begin
-+
- static __must_check __always_inline bool
- user_write_access_begin(const void __user *ptr, size_t len)
+diff --git a/include/linux/eventpoll.h b/include/linux/eventpoll.h
+index ccb478eb174b..efc0aa2d496f 100644
+--- a/include/linux/eventpoll.h
++++ b/include/linux/eventpoll.h
+@@ -82,11 +82,14 @@ static inline struct epoll_event __user *
+ epoll_put_uevent(__poll_t revents, __u64 data,
+ 		 struct epoll_event __user *uevent)
  {
- 	if (unlikely(!access_ok(ptr, len)))
- 		return false;
- 
--	might_fault();
+-	if (__put_user(revents, &uevent->events) ||
+-	    __put_user(data, &uevent->data))
+-		return NULL;
 -
--	allow_write_to_user((void __user *)ptr, len);
-+	__user_write_access_begin(ptr, len);
- 	return true;
+-	return uevent+1;
++	__user_write_access_begin(uevent, sizeof(*uevent));
++	unsafe_put_user(revents, &uevent->events, efault);
++	unsafe_put_user(data, &uevent->data, efault);
++	user_access_end();
++	return uevent + 1;
++efault:
++	user_access_end();
++	return NULL;
  }
- #define user_write_access_begin	user_write_access_begin
-diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-index f5f4f7f85543..9adc8f0dd1c8 100644
---- a/arch/riscv/include/asm/uaccess.h
-+++ b/arch/riscv/include/asm/uaccess.h
-@@ -452,6 +452,7 @@ static __must_check __always_inline bool user_access_begin(const void __user *pt
- }
- #define user_access_begin user_access_begin
- #define user_access_end __disable_user_access
-+#define __user_write_access_begin(a,b) __enable_user_access()
- 
- static inline unsigned long user_access_save(void) { return 0UL; }
- static inline void user_access_restore(unsigned long enabled) { }
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 91a3fb8ae7ff..23edbaef9f71 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -524,6 +524,7 @@ static __must_check __always_inline bool user_access_begin(const void __user *pt
- }
- #define user_access_begin(a,b)	user_access_begin(a,b)
- #define user_access_end()	__uaccess_end()
-+#define __user_write_access_begin(a,b)	__uaccess_begin()
- 
- #define user_access_save()	smap_save()
- #define user_access_restore(x)	smap_restore(x)
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index 1beb5b395d81..a6e32784e6cd 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -552,6 +552,7 @@ do {							\
- #ifndef user_access_begin
- #define user_access_begin(ptr,len) access_ok(ptr, len)
- #define user_access_end() do { } while (0)
-+#define __user_write_access_begin(ptr,len) do { } while (0)
- #define unsafe_op_wrap(op, err) do { if (unlikely(op)) goto err; } while (0)
- #define unsafe_get_user(x,p,e) unsafe_op_wrap(__get_user(x,p),e)
- #define unsafe_put_user(x,p,e) unsafe_op_wrap(__put_user(x,p),e)
--- 
+ #endif
+=20
+--=20
 2.51.1.814.gb8fa24458f-goog
 
 
