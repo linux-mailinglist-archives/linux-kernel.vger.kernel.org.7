@@ -1,162 +1,185 @@
-Return-Path: <linux-kernel+bounces-866413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A60BFFB04
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D024BFFB07
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06C1F3A9BBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:49:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4A993ACE4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0028D2DAFDE;
-	Thu, 23 Oct 2025 07:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1C22DC339;
+	Thu, 23 Oct 2025 07:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L/ktryO0"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aGd44HrT"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C83A2DAFB4
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912142DC332
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761205776; cv=none; b=QKIb/Txy9jUMTgmTZ8X7zjBQaQ9SO+z7XNDqUoeA9pyXUgUqkTpCE8cowWQXjy600Z7VFJIQ1vk1tvBeB/SGry++u6Tl6PMixxiiUqa0a9CLbftFEoPrDKx81pRmUxE+NqbyJAyTMfWrK3Vi1GhmQBEXwtl6qTdOMrO6SyctVN0=
+	t=1761205790; cv=none; b=HWrZZae4K//YUY5tmiiO3CJpRkIhr8VM1zoysZ36hKZ0ctI/2/PYeKOsjk4UxpiHMiBXwXlYbqNkpS8wNVR5sOzvAtupT1/70INPn96z7p4mWmVqlUMqulXFunvswhbkfbkgi+VfTAoYiqksQBSX8ffU+pODlfWO9KVsUBfDF94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761205776; c=relaxed/simple;
-	bh=LO+wB6xyxtIr/hCM8cmPiaOJf+8Rqvc7d4sXFp96uog=;
+	s=arc-20240116; t=1761205790; c=relaxed/simple;
+	bh=0Mp8jxfiDjx+6SGWq944sEmqfWZv44pZHzsKR+o0Y/w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ajH7eTbjJkKHCXSXNoCyrODcCicIJRPbhkHyN6+Qn0a0FYmVL50MSsRN1XcWHe7Cq3IvmPRYUDhqbOIOsLDkYkq1pWJsQivvsiDooXwi0VBhB+J4bYBF046sg8scUclgbl/tUkv2S0VqBuxpe/Z5gjJa815TnuKsDaFMCXxS0tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L/ktryO0; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47117f92e32so4013665e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:49:32 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ks0geSsBGqOfh3kmRhK05jzVbfpHE7H0W7jThCaAeWV5hjoRsq486p8hMGsZXg+1xfCftTRstIw/ER2p49XjepAOJc5aevdFpdqHiI/cLvvSIr16gxL/pLlrLnmx6667AMSZWDuVYFTYufArfWd5ijDbQfCaYAfgMIZwsKJ1lZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aGd44HrT; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-471131d6121so3240155e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:49:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761205771; x=1761810571; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1761205786; x=1761810586; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xnfE6Ztp2tsMj2MenWex51wBbAp43TymX17gslrnx18=;
-        b=L/ktryO06pdNypMz76KtS5nQWpB2MYvdYUdBSoMnPnzK5YOjoDM3hFyOPfQ+W3pAnC
-         aFRGM0oR2V6ypi9y+bntdST//xcaZ9Fh0ZOlBpUjoABUO6nMeABkRAvwb/l+n/G11hSr
-         zBqbVkT5RPXDLgUqtIWEpZuva7fSbN0JkqyVhWpZ7uUs2jMBWsX+gvXIJbgn4Z32ypvi
-         Z/mbArezGhDLH3B9U6GGpAxaXOFJFu6GvDfMwrkFiAShOaHU6VJ+qyko0Er+4XEbNuH+
-         IfiCAenS/nyjM72S3yUfolBK7QOFCzsEtu7YJ5PrbCsGIPBgV5CW0dKSliANFaYab7MY
-         8zGQ==
+        bh=buhrfKCKAUbV93ahXUhbdLbSj4yiyZO38zRVoc8nGc0=;
+        b=aGd44HrT6KriYW7syyu3KrNIQur6T5XYewgynCn4K6vY8k38cHsRcbQjClWVYQ1mjg
+         QjuwREgk8nB68PxaIBBiCOV7Nmbw25MFs5nExvPkvUgboQkPf167cosW5pwB3B7+m6Le
+         8SvOOK7rfm5pYM7f2jPuvtOF48kJYm+i6FBYvmi5uUEl3SPwkdC25ByTEbpYl9aw3h1u
+         no1yaKGMYZ3Kynq9PILDTIPfPVNhurqecFvcy+Ge/Jal3R6Co70vSm+8kfiZly+qLJxT
+         g2IO6q5pMWhcoBzETFtzLYAMcUE8M2S5WhJSwtedqsWKOHkdLAwJaGtVoo9UwnF6aMUk
+         wIUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761205771; x=1761810571;
+        d=1e100.net; s=20230601; t=1761205786; x=1761810586;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xnfE6Ztp2tsMj2MenWex51wBbAp43TymX17gslrnx18=;
-        b=S7GXUdA6SYRdDyW5r++hRjqIWDz61+JkyZsgMHEBUC34+LzaHTo1vQFoF6+ONN0/JH
-         MSkJIuzsd+pyX8dxrMduZTITrhQ6irI/0X8lRJEoggu5As7NyyOM/ahXbIwFik02XsWo
-         oXN4SasZwvlALio5Y3YvsV2zp2/kDQJttQpX/Yf199jkI7wdzWGVH3A9hRWBwjfghDzj
-         9bxoDIAl2wdhsquX3VJGrZNibeasHLP02Tt/Pyajsiel0DZ+uZAJGQIi4H4ZIZoZSxed
-         xIHx8R4LgENIJSPz2sBTAJNIg7ty8ZdcjAAouSAYBQwRw+wco1LHeIwlaaHGhnZ5AKl1
-         dwTA==
-X-Forwarded-Encrypted: i=1; AJvYcCW40ipcW3tM1rIG4p5fNaYXmfH11h6JaeQkssqlEqNh2Qia7bAa1CAK2S8hzxYHQfe2KLswEAhoPKXYWyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2VkDPylDbq+3siW3ZH3taJNjQCY8t0psQAlDlTUIuSx6L3fHf
-	Re8KFsmJiOux6/5SWl+TWqI9DPyomgx6kpYEj3UFV4N/gWFK926xHoUL
-X-Gm-Gg: ASbGnctNT7HU78S/SGbBGeTIkFlaOEyFIHbWVZE8YITclPm3K+Hc1xPB4D8AZfmnCzN
-	KsDydgEp/VY8wW2moecCf/jOGTdYJWOVSMknKn+bk6yhBDtuczwh5kGYVCAED84j7Rm50ODHnx8
-	EI/4taQI3o88nnDOXqHnQdnaxXBJJAJLz2OQsD6uLlEFuVmqEDCBKgJeOCdMpSmtMCMjsP6H5y3
-	mV6/uQFo44NCtMTQECK4+xaTFEc0RlMtgGKBNhKqOUK7SHTk38aB/WxP2GzHtRTPQ+AFxlPGMLK
-	ouiBt6ypE5mG9GCxV3g4INapg24IpTsPc2ZKuWNuoxsgL2RktvSFHMr2CYw3VVFEMpJLVXdNrqg
-	xgt411Ve+PIWzD1EFjn2/hL+D7Dyu30TDfcNkzRONGimB6wBj3IlvIsXPK/GW86K6oveTwNd1Ta
-	dVL5Q=
-X-Google-Smtp-Source: AGHT+IEj8V5br8WN0dlHMXe5guFyspPGkB6zQprS+APL5o3M8jdylAnbTHE9vsz4fgFQFpMJhX8T5A==
-X-Received: by 2002:a05:600c:3b05:b0:471:d13:5762 with SMTP id 5b1f17b1804b1-471178761bemr163567305e9.4.1761205771309;
-        Thu, 23 Oct 2025 00:49:31 -0700 (PDT)
-Received: from gmail.com ([51.154.248.199])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4281314sm82172465e9.4.2025.10.23.00.49.30
+        bh=buhrfKCKAUbV93ahXUhbdLbSj4yiyZO38zRVoc8nGc0=;
+        b=kDi6qjynJzXo5R18EiAzd+thmH5uEpO5WwCwH+lQkTwH/Ez4PeIWXfsVSiOHrysMdd
+         qLn/incueRBCSlzPmvtj/RE7O1mcOPLd2EyjdmemlYkGR5ks8WOCVGQNoqoNNYOaf3bV
+         fDHsJo7Lp3CasTYuISNhDuudpN7DDc+jKYdz5iA8QQRNN6/EaQcHMum5YBG6GWMSs/U0
+         F8X2ksPp9nVIrbtweamNzuCfRDsd1+dYTeY4iTljusXQvYwXmo5OKsi8R7H2prn0cwEA
+         q4DoA45IEPUiDdbWyDuBVsLhPiQCc5bEWVLw4HdjNRWHFifZO9563U9YhcotISPosIUV
+         IjXw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9fAh7HPcNhZ1r1NSXJlJG7K5GsSQgrOdJ6Q80Fn0coFW9yzxwu8dYyAPXchd7Fh4wJsXiW+VF1YmVPdc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx55eLRySnJBPy8OwFh4yIyPx94jnySjxIQKkHvzzD3ryUnmhqC
+	MGgNxgkKhsZOMBMlKw+A6GSZKILTt1JAPzkewwjYhnbedNo8raHstbG5oyq7npt1CcE=
+X-Gm-Gg: ASbGncvkAQ35D4rUWcwRgZkzWQQxFlIOmp4EBlH1VyeUBIuivxY2Ey8N+vOu7shTjzW
+	9nNBeaDkVKZWHkX8NLnglk08skD9PvHfhIggostgcPUB+E7JyPkR+Px99nBull+i/alkErCi+Qs
+	0PhmOlq8P/lzNErvR6JrVyBNxDw/COO8Zg1KCiXzkxHB2dRmvFQMOcrxEXh60soMzc4AjY0Jmmw
+	QnqIeJlPay4h1LV5T3cjVi423eT/buLqaeWwl+s9hhUIM6pYLHjl87uIIJkfT8LavcSerBxgf35
+	S7UyZuvmZE3LdhqcOWdiWJl6/N/634B3hhDax3VM1aB+dAGu5vjF23L6557ZNJ4S4SXu5mDTk3a
+	jz2GO/1GTadZnmw0zXB6DiBQ85f9SaL1CxLA4hZKXCAF5uO3BY4AHiJI6w0Abde8hzkgsbopG5v
+	WKtNbLLPl+XChDXyATcYqor8b0EjpibOh00Cl+yN4=
+X-Google-Smtp-Source: AGHT+IFDHlwH4uQN0NhngE5GpDoyJ/84JrAW5QDGqlOvPH9h/SMikykg+/9OnKS0fpX5phTxKoEdIQ==
+X-Received: by 2002:a05:600d:62b1:b0:46f:b43a:aef4 with SMTP id 5b1f17b1804b1-471b5341411mr75736425e9.38.1761205785863;
+        Thu, 23 Oct 2025 00:49:45 -0700 (PDT)
+Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4342368sm84834305e9.9.2025.10.23.00.49.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 00:49:30 -0700 (PDT)
-Date: Thu, 23 Oct 2025 07:49:29 +0000
-From: Vaibhav Gupta <vaibhavgupta40@gmail.com>
-To: Bjorn Helgaas <helgaas@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Michael Buesch <m@bues.ch>, Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] gpio: bt8xx: use generic power management
-Message-ID: <aPneCYtkbxWp4Hox@gmail.com>
-References: <CAMRc=Mf4FnBoZfdR3gG47te=X53jASzb6MVnUmNw2q1rtUwxzQ@mail.gmail.com>
- <20251022192901.GA1265216@bhelgaas>
+        Thu, 23 Oct 2025 00:49:45 -0700 (PDT)
+Date: Thu, 23 Oct 2025 09:49:38 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printk_legacy_map: use LD_WAIT_CONFIG instead of
+ LD_WAIT_SLEEP
+Message-ID: <aPneEnDQmHhpvRkG@pathway.suse.cz>
+References: <20251022154115.GA22400@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251022192901.GA1265216@bhelgaas>
+In-Reply-To: <20251022154115.GA22400@redhat.com>
 
-> > 
-> > This says it's a v6 but I have no idea what changed since v1. Please
-> > provide a changelog for every version when submitting patches.
-> > 
-> > Bjorn: does this look good to you?
+On Wed 2025-10-22 17:41:15, Oleg Nesterov wrote:
+> printk_legacy_map is used on !PREEMPT_RT to avoid false positives from
+> CONFIG_PROVE_RAW_LOCK_NESTING about raw_spinlock/spinlock nesting.
 > 
-> Yes, it looks good to me.
+> However, LD_WAIT_SLEEP is not exactly right; it fools lockdep as if it
+> is fine to acquire a sleeping lock.
 > 
-> Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
+> Change DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map) to use LD_WAIT_CONFIG.
 > 
-> FWIW, here's the diff from v1 to v6.  Mostly just iterating on
-> compile warning nits:
+> (We can also make printk_legacy_allow_spinlock_enter/exit() depend on
+>  !PREEMPT_RT && CONFIG_PROVE_RAW_LOCK_NESTING)
+
+I do not have strong opinion about adding (&& CONFIG_PROVE_RAW_LOCK_NESTING).
+This dependency is already handled in LD_WAIT_CONFIG definition.
+
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+
+Anyway, the change makes sense to me. It seems that this better fits
+the purpose.
+
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+
+See a note below.
+
+> ---
+>  kernel/printk/printk.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpio/gpio-bt8xx.c b/drivers/gpio/gpio-bt8xx.c
-> index e8d0c67bb618..324eeb77dbd5 100644
-> --- a/drivers/gpio/gpio-bt8xx.c
-> +++ b/drivers/gpio/gpio-bt8xx.c
-> @@ -52,10 +52,8 @@ struct bt8xxgpio {
->  	struct pci_dev *pdev;
->  	struct gpio_chip gpio;
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 5aee9ffb16b9..f11b2f31999b 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -3007,7 +3007,7 @@ bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+>   * false positive. For PREEMPT_RT the false positive condition does not
+>   * occur.
+
+From the comment, it was not obvious to me why the condition does not
+occur for PREEMPT_RT. I had to check the commit message from the
+commit daeed1595b4ddf314b ("printk: Avoid false positive lockdep
+report for legacy printing").
+
+<paste>
+    However, on PREEMPT_RT the printing path from atomic context is
+    always avoided and the console driver is always invoked from a
+    dedicated thread. Thus the lockdep splat on !PREEMPT_RT is a
+    false positive.
+ </paste>
+
+This is much more clear. It might make sense to improve the comment,
+for example:
+
+<proposal>
+/*
+ * Legacy console printing from printk() caller context does not respect
+ * raw_spinlock/spinlock nesting. However, on PREEMPT_RT the printing
+ * path from atomic context is always avoided and the console driver
+ * is always invoked from a dedicated thread. Thus the lockdep splat
+ * on !PREEMPT_RT is a false positive.
+ *
+ * This map is used to temporarily establish LD_WAIT_CONFIG context for the
+ * console write() callback when legacy printing to avoid false positive
+ * lockdep complaints, thus allowing lockdep to continue to function for
+ * real issues.
+ */
+</proposal>
+
+But it can be done in a separate patch...
+
+>   *
+> - * This map is used to temporarily establish LD_WAIT_SLEEP context for the
+> + * This map is used to temporarily establish LD_WAIT_CONFIG context for the
+>   * console write() callback when legacy printing to avoid false positive
+>   * lockdep complaints, thus allowing lockdep to continue to function for
+>   * real issues.
+> @@ -3016,7 +3016,7 @@ bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+>  static inline void printk_legacy_allow_spinlock_enter(void) { }
+>  static inline void printk_legacy_allow_spinlock_exit(void) { }
+>  #else
+> -static DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map, LD_WAIT_SLEEP);
+> +static DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map, LD_WAIT_CONFIG);
 >  
-> -#ifdef CONFIG_PM
->  	u32 saved_outen;
->  	u32 saved_data;
-> -#endif
->  };
->  
->  #define bgwrite(dat, adr)	writel((dat), bg->mmio+(adr))
-> @@ -224,7 +222,8 @@ static void bt8xxgpio_remove(struct pci_dev *pdev)
->  	pci_disable_device(pdev);
->  }
->  
-> -static int __maybe_unused bt8xxgpio_suspend(struct device *dev)
-> +
-> +static int bt8xxgpio_suspend(struct device *dev)
+>  static inline void printk_legacy_allow_spinlock_enter(void)
 >  {
->  	struct pci_dev *pdev = to_pci_dev(dev);
->  	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
-> @@ -241,7 +240,7 @@ static int __maybe_unused bt8xxgpio_suspend(struct device *dev)
->  	return 0;
->  }
->  
-> -static int __maybe_unused bt8xxgpio_resume(struct device *dev)
-> +static int bt8xxgpio_resume(struct device *dev)
->  {
->  	struct pci_dev *pdev = to_pci_dev(dev);
->  	struct bt8xxgpio *bg = pci_get_drvdata(pdev);
-> @@ -258,7 +257,7 @@ static int __maybe_unused bt8xxgpio_resume(struct device *dev)
->  	return 0;
->  }
->  
-> -static SIMPLE_DEV_PM_OPS(bt8xxgpio_pm_ops, bt8xxgpio_suspend, bt8xxgpio_resume);
-> +static DEFINE_SIMPLE_DEV_PM_OPS(bt8xxgpio_pm_ops, bt8xxgpio_suspend, bt8xxgpio_resume);
->  
->  static const struct pci_device_id bt8xxgpio_pci_tbl[] = {
->  	{ PCI_DEVICE(PCI_VENDOR_ID_BROOKTREE, PCI_DEVICE_ID_BT848) },
 
-Hello Bjorn!
-Thanks for the review and mentioning the diff between v1 and v6.
+Best Regards,
+Petr
 
-Hey Randy!
-Please let me know if the diff mentioned by Bjorn is enough or should I send a
-new patch-mail describing the v1-v6 diff?
-
-Best regards,
-Vaibhav
-
-
+PS: I would take this patch via the printk tree. But I am going to wait
+    for feedback from others (John, Sebastian, ...).
 
