@@ -1,49 +1,59 @@
-Return-Path: <linux-kernel+bounces-867185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FDFC01C8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:32:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A097C01D37
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 501A550520B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:31:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B27D73B5E3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6E732ED51;
-	Thu, 23 Oct 2025 14:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CF7331A70;
+	Thu, 23 Oct 2025 14:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MCLbUkYN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEhlRY9W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD48E32E6A7;
-	Thu, 23 Oct 2025 14:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53028330B29;
+	Thu, 23 Oct 2025 14:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761229838; cv=none; b=SjdkFUhB6gF2y7SQtEQyXqssjLgQAUf978iignVlSQmxVMGjrRCt4CWbz7mnc35R0EYaDiD2rNUx2Dc6Y9+b4OCiR1Hrw2pOYMb1RSc86HdUcfHpaJw/jnCxOkXoBaOf84dsMhQUCycx4qBvZl/ZvLtSbKDRDIsiiYEK15/08TI=
+	t=1761229839; cv=none; b=Xl8RY/cDzXPbZeQTZGxm5nkee6hBBg8jt55vHFU83vL2qcL+8LmAVBKFca/gGcmc/FVE6WyZJh0Fo09de4K+nnN7w7AE/Ok8upoYCzwVJls+5ECc3gcn4yvB0UoMD5ybAl07ntZJMluhrRzQ5zcwoFzr9yqvQWpgfZrJ/RWBBUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761229838; c=relaxed/simple;
-	bh=iMyrw87T/G4ZaU6ZmgUalIVzak0E6HRz5LjPpsf7ryc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=HEdBNQV4dTHo17Db2xuVoWw7iZXEt7m9rLx5dvcP9HNty0VDH6K1evJ/Bo/LjqFjIHWSJTksrhr0cvlEKlabXvbH3J7HuDIboVcuNA705bCByVN3JaPZDx4i82OUABLIAe51i75eh0lLmNc3EvmG9ZRgJ009hcZSCosVeJ/CO9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MCLbUkYN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A78C4CEE7;
-	Thu, 23 Oct 2025 14:30:37 +0000 (UTC)
+	s=arc-20240116; t=1761229839; c=relaxed/simple;
+	bh=8jWBZymH5QTt8c150L0evYjJSEI+8ji+eHa5bEcksMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l2iwuULXNzd0/LCuK02Uxh3qK3FmyoI2iEsYEycDFkuheemDrEmtIGwGDqSZiciHY1p9si+V04MdPC8j9d2nsku7qX3/LKxrxYokLuKB04ZYOLNn6/cN7ddz220utr5KB5z42yDdn5y0ECNBxr3Px8tcj7CtPJz52BAetGkHmok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cEhlRY9W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69BA5C4CEF7;
+	Thu, 23 Oct 2025 14:30:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761229837;
-	bh=iMyrw87T/G4ZaU6ZmgUalIVzak0E6HRz5LjPpsf7ryc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=MCLbUkYNQfDRPocz9Gm5sgNvj5LBrFbcxBlfV0F1M0BFY/yoWoiKYHYVhu2ltTCHh
-	 gzOz+OxJAnUE99Hw/NX0K+mfrpEwJ/vB/kKjnjRasmNdQalYxjVVaR6vZ6y3+SNDeX
-	 clfT5/DIqbale74QVk/pGuag8QbrT96Bcybwt7NLUonRdVMWKrPsLCP9EMsgxoMLvp
-	 y6OmsoRvMrCSj+BD4LE1H+ur7IuR+J0HgDLfZiYfqy+BTzYtOsJxIT60BIppjmlndM
-	 emLAEaKDDXt3MVTbGgCnnhDKnclZpmQeEBg8LQOAEdFjinMOgCc1PQ0+b7Q1nY7jba
-	 CxDPpLw3VO0gA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C203809A97;
-	Thu, 23 Oct 2025 14:30:19 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1761229838;
+	bh=8jWBZymH5QTt8c150L0evYjJSEI+8ji+eHa5bEcksMA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cEhlRY9W8CMoBk0eV/tNP9c2hNrAN096x+IHo5GrduYd6HotQae8LG1Hj/VeKVfoZ
+	 Fd09cm5dcFEk39eVzxRGWCcRwylvZdXHHbYBuRki1qK1GrLeqMvwJa1Gk1xabESEnM
+	 TeFd6DqMmPU4FTn5OFGDZGbdehdCAlFLGekTmld2f2vlofbjpa0mj1gwVh3LGXo1q0
+	 0B5dcpLsR0cTmuPr8NMXQvG8G7Fz19gKgO0DeXHusa28AKmJo1j/3k3Z7eSr5RZIj5
+	 oqmS4k6CY0HokqQrlNOZOnM3Yl+UwkpKxdi3f1QUHJPOEXXJ0oAB7wV1H2ReDigN+C
+	 CyZ6GYeAtL27Q==
+From: Philipp Stanner <phasta@kernel.org>
+To: Matthew Brost <matthew.brost@intel.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Stanner <phasta@kernel.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH v2 0/4] Add TODO list (+ small docu change)
+Date: Thu, 23 Oct 2025 16:30:27 +0200
+Message-ID: <20251023143031.149496-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,49 +61,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 0/4] mlx5 misc fixes 2025-10-22
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176122981799.3105055.12421671916328980048.git-patchwork-notify@kernel.org>
-Date: Thu, 23 Oct 2025 14:30:17 +0000
-References: <1761136182-918470-1-git-send-email-tariqt@nvidia.com>
-In-Reply-To: <1761136182-918470-1-git-send-email-tariqt@nvidia.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, saeedm@nvidia.com,
- leon@kernel.org, mbloch@nvidia.com, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, gal@nvidia.com
 
-Hello:
+drm_sched has so many problems that we should have our own TODO list for
+contributors who might wanna help.
 
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Changes in v2:
+  - Add generic TODO list example that can stay in the file forever.
 
-On Wed, 22 Oct 2025 15:29:38 +0300 you wrote:
-> Hi,
-> 
-> This patchset provides misc bug fixes from the team to the mlx5 core and
-> Eth drivers.
-> 
-> Thanks,
-> Tariq.
-> 
-> [...]
+Philipp Stanner (4):
+  drm/sched: Remove out of place resubmit docu
+  drm/sched: Add a TODO list
+  drm/sched: Add TODO entry for resubmitting jobs
+  drm/sched: Add TODO entry for missing runqueue locks
 
-Here is the summary with links:
-  - [net,1/4] net/mlx5: Add PPHCR to PCAM supported registers mask
-    https://git.kernel.org/netdev/net/c/bb65e0c141f8
-  - [net,2/4] net/mlx5e: Skip PPHCR register query if not supported by the device
-    https://git.kernel.org/netdev/net/c/d58a9a917aa3
-  - [net,3/4] net/mlx5: Refactor devcom to return NULL on failure
-    https://git.kernel.org/netdev/net/c/8f82f89550da
-  - [net,4/4] net/mlx5: Fix IPsec cleanup over MPV device
-    https://git.kernel.org/netdev/net/c/664f76be38a1
+ drivers/gpu/drm/scheduler/TODO | 51 ++++++++++++++++++++++++++++++++++
+ include/drm/gpu_scheduler.h    | 10 -------
+ 2 files changed, 51 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/gpu/drm/scheduler/TODO
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.49.0
 
 
