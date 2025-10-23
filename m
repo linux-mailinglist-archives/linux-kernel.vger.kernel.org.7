@@ -1,86 +1,150 @@
-Return-Path: <linux-kernel+bounces-867018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBFB0C01584
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:24:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6896BC015A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF07D4E14DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:24:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 479FB4EB307
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231E1314D20;
-	Thu, 23 Oct 2025 13:24:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABA73161A2;
+	Thu, 23 Oct 2025 13:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leun2FQi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC852C325B
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCCD314D11
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761225846; cv=none; b=iM2VXlrbqFuqsUxfAaHQiH0tkkbF8V6m2ruDbaSAA+rowfJH5p49oiLFtsH4+1bJH7QMG3vOzOHF4hThGQ0OJkUMkUFFZ7se/Ex7C5zNvEjw/xtNl/DF76bm7mOHlu6Y/NWNSH1W7uD/PObpD1qtXSlgiwmpzCCCBwJJK4vQeLI=
+	t=1761225936; cv=none; b=WpvZ+3l/53FrplGmO+AwWyNTz2djsJq230TbWHHp3UtpzBd/rNgaN8/uuWTtCVEbgnaJo2JpXP4xCNmZD4Qv/xWsr8GpE3JPJHPiayl89wqyqPLHskKKforoJQ4QSHCZO5khUjnubjp6Z4RV9vRTrqDmGgufV7rOnfweQWmXhck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761225846; c=relaxed/simple;
-	bh=4v9kRLHmHPRxo/rDuZn2MjhUQt8BZhtCIO2+mh29dlc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TvKrconnwH8u8zRls1Bv9TCAA+U7XCWyWmLRNpFgKvJXl9L95GVET7V57NwV+E6pfYxerHHaYllHDe8JJHVHErAiC72WNHl0BLquZHeFl0zUVe+3d2RjfkUuIfhJ7iACLQJiam4nziKkrxcpc3gxOlOiIZu5vrcWOBp2EsPrxg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430db5635d6so10320645ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:24:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761225844; x=1761830644;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Rbf5LSo5qbbkJ6qSLA5AxwAP5tPAdCk53EnRchaRh4=;
-        b=quM3X7/lVwLtoU1TvMq3RsqfXTrNrv3b7HK/ztdhmVRvu0jr9iD5R7dY21Pzrg7S+k
-         1BhSNgukwJ41H0VvKxEc+8qPGI07hVqF8d8lYN2+J/Kf9IaZjGevv65IAwync8DuT8gO
-         ZjxptaH7mB61zXtRngqqEGahIsQuiuNsameVcS0zzKdKzO/LGLC8ZB9bJ4wNv+4X+yg1
-         70YkzW0ezfMtTb2xnT64Qb1ge7rFawaAqsgnZRybGjmZlmOArokPVmeMPYdLpjkD92wC
-         6x0HcCPc2ovbb0X6/nLtRaj+fozx3c/czulWZXYerw13L2G8aJnzgksPtEnoGEatZFSR
-         lajA==
-X-Gm-Message-State: AOJu0YwWcE5YeGjqm7kveXyyobA8hdHkw9yC/LPUPxqaZqnQvVLiNKKG
-	CPic/uMwLMHAFOveBxY793PhFVgoOkHvTxrV/gj8Sh8e6NTQMJa2paMdOhgxcAPJK4pdTKPRE/p
-	Pl8FYa13GwRE90ClKgMGC5twq9xYQS+SLjm1R3Nd9/RGpzVE11MAfTtiaqQ8=
-X-Google-Smtp-Source: AGHT+IE9TpLhjVH0zokXztZXXb6yKJg6ep/fYiQaEcDsl3T//JbAX+wPj0nOTMlqk8nhZiXMGBh0y8skpjZ3rq3lSIo/r4wgnJci
+	s=arc-20240116; t=1761225936; c=relaxed/simple;
+	bh=vTFnJ06KEKXrVEI0mBGwvSblp5jfCxMuSkM0lraKhos=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OhCfblTU0gt9wxZSjyoKq3qyEK+B3HEKobO1ZKslWp6VOZ3WX2tTHfwRWGgLVcA1FRCkT+yMt8tk2Vxs8lhIK5FisT1GYjdwVpxd3ctb8Z0wN/jENeMs+hI/ijGCluqMpaQDQlQeVN6Hf58Y3wFa9BqW2xpCfAtgdK6xPwJNIoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leun2FQi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B0CC116D0
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:25:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761225936;
+	bh=vTFnJ06KEKXrVEI0mBGwvSblp5jfCxMuSkM0lraKhos=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=leun2FQi+LfxDvGkHXiW1jCuw5q8CfpK+TswofyaVu9edE4Y7owuyuSMk+5VFAbnr
+	 vOPwVSOWFlidJKmFbqaXkcbTWOWxF/qbpVduuCPtmNXrkxbtnuoGcFEJv1Mlziapw/
+	 RvpHruqdKHaAr6R3gHF+1dPcFU92TRxlIJ8R0uZMAkbuQfKmwAA4w4sy1+eVor7Sqp
+	 9KGoQpk8zGycXhVXOtTLiaaUXzCjmFDe3UWvi/ndoBl42nuGSZBzbVih/qmj0Fd3gk
+	 AXqx+DACkPg5CW3Mf2iVi60LmcXXr7XTuT6CAIUAOTqeEyH7nVnWWlWACyCF/RYwPT
+	 x6Zpod6WJsLVA==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57b8fc6097fso767398e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:25:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWL3uM7eBj2Jr9xqxGTHCYWseAsXK0dTxxqAhDK/fy4Bx0iwribgkGWV7HDZ3bkgrAT/qzdNiNPrQYpvGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTRUtPMarDm/sVXLc3ub6WgcofycL99p+0HzFwTM40aSND0NiF
+	4sEAE2N29hlguG2i4QVnwTTPTsQCtTeg7UX8AkiXBVsBccDuFFtOW0bWbnlg8CjFQ0kXhE8aGE0
+	4Bimbznt2poosLj+UlG9MesD4tpMYLBE=
+X-Google-Smtp-Source: AGHT+IF/QxGh0Uh18+Vu5oFqndQ9eTFAFuChF/l1T7L2YcTuBk6NAJrEmSDaYAY6Oqq46nktI15zolAHjgRe4JbZsyg=
+X-Received: by 2002:a05:6512:ba1:b0:57c:2474:3733 with SMTP id
+ 2adb3069b0e04-591d85982ebmr8129374e87.42.1761225934764; Thu, 23 Oct 2025
+ 06:25:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168f:b0:42e:2c30:2835 with SMTP id
- e9e14a558f8ab-430c519b57cmr357053165ab.0.1761225844073; Thu, 23 Oct 2025
- 06:24:04 -0700 (PDT)
-Date: Thu, 23 Oct 2025 06:24:04 -0700
-In-Reply-To: <CABGqKE2GOzKZYcFnd3uVq7qWvNVqaavKQNy35PYebnKjMh+sXw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fa2c74.050a0220.346f24.007c.GAE@google.com>
-Subject: Re: [syzbot] [gfs2?] WARNING: ODEBUG bug in gfs2_fill_super
-From: syzbot <syzbot+19e0be39cc25dfcb0858@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, nirbhay.lkd@gmail.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20251020-opp-simpler-code-v1-1-04f7f447712f@kernel.org>
+ <ms55ue7qqbvoyfhptzu2a5cuthusihtobremhuqfm7lyu7b62o@qasunalgkptl>
+ <CAJ-ks9mKiXR-8m_9x_k6YcL64h+QWExkiWCHMFNJbdUYQvPsNA@mail.gmail.com> <44k7h2wzksrp4eghvdim5kiq5tsul3p7yhy44d3eii7hyvivch@xx3x762acknd>
+In-Reply-To: <44k7h2wzksrp4eghvdim5kiq5tsul3p7yhy44d3eii7hyvivch@xx3x762acknd>
+From: Tamir Duberstein <tamird@kernel.org>
+Date: Thu, 23 Oct 2025 09:24:56 -0400
+X-Gmail-Original-Message-ID: <CAJ-ks9=2217VUNyGq9Z9hiZJfcjSYzzXy8WMh-0jD0a=a2eYJA@mail.gmail.com>
+X-Gm-Features: AS18NWAygUjF8kk0etHernlCfpEOLEdv1BAMj1gRH37qVZmZ0TnzMAcb8jNH7mU
+Message-ID: <CAJ-ks9=2217VUNyGq9Z9hiZJfcjSYzzXy8WMh-0jD0a=a2eYJA@mail.gmail.com>
+Subject: Re: [PATCH] rust: opp: simplify callers of `to_c_str_array`
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Oct 23, 2025 at 7:32=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
+>
+> On 22-10-25, 07:22, Tamir Duberstein wrote:
+> > I believe the `{clk,regulator}_names` vector bindings remain alive for
+> > the whole scope, even if they are shadowed. See
+> > https://play.rust-lang.org/?version=3Dstable&mode=3Ddebug&edition=3D202=
+4&gist=3D800b334c514c2024d7b5e47fc54c1f2d.
+>
+> I tried to print the name of the regulator and clk in the C code:
+>
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index d67d392e16d4..89b65fe07b99 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -2565,6 +2565,8 @@ int dev_pm_opp_set_config(struct device *dev, struc=
+t dev_pm_opp_config *config)
+>                 goto err;
+>         }
+>
+> +       pr_info("%s: %d: %s: %s\n", __func__, __LINE__, config->clk_names=
+[0], config->regulator_names[0]);
+>
+> and I get this:
+>
+> [    2.358437] core: dev_pm_opp_set_config: 2568: =EF=BF=BD<=EF=BF=BD=EF=
+=BF=BDy=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD<=EF=BF=BD=EF=BF=BDy=EF=BF=BD=EF=
+=BF=BD=EF=BF=BDx=EF=BF=BD=EF=BF=BD: =EF=BF=BD<=EF=BF=BD=EF=BF=BDy=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD<=EF=BF=BD=EF=BF=BDy=EF=BF=BD=EF=BF=BD=EF=BF=BDx=
+=EF=BF=BD=EF=BF=BD
+>
+>
+>
+> With following diff applied over your patch, it works again:
+>
+> diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
+> index 743080e14292..02cb754c4abd 100644
+> --- a/rust/kernel/opp.rs
+> +++ b/rust/kernel/opp.rs
+> @@ -444,13 +444,13 @@ pub fn set_supported_hw(mut self, hw: KVec<u32>) ->=
+ Result<Self> {
+>      /// The returned [`ConfigToken`] will remove the configuration when =
+dropped.
+>      pub fn set(self, dev: &Device) -> Result<ConfigToken> {
+>          let clk_names =3D self.clk_names.as_deref().map(to_c_str_array).=
+transpose()?;
+> -        let clk_names =3D clk_names.map_or(ptr::null(), |c| c.as_ptr());
+> +        let clk_names =3D clk_names.as_ref().map_or(ptr::null(), |c| c.a=
+s_ptr());
+>          let regulator_names =3D self
+>              .regulator_names
+>              .as_deref()
+>              .map(to_c_str_array)
+>              .transpose()?;
+> -        let regulator_names =3D regulator_names.map_or(ptr::null(), |c| =
+c.as_ptr());
+> +        let regulator_names =3D regulator_names.as_ref().map_or(ptr::nul=
+l(), |c| c.as_ptr());
+>
+>          let prop_name =3D self
+>              .prop_name
+>
+>
+> and I get:
+>
+> [    2.460149] core: dev_pm_opp_set_config: 2568: dummy_clk: dummy_reg
 
-syzbot tried to test the proposed patch but the build/boot failed:
-
-fs/jfs/jfs_incore.h:86:13: error: type name does not allow function specifier to be specified
-fs/jfs/jfs_incore.h:86:20: error: expected member name or ';' after declaration specifiers
-fs/jfs/inode.c:55:35: error: expected identifier
-
-
-Tested on:
-
-commit:         efb26a23 Add linux-next specific files for 20251023
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cc275090905d8fd7
-dashboard link: https://syzkaller.appspot.com/bug?extid=19e0be39cc25dfcb0858
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=112e2e7c580000
-
+Good catch. This should really be a lot more defensive so the compiler
+catches this kind of use-after-free. I'll send v2 shortly.
 
