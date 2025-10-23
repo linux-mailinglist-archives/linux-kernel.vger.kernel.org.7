@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-866243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31590BFF478
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:51:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E89ABFF49C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6BCC3A835D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:51:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C3B74EEDF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F35828DB3;
-	Thu, 23 Oct 2025 05:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8439A23AE9A;
+	Thu, 23 Oct 2025 05:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YlLE8J3M"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hpv5Tswr"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9FE20D51C
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D851DF252
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761198694; cv=none; b=KON+mQn9ITb3NSb9XDzkOZ7O/agPJ/t6P2tUisRNdJZWKfLgIGu3WtbzmuU2gOggl4p7t3mMHd5Dh7wyzdNlAPfu9OVWijBt/DgteO1eW3KQlca5UJTV9LE7mi9OTpt/OOkufZ8T7+krBU8K6or5KJAm0cwhL9XrgzN5MYoIGtE=
+	t=1761199086; cv=none; b=lxvs24AOUZ6sLN772s69jGJet3ivWsB2iYnfrQCvtcBB/E05sGviUDVarxXp1TUl9HWVS/Fg6yzNjTczxmLPMd36uhNy72m9ZDecx0/gEVuEOHjqpsxCFFP1se1wuXGYT1KMdwLwM+fRUMCcbRu3TOTimNinnv9a0vMvgOq0Hfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761198694; c=relaxed/simple;
-	bh=trsvToJEKKHu/XmsqmtPz8jWxaj1IbQyjRyBsIyHHfM=;
+	s=arc-20240116; t=1761199086; c=relaxed/simple;
+	bh=7VdE+T5JvEjyRxHDFVuvpipqpakTLilpPltYb4d6WAU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ClhAmaS3ap1WLtcBLjT/0clNZhENqge9EFypx7yiccZ8RMZLgft5BBdBhtnmvMtAUc4T4WwqrwBwh/NidWlsOPV6DMWzsrPDFK9JRWRxBBJwRMFGw9VIPIwBJ3o4fS+M5kjkZ0B9wX4fpMc83qFnmXaf9lze8/vio5A0OX8ZdvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YlLE8J3M; arc=none smtp.client-ip=209.85.160.180
+	 To:Cc:Content-Type; b=FO6B5oWaRoNkuJG0v0k4U/8qZKa+YN7+7i+v1yTYAfdKScAr+UuUYi2pyWTHj1YjwPlQEWsQMOvuwXpBGj6e3JCP42w5MLyAwiJjUzLIk5c1bzWEvRHkYap3WpYp7QFkj4oroYgTZwZ8xK2RxRXC9+DWQyVF6wJ7IvGwN/Jt2Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hpv5Tswr; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4e8b4e4ce70so5180191cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:51:33 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b472842981fso58061666b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:58:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761198692; x=1761803492; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+c+NbgHrZN7bWRSFiex5X5KJePzhxA+ZHYyLdwSqtl4=;
-        b=YlLE8J3ML71LBUjAIfM2jyecWpXrRd1q8BwQbRknZRHG8NEA4UITNNxbdQy3Wy7fgG
-         tnQYnH9oCXSjntPJzj1Y73aNuD8FG4rWRhgIMQ8wAsGjeHYdNKCa40v6D2um2H94SqvC
-         zYyIr+0NbHSn4cdA75isKl21HFM2ZerpBDCsnPhnE8iRk3u1Q+0qJ9KC2lmMfv1LJPZw
-         9poDI6l7HsuiS9JccxKC6Nyag7R7VF+WjUXKzzIzqkcdR7JOCpahdJxVuINIY0B8Te9a
-         TpcvnKQNSVB7yzCZKjq9KXuBdmZfEfT3H0NQpbVu376T1QDsbRInZ0QvMrvzRwYFQmsv
-         86Ow==
+        d=gmail.com; s=20230601; t=1761199082; x=1761803882; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KqT3fmbl/NyFgzc1chkjaxa8Hzi6O3hC82OBdEi+dws=;
+        b=Hpv5Tswr07+6oFtdT0GtAgpBRFteYM8bhLd929TAfjNjwQNsP/5skO1qn47PfMJqku
+         QfiWAEAP9qBPVgWDtoq1hVkViGDUjBGFifSY6KG3ihQMDow0/XRK5WIwysXDFYHRHldV
+         SNehzupnhCtztcCnJq2Nf8cw8TobNwQqfDHeS/2v7yrJZ/NriEd9UL3TmxF1mHr8CN+h
+         IH8s6tvukQpZ6126Q1b843ubHNAnjTd3WwrW5YvapNfiqy4Yb6wV2lvyRWdyCACCBop3
+         VDj4LSlrBWp23b+L3vZcTP5xUEyplRD5Wv4NeFmqdEtv195/pvB7aJAZiXWN8cEn9SiC
+         7jbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761198692; x=1761803492;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+c+NbgHrZN7bWRSFiex5X5KJePzhxA+ZHYyLdwSqtl4=;
-        b=PSsaQ4HJlhHV/78xnpIfK032QhgPrqATSgCKWqVTwTWRCtrsVNf4/TsOTVhJtT6UaB
-         1Gxq6qgU0MQiiJKXbDCPY/Eql0efPVDp8yH8x6xSpiurPbu2+Mw0jx001Tq8GbvZIt8u
-         tMjJVSD6JbYBbFWZ1oUJB+eMp9Yyn8hPaFBsVT7PxJ0p1h3qEHXaDjGz8Uonfn9suPDQ
-         hY33/J6rBxVd5YyAxZrGLxJF72ktQhnmGv+BCFrIHtd9HNb2I7FAFaaDg1TDlkrhAVyP
-         xJQLpDW3Fti6zV3YaJiLS+j3UaK8FpwLE/qPsKHypW4YFIwUKUxnaDHZ9yGLSvprdwns
-         0pQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnwtgS5TUVA6M/go2jHAF2yfNQDJTZy9iwfp9Cfwe0lnTGS1zHsCV2UEskHbcj5vOlj5EgZA4Nw3sqkNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEptHbyw+kubWFM1vPapydSJ42J1/8EoyL3tQkH+QS7irKcc+Y
-	wjrsXD0o4b/W8EyxkC3KVQOmWJDCHnI0YOM3EAjMqkxBzml+5Yc/zRVARCBUUWLAomvfqt9+fKj
-	A1QGxKXyC5BymDNduNuNTUR3xECKviIY=
-X-Gm-Gg: ASbGncsTA14LCdgbdrNGr+w22tk+fN5m/qnlBNbgnpiSK5HpMi9uTb84Wu+0+QV1MV1
-	kL9yT4Aj5Uj/rVB0MT5uqQELa9lxrqi0Wv1FzEpBbLC7OZ8wEvN2E5voueACulhUKwcSh3wbGlA
-	mKg29cobizwh7gRcNnrZFpAazUY4ZrlZLlccBSrRRtmn1mIj3Z3PoKuEKEb4hTvBeTjXcapSQZA
-	QEGwfgGX65CHkAILNkEtya2XZ7GPGsm51yLHLnS6Q2QW7pMOLgWIJiYAAPeSTOILj0D21g3dEcp
-	kfPQP8WtNwHfiy9+
-X-Google-Smtp-Source: AGHT+IG2Mi7vqdQCnyt6kuAmhI1WiYtd9JowlwNahGI5Sn/aHmlC3Vnbemadnf9/Q0GK32HOEsS1UsxfrANhNicTuQg=
-X-Received: by 2002:a05:622a:8d:b0:4e8:a621:7912 with SMTP id
- d75a77b69052e-4e8a6217a5fmr273669031cf.84.1761198691860; Wed, 22 Oct 2025
- 22:51:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761199082; x=1761803882;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KqT3fmbl/NyFgzc1chkjaxa8Hzi6O3hC82OBdEi+dws=;
+        b=C/NscwpR7ufCbmhngvRkODvSCtLsSHxCMG9q5gl5LTrbN8avPPwxCIGWlgO7VFrBdU
+         UM+IyIy8551heF+OInHRAU2zDBlR9ABq+fezyT+zn8ldMLZeHrRHdMyj7w9us572Xj2I
+         cY21DKle2VSziHgRlmEWlB33572ap5AwVrmDdTltKwHRTkGuqlI1PJro77Vu0qPS7RO6
+         zcXTs70E//X2lWASJlf+vrCWZDrvtyuX9MSzuGx8mWMoAfILHdB2QaLtT0hpcA6w38qz
+         YPrep/eaU+n+dLr9EvWHJrwsiC0jatkvqUQC302QOqQGHscbx66KWYfMp9judFWpcHbW
+         J5EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWC6/rxN9MJX63zZlz4ehjueAkuK9AF1IZ1Tg8F4D5Htk3gURd1nQH30kOSvmQ1RJ2uqMaUQZlehTrm+Bo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzV+OCv4GmhhzJcu4A4nHNtQ6JPa3SvOu5cdJdaewb96AxGZGR
+	1b674Tphq9lgVjWcSazes613vJoqayMOAOCMb5q5F+KEIWIkCkwQKDXLmckRWjZeIX4otwa3AxU
+	ZR7dWqVYZdgE3pL4G8pYmq/UFjFae6Xo=
+X-Gm-Gg: ASbGncur4xPkjvnGgjigc1mekmHcSs9WMg6c82llTd695E9sO07uiufkAtGy3ulZGwB
+	y5oXbfUSeNq9ZCzaS3mSiEk0ErF4L8Ia6USXCe6OyU+S3PfFibkqHHbubSE72O5LQKZXp1eu03P
+	5r0Z0jA/WPt9GdAwqUCT0a1i3UsxNHgPUKiuRdAwFNBmY4hNXhBkk4QVYfwqX6+1G5Mcv2v9aON
+	KpC2cyyUmIBvqUYmbU4a2Yz7MJmkr9hzTjqexnNrd7NA/XwByFb2mE5bFvn
+X-Google-Smtp-Source: AGHT+IHEgrhoMFz9wAJKmZGqrPoGLd0Yc4jrCJX0a9ZPmSZc59sboKW2LRJQWOCdJd5RmikbQ3D38I9zHdHcXkeQpug=
+X-Received: by 2002:a17:907:3f12:b0:b6d:5718:d43f with SMTP id
+ a640c23a62f3a-b6d5718d7b1mr65656366b.39.1761199082291; Wed, 22 Oct 2025
+ 22:58:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022105719.18321-1-ryncsn@gmail.com>
-In-Reply-To: <20251022105719.18321-1-ryncsn@gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 23 Oct 2025 18:51:20 +1300
-X-Gm-Features: AS18NWB1yQIOT_rwx8pqsyu31KsQcKncmHw5kIG8Uc-XrpaBEO8kE7dzlBnI0ZI
-Message-ID: <CAGsJ_4zKcxO-Tacy0jCZSs83+fGsgqQYNib9nCXoLTuL+hdLxQ@mail.gmail.com>
+References: <20251022105719.18321-1-ryncsn@gmail.com> <CAGsJ_4zKcxO-Tacy0jCZSs83+fGsgqQYNib9nCXoLTuL+hdLxQ@mail.gmail.com>
+In-Reply-To: <CAGsJ_4zKcxO-Tacy0jCZSs83+fGsgqQYNib9nCXoLTuL+hdLxQ@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Thu, 23 Oct 2025 13:57:24 +0800
+X-Gm-Features: AWmQ_bkGCKMn-MW625Ff-LLLuPlBu8nKTWVvjEa-19moLgG3QM5ri2QsiZJtA4k
+Message-ID: <CAMgjq7CdQK_k_oGfOwCtMm18uAXrGwfwUz93pt7kaN-S64G0Cg@mail.gmail.com>
 Subject: Re: [PATCH v2] mm/shmem: fix THP allocation and fallback loop
-To: Kairui Song <ryncsn@gmail.com>
+To: Barry Song <21cnbao@gmail.com>
 Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
 	Baolin Wang <baolin.wang@linux.alibaba.com>, Hugh Dickins <hughd@google.com>, 
 	Dev Jain <dev.jain@arm.com>, David Hildenbrand <david@redhat.com>, 
 	Liam Howlett <liam.howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
 	Mariano Pache <npache@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
 	Ryan Roberts <ryan.roberts@arm.com>, Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org, 
-	Kairui Song <kasong@tencent.com>, stable@vger.kernel.org
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Oct 23, 2025 at 1:51=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+> > diff --git a/mm/shmem.c b/mm/shmem.c
+> > index b50ce7dbc84a..7559773ebb30 100644
+> > --- a/mm/shmem.c
+> > +++ b/mm/shmem.c
+> > @@ -1895,10 +1895,11 @@ static struct folio *shmem_alloc_and_add_folio(=
+struct vm_fault *vmf,
+> >                 order =3D highest_order(suitable_orders);
+> >                 while (suitable_orders) {
+> >                         pages =3D 1UL << order;
+> > -                       index =3D round_down(index, pages);
+> > -                       folio =3D shmem_alloc_folio(gfp, order, info, i=
+ndex);
+> > -                       if (folio)
+> > +                       folio =3D shmem_alloc_folio(gfp, order, info, r=
+ound_down(index, pages));
+> > +                       if (folio) {
+> > +                               index =3D round_down(index, pages);
+> >                                 goto allocated;
+> > +                       }
 >
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index b50ce7dbc84a..7559773ebb30 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1895,10 +1895,11 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
->                 order = highest_order(suitable_orders);
->                 while (suitable_orders) {
->                         pages = 1UL << order;
-> -                       index = round_down(index, pages);
-> -                       folio = shmem_alloc_folio(gfp, order, info, index);
-> -                       if (folio)
-> +                       folio = shmem_alloc_folio(gfp, order, info, round_down(index, pages));
-> +                       if (folio) {
-> +                               index = round_down(index, pages);
->                                 goto allocated;
-> +                       }
+> Could this be a temporary variable to store round_down(index, pages)?
 
-Could this be a temporary variable to store round_down(index, pages)?
+Right we can do that, but the generated code should be the same, the
+compiler is smart enough, I just checked the generated code with gcc /
+clang.
 
->
->                         if (pages == HPAGE_PMD_NR)
->                                 count_vm_event(THP_FILE_FALLBACK);
-> --
-
-Thanks
-Barry
+Do you think the code will be cleaner with a temporary variable? I can
+send a V3 if anyone suggests, it's really a trivial change.
 
