@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-866170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62580BFF0EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:04:42 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1ABCBFF0F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17D553A7815
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:04:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DB7BD354422
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2012BE7B5;
-	Thu, 23 Oct 2025 04:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2430E17D2;
+	Thu, 23 Oct 2025 04:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qqE2oKM3"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OmW0jC/A"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E05518A956
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0002718A956
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761192270; cv=none; b=BMiD0fyTdYcn7jYUw5gt0HHOVm4iYD0OUevIH97X1tJPbhFLXSdJYjh5030AhBlgJGR/3G/1IliG8sdiZATQ38FCmPu4dxP3QgF+S3eZmf15GNY1xbg2i8dY4Fve2WC8VNThfroo65k/Ug+B+EDC+Y5u267pRPgD5JCTfL4AaMo=
+	t=1761192281; cv=none; b=NtQ0pKYcezXTkLDYL29BcFDDeLTWJEtsOBA+/sSRKRbeK8/EeJ0TJkM6lCy93C3jUk5Ht46deWTMocjMYvuRWo2mK5sO/XtBkAjmzTrrd9qTf/4/cwZh4ZG7cV6RHMcL1Xgt0HcSpw7XaKwbjrdPSKPdCnaDPIUZtuSRnSrMecg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761192270; c=relaxed/simple;
-	bh=paEUxBgZ9iBMnGgQLx04Tago1k4qIN7ExmrYSg9GYGY=;
+	s=arc-20240116; t=1761192281; c=relaxed/simple;
+	bh=VbiuVZ6RBebsfqyvVJ5Ds+gMyCUnbR04fiSy1wFclDM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hKsgEpOR4vUzyXoScOKJoHn1yW+PcbQ9xDeJ/H3lnJTd+nXQms1+1jSrI3n+vJTmL+HwM1Dl1vsr3i6HhFZzWMTzkMN7l9vcKGNaYfXmE1vMnxPWS5tGEYGsS5XDm8Ckt2zD6snmj4Im6r2jjoL6sJ09Pyk6AMQIrCHIwHMss20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qqE2oKM3; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MLMA9j031196;
-	Thu, 23 Oct 2025 04:04:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=kNqq/b
-	IE1J52ZfD77A5OJ4HQCqtofGAaXPUWDYZC3HM=; b=qqE2oKM3aYqpoV+9NG+S6r
-	KRpqEqw/PF95ZD4lYALCAOlE8OyOOEVdZhrX1OQ8/YnryBUwZ1UvVtRUSVdZt9nx
-	Fl5Nx/IEoZYjyWJ3MIZDwqiqkTESTc4la+QiBWh6DIVXCjhFST3ErQG0Ke8q56B9
-	4VxZFgMZ93oES9VDKfaj1SzTHEUNiCVboesynAaaeX7R3chtCDWuzPMwAZbt0IpD
-	QzOZJ8ygrbRtUrxK1dkEyjKgjjwIu905ZHS94lm/8peNQryWG4UGMDpngchIbrSh
-	DGWyf4KpBI+Wxe16LSyFUn/iNlYDLwZYlSgxg9LAzAgkGi1Lnt4oWcnxVvXTNahQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v327069s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Oct 2025 04:04:09 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59N41SVA015176;
-	Thu, 23 Oct 2025 04:04:08 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v327069k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Oct 2025 04:04:08 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59N2aEqQ002281;
-	Thu, 23 Oct 2025 04:04:07 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqejknn8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Oct 2025 04:04:07 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59N443di51839398
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 23 Oct 2025 04:04:03 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B784820043;
-	Thu, 23 Oct 2025 04:04:03 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 26A0020040;
-	Thu, 23 Oct 2025 04:04:00 +0000 (GMT)
-Received: from [9.109.215.252] (unknown [9.109.215.252])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 23 Oct 2025 04:03:59 +0000 (GMT)
-Message-ID: <4d2f41ed-4cab-420a-a7ba-f11a45924c9a@linux.ibm.com>
-Date: Thu, 23 Oct 2025 09:33:59 +0530
+	 In-Reply-To:Content-Type; b=NuF+vFWMxW3Zf4Z68SAPlnJ7roakOdrXfOu4uzbZpFkhyzqftPqGA7Z4uLrSISkf3vJgvEDPqdOqGi0FDwEhSceKdYXWUHMl5L76tZHZT4X+huJgjBU4UAS+KtdK5N0JvcscQiNIzv5AzlZGHmzUZ5mHxSKx6noSozg3p1cZREU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OmW0jC/A; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-63bea08a326so425696a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 21:04:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1761192277; x=1761797077; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HHSZMDPvtfAX1xsUrEgKm9tbChBih95VIvPG69sbWIA=;
+        b=OmW0jC/A2MeYOY+X11md1QEu+nxH9C3QMEqvjPZhMsD75B+NMNBbOG8wacwpZiwVcB
+         02fWGea9YivvrVZEyvx8HGKXKwFitZMeh8XkpyGtmGHmlN4jXTfkYdIfTlbdqYQGXIA5
+         4mNBsXNh3mxBt36wxXmx6rSkfBT1voaHThz4p7SnNV/vSW97yOIJxdiwiO+Goct2ae0S
+         ozBJPki4wpY8/7ie62wJCz48Y3odP6wjeLbmGCw4ey4XQHQ2X4z4s1Nf1qjWx0pWn0kR
+         CZq6SPZyZZHEsD837ZGKK5Cs9riXpgY7gv5gM6n9ODGwMAGsXVMoGLGxpTNBDt0ORuXi
+         DzvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761192277; x=1761797077;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HHSZMDPvtfAX1xsUrEgKm9tbChBih95VIvPG69sbWIA=;
+        b=kfZzeTBlUPnHmwFRltGCqD5VC2pSj//RwSCChKna97XMyQMImfETQfdtQn1mvdcFVk
+         kTfOQlwPOXiSGWdgNeoMk9HDHlShR6loX2q+A77Pal2tZGK6hlv0tamtX/myU4xg5DvO
+         hkrPjILC0BFA9thyxn8ifmqsqRzD/Y733iANTV/Bs4Q7qwmu8t9ZR0UsrtADGsTab09/
+         6So7SX9AUwsGoaXKIIQSMm5CwDn1RJoDT74tlz5JHTHFEWpy3vSGDBGUoHgSrzVDyEqf
+         0TvOEJ12ffF9OcornCgEFwCVtuHZZJhK9z4ndAyqJN55Z9QxP1DHTqpF1y6c5xqHQ77E
+         BM9w==
+X-Forwarded-Encrypted: i=1; AJvYcCX598tJ4rg9o+RSfJ16JM+C+yViOJby0VmzyO3Qc0uICYNNn6+iKKNXUiyC95XMQInnYnm0QjQN0ppichE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk5y5ONyfsoKIaIFpLUUIoErUxv0I8HfKOWIrFTvIT7HjBP4Ep
+	SzThrSh711R9y7jNhtzoP4Z+FtmWxYOmjvCQa64GXAm2vhG8cpQqFlYqiqibMBGj7io=
+X-Gm-Gg: ASbGncviEve4P4eYTfIvebHMkevfjhKqWUssWcCrb9uhwmFbzCSzjlCw5QsF/3uERqG
+	a2aEAEfNvsYtbKM97RDiFZT2uoAGsLv47OUWzG0mhIp9cG2AGjmfkR/RzKTzaMSzTK7ZMTtqd78
+	dXlwo/3JDx1F7zMHytdpdDxqdH2W9sdUaX5mV7PaX+wSWqgVQN+pP2jLQrhSeWcNP+VAwH0nGug
+	YSsYx8+Z8+PBkAu07F6/+6YxHfFf00Ka54eeVjchKOdlQTC466jbpEcrdkjytFruGL/yN1TBQVr
+	lQWnrG6o9x1koaDQFi1FScPhhpK9SRn1/I2ddEcvs0FSpbl04upzOhELNExMGYT5VdKneccgE+f
+	aWf6iTHwp3+1gxkNTY94nNuslzF6pQ1LUyN/hwNCQijQVqC0XJEtDoop7vlslOe2Lvjw4wWoRY9
+	oPIYEmrDpR
+X-Google-Smtp-Source: AGHT+IGJiS3xjlcmck6jYeKg58UKDvZ1VJYr2SNmkONX0VTIjq/vCHDBgtScrL9mLTDQswuRHlg1UQ==
+X-Received: by 2002:a50:c949:0:b0:637:e271:8071 with SMTP id 4fb4d7f45d1cf-63c1f6d5dd8mr18546472a12.27.1761192276905;
+        Wed, 22 Oct 2025 21:04:36 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.151])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e3ebb3738sm579215a12.3.2025.10.22.21.04.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 21:04:35 -0700 (PDT)
+Message-ID: <41dbea85-8aa1-4034-8106-e28c37e398b8@tuxon.dev>
+Date: Thu, 23 Oct 2025 07:04:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,85 +82,220 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 00/10] paravirt CPUs and push task for less vCPU
- preemption
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <seanjc@google.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, tglx@linutronix.de, yury.norov@gmail.com,
-        maddy@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, gregkh@linuxfoundation.org,
-        vschneid@redhat.com, iii@linux.ibm.com, huschle@linux.ibm.com,
-        rostedt@goodmis.org, dietmar.eggemann@arm.com, vineeth@bitbyteword.org,
-        jgross@suse.com
-References: <20250910174210.1969750-1-sshegde@linux.ibm.com>
- <aPZIGCFk-Rnlc1yT@google.com>
- <cfc43786-5a9d-4813-b8ac-a8a55f430f03@redhat.com>
+Subject: Re: [PATCH v5 2/9] soc: microchip: add mfd drivers for two syscon
+ regions on PolarFire SoC
+To: Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+ Daire McNamara <daire.mcnamara@microchip.com>,
+ pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-riscv@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251013-album-bovine-faf9f5ebc5d4@spud>
+ <20251013-patient-matrimony-6162c8f92e2e@spud>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <cfc43786-5a9d-4813-b8ac-a8a55f430f03@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=EJELElZC c=1 sm=1 tr=0 ts=68f9a939 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=Zoj0bJXJtDvkO92F0TYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX31ySbOXlWtrv
- 36HjYPNht7QqJ8cVglDFimrajnMGXUo0ccUOu+Em+zLwxF00WDYiiHKYGsdSsnwGg8EKSYZSAPB
- XKc4zv+43LYRM/q30xU2gt4mHm0JOAD44az/GH3EY/DfQ8bu4I5ehILFxMG7IiRBB4b7w0bljOH
- imIKsaCJ7ztVX5BsQiHmieFXkVaJkoEJKebGFEyyr8p6CPGc3nhYoADKAb92AyD3xSnjH1DIVW/
- dNZ6+1zRtXnrzdRaaq1mIAO0N1237aqLmbOPXgQvA7RQeJ0LvDYSBjPHL1QU9ldJTLstIm6ItRC
- paubwmdw/5J2HDegcVg6EV2a80JUEiDL/01jtj5oCAay7lnejvVeGYAsD4dBtyls02PQkU2pe2h
- T2EX2nW/powb4VbwOZT/Nd+vhQdsGQ==
-X-Proofpoint-GUID: 7AYUV3o335U8A7KKkJkO2g6VjFIco6ML
-X-Proofpoint-ORIG-GUID: LzGoaR3-um5SC2JWdi-dBlo3OVIsc2-4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 spamscore=0
- malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+In-Reply-To: <20251013-patient-matrimony-6162c8f92e2e@spud>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi, Conor,
 
-Hi Paolo. Thanks for looking into this series.
-
-On 10/20/25 8:35 PM, Paolo Bonzini wrote:
-> On 10/20/25 16:32, Sean Christopherson wrote:
->>   : Till the hint from underlying hypervisor arrives, another idea is to
->>   : approximate the hint from steal time.
+On 10/13/25 20:45, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
 > 
-> I think this is the first thing to look at.
->
-
-The current code i have does the below: All of this happens in the Guest.
-No change in host. (Host is running PowerVM, a non linux hypervisor)
-
-At every 1second (configurable):
-1. Low and High steal time thresholds are defined.(configurable)
-2. Gathers steam time from all CPUs.
-3. If it higher than the High threshold reduce the core(SMT8) usage by 1
-4. If it lower than low threshould increase core usage by 1.
-5. Avoid ping-pong as much as possible.
-
-Its an initial code to try out if it works with plumbing the push current task framework
-given in the series.
-
-  
-> Perhaps single_task_running() can be exposed in the x86 steal time data 
-> structure, and in fact even in the rseq data for non-VM usecases?  This 
-> is not specific to VMs and I'd like the steal time implementation to 
-> follow the footsteps of rseq rather than the opposite.
+> The control-scb and mss-top-sysreg regions on PolarFire SoC both fulfill
+> multiple purposes. The former is used for mailbox functions in addition
+> to the temperature & voltage sensor while the latter is used for clocks,
+> resets, interrupt muxing and pinctrl.
 > 
-> Paolo
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  drivers/soc/microchip/Kconfig               | 13 ++++++
+>  drivers/soc/microchip/Makefile              |  1 +
+>  drivers/soc/microchip/mpfs-control-scb.c    | 45 +++++++++++++++++++
+>  drivers/soc/microchip/mpfs-mss-top-sysreg.c | 48 +++++++++++++++++++++
+>  4 files changed, 107 insertions(+)
+>  create mode 100644 drivers/soc/microchip/mpfs-control-scb.c
+>  create mode 100644 drivers/soc/microchip/mpfs-mss-top-sysreg.c
 > 
+> diff --git a/drivers/soc/microchip/Kconfig b/drivers/soc/microchip/Kconfig
+> index 19f4b576f822..31d188311e05 100644
+> --- a/drivers/soc/microchip/Kconfig
+> +++ b/drivers/soc/microchip/Kconfig
+> @@ -9,3 +9,16 @@ config POLARFIRE_SOC_SYS_CTRL
+>  	  module will be called mpfs_system_controller.
+>  
+>  	  If unsure, say N.
+> +
+> +config POLARFIRE_SOC_SYSCONS
+> +	bool "PolarFire SoC (MPFS) syscon drivers"
+> +	default y
+> +	depends on ARCH_MICROCHIP
+> +	select MFD_CORE
+> +	help
+> +	  These drivers add support for the syscons on PolarFire SoC (MPFS).
+> +	  Without these drivers core parts of the kernel such as clocks
+> +	  and resets will not function correctly.
+> +
+> +	  If unsure, and on a PolarFire SoC, say y.
+> +
 
-Sorry, I didn't follow. You mean KVM usecases?
+This empty line could be dropped.
 
-I don't know much about rseq(on todo list). Any specific implementation i could
-look at done via rseq that you are talking about?
+> diff --git a/drivers/soc/microchip/Makefile b/drivers/soc/microchip/Makefile
+> index 14489919fe4b..1a3a1594b089 100644
+> --- a/drivers/soc/microchip/Makefile
+> +++ b/drivers/soc/microchip/Makefile
+> @@ -1 +1,2 @@
+>  obj-$(CONFIG_POLARFIRE_SOC_SYS_CTRL)	+= mpfs-sys-controller.o
+> +obj-$(CONFIG_POLARFIRE_SOC_SYSCONS)	+= mpfs-control-scb.o mpfs-mss-top-sysreg.o
+> diff --git a/drivers/soc/microchip/mpfs-control-scb.c b/drivers/soc/microchip/mpfs-control-scb.c
+> new file mode 100644
+> index 000000000000..d1a8e79c232e
+> --- /dev/null
+> +++ b/drivers/soc/microchip/mpfs-control-scb.c
+> @@ -0,0 +1,45 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/array_size.h>
+
+Looks like this one can be dropped or maybe you want to use
+ARRAY_SIZE(mpfs_control_scb_devs) as 4th argument of mfd_add_devices().
+
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+
+Looks like this one can be dropped.
+
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of_platform.h>
+
+Same with this one?
+
+> +#include <linux/platform_device.h>
+> +
+> +static const struct mfd_cell mpfs_control_scb_devs[] = {
+> +	{ .name = "mpfs-tvs", },
+
+I think you can use:
+
+MFD_CELL_NAME("mpfs-tvs")
+
+> +};
+> +
+> +static int mpfs_control_scb_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
+> +
+> +	ret = mfd_add_devices(dev, PLATFORM_DEVID_NONE, mpfs_control_scb_devs,
+> +			      1, NULL, 0, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+
+You can use directly:
+
+	return mfd_add_device(...);
+
+> +}
+> +
+> +static const struct of_device_id mpfs_control_scb_of_match[] = {
+> +	{.compatible = "microchip,mpfs-control-scb", },
+
+This looks un-documented.
+
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, mpfs_control_scb_of_match);
+> +
+> +static struct platform_driver mpfs_control_scb_driver = {
+> +	.driver = {
+> +		.name = "mpfs-control-scb",
+> +		.of_match_table = mpfs_control_scb_of_match,
+> +	},
+> +	.probe = mpfs_control_scb_probe,
+> +};
+> +module_platform_driver(mpfs_control_scb_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Conor Dooley <conor.dooley@microchip.com>");
+> +MODULE_DESCRIPTION("PolarFire SoC control scb driver");
+> diff --git a/drivers/soc/microchip/mpfs-mss-top-sysreg.c b/drivers/soc/microchip/mpfs-mss-top-sysreg.c
+> new file mode 100644
+> index 000000000000..9b2e7b84cdba
+> --- /dev/null
+> +++ b/drivers/soc/microchip/mpfs-mss-top-sysreg.c
+> @@ -0,0 +1,48 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/array_size.h>
+
+Looks like this one can be dropped or maybe you want to use
+ARRAY_SIZE(mpfs_mss_top_sysreg_devs) as 4th argument of mfd_add_devices()
+
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+
+Unused?
+
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of_platform.h>
+
+Unused?
+
+> +#include <linux/platform_device.h>
+> +
+> +static const struct mfd_cell mpfs_mss_top_sysreg_devs[] = {
+> +	{ .name = "mpfs-reset", },
+
+MFD_CELL_NAME() ?
+
+> +};
+> +
+> +static int mpfs_mss_top_sysreg_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
+> +
+> +	ret = mfd_add_devices(dev, PLATFORM_DEVID_NONE, mpfs_mss_top_sysreg_devs,
+> +			      1, NULL, 0, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (devm_of_platform_populate(dev))
+> +		dev_err(dev, "Error populating children\n");
+
+Is it OK return 0 above if there are failures here?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id mpfs_mss_top_sysreg_of_match[] = {
+> +	{.compatible = "microchip,mpfs-mss-top-sysreg", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, mpfs_mss_top_sysreg_of_match);
+> +
+> +static struct platform_driver mpfs_mss_top_sysreg_driver = {
+> +	.driver = {
+> +		.name = "mpfs-mss-top-sysreg",
+> +		.of_match_table = mpfs_mss_top_sysreg_of_match,
+> +	},
+> +	.probe = mpfs_mss_top_sysreg_probe,
+> +};
+> +module_platform_driver(mpfs_mss_top_sysreg_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Conor Dooley <conor.dooley@microchip.com>");
+> +MODULE_DESCRIPTION("PolarFire SoC mss top sysreg driver");
 
 
