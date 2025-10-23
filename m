@@ -1,159 +1,114 @@
-Return-Path: <linux-kernel+bounces-866733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E97ACC0084F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:35:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819BBC0086D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A31813A2115
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:35:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 949241A04E0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE22430DEAE;
-	Thu, 23 Oct 2025 10:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A4F30AD1E;
+	Thu, 23 Oct 2025 10:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPvhA6rW"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRI5o5CE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E4330DD24
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAF82DE6ED;
+	Thu, 23 Oct 2025 10:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761215588; cv=none; b=UR7JUdEuGuKdB8AIfiP4GqqQf4nSwj/9jLremzKJDEGjWOeCzseK6CalPvPcK9BT0EFkBJ6ZtnNok0KJPj0rDgguVbxAw3TVIul4rYT5VZafsbQTcQ0OqdD7zkgFBZbD8VM38Jork7F5BfUkRds4bFkmKi12CzgfHB7HnQFcT0s=
+	t=1761215667; cv=none; b=bMFLbm9+4AiH7yOG0LrRt9HbZRCIp8ytZa9vMXvKQnVSPynhse+S2e4J0pVpiQluQrq/CBaWfT2CF6ScRbg9YN7lJveo3hlG9YR/OwkkeJ1VihGGx5Qby2q8TFjQgq2P7qvGYZgijBXB6Bzl2C9yKN5zWQDik8yrxBmAzk8bifk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761215588; c=relaxed/simple;
-	bh=dZnKR/a/pDH/CB8DnfAtKqRDaLhcZVhuKSlMbnnqq90=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZHueQyxthwVQIMYfunG7flUTOAwGFCPGY44o4vObukBkBtmqeMEvg7r16KgfBpfywVQShq5RjiC+wulqFl3v93rVOjdDam89HmgBY6L9GIxp1tmFAAe8cHLfVyCCfTZjn1o4aJamITLVUvl2ijzGD8VWWmB6TWg/FbJMKcI7A7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nPvhA6rW; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b679450ecb6so502173a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:33:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761215586; x=1761820386; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7aCzwSR2QayqVcdDXwHXvwD07lQU3kcAPJzjXfbUAOI=;
-        b=nPvhA6rWBH87cdrJw9idX647l8Y9oOEK0qWh/bOgpXmxQi87eshBl4wvH5qow2a6Lm
-         CM0n/siqlSVqD3W64OYysxG3psYZfKg0d8Sl4WwrgAs4uUchx/XtuCNLHpqsP5GH1VI5
-         iBoehdkdYMWEpZPbxs2UjSndlg8EgcvIdss28xq7wBeeQzC55w6wNHzwRJ2RfqIg7LO9
-         3SliXSJav08Rxc+kzog7khPboY2TPh2aAC0jK3JeYtlR7aqoBv1qtWH+KBPqAUvuTiVU
-         kmYgipJQo6p5ejtcsdTgWnKJ4FbPwRLxi1sYthVG3b/UuzTytWsGlVYuL6dt6m+DQ4il
-         BP/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761215586; x=1761820386;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7aCzwSR2QayqVcdDXwHXvwD07lQU3kcAPJzjXfbUAOI=;
-        b=rq68v8rE0ox8FRT3IZ4ehr+/Lzznxr2BqMIZ5dMn5UAmIniwrLAbp2U+veMMnEDFVU
-         DAfaLZMuxDbIRUZW3+fhbRG94nj6E3+i5Hj8p3/KN9apB6ToAjNhZPmPvqm98DOK/Skg
-         fgR5EhTa17dNxI+5Ku2rSK6I62qs2rUW/5o0aq4cCwtFetP6EgY3MAedDtqhP4Ls3HWc
-         8qTuEe9kyhyWRuxsyvdh4WPwriqeU4+sbv1Qvoe5x24YaR2u4Wy9ujssZhwpsWTfTiHY
-         wo96dBSoBMju/o9nn+ZVReSD5I1+p17SXcsFO/FJuz625t+JB2m0FjwdRzSO/cwW/G8M
-         QPUA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6yVRCV5V5lgKIu2LqzDGZ+O6RaovNmP3bk47p+kUDMDMuRow/cqbaMQrSKaZpryXnxDVYpCrmxKj/y08=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv2G6kS3kMjnuKc2lJMOmKwVd0vF5a+y9YItR/Z1bwraGqjC9j
-	utirKVXY1rm02p6cgRFLrbYG3IVw89CS3giwlQXD8Q1tAlmjI25RGVLrCRKRdEHzrNZcZjB9Q+c
-	3RZND4E4lpytzuAoxuOiKirNxGdHFc9I=
-X-Gm-Gg: ASbGncujRR2PvrAixD0m0xdwbtar8oaHfZQh6g/AJ9beKU3A6s6DMx9z6D75Xy3LO8y
-	wRvor//xCt8wW6OTYXQpxgwky9q7ZzOYFvsrgfFRfJIWN/uD82JPyY2espRMEIGP847fblVCJ5L
-	elp2zLUDealX8ZZJRqPckQ0xEdlLZpLBvqmB+7PEu2BjkepTSpzdIdrMgcuhjuHvSkO7zzCLQB5
-	2rKzyR8FgP43/t0eexBDyC8QDMkCLNHtZo5Y0utGtxSh4ivnlsLibpl8BltvFkq8xoLCAeHcRTT
-	PLhxfLWhecPfbOXZDpMtsbA6bPezjUqUmafy6fAiLuG04VAuIT/CUHNxru1f+0QnKdcxE2Dxvp2
-	yvhQMXcoqG8F3cZyBAO1+KYUB
-X-Google-Smtp-Source: AGHT+IHsVcEJWnjTOcRm6kFFDy//zI+E6pFS+QqeNfX+0JG9e5gfDnfkAhZ3l+gYEusuaLmHBHf70Dl2/e/vWAz5ugA=
-X-Received: by 2002:a17:903:1a67:b0:24b:11c8:2d05 with SMTP id
- d9443c01a7336-2946e23029fmr26514085ad.45.1761215585733; Thu, 23 Oct 2025
- 03:33:05 -0700 (PDT)
+	s=arc-20240116; t=1761215667; c=relaxed/simple;
+	bh=EvgrZI+rymOOfZUCPqItc1VU/vONGS0OSWFKI/tUzDs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=owAedEmziGoZfPx0MBhy6pW9FOFa5pAnc3ltALGs85Qr/sp2WzRwY2AvyhFYPCjBaQU2qvEEteYYvKD/eF1xRwzAKRwoWB3EYivD7C3qXUwSRU5YdveOCAxU5uV8hKrUTBuADpXCLWw3r9ygBG5bA+OzQrmrTT61V7ENbaUvFOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRI5o5CE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D2D2C4CEE7;
+	Thu, 23 Oct 2025 10:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761215667;
+	bh=EvgrZI+rymOOfZUCPqItc1VU/vONGS0OSWFKI/tUzDs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uRI5o5CEuyLF8Dsw/NHSiQH641JTHFRjyjRHMeLd6Ltw3N/WUcoXgM9nnD5zSct3L
+	 +m1/CsyFgl0kAZeWmYT4WZVkOCsUe4OHX8G+c+f0GK+vmdra6BvwuoRmsTqaO4zK/7
+	 l5jZ/+Lj1gu4cxqy6wfpwkhByYY2ax6WflUUzg4ihhcJgiHmJ8rtTVCR8247axtNrI
+	 MC/AQ9p31JRcxevANJ5y0lskvzJW3DtGUdHntQ+tUhok2yvKWaHsv4RwfUnpUAbpFD
+	 4G76lppLtXr4SBngcinr0W1lMWdAfBk0WndUTVk26yzEAFMuAUeShMgJKsoOsA+w4S
+	 dW3FN/qYIMDtA==
+Date: Thu, 23 Oct 2025 12:34:23 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Yixun Lan <dlan@gentoo.org>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
+Subject: Re: [PATCH v4] i2c: spacemit: configure ILCR for accurate SCL
+ frequency
+Message-ID: <lr77avehdf3skwd5o2yur4hvbxhyx2spzve3wpo733l74ppjcx@mn34escjt542>
+References: <20251017-k1-i2c-ilcr-v4-1-eed4903ecdb9@linux.spacemit.com>
+ <t26pyjnmzj62oczwuje2bbscowj22pdge2ef3tcktwmhzpsq47@7odo2ccvc52a>
+ <sdhkjmi5l2m4ua4zqkwkecbihul5bc2dbmitudwfd57y66mdht@6ipjfyz7dtmx>
+ <748544ABF6A72D31+aPg31PBvHDkBALoa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250913105252.26886-1-opensource206@gmail.com> <8199bec4-b9e1-4d6e-98da-a4d7eb667437@kernel.org>
-In-Reply-To: <8199bec4-b9e1-4d6e-98da-a4d7eb667437@kernel.org>
-From: opensource india <opensource206@gmail.com>
-Date: Thu, 23 Oct 2025 16:02:54 +0530
-X-Gm-Features: AS18NWAg0QSyYQsw_O7gJY62YSwJ5TkGKjIiCvVi1yEvwsZR1T95LHjrV-YNDLA
-Message-ID: <CAKPKb8-s96v+Nh29Z5E0wgyXYgoFHJT2SHA_WpZshXspo0WY0w@mail.gmail.com>
-Subject: Re: [PATCH v3] media: v4l2-ctrls: add full AV1 profile validation in validate_av1_sequence()
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: mchehab@kernel.org, hverkuil@kernel.org, ribalda@chromium.org, 
-	laurent.pinchart@ideasonboard.com, yunkec@google.com, 
-	sakari.ailus@linux.intel.com, james.cowgill@blaize.com, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <748544ABF6A72D31+aPg31PBvHDkBALoa@kernel.org>
 
-On Wed, Oct 22, 2025 at 12:44=E2=80=AFPM Hans Verkuil <hverkuil+cisco@kerne=
-l.org> wrote:
->
-> Hi Pavan,
->
-> On 13/09/2025 12:52, Pavan Bobba wrote:
-> > Complete the "TODO: PROFILES" by enforcing profile-specific and
-> > monochrome constraints as defined by the AV1 specification
-> > (Section 5.5.2, "Color config syntax").
-> >
-> > The validator now checks:
-> >
-> >  - Flags: reject any unknown bits set in sequence->flags
-> >  - Profile range: only profiles 0..2 are valid
-> >  - Profile 0: 8/10-bit only, subsampling must be 4:2:0 (sx=3D1, sy=3D1)=
-,
-> >    monochrome allowed
-> >  - Profile 1: 8/10-bit only, subsampling must be 4:4:4 (sx=3D0, sy=3D0)=
-,
-> >    monochrome forbidden
-> >  - Profile 2:
-> >     * 8/10-bit: only 4:2:2 allowed (sx=3D1, sy=3D0)
-> >     * 12-bit: 4:4:4 (sx=3D0, sy=3D0), 4:2:2 (sx=3D1, sy=3D0), or 4:2:0 =
-(sx=3D1, sy=3D1)
-> >       allowed
-> >  - Monochrome path (all profiles except 1): forces subsampling_x=3D1,
-> >    subsampling_y=3D1, separate_uv_delta_q=3D0
-> >
-> > These checks prevent userspace from providing invalid AV1 sequence
-> > headers that would otherwise be accepted, leading to undefined driver
-> > or hardware behavior.
->
-> This patch was merged in our media-committers next branch, but I noticed =
-that
-> it now fails the v4l2-compliance test for the visl driver.
->
-> The cause is that the new validation now fails with the default values fo=
-r
-> this control as set in std_init_compound().
->
-> You can test this yourself by loading the visl driver and then running
-> v4l2-compliance -d /dev/videoX -E --verbose
-> (-E stops at the first error)
->
-> Can you provide a patch to initialize this control with sane values?
->
-> Apologies for not noticing this before: there are some issues with the au=
-tomatic
-> regression tests in our CI, so the tests weren't run.
->
-> Regards,
->
->         Hans
->
+Hi Troy,
 
-Hi Hans Verkuil,
+On Wed, Oct 22, 2025 at 09:48:04AM +0800, Troy Mitchell wrote:
+> On Tue, Oct 21, 2025 at 06:03:34PM +0200, Andi Shyti wrote:
+> > On Mon, Oct 20, 2025 at 11:28:45AM +0200, Andi Shyti wrote:
+> > > On Fri, Oct 17, 2025 at 03:27:39PM +0800, Troy Mitchell wrote:
+> > > > The SpacemiT I2C controller's SCL (Serial Clock Line) frequency for
+> > > > master mode operations is determined by the ILCR (I2C Load Count Register).
+> > > > Previously, the driver relied on the hardware's reset default
+> > > > values for this register.
+> > > > 
+> > > > The hardware's default ILCR values (SLV=0x156, FLV=0x5d) yield SCL
+> > > > frequencies lower than intended. For example, with the default
+> > > > 31.5 MHz input clock, these default settings result in an SCL
+> > > > frequency of approximately 93 kHz (standard mode) when targeting 100 kHz,
+> > > > and approximately 338 kHz (fast mode) when targeting 400 kHz.
+> > > > These frequencies are below the 100 kHz/400 kHz nominal speeds.
+> > > > 
+> > > > This patch integrates the SCL frequency management into
+> > > > the Common Clock Framework (CCF). Specifically, the ILCR register,
+> > > > which acts as a frequency divider for the SCL clock, is now registered
+> > > > as a managed clock (scl_clk) within the CCF.
+> > > > 
+> > > > This patch also cleans up unnecessary whitespace
+> > > > in the included header files.
+> > > > 
+> > > > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> > > 
+> > > merged to i2c/i2c-host.
+> > 
+> > I'm sorry, because of the report from LKP(*) I reverted your
+> > patch. I2C_K1 is selected by MFD_SPACEMIT_P1, so that we get the
+> > following warning:
+> > 
+> >   WARNING: unmet direct dependencies detected for I2C_K1
+> > 
+> > and compile I2C_K1 without COMMON_CLK. Please, fix it and
+> > resubmit the patch.
+> Yes, I noticed that too. The issue is introduced by PMIC driver(P1)
+> instead of I2C.
+> Should I resubmit this patch right after sending the fix,
+> or wait until the fix gets merged first?
 
-Thank you so much for the review.
-yes, v4l2-compliance expected to fail indeed since it is sending
-default values which, our newly added code rejects as per
-specification
+I have reverted the patch. Please send them both in the same
+series, where the first patch is the "fix" (or preparation to
+this patch) and then this patch.
 
-when you say patch, you mean patch for v4l2-compliance tool with
-proper values so that v4l2 core driver can accept?
+Thanks,
+Andi
 
