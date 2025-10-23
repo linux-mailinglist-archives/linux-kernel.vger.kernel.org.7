@@ -1,262 +1,138 @@
-Return-Path: <linux-kernel+bounces-867040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BF6C016EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:34:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 367FEC01457
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 71FE64FF864
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:33:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED02D3AA0B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53E133CEB1;
-	Thu, 23 Oct 2025 13:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63571314B73;
+	Thu, 23 Oct 2025 13:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GoPbJ9ti"
-Received: from mail-qv1-f99.google.com (mail-qv1-f99.google.com [209.85.219.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P/rHK03x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC6D33C52A
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED3E3148C7;
+	Thu, 23 Oct 2025 13:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761226038; cv=none; b=ExmDZCGgBPoE4eKtj1i0dTHRpnIhI6nz5Oi5YiQC3F/0wuuwBR2l4gelENQXfxGj7KmliIRebShSrMUo2z3fg8XcUmo/opag66d7gw3yGkcm+Y+i5E2YIhuz4faxCBdAJSGsNzPCIs6mSWXmqpAaVu78nu1mxw7ARNLWzxiUOLI=
+	t=1761225148; cv=none; b=SItCwrC353/AjvUVbqsXcKeZ/eCGRK6vQLFORPbMPzbFQZ5zANVaiSEOMnp8CpfMl9hSWS62JB+odmozLDsV2PBnexY0JYoy1QceBqc2xAQl6POpGwYDfSn/kDQloTzIGk14rKzSd0yWbXZYToMCJdtrDvkr/z5aZIOAVKjW6Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761226038; c=relaxed/simple;
-	bh=AXr+tzfOn3Q/HLQ3wexAh6fBD+j+XCPeTmgXNdkLmqQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MchM1GxH4HupZzIzLSSChk207MVguznAt3sNVxgxmrVLr1fyP6vbfhujiqBhDQmMb9qJbjxdwe7CkaI/ndNmA2iVtyqOgaSZAdFmbCVRsy9EqEDHJcbX+ce4hsCMQ1OYmxiAfKU/qbyo8QjM6vgBZvo9e3r6fY3teCH+5UqOrs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GoPbJ9ti; arc=none smtp.client-ip=209.85.219.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f99.google.com with SMTP id 6a1803df08f44-7f7835f4478so6003046d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:27:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761226036; x=1761830836;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:dkim-signature
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tbV5rahZ/BOf/pG+Df+z4Hvsda1kZ/x4HpNILftqJqA=;
-        b=TAF+1CoiCi5aywXc/gcLedy/DLMSFc7G3TfpqlR3+piSP6XGedP4vvnn979Xis9uM7
-         5Rb8gosoNcB35MZJ0c5YTZPkxebOkOZ+ZUq/aNtkoXM0AbC8G2dIdI/49pD+NadH5N6Q
-         U59Lmj5Yto+yyJk+wU4qVz7Rot/tpMge2gcQiWIMDrCZ1unTTdLdymHlw6l/H3UlyOhk
-         pOz1syhejt6ugmCNcZU3VO74sQUXZX8nwH7rK82c9FvVzCtQcT+wIc0LSR+K8M6hHF37
-         NTe5gdcqgfq9drLj5YCyWRGw3RAewmL7UBh8YIEsLuSuXv9agdf2blM/pDlC9xqRVzB9
-         VNKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxoN11eSFhOwUHgIdpsJm34k+5Z6iwVvJcdnrJUIIzj5Ki/xAKcIxbse8A/WVgjxCHvQqzR666JaiM7AQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3uZrIgCJ/3kxlI7He1P0jKQBp3zty/PRk3aOxhl8bloWBlEo3
-	ebBhxAhf9p5Pct3dPhNYi8TEKCaO8uKxBQcJrNOXlIWRuqFXR0J39JnRhZnfbhVZt2iI1VJNpfQ
-	aoBa73MxBsqtiUrCpGd7QmHL0y8sjf+PiwHV36Pc4U3TnXFF2xUv1iP8+6+euJpGHkSdZS7DKwK
-	LKByKgCBKvYDN245GjOWlSQvr4u1gZekmeo2Gk4p9h8iuamRDfXSWlNt3KjxjNobgSxe7Ov67tj
-	mGB3yvD6JNOp578EAU=
-X-Gm-Gg: ASbGnctD3UkI2H1UXdfOd749KWvvG5q4OgHUFBNtM8q85BYbruDAVC9ie8t6ut9DOjP
-	cjpKeo5soI40Vy+mPKITIhJy2ZujOr4v1t8W4Vr5xHWQJjEyrh5qZBvy2242xWoxoOp5lkEusz7
-	XDRyOnr/Yb9i59pig22nAJ3JTWpwjcvI6e3Uv0m+BBEBx4OjtZKfZZuOPSQyrLfPlqHpYi49pkF
-	c0XLKooxYJUoOE07WkCakYfMsKS03q1C84A/7hHusUZchkdzGrWA84Ne9OhNweyHlzKdSgpx9hK
-	cEij1smGU729e8eqC/y8xrzYrnmhGSj2nWWmIYE11s1yzVrNdRO1lldV593CHFcVhDWh1J7/CRk
-	moTLJO/Yccs4AgfZ3tTWJPM0C+JcpMKTKUYUU2nxSjUVfueRODYsl2IfzgBTL0qPeNpg5PGp0Wl
-	CFX7ehciITz8+2NQfMojUwNyb0KHj3iupbxQ==
-X-Google-Smtp-Source: AGHT+IFTOqfHlBFa3+SYEFJVPHJc+D4Uvy6+MQk4aAzRwmAbvdDi4plNo54oh8SdtwYxfTP/sGHnYkGoP+rm
-X-Received: by 2002:ad4:5ccb:0:b0:70f:5a6d:a253 with SMTP id 6a1803df08f44-87c20638f95mr242302926d6.49.1761226032933;
-        Thu, 23 Oct 2025 06:27:12 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-102.dlp.protect.broadcom.com. [144.49.247.102])
-        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-87f9e82e0a2sm1774386d6.34.2025.10.23.06.27.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Oct 2025 06:27:12 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-286a252bfbfso22762715ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:27:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1761226032; x=1761830832; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tbV5rahZ/BOf/pG+Df+z4Hvsda1kZ/x4HpNILftqJqA=;
-        b=GoPbJ9tiqGuFZw4Gxh8twUCh7/IWU6ZXdXcfcnUzhsxHASIbsdvog+4IEkoEned/d/
-         ly/HCigb8UnL4gCgPQhadO15TX/k3GwpPGoubQEtT2dLr8GoTiqoGxz2e1mOQRisttDk
-         Y5fsj5f8u5MT2pX8dw1Rgubm0YVYRtfNVM7xg=
-X-Forwarded-Encrypted: i=1; AJvYcCUREgQcNzINRxX+CNvZes4Ukv/4qvG5aQY4hzaucUFyUpgm3CmBOSHJ/hqeBRnWnYtT5EyymtzLwOEN2EQ=@vger.kernel.org
-X-Received: by 2002:a17:903:1746:b0:28e:7ea4:2023 with SMTP id d9443c01a7336-290cb07d430mr296052065ad.46.1761226031606;
-        Thu, 23 Oct 2025 06:27:11 -0700 (PDT)
-X-Received: by 2002:a17:903:1746:b0:28e:7ea4:2023 with SMTP id d9443c01a7336-290cb07d430mr296051525ad.46.1761226031051;
-        Thu, 23 Oct 2025 06:27:11 -0700 (PDT)
-Received: from photon-dev-haas.. ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dfc204fsm23739785ad.60.2025.10.23.06.27.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 06:27:10 -0700 (PDT)
-From: Ajay Kaher <ajay.kaher@broadcom.com>
-To: vadim.fedorenko@linux.dev,
-	kuba@kernel.org,
-	davem@davemloft.net,
-	richardcochran@gmail.com,
-	nick.shi@broadcom.com,
-	alexey.makhalov@broadcom.com,
-	andrew+netdev@lunn.ch,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	jiashengjiangcool@gmail.com,
-	andrew@lunn.ch,
-	viswanathiyyappan@gmail.com,
-	wei.fang@nxp.com,
-	rmk+kernel@armlinux.org.uk,
-	vladimir.oltean@nxp.com,
-	cjubran@nvidia.com,
-	dtatulea@nvidia.com,
-	tariqt@nvidia.com
-Cc: netdev@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-kernel@vger.kernel.org,
-	florian.fainelli@broadcom.com,
-	vamsi-krishna.brahmajosyula@broadcom.com,
-	tapas.kundu@broadcom.com,
-	shubham-sg.gupta@broadcom.com,
-	karen.wang@broadcom.com,
-	hari-krishna.ginka@broadcom.com,
-	ajay.kaher@broadcom.com
-Subject: [PATCH v3 2/2] ptp/ptp_vmw: load ptp_vmw driver by directly probing the device
-Date: Thu, 23 Oct 2025 13:10:48 +0000
-Message-Id: <20251023131048.3718441-3-ajay.kaher@broadcom.com>
-X-Mailer: git-send-email 2.40.4
-In-Reply-To: <20251023131048.3718441-1-ajay.kaher@broadcom.com>
-References: <20251023131048.3718441-1-ajay.kaher@broadcom.com>
+	s=arc-20240116; t=1761225148; c=relaxed/simple;
+	bh=+VUg8k2zeTQgqeIg3H2uf7FFg1Uh2vReexcyK1NBBLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sm7oA5qN2rL7ZJWjA3++oAIzTkGBDOUY0hDJj/jiVyh0e+oPD/zjaTrgohbQyWL7Sq4GhEtqztvv8n2dXbB2d+Bx1C0NReS08LRUymY+kAqEaFOIuxR24VvWRti4WghTlxbJvBqLrgGoM/RW9oHRjhGA1XjwT+1Z+eyJfbR+N3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P/rHK03x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E503C4CEE7;
+	Thu, 23 Oct 2025 13:12:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761225148;
+	bh=+VUg8k2zeTQgqeIg3H2uf7FFg1Uh2vReexcyK1NBBLs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=P/rHK03x/OEYRU8sbBq6TXkx6PIcvVoW6K2ISbCZUOFoWL5gQs6LHygmK/VRw1UoD
+	 zfbDN1gkHitPCCEwqiMvRVAx7Dq7kg7Hea3GwxGjfaEIzvDoQ8DrFT+gpZ34zjPIEb
+	 hI2LDn4m+hRlNwkRpE/5pdvlNVDbgRfIr6w3I8nlMm/e4CmArkMYBz7wg6/aogVGdU
+	 Nyx1yIHTHJr8OZMI2YyDhPI+R0hI6fRwSsuLd7q6xomXBklXjYvbDidVNqMLyaD8UC
+	 wT+5G7FJrBexYnJfP8PnjIe0AH63AOtM83QI8/77PXBgVx3gZ9hAaMjxCmhTBXrNjz
+	 ZOhEDe23Z3kEA==
+Message-ID: <275742a1-de32-483a-b608-8f5b28e282b9@kernel.org>
+Date: Thu, 23 Oct 2025 15:12:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/7] dt-bindings: memory: factorise LPDDR props into
+ SDRAM props
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Julius Werner <jwerner@chromium.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+References: <20250930-b4-ddr-bindings-v8-0-fe4d8c015a50@gmail.com>
+ <20250930-b4-ddr-bindings-v8-1-fe4d8c015a50@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250930-b4-ddr-bindings-v8-1-fe4d8c015a50@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-For scenerios when ACPI is disabled, allow ptp_vmw driver to be
-loaded by directly probing for the device using VMware hypercalls.
+On 30/09/2025 10:46, Clément Le Goffic wrote:
+> From: Clément Le Goffic <clement.legoffic@foss.st.com>
+> 
+> LPDDR and DDR bindings are SDRAM types and are likely to share the same
+> properties (at least for density, io-width and reg).
+> To avoid bindings duplication, factorise the properties.
+> 
+> The compatible description has been updated because the MR (Mode
+> registers) used to get manufacturer ID and revision ID are not present
+> in case of DDR.
+> Those information should be in a SPD (Serial Presence Detect) EEPROM in
+> case of DIMM module or are known in case of soldered memory chips as
+> they are in the datasheet of the memory chips.
+> 
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
 
-VMware precision clock virtual device is exposed as a platform ACPI
-device in its virtual chipset hardware. Its driver - ptp_vmw - is
-registered with the ACPI bus for discovery and binding. On systems
-where ACPI is disabled, such as virtual machines optimized for fast
-boot times, this means that the device is not discoverable and cannot
-be loaded. Since the device operations are performed via VMware
-hypercalls, the ACPI sub-system can be by-passed and manually loaded.
+Wearing DT hat:
 
-Cc: Shubham Gupta <shubham-sg.gupta@broadcom.com>
-Cc: Nick Shi <nick.shi@broadcom.com>
-Tested-by: Karen Wang <karen.wang@broadcom.com>
-Tested-by: Hari Krishna Ginka <hari-krishna.ginka@broadcom.com>
-Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
----
- drivers/ptp/ptp_vmw.c | 70 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 58 insertions(+), 12 deletions(-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/ptp/ptp_vmw.c b/drivers/ptp/ptp_vmw.c
-index ea1cbdf34..93d33e5cd 100644
---- a/drivers/ptp/ptp_vmw.c
-+++ b/drivers/ptp/ptp_vmw.c
-@@ -98,25 +98,41 @@ static struct ptp_clock_info ptp_vmw_clock_info = {
- 	.enable		= ptp_vmw_enable,
- };
- 
-+static int ptp_vmw_clock_register(void)
-+{
-+	ptp_vmw_clock = ptp_clock_register(&ptp_vmw_clock_info, NULL);
-+	if (IS_ERR(ptp_vmw_clock)) {
-+		pr_err("ptp_vmw: Failed to register ptp clock\n");
-+		return PTR_ERR(ptp_vmw_clock);
-+	}
-+	pr_debug("ptp_vmw: ptp clock registered\n");
-+	return 0;
-+}
-+
-+static void ptp_vmw_clock_unregister(void)
-+{
-+	ptp_clock_unregister(ptp_vmw_clock);
-+	ptp_vmw_clock = NULL;
-+	pr_debug("ptp_vmw: ptp clock unregistered\n");
-+}
-+
- /*
-  * ACPI driver ops for VMware "precision clock" virtual device.
-  */
- 
- static int ptp_vmw_acpi_add(struct acpi_device *device)
- {
--	ptp_vmw_clock = ptp_clock_register(&ptp_vmw_clock_info, NULL);
--	if (IS_ERR(ptp_vmw_clock)) {
--		pr_err("failed to register ptp clock\n");
--		return PTR_ERR(ptp_vmw_clock);
--	}
-+	int ret = ptp_vmw_clock_register();
- 
--	ptp_vmw_acpi_device = device;
--	return 0;
-+	if (ret == 0)
-+		ptp_vmw_acpi_device = device;
-+	return ret;
- }
- 
- static void ptp_vmw_acpi_remove(struct acpi_device *device)
- {
--	ptp_clock_unregister(ptp_vmw_clock);
-+	ptp_vmw_clock_unregister();
-+	ptp_vmw_acpi_device = NULL;
- }
- 
- static const struct acpi_device_id ptp_vmw_acpi_device_ids[] = {
-@@ -135,16 +151,46 @@ static struct acpi_driver ptp_vmw_acpi_driver = {
- 	},
- };
- 
-+/*
-+ * Probe existence of device by poking at a command. If successful,
-+ * register as a PTP clock. This is a fallback option for when ACPI
-+ * is not available.
-+ */
-+static int ptp_vmw_probe(void)
-+{
-+	u64 ns;
-+
-+	return ptp_vmw_pclk_read(&ns);
-+}
-+
- static int __init ptp_vmw_init(void)
- {
--	if (x86_hyper_type != X86_HYPER_VMWARE)
--		return -1;
--	return acpi_bus_register_driver(&ptp_vmw_acpi_driver);
-+	int error = -ENODEV;
-+
-+	if (x86_hyper_type != X86_HYPER_VMWARE) {
-+		error = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (!acpi_disabled) {
-+		error = acpi_bus_register_driver(&ptp_vmw_acpi_driver);
-+		if (!error)
-+			goto out;
-+	}
-+
-+	if (!ptp_vmw_probe())
-+		error = ptp_vmw_clock_register();
-+
-+out:
-+	return error;
- }
- 
- static void __exit ptp_vmw_exit(void)
- {
--	acpi_bus_unregister_driver(&ptp_vmw_acpi_driver);
-+	if (!acpi_disabled && ptp_vmw_acpi_device)
-+		acpi_bus_unregister_driver(&ptp_vmw_acpi_driver);
-+	else if (ptp_vmw_clock)
-+		ptp_vmw_clock_unregister();
- }
- 
- module_init(ptp_vmw_init);
--- 
-2.40.4
-
+Best regards,
+Krzysztof
 
