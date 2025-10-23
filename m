@@ -1,240 +1,184 @@
-Return-Path: <linux-kernel+bounces-866810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA5CC00B4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:24:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A870DC00B2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A626D507F0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:22:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9BB1A61ED0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809DB30DEB4;
-	Thu, 23 Oct 2025 11:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73082FB627;
+	Thu, 23 Oct 2025 11:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LH3cLck/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ke2f1D9k"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BA02D948F;
-	Thu, 23 Oct 2025 11:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66ACD2DECB1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761218523; cv=none; b=XRQS1E8Aeh9l4vVBgaM7CRBnuehbgSUb4zOmMQkBmj5gPwZpHWSY+EJA3BCsjvABnuFYIcFj2sL0g1MJfAE2G8eGEdHl4R8xM/Xe5/v+ruQCezt5ls69631gMLgbrVTMyx6Jr8p3rFvzimDJ1QN7I64m47j9IlX5zSs3uBVfEUQ=
+	t=1761218595; cv=none; b=dluycwhg1pDATZX8JkdBZ4aGlbiBD99zwFNOWNK/+qMhgejZNpY+nch/o6r6CCrUvBy7RpnH/iMp3VIPb1UwQxWXJertjiPKOYf1+AKilOahotBdbUWflHZXOO+M9aDYx88RRN748ZRUZpOVFnvKAnghhOw/TBwS1y0ZiOJn5jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761218523; c=relaxed/simple;
-	bh=OUy4E28XCgPHiY7sYnSVPuAqVISc/0/PFyS3hREWRSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L77bSFcCxoIM5ir/1frgAB/ley4mCFYEqalVZ60r/B91GCBgVvDA2uPr0gSZjPXhQvhvR6kw3slqiEklJEY6xGwnpzk8u2ZlV4AYO0GSIJdgUqE469eZJknfA1lHWf3h0jg+ZRZWEOEXDwr3AYHYi2+QSy7HvSdTC4HpAW8uU4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LH3cLck/; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761218521; x=1792754521;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OUy4E28XCgPHiY7sYnSVPuAqVISc/0/PFyS3hREWRSQ=;
-  b=LH3cLck/fuVEI40gVW6hni5h7v8CLDcN6ZlwPQPWLF9+mglZd4KpCja0
-   ugSIdIZY7QFxbWvYHKwCPk5Ev09wC/OAScT5IgvkYQqvqPDQDJLfEERYE
-   63F487ij4t4t1I1RJonU+XKHcq9AukH/0TDM+VyV5vwtbYPRzhZia08qw
-   mN1HFrHUJ7+q48DpO1bNukiFFdTv6Zl1nvE2Kb/2UE8PDU6izO+e4lmpB
-   tmWy7GnKaEZMEK2ANMFMLTbIATmlABWIAeT42lPcg2mPrhMSAn6ZXxJc1
-   uBElllWQGWTezoOG4sDM6OLijYDeMhha0Oe7PkEaRBh67Qhdkxcp1ASqp
-   Q==;
-X-CSE-ConnectionGUID: IYPIS9z5SPOWBr+H3azAoQ==
-X-CSE-MsgGUID: wlgsGVqHTxa0l/59UITfow==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80820963"
-X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
-   d="scan'208";a="80820963"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 04:22:00 -0700
-X-CSE-ConnectionGUID: 91ur0G2oTPauN3FANFRShg==
-X-CSE-MsgGUID: Urm2SPsSR/2BhTbktE4OLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
-   d="scan'208";a="183306763"
-Received: from bkammerd-mobl.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.221.165])
-  by orviesa006.jf.intel.com with SMTP; 23 Oct 2025 04:21:56 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 23 Oct 2025 14:21:55 +0300
-Date: Thu, 23 Oct 2025 14:21:55 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-Cc: gregkh@linuxfoundation.org, lumag@kernel.org, neil.armstrong@linaro.org,
-	johan+linaro@kernel.org, quic_bjorande@quicinc.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] usb: typec: ucsi_glink: Increase buffer size to
- support UCSI v2
-Message-ID: <aPoP00G_xekNF-XP@kuha.fi.intel.com>
-References: <20251022004554.1956729-1-anjelique.melendez@oss.qualcomm.com>
- <20251022004554.1956729-3-anjelique.melendez@oss.qualcomm.com>
+	s=arc-20240116; t=1761218595; c=relaxed/simple;
+	bh=EejjgDdqkl4dBbr+6AbIsNlOUfcuNaN1bBULFXf19rU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hy92IgWiRynlfrMRfUk91QgMsPGcxlLZ3qZAz0wv1LG1I1MZgaOeaoRjP5oR2tRRBblcnFiGDMGN9/9UM6rr3MhCSmIPHezNHJtq4++9A/gmiWvYEmn421F/f6+D+JVwrLDBm/ig4sftnc5w4gtDLexablGl46hkZVg1PFrbvwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ke2f1D9k; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so473841f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:23:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1761218591; x=1761823391; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nDB7YhxbGJEC3m48FGyuTUiZ3NJbd0w6RqSoQlZXD2s=;
+        b=ke2f1D9k+NzuFAjLYXCRVzkDbFZelDzS6YTAq0oFB2X558cZegQ1PnqhxvtPyIUrtH
+         v4vkRmT8GjXcIun0l0dR9SWb6vvj+DsIpkuwCdsru1hhup1jRIQ7+I2jL5rlEKHFA/PI
+         YeMJXuj0RQ6t3PLQnoTNA/d/rizUFebpxLZG1UD5ac5SHf4Nb9/ttWmTPZWOedsAe37z
+         KBpFy+wOH9IZHzx1O4KuEa8WizZ2btQfmmpahTXEEcsIlR9LrOb5ncOb4g05GY2/svgp
+         uxAfa9pbwU/vBFwRj+jsGceuqsonxcRpOGPwBsydrBlTKwfxE/I9eJyIEKAN4ZbNNp+0
+         UV7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761218591; x=1761823391;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nDB7YhxbGJEC3m48FGyuTUiZ3NJbd0w6RqSoQlZXD2s=;
+        b=meabIAJIZHVG2tl5pqwNwdyvqf5dNzhrg8uA09XNOPx1XVFwRC+PRNUD7Z6D6yvHqM
+         BxCYGIvioDo+95Oj56frstX58Iq5G5el2Xm1QDCHycgAdqo488IJeh6Z4/yD5Q0jGArj
+         R+DLEoRTVIZ+AvfVIGari5h7LdWEhw+XmBff1K6qpbjxsSqRhpCdWu73/mRHOwjnXsxk
+         hZ7RCHaEAMvnQjjMbMCGORhnctxx7HLXay0lqHm9yEmVo7HR82R4eyUgseydWTjGW+9Z
+         +ht4f75uygp9Z/iIwgKDam1WSv8a4a/K9Rl7qlToRdfdnRehS3U62o2JgmhEDhylai/T
+         i+lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFiuDaE23qjZNACQ71PRRFMVQRjqW8bqr4x12XZk6On6SoeEYrF3tvl4/Kzh8Fdj9zinARZuyN4r7zkDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUCS4b1YED0Zcfna4WKqpFPntORf1anKgTPm9WGDbb32FScjDD
+	JwbiwXQIhvDusfhkh8jUl7h/cJ+LPQ5z0bXht/dpKj5w6rB24OPea/HrmnTuhx4eEN4=
+X-Gm-Gg: ASbGncuFZ4GQUmxbuGDNZYtxsCFrMtINxrdaW4Wjb6tmR3UMdYjaF3XV4LgABdT53mZ
+	6/y1xf8jGk2pz4ltiraKHQyTjt4Z9WczSWD1xGjg1DAn5fNiVbAOi6Rx77/8dC8hoAkAQoPsyqD
+	/uUtPRurAAhGfbHrTzoy6Bg/wmZLi0JGPLqM0XZWjKut0bVf6YvuABLpuQDsvcT0MoEt7cK6kCI
+	wQ8zJzRjxX/RSEiAqKaDHAFlLLe1HHexxMnxNEOMVAHuvV+wQVFj41pXmaA9+17MyehjE9Rutzw
+	tVbvcRsc0LuCAoTf77gpPXs9Ac8Ww5VSh7g8uwK/jPwaBLZ4EExDUDgsT9iuJUVrJ7TT5whjYQp
+	3NisUdR3Hv0cbAYDyPn9cu/TzKjUo7pp0Rgi5i5OSl/50BcnzeQkcj8JgmR1U6Ca6FLdu33ortw
+	FQAmbeuPCD
+X-Google-Smtp-Source: AGHT+IEMbLOeinwVvTuX2oj8cLK0836RwRcKtO4iOIjx+CcUWlYhQo8Bx0cOvk+DQVI9vd0jTJuklQ==
+X-Received: by 2002:a05:6000:4185:b0:429:8cd3:886 with SMTP id ffacd0b85a97d-4298cd30f25mr236889f8f.11.1761218590672;
+        Thu, 23 Oct 2025 04:23:10 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.151])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4298bd78c69sm1639717f8f.4.2025.10.23.04.23.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 04:23:08 -0700 (PDT)
+Message-ID: <f09bf940-3d45-49b1-8d7f-9c1a96acb187@tuxon.dev>
+Date: Thu, 23 Oct 2025 14:23:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022004554.1956729-3-anjelique.melendez@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/6] PCI: rzg3s-host: Add Renesas RZ/G3S SoC host
+ driver
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+ robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
+ conor+dt@kernel.org, magnus.damm@gmail.com, p.zabel@pengutronix.de,
+ linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20251007133657.390523-1-claudiu.beznea.uj@bp.renesas.com>
+ <20251007133657.390523-3-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdXF14x68Wk5YdOBS2D2N6LtnQjfGzrsMdSJegX-gc3faQ@mail.gmail.com>
+ <6c69d2a2-5dfe-450f-8a39-2ef6e7a6dbea@tuxon.dev>
+ <CAMuHMdXLiN0kUVJtdEYVnsmnCEbN4hSs5KEhMXJhf7p29xv=0Q@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <CAMuHMdXLiN0kUVJtdEYVnsmnCEbN4hSs5KEhMXJhf7p29xv=0Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 05:45:54PM -0700, Anjelique Melendez wrote:
-> UCSI v2 specification has increased the MSG_IN and MSG_OUT size from
-> 16 bytes to 256 bytes each for the message exchange between OPM and PPM
-> This makes the total buffer size increase from 48 bytes to 528 bytes.
-> Update the buffer size to support this increase.
+Hi, Geert,
+
+On 10/23/25 14:02, Geert Uytterhoeven wrote:
+> Hi Claudiu,
 > 
-> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
-> ---
->  drivers/usb/typec/ucsi/ucsi_glink.c | 80 +++++++++++++++++++++++++----
->  1 file changed, 70 insertions(+), 10 deletions(-)
+> On Thu, 23 Oct 2025 at 12:54, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+>> On 10/23/25 11:00, Geert Uytterhoeven wrote:
+>>> On Tue, 7 Oct 2025 at 15:37, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+>>>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+>>>> only as a root complex, with a single-lane (x1) configuration. The
+>>>> controller includes Type 1 configuration registers, as well as IP
+>>>> specific registers (called AXI registers) required for various adjustments.
+>>>>
+>>>> Hardware manual can be downloaded from the address in the "Link" section.
+>>>> The following steps should be followed to access the manual:
+>>>> 1/ Click the "User Manual" button
+>>>> 2/ Click "Confirm"; this will start downloading an archive
+>>>> 3/ Open the downloaded archive
+>>>> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+>>>> 5/ Open the file r01uh1014ej*-rzg3s.pdf
+>>>>
+>>>> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
+>>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> Thanks for your patch!
+>>>
+>>>> --- /dev/null
+>>>> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+>>>
+>>>> +static void rzg3s_pcie_irq_compose_msi_msg(struct irq_data *data,
+>>>> +                                          struct msi_msg *msg)
+>>>> +{
+>>>> +       struct rzg3s_pcie_msi *msi = irq_data_get_irq_chip_data(data);
+>>>> +       struct rzg3s_pcie_host *host = rzg3s_msi_to_host(msi);
+>>>> +       u32 drop_mask = RZG3S_PCI_MSIRCVWADRL_ENA |
+>>>> +                       RZG3S_PCI_MSIRCVWADRL_MSG_DATA_ENA;
+>>>
+>>> This should include bit 2 (which is hardwired to zero (for now)),
+>>> so I think you better add
+>>>
+>>>     #define RZG3S_PCI_MSIRCVWADRL_ADDR  GENMASK(31, 3)
+>>>
+>>>> +       u32 lo, hi;
+>>>> +
+>>>> +       /*
+>>>> +        * Enable and msg data enable bits are part of the address lo. Drop
+>>>> +        * them.
+>>>> +        */
+>>>> +       lo = readl_relaxed(host->axi + RZG3S_PCI_MSIRCVWADRL) & ~drop_mask;
+>>>
+>>> ... and use FIELD_GET() with the new definition here.
+>>
+>> Bits 31..3 of RZG3S_PCI_MSIRCVWADRL contains only bits 31..3 of the MSI
+>> receive window address low, AFAIU. Using FIELD_GET() for bits 31..3 on the
+>> value read from RZG3S_PCI_MSIRCVWADRL and passing this value to
+>> msg->address_lo will lead to an NVMe device not working.
 > 
-> diff --git a/drivers/usb/typec/ucsi/ucsi_glink.c b/drivers/usb/typec/ucsi/ucsi_glink.c
-> index 1f9f0d942c1a..11b3e24e34e2 100644
-> --- a/drivers/usb/typec/ucsi/ucsi_glink.c
-> +++ b/drivers/usb/typec/ucsi/ucsi_glink.c
-> @@ -16,10 +16,10 @@
->  
->  #define PMIC_GLINK_MAX_PORTS		3
->  
-> -#define UCSI_BUF_SIZE                   48
-> +#define UCSI_BUF_V1_SIZE		(UCSI_MESSAGE_OUT + (UCSI_MESSAGE_OUT - UCSI_MESSAGE_IN))
-> +#define UCSI_BUF_V2_SIZE		(UCSIv2_MESSAGE_OUT + (UCSIv2_MESSAGE_OUT - UCSI_MESSAGE_IN))
->  
->  #define MSG_TYPE_REQ_RESP               1
-> -#define UCSI_BUF_SIZE                   48
->  
->  #define UC_NOTIFY_RECEIVER_UCSI         0x0
->  #define UC_UCSI_READ_BUF_REQ            0x11
-> @@ -32,13 +32,19 @@ struct ucsi_read_buf_req_msg {
->  
->  struct __packed ucsi_read_buf_resp_msg {
->  	struct pmic_glink_hdr   hdr;
-> -	u8                      buf[UCSI_BUF_SIZE];
-> +	union {
-> +		u8 v2_buf[UCSI_BUF_V2_SIZE];
-> +		u8 v1_buf[UCSI_BUF_V1_SIZE];
-> +	} buf;
->  	u32                     ret_code;
->  };
->  
->  struct __packed ucsi_write_buf_req_msg {
->  	struct pmic_glink_hdr   hdr;
-> -	u8                      buf[UCSI_BUF_SIZE];
-> +	union {
-> +		u8 v2_buf[UCSI_BUF_V2_SIZE];
-> +		u8 v1_buf[UCSI_BUF_V1_SIZE];
-> +	} buf;
->  	u32                     reserved;
->  };
->  
-> @@ -72,7 +78,7 @@ struct pmic_glink_ucsi {
->  	bool ucsi_registered;
->  	bool pd_running;
->  
-> -	u8 read_buf[UCSI_BUF_SIZE];
-> +	u8 read_buf[UCSI_BUF_V2_SIZE];
->  };
->  
->  static int pmic_glink_ucsi_read(struct ucsi *__ucsi, unsigned int offset,
-> @@ -132,17 +138,35 @@ static int pmic_glink_ucsi_locked_write(struct pmic_glink_ucsi *ucsi, unsigned i
->  					const void *val, size_t val_len)
->  {
->  	struct ucsi_write_buf_req_msg req = {};
-> +	size_t req_len, buf_len;
->  	unsigned long left;
->  	int ret;
-> +	u8 *buf;
->  
->  	req.hdr.owner = PMIC_GLINK_OWNER_USBC;
->  	req.hdr.type = MSG_TYPE_REQ_RESP;
->  	req.hdr.opcode = UC_UCSI_WRITE_BUF_REQ;
-> -	memcpy(&req.buf[offset], val, val_len);
-> +
-> +	if (ucsi->ucsi->version >= UCSI_VERSION_2_0) {
-> +		buf_len = UCSI_BUF_V2_SIZE;
-> +		buf = req.buf.v2_buf;
-> +	} else if (ucsi->ucsi->version) {
-> +		buf_len = UCSI_BUF_V1_SIZE;
-> +		buf = req.buf.v1_buf;
-> +	} else {
-> +		dev_err(ucsi->dev, "UCSI version unknown\n");
-> +		return -EINVAL;
-> +	}
-> +	req_len = sizeof(struct pmic_glink_hdr) + buf_len + sizeof(u32);
-> +
-> +	if (offset + val_len > buf_len)
-> +		return -EINVAL;
-> +
-> +	memcpy(&buf[offset], val, val_len);
->  
->  	reinit_completion(&ucsi->write_ack);
->  
-> -	ret = pmic_glink_send(ucsi->client, &req, sizeof(req));
-> +	ret = pmic_glink_send(ucsi->client, &req, req_len);
->  	if (ret < 0) {
->  		dev_err(ucsi->dev, "failed to send UCSI write request: %d\n", ret);
->  		return ret;
-> @@ -216,12 +240,48 @@ static const struct ucsi_operations pmic_glink_ucsi_ops = {
->  
->  static void pmic_glink_ucsi_read_ack(struct pmic_glink_ucsi *ucsi, const void *data, int len)
->  {
-> -	const struct ucsi_read_buf_resp_msg *resp = data;
-> +	u32 ret_code, resp_len, buf_len = 0;
-> +	u8 *buf;
-> +
-> +	if (ucsi->ucsi->version) {
-> +		if (ucsi->ucsi->version >= UCSI_VERSION_2_0) {
-> +			buf = ((struct ucsi_read_buf_resp_msg *)data)->buf.v2_buf;
-> +			buf_len = UCSI_BUF_V2_SIZE;
-> +		} else {
-> +			buf = ((struct ucsi_read_buf_resp_msg *)data)->buf.v1_buf;
-> +			buf_len = UCSI_BUF_V1_SIZE;
-> +		}
-> +	} else if (!ucsi->ucsi_registered) {
-> +		/*
-> +		 * If UCSI version is not known yet because device is not registered, choose buffer
-> +		 * size which best fits incoming data
-> +		 */
-> +		if (len > sizeof(struct pmic_glink_hdr) + UCSI_BUF_V2_SIZE) {
-> +			buf = ((struct ucsi_read_buf_resp_msg *)data)->buf.v2_buf;
-> +			buf_len = UCSI_BUF_V2_SIZE;
-> +		} else {
-> +			buf = ((struct ucsi_read_buf_resp_msg *)data)->buf.v1_buf;
-> +			buf_len = UCSI_BUF_V1_SIZE;
-> +		}
-> +	} else {
-> +		dev_err(ucsi->dev, "Device has been registered but UCSI version is still unknown\n");
-> +		return;
-> +	}
->  
-> -	if (resp->ret_code)
-> +	resp_len = sizeof(struct pmic_glink_hdr) + buf_len + sizeof(u32);
-> +
-> +	if (len > resp_len)
-> +		return;
-> +
-> +	/* Ensure that buffer_len leaves space for ret_code to be read back from memory */
-> +	if (buf_len > len - sizeof(struct pmic_glink_hdr) - sizeof(u32))
-> +		buf_len = len - sizeof(struct pmic_glink_hdr) - sizeof(u32);
-> +
-> +	memcpy(&ret_code, buf + buf_len, sizeof(u32));
-> +	if (ret_code)
->  		return;
->  
-> -	memcpy(ucsi->read_buf, resp->buf, UCSI_BUF_SIZE);
-> +	memcpy(ucsi->read_buf, buf, buf_len);
->  	complete(&ucsi->read_ack);
->  }
->  
-> -- 
-> 2.34.1
+> Oops, yes you are right, I went a bit too far with the FIELD_GET()
+> suggestion. But replacing drop_mask by RZG3S_PCI_MSIRCVWADRL_ADDR
+> would still be worthwhile, IMHO.
 
--- 
-heikki
+OK, you mean updating it like:
+
++#define RZG3S_PCI_MSIRCVWADRL_ADDR  GENMASK(31, 3)
+
+// ...
+
+
+-    lo = readl_relaxed(host->axi + RZG3S_PCI_MSIRCVWADRL) & ~drop_mask;
++    lo = readl_relaxed(host->axi + RZG3S_PCI_MSIRCVWADRL) &
+          RZG3S_PCI_MSIRCVWADRL_ADDR;
+
+Thank you for your review,
+Claudiu
 
