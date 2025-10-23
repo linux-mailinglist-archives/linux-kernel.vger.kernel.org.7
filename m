@@ -1,291 +1,213 @@
-Return-Path: <linux-kernel+bounces-867175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE3AC01BFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:26:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDAD3C01C7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB5A1AA1D07
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:25:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989353B4618
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C923332B996;
-	Thu, 23 Oct 2025 14:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D5032B99C;
+	Thu, 23 Oct 2025 14:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="xEyT9lP7"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gu9VsJkz"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011009.outbound.protection.outlook.com [40.93.194.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF3B32AACB;
-	Thu, 23 Oct 2025 14:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761229485; cv=none; b=gHyIhvaWGlbDrSf1BSv47jnFY8Yh0UM5ZvQc75IHCXzLyVeKL8eKXl9izSTzolY6+0iYmf/iVeui41jolX2ncJTReD3+QPT54knuXGrcmRlM3/1BBX9qgPz7R719kN4heSFxOyOycUljpIrsGcStcqC4eiWE4Kp0s7RoMpWGJTQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761229485; c=relaxed/simple;
-	bh=ejT+gSMRl71D9FrJAHgYWi6zvu2pJa3A5weKAUpjry4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RijFH/Lb1Hew35AUzPtLDiGQe6sC3vfVsFsSdtcP1aLewjnAybVAVbKRHh/sZ+QsltdMopKOk2HvbkW78t85GmoS+wgadgZ6xEcAMwU8fJQG42fMSYLP0fjC+eRw8na6XpF6iWuLyXMUW/FHUR4C2xYMnPhmC+eU46Da7TLnml0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=xEyT9lP7; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=7xYDDmBG3SXcp4rXu1j0cg9M+z9JOy8rvqaztOPzzns=; b=xEyT9lP76ehv1CRcrQ9rl/L8zi
-	aGo4Ct0SFk++tsbWRDrvijyrZOusk9EMnOqtnVkO4KGfFBxhLisN8wu6gvU/r3b9N+z8MqL6K/lhx
-	Yg0C02/njSCyyQoSD0WMZwc3lQNaaJXyV2IbinGY07qdmC/YQR68mBDiTk0LOOJGUIpvydv1wLhNZ
-	5FcJ32HuX5Xn6c92pcmj3yaulTXfp4n+0a3y/tqf5ZhEE6yg0+BA2CLb7yg+0xvNBR4wdcUUf3Rib
-	TLKpUdci4pY7QdtbmRN//avLOMXVxANqIghGdJ8Uk0As+7M5RsKJf9lZqWqDz+BKVDddkGFMcJ5jA
-	fJXXnOzA==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1vBwEm-000Jjc-1I;
-	Thu, 23 Oct 2025 15:24:20 +0100
-Date: Thu, 23 Oct 2025 15:24:20 +0100
-From: Jonathan McDowell <noodles@earth.li>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	zohar@linux.ibm.com
-Subject: Re: [PATCH v3 4/4] tpm: Allow for exclusive TPM access when using
- /dev/tpm<n>
-Message-ID: <aPo6lF6W5id5U_i9@earth.li>
-References: <cover.1760958898.git.noodles@meta.com>
- <61049f236fe1eaf72402895cea6892b52ce7e279.1760958898.git.noodles@meta.com>
- <cec499d5130f37a7887d39b44efd8538dd361fe3.camel@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46815314D11;
+	Thu, 23 Oct 2025 14:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761229475; cv=fail; b=jAfo3jiLhpENk1VO7kZNfkccHQQ9jDjmF2w5laqbvLay4XYpX+7TAVHiOqx0fLCGwBkSx2uv5R5w2/8IIVxobF9KARdIr+OQHUNa0KUyuQjlpaVtbXgFVnDXJymN4E9pFhhqp1mu6v81SbHkQyh8zq3FmaRXKJC7tXqvxrusGlM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761229475; c=relaxed/simple;
+	bh=aJczdU7JqHk9Ix8o0x2szHtImOyEmVZNro1IPPHXT7A=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kyRgNUpe4d9H8OFJ5br7AfHJ+Z7cUt0sjtFDKYn8lb+xXQiwBGIhV875Qqg/ZC+9H4vR4hejLjM/xFQCvn96nD0u9gkHDtWs/pBiHw3+GYkMtrLruHy2CUrLynD8joh5gUoW+Fq6uKV7AhWZ+n55cwUtWe34CKm4/GXgRnI9/n0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gu9VsJkz; arc=fail smtp.client-ip=40.93.194.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=w1hBosreYPzYsDvxBil/Owy7fqNQSGa7wSNF0ymFLwA54XksWYADkxumcTMDbIpwk3GvRHHh7/9szVRcqpsHVMRYjBno90+exNu9gIZhrelMJibDvCmrB+KP+k8mkL+HQo/kxfNXWaL3AJJLgya4FJeySBKjz8Tm6R4HQr7uJJLYi8dpYvF+MEgA+/QgyNAt9kHUzCPXx+lUr83dmdXmbQyKlmixBygTp1Z64I11fkBkICJRVPxwf/BVW2nGZrs8EoUdWJxAhmzO4ZoTiZynQWxcpN2NHsvIGkgO5aYzpg/3eDNzJI3nTp3q7ysZMdzf60CwPhV4iL2rv/610GFkfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M6t4PnAjK206wvwbAzqMRyumY8dZfY3KY8Gij+O1JB4=;
+ b=zBKJR5ZQKPYJdpP1QWSmEF1C7Ilzntba5az7GA9PSx5NpwsQkbbN8ma6vtM8tQUrQd3jX0JwKnUD5i/eNFAS1vXvNZaK4YfQGIM5CtFoTZn0GTzwV/5CI2HfLiD/sEt8XNakT0bcYXnc6SpLz1qQQjNTLS/vwrg4yXNA8vncjlAU4S2FlCYVpfVicXX2+vlw/yYaznn0IkOFbwEYBa7i7rZviOkmp0edkmY2vTaSBOPjtDc0ue+4c0lvIL6k92ghVCinYEV6gomp1uYB9Yzt+hti3DoMjIbhiEd8rI1AqE+0hAUZeKXxMcbL2u1mvmZ5LfTu6geiNLXiopeAVWb0+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M6t4PnAjK206wvwbAzqMRyumY8dZfY3KY8Gij+O1JB4=;
+ b=gu9VsJkzePJB+thOlm4JlCphwWWFAxLrvYunSDnyc7mx6ddRkHYPJYjkqVprcGnorxcDRujFZA1LqwG51/XXKMF6RrvdPtq12wISUogX7AWV3XEEHWwHEyt4vpFstzKFVHCON0Oe3NPiF8Tpy3OPw05qKHnGjmxac3Rgc5weWB2Tmz6QZxtHqPCw/QjX2AkXIy0APJs8TNTsDJXIhxjOas0wz3uXJFrIQ3PlOczdDDJ2X6mNxY5y+ZI8NFn13T4sgMV/naQqVOZunk3+BEAhP7LlUxyjtX/0ACYwPIxksHYSr5cJZP6G3k39xGUgv2vHY7e4y66kSPX8kVJNmx5l2Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by CH3PR12MB7571.namprd12.prod.outlook.com (2603:10b6:610:147::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
+ 2025 14:24:29 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 14:24:29 +0000
+Message-ID: <4a8decc1-3538-4040-898c-20a8e6d43617@nvidia.com>
+Date: Thu, 23 Oct 2025 15:24:23 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] soc/tegra: Resolve a spelling error in the
+ tegra194-cbb.c
+To: =?UTF-8?Q?Bruno_Sobreira_Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Gabriel Somlo <gsomlo@gmail.com>, Herve Codina <herve.codina@bootlin.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251022174531.1751-1-brunofrancadevsec@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20251022174531.1751-1-brunofrancadevsec@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P123CA0021.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:151::8) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <cec499d5130f37a7887d39b44efd8538dd361fe3.camel@huaweicloud.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CH3PR12MB7571:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb1c6ab1-905d-439c-82af-08de123fe037
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SmFHd3czWm8wemhhQU5EQnRGY3k5TFVOemFTREtLeU5iSkhkbnJNcWZKUmRk?=
+ =?utf-8?B?SWhRS3dUR1QrbGtRZkdoUGFWRE04MHNnYkF3SVNUVng3WnBKejI5cHRVOG5M?=
+ =?utf-8?B?b0Y1aUdzTVpIcGIvTkZ4MXhFSzF6MngwdWw5UnUvZ1ZZemdqakl6MEFDYVg4?=
+ =?utf-8?B?WlFMVFJTWHBWbFVNdWRycVJVSGRQOXFlSG5IT0ZHZ1p6SmE5cGo2dkEwRlZ2?=
+ =?utf-8?B?VFFqYW15dVk4WXowbFlFNlZrMUJUdHpMeURsMHJYM2ZqMnNkdDhkWjVLS2k0?=
+ =?utf-8?B?bnlMRnpmWWlCOFVmN3lxQmJTUkt3RGFoWTNFUm5rY2FydGFKTFVCTHJBK1ds?=
+ =?utf-8?B?L1RaYXNGOHdqUzU2Y0lnTDltS3hDdWE4Vnp2L1dmWWluL3YrQkxMYms2YTRE?=
+ =?utf-8?B?TzRTcE5JWWRLMjltbGFXa3pkOU55R3dKeGZSUkhTenZpRFR2YlgvampPaXhZ?=
+ =?utf-8?B?dWVic01SQWhER3hHWjRWczl3Z3lCcjc5MFEyU2xJMi80OHl2bXJ6MGRpMUo0?=
+ =?utf-8?B?ZEF1RWljZXFBREtQWUplUU5QVjZmVTBaQ1d4YkVDWHE4UVZCS0xmUE9sN0JN?=
+ =?utf-8?B?UHh3cHF4K09GOEludC80Wm1qNk5Qc3p6aU9adUdPeFR6dkkrdjZrMUUxNHJ6?=
+ =?utf-8?B?QmhoNmpXMG5UZGtZWS9mak41STZiMXZSN2FkZW4vdUlHejU1dXlJOFBnY0Y5?=
+ =?utf-8?B?c1B0Zk50Q2xBZDBnVGh6cUxIYk1zOGdmQ0ZvaUNpWFR0cC8zVkYybmpzNFQz?=
+ =?utf-8?B?aExoNVRKRlk5cVE0OEdpZFpRSkdORExYdUVxb1BMdW1CQ3lvZWl5Y0FFaDBF?=
+ =?utf-8?B?bklCV09QWTFCd2trZVNFZVk2T0hYN3RWUUt5cFZ6YytzZXQ2SytGanFQd0Uv?=
+ =?utf-8?B?QlRpTmJxekRkMFRzQ1JPcWxya2dOK0dOc05ZalNSTEV4NnNyN21yQ2kvS1V0?=
+ =?utf-8?B?UFlGVUs3b2t5YjBLaktkeXRET2pQSFozcTlYdlN1c2wwSkZFZ2ZmTW9kT28x?=
+ =?utf-8?B?WHhPK21IcUJpdmpvc3JCZW5rU0N2R3hIRlp4U3oxQTFueFhjTFRza0tNVm0w?=
+ =?utf-8?B?S1pCdUpjeW5Db1lITll1bjRxYkk3UzdKZDJnWGRlYzNwRVgvOTNKamRUcGVQ?=
+ =?utf-8?B?RkJONGJsN2w5NlVqWUowaWJQMmoxMGRHL0Y2bDRRZDJ6QUZVSDQ5QUZlNGJj?=
+ =?utf-8?B?bkp6a1oyRjQrL3ZFZzVIMHNFVkQ5dWJkU2xsSTVYWWVsSlFFZUJsN3JWVGd4?=
+ =?utf-8?B?enQzTzNlS1JOMU9CTHYycVliOFU5U2pIemV3c0ZnUjM3d1cvSkxpSmxDckZL?=
+ =?utf-8?B?NFg0MjF1K0VUZ25ndTgyaThObkk3bUc4U3ZzeWJ0SHlMSHQwL1ZPMFZqV045?=
+ =?utf-8?B?YVNlM2U1TlRyUXFDNENoL3BBdnNNZWdRK1p1cmlMd2ZUOGkwRlRVd2ExU1JY?=
+ =?utf-8?B?ZDdnNllhcmNsRHh5enBMejRJL3hsZmZFWFFIYXlYcXhGUzFGS3pVbTV6R05T?=
+ =?utf-8?B?YzJGVjk0ZThBcU0wVHY4K1JzMHZQNGVlT2RiOVdEbmN0Sy9iWFFvWEdDSDJ4?=
+ =?utf-8?B?QmI4Q0J2ZlJaM0RxOE83TnFGMllIcjg0Q2k3S0pDQVlJNW92NTlEdnpDOG5H?=
+ =?utf-8?B?WWwxUHdxNHN6N1Y3TWhjQWFFYUJqQUtmejJsa3paVXRLbnRoOWdVUWNpWkNF?=
+ =?utf-8?B?UldOL1JacWlBNzhneFVVS0sxK0plRmtZMGdEcUZCMGdITWtzUFVOT1pZR0JR?=
+ =?utf-8?B?MUsrNUQ5WGJtL1Z1TTFTbFdZVlVJdGFUYmpDN1ltcGN2WHpnMEtmRk9TY2pB?=
+ =?utf-8?B?S05HMldjZGxneWVQTTBFQ1g3UTZzSVlkWmUzcEdIbWdxVVBmb1dreXA1WTZa?=
+ =?utf-8?B?b3FSYko1ZUsvTm13NGdQWnVzT1pTQW1tUC9peFJXQ0U5eHRxOVc2TEpac2J4?=
+ =?utf-8?Q?T0fCr7X4rzYgaPdRlo5JniXCX3XzSJJB?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?U3FtcHJSSnM4bWR5UDdiVUFFcTdpbGVabmlOWGFuc2VJTmI1YVBDZ2ZrMFQ0?=
+ =?utf-8?B?NVBYckRIT2hGUFd6RDF1Yk9nUjZYd3prbTZqUzVKb3BMcDFxQ29VTGM0NWdZ?=
+ =?utf-8?B?N2U4WjFaeWo5WFg3c2NVMGVValdqNVFYQld0WnNxaTFXRjRxQ1ZnUFljUU5a?=
+ =?utf-8?B?MW54UTRHbkFZWXRDRmh3eFhOUFp0Ukx6czBzbHQ1WlU1OTIybzlkMmFMb3lL?=
+ =?utf-8?B?bG9PRElscVdBdzBWM3B2RjFucWRoWjdHcHk4Q3ExTGlNbm8wOGptZk9VSDlY?=
+ =?utf-8?B?NHNaOFB3Vy9qMlVSY2NhQjlTK0JjeDFYdUhQNXRua1REd1BBRE9VSG50NldJ?=
+ =?utf-8?B?bWlCQ1ZFUTFFQ3lqRjBreURvSzhaQTYxZU9KYTM1Z0svbC82bTA5R2x3OTk1?=
+ =?utf-8?B?RmhqR3o3V0hUejlJeG1oNllmRnlSQko4alRJSU9tUzBaM251MFEvSTZ4OXlk?=
+ =?utf-8?B?eXgrbzU1eDBjUHNsWDZ5OFJCOXFwNnhNYTgwS3h4Rkd5ejZoUTRFbXRyMVJN?=
+ =?utf-8?B?WGNhdmcxZEJrVGxZT2lXUjdLb2syOUtyOEM2ZHdsUU1xRjlrK3BWcVRIUGVn?=
+ =?utf-8?B?NjJUYXRSQUVpUUVleHNyMVM1TW9RVHpmL29IckZOc1FuMG93a2h0S0REQlZv?=
+ =?utf-8?B?Mjk1WDkzSGVQbEhHM3UrL1VScFFVYTI4S1Fxb0FmMjJaTmVYTUFXcE1vVEF3?=
+ =?utf-8?B?SDErWmlrK0p3akFUczlVL3l2SGtqaUNJTklrQmdMSU44SFBORVBPdTlCKzJG?=
+ =?utf-8?B?Y0FNeFZLRFRERFViSXBxaHc0M1M0UUU0RXZYTkROOFJIejVPL0xGVnpJWVpu?=
+ =?utf-8?B?VXZXd1RCQ1VpZzNJQjFsc0Z0WDZYOXdJWkUvdS9IZ1pLUmpySmlPeDdMa2VN?=
+ =?utf-8?B?MzRoaEZLYkV0YkJIeHFLcG1TK3k5YlV6QUlreHZEbVhwUzladUlKSlM5aFRq?=
+ =?utf-8?B?emR1WTJOTE03S0xCN2lKcitxOVdYTW9Ya29PMUJCR1YxRmlrSE1DQWw2UExj?=
+ =?utf-8?B?a0Z2N2pVekExaCszTlZFQk5CL2NDbFpVRzljREhDdE5sK0JDTzkvRy9DNnFV?=
+ =?utf-8?B?K2Z2VVhhTUNxSnM5c3VIZUZOSXk2Qjhsb3lBV3RnalFCSmNaNFFwM0M2N0d4?=
+ =?utf-8?B?cHRFOTEyN3ZaVGdWdldsUzA4eDhmbzY0VG9sRFNZS2QxdXo2a0daUksxR1l3?=
+ =?utf-8?B?VCtGaUNiQmwxNVVmZzFaMWJCQUZ0ZnUzQldxMVJOcmNTZmRxSFFZTGlFZ25S?=
+ =?utf-8?B?MUNpRjVWOUFsV093YWNVeTltcDBJTkhydUQ0dG9NYUJiSTR6TnRqc3NsM0Zj?=
+ =?utf-8?B?RlFJaFhUOWRuQXcydXUvUTQwbktkM0FvdUFNRU9jOG1zQXE4ZEd2ZlRmQTFp?=
+ =?utf-8?B?R0tzTlBHQWFxWENlYUc0MmlKTTZlU1MwVVVwazNlaU5qUmVvYnRWdTkvTWV2?=
+ =?utf-8?B?UDIrQjQzRUdydCszK2N4ejJDTDNlN3FCbElTV1BlNjlGS04xVjRGWHVSRWtZ?=
+ =?utf-8?B?K2s0RFZpQTN3VTZNK1dJOW1WSVhRQm1zRHFaemF4N1FtcS8vOHFSVHNVbjla?=
+ =?utf-8?B?b0lXYi95UGU3dnVqNWhML2RQamNOQzZPOW9JanpQaDFoOUVZUlQrUzYvRzJJ?=
+ =?utf-8?B?MUhSTEhMWGhkZ3lHYmJ6SU9tNkE0VHFyS2Frd3ZDa3pULzRDaEZkaU82WVNp?=
+ =?utf-8?B?bkN6TENnd3p1VWw2VlFiaXV0cXZ2Q21BMGlwSldNNmJ4YnQyTmZyUWJSZm5x?=
+ =?utf-8?B?V3FaN3ZVTmlIS2ZUUXhtNUNiS3lZUDRtVFVEcHp0K3Z2QWl2ZlFJdDBhd3Vi?=
+ =?utf-8?B?TWdzSlppZmlyaGxjb2l3ZThsRmVWUUoxUGd4VWZvR3ByTDh4YStVQnV1T1pY?=
+ =?utf-8?B?WEZqQUNKb1NtOExCbG5tQWU0V1lEZGQ3VEZHdTUxa0pFU09SdGRKanRyNXVX?=
+ =?utf-8?B?NlpFOUh6eUFISGxBamNqY21mNXB1bHNGYU1wWDJzOTF5OGNQZmhuMFRwcGQ5?=
+ =?utf-8?B?aE5nZllLbFpkZ3JWRU9va1FBY3lKaklhTUkwb0xhTVFmU3dOVjB5UHA1V210?=
+ =?utf-8?B?aUlyUkRtQmcrWEdpS2lDaEZoN29QV25rRkFJWmlud1F4NHpEYnhUb1VtdnM0?=
+ =?utf-8?Q?9zElyQbaWd842Wfl5cpu1U9pL?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb1c6ab1-905d-439c-82af-08de123fe037
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 14:24:29.0362
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OWKgt4644HpKQcU8CQ+JuW7HEPuIQR0JlHiLMaDzOMZjLbViWlNJM4SQV0F4KeDRNSB27hf4ksrOgbQdIFwkQw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7571
 
-On Mon, Oct 20, 2025 at 01:53:30PM +0200, Roberto Sassu wrote:
->On Mon, 2025-10-20 at 12:31 +0100, Jonathan McDowell wrote:
->> From: Jonathan McDowell <noodles@meta.com>
->>
->> There are situations where userspace might reasonably desire exclusive
->> access to the TPM, or the kernel's internal context saving + flushing
->> may cause issues, for example when performing firmware upgrades. Extend
->> the locking already used for avoiding concurrent userspace access to
->> prevent internal users of the TPM when /dev/tpm<n> is in use.
->>
->> The few internal users who already hold the open_lock are changed to use
->> tpm_internal_(try_get|put)_ops, with the old tpm_(try_get|put)_ops
->> functions changing to obtain read access to the open_lock.  We return
->> -EBUSY when another user has exclusive access, rather than adding waits.
->>
->> Signed-off-by: Jonathan McDowell <noodles@meta.com>
->> ---
->> v2: Switch to _locked instead of _internal_ for function names.
->> v3: Move to end of patch series.
->>
->>  drivers/char/tpm/tpm-chip.c       | 53 +++++++++++++++++++++++++------
->>  drivers/char/tpm/tpm-dev-common.c |  8 ++---
->>  drivers/char/tpm/tpm.h            |  2 ++
->>  drivers/char/tpm/tpm2-space.c     |  5 ++-
->>  4 files changed, 52 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
->> index ba906966721a..687f6d8cd601 100644
->> --- a/drivers/char/tpm/tpm-chip.c
->> +++ b/drivers/char/tpm/tpm-chip.c
->> @@ -144,7 +144,7 @@ void tpm_chip_stop(struct tpm_chip *chip)
->>  EXPORT_SYMBOL_GPL(tpm_chip_stop);
->>
->>  /**
->> - * tpm_try_get_ops() - Get a ref to the tpm_chip
->> + * tpm_try_get_ops_locked() - Get a ref to the tpm_chip
->>   * @chip: Chip to ref
->>   *
->>   * The caller must already have some kind of locking to ensure that chip is
->> @@ -154,7 +154,7 @@ EXPORT_SYMBOL_GPL(tpm_chip_stop);
->>   *
->>   * Returns -ERRNO if the chip could not be got.
->>   */
->> -int tpm_try_get_ops(struct tpm_chip *chip)
->> +int tpm_try_get_ops_locked(struct tpm_chip *chip)
->>  {
->>  	int rc = -EIO;
->>
->> @@ -185,22 +185,57 @@ int tpm_try_get_ops(struct tpm_chip *chip)
->>  	put_device(&chip->dev);
->>  	return rc;
->>  }
->> -EXPORT_SYMBOL_GPL(tpm_try_get_ops);
->>
->>  /**
->> - * tpm_put_ops() - Release a ref to the tpm_chip
->> + * tpm_put_ops_locked() - Release a ref to the tpm_chip
->>   * @chip: Chip to put
->>   *
->> - * This is the opposite pair to tpm_try_get_ops(). After this returns chip may
->> - * be kfree'd.
->> + * This is the opposite pair to tpm_try_get_ops_locked(). After this returns
->> + * chip may be kfree'd.
->>   */
->> -void tpm_put_ops(struct tpm_chip *chip)
->> +void tpm_put_ops_locked(struct tpm_chip *chip)
->>  {
->>  	tpm_chip_stop(chip);
->>  	mutex_unlock(&chip->tpm_mutex);
->>  	up_read(&chip->ops_sem);
->>  	put_device(&chip->dev);
->>  }
->> +
->> +/**
->> + * tpm_try_get_ops() - Get a ref to the tpm_chip
->> + * @chip: Chip to ref
->> + *
->> + * The caller must already have some kind of locking to ensure that chip is
->> + * valid. This function will attempt to get the open_lock for the chip,
->> + * ensuring no other user is expecting exclusive access, before locking the
->> + * chip so that the ops member can be accessed safely. The locking prevents
->> + * tpm_chip_unregister from completing, so it should not be held for long
->> + * periods.
->> + *
->> + * Returns -ERRNO if the chip could not be got.
->> + */
->> +int tpm_try_get_ops(struct tpm_chip *chip)
->> +{
->> +	if (!down_read_trylock(&chip->open_lock))
->> +		return -EBUSY;
->
->Hi Jonathan
->
->do I understand it correctly, that a process might open the TPM with
->O_EXCL, and this will prevent IMA from extending a PCR until that
->process closes the file descriptor?
->
->If yes, this might be a concern, and I think an additional API to
->prevent such behavior would be needed (for example when IMA is active,
->i.e. there is a measurement policy loaded).
 
-Yes, this definitely provides a path where userspace could prevent a 
-measurement hitting the TPM from IMA. I did think about this when 
-working out what to do if the lock was held elsewhere, but punted on 
-making any changes because there are several other avenues where that 
-can already happen.
+On 22/10/2025 18:45, Bruno Sobreira França wrote:
+> Hi, this commit resolves a spelling error in the tegra194-cbb.c.
+> 
+> Signed-off-by: Bruno Sobreira França <brunofrancadevsec@gmail.com>
+> ---
+> Changes in v2
+>    - Really fix the spelling error
+> ---
+>   drivers/soc/tegra/cbb/tegra194-cbb.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
+> index 846b17ffc2f9..e1deda188fdb 100644
+> --- a/drivers/soc/tegra/cbb/tegra194-cbb.c
+> +++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
+> @@ -1836,7 +1836,7 @@ print_errlog1_2(struct seq_file *file, struct tegra194_cbb *cbb,
+>   }
+>   
+>   /*
+> - * Print transcation type, error code and description from ErrLog0 for all
+> + * Print transaction type, error code and description from ErrLog0 for all
+>    * errors. For NOC slave errors, all relevant error info is printed using
+>    * ErrLog0 only. But additional information is printed for errors from
+>    * APB slaves because for them:
 
->> +
->> +	return tpm_try_get_ops_locked(chip);
->> +}
->> +EXPORT_SYMBOL_GPL(tpm_try_get_ops);
->> +
->> +/**
->> + * tpm_put_ops() - Release a ref to the tpm_chip
->> + * @chip: Chip to put
->> + *
->> + * This is the opposite pair to tpm_try_get_ops(). After this returns
->> + * chip may be kfree'd.
->> + */
->> +void tpm_put_ops(struct tpm_chip *chip)
->> +{
->> +	tpm_put_ops_locked(chip);
->> +
->> +	up_read(&chip->open_lock);
->> +}
->>  EXPORT_SYMBOL_GPL(tpm_put_ops);
->>
->>  /**
->> @@ -644,10 +679,10 @@ void tpm_chip_unregister(struct tpm_chip *chip)
->>  #ifdef CONFIG_TCG_TPM2_HMAC
->>  	int rc;
->>
->> -	rc = tpm_try_get_ops(chip);
->> +	rc = tpm_try_get_ops_locked(chip);
->>  	if (!rc) {
->>  		tpm2_end_auth_session(chip);
->> -		tpm_put_ops(chip);
->> +		tpm_put_ops_locked(chip);
->>  	}
->>  #endif
->>
->> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
->> index f2a5e09257dd..0f5bc63411aa 100644
->> --- a/drivers/char/tpm/tpm-dev-common.c
->> +++ b/drivers/char/tpm/tpm-dev-common.c
->> @@ -65,7 +65,7 @@ static void tpm_dev_async_work(struct work_struct *work)
->>
->>  	mutex_lock(&priv->buffer_mutex);
->>  	priv->command_enqueued = false;
->> -	ret = tpm_try_get_ops(priv->chip);
->> +	ret = tpm_try_get_ops_locked(priv->chip);
->>  	if (ret) {
->>  		priv->response_length = ret;
->>  		goto out;
->> @@ -73,7 +73,7 @@ static void tpm_dev_async_work(struct work_struct *work)
->>
->>  	ret = tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
->>  			       sizeof(priv->data_buffer));
->> -	tpm_put_ops(priv->chip);
->> +	tpm_put_ops_locked(priv->chip);
->>
->>  	/*
->>  	 * If ret is > 0 then tpm_dev_transmit returned the size of the
->> @@ -220,14 +220,14 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
->>  	 * lock during this period so that the tpm can be unregistered even if
->>  	 * the char dev is held open.
->>  	 */
->> -	if (tpm_try_get_ops(priv->chip)) {
->> +	if (tpm_try_get_ops_locked(priv->chip)) {
->>  		ret = -EPIPE;
->>  		goto out;
->>  	}
->>
->>  	ret = tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
->>  			       sizeof(priv->data_buffer));
->> -	tpm_put_ops(priv->chip);
->> +	tpm_put_ops_locked(priv->chip);
->>
->>  	if (ret > 0) {
->>  		priv->response_length = ret;
->> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
->> index 02c07fef41ba..57ef8589f5f5 100644
->> --- a/drivers/char/tpm/tpm.h
->> +++ b/drivers/char/tpm/tpm.h
->> @@ -272,6 +272,8 @@ struct tpm_chip *tpm_chip_alloc(struct device *dev,
->>  				const struct tpm_class_ops *ops);
->>  struct tpm_chip *tpmm_chip_alloc(struct device *pdev,
->>  				 const struct tpm_class_ops *ops);
->> +int tpm_try_get_ops_locked(struct tpm_chip *chip);
->> +void tpm_put_ops_locked(struct tpm_chip *chip);
->>  int tpm_chip_register(struct tpm_chip *chip);
->>  void tpm_chip_unregister(struct tpm_chip *chip);
->>
->> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
->> index 60354cd53b5c..0ad5e18355e0 100644
->> --- a/drivers/char/tpm/tpm2-space.c
->> +++ b/drivers/char/tpm/tpm2-space.c
->> @@ -58,10 +58,9 @@ int tpm2_init_space(struct tpm_space *space, unsigned int buf_size)
->>
->>  void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
->>  {
->> -
->> -	if (tpm_try_get_ops(chip) == 0) {
->> +	if (tpm_try_get_ops_locked(chip) == 0) {
->>  		tpm2_flush_sessions(chip, space);
->> -		tpm_put_ops(chip);
->> +		tpm_put_ops_locked(chip);
->>  	}
->>
->>  	kfree(space->context_buf);
->
 
-J.
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks!
+Jon
 
 -- 
-"I'm a compsci. I don't write code." -- Noodles.  "I'm a DB coder.
-Neither do I." -- Adrian.
+nvpublic
+
 
