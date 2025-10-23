@@ -1,167 +1,176 @@
-Return-Path: <linux-kernel+bounces-866284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D91A8BFF628
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:45:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C954BFF67F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3CA5C358004
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:45:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2891C502D83
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092912C159C;
-	Thu, 23 Oct 2025 06:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADB32C08BA;
+	Thu, 23 Oct 2025 06:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CF6kF8Ja"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lPPCyHvj"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010043.outbound.protection.outlook.com [52.101.69.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774362C08BA
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761201919; cv=none; b=TWXxAn4gp+TUOuD9QDJgMNey3+a8YlPPZ8fYZMl3r/9JNNthZxJXznWijJkDs4hg5b4vb0pXxhVsozC68Ler6Msu3UVBT07ZLcai4vkw2Xk/vEmES2dCk4Bpl0ebkS3dgYYjzYHCd3rmKuyYPszIzKRE51hzwwUOeT2RJJ7sTUY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761201919; c=relaxed/simple;
-	bh=Q6syN2U/kg7SVNb9/+fI88jAEOI93lk0180pEu3AQS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V7LXi/hu9qH7nliT2fL4bA0UVTh6uG4hypWo6JiuLOoWsURaKh/ygfOsaWBLDus+LqIRCrJDyAIg+LqkfR0GYJtw+WIsHEvlE/pfFiqi0dpPSzN74LYusI7BIb9v8jJZXO2j0zhmwzARRoT4IiCmE8fNEgb32pxPSfi3dTLZZyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CF6kF8Ja; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-42702037a01so65033f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:45:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761201914; x=1761806714; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WNPJYP6r90cMIhHtjFw9cecGFJVdIxbD+0uriFYd5bk=;
-        b=CF6kF8JaYxT4KKeM6U76mJmwMlPYpox8e2pYMd0e+Iw3lNgfmmQWvdndNuaZvAjV/0
-         /KWDCp2WLpcljBvY7In1a3g/fbNzILlcpHaLoSohcWm2hQaZohrKl7F9SQBntlTZwVQP
-         NDwXK9nt/UNpSWAfSczBx8pNSEfbBedkQpEUy9mSEr1und4ZaDkC/yYm+LP/sLkZ6bU4
-         xdtSr2d1nUdFu9rDgkWWuVrCO/EUbjr+98sRdSlJOD0g+GV+PR1iecUkKSskZ5Q310Hl
-         blH+FRay4SBwphB2sG+zjv6Av1rmMcCWTmVfBQlQz4BhmNJzRb5wX2NJumDiTLWhfuTD
-         1+rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761201914; x=1761806714;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WNPJYP6r90cMIhHtjFw9cecGFJVdIxbD+0uriFYd5bk=;
-        b=NvL8TtLZReyyFY0UyFp2XGxQbXJ78zuTaEcx+dy7MUDff+lstewpJ6VeFA+nyVrlo+
-         FOr6qTj5oDrvV0i3Mkf1wjZ17JyCfHWdWmUmzH7LppnGRIR8gL1YVwNp6zmaPDW7Ih9E
-         hUYrB3WR6VagAqz5nV0OqXKC9c3UF3ONhLty8mQUJhOX2xWuoEkrg4cE5qowstiqiidc
-         x2RkGaD7Sa+t1t1FAgdLiwXklDvG0s1M+WnGY+1txAEOsFQFCLRdmxTqyg6Tbj6eyPkE
-         ZoPDsiyyYs3UVJgxVsy4904tGgfXtOkXuBWBWIW0LfvKS5yO9nH2JPbSvwtKzl87H2pY
-         o74g==
-X-Forwarded-Encrypted: i=1; AJvYcCVZqZ7r7wSRQehmTTErikRpnSnJkJ9W2kpvgXspLbIXcHw+S9USEuoX+ekjsanmmBkNdB8P0LPIQx7841w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCF7iKHCbtZm+19a4nH+iQ1RuJDKQQUPKTOsZuNbKSWSA1WKY+
-	dlG8G/kdmq5aQBPB/hsLjSwyjJDFJU9T3b8cPTPbzEMA8DMzkD7gpL7VqtpPV+ZmymU=
-X-Gm-Gg: ASbGnctccSrhGjrxkks/CDi0pmGlqOhmHfiNapAz9WSFAlVFcC24m3QmaPBAel5ytaY
-	wRO3aifo99eEIjxzQrOmWT7A+hBOXVVgLYf6ckxa21SvCPRVpdj86p5cgUtULMECkX/uDbEbH2y
-	XBfYxAWZe/4DlE/sr4d/ow50I5HFLo5FdfuKfUBPIfjyCGIpxldyFS4BEsApT6TZRk3Rn1hLcC+
-	XbeBJ/9DJLQSzRT2pUJgmdILPtZjHBF2cIGDIYS1QesDyyLFXcX3yub1t/btuPQd+KbE5N/+37S
-	H1xdspdQZa/jYLMnlkqOOFAtvwWdZDDGJW7in0h6QQzQ4b6Io4T73UgkVnLXFj/1RsLsPa50J38
-	jGEpej/IPTtW007j0q6MMrPETFqG1le592WURxdpIQ2gaI2Tssb/H4Zv4Upb4QnS04V9AVBUWRX
-	StoZsyXzg+TrTDMdcDOud5s+/yNaf5oCqFSk/ObnUaiO8cEw6r/99bjlXvUmvNksjZkg==
-X-Google-Smtp-Source: AGHT+IEEbSWHJ68olFyNXTL6G/WJieyPscvfbJ7jtJUURO3283Lli9NeVR1f5nczETHjqFcVCHg9sg==
-X-Received: by 2002:a05:6000:26cd:b0:427:25:3c31 with SMTP id ffacd0b85a97d-4284e528b25mr4403538f8f.1.1761201914397;
-        Wed, 22 Oct 2025 23:45:14 -0700 (PDT)
-Received: from mordecai (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897e77dasm2337018f8f.2.2025.10.22.23.45.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 23:45:13 -0700 (PDT)
-Date: Thu, 23 Oct 2025 08:45:10 +0200
-From: Petr Tesarik <ptesarik@suse.com>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Nikolay Borisov
- <nik.borisov@suse.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <x86@kernel.org>, "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] x86/tsx: Get the tsx= command line parameter
- with early_param()
-Message-ID: <20251023084510.4b1cd2fe@mordecai>
-In-Reply-To: <20251022174603.mx7sze3w5e24obps@desk>
-References: <cover.1761127696.git.ptesarik@suse.com>
-	<befa0b859777267a11c90aebde6a3bedce276b90.1761127696.git.ptesarik@suse.com>
-	<20251022174603.mx7sze3w5e24obps@desk>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-suse-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08592BD013;
+	Thu, 23 Oct 2025 06:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761201973; cv=fail; b=kcmgm29XwMYZq7nDbWLaVr3fTRDfz0f8ZVvJS7oSCEYA/wC+LCcb5Te1lJA2aEjuIw1j/tTyOKW90oGNPGXJAr6z8CsqjXWk5rgWSHAHUWT/5XrtoTyr19nrCnmoaKyTmOrJilY6AJ7tRvvvntOqvxWAYAO8PGVIBe2f2s+pIwQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761201973; c=relaxed/simple;
+	bh=ByzpEjpiAKAxQJuvvoeEM9IBoZX7/A1Frjd1J1sx5yg=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=M/pHqhq+dRl3gS8MNSlC6rhMlfguJKvGzNzQd3x1Uolrc5fIuApmZ8rSrnJBjYDa6O9gA1w71i4U+SuKL4GlF7IiN9S1OkBcducyoH2r03jfmpwyzMnfheMdkh3f2zQrSI62rF4Pazm+g4jP0mZ5SRdUGpTlv7SXVHVk4tTCm30=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lPPCyHvj; arc=fail smtp.client-ip=52.101.69.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CZLw7JC493fjS144mP2TO2SvhUAcLWs3+ks3SinXtbpxMpVDeSdQ6Df6Wd/NsrFievd7ntF1fWnJiA+bshbqMgrTXY6bvYXNLdJ7apCstAVlYeQqwV1OqeGz1YHVvwJAEQy/qt4Sqy7VJkQwgGKeQjkOkGHEgt4Otj1W0nMOgfYIgwpoT9nTkQrU8MeEeAliyRUxMzeBpDAPYklLqPhG/GfVRoj7yk6fgw/8wdiLH2DpxHWFmlmdbjDvYRec/sxZ2StBIm0lSsddLdmaGs15PwvUcg0TBJ/UYCeYnZGuHuk8O1iTF8shGzDwIALSw47JMl7Vj7pyC0Kr3b5I4F8FPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QCb/xkwLUlQVVnKwYCV9Xi11pTwlAoCTP3hYs/qNpyQ=;
+ b=bIjYUQoD8kX4uA+BC1GK/rA3v7hZxCyTKPua5DSRgWZ3cOtYNd/C5N6IZaOG/1VA8wUAS/9PMr4wAsMa0xaPEVhoV8LRmjVgpfeRu3P4mGzvz2lRv82NIUMcAx4DFD+6bz3J4SI2xSyJqmSDe6Fv8wYl32TX8XOaUYMfqMMdG5Jc2u4AK/GAgDPkaoNfGKNQaCSm5TXpke/81cUnekd3dIwLWCFd+VeiEGWVYVjnGOM+6s1AETI7pO66Vqghbwv26scnJ4yLKSNmuh93A/4fpbkefXOrz7AapebUcO6zLjQn8VoWQ9vup/mTUnAmZMcaHIhlbWY3NjNobpVmKQ1u5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QCb/xkwLUlQVVnKwYCV9Xi11pTwlAoCTP3hYs/qNpyQ=;
+ b=lPPCyHvjaAn14UK46jc0OwyDqAdsfzdf91qy4QfVPVkG/o54bj/mXffNLmsTqMPCFvMT60kRsS1FxxBssh5WmeWkfGKQILM4UhxphmEHSl9tbQdrLvcbdWiDyoJKQXGyOucJG4Fh8MOAAtgkQ0u7tO48poqt7eEDACsEQLyCsYS+dQhzrouBpf6Y+yBXvpr/yN4ftQoaAM8QS7IV21381K03Slz46URSyLVEe95GB3mW+zrfU5DdbfPO7e12IixupdPJkNPam+ziZciG1mcUN1Nv4+gd24HTOejBFvUOFEek1yl8KljS4IhoeXOSG2+fEu42U37vqLwQ9H2F30QE8w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
+ by AS8PR04MB8006.eurprd04.prod.outlook.com (2603:10a6:20b:288::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
+ 2025 06:46:06 +0000
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::bab2:d15c:fcf8:ef2b]) by AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::bab2:d15c:fcf8:ef2b%7]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 06:46:05 +0000
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: shengjiu.wang@gmail.com,
+	Xiubo.Lee@gmail.com,
+	festevam@gmail.com,
+	nicoleotsuka@gmail.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] ASoC: fsl: correct the bit order issue for DSD
+Date: Thu, 23 Oct 2025 14:45:36 +0800
+Message-Id: <20251023064538.368850-1-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR04CA0164.apcprd04.prod.outlook.com (2603:1096:4::26)
+ To AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|AS8PR04MB8006:EE_
+X-MS-Office365-Filtering-Correlation-Id: 987cce5c-5424-4dbc-9f40-08de11ffd6ba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|52116014|366016|19092799006|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?G+ovGP6HQwUm8SZyvAz0OsRc52Fr7+GsVxAvXOec7NUy4A9u5XgwYFAwGAKZ?=
+ =?us-ascii?Q?vDU8gAM5nEDTjs6GGKhPA0nuw8xWRNg6ck8iLN1hB7l/g//t9WQEH1Whg5Su?=
+ =?us-ascii?Q?vVHLotfXdAWEoc/kXl5lx9hhtDmKuMq4AYl82I6qAZXmKhLDl8LNHtPkv6iX?=
+ =?us-ascii?Q?P5PhtAN5GcjsabPEYNWVh2c2KyFbKeDnrNioChyiG8AYCEiNlyfaApja8nQp?=
+ =?us-ascii?Q?9We1SFzC6sX4DCIeptM34BWAvK02NsbwjXZQ/DcJ8nNbflCJlKuLTU8nscn4?=
+ =?us-ascii?Q?DdmkdzUkHD3PC2eDe/nYSr4JgEDor4xniXqeLTxhcnSKTeEumpC0leh+FSal?=
+ =?us-ascii?Q?k/YVbrORk4y9jf+FUiSyEA8h19fxTcajFSHphXfqbBYXyQ+R8oH1qIHO+qRs?=
+ =?us-ascii?Q?B/MCr7hKd5VQefWFZdKGAEtpCIb5JKbIWZlNCzqaI0J0RYLsFWseGUd9VMVm?=
+ =?us-ascii?Q?bBSjCLdcJzzucU+5SPF72BHM+jRFDvu3O4Rs2TFgGy9PkUqWik76WIZs9+w+?=
+ =?us-ascii?Q?eTrrab7JDHNz9lbL/61bvTpz4txDoSiw2Y7RGahKQcuSDBHfHtMibCk/a+d/?=
+ =?us-ascii?Q?DzQS2D3FsFG1rtLdgaQJY2RW5Lw+vcXrCXwnvvyF/86mIIxwyLWbUzth/1RG?=
+ =?us-ascii?Q?pz34wgeD9TeX7cutwIYw2fB37RSU0zqo/vtPWb++4IypxxQBLY1hdODVlSRZ?=
+ =?us-ascii?Q?xtiLMPteUUbQKSjPm392d6cX9CbvQdPsKmBv8LPK7EdasylFadBrIcXJUJZk?=
+ =?us-ascii?Q?zwHUHshVZh3oQkV5z7RK/xSjIRpoGPmQ8KUIxmJkN7omcgHEphYhZ8Mu2cWp?=
+ =?us-ascii?Q?B+7CcK8ItYdiNBI/XUg++vjV43Nd56rHC7m1qVpUNNKKjH3lckniQcz0xbyj?=
+ =?us-ascii?Q?rL4REgngdc9pP1IvpKJX9Z2zNmf1xRgRjBjSBmXR/9px8z2mLAPk/QYhRvSK?=
+ =?us-ascii?Q?lr2g6O79RGIJGyCcF2MyOWvYkJao0QMsNMIdP/yt7YiXtsVQMNtWu+b39eUk?=
+ =?us-ascii?Q?Wvt6ksHO1kM+Uu3m1bxhBtxUUuaOwFan8zmBI8qUqIwXCtNzGwc8qlY7Ylra?=
+ =?us-ascii?Q?nU1PzJZjRhRpzRncgV/2iawLhRLzgBzNLSexGizvz2Qpo/Yfxlp8auYBnBds?=
+ =?us-ascii?Q?DDLUB5xK6/M4oKU0OBtAnoz3vnn2TELUWcbRT5lvAFcYwry3j5Qu5KB27Ds/?=
+ =?us-ascii?Q?/CSu1GF2rUlnwewdH1xpu4ij/Lteppj+jzpYsWYDtkQV7i3Zk+2awtdgVprI?=
+ =?us-ascii?Q?/7VA56l1wpkZq3Vi/HgtG/ExnFw1KrHMWjZzaWXGxCKyWB0vNQDyDcSX5JM3?=
+ =?us-ascii?Q?FehFfkuy3SEFOIcWWXwyQTpLysh8ICxplOygQiYx7QvspS/tofxDY6ewMdNu?=
+ =?us-ascii?Q?MSE7K4QCWRNz0bx+DQR54zWhhMkAsNUIKdCpwODK1lHWqjTGzq26NavrK6SU?=
+ =?us-ascii?Q?HEhsOIWspnvN4FD3XOiXqqQUeqIWEB2x7HNj197cCeaRHzqUnsfWaopeJ2XS?=
+ =?us-ascii?Q?iyr/JYV2j5s0/EU9Txmmtalb4RbG+OhIOEd5k7Efz9uQ2XJuAfVZlHMukA?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(52116014)(366016)(19092799006)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?sg/Du2O5B97sWkt1sa6KtD/Xq6TeCvuFTZ217klgHFUFJFjyvcK9fbSS6759?=
+ =?us-ascii?Q?mKfwFet5h5DcV5seIVYroeIDd98xSoE4rsV1idrs4a4+j5FR6mMvbYSCc5C5?=
+ =?us-ascii?Q?iZ3Mu35JRAjocP4pTanZnoIFUvsqMqLPg2LW7VZq5r5lehz5MnUXT+5YA5c5?=
+ =?us-ascii?Q?LUh3TiJZMm3gN4llVwB0kjeZxb5RIknK4ZBJSuZ8JPw94siPQK0kja70QGRt?=
+ =?us-ascii?Q?08OT+VbADKhOYZqyHnGkYi0YA8YzrmOf1KmRJrACUujrGkWFH3kmkrCtTzxq?=
+ =?us-ascii?Q?w6YpRTbnWlFUzk+Biek72h+RgUWnNS80xDqmxstLza/jG3xdn78ulKMEf4LZ?=
+ =?us-ascii?Q?OmNR6FYRZBJWRGgsfxME+Q3dH+OyVozHwZASFTRQDUoJ82k9ife6SfM5Jn1p?=
+ =?us-ascii?Q?i5TuGbO1S9E56YShj6+gvEbNS43hhKmKAz8UcdPRylfTYgQsqOeo5VSn04XJ?=
+ =?us-ascii?Q?Vu8R+8YIde9YKbgylblLD7Wo6Ik99dg36Q3UqJIX8uKQcVIwo43PzOkOQdIW?=
+ =?us-ascii?Q?yBrPiP82qHBqkt/Zrfta3/OkUIwKR1V9aRPDl/mhsMdwQ8PT+tvBmryEWez3?=
+ =?us-ascii?Q?hl8JQBfOGZoDnU61XyAZY6kj+/lWjEbqIfphPFUULpGpvV9k5SGtbk80eyrh?=
+ =?us-ascii?Q?MkCWFJVWBtqxyFspYTBp1GlK+p0k6CxJQqh39J4UZ2DHT1PTMzq3TQMFxffs?=
+ =?us-ascii?Q?vrOX0w8ZRaquvhLl4/dw74daTNEpsDO1+axSRQFs1KN0AQ15T+HbbhieB0lv?=
+ =?us-ascii?Q?uY79e2KewdU3TPaTVl2HEGwfvKCr64r38DI9UPZ13lTqIJ4M/9u3LWxFFrMv?=
+ =?us-ascii?Q?xC1hseOlKu08acKttnFd8ERmJOGkqh1q8UTFAoPgx3Rz81j8xYkVY8p5SoDd?=
+ =?us-ascii?Q?TMTlmxwUKFxb/AYqEfy294HHz0zlI/XYSpS4Z8mPOI232zU+oP/4uGwzvAdN?=
+ =?us-ascii?Q?xB+ClHsd/IU7V7TxZBsLE+KCjf0besL/MPCNiMxv7OhL8J8hO6wep1evN85p?=
+ =?us-ascii?Q?UG/l+4bo/+R/fGVsrwFGiNRcbGYFaX2DXoIIsCSZxcG5eU1Jp6zy+N4MZUxZ?=
+ =?us-ascii?Q?LWCyRjJGAjmwYR8pezRynmwjY76GHgq97GhVHqJTc9oLmG0yaHBitbQPuqjk?=
+ =?us-ascii?Q?3n+ffHf7bcA8sSw4Vuy4Zm5kUCSkWfOywULBYAP6Dd3JalPLiWzygvG3nKtH?=
+ =?us-ascii?Q?FGSj314PPqo2zW7VxfnCZxYmob2ZLwp/blS5xhYAUFgJIjtoXXiS0iNIOCTX?=
+ =?us-ascii?Q?eQRDCeDYdk2pT4dwq1TM7Y0Z6E2EZQh7PrMo/3IYrGBSBErz01KPxZiYKwLx?=
+ =?us-ascii?Q?pFqUzgYvMku/vUU3D1okSJqU76tlfF+Vc3SDlj3V4vaeDLJMN9T91LEPStF+?=
+ =?us-ascii?Q?IHSMaSFppTXImm6VCF5OEECjw4k6T40EQLTu5+sILOywV9CEuhCaUMym3GqN?=
+ =?us-ascii?Q?8HUt8YaGd/hGY0s8vChxlDHhDVaulg29C0diP5fMtYg/h2fAWNC7HmweePY6?=
+ =?us-ascii?Q?LeR03fkidou/toeTMwB9pXp3Qc9nRhaloLRXvAS/FXwfRRf6s4u2LzI8sGCV?=
+ =?us-ascii?Q?0Ybb8G2rkLJvUedmPPrWqdRSE3EmYyIytxgeXhj7?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 987cce5c-5424-4dbc-9f40-08de11ffd6ba
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 06:46:05.3678
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wvnAaXWSxvkt10MVKVMhglTPuurLKk6SwOlpiFC4zTJ/3oHrmuKP1gNRrrK9DQSm8IEiL14s1ltir8nwoYMONQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8006
 
-On Wed, 22 Oct 2025 10:46:03 -0700
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
+The DSD little endian format requires the msb first, the previous
+understanding is not correct. The issue is found by testing with
+pipewire.
 
-> On Wed, Oct 22, 2025 at 12:26:13PM +0200, Petr Tesarik wrote:
-> > Use early_param() to get the value of the tsx= command line parameter. It
-> > is an early parameter, because it must be parsed before tsx_init(), which
-> > is called long before kernel_init(), where normal parameters are parsed.
-> > 
-> > Although cmdline_find_option() from tsx_init() works fine, the option is
-> > later reported as unknown and passed to user space. The latter is not a
-> > real issue, but the former is confusing and makes people wonder if the tsx=
-> > parameter had any effect and double-check for typos unnecessarily.
-> > 
-> > The behavior changes slightly if "tsx" is given without any argument (which
-> > is invalid syntax). Prior to this patch, the kernel logged an error message
-> > and disabled TSX. With this patch, the kernel still issues a warning
-> > (Malformed early option 'tsx'), but TSX state is unchanged. The new
-> > behavior is consistent with other parameters, e.g. "tsx_async_abort".
-> > 
-> > Suggested-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> > Signed-off-by: Petr Tesarik <ptesarik@suse.com>
-> > ---
-> >  arch/x86/kernel/cpu/tsx.c | 52 ++++++++++++++++++++-------------------
-> >  1 file changed, 27 insertions(+), 25 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/tsx.c b/arch/x86/kernel/cpu/tsx.c
-> > index 8be08ece2214..74ba4abac7e9 100644
-> > --- a/arch/x86/kernel/cpu/tsx.c
-> > +++ b/arch/x86/kernel/cpu/tsx.c
-> > @@ -20,13 +20,17 @@
-> >  #define pr_fmt(fmt) "tsx: " fmt
-> >  
-> >  enum tsx_ctrl_states {
-> > +	TSX_CTRL_AUTO,
-> >  	TSX_CTRL_ENABLE,
-> >  	TSX_CTRL_DISABLE,
-> >  	TSX_CTRL_RTM_ALWAYS_ABORT,
-> >  	TSX_CTRL_NOT_SUPPORTED,
-> >  };
-> >  
-> > -static enum tsx_ctrl_states tsx_ctrl_state __ro_after_init = TSX_CTRL_NOT_SUPPORTED;
-> > +static enum tsx_ctrl_states tsx_ctrl_state __ro_after_init =
-> > +	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_AUTO) ? TSX_CTRL_AUTO :
-> > +	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_OFF) ? TSX_CTRL_DISABLE :  
->                                                  ^
-> 						 The extra space I had in
-> 						 the version I sent was
-> 						 intentional.
-> 
-> > +	TSX_CTRL_ENABLE;  
-> 
-> Also this can stay on the same line.
-> 
-> 	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_AUTO) ? TSX_CTRL_AUTO    :
-> 	IS_ENABLED(CONFIG_X86_INTEL_TSX_MODE_OFF)  ? TSX_CTRL_DISABLE : TSX_CTRL_ENABLE;
-> 
-> IMO, this is so much more easier to read.
+Shengjiu Wang (2):
+  ASoC: fsl_sai: fix bit order for DSD format
+  ASoC: fsl_micfil: correct the endian format for DSD
 
-Matter of taste if you ask me. I have no preference either way, so if
-you do have an opinion, let's write it your way.
+ sound/soc/fsl/fsl_micfil.c | 4 ++--
+ sound/soc/fsl/fsl_sai.c    | 3 +--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-Do I have to resubmit, or can an x86 maintainer adjust it when applying
-the patch?
+-- 
+2.34.1
 
-Petr T
 
