@@ -1,189 +1,241 @@
-Return-Path: <linux-kernel+bounces-866684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F7DC006EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:19:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9202C006ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E93B735336C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:19:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A0D04FCFE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647D8309EF4;
-	Thu, 23 Oct 2025 10:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nYuCDIfG"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9CD302773
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E25130102A;
+	Thu, 23 Oct 2025 10:19:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4CB27EC7C
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761214744; cv=none; b=kL21sxWdpiDQYsxpqo+FKwbJk6SHX3Fhojylw59TdwM8N49Z3lbRG+Ku+lZ+tN42Tfyg0HQgWHuYYajdKOgHAvVC3T9zNzReF+XLCBLFhiT1B5LswLNx+W9jm6LZd36fvbHE2cVOFM1X7V0fUy3xGR0lLOJy4SrtSjxkin+kldE=
+	t=1761214741; cv=none; b=exfaFDvGzF9xQlNKqvYAcyOxCdNoQfm3wGalZCZFONo6GFXca67MZyygV9YK2nb6GIv6uHO5qDWdJUYzJNMy4QPYphGfQOgaRGKKjbHseJXb5+G0H5hbGngqgTOtZ/D1KEyHNeADl6zM3vc2VNKXSCq1A0B96gyylY5TzaXiKgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761214744; c=relaxed/simple;
-	bh=a1BeWYtfc8iIuGaES/OhW8TI3qadjfvgm0OZbqp61vs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XBv+uY1ESw1uFGB05JFFT0zO0TLWGHJYLEJ2+xGKle05DgaOayA0mqa2LnDTtTErj/epQLWkttb1t/DeBzqyX8FFU6M8NmB6BfcN+Te/FX+Hd+Ibpp06FQoc6+rOwITEfKCocgoTI27p+Fpsr3xPNuF4wjglSWfWKi8tFN9UcHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nYuCDIfG; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-87c103928ffso5864666d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:19:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761214742; x=1761819542; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jj+Kif4dfrKe9mwz38YrsgAu4gm6A5BRFb4/J3K2e94=;
-        b=nYuCDIfG3povgXiZvoKLcYsWc0eNtRd9eUCmpZcHxlrNosLieTfFfLTaATze5jfzYt
-         zOLEJ45EVMDbENJnikTlE7Yffs7X8zj0N8HuPfULNotzpfUsOlPfTWQahlWMxgVRt+F+
-         K7l4cOGqeeXESijAkJg5mzdLybo0F82WBq+ldzRXfSuwUeYw6+w4doLRplpUaTtvyeyF
-         DkLRpssPPFoItcKTeaGG2lID9LvLVgWm58Zuswx4OYtVCX4GrZ2gZ6L/dRVm5OvcbfXt
-         UUxR8hZi+BZGKUzbxAnI9zYxstEZSvshrHFN//ggJcHsuwX2kHormZm7Wr5wrs1ddX3O
-         kpzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761214742; x=1761819542;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jj+Kif4dfrKe9mwz38YrsgAu4gm6A5BRFb4/J3K2e94=;
-        b=vGlzsNVYx0h2nqoyrlXBQIYps14fYscQT5LJDRmQWTfz6mfIupz891+NmTL5yZijag
-         5QY+C6gU6XSk78taYdxftticWur42Zzj209qUqub+inK6xwWJUzokwVNoYthbbWVzvol
-         zNo6d+olt6psMPKY+VopBr5HVN69vDCuzPQ+sMg6wSK44pUDHTG633W8uXBPKhseyk9i
-         c9GSOiUymhMt/hJaEeia+KEbOY1t1mhbj0DEDzYo+gleE65kVDsrAR//ybRasgc5t8Ln
-         lCIJRX3+p1ZdnDsRoOMby3j/q6GEFf7PDnkByBUtGRYp8+kgYtMwkeQctZ5PXU9hTWhA
-         B1hA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuQ+8l35Szjlt4+4nwhcWxbad3/CeUUfKnAj1vcl3ebJVc2b+9ojkibX21RtG3gQ+ozy/pxLeaHZ4fJSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9U9oJLtXyCB7ZdDP1g5aIZfY63qkXvMC2Klb1TpC+4ZDdu6Mf
-	clfItwEBpC+827Fqdi+rZX0pS1kR1OIZECahqX5b8vJmrw/JQd4MarsfZwoxxGw1Dyl9sRY+AIK
-	XIhld7lBxTsifxbWc+GYCbFfAueztLnBfaMbEwp/NbQ==
-X-Gm-Gg: ASbGnctGU2Jg+ZjrgmvC171ghr4pSzCvOFgm9uE+ITIEpj9ZzUo85ZRatC4pIWk6Xgj
-	MFukdpGY+C1c4hw2rXDIx9dbivGcbfHt4DqOO/K7uaK6AoG5lpd16GaSiqluwuVCDHl8u/cGTBD
-	nbna5MaOwGyeH6mmxFBts1P7XC51RIyYXMZZfJruz83igesyQvt7I6PanpgE8xCGVy2dUaLlHFN
-	PaReE54cwRbLOU9fSuKz4BltqPJMFpHt4lqmWcowEMmFva4e4Q/VDyUUa56Hc+lYEd6icGBTRRK
-	TM9vR020mSKfKFbDrg==
-X-Google-Smtp-Source: AGHT+IHNhmQID8BxdTuPqUD1UOIaCU7OEog3sKm0kstXbUtDfJdGdBhlg02NR752jpqHk1Bz3E77Jj7bDJWs5M5CGgM=
-X-Received: by 2002:a05:6214:2423:b0:87c:29c4:4bec with SMTP id
- 6a1803df08f44-87c29c46f93mr338397966d6.54.1761214741816; Thu, 23 Oct 2025
- 03:19:01 -0700 (PDT)
+	s=arc-20240116; t=1761214741; c=relaxed/simple;
+	bh=uFkaK+Q3v7ERcep9IcbJIVUKMJGVGKIxEWt+xcA9EOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YhDb2hYhcEzazEnUmSkvLPkc8PjT+pE9EA83G0vsgCn78hB6vN5ZpXRT30DCCHRAhAROel0jX8lf5X7c0NKZA5rJhI3ZBSbWFSZSkea8rJOW/Ow/lTJu5sr7rUc0qLzXyrAwGHf/iodJjQLdkOm2fBi33BvCsH4J2Z8KfirICdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E50B1516;
+	Thu, 23 Oct 2025 03:18:50 -0700 (PDT)
+Received: from [10.1.31.176] (XHFQ2J9959.cambridge.arm.com [10.1.31.176])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A4BA3F59E;
+	Thu, 23 Oct 2025 03:18:54 -0700 (PDT)
+Message-ID: <bc8f62a8-8e9d-45a2-8d77-e193b12d465d@arm.com>
+Date: Thu, 23 Oct 2025 11:18:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021234520.3355-1-mike.leach@linaro.org> <20251021234520.3355-2-mike.leach@linaro.org>
- <20251022092958.GQ281971@e132581.arm.com> <CAJ9a7Vi+Oq3Zma0Cs+w8m0kRE0pG6ax3=26EQK=u7d=vQfNFQw@mail.gmail.com>
- <20251022140409.GR281971@e132581.arm.com>
-In-Reply-To: <20251022140409.GR281971@e132581.arm.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Thu, 23 Oct 2025 11:18:50 +0100
-X-Gm-Features: AS18NWCeiUa4aE_71Sz4zTfIuX-f8RyEZqLdNWyWeqNAXjkOZBf7qdkAOeOtddc
-Message-ID: <CAJ9a7VggKoYdELcWTXxOg6-78TK2NAEE9uNo6cgpmx0x=0cwsQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] coresight: fix issue where coresight component has no claimtags
-To: Leo Yan <leo.yan@arm.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, suzuki.poulose@arm.com, james.clark@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -v2 2/2] arm64, tlbflush: don't TLBI broadcast if page
+ reused in write fault
+Content-Language: en-GB
+To: Barry Song <21cnbao@gmail.com>, Huang Ying <ying.huang@linux.alibaba.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Yang Shi <yang@os.amperecomputing.com>,
+ "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>,
+ Yin Fengwei <fengwei_yin@linux.alibaba.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
+ <20251013092038.6963-3-ying.huang@linux.alibaba.com>
+ <CAGsJ_4xaA8QRjP9H=n1hQfEfGop7vOd5Y=J+KQzuOyfa8GK-kQ@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAGsJ_4xaA8QRjP9H=n1hQfEfGop7vOd5Y=J+KQzuOyfa8GK-kQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Leo
-
-On Wed, 22 Oct 2025 at 15:04, Leo Yan <leo.yan@arm.com> wrote:
->
-> Hi Mike,
->
-> On Wed, Oct 22, 2025 at 01:35:46PM +0100, Mike Leach wrote:
->
-> [...]
->
-> > > - We can add a new flag ("bool claim_impl" in the struct csdev_access),
-> > >   by default the field will be zero.
-> > >
-> >
-> > I considered a bool - but the correct place for this would be
-> > coresight_device - where we keep all the information about the
-> > hardware features.
->
-> Maybe coresight_device is suitable. But this might require to update
-> furthermore for claim function arguments (e.g., need to pass "csdev"
-> rather than "csdev_access").
->
-> > > - The drivers support claim tags call coresight_clear_self_claim_tag()
-> > >   in probe (see __catu_probe() as an example), we can call a new
-> > >   function coresight_init_claim_tag() to replace it, this function sets
-> > >   "claim_impl" properly and clear the tag if supported.
-> > >
-> >
-> > I considered moving this initialisation to the common coresight code
-> > where we create the coresight_device.
->
-> Seems to me, this is dangerous. If a module is not CoreSight compliant
-> and claim registers are absent, when access we will get unknown values
-> or even cause serious result (external abort or bus lockup).
->
-
-Currently all our drivers assume claim registers are compliant - so
-this makes no functional difference to the current situation.
-
-If the hardware is non-compliant, and is bound to the current drivers,
-then there will be an access to the registers that could cause the
-same issues.
-
-There is little sense in having a call in individual drivers to init
-claim tags which are regarded as common management structure.
-Any coresight component with no claim tags must still either have
-registers indicating no claim tags or as per the specification
-unimplemented register locations have to be  RAZ/WI - which amounts to
-the same thing.
+Hi Barry, Huang,
 
 
+On 22/10/2025 05:08, Barry Song wrote:
+>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+>> index aa89c2e67ebc..35bae2e4bcfe 100644
+>> --- a/arch/arm64/include/asm/pgtable.h
+>> +++ b/arch/arm64/include/asm/pgtable.h
+>> @@ -130,12 +130,16 @@ static inline void arch_leave_lazy_mmu_mode(void)
+>>  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+>>
+>>  /*
+>> - * Outside of a few very special situations (e.g. hibernation), we always
+>> - * use broadcast TLB invalidation instructions, therefore a spurious page
+>> - * fault on one CPU which has been handled concurrently by another CPU
+>> - * does not need to perform additional invalidation.
+>> + * We use local TLB invalidation instruction when reusing page in
+>> + * write protection fault handler to avoid TLBI broadcast in the hot
+>> + * path.  This will cause spurious page faults if stall read-only TLB
+>> + * entries exist.
+>>   */
+>> -#define flush_tlb_fix_spurious_fault(vma, address, ptep) do { } while (0)
+>> +#define flush_tlb_fix_spurious_fault(vma, address, ptep)       \
+>> +       local_flush_tlb_page_nonotify(vma, address)
+>> +
+>> +#define flush_tlb_fix_spurious_fault_pmd(vma, address, pmdp)   \
+>> +       local_flush_tlb_page_nonotify(vma, address)
+>>
+>>  /*
+>>   * ZERO_PAGE is a global shared page that is always zero: used
+>> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+>> index 18a5dc0c9a54..651b31fd18bb 100644
+>> --- a/arch/arm64/include/asm/tlbflush.h
+>> +++ b/arch/arm64/include/asm/tlbflush.h
+>> @@ -249,6 +249,18 @@ static inline unsigned long get_trans_granule(void)
+>>   *             cannot be easily determined, the value TLBI_TTL_UNKNOWN will
+>>   *             perform a non-hinted invalidation.
+>>   *
+>> + *     local_flush_tlb_page(vma, addr)
+>> + *             Local variant of flush_tlb_page().  Stale TLB entries may
+>> + *             remain in remote CPUs.
+>> + *
+>> + *     local_flush_tlb_page_nonotify(vma, addr)
+>> + *             Same as local_flush_tlb_page() except MMU notifier will not be
+>> + *             called.
+>> + *
+>> + *     local_flush_tlb_contpte_range(vma, start, end)
+>> + *             Invalidate the virtual-address range '[start, end)' mapped with
+>> + *             contpte on local CPU for the user address space corresponding
+>> + *             to 'vma->mm'.  Stale TLB entries may remain in remote CPUs.
+>>   *
+>>   *     Finally, take a look at asm/tlb.h to see how tlb_flush() is implemented
+>>   *     on top of these routines, since that is our interface to the mmu_gather
+>> @@ -282,6 +294,33 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
+>>         mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
+>>  }
+>>
+>> +static inline void __local_flush_tlb_page_nonotify_nosync(
+>> +       struct mm_struct *mm, unsigned long uaddr)
+>> +{
+>> +       unsigned long addr;
+>> +
+>> +       dsb(nshst);
 
+I've skimmed through this thread so appologies if I've missed some of the
+detail, but thought it might be useful to give my opinion as a summary...
 
+> We were issuing dsb(ishst) even for the nosync case, likely to ensure
+> PTE visibility across cores. 
 
-> [...]
->
-> > > > +/*
-> > > > + * Coresight specification defines a maximum of 8 claim tag bits.
-> > > > + * The precise number is implementation defined, and may be obtained by
-> > > > + * reading the CLAIMSET register.
-> > > > + */
-> > > > +#define CORESIGHT_CLAIM_BITS_MAX_MASK        GENMASK(7, 0)
-> > > > +#define CORESIGHT_CLAIM_SELF_HOSTED_BIT      BIT(1)
-> > >
-> > > Now we only care about the self-host bit. Can reuse existed macros ?
-> > >
-> >
-> > I feel that drivers should be written to match the specification - the
-> > macros above are a correct mask value per specification and the
-> > correct bitfield comparison for the MSBit of the protocol.
-> >
-> > The ones below are a protocol masks field, and a specific protocol
-> > value that is used in value rather than bit comparisons in the
-> > claimtag code. I felt it clearer to differentiate between the uses
-> > when reading the code.
->
-> How about change CORESIGHT_CLAIM_EXTERNAL and
-> CORESIGHT_CLAIM_SELF_HOSTED to MSBit ?
->
+The leading dsb prior to issuing the tlbi is to ensure that the HW table
+walker(s) will always see the new pte immediately after the tlbi completes.
+Without it, you could end up with the old value immediately re-cached after the
+tlbi completes. So if you are broadcasting the tlbi, the dsb needs to be to ish.
+If you're doing local invalidation, then nsh is sufficient.
 
-The checking code for the protocol does a value compare on the pair of
-bits, not individual bit checks.
+"nosync" is just saying that we will not wait for the tlbi to complete. You
+still need to issue the leading dsb to ensure that the table walkers see the
+latest pte once the tlbi (eventually) completes.
 
-Regards
+> However, since set_ptes already includes a
+> dsb(ishst) in __set_pte_complete(), does this mean we’re being overly
+> cautious in __flush_tlb_page_nosync() in many cases?
 
+We only issue a dsb in __set_pte_complete() for kernel ptes. We elide for user
+ptes becaue we can safely take a fault (for the case where we transition
+invalid->valid) for user mappings and that race will resolve itself with the
+help of the PTL. For valid->valid or valid->invalid, there will be an associated
+tlb flush, which has the barrier.
 
-Mike
+> 
+> static inline void __flush_tlb_page_nosync(struct mm_struct *mm,
+>                                            unsigned long uaddr)
+> {
+>         unsigned long addr;
+> 
+>         dsb(ishst);
+>         addr = __TLBI_VADDR(uaddr, ASID(mm));
+>         __tlbi(vale1is, addr);
+>         __tlbi_user(vale1is, addr);
+>         mmu_notifier_arch_invalidate_secondary_tlbs(mm, uaddr & PAGE_MASK,
+>                                                 (uaddr & PAGE_MASK) +
+> PAGE_SIZE);
+> }
+> 
+> On the other hand, __ptep_set_access_flags() doesn’t seem to use
+> set_ptes(), so there’s no guarantee the updated PTEs are visible to all
+> cores. If a remote CPU later encounters a page fault and performs a TLB
+> invalidation, will it still see a stable PTE?
 
+Yes, because the reads and writes are done under the PTL; that synchonizes the
+memory for us.
 
-> Thanks,
-> Leo
+You were discussing the potential value of upgrading the leading dsb from nshst
+to ishst during the discussion. IMHO that's neither required nor desirable - the
+memory synchonization is handled by the PTL. Overall, this optimization relies
+on the premise that synchronizing with remote CPUs is expensive and races are
+rare, so we should keep everything local for as long as possible and not worry
+about micro-optimizing the efficiency of the race case.
 
+> 
+>> +       addr = __TLBI_VADDR(uaddr, ASID(mm));
+>> +       __tlbi(vale1, addr);
+>> +       __tlbi_user(vale1, addr);
+>> +}
+>> +
+>> +static inline void local_flush_tlb_page_nonotify(
+>> +       struct vm_area_struct *vma, unsigned long uaddr)
+>> +{
+>> +       __local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
+>> +       dsb(nsh);
+>> +}
+>> +
+>> +static inline void local_flush_tlb_page(struct vm_area_struct *vma,
+>> +                                       unsigned long uaddr)
+>> +{
+>> +       __local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
+>> +       mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, uaddr & PAGE_MASK,
+>> +                                               (uaddr & PAGE_MASK) + PAGE_SIZE);
+>> +       dsb(nsh);
+>> +}
+>> +
+>>  static inline void __flush_tlb_page_nosync(struct mm_struct *mm,
+>>                                            unsigned long uaddr)
+>>  {
+>> @@ -472,6 +511,23 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
+>>         dsb(ish);
+>>  }
+>>
+> 
+> We already have functions like
+> __flush_tlb_page_nosync() and __flush_tlb_range_nosync().
+> Is there a way to factor out or extract their common parts?
+> 
+> Is it because of the differences in barriers that this extraction of
+> common code isn’t feasible?
 
+I've proposed re-working these functions to add indepednent flags for
+sync/nosync, local/broadcast and notify/nonotify. I think that will clean it up
+quite a bit. But I was going to wait for this to land first. And also, Will has
+an RFC for some other tlbflush API cleanup (converting it to C functions) so
+might want to wait for or incorporate that too.
 
---
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+Thanks,
+Ryan
+
+> 
+> Thanks
+> Barry
+
 
