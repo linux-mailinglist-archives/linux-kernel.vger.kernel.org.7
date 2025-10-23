@@ -1,120 +1,221 @@
-Return-Path: <linux-kernel+bounces-866852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104B4C00CC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:39:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF287C00C9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 981BD4F8EDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:39:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C23904EA897
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A5B2773EC;
-	Thu, 23 Oct 2025 11:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MyxMWOyd"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7344D30CDAB;
+	Thu, 23 Oct 2025 11:37:53 +0000 (UTC)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CA730DD23
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A271C3F36
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761219504; cv=none; b=B/8Wt0fi7C215NOaeHO1yvdDgLgupMssMVeOaqDekcVu02rlcqGYUDGQJUMJxYR92C/k1uIkHnHHk5oISmr1x0gWVLWjRzulm8oz6Tsn6frOToSmILIH4wqH5A9GYESpKr5xNFrxulSLBQ/4b7mBzezL5fqDeQH3RpcfkubB0xs=
+	t=1761219472; cv=none; b=erOVuraOWbkhYgGhsvKL9d7AcWmM98Oh2KDh2aIdDl6eISbF/EAp3mphgJ/ANyKK4bbypI3R8/I+w8zYg3fB4EnfDXsWe9yVafKjFhcu4WM1gKy44POb3buBkRIQPcQRurXwNbc2F0LYFYbZgzZ0voNodAEWlpgRKawZ1JewaGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761219504; c=relaxed/simple;
-	bh=JcnSMo9y3YxKtGUECkBGqRJ6L1ZRjv62tHSgnSjZjEk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=BNC+yLvV4ZHTLh/2fv4RswKJj5cFMuAo50K4qmKI+XUk9NpDP6UAkGZO0HVLg1ZuY6aE0s6DdNFU9y/DidfJMj4h6c2iCdJDYzg4qWdCIUX19MhGMDajwnFQ1QHQ/npKilpXuC//blFsEieCqqA4lZoWmSum7D/fIGPUl0otX1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MyxMWOyd; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251023113101euoutp0268864e24357ba4f75f24b3f4ee7df938~xG2fIuvEn1398313983euoutp02Z
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:31:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251023113101euoutp0268864e24357ba4f75f24b3f4ee7df938~xG2fIuvEn1398313983euoutp02Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761219061;
-	bh=Zx10uetxODgjiKwTb72B0FkSj8NfHGThGH35zw/9c/k=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=MyxMWOydrLm4P9vtJWZy9qjqZKcM90Rb+ffqBXikNI6dTkoAPV2JMO2VugVbaAbBP
-	 Jn1EV96/W6+Ut7T6dIvy0/SVfVGHQ7LiLTfQ5UfcinytcjkgsPxWjhw0tMdgCUX2yA
-	 t3M/3HTVDNrYEx8DiU29K5P0MYVEZMpUVI9Ss0y8=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251023113101eucas1p2c227985b0198d888564cab00aeb94f01~xG2epxrmC0682306823eucas1p2M;
-	Thu, 23 Oct 2025 11:31:01 +0000 (GMT)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251023113100eusmtip2603dffa83e23648131d49e9f9b96ce67~xG2eKz9l00413304133eusmtip2C;
-	Thu, 23 Oct 2025 11:31:00 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa
-	<tfiga@chromium.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Guennadi
-	Liakhovetski <g.liakhovetski@gmx.de>, Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>, Hans Verkuil <hverkuil@kernel.org>,
-	stable@vger.kernel.org, Shuangpeng Bai <SJB7183@psu.edu>
-Subject: [PATCH v3] media: videobuf2: forbid remove_bufs when legacy fileio
- is active
-Date: Thu, 23 Oct 2025 13:30:52 +0200
-Message-Id: <20251023113052.1303082-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761219472; c=relaxed/simple;
+	bh=6/N3YiTLQifAY9zz3xwpfpgdh+PsNHV80wg+8+9zp1Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ne3qsrExzcmtpGc9oXfdMvjisBS5L93BIXCsYvgJCxW0YyXSSRCK3uef4NcJj/UveKwb0LpsdYeJ9mv9hHKe7OS34jAGkQv79A2Ytxarqj9kMyDkbT1jIjZ4X7+KFflYLCB1+QzfT7aOWS0KTvuB5PA/2XrAWJahz76r5qaHUDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-5d5fbfca7e2so807902137.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:37:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761219469; x=1761824269;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6zsBv2UTTNDe+bvN26dCEz5bfw+/JNH9ObmAd3JmbGM=;
+        b=ujWL6JT/bIA7paoMRjzgL4x+T6aIzmFpIwnNxq7teOb9qVin6bORIj8OmDg9sq4fge
+         KdKYL/E/AHssnahAWsaAmop9w5cA/KJCNkZii4fV4EWMqTc7dPU5oGflrWybVtXpdpXE
+         liYUJQB0oto16JfCQw67ZE2XMbosXFpAdothXjm+RaqRRZ4rPUVM9oX8KynipZU3Zcsb
+         y0brSIK26T9wxZVfC2D+iE1XKbUTqeEneDR/si/YMR6liDqUiBH3OPH0CTm8vJFXeeGk
+         yZVPdwK0u1oJQ+A9DCzIpTt2rEfzmdZCIMzGElfU/9XEahLrgyv5cwhIG6k35UHVSqez
+         HE+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWBlU54xQqDwEvjs/+tsJg2fBRcedOyJiqM1T8EDL6e7BE9X7YLvOI+4X4f4qYKEFOBdMuRpKX7qMMyQug=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3vIJo5+tbTC+YjQKQoyW7ogWWkTufMJq+EqoK/35tGJCUCPFC
+	yBrWATBC3LoXSvJoEqzrboet5yJckcJAwZUcQKr9vEDingQrxGUwsMrl7JjasgXr
+X-Gm-Gg: ASbGncv2av3/iAfksB8I+I35TtZvJccEOllGB88daLgfZ86UfDNG02H3M0tMpdRLq0K
+	NL4IeFBS4snt2v9xRO5t+6Q/nTcl93lDRfx+6aKCMkexgYRujTe89fWrUvyNjl/HZGIGjCaBirr
+	XWPiIfY968ufSZ5pe5hUNDWGLwlczwHOGOlBET3MES1IPc8AUGpGVxpbaQdKttbC6H0XVREKQob
+	MSILL/dXRtX4gSbr0kReoqo8LkczFpTxH+D7A2gePj39D3TPKppJLzLOBXSdl8U6JZkhJTVCgQc
+	NqdUNDp88+K2IgoJWkUEZu+0j0BGB4c+F/+1UbMAwGjJSX5Gt/0WnDn9gXUQ55Er5lweQlVhd+C
+	IG648MSRim1Qxee2rNJ4YJPgXUkhhynJ0zm8Va2Yb/qduqw+SVTImXWqnrnoNVYDM8azRBFyq2C
+	PqW5TwqD+z2kzCJ8A3BIFR1It/WYjM/TbB2rqPPKpLLSP+yr7T2B84
+X-Google-Smtp-Source: AGHT+IGc1+FpGxlaLLrwnzn0UbgGpEFyiZllsEbo9ocxtamoZjA6VB2I8mZgU1/+bzwX6xjhOFOzUQ==
+X-Received: by 2002:a67:f652:0:b0:5a0:a095:9a2f with SMTP id ada2fe7eead31-5db23796a23mr1702990137.3.1761219469385;
+        Thu, 23 Oct 2025 04:37:49 -0700 (PDT)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-934abbd2740sm779916241.16.2025.10.23.04.37.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 04:37:49 -0700 (PDT)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5563c36f6d4so706233e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:37:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhaWpfIrCXFF7ggln34PjQoddqbuZIfeudZOxDMu67gZ2ReCzMAmdTLbTIIH+JhfPSNGKp1HG9X+chvA0=@vger.kernel.org
+X-Received: by 2002:a67:fd0f:0:b0:5d4:1499:99a4 with SMTP id
+ ada2fe7eead31-5db238491ffmr1515554137.13.1761219064357; Thu, 23 Oct 2025
+ 04:31:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251023113101eucas1p2c227985b0198d888564cab00aeb94f01
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251023113101eucas1p2c227985b0198d888564cab00aeb94f01
-X-EPHeader: CA
-X-CMS-RootMailID: 20251023113101eucas1p2c227985b0198d888564cab00aeb94f01
-References: <CGME20251023113101eucas1p2c227985b0198d888564cab00aeb94f01@eucas1p2.samsung.com>
+References: <20251020080648.13452-1-herve.codina@bootlin.com>
+ <20251020080648.13452-8-herve.codina@bootlin.com> <CAMuHMdV03D_3b_JA2vzW4tE_QbkkT1bN1dm+zLLLX24oDHMj0Q@mail.gmail.com>
+ <20251022150339.4c48649e@bootlin.com>
+In-Reply-To: <20251022150339.4c48649e@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Oct 2025 13:30:53 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWY=FbO6YG1jrd0OWfrpPpBzrqmBVcWnw7TnnsKPGgr8A@mail.gmail.com>
+X-Gm-Features: AWmQ_bml4kcY7IJK2WvckNb7k-cRq3k2ESGBRnimvIxLnwqyhf2dlX518mVHMZI
+Message-ID: <CAMuHMdWY=FbO6YG1jrd0OWfrpPpBzrqmBVcWnw7TnnsKPGgr8A@mail.gmail.com>
+Subject: Re: [PATCH v5 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
+ Interrupt Multiplexer
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Hoan Tran <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, 
+	Serge Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Pascal Eberhard <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-vb2_ioctl_remove_bufs() call manipulates queue internal buffer list,
-potentially overwriting some pointers used by the legacy fileio access
-mode. Add a vb2_verify_memory_type() check symmetrical to
-vb2_ioctl_create_bufs() to forbid that ioctl when fileio is active to
-protect internal queue state between subsequent read/write calls.
+Hi Herv=C3=A9,
 
-CC: stable@vger.kernel.org
-Fixes: a3293a85381e ("media: v4l2: Add REMOVE_BUFS ioctl")
-Reported-by: Shuangpeng Bai<SJB7183@psu.edu>
-Suggested-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/common/videobuf2/videobuf2-v4l2.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+On Wed, 22 Oct 2025 at 15:03, Herve Codina <herve.codina@bootlin.com> wrote=
+:
+> On Tue, 21 Oct 2025 15:05:35 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Mon, 20 Oct 2025 at 10:08, Herve Codina (Schneider Electric)
+> > <herve.codina@bootlin.com> wrote:
+> > > On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
+> > > interruption lines are multiplexed by the GPIO Interrupt Multiplexer =
+in
+> > > order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
+> > >
+> > > The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
+> > > IRQ lines out of the 96 available to wire them to the GIC input lines=
+.
+> > >
+> > > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootli=
+n.com>
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-index d911021c1bb0..a8a5b42a42d0 100644
---- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
-+++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-@@ -1000,13 +1000,15 @@ int vb2_ioctl_remove_bufs(struct file *file, void *priv,
- 			  struct v4l2_remove_buffers *d)
- {
- 	struct video_device *vdev = video_devdata(file);
--
--	if (vdev->queue->type != d->type)
--		return -EINVAL;
-+	int res;
- 
- 	if (d->count == 0)
- 		return 0;
- 
-+	res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
-+	if (res)
-+		return res;
-+
- 	if (vb2_queue_is_busy(vdev->queue, file))
- 		return -EBUSY;
- 
--- 
-2.34.1
+> > > --- /dev/null
+> > > +++ b/drivers/soc/renesas/rzn1_irqmux.c
+> > > @@ -0,0 +1,150 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * RZ/N1 GPIO Interrupt Multiplexer
+> > > + *
+> > > + * Copyright 2025 Schneider Electric
+> > > + * Author: Herve Codina <herve.codina@bootlin.com>
+> > > + */
+> > > +
+> > > +#include <linux/bitops.h>
+> > > +#include <linux/build_bug.h>
+> > > +#include <linux/mod_devicetable.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/of.h>
+> > > +#include <linux/of_irq.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> > > +
+> > > +/*
+> > > + * The array index is the output line index, the value at the index =
+is the
+> > > + * GIC SPI interrupt number the output line is connected to.
+> > > + */
+> > > +static const u32 rzn1_irqmux_output_lines[] =3D {
+> > > +       103, 104, 105, 106, 107, 108, 109, 110
+> > > +};
+> >
+> > I did read the discussion with Wolfram, but the flexibility (and
+> > overhead) provided by this array sounds a bit overkill to me.
+> >
+> > What about just defining:
+> >
+> >     #define RZN1_IRQMUX_SPI_BASE    103
+> >     #define RZN1_IRQMUX_NUM_IRQS    8
+> >
+> > ?
+> >
+> > If/when a new SoC with a similar setup ever arrives, you can probably
+> > just replace the constants above by variables inside SoC-specific
+> > match data.  And if the new mapping would be non-contiguous, you can
+> > still revive this array ;-)
+>
+> I have in mind a use case that can lead to a non-contiguous mapping.
+>
+> The RZ/N1 SoC embeds a Cortex-M3 CPU. This CPU can use GPIOs and
+> some of them for interrupt purpose. In that case, those GPIOs have
+> to be routed to the interrupt line expected by the Cortex-M3.
+>
+> And so, we have some interrupts reserved for CPUs running Linux and
+> some others for the Cortex-M3.
+>
+> Among those reserved interrupts may some are not used.
+>
+> for instance:
+>   Interrupt 103, 102: Reserved and used by Linux
+>   Interrupt 103: Reserved for Linux but not used -> Hole in the mapping
+>   Interrupt 104: Reserved and used my Cortex-M3 (need to be routed by Lin=
+ux)
 
+102 does not seem to  be correct?
+
+> I don't know if this use case is relevant but I think we should be too re=
+strictive
+> on the mapping and so accept holes.
+>
+> With that in mind, I let you confirm that you still prefer to have a mapp=
+ing
+> without any holes. A future patch to support that is always possible.
+
+While that would indeed be a non-discontiguous mapping, I do not see how
+it is related to rzn1_irqmux_output_lines[] in the driver.  That array
+would still contain the same contiguous values 103..110, right?
+
+Sorry, I haven't been following the development of this driver that
+closely (RZ/N1 is completely different from e.g. R-Car, and I never
+had access to an RZ/N1 platform), so perhaps I am missing something.
+Why does the user have to specify an interrupt-map in DT? Can't the
+driver create the mapping dynamically, based actual usage of the
+GPIOs? I.e. the first 8 GPIOs that ask for interrupt functionality
+receive it, and are mapped to an available GIC interrupt?
+I believe this is how rzg2l-irqc works, mapping up to 32 GPIO interrupts
+to 32 GIC (TINT) interrupts.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
