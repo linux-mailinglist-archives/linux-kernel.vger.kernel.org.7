@@ -1,220 +1,210 @@
-Return-Path: <linux-kernel+bounces-867322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E291C0241F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:54:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C9FC02437
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DF014EE5C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:54:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4F924F3BAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12576248F6A;
-	Thu, 23 Oct 2025 15:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE2F23F429;
+	Thu, 23 Oct 2025 15:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="W7/7ZX0k"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nv6vZYDI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE552459CF
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713A223CF12;
+	Thu, 23 Oct 2025 15:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761234858; cv=none; b=MQNvpEAFnlZELBoCQl4rV1N9E+7+MUt+Clq6oJy792tbTcUu+ui860h8kgJnLElbU03l94wO6r4tjXUxIGLeNgG7bK1mMjWRSk1UaPQhZT4kbUY4FyifGEq7GA9jClJY05jTQD0UMY9PNdEmKbo964d/jK15++kPTEYiN6CP1So=
+	t=1761234915; cv=none; b=p+EFQs4O86fykYmF6kIrXdSlzI5WA3JqIfoK9dWo4XBjDGCZBLvZefSMO6bvzeZdoQt3+ssiwpPKVaq/OjsLeqq1qPhFuMmocc8yOx/aql37tpmX4juO/s8OcTwFZCZ7u7YOCWPQV/YC7tRxUdnmosaIeFDPmhrc0KQAvMV1ivs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761234858; c=relaxed/simple;
-	bh=L6ZUAf2g56f0pbLijFNIC533CJWAt9IDFeMaFeWyyhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SmD5c+ECf9ZWZruRTPf2c3xxBFnw+laQWjH9T2+8LI+q4G4dhYGQVlzWi9j5oSMAPI6mJ8aK5ETT/JVX7hnC99FB0wm3VXvbXrfurhg0grHh0L8QwDmuQqXMIyYAGvn6u4MsRsA02UhFbIBvUldPyFcDwj81U7xAHn0U1514urc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=W7/7ZX0k; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59NE6d21015958
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:54:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OIzxKAenz0uP2vnqlUCHL0UbaGItN6WBFXym1N/6m4k=; b=W7/7ZX0k6LVGb9pB
-	LqR4H1OtSyiHJV3mKcQQBzX26/ZWmosBILOrtFI4XViImHT0v4bPwI7DePKHlM7a
-	Iywgt3+/tnQzmvheeGLE0ygsjSemUxtPM8o1wh/Avk8TzLzM9YJ/l0oWJy2fL8nc
-	C8hamxjPe4QUlaq/SVbFPmX7oLuVsDz6gTcLSKqle1pRA6PCnG/C9kRcDqabUaZ/
-	Aibr/eWJaEw0Fpe0A1gGfka4zxmo76a++DgnUs/MT2DlvBVyrimbl5k01VQ8WZJY
-	y+3k3ZCkBukTY7TI5vLT27pp3pT2hM0ljjw34JF2025ydv4hBl2DJMBQee7Oo+QW
-	JgBpLQ==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xkpsen9e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:54:15 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-783c3400b5dso649617b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:54:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761234855; x=1761839655;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OIzxKAenz0uP2vnqlUCHL0UbaGItN6WBFXym1N/6m4k=;
-        b=mBfyY2a44tNALtiT38ElDp9dYsuS+LtLQ7MnmQbC5VaKKD+Ie7turdZ6GYPlr07WpE
-         2Mozx1d6djp38Nb7z3Ck8pBZye4dJ8dQfrsO0FlMus5r8imD4LnrwfQq1N7HnI/rL7nq
-         mo8TjZwXWVoblqJ9vgN1RGpbw9YYUVqx6WnJKfUBCXuX2qIz7Bcbrt0oLEVHV7OlX31R
-         rFaZMTvv66ESioK3kQebpjmgMTscqE3IoaHiCUIlQHe2LKOrxM29/KCYBrBRe1ucXTlP
-         rHJw22YainDuqxGMbU7r283lSVu6r+BZJlPxBmOuI15y4Iev2MendQKGRQU28O6NXDCC
-         +xDg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8t7/PMk4NxyUr3uDK7Dw/zo5ot9XNHLWQxfbeoa7kDHUbeietmifarmkUQrysJ5fMhYVd+TzRq6/mYbA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHdISfULhaX/ORhSazCd0ODKkNeWjfiI1S3tQQr5ZnsMnBKC1Z
-	RHhYtvN/cDJj3VPn7kth1vnIF25l+CMgeZnSDeiqHBOfSslKoaycjTL7MvHwAKvw3EDnJi0R1H6
-	SYMyl68oRbOAUjWsjPTabY2wgjElCxgKSjA/XXJlmIFy/nWOYra22TPPgPOS7PKYit40=
-X-Gm-Gg: ASbGncuCe1ADhclKjlsSp5OCT4fbEy0upYjqhEnZ6CturtGtKeEJI9GZDfL309914nA
-	ry/dl9WSDhvRfEzbqnwFCURcF/BocR+nOmsC81vx9qLNeFQBtYiGQAhDld/I0jrYnSoGFctgFB3
-	MTOMzX0UeomWxu4MBBTBVEVA++IV5l2+wIT+dolx6EMy9bWkrdiwnByhdUCp5gGyYKlm+oDdZ22
-	VicQLwSDtF1gIJfjTsrHjs5n5gYWFywgUn3wVbt1wX54613VyojSljhMTyYQnAjDyor9CVUEmnX
-	H+/wgTaQlYspUMw5zmmyaNsn8cmQCOfXuImsmPsVuxQT1T8RaEKIFjnPvH235tglhUK5lizSgdJ
-	WbCnU7Y/MU3Aqk/FeaO9/0y8caEMFCLAl
-X-Received: by 2002:a05:6a00:22d4:b0:774:1f59:89de with SMTP id d2e1a72fcca58-7a274ba902amr3397224b3a.11.1761234855018;
-        Thu, 23 Oct 2025 08:54:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+RNZjlAZ/HGhfeZvjXwH2L38Bx85+VCX5eW1fEPyVsXUTievo9QBpW0YYKx7Ywmq/s0eAjw==
-X-Received: by 2002:a05:6a00:22d4:b0:774:1f59:89de with SMTP id d2e1a72fcca58-7a274ba902amr3397174b3a.11.1761234854497;
-        Thu, 23 Oct 2025 08:54:14 -0700 (PDT)
-Received: from [10.216.6.161] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274dc33desm2913319b3a.71.2025.10.23.08.54.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 08:54:14 -0700 (PDT)
-Message-ID: <0e49a6b0-276c-85b4-3ffa-39e5412db522@oss.qualcomm.com>
-Date: Thu, 23 Oct 2025 21:24:01 +0530
+	s=arc-20240116; t=1761234915; c=relaxed/simple;
+	bh=1QpoQFpPQ94aZbwr72YQxHT323Coj8A+g67bYc56XnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=EU53Vjba8tun13ayIUMqjJ6759Yq7LzBi2Dfq55dctPdP+NCA4EGdObDtsBMtTzUe/pBwqHNYglFWYCMDjS9YEyPtAxKzLB9vSKtUHtdzfbY8WM+Zbr7muMPCzEy5yUWxSHpFWK/kTGGDC5rkifqI6BrjoCu+fhRr2KmBxHcaLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nv6vZYDI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA69EC4CEE7;
+	Thu, 23 Oct 2025 15:55:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761234914;
+	bh=1QpoQFpPQ94aZbwr72YQxHT323Coj8A+g67bYc56XnI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=nv6vZYDIq4am/DtLED1qWXVAd2mLG+N0czCN9jA1x9/ayvMuLkUTjlElJaRnzJLDw
+	 UQH6d8lBkhDAVuswDv9zAPnGQkloIBAAkB/6LDzgYKOV0bX290FLLvIRbqdKiLDZFe
+	 Gl7OqgIWM9Ode8EkIGfu1ABY127HikycA/qKBnJLiwFeYH3R8paBUlK6taUvhjAn2z
+	 6/OjnBAwkxM1pO+Cdkpew56iPnH/MZyWqW1nRnKGCYSSgR+M7g1XBASKosE/6todZf
+	 RzDMnjS2StUDsoaQ+8U9xvG1zBiyWu1SuUoSQuCQbfhkqgEzeqLGXxNJjJmE+Er1D6
+	 IaA8F+Mhiuk5g==
+Date: Thu, 23 Oct 2025 10:55:13 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+	p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v5 2/6] PCI: rzg3s-host: Add Renesas RZ/G3S SoC host
+ driver
+Message-ID: <20251023155513.GA1292722@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v16 05/14] power: reset: reboot-mode: Expose sysfs for
- registered reboot_modes
-Content-Language: en-US
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel
- <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andre Draszik
- <andre.draszik@linaro.org>,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-References: <20251015-arm-psci-system_reset2-vendor-reboots-v16-0-b98aedaa23ee@oss.qualcomm.com>
- <20251015-arm-psci-system_reset2-vendor-reboots-v16-5-b98aedaa23ee@oss.qualcomm.com>
- <CACMJSetWthCcJo8v7EuUK-aDKhf5KTNG5WQQ9aTQu62B+E=DMA@mail.gmail.com>
- <8fb6e8e0-cdca-0bd5-d0fe-56b5f6d27a5c@oss.qualcomm.com>
- <CACMJSetTrze028iXmH3i=JguJy=aNOMcnkLhO1ewYNiusvVmgA@mail.gmail.com>
- <efc84b92-43f9-ba25-1259-ae3907273af4@oss.qualcomm.com>
- <CACMJSetctEH4K58R9JvSYNzzYgE0NGMsAr5JxiZ4RH_3T08x-A@mail.gmail.com>
-From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-In-Reply-To: <CACMJSetctEH4K58R9JvSYNzzYgE0NGMsAr5JxiZ4RH_3T08x-A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE5MCBTYWx0ZWRfX/HUx1ENmeA2J
- bO2Ez/SphylHv8shO/bJ2bBb80LpYg+a2K+IfhgTL524SlMinH5toSs5QW06GCyUDZrx7YgdZRH
- poDkuub8xr87IzVAprweSduXWANogiYuI3RFG5PYUVdex0DgVB/emukEP+eEoHDrmYnrMJdMOlo
- 80llHdCvwQ81pBUpJ8NzD6dBOmiKBokxeIUxLsQk2oXgNZ8Xonf4Yjwp7OJid3fRoevLR/549Se
- uC967gPYQ6KvdmG+7JANcKL+C1yB87V3XlU6DkgMmSPx7RED0QME3RiSPazMNQznSHi9mniQ+XO
- Bn+mujFwkCmwD6BoJ9U1DTfeE9VewI7vJkMMfi/M+nWuf6KNusmJULjNsjisD+OIbFsgSXwB1Oy
- 0XZyRu4JdF4x/+Z6hQi8FCIicgVlnw==
-X-Authority-Analysis: v=2.4 cv=FbM6BZ+6 c=1 sm=1 tr=0 ts=68fa4fa7 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=rypWqsooHcgQ8WysroIA:9 a=QEXdDO2ut3YA:10
- a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-GUID: lCUfaRn0zIoyIt62QP6ygL2DUK60Xhgt
-X-Proofpoint-ORIG-GUID: lCUfaRn0zIoyIt62QP6ygL2DUK60Xhgt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-23_01,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 spamscore=0 impostorscore=0 clxscore=1015 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510210190
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <51af454f-6322-47c3-9e93-4fc07efc2b8d@tuxon.dev>
 
+On Thu, Oct 23, 2025 at 08:11:17AM +0300, Claudiu Beznea wrote:
+> On 10/22/25 22:49, Bjorn Helgaas wrote:
+> > On Tue, Oct 07, 2025 at 04:36:53PM +0300, Claudiu wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+> >> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+> >> only as a root complex, with a single-lane (x1) configuration. The
+> >> controller includes Type 1 configuration registers, as well as IP
+> >> specific registers (called AXI registers) required for various adjustments.
 
-
-On 10/23/2025 8:32 PM, Bartosz Golaszewski wrote:
-> On Wed, 22 Oct 2025 at 16:21, Shivendra Pratap
-> <shivendra.pratap@oss.qualcomm.com> wrote:
->>
->>
->>
->> On 10/20/2025 1:10 PM, Bartosz Golaszewski wrote:
->>> On Fri, 17 Oct 2025 at 21:40, Shivendra Pratap
->>> <shivendra.pratap@oss.qualcomm.com> wrote:
->>>>
->>>>>
->>>>> If you're using devres here - at least make it obvious by adding the
->>>>> devm_ prefix to the function name and make it take an explicit struct
->>>>> device * parameter so that it's clear who owns the managed resource.
->>>>>
->>>>
->>>> sure. we can add devm_ prefix to the function name.
->>>> reboot->reboot_dev is an internal member of struct reboot_mode_driver *reboot.
->>>> The struct reboot_mode_driver *reboot is owned by the calling driver.
->>>> If we want to PASS reboot->reboot_dev to the devm_ prefixed function call, we
->>>> will need to kind of split create_reboot_mode_device into two calls - device_create
->>>> in a separate function and then call the devm_ prefix function where we add the devres_alloc.
->>>> Can you suggest a bit more on this?
->>>>
->>>
->>> Ah, ok I missed the broken logic here. Devres should only be used in
->>> devices already *attached* to a driver as all managed resources will
->>> get released on driver *detach*. What you have here may "work" by
->>> accident but that's not correct and is very fragile as soon as you
->>> have some non-standard behavior or error paths. Devres won't fly here,
->>> please just use regular allocation and free whatever you need in the
->>> corresponding release/free/whatever routine.
->>
->> Thanks, got the problem here. Was using devres to associate the reboot_mode struct
->> with the driver, so that it could be retrieved later when reboot_modes_show is called.
->>
->> When reboot_modes_show is invoked, there's no direct way to identify which reboot_mode
->> instance is tied to the current driver, as multiple drivers can register with the reboot-mode
->> framework at the same time. Without devres, will need to maintain a global list of mapping for
->> all device driver structs and their corresponding reboot_mode struct. Then reboot_modes_show
->> would have to look up the correct reboot_mode struct using the device driver's pointer.
->>
->> Hope its ok to maintain that separate logic here?
->>
+> >> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+> > 
+> >> +#define RZG3S_PCI_MSIRCVWMSKL			0x108
+> >> +#define RZG3S_PCI_MSIRCVWMSKL_MASK		GENMASK(31, 2)
+> > 
+> > Unfortunate to have to add _MASK here when none of the other GENMASKs
+> > need it.  Can't think of a better name though.
 > 
-> Why can't you just do:
-> 
-> device_create(rb_class, NULL, 0, data reboot->driver_name);
-> 
-> Where data is whatever driver data you want to associate with the new
-> class device? You can then retrieve it with dev_get_drvdata() in
-> callbacks.
+> Most of the register offsets and fields defines tried to use the naming
+> from the HW manual. ...
 
-sure. thanks for the suggestion. That will make it much simpler.
+It's OK as-is.
 
-thanks,
-Shivendra
+> >> +static int rzg3s_pcie_msi_enable(struct rzg3s_pcie_host *host)
+> >> +{
+> >> +	struct platform_device *pdev = to_platform_device(host->dev);
+> >> +	struct rzg3s_pcie_msi *msi = &host->msi;
+> >> +	struct device *dev = host->dev;
+> >> +	const char *devname;
+> >> +	int irq, ret;
+> >> +
+> >> +	ret = devm_mutex_init(dev, &msi->map_lock);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >> +	msi->irq = platform_get_irq_byname(pdev, "msi");
+> >> +	if (msi->irq < 0)
+> >> +		return dev_err_probe(dev, irq ? irq : -EINVAL,
+> >> +				     "Failed to get MSI IRQ!\n");
+> >> +
+> >> +	devname = devm_kasprintf(dev, GFP_KERNEL, "%s-msi", dev_name(dev));
+> >> +	if (!devname)
+> >> +		return -ENOMEM;
+> >> +
+> >> +	ret = rzg3s_pcie_msi_allocate_domains(msi);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >> +	ret = request_irq(msi->irq, rzg3s_pcie_msi_irq, 0, devname, host);
+> > 
+> > Should this be devm_request_irq()?  Most drivers use it, although
+> > pci-tegra.c and pcie-apple.c do not.  Maybe there's some special
+> > rule about using request_irq() even though the driver uses devm in
+> > general?  I dunno.
+> 
+> In general is not good to mix devm cleanups with driver specific
+> one.
+> 
+> As it was requested to drop the devm cleanups from this driver
+> (especially devm_pm_runtime_enable() which enables the also the
+> clocks) I switched the initial devm_request_irq() to request_irq()
+> to avoid keeping the interrupt requested on error path, after
+> driver's probed was executed, until devm cleanups are called, and
+> potentially having it firing w/o hardware resourced being enabled
+> (e.g. clocks), and potentially reading HW registers.
+
+I couldn't find that request to drop devm, and I don't see where
+devm_pm_runtime_enable() enables clocks.
+
+> E.g., accessing the HW registers while clocks are disabled on the
+> SoC I'm working with leads to synchronous aborts.
+> 
+> So, I only kept the devm helpers for memory allocations, resets
+> assert/de-assert and the mutex initialization.
+
+I'm OK with request_irq() here since you have a good reason.  This
+problem of accessing registers while clocks are disabled sounds
+familiar, so I think other hardware has a similar issue.  It would be
+nice if everybody handled it the same way.
+
+I don't know enough to identify other similar hardware and see how
+they handled it (or identify drivers that *don't* handle it).  It
+might be worth a one-line comment here to help future code readers.
+
+> >> +static int rzg3s_pcie_intx_setup(struct rzg3s_pcie_host *host)
+> >> +{
+> >> +	struct device *dev = host->dev;
+> >> +
+> >> +	for (int i = 0; i < PCI_NUM_INTX; i++) {
+> >> +		struct platform_device *pdev = to_platform_device(dev);
+> > 
+> > Looks like this should be outside the loop.
+> 
+> OK, I kept it here as it is used only inside this block.
+
+Ah, I see the motivation.  I suppose the compiler is smarter than I am
+and hoists it out of the loop anyway, but I think it is easier for
+humans to read if the loop only contains things that change for each
+iteration.
+
+> >> +		char irq_name[5] = {0};
+> >> +		int irq;
+> >> +
+> >> +		scnprintf(irq_name, ARRAY_SIZE(irq_name), "int%c", 'a' + i);
+> >> +
+> >> +		irq = platform_get_irq_byname(pdev, irq_name);
+> >> +		if (irq < 0)
+> >> +			return dev_err_probe(dev, -EINVAL,
+> >> +					     "Failed to parse and map INT%c IRQ\n",
+> >> +					     'A' + i);
+> >> +
+> >> +		host->intx_irqs[i] = irq;
+> >> +		irq_set_chained_handler_and_data(irq,
+> >> +						 rzg3s_pcie_intx_irq_handler,
+> >> +						 host);
+> >> +	}
+
+> +     host->intx_domain = irq_domain_create_linear(of_fwnode_handle(dev->of_node),
+> +                                                  PCI_NUM_INTX,
+> +                                                  &rzg3s_pcie_intx_domain_ops,
+> +                                                  host);
+> ...
+> +     irq_domain_update_bus_token(host->intx_domain, DOMAIN_BUS_WIRED);
+> +
+
+Can we use dev_fwnode(dev) here instead of of_fwnode_handle() so it
+matches the one in rzg3s_pcie_msi_allocate_domains()?
+
+I think irq_domain_update_bus_token() is needed here because
+host->intx_domain and msi->domain are identified by the same fwnode,
+and this will be easier to see if we get the fwnode the same way.
+
+(See 61d0a000b774 ("genirq/irqdomain: Add irq_domain_update_bus_token
+helper").  I wish irq_domain_update_bus_token() had a function comment
+to this effect.  Maybe even a mention in Documentation/.)
+
+It would also help code readers if we could use function names similar
+to other drivers.  For instance, rzg3s_pcie_intx_setup() creates the
+INTx IRQ domain, but no other driver uses a name like *_intx_setup().
+The general consensus seems to be *_pcie_init_irq_domain().
+
+Bjorn
 
