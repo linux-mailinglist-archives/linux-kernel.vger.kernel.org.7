@@ -1,182 +1,162 @@
-Return-Path: <linux-kernel+bounces-867379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A0FC02728
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:28:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33BEC0273A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA12D4EAA24
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:28:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7410C3A4C40
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD712E2DDE;
-	Thu, 23 Oct 2025 16:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E22E308F15;
+	Thu, 23 Oct 2025 16:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l09m59LP"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qvlkFrke"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B511B2D7DC5
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA7530CD85
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761236928; cv=none; b=bAOl6QntF/zjZr1U50xTDeXxOs7DNp+hwAbqFso1RUTLo10oaWqX/EIHfgOpiS3bNIU3mNgrCN9NakldIDrPdbtRPmv9lMN/laF+odEACvJNDt1xBr1IFxBrQPzHGtFJAOdnxcArMn92os1njM3XWkdg1cuck3PQoWHVFMEZeVo=
+	t=1761237020; cv=none; b=JUGMREE9qA0b8XgHxhJlnmUz9AJRF5am+GdTT23Nb5lhnNtSKGWUiCq4LmY40hlv6+4HB/n6cMNB/5ZSnSdf+NNaQIp3FWJaEb3tHaFU2Wh118V0b5XCoABpn8brchqvh9bfYt+B6V/POqdejLm7egsTGvYIxZyCoV6eufXbNYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761236928; c=relaxed/simple;
-	bh=63NV+cUupyziu+omg8nqL0ixV1A3QIcHdqVlAw7Dagc=;
+	s=arc-20240116; t=1761237020; c=relaxed/simple;
+	bh=a3M7W3BWeRUGRfhK+snn/DeGWrSLsPNKDdfBeO+UoHk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fExAcBHFK5iqWe9lJiapJQ/IFmlZJwomuMa6mkC6ZQju0puhkDAWCc2J/zxKynEyh1wRYPj8iJH6F8GKmWyFLcUZUpfrff22q9SZZ9UAjyU0Q9mRSJ4Djeoo/bYj0bKN4EdTO/OUWLJraX/0OYv2bPEjseAJdQ9NIATrHsrCWcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l09m59LP; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3307de086d8so1119044a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:28:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761236926; x=1761841726; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Em8aVnsPg6h7N7/uWYB8oyJdXyJBUaoBp3birjoLGA=;
-        b=l09m59LPlMAblhcaxNMxYTk9aT/FbdRZ92+CkvrD6cCW4Dzp+WM7MjaJqVyojuZou4
-         337/nFoNqWYbYPMISXs5LkwpzkXwD8CO45rLWL3pGhrcTfikbYPFBVV6FtneDEZ3oWBC
-         T372xt6gM62Q6g44amFRyfZSBQF38jfOZz0QWqGpnqWdEuGZbQFJLgkCDmoxuvMylqnA
-         qafr7oM6T1TLQqbnHZk+EYVNUfdO29AsSEX3qsD6TgACUfHDxxydXCCMrJNx8Q6fkjkk
-         kjDhYJ/TBMxjNlLAsaNQHoR1acg+dyInebpj2e8TpBo69I+mMwqw0dDFFWQ8ET5RULdp
-         ZPjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761236926; x=1761841726;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Em8aVnsPg6h7N7/uWYB8oyJdXyJBUaoBp3birjoLGA=;
-        b=ovlUQXZ24Tp/BJ9r1EdDFGmdv/9O9Xbx08Flyb6Q+wCvAyBQR7Y22GkPfB+tGjE/K6
-         XxmpWma0XAS0vaB5bT2OOVxpj0Kxy1cvqENAcJersx0rQr2uQTRtSLGivUu1IMVDf9j2
-         qtQFZtZAAFpSiHZi69SOZ52GdJeViWlSD9Jlk4QfOFNrIc9lXnCGBUdcPI5mRXhfAF5n
-         sBA4t95I6cCMbFhrW0Cn3CmXECvLy2Cg9u5pyOVaYaOFJDPQtZRLqvjAX4wOzxSDw7oK
-         PS7KVUw6rkmpPv7+TR2Z0cfmMO4xcys83ujHkN3fq4LBvINbn4OeEf115+/dbXPiPpwD
-         SAKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhyrL+UWPbq+qB8dtD/t6m1LjDE07vFkJh3NYLPKJr+wDzCoqefFi3pfFnVyzXK5239im0uumv6QiL4QQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZB0060e2YhqTqyrRoCIF7swr0sWoc4UqBONjRDTDeFoLOXM5D
-	0JSctBkbfAdUxxwCWue+IeTPTEB4dD+rrxD3AZWpTFXEMa69x9Ee0ZLnTDfofS9syYdrzdhGKpf
-	nwHZqG4Ruuyc4GoOXu3X5MESKjAERxck=
-X-Gm-Gg: ASbGncvqxVTpQskA7Wji/zlcCb2XidNeTto6OqSTNC7/Vj/WgVrK63dRaRxeLDC6RQS
-	HbAuiprI38SMV7jcTYMKc+3ePwiKpY5h2Lgtb0h9cNW0itOF1sAMd3sV+N3NGOkLsCd7Y/5ZG0h
-	ilIA49mGrh08ORE63BgpeSoBkuUcwD6o4NPCUZw9Ovl87Q5DPuoetJPamlsFtI50FDn4JR18FSK
-	/3bwQKBVkJ1p2Wk9ynvAzcHgfT4t2JppOfs0HjiqVHooQT0l4sql3qmmYh+TBZuRBVaFxvaDqDe
-X-Google-Smtp-Source: AGHT+IFlAVTw+Jxi+v6C1/6Bf81dYfI+9RDj02EdZzIhjQpUiAelOtgUEgVhekEHrknrIsV5fyIhFUoBeT1x6+CMKoU=
-X-Received: by 2002:a17:90b:3ec1:b0:33b:a5d8:f198 with SMTP id
- 98e67ed59e1d1-33bcf90b791mr29528595a91.25.1761236926084; Thu, 23 Oct 2025
- 09:28:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=u96qaJvrLs2qr+S1RLaHJnyRNCgR96ywo8y1Pac2sh11XIVF8BQ7oGROGxYgzEzSZz037fY7AaB+eFiYHUPBOEiPiuDko9yaTy0e0WIFvYOwaFcjcMZ9nIkLmxVonxE/vXNa8f3oLWADGZu9AHpNcnOy9jyQY3f4iRU32uqMb/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qvlkFrke; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D7B4C4CEFD
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:30:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761237020;
+	bh=a3M7W3BWeRUGRfhK+snn/DeGWrSLsPNKDdfBeO+UoHk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qvlkFrkeuyZbSOa0eJlFoW8mhuEYTiaMZH9yDPoiP4l42l3jFy8HwP+yXzSCXg1YW
+	 BkK10VNt9Gv2UJIre5u0Yq+07wbILujdGj1zpuIOZI++3X/iLyS45I3HsS3HEfINj4
+	 7XoCij7u/D3+V7GfL5RApPd4/dcNDhPSwVKhwF28rdriAs1GOyFmTignQq8HDIdvkA
+	 vcry+txW8kDEHPBiABUMcyJ6Cvg5inb9rUIDkcaLplYqovTVAKSNUR5soWWoJcOlk8
+	 V8/a6/CvbgI3xsAVANuIcPiG2yCCIXhynJXjoHYKheSzSKZ8eJYaY3yXqoi3wbooY7
+	 dnnrYVBZVG09w==
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-43f935f7d14so391473b6e.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:30:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWKzgXhVOuHiiRNmmJ2/RuJE5KcN+Z1SrZhbxneP7xMtqH4VdrXoiDS+pdTU/Ak7v0uCWVAglp76PFFpv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz2Ww/hEULNvgGaCQIgS6oyWUaPQBazvCNXIvLoNRzvKDjKjxE
+	0eHJUYK0xMM7OjdAJ8OAqZemXUCmWxvH5D6foL3rt90gt6HVY5chO7CT+DNKfdU5OgukJ13Xjql
+	HKsCNeWS4CkqFGVyhbo4kMV/EFWL9y/U=
+X-Google-Smtp-Source: AGHT+IHDq1EztUjEhZbcmsAypXJ2oBtJE39079rPcy57qhSiOK4J+4PcxlPfYPQJor2CNvKDZhuPPyoPZkpMwe3ojAk=
+X-Received: by 2002:a05:6808:6f94:b0:43f:9caf:645e with SMTP id
+ 5614622812f47-443a2dd813emr11123727b6e.6.1761237019735; Thu, 23 Oct 2025
+ 09:30:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020093941.548058-1-dolinux.peng@gmail.com>
- <20251020093941.548058-3-dolinux.peng@gmail.com> <174642a334760af39a5e7bacdd8b977b392a82c7.camel@gmail.com>
- <CAErzpmusSgOaROhEO25fKenvxQJU1oSPKKzUA4h67ptdQxWM7A@mail.gmail.com>
- <7651ac9cc74e135f04ecfee8660bea0a0d3883ab.camel@gmail.com>
- <CAErzpmtWLLYuFk3npTiOgGOKcEcH1QUGGEHLvPncVT+z261C1A@mail.gmail.com> <CAADnVQKU0MnQHxxvnp9WCu_UO4fEtd_D6ckNmOd7pLg90ecF4A@mail.gmail.com>
-In-Reply-To: <CAADnVQKU0MnQHxxvnp9WCu_UO4fEtd_D6ckNmOd7pLg90ecF4A@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 23 Oct 2025 09:28:30 -0700
-X-Gm-Features: AS18NWAlx_LP4MbVy4TD6faRRP3spZFTyP2d7dWDF5qL_JOwSX3QL17uG_zT1tA
-Message-ID: <CAEf4Bzajdv3Rd1xAxm_UZWBxPc8M0=VuUkfjJvOFSObOs19GbQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/5] btf: sort BTF types by kind and name to enable
- binary search
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Donglin Peng <dolinux.peng@gmail.com>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, 
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
+References: <20251002113404.3117429-1-srosek@google.com> <20251002113404.3117429-3-srosek@google.com>
+ <CAJZ5v0iQToOkedruYqsowSm8=fxpnyJf86JJHB36E8+aCSZ5Hw@mail.gmail.com>
+ <CAF3aWvFSomq+cm2sj+KjkYw=WODsrwH-VLDL=yOc6o9dqc5hWA@mail.gmail.com>
+ <CAJZ5v0g72U3+u_KedKpZh2TuN-iYbXPcnZhN16oDvi4UqUTr7Q@mail.gmail.com> <CAF3aWvFc5ZZo3VaJSr68FwGuCFYJU=tXsJ6Fm1vmNLs4B=+8dg@mail.gmail.com>
+In-Reply-To: <CAF3aWvFc5ZZo3VaJSr68FwGuCFYJU=tXsJ6Fm1vmNLs4B=+8dg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 23 Oct 2025 18:30:08 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gJYOcTCACj6jKYL6juAYpUvJUf89kZ6ZxU3fMOpBjFzQ@mail.gmail.com>
+X-Gm-Features: AS18NWCx-ccLUIcSua3zctE2K3sw3aOfu-2Tq4ZHKx5jLgRgn6u4OwXeYMA0b5c
+Message-ID: <CAJZ5v0gJYOcTCACj6jKYL6juAYpUvJUf89kZ6ZxU3fMOpBjFzQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] ACPI: DPTF: Move INT340X device IDs to header
+To: =?UTF-8?Q?S=C5=82awomir_Rosek?= <srosek@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Alex Hung <alexhung@gmail.com>, 
+	Hans de Goede <hansg@kernel.org>, Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>, 
+	AceLan Kao <acelan.kao@canonical.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Tomasz Nowicki <tnowicki@google.com>, 
+	Stanislaw Kardach <skardach@google.com>, Michal Krawczyk <mikrawczyk@google.com>, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 8:53=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Thu, Oct 23, 2025 at 3:35=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.=
+On Thu, Oct 23, 2025 at 6:27=E2=80=AFPM S=C5=82awomir Rosek <srosek@google.=
 com> wrote:
+>
+> On Thu, Oct 23, 2025 at 5:11=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
 > >
-> > On Thu, Oct 23, 2025 at 4:50=E2=80=AFAM Eduard Zingerman <eddyz87@gmail=
-.com> wrote:
+> > On Thu, Oct 23, 2025 at 4:41=E2=80=AFPM S=C5=82awomir Rosek <srosek@goo=
+gle.com> wrote:
 > > >
-> > > On Wed, 2025-10-22 at 11:02 +0800, Donglin Peng wrote:
-> > > > On Wed, Oct 22, 2025 at 2:59=E2=80=AFAM Eduard Zingerman <eddyz87@g=
-mail.com> wrote:
-> > > > >
-> > > > > On Mon, 2025-10-20 at 17:39 +0800, Donglin Peng wrote:
-> > > > > > This patch implements sorting of BTF types by their kind and na=
-me,
-> > > > > > enabling the use of binary search for type lookups.
-> > > > > >
-> > > > > > To share logic between kernel and libbpf, a new btf_sort.c file=
- is
-> > > > > > introduced containing common sorting functionality.
-> > > > > >
-> > > > > > The sorting is performed during btf__dedup() when the new
-> > > > > > sort_by_kind_name option in btf_dedup_opts is enabled.
-> > > > >
-> > > > > Do we really need this option?  Dedup is free to rearrange btf ty=
-pes
-> > > > > anyway, so why not sort always?  Is execution time a concern?
+> > > On Wed, Oct 22, 2025 at 8:46=E2=80=AFPM Rafael J. Wysocki <rafael@ker=
+nel.org> wrote:
 > > > >
-> > > > The issue is that sorting changes the layout of BTF. Many existing =
-selftests
-> > > > rely on the current, non-sorted order for their validation checks. =
-Introducing
-> > > > this as an optional feature first allows us to run it without immed=
-iately
-> > > > breaking the tests, giving us time to fix them incrementally.
+> > > > On Thu, Oct 2, 2025 at 1:34=E2=80=AFPM Slawomir Rosek <srosek@googl=
+e.com> wrote:
+> > > > >
+> > > > > The ACPI INT340X device IDs are shared between the DPTF core
+> > > > > and thermal drivers, thus they are moved to the common header.
+> > > > >
+> > > > > Signed-off-by: Slawomir Rosek <srosek@google.com>
+> > > >
+> > > > I've actually started to wonder if int340x_thermal_handler is neede=
+d at all.
+> > > >
+> > > > It just creates a platform device if the given ACPI device ID is in
+> > > > its list,
 > > >
-> > > How many tests are we talking about?
-> > > The option is an API and it stays with us forever.
-> > > If the only justification for its existence is to avoid tests
-> > > modification, I don't think that's enough.
+> > > That's true. It creates platform device for the given ACPI device ID,
+> > > but only if CONFIG_INT340X_THERMAL is enabled.
+> > >
+> > > > but acpi_default_enumeration() would do that too with the
+> > > > caveat that it would also be done for CONFIG_INT340X_THERMAL unset.
+> > >
+> > > Not exactly. scan handler returns ret=3D1, so device is marked as enu=
+merated
+> > > https://elixir.bootlin.com/linux/v6.18-rc2/source/drivers/acpi/scan.c=
+#L2314
+> > >
+> > > > That should not be a problem though because if CONFIG_INT340X_THERM=
+AL,
+> > > > there are no drivers that will bind to those platform devices, so t=
+he
+> > > > net outcome should be the same.
+> > >
+> > > If CONFIG_INT340X_THERMAL is not set and there are no drivers to atta=
+ch
+> > > to platform devices and int340x_thermal_handler is removed then you a=
+re
+> > > right, acpi_default_enumeration() will enumerate ACPI bus anyway and
+> > > create platform devices for all ACPI device IDs. However, for me it l=
+ooks
+> > > like it was intentional to prevent this behaviour unless INT340X driv=
+ers
+> > > are "present" in the system (were enabled for build so should be).
+> > > I am not sure how DPTF works and what may happen if platform devices =
+are
+> > > visible in sysfs while drivers are not loaded.
 > >
-> > I get your point, thanks. I wonder what others think?
+> > Such a dependency would be unexpected and confusing.
+> >
+> > Also, I'm not sure why it would be useful because the lack of drivers
+> > means that the devices in question are not handled, so no
+> > functionality related to them is provided by the kernel.
+> >
+> > > >
+> > > > Thus I'm wondering if the way to go might be to drop
+> > > > int340x_thermal_handler and simply keep the device IDs in the drive=
+rs
+> > > > that use them for device binding.
+> > >
+> > > Even better. If it's not required for DPTF to prevent enumeration
+> > > on the platform bus I can simply remove the scan handler.
+> >
+> > I would at least try to do that.
 >
-> +1 to Eduard's point.
-> No new flags please. Always sort.
->
-> Also I don't feel that sorting logic belongs in libbpf.
-> pahole needs to dedup first, apply extra filters, add extra BTFs.
-> At that point going back to libbpf and asking to sort seems odd.
+> Makes sense, so I'll give it a try. Removing handler will result with
+> only two patches, one to update dts_doc_thermal kconfig and second
+> to remove the dptf scan handler, the rest won't be needed for a new
+> patchset. Should I send it as v4?
 
-Correct, I'd also not bake sorting into libbpf. Sorting order should
-be determined by pahole (or whatever other producer of BTF) after all
-the information is collected. So btf_dedup shouldn't sort.
-
-But I think we should add a new API to libbpf to help with sorting.
-I'd add this:
-
-int btf__permute(struct btf *btf, int permutation, int permutation_sz);
-
-With the idea that libbpf will renumber and reshuffle BTF data
-according to permutation provided by the caller. Caller should make
-sure that permutation is a valid one, of course.
-
- (we can also extend this to allow specifying that some types should
-be dropped by mapping them to zero, I think I wanted something like
-that for BTF linker at some point, don't remember details anymore; but
-that's definitely not in v1)
-
-This is useful for sorting use case (pahole build an index from old
-btf type ID to new btf type ID -> libbpf shuffles bytes and renumbers
-everything), but can be applied more generally (I don't remember now,
-but I did have this idea earlier in response to some need for BTF
-reshuffling).
-
-Speaking of flags, though. I think adding BTF_F_SORTED flag to
-btf_header->flags seems useful, as that would allow libbpf (and user
-space apps working with BTF in general) to use more optimal
-find_by_name implementation. The only gotcha is that old kernels
-enforce this btf_header->flags to be zero, so pahole would need to
-know not to emit this when building BTF for old kernels (or, rather,
-we'll just teach pahole_flags in kernel build scripts to add this
-going forward). This is not very important for kernel, because kernel
-has to validate all this anyways, but would allow saving time for user
-space.
+Yes, please!
 
