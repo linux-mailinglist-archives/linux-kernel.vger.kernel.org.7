@@ -1,376 +1,224 @@
-Return-Path: <linux-kernel+bounces-866570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264CAC0020A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:09:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07B0C001AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C670D1A03291
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8AD33A3AB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4402FD7A5;
-	Thu, 23 Oct 2025 09:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218A32FD7A4;
+	Thu, 23 Oct 2025 09:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="J6Xi1jOm";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="GmvgYyUn"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B1EL2lBW"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294932FDC36
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761210407; cv=fail; b=ctoIJuI0FPJ+nSLQMdAxnOs8JQxiSIMi9rGMzf82Pp3Ze0CEKHbK3Xtj17hJjuA6w8SECMgZctVF8HzkUNuPs1tRGfw0lc+uu+tOI/0pDUVYgQeEIUlFAOOFC91nA8UavmRLryu0n1jgHIwF7KnDIZCbo3/azfYqe4IkW7BHuxY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761210407; c=relaxed/simple;
-	bh=5Vj1qM3BqzArZI/MHrTZ9cKLrggVP5ebJ15gmrcHe20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ZmPnul6wL6PlFivhOlLep64P5tj5i3JjImJ9aqYYx/hCtdueNI3ENa8OGIUWXNE4IyAPXWzSiF6RWGL1RJd1THrxUbkE+BiGFgh3mnjddOiCXFYuq7psMn/j2cIi6qKOJhrBiCx2Pv2OnrwQL/IRNQTiSUlvZT+23/s2hwn+Yqk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=J6Xi1jOm; dkim=fail (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=GmvgYyUn reason="signature verification failed"; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N8neGC025473;
-	Thu, 23 Oct 2025 09:06:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=Yss5uDzf5nMYCr/p4jcRKSWkCnZk4obekIe8nZHiWiA=; b=
-	J6Xi1jOmyC2bp9olIUo5xPBVK0WP6JO0Lkhu1DTUInbUy8Lcy9JDOLJMjEsgl8CN
-	urr7q9pXKUu9KC5CNanVjd4NyQLCGbGRorqVXf2piKbDNo4Zp7p8whkA16uPMRmy
-	xtIh49xkHpZv3Q3jvyH5OAyV4VEdQBE+8vBua78LUh2kUZ7xvKazmBOB+vSLSctV
-	H46+vuPTgGYKj2yiuQpK2Kx0WYy7SSZrgzl0dtvLvoc4KWwLa7REKw7X4Cnao98n
-	Ewx4Yt4CLAcAcP8xwhibtAmDqIw0d//oR4ETPJzrQ/X+is83McfMrJ+7IXbUJKWQ
-	+E1+E7oUy2WVCeOzLdJdmA==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49v2vw1bwc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 23 Oct 2025 09:06:19 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59N7wtdd012018;
-	Thu, 23 Oct 2025 09:06:18 GMT
-Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazon11013027.outbound.protection.outlook.com [40.93.201.27])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49v1bej7b1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 23 Oct 2025 09:06:18 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Hhc/gT/bErSnLGjhfXpibnYD3crd/T+1Ktjqywc1ZFy0x5xwNt/gyasidoFLLKMyx93cHMAlnUbYZBMchTdd0XZ9tzn33SxYExbzg0HGfOZRilGKY2NwaP11gX/D8swO8IlTCe+/mWJ9zXNw2KyHUXCT1MfdRy0yvmiiWLrPofs7ZqKYUDFHbpB0xHzQbfuHehuMIWTJWokcATj2UGXSi7zrMeXTj2uyWYDKII49SwQStyCc1JFRQipX/0OLXpgSF/cq4fWamt0SaNDSATzuGIQAqViQQf7abyYrDLMKWTqnS6wTTQuEM+YC+6rCaoSFqYFHCK23A195vEi7qU5COA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FrDyduiKFyJtoorQod6cLpMmGBkoWfCcMfyegeGfVvA=;
- b=aanY2Cp+zN/UKpudFRbU5JlxtFPnw5jYUTPP9hH2JTUmfbo5sBopTaDJ0NzkgWOaiJlDWNNrKxOnKlmC1q12NWyxRrr+hmj2QTCdgMu2HkP1caS+gC0ooHFeJOoYreODNJDz+K8aF32NGS2/2XilqTvyAD2sCa0BYo3o9xrKpojZUPfdw1dJ3EhCv/hf0WI8jF/PSY7Hy/NGNRuAcsP9EA4BWJlVKySu5MM92OB7VryUtFqyLfH9KsufEdWTMjLDQ9xkEU8ZGRg8x+73N4lgPnL1bLDifNHfdieDW1+qBoKb8wC6UZAMtNACSEXva0qGgPq82FfYC+gJ8ieNCS3taQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FrDyduiKFyJtoorQod6cLpMmGBkoWfCcMfyegeGfVvA=;
- b=GmvgYyUn8hmW7TNh5+r3dZZw1DbClhSffaKvIH76TEOaCBdpHLU36QSxLIty58mXVhWe96ggtEZHQcDb1TD30YqlaqPMimmOMEZIitpfg8N84+BydDw4tr5AGqcU6IO39wFG+jPGSFBDIHETHCydoSIzqr2U/4varSI7LiY4XU4=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by BLAPR10MB4882.namprd10.prod.outlook.com (2603:10b6:208:30d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
- 2025 09:06:14 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%5]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 09:06:14 +0000
-Date: Thu, 23 Oct 2025 18:06:05 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Hao Ge <hao.ge@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Lameter <cl@gentwo.org>,
-        David Rientjes <rientjes@google.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
-Subject: Re: [PATCH] slab: Fix obj_ext is mistakenly considered NULL due to
- race condition
-Message-ID: <aPnv_W48rbPPmAOj@hyeyoo>
-References: <20251023012117.890883-1-hao.ge@linux.dev>
- <aPmR6Fz8HxYk4rTF@hyeyoo>
- <b8c90552-7be6-45bb-b586-ee21f63499c8@linux.dev>
- <aPneQRY5ei-zvSGQ@hyeyoo>
- <cc961fad-f9bc-4c5a-a7f1-ea3842aefed3@linux.dev>
- <abc7bc71-c9a4-4a19-a47f-f6d6f40608fb@linux.dev>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <abc7bc71-c9a4-4a19-a47f-f6d6f40608fb@linux.dev>
-X-ClientProxiedBy: SEWP216CA0128.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:2c0::12) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988562F6933
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761210394; cv=none; b=MMT7+l50QbXslClP91eFgvt4G5ScG/RlCPFcBuuL+/DfLmsjenV6l52mUpVdQCpJ4+BQqWL09MNGniQxQPar0l8QkewcZxSTAuJ5GNM4XZognnRCvC+ahILxyTm8yDe3KQAPln2/2HrmOZHdp/7uW+8ilytDujbrQtHg3QhfwHc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761210394; c=relaxed/simple;
+	bh=xwACydKQvgDKuB0v3VRVNVKaf/7fL95Co83H8L4/8V8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WjkLpnkx24vKb7pfBJzXejVwdYKfTew8D/qgWtEVQ0M4qu1bcoOApPrPqlbejb7tVHh9iqLw6s1C3zean1LnddwQN2KFjP3/h9jI2diQf09COOJioKG50kQ7+2tP8pMYttWDOkJXjMMzq5oq7hAiGy5pbr2jwdsekYK8TdgkByg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B1EL2lBW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6NGY5016465
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:06:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Tbyvd4eRGssa6Ha0ecVbsY
+	tSBYVsX1t2xVyxXt94ET0=; b=B1EL2lBWBnN34927WafsHwonB2UGuLi6pZlOPk
+	OmgCYq64xuesQ06vVKEV8RP0vsd4sSzRxd0gTT0R4Eyudf45C5sy4YP3gkPSY9UT
+	fJaLnL7Fs1C3+YIISCWROoisShsWMo2XmUJJUkX5ygH2TxPpi+nWhgLteODJW8bA
+	K2O+tvRHwr4ZT7BTjsSISqqhRpo61PrimoiemBqMBq7IOfjlYfiM8JsOqeFwyAug
+	+jgfJgEAut9gOLibsCJoPHo5a3VSq2dnDQH5Wv9boiBgPfTg6RUURWkWfmthRRrW
+	CpTCeRSotwd8MUIMId8ojRylX4dMNYWYhFA8tPbMy1+3PClQ==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xkpsdc5g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:06:31 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2698b5fbe5bso9284435ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:06:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761210391; x=1761815191;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tbyvd4eRGssa6Ha0ecVbsYtSBYVsX1t2xVyxXt94ET0=;
+        b=sP/RPZwKfJz+3FrJHZO1vLWvVn2MUh4W7ZOpjlthm0Scu8Em6H1ltsHgUU3sl8rBfI
+         MqvFl8qUZysUPm3QmAlCocirP1ogAAGqqPi7NURD4GjaiYdrIx0X/a2f8HK5CsUSY4ik
+         y8WaKvlkXCuc2+YJkar99LjM7qB1wsp9WbGe4PGbKAe7nZXPXy4EWh/HYfC1nvaKOI0J
+         Oit4KFl8HxVkixAGDjLUhyj0l69DU+yYU1DpeHRsfstTkcfTB0jgWkRJFF19LNNZTRz1
+         361CV5+xbeMN/Dv/Ur9gm3+B3HxLwmSZww6bmQ/O3cY6VwwKuWXi5y9fh22Zh8U8Kcdl
+         fn/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWnkOs0hS44APK66b6Vy3pPoUGoQtQjyfB2iDIR0NjIPr85rVUH1HK40zZ6OOqRJupGy94vkCNDPYB59XE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywkyf4NtB4UqBdP7Lr2pcFaVwdSwBcz/hVXHcPSf8VNtK7MR8to
+	Umusg8exXzwaV6saWlzHQy31SGKek+AlaqGOg6MS/YVshtpZlDVT54wItoih9pRDWstfG6Q8t4/
+	pWoP2Eel2xqk8B40K8tClM5ycv6wCVAMth2yye9RSi+Scxp29o013XaUlL22GxZdBpCQ=
+X-Gm-Gg: ASbGncuITYmO/ra3i+BLNJaClIQPkIHA52DE9LMDmp1aKY9reWnGMfJKpoAibP/QCXM
+	vwg1cYXw6SZrksR5qoSrBCrfSToSeT/db8P9WPcJibtGi+3KozPRDEsElyhGBbUjZP29FKXui0e
+	np8fktqSSCmXc1GrK3eCB2ojq0O/SUIsgfktdkoT/zng6PMyUfk/etykd7Iy+5f9pB9k0DNsDyW
+	mewJci/fOwO+Qbrdmrjh4zxQY57jLp5mbpguNmb/EnLC53hKtLGjDRWYvQEgNwfaujimunlcCeQ
+	RjGJozsY4o0k4j++0AlgaShLEEOqS67Nd5RNTrjID3LvdBAC+l5gVOEugbQ3NEOcuxvh0TeTW1e
+	VmAqsINAHPlPbM1tynrWYY8Edn1xGJbmKtF7u7mWzOQ7kl9T83sAzYw==
+X-Received: by 2002:a17:902:ec87:b0:269:82a5:fa19 with SMTP id d9443c01a7336-290cb07cbbbmr274605415ad.45.1761210390987;
+        Thu, 23 Oct 2025 02:06:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGXtnMJKSahTr3YrUSbYlgQcd+PhongCRbCPX3M+/vpJqbpLoH+wusz0Lz81kTeDHbmGQz8pA==
+X-Received: by 2002:a17:902:ec87:b0:269:82a5:fa19 with SMTP id d9443c01a7336-290cb07cbbbmr274605095ad.45.1761210390516;
+        Thu, 23 Oct 2025 02:06:30 -0700 (PDT)
+Received: from hu-hangxian-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dfc1c8asm16698685ad.71.2025.10.23.02.06.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 02:06:30 -0700 (PDT)
+From: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+Date: Thu, 23 Oct 2025 02:06:26 -0700
+Subject: [PATCH] media: camss: csiphy: Make CSIPHY status macro
+ cross-platform
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|BLAPR10MB4882:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9327f406-c350-411d-bdef-08de12136abf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?ekasSG+1SDoVlrC9RsLIOMIEnBorvhJ7Wm0gMSLNcP+S3UlC7aKUHx8JpJ?=
- =?iso-8859-1?Q?eE2Kd9xHBablANYq0nV+HnvBHBTnP/dnK8KMhcKI9qOXVjqnjv9ksWKAQF?=
- =?iso-8859-1?Q?mJ3DZO7dx8AxE2QbNAXpGYGlOUYKAzRXzbcyvg2PFjXw7ucNXoa5syg57g?=
- =?iso-8859-1?Q?E8BicnTmZgc4OB3laYvOXjhGVzOIJSqlGgsydA5AcXcDkGeriMo9awB18y?=
- =?iso-8859-1?Q?aIsaFYXOungNPLHOAXHDYHfA6DeCidFopHSSRED6ttMWJsnfBu6R8QWIP3?=
- =?iso-8859-1?Q?sQ8y8Gyxv/do5mm0S+OWkBKrlz4ux0K/qyezeT39LUKvIuu4vY+nJs4Kt6?=
- =?iso-8859-1?Q?5BsTYSby4kGnYClop5AUdVDu/kaOK6zkNLBYRyeTY15Qy3y4jXkGXj8ick?=
- =?iso-8859-1?Q?DC+PXaJ5ZZxdeUhqGm8QLnBOXUBVfVVsLaSxqhxYvLwZpsluqAC92+FgOQ?=
- =?iso-8859-1?Q?5TZWL+85dZlu0AwSnTU+5Jr1PSQdMwacEUanZhaVry+960f9uCo4K3eq+0?=
- =?iso-8859-1?Q?PPcd0LG9Jv86qdk0EjRUvw994cPOO3NC9l7JHOyDmuk4SP436sbW2Pimr+?=
- =?iso-8859-1?Q?d+0mv1y/v+KSyxMkdVOH0XS1EkG1BMq3yP4bRZKDbDyRa8m/ubYB681d2Z?=
- =?iso-8859-1?Q?gdFnAZHs/BVbp6yFVRu7dC2xrAFrupo8VTfGrEIlAdsvxC7lPDWTJ1DZsn?=
- =?iso-8859-1?Q?OJa4+y9aemUFSWOt5UpFK6GyVMH3qIAZ0wTBqGwG7Rsud3L2IrNO0j7qY1?=
- =?iso-8859-1?Q?2VaafavIk2lJ2mqQmrzgfwVobPgw2aCjXPVzc8cPgIpUpKnG+nOFtSaPIl?=
- =?iso-8859-1?Q?dF/6j3gDCly6o622QNqrun5sagk0nALf0hisPkZ0wZusoVLeCeC4CggpNc?=
- =?iso-8859-1?Q?lAC3cIIiGcxPMMsfFoJbGWtpoCJdhUHtFhfoMHmYHw/X1Z4q2w5eGOni9Y?=
- =?iso-8859-1?Q?cwhr7YJ1ibXv9/qyRg/7C044RBEDxUzKh8LNWEbYmFaT1YrLvqve0eKBt1?=
- =?iso-8859-1?Q?OOjqZg55e2+k1WE7nB3C8LqdFEwTNu8hEZIS1fpO6zKBK650vKYAoMJEVG?=
- =?iso-8859-1?Q?ODTn50P0Rn/hf//qKlSSNl7USra8IQ3qZ7my8xL/RvtZVweU6KQYv1nuUO?=
- =?iso-8859-1?Q?kSssJX4Zw33y5OlxA8qeOkg41KYVwOEhOW6gBs5zbH5oyz0sT18z6K3aDQ?=
- =?iso-8859-1?Q?uzlX+ZksVWLaNjzLhrBug/SMpwKtCjWLT+7x+o+JXhIuvjkTMkLRwuHONG?=
- =?iso-8859-1?Q?hyreeY6VsJkYvbJKdG1UZXxF2CyF57XutoAUsQGwQdFICggHpzaDCq/fj/?=
- =?iso-8859-1?Q?1jLIJ7FJQlcKOyNiShVEaUY+ec2MJHbi3oa5lNHhO4XRRi2CkUr2Z/ie6y?=
- =?iso-8859-1?Q?jDK2gaZtVNAvsPK/1LuWZ3Is+LJC3Fi9y23MgcBEQLp7quCNaldNf32nfB?=
- =?iso-8859-1?Q?U5mb+f91lkRsAXbykhP9BpQgpH2k56+KQ+ZRkKCKsYa94mqzzNhK8kU5vx?=
- =?iso-8859-1?Q?6ME9oCF5d8JsTxhmEAjAEa?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?b8B1wlrOFKNk3G6V8zK4wt7Br/HYD5BOMRtK+0VW7dG8qr3j1ipYMkfZxJ?=
- =?iso-8859-1?Q?/Bf8cuHkQvaL+WS4VAjyDanUx3WYBNG3nuwENOyEnaCGqP2A4SPytvNmBC?=
- =?iso-8859-1?Q?kXo05JCxjBnvTtw1ZBt8mZQ0pd2GEkAocdVDieSwdNXU7iVDintdRYtXEP?=
- =?iso-8859-1?Q?s80SvUz70iRKTeG2J9ru5RhG7zGF+N55U3w5q1q1BiOUgged6L/4ke8wPf?=
- =?iso-8859-1?Q?UB0sya43Sq6vW3ck9sM3bqormRG4/AG7Rk0+6N1rJC6KU+F1mpVExM0mFT?=
- =?iso-8859-1?Q?vbU4Ncn0dBjaEl7DAq87RH+fFUlMOF82qKZTEClWeDAjeDIsnBcZbCvtZg?=
- =?iso-8859-1?Q?K/Oi5rdrGG+2c/zvnzTP8cSUmTgzumHTOrOApsyS5L5rjHQp5qKR9ohR4Q?=
- =?iso-8859-1?Q?/iAvOKB/+aTdB1OGQhWDJ6LY653BpO64y1P1qHXFgzNW7tQ+XmlHjP8DOC?=
- =?iso-8859-1?Q?nsHFMu2ezy3GuCbSooK+BxbPO2UFdY24D+4VlVgFeS/mtNfq8enc0c0ZWH?=
- =?iso-8859-1?Q?ZAR5Odmx3ZyGjX0EsLgizyseDNYNhE3ka8LxyXOuIE8xqSNxrEtufZjbUI?=
- =?iso-8859-1?Q?lwLzkjv5EXVUjixJqzTyPNGqI3nbN6Wr6cpIEB7OrnNI3wj97Qy+i2sAJe?=
- =?iso-8859-1?Q?0x0RY+qrqlzU/imig2bWYBPlI5jqvr6RGLSfQo2KcE4j283Z7aQxFQqTEN?=
- =?iso-8859-1?Q?xcBaGSC2v15iOLfi62w9iupTIF82hoWzoeXV9jorr39fIWqf4qBNIB6ZBa?=
- =?iso-8859-1?Q?10qyfKe8svBIpjerBCDPBw7mqe0EFmWwaTEVC+7aAqA5fN9vT1KQ/eEJzf?=
- =?iso-8859-1?Q?e8I3MYUvIGgtk5o9MQh8cMn8+B/jjxh9lfClpbRvcOU0KbzrckdPy9bLrM?=
- =?iso-8859-1?Q?ZNCQYlNhbm+69ZzZrwJcCtTeXclDhMrhP0M+FGpHMuG7WeBSvi8LVjqOOq?=
- =?iso-8859-1?Q?D6Nk/brxlKws+Z4U1szdkCrrW78KnEDXSQ486uVbpdD1ISaNdrludcuS2c?=
- =?iso-8859-1?Q?W9MIJ3xkukAmBnE6nhWtGbeataE8zxPjoRFjVhygxZwgE4Y2HbeKCAxYHK?=
- =?iso-8859-1?Q?KcX6XQ23veX76XuEwdecL+19OXMsruZZe1p4D08pS5LxKj/rTk9mK3ESDs?=
- =?iso-8859-1?Q?MS6sFpa8469TF64YBpWTiA3UKg8aoWNKWwQjzPHRv68OnSyHOoEQeEScZp?=
- =?iso-8859-1?Q?gcZMgDSU57g7PONySkgzgo+b9DTzjP97fVUARbXRzdbft7DGw1pZRBwwA4?=
- =?iso-8859-1?Q?/9stPbC3UyZP2/jmf+iKIqSwxCNt/jt+mv0l7FCziCZonddKfngoJAeNFE?=
- =?iso-8859-1?Q?gbcyoMUsOnJEbcbfvEgPR0hGODIPokgBxuhalIeU428wE8/F+AB28QXMRL?=
- =?iso-8859-1?Q?rq9okij6h7so0QU0EnyIJvsRLj1pdxZtfibQq26pbdu789r6kpsYVqo2C8?=
- =?iso-8859-1?Q?fPvpuh6j1J/yL+r0vocQucLEWdI2K+rbSUZ83+6efLCEgzEJ7kVTUYBXJ3?=
- =?iso-8859-1?Q?/ectEzrx9jW7xnt1oQd+ctYf8us0DAmFzzQN1KUawuZrn4obucyL/o9cGQ?=
- =?iso-8859-1?Q?JioKTAinPf9AXG337erpmmbBtWFhhtjCqP7/2uWz2ifja+VGw5CWhBnM0v?=
- =?iso-8859-1?Q?PDo/lph3i+qOHV7S1XoOUCZMvrPtA815q9?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	IkfWxmXI8olocDXErSnf1MdmCfocCyY3GhOPBvpe0XB+zZbsChEUddbXRw+dsaj7iFoKifjDyfwCzAuLkplpp7/YQNjQPkoic9UpmCpHMjFPWGHQsL8n64oRb0w03LrRQLeI8Gm4Phkj/EtpkD69nDpBjCk3AC9rgWtNVwxhdWRrLXRwQqnhFg7u6+2aYDX2W8zDMiVtmX7PEDmluNTQWL9jK4+zrjdBDcGOzbEhrjrVMBqntvfv1W+PsauEKexRiprXH+r5KWmHp3KitEuKdJN86xbRm8BqaegOsA1zGPOvI7oU4qoriEddOkQncbAyZERrN1HMZe026agj2wnj/5i/pH2B1bDg5C0P4htgvtYF9z72mvf9z+Mab0AFFmt/CeY5KST2b/8QbmG6UaTPKFYDUo72M64JezzjLYL/wGCFgxaPJSgEx9UkTfLagbS+I9GA7ombS8VyF+BtKaOleU/ExlF9IkStHi5T3uDorveOyE+qfpeo3TQ1gKdASsE+oqT8p/ObXvWpbqStjbuqDmdOMXYNZPmqiOBiAE0r6zMwwvLFJvGAOXCI/fUSzgbaMW56MBbkEgZ0Orix1wOcR/awkbAhkAR+LGk52rbvWs8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9327f406-c350-411d-bdef-08de12136abf
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 09:06:14.0846
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: x0p9dRuAu+7OUtGoCgyXAg75m3PIz37I9ttx+aSyHxyeGLuMOpCdffKlOluvznu9OR90nbUYjL+aRsmWH0ErVw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4882
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251023-make-csiphy-status-macro-cross-platform-v1-1-5746446dfdc6@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIABHw+WgC/x2NQQrCQAxFr1KyNjAzpaBeRVyEaWqDtjMkoyild
+ 29w8RbvLf7fwFiFDa7dBsofMSmrSzx1kGdaH4wyukMKaYghRVzoyZhN6vxDa9Te5ilrQccM64v
+ aVHTBob+EMcd0Jmbwtao8yff/dLvv+wHpHkPYeQAAAA==
+X-Change-ID: 20251021-make-csiphy-status-macro-cross-platform-5390dc128aee
+To: Loic Poulain <loic.poulain@oss.qualcomm.com>,
+        Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org,
+        Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE5MCBTYWx0ZWRfX/yBNSXGN8cA3
+ OhAou4GntyzS+sLJcdQ02Fc1A3eRVxllsBY7Xuyrptpspk3CAdeEUblKuI3X9LZwmNuZ6cRMiH7
+ /uHaDq6J/82f8yrtiG82bT+1Osa/38RU+7xB/OviG5bgtu5E2N/Q/HHz4YuFgehUJFdNhFYS9A5
+ FjjS04DrssgpLPH/i6K1j3zLb/+vP1EBk8SMXmeCi1/o1hSfdprgODrm/ffzHYU2N0x0O2y/ZMO
+ mShiwxUY/TIRY58lBMgx+fiZ1E4e7JGiWBBbXtmHgtK/fZ5HpmYgAiPEaGJ0LqZZ89X0NhTlnnB
+ LgmI+a+uY8mmmgRGZgvKdGPZJyY4zsBCn2QGPRHJpubkLGXdtby+/YXIDvqXucKruhyL09Lc+su
+ xXdK1hrbnBNjIiEzRaymJi0ahjhX/w==
+X-Authority-Analysis: v=2.4 cv=FbM6BZ+6 c=1 sm=1 tr=0 ts=68f9f017 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=edmtyYkapI0WV9tsjtgA:9 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-GUID: PPJhKEZpsQrgACOk2Majlh3Q-8Hhlf-v
+X-Proofpoint-ORIG-GUID: PPJhKEZpsQrgACOk2Majlh3Q-8Hhlf-v
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 suspectscore=0
- malwarescore=0 bulkscore=0 phishscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
- definitions=main-2510230081
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX81k1nHfwyn34
- Uq9WPcZ4BTH1BWF7Ed8fjFtrbSdhMXiAdmQZ/CEhrISq/f901TT8j2MMfHgw5FHQnNvdoGQkekj
- RgGofHWlGIneZ9+gT3UIkQKIHOywZH0tOUeOS6g6W15go6ba+7AfzN0k/BwJfyb8c7lsvZvZqrD
- OmIaKaBjrZyWkiiJ4+eEU+xsjA0xYSNhyBia6iAwpl88/4iUMgXc9WnR5t4zAQKxSYyBYeL4diI
- jUqEh5hvhaETBQNE6PuAIS7+HMd6WHQb68U2+GaGP8iVwIBOEs8Ar3lprUaoW3zW+sTjiPFeuQ0
- E9I6jU9K2J22o6yEvkY3qXIm/iu6ylw/qAaWl01YkF0H3/kd4BhhhaiZA4qZXObZSd59cltD+b8
- 7hiwukwHlHY8AP/D6QwzkQ7qCa6ORQ==
-X-Proofpoint-ORIG-GUID: S0G04Xu4RbEK_Ongts4G1YzIZGlkVAS1
-X-Proofpoint-GUID: S0G04Xu4RbEK_Ongts4G1YzIZGlkVAS1
-X-Authority-Analysis: v=2.4 cv=FuwIPmrq c=1 sm=1 tr=0 ts=68f9f00b cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=QokhSt2ydNtxb3VdzbAA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510210190
 
-On Thu, Oct 23, 2025 at 04:46:42PM +0800, Hao Ge wrote:
-> Hi Harry
-> 
-> 
-> On 2025/10/23 16:23, Hao Ge wrote:
-> > Hi Harry
-> > 
-> > 
-> > On 2025/10/23 15:50, Harry Yoo wrote:
-> > > On Thu, Oct 23, 2025 at 11:11:56AM +0800, Hao Ge wrote:
-> > > > Hi Harry
-> > > > 
-> > > > 
-> > > > On 2025/10/23 10:24, Harry Yoo wrote:
-> > > > > On Thu, Oct 23, 2025 at 09:21:17AM +0800, Hao Ge wrote:
-> > > > > > From: Hao Ge <gehao@kylinos.cn>
-> > > > > > 
-> > > > > > If two competing threads enter alloc_slab_obj_exts(), and the
-> > > > > > thread that failed to allocate the object extension vector exits
-> > > > > > after the one that succeeded, it will mistakenly assume slab->obj_ext
-> > > > > > is still empty due to its own allocation failure. This
-> > > > > > will then trigger
-> > > > > > warnings enforced by CONFIG_MEM_ALLOC_PROFILING_DEBUG checks in
-> > > > > > the subsequent free path.
-> > > > > > 
-> > > > > > Therefore, let's add an additional check when
-> > > > > > alloc_slab_obj_exts fails.
-> > > > > > 
-> > > > > > Signed-off-by: Hao Ge <gehao@kylinos.cn>
-> > > > > > ---
-> > > > > >    mm/slub.c | 9 ++++++---
-> > > > > >    1 file changed, 6 insertions(+), 3 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/mm/slub.c b/mm/slub.c
-> > > > > > index d4403341c9df..42276f0cc920 100644
-> > > > > > --- a/mm/slub.c
-> > > > > > +++ b/mm/slub.c
-> > > > > > @@ -2227,9 +2227,12 @@ prepare_slab_obj_exts_hook(struct
-> > > > > > kmem_cache *s, gfp_t flags, void *p)
-> > > > > >        slab = virt_to_slab(p);
-> > > > > >        if (!slab_obj_exts(slab) &&
-> > > > > >            alloc_slab_obj_exts(slab, s, flags, false)) {
-> > > > > > -        pr_warn_once("%s, %s: Failed to create slab
-> > > > > > extension vector!\n",
-> > > > > > -                 __func__, s->name);
-> > > > > > -        return NULL;
-> > > > > > +        /* Recheck if a racing thread has successfully
-> > > > > > allocated slab->obj_exts. */
-> > > > > > +        if (!slab_obj_exts(slab)) {
-> > > > > > +            pr_warn_once("%s, %s: Failed to create slab
-> > > > > > extension vector!\n",
-> > > > > > +                     __func__, s->name);
-> > > > > > +            return NULL;
-> > > > > > +        }
-> > > > > >        }
-> > > > > Maybe this patch is a bit paranoid... since if
-> > > > > mark_failed_objexts_alloc()
-> > > > > win cmpxchg() and then someone else allocates the object
-> > > > > extension vector,
-> > > > > the warning will still be printed anyway.
-> > > Oh, just to be clear I was talking about the other warning:
-> > > pr_warn_once("%s, %s: Failed to create slab extension vector!",
-> > > __func__, s->name);
-> > > 
-> > > > The process that successfully allocates slab_exts will call
-> > > > handle_failed_objexts_alloc, setting ref->ct = CODETAG_EMPTY
-> > > > to prevent the warning from being triggered.
-> > > But yeah I see what you mean.
-> > > 
-> > > As you mentioned, if the process that failed to allocate the vector wins
-> > > cmpxchg(), later process that successfully allocate the vector would
-> > > call set_codetag_empty(), so no warning.
-> > > 
-> > > But if the process that allocates the vector wins cmpxchg(),
-> > > then it won't call set_codetag_empty(), so the process
-> > > that was trying to set OBJEXTS_ALLOC_FAIL now needs to set the tag.
-> > 
-> > Yes, the case I'm encountering is exactly this one.
-> > 
-> > > 
-> > > > > But anyway, I think there is a better way to do this:
-> > > What do you think about the diff I suggested below, though?
-> > 
-> > Sorry for the delayed response earlier; I was trying to deduce all
-> > possible scenarios.
-> > 
-> > It makes sense to me, and I will submit the V2 version based on this
-> > suggestion.
-> > 
-> > Thank you for your help.
-> > 
-> > > 
-> > > > > diff --git a/mm/slub.c b/mm/slub.c
-> > > > > index dd4c85ea1038..d08d7580349d 100644
-> > > > > --- a/mm/slub.c
-> > > > > +++ b/mm/slub.c
-> > > > > @@ -2052,9 +2052,9 @@ static inline void
-> > > > > mark_objexts_empty(struct slabobj_ext *obj_exts)
-> > > > >        }
-> > > > >    }
-> > > > > -static inline void mark_failed_objexts_alloc(struct slab *slab)
-> > > > > +static inline bool mark_failed_objexts_alloc(struct slab *slab)
-> > > > >    {
-> > > > > -    cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
-> > > > > +    return cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL) == 0;
-> > > > >    }
-> > > > >    static inline void handle_failed_objexts_alloc(unsigned
-> > > > > long obj_exts,
-> > > > > @@ -2076,7 +2076,7 @@ static inline void
-> > > > > handle_failed_objexts_alloc(unsigned long obj_exts,
-> > > > >    #else /* CONFIG_MEM_ALLOC_PROFILING_DEBUG */
-> > > > >    static inline void mark_objexts_empty(struct slabobj_ext
-> > > > > *obj_exts) {}
-> > > > > -static inline void mark_failed_objexts_alloc(struct slab *slab) {}
-> > > > > +static inline bool mark_failed_objexts_alloc(struct slab
-> > > > > *slab) { return true; }
-> 
-> Maybe it returns false here.
->
-> When CONFIG_MEM_ALLOC_PROFILING_DEBUG is not enabled,
-> 
-> The following condition will never be executed:
-> 
-> if (!mark_failed_objexts_alloc(slab) && slab_obj_exts(slab))
+The current value of '0xb0' that represents the offset to the status
+registers within the common registers of the CSIPHY has been changed on
+the newer SOCs and it requires generalizing the macro using a new
+variable 'common_status_offset'. This variable is initialized in the
+csiphy_init() function.
 
-Good point. But without CONFIG_MEM_ALLOC_PROFILING_DEBUG, we don't know
-if someone else successfully allocated the vector or not (unlike, with
-CONFIG_MEM_ALLOC_PROFILING_DEBUG enabled, we know that when we lose
-cmpxchg()). We cannot "fix" the case where a process fails to allocate
-the vector but another allocates the vector.
+Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+---
+This change introduces common_status_offset to replace the hardcoded
+offset in CSIPHY_3PH_CMN_CSI_COMMON_STATUSn.
+---
+ .../media/platform/qcom/camss/camss-csiphy-3ph-1-0.c  | 19 +++++++++++++------
+ drivers/media/platform/qcom/camss/camss-csiphy.h      |  1 +
+ 2 files changed, 14 insertions(+), 6 deletions(-)
 
-So I'm not sure if checking slab_obj_exts() once more is worth it in
-this case, but I'm fine with either way.
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+index a229ba04b158..9b6a0535cdf8 100644
+--- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
++++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+@@ -46,7 +46,8 @@
+ #define CSIPHY_3PH_CMN_CSI_COMMON_CTRL5_CLK_ENABLE	BIT(7)
+ #define CSIPHY_3PH_CMN_CSI_COMMON_CTRL6_COMMON_PWRDN_B	BIT(0)
+ #define CSIPHY_3PH_CMN_CSI_COMMON_CTRL6_SHOW_REV_ID	BIT(1)
+-#define CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(offset, n)	((offset) + 0xb0 + 0x4 * (n))
++#define CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(offset, common_status_offset, n) \
++	((offset) + (common_status_offset) + 0x4 * (n))
+ 
+ #define CSIPHY_DEFAULT_PARAMS		0
+ #define CSIPHY_LANE_ENABLE		1
+@@ -714,13 +715,17 @@ static void csiphy_hw_version_read(struct csiphy_device *csiphy,
+ 	       CSIPHY_3PH_CMN_CSI_COMMON_CTRLn(regs->offset, 6));
+ 
+ 	hw_version = readl_relaxed(csiphy->base +
+-				   CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 12));
++		CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset,
++						  regs->common_status_offset, 12));
+ 	hw_version |= readl_relaxed(csiphy->base +
+-				   CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 13)) << 8;
++		CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset,
++						  regs->common_status_offset, 13)) << 8;
+ 	hw_version |= readl_relaxed(csiphy->base +
+-				   CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 14)) << 16;
++		CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset,
++						  regs->common_status_offset, 14)) << 16;
+ 	hw_version |= readl_relaxed(csiphy->base +
+-				   CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, 15)) << 24;
++		CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset,
++						  regs->common_status_offset, 15)) << 24;
+ 
+ 	dev_dbg(dev, "CSIPHY 3PH HW Version = 0x%08x\n", hw_version);
+ }
+@@ -749,7 +754,8 @@ static irqreturn_t csiphy_isr(int irq, void *dev)
+ 	for (i = 0; i < 11; i++) {
+ 		int c = i + 22;
+ 		u8 val = readl_relaxed(csiphy->base +
+-				       CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset, i));
++			CSIPHY_3PH_CMN_CSI_COMMON_STATUSn(regs->offset,
++							  regs->common_status_offset, i));
+ 
+ 		writel_relaxed(val, csiphy->base +
+ 			       CSIPHY_3PH_CMN_CSI_COMMON_CTRLn(regs->offset, c));
+@@ -989,6 +995,7 @@ static int csiphy_init(struct csiphy_device *csiphy)
+ 
+ 	csiphy->regs = regs;
+ 	regs->offset = 0x800;
++	regs->common_status_offset = 0xb0;
+ 
+ 	switch (csiphy->camss->res->version) {
+ 	case CAMSS_845:
+diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
+index 895f80003c44..2d5054819df7 100644
+--- a/drivers/media/platform/qcom/camss/camss-csiphy.h
++++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
+@@ -90,6 +90,7 @@ struct csiphy_device_regs {
+ 	const struct csiphy_lane_regs *lane_regs;
+ 	int lane_array_size;
+ 	u32 offset;
++	u32 common_status_offset;
+ };
+ 
+ struct csiphy_device {
 
-> if another process that allocates the vector, we will lose one count.
+---
+base-commit: 076fb8624c282c10aa8add9a4ae2d9354d2594cb
+change-id: 20251021-make-csiphy-status-macro-cross-platform-5390dc128aee
 
-By "one count" you mean skipping accounting the object in memory
-profiling, right?
-
-> > > > >    static inline void handle_failed_objexts_alloc(unsigned
-> > > > > long obj_exts,
-> > > > >                struct slabobj_ext *vec, unsigned int objects) {}
-> > > > > @@ -2125,7 +2125,9 @@ int alloc_slab_obj_exts(struct slab
-> > > > > *slab, struct kmem_cache *s,
-> > > > >        }
-> > > > >        if (!vec) {
-> > > > >            /* Mark vectors which failed to allocate */
-> > > > > -        mark_failed_objexts_alloc(slab);
-> > > > > +        if (!mark_failed_objexts_alloc(slab) &&
-> > > > > +            slab_obj_exts(slab))
-> > > > > +            return 0;
-> > > > >            return -ENOMEM;
-> > > > >        }
-> > > > > 
-
+Best regards,
 -- 
-Cheers,
-Harry / Hyeonggon
+Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+
 
