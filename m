@@ -1,161 +1,166 @@
-Return-Path: <linux-kernel+bounces-866436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88167BFFC19
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:00:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 467EDBFFC22
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8765D3519A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:00:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31AA518C3796
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694422E7623;
-	Thu, 23 Oct 2025 08:00:37 +0000 (UTC)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972B72E7F27;
+	Thu, 23 Oct 2025 08:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QXJOoCbn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="30++XHrh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E942BFC60
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E762C257827;
+	Thu, 23 Oct 2025 08:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761206436; cv=none; b=K7OMZjEMfs0oLxuY/3frYk3wGEvZRTIDFhFJM8HbpXDOIykUa7qlOZHRcFoZxQizhSqZi52xcfA/gyB9sGxE9+kgQi4GhF3Ptin2FkNjip02r1o7EQA9KaRilGs4E7k1w3P5jxvUiMRC4Cp98AKcMls1IATSo79ukNOgyWtqr3o=
+	t=1761206461; cv=none; b=LF0Mo6JAdzEp4jPVJyP1J3ABKFSChjk0G3gDijLq0rodurTYEpxxAXpEqMIG/1c4GYhomN1Tx+USvZ2KbZ6OwyRP7TJUHqbc2r0R16KMbiuO1eVxhyu0yQ706XFCAS8oLQ+Ri37YZDPYfPl8g7t0QHIr+VHmd2+CYd+Gz6bBgts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761206436; c=relaxed/simple;
-	bh=KpSaMjSEZziIYn4V8EA3oAQHYYGym/G8ks3Kmoko+Q4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dyaBpkUfwuQ0OVSeD7yWiqaKBYjA5VK6O1uElFDjkdm8b9ff+XXSa1OQt6Ji6XbYoh+TfUEN1gvclXdHj6Tep0/3wxZmc3HUr3ErGl9qoWNIu1rjwPbq4yUDc2nEWgwIb7L9LQxnBjKENNnK5dmci8B/XhsVzyTX7rGCP3+wX4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-54aa4b86b09so254826e0c.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:00:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761206433; x=1761811233;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XF9ym20BXQJuQdpG7CWrlv8nMa2KXEsJ8BzTyt5Bosk=;
-        b=LeOBqNQxt8wNy2l2pbq2RJCmvGTJj4MKY9kJs16nBkPXfn9DMN+6KaaipluEj530CS
-         dp4fCdoMT3YUwn9OtVEkwNP93MeGBMIDbkbNDeuncH5ppKOBO1yp+P8yU9EmvpPCnePm
-         pZ/UJ/1rgrDMB/AxR+hDY/YZb+GXlGsU64HsH/s4SRo1082D6IqJNXXg8IBrRIvzMD3p
-         VjJLPAhcfQDwR3bK5OBRfj1zMxQSWonQpnKhmjinQPxJBPV3gemCy+utxvlnYDeKaJ+Q
-         5DegM02OF6F4IqkH2f5Cm4q723uOhhEs5JrjZYB1EGf0aD+XzOKfj31O8S8MuD3paeNJ
-         TXTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXseXdwFFhKUowPGqDOUy8BbMp4rfvURmoFDlB2UwWgu7navcbCocHQZq+SEX+xqsCD8WwNx6pfuckUFpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa+aMHlScggsLfsfnpN41rTfl06GOoNuuPD6zDi195DXNn4y8v
-	/fTZZmyt4wl5cYGa3chIjKApz9Q1IIXu9asCVT5efv9QmpSFoFqRvs33yp0iieSj
-X-Gm-Gg: ASbGncu7x8OBK6tIxqen/tC1RXRomsX5NfPAwoiD5ujxMIuBHn6yBdk7vcXFOawm78z
-	mqBFeFMlAdQO+fgmfyJf4uOkCJqGdfFgSTGif78FY8z+p6hqd5tc9JW7Haqyzwoe8YxVlWyHvWb
-	w8PZy9Ndxu5SG4QddYmX/gLDTkGpXPojAkXkDL4SdPmjNta5GitPXYv/ye1wom81LWAP0ccWfng
-	hAj0NlHVyGkeOnQ0eX0e5JK8jqEsiTIG0T390028jOyLmy/9WqkDxYEC7uzT3zTRC3+wu4xmzz3
-	bMeSP4k5ZcEA19Sj3cMWIiXzgtejrkUkOhs2pxFN5RNeRcygtPkxzNn71wN0mqzIBnNI+ByoEXw
-	EvNWMQQD5yEkE7j2FA1w0Wi3iM6Z47bYE3O4cc3+hVDzuRt9lRGpF50UZ/A2nM1engjfZo0ehiv
-	YBkKNTO3ZWFTvuZbIXHgxCRRKGq/3d10lr1BtBk2eGfdLUvU9Y
-X-Google-Smtp-Source: AGHT+IEqg9bETS0HA542MZOyEwHRHA6wHMqlAFe8RKqBz3aEcxl+9O9Z4VOoUYEiR/eKa2FdKOE7bQ==
-X-Received: by 2002:a05:6122:6593:b0:54c:da0:f709 with SMTP id 71dfb90a1353d-5564eebb778mr6848917e0c.13.1761206433496;
-        Thu, 23 Oct 2025 01:00:33 -0700 (PDT)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-557bd89f41csm528563e0c.1.2025.10.23.01.00.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 01:00:33 -0700 (PDT)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5a3511312d6so231462137.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:00:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW8OeBSLRHjfxusIYUHeaoKgRnI6J5VTvwlg3B8es63bYUEEUcDYrJtid/94BvW0D2/WjvbsVIm6HljkYs=@vger.kernel.org
-X-Received: by 2002:a05:6102:32d3:b0:5d5:f40a:4cf1 with SMTP id
- ada2fe7eead31-5d7dd6a4e59mr6656672137.24.1761206432910; Thu, 23 Oct 2025
- 01:00:32 -0700 (PDT)
+	s=arc-20240116; t=1761206461; c=relaxed/simple;
+	bh=xVl+OOG4pdgCh6L81H5p5tPKjQ1PAaXWAg20Ct+OGU0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=jC9AnP5Kd2Mv4IZbLgpu4R6YDK+tOKzdsErPb8qgjSVnk/ACE+9Msru+hpODF/INBwLmwC7t15vCnxmIvIru0CjpZCiUKsPRh3n4JhCvcUGLbF+09zpUmtfpeSe7vNtmVfp//t7KXJEvTwgJhgu03ftYTLqAY+PvaEkNfZ9sv5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QXJOoCbn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=30++XHrh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 23 Oct 2025 08:00:50 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761206455;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=00Z8zJXcen6vBAxIwzWzqcCaxkxXun5gYD/COcx+fks=;
+	b=QXJOoCbnpewHBlDHjPxD/tyS18x+qAhMg+g38+iZ8BhctdIzQWoXWhwwLwEdhlti6ApiGF
+	3ZkGUIWn5gIBz6ahVCGfXy41WWYCQZ0n5VeoEzrpXEdmIf7NdNz0Y94P36LMQSNyqW3UC/
+	I/K9a6FhHttcWtYHlijlwzEddwyYXkpa5//vMxVposYW6qQYReh/FIXXQnej6UpaVp0dYu
+	WAsih+ozV5IeB9XYvEVOyP79mxw9mGFO0X0ULMlWSjvq1fyqZw3mhaXJHVsI76JwKZW1Sn
+	xwqHpGm/BCmwqmxpXOqtpZcxsYU9Jdnwx6oMuyvfAOb9DN4j7BhL/LrBp5/Jwg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761206455;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=00Z8zJXcen6vBAxIwzWzqcCaxkxXun5gYD/COcx+fks=;
+	b=30++XHrhPBp+hpoNxRrEt6tW//6dWZgqGaCwc3pX5vBPx//da9ZQU55BaKNh4FKYNI17oJ
+	RFi0akzdlD2wxqAw==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: objtool/core] perf build: Fix perf build issues with fixdep
+Cc: Thorsten Leemhuis <linux@leemhuis.info>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <8881bc3321bd9fa58802e4f36286eefe3667806b.1760992391.git.jpoimboe@kernel.org>
+References:
+ <8881bc3321bd9fa58802e4f36286eefe3667806b.1760992391.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007133657.390523-1-claudiu.beznea.uj@bp.renesas.com> <20251007133657.390523-3-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20251007133657.390523-3-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Oct 2025 10:00:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXF14x68Wk5YdOBS2D2N6LtnQjfGzrsMdSJegX-gc3faQ@mail.gmail.com>
-X-Gm-Features: AS18NWB9_OOBrClG3W5gj81JVaeCg1e2FLiq_rBpovw0Id2oH40EKE5zSy4p5SM
-Message-ID: <CAMuHMdXF14x68Wk5YdOBS2D2N6LtnQjfGzrsMdSJegX-gc3faQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/6] PCI: rzg3s-host: Add Renesas RZ/G3S SoC host driver
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, 
-	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	geert+renesas@glider.be, magnus.damm@gmail.com, p.zabel@pengutronix.de, 
-	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <176120645051.2601451.8884022531775648554.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
+The following commit has been merged into the objtool/core branch of tip:
 
-On Tue, 7 Oct 2025 at 15:37, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
-> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
-> only as a root complex, with a single-lane (x1) configuration. The
-> controller includes Type 1 configuration registers, as well as IP
-> specific registers (called AXI registers) required for various adjustments.
->
-> Hardware manual can be downloaded from the address in the "Link" section.
-> The following steps should be followed to access the manual:
-> 1/ Click the "User Manual" button
-> 2/ Click "Confirm"; this will start downloading an archive
-> 3/ Open the downloaded archive
-> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
-> 5/ Open the file r01uh1014ej*-rzg3s.pdf
->
-> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Commit-ID:     f6af8690d17d8621a6c8cdb24746c904adfc9465
+Gitweb:        https://git.kernel.org/tip/f6af8690d17d8621a6c8cdb24746c904adf=
+c9465
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Mon, 20 Oct 2025 13:33:15 -07:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Thu, 23 Oct 2025 09:53:49 +02:00
 
-Thanks for your patch!
+perf build: Fix perf build issues with fixdep
 
-> --- /dev/null
-> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+Commit a808a2b35f66 ("tools build: Fix fixdep dependencies") broke the
+perf build ("make -C tools/perf") by introducing two inadvertent
+conflicts:
 
-> +static void rzg3s_pcie_irq_compose_msi_msg(struct irq_data *data,
-> +                                          struct msi_msg *msg)
-> +{
-> +       struct rzg3s_pcie_msi *msi = irq_data_get_irq_chip_data(data);
-> +       struct rzg3s_pcie_host *host = rzg3s_msi_to_host(msi);
-> +       u32 drop_mask = RZG3S_PCI_MSIRCVWADRL_ENA |
-> +                       RZG3S_PCI_MSIRCVWADRL_MSG_DATA_ENA;
+  1) tools/build/Makefile includes tools/build/Makefile.include, which
+     defines a phony 'fixdep' target.  This conflicts with the $(FIXDEP)
+     file target in tools/build/Makefile when OUTPUT is empty, causing
+     make to report duplicate recipes for the same target.
 
-This should include bit 2 (which is hardwired to zero (for now)),
-so I think you better add
+  2) The FIXDEP variable in tools/build/Makefile conflicts with the
+     previously existing one in tools/perf/Makefile.perf.
 
-    #define RZG3S_PCI_MSIRCVWADRL_ADDR  GENMASK(31, 3)
+Remove the unnecessary include of tools/build/Makefile.include from
+tools/build/Makefile, and rename the FIXDEP variable in
+tools/perf/Makefile.perf to FIXDEP_BUILT.
 
-> +       u32 lo, hi;
-> +
-> +       /*
-> +        * Enable and msg data enable bits are part of the address lo. Drop
-> +        * them.
-> +        */
-> +       lo = readl_relaxed(host->axi + RZG3S_PCI_MSIRCVWADRL) & ~drop_mask;
+Fixes: a808a2b35f66 ("tools build: Fix fixdep dependencies")
+Reported-by: Thorsten Leemhuis <linux@leemhuis.info>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Tested-by: Thorsten Leemhuis <linux@leemhuis.info>
+Link: https://patch.msgid.link/8881bc3321bd9fa58802e4f36286eefe3667806b.17609=
+92391.git.jpoimboe@kernel.org
+---
+ tools/build/Makefile     | 2 --
+ tools/perf/Makefile.perf | 6 +++---
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
-... and use FIELD_GET() with the new definition here.
-
-> +       hi = readl_relaxed(host->axi + RZG3S_PCI_MSIRCVWADRU);
-> +
-> +       msg->address_lo = lo;
-> +       msg->address_hi = hi;
-> +       msg->data = data->hwirq;
-> +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/tools/build/Makefile b/tools/build/Makefile
+index a5b3c29..3a5a380 100644
+--- a/tools/build/Makefile
++++ b/tools/build/Makefile
+@@ -37,8 +37,6 @@ ifneq ($(wildcard $(TMP_O)),)
+ 	$(Q)$(MAKE) -C feature OUTPUT=3D$(TMP_O) clean >/dev/null
+ endif
+=20
+-include $(srctree)/tools/build/Makefile.include
+-
+ FIXDEP		:=3D $(OUTPUT)fixdep
+ FIXDEP_IN	:=3D $(OUTPUT)fixdep-in.o
+=20
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 47c906b..02f87c4 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -234,12 +234,12 @@ endif
+ # The fixdep build - we force fixdep tool to be built as
+ # the first target in the separate make session not to be
+ # disturbed by any parallel make jobs. Once fixdep is done
+-# we issue the requested build with FIXDEP=3D1 variable.
++# we issue the requested build with FIXDEP_BUILT=3D1 variable.
+ #
+ # The fixdep build is disabled for $(NON_CONFIG_TARGETS)
+ # targets, because it's not necessary.
+=20
+-ifdef FIXDEP
++ifdef FIXDEP_BUILT
+   force_fixdep :=3D 0
+ else
+   force_fixdep :=3D $(config)
+@@ -286,7 +286,7 @@ $(goals) all: sub-make
+=20
+ sub-make: fixdep
+ 	@./check-headers.sh
+-	$(Q)$(MAKE) FIXDEP=3D1 -f Makefile.perf $(goals)
++	$(Q)$(MAKE) FIXDEP_BUILT=3D1 -f Makefile.perf $(goals)
+=20
+ else # force_fixdep
+=20
 
