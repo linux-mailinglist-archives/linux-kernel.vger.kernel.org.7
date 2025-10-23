@@ -1,101 +1,134 @@
-Return-Path: <linux-kernel+bounces-866767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7055C0098D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D466C00996
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECC1C3AE542
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:58:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1219D3AE5C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A5C30AD0A;
-	Thu, 23 Oct 2025 10:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A37309DCF;
+	Thu, 23 Oct 2025 10:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EhRmCHL9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ljnUuImE"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44543054D3;
-	Thu, 23 Oct 2025 10:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8036425A331;
+	Thu, 23 Oct 2025 10:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761217132; cv=none; b=SOJSoI2v8uPO1BtNUaotPsp7Yq9NHfF/hIWsuaF3EaQXuLj0CMFDI6pz5+/2clM4PVb0sl5I31YLh0lBrioG5Q54YNviL3zygWdQOQl33oXwj5T1Zk11hOAR366oJ92FP5c1TQvQEVJmR6FJJHGIO8z3OptDN1y68NYYhHMicfI=
+	t=1761217179; cv=none; b=beLyNrP/hO3ON7g97SY8/Bq65+aOBoSLc1VtudV1T75t5o1/RDRmsY125kRqbRXSnw+eqIBs4M42QpCnwEF1I8pmPjYjbpZnxaOdkPa5XHPrdmPYzqMd/WWT9+g3kQ9DmLlIgBZydUW2Ct5tzulAKX33N3CEfn1sMgcTUsQoUE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761217132; c=relaxed/simple;
-	bh=R6UW0ZVQUKE/m2NNBlAe9KC9Lu26GRWU78BmPRkjRfQ=;
+	s=arc-20240116; t=1761217179; c=relaxed/simple;
+	bh=ZareSfvJu1tD4utOGY4tzaHmqdMXYJKeJkBrPZsTs58=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AAA5DID/ZES5UFdRBAlo+zFQL/ouo4h0nWTWXFc5PB/VRAuCWrt6dDQbPFDx2p1+oU1sWDK1bqIg0Nq+4L4xhYZtxdtrd3h7fatq9mmgEW4ZUWbQHwe8HtqzU5zZAIA6TrcOT2JNIAgfDkTNZYOHfmAJofpOFyT3JMU3MOi3xHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EhRmCHL9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE116C4CEE7;
-	Thu, 23 Oct 2025 10:58:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761217132;
-	bh=R6UW0ZVQUKE/m2NNBlAe9KC9Lu26GRWU78BmPRkjRfQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EhRmCHL9MtHY2uK7BccTtMz3HJLasv6irs4GVrest4QPeIwY0nG0y4NJR2oDl1W/a
-	 Uztx+EAJpAJd0SyYMXWbc+TlL/PamoyQlCbpH1bW3Yr0ubJ9E70UuN+AvFOUJIY4Si
-	 RQ2aj4LSUCHcuSSLN4uTGuc/1p8B4Z5MsHQ0+i30rVS+SU+cR28thnYKGGtOrO+no4
-	 HmEF3ArxkJM7J6t/jkNuJygz47cbgWVZ0kijhXa7LTX5iEzQ+X2zH2gZaUh2rJL2LP
-	 9DHI3zLz9o7ayMbMbx3e00wbJTIVQDZZ+70d3mvK64mIio7NqLAw+jp342EPaZ0pld
-	 41tS0bLE7WQpA==
-Date: Thu, 23 Oct 2025 12:58:49 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: syniurge@gmail.com, shyam-sundar.s-k@amd.com, wsa@kernel.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] i2c: fix reference leak in MP2 PCI device
-Message-ID: <jlvcp2cb2cpdjzkfet5nosusjuvbzvil3zf7csbdfjan3pkidn@jdrneilgrmz7>
-References: <20251022095402.8846-1-make24@iscas.ac.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BAUs0InA2CuGHTKzSmXWKs/fvfA0qGIFH3DsnQKsbLA7qUYChS9s4zYOnpvDhqvFdIA2creduxLc6iGYd/vMklD4f2s6nhpYbQ7hilPq8Q9ggeMPTbL/BrcHNJAvXb4jYlp3sKd6sDx1aQK35Cnu3hij8IbllLqTVeigEKKGGKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ljnUuImE; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=cXNqIy91mHPmLyBUYzLy8qeZ7FOKJrKClaIbZivIa/4=; b=ljnUuImE9Pjqxqy0Uz5qYz6n9e
+	mGCtjIUZIsd8VeoxBNlc51Frunk5tzXuigWR4oE67G5/H6szRyYTez9MIgvnmQSNh4Mw0eOydkivV
+	mD4YugCenid+cFxILBA/x/XzqQa/ZL4mutB4tYA0aeKv9M1Q3dNzphSJD6Sd0Tbl58dUax4bFVDo/
+	viI2gysJGHzHvM0rj+FTKe7sYmxNOGmMcpGO0j4gw2+c479jYSr/16oHGCDRG4Cj3fANteVJGbu5z
+	RCo/wbUYOg/Lbi7u6XKIkydMPRrDNHOXF9ZuDsZ71qFEW3wnqTcn2u60T8c7lhjC46U1T82xbnjmE
+	aJL5ohPw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41112)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vBt2S-000000006EA-3ZEb;
+	Thu, 23 Oct 2025 11:59:24 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vBt2P-000000001d1-35L8;
+	Thu, 23 Oct 2025 11:59:21 +0100
+Date: Thu, 23 Oct 2025 11:59:21 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Rohan G Thomas <rohan.g.thomas@intel.com>,
+	Boon Khai Ng <boon.khai.ng@altera.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Matthew Gerlach <matthew.gerlach@altera.com>
+Subject: Re: [PATCH net v3 2/3] net: stmmac: Consider Tx VLAN offload tag
+ length for maxSDU
+Message-ID: <aPoKiREmRurn-Mle@shell.armlinux.org.uk>
+References: <20251017-qbv-fixes-v3-0-d3a42e32646a@altera.com>
+ <20251017-qbv-fixes-v3-2-d3a42e32646a@altera.com>
+ <d7bbb7dd-ddc6-43d6-b234-53213bde71bd@altera.com>
+ <83ffc316-6711-4ae4-ad10-917f678de331@linux.dev>
+ <0d3a8abe-773c-4859-9d6f-d08c118ce610@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251022095402.8846-1-make24@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0d3a8abe-773c-4859-9d6f-d08c118ce610@altera.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi,
+On Sat, Oct 18, 2025 at 07:20:03AM +0530, G Thomas, Rohan wrote:
+> Hi Vadim,
+> 
+> On 10/17/2025 5:51 PM, Vadim Fedorenko wrote:
+> > On 17/10/2025 08:36, G Thomas, Rohan wrote:
+> > > Hi All,
+> > > 
+> > > On 10/17/2025 11:41 AM, Rohan G Thomas via B4 Relay wrote:
+> > > > +    sdu_len = skb->len;
+> > > >       /* Check if VLAN can be inserted by HW */
+> > > >       has_vlan = stmmac_vlan_insert(priv, skb, tx_q);
+> > > > +    if (has_vlan)
+> > > > +        sdu_len += VLAN_HLEN;
+> > > > +
+> > > > +    if (priv->est && priv->est->enable &&
+> > > > +        priv->est->max_sdu[queue] &&
+> > > > +        skb->len > priv->est->max_sdu[queue]){
+> > > 
+> > > I just noticed an issue with the reworked fix after sending the patch.
+> > > The condition should be: sdu_len > priv->est->max_sdu[queue]
+> > > 
+> > > I’ll send a corrected version, and will wait for any additional comments
+> > > in the meantime.
+> > 
+> > Well, even though it's a copy of original code, it would be good to
+> > improve some formatting and add a space at the end of if statement to
+> > make it look like 'if () {'>
+> 
+> Thanks for pointing this out. I'll fix the formatting in the next version.
 
-I'm sorry I didn't follow up on your last comment. Thanks a lot
-for resending it.
+I suggest:
 
-...
+First patch - fix formatting.
+Second patch - move the code.
 
-> diff --git a/drivers/i2c/busses/i2c-amd-mp2-pci.c b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-> index ef7370d3dbea..60edbabc2986 100644
-> --- a/drivers/i2c/busses/i2c-amd-mp2-pci.c
-> +++ b/drivers/i2c/busses/i2c-amd-mp2-pci.c
-> @@ -458,13 +458,16 @@ struct amd_mp2_dev *amd_mp2_find_device(void)
->  {
->  	struct device *dev;
->  	struct pci_dev *pci_dev;
-> +	struct amd_mp2_dev *mp2_dev;
->  
->  	dev = driver_find_next_device(&amd_mp2_pci_driver.driver, NULL);
->  	if (!dev)
->  		return NULL;
->  
->  	pci_dev = to_pci_dev(dev);
-> -	return (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
-> +	mp2_dev = (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
-> +	put_device(dev);
-> +	return mp2_dev;
+We have a general rule that when code is moved, it should be moved with
+no changes - otherwise it makes review much harder.
 
-I still hold the same opinion, but, it's anyway a small change
-and the difference is trivial.
+Thanks.
 
-Applied to i2c/i2c-host-fixes. I will include this patch in the
-next week's pull request because I want to keep it a bit longer
-for testing.
-
-Thanks,
-Andi
-
->  }
->  EXPORT_SYMBOL_GPL(amd_mp2_find_device);
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
