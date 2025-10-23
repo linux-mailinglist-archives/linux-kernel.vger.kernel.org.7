@@ -1,184 +1,205 @@
-Return-Path: <linux-kernel+bounces-867077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8051C01880
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:48:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAEECC018A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A989A4E4EAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87BF73B054D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2193148CF;
-	Thu, 23 Oct 2025 13:48:41 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B26320A1D;
+	Thu, 23 Oct 2025 13:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gj8HcGBF"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1C61A9F86
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A05F315D57;
+	Thu, 23 Oct 2025 13:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227321; cv=none; b=g0kBESITA+fCooPEydE74JoWthdPg8be0uK27KwTovc/KcZzS4+JwPNfNiJvfi2PPDyui99eLHEtPccaCwwNQaE7KeVO+t4HcxHy1+AlDXGWEpOrtBr9L+EvA/O5TgcWgtoBvUE6jbimEBgAkK44+4bPQ9Qx04lK8YASHibVcfM=
+	t=1761227444; cv=none; b=tpKHdcxRarggU88h0e0opKq50FAs8puMNBUfnSIngA/lbjDL4PfhTrZSOGtqxXKb22ODWx3WH8uxtxgWQINPa8gKa3wHkaTHDBpBrnJyem86f0ac5T5kgXkTbkraadIb1FDCgofNFZkkQmVUVmrFrYWpwk0SWdloPkJU+itx/8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227321; c=relaxed/simple;
-	bh=mUk5hBrYrGGkrMiI5trxkBqm/8b3hnisi9ONaq3cT7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FgORc6sMgvwSnKG/Iru5Iara28k3QM56l3C2QftPPfVa76hAcBDtGu6vA668SncYs5eu8635WWynbfPcIHCw4WH3ZYoDqAIQcF0bt2lDJhTjKLSjZzoLIno0b2W4q2Jm/Jtg7ZAdio2RlWXyGBJjrdKLU1RapVOubyiknpJLQPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1vBvg4-00026g-Ls; Thu, 23 Oct 2025 15:48:28 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1vBvg4-0054AZ-1B;
-	Thu, 23 Oct 2025 15:48:28 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1vBvg4-00DFOj-0r;
-	Thu, 23 Oct 2025 15:48:28 +0200
-Date: Thu, 23 Oct 2025 15:48:28 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Johan Hovold <johan@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 0/3] USB-Serial serdev support
-Message-ID: <20251023134828.2dzq2rhtjplqyyaj@pengutronix.de>
-References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
- <Zt7kCxawoszunWq3@hovoldconsulting.com>
- <20240917044948.i2eog4ondf7vna7q@pengutronix.de>
- <Z8_wcASfJ8SeAQ8l@hovoldconsulting.com>
- <20250313194044.t2t3c7j6ktvshjhs@pengutronix.de>
- <aPogbAozezmqSMuU@hovoldconsulting.com>
+	s=arc-20240116; t=1761227444; c=relaxed/simple;
+	bh=l69amUJcXORsIOVX7PpL4EYcvGyT8oCAoRgKxeotHBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YZFwfDY9BS+umlHnD8ODw9dEzhMdhCnz9JTGv+f+iF+y/8Dkd+mOS1WJyrIcIHjegaZZOOHQ58hVxF25OiL08P+OjRqZCb/qO1cfVaHgJI1dKpOj/knxL6T+1xtIMemYxMeQthhQdACLUtnQttRKu8GKrA22uEEUzXBceBRaeJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gj8HcGBF; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59NDoTUS540288;
+	Thu, 23 Oct 2025 08:50:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1761227429;
+	bh=zki04Sm93j86wFa73SiXbRhOneWQJcRk+qoxflH2Q9g=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=gj8HcGBFKgITuRVeZo89cCU+6zRmxLf6nbvWuc/iZo3M98TywDl/KwZkai2RcuG6o
+	 ZmNhIE66U9pVh6HS20u7ARsI+O72bbUMQ4C8YENVTL5rhZMzRWw3kO3SIC8fByALVL
+	 tqjFlhTTI0Iuwbgx24r5KmRpq7zviXEje+CdvBvQ=
+Received: from DFLE206.ent.ti.com (dfle206.ent.ti.com [10.64.6.64])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59NDoSiT2749992
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 23 Oct 2025 08:50:29 -0500
+Received: from DFLE207.ent.ti.com (10.64.6.65) by DFLE206.ent.ti.com
+ (10.64.6.64) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 23 Oct
+ 2025 08:50:28 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE207.ent.ti.com
+ (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 23 Oct 2025 08:50:28 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59NDoPG32933967;
+	Thu, 23 Oct 2025 08:50:25 -0500
+Message-ID: <554df7d2-1809-42a8-b512-bde3fd284163@ti.com>
+Date: Thu, 23 Oct 2025 19:20:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPogbAozezmqSMuU@hovoldconsulting.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] arm64: dts: ti: k3-j722s-main: fix the audio
+ refclk source
+To: Michael Walle <mwalle@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
+References: <20251017102228.530517-1-mwalle@kernel.org>
+ <20251017102228.530517-2-mwalle@kernel.org>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20251017102228.530517-2-mwalle@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 25-10-23, Johan Hovold wrote:
-> On Thu, Mar 13, 2025 at 08:40:44PM +0100, Marco Felsch wrote:
-> > On 25-03-11, Johan Hovold wrote:
-> > > On Tue, Sep 17, 2024 at 06:49:48AM +0200, Marco Felsch wrote:
-> > > > On 24-09-09, Johan Hovold wrote:
-> > > > > On Wed, Aug 07, 2024 at 04:08:47PM +0200, Marco Felsch wrote:
-> > > > > > this patchset is based on Johan's patches [1] but dropped the need of
-> > > > > > the special 'serial' of-node [2].
-> > > > > 
-> > > > > That's great that you found and referenced my proof-of-concept patches,
-> > > > > but it doesn't seem like you tried to understand why this hasn't been
-> > > > > merged yet.
-> > > 
-> > > > > First, as the commit message you refer to below explain, we need some
-> > > > > way to describe multiport controllers. Just dropping the 'serial' node
-> > > > > does not make that issue go away.
-> > > > 
-> > > > Sorry for asking but isn't the current OF abstraction [1] enough? As far
-> > > > as I understood we can describe the whole USB tree within OF. I used [1]
-> > > > and the this patchset to describe the following hierarchy:
-> > > > 
-> > > >  usb-root -> usb-hub port-1 -> usb-serial interface-0 -> serial
-> > > >                                                          bt-module
-> > > > 
-> > > > [1] Documentation/devicetree/bindings/usb/usb-device.yaml
-> > > 
-> > > Again, you still need to consider devices with multiple serial ports
-> > > (and they do not always map neatly to one port per interface either).
-> > 
-> > We use a dual-port FTDI and our USB tree looks as followed:
-> 
-> > interface-0 is used for the bt-module which is served by the serdev
-> > driver.
-> > 
-> > interface-1 is used by an userspace driver which makes use of the
-> > /dev/ttyUSB1 port.
-> >
-> > So we do have the multiple serial ports use-case already. Can you please
-> > explain what I miss?
-> 
-> There are other USB serial devices that support multiple ports over a
-> single USB interface. The DT bindings need to account for that case as
-> well, and that probably means we should not be describing the interfaces
-> at all but rather the physical ports.
+Hi Michael,
 
-Ah okay, I wasn't even aware that this possible too. However this is DT
-description and another topic.
-
-> > > > > Second, and more importantly, you do not address the main obstacle for
-> > > > > enabling serdev for USB serial which is that the serdev cannot handle
-> > > > > hotplugging.
-> > > > 
-> > > > Hotplugging is a good point but out-of-scope IMHO (at least for now)
-> > > > since the current serdev implementation rely on additional firmware
-> > > > information e.g OF node to be present. E.g. if the above mentioned setup
-> > > > would connect the "serial bt-module" directly to the UART port you still
-> > > > need an OF node to bind the serdev driver. If the node isn't present
-> > > > user-space would need to do the hci handling.
-> > > 
-> > > There's nothing preventing you from adding a devicetree node for a USB
-> > > device that can be unplugged.
-> > 
-> > I see and I have to admit that I didn't test this :/ But since you
-> > pointed it out I tested it now!
-> > 
-> > So as explained, our USB tree looks as above and our DTS looks like the
-> > one in the cover letter. Of course I run on an embedded system but the
-> > USB FTDI based module is powered by the VBUS of the hub. Therefore I
-> > ran the test by disabling the downstream port which in turn disabled the
-> > VBUS supply. This should come very close to a physical unplug event.
-> 
-> You will also see the following kind of warnings in the logs:
-> 
-> ttyUSB ttyUSB0: tty_hangup: tty->count(1) != (#fd's(0) + #kopen's(0))
-> ttyUSB ttyUSB0: tty_port_close_start: tty->count = 1 port count = 0
-> 
-> which are due to the fact that serdev does not support hangups which are
-> used during teardown of USB serial ports.
-
-IIRC I added the following patch to solve this:
-
- - [PATCH 1/3] serdev: ttyport: make use of tty_kopen_exclusive
-
-Sorry for not remembering the details since this conversation/patchset
-is quite old but still one of our top prios.
-
-> > > > So from my POV the serdev abstraction is for manufacturers which make
-> > > > use of "onboard" usb-devices which are always present at the same USB
-> > > > tree location. Serdev is not made for general purpose USB ports (yet)
-> > > > where a user can plug-in all types of USB devices.
-> > > 
-> > > Right, but someone need to make sure that serdev can handle devices
-> > > going away first as nothing is currently preventing that from happening.
-> > 
-> > Can you please check my above tests? Maybe I do miss something but for
-> > me it looks like it's working. Looking forwards for your input.
-> 
-> I skimmed the code to verify that the issue is still there, and even
-> forward ported my patches to confirm that that you would still see the
-> port count warnings that indicate that something is amiss.
-
-As said, patch-1 should address this issue.
-
-Regards,
-  Marco
+On 10/17/2025 3:52 PM, Michael Walle wrote:
+> At the moment the clock parent of the audio extclk output is PLL1_HSDIV6
+> of the main domain. This very clock output is also used among various IP
+> cores, for example for the USB1 LPM clock. The audio extclock being an
+> external clock output with a variable frequency, it is likely that a
+> user of this clock will try to set it's frequency to a different value,
+> i.e. an audio codec. Because that clock output is used also for other IP
+> cores, bad things will happen.
+>
+> Instead of using PLL1_HSDIV6 use the PLL2_HSDIV8 as a sane default, as
+> this output is exclusively used among other audio peripherals.
 
 
-> Johan
-> 
+Thanks for this fix,
+
+Initial support for audio_refclkx was added in j722s and am62p soc 
+specific files due
+
+to selection of different parent.
+
+Since these SOC share many common things, and this patch will make these 
+nodes same as of am62p device
+
+https://elixir.bootlin.com/linux/v6.18-rc2/source/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi#L46 
+
+
+So I suggest to move in common file 
+https://elixir.bootlin.com/linux/v6.18-rc2/source/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi#L42 
+
+
+and remove from SOC specific files.
+
+
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> ---
+> The original abort happens when sound is played and the codec will try
+> to change the clock frequency of the audio_extclk. In that case, there
+> will be a synchronous external abort in the xhci irq handler on our
+> board. This error only happens on board variants with an attached
+> on-board USB hub (TUSB8043A) probably because of USB traffic.
+>
+> This can also reduced to just run k3conf to set the clock manually:
+>    k3conf set clock 157 15 12000000
+>
+> That will then produce the following splat:
+>
+>      Internal error: synchronous external abort: 0000000096000010 [#1]  SMP
+>      Modules linked in:
+>      CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G   M                6.18.0-rc1-next-20251016-00042-gde32b6002bba #3076 NONE
+>      Tainted: [M]=MACHINE_CHECK
+>      Hardware name: Kontron SMARC-sAM67 (DT)
+>      pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>      pc : xhci_handle_events.isra.0+0x278/0x14e8
+>      lr : xhci_irq+0xa4/0x140
+>      sp : ffff800080003e00
+>      x29: ffff800080003e60 x28: ffff0008043cc000 x27: 0000000000000000
+>      x26: ffff000804513a78 x25: ffffbdbfa3b5df40 x24: ffff0008043c9c48
+>      x23: ffff000803234c60 x22: ffff800081410490 x21: 0000000000000000
+>      x20: 0000000000000000 x19: ffff0008043c9240 x18: 0000000000000004
+>      x17: ffff4249db4d5000 x16: ffff800080000000 x15: ffff00097ee690e0
+>      x14: 0000000000000001 x13: 0000000000000001 x12: 0000000000000000
+>      x11: 0000000000000040 x10: ffff0008000146f0 x9 : ffffbdbfa240937c
+>      x8 : ffff000802679fb0 x7 : 0000000000000000 x6 : 0000000000000000
+>      x5 : ffff000802679f88 x4 : ffff0008043c9284 x3 : 0000000000000078
+>      x2 : ffff0008043cc000 x1 : ffff000804513a00 x0 : 0000000000000078
+>      Call trace:
+>       xhci_handle_events.isra.0+0x278/0x14e8 (P)
+>       xhci_irq+0xa4/0x140
+>       usb_hcd_irq+0x38/0x60
+>       __handle_irq_event_percpu+0x64/0x278
+>       handle_irq_event+0x4c/0x110
+>       handle_fasteoi_irq+0x14c/0x270
+>       handle_irq_desc+0x3c/0x68
+>       generic_handle_domain_irq+0x24/0x40
+>       gic_handle_irq+0x138/0x280
+>       call_on_irq_stack+0x30/0x48
+>       do_interrupt_handler+0x88/0xa0
+>       el1_interrupt+0x4c/0xb8
+>       el1h_64_irq_handler+0x18/0x30
+>       el1h_64_irq+0x80/0x88
+>       default_idle_call+0x38/0xf0 (P)
+>       do_idle+0x22c/0x290
+>       cpu_startup_entry+0x40/0x50
+>       rest_init+0xc8/0xd0
+>       start_kernel+0x8d0/0x8d8
+>       __primary_switched+0x88/0x98
+>      Code: eb02031f 54000e80 f8606836 f9400b1c (b94002d6)
+>      ---[ end trace 0000000000000000 ]---
+>      Kernel panic - not syncing: synchronous external abort: Fatal exception in interrupt
+> ---
+>   arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> index 11a1a42e12b1..04de29da40f1 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+> @@ -468,7 +468,7 @@ audio_refclk0: clock@82e0 {
+>   		reg = <0x82e0 0x4>;
+>   		clocks = <&k3_clks 157 0>;
+>   		assigned-clocks = <&k3_clks 157 0>;
+> -		assigned-clock-parents = <&k3_clks 157 15>;
+> +		assigned-clock-parents = <&k3_clks 157 16>;
+>   		#clock-cells = <0>;
+>   	};
+>   
+> @@ -477,7 +477,7 @@ audio_refclk1: clock@82e4 {
+>   		reg = <0x82e4 0x4>;
+>   		clocks = <&k3_clks 157 18>;
+>   		assigned-clocks = <&k3_clks 157 18>;
+> -		assigned-clock-parents = <&k3_clks 157 33>;
+> +		assigned-clock-parents = <&k3_clks 157 34>;
+>   		#clock-cells = <0>;
+>   	};
+>   };
 
