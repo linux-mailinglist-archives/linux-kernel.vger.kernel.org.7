@@ -1,211 +1,125 @@
-Return-Path: <linux-kernel+bounces-867236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6ABC01F87
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:04:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B0EC01F99
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82C973AD1FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:00:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D92944EFD6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B74338923;
-	Thu, 23 Oct 2025 14:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258BB332ED2;
+	Thu, 23 Oct 2025 15:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6d8xsXj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WTfHNZv0"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1447A330D34;
-	Thu, 23 Oct 2025 14:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D3E3328F5
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761231590; cv=none; b=rkgu5CYZQ9W8ehnEG3weY0nW//1O3AJJR6S+EjGPKU0Wpizv8aa4Fz9OejecVpm4uMsInQRh0vGp+4XKtsIGUhHoqlSy99OkGR0oqU95EzHnMp0dLpaSgQDGwqRJvhhjBA6kxFf0npKk6rcRh9HhVYCSPzFZ5S7vlFw+SBs3A0A=
+	t=1761231602; cv=none; b=siLWSpZ7lq8Ft7j6AbuM5VoXv2dTabF3o/erZzBosUCDvsOLOHHQR/nR5vHOtk74VHBUmwQZ5vO2MUDBDv8nywgFh2jjQIVoqHOnT4/gzKcaKrs23vCqQPw9pEfOwFgGdeF8IlURSL1hGedr82JwALyiOdXpnhMhO71EJF86S84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761231590; c=relaxed/simple;
-	bh=cXZ5FzyudK+Ly7PkDe/gmfBGxOLTQi1YvUaQvOnWpu0=;
-	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pBUkekU+zF9h8oxwdkDrfYOHvVE+RuvNNlolIUgxAsp0w85fXLLYtlyygW7NY0gNJVQoURleW8fBwzDZjIP5VknkVnjXtWDDdiwKuWZBXt4UfFN/gAvDC5Tcq8aQN6CLWYqtIZAtobahwvGCA/476XyttKPE2OhmxdEUBossrVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6d8xsXj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C770C4CEE7;
-	Thu, 23 Oct 2025 14:59:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761231589;
-	bh=cXZ5FzyudK+Ly7PkDe/gmfBGxOLTQi1YvUaQvOnWpu0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=U6d8xsXjRjSS47t571oe1/ZnaeeWoHx9XGxaWBr5xPWhVIfSSSUVZaVYXRkNoK9Ir
-	 My5WbSTlGMIhq1LD7gpHXJYg1S6nXBp6PS+wQNpFYiDU6v8BYCJOsejGPhr44Incv5
-	 v1fMEpr0bfG4VTO0LHi2paGDXC3yuUsmkTcQFryQi31ULsIke+au5NdMIQqbnn/G70
-	 zayvrLbRRssm3HTtPg6r23rECEal5WIGaKpgxhDt30PZUlyRvY4kTe0q9osXrymj49
-	 Uyg49UmH3z60XeAnWc0lx83rJiJ4XZvGXz0SKTLURYntuBDs/5rApIecL373J3KPli
-	 cqy+ncC6WD55Q==
-Subject: [PATCH net V1 3/3] veth: more robust handing of race to avoid txq
- getting stuck
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-To: netdev@vger.kernel.org, makita.toshiaki@lab.ntt.co.jp
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>,
- Eric Dumazet <eric.dumazet@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, ihor.solodrai@linux.dev,
- toshiaki.makita1@gmail.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
-Date: Thu, 23 Oct 2025 16:59:44 +0200
-Message-ID: <176123158453.2281302.11061466460805684097.stgit@firesoul>
-In-Reply-To: <176123150256.2281302.7000617032469740443.stgit@firesoul>
-References: <176123150256.2281302.7000617032469740443.stgit@firesoul>
-User-Agent: StGit/1.5
+	s=arc-20240116; t=1761231602; c=relaxed/simple;
+	bh=cCjw14mLE9P+iI4RdSZoroo4x5ze1Fp0XffjVUeu23Q=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Ear4uDl40FF3ALnoD96OaK9Hxl3//vO6Y/iVP7yCA9FFddB8kBJUTaJZxSF901Bs9OCGKqKDpejFiiSviCSyhoengO0Ih5pyNCeJBQRfEyf5s1SbY5Pa4BzVImjIdy/a8ikdHoCzmrsGupjH8YHm6Rgnk05H9DBCVRAiszYGHhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WTfHNZv0; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32edda89a37so764666a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:00:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761231600; x=1761836400; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DsY3zzD8XUrRiTLyLBawfwaQI9/sErmot+/rfYHcY0U=;
+        b=WTfHNZv0eOCB05pI8Fvz11G2pvgQxEyAWzjc6AAIQ+Xjc49zNWsifCNy4m/+vLQBVg
+         kZVP+Hg0M7LwEbmXb7ByiThUkv6/19ddTM8LGxukRy7KF6gFTr3tNlhDdX2HV+KGk02Z
+         IfnT5hBhOqq0v9wCI1Q4URp+5eUeV+o7YwuKMeAV9tYPJzQN5YDBBKtvxR9Y+dWsQScx
+         m6xDjv6QST1TfiU9Yqa6OaI7xUCKbbBWrpnb77BRUEULt4l/SB/qIW2/k5i2A/XsWhY1
+         P2NSAJxsli0rRBj3RfHudL1wF0G/zUIz20jP2lqC0za1LCVL5GjoXjfpwZpHwNqdXXC9
+         o52A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761231600; x=1761836400;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DsY3zzD8XUrRiTLyLBawfwaQI9/sErmot+/rfYHcY0U=;
+        b=DFLIkyO/Lzcq5akWeCsI5hbV+UJL6SerHR4FC6JIHt3dxqpthLVYwKOqAFbiJ4jheY
+         SSXDRUAVgPo6ED2JbL1cpZGBUNHa8+26WHJFNq3PQQftOekRoomitR4eD7OpckYtAyTb
+         UvXPdGMoABcWrgfxidZ+RAbTIJJRcddamBf8tzEFma7wAiUan1FlVNYzucsxokjrrOMO
+         cSS02RgYahQ6KBaECfFhkICGInWAQyKcsOBp6twdHySEkHxyXLDebp88JhNFYaYG1MeW
+         R13WIhyr4GQjzUnkjQRXlZ5JGvN82ZAJKDwMaDAhVTqw54ToB0a/UsxQ1aIoU3TA8pTc
+         gwug==
+X-Forwarded-Encrypted: i=1; AJvYcCXbU+uOtLLkB77DNQmE3GhIg2p+qwJBJ3wiDB9+5ul1wejfMEv0fwpCVysa5+XAWLsPgI9Sza4KFizUQW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwajFaT/25INJxSNhNBd/HyNFGpb5mK9Ook66ERiqLk5qkvXZJW
+	yC/2d7cm/oQsMMzWrZ4NRNTd8BN1M0GgOVzaFqizhoEd+0pXH3O3VCzle5cwu5IoL5PePR6gv1n
+	dhiKspw==
+X-Google-Smtp-Source: AGHT+IGIKST/5gTXkhLeNb6+zo5OEJ6E7Tz0ILKzp1TDg+5uVro2JJ+z5T3UkH4GmCDPjUQAuY2o81CumRA=
+X-Received: from pjbsp15.prod.google.com ([2002:a17:90b:52cf:b0:330:a006:a384])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5291:b0:32e:859:c79
+ with SMTP id 98e67ed59e1d1-33bcec1ab25mr31136898a91.0.1761231599767; Thu, 23
+ Oct 2025 07:59:59 -0700 (PDT)
+Date: Thu, 23 Oct 2025 07:59:58 -0700
+In-Reply-To: <28136b62074550826efa3f57b1f7be07f571abdc.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-10-seanjc@google.com>
+ <28136b62074550826efa3f57b1f7be07f571abdc.camel@intel.com>
+Message-ID: <aPpC7mt3CwWuhv1p@google.com>
+Subject: Re: [PATCH v3 09/25] KVM: TDX: Fold tdx_sept_drop_private_spte() into tdx_sept_remove_private_spte()
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: "chenhuacai@kernel.org" <chenhuacai@kernel.org>, "frankja@linux.ibm.com" <frankja@linux.ibm.com>, 
+	"maz@kernel.org" <maz@kernel.org>, "borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>, 
+	"pjw@kernel.org" <pjw@kernel.org>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
+	"kas@kernel.org" <kas@kernel.org>, "maobibo@loongson.cn" <maobibo@loongson.cn>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "maddy@linux.ibm.com" <maddy@linux.ibm.com>, 
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, "imbrenda@linux.ibm.com" <imbrenda@linux.ibm.com>, 
+	"zhaotianrui@loongson.cn" <zhaotianrui@loongson.cn>, "anup@brainfault.org" <anup@brainfault.org>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ira Weiny <ira.weiny@intel.com>, 
+	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>, Vishal Annapurve <vannapurve@google.com>, 
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, "x86@kernel.org" <x86@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-Commit dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to
-reduce TX drops") introduced a race condition that can lead to a permanently
-stalled TXQ. This was observed in production on ARM64 systems (Ampere Altra
-Max).
+On Thu, Oct 23, 2025, Kai Huang wrote:
+> On Thu, 2025-10-16 at 17:32 -0700, Sean Christopherson wrote:
+> > Fold tdx_sept_drop_private_spte() into tdx_sept_remove_private_spte() to
+> > avoid having to differnatiate between "zap", "drop", and "remove", and to
+> 		  ^
+> 		  differentiate
+> 
+> Nit: it's a wee bit confusing that you mentioned "zap", because after this
+> patch tdx_sept_zap_private_spte() is still there.  But it may be only me
+> feeling that way.
 
-The race occurs in veth_xmit(). The producer observes a full ptr_ring and
-stops the queue (netif_tx_stop_queue()). The subsequent conditional logic,
-intended to re-wake the queue if the consumer had just emptied it (if
-(__ptr_ring_empty(...)) netif_tx_wake_queue()), can fail. This leads to a
-"lost wakeup" where the TXQ remains stopped (QUEUE_STATE_DRV_XOFF) and
-traffic halts.
+Hmm, yeah, I agree that's a confusing/misleading.  How about this?
 
-This failure is caused by an incorrect use of the __ptr_ring_empty() API
-from the producer side. As noted in kernel comments, this check is not
-guaranteed to be correct if a consumer is operating on another CPU. The
-empty test is based on ptr_ring->consumer_head, making it reliable only for
-the consumer. Using this check from the producer side is fundamentally racy.
-
-This patch fixes the race by adopting the more robust logic from an earlier
-version V4 of the patchset, which always flushed the peer:
-
-(1) In veth_xmit(), the racy conditional wake-up logic and its memory barrier
-are removed. Instead, after stopping the queue, we unconditionally call
-__veth_xdp_flush(rq). This guarantees that the NAPI consumer is scheduled,
-making it solely responsible for re-waking the TXQ.
-
-(2) On the consumer side, the logic for waking the peer TXQ is centralized.
-It is moved out of veth_xdp_rcv() (which processes a batch) and placed at
-the end of the veth_poll() function. This ensures netif_tx_wake_queue() is
-called once per complete NAPI poll cycle.
-
-(3) Finally, the NAPI completion check in veth_poll() is updated. If NAPI is
-about to complete (napi_complete_done), it now also checks if the peer TXQ
-is stopped. If the ring is empty but the peer TXQ is stopped, NAPI will
-reschedule itself. This prevents a new race where the producer stops the
-queue just as the consumer is finishing its poll, ensuring the wakeup is not
-missed.
-
-Fixes: dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to reduce TX drops")
-Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
----
- drivers/net/veth.c |   42 +++++++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-index 3976ddda5fb8..1d70377481eb 100644
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -392,14 +392,12 @@ static netdev_tx_t veth_xmit(struct sk_buff *skb, struct net_device *dev)
- 		}
- 		/* Restore Eth hdr pulled by dev_forward_skb/eth_type_trans */
- 		__skb_push(skb, ETH_HLEN);
--		/* Depend on prior success packets started NAPI consumer via
--		 * __veth_xdp_flush(). Cancel TXQ stop if consumer stopped,
--		 * paired with empty check in veth_poll().
--		 */
- 		netif_tx_stop_queue(txq);
--		smp_mb__after_atomic();
--		if (unlikely(__ptr_ring_empty(&rq->xdp_ring)))
--			netif_tx_wake_queue(txq);
-+		/* Handle race: Makes sure NAPI peer consumer runs. Consumer is
-+		 * responsible for starting txq again, until then ndo_start_xmit
-+		 * (this function) will not be invoked by the netstack again.
-+		 */
-+		__veth_xdp_flush(rq);
- 		break;
- 	case NET_RX_DROP: /* same as NET_XMIT_DROP */
- drop:
-@@ -900,17 +898,9 @@ static int veth_xdp_rcv(struct veth_rq *rq, int budget,
- 			struct veth_xdp_tx_bq *bq,
- 			struct veth_stats *stats)
- {
--	struct veth_priv *priv = netdev_priv(rq->dev);
--	int queue_idx = rq->xdp_rxq.queue_index;
--	struct netdev_queue *peer_txq;
--	struct net_device *peer_dev;
- 	int i, done = 0, n_xdpf = 0;
- 	void *xdpf[VETH_XDP_BATCH];
- 
--	/* NAPI functions as RCU section */
--	peer_dev = rcu_dereference_check(priv->peer, rcu_read_lock_bh_held());
--	peer_txq = peer_dev ? netdev_get_tx_queue(peer_dev, queue_idx) : NULL;
--
- 	for (i = 0; i < budget; i++) {
- 		void *ptr = __ptr_ring_consume(&rq->xdp_ring);
- 
-@@ -959,11 +949,6 @@ static int veth_xdp_rcv(struct veth_rq *rq, int budget,
- 	rq->stats.vs.xdp_packets += done;
- 	u64_stats_update_end(&rq->stats.syncp);
- 
--	if (peer_txq && unlikely(netif_tx_queue_stopped(peer_txq))) {
--		txq_trans_cond_update(peer_txq);
--		netif_tx_wake_queue(peer_txq);
--	}
--
- 	return done;
- }
- 
-@@ -971,12 +956,20 @@ static int veth_poll(struct napi_struct *napi, int budget)
- {
- 	struct veth_rq *rq =
- 		container_of(napi, struct veth_rq, xdp_napi);
-+	struct veth_priv *priv = netdev_priv(rq->dev);
-+	int queue_idx = rq->xdp_rxq.queue_index;
-+	struct netdev_queue *peer_txq;
- 	struct veth_stats stats = {};
-+	struct net_device *peer_dev;
- 	struct veth_xdp_tx_bq bq;
- 	int done;
- 
- 	bq.count = 0;
- 
-+	/* NAPI functions as RCU section */
-+	peer_dev = rcu_dereference_check(priv->peer, rcu_read_lock_bh_held());
-+	peer_txq = peer_dev ? netdev_get_tx_queue(peer_dev, queue_idx) : NULL;
-+
- 	xdp_set_return_frame_no_direct();
- 	done = veth_xdp_rcv(rq, budget, &bq, &stats);
- 
-@@ -986,7 +979,8 @@ static int veth_poll(struct napi_struct *napi, int budget)
- 	if (done < budget && napi_complete_done(napi, done)) {
- 		/* Write rx_notify_masked before reading ptr_ring */
- 		smp_store_mb(rq->rx_notify_masked, false);
--		if (unlikely(!__ptr_ring_empty(&rq->xdp_ring))) {
-+		if (unlikely(!__ptr_ring_empty(&rq->xdp_ring) ||
-+			     (peer_txq && netif_tx_queue_stopped(peer_txq)))) {
- 			if (napi_schedule_prep(&rq->xdp_napi)) {
- 				WRITE_ONCE(rq->rx_notify_masked, true);
- 				__napi_schedule(&rq->xdp_napi);
-@@ -998,6 +992,12 @@ static int veth_poll(struct napi_struct *napi, int budget)
- 		veth_xdp_flush(rq, &bq);
- 	xdp_clear_return_frame_no_direct();
- 
-+	/* Release backpressure per NAPI poll */
-+	if (peer_txq && netif_tx_queue_stopped(peer_txq)) {
-+		txq_trans_cond_update(peer_txq);
-+		netif_tx_wake_queue(peer_txq);
-+	}
-+
- 	return done;
- }
- 
-
-
+  KVM: TDX: Fold tdx_sept_drop_private_spte() into tdx_sept_remove_private_spte()
+  
+  Fold tdx_sept_drop_private_spte() into tdx_sept_remove_private_spte() as a
+  step towards having "remove" be the only and only function that deals with
+  removing/zapping/dropping a SPTE, e.g. to avoid having to differentiate
+  between "zap", "drop", and "remove".  Eliminating the "drop" helper also
+  gets rid of what is effectively dead code due to redundant checks, e.g. on
+  an HKID being assigned.
+  
+  No functional change intended.
 
