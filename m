@@ -1,186 +1,77 @@
-Return-Path: <linux-kernel+bounces-866912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69BD5C01031
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:11:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CAE9C0106B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AABB3AC70B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:11:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AAE3B4F52AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3950230FC11;
-	Thu, 23 Oct 2025 12:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="biNjzk7L"
-Received: from mail-m49195.qiye.163.com (mail-m49195.qiye.163.com [45.254.49.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9633E30F947;
+	Thu, 23 Oct 2025 12:10:57 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B262330F93F;
-	Thu, 23 Oct 2025 12:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC79E30F948
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761221449; cv=none; b=H8CmKjOOg249vW3gl3Y4h286MRfQxn1TLE37hzO1nL6R9XxrC+/GuJeQN8aqYRWD2zwb/8DJLWugxADfssQueBKfD+qt2omdOuMzjBILiljAhkItPK8zOrE6GltDu094XhLlzSYciTujO/seVtlrffVlPnPBo5Ri7ecTe1M3vhQ=
+	t=1761221453; cv=none; b=LHStP/IV8p71wnkmFZ9ivr/zaTVEIEHLGJQ9nvY8NJxlthK9hIZkeM5kRiGyglCZSN2S09EyWZL3dZD3D6UkJc0e+cJWHRCWWtRm4if9DpZVVDwB0WVgjEXdO6PJPZMrmsX0qzdWtxG88an+DaypCvy7wOJgCURQlQ2xvWOWMrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761221449; c=relaxed/simple;
-	bh=oAZzN4JwMBb4zdgdgHMUaM0HJArOfgw/LUeK6U1j1qg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e/4mmLjJ+BabY5CS/QHLDEleXNJ5wz2AmWmggQw7XVcNBGCiyQfJnmWPckXJfQWjYhSySu1WE63CySb3hH9nLGvAzVPoB9RMSR5OADVwua7CSRqtLm8n8JO9G9q0P6Fmmq3yfFMklGcdRxG+nLBmv42F48/RUebMPFyl6MhO99w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=biNjzk7L; arc=none smtp.client-ip=45.254.49.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.149] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 26f2c95f7;
-	Thu, 23 Oct 2025 20:10:21 +0800 (GMT+08:00)
-Message-ID: <6f769567-b383-4c79-b441-3dd84f21cdae@rock-chips.com>
-Date: Thu, 23 Oct 2025 20:10:20 +0800
+	s=arc-20240116; t=1761221453; c=relaxed/simple;
+	bh=QtRLj3vOoZMDeu5ioxtwz0mA9axsP99tGxCDQ49INNY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pxIwEozY77dy/ugZKo2ENDmsZpSPQjmTAFcRZAcNPnMACvYTuii5bGuW5Nz6ujs6fcvH203+WCy/aVPaZmbyokzDBmlsWVmISmTX3G1ToLYkhdR4c6UFNuk/PexiBro/Io+rRMBTDSD+OqQ5zmCYJynY5ab1PXlY76g0y6/pHT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430ced58cd2so27719805ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:10:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761221447; x=1761826247;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QtRLj3vOoZMDeu5ioxtwz0mA9axsP99tGxCDQ49INNY=;
+        b=ZaEM8klICOBR1tj93Tn3MxE6Wh7FNkzCM+IrafDLOJlrukJs1pbOZr8+x90QtZiuXd
+         P8ayWAYGWXe/LHXd3XIpDZ9l2C/ty4c86Wsxaw4O082J/jo7JHipoSQ2pvW13OfiUBvV
+         Zz2aC3BloxX9tGzprw10hk89HNZcLJIlqrzL3/WY9ShM6KT1BueE+Das4HlR8NqwGldO
+         e1hoZqGQT1u7Fg2/UMrim0io5za7i4XQmXBOcsCdANwyZL+dhbF1yizsJsn62tO7JySH
+         Igoa8186TbcW0CyTIFaYfGBtrPDTrLW7Vgj7cZ4KNoTzmEHf27J53KUjY8fB0X4kqDQE
+         qlqA==
+X-Gm-Message-State: AOJu0YxlCTUkANi3llmv17Ru3wj9bB5dTLYl2z7dBpUFkR5eH0C+pgXW
+	AqZIEX41Osh6ayOx6JHSPT8lfhRWmjggL0I/2SqPieqXskxbXAXvn8HeUSVqzlpofofndOf0Lou
+	w1tpq5OzWPUSXYbXpVnOvKybZ6WJla9R2Dl7shJhLfNAjC9lY1JksR2NY+M0=
+X-Google-Smtp-Source: AGHT+IGXXZorBxYBJbJ5uwF67TnFapsFWO9fYrIN+glLKbsPlGl9/JWSNTaZUb4grPhJVzi5W1XFPkm0QtJ2x2SGwz246pHI7Pju
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/9] drm/bridge: Implement generic USB Type-C DP HPD
- bridge
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Yubing Zhang <yubing.zhang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Amit Sunil Dhamne <amitsd@google.com>, Dragan Simic <dsimic@manjaro.org>,
- Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>,
- Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-References: <20251023033009.90-1-kernel@airkyi.com>
- <20251023033009.90-3-kernel@airkyi.com> <aPnrKFWTvpuRTyhI@kuha.fi.intel.com>
- <14b8ac71-489b-4192-92d6-5f228ff3881d@rock-chips.com>
- <aPoZhBdc1M6Qgfae@kuha.fi.intel.com>
-Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <aPoZhBdc1M6Qgfae@kuha.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a9a10fa2ad903abkunm63b0b3181a1121
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0hCTlZDT0xDTk4ZSUgdHRhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
-	xVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=biNjzk7LSVRSGV1ZBRFm2pqDrcSqN6X6pQT3v+20RIGWpgAkjhtuaHxj6ZVvF/acb202inF411z7yGIUoF/7CHQ2Pg/L6wLybWl0rz+LjhvsgHqysLYlVIWIXUgVF/qQOrfHbm3hQOkvKYsFtMh9rTdxx3ulZty1nhOw2ruKgYk=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=+tppR1r2GR2aHsAGWh+r4F7VMu3ZGa0gIoTITM9UMtU=;
-	h=date:mime-version:subject:message-id:from;
+X-Received: by 2002:a05:6e02:1a65:b0:430:c323:2bca with SMTP id
+ e9e14a558f8ab-430c5223f39mr174011975ab.10.1761221447381; Thu, 23 Oct 2025
+ 05:10:47 -0700 (PDT)
+Date: Thu, 23 Oct 2025 05:10:47 -0700
+In-Reply-To: <68f6a48f.050a0220.91a22.0451.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fa1b47.a70a0220.3bf6c6.004c.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [gfs2?] WARNING: ODEBUG bug in gfs2_fill_super
+From: syzbot <syzbot+19e0be39cc25dfcb0858@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Heikki,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-On 10/23/2025 8:03 PM, Heikki Krogerus wrote:
->>>> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
->>>> index 245e8a27e3fc..e91736829167 100644
->>>> --- a/drivers/gpu/drm/bridge/Makefile
->>>> +++ b/drivers/gpu/drm/bridge/Makefile
->>>> @@ -1,6 +1,7 @@
->>>>    # SPDX-License-Identifier: GPL-2.0
->>>>    obj-$(CONFIG_DRM_AUX_BRIDGE) += aux-bridge.o
->>>>    obj-$(CONFIG_DRM_AUX_HPD_BRIDGE) += aux-hpd-bridge.o
->>>> +obj-$(CONFIG_DRM_AUX_TYPEC_DP_HPD_BRIDGE) += aux-hpd-typec-dp-bridge.o
->>> Instead, why not just make that a part of aux-hpd-bridge
->>> conditionally:
->>>
->>> ifneq ($(CONFIG_TYPEC),)
->>>           aux-hpd-bridge-y        += aux-hpd-typec-dp-bridge.o
->>> endif
->> Oh, I did consider that! But I noticed that aux-hpd-bridge.c contains the
->> following statement module_auxiliary_driver(drm_aux_hpd_bridge_drv), which
->> already includes a module_init. In the newly added file, in order to call the
->> register function, another module_init was also added. If the two files are
->> each made into a module separately, would there be a problem?
-> You would not call module_init() from the new file. Instead you would
-> call drm_aux_hpd_typec_dp_bridge_init() and what ever directly from
-> aux-hpd-bridge.c:
->
-> diff --git a/drivers/gpu/drm/bridge/aux-bridge.h b/drivers/gpu/drm/bridge/aux-bridge.h
-> new file mode 100644
-> index 000000000000..ae689a7778fa
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +#ifndef AUX_HPD_BRIDGE_H
-> +#define AUX_HPD_BRIDGE_H
-> +
-> +#if IS_ENABLED(CONFIG_TYPEC)
-> +int drm_aux_hpd_typec_dp_bridge_init(void);
-> +void drm_aux_hpd_typec_dp_bridge_exit(void);
-> +#else
-> +static inline int drm_aux_hpd_typec_dp_bridge_init(void) { return 0; }
-> +static inline void drm_aux_hpd_typec_dp_bridge_exit(void) { }
-> +#endif /* IS_ENABLED(CONFIG_TYPEC) */
-> +
-> +#endif /* AUX_HPD_BRIDGE_H */
-> diff --git a/drivers/gpu/drm/bridge/aux-hpd-bridge.c b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
-> index 2e9c702c7087..3578df1df78a 100644
-> --- a/drivers/gpu/drm/bridge/aux-hpd-bridge.c
-> +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
-> @@ -12,6 +12,8 @@
->   #include <drm/drm_bridge.h>
->   #include <drm/bridge/aux-bridge.h>
->   
-> +#include "aux-hpd-bridge.h"
-> +
->   static DEFINE_IDA(drm_aux_hpd_bridge_ida);
->   
->   struct drm_aux_hpd_bridge_data {
-> @@ -190,9 +192,16 @@ static int drm_aux_hpd_bridge_probe(struct auxiliary_device *auxdev,
->   
->          auxiliary_set_drvdata(auxdev, data);
->   
-> +       drm_aux_hpd_typec_dp_bridge_init();
-> +
->          return devm_drm_bridge_add(data->dev, &data->bridge);
->   }
->   
-> +static void drm_aux_hpd_bridge_remove(struct auxiliary_device *auxdev)
-> +{
-> +       drm_aux_hpd_typec_dp_bridge_exit();
-> +}
-> +
->   static const struct auxiliary_device_id drm_aux_hpd_bridge_table[] = {
->          { .name = KBUILD_MODNAME ".dp_hpd_bridge", .driver_data = DRM_MODE_CONNECTOR_DisplayPort, },
->          {},
-> @@ -203,6 +212,7 @@ static struct auxiliary_driver drm_aux_hpd_bridge_drv = {
->          .name = "aux_hpd_bridge",
->          .id_table = drm_aux_hpd_bridge_table,
->          .probe = drm_aux_hpd_bridge_probe,
-> +       .remove = drm_aux_hpd_bridge_remove,
->   };
->   module_auxiliary_driver(drm_aux_hpd_bridge_drv);
+***
 
-Yes, if we don't distinguish them through Kconfig, we need to use the IS_ENABLED macro in the code. Thanks again for you code.
+Subject: Re: [syzbot] [gfs2?] WARNING: ODEBUG bug in gfs2_fill_super
+Author: nirbhay.lkd@gmail.com
 
-
-Another thing is that CONFIG_DRM_AUX_HPD_BRIDGE originally needed to be selected by other modules. With this change, we also need to expose it in Kconfig.
-
-
->
->
--- 
-Best,
-Chaoyi
-
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+master
 
