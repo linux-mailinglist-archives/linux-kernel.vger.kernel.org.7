@@ -1,232 +1,150 @@
-Return-Path: <linux-kernel+bounces-866221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C29BFF367
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:03:18 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F49BFF36A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C938418C3706
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:03:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3706134FAF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D53A263F36;
-	Thu, 23 Oct 2025 05:03:12 +0000 (UTC)
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC0F261B9E;
+	Thu, 23 Oct 2025 05:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="dCdhxMLK"
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A542E2144C9;
-	Thu, 23 Oct 2025 05:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FD218FDDE
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761195791; cv=none; b=tEny2O+V/C5q+YkwIKfJkAwZDBI9BgUOhY0OrU6oz7vaILrWVMISM7x6LFxi8ututN02gzM671tJzclZ8s4Ienn+ta7N6881ZolwxBtX3dM3csZgObPUio6s7bMG91We1+IBJ22oJhpLqhwkiqhdP6XjhtxLLfgq2VWmtXBSb8M=
+	t=1761195840; cv=none; b=nlYEiVz7IvkEtwXrcAOotlCFzy3kyfXatIGwRfK/xgsufZOfmWrg8Z+D4mYkt8eIHb8e2AY+gDvgg9KMz4Ffw0tIBLKtwnBuIejPcGnacKY/Ye2+k5/G61qcEpV3DGAKOO/ZJSwngNXAI0kgumPUdUjljU3GiFomUN7DNg7ZZo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761195791; c=relaxed/simple;
-	bh=kfel5uVI0DOdfhwAW8d+UPBejutgczNYN21avUM8KmA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MMe0SFX88AH79NMQwN6SID0Mbh+ln4S5RSeKbQOQJZaQ9Z2obufQPtpcSdeVByYATde+nKfd36oD/fcxdC3HmJ4qQbZDjjPpKo3TZPkDhKsc8/N5YTAlnTmT3qzVZitcsJEpujxII2fR/9xHCWWG/2uI7AqK9L6d2yg0ITQswVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip4t1761195725ta0e74cd0
-X-QQ-Originating-IP: 0FMBK9Z1fvIt7HFhRuKzeDe02SC7oomowzyx0kdow3I=
-Received: from [IPV6:240f:10b:7440:1:e4c5:315f ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 23 Oct 2025 13:02:01 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13591987540771143287
-Message-ID: <B08A289028EE2F0D+c2d1f2e5-d7c6-497a-82bd-92ae477e1016@radxa.com>
-Date: Thu, 23 Oct 2025 14:01:59 +0900
+	s=arc-20240116; t=1761195840; c=relaxed/simple;
+	bh=oNlKIBS24VqVSjl5MOV4qcUC67XjWxB93AyLU5N3D3E=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=kBfsTtHceBusOo1SuNY1gIf++PMTe+xsG/86fTQ7LeYO6axivo2cGgO00c22eY6laEJPh0oRRzkyiGK8QNmf0hivFfqRs+OAsc8YiKVZIp5A/pvs1KYYxb63Ms4iw1/uehTsKScSogJNZHQ46C4cp0nRQtDc0P2itR5IHsucYac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=dCdhxMLK; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=R+VWjAe6xaqPWQpev4m4QDyG6R7acsvDc/fzb6ubZYA=;
+  b=dCdhxMLKhyum0kKcpPyI2z3XCbQ6iPINtbqbQGCB3mvu0NmgHQ64QLEs
+   p4HBajLFWNgEyBto1dzCcqan8U+zBzeean9ty0USaXuCdH6L6HT8Z3vGK
+   zA9K2t5L36b6I4uzY3AvHsLgnRc09TxF+19keA3xUFdkF5d7kZreV0suS
+   8=;
+X-CSE-ConnectionGUID: klvy0VtVTsOeptM6O4RINg==
+X-CSE-MsgGUID: ZHC8UKZ7QQK2kT1RYdD0dw==
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.19,248,1754949600"; 
+   d="scan'208";a="128920397"
+Received: from unknown (HELO hadrien) ([202.51.247.22])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 07:03:46 +0200
+Date: Thu, 23 Oct 2025 13:03:38 +0800 (+08)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Harsh Jain <h.jain@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+    Mounika Botcha <mounika.botcha@amd.com>
+cc: linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev
+Subject: drivers/crypto/xilinx/xilinx-trng.c:336:54-61: WARNING: Consider
+ using %pe to print PTR_ERR() (fwd)
+Message-ID: <c78d7370-85c-2651-c4be-9b9880ec2b15@inria.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND] Re: [PATCH] PCI/ASPM: Enable only L0s and L1 for
- devicetree platforms
-From: FUKAUMI Naoki <naoki@radxa.com>
-To: Bjorn Helgaas <helgaas@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: Christian Zigotzky <chzigotzky@xenosoft.de>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
- linux-rockchip@lists.infradead.org
-References: <20251022191313.GA1265088@bhelgaas>
- <340D76D438E6105B+58e7f834-75f7-40c5-a46a-677cb279a02d@radxa.com>
-Content-Language: en-US
-In-Reply-To: <340D76D438E6105B+58e7f834-75f7-40c5-a46a-677cb279a02d@radxa.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: M75I2DDAzREFLlghz9/TQeXusM88YHXsQmK1WoDawJbMuclbQPYFvQ0Z
-	WnUwSKOisXP8QynvwIZ/wtZS8gRe+vK/xkdedlDS+Fg4bMGFTEPwHDYLvmYz4E+fO+M5Tru
-	Xyp6mDCz/P9no15uJbzXb1pZLENT9a4OgqnwCkO2DOSeLsRc0JSNZQU55nLpspnFwb0tKC4
-	IaEKrawwNvdNXaUIhfGDIctYFMOtx2ZV4GucDma8BtyOhNFcvMa0TetdXqYP3M6LP4aptn4
-	T1RTW3GlUY8eshVIRatkze/V7lKiXVMMCAWAlHSrf8vOriIocoBrGHyQiX+o+vJVC6lZiTJ
-	ZjomqX+wTx95GQgx6+ilcPBHe//8TzHFk1WeZAXeLdrsV46YwTAcsaYNyx0vic6mQf9Z8wU
-	hRFj3bcNN2/JePrEcFdMX3fGVF9Z+vKcnRCmBZR8bvsZnBLeZiF4Mm4DppdC6Dl140JJ9Rw
-	qBsqI0jgR5EJ2t7pw6nzYlAAC7JvlsgWA7FQuYintZ9X8uPuDUUZDU5pOWzLCEHPT0TJ5ol
-	fEHW7K62to+hvqSXhX7Dkb0CC+OfKttuUPQKQuMK8d+gtT3D4wHZXBEY5Rv9tze89A7yWd6
-	9F/HJUFIr7sam50Z1aysSDR8niipzfuKVGLL8n0vaQYmtmY+EFxNnehK1oeEryHKSfbjBJR
-	bEJxbO9wD4Tz6gypSxlZAKM5ji25BH+MjV94nUZD8M8wsi4STo33mcKTXJPeoR2VV0/UKqv
-	VO9usnMCPQoI5te8O/FlKQnaRRZbb2hfqxclHMd67HxMBEjUaI5Dwt99PSgzifxSKhlHKoR
-	RgoUZL0dep3sRdlUiSVkq2B25UY2SgvA0qTMi20QBobHJl8R2AvVPYTwLWTSo4kWz21Fcv2
-	aC501SOJtzIlsBRJnmSzBoMVKOn+PHlHT25T78lCLYYEQXhHw8yclfDxszrMnxTxJ0PCSXt
-	nRAGfIy7MUM77CAyUbAYxQ8mrntWZmBBJs8um9X8zzzrZwACB1YMEKuZpza0b0IIMRrs1sC
-	kdWJCTNQ==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=US-ASCII
 
-On 10/23/25 13:25, FUKAUMI Naoki wrote:
-> # Fixes the ML address for linux-rockchip
-> # Please resend the original patch to linux-rockchip@lists.infradead.org
 
-and linuxppc-dev@lists.ozlabs.org?
 
-> Hi Bjorn,
-> 
-> On 10/23/25 04:13, Bjorn Helgaas wrote:
->> Christian, Naoki, any chance you could test this patch on top of
->> v6.18-rc1 to see whether it resolves the problem you reported?
->>
->> I'd like to verify that it works before merging it.
-> 
-> I'll be testing now. May I test on v6.18-rc2 without the following patch?
-> 
->   "PCI: dw-rockchip: Prevent advertising L1 Substates support"
-> 
-> Best regards,
-> 
-> -- 
-> FUKAUMI Naoki
-> Radxa Computer (Shenzhen) Co., Ltd.
-> 
->> On Mon, Oct 20, 2025 at 05:12:07PM -0500, Bjorn Helgaas wrote:
->>> From: Bjorn Helgaas <bhelgaas@google.com>
->>>
->>> f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for 
->>> devicetree
->>> platforms") enabled Clock Power Management and L1 Substates, but that
->>> caused regressions because these features depend on CLKREQ#, and not all
->>> devices and form factors support it.
->>>
->>> Enable only ASPM L0s and L1, and only when both ends of the link 
->>> advertise
->>> support for them.
->>>
->>> Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states 
->>> for devicetree platforms")
->>> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
->>> Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045- 
->>> a1b04908051a@xenosoft.de/
->>> Reported-by: FUKAUMI Naoki <naoki@radxa.com>
->>> Link: https://lore.kernel.org/ 
->>> r/22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com/
+---------- Forwarded message ----------
+Date: Thu, 23 Oct 2025 12:35:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: oe-kbuild@lists.linux.dev
+Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
+Subject: drivers/crypto/xilinx/xilinx-trng.c:336:54-61: WARNING: Consider using
+    %pe to print PTR_ERR()
 
-and https://lore.kernel.org/all/DDIW7ZP5K1VR.2I7VW56B9CZLF@cknow-tech.com/
+BCC: lkp@intel.com
+CC: oe-kbuild-all@lists.linux.dev
+CC: linux-kernel@vger.kernel.org
+TO: Harsh Jain <h.jain@amd.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>
+CC: Mounika Botcha <mounika.botcha@amd.com>
 
-maybe https://lore.kernel.org/all/20251015101304.3ec03e6b@bootlin.com/
-(then +Cc: linux-arm-kernel@lists.infradead.org?)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   43e9ad0c55a369ecc84a4788d06a8a6bfa634f1c
+commit: 8979744aca8096ee5072798dfc1181606919b35d crypto: xilinx - Add TRNG driver for Versal
+date:   7 weeks ago
+:::::: branch date: 3 hours ago
+:::::: commit date: 7 weeks ago
+config: powerpc64-randconfig-r064-20251023 (https://download.01.org/0day-ci/archive/20251023/202510231229.Z6TduqZy-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 754ebc6ebb9fb9fbee7aef33478c74ea74949853)
 
-Best regards,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Julia Lawall <julia.lawall@inria.fr>
+| Closes: https://lore.kernel.org/r/202510231229.Z6TduqZy-lkp@intel.com/
 
---
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
+cocci warnings: (new ones prefixed by >>)
+>> drivers/crypto/xilinx/xilinx-trng.c:336:54-61: WARNING: Consider using %pe to print PTR_ERR()
 
->>> ---
->>>
->>> Mani, not sure what you think we should do here.  Here's a stab at it 
->>> as a
->>> strawman and in case anybody can test it.
->>>
->>> Not sure about the message log message.  Maybe OK for testing, but 
->>> might be
->>> overly verbose ultimately.
->>>
->>> ---
->>>   drivers/pci/pcie/aspm.c | 34 +++++++++-------------------------
->>>   1 file changed, 9 insertions(+), 25 deletions(-)
->>>
->>> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
->>> index 7cc8281e7011..dbc74cc85bcb 100644
->>> --- a/drivers/pci/pcie/aspm.c
->>> +++ b/drivers/pci/pcie/aspm.c
->>> @@ -243,8 +243,7 @@ struct pcie_link_state {
->>>       /* Clock PM state */
->>>       u32 clkpm_capable:1;        /* Clock PM capable? */
->>>       u32 clkpm_enabled:1;        /* Current Clock PM state */
->>> -    u32 clkpm_default:1;        /* Default Clock PM state by BIOS or
->>> -                       override */
->>> +    u32 clkpm_default:1;        /* Default Clock PM state by BIOS */
->>>       u32 clkpm_disable:1;        /* Clock PM disabled */
->>>   };
->>> @@ -376,18 +375,6 @@ static void pcie_set_clkpm(struct 
->>> pcie_link_state *link, int enable)
->>>       pcie_set_clkpm_nocheck(link, enable);
->>>   }
->>> -static void pcie_clkpm_override_default_link_state(struct 
->>> pcie_link_state *link,
->>> -                           int enabled)
->>> -{
->>> -    struct pci_dev *pdev = link->downstream;
->>> -
->>> -    /* For devicetree platforms, enable ClockPM by default */
->>> -    if (of_have_populated_dt() && !enabled) {
->>> -        link->clkpm_default = 1;
->>> -        pci_info(pdev, "ASPM: DT platform, enabling ClockPM\n");
->>> -    }
->>> -}
->>> -
->>>   static void pcie_clkpm_cap_init(struct pcie_link_state *link, int 
->>> blacklist)
->>>   {
->>>       int capable = 1, enabled = 1;
->>> @@ -410,7 +397,6 @@ static void pcie_clkpm_cap_init(struct 
->>> pcie_link_state *link, int blacklist)
->>>       }
->>>       link->clkpm_enabled = enabled;
->>>       link->clkpm_default = enabled;
->>> -    pcie_clkpm_override_default_link_state(link, enabled);
->>>       link->clkpm_capable = capable;
->>>       link->clkpm_disable = blacklist ? 1 : 0;
->>>   }
->>> @@ -811,19 +797,17 @@ static void 
->>> pcie_aspm_override_default_link_state(struct pcie_link_state *link)
->>>       struct pci_dev *pdev = link->downstream;
->>>       u32 override;
->>> -    /* For devicetree platforms, enable all ASPM states by default */
->>> +    /* For devicetree platforms, enable L0s and L1 by default */
->>>       if (of_have_populated_dt()) {
->>> -        link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
->>> +        if (link->aspm_support & PCIE_LINK_STATE_L0S)
->>> +            link->aspm_default |= PCIE_LINK_STATE_L0S;
->>> +        if (link->aspm_support & PCIE_LINK_STATE_L1)
->>> +            link->aspm_default |= PCIE_LINK_STATE_L1;
->>>           override = link->aspm_default & ~link->aspm_enabled;
->>>           if (override)
->>> -            pci_info(pdev, "ASPM: DT platform, 
->>> enabling%s%s%s%s%s%s%s\n",
->>> -                 FLAG(override, L0S_UP, " L0s-up"),
->>> -                 FLAG(override, L0S_DW, " L0s-dw"),
->>> -                 FLAG(override, L1, " L1"),
->>> -                 FLAG(override, L1_1, " ASPM-L1.1"),
->>> -                 FLAG(override, L1_2, " ASPM-L1.2"),
->>> -                 FLAG(override, L1_1_PCIPM, " PCI-PM-L1.1"),
->>> -                 FLAG(override, L1_2_PCIPM, " PCI-PM-L1.2"));
->>> +            pci_info(pdev, "ASPM: DT platform, enabling%s%s\n",
->>> +                 FLAG(override, L0S, " L0s"),
->>> +                 FLAG(override, L1, " L1"));
->>>       }
->>>   }
->>> -- 
->>> 2.43.0
->>>
->>
-> 
-> 
+vim +336 drivers/crypto/xilinx/xilinx-trng.c
 
+8979744aca8096 Harsh Jain 2025-08-25  323
+8979744aca8096 Harsh Jain 2025-08-25  324  static int xtrng_probe(struct platform_device *pdev)
+8979744aca8096 Harsh Jain 2025-08-25  325  {
+8979744aca8096 Harsh Jain 2025-08-25  326  	struct xilinx_rng *rng;
+8979744aca8096 Harsh Jain 2025-08-25  327  	int ret;
+8979744aca8096 Harsh Jain 2025-08-25  328
+8979744aca8096 Harsh Jain 2025-08-25  329  	rng = devm_kzalloc(&pdev->dev, sizeof(*rng), GFP_KERNEL);
+8979744aca8096 Harsh Jain 2025-08-25  330  	if (!rng)
+8979744aca8096 Harsh Jain 2025-08-25  331  		return -ENOMEM;
+8979744aca8096 Harsh Jain 2025-08-25  332
+8979744aca8096 Harsh Jain 2025-08-25  333  	rng->dev = &pdev->dev;
+8979744aca8096 Harsh Jain 2025-08-25  334  	rng->rng_base = devm_platform_ioremap_resource(pdev, 0);
+8979744aca8096 Harsh Jain 2025-08-25  335  	if (IS_ERR(rng->rng_base)) {
+8979744aca8096 Harsh Jain 2025-08-25 @336  		dev_err(&pdev->dev, "Failed to map resource %ld\n", PTR_ERR(rng->rng_base));
+8979744aca8096 Harsh Jain 2025-08-25  337  		return PTR_ERR(rng->rng_base);
+8979744aca8096 Harsh Jain 2025-08-25  338  	}
+8979744aca8096 Harsh Jain 2025-08-25  339
+8979744aca8096 Harsh Jain 2025-08-25  340  	xtrng_trng_reset(rng->rng_base);
+8979744aca8096 Harsh Jain 2025-08-25  341  	ret = xtrng_reseed_internal(rng);
+8979744aca8096 Harsh Jain 2025-08-25  342  	if (ret) {
+8979744aca8096 Harsh Jain 2025-08-25  343  		dev_err(&pdev->dev, "TRNG Seed fail\n");
+8979744aca8096 Harsh Jain 2025-08-25  344  		return ret;
+8979744aca8096 Harsh Jain 2025-08-25  345  	}
+8979744aca8096 Harsh Jain 2025-08-25  346
+8979744aca8096 Harsh Jain 2025-08-25  347  	xilinx_rng_dev = rng;
+8979744aca8096 Harsh Jain 2025-08-25  348  	mutex_init(&rng->lock);
+8979744aca8096 Harsh Jain 2025-08-25  349  	ret = crypto_register_rng(&xtrng_trng_alg);
+8979744aca8096 Harsh Jain 2025-08-25  350  	if (ret) {
+8979744aca8096 Harsh Jain 2025-08-25  351  		dev_err(&pdev->dev, "Crypto Random device registration failed: %d\n", ret);
+8979744aca8096 Harsh Jain 2025-08-25  352  		return ret;
+8979744aca8096 Harsh Jain 2025-08-25  353  	}
+8979744aca8096 Harsh Jain 2025-08-25  354  	ret = xtrng_hwrng_register(&rng->trng);
+8979744aca8096 Harsh Jain 2025-08-25  355  	if (ret) {
+8979744aca8096 Harsh Jain 2025-08-25  356  		dev_err(&pdev->dev, "HWRNG device registration failed: %d\n", ret);
+8979744aca8096 Harsh Jain 2025-08-25  357  		goto crypto_rng_free;
+8979744aca8096 Harsh Jain 2025-08-25  358  	}
+8979744aca8096 Harsh Jain 2025-08-25  359  	platform_set_drvdata(pdev, rng);
+8979744aca8096 Harsh Jain 2025-08-25  360
+8979744aca8096 Harsh Jain 2025-08-25  361  	return 0;
+8979744aca8096 Harsh Jain 2025-08-25  362
+8979744aca8096 Harsh Jain 2025-08-25  363  crypto_rng_free:
+8979744aca8096 Harsh Jain 2025-08-25  364  	crypto_unregister_rng(&xtrng_trng_alg);
+8979744aca8096 Harsh Jain 2025-08-25  365
+8979744aca8096 Harsh Jain 2025-08-25  366  	return ret;
+8979744aca8096 Harsh Jain 2025-08-25  367  }
+8979744aca8096 Harsh Jain 2025-08-25  368
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
