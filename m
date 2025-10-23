@@ -1,97 +1,109 @@
-Return-Path: <linux-kernel+bounces-866937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C93EDC011B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:25:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738B0C011CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5C2F4FA3DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:25:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2676218C1930
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A61C30AD03;
-	Thu, 23 Oct 2025 12:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2837530E832;
+	Thu, 23 Oct 2025 12:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lxsm4WQL"
-Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XL1J53yy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02AB212FB3
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1DD3009C1;
+	Thu, 23 Oct 2025 12:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761222325; cv=none; b=IOikKK2imI+bAlFHeGCJ3T1FsM0zUvMiIpmQaU2siIhWqUJ8Qi90mUEv6WvH01/dGBljQ5XqtPn7JcI0Ub5NEQK5eq7QstN/XKDCLhEp7dEJPFkvj7l3/6HfSO8Tn6kK09BWgm+mxO6ksRMkJhwkkrNm67U/opz/e3prKfH4ouU=
+	t=1761222389; cv=none; b=YOUmtZVrpdtEEMOyALGaYcGP8Mh5rzNHo9mS4n1fA5WIaEfoYkUXz1tk89IYYWSmyuHYhCO8jqBdVJmSUFyi4dbiPbSQHAg7nUJ04Coxd1toeZnzujpf3z3QUnyVhkrGXF7xNxJB6ab3RylWgmSff2YL1Ljjdb9G/tW2FOpzPI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761222325; c=relaxed/simple;
-	bh=gH1QxgpCetu7kizrxHoHHg7KTeThEjL3QD6Lg5r7T3c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=STcPy/ZTUGPaavhKkNi7OSX4nACdO4UOY98j4y7f1SsvSLvPvmM3VnrvaGas9WtVIdTjOtVjv2h4RUxNp9QP2qIgMZ2Jbs0H45pnebabWbzuBVTLpdtBVCR8DHZrJTrHASPQL6biiBt58jrdRh3EdttwA4ne+Z9Wu/hVIB8ls2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lxsm4WQL; arc=none smtp.client-ip=209.85.215.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b631a684a9fso50118a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:25:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761222323; x=1761827123; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5QjTwYOzpkDEA/ocyG2cBj+uj0itR7zz8WtGEAMDG2s=;
-        b=Lxsm4WQLkEU2ftO6zXUdMaY/4o6beUKaMEnP/sOwsHMmfLT+Nq92+GyFYDKf7jzZua
-         QDJYcWIgvs2lWsGQ7zLwptMMdnYkaSpWoYSa4CqEEEMrIF28YTbMoF01z10C2CbrtvsK
-         kfaDNVFRGxOXRWdmx7n0/Oy12Ja+VmMTDOFdCGXkMnMbWY8TiQWBr/CkO8dDUdZQhDVk
-         3gRBVULAhQOApjNKPbk12Zx4kCm8k3uNtELJQjCtEftCypLHVS3umzfOWIfNVHLVsZrm
-         pMWToGZtsRHja0CPdFND+CrndvrrAdmBWIWDjj3JaOUEgfUIIgMKJZl4nniIB7kTiumF
-         MveQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761222323; x=1761827123;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5QjTwYOzpkDEA/ocyG2cBj+uj0itR7zz8WtGEAMDG2s=;
-        b=fKoRN466i7eU0N/aDE0p0d897mzQlX08gW0yEk7OpA9zFKLV5JQEHrYo8IyAyEcJ5Y
-         n6r4C8OH2N8T16fwarTuPjQq40uvaht+O3MqAXIT4T72zeOhMm+HobKDJPXG+L7DdKaM
-         UbvogfKBuNYNIOcqqyHAiQx4dI5OmgicurGSpAdH0tufJYwCet7fCugaC/ld/O4gm1rO
-         ak8LPtAAqOx0jFtJUBUH6luSntX6UgsXpn/QMGCWF+EFRrRpsLVjm5r6pLpesb2olY2R
-         LxjI/U5NdVVL9FD81gRAR7Tiv4Ut/blj0G2aSFTP0NmtbOsFddZjDNNKAo7CLsY/6ITt
-         i7nA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpPR/HN9UpyXOEQm7wzeEUqJrW9O/cO5/Bg4oTRqLWZOefV3pryp9vO1RsYNPW0RkldDWi0ssl8S7C8zM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8oNFJPVOg3yLanzq19Tps9NVSx1luFOJ722gf+t7V8DXSzarj
-	5XGUEqUaJdDQTlq4g6ejJrCkphpEsFpnqI3cWzQ1h/TuxDWv5HF784hJHi+pwfUl+sAjDJZp
-X-Gm-Gg: ASbGnctfVJZQdB1x6Hn9g7yy+T1Mee2jhno2Vh/GGA+5SD7SJ0z7vwPiKb2hfdm9EfN
-	qKzXALkivUjK+1kqJxlJ5Yernebxz1IVqz34bI+zAg/01msFV2ZspFm51v5ELtsZbod9iDcs2i1
-	11EI4x4X/kWLjw/vht0Sp23xJ4SnJx4jkXBj11bvMGjeaEKXmGyx0RoJeITL7VaPZHtzJKr3kh+
-	YF1eYZi8JHP9XsRRI69Y1PIf/Tq6KqLSyD3cBC19ZxUMTKI8Yk4OByD7om34gIWQhlQOyhlsWHP
-	Miq9HA5A44sMKW1h0VG3ReZgOrcZLjixrU4+U3Wp4K3yMlia4763GMrTCBLtousTgmkn9On7RaL
-	PMRCat9ew6grqYqn9JSEGlVsiN3zc9R2xmV6tMdnhujQo4/uze/3H70+qrMdcKH4h
-X-Google-Smtp-Source: AGHT+IF03IYVuLtHNljpmyJKTLX2ueFVUYHymHpr3RRDRbspFMhGN0rwRau6yUsKDSVnk0QDFNmA4Q==
-X-Received: by 2002:a05:6a21:798a:b0:339:a6ac:a69c with SMTP id adf61e73a8af0-339a6acce4emr5522071637.5.1761222322927;
-        Thu, 23 Oct 2025 05:25:22 -0700 (PDT)
-Received: from user.. ([58.206.232.74])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a27d583970sm574079b3a.51.2025.10.23.05.25.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 05:25:22 -0700 (PDT)
-From: clingfei <clf700383@gmail.com>
-X-Google-Original-From: clingfei <1599101385@qq.com>
-To: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	herbert@gondor.apana.org.au,
-	horms@kernel.org,
-	kuba@kernel.org,
+	s=arc-20240116; t=1761222389; c=relaxed/simple;
+	bh=WkRBZU6DdRBPBvlJ2N3/YkvCzsXVTcOCM1yMrI1FnBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KXDs/mSRXdO5+MiabN87MvT9ndsy/qKOJeSdSPfuMcd2Bj6gdRs+Lt0qxWY0FtC5HeBTIaLcvxOFvw/z+oab5loDnvqp9OApWpt0L3fqG+HXxKjsAPdoSCOa8esIi3MMR0Mdj8tythvE8lb9ZP83XxqMEXU/+9m9lHiqiCgxal4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XL1J53yy; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761222388; x=1792758388;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WkRBZU6DdRBPBvlJ2N3/YkvCzsXVTcOCM1yMrI1FnBQ=;
+  b=XL1J53yy9A1x2CwuIACbnVU6be6/JKwJNpdL6cmUu4E9xgpOw3MNCQlR
+   hX4LCwRLSlbdGk6vgGkGtyNdTpJwG5o3HryefyUm4nEPTnSreQhIMHXpz
+   FqbKJmEXc9BTuj2aVDDIJLN3euddcLjPXPcpndZLAvIzZL44LCM6H1Wsd
+   DMFwoR15Npz1T8emFt8NR27rgViVW4eIPT+jr/hJT4VR4qcNOD28cGnMW
+   /DC2kue1TN9Cf6kTvXb/TBGCKiNF1kQ4YAIpLhpfiprQhifYWrGRrk7kd
+   yJgNiby4lVnPcie8J6ygQ6Yp2OPf1bBOUnx9LwM0MNygjLE4oJ90sKXtK
+   w==;
+X-CSE-ConnectionGUID: CaTSF8OJQlSLCYlHFJSMtg==
+X-CSE-MsgGUID: EO+RrIOOTXWa51nqqdr9wA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73992775"
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="73992775"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 05:26:27 -0700
+X-CSE-ConnectionGUID: rbNur2/2SmyTNh2buCmzcQ==
+X-CSE-MsgGUID: Thbs1WH3RtSINmLU3Tnm6g==
+X-ExtLoop1: 1
+Received: from unknown (HELO fdefranc-mobl3.igk.intel.com) ([10.237.142.160])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 05:26:16 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: linux-cxl@vger.kernel.org
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Shuai Xue <xueshuai@linux.alibaba.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Xiaofei Tan <tanxiaofei@huawei.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"Fabio M . De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Guo Weikang <guoweikang.kernel@gmail.com>,
+	Xin Li <xin@zytor.com>,
+	Will Deacon <will@kernel.org>,
+	Huang Yiwei <quic_hyiwei@quicinc.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Li Ming <ming.li@zohomail.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Karolina Stolarek <karolina.stolarek@oracle.com>,
+	Jon Pan-Doh <pandoh@google.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Shiju Jose <shiju.jose@huawei.com>,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	steffen.klassert@secunet.com,
-	syzkaller-bugs@googlegroups.com,
-	clf700383@gmail.com
-Subject: [PATCH net] net: key: Fix potential integer overflow in set_ipsecrequest
-Date: Thu, 23 Oct 2025 20:24:51 +0800
-Message-Id: <20251023122451.606435-1-1599101385@qq.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <68f1d9d6.050a0220.91a22.0419.GAE@google.com>
-References: <68f1d9d6.050a0220.91a22.0419.GAE@google.com>
+	linux-acpi@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-pci@vger.kernel.org
+Subject: [PATCH 0/6 v6] Make ELOG and GHES log and trace consistently
+Date: Thu, 23 Oct 2025 14:25:35 +0200
+Message-ID: <20251023122612.1326748-1-fabio.m.de.francesco@linux.intel.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,118 +112,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-syzbot found that there is a kernel bug in set_ipsecrequest:
+When Firmware First is enabled, BIOS handles errors first and then it
+makes them available to the kernel via the Common Platform Error Record
+(CPER) sections (UEFI 2.10 Appendix N). Linux parses the CPER sections
+via one of two similar paths, either ELOG or GHES.
 
-skbuff: skb_over_panic: text:ffffffff8a1fdd63 len:392 put:16 head:ffff888073664d00 
-data:ffff888073664d00 tail:0x188 end:0x180 dev:<NULL>
-------------[ cut here ]------------
-kernel BUG at net/core/skbuff.c:212!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 6012 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:skb_panic+0x157/0x160 net/core/skbuff.c:212
-Code: c7 60 10 6e 8c 48 8b 74 24 08 48 8b 54 24 10 8b 0c 24 44 8b 44 24 04 4d 89 e9 50 55 
-41 57 41 56 e8 6e 54 f5 ff 48 83 c4 20 90 <0f> 0b cc cc cc cc cc cc cc 90 90 90 90 90 90 
-90 90 90 90 90 90 90
-RSP: 0018:ffffc90003d5eb68 EFLAGS: 00010282
-RAX: 0000000000000088 RBX: dffffc0000000000 RCX: bc84b821dc35fd00
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 0000000000000180 R08: ffffc90003d5e867 R09: 1ffff920007abd0c
-R10: dffffc0000000000 R11: fffff520007abd0d R12: ffff8880720b7b50
-R13: ffff888073664d00 R14: ffff888073664d00 R15: 0000000000000188
-FS:  000055555b9e7500(0000) GS:ffff888125e0c000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055555b9e7808 CR3: 000000007ead6000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- skb_over_panic net/core/skbuff.c:217 [inline]
- skb_put+0x159/0x210 net/core/skbuff.c:2583
- skb_put_zero include/linux/skbuff.h:2788 [inline]
- set_ipsecrequest+0x73/0x680 net/key/af_key.c:3532
- pfkey_send_migrate+0x11f2/0x1de0 net/key/af_key.c:3636
- km_migrate+0x155/0x260 net/xfrm/xfrm_state.c:2838
- xfrm_migrate+0x2020/0x2330 net/xfrm/xfrm_policy.c:4698
- xfrm_do_migrate+0x796/0x900 net/xfrm/xfrm_user.c:3144
- xfrm_user_rcv_msg+0x7a3/0xab0 net/xfrm/xfrm_user.c:3501
- netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
- xfrm_netlink_rcv+0x79/0x90 net/xfrm/xfrm_user.c:3523
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:727 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:742
- ____sys_sendmsg+0x505/0x830 net/socket.c:2630
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2684
- __sys_sendmsg net/socket.c:2716 [inline]
- __do_sys_sendmsg net/socket.c:2721 [inline]
- __se_sys_sendmsg net/socket.c:2719 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2719
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Currently, ELOG and GHES show some inconsistencies in how they print to
+the kernel log as well as in how they report to userspace via trace
+events.
 
-The root cause is that there is an integer overflow when calling set_ipsecrequest, 
-causing the result of `pfkey_sockaddr_pair_size(family)` is not consistent with 
-that used in alloc_skb, thus exceeds the total buffer size and the kernel panic.
+Make the two mentioned paths act similarly for what relates to logging
+and tracing.
 
-The issue was detected on bpf-next and linux-next, but the mainstream should also 
-have this problem.
+--- Changes for v6 ---
 
-This patch has been tested by syzbot and dit not trigger any issue:
->
-> Hello,
->
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
->
-> Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
-> Tested-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
->
-> Tested on:
->
-> commit:         7361c864 selftests/bpf: Fix list_del() in arena list
-> git tree:       bpf-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1089f52f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=9ad7b090a18654a7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=be97dd4da14ae88b6ba4
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=12bf83cd980000
->
-> Note: testing is done by a robot and is best-effort only.
+	- Rename the helper that copies the CPER CXL protocol error
+	  information to work struct (Dave)
+	- Return -EOPNOTSUPP (instead of -EINVAL) from the two helpers if
+	  ACPI_APEI_PCIEAER is not defined (Dave)
+
+--- Changes for v5 ---
+
+	- Add 3/6 to select ACPI_APEI_PCIEAER for GHES
+	- Add 4,5/6 to move common code between ELOG and GHES out to new
+	  helpers use them in 6/6 (Jonathan).
+
+--- Changes for v4 ---
+
+	- Re-base on top of recent changes of the AER error logging and
+	  drop obsoleted 2/4 (Sathyanarayanan)
+	- Log with pr_warn_ratelimited() (Dave)
+	- Collect tags
+
+--- Changes for v3 ---
+
+    1/4, 2/4:
+	- collect tags; no functional changes
+    3/4:
+	- Invert logic of checks (Yazen)
+	- Select CONFIG_ACPI_APEI_PCIEAER (Yazen)
+    4/4:
+	- Check serial number only for CXL devices (Yazen)
+	- Replace "invalid" with "unknown" in the output of a pr_err()
+	  (Yazen)
+	
+--- Changes for v2 ---
+
+	- Add a patch to pass log levels to pci_print_aer() (Dan)
+	- Add a patch to trace CPER CXL Protocol Errors
+	- Rework commit messages (Dan)
+	- Use log_non_standard_event() (Bjorn)
+
+--- Changes for v1 ---
+
+	- Drop the RFC prefix and restart from PATCH v1
+	- Drop patch 3/3 because a discussion on it has not yet been
+	  settled
+	- Drop namespacing in export of pci_print_aer while() (Dan)
+	- Don't use '#ifdef' in *.c files (Dan)
+	- Drop a reference on pdev after operation is complete (Dan)
+	- Don't log an error message if pdev is NULL (Dan)
+
+Fabio M. De Francesco (6):
+  ACPI: extlog: Trace CPER Non-standard Section Body
+  ACPI: extlog: Trace CPER PCI Express Error Section
+  acpi/ghes: Make GHES select ACPI_APEI_PCIEAER
+  acpi/ghes: Add helper for CPER CXL protocol errors validity checks
+  acpi/ghes: Add helper to copy CPER CXL protocol error information to
+    work struct
+  ACPI: extlog: Trace CPER CXL Protocol Error Section
+
+ drivers/acpi/Kconfig       |  1 +
+ drivers/acpi/acpi_extlog.c | 60 ++++++++++++++++++++++++++++++++++++
+ drivers/acpi/apei/Kconfig  |  1 +
+ drivers/acpi/apei/ghes.c   | 62 +++++++++++++++++++++++++-------------
+ drivers/cxl/core/ras.c     |  6 ++++
+ drivers/pci/pcie/aer.c     |  2 +-
+ include/cxl/event.h        | 22 ++++++++++++++
+ 7 files changed, 132 insertions(+), 22 deletions(-)
 
 
-From 6dc2deb09faf7d53707cc9e75e175b09644fd181 Mon Sep 17 00:00:00 2001
-From: Cheng Lingfei <clf700383@gmail.com>
-Date: Mon, 20 Oct 2025 13:48:54 +0800
-Subject: [PATCH] fix integer overflow in set_ipsecrequest
-
-syzbot reported a kernel BUG in set_ipsecrequest() due to an skb_over_panic.
-
-The mp->new_family and mp->old_family is u16, while set_ipsecrequest receives
-family as uint8_t,  causing a integer overflow and the later size_req calculation
-error, which exceeds the size used in alloc_skb, and ultimately triggered the
-kernel bug in skb_put.
-
-Reported-by: syzbot+be97dd4da14ae88b6ba4@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=be97dd4da14ae88b6ba4
-Signed-off-by: Cheng Lingfei <clf700383@gmail.com>
----
- net/key/af_key.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/key/af_key.c b/net/key/af_key.c
-index 2ebde0352245..08f4cde01994 100644
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -3518,7 +3518,7 @@ static int set_sadb_kmaddress(struct sk_buff *skb, const struct xfrm_kmaddress *
- 
- static int set_ipsecrequest(struct sk_buff *skb,
- 			    uint8_t proto, uint8_t mode, int level,
--			    uint32_t reqid, uint8_t family,
-+			    uint32_t reqid, uint16_t family,
- 			    const xfrm_address_t *src, const xfrm_address_t *dst)
- {
- 	struct sadb_x_ipsecrequest *rq;
+base-commit: 552c50713f273b494ac6c77052032a49bc9255e2
 -- 
-2.34.1
+2.51.0
 
 
