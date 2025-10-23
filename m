@@ -1,132 +1,196 @@
-Return-Path: <linux-kernel+bounces-867151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB035C01ACF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:13:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA00C01BA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132E718898BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BF9E3BB377
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42990322C99;
-	Thu, 23 Oct 2025 14:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442F0328601;
+	Thu, 23 Oct 2025 14:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZexjWfku"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pU+Mn0X9"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF5E1E9905
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3C13277B8
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761228820; cv=none; b=Rq8mCeZRDxkVXsBovy+2CrFmnwpbNA1t/MQeVCH2JYgOQneN5BJnFOSC8QjZvnPR/ujO3We3H+TejaGC/T57Q/DdaXUFBqi7tzKlCKurH+Cuw3YGKxNo/U/Fj3PWTUsZKbGx41zWH2f0kH/p0HDBF4AnDaMxvzxEcEFP/kWMZ7E=
+	t=1761228824; cv=none; b=riLd3WasMK40V4EVFgu8x131vD3wjgYyb3o8+3ZATabiv6mRSM8yBAFgeEb3Ntgc4fHS9dXWv2KRp7oY8ZbInbZWxwk3RW6hwQT1yUCvy3PdyADEAHzaFww5UYZ05jWdDPIvtVC8ZgSePZJtqClnHxo3zeXQHBCqh1oKJOJaho0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761228820; c=relaxed/simple;
-	bh=cZpeLUAcuryHPcdrxITI066SvmIhzzKTwSENhSqSg38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S7DE4xQGPd59YYUSZHDzAgqwJeeeSn5wfTUXF3Q96TJbDVhBwXVqfymwV+qB/CwDuQUDXDkOOwbOVlYuBCPQEXcSrLLXAV5UTHm2OsIMZ6oXTu5a14AtewJ6jX5XVmt5lDgIuwPBfNvw2gnnT2HDTxc0yOTyhgXGS8y6A2x2IO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZexjWfku; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B61FC4CEFF
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:13:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761228820;
-	bh=cZpeLUAcuryHPcdrxITI066SvmIhzzKTwSENhSqSg38=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZexjWfkuM1Mnrohl/Rfjbhz03Qh2y244gv0V1ExhgW2AYGEX3k9CHHb6UVonzu4Uc
-	 jQY9dsDPUSlqV+y3IJ2LLJc6yc9E0pD0EEO1fC7WE7TS69zMaE40YWnEkeVX1quzAX
-	 qjJ+v09+zTlULgnrE/XIyMjlRL4timW5IcK2uBR+2UrKb9nAM0WsRBwHRUJpmlGexW
-	 zqbULJN+LWfhm+g9gAIEsJWUwWwIxOkM6lDlxvkA8ZRTauRthqrliZlfgcHPn+5Brr
-	 nFptX+i2+AcyKyvhcD/I1BHQli4STcY/oAkMIKu2jxyCgejYoInS6wvgN8K8uFOK/w
-	 kSZCHruE8WoOQ==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57bd482dfd2so955332e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:13:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWM7feLUKbUjnx7cZ7faylIcbTWL1y2VKsqnG1tZKqq+P/xU0+h2EGbqOtoUoVaI9GglU5p8i3Stf1zZKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzBO9c2nlhHFIekO6y/si5dO7xaH4UQ0pXB2AL608SPIv/CvLs
-	8wFT0cIOgdvHSF9MaDhIAcaZSYlIQ3QAmIsOAcnolE0j81PWwd+Ebv+71rm94c++KNUJyEXlY10
-	/WUJAZbsSr3eUBY5yUuowh6ZgUn+zaD0=
-X-Google-Smtp-Source: AGHT+IHO6/AXibCvANwIPz1i1SVGnWXIEXzs5+ih5K1pmNk7GVSQwJgh9sM1FbWbV7Sjq21NzIM2aNTWjm+g/kX+AtQ=
-X-Received: by 2002:a05:6512:ad4:b0:592:f330:217 with SMTP id
- 2adb3069b0e04-592f330065fmr2006781e87.31.1761228818734; Thu, 23 Oct 2025
- 07:13:38 -0700 (PDT)
+	s=arc-20240116; t=1761228824; c=relaxed/simple;
+	bh=Uwo+aYqg5B2e+9HKK6ZZffaGQmJz/+R31BTiwfyuubU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvGQrO1jZ6/gqnd/I3ZyU0JYtebkfN68I/OEE8B7suyYCpyfACJyh3331Geg383/j3cgOYejUyzKXGMdajzE6gesxzR3MK1yQIifJUI/sXXuHuzLTe+BM17qdcmrnuWPlcQnGrqakNTHG2/SVdfJNN81YBQvMf014D37AUac6vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pU+Mn0X9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N7YJT7011783
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:13:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=bxlmW53Ze95tx/Dvnq3bdZa2
+	THJyIwU6ELjaUv9Gq8M=; b=pU+Mn0X9jNXUt1EVLox7A5LY7XOubdiPbjYo+RRx
+	W1M2o4bBX9bF3cgjRLj2g8kBIbNZUvTjym5lZj1bm3LKCH80/Z+ImWiL69lKXOpW
+	mYHS1tSAu0Ow4LmopH2i1pxtRx4NQSU9P2Tfq8vBpgmhD5GiAF5Nv599R4+zL0Se
+	OOHtoenOEZlvDm2WmnAdEXgBWKSgKEVcqdlzaLQbai0MNXIvsB6/AyDeq09602O4
+	D5xftRE6H8h0z7XnUg4679p8+4TvGOIZdGYbxtPwu38NkTUGI143wDnFfLd2Zmts
+	Co2tGIXbTDruXTQb6tGIQ77H2SzVXj+87+bKdxgGRAGEAQ==
+Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com [209.85.222.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49y524avax-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:13:42 +0000 (GMT)
+Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-932e3a8a82dso4910069241.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:13:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761228821; x=1761833621;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bxlmW53Ze95tx/Dvnq3bdZa2THJyIwU6ELjaUv9Gq8M=;
+        b=E0/boFUizS1oj24cSFud7rkTXrfIFC0lseN2Y0JtVXtCBok+GTC+dKuWk+0JZdW4e2
+         AhSxHhg273xSESqT5LwXJTCooizrpuzaV/gN9wVZhsYEdlxD6UjOU4EH6x56iqw4so6C
+         fyIGa/aCd5INW+ngV99dCmsVdAkeDHvgvup71h3M0ItZQf/SyFG68fT1qE4GqiOiMPlf
+         o6kMMO7XL8u67XdmbeVvVPDr2NfVY8SizAP0LOLLw2NcxnxYXIAGyxl2pTIc3GUfVt5X
+         eTuXEharIXNeiv/jejEhYiRYNQbH/psZhuhF3melkl2cCu8bi+Rh3fx04rEHHSALYk2j
+         UVug==
+X-Forwarded-Encrypted: i=1; AJvYcCWDoxnNZdXXgImwDP1lGFwsilcx1tiXlzaSXhR7U2+Xh1eP8mKTH6moH034CDYfa8P7wLoQM4IgYmUykzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwNkkMK6GkbMwopcQmXW9XJg3bowHP66fO1+9zS6xa8Eu4NX0g
+	mWmX83l8zC9TqHheRGHdi3IED5k/CAbKZLY1c9jEI5wkOo/9V36ceC4SBHgL2oCA/2+DyeauD2J
+	b7lOarLWD6DL7oRcORAvqM14dFKUlsl8bZH5jeExn4MICUxIcFDlMBNvDYynoH+tIr4Y=
+X-Gm-Gg: ASbGnctblS11L7fmXUQKd07pMZ3uiwGUAjdNIZMbHTn8Yoli6XUXCOCmmkxnDoDTUdo
+	YSofgkFsDc7z0BxQlpF1tr31VkFfxSEC7JMsk2pES8ep6KI6ds/44dfBwR7NgeMMx730/LumDLd
+	MGSvJzJ0lawSUqYkQm1o4iNKx+pP5eCWRvqWBxRrDYB3A5375btcba1S8vmMgnCGx+LXdFpgBaU
+	hB/KcMfVwmLxsvLKisJI6CtUR+I+i0Ff2YDvRREQWxZGAzqI/klcIhjVcerIZyA9ljrUjuB2WXZ
+	eBu98sVULzRXD9XGFNCUaoSICepGaI8AxRag/jKlMnf5ig99ZzfOAsnT2ycG9HQAvoB4bIsWSff
+	Xh73MAfWia0xDtK3wgjXEbmz8KiP++KhsjBC/Shq0BBIaab7LWTcaYZBGQD5Wy6+Ys7ByRiQMnD
+	ZsJ5vW6MXY6fmG
+X-Received: by 2002:a05:6122:810:b0:54a:a58f:e989 with SMTP id 71dfb90a1353d-556a23d1b76mr1496699e0c.8.1761228820717;
+        Thu, 23 Oct 2025 07:13:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG5TgXEWMCaYgffAKUiCdHKVEM+aaviF0rQ5ddKDKB+LpphL8HT0eGhK1PfL8c/RkWPBJR2bg==
+X-Received: by 2002:a05:6122:810:b0:54a:a58f:e989 with SMTP id 71dfb90a1353d-556a23d1b76mr1496672e0c.8.1761228820138;
+        Thu, 23 Oct 2025 07:13:40 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378d66bbc2bsm4790101fa.5.2025.10.23.07.13.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 07:13:39 -0700 (PDT)
+Date: Thu, 23 Oct 2025 17:13:37 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: broonie@kernel.org, gregkh@linuxfoundation.org, srini@kernel.org,
+        rafael@kernel.org, dakr@kernel.org, make24@iscas.ac.cn, steev@kali.org,
+        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, abel.vesa@linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2] regmap: slimbus: fix bus_context pointer in regmap
+ init calls
+Message-ID: <aduio24mrmn2n5ioznn4qqvxohka5ellynbhsfuai5ybupja7n@alr3vpmtayxa>
+References: <20251022201013.1740211-1-alexey.klimov@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022220755.1026144-1-usamaarif642@gmail.com> <20251022220755.1026144-3-usamaarif642@gmail.com>
-In-Reply-To: <20251022220755.1026144-3-usamaarif642@gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 23 Oct 2025 16:13:26 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEYYSc8=qMmDW6E2kRFawK34okGvq=rTuhvv5hVPsd-iw@mail.gmail.com>
-X-Gm-Features: AS18NWARiLhzK3lWZNO_ocfdywm7tHpCV6F_eJg7_7UwW2CLn2dF03GBv3x4pbY
-Message-ID: <CAMj1kXEYYSc8=qMmDW6E2kRFawK34okGvq=rTuhvv5hVPsd-iw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] efi/libstub: Fix page table access in 5-level to
- 4-level paging transition
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: dwmw@amazon.co.uk, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, x86@kernel.org, 
-	apopple@nvidia.com, thuth@redhat.com, nik.borisov@suse.com, kas@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, kernel-team@meta.com, 
-	Michael van der Westhuizen <rmikey@meta.com>, Tobias Fleig <tfleig@meta.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022201013.1740211-1-alexey.klimov@linaro.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDE1NSBTYWx0ZWRfX1x+XSrTUGcuV
+ 1wxXxDTcMxSW5mRD3CPGD4lKZDbHXfvop6WNRWR/jJwDOzIKAGjPvuJ13Zn3aew4zQQGDrZoZ88
+ URC6eVUMRYYaOGvs9B6w9pLo6mKsj54v8YLvZNOQst0Zh3+EGVs7GxuhoTvfLS59Aael2mlnwPN
+ RuxticHj9VDQXC9KmW9Vo2r0GSczyv+yUDkoOK2O9d3fmD5q3/W+1gE5P9iX966wXL35KjMLhEC
+ ZLZPp+8suf501HjJ56pyJrrKm2xPLHWsDAyRrB4HZyOHNrNoMNjQSU8wsrx2f/RcBdW61jSEgnc
+ jKvj2mEC3TKW9x1IagIsRwgx0l1+t12BmtVsMMjE0tYBfsRylStjvj31KFTWN+3Gq5hJPLEiYDH
+ E9H79CO3gZN8UwfgoB79K4A8GCkh0g==
+X-Authority-Analysis: v=2.4 cv=Uotu9uwB c=1 sm=1 tr=0 ts=68fa3816 cx=c_pps
+ a=KB4UBwrhAZV1kjiGHFQexw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=FQcGyLhEAAAA:8 a=KKAkSRfTAAAA:8 a=PG27YUxyvBvumL9L9GoA:9 a=CjuIK1q_8ugA:10
+ a=o1xkdb1NAhiiM49bd1HK:22 a=09nrmc514_O-33C_6P4G:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: glkd-oWQMQ1UMnv0mwLGEfyroMyLbRrJ
+X-Proofpoint-ORIG-GUID: glkd-oWQMQ1UMnv0mwLGEfyroMyLbRrJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-23_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 impostorscore=0 priorityscore=1501 clxscore=1015 spamscore=0
+ adultscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510220155
 
-On Thu, 23 Oct 2025 at 00:08, Usama Arif <usamaarif642@gmail.com> wrote:
->
-> When transitioning from 5-level to 4-level paging, the existing code
-> incorrectly accesses page table entries by directly dereferencing CR3
-> and applying PAGE_MASK. This approach has several issues:
->
-> - __native_read_cr3() returns the raw CR3 register value, which on
->   x86_64 includes not just the physical address but also flags Bits
->   above the physical address width of the system (i.e. above
->   __PHYSICAL_MASK_SHIFT) are also not masked.
-> - The pgd value is masked by PAGE_SIZE which doesn't take into account
->   the higher bits such as _PAGE_BIT_NOPTISHADOW.
->
-> Replace this with proper accessor functions:
-> - read_cr3_pa(): Uses CR3_ADDR_MASK properly clearing SME encryption bit
->   and extracting only the physical address portion.
-> - mask pgd value with PTE_PFN_MASK instead of PAGE_MASK, accounting for
->   flags above physical address (_PAGE_BIT_NOPTISHADOW in particular).
->
-> Fixes: cb1c9e02b0c1 ("x86/efistub: Perform 4/5 level paging switch from the stub")
-> Co-developed-by: Kiryl Shutsemau <kas@kernel.org>
-> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> Reported-by: Michael van der Westhuizen <rmikey@meta.com>
-> Reported-by: Tobias Fleig <tfleig@meta.com>
+On Wed, Oct 22, 2025 at 09:10:12PM +0100, Alexey Klimov wrote:
+> Commit 4e65bda8273c ("ASoC: wcd934x: fix error handling in
+> wcd934x_codec_parse_data()") revealed the problem in the slimbus regmap.
+> That commit breaks audio playback, for instance, on sdm845 Thundercomm
+> Dragonboard 845c board:
+> 
+>  Unable to handle kernel paging request at virtual address ffff8000847cbad4
+>  ...
+>  CPU: 5 UID: 0 PID: 776 Comm: aplay Not tainted 6.18.0-rc1-00028-g7ea30958b305 #11 PREEMPT
+>  Hardware name: Thundercomm Dragonboard 845c (DT)
+>  ...
+>  Call trace:
+>   slim_xfer_msg+0x24/0x1ac [slimbus] (P)
+>   slim_read+0x48/0x74 [slimbus]
+>   regmap_slimbus_read+0x18/0x24 [regmap_slimbus]
+>   _regmap_raw_read+0xe8/0x174
+>   _regmap_bus_read+0x44/0x80
+>   _regmap_read+0x60/0xd8
+>   _regmap_update_bits+0xf4/0x140
+>   _regmap_select_page+0xa8/0x124
+>   _regmap_raw_write_impl+0x3b8/0x65c
+>   _regmap_bus_raw_write+0x60/0x80
+>   _regmap_write+0x58/0xc0
+>   regmap_write+0x4c/0x80
+>   wcd934x_hw_params+0x494/0x8b8 [snd_soc_wcd934x]
+>   snd_soc_dai_hw_params+0x3c/0x7c [snd_soc_core]
+>   __soc_pcm_hw_params+0x22c/0x634 [snd_soc_core]
+>   dpcm_be_dai_hw_params+0x1d4/0x38c [snd_soc_core]
+>   dpcm_fe_dai_hw_params+0x9c/0x17c [snd_soc_core]
+>   snd_pcm_hw_params+0x124/0x464 [snd_pcm]
+>   snd_pcm_common_ioctl+0x110c/0x1820 [snd_pcm]
+>   snd_pcm_ioctl+0x34/0x4c [snd_pcm]
+>   __arm64_sys_ioctl+0xac/0x104
+>   invoke_syscall+0x48/0x104
+>   el0_svc_common.constprop.0+0x40/0xe0
+>   do_el0_svc+0x1c/0x28
+>   el0_svc+0x34/0xec
+>   el0t_64_sync_handler+0xa0/0xf0
+>   el0t_64_sync+0x198/0x19c
+> 
+> The __devm_regmap_init_slimbus() started to be used instead of
+> __regmap_init_slimbus() after the commit mentioned above and turns out
+> the incorrect bus_context pointer (3rd argument) was used in
+> __devm_regmap_init_slimbus(). It should be just "slimbus" (which is equal
+> to &slimbus->dev). Correct it. The wcd934x codec seems to be the only or
+> the first user of devm_regmap_init_slimbus() but we should fix it till
+> the point where __devm_regmap_init_slimbus() was introduced therefore
+> two "Fixes" tags.
+> 
+> While at this, also correct the same argument in __regmap_init_slimbus().
+> 
+> Fixes: 4e65bda8273c ("ASoC: wcd934x: fix error handling in wcd934x_codec_parse_data()")
+> Fixes: 7d6f7fb053ad ("regmap: add SLIMbus support")
+> Cc: stable@vger.kernel.org
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Cc: Ma Ke <make24@iscas.ac.cn>
+> Cc: Steev Klimaszewski <steev@kali.org>
+> Cc: Srinivas Kandagatla <srini@kernel.org>
+> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 > ---
->  drivers/firmware/efi/libstub/x86-5lvl.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/firmware/efi/libstub/x86-5lvl.c b/drivers/firmware/efi/libstub/x86-5lvl.c
-> index f1c5fb45d5f7c..34b72da457487 100644
-> --- a/drivers/firmware/efi/libstub/x86-5lvl.c
-> +++ b/drivers/firmware/efi/libstub/x86-5lvl.c
-> @@ -81,8 +81,11 @@ void efi_5level_switch(void)
->                 new_cr3 = memset(pgt, 0, PAGE_SIZE);
->                 new_cr3[0] = (u64)cr3 | _PAGE_TABLE_NOENC;
->         } else {
-> +               pgd_t *pgdp;
-> +
-> +               pgdp = (pgd_t *)read_cr3_pa();
+> 
 
-Shouldn't this be using native_read_cr3_pa()? And is there any reason
-to re-read CR3 here, rather than update the code that populates the
-cr3 variable? The preceding other branch of the if() should probably
-use the same sanitised value of CR3, no?
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 
->                 /* take the new root table pointer from the current entry #0 */
-> -               new_cr3 = (u64 *)(cr3[0] & PAGE_MASK);
-> +               new_cr3 = (u64 *)(pgd_val(pgdp[0]) & PTE_PFN_MASK);
->
->                 /* copy the new root table if it is not 32-bit addressable */
->                 if ((u64)new_cr3 > U32_MAX)
-> --
-> 2.47.3
->
+-- 
+With best wishes
+Dmitry
 
