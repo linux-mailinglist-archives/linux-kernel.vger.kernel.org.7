@@ -1,106 +1,137 @@
-Return-Path: <linux-kernel+bounces-866257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F99BFF4FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:14:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD684BFF500
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D6A574EA7B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:14:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 32A844ED5C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4163C27A465;
-	Thu, 23 Oct 2025 06:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7FD21A436;
+	Thu, 23 Oct 2025 06:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="yLIcTdH6"
-Received: from sg-1-23.ptr.blmpb.com (sg-1-23.ptr.blmpb.com [118.26.132.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vqOPnXgR"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8B7279324
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4961E502
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761200082; cv=none; b=a8YA4lqwfopK3TSdFgyJqeHVyGXn4OX7M0UtgzOPvSY/nS/CIk0D7WP2qnkVnzb/Fk0voUOb06rxol36i52LJ9HuyEH1Pt1AUuJLOQcCL64W9H1TTSNwIk96AwBshZLOX8HxQ+Jrrvnw1IzOTagzeq8Bl0s/8jtpqUprvO0O1tM=
+	t=1761200164; cv=none; b=G4h5gyx8ulpKKRwwn5BTpeyS88aS6c/oMijjJfGRakYG18AowbndboxxyhkxtPZo1OxRJ7tDJQWZ+b9/lNdTe6S/54ON/zLo9aSSZphLVXNmrAnyMYBYTdmPd2YexCfVUo+SkfaZ1XJ59RyzON+Svp0LQmI6eLJb5/wKtsWCFh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761200082; c=relaxed/simple;
-	bh=ZL5TWyyHbxmT4xy0Sv8uektcWHxntirjX+FvT7x5qeM=;
-	h=Message-Id:In-Reply-To:From:Subject:Date:To:Cc:References:
-	 Mime-Version:Content-Type:Content-Disposition; b=Dbvz8X0uIUDPctucAkS0Nhs80rSWAqn6T5rj+0nFeD3Ek31cwujHaOtQux090M7balFuxYMpC2WDP8Rpil1quWZBhWenXJsRzVVIm0qds3FfFwrm0NyNLvgNkFSib5RkEQDWNoh7KUW07vZ7gxX0zovZ7YAS7UUOdBAEROKuvhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=fail smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=yLIcTdH6; arc=none smtp.client-ip=118.26.132.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fnnas.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1761200066;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=I0DeQvV/YRBGnIAotey1VEst0KMw5VbVrMVkBCLAcS0=;
- b=yLIcTdH6+z79XscLsh99AbyejGWdjkoO75Mq/1190Z6owoTGlApT5mA0oMqCmNGNUecdVj
- oY9P/lIQLO53BhC/BU++aEkXXfd1f8HnOmaCdr+zOa37aL+YAEaAEeOOrH+KrMjFg5ttwS
- FRAoyebEIMAnmT+1wNZl9R9fpoHnxmXF4RCHVDneHqxk2hbDGR5t0UhJ1wHwVHJkVsTXwH
- 1EpoYDvsWL7I7fwmg5BlceLHQKQSelZx56+dZb+KZPIBPgs52umsZEaIl7rl7KzrKJf5KH
- QEPW1VlyTjP9UPqF3/U8zUk4EO4rXZmiGcS1WFvvVcpkdntmPie3NNTG2dJuWg==
-Message-Id: <vwzui4ahytskgcffiei2grbypf5jgebwku5qevdyxja463t4fv@w6kycwc47qwf>
-X-Original-From: Coly Li <colyli@fnnas.com>
-In-Reply-To: <20251023060629.801792-1-tanze@kylinos.cn>
-Received: from studio.lan ([120.245.65.31]) by smtp.feishu.cn with ESMTPS; Thu, 23 Oct 2025 14:14:23 +0800
-From: "Coly Li" <colyli@fnnas.com>
-Subject: Re: [PATCH v3] bcache: Use vmalloc_array() to improve code
-Date: Thu, 23 Oct 2025 14:14:22 +0800
-To: "tanze" <tanze@kylinos.cn>
-Cc: <john.g.garry@oracle.com>, <kent.overstreet@linux.dev>, 
-	<linux-bcache@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Lms-Return-Path: <lba+268f9c7c0+bcc63c+vger.kernel.org+colyli@fnnas.com>
-References: <20251023060629.801792-1-tanze@kylinos.cn>
+	s=arc-20240116; t=1761200164; c=relaxed/simple;
+	bh=XL+bJoTceH2UkMnJaD6SFvvRmec44qTz1JVZhc60Ips=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IqUxUjdW+Bi5acyT/PFjty0p+aIjQbr6ULMW/rJny0sVRiJid7s5nlx4TEE5i6OSS1bEqoskfGeD31/wAoLCVW4wvCOnGqTV87KYO6/2mL+owNMJ/HcMKQn3jISUol1Jk1+Fm+jHgWQVLswafH9Y+ezEKmkiR6Ioa2UnHoBK1Y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vqOPnXgR; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761200158; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=hhj1VLtSYO+AfqlDWQL1li1LYgXwZ69chK1m/bx772o=;
+	b=vqOPnXgRdA37HK4z4noYbJaw4QlF9pxXCjyjLkPddbfdpHMKq75SO49l2ikJ0XN/+plkf6Y/0knJIPpuYFNqSZK+pIv0sVWjOJ+jnBqZQVWv7t1HWYBdiItwO2Fh8YDBzj9s+d6EwP2Op2WugK3tXvxMcjWonfpS0MrUejx5zeM=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0Wqq5ZkD_1761200155 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 23 Oct 2025 14:15:56 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
+ <will@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,  David
+ Hildenbrand <david@redhat.com>,  Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>,  Vlastimil Babka <vbabka@suse.cz>,  Zi Yan
+ <ziy@nvidia.com>,  Baolin Wang <baolin.wang@linux.alibaba.com>,  Ryan
+ Roberts <ryan.roberts@arm.com>,  Yang Shi <yang@os.amperecomputing.com>,
+  "Christoph Lameter (Ampere)" <cl@gentwo.org>,  Dev Jain
+ <dev.jain@arm.com>,  Anshuman Khandual <anshuman.khandual@arm.com>,
+  Yicong Yang <yangyicong@hisilicon.com>,  Kefeng Wang
+ <wangkefeng.wang@huawei.com>,  Kevin Brodsky <kevin.brodsky@arm.com>,  Yin
+ Fengwei <fengwei_yin@linux.alibaba.com>,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  linux-mm@kvack.org
+Subject: Re: [PATCH -v2 2/2] arm64, tlbflush: don't TLBI broadcast if page
+ reused in write fault
+In-Reply-To: <CAGsJ_4z7SASir4gWThfePdnvw82TB8E6rXnzJ=CieaFnJpJt7g@mail.gmail.com>
+	(Barry Song's message of "Thu, 23 Oct 2025 18:39:39 +1300")
+References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
+	<20251013092038.6963-3-ying.huang@linux.alibaba.com>
+	<CAGsJ_4xaA8QRjP9H=n1hQfEfGop7vOd5Y=J+KQzuOyfa8GK-kQ@mail.gmail.com>
+	<87a51jfl44.fsf@DESKTOP-5N7EMDA>
+	<CAGsJ_4zPH0fwBOLQwh1y6jG3tCXHLGRCTyVVSCWb+NfLCEMV0Q@mail.gmail.com>
+	<871pmv9unr.fsf@DESKTOP-5N7EMDA>
+	<CAGsJ_4zW6ogVdi=t9JCuvGD9N21mA_ORXRCakw4Av68d9n+DDw@mail.gmail.com>
+	<875xc78es0.fsf@DESKTOP-5N7EMDA>
+	<CAGsJ_4zKGS-Xd-58ufXGoyRfaZWd8wTgv0b6ibHJ2aS14mQqtw@mail.gmail.com>
+	<87a51j6zg7.fsf@DESKTOP-5N7EMDA>
+	<CAGsJ_4y32i3aNYPum=8J3_Kt6vOSisr_jg6btB-YG1uQBqHG7Q@mail.gmail.com>
+	<87ms5j4444.fsf@DESKTOP-5N7EMDA>
+	<CAGsJ_4xhJSLnXOZy4kPmnif5Paq+OPN_Ww+rPk2WO4-ADSC0Yw@mail.gmail.com>
+	<87qzuu1kg2.fsf@DESKTOP-5N7EMDA>
+	<CAGsJ_4z7SASir4gWThfePdnvw82TB8E6rXnzJ=CieaFnJpJt7g@mail.gmail.com>
+Date: Thu, 23 Oct 2025 14:15:53 +0800
+Message-ID: <874irqywh2.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 02:06:29PM +0800, tanze wrote:
-> Remove array_size() calls and replace vmalloc(),
-> due to vmalloc_array() being optimized better,
-> using fewer instructions, and handling overflow more concisely.
-> 
-> Signed-off-by: tanze <tanze@kylinos.cn>
-> 
-> ---
-> Hi, Coly Li.
-> 
-> Thank you for your prompt reply. 
-> I have resubmitted the v3 version of the patch, 
-> with revisions made as per your requirements.
-> 
-> Best regards,
-> Ze Tan
-> ---
-> Changes in v3:
-> - The empty line has been deleted.
-> ---
->  drivers/md/bcache/sysfs.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-> index 826b14cae4e5..7bb5605ad7fb 100644
-> --- a/drivers/md/bcache/sysfs.c
-> +++ b/drivers/md/bcache/sysfs.c
-> @@ -1061,8 +1061,7 @@ SHOW(__bch_cache)
->  		uint16_t q[31], *p, *cached;
->  		ssize_t ret;
->  
-> -		cached = p = vmalloc(array_size(sizeof(uint16_t),
-> -						ca->sb.nbuckets));
-> +		cached = p = vmalloc_array(ca->sb.nbuckets, sizeof(uint16_t));
->  		if (!p)
->  			return -ENOMEM;
-> 
+Barry Song <21cnbao@gmail.com> writes:
 
-It looks good to me. I take it into my for-next. Thanks.
+>> >
+>> > A:
+>> > write pte
+>> > don't broadcast pte
+>> > tlbi
+>> > don't broadcast tlbi
+>> >
+>> > with
+>> >
+>> > B:
+>> > write pte
+>> > broadcast pte
+>>
+>> I suspect that pte will be broadcast, DVM broadcast isn't used for
+>> the memory coherency IIUC.
+>
+> I guess you=E2=80=99re right. By =E2=80=9Cbroadcast,=E2=80=9D I actually =
+meant the PTE becoming visible
+> to other CPUs. With a dsb(ish) before tlbi, other cores=E2=80=99 TLBs can=
+ load the new
+> PTE after their TLB is shoot down. But as you said, if the hardware doesn=
+=E2=80=99t
+> propagate the updated PTE faster, it doesn=E2=80=99t seem to help reduce =
+page faults.
+>
+> As a side note, I=E2=80=99m curious about the data between dsb(nsh) and d=
+sb(ish) on
+> your platform. Perhaps because the number of CPU cores is small, I didn=
+=E2=80=99t see
+> any noticeable difference between them on phones.
 
-Coly Li
+Sure.  I can git it a try.  Can you share the test case?
+
+>>
+>> > tlbi
+>> > don't broadcast tlbi
+>> >
+>> > I guess the gain comes from "don't broadcat tlbi" ?
+>> > With B, we should be able to share many existing code.
+>>
+>> Ryan has some plan to reduce the code duplication with the current
+>> solution.
+>
+> Ok.
+
+---
+Best Regards,
+Huang, Ying
 
