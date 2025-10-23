@@ -1,142 +1,227 @@
-Return-Path: <linux-kernel+bounces-866517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08F7BFFFB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:43:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F1DBFFFD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 619C73401A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:43:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA07D188CD99
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77B53019CE;
-	Thu, 23 Oct 2025 08:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E8C302149;
+	Thu, 23 Oct 2025 08:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJjFc9O5"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="k6mnvdMx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EXhO1lOU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ruW/HzMQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/Z7/KBwY"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC042F3C26
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59463019B5
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761208998; cv=none; b=pRFGPtK2fSH0Hmixszr2kAKheBSMjfuZ3YHwhBtEuL2vMoIpGpOKoJQtB7XvyvCqMQ0BZQDLsqXDWaBnc1pLU79C4SBntHqr7lZ4e1BWZa0FMBPnyhcoi51H6ZMkXfYpV+j/ZbiE8XR+AMpOS+OGcM/zPNciHePEXk5rSB8dSWY=
+	t=1761209090; cv=none; b=OLs7sjw069QUJnpQf5VwMx18UaMXdlrz9LQFBokyDAsgVJXcDyxW8rqRe0zSwflqEMwCZmSvxALGk1FA8QDvHCz+M9PiRrkySmsLPdyUb5WgF/csniWRhQPoVxS16BxUB38Jxxyb+ulULmqbi57wb/1L0qvLcVF2wa63r9PSkNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761208998; c=relaxed/simple;
-	bh=h277j0BdJAJJfrnn3LPaDfuaMi5C0Xtj1wAoSJszDQw=;
+	s=arc-20240116; t=1761209090; c=relaxed/simple;
+	bh=F3OTy4b16LzApbKeCK9CQdP9sQX2nXedga0zslOc0IU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=saHhopHsESQThpSGs5EBAtvisQogTfzkFjmD643Hvwm7Fdq4ESlW6iWHEMuVTYWF3Od2kJ7cbc2uPZdJ/7PUEm8FnLGJVuZGQ/xAAKRzjvLku5VM1KPUwr8ph9w6JuJNj6jtIXC36c4qz9kyfSDu6AkDWoMHAJ9iJHYGumqxPbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJjFc9O5; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b5579235200so357571a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761208995; x=1761813795; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KqheznwEahoAcIc95fCF8gQr8sHNf2ct8iY0MfSeg6g=;
-        b=AJjFc9O5UZLxwUqH5yBwCk4w0whgnAKEYXROjOGZwucwIMD8k04nBxjBxte0aZY8NL
-         E1+oAJwO0iYWuzKZ45foqRGzebxOSm5+4M1koj0jxxDntetjG/en0wMr4Ufz5BczRs8t
-         5e23RVZPdMjoDm/FW4u53FMltS0HHnImtwB21Hj2GE6B+sU7Ws85iTm7xNSFDRvW9tD/
-         AeWa8yRnmsiyNM6ZKl26R59nDcWfllI9i5zYs1driEyPMLkc6SXVi3wuSbnfPI0FG95p
-         CRHi9eY+JOWvlHLRgV73oDrvOHgRAPZqNHGigmFUYr5ib72OyLXpgi9NqyLPYDIuDsiV
-         T8GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761208995; x=1761813795;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KqheznwEahoAcIc95fCF8gQr8sHNf2ct8iY0MfSeg6g=;
-        b=G+cLxJwkfINZNZOwwT4scl51vkOwfc1lz5XLl5hljQcnjWmfQeOid3astPgkHykEMA
-         iC7yVLku0IBU6fikAC8kxVbVGEQmnaim5zjw0DSFUDjx6Wqq7EByA8VxS/E8eL9uxHet
-         DkHKxAD/GMXQGqohDjNO151R+9JzMg0sVkbE4HSz7+lMgQoHDSXN9XWQ11rDv9CznD16
-         LK5EhgWqYOELZVzKSWm4Htxi+7L0bGyuDhqDSBElqLY1oxnXitRs4siDcbyN5gZRi8rM
-         aNeaXQ5qgjMdM8aDNwyf1hmYqxOvqwRHT37nnfD43M4ETc3YJdotopMFEqEz/n1sXQB3
-         2LOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAFXYubjDjePJsA8lBuZyco8+p+bh8uAq3mNNuPEMPCk3ui34HPX05gLE3u9zSgS+5Ru3MQ4MO5+lFn6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh+j4OaEgYgEvNweXAmxnz25MZtthNYjtEAE8zrT99O2XPA6HK
-	sHc1WIXzJLpUzjZA4bI0RHFcUDE9IeEPHMb5aKrOL3QPMX/iX8FAQRtX
-X-Gm-Gg: ASbGncsK5jNvxrjmtjLykINPf6D+yXb6/uv/xAlpfuo0p4uYw0FPk8L6rrY5ypsFXLM
-	60IRNNY9e2sHErTj1BVosYvAiSGwJoRA2edTIhzS5l+Bc8G1WeHu9eWiNV937+wEm3WbwUyH81g
-	V6q2sgDAzdl5ho1byiVKF9+kd4eA0ZEn/GXHMxcCJfifFepCRN469Jc4C6xQu0N6mGzDssDyYJo
-	I3RS6LB8HXMYTy0nRkOKkB/PBI9HowoOTPTdBgUjzhLDDDJ6DLV6qKwZlOHoJZ5qGoG0lbzIdMd
-	2oO0rdAM7efyu+/0g+3d7zMzsXjE2k/NTHKh/3+ZqRan2g6ASadNQUX1Ynos57Qb9jgIg5vtLzG
-	IS3Qyx1yb7EksYayHSfgL+rxGs7aWRaCnDO/T5aMRnTlfxbCkbZDon68HdTbGe2a453bFoo8L7K
-	rLlHxyFqvCsPI=
-X-Google-Smtp-Source: AGHT+IHEOgGN5yNyJpbzAdkY2kAXHAbs03hm9RTq1jzAuwC08hoEOkO/K6ScXyZjbWhH2WaZz9e7+g==
-X-Received: by 2002:a17:903:1c9:b0:278:9051:8ea9 with SMTP id d9443c01a7336-2946e117e69mr21542875ad.40.1761208994856;
-        Thu, 23 Oct 2025 01:43:14 -0700 (PDT)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946e21fbbdsm15563255ad.99.2025.10.23.01.43.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 01:43:13 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 94D994206924; Thu, 23 Oct 2025 15:43:11 +0700 (WIB)
-Date: Thu, 23 Oct 2025 15:43:11 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Networking <netdev@vger.kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Michael Grzeschik <m.grzeschik@pengutronix.de>,
-	Avery Pennarun <apenwarr@worldvisions.ca>
-Subject: Re: [PATCH net-next v2] Documentation: ARCnet: Update obsolete
- contact info
-Message-ID: <aPnqn6jDiJkZiUfR@archie.me>
-References: <20251023025506.23779-1-bagasdotme@gmail.com>
- <295b96fd-4ece-4e11-be1c-9d92d93b94b7@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i4JaiTs9Ro3eZ2idCt6OQ7UCwF/hnlAq4giPQhyk6NFhEklEsf2rcsvvrwimMktQ3o6TVtfUt5s7Wprd5D2Tf6GExP8+E7ZjF8yD2L6Xblt/rLllbYug0NGY2e3K7fTAwZ3HI4y3Rnq8L8tyNJohMyMChGoEIiHqvUhaCLN7zsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=k6mnvdMx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EXhO1lOU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ruW/HzMQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/Z7/KBwY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9B9691F750;
+	Thu, 23 Oct 2025 08:44:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761209082; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uT++X15nR02aN95TsJbUkl1xeZRDQ6iRqUBMrz4vKM0=;
+	b=k6mnvdMxOOpSPNL5d2igOGf95Zo+FrXzFx+SdSmGphG+ZFzpd7WoJd0t7wSiq6uGgzzaib
+	2RS6jcTkrBE92rra2+lLDAPXeti6l0f2JC1lX3OWZHpALMR4MvykmNvGU93fcQqeJ7cd76
+	vUDd+XLiizeNFG3q0FPqiJqFppDy+a0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761209082;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uT++X15nR02aN95TsJbUkl1xeZRDQ6iRqUBMrz4vKM0=;
+	b=EXhO1lOUUuQqZySuP3Sw8w+L8D1JUVHgTaNZ0BYilxnYXBf107whjOnl85sLulm9H32B2T
+	XzhJmc1lXOv0y7Dw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761209078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uT++X15nR02aN95TsJbUkl1xeZRDQ6iRqUBMrz4vKM0=;
+	b=ruW/HzMQZkLDzw9pPT9qqsgQ0l7ce1+1ZbobIqtCys0ORZcwxiPtXlWRt+qmWhfYSA2/ZJ
+	zal2xGJmEwKqxFVE5MS/6yG0/txhoZiFetZx8kukJC6lu40r9XguMB67JzdwxUi1nAWJuZ
+	EBtVK9GjJCJgcJVauxDyEq6BJ65mROU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761209078;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uT++X15nR02aN95TsJbUkl1xeZRDQ6iRqUBMrz4vKM0=;
+	b=/Z7/KBwYMiXRHJ6O62WTvJZr2cvlPQQC19KsgBcotqbmmsRxEzzGPTZl1eTKfPtYeZOtH/
+	Zs0dyQyvMc5H0ADQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A9F61136CF;
+	Thu, 23 Oct 2025 08:44:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fiJAJvPq+WhuFQAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Thu, 23 Oct 2025 08:44:35 +0000
+Date: Thu, 23 Oct 2025 09:44:34 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	David Hildenbrand <david@redhat.com>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, 
+	Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, ziy@nvidia.com, 
+	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com, 
+	corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org, 
+	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, baohua@kernel.org, 
+	willy@infradead.org, peterx@redhat.com, wangkefeng.wang@huawei.com, 
+	usamaarif642@gmail.com, sunnanyong@huawei.com, vishal.moola@gmail.com, 
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, kas@kernel.org, aarcange@redhat.com, 
+	raquini@redhat.com, anshuman.khandual@arm.com, catalin.marinas@arm.com, 
+	tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, 
+	jglisse@google.com, surenb@google.com, zokeefe@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, hughd@google.com, 
+	richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz, rppt@kernel.org, 
+	jannh@google.com, Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: Re: [PATCH v12 mm-new 15/15] Documentation: mm: update the admin
+ guide for mTHP collapse
+Message-ID: <c62m3tyr6co7jqdrwhtp7exnewhogxtife7g6yh4gve7gqecz6@b5xpocyvifxp>
+References: <20251022183717.70829-1-npache@redhat.com>
+ <20251022183717.70829-16-npache@redhat.com>
+ <bba40f08-1b87-6b57-0e10-6e96e4d7bde6@gentwo.org>
+ <ed0887eb-6124-44ab-9d1f-1e87e9640e14@redhat.com>
+ <666ee834-396d-4a7c-be89-96c58b5c2ea8@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sYkyoOFIpjBoikjz"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <295b96fd-4ece-4e11-be1c-9d92d93b94b7@infradead.org>
+In-Reply-To: <666ee834-396d-4a7c-be89-96c58b5c2ea8@lucifer.local>
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gentwo.org,redhat.com,vger.kernel.org,kvack.org,nvidia.com,linux.alibaba.com,oracle.com,arm.com,lwn.net,goodmis.org,kernel.org,efficios.com,linux-foundation.org,infradead.org,huawei.com,gmail.com,linux.intel.com,os.amperecomputing.com,suse.de,suse.cz,google.com,cmpxchg.org,suse.com,linux.dev];
+	R_RATELIMIT(0.00)[to_ip_from(RL9fy6bbe9bsqg6ca1r59pbo74)];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[50];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
+X-Spam-Level: 
 
+On Thu, Oct 23, 2025 at 09:00:10AM +0100, Lorenzo Stoakes wrote:
+> On Wed, Oct 22, 2025 at 10:22:08PM +0200, David Hildenbrand wrote:
+> > On 22.10.25 21:52, Christoph Lameter (Ampere) wrote:
+> > > On Wed, 22 Oct 2025, Nico Pache wrote:
+> > >
+> > > > Currently, madvise_collapse only supports collapsing to PMD-sized THPs +
+> > > > and does not attempt mTHP collapses. +
+> > >
+> > > madvise collapse is frequently used as far as I can tell from the THP
+> > > loads being tested. Could we support madvise collapse for mTHP?
+> >
+> > The big question is still how user space can communicate the desired order,
+> > and how we can not break existing users.
+>
 
---sYkyoOFIpjBoikjz
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Do we want to let userspace communicate order? It seems like an extremely
+specific thing to do. A more simple&sane semantic could be something like:
+"MADV_COLLAPSE collapses a given [addr, addr+len] range into the highest
+order THP it can/thinks it should.". The implementation details of PMD or
+contpte or <...> are lost by the time we get to userspace.
 
-On Wed, Oct 22, 2025 at 09:21:43PM -0700, Randy Dunlap wrote:
-> I'm wondering about one thing in arcnet-hardware.rst:
->   it refers to www.arcnet.com.
-> Did you happen to try that web site?
-> Looks like it is something about AIoT.
+The man page itself is pretty vaguely written to allow us to do whatever
+we want. It sounds to me that allowing userspace to create arbitrary order
+mTHPs would be another pandora's box we shouldn't get into.
 
-And it's membership application form, though. (I'm on the err side to not
-enter my personal data there.)
+> Yes, and let's go one step at a time, this series still needs careful scrutiny
+> and we need to ensure the _fundamentals_ are in place for khugepaged before we
+> get into MADV_COLLAPSE :)
+>
+> >
+> > So I guess there will definitely be some support to trigger collapse to mTHP
+> > in the future, the big question is through which interface. So it will
+> > happen after this series.
+> 
+> Yes.
+> 
+> >
+> > Maybe through process_madvise() where we have an additional parameter, I
+> > think that was what people discussed in the past.
+> 
+> I wouldn't absolutely love us doing that, given it is a general parameter so
+> would seem applicable to any madvise() option and could lead to confusion, also
+> process_madvise() was originally for cross-process madvise vector operations.
 
-> I found the ARCnet Trade Association at
->   www.arcnet.cc
+For what it's worth, it would probably not be too hard to devise a generic
+separation there between "generic flags" and "behavior-specific flags".
+And then stuff the desired THP order into MADV_COLLAPSE-specific flags.
 
-That's ARCNET Resource Center.
+> 
+> I expanded this to make it applicable to the current process (and introduced
+> PIDFD_SELF to make that more sane), and SJ has optimised it across vector
+> operations (thanks SJ! :), but in general - it seems very weird to have
+> madvise() provide an operation that process_madvise() providse another version
+> of that has an extra parameter.
+> 
+> As usual we've painted ourselves into a corner with an API... :)
 
-Thanks.
+But yes, I agree it would feel weird.
 
---=20
-An old man doll... just what I always wanted! - Clara
+> 
+> Perhaps we'll to accept the process_madvise() compromise and add
+> MADV_COLLAPSE_MHTP that only works with it or something.
+> 
+> Of course adding a new syscall isn't impossible... madvise2() not very appealing
+> however...
 
---sYkyoOFIpjBoikjz
-Content-Type: application/pgp-signature; name=signature.asc
+It is my impression that process_madvise() is already madvise2(), but
+poorly named.
 
------BEGIN PGP SIGNATURE-----
+> 
+> TL;DR I guess we'll deal with that when we come to it :)
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaPnqmgAKCRD2uYlJVVFO
-o1d3AQCRe0oF2MekWkvylVGpjC6ok/H13SiWxWu7yovWlHyVCAD/eYNUs9+dyZCa
-NX/jHGU7SuQ8ikjpge0Y+EPxhi4V2Ac=
-=jNqa
------END PGP SIGNATURE-----
+Amen :)
 
---sYkyoOFIpjBoikjz--
+-- 
+Pedro
 
