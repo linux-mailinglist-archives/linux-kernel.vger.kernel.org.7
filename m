@@ -1,293 +1,308 @@
-Return-Path: <linux-kernel+bounces-867708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07BFC03550
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:11:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEA7C03556
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8541F3ACA69
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F323ADCF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813B934D93B;
-	Thu, 23 Oct 2025 20:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AEE34D4C1;
+	Thu, 23 Oct 2025 20:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VlWF0jqC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kOqzGkGY"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZCAbHQm9"
+Received: from mail-yx1-f97.google.com (mail-yx1-f97.google.com [74.125.224.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8C428E00;
-	Thu, 23 Oct 2025 20:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D5CEEB3
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761250294; cv=none; b=W2KeEvsaKbphfNgPZtnLbNeYM0WjOG3w/H1ujXYVijdhCT+7+RtvwTlwf0Z3ehYQ7zqK2Mj2dGvFLnYrgONqwUbxeqa72Ym06n5/ZFXA+6OHdfE1y+oIeAZBraKNXW6kOylKza2zgdob+rrk/99B3tylDMncRcFnkwmO6yjMo9U=
+	t=1761250375; cv=none; b=Ji9mU9twQFQQTVH5YB6n2IEjY43hbMuhRklUW2tw6e2d+2Zo1PzwTmbBVVHBGYtemw6dLlpchXoG59JtdLNawYGA2L3aJ9qnclM/WqkYzRa26VnZuKu6gRo0X6iamowvUHj2fVh+FnjYCVl/qoA1flWsefyToLG/OlF/UHH6mLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761250294; c=relaxed/simple;
-	bh=CxKb4+oGVyQgdYdyPKR7U9RpetdTfMVZ6enFWPs6ndg=;
-	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=cxtjtScY1z4B1g+Sh3FBPF0cpE490KXfvxEsY1M0inDmBRLaA0BZaN5hijAdVd59jUez1jxx07TIs45v5Z1VVCz78NxGgzXaBK2tsdcYCZyAtxlXbrNPVbBt6WC6VjIbdGZCR4KocuVEw5CLr347PogG0W8EEaP1DcXCL5v36YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VlWF0jqC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kOqzGkGY; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 45C167A003A;
-	Thu, 23 Oct 2025 16:11:31 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Thu, 23 Oct 2025 16:11:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1761250291;
-	 x=1761336691; bh=uOtdIBBvO4Ujse60vki69gfDQAEcTBuUnWSLTKLCpJ8=; b=
-	VlWF0jqCIMQ6JHgD75hGpuWKuO2BWc/R8TVTYFsR894nKb+F4+YUs3FqsFGc7uQf
-	Wzpd/oRWRo2QpHIYp0fAKO+nhXJrocVlEoAvaTYfCPLESY+aizrxZLD73ceERqm9
-	T3ck8LXtCRF7+oy6+FdwY7alaJFGBYbCtQ5XxYMfMT9rD/vwn11t13e/YgZ+NEVK
-	rF38LBNXT7g5Iz4y2r4Svd8+uQYgUk+CPbLv//SbDbn5x646KSkLDgYTomolc15k
-	rUIzH4jxyphye65iNNA7mWzePskzrmw46C7rvW4oZeT2PdExvPxq576Oq+vh+GnX
-	aXYPI5OqXwb25wPxrhsoFQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-transfer-encoding:content-type
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm2; t=1761250291; x=1761336691; bh=u
-	OtdIBBvO4Ujse60vki69gfDQAEcTBuUnWSLTKLCpJ8=; b=kOqzGkGYPMqjB4uHP
-	zXcffmF54QCYlB53Bptup3D+wO9KLsgtmHyZa7/KJvAMMLuNxzWWtlZ83+7NJnuq
-	8EFXp/hG/b4jHOwfmVP3C6OmbD1k+KNIRQ4mYxWBmC9X1lt6Aa8O/dWpc2rQd//d
-	VKuWNs2hi2cckvBurbtlzQK7JdUyaBHzaz5cFxuY+JLtRPSe+GDDWaTk3ntTg6QP
-	nE3C2nM9R3CS9RKdNkgp6I24hsAzrHFhWtUUpqUIHuVBE/8Rf9aoFcRBELezXK9t
-	Fn/CvumnkUw92aNHiQsxUKCR0PG/4yRhOIyTfU5QW7INWNu3bOUlD1MMhKa1y1Vo
-	rLh2Q==
-X-ME-Sender: <xms:74v6aAbe_DwmhGMJG53C6jW140c11inxjy5RxYnYFvb5_QRaO2P_Ag>
-    <xme:74v6aGPAOuTnDmbdIkMBttLRDcHfH24WNzAOJewXmAncY4L8c6d9pTMQDNHbB1f16
-    gskQ5mxDHpunROpwNiiNMth3xhMqPsmfAKSpWxLfPdPyn5D-9AR-GA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeejfeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvffkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpedutddtfffhfeehfeegvdfflefhgeegfefhvdeuhfeuffehjefhueeitddttdekleen
-    ucffohhmrghinhepghhithhhuhgsrdgtohhmpdhlfihnrdhnvghtnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdgu
-    vgdpnhgspghrtghpthhtohepvdefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    gtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhmpdhrtghpthhtohepsghmtgdq
-    shifsegrshhpvggvughtvggthhdrtghomhdprhgtphhtthhopehrhigrnhgptghhvghnse
-    grshhpvggvughtvggthhdrtghomhdprhgtphhtthhopehprhgrsghhrghkrghrrdhmrghh
-    rgguvghvqdhlrggurdhrjhessghprdhrvghnvghsrghsrdgtohhmpdhrtghpthhtoheprg
-    hnughrvgifsegtohguvggtohhnshhtrhhutghtrdgtohhmrdgruhdprhgtphhtthhopehj
-    khestghouggvtghonhhsthhruhgtthdrtghomhdrrghupdhrtghpthhtohepnhhfrhgrph
-    hrrgguohestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopehjohgvlhesjhhmshdr
-    ihgurdgruhdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:74v6aNz9Pv7pk8lbFJEkMAOTx4K8eA6k_u48jDljbJJNKwZ6n8T3tw>
-    <xmx:74v6aJbtVwBmGAByqauon98-IvQkP7upRMQz3zhqgGiHcw_-jd4Urw>
-    <xmx:74v6aDI5d2dDUWbqUYfz156HA-I5s1wavJEvP9WokWH2XbiPq0aPiQ>
-    <xmx:74v6aI3hmtTp9iZM2_WYyKde4a63tzgl5bkTBhouA5a9JfdYRYdadg>
-    <xmx:84v6aDknT2cJSxKMQoFrJUJ4d5-n5TaMrBQriloDjrQFpv3sTaieodpF>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id AFAB7700054; Thu, 23 Oct 2025 16:11:27 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761250375; c=relaxed/simple;
+	bh=OCnaonNsZfwYtY8w20ajyelkETsp5k33ujjnYrk5kNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SkoBmBPPd34LcZqN6lqAP+rg5SL4TXDUZy9DwW+bCS+JylLBy1PGSN83WGKTYfPHFCtHlnNF7+VjcLlmPLpXjWfwSOY8gEAQ4JjBEl+CPXaLbFvNoFCKfcXTutXNebQlwSW+Zwqs54Cdrbk8pJcHXr2Be9Mp3qM+3cx/5+Ez++o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZCAbHQm9; arc=none smtp.client-ip=74.125.224.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-yx1-f97.google.com with SMTP id 956f58d0204a3-63d0692136bso1564082d50.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:12:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761250372; x=1761855172;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FfKzLamtfyKDr/ZoLAnuN3X3QCSid0OYX3ziX7Skv84=;
+        b=tafca2nr1mTjmnJFkPtS5cEC4qbL7xnCZ2fW+mrXZU0HU3KGMuxX92XFeBUgM0j5RV
+         fSiNbQtRFDS6TqHn7kSuDPC/X1QLJs3hwjUjBBudQftDddo+3C/p55KdJ1VS3THL/iJE
+         7keHTPo8l0Kev5zjaBOfHejrYGNRpXnFohf9ImdM4uqkF7K63ocl4ywnevg6nIel9fpl
+         wNEp5JrPDyRaHN+NPDeee1+87zqAVhyB1oQNYAMau3c5kEVbNGKmQmEJALVLE5ee6ZA2
+         6ZBolX7jm2azv0tb65SF+HB/qu03gEuuYRb5QoOT9HL8xhOIJiV2dYHirVjyM5PYnNtH
+         3FUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUfDa2JE8RQGJgtTKM5YhSUkenexq6lR/4dlUiHRE22rF2lFNLODJxsuNPlYiQGCMTiRThXZCVV6XJZK1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzOik+hnqG6LLPKZRua85N2+a5n1dIVk6986hYaZhBfNEYIWpt
+	DHI+zLV6qbIEDBhHjjalitAFKldeHIff9xRUjy4K0GgUx8310X85CNIwNEhlonJwMFb8oYhzIP9
+	EMsUiFaQ1jINW0I0vdUoZfWPUvgc1TMPG/lz3LGN68he2rCAOjIUkoKyhlTRbluOXtFv9oI5JEd
+	ZDycNJffOuH0/JqWvzHdq6vNAL1p0H1rn9WKMAt3gUNqLZs793q02Qb4AKw2uAyi3o+QeDzzad3
+	B63meit0r9zuZE3
+X-Gm-Gg: ASbGncu9uCkFISctLVN9kftVWHw88K2KJ3K+Dwbwk7Nas1UKQGRyzf14X7u5lqDbBzx
+	CrNydYqzsPK1sDvgIl7K7+35VQ+FEr6HAlm7nhINpEXWnVa9Vpmo2k3sw0qQdUN9Zy+zphGJx0i
+	go+M20F0l+KVXXpWtBu1lP5QUnGqP/kQK7WZ9jYgckkv3Be2VwYxtSu3VP2JCgtiJ/QKRElHHVm
+	k3B8R3/OYVoATLfIwdJvBWXXTHCcM2bRGP8votezGQ5Gxw2P2fj6TOoohcC4lCPqIKpUnO0cV+8
+	ilhHglkRmI9BZXzCkV212X8UtL419Ym95W0szhCE+62YDQz+EGSVtae/9aRA+lzlkA1Tw+bROKz
+	Xpoj4dVM+6qV5oJGZJboEIWa3AT19pQMFCf+nN7A+5TudTBe3hkAnjsuDg1EevC2MBEI+6RmoFc
+	Azuzt0JXpknXIRXttG9RQEh6iTpI4ihKg=
+X-Google-Smtp-Source: AGHT+IHM6PeA2ZUSFAY0Rd1xKWYNlOkOHisF8hzCfd/oxsyXHP3NvXjqlvP7M2C8PdokXmM7JHmPQ6hQW1Qb
+X-Received: by 2002:a05:690e:408b:b0:63e:2324:9ddb with SMTP id 956f58d0204a3-63e23249e5fmr17588140d50.65.1761250372177;
+        Thu, 23 Oct 2025 13:12:52 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
+        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-785cd6c35e9sm1444567b3.19.2025.10.23.13.12.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Oct 2025 13:12:52 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-426ec5e9278so781948f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:12:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1761250370; x=1761855170; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FfKzLamtfyKDr/ZoLAnuN3X3QCSid0OYX3ziX7Skv84=;
+        b=ZCAbHQm9whaD5BUcRzXSRrvnVnJc4/enkuN0sKv1zOZN4hsKbO137w1XJIgtMUb8Bu
+         ccs3asmz9jJpS/gFWffin9Y0XQcLT2Ar4najFdk8MWI4jhPCGOR0ocDKD0xpNSz6R28C
+         lQkc1Mbzu4RMEcPPOJoBG+mkiNFLDauZWN4VI=
+X-Forwarded-Encrypted: i=1; AJvYcCUCmaQ4Wo4fa6B25pcod7Cc+M+Qsd49ptTuVXGktXWOB6RDtSSNXe2Qo3jy3OfeDij174xxNE9EzlliTKI=@vger.kernel.org
+X-Received: by 2002:a05:6000:310d:b0:3fb:9950:b9eb with SMTP id ffacd0b85a97d-42704d90129mr14161476f8f.28.1761250370397;
+        Thu, 23 Oct 2025 13:12:50 -0700 (PDT)
+X-Received: by 2002:a05:6000:310d:b0:3fb:9950:b9eb with SMTP id
+ ffacd0b85a97d-42704d90129mr14161465f8f.28.1761250369926; Thu, 23 Oct 2025
+ 13:12:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AMptcG-LwCSF
-Date: Thu, 23 Oct 2025 22:11:06 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Ryan Chen" <ryan_chen@aspeedtech.com>, BMC-SW <BMC-SW@aspeedtech.com>,
- "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Joel Stanley" <joel@jms.id.au>,
- "Andrew Jeffery" <andrew@codeconstruct.com.au>,
- "Jeremy Kerr" <jk@codeconstruct.com.au>, "Lee Jones" <lee@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>,
- "Bjorn Andersson" <bjorn.andersson@oss.qualcomm.com>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Nishanth Menon" <nm@ti.com>,
- =?UTF-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>,
- "Taniya Das" <quic_tdas@quicinc.com>, "Lad,
- Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
- "Eric Biggers" <ebiggers@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-Id: <6a97fbb4-19c2-4ffa-9c73-26aea02c27e4@app.fastmail.com>
-In-Reply-To: 
- <TY2PPF5CB9A1BE626A2F0F6307461D8F64BF2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
-References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
- <20251022070543.1169173-5-ryan_chen@aspeedtech.com>
- <b5441728-06a7-44ea-8876-3a9fc3cf55be@app.fastmail.com>
- <TY2PPF5CB9A1BE626A2F0F6307461D8F64BF2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
-Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC device tree
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20250919032936.2267240-1-ryasuoka@redhat.com> <aPEFs0kYfXGZUHCA@zeus>
+In-Reply-To: <aPEFs0kYfXGZUHCA@zeus>
+From: Ian Forbes <ian.forbes@broadcom.com>
+Date: Thu, 23 Oct 2025 15:12:38 -0500
+X-Gm-Features: AWmQ_blwB_gCW_dFnQhGJNNmgUmY3G8S1CM4WFjSPbYzJfqKKWDZTnBoJ8EvTPw
+Message-ID: <CAO6MGtj5LCKBJfTETPb_dUBSVO3de8hZLUMSm5thyeMeY8bEXw@mail.gmail.com>
+Subject: Re: [PATCH drm-misc-next v3 0/1] add drm_panic_support for vmwgfx-stdu
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>
+Cc: zack.rusin@broadcom.com, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	jfalempe@redhat.com, bcm-kernel-feedback-list@broadcom.com, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000b5d99e0641d90eb7"
 
-On Thu, Oct 23, 2025, at 09:37, Ryan Chen wrote:
+--000000000000b5d99e0641d90eb7
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+If it doesn't work on vbox that's not really our problem. I've sent my
+version [1] that works on Workstation and ESXI.
+Since it has less code it has a much higher chance of succeeding in a
+panic situation which is what we care about.
+Feel free to add whatever tags you feel are appropriate on that patch revie=
+w.
+
+[1] https://lore.kernel.org/dri-devel/20251023200447.206834-1-ian.forbes@br=
+oadcom.com/T/#u
+
+Ian,
+
+On Thu, Oct 16, 2025 at 9:48=E2=80=AFAM Ryosuke Yasuoka <ryasuoka@redhat.co=
+m> wrote:
 >
->> > +	aliases {
->> > +		serial0 = &uart0;
->> > +		serial1 = &uart1;
->> > +		serial2 = &uart2;
->> > +		serial3 = &uart3;
->> > +		serial4 = &uart4;
->> > +		serial5 = &uart5;
->> > +		serial6 = &uart6;
->> > +		serial7 = &uart7;
->> > +		serial8 = &uart8;
->> > +		serial9 = &uart9;
->> > +		serial10 = &uart10;
->> > +		serial11 = &uart11;
->> > +		serial12 = &uart12;
->> > +		serial13 = &uart13;
->> > +		serial14 = &uart14;
->> > +	};
->> 
->> This looks like you just list all the uarts that are present on the chip, which is
->> not how the aliases are meant to be used. Move this block into the board
->> specific file and only list the ones that are actually enabled on that particular
->> board.
->> 
->> In particular, the alias names are meant to be local to the board and don't
->> usually correspond to the numbering inside of the chip. In the defconfig, we
->> currently set CONFIG_SERIAL_8250_NR_UARTS=8, which is enough for any
->> board we support so far, but that means only the first
->> 8 aliases in the list will actually work.
+> On Fri, Sep 19, 2025 at 12:29:29PM +0900, Ryosuke Yasuoka wrote:
+> > Add drm_panic support for stdu in vmwgfx. This patch was tested in a VM
+> > with VMSVGA on Virtual Box.
+> >
+> > Based on the feedback for v2 patch, I've made the following updates in
+> > my v3 patch.
+> > - Use MEMREMAP_WB | MEMREMAP_DEC flags for memremap
+> > - Use vmw_priv->initial_height and initial_width for sb and VRAM
+> > - Move all panic related functions to the vmwgfx_kms.c file
+> > - Ensure if the current display unit is 0 in get_scanout_buffer()
+> >
+> > I did not apply all of Ian's feedback in this v3 patch for the reasons
+> > outlined below.
+> >
+> > > 1. You can call `vmw_kms_write_svga` directly in `panic_flush`. There
+> > > is no need to mark the buffer as dirty or send any commands.
+> >
+> > In my test environment (VirtualBox), the panic screen appears unstably
+> > without dirty command's submission. Without it, the screen sometimes
+> > appears immediately as expected, and at other times, there's a delay
+> > of 15 to 20 seconds. I've also observed that it sometimes only appears
+> > after switching between the VirtualBox console window and other windows=
+.
+> >
+> > With command submission, we can stably get a panic screen. Even if it
+> > fails, we may get the panic screen ultimately. Therefore, I think we
+> > should retain vmw_kms_panic_do_bo_dirty() to submit commands.
+> >
+> > > 2. The format should be hardcoded to RGB565 to minimize the risk of
+> > > overrunning VRAM. Adjust the pitch accordingly to 2x width.
+> >
+> > While it's possible to output the panic screen with RGB565 by adjusting
+> > pitch and width, and BPP on the (virtual) hardware side, this approach
+> > causes debugfs to fail. It appears that the BPP must be reset after the
+> > panic screen is displayed, and there is no way to wait for the screen
+> > to be fully displayed within the drm_panic handler code.
+> >
+> > In my test environment, as VRAM has enough space even when using
+> > XRGB8888 (32 bits), I think the risk of overruning VRAM is low. So I've
+> > kept the default format and CPP size.
+> >
+> > v1:
+> > https://lore.kernel.org/all/20250901083701.32365-1-ryasuoka@redhat.com/
+> >
+> > v2:
+> > https://lore.kernel.org/all/20250908141152.221291-2-ryasuoka@redhat.com=
+/
+> > - Map a scanout_buffer to VRAM in .get_scanout_buffer
+> > - And then write to VRAM directly using fifo in legacy mode to avoid
+> > allocations or command submissions.
+> >
+> >
+> > Ryosuke Yasuoka (1):
+> >   drm/vmwgfx: add drm_panic support for stdu mode
+> >
+> >  drivers/gpu/drm/vmwgfx/vmwgfx_drv.h  |   4 +
+> >  drivers/gpu/drm/vmwgfx/vmwgfx_kms.c  | 165 +++++++++++++++++++++++++++
+> >  drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c |   2 +
+> >  3 files changed, 171 insertions(+)
+> >
+> >
+> > base-commit: d41c79838c47bc822534cd53628fe5e0f8ad2424
+> > --
+> > 2.51.0
 >
-> Understood. I'll move the aliases block from the SoC dtsi into the
-> EVB board dts. For the EVB, UART12 is used as the default console,
-> and the board labels match the SoC numbering, so I plan to keep:
+> Hi all,
 >
-> Does that look acceptable?
-> ast2700-evb.dts
-> 	aliases {
-> 		serial0 = &uart0;
-> 		serial1 = &uart1;
-> 		serial2 = &uart2;
-> 		serial3 = &uart3;
-> 		serial4 = &uart4;
-> 		serial5 = &uart5;
-> 		serial6 = &uart6;
-> 		serial7 = &uart7;
-> 		serial8 = &uart8;
-> 		serial9 = &uart9;
-> 		serial10 = &uart10;
-> 		serial11 = &uart11;
-> 		serial12 = &uart12;
-> 		serial13 = &uart13;
-> 		serial14 = &uart14;
-> }
-
-I think this would be broken for the defconfig if the consol is
-on serial12. I would recommend using serial0 as the console, like
-
-aliases {
-       serial0 = &uart12;
-}
-
-in this case. If additional uarts are enabled, add those as
-further aliases.
-
->> 
->> > +	soc1: soc@14000000 {
->> > +		compatible = "simple-bus";
->> > +		#address-cells = <2>;
->> > +		#size-cells = <2>;
->> > +		ranges = <0x0 0x0 0x0 0x14000000 0x0 0x10000000>;
->> 
->> This probably needs some explanation: why are there two 'soc@...'
->> devices? Is this literally two chips in the system, or are you describing two
->> buses inside of the same SoC?
+> This is a gentle reminder for this v3 patch.
+> I would appreciate any feedback when you have a chance.
 >
-> The AST2700 is two soc connection with a property bus.
-> Sharing some decode registers. Each have it own ahb bus.
-
-I don't understand your explanation, 
-
->> 
->> > +
->> > +		mdio0: mdio@14040000 {
->> > +			compatible = "aspeed,ast2600-mdio";
->> > +			reg = <0 0x14040000 0 0x8>;
->> > +			resets = <&syscon1 SCU1_RESET_MII>;
->> > +			status = "disabled";
->> > +		};
->> 
->> I see that you use the old compatible="aspeed,ast2600-mdio" string exclusively
->> here. While this works, I would suggest you list both a more specific
->> "aspeed,ast2700-mdio" string to refer to the version in this chip as well as the
->> fallback "aspeed,ast2600-mdio" string as the generic identifier.
->> 
->> The binding obviously has to describe both in that case, but the driver does not
->> need to be modified as long as both behave the same way.
+> Ian, your feedback on v1 and v2 were very helpful. I would appreciate it
+> if you could take another look when you have a moment.
 >
-> Thanks, will submit ast2700-mdio. 
-> Question, should I add in here patch series?
-> Or go for another patch thread?
-
-Since there is no corresponding driver change, I would keep the binding
-change as a patch in this series.
-
->> > +
->> > +		syscon1: syscon@14c02000 {
->> > +			compatible = "aspeed,ast2700-scu1", "syscon", "simple-mfd";
->> > +			reg = <0x0 0x14c02000 0x0 0x1000>;
->> > +			ranges = <0x0 0x0 0x14c02000 0x1000>;
->> > +			#address-cells = <1>;
->> > +			#size-cells = <1>;
->> > +			#clock-cells = <1>;
->> > +			#reset-cells = <1>;
->> > +
->> > +			scu_ic2: interrupt-controller@100 {
->> > +				compatible = "aspeed,ast2700-scu-ic2";
->> > +				reg = <0x100 0x8>;
->> > +				#interrupt-cells = <1>;
->> > +				interrupts-extended = <&intc1_5 0>;
->> > +				interrupt-controller;
->> > +			};
->> > +
->> > +			scu_ic3: interrupt-controller@108 {
->> > +				compatible = "aspeed,ast2700-scu-ic3";
->> > +				reg = <0x108 0x8>;
->> > +				#interrupt-cells = <1>;
->> > +				interrupts-extended = <&intc1_5 26>;
->> > +				interrupt-controller;
->> > +			};
->> 
->> This looks a bit silly to be honest: you have two separate devices that each have
->> a single register and a different compatible string?
+> Any comments are welcome.
 >
-> Yes, it have difference register define in each scu-ic#. That is 
-> compatible with design.
-> https://github.com/torvalds/linux/blob/master/drivers/irqchip/irq-aspeed-scu-ic.c#L45-L48
-
-Right, if the driver already has this design, it does make sense to
-not change it for the new generation. For a newly added driver I would
-probably do it differently.
-
->> Also you claim to be compatible with "syscon" but nothing actually refers to the
->> syscon node in that form?
+> Thank you
+> Ryosuke
 >
-> There is another submit ongoing in pinctrl which will use syscon. 
-> https://lwn.net/ml/all/20250829073030.2749482-2-billy_tsai@aspeedtech.com/
->
-> Could I keep it? or I should remove it?
 
-The version of the driver you are linking does not appear to use
-syscon, maybe this is an artifact from a previous version?
+--000000000000b5d99e0641d90eb7
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-If so, you can drop it. On the other hand, this does seem to
-be a classic syscon device and keeping it marked that way is not
-harmful, just redundant if you actually use the more specific
-compatible string.
-
-
-     Arnd
+MIIVIgYJKoZIhvcNAQcCoIIVEzCCFQ8CAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghKPMIIGqDCCBJCgAwIBAgIQfofDCS7XZu8vIeKo0KeY9DANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNTNaFw0yOTA0MTkwMDAwMDBaMFIxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBS
+NiBTTUlNRSBDQSAyMDIzMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwjAEbSkPcSyn
+26Zn9VtoE/xBvzYmNW29bW1pJZ7jrzKwPJm/GakCvy0IIgObMsx9bpFaq30X1kEJZnLUzuE1/hlc
+hatYqyORVBeHlv5V0QRSXY4faR0dCkIhXhoGknZ2O0bUJithcN1IsEADNizZ1AJIaWsWbQ4tYEYj
+ytEdvfkxz1WtX3SjtecZR+9wLJLt6HNa4sC//QKdjyfr/NhDCzYrdIzAssoXFnp4t+HcMyQTrj0r
+pD8KkPj96sy9axzegLbzte7wgTHbWBeJGp0sKg7BAu+G0Rk6teO1yPd75arbCvfY/NaRRQHk6tmG
+71gpLdB1ZhP9IcNYyeTKXIgfMh2tVK9DnXGaksYCyi6WisJa1Oa+poUroX2ESXO6o03lVxiA1xyf
+G8lUzpUNZonGVrUjhG5+MdY16/6b0uKejZCLbgu6HLPvIyqdTb9XqF4XWWKu+OMDs/rWyQ64v3mv
+Sa0te5Q5tchm4m9K0Pe9LlIKBk/gsgfaOHJDp4hYx4wocDr8DeCZe5d5wCFkxoGc1ckM8ZoMgpUc
+4pgkQE5ShxYMmKbPvNRPa5YFzbFtcFn5RMr1Mju8gt8J0c+dxYco2hi7dEW391KKxGhv7MJBcc+0
+x3FFTnmhU+5t6+CnkKMlrmzyaoeVryRTvOiH4FnTNHtVKUYDsCM0CLDdMNgoxgkCAwEAAaOCAX4w
+ggF6MA4GA1UdDwEB/wQEAwIBhjBMBgNVHSUERTBDBggrBgEFBQcDAgYIKwYBBQUHAwQGCisGAQQB
+gjcUAgIGCisGAQQBgjcKAwwGCisGAQQBgjcKAwQGCSsGAQQBgjcVBjASBgNVHRMBAf8ECDAGAQH/
+AgEAMB0GA1UdDgQWBBQAKTaeXHq6D68tUC3boCOFGLCgkjAfBgNVHSMEGDAWgBSubAWjkxPioufi
+1xzWx/B/yGdToDB7BggrBgEFBQcBAQRvMG0wLgYIKwYBBQUHMAGGImh0dHA6Ly9vY3NwMi5nbG9i
+YWxzaWduLmNvbS9yb290cjYwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
+b20vY2FjZXJ0L3Jvb3QtcjYuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vcm9vdC1yNi5jcmwwEQYDVR0gBAowCDAGBgRVHSAAMA0GCSqGSIb3DQEBDAUAA4IC
+AQCRkUdr1aIDRmkNI5jx5ggapGUThq0KcM2dzpMu314mJne8yKVXwzfKBtqbBjbUNMODnBkhvZcn
+bHUStur2/nt1tP3ee8KyNhYxzv4DkI0NbV93JChXipfsan7YjdfEk5vI2Fq+wpbGALyyWBgfy79Y
+IgbYWATB158tvEh5UO8kpGpjY95xv+070X3FYuGyeZyIvao26mN872FuxRxYhNLwGHIy38N9ASa1
+Q3BTNKSrHrZngadofHglG5W3TMFR11JOEOAUHhUgpbVVvgCYgGA6dSX0y5z7k3rXVyjFOs7KBSXr
+dJPKadpl4vqYphH7+P40nzBRcxJHrv5FeXlTrb+drjyXNjZSCmzfkOuCqPspBuJ7vab0/9oeNERg
+nz6SLCjLKcDXbMbKcRXgNhFBlzN4OUBqieSBXk80w2Nzx12KvNj758WavxOsXIbX0Zxwo1h3uw75
+AI2v8qwFWXNclO8qW2VXoq6kihWpeiuvDmFfSAwRLxwwIjgUuzG9SaQ+pOomuaC7QTKWMI0hL0b4
+mEPq9GsPPQq1UmwkcYFJ/Z4I93DZuKcXmKMmuANTS6wxwIEw8Q5MQ6y9fbJxGEOgOgYL4QIqNULb
+5CYPnt2LeiIiEnh8Uuh8tawqSjnR0h7Bv5q4mgo3L1Z9QQuexUntWD96t4o0q1jXWLyrpgP7Zcnu
+CzCCBYMwggNroAMCAQICDkXmuwODM8OFZUjm/0VRMA0GCSqGSIb3DQEBDAUAMEwxIDAeBgNVBAsT
+F0dsb2JhbFNpZ24gUm9vdCBDQSAtIFI2MRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpH
+bG9iYWxTaWduMB4XDTE0MTIxMDAwMDAwMFoXDTM0MTIxMDAwMDAwMFowTDEgMB4GA1UECxMXR2xv
+YmFsU2lnbiBSb290IENBIC0gUjYxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2Jh
+bFNpZ24wggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCVB+hzymb57BTKezz3DQjxtEUL
+LIK0SMbrWzyug7hBkjMUpG9/6SrMxrCIa8W2idHGsv8UzlEUIexK3RtaxtaH7k06FQbtZGYLkoDK
+RN5zlE7zp4l/T3hjCMgSUG1CZi9NuXkoTVIaihqAtxmBDn7EirxkTCEcQ2jXPTyKxbJm1ZCatzEG
+xb7ibTIGph75ueuqo7i/voJjUNDwGInf5A959eqiHyrScC5757yTu21T4kh8jBAHOP9msndhfuDq
+jDyqtKT285VKEgdt/Yyyic/QoGF3yFh0sNQjOvddOsqi250J3l1ELZDxgc1Xkvp+vFAEYzTfa5MY
+vms2sjnkrCQ2t/DvthwTV5O23rL44oW3c6K4NapF8uCdNqFvVIrxclZuLojFUUJEFZTuo8U4lptO
+TloLR/MGNkl3MLxxN+Wm7CEIdfzmYRY/d9XZkZeECmzUAk10wBTt/Tn7g/JeFKEEsAvp/u6P4W4L
+sgizYWYJarEGOmWWWcDwNf3J2iiNGhGHcIEKqJp1HZ46hgUAntuA1iX53AWeJ1lMdjlb6vmlodiD
+D9H/3zAR+YXPM0j1ym1kFCx6WE/TSwhJxZVkGmMOeT31s4zKWK2cQkV5bg6HGVxUsWW2v4yb3BPp
+DW+4LtxnbsmLEbWEFIoAGXCDeZGXkdQaJ783HjIH2BRjPChMrwIDAQABo2MwYTAOBgNVHQ8BAf8E
+BAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUrmwFo5MT4qLn4tcc1sfwf8hnU6AwHwYD
+VR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwDQYJKoZIhvcNAQEMBQADggIBAIMl7ejR/ZVS
+zZ7ABKCRaeZc0ITe3K2iT+hHeNZlmKlbqDyHfAKK0W63FnPmX8BUmNV0vsHN4hGRrSMYPd3hckSW
+tJVewHuOmXgWQxNWV7Oiszu1d9xAcqyj65s1PrEIIaHnxEM3eTK+teecLEy8QymZjjDTrCHg4x36
+2AczdlQAIiq5TSAucGja5VP8g1zTnfL/RAxEZvLS471GABptArolXY2hMVHdVEYcTduZlu8aHARc
+phXveOB5/l3bPqpMVf2aFalv4ab733Aw6cPuQkbtwpMFifp9Y3s/0HGBfADomK4OeDTDJfuvCp8g
+a907E48SjOJBGkh6c6B3ace2XH+CyB7+WBsoK6hsrV5twAXSe7frgP4lN/4Cm2isQl3D7vXM3PBQ
+ddI2aZzmewTfbgZptt4KCUhZh+t7FGB6ZKppQ++Rx0zsGN1s71MtjJnhXvJyPs9UyL1n7KQPTEX/
+07kwIwdMjxC/hpbZmVq0mVccpMy7FYlTuiwFD+TEnhmxGDTVTJ267fcfrySVBHioA7vugeXaX3yL
+SqGQdCWnsz5LyCxWvcfI7zjiXJLwefechLp0LWEBIH5+0fJPB1lfiy1DUutGDJTh9WZHeXfVVFsf
+rSQ3y0VaTqBESMjYsJnFFYQJ9tZJScBluOYacW6gqPGC6EU+bNYC1wpngwVayaQQMIIGWDCCBECg
+AwIBAgIMdv+fjzxf0KFt9De7MA0GCSqGSIb3DQEBCwUAMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
+ExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAy
+MDIzMB4XDTI0MTEyODA2NDcxOVoXDTI2MTEyOTA2NDcxOVowgaUxCzAJBgNVBAYTAlVTMRMwEQYD
+VQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEZMBcGA1UEYRMQTlRSVVMrREUtNjYx
+MDExNzEWMBQGA1UEChMNQlJPQURDT00gSU5DLjETMBEGA1UEAxMKSWFuIEZvcmJlczEmMCQGCSqG
+SIb3DQEJARYXaWFuLmZvcmJlc0Bicm9hZGNvbS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQC2AMlK9RdoCw8arN33t70vxMApCT5iWUWUvifzr+uPD1yUo6FYiadl5yCjOgy5+a/b
+yDWISjqDL/DJ1OAopJ9LEPqznspPNSFvQ9pOB7Z3CIITWi2QoSJMjlmG2GIXLe3wQQJ9CVwF8Dlc
+V0fYJUiKJMCwvDmndOil8EtMA8j2T6taUZoQINiKQ0oDWgY6eYVv7AdPVIeOOs3noCyUL8AyA7Bl
+yoOPBB2/gk8VGcolEKgAAj+3hPbBF/d19x1bZzU3wABizBomVwykx5ms1nVXDbQajz8jqYECKWh9
+3OMo7BuC3TAClu5mLr2zs0Ccpp6NRRkjTF8WtCJ+jSnjFJGLAgMBAAGjggHYMIIB1DAOBgNVHQ8B
+Af8EBAMCBaAwgZMGCCsGAQUFBwEBBIGGMIGDMEYGCCsGAQUFBzAChjpodHRwOi8vc2VjdXJlLmds
+b2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3I2c21pbWVjYTIwMjMuY3J0MDkGCCsGAQUFBzABhi1o
+dHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3I2c21pbWVjYTIwMjMwZQYDVR0gBF4wXDAJ
+BgdngQwBBQMBMAsGCSsGAQQBoDIBKDBCBgorBgEEAaAyCgMCMDQwMgYIKwYBBQUHAgEWJmh0dHBz
+Oi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwQQYDVR0fBDowODA2
+oDSgMoYwaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3I2c21pbWVjYTIwMjMuY3JsMCIG
+A1UdEQQbMBmBF2lhbi5mb3JiZXNAYnJvYWRjb20uY29tMBMGA1UdJQQMMAoGCCsGAQUFBwMEMB8G
+A1UdIwQYMBaAFAApNp5ceroPry1QLdugI4UYsKCSMB0GA1UdDgQWBBSvJWzgGK7aSByS+CQVBVfM
+Xgm5azANBgkqhkiG9w0BAQsFAAOCAgEAfrWiLF3zrYq7D+KPNRaAP70FbxHeaiUfn27Hbu37Eefz
+xeJTcFZH04IEtXqpM3NWYZm4A/dFn/VQPbLCRaeXzpT2TESVH6EFY7BEF0rnSSlUbFyi000MnSH3
+h5m+MoyE+PzLqfzLBZS+EU/haCpPy6Nqhs3fPKG3w5VTnUPsAxXK7rSmkIDVNsvwRttuMq9KHJzH
+Bx51dP/z3mel4OuMjgrwHk5uNY1Sn1MZAUQztVUsWguyfoKcmhxXbBccR5DdEfBgDEbq8bicPQ3J
+kqEy1QZXJfHlJuAJIiEw7odGctwqLeGCU6cBLhnsg54ngjO3uYC6tIySul55MRxFKE8HIwIrx+D5
+2SwhDeVLZ8sTK40uPzW5xg5laOWVCvmy2b+cHCGzarUeIlYdtw0ejdH9Hbkm0G7IrDvjkhPa64gR
+6Q+m5CGRDk+8iWhieH6WFE4HL++BpZhoi+YsOkGU3DK0dA+pxQnXNcNw1s0eNbSUVwQzmlC4LqiK
+Gj5JV81HTPLhoAya57a9i28Fp5qHZiFnCq4HMvwiwY7IWe+UwUuueU199aTK80xNiS553vHc6FpI
+/vxGy+LveJqEtodfKqQKwDOVu//c1Lz3uergJHqFYTMykk5U95J3FG5q/7Mqe4RF6E9OgtuAJidS
+6Ca5anjLQ/qzIfTjoXX7TJSjPztehRQxggJXMIICUwIBATBiMFIxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBD
+QSAyMDIzAgx2/5+PPF/QoW30N7swDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEILwK
+q+o3rnSJM+at5TvoiyKUdvZFFeNneK4koKCKjoqXMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEw
+HAYJKoZIhvcNAQkFMQ8XDTI1MTAyMzIwMTI1MFowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQME
+ASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJ
+YIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAG5kjOK8mVQWzgbKj2Bdi/Phz6H8Qtz5acoZn47G
+x5VuCpiRImy8rqpceLCTA8qAJgOPYl89Ia90WqjYgBQpx6bHodpQqAerWk3EMUMjCSDEu/e/bD65
+dzLg19OTyE+fLkE6PDa+IsZbd2Ldo/3XtSiZLQL9znOZkLjv3TVoxNm40QayZJKDNG4CwWbNQVih
+wdNm4YNvvHQuyz5vRI5/fhg7CqNVY6DCFPDWNRRD7NUD3paoGVRuFwUR5jh8M8nXfKdw15EfRvdD
+TqDlCBIvNolUZeeobMtmSRlRwgqkojOVCqjiLgIddMtQX3IzN6QE6R8Llr9CklXTkl+4duMNWcM=
+--000000000000b5d99e0641d90eb7--
 
