@@ -1,93 +1,202 @@
-Return-Path: <linux-kernel+bounces-866876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30536C00E64
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:51:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E04C00E91
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 61E36500971
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:51:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C05CF3A6B8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B3930E82E;
-	Thu, 23 Oct 2025 11:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=awinic.com header.i=@awinic.com header.b="AzmGxPgx"
-Received: from out28-4.mail.aliyun.com (out28-4.mail.aliyun.com [115.124.28.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C813330C610;
+	Thu, 23 Oct 2025 11:54:10 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0FF305E2F;
-	Thu, 23 Oct 2025 11:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA812F3C02;
+	Thu, 23 Oct 2025 11:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761220254; cv=none; b=O7b3w0cv2O8IiCg+3Q+N2z/ggZ1Aks8qu2FwYBz7EIRYkFhf8NyhmnIuEPzZ3SkLEgTiMx/EGpUnYhgIq8iylveh+77ZKTPcv6Ckp6Zfk7Wxp8yv3r91ueNwxRTv/N+qlUwDWOo/BUMKdES9uOBQCZZWIVt2IE9TowvrJvA4Ou0=
+	t=1761220450; cv=none; b=UkDMn8qpmd9nReB5T0e/DHXHKiJSz5Dl9qY8HwCH1Oa9goAdJz66oK6DQmssIbP3mfPlgHsyBV4ISrqLPoV9g5wQoV6sr4YrnykxsKZOyHQLuf520jvd5Uy0YwjLB9/CYY0C5RTtXoTnCa0nDOzDBlq4CTsd3ZBT1BVno2CQGKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761220254; c=relaxed/simple;
-	bh=Ejsf6XBngtxYbRNLQelXtNVq3ZWs26NMIkiQ6iqBbeM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qpjvpoR0a1YRDoewIoj+f3vkO4jSADHPzou/fmJPhEv/1jXJFrsLrnG9i8HctTV1SY4f0CVOEM9OUMEnpICS/VbVjX8BTy5hQc1lGHtbBEV3Vq7qK0OZQXYbGRqQXf5pRM1qbBMAZ9OsZXOK8RAOIG0+yoejCbn2e+6n1aHQT5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; dkim=pass (2048-bit key) header.d=awinic.com header.i=@awinic.com header.b=AzmGxPgx; arc=none smtp.client-ip=115.124.28.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=awinic.com; s=default;
-	t=1761220241; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=I0x2z+i4gd5Gz0iz02dYYEQfSklfjr6CiyQ/pRpynpI=;
-	b=AzmGxPgx7Peb4rpqoW892DcUPYMPNbEQc3Dg4YY1/qCIskcjMyadtdZuQDs/uwHA1w+Um3XWUY4EU66OpI/eXjLOQXHA0fG8+GBRrPECxSM6p8lVRgmXNFO2Xlqr7tr9/OXWy5i4P0bsCjxKnnun85SaE5/2RPB/17Ib/dbEm6/0JguKt+IH8GCVzc8Lfc3rE0aNaCmw6lDsJgu6GKJc8c2TNefaNmzPZ7ThBrEXgGz5MmPKR97Fhmalnc0vrdUssYK+jRmDr5eiKvxcDzOPzXsBxUeBEdQBoXmH9hHsnG5/ONTusMN3xfwOsd7zd2Oa33SwmY8YXJayszZXT7ur2g==
-Received: from ubuntu-VirtualBox..(mailfrom:wangweidong.a@awinic.com fp:SMTPD_---.f5ewZFJ_1761220237 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Thu, 23 Oct 2025 19:50:39 +0800
-From: wangweidong.a@awinic.com
-To: broonie@kernel.org
-Cc: alexey.klimov@linaro.org,
-	ardb@kernel.org,
-	arnd@arndb.de,
-	cy_huang@richtek.com,
-	ebiggers@google.com,
-	hangyi@everest-semi.com,
-	lgirdwood@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux@treblig.org,
-	nick.li@foursemi.com,
-	niranjan.hy@ti.com,
-	perex@perex.cz,
-	rf@opensource.cirrus.com,
-	shenghao-ding@ti.com,
-	srinivas.kandagatla@oss.qualcomm.com,
-	thorsten.blum@linux.dev,
-	tiwai@suse.com,
-	wangweidong.a@awinic.com,
-	yesanishhere@gmail.com,
-	yijiangtao@awinic.com
-Subject: Re: [PATCH V2 1/7] ASoC: codecs:Rework the awinic driver lib
-Date: Thu, 23 Oct 2025 19:50:37 +0800
-Message-ID: <20251023115037.35553-1-wangweidong.a@awinic.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <72907b06-c7f8-455e-8dd9-f5b4041d4bde@sirena.org.uk>
-References: <72907b06-c7f8-455e-8dd9-f5b4041d4bde@sirena.org.uk>
+	s=arc-20240116; t=1761220450; c=relaxed/simple;
+	bh=S3Nr6LQGbZd2jvsFaTLQAqwk2Ri8H/TuFcRTEn5DogM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XdfKqpOkBGPSqF8hFe4Q3aKt2AFxS/RvSS8hXcTyZsVAnUB8Kj5AEH2JorZB7yEzs3ZWHD/08psUerE1QNjlkixMhSosnTBTZcxgCHTC16tYQ5ic9Pn7mQ74fbwlIr92/TRES3spPLMueqqMTM+GKg0BQSUIRuvzXP8tQCEmW8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from [192.168.2.54] (unknown [143.105.117.17])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id 5C752B220A1E;
+	Thu, 23 Oct 2025 13:53:56 +0200 (CEST)
+Message-ID: <eaa5347b-af52-4de3-be58-f7b932c8fe01@freeshell.de>
+Date: Thu, 23 Oct 2025 04:53:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] riscv: dts: spacemit: add MusePi Pro board device
+ tree
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Yangyu Chen <cyy@cyyself.name>,
+ Paul Walmsley <pjw@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20251023-k1-musepi-pro-dts-v4-0-01836303e10f@linux.spacemit.com>
+ <20251023-k1-musepi-pro-dts-v4-2-01836303e10f@linux.spacemit.com>
+Content-Language: en-US
+From: E Shattow <e@freeshell.de>
+In-Reply-To: <20251023-k1-musepi-pro-dts-v4-2-01836303e10f@linux.spacemit.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 20, 2025 at 02:40:32 +0100, broonie@kernel.org wrote:
-> On Fri, Oct 17, 2025 at 06:10:59PM +0800, wangweidong.a@awinic.com wrote:
->> From: Weidong Wang <wangweidong.a@awinic.com>
->> 
->> Extract the awxxxx driver common interfaces into
->> aw-common-firmware and aw-common-device
->> to facilitate subsequent driver usage.
+On 10/23/25 00:28, Troy Mitchell wrote:
+> Add initial device tree support for the MusePi Pro board [1].
+> The board is using the SpacemiT K1/M1 SoC.
+> 
+> This device tree is adapted from the SpacemiT vendor tree [2] and
+> enables basic board functionality, including UART console, LED, eMMC,
+> Ethernet, and PDMA.
+> 
+> Link: https://developer.spacemit.com/documentation?token=YJtdwnvvViPVcmkoPDpcvwfVnrh&type=pdf [1]
+> Link: https://gitee.com/bianbu-linux/linux-6.6/blob/k1-bl-v2.2.y/arch/riscv/boot/dts/spacemit/k1-x_MUSE-Pi-Pro.dts [2]
+> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> ---
+> Changelog in v4:
+> - modify commit message
+> - add SpacemiT copyright
+> - Link to v3: https://lore.kernel.org/all/20251017-k1-musepi-pro-dts-v3-2-40b05491699f@linux.spacemit.com/
+> 
+> Changelog in v3:
+> - sort dts node
+> - add ethernet alias
+> - add emmc, pdma, and eth0 node (a squash of patches 3–5 from v2)
+> - Link to v2: https://lore.kernel.org/all/20251010-k1-musepi-pro-dts-v2-2-6e1b491f6f3e@linux.spacemit.com/
+> 
+> Changelog in v2:
+> - modify commit message
+> - swap pinctrl-names and pinctrl-0 properties in uart0 node
+> - rename model: "MusePi Pro" -> "SpacemiT MusePi Pro"
+> - keep the dtb-$(CONFIG_ARCH_SPACEMIT) entries in alphabetical order
+> - Link to v1: https://lore.kernel.org/all/20250928-k1-musepi-pro-dts-v1-2-5efcca0ce3ae@linux.spacemit.com/
+> ---
+>  arch/riscv/boot/dts/spacemit/Makefile          |  1 +
+>  arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts | 79 ++++++++++++++++++++++++++
+>  2 files changed, 80 insertions(+)
+> 
+> diff --git a/arch/riscv/boot/dts/spacemit/Makefile b/arch/riscv/boot/dts/spacemit/Makefile
+> index 152832644870624d8fd77684ef33addb42b0baf3..942ecb38bea034ef5fbf2cef74e682ee0b6ad8f4 100644
+> --- a/arch/riscv/boot/dts/spacemit/Makefile
+> +++ b/arch/riscv/boot/dts/spacemit/Makefile
+> @@ -1,4 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  dtb-$(CONFIG_ARCH_SPACEMIT) += k1-bananapi-f3.dtb
+>  dtb-$(CONFIG_ARCH_SPACEMIT) += k1-milkv-jupiter.dtb
+> +dtb-$(CONFIG_ARCH_SPACEMIT) += k1-musepi-pro.dtb
+>  dtb-$(CONFIG_ARCH_SPACEMIT) += k1-orangepi-rv2.dtb
+> diff --git a/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts b/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..29e333b670cf0a5c4ed852668460db475b9c44cb
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/spacemit/k1-musepi-pro.dts
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
+> + * Copyright (C) 2025 SpacemiT, Inc
+> + * Copyright (C) 2025 Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "k1.dtsi"
+> +#include "k1-pinctrl.dtsi"
+> +
+> +/ {
+> +	model = "SpacemiT MusePi Pro";
+> +	compatible = "spacemit,musepi-pro", "spacemit,k1";
+> +
+> +	aliases {
+> +		ethernet0 = &eth0;
+> +		serial0 = &uart0;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0";
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		led1 {
+> +			label = "sys-led";
+> +			gpios = <&gpio K1_GPIO(96) GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "heartbeat";
+> +			default-state = "on";
+> +		};
+> +	};
+> +};
+> +
+> +&emmc {
+> +	bus-width = <8>;
+> +	mmc-hs400-1_8v;
+> +	mmc-hs400-enhanced-strobe;
+> +	non-removable;
+> +	no-sd;
+> +	no-sdio;
 
-> This doesn't apply against current code, please check and resend.
+I doubt very much that 'no-sd' or 'no-sdio' are appropriate here. These
+are not general properties, they are useful only for specific
+workarounds of hardware that reacts badly to commands. Is the hardware
+broken that it needs these properties?
 
-Thank you very much for your review.
-Could you help me? What caused this?
+-E
 
-Best regards,
-Weidong Wang
+> +	status = "okay";
+> +};
+> +
+> +&eth0 {
+> +	phy-handle = <&rgmii0>;
+> +	phy-mode = "rgmii-id";
+> +	pinctrl-0 = <&gmac0_cfg>;
+> +	pinctrl-names = "default";
+> +	rx-internal-delay-ps = <0>;
+> +	tx-internal-delay-ps = <0>;
+> +	status = "okay";
+> +
+> +	mdio-bus {
+> +		#address-cells = <0x1>;
+> +		#size-cells = <0x0>;
+> +
+> +		reset-gpios = <&gpio K1_GPIO(110) GPIO_ACTIVE_LOW>;
+> +		reset-delay-us = <10000>;
+> +		reset-post-delay-us = <100000>;
+> +
+> +		rgmii0: phy@1 {
+> +			reg = <0x1>;
+> +		};
+> +	};
+> +};
+> +
+> +&pdma {
+> +	status = "okay";
+> +};
+> +
+> +&uart0 {
+> +	pinctrl-0 = <&uart0_2_cfg>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +};
+> 
+
 
