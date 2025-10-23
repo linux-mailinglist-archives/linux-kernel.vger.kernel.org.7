@@ -1,211 +1,243 @@
-Return-Path: <linux-kernel+bounces-866322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84403BFF769
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:10:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D571EBFF773
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32D7419A7A83
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:10:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D843818862B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00A7298987;
-	Thu, 23 Oct 2025 07:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B7527990A;
+	Thu, 23 Oct 2025 07:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcJFhi8t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="blqg4DDY"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E794E27990A;
-	Thu, 23 Oct 2025 07:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BE926F29B
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761203415; cv=none; b=NQ8J8bhKorEJvlQler5gDJo9jRLDG7tBX2vBcvtPbAL9Bqb9ICGPZUytlThJjAbdRjkcUVkzxn4LJsvFJrdqmFseBqbFL3drvIgmZgVfuT6cKjmm7odFgtipPqSiO1GbTrs5zs1VSNyYYtVIq3uDgXx+57kxQRA7bR4HfJmqlHk=
+	t=1761203476; cv=none; b=V3G+XyklSjFqwJuNNZbSR9ZiLWif3OCplgMIZX5xoKmk/t2opRrXVscuHT81INvs1Eo1lo813npSDPceuVrqUdWAndHejjgBVJoB/FTdXxG4HZifstyAxoo0fLWOClbme7tQUHb2Rda2jhvQpf8sUljf2SHYOmb0C5TvZH3G96Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761203415; c=relaxed/simple;
-	bh=3eigXBLiimevcUcf8KdhhD/v0+6ZZjko+MbkPytVjq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P9MbRriVZ1klkjPGyfkkfvs+D9X7hTV2Ej8KgtRhNP03OtJeLHo8n2OtKe2RH4ZN+lVqiw/rqr8Nflkmieiini7dmsOmw9mYy9Paek/dNx3eGGqs3CGFBervN+ddVAP+pLUoyTTPG+ZhdeBc8UDaQLX7nG3M8kiMlLLOJbgqGTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcJFhi8t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49433C4CEE7;
-	Thu, 23 Oct 2025 07:10:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761203414;
-	bh=3eigXBLiimevcUcf8KdhhD/v0+6ZZjko+MbkPytVjq0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WcJFhi8tSHC6qd0/sKDdW4POrtY8pODQNVNADd8AbwXFN47Qw7Av6RR1wEc8y4kIg
-	 JriUhZcFP08MpUvg7WoV5KC/BLx+T15pEJUTAZL4YKbdd0QUPaMUqNe6eKQei9BIPt
-	 iZD6Lzb1MPz+qfvA9FiR+0j5SDrjIUzzy36JQEVxXKzf8CYmxDuEhZgEq0imUVzddw
-	 FJQ6UC2tuwX6mBhwn7+8RGIo714r6Xcq43rmXGtlGUfLOhwwKygTbmAvh1S+7Y81rB
-	 UNChcCRiu/B5WjBWPYRF0OnYurR8gHb34HJqm738Db4V7qykDKpHPE+nJCi3XDtEMS
-	 a7N2hWzjZKP2Q==
-Date: Thu, 23 Oct 2025 10:10:01 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
-	Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v7 7/8] mm: Introduce deferred freeing for kernel page
- tables
-Message-ID: <aPnUyYS8N9Lp59vS@kernel.org>
-References: <20251022082635.2462433-1-baolu.lu@linux.intel.com>
- <20251022082635.2462433-8-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1761203476; c=relaxed/simple;
+	bh=83WfB3SqYO2Z9dZJO8Pzq5z46Mj56YTUJvCapIfPmAg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VvAJNqkRk7q9VQC5bc78Ho058Uq44GkHjGdt5OEGZtz1cmyOgkDjXS8v8kR8vsutgIgdOvIbuCrD3nOP0oCm4nZ4ogdeu4LnITVZ5FgOY6cFCCvrNnBOtjlUCJOtAInS+6rzYOcE1biYKZpSsAKQ8/2MUD/qx7jYGbL5R6/z9uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=blqg4DDY; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-785d3a5f641so785147b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:11:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761203473; x=1761808273; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BVFmcKppr8jIO/+cy4Rhc1x+4EvS+GSHFcZUJ4Pfb18=;
+        b=blqg4DDYSCovejyIvemMMK27MlBOA9HC/IIQEU0bq2gnWMguHL83E98lhcT1htszE6
+         H9x8CdGAhQ0EoYpOl7gH0P4smixwy4iCkDWiI2HjJtEcVrlYDqZvw/TzxPlf+5DsbTs4
+         eT8X2d5T4GjVBo11Rxy5MlXXuZ4KMaPgQ8JaReied2UHFO+klNDm4JPOWY/sugMFhE3a
+         oL9/ogIcNf6HDyoV+IS2gr/PXuebRiEy5iOFDjFCZcFng1yWDHlF0L/OXK/TEYu0LiWN
+         apMtE5lDnPR1H35cLjDzOUixSKXx4JmlkvQP5b0P69mNoAuGMS+M3zfTO4MqMWx6shUk
+         lI5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761203473; x=1761808273;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BVFmcKppr8jIO/+cy4Rhc1x+4EvS+GSHFcZUJ4Pfb18=;
+        b=beNiB8smvtPbZMvn7j8YtE7UN5cEzx0eDHFsOnCQSYirHZTsgqe9EaPpekomFGofRX
+         D4MlPZteTWQ7JTARmCh3xiCUWw9Hbc23WLdwtAouO54YiVIgCRq97Z5tgLAJbDu2QQz0
+         +FNNRmWeN6nlDDbCclW5pxDdxFdLnPxidoFR4Dj/VslmuNgTu9SqEy510BtFBLJQOVVT
+         CsrbPyyo4h6C7Jy0ajTDuMuBu1VlGUszu0JClRQGVNy/ic2qpen1pfbdMk3cfxOhlhAV
+         RC/sTAzgNa4Lz/nStkRGb5chH9h5yE0goXk4D1e/D7/BMsNP8GnU6/xDomWZXbwc97KU
+         gV+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWG/+nFKV//rW/E/zBuJXproGyaQp6pwzKAZxQAAUkQl/g4yssSo6eSntXOVygo0qYpSmp6ivpSv4TaR6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPWkq1Vo+ZtSQM+SgWDNEvuwOek+I0ZvPj91F3iYwV/Aodrqp4
+	WdtMm/JN5/kzhB1F6+2oayTPnS30PffbmJMu4MzgIYxPcFLZOfQBvarUNi6lrFMcCXILMdPYcqN
+	tEggVeHz6B5CtekKXCIC5vs8oJsKrVzDnTHP8cobDOg==
+X-Gm-Gg: ASbGnct/KILMN/3V2712QYCLC3pZxBFkJjD+SVJs4ihHgf8jFZB21pAyFm0QVrjN2HE
+	3ooVrQf3G/dt9f8Umn6EEkmmXHCCx+caUh1KBuzo9Zvdjls0YEBNGhtCEiqPgfd7WmdmtqoYexF
+	J84jE57dnDuftK/ZJkqMybdFalUks1d4ML7lzs5RtKaJ4CP2knYHwrWEinc3Q7eLj+g/b9f2yNI
+	pRR8PQTkko9t3HMYFDlZWT5QTWLM8+0++mQutS3Q7K2KEbsrFMKgtAGSdnVypV5nvskD4w4fWdo
+	Z+MbJucJolkKwwVBTcvjjO/A5+WlyitF0FbgbTpbb9spvabAXx1/deRVuEvOkBcsw7r8uWM=
+X-Google-Smtp-Source: AGHT+IH3VvCDO2eAFj9JJJRDEEDT2NNCXO5PyFPHxu8d0hi6hIJxQoOArUWORp1GvtDA6/0rOxpi/UwchI9zIngrtoA=
+X-Received: by 2002:a05:690e:d85:b0:63f:309f:6354 with SMTP id
+ 956f58d0204a3-63f309f66efmr3332065d50.47.1761203473301; Thu, 23 Oct 2025
+ 00:11:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022082635.2462433-8-baolu.lu@linux.intel.com>
+References: <20251022060141.370358070@linuxfoundation.org>
+In-Reply-To: <20251022060141.370358070@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 23 Oct 2025 12:41:00 +0530
+X-Gm-Features: AWmQ_bnJFFuVapEywiEjdKwHI9nFNuApBe7za4vRcqQ8LxS3q9W1qtdNuEfmywk
+Message-ID: <CA+G9fYuEMMptWPgF5wmEPN4T2eyrDC8i+Ha_xLT_E35AXHeP-A@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/135] 6.12.55-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 04:26:33PM +0800, Lu Baolu wrote:
-> From: Dave Hansen <dave.hansen@linux.intel.com>
-> 
-> This introduces a conditional asynchronous mechanism, enabled by
-> CONFIG_ASYNC_KERNEL_PGTABLE_FREE. When enabled, this mechanism defers the
-> freeing of pages that are used as page tables for kernel address mappings.
-> These pages are now queued to a work struct instead of being freed
-> immediately.
-> 
-> This deferred freeing allows for batch-freeing of page tables, providing
-> a safe context for performing a single expensive operation (TLB flush)
-> for a batch of kernel page tables instead of performing that expensive
-> operation for each page table.
-> 
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+On Wed, 22 Oct 2025 at 13:49, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.55 release.
+> There are 135 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 24 Oct 2025 06:01:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.55-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-> ---
->  mm/Kconfig           |  3 +++
->  include/linux/mm.h   | 16 +++++++++++++---
->  mm/pgtable-generic.c | 37 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 53 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 0e26f4fc8717..a83df9934acd 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -908,6 +908,9 @@ config PAGE_MAPCOUNT
->  config PGTABLE_HAS_HUGE_LEAVES
->  	def_bool TRANSPARENT_HUGEPAGE || HUGETLB_PAGE
->  
-> +config ASYNC_KERNEL_PGTABLE_FREE
-> +	def_bool n
-> +
->  # TODO: Allow to be enabled without THP
->  config ARCH_SUPPORTS_HUGE_PFNMAP
->  	def_bool n
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 52ae551d0eb4..d521abd33164 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3031,6 +3031,14 @@ static inline void __pagetable_free(struct ptdesc *pt)
->  	__free_pages(page, compound_order(page));
->  }
->  
-> +#ifdef CONFIG_ASYNC_KERNEL_PGTABLE_FREE
-> +void pagetable_free_kernel(struct ptdesc *pt);
-> +#else
-> +static inline void pagetable_free_kernel(struct ptdesc *pt)
-> +{
-> +	__pagetable_free(pt);
-> +}
-> +#endif
->  /**
->   * pagetable_free - Free pagetables
->   * @pt:	The page table descriptor
-> @@ -3040,10 +3048,12 @@ static inline void __pagetable_free(struct ptdesc *pt)
->   */
->  static inline void pagetable_free(struct ptdesc *pt)
->  {
-> -	if (ptdesc_test_kernel(pt))
-> +	if (ptdesc_test_kernel(pt)) {
->  		ptdesc_clear_kernel(pt);
-> -
-> -	__pagetable_free(pt);
-> +		pagetable_free_kernel(pt);
-> +	} else {
-> +		__pagetable_free(pt);
-> +	}
->  }
->  
->  #if defined(CONFIG_SPLIT_PTE_PTLOCKS)
-> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-> index 567e2d084071..1c7caa8ef164 100644
-> --- a/mm/pgtable-generic.c
-> +++ b/mm/pgtable-generic.c
-> @@ -406,3 +406,40 @@ pte_t *__pte_offset_map_lock(struct mm_struct *mm, pmd_t *pmd,
->  	pte_unmap_unlock(pte, ptl);
->  	goto again;
->  }
-> +
-> +#ifdef CONFIG_ASYNC_KERNEL_PGTABLE_FREE
-> +static void kernel_pgtable_work_func(struct work_struct *work);
-> +
-> +static struct {
-> +	struct list_head list;
-> +	/* protect above ptdesc lists */
-> +	spinlock_t lock;
-> +	struct work_struct work;
-> +} kernel_pgtable_work = {
-> +	.list = LIST_HEAD_INIT(kernel_pgtable_work.list),
-> +	.lock = __SPIN_LOCK_UNLOCKED(kernel_pgtable_work.lock),
-> +	.work = __WORK_INITIALIZER(kernel_pgtable_work.work, kernel_pgtable_work_func),
-> +};
-> +
-> +static void kernel_pgtable_work_func(struct work_struct *work)
-> +{
-> +	struct ptdesc *pt, *next;
-> +	LIST_HEAD(page_list);
-> +
-> +	spin_lock(&kernel_pgtable_work.lock);
-> +	list_splice_tail_init(&kernel_pgtable_work.list, &page_list);
-> +	spin_unlock(&kernel_pgtable_work.lock);
-> +
-> +	list_for_each_entry_safe(pt, next, &page_list, pt_list)
-> +		__pagetable_free(pt);
-> +}
-> +
-> +void pagetable_free_kernel(struct ptdesc *pt)
-> +{
-> +	spin_lock(&kernel_pgtable_work.lock);
-> +	list_add(&pt->pt_list, &kernel_pgtable_work.list);
-> +	spin_unlock(&kernel_pgtable_work.lock);
-> +
-> +	schedule_work(&kernel_pgtable_work.work);
-> +}
-> +#endif
-> -- 
-> 2.43.0
-> 
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
--- 
-Sincerely yours,
-Mike.
+## Build
+* kernel: 6.12.55-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: bd9af5ba302635dcb1e470488c0fdf70be8d45cf
+* git describe: v6.12.54-136-gbd9af5ba3026
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
+.54-136-gbd9af5ba3026
+
+## Test Regressions (compared to v6.12.53-278-g6122296b30b6)
+
+## Metric Regressions (compared to v6.12.53-278-g6122296b30b6)
+
+## Test Fixes (compared to v6.12.53-278-g6122296b30b6)
+
+## Metric Fixes (compared to v6.12.53-278-g6122296b30b6)
+
+## Test result summary
+total: 119783, pass: 101440, fail: 3822, skip: 14162, xfail: 359
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 137 passed, 2 failed
+* arm64: 57 total, 51 passed, 6 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 33 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 39 passed, 1 failed
+* riscv: 25 total, 24 passed, 1 failed
+* s390: 22 total, 21 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 46 passed, 3 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
