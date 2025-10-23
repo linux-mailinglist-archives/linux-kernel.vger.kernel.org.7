@@ -1,176 +1,126 @@
-Return-Path: <linux-kernel+bounces-867489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924C6C02C5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:42:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F33C02C5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173D03AC5B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:42:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D5E14EDDE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5758D34A777;
-	Thu, 23 Oct 2025 17:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6B434A76E;
+	Thu, 23 Oct 2025 17:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIztLfdL"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1rXeHjW"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57810347BD7
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 17:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E97634A3DA
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 17:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761241366; cv=none; b=IsEJLmuySjq3AyBNLo4JUDzbbXJGetQagug2X1d4JcYjNlmStpE00PwbRUvEZgxC3o8luYXI2r52wJpGDs3VmBdGzsxOrrLw64CX8NvjKjeBYVTmW8kIc0kuFIXUVHUC3xrANy3AmFQizcCRvtL0h/DAo2K6a3yoi2242CVlXC4=
+	t=1761241373; cv=none; b=mJH/EwqAGt/ZNT4FBDKaDilqmEVyDJRdfHhgPerU8F7O+mBgk30pz7LWx/kzi0zAlUUB0NCuPKsP+8kOaBNsq1qcdwWwqxxLlvBDxS4xmMhNo/50Esv47J4/zgVMiYeHjpqYOUUlahpD4mRDAaX5oiT7GUOCuNuzXiSM7ylvEPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761241366; c=relaxed/simple;
-	bh=tN8Tb70+nrqsimQF3WIi1yTMIjN+5Om0ChlgLkRhs+A=;
+	s=arc-20240116; t=1761241373; c=relaxed/simple;
+	bh=SOi8RTAvsP5fHphida3kvNb3CyaDYKqZqhJ0YfbI+/U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SE+0pYEKjSHaInPiyxZIl+qENJd8xvYJ024UkZaEPIpo7ej78AQI/jasvwRIIdoAt8Lm9gUW0/ubb9nVrGdGBO6EghBaq6CucpysRuC0f74GEX5/QuM8xTsX5E4Ff0DZSR2T2Ua7gMhx8qwIKNUzVNlgKiGiB5pDA9J1cLd+kpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIztLfdL; arc=none smtp.client-ip=209.85.210.169
+	 To:Cc:Content-Type; b=dJulTngSOyehBIog18BwfjlTxn/JKE5BVlUmrSUaB0MvA1hRyNYlSFf1mhoaImIFa6dXUbcjC9iEfDYO8RkXHuYR1Uh6UCylDiVWQW9UaZQzf0uiGeYVkuscNn4Bok9yJQeLP9xdNrngHpI+u2wG+bdDbOH0mC5fVcdtrKKcgoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O1rXeHjW; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-793021f348fso1074534b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:42:45 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b5c18993b73so200453266b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:42:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761241364; x=1761846164; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761241370; x=1761846170; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PPAtMguVYUjm2bPXdyPdBBsK+GKvEKPYmuqUzpm+2v0=;
-        b=SIztLfdLp598RQ3YFRGSDgX9PXgBp8nKYfl1jWbJ3X6v6+7xYJPp8tU+oUlsDlAuhU
-         YR1tqeEYla5kvVpZyy2OMSunZNoUuGfItKd/Rg/+8qOl90kNDLj/9EKANxCl/pX0IO/H
-         tRp8zS6SLOVHp4H4d1i5uFD3Vgf2yb+E5uZlv1f+9jwSzO5cKIR+/Ns8TvuiqLevA0Kq
-         IhGTUO7Jk7egOiaBOP9de7TOL3aV6fQPVWMmvh0i44z3pxJRR8IpGFAMxXWMzjsNBYbv
-         vGjjQr2SwPN+rMkF2/YDzkjVVTcC0LyTKGceq0SUjggVVaXlOnG71BkEcF0hCgbiwK2+
-         7luw==
+        bh=FgjwodffJXCXV9bFCxRQxHHnhjnX/ahOR9pMrTqBvoc=;
+        b=O1rXeHjWSl+Nw52FXcYJ61T6RoKZowNj42LSaJKMKlfLNKrgp5ByBffGK2eo17Tijg
+         q153QGRNeN7LYb5LnEKgSW1kdLvRbfo6HkIG3nnlEpCn4qigkHLzJNtrNqw++LRwDpaf
+         sJi+eh9ebDwna/h8UVtfj/U/2g5ACM2Ky9uQpZ8d687LCgFxX75G6JP3jiQOB4LHoR/w
+         QXLT9gS8lS1nNq8oMp/ix19CjbuRL/wdBYrhrWPVESIxGwsKftRuflxic9ndFf4SwFDy
+         E05iWClNuEs32ev6/C5pLYTdl3FF9XdjkA1sOC53gbQtmEV+TQNogTy95LPXET7LUR94
+         TNwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761241364; x=1761846164;
+        d=1e100.net; s=20230601; t=1761241370; x=1761846170;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PPAtMguVYUjm2bPXdyPdBBsK+GKvEKPYmuqUzpm+2v0=;
-        b=dRZhkZiHFpWBIqwk4J32O3unk1SkYsnTNaHpzclqc+sK8XjFbeqrmo82Gp8GLSjgkz
-         g0ENs6FL1LqTxj78kFBzv5jdjdxCmkuPA8Upo36BFdGg/kvHynsZqk3KeyCLe/1usUIR
-         w8QNcdc2lYYzMcvE/fem1VE7C2+n9QT5Iaqtoc8LyGZflabUVELMQetagg8//w6E9Ds3
-         rNMy0cJWE2EDN6P1GxD27NTOtIgwsHsK5oIAgb/Vc5dDcgCf861q10lgG/R6JsG4oDrI
-         RLrdqdwcv9Vz59t2Gp0i46MHJvlQjVcz3GRzOj3udyLUPBivzgDL68HRFPeasJfv5vqJ
-         b3nA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBBQmYfouWMrjzkm5Nmkjr+4B2b1r2xoNNXvTERd71iHYfYNv0SdF616JP4oO8Gb5TrY6LxKLQihgG7Pk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRopxLpETcE96IhxkIw1TUoEg5l51lr/+YPRuRaMjkVaT7hZLM
-	qzVNR2I6DZWuth0R5/ZqjY+OjYbKm3xrEH4yuQB0tZyVkfqgCSBKkzZu8ozXmibNM1NHefkQAep
-	V2TQMiZ97qiAisczkyxPGvIZbE7NLAQI=
-X-Gm-Gg: ASbGncv7bgRUtjg8RYF5ZDFxpHGcTbLdDf06BOvuXil1onkx+X6nQg0jArffJlknLde
-	iLk5z7shC9VBI/sTizoJFTpDHsOm3aFEtMSwjGRtJR3/m/fagLDLKHctm6DNS2zKeK6uYUO6CrU
-	3ot0+8NVq8O5JQUuDjbSV8S2MjlxDhyntsovM6xrzuBSjY9bsi2kI7sj8CeOu6fP+6x83np/l+M
-	aXdtqiOXoGUQzroHN1p3zqQ3pjFAccNMEcmmLBZY77wQ/kvg0H/jLUtbc+p
-X-Google-Smtp-Source: AGHT+IGLmB1ebZNebWwSLNxI6zWpEV/Sv/pPIWfLfVFPhnIS1gTRgxcF5G/Ed1LOT26G5vAVRNngplSfykW+Lus7CTI=
-X-Received: by 2002:a17:903:94e:b0:27e:dc53:d222 with SMTP id
- d9443c01a7336-290cb278e97mr315093915ad.44.1761241364475; Thu, 23 Oct 2025
- 10:42:44 -0700 (PDT)
+        bh=FgjwodffJXCXV9bFCxRQxHHnhjnX/ahOR9pMrTqBvoc=;
+        b=s7Cb0x3d8zt2bd1vihAXn3FXLEM6+A2FlEEOWUdNnEV6PGvj0AmvBgkkn2Tud4PhIW
+         rxQh0h2UgZ9khHOiw8Fmz2ha+TguX2rYWN/JujJHHEe67o1I6fDFkXrofkon+QmVsSFC
+         KT/u+JMS95hHjxOW607I/jxKROKW3/WhHQqsQlvwxXy3ArtY6LGwEH+tA0+sFJ9DATlw
+         rPX01S/KwJ6aEvw0hQB4t5NZ249ImtWYMuvwJRvh8oeal2lHMQR8h+fwVn5B2buLlV+k
+         AATzXDdgOM6gIWSOMJioEfDCgQxZj3P1MzafqOVq33kLJwlygu1SM0SbYbYYoYyXbpaC
+         WxnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMej/JNKYmIzcBK+rEaPq0Kw5bqeOQqYXG3GrtUp6+Z4yiktY6rQcwe6pXzvto5AG1q6e5fTBcGRqkyoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi2J+K2vRdLQx8mgu93e7IkQHMCofneQ+mpY6lOBGLVtXHui47
+	QOtUbuU+Ud5LSJjYCg71skCGjiRk77S8zIDl4hvcHkP2LZdGXMFqyJ2QW/psdxIg0z7bnxWSffU
+	vyvgWFKVbU9/vTQH6E/LEoY0Vnx1WznU=
+X-Gm-Gg: ASbGncsSD7U2+WN6nkGdPG/kXwk2ygGN+3XIs+MKKH7vbstiEhaG++DNFxvSpeDEK5X
+	33D4JXTqTMCzTzoVMgW6ULt3t/kXUFfByysjqIQhu0aN4H2RPgyR7/2z886tXuOzAbilcx3Krv0
+	CC+0oFbmbN3aY5ohovef8YKc2kgfYusZh+OoizJ1ZikjqFLP46mwZeBk9hIn1NPRqF7rPZ5hUC3
+	nbhN0wMXnpY4nQq3OkAfhqxqBAL82PBEstXWVSneVCHbwu4v04EIrmC08mF+viHPYPDSjSQJA==
+X-Google-Smtp-Source: AGHT+IEKQYSOEcrZQfp4cJ7IkzzOuPov5OvT9VKtkMyLr8PjhSdzUuJ0K2NylS1MWdT9Z9LwTFR1Qn2IXWVMA8nvEAc=
+X-Received: by 2002:a17:907:2dab:b0:b44:f9fe:913a with SMTP id
+ a640c23a62f3a-b6475d04cb3mr2843914766b.65.1761241370295; Thu, 23 Oct 2025
+ 10:42:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023065913.36925-1-ryncsn@gmail.com> <774c443f-f12f-4d4f-93b1-8913734b62b2@redhat.com>
- <f0715f2c-ee27-4e13-84d0-5df156410527@redhat.com>
-In-Reply-To: <f0715f2c-ee27-4e13-84d0-5df156410527@redhat.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Fri, 24 Oct 2025 01:42:05 +0800
-X-Gm-Features: AS18NWCKbpYNUbtlmhqYan2nj3cCPEw88Vfgq-76wvP0ZxptePnkT4EeZPn3IR4
-Message-ID: <CAMgjq7Chg6e_xL4wxYJqMzmCRENawQ63KSABrZ9zVbR4ET=YFA@mail.gmail.com>
-Subject: Re: [PATCH v3] mm/shmem: fix THP allocation and fallback loop
-To: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Hugh Dickins <hughd@google.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	Liam Howlett <liam.howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Mariano Pache <npache@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
+References: <20251017141536.577466-1-kirill@shutemov.name> <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
+ <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
+In-Reply-To: <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
+From: Yang Shi <shy828301@gmail.com>
+Date: Thu, 23 Oct 2025 10:42:37 -0700
+X-Gm-Features: AWmQ_bl7HHHe3F5m7s8SKqaEwkR90lx0Ku2nfc1LYSRH2AGyQ13C81borZW52B8
+Message-ID: <CAHbLzkpx7iv40Tt+CDpbSsOupkGXKcix0wfiF6cVGrLFe0dvRQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 24, 2025 at 12:14=E2=80=AFAM David Hildenbrand <david@redhat.co=
-m> wrote:
+On Thu, Oct 23, 2025 at 3:34=E2=80=AFAM Kiryl Shutsemau <kirill@shutemov.na=
+me> wrote:
 >
-> On 23.10.25 18:13, David Hildenbrand wrote:
-> > On 23.10.25 08:59, Kairui Song wrote:
-> >> From: Kairui Song <kasong@tencent.com>
-> >>
-> >> The order check and fallback loop is updating the index value on every
-> >> loop, this will cause the index to be wrongly aligned by a larger valu=
-e
-> >> while the loop shrinks the order.
-> >>
-> >> This may result in inserting and returning a folio of the wrong index
-> >> and cause data corruption with some userspace workloads [1].
-> >>
-> >> Cc: stable@vger.kernel.org
-> >> Link: https://lore.kernel.org/linux-mm/CAMgjq7DqgAmj25nDUwwu1U2cSGSn8n=
-4-Hqpgottedy0S6YYeUw@mail.gmail.com/ [1]
-> >> Fixes: e7a2ab7b3bb5d ("mm: shmem: add mTHP support for anonymous shmem=
-")
-> >> Signed-off-by: Kairui Song <kasong@tencent.com>
-> >>
-> >> ---
-> >>
-> >> Changes from V2:
-> >> - Introduce a temporary variable to improve code,
-> >>     no behavior change, generated code is identical.
-> >> - Link to V2: https://lore.kernel.org/linux-mm/20251022105719.18321-1-=
-ryncsn@gmail.com/
-> >>
-> >> Changes from V1:
-> >> - Remove unnecessary cleanup and simplify the commit message.
-> >> - Link to V1: https://lore.kernel.org/linux-mm/20251021190436.81682-1-=
-ryncsn@gmail.com/
-> >>
-> >> ---
-> >>    mm/shmem.c | 9 ++++++---
-> >>    1 file changed, 6 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/mm/shmem.c b/mm/shmem.c
-> >> index b50ce7dbc84a..e1dc2d8e939c 100644
-> >> --- a/mm/shmem.c
-> >> +++ b/mm/shmem.c
-> >> @@ -1882,6 +1882,7 @@ static struct folio *shmem_alloc_and_add_folio(s=
-truct vm_fault *vmf,
-> >>      struct shmem_inode_info *info =3D SHMEM_I(inode);
-> >>      unsigned long suitable_orders =3D 0;
-> >>      struct folio *folio =3D NULL;
-> >> +    pgoff_t aligned_index;
-> >>      long pages;
-> >>      int error, order;
-> >>
-> >> @@ -1895,10 +1896,12 @@ static struct folio *shmem_alloc_and_add_folio=
-(struct vm_fault *vmf,
-> >>              order =3D highest_order(suitable_orders);
-> >>              while (suitable_orders) {
-> >>                      pages =3D 1UL << order;
-> >> -                    index =3D round_down(index, pages);
-> >> -                    folio =3D shmem_alloc_folio(gfp, order, info, ind=
-ex);
-> >> -                    if (folio)
-> >> +                    aligned_index =3D round_down(index, pages);
-> >> +                    folio =3D shmem_alloc_folio(gfp, order, info, ali=
-gned_index);
-> >> +                    if (folio) {
-> >> +                            index =3D aligned_index;
-> >>                              goto allocated;
-> >> +                    }
-> >
-> > Was the found by code inspection or was there a report about this?
+> On Wed, Oct 22, 2025 at 07:28:27PM +0200, David Hildenbrand wrote:
+> > "garbage" as in pointing at something without a direct map, something t=
+hat's
+> > protected differently (MTE? weird CoCo protection?) or even worse MMIO =
+with
+> > undesired read-effects.
 >
-> Answering my own question, the "Link:" above should be
+> Pedro already points to the problem with missing direct mapping.
+> _nofault() copy should help with this.
 >
-> Closes:
-> https://lore.kernel.org/linux-mm/CAMgjq7DqgAmj25nDUwwu1U2cSGSn8n4-Hqpgott=
-edy0S6YYeUw@mail.gmail.com/
+> Can direct mapping ever be converted to MMIO? It can be converted to DMA
+> buffer (which is fine), but MMIO? I have not seen it even in virtualized
+> environments.
 >
+> I cannot say for all CoCo protections, but TDX guest shared<->private
+> should be fine.
+>
+> I am not sure about MTE. Is there a way to bypass MTE check for a load?
+> And how does it deal with stray reads from load_unaligned_zeropad()?
 
-Thanks for the review. It's reported by and fixed by me, so I didn't
-include an extra Report-By & Closes, I thought that's kind of
-redundant. Do we need that? Maybe Andrew can help add it :) ?
+If I remember correctly, _nofault() copy should skip tag check too.
+
+Thanks,
+Yang
+
+>
+> --
+>   Kiryl Shutsemau / Kirill A. Shutemov
+>
 
