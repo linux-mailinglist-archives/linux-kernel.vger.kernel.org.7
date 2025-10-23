@@ -1,218 +1,153 @@
-Return-Path: <linux-kernel+bounces-866499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B6FBFFED4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:29:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EDCBFFF01
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C16F3AA54D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:29:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA69E19C71AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5702FB99A;
-	Thu, 23 Oct 2025 08:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33AC2FFDC2;
+	Thu, 23 Oct 2025 08:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="EmT1uYpg"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022124.outbound.protection.outlook.com [40.107.75.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dNaj6o+I"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF822FCC06;
-	Thu, 23 Oct 2025 08:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761208177; cv=fail; b=QxY+v5cIhfpOYOJNQaI79VaNhUmkAOsxVQUPJ+NSdB4UV86eStNFr4KJXhojfrYcPeUajFRTOio81PdZ759FY3XpWJ0sydTN2WUCjYKEXHPZUbrxljynRqYNF77K1TOegxIsNgPIEDDeDkGUYS3EcNFYuWFz/LezZ6D7aEviy7Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761208177; c=relaxed/simple;
-	bh=0tgitGA/0sxG6qja7A/xrOT5NEBfX0tFpIX+mcksAP0=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=q4TWzPrgZZAe3oqGbVK/VJRDgULuqNuxw8VzIx2GsLWBWq6VX++BaUhnpKBkW2ndV3pdk7UOnqUJlHGOJodVrfBW0ZrtkDa70poJH6Qy726PzE0Uko1QtxFBqWqwylNt19R1nnVBJGKgVXpPkbW4XfJrmLXuJhhXHHI38dLlzvQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=EmT1uYpg; arc=fail smtp.client-ip=40.107.75.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HQSeIBn5N5odynob03swtvYUJqCzk+Wr4/0W87MkA/aUiO/S05B5+F7b+gEAVU3vnULMiGs/QA4uTUCl282OCLJYMND2Z+e1LGFIr2+fXOgP7qWfpyd8Phya84qCgf9YjQDnQuC1ktt6cvYi8r5vhTvEakKN4Lk612LCiEiDdy/GDI2s6v4KeQl+72JRyE3iYL+457AH8NLEWexMfEuv3NV1k2Hhsmht0ZGg2tjsoQe9yhYPk6zHRj1nYlw+BPIpHBBQwF22xlbvM7X06QVmzhkaTLoAYv9+5UykUSPLyRI8i/hmyFEa3VwVyZOcVMWKSw+J6cMOnRCM9WUjY/d88A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iLXj+X2nyyxuKXeHjDsw43Fi55PMCTIb2UDXTrS2poQ=;
- b=UDyx7Un9L2wW3qN4uzBx5E39eo5xnH5FyyM7J2L1fgEFkql009tLm2JKZyyIhy8zLNdjgg0HA3JgioHqalHtQEjxNn0xTEIL6AasutfBw2JICxVKosAiPC/Z1ZEsAyWrYMLdTYw/QqlI3tXXs/hSNWHZiJmv3G5Nr1KD+isRDP/Av3A7uk2pUgH+3YLT1JEM7uI0gKW1kCrkTKMe0YIKfawII1QuJmQYUpBfzg42UNXG4eAS9asd/J551/ns7M7bC7v/re4hsHFwBl8x3c9VZKiSi+e1mebJusN3BQAWgwtVDGzrF9fXMST5Q0qHAc2t2MTilqycXYSFqYjcqQJJKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iLXj+X2nyyxuKXeHjDsw43Fi55PMCTIb2UDXTrS2poQ=;
- b=EmT1uYpg4185MRSZzFtgMHj0B1ImcgKO/8lvTvBjzuqSuLb99eJ4pDsxoER6xbAZ2n2WzT1XoONyWhxV1+4gClNGRK3F8VFO6rR+n4XSbPKwj0DIjfwR/6oQm89JGDjIV3/6DQDQtaGOXGFeJR3C6Eqn6NUPtVAXvU6/Sa6Yx7qcq0hgrJLSwmVXsgza2Tw+k5Qy6thIsFgPAa+pschPgvbe1BwYHlnBf2Y10OthRumFSMXReUQcYpVNYcw6X8YIPp3tEA7d1hesohTawlj9LzlEjLC7klQnKpPS90mur0cdF+lGvGXPdQBbuVZMCPJxuoFR9byB2yTji+QHPJqPDQ==
-Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com (2603:1096:408::791)
- by SI2PR06MB5340.apcprd06.prod.outlook.com (2603:1096:4:1ec::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
- 2025 08:29:30 +0000
-Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
- ([fe80::df4f:b1a1:1825:4a80]) by TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
- ([fe80::df4f:b1a1:1825:4a80%7]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 08:29:29 +0000
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
-	"jk@codeconstruct.com.au" <jk@codeconstruct.com.au>, Kevin Chen
-	<kevin_chen@aspeedtech.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>
-Subject: RE: [PATCH v5 3/3] irqchip: aspeed: add compatible strings for
- ast2700-intc0-ic and ast2700-intc1-ic
-Thread-Topic: [PATCH v5 3/3] irqchip: aspeed: add compatible strings for
- ast2700-intc0-ic and ast2700-intc1-ic
-Thread-Index: AQHcQyDSWW55133XQ0ux9XL7yULGOLTOYeUAgAEEmEA=
-Date: Thu, 23 Oct 2025 08:29:29 +0000
-Message-ID:
- <TY2PPF5CB9A1BE69A2BDA1BC2C78A7FFFCDF2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
-References: <20251022065507.1152071-1-ryan_chen@aspeedtech.com>
- <20251022065507.1152071-4-ryan_chen@aspeedtech.com> <87ecquyj5p.ffs@tglx>
-In-Reply-To: <87ecquyj5p.ffs@tglx>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY2PPF5CB9A1BE6:EE_|SI2PR06MB5340:EE_
-x-ms-office365-filtering-correlation-id: 5b56b752-2574-4adc-2e5e-08de120e4917
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?J/ac8x460gn4WuLnhvotq1xq69MF+pjUlGTsZRxYbgMEiRbuv2it4cTfinRT?=
- =?us-ascii?Q?tOG+dIIilYjioNJ0JtwBnhqdtGj5ZgXtr2qTSaQTk9EsRPwGc65lX43Hin7/?=
- =?us-ascii?Q?SiY9y355N/8dIsT+HCMAAK06/az1OP9Q29PcI0fvTLtUGrYSRGPgK0M8UGlO?=
- =?us-ascii?Q?hGbjU6kxRPPizNh6n6E7DxRQ8zZcW3d2bGMZPgo+klRqyEqTwVYl/N7Uy3bf?=
- =?us-ascii?Q?hzUbjmB4MJL7S7VtT+T8aHESKbIw5vpmWkvdYm3LOWc3JmpF+onI8Q4rw1+h?=
- =?us-ascii?Q?wJzEar2GmN1BamRZlDCOp5ARz3pEwmgBVS2LIv7mbd8Qfp/ALXrih3h5i15i?=
- =?us-ascii?Q?LfriTkyDWYqtCmpgJ9EuyelnvLYMYbL+QftwC0+CCGyFo3G319UitAwLubZt?=
- =?us-ascii?Q?iPMTIa66F6PrUaM22xi09Fo7clYUxJ3siDtuV53usGCX/+bAH6xUN3XF2d3h?=
- =?us-ascii?Q?fQcqK7qjiI3JfHQ2pVlimkSpFs3W24nnHHY+YdyE53YxVKhxwtaqpAuzhyKN?=
- =?us-ascii?Q?lQXyL0FTnHY4PYIyPu06Rv7DGVEcs0E2L2aODFF8suEl7yNI8cNQiroH8rc3?=
- =?us-ascii?Q?9ucURkxf8ICyq6xmqtbX259VQkjGM0OM5igViAiMunun7ulEHs4swHqBsM3s?=
- =?us-ascii?Q?rtQQEUk8FRbM82Zs96FowTfOFaKn/OJa31UEY1qA73qmt5K9zxZJntlBk8ua?=
- =?us-ascii?Q?uhncCTvan/1TY4mzBRoRXMQMSd9B5gIZXsC2HqyyW/SMOuusgoCz3HUa9Oom?=
- =?us-ascii?Q?mQDi5Ucl83XSVKP6USuYFRrMUbeUtaGdCF7sDA6szywXNvowh5jMOdIynnfW?=
- =?us-ascii?Q?TTp+FMHTtVVnPEg2w3BcrSEQp5vdR6RZMr9oarrwr9sVqTd+Bm7hSBIunxl5?=
- =?us-ascii?Q?58QMT+4n0/zaY4fGANqdoEuLAYKVHZ6q5mxruu0DxUQz/3Gzm1p7Bm+bskip?=
- =?us-ascii?Q?oI05hwc2GCsEwMLAW7/0B4LQVsSsc+6Cc+LRtUvWq/ck+sFWuh99NGMu5o3e?=
- =?us-ascii?Q?iftDQn6AEyoX0bzOBahJG+gAe12pelAffoUTFayxhGtUPbkkjmba/nKf4f2T?=
- =?us-ascii?Q?MsFPGOoRys1KHNCaX0KBzVGnrLGP4BEyeMdCjFEGHZnaEJ2M21bAmFTk6TF/?=
- =?us-ascii?Q?dQTJdbUFeN1c0BvBhtJRzlTEOfLQzFBX94zDg2fJ6dTFZiu5pL9OPEGLv/Aq?=
- =?us-ascii?Q?W2LmYnJTM10LG5+bd0r1rwKJtVsv9wbpE8+xn6t7O78cVGZUOjuEQYpJkgyA?=
- =?us-ascii?Q?3XXigxQtuezRGV//BMdxepaY7tpho2ewLePXDYYDB/NEJ/yyapGVTtx/ETEE?=
- =?us-ascii?Q?eeVS2HBHwZOOjF3n11RBYcGhStDdkwcSzQEojDxIHVCRDoVM6qmOUJUK7B4N?=
- =?us-ascii?Q?iHYklX7etpJVabwAKgkmtgjdusKX6JH32sti4U5TbLK9K5wU63yEi3mZlkue?=
- =?us-ascii?Q?1oNlwzgD7QkhvbckD8F2ayleRCSSRI6K1YnwZ29WKKBXpbuijxPSrBcllkaQ?=
- =?us-ascii?Q?6G5if2am1hgaC0yLOECqUN6VgjrheawoxbzRvSaAGVsx46ZHLcuPoHHuRQ?=
- =?us-ascii?Q?=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?PCW684PiVcblFdXQovrPgb+OeXEsW6hWMk6DzbN4q5ZyqgrhO/SfwqF33Pvm?=
- =?us-ascii?Q?uXQVFKoYoiRQ8ATL7Ylk1E/QP8iKTyx7yHOcDWjdSyDamXn9cXom3FfG1qax?=
- =?us-ascii?Q?sIJ5ioHWaX1xEsxAPloN7jrts+MHHU29otMHhN/6SVGcVKGdIerMqd1Gnqmh?=
- =?us-ascii?Q?bl0jnBJGuz2MYpk24rl7pCocBHOiexfcYEAdY7pMH6C5X59wlGEtscQARJKH?=
- =?us-ascii?Q?3aEFN+XJvr2UVtS5jtXPEv3hlq4kmzGvD13l8CSgOhP7lms1K9itCZPocSWm?=
- =?us-ascii?Q?I6khqkvAGl6OHdqFQXYM+aEwG4iiyGNTRBJQ9gy/cgiqoB8Z5rO6PcCRM4c6?=
- =?us-ascii?Q?aApu0BpB9JAur73gz2Uusm28FWyN9gEBn+4AO1p/FkINUC8jOtk/K1rOIpU3?=
- =?us-ascii?Q?yTt5pb772VP4ya6xDYxGzMVI6hGG0m4dt4WTG18VgJaccwiMccKpp7SNGWBu?=
- =?us-ascii?Q?x0s+3SU+MyfWMBYIGaYu8ROzJCdayifu5kvO1J8nsY6ETFP6l0PsyIkAWPtH?=
- =?us-ascii?Q?44h82XuciowFS5i99Y/GjDmZK7V8HX/HCB9S3zMqdkKXdMcgSpzDa0jleVVs?=
- =?us-ascii?Q?OjBx/lwcEUMaoXmbFQVrgg1VM4pT1kGmL99xcEKd2Uk5DUQukp3vwvR0MXxK?=
- =?us-ascii?Q?b4s4lpTPZ4bzGLVr8sDguwsFaKfSauCVKYaTCLIkZhcIWR4yhRupfF/w8RHe?=
- =?us-ascii?Q?Yl7nSo09HM+MhZE5jPPfFcyHgXf5NoaSyKOE9w0SFReMuWkZ2GeX+wWaRhf0?=
- =?us-ascii?Q?1znSC2bgqcCEizmoRBOOsEGBLRpx4WhFlDWWt0UHVIswwTcJk0AM+JWgUVoo?=
- =?us-ascii?Q?YlLjj+8wds9SVtE/ei7m7qn7ijvoRWc9GLom4twAZDppVz2xWWWrpUbAz3ag?=
- =?us-ascii?Q?QJeAQENG3JDHhBOZkhF1D13+MVnPNK0HKB4/l4iZrW5QBNhksaj/7V4hrNRe?=
- =?us-ascii?Q?3BNTo4qLAr1eIUN6/SG96qrqV2gfxDEJetJLwHWTklTQsCP8QoceYt84UrdF?=
- =?us-ascii?Q?ASko6mpQ/R3+hz133NcvWWQsUhblW4dAcaQyRubbBFOoe3/Fhjw3KVnF2lFX?=
- =?us-ascii?Q?FmIVpUtzlwy2TS/oReyU7sQUpC+U86VO344z7K+YyHFPRmfLAP+qXEXBimgS?=
- =?us-ascii?Q?s8EuoQp9rr+2bD9geyGWo3ytZCVtSKwpWjF+KCd4ZMRs7lHY6UqGDJAhBSEb?=
- =?us-ascii?Q?iZ/rVPcjJ8hxM4pAUuTAGuz6I8iVoeFsEj7A5e/tbH+SM2FXdXk6SqO+47yj?=
- =?us-ascii?Q?b4/SJ+0CXDLHIh6TqiEsAqwuNyV+zwpz6U63QxJ9dR+vaEESgdAeSaCjSUxv?=
- =?us-ascii?Q?1dW1ERu25KQAfmHaF+/jxEYrXa1/HtK7VcZzkvU9eqlyrq9ORcWlWgMB9+6T?=
- =?us-ascii?Q?Xm1ix6MDdXC4O6Csj+PzbBbXe3K+m3cp8ard+FPZaPCzojPruEwutuqq8QZ8?=
- =?us-ascii?Q?TVqU+3hn9e2CzOL1l0hVlOF+DZLJoKg8vXCAzkoyJ71UUTvjPprbLNbl+1yM?=
- =?us-ascii?Q?ZRJjHvESBIhihPymsNovykIn7cEgJsGpYH0IKJGA2/Q8pGJstoQs9+OoQcYc?=
- =?us-ascii?Q?8C4VH0H/RRt8R2ikQMHgSpoRAHLW5tMlKi5uWYtM?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65ACC2FE04E;
+	Thu, 23 Oct 2025 08:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761208205; cv=none; b=mfpVtDcNSLKuBnkgvFTUu+Ayw+TZD7gA64VjvI0wV6gEI1jeBn1ixSgzJi3n3M1JciiJHVVsVH2gJwnPyqJEymBWsiKrWLql4uIVmNdsDd3CEb7NhtbiM2luXmCIJvyZGviWMJ/btWBkEQ30knWIASEcchTqKMr2pTT5o9+iClg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761208205; c=relaxed/simple;
+	bh=Ch5XHan7n+TFh9cqXyKAmWNWnMzChVHFasLvrJE4wkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rLG0Lfs6VWBAUks3sKieEDAFW96zyeX5Z6tTQZ9Ea88X1abJ2KZtzS9Ahi71FFeIOlTmCvqkF5UYo0nPh9xMEBpq2paKet3I9eKTFCWXRBsGtJC3u/UmjFs1I9CfuCFG8ymR2FHAwbrHIclvp03hCuV3YR7mNDIrYZCqb3P2sHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dNaj6o+I; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761208204; x=1792744204;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ch5XHan7n+TFh9cqXyKAmWNWnMzChVHFasLvrJE4wkg=;
+  b=dNaj6o+IlM/YDqFXRGIUlxJBbQIwgEPo1XWwb+ApcZL2gtjgbqJmKbs4
+   4/oIopg0TjunBPHPC8z8Mtho7f5UryT0/PJoox+D/6Jf2QDsOyUbfcPyd
+   D2gV/FT49tZJXZjPBF/E5v8OQoULZuWAQYqNPkipPrI4GMckxM6vyxQ04
+   Vc2xMoapuj+zLDIejcP91tCnccbfjiVHkliGGIHsB7ByO17GixWlemZ9f
+   ycLgQyUGu/jDrr77DMpJZGUDERm0jVG5YTIBbMXx5AGhEwr7S6O+QT3uf
+   iWuuM71QxYRQd3itlvj+WEVGrDlULyZjjbUEi6U5PrvN/aMpy6yAc2vBm
+   g==;
+X-CSE-ConnectionGUID: Sbr5hshARCeqjnv0rgXCmA==
+X-CSE-MsgGUID: oJ/L3cWQRnOOGa1mRI6Ycw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73975917"
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="73975917"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 01:30:01 -0700
+X-CSE-ConnectionGUID: rzmiWePRQC+B9dJ+/YBtZA==
+X-CSE-MsgGUID: Nd/VzcadQXedqM1wJPyvdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="221289795"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 01:29:57 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vBqhl-00000001tb8-3zNP;
+	Thu, 23 Oct 2025 11:29:53 +0300
+Date: Thu, 23 Oct 2025 11:29:53 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
+	devicetree@vger.kernel.org, Carlos Song <carlos.song@nxp.com>
+Subject: Re: [PATCH v6 3/5] i3c: master: svc: Add basic HDR mode support
+Message-ID: <aPnngQdwEqHgPc7R@smile.fi.intel.com>
+References: <20251014-i3c_ddr-v6-0-3afe49773107@nxp.com>
+ <20251014-i3c_ddr-v6-3-3afe49773107@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b56b752-2574-4adc-2e5e-08de120e4917
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2025 08:29:29.8250
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VW+OoHH7VzsmibS1UIfqDS352bI1JnJhbkxgx2Vqt6344WBrVYxxgwIsHmrh+UXN4KVqeSeBKk2P/GWhjn5ahiObTkd/KgL0PtI8d3lerm0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB5340
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014-i3c_ddr-v6-3-3afe49773107@nxp.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-> Subject: Re: [PATCH v5 3/3] irqchip: aspeed: add compatible strings for
-> ast2700-intc0-ic and ast2700-intc1-ic
->=20
-> On Wed, Oct 22 2025 at 14:55, Ryan Chen wrote:
->=20
-> The subject prefix is: irqchip/aspeed-intc:
->=20
-> It's documented how to make them:
->=20
->=20
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#patch-=
-su
-> bject
+On Tue, Oct 14, 2025 at 12:40:02PM -0400, Frank Li wrote:
+> Add basic HDR mode support for the svs I3C master driver.
+> 
+> Only support for private transfers and does not support sending CCC
+> commands in HDR mode.
+> 
+> Key differences:
+> - HDR uses commands (0x00-0x7F for write, 0x80-0xFF for read) to
+> distinguish transfer direction.
+> - HDR read/write commands must be written to FIFO before issuing the I3C
+> address command. The hardware automatically sends the standard CCC command
+> to enter HDR mode.
+> - HDR exit pattern must be sent instead of send a stop after transfer
+> completion.
+> - Read/write data size must be an even number.
 
-Thanks, will fix.
->=20
-> > The AST2700 SoC defines two parent interrupt controller blocks
-> > (INTC0 and INTC1), each containing multiple interrupt-controller child
-> > instances ("*-intc-ic"). The existing irqchip driver
-> > (irq-aspeed-intc.c) currently only registers a single compatible
-> > string: "aspeed,ast2700-intc-ic"
-> >
-> > To support device trees that describe the INTC0 and INTC1 hierarchy
-> > more precisely, this patch adds two additional
->=20
-> s/this patch adds/add/
-will fix.
->=20
-> git grep 'This patch' Documentation/process/
->=20
-will fix.
+...
 
-> > compatible strings:
-> >  - "aspeed,ast2700-intc0-ic"
-> >  - "aspeed,ast2700-intc1-ic"
-> >
-> > Both map to the same initialization function
-> > `aspeed_intc_ic_of_init()`.
->=20
-> The backticks are pointless. Just write aspeed...init()
+> +static void svc_i3c_master_emit_force_exit(struct svc_i3c_master *master)
+> +{
+> +	u32 reg = 0;
 
-will fix.
+Useless.
 
-Thanks a lot.
->=20
-> Thanks,
->=20
->         tglx
+> +	writel(SVC_I3C_MCTRL_REQUEST_FORCE_EXIT, master->regs + SVC_I3C_MCTRL);
+> +	readl_poll_timeout(master->regs + SVC_I3C_MSTATUS, reg,
+> +			   SVC_I3C_MSTATUS_MCTRLDONE(reg), 0, 1000);
+
+No error checks? Why is it okay?
+Why is the first parameter 0 while it's not an _atomic() call?
+
+> +	udelay(1);
+
+No explanations given. Also is it really need to be atomic? If not, use
+fsleep() and it will choose the best suitable API under the hood.
+
+>  }
+
+...
+
+> +	if (xfer_type == SVC_I3C_MCTRL_TYPE_DDR) {
+> +		/* DDR command need prefill into FIFO */
+> +		writel(rnw_cmd, master->regs + SVC_I3C_MWDATAB);
+> +		if (!rnw) {
+> +			/* write data also need prefill into FIFO */
+> +			ret = svc_i3c_master_write(master, out, xfer_len);
+> +		if (ret)
+> +			goto emit_stop;
+> +		}
+
+The indentation here is a mess.
+
+> +	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
