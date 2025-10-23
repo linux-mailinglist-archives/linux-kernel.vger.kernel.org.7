@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-867065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D583C017D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:41:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C9BC017E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:42:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1551507089
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F01CA3B0AB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69EB2EBDD7;
-	Thu, 23 Oct 2025 13:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E919832C923;
+	Thu, 23 Oct 2025 13:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="d6OCRYzx"
-Received: from smtp64.ord1d.emailsrvr.com (smtp64.ord1d.emailsrvr.com [184.106.54.64])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="NEirdvaC"
+Received: from smtp71.ord1d.emailsrvr.com (smtp71.ord1d.emailsrvr.com [184.106.54.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D214E329C54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01B6328635
 	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.64
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761226607; cv=none; b=WkKRc48d/uzxyzCmVoBA2UH7jl3jEpDwPMNB+j3kUX0p4OMbJweT1TLKOB3dtYOaG76g9rpOVCMDrNf2KSfhQuIeapAz5brnGYWZfJZxrlQPv7gDIeR1ocEcZSOYV7iIcSBWiKzg2/ShSYO20ppztonp3ZVJCvZ6wDtWjYXeWZY=
+	t=1761226608; cv=none; b=C4YGlPBgwBIYZO2lSsA5fsET0GyUQIgJ20P279wzCEC/sFSH/2Mlf507nHkcdbRYH5Xfi7I9n5ubBvXR2ZdCytfdrCGxY+NkWTDjiSFfS5t3IitAr6P2CtZxNQRnb4cYjiTM/pRKpcpft1uBowdjAgLEibXCPOPBJTuuVnz54qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761226607; c=relaxed/simple;
-	bh=y5IaZwnAwDnImYBuI3AiQn7FHODEcM2jojuv0AzXxvE=;
+	s=arc-20240116; t=1761226608; c=relaxed/simple;
+	bh=FmPZiT98w2k7d+SqTmblsmMypwu/9ii4PANd60nJCE8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LbL+uUvzIuHINE+dtQymEjYwlCXmwJBYhnHwZoVahdLajq1oGqHMFNUrRXDVi7D4ZxxaZdIWbcnTf+h504IVvyRL2EKG0w4Tu3Vh87ntVku45plTZFCBZ81V3nd1AjDk67UHLVjjsmBjcO1jjQPni+ogqoLvYcKcG+xxPZLNkDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=d6OCRYzx; arc=none smtp.client-ip=184.106.54.64
+	 MIME-Version; b=smeAsQtMgsXUMCE2devtOEO8vKzWZvREOBLeaJrFGJYVA/NohtKuULmCyS9LCCaSTiAUoYfBRj92C8QcLjpoo87pyOCaEsU8fUPZ1rMTe32+uHN4fDZqtX41Bun3eH+jhjXaaGKufiGXoVjH8yzR4Fyk41KfnO/vbrNXBlO2pos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=NEirdvaC; arc=none smtp.client-ip=184.106.54.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1761226057;
-	bh=y5IaZwnAwDnImYBuI3AiQn7FHODEcM2jojuv0AzXxvE=;
+	s=20221208-6x11dpa4; t=1761226058;
+	bh=FmPZiT98w2k7d+SqTmblsmMypwu/9ii4PANd60nJCE8=;
 	h=From:To:Subject:Date:From;
-	b=d6OCRYzxvhKzmScoEDwvHL4FbAk7Ir5Pfd7DOpyNtI9YgqMadrgFESn6zlQUqNeiT
-	 4aDEb73+XQCzuqgN/2+QDyE8xlxw/cKS4KmWuY9dEHZuGYg8HPgX0IMRj6C+qQulVU
-	 ANhwtOFFwuq8iK27SumaoUVeO4oOlpbr1KlTjlBo=
+	b=NEirdvaCqyjinKXRxVREvlvmjPzEVetGEZB4j+nkfwWPI64ghB5WegLe/jLqEm2Lo
+	 0bl+WyHxoxFdDhaVwWUSNOqOPYTO6LI3ExXw12vRTlBVcWs6Jozl6Joau1rkrTEIFi
+	 VY9bDkdzlXNQeU/NmdJ6Kmw0+5Ez/yvOjq0rfkjE=
 X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp1.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 51773402A9;
-	Thu, 23 Oct 2025 09:27:36 -0400 (EDT)
+Received: by smtp1.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 8B720402B1;
+	Thu, 23 Oct 2025 09:27:37 -0400 (EDT)
 From: Ian Abbott <abbotti@mev.co.uk>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -47,9 +47,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	H Hartley Sweeten <hsweeten@visionengravers.com>,
 	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
 	lvc-project@linuxtesting.org
-Subject: [PATCH 1/2] comedi: Add reference counting for Comedi command handling
-Date: Thu, 23 Oct 2025 14:06:45 +0100
-Message-ID: <20251023132706.7983-2-abbotti@mev.co.uk>
+Subject: [PATCH 2/2] comedi: Use reference count for asynchronous command functions
+Date: Thu, 23 Oct 2025 14:06:46 +0100
+Message-ID: <20251023132706.7983-3-abbotti@mev.co.uk>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251023132706.7983-1-abbotti@mev.co.uk>
 References: <20251023132706.7983-1-abbotti@mev.co.uk>
@@ -60,7 +60,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Classification-ID: a5f18e55-3fae-4f0c-8e4d-f1649ff649d1-2-1
+X-Classification-ID: a5f18e55-3fae-4f0c-8e4d-f1649ff649d1-3-1
 
 For interrupts from badly behaved hardware (as emulated by Syzbot), it
 is possible for the Comedi core functions that manage the progress of
@@ -68,230 +68,784 @@ asynchronous data acquisition to be called from driver ISRs while no
 asynchronous command has been set up, which can cause problems such as
 invalid pointer dereferencing or dividing by zero.
 
-To help protect against that, introduce new functions to maintain a
-reference counter for asynchronous commands that are being set up.
-`comedi_get_is_subdevice_running(s)` will check if a command has been
-set up on a subdevice and is still marked as running, and if so will
-increment the reference counter and return `true`, otherwise it will
-return `false` without modifying the reference counter.
-`comedi_put_is_subdevice_running(s)` will decrement the reference
-counter and set a completion event when decremented to 0.
+Change those functions in the Comedi core to use this pattern: if
+`comedi_get_is_subdevice_running(s)` returns `true` then call a safe
+version of the function with the same name prefixed with an underscore,
+followed by a call to `comedi_put_is_subdevice_running(s)`, otherwise
+take some default action.
 
-Change the `do_cmd_ioctl()` function (responsible for setting up the
-asynchronous command) to  reinitialize the completion event and set the
-reference counter to 1 before it marks the subdevice as running.  Change
-the `do_become_nonbusy()` function (responsible for destroying a
-completed command) to call `comedi_put_is_subdevice_running(s)` and wait
-for the completion event after marking the subdevice as not running.
+`comedi_get_is_subdevice_running(s)` returning `true` ensures that the
+details of the asynchronous command will not be destroyed before the
+matching call to `comedi_put_is_subdevice_running(s)`.
 
-Because the subdevice normally gets marked as not running before the
-call to `do_become_nonbusy()` (and may also be called when the Comedi
-device is being detached from the low-level driver), add a new flag
-`COMEDI_SRF_BUSY` to the set of subdevice run-flags that indicates that
-an asynchronous command was set up and will need to be destroyed.  This
-flag is set by `do_cmd_ioctl()` and cleared and checked by
-`do_become_nonbusy()`.
+Replace calls to those functions from elsewhere in the Comedi core with
+calls to the safe versions of the functions.
 
-Subsequent patches will change the Comedi core functions that are called
-from low-level drivers for asynchrous command handling to make use of
-the `comedi_get_is_subdevice_running()` and
-`comedi_put_is_subdevice_running()` functions, and will modify the ISRs
-of some of these low-level drivers if they dereference the subdevice's
-`async` pointer directly.
+The modified functions are: `comedi_buf_read_alloc()`,
+`comedi_buf_read_free()`, `comedi_buf_read_n_available()`,
+`comedi_buf_read_samples()`, `comedi_buf_write_alloc()`,
+`comedi_buf_write_free()`, `comedi_buf_write_samples()`,
+`comedi_bytes_per_scan()`, `comedi_event()`, `comedi_handle_events()`,
+`comedi_inc_scan_progress()`, `comedi_nsamples_left()`,
+`comedi_nscans_left()`.
 
 Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
 ---
- drivers/comedi/comedi_fops.c     | 78 ++++++++++++++++++++++++++++----
- drivers/comedi/drivers.c         |  1 +
- include/linux/comedi/comedidev.h |  7 +++
- 3 files changed, 78 insertions(+), 8 deletions(-)
+ drivers/comedi/comedi_buf.c      | 274 ++++++++++++++++++++-----------
+ drivers/comedi/comedi_fops.c     |  56 ++++---
+ drivers/comedi/comedi_internal.h |  12 ++
+ drivers/comedi/drivers.c         | 133 +++++++++++----
+ 4 files changed, 323 insertions(+), 152 deletions(-)
 
-diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
-index 7e2f2b1a1c36..595723e24c74 100644
---- a/drivers/comedi/comedi_fops.c
-+++ b/drivers/comedi/comedi_fops.c
-@@ -38,6 +38,7 @@
-  * COMEDI_SRF_ERROR:		indicates an COMEDI_CB_ERROR event has occurred
-  *				since the last command was started
-  * COMEDI_SRF_RUNNING:		command is running
-+ * COMEDI_SRF_BUSY:		command was started and subdevice still busy
-  * COMEDI_SRF_FREE_SPRIV:	free s->private on detach
-  *
-  * COMEDI_SRF_BUSY_MASK:	runflags that indicate the subdevice is "busy"
-@@ -45,9 +46,11 @@
- #define COMEDI_SRF_RT		BIT(1)
- #define COMEDI_SRF_ERROR	BIT(2)
- #define COMEDI_SRF_RUNNING	BIT(27)
-+#define COMEDI_SRF_BUSY		BIT(28)
- #define COMEDI_SRF_FREE_SPRIV	BIT(31)
- 
--#define COMEDI_SRF_BUSY_MASK	(COMEDI_SRF_ERROR | COMEDI_SRF_RUNNING)
-+#define COMEDI_SRF_BUSY_MASK	\
-+	(COMEDI_SRF_ERROR | COMEDI_SRF_RUNNING | COMEDI_SRF_BUSY)
- 
- /**
-  * struct comedi_file - Per-file private data for COMEDI device
-@@ -665,6 +668,11 @@ static bool comedi_is_runflags_in_error(unsigned int runflags)
- 	return runflags & COMEDI_SRF_ERROR;
+diff --git a/drivers/comedi/comedi_buf.c b/drivers/comedi/comedi_buf.c
+index 002c0e76baff..37074225d590 100644
+--- a/drivers/comedi/comedi_buf.c
++++ b/drivers/comedi/comedi_buf.c
+@@ -273,19 +273,8 @@ unsigned int comedi_buf_write_n_available(struct comedi_subdevice *s)
+ 	return free_end - async->buf_write_count;
  }
  
-+static bool comedi_is_runflags_busy(unsigned int runflags)
-+{
-+	return runflags & COMEDI_SRF_BUSY;
-+}
-+
- /**
-  * comedi_is_subdevice_running() - Check if async command running on subdevice
-  * @s: COMEDI subdevice.
-@@ -687,6 +695,46 @@ static bool __comedi_is_subdevice_running(struct comedi_subdevice *s)
- 	return comedi_is_runflags_running(runflags);
- }
- 
-+/**
-+ * comedi_get_is_subdevice_running() - Get if async command running on subdevice
-+ * @s: COMEDI subdevice.
-+ *
-+ * If an asynchronous COMEDI command is running on the subdevice, increment
-+ * a reference counter.  If the function return value indicates that a
-+ * command is running, then the details of the command will not be destroyed
-+ * before a matching call to comedi_put_is_subdevice_running().
-+ *
-+ * Return: %true if an asynchronous COMEDI command is active on the
-+ * subdevice, else %false.
-+ */
-+bool comedi_get_is_subdevice_running(struct comedi_subdevice *s)
-+{
-+	unsigned long flags;
-+	bool running;
-+
-+	spin_lock_irqsave(&s->spin_lock, flags);
-+	running = __comedi_is_subdevice_running(s);
-+	if (running)
-+		refcount_inc(&s->async->run_active);
-+	spin_unlock_irqrestore(&s->spin_lock, flags);
-+	return running;
-+}
-+EXPORT_SYMBOL_GPL(comedi_get_is_subdevice_running);
-+
-+/**
-+ * comedi_put_is_subdevice_running() - Put if async command running on subdevice
-+ * @s: COMEDI subdevice.
-+ *
-+ * Decrements the reference counter that was incremented when
-+ * comedi_get_is_subdevice_running() returned %true.
-+ */
-+void comedi_put_is_subdevice_running(struct comedi_subdevice *s)
-+{
-+	if (refcount_dec_and_test(&s->async->run_active))
-+		complete_all(&s->async->run_complete);
-+}
-+EXPORT_SYMBOL_GPL(comedi_put_is_subdevice_running);
-+
- bool comedi_can_auto_free_spriv(struct comedi_subdevice *s)
- {
- 	unsigned int runflags = __comedi_get_subdevice_runflags(s);
-@@ -736,20 +784,28 @@ static void do_become_nonbusy(struct comedi_device *dev,
- 			      struct comedi_subdevice *s)
+-/**
+- * comedi_buf_write_alloc() - Reserve buffer space for writing
+- * @s: COMEDI subdevice.
+- * @nbytes: Maximum space to reserve in bytes.
+- *
+- * Reserve up to @nbytes bytes of space to be written in the COMEDI acquisition
+- * data buffer associated with the subdevice.  The amount reserved is limited
+- * by the space available.
+- *
+- * Return: The amount of space reserved in bytes.
+- */
+-unsigned int comedi_buf_write_alloc(struct comedi_subdevice *s,
+-				    unsigned int nbytes)
++unsigned int _comedi_buf_write_alloc(struct comedi_subdevice *s,
++				     unsigned int nbytes)
  {
  	struct comedi_async *async = s->async;
-+	unsigned int runflags;
-+	unsigned long flags;
+ 	unsigned int unalloc = comedi_buf_write_n_unalloc(s);
+@@ -303,6 +292,29 @@ unsigned int comedi_buf_write_alloc(struct comedi_subdevice *s,
  
- 	lockdep_assert_held(&dev->mutex);
--	comedi_update_subdevice_runflags(s, COMEDI_SRF_RUNNING, 0);
--	if (async) {
-+	spin_lock_irqsave(&s->spin_lock, flags);
-+	runflags = __comedi_get_subdevice_runflags(s);
-+	__comedi_clear_subdevice_runflags(s, COMEDI_SRF_RUNNING |
-+					     COMEDI_SRF_BUSY);
-+	spin_unlock_irqrestore(&s->spin_lock, flags);
-+	if (comedi_is_runflags_busy(runflags)) {
-+		/*
-+		 * "Run active" counter was set to 1 when setting up the
-+		 * command.  Decrement it and wait for it to become 0.
-+		 */
+ 	return nbytes;
+ }
++
++/**
++ * comedi_buf_write_alloc() - Reserve buffer space for writing
++ * @s: COMEDI subdevice.
++ * @nbytes: Maximum space to reserve in bytes.
++ *
++ * Reserve up to @nbytes bytes of space to be written in the COMEDI acquisition
++ * data buffer associated with the subdevice.  The amount reserved is limited
++ * by the space available.
++ *
++ * Return: The amount of space reserved in bytes.
++ */
++unsigned int comedi_buf_write_alloc(struct comedi_subdevice *s,
++				    unsigned int nbytes)
++{
++	if (comedi_get_is_subdevice_running(s)) {
++		nbytes = _comedi_buf_write_alloc(s, nbytes);
 +		comedi_put_is_subdevice_running(s);
-+		wait_for_completion(&async->run_complete);
- 		comedi_buf_reset(s);
- 		async->inttrig = NULL;
- 		kfree(async->cmd.chanlist);
- 		async->cmd.chanlist = NULL;
- 		s->busy = NULL;
- 		wake_up_interruptible_all(&async->wait_head);
--	} else {
--		dev_err(dev->class_dev,
--			"BUG: (?) %s called with async=NULL\n", __func__);
--		s->busy = NULL;
++	} else {
++		nbytes = 0;
++	}
++	return nbytes;
++}
+ EXPORT_SYMBOL_GPL(comedi_buf_write_alloc);
+ 
+ /*
+@@ -362,6 +374,24 @@ unsigned int comedi_buf_write_n_allocated(struct comedi_subdevice *s)
+ 	return async->buf_write_alloc_count - async->buf_write_count;
+ }
+ 
++unsigned int _comedi_buf_write_free(struct comedi_subdevice *s,
++				    unsigned int nbytes)
++{
++	struct comedi_async *async = s->async;
++	unsigned int allocated = comedi_buf_write_n_allocated(s);
++
++	if (nbytes > allocated)
++		nbytes = allocated;
++
++	async->buf_write_count += nbytes;
++	async->buf_write_ptr += nbytes;
++	comedi_buf_munge(s, async->buf_write_count - async->munge_count);
++	if (async->buf_write_ptr >= async->prealloc_bufsz)
++		async->buf_write_ptr %= async->prealloc_bufsz;
++
++	return nbytes;
++}
++
+ /**
+  * comedi_buf_write_free() - Free buffer space after it is written
+  * @s: COMEDI subdevice.
+@@ -379,22 +409,35 @@ unsigned int comedi_buf_write_n_allocated(struct comedi_subdevice *s)
+  */
+ unsigned int comedi_buf_write_free(struct comedi_subdevice *s,
+ 				   unsigned int nbytes)
++{
++	if (comedi_get_is_subdevice_running(s)) {
++		nbytes = _comedi_buf_write_free(s, nbytes);
++		comedi_put_is_subdevice_running(s);
++	} else {
++		nbytes = 0;
++	}
++	return nbytes;
++}
++EXPORT_SYMBOL_GPL(comedi_buf_write_free);
++
++unsigned int _comedi_buf_read_n_available(struct comedi_subdevice *s)
+ {
+ 	struct comedi_async *async = s->async;
+-	unsigned int allocated = comedi_buf_write_n_allocated(s);
++	unsigned int num_bytes;
+ 
+-	if (nbytes > allocated)
+-		nbytes = allocated;
++	if (!async)
++		return 0;
+ 
+-	async->buf_write_count += nbytes;
+-	async->buf_write_ptr += nbytes;
+-	comedi_buf_munge(s, async->buf_write_count - async->munge_count);
+-	if (async->buf_write_ptr >= async->prealloc_bufsz)
+-		async->buf_write_ptr %= async->prealloc_bufsz;
++	num_bytes = async->munge_count - async->buf_read_count;
+ 
+-	return nbytes;
++	/*
++	 * ensure the async buffer 'counts' are read before we
++	 * attempt to read data from the buffer
++	 */
++	smp_rmb();
++
++	return num_bytes;
+ }
+-EXPORT_SYMBOL_GPL(comedi_buf_write_free);
+ 
+ /**
+  * comedi_buf_read_n_available() - Determine amount of readable buffer space
+@@ -409,23 +452,38 @@ EXPORT_SYMBOL_GPL(comedi_buf_write_free);
+  */
+ unsigned int comedi_buf_read_n_available(struct comedi_subdevice *s)
+ {
+-	struct comedi_async *async = s->async;
+ 	unsigned int num_bytes;
+ 
+-	if (!async)
+-		return 0;
++	if (comedi_get_is_subdevice_running(s)) {
++		num_bytes = _comedi_buf_read_n_available(s);
++		comedi_put_is_subdevice_running(s);
++	} else {
++		num_bytes = 0;
++	}
++	return num_bytes;
++}
++EXPORT_SYMBOL_GPL(comedi_buf_read_n_available);
+ 
+-	num_bytes = async->munge_count - async->buf_read_count;
++unsigned int _comedi_buf_read_alloc(struct comedi_subdevice *s,
++				    unsigned int nbytes)
++{
++	struct comedi_async *async = s->async;
++	unsigned int available;
++
++	available = async->munge_count - async->buf_read_alloc_count;
++	if (nbytes > available)
++		nbytes = available;
++
++	async->buf_read_alloc_count += nbytes;
+ 
+ 	/*
+ 	 * ensure the async buffer 'counts' are read before we
+-	 * attempt to read data from the buffer
++	 * attempt to read data from the read-alloc'ed buffer space
+ 	 */
+ 	smp_rmb();
+ 
+-	return num_bytes;
++	return nbytes;
+ }
+-EXPORT_SYMBOL_GPL(comedi_buf_read_n_available);
+ 
+ /**
+  * comedi_buf_read_alloc() - Reserve buffer space for reading
+@@ -445,21 +503,12 @@ EXPORT_SYMBOL_GPL(comedi_buf_read_n_available);
+ unsigned int comedi_buf_read_alloc(struct comedi_subdevice *s,
+ 				   unsigned int nbytes)
+ {
+-	struct comedi_async *async = s->async;
+-	unsigned int available;
+-
+-	available = async->munge_count - async->buf_read_alloc_count;
+-	if (nbytes > available)
+-		nbytes = available;
+-
+-	async->buf_read_alloc_count += nbytes;
+-
+-	/*
+-	 * ensure the async buffer 'counts' are read before we
+-	 * attempt to read data from the read-alloc'ed buffer space
+-	 */
+-	smp_rmb();
+-
++	if (comedi_get_is_subdevice_running(s)) {
++		nbytes = _comedi_buf_read_alloc(s, nbytes);
++		comedi_put_is_subdevice_running(s);
++	} else {
++		nbytes = 0;
++	}
+ 	return nbytes;
+ }
+ EXPORT_SYMBOL_GPL(comedi_buf_read_alloc);
+@@ -469,21 +518,8 @@ static unsigned int comedi_buf_read_n_allocated(struct comedi_async *async)
+ 	return async->buf_read_alloc_count - async->buf_read_count;
+ }
+ 
+-/**
+- * comedi_buf_read_free() - Free buffer space after it has been read
+- * @s: COMEDI subdevice.
+- * @nbytes: Maximum space to free in bytes.
+- *
+- * Free up to @nbytes bytes of buffer space previously reserved for reading in
+- * the COMEDI acquisition data buffer associated with the subdevice.  The
+- * amount of space freed is limited to the amount that was reserved.
+- *
+- * The freed space becomes available for allocation by the writer.
+- *
+- * Return: The amount of space freed in bytes.
+- */
+-unsigned int comedi_buf_read_free(struct comedi_subdevice *s,
+-				  unsigned int nbytes)
++unsigned int _comedi_buf_read_free(struct comedi_subdevice *s,
++				   unsigned int nbytes)
+ {
+ 	struct comedi_async *async = s->async;
+ 	unsigned int allocated;
+@@ -503,6 +539,31 @@ unsigned int comedi_buf_read_free(struct comedi_subdevice *s,
+ 	async->buf_read_ptr %= async->prealloc_bufsz;
+ 	return nbytes;
+ }
++
++/**
++ * comedi_buf_read_free() - Free buffer space after it has been read
++ * @s: COMEDI subdevice.
++ * @nbytes: Maximum space to free in bytes.
++ *
++ * Free up to @nbytes bytes of buffer space previously reserved for reading in
++ * the COMEDI acquisition data buffer associated with the subdevice.  The
++ * amount of space freed is limited to the amount that was reserved.
++ *
++ * The freed space becomes available for allocation by the writer.
++ *
++ * Return: The amount of space freed in bytes.
++ */
++unsigned int comedi_buf_read_free(struct comedi_subdevice *s,
++				  unsigned int nbytes)
++{
++	if (comedi_get_is_subdevice_running(s)) {
++		nbytes = _comedi_buf_read_free(s, nbytes);
++		comedi_put_is_subdevice_running(s);
++	} else {
++		nbytes = 0;
++	}
++	return nbytes;
++}
+ EXPORT_SYMBOL_GPL(comedi_buf_read_free);
+ 
+ static void comedi_buf_memcpy_to(struct comedi_subdevice *s,
+@@ -558,6 +619,38 @@ static void comedi_buf_memcpy_from(struct comedi_subdevice *s,
  	}
  }
  
-@@ -1860,8 +1916,14 @@ static int do_cmd_ioctl(struct comedi_device *dev,
- 	if (async->cmd.flags & CMDF_WAKE_EOS)
- 		async->cb_mask |= COMEDI_CB_EOS;
- 
++static unsigned int _comedi_buf_write_samples(struct comedi_subdevice *s,
++					      const void *data,
++					      unsigned int nsamples)
++{
++	unsigned int max_samples;
++	unsigned int nbytes;
++
 +	/*
-+	 * Set the "run active" counter with an initial count of 1 that will
-+	 * complete the "safe to reset" event when it is decremented to 0.
++	 * Make sure there is enough room in the buffer for all the samples.
++	 * If not, clamp the nsamples to the number that will fit, flag the
++	 * buffer overrun and add the samples that fit.
 +	 */
-+	refcount_set(&s->async->run_active, 1);
-+	reinit_completion(&s->async->run_complete);
- 	comedi_update_subdevice_runflags(s, COMEDI_SRF_BUSY_MASK,
--					 COMEDI_SRF_RUNNING);
-+					 COMEDI_SRF_RUNNING | COMEDI_SRF_BUSY);
++	max_samples = comedi_bytes_to_samples(s, comedi_buf_write_n_unalloc(s));
++	if (nsamples > max_samples) {
++		dev_warn(s->device->class_dev, "buffer overrun\n");
++		s->async->events |= COMEDI_CB_OVERFLOW;
++		nsamples = max_samples;
++	}
++
++	if (nsamples == 0)
++		return 0;
++
++	nbytes = comedi_samples_to_bytes(s, nsamples);
++	nbytes = _comedi_buf_write_alloc(s, nbytes);
++	comedi_buf_memcpy_to(s, data, nbytes);
++	_comedi_buf_write_free(s, nbytes);
++	_comedi_inc_scan_progress(s, nbytes);
++	s->async->events |= COMEDI_CB_BLOCK;
++
++	return nbytes;
++}
++
+ /**
+  * comedi_buf_write_samples() - Write sample data to COMEDI buffer
+  * @s: COMEDI subdevice.
+@@ -577,35 +670,43 @@ static void comedi_buf_memcpy_from(struct comedi_subdevice *s,
+  */
+ unsigned int comedi_buf_write_samples(struct comedi_subdevice *s,
+ 				      const void *data, unsigned int nsamples)
++{
++	unsigned int nbytes;
++
++	if (comedi_get_is_subdevice_running(s)) {
++		nbytes = _comedi_buf_write_samples(s, data, nsamples);
++		comedi_put_is_subdevice_running(s);
++	} else {
++		nbytes = 0;
++	}
++	return nbytes;
++}
++EXPORT_SYMBOL_GPL(comedi_buf_write_samples);
++
++static unsigned int _comedi_buf_read_samples(struct comedi_subdevice *s,
++					    void *data, unsigned int nsamples)
+ {
+ 	unsigned int max_samples;
+ 	unsigned int nbytes;
  
- 	/*
- 	 * Set s->busy _after_ setting COMEDI_SRF_RUNNING flag to avoid
+-	/*
+-	 * Make sure there is enough room in the buffer for all the samples.
+-	 * If not, clamp the nsamples to the number that will fit, flag the
+-	 * buffer overrun and add the samples that fit.
+-	 */
+-	max_samples = comedi_bytes_to_samples(s, comedi_buf_write_n_unalloc(s));
+-	if (nsamples > max_samples) {
+-		dev_warn(s->device->class_dev, "buffer overrun\n");
+-		s->async->events |= COMEDI_CB_OVERFLOW;
++	/* clamp nsamples to the number of full samples available */
++	max_samples = comedi_bytes_to_samples(s,
++					      _comedi_buf_read_n_available(s));
++	if (nsamples > max_samples)
+ 		nsamples = max_samples;
+-	}
+ 
+ 	if (nsamples == 0)
+ 		return 0;
+ 
+-	nbytes = comedi_buf_write_alloc(s,
++	nbytes = _comedi_buf_read_alloc(s,
+ 					comedi_samples_to_bytes(s, nsamples));
+-	comedi_buf_memcpy_to(s, data, nbytes);
+-	comedi_buf_write_free(s, nbytes);
+-	comedi_inc_scan_progress(s, nbytes);
++	comedi_buf_memcpy_from(s, data, nbytes);
++	_comedi_buf_read_free(s, nbytes);
++	_comedi_inc_scan_progress(s, nbytes);
+ 	s->async->events |= COMEDI_CB_BLOCK;
+ 
+ 	return nbytes;
+ }
+-EXPORT_SYMBOL_GPL(comedi_buf_write_samples);
+ 
+ /**
+  * comedi_buf_read_samples() - Read sample data from COMEDI buffer
+@@ -624,25 +725,14 @@ EXPORT_SYMBOL_GPL(comedi_buf_write_samples);
+ unsigned int comedi_buf_read_samples(struct comedi_subdevice *s,
+ 				     void *data, unsigned int nsamples)
+ {
+-	unsigned int max_samples;
+ 	unsigned int nbytes;
+ 
+-	/* clamp nsamples to the number of full samples available */
+-	max_samples = comedi_bytes_to_samples(s,
+-					      comedi_buf_read_n_available(s));
+-	if (nsamples > max_samples)
+-		nsamples = max_samples;
+-
+-	if (nsamples == 0)
+-		return 0;
+-
+-	nbytes = comedi_buf_read_alloc(s,
+-				       comedi_samples_to_bytes(s, nsamples));
+-	comedi_buf_memcpy_from(s, data, nbytes);
+-	comedi_buf_read_free(s, nbytes);
+-	comedi_inc_scan_progress(s, nbytes);
+-	s->async->events |= COMEDI_CB_BLOCK;
+-
++	if (comedi_get_is_subdevice_running(s)) {
++		nbytes = _comedi_buf_read_samples(s, data, nsamples);
++		comedi_put_is_subdevice_running(s);
++	} else {
++		nbytes = 0;
++	}
+ 	return nbytes;
+ }
+ EXPORT_SYMBOL_GPL(comedi_buf_read_samples);
+diff --git a/drivers/comedi/comedi_fops.c b/drivers/comedi/comedi_fops.c
+index 595723e24c74..95663b8f89b6 100644
+--- a/drivers/comedi/comedi_fops.c
++++ b/drivers/comedi/comedi_fops.c
+@@ -1206,15 +1206,15 @@ static int do_bufinfo_ioctl(struct comedi_device *dev,
+ 	if (!(async->cmd.flags & CMDF_WRITE)) {
+ 		/* command was set up in "read" direction */
+ 		if (bi.bytes_read) {
+-			comedi_buf_read_alloc(s, bi.bytes_read);
+-			bi.bytes_read = comedi_buf_read_free(s, bi.bytes_read);
++			_comedi_buf_read_alloc(s, bi.bytes_read);
++			bi.bytes_read = _comedi_buf_read_free(s, bi.bytes_read);
+ 		}
+ 		/*
+ 		 * If nothing left to read, and command has stopped, and
+ 		 * {"read" position not updated or command stopped normally},
+ 		 * then become non-busy.
+ 		 */
+-		if (comedi_buf_read_n_available(s) == 0 &&
++		if (_comedi_buf_read_n_available(s) == 0 &&
+ 		    !comedi_is_runflags_running(runflags) &&
+ 		    (bi.bytes_read == 0 ||
+ 		     !comedi_is_runflags_in_error(runflags))) {
+@@ -1231,9 +1231,9 @@ static int do_bufinfo_ioctl(struct comedi_device *dev,
+ 			if (comedi_is_runflags_in_error(runflags))
+ 				retval = -EPIPE;
+ 		} else if (bi.bytes_written) {
+-			comedi_buf_write_alloc(s, bi.bytes_written);
++			_comedi_buf_write_alloc(s, bi.bytes_written);
+ 			bi.bytes_written =
+-			    comedi_buf_write_free(s, bi.bytes_written);
++			    _comedi_buf_write_free(s, bi.bytes_written);
+ 		}
+ 		bi.bytes_read = 0;
+ 	}
+@@ -2574,7 +2574,7 @@ static __poll_t comedi_poll(struct file *file, poll_table *wait)
+ 		poll_wait(file, &s->async->wait_head, wait);
+ 		if (s->busy != file || !comedi_is_subdevice_running(s) ||
+ 		    (s->async->cmd.flags & CMDF_WRITE) ||
+-		    comedi_buf_read_n_available(s) > 0)
++		    _comedi_buf_read_n_available(s) > 0)
+ 			mask |= EPOLLIN | EPOLLRDNORM;
+ 	}
+ 
+@@ -2707,7 +2707,7 @@ static ssize_t comedi_write(struct file *file, const char __user *buf,
+ 			break;
+ 
+ 		/* Allocate all free buffer space. */
+-		comedi_buf_write_alloc(s, async->prealloc_bufsz);
++		_comedi_buf_write_alloc(s, async->prealloc_bufsz);
+ 		m = comedi_buf_write_n_allocated(s);
+ 		n = min_t(size_t, m, nbytes);
+ 
+@@ -2735,7 +2735,7 @@ static ssize_t comedi_write(struct file *file, const char __user *buf,
+ 			n -= m;
+ 			retval = -EFAULT;
+ 		}
+-		comedi_buf_write_free(s, n);
++		_comedi_buf_write_free(s, n);
+ 
+ 		count += n;
+ 		nbytes -= n;
+@@ -2821,7 +2821,7 @@ static ssize_t comedi_read(struct file *file, char __user *buf, size_t nbytes,
+ 	while (count == 0 && !retval) {
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 
+-		m = comedi_buf_read_n_available(s);
++		m = _comedi_buf_read_n_available(s);
+ 		n = min_t(size_t, m, nbytes);
+ 
+ 		if (n == 0) {
+@@ -2861,8 +2861,8 @@ static ssize_t comedi_read(struct file *file, char __user *buf, size_t nbytes,
+ 			retval = -EFAULT;
+ 		}
+ 
+-		comedi_buf_read_alloc(s, n);
+-		comedi_buf_read_free(s, n);
++		_comedi_buf_read_alloc(s, n);
++		_comedi_buf_read_free(s, n);
+ 
+ 		count += n;
+ 		nbytes -= n;
+@@ -2896,7 +2896,7 @@ static ssize_t comedi_read(struct file *file, char __user *buf, size_t nbytes,
+ 		    s == new_s && new_s->async == async && s->busy == file &&
+ 		    !(async->cmd.flags & CMDF_WRITE) &&
+ 		    !comedi_is_subdevice_running(s) &&
+-		    comedi_buf_read_n_available(s) == 0)
++		    _comedi_buf_read_n_available(s) == 0)
+ 			do_become_nonbusy(dev, s);
+ 		mutex_unlock(&dev->mutex);
+ 	}
+@@ -3361,18 +3361,7 @@ static const struct file_operations comedi_fops = {
+ 	.llseek = noop_llseek,
+ };
+ 
+-/**
+- * comedi_event() - Handle events for asynchronous COMEDI command
+- * @dev: COMEDI device.
+- * @s: COMEDI subdevice.
+- * Context: in_interrupt() (usually), @s->spin_lock spin-lock not held.
+- *
+- * If an asynchronous COMEDI command is active on the subdevice, process
+- * any %COMEDI_CB_... event flags that have been set, usually by an
+- * interrupt handler.  These may change the run state of the asynchronous
+- * command, wake a task, and/or send a %SIGIO signal.
+- */
+-void comedi_event(struct comedi_device *dev, struct comedi_subdevice *s)
++void _comedi_event(struct comedi_device *dev, struct comedi_subdevice *s)
+ {
+ 	struct comedi_async *async = s->async;
+ 	unsigned int events;
+@@ -3408,6 +3397,25 @@ void comedi_event(struct comedi_device *dev, struct comedi_subdevice *s)
+ 	if (si_code)
+ 		kill_fasync(&dev->async_queue, SIGIO, si_code);
+ }
++
++/**
++ * comedi_event() - Handle events for asynchronous COMEDI command
++ * @dev: COMEDI device.
++ * @s: COMEDI subdevice.
++ * Context: in_interrupt() (usually), @s->spin_lock spin-lock not held.
++ *
++ * If an asynchronous COMEDI command is active on the subdevice, process
++ * any %COMEDI_CB_... event flags that have been set, usually by an
++ * interrupt handler.  These may change the run state of the asynchronous
++ * command, wake a task, and/or send a %SIGIO signal.
++ */
++void comedi_event(struct comedi_device *dev, struct comedi_subdevice *s)
++{
++	if (comedi_get_is_subdevice_running(s)) {
++		comedi_event(dev, s);
++		comedi_put_is_subdevice_running(s);
++	}
++}
+ EXPORT_SYMBOL_GPL(comedi_event);
+ 
+ /* Note: the ->mutex is pre-locked on successful return */
+diff --git a/drivers/comedi/comedi_internal.h b/drivers/comedi/comedi_internal.h
+index cf10ba016ebc..41a3b09f8f05 100644
+--- a/drivers/comedi/comedi_internal.h
++++ b/drivers/comedi/comedi_internal.h
+@@ -36,6 +36,18 @@ struct comedi_buf_map *
+ comedi_buf_map_from_subdev_get(struct comedi_subdevice *s);
+ unsigned int comedi_buf_write_n_available(struct comedi_subdevice *s);
+ unsigned int comedi_buf_write_n_allocated(struct comedi_subdevice *s);
++unsigned int _comedi_buf_write_alloc(struct comedi_subdevice *s,
++				     unsigned int nbytes);
++unsigned int _comedi_buf_write_free(struct comedi_subdevice *s,
++				    unsigned int nbytes);
++unsigned int _comedi_buf_read_n_available(struct comedi_subdevice *s);
++unsigned int _comedi_buf_read_alloc(struct comedi_subdevice *s,
++				    unsigned int nbytes);
++unsigned int _comedi_buf_read_free(struct comedi_subdevice *s,
++				   unsigned int nbytes);
++void _comedi_inc_scan_progress(struct comedi_subdevice *s,
++			       unsigned int num_bytes);
++void _comedi_event(struct comedi_device *dev, struct comedi_subdevice *s);
+ void comedi_device_cancel_all(struct comedi_device *dev);
+ bool comedi_can_auto_free_spriv(struct comedi_subdevice *s);
+ 
 diff --git a/drivers/comedi/drivers.c b/drivers/comedi/drivers.c
-index c9ebaadc5e82..fd6e6cbe47ad 100644
+index fd6e6cbe47ad..69cd2a253c66 100644
 --- a/drivers/comedi/drivers.c
 +++ b/drivers/comedi/drivers.c
-@@ -677,6 +677,7 @@ static int __comedi_device_postconfig_async(struct comedi_device *dev,
- 		return -ENOMEM;
+@@ -441,6 +441,13 @@ unsigned int comedi_bytes_per_scan_cmd(struct comedi_subdevice *s,
+ }
+ EXPORT_SYMBOL_GPL(comedi_bytes_per_scan_cmd);
  
- 	init_waitqueue_head(&async->wait_head);
-+	init_completion(&async->run_complete);
- 	s->async = async;
++static unsigned int _comedi_bytes_per_scan(struct comedi_subdevice *s)
++{
++	struct comedi_cmd *cmd = &s->async->cmd;
++
++	return comedi_bytes_per_scan_cmd(s, cmd);
++}
++
+ /**
+  * comedi_bytes_per_scan() - Get length of asynchronous command "scan" in bytes
+  * @s: COMEDI subdevice.
+@@ -458,9 +465,16 @@ EXPORT_SYMBOL_GPL(comedi_bytes_per_scan_cmd);
+  */
+ unsigned int comedi_bytes_per_scan(struct comedi_subdevice *s)
+ {
+-	struct comedi_cmd *cmd = &s->async->cmd;
++	unsigned int num_bytes;
  
- 	async->max_bufsize = comedi_default_buf_maxsize_kb * 1024;
-diff --git a/include/linux/comedi/comedidev.h b/include/linux/comedi/comedidev.h
-index 4cb0400ad616..35fdc41845ce 100644
---- a/include/linux/comedi/comedidev.h
-+++ b/include/linux/comedi/comedidev.h
-@@ -15,6 +15,7 @@
- #include <linux/spinlock_types.h>
- #include <linux/rwsem.h>
- #include <linux/kref.h>
-+#include <linux/completion.h>
- #include <linux/comedi.h>
+-	return comedi_bytes_per_scan_cmd(s, cmd);
++	if (comedi_get_is_subdevice_running(s)) {
++		num_bytes = _comedi_bytes_per_scan(s);
++		comedi_put_is_subdevice_running(s);
++	} else {
++		/* Use nomimal, single sample scan length. */
++		num_bytes = comedi_samples_to_bytes(s, 1);
++	}
++	return num_bytes;
+ }
+ EXPORT_SYMBOL_GPL(comedi_bytes_per_scan);
  
- #define COMEDI_VERSION(a, b, c) (((a) << 16) + ((b) << 8) + (c))
-@@ -272,6 +273,8 @@ struct comedi_buf_map {
-  * @events: Bit-vector of events that have occurred.
-  * @cmd: Details of comedi command in progress.
-  * @wait_head: Task wait queue for file reader or writer.
-+ * @run_complete: "run complete" completion event.
-+ * @run_active: "run active" reference counter.
-  * @cb_mask: Bit-vector of events that should wake waiting tasks.
-  * @inttrig: Software trigger function for command, or NULL.
+@@ -482,6 +496,17 @@ static unsigned int __comedi_nscans_left(struct comedi_subdevice *s,
+ 	return nscans;
+ }
+ 
++static unsigned int _comedi_nscans_left(struct comedi_subdevice *s,
++					unsigned int nscans)
++{
++	if (nscans == 0) {
++		unsigned int nbytes = _comedi_buf_read_n_available(s);
++
++		nscans = nbytes / _comedi_bytes_per_scan(s);
++	}
++	return __comedi_nscans_left(s, nscans);
++}
++
+ /**
+  * comedi_nscans_left() - Return the number of scans left in the command
+  * @s: COMEDI subdevice.
+@@ -499,25 +524,18 @@ static unsigned int __comedi_nscans_left(struct comedi_subdevice *s,
+ unsigned int comedi_nscans_left(struct comedi_subdevice *s,
+ 				unsigned int nscans)
+ {
+-	if (nscans == 0) {
+-		unsigned int nbytes = comedi_buf_read_n_available(s);
+-
+-		nscans = nbytes / comedi_bytes_per_scan(s);
++	if (comedi_get_is_subdevice_running(s)) {
++		nscans = _comedi_nscans_left(s, nscans);
++		comedi_put_is_subdevice_running(s);
++	} else {
++		nscans = 0;
+ 	}
+-	return __comedi_nscans_left(s, nscans);
++	return nscans;
+ }
+ EXPORT_SYMBOL_GPL(comedi_nscans_left);
+ 
+-/**
+- * comedi_nsamples_left() - Return the number of samples left in the command
+- * @s: COMEDI subdevice.
+- * @nsamples: The expected number of samples.
+- *
+- * Returns the number of samples remaining to complete the command, or the
+- * specified expected number of samples (@nsamples), whichever is fewer.
+- */
+-unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
+-				  unsigned int nsamples)
++static unsigned int _comedi_nsamples_left(struct comedi_subdevice *s,
++					  unsigned int nsamples)
+ {
+ 	struct comedi_async *async = s->async;
+ 	struct comedi_cmd *cmd = &async->cmd;
+@@ -538,24 +556,34 @@ unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
+ 		return samples_left;
+ 	return nsamples;
+ }
+-EXPORT_SYMBOL_GPL(comedi_nsamples_left);
+ 
+ /**
+- * comedi_inc_scan_progress() - Update scan progress in asynchronous command
++ * comedi_nsamples_left() - Return the number of samples left in the command
+  * @s: COMEDI subdevice.
+- * @num_bytes: Amount of data in bytes to increment scan progress.
++ * @nsamples: The expected number of samples.
   *
-@@ -357,6 +360,8 @@ struct comedi_async {
- 	unsigned int events;
- 	struct comedi_cmd cmd;
- 	wait_queue_head_t wait_head;
-+	struct completion run_complete;
-+	refcount_t run_active;
- 	unsigned int cb_mask;
- 	int (*inttrig)(struct comedi_device *dev, struct comedi_subdevice *s,
- 		       unsigned int x);
-@@ -584,6 +589,8 @@ struct comedi_device *comedi_dev_get_from_minor(unsigned int minor);
- int comedi_dev_put(struct comedi_device *dev);
+- * Increments the scan progress by the number of bytes specified by @num_bytes.
+- * If the scan progress reaches or exceeds the scan length in bytes, reduce
+- * it modulo the scan length in bytes and set the "end of scan" asynchronous
+- * event flag (%COMEDI_CB_EOS) to be processed later.
++ * Returns the number of samples remaining to complete the command, or the
++ * specified expected number of samples (@nsamples), whichever is fewer.
+  */
+-void comedi_inc_scan_progress(struct comedi_subdevice *s,
+-			      unsigned int num_bytes)
++unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
++				  unsigned int nsamples)
++{
++	if (comedi_get_is_subdevice_running(s)) {
++		nsamples = _comedi_nsamples_left(s, nsamples);
++		comedi_put_is_subdevice_running(s);
++	} else {
++		nsamples = 0;
++	}
++	return nsamples;
++}
++EXPORT_SYMBOL_GPL(comedi_nsamples_left);
++
++void _comedi_inc_scan_progress(struct comedi_subdevice *s,
++			       unsigned int num_bytes)
+ {
+ 	struct comedi_async *async = s->async;
+ 	struct comedi_cmd *cmd = &async->cmd;
+-	unsigned int scan_length = comedi_bytes_per_scan(s);
++	unsigned int scan_length = _comedi_bytes_per_scan(s);
  
- bool comedi_is_subdevice_running(struct comedi_subdevice *s);
-+bool comedi_get_is_subdevice_running(struct comedi_subdevice *s);
-+void comedi_put_is_subdevice_running(struct comedi_subdevice *s);
+ 	/* track the 'cur_chan' for non-SDF_PACKED subdevices */
+ 	if (!(s->subdev_flags & SDF_PACKED)) {
+@@ -576,8 +604,43 @@ void comedi_inc_scan_progress(struct comedi_subdevice *s,
+ 		async->events |= COMEDI_CB_EOS;
+ 	}
+ }
++
++/**
++ * comedi_inc_scan_progress() - Update scan progress in asynchronous command
++ * @s: COMEDI subdevice.
++ * @num_bytes: Amount of data in bytes to increment scan progress.
++ *
++ * Increments the scan progress by the number of bytes specified by @num_bytes.
++ * If the scan progress reaches or exceeds the scan length in bytes, reduce
++ * it modulo the scan length in bytes and set the "end of scan" asynchronous
++ * event flag (%COMEDI_CB_EOS) to be processed later.
++ */
++void comedi_inc_scan_progress(struct comedi_subdevice *s,
++			      unsigned int num_bytes)
++{
++	if (comedi_get_is_subdevice_running(s)) {
++		_comedi_inc_scan_progress(s, num_bytes);
++		comedi_put_is_subdevice_running(s);
++	}
++}
+ EXPORT_SYMBOL_GPL(comedi_inc_scan_progress);
  
- void *comedi_alloc_spriv(struct comedi_subdevice *s, size_t size);
- void comedi_set_spriv_auto_free(struct comedi_subdevice *s);
++static unsigned int _comedi_handle_events(struct comedi_device *dev,
++					  struct comedi_subdevice *s)
++{
++	unsigned int events = s->async->events;
++
++	if (events == 0)
++		return events;
++
++	if ((events & COMEDI_CB_CANCEL_MASK) && s->cancel)
++		s->cancel(dev, s);
++
++	_comedi_event(dev, s);
++
++	return events;
++}
++
+ /**
+  * comedi_handle_events() - Handle events and possibly stop acquisition
+  * @dev: COMEDI device.
+@@ -597,16 +660,14 @@ EXPORT_SYMBOL_GPL(comedi_inc_scan_progress);
+ unsigned int comedi_handle_events(struct comedi_device *dev,
+ 				  struct comedi_subdevice *s)
+ {
+-	unsigned int events = s->async->events;
+-
+-	if (events == 0)
+-		return events;
+-
+-	if ((events & COMEDI_CB_CANCEL_MASK) && s->cancel)
+-		s->cancel(dev, s);
+-
+-	comedi_event(dev, s);
++	unsigned int events;
+ 
++	if (comedi_get_is_subdevice_running(s)) {
++		events = _comedi_handle_events(dev, s);
++		comedi_put_is_subdevice_running(s);
++	} else {
++		events = 0;
++	}
+ 	return events;
+ }
+ EXPORT_SYMBOL_GPL(comedi_handle_events);
 -- 
 2.51.0
 
