@@ -1,435 +1,217 @@
-Return-Path: <linux-kernel+bounces-866337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6496CBFF7EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:20:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FBABFF7F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9020C4F09D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:20:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AE104F6403
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437F52C11C4;
-	Thu, 23 Oct 2025 07:18:14 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4mi4ymjia.icoremail.net (zg8tmja5ljk3lje4mi4ymjia.icoremail.net [209.97.182.222])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B53292918;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E59A2D77F7;
+	Thu, 23 Oct 2025 07:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="Noypwj+/"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010051.outbound.protection.outlook.com [52.101.228.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FFC2C11D6;
 	Thu, 23 Oct 2025 07:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.182.222
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761203893; cv=none; b=Z/I+VBpBJBY3+Yd4sV6dtdJOZ0iCFrsX/bZ5DI5FiKXjDpBK2TCwJeJEb6v8UzulXZbLwHI+b2qwA+hko/4BUanqlFZ9aDrwxH1GRbX5BBDqvQJi6iKUCykDnlZ31R+LQ2h8jpnsxXqiRY3IXvJ/5VvtMwG+6eSEDUiUy8da0gI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761203893; c=relaxed/simple;
-	bh=h5JqkehtiFS77SbCZc+ToJ1YCRVywIAcRh5HcqenYCQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hS0Cl9nSUcqJsDzExsECTe8BZnJdMszJSFufcRpT4ZRrVBtVbQIc8LQpTE1OvZFFz6kHCAp/x9dQrBoJ/Zi2ehGwMVIDtWXWz+uois1sUJwFuwHLODn3w/jfUaDK4WCeyEGeZnfdXanmctYFttnA8qgFlmoPxcORQIH9g+Wck8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=209.97.182.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0005152DT.eswin.cn (unknown [10.12.96.41])
-	by app1 (Coremail) with SMTP id TAJkCgCnuwyi1vloS64qAQ--.23465S2;
-	Thu, 23 Oct 2025 15:17:56 +0800 (CST)
-From: dongxuyang@eswincomputing.com
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761203894; cv=fail; b=lkTiqPpaS8tZE1SRZ9GiF3G1ZSGLzhLgGMJa08XAOXRiDeOvgkiW2D+pFV4OrxhZmc80oB3E4LHhvIfdPURsLnYSEBXATtfB914vMpDn03rRiTpg7EszhL1L7m9Kw5T5WyFhd5YvxNx1499DYyDBoIgwUfWdc7oI0+Wb28qSlrY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761203894; c=relaxed/simple;
+	bh=iu+hNJUTbDQc4TV3NTF41UAqmH1y7aV4oGLrUD9JQ4U=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=TLQZGupXyxv8XWYxHPvcooowOCheGkg6GxJk2Jvr7FTavmu8jYQIdp1fimkWzttzFgD3HO0DXuLiw6TEMyO8GDXb++qltbCy8nYd3ubpX4lHWSn8plwWVUXsEXimTuhVXlMZ5uI6CCS+vjB74h22lbcZKA44w6oitBjBj/urqqk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=Noypwj+/; arc=fail smtp.client-ip=52.101.228.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aS7ke5+W+5OHlD+IILpPjiqWrDnj7974KngBMIEARKZ+qIXD7R0CgGQVP1fazwQ/RJnV7mIbhUQ76Wsate53Q/Z1G6jU/fgpEZUgpkTuV+ARSYHByX7e5LT+xl9jThvvpd4S+c6R/NRuKwEnaikAM+eDOXCCR2tfOg/VFjrcXh8Qssu8Gm9n2VsD2Yha32j7hNDVOPNMJRlycJwIcHTWDP+w+Nd4dHKPx56Ogh9a6666a19MfTCwoqxY1+1jMoVD3+Zgec1AE93F8ZJJfPhGpZeCnF+OXEvemlgmQ944azaT9rRr9Bu2iwkSXYInXxkV+F8ISsCSOwpljtX/8TNa+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=55w74kw+17yZTCLnXHer7LAFH08XZa0X1L5kUpqNqWE=;
+ b=sMC/+tIwpr+fA0QgdLG/e1cASRM8v0u1qo89qnTyj1A4kPqNrF0SouLsGEpSYmqNdcasrks3mrG8KBx/kXOuXx7+O/JcVvOH9G4HgbtuOJ8G1eGl2AjXYW6kxy1Xo66MuRIVG5Bjka2ONBS4SzfmrUkLgXF5t40Zwrerrmj5KZ7Hf8KypEgga2fIZE6/EanteAYpgMtGKJ1Q+Ww0gJDGtCSCS0arKLko+RfD7HQ0sBRXmtR5Gd7qkRgKD+Zk6JBz27IrE5wkXxe1EuG1gTzezV7+1hOXzBne0V5a04JpPk32F7nKDNshuqeOqJyrtJ16m+pjHH6mVJSMzBiB62Ww2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
+ header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=55w74kw+17yZTCLnXHer7LAFH08XZa0X1L5kUpqNqWE=;
+ b=Noypwj+/IzPBtw5+7YKETir8eDBPsfBlbXcFIvZ5aH1TZ0jmvy6oyqqpK5EAYyQ4k88ZdTRxGAqXVjWa0/mrtQzz1xtEG8WIcx3/1wNBd7kvY+NsABqsPa+XszrvwlgJ6mUqUR7/Cm/jzJNOZ2C26r/5tq772ovbDZTPp0cnQ4A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=valinux.co.jp;
+Received: from OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:10d::7)
+ by TY7P286MB5387.JPNP286.PROD.OUTLOOK.COM (2603:1096:405:1f3::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
+ 2025 07:18:07 +0000
+Received: from OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::80f1:db56:4a11:3f7a]) by OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::80f1:db56:4a11:3f7a%5]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 07:18:06 +0000
+From: Koichiro Den <den@valinux.co.jp>
+To: ntb@lists.linux.dev,
+	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	huangyifeng@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	Xuyang Dong <dongxuyang@eswincomputing.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v7 1/2] dt-bindings: clock: eswin: Documentation for eic7700 SoC
-Date: Thu, 23 Oct 2025 15:17:48 +0800
-Message-Id: <20251023071748.513-1-dongxuyang@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20251023071658.455-1-dongxuyang@eswincomputing.com>
-References: <20251023071658.455-1-dongxuyang@eswincomputing.com>
+Cc: jdmason@kudzu.us,
+	dave.jiang@intel.com,
+	allenbh@gmail.com,
+	mani@kernel.org,
+	kwilczynski@kernel.org,
+	kishon@kernel.org,
+	bhelgaas@google.com,
+	jbrunet@baylibre.com,
+	Frank.Li@nxp.com,
+	lpieralisi@kernel.org,
+	yebin10@huawei.com,
+	geert+renesas@glider.be,
+	arnd@arndb.de
+Subject: [PATCH 0/6] PCI: endpoint/NTB: Harden vNTB resource management
+Date: Thu, 23 Oct 2025 16:17:51 +0900
+Message-ID: <20251023071757.901181-1-den@valinux.co.jp>
+X-Mailer: git-send-email 2.48.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY4PR01CA0044.jpnprd01.prod.outlook.com
+ (2603:1096:405:372::17) To OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:10d::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgCnuwyi1vloS64qAQ--.23465S2
-X-Coremail-Antispam: 1UD129KBjvAXoW3ZF4UuF45ur18Zr13Xw15XFb_yoW8Xw1DZo
-	W8C3Zxu3yUKw1IvrsxGw1xX3yYkr47Jr1DXF13Xa4fKF1xJrnFkry8Jr40934ftryj9r90
-	kwsrKwn7ZrWY9FW7n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUYK7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
-	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
-	x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
-	Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE-syl42
-	xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWU
-	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI4
-	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
-	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
-	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUrdb1DUUUU
-X-CM-SenderInfo: pgrqw5xx1d0w46hv4xpqfrz1xxwl0woofrz/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS3P286MB0979:EE_|TY7P286MB5387:EE_
+X-MS-Office365-Filtering-Correlation-Id: abf9687c-739b-40b8-fd77-08de12044ff2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?R33qGgJUcJl8Oi8f9EVGcpb+g2CXHYukLMLeLmC/EUR9aKDA7akT55OeSl6S?=
+ =?us-ascii?Q?N1AwLOfzAK9wb5aMrZFdtXabyelQpxWZlHB7Mak2pBWxxCiSfBSLtWWA+QNj?=
+ =?us-ascii?Q?I1EnEL5HIZxqIWrmLYR5uDeB8DkigXsQNYw4OKzWbL1+0iLEwtxqfLtTOk1R?=
+ =?us-ascii?Q?prBYU9OFw697x3z5WjDwhiXfVPE7c5VEJec3GzCe2YSPJIlrxZckmZJ7MlW4?=
+ =?us-ascii?Q?AQCNbXIkJ6tTOhCRV7fO2smrAkD4HZTsqio/NQsrcS7OVCjXXTw8DPQWNCAi?=
+ =?us-ascii?Q?OvlQ9tcmiCBsiakJA1vBo8cZAYdwXIR4IVd46AfgRGARmoSNkzaXStSMZBMy?=
+ =?us-ascii?Q?8y94GFvilQTBhnyrADnu41oqNAK2/SkFSglYAboPEodiH4Y32zlID09KmaOu?=
+ =?us-ascii?Q?tIe9Mx0vM0kAnN+WXmTX4xAw3qmH2saVd50OeaNBHkJL/u2k2AhJ8aynbS2j?=
+ =?us-ascii?Q?uhx8eQC5MgSybV/sAshX5HOvJ4R23Do3lCWGqts2Zr+kq8zyM11BeZYJoqMn?=
+ =?us-ascii?Q?y8HJw0IQH3vf4u9Mef6I89nuBIBkoR9HNaX6DqCEyOxJuihc8YfnyZarB8s3?=
+ =?us-ascii?Q?5qqZJnHonboiN7TGeGColfD9nf4PYv+nox/LtTsCNM59HXfa0zNRuCHGXGj6?=
+ =?us-ascii?Q?dScq8ASZJ2MalPmQha59xJHO8AF1YH8kanOjYLK8v2xuf3RLjHteYMZY+Gjg?=
+ =?us-ascii?Q?KvAyBiruHJMqqydqjS+E69refrcTQmZBzqZuGSTlKZ/ATU/auuQujEejecVM?=
+ =?us-ascii?Q?s5nJRlXR7xaN/SEP7Lz7dDE+SIn0thdlBH6KPzjm/uxFXBm8UFI7kMiZny6t?=
+ =?us-ascii?Q?fDG8ouD4yF4ZkeDOl6POI3u9r+OL2Pa6W1XvbZlfiXxvd4HeeGbE+Zk8Rrnk?=
+ =?us-ascii?Q?DSdquLyKOQ4YZaXCBNGOLWUL55DR8i3UWk+D3SBB7WyZo6as5MgAkO91KtK3?=
+ =?us-ascii?Q?AZ48Yf7cpJnqRKcwESQStmAx5kOgS7OG/CnC+ylvbkyGiM7cMIn9C177EsL/?=
+ =?us-ascii?Q?mWPAkEIkbbnLeH15aQpb5OEZ4Lcat11rBBAmZ9BWfwwZ0CYTWZn9nUWznYef?=
+ =?us-ascii?Q?hUTDlubaEm/F+9LiO6389NUMpy69HxuYP9nDKqYe8Yqo0MNglUdcoRJ1KAOZ?=
+ =?us-ascii?Q?sW80V9kOeuvJRapAa5X9PwLjl2uJfgDOiaZsUvW+9syxMYbXRq2MLjJKD5Nl?=
+ =?us-ascii?Q?7Agv9IfAreaif6mvz+ck8dRrNeS2W1YxA3AWQnbCUGNySVCc3EVO+51t9Mrj?=
+ =?us-ascii?Q?mUs62p79GC4sBXczMOM5pjtHj/OtOqTSqdMS+nuMXg49IRcCnoNH0RH8tY7H?=
+ =?us-ascii?Q?nVq8hWBIqQTWQKyzoLpmpqgYOcH+P7P6C7In3TibfGNpdmUw/q3buUbDapm3?=
+ =?us-ascii?Q?4jp1Td/6CMuE18FVWpy1Wjfyjxi+ggFD8Dd8YtQzaQt+Rzv+a1c465DjN52e?=
+ =?us-ascii?Q?InTbPrDgjxgp0SMxk+9BFIcZsezDNFf0?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?v1x+zfeLlyheZc8Ml5DOijld/SNzCpXrVwa02PjszgiiMVA/G+fTvrFYOsfh?=
+ =?us-ascii?Q?SfULKZRLWHsNbhJvq0RG7m091NFyLzFw74JYaWRARXXeh+7l96HdzLGUUU3Q?=
+ =?us-ascii?Q?pBlYLHSWy2IqKm7dUZk2vW/naXKK2AguKivQpoENFG3OjlrtG2MhCqkX6Wfx?=
+ =?us-ascii?Q?yrlGrbLdYcj6GoXhuufVNRpI6TW0XGYN4X+Dd4z6EJPUH0VHFXdB/ZLZWRSb?=
+ =?us-ascii?Q?vq6AHJxp4SfT1i/sTLqhANU78gz6xxbENK45SbdnjEb25pk13U+eQo6mBq6I?=
+ =?us-ascii?Q?yKlbRo/1vsRNm00PT6aGeNLvbEVeGdXi14EBg26XEfQcBp26XoM6Pr/mgeN4?=
+ =?us-ascii?Q?hcvjHbWmQmIHmdFzZPfpXXhdt2ifBz80mO/WOPb/HCNQh3Mzl6JBdEV2LXpf?=
+ =?us-ascii?Q?YM7LISjjNshr+NrNPKf56Twj0KPrt2S7RCQGeBS0rTPyiCyc7FF1Cu2Xi9EN?=
+ =?us-ascii?Q?Me+p20DxfmiUeUf/khvYq9NDoH+e9vkvPY/wRP+BWcRcM+DlhATOsV/3n/6+?=
+ =?us-ascii?Q?BKtyit65vH253JPeD++xy9MRIvpNjMPJsd5al3YoOa6A/iUw6IEsCzZy0lCJ?=
+ =?us-ascii?Q?idmd+cCzdZW5zzzeyo2lo0qqFT74eOpBPAaHams5DTtZFH0nqeHiSGDMjQPj?=
+ =?us-ascii?Q?FMsRlJjQgynvStcj0qmWKeoK7UO+PNh6Pkj3odPCpXjU+7nt59MoxtvhXYJI?=
+ =?us-ascii?Q?7js/v5jCvyXfdVKquFzsQT2az5gF1K5kRH6nDyxv6q+nAYXM5SE6L33clzu+?=
+ =?us-ascii?Q?LUTiQ3oU7ZxMdgoXD5iM7s6xIDsXa3CxauE3RDw2ig8mMg+YJuoap/ZI9q0I?=
+ =?us-ascii?Q?/cFxD91U6qy2ICqT2JtWN624GHgN7HLdGhsxVGEKgqTN3bab1r0I+yZav9hN?=
+ =?us-ascii?Q?tTmqV1Yeab592zguBAuyhUvsdc7aTzgEENgpU4BrtHDjcTAWRj1GRFJtoozc?=
+ =?us-ascii?Q?24yMkQL0xn0CddV2+b/JoeXLJn8blPYYAXOJL/D44dDCGbG9A7Qxmeb2D3F9?=
+ =?us-ascii?Q?G/8SA6xz/jCPlo8C2cSZxsj5rMABYCCKqR6tgOs4DEPPhXp5JFqT9nAy6Kdi?=
+ =?us-ascii?Q?iRktz37ntICdvAvL09lpsAihOZN3c8DnWCrKhMwfk9T0Z0KYLcvwoiw9VhU6?=
+ =?us-ascii?Q?OqpmdXs2E/HYeGZNoQf4ss3Wtm0I6Xf/XOFWrhHsOHGAok1v499cvy8qD+Uv?=
+ =?us-ascii?Q?HB5SnIElCVUoXDcEofK2AmgJCQGmS2t/JfBLk333K1tUVB/dH5OuKMzx8e0H?=
+ =?us-ascii?Q?C8uuXN47Sm1LFh/iQTX3JVBXASyjhOz+1rB5eOz4QMSk+CPEvN1eGaELdCi/?=
+ =?us-ascii?Q?AMTSbNT3LVZu0wZcsGPJcVqkLZWlAtEBZx652UGq0wpkGVBnrT7xiZjnYntl?=
+ =?us-ascii?Q?meyBZ72ZZD4d8ucGKWNBWq/aw0qN34CvfiaFnAtu55Stmpgvj9EWGnYdApeo?=
+ =?us-ascii?Q?TPkDDylMDDEs38FDF+YSb44hfVPZYLFmbHT+ctxTKgebIUQvWaQG333e2gU4?=
+ =?us-ascii?Q?e7M0IsQ8jG/JmImhMGR7JOYW6+2r6g+oivtxtWxpC0qHIaQzXlZJ/VJ8ZRSt?=
+ =?us-ascii?Q?AY7HJiwd1nx2KK2XAVrrgda94UxcKaEOmnjgkFqkg8I45cFMH1dKMZiXBZ3a?=
+ =?us-ascii?Q?/E0ysSmbMhV8/lDdQmJjH8I=3D?=
+X-OriginatorOrg: valinux.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: abf9687c-739b-40b8-fd77-08de12044ff2
+X-MS-Exchange-CrossTenant-AuthSource: OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 07:18:06.8258
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GeHOjhFdWteZfDqC9s/+GEloMoti0se5wNMhwrAiAKf2g4SO36D9ru7j7LFgYKFuqllFs74l7I17MR9+5V7uOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7P286MB5387
 
-From: Xuyang Dong <dongxuyang@eswincomputing.com>
+The vNTB endpoint function (pci-epf-vntb) can be configured and reconfigured
+through configfs (link/unlink functions, start/stop the controller, update
+parameters). In practice, several pitfalls present: double-unmapping when two
+windows share a BAR, wrong parameter order in .drop_link leading to wrong
+object lookups, duplicate EPC teardown that leads to oopses, a work item
+running after resources were torn down, and inability to re-link/restart
+fundamentally because ntb_dev was embedded and the vPCI bus teardown was
+incomplete.
 
-Add device tree binding documentation for the ESWIN eic7700
-clock controller module.
+This series addresses those issues and hardens resource management across NTB
+EPF and PCI EP core:
 
-Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
----
- .../bindings/clock/eswin,eic7700-clock.yaml   |  46 +++
- .../dt-bindings/clock/eswin,eic7700-clock.h   | 280 ++++++++++++++++++
- 2 files changed, 326 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
- create mode 100644 include/dt-bindings/clock/eswin,eic7700-clock.h
+- Avoid double iounmap when PEER_SPAD and CONFIG share the same BAR.
+- Fix configfs .drop_link parameter order so the correct groups are used during
+  unlink.
+- Remove duplicate EPC resource teardown in both pci-epf-vntb and pci-epf-ntb,
+  avoiding crashes on .allow_link failures and during .drop_link.
+- Stop the delayed cmd_handler work before clearing BARs/doorbells.
+- Manage ntb_dev as a devm-managed allocation and implement .remove() in the
+  vNTB PCI driver. Switch to pci_scan_root_bus().
 
-diff --git a/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml b/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
-new file mode 100644
-index 000000000000..3125ae52bde6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/eswin,eic7700-clock.yaml
-@@ -0,0 +1,46 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/eswin,eic7700-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Eswin EIC7700 SoC clock controller
-+
-+maintainers:
-+  - Yifeng Huang <huangyifeng@eswincomputing.com>
-+  - Xuyang Dong <dongxuyang@eswincomputing.com>
-+
-+description:
-+  The clock controller generates and supplies clock to all the modules
-+  for eic7700 SoC.
-+
-+properties:
-+  compatible:
-+    const: eswin,eic7700-clock
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: External 24MHz oscillator clock
-+
-+  '#clock-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@51828000 {
-+        compatible = "eswin,eic7700-clock";
-+        reg = <0x51828000 0x300>;
-+        clocks = <&xtal24m>;
-+        #clock-cells = <1>;
-+    };
-diff --git a/include/dt-bindings/clock/eswin,eic7700-clock.h b/include/dt-bindings/clock/eswin,eic7700-clock.h
-new file mode 100644
-index 000000000000..33dea1ae5116
---- /dev/null
-+++ b/include/dt-bindings/clock/eswin,eic7700-clock.h
-@@ -0,0 +1,280 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd..
-+ * All rights reserved.
-+ *
-+ * Device Tree binding constants for EIC7700 clock controller.
-+ *
-+ * Authors:
-+ *	Yifeng Huang <huangyifeng@eswincomputing.com>
-+ *	Xuyang Dong <dongxuyang@eswincomputing.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_ESWIN_EIC7700_CLOCK_H_
-+#define _DT_BINDINGS_ESWIN_EIC7700_CLOCK_H_
-+
-+#define EIC7700_CLK_XTAL_32K				0
-+#define EIC7700_CLK_PLL_CPU				1
-+#define EIC7700_CLK_SPLL0_FOUT1				2
-+#define EIC7700_CLK_SPLL0_FOUT2				3
-+#define EIC7700_CLK_SPLL0_FOUT3				4
-+#define EIC7700_CLK_SPLL1_FOUT1				5
-+#define EIC7700_CLK_SPLL1_FOUT2				6
-+#define EIC7700_CLK_SPLL1_FOUT3				7
-+#define EIC7700_CLK_SPLL2_FOUT1				8
-+#define EIC7700_CLK_SPLL2_FOUT2				9
-+#define EIC7700_CLK_SPLL2_FOUT3				10
-+#define EIC7700_CLK_VPLL_FOUT1				11
-+#define EIC7700_CLK_VPLL_FOUT2				12
-+#define EIC7700_CLK_VPLL_FOUT3				13
-+#define EIC7700_CLK_APLL_FOUT1				14
-+#define EIC7700_CLK_APLL_FOUT2				15
-+#define EIC7700_CLK_APLL_FOUT3				16
-+#define EIC7700_CLK_EXT_MCLK				17
-+#define EIC7700_CLK_LPDDR_REF_BAK			18
-+#define EIC7700_CLK_MUX_CPU_ROOT_3MUX1_GFREE		19
-+#define EIC7700_CLK_MUX_CPU_ACLK_2MUX1_GFREE		20
-+#define EIC7700_CLK_MUX_DSP_ACLK_ROOT_2MUX1_GFREE	21
-+#define EIC7700_CLK_MUX_D2D_ACLK_ROOT_2MUX1_GFREE	22
-+#define EIC7700_CLK_MUX_MSHCORE_ROOT_3MUX1_0		23
-+#define EIC7700_CLK_MUX_MSHCORE_ROOT_3MUX1_1		24
-+#define EIC7700_CLK_MUX_MSHCORE_ROOT_3MUX1_2		25
-+#define EIC7700_CLK_MUX_NPU_LLCLK_3MUX1_GFREE		26
-+#define EIC7700_CLK_MUX_NPU_CORE_3MUX1_GFREE		27
-+#define EIC7700_CLK_MUX_VI_ACLK_ROOT_2MUX1_GFREE	28
-+#define EIC7700_CLK_MUX_VI_DVP_ROOT_2MUX1_GFREE		29
-+#define EIC7700_CLK_MUX_VI_DIG_ISP_ROOT_2MUX1_GFREE	30
-+#define EIC7700_CLK_MUX_VO_ACLK_ROOT_2MUX1_GFREE	31
-+#define EIC7700_CLK_MUX_VO_PIXEL_ROOT_2MUX1		32
-+#define EIC7700_CLK_MUX_VCDEC_ROOT_2MUX1_GFREE		33
-+#define EIC7700_CLK_MUX_VCACLK_ROOT_2MUX1_GFREE		34
-+#define EIC7700_CLK_MUX_SATA_PHY_2MUX1			35
-+#define EIC7700_CLK_MUX_BOOTSPI_CLK_2MUX1_GFREE		36
-+#define EIC7700_CLK_MUX_SCPU_CORE_CLK_2MUX1_GFREE	37
-+#define EIC7700_CLK_MUX_LPCPU_CORE_CLK_2MUX1_GFREE	38
-+#define EIC7700_CLK_MUX_VO_MCLK_2MUX_EXT_MCLK		39
-+#define EIC7700_CLK_MUX_SYSCFG_CLK_ROOT_2MUX1_GFREE	40
-+#define EIC7700_CLK_MUX_AONDMA_AXI2MUX1_GFREE		41
-+#define EIC7700_CLK_MUX_RMII_REF_2MUX			42
-+#define EIC7700_CLK_MUX_ETH_CORE_2MUX1			43
-+#define EIC7700_CLK_MUX_VI_DW_ROOT_2MUX1		44
-+#define EIC7700_CLK_MUX_NPU_E31_3MUX1_GFREE		45
-+#define EIC7700_CLK_MUX_DDR_ACLK_ROOT_2MUX1_GFREE	46
-+#define EIC7700_CLK_DIV_SYS_CFG_DYNM			47
-+#define EIC7700_CLK_DIV_NOC_NSP_DYNM			48
-+#define EIC7700_CLK_DIV_BOOTSPI_DYNM			49
-+#define EIC7700_CLK_DIV_SCPU_CORE_DYNM			50
-+#define EIC7700_CLK_DIV_LPCPU_CORE_DYNM			51
-+#define EIC7700_CLK_DIV_GPU_ACLK_DYNM			52
-+#define EIC7700_CLK_DIV_DSP_ACLK_DYNM			53
-+#define EIC7700_CLK_DIV_D2D_ACLK_DYNM			54
-+#define EIC7700_CLK_DIV_HSP_ACLK_DYNM			55
-+#define EIC7700_CLK_DIV_ETH_TXCLK_DYNM_0		56
-+#define EIC7700_CLK_DIV_ETH_TXCLK_DYNM_1		57
-+#define EIC7700_CLK_DIV_MSHC_CORE_DYNM_0		58
-+#define EIC7700_CLK_DIV_MSHC_CORE_DYNM_1		59
-+#define EIC7700_CLK_DIV_MSHC_CORE_DYNM_2		60
-+#define EIC7700_CLK_DIV_PCIE_ACLK_DYNM			61
-+#define EIC7700_CLK_DIV_NPU_ACLK_DYNM			62
-+#define EIC7700_CLK_DIV_NPU_LLC_SRC0_DYNM		63
-+#define EIC7700_CLK_DIV_NPU_LLC_SRC1_DYNM		64
-+#define EIC7700_CLK_DIV_NPU_CORECLK_DYNM		65
-+#define EIC7700_CLK_DIV_VI_ACLK_DYNM			66
-+#define EIC7700_CLK_DIV_VI_DVP_DYNM			67
-+#define EIC7700_CLK_DIV_VI_DIG_ISP_DYNM			68
-+#define EIC7700_CLK_DIV_VI_SHUTTER_DYNM_0		69
-+#define EIC7700_CLK_DIV_VI_SHUTTER_DYNM_1		70
-+#define EIC7700_CLK_DIV_VI_SHUTTER_DYNM_2		71
-+#define EIC7700_CLK_DIV_VI_SHUTTER_DYNM_3		72
-+#define EIC7700_CLK_DIV_VI_SHUTTER_DYNM_4		73
-+#define EIC7700_CLK_DIV_VI_SHUTTER_DYNM_5		74
-+#define EIC7700_CLK_DIV_VO_ACLK_DYNM			75
-+#define EIC7700_CLK_DIV_IESMCLK_DYNM			76
-+#define EIC7700_CLK_DIV_VO_PIXEL_DYNM			77
-+#define EIC7700_CLK_DIV_VO_MCLK_DYNM			78
-+#define EIC7700_CLK_DIV_VC_ACLK_DYNM			79
-+#define EIC7700_CLK_DIV_JD_DYNM				80
-+#define EIC7700_CLK_DIV_JE_DYNM				81
-+#define EIC7700_CLK_DIV_VE_DYNM				82
-+#define EIC7700_CLK_DIV_VD_DYNM				83
-+#define EIC7700_CLK_DIV_G2D_DYNM			84
-+#define EIC7700_CLK_DIV_AONDMA_AXI_DYNM			85
-+#define EIC7700_CLK_DIV_CRYPTO_DYNM			86
-+#define EIC7700_CLK_DIV_VI_DW_DYNM			87
-+#define EIC7700_CLK_DIV_NPU_E31_DYNM			88
-+#define EIC7700_CLK_DIV_SATA_PHY_REF_DYNM		89
-+#define EIC7700_CLK_DIV_DSP_0_ACLK_DYNM			90
-+#define EIC7700_CLK_DIV_DSP_1_ACLK_DYNM			91
-+#define EIC7700_CLK_DIV_DSP_2_ACLK_DYNM			92
-+#define EIC7700_CLK_DIV_DSP_3_ACLK_DYNM			93
-+#define EIC7700_CLK_DIV_DDR_ACLK_DYNM			94
-+#define EIC7700_CLK_DIV_AON_RTC_DYNM			95
-+#define EIC7700_CLK_DIV_U84_RTC_TOGGLE_DYNM		96
-+#define EIC7700_CLK_DIV_VO_CEC_DYNM			97
-+#define EIC7700_CLK_GATE_CPU_EXT_SRC_CORE_CLK_0		98
-+#define EIC7700_CLK_GATE_CPU_EXT_SRC_CORE_CLK_1		99
-+#define EIC7700_CLK_GATE_CPU_EXT_SRC_CORE_CLK_2		100
-+#define EIC7700_CLK_GATE_CPU_EXT_SRC_CORE_CLK_3		101
-+#define EIC7700_CLK_GATE_CPU_TRACE_CLK_0		102
-+#define EIC7700_CLK_GATE_CPU_TRACE_CLK_1		103
-+#define EIC7700_CLK_GATE_CPU_TRACE_CLK_2		104
-+#define EIC7700_CLK_GATE_CPU_TRACE_CLK_3		105
-+#define EIC7700_CLK_GATE_CPU_TRACE_COM_CLK		106
-+#define EIC7700_CLK_GATE_SPLL0_FOUT2			107
-+#define EIC7700_CLK_GATE_NOC_NSP_CLK			108
-+#define EIC7700_CLK_GATE_BOOTSPI			109
-+#define EIC7700_CLK_GATE_BOOTSPI_CFG			110
-+#define EIC7700_CLK_GATE_SCPU_CORE			111
-+#define EIC7700_CLK_GATE_SCPU_BUS			112
-+#define EIC7700_CLK_GATE_LPCPU_CORE			113
-+#define EIC7700_CLK_GATE_LPCPU_BUS			114
-+#define EIC7700_CLK_GATE_GPU_ACLK			115
-+#define EIC7700_CLK_GATE_GPU_GRAY_CLK			116
-+#define EIC7700_CLK_GATE_GPU_CFG_CLK			117
-+#define EIC7700_CLK_GATE_DSPT_ACLK			118
-+#define EIC7700_CLK_GATE_DSPT_CFG_CLK			119
-+#define EIC7700_CLK_GATE_D2D_ACLK			120
-+#define EIC7700_CLK_GATE_D2D_CFG_CLK			121
-+#define EIC7700_CLK_GATE_TCU_ACLK			122
-+#define EIC7700_CLK_GATE_TCU_CFG_CLK			123
-+#define EIC7700_CLK_GATE_DDRT_CFG_CLK			124
-+#define EIC7700_CLK_GATE_DDRT0_P0_ACLK			125
-+#define EIC7700_CLK_GATE_DDRT0_P1_ACLK			126
-+#define EIC7700_CLK_GATE_DDRT0_P2_ACLK			127
-+#define EIC7700_CLK_GATE_DDRT0_P3_ACLK			128
-+#define EIC7700_CLK_GATE_DDRT0_P4_ACLK			129
-+#define EIC7700_CLK_GATE_DDRT1_P0_ACLK			130
-+#define EIC7700_CLK_GATE_DDRT1_P1_ACLK			131
-+#define EIC7700_CLK_GATE_DDRT1_P2_ACLK			132
-+#define EIC7700_CLK_GATE_DDRT1_P3_ACLK			133
-+#define EIC7700_CLK_GATE_DDRT1_P4_ACLK			134
-+#define EIC7700_CLK_GATE_TIMER_CLK_0			135
-+#define EIC7700_CLK_GATE_TIMER_CLK_1			136
-+#define EIC7700_CLK_GATE_TIMER_CLK_2			137
-+#define EIC7700_CLK_GATE_TIMER_CLK_3			138
-+#define EIC7700_CLK_GATE_TIMER_PCLK_0			139
-+#define EIC7700_CLK_GATE_TIMER_PCLK_1			140
-+#define EIC7700_CLK_GATE_TIMER_PCLK_2			141
-+#define EIC7700_CLK_GATE_TIMER_PCLK_3			142
-+#define EIC7700_CLK_GATE_TIMER3_CLK8			143
-+#define EIC7700_CLK_GATE_PCIET_ACLK			144
-+#define EIC7700_CLK_GATE_PCIET_CFG_CLK			145
-+#define EIC7700_CLK_GATE_PCIET_CR_CLK			146
-+#define EIC7700_CLK_GATE_PCIET_AUX_CLK			147
-+#define EIC7700_CLK_GATE_NPU_ACLK			148
-+#define EIC7700_CLK_GATE_NPU_CFG_CLK			149
-+#define EIC7700_CLK_GATE_NPU_LLC_ACLK			150
-+#define EIC7700_CLK_GATE_NPU_CLK			151
-+#define EIC7700_CLK_GATE_NPU_E31_CLK			152
-+#define EIC7700_CLK_GATE_VI_ACLK			153
-+#define EIC7700_CLK_GATE_VI_DVP_CLK			154
-+#define EIC7700_CLK_GATE_VI_CFG_CLK			155
-+#define EIC7700_CLK_GATE_VI_DIG_DW_CLK			156
-+#define EIC7700_CLK_GATE_VI_DIG_ISP_CLK			157
-+#define EIC7700_CLK_GATE_VI_SHUTTER_0			158
-+#define EIC7700_CLK_GATE_VI_SHUTTER_1			159
-+#define EIC7700_CLK_GATE_VI_SHUTTER_2			160
-+#define EIC7700_CLK_GATE_VI_SHUTTER_3			161
-+#define EIC7700_CLK_GATE_VI_SHUTTER_4			162
-+#define EIC7700_CLK_GATE_VI_SHUTTER_5			163
-+#define EIC7700_CLK_GATE_VI_PHY_TXCLKESC		164
-+#define EIC7700_CLK_GATE_VI_PHY_CFG			165
-+#define EIC7700_CLK_GATE_VO_ACLK			166
-+#define EIC7700_CLK_GATE_VO_CFG_CLK			167
-+#define EIC7700_CLK_GATE_VO_HDMI_IESMCLK		168
-+#define EIC7700_CLK_GATE_VO_PIXEL_CLK			169
-+#define EIC7700_CLK_GATE_VO_I2S_MCLK			170
-+#define EIC7700_CLK_GATE_HSP_CFG_CLK			171
-+#define EIC7700_CLK_GATE_VC_ACLK			172
-+#define EIC7700_CLK_GATE_VC_CFG_CLK			173
-+#define EIC7700_CLK_GATE_VC_JE_CLK			174
-+#define EIC7700_CLK_GATE_VC_JD_CLK			175
-+#define EIC7700_CLK_GATE_VC_VE_CLK			176
-+#define EIC7700_CLK_GATE_VC_VD_CLK			177
-+#define EIC7700_CLK_GATE_G2D_CFG_CLK			178
-+#define EIC7700_CLK_GATE_G2D_CLK			179
-+#define EIC7700_CLK_GATE_G2D_ACLK			180
-+#define EIC7700_CLK_GATE_AONDMA_CFG			181
-+#define EIC7700_CLK_GATE_AONDMA_ACLK			182
-+#define EIC7700_CLK_GATE_AON_ACLK			183
-+#define EIC7700_CLK_GATE_HSP_SATA_RBC_CLK		184
-+#define EIC7700_CLK_GATE_VO_CR_CLK			185
-+#define EIC7700_CLK_GATE_HSP_ACLK			186
-+#define EIC7700_CLK_GATE_HSP_SATA_OOB_CLK		187
-+#define EIC7700_CLK_GATE_RTC_CFG			188
-+#define EIC7700_CLK_GATE_RTC				189
-+#define EIC7700_CLK_GATE_HSP_MSHC0_CORE_CLK		190
-+#define EIC7700_CLK_GATE_HSP_MSHC1_CORE_CLK		191
-+#define EIC7700_CLK_GATE_HSP_MSHC2_CORE_CLK		192
-+#define EIC7700_CLK_GATE_HSP_ETH0_CORE_CLK		193
-+#define EIC7700_CLK_GATE_HSP_ETH1_CORE_CLK		194
-+#define EIC7700_CLK_GATE_HSP_RMII_REF_0			195
-+#define EIC7700_CLK_GATE_HSP_RMII_REF_1			196
-+#define EIC7700_CLK_GATE_PKA_CFG			197
-+#define EIC7700_CLK_GATE_SPACC_CFG			198
-+#define EIC7700_CLK_GATE_CRYPTO				199
-+#define EIC7700_CLK_GATE_TRNG_CFG			200
-+#define EIC7700_CLK_GATE_OTP_CFG			201
-+#define EIC7700_CLK_GATE_MAILBOX_0			202
-+#define EIC7700_CLK_GATE_MAILBOX_1			203
-+#define EIC7700_CLK_GATE_MAILBOX_2			204
-+#define EIC7700_CLK_GATE_MAILBOX_3			205
-+#define EIC7700_CLK_GATE_MAILBOX_4			206
-+#define EIC7700_CLK_GATE_MAILBOX_5			207
-+#define EIC7700_CLK_GATE_MAILBOX_6			208
-+#define EIC7700_CLK_GATE_MAILBOX_7			209
-+#define EIC7700_CLK_GATE_MAILBOX_8			210
-+#define EIC7700_CLK_GATE_MAILBOX_9			211
-+#define EIC7700_CLK_GATE_MAILBOX_10			212
-+#define EIC7700_CLK_GATE_MAILBOX_11			213
-+#define EIC7700_CLK_GATE_MAILBOX_12			214
-+#define EIC7700_CLK_GATE_MAILBOX_13			215
-+#define EIC7700_CLK_GATE_MAILBOX_14			216
-+#define EIC7700_CLK_GATE_MAILBOX_15			217
-+#define EIC7700_CLK_GATE_LSP_I2C0_PCLK			218
-+#define EIC7700_CLK_GATE_LSP_I2C1_PCLK			219
-+#define EIC7700_CLK_GATE_LSP_I2C2_PCLK			220
-+#define EIC7700_CLK_GATE_LSP_I2C3_PCLK			221
-+#define EIC7700_CLK_GATE_LSP_I2C4_PCLK			222
-+#define EIC7700_CLK_GATE_LSP_I2C5_PCLK			223
-+#define EIC7700_CLK_GATE_LSP_I2C6_PCLK			224
-+#define EIC7700_CLK_GATE_LSP_I2C7_PCLK			225
-+#define EIC7700_CLK_GATE_LSP_I2C8_PCLK			226
-+#define EIC7700_CLK_GATE_LSP_I2C9_PCLK			227
-+#define EIC7700_CLK_GATE_LSP_WDT0_PCLK			228
-+#define EIC7700_CLK_GATE_LSP_WDT1_PCLK			229
-+#define EIC7700_CLK_GATE_LSP_WDT2_PCLK			230
-+#define EIC7700_CLK_GATE_LSP_WDT3_PCLK			231
-+#define EIC7700_CLK_GATE_LSP_SSI0_PCLK			232
-+#define EIC7700_CLK_GATE_LSP_SSI1_PCLK			233
-+#define EIC7700_CLK_GATE_LSP_PVT_PCLK			234
-+#define EIC7700_CLK_GATE_AON_I2C0_PCLK			235
-+#define EIC7700_CLK_GATE_AON_I2C1_PCLK			236
-+#define EIC7700_CLK_GATE_LSP_UART0_PCLK			237
-+#define EIC7700_CLK_GATE_LSP_UART1_PCLK			238
-+#define EIC7700_CLK_GATE_LSP_UART2_PCLK			239
-+#define EIC7700_CLK_GATE_LSP_UART3_PCLK			240
-+#define EIC7700_CLK_GATE_LSP_UART4_PCLK			241
-+#define EIC7700_CLK_GATE_LSP_TIMER_PCLK			242
-+#define EIC7700_CLK_GATE_LSP_FAN_PCLK			243
-+#define EIC7700_CLK_GATE_LSP_PVT0_CLK			244
-+#define EIC7700_CLK_GATE_LSP_PVT1_CLK			245
-+#define EIC7700_CLK_GATE_VC_JE_PCLK			246
-+#define EIC7700_CLK_GATE_VC_JD_PCLK			247
-+#define EIC7700_CLK_GATE_VC_VE_PCLK			248
-+#define EIC7700_CLK_GATE_VC_VD_PCLK			249
-+#define EIC7700_CLK_GATE_VC_MON_PCLK			250
-+#define EIC7700_CLK_GATE_HSP_DMA0_CLK			251
-+#define EIC7700_CLK_GATE_HSP_DMA0_CLK_TEST		252
-+#define EIC7700_CLK_FIXED_FACTOR_CPU_DIV2		253
-+#define EIC7700_CLK_FIXED_FACTOR_CLK_1M_DIV24		254
-+#define EIC7700_CLK_FIXED_FACTOR_MIPI_TXESC_DIV10	255
-+#define EIC7700_CLK_FIXED_FACTOR_U84_CORE_LP_DIV2	256
-+#define EIC7700_CLK_FIXED_FACTOR_SCPU_BUS_DIV2		257
-+#define EIC7700_CLK_FIXED_FACTOR_LPCPU_BUS_DIV2		258
-+#define EIC7700_CLK_FIXED_FACTOR_PCIE_CR_DIV2		259
-+#define EIC7700_CLK_FIXED_FACTOR_PCIE_AUX_DIV4		260
-+#define EIC7700_CLK_FIXED_FACTOR_PVT_DIV20		261
-+#define EIC7700_CLK_FIXED_FACTOR_HSP_RMII_REF_DIV6	262
-+
-+#endif /* _DT_BINDINGS_ESWIN_EIC7700_CLOCK_H_ */
+With these changes, the controller can now be stopped, a function unlinked,
+configfs settings updated, and the controller re-linked and restarted
+without rebooting the endpoint, as long as the underlying pci_epc_ops
+.stop() is non-destructive and .start() restores normal operation.
+
+Patches 1-5 carry Fixes tags and are candidates for stable. Patch 6 is a
+behavioral improvement that completes lifetime management for relink/restart
+scenarios.
+
+
+Koichiro Den (6):
+  NTB: epf: Avoid pci_iounmap() with offset when PEER_SPAD and CONFIG
+    share BAR
+  PCI: endpoint: Fix parameter order for .drop_link
+  PCI: endpoint: pci-epf-vntb: Remove duplicate resource teardown
+  PCI: endpoint: pci-epf-ntb: Remove duplicate resource teardown
+  NTB: epf: vntb: Stop cmd_andler work in epf_ntb_epc_cleanup
+  PCI: endpoint: pci-epf-vntb: Manage ntb_dev lifetime and fix vpci bus
+    teardown
+
+ drivers/ntb/hw/epf/ntb_hw_epf.c               |  3 +-
+ drivers/pci/endpoint/functions/pci-epf-ntb.c  | 56 +-----------
+ drivers/pci/endpoint/functions/pci-epf-vntb.c | 86 ++++++++++++-------
+ drivers/pci/endpoint/pci-ep-cfs.c             |  8 +-
+ 4 files changed, 62 insertions(+), 91 deletions(-)
+
 -- 
-2.43.0
+2.48.1
 
 
