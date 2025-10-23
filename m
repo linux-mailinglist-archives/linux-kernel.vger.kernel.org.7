@@ -1,151 +1,203 @@
-Return-Path: <linux-kernel+bounces-866784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1023EC00A31
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:10:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 955F2C00A3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E3C43AF2DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:09:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAC563AF737
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4612E30C375;
-	Thu, 23 Oct 2025 11:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62D530C605;
+	Thu, 23 Oct 2025 11:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="KTtZ9kPr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZvSBd6Pk"
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DYxOP7Y9"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351328C00C;
-	Thu, 23 Oct 2025 11:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514073043CF;
+	Thu, 23 Oct 2025 11:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761217760; cv=none; b=F3rllKotjNB2ksrTJlYW2DdKl/pJpHv+eJr+aw3gqk8DnuMXhTMMKVCSQQTblWvn2GyF98VwoXS4S+4D+mrft9yyDyoRzZEtPBnMdwK/C4C51B5jdveK7mm2n6D8WMwFJyxHfYFPsxbnriivx2+CMCp0mOtXU2X5AeTSHHGPC2k=
+	t=1761217779; cv=none; b=N2lK/DASvg2NfFHHgMnKZndkRLav/lfzm/Mjp4o9MiMvyPWLKtqkLjJ/PHYG7jJI2FXdR4iSXKns0R3JnxvB6sBH72sx95dGLwtNxCsKk41zAIXab+h/pJiTOcTdL49D93qmG2wRW2E/zH7Jq3qkw955DcR5rVzAh4pb1wk7F9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761217760; c=relaxed/simple;
-	bh=TCq9qcVCutQlKO9j2oFwyEX6973EaileswZin2dPFvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=putk1LE7xSVdnlFvmOyC4aSJ5+bMnGPrx3c0LgilaLuonQ+33tsuBKUU3S5G7O8mSq+U9WBEF977/1a+2q7BzsEufBF0IBEb6Lyg52/9vF8HUFFosOxGqDX1+lp3+0f0sTltoAD2Z6+dU1MHPuEktL9OlnSYaNK13loJHXsXniA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=KTtZ9kPr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZvSBd6Pk; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 54A967A01AA;
-	Thu, 23 Oct 2025 07:09:15 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Thu, 23 Oct 2025 07:09:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761217755; x=
-	1761304155; bh=e9KawlaDhjJS+ZMKZhm8w/oQQAYs/+bmrKLwAa9o+Oo=; b=K
-	TtZ9kPrsDfd+3EaDrvYvKpHAYzkTIVJrAmKe43FITa5lv0nU0iv1DvSxHM2brJHP
-	gXTzRl0evfqb/S4E1iAxXB8h82GaBDpSCh81DC1kl1jdJvli7hF3tMxQW2BXQIfX
-	C9TPWrTl258e/B7muQMshy7xxhDnc2hzV4ymHyBQr0pL1R0mz0HvVqOXyxjBT1gd
-	FAK5k3Ab0NutyVxM7b/mHjEfS1zhsklO20wj3qj29BFELNA4MNl0klKX8SG3X7FK
-	Tk+j8/6L/LHxHk9wo6ugVTSkkUDpb/IU5o0y7HmBoDrLB66MxRaG7NkTnx+6b3aj
-	9+M5Dixxcx7gLWJceyAQQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1761217755; x=1761304155; bh=e9KawlaDhjJS+ZMKZhm8w/oQQAYs/+bmrKL
-	wAa9o+Oo=; b=ZvSBd6PkTl7poelfrzGYRIkas/w2kqCzCVlPo33fflhWd8vbGGD
-	QpOuZsa7EN85wVTexfkKIF24Ia5/TCUpbU8qL+h3KWOp8kJ/cYsCw/m0qryEg6ND
-	D7BxD273UqTbDugWmRK8c2bZU2ObW/RUbITAwpMcIrw1eWmI5O82Zfb5UZ2q7/5W
-	fApkBz1Nk+eD+UgFEdLSpvSDaj3toTfNrTN3eyYTeHLpuHXv/fbaZV3q/7DiWzve
-	ZPiB/ockgXEUtYhDYcn/k0GNk9IF79AVhN+Q1S5GK1blhpv/J1laU8OqzQd+Hpk+
-	pvnwF2igK+u6FU/zLCBq5ehZT/EAJpI3hAA==
-X-ME-Sender: <xms:2gz6aLgPC_4h27QyswLx5Cwse3RkDSj_uz_4GZaG8mnNLHpnvEabCg>
-    <xme:2gz6aJWyRsYlYESon6RK4edRatJupDlTRapA3AHpbp1OC7G-aAelaSHYHjSyTnKfX
-    9YEjjSqwREQkeITFqtnRZ_BmWqrui-aoIUY0rsoMSJzjAWPlOIE8_M>
-X-ME-Received: <xmr:2gz6aPvrFmO55TAZcbaCU-gBvZySktHrGHEVrq2_E4mX_Q8BWgYEbXORR3UfaQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeifedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedv
-    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrd
-    gtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
-    ghdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
-    epthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphht
-    thhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepsg
-    hrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdr
-    tgiipdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:2gz6aK-j5ahkGjat69k16dsaj_YxKtt6KtPiks_qU2wDXwki7BDPRg>
-    <xmx:2gz6aPuITyhUJk6Nw5pKFFQR6WrAIQmg30Seq_-GRtZp0CNvCvcnTg>
-    <xmx:2gz6aA6cv6s3eOCKW0IeSI7ZfBvceFJVxxXs8Xr538dmhrLrLBnkJg>
-    <xmx:2gz6aINJcBwkBSnrruG4pP9k_2H-RjmOYbZ2I3uAnWQ8EefKooggHA>
-    <xmx:2wz6aJnHpCeaO4Lu5OQQekx6DiIO6DwritTNhnpjWjS4xbjI3-7k-luM>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Oct 2025 07:09:14 -0400 (EDT)
-Date: Thu, 23 Oct 2025 12:09:12 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-Message-ID: <55p3kov54tjf5cr2sm3h3z7hv5cq6nlcqihlyxa427pz5mtkuv@nddjx4onw6mq>
-References: <20251017141536.577466-1-kirill@shutemov.name>
- <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
- <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
- <06333766-fb79-4deb-9b53-5d1230b9d88d@redhat.com>
+	s=arc-20240116; t=1761217779; c=relaxed/simple;
+	bh=whx3qauetCaL8L4L/j6vIJhu8Al6aBGqgPVGr7Y+0y4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UmJyCq7bIxHGwkBOazi+6830XdQgq1N05z/3NDQ/La+PN31uW9t3oRw3RznBHv2JLy/EWrAzxhTRVYcojdSj2zSbdMLlyVlWLgG2hhz/Y77zUnIHTLXpwGbGhZj+Q4L9gJZsZWAMkVjNasGPL7FMv02e264UgywTq7e4YnDggmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DYxOP7Y9; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761217775;
+	bh=whx3qauetCaL8L4L/j6vIJhu8Al6aBGqgPVGr7Y+0y4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DYxOP7Y98ENygjBbGy1cxfywA2ToT7ntiDye2btmfJLFQ9t4f0bh3I+180vRpleYa
+	 mBzJRPPPkvd2nnt4SUBL9NSGmlE6hFBiXCEiz1AhStX9y0HFYIiI1YVYoZlu7zxnlR
+	 mCXHkxr6maqOiBMlzVGCtQuL18faF0Jd5RSfUdngZTzoBgpc4ghtu7QUhz3xTwtj7j
+	 /EEMaHYVzs4gyMvly/5/ae+Y/I08BVIPvtLaZo+xvCnkfqVhWdiGzDcDu67wWIAIXL
+	 UXRW4Nyt8UdJFTX2KXOeF5ljn/DHtt1AU+n/EPNMiDMofwzYmnzrbLGpl7VbPZDsVs
+	 mrRwaQ4PyG5Sw==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:6ab:9c26:3ff9:9bf9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7498817E00B0;
+	Thu, 23 Oct 2025 13:09:34 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: frank-w@public-files.de
+Cc: angelogioacchino.delregno@collabora.com,
+	conor+dt@kernel.org,
+	daniel@makrotopia.org,
+	devicetree@vger.kernel.org,
+	guangjie.song@mediatek.com,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	mturquette@baylibre.com,
+	netdev@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	richardcochran@gmail.com,
+	robh@kernel.org,
+	sboyd@kernel.org,
+	wenst@chromium.org
+Subject: Re: issue with [PATCH v6 06/27] clk: mediatek: clk-gate: Refactor mtk_clk_register_gate to use mtk_gate struct
+Date: Thu, 23 Oct 2025 13:09:22 +0200
+Message-Id: <20251023110922.186619-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <trinity-00d61a0e-40f3-449d-814a-eccd621b4665-1760291406778@trinity-msg-rest-gmx-gmx-live-ddd79cd8f-fsr29>
+References: <trinity-00d61a0e-40f3-449d-814a-eccd621b4665-1760291406778@trinity-msg-rest-gmx-gmx-live-ddd79cd8f-fsr29>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <06333766-fb79-4deb-9b53-5d1230b9d88d@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 23, 2025 at 12:54:59PM +0200, David Hildenbrand wrote:
-> On 23.10.25 12:31, Kiryl Shutsemau wrote:
-> > On Wed, Oct 22, 2025 at 07:28:27PM +0200, David Hildenbrand wrote:
-> > > "garbage" as in pointing at something without a direct map, something that's
-> > > protected differently (MTE? weird CoCo protection?) or even worse MMIO with
-> > > undesired read-effects.
-> > 
-> > Pedro already points to the problem with missing direct mapping.
-> > _nofault() copy should help with this.
-> 
-> Yeah, we do something similar when reading the kcore for that reason.
-> 
-> > 
-> > Can direct mapping ever be converted to MMIO? It can be converted to DMA
-> > buffer (which is fine), but MMIO? I have not seen it even in virtualized
-> > environments.
-> 
-> I recall discussions in the context of PAT and the adjustment of caching
-> attributes of the direct map for MMIO purposes: so I suspect there are ways
-> that can happen, but I am not 100% sure.
-> 
-> 
-> Thinking about it, in VMs we have the direct map set on balloon inflated
-> pages that should not be touched, not even read, otherwise your hypervisor
-> might get very angry. That case we could likely handle by checking whether
-> the source page actually exists and doesn't have PageOffline() set, before
-> accessing it. A bit nasty.
-> 
-> A more obscure cases would probably be reading a page that was poisoned by
-> hardware and is not expected to be used anymore. Could also be checked by
-> checking the page.
+Hi Frank,
 
-I don't think we can check the page. Since the page is not stabilized
-with a reference, it is TOCTOU race. If there's some side effect that
-we cannot suppress on read (like _nofault() does) we are screwed.
+On 10/12/25 19:50, Frank Wunderlich wrote:
+> Hi,
+>
+> this patch seems to break at least the mt7987 device i'm currently working on with torvalds/master + a bunch of some patches for mt7987 support.
+>
+> if i revert these 2 commits my board works again:
+>
+> Revert "clk: mediatek: clk-gate: Refactor mtk_clk_register_gate to use mtk_gate struct" => 8ceff24a754a
+> Revert "clk: mediatek: clk-gate: Add ops for gates with HW voter"
+>
+> if i reapply the first one (i had to revert the second before), it is broken again.
+>
+> I have seen no changes to other clock drivers in mtk-folder. Mt7987 clk driver is not upstream yet, maybe you can help us changing this driver to work again.
+>
+> this is "my" commit adding the mt7987 clock driver...
+>
+> https://github.com/frank-w/BPI-Router-Linux/commit/7480615e752dee7ea9e60dfaf31f39580b4bf191
+>
+> start of trace (had it sometimes with mmc or spi and a bit different with 2p5g phy, but this is maybe different issue):
+>
+> [    5.593308] Unable to handle kernel paging request at virtual address ffffffc081371f88
+> [    5.593322] Mem abort info:
+> [    5.593324]   ESR = 0x0000000096000007
+> [    5.593326]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    5.593329]   SET = 0, FnV = 0
+> [    5.593331]   EA = 0, S1PTW = 0
+> [    5.593333]   FSC = 0x07: level 3 translation fault
+> [    5.593336] Data abort info:
+> [    5.593337]   ISV = 0, ISS = 0x00000007, ISS2 = 0x00000000
+> [    5.593340]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> [    5.593343]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [    5.593345] swapper pgtable: 4k pages, 39-bit VAs, pgdp=0000000045294000
+> [    5.593349] [ffffffc081371f88] pgd=1000000045a7f003, p4d=1000000045a7f003, pud=1000000045a7f003, pmd=1000000045a82003, pte=0000000000000000
+> [    5.593364] Internal error: Oops: 0000000096000007 [#1]  SMP
+> [    5.593369] Modules linked in:
+> [    5.593375] CPU: 0 UID: 0 PID: 1570 Comm: udevd Not tainted 6.17.0-bpi-r4 #7 NONE 
+> [    5.593381] Hardware name: Bananapi BPI-R4-LITE (DT)
+> [    5.593385] pstate: 204000c5 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [    5.593390] pc : mtk_cg_enable+0x14/0x38
+> [    5.593404] lr : clk_core_enable+0x70/0x16c
+> [    5.593411] sp : ffffffc085853090
+> [    5.593413] x29: ffffffc085853090 x28: 0000000000000000 x27: ffffffc0800b82c4
+> [    5.593420] x26: ffffffc085853754 x25: 0000000000000004 x24: ffffff80001828f4
+> [    5.593426] x23: 0000000000000000 x22: ffffff80030620c0 x21: ffffff8007819580
+> [    5.593432] x20: 0000000000000000 x19: ffffff8000feee00 x18: 0000003e39f23000
+> [    5.593438] x17: ffffffffffffffff x16: 0000000000020000 x15: ffffff8002f590a0
+> [    5.593444] x14: ffffff800346e000 x13: 0000000000000000 x12: 0000000000000000
+> [    5.593450] x11: 0000000000000001 x10: 0000000000000000 x9 : 0000000000000000
+> [    5.593455] x8 : ffffffc085853528 x7 : 0000000000000000 x6 : 0000000000002c01
+> [    5.593461] x5 : ffffffc080858794 x4 : 0000000000000014 x3 : 0000000000000001
+> [    5.593467] x2 : 0000000000000000 x1 : ffffffc081371f70 x0 : ffffff8001028c00
+> [    5.593473] Call trace:
+> [    5.593476]  mtk_cg_enable+0x14/0x38 (P)
+> [    5.593484]  clk_core_enable+0x70/0x16c
+> [    5.593490]  clk_enable+0x28/0x54
+> [    5.593496]  mtk_spi_runtime_resume+0x84/0x174
+> [    5.593506]  pm_generic_runtime_resume+0x2c/0x44
+> [    5.593513]  __rpm_callback+0x40/0x228
+> [    5.593521]  rpm_callback+0x38/0x80
+> [    5.593527]  rpm_resume+0x590/0x774
+> [    5.593533]  __pm_runtime_resume+0x5c/0xcc
+> [    5.593539]  spi_mem_access_start.isra.0+0x38/0xdc
+> [    5.593545]  spi_mem_exec_op+0x40c/0x4e0
+>
+> it is not clear for me, how to debug further as i have different clock drivers (but i guess either the infracfg is the right).
+> maybe the critical-flag is not passed?
+>
+> regards Frank
+>
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Could you try adding some debug prints to help identify the specific 
+gate/gates causing the issue? It would be very helpful in narrowing 
+down the problem.
+
+A couple notes - I noticed that some mux-gate clocks have -1 assigned to 
+the _gate, _upd_ofs, and _upd unsigned int fields. Not sure this is 
+directly related to the crash above, but it’s something that should 
+be addressed regardless:
+
+MUX_GATE_CLR_SET_UPD(CLK_INFRA_MUX_UART0_SEL, "infra_mux_uart0_sel",
+		     infra_mux_uart0_parents, 0x0018, 0x0010, 0x0014,
+		     0, 1, -1, -1, -1),
+
+I think __initconst should also be removed from clocks that are used at 
+runtime. I’m not certain this is directly related to the issue, but I
+wanted to mention it in case it’s helpful.
+
+Best,
+
+Laura
+
+>
+>> Gesendet: Sonntag, 21. September 2025 um 18:53
+>> Von: "Stephen Boyd" <sboyd@kernel.org>
+>> An: "Laura Nao" <laura.nao@collabora.com>, angelogioacchino.delregno@collabora.com, conor+dt@kernel.org, krzk+dt@kernel.org, matthias.bgg@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, richardcochran@gmail.com, robh@kernel.org
+>> CC: guangjie.song@mediatek.com, wenst@chromium.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, kernel@collabora.com, "Laura Nao" <laura.nao@collabora.com>
+>> Betreff: Re: [PATCH v6 06/27] clk: mediatek: clk-gate: Refactor mtk_clk_register_gate to use mtk_gate struct
+>>
+>> Quoting Laura Nao (2025-09-15 08:19:26)
+>>> MT8196 uses a HW voter for gate enable/disable control, with
+>>> set/clr/sta registers located in a separate regmap. Refactor
+>>> mtk_clk_register_gate() to take a struct mtk_gate, and add a pointer to
+>>> it in struct mtk_clk_gate. This allows reuse of the static gate data
+>>> (including HW voter register offsets) without adding extra function
+>>> arguments, and removes redundant duplication in the runtime data struct.
+>>>
+>>> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+>>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>>> ---
+>>
+>> Applied to clk-next
+>
+
 
