@@ -1,285 +1,312 @@
-Return-Path: <linux-kernel+bounces-866094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FA9BFEDC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:39:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766A5BFEDC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A9793A4948
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:39:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0153A47DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C831E1F0995;
-	Thu, 23 Oct 2025 01:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF5A1E3DDB;
+	Thu, 23 Oct 2025 01:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="b4YM8B5m";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="QINaZq+o"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cx6JIJ/1"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0881157A5A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC8C1D63F5
 	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761183587; cv=fail; b=pRwBR63UW8pvtV7WV3eCou0olG0xA7ImlYqrNOy7wbDeCxjBQpMXfaQ+UZKanV5LG/n94WUrq9/hsQq5oyDrYA2XJuGoBEf8js+j1f6AO7yT/tJfBdiPrt3YN7zelDAYAAxJ2uoLLY70KGubEsBmnThDxWMDdtqkrmL4TUQrNwI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761183587; c=relaxed/simple;
-	bh=2lqSHeOWwbZDU/2cb8c+ULNZLr1XhiqIYGsfHEFlNZg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=i1gg/E03QKkwuN6wJgjmuP8KlL6+DNJeUfnsC5MkahFa/U6n2OxamiFGlpuotp2sFsOUuYd2ZIDmdkjDqqh4GZSryVdsgFk70NjkO7yDID63BXu9jfm86w6gmT8t/cgvCr3DGqGCgGHefpxuh0XDTR4ZK+uWoiQpmHkDidXzwJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=b4YM8B5m; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=QINaZq+o; arc=fail smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 1f4470e2afb111f0ae1e63ff8927bad3-20251023
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=2lqSHeOWwbZDU/2cb8c+ULNZLr1XhiqIYGsfHEFlNZg=;
-	b=b4YM8B5mCLKx7ByUyjc+6XrPgI1hSp4qeZyCrzFhIqe59oKDsdYdcWkhvUMO18paYP7l3uAi1MoSG8PPP9f7crBCq+DNN7Gy1ikWRqKl3gYdmG5TJK7YWcPRolz1cYSRghi1Hkg6RcFtmIrh3MSlRsVjYFuCT/hAg0taYbhjwR4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:1d839a0a-0bcb-4512-878c-ecb204379034,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:e965f0f0-31a8-43f5-8f31-9f9994fcc06e,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|110|111|836|888|898,
-	TC:-5,Content:0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,
-	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 1f4470e2afb111f0ae1e63ff8927bad3-20251023
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <xion.wang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 832232688; Thu, 23 Oct 2025 09:39:31 +0800
-Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Thu, 23 Oct 2025 09:39:29 +0800
-Received: from SG2PR04CU010.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
- 15.2.1748.26 via Frontend Transport; Thu, 23 Oct 2025 09:39:29 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GMWuR7heP8mECplibAJximM3LIhpvxntW/CIjt+bPDl2tvEWuvl2bDWnynHADJsJLDydMZSVxpW8z11dxkTUoMJf3Mon9MfUi97F1gLkEAksE/VO6UVeojo64NwQO15+0aqoiDByr1gUzl7u//0dDNtvbpfxSUM5lFjTvIZ5WfcJEDR1C6r5qHBN3oCDQ0UnwjL/5z25e++jsqtnM5vqeo8RWi0vTeftRPwG//VWP+0AOIF5PhBh4gUjUC6SiOJp93+i1gj18oK3vmjcO2n5MV8jSt72XJSIug64cblr7gYwq6yhCYX9FDyX+iE1RXOG0t6Caz1Yh6yzjNDhbp0Hvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2lqSHeOWwbZDU/2cb8c+ULNZLr1XhiqIYGsfHEFlNZg=;
- b=oZ4DsizH04ZTfK3qznH9t7fMROSY+AQQs+e61qdEVne8YeeWdUSr4HqStk2oXB89XMW8etnXWCCdvrhQClEFNB9Lf7FSwQcLQoeO6TuUJE6cgSpHwkP8+TJDavWDd5DA9vek5mr3+yFL7ZEEz3nsxdodYzjU6Xp+FwNEsAbe2inBpfBY0V0ZrFCaz1omxWQxViC8SenCCyUJiN5XM09Aar6fI9C1d5tNEItptU5UI9fslIkk2bGLG2fhdKdG63PT0wjb6eY9+Mmhc9IriVlwCAZ1mlC5hwTWWi9voCIS3o9qtH1VfX2+v6oPqRUA1eGvmjq0eJfTXL56+443czptQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761183586; cv=none; b=jH0WhKyfaxl2KS0Cuz13nhGbeHZZhBQRqy0KdzOsp7y/q9aXClUXORjnsRrYmvmS3UB7qMFvDGNqXpT5fxpPXjLaPZy53hicDx0VLE3ljUQU3iB20bVtDP/ikhEOU6aBfr2FUk5nfMTzy45tdJfiHIvNqxNLWpB+lKjMPAYIBdk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761183586; c=relaxed/simple;
+	bh=hcTwpzJMcuc0GjiCytFV+DwouXcQxWmg3I9x4rFf+us=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IAFQcU/mL5Zf6B4oxvV1Sk1/B9Uwkp3V9XFiyafnm8qpmGn6JqFdeB8v96m/bK7OiI8ybkE+eP+hAPNp5sak8ITGJQQxf9/BevefN50P74Wj+1S1swT46cr7m6YCyhQYWnfaVoGf7M6hNqMf6NAPQxfdpcWrcTYeKWXRPByjg3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cx6JIJ/1; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47495477241so1412515e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 18:39:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2lqSHeOWwbZDU/2cb8c+ULNZLr1XhiqIYGsfHEFlNZg=;
- b=QINaZq+oygZXU+Rad6pwvQf9V5v4kM5EoQm/of7BG837Hmdbee6MsNow53NmXXD3reziZeyGyu9NdgkFlXvxkzITlTg2R1tntn9lCL/ihY6Uag0g/NzWUQ9wWmFG8AHheknwGG/gZXyobDZe/FbKxGpKfCbsDQ5etT7bYonvKeg=
-Received: from SEZPR03MB8122.apcprd03.prod.outlook.com (2603:1096:101:183::7)
- by KL1PR03MB7040.apcprd03.prod.outlook.com (2603:1096:820:dd::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
- 2025 01:39:27 +0000
-Received: from SEZPR03MB8122.apcprd03.prod.outlook.com
- ([fe80::e130:f417:b0bb:f2b7]) by SEZPR03MB8122.apcprd03.prod.outlook.com
- ([fe80::e130:f417:b0bb:f2b7%6]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 01:39:27 +0000
-From: =?utf-8?B?WGlvbiBXYW5nICjnjovpkasp?= <Xion.Wang@mediatek.com>
-To: "omosnace@redhat.com" <omosnace@redhat.com>,
-	"stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>
-CC: "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, wsd_upstream
-	<wsd_upstream@mediatek.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	=?utf-8?B?SHVhZGlhbiBMaXUgKOWImOWNjuWFuCk=?= <huadian.liu@mediatek.com>,
-	"paul@paul-moore.com" <paul@paul-moore.com>, "matthias.bgg@gmail.com"
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH 0/1] selinux: export current_sid API for use in other
- kernel modules
-Thread-Topic: [PATCH 0/1] selinux: export current_sid API for use in other
- kernel modules
-Thread-Index: AQHcQyVZqEcKDmFbPU2Gdikj+ke3erTNz7AAgABJFQCAANyqgA==
-Date: Thu, 23 Oct 2025 01:39:26 +0000
-Message-ID: <f85fc1bc2bc72d13dd45f97d3014bd307e481e31.camel@mediatek.com>
-References: <20251022072729.14820-1-xion.wang@mediatek.com>
-	 <CAFqZXNuPqwfqA23LH8NOG6KM1Nb7WvW77wnpp-vZ5omU40j_qQ@mail.gmail.com>
-	 <CAEjxPJ5BWjvDmQ37PPLHrmcTwRnOy6eW_uNoKG=ERZqRMAc3dw@mail.gmail.com>
-In-Reply-To: <CAEjxPJ5BWjvDmQ37PPLHrmcTwRnOy6eW_uNoKG=ERZqRMAc3dw@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEZPR03MB8122:EE_|KL1PR03MB7040:EE_
-x-ms-office365-filtering-correlation-id: aa2fdb2b-b7c7-4b4b-1f8a-08de11d500e1
-x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?WlZ6OVRzZnEyY1FMT3RSQmpVVVJGVjBTeXhsU2dWNDJhY0tWWjBhd2tyME1m?=
- =?utf-8?B?ZzdpVVg0ZUZpVkpDajBzUlFKTVI4Y0cyc1ZpYzh0Q1cxM2gvTTkwQ2E0UFM2?=
- =?utf-8?B?K3kwUTYrNS9aWXVhSkFWbytOQmpEVVRQWjVLdVNsL3EzZ0dWSUlFV1N1MmJo?=
- =?utf-8?B?ZnYxT045NTBPVEpETFZuV3JHOFprSlJWaDUrQWtFM1QrcFFoa3RHQTczckpW?=
- =?utf-8?B?V1duZHNHQU93UTFJYkRlazIxcHBZVFFWNFFLOFVma0tRS0ZlSENJRXJZVTlm?=
- =?utf-8?B?N3B3bmdBRDFMUitZYytPeFBjelNqUzRVbStNSVRodTdxcDVzMFc4MFQvcTdI?=
- =?utf-8?B?SW9QL0tIT0EwMXVENlBVMTVSOGlRMHVha2piaW04RVpSTkNhaFlFZ3luZEhE?=
- =?utf-8?B?SFdTeDhDQmVMVTk0akNIRjRTT1VZZkp1MkhubkE2T3BiVWZTczdDR0UwTGJw?=
- =?utf-8?B?RTl5VFhSSk9MT1pUd3FMZ2NIN2pBck5CcFV1SEp0cU43ZEFZZ3IvMnlqcnZH?=
- =?utf-8?B?ZG9IY2V2TVd6WUJ5YzUrSnBIMXpVZDF1a2JabUhJOUVSOXNNU24wT3dMWmxR?=
- =?utf-8?B?cnYwNEVYaXZ0bFVUdG9mQ0hoeUdBVkxETUNjODYxN3BLSjYyYWh4dlBwTkk3?=
- =?utf-8?B?YjVJU2daeXJJdE9NRWV0cmxJZzNOSVZlOXkyZ3lKNlZVR3BNL3M1c1NmRWdJ?=
- =?utf-8?B?SFI0d1RvMDRsU2EzT0oyUnVMNjY4cUpXSUdkVVdEcy9IR2VTdWZXWk1qTWpr?=
- =?utf-8?B?T1pWYVR3eTFVaG9RMTNuZnQ0RWF5bGhHUlVmWTVZUUVDSmFwVlRkZzNZWmRX?=
- =?utf-8?B?Z1dnQkF1QmZYTFF0eUVWSSt3KzNONTdBUTU1K2xaSUJpYWY4cTV3dUV0Nkc4?=
- =?utf-8?B?NEF3aGVDVWVicFd1bFpGUUxCNE5ndmROd1g4WUtmRjE4ZVpPbHVPSnJNampT?=
- =?utf-8?B?TzJEcDViZUV4elZSWnU2Z0FPYXZTL296dDhaZEcweDVLNU5HMW01MFA1TndF?=
- =?utf-8?B?c2JTSkNXb0FiTFR1cXluSlhjKzQydEZVU3E3TzgrWXBqdk04V3V1RnNaMXUr?=
- =?utf-8?B?dlZ4VDdYMzlOVE5HL0tWcHZTelJ3bmxxcEZIeXFabkx4RkNRU0lIdGZiZlox?=
- =?utf-8?B?b3ZnNGtXaUp6b1NZRVpBZERGL3E0bmRPN3RrY1FKU0NNOEw4c0pQd1A4SWpT?=
- =?utf-8?B?QjBOT2RwME9ickRjWVduT2Z6NjFtdlRCQ2V3azNJSjJWeWRWZVlxbVZMaFpQ?=
- =?utf-8?B?MUdueVltYmd6QS9lUmlSSzdnWERZSDE0am12Y1U0K3ZySUIwMk9iZmZvcWtC?=
- =?utf-8?B?SG5hZGszblFpUGRiQXN5bU5FYTVmc1U1RlZQZU92cUVUc0Z5eVU5Ukd3eEZH?=
- =?utf-8?B?eHRyT0I1aWFQOEVEYXpwcEZRMUJYSm1KTmNJZ1IyUXREOTNhclUzWDIrTGNV?=
- =?utf-8?B?N2FBbnQvSzJBWlBVOHlXNXc1ckJFcDQ4ZzltSnVMb0JSTEphNXRFampDY1ly?=
- =?utf-8?B?U1BUMGdWWFBvc3p6ZmM0dUg1VFdvWWxrK2J6TXVVcTlZQTNwVmNqU0NHVzhW?=
- =?utf-8?B?UjNjK1cvbngvYjdUZXN3RGtsZldGaUJ1Zkt6WlRXTDJERGRjMlp6ei9wbEdv?=
- =?utf-8?B?N05VU3dFRmY3dWRqY1RRUVJ3WUw0Q3RHQmRhK08zSCtTd1VHNHBaOXUyUUNU?=
- =?utf-8?B?WmVBSUlFamNDbmtkTGllODh0MGFjeEtobXRJc1kwUDYrZldOQUxkWE9tUzEv?=
- =?utf-8?B?YUlmVWhFbW5jWVVyRlducm51VDFvS0ovdVZuVVNwN3dwR0d6b1NmaWZRdTRM?=
- =?utf-8?B?eHRwMHg1SEV3c0ZpNy9xeW1yeVIyMlFoU3Q1bmsvWTJwVDAvOWp4eHBzbks1?=
- =?utf-8?B?R1VBNzRHbGpJNHpOaTlWdVdxNzRzaFJvVFZHUkxMOUpzRTBiZ05EREtYZndp?=
- =?utf-8?B?RWFqUWpud1ZEWDdqcWtJZzhRaVpVd2xxK1JGaG5PcVhodkJ6bVVIbE5hM0ly?=
- =?utf-8?B?enR1K0pjbzhXbU1oNkt0MXNRMFBDbnhHbEwxMnhnakovSUJUMXFhZjM3RnQy?=
- =?utf-8?Q?3F3BIK?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR03MB8122.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?V0xRRWtUeGhHVSs4MG1mbGFnelZvaXNVWTJBM2tuUENFeHlISWFJUXhCcXht?=
- =?utf-8?B?NFo4eHh5SDE5M01VOUluaDhjdnhwTUR2ZkxjNzV0M2F0RzVxNTdYZTVNbGhr?=
- =?utf-8?B?aFFna0xXQVh3NWsxVFVwVVcyM3dkeE1UbU04RzlWaExFaGdHQXRIUTZFcXpv?=
- =?utf-8?B?SVNsV3lQR3BxWTg3K21uUlIrZzd6cHVTSENkOUpUZmlCcy9mNmhlRE5HWmRE?=
- =?utf-8?B?YkIwMC9qUDJnSzFKME50R0hRSXZsaDN4T3p3RjhjL0VVY25aRXNQbk1MRGc1?=
- =?utf-8?B?Mms4ZUxaVDdTc3pjVVFsVmhIY3c5dGFVSExxV3RnVkZjUjRFdnl3QjE4WVda?=
- =?utf-8?B?cXBHQjBrbkJZVUtRQmZ2UU03OEFwbVNwcDVLRkcyVlhscnc1eDFWL3NYQjRi?=
- =?utf-8?B?VVBFS2tmZU5RNTEyVXVPQzlSbWJSMmpJWHNneW1YKzF1Rnh6Nm1lZ2FJa0VN?=
- =?utf-8?B?NlJyZFF0cHAyL1FFMVpWOEV2bllnZjJjZ0ttbnRMdjRJdkZRYzB0anQ3NG5p?=
- =?utf-8?B?SXRGVkUzTDhPeFVrZXJUOUpBQmhxYU9MVnpDYTBRL01Ed2FPeU0zY3ErUDhQ?=
- =?utf-8?B?RlM5VURzWDhzMjNNZi9qbmdzUExvSkkzbkwyMVBuTUN3Y1FZN0RFSUpTdlBE?=
- =?utf-8?B?NnBIb2piMmgyT1p4d3ZHMnNWd2JTYWhhd3ptTmZ4dFQ2aTREY1VCOWtCM1dI?=
- =?utf-8?B?R1U0T2h3UFpmaEdRcEtZYjh0M25qSmsrTUtpVkJUY3A3YWxEeFZyYnl3cmEv?=
- =?utf-8?B?ekx6M21IRk9UZURFZlFRR0g3eGlxU29lRzhvOGlZOHpNckQ1LzA4aS9wZmdy?=
- =?utf-8?B?bURmZmhpQ3kzUEpsZ084eGJTUUNSdzN5U2NkRU1QMi84WFRGVXIyQjNCOEk3?=
- =?utf-8?B?Wk16eCsrYzhjdVF4WFg4R1ppeGFyR0xpYVRDU1ovWWk1TnhTYUNmTEtvNC9z?=
- =?utf-8?B?ekFmN2hqdXB4cVNUcmNHbnNEeVViYnk5UmF3Rnk5eW1ZUmVWZ0V5NlkvNHRo?=
- =?utf-8?B?YWYwN25FZ0VxSndCU3F4YnM2SWZrTG5GQ1l3d1NNbDN6MTVXbVNBNDJSeEFP?=
- =?utf-8?B?Z0RESmlCUXo2a1RNV3V5OW10akFZYy9QQU5jQnV0eGdsKzNNT2RaWmNnK0ZI?=
- =?utf-8?B?ejAyYWw4OVpZWkdMWWw2ZFNRR0RIcWhOTWFxRHRoc05xR2ZwMG1EaWh5Vk1Z?=
- =?utf-8?B?bmIwNU9KNHcvZGJRcm1Dc0ZXdXpuS2VEOGxMT1ViSlRCaHlYTEZSSnZ5dTkw?=
- =?utf-8?B?OFFTcUhnQW5jN203YkZiRUI4bW5tR291cFdYTlhZZnhXak1tcUZCZmg1c3lI?=
- =?utf-8?B?RjdpbDFMZU1PdTRxRk0zTHh2T285ZFFDRFdRams5alNYb2E2STRmMm1wOUxK?=
- =?utf-8?B?QXJzYklITk1Kcm5oN3RJS0hlZWM0RUtpT2Y1N3A3OEtsU1RHZVhtRFlCVTF3?=
- =?utf-8?B?NGJnV3lhTFpKL3JWKzdYRTMxR2JnMUtWSWNTUmdTY3lxMnNFUUpvamFSMUF1?=
- =?utf-8?B?VTVlMDA0UzdUSm5DdEpyQTFURk92VE1oQmFFeUdQTlNvYzgzYXNCRDFtM0lt?=
- =?utf-8?B?UGZrQkVLcXl5emUza2tWbzhaKzZVRlFkalpGTTRmMkdTQlFyUEtZY1UraG1S?=
- =?utf-8?B?WDJxUUNoRU5XeVBBY1pyTDJzUk8yc0dhbUIzSWNqdHk1YytIcVhFTmpmczla?=
- =?utf-8?B?ZjU2SFRYdm4wbDZwVDAvZzhEWU44diswQ0FRT1o0TDZFVlVhTWpVallpbGpM?=
- =?utf-8?B?ejE3RWdWVjVaaG1qTXhFcFo3RmdURm5ONzJ5dk5LSnJmRXZpMlhXOEZ4SUo5?=
- =?utf-8?B?OXVmVkYyNXYwclZ4NzlZbXNuUUdQakdJdVlJZndsQ1VGcHl2dVFpN28wbUFD?=
- =?utf-8?B?NFVkbTBBVHo4S2JTOHFYOVBzK2ZSemxZMUZ4ZzFkV1BCU3BUb2JmUUkvUUhq?=
- =?utf-8?B?ZnlMRCtTNlVIeDNPamducysvOGZIdFFkWk9nd1lMTjVFS0EyQWhtOGkxSmdI?=
- =?utf-8?B?ZldFU093M2tVU0hQN1lSZXNkeXVvTjZHVHVlS2trTnZ2VzZVK2w2UXV4TWFF?=
- =?utf-8?B?YVRJV0R6UUVrTmZWQTJUYU9IeTl2dVQ3YUYySXltaytBK016b25kc0lwWFBy?=
- =?utf-8?B?WXdPM2JEeGIxQ0ZvL0QrdEFZbkpaQnNGUk5pOFY1WjA3TGVyNmNxQlhlV3pJ?=
- =?utf-8?B?bXc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2F9BADC28A960442991D6274FFBB0965@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20230601; t=1761183583; x=1761788383; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aCgsnRi7DdXq+4PeoxX5w1Bin2sJADD0GjGW6qb07u4=;
+        b=cx6JIJ/1A7nmPhB4+zbxTkCuayvNk7uDUgvqtqmFvZb/JQK5jtjTr1mwFseCXTFcvm
+         fuM64Kns3ObGtrhJeEAQclx1f+cX9AMQUU82pU5mSsmqMIxf0mqbc6M72ZD8bFkvLRrv
+         SX9iVJaPgw65lEs55fkoVB0VoXCgtzW9Un9mE3LA8zTmT9ca0BmyHSaLOhmuzBsnf2qz
+         0iq8iNZJGcaRhW23x7bJB1SH5fjURMntRV72DP+j+wdDQAll6qccwGdRPENnkX2oy77U
+         bz7lkbj4k/EeaEc4P5DHgOxfdNhaT7zxesLVhskY3nDsnegi1fvkrPYh4pUE/2XPYU1f
+         NAkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761183583; x=1761788383;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aCgsnRi7DdXq+4PeoxX5w1Bin2sJADD0GjGW6qb07u4=;
+        b=lRYW2akst/fZE/iSVXPAI2a6nHFhkye586dUtIG9gIIejkHIKmDKSlPBTdM3pEeuY8
+         edy0pgf4FJDv7PmsIGOM7dxs8qoN2mFs/Xokdo5UFbrOX6Ca1orbZCms4Eb4j9ERrAyn
+         74MNAwDJ0cFJn1bbUrru5DmRGcKNNiZzToTTnUaDTlHHxDnWaJ6daMS4pdQSptYH1+ty
+         7g2wuKsMDWLawTY+yip0rS/ysbZuRCnVgjN8AOSgkjwTIrKTYbOjAxzUYNS1m+B+C4PL
+         yz9RNJ14n5cvw82rk/QEv5Df8ngpnj/uwtFUbRNU18/8HL+mafEcc7gMx7ufMU+6Zl5F
+         6HqA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+oEXEuryYEHD72IPyOUX0HNfUzqlKN75ns/K/l6X6rZ+GnMTuvwlnAX2lENm5xsgs4rsIqerQRJAEZFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsOH9HR1o+3+D8Z0VLqoRVU17K2OpuTsX2kzpYx8/eG//SFdky
+	O4tRAzMIj2X157HzdGzTVodaXM1g58SpDE1FzdZFff7Pl3n3ezSJ3y4pDjln1mxdG0I1pSXLk0P
+	fQrhLExJUNPKNYDq7E2mYK7PqAw3xmwY=
+X-Gm-Gg: ASbGncvAXCvXLkmBQZtdd46pzx0JHbRrZ8zHypmrT+X7TAvoaExL3HXyFYT4ltICWCm
+	jcX4W+NvPgyLHVWgdTEYRMTaC44yDKe3OS87knr35kZKenPSn71N9zgREFgnvMJlbIOr52UUm6T
+	ENNbSpz6UucpQRrsXpjxeZnS/VVHvKPoYzTpKtHp1JxZ6tzS/1owjKGzIsCqyG8n9ugJGmEFmHN
+	sq/Fqfu5yL/2HGgccpsOAhdWScC+u2FWjOdjwufZ5Nc31VdVpV8V/PVXHjIt0TwJFDDVJB0PAVZ
+	sTNw7s/eJU/WNmLw3lfuWRHi5dhr
+X-Google-Smtp-Source: AGHT+IHaoIGDfmHhdkPRo4MNsgmOBYeFnVuSgdjaRFMt6OjYkcbtKdwZsGshPjXi1FZxU1k9s1QNF+wMZKYGxIIs7as=
+X-Received: by 2002:a05:600c:34d0:b0:46f:c0c9:6961 with SMTP id
+ 5b1f17b1804b1-475cafae8b8mr3068325e9.14.1761183582636; Wed, 22 Oct 2025
+ 18:39:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR03MB8122.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa2fdb2b-b7c7-4b4b-1f8a-08de11d500e1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2025 01:39:27.3104
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NCy1wBvInlUTb1iiFHYzQFGePbAIv3vszf9Pr/6lSWHlOQ4OjeZYELqj8hxbp3hph6nGYZrv0I+90Wt1U7AeEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7040
+References: <20250930115600.709776-2-aleksei.nikiforov@linux.ibm.com>
+ <20251008203111.e6ce309e9f937652856d9aa5@linux-foundation.org>
+ <335827e0-0a4c-43c3-a79b-6448307573fd@linux.ibm.com> <20251022030213.GA35717@sol>
+ <20251022143604.1ac1fcb18bfaf730097081ab@linux-foundation.org>
+In-Reply-To: <20251022143604.1ac1fcb18bfaf730097081ab@linux-foundation.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 22 Oct 2025 18:39:31 -0700
+X-Gm-Features: AS18NWCpy-eVIKqwjq3HvvI-t1t4YZx5136aumXfPGuarDyJS0x745rdekxcgMU
+Message-ID: <CAADnVQ+o4kE84u05kCgDui-hdk2BK=9vvAOpktiTsRThYRK+Pw@mail.gmail.com>
+Subject: Re: [PATCH] mm/kmsan: Fix kmsan kmalloc hook when no stack depots are
+ allocated yet
+To: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Harry Yoo <harry.yoo@oracle.com>, Michal Hocko <mhocko@suse.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Eric Biggers <ebiggers@kernel.org>, 
+	Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>, Alexander Potapenko <glider@google.com>, 
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	kasan-dev <kasan-dev@googlegroups.com>, linux-mm <linux-mm@kvack.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Ilya Leoshkevich <iii@linux.ibm.com>, 
+	Alexei Starovoitov <ast@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gV2VkLCAyMDI1LTEwLTIyIGF0IDA4OjI5IC0wNDAwLCBTdGVwaGVuIFNtYWxsZXkgd3JvdGU6
-DQo+IEV4dGVybmFsIGVtYWlsIDogUGxlYXNlIGRvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0
-dGFjaG1lbnRzIHVudGlsDQo+IHlvdSBoYXZlIHZlcmlmaWVkIHRoZSBzZW5kZXIgb3IgdGhlIGNv
-bnRlbnQuDQo+IA0KPiANCj4gT24gV2VkLCBPY3QgMjIsIDIwMjUgYXQgNDowOOKAr0FNIE9uZHJl
-aiBNb3NuYWNlayA8b21vc25hY2VAcmVkaGF0LmNvbT4NCj4gd3JvdGU6DQo+ID4gDQo+ID4gT24g
-V2VkLCBPY3QgMjIsIDIwMjUgYXQgOTo0M+KAr0FNIDx4aW9uLndhbmdAbWVkaWF0ZWsuY29tPiB3
-cm90ZToNCj4gPiA+IA0KPiA+ID4gRnJvbTogWGlvbiBXYW5nIDx4aW9uLndhbmdAbWVkaWF0ZWsu
-Y29tPg0KPiA+ID4gDQo+ID4gPiBXZSBoYXZlIGEga2VybmVsIGRyaXZlciBkZXNpZ25lZCB0byBt
-b25pdG9yIHRoZSBzdGF0dXMgb2YgdGhlDQo+ID4gPiBBbmRyb2lkDQo+ID4gPiB1c2Vyc3BhY2Ug
-d2F0Y2hkb2cuIFRoZSBpbXBsZW1lbnRhdGlvbiB3b3JrcyBhcyBmb2xsb3dzOiB3ZQ0KPiA+ID4g
-bW9kaWZ5IHRoZQ0KPiA+ID4gQW5kcm9pZCB1c2Vyc3BhY2Ugd2F0Y2hkb2cgY29kZSB0byBwZXJp
-b2RpY2FsbHkgc2VuZCBhICJraWNrIg0KPiA+ID4gc2lnbmFsIHRvDQo+ID4gPiB0aGUga2VybmVs
-IGRyaXZlciB2aWEgaW9jdGwsIHNvIHRoYXQgdGhlIGtlcm5lbCBkcml2ZXIgY2FuDQo+ID4gPiBk
-ZXRlcm1pbmUNCj4gPiA+IHdoZXRoZXIgdGhlIHVzZXJzcGFjZSBpcyBzdGlsbCByZXNwb25zaXZl
-LiBJZiB0aGUga2VybmVsIGRyaXZlcg0KPiA+ID4gZG9lcyBub3QNCj4gPiA+IHJlY2VpdmUgYSBr
-aWNrIHNpZ25hbCBmcm9tIHRoZSB1c2Vyc3BhY2Ugd2F0Y2hkb2cgd2l0aGluIGENCj4gPiA+IGNl
-cnRhaW4NCj4gPiA+IHBlcmlvZCwgaXQgaW5mZXJzIHRoYXQgdGhlIHVzZXJzcGFjZSBpcyBzdHVj
-ay4gSW4gdGhpcyBjYXNlLCB0aGUNCj4gPiA+IGtlcm5lbA0KPiA+ID4gZHJpdmVyIHdpbGwgZHVt
-cCBrZXkgcHJvY2VzcyBpbmZvcm1hdGlvbiBhdCB0aGUga2VybmVsIGxldmVsIGFuZA0KPiA+ID4g
-dHJpZ2dlcg0KPiA+ID4gYSBmdWxsIHN5c3RlbSByZWJvb3QuDQo+ID4gPiANCj4gPiA+IFRvIGVu
-c3VyZSB0aGF0IG9ubHkgdGhlIGxlZ2l0aW1hdGUgQW5kcm9pZCB1c2Vyc3BhY2Ugd2F0Y2hkb2cN
-Cj4gPiA+IHByb2Nlc3MgY2FuDQo+ID4gPiBhY2Nlc3MgdGhlIGlvY3RsIGludGVyZmFjZSBhbmQg
-cGVyZm9ybSB0aGUga2ljayBvcGVyYXRpb24sIGFuZCB0bw0KPiA+ID4gcHJldmVudA0KPiA+ID4g
-bWFsaWNpb3VzIG9yIHVuYXV0aG9yaXplZCBwcm9jZXNzZXMgZnJvbSBzcG9vZmluZyB0aGUga2lj
-ayBhY3Rpb24NCj4gPiA+ICh3aGljaA0KPiA+ID4gY291bGQgY29tcHJvbWlzZSBzeXN0ZW0gcmVs
-aWFiaWxpdHkpLCB3ZSB3YW50IHRvIGlkZW50aWZ5IHRoZQ0KPiA+ID4gY2FsbGluZw0KPiA+ID4g
-dGFzayBieSBpdHMgc2VjdXJpdHkgaWRlbnRpZmllciAoc2lkKS4gQnkgY2hlY2tpbmcgdGhlIHNp
-ZCwgd2UNCj4gPiA+IGNhbg0KPiA+ID4gZWZmZWN0aXZlbHkgcHJldmVudCB1bmF1dGhvcml6ZWQg
-cHJvY2Vzc2VzIGZyb20gc2VuZGluZyBraWNrDQo+ID4gPiBzaWduYWxzLg0KPiA+ID4gDQo+ID4g
-PiBDdXJyZW50bHksIHRoZSBjdXJyZW50X3NpZCgpIGZ1bmN0aW9uIGluIHRoZSBrZXJuZWwgaXMg
-ZGVmaW5lZCBhcw0KPiA+ID4gc3RhdGljIGlubGluZSBhbmQgY2Fubm90IGJlIGRpcmVjdGx5IGNh
-bGxlZCBmcm9tIG1vZHVsZXMgb3INCj4gPiA+IGRyaXZlcnMuIFdlDQo+ID4gPiBwcm9wb3NlIHRv
-IGV4cG9ydCB0aGlzIGZ1bmN0aW9uLCBzbyB0aGF0IHRoZSBrZXJuZWwgZHJpdmVyIGNhbg0KPiA+
-ID4gY2FsbA0KPiA+ID4gY3VycmVudF9zaWQoKSB0byBvYnRhaW4gdGhlIHNpZCBvZiB0aGUgY3Vy
-cmVudCBwcm9jZXNzIGFuZCBkZWNpZGUNCj4gPiA+IHdoZXRoZXINCj4gPiA+IHRvIGFsbG93IHRo
-ZSBraWNrIG9wZXJhdGlvbi4NCj4gPiA+IA0KPiA+ID4gVGhpcyBjaGFuZ2Ugd2lsbCBoZWxwIGVu
-aGFuY2Ugc3lzdGVtIHNlY3VyaXR5IGFuZCByb2J1c3RuZXNzIGJ5DQo+ID4gPiBwcmV2ZW50aW5n
-IHRoZSB3YXRjaGRvZyBtZWNoYW5pc20gZnJvbSBiZWluZyBieXBhc3NlZCBvciBhYnVzZWQuDQo+
-ID4gPiANCj4gPiA+IEkgd291bGQgbGlrZSB0byBhc2sgdGhlIG1haW50YWluZXJzIGlmIHRoZXJl
-IGFyZSBhbnkgYWRkaXRpb25hbA0KPiA+ID4gc2VjdXJpdHkNCj4gPiA+IGNvbmNlcm5zIHJlZ2Fy
-ZGluZyBleHBvcnRpbmcgY3VycmVudF9zaWQoKSBhcyBhIHB1YmxpYyBBUEksIG9yIGlmDQo+ID4g
-PiB0aGVyZQ0KPiA+ID4gYXJlIGFueSBhbHRlcm5hdGl2ZSBvciBtb3JlIHJlY29tbWVuZGVkIGFw
-cHJvYWNoZXMgdG8gYWNoaWV2ZQ0KPiA+ID4gdGhpcyBnb2FsLg0KPiA+ID4gQW55IGZlZWRiYWNr
-IG9yIHN1Z2dlc3Rpb25zIHdvdWxkIGJlIGdyZWF0bHkgYXBwcmVjaWF0ZWQuDQo+ID4gDQo+ID4g
-Q291bGRuJ3QgeW91IGp1c3QgdXNlIHNlY3VyaXR5X2NyZWRfZ2V0c2VjaWQoKSBvciB0aGUgbmV3
-DQo+ID4gc2VjdXJpdHlfY3JlZF9nZXRsc21wcm9wKCk/DQo+ID4gDQo+ID4gVW50ZXN0ZWQ6DQo+
-ID4gDQo+ID4gdTMyIHNpZDsNCj4gPiBzZWN1cml0eV9jcmVkX2dldHNlY2lkKGN1cnJlbnRfY3Jl
-ZCgpLCAmc2lkKTsNCj4gPiANCj4gPiAtLSBvciAtLQ0KPiA+IA0KPiA+IGxzbV9wcm9wIHByb3A7
-DQo+ID4gc2VjdXJpdHlfY3JlZF9nZXRsc21wcm9wKGN1cnJlbnRfY3JlZCgpLCAmcHJvcCk7DQo+
-ID4gdTMyIHNpZCA9IHByb3Auc2VsaW51eC0+c2VjaWQ7DQo+ID4gDQo+IA0KPiBJIHN1cHBvc2Ug
-dGhlIG5leHQgbG9naWNhbCBxdWVzdGlvbiB3b3VsZCBiZSB3aGF0IHdpbGwgeW91IGRvIHdpdGgN
-Cj4gdGhlDQo+IHNlY2lkIC0geW91IGNhbid0IGp1c3QgY29tcGFyZSBpdCB0byBhIGZpeGVkIHZh
-bHVlIHNpbmNlIHRoZXkgYXJlDQo+IGR5bmFtaWNhbGx5IGFzc2lnbmVkLg0KPiBOb3JtYWxseSB5
-b3Ugd291bGQgaW5zdGVhZCBqdXN0IHBhc3MgaXQgdG8gYSBTRUxpbnV4IHBlcm1pc3Npb24gY2hl
-Y2sNCj4gdG8gc2VlIGlmIHRoYXQgU0lEIGlzIGFsbG93ZWQgdGhlIHBlcm1pc3Npb24gcmVxdWly
-ZWQgdG8gcGVyZm9ybSB0aGlzDQo+IG9wZXJhdGlvbi4NCj4gQnV0IHRoaXMgdG9vIHdvdWxkIHJl
-cXVpcmUgdXNpbmcgYSBMU00gaG9vayB0byBwZXJmb3JtIHRoZSBwZXJtaXNzaW9uDQo+IGNoZWNr
-IChpbiB3aGljaCBjYXNlIHlvdSBkb24ndCBuZWVkIHRvIGZldGNoIHRoZSBTSUQgc2VwYXJhdGVs
-eTsgaXQNCj4gY2FuIGFsbCBiZSBkb25lIHdpdGhpbiB0aGUgc2FtZSBob29rKS4NCg0KDQpUaGUg
-U0lEIG9mIGEgcHJvY2VzcyBjb3JyZXNwb25kcyB0byBpdHMgU0VMaW51eCBsYWJlbC4gQnkgcmVj
-b3JkaW5nIHRoZQ0KU0lEIGFzc29jaWF0ZWQgd2l0aCBhIHRydXN0ZWQgU0VMaW51eCBsYWJlbCBh
-dCBib290IHRpbWUsIHdlIGNhbiBsYXRlcg0KY2hlY2sgaWYgb3RoZXIgcHJvY2Vzc2VzIGhhdmUg
-dGhlIHNhbWUgU0lEIGJlZm9yZSBncmFudGluZyBhY2Nlc3MgdG8NCnNlbnNpdGl2ZSBkcml2ZXIg
-bm9kZXMuIFNpbmNlIHRoZSBTSUQgZm9yIGEgU0VMaW51eCBsYWJlbCByZW1haW5zDQpjb25zdGFu
-dCBkdXJpbmcgYSBzaW5nbGUgYm9vdCwgdGhpcyBhcHByb2FjaCBlbnN1cmVzIHRoYXQgb25seQ0K
-cHJvY2Vzc2VzIHdpdGggc3BlY2lmaWMgU0VMaW51eCBsYWJlbHMgY2FuIGFjY2VzcyB0aGUgbm9k
-ZSwgZXZlbiBhZnRlcg0KdXNlci1zcGFjZSByZXN0YXJ0cy4NCg0KDQpUaGlzIEFQSSwNCnNlY3Vy
-aXR5X2NyZWRfZ2V0c2VjaWQoY3VycmVudF9jcmVkKCksICZzaWQpOw0KY2FuIGNvcnJlY3RseSBv
-YnRhaW4gdGhlIFNJRCBvZiB0aGUgY3VycmVudCBwcm9jZXNzIGluIGxvY2FsIHRlc3RpbmcuDQoN
-Cg==
+On Wed, Oct 22, 2025 at 2:36=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Tue, 21 Oct 2025 20:02:13 -0700 Eric Biggers <ebiggers@kernel.org> wro=
+te:
+>
+> > On Fri, Oct 10, 2025 at 10:07:04AM +0200, Aleksei Nikiforov wrote:
+> > > On 10/9/25 05:31, Andrew Morton wrote:
+> > > > On Tue, 30 Sep 2025 13:56:01 +0200 Aleksei Nikiforov <aleksei.nikif=
+orov@linux.ibm.com> wrote:
+> > > >
+> > > > > If no stack depot is allocated yet,
+> > > > > due to masking out __GFP_RECLAIM flags
+> > > > > kmsan called from kmalloc cannot allocate stack depot.
+> > > > > kmsan fails to record origin and report issues.
+> > > > >
+> > > > > Reusing flags from kmalloc without modifying them should be safe =
+for kmsan.
+> > > > > For example, such chain of calls is possible:
+> > > > > test_uninit_kmalloc -> kmalloc -> __kmalloc_cache_noprof ->
+> > > > > slab_alloc_node -> slab_post_alloc_hook ->
+> > > > > kmsan_slab_alloc -> kmsan_internal_poison_memory.
+> > > > >
+> > > > > Only when it is called in a context without flags present
+> > > > > should __GFP_RECLAIM flags be masked.
+> > > > >
+> > > > > With this change all kmsan tests start working reliably.
+> > > >
+> > > > I'm not seeing reports of "hey, kmsan is broken", so I assume this
+> > > > failure only occurs under special circumstances?
+> > >
+> > > Hi,
+> > >
+> > > kmsan might report less issues than it detects due to not allocating =
+stack
+> > > depots and not reporting issues without stack depots. Lack of reports=
+ may go
+> > > unnoticed, that's why you don't get reports of kmsan being broken.
+> >
+> > Yes, KMSAN seems to be at least partially broken currently.  Besides th=
+e
+> > fact that the kmsan KUnit test is currently failing (which I reported a=
+t
+> > https://lore.kernel.org/r/20250911175145.GA1376@sol), I've confirmed
+> > that the poly1305 KUnit test causes a KMSAN warning with Aleksei's patc=
+h
+> > applied but does not cause a warning without it.  The warning did get
+> > reached via syzbot somehow
+> > (https://lore.kernel.org/r/751b3d80293a6f599bb07770afcef24f623c7da0.176=
+1026343.git.xiaopei01@kylinos.cn/),
+> > so KMSAN must still work in some cases.  But it didn't work for me.
+>
+> OK, thanks, I pasted the above para into the changelog to help people
+> understand the impact of this.
+>
+> > (That particular warning in the architecture-optimized Poly1305 code is
+> > actually a false positive due to memory being initialized by assembly
+> > code.  But that's besides the point.  The point is that I should have
+> > seen the warning earlier, but I didn't.  And Aleksei's patch seems to
+> > fix KMSAN to work reliably.  It also fixes the kmsan KUnit test.)
+> >
+> > I don't really know this code, but I can at least give:
+> >
+> > Tested-by: Eric Biggers <ebiggers@kernel.org>
+> >
+> > If you want to add a Fixes commit I think it is either 97769a53f117e2 o=
+r
+> > 8c57b687e8331.  Earlier I had confirmed that reverting those commits
+> > fixed the kmsan test too
+> > (https://lore.kernel.org/r/20250911192953.GG1376@sol).
+>
+> Both commits affect the same kernel version so either should be good
+> for a Fixes target.
+>
+> I'll add a cc:stable to this and shall stage it for 6.18-rcX.
+>
+> The current state is below - if people want to suggest alterations,
+> please go for it.
+
+Thanks for cc-ing and for extra context.
+
+>
+>
+> From: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
+> Subject: mm/kmsan: fix kmsan kmalloc hook when no stack depots are alloca=
+ted yet
+> Date: Tue, 30 Sep 2025 13:56:01 +0200
+>
+> If no stack depot is allocated yet, due to masking out __GFP_RECLAIM
+> flags kmsan called from kmalloc cannot allocate stack depot.  kmsan
+> fails to record origin and report issues.  This may result in KMSAN
+> failing to report issues.
+>
+> Reusing flags from kmalloc without modifying them should be safe for kmsa=
+n.
+> For example, such chain of calls is possible:
+> test_uninit_kmalloc -> kmalloc -> __kmalloc_cache_noprof ->
+> slab_alloc_node -> slab_post_alloc_hook ->
+> kmsan_slab_alloc -> kmsan_internal_poison_memory.
+>
+> Only when it is called in a context without flags present should
+> __GFP_RECLAIM flags be masked.
+
+I see. So this is a combination of gfpflags_allow_spinning()
+and old kmsan code.
+We hit this issue a few times already.
+
+I feel the further we go the more a new __GFP_xxx flag could be justified,
+but Michal is strongly against it.
+This particular issue actually might tilt it in favor of Michal's position,
+since fixing kmsan is the right thing to do.
+
+The fix itself makes sense to me. No better ideas so far.
+
+What's puzzling is that it took 9 month to discover it ?!
+and allegedly Eric is seeing it by running kmsan selftest,
+but Alexander couldn't repro it initially?
+Looks like there is a gap in kmsan test coverage.
+People that care about kmsan should really step up.
+
+> With this change all kmsan tests start working reliably.
+>
+> Eric reported:
+>
+> : Yes, KMSAN seems to be at least partially broken currently.  Besides th=
+e
+> :_fact that the kmsan KUnit test is currently failing (which I reported a=
+t
+> :_https://lore.kernel.org/r/20250911175145.GA1376@sol), I've confirmed th=
+at
+> :_the poly1305 KUnit test causes a KMSAN warning with Aleksei's patch
+> :_applied but does not cause a warning without it.  The warning did get
+> :_reached via syzbot somehow
+> :_(https://lore.kernel.org/r/751b3d80293a6f599bb07770afcef24f623c7da0.176=
+1026343.git.xiaopei01@kylinos.cn/),
+> :_so KMSAN must still work in some cases.  But it didn't work for me.
+>
+> Link: https://lkml.kernel.org/r/20250930115600.709776-2-aleksei.nikiforov=
+@linux.ibm.com
+> Link: https://lkml.kernel.org/r/20251022030213.GA35717@sol
+> Fixes: 97769a53f117 ("mm, bpf: Introduce try_alloc_pages() for opportunis=
+tic page allocation")
+> Signed-off-by: Aleksei Nikiforov <aleksei.nikiforov@linux.ibm.com>
+> Reviewed-by: Alexander Potapenko <glider@google.com>
+> Tested-by: Eric Biggers <ebiggers@kernel.org>
+> Cc: Dmitriy Vyukov <dvyukov@google.com>
+> Cc: Ilya Leoshkevich <iii@linux.ibm.com>
+> Cc: Marco Elver <elver@google.com>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>
+>  mm/kmsan/core.c   |    3 ---
+>  mm/kmsan/hooks.c  |    6 ++++--
+>  mm/kmsan/shadow.c |    2 +-
+>  3 files changed, 5 insertions(+), 6 deletions(-)
+>
+> --- a/mm/kmsan/core.c~mm-kmsan-fix-kmsan-kmalloc-hook-when-no-stack-depot=
+s-are-allocated-yet
+> +++ a/mm/kmsan/core.c
+> @@ -72,9 +72,6 @@ depot_stack_handle_t kmsan_save_stack_wi
+>
+>         nr_entries =3D stack_trace_save(entries, KMSAN_STACK_DEPTH, 0);
+>
+> -       /* Don't sleep. */
+> -       flags &=3D ~(__GFP_DIRECT_RECLAIM | __GFP_KSWAPD_RECLAIM);
+> -
+>         handle =3D stack_depot_save(entries, nr_entries, flags);
+>         return stack_depot_set_extra_bits(handle, extra);
+>  }
+> --- a/mm/kmsan/hooks.c~mm-kmsan-fix-kmsan-kmalloc-hook-when-no-stack-depo=
+ts-are-allocated-yet
+> +++ a/mm/kmsan/hooks.c
+> @@ -84,7 +84,8 @@ void kmsan_slab_free(struct kmem_cache *
+>         if (s->ctor)
+>                 return;
+>         kmsan_enter_runtime();
+> -       kmsan_internal_poison_memory(object, s->object_size, GFP_KERNEL,
+> +       kmsan_internal_poison_memory(object, s->object_size,
+> +                                    GFP_KERNEL & ~(__GFP_RECLAIM),
+>                                      KMSAN_POISON_CHECK | KMSAN_POISON_FR=
+EE);
+>         kmsan_leave_runtime();
+>  }
+> @@ -114,7 +115,8 @@ void kmsan_kfree_large(const void *ptr)
+>         kmsan_enter_runtime();
+>         page =3D virt_to_head_page((void *)ptr);
+>         KMSAN_WARN_ON(ptr !=3D page_address(page));
+> -       kmsan_internal_poison_memory((void *)ptr, page_size(page), GFP_KE=
+RNEL,
+> +       kmsan_internal_poison_memory((void *)ptr, page_size(page),
+> +                                    GFP_KERNEL & ~(__GFP_RECLAIM),
+>                                      KMSAN_POISON_CHECK | KMSAN_POISON_FR=
+EE);
+>         kmsan_leave_runtime();
+>  }
+> --- a/mm/kmsan/shadow.c~mm-kmsan-fix-kmsan-kmalloc-hook-when-no-stack-dep=
+ots-are-allocated-yet
+> +++ a/mm/kmsan/shadow.c
+> @@ -208,7 +208,7 @@ void kmsan_free_page(struct page *page,
+>                 return;
+>         kmsan_enter_runtime();
+>         kmsan_internal_poison_memory(page_address(page), page_size(page),
+> -                                    GFP_KERNEL,
+> +                                    GFP_KERNEL & ~(__GFP_RECLAIM),
+>                                      KMSAN_POISON_CHECK | KMSAN_POISON_FR=
+EE);
+>         kmsan_leave_runtime();
+>  }
+> _
+>
 
