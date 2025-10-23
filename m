@@ -1,141 +1,167 @@
-Return-Path: <linux-kernel+bounces-866773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC67C009BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:01:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC99CC009E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 40BB9359BA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:01:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 012833AF0C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271832C0274;
-	Thu, 23 Oct 2025 11:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Khbqm+8S"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CD230BB97;
+	Thu, 23 Oct 2025 11:03:10 +0000 (UTC)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0DA30C354
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA97130ACF1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761217300; cv=none; b=e7MWZdX4gBlmaKo9ePY+kIjZNqk4cJcQ+N6KgVA/R+EV3lkEgvWmP3T3aT4sxMFuolchTIIP6rBKaZ5LyEnqQASRU/e6VyF1BdcF+5ZNhrN9cwbzUIgRmZCwufsEtWyIHDm/JXPjqC3TEK+eUkAaaWbbIUCUBQt60S4EHoUc8ck=
+	t=1761217390; cv=none; b=H80tlEpdNxWqWqGjwuvlTuiFD/3IfRaUlPAqZyaewwrRSMtVlXlFXNAfcAHKo9jPSDsNHAjiLrSf+TFe0WnBUZwMf7Cz6jPR1Y8gwagxrRVEtDwM2IijZZwYYZDwiwYtA4uiCaKgXpa8NyQsef7yytVu2atylh/2gduQbMrRQOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761217300; c=relaxed/simple;
-	bh=acORxjDGKnORTx6j/7QmmdQ6i6FPsWUKCG5ztHHl6+Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TI5891ZtCMfKSYvo8MaSgMnQjd3+4Gujt6RTPVHtSsKdpCTeBXz+foj3HxxyT1T8jjaYnzjtSX17zngyfSBjmhOmKjLCOfNmNJM+VqY+UBuegBSEBsozl/D/a8waYHzBB+G8vQnv55wl8bNaTOkYZdZXAw4nSTzmPLojR2DovH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Khbqm+8S; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1761217390; c=relaxed/simple;
+	bh=tg+8iAuL9v348WQn+/MKpxNJ48PFBRZL9CF/o4UEAoE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mQPbdaBeqc5IboEdtlmkQ7QBIIvPg3d8D8Vz88Pxvw+kFJsahL2uruThEDyb81i5MnLNJBFdp3g5a3gcI3E8nKmwosq9B/dH6cA/ZHAsIyIofG4JZ99x/ciPkHiOIu7qzCUctPaWtASA+qZTB36QEDDRNNuVIlgTAIFmqLYdcg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-427015003eeso631199f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:01:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761217297; x=1761822097; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q6U9a2Cy7mjvoZRssEb49g74q+K1a1YNWMrOof4a154=;
-        b=Khbqm+8S8Fk6eJsngpqEsoGwd/6TaRKYz3qrk78hEmlHPLUQcFMB5pKFM+1xoIAWuj
-         QYS9WYxuRxvFM1P1L97e/oBJe9D3zClbY/kscDF4ZUxysOjRGxierRSbxpG3enMygAoD
-         UgIXh4GnhklYDe+SoMco8IVMciFRikkZM2gDIEmA0PmQukVPwdQLfJrJ/Q+OFu5ME2Qt
-         OsAn6/RFQGsCfJ/r29L+RqU3bk7OclWGH2n62lu8ik7jLsG1QTtQqUI6r0qV0ctGukuB
-         GXgcKDDPx/GFEQ3tSjl3wQjTArdng3rZFxAyuwlZ194EHJ+E2JXKLriq7ZWf2p5ytwqC
-         +RSA==
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-5ccccc1f7caso326992137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:03:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761217297; x=1761822097;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q6U9a2Cy7mjvoZRssEb49g74q+K1a1YNWMrOof4a154=;
-        b=P6DepTZvJj1k+f52s7tTDB1Mx0Fl8pOhrro/2/OYYNAdUouymtmfAl03o1nQIyXnHy
-         7lN8XYWq32QBPvhe+7X2oENgavjCmUUswKRapv5LtVKggqMRChrqiAvki4N3N0ji0XAq
-         l9mBi7EnXhcDrdSyiWYs0d8lnPZutCXhOKUxXvXcGTfz0CeN822ExWFgUSBM54OqBXfb
-         F/XprJGPfA68xoCoi/3CUAdqBd3UDmV3+zg0Gd6Vpob06xhxv9jwbxIAtOnTykesKziy
-         DXyehs6wnbKguvlvwIKnBkX9V0Jm9bGHEHrXOqPoY/a2DiFk7WHgejSxSG94tPDXai2I
-         mX7w==
-X-Forwarded-Encrypted: i=1; AJvYcCW296g4CSVIqHTw/EM24WWbZVxCWRJXqlSFlfJFxeIatfAI623OD64uktIErXS0dc4GfAkhOh0jrAsktEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJFJB8Kjc5Dz6VteNwCFU558o9Qe/iOodxHOCTtRacKoP4ZrEb
-	5aFJtiZsCqC3H4ClWV9Xyr1klOn7GXZqOC8zocm1Y4/DHWV5PZX22IjW
-X-Gm-Gg: ASbGncs4sNbriSDyWQ6YzohtEhjJYvjzmVX8JWJJaP5UAZEFEsfEQbhqLw1sH6drqDE
-	LboPI5QZIdFCyQs37qJbElICf3LHzNsVICgXki/lzHukGTDsZqt3Dc8GFaRxGV9HwX9VQwkbbYJ
-	ZNgVx1n5YNlDC4loqqf7eFruIx2pZVDHrFtjAMEMgskd9wZ0FH12nHSq0zK3T384eT4QsNdyrj3
-	qUANXE3Jrzy1YKlQ5K2bUHJTIg+ajtr0J7OU5XUQZO5HRkkaUNAfvcCz+u1w2TbzDtkDhG9m+LS
-	W94/dRNROjo+cMRE6k04/yrBTohiqmPQSOnfPoF/wLBD1b4OFGIwuvKT4qyAVb3OhbvrtMTz5oN
-	NrmARWcHToMIQjkFm1/diprHtytFV3EkVcHxARJRK11bq3VQZSBMkOWEeUNa0A715RC03uKY/aa
-	nE21D2lQZ8VsymolE=
-X-Google-Smtp-Source: AGHT+IEapGdsnbsARzHgqMt7pwyPik5jNaiTQ3NpmdvCWaP+cQHwZuOZPDEe5IzRDcAqcGtZcpPuiQ==
-X-Received: by 2002:a5d:5f82:0:b0:40f:288e:9968 with SMTP id ffacd0b85a97d-42704db9eb7mr16255793f8f.51.1761217296901;
-        Thu, 23 Oct 2025 04:01:36 -0700 (PDT)
-Received: from shift.. ([86.124.201.90])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898adf78sm3596420f8f.32.2025.10.23.04.01.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 04:01:36 -0700 (PDT)
-From: Cezar Chiru <chiru.cezar.89@gmail.com>
-To: andi.shyti@kernel.org,
-	wsa+renesas@sang-engineering.com
-Cc: linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Cezar Chiru <chiru.cezar.89@gmail.com>
-Subject: [PATCH v1 2/2] i2c: pcf8584: Make pcf_doAddress() function void
-Date: Thu, 23 Oct 2025 14:01:17 +0300
-Message-ID: <20251023110118.7940-3-chiru.cezar.89@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251023110118.7940-1-chiru.cezar.89@gmail.com>
-References: <20251023110118.7940-1-chiru.cezar.89@gmail.com>
+        d=1e100.net; s=20230601; t=1761217386; x=1761822186;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WjWvH/pQF78pnjKmIZIOC/klk9iC3EtNoJr9L6Gp1mo=;
+        b=HlbbQX8vRus6FcUPgzDpHXXsqaZktQ5gRg1uWyW9QjDtYdQuwMv1mv70W2un1ieNP5
+         Kjoof7k0J3J0NtcN0bmQG1wNjZscsytA9M6H30FX3W+9gI6Fc9EYYiTCQzmwAqFsoOVQ
+         ixUCgykGn5b5s6JpGunbbllJMo6B22f3TyRLGKZaCib54QSgwIm1+2jLSn4tHwN3wHzz
+         VNqd8O6mBSVOR4FN/HUEEyWrIH8j5StBHq/cCgyka91ofgUR7/kF1VuKy5E6Vygi8uhW
+         ADBCpY5UC6MQI+MzQ1rSl46jgOtWQS3nPIOD1HD0UzbY1xQxeBnLlv2FvK7+L4lcm7Zq
+         7o1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUxtuvk5ZVJkz9wWVfFncVZmMcGNdgC2PpJfkE2K/0jrilbqHNuPd/qpIaiMiT9QkRqOH3OITJlW8ORXBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJLxjDedO8IvwNsW9nNHn11xc+MNMB7kXJei3IHxuA5GFZ3tlD
+	Ul+2xdWz1rH17CX0eYzKENd/hgHc2BIhD28D342wji7ZU0VGjMs54dl7sCsGUVUV
+X-Gm-Gg: ASbGnctEfC4uGUSWSVKHR7B4ep63wK9rjTjuMF5wuuQd5lHhgEDRURm0vS3a8BZpkgX
+	tZ/1/EuH96/NIdIvRtmiC0dqNN9sinKVFoOljgexhzDdUH4q7QHXTD3VOb0RpHdOmrIyW1sbMlg
+	Yb3prFrAj8i7e+ScSyW3NOhHkVuUt1H6lHakKSqBo8EHtORtnsHUO3gcLDv2qENiKLjE30iutQA
+	VNf33WIqG4x8T7VN2aQHODkVfjcmJXq6G144cecUXXSyD3yw1LBArszHMz30Ec30gU3iFiYraEH
+	Q2d9TJsZ8R+MlkA3ZeJCrI1q9nfx5ywFPXSIuViQ+uhg8CYE5s/ET9eetyaHr8Jx4MFS8Wls74h
+	9TmI0bpOGYAagQfcwG2EdVRCq3+HwzSP5Q42gfJtZJnDXNP3OVVfmasG0G08rSVQpig03RLo+3k
+	Sdmy7xjl5hb2hbsCS8v1XoDfjbf6RISxFwtR3Xzw==
+X-Google-Smtp-Source: AGHT+IGES0aIH1hVqNuzTzRKs9IhApESNzqAqaANmmHI8uP4o5fd772y2ECD99gsl9xuaKLrRFSipg==
+X-Received: by 2002:a05:6102:3a13:b0:5d5:fefc:9fd0 with SMTP id ada2fe7eead31-5d7dd319363mr6937594137.0.1761217386311;
+        Thu, 23 Oct 2025 04:03:06 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5db2c7c9d3asm718943137.6.2025.10.23.04.03.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 04:03:05 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-932bf9df69dso219707241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:03:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWf5K8dgIy2+ionPFmkqYtyhuzauTWnikhXrvAmhuSIxlrq1X0/0qjtmSbLZet8l+NpOOn1RKGRGxuiT7g=@vger.kernel.org
+X-Received: by 2002:a05:6102:2acc:b0:520:a44f:3ddf with SMTP id
+ ada2fe7eead31-5d7dd5a3793mr5929967137.10.1761217385274; Thu, 23 Oct 2025
+ 04:03:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251007133657.390523-1-claudiu.beznea.uj@bp.renesas.com>
+ <20251007133657.390523-3-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdXF14x68Wk5YdOBS2D2N6LtnQjfGzrsMdSJegX-gc3faQ@mail.gmail.com> <6c69d2a2-5dfe-450f-8a39-2ef6e7a6dbea@tuxon.dev>
+In-Reply-To: <6c69d2a2-5dfe-450f-8a39-2ef6e7a6dbea@tuxon.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Oct 2025 13:02:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXLiN0kUVJtdEYVnsmnCEbN4hSs5KEhMXJhf7p29xv=0Q@mail.gmail.com>
+X-Gm-Features: AWmQ_bm3rJeUf0KSNhlRfvLpl1M_xWwhhcqbJogOZCts4Aa1eBeKq-NYF1bmLWY
+Message-ID: <CAMuHMdXLiN0kUVJtdEYVnsmnCEbN4hSs5KEhMXJhf7p29xv=0Q@mail.gmail.com>
+Subject: Re: [PATCH v5 2/6] PCI: rzg3s-host: Add Renesas RZ/G3S SoC host driver
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, 
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, p.zabel@pengutronix.de, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Change pcf_doAddress() function's type from int to void as it is always
-returns 0. This way there is no need for extra assignment and extra checks
-when the function is called.
-Remove assignment of pcf_doAddress() and replace it with a simple function
-call.
+Hi Claudiu,
 
-Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
----
- drivers/i2c/algos/i2c-algo-pcf.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+On Thu, 23 Oct 2025 at 12:54, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+> On 10/23/25 11:00, Geert Uytterhoeven wrote:
+> > On Tue, 7 Oct 2025 at 15:37, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+> >> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+> >> only as a root complex, with a single-lane (x1) configuration. The
+> >> controller includes Type 1 configuration registers, as well as IP
+> >> specific registers (called AXI registers) required for various adjustments.
+> >>
+> >> Hardware manual can be downloaded from the address in the "Link" section.
+> >> The following steps should be followed to access the manual:
+> >> 1/ Click the "User Manual" button
+> >> 2/ Click "Confirm"; this will start downloading an archive
+> >> 3/ Open the downloaded archive
+> >> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+> >> 5/ Open the file r01uh1014ej*-rzg3s.pdf
+> >>
+> >> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
+> >> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >
+> > Thanks for your patch!
+> >
+> >> --- /dev/null
+> >> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+> >
+> >> +static void rzg3s_pcie_irq_compose_msi_msg(struct irq_data *data,
+> >> +                                          struct msi_msg *msg)
+> >> +{
+> >> +       struct rzg3s_pcie_msi *msi = irq_data_get_irq_chip_data(data);
+> >> +       struct rzg3s_pcie_host *host = rzg3s_msi_to_host(msi);
+> >> +       u32 drop_mask = RZG3S_PCI_MSIRCVWADRL_ENA |
+> >> +                       RZG3S_PCI_MSIRCVWADRL_MSG_DATA_ENA;
+> >
+> > This should include bit 2 (which is hardwired to zero (for now)),
+> > so I think you better add
+> >
+> >     #define RZG3S_PCI_MSIRCVWADRL_ADDR  GENMASK(31, 3)
+> >
+> >> +       u32 lo, hi;
+> >> +
+> >> +       /*
+> >> +        * Enable and msg data enable bits are part of the address lo. Drop
+> >> +        * them.
+> >> +        */
+> >> +       lo = readl_relaxed(host->axi + RZG3S_PCI_MSIRCVWADRL) & ~drop_mask;
+> >
+> > ... and use FIELD_GET() with the new definition here.
+>
+> Bits 31..3 of RZG3S_PCI_MSIRCVWADRL contains only bits 31..3 of the MSI
+> receive window address low, AFAIU. Using FIELD_GET() for bits 31..3 on the
+> value read from RZG3S_PCI_MSIRCVWADRL and passing this value to
+> msg->address_lo will lead to an NVMe device not working.
 
-diff --git a/drivers/i2c/algos/i2c-algo-pcf.c b/drivers/i2c/algos/i2c-algo-pcf.c
-index 06b9fd355bff..6352314e48ed 100644
---- a/drivers/i2c/algos/i2c-algo-pcf.c
-+++ b/drivers/i2c/algos/i2c-algo-pcf.c
-@@ -253,7 +253,7 @@ static int pcf_readbytes(struct i2c_adapter *i2c_adap, char *buf,
- }
+Oops, yes you are right, I went a bit too far with the FIELD_GET()
+suggestion. But replacing drop_mask by RZG3S_PCI_MSIRCVWADRL_ADDR
+would still be worthwhile, IMHO.
 
+Gr{oetje,eeting}s,
 
--static int pcf_doAddress(struct i2c_algo_pcf_data *adap,
-+static void pcf_doAddress(struct i2c_algo_pcf_data *adap,
- 			 struct i2c_msg *msg)
- {
- 	unsigned char addr = i2c_8bit_addr_from_msg(msg);
-@@ -261,8 +261,6 @@ static int pcf_doAddress(struct i2c_algo_pcf_data *adap,
- 	if (msg->flags & I2C_M_REV_DIR_ADDR)
- 		addr ^= 1;
- 	i2c_outb(adap, addr);
--
--	return 0;
- }
+                        Geert
 
- static int pcf_xfer(struct i2c_adapter *i2c_adap,
-@@ -288,7 +286,7 @@ static int pcf_xfer(struct i2c_adapter *i2c_adap,
- 		int ret;
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- 		pmsg = &msgs[i];
--		ret = pcf_doAddress(adap, pmsg);
-+		pcf_doAddress(adap, pmsg);
-
- 		/* Send START */
- 		if (i == 0)
---
-2.43.0
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
