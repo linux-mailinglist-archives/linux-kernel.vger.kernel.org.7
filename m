@@ -1,391 +1,108 @@
-Return-Path: <linux-kernel+bounces-867592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892ACC030EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:47:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA4EC03109
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D4E0D35B57C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:47:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4BFD34EC205
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E828F346E50;
-	Thu, 23 Oct 2025 18:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DB629827E;
+	Thu, 23 Oct 2025 18:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="dlA7gAms"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lCJLiySW"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC25C2701DC
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B9935B120
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761245258; cv=none; b=Cotdp0mdOFKMwbajofGipZPYBZbUjAvS5aqQWO/DTmVGW26xIn6ZnvBazah3e0dsF8Ck25hlbkMM075S5khPPGrwOwBdrst3pEaM1nyVOzsVs06NxY5xg/CovzP5YbC4PhS6mFlaLrR2QxXo6w/QYBJxAm0NYQg0jMSo1lHaBMc=
+	t=1761245387; cv=none; b=A5z97iTDCYBXOVPUSU6Z0XeL/2pnKaE0LVnR1X/+IxSRzBs8SXP4C/KcmzY4P799bn5wcv4D7+UZ5M2+TlsgVqNlprh1c1e+2RS2d0BOjXiCxJtwhiA30XN4y9oH3UI78isSJzbOihJL+xHXVTRQNeWGOl5SO19oH92Dh3FBQIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761245258; c=relaxed/simple;
-	bh=giR1Ap2iAT4cSqjTbCqfpt2EFuxHIrCAvla6fe0mugo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fTLBaBf2ssVuMwmQkKyAWbhKj7RBthRAT9/oPw2H9PJ29evwGMogtsCm1fIMfsqlN1q4Oem13FTd+XfAdY7QwpbcljqDGNgsVysJwQkUsnhLelCmvqAzkx/uEnIP/ugnhle8TKQjKGRI1bgqo5/aUl9UkuPz0N/byh436u2dSRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=dlA7gAms; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-77f67ba775aso1466244b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:47:36 -0700 (PDT)
+	s=arc-20240116; t=1761245387; c=relaxed/simple;
+	bh=2nd652PUMtxe+A7zqF5Bu33R+D4iWOSC+2cXUl6RNFw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tJ7HJ9xIWJcr0cw+rJBwYWePGFxXZhZG4XiXM55IhL/PSGuxd6Qelbhi/t+4fi2CHEFZZuV6p2M5X1aYbgUR6CTkJG7F9LqJoxBl4p2ZDs1EuERNUBgs2gYJSRDD8SFbkWJNALstTRgSevopBrLAOI81kQpuzQERuuZUctr6e9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lCJLiySW; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-427060bc0f5so700960f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:49:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1761245256; x=1761850056; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gDlTS66uQs02ZrCh1NQbJm6uxfOa1C37VmD1HX7Ng0A=;
-        b=dlA7gAmsoJ1vVPXVmzHBVvcFxF3+h+Ywqi42UhDl/llWfLzpjfiGpB+FHBH9ijcjWd
-         hmNVwAL/8A36jWJTIzvEYON/db2d1gR1HLA6k6Qlj3ribNS8g9u0H9cuUXM4oCAM54Kp
-         HcUbKqktvIUyhxMsLZ6723z9E0Ap+F3Fx+Va71BvNgmhU8ToURdfwD4UWOnIgWoHeorL
-         S6V9Eyltkk6ojvGJocgxzTxQ56mzcs1kOThCJheQJdyyWxgNKC7nLFGPW0bLlFQhnjOT
-         acuCMJ4o2tb1+lRWpnfstL9TzW+PWEDi0Ut77NblSf+5mx/Gr9KnIUjeMmgqAtEoOWbv
-         6mew==
+        d=gmail.com; s=20230601; t=1761245384; x=1761850184; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2nd652PUMtxe+A7zqF5Bu33R+D4iWOSC+2cXUl6RNFw=;
+        b=lCJLiySWsMWv1TTM2/BoT7K5IgNE/MpGt/1RJ64Dx0nKmGx/Ar+5NHLQvoMGmRsiFF
+         sbmmSh4Y9R9396AzIfwXGEnaKuiLpzcRqY+/nuT4b7qBuMh0EmuynADsEbJ5c21SUNuv
+         BhEnYLa0NdqGYyD0Nu6mcZl5Q+QGMQJDEBH1YrAGUkrynrPJz5dyY4ijQ9h8FAlQs/Rx
+         D9jvftHhkmVtB3sWfeK4MdOxjDscP+W/jrfXarAAiVqQFPDjHY1um//6wHiqzOilO6m+
+         l9Ugw4Z2H9AQfN90Gk+Os/kYtmBRBwJL5UZO/uBgNKK039whq9xeGbpAkUpnjryMuR/d
+         iF0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761245256; x=1761850056;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gDlTS66uQs02ZrCh1NQbJm6uxfOa1C37VmD1HX7Ng0A=;
-        b=BUzJ/pWNB42aL1lGfH/AQZEfWOXtv2xnndCrRnRmFU8ilu/qJKCoUuhEfB0PGV6Agi
-         mycXttC0BhcHRnE/gu7BrzHi8B9mSHzF6S4+03gBbwEiOGvfcHuxKdyb1e0xofHhJk2M
-         YCjae1RD3ToO8jEl+uUZe9wY7jnjpccoHZdxEzxM3Wy4PfIPh7zXnT29jPhXO9jQUTzz
-         Ons0RqNdY6ZSsGx9azcPA1st/xbTfF0DvEmra00Vv6oATLCRb9opioCB/zN9HJlhQmUG
-         VLBvZKbBPuhGwIkXHDIB08ClhRBS1GGG7mDJCPExz20tFkuRnjxgzwGmGp8q6KO6QPoR
-         RNQQ==
-X-Gm-Message-State: AOJu0Yy/z76dVUNE3+dzOBV2r1LSFhgb6wv+ZzHRsyWJM+PsDZlOFPdt
-	n7PB6rWFkl9Tfh0fr0yyiIQEJAD1BzwvBSOtRn50ezoEdcP4eAsApu169UICNAk909uqA8SUjYT
-	d7fdy
-X-Gm-Gg: ASbGncu43F82dzmb6YC7U1VsLoNxV+o3fMtv+X8rgbBSvV9AvXtW0ih6N5pZTmnbsh4
-	djXspfIed5K5Snmp1xT+scO0TNoDrY7NqP4trXTC8AGn+HEPjR3ZartjVJRr8Y/tOznuhfJ3JOQ
-	eIyJw7WC9191DzjEcuMmkEqxEc2rrc6HCoONCwe3CcYXc5jsLJL/bp+pUtYBwzYXLkZKRi5xXJX
-	TUQE8u7koJQjUasGsl8VaD52CFW5NUhO1ySMm3Rk6wFwJGsD+AXqXpqiskaLJ++lJ/a/FdJZemn
-	2D3oROSFp0RRkvhy+aDwYtGTrT4ro7wTISRTxfbR3V70wXYVMXMvgSWzNe2XQ3F6Djz+aARwFMr
-	K2gZG8F/TiS205tdx19hCm3C2lb+X4Rjw4paN7EMlsRyN1VmmSredwzDIPs88wURurkbQxo5O++
-	S1og==
-X-Google-Smtp-Source: AGHT+IF8HQIHdGLUBu61JKxd11Dvm79npjsLYZBdWDhc4aMFaVHyj557vf//cPT1d4ZxPBolSup6cw==
-X-Received: by 2002:a05:6a21:9986:b0:320:3da8:34d7 with SMTP id adf61e73a8af0-334a85661b7mr32411910637.22.1761245256047;
-        Thu, 23 Oct 2025 11:47:36 -0700 (PDT)
-Received: from mozart.vkv.me ([192.184.167.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4bb9259sm2793961a12.2.2025.10.23.11.47.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 11:47:35 -0700 (PDT)
-From: Calvin Owens <calvin@wbinvd.org>
-To: linux-kernel@vger.kernel.org
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
-	Neeraj Kale <neeraj.sanjaykale@nxp.com>,
-	Yang Li <yang.li@amlogic.com>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	linux-bluetooth@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	Francesco Valla <francesco@valla.it>
-Subject: [PATCH] Bluetooth: fix corruption in h4_recv_buf() after cleanup
-Date: Thu, 23 Oct 2025 11:47:19 -0700
-Message-ID: <ab6fa50055fa0c39e5501c123c36e662eb48ae61.1761245114.git.calvin@wbinvd.org>
-X-Mailer: git-send-email 2.47.3
+        d=1e100.net; s=20230601; t=1761245384; x=1761850184;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2nd652PUMtxe+A7zqF5Bu33R+D4iWOSC+2cXUl6RNFw=;
+        b=OWlklckSyO4XsNJACRghKHvou3NctFE3b+Eda0/+qTfeqxQWQDlrKlUPR566QvhGf5
+         ZZltMARHDjyAk4bsE9YdSeuUFAVIH4Lp2xOtgSCejfNVVEOgv7MFOkZTTqreqMYfxbYI
+         CIZBEzw6B1nsfp6R2XSa36d+68JeTAAzCRCGmmC/6MN7xXriZx+WFdvvRallUpDHWfmp
+         z1L4xndAj/OwIWvf0/HauNo4MD0WRndGCElFpdtmjTrz1LfOOBaZpYH6xCTbJDXJ8/Dz
+         +moqKLXsHH33dK3MI3K5z3s/rWlgIaPrxmtHAWEy8qKjrvgL4jHaCJQoX8b+kIp+eiu8
+         hoGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlh9WknlRj06cPgZXi32hjJ2gEiIVH/JIIBPOjKGVF3PbGhQjJGpJcEoCxHsYcB+0E3HklC/+Qy5QUKB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo+O2IrsXtDexIzzBhxjSGVToXQ1FomWNX2rnYvNx+0azhi4Zl
+	kec2UQDz2f5tDJ+epC6DfGRpPtxP50ylCIcNGxIr9IZ9BmYBodupaL5PyZZW9kZ4JWbeAf8VjDP
+	dqghKn3b4XZGSHA7G779q5lqjHldGedE=
+X-Gm-Gg: ASbGncsVn1KlQ2Bc08RXQjPVw8tW7DPbR/756ay22oEsBnMts75EDQ8XdgHszMFqeBn
+	agOPairn6E5YK9sIlq/ZkrGjjwMLyOY8KQRqMqFh820iQarxtGd5qj1C30VjyaURjb1HKeeGkWa
+	ePbIB24ERCqPS5INgqoidYbj32d8DIB6iR7Cz+OTxthfXBTfBZuQB5i+juNIEE+DZJ6iK0Mkt1c
+	YrKTBoOxwThEa11xKEsqoV6wWFE9blOcVFNseH184BoqkRVkU6RHtktQUeDAxQVeUzl5x1e76Ns
+	g5tGREa/mZ4=
+X-Google-Smtp-Source: AGHT+IEeHRMJWPv3/iVJ9quZ//H+bz+8QmjfPzxud/29WWYKF0dtb/o8Ka+b/OD/RMRH+3FeY1cruqwGT5+h2lnbztU=
+X-Received: by 2002:a05:6000:2405:b0:426:d5ac:8660 with SMTP id
+ ffacd0b85a97d-42704e0eed1mr18520576f8f.58.1761245384235; Thu, 23 Oct 2025
+ 11:49:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251024-swap-clean-after-swap-table-p1-v2-0-a709469052e7@tencent.com>
+ <20251024-swap-clean-after-swap-table-p1-v2-5-a709469052e7@tencent.com>
+In-Reply-To: <20251024-swap-clean-after-swap-table-p1-v2-5-a709469052e7@tencent.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Thu, 23 Oct 2025 11:49:32 -0700
+X-Gm-Features: AWmQ_bmPTHIQQvWwNe5YWL2_sylNwTUwWHrORzXS9fyw3tv9sd81xVKAoFs0KoI
+Message-ID: <CAKEwX=NO3v_rMcjkUHQuL1GjxnNCZPceYrL2Wm1C6WaHrJcM2A@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] mm, swap: remove redundant argument for isolating
+ a cluster
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
+	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	YoungJun Park <youngjun.park@lge.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks to Francesco Valla's investigation, the reason for the duplicate
-code I recently cleaned up is finally clear: a different structure is
-stored in drvdata for the drivers which used that duplicate function,
-but h4_recv_buf() assumes drvdata is always an hci_uart structure.
+On Thu, Oct 23, 2025 at 11:02=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wro=
+te:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> The order argument was introduced by an intermediate commit and was then
+> never used, just remove it.
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 
-Consequently, alignment and padding are now randomly corrupted for
-btmtkuart, btnxpuart, and bpa10x in h4_recv_buf(), causing erratic
-breakage.
-
-Fix this by making the hci_uart structure the explicit argument to
-h4_recv_buf(). Every caller already has a reference to hci_uart, and
-already obtains the hci_hdev reference through it, so this actually
-eliminates a redundant pointer indirection for all existing callers.
-
-Fixes: 93f06f8f0daf ("Bluetooth: remove duplicate h4_recv_buf() in header")
-Reported-by: Francesco Valla <francesco@valla.it>
-Closes: https://lore.kernel.org/lkml/6837167.ZASKD2KPVS@fedora.fritz.box/
-Signed-off-by: Calvin Owens <calvin@wbinvd.org>
----
- drivers/bluetooth/bpa10x.c    | 4 +++-
- drivers/bluetooth/btmtkuart.c | 4 +++-
- drivers/bluetooth/btnxpuart.c | 4 +++-
- drivers/bluetooth/hci_ag6xx.c | 2 +-
- drivers/bluetooth/hci_aml.c   | 2 +-
- drivers/bluetooth/hci_ath.c   | 2 +-
- drivers/bluetooth/hci_bcm.c   | 2 +-
- drivers/bluetooth/hci_h4.c    | 6 +++---
- drivers/bluetooth/hci_intel.c | 2 +-
- drivers/bluetooth/hci_ll.c    | 2 +-
- drivers/bluetooth/hci_mrvl.c  | 6 +++---
- drivers/bluetooth/hci_nokia.c | 4 ++--
- drivers/bluetooth/hci_qca.c   | 2 +-
- drivers/bluetooth/hci_uart.h  | 2 +-
- 14 files changed, 25 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/bluetooth/bpa10x.c b/drivers/bluetooth/bpa10x.c
-index b7ba667a3d09..e305d04aac9d 100644
---- a/drivers/bluetooth/bpa10x.c
-+++ b/drivers/bluetooth/bpa10x.c
-@@ -41,6 +41,7 @@ struct bpa10x_data {
- 	struct usb_anchor rx_anchor;
- 
- 	struct sk_buff *rx_skb[2];
-+	struct hci_uart hu;
- };
- 
- static void bpa10x_tx_complete(struct urb *urb)
-@@ -96,7 +97,7 @@ static void bpa10x_rx_complete(struct urb *urb)
- 	if (urb->status == 0) {
- 		bool idx = usb_pipebulk(urb->pipe);
- 
--		data->rx_skb[idx] = h4_recv_buf(hdev, data->rx_skb[idx],
-+		data->rx_skb[idx] = h4_recv_buf(&data->hu, data->rx_skb[idx],
- 						urb->transfer_buffer,
- 						urb->actual_length,
- 						bpa10x_recv_pkts,
-@@ -388,6 +389,7 @@ static int bpa10x_probe(struct usb_interface *intf,
- 	hci_set_drvdata(hdev, data);
- 
- 	data->hdev = hdev;
-+	data->hu.hdev = hdev;
- 
- 	SET_HCIDEV_DEV(hdev, &intf->dev);
- 
-diff --git a/drivers/bluetooth/btmtkuart.c b/drivers/bluetooth/btmtkuart.c
-index d9b90ea2ad38..27aa48ff3ac2 100644
---- a/drivers/bluetooth/btmtkuart.c
-+++ b/drivers/bluetooth/btmtkuart.c
-@@ -79,6 +79,7 @@ struct btmtkuart_dev {
- 	u16	stp_dlen;
- 
- 	const struct btmtkuart_data *data;
-+	struct hci_uart hu;
- };
- 
- #define btmtkuart_is_standalone(bdev)	\
-@@ -368,7 +369,7 @@ static void btmtkuart_recv(struct hci_dev *hdev, const u8 *data, size_t count)
- 		sz_left -= adv;
- 		p_left += adv;
- 
--		bdev->rx_skb = h4_recv_buf(bdev->hdev, bdev->rx_skb, p_h4,
-+		bdev->rx_skb = h4_recv_buf(&bdev->hu, bdev->rx_skb, p_h4,
- 					   sz_h4, mtk_recv_pkts,
- 					   ARRAY_SIZE(mtk_recv_pkts));
- 		if (IS_ERR(bdev->rx_skb)) {
-@@ -858,6 +859,7 @@ static int btmtkuart_probe(struct serdev_device *serdev)
- 	}
- 
- 	bdev->hdev = hdev;
-+	bdev->hu.hdev = hdev;
- 
- 	hdev->bus = HCI_UART;
- 	hci_set_drvdata(hdev, bdev);
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index d5153fed0518..3b1e9224e965 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -212,6 +212,7 @@ struct btnxpuart_dev {
- 	struct ps_data psdata;
- 	struct btnxpuart_data *nxp_data;
- 	struct reset_control *pdn;
-+	struct hci_uart hu;
- };
- 
- #define NXP_V1_FW_REQ_PKT	0xa5
-@@ -1756,7 +1757,7 @@ static size_t btnxpuart_receive_buf(struct serdev_device *serdev,
- 
- 	ps_start_timer(nxpdev);
- 
--	nxpdev->rx_skb = h4_recv_buf(nxpdev->hdev, nxpdev->rx_skb, data, count,
-+	nxpdev->rx_skb = h4_recv_buf(&nxpdev->hu, nxpdev->rx_skb, data, count,
- 				     nxp_recv_pkts, ARRAY_SIZE(nxp_recv_pkts));
- 	if (IS_ERR(nxpdev->rx_skb)) {
- 		int err = PTR_ERR(nxpdev->rx_skb);
-@@ -1875,6 +1876,7 @@ static int nxp_serdev_probe(struct serdev_device *serdev)
- 	reset_control_deassert(nxpdev->pdn);
- 
- 	nxpdev->hdev = hdev;
-+	nxpdev->hu.hdev = hdev;
- 
- 	hdev->bus = HCI_UART;
- 	hci_set_drvdata(hdev, nxpdev);
-diff --git a/drivers/bluetooth/hci_ag6xx.c b/drivers/bluetooth/hci_ag6xx.c
-index 2d40302409ff..94588676510f 100644
---- a/drivers/bluetooth/hci_ag6xx.c
-+++ b/drivers/bluetooth/hci_ag6xx.c
-@@ -105,7 +105,7 @@ static int ag6xx_recv(struct hci_uart *hu, const void *data, int count)
- 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
- 		return -EUNATCH;
- 
--	ag6xx->rx_skb = h4_recv_buf(hu->hdev, ag6xx->rx_skb, data, count,
-+	ag6xx->rx_skb = h4_recv_buf(hu, ag6xx->rx_skb, data, count,
- 				    ag6xx_recv_pkts,
- 				    ARRAY_SIZE(ag6xx_recv_pkts));
- 	if (IS_ERR(ag6xx->rx_skb)) {
-diff --git a/drivers/bluetooth/hci_aml.c b/drivers/bluetooth/hci_aml.c
-index 707e90f80130..b1f32c5a8a3f 100644
---- a/drivers/bluetooth/hci_aml.c
-+++ b/drivers/bluetooth/hci_aml.c
-@@ -650,7 +650,7 @@ static int aml_recv(struct hci_uart *hu, const void *data, int count)
- 	struct aml_data *aml_data = hu->priv;
- 	int err;
- 
--	aml_data->rx_skb = h4_recv_buf(hu->hdev, aml_data->rx_skb, data, count,
-+	aml_data->rx_skb = h4_recv_buf(hu, aml_data->rx_skb, data, count,
- 				       aml_recv_pkts,
- 				       ARRAY_SIZE(aml_recv_pkts));
- 	if (IS_ERR(aml_data->rx_skb)) {
-diff --git a/drivers/bluetooth/hci_ath.c b/drivers/bluetooth/hci_ath.c
-index dbfe34664633..8d2b5e7f0d6a 100644
---- a/drivers/bluetooth/hci_ath.c
-+++ b/drivers/bluetooth/hci_ath.c
-@@ -191,7 +191,7 @@ static int ath_recv(struct hci_uart *hu, const void *data, int count)
- {
- 	struct ath_struct *ath = hu->priv;
- 
--	ath->rx_skb = h4_recv_buf(hu->hdev, ath->rx_skb, data, count,
-+	ath->rx_skb = h4_recv_buf(hu, ath->rx_skb, data, count,
- 				  ath_recv_pkts, ARRAY_SIZE(ath_recv_pkts));
- 	if (IS_ERR(ath->rx_skb)) {
- 		int err = PTR_ERR(ath->rx_skb);
-diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-index f96617b85d87..fff845ed44e3 100644
---- a/drivers/bluetooth/hci_bcm.c
-+++ b/drivers/bluetooth/hci_bcm.c
-@@ -698,7 +698,7 @@ static int bcm_recv(struct hci_uart *hu, const void *data, int count)
- 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
- 		return -EUNATCH;
- 
--	bcm->rx_skb = h4_recv_buf(hu->hdev, bcm->rx_skb, data, count,
-+	bcm->rx_skb = h4_recv_buf(hu, bcm->rx_skb, data, count,
- 				  bcm_recv_pkts, ARRAY_SIZE(bcm_recv_pkts));
- 	if (IS_ERR(bcm->rx_skb)) {
- 		int err = PTR_ERR(bcm->rx_skb);
-diff --git a/drivers/bluetooth/hci_h4.c b/drivers/bluetooth/hci_h4.c
-index 9070e31a68bf..ec017df8572c 100644
---- a/drivers/bluetooth/hci_h4.c
-+++ b/drivers/bluetooth/hci_h4.c
-@@ -112,7 +112,7 @@ static int h4_recv(struct hci_uart *hu, const void *data, int count)
- 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
- 		return -EUNATCH;
- 
--	h4->rx_skb = h4_recv_buf(hu->hdev, h4->rx_skb, data, count,
-+	h4->rx_skb = h4_recv_buf(hu, h4->rx_skb, data, count,
- 				 h4_recv_pkts, ARRAY_SIZE(h4_recv_pkts));
- 	if (IS_ERR(h4->rx_skb)) {
- 		int err = PTR_ERR(h4->rx_skb);
-@@ -151,12 +151,12 @@ int __exit h4_deinit(void)
- 	return hci_uart_unregister_proto(&h4p);
- }
- 
--struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
-+struct sk_buff *h4_recv_buf(struct hci_uart *hu, struct sk_buff *skb,
- 			    const unsigned char *buffer, int count,
- 			    const struct h4_recv_pkt *pkts, int pkts_count)
- {
--	struct hci_uart *hu = hci_get_drvdata(hdev);
- 	u8 alignment = hu->alignment ? hu->alignment : 1;
-+	struct hci_dev *hdev = hu->hdev;
- 
- 	/* Check for error from previous call */
- 	if (IS_ERR(skb))
-diff --git a/drivers/bluetooth/hci_intel.c b/drivers/bluetooth/hci_intel.c
-index 9b353c3d6442..1d6e09508f1f 100644
---- a/drivers/bluetooth/hci_intel.c
-+++ b/drivers/bluetooth/hci_intel.c
-@@ -972,7 +972,7 @@ static int intel_recv(struct hci_uart *hu, const void *data, int count)
- 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
- 		return -EUNATCH;
- 
--	intel->rx_skb = h4_recv_buf(hu->hdev, intel->rx_skb, data, count,
-+	intel->rx_skb = h4_recv_buf(hu, intel->rx_skb, data, count,
- 				    intel_recv_pkts,
- 				    ARRAY_SIZE(intel_recv_pkts));
- 	if (IS_ERR(intel->rx_skb)) {
-diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
-index 7044c86325ce..6f4e25917b86 100644
---- a/drivers/bluetooth/hci_ll.c
-+++ b/drivers/bluetooth/hci_ll.c
-@@ -429,7 +429,7 @@ static int ll_recv(struct hci_uart *hu, const void *data, int count)
- 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
- 		return -EUNATCH;
- 
--	ll->rx_skb = h4_recv_buf(hu->hdev, ll->rx_skb, data, count,
-+	ll->rx_skb = h4_recv_buf(hu, ll->rx_skb, data, count,
- 				 ll_recv_pkts, ARRAY_SIZE(ll_recv_pkts));
- 	if (IS_ERR(ll->rx_skb)) {
- 		int err = PTR_ERR(ll->rx_skb);
-diff --git a/drivers/bluetooth/hci_mrvl.c b/drivers/bluetooth/hci_mrvl.c
-index e08222395772..8767522ec4c6 100644
---- a/drivers/bluetooth/hci_mrvl.c
-+++ b/drivers/bluetooth/hci_mrvl.c
-@@ -264,9 +264,9 @@ static int mrvl_recv(struct hci_uart *hu, const void *data, int count)
- 				!test_bit(STATE_FW_LOADED, &mrvl->flags))
- 		return count;
- 
--	mrvl->rx_skb = h4_recv_buf(hu->hdev, mrvl->rx_skb, data, count,
--				    mrvl_recv_pkts,
--				    ARRAY_SIZE(mrvl_recv_pkts));
-+	mrvl->rx_skb = h4_recv_buf(hu, mrvl->rx_skb, data, count,
-+				   mrvl_recv_pkts,
-+				   ARRAY_SIZE(mrvl_recv_pkts));
- 	if (IS_ERR(mrvl->rx_skb)) {
- 		int err = PTR_ERR(mrvl->rx_skb);
- 		bt_dev_err(hu->hdev, "Frame reassembly failed (%d)", err);
-diff --git a/drivers/bluetooth/hci_nokia.c b/drivers/bluetooth/hci_nokia.c
-index cd7575c20f65..1e65b541f8ad 100644
---- a/drivers/bluetooth/hci_nokia.c
-+++ b/drivers/bluetooth/hci_nokia.c
-@@ -624,8 +624,8 @@ static int nokia_recv(struct hci_uart *hu, const void *data, int count)
- 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
- 		return -EUNATCH;
- 
--	btdev->rx_skb = h4_recv_buf(hu->hdev, btdev->rx_skb, data, count,
--				  nokia_recv_pkts, ARRAY_SIZE(nokia_recv_pkts));
-+	btdev->rx_skb = h4_recv_buf(hu, btdev->rx_skb, data, count,
-+				    nokia_recv_pkts, ARRAY_SIZE(nokia_recv_pkts));
- 	if (IS_ERR(btdev->rx_skb)) {
- 		err = PTR_ERR(btdev->rx_skb);
- 		dev_err(dev, "Frame reassembly failed (%d)", err);
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index 4cff4d9be313..888176b0faa9 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1277,7 +1277,7 @@ static int qca_recv(struct hci_uart *hu, const void *data, int count)
- 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
- 		return -EUNATCH;
- 
--	qca->rx_skb = h4_recv_buf(hu->hdev, qca->rx_skb, data, count,
-+	qca->rx_skb = h4_recv_buf(hu, qca->rx_skb, data, count,
- 				  qca_recv_pkts, ARRAY_SIZE(qca_recv_pkts));
- 	if (IS_ERR(qca->rx_skb)) {
- 		int err = PTR_ERR(qca->rx_skb);
-diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
-index cbbe79b241ce..48ac7ca9334e 100644
---- a/drivers/bluetooth/hci_uart.h
-+++ b/drivers/bluetooth/hci_uart.h
-@@ -162,7 +162,7 @@ struct h4_recv_pkt {
- int h4_init(void);
- int h4_deinit(void);
- 
--struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
-+struct sk_buff *h4_recv_buf(struct hci_uart *hu, struct sk_buff *skb,
- 			    const unsigned char *buffer, int count,
- 			    const struct h4_recv_pkt *pkts, int pkts_count);
- #endif
--- 
-2.47.3
-
+Acked-by: Nhat Pham <nphamcs@gmail.com>
 
