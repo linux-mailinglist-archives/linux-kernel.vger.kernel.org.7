@@ -1,226 +1,216 @@
-Return-Path: <linux-kernel+bounces-867788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739BCC03800
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:09:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CAAFC03803
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 41EB6350BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:09:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2F17634B8B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B952741A6;
-	Thu, 23 Oct 2025 21:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D535927AC21;
+	Thu, 23 Oct 2025 21:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EI5hLpta"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RdndFVna"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BA5221FDA
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAAE221FDA
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761253778; cv=none; b=NOGOdNUpeDl2mh2s1/1ABIYirPA27/CAd5jHLUtEMIgGP/ujJ0NH2/76CuVLpGi3kdW7ej/FApUtV1n1XF21mxDy9rEI0xJxM7ehoodVUrhzXUwEpZBKSP7CkVpycxj4nsgC1cAZz6BbAUR1ws66lZiqVKloMXCWikTx4TvaJP4=
+	t=1761253851; cv=none; b=iuAgYExA9Jvt7PM29WirbSRuJzeQ7ELf+ZBg5lFaEDVz+/I9AaGST/M1SDn0d66xHVRh77UZKvdayvmLb3jnNzkNwDu3Y0fBGgAyTd+rM+ytW7ofxwkGwh8+BkMyyLS9pNhNmMa8JtleZDV/1vxCLb835MS2LwHlvHkHART4GV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761253778; c=relaxed/simple;
-	bh=xFNUDuxlgYBQnBFlQVlz64sKz0GbaTPUJzILgMe5A4c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qM1MIyJF9ZpMyc6h0CEpXHy4prr4Ub+OLG5l5/XderZtf0xjSaFxUtCvutJ5L2LMWtYLUTQRaEsLZrIXd/aYh/TjY5hhH7T8E65iZHRUMRJKikhsb5D/5L+iVoefi025k6BPeMZcrjOMw8ccXYmiD2GbmIBKA7H2SsO9dI223lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EI5hLpta; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-782e93932ffso1143012b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:09:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761253776; x=1761858576; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=h5YU3fkImwOk5m1OUm42Cx7Ih1OV3rU+ewOPMoP49t0=;
-        b=EI5hLpta77PMqDSHxDTFL3ENmXdCr934vAIrzqXIliXUn6MLIzUYAPnGfBEDfZHRsv
-         HgC8m+n5SObZzCEo2WBzOB4DM4G2YdffqrZ6lznpT8qKBarfUjCDIwQBPvuuMm9rUZXG
-         vQNkJcmRUlOVQnA61JsT9D5jxK5F1yc7GnAIA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761253776; x=1761858576;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h5YU3fkImwOk5m1OUm42Cx7Ih1OV3rU+ewOPMoP49t0=;
-        b=Tcsy08C8887XfOjUUwUvYqtOrZ0xSDKV/j3d0JKGc9VtRv1mpNAONbaUCNGef3IvTj
-         PFSkiXSmR2Vd8iMSpKjpYLT6OTSzIvHZ0E4t5a8MTnmHIfpVboqosExwzRnMJnHQmAsH
-         ZBEOExApyx544Ha0c1taJFxsq3ooVgiv9Vi8V5IbBFddM1/XbTjNyb/cqCkpwwuC8jI3
-         Q+s6aTtNDcZ4klo73tesX2MUpTi9byKWRAuqjntpMrIwAIiAbpDGYvmuCDmYKr75WVN9
-         XPHZGSMF67J7MDZp6aIhCt9GbT5p0ctXbK0NaDG+CUwSmUrgJbk2yXNyFWuRmxyEcupc
-         jM5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWrW3ldzZGf0dWvG/AGxxu6WX4bCRH5mFGmxdFbQg5jEDJhzbO5Tw6p3sYr6aEUrXHQMWMYIasT3E4kzA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmWpO1IHOwJYBB1DutUoSGKL5qnl/lyTqfcYx9n8i2xo1j4Xd9
-	a1YLkApXmvfTIN7gPLJ5m33A8dyx1nUbDqXTUqVQsDwqS0hOomHWG/odEHXsU4ZWrw==
-X-Gm-Gg: ASbGncuVhpwdt0ICZdobxLmf4LQGS8Bok2upOC6zWKb5mGY5il5dYmw/e1zxLYlDwe9
-	I+Rk0JH1R0ZIT448oy6EzkPlic1f9ZdmDITeqaiFjwdtUhZhthkRI6PN4nT2VVffp4JQLi/xRDY
-	LIO41jKR7GBe1NiUx+r0+YnMZoFH0vlH8DzvqPPjKjzXYTzkG+R5HPCxcmUTGsLoKBlXF7FhXrb
-	PyNyaC+GC6ka2QEaA4/BwphA2wxZNFTrb0tZppA3vewPsBO9JsYu8tcmh2NbF9Gs7GNF3j+FRbF
-	cwxDAR6OnS4kPwYO2WxCdfuWrhzwIUd0243sV2PlhSYIv3MSk/NbWYaSFu822ma1JV82WsdNJrX
-	AkfUUOMAGLSzLancmmf0k0tIa+T1csJ1kZMXbEPb0E4Z5nwnIegrzvUDXAWSendghNhaMELexQu
-	7IpoF7LfGutqD6AUBN/GeTxJzHg16E/45AznEApSuysQZjL+FN
-X-Google-Smtp-Source: AGHT+IH4cOtgwgDTRA9Hx5ecopi6nNJX76Z4NKaJ+kI0YK4nfHiy9626S+MkwrmKPyX9hlSOHsb5Tg==
-X-Received: by 2002:a05:6a21:71ca:b0:33b:2c70:78e5 with SMTP id adf61e73a8af0-33b2c7fe045mr7751993637.6.1761253776000;
-        Thu, 23 Oct 2025 14:09:36 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e7c:8:839c:d3ee:bea4:1b90])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b6cf4e349b8sm2991626a12.35.2025.10.23.14.09.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 14:09:35 -0700 (PDT)
-From: Brian Norris <briannorris@chromium.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Lukas Wunner <lukas@wunner.de>,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Brian Norris <briannorris@chromium.org>
-Subject: [PATCH v4] PCI/PM: Prevent runtime suspend before devices are fully initialized
-Date: Thu, 23 Oct 2025 14:09:01 -0700
-Message-ID: <20251023140901.v4.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
-X-Mailer: git-send-email 2.51.1.821.gb6fe4d2222-goog
+	s=arc-20240116; t=1761253851; c=relaxed/simple;
+	bh=ZeXj6RHOgJiffLwS5fM8bhz4WNccfTBQc+5AvcbfMB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KOVcZKZGaWMtszmq5l0QxRmOtMJvCz9//MFkELS4MuIOSx7/jI6Wa/pxh3QIL6uziFhCKunHcD9q+bcD9sDgpCgLaW/d3DvTfg/yRLAC37c5NLAx90BLMBqaPXi8pyOfsyyc9nBeafpQOU32JAMkKrORlu3TZoKMFmRPdFz7lmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RdndFVna; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761253849; x=1792789849;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ZeXj6RHOgJiffLwS5fM8bhz4WNccfTBQc+5AvcbfMB8=;
+  b=RdndFVnapn5PkV+lXuQjHYuL55ApbwndXElGyUBS+M1b5ShuiobFFNPc
+   9BHwL5tIufGZbI40SsFJXbLssdqzngc/ZIR8tjktVuWURvCN8ajtkDqYQ
+   nxnZc8/EkFuox14SDJNGtawlJS0kIj4ORbwMW6t8gCpT3DEa1hRSreAja
+   7wBKqjgcCFD3Eqzf1MyryxxEXlYdYvEp4W9mpQuyK+mhM3B87A7BkTwiR
+   TVZ9LqUi7uNve0uI89EC5ZInMYadMgC76eQ4Ls4ZESpcjDqFEZFO1FRbm
+   3u2YIzw070GOyGFsA/55z+1rNHgT8E10BO/9hHxCxuLxxSTCVg2HfTn6r
+   A==;
+X-CSE-ConnectionGUID: P6aRdzQMSEyPlV/ZF6luTA==
+X-CSE-MsgGUID: +djbrtSNRk6OUcsq3pdxQQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62645682"
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="62645682"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 14:10:47 -0700
+X-CSE-ConnectionGUID: zgERDZQJSl+348MR+kVQ2Q==
+X-CSE-MsgGUID: V5IyUYd4RpqXuYm43kUzSg==
+X-ExtLoop1: 1
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.125.108.251]) ([10.125.108.251])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 14:10:47 -0700
+Message-ID: <aad8ae43-a7bd-42b2-9452-2bdee82bf0d8@intel.com>
+Date: Thu, 23 Oct 2025 14:10:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
+To: Vishal Annapurve <vannapurve@google.com>, Chao Gao <chao.gao@intel.com>
+Cc: "Reshetova, Elena" <elena.reshetova@intel.com>,
+ "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "Weiny, Ira" <ira.weiny@intel.com>, "Huang, Kai" <kai.huang@intel.com>,
+ "Williams, Dan J" <dan.j.williams@intel.com>,
+ "yilun.xu@linux.intel.com" <yilun.xu@linux.intel.com>,
+ "sagis@google.com" <sagis@google.com>,
+ "paulmck@kernel.org" <paulmck@kernel.org>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20251001025442.427697-1-chao.gao@intel.com>
+ <CAGtprH_FzXjnC0Rbctpvm2_kqAAnUOfnaT4885fBiAi7s0jcXw@mail.gmail.com>
+ <IA1PR11MB949522AA3819E217C5467B51E7E8A@IA1PR11MB9495.namprd11.prod.outlook.com>
+ <5b4c2bb3-cfde-4559-a59d-0ff9f2a250b4@intel.com>
+ <IA1PR11MB94955392108F5A662D469134E7E9A@IA1PR11MB9495.namprd11.prod.outlook.com>
+ <CAGtprH96B5K9Hk5h0FgxSUBa-pik=E=dLrO-4oxx76dxb9=7wQ@mail.gmail.com>
+ <IA1PR11MB9495BB77A4FAFBD78600416AE7F6A@IA1PR11MB9495.namprd11.prod.outlook.com>
+ <CAGtprH-h_axusSLTWsEZ6QoxgmVs0nVknqNJx-iskpsg_qHKFg@mail.gmail.com>
+ <aPiEakpcADuQHqQ3@intel.com>
+ <CAGtprH8q5U6h3p5iDYtwRiyVG_xF8hDwq6G34hLt-jhe+MRNaA@mail.gmail.com>
+ <CAGtprH9bLpQQ_2UOOShd15hPwMqwW+gwo1TzczLbwGdNkcJHhg@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <CAGtprH9bLpQQ_2UOOShd15hPwMqwW+gwo1TzczLbwGdNkcJHhg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Today, it's possible for a PCI device to be created and
-runtime-suspended before it is fully initialized. When that happens, the
-device will remain in D0, but the suspend process may save an
-intermediate version of that device's state -- for example, without
-appropriate BAR configuration. When the device later resumes, we'll
-restore invalid PCI state and the device may not function.
+On 10/23/25 13:31, Vishal Annapurve wrote:
+...
+>> Admin logic to update TDX modules can be designed to either retry
+>> failed TDX module updates or to be more robust, adds some
+>> synchronization with VM creation attempts on the host. i.e. I think
+>> it's fine to punt this problem of ensuring the forward progress to
+>> user-space admin logic on the host.
+> Discussed offline with Erdem Aktas on this. From Google's perspective
+> "Avoid updates during updatesensitive times" seems a better option as
+> I mentioned above.
+> 
+> To avoid having to choose which policy to enforce in kernel, a better
+> way could be to:
+> * Allow user space opt-in for "Avoid updates during updatesensitive times" AND
+> * Allow user space opt-in for "Detect incompatibility after update" as well OR
+> * Keep "Detect incompatibility after update" enabled by default based
+> on the appetite for avoiding silent corruption scenarios.
 
-Prevent runtime suspend for PCI devices by deferring pm_runtime_enable()
-until we've fully initialized the device.
+I'd really prefer to keep this simple. Adding new opt-in ABIs up the
+wazoo doesn't seem great.
 
-More details on how exactly this may occur:
+I think I've heard three requirements in the end:
 
-1. PCI device is created by pci_scan_slot() or similar
-2. As part of pci_scan_slot(), pci_pm_init() enables runtime PM; the
-   device starts "active" and we initially prevent (pm_runtime_forbid())
-   suspend -- but see [*] footnote
-3. Underlying 'struct device' is added to the system (device_add());
-   runtime PM can now be configured by user space
-4. PCI device receives BAR configuration
-   (pci_assign_unassigned_bus_resources(), etc.)
-5. PCI device is added to the system in pci_bus_add_device()
+1. Guarantee module update forward progress
+2. Avoid "corrupt" TD build processes by letting the build/update
+   race happen
+3. Don't complicate the build process by forcing it to error out
+   if a module update clobbers a build
 
-The device may potentially suspend between #3 and #4.
+One thing I don't think I've heard anyone be worried about is how timely
+the update process is. So how about this: Updates wait for any existing
+builds to complete. But, new builds wait for updates. That can be done
+with a single rwsem:
 
-[*] By default, pm_runtime_forbid() prevents suspending a device; but by
-design [**], this can be overridden by user space policy via
+struct rw_semaphore update_rwsem;
 
-  echo auto > /sys/bus/pci/devices/.../power/control
+tdx_td_init()
+{
+	...
++	down_read_interruptible(&update_rwsem);
+	kvm_tdx->state = TD_STATE_INITIALIZED;
 
-Thus, the above #3/#4 sequence is racy with user space (udev or
-similar).
+tdx_td_finalize()
+{
+	...
++	up_read(&update_rwsem);
+	kvm_tdx->state = TD_STATE_RUNNABLE;
 
-Notably, many PCI devices are enumerated at subsys_initcall time and so
-will not race with user space. However, there are several scenarios
-where PCI devices are created later on, such as with hotplug or when
-drivers (pwrctrl or controller drivers) are built as modules.
+A module update does:
 
-  ---
+	down_write_interruptible(&update_rwsem);
+	do_actual_update();
+	up_write(&update_rwsem);
 
-[**] The relationship between pm_runtime_forbid(), pm_runtime_allow(),
-/sys/.../power/control, and the runtime PM usage counter can be subtle.
-It appears that the intention of pm_runtime_forbid() /
-pm_runtime_allow() is twofold:
+There would be no corruption issues, no erroring out of the build
+process, and no punting to userspace to ensure forward progress.
 
-1. Allow the user to disable runtime_pm (force device to always be
-   powered on) through sysfs.
-2. Allow the driver to start with runtime_pm disabled (device forced
-   on) and user space could later enable runtime_pm.
+The big downside is that both the build process and update process can
+appear to hang for a long time. It'll also be a bit annoying to ensure
+that there are up_read(&update_rwsem)'s if the kvm_tdx object gets torn
+down during a build.
 
-This conclusion comes from reading `Documentation/power/runtime_pm.rst`,
-specifically the section starting "The user space can effectively
-disallow".
+But the massive upside is that there's no new ABI and all the
+consistency and forward progress guarantees are in the kernel. If we
+want new ABIs around it that give O_NONBLOCK semantics to build or
+update, that can be added on after the fact.
 
-This means that while pm_runtime_forbid() does technically increase the
-runtime PM usage counter, this usage counter is not a guarantee of
-functional correctness, because sysfs can decrease that count again.
+Plus, if userspace *WANTS* to coordinate the whole shebang, they're free
+to. They'd never see long hangs because they would be coordinating.
 
-  ---
-
-Note that we also move pm_runtime_set_active(), but leave
-pm_runtime_forbid() in place earlier in the initialization sequence, to
-avoid confusing user space. From Documentation/power/runtime_pm.rst:
-
-  "It should be noted, however, that if the user space has already
-  intentionally changed the value of /sys/devices/.../power/control to
-  "auto" to allow the driver to power manage the device at run time, the
-  driver may confuse it by using pm_runtime_forbid() this way."
-
-Thus, we should ensure pm_runtime_forbid() is called before the device
-is available to user space.
-
-Link: https://lore.kernel.org/all/20251016155335.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid/
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
----
-
-Changes in v4:
- * Move pm_runtime_set_active() too
-
-Changes in v3:
- * Add Link to initial discussion
- * Add Rafael's Reviewed-by
- * Add lengthier footnotes about forbid vs allow vs sysfs
-
-Changes in v2:
- * Update CC list
- * Rework problem description
- * Update solution: defer pm_runtime_enable(), instead of trying to
-   get()/put()
-
- drivers/pci/bus.c | 4 ++++
- drivers/pci/pci.c | 2 --
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-index f26aec6ff588..40ff954f416f 100644
---- a/drivers/pci/bus.c
-+++ b/drivers/pci/bus.c
-@@ -14,6 +14,7 @@
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/proc_fs.h>
- #include <linux/slab.h>
- 
-@@ -375,6 +376,9 @@ void pci_bus_add_device(struct pci_dev *dev)
- 		put_device(&pdev->dev);
- 	}
- 
-+	pm_runtime_set_active(&dev->dev);
-+	pm_runtime_enable(&dev->dev);
-+
- 	if (!dn || of_device_is_available(dn))
- 		pci_dev_allow_binding(dev);
- 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index b14dd064006c..234bf3608569 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3225,8 +3225,6 @@ void pci_pm_init(struct pci_dev *dev)
- poweron:
- 	pci_pm_power_up_and_verify_state(dev);
- 	pm_runtime_forbid(&dev->dev);
--	pm_runtime_set_active(&dev->dev);
--	pm_runtime_enable(&dev->dev);
- }
- 
- static unsigned long pci_ea_flags(struct pci_dev *dev, u8 prop)
--- 
-2.51.1.821.gb6fe4d2222-goog
-
+Thoughts?
 
