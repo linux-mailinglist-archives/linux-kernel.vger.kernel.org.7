@@ -1,205 +1,217 @@
-Return-Path: <linux-kernel+bounces-866886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BEAC00F25
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:01:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D522EC00F1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF73B4E4050
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:01:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51C94188E45B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8584630F80A;
-	Thu, 23 Oct 2025 12:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B1D30F817;
+	Thu, 23 Oct 2025 12:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y65wUZXg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fAx7tjmP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="x1nM2Jay";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NZt1RgMs"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ERRuSMqz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E2030F535
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C040C309F1B
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761220882; cv=none; b=FnijyyRjiFywbpSCo+j5Cu9rxKBJKVQyAGuUDIh3B3OmoZGOhs0/h3h0S+rRsmRr+iHsca1ouR1FSU2av9S4Sl9kWRJVxfp+hIvLY2KK6ktUqEBvgiK+CROVVXat7sd/BHico1qyZf2MfYmnIqwceCQyAWhZNzW2XCeTQ7U66Kk=
+	t=1761220883; cv=none; b=QsHrZCzYr7VlRlQ3xk6Q7gxAw8288ltUqkJZYdGL9s5A/udLM+CEY2VRfsjDU2uhwNWsDMVbh7ZRLEch5XiNOWmQaAHyyLw6uUC1EqV3ujFk43PZE586sXNvxl1St/QF11jqr0A5GdMSe/RDT4v/woeQc4zgcWva7W41WKltSeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761220882; c=relaxed/simple;
-	bh=Zlay6eCbvp2/Sw6UVOR2JhIolZPjDd3LN1tdgEkO/9U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JMn/bJf6SLrTGhf6QhUDTC6iBHH+YS9SFGYVf9FDjBO+DsDe/FB3W9Wh+esL8gENrGbJKmF8wod6E8+QTYTEtizGrSyCEjvKDyv1PZIMyGbeK4gknSo33jq9BV5Fru7NGIhxHQMOZ+SaVVLcmTqf4UipNZdFDNRbWw+9ysDjMbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y65wUZXg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fAx7tjmP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=x1nM2Jay; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NZt1RgMs; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CC4481F391;
-	Thu, 23 Oct 2025 12:01:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761220875; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=W7p5nQWyCEhm9BH1MPA6rOHeMDHeFHPXgItAhkK0bBk=;
-	b=Y65wUZXgkVndE5aov4Vu25yrlvdnxDZF3KzFeLn+HtrfNV3Iwwz+836Hf7159IhzEFhUXC
-	qvMqHvgttwJppRWWJeaCrN5n2JP3LbXxpUf8iRV/RMtxtGiyuDb+3bjejOvD4ji6ok1agf
-	MnNYi/ATJqjOvie+1QWIR9+wog5Ky78=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761220875;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=W7p5nQWyCEhm9BH1MPA6rOHeMDHeFHPXgItAhkK0bBk=;
-	b=fAx7tjmP7SKp9lZ681IeFhbTwixq4xnXi8JX/vOO3wl/XEHU8CTIo/c7bEybwUTrmJfrCV
-	FWxWBcPtBAvSaLDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761220870; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=W7p5nQWyCEhm9BH1MPA6rOHeMDHeFHPXgItAhkK0bBk=;
-	b=x1nM2JaysuHh7Y6m6973jnSjlTihU14/4NCNonFKNyHk3uvwnQLkIdABqpdNwwbgizp3cX
-	NvBwlEdWC2rgs2HQm8fuO9y69yefbL5zqhONs6lxS7ft2YL9h8tkOsQpSuDkK8IzjcNWX6
-	EPyu7eVFnXQQSR49v206zI1WGuixCVQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761220870;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=W7p5nQWyCEhm9BH1MPA6rOHeMDHeFHPXgItAhkK0bBk=;
-	b=NZt1RgMsq8Jh6U9g028u8q8R3hXsTJbXTD9xq6Ofp3N+CJ5Kh89YxRtVmccdmYbbdGBaXp
-	sJ3IRG0cCsai6aDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ADD2913285;
-	Thu, 23 Oct 2025 12:01:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 73glKgYZ+mjtVAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 23 Oct 2025 12:01:10 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Thu, 23 Oct 2025 14:01:07 +0200
-Subject: [PATCH v2] slab: fix slab accounting imbalance due to
- defer_deactivate_slab()
+	s=arc-20240116; t=1761220883; c=relaxed/simple;
+	bh=xgyOM0BDgOZaPTwKa5g6GcOjB33jTljJLH+mwWNy4PM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VjOcUlSnk75HPaejzjEh2ej2le6OI/ZS6QAgt3qQxkq//Q2g9/PYDOIZv2Fmb7AAEQfth6REjAkMERT86Lrc+RFKhxjn2huSlPOIOIp2MyCLoPzYbmk09MiZsRADBV+Dv9J3wO+n4WPRbbbf9eJyB7HKwzMKiWpwA+Miwd+jIhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ERRuSMqz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N7eGuq026255
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:01:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=goeKdp/WYHhJWHlaAy8C59qV
+	Sxphru8lrJomaYpY0h0=; b=ERRuSMqzetasBthM5RxIR9p9b2FPm8/Zi9gQWLY0
+	SWJKLQH3qGe3Mq76R8uVPpVyCGW6AW4M+wZYJS71aQ53AZ+Nf/5DX9OLRbl5YVyW
+	6qwP1S9MqpLVA0Twp8C7onzazAZ7yLPI4VIwdcN37Ve+vNEmQZhurqmqh7mpB45T
+	2lSiqaiSCf7Uxy5HbdFZ4D2n9ujUKPqm0fjLd4M1R6tiEWB9MrI5FMxCphd0eb4+
+	8Iq0Ow4f6r4c9YyLla5aA5Qj2ChVclZVYiHAdvpK8Ybxhcvi6xc4XhKNcT2x4pt3
+	jF8MdXeQ5d+4ji3YvPL4ROa5SEEAWvGxM48KJyDiXqbwFg==
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49y5x8jd06-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:01:20 +0000 (GMT)
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-556fd0bcc47so1652814e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:01:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761220879; x=1761825679;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=goeKdp/WYHhJWHlaAy8C59qVSxphru8lrJomaYpY0h0=;
+        b=WWIXDw/DqGb6Pk9TK0WcoqfLCEOmeUo+xZNK4TvtzPcMpcART2/dWBwEa/BJ4MCYBc
+         EQaIVcRbCJwnimEr06LBeYjh3kx29NrYzX9JY18iBURtnK0TBzsLRh8DO+0XIxqSVPY+
+         uLOIv0FZ2nvsVd122VNI5m95wLSAyw1FEHvNaYUJUoW+tbTne/bH+ICa61CDQ1Re93xo
+         6XOg6oqZXZ6Kv8TlhzNY9eaN4tveqKcfOR+DvzotSZYuDFa45dvNMqH65YcNjm9J5iPU
+         cwzteOVAkrKjF3bTVmYd+dJtXEvuocSpcP+tcogyr4OOlE6f+MQnsv6Rl4VSTaM/EETK
+         nLYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrZFjuZNeGTujD5/Q/NhDIET10QIdwAPS5jhOAuYNaFs8chrDkeigA6W4vImScdTuYRTtfoAx+gYSfzbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeCfXo1BFsLeLJXWQnpVxCwYk9iZCrzte83f6xcoMZCP0zAAsH
+	2iZNsVt3kXcNBGZs+7cTLf0CBw+iurOi9pPkHPBKpdyFgzrGzrA+qNSOhEK0c4MxnHOVKTSO8+D
+	kd0uDykB1XSEsKmxs9c1K8oWoIH/koRYjTozJAERhRlF1LD0Zn7J4BmaKSvejfOkj1DulNvheJB
+	4=
+X-Gm-Gg: ASbGncs2rau0U7rcl98LyJBeUHBC0KJudzFO2sbz1JZc4T9ynPTztvjxufIaSGvSC7H
+	9Z1mTdqKDf3TXV9je380RGm5/dQ6xXe1AZB9gRdtbxAz0vCrrRqu2Gr00y3YsOmXIbQZS1WyEJw
+	SDE07Il5x9/f+q35knfGzwrjQV131E/ceudMM8M+/sfsNbI+9+Trj5wn4Ue4WDJCHnkbKv2pKxb
+	2+FUSnYvV36eaUGuEhTbzSz8KGE7sFaYmT/Rc/eqfkFkTUbwQWSkchGP1Rk3jTRYDvi0vCHOhsO
+	pDCgPrE5FYcdG+1joxlVcC4Uxj9Xlm9Hz5O7mzDapXwaDE/Jz3Z485EOuR1I/jVE1chgrPyNIMB
+	nP0M5fdOVsBNowBNCQbk8mtXI4bYIaYpcdeDQpI3394IsO720SM9KMhZjdXRQ1XU/upopgL00t9
+	L7MfOC6sPo+uUR
+X-Received: by 2002:a05:6122:c457:10b0:54a:8deb:21a7 with SMTP id 71dfb90a1353d-556a1fe00b0mr1375539e0c.4.1761220877769;
+        Thu, 23 Oct 2025 05:01:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGYxrTX1ih+hGngZciP+iHFYfeFoyaVhepsbpmQ8PJc+gldudoSg8FgGhwuto7pKkQZUsY/ew==
+X-Received: by 2002:a05:6122:c457:10b0:54a:8deb:21a7 with SMTP id 71dfb90a1353d-556a1fe00b0mr1375509e0c.4.1761220877262;
+        Thu, 23 Oct 2025 05:01:17 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378d66bbd08sm4052251fa.4.2025.10.23.05.01.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 05:01:16 -0700 (PDT)
+Date: Thu, 23 Oct 2025 15:01:14 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: yuanjie yang <yuanjie.yang@oss.qualcomm.com>
+Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
+        simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
+        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
+        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
+Subject: Re: [PATCH 04/12] drm/msm/mdss: Add support for Kaanapali
+Message-ID: <7yrjpxx2uqb7ox6yk55hsdj2cgexvcoqjjutmhnjokciy7pnl4@a3zdvmn7wmto>
+References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
+ <20251023075401.1148-5-yuanjie.yang@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-fix-slab-accounting-v2-1-0e62d50986ea@suse.cz>
-X-B4-Tracking: v=1; b=H4sIAAIZ+mgC/32NQQ6CMBBFr0Jm7Zi2RCCuvIdh0ZYpTGJa0wGiE
- u5u5QAu38//728glJkErtUGmVYWTrGAOVXgJxtHQh4Kg1HmopUxGPiF8rAOrfdpiTPHEYOyzg2
- 2s00IUJbPTKV2WO994YllTvl9nKz6l/73rRo1mrZrFfm6qT3dZBE6+w/0+75/AfnahGu0AAAA
-X-Change-ID: 20251022-fix-slab-accounting-f0abbda8a6ff
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
- Alexei Starovoitov <ast@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- Vlastimil Babka <vbabka@suse.cz>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2365; i=vbabka@suse.cz;
- h=from:subject:message-id; bh=Zlay6eCbvp2/Sw6UVOR2JhIolZPjDd3LN1tdgEkO/9U=;
- b=owGbwMvMwMG4+8GG0kuuHbMYT6slMWT8kmTZvKlyzQm2Pcc9Jp95ELVgk/UJvSeiXG8XWi53T
- vsn66W4upPRn4WBkYPBUkyRpXr3CUfRmcoe0zx8P8IMYmUCmSIt0sAABCwMfLmJeaVGOkZ6ptqG
- eoaGOkAmAxenAEz168ccDK2HIg3n6Vw6br03rFdNcraScK391WSDCxY3Ui4szLuy7X1f3Z2d3LK
- 5KRPv8F+//LCtv4Zpo2z/7Nki6466usRGi26q8ctL+v7K3dXzX+LCet5lr/jVSteveGcrEaH7l7
- /VKME78pVfSFwYtzPTi2WPBKYd/akw9zNrGPMmllT9FY0fj3BcsGPlYj+TcnOT6ldJpRhlwcqFt
- 6dH2Rhsfhko27LmnCN3go7C3IDLNW83v5pSddz30DROrk3zw06Wmx6Sf/OtUG3rRRYOuQuxkZzL
- f074EvjX7XjzvjdVB+t/8VomaGm25tv7PL30vbSu/32RWDv3bEvfK90Hf23T27dcwb/gTfqRxaG
- uM86dAgA=
-X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
- fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023075401.1148-5-yuanjie.yang@oss.qualcomm.com>
+X-Proofpoint-ORIG-GUID: 1OgAmMMHP-TOKkJHYDizkW83FbF8xGDY
+X-Proofpoint-GUID: 1OgAmMMHP-TOKkJHYDizkW83FbF8xGDY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDE2NCBTYWx0ZWRfX6ZOCNLrfh6Eh
+ b3kmhTRzlEPcncAcLXWLm5UTzpLVtJMfKEgYeKV7S2Ecayj1Ks9v2yRjAmn8HgzagTm6VZxtdI4
+ /J2u3ybs37zcm7GNjjLV2dkBXcFrmHNK3nhfssMFQJyP5tO/M6FIgnYmPnFVshVk39CwmxY/c35
+ BObk79smiJoEuzEuvToDnC7e1COg4JWivj8P0h+Y2ZABPc4+wJPjlP/QJxYlz1yN178wT+wJ098
+ mgFJRaRNnp/oRvj1BeXBFjDmp3FVM7QRRgGHlvCMrbJqeK04vGGZvTEiNLn+i4KqrpdOEZbiv4X
+ EQIl/fwV1v2FfIpKlZSqI0f89uNEdgoTNRcoPP7MJXjvsMjna4BGJAYJf0nA7Yo29KvEQEyBkUR
+ 0iTaTG4Fu7Gilurn9jKhzypwfoGE/w==
+X-Authority-Analysis: v=2.4 cv=UOTQ3Sfy c=1 sm=1 tr=0 ts=68fa1910 cx=c_pps
+ a=+D9SDfe9YZWTjADjLiQY5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
+ a=FJEgi42wPuteDVaKdBsA:9 a=CjuIK1q_8ugA:10 a=vmgOmaN-Xu0dpDh8OwbV:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 suspectscore=0 adultscore=0 clxscore=1015 phishscore=0
+ bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510220164
 
-Since commit af92793e52c3 ("slab: Introduce kmalloc_nolock() and
-kfree_nolock().") there's a possibility in alloc_single_from_new_slab()
-that we discard the newly allocated slab if we can't spin and we fail to
-trylock. As a result we don't perform inc_slabs_node() later in the
-function. Instead we perform a deferred deactivate_slab() which can
-either put the unacounted slab on partial list, or discard it
-immediately while performing dec_slabs_node(). Either way will cause an
-accounting imbalance.
+On Thu, Oct 23, 2025 at 03:53:53PM +0800, yuanjie yang wrote:
+> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> 
+> Add mdss support for the Qualcomm Kaanapali platform.
+> 
+> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> ---
+>  drivers/gpu/drm/msm/msm_mdss.c | 22 ++++++++++++++++++++++
+>  include/linux/soc/qcom/ubwc.h  |  1 +
+>  2 files changed, 23 insertions(+)
 
-Fix this by not marking the slab as frozen, and using free_slab()
-instead of deactivate_slab() for non-frozen slabs in
-free_deferred_objects(). For CONFIG_SLUB_TINY, that's the only possible
-case. By not using discard_slab() we avoid dec_slabs_node().
+Where can I find the UBWC config for Kaanapali?
 
-Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
-Changes in v2:
-- Fix the problem differently. Harry pointed out that we can't move
-  inc_slabs_node() outside of list_lock protected regions as that would
-  reintroduce issues fixed by commit c7323a5ad078
-- Link to v1: https://patch.msgid.link/20251022-fix-slab-accounting-v1-1-27870ec363ce@suse.cz
----
- mm/slub.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
+> index 2d0e3e784c04..665751d2b999 100644
+> --- a/drivers/gpu/drm/msm/msm_mdss.c
+> +++ b/drivers/gpu/drm/msm/msm_mdss.c
+> @@ -243,6 +243,24 @@ static void msm_mdss_setup_ubwc_dec_50(struct msm_mdss *msm_mdss)
+>  	writel_relaxed(1, msm_mdss->mmio + REG_MDSS_UBWC_PREDICTION_MODE);
+>  }
+>  
+> +static void msm_mdss_setup_ubwc_dec_60(struct msm_mdss *msm_mdss)
+> +{
+> +	const struct qcom_ubwc_cfg_data *data = msm_mdss->mdss_data;
+> +	u32 value = MDSS_UBWC_STATIC_UBWC_SWIZZLE(data->ubwc_swizzle) |
+> +		    MDSS_UBWC_STATIC_HIGHEST_BANK_BIT(data->highest_bank_bit);
+> +
+> +	if (data->ubwc_bank_spread)
+> +		value |= MDSS_UBWC_STATIC_UBWC_BANK_SPREAD;
+> +
+> +	if (data->macrotile_mode)
+> +		value |= MDSS_UBWC_STATIC_MACROTILE_MODE;
+> +
+> +	writel_relaxed(value, msm_mdss->mmio + REG_MDSS_UBWC_STATIC);
+> +
+> +	writel_relaxed(5, msm_mdss->mmio + REG_MDSS_UBWC_CTRL_2);
+> +	writel_relaxed(1, msm_mdss->mmio + REG_MDSS_UBWC_PREDICTION_MODE);
+> +}
+> +
+>  static int msm_mdss_enable(struct msm_mdss *msm_mdss)
+>  {
+>  	int ret, i;
+> @@ -296,6 +314,9 @@ static int msm_mdss_enable(struct msm_mdss *msm_mdss)
+>  	case UBWC_5_0:
+>  		msm_mdss_setup_ubwc_dec_50(msm_mdss);
+>  		break;
+> +	case UBWC_6_0:
+> +		msm_mdss_setup_ubwc_dec_60(msm_mdss);
+> +		break;
+>  	default:
+>  		dev_err(msm_mdss->dev, "Unsupported UBWC decoder version %x\n",
+>  			msm_mdss->mdss_data->ubwc_dec_version);
+> @@ -552,6 +573,7 @@ static const struct msm_mdss_data data_153k6 = {
+>  };
+>  
+>  static const struct of_device_id mdss_dt_match[] = {
+> +	{ .compatible = "qcom,kaanapali-mdss", .data = &data_57k },
+>  	{ .compatible = "qcom,mdss", .data = &data_153k6 },
+>  	{ .compatible = "qcom,msm8998-mdss", .data = &data_76k8 },
+>  	{ .compatible = "qcom,qcm2290-mdss", .data = &data_76k8 },
+> diff --git a/include/linux/soc/qcom/ubwc.h b/include/linux/soc/qcom/ubwc.h
+> index 1ed8b1b16bc9..0a4edfe3d96d 100644
+> --- a/include/linux/soc/qcom/ubwc.h
+> +++ b/include/linux/soc/qcom/ubwc.h
+> @@ -52,6 +52,7 @@ struct qcom_ubwc_cfg_data {
+>  #define UBWC_4_0 0x40000000
+>  #define UBWC_4_3 0x40030000
+>  #define UBWC_5_0 0x50000000
+> +#define UBWC_6_0 0x60000000
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 23d8f54e9486..87a1d2f9de0d 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3422,7 +3422,6 @@ static void *alloc_single_from_new_slab(struct kmem_cache *s, struct slab *slab,
- 
- 	if (!allow_spin && !spin_trylock_irqsave(&n->list_lock, flags)) {
- 		/* Unlucky, discard newly allocated slab */
--		slab->frozen = 1;
- 		defer_deactivate_slab(slab, NULL);
- 		return NULL;
- 	}
-@@ -6471,9 +6470,12 @@ static void free_deferred_objects(struct irq_work *work)
- 		struct slab *slab = container_of(pos, struct slab, llnode);
- 
- #ifdef CONFIG_SLUB_TINY
--		discard_slab(slab->slab_cache, slab);
-+		free_slab(slab->slab_cache, slab);
- #else
--		deactivate_slab(slab->slab_cache, slab, slab->flush_freelist);
-+		if (slab->frozen)
-+			deactivate_slab(slab->slab_cache, slab, slab->flush_freelist);
-+		else
-+			free_slab(slab->slab_cache, slab);
- #endif
- 	}
- }
+This should be tied with the ubwc config changes as this chunk goes into
+a different subsystem.
 
----
-base-commit: 6ed8bfd24ce1cb31742b09a3eb557cd008533eec
-change-id: 20251022-fix-slab-accounting-f0abbda8a6ff
+>  
+>  #if IS_ENABLED(CONFIG_QCOM_UBWC_CONFIG)
+>  const struct qcom_ubwc_cfg_data *qcom_ubwc_config_get_data(void);
+> -- 
+> 2.34.1
+> 
 
-Best regards,
 -- 
-Vlastimil Babka <vbabka@suse.cz>
-
+With best wishes
+Dmitry
 
