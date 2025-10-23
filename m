@@ -1,208 +1,432 @@
-Return-Path: <linux-kernel+bounces-867238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B586C01FB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:06:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB22C01F68
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B458D3AE864
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B726218C5785
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87464336ED9;
-	Thu, 23 Oct 2025 15:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E14C32AAC8;
+	Thu, 23 Oct 2025 15:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhElHD9w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Zk6I2NEo"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4D422068D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4B4212B31;
+	Thu, 23 Oct 2025 15:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761231611; cv=none; b=oL+gjxJd2rvwcQrOXyISl9NQJc0K1AWe+5gOeE2+Cfd3F9Vslo3gEcHP1f5/YLfNWKjNi58ROk4wFVCZ2jZo/dhgYXdWaG8EJqbbVcatn8K41V+hQZmdcKtxWnUViMwbfTOrhp0i5E9j5/85Z6e9tIG4EQN22WdrLsNkoKGzEDM=
+	t=1761231622; cv=none; b=EZAxm/uiYIcfOU553NgEyWVRRnNpi9cRgrZr44jQ267E7JXfgV9xKFJaL6pO+I7D6KFuUNHXpUaWvikYbychs80AGqhfGwevkx+Jw5YNYM163wKhA4NVDS71h7AoApXvQiNvpENnRnMING1tDEnCeniFH/80DiIRf9d8Wg1QgAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761231611; c=relaxed/simple;
-	bh=4D2jOJRxSF4dEQgBcZy8n0Oy2bxBObeKMoSrbVEDkuA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=segfzajDGMOiXf8DLnFrRtCB++zL2IH3Zx7jR2rtjvtn8JMzeJ9CyoPiLmSOgmNylMmGYB16IFBC1AbTaIK/xV1WIuyxT3Q4EDJWcfhioMqQJo72dvYsDTjrx0xyYuL56XSBC+ndNSLpxDq1erigLZw3P6Ikw52dHNp82R8JY0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZhElHD9w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 571FAC16AAE
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:00:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761231611;
-	bh=4D2jOJRxSF4dEQgBcZy8n0Oy2bxBObeKMoSrbVEDkuA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZhElHD9w+eEOeLILoWpl/ROaHfan6lMyEhMOFJb+7njnsEVxNuiwnbq2+vlhbIjum
-	 Dxz2wY8NQ75RPtfc68s+M99moe/y01nbL2SweJHao0HWoXSl5aLi9tZohr/LAWw3Nl
-	 aXwau7DwJQ2MbJZzl17/PgDpunbiFjPrp7Dtz8aGfypJpCGC+sKC3BZbtvRPenkELN
-	 60U+gsLcnENM35oLmNwurzuTGMBFh6WQKjXLxNdzjCsWz5qur7HfN+bywhjfMuJ2+b
-	 ND/ejimLyV67FWEg5zB0GN41vmTpFmqvuqeUH813umtuT3hDHgPYmQtnQgy4Lg/llS
-	 L0IZK0NJJCIHQ==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-43f935f7d14so339561b6e.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:00:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXyfmvgYfphXR8eO/bi/m9tLvChOIfchmKmEif5b/UojKf06lUnnRzl/hkcJuuOQll1U13lJgzEH4fpoO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4op0DiwN0mgKGQvwmdEVLsTaW6olXrm34q6Cq3mdm2vQHCq7N
-	pcxNptU1Hv/P93Ky0tmqDVqGI18Ng7LYF545DXKxK3a4diC2ofGaeptc6/l1ixhQzzoAtlKKLfN
-	eGZ+RjC93HMMjdaeQvDUZkTnET9aKRhc=
-X-Google-Smtp-Source: AGHT+IHa1e0HiSHmvwXRumDdY7jZn5K3wnKO4MT9rWI/sxjE/u3U28hEj9Jhooq5nM+ZxTxJW/DdLo+z7u3biFECeGs=
-X-Received: by 2002:a05:6808:6909:b0:438:37eb:62c7 with SMTP id
- 5614622812f47-443a2e2985fmr11783735b6e.21.1761231610537; Thu, 23 Oct 2025
- 08:00:10 -0700 (PDT)
+	s=arc-20240116; t=1761231622; c=relaxed/simple;
+	bh=R0GeTZKfjIhHXP42wz7zEjRHdLp4ZwtqPklzi8TwTIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBramAcuyv/bFAr+9kbRAS69kv0Zw+vP6jL2F+9x7q4/FxE3HKmTEqjn6G8Q1hm9u9aXR4M0XPNx6kXgBC/D+9yqXEOlHS8hYqyaxQTjjxfdPzyedLDqEue88G99iMoivnvEKoIs2U9Maep8gies5Ft61CdvNESxdiAb07PXyTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Zk6I2NEo; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GkE3Bt9DML1UUffNBHGmtz8BjgijwMfbmgx8DCpGxOo=; b=Zk6I2NEo2jeniivae/9Av2I7Sc
+	1jRDgJIwo2yit97K1Nl0tSIMFRhGe7NsveZMqhL9xokH+NON1NE6FKHKJXD6hSScz3g9hxDDmJCde
+	7r8pAckDLsq/GSVoGo3Qb/4JmO9C6IbFD0rEDZ6EXBVNmKrUqBJTwDcH36NBg8ShTRHDEJiGMZzLq
+	lMVZaoR04tNR7UTJAhUG++UXmK2PWTEvldxGR+RQNVZZj1gfudQq9yEIytwLKzsZE9N313GXtmrVp
+	9BEXQZw2MP2HR+lWS6p+s+U5yiiUKNEMO1G4L6ie98D7KRi37GpGLtN6H6qkVUA6sJ5YhHHpdoSlO
+	1/a1Y3EA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vBwnK-00000005rPs-1NKw;
+	Thu, 23 Oct 2025 15:00:03 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7E26230039F; Thu, 23 Oct 2025 17:00:02 +0200 (CEST)
+Date: Thu, 23 Oct 2025 17:00:02 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, x86@kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: Re: [PATCH v16 0/4] perf: Support the deferred unwinding
+ infrastructure
+Message-ID: <20251023150002.GR4067720@noisy.programming.kicks-ass.net>
+References: <20251007214008.080852573@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002113404.3117429-1-srosek@google.com> <20251002113404.3117429-2-srosek@google.com>
- <CAJZ5v0ho8MhU8jj=YMyDKdTQWZt24LjoCaoEgJRsdi3YykkBBQ@mail.gmail.com> <CAF3aWvGdvHxA_fJm1EE2byL0LQUC3K2LGeDLxr3EpRzSQ=3Waw@mail.gmail.com>
-In-Reply-To: <CAF3aWvGdvHxA_fJm1EE2byL0LQUC3K2LGeDLxr3EpRzSQ=3Waw@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 23 Oct 2025 16:59:59 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jPJqpX5xJX0j5OC21sp093O_B+jsL1mSBztR1wORV0Fg@mail.gmail.com>
-X-Gm-Features: AS18NWBXAE19BSgci90ZeQZmyqlqzpPybg5SJsR149yPoAo8jLxZSgIzaDlfpfM
-Message-ID: <CAJZ5v0jPJqpX5xJX0j5OC21sp093O_B+jsL1mSBztR1wORV0Fg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/6] ACPI: DPTF: Ignore SoC DTS thermal while scanning
-To: =?UTF-8?Q?S=C5=82awomir_Rosek?= <srosek@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Alex Hung <alexhung@gmail.com>, 
-	Hans de Goede <hansg@kernel.org>, Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>, 
-	AceLan Kao <acelan.kao@canonical.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Tomasz Nowicki <tnowicki@google.com>, 
-	Stanislaw Kardach <skardach@google.com>, Michal Krawczyk <mikrawczyk@google.com>, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251007214008.080852573@kernel.org>
 
-On Thu, Oct 23, 2025 at 4:36=E2=80=AFPM S=C5=82awomir Rosek <srosek@google.=
-com> wrote:
->
-> On Wed, Oct 22, 2025 at 8:33=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
-org> wrote:
-> >
-> > On Thu, Oct 2, 2025 at 1:34=E2=80=AFPM Slawomir Rosek <srosek@google.co=
-m> wrote:
-> > >
-> > > The Intel SoC DTS thermal driver on Baytrail platform uses IRQ 86 for
-> > > critical overheating notification. The IRQ 86 is described in the _CR=
-S
-> > > control method of INT3401 device, thus Intel SoC DTS thermal driver
-> > > requires INT3401 device to be enumerated.
-> >
-> > I don't think that the specific interrupt number is relevant here.  It
-> > would be sufficient to say something like "The IRQ used by the Intel
-> > SoC DTS thermal device for critical overheating notification is listed
-> > in _CRS of device INT3401 which therefore needs to be enumerated for
-> > Intel SoC DTS thermal to work."
->
-> Above text is copied from the original change which is linked below.
-> I will rephrase it as you suggested.
->
-> >
-> > > Since dependency on INT3401 device is unrelated to DPTF the IS_ENABLE=
-()
-> > > macro is removed from ACPI DPTF INT340X scan handler, instead Kconfig
-> > > is updated to ensure proper enumeration of INT3401 device.
-> >
-> > It is not entirely clear what happens in this patch after reading the
-> > above paragraph.
-> >
-> > I would rather continue the previous thought by saying that the
-> > enumeration happens by binding the int3401_thermal driver to the
-> > INT3401 platform device.  Thus CONFIG_INT340X_THERMAL is in fact
-> > necessary for enumerating it, so checking CONFIG_INTEL_SOC_DTS_THERMAL
-> > in int340x_thermal_handler_attach() is pointless and INT340X_THERMAL
-> > may as well be selected by INTEL_SOC_DTS_THERMAL.
->
-> Sure, I will rephrase it to clearly describe what happens here.
->
-> >
-> > > Fixes: 014d9d5d0cc1 ("ACPI/int340x_thermal: enumerate INT3401 for Int=
-el SoC DTS thermal driver")
-> >
-> > Why do you want this tag to be added?
->
-> Just for context. The IS_ENABLE is added to the scan handler in 014d9d5d0=
-cc1
-> and this change is about to fix that. I can remove the tag if it's not ne=
-eded.
+On Tue, Oct 07, 2025 at 05:40:08PM -0400, Steven Rostedt wrote:
 
-I don't see a functional issue with this, it is just dead code AFAICS.
-As a rule, Fixes: tags are not added to patches removing dead code.
+>  include/linux/perf_event.h            |   9 +-
+>  include/linux/unwind_deferred.h       |  15 ++
+>  include/uapi/linux/perf_event.h       |  25 ++-
+>  kernel/bpf/stackmap.c                 |   4 +-
+>  kernel/events/callchain.c             |  14 +-
+>  kernel/events/core.c                  | 362 +++++++++++++++++++++++++++++++++-
+>  kernel/unwind/deferred.c              | 283 ++++++++++++++++++++++----
+>  tools/include/uapi/linux/perf_event.h |  25 ++-
+>  8 files changed, 686 insertions(+), 51 deletions(-)
 
-> >
-> > > Signed-off-by: Slawomir Rosek <srosek@google.com>
-> > > ---
-> > >  drivers/acpi/dptf/int340x_thermal.c | 7 +------
-> > >  drivers/thermal/intel/Kconfig       | 3 ++-
-> > >  2 files changed, 3 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/drivers/acpi/dptf/int340x_thermal.c b/drivers/acpi/dptf/=
-int340x_thermal.c
-> > > index a222df059a16..947fe50c2ef6 100644
-> > > --- a/drivers/acpi/dptf/int340x_thermal.c
-> > > +++ b/drivers/acpi/dptf/int340x_thermal.c
-> > > @@ -11,10 +11,9 @@
-> > >
-> > >  #include "../internal.h"
-> > >
-> > > -#define INT3401_DEVICE 0X01
-> > >  static const struct acpi_device_id int340x_thermal_device_ids[] =3D =
-{
-> > >         {"INT3400"},
-> > > -       {"INT3401", INT3401_DEVICE},
-> > > +       {"INT3401"},
-> > >         {"INT3402"},
-> > >         {"INT3403"},
-> > >         {"INT3404"},
-> > > @@ -76,10 +75,6 @@ static int int340x_thermal_handler_attach(struct a=
-cpi_device *adev,
-> > >  {
-> > >         if (IS_ENABLED(CONFIG_INT340X_THERMAL))
-> > >                 acpi_create_platform_device(adev, NULL);
-> > > -       /* Intel SoC DTS thermal driver needs INT3401 to set IRQ desc=
-riptor */
-> > > -       else if (IS_ENABLED(CONFIG_INTEL_SOC_DTS_THERMAL) &&
-> > > -                id->driver_data =3D=3D INT3401_DEVICE)
-> > > -               acpi_create_platform_device(adev, NULL);
-> > >         return 1;
-> > >  }
-> > >
-> > > diff --git a/drivers/thermal/intel/Kconfig b/drivers/thermal/intel/Kc=
-onfig
-> > > index e0268fac7093..f9e275538e29 100644
-> > > --- a/drivers/thermal/intel/Kconfig
-> > > +++ b/drivers/thermal/intel/Kconfig
-> > > @@ -44,7 +44,8 @@ config INTEL_SOC_DTS_IOSF_CORE
-> > >
-> > >  config INTEL_SOC_DTS_THERMAL
-> > >         tristate "Intel SoCs DTS thermal driver"
-> > > -       depends on X86 && PCI && ACPI
-> > > +       depends on X86_64 && PCI && ACPI
-> >
-> > AFAICS NET needs to be added to the dependency list above or selecting
-> > INT340X_THERMAL below may not actually cause it to be built.
->
-> Right. Previously I tried to "select NET" (INTEL_SOC_DTS_THERMAL does not
-> depend on NET directly so it seemed to be more appropriate to me) but got
-> circular dependency error so I assumed it is ensured somehow. Now I check=
-ed
-> again and you are right, I was able to disable NET and get unmet dependen=
-cies.
-> I will add dependency on NET. Thanks
+After staring at this some, I mostly threw it all out and wrote the
+below.
 
-The rule of thumb is that if you want A to select B, then they both
-need to depend on the same things.
+I also have some hackery on the userspace patches to go along with this,
+and it all sits in my unwind/cleanup branch.
 
-> >
-> > > +       select INT340X_THERMAL
-> > >         select INTEL_SOC_DTS_IOSF_CORE
-> > >         help
-> > >           Enable this to register Intel SoCs (e.g. Bay Trail) platfor=
-m digital
-> > > --
->
+Trouble is, pretty much every unwind is 510 entries long -- this cannot
+be right. I'm sure there's a silly mistake in unwind/user.c but I'm too
+tired to find it just now. I'll try again tomorrow.
+  
+---
+ include/linux/perf_event.h            |    2 
+ include/linux/unwind_deferred.h       |   12 -----
+ include/linux/unwind_deferred_types.h |   13 +++++
+ include/uapi/linux/perf_event.h       |   21 ++++++++-
+ kernel/bpf/stackmap.c                 |    4 -
+ kernel/events/callchain.c             |   14 +++++-
+ kernel/events/core.c                  |   79 +++++++++++++++++++++++++++++++++-
+ tools/include/uapi/linux/perf_event.h |   21 ++++++++-
+ 8 files changed, 146 insertions(+), 20 deletions(-)
+
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1720,7 +1720,7 @@ extern void perf_callchain_user(struct p
+ extern void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
+ extern struct perf_callchain_entry *
+ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+-		   u32 max_stack, bool crosstask, bool add_mark);
++		   u32 max_stack, bool crosstask, bool add_mark, u64 defer_cookie);
+ extern int get_callchain_buffers(int max_stack);
+ extern void put_callchain_buffers(void);
+ extern struct perf_callchain_entry *get_callchain_entry(int *rctx);
+--- a/include/linux/unwind_deferred.h
++++ b/include/linux/unwind_deferred.h
+@@ -6,18 +6,6 @@
+ #include <linux/unwind_user.h>
+ #include <linux/unwind_deferred_types.h>
+ 
+-struct unwind_work;
+-
+-typedef void (*unwind_callback_t)(struct unwind_work *work,
+-				  struct unwind_stacktrace *trace,
+-				  u64 cookie);
+-
+-struct unwind_work {
+-	struct list_head		list;
+-	unwind_callback_t		func;
+-	int				bit;
+-};
+-
+ #ifdef CONFIG_UNWIND_USER
+ 
+ enum {
+--- a/include/linux/unwind_deferred_types.h
++++ b/include/linux/unwind_deferred_types.h
+@@ -39,4 +39,17 @@ struct unwind_task_info {
+ 	union unwind_task_id	id;
+ };
+ 
++struct unwind_work;
++struct unwind_stacktrace;
++
++typedef void (*unwind_callback_t)(struct unwind_work *work,
++				  struct unwind_stacktrace *trace,
++				  u64 cookie);
++
++struct unwind_work {
++	struct list_head		list;
++	unwind_callback_t		func;
++	int				bit;
++};
++
+ #endif /* _LINUX_UNWIND_USER_DEFERRED_TYPES_H */
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -463,7 +463,9 @@ struct perf_event_attr {
+ 				inherit_thread :  1, /* children only inherit if cloned with CLONE_THREAD */
+ 				remove_on_exec :  1, /* event is removed from task on exec */
+ 				sigtrap        :  1, /* send synchronous SIGTRAP on event */
+-				__reserved_1   : 26;
++				defer_callchain:  1, /* request PERF_RECORD_CALLCHAIN_DEFERRED records */
++				defer_output   :  1, /* output PERF_RECORD_CALLCHAIN_DEFERRED records */
++				__reserved_1   : 24;
+ 
+ 	union {
+ 		__u32		wakeup_events;	  /* wake up every n events */
+@@ -1239,6 +1241,22 @@ enum perf_event_type {
+ 	 */
+ 	PERF_RECORD_AUX_OUTPUT_HW_ID		= 21,
+ 
++	/*
++	 * This user callchain capture was deferred until shortly before
++	 * returning to user space.  Previous samples would have kernel
++	 * callchains only and they need to be stitched with this to make full
++	 * callchains.
++	 *
++	 * struct {
++	 *	struct perf_event_header	header;
++	 *	u64				cookie;
++	 *	u64				nr;
++	 *	u64				ips[nr];
++	 *	struct sample_id		sample_id;
++	 * };
++	 */
++	PERF_RECORD_CALLCHAIN_DEFERRED		= 22,
++
+ 	PERF_RECORD_MAX,			/* non-ABI */
+ };
+ 
+@@ -1269,6 +1287,7 @@ enum perf_callchain_context {
+ 	PERF_CONTEXT_HV				= (__u64)-32,
+ 	PERF_CONTEXT_KERNEL			= (__u64)-128,
+ 	PERF_CONTEXT_USER			= (__u64)-512,
++	PERF_CONTEXT_USER_DEFERRED		= (__u64)-640,
+ 
+ 	PERF_CONTEXT_GUEST			= (__u64)-2048,
+ 	PERF_CONTEXT_GUEST_KERNEL		= (__u64)-2176,
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -315,7 +315,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_re
+ 		max_depth = sysctl_perf_event_max_stack;
+ 
+ 	trace = get_perf_callchain(regs, kernel, user, max_depth,
+-				   false, false);
++				   false, false, 0);
+ 
+ 	if (unlikely(!trace))
+ 		/* couldn't fetch the stack trace */
+@@ -452,7 +452,7 @@ static long __bpf_get_stack(struct pt_re
+ 		trace = get_callchain_entry_for_task(task, max_depth);
+ 	else
+ 		trace = get_perf_callchain(regs, kernel, user, max_depth,
+-					   crosstask, false);
++					   crosstask, false, 0);
+ 
+ 	if (unlikely(!trace) || trace->nr < skip) {
+ 		if (may_fault)
+--- a/kernel/events/callchain.c
++++ b/kernel/events/callchain.c
+@@ -218,7 +218,7 @@ static void fixup_uretprobe_trampoline_e
+ 
+ struct perf_callchain_entry *
+ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
+-		   u32 max_stack, bool crosstask, bool add_mark)
++		   u32 max_stack, bool crosstask, bool add_mark, u64 defer_cookie)
+ {
+ 	struct perf_callchain_entry *entry;
+ 	struct perf_callchain_entry_ctx ctx;
+@@ -251,6 +251,18 @@ get_perf_callchain(struct pt_regs *regs,
+ 			regs = task_pt_regs(current);
+ 		}
+ 
++		if (defer_cookie) {
++			/*
++			 * Foretell the coming of PERF_RECORD_CALLCHAIN_DEFERRED
++			 * which can be stitched to this one, and add
++			 * the cookie after it (it will be cut off when the
++			 * user stack is copied to the callchain).
++			 */
++			perf_callchain_store_context(&ctx, PERF_CONTEXT_USER_DEFERRED);
++			perf_callchain_store_context(&ctx, defer_cookie);
++			goto exit_put;
++		}
++
+ 		if (add_mark)
+ 			perf_callchain_store_context(&ctx, PERF_CONTEXT_USER);
+ 
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -56,6 +56,7 @@
+ #include <linux/buildid.h>
+ #include <linux/task_work.h>
+ #include <linux/percpu-rwsem.h>
++#include <linux/unwind_deferred.h>
+ 
+ #include "internal.h"
+ 
+@@ -8200,6 +8201,8 @@ static u64 perf_get_page_size(unsigned l
+ 
+ static struct perf_callchain_entry __empty_callchain = { .nr = 0, };
+ 
++static struct unwind_work perf_unwind_work;
++
+ struct perf_callchain_entry *
+ perf_callchain(struct perf_event *event, struct pt_regs *regs)
+ {
+@@ -8208,8 +8211,11 @@ perf_callchain(struct perf_event *event,
+ 		!(current->flags & (PF_KTHREAD | PF_USER_WORKER));
+ 	/* Disallow cross-task user callchains. */
+ 	bool crosstask = event->ctx->task && event->ctx->task != current;
++	bool defer_user = IS_ENABLED(CONFIG_UNWIND_USER) && user &&
++			  event->attr.defer_callchain;
+ 	const u32 max_stack = event->attr.sample_max_stack;
+ 	struct perf_callchain_entry *callchain;
++	u64 defer_cookie;
+ 
+ 	if (!current->mm)
+ 		user = false;
+@@ -8217,8 +8223,13 @@ perf_callchain(struct perf_event *event,
+ 	if (!kernel && !user)
+ 		return &__empty_callchain;
+ 
+-	callchain = get_perf_callchain(regs, kernel, user,
+-				       max_stack, crosstask, true);
++	if (!(user && defer_user && !crosstask &&
++	      unwind_deferred_request(&perf_unwind_work, &defer_cookie) >= 0))
++		defer_cookie = 0;
++
++	callchain = get_perf_callchain(regs, kernel, user, max_stack,
++				       crosstask, true, defer_cookie);
++
+ 	return callchain ?: &__empty_callchain;
+ }
+ 
+@@ -10003,6 +10014,67 @@ void perf_event_bpf_event(struct bpf_pro
+ 	perf_iterate_sb(perf_event_bpf_output, &bpf_event, NULL);
+ }
+ 
++struct perf_callchain_deferred_event {
++	struct unwind_stacktrace *trace;
++	struct {
++		struct perf_event_header	header;
++		u64				cookie;
++		u64				nr;
++		u64				ips[];
++	} event;
++};
++
++static void perf_callchain_deferred_output(struct perf_event *event, void *data)
++{
++	struct perf_callchain_deferred_event *deferred_event = data;
++	struct perf_output_handle handle;
++	struct perf_sample_data sample;
++	int ret, size = deferred_event->event.header.size;
++
++	if (!event->attr.defer_output)
++		return;
++
++	/* XXX do we really need sample_id_all for this ??? */
++	perf_event_header__init_id(&deferred_event->event.header, &sample, event);
++
++	ret = perf_output_begin(&handle, &sample, event,
++				deferred_event->event.header.size);
++	if (ret)
++		goto out;
++
++	perf_output_put(&handle, deferred_event->event);
++	for (int i = 0; i < deferred_event->trace->nr; i++) {
++		u64 entry = deferred_event->trace->entries[i];
++		perf_output_put(&handle, entry);
++	}
++	perf_event__output_id_sample(event, &handle, &sample);
++
++	perf_output_end(&handle);
++out:
++	deferred_event->event.header.size = size;
++}
++
++/* Deferred unwinding callback for task specific events */
++static void perf_unwind_deferred_callback(struct unwind_work *work,
++					 struct unwind_stacktrace *trace, u64 cookie)
++{
++	struct perf_callchain_deferred_event deferred_event = {
++		.trace = trace,
++		.event = {
++			.header = {
++				.type = PERF_RECORD_CALLCHAIN_DEFERRED,
++				.misc = PERF_RECORD_MISC_USER,
++				.size = sizeof(deferred_event.event) +
++					(trace->nr * sizeof(u64)),
++			},
++			.cookie = cookie,
++			.nr = trace->nr,
++		},
++	};
++
++	perf_iterate_sb(perf_callchain_deferred_output, &deferred_event, NULL);
++}
++
+ struct perf_text_poke_event {
+ 	const void		*old_bytes;
+ 	const void		*new_bytes;
+@@ -14799,6 +14871,9 @@ void __init perf_event_init(void)
+ 
+ 	idr_init(&pmu_idr);
+ 
++	unwind_deferred_init(&perf_unwind_work,
++			     perf_unwind_deferred_callback);
++
+ 	perf_event_init_all_cpus();
+ 	init_srcu_struct(&pmus_srcu);
+ 	perf_pmu_register(&perf_swevent, "software", PERF_TYPE_SOFTWARE);
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -463,7 +463,9 @@ struct perf_event_attr {
+ 				inherit_thread :  1, /* children only inherit if cloned with CLONE_THREAD */
+ 				remove_on_exec :  1, /* event is removed from task on exec */
+ 				sigtrap        :  1, /* send synchronous SIGTRAP on event */
+-				__reserved_1   : 26;
++				defer_callchain:  1, /* request PERF_RECORD_CALLCHAIN_DEFERRED records */
++				defer_output   :  1, /* output PERF_RECORD_CALLCHAIN_DEFERRED records */
++				__reserved_1   : 24;
+ 
+ 	union {
+ 		__u32		wakeup_events;	  /* wake up every n events */
+@@ -1239,6 +1241,22 @@ enum perf_event_type {
+ 	 */
+ 	PERF_RECORD_AUX_OUTPUT_HW_ID		= 21,
+ 
++	/*
++	 * This user callchain capture was deferred until shortly before
++	 * returning to user space.  Previous samples would have kernel
++	 * callchains only and they need to be stitched with this to make full
++	 * callchains.
++	 *
++	 * struct {
++	 *	struct perf_event_header	header;
++	 *	u64				cookie;
++	 *	u64				nr;
++	 *	u64				ips[nr];
++	 *	struct sample_id		sample_id;
++	 * };
++	 */
++	PERF_RECORD_CALLCHAIN_DEFERRED		= 22,
++
+ 	PERF_RECORD_MAX,			/* non-ABI */
+ };
+ 
+@@ -1269,6 +1287,7 @@ enum perf_callchain_context {
+ 	PERF_CONTEXT_HV				= (__u64)-32,
+ 	PERF_CONTEXT_KERNEL			= (__u64)-128,
+ 	PERF_CONTEXT_USER			= (__u64)-512,
++	PERF_CONTEXT_USER_DEFERRED		= (__u64)-640,
+ 
+ 	PERF_CONTEXT_GUEST			= (__u64)-2048,
+ 	PERF_CONTEXT_GUEST_KERNEL		= (__u64)-2176,
 
