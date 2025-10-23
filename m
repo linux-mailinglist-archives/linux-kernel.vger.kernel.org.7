@@ -1,344 +1,138 @@
-Return-Path: <linux-kernel+bounces-866903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBFFC00FA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:07:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F4CC00F8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B6F11A60460
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:07:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC7B1A6025C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9660B30F93E;
-	Thu, 23 Oct 2025 12:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA79298CA6;
+	Thu, 23 Oct 2025 12:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CWh8dmEg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="uyG+8FMJ"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9731D9346;
-	Thu, 23 Oct 2025 12:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61FB30CD88
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761221208; cv=none; b=HPiFssVN1FYYcaVNDsTB5ZATJI1S6XqTVp5a1Yr89p3nzznV2NIc5Q9U4MHoUAEgpM2aSZYikrDlUEXhxQfx08jm7cwnGRYoAgL8ACRA/Y8BqGv3oWWbabCBfZ1Oj2H03W0a1rvNJk4RYebFkIDMmYG68NF7Jv95/Ltk6XWcnSI=
+	t=1761221153; cv=none; b=Cr9tG91dIGdwYpjOZG5/kfu6boxvzbmUEGOqrCMFe5oMZO29qB9tmHgLVHV4F1PjQeJm+niaouSaMma/E+TbXRaGBwUM0f60ODhZau+TRJFAg3YZh2Aq3iOWIVJtn0M49s+pdBeOXHupfsgfYazxyrID73svCHfhzQsteyCSXpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761221208; c=relaxed/simple;
-	bh=Kxw75anzo26d/gWdMfSPCv4TNV0xnDe2ItxmgjbDW8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=no9kiD4ei7j9k/jfgcrE6tQlOWY1Xo1Vpw/3vLbGzaiH/I8tIrQ1IiC8j5Ce1d0FN3oZbhxggBlnBdIv7YDk3tuxcghWKEUJH0/GykG9fsaMi/nNwOhT/hQAhjntvEcOTKY3u3ViGF8SKfdh2pCNIQDkE3Jxev3cq7zDOWaCefc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CWh8dmEg; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761221206; x=1792757206;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Kxw75anzo26d/gWdMfSPCv4TNV0xnDe2ItxmgjbDW8E=;
-  b=CWh8dmEgVHNtsWCKs0BJqIWedlJuLS3NsHNV9EOXh/dWSQLo+gec8aye
-   +dzjX2/wbWp60ppwcICSj2e0Gq+ba1rFRXu4cf36pheN33Vl/EUIGN3n+
-   woGQ+xI4pzIP8pcTPjMjc3hXFCvHIXScwySQmJcUfVj5acq9qj0ozPPBH
-   eRuntmW94LnRf6ZljNPgA/z16QPnGRPrATZ8Qx9Odqntr9nPzmzvKTel5
-   jostGM3axw7ogeU3zLX9ZRC9FPbXyIsDg1s6WvrcJ5Otj8n19YNxZvjER
-   +h0niZKSgvyqQ0gCx6uDHC0LMQlmDBD0kUcZW/O5E+Ib2Obq76kb7d6HU
-   g==;
-X-CSE-ConnectionGUID: vyMBOLrbRseWJZyomENsKg==
-X-CSE-MsgGUID: LlCPciRuTvOup2pl32rZVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73678379"
-X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
-   d="scan'208";a="73678379"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 05:06:45 -0700
-X-CSE-ConnectionGUID: tSitkFo/QTyDESIgSNDvwA==
-X-CSE-MsgGUID: 0Auo8vX1RCWbkqL2ng1u1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
-   d="scan'208";a="184916161"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 23 Oct 2025 05:06:37 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vBu5S-000DRp-2V;
-	Thu, 23 Oct 2025 12:06:34 +0000
-Date: Thu, 23 Oct 2025 20:05:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Caleb Sander Mateos <csander@purestorage.com>,
-	Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
-	Ming Lei <ming.lei@redhat.com>, Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Chris Mason <chris.mason@fusionio.com>,
-	David Sterba <dsterba@suse.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: Re: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in
- task work dispatch
-Message-ID: <202510231952.gAXMcT2A-lkp@intel.com>
-References: <20251022231326.2527838-4-csander@purestorage.com>
+	s=arc-20240116; t=1761221153; c=relaxed/simple;
+	bh=Iw/i/voACEOEUB0dl8Hwa2eGsgmSTL3oU67E/m1QVYU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H/gB7896mWRmi+rPGaP0fsrC6qghMeQwnxmPYYBnivgEkj0nPq65/9VxwM0wma/NPLkGlaXnuB8Zf7dY4sLA6nG07OZ7ISPlEQKXg42itq/EQ9c+25rX1O60kWbcGeUw1Ui1vJEJv/4koK0LOq/v8OjkhyP3F+9DsFVZoXDva9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=uyG+8FMJ; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ee64bc6b90so610403f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:05:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761221150; x=1761825950; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K+knHP+hH8wtFXL9FrX8Adjy6J9Lu8uJnSEg3TGlm3I=;
+        b=uyG+8FMJ0sbkNL3nSa3XQOzVI9s2QM7VyNyk9i5TN/UqebVdXbkmHmklYMIX3eodcS
+         XBSO1VX/OK+f4qVrfG8kWhp1OaiLxPQ3tNtH0Of5rSk97HhQHfI7LUGoXsXr0OOYABxD
+         Y1IePlPMCdWYddBRTEIzxzfyttWk5KNnBeUDrelBeopSGRQ0O29PV+qxrGSgqvRH1rdA
+         Qe4GD8ofcIfS3+7PTbQfNzTnsAuqpKJR60NsgDuBuloKnl+3McuZP52DONiXIBux8Vfj
+         /27dJ9qYsIkS2fxxLtrORNpy7X5iL4CQbYOOxvKZLV0kUTSs2ZSyK9D42ytpjKLHVqU0
+         qrqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761221150; x=1761825950;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K+knHP+hH8wtFXL9FrX8Adjy6J9Lu8uJnSEg3TGlm3I=;
+        b=LaEmWoYwAWRG2eCwXjmlXkJgmVItjvQNMwNhzeH6PTwjaMHj9u0OktUyLhsMjPD4pz
+         +u6TtzUty1sEyS8qoU4yhe70cQqQXbRN/aXU5uYtSJ4h2eJXmLkEYFI2Txaq8F68wGmd
+         rQEOYNOmujyY0AiZRDgSwFjC+1QJBzLA4R6lNlUMl5TvhXpCaRbTQOBGayEHfQvV6O62
+         5OPcKDPc+2RngZim5WQ8p/Y6OswsloFNnKNTeqVDSrgHR93/NR3e6S6lEHkLD0DWhDKG
+         RzID/kgJjqHLlFkjwC2iZ64lj+TzlGUhuNN888cVWvuPHogQXNXFKnlz7Q8mjog/FIyd
+         GAHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNe5j27a0BqIeOGrWEQoyxTX4L1xBP2wILmNY5jLNeQZqabWC5Gsv835tSq7X5Dh1CpSAQjKk5TzXUiPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyscyKq5nh6OYU8to9nrEqP4aVZnRUhia9L5DmCETwHy6LKe5hA
+	J3j+dhO0oBUhhiRK/itH2G/zFFLJHi4aZk1SVm+MA/7lrh79QND07YyZxjyW9PswjLM=
+X-Gm-Gg: ASbGncvoeQ8JuG7toNZHBHOoviFse7sZSnjzG56TWBgV6HqQQOKTO7jqvMIQ+c56uvH
+	XMT77htTaaFEgRVntFhyjxwZ2q+R1UkdBDYoOsQCNfSfrK+w50qnib3+QCRskiSuiil0KvH8fxM
+	3xnasqUjhXOgJ14+n6PdnHxDBEkxW4JSx405vKKwx3lHymloE30mfiw+5OZG0vLdHSnHH0n/Hyy
+	Z3LQ+QNIDVkE3ux72NG5l5eId3XEgMOGLA4nc/vSzpxkDwQHDQPlIdp0QkwNfGf670wr04TqUm2
+	nH8ffUPgKb2Z6X/W8wR52gYThUBKQEmk+doyjjhrMgwRsUWGf5zvrls5t1mP8nWfPStgoF9fxan
+	t4gwpYpM90faytAbYK2PyEwXTRMyQZnpsyMtTNCFNPpKxZaZuSRuPvmRJ+RjQPD61oWbFnJVvwS
+	WftLxdXhocG5tmt1gbQH6BnA==
+X-Google-Smtp-Source: AGHT+IHwJs8vP+ZphKLVg8Qnj866Tn55HPAEvE8rihx7f3rOB0WHPIdkAlWdTCpxtTyY9j9MwN+iRA==
+X-Received: by 2002:a5d:5d10:0:b0:427:7ac:5287 with SMTP id ffacd0b85a97d-42707ac52e1mr14432699f8f.34.1761221149595;
+        Thu, 23 Oct 2025 05:05:49 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:1b4:e02e:c538:6feb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897e763csm3719949f8f.6.2025.10.23.05.05.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 05:05:48 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Michael Walle <mwalle@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Sander Vanheule <sander@svanheule.net>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v6 0/8] RTL8231 GPIO expander support
+Date: Thu, 23 Oct 2025 14:05:47 +0200
+Message-ID: <176122114012.40841.4682534085501812836.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20251021142407.307753-1-sander@svanheule.net>
+References: <20251021142407.307753-1-sander@svanheule.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022231326.2527838-4-csander@purestorage.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Caleb,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on axboe-block/for-next]
-[also build test ERROR on kdave/for-next linus/master v6.18-rc2]
-[cannot apply to mszeredi-fuse/for-next linux-nvme/for-next next-20251023]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Caleb-Sander-Mateos/io_uring-expose-io_should_terminate_tw/20251023-071617
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-patch link:    https://lore.kernel.org/r/20251022231326.2527838-4-csander%40purestorage.com
-patch subject: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in task work dispatch
-config: x86_64-buildonly-randconfig-005-20251023 (https://download.01.org/0day-ci/archive/20251023/202510231952.gAXMcT2A-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251023/202510231952.gAXMcT2A-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510231952.gAXMcT2A-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> block/ioctl.c:783:1: error: invalid storage class specifier in function declarator
-     783 | static void bio_cmd_bio_end_io(struct bio *bio)
-         | ^
->> block/ioctl.c:783:13: error: parameter named 'bio_cmd_bio_end_io' is missing
-     783 | static void bio_cmd_bio_end_io(struct bio *bio)
-         |             ^
->> block/ioctl.c:783:48: error: expected ';' at end of declaration
-     783 | static void bio_cmd_bio_end_io(struct bio *bio)
-         |                                                ^
-         |                                                ;
->> block/ioctl.c:781:38: error: parameter 'blk_cmd_complete' was not declared, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
-     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-         |                                      ^
-     782 | 
-     783 | static void bio_cmd_bio_end_io(struct bio *bio)
-     784 | {
->> block/ioctl.c:781:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
-     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-         | ~~~~~~ ^
-         | int
->> block/ioctl.c:785:29: error: use of undeclared identifier 'bio'
-     785 |         struct io_uring_cmd *cmd = bio->bi_private;
-         |                                    ^
-   block/ioctl.c:788:15: error: use of undeclared identifier 'bio'
-     788 |         if (unlikely(bio->bi_status) && !bic->res)
-         |                      ^
-   block/ioctl.c:789:34: error: use of undeclared identifier 'bio'
-     789 |                 bic->res = blk_status_to_errno(bio->bi_status);
-         |                                                ^
->> block/ioctl.c:791:2: error: call to undeclared function 'IO_URING_CMD_TASK_WORK'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     791 |         io_uring_cmd_do_in_task_lazy(cmd, blk_cmd_complete);
-         |         ^
-   include/linux/io_uring/cmd.h:149:7: note: expanded from macro 'io_uring_cmd_do_in_task_lazy'
-     149 |                                   IO_URING_CMD_TASK_WORK(uring_cmd_cb),         \
-         |                                   ^
-   block/ioctl.c:791:2: note: did you mean 'DEFINE_IO_URING_CMD_TASK_WORK'?
-   include/linux/io_uring/cmd.h:149:7: note: expanded from macro 'io_uring_cmd_do_in_task_lazy'
-     149 |                                   IO_URING_CMD_TASK_WORK(uring_cmd_cb),         \
-         |                                   ^
-   block/ioctl.c:781:8: note: 'DEFINE_IO_URING_CMD_TASK_WORK' declared here
-     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-         |        ^
->> block/ioctl.c:791:2: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'io_req_tw_func_t' (aka 'void (*)(struct io_kiocb *, struct io_tw_state)') [-Wint-conversion]
-     791 |         io_uring_cmd_do_in_task_lazy(cmd, blk_cmd_complete);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/io_uring/cmd.h:149:7: note: expanded from macro 'io_uring_cmd_do_in_task_lazy'
-     149 |                                   IO_URING_CMD_TASK_WORK(uring_cmd_cb),         \
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/io_uring/cmd.h:123:25: note: passing argument to parameter 'task_work_cb' here
-     123 |                             io_req_tw_func_t task_work_cb, unsigned flags)
-         |                                              ^
-   block/ioctl.c:792:10: error: use of undeclared identifier 'bio'; did you mean 'bic'?
-     792 |         bio_put(bio);
-         |                 ^~~
-         |                 bic
-   block/ioctl.c:786:22: note: 'bic' declared here
-     786 |         struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-         |                             ^
->> block/ioctl.c:781:8: error: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Werror,-Wdeprecated-non-prototype]
-     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-         |        ^
->> block/ioctl.c:847:20: error: use of undeclared identifier 'bio_cmd_bio_end_io'
-     847 |         prev->bi_end_io = bio_cmd_bio_end_io;
-         |                           ^
-   13 errors generated.
---
->> drivers/nvme/host/ioctl.c:412:1: error: invalid storage class specifier in function declarator
-     412 | static enum rq_end_io_ret nvme_uring_cmd_end_io(struct request *req,
-         | ^
->> drivers/nvme/host/ioctl.c:412:27: error: parameter named 'nvme_uring_cmd_end_io' is missing
-     412 | static enum rq_end_io_ret nvme_uring_cmd_end_io(struct request *req,
-         |                           ^
->> drivers/nvme/host/ioctl.c:413:24: error: expected ';' at end of declaration
-     413 |                                                 blk_status_t err)
-         |                                                                  ^
-         |                                                                  ;
->> drivers/nvme/host/ioctl.c:410:38: error: parameter 'nvme_uring_task_cb' was not declared, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
-     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
-         |                                      ^
-     411 | 
-     412 | static enum rq_end_io_ret nvme_uring_cmd_end_io(struct request *req,
-     413 |                                                 blk_status_t err)
-     414 | {
->> drivers/nvme/host/ioctl.c:410:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
-     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
-         | ~~~~~~ ^
-         | int
->> drivers/nvme/host/ioctl.c:415:32: error: use of undeclared identifier 'req'
-     415 |         struct io_uring_cmd *ioucmd = req->end_io_data;
-         |                                       ^
-   drivers/nvme/host/ioctl.c:418:15: error: use of undeclared identifier 'req'
-     418 |         if (nvme_req(req)->flags & NVME_REQ_CANCELLED) {
-         |                      ^
-   drivers/nvme/host/ioctl.c:421:26: error: use of undeclared identifier 'req'
-     421 |                 pdu->status = nvme_req(req)->status;
-         |                                        ^
->> drivers/nvme/host/ioctl.c:423:38: error: use of undeclared identifier 'err'
-     423 |                         pdu->status = blk_status_to_errno(err);
-         |                                                           ^
-   drivers/nvme/host/ioctl.c:425:37: error: use of undeclared identifier 'req'
-     425 |         pdu->result = le64_to_cpu(nvme_req(req)->result.u64);
-         |                                            ^
-   include/linux/byteorder/generic.h:87:21: note: expanded from macro 'le64_to_cpu'
-      87 | #define le64_to_cpu __le64_to_cpu
-         |                     ^
->> drivers/nvme/host/ioctl.c:435:2: error: call to undeclared function 'IO_URING_CMD_TASK_WORK'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     435 |         io_uring_cmd_do_in_task_lazy(ioucmd, nvme_uring_task_cb);
-         |         ^
-   include/linux/io_uring/cmd.h:149:7: note: expanded from macro 'io_uring_cmd_do_in_task_lazy'
-     149 |                                   IO_URING_CMD_TASK_WORK(uring_cmd_cb),         \
-         |                                   ^
-   drivers/nvme/host/ioctl.c:435:2: note: did you mean 'DEFINE_IO_URING_CMD_TASK_WORK'?
-   include/linux/io_uring/cmd.h:149:7: note: expanded from macro 'io_uring_cmd_do_in_task_lazy'
-     149 |                                   IO_URING_CMD_TASK_WORK(uring_cmd_cb),         \
-         |                                   ^
-   drivers/nvme/host/ioctl.c:410:8: note: 'DEFINE_IO_URING_CMD_TASK_WORK' declared here
-     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
-         |        ^
->> drivers/nvme/host/ioctl.c:435:2: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'io_req_tw_func_t' (aka 'void (*)(struct io_kiocb *, struct io_tw_state)') [-Wint-conversion]
-     435 |         io_uring_cmd_do_in_task_lazy(ioucmd, nvme_uring_task_cb);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/io_uring/cmd.h:149:7: note: expanded from macro 'io_uring_cmd_do_in_task_lazy'
-     149 |                                   IO_URING_CMD_TASK_WORK(uring_cmd_cb),         \
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/io_uring/cmd.h:123:25: note: passing argument to parameter 'task_work_cb' here
-     123 |                             io_req_tw_func_t task_work_cb, unsigned flags)
-         |                                              ^
->> drivers/nvme/host/ioctl.c:410:8: error: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Werror,-Wdeprecated-non-prototype]
-     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
-         |        ^
->> drivers/nvme/host/ioctl.c:524:16: error: use of undeclared identifier 'nvme_uring_cmd_end_io'; did you mean 'nvme_uring_cmd_io'?
-     524 |         req->end_io = nvme_uring_cmd_end_io;
-         |                       ^~~~~~~~~~~~~~~~~~~~~
-         |                       nvme_uring_cmd_io
-   drivers/nvme/host/ioctl.c:439:12: note: 'nvme_uring_cmd_io' declared here
-     439 | static int nvme_uring_cmd_io(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-         |            ^
-   14 errors generated.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-vim +783 block/ioctl.c
+On Tue, 21 Oct 2025 16:23:55 +0200, Sander Vanheule wrote:
+> The RTL8231 GPIO and LED expander can be configured for use as an MDIO
+> or SMI bus device. Currently only the MDIO mode is supported, although
+> SMI mode support should be fairly straightforward, once an SMI bus
+> driver is available.
+> 
+> Provided features by the RTL8231:
+>   - Up to 37 GPIOs
+>     - Configurable drive strength: 8mA or 4mA (currently unsupported)
+>     - Input debouncing on GPIOs 31-36
+>   - Up to 88 LEDs in multiple scan matrix groups
+>     - On, off, or one of six toggling intervals
+>     - "single-color mode": 2×36 single color LEDs + 8 bi-color LEDs
+>     - "bi-color mode": (12 + 2×6) bi-color LEDs + 24 single color LEDs
+>   - Up to one PWM output (currently unsupported)
+>     - Fixed duty cycle, 8 selectable frequencies (1.2kHz - 4.8kHz)
+> 
+> [...]
 
-50c52250e2d74b Pavel Begunkov      2024-09-11  771  
-50c52250e2d74b Pavel Begunkov      2024-09-11  772  static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int issue_flags)
-50c52250e2d74b Pavel Begunkov      2024-09-11  773  {
-50c52250e2d74b Pavel Begunkov      2024-09-11  774  	struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-50c52250e2d74b Pavel Begunkov      2024-09-11  775  
-50c52250e2d74b Pavel Begunkov      2024-09-11  776  	if (bic->res == -EAGAIN && bic->nowait)
-50c52250e2d74b Pavel Begunkov      2024-09-11  777  		io_uring_cmd_issue_blocking(cmd);
-50c52250e2d74b Pavel Begunkov      2024-09-11  778  	else
-ef9f603fd3d4b7 Caleb Sander Mateos 2025-09-22  779  		io_uring_cmd_done(cmd, bic->res, issue_flags);
-50c52250e2d74b Pavel Begunkov      2024-09-11  780  }
-c004e50b1d8661 Caleb Sander Mateos 2025-10-22 @781  static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-50c52250e2d74b Pavel Begunkov      2024-09-11  782  
-50c52250e2d74b Pavel Begunkov      2024-09-11 @783  static void bio_cmd_bio_end_io(struct bio *bio)
-50c52250e2d74b Pavel Begunkov      2024-09-11  784  {
-50c52250e2d74b Pavel Begunkov      2024-09-11 @785  	struct io_uring_cmd *cmd = bio->bi_private;
-50c52250e2d74b Pavel Begunkov      2024-09-11  786  	struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-50c52250e2d74b Pavel Begunkov      2024-09-11  787  
-50c52250e2d74b Pavel Begunkov      2024-09-11  788  	if (unlikely(bio->bi_status) && !bic->res)
-50c52250e2d74b Pavel Begunkov      2024-09-11  789  		bic->res = blk_status_to_errno(bio->bi_status);
-50c52250e2d74b Pavel Begunkov      2024-09-11  790  
-50c52250e2d74b Pavel Begunkov      2024-09-11 @791  	io_uring_cmd_do_in_task_lazy(cmd, blk_cmd_complete);
-50c52250e2d74b Pavel Begunkov      2024-09-11  792  	bio_put(bio);
-50c52250e2d74b Pavel Begunkov      2024-09-11  793  }
-50c52250e2d74b Pavel Begunkov      2024-09-11  794  
-50c52250e2d74b Pavel Begunkov      2024-09-11  795  static int blkdev_cmd_discard(struct io_uring_cmd *cmd,
-50c52250e2d74b Pavel Begunkov      2024-09-11  796  			      struct block_device *bdev,
-50c52250e2d74b Pavel Begunkov      2024-09-11  797  			      uint64_t start, uint64_t len, bool nowait)
-50c52250e2d74b Pavel Begunkov      2024-09-11  798  {
-50c52250e2d74b Pavel Begunkov      2024-09-11  799  	struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-50c52250e2d74b Pavel Begunkov      2024-09-11  800  	gfp_t gfp = nowait ? GFP_NOWAIT : GFP_KERNEL;
-50c52250e2d74b Pavel Begunkov      2024-09-11  801  	sector_t sector = start >> SECTOR_SHIFT;
-50c52250e2d74b Pavel Begunkov      2024-09-11  802  	sector_t nr_sects = len >> SECTOR_SHIFT;
-50c52250e2d74b Pavel Begunkov      2024-09-11  803  	struct bio *prev = NULL, *bio;
-50c52250e2d74b Pavel Begunkov      2024-09-11  804  	int err;
-50c52250e2d74b Pavel Begunkov      2024-09-11  805  
-50c52250e2d74b Pavel Begunkov      2024-09-11  806  	if (!bdev_max_discard_sectors(bdev))
-50c52250e2d74b Pavel Begunkov      2024-09-11  807  		return -EOPNOTSUPP;
-50c52250e2d74b Pavel Begunkov      2024-09-11  808  	if (!(file_to_blk_mode(cmd->file) & BLK_OPEN_WRITE))
-50c52250e2d74b Pavel Begunkov      2024-09-11  809  		return -EBADF;
-50c52250e2d74b Pavel Begunkov      2024-09-11  810  	if (bdev_read_only(bdev))
-50c52250e2d74b Pavel Begunkov      2024-09-11  811  		return -EPERM;
-50c52250e2d74b Pavel Begunkov      2024-09-11  812  	err = blk_validate_byte_range(bdev, start, len);
-50c52250e2d74b Pavel Begunkov      2024-09-11  813  	if (err)
-50c52250e2d74b Pavel Begunkov      2024-09-11  814  		return err;
-50c52250e2d74b Pavel Begunkov      2024-09-11  815  
-50c52250e2d74b Pavel Begunkov      2024-09-11  816  	err = filemap_invalidate_pages(bdev->bd_mapping, start,
-50c52250e2d74b Pavel Begunkov      2024-09-11  817  					start + len - 1, nowait);
-50c52250e2d74b Pavel Begunkov      2024-09-11  818  	if (err)
-50c52250e2d74b Pavel Begunkov      2024-09-11  819  		return err;
-50c52250e2d74b Pavel Begunkov      2024-09-11  820  
-50c52250e2d74b Pavel Begunkov      2024-09-11  821  	while (true) {
-50c52250e2d74b Pavel Begunkov      2024-09-11  822  		bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects, gfp);
-50c52250e2d74b Pavel Begunkov      2024-09-11  823  		if (!bio)
-50c52250e2d74b Pavel Begunkov      2024-09-11  824  			break;
-50c52250e2d74b Pavel Begunkov      2024-09-11  825  		if (nowait) {
-50c52250e2d74b Pavel Begunkov      2024-09-11  826  			/*
-50c52250e2d74b Pavel Begunkov      2024-09-11  827  			 * Don't allow multi-bio non-blocking submissions as
-50c52250e2d74b Pavel Begunkov      2024-09-11  828  			 * subsequent bios may fail but we won't get a direct
-50c52250e2d74b Pavel Begunkov      2024-09-11  829  			 * indication of that. Normally, the caller should
-50c52250e2d74b Pavel Begunkov      2024-09-11  830  			 * retry from a blocking context.
-50c52250e2d74b Pavel Begunkov      2024-09-11  831  			 */
-50c52250e2d74b Pavel Begunkov      2024-09-11  832  			if (unlikely(nr_sects)) {
-50c52250e2d74b Pavel Begunkov      2024-09-11  833  				bio_put(bio);
-50c52250e2d74b Pavel Begunkov      2024-09-11  834  				return -EAGAIN;
-50c52250e2d74b Pavel Begunkov      2024-09-11  835  			}
-50c52250e2d74b Pavel Begunkov      2024-09-11  836  			bio->bi_opf |= REQ_NOWAIT;
-50c52250e2d74b Pavel Begunkov      2024-09-11  837  		}
-50c52250e2d74b Pavel Begunkov      2024-09-11  838  
-50c52250e2d74b Pavel Begunkov      2024-09-11  839  		prev = bio_chain_and_submit(prev, bio);
-50c52250e2d74b Pavel Begunkov      2024-09-11  840  	}
-50c52250e2d74b Pavel Begunkov      2024-09-11  841  	if (unlikely(!prev))
-50c52250e2d74b Pavel Begunkov      2024-09-11  842  		return -EAGAIN;
-50c52250e2d74b Pavel Begunkov      2024-09-11  843  	if (unlikely(nr_sects))
-50c52250e2d74b Pavel Begunkov      2024-09-11  844  		bic->res = -EAGAIN;
-50c52250e2d74b Pavel Begunkov      2024-09-11  845  
-50c52250e2d74b Pavel Begunkov      2024-09-11  846  	prev->bi_private = cmd;
-50c52250e2d74b Pavel Begunkov      2024-09-11 @847  	prev->bi_end_io = bio_cmd_bio_end_io;
-50c52250e2d74b Pavel Begunkov      2024-09-11  848  	submit_bio(prev);
-50c52250e2d74b Pavel Begunkov      2024-09-11  849  	return -EIOCBQUEUED;
-50c52250e2d74b Pavel Begunkov      2024-09-11  850  }
-50c52250e2d74b Pavel Begunkov      2024-09-11  851  
+Applied, thanks!
 
+[1/8] gpio: regmap: Force writes for aliased data regs
+      https://git.kernel.org/brgl/linux/c/ed2bd02d24947e36c9438bee1449d9bf87671b16
+[2/8] gpio: regmap: Bypass cache for aliased inputs
+      https://git.kernel.org/brgl/linux/c/3233741c0be59dd224e797deb2dd1621695ac95c
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
