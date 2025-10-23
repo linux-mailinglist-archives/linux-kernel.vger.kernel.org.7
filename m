@@ -1,98 +1,121 @@
-Return-Path: <linux-kernel+bounces-867573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193CCC0305E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:37:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF5DC03031
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AAC4540A5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:34:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 962963AC289
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5552345CD5;
-	Thu, 23 Oct 2025 18:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71E034C83A;
+	Thu, 23 Oct 2025 18:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="umJTBkhf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZqhMYiWG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B0B2989A2;
-	Thu, 23 Oct 2025 18:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE4028CF7C;
+	Thu, 23 Oct 2025 18:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761244334; cv=none; b=VpSuUbSYiGQtc+7uGUrnNS0w0jP45HcMYxAkk+QFV5A2MbuT78rOaC8UVEX/niN5MnCA63D2hd5K//DCsxW6F2brmuIT7wJvjE980l9G1My4Qo3OMkdVzmjEpQHiDSdB2txyNUZTkcY6PMhIEvV7MSJnmMCs8BgEmTJcAKB3lI0=
+	t=1761244385; cv=none; b=qKe5mxdTlaDps0or2cygyK/saYtezSaNrXayXLRaqzWcuVuJV+7NPWjuSKQZUENGFxALPNp8KKJKBcmU4c/G2ilKeDzEwa9uSokM2QJZ/bTwZtAPQKDPYx170T5WMJslvRr76W0w5jT0ZcEoviiMFHNDpwS9v9uJ6J7Sbn/ynxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761244334; c=relaxed/simple;
-	bh=s4NJy+OqNopQqO6UBGDQC+oxU9CM2iay6ZEpBQJXZ5s=;
+	s=arc-20240116; t=1761244385; c=relaxed/simple;
+	bh=Gy86uPw0GMS0aTDE3I7lBaDqSTWlw2dIyTY5N2sn1w8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lOzkF/JGWrEbIf0lEQA2oCRS0P5uypZPYqSoJ/TyraJNMztXVPlNjlIl9sZM0WDKWQInvwA8xzVpDC6a9WhAS8Ernpkf0Fxub+rjLRIPXkC8J9rTxKZV8EG/tdEA4p5UCHruydgIYe9541TufAo4vjGrQeIi8UVZ40r/MgXf3NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=umJTBkhf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55D1DC4CEE7;
-	Thu, 23 Oct 2025 18:32:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761244334;
-	bh=s4NJy+OqNopQqO6UBGDQC+oxU9CM2iay6ZEpBQJXZ5s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=umJTBkhfPkbYkFecVLNAIaXszgopk+yQHW5y3DGFngwXYeypYdR1eEiL3PeVmjlH3
-	 udY5wAZzm3Ksaj+TR3F24EaShe6GjOUTSZQxdNwudzXsdh0g66CJvDEoZShTOi8Kw9
-	 FoTsnF0+ePdDNVwxBTp7APL/hkgvFnNghw+tTqN4g933lmXBgRz30cgrHbBuT8DWRp
-	 j1GnPenFHralMGEsQaMSc4mTANP+YEnAloeyI3MrScxoP57Ds9gTlUIVBv9ptP7yEX
-	 e+C41sj4wAoQs98gMctdgOdHXRg7MthU+HvIPa5d3cmi7gkuBnTzFtBnCaVlJn9wsc
-	 /B9cEFIdjeVMQ==
-Date: Thu, 23 Oct 2025 19:32:10 +0100
-From: Conor Dooley <conor@kernel.org>
-To: dimitri.fedrau@liebherr.com
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=kTPHzfnQAvIme/VGb3wUcdBzQCNIjyAMcZlekSlBuUxXRshV19egeV4kJ6MyTVRfl82E37BL4ThEAE/zRY8E8qmh8en8G6myU+wbQXGkkChYKeOs/5vXyrYHXNVZqv5v789DNgCzBopKfM6pGJEFq78QM9EcqZGQphnXUufr0Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZqhMYiWG; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761244384; x=1792780384;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Gy86uPw0GMS0aTDE3I7lBaDqSTWlw2dIyTY5N2sn1w8=;
+  b=ZqhMYiWGKGIgWNRTADXcpziiK0hKe7GqHpVkd10L+pGx3PlCgz3d70qR
+   taIiCossjLFA1mpP6AxGO9JpjWTXXbz3GJworWIOH2Uxy4JgpPkt1bNfg
+   kJbLeA83Rff9h28EMvuYWv1o5t4AMfmSRQZ6lD4nGapYij8xblsy1sqyk
+   U4N1TB8uhcIJLObHq8KJH+L8mhkFYT1+kWqcZdX8Xh8RvwTBALRe7IA8l
+   MgMWupINLOYjj4R4Yy0GPDGnDslNJQP1QcBdu74jseucuKFK4zrY7oMqX
+   byN6m5s+cDlEk1GAC7M1e1stvKnYhbk/n12PMg93Af7jk2oCD4jQJQuTL
+   A==;
+X-CSE-ConnectionGUID: HTwwhQ9HT0mbbynDai/qCg==
+X-CSE-MsgGUID: ByJyAHe+QTueI4yAb0r8ig==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80859665"
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="80859665"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:33:02 -0700
+X-CSE-ConnectionGUID: oKGdB9QJT6mH32is+QHqdA==
+X-CSE-MsgGUID: 38ZfxTWkTVi5lD3sSrT/Eg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="189484420"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:32:59 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vC07M-000000020uM-0Sfa;
+	Thu, 23 Oct 2025 21:32:56 +0300
+Date: Thu, 23 Oct 2025 21:32:55 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: Aditya Dutt <duttaditya18@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: power: supply: gpio-charger: add
- support for fast-charge timer
-Message-ID: <20251023-nurture-extrovert-8a82296131d6@spud>
-References: <20251022-gpio-charger-timer-v1-0-b557409400f2@liebherr.com>
- <20251022-gpio-charger-timer-v1-1-b557409400f2@liebherr.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Frank Zago <frank@zago.net>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: position: Add support for ams AS5600 angle
+ sensor
+Message-ID: <aPp010RxM3Dp_fAd@smile.fi.intel.com>
+References: <20251020201653.86181-1-duttaditya18@gmail.com>
+ <20251020201653.86181-3-duttaditya18@gmail.com>
+ <20251023191627.00003b52@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6vsFR8pEpU/FcfKy"
-Content-Disposition: inline
-In-Reply-To: <20251022-gpio-charger-timer-v1-1-b557409400f2@liebherr.com>
-
-
---6vsFR8pEpU/FcfKy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251023191627.00003b52@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Oct 22, 2025 at 09:47:47PM +0200, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
->=20
-> On some devices like TIs BQ24081 battery charger it is possible to activa=
-te
-> or deactivate a fast-charge timer that provides a backup safety for charge
-> termination via GPIO. In case of the BQ24081 it is a fixed 7-hour timer.
->=20
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+On Thu, Oct 23, 2025 at 07:16:27PM +0100, Jonathan Cameron wrote:
+> On Tue, 21 Oct 2025 01:46:53 +0530
+> Aditya Dutt <duttaditya18@gmail.com> wrote:
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+...
 
---6vsFR8pEpU/FcfKy
-Content-Type: application/pgp-signature; name="signature.asc"
+> > +		if (chan->channel == 0) {
+> > +			/* Whole angle range = 2*pi / 4096 */
+> > +			*val = 2 * 3141592;
 
------BEGIN PGP SIGNATURE-----
+Can you, please, add a definition of PI * 10^6 to units.h? We have already
+users of this value and of the PI * 10^5.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPp0qgAKCRB4tDGHoIJi
-0pSnAQD8jTNqwT16SuF7P/cvfoKoXqTlTZWaL9gSixXaBGTcoQEAwN8PQ6DA040T
-TPnEzJZbJqpIxC41t2GWf7le1DMjzwk=
-=vWa1
------END PGP SIGNATURE-----
+...
 
---6vsFR8pEpU/FcfKy--
+> > +			/* Partial angle = (range / 4096) * (2*pi / 4096) */
+> Use multi line comment syntax for htis.
+
+Also you may use Greek PI (as unicode character) in the comments and messages.
+We've been living decades in the unicode time!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
