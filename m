@@ -1,98 +1,186 @@
-Return-Path: <linux-kernel+bounces-866234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 103B6BFF41C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:31:48 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B0FBFF425
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 780B74E8A33
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:31:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1736D355EF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DA326F2BB;
-	Thu, 23 Oct 2025 05:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hBTQW88t"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5062580D7;
-	Thu, 23 Oct 2025 05:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC37326ED35;
+	Thu, 23 Oct 2025 05:35:32 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813492580D7
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761197498; cv=none; b=Djizj0p5aSX2emo3lJC2RpLodeb25qE6orLfptkR7IhulcAY1BbZ/exhhpEUNCbYCbWD80USPlokhGLKMv/y9qj3kSu/aBFdWCHLNvRS7KVMwwhdp5awDCoU2FLhxR08HZQRngkV7Kqj8qQuE7kUNoybFvBhJd3xSii9UL0rRww=
+	t=1761197732; cv=none; b=EfLoZOFN0m/MfHtVJOB1zhVs8aESY3sTUbUP8k9AX0F0ipzEsXpFkkIR/AV6+mBINMhtQ4G+2H9s9D9XzXRmxxfK4kmbdLVQAyDCa/cDqE5fp3TJo1eMg9R/OCWyJu5I9aH8S294r7XkwDj+hVzglXAUb/2P+IcA6aR5q/2veu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761197498; c=relaxed/simple;
-	bh=0318MgPvKMFUhbuNLt4YzGS6yD/H5LVrPWGi4HS3NDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ho+3gaWvvfXBQ+0Wbbcs7ml3ikpiNhLohBuCNEI8X4iSosgCvt7ks4FYYnYgPRmFEiWmYOdHFnGmLIS5CWZOSuEkYKmyc6u+FvuPMduVGlA2vVWcXY5ZUo20khD4wvgIlzHLyF0GHapX7JI3Gz4H8mmWsai4wSsHjPmTYABL/D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hBTQW88t; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id 4594720145BA; Wed, 22 Oct 2025 22:31:36 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4594720145BA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761197496;
-	bh=4s7gOeLJDhiSJgwQKsvhyE8vqzIWD6iVcIQfyEzVeIs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hBTQW88t4GhGKp5NxOr61HzmXG/lQSkL0TiDKm943XMo28vWlw5zxxghkq89ugEtM
-	 m+1Ru4TJybDv0+MsKg+Y079bFF3n/zDlA6LHjBMXHPvaZ7WmYJUgBd4986hRwxrNou
-	 BUA1+qCSiUyLlsUV0inLxTfyG2kp8VdnDIK20Zns=
-Date: Wed, 22 Oct 2025 22:31:36 -0700
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, longli@microsoft.com,
-	kotaranov@microsoft.com, horms@kernel.org,
-	shradhagupta@linux.microsoft.com, dipayanroy@linux.microsoft.com,
-	shirazsaleem@microsoft.com, rosenp@gmail.com,
-	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
-Subject: Re: [PATCH 2/2] net: mana: Add standard counter rx_missed_errors
-Message-ID: <20251023053136.GA6431@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1757908698-16778-1-git-send-email-ernis@linux.microsoft.com>
- <1757908698-16778-3-git-send-email-ernis@linux.microsoft.com>
- <0b5b0d1d-438a-4e41-99c8-a6f61d7581b4@redhat.com>
+	s=arc-20240116; t=1761197732; c=relaxed/simple;
+	bh=5KLzgB3fOk4V9E7gteF2nHRT0WhYdiybJvJZtUHg1zQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RXAcaDUwjxJffe2AuROkaxKwG+5cKwVexLTg6gp6aRHMxSXsO83DPW1+r+WeVyUEcbocp/hichmsHdUMvEGoeDz3XdN59kDPnc8fgXPcEonbvndDZLnfUCAS3iLjShUvCRmRXQRHlROGSIIg/o4zYheBI6T4gzwJu+em8TQSRmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-937e5f9ea74so33544039f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:35:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761197730; x=1761802530;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sFXxINLTagmUWGqODVvrEzSLw4OsO+wL4nCUkiEGxc8=;
+        b=l1/1TdJrGhghJA2UbdED86II2wPS0ZZ8iQyx75enOumNlHN+vV+NlwYk0PmIovhBC+
+         G1w5f+4ANj+wqeC0ISPbZEO6nKAJrkWwrglo4mUmun37OHMg+cfZE/fCvhmMm8KBX67v
+         roq2fVFTB4ULWLbRHLfCQ4lD8z0wzPlkh+ExQlpGGokVIVJ8DOa64MbR1vIV7qgADgaC
+         4oa+YoW0ktrHgf5gWKH3eMaK+pv+rpnlzslmTVSM0PSvJayTJK56vxAwOCj26IeH1AX4
+         HwwMq5aoB7NKcFra7ewmslw8anDRCmp+TrOO2gpwlZW0uj9vnmTLOCAXzMcujiX0deh4
+         e9Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2osqRD1fAycg5WC2I26FRQ6Xz2iveEX0JloB/7LKZthhszcmDU76w2+dT7f1wq0QVx8lzuR53NzKfDG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyowZDKhiu7Ezx4aIFtHiPmCD98fO4D+nMNypxnwdiQwI1AN5A1
+	BdR/ZeuimTFPGHoa8xGsIRfW+vnfzgP2RFN7GYrrRooTZxhLTCKDq0Y36vX7XyIsC2tEIApzfvQ
+	tsi/G5TURnbRFbEI9xTUbFUigcvxGp30aQLuoNAtf/ujKb+aFnl35N85/66U=
+X-Google-Smtp-Source: AGHT+IGv1iacUoMEHu746AvIgzjKBVjenIRK1K9fiPm5nQKfbhkYeeQlcAsFhBdlsAh5bdokGQtYcDgEJsViXef2LgSvgWoc2Rkl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b5b0d1d-438a-4e41-99c8-a6f61d7581b4@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Received: by 2002:a05:6e02:1605:b0:430:a5e3:fd70 with SMTP id
+ e9e14a558f8ab-430c5253b58mr305347795ab.9.1761197729700; Wed, 22 Oct 2025
+ 22:35:29 -0700 (PDT)
+Date: Wed, 22 Oct 2025 22:35:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f9bea1.a70a0220.3bf6c6.0032.GAE@google.com>
+Subject: [syzbot] [hfs?] kernel BUG in hfs_new_inode
+From: syzbot <syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com>
+To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	slava@dubeyko.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 16, 2025 at 03:22:54PM +0200, Paolo Abeni wrote:
-> On 9/15/25 5:58 AM, Erni Sri Satya Vennela wrote:
-> > Report standard counter stats->rx_missed_errors
-> > using hc_rx_discards_no_wqe from the hardware.
-> > 
-> > Add a dedicated workqueue to periodically run
-> > mana_query_gf_stats every 2 seconds to get the latest
-> > info in eth_stats and define a driver capability flag
-> > to notify hardware of the periodic queries.
-> > 
-> > To avoid repeated failures and log flooding, the workqueue
-> > is not rescheduled if mana_query_gf_stats fails.
-> 
-> Can the failure root cause be a "transient" one? If so, this looks like
-> a dangerous strategy; is such scenario, AFAICS, stats will be broken
-> until the device is removed and re-probed.
-> 
-> /P
-After internal discussion, We are planning to fix this issue following
-the below approach:
+Hello,
 
-Stop rescheduling the work queue only upon detecting HWC timeout.
-In this case:
-1. Reset all stats to zero to avoid stale reporting.
-2. Introduce a driver flag to detect the first occurrence of HWC timeout.
-3. Log a warn_once during subsequent calls to mana_get_stats64 to signal
-   the issue.
+syzbot found the following issue on:
 
-Thanks,
-Vennela
+HEAD commit:    552c50713f27 Merge tag 'vfio-v6.18-rc3' of https://github...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1231d734580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=216353986aa62c5d
+dashboard link: https://syzkaller.appspot.com/bug?extid=17cc9bb6d8d69b4139f0
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e953e2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176d7c58580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/822137407e34/disk-552c5071.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c352dbdc77fe/vmlinux-552c5071.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/96bd9d9f8c50/bzImage-552c5071.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/d008a2751bbd/mount_0.gz
+
+The issue was bisected to:
+
+commit a06ec283e125e334155fe13005c76c9f484ce759
+Author: Viacheslav Dubeyko <slava@dubeyko.com>
+Date:   Tue Jun 10 23:16:09 2025 +0000
+
+    hfs: add logic of correcting a next unused CNID
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11b4e3e2580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13b4e3e2580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b4e3e2580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com
+Fixes: a06ec283e125 ("hfs: add logic of correcting a next unused CNID")
+
+loop0: detected capacity change from 0 to 64
+hfs: unable to loca[  123.243188][ T5988] hfs: unable to locate alternate MDB
+hfs: continuing without an alternate MDB
+------------[ cut here ]------------
+kernel BUG at fs/hfs/inode.c:222!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5988 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:hfs_new_inode+0xbc4/0xbd0 fs/hfs/inode.c:222
+Code: 89 f1 80 e1 07 fe c1 38 c1 0f 8c 15 fa ff ff 4c 89 f7 e8 0f 6f 8b ff e9 08 fa ff ff e8 b5 b7 29 ff 90 0f 0b e8 ad b7 29 ff 90 <0f> 0b e8 a5 b7 29 ff 90 0f 0b 66 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc900040af848 EFLAGS: 00010293
+RAX: ffffffff829555d3 RBX: ffff8880335088c8 RCX: ffff888026d23c00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed1005214608 R12: ffff8880290a3000
+R13: 1ffff110073d90f3 R14: 0000000100000000 R15: ffff8880335088c8
+FS:  00007f6c84dde6c0(0000) GS:ffff888126cc2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2e263fff CR3: 000000003276a000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ hfs_create+0x2a/0xe0 fs/hfs/dir.c:198
+ lookup_open fs/namei.c:3796 [inline]
+ open_last_lookups fs/namei.c:3895 [inline]
+ path_openat+0x1500/0x3840 fs/namei.c:4131
+ do_filp_open+0x1fa/0x410 fs/namei.c:4161
+ do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+ do_sys_open fs/open.c:1452 [inline]
+ __do_sys_openat fs/open.c:1468 [inline]
+ __se_sys_openat fs/open.c:1463 [inline]
+ __x64_sys_openat+0x138/0x170 fs/open.c:1463
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6c8576efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f6c84dde038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f6c859c5fa0 RCX: 00007f6c8576efc9
+RDX: 0000000000000042 RSI: 00002000000002c0 RDI: ffffffffffffff9c
+RBP: 00007f6c857f1f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000058 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f6c859c6038 R14: 00007f6c859c5fa0 R15: 00007fffc4216518
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:hfs_new_inode+0xbc4/0xbd0 fs/hfs/inode.c:222
+Code: 89 f1 80 e1 07 fe c1 38 c1 0f 8c 15 fa ff ff 4c 89 f7 e8 0f 6f 8b ff e9 08 fa ff ff e8 b5 b7 29 ff 90 0f 0b e8 ad b7 29 ff 90 <0f> 0b e8 a5 b7 29 ff 90 0f 0b 66 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc900040af848 EFLAGS: 00010293
+RAX: ffffffff829555d3 RBX: ffff8880335088c8 RCX: ffff888026d23c00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000004 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed1005214608 R12: ffff8880290a3000
+R13: 1ffff110073d90f3 R14: 0000000100000000 R15: ffff8880335088c8
+FS:  00007f6c84dde6c0(0000) GS:ffff888126cc2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2e263fff CR3: 000000003276a000 CR4: 00000000003526f0
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
