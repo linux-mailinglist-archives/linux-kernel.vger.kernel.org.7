@@ -1,129 +1,118 @@
-Return-Path: <linux-kernel+bounces-867599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535E7C03142
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:51:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01682C0314E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EE7BD356A0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:51:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFB47188DD8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6AF134B674;
-	Thu, 23 Oct 2025 18:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4539C34BA57;
+	Thu, 23 Oct 2025 18:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2vH2Bgt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mE8W/9c1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B1827FB35;
-	Thu, 23 Oct 2025 18:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2D734B681;
+	Thu, 23 Oct 2025 18:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761245501; cv=none; b=TIPDv3S1CayEQagqwevbB6L+ULHnpusGilA3CqmaAPa/mlzMoj7miPWdKgPwx1VNfw+porBonSD529s5w0NlAFxTlhJyKWrjXlF8zgsMB2aE/CGG4NQIrmKF/3HHpBDFyjGaD0hU3+1MsylhxNwJ9IkegLo6uPMgNg7zYzl7HFg=
+	t=1761245506; cv=none; b=dW9pPEt5KUIUe22r6uQI4hNvadsk5NMXT1ohLgebH+S+xFTSNvjPRlT76SkobeEEh5HWfMnTmxlxgfhv+LA+gks7fu5OdYL0xN6fYhj3MuR2GZ1gEUJ1ZGsyl2VmAhHUu/rzOTTu7F4SrtCKrRctBRJlF+OTaGvsvJcmFWa1AiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761245501; c=relaxed/simple;
-	bh=fUW5hqoyXRr1qipV1nRFLz7P3NbiQcTW+NuLP3KbaCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DM3sapNKNQ/9yflSS1emduvZEtQpatZ4trF9dKWZKkNHtw5+20+FG94+LlAZxcHq1NCn3qIImI+Ba31mc4oOD8hTXNkqM0Jpua4JDR9RYIJH6BsLH4JO7+z2amZOyR7h1FTlGFxBpElGDyguIGK2DkeygwZtIvzDDP6d/xa0uRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2vH2Bgt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C858C4CEFF;
-	Thu, 23 Oct 2025 18:51:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761245500;
-	bh=fUW5hqoyXRr1qipV1nRFLz7P3NbiQcTW+NuLP3KbaCU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E2vH2BgtgwdjwRX60PEt8E5SOCgUO6/3z1Tvj3P7OuXPXM+KkfUeZWdgnuG39tiXt
-	 LOJWBevwQf4tx8g7NLNbuvNRyT51zaQ3/g0yGRr1XMHTeQnfIko5HVt8B5mIH7GrfA
-	 xzUIXwJqdEx9wEkNKmCrP7SG7t6peWsImFFJ0VVRdtfEt5PJqfiN5xHvyxTRMDZ2mZ
-	 NFJS6Jb+69hUCBNn9hmWLCngH+jrgtX/ax8ESzgXC4UHS7NzR+R62mwneGGux+sPI5
-	 5gK+CQFi2Vi4VAq7SlLSyOaNBf37ToPr2tBHvDB0ikIJG6Anp3ItOFJJI8bvJ/h6TE
-	 Xf5tjjjYPLnIA==
-Message-ID: <e3525c7a-2d4e-4cea-ae9d-6fb9d04bc3fe@kernel.org>
-Date: Thu, 23 Oct 2025 20:51:34 +0200
+	s=arc-20240116; t=1761245506; c=relaxed/simple;
+	bh=w1wstypz6XgiBOEHNrlo+bizf5VavPX2yq4PjU9XYyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nysdQRUaaa60Bo7N8s5qQSS9ilk6ROV1V2UIEn/DOdsEpEeXzUhzkI0i9PiZbqgYIFFMWiFNj2f/M/7iyNjmIkrLMJwQkC97VHIDHOxmSoVFuDJnCmMyk9U8g1aOzMyODy/PCW0+b8Pbw6yxGknYM97XRtGN9k6ItwTSS/OuTR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mE8W/9c1; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761245505; x=1792781505;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=w1wstypz6XgiBOEHNrlo+bizf5VavPX2yq4PjU9XYyA=;
+  b=mE8W/9c1uLzqOwEl0XbEojvymmG6Oz6q2prFpm+DW49dBuRGPHWrhRwj
+   GSMqweTeVhFjX7uPfaAAomd86IiemqQCKtUTa9zHChwa+haopInzJ4H0l
+   pAMvtk/ImbVkNTZEchSdvcZp///jwH1ERn78y9uvO+QcjD9OPbrWmOVdU
+   3//BcjVXRzjn8MQ//9rnXRupg8QqY+PJPhPkCipzk6sGLlLEUiv5bPwxH
+   J7fYHXv4GfDXM4nE6TAXiGIXMm/cB6jDzpl/2zckLzjMwUAa8RPRJqZO1
+   mnwGj+S8TmPxD+tbrd+TlzaIDfTlPcU2DWJH6DdsIjzR8keYL4tRqgfh6
+   g==;
+X-CSE-ConnectionGUID: OYPs6oIvROO9GLr5/lENyw==
+X-CSE-MsgGUID: xbYiqSUJSBi8ZCTGYS+R2w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="66041427"
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="66041427"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:51:44 -0700
+X-CSE-ConnectionGUID: UPoG+fY6SY2BObKguIsuYw==
+X-CSE-MsgGUID: Y4HygLLIRsKI7KPxF+AZpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="184712791"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:51:40 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vC0PR-0000000210x-3Zih;
+	Thu, 23 Oct 2025 21:51:37 +0300
+Date: Thu, 23 Oct 2025 21:51:37 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Akhilesh Patil <akhilesh@ee.iitb.ac.in>, jic23@kernel.org,
+	dlechner@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, andy@kernel.org,
+	marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
+	salah.triki@gmail.com, skhan@linuxfoundation.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, akhileshpatilvnit@gmail.com
+Subject: Re: [PATCH 2/2] iio: pressure: adp810: Add driver for adp810 sensor
+Message-ID: <aPp5OYcPxNNIOgB6@smile.fi.intel.com>
+References: <cover.1760184859.git.akhilesh@ee.iitb.ac.in>
+ <8c202e7ccd332b26217d529a7a73b7a3ef0726ea.1760184859.git.akhilesh@ee.iitb.ac.in>
+ <CAHp75VdGJfMALGOFvkOW=JZ0yHE2QbRSzNs2Xd42-Weec1GmQw@mail.gmail.com>
+ <95c1ba99-510b-4efb-9b6d-4c1103fc43a5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: thermal: qcom-tsens: document the
- Kaanapali Temperature Sensor
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
- trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
-References: <20251021-b4-knp-tsens-v2-1-7b662e2e71b4@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251021-b4-knp-tsens-v2-1-7b662e2e71b4@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <95c1ba99-510b-4efb-9b6d-4c1103fc43a5@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 22/10/2025 08:23, Jingyi Wang wrote:
-> From: Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
+On Sun, Oct 12, 2025 at 05:12:26AM +0200, Krzysztof Kozlowski wrote:
+> On 11/10/2025 16:10, Andy Shevchenko wrote:
+> > On Sat, Oct 11, 2025 at 3:25 PM Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
+> >> +AOSONG ADP810 DIFFERENTIAL PRESSURE SENSOR DRIVER
+> >> +M:     Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> >> +L:     linux-iio@vger.kernel.org
+> >> +S:     Maintained
+> >> +F:     Documentation/devicetree/bindings/iio/pressure/aosong,adp810.yaml
+> >> +F:     drivers/iio/pressure/adp810.c
+> > 
+> > Some tools will report an orphaned yaml file if you apply patch 1
+> > without patch 2.
 > 
-> Document the Temperature Sensor (TSENS) on the Kaanapali Platform.
-> 
-> Signed-off-by: Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
-> Changes in v2:
+> You mean checkpatch? That warning is not really relevant. Adding
+> maintainers entry here for both files is perfectly fine and correct.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+It's relevant as long as I see (false positive) warnings from it. Can somebody
+shut the checkpatch up about missing DT files in the MAINTAINERS?
 
-Best regards,
-Krzysztof
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
