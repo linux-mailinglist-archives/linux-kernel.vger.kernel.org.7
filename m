@@ -1,70 +1,60 @@
-Return-Path: <linux-kernel+bounces-866899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2070C00F81
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:05:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3DFC00FA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB9413A3A10
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:05:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F7854FECAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D643D30EF7E;
-	Thu, 23 Oct 2025 12:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B9130E0C8;
+	Thu, 23 Oct 2025 12:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=awinic.com header.i=@awinic.com header.b="dOC9oOZ3"
-Received: from out28-193.mail.aliyun.com (out28-193.mail.aliyun.com [115.124.28.193])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCucqQbN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D38298CA6;
-	Thu, 23 Oct 2025 12:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9FE30EF9E;
+	Thu, 23 Oct 2025 12:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761221123; cv=none; b=gfav7/6WwhhKOJpNBQGgBJdqvN60OJFcbJjEe9whBA/78qzTy6Y1wYoFRL8wQc8yD+Syf2RkILE+Yx6k0MIc+Xnlb097heKqEiZu5JgnSe+e0Gtmn58myuObK+6jLsno+ZsmaSqz0Srpmc3+hVbxjB9BV7g7OATGRbe7aEHaH2I=
+	t=1761221131; cv=none; b=T5Kh7B9YpX1u1rSkY1Pnw4NbZSQLXuP1lL1/CBgOYwj+7SiqM6TIFyfbUoZ/OGkNWJgMgw+gZI1bm6GOVs7fTX2aeFGwXBN7N03TTzUWncpAaeaRZl/ox7GPRqNm3SBJnBZmTNnP9/l4yEC5538ZLJtakzv9n4dBC1vvS4Ckm8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761221123; c=relaxed/simple;
-	bh=3k0NUeQDwjZf1pkCpBUsVQA3kbq6yFLrPLifdQ5IT5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ApcJm29ihCwrrRRe1C6fxA2sqF0aWCBo9hfVR1eAKV47BsAK1ENk4LycytXU+4IflHir25IeWBWTk9nN0Os2SKwVS46QeQmgD7VmnQC+tL4gFcJdPPYYQSznYFRRofDicvo7tL4ZXHto/816251jtYxGDPAF0eRIDhxQ6+YTf7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; dkim=pass (2048-bit key) header.d=awinic.com header.i=@awinic.com header.b=dOC9oOZ3; arc=none smtp.client-ip=115.124.28.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=awinic.com; s=default;
-	t=1761221110; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=JTOkdgREhZr6P8sc2B87Q0nNG83Ch+Fq1cqU5rxpBL4=;
-	b=dOC9oOZ3uqFX4X/9aAQYCbXNz/zXE6pLfmFKEUUjCTPGI0e0K/MKSXzS7VQeqUaeNt/u1xtRnXu1VOSMxNvmV7vUBXOPKlG2dghtzfV8TG8IOF4OjjecYSVCZ/34Wa/bNkYUR/sJTecw0aNJHD6EK/gBIV5M6T2yESD9aTU9Kdmq6ylZv//zPeznhWWIXbfGyVm+a7Gm9z4HxOdwryRWAauU6pk+An7Y0Gq4MjN3hX7IFmL6LwuJGxLyQIbyiYwJp+kRfYBecmVv3fhGDJhTLrTHsDzftAw1X6bMt3iiukPjLl08MXYtoDDI9jcGdNymzqIwJK5+R7yDg4ZxgC5tog==
-Received: from ubuntu-VirtualBox..(mailfrom:wangweidong.a@awinic.com fp:SMTPD_---.f5erwzP_1761221106 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Thu, 23 Oct 2025 20:05:08 +0800
-From: wangweidong.a@awinic.com
-To: broonie@kernel.org
-Cc: alexey.klimov@linaro.org,
-	ardb@kernel.org,
-	arnd@arndb.de,
-	cy_huang@richtek.com,
-	ebiggers@google.com,
-	lgirdwood@gmail.com,
+	s=arc-20240116; t=1761221131; c=relaxed/simple;
+	bh=zZuQXSTIkvfO+rEfdYOWf8tCjPjJZkwTd/3fAJkapCE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oCXP4eS+aMh4Skp6Jr9aOSKvEZj2IHBT+1uKvC3e+v4chZPhEoya2iSXNgbbeFuehajEPVAJrDy47yVCPD5n6+P3g8Yer0M5G8kmzf4Ll+dQWGVS8Kmux0lUZIJbK7B0JEo/UNKSln7EtCzANEQZKiviPcRD50JbV3h0PgljfqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCucqQbN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1F82C4CEE7;
+	Thu, 23 Oct 2025 12:05:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761221131;
+	bh=zZuQXSTIkvfO+rEfdYOWf8tCjPjJZkwTd/3fAJkapCE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sCucqQbNIW0hCXaOQIzqi181nZXFIgKvHtqsWFsvJUnGa+i7fLZ1bn6lmrLKxjHTn
+	 /fINNTcf3UHx73XFSwNwpmdj4t03U6y9S5Qsu2ZYL5PektTCn4Vg0NcYErGGVVBcVL
+	 xJb8zfQfiBH++Hp5QaStXs2lbvRwTY8RaB7c5faQ4lnGvtLX8HX6V+yuZ2Pr34IkeX
+	 FuUzjvUCzO0F8fcfDoAFhn743GVxsInYBpyNrm61l0zZsZ+VU44Lf+JOksQBGjqAbO
+	 ZqV6ZxgzYVfxJ2k46cDqz487hdeqGzymut932V54i+z4va4B2wicbi3ch0zxy7z0CO
+	 GP9jeC7SLPSzw==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vBu4X-000000001Tz-1noL;
+	Thu, 23 Oct 2025 14:05:37 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux@treblig.org,
-	nick.li@foursemi.com,
-	niranjan.hy@ti.com,
-	perex@perex.cz,
-	shenghao-ding@ti.com,
-	srinivas.kandagatla@oss.qualcomm.com,
-	thorsten.blum@linux.dev,
-	tiwai@suse.com,
-	wangweidong.a@awinic.com,
-	yesanishhere@gmail.com,
-	yijiangtao@awinic.com
-Subject: Re: [PATCH V2 1/7] ASoC: codecs:Rework the awinic driver lib
-Date: Thu, 23 Oct 2025 20:05:06 +0800
-Message-ID: <20251023120506.35628-1-wangweidong.a@awinic.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <ad81a2b7-5df4-4e41-9bf1-6949723d43b8@sirena.org.uk>
-References: <ad81a2b7-5df4-4e41-9bf1-6949723d43b8@sirena.org.uk>
+	Johan Hovold <johan@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] Bluetooth: rfcomm: fix modem control handling
+Date: Thu, 23 Oct 2025 14:05:30 +0200
+Message-ID: <20251023120530.5685-1-johan@kernel.org>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,24 +63,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 23, 2025 at 12:55:49 +0100, broonie@kernel.org wrote:
-> On Thu, Oct 23, 2025 at 07:50:37PM +0800, wangweidong.a@awinic.com wrote:
->> On Mon, Oct 20, 2025 at 02:40:32 +0100, broonie@kernel.org wrote:
+The RFCOMM driver confuses the local and remote modem control signals,
+which specifically means that the reported DTR and RTS state will
+instead reflect the remote end (i.e. DSR and CTS).
 
->>> This doesn't apply against current code, please check and resend.
+This issue dates back to the original driver (and a follow-on update)
+merged in 2002, which resulted in a non-standard implementation of
+TIOCMSET that allowed controlling also the TS07.10 IC and DV signals by
+mapping them to the RI and DCD input flags, while TIOCMGET failed to
+return the actual state of DTR and RTS.
 
->> Thank you very much for your review.
->> Could you help me? What caused this?
+Note that the bogus control of input signals in tiocmset() is just
+dead code as those flags will have been masked out by the tty layer
+since 2003.
 
-> Whatever tree you used to base the patch on is different enough to my
-> tree that the patches didn't apply.  My tree, as listed in MAINTAINERS,
-> is:
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
 
->   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Changes in v2
+ - fix a compilation issue discovered before sending v1 but never folded
+   into the actual patch...
 
-OK, I see. Thank you very much
-I will replace tree.
 
-Best regards,
-Weidong Wang
+ net/bluetooth/rfcomm/tty.c | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
+
+diff --git a/net/bluetooth/rfcomm/tty.c b/net/bluetooth/rfcomm/tty.c
+index 376ce6de84be..b783526ab588 100644
+--- a/net/bluetooth/rfcomm/tty.c
++++ b/net/bluetooth/rfcomm/tty.c
+@@ -643,8 +643,8 @@ static void rfcomm_dev_modem_status(struct rfcomm_dlc *dlc, u8 v24_sig)
+ 		tty_port_tty_hangup(&dev->port, true);
+ 
+ 	dev->modem_status =
+-		((v24_sig & RFCOMM_V24_RTC) ? (TIOCM_DSR | TIOCM_DTR) : 0) |
+-		((v24_sig & RFCOMM_V24_RTR) ? (TIOCM_RTS | TIOCM_CTS) : 0) |
++		((v24_sig & RFCOMM_V24_RTC) ? TIOCM_DSR : 0) |
++		((v24_sig & RFCOMM_V24_RTR) ? TIOCM_CTS : 0) |
+ 		((v24_sig & RFCOMM_V24_IC)  ? TIOCM_RI : 0) |
+ 		((v24_sig & RFCOMM_V24_DV)  ? TIOCM_CD : 0);
+ }
+@@ -1055,10 +1055,14 @@ static void rfcomm_tty_hangup(struct tty_struct *tty)
+ static int rfcomm_tty_tiocmget(struct tty_struct *tty)
+ {
+ 	struct rfcomm_dev *dev = tty->driver_data;
++	struct rfcomm_dlc *dlc = dev->dlc;
++	u8 v24_sig;
+ 
+ 	BT_DBG("tty %p dev %p", tty, dev);
+ 
+-	return dev->modem_status;
++	rfcomm_dlc_get_modem_status(dlc, &v24_sig);
++
++	return (v24_sig & (TIOCM_DTR | TIOCM_RTS)) | dev->modem_status;
+ }
+ 
+ static int rfcomm_tty_tiocmset(struct tty_struct *tty, unsigned int set, unsigned int clear)
+@@ -1071,23 +1075,15 @@ static int rfcomm_tty_tiocmset(struct tty_struct *tty, unsigned int set, unsigne
+ 
+ 	rfcomm_dlc_get_modem_status(dlc, &v24_sig);
+ 
+-	if (set & TIOCM_DSR || set & TIOCM_DTR)
++	if (set & TIOCM_DTR)
+ 		v24_sig |= RFCOMM_V24_RTC;
+-	if (set & TIOCM_RTS || set & TIOCM_CTS)
++	if (set & TIOCM_RTS)
+ 		v24_sig |= RFCOMM_V24_RTR;
+-	if (set & TIOCM_RI)
+-		v24_sig |= RFCOMM_V24_IC;
+-	if (set & TIOCM_CD)
+-		v24_sig |= RFCOMM_V24_DV;
+ 
+-	if (clear & TIOCM_DSR || clear & TIOCM_DTR)
++	if (clear & TIOCM_DTR)
+ 		v24_sig &= ~RFCOMM_V24_RTC;
+-	if (clear & TIOCM_RTS || clear & TIOCM_CTS)
++	if (clear & TIOCM_RTS)
+ 		v24_sig &= ~RFCOMM_V24_RTR;
+-	if (clear & TIOCM_RI)
+-		v24_sig &= ~RFCOMM_V24_IC;
+-	if (clear & TIOCM_CD)
+-		v24_sig &= ~RFCOMM_V24_DV;
+ 
+ 	rfcomm_dlc_set_modem_status(dlc, v24_sig);
+ 
+-- 
+2.49.1
+
 
