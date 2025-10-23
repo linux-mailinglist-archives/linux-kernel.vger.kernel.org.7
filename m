@@ -1,108 +1,99 @@
-Return-Path: <linux-kernel+bounces-867821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE79C03906
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:36:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A93C03918
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD3544E838E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:36:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBAC84E7BF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53D7280308;
-	Thu, 23 Oct 2025 21:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60D5296BC3;
+	Thu, 23 Oct 2025 21:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="D5dLSV7c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBJKwggN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B43EEB3;
-	Thu, 23 Oct 2025 21:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7E6EEB3;
+	Thu, 23 Oct 2025 21:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761255386; cv=none; b=jkg9cOK7oEN4Me3fzx/meABuoFRoTxUU8ZupFJuCsUjjNInqKpvVT1LzPQJTRTN+pHwnA2B99goyc8pNfzLD626lID6kdJcfZnVP+oy4nkyhjhUyeurxbA/tRcSoW7OXBwCAkJvXyOc1M1Lat7qlcPC+BiQcKzNZMmvsQqlhvIw=
+	t=1761255627; cv=none; b=Tfki8JpZB25h8ZyFDSSIJuburjw/1ikKKQcl2E0My1jbNfd/ChPDuwoytt0qgNVL1STyWYpVAwOxa3tAgwCKlngvBLY9/UfWfI3uvemjaBO8pE8Ky9R029gXd79ieV2e1RzFAKSGhFAA3K3WHyePNFTLQFDY3/f1bEIQs/B3fOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761255386; c=relaxed/simple;
-	bh=PeQvjl8tTHsyJLNIyC0D1J39XRcadQROmtv7uZK7IMo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GZSY0qaiFucal/+pL9eSb2n/grV1qeKQZ2Hs6pRDay+Sg5qM1b33sEYSiyHVdtgEu2wCkii02b9pc5qqiuMBsjsefXoNslLNwwc23POXNb47jWF0eR0hoPv3WtqJaCQVWDtrq7jfDpAAx5Lqc9Ro6skQW09ouOE6okRLHg7VztI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=D5dLSV7c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC59C4CEE7;
-	Thu, 23 Oct 2025 21:36:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1761255385;
-	bh=PeQvjl8tTHsyJLNIyC0D1J39XRcadQROmtv7uZK7IMo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D5dLSV7cClMTLlP1vvO/xSsofDIiz6K30iXsothe1O5uqNMocMhnArlWU6WugZ4F0
-	 3+FNIq71QSLCs4QBTqUENXpZukkHfHAH0AfcMkDFKPnu26S55DMAgZ2SklkCX8+WQN
-	 i7Jhbbi2Hu3iBHnpF4AsyZl96QUiJpmL4TBeKlLA=
-Date: Thu, 23 Oct 2025 14:36:24 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>, Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Lorenzo
- Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
- <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
- <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, Harry Yoo
- <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt
- <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kiryl Shutsemau <kas@kernel.org>
-Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries
- beyond i_size
-Message-Id: <20251023143624.1732f958020254baff0a4bee@linux-foundation.org>
-In-Reply-To: <3ad31422-81c7-47f2-ae3e-e6bc1df402ee@redhat.com>
-References: <20251023093251.54146-1-kirill@shutemov.name>
-	<20251023093251.54146-2-kirill@shutemov.name>
-	<20251023134929.b72ab75a8c132a17ae68a582@linux-foundation.org>
-	<3ad31422-81c7-47f2-ae3e-e6bc1df402ee@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761255627; c=relaxed/simple;
+	bh=5qCzJg0hCt3HBb3QIW58eH+hgYTu6FwAxvg34Yv5VZo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=BG/cJYsNUtkuO5k9l+fLjO2LCgV72AY8Y9/+4Vua1P4FymuHaJPKsOFCiAo55cDzouRfZkrsLsM+46kCXAkCPmIpATmwVOGnSD6XAlSpQV/z+O4er5wgeQ44c+B1lOReESu0F4yk/W8m4EgC2/fLHIZvRL5I/6fdjtSlkrneBKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBJKwggN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB27AC4CEE7;
+	Thu, 23 Oct 2025 21:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761255626;
+	bh=5qCzJg0hCt3HBb3QIW58eH+hgYTu6FwAxvg34Yv5VZo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=hBJKwggNlS5Z/APUyqIyD/y3+ODXl8giHzG1gqnyTHY6Kx57RGM/6Bv+Q+hNMOJsx
+	 zDGzvBYt9sYkNhQoz9P7Mq5aoI1w5n+wbOLQhWlYJHlROaaHm0GwS2ZB1p9r46g6TF
+	 fVkqgs1y2mkXPHJWVeypsX5K8S5DlGCGpkBd2eFNn3JsD1f9CbVE4dKINgGj22vkWC
+	 4hQLBnrCMLX7UFvzJ4Y3cIr2y7g8XIuKEev3HUd2iDuK4QpaBqtNRagn/WuAlzeyqZ
+	 XlU+BzVIciG55ec82SLKs7S+ObDRCYdigBA275Spv2uU5gLCLWCEbZcPtNde9jMKCq
+	 55dNZJhb5ITzA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B33380A960;
+	Thu, 23 Oct 2025 21:40:08 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Bluetooth: fix corruption in h4_recv_buf() after cleanup
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <176125560702.3260295.10385824633115850837.git-patchwork-notify@kernel.org>
+Date: Thu, 23 Oct 2025 21:40:07 +0000
+References: 
+ <ab6fa50055fa0c39e5501c123c36e662eb48ae61.1761245114.git.calvin@wbinvd.org>
+In-Reply-To: 
+ <ab6fa50055fa0c39e5501c123c36e662eb48ae61.1761245114.git.calvin@wbinvd.org>
+To: Calvin Owens <calvin@wbinvd.org>
+Cc: linux-kernel@vger.kernel.org, marcel@holtmann.org, luiz.dentz@gmail.com,
+ sean.wang@mediatek.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, amitkumar.karwar@nxp.com,
+ neeraj.sanjaykale@nxp.com, yang.li@amlogic.com, pmenzel@molgen.mpg.de,
+ linux-bluetooth@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ francesco@valla.it
 
-On Thu, 23 Oct 2025 22:54:49 +0200 David Hildenbrand <david@redhat.com> wrote:
+Hello:
 
-> >> Fixes: 19773df031bc ("mm/fault: try to map the entire file folio in finish_fault()")
-> > 
-> > Sep 28 2025
-> > 
-> >> Fixes: 357b92761d94 ("mm/filemap: map entire large folio faultaround")
-> > 
-> > Sep 28 2025
-> > 
-> >> Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
-> > 
-> > Jul 26 2016
-> > 
-> > eek, what's this one doing here?  Are we asking -stable maintainers
-> > to backport this patch into nine years worth of kernels?
-> > 
-> > I'll remove this Fixes: line for now...
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+
+On Thu, 23 Oct 2025 11:47:19 -0700 you wrote:
+> Thanks to Francesco Valla's investigation, the reason for the duplicate
+> code I recently cleaned up is finally clear: a different structure is
+> stored in drvdata for the drivers which used that duplicate function,
+> but h4_recv_buf() assumes drvdata is always an hci_uart structure.
 > 
-> Ehm, why?
-
-Because the Sep 28 2025 Fixes: totally fooled me and because this
-doesn't apply to 6.17, let alone to 6.ancient.
-
-> It sure is a fix for that. We can indicate to which stable 
-> versions we want to have ti backported.
+> Consequently, alignment and padding are now randomly corrupted for
+> btmtkuart, btnxpuart, and bpa10x in h4_recv_buf(), causing erratic
+> breakage.
 > 
-> And yes, it might be all stable kernels.
+> [...]
 
-No probs, thanks for clarifying.  I'll restore the
+Here is the summary with links:
+  - Bluetooth: fix corruption in h4_recv_buf() after cleanup
+    https://git.kernel.org/bluetooth/bluetooth-next/c/1aaa18cc80c5
 
-	Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
-	Cc; <stable@vger.kernel.org>
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-and shall let others sort out the backporting issues.
+
 
