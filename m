@@ -1,148 +1,132 @@
-Return-Path: <linux-kernel+bounces-866229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8729BFF3DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:17:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47257BFF3DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 100A53A589E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:17:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE3223A89EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D41624C692;
-	Thu, 23 Oct 2025 05:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63323269D17;
+	Thu, 23 Oct 2025 05:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUvUYYEx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I6OtHOUR"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBFE157A5A;
-	Thu, 23 Oct 2025 05:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3C4242D7C
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761196630; cv=none; b=a8l/GIsrBp5Ka3tZAOs2cgq6CGJprOtgwA/oLN2+IvWI0vi7KogIGDnvoEJs0iBVoZFcJaPRJVwmZrrp965A9deUX5J1F3Q/Emi3IKS/hsITSWLbStacMv8OyNoePFyI8g3YIpcgfHEvQFV0/Fr6TSMuh1aCTlSpISbuvsSczhI=
+	t=1761196768; cv=none; b=q2AYDzAIk5BvY8EcdgFGDEquCy+KWbbiKJrohn4yoRViXRQtXk1WkDBWg0jPFqV4XgM8zGqZLEfy0Zg3VlCxo/XIoixFuJ+uEmuOjVNzEsu9CoC1SmQphwwJ13Ju5s+cHSYQFjpdHL/4Jt/wQxyTCutZ7QDpB+8cfwIzq8Jttew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761196630; c=relaxed/simple;
-	bh=wSiU4i1VN6HLtvNowK3/ZRUnH7MHzaLbuZNOUkxiTJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j2MD5PS+gI4mxlOioh4l+pCr1mB2mVA2PyLTJAOrZRXBt+c4kiFErIVsoDIdU4M+SoBuJ/Wq2YoS/ddQ6RPYZzCUTMidtI0Lfrq+gfmYV35xDZ5UyXcFz3pMqW2iRPXocoWum6Yf87n4hd+3mgaHVAIv7BKmnvkN+RPAeiVbDFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUvUYYEx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4679EC4CEE7;
-	Thu, 23 Oct 2025 05:16:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761196627;
-	bh=wSiU4i1VN6HLtvNowK3/ZRUnH7MHzaLbuZNOUkxiTJ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BUvUYYExFEEvOcUyuuJO6p108bLwD4CukVdAL3YICXBCWps9S2wk92BsmQDzO+o6c
-	 pDGTxIh3KbKx5I6LH0trzh4mceVbI+LUHjc6JLTw+/8PjAw2zufRbNJhMmdvdcpshw
-	 c32W0R2Uwl9lYGthoBTv+5YT9BzWGVdybisEwqcDwawdgpUV+VUqv5kX2xKAKHpTb8
-	 6PNeRu/JUVuk6ZIFtAsklv2zZ7FSJiF9mlO/+wr/ylOl1uXGgWQ0+QM5PqzYcMsHCV
-	 es5EavQ/UvWm13sERH8B5xejbY1cwv1NeghauHXjBb5BwR36eP/5CMgkUgsyXhT6CL
-	 82QvKNHZNb7GQ==
-Date: Thu, 23 Oct 2025 10:46:50 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-Cc: mkl@pengutronix.de, thomas.kopp@microchip.com, 
-	mailhol.vincent@wanadoo.fr, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linus.walleij@linaro.org, brgl@bgdev.pl, linux-can@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, mukesh.savaliya@oss.qualcomm.com, 
-	anup.kulkarni@oss.qualcomm.com
-Subject: Re: [PATCH v6 0/6] can: mcp251xfd: add gpio functionality
-Message-ID: <dvqn5hwvoi36djxkfte2sw2o2nnk7irh6tgt5vmtqgm6t2dbyc@snde7uwlzbia>
-References: <20251001091006.4003841-1-viken.dadhaniya@oss.qualcomm.com>
+	s=arc-20240116; t=1761196768; c=relaxed/simple;
+	bh=51aXDOGdj/po8jhlXOkKS2wP8VODlnd8UT+bbLyMaxI=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=N0WVOnz7IY/7BKo/Gm5OstVmM1D5wpMb/Tp4CnF7uU05Ps/vAHHf7/L6C3c9J78By8trPF/NW3evOp+yi8v6MNjacwCU4g3PugaF014tAvlBeXYjE6VsU3F3uP1oLvLg98JmUZbZ/OsWnVSckhmA6qQP4qJOZfl+ElXAsrpVNEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I6OtHOUR; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-781997d195aso295493b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:19:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761196767; x=1761801567; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=51aXDOGdj/po8jhlXOkKS2wP8VODlnd8UT+bbLyMaxI=;
+        b=I6OtHOURNOJC7LHWtRjF6vqF5aH6U/7tLA6LBTdE0KdMQKV3kR/25Rc4zGx7ka9OVv
+         irl9jO0SIJf/O0CzqvvuBLrcdWQMo4pYwqZCx0/nrIDKv6ZfkScCEMc736UZSzMESKsL
+         R4eMEF0zI6kwLrKMHxlpMU2YHanw6GmVgTzrwR6Kw4lyqDKvFZxV0avXODidOkjfjZfv
+         9UcRPxaaQr0nlR5r6zP8cJ9ujSLevp7seYda6kSoOLeYqXLVs9X0EleRnBom0eO/G3Ke
+         VRKWSmAvekXaBxxsLF/4kOUJZ4XMA5vMRY9qyJlSr8hI2JahbmS05T145rKnvWzfsDXV
+         2uHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761196767; x=1761801567;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=51aXDOGdj/po8jhlXOkKS2wP8VODlnd8UT+bbLyMaxI=;
+        b=NZLyrSOG72l4WIo5OkSoHs3+44CJNO/uCP8wcqeJ3HVWqMFW2DTgbe7Xpe8K45+fdH
+         0/Op8WhJ3pGcukwEFNB0rLcQQDo+yXLzHSf8inIhMcB+heiBpoGjKkk4Blky7S6E72Cq
+         4jDbK86izs839DmvJWzh6YVU3HDFiSzg7zR1Sj9NoXr+bZke1uzcxsu8FIZUb2el3bIA
+         /E3azmnHSYeulV/iBuf9/obWLkD2PkJnzbg8od0oAbTeBP9fqjpP30EVh6ssGiKwcbb8
+         chtAHGt2XC+w5z+5OQGdvqtD/buulDQ2hpfibcLL1FZdd9Av+ECfCjDM3qvG5CMkATkM
+         ynAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE4hV0Q/s1hhotzxGvlwknbT3aVyxNSZzgxG6NW5HjaawWqNtAE986YRH4jYyxwOd5kP9aCPv28lN4qzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwBbRhxIcXjwdlf4XC1V2lH5TquWoxy23MrtU0259ODoL0R/WF
+	ESFXfDnUAQuRBCmVrJXtI8+8j55K0xWSoetzU4CqIhWw9885csFkNgVr
+X-Gm-Gg: ASbGncsPHKWiXz6G/2acyRTmMHSqj4HcgM3SOqZSyyGIfXhNV1xtAm+dtV94bK1OyJ5
+	88PGwoZFTf2RBy4qxvnrb6tCuvAFCniBAAQNOaqY4he6QH0pqFRwLW/A2aHXBkXR5GAXS65g4S8
+	c5D7k9ouaTwLV1bHgdOu5/Wg/SJcySDhwF5Yjqy3tgNoVSHkjW+RvhuxWBEZhaD6r0obf6mmx2k
+	IkBi2HIzak6Uu/HcI4//w888dgi0KrmzEmTp23Ci+nGADSA8U8Kbl4tjIDu+p9t4klzEUzrQ2jg
+	0q6tbTgCFhZHb7+NkDDrSwE5aw3bIkIxewqItvDvwibKphNcvscjz8nTZAORRV0zI8xL3eOc65w
+	2+CJgfndg4rI7WGjLEbibWENNHyOyc+UCosxcsH+RF82iFRLK0vynKQ19JU7c24yohbZwkYDQPk
+	Eb/6fiTwv9IIHUIz1hArUXzDATJsXMJL7iiu/jumW04r5VHCdpQ4xXaQ==
+X-Google-Smtp-Source: AGHT+IGVsTk3QsyiPJrUe+IqfmTmdgg7c6o5S51y4i/ui4y4RNQVHgrAf90jQBXrDKdEcp6hkc4OOQ==
+X-Received: by 2002:a05:6a20:5493:b0:334:99f9:ff45 with SMTP id adf61e73a8af0-334a863c4bemr32416022637.57.1761196766414;
+        Wed, 22 Oct 2025 22:19:26 -0700 (PDT)
+Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4bb8eacsm882436a12.3.2025.10.22.22.19.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 22:19:25 -0700 (PDT)
+Date: Thu, 23 Oct 2025 14:19:09 +0900 (JST)
+Message-Id: <20251023.141909.400243634709519102.fujita.tomonori@gmail.com>
+To: aliceryhl@google.com, dakr@kernel.org, miguel.ojeda.sandonis@gmail.com
+Cc: fujita.tomonori@gmail.com, daniel.almeida@collabora.com,
+ a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org,
+ anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
+ frederic@kernel.org, gary@garyguo.net, jstultz@google.com,
+ linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com,
+ rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de,
+ tmgross@umich.edu, gregkh@linuxfoundation.org
+Subject: Re: [PATCH v2 1/2] rust: add udelay() function
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <aPjmKSrETqrchW_e@google.com>
+References: <DDO3OMBHS8TB.2LDODR1AFRCU3@kernel.org>
+	<20251022.193230.585171330619599845.fujita.tomonori@gmail.com>
+	<aPjmKSrETqrchW_e@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251001091006.4003841-1-viken.dadhaniya@oss.qualcomm.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-7
+Content-Transfer-Encoding: base64
 
-On Wed, Oct 01, 2025 at 02:40:00PM +0530, Viken Dadhaniya wrote:
-> Hi all,
-> 
-> The mcp251xfd allows two pins to be configured as GPIOs. This series
-> adds support for this feature.
-> 
-> The GPIO functionality is controlled with the IOCON register which has
-> an erratum.
-> 
-> Patch 1 from https://lore.kernel.org/linux-can/20240429-mcp251xfd-runtime_pm-v1-3-c26a93a66544@pengutronix.de/
-> Patch 2 refactor of no-crc functions to prepare workaround for non-crc writes
-> Patch 3 is the fix/workaround for the aforementioned erratum
-> Patch 4 only configure pin1 for rx-int
-> Patch 5 adds the gpio support
-> Patch 6 updates dt-binding
-> 
-> As per Marc's comment on below patch, we aim to get this series into
-> linux-next since the functionality is essential for CAN on the RB3 Gen2
-> board. As progress has stalled, Take this series forward with minor code
-> adjustments. Include a Tested-by tag to reflect validation performed on the
-> target hardware.
-> 
-
-LGTM! For the series,
-
-Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
-
-- Mani
-
-> https://lore.kernel.org/all/20240806-industrious-augmented-crane-44239a-mkl@pengutronix.de/
-> ---
-> Changes in v6:
-> - Simplified error handling by directly returning regmap_update_bits() result.
-> - Added Acked-By tag.
-> - Link to v5: https://lore.kernel.org/all/20250926133018.3071446-1-viken.dadhaniya@oss.qualcomm.com/
-> 
-> Changes in v5:
-> - Removed #ifdef GPIOLIB and added select GPIOLIB in Kconfig
-> - Rebased patch on latest baseline
-> - Resolved Kernel Test Robot warnings
-> - Link to v4: https://lore.kernel.org/all/20250918064903.241372-1-viken.dadhaniya@oss.qualcomm.com/
-> 
-> Changes in v4:
-> - Moved GPIO register initialization into mcp251xfd_register after enabling
->   runtime PM to avoid GPIO request failures when using the gpio-hog
->   property to set default GPIO state.
-> - Added Tested-by and Signed-off-by tags.
-> - Dropped the 1st and 2nd patches from the v3 series as they have already been merged.
-> - Link to v3: https://lore.kernel.org/linux-can/20240522-mcp251xfd-gpio-feature-v3-0-8829970269c5@ew.tq-group.com/
-> 
-> Changes in v3:
-> - Implement workaround for non-crc writes
-> - Configure only Pin1 for rx-int feature
-> - moved errata check to .gather_write callback function
-> - Added MCP251XFD_REG_IOCON_*() macros
-> - Added Marcs suggestions
-> - Collect Krzysztofs Acked-By
-> - Link to v2: https://lore.kernel.org/r/20240506-mcp251xfd-gpio-feature-v2-0-615b16fa8789@ew.tq-group.com
-> 
-> ---
-> Gregor Herburger (5):
->   can: mcp251xfd: utilize gather_write function for all non-CRC writes
->   can: mcp251xfd: add workaround for errata 5
->   can: mcp251xfd: only configure PIN1 when rx_int is set
->   can: mcp251xfd: add gpio functionality
->   dt-bindings: can: mcp251xfd: add gpio-controller property
-> 
-> Marc Kleine-Budde (1):
->   can: mcp251xfd: move chip sleep mode into runtime pm
-> 
->  .../bindings/net/can/microchip,mcp251xfd.yaml |   5 +
->  drivers/net/can/spi/mcp251xfd/Kconfig         |   1 +
->  .../net/can/spi/mcp251xfd/mcp251xfd-core.c    | 273 +++++++++++++++---
->  .../net/can/spi/mcp251xfd/mcp251xfd-regmap.c  | 114 ++++++--
->  drivers/net/can/spi/mcp251xfd/mcp251xfd.h     |   8 +
->  5 files changed, 335 insertions(+), 66 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+T24gV2VkLCAyMiBPY3QgMjAyNSAxNDoxMTo1MyArMDAwMA0KQWxpY2UgUnlobCA8YWxpY2VyeWhs
+QGdvb2dsZS5jb20+IHdyb3RlOg0KDQo+IE9uIFdlZCwgT2N0IDIyLCAyMDI1IGF0IDA3OjMyOjMw
+UE0gKzA5MDAsIEZVSklUQSBUb21vbm9yaSB3cm90ZToNCj4+IE9uIFR1ZSwgMjEgT2N0IDIwMjUg
+MTc6MjA6NDEgKzAyMDANCj4+ICJEYW5pbG8gS3J1bW1yaWNoIiA8ZGFrckBrZXJuZWwub3JnPiB3
+cm90ZToNCj4+IA0KPj4gPiBPbiBUdWUgT2N0IDIxLCAyMDI1IGF0IDU6MTMgUE0gQ0VTVCwgTWln
+dWVsIE9qZWRhIHdyb3RlOg0KPj4gPj4gaS5lLiBpZiB0aGV5IGFyZW4ndCBzdXJlIHdoYXQgdGhl
+IHZhbHVlIGlzLCB0aGVuIEkgd291bGQgcHJlZmVyIHRoZXkNCj4+ID4+IGNsYW1wIGl0IGV4cGxp
+Y2l0bHkgb24gdGhlIGNhbGxlZSBzaWRlIChvciB3ZSBwcm92aWRlIGFuIGV4cGxpY2l0bHkNCj4+
+ID4+IGNsYW1wZWQgdmVyc2lvbiBpZiBpdCBpcyBhIGNvbW1vbiBjYXNlLCBidXQgaXQgc2VlbXMg
+dG8gbWUgcnVudGltZQ0KPj4gPj4gdmFsdWVzIGFyZSBhbHJlYWR5IHRoZSBtaW5vcml0eSkuDQo+
+PiA+IA0KPj4gPiBBYnNvbHV0ZWx5ISBFc3BlY2lhbGx5IGdpdmVuIHRoZSBjb250ZXh0IHVkZWxh
+eSgpIGlzIGludHJvZHVjZWQNCj4+ID4gKHJlYWRfcG9sbF90aW1lb3V0X2F0b21pYygpKSwgdGhl
+IGNvbXBpbGUgdGltZSBjaGVja2VkIHZlcnNpb24gaXMgd2hhdCB3ZSByZWFsbHkNCj4+ID4gd2Fu
+dC4NCj4+ID4gDQo+PiA+IE1heWJlIHdlIHNob3VsZCBldmVuIGRlZmVyIGEgcnVudGltZSBjaGVj
+a2VkIC8gY2xhbXBlZCB2ZXJzaW9uIHVudGlsIGl0IGlzDQo+PiA+IGFjdHVhbGx5IG5lZWRlZC4N
+Cj4+IA0KPj4gVGhlbiBwZXJoYXBzIHNvbWV0aGluZyBsaWtlIHRoaXM/DQo+PiANCj4+ICNbaW5s
+aW5lKGFsd2F5cyldDQo+PiBwdWIgZm4gdWRlbGF5KGRlbHRhOiBEZWx0YSkgew0KPj4gICAgIGJ1
+aWxkX2Fzc2VydCEoDQo+PiAgICAgICAgIGRlbHRhLmFzX25hbm9zKCkgPj0gMCAmJiBkZWx0YS5h
+c19uYW5vcygpIDw9IGk2NDo6ZnJvbShiaW5kaW5nczo6TUFYX1VERUxBWV9NUykgKiAxXzAwMF8w
+MDANCj4+ICAgICApOw0KPiANCj4gVGhpcyBpcyBhIGJhZCBpZGVhLiBVc2luZyBidWlsZF9hc3Nl
+cnQhIGFzc2VydCBmb3IgcmFuZ2UgY2hlY2tzIHdvcmtzDQo+IHBvb3JseSwgYXMgd2UgZm91bmQg
+Zm9yIHJlZ2lzdGVyIGluZGV4IGJvdW5kcyBjaGVja3MuDQoNCk9oLCBJIGRpZG6idCBrbm93IGFi
+b3V0IHRoYXQuIERvIHlvdSBoYXZlIGEgcG9pbnRlciBvciBzb21lIGRldGFpbHMgSQ0KY291bGQg
+bG9vayBhdD8NCg0KDQo+IElmIHlvdSByZWFsbHkgd2FudCB0byBjaGVjayBpdCBhdCBjb21waWxl
+LXRpbWUsIHlvdSdsbCBuZWVkIGEgd3JhcHBlcg0KPiB0eXBlIGFyb3VuZCBEZWx0YSB0aGF0IGNh
+biBvbmx5IGJlIGNvbnN0cnVjdGVkIHdpdGggZGVsYXlzIGluIHRoZSByaWdodA0KPiByYW5nZS4N
+Cg0KWW91IG1lYW50IHRoYXQgaW50cm9kdWNpbmcgYSBuZXcgdHlwZSBsaWtlIFVkZWxheURlbHRh
+LCByaWdodD8NCg0KcmVhZF9wb2xsX3RpbWVvdXQoKSBhbmQgcmVhZF9wb2xsX3RpbWVvdXRfYXRv
+bWljKCkgdXNlIGRpZmZlcmVudCBEZWx0YQ0KdHlwZXMuLi4gSSdtIG5vdCBzdXJlIGl0J3MgYSBn
+b29kIGlkZWEuDQoNCkRhbmlsbyBhbmQgTWlndWVsLCBhbnkgaWRlYXMgZm9yIG90aGVyIHdheXMg
+d2UgY291bGQgZG8gdGhlDQpjb21waWxlLXRpbWUgY2hlY2s/DQoNCg==
 
