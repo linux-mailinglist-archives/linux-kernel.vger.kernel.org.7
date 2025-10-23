@@ -1,115 +1,136 @@
-Return-Path: <linux-kernel+bounces-866760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2455C0095A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:53:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C13C00963
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 675D21A07F52
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:54:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E3DC3A8078
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6F130B527;
-	Thu, 23 Oct 2025 10:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F6D305976;
+	Thu, 23 Oct 2025 10:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LB1JrjFr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Pf30+2tg"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CADA2F0670;
-	Thu, 23 Oct 2025 10:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7054B2D12EA;
+	Thu, 23 Oct 2025 10:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761216814; cv=none; b=dAcHKjHNu+Xwao1QM8Dz4ejoW2Bxl4j+ivPXxizpcxWiJuGW52B04/0H+cZRSfpxCSWurh9HbQlaqPbhaRMjxxVMuiQH2pPNPJRws1ydGy8Y6deMN9KJA0THgveAFtRR9/+Ofqf///uj3ohhiEC3DFnHRfmKtVofL6aHRp8KvaY=
+	t=1761216872; cv=none; b=ti6k1wRnyt5V2TRye0q42QEgqi+kXOtgyGRDlu9GGEEcHH5F3XbIGdqdJd+P/5dDhpMB2SmqViENLIWGMaU0p6NmgDSEFDBz9SVr2mQSuluKv/YiD8vCHUf+dlSBkoDJxoG4abCKE0LoUI4Sgr//eeS7Qvt9eoZBbIN1ygitAJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761216814; c=relaxed/simple;
-	bh=GR0KQXu3IcBgttzBFIK3m0UxoJSPmogpHAoOEO22v3Y=;
+	s=arc-20240116; t=1761216872; c=relaxed/simple;
+	bh=ZFnvfm+yWoOd7Q01/nDjdXk5cVbJUlrMR12+19gWEe4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OP+LTCoxgC+c/k4O4VemIYdj0zUDmF9wADbVv8159Eyy0gMQLa/PXfsxntIrFrcDiSrYpyOpmRPHTMFGBDNf21FrMykKRhJDLeomQ0KAYbzI2ng76OQ716HYKGrIbnxf9hsNoQDpQ6WiTq+0qYBdHQ7QAfc0+/qwnFBZiIcwpvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LB1JrjFr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A103C4CEE7;
-	Thu, 23 Oct 2025 10:53:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761216813;
-	bh=GR0KQXu3IcBgttzBFIK3m0UxoJSPmogpHAoOEO22v3Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LB1JrjFr8IxukftDP18sfUg5iYVH3C+7YIHfBWhUHtXL0cHAaiK/4/xoRE8SWcnae
-	 XD0/ycdFYd2Pt3eY8e7fDsHvn4M+6vyr1QDaoicWSkdQswItRyClL8sjFscmz9ECK3
-	 LeLSVYmjA85Y51JW/Plss+aBkC7nIGUOP0qwfel69XkBfWV/Ook4UL9SRfGjP6jJST
-	 x1ZHN8XrqHtKwoS173YzNVbvz2jvRmT2+Pl9Ca2WpKRYz2qtFl8UL7i80h0a6lZN0h
-	 Pv9qLAZb8HmuNMJZUGpj/ExqXQH4JdCww9lQpE/B1B+LRI8A0dSjd4oXIGMXKaC4ZD
-	 k2MtPyPkwy8ig==
-Date: Thu, 23 Oct 2025 12:53:30 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Cezar Chiru <chiru.cezar.89@gmail.com>
-Cc: wsa+renesas@sang-engineering.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: pcf8584: Make pcf_doAddress() function void
-Message-ID: <6pkzvfpzkg6mriqs7flbs5a2534tc6pk4ujs77h625xwlly5hu@fxxotb4oeh7q>
-References: <20251022015405.7082-1-chiru.cezar.89@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BsDYSlVerjP2oymia+oB5QJZyJBkBrisTUqHUsNeKTdkr5Ub4S6Ofur8c957SqxTKZBwV1qK3L6KNppONsTeRsSln4d8C7i+pdGWI7Kxcj4X1iNd1mHbeIMjqvY5llrU5hX96grr1xmyTDXlCF3g8XNPyQPGhcBMTo0DC07lwe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Pf30+2tg; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=P5H/X2O6VAth3+1IJiZ1jVADDRZOBh553gExnuinE6g=; b=Pf30+2tgWHWff05MLYY0zw/0+w
+	abhcaYZwkQ0qPJr4E85uSPGBRk37p6qmfNoCVIxrBYfZCf8tOmpPEQJbblRJoZOCPOLObmbV/wvPO
+	uoVUr+lEphTXs9FQ9lp7Ty3ukn6EbY+cuU9CjUwYcdbXM9lcSfZCHvb7pS1TaajOqUYOdcmb+bYnz
+	23KRqaGwo77hReiEZUy5NBKDJvqtwSIfQ1zPJk1uwJSjCpWFbhzIpKvfPO7VnLWUwHPzkGWDIPQmA
+	lfcHw/CMNhIUXbIa7hewF4ETVeKLDIjTMnFGgcBAxt0qt06glhbgO9iD1tDuu+Dd8dPEB+vOLzwXm
+	PevYaXlA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45430)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vBsxV-000000006Cw-1WVS;
+	Thu, 23 Oct 2025 11:54:17 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vBsxQ-000000001cU-0p2n;
+	Thu, 23 Oct 2025 11:54:12 +0100
+Date: Thu, 23 Oct 2025 11:54:12 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Rohan G Thomas <rohan.g.thomas@intel.com>,
+	"Ng, Boon Khai" <boon.khai.ng@altera.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net v3 1/3] net: stmmac: vlan: Disable 802.1AD tag
+ insertion offload
+Message-ID: <aPoJVOUe-ASx1GmV@shell.armlinux.org.uk>
+References: <20251017-qbv-fixes-v3-0-d3a42e32646a@altera.com>
+ <20251017-qbv-fixes-v3-1-d3a42e32646a@altera.com>
+ <aPI5pBXnh5X7OXtG@shell.armlinux.org.uk>
+ <e45a8124-ace8-40bf-b55f-56dc8fbe6987@altera.com>
+ <1abbcd93-6144-440c-90d9-439d0f18383b@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251022015405.7082-1-chiru.cezar.89@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1abbcd93-6144-440c-90d9-439d0f18383b@altera.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi Cezar,
-
-thanks for taking care of this.
-
-On Wed, Oct 22, 2025 at 04:54:05AM +0300, Cezar Chiru wrote:
-> Change pcf_doAddress() function's type from int to void as it is always
-
-The "is" is not needed.
-
-> returns 0. This way there is no need for extra assignment and extra checks
-> when the function is called.
-> Remove assignment of pcf_doAddress() and replace it with a simple function
-> call.
+On Thu, Oct 23, 2025 at 09:01:20AM +0530, G Thomas, Rohan wrote:
+> Hi Russell,
 > 
-> Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
-
-It's not that I care much myself, but normally when someone
-suggests a change, you should recognize it with "Suggested-by".
-
-Please insert this patch in the same series with your
-
-"[PATCH v8 1/1] i2c: pcf8584: Move 'ret' ... "
-
-patch.
-
-> ---
->  drivers/i2c/algos/i2c-algo-pcf.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> On 10/18/2025 7:26 AM, G Thomas, Rohan wrote:
+> > Hi Russell,
+> > 
+> > On 10/17/2025 6:12 PM, Russell King (Oracle) wrote:
+> > > On Fri, Oct 17, 2025 at 02:11:19PM +0800, Rohan G Thomas via B4 Relay wrote:
+> > > > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > > > index 650d75b73e0b0ecd02d35dd5d6a8742d45188c47..dedaaef3208bfadc105961029f79d0d26c3289d8 100644
+> > > > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > > > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > > > @@ -4089,18 +4089,11 @@ static int stmmac_release(struct net_device *dev)
+> > > >    static bool stmmac_vlan_insert(struct stmmac_priv *priv, struct sk_buff *skb,
+> > > >    			       struct stmmac_tx_queue *tx_q)
+> > > >    {
+> > > > -	u16 tag = 0x0, inner_tag = 0x0;
+> > > > -	u32 inner_type = 0x0;
+> > > > +	u16 tag = 0x0;
+> > > >    	struct dma_desc *p;
+> > > 
+> > > #include <stdnetdevcodeformat.h> - Please maintain reverse christmas-
+> > > tree order.
+> > 
+> > Thanks for pointing this out. I'll fix the declaration order in the next
+> > revision.
+> > 
+> > > 
+> > > I haven't yet referred to the databook, so there may be more comments
+> > > coming next week.
+> > > 
+> > 
+> > Sure! Will wait for your feedback before sending the next revision.
 > 
-> diff --git a/drivers/i2c/algos/i2c-algo-pcf.c b/drivers/i2c/algos/i2c-algo-pcf.c
-> index d1b0e55fd871..7e4a6d19494b 100644
-> --- a/drivers/i2c/algos/i2c-algo-pcf.c
-> +++ b/drivers/i2c/algos/i2c-algo-pcf.c
-> @@ -253,7 +253,7 @@ static int pcf_readbytes(struct i2c_adapter *i2c_adap, char *buf,
->  }
->  
->  
-> -static int pcf_doAddress(struct i2c_algo_pcf_data *adap,
-> +static void pcf_doAddress(struct i2c_algo_pcf_data *adap,
+> Just checking in — have you had a chance to review the patch further? Or
+> would it be okay for me to go ahead and send the next revision for
+> review?
 
-while you are at this you can use the chance to rename this
-function to a more kernel style naming. E.g.:
+I've checked my version of the databook, and the core version that has
+VLINS/DVLAN and my databook doesn't cover this. So I'm afraid I can't
+review further.
 
-	pcf_send_address()
-
-I would accept it in the same patch, but if you prefer you can
-send it as a 3/3 patch. Your choice.
-
-In any case, thanks for these cleanups!
-
-Andi
-
->  			 struct i2c_msg *msg)
->  {
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
