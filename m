@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-866028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC64BFEABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:05:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E216BFEAA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0D521A05F5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:05:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 112E34F85ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886ED1519B4;
-	Thu, 23 Oct 2025 00:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAFF26290;
+	Thu, 23 Oct 2025 00:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h3jBWO5N"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kVk5e08s"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EC829A2;
-	Thu, 23 Oct 2025 00:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83EA8821;
+	Thu, 23 Oct 2025 00:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761177874; cv=none; b=fl4WiELQek+2MU/0jpTlxKXrKgBeTp7aKHzOjm/7PHW1bEhX2ed4zUHr0/NIM0eNGtCDcIhxGCLNZA0QHQY1O+sVa9EbWS4ugfnhxo3XTgUTeHgpMc41Lp+q0qz0Ck91rTfvcBajXqqGb73AFHyYnBkn04KCCC6QIRoxLmeKlBE=
+	t=1761177872; cv=none; b=e0+ZeUctt3ekI8u5Ab3YCwURly73ZoFCuMimery6jMK7/14rv96UVx5jvSYI80dX0ZH3FKsHi8SYkcSi7ueCvbmzLy7iUX4kweqimoBzMcKd1LjniZKXy6wpu3mTOTqTvtzaIRII9/iiLiRhySpZTNmAxUB+2ILQDR+VaBp3ds4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761177874; c=relaxed/simple;
-	bh=R7sNaw4y/sEBbeMQ9YD6iGrdQApY+snp9f5pwr/so7s=;
+	s=arc-20240116; t=1761177872; c=relaxed/simple;
+	bh=VmKIfqbGp+sERaU5zAzANQnfoYUaDUG0CsvMmCPWWG8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QOjz2Y/o/F3waVUuKPLm4BiR2D5HZNXwSaIfJMkCTVuCVu60VdnOYfUQf0CEOoKf+oKrnKuZqQtKsBTyY6zLzIuZGxhUM4Btm+illBD6mtqvq66M/7fom9jj6pCvb3EVebqqAJeeLPUPwmBy/bjz3tkrfPqszwKNMsYhu6uOQc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h3jBWO5N; arc=none smtp.client-ip=192.198.163.15
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xjo68kOePlN/7IECKJKtwAlfrB8wxmzRb8PI4oc/5p+xJGxUxvhG1ZAaGJ7V/L1XTyZps/HGUH8SLK/YpCHw2TDEeBpQnW5WKFHkst/A/+44o3MLbIEzs5a+Gg98UdgDR9lPgy3XbUB3ya+36OQNm7YD1zx7CNP4itmZUgY9VBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kVk5e08s; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761177873; x=1792713873;
+  t=1761177871; x=1792713871;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=R7sNaw4y/sEBbeMQ9YD6iGrdQApY+snp9f5pwr/so7s=;
-  b=h3jBWO5Nr21elAaaquD9VtwOU0FED2CjuiDurhmd32Enrpu8AstOo+pP
-   U0+1MVm566JInYp2z+ICcPe5IgsJhiMf8wScDEjhdIbJhif8Ge/DWpVO5
-   R4I5AT7HxW8OB2GJh/o8PXRd6IiryYFX0HLI3W9zTBCMLAlBiuXLI4l39
-   dVvFna2TG/pxVPs1W6PIq9m5vjyooD5nKCKemW/N6adNYS38/azgDSB0O
-   f0vDTVtsnPsTgFk1tE0VNdvhsY+wZS5+aMiZax9tNm6cnGkJ8HgEZwh5r
-   waPmdAJvhBu7wefDj9SKIqKna+joabx71wKZxjazctquFd3qy8hCqvw+w
-   A==;
-X-CSE-ConnectionGUID: 9p1xJsDKSauBDWIdZXhB9A==
-X-CSE-MsgGUID: Gultst/rS2qMsYrifdH/Kg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63433945"
+  bh=VmKIfqbGp+sERaU5zAzANQnfoYUaDUG0CsvMmCPWWG8=;
+  b=kVk5e08s3qpDwghI04sZ+lAvGT32DB5rIzVNfmUr0SYEnLq+dit2V3XA
+   6EMd/RoLrUW+Vd8DGU+hJxeRTnUbJV4FRnfzuhwUt6/mjAQnd3z90xrZK
+   ytCp3CXpqtp7UjLK+oEWWb0gFIb52uLtiMQg6M8Bs1iyHXtgDM4M4o1Mi
+   Nb8DxxsxStk7EJv0H40BWTz0JYaS4wdhVKy0/yeKAyv+/Rb3GLw1mi4nM
+   E6iL/BG2dbAmwMhMCeW40j0YM7P89IvME0VARwMuiAqny/xS1k6Sh3rtQ
+   gGk6cYEG8JxBXbIqqoUcUJJ0S6Vc0MsiaqnMbDwFtOd+h7JqrCJcMT/Zm
+   Q==;
+X-CSE-ConnectionGUID: +YbAQtfhQN6UO8O7+yPXow==
+X-CSE-MsgGUID: /S5Cc/e5Sm2cXeLe4OkMLQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74685985"
 X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="63433945"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 17:04:32 -0700
-X-CSE-ConnectionGUID: RQ5X8IvDSJW+shKWJ/XzaQ==
-X-CSE-MsgGUID: SUBhFPknQIWpRfmqleoJzg==
+   d="scan'208";a="74685985"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 17:04:30 -0700
+X-CSE-ConnectionGUID: BFmTa4RDRgezEuMZtnhy4A==
+X-CSE-MsgGUID: pw6/2XUfSvu0P92j/MfVQg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="183179024"
+   d="scan'208";a="207670240"
 Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 22 Oct 2025 17:04:27 -0700
+  by fmviesa002.fm.intel.com with ESMTP; 22 Oct 2025 17:04:27 -0700
 Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1vBiob-000CqZ-2B;
+	id 1vBiob-000CqX-27;
 	Thu, 23 Oct 2025 00:04:25 +0000
-Date: Thu, 23 Oct 2025 08:03:41 +0800
+Date: Thu, 23 Oct 2025 08:03:57 +0800
 From: kernel test robot <lkp@intel.com>
-To: Yingchao Deng <yingchao.deng@oss.qualcomm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
+To: Dmitry Skorodumov <skorodumov.dmitry@huawei.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Yingchao Deng <yingchao.deng@oss.qualcomm.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, quic_yingdeng@quicinc.com,
-	Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
-	Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>,
-	Jinlong Mao <jinlong.mao@oss.qualcomm.com>
-Subject: Re: [PATCH v3] stm: class: Add MIPI OST protocol support
-Message-ID: <202510230717.u8tTLt9x-lkp@intel.com>
-References: <20251022071834.1658684-1-yingchao.deng@oss.qualcomm.com>
+	andrey.bokhanko@huawei.com,
+	Dmitry Skorodumov <skorodumov.dmitry@huawei.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH net-next 7/8] ipvlan: Support IPv6 for learnable l2-bridge
+Message-ID: <202510230706.1LUrP6NA-lkp@intel.com>
+References: <20251021144410.257905-8-skorodumov.dmitry@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,106 +82,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251022071834.1658684-1-yingchao.deng@oss.qualcomm.com>
+In-Reply-To: <20251021144410.257905-8-skorodumov.dmitry@huawei.com>
 
-Hi Yingchao,
+Hi Dmitry,
 
 kernel test robot noticed the following build errors:
 
-[auto build test ERROR on atorgue-stm32/stm32-next]
-[also build test ERROR on linus/master v6.18-rc2 next-20251022]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[auto build test ERROR on net-next/main]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yingchao-Deng/stm-class-Add-MIPI-OST-protocol-support/20251022-152642
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/atorgue/stm32.git stm32-next
-patch link:    https://lore.kernel.org/r/20251022071834.1658684-1-yingchao.deng%40oss.qualcomm.com
-patch subject: [PATCH v3] stm: class: Add MIPI OST protocol support
-config: i386-randconfig-013-20251023 (https://download.01.org/0day-ci/archive/20251023/202510230717.u8tTLt9x-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251023/202510230717.u8tTLt9x-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Skorodumov/ipvlan-Implement-learnable-L2-bridge/20251021-224923
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20251021144410.257905-8-skorodumov.dmitry%40huawei.com
+patch subject: [PATCH net-next 7/8] ipvlan: Support IPv6 for learnable l2-bridge
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20251023/202510230706.1LUrP6NA-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251023/202510230706.1LUrP6NA-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510230717.u8tTLt9x-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510230706.1LUrP6NA-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
->> drivers/hwtracing/stm/p_ost.c:201:13: error: call to undeclared function 'task_tgid_nr'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     201 |         hdr.tgid        = task_tgid_nr(current);
+>> drivers/net/ipvlan/ipvlan_core.c:832:23: error: call to undeclared function 'csum_ipv6_magic'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     832 |         icmph->icmp6_cksum = csum_ipv6_magic(&ip6h->saddr, &ip6h->daddr,
+         |                              ^
+   drivers/net/ipvlan/ipvlan_core.c:832:23: note: did you mean 'csum_tcpudp_magic'?
+   arch/hexagon/include/asm/checksum.h:21:9: note: 'csum_tcpudp_magic' declared here
+      21 | __sum16 csum_tcpudp_magic(__be32 saddr, __be32 daddr,
+         |         ^
+   arch/hexagon/include/asm/checksum.h:20:27: note: expanded from macro 'csum_tcpudp_magic'
+      20 | #define csum_tcpudp_magic csum_tcpudp_magic
          |                           ^
-   drivers/hwtracing/stm/p_ost.c:172:6: warning: unused variable 'i' [-Wunused-variable]
-     172 |         int i;
-         |             ^
-   1 warning and 1 error generated.
+   1 error generated.
 
 
-vim +/task_tgid_nr +201 drivers/hwtracing/stm/p_ost.c
+vim +/csum_ipv6_magic +832 drivers/net/ipvlan/ipvlan_core.c
 
-   154	
-   155	static ssize_t
-   156	notrace ost_write(struct stm_data *data, struct stm_output *output,
-   157			  unsigned int chan, const char *buf, size_t count,
-   158			  struct stm_source_data *source)
-   159	{
-   160		unsigned int c = output->channel + chan;
-   161		unsigned int m = output->master;
-   162		const unsigned char nil = 0;
-   163		u32 header = DATA_HEADER;
-   164		struct trc_hdr {
-   165			u16 version;
-   166			u16 magic;
-   167			u32 cpu;
-   168			u64 timestamp;
-   169			u64 tgid;
-   170		} hdr;
-   171		ssize_t sz;
-   172		int i;
-   173		struct ost_output *op = output->pdrv_private;
-   174	
-   175		/*
-   176		 * Identify the source by entity type.
-   177		 * If entity type is not set, return error value.
-   178		 */
-   179		if (op->node.entity_type)
-   180			header |= ost_entity_value[op->node.entity_type];
-   181		else
-   182			return -EINVAL;
-   183	
-   184		/*
-   185		 * STP framing rules for OST frames:
-   186		 *   * the first packet of the OST frame is marked;
-   187		 *   * the last packet is a FLAG with timestamped tag.
-   188		 */
-   189		/* Message layout: HEADER / DATA / TAIL */
-   190		/* HEADER */
-   191		sz = data->packet(data, m, c, STP_PACKET_DATA, STP_PACKET_MARKED,
-   192				  4, (u8 *)&header);
-   193		if (sz <= 0)
-   194			return sz;
-   195	
-   196		/* DATA */
-   197		hdr.version	= STM_MAKE_VERSION(0, 3);
-   198		hdr.magic	= STM_HEADER_MAGIC;
-   199		hdr.cpu		= raw_smp_processor_id();
-   200		hdr.timestamp = sched_clock();
- > 201		hdr.tgid	= task_tgid_nr(current);
-   202		sz = stm_data_write(data, m, c, false, &hdr, sizeof(hdr));
-   203		if (sz <= 0)
-   204			return sz;
-   205	
-   206		sz = stm_data_write(data, m, c, false, buf, count);
-   207	
-   208		/* TAIL */
-   209		if (sz > 0)
-   210			data->packet(data, m, c, STP_PACKET_FLAG,
-   211				STP_PACKET_TIMESTAMPED, 0, &nil);
-   212	
-   213		return sz;
-   214	}
-   215	
+   788	
+   789	static void ipvlan_snat_patch_tx_ipv6(struct ipvl_dev *ipvlan,
+   790					      struct sk_buff *skb)
+   791	{
+   792		struct ipv6hdr *ip6h;
+   793		struct icmp6hdr *icmph;
+   794		u8 icmp_option;
+   795		u8 *lladdr;
+   796		u16 ndsize;
+   797	
+   798		if (unlikely(!pskb_may_pull(skb, sizeof(*ip6h))))
+   799			return;
+   800	
+   801		if (ipv6_hdr(skb)->nexthdr != NEXTHDR_ICMP)
+   802			return;
+   803	
+   804		if (unlikely(!pskb_may_pull(skb, sizeof(*ip6h) + sizeof(*icmph))))
+   805			return;
+   806	
+   807		ip6h = ipv6_hdr(skb);
+   808		icmph = (struct icmp6hdr *)(ip6h + 1);
+   809	
+   810		/* Patch Source-LL for solicitation, Target-LL for advertisement */
+   811		if (icmph->icmp6_type == NDISC_NEIGHBOUR_SOLICITATION ||
+   812		    icmph->icmp6_type == NDISC_ROUTER_SOLICITATION)
+   813			icmp_option = ND_OPT_SOURCE_LL_ADDR;
+   814		else if (icmph->icmp6_type == NDISC_NEIGHBOUR_ADVERTISEMENT)
+   815			icmp_option = ND_OPT_TARGET_LL_ADDR;
+   816		else
+   817			return;
+   818	
+   819		ndsize = htons(ip6h->payload_len);
+   820		if (unlikely(!pskb_may_pull(skb, sizeof(*ip6h) + ndsize)))
+   821			return;
+   822	
+   823		lladdr = ipvlan_search_icmp6_ll_addr(skb, icmp_option);
+   824		if (!lladdr)
+   825			return;
+   826	
+   827		ether_addr_copy(lladdr, ipvlan->phy_dev->dev_addr);
+   828	
+   829		ip6h = ipv6_hdr(skb);
+   830		icmph = (struct icmp6hdr *)(ip6h + 1);
+   831		icmph->icmp6_cksum = 0;
+ > 832		icmph->icmp6_cksum = csum_ipv6_magic(&ip6h->saddr, &ip6h->daddr,
+   833						     ndsize,
+   834						     IPPROTO_ICMPV6,
+   835						     csum_partial(icmph,
+   836								  ndsize,
+   837								  0));
+   838		skb->ip_summed = CHECKSUM_COMPLETE;
+   839	}
+   840	#else
+   841	static void ipvlan_snat_patch_tx_ipv6(struct ipvl_dev *ipvlan,
+   842					      struct sk_buff *skb)
+   843	{
+   844	}
+   845	#endif
+   846	
 
 -- 
 0-DAY CI Kernel Test Service
