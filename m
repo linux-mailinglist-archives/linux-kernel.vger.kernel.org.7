@@ -1,135 +1,125 @@
-Return-Path: <linux-kernel+bounces-866745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A430C008C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:43:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E41C008D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:43:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 211444F993D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:43:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4599D4FD3E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4416630AACD;
-	Thu, 23 Oct 2025 10:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5379D3064BB;
+	Thu, 23 Oct 2025 10:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wg+2Fk1r"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GgtmlB1Q"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D803074B1
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4902319F115
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761216195; cv=none; b=g7htCzg3lkdHEQhtFAvjg0U9pd8L7BIdH0jIIIUY9Co7O/oxzDGRGqnhjdFIWmKkxo+xcdMrpQo97s55smWbhYWAVJsjyRPWPTm4+PAVzLuVnWX+1MhFuSkSnoFka+Q8q9k6ETDllaCQiOwXFEF7tOp6kKr4fuAfp+Bo1xlC3R8=
+	t=1761216209; cv=none; b=GNAR33KB7IHiC5gbKSS5QqKy5HCNR7ea1kyeJS9VvObEn0DRk0YaTZPDURfMCb/W22ToD0AVJcAmL0HiO0oE3BgKFYElU9kjYKNACqj5sGwS3qKnzd3BD+YV1jc55nlkeeo2hYTzdINSwuVeg0JCEWsTCbOYfEhuX6FwmXVEtxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761216195; c=relaxed/simple;
-	bh=PSq4rzHsTZYmnPW7B8CFsP6cGQe5nHJwDQGMbKTQhlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UAb5TWGGQPbyF4UQ7Oeg6YIq6GCB8OFffiUaFcBX7BwaLpifUy3WMs3mo5TD0ZUiYvDVdE0+X+N1TtkGbB7cH2HygaywoIizxSknG6nwy+/LYReiCPborQlnTd/JDf1osXogYv5jVwvlfL3Chie+HmiyJ1fBFUICcuMIrAopCjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wg+2Fk1r; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761216193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2itfR4P5vWlnhxtQmgFjh+n2XUI3sGLIeHL7uzBaLr4=;
-	b=Wg+2Fk1rKYh4Nd+M/CzDit32eSiJ1J4iqc5JTikhTBMrGq1XhZ94UM7xZ9XtrbozUj/euB
-	O0OYfsQbSuPiQhCtfI0XNwVVbdRcXl6+a3/VwooTDm2mPlB/TN6w7CejrLRC1SFiPXe+VD
-	RxviOo1BzUTCitWCVfF83WrS2MmTlPM=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-137-rrc4yReVPE22vYmNHi3_TQ-1; Thu, 23 Oct 2025 06:43:09 -0400
-X-MC-Unique: rrc4yReVPE22vYmNHi3_TQ-1
-X-Mimecast-MFC-AGG-ID: rrc4yReVPE22vYmNHi3_TQ_1761216189
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-429893e2905so472219f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:43:09 -0700 (PDT)
+	s=arc-20240116; t=1761216209; c=relaxed/simple;
+	bh=yfiZ/v4sjNEPealFn/6obw9kLQ8DcjpygkxhwfB5aQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iun23wa69ES5fU0e7AcBks2+6I7NHbDHYcnAH5KMZE7b0JAEvcBE8Cyixyw1qn7933WHzjRm0Ze9OwreDo5+Nz5l79EpSEToC4J7Jp16zpZgHLiBbhsltRggTtkMGUXc6cZD1OWyye429lxzo6UWa8l26pPXmp4B/yAdo07zwfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GgtmlB1Q; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b55517e74e3so615996a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:43:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761216207; x=1761821007; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oimtdy4jzaui5mD86nBtASLISt4Nnfmett/2NBvJrk4=;
+        b=GgtmlB1QZQNg5PWJMc9C5LDGB0XRumfVb4tvMDijqYHJyexYH3wNrYJ3bzl2x1SMTC
+         WHo5wca33LktR9OPfq6PYwLanBverSSm89YgO3hho44cKK2v1/6jRmkDfw8osCDItn7E
+         ZSqkHnkqUAH4yl/j1RuUKl3fMggBu5UBNuOpvMoJiqshxujT1whbl7DJCX8vvRXcbR9Q
+         wOVT6oWJROy/nMeAfgY6/Af/1OFTCMGrXuFfqNrrNQhBIx2zifmpVmwvqX4Kz5rUGCQW
+         y0ve86SzAYMBkbVGfp3BxUa1eAjSKmoVFPxpMWjhqJKQUd5CAh//PXjpNg0NORtcnI8E
+         ARiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761216188; x=1761820988;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2itfR4P5vWlnhxtQmgFjh+n2XUI3sGLIeHL7uzBaLr4=;
-        b=olwjkXKA0nEa9Wm/2pBanudQkqtWfEdhr1gYtCGE7/GEAluj21XgtHGT5hitoTfi+B
-         FFaDk5lAMSx7D75q1UdVxw7YPML6HmtTTSnuync2s7YbLOPwn2nYHrZ2BWvMXm+yTT0/
-         Ij3ln9b2ySh2Vc9lVFjlyag2vLM2gviOdrBuVbXu26yivXaUJAFrXJBqTRry9/CrmFH0
-         CTOrSakfB6BUbDFz0j4LbtihqD8ptI7SZcrevzb3Zw7hndSRFIlvXDg/yJDu+E7aemxF
-         61gZcwbCeLhA9FWUGvJRG0yYCHZ1iFLzZVQV0tPwcONS/cqXqnQAVf/ZWLF4oTpeZSvK
-         UX0g==
-X-Forwarded-Encrypted: i=1; AJvYcCX4ye9XxYcqOOCCOYM1/N1oRc1plh4Lqwbf2LHTB35Kp/PnLj7IogZgQueuj50i0Il1VjxtccHOU9mpnNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5Z7m2SE57wXcnNkpyrwW/GXhS18Cy6X+6qSoHmMxfAwyc+v5T
-	82FOrl3YxhAEGYQpLJMH9flqypHD5WU+Qiw9uD0EB1uchC3v5oQXGbk+TOtdDi9qeYXhdQJa7bp
-	bhRUoVEEILxq/Qqtsuw/UsPnBHth+fEfRUhjr2pPOw9/LjFgKohc8DIUNeTDNKSfEDw==
-X-Gm-Gg: ASbGnctqMRUT/2K7nSvRgyg/uCcyNJ1pASChRunNQIh2raLeOY6IROFqoDo5KzZfE29
-	IXyJREsVduKYh2eWCPLYBBcwTmKGozcZDC4Kbk+vCd5+ebK8rJVPv2EQWbKhjJEY9F6dogxpGNI
-	vUt0LgsL4Sthkvc+YjnVL8UIekpCpVkEylva5zssdC/yeBWuwHEm8WqU7mVHgzncA9fX71SApsW
-	x0hOSJklUgaVW06jIfXxGRFrlmpmaFlq6glk+pm1YSLthDir7m+zLbBJK8G/XnPFXRgtr7Wkubt
-	4evhy04WCjrxas8/xVwJATHMVPWwJXn28o6eHUcTcoWFfWrGHyC2UDgMZ5jQbELMac9s41oJOF+
-	bPi4FOVUk7I8lOVMSOiaoOjk+a/TIu1+sgkVmpFgZn5sAKKk=
-X-Received: by 2002:a05:600c:3b83:b0:46e:3d41:6001 with SMTP id 5b1f17b1804b1-47117925171mr243743995e9.34.1761216188616;
-        Thu, 23 Oct 2025 03:43:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHeZ82VrSnvpK1c3qyzIXLRxmMNdmjxKL2P/cuqpRB9ovXOV8FGWqUSGpOdh0UCletrBUBh+w==
-X-Received: by 2002:a05:600c:3b83:b0:46e:3d41:6001 with SMTP id 5b1f17b1804b1-47117925171mr243743745e9.34.1761216188204;
-        Thu, 23 Oct 2025 03:43:08 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475cae92067sm31140865e9.4.2025.10.23.03.43.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 03:43:07 -0700 (PDT)
-Message-ID: <268ee657-903a-4271-9e17-fcf1dc79b92c@redhat.com>
-Date: Thu, 23 Oct 2025 12:43:06 +0200
+        d=1e100.net; s=20230601; t=1761216207; x=1761821007;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oimtdy4jzaui5mD86nBtASLISt4Nnfmett/2NBvJrk4=;
+        b=Z9QgiFBQIisxzXRqItEpO4v3rZZO49z1HeJ1gscuVpteR5K3Ex2KXTAKJ2kCTQlobL
+         7jZfwKVdM2zJxyQHkG9a8QfEVdKGQkns2L8cndMEdZD0ZM3pMGQwP07V5FByh0BPPiPq
+         gYq9DQMBGe0f+fa0voOQvPXBnadMPK2owjjFes6hA0W87NZbGc873pO/zgXZLU1gIu+w
+         jKFmFz5mBtOMbvGzU5PBvKFE2V3wLGKpJftGwdEPl6A+i2S0HIwI+biKGzUYEJOD9IIQ
+         8z09EFFEYvPweDi8A2PwKAGuqaSqjJkAk9fhVEb4tB5NyiSICKr+8CsUTiI1O8vCZnoG
+         Zt5g==
+X-Gm-Message-State: AOJu0YwlyPAvtttZ3WGmn54j3HoJC7ecWnyllXsD29kIRqozXhCYs2Q2
+	X2tVFk2qoy+Z+tB+5dURJuYHmFKdpYgv+rdiq/7S3ViAcQX6R73TyS2L
+X-Gm-Gg: ASbGncuPdoZFLJGQnZJLMsxaDCZR0Nn3KN4ZKsfQumYuixKy5gzHe8CEEg7w2ygl/lA
+	//UKgL4jM/ecayrMlWHNsU8ojb1jug9qtoV4FhNTIH0pCTBRE5bYPYm62I1y1XztSGyaB9jlM00
+	9q0skaihupzqGSOU12frIVUwu5X3LU0Cgy1V1XjYsZNd3D/CU6vUhB/EYQyj+hPmFmd//pSpv2O
+	LKklsoSn++MND9HfhKx62H5sIsSHafK3pXASICgniy0GbA6eCaR2cT32a2YDwT1Ml+sZ5UyqPWM
+	I1b9agtWO26j2zrnLZ6JG58sNYinK04PXO7ii0fdu5i0tk+6tQkAnjQyca5YzWhtalqdgY2BC2O
+	j1RgR7pWgjArTpxqfFKIptzOlga0oTKm6wFJShSJFAmFai6HOF6wdCyLtVtIlsK2Z9tXjfPn4HC
+	cFpo8+KLFAW66UBVJgZ0g=
+X-Google-Smtp-Source: AGHT+IH/gs6+8CFlO2G87tCtAtLvUgrD/2n3++PXEeHzzYkJTjhzcKeN8bij7zgjnMAfHtOTCePOQg==
+X-Received: by 2002:a17:903:19e6:b0:267:d0fa:5f75 with SMTP id d9443c01a7336-290c9c8a5b0mr338020675ad.1.1761216207465;
+        Thu, 23 Oct 2025 03:43:27 -0700 (PDT)
+Received: from iku.. ([2401:4900:1c06:ef2:36b5:9454:6fa:e888])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946ddec426sm19240945ad.34.2025.10.23.03.43.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 03:43:26 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/2] SH-SCI serial driver code cleanup
+Date: Thu, 23 Oct 2025 11:43:11 +0100
+Message-ID: <20251023104313.210989-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/9] net: Add struct sockaddr_unspec for sockaddr of
- unknown length
-To: Kees Cook <kees@kernel.org>, Jakub Kicinski <kuba@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Simon Horman <horms@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>,
- Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20251020212125.make.115-kees@kernel.org>
- <20251020212639.1223484-1-kees@kernel.org>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20251020212639.1223484-1-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/20/25 11:26 PM, Kees Cook wrote:
-> Add flexible sockaddr structure to support addresses longer than the
-> traditional 14-byte struct sockaddr::sa_data limitation without
-> requiring the full 128-byte sa_data of struct sockaddr_storage. This
-> allows the network APIs to pass around a pointer to an object that
-> isn't lying to the compiler about how big it is, but must be accompanied
-> by its actual size as an additional parameter.
-> 
-> It's possible we may way to migrate to including the size with the
-> struct in the future, e.g.:
-> 
-> struct sockaddr_unspec {
-> 	u16 sa_data_len;
-> 	u16 sa_family;
-> 	u8  sa_data[] __counted_by(sa_data_len);
-> };
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Side note: sockaddr_unspec is possibly not the optimal name, as
-AF_UNSPEC has a specific meaning/semantic.
+Hi all,
 
-Name-wise, I think 'sockaddr_sized' would be better, but I agree with
-David the struct may cause unaligned access problems.
+This patch series contains two patches for the SH-SCI serial driver.
+The first patch sorts the include files alphabetically, which has no
+impact on code behavior. The second patch merges the contents of sh-sci.h
+into sh-sci.c to reduce file clutter and improve maintainability.
 
-/P
+v1->v2:
+- Sorted the include files alphabetically in the first patch.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  serial: sh-sci: Sort include files alphabetically
+  serial: sh-sci: Merge sh-sci.h into sh-sci.c
+
+ drivers/tty/serial/sh-sci.c | 184 +++++++++++++++++++++++++++++++++++-
+ drivers/tty/serial/sh-sci.h | 178 ----------------------------------
+ 2 files changed, 179 insertions(+), 183 deletions(-)
+ delete mode 100644 drivers/tty/serial/sh-sci.h
+
+-- 
+2.43.0
 
 
