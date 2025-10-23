@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-867822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A93C03918
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:40:36 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB46FC03922
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBAC84E7BF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:40:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 75BAA35B82C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60D5296BC3;
-	Thu, 23 Oct 2025 21:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B462E2C2358;
+	Thu, 23 Oct 2025 21:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBJKwggN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPOgB7Zb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7E6EEB3;
-	Thu, 23 Oct 2025 21:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157C12C0F81;
+	Thu, 23 Oct 2025 21:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761255627; cv=none; b=Tfki8JpZB25h8ZyFDSSIJuburjw/1ikKKQcl2E0My1jbNfd/ChPDuwoytt0qgNVL1STyWYpVAwOxa3tAgwCKlngvBLY9/UfWfI3uvemjaBO8pE8Ky9R029gXd79ieV2e1RzFAKSGhFAA3K3WHyePNFTLQFDY3/f1bEIQs/B3fOM=
+	t=1761255631; cv=none; b=TWMmO4wY0rXJ/NEHpNNR9lYOgwwJ0EPBamT1XYXsCF54XsIUchOe/qO5e1uJLNzO6v96QO4JPzq6zTt5cWJKFQWDu1t6md+scISNvDjLKYR6ynKHhg6/PvMfrSFO74asWERoePvtFoye2Sr4/TwHeTwrxF7lx7IYnKTPum/M7vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761255627; c=relaxed/simple;
-	bh=5qCzJg0hCt3HBb3QIW58eH+hgYTu6FwAxvg34Yv5VZo=;
+	s=arc-20240116; t=1761255631; c=relaxed/simple;
+	bh=d31fxEionGDqWxCah++7HR8uos8Wm0b0XhvSzDRCHT0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=BG/cJYsNUtkuO5k9l+fLjO2LCgV72AY8Y9/+4Vua1P4FymuHaJPKsOFCiAo55cDzouRfZkrsLsM+46kCXAkCPmIpATmwVOGnSD6XAlSpQV/z+O4er5wgeQ44c+B1lOReESu0F4yk/W8m4EgC2/fLHIZvRL5I/6fdjtSlkrneBKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBJKwggN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB27AC4CEE7;
-	Thu, 23 Oct 2025 21:40:26 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=LJicgvsnIP/cJIEKoQYjy+6bSn1BVlWYolebqSGXBo0vfgBkL780udKUdZVQ2C/WB9gxWbrKTT3MP5aRMECmUZn8l38Ctec0a69CeBpDg+fkhnC6CudnCn2s6NGti6HI0AyQPD24TR66Eg2D5rKrbo8AKnH/95I65407O/+ziJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPOgB7Zb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0A16C4CEE7;
+	Thu, 23 Oct 2025 21:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761255626;
-	bh=5qCzJg0hCt3HBb3QIW58eH+hgYTu6FwAxvg34Yv5VZo=;
+	s=k20201202; t=1761255630;
+	bh=d31fxEionGDqWxCah++7HR8uos8Wm0b0XhvSzDRCHT0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hBJKwggNlS5Z/APUyqIyD/y3+ODXl8giHzG1gqnyTHY6Kx57RGM/6Bv+Q+hNMOJsx
-	 zDGzvBYt9sYkNhQoz9P7Mq5aoI1w5n+wbOLQhWlYJHlROaaHm0GwS2ZB1p9r46g6TF
-	 fVkqgs1y2mkXPHJWVeypsX5K8S5DlGCGpkBd2eFNn3JsD1f9CbVE4dKINgGj22vkWC
-	 4hQLBnrCMLX7UFvzJ4Y3cIr2y7g8XIuKEev3HUd2iDuK4QpaBqtNRagn/WuAlzeyqZ
-	 XlU+BzVIciG55ec82SLKs7S+ObDRCYdigBA275Spv2uU5gLCLWCEbZcPtNde9jMKCq
-	 55dNZJhb5ITzA==
+	b=qPOgB7ZbFrY3w8SGFNGEVY3qHsgEQZBaVWStjO8GytPOCuGTs/29Yix86h+nZvfw4
+	 TlHBZgU1Hn+en1rzl/Qy8sbWF0La65GujMV1VETpdqkNL74GxoCPMjurny/1DPOOW/
+	 gL0y6gsoWHQwS/kpdiCbkxKympGWiq3aKltAFsVm6AjC2kMH7lFQ2+lCKRrRB8ENLP
+	 NB3s98if5mblIB7UGVc8x2+h7QKECOcv4BxXpax3MgVw6g2+MkVdwSkqkNAa8aOF5J
+	 zKgVWeIa3OMC3KiDXzFVGWgY+utRJCsdNQS/zaajam7/I3VSpaDMkwaU7kZ0pcZKVv
+	 L1neGlxRyU+rg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B33380A960;
-	Thu, 23 Oct 2025 21:40:08 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D41380A960;
+	Thu, 23 Oct 2025 21:40:12 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,44 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: fix corruption in h4_recv_buf() after cleanup
+Subject: Re: [PATCH v2] Bluetooth: rfcomm: fix modem control handling
 From: patchwork-bot+bluetooth@kernel.org
 Message-Id: 
- <176125560702.3260295.10385824633115850837.git-patchwork-notify@kernel.org>
-Date: Thu, 23 Oct 2025 21:40:07 +0000
-References: 
- <ab6fa50055fa0c39e5501c123c36e662eb48ae61.1761245114.git.calvin@wbinvd.org>
-In-Reply-To: 
- <ab6fa50055fa0c39e5501c123c36e662eb48ae61.1761245114.git.calvin@wbinvd.org>
-To: Calvin Owens <calvin@wbinvd.org>
-Cc: linux-kernel@vger.kernel.org, marcel@holtmann.org, luiz.dentz@gmail.com,
- sean.wang@mediatek.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, amitkumar.karwar@nxp.com,
- neeraj.sanjaykale@nxp.com, yang.li@amlogic.com, pmenzel@molgen.mpg.de,
- linux-bluetooth@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- francesco@valla.it
+ <176125561099.3260295.2414265996830531276.git-patchwork-notify@kernel.org>
+Date: Thu, 23 Oct 2025 21:40:10 +0000
+References: <20251023120530.5685-1-johan@kernel.org>
+In-Reply-To: <20251023120530.5685-1-johan@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: luiz.dentz@gmail.com, marcel@holtmann.org, johan.hedberg@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
 
 Hello:
 
 This patch was applied to bluetooth/bluetooth-next.git (master)
 by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-On Thu, 23 Oct 2025 11:47:19 -0700 you wrote:
-> Thanks to Francesco Valla's investigation, the reason for the duplicate
-> code I recently cleaned up is finally clear: a different structure is
-> stored in drvdata for the drivers which used that duplicate function,
-> but h4_recv_buf() assumes drvdata is always an hci_uart structure.
+On Thu, 23 Oct 2025 14:05:30 +0200 you wrote:
+> The RFCOMM driver confuses the local and remote modem control signals,
+> which specifically means that the reported DTR and RTS state will
+> instead reflect the remote end (i.e. DSR and CTS).
 > 
-> Consequently, alignment and padding are now randomly corrupted for
-> btmtkuart, btnxpuart, and bpa10x in h4_recv_buf(), causing erratic
-> breakage.
+> This issue dates back to the original driver (and a follow-on update)
+> merged in 2002, which resulted in a non-standard implementation of
+> TIOCMSET that allowed controlling also the TS07.10 IC and DV signals by
+> mapping them to the RI and DCD input flags, while TIOCMGET failed to
+> return the actual state of DTR and RTS.
 > 
 > [...]
 
 Here is the summary with links:
-  - Bluetooth: fix corruption in h4_recv_buf() after cleanup
-    https://git.kernel.org/bluetooth/bluetooth-next/c/1aaa18cc80c5
+  - [v2] Bluetooth: rfcomm: fix modem control handling
+    https://git.kernel.org/bluetooth/bluetooth-next/c/8d2c47aeb078
 
 You are awesome, thank you!
 -- 
