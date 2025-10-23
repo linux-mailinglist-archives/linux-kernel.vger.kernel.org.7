@@ -1,166 +1,188 @@
-Return-Path: <linux-kernel+bounces-866124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B18DBFEF0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:34:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68FEBBFEF25
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEBA119C458F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:34:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30E694F0515
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB073B1BF;
-	Thu, 23 Oct 2025 02:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E66D212572;
+	Thu, 23 Oct 2025 02:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="p05JYWE/"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010051.outbound.protection.outlook.com [52.101.61.51])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C8mjLTBe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A711A28E00
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761186854; cv=fail; b=r+F73t/GNcCI5xSyT54mqJdTKbpuO+vcU3bU8nDhHCAHDOcWcBEUaiDZTs0Dl8X20Uybv076zaUOdEDvu9h1KKIrq5KZf6oYU3/mPg/yI3Y2VLy+2t8flxz0jLi2HiC4i9FdvpWgOvrD1fWffVw1om4KdoYi2+TiDLAnQ1RZbvc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761186854; c=relaxed/simple;
-	bh=ekd7TVev7ZKV9iODsnb1MrkOrWElbz5jnhjMsMOsNfM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TiUQwclpgnQsVCIqNKQeNQHillAVnV2AAun22Y98Ho/g+OAbN9zTTEYGXeCPPFfGF92mtrhWaaDqE93kIw54vNM6pX7S7dC0pwUYjQGLqMrYfyLrG12XlQP7M93SXQ4y+AFQ08MW6GgnkjjxBbptl1dHXv7zTYrGO6M97SrU+2I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=p05JYWE/; arc=fail smtp.client-ip=52.101.61.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bBkVzB6/B4PVCijJd3v6JXCocGbHoonncs+5Mwm/BKj1xapH5OX3cQzFFr1hCBJitiYNmIjdWFIpTEJlSAC5+j+ONWK3IYr9fFkNhNfj+fOrLU42MR8gkWGov1olFVV/4aa8EYiES9udn89C7xtl9GjxEz69VISDwG6Xk0VJuvj0Eb/Ao+frHxa8romE3KUD0dnzzIT2e6Gv8CD2iDNxoW2EBp7LiSCDoEdNiEh7KZ96n6oUr2ynabSAevieiUkV+NmnoqUyKXkT3lixtqfV8OV6M2b+6zP0iRQ4RMLwjOtkqDKoN1sDdNxipbYTg4tmF9prk0DJ6ohrweEjojAFaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2TYLufM5miJya5tRdQOWx4jbp67jsRCxBjSkSqRwlTc=;
- b=ycXl5Q4xQqoKlVGeiPWafZf3sG+9SOJ0/YB4msG4dW8pD7MV4iSCumES0NvLhxOFfbgjLZw4UqxDlhNOxtD8jr3N9WCvssLGo3LCFevn4xg8rt5oyF5jrR/vJyj2r14HgS1J/dqnzsHcJkX9Po9PI3IWnJQ7RmA3Hqvkrh8GWbrDtBfrsm/5+ZSDzU1k19xkzosf2HM45MfCkuI+eGE8BT8BvwoMWe62G+UG11n5CEYCr3wZla9nrrEwkO4K4LfiF3RjMKF6gYKCB2Vc2Nx0NdhAwPLtsvNz27NJwUXdygqL5xZLBF+6qv8EwXdwSRXvRKBSpGiVRfbmosBXi1+L2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2TYLufM5miJya5tRdQOWx4jbp67jsRCxBjSkSqRwlTc=;
- b=p05JYWE/HrFaIkrxN/AsK7kQ7h+jEbcq837P+Bg6jLdQrweiDBIXiQHF77zbuc20d3n8VDGc4AZiUX90Y+M1q1JKxOHfN2Yy5II7GZUA265rZmD2HJsvvNJwvck0dKbUyF1Ysr8ke7zz74vOibMfXkyKD5muPy4F5JOKnxPJ3LQ2zkhrjAAlFEGITiUAnWATAGRR9asb1ZdJTzVZG2/e1BogmY7sOLu5XXx8Li/5F/8TT46Tw3Y3tPE0jUTvtlNd57RXnY3oS7osz2zqX5w/1SyxRtQ4hjaYdF64LZYugVz5RW71yhVDcv5w53UH4Pgb/KXGD39EgaRyCksjRjyR0Q==
-Received: from CH0PR13CA0059.namprd13.prod.outlook.com (2603:10b6:610:b2::34)
- by PH7PR12MB7209.namprd12.prod.outlook.com (2603:10b6:510:204::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
- 2025 02:34:08 +0000
-Received: from CH1PEPF0000A346.namprd04.prod.outlook.com
- (2603:10b6:610:b2:cafe::cf) by CH0PR13CA0059.outlook.office365.com
- (2603:10b6:610:b2::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.11 via Frontend Transport; Thu,
- 23 Oct 2025 02:34:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CH1PEPF0000A346.mail.protection.outlook.com (10.167.244.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Thu, 23 Oct 2025 02:34:08 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 22 Oct
- 2025 19:33:54 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Oct
- 2025 19:33:54 -0700
-Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 22 Oct 2025 19:33:52 -0700
-Date: Wed, 22 Oct 2025 19:33:51 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-CC: <jgg@nvidia.com>, <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>,
-	<will@kernel.org>, <joro@8bytes.org>, <kevin.tian@intel.com>,
-	<jsnitsel@redhat.com>, <vasant.hegde@amd.com>, <iommu@lists.linux.dev>,
-	<santosh.shukla@amd.com>, <sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
-	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
-	<gptran@google.com>, <kpsingh@google.com>, <joao.m.martins@oracle.com>,
-	<alejandro.j.jimenez@oracle.com>
-Subject: Re: [PATCH v4 11/16] iommu/amd: Introduce struct amd_iommu_viommu
-Message-ID: <aPmUD3U764IPo/et@Asurada-Nvidia>
-References: <20251021014324.5837-1-suravee.suthikulpanit@amd.com>
- <20251021014324.5837-12-suravee.suthikulpanit@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9264E1DF25C;
+	Thu, 23 Oct 2025 02:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761187057; cv=none; b=CzAsxH7CwuyuyHJFultIpPCyTo5OHGpiQbkqeP8DdL6V/T06KJdypWBV/Z1fh34ZT/d5yJPvLXWa8/GR54v1MrJvquhKLvC0vM/NScFpmNsh2YOZ1VbDCZ9A6CNwY49gUW88zTxt8WxoKeqNfbrWNnZQ9SzAwxVw9Y45o7kBQ5I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761187057; c=relaxed/simple;
+	bh=a04xsGAxcdRE8nZTquzK8pJgFqX3dH8uKYpzLxfIqJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JP2fRtZi1wd2RkRL8MZVrRsix22b2+958iaVQ8lrx+xaFOjmdmDBtxLeYwt63FNgbzI/uf3YTrrN6qdePoKJ1BxTbdXOmzWAhGV1/6SNwIaDZ+gRCRx6jW5clg6ZvhpL5C3KrWdSHYvUYbrG2F+SBuDekPj+0l5XxzgMeNsqZkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C8mjLTBe; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761187056; x=1792723056;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=a04xsGAxcdRE8nZTquzK8pJgFqX3dH8uKYpzLxfIqJ0=;
+  b=C8mjLTBeKffgML39QhcrQZYiz7Fh6Fxy3CHfwfLkn7iseP93/npJs3Lv
+   nI0sS7vNqcZ0ugu6Xkn3urJJlF4L06A9Es5qL3uuyQlKv84leXarjNbgM
+   1fG7K15hr2CvmVZFmG0MNthrBBgzG08uQkLpeBXmYBfTKGBe9Pqs+sf1A
+   UsDxSbPKotJ2yjJQLGPe/oOqyoRZX++QhzFRLxuE9FUDO43dygij3UOJQ
+   713vShLlFLiMtwy2P8sjxHUGDc3toc/PN92cVBnZNrMPAkIT8I9u3nRWL
+   euovsYAcERtXFZ1xjnlhEBna4yjp+PE8G6CfLeNLJI7d+YfqU9mK+htMw
+   Q==;
+X-CSE-ConnectionGUID: Af07XFECR7KYmIl+xsXs4w==
+X-CSE-MsgGUID: udtlu95GQKiHsoxTIFv1ew==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73636505"
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="73636505"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 19:37:35 -0700
+X-CSE-ConnectionGUID: w8GzWDQITKWBdVZbpWT5Dg==
+X-CSE-MsgGUID: bZ+I8jKrSOyESyQvDRZh5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="183966486"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 22 Oct 2025 19:37:32 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBlCg-000Cwb-0H;
+	Thu, 23 Oct 2025 02:37:27 +0000
+Date: Thu, 23 Oct 2025 10:36:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Siddharth Nayyar <sidnayyar@google.com>, petr.pavlu@suse.com
+Cc: oe-kbuild-all@lists.linux.dev, arnd@arndb.de,
+	linux-arch@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	mcgrof@kernel.org, nathan@kernel.org, nicolas.schier@linux.dev,
+	samitolvanen@google.com, sidnayyar@google.com, maennich@google.com,
+	gprocida@google.com
+Subject: Re: [PATCH v2 10/10] module loader: enforce symbol import protection
+Message-ID: <202510231021.yaURwkIz-lkp@intel.com>
+References: <20251013153918.2206045-11-sidnayyar@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251021014324.5837-12-suravee.suthikulpanit@amd.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A346:EE_|PH7PR12MB7209:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7ce11ae-74ef-4664-ed47-08de11dca496
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?va9EsNL92SjxyDnGmuUFR0YnXQc4PDf8JyiyhIXfzpodbykI2xumqtrCu+M9?=
- =?us-ascii?Q?RrsjJtoD/XfD40CDGOfw6Q8XRMqvof6/rkTHa2hxHICFnLUrC3JnQSgTuA0Z?=
- =?us-ascii?Q?fv4VglXS42ZIYPlUamshd3d6jmpvgARKfhPjKOSeAPn2d0E5BrqBtvudtOBi?=
- =?us-ascii?Q?cXi7rJkcI7Pcv3WYhVtJNbBI5t7XU+7Iy7zCZmCNNmW9FxGlFdeaAOqJcD9a?=
- =?us-ascii?Q?Otw75sapWyXH7w/s0OZksh7+jIWG230FYvYFkM3MSYzTlpSE5jkH2WdnEGZQ?=
- =?us-ascii?Q?8IoTPjlZIm7j3QFvwaEEdC9/hv9GTqHmH/Q2leJ+9Hi8nri2OzWZeH8bqB32?=
- =?us-ascii?Q?AD18LKa/aPqZ+K1QcpK4BxSwxKArDBtAQ1aHM6xmtD1aS+4IPgzU1skqHYXK?=
- =?us-ascii?Q?OtWN5NJBCKtLR51YbzsCj648+3SiMXGtPJRKraw7YdLf2LOilpq4hb0/F6RF?=
- =?us-ascii?Q?ztXwoVzPMysNM4T6Nsia0hfgX1cWC/gumtCKgFWpg0GxJE9n8UWEAqku4gEI?=
- =?us-ascii?Q?cEkmdmfFujlQcILP4lwTPvl3yDCo8HaS18P9NcN4D9wU6mkGd4KWtU7+36Vl?=
- =?us-ascii?Q?V1tZqLSAMdzzsJl3UrFKaOZfGlIzZcxdTw30Iama4Qh1g+Y0ydID+BldZwDe?=
- =?us-ascii?Q?o+zqHPVHMOhF1UAerxsNXzI9Hms8cPg2AGs5siMGh0CAWc/ngdl2mKu2zXz4?=
- =?us-ascii?Q?818DhWLjSxM5XFP9BZhaoEnDW731WrK3mMYm30OX6kGITnqsRO/TOloh22FU?=
- =?us-ascii?Q?PSHpRNEL9asYwGoWeZIhuuSmbqXBtAuE/s+p7rLaKQh1/pVkK80MJsoX9PBi?=
- =?us-ascii?Q?8xX5fuFOf17KYWJUnPv1Gh8USM2HyGFucKmkLYO3g9scwneBiiwmFZUVtxMf?=
- =?us-ascii?Q?GWaCN1ouO03bOKRs12ULKUanFgi3JxMRfJT+Mif4x444NSGn3nsMY46mgUI2?=
- =?us-ascii?Q?FBODPk2Z8sfPFB3Bh3c9SKQGHG9AHDwamgth/CCk4wZhtZiMGuX83nDrnFJS?=
- =?us-ascii?Q?utKpIBkoMaVc7N1YrxGdLIyudbykVsZPNnauPnugf5spCMSjubhxW1WYbG2U?=
- =?us-ascii?Q?3lqclSjwYvwuFwQHD0sMFh+3LrbvNXv/WNBhcsmQDSEZYBuRNhQx3HBTNMop?=
- =?us-ascii?Q?NmtxyZlyaOzeF9rwtonv5lYno3eAD8Cc3AHKu3kyaaQL7s0mK9ts+mvQ0OxP?=
- =?us-ascii?Q?4xU7VZ+5odJFBdkysfQ9vNB6PGW9gZk96mwru/2dCM+HmxTBFk+d1a51895H?=
- =?us-ascii?Q?olLlYgUIAGS82D27cmUldD1vLVCEEEmdR7tVHkdl70t7Jp9Q+Pe8DxYRctaO?=
- =?us-ascii?Q?gY4QB+REPfa9pP8Rt/DlNTgbDNKeyiJV76+pH2XYPYuT7CqKdjm3PBLbZuU1?=
- =?us-ascii?Q?Q4rP4jQjUzD5OV+dHrYjdiVbAFUD1V0eJvjsdk77JFYZQuiR3Cc0k7a8tSvN?=
- =?us-ascii?Q?I8iL7BoqygECyO+hj7XXeBniBlApAnXU6LYn+2mVE8ehBKCq1YHiszaPQvnZ?=
- =?us-ascii?Q?PcIfqpnqs1AdQLSgnUCqt0kfoxJ1CssVEICcwkJWHilksRrvV9Lvtzazl0X2?=
- =?us-ascii?Q?oxhoKvF/G/Atla9wr/8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 02:34:08.3508
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7ce11ae-74ef-4664-ed47-08de11dca496
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A346.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7209
+In-Reply-To: <20251013153918.2206045-11-sidnayyar@google.com>
 
-On Tue, Oct 21, 2025 at 01:43:19AM +0000, Suravee Suthikulpanit wrote:
-> Which stores reference to nested parent domain assigned during the call to
-> struct iommu_ops.viommu_init(). Information in the nest parent is needed
-> when setting up the nested translation.
-> 
-> Note that the viommu initialization will be introduced in subsequent
-> commit.
-> 
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Hi Siddharth,
 
-Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on arnd-asm-generic/master]
+[also build test ERROR on soc/for-next linus/master v6.18-rc2 next-20251022]
+[cannot apply to mcgrof/modules-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Siddharth-Nayyar/define-kernel-symbol-flags/20251021-104658
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
+patch link:    https://lore.kernel.org/r/20251013153918.2206045-11-sidnayyar%40google.com
+patch subject: [PATCH v2 10/10] module loader: enforce symbol import protection
+config: x86_64-randconfig-122-20251022 (https://download.01.org/0day-ci/archive/20251023/202510231021.yaURwkIz-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251023/202510231021.yaURwkIz-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510231021.yaURwkIz-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   kernel/module/main.c: In function 'resolve_symbol':
+>> kernel/module/main.c:1271:37: error: 'struct module' has no member named 'sig_ok'
+    1271 |         if (fsa.is_protected && !mod->sig_ok) {
+         |                                     ^~
+
+
+vim +1271 kernel/module/main.c
+
+  1228	
+  1229	/* Resolve a symbol for this module.  I.e. if we find one, record usage. */
+  1230	static const struct kernel_symbol *resolve_symbol(struct module *mod,
+  1231							  const struct load_info *info,
+  1232							  const char *name,
+  1233							  char ownername[])
+  1234	{
+  1235		struct find_symbol_arg fsa = {
+  1236			.name	= name,
+  1237			.gplok	= !(mod->taints & (1 << TAINT_PROPRIETARY_MODULE)),
+  1238			.warn	= true,
+  1239		};
+  1240		int err;
+  1241	
+  1242		/*
+  1243		 * The module_mutex should not be a heavily contended lock;
+  1244		 * if we get the occasional sleep here, we'll go an extra iteration
+  1245		 * in the wait_event_interruptible(), which is harmless.
+  1246		 */
+  1247		sched_annotate_sleep();
+  1248		mutex_lock(&module_mutex);
+  1249		if (!find_symbol(&fsa))
+  1250			goto unlock;
+  1251	
+  1252		if (fsa.license == GPL_ONLY)
+  1253			mod->using_gplonly_symbols = true;
+  1254	
+  1255		if (!inherit_taint(mod, fsa.owner, name)) {
+  1256			fsa.sym = NULL;
+  1257			goto getname;
+  1258		}
+  1259	
+  1260		if (!check_version(info, name, mod, fsa.crc)) {
+  1261			fsa.sym = ERR_PTR(-EINVAL);
+  1262			goto getname;
+  1263		}
+  1264	
+  1265		err = verify_namespace_is_imported(info, fsa.sym, mod);
+  1266		if (err) {
+  1267			fsa.sym = ERR_PTR(err);
+  1268			goto getname;
+  1269		}
+  1270	
+> 1271		if (fsa.is_protected && !mod->sig_ok) {
+  1272			pr_warn("%s: Cannot use protected symbol %s\n",
+  1273				mod->name, name);
+  1274			fsa.sym = ERR_PTR(-EACCES);
+  1275			goto getname;
+  1276		}
+  1277	
+  1278		err = ref_module(mod, fsa.owner);
+  1279		if (err) {
+  1280			fsa.sym = ERR_PTR(err);
+  1281			goto getname;
+  1282		}
+  1283	
+  1284	getname:
+  1285		/* We must make copy under the lock if we failed to get ref. */
+  1286		strscpy(ownername, module_name(fsa.owner), MODULE_NAME_LEN);
+  1287	unlock:
+  1288		mutex_unlock(&module_mutex);
+  1289		return fsa.sym;
+  1290	}
+  1291	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
