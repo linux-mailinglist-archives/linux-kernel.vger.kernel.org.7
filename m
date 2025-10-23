@@ -1,56 +1,61 @@
-Return-Path: <linux-kernel+bounces-867374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D96C0270D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:26:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA972C026C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70C6A3B0453
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:25:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 63F584E538B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E671D337118;
-	Thu, 23 Oct 2025 16:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1542D29D7;
+	Thu, 23 Oct 2025 16:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PnZNrSW6"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ow5itVTp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8582D9795
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B792D24B7;
+	Thu, 23 Oct 2025 16:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761236606; cv=none; b=DxrFQfI+h6nGtzPjR847/ydWk1pxb498t+bE8owzCh6DDlb7ZzeWbPt/8bqo4U7qWXznzI14E1GH5wdfiv0okMDH39kuZNrMhT8waCrCJ+BodmkvOPxfPMzurJ/gmi/aPXXt/BpmpwwuChRVCQCCVV2QgidXRLAKYtRTUGgo7rw=
+	t=1761236583; cv=none; b=Da3F35HM/Qf1EEXxG4EHJ01xxWiTHGnsUpFTjG/DfJFS1Id5kEEpx8uIhKRVc7KJ3vxORp/ctOPyix6KwLlkjk99vwe6Lh7+6G0sZoATSSqegJvQtiRjgy1qq9MPg4qvkWAE3AkhG1hWOsmWkqbtGxWN6r4tEtPwxQbvfdNIjPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761236606; c=relaxed/simple;
-	bh=BoI04ne66BgdO6RQx8tLnItxQ9eDqwU1DrU84iIL4D8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WUKUX5uWXKmpkfwL3hBSEmIXLxQHqnO3tupba6YEz3ug4fecKpKPzsXwIaWlvN3EgcizJIcWbca3ZqILgy8ilzeD5eRer7uI0sMlOYd5AqTiwkjsTiVlmE8UzxITxzGhrCdIWp60cxEUENoSm2e85xqfPpOgrufUote8bc87qRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PnZNrSW6; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id A75224E412B0;
-	Thu, 23 Oct 2025 16:23:22 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7E275606DE;
-	Thu, 23 Oct 2025 16:23:22 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 50C5F102F2475;
-	Thu, 23 Oct 2025 18:23:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761236601; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ZJv3iwv2xhtLbUdm9xnAIqJx8pCFt3cC26JBlEGXT88=;
-	b=PnZNrSW6hlNuyaCxQD0TaSMfii29T1liLZdhZfgXwf3EEcPRWeRETPPMAKz2//807EQBkv
-	MvsTg+4Kk26ZQDIvB8HX6WKG0BXY27xHD+PW6UhgWjGyZsq9DH/y0+5q99zevUaR+fX7Vu
-	aCtqBK9JwqzDO4/DumTh6iW/gm22JGlfmzoUdzEvS5coJq08hUun7uyBEcX73ySQntomSf
-	SAiDWTi6VglIK8NICve4GYgNtSFaYAIVJSARB9jcpD6qoArcylR5hF5/OFh6KoeRM2C/Hk
-	tHQpohCaStWu6N77Nr8XbVV44WhPPLRzy7YtkHPG+poT/1Buzx8x4yp8FBxCqw==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Thu, 23 Oct 2025 18:22:55 +0200
-Subject: [PATCH net-next v3 5/5] net: macb: Add "mobileye,eyeq5-gem"
- compatible
+	s=arc-20240116; t=1761236583; c=relaxed/simple;
+	bh=9r3j3AdTVU/kmy3Ei2mYw+5H98mhIV0hwNGa4uA1cuk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=awa0pTuzMXuUF6+Tfci564qaZ8XqdL193DKwsIIanqPuv3XWXOw3YUxd5fxhTCkaE4q5rh1TfFWS/ahRuJpX9IMLdFEAfC6jqGCaw1L8Z7+edayJc5EYRyTZ7cC9NRGxIHcoKF8c5H15YuDqlBLDkvk8fyb/0qTXVM+Fg0R+6QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ow5itVTp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D16A4C4CEE7;
+	Thu, 23 Oct 2025 16:23:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761236583;
+	bh=9r3j3AdTVU/kmy3Ei2mYw+5H98mhIV0hwNGa4uA1cuk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ow5itVTpWEXEl5jGmJPSTd1he04pO71nS4NsNyjILWkXtafwP815F24tCakR/horx
+	 v3gt5FRJy9ROrIUIk03zAG9dt3yKDLC8topbduMH1ZEC6KJoWapUdi1Hz4btffjbAh
+	 fi8nnvdJQkZISDjYFcNkAR1yYRaVlnzjVVsVGUqTsg91Zl1JM4YqfqPGovHLRtBi/u
+	 QagBn7cocQAMbxdo2KJATVif4LydD1hq0TcUv9+cfd9eeHUS+x2jllsSTkDKHwn+c4
+	 OLDtDOI3FFut1iJVCWlJ1NkXen9kQsYfe3eeQ8PZuRt6+9ZroHmOt8qvu876UyEEcg
+	 hXcuQxKaVHDbg==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, aiqun.yu@oss.qualcomm.com, 
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
+ yijie.yang@oss.qualcomm.com, 
+ Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+In-Reply-To: <20250924-knp-regulator-v1-0-d9cde9a98a44@oss.qualcomm.com>
+References: <20250924-knp-regulator-v1-0-d9cde9a98a44@oss.qualcomm.com>
+Subject: Re: [PATCH 0/2] Add rpmh regulator support for Kaanapali
+Message-Id: <176123658056.145979.6028101761014548543.b4-ty@kernel.org>
+Date: Thu, 23 Oct 2025 17:23:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,127 +63,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251023-macb-eyeq5-v3-5-af509422c204@bootlin.com>
-References: <20251023-macb-eyeq5-v3-0-af509422c204@bootlin.com>
-In-Reply-To: <20251023-macb-eyeq5-v3-0-af509422c204@bootlin.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Russell King <linux@armlinux.org.uk>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Beno=C3=AEt_Monin?= <benoit.monin@bootlin.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-88d78
 
-Add support for the two GEM instances inside Mobileye EyeQ5 SoCs, using
-compatible "mobileye,eyeq5-gem". With it, add a custom init sequence
-that must grab a generic PHY and initialise it.
+On Wed, 24 Sep 2025 16:30:46 -0700, Jingyi Wang wrote:
+> Add rpmh regulator support for Kaanapali by adding PMR735D PMIC.
+> 
+> dependency:
+> https://lore.kernel.org/all/20250916-glymur-rpmh-regulator-driver-v2-0-c6593ff9b4be@oss.qualcomm.com/#t
+> 
+> 
 
-We use bp->phy in both RGMII and SGMII cases. Tell our mode by adding a
-phy_set_mode_ext() during macb_open(), before phy_power_on(). We are
-the first users of bp->phy that use it in non-SGMII cases.
+Applied to
 
-The phy_set_mode_ext() call is made unconditionally. It cannot cause
-issues on platforms where !bp->phy or !bp->phy->ops->set_mode as, in
-those cases, the call is a no-op (returning zero). From reading
-upstream DTS, we can figure out that no platform has a bp->phy and a
-PHY driver that has a .set_mode() implementation:
- - cdns,zynqmp-gem: no DTS upstream.
- - microchip,mpfs-macb: microchip/mpfs.dtsi, &mac0..1, no PHY attached.
- - xlnx,versal-gem: xilinx/versal-net.dtsi, &gem0..1, no PHY attached.
- - xlnx,zynqmp-gem: xilinx/zynqmp.dtsi, &gem0..3, PHY attached to
-   drivers/phy/xilinx/phy-zynqmp.c which has no .set_mode().
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- drivers/net/ethernet/cadence/macb_main.c | 38 ++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+Thanks!
 
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 44188e7eee56..b1ed98d9c438 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -2965,6 +2965,10 @@ static int macb_open(struct net_device *dev)
- 
- 	macb_init_hw(bp);
- 
-+	err = phy_set_mode_ext(bp->phy, PHY_MODE_ETHERNET, bp->phy_interface);
-+	if (err)
-+		goto reset_hw;
-+
- 	err = phy_power_on(bp->phy);
- 	if (err)
- 		goto reset_hw;
-@@ -5189,6 +5193,28 @@ static int init_reset_optional(struct platform_device *pdev)
- 	return ret;
- }
- 
-+static int eyeq5_init(struct platform_device *pdev)
-+{
-+	struct net_device *netdev = platform_get_drvdata(pdev);
-+	struct macb *bp = netdev_priv(netdev);
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	bp->phy = devm_phy_get(dev, NULL);
-+	if (IS_ERR(bp->phy))
-+		return dev_err_probe(dev, PTR_ERR(bp->phy),
-+				     "failed to get PHY\n");
-+
-+	ret = phy_init(bp->phy);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to init PHY\n");
-+
-+	ret = macb_init(pdev);
-+	if (ret)
-+		phy_exit(bp->phy);
-+	return ret;
-+}
-+
- static const struct macb_usrio_config sama7g5_usrio = {
- 	.mii = 0,
- 	.rmii = 1,
-@@ -5343,6 +5369,17 @@ static const struct macb_config versal_config = {
- 	.usrio = &macb_default_usrio,
- };
- 
-+static const struct macb_config eyeq5_config = {
-+	.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE | MACB_CAPS_JUMBO |
-+		MACB_CAPS_GEM_HAS_PTP | MACB_CAPS_QUEUE_DISABLE |
-+		MACB_CAPS_NO_LSO,
-+	.dma_burst_length = 16,
-+	.clk_init = macb_clk_init,
-+	.init = eyeq5_init,
-+	.jumbo_max_len = 10240,
-+	.usrio = &macb_default_usrio,
-+};
-+
- static const struct macb_config raspberrypi_rp1_config = {
- 	.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE | MACB_CAPS_CLK_HW_CHG |
- 		MACB_CAPS_JUMBO |
-@@ -5374,6 +5411,7 @@ static const struct of_device_id macb_dt_ids[] = {
- 	{ .compatible = "microchip,mpfs-macb", .data = &mpfs_config },
- 	{ .compatible = "microchip,sama7g5-gem", .data = &sama7g5_gem_config },
- 	{ .compatible = "microchip,sama7g5-emac", .data = &sama7g5_emac_config },
-+	{ .compatible = "mobileye,eyeq5-gem", .data = &eyeq5_config },
- 	{ .compatible = "raspberrypi,rp1-gem", .data = &raspberrypi_rp1_config },
- 	{ .compatible = "xlnx,zynqmp-gem", .data = &zynqmp_config},
- 	{ .compatible = "xlnx,zynq-gem", .data = &zynq_config },
+[1/2] regulator: dt-bindings: qcom,rpmh: Add support for PMR735D
+      commit: f76dbe127f1b5910e37dfe307d2de5c13d61ed89
+[2/2] regulator: rpmh-regulator: Add RPMH regulator support for PMR735D
+      commit: d054cc3a2ccfb19484f3b54d69b6e416832dc8f4
 
--- 
-2.51.1
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
