@@ -1,131 +1,138 @@
-Return-Path: <linux-kernel+bounces-866493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F70BFFE8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 820AABFFEAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 472754FEF3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:26:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 26869500517
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8426F2F83A2;
-	Thu, 23 Oct 2025 08:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4062F3611;
+	Thu, 23 Oct 2025 08:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JZ56sywL"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h4nDh4zT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EB82F3611
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DE62F39C3;
+	Thu, 23 Oct 2025 08:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761207986; cv=none; b=jjFuzPvM38KafdaqzGkm98l94JzmQKXxOzJcT9peNMKgEZLHVEilRtwXWpYn+FYWpVkZug7NLcObhYa1BWH2gaMwbZ6i4BHN9vdViV4M/nVbO3loNXwce50kGPQFtIHTnToXH0+j60Whj+b1tMRER9984StVhwegwHzsQPsYEbo=
+	t=1761208006; cv=none; b=HxxE0A2UErv1co139FKV9zjBnz3ZNNglrK2Nh8Aw/UASkDb35NPmmkW5jPnOHov5ogud1/YXOATH531T1IRC4NQDD0ETqGEvLTRQp8iuix+9OY/45Q4ZO8ZJ8gHuk6GN8OAebFdqOWSZ2kJ6SEIVSmQiDqOwWe5QeFMb6q4nLwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761207986; c=relaxed/simple;
-	bh=9Fg3vMFXwJtcWe+pZJoXoz30yGJyrxHbyL+TfUSepZk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XavNZ++Fd1bPAu8kNzIbpWmyAmKig1FyhWEzPeuPAqVXOpLTA9Tjne+UhMclyS6b2Q4VCSyAmIu5ubrjU0igeEjeMP4COFY6ZE02Zy+ksveBlJv8ipD4yGhfdQkV0Oz/Gvvom+I5u3DcgGrUsvmny7YOMgcYLneospReohOfhzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JZ56sywL; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-47113dcc15dso2537715e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:26:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761207983; x=1761812783; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pF3XqRoNHj3sZR7wlPcBDSDjMHwfDCCUCqxTkrzKgUo=;
-        b=JZ56sywLgKjFz0ylKSOJoQaAAuF9p3N1lKlh8SaQzooOdjz76LkM0vDIEN1lZNAbaT
-         AgOQpT48469WkEP+mpEYsrJIsi5RoRnBZRNo1eZxleL2/34TfPpZ26sOxAnTSW8FgctE
-         veHgdBOYX2/gXmXnsjJe1SSmVDUSrOJtJwXEpN0wFwsP1U9kJxrMPfSJOhnShaW9MPpA
-         gP7PwXRDUoT+tQfUSKRX5I5iJYBWhADRBShnd5s6A8Ee58EWcMnHleeS7ALV0yfY/9NT
-         YF3C3o4OEb7DgkhNpItzgRLhUPwT2R5qDrwjQY4awpVUnV+vfqcCZn/FcYE7Ew12WOko
-         sRcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761207983; x=1761812783;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pF3XqRoNHj3sZR7wlPcBDSDjMHwfDCCUCqxTkrzKgUo=;
-        b=QdjhdMKbkZfIHorVptlbDAZEIphegHOxne+DC6ujlZBjPHFJtIvHevRXe912BQOrDz
-         bqe4U2FeWSHRQLaM4tJOTt2nsKwloOVH+2hA2NdWmmt1dvNMkhGiLyvn0USFjQxjeEP7
-         xtBV4vQe9yEywhOyQlKLiTArO2hU0HoRtwnF9RlxPbgyt6oRRQZsAEuH4TRdhdebJFVb
-         kDG+bo80wY/LSoTT6Mjf8mOBhgABuKOj5zzO6dt8sgPY3Pe9ocd/JApAo/kBf6dhO44w
-         i54KohbNcqp9PW4H6jUowL6rYcK9DA7u88fVnNU36dRZtGDC+UEOw0h+kA15Gv211eJH
-         GcWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDxU7E/jKt54MkGy9nfY1+jy6e4/qlcqf5Pz8XmC+u0/qzdCmO6oLmkCUfRqH5Vu9MLVmc1Y1+EHqW+P0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPxC63Yvg+XzLv1a+Ea5Vxot13dVY3QZoBnsG0FcqPoMrQlNot
-	vEIl0BZwNQ0cga92MV9j1q+z+FgUEy2+XBThgGM8hfwhM4KzsafHWXd6nIiQiYLpd+n8ph9NMZi
-	OxOJQwi9JXAfNHtSWWw==
-X-Google-Smtp-Source: AGHT+IFL9mUzN1PJl3xW0LdYWHYYrR/keeaUlrS5f2myPn0lmPkjh9byHtmWsbcyr63o7ILjU4oor7YsRWX3pCg=
-X-Received: from wmwr4.prod.google.com ([2002:a05:600d:8384:b0:46e:3d73:fc5f])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:820b:b0:46e:27fb:17f0 with SMTP id 5b1f17b1804b1-47117877244mr173618305e9.9.1761207983525;
- Thu, 23 Oct 2025 01:26:23 -0700 (PDT)
-Date: Thu, 23 Oct 2025 08:26:22 +0000
-In-Reply-To: <20251022143158.64475-7-dakr@kernel.org>
+	s=arc-20240116; t=1761208006; c=relaxed/simple;
+	bh=hIgKZLpwh9ypnh/7PbIPkTvyj83dO52fKwwzYQwLGK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h/TujRoM3gxssc1pq4sY+yWM0OqjPlTR+jdvNhJM/fddF9BoHs12b9+BgPOi6t7P3VI/ew4ZyppCNup9YTS8GbJAYaUOEsqiVoA/KGjnMaJyI/9aFcwTH1dTjwmcZyS7lXfT6IiAUe5cxUMAc2zw4MAcVPAwtj4Ugi8Dx5B1UvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h4nDh4zT; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761208005; x=1792744005;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hIgKZLpwh9ypnh/7PbIPkTvyj83dO52fKwwzYQwLGK4=;
+  b=h4nDh4zTnrHukgjdRYmcTTEoJiX6RyTQ8IliVgeDQk+TrgucgO4Isk6a
+   EDbizDpO8K4KU9+O+GfMOn30uhP74Jw0m/Xwnay53B+pGzQ5/Y37i/fyO
+   WJx5XZex39ST87J6fyxgYAkQ9+ISc1jOzpyB7KQLk1biDNoNDgTBODdHc
+   Duu5cqJxScx5oRrvME8GiED0eiyjCHmrDE83P/fbAfHcTcCIDOowQzspp
+   XKMVVR1m/Dmst5DVAHOllvp8vT9CkZbvRLJ/BUHnOGk6p64bBab7jrYmy
+   eJxGzhI6qyEw41QW2NfP3DamfNEsa3t19vYl5E/bptYSAVG7SeDK9pg+j
+   g==;
+X-CSE-ConnectionGUID: wLbOXc4fSbifuxChAvGDOw==
+X-CSE-MsgGUID: Zx+90B+QS8GulZug7p/jCg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67016421"
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="67016421"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 01:26:44 -0700
+X-CSE-ConnectionGUID: uyTyVUMQSvK5tiZL0uQvlw==
+X-CSE-MsgGUID: WxnY47zNRrmucoia1M0YvQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="188495374"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 01:26:40 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vBqeb-00000001tZK-466A;
+	Thu, 23 Oct 2025 11:26:37 +0300
+Date: Thu, 23 Oct 2025 11:26:37 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 2/5] i3c: master: svc: Replace bool rnw with union for
+ HDR support
+Message-ID: <aPnmvepToKtZnAI-@smile.fi.intel.com>
+References: <20251014-i3c_ddr-v6-0-3afe49773107@nxp.com>
+ <20251014-i3c_ddr-v6-2-3afe49773107@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251022143158.64475-1-dakr@kernel.org> <20251022143158.64475-7-dakr@kernel.org>
-Message-ID: <aPnmriUUdbsQAu3e@google.com>
-Subject: Re: [PATCH v3 06/10] rust: debugfs: support for binary large objects
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014-i3c_ddr-v6-2-3afe49773107@nxp.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Oct 22, 2025 at 04:30:40PM +0200, Danilo Krummrich wrote:
-> Introduce support for read-only, write-only, and read-write binary files
-> in Rust debugfs. This adds:
+On Tue, Oct 14, 2025 at 12:40:01PM -0400, Frank Li wrote:
+> Replace the bool rnw field with a union in preparation for adding HDR
+> support. HDR uses a cmd field instead of the rnw bit to indicate read or
+> write direction.
 > 
-> - BinaryWriter and BinaryReader traits for writing to and reading from
->   user slices in binary form.
-> - New Dir methods: read_binary_file(), write_binary_file(),
->   `read_write_binary_file`.
-> - Corresponding FileOps implementations: BinaryReadFile,
->   BinaryWriteFile, BinaryReadWriteFile.
+> Add helper function svc_cmd_is_read() to check transfer direction.
 > 
-> This allows kernel modules to expose arbitrary binary data through
-> debugfs, with proper support for offsets and partial reads/writes.
+> Add a local variable 'rnw' in svc_i3c_master_priv_xfers() to avoid
+> repeatedly accessing xfers[i].rnw.
 > 
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Matthew Maurer <mmaurer@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> No functional change.
 
-> +extern "C" fn blob_read<T: BinaryWriter>(
-> +    file: *mut bindings::file,
-> +    buf: *mut c_char,
-> +    count: usize,
-> +    ppos: *mut bindings::loff_t,
-> +) -> isize {
-> +    // SAFETY:
-> +    // - `file` is a valid pointer to a `struct file`.
-> +    // - The type invariant of `FileOps` guarantees that `private_data` points to a valid `T`.
-> +    let this = unsafe { &*((*file).private_data.cast::<T>()) };
-> +
-> +    // SAFETY:
-> +    // `ppos` is a valid `file::Offset` pointer.
-> +    // We have exclusive access to `ppos`.
-> +    let pos = unsafe { file::Offset::from_raw(ppos) };
-> +
-> +    let mut writer = UserSlice::new(UserPtr::from_ptr(buf.cast()), count).writer();
-> +
-> +    let ret = || -> Result<isize> {
-> +        let written = this.write_to_slice(&mut writer, pos)?;
-> +
-> +        Ok(written.try_into()?)
+...
 
-Hmm ... a conversion? Sounds like write_to_slice() has the wrong return
-type.
+>  struct svc_i3c_cmd {
+>  	u8 addr;
+> -	bool rnw;
+> +	union {
+> +		bool rnw;
+> +		u8 cmd;
+> +		u32 rnw_cmd;
+> +	};
 
-Alice
+Same Q, what is the selector?
+
+>  	u8 *in;
+>  	const void *out;
+>  	unsigned int len;
+
+>  }
+
+> +static bool svc_cmd_is_read(u32 rnw_cmd, u32 type)
+> +{
+> +	return rnw_cmd;
+> +}
+
+Useless?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
