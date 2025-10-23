@@ -1,202 +1,181 @@
-Return-Path: <linux-kernel+bounces-866819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DDFAC00BA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:29:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F136C00BBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E02AD4F4053
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:29:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80AB84FCA59
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF0730DEB0;
-	Thu, 23 Oct 2025 11:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C9C30DEC5;
+	Thu, 23 Oct 2025 11:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="JyzJJslw"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYtkqRJO"
+Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACFA30DEB1
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E5E30BB82
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761218960; cv=none; b=vDGICOaJzd3qnJ4F3cDILGLmJ9HLzYPe3ekIAlvdihENok/2QD7EInv0oX2FvycG6zqUIRJOYJ5frFwMGpmwgojHcAYZo45Qj/5342kKjFWKr4f6v/aeqew7PVxhQ3uWv8ZFXxkDh3q/NMXmLzMrRSTmzgunVc6q31qGjUABxCY=
+	t=1761218970; cv=none; b=AZHWwQkylABWTs89VWWkwQthusejunl325fAnLEfjupA5c+M/IZuS1WP2oqnIKsVpSth40FFdPElqN5vBewymPHFTq6VJ8QztH+1DY3nO3ILKk7oNgMzb8GMr2Lq98y2GISBX89O/pkZTM8d9DGr9HDFdtZnaDmwcKp9o3vaGkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761218960; c=relaxed/simple;
-	bh=x8UThgThW8sgU+bTtRpNm6v4HS71/1MoGY1+mjSdEZc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kvuTCNiGVovFYGtYyMD1LstItMwxF6Q6/Gb6Kkz/AvkFo/rLeMqisk7dPXCs1AX7CjBmVkdLPlbs2GDPVWKtmXhLu9MkB0OjdnRaphQRELHeR/ZFLFsyLWnTwanafd23nCmnHW/CEoD1m1OkATNmizkqlopB8K+B2/1izkH7Ils=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=JyzJJslw; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-63b9da57cecso1104600a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:29:18 -0700 (PDT)
+	s=arc-20240116; t=1761218970; c=relaxed/simple;
+	bh=FzKKP+qi1TzhAHy7hRHyyiW9VgAJXjaR72cYrrVJ5mc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kDQIom0XtwP1D0aM9wjqF3SqaLMcmduWhogv9veFQNALkIEi1hX4HlsCcYNq7032TeMZeOH95sQnpjzpuW68pph33VbCiGYMIIEGhstuyHrPaZtvodD8gClyXKDkjq8EfuyPd/pTaZse9unzfQgTbmPYDtMoWw16+JRWqVh/q8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYtkqRJO; arc=none smtp.client-ip=209.85.216.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-33d463e79ddso900195a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:29:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1761218956; x=1761823756; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2VcPDDfMA6ig8zCBApRX9ed3uOSim2Fm642DnrpLTL8=;
-        b=JyzJJslw+1ZNKt2ExU5pTZPdI2BWRyNk0FmNliGwXcQbs6MGFWly/WbcwaMCucE11l
-         mQ86woddhnaUHUDo6Iq+QqaRGf1SrtaMDg5St+v8K9HnACA2rO/sQ3DVsXm7YQ4yTUWt
-         TXaJcnzfG/NmMS3rhWWj7xOV54ja9X0jmfPZywEQTLiEERSodj6dKFwPfeWb+c8PLuPv
-         oaypWf+EnKMybZee/xolU2g4Y3fA0iqiBs2Txii5oqHeJD8ToN7gJPCKfk35qruxsUsz
-         NfJ3mEeE7Fmz+e9UjYVj8A3b/nYcdBjaUbutCMnlDPYmj39cwWVYie7MTaoLX38BUifp
-         lwCQ==
+        d=gmail.com; s=20230601; t=1761218967; x=1761823767; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pI8fyvV9NpEDh37BJB0AeNnznBi5OzA64bjGckGCQw4=;
+        b=bYtkqRJO3m2MRd84Vh8P8CENFYgXShP7hPZayPRpzHltTEjMRbDEG2gAJblVt3iU1C
+         pyh/BdGcXrPx5MUCWFx7es6Yd718xgvasR3ibASOPdIQoFI7P6MiNjtYH+fHgykZV8ru
+         /edtBNnv2xnc1RJVW+J50tCiqndrpvTEa9A7gZ1VJF0rLjcQinNuUJ9j+ZJuZ8L8TorP
+         hY9z1if0M4y7d9yiqe2oYkfZDcn9aWqUEIUS08K+83t//sIrBlnOsCvA9aFsjc5ncT3h
+         5lU1FDhHLubrPipc2uhC2OVL8rjVTR6GRMJak5JONyU8SoSrYEU9dgkyfotxCbLeS47l
+         c9Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761218956; x=1761823756;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761218967; x=1761823767;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2VcPDDfMA6ig8zCBApRX9ed3uOSim2Fm642DnrpLTL8=;
-        b=e77xs2Rak/dhX+LF+z4ogtNs4v4HIRjUN63q9XowhNyy14V2OWS5bDzT/nm6gavbi+
-         iDSMLz3B5nLclHavo31fU8RDAXt/SSO+TP6IAUeaiucIv38Rtl5vspYMLunp2McqaXSP
-         +Rso1hFWe33TtqwzTdOvjk20brXcoiZMbKcHLBc6jbh4yeBM2DP+QWcCyNJvLrsmAdnx
-         /A9kUXP/Nigosj3xMrdV7a/6r465hy4SrgkbLik5DKiMOyo6JB5S0Wbmg3EkMcgntmov
-         wYHPqtmuSamhbJCwpD/PUBwh+t8HrG/fm4PUmUXRuOQkegNsMnaI/NcQOvT6mpQn1L1o
-         uceg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzkngjvp1YR59NWT6DXRxxeG+cj32h2AdihiwmKDsZoOzUcWkdarQmvSnrl21EmmtsA2VLH30O/ePvVaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbVfUh/lbJKo7XarH7m0fj4InLQlqFOq+5Z+VFG7gISrfAm2/7
-	lVxT7KOLW0eSBvS6+mEWWs6wN/kFgA68KN4RyKobyu+IDKxLY5fCXfRBcwu6Kb8xdMWkGJhXLYs
-	AtuvJkr5fJQ==
-X-Gm-Gg: ASbGnct2nvVTb+XUfI1YxVAzpladeVpjqBecRDhjauP0GGVrFDJc9qfunCXNKQwE7oA
-	Pkn821QXari66dj55DdU7KQMnEsdjOx+yQBWmE/UHNxxYYkY6wTj3uipGzfkIDCWtBWL8feqOZZ
-	aLimBDP/B1sOpiJn8lOH/P5LDoM/HETzAZpSda/sij6M1CF2sNJdIOKHQMeMLk2NrN2hh75ACyU
-	gYzZM1WCmYu10FD7MqMuvqULvRtUgZ0k9068r9wITnsPirlRztvqq3rsKAlv92U75iorDSWbiP6
-	8zllLH87rOPH3bQVLW/cBGoNEZ/E8aED7oNY/8cr2OHiIWH3ZWoOGxiaIZ3tae7f0LKQlZvllpQ
-	YXWYMk09tmgmKwe5oAquSAfeENN4342ypiZ/vHOE91856WYV19ZDRzgAgPo2qhH0x955J3SLMqC
-	hvEn1zK5+kAVBimreZGFTpRGIXw31aKLOSrUCjQdSOjed6A4xh9q2KmVCN
-X-Google-Smtp-Source: AGHT+IGx1IekfgAK1nsvkYIbewkd7/Kp9LHUEp2UQobF//6DrQaUqt2l8HG+IxLZVRXH/rfq8SBPxQ==
-X-Received: by 2002:a17:907:3daa:b0:b50:d6a7:d6b2 with SMTP id a640c23a62f3a-b647443b9e9mr3287099266b.32.1761218956516;
-        Thu, 23 Oct 2025 04:29:16 -0700 (PDT)
-Received: from [192.168.178.36] (046124199085.public.t-mobile.at. [46.124.199.85])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e3ebb328esm1439098a12.5.2025.10.23.04.29.15
+        bh=pI8fyvV9NpEDh37BJB0AeNnznBi5OzA64bjGckGCQw4=;
+        b=ehAevmqLN1O2OR3nmywPN90XXM482oEvWhLILrzoJ9Oct/vlHEYWJU5YTpa7NRwcdk
+         yupyV88arUuWxsbjPBHHwmjRpRZIobfMNiwAl/lETbNheBGYETLscC9cagNimlEesRuj
+         0GF2H9UzD7PvxOaNBwdo98K/Vurv6J66PMMCoXqheEysvHviWfAPAfQMeawnFZ2J4ugG
+         oUL73JVWlblDpIxmxYtqboOT1gZXgTjL3ePZ+iWjPvas2LtQk6s6NM1iuHtvjR9ldj++
+         6S8TpEBHHH7EU4GMbU4vj3apXHCiUCFQVv7W9XJdA1pA/BaHIujJpELP+0hmoiolZxvD
+         vF6w==
+X-Gm-Message-State: AOJu0YwihCT80smiGuk/4FJt8zgol+ojxBrA0ZaeZMQ2iZ8ffM8Jpw2K
+	TC03t5lrpsHkF8nSGsD9K/HVH0nzVVA2XbOfEXsDZWjPbqLQ7aKkWWaQ
+X-Gm-Gg: ASbGncveWo+EhrYfj2Vqh/F+z7fQ+56h2ITENI4PZejWFwLlSGe/J5uTkl+5aiemjDI
+	e62Rbrp/U1abF+T5Q28/P88mspqnm238+MCTHuXjTtYbmeS4lBwF0KBcMajuw9I7SXkqZI8aimI
+	WKlhdFWxHAPVdGpmr+Mz1vqsVS+4yYCxzWq1Mj77EFbsRMMyuTRA/wnxsPsLdVtq1+3DdmYwxPn
+	DX/Um5KS6/YL3AneHGn5SDo9MBDgGQcTlRFsdcsuLGUV0/b27a77fQ6sfhj3zvJ13pq/QiefncI
+	fnYEBKPPYuVYg2pYrjeEJXTVbj1I7Om6u40d5r9Rffuji1B1c0Bh5QhTThXJeEAtLRfygT3S+LI
+	wqOAhL5c0YkJWn4mgw/xhbvr19v/1Ild+ogD+7xwdG/kcW8JcNghAm3ZY9YPB21DFW05OP3bu04
+	WsJsAmV+Mz1H2idFvm0kqIG0EHZh29rax8MVebv2Y=
+X-Google-Smtp-Source: AGHT+IHMYmeE18WGGDWshrdmjaUibaI2DHVfeSDnI9qvk7s92Hc90Yy/ULdLnI50ohpLA3HpbFF6uw==
+X-Received: by 2002:a17:903:b0e:b0:290:c76f:d2ac with SMTP id d9443c01a7336-290cb65c5dbmr299615075ad.43.1761218967442;
+        Thu, 23 Oct 2025 04:29:27 -0700 (PDT)
+Received: from zhr-ThinkStation-K.mioffice.cn ([43.224.245.231])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946de02cb7sm20942165ad.40.2025.10.23.04.29.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 04:29:16 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Thu, 23 Oct 2025 13:29:02 +0200
-Subject: [PATCH v3 2/2] arm64: dts: qcom: Add PMIV0104 PMIC
+        Thu, 23 Oct 2025 04:29:26 -0700 (PDT)
+From: Hongru Zhang <zhanghongru06@gmail.com>
+X-Google-Original-From: Hongru Zhang <zhanghongru@xiaomi.com>
+To: paul@paul-moore.com,
+	stephen.smalley.work@gmail.com,
+	omosnace@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org,
+	zhanghongru@xiaomi.com
+Subject: [PATCH v4 1/3] selinux: Introduce a new config to make avc cache slot size adjustable
+Date: Thu, 23 Oct 2025 19:29:19 +0800
+Message-ID: <cc48748e9dcfa63fbbaeabad0b2536a0f602cb1d.1761217900.git.zhanghongru@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1761217900.git.zhanghongru@xiaomi.com>
+References: <cover.1761217900.git.zhanghongru@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251023-sm7635-pmiv0104-v3-2-27f1c417376d@fairphone.com>
-References: <20251023-sm7635-pmiv0104-v3-0-27f1c417376d@fairphone.com>
-In-Reply-To: <20251023-sm7635-pmiv0104-v3-0-27f1c417376d@fairphone.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761218951; l=2204;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=x8UThgThW8sgU+bTtRpNm6v4HS71/1MoGY1+mjSdEZc=;
- b=w6EEnHkhKTsqJFMyAkXpi9sGxV4XUKIWR9ijRcHthZK0m2PNY1je19oM6FvpfkHthQ15P+ZXg
- xiGwrDZfbmVCtvl3U6DaVeuqEeQJF0qj7BqGR0Cfgv8YkioiGcUqQqU
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-Add a dts for the PMIC used e.g. on devices with the Milos SoC.
+From: Hongru Zhang <zhanghongru@xiaomi.com>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+On mobile device high-load situations, permission check can happen
+more than 90,000/s (8 core system). With default 512 cache nodes
+configuration, avc cache miss happens more often and occasionally
+leads to long time (>2ms) irqs off on both big and little cores,
+which decreases system real-time capability.
+
+An actual call stack is as follows:
+ => avc_compute_av
+ => avc_perm_nonode
+ => avc_has_perm_noaudit
+ => selinux_capable
+ => security_capable
+ => capable
+ => __sched_setscheduler
+ => do_sched_setscheduler
+ => __arm64_sys_sched_setscheduler
+ => invoke_syscall
+ => el0_svc_common
+ => do_el0_svc
+ => el0_svc
+ => el0t_64_sync_handler
+ => el0t_64_sync
+
+Although we can expand avc nodes through /sys/fs/selinux/cache_threshold
+to mitigate long time irqs off, hash conflicts make the bucket average
+length longer because of the fixed size of cache slots, leading to
+avc_search_node() latency increase.
+
+So introduce a new config to make avc cache slot size also configurable,
+and with fine tuning, we can mitigate long time irqs off with slightly
+avc_search_node() performance regression.
+
+Theoretically, the main overhead is memory consumption.
+
+Signed-off-by: Hongru Zhang <zhanghongru@xiaomi.com>
 ---
- arch/arm64/boot/dts/qcom/pmiv0104.dtsi | 73 ++++++++++++++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
+ security/selinux/Kconfig | 11 +++++++++++
+ security/selinux/avc.c   |  6 +++---
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/pmiv0104.dtsi b/arch/arm64/boot/dts/qcom/pmiv0104.dtsi
-new file mode 100644
-index 000000000000..85ee8911d93e
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/pmiv0104.dtsi
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2025, Luca Weiss <luca.weiss@fairphone.com>
-+ */
+diff --git a/security/selinux/Kconfig b/security/selinux/Kconfig
+index 61abc1e094a8..5588c4d573f6 100644
+--- a/security/selinux/Kconfig
++++ b/security/selinux/Kconfig
+@@ -69,6 +69,17 @@ config SECURITY_SELINUX_SID2STR_CACHE_SIZE
+ 
+ 	  If unsure, keep the default value.
+ 
++config SECURITY_SELINUX_AVC_HASH_BITS
++	int "SELinux avc hashtable size"
++	depends on SECURITY_SELINUX
++	range 9 14
++	default 9
++	help
++	  This option sets the number of buckets used in the AVC hash table
++	  to 2^SECURITY_SELINUX_AVC_HASH_BITS. A higher value helps maintain
++	  shorter chain lengths especially when expanding AVC nodes via
++	  /sys/fs/selinux/avc/cache_threshold.
 +
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/spmi/spmi.h>
-+
-+/ {
-+	thermal-zones {
-+		pmiv0104-thermal {
-+			polling-delay-passive = <100>;
-+
-+			thermal-sensors = <&pmiv0104_temp_alarm>;
-+
-+			trips {
-+				trip0 {
-+					temperature = <95000>;
-+					hysteresis = <0>;
-+					type = "passive";
-+				};
-+
-+				trip1 {
-+					temperature = <115000>;
-+					hysteresis = <0>;
-+					type = "hot";
-+				};
-+
-+				trip2 {
-+					/*
-+					 * Current Linux driver currently only supports up to
-+					 * 125°C, should be updated to 145°C once available.
-+					 */
-+					temperature = <125000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&spmi_bus {
-+	pmic@PMIV0104_SID {
-+		compatible = "qcom,pmiv0104", "qcom,spmi-pmic";
-+		reg = <PMIV0104_SID SPMI_USID>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		pmiv0104_temp_alarm: temp-alarm@a00 {
-+			compatible = "qcom,spmi-temp-alarm";
-+			reg = <0xa00>;
-+			interrupts = <PMIV0104_SID 0xa 0x0 IRQ_TYPE_EDGE_BOTH>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+
-+		pmiv0104_gpios: gpio@8800 {
-+			compatible = "qcom,pmiv0104-gpio", "qcom,spmi-gpio";
-+			reg = <0x8800>;
-+			gpio-controller;
-+			gpio-ranges = <&pmiv0104_gpios 0 0 10>;
-+			#gpio-cells = <2>;
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		pmiv0104_eusb2_repeater: phy@fd00 {
-+			compatible = "qcom,pmiv0104-eusb2-repeater";
-+			reg = <0xfd00>;
-+			#phy-cells = <0>;
-+		};
-+	};
-+};
-
+ config SECURITY_SELINUX_DEBUG
+ 	bool "SELinux kernel debugging support"
+ 	depends on SECURITY_SELINUX
+diff --git a/security/selinux/avc.c b/security/selinux/avc.c
+index 430b0e23ee00..c12d45e46db6 100644
+--- a/security/selinux/avc.c
++++ b/security/selinux/avc.c
+@@ -34,9 +34,9 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/avc.h>
+ 
+-#define AVC_CACHE_SLOTS			512
+-#define AVC_DEF_CACHE_THRESHOLD		512
+-#define AVC_CACHE_RECLAIM		16
++#define AVC_CACHE_SLOTS		(1 << CONFIG_SECURITY_SELINUX_AVC_HASH_BITS)
++#define AVC_DEF_CACHE_THRESHOLD	AVC_CACHE_SLOTS
++#define AVC_CACHE_RECLAIM	16
+ 
+ #ifdef CONFIG_SECURITY_SELINUX_AVC_STATS
+ #define avc_cache_stats_incr(field)	this_cpu_inc(avc_cache_stats.field)
 -- 
-2.51.1
+2.43.0
 
 
