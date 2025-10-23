@@ -1,239 +1,288 @@
-Return-Path: <linux-kernel+bounces-867136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C3DC01AD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:13:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4FBC01AF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5CB23B2134
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:04:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280F73B25AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AC1319848;
-	Thu, 23 Oct 2025 14:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b="uRIJyI3T"
-Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CB530BB80
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CED315D4F;
+	Thu, 23 Oct 2025 14:04:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DF731D38E;
+	Thu, 23 Oct 2025 14:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761228267; cv=none; b=iUcw+x9Sv2cBpBSnYaJaaq3jpHLMDr7TyjYAl7j0ChuZK+u3di3UkkjBMJdDLUfL52yAUItTu9RxZ1oZX+SmZlD86/rjs9MIFtJQCJiADeD1R5aYpGQmfgMP6F5XC6tjc2RAkH2F+DgP2XTJGwYvp2gaF4vN5X2DImbzU23Nlrk=
+	t=1761228272; cv=none; b=Rmt3ivh7Ac172on4R1f/jarsg/gFVqca1a7odmCEQwduwkU4zveJwNbDGjOqkicudysBzMwZ//7kK2FCcRfDb7vShLQE8Yv9WdFtcC7mzxcz6FyCtKEzn6T/CAPevsUpLTmg6KjxzPQ70ggeVOdc9aRDwQBSLhqG7/LPl1dUY8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761228267; c=relaxed/simple;
-	bh=5GiTTJ/V4N6ZMDGl9YJyFnN1W24wDkPrKk2JEhAebdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S3tyYejm3thWBoEBs+mYM1pZkpF0Ro+2MqTOlbs5523zN0p+8aTxDFRCwNVgonfJ610ndPsYamWOm3E0Rq3Otv3cT1JI21QnCcErOIhwl9epsWLW/YVATszS8+Ns8l+nAH1xPVohylZW9FUD7ZOFTGeyWhmRZhYa0gKRW5eFCnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com; spf=pass smtp.mailfrom=etsalapatis.com; dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b=uRIJyI3T; arc=none smtp.client-ip=74.125.224.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etsalapatis.com
-Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-63e1a326253so943840d50.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:04:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=etsalapatis-com.20230601.gappssmtp.com; s=20230601; t=1761228264; x=1761833064; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8J8W/4L7ibTLS0Bia7yvTTNJ+W7TrnhRbawnUFjqqNQ=;
-        b=uRIJyI3TAWsr8TYWYhdezUzZwTe6AtCZnQoVEfhE1TYpr2Tq9awrZ6gABbT+HQnCS/
-         Lp0vVqddi5pyRr4Z3bhlWr2wKJaztf9C5VnePqbyNcaroLMM2VZJ/lhWdVFf3OFcPUUS
-         AZhZSOa3slDuQTbDSj3b1YTVf1Rx9PlyqiUFZiMSnu6TWuU4Ogc+9vCdWahpLwgMBD+9
-         J41I7aV0MxSK6rRZ6awh762v4T6a1M4wXJ/9K/INHLtV8Qc9pcMQXayjA6IMCf30nOVA
-         /jLHxSiF0koJJTulsxz7OaCZ1v9VeSdzXqTyKuMuRKvJ5Lp4YRu0tCqkcIOdvVjfhSx0
-         OynQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761228264; x=1761833064;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8J8W/4L7ibTLS0Bia7yvTTNJ+W7TrnhRbawnUFjqqNQ=;
-        b=KnDSyi1CNYbu43F4PzGb7PLegHHyTYxSiTCSaOhXpvaXNVAA9kmrDoPesMTZwgLgWZ
-         2V/gJEWp3STYNJMYVe3RjIBxeeMocplE57OqTdqbMtHOYYFpvQ8jSDnYD0ItDqGwVvPV
-         P+4AObiX/YwML9tpNZBFpWdUAWaMKWQX/Pf9G86XBlaMgu3Vtvwj22456fnqn6Wx3WtY
-         O8JbNHhs4Y56lkFXQdIGs1wLl9tnC6pQbbl4uiuFKqfg6BK1Wg8YTPTMAavR30muWVyA
-         aZWxCS4APwDa2i3qMW79rERIrSSdWCJQAOKKwg/usRo275ExHO/gyPdFYeTiDg8H3hW6
-         tTIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXq1h6Y4OHqU5jq7VaONYQsXzGHyZPWYuhhjgNf0hgAypA1l642EcUMkJyZNNuzrqWikiGrd1WNRPaN5vw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+S/jk8QdGzNpYPbw+fBqHvicGhfdU2Op7p7UaqhQA4bk3QJC2
-	Bko4krnNY1KC5QE3lN993tVZGpDFiOoE2h2puLu56hbO48ZlMYQ+8Qx0JI6C3NoZ0XbMxXdotHD
-	manZtoosF3bIe4uwVTYEP9L8DKhTqyQtiNVefia9GwtkTeSMdFwJmoU0=
-X-Gm-Gg: ASbGncvQMXglcxsqd/ltO0N8oeC255A4qkIWkq2VbuD0JbMqctD3wfOiasts98L4rTd
-	iJVtt/IX7OpSYk0wtZP4AnLUZ21RJUcewMSLop2DT6wvfNMN7RpbOGztjrGrBKDI+iTeTe0tsW4
-	tuNlgOdSbB3ftgPb683wFLdvaiQhnkTVtp+cLxEcYcsFRnTXbl8s/eKF5T6SZ3x/30au8D+p3Vh
-	EOTQofPbeCnLoMzhZW47s26+PupTtMJs8QP+OkchOxlCUF4SWBituoVzjnhc7Y=
-X-Google-Smtp-Source: AGHT+IGjkj4Vq+RYZ1BNhqghj1MG0T/9n6DAldT6/wV4FPLBWGPt1qZo28oeUBDysRpcui7hFmQ1+8o6Ij5ujeyDl6k=
-X-Received: by 2002:a05:690e:1699:b0:63e:27e6:87a2 with SMTP id
- 956f58d0204a3-63e27e68918mr13009967d50.46.1761228249887; Thu, 23 Oct 2025
- 07:04:09 -0700 (PDT)
+	s=arc-20240116; t=1761228272; c=relaxed/simple;
+	bh=LdEFzGAgWDyhRHeXYouOhUtUCFbNzY7zZHVrkrO0oyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IVNKXZ/TJz3crME3+BGDuraEsb52Xs2A0i47Y4Z2lVQbiglu5zHUbFH09yzykofwlTbji9qzifEPLc+OsKXXwVkaFgZFqHbknfCW1AEcEdShdsLE3uSh7gEJPfViD7tEGGEyJKbUBEocRFZ5Px4M9NQV+q19ST4gAkcfBeD+VhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D1C91516;
+	Thu, 23 Oct 2025 07:04:22 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CA033F59E;
+	Thu, 23 Oct 2025 07:04:28 -0700 (PDT)
+Date: Thu, 23 Oct 2025 15:04:22 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+	linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+	x86@kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
+ per-arch
+Message-ID: <aPoqbXmmhlbPRIb7@e133380.arm.com>
+References: <aO/CEuyaIyZ5L28d@e133380.arm.com>
+ <dd5ba9e5-9809-4792-966a-e35368ab89f0@intel.com>
+ <aPJP52jXJvRYAjjV@e133380.arm.com>
+ <e788ca62-ec63-4552-978b-9569f369afd5@intel.com>
+ <aPZaTk97RC6sg+uQ@e133380.arm.com>
+ <aPZj1nDVEYmYytY9@agluck-desk3>
+ <aPearyfcnpJJ/e06@e133380.arm.com>
+ <aPf0OKwDZ4XbmVRB@agluck-desk3>
+ <aPjxAIudLd16aU4Z@e133380.arm.com>
+ <aPkEb4CkJHZVDt0V@agluck-desk3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023080130.76761-1-arighi@nvidia.com>
-In-Reply-To: <20251023080130.76761-1-arighi@nvidia.com>
-From: Emil Tsalapatis <emil@etsalapatis.com>
-Date: Thu, 23 Oct 2025 10:03:58 -0400
-X-Gm-Features: AWmQ_bkyx9eKFwXSoUOomaXE-OysM83cIrNTnVb2dOkFLwm_-z0p1_rPmf4bW7c
-Message-ID: <CABFh=a7EZQanSX+=of5A41Kwy83YDmu-AoGJ5hCns8YNkJ2FxA@mail.gmail.com>
-Subject: Re: [PATCH v3 sched_ext/for-6.19] sched_ext/tools: Add compat layer
- for kfuncs using struct *_args
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>, 
-	Changwoo Min <changwoo@igalia.com>, sched-ext@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPkEb4CkJHZVDt0V@agluck-desk3>
 
-On Thu, Oct 23, 2025 at 4:01=E2=80=AFAM Andrea Righi <arighi@nvidia.com> wr=
-ote:
->
-> Commit c0d630ba347c7 ("sched_ext: Wrap kfunc args in struct to prepare
-> for aux__prog") introduced new kfuncs that take their scalar arguments
-> packed into dedicated *_args structs.
->
-> However, these new kfuncs need to coexist with the previous scalar
-> variants, which causes build failures in sched_ext schedulers when
-> building against older kernels.
->
-> To address this, mirror the struct definitions adding a __COMPAT prefix,
-> ensuring schedulers can still build also on old kernels that don't have
-> the BTF definitions for these structs.
->
-> Moreover, add a __COMPAT_bpf_ksym_exists() helper, which extends
-> bpf_ksym_exists() to handle static inline kfunc wrappers and fall back
-> to the *___compat() variants, where available.
->
-> Fixes: c0d630ba347c7 ("sched_ext: Wrap kfunc args in struct to prepare fo=
-r aux__prog")
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> ---
+Hi Tony,
 
-Tested the patch on a 6.17 and a 6.19 system, binaries run on both
-when compiled on either.
+On Wed, Oct 22, 2025 at 09:21:03AM -0700, Luck, Tony wrote:
+> Hi Dave,
+> 
+> On Wed, Oct 22, 2025 at 03:58:08PM +0100, Dave Martin wrote:
+> > Hi Tony,
+> > 
+> > On Tue, Oct 21, 2025 at 01:59:36PM -0700, Luck, Tony wrote:
 
-Reviewed-by: Emil Tsalapatis <emil@etsalapatis.com>
+[...]
 
-> Changes v2 -> v3:
->  - Drop the ___v2() suffix from the new kfuncs (Tejun)
->  - Add __COMPAT_bpf_ksym_exists() to handle kfunc detection with static
->    inline wrappers
->  - Link to v2: https://lore.kernel.org/all/20251022153610.20111-1-arighi@=
-nvidia.com/
->
-> ChangeLog v1 -> v2:
->  - Introduce __COMPAT_* struct to fix build error with v6.19 (thanks Emil=
-)
->
->  tools/sched_ext/include/scx/common.bpf.h |  3 --
->  tools/sched_ext/include/scx/compat.bpf.h | 36 +++++++++++++++++++++++-
->  2 files changed, 35 insertions(+), 4 deletions(-)
->
-> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/i=
-nclude/scx/common.bpf.h
-> index e65b1eb668ea5..64e5411d04c04 100644
-> --- a/tools/sched_ext/include/scx/common.bpf.h
-> +++ b/tools/sched_ext/include/scx/common.bpf.h
-> @@ -60,9 +60,6 @@ static inline void ___vmlinux_h_sanity_check___(void)
->
->  s32 scx_bpf_create_dsq(u64 dsq_id, s32 node) __ksym;
->  s32 scx_bpf_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake=
-_flags, bool *is_idle) __ksym;
-> -s32 __scx_bpf_select_cpu_and(struct task_struct *p, const struct cpumask=
- *cpus_allowed,
-> -                            struct scx_bpf_select_cpu_and_args *args) __=
-ksym __weak;
-> -bool __scx_bpf_dsq_insert_vtime(struct task_struct *p, struct scx_bpf_ds=
-q_insert_vtime_args *args) __ksym __weak;
->  u32 scx_bpf_dispatch_nr_slots(void) __ksym;
->  void scx_bpf_dispatch_cancel(void) __ksym;
->  bool scx_bpf_dsq_move_to_local(u64 dsq_id) __ksym __weak;
-> diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/i=
-nclude/scx/compat.bpf.h
-> index a023b71991a6a..d534cacb94066 100644
-> --- a/tools/sched_ext/include/scx/compat.bpf.h
-> +++ b/tools/sched_ext/include/scx/compat.bpf.h
-> @@ -15,6 +15,13 @@
->         __ret;                                                           =
-       \
->  })
->
-> +/*
-> + * Extended version of bpf_ksym_exists() that handles static inline kfun=
-c
-> + * wrappers, falling back to the *___compat versions.
-> + */
-> +#define __COMPAT_bpf_ksym_exists(sym) \
-> +       (__builtin_constant_p(!!sym) ? bpf_ksym_exists(sym##___compat) : =
-!!sym)
-> +
->  /*
->   * v6.15: 950ad93df2fc ("bpf: add kfunc for populating cpumask bits")
->   *
-> @@ -161,6 +168,27 @@ static inline struct task_struct *__COMPAT_scx_bpf_c=
-pu_curr(int cpu)
->         return rq ? rq->curr : NULL;
->  }
->
-> +/*
-> + * v6.19: Mirror the following _args structs, to prevent build errors in
-> + * kernels that don't have these structs defined yet.
-> + *
-> + * The kernel will carry these __COMPAT_* structs until v6.23 (see below=
-).
-> + */
-> +#define scx_bpf_select_cpu_and_args __COMPAT_scx_bpf_select_cpu_and_args
-> +struct __COMPAT_scx_bpf_select_cpu_and_args {
-> +       s32 prev_cpu;
-> +       u64 wake_flags;
-> +       u64 flags;
-> +};
-> +
-> +#define scx_bpf_dsq_insert_vtime_args __COMPAT_scx_bpf_dsq_insert_vtime_=
-args
-> +struct __COMPAT_scx_bpf_dsq_insert_vtime_args {
-> +       u64 dsq_id;
-> +       u64 slice;
-> +       u64 vtime;
-> +       u64 enq_flags;
-> +};
-> +
->  /*
->   * v6.19: To work around BPF maximum parameter limit, the following kfun=
-cs are
->   * replaced with variants that pack scalar arguments in a struct. Wrappe=
-rs are
-> @@ -170,9 +198,15 @@ static inline struct task_struct *__COMPAT_scx_bpf_c=
-pu_curr(int cpu)
->   * compatibility. After v6.23 release, remove the compat handling and mo=
-ve the
->   * wrappers to common.bpf.h.
->   */
-> +s32 __scx_bpf_select_cpu_and(struct task_struct *p, const struct cpumask=
- *cpus_allowed,
-> +                            struct scx_bpf_select_cpu_and_args *args) __=
-ksym __weak;
->  s32 scx_bpf_select_cpu_and___compat(struct task_struct *p, s32 prev_cpu,=
- u64 wake_flags,
->                                     const struct cpumask *cpus_allowed, u=
-64 flags) __ksym __weak;
-> -void scx_bpf_dsq_insert_vtime___compat(struct task_struct *p, u64 dsq_id=
-, u64 slice, u64 vtime, u64 enq_flags) __ksym __weak;
-> +
-> +bool __scx_bpf_dsq_insert_vtime(struct task_struct *p,
-> +                               struct scx_bpf_dsq_insert_vtime_args *arg=
-s) __ksym __weak;
-> +void scx_bpf_dsq_insert_vtime___compat(struct task_struct *p,
-> +                               u64 dsq_id, u64 slice, u64 vtime, u64 enq=
-_flags) __ksym __weak;
->
->  /**
->   * scx_bpf_select_cpu_and - Pick an idle CPU usable by task @p
-> --
-> 2.51.1
->
+> > <soapbox>
+> > 
+> > We could, in the same way that a vendor could wire a UART directly to
+> > the pins of a regular mains power plug.  They could stick a big label
+> > on it saying exactly how the pins should be hooked up to another low-
+> > voltage UART and not plugged into a mains power outlet... but you know
+> > what's going to happen.
+> 
+> The PDP 11/03 for undegraduate Comp Sci student use at my univeristy had allegedly
+> been student proofed against such things. Oral history said you could wire 240V
+> mains across input pins to get a 50 Hz clock. I didn't test this theory.
+
+Now, there's an idea...
+
+
+> > The whole point of a file-like interface is that the user doesn't (or
+> > shouldn't) have to craft I/O directly at the syscall level.  If they
+> > have to do that, then the reasons for not relying on ioctl() or a
+> > binary protocol melt away (like that UART).
+> > 
+> > Because the easy, unsafe way of working with these files almost always
+> > works, people are almost certainly going to use it, even if we tell
+> > them not to (IMHO).
+> > 
+> > </soapbox>
+> > 
+> > 
+> > That said, for practical purposes, the interface is reliable enough
+> > (for now).  We probably shouldn't mess with it unless we can come up
+> > with something that is clearly better.
+> > 
+> > (I have some ideas, but I think it's off-topic, here.)
+> 
+> Agreed off-topic ... but fixing it seems hard. What if I do:
+> 
+> # echo -n "L3:0=" > schemata
+> 
+> and then my control program dies?
+
+Probably nothing?
+
+In my hack for this, I buffered a partial line for each open struct file.
+
+If the struct file survives the terminated program, something else
+could append more to the incomplete line through any fd still open on
+the struct file (as in my { { echo; ... echo; } >schememta; } shell
+example).
+
+Otherwise, when the file is closed with an incomplete line, an error
+could be reported through close().  I implemented this, but it turns
+out not to be a magic bullet -- lots of software doesn't check the
+return value from close() / fclose(), and Linux's version of dup2()
+just silently loses close-time errors on the fd being clobbered.
+(dash, and probably other shells, undo redirections using dup2().
+Dupping the victim fd before the dup2(), so that it can be closed
+separately, can help -- as documented in the dup2() man page.  But as
+of today, most software probably doesn't do this.  Some OSes seem to
+have different dup2() behaviour that doesn't suffer from this problem.)
+
+Anyway, all in all, I wasn't convinced that this approach created fewer
+problems than it solved...
+
+[...]
+
+> > > I'm starting to worry about this co-existence of old/new syntax for
+> > > Intel region aware. Life seems simple if there is only one MB_HW
+> > > connected to the legacy "MB". Updates to either will make both
+> > > appear with new values when the schemata is read. E.g.
+> > > 
+> > > # cat schemata
+> > > MB:0=100
+> > > #MB_HW=255
+> > > 
+> > > # echo MB:0=50 > schemata
+> > > 
+> > > # cat schemata
+> > > MB:0=50
+> > > #MB_HW=127
+> > > 
+> > > But Intel will have several MB_HW controls, one for each region.
+> > > [Schemata names TBD, but I'll just call them 0, 1, 2, 3 here]
+> > > 
+> > > # cat schemata
+> > > MB:0=100
+> > > #MB_HW0=255
+> > > #MB_HW1=255
+> > > #MB_HW2=255
+> > > #MB_HW3=255
+> > > 
+> > > If the user sets just one of the HW controls:
+> > > 
+> > > # echo MB_HW1=64
+> > > 
+> > > what should resctrl display for the legacy "MB:" line?
+> > >
+> > > -Tony
+> > 
+> > Erm, good question.  I hadn't though too carefully about the region-
+> > aware case.
+> > 
+> > I think it's reasonable to expect software that writes MB_HW<n>
+> > independently to pay attention only to these specific schemata when
+> > reading back -- a bit like accessing a C union.
+> > 
+> > # echo 'MB:0=100' >schemata
+> > # cat schemata
+> > ->
+> > 	MB:0=100
+> > 	# MB_HW:0=255
+> > 	# MB_HW0:0=255
+> > 	# MB_HW1:0=255
+> > 	# MB_HW2:0=255
+> > 	# MB_HW3:0=255
+> > 
+> > # echo 'MB:0=100' >schemata
+> > # cat schemata
+> > ->
+> > 	MB:0=50
+> > 	# MB_HW:0=128
+> > 	# MB_HW0:0=128
+> > 	# MB_HW1:0=128
+> > 	# MB_HW2:0=128
+> > 	# MB_HW3:0=128
+> > 
+> > # echo 'MB_HW:0=127' >schemata
+> > # cat schemata
+> > ->
+> > 	MB:0=50
+> > 	# MB_HW:0=127
+> > 	# MB_HW0:0=127
+> > 	# MB_HW1:0=127
+> > 	# MB_HW2:0=127
+> > 	# MB_HW3:0=127
+> > 
+> > # echo 'MB_HW1:0=64' >schemata
+> > # cat schemata
+> > ->
+> > 	MB:0=???
+> > 	# MB_HW:0=???
+> > 	# MB_HW0:0=127
+> > 	# MB_HW1:0=64
+> > 	# MB_HW2:0=127
+> > 	# MB_HW3:0=127
+> > 
+> > The rules for populating the ??? entries could be designed to be
+> > somewhat intuitive, or we could just do the easiest thing.
+> > 
+> > So, could we just pick one, fixed, region to read the MB_HW value from?
+> > Say, MB_HW0:
+> > 
+> > 	MB:0=50
+> > 	# MB_HW:0=127
+> > 	# MB_HW0:0=127
+> > 	# MB_HW1:0=64
+> > 	# MB_HW2:0=127
+> > 	# MB_HW3:0=127
+> > 
+> > Or take the average across all regions:
+> > 
+> > 	MB:0=44
+> > 	# MB_HW:0=111
+> > 	# MB_HW0:0=127
+> > 	# MB_HW1:0=64
+> > 	# MB_HW2:0=127
+> > 	# MB_HW3:0=127
+> > 
+> > The latter may be more costly or complex to implement, and I don't
+> > know whether it is really useful.  Software that knows about the
+> > MB_HW<n> entries also knows that once you have looked at these, MB_HW
+> > and MB tell you nothing else.
+> > 
+> > What do you think?
+> > 
+> > I'm wondering whether setting the MB_HW<n> independently may be quite a
+> > specialised use case, which not everyone will want/need to do, but
+> > that's an assumption on my part.
+> 
+> It's difficult to guess what users will want to do. But it is likely
+> the case that total available bandwidth to regions will be different
+> (local DDR > remote DDR > CXL). So while the system will boot up with
+> no throttling on any region, it may be useful to enforce more throttling
+> on access to the slower regions.
+> 
+> Rather than trying to make up some number to fill in the ?? for the MB:
+> line, another option would be to stop showing the legacy MB: line in schemata
+> as soon as the user shows they know about the direct HW access mode
+> by writing any of the HW lines.
+> 
+> Any sysadmin trying to mix and match legacy access with direct HW access
+> is going to run into problems very quickly. In the spirit of not giving
+> them the cable to connect mains to the UART, perhaps removing the
+> foot-gun from the table might be a good option?
+> 
+> -Tony
+
+Quite possibly.
+
+Ideally, we'd have some kind of generic interface, but (as with "MB")
+there's always the risk that the hardware evolves in directions that
+don't fit the abstraction.
+
+For now, I will try to refocus the discussion back onto the schema
+description topic.  I think that's probably the easiest thing to get
+nailed down before we try to figure out how to deal with the "shadow
+schema" issue.
+
+Cheers
+---Dave
 
