@@ -1,98 +1,174 @@
-Return-Path: <linux-kernel+bounces-867532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AEC3C02D87
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:06:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D5DC02DAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C2424E64A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:06:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9707A3AE9B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF7A34B1B7;
-	Thu, 23 Oct 2025 18:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8DD34C155;
+	Thu, 23 Oct 2025 18:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RYHLvRL3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V5Z6NbT6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820CD236453;
-	Thu, 23 Oct 2025 18:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441D534B1AE;
+	Thu, 23 Oct 2025 18:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761242762; cv=none; b=aHpWMI+54nqAX03u9A3DKOv5OWjxeIherDxjYVxNukgZHwlcCqDgisRhwGNDTIUx2jpgTc88UcSP+XxLEBz8hher2CfFkgCx3XTouKUMQgoyuf+WC1wTsqcuLBsc+24V3sY6CeoSBBgj0mGqiqszUZSb2T27ND3JIaRdNBPwG9o=
+	t=1761242821; cv=none; b=GGNKHZpx7ZUzxxus8cd9h9G9sRPX3NEObjYN5oDSOteq14Nfk9Wm4zBQ5NtIGLHYW88EUaHcTexzc1cTomWg3czpu4QL5gdJlMlMGa57MSuP8cpK2FKLknQ2OgS7tTKoENrcNRkpamCNXFJHC+SBneTuR6/8SyjBDoo7uEIcduY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761242762; c=relaxed/simple;
-	bh=ZC+FbIrrH5H4EU21SpNhVgK4j6OO+DoWiJHHCvyDPp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LtjhmpJDWnx8ZeG3bv/6VpSWGbdms8KaHGPX74SGaIYjDK8nNxVp5VVAN03bjIikbIqYPrMRAt4XxchLdBwrpIFI7OLkeARQUFtcaC0YHyMnd3LvL9tJ9bAAFPVHcmFpjy+KWB6pFUmj5H76blL4BA7X1PkqNUjiEkf02rkNMKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RYHLvRL3; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761242761; x=1792778761;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZC+FbIrrH5H4EU21SpNhVgK4j6OO+DoWiJHHCvyDPp8=;
-  b=RYHLvRL3ftpURfXA7DpSlCfVMCJf3lO7C/pkjJBu2C26farKfA8210Fr
-   UDRJOxinlNPmhlU9Wj7a/4KhDj5H/UMsDlF5wM/37piNE6LDqcgs7CuSg
-   Egz0zXAhjmy4wc+pcYYEVyY4wk3twqC86IhgP5Op8gn1K6DeTeY/3zJtp
-   YVi6gM9fPTQDc5CrzjA60P1BYqqs99Wkl08K43x6LaT2iuH6dAXYcDMxW
-   zdwnYn+oRaf7M3IEndFTB2lza8JRzszyxWUhvjt4uHiZz/AEhhhTMnta6
-   4xibXycwEOjtxkk0AS63G8nl12v8nMr46OlpDK84j3q9jM+EUuxh7knls
-   Q==;
-X-CSE-ConnectionGUID: 3T2CoiBBTUCIs22d/sqYpA==
-X-CSE-MsgGUID: 1z5cnOdrT6eN6PDifR50Gw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62453767"
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="62453767"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:06:00 -0700
-X-CSE-ConnectionGUID: f7iP42xpSpKQCHvwZDFu9g==
-X-CSE-MsgGUID: ayrCixg1SgejRxxZuUfRUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="183829559"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:05:58 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vBzhD-000000020k3-1bWs;
-	Thu, 23 Oct 2025 21:05:55 +0300
-Date: Thu, 23 Oct 2025 21:05:55 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Kartik Rajput <kkartik@nvidia.com>
-Cc: alexandre.belloni@bootlin.com, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, linux-rtc@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] rtc: tegra: Use devm_clk_get_enabled() in probe
-Message-ID: <aPpug9kcQwQlhivK@smile.fi.intel.com>
-References: <20251023093042.770798-1-kkartik@nvidia.com>
+	s=arc-20240116; t=1761242821; c=relaxed/simple;
+	bh=b5POU65SI9uBItwU3VrQQapA5Fe5zoNWbwcZVbOTXlo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gBP4w9F5FgQ/zsjcJwrl2GSA4/WSC9VQUtvYaS5J9wVgPFwT//K5tE9q3p9nwno9apQyg0g++965dlYbH4+4l7rifeY7Dg7tbRbgKDK3Jpp9JqfUf1nb8iWHH4OHnBC/UEeATRDoFuiX29TrTQ6R16oeGjn8VXdV4NxEC63XNkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V5Z6NbT6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1A93C4CEE7;
+	Thu, 23 Oct 2025 18:07:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761242820;
+	bh=b5POU65SI9uBItwU3VrQQapA5Fe5zoNWbwcZVbOTXlo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=V5Z6NbT6+ZsvBawxRtQxU7LhzI9ILCHAXbufohmEyU04NEMevBNBjSTSRUOGz0Q6M
+	 p/J8OXFmnNBJwV8Z7CvorFLum3GOtQkbxP5iqmU671wwUKwqgVNcwVxXHQ/0ddSG4/
+	 WnyzlBLS4VlcV8QXxN57mSobGCvmXQUwTGjRneEg77O9umCvyPvHMWxlpsskxpr05i
+	 A7EwOXDh3hCDu9JbL1yuX8Zlf41V1lduTmNA4AFpT5PMbdfqRgb0/x7IebHpC7K8Vc
+	 xzrTrxOAdhXbQg4kmhjO0yEukjIjPBOAvhN0Q9GtFiCHbacF6o9UEmjW0D+0iLFXg7
+	 W7Yne6d0AMhiA==
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+	Christian Zigotzky <chzigotzky@xenosoft.de>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Diederik de Haas <diederik@cknow-tech.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
+Date: Thu, 23 Oct 2025 13:06:26 -0500
+Message-ID: <20251023180645.1304701-1-helgaas@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023093042.770798-1-kkartik@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 23, 2025 at 03:00:40PM +0530, Kartik Rajput wrote:
-> Simplify clock management by replacing devm_clk_get() and manual clock
-> enable/disable with devm_clk_get_enabled(). This also simplifies the
-> error handling logic.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-with the caveat that you need to remove ->remove() altogether as well.
+f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree
+platforms") enabled Clock Power Management and L1 PM Substates, but those
+features depend on CLKREQ# and possibly other device-specific
+configuration.  We don't know whether CLKREQ# is supported, so we shouldn't
+blindly enable Clock PM and L1 PM Substates.
 
+Enable only ASPM L0s and L1, and only when both ends of the link advertise
+support for them.
+
+Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
+Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@xenosoft.de/
+Reported-by: FUKAUMI Naoki <naoki@radxa.com>
+Closes: https://lore.kernel.org/r/22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com/
+Reported-by: Herve Codina <herve.codina@bootlin.com>
+Link: https://lore.kernel.org/r/20251015101304.3ec03e6b@bootlin.com/
+Reported-by: Diederik de Haas <diederik@cknow-tech.com>
+Link: https://lore.kernel.org/r/DDJXHRIRGTW9.GYC2ULZ5WQAL@cknow-tech.com/
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Tested-by: FUKAUMI Naoki <naoki@radxa.com>
+---
+I intend this for v6.18-rc3.
+
+I think it will fix the issues reported by Diederik and FUKAUMI Naoki (both
+on Rockchip).  I hope it will fix Christian's report on powerpc, but don't
+have confirmation.  I think the performance regression Herve reported is
+related, but this patch doesn't seem to fix it.
+
+FUKAUMI Naoki's successful testing report:
+https://lore.kernel.org/r/4B275FBD7B747BE6+a3e5b367-9710-4b67-9d66-3ea34fc30866@radxa.com/
+---
+ drivers/pci/pcie/aspm.c | 34 +++++++++-------------------------
+ 1 file changed, 9 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+index 7cc8281e7011..79b965158473 100644
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -243,8 +243,7 @@ struct pcie_link_state {
+ 	/* Clock PM state */
+ 	u32 clkpm_capable:1;		/* Clock PM capable? */
+ 	u32 clkpm_enabled:1;		/* Current Clock PM state */
+-	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
+-					   override */
++	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
+ 	u32 clkpm_disable:1;		/* Clock PM disabled */
+ };
+ 
+@@ -376,18 +375,6 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
+ 	pcie_set_clkpm_nocheck(link, enable);
+ }
+ 
+-static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
+-						   int enabled)
+-{
+-	struct pci_dev *pdev = link->downstream;
+-
+-	/* For devicetree platforms, enable ClockPM by default */
+-	if (of_have_populated_dt() && !enabled) {
+-		link->clkpm_default = 1;
+-		pci_info(pdev, "ASPM: DT platform, enabling ClockPM\n");
+-	}
+-}
+-
+ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+ {
+ 	int capable = 1, enabled = 1;
+@@ -410,7 +397,6 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+ 	}
+ 	link->clkpm_enabled = enabled;
+ 	link->clkpm_default = enabled;
+-	pcie_clkpm_override_default_link_state(link, enabled);
+ 	link->clkpm_capable = capable;
+ 	link->clkpm_disable = blacklist ? 1 : 0;
+ }
+@@ -811,19 +797,17 @@ static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
+ 	struct pci_dev *pdev = link->downstream;
+ 	u32 override;
+ 
+-	/* For devicetree platforms, enable all ASPM states by default */
++	/* For devicetree platforms, enable L0s and L1 by default */
+ 	if (of_have_populated_dt()) {
+-		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
++		if (link->aspm_support & PCIE_LINK_STATE_L0S)
++			link->aspm_default |= PCIE_LINK_STATE_L0S;
++		if (link->aspm_support & PCIE_LINK_STATE_L1)
++			link->aspm_default |= PCIE_LINK_STATE_L1;
+ 		override = link->aspm_default & ~link->aspm_enabled;
+ 		if (override)
+-			pci_info(pdev, "ASPM: DT platform, enabling%s%s%s%s%s%s%s\n",
+-				 FLAG(override, L0S_UP, " L0s-up"),
+-				 FLAG(override, L0S_DW, " L0s-dw"),
+-				 FLAG(override, L1, " L1"),
+-				 FLAG(override, L1_1, " ASPM-L1.1"),
+-				 FLAG(override, L1_2, " ASPM-L1.2"),
+-				 FLAG(override, L1_1_PCIPM, " PCI-PM-L1.1"),
+-				 FLAG(override, L1_2_PCIPM, " PCI-PM-L1.2"));
++			pci_info(pdev, "ASPM: default states%s%s\n",
++				 FLAG(override, L0S, " L0s"),
++				 FLAG(override, L1, " L1"));
+ 	}
+ }
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
