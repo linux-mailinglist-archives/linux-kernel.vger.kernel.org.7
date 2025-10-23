@@ -1,136 +1,82 @@
-Return-Path: <linux-kernel+bounces-867073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74913C0187C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:48:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29F1C01852
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFB3C1881E70
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:46:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2023AA0A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A328C31579F;
-	Thu, 23 Oct 2025 13:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqry/oZO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CAD31C6FE5;
+	Thu, 23 Oct 2025 13:46:27 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5A2274B44;
-	Thu, 23 Oct 2025 13:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFD01D2F42
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227134; cv=none; b=Cgp5gVp2i5SsHhJIficR8qHZgI1QS82yHlTZPqmBUzOLY3/BeRyLZP3Ql/YQfbKtCjzgXjOuVbNZRjAtyzOz9YTnw7yUcmxi/BX4zqcDav/muiov0bbOmcRPXSg1Gdr0XrsMeUXTNGad1LBO3coubvdEaaSRPqTOELjZS4T3dcU=
+	t=1761227186; cv=none; b=B+IrzxEOf7esf6bNlakh3ihAi6DquL+Qohspl0gKznjqoRkyxKo1lQK64OEf2y/g5BOYURCqrJG9oigK+zOUPCUXuU6hIB4tCfVrYH/vnVUyPD0xM4w/Y1Tn+vp0b3IUvP8k6OK8PAtPJOkYMbcsBIJJzSGnNuiHc1tiw42KWME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227134; c=relaxed/simple;
-	bh=Qt0yuLtw66ZCq3MNXemX3SqZ1fs/KSoTjGU3m7F/lGU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Nz1Nds7wH4uRAkB/Y2qvCCLnAgsRAXfbcKAVjQh04crOcGSsUHK+66DVjwNd5ugGBVu8VOmQcOeu4exVLc0jBjEO2S8XwPLdzZ6d49yHVmU3I1jNgM6pzv3Ci6CcTPPSi5lhq9HaVHa1aTYgHOfQnRf78o26nttrSQzOGc6pcGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqry/oZO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AAE1C4CEE7;
-	Thu, 23 Oct 2025 13:45:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761227133;
-	bh=Qt0yuLtw66ZCq3MNXemX3SqZ1fs/KSoTjGU3m7F/lGU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=aqry/oZOTZd9CJW0T1mbAjhDHMQymTpNckh+GWm7OhJL7taGKQO86I6R/hOMTvSLY
-	 SLQwYmdq9UC6n9K9AkFm+Nvyzxi5b8e+9+osbpQX5BShUU9QdcQ+v8F6pSpG9PniuG
-	 oUZk0Y+fHvu/ZNQFQ7nocyD6QlSowiSBs9S9N1g3hRNqx8RojGuIxfVNmm+geOuAr4
-	 2O+c9VqjUcEZ7HLlt0a2npyasTsyO0GEn9wPHaJtwJXzedJENFwyp2ryhKgSO04KCY
-	 OA+CjmtFBeClA+d+2GHP2VgmjDM0CFOQCgp2oFwtauWtxYiGPFgRl+dtL6VRkp9oMW
-	 UZyY2aff/AhLg==
-Date: Thu, 23 Oct 2025 06:45:31 -0700
-From: Kees Cook <kees@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-CC: Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Marco Elver <elver@google.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Masahiro Yamada <masahiroy@kernel.org>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Johannes Weiner <hannes@cmpxchg.org>, llvm@lists.linux.dev,
- Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Nicolas Schier <nicolas.schier@linux.dev>, Shuah Khan <shuah@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- =?ISO-8859-1?Q?Thomas_Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
- Tamir Duberstein <tamird@gmail.com>, Michael Kelley <mhklinux@outlook.com>,
- kernel test robot <lkp@intel.com>, Heiko Carstens <hca@linux.ibm.com>,
- Uros Bizjak <ubizjak@gmail.com>, Jan Hendrik Farr <kernel@jfarr.cc>,
- Yafang Shao <laoar.shao@gmail.com>,
- Marc Herbert <Marc.Herbert@linux.intel.com>,
- Christopher Ferris <cferris@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Paolo Abeni <pabeni@redhat.com>, Tejun Heo <tj@kernel.org>,
- Jeff Xu <jeffxu@chromium.org>,
- =?ISO-8859-1?Q?Michal_Koutn=FD?= <mkoutny@suse.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Randy Dunlap <rdunlap@infradead.org>,
- Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 1/3] compiler_types: Introduce __counted_by_ptr()
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20251023080123.GU3245006@noisy.programming.kicks-ass.net>
-References: <20251020220005.work.095-kees@kernel.org> <20251020220118.1226740-1-kees@kernel.org> <20251021095447.GL3245006@noisy.programming.kicks-ass.net> <202510211210.84D670D1C@keescook> <202510221746.7C09BBE@keescook> <20251023080123.GU3245006@noisy.programming.kicks-ass.net>
-Message-ID: <1D53887A-B277-4813-A3E6-9367CCFC8759@kernel.org>
+	s=arc-20240116; t=1761227186; c=relaxed/simple;
+	bh=3n1MCb1jHEe0UbHSzU6tyatyvvYLechbwovqMV7IPtc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sYft6TJ8Mg4Kbn+c7vPVag0VrWji2Tf80sDrerWS0SaRYH8gKeJkORm/GveR3AYSd2dJvBpMcE1FKq9x2gTDsJ2iBXLZh7ePrzdw/geFYC/sNH2WvHZaHls5CkXAd8149m8X+jukguVa5lsYecn1iblca58wtlO+H57HR1RS19w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 23 Oct
+ 2025 16:46:20 +0300
+Received: from localhost (10.0.253.101) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 23 Oct
+ 2025 16:46:20 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: <syzbot+fce5d9d5bd067d6fbe9b@syzkaller.appspotmail.com>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	<syzkaller-bugs@googlegroups.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [syzbot] [kernel?] general protection fault in pcl818_ai_cancel
+Date: Thu, 23 Oct 2025 16:46:11 +0300
+Message-ID: <20251023134612.396121-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <68690156.a00a0220.c7b3.0036.GAE@google.com>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
+#syz test
 
+---
+ drivers/comedi/drivers/pcl818.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-On October 23, 2025 1:01:23 AM PDT, Peter Zijlstra <peterz@infradead=2Eorg=
-> wrote:
->On Wed, Oct 22, 2025 at 05:47:43PM -0700, Kees Cook wrote:
->> On Tue, Oct 21, 2025 at 12:24:05PM -0700, Kees Cook wrote:
->> > On Tue, Oct 21, 2025 at 11:54:47AM +0200, Peter Zijlstra wrote:
->> > > > [=2E=2E=2E]
->> > > > Unfortunately, this annotation cannot be used for "void *" member=
-s
->> > > > (since such a member is considered a pointer to an incomplete typ=
-e,
->> > > > and neither Clang nor GCC developers could be convinced otherwise=
-[1],
->> > > > even in the face of the GNU extension that "void *" has size "1 b=
-yte"
->> > > > for pointer arithmetic)=2E For "void *" members, we must use the =
-coming
->> > > > "sized_by" attribute=2E
->> > >=20
->> > > So why do we need both __counted_by_ptr() and this __sized_by(), wo=
-n't
->> > > one be good enough?
->> > [=2E=2E=2E]
->> > Let me take another stab at it=2E=2E=2E
->>=20
->> It seems this will be acceptable as long as it is gated by GNU
->> extensions=2E
->
->Excellent!
->
->> GCC patch in progress=2E Clang PR here:
->> https://github=2Ecom/llvm/llvm-project/pull/163698
->
->I think you've got your link mixed up, this appears to be arm-kcfi (also
->good ofc)=2E Either that, or I need copy/paste lessons=2E
->
->This one?
->
->  https://github=2Ecom/llvm/llvm-project/pull/164737
-
-Whoops, yes, that's the one! Seems I'm the one needing those lessons=2E ;)
-
-
---=20
-Kees Cook
+diff --git a/drivers/comedi/drivers/pcl818.c b/drivers/comedi/drivers/pcl818.c
+index 4127adcfb229..06fe06396f23 100644
+--- a/drivers/comedi/drivers/pcl818.c
++++ b/drivers/comedi/drivers/pcl818.c
+@@ -1111,10 +1111,9 @@ static void pcl818_detach(struct comedi_device *dev)
+ {
+ 	struct pcl818_private *devpriv = dev->private;
+ 
+-	if (devpriv) {
+-		pcl818_ai_cancel(dev, dev->read_subdev);
++	if (devpriv)
+ 		pcl818_reset(dev);
+-	}
++
+ 	pcl818_free_dma(dev);
+ 	comedi_legacy_detach(dev);
+ }
 
