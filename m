@@ -1,112 +1,184 @@
-Return-Path: <linux-kernel+bounces-867083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D21C018BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:52:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8051C01880
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8337E3B104C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:51:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A989A4E4EAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1157315D46;
-	Thu, 23 Oct 2025 13:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="GAojAMkQ"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2193148CF;
+	Thu, 23 Oct 2025 13:48:41 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B5E2C11C0;
-	Thu, 23 Oct 2025 13:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1C61A9F86
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227486; cv=none; b=gYC/F+Bf1jLQc8X4JKX2cVgVe2zTqh/BJ66n/yO2uN8H1w/G8DSwJOX0Jzdlhv+BswTum0whma4TmIznRgk1xoyOFacs0E9QcN6DHYbetRkFEh9OT3UhRe8Glca19ms0HABEDT2sgIC6jmvro9XvasbPHJspyE1m1YIXI3XYCw4=
+	t=1761227321; cv=none; b=g0kBESITA+fCooPEydE74JoWthdPg8be0uK27KwTovc/KcZzS4+JwPNfNiJvfi2PPDyui99eLHEtPccaCwwNQaE7KeVO+t4HcxHy1+AlDXGWEpOrtBr9L+EvA/O5TgcWgtoBvUE6jbimEBgAkK44+4bPQ9Qx04lK8YASHibVcfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227486; c=relaxed/simple;
-	bh=n38rpblOs+l0Uh+pRnN15UApR181ML0sIibuGLecbPY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fTnVl9NduWTDLOcCO9fekNo4XjmBzsCv6k0ZInloHwaaHd/9ENBS/r/r3IFvqCrEOUyeYPwc2QjP0RHaz8NHRdCukb211HZVh/fmokWHi1UK8MCoGBrMhNIaourTY2gEsucoHWQycmIWjMxSM83N0Vr//fuQOXWhnU5NfrCXx3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=GAojAMkQ; arc=none smtp.client-ip=117.135.210.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=n3
-	8rpblOs+l0Uh+pRnN15UApR181ML0sIibuGLecbPY=; b=GAojAMkQUT29pCF11y
-	uJWTUHgw+03xw3YVk+6v1tAzeXK6Ppsg0nwLfhAOkAPiJo3FoomdFKDj7+5GKuMC
-	1KuaAghb3JihmLffl/0I2TRPlnoVvqKo/0GnmdRwcgJ5gBKgL8Skvl/LEiQjXImW
-	YulUfd4eCY2gTXyjRnB5EUAmA=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PikvCgDnT0PvMfpoOIyWAQ--.32275S4;
-	Thu, 23 Oct 2025 21:47:35 +0800 (CST)
-From: Jinvas <jinvas@126.com>
-To: jgg@nvidia.com
-Cc: ajones@ventanamicro.com,
-	alex.williamson@redhat.com,
-	alex@ghiti.fr,
-	anup@brainfault.org,
-	atish.patra@linux.dev,
-	iommu@lists.linux.dev,
-	joro@8bytes.org,
-	kvm-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	robin.murphy@arm.com,
-	tglx@linutronix.de,
-	tjeznach@rivosinc.com,
-	will@kernel.org,
-	zong.li@sifive.com
-Subject: Re: [RFC PATCH v2 08/18] iommu/riscv: Use MSI table to enable IMSIC access
-Date: Thu, 23 Oct 2025 21:47:08 +0800
-Message-Id: <20251023134708.1192-1-jinvas@126.com>
-X-Mailer: git-send-email 2.28.0.windows.1
-In-Reply-To: <20250922235651.GG1391379@nvidia.com>
-References: <20250922235651.GG1391379@nvidia.com>
+	s=arc-20240116; t=1761227321; c=relaxed/simple;
+	bh=mUk5hBrYrGGkrMiI5trxkBqm/8b3hnisi9ONaq3cT7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FgORc6sMgvwSnKG/Iru5Iara28k3QM56l3C2QftPPfVa76hAcBDtGu6vA668SncYs5eu8635WWynbfPcIHCw4WH3ZYoDqAIQcF0bt2lDJhTjKLSjZzoLIno0b2W4q2Jm/Jtg7ZAdio2RlWXyGBJjrdKLU1RapVOubyiknpJLQPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1vBvg4-00026g-Ls; Thu, 23 Oct 2025 15:48:28 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1vBvg4-0054AZ-1B;
+	Thu, 23 Oct 2025 15:48:28 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1vBvg4-00DFOj-0r;
+	Thu, 23 Oct 2025 15:48:28 +0200
+Date: Thu, 23 Oct 2025 15:48:28 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Johan Hovold <johan@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 0/3] USB-Serial serdev support
+Message-ID: <20251023134828.2dzq2rhtjplqyyaj@pengutronix.de>
+References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
+ <Zt7kCxawoszunWq3@hovoldconsulting.com>
+ <20240917044948.i2eog4ondf7vna7q@pengutronix.de>
+ <Z8_wcASfJ8SeAQ8l@hovoldconsulting.com>
+ <20250313194044.t2t3c7j6ktvshjhs@pengutronix.de>
+ <aPogbAozezmqSMuU@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID:PikvCgDnT0PvMfpoOIyWAQ--.32275S4
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Gw17Zry8JFy5Jw1xXw13Arb_yoWkJrc_Zr
-	n5Ar42q34xA3Z2vrW8Grs8XrWUKa1UXr43t3y7W3yfA34jkr48JF1vg3Z0vw47Xrs7CrZI
-	gFy3JFW3uw17ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0Q18PUUUUU==
-X-CM-SenderInfo: xmlq4tbv6rjloofrz/1tbi1x7vlmj6HzMJSwABsN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPogbAozezmqSMuU@hovoldconsulting.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, 22 Sep 2025 20:56:51 -0300, Jason Gunthorpe wrote:=0D
-> We no longer need to support 32 bit builds and we missed this while=0D
-> cleaning up.=0D
-> Right now the only way to deal with this would be to only use one of=0D
-> the S1 or S2 and make that decision when the iommu driver starts. You=0D
-> can return the right SW_MSI/HW_MSI based on which PAGING domain style=0D
-> the driver is going to use.=0D
-=0D
-> I recommend if the S2 is available you make the driver always use the=0D
-> S2 for everything and ignore the S1 except for explicit two stage=0D
-> translation setup by a hypervisor. Thus always return HW_MSI.=0D
-> If the iommu does not support S2 then always use S1 and always return=0D
-> SW_MSI.=0D
-=0D
-I strongly agree with this suggestion,=0D
-because on one hand, the confusing design of RISC-V =E2=80=94=0D
-particularly the translation rules of the msix_table =E2=80=94=0D
-leads to different translation behaviors in S1 and S2 modes;=0D
-=0D
-on the other hand,=0D
-designing a proper caching mechanism for the msix_table=0D
-in both S1 and S2 modes is quite challenging.=0D
-=0D
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>=0D
-=0D
-Thanks for the patch!=0D
-=0D
-Best regards,=0D
-jinvas=
+On 25-10-23, Johan Hovold wrote:
+> On Thu, Mar 13, 2025 at 08:40:44PM +0100, Marco Felsch wrote:
+> > On 25-03-11, Johan Hovold wrote:
+> > > On Tue, Sep 17, 2024 at 06:49:48AM +0200, Marco Felsch wrote:
+> > > > On 24-09-09, Johan Hovold wrote:
+> > > > > On Wed, Aug 07, 2024 at 04:08:47PM +0200, Marco Felsch wrote:
+> > > > > > this patchset is based on Johan's patches [1] but dropped the need of
+> > > > > > the special 'serial' of-node [2].
+> > > > > 
+> > > > > That's great that you found and referenced my proof-of-concept patches,
+> > > > > but it doesn't seem like you tried to understand why this hasn't been
+> > > > > merged yet.
+> > > 
+> > > > > First, as the commit message you refer to below explain, we need some
+> > > > > way to describe multiport controllers. Just dropping the 'serial' node
+> > > > > does not make that issue go away.
+> > > > 
+> > > > Sorry for asking but isn't the current OF abstraction [1] enough? As far
+> > > > as I understood we can describe the whole USB tree within OF. I used [1]
+> > > > and the this patchset to describe the following hierarchy:
+> > > > 
+> > > >  usb-root -> usb-hub port-1 -> usb-serial interface-0 -> serial
+> > > >                                                          bt-module
+> > > > 
+> > > > [1] Documentation/devicetree/bindings/usb/usb-device.yaml
+> > > 
+> > > Again, you still need to consider devices with multiple serial ports
+> > > (and they do not always map neatly to one port per interface either).
+> > 
+> > We use a dual-port FTDI and our USB tree looks as followed:
+> 
+> > interface-0 is used for the bt-module which is served by the serdev
+> > driver.
+> > 
+> > interface-1 is used by an userspace driver which makes use of the
+> > /dev/ttyUSB1 port.
+> >
+> > So we do have the multiple serial ports use-case already. Can you please
+> > explain what I miss?
+> 
+> There are other USB serial devices that support multiple ports over a
+> single USB interface. The DT bindings need to account for that case as
+> well, and that probably means we should not be describing the interfaces
+> at all but rather the physical ports.
 
+Ah okay, I wasn't even aware that this possible too. However this is DT
+description and another topic.
+
+> > > > > Second, and more importantly, you do not address the main obstacle for
+> > > > > enabling serdev for USB serial which is that the serdev cannot handle
+> > > > > hotplugging.
+> > > > 
+> > > > Hotplugging is a good point but out-of-scope IMHO (at least for now)
+> > > > since the current serdev implementation rely on additional firmware
+> > > > information e.g OF node to be present. E.g. if the above mentioned setup
+> > > > would connect the "serial bt-module" directly to the UART port you still
+> > > > need an OF node to bind the serdev driver. If the node isn't present
+> > > > user-space would need to do the hci handling.
+> > > 
+> > > There's nothing preventing you from adding a devicetree node for a USB
+> > > device that can be unplugged.
+> > 
+> > I see and I have to admit that I didn't test this :/ But since you
+> > pointed it out I tested it now!
+> > 
+> > So as explained, our USB tree looks as above and our DTS looks like the
+> > one in the cover letter. Of course I run on an embedded system but the
+> > USB FTDI based module is powered by the VBUS of the hub. Therefore I
+> > ran the test by disabling the downstream port which in turn disabled the
+> > VBUS supply. This should come very close to a physical unplug event.
+> 
+> You will also see the following kind of warnings in the logs:
+> 
+> ttyUSB ttyUSB0: tty_hangup: tty->count(1) != (#fd's(0) + #kopen's(0))
+> ttyUSB ttyUSB0: tty_port_close_start: tty->count = 1 port count = 0
+> 
+> which are due to the fact that serdev does not support hangups which are
+> used during teardown of USB serial ports.
+
+IIRC I added the following patch to solve this:
+
+ - [PATCH 1/3] serdev: ttyport: make use of tty_kopen_exclusive
+
+Sorry for not remembering the details since this conversation/patchset
+is quite old but still one of our top prios.
+
+> > > > So from my POV the serdev abstraction is for manufacturers which make
+> > > > use of "onboard" usb-devices which are always present at the same USB
+> > > > tree location. Serdev is not made for general purpose USB ports (yet)
+> > > > where a user can plug-in all types of USB devices.
+> > > 
+> > > Right, but someone need to make sure that serdev can handle devices
+> > > going away first as nothing is currently preventing that from happening.
+> > 
+> > Can you please check my above tests? Maybe I do miss something but for
+> > me it looks like it's working. Looking forwards for your input.
+> 
+> I skimmed the code to verify that the issue is still there, and even
+> forward ported my patches to confirm that that you would still see the
+> port count warnings that indicate that something is amiss.
+
+As said, patch-1 should address this issue.
+
+Regards,
+  Marco
+
+
+> Johan
+> 
 
