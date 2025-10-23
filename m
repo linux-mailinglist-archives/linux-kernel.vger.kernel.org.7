@@ -1,118 +1,97 @@
-Return-Path: <linux-kernel+bounces-867600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01682C0314E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:52:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A001C0316F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFB47188DD8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:52:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8583ACE6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4539C34BA57;
-	Thu, 23 Oct 2025 18:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7049D34B43B;
+	Thu, 23 Oct 2025 18:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mE8W/9c1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bA3b2DEt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2D734B681;
-	Thu, 23 Oct 2025 18:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB673295516;
+	Thu, 23 Oct 2025 18:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761245506; cv=none; b=dW9pPEt5KUIUe22r6uQI4hNvadsk5NMXT1ohLgebH+S+xFTSNvjPRlT76SkobeEEh5HWfMnTmxlxgfhv+LA+gks7fu5OdYL0xN6fYhj3MuR2GZ1gEUJ1ZGsyl2VmAhHUu/rzOTTu7F4SrtCKrRctBRJlF+OTaGvsvJcmFWa1AiM=
+	t=1761245521; cv=none; b=mBTlHp76uVozFrcp3hGK3vS4AP8maIiUXik4ItHU64uxKRJcMglwVmqE4EWSlxJpQFMa3Ry6SwXpeIwP3JER/frMKiDMdXt8V662O7cGPhd9N1BBrlIuuiOWiiUf91kjzGKcM1SGjX5WImSBYXQzIB83tgPBMyc4Uv6ZjTP3Zr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761245506; c=relaxed/simple;
-	bh=w1wstypz6XgiBOEHNrlo+bizf5VavPX2yq4PjU9XYyA=;
+	s=arc-20240116; t=1761245521; c=relaxed/simple;
+	bh=eESPCSSOXsamdSuHXgJXCQrhot0/CQd3pgItLPG55rw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nysdQRUaaa60Bo7N8s5qQSS9ilk6ROV1V2UIEn/DOdsEpEeXzUhzkI0i9PiZbqgYIFFMWiFNj2f/M/7iyNjmIkrLMJwQkC97VHIDHOxmSoVFuDJnCmMyk9U8g1aOzMyODy/PCW0+b8Pbw6yxGknYM97XRtGN9k6ItwTSS/OuTR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mE8W/9c1; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761245505; x=1792781505;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=w1wstypz6XgiBOEHNrlo+bizf5VavPX2yq4PjU9XYyA=;
-  b=mE8W/9c1uLzqOwEl0XbEojvymmG6Oz6q2prFpm+DW49dBuRGPHWrhRwj
-   GSMqweTeVhFjX7uPfaAAomd86IiemqQCKtUTa9zHChwa+haopInzJ4H0l
-   pAMvtk/ImbVkNTZEchSdvcZp///jwH1ERn78y9uvO+QcjD9OPbrWmOVdU
-   3//BcjVXRzjn8MQ//9rnXRupg8QqY+PJPhPkCipzk6sGLlLEUiv5bPwxH
-   J7fYHXv4GfDXM4nE6TAXiGIXMm/cB6jDzpl/2zckLzjMwUAa8RPRJqZO1
-   mnwGj+S8TmPxD+tbrd+TlzaIDfTlPcU2DWJH6DdsIjzR8keYL4tRqgfh6
-   g==;
-X-CSE-ConnectionGUID: OYPs6oIvROO9GLr5/lENyw==
-X-CSE-MsgGUID: xbYiqSUJSBi8ZCTGYS+R2w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="66041427"
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="66041427"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:51:44 -0700
-X-CSE-ConnectionGUID: UPoG+fY6SY2BObKguIsuYw==
-X-CSE-MsgGUID: Y4HygLLIRsKI7KPxF+AZpw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="184712791"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:51:40 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vC0PR-0000000210x-3Zih;
-	Thu, 23 Oct 2025 21:51:37 +0300
-Date: Thu, 23 Oct 2025 21:51:37 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Akhilesh Patil <akhilesh@ee.iitb.ac.in>, jic23@kernel.org,
-	dlechner@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, andy@kernel.org,
-	marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
-	salah.triki@gmail.com, skhan@linuxfoundation.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, akhileshpatilvnit@gmail.com
-Subject: Re: [PATCH 2/2] iio: pressure: adp810: Add driver for adp810 sensor
-Message-ID: <aPp5OYcPxNNIOgB6@smile.fi.intel.com>
-References: <cover.1760184859.git.akhilesh@ee.iitb.ac.in>
- <8c202e7ccd332b26217d529a7a73b7a3ef0726ea.1760184859.git.akhilesh@ee.iitb.ac.in>
- <CAHp75VdGJfMALGOFvkOW=JZ0yHE2QbRSzNs2Xd42-Weec1GmQw@mail.gmail.com>
- <95c1ba99-510b-4efb-9b6d-4c1103fc43a5@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hGEBNlXcIC8ycB7brX+edIaYePweofS2zdlfPl3gSIRC/z5A56sPh9N1OoCMLMhepOVNJo5orhr/eV6wyNEX8jr8tzQzCbU+15OnlME4/r51CW4af+nGN+nP8/VMJhuaNOlygmyeiZ5xh+V1wOU4YmFy3ic3rDpYEos4xCtxf0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bA3b2DEt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86A0DC4CEE7;
+	Thu, 23 Oct 2025 18:51:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761245519;
+	bh=eESPCSSOXsamdSuHXgJXCQrhot0/CQd3pgItLPG55rw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bA3b2DEt1Qj9qdsRfH8GCJ5h0s/H+acgjn84ZW3oj9j5P3DZqMYlP4KXOQELIoOyJ
+	 pntbvPcNso9/wMaH8FA1GkPYMHXL+kUQjiS0Wh/HQXLlAllv0Fq7/AANwXg0r7j3LV
+	 oKy0N+6zDNkN74OEltqsVPXqKNFR8P93zL3FxGyWYC1CLXkpaCtofUJaprqS6Mi7RV
+	 zCRs0AYDKzez8eVjNxDKiVOLwiDQxtVa54yw640Q3XXkNn6DTTOMyrl7b4JCCSeN5R
+	 4MiJzsVSsvvNw5ulxutifgawh2Uve19vLrs398gq9xKBGaKkz8Tl7vAAn8fra+y3pZ
+	 4IIozRWIUa6gA==
+Date: Thu, 23 Oct 2025 19:51:54 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	han.xu@nxp.com, broonie@kernel.org, dlan@gentoo.org,
+	Frank.li@nxp.com, guodong@riscstar.com, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org, imx@lists.linux.dev,
+	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/9] dt-bindings: spi: fsl-qspi: support SpacemiT K1
+Message-ID: <20251023-finlike-outline-86e62afa4bd7@spud>
+References: <20251023175922.528868-1-elder@riscstar.com>
+ <20251023175922.528868-2-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TUrEZvgml7CQLLIf"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <95c1ba99-510b-4efb-9b6d-4c1103fc43a5@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Sun, Oct 12, 2025 at 05:12:26AM +0200, Krzysztof Kozlowski wrote:
-> On 11/10/2025 16:10, Andy Shevchenko wrote:
-> > On Sat, Oct 11, 2025 at 3:25 PM Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
-> >> +AOSONG ADP810 DIFFERENTIAL PRESSURE SENSOR DRIVER
-> >> +M:     Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> >> +L:     linux-iio@vger.kernel.org
-> >> +S:     Maintained
-> >> +F:     Documentation/devicetree/bindings/iio/pressure/aosong,adp810.yaml
-> >> +F:     drivers/iio/pressure/adp810.c
-> > 
-> > Some tools will report an orphaned yaml file if you apply patch 1
-> > without patch 2.
-> 
-> You mean checkpatch? That warning is not really relevant. Adding
-> maintainers entry here for both files is perfectly fine and correct.
-
-It's relevant as long as I see (false positive) warnings from it. Can somebody
-shut the checkpatch up about missing DT files in the MAINTAINERS?
-
--- 
-With Best Regards,
-Andy Shevchenko
+In-Reply-To: <20251023175922.528868-2-elder@riscstar.com>
 
 
+--TUrEZvgml7CQLLIf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Oct 23, 2025 at 12:59:13PM -0500, Alex Elder wrote:
+> Add the SpacemiT K1 SoC QSPI IP to the list of supported hardware.  This
+> is the first non-Freescale device represented here.  It has a nearly
+> identidal register set, and this binding correctly describes the hardware.
+>=20
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+> v2: - Point out that this is the first non-Freescale device used here
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
+
+--TUrEZvgml7CQLLIf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPp5SgAKCRB4tDGHoIJi
+0hS8AQDYMRazoABNlKH/b+Mygp/zkDAWNQf1cbEZnLpyMl7Y4wD/Re8aUdx97KFQ
+e82V6/zj8gHJG/3k0oy3joGkFupZOg0=
+=OZe3
+-----END PGP SIGNATURE-----
+
+--TUrEZvgml7CQLLIf--
 
