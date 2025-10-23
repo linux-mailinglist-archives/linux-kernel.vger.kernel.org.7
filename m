@@ -1,286 +1,164 @@
-Return-Path: <linux-kernel+bounces-866954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A91FC012C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:39:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17D3C0116A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 340A64E49DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:39:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92ED819A2F8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F109731197F;
-	Thu, 23 Oct 2025 12:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC232EF673;
+	Thu, 23 Oct 2025 12:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZZ/VenAy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DS20vGZZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE752D7809
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D5131076A;
+	Thu, 23 Oct 2025 12:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761223176; cv=none; b=UWgdSuRATWbk1E2boi6zCrA2ObiGLTWo+3gHVkvE6Pme+nqqZMNm6Q2ZIYXhOR6R2YXNM2QmGowlPxJo2DeMIXw8K+4DirmLmvPs2YtxnNjegHAgLz7864NDaVZRN2vMsTcU8hKD5L3dFsdASFQE4GaF7rVlSQ6XtNZDvOvYkDQ=
+	t=1761222105; cv=none; b=ASWrZGpyty8IhgsnOlXYaD9IWAQRZ5mmHzpCXocJ4ntr3JiMD6kUE76HuBLMk/UGbTLtZCBReAVAFJ/wWeszYYdRsuHwiOqL1oE9IOZL/5qThO6g1weiuboSsXFBYWuSA1WNzm3fNKFP3WuyxlkAwpuBQN8DE7zAXAFXfoLKKMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761223176; c=relaxed/simple;
-	bh=KmRvcoYcjlvhPgav741lytDtILQGNZ30w3cEtKl4LH8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JqC/8x2+Cb6I5TkPstjZff2Ayv9iMZcNPmtX8UoDiaF+vbeU5vCb0CDA0V8BkEowp5T4h1AQwE9vVmJk9se4JhBSDHN7g3fPZsiOziPoCBTkI/5lZQw+3yy/K2SOwpzcxUfekL44uVhaQbLIyK0ZwiKtDcLxIEppXsYBjTxkJDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZZ/VenAy; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761223174; x=1792759174;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=KmRvcoYcjlvhPgav741lytDtILQGNZ30w3cEtKl4LH8=;
-  b=ZZ/VenAyR85OXpri8alh/9MxqCNlDHJg0184XB6Gop21IzJJqdlzp/UO
-   JiJU1WcImn25Tpa7HUB0MfCzIUUU+etVOhUd/IpX9CVg6vnEja/W822kq
-   Xx00uJEjo8/n8+b9NM6VPNjy7551cIyvxkWDd9yeCnOqHsKEEUPbCqhgU
-   ssOOWLcS45sGGAnn9u1m7any6xJmBjSD70SRVhP3Vh2k9WEGCRBKf3In8
-   fvAmYR3pk5TzTRYJnNY4uSUq7ldyK6y60/4MeTFo/li5pL5P5z4l/uDZG
-   4WvZiAnKfrUIBScZehZHjqvRemoKdxjDto9/VLO+We+qEZUaoGoBaKpPv
-   g==;
-X-CSE-ConnectionGUID: rP21F4O+RTWcbx1yd7AEdw==
-X-CSE-MsgGUID: 2sAaCWCCQ1G9JBZtjzWjiw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73993806"
-X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
-   d="scan'208";a="73993806"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 05:39:33 -0700
-X-CSE-ConnectionGUID: tfwWjXmmRp2AVurpNjXy3g==
-X-CSE-MsgGUID: /OSlYZQCRKe0CRCHdZ7+Fg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
-   d="scan'208";a="189278920"
-Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 05:39:30 -0700
-From: Alexander Usyskin <alexander.usyskin@intel.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Reuven Abliyev <reuven.abliyev@intel.com>,
-	Alexander Usyskin <alexander.usyskin@intel.com>
-Subject: [PATCH v3] mtd: intel-dg: wake card on operations
-Date: Thu, 23 Oct 2025 15:21:03 +0300
-Message-ID: <20251023122103.3922113-1-alexander.usyskin@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761222105; c=relaxed/simple;
+	bh=sMmkPGhdpplWALni+IITkL/qb28yjH+xEfSEqV/P9VU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K7Fykn1ruesHWQqq8K3D2jMj5v6g9xYTlNut7p8HduY/KY5VH+PePS9W9u3dobxlWXW7Kineov+b93niO1sMHDi48TlqBDI0v0RF9jSHZ0kI3WVz2xy+ZRW9BA/ucOgUiYCizDGGaBLeIK7gLdKa4aDyyP8NKWobuq5iU+2Zwrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DS20vGZZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6Idra020167;
+	Thu, 23 Oct 2025 12:21:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	flI7ugfkonKzNXPkzz6v8j+r7iR6ZIV8NzhFfcuiNQ8=; b=DS20vGZZxA8709bc
+	rl3T+SYFFnnvhxsidUxTlWxrnM3pOWJumROtkTltZV/VzvMQ/6U/D3VLff0Nf4Bm
+	7UW9n273G6Ez2CpNTAk6OBVuDC3BHZR77gkUikxnDBF2XJv+/1Dd3ChZPW1jTKJQ
+	Sw4vnMsnyf8TmPzSwnU6bFC/6UY5onZaMgkryDMco+ff3hvw2k0UJMkBKJcXVUIV
+	d+9t8JrsV/3gqXfN49z8wrcyLNqHH2EEtJgQPJQynVgb9L79S5XMRiROqvTH5KmY
+	QV2V+h+nwesYbD1eoKfoyD4qYd2bdzGosvoWm5dkVeBhVM3CqamGAD32X4I+LYnJ
+	cTut9w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v08prk3u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 Oct 2025 12:21:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59NCLbmC022925
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 Oct 2025 12:21:37 GMT
+Received: from [10.151.36.85] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 23 Oct
+ 2025 05:21:33 -0700
+Message-ID: <053cdafd-1abd-4f1c-8f48-9da38591fcaa@quicinc.com>
+Date: Thu, 23 Oct 2025 17:51:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: dts: qcom: ipq5424: add cooling maps for CPU
+ thermal zones
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
+        <kathiravan.thirumoorthy@oss.qualcomm.com>
+References: <20251023043838.1603673-1-quic_mmanikan@quicinc.com>
+ <1039aea3-47c6-4205-826a-636e595f127d@oss.qualcomm.com>
+Content-Language: en-US
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <1039aea3-47c6-4205-826a-636e595f127d@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMCBTYWx0ZWRfX1XQBLUZcyyGL
+ IqhjjDxkeakQmkbcvuZvgN4AlugSC9uEfz41aoRtgga5FBYrmKx923JdmEOUrhFu6sNiyc1c79R
+ RROybqRLCydavhleORhtu5RqnYHPOHC5AkQq6Q67YUB7dF1B22G6nhYlYjA60eSufnE7zd8LT9m
+ mH51969LSEbQs/u+HsFTbt8gTzbqR1jsCu/g9idkISVoW68ghvRWAqn8pc+//lKlcAEEL5ooUUT
+ TXqm7uPjpbNS++ocf+RFkDllzCU6a97XqrJwlQkximJjeyWEWf7IomCarWUlDGduSbtLFZgyJA3
+ 9FXz3iFeF5MnlSpVt+rVFulwgBPPgmiLtwMqJvebBeYGR9oJBQ/KaTlPbq+vlCxW9Ao+XRgxDl8
+ gW4xPF2X1AvCWDUalHJ/3fSPOLd6LQ==
+X-Proofpoint-GUID: y1mVgpig00Hh7CLRhsQhXgu2odyX-4An
+X-Authority-Analysis: v=2.4 cv=Up1u9uwB c=1 sm=1 tr=0 ts=68fa1dd2 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=lvJb9Z2Iq2x4Kuo4DdYA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: y1mVgpig00Hh7CLRhsQhXgu2odyX-4An
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180000
 
-The Intel DG cards do not have separate power control for
-persistent memory.
-The memory is available when the whole card is awake.
 
-Enable runtime PM in mtd driver to notify parent graphics driver
-that whole card should be kept awake while nvm operations are
-performed through this driver.
 
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
----
+On 10/23/2025 2:09 PM, Konrad Dybcio wrote:
+> On 10/23/25 6:38 AM, Manikanta Mylavarapu wrote:
+>> Add cooling-maps to the cpu1, cpu2, and cpu3 thermal zones to associate
+>> passive trip points with CPU cooling devices. This enables proper
+>> thermal mitigation by allowing the thermal framework to throttle CPUs
+>> based on temperature thresholds. Also, label the trip points to allow
+>> referencing them in the cooling maps.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+> 
+> [...]
+> 
+>>  		cpu1-thermal {
+>> @@ -1254,18 +1269,28 @@ cpu1-thermal {
+>>  			thermal-sensors = <&tsens 12>;
+>>  
+>>  			trips {
+>> -				cpu-critical {
+>> +				cpu1_crit: cpu-critical {
+>>  					temperature = <120000>;
+>>  					hysteresis = <9000>;
+>>  					type = "critical";
+>>  				};
+>>  
+>> -				cpu-passive {
+>> +				cpu1_alert: cpu-passive {
+>>  					temperature = <110000>;
+>>  					hysteresis = <9000>;
+>>  					type = "passive";
+>>  				};
+> 
+> This means "software will start throttling the cpufreq at 110C"
+> 
+> Is this what you want?
+> 
 
-V3: Check return value of devm_pm_runtime_enable
+Hi Konrad,
 
-V2: Address review comments (Andy)
+Thank you for reviewing the patch.
 
- drivers/mtd/devices/mtd_intel_dg.c | 74 +++++++++++++++++++++++++-----
- 1 file changed, 62 insertions(+), 12 deletions(-)
+Yes, the intent is to initiate software-based cpufreq throttling at 110°C.
 
-diff --git a/drivers/mtd/devices/mtd_intel_dg.c b/drivers/mtd/devices/mtd_intel_dg.c
-index b438ee5aacc3..2bab30dcd35f 100644
---- a/drivers/mtd/devices/mtd_intel_dg.c
-+++ b/drivers/mtd/devices/mtd_intel_dg.c
-@@ -15,14 +15,18 @@
- #include <linux/module.h>
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/partitions.h>
-+#include <linux/pm_runtime.h>
- #include <linux/string.h>
- #include <linux/slab.h>
- #include <linux/sizes.h>
- #include <linux/types.h>
- 
-+#define INTEL_DG_NVM_RPM_TIMEOUT_MS 500
-+
- struct intel_dg_nvm {
- 	struct kref refcnt;
- 	struct mtd_info mtd;
-+	struct device *dev;
- 	struct mutex lock; /* region access lock */
- 	void __iomem *base;
- 	void __iomem *base2;
-@@ -421,6 +425,8 @@ static int intel_dg_nvm_init(struct intel_dg_nvm *nvm, struct device *device,
- 	unsigned int i, n;
- 	int ret;
- 
-+	nvm->dev = device;
-+
- 	/* clean error register, previous errors are ignored */
- 	idg_nvm_error(nvm);
- 
-@@ -498,6 +504,7 @@ static int intel_dg_mtd_erase(struct mtd_info *mtd, struct erase_info *info)
- 	size_t len;
- 	u8 region;
- 	u64 addr;
-+	int ret;
- 
- 	if (WARN_ON(!nvm))
- 		return -EINVAL;
-@@ -512,20 +519,29 @@ static int intel_dg_mtd_erase(struct mtd_info *mtd, struct erase_info *info)
- 	total_len = info->len;
- 	addr = info->addr;
- 
-+	ret = pm_runtime_resume_and_get(nvm->dev);
-+	if (ret < 0) {
-+		dev_err(&mtd->dev, "rpm: get failed %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = 0;
- 	guard(mutex)(&nvm->lock);
- 
- 	while (total_len > 0) {
- 		if (!IS_ALIGNED(addr, SZ_4K) || !IS_ALIGNED(total_len, SZ_4K)) {
- 			dev_err(&mtd->dev, "unaligned erase %llx %zx\n", addr, total_len);
- 			info->fail_addr = addr;
--			return -ERANGE;
-+			ret = -ERANGE;
-+			break;
- 		}
- 
- 		idx = idg_nvm_get_region(nvm, addr);
- 		if (idx >= nvm->nregions) {
- 			dev_err(&mtd->dev, "out of range");
- 			info->fail_addr = MTD_FAIL_ADDR_UNKNOWN;
--			return -ERANGE;
-+			ret = -ERANGE;
-+			break;
- 		}
- 
- 		from = addr - nvm->regions[idx].offset;
-@@ -541,14 +557,16 @@ static int intel_dg_mtd_erase(struct mtd_info *mtd, struct erase_info *info)
- 		if (bytes < 0) {
- 			dev_dbg(&mtd->dev, "erase failed with %zd\n", bytes);
- 			info->fail_addr += nvm->regions[idx].offset;
--			return bytes;
-+			ret = bytes;
-+			break;
- 		}
- 
- 		addr += len;
- 		total_len -= len;
- 	}
- 
--	return 0;
-+	pm_runtime_put_autosuspend(nvm->dev);
-+	return ret;
- }
- 
- static int intel_dg_mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
-@@ -577,17 +595,24 @@ static int intel_dg_mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
- 	if (len > nvm->regions[idx].size - from)
- 		len = nvm->regions[idx].size - from;
- 
-+	ret = pm_runtime_resume_and_get(nvm->dev);
-+	if (ret < 0) {
-+		dev_err(&mtd->dev, "rpm: get failed %zd\n", ret);
-+		return ret;
-+	}
-+
- 	guard(mutex)(&nvm->lock);
- 
- 	ret = idg_read(nvm, region, from, len, buf);
- 	if (ret < 0) {
- 		dev_dbg(&mtd->dev, "read failed with %zd\n", ret);
--		return ret;
-+	} else {
-+		*retlen = ret;
-+		ret = 0;
- 	}
- 
--	*retlen = ret;
--
--	return 0;
-+	pm_runtime_put_autosuspend(nvm->dev);
-+	return ret;
- }
- 
- static int intel_dg_mtd_write(struct mtd_info *mtd, loff_t to, size_t len,
-@@ -616,17 +641,24 @@ static int intel_dg_mtd_write(struct mtd_info *mtd, loff_t to, size_t len,
- 	if (len > nvm->regions[idx].size - to)
- 		len = nvm->regions[idx].size - to;
- 
-+	ret = pm_runtime_resume_and_get(nvm->dev);
-+	if (ret < 0) {
-+		dev_err(&mtd->dev, "rpm: get failed %zd\n", ret);
-+		return ret;
-+	}
-+
- 	guard(mutex)(&nvm->lock);
- 
- 	ret = idg_write(nvm, region, to, len, buf);
- 	if (ret < 0) {
- 		dev_dbg(&mtd->dev, "write failed with %zd\n", ret);
--		return ret;
-+	} else {
-+		*retlen = ret;
-+		ret = 0;
- 	}
- 
--	*retlen = ret;
--
--	return 0;
-+	pm_runtime_put_autosuspend(nvm->dev);
-+	return ret;
- }
- 
- static void intel_dg_nvm_release(struct kref *kref)
-@@ -753,6 +785,21 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
- 	}
- 	nvm->nregions = n; /* in case where kasprintf fail */
- 
-+	ret = devm_pm_runtime_enable(device);
-+	if (ret < 0) {
-+		dev_err(device, "rpm: enable failed %d\n", ret);
-+		goto err_norpm;
-+	}
-+
-+	pm_runtime_set_autosuspend_delay(device, INTEL_DG_NVM_RPM_TIMEOUT_MS);
-+	pm_runtime_use_autosuspend(device);
-+
-+	ret = pm_runtime_resume_and_get(device);
-+	if (ret < 0) {
-+		dev_err(device, "rpm: get failed %d\n", ret);
-+		goto err_norpm;
-+	}
-+
- 	nvm->base = devm_ioremap_resource(device, &invm->bar);
- 	if (IS_ERR(nvm->base)) {
- 		ret = PTR_ERR(nvm->base);
-@@ -781,9 +828,12 @@ static int intel_dg_mtd_probe(struct auxiliary_device *aux_dev,
- 
- 	dev_set_drvdata(&aux_dev->dev, nvm);
- 
-+	pm_runtime_put(device);
- 	return 0;
- 
- err:
-+	pm_runtime_put(device);
-+err_norpm:
- 	kref_put(&nvm->refcnt, intel_dg_nvm_release);
- 	return ret;
- }
--- 
-2.43.0
+> Also, is there nothing like LMH on this platform that throttles the
+> device way earlier, without OS intervention?
+> 
+
+IPQ5424 platform does not support LMH.
+
+Thanks & Regards,
+Manikanta.
 
 
