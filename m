@@ -1,720 +1,247 @@
-Return-Path: <linux-kernel+bounces-866274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20EBBFF5B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:34:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D6FBFF5C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 343CC4E61B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:34:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 737E94E937B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C7835B135;
-	Thu, 23 Oct 2025 06:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1217285041;
+	Thu, 23 Oct 2025 06:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Iz9KGvIH"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kmw5L+rR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FF62AD1F
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A550C25A2C2
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761201279; cv=none; b=JBmbjVOoZgtYo9VgMXZZM9Y3tch3TgVa8MkoxOzweoH7re3WMFTAG82rGqvdqFOybDHVLP816opf4EAKc532bdV4CHNes5Y2B6BlYCcK9JmF+a3BAOXWDoMz/h/f174cRVQVQgd5XTYB8dMxJMcopD7L9fMuwVCuHFgDCyHmOZ8=
+	t=1761201340; cv=none; b=eAmewHKe8nLBJG+168ZzK8rNRP0oGKiIYYpOFCTKitvCJIQBuDMRErumZseNae323hIToP5XJbWOrPH0TbDHy5T7utPC15t3wS4NkLUD88o9OmKGOzeu1zhkyeptYHOJEZWpUhYKtCcykqiUIP9i1uWlomzVQH/9UGXZ7gDj68Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761201279; c=relaxed/simple;
-	bh=4+CM0eifem9/bPp9u9v8GymoEbLYHYiGllgUxf6Ry6A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bNP6lawHlS7gnIqs4z1TjElAGEUgJipSqA2D0bBy+phA0+fWLQO+X436gN16kA7RD/UCWipJVj83Q8kFVjBm/Kg+IjAkiQ5773aDbAegtsE9Kh/77NEKabFGcuigIKjF1oqFBcf4kXK1Cl4XaSURWNcAtDSQlM4mix1hZKPH7jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Iz9KGvIH; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-29476dc9860so1407165ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761201276; x=1761806076; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zLKbtCZN5GcjqVsKXJTaq/b96RWwGHFYjipZyD0gbwk=;
-        b=Iz9KGvIHNfhezPrgWqfiOOhvy1nh+LaRKEKimCO6kChPcsyFyjlaWUm2u5bIgmQDcl
-         cG1gtLVEjYSRiQVz5PV79A0GwNFTgR8US91yZPXYJgBdZb06b0N4gkAwqnGJz99/3JrY
-         nA6jkiqqzBmKOZOOgeR+/L8ix1toEK5/2lqa+y+DlGMYsliXgNvabnVR9BsSigFGyqL+
-         5C0gDQQrVHSHLIesFnYSe9QW85xavHPbtX73JtUy4wV9eNVzUGe8CI/wYZsX/k7pPQna
-         /T0ZuwkoCZippd4JK2rJ/OgjxGTk0GassrreJv+DfsffV3Y0nLX8H7opAaiOwJDVyqzq
-         +tng==
+	s=arc-20240116; t=1761201340; c=relaxed/simple;
+	bh=ff4ytZ3X3G+eW835i4qVj2PVGW3Z/piDZN+yFg/tVwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jowqWIACVjqcX+hmvppqCFQwHi20fY6DIdnJ7Z4WBjJOatyHReMmSqmIQVt+CrC5L01+X8UdWhXbZbAYTYKFq8J3bTCWPTmu3hrPCRuasqVROn19xj6yGlqkRykgWMrbDSNGJ4iQkTlQt8aONFl9i5EGF91FE5B8X7NgB+CtOi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kmw5L+rR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6AHgL016774
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:35:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JpAujb8k3aqNqpv+Pdjy+NX3D0D5Tr6/yV3o0vk301E=; b=kmw5L+rRYQQgUwq4
+	gW3dBiDZNjrt4YvNppAIrk1i4msaa5nvXYyFm7iGx3dN1usWswcwng7BEHhBAmdM
+	DDkAa8JUmQVIl1g+2I/cmZNTgH1JZNoPtI8nQ8NFrwTaAYZLiSEwISHICK5rJKAG
+	lFtkd/GzvNygxcewjChWG9K+stVM6zcE6qdv8I2I1pPXvKFp5ceLWlOM1+Z9cJP8
+	mx27W3vBGlAZiZgEcaXj10/LFa50htamnZmL5Fsz9VXWrOXvEg6CJBspbzOg/Gw8
+	RCgGNrHDU80RSBUGOnrs7C6mp5bG/CYEZNg6vcvyn2JZzhRAMh2e1YVcs2rLBvz9
+	3rksdw==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xhe0n67k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:35:37 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-76e2eb787f2so448495b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:35:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761201276; x=1761806076;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zLKbtCZN5GcjqVsKXJTaq/b96RWwGHFYjipZyD0gbwk=;
-        b=CeH6GKXIR1iVKSIC7vtyqV1u6aBe/X91bukPabVl/UpcXT18v/RO/wr/TC253P5opX
-         yUp71f5fHQQJnYmo6V2pQ9nDTFq8A2nQ73/bcvTmnEnh+vwrcL/oBoTgsEK1tpj6+hAZ
-         T9LJ05YPiEg0yBMPwy/CwHrDrCh6bBkcucaJQuGrjV81G48xvYOxIxc4tuA0tlVyEPvP
-         NdFFrmuoFH0/9n1ikO2hgqcLXL4LFWTOs9MIf0IlCtnfmsBx5nCg9oc1UL65HzwmT9sN
-         s0sJa6cfArXbVtOoQqgfmOhgIIABqRUGVUOUC/lDRc+f4i52R/v6nbevI9hSr48ms+KT
-         Pkxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiFxOn62qnllz4YuX7Ck7HMbuefu1f4gjsbS508tiEYPBbbGESpf3i9JSJagexqNsFEFYFOO+hhi4k178=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwekLj1XfGJs8KHGG9CXSYErTDW+0dJs7duNvS/c/jU/r8mXZrw
-	iiCEv5vkaWL1REFo/ZT8Xwn+5Wbpb92vfJF4dTVzBAlgq7z+uZ5SQrTkrpRo5sDkmmE=
-X-Gm-Gg: ASbGncvng6pGZQc83NL7ytXf7u8gksCN5wui8RyTWdDYHZS8nvBxA84tQUMZWoVhM2V
-	Wo8guo5uR3cHOm/jiGPhRId6/oeUeDEw7jtQXu/wd4VnGXoWKCjJwJgTpkTk8fMGg+iLFQepAEH
-	8/t1CY9GCYFQ6VXSHcyW0mySdgH75mObGJ83+evuAdvoakEPaW5qXTGNhsrO+jLQQZ2jaxcn78t
-	29Q6y+Bfv+TpBe+tTF2pleTNiGecgwuT8LwXdLzXB3mR4IMLYhJHtNnnuBUrG8FW3E5BTRfvZeM
-	0y96hdYj+XHSyqWUxDbv5WEQsUj8Or48AN6kBq52yOvaDw4elvQWQrCXWyLn8ybqYmfpVEr3XoT
-	ARyjIhYLwyQzn9jLu3p8UtvmtU3KtqmwL5y+ZfNOCpht3bgzgWr9JSrzpV5iFZULnmrCYIs8jcb
-	GcbDyq3gC9n61C
-X-Google-Smtp-Source: AGHT+IF/Pj/dA9Uy6ATET7eqz324RUB1crJJB0RMmX8/rBg0CadHqN7oHKd1QnpztJdLoQ8hZfkJ2w==
-X-Received: by 2002:a17:902:d2ca:b0:290:ab25:2986 with SMTP id d9443c01a7336-290cb27d770mr317671725ad.48.1761201275938;
-        Wed, 22 Oct 2025 23:34:35 -0700 (PDT)
-Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fb014463esm1270511a91.7.2025.10.22.23.34.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 23:34:35 -0700 (PDT)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Joe Perches <joe@perches.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V2] OPP: Initialize scope-based pointers inline
-Date: Thu, 23 Oct 2025 12:04:24 +0530
-Message-Id: <173e02d674946ff3ef8da7f44a9d5b820b9af21c.1761200897.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+        d=1e100.net; s=20230601; t=1761201336; x=1761806136;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JpAujb8k3aqNqpv+Pdjy+NX3D0D5Tr6/yV3o0vk301E=;
+        b=V2wT8k/2OoQYUvzsQmJUnHp+GeUX1pSSByRxB+G8X2Pk0m6e1frsrwUjjnvO5hbEBt
+         eHD/f+bC5gp/B6WhDth2QU3+lxu5Uhg7EOH/y34hzSiIzLTemoaGw+0tBScZz1RncIyd
+         HmD8J4PrVowCU78EIDUiPE6SH1XNNvwGcWHKg3Q7npbn2bJCSG3L3PCmKydwAYecBOXo
+         WW4SPHmlmQyarCac3QTv2chpoEV19Tj5Y3NC6XqlBw+pL8/eoKcKaowKYw+ofuN0Vfly
+         yGY9pCxup1uAg8UgdWKRhPRikc0JkZcHvNh7Sbw9XRAqINMXq2GcoXi2w2u4HAhppJYd
+         KgaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnbmB5u9pykZJOi7QHIKNHK9coRyhA04APqu3SV3ODoF6dBMUj9LvNdsIo5fKBLJOaBVMdgJyxD2MZ3Jw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0Z218QHmVhdbInMDxRXi5U+sxSCuri1gTSNJXxp6DyPGa6rOO
+	VC2Jt/W4+1Ep2iM2QXkNEumV+o1olJd1gEkmMtExLarKZJS49pOMGTeINOEQk1KEmFJCBqaiToJ
+	fuzTzM5B8eldukQbrYoIaLbY38qWuez5toHM3eWpnSqXNJEWqRnIxbrdVZHI3iLlamM0=
+X-Gm-Gg: ASbGncs1KYQFNSw7vah2/XzWNm74H1ceHxqi2esnDcBiFYCdJ5Ed9LnGG1xrowVEJsA
+	9JBwV/DrT6KtJAiqRv8vyspEVV3i+9Rxg3mCB1Yn+KfGCCNulOmxNvSu7Tcn3Q2dKHMbA3ML7/G
+	zE0ZQkGQRtGc3TySJxsRAUyD+0V7Cq55OlJRCTAIZrbZEQikuVwK6TfnqvlYlNVv+R+EuVDS9in
+	lwxpMW30UeLjCiN4IZV++gW+FYxH3/8AJzGN+nxG3kqYorCnlxVCH/3gPxR/KHjR62X1ftZ+buI
+	/lWHZkSxyBGfSReVZp1QF2fHVa9r+10K5mMRqI7OAw07VEXTew4Rakt/oY/VRGE+KoCNybCWifn
+	T5GtHYnoXFc6+lKRxKanraB5h60A=
+X-Received: by 2002:a05:6a00:4099:b0:7a2:23cd:418c with SMTP id d2e1a72fcca58-7a223cd42b2mr24458046b3a.3.1761201336147;
+        Wed, 22 Oct 2025 23:35:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFqgjoOyq6fjU6mL6BfXgOkMCX6FeequRl8KVaAdKGfOEZukeMq3sizCU9wMfGDVahdPfUBNQ==
+X-Received: by 2002:a05:6a00:4099:b0:7a2:23cd:418c with SMTP id d2e1a72fcca58-7a223cd42b2mr24458024b3a.3.1761201335575;
+        Wed, 22 Oct 2025 23:35:35 -0700 (PDT)
+Received: from [10.217.217.147] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274dba7c7sm1367091b3a.69.2025.10.22.23.35.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 23:35:35 -0700 (PDT)
+Message-ID: <09e0b94c-2bf6-4147-a831-d3b0724fc418@oss.qualcomm.com>
+Date: Thu, 23 Oct 2025 12:05:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/9] clk: qcom: rpmh: Add support for Kaanapali rpmh
+ clocks
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com
+References: <20250924-knp-clk-v1-0-29b02b818782@oss.qualcomm.com>
+ <20250924-knp-clk-v1-4-29b02b818782@oss.qualcomm.com>
+ <thy7r7my2i3gfuy723rrq36k7hjobzqcnlzbggpagg4fgfvvzg@g5wzzxoppja5>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <thy7r7my2i3gfuy723rrq36k7hjobzqcnlzbggpagg4fgfvvzg@g5wzzxoppja5>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE2NyBTYWx0ZWRfX+rxYsJ8sFjHy
+ 3wa4K3G5DllgZPRnq72qH6r4QWwKkalPnGjp9p3liPijz8zdMIlHD+9sgZHRfLOYtikG3a3tmNl
+ /xs93ZqCYJmyU4q2ItJg4ARO57Ny9R2yCR+g8V7gukVWH4/GdTDw/NVNzFyd/APrJTFgizdUnki
+ F8akbZV5/WvqFucEuZeIRbQ695DAXTS3BiZ17VdSfUYNxex5y/Bs8tks7ES84zomvWxN3+eNLg3
+ LhQP3B+7+uwE/doDsdNWNEWCyKhQts/CXJtPn4iyR1FMR5Goh3uRRbGqpreRW0fjK+H6cEXBTUl
+ dhG/vn3xq1sPL4hvfdF/UmI9W6Y8xQA8KCqjmqYo/edGJXhRyIRxJ0WySXtzusAC+TVLeMP7OKG
+ gh4VO2ujzcCw0xVwmAdssp8+txBDYA==
+X-Proofpoint-ORIG-GUID: svx0GteSsdj4JhCyRERu5luwgU75QV6I
+X-Authority-Analysis: v=2.4 cv=WYUBqkhX c=1 sm=1 tr=0 ts=68f9ccb9 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=QqeVPp7IqxZMZk5Gz7sA:9 a=QEXdDO2ut3YA:10
+ a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: svx0GteSsdj4JhCyRERu5luwgU75QV6I
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 bulkscore=0 impostorscore=0 spamscore=0
+ priorityscore=1501 clxscore=1015 malwarescore=0 lowpriorityscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510210167
 
-Uninitialized pointers with `__free` attribute can cause undefined
-behaviour as the memory allocated to the pointer is freed automatically
-when the pointer goes out of scope.
 
-The OPP core doesn't have any bugs related to this as of now, but it is
-better to initialize pointers marked with `__free` attribute at
-declaration to simplify the code and ensure proper scope-based cleanup.
 
-Reported-by: Joe Perches <joe@perches.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-V2:
-- Added blank line after definitions (Joe).
-- Fixed a build error in dev_pm_opp_of_register_em():
+On 10/20/2025 4:29 PM, Dmitry Baryshkov wrote:
+> On Wed, Sep 24, 2025 at 03:58:56PM -0700, Jingyi Wang wrote:
+>> From: Taniya Das <taniya.das@oss.qualcomm.com>
+>>
+>> Add the RPMH clocks present in Kaanapali SoC.
+>>
+>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>> ---
+>>  drivers/clk/qcom/clk-rpmh.c | 39 +++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 39 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+>> index 63c38cb47bc4..6b1f24ee66d5 100644
+>> --- a/drivers/clk/qcom/clk-rpmh.c
+>> +++ b/drivers/clk/qcom/clk-rpmh.c
+>> @@ -395,6 +395,16 @@ DEFINE_CLK_RPMH_VRM(clk4, _a, "C4A_E0", 1);
+>>  DEFINE_CLK_RPMH_VRM(clk5, _a, "C5A_E0", 1);
+>>  DEFINE_CLK_RPMH_VRM(clk8, _a, "C8A_E0", 1);
+>>  
+>> +DEFINE_CLK_RPMH_VRM(c1a_e0, _a, "C1A_E0", 1);
+>> +DEFINE_CLK_RPMH_VRM(c2a_e0, _a, "C2A_E0", 1);
+> 
+> No. Please make sure that you follow what others have done.
+> 
+> Why are these clocks named differently from clkN defined above?
 
-  note: jump bypasses initialization of variable with __attribute__((cleanup))
+Sure, I will go back and reuse the clkN definitions.
 
- drivers/opp/core.c |  69 ++++++++++++++-----------
- drivers/opp/cpu.c  |  16 +++---
- drivers/opp/of.c   | 125 +++++++++++++++++++++++++--------------------
- 3 files changed, 117 insertions(+), 93 deletions(-)
+> 
+>> +DEFINE_CLK_RPMH_VRM(c3a_e0, _a2, "C3A_E0", 2);
+>> +DEFINE_CLK_RPMH_VRM(c4a_e0, _a2, "C4A_E0", 2);
+>> +DEFINE_CLK_RPMH_VRM(c5a_e0, _a2, "C5A_E0", 2);
+>> +DEFINE_CLK_RPMH_VRM(c6a_e0, _a2, "C6A_E0", 2);
+>> +DEFINE_CLK_RPMH_VRM(c7a_e0, _a2, "C7A_E0", 2);
+>> +DEFINE_CLK_RPMH_VRM(c8a_e0, _a2, "C8A_E0", 2);
+> 
+> And these should use the same pattern. If the old names are unsuitable
+> because of the clash between clock names, you can rename them. But
+> please, be consistent.
+> 
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index bba4f7daff8c..dbebb8c829bc 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -309,9 +309,9 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_is_turbo);
-  */
- unsigned long dev_pm_opp_get_max_clock_latency(struct device *dev)
- {
--	struct opp_table *opp_table __free(put_opp_table);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
- 
--	opp_table = _find_opp_table(dev);
- 	if (IS_ERR(opp_table))
- 		return 0;
- 
-@@ -327,7 +327,6 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_get_max_clock_latency);
-  */
- unsigned long dev_pm_opp_get_max_volt_latency(struct device *dev)
- {
--	struct opp_table *opp_table __free(put_opp_table);
- 	struct dev_pm_opp *opp;
- 	struct regulator *reg;
- 	unsigned long latency_ns = 0;
-@@ -337,7 +336,9 @@ unsigned long dev_pm_opp_get_max_volt_latency(struct device *dev)
- 		unsigned long max;
- 	} *uV;
- 
--	opp_table = _find_opp_table(dev);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
-+
- 	if (IS_ERR(opp_table))
- 		return 0;
- 
-@@ -409,10 +410,11 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_get_max_transition_latency);
-  */
- unsigned long dev_pm_opp_get_suspend_opp_freq(struct device *dev)
- {
--	struct opp_table *opp_table __free(put_opp_table);
- 	unsigned long freq = 0;
- 
--	opp_table = _find_opp_table(dev);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
-+
- 	if (IS_ERR(opp_table))
- 		return 0;
- 
-@@ -447,9 +449,9 @@ int _get_opp_count(struct opp_table *opp_table)
-  */
- int dev_pm_opp_get_opp_count(struct device *dev)
- {
--	struct opp_table *opp_table __free(put_opp_table);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
- 
--	opp_table = _find_opp_table(dev);
- 	if (IS_ERR(opp_table)) {
- 		dev_dbg(dev, "%s: OPP table not found (%ld)\n",
- 			__func__, PTR_ERR(opp_table));
-@@ -605,9 +607,9 @@ _find_key(struct device *dev, unsigned long *key, int index, bool available,
- 			  unsigned long opp_key, unsigned long key),
- 	  bool (*assert)(struct opp_table *opp_table, unsigned int index))
- {
--	struct opp_table *opp_table __free(put_opp_table);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
- 
--	opp_table = _find_opp_table(dev);
- 	if (IS_ERR(opp_table)) {
- 		dev_err(dev, "%s: OPP table not found (%ld)\n", __func__,
- 			PTR_ERR(opp_table));
-@@ -1410,12 +1412,13 @@ static int _set_opp(struct device *dev, struct opp_table *opp_table,
-  */
- int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
- {
--	struct opp_table *opp_table __free(put_opp_table);
- 	struct dev_pm_opp *opp __free(put_opp) = NULL;
- 	unsigned long freq = 0, temp_freq;
- 	bool forced = false;
- 
--	opp_table = _find_opp_table(dev);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
-+
- 	if (IS_ERR(opp_table)) {
- 		dev_err(dev, "%s: device's opp table doesn't exist\n", __func__);
- 		return PTR_ERR(opp_table);
-@@ -1477,9 +1480,9 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_set_rate);
-  */
- int dev_pm_opp_set_opp(struct device *dev, struct dev_pm_opp *opp)
- {
--	struct opp_table *opp_table __free(put_opp_table);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
- 
--	opp_table = _find_opp_table(dev);
- 	if (IS_ERR(opp_table)) {
- 		dev_err(dev, "%s: device opp doesn't exist\n", __func__);
- 		return PTR_ERR(opp_table);
-@@ -1794,10 +1797,11 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_put);
-  */
- void dev_pm_opp_remove(struct device *dev, unsigned long freq)
- {
--	struct opp_table *opp_table __free(put_opp_table);
- 	struct dev_pm_opp *opp = NULL, *iter;
- 
--	opp_table = _find_opp_table(dev);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
-+
- 	if (IS_ERR(opp_table))
- 		return;
- 
-@@ -1885,9 +1889,9 @@ bool _opp_remove_all_static(struct opp_table *opp_table)
-  */
- void dev_pm_opp_remove_all_dynamic(struct device *dev)
- {
--	struct opp_table *opp_table __free(put_opp_table);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
- 
--	opp_table = _find_opp_table(dev);
- 	if (IS_ERR(opp_table))
- 		return;
- 
-@@ -2871,10 +2875,11 @@ static int _opp_set_availability(struct device *dev, unsigned long freq,
- 				 bool availability_req)
- {
- 	struct dev_pm_opp *opp __free(put_opp) = ERR_PTR(-ENODEV), *tmp_opp;
--	struct opp_table *opp_table __free(put_opp_table);
- 
- 	/* Find the opp_table */
--	opp_table = _find_opp_table(dev);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
-+
- 	if (IS_ERR(opp_table)) {
- 		dev_warn(dev, "%s: Device OPP not found (%ld)\n", __func__,
- 			 PTR_ERR(opp_table));
-@@ -2932,11 +2937,12 @@ int dev_pm_opp_adjust_voltage(struct device *dev, unsigned long freq,
- 
- {
- 	struct dev_pm_opp *opp __free(put_opp) = ERR_PTR(-ENODEV), *tmp_opp;
--	struct opp_table *opp_table __free(put_opp_table);
- 	int r;
- 
- 	/* Find the opp_table */
--	opp_table = _find_opp_table(dev);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
-+
- 	if (IS_ERR(opp_table)) {
- 		r = PTR_ERR(opp_table);
- 		dev_warn(dev, "%s: Device OPP not found (%d)\n", __func__, r);
-@@ -2986,12 +2992,13 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_adjust_voltage);
-  */
- int dev_pm_opp_sync_regulators(struct device *dev)
- {
--	struct opp_table *opp_table __free(put_opp_table);
- 	struct regulator *reg;
- 	int ret, i;
- 
- 	/* Device may not have OPP table */
--	opp_table = _find_opp_table(dev);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
-+
- 	if (IS_ERR(opp_table))
- 		return 0;
- 
-@@ -3062,9 +3069,9 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_disable);
-  */
- int dev_pm_opp_register_notifier(struct device *dev, struct notifier_block *nb)
- {
--	struct opp_table *opp_table __free(put_opp_table);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
- 
--	opp_table = _find_opp_table(dev);
- 	if (IS_ERR(opp_table))
- 		return PTR_ERR(opp_table);
- 
-@@ -3082,9 +3089,9 @@ EXPORT_SYMBOL(dev_pm_opp_register_notifier);
- int dev_pm_opp_unregister_notifier(struct device *dev,
- 				   struct notifier_block *nb)
- {
--	struct opp_table *opp_table __free(put_opp_table);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
- 
--	opp_table = _find_opp_table(dev);
- 	if (IS_ERR(opp_table))
- 		return PTR_ERR(opp_table);
- 
-@@ -3101,10 +3108,10 @@ EXPORT_SYMBOL(dev_pm_opp_unregister_notifier);
-  */
- void dev_pm_opp_remove_table(struct device *dev)
- {
--	struct opp_table *opp_table __free(put_opp_table);
--
- 	/* Check for existing table for 'dev' */
--	opp_table = _find_opp_table(dev);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(dev);
-+
- 	if (IS_ERR(opp_table)) {
- 		int error = PTR_ERR(opp_table);
- 
-diff --git a/drivers/opp/cpu.c b/drivers/opp/cpu.c
-index 97989d4fe336..a6da7ee3ec76 100644
---- a/drivers/opp/cpu.c
-+++ b/drivers/opp/cpu.c
-@@ -56,10 +56,10 @@ int dev_pm_opp_init_cpufreq_table(struct device *dev,
- 		return -ENOMEM;
- 
- 	for (i = 0, rate = 0; i < max_opps; i++, rate++) {
--		struct dev_pm_opp *opp __free(put_opp);
--
- 		/* find next rate */
--		opp = dev_pm_opp_find_freq_ceil(dev, &rate);
-+		struct dev_pm_opp *opp __free(put_opp) =
-+			dev_pm_opp_find_freq_ceil(dev, &rate);
-+
- 		if (IS_ERR(opp)) {
- 			ret = PTR_ERR(opp);
- 			goto out;
-@@ -154,12 +154,13 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_cpumask_remove_table);
- int dev_pm_opp_set_sharing_cpus(struct device *cpu_dev,
- 				const struct cpumask *cpumask)
- {
--	struct opp_table *opp_table __free(put_opp_table);
- 	struct opp_device *opp_dev;
- 	struct device *dev;
- 	int cpu;
- 
--	opp_table = _find_opp_table(cpu_dev);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(cpu_dev);
-+
- 	if (IS_ERR(opp_table))
- 		return PTR_ERR(opp_table);
- 
-@@ -201,10 +202,11 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_set_sharing_cpus);
-  */
- int dev_pm_opp_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask)
- {
--	struct opp_table *opp_table __free(put_opp_table);
- 	struct opp_device *opp_dev;
- 
--	opp_table = _find_opp_table(cpu_dev);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_opp_table(cpu_dev);
-+
- 	if (IS_ERR(opp_table))
- 		return PTR_ERR(opp_table);
- 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 505d79821584..1e0d0adb18e1 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -45,9 +45,10 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_of_get_opp_desc_node);
- struct opp_table *_managed_opp(struct device *dev, int index)
- {
- 	struct opp_table *opp_table, *managed_table = NULL;
--	struct device_node *np __free(device_node);
- 
--	np = _opp_of_get_opp_desc_node(dev->of_node, index);
-+	struct device_node *np __free(device_node) =
-+		_opp_of_get_opp_desc_node(dev->of_node, index);
-+
- 	if (!np)
- 		return NULL;
- 
-@@ -95,10 +96,11 @@ static struct device_node *of_parse_required_opp(struct device_node *np,
- /* The caller must call dev_pm_opp_put_opp_table() after the table is used */
- static struct opp_table *_find_table_of_opp_np(struct device_node *opp_np)
- {
--	struct device_node *opp_table_np __free(device_node);
- 	struct opp_table *opp_table;
- 
--	opp_table_np = of_get_parent(opp_np);
-+	struct device_node *opp_table_np __free(device_node) =
-+		of_get_parent(opp_np);
-+
- 	if (!opp_table_np)
- 		return ERR_PTR(-ENODEV);
- 
-@@ -146,12 +148,13 @@ static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
- 					     struct device_node *opp_np)
- {
- 	struct opp_table **required_opp_tables;
--	struct device_node *np __free(device_node);
- 	bool lazy = false;
- 	int count, i, size;
- 
- 	/* Traversing the first OPP node is all we need */
--	np = of_get_next_available_child(opp_np, NULL);
-+	struct device_node *np __free(device_node) =
-+		of_get_next_available_child(opp_np, NULL);
-+
- 	if (!np) {
- 		dev_warn(dev, "Empty OPP table\n");
- 		return;
-@@ -171,9 +174,9 @@ static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
- 	opp_table->required_opp_count = count;
- 
- 	for (i = 0; i < count; i++) {
--		struct device_node *required_np __free(device_node);
-+		struct device_node *required_np __free(device_node) =
-+			of_parse_required_opp(np, i);
- 
--		required_np = of_parse_required_opp(np, i);
- 		if (!required_np) {
- 			_opp_table_free_required_tables(opp_table);
- 			return;
-@@ -199,14 +202,15 @@ static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
- void _of_init_opp_table(struct opp_table *opp_table, struct device *dev,
- 			int index)
- {
--	struct device_node *np __free(device_node), *opp_np;
-+	struct device_node *opp_np;
- 	u32 val;
- 
- 	/*
- 	 * Only required for backward compatibility with v1 bindings, but isn't
- 	 * harmful for other cases. And so we do it unconditionally.
- 	 */
--	np = of_node_get(dev->of_node);
-+	struct device_node *np __free(device_node) = of_node_get(dev->of_node);
-+
- 	if (!np)
- 		return;
- 
-@@ -273,9 +277,9 @@ void _of_clear_opp(struct opp_table *opp_table, struct dev_pm_opp *opp)
- static int _link_required_opps(struct dev_pm_opp *opp,
- 			       struct opp_table *required_table, int index)
- {
--	struct device_node *np __free(device_node);
-+	struct device_node *np __free(device_node) =
-+		of_parse_required_opp(opp->np, index);
- 
--	np = of_parse_required_opp(opp->np, index);
- 	if (unlikely(!np))
- 		return -ENODEV;
- 
-@@ -349,16 +353,13 @@ static void lazy_link_required_opp_table(struct opp_table *new_table)
- 	guard(mutex)(&opp_table_lock);
- 
- 	list_for_each_entry_safe(opp_table, temp, &lazy_opp_tables, lazy) {
--		struct device_node *opp_np __free(device_node);
- 		bool lazy = false;
- 
- 		/* opp_np can't be invalid here */
--		opp_np = of_get_next_available_child(opp_table->np, NULL);
-+		struct device_node *opp_np __free(device_node) =
-+			of_get_next_available_child(opp_table->np, NULL);
- 
- 		for (i = 0; i < opp_table->required_opp_count; i++) {
--			struct device_node *required_np __free(device_node) = NULL;
--			struct device_node *required_table_np __free(device_node) = NULL;
--
- 			required_opp_tables = opp_table->required_opp_tables;
- 
- 			/* Required opp-table is already parsed */
-@@ -366,8 +367,10 @@ static void lazy_link_required_opp_table(struct opp_table *new_table)
- 				continue;
- 
- 			/* required_np can't be invalid here */
--			required_np = of_parse_required_opp(opp_np, i);
--			required_table_np = of_get_parent(required_np);
-+			struct device_node *required_np __free(device_node) =
-+				of_parse_required_opp(opp_np, i);
-+			struct device_node *required_table_np __free(device_node) =
-+				of_get_parent(required_np);
- 
- 			/*
- 			 * Newly added table isn't the required opp-table for
-@@ -402,13 +405,12 @@ static void lazy_link_required_opp_table(struct opp_table *new_table)
- static int _bandwidth_supported(struct device *dev, struct opp_table *opp_table)
- {
- 	struct device_node *opp_np __free(device_node) = NULL;
--	struct device_node *np __free(device_node) = NULL;
- 	struct property *prop;
- 
- 	if (!opp_table) {
--		struct device_node *np __free(device_node);
-+		struct device_node *np __free(device_node) =
-+			of_node_get(dev->of_node);
- 
--		np = of_node_get(dev->of_node);
- 		if (!np)
- 			return -ENODEV;
- 
-@@ -422,7 +424,9 @@ static int _bandwidth_supported(struct device *dev, struct opp_table *opp_table)
- 		return 0;
- 
- 	/* Checking only first OPP is sufficient */
--	np = of_get_next_available_child(opp_np, NULL);
-+	struct device_node *np __free(device_node) =
-+		of_get_next_available_child(opp_np, NULL);
-+
- 	if (!np) {
- 		dev_err(dev, "OPP table empty\n");
- 		return -EINVAL;
-@@ -1269,11 +1273,12 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_of_cpumask_add_table);
- int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev,
- 				   struct cpumask *cpumask)
- {
--	struct device_node *np __free(device_node);
- 	int cpu;
- 
- 	/* Get OPP descriptor node */
--	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-+	struct device_node *np __free(device_node) =
-+		dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-+
- 	if (!np) {
- 		dev_dbg(cpu_dev, "%s: Couldn't find opp node.\n", __func__);
- 		return -ENOENT;
-@@ -1286,13 +1291,12 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev,
- 		return 0;
- 
- 	for_each_possible_cpu(cpu) {
--		struct device_node *cpu_np __free(device_node) = NULL;
--		struct device_node *tmp_np __free(device_node) = NULL;
--
- 		if (cpu == cpu_dev->id)
- 			continue;
- 
--		cpu_np = of_cpu_device_node_get(cpu);
-+		struct device_node *cpu_np __free(device_node) =
-+			of_cpu_device_node_get(cpu);
-+
- 		if (!cpu_np) {
- 			dev_err(cpu_dev, "%s: failed to get cpu%d node\n",
- 				__func__, cpu);
-@@ -1300,7 +1304,9 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev,
- 		}
- 
- 		/* Get OPP descriptor node */
--		tmp_np = _opp_of_get_opp_desc_node(cpu_np, 0);
-+		struct device_node *tmp_np __free(device_node) =
-+			_opp_of_get_opp_desc_node(cpu_np, 0);
-+
- 		if (!tmp_np) {
- 			pr_err("%pOF: Couldn't find opp node\n", cpu_np);
- 			return -ENOENT;
-@@ -1328,16 +1334,17 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_of_get_sharing_cpus);
-  */
- int of_get_required_opp_performance_state(struct device_node *np, int index)
- {
--	struct device_node *required_np __free(device_node);
--	struct opp_table *opp_table __free(put_opp_table) = NULL;
--	struct dev_pm_opp *opp __free(put_opp) = NULL;
- 	int pstate = -EINVAL;
- 
--	required_np = of_parse_required_opp(np, index);
-+	struct device_node *required_np __free(device_node) =
-+		of_parse_required_opp(np, index);
-+
- 	if (!required_np)
- 		return -ENODEV;
- 
--	opp_table = _find_table_of_opp_np(required_np);
-+	struct opp_table *opp_table __free(put_opp_table) =
-+		_find_table_of_opp_np(required_np);
-+
- 	if (IS_ERR(opp_table)) {
- 		pr_err("%s: Failed to find required OPP table %pOF: %ld\n",
- 		       __func__, np, PTR_ERR(opp_table));
-@@ -1350,7 +1357,9 @@ int of_get_required_opp_performance_state(struct device_node *np, int index)
- 		return -EINVAL;
- 	}
- 
--	opp = _find_opp_of_np(opp_table, required_np);
-+	struct dev_pm_opp *opp __free(put_opp) =
-+		_find_opp_of_np(opp_table, required_np);
-+
- 	if (opp) {
- 		if (opp->level == OPP_LEVEL_UNSET) {
- 			pr_err("%s: OPP levels aren't available for %pOF\n",
-@@ -1376,14 +1385,17 @@ EXPORT_SYMBOL_GPL(of_get_required_opp_performance_state);
-  */
- bool dev_pm_opp_of_has_required_opp(struct device *dev)
- {
--	struct device_node *np __free(device_node) = NULL, *opp_np __free(device_node);
- 	int count;
- 
--	opp_np = _opp_of_get_opp_desc_node(dev->of_node, 0);
-+	struct device_node *opp_np __free(device_node) =
-+		_opp_of_get_opp_desc_node(dev->of_node, 0);
-+
- 	if (!opp_np)
- 		return false;
- 
--	np = of_get_next_available_child(opp_np, NULL);
-+	struct device_node *np __free(device_node) =
-+		of_get_next_available_child(opp_np, NULL);
-+
- 	if (!np) {
- 		dev_warn(dev, "Empty OPP table\n");
- 		return false;
-@@ -1425,12 +1437,14 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_get_of_node);
- static int __maybe_unused
- _get_dt_power(struct device *dev, unsigned long *uW, unsigned long *kHz)
- {
--	struct dev_pm_opp *opp __free(put_opp);
- 	unsigned long opp_freq, opp_power;
- 
- 	/* Find the right frequency and related OPP */
- 	opp_freq = *kHz * 1000;
--	opp = dev_pm_opp_find_freq_ceil(dev, &opp_freq);
-+
-+	struct dev_pm_opp *opp __free(put_opp) =
-+		dev_pm_opp_find_freq_ceil(dev, &opp_freq);
-+
- 	if (IS_ERR(opp))
- 		return -EINVAL;
- 
-@@ -1465,14 +1479,13 @@ _get_dt_power(struct device *dev, unsigned long *uW, unsigned long *kHz)
- int dev_pm_opp_calc_power(struct device *dev, unsigned long *uW,
- 			  unsigned long *kHz)
- {
--	struct dev_pm_opp *opp __free(put_opp) = NULL;
--	struct device_node *np __free(device_node);
- 	unsigned long mV, Hz;
- 	u32 cap;
- 	u64 tmp;
- 	int ret;
- 
--	np = of_node_get(dev->of_node);
-+	struct device_node *np __free(device_node) = of_node_get(dev->of_node);
-+
- 	if (!np)
- 		return -EINVAL;
- 
-@@ -1481,7 +1494,10 @@ int dev_pm_opp_calc_power(struct device *dev, unsigned long *uW,
- 		return -EINVAL;
- 
- 	Hz = *kHz * 1000;
--	opp = dev_pm_opp_find_freq_ceil(dev, &Hz);
-+
-+	struct dev_pm_opp *opp __free(put_opp) =
-+		dev_pm_opp_find_freq_ceil(dev, &Hz);
-+
- 	if (IS_ERR(opp))
- 		return -EINVAL;
- 
-@@ -1502,11 +1518,12 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_calc_power);
- 
- static bool _of_has_opp_microwatt_property(struct device *dev)
- {
--	struct dev_pm_opp *opp __free(put_opp);
- 	unsigned long freq = 0;
- 
- 	/* Check if at least one OPP has needed property */
--	opp = dev_pm_opp_find_freq_ceil(dev, &freq);
-+	struct dev_pm_opp *opp __free(put_opp) =
-+		dev_pm_opp_find_freq_ceil(dev, &freq);
-+
- 	if (IS_ERR(opp))
- 		return false;
- 
-@@ -1526,12 +1543,16 @@ static bool _of_has_opp_microwatt_property(struct device *dev)
-  */
- int dev_pm_opp_of_register_em(struct device *dev, struct cpumask *cpus)
- {
--	struct device_node *np __free(device_node) = NULL;
- 	struct em_data_callback em_cb;
- 	int ret, nr_opp;
- 	u32 cap;
- 
--	if (IS_ERR_OR_NULL(dev)) {
-+	if (IS_ERR_OR_NULL(dev))
-+		return -EINVAL;
-+
-+	struct device_node *np __free(device_node) = of_node_get(dev->of_node);
-+
-+	if (!np) {
- 		ret = -EINVAL;
- 		goto failed;
- 	}
-@@ -1548,12 +1569,6 @@ int dev_pm_opp_of_register_em(struct device *dev, struct cpumask *cpus)
- 		goto register_em;
- 	}
- 
--	np = of_node_get(dev->of_node);
--	if (!np) {
--		ret = -EINVAL;
--		goto failed;
--	}
--
- 	/*
- 	 * Register an EM only if the 'dynamic-power-coefficient' property is
- 	 * set in devicetree. It is assumed the voltage values are known if that
+
+Sure, Dmitry, will make the changes.
+
+>> +DEFINE_CLK_RPMH_VRM(c11a_e0, _a4, "C11A_E0", 4);
+> 
+>> +
+>>  DEFINE_CLK_RPMH_BCM(ce, "CE0");
+>>  DEFINE_CLK_RPMH_BCM(hwkm, "HK0");
+>>  DEFINE_CLK_RPMH_BCM(ipa, "IP0");
+>> @@ -900,6 +910,34 @@ static const struct clk_rpmh_desc clk_rpmh_glymur = {
+>>  	.num_clks = ARRAY_SIZE(glymur_rpmh_clocks),
+>>  };
+>>  
+>> +static struct clk_hw *kaanapali_rpmh_clocks[] = {
+>> +	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
+>> +	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
+>> +	[RPMH_DIV_CLK1]		= &clk_rpmh_c11a_e0_a4.hw,
+>> +	[RPMH_LN_BB_CLK1]	= &clk_rpmh_c6a_e0_a2.hw,
+>> +	[RPMH_LN_BB_CLK1_A]	= &clk_rpmh_c6a_e0_a2_ao.hw,
+>> +	[RPMH_LN_BB_CLK2]	= &clk_rpmh_c7a_e0_a2.hw,
+>> +	[RPMH_LN_BB_CLK2_A]	= &clk_rpmh_c7a_e0_a2_ao.hw,
+>> +	[RPMH_LN_BB_CLK3]	= &clk_rpmh_c8a_e0_a2.hw,
+>     -I$(KERNEL_ROOT)                            \
+>> +	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_c8a_e0_a2_ao.hw,
+>> +	[RPMH_RF_CLK1]		= &clk_rpmh_c1a_e0_a.hw,
+>> +	[RPMH_RF_CLK1_A]	= &clk_rpmh_c1a_e0_a_ao.hw,
+>> +	[RPMH_RF_CLK2]		= &clk_rpmh_c2a_e0_a.hw,
+>> +	[RPMH_RF_CLK2_A]	= &clk_rpmh_c2a_e0_a_ao.hw,
+>> +	[RPMH_RF_CLK3]		= &clk_rpmh_c3a_e0_a2.hw,
+>> +	[RPMH_RF_CLK3_A]	= &clk_rpmh_c3a_e0_a2_ao.hw,
+>> +	[RPMH_RF_CLK4]		= &clk_rpmh_c4a_e0_a2.hw,
+>> +	[RPMH_RF_CLK4]		= &clk_rpmh_c4a_e0_a2.hw,
+>> +	[RPMH_RF_CLK5_A]	= &clk_rpmh_c5a_e0_a2_ao.hw,
+>> +	[RPMH_RF_CLK5_A]	= &clk_rpmh_c5a_e0_a2_ao.hw,
+>> +	[RPMH_IPA_CLK]		= &clk_rpmh_ipa.hw,
+>> +};
+>> +
+>> +static const struct clk_rpmh_desc clk_rpmh_kaanapali = {
+>> +	.clks = kaanapali_rpmh_clocks,
+>> +	.num_clks = ARRAY_SIZE(kaanapali_rpmh_clocks),
+>> +};
+>> +
+>>  static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+>>  					 void *data)
+>>  {
+>> @@ -990,6 +1028,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+>>  
+>>  static const struct of_device_id clk_rpmh_match_table[] = {
+>>  	{ .compatible = "qcom,glymur-rpmh-clk", .data = &clk_rpmh_glymur},
+>> +	{ .compatible = "qcom,kaanapali-rpmh-clk", .data = &clk_rpmh_kaanapali},
+>>  	{ .compatible = "qcom,milos-rpmh-clk", .data = &clk_rpmh_milos},
+>>  	{ .compatible = "qcom,qcs615-rpmh-clk", .data = &clk_rpmh_qcs615},
+>>  	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
+>>
+>> -- 
+>> 2.25.1
+>>
+> 
+
 -- 
-2.31.1.272.g89b43f80a514
+Thanks,
+Taniya Das
 
 
