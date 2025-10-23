@@ -1,62 +1,66 @@
-Return-Path: <linux-kernel+bounces-867630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED11BC03271
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:16:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A7D0C0327A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EEB03B1350
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:15:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 262783B12AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F0834D4CB;
-	Thu, 23 Oct 2025 19:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D04F34D4E6;
+	Thu, 23 Oct 2025 19:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="N+kGPbix"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UlE0riLV"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F312356C7;
-	Thu, 23 Oct 2025 19:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DE934CFD3;
+	Thu, 23 Oct 2025 19:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761246943; cv=none; b=kuClwzbmthtM7TfaMDhYceot/pMgvpf537TJn9rVwcYUBoHcSj5twnVe4IriQfAykZeBKMXpFo29biV6HyvdTJVEbmortAnLnsSuYMrD5tTqQfht7D6pgLnYdsIyQtNgLdQ8zSa4njHYFsdPYk42H9Pb7U0V6u7xC08zfYYxorw=
+	t=1761246963; cv=none; b=Vp5p3dNiecMzXqqu7GHNCc5j7veDyeAqkLz11AXix/FT20MzflfR7sGpDMCAX6GevAkt4QRYjGjCuemAgfW5npYJazDoFWpHQ+G8m6og+yuI/n7fNSZT9PmwxQMoeu8UM0HwWRG0Ohou0oJIGhdfsWtJY8rcHKuaduJ8ubbvEJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761246943; c=relaxed/simple;
-	bh=lBwBnWTT656kmdcY7xIZ2C12l4MOlTwkkMGrs0lq+18=;
+	s=arc-20240116; t=1761246963; c=relaxed/simple;
+	bh=uh5+lqrS/SBTXR/rciPknKgV/zgEE2VyVIqvRo/hAGw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Du504Nb3lBGdUzWwa1ir80+hqnE0veGcnmJwE8rEHEUZS4amitYQQWlqXV/P8Tr7NN8wKkUypAqsDyyBN8Vw4VrnGptT6Uk1wW+Nzw3Vvj1ek+Q7TEUVFPEevUHP8djGU42n/VkXQWBkuqsIy/Wsp7itAGRBK4sY0q/JNz6Ains=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=N+kGPbix; arc=none smtp.client-ip=68.232.153.233
+	 MIME-Version:Content-Type; b=h1cZCsxsdR1MuRRCX3g8xbLANXwCXdm5RTbKfEMCfH4OnEysYMc5veeWtvi4DNi7BPCjmfCdPg76MjWmjU3RtF94SqUXlSflAkk3PMOcghQ6YKFY21++rG0+VCCCzXalL9yj1EardWLIxDIAyi2LqCOG5iA4KC3OJnLBlH+O2Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=UlE0riLV; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1761246941; x=1792782941;
+  t=1761246961; x=1792782961;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=lBwBnWTT656kmdcY7xIZ2C12l4MOlTwkkMGrs0lq+18=;
-  b=N+kGPbixEQQhzt0JhSKVO6aESdg8uuRFVtnwAYDgPt/2jKdw2H8wqKuP
-   o/CTiqM9ILrO0VAbUyVYetzYyJvDa0Q2w49lLiaPm5aLr5fYAjilMHAis
-   sP/YXt5VM3gPBpD/ef00xIxtiTwQZdgfbDboctnwPASTGd0C2nl0lWVZT
-   EIK3kS6tnYuIGr+fEktGWVV33Ka42RVkEJhkJAtTJWEw5wgYxcKwuIMvf
-   svhYNaMprpABwD41hdCZjlybZpjeYNly52NPNVoUGEYHkZoXj5nvm73SY
-   EXKc9sFbuo6SIcFyR1uvo6gQS3SezikyPgQixh7puIoUXx/mudiMhvkj6
-   g==;
-X-CSE-ConnectionGUID: w2V51oyKREaPdSMAbb7Zcg==
-X-CSE-MsgGUID: h/QNsp0JQ52A7AwNAY/qRQ==
+  bh=uh5+lqrS/SBTXR/rciPknKgV/zgEE2VyVIqvRo/hAGw=;
+  b=UlE0riLVJ/y+MHGYnF7S7wGUf/iGDfg6U6BFOUnyCyMhcJPcyS+DmXN9
+   gEOyiC7PWirMsUybWYn+OzFObBjcny4WBKkGO4LYkTHiweWKGZqW9e0G8
+   lWCpyb5x5aCakRQwlkRvjI9pGk62Q375LAuAi9O0KwR8UvTujKRaSk5se
+   5nS7V0BDPQW5EdTdRlbkh5ja/raFvsQ0KIlIkFVJfOr1sFvcwMGHNeQTB
+   M4GB8aUpGg6WW1BE5AqjEY6xIkj9pyaKAJ3qc7zvEVbluZDhexhIUjghL
+   YtOMm5H3wrL0H7XZcUVYtbVrUAShy/yK942hI5wXLDhDlP3zQXJzDRE40
+   Q==;
+X-CSE-ConnectionGUID: Bo16A/8xSLi5sWxfr2eeOg==
+X-CSE-MsgGUID: Z7o9yn77Q+KSRfPvVIZjQw==
 X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="54427351"
+   d="scan'208";a="215529397"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Oct 2025 12:15:35 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Oct 2025 12:16:00 -0700
+Received: from chn-vm-ex2.mchp-main.com (10.10.87.31) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Thu, 23 Oct 2025 12:15:16 -0700
+ 15.1.2507.58; Thu, 23 Oct 2025 12:15:20 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
+ chn-vm-ex2.mchp-main.com (10.10.87.31) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.27; Thu, 23 Oct 2025 12:15:19 -0700
 Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 23 Oct 2025 12:15:13 -0700
+ 15.1.2507.58 via Frontend Transport; Thu, 23 Oct 2025 12:15:16 -0700
 From: Horatiu Vultur <horatiu.vultur@microchip.com>
 To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
 	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
@@ -66,9 +70,9 @@ To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
 	<christophe.jaillet@wanadoo.fr>, <steen.hegelund@microchip.com>,
 	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: Horatiu Vultur <horatiu.vultur@microchip.com>
-Subject: [PATCH net-next v5 1/2] phy: mscc: Use PHY_ID_MATCH_EXACT for VSC8584, VSC8582, VSC8575, VSC856X
-Date: Thu, 23 Oct 2025 21:13:49 +0200
-Message-ID: <20251023191350.190940-2-horatiu.vultur@microchip.com>
+Subject: [PATCH net-next v5 2/2] phy: mscc: Fix PTP for VSC8574 and VSC8572
+Date: Thu, 23 Oct 2025 21:13:50 +0200
+Message-ID: <20251023191350.190940-3-horatiu.vultur@microchip.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251023191350.190940-1-horatiu.vultur@microchip.com>
 References: <20251023191350.190940-1-horatiu.vultur@microchip.com>
@@ -81,116 +85,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-As the PHYs VSC8584, VSC8582, VSC8575 and VSC856X exists only as rev B,
-we can use PHY_ID_MATCH_EXACT to match exactly on revision B of the PHY.
-Because of this change then there is not need the check if it is a
-different revision than rev B in the function vsc8584_probe() as we
-already know that this will never happen.
-These changes are a preparation for the next patch because in that patch
-we will make the PHYs VSC8574 and VSC8572 to use vsc8584_probe() and
-these PHYs have multiple revision.
+The PTP initialization is two-step. First part are the function
+vsc8584_ptp_probe_once() and vsc8584_ptp_probe() at probe time which
+initialize the locks, queues, creates the PTP device. The second part is
+the function vsc8584_ptp_init() at config_init() time which initialize
+PTP in the HW.
 
+For VSC8574 and VSC8572, the PTP initialization is incomplete. It is
+missing the first part but it makes the second part. Meaning that the
+ptp_clock_register() is never called.
+
+There is no crash without the first part when enabling PTP but this is
+unexpected because some PHys have PTP functionality exposed by the
+driver and some don't even though they share the same PTP clock PTP.
+
+Fixes: 774626fa440e ("net: phy: mscc: Add PTP support for 2 more VSC PHYs")
 Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 ---
- drivers/net/phy/mscc/mscc.h      |  8 ++++----
- drivers/net/phy/mscc/mscc_main.c | 23 ++++-------------------
- 2 files changed, 8 insertions(+), 23 deletions(-)
+ drivers/net/phy/mscc/mscc_main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/phy/mscc/mscc.h b/drivers/net/phy/mscc/mscc.h
-index 2d8eca54c40a2..2eef5956b9cc5 100644
---- a/drivers/net/phy/mscc/mscc.h
-+++ b/drivers/net/phy/mscc/mscc.h
-@@ -289,12 +289,12 @@ enum rgmii_clock_delay {
- #define PHY_ID_VSC8540			  0x00070760
- #define PHY_ID_VSC8541			  0x00070770
- #define PHY_ID_VSC8552			  0x000704e0
--#define PHY_ID_VSC856X			  0x000707e0
-+#define PHY_ID_VSC856X			  0x000707e1
- #define PHY_ID_VSC8572			  0x000704d0
- #define PHY_ID_VSC8574			  0x000704a0
--#define PHY_ID_VSC8575			  0x000707d0
--#define PHY_ID_VSC8582			  0x000707b0
--#define PHY_ID_VSC8584			  0x000707c0
-+#define PHY_ID_VSC8575			  0x000707d1
-+#define PHY_ID_VSC8582			  0x000707b1
-+#define PHY_ID_VSC8584			  0x000707c1
- #define PHY_VENDOR_MSCC			0x00070400
- 
- #define MSCC_VDDMAC_1500		  1500
 diff --git a/drivers/net/phy/mscc/mscc_main.c b/drivers/net/phy/mscc/mscc_main.c
-index ef0ef1570d392..9343ed3b000d4 100644
+index 9343ed3b000d4..8678ebf89cca5 100644
 --- a/drivers/net/phy/mscc/mscc_main.c
 +++ b/drivers/net/phy/mscc/mscc_main.c
-@@ -1724,12 +1724,6 @@ static int vsc8584_config_init(struct phy_device *phydev)
- 	 * in this pre-init function.
- 	 */
- 	if (phy_package_init_once(phydev)) {
--		/* The following switch statement assumes that the lowest
--		 * nibble of the phy_id_mask is always 0. This works because
--		 * the lowest nibble of the PHY_ID's below are also 0.
--		 */
--		WARN_ON(phydev->drv->phy_id_mask & 0xf);
--
- 		switch (phydev->phy_id & phydev->drv->phy_id_mask) {
- 		case PHY_ID_VSC8504:
- 		case PHY_ID_VSC8552:
-@@ -2290,11 +2284,6 @@ static int vsc8584_probe(struct phy_device *phydev)
- 	   VSC8531_DUPLEX_COLLISION};
- 	int ret;
- 
--	if ((phydev->phy_id & MSCC_DEV_REV_MASK) != VSC8584_REVB) {
--		dev_err(&phydev->mdio.dev, "Only VSC8584 revB is supported.\n");
--		return -ENOTSUPP;
--	}
--
- 	vsc8531 = devm_kzalloc(&phydev->mdio.dev, sizeof(*vsc8531), GFP_KERNEL);
- 	if (!vsc8531)
- 		return -ENOMEM;
-@@ -2587,9 +2576,8 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_inband  = vsc85xx_config_inband,
- },
- {
--	.phy_id		= PHY_ID_VSC856X,
-+	PHY_ID_MATCH_EXACT(PHY_ID_VSC856X),
- 	.name		= "Microsemi GE VSC856X SyncE",
--	.phy_id_mask	= 0xfffffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.soft_reset	= &genphy_soft_reset,
- 	.config_init    = &vsc8584_config_init,
-@@ -2667,9 +2655,8 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_inband  = vsc85xx_config_inband,
- },
- {
--	.phy_id		= PHY_ID_VSC8575,
-+	PHY_ID_MATCH_EXACT(PHY_ID_VSC8575),
- 	.name		= "Microsemi GE VSC8575 SyncE",
--	.phy_id_mask	= 0xfffffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.soft_reset	= &genphy_soft_reset,
- 	.config_init    = &vsc8584_config_init,
-@@ -2693,9 +2680,8 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_inband  = vsc85xx_config_inband,
- },
- {
--	.phy_id		= PHY_ID_VSC8582,
-+	PHY_ID_MATCH_EXACT(PHY_ID_VSC8582),
- 	.name		= "Microsemi GE VSC8582 SyncE",
--	.phy_id_mask	= 0xfffffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.soft_reset	= &genphy_soft_reset,
- 	.config_init    = &vsc8584_config_init,
-@@ -2719,9 +2705,8 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_inband  = vsc85xx_config_inband,
- },
- {
--	.phy_id		= PHY_ID_VSC8584,
-+	PHY_ID_MATCH_EXACT(PHY_ID_VSC8584),
- 	.name		= "Microsemi GE VSC8584 SyncE",
--	.phy_id_mask	= 0xfffffff0,
- 	/* PHY_GBIT_FEATURES */
- 	.soft_reset	= &genphy_soft_reset,
- 	.config_init    = &vsc8584_config_init,
+@@ -2613,7 +2613,7 @@ static struct phy_driver vsc85xx_driver[] = {
+ 	.suspend	= &genphy_suspend,
+ 	.resume		= &genphy_resume,
+ 	.remove		= &vsc85xx_remove,
+-	.probe		= &vsc8574_probe,
++	.probe		= &vsc8584_probe,
+ 	.set_wol	= &vsc85xx_wol_set,
+ 	.get_wol	= &vsc85xx_wol_get,
+ 	.get_tunable	= &vsc85xx_get_tunable,
+@@ -2636,12 +2636,12 @@ static struct phy_driver vsc85xx_driver[] = {
+ 	.config_aneg    = &vsc85xx_config_aneg,
+ 	.aneg_done	= &genphy_aneg_done,
+ 	.read_status	= &vsc85xx_read_status,
+-	.handle_interrupt = vsc85xx_handle_interrupt,
++	.handle_interrupt = vsc8584_handle_interrupt,
+ 	.config_intr    = &vsc85xx_config_intr,
+ 	.suspend	= &genphy_suspend,
+ 	.resume		= &genphy_resume,
+ 	.remove		= &vsc85xx_remove,
+-	.probe		= &vsc8574_probe,
++	.probe		= &vsc8584_probe,
+ 	.set_wol	= &vsc85xx_wol_set,
+ 	.get_wol	= &vsc85xx_wol_get,
+ 	.get_tunable	= &vsc85xx_get_tunable,
 -- 
 2.34.1
 
