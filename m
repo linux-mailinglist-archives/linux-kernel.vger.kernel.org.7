@@ -1,93 +1,93 @@
-Return-Path: <linux-kernel+bounces-866708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1751C007AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:29:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4334AC007B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C0FC19C78A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:29:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB3173A3A8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C0930E0EE;
-	Thu, 23 Oct 2025 10:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5B530F94A;
+	Thu, 23 Oct 2025 10:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AaKUTF3e"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="D7Y5dDo5"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D0730EF7D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA52A30F533
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761215180; cv=none; b=SA/VlA8Pz8AYoPF36nsQIRrfJtjAi/uXwgUWucr64AXyGUpAfawdfl+3Kah9wisRsUjJmLbwML25iNrtJLcbbLzNhFMA8J7L9RTgue7trbIIaFKuGV4lO/DgRRZadV8sGiPe8l2OWbbKcDGI/ZFtfHIQvj9DlI+YOHphd0+yS6Y=
+	t=1761215181; cv=none; b=CkPHngatYRRh991o9LHEj75TvhzhixG5ERH7k49aRRrmtQW6ap+ITYPvgGr8Uw7rDJwSWBmZH1d9IiUZ1raWvEBjr8l6gTuETG1HDyrd3/cki6tcKUbA/EkR4ZRbL6vZf1TCUPEBYcTkTmy7xWjS07IOfkqfV79VBZ3SAccEZHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761215180; c=relaxed/simple;
-	bh=dLHz5GvCqsmxeiBqKMEL3HcMUOaRmWqxPH16ZJ+zr84=;
+	s=arc-20240116; t=1761215181; c=relaxed/simple;
+	bh=t04XyOJAlW4a/cW3iIAeR5OckKuonqZ/J6zYap6C1zs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pNa17NFLiC12i6dh+ROmddG2OD3U4pDhfc4SJcm2uK2Bq0BqoPP39WqSVkYVA5iA6VkDj1/5t67bYelvNCksIfK1qjf16pFGNe4lioOL99FrevRSRrDGrCk4TymSHUooDHFKphihdmIHGOPmFJk7WwkogvAANTq0LLMvRLJfP14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AaKUTF3e; arc=none smtp.client-ip=205.220.168.131
+	 MIME-Version; b=eerWthzUeYW5lefgaM5hl6YQHHTrZxEDhXHSYG+nTovSo2JajX4g57Ei1sPUhWdX906/ZeGjkDA4qKbQWSWb0++cLlS3WJ8oJq4fNjj9JNkg0lSM/2rdSxQ0ZwO6K4ofVeSSjuqwgiJqClMdG1UW4bOFxQQSxZLAyppQpQI5VDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=D7Y5dDo5; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N8T7lC027485
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:26:17 GMT
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6dfsI000663
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:26:19 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=JitUmPpOE5T
-	5FCzl9njQ018JnbQNGz2uQiWhNK3tWOE=; b=AaKUTF3epbbr6yJaNDjUCsqzLAm
-	11y2e6WNB8UIH0mVSKCRRFMKznv1p93IpJS6wXXwKqUnUNbxFlFOG2EQ/OlzxA4c
-	9tIAcIsOrIHToT+i59sbKkEbCooFaW0LfPCDclQbIfHIeGNX2K9+C+8Bx966Lqer
-	Bm+QfkfGcdrVKXOR3rkyydsG1QyIvGczahYTE2R6yZFeYe+A9810EV9c4oN9m0i0
-	ZUr9qSxzY8Dt0kJaCJERKrUM2bdEejoAQl575l/B7Z4Hx5yiVVnchdx48joQRnKQ
-	gfsM7PH8mUmztwLPd0Sa7ZJ58TZVJeE0fs+64smAJQBzQgXOgCDVMuuDbEw==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49y524a760-1
+	:mime-version:references:subject:to; s=qcppdkim1; bh=iDeZtnWh/qc
+	Fvkr98+XBzVWqMHOVajWl1qfIqPp106w=; b=D7Y5dDo59fWFyB2WckwUeLAJIFI
+	mxonuGuCSZS3RuXJNn+85mvVbCE6hyrHfvxcEK+ife1dQ9TpvaxJK3HTc70EVfgR
+	bhq1pKBiorO0I6r5VDdzRwUY4ZMlo6fEBw9+T/v67mJICWAqQfpSeocv3Sz85so2
+	7Cq7WZb1DtvuRgxuQi8OpPXywFYm0d1GTd9wKkaIYJNRelqlODtPPlrUABo7mxue
+	u7TB1O3Td1TtkjqcDOj5tT8Se5nR2YNi9puIaZ35J4VWUckWnYZmAkERXxvnpEVg
+	IvFU9m4nl0wQh0y2dGbFHhZlV5okZYjn0zSaMSEl0JDB21gid4kIUlfjdDw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49w08wdp25-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:26:17 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4e8b73b2f90so22785651cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:26:17 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:26:18 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4e8a4c63182so17546361cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:26:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761215176; x=1761819976;
+        d=1e100.net; s=20230601; t=1761215177; x=1761819977;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JitUmPpOE5T5FCzl9njQ018JnbQNGz2uQiWhNK3tWOE=;
-        b=AqFl03QfqHECDiBQCJ9s50lctf7nrJOJxTvYY/3NH+DWsbaitZ9kUqt2KeLJFGfOdc
-         5jYRk7tERcw+arMzuGRkMtmKzVF1Wa/2wLcwapu6otSKRA8reFZ7rG1Kjr0TgjzG+waF
-         WXzSVE6KRnClZU/28BqHZt8iDjEjDRTw4s+IW3ANT5gX2m39TqAPDs0io/uhiLlcTV0p
-         ER//BI+uEKE9KZgeiKqjQZ7GEb+HZ5wgLu5QQUpCajd0uLvD9NdHHqbsFmg9N4HXFj3v
-         nMpf7uvzdiAnalh6b+0/fyW826RE+efgoOD7o4t0wPdQrkxYmvfjBf9qe3kPtRmHQuFP
-         Um6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUTXKYun4vB1yvLNYCH36O40h797sd7qZSwogAYI3RbUJdlTlv0lto/qMR6bkigZrv84COieiUqZ9rPw4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVc2Uw6Zc+iThhZhkKWlzYht2Eae0jDJ00oZQlkRZdSyDTAzQ2
-	6DndRAx3/LcbMTCTiG64v+rzH49R/Zf0dolEgARpVx5fQr6Jv/PdyDPmwIQTYVg4HAOEcBvqT4G
-	vpin/XxxSQI63rWrmRjDLbiK65OeLIfgGtQ4YJYE70wlRBsxtmRVa9oJCTNTlb+FZMUg=
-X-Gm-Gg: ASbGncu26krIUQ4vNft481DKxjlA6XxrXC65VrGDcPCrkq+Ug/Z0DcoyIeD9uEopAr/
-	Auh3uJqcw7rmhEyElbm0mtSV645D8yW80MvLMXzYPsOEUAWlTtIuHwt89vFupXODFw/mAEWyJyv
-	lwngWjLhJ9ZYV94SsfpjGF9ztkTlnvNlxV6erQtoPSNKaldS5PScRF5Hgb1SHdEBnhkzb0pTW9M
-	XoN89wVnUqFzwj59sqI9ocLzu+PbUGQF714zc4F5vzoDRcnRVYfwZOtCsOSxA+tCsQTV3xlbnsA
-	sTPtz5FohWHW2lzdATrljI1oSgqZ6BZi7D0YALfxTGkPv/RGKhsvoq66zwm48FXT5BTEIQ/GQpu
-	jwdc4EtetTDBl
-X-Received: by 2002:ac8:598b:0:b0:4e8:968d:b14a with SMTP id d75a77b69052e-4e89d28295amr268425321cf.22.1761215176210;
-        Thu, 23 Oct 2025 03:26:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEj7fkh7+VmeztYn4QdA68cJbOaNXQj+xi9BZBCSrDbEh6Oo9ctMku5VaXZ9TTwndXPdbnPQw==
-X-Received: by 2002:ac8:598b:0:b0:4e8:968d:b14a with SMTP id d75a77b69052e-4e89d28295amr268425171cf.22.1761215175778;
-        Thu, 23 Oct 2025 03:26:15 -0700 (PDT)
+        bh=iDeZtnWh/qcFvkr98+XBzVWqMHOVajWl1qfIqPp106w=;
+        b=Q41hmNbpjMQ0OFU7NSng2/n3wWOwbdsMnD2qkVSGBHMcawykLwjtPdtzcqEY1c4x09
+         sWJAHUAvAiIGi0TSY5iOMgWFUCYKijfRlFdo4tTpeyJFSjZkbfPi1G6TIcd8/btEDSWx
+         oZTHN0OWzGVYh8xdMJCp77+Om/49v0UsNccbOdO8xZoC95nNuO2eISAA9bYlxGnnvY8k
+         VGCvx2dlDuU7jM0C0UDU+QfVmdPjYBdx1Pt5sSlTi72Xl0DxhTKTSHibC2v+7rC5NbPM
+         cu9JI2absLM5kIV5NUaGYbIUiM9K+D2T8S1M0m7ZseT6px6nAi5qUSPZWxWcUNQDyhZV
+         y5LA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSoqkaTZvQXUPghzUF4jZjJteQvf/2Tmz7QCLns7ysHTd6OxxxieWKaH8R3Nsm9kCqMNMfOvoJN7e2Im0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5BY7YA9rAXtNIiyg3gOuUzLSj58+gIITEJdOJImYJDMfZs93v
+	hBWQ95hCHVdhHKxdXiVMvPyQWLrTw/5lVf96E19YW1DOCORDGFfjbC31GWdPRPRCYk97CErq3Ix
+	5frK4+cWGJL3SLJeLPegVHyh8jlWfh2B5vM8MAu263xebdvp2MA5pxgPV/K5LbpINXEo=
+X-Gm-Gg: ASbGncuT5wP7RtmDIJRdc17HdjE0fiMbPMq7jII1DdnQ/2BEK1+f68DQjHVixwM8V3Q
+	IcLmqpNFi6bPVLYZ7NvnZYK5JUzqQ9BTguxwzcCPySgXWT4b04mwhUd6I9+rkJwmQXvGYtNE980
+	jYitbUr8o4J+6K6JUwej0lYEbNOOh8+ho3eSRCX7HcXGcDNOKyO0knmCsntvfAC0HQb0LMbvcMr
+	CLfGkgAsNMGfBHteUJiAZB6S+6uQlFWqkRqntQvNoldqA/QIDPhkMNKGZbPBPnWoRtN3x5TAOjR
+	7WK/NQH7Bha3X//2LKS3uMgHR/7JwbQWUIOGKXbYbtHumGGR0rXYZ6BGfq2soHvQvtrZm33FGzb
+	X1Quj0enHOdAT
+X-Received: by 2002:a05:622a:1196:b0:4e8:a307:a428 with SMTP id d75a77b69052e-4eb8107e17amr21075761cf.28.1761215177502;
+        Thu, 23 Oct 2025 03:26:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3rxCOTom7ofYplfN08by1bi87SvFeGoFIn0488gg2BDmU7tq8Qp6ELKT3VSIa5YBBU73qWQ==
+X-Received: by 2002:a05:622a:1196:b0:4e8:a307:a428 with SMTP id d75a77b69052e-4eb8107e17amr21075581cf.28.1761215177083;
+        Thu, 23 Oct 2025 03:26:17 -0700 (PDT)
 Received: from debian ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c427f77bsm92220685e9.3.2025.10.23.03.26.14
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c427f77bsm92220685e9.3.2025.10.23.03.26.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 03:26:15 -0700 (PDT)
+        Thu, 23 Oct 2025 03:26:16 -0700 (PDT)
 From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 To: broonie@kernel.org
 Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org,
         linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Subject: [PATCH v2 17/20] ASoC: qcom: q6afe: Use guard() for spin locks
-Date: Thu, 23 Oct 2025 11:24:41 +0100
-Message-ID: <20251023102444.88158-18-srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH v2 18/20] ASoC: qcom: q6apm-dai: Use guard() for spin locks
+Date: Thu, 23 Oct 2025 11:24:42 +0100
+Message-ID: <20251023102444.88158-19-srinivas.kandagatla@oss.qualcomm.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251023102444.88158-1-srinivas.kandagatla@oss.qualcomm.com>
 References: <20251023102444.88158-1-srinivas.kandagatla@oss.qualcomm.com>
@@ -98,78 +98,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDE1NSBTYWx0ZWRfX01EPZAT4cePe
- RL8H3BAD1CwPaSejOZIGwmctskat2tFUZm92FDvvuzTcHpUQKfSCS7086ra3Ro43btOv+OT97uQ
- dV8LhhY0k5tFSyKYpzF/K7Yak13uZ0xvG5FWM8v2ybUN3RpaxLLKsbwBEVd1XZfhxCSGDpTrmfp
- e/jvM0xqhJ5mPuXeHCJ9O0yftwlTwN8NSTAumUxXl2C2p4KFoUI4deiDjnBbwejv5CiXj6CnZDn
- WpeppIbNQ+6mEbSnaEXnB1DDj29B69W5V8YApb4cV16PF/QkKjLuK8kvnop2Fv9lSaax/acUk/J
- O3eEOxK/N/gvETlBLrmgLtRCWfkPdZ9CqX4K3B/BRHGjcXoq1nbm3CXCw1LmzsWGOkAsf1g+1Gd
- HR7snPqH8amRHNjerQa8XKufZX/umQ==
-X-Authority-Analysis: v=2.4 cv=Uotu9uwB c=1 sm=1 tr=0 ts=68fa02c9 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+X-Proofpoint-ORIG-GUID: Bwh3-ACZ5ZdRWPYoBth4PRhIkwEKk2Fm
+X-Proofpoint-GUID: Bwh3-ACZ5ZdRWPYoBth4PRhIkwEKk2Fm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE5MDA5MCBTYWx0ZWRfXyDXC8OjHJNP1
+ S0fG8GS4082Y0vW/KbtcVXywkOGIPHJSNv9YSixtDf8pULGxYVhS4fmg2Np03ILYNQGQF0YIaw6
+ UePTLs8WE6g8a0RRBIMQG0i9KMAlNDiRFrtOB+UoylKXVeYWJgvZa5kOCwKM3M22iBivJNiFedT
+ r+Oi/hGy3or4qXP4PdlW6p5crJT3SRVBHHVFP/NCL9Fgglq7uekHUfBLSKmIqfCOQ7ztJemdgHo
+ wPCOQ9coQAVSIsMWF/7+mXPd0OsZ3WVdYADsf8m/2T4KMhM4pAgGK2YYzQIBPqteR+0UwsTxaql
+ cWt0VpjpwAHf+sCcDuOeMAWi/mFFo3nNXSpwWffmG8Cqj2GQiT2DST6e6LnxiJc825RKJhZ+Aia
+ ojmgLJ9+3q2ptF2nfsfR2uVdK8ehbQ==
+X-Authority-Analysis: v=2.4 cv=V5NwEOni c=1 sm=1 tr=0 ts=68fa02ca cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
  a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=RrrD4pAD4uqPltEmIwwA:9 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-GUID: CDTjbr_dnoIDg7oHr4AIsmcNT-D02us5
-X-Proofpoint-ORIG-GUID: CDTjbr_dnoIDg7oHr4AIsmcNT-D02us5
+ a=_oaKiOAelN1AsWPOrNEA:9 a=kacYvNCVWA4VmyqE58fU:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 impostorscore=0 priorityscore=1501 clxscore=1015 spamscore=0
- adultscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ bulkscore=0 malwarescore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
+ spamscore=0 suspectscore=0 clxscore=1015 phishscore=0 impostorscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510220155
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510190090
 
 Clean up the code using guard() for spin locks.
-
 No functional changes, just cleanup.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
 ---
- sound/soc/qcom/qdsp6/q6afe.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ sound/soc/qcom/qdsp6/q6apm-dai.c | 23 +++++------------------
+ 1 file changed, 5 insertions(+), 18 deletions(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
-index 56f85f1c2425..980851a12976 100644
---- a/sound/soc/qcom/qdsp6/q6afe.c
-+++ b/sound/soc/qcom/qdsp6/q6afe.c
-@@ -946,9 +946,8 @@ static struct q6afe_port *q6afe_find_port(struct q6afe *afe, int token)
+diff --git a/sound/soc/qcom/qdsp6/q6apm-dai.c b/sound/soc/qcom/qdsp6/q6apm-dai.c
+index 786ab3222515..aaeeadded7aa 100644
+--- a/sound/soc/qcom/qdsp6/q6apm-dai.c
++++ b/sound/soc/qcom/qdsp6/q6apm-dai.c
+@@ -151,33 +151,28 @@ static void event_handler_compr(uint32_t opcode, uint32_t token,
  {
- 	struct q6afe_port *p;
- 	struct q6afe_port *ret = NULL;
+ 	struct q6apm_dai_rtd *prtd = priv;
+ 	struct snd_compr_stream *substream = prtd->cstream;
 -	unsigned long flags;
+ 	uint32_t wflags = 0;
+ 	uint64_t avail;
+ 	uint32_t bytes_written, bytes_to_write;
+ 	bool is_last_buffer = false;
  
--	spin_lock_irqsave(&afe->port_list_lock, flags);
-+	guard(spinlock)(&afe->port_list_lock);
- 	list_for_each_entry(p, &afe->port_list, node)
- 		if (p->token == token) {
- 			ret = p;
-@@ -956,7 +955,6 @@ static struct q6afe_port *q6afe_find_port(struct q6afe *afe, int token)
++	guard(spinlock_irqsave)(&prtd->lock);
+ 	switch (opcode) {
+ 	case APM_CLIENT_EVENT_CMD_EOS_DONE:
+-		spin_lock_irqsave(&prtd->lock, flags);
+ 		if (prtd->notify_on_drain) {
+ 			snd_compr_drain_notify(prtd->cstream);
+ 			prtd->notify_on_drain = false;
+ 		} else {
+ 			prtd->state = Q6APM_STREAM_STOPPED;
+ 		}
+-		spin_unlock_irqrestore(&prtd->lock, flags);
+ 		break;
+ 	case APM_CLIENT_EVENT_DATA_WRITE_DONE:
+-		spin_lock_irqsave(&prtd->lock, flags);
+ 		bytes_written = token >> APM_WRITE_TOKEN_LEN_SHIFT;
+ 		prtd->copied_total += bytes_written;
+ 		snd_compr_fragment_elapsed(substream);
+ 
+-		if (prtd->state != Q6APM_STREAM_RUNNING) {
+-			spin_unlock_irqrestore(&prtd->lock, flags);
++		if (prtd->state != Q6APM_STREAM_RUNNING)
  			break;
+-		}
+ 
+ 		avail = prtd->bytes_received - prtd->bytes_sent;
+ 
+@@ -202,7 +197,6 @@ static void event_handler_compr(uint32_t opcode, uint32_t token,
+ 				audioreach_shared_memory_send_eos(prtd->graph);
  		}
  
--	spin_unlock_irqrestore(&afe->port_list_lock, flags);
- 	return ret;
- }
- 
-@@ -1733,7 +1731,6 @@ struct q6afe_port *q6afe_port_get_from_id(struct device *dev, int id)
- 	int port_id;
- 	struct q6afe *afe = dev_get_drvdata(dev->parent);
- 	struct q6afe_port *port;
+-		spin_unlock_irqrestore(&prtd->lock, flags);
+ 		break;
+ 	default:
+ 		break;
+@@ -583,14 +577,12 @@ static int q6apm_dai_compr_pointer(struct snd_soc_component *component,
+ {
+ 	struct snd_compr_runtime *runtime = stream->runtime;
+ 	struct q6apm_dai_rtd *prtd = runtime->private_data;
 -	unsigned long flags;
- 	int cfg_type;
+ 	uint64_t temp_copied_total;
  
- 	if (id < 0 || id >= AFE_PORT_MAX) {
-@@ -1810,9 +1807,8 @@ struct q6afe_port *q6afe_port_get_from_id(struct device *dev, int id)
- 	port->cfg_type = cfg_type;
- 	kref_init(&port->refcount);
+-	spin_lock_irqsave(&prtd->lock, flags);
++	guard(spinlock_irqsave)(&prtd->lock);
+ 	tstamp->copied_total = prtd->copied_total;
+ 	temp_copied_total = tstamp->copied_total;
+ 	tstamp->byte_offset = do_div(temp_copied_total, prtd->pcm_size);
+-	spin_unlock_irqrestore(&prtd->lock, flags);
  
--	spin_lock_irqsave(&afe->port_list_lock, flags);
-+	guard(spinlock)(&afe->port_list_lock);
- 	list_add_tail(&port->node, &afe->port_list);
--	spin_unlock_irqrestore(&afe->port_list_lock, flags);
+ 	return 0;
+ }
+@@ -633,11 +625,9 @@ static int q6apm_dai_compr_ack(struct snd_soc_component *component, struct snd_c
+ {
+ 	struct snd_compr_runtime *runtime = stream->runtime;
+ 	struct q6apm_dai_rtd *prtd = runtime->private_data;
+-	unsigned long flags;
  
- 	return port;
+-	spin_lock_irqsave(&prtd->lock, flags);
++	guard(spinlock_irqsave)(&prtd->lock);
+ 	prtd->bytes_received += count;
+-	spin_unlock_irqrestore(&prtd->lock, flags);
+ 
+ 	return count;
+ }
+@@ -762,7 +752,6 @@ static int q6apm_compr_copy(struct snd_soc_component *component,
+ 	struct snd_compr_runtime *runtime = stream->runtime;
+ 	struct q6apm_dai_rtd *prtd = runtime->private_data;
+ 	void *dstn;
+-	unsigned long flags;
+ 	size_t copy;
+ 	u32 wflags = 0;
+ 	u32 app_pointer;
+@@ -797,7 +786,7 @@ static int q6apm_compr_copy(struct snd_soc_component *component,
+ 			return -EFAULT;
+ 	}
+ 
+-	spin_lock_irqsave(&prtd->lock, flags);
++	guard(spinlock_irqsave)(&prtd->lock);
+ 	bytes_in_flight = prtd->bytes_received - prtd->copied_total;
+ 
+ 	if (prtd->next_track) {
+@@ -820,8 +809,6 @@ static int q6apm_compr_copy(struct snd_soc_component *component,
+ 		prtd->bytes_sent += bytes_to_write;
+ 	}
+ 
+-	spin_unlock_irqrestore(&prtd->lock, flags);
+-
+ 	return count;
+ }
  
 -- 
 2.51.0
