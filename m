@@ -1,205 +1,147 @@
-Return-Path: <linux-kernel+bounces-867783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC9BC037BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:05:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E550C037BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2F533A6589
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:05:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24D3A3A695A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8775E27057D;
-	Thu, 23 Oct 2025 21:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MbQ9+78i"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C818227057D;
+	Thu, 23 Oct 2025 21:04:59 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BF3254876
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F1235B138
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761253523; cv=none; b=YuIif4sAp4ePxtNfuzXgjfERd+5EbaaibucBCY4+L7xI3CM1KQNvdC1S+CU3S8NgTwjPSNCYEK/Q4GdjRDRRjDUBeJFfeF+Ne/EYaeBnbnM2DG+NjhZWHixxh0N+kiUsbbJiny0d0vAmk/jL+aGMECck2XSqEwsgxt7cXpU3kSU=
+	t=1761253499; cv=none; b=clda4gc6scvyFwG2tOKCtqRiO3Oa4dVqHXorkD5CTdp2gD2VbPVE+6DDorQcM7PsrIMkdC9QAnzyR94L8q6O1FyDAfeIai1i/XBO/OnALZlctoMDO2jrYAZCmuUnm5fiLtpi5ZWocR9ISwTBbXvktRkg0dqSH9KMQpgTHlNolBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761253523; c=relaxed/simple;
-	bh=uNN9PPr/yTFHzxK8MQ3XHv/YvwCSmF0U+8ouACnxjAk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rx3zqn+qCBFpMjlOlOP/JXbg6wyps1Qxq+WWWNWOQygsWV29h/bVBlBpoGbG85h+8C6RuomU5kwvyLoCwnHZyJQYKhR/z/fgtpmhaXtRUPFF9JAVNFYkXPZdl3j7rV29Q0n2bJmmDL1TLCM07sZEFezOstS99DTvP63ZtViG21U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MbQ9+78i; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-378cfbf83f2so15747711fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:05:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761253520; x=1761858320; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=862okFpfVZvhmXzSNmyjfrfI1Xm8aQ7K46jS7eTHfAM=;
-        b=MbQ9+78ijwayERorwWr8N805GGfvAwCcoWQxfghPCkoFwEg9j0sZ9CyzaYoj6N3kFs
-         Zzr3KsuZXg5GRzn7S8gjvH+fQ+9UTworBMwnQ6AGjUnBr15OcDtaLRsYKwI69IFBgZS/
-         Pr8GYeLApEmyJcAPwEWGOiI2opqoN6FPMAO22l9pThwbzfJ6PWSFprQS70DbiOd0VZ4n
-         5NBj4ERfKkMCur3qRriANvVbSMLYjSKlWGND6WswtBADsLeAq8FpD703RktdgbiOqjqu
-         RwJrhUvDpRtGPrh1LMcuEYqiw38OoqW7tfC9v6SUC8SJZN+MpVdmQBn02epKnRezWbI9
-         I8+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761253520; x=1761858320;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=862okFpfVZvhmXzSNmyjfrfI1Xm8aQ7K46jS7eTHfAM=;
-        b=PUBiFxRj2DieUVIoQrQ9kuiiKur05OPwN7zBYSUsV1MkVIjzgnhCmTKNPU2oXjC5Ep
-         hr195WNkuT6AbGSqJkH7TlxbjudLaA4mrv7wKclJKtRcchb/J/qZOX+4pfZ3/e9whvx7
-         Fn7rJSipiLul+gUvoj+YFjGK2wBsV0RHt1ghU16010R4aFao+5AFkh+Ls1tOeg3JIbCY
-         w2AP/0ou9+ah++SyCxJg8loSgMB9tOhIU6l/l0Pl1/vupqTmgtDKC02ou4rvU8+G6Go9
-         xSCXf4XvsvNQPkLjstt2IVzjnD5QsxgqdcA0DU1YooaPAoaX1Pi0tdVE8rqUfikJfD/5
-         yS+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV8ZtG0R3a6vS0fTK/j4KW1UDh6D9cWNDIwwtjn31XUMbguNDTrzwwV4Hs82MhUuflXoj4GMDbECMJgHio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNxWR271VwQayMOcXWG6tQXEp9ErrSgocAXtFciasgOQjworF0
-	/3GidP8tfGBwz8QSypxUxWSHQ0QI0GTt/OWQ/9D3k1yFEU6/8UuesCGkkoqZjGl05W7vqMB3Fna
-	lPrL/BaTsht/rg1m29OtWhIEufmhnzRE=
-X-Gm-Gg: ASbGncuXgk0bFz/JIl+GOvwrvfe5QmUUsFg+QVfF2BVHdqbqsViTaeOYyd0nim5Vvmb
-	FeaIuKCFCMYFTJlf2BVFRjF5+lOYezyRU8+1CiycFmaFXzj/SVU2Tk/AsarSC/cw9kQyiKluIkC
-	LUkU7kppVHbtJFrIa9UrtJ9hw+IaqIVL2P7mH/sSfaJOITVcdBpJjKBmReUzrwLYUrryPlgSOQZ
-	p6f7eTfJcqY29JrBudr9TPUvAj8Hk8yxN5ijpI39VqtcmmQve3ZVyu5SSjBS/jPSq0OGQ==
-X-Google-Smtp-Source: AGHT+IG9hVStadcHgcH9pwqipVZ8q236Yr5ZSYyiWguCrs1hAdh+Ks2DDRtnidEtfFSfFhuAguYEPWv9H0ksKC0iQco=
-X-Received: by 2002:a05:651c:908:b0:376:2802:84b0 with SMTP id
- 38308e7fff4ca-37797a8ed3fmr71073181fa.46.1761253519780; Thu, 23 Oct 2025
- 14:05:19 -0700 (PDT)
+	s=arc-20240116; t=1761253499; c=relaxed/simple;
+	bh=RMEi3n8PARTMY4qA/ODdBOqZMt4BtGgB0HzAgOu1Yvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=P71YCvmOCYHABXGwU0sA1EKD2GRQvjjQ6ivCW5JRyPHDHy+dySd45IT5DYRnTujUCEoxmxNHjzaF7pdFRAVfBYFujOVV/N+tG5TY//9tfbqfM7uqQ4Qi+Kz+eaNKenrBDcYFoH7NznlxD20//QgtygwtOX3YRpkUBwMEDLJ+mFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 74B7A1DCCF9;
+	Thu, 23 Oct 2025 21:04:54 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id CFEAE20028;
+	Thu, 23 Oct 2025 21:04:52 +0000 (UTC)
+Date: Thu, 23 Oct 2025 17:05:19 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Gabriele Monaco
+ <gmonaco@redhat.com>, Nam Cao <namcao@linutronix.de>
+Subject: [ GIT PULL ] rv: A couple of fixes for v6.18
+Message-ID: <20251023170519.52a6261a@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022223417.139332-2-rpthibeault@gmail.com>
-In-Reply-To: <20251022223417.139332-2-rpthibeault@gmail.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Thu, 23 Oct 2025 17:05:06 -0400
-X-Gm-Features: AWmQ_blXZO5mFjarWLO1_mPPNpv69dkFfEOsfq92hPD4abmuqgith-oR4ByY-LI
-Message-ID: <CABBYNZJtp0wqL_SJEk0wVo4DuadrBirmJ5VOe_TyE_RN8jOJNA@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_event: validate HCI event packet Parameter
- Total Length
-To: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com, 
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
-	david.hunter.linux@gmail.com, khalid@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Raphael,
-
-On Wed, Oct 22, 2025 at 6:38=E2=80=AFPM Raphael Pinsonneault-Thibeault
-<rpthibeault@gmail.com> wrote:
->
-> There is a BUG: KMSAN: uninit-value in hci_cmd_complete_evt() due to a
-> malformed HCI event packet received from userspace.
->
-> The existing code in hci_event_packet() checks that the buffer is large
-> enough to contain the event header, and checks that the hdr's Event Code
-> is valid, but does not check the hdr's Parameter Total Length. So,
-> syzbot=E2=80=99s event packet passes through and uses the un-init values =
-in
-> hci_event_func() =3D> hci_cmd_complete_evt().
-
-It does checks the length:
-
-    if (skb->len < ev->min_len) {
-        bt_dev_err(hdev, "unexpected event 0x%2.2x length: %u < %u",
-               event, skb->len, ev->min_len);
-        return;
-    }
-
-> Reported-by: syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3Da9a4bedfca6aa9d7fa24
-> Tested-by: syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com
-> Fixes: a9de9248064bf ("[Bluetooth] Switch from OGF+OCF to using only opco=
-des")
-> Signed-off-by: Raphael Pinsonneault-Thibeault <rpthibeault@gmail.com>
-> ---
->  net/bluetooth/hci_event.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-> index d790b0d4eb9a..5e1498cc04cd 100644
-> --- a/net/bluetooth/hci_event.c
-> +++ b/net/bluetooth/hci_event.c
-> @@ -7565,7 +7565,7 @@ void hci_event_packet(struct hci_dev *hdev, struct =
-sk_buff *skb)
->         hci_req_complete_t req_complete =3D NULL;
->         hci_req_complete_skb_t req_complete_skb =3D NULL;
->         struct sk_buff *orig_skb =3D NULL;
-> -       u8 status =3D 0, event, req_evt =3D 0;
-> +       u8 status =3D 0, event, req_evt =3D 0, len;
->         u16 opcode =3D HCI_OP_NOP;
->
->         if (skb->len < sizeof(*hdr)) {
-> @@ -7585,6 +7585,13 @@ void hci_event_packet(struct hci_dev *hdev, struct=
- sk_buff *skb)
->                 goto done;
->         }
->
-> +       len =3D hdr->plen;
-> +       if (len !=3D skb->len - HCI_EVENT_HDR_SIZE) {
-> +               bt_dev_warn(hdev, "Unexpected HCI Parameter Length 0x%2.2=
-x",
-> +                           len);
-> +               goto done;
-> +       }
-
-Looks like a big hammer for a uninitialized value, which I assume is
-from the following code:
-
-    if (i =3D=3D ARRAY_SIZE(hci_cc_table)) {
-        /* Unknown opcode, assume byte 0 contains the status, so
-         * that e.g. __hci_cmd_sync() properly returns errors
-         * for vendor specific commands send by HCI drivers.
-         * If a vendor doesn't actually follow this convention we may
-         * need to introduce a vendor CC table in order to properly set
-         * the status.
-         */
-        *status =3D skb->data[0];
-    }
-
-That one is accessing skb->data without first checking it like
-hci_cc_skb_pull like all other event handlers are doing, if that is
-really the case then something like the following should make it go
-away:
-
-diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-index bae8c219341a..e71fbdebffae 100644
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -4219,6 +4219,13 @@ static void hci_cmd_complete_evt(struct hci_dev
-*hdev, void *data,
-        }
-
-        if (i =3D=3D ARRAY_SIZE(hci_cc_table)) {
-+               if (!skb->len) {
-+                       bt_dev_err(hdev, "unexpected cc 0x%4.4x with no sta=
-tus",
-+                                  *opcode);
-+                       *status =3D HCI_ERROR_UNSPECIFIED;
-+                       return;
-+               }
-+
-                /* Unknown opcode, assume byte 0 contains the status, so
-                 * that e.g. __hci_cmd_sync() properly returns errors
-                 * for vendor specific commands send by HCI drivers.
-
-> +
->         /* Only match event if command OGF is not for LE */
->         if (hdev->req_skb &&
->             hci_opcode_ogf(hci_skb_opcode(hdev->req_skb)) !=3D 0x08 &&
-> --
-> 2.43.0
->
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: hhkz4fwib5ykyogbc3q9pc3ur9esp3jm
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: CFEAE20028
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19JtznBFKtT2CJumPAw78lqj9v3dixl5i8=
+X-HE-Tag: 1761253492-794983
+X-HE-Meta: U2FsdGVkX18WKZCcYlh8AZfNbQNUsWTxPXmwdOkVWYA2JkPbWKM8Hw093R6kJD1F171i0LAab5VSiIs+uHMDwd2TFPO4wNixDfoUFPj/y3RR+nsfqFsNCoVU6xQk6W2vPmarZpoRIVbaMt8ejTt7BR3CxovT5BbaolrzdWheURHfqswPXjxv01d/06JfymbU5JhUssPKPIBInrz4TMRsC7qOGxEU/7bHVIXMH2i1LiKmY8MB3bic5kcUP30V6HbA8UF6x7NNkhfLY6bmYFsGnHhyqMm7N3xn6pmPUQGcjnz7Prx4hWVh6hAQx3ceLAKBiu8zGkXAifw6CDp+Es60JWu+UtekpV2V
 
 
---=20
-Luiz Augusto von Dentz
+Linus,
+
+A couple of fixes for Runtime Verification
+
+- A bug caused a kernel panic when reading enabled_monitors was reported.
+  Change callbacks functions to always use list_head iterators and by
+  doing so, fix the wrong pointer that was leading to the panic.
+
+- The rtapp/pagefault monitor relies on the MMU to be present
+  (pagefaults exist) but that was not enforced via kconfig, leading to
+  potential build errors on systems without an MMU. Add that kconfig
+  dependency.
+
+
+Please pull the latest trace-rv-v6.18-rc2 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-rv-v6.18-rc2
+
+Tag SHA1: 710476ae493b02551d9987bdbd52f4c3cf3bffef
+Head SHA1: 3d62f95bd8450cebb4a4741bf83949cd54edd4a3
+
+
+Nam Cao (2):
+      rv: Fully convert enabled_monitors to use list_head as iterator
+      rv: Make rtapp/pagefault monitor depends on CONFIG_MMU
+
+----
+ kernel/trace/rv/monitors/pagefault/Kconfig |  1 +
+ kernel/trace/rv/rv.c                       | 12 ++++++------
+ 2 files changed, 7 insertions(+), 6 deletions(-)
+---------------------------
+diff --git a/kernel/trace/rv/monitors/pagefault/Kconfig b/kernel/trace/rv/monitors/pagefault/Kconfig
+index 5e16625f1653..0e013f00c33b 100644
+--- a/kernel/trace/rv/monitors/pagefault/Kconfig
++++ b/kernel/trace/rv/monitors/pagefault/Kconfig
+@@ -5,6 +5,7 @@ config RV_MON_PAGEFAULT
+ 	select RV_LTL_MONITOR
+ 	depends on RV_MON_RTAPP
+ 	depends on X86 || RISCV
++	depends on MMU
+ 	default y
+ 	select LTL_MON_EVENTS_ID
+ 	bool "pagefault monitor"
+diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
+index 48338520376f..43e9ea473cda 100644
+--- a/kernel/trace/rv/rv.c
++++ b/kernel/trace/rv/rv.c
+@@ -501,7 +501,7 @@ static void *enabled_monitors_next(struct seq_file *m, void *p, loff_t *pos)
+ 
+ 	list_for_each_entry_continue(mon, &rv_monitors_list, list) {
+ 		if (mon->enabled)
+-			return mon;
++			return &mon->list;
+ 	}
+ 
+ 	return NULL;
+@@ -509,7 +509,7 @@ static void *enabled_monitors_next(struct seq_file *m, void *p, loff_t *pos)
+ 
+ static void *enabled_monitors_start(struct seq_file *m, loff_t *pos)
+ {
+-	struct rv_monitor *mon;
++	struct list_head *head;
+ 	loff_t l;
+ 
+ 	mutex_lock(&rv_interface_lock);
+@@ -517,15 +517,15 @@ static void *enabled_monitors_start(struct seq_file *m, loff_t *pos)
+ 	if (list_empty(&rv_monitors_list))
+ 		return NULL;
+ 
+-	mon = list_entry(&rv_monitors_list, struct rv_monitor, list);
++	head = &rv_monitors_list;
+ 
+ 	for (l = 0; l <= *pos; ) {
+-		mon = enabled_monitors_next(m, mon, &l);
+-		if (!mon)
++		head = enabled_monitors_next(m, head, &l);
++		if (!head)
+ 			break;
+ 	}
+ 
+-	return mon;
++	return head;
+ }
+ 
+ /*
 
