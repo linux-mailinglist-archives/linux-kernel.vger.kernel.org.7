@@ -1,179 +1,108 @@
-Return-Path: <linux-kernel+bounces-866996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E469C014A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:15:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79E6C014A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E67BB3AD3AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2B1818C889C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB36E315764;
-	Thu, 23 Oct 2025 13:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17014309DA4;
+	Thu, 23 Oct 2025 13:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGKzAEma"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v/8+Ah+E"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD58314D1A;
-	Thu, 23 Oct 2025 13:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2B02253A1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761225274; cv=none; b=GWss3k0DvO55wphflPwajkSOr2pc7gM+GTsQyfug5zmDudzSGkc43uUD+Zjeg/2ZXBXiaef62o0q4D3e4NLOH32qGKir8j8giqp3/pXI/lewDZXpomT50o0mn8kT2pD5GPaHUbT6J6IPdYlujOTh+IHnY5f2776FBcfNnnKAVkY=
+	t=1761225324; cv=none; b=Q2ZnEUPRz3jVKpCtuW+9pMK5OjUetCVGchr0hhuWM4zAqKeSy+S7MtVvGTfOnT7aAO2SBpkXvJ7xXZBEEePVzWc5VV25PQxsARqpmII1NjpgT8IZRdP3EvKy3z9+DgfO8IJ6a0kNf2RGIagQe8Wu9nzkKOFSsoSBpMIdkWSe/UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761225274; c=relaxed/simple;
-	bh=PLd1NVzmQHGQzIcfZ9nEYp9jvBlKFleg3SJKD4eBeJk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=si8iQKpiyeKAx465uoQQkuLNR1GbRBF6yqmKdMiS1jalGcChHNrk0cqqnon3Fz++ECLPZU3yuBZ+SfqazLFkITTlZ85DcrKQNxd7KyzmtTyYL2z5Sz+R6JImKUjQTMnAOT1ddmrffxoQzP4zCH0cENZM72/KKmtRNfwlBVo1Z0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGKzAEma; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05F2DC4CEE7;
-	Thu, 23 Oct 2025 13:14:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761225274;
-	bh=PLd1NVzmQHGQzIcfZ9nEYp9jvBlKFleg3SJKD4eBeJk=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=LGKzAEmaTPH8NSmWkzzvonEk4IiDY4od3aVcr/pqvudYANDc7pn4sGOThnAQ1Smvc
-	 Gc0XLxiIhTg7qGIts/b38Gy1+zTRBDx9s3L7XR1JjsFuVLqiBX13YTl4ZZ0Xi1Mwao
-	 VCGmYiY3WRdfd+SCS6OpmMQBlIvUBodtL19N8j/rmnvFomyHl3RhgJRTKDDim8+MI5
-	 91gG+VNHHjuq30I56RTXJXMXOb4yZ0/6MdTpQFVD8aic3EskyYZfT4bLgEIuYLsWdz
-	 Ln+HBaTDVdjI9Uhzg6rFXNZazdT4ozE7JySm9ordYsdxIkUh37Id1z9okHS7znWD8e
-	 DjQTsfoXTC45A==
-Message-ID: <7fc65c85-f75e-419c-aa1b-0c85376373d4@kernel.org>
-Date: Thu, 23 Oct 2025 15:14:30 +0200
+	s=arc-20240116; t=1761225324; c=relaxed/simple;
+	bh=z76NHbYS0l11eBUt7HKnQi+UP7NNGUE+0BdLSRPd0MQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JbHh73qnws3jXN1stukCibvCqs2qtQzbnB4lhplUbNLJ0zSIQYa6/vMlRetWeDWCABK80E2Z1tUAv+z5tgGtoaCuO4wQP7hvz7oU7+jDYz+jIFurHb9a2j8GxcX6coTQH3rI7hXx5+/aJFvNX6u1d6zCxpG3OFrqoy5Je0xnrMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v/8+Ah+E; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-375eff817a3so9508171fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:15:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761225320; x=1761830120; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z76NHbYS0l11eBUt7HKnQi+UP7NNGUE+0BdLSRPd0MQ=;
+        b=v/8+Ah+E94O993/x9K1KeDjV8MYEBky1QF2AsgHqGiukg1O6EShOphrzgIigfER504
+         VFaiVGBJMDYSDNBnixNVCUDIRpGbzvy3uz+CmBMLj9HvMYg+R4wK0l5YRACz18wxq66i
+         eHjWLMA9wqWhI64MNtWu89JOY+LZVy1ptiMHcc+1hIn6nQ2rfMso8t4bMmNxHQWWM6rB
+         Dk+dBBypmHIr7G+c6sZrCEBYcPV6mIQ8Q7eEj47dsR2vD1H9QAwteAGmsosMqnH53WOg
+         mH5zBgEKcKvBhhqwigHdpLk6bGrYEsokEEcqEjGEL3sHnTdJeGxyu9ocjstIgx5KIXJF
+         CEJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761225320; x=1761830120;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z76NHbYS0l11eBUt7HKnQi+UP7NNGUE+0BdLSRPd0MQ=;
+        b=lWNrgRjLj9pJhoaxohRsa5PmwHpynHWN/qnEQwGg9jFsHlYrHaf0ImX1ys9mNfQiZy
+         MQzFIvOu23l3oj7UbL54DsCrP6WhdNxawhUxQ01okTOcmXiMSE3+ex2em+RGHOhx3ljy
+         QsdjPvmb6gCubHeu5PF1pDveis4BmjHCxQ8br3dZLuBr8kP/TEey/E1e8bI/x86O/pqc
+         7xfWMw53gx9bzh8zPb4iwQVNeYnw4JRMsUfyN+bz/UmvvtGNbusGautqXVnt+PbRLxWb
+         FtfGW030L6hquSmLYQkr1BHIsKT/D96szWT67YVEG5OgfxmLx0NPX5Cgt6pTmrQAv0WY
+         0dsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHXwj7kt+pSpm0KBhnPyEXP1KAYI4c2IXz51z/sTqSlfyEXs47sjBeNtfHnzOsDKMXH7JnXe8SufvMqqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0L6KV3RFmqTUKlKPQVTmnCIi1W4c9FZntoA1p46I9+hNA7teF
+	SIUy8cmqnpTnB+VVOiH17HNV8NvXi0p/Sc9iT06WYpkE93XBEj8DKZBZxgBKi9It5fBeZlMmnE+
+	05+EcTyLqZmyoUrqSBBVf20oZymhG+biKirUAA93uag==
+X-Gm-Gg: ASbGncsP/ov+BlUeUCexFElJxTvHegRb6PNA68yeu5CzKimiP+jO7l3l4nuTulT9M5i
+	zkEjpOR6/DxEWS3thbEtJz1L9c3vvKTThkoD4CcE52eQMBkltfFnqtin5sU3pgOfCLD6R4jmnkj
+	WpM9/pq7K+DhU9DDHPruFBBtDrtutQBNPAhGVcu2mmFbeeIcKI0/TfkfPVrc+rKBry2SLfnCvS+
+	ekN0PsGNlrNAlBoNHIG4Kew8ynwI46ftJRuTpjxhxh3cIoggwT/oGz5cFWSw3a3Ql0Tsxw8X+xD
+	wGGgkg==
+X-Google-Smtp-Source: AGHT+IG/ZAd7RUnoCK6/TWMMjPJ1VQjmx8Caf3SATBmY9x3/PxhBlmEnwJGz57NSvFmOq7fh2pz0uSBe0AV0o43DOpw=
+X-Received: by 2002:a2e:a906:0:b0:378:d424:d3d0 with SMTP id
+ 38308e7fff4ca-378d424e478mr9052641fa.8.1761225320551; Thu, 23 Oct 2025
+ 06:15:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v3] media: v4l2-ctrls: add full AV1 profile validation in
- validate_av1_sequence()
-To: jc@kynesim.co.uk
-Cc: opensource india <opensource206@gmail.com>, mchehab@kernel.org,
- hverkuil@kernel.org, ribalda@chromium.org,
- laurent.pinchart@ideasonboard.com, yunkec@google.com,
- sakari.ailus@linux.intel.com, james.cowgill@blaize.com,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250913105252.26886-1-opensource206@gmail.com>
- <8199bec4-b9e1-4d6e-98da-a4d7eb667437@kernel.org>
- <CAKPKb8-s96v+Nh29Z5E0wgyXYgoFHJT2SHA_WpZshXspo0WY0w@mail.gmail.com>
- <f9001f98-80d6-49d5-8665-d42fcef7b07d@kernel.org>
- <CAFyCYyOFFMrDetScx_8_VgRpCVyTq_O0PGn1hDt7+UwMygqeXw@mail.gmail.com>
-Content-Language: en-US, nl
-In-Reply-To: <CAFyCYyOFFMrDetScx_8_VgRpCVyTq_O0PGn1hDt7+UwMygqeXw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251022133425.61988-3-krzysztof.kozlowski@linaro.org> <20251022133425.61988-4-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20251022133425.61988-4-krzysztof.kozlowski@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 23 Oct 2025 15:15:09 +0200
+X-Gm-Features: AS18NWB6N45TxgNnccz0wGQlLC0_F0Qi57GxnfcGIPV2g0I0ThiCPIszr8ydkDg
+Message-ID: <CACRpkdZ8rcWy9SvNuh+wq0Yz+byYMPkK6ZMkqjd8YW3SKKBzug@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: pinctrl: toshiba,visconti: Drop
+ redundant functions type
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, 
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, 
+	Punit Agrawal <punit1.agrawal@toshiba.co.jp>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 23/10/2025 15:03, John Cox wrote:
-> On Thu, 23 Oct 2025 at 11:44, Hans Verkuil <hverkuil+cisco@kernel.org> wrote:
->>
->> On 23/10/2025 12:32, opensource india wrote:
->>> On Wed, Oct 22, 2025 at 12:44 PM Hans Verkuil <hverkuil+cisco@kernel.org> wrote:
->>>>
->>>> Hi Pavan,
->>>>
->>>> On 13/09/2025 12:52, Pavan Bobba wrote:
->>>>> Complete the "TODO: PROFILES" by enforcing profile-specific and
->>>>> monochrome constraints as defined by the AV1 specification
->>>>> (Section 5.5.2, "Color config syntax").
->>>>>
->>>>> The validator now checks:
->>>>>
->>>>>  - Flags: reject any unknown bits set in sequence->flags
->>>>>  - Profile range: only profiles 0..2 are valid
->>>>>  - Profile 0: 8/10-bit only, subsampling must be 4:2:0 (sx=1, sy=1),
->>>>>    monochrome allowed
->>>>>  - Profile 1: 8/10-bit only, subsampling must be 4:4:4 (sx=0, sy=0),
->>>>>    monochrome forbidden
->>>>>  - Profile 2:
->>>>>     * 8/10-bit: only 4:2:2 allowed (sx=1, sy=0)
->>>>>     * 12-bit: 4:4:4 (sx=0, sy=0), 4:2:2 (sx=1, sy=0), or 4:2:0 (sx=1, sy=1)
->>>>>       allowed
->>>>>  - Monochrome path (all profiles except 1): forces subsampling_x=1,
->>>>>    subsampling_y=1, separate_uv_delta_q=0
->>>>>
->>>>> These checks prevent userspace from providing invalid AV1 sequence
->>>>> headers that would otherwise be accepted, leading to undefined driver
->>>>> or hardware behavior.
->>>>
->>>> This patch was merged in our media-committers next branch, but I noticed that
->>>> it now fails the v4l2-compliance test for the visl driver.
->>>>
->>>> The cause is that the new validation now fails with the default values for
->>>> this control as set in std_init_compound().
->>>>
->>>> You can test this yourself by loading the visl driver and then running
->>>> v4l2-compliance -d /dev/videoX -E --verbose
->>>> (-E stops at the first error)
->>>>
->>>> Can you provide a patch to initialize this control with sane values?
->>>>
->>>> Apologies for not noticing this before: there are some issues with the automatic
->>>> regression tests in our CI, so the tests weren't run.
->>>>
->>>> Regards,
->>>>
->>>>         Hans
->>>>
->>>
->>> Hi Hans Verkuil,
->>>
->>> Thank you so much for the review.
->>> yes, v4l2-compliance expected to fail indeed since it is sending
->>> default values which, our newly added code rejects as per
->>> specification
->>>
->>> when you say patch, you mean patch for v4l2-compliance tool with
->>> proper values so that v4l2 core driver can accept?
->>
->> No, std_init_compound() in the kernel needs to be patched so the initial
->> value of this control passes the new validation tests. The initial control
->> values should always be sane.
-> 
-> Whilst that is a good principle it makes almost no sense in this
-> context. There is almost no chance that a given bitstream will decode
-> against a default sequence header and failing to set it explicitly is
-> going to be a mistake on the users part. It seems to me that it is
-> better to have something that is detectable as unset rather than
-> something that is valid but wrong.
-> 
-> I accept that it is the V4L2 way to require "valid" default values for
-> all supported ctrls, but it seems to me to be actively unhelpful for
-> things like SPS / VPS / Tile Group Entry where if not set correctly
-> from bits of the bitstream that the kernel doesn't get to see they
-> will break the stream decode.
+On Wed, Oct 22, 2025 at 3:34=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 
-I agree, but the V4L2 design (not just controls, but also formats etc.) is
-that they have valid values, even if it makes no sense in the bigger picture.
+> Referenced pinmux-node.yaml schema already defines type for "functions"
+> so $ref is redundant.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Now, is that the right design or not? You could argue either way, but the
-fact is that that's how it was designed many years ago.
+Patch applied for next.
 
-Changing this for just a single control is worse than just initing with the
-minimum you can get away with. Bonus points if it is somewhat sane :-)
-
-The advantage of always reporting valid values is that the application never
-has to explicitly check if the format/control/etc. has invalid values.
-
-Regards,
-
-	Hans
-
-> 
-> I'm not going to argue this point but I felt that I wanted to make it.
-> 
-> Regards
-> 
-> John Cox
->> Regards,
->>
->>         Hans
->>
-> 
-
+Yours,
+Linus Walleij
 
