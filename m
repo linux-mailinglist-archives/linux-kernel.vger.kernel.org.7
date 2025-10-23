@@ -1,178 +1,164 @@
-Return-Path: <linux-kernel+bounces-866311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0771ABFF6FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:58:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A18DBFF70F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3BE14E7D6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:58:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A345818936A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54040292918;
-	Thu, 23 Oct 2025 06:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AEF2BDC1B;
+	Thu, 23 Oct 2025 06:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YwOH8CUA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVGXZ3Xe"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843B7239E80;
-	Thu, 23 Oct 2025 06:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB49285CB8
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761202681; cv=none; b=KxrgYSCtKPL+8qsu0HgwrJtenkfqGdi+nKxVJ0I7mYq4pM+S6QFOQGWVzACway4EboYmO8HZphM2m/IzjyG9t1smLPyKgixZIsiG6DXbx/yx4wk/9blq3D+aM4Yx4ZnYLO3QIwdrs2+OS9zkSxyROY7ZwimmrgBlXINKyl+ndqE=
+	t=1761202763; cv=none; b=C5f/een3+dFimhQG2j+B0COXd/CPGPKGAOeFjI6rFe+VavC1Je1pGYKoSC8e/5OYQ5fyeygmfHWzWAS0PGJqEMeMiySq9UIIEQaUn5Odp2/ZqdpIvPW+v+6BSI8WDenm6iEB++uNqjZq3kB/WdNDxZvRbfuG5HBsULlTAyh9x8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761202681; c=relaxed/simple;
-	bh=Bk8mkjow2SUlSxjCiPaDSHS2if6WZcJF6LTupPJO9Lg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BgnJiFb6dfO2R08iXL1oZ7NKMfhQKUypnMZZo8NQct/zmWBntwTWhRl3Nfai1mIl2OkX5XdgAGcdMZmiGJZdaTgr2DSncqyE22an549wXWKQcXTFx/l7/3qdrVOaciQ6//9QW88hsFHNd+VgPWswto8tk5es+aa6A5CfN0fotZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YwOH8CUA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AC92C4CEE7;
-	Thu, 23 Oct 2025 06:57:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761202681;
-	bh=Bk8mkjow2SUlSxjCiPaDSHS2if6WZcJF6LTupPJO9Lg=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=YwOH8CUA1g9ZjTrRt8S/qb1Q3DHdjKzluiDFYeHpLVuGaohh7VOG2OGrBAcLeOlWs
-	 C40TQFde0pwYlDpr2/HKy0dG0ouwreMDd+jnkJjYr22RM05cEfFvM10L2CWG6tySP8
-	 gKZA4cMykWRNYPifPlo1rsti7VELpDv6T38DWPy7Nd59Ry68maQUUvsfmfhBAC14BG
-	 jw/Ajk9wAAnjRVhq1iNqRgHRVJpJBy+mq10zbkRDWYLnM1ICI42l4IorHuyK5D4ri8
-	 PIvT7YwVn3s7Zo5nOQUgaGACuU+x6YJ2UmZRvWs8zKj6ZpZThib+KD1xnSnWrVc6so
-	 D66n7jYnPapbg==
-Message-ID: <698ba0ea-3367-4fc0-bd4f-0177283c2e77@kernel.org>
-Date: Thu, 23 Oct 2025 08:57:55 +0200
+	s=arc-20240116; t=1761202763; c=relaxed/simple;
+	bh=jv3RRiQeAxRj+yS1gIR9ygnBb8z/VVm8giUZt1eG3P0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mVVHc9gRsGPWEFcGE0sk0XQ2BGgkSfSBwYE9ZDca1RnKBqakn9avbTCwudhwwYaRS7jjxRT0jFz1MK/YHF3ppLPGqgOS/1y5se/PjGGxiCvNFVYF4K6u6PHux/sYq04IcWK9LDk05Nto9KQ9nZZEI2q1wR+XUZsWdmZ4NlSwgM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PVGXZ3Xe; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-33bafd5d2adso478857a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:59:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761202761; x=1761807561; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rv8wkF7zXzO22qUjEduk8QMkq+ulYIyp393gGAAnjeA=;
+        b=PVGXZ3Xe2ueNZRV4NcXS0RxIZYo6klu4qou5aLo+QN3kCfDUYU/6/7b/sErcAIGJA7
+         dX+o1EHbquax9OV3euJvpISoPQNtq0hfAdw6J5sahdOUnoCYtUQ+TDrs/sWHpetjSDE2
+         w9893JySCFztXCTMllf5rRPpL7HXOm0qPaKzxbciyjYHaabYJ5/tT7EeGyrzzLKvi/RU
+         5S+DSjOOuhOb1/HuOR+LJGvjLow4kycrFgd3tLG3X+dleKh8PMqNVyGCqWBMN9yZdtPZ
+         6/K4I36co15nwkry3LYId+DOqyDpwObi77gFmxcOdhHoTU0VxzOWJGT5Pk9bsNkFS0nY
+         YsFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761202761; x=1761807561;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rv8wkF7zXzO22qUjEduk8QMkq+ulYIyp393gGAAnjeA=;
+        b=GzqBN63awZf8j6fayrG6rXjW7OB4b6aO73U8XjrKpdIkLdmVBuLsELqMJvyZWflBYd
+         82Nro6X1vT9ecnlwpsmXp4rTGl8YMpbx3rCSVCim6mbVPwyP2keCTaowWuX4qP/HRyvu
+         +UZdn/Gwk3faVJp4ldKFotqlV1kjxNo3IBix59svHKH/BbVwh5GOOZTj/G/Y1uc2JTqg
+         lRuH0fuzuMUZ4RR+kWjQykB0gnm4ye/1ZjpD+/VXXq1zkMtMLBwXovlp9INPm+/S9Ccp
+         QACwKvFjxQdvq+wZnZCOn+bumWK5rDOzMBIagoGxJzVoObdiZyt74Cbavx5PQOYFbny8
+         ttQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLD7RMUJUZGbpAdtxnGhnzC53HQNQVJdMkGcR2Asz7zjTVLoxhkwiWqY94QhQZdNvk9w0CG5izlGoje1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywwpl2DqTpeyK5OyjSY1mle+qlwG6DMHdvL+Kpl7HTOiepXB9V
+	Es23KLeYSxr6Ytyg4RRJEyk/IQBc0titgiBNlSsRLE4f7gYYwWbFDrP+
+X-Gm-Gg: ASbGncs9cBVOQM0sgNKmyEx9qYHYZwV+ARtve0zV2stV7o4eZCHA7oQDb+BzyIdsVjU
+	q77ITmiMfo+IDaiwNwbxnISlH6NSlRfyP4icMGoIEBIcdzKeWL60sdJLCWv50vY8K5mkdOu0htK
+	phTSJWcjHkqO6xRBw/c75TbiHAD4t7fjFTGP5nhft8kssSXM370FGBfApJqzECylstb/nh9GUEc
+	TsQRtgUH34LEUzDdxdxTcj6UqKtx6RjM7/R49zIn2tFbJAmGRjYoCu/nS73LyyQLz1NKg8v4nbS
+	f7GNLnWKfrUOh7LoZiVIQqN9TvV7W3TF1Eyr4g/n+QELUh4KdR3uZPWbyXWC+10CDIq3qTveTxg
+	ac21Hl+ogwC3RVg9UxlElcbV4cuEU0vqzSV6qkF4k50156yz8CD8+tcQuca68N1XesunrJ/CAQW
+	QFvYrJtcXewYpqPQ==
+X-Google-Smtp-Source: AGHT+IGY9vl7Ys2QrXyChnMJJ8Hm15T8p66vefo6gmsF42VNf8SOd0Wf86nEbGrndI9aN+e5mM9IXw==
+X-Received: by 2002:a17:90b:1dc4:b0:33b:ade7:51d3 with SMTP id 98e67ed59e1d1-33bcf8f78c4mr32616407a91.20.1761202760650;
+        Wed, 22 Oct 2025 23:59:20 -0700 (PDT)
+Received: from KASONG-MC4 ([43.132.141.24])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fb016f83fsm1351963a91.12.2025.10.22.23.59.16
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 22 Oct 2025 23:59:19 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Hugh Dickins <hughd@google.com>,
+	Dev Jain <dev.jain@arm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Liam Howlett <liam.howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Mariano Pache <npache@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] mm/shmem: fix THP allocation and fallback loop
+Date: Thu, 23 Oct 2025 14:59:13 +0800
+Message-ID: <20251023065913.36925-1-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.51.0
+Reply-To: Kairui Song <ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: phy: google: Add Google Tensor G5 USB
- PHY
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Roy Luo <royluo@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20251017235159.2417576-1-royluo@google.com>
- <20251017235159.2417576-2-royluo@google.com>
- <20251023-collie-of-impossible-plenty-fc9382@kuoka>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251023-collie-of-impossible-plenty-fc9382@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/10/2025 08:43, Krzysztof Kozlowski wrote:
-> On Fri, Oct 17, 2025 at 11:51:58PM +0000, Roy Luo wrote:
->> Document the device tree bindings for the USB PHY interfaces integrated
->> with the DWC3 controller on Google Tensor SoCs, starting with G5
->> generation. The USB PHY on Tensor G5 includes two integrated Synopsys
->> PHY IPs: the eUSB 2.0 PHY IP and the USB 3.2/DisplayPort combo PHY IP.
->>
->> Due to a complete architectural overhaul in the Google Tensor G5, the
->> existing Samsung/Exynos USB PHY binding for older generations of Google
->> silicons such as gs101 are no longer compatible, necessitating this new
->> device tree binding.
->>
->> Signed-off-by: Roy Luo <royluo@google.com>
->> ---
->>  .../bindings/phy/google,gs5-usb-phy.yaml      | 104 ++++++++++++++++++
->>  1 file changed, 104 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
->> new file mode 100644
->> index 000000000000..c92c20eba1ea
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
->> @@ -0,0 +1,104 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +# Copyright (C) 2025, Google LLC
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/phy/google,gs5-usb-phy.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Google Tensor Series (G5+) USB PHY
->> +
->> +maintainers:
->> +  - Roy Luo <royluo@google.com>
->> +
->> +description: |
->> +  Describes the USB PHY interfaces integrated with the DWC3 USB controller on
->> +  Google Tensor SoCs, starting with the G5 generation.
->> +  Two specific PHY IPs from Synopsys are integrated, including eUSB 2.0 PHY IP
->> +  and USB 3.2/DisplayPort combo PHY IP.
->> +  The hardware can support three PHY interfaces, which are selected using the
->> +  first phandle argument in the PHY specifier::
-> 
-> Just one ':', anyway this sentence and below does not belong to
-> description but to phy-cells. You describe the cells.
-> 
-> Or just mention the header with IDs - here or in phy-cells.
+From: Kairui Song <kasong@tencent.com>
 
+The order check and fallback loop is updating the index value on every
+loop, this will cause the index to be wrongly aligned by a larger value
+while the loop shrinks the order.
 
-If you go with free-form text description in phy cells, then some
-example could be:
-renesas,rcar-gen2-usb-phy.yaml
+This may result in inserting and returning a folio of the wrong index
+and cause data corruption with some userspace workloads [1].
 
-For the header (in this case clocks):
-display/msm/dsi-phy-common.yaml
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/linux-mm/CAMgjq7DqgAmj25nDUwwu1U2cSGSn8n4-Hqpgottedy0S6YYeUw@mail.gmail.com/ [1]
+Fixes: e7a2ab7b3bb5d ("mm: shmem: add mTHP support for anonymous shmem")
+Signed-off-by: Kairui Song <kasong@tencent.com>
 
+---
 
-Best regards,
-Krzysztof
+Changes from V2:
+- Introduce a temporary variable to improve code,
+  no behavior change, generated code is identical.
+- Link to V2: https://lore.kernel.org/linux-mm/20251022105719.18321-1-ryncsn@gmail.com/
+
+Changes from V1:
+- Remove unnecessary cleanup and simplify the commit message.
+- Link to V1: https://lore.kernel.org/linux-mm/20251021190436.81682-1-ryncsn@gmail.com/
+
+---
+ mm/shmem.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index b50ce7dbc84a..e1dc2d8e939c 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1882,6 +1882,7 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	unsigned long suitable_orders = 0;
+ 	struct folio *folio = NULL;
++	pgoff_t aligned_index;
+ 	long pages;
+ 	int error, order;
+ 
+@@ -1895,10 +1896,12 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+ 		order = highest_order(suitable_orders);
+ 		while (suitable_orders) {
+ 			pages = 1UL << order;
+-			index = round_down(index, pages);
+-			folio = shmem_alloc_folio(gfp, order, info, index);
+-			if (folio)
++			aligned_index = round_down(index, pages);
++			folio = shmem_alloc_folio(gfp, order, info, aligned_index);
++			if (folio) {
++				index = aligned_index;
+ 				goto allocated;
++			}
+ 
+ 			if (pages == HPAGE_PMD_NR)
+ 				count_vm_event(THP_FILE_FALLBACK);
+-- 
+2.51.0
+
 
