@@ -1,47 +1,82 @@
-Return-Path: <linux-kernel+bounces-867300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB09EC022CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:39:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82037C022EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 29A0A349EDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:39:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7478F4F6BF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AAD33CEB7;
-	Thu, 23 Oct 2025 15:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA69E33CE9B;
+	Thu, 23 Oct 2025 15:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+9SCqj2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=6wind.com header.i=@6wind.com header.b="Ly6rUpVw"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945FD3148D9;
-	Thu, 23 Oct 2025 15:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195BF33C50F
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761233945; cv=none; b=cwGU0Yx9eWHPlpJvqdyrAm0UL/6xZicYbDeKTnCL4KyLQvw2RA4WDYkyRkKR5g5BLer0uXvKUrUg7+V/e5BAI2wzvTBSL6X+EZA5ztnO6aME2wfhv1cn4cqNxcO5jnezJGcuNF89//Hwco24FJ5dRe+3t12fIVVOyS/VrtIgieQ=
+	t=1761233955; cv=none; b=FjaPuJwktYLXwsCUvNi1HWtJApjXCzKKaXZ/vqltvL0sC1pAOWWhTxvntFQTTPpZGVI52oKplyvCilSH000eSWD0siYLWnwFM3vl+/8iSiqwDWXxOD1iZEg+pwD5qyyHDHeRWbukdbUaVd7Bps3ImAh/oQlvpIvWBsJzh6J7eJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761233945; c=relaxed/simple;
-	bh=0PfGVFLSwAdtpJraASf2Vn9Px0DJm3s79Tpdl3v9jAI=;
+	s=arc-20240116; t=1761233955; c=relaxed/simple;
+	bh=m48FPyq3hS5hTCmbr8c8h/LHH2v+gSJH4SwXZ6Zsgeg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L5kbEwsf6T6mpDQRC9AjRsj0WD5uwFXBOECOObFNRexdP7ebxWHaFbRMZCEtkvqmFhAQc7vRCPbw4UFK8V2cwkvTdmynJUFNxE48P+iRTibmLIqA5MA52qpkoBdEwqN+ZKkyRC1Omth1hkJeXmeA2Hi/9olhoNNEUcRsoNRmPj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+9SCqj2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE3BC4CEE7;
-	Thu, 23 Oct 2025 15:39:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761233945;
-	bh=0PfGVFLSwAdtpJraASf2Vn9Px0DJm3s79Tpdl3v9jAI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B+9SCqj2SSqdHloiLkw+HF2Sx5pnRwPA3/FtB+nCYKHHzPI/3wjPkELJx7olhiaeE
-	 g3MPCMgEqjG24cZt0upltSjwu4z+44N3+H3wCsgbbpj+9SoY7R+g8P7213lG4yFb6d
-	 stoe+C80EpXukDWcRtOjA5NXFZjgBUKPOdeALpuavO2kjKZ+flOi55QULmqLf9ty1X
-	 Wg8PSy7vHf9MV5Eqsr5iQHS6uzrT7NL3SLGLZ49IfUpuk/aKBqT48y4fUs08sbLJZC
-	 IXfU4Bm36rJIf71F382hY4R1QJnS9GHr7YjWwpLGLdznzrrgjay4qZ+M/SHmq5/GHw
-	 45vgqh6Ud4i0w==
-Message-ID: <9931c958-d353-4e37-ad2e-f6854c968af1@kernel.org>
-Date: Thu, 23 Oct 2025 17:38:59 +0200
+	 In-Reply-To:Content-Type; b=HbpPjke6AAx/pn8Lwk4NMld6JvUi5z6i6OVRAPj1zKyKHAOLG8ATOfe6JPsP+Fqd9lRIHsCcq5xGTaWdszBYe+6f+KFH+hQ1CmEF1GfECL2BYvSJMdB2D25mopsTcV0rXfVVwzDwTc5ShHoPsDn8NZFrzakKFo6aO74kkJgp+nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=6wind.com; spf=pass smtp.mailfrom=6wind.com; dkim=pass (2048-bit key) header.d=6wind.com header.i=@6wind.com header.b=Ly6rUpVw; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=6wind.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=6wind.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-4271234b49cso137167f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=6wind.com; s=google; t=1761233951; x=1761838751; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pm3nq9zl8vSP9OQckXLMLZC8gBiYgr978W9DuCmvOUw=;
+        b=Ly6rUpVwZqT9BiCA8oyv1CXYwaenFYkmLRQFuMS+pKs/O/AP7s6Ek5vJsiMWR97/kO
+         qsNAxfVbUpd9ZmzrzO8RWoFxbDpxy8qCCtKAmrbjPk/XUlKW4EiOr+CwLr+qyQA+Rz76
+         32JeP3erTDEOvBVGMGgZFcAZ6RdFoIfoawsvBsfkq/0UqXcsml5vVSCnGKTyHrWVvjZZ
+         qZ/DZoMhClMDvm9GTRptGX9wuIfQxe8fnXEl2gCIbW2hgOinfo09tpntonoEaz7n4zeF
+         KtxW+drv6qGJrP50LpdKiishyGumgvgSFja+XuuABmRMLhvE+3DCH8CXPfFU3+uQvuoI
+         CwCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761233951; x=1761838751;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pm3nq9zl8vSP9OQckXLMLZC8gBiYgr978W9DuCmvOUw=;
+        b=PfMPgxM+Dn1RUxFkrg53cWEWNtOY5iTbqI6ly9YbFPrY4mtwB4L3KMb4xxXIDQQMtI
+         W8pIYmxVC/w5Gs866WfdF/hhRtgqUFLcQ3ux++vc3AKXxtntKpQ7wAFLyTUQQv988fvn
+         eOfLpJpjwIe6H3hwCwD2RtuvXsYXZ5mE2n7yUVuQz2bGwAAZ1HhT5T2pY0hnR2E5P47J
+         dziMOx9Ora02QJdjlkCKAk5YPCjlHPqH+E9m5tLsWINOd+MP+UqBVqEXr5PeRIbLZVsa
+         3k7rM1a/NdOpoXuui06akfJH9sJAS4Nc3oWYL+KMYNtlFMXxgaORgqSpWMUvfx7Ja3bi
+         uIgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXh9ySG7HhE5Sqsb7zltR7Zx4uUzDAphehsJo89PpmVHuWHEf8K/zkV8eoQStdZfxr4KtiVxQZG6AaHfm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpQjD5RlanUjYpnDTgVFr7RRpNGaGepoaz5lsrqpJJwc8K+Nir
+	hZuvVhWZ40EgUtDVi2kg8KkRbMnGdy1o/Qq6GfbSIK29Xx9ZF7DIo+WBpscy0+u1j/GF2Q0RcRU
+	5kA/J/nM=
+X-Gm-Gg: ASbGnctiBtZ9eGXpwHpUkHO0I/qoXj408j6zQRlTBNzNHth5Hw50F5uxRXN1nI5Ublt
+	hjcepoiVqGMe4wkHL1W0odtqOAOmHUda7eq9/MJT3MGL2UXttmhcp4w42ffaT2aG07brZFEgKGZ
+	LJGQmKZ3+wrO4AzziyYNiK00dPUBMkd1voRNi98U+6vLPODlDVBARl3eWzn8S6KZi5n8IxT+btU
+	poXMPRBrnxMmatdstVlXstFHJZKgESSneGkfWAmxat7F4Rt9+rvbKryJ49150PoFd7OVy29JmM0
+	Cwp/W5LIRwgeySPtn8XTMRZkmVxETmhsImQL3mZVlXyRrZ+KXgcZLQcg1M/M83+R9afJICRbTpp
+	nce2cPK1zMdl8RhgP1Hxma5q3WgwWKb81s6g0LoOgJze8Gbi9a5jvWXtJfZGIpzoRLiz5mBOgwB
+	dS53VZu61Tbm035TfyWicdsChDY1yBb5p3nQgZnCaQZNssifdR65vK
+X-Google-Smtp-Source: AGHT+IFW67sl60in/eMiQDWOwc8lfrPy3RIhmCwSEmLiHSpg5obyZG5HeVxylRoaEHdc7vld3nqL3A==
+X-Received: by 2002:a05:6000:220b:b0:429:8d46:fc5e with SMTP id ffacd0b85a97d-4298d46fdffmr263763f8f.4.1761233951243;
+        Thu, 23 Oct 2025 08:39:11 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:b41:c160:6a1d:efff:fe52:1959? ([2a01:e0a:b41:c160:6a1d:efff:fe52:1959])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898add96sm4522926f8f.30.2025.10.23.08.39.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 08:39:10 -0700 (PDT)
+Message-ID: <6a2072e1-43be-49a3-b612-d6e2714ec63e@6wind.com>
+Date: Thu, 23 Oct 2025 17:39:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,82 +84,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp-phy:
- Add Kaanapali QMP PHY
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Vinod Koul
- <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
- trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, Ronak Raheja <ronak.raheja@oss.qualcomm.com>
-References: <20251021-knp-usb-v2-0-a2809fffcfab@oss.qualcomm.com>
- <20251021-knp-usb-v2-1-a2809fffcfab@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Reply-To: nicolas.dichtel@6wind.com
+Subject: Re: [PATCH net-next] rtnetlink: honor RTEXT_FILTER_SKIP_STATS in
+ IFLA_STATS
+To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
+Cc: toke@redhat.com, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@google.com>, Stanislav Fomichev <sdf@fomichev.me>,
+ Xiao Liang <shaw.leon@gmail.com>, Cong Wang <cong.wang@bytedance.com>,
+ linux-kernel@vger.kernel.org
+References: <20251023083450.1215111-1-amorenoz@redhat.com>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251021-knp-usb-v2-1-a2809fffcfab@oss.qualcomm.com>
+Organization: 6WIND
+In-Reply-To: <20251023083450.1215111-1-amorenoz@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22/10/2025 08:50, Jingyi Wang wrote:
-> From: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+Le 23/10/2025 à 10:34, Adrian Moreno a écrit :
+> Gathering interface statistics can be a relatively expensive operation
+> on certain systems as it requires iterating over all the cpus.
 > 
-> Document QMP combo PHY for Kaanapali. Use fallback to indicate the
-> compatibility of the QMP PHY on the Kaanapali with that on the SM8750.
+> RTEXT_FILTER_SKIP_STATS was first introduced [1] to skip AF_INET6
+> statistics from interface dumps and it was then extended [2] to
+> also exclude IFLA_VF_INFO.
 > 
-> Signed-off-by: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
-> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> The semantics of the flag does not seem to be limited to AF_INET
+> or VF statistics and having a way to query the interface status
+> (e.g: carrier, address) without retrieving its statistics seems
+> reasonable. So this patch extends the use RTEXT_FILTER_SKIP_STATS
+> to also affect IFLA_STATS.
+> 
+> [1] https://lore.kernel.org/all/20150911204848.GC9687@oracle.com/
+> [2] https://lore.kernel.org/all/20230611105108.122586-1-gal@nvidia.com/
+> 
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
 > ---
+>  net/core/rtnetlink.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+> index 8040ff7c356e..88d52157ef1c 100644
+> --- a/net/core/rtnetlink.c
+> +++ b/net/core/rtnetlink.c
+> @@ -2123,7 +2123,8 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb,
+>  	if (rtnl_phys_switch_id_fill(skb, dev))
+>  		goto nla_put_failure;
+>  
+> -	if (rtnl_fill_stats(skb, dev))
+> +	if (~ext_filter_mask & RTEXT_FILTER_SKIP_STATS &&
+Maybe parentheses around this first condition?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The size could be adjusted accordingly in if_nlmsg_size().
 
-Best regards,
-Krzysztof
+> +	    rtnl_fill_stats(skb, dev))
+>  		goto nla_put_failure;
+>  
+>  	if (rtnl_fill_vf(skb, dev, ext_filter_mask))
+
 
