@@ -1,151 +1,227 @@
-Return-Path: <linux-kernel+bounces-867486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43017C02C36
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:39:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E73C02C45
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8A1F4E0633
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:39:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 264E01AA049C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953A734A3D6;
-	Thu, 23 Oct 2025 17:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C6234A770;
+	Thu, 23 Oct 2025 17:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLRAGeN/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYjoycFg"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E635C236453;
-	Thu, 23 Oct 2025 17:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B3533DEF3
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 17:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761241177; cv=none; b=gmrCWPJl5bIx7jHD22qObHdsHjE8/ai5MKRqbsg2NQVFyj9tfcOSazVC16W2rzaB9lfspl0a+0C7wdADIgDSmB+ScfSi2BIYcJ74jXmQW4V7jZP5VVysATVXJDSWhqq0qGj6CAXfmV4B0iMzebnNqst9mBjDTESIdWwF2FAFe94=
+	t=1761241232; cv=none; b=FPAQHX/UAkOJ/lT4cA9D2jlT1Du9K5Lsltv2PJui6dmxJU7/XALkcFkRs2WeQtOeB62jE7aXqRlfghGQNICkJo54U0lFiJIMXuTnIexWAciuP9klGCBCTpKMfn+P2RIAbUw3W9HWaqgrCkvUFAslyo3zRO6pgWL26fCVDr2FHRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761241177; c=relaxed/simple;
-	bh=y8FcQl/tdhUR9emAymQCDVyljD2NFGR2+Z65Qge1MJc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cu2aX+NWqL6mx7ODQWV4VcYJSuUvYr+bEN766RMpeYKcQRMzulUiDBJwA5JFxuFgsoDm/lqAUHFjGi67ux4elRtQQGsnQtG3zZHz96xjoQUnjDymee+r6JrHY/ypdrZbRS705Fz4QcGmvYlLRYokEEqHBYGmMtZ9J9hI9ojxqnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLRAGeN/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DCB8C4CEE7;
-	Thu, 23 Oct 2025 17:39:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761241176;
-	bh=y8FcQl/tdhUR9emAymQCDVyljD2NFGR2+Z65Qge1MJc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=RLRAGeN/43K4pTReEel9mg67U5oa02cfOnXqw+capCfwW6lJ6n9KErRBKgq8Q/p5C
-	 3Qzc+SDtfkn9cM+5ChQM80BwLuYbpeqXaiCk6Goav2JvIjnC+oAatXgJUUMV6edEg9
-	 p9Cok6IJs59JF+nEy6vFIEp/9DB2xjVlPZxERM0FrhQQ6skk2AyoP0C5Pul7QcPYzF
-	 0TWkbXXqbBkjlSGSTuMsZ3z/OHswrAfLyFdA9oUKrNRoeFQDsqEditk/5zA/i8JPt1
-	 t2OtXeXNGUXefVAziXfeiR7w8zuSBpqCiCDmYPcN3yR8VwtbSww+52bSOQAyN/2Td3
-	 jqdpwmPpnCPNg==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Thu, 23 Oct 2025 10:38:50 -0700
-Subject: [PATCH] jfs: Rename _inline to avoid conflict with clang's
- '-fms-extensions'
+	s=arc-20240116; t=1761241232; c=relaxed/simple;
+	bh=TTK6h6ml7y/22TB+D+/QTwGdPNuUZy3BGLD3gRDdYAM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sPF8rZ289vfZ2tTxfK4eE4Kq9l+NjBbT2IGh3dSod5nSdAkCNs38dBVnhlGiVCVrx+yUpwkEqxosrJZnAvrjxDnWogxNGl7mPubg7QmOS8qttPkp2L+b59eVfjwuQuurOsHNlrkvP74fqKs03qx72ODbfsuEMjMsZOBy/vRHH8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eYjoycFg; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b403bb7843eso227676966b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:40:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761241228; x=1761846028; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=smzdmE7oqDk8LuIhXOJODpEUrtL1Td6tLH8AoLayyPw=;
+        b=eYjoycFgUCk9GaDxqbRzoUj4IiltGk2u55V0kLa6PmdSHsBkiJJabBLYfDsp9VZrOq
+         0RmTBwNI7ijbhKKLAkd9+cAMhWaIgCVgmrTIkDBiiz2NndQxhn+/cSzIZXZe5c3AJPmS
+         uJ43YpR/1emzqFLJCeHzWleD5tEXIHhrSGy3h60K1GnEGmqIwufjNUBe8bE+ME4C4sPy
+         v8n0FvYa/WCYG/yCSbvwfuy/31wtcEZB5JAOOMhO0I1FDRSCrEjzyUcSeW9Sf8tHUAUo
+         naG85qzW4sXNmDCa4TjHcLx0/RsjDd7TshEIePFtpEG0Kw8OkPJgNPKuy1LmSnhpL8dk
+         wWCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761241228; x=1761846028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=smzdmE7oqDk8LuIhXOJODpEUrtL1Td6tLH8AoLayyPw=;
+        b=pGhPw5zGLdWXBuW20eUHSz62DIJdvMF463NVfEvZsQAP6Y1UQh3WtyG/1KOTb28qTm
+         9FPj1RMl1PbtTWZyxR/m90ZaXyK8s8DTUZ0+C6HjD6IhH9K1a2h5xd6ONAagv2FDuqxu
+         ac729EGQTm19A8Rtvyew6yPYUQ/8+hWNFae73/sSrR/qflcgimRGbdQL32BWEEccqx53
+         iJzs3ZTT2h2IHSXo4uRGD55n571BPWj2lcyc/9wgy8vojQDJhQiHBG01+m28pMARRciv
+         HkYJUctq9MKakZGV0fXJmo+kk12rd7KQgKspS2jgNFFN/bKxeC0ZfPParmiF5jLPIc2z
+         O6oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJvi4jNzorWCiC4JwxXMfpJp41E3rEDPf2VqPF8GiiHNeclTfGu+HpYO8PSNEtEpdKOF1OvL2qmvKkrMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywhpv74+//Qz/FQorfvzjnJMwHOzypsbDurHXbTfFI/1Z5p83Cn
+	zQ1a4097eihqqv7gEya85+xb7t3gfYNDDPp0DkVyIbo4wXrwr8MhelT2bCH+gLKwW0YJ41KImgh
+	QiLcdFfjqIahyGdRev0jp2tU/x/L831Q=
+X-Gm-Gg: ASbGnctzbBSYDb/hQqPQSKQb0BwoshgDESanwMPVqUymZ7SOFQrxLJUTmfz1lFOkvs1
+	dGrdMm+LseP5NSh5i1DQbbKpkL3ZrAv8nr7bacmeRPO33jKzlWUDrRCI0V6zFVwskyKQWBfq1fH
+	xV8xPd3fb0vBTY0ALmpBaRN1g+MgY7AI1JRHvf58q14X8MZg8LhwBr+TV3uzaTzBMDcxSWN2NLN
+	1opm3E/Jeps5POzJr0ybkMEhCyk3hT/Gs25OnEbJ32qUZkpWh/75mHrsgwhEYuDqwaeWhG/VQ==
+X-Google-Smtp-Source: AGHT+IHow1VR8JQAE5q6qgDSicvmCI1LUGpLgKgoz/cgPgRgNpbdkUQD3/ZXHjoZ0VycRm0yeeZH7AQnSl5smGqMZo0=
+X-Received: by 2002:a17:907:3f87:b0:b3c:3c8e:1896 with SMTP id
+ a640c23a62f3a-b6473b52634mr2763877966b.42.1761241228124; Thu, 23 Oct 2025
+ 10:40:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-jfs-fix-conflict-with-clang-ms-ext-v1-1-e219d59a1e68@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x2N0QrCMBAEf6XcswtppEj8FfEhphd7UlPJBS2U/
- nsPHwd2djZSrsJK126jyl9RWYpBf+ooTbE8GTIak3d+6J0/45UVWVakpeRZUsNP2oQ02xZvBa8
- NMfoxuEtw4RHIjj6VzfhHbvd9PwBu+OaEdAAAAA==
-X-Change-ID: 20251023-jfs-fix-conflict-with-clang-ms-ext-aa2d907909b9
-To: Nicolas Schier <nsc@kernel.org>, 
- Linus Torvalds <torvalds@linux-foundation.org>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, Dave Kleikamp <dave.kleikamp@oracle.com>, 
- Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2945; i=nathan@kernel.org;
- h=from:subject:message-id; bh=y8FcQl/tdhUR9emAymQCDVyljD2NFGR2+Z65Qge1MJc=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDBm/MvwiHc7rTVoxw1ps7+wnKXdD07weVZzI3HP0EN/vg
- 09MmeJdO0pZGMS4GGTFFFmqH6seNzScc5bxxqlJMHNYmUCGMHBxCsBEGo4xMkxZuiX1SgiPteei
- 3+UtClKmlz5MWP2jKbPZtks9rCLpz0RGhp2Lr259fKWa+eXrf4KZLw+p3DiyRnRpbdM0iWrbnY8
- +rmQAAA==
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+References: <20251023030521.473097-1-ziy@nvidia.com>
+In-Reply-To: <20251023030521.473097-1-ziy@nvidia.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Thu, 23 Oct 2025 10:40:15 -0700
+X-Gm-Features: AWmQ_bn3zq0uDKg6ko2JiMC7FRwDGgYYe7WpkCFUwmKJwPnSL1F1mC_HQ9WgH9I
+Message-ID: <CAHbLzkqf37UpnFmQ_yZqZmWAa5X72JgFHsyUUBcyP6Pn9c3YyQ@mail.gmail.com>
+Subject: Re: [PATCH v4] mm/huge_memory: preserve PG_has_hwpoisoned if a folio
+ is split to >0 order
+To: Zi Yan <ziy@nvidia.com>
+Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com, 
+	kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org, 
+	nao.horiguchi@gmail.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After commit 778740ee2d00 ("Kbuild: enable -fms-extensions"), building
-fs/jfs fails with clang:
+On Wed, Oct 22, 2025 at 8:05=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
+>
+> folio split clears PG_has_hwpoisoned, but the flag should be preserved in
+> after-split folios containing pages with PG_hwpoisoned flag if the folio =
+is
+> split to >0 order folios. Scan all pages in a to-be-split folio to
+> determine which after-split folios need the flag.
+>
+> An alternatives is to change PG_has_hwpoisoned to PG_maybe_hwpoisoned to
+> avoid the scan and set it on all after-split folios, but resulting false
+> positive has undesirable negative impact. To remove false positive, calle=
+r
+> of folio_test_has_hwpoisoned() and folio_contain_hwpoisoned_page() needs =
+to
+> do the scan. That might be causing a hassle for current and future caller=
+s
+> and more costly than doing the scan in the split code. More details are
+> discussed in [1].
+>
+> This issue can be exposed via:
+> 1. splitting a has_hwpoisoned folio to >0 order from debugfs interface;
+> 2. truncating part of a has_hwpoisoned folio in
+>    truncate_inode_partial_folio().
+>
+> And later accesses to a hwpoisoned page could be possible due to the
+> missing has_hwpoisoned folio flag. This will lead to MCE errors.
+>
+> Link: https://lore.kernel.org/all/CAHbLzkoOZm0PXxE9qwtF4gKR=3DcpRXrSrJ9V9=
+Pm2DJexs985q4g@mail.gmail.com/ [1]
+> Fixes: c010d47f107f ("mm: thp: split huge page to any lower order pages")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
 
-  In file included from fs/jfs/jfs_unicode.c:8:
-  fs/jfs/jfs_incore.h:86:13: error: type name does not allow function specifier to be specified
-     86 |                                         unchar _inline[128];
-        |                                                ^
-  fs/jfs/jfs_incore.h:86:20: error: expected member name or ';' after declaration specifiers
-     86 |                                         unchar _inline[128];
-        |                                         ~~~~~~~~~~~~~~^
+Thanks for fixing this. Reviewed-by: Yang Shi <yang@os.amperecomputing.com>
 
-'-fms-extensions' in clang enables several other Microsoft specific
-keywords such as _inline [1], presumably for compatibility with MSVC, as
-Microsoft's documentation [2] mentions:
-
-  For compatibility with previous versions, _inline and _forceinline are
-  synonyms for __inline and __forceinline, respectively
-
-Rename the _inline array in 'struct jfs_inode_info' to _inline_sym to
-avoid this conflict, which is not a large workaround as this member is
-only ever referred to via the i_inline macro.
-
-Fixes: 778740ee2d00 ("Kbuild: enable -fms-extensions")
-Link: https://github.com/llvm/llvm-project/blob/249883d0c5883996bed038cd82a8999f342994c9/clang/include/clang/Basic/TokenKinds.def#L744-L79 [1]
-Link: https://learn.microsoft.com/en-us/cpp/c-language/inline-functions [2]
-Acked-by: Dave Kleikamp <dave.kleikamp@oracle.com>
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
-I will stuff this into kbuild-next by Saturday morning UTC unless
-Nicolas is able to take it sooner to ensure it makes the Monday -next
-release.
----
- fs/jfs/jfs_incore.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/jfs/jfs_incore.h b/fs/jfs/jfs_incore.h
-index 10934f9a11be..5aaafedb8fbc 100644
---- a/fs/jfs/jfs_incore.h
-+++ b/fs/jfs/jfs_incore.h
-@@ -76,14 +76,14 @@ struct jfs_inode_info {
- 		struct {
- 			unchar _unused[16];	/* 16: */
- 			dxd_t _dxd;		/* 16: */
--			/* _inline may overflow into _inline_ea when needed */
-+			/* _inline_sym may overflow into _inline_ea when needed */
- 			/* _inline_ea may overlay the last part of
- 			 * file._xtroot if maxentry = XTROOTINITSLOT
- 			 */
- 			union {
- 				struct {
- 					/* 128: inline symlink */
--					unchar _inline[128];
-+					unchar _inline_sym[128];
- 					/* 128: inline extended attr */
- 					unchar _inline_ea[128];
- 				};
-@@ -101,7 +101,7 @@ struct jfs_inode_info {
- #define i_imap u.file._imap
- #define i_dirtable u.dir._table
- #define i_dtroot u.dir._dtroot
--#define i_inline u.link._inline
-+#define i_inline u.link._inline_sym
- #define i_inline_ea u.link._inline_ea
- #define i_inline_all u.link._inline_all
- 
-
----
-base-commit: ac1280211e1c41704c756fd1bc5512f92010b3f0
-change-id: 20251023-jfs-fix-conflict-with-clang-ms-ext-aa2d907909b9
-
-Best regards,
---  
-Nathan Chancellor <nathan@kernel.org>
-
+> ---
+> From V3[1]:
+>
+> 1. Separated from the original series;
+> 2. Added Fixes tag and cc'd stable;
+> 3. Simplified page_range_has_hwpoisoned();
+> 4. Renamed check_poisoned_pages to handle_hwpoison, made it const, and
+>    shorten the statement;
+> 5. Removed poisoned_new_folio variable and checked the condition
+>    directly.
+>
+> [1] https://lore.kernel.org/all/20251022033531.389351-2-ziy@nvidia.com/
+>
+>  mm/huge_memory.c | 23 ++++++++++++++++++++---
+>  1 file changed, 20 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index fc65ec3393d2..5215bb6aecfc 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3455,6 +3455,14 @@ bool can_split_folio(struct folio *folio, int call=
+er_pins, int *pextra_pins)
+>                                         caller_pins;
+>  }
+>
+> +static bool page_range_has_hwpoisoned(struct page *page, long nr_pages)
+> +{
+> +       for (; nr_pages; page++, nr_pages--)
+> +               if (PageHWPoison(page))
+> +                       return true;
+> +       return false;
+> +}
+> +
+>  /*
+>   * It splits @folio into @new_order folios and copies the @folio metadat=
+a to
+>   * all the resulting folios.
+> @@ -3462,17 +3470,24 @@ bool can_split_folio(struct folio *folio, int cal=
+ler_pins, int *pextra_pins)
+>  static void __split_folio_to_order(struct folio *folio, int old_order,
+>                 int new_order)
+>  {
+> +       /* Scan poisoned pages when split a poisoned folio to large folio=
+s */
+> +       const bool handle_hwpoison =3D folio_test_has_hwpoisoned(folio) &=
+& new_order;
+>         long new_nr_pages =3D 1 << new_order;
+>         long nr_pages =3D 1 << old_order;
+>         long i;
+>
+> +       folio_clear_has_hwpoisoned(folio);
+> +
+> +       /* Check first new_nr_pages since the loop below skips them */
+> +       if (handle_hwpoison &&
+> +           page_range_has_hwpoisoned(folio_page(folio, 0), new_nr_pages)=
+)
+> +               folio_set_has_hwpoisoned(folio);
+>         /*
+>          * Skip the first new_nr_pages, since the new folio from them hav=
+e all
+>          * the flags from the original folio.
+>          */
+>         for (i =3D new_nr_pages; i < nr_pages; i +=3D new_nr_pages) {
+>                 struct page *new_head =3D &folio->page + i;
+> -
+>                 /*
+>                  * Careful: new_folio is not a "real" folio before we cle=
+ared PageTail.
+>                  * Don't pass it around before clear_compound_head().
+> @@ -3514,6 +3529,10 @@ static void __split_folio_to_order(struct folio *f=
+olio, int old_order,
+>                                  (1L << PG_dirty) |
+>                                  LRU_GEN_MASK | LRU_REFS_MASK));
+>
+> +               if (handle_hwpoison &&
+> +                   page_range_has_hwpoisoned(new_head, new_nr_pages))
+> +                       folio_set_has_hwpoisoned(new_folio);
+> +
+>                 new_folio->mapping =3D folio->mapping;
+>                 new_folio->index =3D folio->index + i;
+>
+> @@ -3600,8 +3619,6 @@ static int __split_unmapped_folio(struct folio *fol=
+io, int new_order,
+>         int start_order =3D uniform_split ? new_order : old_order - 1;
+>         int split_order;
+>
+> -       folio_clear_has_hwpoisoned(folio);
+> -
+>         /*
+>          * split to new_order one order at a time. For uniform split,
+>          * folio is split to new_order directly.
+> --
+> 2.51.0
+>
 
