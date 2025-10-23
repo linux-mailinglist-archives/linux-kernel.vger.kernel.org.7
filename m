@@ -1,178 +1,220 @@
-Return-Path: <linux-kernel+bounces-866479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 756DFBFFE1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:23:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF0CEBFFDB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24A2F1A6040E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:23:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ACA33AB54A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783732F5A35;
-	Thu, 23 Oct 2025 08:21:19 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18622FF152;
-	Thu, 23 Oct 2025 08:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761207678; cv=none; b=f8hG6l5eWUPb3njBISuR7bx/dQUPeyZNkbIfp2JR5vVtvvFGrSRpKoI+EwFWp3JMnlAuhAj7iq7x05GmXUuJfreLn/MlEXa7XxtWu/TgZrR/hKQVlnMizBQgRZZ/8uv+1nA4pDLJhiYJhgk+JWzL6igklSd2u3lTHM5AeFaISOA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761207678; c=relaxed/simple;
-	bh=Pg7tjeq7r3AX9QT2iM2Pps0AvibFReG3mtK6Z/Newus=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ab24PIh/GiAFt5d6BB/ROVzJzMM49cN8WzJEOHG4xNKxVO4qrQVzVhlGsQMJAU5u0AGZPFApzPqizdxXADi70iQKV+RdOiWCukkEeQYoV7EMF1WWkaT8M8/jMOpfn+/OqMlYXIDDbtDFWfLi5Y+N6jUVyVOeWh3DeZ1BZA4iuAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: Ir7V6Xz6RZG6rhRsZ9GM8g==
-X-CSE-MsgGUID: kc63CY+wQVOikdpb03IcJA==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 23 Oct 2025 17:21:11 +0900
-Received: from demon-pc.localdomain (unknown [10.226.93.77])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0A230417DE80;
-	Thu, 23 Oct 2025 17:21:05 +0900 (JST)
-From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-To: 
-Cc: John Madieu <john.madieu.xa@bp.renesas.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Subject: [PATCH 10/10] arm64: dts: renesas: r9a09g087: add TSU and thermal zones support
-Date: Thu, 23 Oct 2025 11:19:24 +0300
-Message-ID: <20251023081925.2412325-11-cosmin-gabriel.tanislav.xa@renesas.com>
-X-Mailer: git-send-email 2.51.1.dirty
-In-Reply-To: <20251023081925.2412325-1-cosmin-gabriel.tanislav.xa@renesas.com>
-References: <20251023081925.2412325-1-cosmin-gabriel.tanislav.xa@renesas.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0A42F6928;
+	Thu, 23 Oct 2025 08:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="BdSPMF7D"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022096.outbound.protection.outlook.com [40.107.75.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01A12F5A27;
+	Thu, 23 Oct 2025 08:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761207640; cv=fail; b=bMjodOjQAen93fXBwYVFz6nUMdO0nkCcgLeOzF+hsYJ/CgqLhy8ZHDAqTQPvV8kj7BCcnVhIQSUvcppYFoHmeUkjEWAW61xSkkW+T3nXHb92/HEaHEFCAKa4nx2R6sLjU1G17tW82PYAS8HDGx09BjgkhMkrOCo5tISE51AcgfE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761207640; c=relaxed/simple;
+	bh=EdugZGECWMP6nfne4r9aAcXyPZPJHE9eBNFXCrXF+wQ=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ob/dPngtAej4QuN9OZKBa/epe3UI3oS/JOSODR3j1lU8XNJzDEqr/zbnFEsHuxrsTli9YMUR/BjMlI3CbvIFYdhQmqIM3QddAKzyNCzy7RLwsOcwlPMasdjwMUw8NmAY0BSZU7/tFk1AqDBgDTQauIb/nsnY+vq/PVi+dq6Kc88=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=BdSPMF7D; arc=fail smtp.client-ip=40.107.75.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RotLaInNXBHNTx+k6TCGHBoIBKlV3plO+eUibTGYKtC4BZYfrH8esiszzP/KcoZRZm2H4wl9BPS6PxoePaRG1svisuuLdBM6wX2gUSRvpZ+Qe0U0Zu589pgNke7X4o5bX0WdsMUcuuahwpWX+qQSMS9E0bgSmmn3IMRsRAidAZF1VA4DEeIMWbMKVy/DpU3Z7+NQmjeAMdp6ymZA/0aJqdkcV95JBP19IYnLfl6MGBvY4OcKXsKeYjRJ+TU53dFj/Z6HpAiWTOsz2lO/uhHneOMS28v9GBYX7jXOXTWU7364ZUXIHNPldy+9Vqsp2nQxlEz4l/s8qUxKaCsO0V0s1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sLVCxmgdPTxOkrtRmCtbGCBask5b7vJNCjtt9YKrfvs=;
+ b=aiXhsux2w23JB3z7F3sA/FA4yC2albaDttAjzYrPHNgjjfs2qIfJFCC5K9FLlm0vt1MNSqS3qSfWGUtoxUEi6bV55t1XvOvJu/TP/Kfv+0lbXIm8w7rIbkTpeY25jTgU88n0buikLZmXOHodvgCpq7/dIB3j+ZYlF2uF5ZWfB9y2p/oRZEXkrAORhtK8nhtFNy2R12JpQ7xAP/VVSYKzfuz4XZzIqwaCefaBh0smuqHNuvLeTI4akH6mleDCYFtSSsPEG8K+p8AkGxcnP5FAEZ/hgHgrf3rzriOcC/aByyvqgUy9T+mTn9QNzl+T+GrUvxrh4sDa0FTH/ifEB1H7uA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sLVCxmgdPTxOkrtRmCtbGCBask5b7vJNCjtt9YKrfvs=;
+ b=BdSPMF7Dup6UupOLGpbA0xDOHzzb8PFhuwO1/9q47wX8IZUOlbAc8WbjS5zUZlOzqf9OlbB8QoS5PCYVw4tquNEON4eK50xHXyO7fHSmpGo31aG04I9SofAzUf5jREFsXdYpzujm3X56lIzsBkFhB8OHNruVjQ/3K3nVLKxQmNCKieF1jRJOTo2OEIl7DLWWoUiFVldUVXrh7sER0dogd3dthz7nzL6HUUPtXdTUZohzsOYI4TJsDMgXrv/VlMNO0vM1drZ5ivsTa2PxmLHcCPLQCZUZbYIGTNevGpf03gqGrE5DFHq3W1hOfiik5F4LhCGU38kXvItoJ3nAp5plug==
+Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com (2603:1096:408::791)
+ by KL1PR0601MB5549.apcprd06.prod.outlook.com (2603:1096:820:c0::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
+ 2025 08:20:33 +0000
+Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
+ ([fe80::df4f:b1a1:1825:4a80]) by TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
+ ([fe80::df4f:b1a1:1825:4a80%7]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 08:20:33 +0000
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+	"jk@codeconstruct.com.au" <jk@codeconstruct.com.au>, Kevin Chen
+	<kevin_chen@aspeedtech.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>
+Subject: RE: [PATCH v5 2/3] Irqchip/ast2700-intc: add debugfs support for
+ routing/protection display
+Thread-Topic: [PATCH v5 2/3] Irqchip/ast2700-intc: add debugfs support for
+ routing/protection display
+Thread-Index: AQHcQyDR1tGnofTzaEGq5MiftiNfKLTOXiAAgADym1A=
+Date: Thu, 23 Oct 2025 08:20:33 +0000
+Message-ID:
+ <TY2PPF5CB9A1BE65F13FC00C09F5C1FAE68F2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+References: <20251022065507.1152071-1-ryan_chen@aspeedtech.com>
+ <20251022065507.1152071-3-ryan_chen@aspeedtech.com> <87h5vqyjs7.ffs@tglx>
+In-Reply-To: <87h5vqyjs7.ffs@tglx>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY2PPF5CB9A1BE6:EE_|KL1PR0601MB5549:EE_
+x-ms-office365-filtering-correlation-id: f0dcbff9-49c1-4c08-0c5d-08de120d0956
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?b7uaR8dLSFQ89Ds8CsMs2h6aO7KLLOfgXHoAUgMLrX39T0Nm19uhmxsHphSf?=
+ =?us-ascii?Q?RHrZ7zwYZzwIAjwMduqxdsQ7ex1uCzsMiV6sc8fJ4G1sGIUVsAYOpcdGbmRC?=
+ =?us-ascii?Q?lQH1a4Pd36dbVWmBoaAYIe9bhG1JbBQqvSC/NkIyhJTzxYpvkQzlUubPaIF/?=
+ =?us-ascii?Q?y3uY96AnpupDNPv8N3+aGLWw7sstov6BxV/9MDMPdopKY1iwHXKJ/MvZ0ZsF?=
+ =?us-ascii?Q?QEqjZX3U+A5VzPs+RfwXxmBItfFJV+Zj0qxWlFHweSmyKk4n31Xc3JL7gDXW?=
+ =?us-ascii?Q?slusIn96SGWc+ZsMdkAdHCss0Rco72RP6eKGIxRQ77NBAFTfeDLoMgAlFetQ?=
+ =?us-ascii?Q?CsgLx2TWomPf+mAmcZ1CyDQ0VGz+oSC7tS+DF/ZY3m9CUwWygpptlDvi6xRH?=
+ =?us-ascii?Q?3HBbQ5jdmIsHMbbLO9ApUufs6EDYdvPDOtEHbl3VAm33pOlH92dUUlqVr+Tq?=
+ =?us-ascii?Q?lSILgnwZBZlN68Nwl1jfcpMrQwDJIVAMEdP7xnmEs2yPKrB2IgHVWHQFrAa5?=
+ =?us-ascii?Q?tqZquAEyK5UO9+LpBAJrfXd2PwByP5IWQBPasjkPFVBhkrXzyAesUOwJNSWU?=
+ =?us-ascii?Q?aRVJwCh/T5z34cQWhQLvOhe6LuWojfBCkp0tTrfBUvDhB/X2LkZjzMLsr2iA?=
+ =?us-ascii?Q?bNHnK+XvvmpgqRWV1WaXJ1ZjNLHTYKhohSQ6zF7ykwmogt6aOHHq91VqaEmQ?=
+ =?us-ascii?Q?WaDRvcMGfOZqOBlTg7LZ65Rj7dCUdmZsSEK3PuL7vBO5CJtU1c1Aw3zjSL5T?=
+ =?us-ascii?Q?KcVR4lc5Z7vrAgF2/bXEA87Kz1fJpPXFFWeAJ+dN8HCHTRNTcEs+M7lr15P3?=
+ =?us-ascii?Q?Dwf+nOWjnNiUX8RnQxnc/0CsvHGdBfXriyIjB8r9WnmMcldmrMhLAIICSpCV?=
+ =?us-ascii?Q?GIejZd3dbCUpoYDZd026TFGiVz1AXLySAL8aXNcXTJfJTuu1okVcqEpqVH6W?=
+ =?us-ascii?Q?CW2f94vQVULR8ApBCKcxIan+tqFeYp1rPmBMKaMfeW8alnOaN0KHBg9D9Mpr?=
+ =?us-ascii?Q?+VTeAhzWeDErCzstb9wOgOwFU40eQoaAYys1drSKrZs2TvYOxz3X5jsctSpm?=
+ =?us-ascii?Q?lQ1ks+q1ta1mH/0rdRb2p98fYbAwmVr7c/F4cV5eyjEkiHdjFlzyRXVEIH3i?=
+ =?us-ascii?Q?MrYClHSdyuu5/A2qVKWN37ZcYrGv+oNc+0ZfkxOtrg4rTdPGb2fJ/vaRJIv1?=
+ =?us-ascii?Q?hgfxvJk0UZYuYyhqiJZk2OX4eG+BLfRlxHH/hZIKVqtun7T+M3Z+ovo5iQyg?=
+ =?us-ascii?Q?OoIb4zZg5VKYFxO9pkljnyeP8JpVq819hcaY3uVH64Hi6ML8UKHPwxxlUcOn?=
+ =?us-ascii?Q?kBa4CemaZbyDY6yaLWFBwp7Xe1VgRCHVXLSpmE4g+04xeZXnCaSKs0b61H5C?=
+ =?us-ascii?Q?uuPVx/OIWF3Pwkjr6GOsI0DZRLPlL1gJI0+Y9zEfFDH6aHO3UiuUG+FVQf5A?=
+ =?us-ascii?Q?ExvGXXzNpTRQBB4XZL84L7Ga5DNrSuzokzRMGVmw1YliroAsyZiZIKThouSF?=
+ =?us-ascii?Q?NHSsK4lJXU4JqxoLUZh77k+8IohlRzZxV3szWtnIMmAuK7O+QTmuNJFXWg?=
+ =?us-ascii?Q?=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020)(38070700021);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?MqbZ3b/Is1+lGq5aZTq/odPuZ69aVRrtO2LBKR6uwAfwYgg2bNf206c/aNN5?=
+ =?us-ascii?Q?aqgpEAYk20/L8vT62VTHMzdiPe/OSzG0cFN5dwB2FSaTIfRIuP+vCuifF5rG?=
+ =?us-ascii?Q?q/khOzV0o5+od2mLOeQaYbXbCY4BDytld+u0P19FxRbQOnlcRrHXnJBnEbpW?=
+ =?us-ascii?Q?dRYAZhglQqz5jv2Yl9EnT1FnkVxgllPs3PLMtgz9BrCmxWPMXnpaKiOhpuzF?=
+ =?us-ascii?Q?/VRFhsnnOTL7lLLhwapCI71UiT7y6VlKZAZS9KKgJrRBjz8DqE28uArkx5aF?=
+ =?us-ascii?Q?RmFobNNZgtx3v0sxRNXlRj926SbmbczX5nPWxbDDTIDY9wecIOi4v570/2LR?=
+ =?us-ascii?Q?1aTFaHRq43AUkhLSSfmHw+0KZhIoIkTOnIPounvSr1J1qkJ41OhvSxRr82mp?=
+ =?us-ascii?Q?Yr6jw8KV9s5tIJhoT6Qh21L9TT6X1PijI77avB1xaOYCMWMHQgzIImKbh+zm?=
+ =?us-ascii?Q?6PJL2KGNk1VTik0Qfuolpq4LsV7APlYTBhAQ30/YAlXkYl3M5D6UiDOcdewC?=
+ =?us-ascii?Q?VfKODvQFOK6QTCF/3ZH7/vfVpgB3ZEXPuQxvW9lIXDIO94555Fw0iFW3Hvnk?=
+ =?us-ascii?Q?9a3luWMo6ZcVGwtUR4cepsIkg+C00ozL1uFrTkWHMA1mZ7IfjIULw/SD/b3A?=
+ =?us-ascii?Q?T/kJBaBvxrDtDAdMXAQdwqcC/NLNRr5YjE7Wxc0wGmobI+2b7wOVwjMxCq5M?=
+ =?us-ascii?Q?BJFS0L/YsfaikAlvATjHe99ZsRApMHUf97usDpWMbOZUy1rlJQRuWiXVkdds?=
+ =?us-ascii?Q?MrnWgSejthrrKWHiQ1+lyhUfd0GrIuYv10nnfcfIBST716EdrJFdKv4Eblcd?=
+ =?us-ascii?Q?z51DlACndqHYmaBHz8xEuIz9RAO7b/bSAsplMTJ0y+/AKh0iQ+I9zUFvcG0W?=
+ =?us-ascii?Q?j8z/n6mMBABEgr5YfRbjH4mDsvyIsv33mIJMVMW3VerCJc+ori8Q9MEfI0Co?=
+ =?us-ascii?Q?sj4WoSKgRvzt5de6Bmde2TrChs1xX5pY4ILJBLXskXTpI4NeOpP1Z30G999C?=
+ =?us-ascii?Q?L+I2NBwoepzrRsviSzGRBAV+lGUx6eq5I0nSUaZHfE9JqNoGhrLav4prUPTK?=
+ =?us-ascii?Q?VnOMpPi3+dF1NKytD7Dl8gK4QD5hw9WjlfKlaQT5ibttT4vsHQbvILXZiWmC?=
+ =?us-ascii?Q?s3CPA/nNx1GHJ315pMZ33jCuv823W+v65qmTfgLPfQeaYYP51BOyHdQVs+83?=
+ =?us-ascii?Q?3TGqLcHAHo2b6KyqA/Aqb4cylPIOTtbEOXBMsRPww+b+1RWo4sfi1Bv+8nHW?=
+ =?us-ascii?Q?ISyoEOx8YCm/t+hxwP2lhQW3CBDAhw1x2QoplRwyAJ4PI44UB9ZKfubFd/1v?=
+ =?us-ascii?Q?Ztd2oxnMQhjLXVoqyb9/jVOkxq0OARm2oBRdChNxihvITUS+cv7IRJVdkXUY?=
+ =?us-ascii?Q?GVFzhp2N57DKYqmmRHu6Gav7c6VWtc4wNkIl44yxlJCn69FP3pSO3y5yLIDO?=
+ =?us-ascii?Q?Qp/xg+icqkbh69+cBjwfYA05YMHyqCRxbVe5mZiWyPVj3rylKBdSlRvyzeeI?=
+ =?us-ascii?Q?xr8Id66VyRs9a6WJVDS2M0qsh55rMKm687vzcfD3yNwQeTqxGnadP2RLcUqD?=
+ =?us-ascii?Q?Q1VnzuDXlQ72tTnGBhFe4+HH2XhDZvClygEKmKmj?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0dcbff9-49c1-4c08-0c5d-08de120d0956
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2025 08:20:33.3287
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: lwrFCKvYfX03U2iNP8fvn1O+J71E3tGlKBJgC4hoHoPkhtjofSTJfkew8ljTzJinsNZu76umyPU646qiYGcjwyQV0oRD5pkTvZaSXlNGxAo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5549
 
-The Renesas RZ/N2H (R9A09G087) SoC includes a Temperature Sensor Unit
-(TSU). The device provides real-time temperature measurements for
-thermal management, utilizing a single dedicated channel for temperature
-sensing.
+> Subject: Re: [PATCH v5 2/3] Irqchip/ast2700-intc: add debugfs support for
+> routing/protection display
+>=20
+> On Wed, Oct 22 2025 at 14:55, Ryan Chen wrote:
+>=20
+> The prefix is: irqchip/ast....:
 
-The TSU loads calibration data via SMC SIP.
+I'll use irqchip/aspeed-intc:
 
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+>=20
+> > AST2700 INTC0/INTC1 nodes ("aspeed,ast2700-intc0/1") not only include
+> > the interrupt controller child node ("aspeed,ast2700-intc-ic"), but
+> > also provide interrupt routing and register protection features.
+>=20
+> Lacks a new line to open a new paragraph.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index 5eef8c18037e..db117b6f75a1 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -36,6 +36,7 @@ cpu0: cpu@0 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C0>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -46,6 +47,7 @@ cpu1: cpu@100 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C1>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -56,6 +58,7 @@ cpu2: cpu@200 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C2>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -66,6 +69,7 @@ cpu3: cpu@300 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C3>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -244,6 +248,17 @@ wdt5: watchdog@80083400 {
- 			status = "disabled";
- 		};
- 
-+		tsu: thermal@80086000 {
-+			compatible = "renesas,r9a09g087-tsu", "renesas,r9a09g077-tsu";
-+			reg = <0 0x80086000 0 0x1000>;
-+			interrupts = <GIC_SPI 713 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 714 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "adi", "adcmpi";
-+			clocks = <&cpg CPG_MOD 307>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+
- 		i2c0: i2c@80088000 {
- 			compatible = "renesas,riic-r9a09g087", "renesas,riic-r9a09g077";
- 			reg = <0 0x80088000 0 0x400>;
-@@ -844,6 +859,37 @@ sdhi1_vqmmc: vqmmc-regulator {
- 		};
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <250>;
-+			thermal-sensors = <&tsu>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&target>;
-+					cooling-device = <&cpu0 0 1>, <&cpu1 0 1>,
-+							 <&cpu2 0 1>, <&cpu3 0 1>;
-+					contribution = <1024>;
-+				};
-+			};
-+
-+			trips {
-+				target: trip-point {
-+					temperature = <95000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				sensor_crit: sensor-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+
- 	stmmac_axi_setup: stmmac-axi-config {
- 		snps,lpi_en;
- 		snps,wr_osr_lmt = <0xf>;
--- 
-2.51.1.dirty
+I'll split the opening sentence and the follow-up paragraph in
+the commit message.
+>=20
+> > Adds debugfs entries for interrupt routing and protection status for
+>=20
+> Add
 
+Will update
+
+>=20
+> > AST2700 INTC0/INTC1.
+>=20
+> But what you are failing to explain is why this is required and useful. J=
+ust
+> adding code because we can is not a real good reason.
+
+The INTC0/INTC1 routing and protection registers are set up by early firmwa=
+re
+and are not modified by Linux.=20
+
+When routing is off, interrupts get merged/misdirected silently.
+A minimal kernel-side visibility helps confirm that the upstream interrupt
+topology (e.g., which INTC1 groups are funneled to which INTC0 inputs / GIC=
+ SPIs)
+matches what the DT and drivers assume.
+
+The protection bits gate which CPU can write/read specific INTC=20
+windows (PSP/SSP/TSP). When those are mis-programmed,=20
+Linux can neither steer nor even read status in places it expects to.=20
+A raw readout lets us verify that Linux isn't boxed out by mistake.
+>=20
+> Thanks,
+>=20
+>         tglx
 
