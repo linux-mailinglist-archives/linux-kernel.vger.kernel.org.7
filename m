@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-866426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2824BFFBC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:56:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC087BFFBD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D8A51A00CD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:56:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB1C94E7351
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E662DE70C;
-	Thu, 23 Oct 2025 07:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A266A2E2EEF;
+	Thu, 23 Oct 2025 07:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SeSnbzm3"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WXHjepf5"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC7F2DEA79
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2C22E0B5F
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761206133; cv=none; b=PYgRVRr48KqnLukYSwL4hzuW1DlmEb2L4aOYzWQERCPwOZYUB1rG6M8ehqsMM+DyKyFL7mQmAruYKddfp45aP4JNU4rLCgv0awf9ejsHwqqcXhALQebl0R2S9r33k+cpHL1qR6exPZNAHMoVusgP3B5YD3QY7+oTEKDv5QpCYyg=
+	t=1761206140; cv=none; b=MWQBmtrRo7b1CmdT0gsIEnn+UTFcCWCX3IjVe4czVjn+JtFJkxIm7R0Uh0AZKpuvGYvyLUpWyPK3RvhE3o8LCkT2N/5VOGX5VRkOwKzSjS2NiNPC2AQ4xPMzAzQ/ZBfIT874wcZ8qTUTVc96jzTJsnpCdlOjwQ4BLuP/J+IeENo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761206133; c=relaxed/simple;
-	bh=JEWdZx+uwzrMx0vf6tzTqtOibYqpos0ApsjBKoz9X/E=;
+	s=arc-20240116; t=1761206140; c=relaxed/simple;
+	bh=8rdmNQAo9Bd+9bAr+NPJwM1gYXFJ8g2yQPEWjrxSiZ0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DIWzKbb+ugozjGoKWAmvfTifEQRaWmE64/wWEjGvQJeikU76ez3pglg4MqbzwepCAaxWiH1SHNuVrkpzfjBhXXm2aT6BB3XBCJH9P3erNbDR1z2SNWWnGgrM/nEqQOtNgJ5+k35EjJ/FN9mg9GwmaOvFkRSf0qn6QGCyo1o2fms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SeSnbzm3; arc=none smtp.client-ip=205.220.168.131
+	 MIME-Version; b=OnjWSdYyjUgIqkfxUD3wRDiXT8LEc8J/LAwlOMsk9DXLNwyBkXGwap8AhXHzp2YsOZgHu7ivino3HLmEGkTX1PuHgCRltjQOAqL72imBIOxGR+Me3cEC2blQ1Jo3F7PQ+5dK15AtU9FabQhjoIWOVifH/WampmVv4V6mBbEGcec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WXHjepf5; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MKLSZY019075
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:55:31 GMT
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6dfV0000663
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:55:38 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=lOK2MHSzPbs
-	iXffQZgfe3h7iHMKpferDHyC/TWrrCWc=; b=SeSnbzm3H/cw2/2r7DRnoRK4Fca
-	8wMZ/x7Yn5bTTaQWB6FSKnvPEpQOe8975TE27FxJWBo6M7wty50N6dzKGmcv8ZGp
-	lcyTCnVlYqSztuojTYb3TkboI20wlbPyHUffR2P1l4+7vaiKFSzNyvYls7liJy8P
-	EaxgNdE6ANqb0dX+QZdu0Ck0K/LS2TdoASmlhts4SsTjKae5US6wR2BvPKBG1RQC
-	iOoEkScnuv6C/yQ3+VxkxO6JhKKsTpxXDU9r+f5PrJBro2XuHleA99tRgx/ycs7V
-	u5oP/SuNDE8OmO7Eb8IZTXl0NVfmkHTat05ViJyWVSAUmgUtmoW09Tgfv1g==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49y67qhfuq-1
+	:mime-version:references:subject:to; s=qcppdkim1; bh=w2fC93DLUlG
+	GbUXGQjHhV8DdpBbQi0xLHsTL8o67LJ4=; b=WXHjepf5MYu5cijtLVVBVnTLOW0
+	byGMo+foJtSjR30FlSqtQli1zp9opvPqeV2Y4E4KXpRvOdiuB05i6KenLguS3Aam
+	xdK8BY5Worl/S4qTrfpd56v3PzLukhHL++qUa+DMs8+uayfUwbcsCb2SOnymMHFo
+	1+rGKCfp8+ofdFf8uGZXvrCFtvoA65Gt5sf7V172DEF3WWQGzwud9eoBgxJ4GfNJ
+	5wM1mBfikEc6m70E5vFUvemDiGRxH/7BVMVD8FHcTeBasz2WEVoHZisveWNSHxv1
+	CLIoTAtAp7aY4gCA9b4WDkD2lzC6tBMAdtzfDRVU6F3g3ao2ZDTHmdyrhXw==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49w08wd5xw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:55:30 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-290ab8f5af6so3798275ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:55:30 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:55:38 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-290bd7c835dso5584235ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:55:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761206129; x=1761810929;
+        d=1e100.net; s=20230601; t=1761206137; x=1761810937;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lOK2MHSzPbsiXffQZgfe3h7iHMKpferDHyC/TWrrCWc=;
-        b=A4XvFlXHHOEV4YEpLPEGWFY+lnaOU0faKv1+t0MOGMe5hWkRWAkUDAqiJnDFrYLyQb
-         SrTPQljcwHRmtLv4isWpgUc8ZbWYgRIbJXOhfoPSXriuORV5QqeVsgYNQnph4zTEXibW
-         eIhBEMn83cChZON8CW715RpBRA49sq3fdJmehW+7CsDkQdXzQXwOe4kh897PzdKvw2i+
-         0o22yDsjAICv2SYdczUuBfB+tNzcK1B/uX9zCNhn/Tzg2gQQBl1bBh2yQjMI/byGn86y
-         2cRVYiybHQfhIj4cSvStiHUvy3Jw5qG+x/zKJ4Fw2I91uarRi16Lhxu6DORXH/QgDl7F
-         tE1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVoQf5kY/jkADKr7O7dhZGF1RQBdvUbOaHxP9hP7HV/XwHmZ6foK0OOT7tRbCRx7rGQwwNh40xOwCsanLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/tXmmR7aK4NLjhOH8684vS4A9KNnKgA9TmhZeTbDFDQjidvfV
-	YOde2zLogl4xSPO1W1bdgLpx6ccHCsOT/W5ds1CVmuDr6atn1uYsbXcf/B+U0v+DCZ6BRTKKa+B
-	tYFkxAKO8GRnBHGP4jKqr2dO6rVLECGrHj339yhb5ANzKdbJn3l2+Dx76WHL3J3Sg5yY=
-X-Gm-Gg: ASbGncvUUl+TpQ0Yq7uWRlOReZIj+yLrf8W6tBcRrNuAW9WMdv4q68EbHwTAXSO5PHS
-	fm0Fj5ds3sYYtiImpjbWm0cPDRCSM5dgJLbExb4mri49XZarZxLMpSP/t4ZVnP9GJU5tbubSkl3
-	Dos8k0PY2N0sFtHzV0xUABfAg6XGhJSvMRGHd6J5s6YjjpWE8Wc9k6kVB26nohl13ev4w3XPYid
-	l4dp1C7fHgK00V5YvAonXQqnPAvMm1IVASKBs9qSSYBkcFlHEWh4AMg0KGDbXatYtFyHF6WIEC+
-	g578Qu0nXNc4hPTfUmtJchhOzynSuZmU67ikNFmkT/Ym0tOhYWOTYkraxEWxbAIkPUXXhYVVB72
-	wooLZmsjO+cTeCddLeSUU8mxsBZ0+zd3yyWj5Jrt2DwaxAP/MFA==
-X-Received: by 2002:a17:902:ef4d:b0:269:8f0c:4d86 with SMTP id d9443c01a7336-290cb66049dmr319783485ad.53.1761206129516;
-        Thu, 23 Oct 2025 00:55:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0QuIZ+LuMNR8q0/YAebLqe1CyU54eHt5XXlt5BpEpKdtKF5ztAJWGBj2FwTltk88GyCTZ8A==
-X-Received: by 2002:a17:902:ef4d:b0:269:8f0c:4d86 with SMTP id d9443c01a7336-290cb66049dmr319783175ad.53.1761206129026;
-        Thu, 23 Oct 2025 00:55:29 -0700 (PDT)
+        bh=w2fC93DLUlGGbUXGQjHhV8DdpBbQi0xLHsTL8o67LJ4=;
+        b=VwZRr3h/t7sHGMUTfLZH/dVSdEyiwwPiCpb36qVNplyRuDj70Ec9VRoEDMg1u0xMYi
+         jxrA+SrmOd0YV0ZqNR4X9Y4kfvx0tfq/3LSHJgWxPDO1v7AmAT4LdE/W5Jen76vZtWGM
+         ni17XRhGAABzlWWGwGLDUB0XBufCo8dgLd90wSQI5NJFRyD/HrGLCfZA1hJQ1wV2v77U
+         RIWPD0YV27ogTwZa6Hxgykpw4k3csdocL+ZqC32QPXMqQRs0fY7BQrrX+uPsuob2QAs/
+         wvTe52IVMDWx96WFy4V5DOWuw/hazwigg5bd3PVopXVEyKJJnf48Lth4AvR3limhAHJi
+         r7VA==
+X-Forwarded-Encrypted: i=1; AJvYcCVROReAByCl4fv0T1RtY/cUJrDNBlFDpKuDPeN7jAQhmRfUJzcXsoAgFVXW9ft1pckBt+OTWOB5ucgvwL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNIw366hk0gm39oR9v7RelbSyDMjnC6LHkVL2OfH0LFLmCsb/Y
+	GRijYld/7h++hpon1fQJIyiECQ+S5dOieDHPAt9n8s/5ecYqOz5Iy3NOCwAgoNthsQYTdHlhTBW
+	Nz5SDfJCRRzCo5KXnQULRM3j/tvt6VJRD7aovS+BEolIdHrgpuJdsmzolqycEFMuD/ns=
+X-Gm-Gg: ASbGncvE5vlU19LryESKZ33Zg/rzpSF90ukFrk10eyr4PzvFDXJz36DEJ3rHBDnWqid
+	iN7hhJ6hCcy7EZT/JpPCylNxYZo+6RvOHqjoCCtRRAc3qjjBS7XqsZiC6Dp+KI5Nccuz+AIGjxk
+	zeVE/y52fuVuAxaIvG6UCm5ka2YqYDedjBcdglnC5ZTQAysGsPIO5bADdsry4v4ZxI8TN4IBodK
+	82nC8MbH2HxG3gsI3jxayTnGM99R8VdrmNJAwKRXQ8dUKYlI/ZsxrlD1rzdXZJK2xz6bnXcS+P8
+	WLawxOf7MoFzkRtNoS9f7bUQhZGjnbiHnE8CkZZO0dkGSZgcPOY/iHKGKKAuuWwuA8WCHyRJQzm
+	WQrzCe5peA5T5VrIP1HAQ4XjtcUsowqJXKy6fhJ1uu4EMUpONMw==
+X-Received: by 2002:a17:903:2310:b0:28e:7841:d437 with SMTP id d9443c01a7336-290ca121206mr291270645ad.38.1761206137447;
+        Thu, 23 Oct 2025 00:55:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH682hkGWt3dvBEItqoe9UCqS26mzJjNqbQjGPbVOBXOGQ063Q1XYvwVWIAZvw9Ki9Hjwp2hA==
+X-Received: by 2002:a17:903:2310:b0:28e:7841:d437 with SMTP id d9443c01a7336-290ca121206mr291270225ad.38.1761206136943;
+        Thu, 23 Oct 2025 00:55:36 -0700 (PDT)
 Received: from yuanjiey.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946e1231b0sm14371265ad.97.2025.10.23.00.55.21
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946e1231b0sm14371265ad.97.2025.10.23.00.55.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 00:55:28 -0700 (PDT)
+        Thu, 23 Oct 2025 00:55:36 -0700 (PDT)
 From: yuanjie yang <yuanjie.yang@oss.qualcomm.com>
 To: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
         sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
@@ -90,9 +90,9 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
         aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
-Subject: [PATCH 04/12] drm/msm/mdss: Add support for Kaanapali
-Date: Thu, 23 Oct 2025 15:53:53 +0800
-Message-Id: <20251023075401.1148-5-yuanjie.yang@oss.qualcomm.com>
+Subject: [PATCH 05/12] drm/msm/dsi: Add support for Kaanapali
+Date: Thu, 23 Oct 2025 15:53:54 +0800
+Message-Id: <20251023075401.1148-6-yuanjie.yang@oss.qualcomm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
 References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
@@ -103,98 +103,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDE2OCBTYWx0ZWRfX6smnvuhztoSw
- 2djLFQsdDH2bVt0xEbEuUC57PLa4KCp9EZWbaNg5sC/6kYzGqtfyHghjmKXYCi5hTRpe5loWsFY
- VR7VFtuVWkg5/0IPlSfC3UBAIErVFI+3mwFY8i+38T2Bh1YWEwm6zhK+FAve32mMJL4a/RYj3m8
- I5+ByiP4nXeHoWNC52avOylLRJo+Z0dlg0/G/zmSctk2wx6bS2cpPaVmBXbIRm8VmULeILrEq2o
- 5HtFwOtmOSzJBlV0vxlRJIcuK+Aaw4BViZOnW3RMlx/kujFSnqNnpMuuw4DctbQp8ZjxUa5VaXu
- ym7rKH5S3NnKoKTRVLlAXpuIH3Ofp9PALF/xTe+XHhAAxFeWRH0PuQy7I5RHCSGMwvilvPsMV9r
- shHYcnsBecAiw7wm3M4Ajspuz9wGmQ==
-X-Authority-Analysis: v=2.4 cv=LMRrgZW9 c=1 sm=1 tr=0 ts=68f9df72 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+X-Proofpoint-ORIG-GUID: -wYiI8aScv4-JBlJ4sLY3jeVlCmODBTV
+X-Proofpoint-GUID: -wYiI8aScv4-JBlJ4sLY3jeVlCmODBTV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE5MDA5MCBTYWx0ZWRfX/ZW/k/DPpUL2
+ gxTWp4dGzIxLJYL0Do6tq8blr4s2+QZ6YEyL1w2cjmOD4enZ/sAFbdONAM3/Fh2LL0klZ9UP9WN
+ BcNScgLIwxKdMyND8DWKmaHymRra4TiQaaR/nn5Q7WELRin476EZkXKrbNOXY9AHRugbaAR8bUo
+ 8JmsOTs8AO5x5DsaI6sA1PnVMqdcm/uESKMoEX6bIsliOxS/FksooUgCuCntd9FzxCh6HQ8KcEw
+ f7DA3dhG1hZWJ32nvmvK16Kru1eFvUCENjRV2GZ5hmM8rFM8ahu0q3xR3d7pENiF91uby87/zAJ
+ GrzxdrsD9DArKSucTuJRddXyrk46GoDJJHZDoQBkIMGpo2A5PfAPfVmElGWGdck+ou+IV/xfpww
+ hI24UaDflIc2ICJeH5I5Aq3fJIGt2Q==
+X-Authority-Analysis: v=2.4 cv=V5NwEOni c=1 sm=1 tr=0 ts=68f9df7a cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
  a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=fceNRhxQrX_EhRTcvHUA:9 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-GUID: aCQWOJDPkGyhfYzJRQm9GljvX6ZRwOci
-X-Proofpoint-ORIG-GUID: aCQWOJDPkGyhfYzJRQm9GljvX6ZRwOci
+ a=EGddA7oXPexY6v9tJfMA:9 a=1OuFwYUASf3TG4hYMiVC:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1011 priorityscore=1501 impostorscore=0 phishscore=0
- bulkscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0 spamscore=0
+ bulkscore=0 malwarescore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
+ spamscore=0 suspectscore=0 clxscore=1015 phishscore=0 impostorscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510220168
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510190090
 
 From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
 
-Add mdss support for the Qualcomm Kaanapali platform.
+Add DSI Controller version 2.10.0 support for DSI on Qualcomm
+Kaanapali SoC.
 
 Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
 Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
 ---
- drivers/gpu/drm/msm/msm_mdss.c | 22 ++++++++++++++++++++++
- include/linux/soc/qcom/ubwc.h  |  1 +
- 2 files changed, 23 insertions(+)
+ drivers/gpu/drm/msm/dsi/dsi_cfg.c | 13 +++++++++++++
+ drivers/gpu/drm/msm/dsi/dsi_cfg.h |  1 +
+ 2 files changed, 14 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
-index 2d0e3e784c04..665751d2b999 100644
---- a/drivers/gpu/drm/msm/msm_mdss.c
-+++ b/drivers/gpu/drm/msm/msm_mdss.c
-@@ -243,6 +243,24 @@ static void msm_mdss_setup_ubwc_dec_50(struct msm_mdss *msm_mdss)
- 	writel_relaxed(1, msm_mdss->mmio + REG_MDSS_UBWC_PREDICTION_MODE);
- }
- 
-+static void msm_mdss_setup_ubwc_dec_60(struct msm_mdss *msm_mdss)
-+{
-+	const struct qcom_ubwc_cfg_data *data = msm_mdss->mdss_data;
-+	u32 value = MDSS_UBWC_STATIC_UBWC_SWIZZLE(data->ubwc_swizzle) |
-+		    MDSS_UBWC_STATIC_HIGHEST_BANK_BIT(data->highest_bank_bit);
-+
-+	if (data->ubwc_bank_spread)
-+		value |= MDSS_UBWC_STATIC_UBWC_BANK_SPREAD;
-+
-+	if (data->macrotile_mode)
-+		value |= MDSS_UBWC_STATIC_MACROTILE_MODE;
-+
-+	writel_relaxed(value, msm_mdss->mmio + REG_MDSS_UBWC_STATIC);
-+
-+	writel_relaxed(5, msm_mdss->mmio + REG_MDSS_UBWC_CTRL_2);
-+	writel_relaxed(1, msm_mdss->mmio + REG_MDSS_UBWC_PREDICTION_MODE);
-+}
-+
- static int msm_mdss_enable(struct msm_mdss *msm_mdss)
- {
- 	int ret, i;
-@@ -296,6 +314,9 @@ static int msm_mdss_enable(struct msm_mdss *msm_mdss)
- 	case UBWC_5_0:
- 		msm_mdss_setup_ubwc_dec_50(msm_mdss);
- 		break;
-+	case UBWC_6_0:
-+		msm_mdss_setup_ubwc_dec_60(msm_mdss);
-+		break;
- 	default:
- 		dev_err(msm_mdss->dev, "Unsupported UBWC decoder version %x\n",
- 			msm_mdss->mdss_data->ubwc_dec_version);
-@@ -552,6 +573,7 @@ static const struct msm_mdss_data data_153k6 = {
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.c b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
+index fed8e9b67011..bd3c51c350e7 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_cfg.c
++++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
+@@ -205,6 +205,17 @@ static const struct msm_dsi_config sm8650_dsi_cfg = {
+ 	},
  };
  
- static const struct of_device_id mdss_dt_match[] = {
-+	{ .compatible = "qcom,kaanapali-mdss", .data = &data_57k },
- 	{ .compatible = "qcom,mdss", .data = &data_153k6 },
- 	{ .compatible = "qcom,msm8998-mdss", .data = &data_76k8 },
- 	{ .compatible = "qcom,qcm2290-mdss", .data = &data_76k8 },
-diff --git a/include/linux/soc/qcom/ubwc.h b/include/linux/soc/qcom/ubwc.h
-index 1ed8b1b16bc9..0a4edfe3d96d 100644
---- a/include/linux/soc/qcom/ubwc.h
-+++ b/include/linux/soc/qcom/ubwc.h
-@@ -52,6 +52,7 @@ struct qcom_ubwc_cfg_data {
- #define UBWC_4_0 0x40000000
- #define UBWC_4_3 0x40030000
- #define UBWC_5_0 0x50000000
-+#define UBWC_6_0 0x60000000
++static const struct msm_dsi_config kaanapali_dsi_cfg = {
++	.io_offset = DSI_6G_REG_SHIFT,
++	.regulator_data = sm8650_dsi_regulators,
++	.num_regulators = ARRAY_SIZE(sm8650_dsi_regulators),
++	.bus_clk_names = dsi_v2_4_clk_names,
++	.num_bus_clks = ARRAY_SIZE(dsi_v2_4_clk_names),
++	.io_start = {
++		{ 0x9ac0000, 0x9ac3000 },
++	},
++};
++
+ static const struct regulator_bulk_data sc7280_dsi_regulators[] = {
+ 	{ .supply = "vdda", .init_load_uA = 8350 },	/* 1.2 V */
+ 	{ .supply = "refgen" },
+@@ -332,6 +343,8 @@ static const struct msm_dsi_cfg_handler dsi_cfg_handlers[] = {
+ 		&sm8650_dsi_cfg, &msm_dsi_6g_v2_host_ops},
+ 	{MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_9_0,
+ 		&sm8650_dsi_cfg, &msm_dsi_6g_v2_9_host_ops},
++	{MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_10_0,
++		&kaanapali_dsi_cfg, &msm_dsi_6g_v2_9_host_ops},
+ };
  
- #if IS_ENABLED(CONFIG_QCOM_UBWC_CONFIG)
- const struct qcom_ubwc_cfg_data *qcom_ubwc_config_get_data(void);
+ const struct msm_dsi_cfg_handler *msm_dsi_cfg_get(u32 major, u32 minor)
+diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.h b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
+index 38f303f2ed04..5dc812028bd5 100644
+--- a/drivers/gpu/drm/msm/dsi/dsi_cfg.h
++++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
+@@ -32,6 +32,7 @@
+ #define MSM_DSI_6G_VER_MINOR_V2_7_0	0x20070000
+ #define MSM_DSI_6G_VER_MINOR_V2_8_0	0x20080000
+ #define MSM_DSI_6G_VER_MINOR_V2_9_0	0x20090000
++#define MSM_DSI_6G_VER_MINOR_V2_10_0	0x200a0000
+ 
+ #define MSM_DSI_V2_VER_MINOR_8064	0x0
+ 
 -- 
 2.34.1
 
