@@ -1,110 +1,94 @@
-Return-Path: <linux-kernel+bounces-867583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3152EC03082
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:39:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27ACAC0308B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 751143AB92B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:39:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF6DE1AA264B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5391727E7F0;
-	Thu, 23 Oct 2025 18:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9D5295516;
+	Thu, 23 Oct 2025 18:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="cHT93CGn"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCMGI8uv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4723A2327A3
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F37F230BCC;
+	Thu, 23 Oct 2025 18:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761244735; cv=none; b=mO3vDYq8QDb+2rT1jsWncBSHMXg4BltIwodqxAL3T/hchUyovS3tXuVY2VGj2W49H2b80Vvv0ulmoTZ1rUkN/Dy6bPYn1OJ8kYBCscG4onkZ6W83A0byZTZWbGL4xTvSHk3LghekZKwYNXN7zbQA2i5BMXS2TIDuk8DAxiBVkV0=
+	t=1761244742; cv=none; b=jSHSfkzOvKytxzVxdpCPZxmloHc3WoJaJhD70JKDicgnTUN88wCnJUSW+bar/E6rES0FZCNIacC6dn4MBmA+hJauEsnxSDchXXFM6wJoqmgrat8UFwcI76Oq9txknrvvRWOzFvsvFLvIIt2MhK80qWeQ/7VnnJrCBIyDv0bNQJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761244735; c=relaxed/simple;
-	bh=IJz322Dk2EbU9jOBpCOHtD/vjWDkx0Y4Ic75icLEf7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gfdsap42gqxKa5Ef7MVdjg0d+FyNSsreZyQ7u0A0npJdXAEjiOnYImSDRDOaQG2kf41gNNzX1Zy3Aq9CfyZ+NhveG5YQNnohL7tiQJGc9KF5zFrSX0bwKW8XI98VRkesT0/tD3tGvB9/PZNQjXxa9x8jFyM5y1lcTWYxPdiSgS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=cHT93CGn; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7a28226dd13so256973b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:38:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1761244733; x=1761849533; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IJz322Dk2EbU9jOBpCOHtD/vjWDkx0Y4Ic75icLEf7s=;
-        b=cHT93CGniYOkAK5Zk/I6FxHqgr8b1cCatB7WB8/ruwecUfO8CMsd4t9mdHxGlM3/oq
-         lmsRz9jYCn31HY/qeBqwqf/fF6IHhlJTFmZMwQLuyMHIh58+fEnFIWsIB4U22xMimSyh
-         ykEt4IWfXZC93j2NMTsL0abj6FNxw/5EBHw+YzniLdwMUfjAiFy18AfBlrXlat8/SWks
-         l3v5foR0x3ekjxeCHGp2XTdGgk2IgWrCtsp7kmx7fDSBC9kqDpTaiALlt+0vbJNliCKm
-         U9CjQsYeozGTiUfkwF7Fz49GZM0QHnTPPV1fwL7ZeAMyKM/VP9x+Iw0S+ZW9dZmwW6XQ
-         HCjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761244733; x=1761849533;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IJz322Dk2EbU9jOBpCOHtD/vjWDkx0Y4Ic75icLEf7s=;
-        b=xEMSA1aRk2kX93DJ8uu5nR74kjO1TDXPzHyi9YbDJCJoG6WWnB+c4GBh/fSLb+hjG5
-         L5YGMdBov/PQqFfG+Bif1oLTeOybRtBHqo6T4DazR93YxN07g8N7ZVIN9ZnWjvnb2KTH
-         LHTXtOMKmg881Qo9f/Pw/WKpc+z7W5BeN7p3FGV17sOKZ0qbLqAvpeMoqBIMYo2bX661
-         +jo6dve5xv1teghUvdGRcNUMnKeTFAXyGY0ow7CarXGuqhI1pKLBBnBtHloT7Uywa9rn
-         kDo6tkGvzKxGCJjus5JXFeoV6uSWxPS7PXnrLfYcv2cVSpitVRed5RwnHw/A7o2pJusi
-         JXDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIKhOZCpBy06sCvCh56DB6tPZc3RmwOCbBoG6vE0dEje7wXu8xxnqaWSYbsQjLQGw5W3A49A556YTZIqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4znUoKE4IJedLQpIAQcgyIgVptfdiXfLXTWE7hTyvPvQsGemq
-	5OUbbgpiwOOJlDb3MHPesx+BgVoiB+epFPy3OVWExuxnjBYmQD1+CK4xORH2oEk2ao0=
-X-Gm-Gg: ASbGncu6qtRj/1rLNFlV85k2xxwaYwvE0kb/AnP0KuiMZL+Q/z4EHC5cdG0aedJGfeb
-	icWVY1juk9H013LUl6XZpZ66e/AiYGP3nH4ksubiydjyMZsr9FXo4RKdQ17lvz1DMUCLapcUqcy
-	VUKmo2UGnTdGIO7ihVhTasvuuN7kFB33bpIPzcL7S0K7WrGMTF26kNjCe95sz0yQdsCsmFEYGGM
-	j/2uBoor9YwV/NJOeUfpwZUJyX5/L6Z6pCApHxQ45SJHf+Y7sM6Urb1a+/to2XICO6LnV/RkyrP
-	PYbvOWvRzHInoSRLH4FbBs9O2hmInWXRNy/E9/wHBYKAVep2Gf09bYnXgPLcDfnFn3aAa++kXiO
-	bZdKlVDnLzJRWZT7+zhOI8eCBm+IMm31p+Jtar8Q9BsiySvn62UT6bxeFK2RVADxL8lVncktdOd
-	w1Jlo5TR9f3y2j
-X-Google-Smtp-Source: AGHT+IHv4EEmGzJ6qdnkG0U4M/t1i0Oxb27fs6YPyYXb02bVmUpsxYKcjyZyI1rde0buij6ZTIgCWA==
-X-Received: by 2002:a17:903:1a4c:b0:267:ba92:4d19 with SMTP id d9443c01a7336-290c99a8ed3mr313633845ad.0.1761244733473;
-        Thu, 23 Oct 2025 11:38:53 -0700 (PDT)
-Received: from mozart.vkv.me ([192.184.167.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946de105b1sm30862925ad.49.2025.10.23.11.38.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 11:38:53 -0700 (PDT)
-Date: Thu, 23 Oct 2025 11:38:51 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: Francesco Valla <francesco@valla.it>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [BUG] Erratic behavior in btnxpuart on v6.18-rc2 - and a
- possible solution
-Message-ID: <aPp2O-H55h4IJOFU@mozart.vkv.me>
-References: <6837167.ZASKD2KPVS@fedora.fritz.box>
- <2569250.XAFRqVoOGU@fedora.fritz.box>
- <aPkCZ8l4-5ffyiAe@mozart.vkv.me>
- <1982590.7Z3S40VBb9@fedora.fritz.box>
+	s=arc-20240116; t=1761244742; c=relaxed/simple;
+	bh=CMLdyhpydVR0/Nx6iPY2zTrIJoMIDwh4t2xWU0ZSEq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rBdz2YQ8tPPpJgL88dO7+4JJKg44lXod4yIQfHaE1vwrGJwXFjc8ijkpznBGlX6L2mgbmJ5/PcdAoWAVtZwyohq0v+T/MZP4Wt97nYEgHcvKm+mYqGAu52sXSv2KUfh0ST3roYZheyHjpW8DzoWceY3RcQPsrQgBzGqzSoKOhKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCMGI8uv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86289C4CEE7;
+	Thu, 23 Oct 2025 18:38:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761244742;
+	bh=CMLdyhpydVR0/Nx6iPY2zTrIJoMIDwh4t2xWU0ZSEq0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bCMGI8uviTWrDUJwu13OthmrVIiNYPGmqEKz6srTaDiSoG+lzBU2ZoefXj3t77Wwv
+	 C0Q1189DmcWWNvgMJXjb+3bciCyII2LVyE/3iYHg6yw7IyCCJz5Gv33OmwfDwa+kTG
+	 CD+bElQ0GD+hSrr36Xc0J5UlBLXlwaVjOE8k1xUoY3W6+ZoKUEeUhasDge2lnj+FZP
+	 Y3YfjTmYxQZl1VbK92QiRrJN33npn41Zg/YdVuXpYkMWGGcvLHqasZXywz+shuzYxg
+	 P0aUlrTtmGFDgowhBIPrArbaEcRuulLW5g2/D65V7SZ/jJRyyjsu+8VSwZdmr4b6N3
+	 UExTM1ZqDWdYw==
+From: Conor Dooley <conor@kernel.org>
+To: linux-riscv@lists.infradead.org,
+	Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	stable@vger.kernel.org,
+	Valentina.FernandezAlanis@microchip.com,
+	Cyril.Jean@microchip.com,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Jamie Gibbons <jamie.gibbons@microchip.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] riscv: dts: microchip: remove BeagleV Fire fabric.dtsi
+Date: Thu, 23 Oct 2025 19:38:55 +0100
+Message-ID: <20251023-feminism-rewrap-39719eb7832a@spud>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251021-dastardly-washbowl-b8c4ec1745db@spud>
+References: <20251021-dastardly-washbowl-b8c4ec1745db@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1982590.7Z3S40VBb9@fedora.fritz.box>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=575; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=JhXib/kn2jozWLbz0WSVdzkOIm/eAov7GTmNvhuhfhA=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBm/yuyZ1TesPGn/5NQ/h538J4qzTlzbuLU0S2+unHkip yaH4uoHHaUsDGJcDLJiiiyJt/tapNb/cdnh3PMWZg4rE8gQBi5OAZiI+l6GP3wNtyrXVtpFNBdO OF8z6UnKaXH+On4n0ze6pS9dmJ9piDH8L8s9/+3g7CvvtFbOZ3ogeMSj0/JJ9ryJHNYv7yWs1jV KYwQA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On Wednesday 10/22 at 22:35 +0200, Francesco Valla wrote:
-> On Wednesday, 22 October 2025 at 18:12:23 Calvin Owens <calvin@wbinvd.org> wrote:
-> > <snip>
->
-> I tested this on my i.MX93 FRDM and I confirm it's working. Can't say that I
-> like it, but...
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Yeah, on second thought I agree, the cross-driver dependency on drvdata
-is gross. But I think I found a better way, I'll send a patch in a sec.
+On Tue, 21 Oct 2025 16:38:37 +0100, Conor Dooley wrote:
+> At the time of adding the fabric.dtsi for the BeagleV Fire, we thought
+> that the fabric nodes in the Beagle supplied images were stable. They
+> are not, which has lead to nodes present in the devicetree that are not
+> in the programmed FPGA images. This is obviously problematic, and these
+> nodes must be removed.
+> 
+> --
+> 
+> [...]
 
-Thanks again for looking into this.
+Applied to riscv-dt-fixes, thanks!
+
+[1/1] riscv: dts: microchip: remove BeagleV Fire fabric.dtsi
+      https://git.kernel.org/conor/c/5ef13c363640
+
+Thanks,
+Conor.
 
