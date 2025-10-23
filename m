@@ -1,185 +1,222 @@
-Return-Path: <linux-kernel+bounces-866414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D024BFFB07
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:49:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA07BFFB0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4A993ACE4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:49:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09F5B4FA2E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1C22DC339;
-	Thu, 23 Oct 2025 07:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E0F2DC78C;
+	Thu, 23 Oct 2025 07:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aGd44HrT"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="L+YyG4hO"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912142DC332
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B332DC352
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761205790; cv=none; b=HWrZZae4K//YUY5tmiiO3CJpRkIhr8VM1zoysZ36hKZ0ctI/2/PYeKOsjk4UxpiHMiBXwXlYbqNkpS8wNVR5sOzvAtupT1/70INPn96z7p4mWmVqlUMqulXFunvswhbkfbkgi+VfTAoYiqksQBSX8ffU+pODlfWO9KVsUBfDF94=
+	t=1761205807; cv=none; b=ic3DB6crBheJvHy/fuoE9PyiuLmNLyRvzOSn2d6HjNRt9HVc3k/Y3Sb6jbKXN+UzHe/sC/zm596pruKbmeegnmvhW3NYDGOr8FdYkCi2PbIK/lP9Ufo8p1GHWSINuVYnYU66by7dgKosdJfL6RyIKvesnC5X0TrrCpMtRz+/7hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761205790; c=relaxed/simple;
-	bh=0Mp8jxfiDjx+6SGWq944sEmqfWZv44pZHzsKR+o0Y/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ks0geSsBGqOfh3kmRhK05jzVbfpHE7H0W7jThCaAeWV5hjoRsq486p8hMGsZXg+1xfCftTRstIw/ER2p49XjepAOJc5aevdFpdqHiI/cLvvSIr16gxL/pLlrLnmx6667AMSZWDuVYFTYufArfWd5ijDbQfCaYAfgMIZwsKJ1lZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aGd44HrT; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-471131d6121so3240155e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:49:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761205786; x=1761810586; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=buhrfKCKAUbV93ahXUhbdLbSj4yiyZO38zRVoc8nGc0=;
-        b=aGd44HrT6KriYW7syyu3KrNIQur6T5XYewgynCn4K6vY8k38cHsRcbQjClWVYQ1mjg
-         QjuwREgk8nB68PxaIBBiCOV7Nmbw25MFs5nExvPkvUgboQkPf167cosW5pwB3B7+m6Le
-         8SvOOK7rfm5pYM7f2jPuvtOF48kJYm+i6FBYvmi5uUEl3SPwkdC25ByTEbpYl9aw3h1u
-         no1yaKGMYZ3Kynq9PILDTIPfPVNhurqecFvcy+Ge/Jal3R6Co70vSm+8kfiZly+qLJxT
-         g2IO6q5pMWhcoBzETFtzLYAMcUE8M2S5WhJSwtedqsWKOHkdLAwJaGtVoo9UwnF6aMUk
-         wIUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761205786; x=1761810586;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=buhrfKCKAUbV93ahXUhbdLbSj4yiyZO38zRVoc8nGc0=;
-        b=kDi6qjynJzXo5R18EiAzd+thmH5uEpO5WwCwH+lQkTwH/Ez4PeIWXfsVSiOHrysMdd
-         qLn/incueRBCSlzPmvtj/RE7O1mcOPLd2EyjdmemlYkGR5ks8WOCVGQNoqoNNYOaf3bV
-         fDHsJo7Lp3CasTYuISNhDuudpN7DDc+jKYdz5iA8QQRNN6/EaQcHMum5YBG6GWMSs/U0
-         F8X2ksPp9nVIrbtweamNzuCfRDsd1+dYTeY4iTljusXQvYwXmo5OKsi8R7H2prn0cwEA
-         q4DoA45IEPUiDdbWyDuBVsLhPiQCc5bEWVLw4HdjNRWHFifZO9563U9YhcotISPosIUV
-         IjXw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9fAh7HPcNhZ1r1NSXJlJG7K5GsSQgrOdJ6Q80Fn0coFW9yzxwu8dYyAPXchd7Fh4wJsXiW+VF1YmVPdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx55eLRySnJBPy8OwFh4yIyPx94jnySjxIQKkHvzzD3ryUnmhqC
-	MGgNxgkKhsZOMBMlKw+A6GSZKILTt1JAPzkewwjYhnbedNo8raHstbG5oyq7npt1CcE=
-X-Gm-Gg: ASbGncvkAQ35D4rUWcwRgZkzWQQxFlIOmp4EBlH1VyeUBIuivxY2Ey8N+vOu7shTjzW
-	9nNBeaDkVKZWHkX8NLnglk08skD9PvHfhIggostgcPUB+E7JyPkR+Px99nBull+i/alkErCi+Qs
-	0PhmOlq8P/lzNErvR6JrVyBNxDw/COO8Zg1KCiXzkxHB2dRmvFQMOcrxEXh60soMzc4AjY0Jmmw
-	QnqIeJlPay4h1LV5T3cjVi423eT/buLqaeWwl+s9hhUIM6pYLHjl87uIIJkfT8LavcSerBxgf35
-	S7UyZuvmZE3LdhqcOWdiWJl6/N/634B3hhDax3VM1aB+dAGu5vjF23L6557ZNJ4S4SXu5mDTk3a
-	jz2GO/1GTadZnmw0zXB6DiBQ85f9SaL1CxLA4hZKXCAF5uO3BY4AHiJI6w0Abde8hzkgsbopG5v
-	WKtNbLLPl+XChDXyATcYqor8b0EjpibOh00Cl+yN4=
-X-Google-Smtp-Source: AGHT+IFDHlwH4uQN0NhngE5GpDoyJ/84JrAW5QDGqlOvPH9h/SMikykg+/9OnKS0fpX5phTxKoEdIQ==
-X-Received: by 2002:a05:600d:62b1:b0:46f:b43a:aef4 with SMTP id 5b1f17b1804b1-471b5341411mr75736425e9.38.1761205785863;
-        Thu, 23 Oct 2025 00:49:45 -0700 (PDT)
-Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4342368sm84834305e9.9.2025.10.23.00.49.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 00:49:45 -0700 (PDT)
-Date: Thu, 23 Oct 2025 09:49:38 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk_legacy_map: use LD_WAIT_CONFIG instead of
- LD_WAIT_SLEEP
-Message-ID: <aPneEnDQmHhpvRkG@pathway.suse.cz>
-References: <20251022154115.GA22400@redhat.com>
+	s=arc-20240116; t=1761205807; c=relaxed/simple;
+	bh=bE9DUULRUYQBlQg9VZE7ioXLtTLw+Uog0xQNXv5k1sM=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=aUapiDjfPPoJUipcHxGxIXbsdP5QMeH1f+7Bzgjrg37hFlHHQ3/WNC6Xy+3YDktiCMWInE6Nrf8CmY9I/yu2ym0FldlJcDBs3/nXIj3/Br09M7Cd5Ungpuo6pUk0z7w6Fi7S+wioJNPumpAP7MATik3swT+QbT0F3FoooLU2g3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=L+YyG4hO; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022154115.GA22400@redhat.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761205790;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vd+5huyqIQSpq/F65arGSoTaP04RVAJffOfxOov/K3k=;
+	b=L+YyG4hOJhDKQtn8sYeccPOpwpkB2Ngem/oETqNQvZhUnLhxYBVxvE6JwqACJjZlqGkP3u
+	1+DJxQwOvfTYJyT5x5qPL4uOguRdzm+zygddYMhAiTVCEACK2Xm/C+XZi7xzltwRh9E0ZJ
+	VXl2f304JdRx7QmIdZm/BqvBQXEV2WI=
+Date: Thu, 23 Oct 2025 07:49:48 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Message-ID: <8a94c764c5fa4ff04fa7dd69ed47fcdf782b814e@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH bpf-next v1] selftests/bpf: Guard addr_space_cast code
+ with __BPF_FEATURE_ADDR_SPACE_CAST
+To: "Yonghong Song" <yonghong.song@linux.dev>, bpf@vger.kernel.org
+Cc: "Andrii Nakryiko" <andrii@kernel.org>, "Eduard Zingerman"
+ <eddyz87@gmail.com>, "Alexei Starovoitov" <ast@kernel.org>, "Daniel
+ Borkmann" <daniel@iogearbox.net>, "Martin KaFai Lau"
+ <martin.lau@linux.dev>, "Song Liu" <song@kernel.org>, "John Fastabend"
+ <john.fastabend@gmail.com>, "KP Singh" <kpsingh@kernel.org>, "Stanislav
+ Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>, "Jiri Olsa"
+ <jolsa@kernel.org>, "Shuah Khan" <shuah@kernel.org>, "Nathan Chancellor"
+ <nathan@kernel.org>, "Nick Desaulniers"
+ <nick.desaulniers+lkml@gmail.com>, "Bill Wendling" <morbo@google.com>,
+ "Justin Stitt" <justinstitt@google.com>, "Puranjay Mohan"
+ <puranjay@kernel.org>, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+In-Reply-To: <84906f32-955d-4fda-b87d-56c052ddfd87@linux.dev>
+References: <20251022071825.238909-1-jiayuan.chen@linux.dev>
+ <6aa7fafd-30b1-4605-8b80-4a158934218d@linux.dev>
+ <0643875cea56f4e4fd78c7e9222b24e269136155@linux.dev>
+ <84906f32-955d-4fda-b87d-56c052ddfd87@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed 2025-10-22 17:41:15, Oleg Nesterov wrote:
-> printk_legacy_map is used on !PREEMPT_RT to avoid false positives from
-> CONFIG_PROVE_RAW_LOCK_NESTING about raw_spinlock/spinlock nesting.
-> 
-> However, LD_WAIT_SLEEP is not exactly right; it fools lockdep as if it
-> is fine to acquire a sleeping lock.
-> 
-> Change DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map) to use LD_WAIT_CONFIG.
-> 
-> (We can also make printk_legacy_allow_spinlock_enter/exit() depend on
->  !PREEMPT_RT && CONFIG_PROVE_RAW_LOCK_NESTING)
+October 23, 2025 at 11:42, "Yonghong Song" <yonghong.song@linux.dev mailt=
+o:yonghong.song@linux.dev?to=3D%22Yonghong%20Song%22%20%3Cyonghong.song%4=
+0linux.dev%3E > wrote:
 
-I do not have strong opinion about adding (&& CONFIG_PROVE_RAW_LOCK_NESTING).
-This dependency is already handled in LD_WAIT_CONFIG definition.
 
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+>=20
+>=20On 10/22/25 8:33 PM, Jiayuan Chen wrote:
+>=20
+>=20>=20
+>=20> October 22, 2025 at 23:33, "Yonghong Song" <yonghong.song@linux.dev=
+ mailto:yonghong.song@linux.dev?to=3D%22Yonghong%20Song%22%20%3Cyonghong.=
+song%40linux.dev%3E > wrote:
+> >=20
+>=20> >=20
+>=20> > On 10/22/25 12:18 AM, Jiayuan Chen wrote:
+> > >=20
+>=20>  When compiling the BPF selftests with Clang versions that do not s=
+upport
+> >=20
+>=20> >=20
+>=20> > If=C2=A0you are really using llvm18, then I found there are some =
+other
+> > >  build failures as well, e.g.,
+> > >=20
+>=20>  Yes i'm using llvm18
+> >=20
+>=20> >=20
+>=20> > /home/yhs/work/bpf-next/tools/testing/selftests/bpf/bpf_arena_com=
+mon.h:47:15: error: conflicting types for 'bpf_arena_alloc_pages'
+> > >  47 | void __arena* bpf_arena_alloc_pages(void *map, void __arena *=
+addr, __u32 page_cnt,
+> > >  | ^
+> > >  /home/yhs/work/bpf-next/tools/testing/selftests/bpf/tools/include/=
+vmlinux.h:160636:48: note: previous declaration is here
+> > >  160636 | extern void __attribute__((address_space(1))) *bpf_arena_=
+alloc_pages(void *p__map, void __attribute__((address_space(1))) *addr__i=
+gn, u32 page_cnt, int node_id, u64 flags) __weak __ksym;
+> > >  | ^
+> > >=20
+>=20>  I hadn't encountered this error before, but it started appearing a=
+fter I upgraded LLVM to version 20.
+> >=20
+>=20>  $ make V=3D1
+> >=20
+>=20>  /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/b=
+pf/tools/sbin/bpftool btf dump file /home/chenjiayuan/code/upstream/bpf-n=
+ext/vmlinux format c > /home/chenjiayuan/code/upstream/bpf-next/tools/tes=
+ting/selftests/bpf/tools/include/.vmlinux.h.tmp
+> >  cmp -s /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selfte=
+sts/bpf/tools/include/.vmlinux.h.tmp /home/chenjiayuan/code/upstream/bpf-=
+next/tools/testing/selftests/bpf/tools/include/vmlinux.h || mv /home/chen=
+jiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/include/=
+.vmlinux.h.tmp /home/chenjiayuan/code/upstream/bpf-next/tools/testing/sel=
+ftests/bpf/tools/include/vmlinux.h
+> >  clang -g -Wall -Werror -D__TARGET_ARCH_x86 -mlittle-endian -I/home/c=
+henjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/tools/inclu=
+de -I/home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf=
+ -I/home/chenjiayuan/code/upstream/bpf-next/tools/include/uapi -I/home/ch=
+enjiayuan/code/upstream/bpf-next/tools/testing/selftests/usr/include -std=
+=3Dgnu11 -fno-strict-aliasing -Wno-compare-distinct-pointer-types -idiraf=
+ter /usr/lib/llvm-20/lib/clang/20/include -idirafter /usr/local/include -=
+idirafter /usr/include/x86_64-linux-gnu -idirafter /usr/include -DENABLE_=
+ATOMICS_TESTS -O2 --target=3Dbpfel -c progs/stream.c -mcpu=3Dv3 -o /home/=
+chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf/stream.bpf=
+.o
+> >  In file included from progs/stream.c:8:
+> >  /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf=
+/bpf_arena_common.h:47:15: error: conflicting types for 'bpf_arena_alloc_=
+pages'
+> >  47 | void __arena* bpf_arena_alloc_pages(void *map, void __arena *ad=
+dr, __u32 page_cnt,
+> >  | ^
+> >  /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf=
+/tools/include/vmlinux.h:152158:14: note: previous declaration is here
+> >  152158 | extern void *bpf_arena_alloc_pages(void *p__map, void *addr=
+__ign, u32 page_cnt, int node_id, u64 flags) __weak __ksym;
+> >  | ^
+> >  In file included from progs/stream.c:8:
+> >  /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf=
+/bpf_arena_common.h:49:5: error: conflicting types for 'bpf_arena_reserve=
+_pages'
+> >  49 | int bpf_arena_reserve_pages(void *map, void __arena *addr, __u3=
+2 page_cnt) __ksym __weak;
+> >  | ^
+> >  /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf=
+/tools/include/vmlinux.h:152160:12: note: previous declaration is here
+> >  152160 | extern int bpf_arena_reserve_pages(void *p__map, void *ptr_=
+_ign, u32 page_cnt) __weak __ksym;
+> >  | ^
+> >  In file included from progs/stream.c:8:
+> >  /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf=
+/bpf_arena_common.h:50:6: error: conflicting types for 'bpf_arena_free_pa=
+ges'
+> >  50 | void bpf_arena_free_pages(void *map, void __arena *ptr, __u32 p=
+age_cnt) __ksym __weak;
+> >  | ^
+> >  /home/chenjiayuan/code/upstream/bpf-next/tools/testing/selftests/bpf=
+/tools/include/vmlinux.h:152159:13: note: previous declaration is here
+> >  152159 | extern void bpf_arena_free_pages(void *p__map, void *ptr__i=
+gn, u32 page_cnt) __weak __ksym;
+> >  | ^
+> >  3 errors generated.
+> >  make: *** [Makefile:761: /home/chenjiayuan/code/upstream/bpf-next/to=
+ols/testing/selftests/bpf/stream.bpf.o] Error 1
+> >=20
+>=20>  $ clang --version
+> >  Ubuntu clang version 20.1.8 (++20250804090239+87f0227cb601-1~exp1~20=
+250804210352.139)
+> >  Target: x86_64-pc-linux-gnu
+> >  Thread model: posix
+> >  InstalledDir: /usr/lib/llvm-20/bin
+> >=20
+>=20>  $ pahole --version
+> >  v1.29
+> >=20
+>=20Please try pahole version 1.30.
+>=20
+>=20>=20
+>=20> I updated LLVM via https://apt.llvm.org/. Could this be caused by s=
+ome binaries or libraries still using LLVM 18?
+> >
+>
 
-Anyway, the change makes sense to me. It seems that this better fits
-the purpose.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+thanks, but version 1.30 didn't work in my tests - even pahole's master b=
+ranch fails, only the next branch works...
 
-See a note below.
 
-> ---
->  kernel/printk/printk.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 5aee9ffb16b9..f11b2f31999b 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -3007,7 +3007,7 @@ bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
->   * false positive. For PREEMPT_RT the false positive condition does not
->   * occur.
+It seems that the 'old' pahole parses some kfuncs incorrectly, for exampl=
+e bpf_dynptr_slice().
 
-From the comment, it was not obvious to me why the condition does not
-occur for PREEMPT_RT. I had to check the commit message from the
-commit daeed1595b4ddf314b ("printk: Avoid false positive lockdep
-report for legacy printing").
 
-<paste>
-    However, on PREEMPT_RT the printing path from atomic context is
-    always avoided and the console driver is always invoked from a
-    dedicated thread. Thus the lockdep splat on !PREEMPT_RT is a
-    false positive.
- </paste>
-
-This is much more clear. It might make sense to improve the comment,
-for example:
-
-<proposal>
-/*
- * Legacy console printing from printk() caller context does not respect
- * raw_spinlock/spinlock nesting. However, on PREEMPT_RT the printing
- * path from atomic context is always avoided and the console driver
- * is always invoked from a dedicated thread. Thus the lockdep splat
- * on !PREEMPT_RT is a false positive.
- *
- * This map is used to temporarily establish LD_WAIT_CONFIG context for the
- * console write() callback when legacy printing to avoid false positive
- * lockdep complaints, thus allowing lockdep to continue to function for
- * real issues.
- */
-</proposal>
-
-But it can be done in a separate patch...
-
->   *
-> - * This map is used to temporarily establish LD_WAIT_SLEEP context for the
-> + * This map is used to temporarily establish LD_WAIT_CONFIG context for the
->   * console write() callback when legacy printing to avoid false positive
->   * lockdep complaints, thus allowing lockdep to continue to function for
->   * real issues.
-> @@ -3016,7 +3016,7 @@ bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
->  static inline void printk_legacy_allow_spinlock_enter(void) { }
->  static inline void printk_legacy_allow_spinlock_exit(void) { }
->  #else
-> -static DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map, LD_WAIT_SLEEP);
-> +static DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map, LD_WAIT_CONFIG);
->  
->  static inline void printk_legacy_allow_spinlock_enter(void)
->  {
-
-Best Regards,
-Petr
-
-PS: I would take this patch via the printk tree. But I am going to wait
-    for feedback from others (John, Sebastian, ...).
+./tools/sbin/bpftool btf dump file ../../../../vmlinux | grep bpf_dynptr_=
+slice -A 2
+	'KF_bpf_dynptr_slice' val=3D23
+	'KF_bpf_dynptr_slice_rdwr' val=3D24
+	'KF_bpf_dynptr_clone' val=3D25
+	'KF_bpf_percpu_obj_new_impl' val=3D26
+--
+[68242] FUNC 'bpf_dynptr_slice' type_id=3D68241 linkage=3Dstatic         =
+     <- missing corresponding DECL_TAG ?
+[68243] FUNC 'bpf_dynptr_slice_rdwr' type_id=3D68241 linkage=3Dstatic
+[68244] DECL_TAG 'bpf_kfunc' type_id=3D68243 component_idx=3D-1
+[68245] FUNC_PROTO '(anon)' ret_type_id=3D38 vlen=3D5
 
