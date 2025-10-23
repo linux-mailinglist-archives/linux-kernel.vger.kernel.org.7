@@ -1,182 +1,166 @@
-Return-Path: <linux-kernel+bounces-866476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E9D5BFFDF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:22:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDBA4BFFDD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61FDC3A601A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:22:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8813D1A06E7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BBA2FB0B3;
-	Thu, 23 Oct 2025 08:20:58 +0000 (UTC)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1392E2F3605;
+	Thu, 23 Oct 2025 08:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H/zN1aQC"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50592FB607
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86332F83D4
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761207657; cv=none; b=AQV4B6W9W1UIv5TO/qo+DpG4J2+c0AXFn6eKVh0/qzi3uJDB4+S+RUxSa9a6Eo8n/NcBl1Bl9xYTm8XP4mJNSLoxct3uEuEeke5Pw6Uc6Xpwa1ESYklWQ0ubwP+L9daDOaUgoh8prs70zUxQBbjOS4MuxaRH6/4SASE56xDktEM=
+	t=1761207654; cv=none; b=UTd3nmT8RI/dpncn6CXbq345wdYyWCDMbb/+krtXGHLXiMCchNms/wC8OeqHKMpPS2zhNFQFB7Vm4F+u79WbSPl4uCxh1D8dTSV1ysGWjWkEkyQPyFYSXDP5ECb+9yGoHaIOupyBv8ciobJMmU/gdnP5uCyHabTDVk3ifxiZ2Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761207657; c=relaxed/simple;
-	bh=riOWBoniluYmZkJSNiPD51TALJtz2J5b6wiQtNSND7U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=osnasXi1AV4erdfQNcpf+XELXSWHWfQhWwqoe9Qz1sFZTbR7f4X9G+Fh7ayEsQL7HncWukVLTppDpEdXlSklg9pnuystEEkYQMs5E1i57I4d2d70lfaZkny8UFDKnaYgJ/tb3KHf3HJjCMqUceuv8Rn8+LmhgBVRnaee5dBjzg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1761207654; c=relaxed/simple;
+	bh=/kzwLma60KyeM4C1lbV9kL+l7FiRZQTbszIYI4trr4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d+t9g/RHcaMJ3Wh17//akMv8RZGOVP+OcNP71SJm1aSbnPmBam9lQVtjn7NkbF+ptqkVNynmInN3gf/afGX7p6yRo2d/tSWa1f1Be9homzAhJkZLs7WlfWAQiIdEfFEDN7USoO2+6jsX9wt9xDt0Co3bYtCKUNdEzAaij0Wy0Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H/zN1aQC; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-557bf688086so49640e0c.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:20:54 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47103b6058fso3758655e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761207648; x=1761812448; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jEYNjz+HsVVYinojoxpbidjnmyoS4XjFSkLlwaniZc4=;
+        b=H/zN1aQC2/uY73CPDxcR3A8HvKY9qQBG4Yqtc5EkmSmr/WhhSeB/cDUxw3pRNq/Qn7
+         mWDYLDDJnM1jwUU0X1lDh/eyERB+9yMkkkMUao/UtaQYNZzvSY3vNtp3hlKx5EEfZVps
+         iOqEZDLsQV7/FxqNg1BozaOOpOusWDQvLKEmlPo8aegSYmTTOnruXOEPhCWd6uMXTvTc
+         F/BFSrfjIhRrrvUEx5yy+FSFoRLcNYAOgGOAXXMqPoslPrfdSB8IBnWv9cLdfZ2c9a3t
+         yfyiYcadPSUDPJVf84tXFOU0RK02D0VdGPwfPmwsIcBBkyWknj6DAoD85TTnWIL40ueA
+         6Now==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761207653; x=1761812453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761207648; x=1761812448;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ECYIxuT82Q/NafhPkuUWEytQEjZXJcXQfJX7HoJHHBY=;
-        b=VPzNijt8K9hNULizUlL2uQvIf526J7DcWOxoWzpwBU04VeozSWqq7IlLKyYD6GmGv0
-         ohQFxNOfhN8N+xoJJ2qX96hyaJE3uc2bc/R0X9xWt6KrXnUiWJyxGHaspsxLjRrfte52
-         YxY9VhHK1Z27lK24Nsco9HHPu4t8IfiXoBHcfHxVIBeEdncQyIbmL/47ZedlWI+NRzJ7
-         nB8ScfIodP6MyxhTf4uipLTqQjysiK+CR8w4qhgXS+4lSy5YAkb2n0WQ+2pqsAySVUHg
-         ijK2dg1deVirNCzxk+Fo1iKuARQIxF7VIsN6h2DKrN2jTs5hy4F1YxCk5Dqj1/6vrhv8
-         bnkg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Qf/B7plc8i3OUAAP5eG5CbGKUbNnQL3uN4iJ+BaCIFuNAupky8pJQ0cr/0PGA8CE7NWD7Bk0SKEZlVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygljL0uC/XhgCmc5kFpIsYIulK2cTEqKpJWZx1fmLfncFMCp/N
-	uz+cP9XPzAnLps1cCO32GpLMeD3iTP2a7sMAdnihQq9Wmqf5EtXvRUB5WvoTgLOd
-X-Gm-Gg: ASbGncsxhOrVH+19sBIM84GtpICU2BNECDYScreKdOrtn95e+J3yDl26SYFKqu/P4hh
-	2AuxQZ84e1jWO0dWgJDlmW/Tlp+/KY8ytGT2AonVpZI7Sp3yxj96iCkqF2V9BPxef2cZzMRKMYC
-	A4EiaJDdp3Nxl5hq4iXlMRzlErdBw4rMiJBxD5ZXOT8DFdg3DVscJnxFVSuc0Awy96khThlN8pU
-	wNQlCqcs8QHiFvOyBvrQGYcCWLdli9dWyhSpG/hl7HXwdmEzlT5sNb1IPP4gUg5WltzdG3YowQG
-	2nTqd+CcBKFF7kBXhRUNshHkGWnUp+IoP9V5z2u4vLxFKFIekpWNp50xPWt5Iz2uWpXwHkWV4eb
-	elcbz85Uyrto8deL/PK1fvuMRIoPwm8gFpuZz3OAqGrMe2yQAf1QvC8MSs8CsoFMYvRzZafLnJK
-	e6UKv/7uVIsBs8ohQ1lL62h4keuNMOJqm49FsNeQ==
-X-Google-Smtp-Source: AGHT+IFfQI30DVJr4nRXCeZn+peMFXvEm2K6CFMhemWlKpOzXydhzoUA+zJOJy9ZmPXP8Ybd5DyA6w==
-X-Received: by 2002:a05:6122:3183:b0:54a:9927:7ab7 with SMTP id 71dfb90a1353d-5564ee4b9b8mr8238333e0c.4.1761207653371;
-        Thu, 23 Oct 2025 01:20:53 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-557bef22a61sm551858e0c.24.2025.10.23.01.20.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 01:20:52 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5d40e0106b6so278538137.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:20:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV3qiMH+I9vbylCEH3mD4l1eiON7PSrwUcAH+9vaX450gbdeLVL6FM2IyG9Q8VrnYXbpNUwv3xDw/BQ1+c=@vger.kernel.org
-X-Received: by 2002:a05:6102:5110:b0:5db:27e9:933e with SMTP id
- ada2fe7eead31-5db27e9988cmr1196188137.38.1761207652096; Thu, 23 Oct 2025
- 01:20:52 -0700 (PDT)
+        bh=jEYNjz+HsVVYinojoxpbidjnmyoS4XjFSkLlwaniZc4=;
+        b=oek1xcInBcl7vGPnG8kxIIraL5COQ7dZkUH9H9edH9DE6ZMEyeSU474c613+K1z6/d
+         aEyh3VI3iJ9kpnXr70lCYQ6D8FLsd0IjB/QDLQVAVxoX4o/qO5fO9ZzDquCY9I2yCFHU
+         QlocIMpAYEclPxUPgyAxrodomED/Ms9VSq3ufGVO0lth2GxidzXEN/Uow/27Ut7jMcxd
+         CymJiaN+GHKST6XeW4SHhuSX1S+jSO1+OJSEy0Im1P6EJ+S6O2l4ZJMhSl2p+U60629J
+         widYGnBMpdnwc06BE8ohhoHkEcrSsbEGvMDDT82qaXUhCykQyWFdoP6aWXj55s7JnpDd
+         TrTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJT2eLB1+YPsuwKMpz9wob5yVX6NxDaqgC6ihnsvkFh+uP1z6tib2rAIDx7XrVXjWELOTYMf7C5L78FZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJfdyf1pfLcZdyPLVO9tzxEaTEWAsUt/5GJXIcmDWfy2+4/hK9
+	z5PEHPKT7X1B3WBdvKzY6Lsq7toePbErMrH91JgFlXnnPzL6frJ0Dl82
+X-Gm-Gg: ASbGnctqIXewhz2+LjhIVt66oZfFvRdpDsVc8B/CQ+v9WolqUhLs7n1FDP5/qEHF+kp
+	1IqGe18wlO+Gj+jopzTIY4DzskFflizOZEMoIPAxVAQCcI2FuDxSNwA2iUzYTGnVJIvm4mhfLjE
+	6KO+CalBCNb2cdfGGW6GlOv+murjvYjFls1WC0MH3k7rArpl7GOPl4nDkkL23Pzx07SoAaccNwf
+	GAh25hO0BLxocVJqmsbf3ovRjMupgGR8uLaszOCdwHTsxhxcxdR0Sfok9ZUFieKRPvzGtc0oxCH
+	kkZ22n+/ZLdFpGi+2AFoolR8jg6kpNcTgTsI9dFdunh+axAyhjzE6gAy9rp5blC3bzbgGWhL1Ff
+	OgqR4Lz+KA1tTcZkeqIkJluIqsoTW7OSk9NWtI7CGxE8Onf4CI9yea3+HVFWBquM55qzivE/uB2
+	vjGG9fcmHsifwresBLgm9pp9/ZO9KumwGDErrGup3XJg==
+X-Google-Smtp-Source: AGHT+IHxwQzd6t6kPmDT9mLD66n8ELzc2lh8zguwps85JG/bAq5fbMdHocSaID3n4PD7hcE7rSKviQ==
+X-Received: by 2002:a05:600c:6995:b0:46e:33ed:bca4 with SMTP id 5b1f17b1804b1-475c6f68f4dmr29819895e9.15.1761207648234;
+        Thu, 23 Oct 2025 01:20:48 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475caf2f142sm25151455e9.15.2025.10.23.01.20.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 01:20:47 -0700 (PDT)
+Date: Thu, 23 Oct 2025 09:20:46 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Biancaa Ramesh <biancaa2210329@ssn.edu.in>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] replace strcpy with strscpy for safe copy
+Message-ID: <20251023092046.4f556e0f@pumpkin>
+In-Reply-To: <20251022192318.GI2441659@ZenIV>
+References: <20251021143952.37036-1-biancaa2210329@ssn.edu.in>
+	<20251022192318.GI2441659@ZenIV>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015192611.241920-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdW1B7Yk1hUU9MSJsiL8wSmjAUGN7Qd_wgBHv8Ct=-wi4Q@mail.gmail.com>
- <CA+V-a8uY11uWoQ_en5QC=W4HPHRwT6rKQQJ-knT8Gi-+czm05w@mail.gmail.com> <20251021184502.GD19043@pendragon.ideasonboard.com>
-In-Reply-To: <20251021184502.GD19043@pendragon.ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Oct 2025 10:20:41 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUU-2ugmA-VcRuYOsriUKtAEQXmWEwJSwuCsSTa3ySTZg@mail.gmail.com>
-X-Gm-Features: AS18NWACo5Ab6gaObSrlb5u0ift86EnuHySc5nm6Ey8p5bDoFaPy9DC0cq8vSBg
-Message-ID: <CAMuHMdUU-2ugmA-VcRuYOsriUKtAEQXmWEwJSwuCsSTa3ySTZg@mail.gmail.com>
-Subject: Re: [PATCH v11 0/7] Add support for DU/DSI clocks and DSI driver
- support for the Renesas RZ/V2H(P) SoC
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Laurent,
+On Wed, 22 Oct 2025 20:23:18 +0100
+Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-On Tue, 21 Oct 2025 at 20:45, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Tue, Oct 21, 2025 at 07:26:49PM +0100, Lad, Prabhakar wrote:
-> > On Tue, Oct 21, 2025 at 11:26=E2=80=AFAM Geert Uytterhoeven wrote:
-> > > On Wed, 15 Oct 2025 at 21:26, Prabhakar <prabhakar.csengg@gmail.com> =
-wrote:
-> > > > This patch series adds DU/DSI clocks and provides support for the
-> > > > MIPI DSI interface on the RZ/V2H(P) SoC.
-> > > >
-> > > > v10->v11:
-> > > > - Split CPG_PLL_CLK1_K/M/PDIV macro change into separate patch
-> > > > - Updated rzv2h_cpg_plldsi_div_determine_rate()
-> > > >   while iterating over the divider table
-> > > > - Added Acked-by tag from Tomi for patch 2/7 and 3/7
-> > > > - Added Reviewed-by tag from Geert for patch 2/7 and 3/7
-> > >
-> > > I think this series is ready for merging.
-> >
-> > \o/
-> >
-> > > > Lad Prabhakar (7):
-> > > >   clk: renesas: rzv2h-cpg: Add instance field to struct pll
-> > > >   clk: renesas: rzv2h-cpg: Use GENMASK for PLL fields
-> > > >   clk: renesas: rzv2h-cpg: Add support for DSI clocks
-> > > >   clk: renesas: r9a09g057: Add clock and reset entries for DSI and =
-LCDC
-> > > >   dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
-> > > >     RZ/V2N
-> > > >   drm: renesas: rz-du: mipi_dsi: Add LPCLK clock support
-> > > >   drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
-> > >
-> > > As this touches both clk and drm, let's discuss the merge strategy.
-> > > My proposal:
-> > >   1. I queue patches 1-3 in an immutable branch with a signed tag,
-> > >      to be used as a base for the remaining patches,
-> > >   2. I queue patch 4 on top of 1 in renesas-clk for v6.19,
-> > >   3. The DRM people queue patches 5-7 on top of 1.
-> > >
-> > > Does that sound fine for you?
-> > Sounds good to me.
-> >
-> > Biju/Tomi, are you OK with the above?
->
-> The plan seems good to me. Note that you won't be able to push this
-> yourself to drm-misc as committers are limited to pushing linear
-> branches. We need an ack from the drm-misc maintainers, and one of them
+> On Tue, Oct 21, 2025 at 08:09:52PM +0530, Biancaa Ramesh wrote:
+> 
+> > diff --git a/fs/ufs/dir.c b/fs/ufs/dir.c
+> > index 0388a1bae326..cffb7863adc5 100644
+> > --- a/fs/ufs/dir.c
+> > +++ b/fs/ufs/dir.c
+> > @@ -557,14 +557,14 @@ int ufs_make_empty(struct inode * inode, struct inode *dir)
+> >  	ufs_set_de_type(sb, de, inode->i_mode);
+> >  	ufs_set_de_namlen(sb, de, 1);
+> >  	de->d_reclen = cpu_to_fs16(sb, UFS_DIR_REC_LEN(1));
+> > -	strcpy (de->d_name, ".");
+> > +	strscpy(de->d_name, ".", sizeof(de->d_name));
+> >  	de = (struct ufs_dir_entry *)
+> >  		((char *)de + fs16_to_cpu(sb, de->d_reclen));
+> >  	de->d_ino = cpu_to_fs32(sb, dir->i_ino);
+> >  	ufs_set_de_type(sb, de, dir->i_mode);
+> >  	de->d_reclen = cpu_to_fs16(sb, chunk_size - UFS_DIR_REC_LEN(1));
+> >  	ufs_set_de_namlen(sb, de, 2);
+> > -	strcpy (de->d_name, "..");
+> > +	strscpy(de->d_name, "..", sizeof(de->d_name));
+> >  	kunmap_local(kaddr);  
+> 
+> Hard NAK.  This kind of cargo-culting is completely pointless.
+> 
+> Think for a second.  Really.  We are creating "." and ".." entries in freshly
+> created directory.  What your change does is "if directory entry name couldn't
+> hold a 2-character string, we might have trouble".  No shit - we would.  Not of
+> the "overflow something" variety, actually, but there's not much use for a
+> filesystem that could only handle single-character filenames, is there?
+> 
+> What's worse, you are papering over a real subtlety here: directory entries on
+> UFS are variable-length.  There is a fixed-sized header (8 bytes), followed by
+> NUL-terminated name.  The size of entry is encoded in 16bit field in the header
+> (offset 4), and name (including NUL) must not be longer than entry length - 8.
+> 
+> struct ufs_dir_entry describes the entry layout, all right, with ->d_name[]
+> being the last member.  It is declared as
+>         __u8    d_name[UFS_MAXNAMLEN + 1];      /* file name */
+> which is to say, the longest we might need (255+1).  So your changes are basically
+> 'check that "." or ".." aren't longer than 255 characters to make sure we are
+> memory-safe'.  However, that does *NOT* guarantee memory safety - the first
+> entry is actually only 12 bytes long, while the second one spans the rest of the
+> block.  What is relevant is "entry size is at least UFS_DIR_REC_LEN(strlen(name))",
+> which is true for both entries - the first one is explicitly UFS_DIR_REC_LEN(1)
+> bytes long, the second - block size - UFS_DIR_REC_LEN(1), which is going to be
+> greater than UFS_DIR_REC_LEN(2).  Block size is going to be over twenty four
+> bytes, after all...
+> 
+> What we ought to do is turning ->d_name into a flex array:
+>         __u8    d_name[];      /* file name, no more than UFS_MAXNAMLEN + 1 */
+> at which point your obfuscation^Wimprovement falls apart.
+> 
+> Note that
+> 	* use of strscpy() here was *not* any safer than strcpy()
+> 	* it _pretended_ to improve safety ("move along, nothing to look
+> at in this place"), but at the closer look result was a lot more fishy 
+> than the original; it reads as "we have 256 bytes there", which is simply
+> false.
+> 
+> This is not an improvement.
+> 
 
-Do you mean new commits must be in a single branch, or drm-misc
-itself must be linear? In case of the former, 5-7 can be applied on top of
-my immutable branch, without involving a merge?
+It is also likely to make the code much worse, strscpy() is already slower
+than strcpy() - because the compiler knows about strcpy().
+The copy of "." can reduce to the write of a 16bit constant.
+The copy of ".." is more problematic, a memcpy() of "..\0" might be better.
 
-> will need to merge the branch (either branch 1. as prepared by Geert, on
-> top of which you can them push patches 5-7 yourself, or a branch you'll
-> prepare on top of 1. with patches 5-7).
-
-Note that another change to include/linux/clk/renesas.h,
-and thus a dependency of drm on clk, is coming in
-"[PATCH v3 0/2] Remove hard coded values for MIPI-DSI"
-https://lore.kernel.org/20251022235903.1091453-1-chris.brandt@renesas.com
-
-Would it be worthwhile to wait on/speed up review of the latter?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+	David
 
