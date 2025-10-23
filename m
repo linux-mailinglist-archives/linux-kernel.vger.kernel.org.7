@@ -1,129 +1,110 @@
-Return-Path: <linux-kernel+bounces-867582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7504BC03094
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:39:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3152EC03082
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD05F5013F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 751143AB92B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D1C27FB12;
-	Thu, 23 Oct 2025 18:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5391727E7F0;
+	Thu, 23 Oct 2025 18:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z1Q2pcq8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="cHT93CGn"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7349627AC4D;
-	Thu, 23 Oct 2025 18:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4723A2327A3
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761244685; cv=none; b=mOPGFcdoHMeSwUD6YRqgWE9J7B0Eg76i+8l6NdYxLyxXVAsYBh8FxYgGYgtxEn4azmv4934LGiXImvS4wCQpdIGRFMMfR8oFtvaez5MO4IKVJWAKL7GHjqxXFbSbKZy+Qe77PJq+njwPEuPtfPur7UBHWnmVYOlt3GKhMT5ZXpM=
+	t=1761244735; cv=none; b=mO3vDYq8QDb+2rT1jsWncBSHMXg4BltIwodqxAL3T/hchUyovS3tXuVY2VGj2W49H2b80Vvv0ulmoTZ1rUkN/Dy6bPYn1OJ8kYBCscG4onkZ6W83A0byZTZWbGL4xTvSHk3LghekZKwYNXN7zbQA2i5BMXS2TIDuk8DAxiBVkV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761244685; c=relaxed/simple;
-	bh=jFr4xShDGQKlComnou2o80VctOUNsQv0T6YGPfBQUoQ=;
+	s=arc-20240116; t=1761244735; c=relaxed/simple;
+	bh=IJz322Dk2EbU9jOBpCOHtD/vjWDkx0Y4Ic75icLEf7s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YV1WQ3UzjQzkJSXUR0NJczOc1PPfj2EnOVJq8OId5+lmXMerL53aSVItSILF7o+s+AYvaPcdMT14X1WRLnrFnglbpYG6AoYD3G9xT8hUdv+meMjkOpp5qtBwcwUzbS1BaGQMBwGJvKEUTgCMz7l9x1DdBWl2cV4PMZsVgD98dLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z1Q2pcq8; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761244683; x=1792780683;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=jFr4xShDGQKlComnou2o80VctOUNsQv0T6YGPfBQUoQ=;
-  b=Z1Q2pcq8Xc63+WBRlkv/kDnIdoOkMQ29nPIERR6dEh6zrR8tss/uGIUa
-   tBhwjMOIAtt1LFnHtKvG7w/QYOlTySkBtsFvYT0DCt6Cd0LdFF5Y08Z7N
-   2XTU5J63kSt2IMxzzJ1c0m+T2etULcPysx3CEsZG8tk2IhHdGCpXSOzhL
-   z4nTx6bTF/ryWaNKcSIB2XWoIfiCR0N5sKCRB2P4xPD+8rqQiIjwlQLYs
-   1H4H9s158zVrNh6GXL4RBHm+ZsD0FsbkCXsdyJKcWrROW3HouCU7rMtWi
-   cDH0ZhUEV/PvQLeb1WZ39nB1prJVNID9R7JfrSgT4bWn/XyD768JB2N5D
-   w==;
-X-CSE-ConnectionGUID: rq8I0zChRfSV5PiubmdJrg==
-X-CSE-MsgGUID: JNBNwR0LTGykbbk07w4waw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63573129"
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="63573129"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:38:03 -0700
-X-CSE-ConnectionGUID: Q06e3c34TgmL0Zx1SbB7uw==
-X-CSE-MsgGUID: PzTvBSmrQhyrGlieA0m7Zg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="184615898"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:38:00 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vC0CE-000000020wR-0E1k;
-	Thu, 23 Oct 2025 21:37:58 +0300
-Date: Thu, 23 Oct 2025 21:37:57 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Petre Rodan <petre.rodan@subdimension.ro>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] iio: accel: bma220: move set_wdt() out of bma220_core
-Message-ID: <aPp2BeNqFJABsAkg@smile.fi.intel.com>
-References: <20251021-bma220_set_wdt_move-v1-1-6c99f6fd951c@subdimension.ro>
- <aPjE-n0wKNIJd2-M@smile.fi.intel.com>
- <20251023182318.00004319@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gfdsap42gqxKa5Ef7MVdjg0d+FyNSsreZyQ7u0A0npJdXAEjiOnYImSDRDOaQG2kf41gNNzX1Zy3Aq9CfyZ+NhveG5YQNnohL7tiQJGc9KF5zFrSX0bwKW8XI98VRkesT0/tD3tGvB9/PZNQjXxa9x8jFyM5y1lcTWYxPdiSgS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=cHT93CGn; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7a28226dd13so256973b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:38:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wbinvd.org; s=wbinvd; t=1761244733; x=1761849533; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IJz322Dk2EbU9jOBpCOHtD/vjWDkx0Y4Ic75icLEf7s=;
+        b=cHT93CGniYOkAK5Zk/I6FxHqgr8b1cCatB7WB8/ruwecUfO8CMsd4t9mdHxGlM3/oq
+         lmsRz9jYCn31HY/qeBqwqf/fF6IHhlJTFmZMwQLuyMHIh58+fEnFIWsIB4U22xMimSyh
+         ykEt4IWfXZC93j2NMTsL0abj6FNxw/5EBHw+YzniLdwMUfjAiFy18AfBlrXlat8/SWks
+         l3v5foR0x3ekjxeCHGp2XTdGgk2IgWrCtsp7kmx7fDSBC9kqDpTaiALlt+0vbJNliCKm
+         U9CjQsYeozGTiUfkwF7Fz49GZM0QHnTPPV1fwL7ZeAMyKM/VP9x+Iw0S+ZW9dZmwW6XQ
+         HCjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761244733; x=1761849533;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IJz322Dk2EbU9jOBpCOHtD/vjWDkx0Y4Ic75icLEf7s=;
+        b=xEMSA1aRk2kX93DJ8uu5nR74kjO1TDXPzHyi9YbDJCJoG6WWnB+c4GBh/fSLb+hjG5
+         L5YGMdBov/PQqFfG+Bif1oLTeOybRtBHqo6T4DazR93YxN07g8N7ZVIN9ZnWjvnb2KTH
+         LHTXtOMKmg881Qo9f/Pw/WKpc+z7W5BeN7p3FGV17sOKZ0qbLqAvpeMoqBIMYo2bX661
+         +jo6dve5xv1teghUvdGRcNUMnKeTFAXyGY0ow7CarXGuqhI1pKLBBnBtHloT7Uywa9rn
+         kDo6tkGvzKxGCJjus5JXFeoV6uSWxPS7PXnrLfYcv2cVSpitVRed5RwnHw/A7o2pJusi
+         JXDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIKhOZCpBy06sCvCh56DB6tPZc3RmwOCbBoG6vE0dEje7wXu8xxnqaWSYbsQjLQGw5W3A49A556YTZIqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4znUoKE4IJedLQpIAQcgyIgVptfdiXfLXTWE7hTyvPvQsGemq
+	5OUbbgpiwOOJlDb3MHPesx+BgVoiB+epFPy3OVWExuxnjBYmQD1+CK4xORH2oEk2ao0=
+X-Gm-Gg: ASbGncu6qtRj/1rLNFlV85k2xxwaYwvE0kb/AnP0KuiMZL+Q/z4EHC5cdG0aedJGfeb
+	icWVY1juk9H013LUl6XZpZ66e/AiYGP3nH4ksubiydjyMZsr9FXo4RKdQ17lvz1DMUCLapcUqcy
+	VUKmo2UGnTdGIO7ihVhTasvuuN7kFB33bpIPzcL7S0K7WrGMTF26kNjCe95sz0yQdsCsmFEYGGM
+	j/2uBoor9YwV/NJOeUfpwZUJyX5/L6Z6pCApHxQ45SJHf+Y7sM6Urb1a+/to2XICO6LnV/RkyrP
+	PYbvOWvRzHInoSRLH4FbBs9O2hmInWXRNy/E9/wHBYKAVep2Gf09bYnXgPLcDfnFn3aAa++kXiO
+	bZdKlVDnLzJRWZT7+zhOI8eCBm+IMm31p+Jtar8Q9BsiySvn62UT6bxeFK2RVADxL8lVncktdOd
+	w1Jlo5TR9f3y2j
+X-Google-Smtp-Source: AGHT+IHv4EEmGzJ6qdnkG0U4M/t1i0Oxb27fs6YPyYXb02bVmUpsxYKcjyZyI1rde0buij6ZTIgCWA==
+X-Received: by 2002:a17:903:1a4c:b0:267:ba92:4d19 with SMTP id d9443c01a7336-290c99a8ed3mr313633845ad.0.1761244733473;
+        Thu, 23 Oct 2025 11:38:53 -0700 (PDT)
+Received: from mozart.vkv.me ([192.184.167.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946de105b1sm30862925ad.49.2025.10.23.11.38.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 11:38:53 -0700 (PDT)
+Date: Thu, 23 Oct 2025 11:38:51 -0700
+From: Calvin Owens <calvin@wbinvd.org>
+To: Francesco Valla <francesco@valla.it>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [BUG] Erratic behavior in btnxpuart on v6.18-rc2 - and a
+ possible solution
+Message-ID: <aPp2O-H55h4IJOFU@mozart.vkv.me>
+References: <6837167.ZASKD2KPVS@fedora.fritz.box>
+ <2569250.XAFRqVoOGU@fedora.fritz.box>
+ <aPkCZ8l4-5ffyiAe@mozart.vkv.me>
+ <1982590.7Z3S40VBb9@fedora.fritz.box>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251023182318.00004319@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <1982590.7Z3S40VBb9@fedora.fritz.box>
 
-On Thu, Oct 23, 2025 at 06:23:18PM +0100, Jonathan Cameron wrote:
-> On Wed, 22 Oct 2025 14:50:18 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Tue, Oct 21, 2025 at 01:31:49PM +0300, Petre Rodan wrote:
-> > > Move bma220_set_wdt() into bma220_i2c.c instead of using a conditional
-> > > based on i2c_verify_client() in bma220_core.c that would make core
-> > > always depend on the i2c module.  
-> > 
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > 
-> > But Kconfig for this driver is a bit strange. Usually we do other way around,
-> > i.e. make user visible selection of the glue drivers, while core is selected if
-> > at least one of the leaf driver selected by the user.
-> > 
-> This comes up from time to time.  There kind of isn't a right answer
-> to my mind in the trade off between complexity of configuration 
-> and desire for minimum useful set of Kconfig symbols and people wanting
-> to build only exactly what they want.  So we've ended up with a mix.
-> 
-> I don't mind setting a policy on this for new code going forwards, but
-> that means we need to decide which approach we prefer and document
-> it somewhere.
+On Wednesday 10/22 at 22:35 +0200, Francesco Valla wrote:
+> On Wednesday, 22 October 2025 at 18:12:23 Calvin Owens <calvin@wbinvd.org> wrote:
+> > <snip>
+>
+> I tested this on my i.MX93 FRDM and I confirm it's working. Can't say that I
+> like it, but...
 
-One immediate thing from top of my mind why current approach worse than
-proposed by me.
+Yeah, on second thought I agree, the cross-driver dependency on drvdata
+is gross. But I think I found a better way, I'll send a patch in a sec.
 
-- when you have an SPI or I²C enabled the glue driver will be silently build.
-As a used on the embedded system with smaller resources (flash/ROM) I prefer
-the opposite behaviour, i.e. when _I_ control what SPI/I²C component driver is
-needed even if the subsystem is present.
-
-But let's give a time to gather other opinions and justifications.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks again for looking into this.
 
