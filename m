@@ -1,162 +1,157 @@
-Return-Path: <linux-kernel+bounces-866326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D84BBFF781
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:14:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A945BFF7F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 088EA189412B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:15:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A40B3AA323
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE692BEFF3;
-	Thu, 23 Oct 2025 07:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CB52E0417;
+	Thu, 23 Oct 2025 07:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mly662LS"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="plQG8p3L";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="dg8o9OGs"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF85C26E6E8
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9C12DF6F4
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761203672; cv=none; b=be6+JXrra0vd4QDg2iMg1pz2t9rRUVsy0b6iyvDCYm2CQJq9A/H+ss56AaCgRb0c5oQaOKRqct0KPV3kyyRrkwM32w8kxXIC4SgfNKUwzDPOAxeht5OiyRiDqoTeZH3Xw5/MnIb4GrBkNDLL63wLHuwoERsFkrv6JlRg9vvfmYk=
+	t=1761203820; cv=none; b=BXmxG3OsT+INxPP/w4xBhrHNYupTN0fG6+tARNhEEtYzXPS1Mtb1ZS6FSd1apl7lOA9FQ44A8BKkhW3HyRTFRajrvCyJ2RcHwqaCKDpUQJ1mz5cg5VF92xxRzhL0ZvYf6Y6P8tHedx+rEwzE4laOt2kWBnW3U2LdM9vg6caFlCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761203672; c=relaxed/simple;
-	bh=iy5HTtFm7dpN+Me6tHRDSQSZHt+q3XPJc6WhQo7w9dQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bjaMKQzurMcLPc8z1cydGz3luMMqAIocu5nqeZNgS/xOB87wqnrNkiV8qGXwHjnQQxWCDZWnsmSYBDJ/RADc9opOFDccPTFD0WClg/nYd+H1dBd47jSI3nbWNpqNS3USOebAF98wrbyJ0OSPlk5CkL8SlbabHHczcozWd67sJrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mly662LS; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47106fc51faso6824795e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:14:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761203669; x=1761808469; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FHZKwD0y2BSAHZQav3wChNXXRo6vZFDMSesZpxuz1Jo=;
-        b=mly662LSk7P5yuPcUihyelz3YNZsBMA9VZ680Xv+pO42aKSUWUzdtTgihkOpg5/nkF
-         QOsqqxso3R//HzyNUQERpYCr6XGgPxlbTD61qQwi7SYIbT6IkhSHPiq91zKvu+RptVb5
-         8aekYhRBAtrVDy9lQpax124NiN5dT/W39wR5b+zO8kVZyAB2WeCTS6i8dPfJwzqZzVQt
-         Q3q0eJ8lhmS+c2JQL66ayOXQkvVdjMI3A7CyeBg67WaVaHeE4siMk1L+Xe/zcxlqyNzL
-         i7VyYxa9+iy4gnFHb2JVr7mbu4IgAp9+4xtNV7mVIcfxfVpJ5Qshq/c+qwtKKGekk3hX
-         u6GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761203669; x=1761808469;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FHZKwD0y2BSAHZQav3wChNXXRo6vZFDMSesZpxuz1Jo=;
-        b=ljcHcKKrCj9UIcGa1xBDPIu8F2jbqF48Om9KXhbV/w6pcqL+Dy6NLRWgY01a+Fq0au
-         PHJFSXv/w6sHQ+/tcHIa1wQHd4K8/6t9Y1GsK/QF1NjF0HMTUtc+lcLNw9DYXGgNkhXn
-         RTaOA3V5WD5/Q66bJFMB33kSUtuSFVQFMB6LmZYTM1cnCifrC2LxEyOzmcg3PozhNmYd
-         vvODhraOUWiBDPeXEt5UfkTYxeHeAyAzPdzVokYtYFFEyl+jPmH2A7+QYW1cIEtgL468
-         VVv5ajnLNE27xvFTTQzZNYCPe8QKBQmbiDT2oV+3D6Lffpqhah+JTMPBCVnT44XC+NLx
-         dqVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrO3BsNWbfMSIs8XNB2biXE/hnbZx77vS3xR77dtaTFHjbAe8R0ssIMl8sHhDGhyMF3MJwwEFYWkMyPC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFAlawl0qaTIwM6XLV6lCLF6J85+jbjLFZXHHc0peoE7/KfhDV
-	uTqrMoXsMQ149NO0lI5ifUU2rNbbU2Pzvp5XWQbW9zYSvkin5p6N1U6m
-X-Gm-Gg: ASbGnctJmWcdihCPsgMNd0Uz4fuUnnAV6TVFULphKCiioYRx3STfdD+YDaBgVYM1ezP
-	SP1OnS9bH4U3R2kpUE6EzcfGSUdxRWg9khvVyJLG/wmses8LfFWYfhc04v3xlYLsNkEWhrmcsA0
-	CyEYswf9HNAZHVZUXFvl+CkqUuZSFXdVw8bQ7x40apzhBD/Zo7tirRbn/u0s+LosG5MA2HLBxMa
-	mwnx1RFJDPEjUl54Ok6sc9+oRSCLk966+RHSchaTaSuVezyb1emiDIFBQIk/IRafoj8tkRqJrw6
-	j7GEJgG/xsk0J9WLZ4gfp06CibeMka2eSGj9pejvpEGTV9pcg/ox2qICap87vIBtGnCl9gYqLCa
-	FzKmZy2qDRox5AqaKe3d6hWCHXOg+LxNgY19GF98JVIK0aAIOlXeRQO1b8RWfRHUZug9GjNbkg9
-	KFObxFZfOu33kqyCkHUNh9pR0lCit1XzLFlA==
-X-Google-Smtp-Source: AGHT+IHF3QpIBvHbO664dQtYn1vPzXqJe1fWVDo+5Z0XZfkV9YVe45fmMUl5EE7efd/FPw08qbICAg==
-X-Received: by 2002:a05:600c:871a:b0:471:14f5:124e with SMTP id 5b1f17b1804b1-4711791ef9bmr172539805e9.35.1761203668800;
-        Thu, 23 Oct 2025 00:14:28 -0700 (PDT)
-Received: from [10.221.206.54] ([165.85.126.46])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475caf2f3bbsm20267125e9.16.2025.10.23.00.14.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 00:14:28 -0700 (PDT)
-Message-ID: <3450b913-d205-4b19-8690-d3191cb680a2@gmail.com>
-Date: Thu, 23 Oct 2025 10:14:29 +0300
+	s=arc-20240116; t=1761203820; c=relaxed/simple;
+	bh=ypSJqeekZgf5O+2c4uKMeyWNcaUMCSwrdj4Z4jmFTB4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NCRoVqrnHJcdKR8umOpf4XA2ccruD0ibRvZiV3PtUATI7f9du0COLha6/qnPmhZ3Flf1NHduHwXqVX4r+839VuKFtgvlDkXyckvpdWna0njvO3fVGmsib7B60drLl9zvYzxORwD4Wy2DM7/AdNiKetZQS6O61Uo1i7HM4STtaoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=plQG8p3L; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=dg8o9OGs; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1593B1F38D;
+	Thu, 23 Oct 2025 07:16:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1761203806; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ljXa6fFm6MKyoAZiWZm7qbUvg2RgHW5M1AdCNJCtXoM=;
+	b=plQG8p3LNqRwYwraFXOYYU/x6KcHF2k1JYSbTbVfdbGX7TwWf0SJoQgBghHgSAsmIvql7S
+	N3w92ljMS7uXMeNfp8i+TJvgvnuNAEv7IIYC7NQEIQKL9VzWv7FFS6Wr/xiJGQ/aplQrum
+	XRLVV2U4vJjqu5ZaPbDNS979JKZGomc=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=dg8o9OGs
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1761203802; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ljXa6fFm6MKyoAZiWZm7qbUvg2RgHW5M1AdCNJCtXoM=;
+	b=dg8o9OGsxIb7QFrZLj362y1TOfAjbsnXMgTVYNrdhnpHs+rAHYw4SU4uyuH50xGzquAacw
+	fFoHInsoPenlEhVbwjBiTWjIVHXAbZYzulitPElTNrwdmyeZp2fLk5+PXiNlJ2CM2QHdBG
+	wUXpKFHcHOEDOkXQdNoLOEHkSNjCjiY=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 082F6136CF;
+	Thu, 23 Oct 2025 07:16:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Wru1AVrW+Wh0QQAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Thu, 23 Oct 2025 07:16:42 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 6.18-rc3
+Date: Thu, 23 Oct 2025 09:16:23 +0200
+Message-ID: <cover.1761202410.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] driver core: auxiliary bus: Fix sysfs creation on
- bind
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Tariq Toukan <tariqt@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
- Mark Bloch <mbloch@nvidia.com>, Gal Pressman <gal@nvidia.com>,
- Aya Levin <ayal@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, Simon Horman <horms@kernel.org>,
- Shay Drory <shayd@nvidia.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Parav Pandit <parav@nvidia.com>,
- Amir Tzin <amirtz@nvidia.com>
-References: <1761200367-922346-1-git-send-email-tariqt@nvidia.com>
- <2025102347-fridge-happier-ea97@gregkh>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <2025102347-fridge-happier-ea97@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 1593B1F38D
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:mid,suse.com:dkim];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
 
+Hi,
 
+please pull a few btrfs fixes. Thanks.
 
-On 23/10/2025 9:46, Greg Kroah-Hartman wrote:
-> On Thu, Oct 23, 2025 at 09:19:27AM +0300, Tariq Toukan wrote:
->> From: Amir Tzin <amirtz@nvidia.com>
->>
->> In case an auxiliary device with IRQs directory is unbinded, the
->> directory is released, but auxdev->sysfs.irq_dir_exists remains true.
->> This leads to a failure recreating the directory on bind [1].
->>
->> Using the attributes group visibility interface, expose the IRQs
->> attributes group if"f the xarray storing IRQs entries is not empty. Now
->> irq_dir_exists field is redundant and can be removed.
->>
->> [1]
->> [] mlx5_core.sf mlx5_core.sf.2: mlx5_irq_affinity_request:167:(pid 1939):
->>     Failed to create sysfs entry for irq 56, ret = -2
->> [] mlx5_core.sf mlx5_core.sf.2: mlx5_eq_table_create:1195:(pid 1939):
->>     Failed to create async EQs
->> [] mlx5_core.sf mlx5_core.sf.2: mlx5_load:1362:(pid 1939):
->>     Failed to create EQs
->>
->> Fixes: a808878308a8 ("driver core: auxiliary bus: show auxiliary device IRQs")
->> Signed-off-by: Amir Tzin <amirtz@nvidia.com>
->> Reviewed-by: Mark Bloch <mbloch@nvidia.com>
->> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
->> ---
->>   drivers/base/auxiliary.c       |  13 +++-
->>   drivers/base/auxiliary_sysfs.c | 117 +++++++++++++++++++++++++--------
->>   include/linux/auxiliary_bus.h  |  26 ++++++--
->>   3 files changed, 118 insertions(+), 38 deletions(-)
->>
->> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
->> index 04bdbff4dbe5..b0fb31279257 100644
->> --- a/drivers/base/auxiliary.c
->> +++ b/drivers/base/auxiliary.c
->> @@ -225,7 +225,16 @@ static int auxiliary_bus_probe(struct device *dev)
->>   		return ret;
->>   	}
->>   
->> -	return auxdrv->probe(auxdev, auxiliary_match_id(auxdrv->id_table, auxdev));
->> +	ret = auxiliary_bus_irq_dir_res_probe(auxdev);
->> +	if  (ret)
->> +		return ret;
-> 
-> Please always use scripts/checkpatch.pl so that you don't get grumpy
-> maintainers asking you why you didn't use scripts/checkpatch.pl...
-> 
+- in send, fix duplicated rmdir operations when using extrefs
+  (hardlinks), receive can fail with ENOENT
 
-Sure. Always running it before submissions.
-It passes for me. Anything I miss?
+- fixup of error check when reading extent root in ref-verify and
+  damaged roots are allowed by mount option (found by smatch)
 
+- fix freeing partially initialized fs info (found by syzkaller)
 
-total: 0 errors, 0 warnings, 258 lines checked
-patch has no obvious style problems and is ready for submission.
+- fix use-after-free when printing ref_tracking status of delayed inodes
 
+----------------------------------------------------------------
+The following changes since commit 8aec9dbf2db2e958de5bd20e23b8fbb8f2aa1fa6:
 
+  btrfs: send: fix -Wflex-array-member-not-at-end warning in struct send_ctx (2025-10-13 22:36:38 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.18-rc2-tag
+
+for you to fetch changes up to ada7d45b568abe4f1fd9c53d66e05fbea300674b:
+
+  btrfs: ref-verify: fix IS_ERR() vs NULL check in btrfs_build_ref_tree() (2025-10-22 09:40:07 +0200)
+
+----------------------------------------------------------------
+Amit Dhingra (1):
+      btrfs: ref-verify: fix IS_ERR() vs NULL check in btrfs_build_ref_tree()
+
+Dewei Meng (1):
+      btrfs: directly free partially initialized fs_info in btrfs_check_leaked_roots()
+
+Leo Martins (1):
+      btrfs: fix delayed_node ref_tracker use after free
+
+Ting-Chang Hou (1):
+      btrfs: send: fix duplicated rmdir operations when using extrefs
+
+ fs/btrfs/delayed-inode.c |  2 +-
+ fs/btrfs/delayed-inode.h |  7 ++++++
+ fs/btrfs/ref-verify.c    |  2 +-
+ fs/btrfs/send.c          | 56 +++++++++++++++++++++++++++++++++++++++++-------
+ fs/btrfs/super.c         |  8 ++++++-
+ 5 files changed, 64 insertions(+), 11 deletions(-)
 
