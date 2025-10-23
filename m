@@ -1,222 +1,130 @@
-Return-Path: <linux-kernel+bounces-866264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91ACBFF534
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:22:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA22CBFF54C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3F76235432C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C61A3A4AD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49D82877F1;
-	Thu, 23 Oct 2025 06:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A052877C3;
+	Thu, 23 Oct 2025 06:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="olPjZMRs"
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U4B7h6Es"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34C8261B98
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0661B7F4;
+	Thu, 23 Oct 2025 06:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761200546; cv=none; b=bN/RN5/zcNvCFVko9HIdQMhkHxSop5dyOYMueoW9xJiUZmy/+KE5XqcLOU8t7iDgDezjJUtprK65kHdQ3V+cSumrGu2egGgTksqGoU69OJWdoE33Oux2eeiJ882pPfWUq+EZy7RBQF5teMppbXSdD+Xg0/u0B5h5g7YSwk3DP+E=
+	t=1761200639; cv=none; b=BtSUtHb+DPFZx3JED9LvNp757DU5v7HwJm4FV9aUrUCeE0M/uODb3VAFG8lGY+8wPmNi395BWM3nO1qrLFQH//aRy/wE7xZZVzUKAM6P5DphycQrWnVywD8kQ9/BVqmpHC5H8auGpgSt7bTj1SzgEue1jeJsYW5ZMiy7sk4kEqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761200546; c=relaxed/simple;
-	bh=01UZ5quuFjdaQeSknRoHRrfJabw9WpGjufNM27USbN4=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=NAuUDQNyuvZEyViiJLI2Y7E6hS1QpdVJ9JpSLu+qOAF7D4T33qpXIQNknxUfZMwXqDfFocQA6TLB/kgRR+RxnbenxNbPhMOlKzJ+WecDp6uXHCiUOnV1Cud9ulAQuptb/pqUjAX/qjdbLNJT8wF19/xA4E0IC0M0fOCbzHlNvvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=olPjZMRs; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=1pDyJvCEN9xSlK+iJrYL+6Rkp1YGLa9d61bAAMJUQ+A=;
-  b=olPjZMRs7XPhrp6Z6QZpsyLVP8fPV+o3QKUEErqazrMBrtqo8Oa8U6Y7
-   eC+GV9BnMrjaYhpwTDNdcNvR8MxQF6Ev9HJzOl75hyYkGBtJuRfTdXMXQ
-   aRc9MswhjxXXqusKBF3Qp7zlJffyzQ850y43fjaJCookyDY1K9vsfsGao
-   o=;
-X-CSE-ConnectionGUID: muWDRv7oTESUrZL/W2R/HQ==
-X-CSE-MsgGUID: /oDo51BDS2KWjZJ5/u2i9g==
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.19,248,1754949600"; 
-   d="scan'208";a="128925619"
-Received: from unknown (HELO hadrien) ([202.51.247.22])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 08:22:19 +0200
-Date: Thu, 23 Oct 2025 14:22:15 +0800 (+08)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
-    Hans de Goede <hdegoede@redhat.com>
-Subject: drivers/gpio/gpiolib-acpi-core.c:379:8-15: WARNING: Consider using
- %pe to print PTR_ERR() (fwd)
-Message-ID: <c5d376d-6ed6-186c-d0db-6c3e8175cfa@inria.fr>
+	s=arc-20240116; t=1761200639; c=relaxed/simple;
+	bh=oV9RkZkygT9VUa3nhCa0IQVYUYgzkyXV6xlNfjokywg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gw5ghPfu4jP7EZh2Ab/dXiAXYdmAnAkRVWhHOzSKzMSStVhh6RD6VQUWkAuSe13vTl/naxa8apK1sBXbUe8qwOfftC07THBP2F7aZgbs5Bf1gF1D8LiSjWbrK1EFXLCLvumseSlwFS5QPh+zGoyVtHABt+Xw3v75dOjr3x6Efew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U4B7h6Es; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761200637; x=1792736637;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oV9RkZkygT9VUa3nhCa0IQVYUYgzkyXV6xlNfjokywg=;
+  b=U4B7h6EsCTMWaCOGnpNE2gHFD04W4xkHLTN4aQaIS9pYc/UcUetq0FaC
+   TKSbhOAwK0MRgojXc51B6wH5EHaX60uWKgsBKeH8NwNgwFSHqSVCGdhik
+   FzsKzb3iKS/u6kHcEfo4Gev/4SmSq8B6w6hLz13NDPjlJtcycYoB5J1Ta
+   sNMTdE0Do2VbEJ5yyn498C0bp1ZOcHITLwkTJM6K4/yRhjLd3WvccGKpj
+   83kY4qbueWd89Ru/U5JDcORQeAXhrcMGBheqF3Bjzfbh5cN50y/nIRCY6
+   y6SafXi6yD2U8gs7k2Z9bxYoVu/iuJEkRzCe+BWjRF3jKjMCtSaPlP8q/
+   g==;
+X-CSE-ConnectionGUID: jz+Lq5KpQAqhg7AYk241MA==
+X-CSE-MsgGUID: 2tU2yEYYShmK8UzNDQb7HA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80796496"
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="80796496"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 23:23:57 -0700
+X-CSE-ConnectionGUID: QoHd3iDeTRy2L5P4GVdOGA==
+X-CSE-MsgGUID: 8EfisnNfTEGG//5yhkRdxw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="183291968"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa010.jf.intel.com with ESMTP; 22 Oct 2025 23:23:56 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id E561D95; Thu, 23 Oct 2025 08:23:54 +0200 (CEST)
+Date: Thu, 23 Oct 2025 08:23:54 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Cezar Chiru <chiru.cezar.89@gmail.com>
+Cc: andi.shyti@kernel.org, wsa+renesas@sang-engineering.com,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 1/1] i2c: pcf8584: Move 'ret' variable inside for
+ loop, break if ret < 0.
+Message-ID: <aPnJ-inBznSQQPo0@black.igk.intel.com>
+References: <20251022015213.6988-1-chiru.cezar.89@gmail.com>
+ <20251022015213.6988-2-chiru.cezar.89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022015213.6988-2-chiru.cezar.89@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Wed, Oct 22, 2025 at 04:52:13AM +0300, Cezar Chiru wrote:
+> Require spaces around '=' and '<'. Add spaces around binary operators.
+> Enforce error fixing based on checkpatch.pl output on file.
+> Move 'ret' variable inside for loop. Then check if (ret < 0) break. This
+> improves usage of ret variable.
 
+No need to have a cover letter for a single patch.
 
----------- Forwarded message ----------
-Date: Thu, 23 Oct 2025 14:00:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: oe-kbuild@lists.linux.dev
-Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
-Subject: drivers/gpio/gpiolib-acpi-core.c:379:8-15: WARNING: Consider using %pe
-    to print PTR_ERR()
+> Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
+> ---
 
-BCC: lkp@intel.com
-CC: oe-kbuild-all@lists.linux.dev
-CC: linux-kernel@vger.kernel.org
-TO: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: Hans de Goede <hdegoede@redhat.com>
+You may use this comment block space for changelog and additional comments if
+required.
 
-Hi Andy,
+...
 
-First bad commit (maybe != root cause):
+>  		goto out;
+>  	}
+>  
+> -	for (i = 0;ret >= 0 && i < num; i++) {
+> -		pmsg = &msgs[i];
+> +	for (i = 0; i < num; i++) {
+> +		int ret;
+>  
+> +		pmsg = &msgs[i];
+>  		ret = pcf_doAddress(adap, pmsg);
+>  
+>  		/* Send START */
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   43e9ad0c55a369ecc84a4788d06a8a6bfa634f1c
-commit: 92dc572852ddcae687590cb159189004d58e382e gpiolib: acpi: Move quirks to a separate file
-date:   5 months ago
-:::::: branch date: 5 hours ago
-:::::: commit date: 5 months ago
-config: x86_64-randconfig-104-20251023 (https://download.01.org/0day-ci/archive/20251023/202510231350.calxvXIm-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+>  			ret = pcf_sendbytes(i2c_adap, pmsg->buf, pmsg->len,
+>  					    (i + 1 == num));
+>  		}
+> +
+> +		if (ret < 0)
+> +			break;
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Julia Lawall <julia.lawall@inria.fr>
-| Closes: https://lore.kernel.org/r/202510231350.calxvXIm-lkp@intel.com/
+I think goto out; is better as it's kept consistent with other error path branches above.
 
-cocci warnings: (new ones prefixed by >>)
->> drivers/gpio/gpiolib-acpi-core.c:379:8-15: WARNING: Consider using %pe to print PTR_ERR()
-
-vim +379 drivers/gpio/gpiolib-acpi-core.c
-
-2ccb21f5516afe drivers/gpio/gpiolib-acpi.c Hans de Goede      2020-03-02  334
-d4fc46f1739d2e drivers/gpio/gpiolib-acpi.c Hans de Goede      2019-11-14  335  /* Always returns AE_OK so that we keep looping over the resources */
-e59f5e08ece106 drivers/gpio/gpiolib-acpi.c Hans de Goede      2018-11-28  336  static acpi_status acpi_gpiochip_alloc_event(struct acpi_resource *ares,
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  337  					     void *context)
-0d1c28a449c6c2 drivers/gpio/gpiolib-acpi.c Mathias Nyman      2013-01-28  338  {
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  339  	struct acpi_gpio_chip *acpi_gpio = context;
-aa92b6f689acf1 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  340  	struct gpio_chip *chip = acpi_gpio->chip;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  341  	struct acpi_resource_gpio *agpio;
-7fc7acb9a0b0ff drivers/gpio/gpiolib-acpi.c Rafael J. Wysocki  2013-04-09  342  	acpi_handle handle, evt_handle;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  343  	struct acpi_gpio_event *event;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  344  	irq_handler_t handler = NULL;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  345  	struct gpio_desc *desc;
-0c2cae09a765b1 drivers/gpio/gpiolib-acpi.c Andy Shevchenko    2022-03-17  346  	unsigned int pin;
-0c2cae09a765b1 drivers/gpio/gpiolib-acpi.c Andy Shevchenko    2022-03-17  347  	int ret, irq;
-0d1c28a449c6c2 drivers/gpio/gpiolib-acpi.c Mathias Nyman      2013-01-28  348
-25e3ef894eef41 drivers/gpio/gpiolib-acpi.c Andy Shevchenko    2017-05-23  349  	if (!acpi_gpio_get_irq_resource(ares, &agpio))
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  350  		return AE_OK;
-0d1c28a449c6c2 drivers/gpio/gpiolib-acpi.c Mathias Nyman      2013-01-28  351
-58383c78425e4e drivers/gpio/gpiolib-acpi.c Linus Walleij      2015-11-04  352  	handle = ACPI_HANDLE(chip->parent);
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  353  	pin = agpio->pin_table[0];
-0d1c28a449c6c2 drivers/gpio/gpiolib-acpi.c Mathias Nyman      2013-01-28  354
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  355  	if (pin <= 255) {
-213d266ebfb162 drivers/gpio/gpiolib-acpi.c Linus Torvalds     2022-03-19  356  		char ev_name[8];
-213d266ebfb162 drivers/gpio/gpiolib-acpi.c Linus Torvalds     2022-03-19  357  		sprintf(ev_name, "_%c%02X",
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  358  			agpio->triggering == ACPI_EDGE_SENSITIVE ? 'E' : 'L',
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  359  			pin);
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  360  		if (ACPI_SUCCESS(acpi_get_handle(handle, ev_name, &evt_handle)))
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  361  			handler = acpi_gpio_irq_handler;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  362  	}
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  363  	if (!handler) {
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  364  		if (ACPI_SUCCESS(acpi_get_handle(handle, "_EVT", &evt_handle)))
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  365  			handler = acpi_gpio_irq_handler_evt;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  366  	}
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  367  	if (!handler)
-c06632ea054c49 drivers/gpio/gpiolib-acpi.c Hans de Goede      2017-06-23  368  		return AE_OK;
-0d1c28a449c6c2 drivers/gpio/gpiolib-acpi.c Mathias Nyman      2013-01-28  369
-b24fd5bc8e6d6b drivers/gpio/gpiolib-acpi.c Andy Shevchenko    2025-05-13  370  	if (acpi_gpio_in_ignore_list(ACPI_GPIO_IGNORE_INTERRUPT, dev_name(chip->parent), pin)) {
-5fb36a8c87d9e9 drivers/gpio/gpiolib-acpi.c Hans de Goede      2023-09-09  371  		dev_info(chip->parent, "Ignoring interrupt on pin %u\n", pin);
-5fb36a8c87d9e9 drivers/gpio/gpiolib-acpi.c Hans de Goede      2023-09-09  372  		return AE_OK;
-5fb36a8c87d9e9 drivers/gpio/gpiolib-acpi.c Hans de Goede      2023-09-09  373  	}
-5fb36a8c87d9e9 drivers/gpio/gpiolib-acpi.c Hans de Goede      2023-09-09  374
-2e2b496cebefb9 drivers/gpio/gpiolib-acpi.c Andy Shevchenko    2020-11-11  375  	desc = acpi_request_own_gpiod(chip, agpio, 0, "ACPI:Event");
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  376  	if (IS_ERR(desc)) {
-3f86a7e090d1df drivers/gpio/gpiolib-acpi.c Hans de Goede      2019-11-14  377  		dev_err(chip->parent,
-3f86a7e090d1df drivers/gpio/gpiolib-acpi.c Hans de Goede      2019-11-14  378  			"Failed to request GPIO for pin 0x%04X, err %ld\n",
-3f86a7e090d1df drivers/gpio/gpiolib-acpi.c Hans de Goede      2019-11-14 @379  			pin, PTR_ERR(desc));
-d4fc46f1739d2e drivers/gpio/gpiolib-acpi.c Hans de Goede      2019-11-14  380  		return AE_OK;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  381  	}
-0d1c28a449c6c2 drivers/gpio/gpiolib-acpi.c Mathias Nyman      2013-01-28  382
-e3a2e87893125b drivers/gpio/gpiolib-acpi.c Alexandre Courbot  2014-10-23  383  	ret = gpiochip_lock_as_irq(chip, pin);
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  384  	if (ret) {
-3f86a7e090d1df drivers/gpio/gpiolib-acpi.c Hans de Goede      2019-11-14  385  		dev_err(chip->parent,
-3f86a7e090d1df drivers/gpio/gpiolib-acpi.c Hans de Goede      2019-11-14  386  			"Failed to lock GPIO pin 0x%04X as interrupt, err %d\n",
-3f86a7e090d1df drivers/gpio/gpiolib-acpi.c Hans de Goede      2019-11-14  387  			pin, ret);
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  388  		goto fail_free_desc;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  389  	}
-7fc7acb9a0b0ff drivers/gpio/gpiolib-acpi.c Rafael J. Wysocki  2013-04-09  390
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  391  	irq = gpiod_to_irq(desc);
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  392  	if (irq < 0) {
-3f86a7e090d1df drivers/gpio/gpiolib-acpi.c Hans de Goede      2019-11-14  393  		dev_err(chip->parent,
-3f86a7e090d1df drivers/gpio/gpiolib-acpi.c Hans de Goede      2019-11-14  394  			"Failed to translate GPIO pin 0x%04X to IRQ, err %d\n",
-3f86a7e090d1df drivers/gpio/gpiolib-acpi.c Hans de Goede      2019-11-14  395  			pin, irq);
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  396  		goto fail_unlock_irq;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  397  	}
-7fc7acb9a0b0ff drivers/gpio/gpiolib-acpi.c Rafael J. Wysocki  2013-04-09  398
-e59f5e08ece106 drivers/gpio/gpiolib-acpi.c Hans de Goede      2018-11-28  399  	event = kzalloc(sizeof(*event), GFP_KERNEL);
-e59f5e08ece106 drivers/gpio/gpiolib-acpi.c Hans de Goede      2018-11-28  400  	if (!event)
-e59f5e08ece106 drivers/gpio/gpiolib-acpi.c Hans de Goede      2018-11-28  401  		goto fail_unlock_irq;
-e59f5e08ece106 drivers/gpio/gpiolib-acpi.c Hans de Goede      2018-11-28  402
-e59f5e08ece106 drivers/gpio/gpiolib-acpi.c Hans de Goede      2018-11-28  403  	event->irqflags = IRQF_ONESHOT;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  404  	if (agpio->triggering == ACPI_LEVEL_SENSITIVE) {
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  405  		if (agpio->polarity == ACPI_ACTIVE_HIGH)
-e59f5e08ece106 drivers/gpio/gpiolib-acpi.c Hans de Goede      2018-11-28  406  			event->irqflags |= IRQF_TRIGGER_HIGH;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  407  		else
-e59f5e08ece106 drivers/gpio/gpiolib-acpi.c Hans de Goede      2018-11-28  408  			event->irqflags |= IRQF_TRIGGER_LOW;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  409  	} else {
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  410  		switch (agpio->polarity) {
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  411  		case ACPI_ACTIVE_HIGH:
-e59f5e08ece106 drivers/gpio/gpiolib-acpi.c Hans de Goede      2018-11-28  412  			event->irqflags |= IRQF_TRIGGER_RISING;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  413  			break;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  414  		case ACPI_ACTIVE_LOW:
-e59f5e08ece106 drivers/gpio/gpiolib-acpi.c Hans de Goede      2018-11-28  415  			event->irqflags |= IRQF_TRIGGER_FALLING;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  416  			break;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  417  		default:
-e59f5e08ece106 drivers/gpio/gpiolib-acpi.c Hans de Goede      2018-11-28  418  			event->irqflags |= IRQF_TRIGGER_RISING |
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  419  					   IRQF_TRIGGER_FALLING;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  420  			break;
-7fc7acb9a0b0ff drivers/gpio/gpiolib-acpi.c Rafael J. Wysocki  2013-04-09  421  		}
-7fc7acb9a0b0ff drivers/gpio/gpiolib-acpi.c Rafael J. Wysocki  2013-04-09  422  	}
-aa92b6f689acf1 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  423
-4b01a14bac7335 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  424  	event->handle = evt_handle;
-e59f5e08ece106 drivers/gpio/gpiolib-acpi.c Hans de Goede      2018-11-28  425  	event->handler = handler;
-4b01a14bac7335 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  426  	event->irq = irq;
-2ccb21f5516afe drivers/gpio/gpiolib-acpi.c Hans de Goede      2020-03-02  427  	event->irq_is_wake = acpi_gpio_irq_is_wake(chip->parent, agpio);
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  428  	event->pin = pin;
-e46cf32ced90d0 drivers/gpio/gpiolib-acpi.c Alexandre Courbot  2014-08-19  429  	event->desc = desc;
-0d1c28a449c6c2 drivers/gpio/gpiolib-acpi.c Mathias Nyman      2013-01-28  430
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  431  	list_add_tail(&event->node, &acpi_gpio->events);
-ca876c7483b697 drivers/gpio/gpiolib-acpi.c Benjamin Tissoires 2018-07-12  432
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  433  	return AE_OK;
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  434
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  435  fail_unlock_irq:
-e3a2e87893125b drivers/gpio/gpiolib-acpi.c Alexandre Courbot  2014-10-23  436  	gpiochip_unlock_as_irq(chip, pin);
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  437  fail_free_desc:
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  438  	gpiochip_free_own_desc(desc);
-6072b9dcf97870 drivers/gpio/gpiolib-acpi.c Mika Westerberg    2014-03-10  439
-d4fc46f1739d2e drivers/gpio/gpiolib-acpi.c Hans de Goede      2019-11-14  440  	return AE_OK;
-0d1c28a449c6c2 drivers/gpio/gpiolib-acpi.c Mathias Nyman      2013-01-28  441  }
-7fc7acb9a0b0ff drivers/gpio/gpiolib-acpi.c Rafael J. Wysocki  2013-04-09  442
-
-:::::: The code at line 379 was first introduced by commit
-:::::: 3f86a7e090d1dfb974a9dc9d44049f9bff01e6a5 gpiolib: acpi: Print pin number on acpi_gpiochip_alloc_event errors
-
-:::::: TO: Hans de Goede <hdegoede@redhat.com>
-:::::: CC: Linus Walleij <linus.walleij@linaro.org>
+>  	}
+>  
+>  out:
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With Best Regards,
+Andy Shevchenko
+
+
 
