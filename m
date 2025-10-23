@@ -1,133 +1,165 @@
-Return-Path: <linux-kernel+bounces-867654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E76C0335A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:40:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A50CC0335D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87BFE1A66DBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:40:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A7D53A9229
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D2E34D92D;
-	Thu, 23 Oct 2025 19:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3802234D4C1;
+	Thu, 23 Oct 2025 19:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGiw1PLt"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LLGFG5+D"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C20030B515
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151C12BEC55
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761248413; cv=none; b=JyPJioDwrlYIK+CYBl9CNZL5k7NxNObZUjfjUqpxg1oZcpE//wKnh48ea9I+lNH5daOegmprs0MkEoGyZh4GjvPSoI8/I7UrlcusDsr6pQKC0bHQFl/qFI2lTKvFU/+6MrgRNzG3IEWav0dhwz300XfB21ea39JbW3EN1oNhSJA=
+	t=1761248463; cv=none; b=cLu8sFQxPDcjg0W98LXiiqr5oiytOANHRT1t+FS9BT8S3xadxzka64jIsRRp+Q+/554Snq9Ai0CXFsSFWaD6bZCmvKwlY/dw44ZEqcvBlzcavdeM369X01ZX9GF0MBKRDQ3UfnqJw33o4zTM7xTPlingbzo4PxYjAuBNyDrWJjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761248413; c=relaxed/simple;
-	bh=LVSTUEbnkLIAzj9Vx2EvlgOAnsoNEFWZI7Re6Fq/m9U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=agYyP/tdUJZSMIWtDK80ew06EXwYrNAbUYA54Vz9VjXxAjiBDrgmHwa1TjL/SJQdiitx/ILOT1m9KDFgAx5YHHsPT6ulLG0VFaRfFEfdP/oea3tnm/e7QyXjW1nobRMVgVbKYtnLZjjyvWewT7ukSUx+wAYfZnYvFNCXFx7lOMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MGiw1PLt; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-290cd62acc3so14219725ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:40:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761248411; x=1761853211; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LVSTUEbnkLIAzj9Vx2EvlgOAnsoNEFWZI7Re6Fq/m9U=;
-        b=MGiw1PLt2FiiYONIpQvOVqvLQuIVbbJQ6q1IXmfj09Sga9l/64PLynicJmhPrehJM4
-         CKqEIp19MJbpvwFyM00phSeggso+QJuSZ4vs8bBhAKU156viYEnMIJrTxRZX/7oxKAgh
-         fLneuqe4Uvx4M9wOL/Hv1AtDrhYfd1jlCF24KQXAvbnDk6PrRQNjbuNnSLzYxZiHNnXr
-         AjWN+i6qh5riSdqJgqpisV5OwF0h/g9vxZwOsd6CfD3Q7ys4CW/G5BOpu4cB1lJu+zNw
-         6/K3wTQpS6LcPTyZqLCP4oTlLuDGSYSTxRRWVaCRE6pNAbdDCLJmEYmPlYfhE/XlyBaC
-         Mu8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761248411; x=1761853211;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LVSTUEbnkLIAzj9Vx2EvlgOAnsoNEFWZI7Re6Fq/m9U=;
-        b=HIOZHr5oZnpImTBflfi0IrGKzeKdvZ8g2q3wpf0sPYJlB3nDnNa3Ut74JQZelJ95y5
-         3TQsQQ2PCq3uXVZtcOZENpprXtFhd2xzUEumu813LNh6VoWfi3otxPFOMPAcRJxBKPd4
-         lOvB7wsUwd6/FcmbmKl6LcpPb1cwhQiUEaqJwvp9Fmif+cVgPAlWOAtBHNiyFIi6qcze
-         llqeb7sjQm3Dj5YojdH7wCYI4Vxh2uoPmPOsnif/WJ9n2qRxEVqEdV9TCl4vb8Xe0FP9
-         QZpLtlVKOIdSxLOLCW7cCv9QfJtbouuSP7DERIVbizrfOkNcEpai7pEUQP5fGktdMbwu
-         IL7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXonwkE7N8a0qynIshkjqWQty2I06j4sTTnmGEIrWzdGFL8gPDuf+WXVkn8zAmfQKbt90XHR9x9v5ySVNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziAGVjFhR5eQtc0fu2hVgAykfy/ZHmlXfr2xmcZg6S+nSq8MJm
-	hgK9lYApZ6TvVsENOHPCRmpUNrjEW4P9tYvDYRFC3rCqRe3AQ8/oabYQwuornooQFTgZmqulhTD
-	Iiqi3sux0I5MD3TP5NPZRIhZ9dXYpH5I=
-X-Gm-Gg: ASbGncvTqAO3SBzmtlrZtWf9X3h9pakLyU0D0Q0kwRGjpnVXdAvPpY0ClvK+pki7iWq
-	wg2OBfK5QUw2pJBPFiZBQL6/cInnXHoVQ8rZjvmyEF7KJ6W9WdJQl+FS0i5gUyBnUhXLzMlI4da
-	ovLrUue/U2AzGX+jxUSTo35GTUywjMbSUBqkpmc+qvwHaDKRJXsdFX8lJBSDMSPK+N10tnSdQJF
-	XYim3jxNYy5FAm+IyfkyfRxijbnMA/4NljnHWWt9z4yJv2FVR6AU1XhmoI1SafDB9zem/OQ/Wmb
-	DxJK5WjC4E4=
-X-Google-Smtp-Source: AGHT+IEhuZTV8ezLGcrth8HESSqDZMBIJHnHiqqsyIHltjqbCmhOwj0sR/LSVQ/PCaZxbA7uEuZRcIOOcvol27U+RHg=
-X-Received: by 2002:a17:903:1a0e:b0:26a:23c7:68da with SMTP id
- d9443c01a7336-290ca02353emr310880525ad.25.1761248411250; Thu, 23 Oct 2025
- 12:40:11 -0700 (PDT)
+	s=arc-20240116; t=1761248463; c=relaxed/simple;
+	bh=EZvSIuYJ3b/lrMN/a187wOL5XBrJRwc0mlFfLxSRTNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F+kNF3YdfZf6Jpl5I+FOHI8JOOWJOsWqtNTxaVedi0NbvqzZIIQMQL7WsrtB9DFNHKRH9Tyr5pkUnRPfO2QXlAcZTLw7bAY6J3zWmNaZYsAGhzfal1yzk+UgUrkuxleBiuDQYkW+uglBWHAdmCFrVVNT3hu8t1tPNmRPhYaz4sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LLGFG5+D; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761248462; x=1792784462;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=EZvSIuYJ3b/lrMN/a187wOL5XBrJRwc0mlFfLxSRTNs=;
+  b=LLGFG5+DBDCGrLwXszLj+2fvTTGCNJT7CyqaN6pd+zx546C8s9xnddmz
+   dLrmMrB1w5H70PoXl2hHfAowoIfy+I+s61l8RqG4EF8nxMx/CyeePazQX
+   BFrifjm1g+3/zpGadYaID44wSZNINfhuPNVNAcKaw2w6jdN5yJXRU75gQ
+   xX3yqIYF3+PfYY8gCcl2hBTMwb09Xd/nqM2TY30TV/iU8lzoMq86noenH
+   tT0oW9Mqfd2juNirjbT+Pk8G0KBxSg3w7WMpcFro2//hglD927DFkNdNC
+   q5aJU2dBM5k4/bDhNRmfiv3iqaIz4Ji2UU+AeO7r83jH3mwX/VJ1durtP
+   A==;
+X-CSE-ConnectionGUID: z+wGMvgFTp+AfqqKcS8USQ==
+X-CSE-MsgGUID: ggbBA6EBT4uW4u1HhjQuzw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63333781"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63333781"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 12:41:02 -0700
+X-CSE-ConnectionGUID: xhJ4pgrURdGtIG7TipTo9Q==
+X-CSE-MsgGUID: 9Hg2U50JR468NFeVk2g90Q==
+X-ExtLoop1: 1
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.125.108.251]) ([10.125.108.251])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 12:41:00 -0700
+Message-ID: <0bfa4895-727b-407b-90d2-7d54b9bd4910@intel.com>
+Date: Thu, 23 Oct 2025 12:40:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020093941.548058-1-dolinux.peng@gmail.com>
- <20251020093941.548058-3-dolinux.peng@gmail.com> <174642a334760af39a5e7bacdd8b977b392a82c7.camel@gmail.com>
- <CAErzpmusSgOaROhEO25fKenvxQJU1oSPKKzUA4h67ptdQxWM7A@mail.gmail.com>
- <7651ac9cc74e135f04ecfee8660bea0a0d3883ab.camel@gmail.com>
- <CAErzpmtWLLYuFk3npTiOgGOKcEcH1QUGGEHLvPncVT+z261C1A@mail.gmail.com>
- <CAADnVQKU0MnQHxxvnp9WCu_UO4fEtd_D6ckNmOd7pLg90ecF4A@mail.gmail.com>
- <CAEf4Bzajdv3Rd1xAxm_UZWBxPc8M0=VuUkfjJvOFSObOs19GbQ@mail.gmail.com> <CAADnVQJG_tK18oxmjW37cbrxF2zPKPk_dvqXUTnOjUue7J0tLQ@mail.gmail.com>
-In-Reply-To: <CAADnVQJG_tK18oxmjW37cbrxF2zPKPk_dvqXUTnOjUue7J0tLQ@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 23 Oct 2025 12:39:57 -0700
-X-Gm-Features: AS18NWCi5yLjTclZEFhU1VH8SOuBSBCDx6iFebw-WC4t6DXqtoN0O0_X7B7k0LM
-Message-ID: <CAEf4BzYLyi6=Fyz9ziOAwkFOjUPyJmTj4c6g247XBwgwJ8m-qw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/5] btf: sort BTF types by kind and name to enable
- binary search
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Donglin Peng <dolinux.peng@gmail.com>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, 
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] epoll: Use __user_write_access_begin() and
+ unsafe_put_user() in epoll_put_uevent().
+To: Kuniyuki Iwashima <kuniyu@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Alexandre Ghiti <alex@ghiti.fr>, "H. Peter Anvin" <hpa@zytor.com>,
+ Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuni1840@gmail.com>,
+ x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251023000535.2897002-1-kuniyu@google.com>
+ <20251023000535.2897002-3-kuniyu@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20251023000535.2897002-3-kuniyu@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 23, 2025 at 11:37=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Thu, Oct 23, 2025 at 9:28=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> >
-> > Speaking of flags, though. I think adding BTF_F_SORTED flag to
-> > btf_header->flags seems useful, as that would allow libbpf (and user
-> > space apps working with BTF in general) to use more optimal
-> > find_by_name implementation. The only gotcha is that old kernels
-> > enforce this btf_header->flags to be zero, so pahole would need to
-> > know not to emit this when building BTF for old kernels (or, rather,
-> > we'll just teach pahole_flags in kernel build scripts to add this
-> > going forward). This is not very important for kernel, because kernel
-> > has to validate all this anyways, but would allow saving time for user
-> > space.
->
-> Thinking more about it... I don't think it's worth it.
-> It's an operational headache. I'd rather have newer pahole sort it
-> without on/off flags and detection, so that people can upgrade
-> pahole and build older kernels.
-> Also BTF_F_SORTED doesn't spell out the way it's sorted.
-> Things may change and we will need a new flag and so on.
-> I think it's easier to check in the kernel and libbpf whether
-> BTF is sorted the way they want it.
-> The check is simple, fast and done once. Then both (kernel and libbpf) ca=
-n
-> set an internal flag and use different functions to search
-> within a given BTF.
+On 10/22/25 17:04, Kuniyuki Iwashima wrote:
+> --- a/include/linux/eventpoll.h
+> +++ b/include/linux/eventpoll.h
+> @@ -82,11 +82,14 @@ static inline struct epoll_event __user *
+>  epoll_put_uevent(__poll_t revents, __u64 data,
+>  		 struct epoll_event __user *uevent)
+>  {
+> -	if (__put_user(revents, &uevent->events) ||
+> -	    __put_user(data, &uevent->data))
+> -		return NULL;
+> -
+> -	return uevent+1;
+> +	__user_write_access_begin(uevent, sizeof(*uevent));
+> +	unsafe_put_user(revents, &uevent->events, efault);
+> +	unsafe_put_user(data, &uevent->data, efault);
+> +	user_access_end();
+> +	return uevent + 1;
+> +efault:
+> +	user_access_end();
+> +	return NULL;
+>  }
+>  #endif
 
-I guess that's fine. libbpf can do this check lazily on the first
-btf__find_by_name() to avoid unnecessary overhead. Agreed.
+This makes me nervous. The access_ok() check is quite a distance away.
+I'd kinda want to see some performance numbers before doing this. Is
+removing a single access_ok() even measurable?
+
+Also, even if we go do this, shouldn't __user_write_access_begin() be
+called something more like unsafe_user_write_access_begin()?
 
