@@ -1,95 +1,77 @@
-Return-Path: <linux-kernel+bounces-867063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630CAC017CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:41:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1250C017F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78C66541DAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:39:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 211D250900F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69170330B3C;
-	Thu, 23 Oct 2025 13:36:08 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C78315D2B;
+	Thu, 23 Oct 2025 13:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2qEoWid"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799B033030D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E42930B527;
+	Thu, 23 Oct 2025 13:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761226568; cv=none; b=hMfkMD2Ruzg+6jwjuXjh15uVUwxI43L9MhNh5TFtq8C87gEbl3CgjYM+5HM8DDstm1xqaaaLA/86ZTfsWAPqx+vpEwnhlE4Omexv5drEYOuDdT1NumxrlJTl563r3BVy9EZnQU85yBMTKFOwm3goQOu8sYUt/m+Mow6YYGgVvXI=
+	t=1761226687; cv=none; b=PjXVBFmU8f2+U+5RT0FxblSt0GAr4ArvOEmZ9arDbb3slmllJjVdBV9BfIKSRKKfq1prW7ekEci8prmuEjTKBe3pvIG0h2LJpzfC1JKezYOC4jsvDpE8ERcRmo2uiYNvW70apI/KvQ+H4juAxJ8DRY5KvsovGT2iyzGsfYBcHTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761226568; c=relaxed/simple;
-	bh=i+ZDwLqCNRUenRv3NOfF7KxC1qMy/N0EOnft+gGHMyU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cYhkdAgu1Ml1Da+imrSD1n8j+I1oineYsptEhgU76NFgoj5VsUHL28oVQiqY18VjLoZWwNAfgbtDTG3zTP3MljaZkRMwlLPaMGQVINj6QnFyXANukHDdpMwTdicqbuRBD3LDC2lOC3j89uwjw9dAodpJsQJ0n7NhtPM4jbKP1T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-431d777219bso10525095ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:36:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761226565; x=1761831365;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t88iK0z3dm7KTu80deyw2AORP9SnbNPhZ/c9YGsugLY=;
-        b=G/fY6p4UiMgdaIOyDxdazf7r2r82HHImUNgybuRr//kbJglVxWV2frMhY/yHI/7lhy
-         zcgZdi4T0cPCrKuKKy1LdRYVZko3MRwFVFk0rI4DcV/JzwQuK4dDrkIvqCvq9iSgaQas
-         7VOaFJ7BIav2p0uKx4qR2dZxw/S/OD4ru4ZBNJjVnNY90+iMqqpBP5e8gil9+6yNHNiy
-         CD7tJ3pYTcCo7K5lvz081Jd1KguqnRNieopPDQb1IrOgHbMNsp2NaMjoUHttSf959vrQ
-         GfvEkV69JEkyslf9nrfo1n9wIGptyTHgNc3EzkFBSY8CfBmU41w+5BPvT+YEQf1LDOf0
-         Vedw==
-X-Gm-Message-State: AOJu0Yx8ttOppM5AXmRfJs+OxGPTXm/at6/7DWWxP/GRBDeqDv+IX/qf
-	SDM8Y/138IAEx/pwT1ItqN572SHauo+vfHVUNdpQwWnkxgsSOC/nMSG2dPQdkPqIaQaYokEv5E7
-	K2w8KA+h2HAPyC0l4fLISBsH9SHZeMdYDj8MDBhaaiiKmMTt2WrTJWdl0fIg=
-X-Google-Smtp-Source: AGHT+IEgUU/m/HMkciMgLeZV5BV72dXaPCCc/ybUWAFE9drHG1Q9Uig/0UdOYnpTzO7Rhz3XNqt2Ahoc1ilSET3vJ2aX9MXBLdOr
+	s=arc-20240116; t=1761226687; c=relaxed/simple;
+	bh=hJRiIku0v3R2e9HuMOMNdKlo5Q2k1VCqpifdBakfjZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qjnx8IOKmjBrqezsTAGczVhAcZD0aQzjwyA2PanAnUw9sSSWG4hikmVsbI2loS7Wc2CJnfYijqehm71efjb7KAG+Im3WAs5w8eMsntCX7qJKrCNewKPufijzx0Hkx8zarvN4bv/G0KPVeuuzMskIVwAUi/gFFK8I54vhPCVl4fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2qEoWid; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DEBC4CEE7;
+	Thu, 23 Oct 2025 13:38:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761226686;
+	bh=hJRiIku0v3R2e9HuMOMNdKlo5Q2k1VCqpifdBakfjZ8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f2qEoWidFhGQ35FvTPJO1wrglL6XxkIq+/SjZ7BvTsVJl5/z86DUOwzel49ph4u4M
+	 VhJiBvbEO738scaxpn+/66u5FWJl4qANcCFdz0SmoAZP9gpN/p2IdysoJBjrDeT+zP
+	 g6yJeoTzdIf5ku0myNdnG8udToIjh6TdBUx7vz4J71G6Atk+8tlC+hEXkGlzlywItT
+	 ZrMHUyzFYOHAeauP2nuVfJ55hx0xv2mcX3Mk9mcU54rnvukXw8DV/zey9zrbQR0X50
+	 kihNF0Q8wlALF77KVmH1NMEHY9qB+iWurTcPBA+nuuMq1vu7cZTtZks2HWDfiuQfu2
+	 96NDWwVe4/BMA==
+Date: Thu, 23 Oct 2025 06:38:05 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: Daniel Zahka <daniel.zahka@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan
+ <tariqt@nvidia.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Leon Romanovsky <leon@kernel.org>, Mark Bloch
+ <mbloch@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Vlad Dumitrescu
+ <vdumitrescu@nvidia.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org
+Subject: Re: [PATCH net-next] net/mlx5: Implement swp_l4_csum_mode via
+ devlink params
+Message-ID: <20251023063805.5635e50e@kernel.org>
+In-Reply-To: <uqbng3vzz2ybmrrhdcocsfjtfxitck2rs76hcrsk7aiddjssp2@haqcnmzrljws>
+References: <20251022190932.1073898-1-daniel.zahka@gmail.com>
+	<uqbng3vzz2ybmrrhdcocsfjtfxitck2rs76hcrsk7aiddjssp2@haqcnmzrljws>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c0c:b0:430:ae99:e501 with SMTP id
- e9e14a558f8ab-430c527db5fmr319218875ab.16.1761226565556; Thu, 23 Oct 2025
- 06:36:05 -0700 (PDT)
-Date: Thu, 23 Oct 2025 06:36:05 -0700
-In-Reply-To: <675e5ede.050a0220.37aaf.00ed.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fa2f45.a00a0220.9662e.0005.GAE@google.com>
-Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
- 43e9ad0c55a369ecc84a4788d06a8a6bfa634f1c
-From: syzbot <syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Thu, 23 Oct 2025 14:18:20 +0200 Jiri Pirko wrote:
+> >+	DEVLINK_PARAM_DRIVER(MLX5_DEVLINK_PARAM_ID_SWP_L4_CSUM_MODE,  
+> 
+> Why this is driver specific? Isn't this something other drivers might
+> eventually implement as well?
 
-***
-
-Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 43e9ad0c55a369ecc84a4788d06a8a6bfa634f1c
-Author: dmantipov@yandex.ru
-
-diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index fcc89856ab95..5fad0a56cc98 100644
---- a/fs/ocfs2/inode.c
-+++ b/fs/ocfs2/inode.c
-@@ -1503,6 +1503,14 @@ int ocfs2_validate_inode_block(struct super_block *sb,
- 		goto bail;
- 	}
- 
-+	if ((le16_to_cpu(di->i_dyn_features) & OCFS2_INLINE_DATA_FL) &&
-+	    le32_to_cpu(di->i_clusters)) {
-+		rc = ocfs2_error(sb, "Invalid dinode %llu: %u clusters\n",
-+				 (unsigned long long)bh->b_blocknr,
-+				 le32_to_cpu(di->i_clusters));
-+		goto bail;
-+	}
-+
- 	rc = 0;
- 
- bail:
+Seems highly unlikely, TBH.
 
