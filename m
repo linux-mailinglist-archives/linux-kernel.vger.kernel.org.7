@@ -1,157 +1,391 @@
-Return-Path: <linux-kernel+bounces-867591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C729FC030E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:46:11 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892ACC030EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91D394F2153
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:46:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D4E0D35B57C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2500625B663;
-	Thu, 23 Oct 2025 18:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E828F346E50;
+	Thu, 23 Oct 2025 18:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T4My599u";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="F1hzFQB4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VCr+Zb5a";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+qCOOoUV"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="dlA7gAms"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054D835B120
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC25C2701DC
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761245158; cv=none; b=DMNWsod63Mi9nj1e68lnsiAkv0QhNwPPXW/LbHRjqTeNVLZ9EyoYgWid5NTu7p/WlM0RgnU9zSt0xiYzpnqmUepL1meaqO3dlFQtzAUHm5dLqa4c3Eql4HU4ypQKiDgmw2XBHQLmOZ6rNpMJ79+1X0boTzv2eUqznwx0esKdBkg=
+	t=1761245258; cv=none; b=Cotdp0mdOFKMwbajofGipZPYBZbUjAvS5aqQWO/DTmVGW26xIn6ZnvBazah3e0dsF8Ck25hlbkMM075S5khPPGrwOwBdrst3pEaM1nyVOzsVs06NxY5xg/CovzP5YbC4PhS6mFlaLrR2QxXo6w/QYBJxAm0NYQg0jMSo1lHaBMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761245158; c=relaxed/simple;
-	bh=UoSp3aIfb+na87FxUMSykouMs0jHUrOyweI0uRK1xiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MZAQV/w9VIp2Sj/h5ekoWq8TyRqCHKtr+NfF3CC8DeEWSTXb8eTi07qNGuyU1jGr4lO+LDTCXe4JNxQsKEHJ1CKrlXRt0p4TEgC07bYnPqOQOlw56WhdRAbVnT6+mTyOxRkO75/KizmgNk5eUoy0q0XVnjaTRSatfwGZ6VHHTNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T4My599u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=F1hzFQB4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VCr+Zb5a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+qCOOoUV; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0AE031F388;
-	Thu, 23 Oct 2025 18:45:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761245151;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I2/VJEywAU9LBRvL2S4Xz/ZfJnrbrX//+Tmg/U0F1u4=;
-	b=T4My599uidGQ17KIMIpiuMCrLcTjHTKVVWRHiTgtcmvrOPQrtjmTAl9YutNQtffhA1Xcav
-	+KI+7EoZ/sL1CK9flabFtCeEfRBZn5KIbQnW6JfvZni/1J+BKAC8WblU3VEhD74Iug9PDX
-	nePqMTvAFj8qpDSKhinT27FOasQRMK4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761245151;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I2/VJEywAU9LBRvL2S4Xz/ZfJnrbrX//+Tmg/U0F1u4=;
-	b=F1hzFQB4596YPQHJ2G6n0o3XQW3Kf18ov3cO52wyctYcOCnc63ciL9Q+MfEYtxTts1Sz/o
-	F00nsq2y22+gCxCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761245147;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I2/VJEywAU9LBRvL2S4Xz/ZfJnrbrX//+Tmg/U0F1u4=;
-	b=VCr+Zb5aned6VdcQds7Gp8QJ+zU43pxj1DaJQB2N7WC/cn0Ihbv/ODd5Z/sG3MTZ6aEUFV
-	LHd3C2/kpAXLDiefZzHaXXsRW1YFSEsGOtQwvgpiXo9uxnxeGJ84Xs7/8jlqJGGsWZp73Q
-	+ADhja8ThNl3uLnMFDiAcO+4/rtZ1hc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761245147;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I2/VJEywAU9LBRvL2S4Xz/ZfJnrbrX//+Tmg/U0F1u4=;
-	b=+qCOOoUVBZ0e7pWyy+vZTDIbPlhXABGPbWy6Yvw0k1AcwAs1XDcEwq6qhFcgFonaxpsspa
-	43KdR0xKJ8fhANCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D357A13285;
-	Thu, 23 Oct 2025 18:45:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5xVvMtp3+mgdWAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 23 Oct 2025 18:45:46 +0000
-Date: Thu, 23 Oct 2025 20:45:37 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [PATCH 10/10] btrfs: switch to library APIs for checksums
-Message-ID: <20251023184537.GB20913@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20251018043106.375964-1-ebiggers@kernel.org>
- <20251018043106.375964-11-ebiggers@kernel.org>
- <20251022071141.GV13776@twin.jikos.cz>
- <20251022175934.GA1646@quark>
+	s=arc-20240116; t=1761245258; c=relaxed/simple;
+	bh=giR1Ap2iAT4cSqjTbCqfpt2EFuxHIrCAvla6fe0mugo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fTLBaBf2ssVuMwmQkKyAWbhKj7RBthRAT9/oPw2H9PJ29evwGMogtsCm1fIMfsqlN1q4Oem13FTd+XfAdY7QwpbcljqDGNgsVysJwQkUsnhLelCmvqAzkx/uEnIP/ugnhle8TKQjKGRI1bgqo5/aUl9UkuPz0N/byh436u2dSRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=dlA7gAms; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-77f67ba775aso1466244b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:47:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=wbinvd.org; s=wbinvd; t=1761245256; x=1761850056; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gDlTS66uQs02ZrCh1NQbJm6uxfOa1C37VmD1HX7Ng0A=;
+        b=dlA7gAmsoJ1vVPXVmzHBVvcFxF3+h+Ywqi42UhDl/llWfLzpjfiGpB+FHBH9ijcjWd
+         hmNVwAL/8A36jWJTIzvEYON/db2d1gR1HLA6k6Qlj3ribNS8g9u0H9cuUXM4oCAM54Kp
+         HcUbKqktvIUyhxMsLZ6723z9E0Ap+F3Fx+Va71BvNgmhU8ToURdfwD4UWOnIgWoHeorL
+         S6V9Eyltkk6ojvGJocgxzTxQ56mzcs1kOThCJheQJdyyWxgNKC7nLFGPW0bLlFQhnjOT
+         acuCMJ4o2tb1+lRWpnfstL9TzW+PWEDi0Ut77NblSf+5mx/Gr9KnIUjeMmgqAtEoOWbv
+         6mew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761245256; x=1761850056;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gDlTS66uQs02ZrCh1NQbJm6uxfOa1C37VmD1HX7Ng0A=;
+        b=BUzJ/pWNB42aL1lGfH/AQZEfWOXtv2xnndCrRnRmFU8ilu/qJKCoUuhEfB0PGV6Agi
+         mycXttC0BhcHRnE/gu7BrzHi8B9mSHzF6S4+03gBbwEiOGvfcHuxKdyb1e0xofHhJk2M
+         YCjae1RD3ToO8jEl+uUZe9wY7jnjpccoHZdxEzxM3Wy4PfIPh7zXnT29jPhXO9jQUTzz
+         Ons0RqNdY6ZSsGx9azcPA1st/xbTfF0DvEmra00Vv6oATLCRb9opioCB/zN9HJlhQmUG
+         VLBvZKbBPuhGwIkXHDIB08ClhRBS1GGG7mDJCPExz20tFkuRnjxgzwGmGp8q6KO6QPoR
+         RNQQ==
+X-Gm-Message-State: AOJu0Yy/z76dVUNE3+dzOBV2r1LSFhgb6wv+ZzHRsyWJM+PsDZlOFPdt
+	n7PB6rWFkl9Tfh0fr0yyiIQEJAD1BzwvBSOtRn50ezoEdcP4eAsApu169UICNAk909uqA8SUjYT
+	d7fdy
+X-Gm-Gg: ASbGncu43F82dzmb6YC7U1VsLoNxV+o3fMtv+X8rgbBSvV9AvXtW0ih6N5pZTmnbsh4
+	djXspfIed5K5Snmp1xT+scO0TNoDrY7NqP4trXTC8AGn+HEPjR3ZartjVJRr8Y/tOznuhfJ3JOQ
+	eIyJw7WC9191DzjEcuMmkEqxEc2rrc6HCoONCwe3CcYXc5jsLJL/bp+pUtYBwzYXLkZKRi5xXJX
+	TUQE8u7koJQjUasGsl8VaD52CFW5NUhO1ySMm3Rk6wFwJGsD+AXqXpqiskaLJ++lJ/a/FdJZemn
+	2D3oROSFp0RRkvhy+aDwYtGTrT4ro7wTISRTxfbR3V70wXYVMXMvgSWzNe2XQ3F6Djz+aARwFMr
+	K2gZG8F/TiS205tdx19hCm3C2lb+X4Rjw4paN7EMlsRyN1VmmSredwzDIPs88wURurkbQxo5O++
+	S1og==
+X-Google-Smtp-Source: AGHT+IF8HQIHdGLUBu61JKxd11Dvm79npjsLYZBdWDhc4aMFaVHyj557vf//cPT1d4ZxPBolSup6cw==
+X-Received: by 2002:a05:6a21:9986:b0:320:3da8:34d7 with SMTP id adf61e73a8af0-334a85661b7mr32411910637.22.1761245256047;
+        Thu, 23 Oct 2025 11:47:36 -0700 (PDT)
+Received: from mozart.vkv.me ([192.184.167.117])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4bb9259sm2793961a12.2.2025.10.23.11.47.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 11:47:35 -0700 (PDT)
+From: Calvin Owens <calvin@wbinvd.org>
+To: linux-kernel@vger.kernel.org
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+	Neeraj Kale <neeraj.sanjaykale@nxp.com>,
+	Yang Li <yang.li@amlogic.com>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	linux-bluetooth@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	Francesco Valla <francesco@valla.it>
+Subject: [PATCH] Bluetooth: fix corruption in h4_recv_buf() after cleanup
+Date: Thu, 23 Oct 2025 11:47:19 -0700
+Message-ID: <ab6fa50055fa0c39e5501c123c36e662eb48ae61.1761245114.git.calvin@wbinvd.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022175934.GA1646@quark>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:replyto];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 10:59:34AM -0700, Eric Biggers wrote:
-> > Thanks, this simplifies quite a few things. I'd like to take it via the
-> > btrfs tree as there may be the hash additions (XXH3, BLAKE3) but
-> > currently I'm not sure if it won't make things more complicated. I
-> > haven't started the kernel part yet so I can use this patchset for
-> > development and rebase once it's merged. 
-> 
-> Great.  I'm planning to take patches 1-9 through libcrypto-next for
-> 6.19.  You can then take patch 10 through the btrfs tree for 6.20.  Does
-> that sound good?
+Thanks to Francesco Valla's investigation, the reason for the duplicate
+code I recently cleaned up is finally clear: a different structure is
+stored in drvdata for the drivers which used that duplicate function,
+but h4_recv_buf() assumes drvdata is always an hci_uart structure.
 
-Yes, the 6.20 schedule works better for me.
+Consequently, alignment and padding are now randomly corrupted for
+btmtkuart, btnxpuart, and bpa10x in h4_recv_buf(), causing erratic
+breakage.
 
-> We can work out the XXH3 and BLAKE3 support later.  If
-> you'd like to add another checksum algorithm, I'd suggest picking just
-> one.  btrfs already supports an awful lot of choices for the checksum.
-> But we can discuss that later.
+Fix this by making the hci_uart structure the explicit argument to
+h4_recv_buf(). Every caller already has a reference to hci_uart, and
+already obtains the hci_hdev reference through it, so this actually
+eliminates a redundant pointer indirection for all existing callers.
 
-Yes, I'v deleted long answer to that, it would be better to discuss that
-separately once the xxh3 and blake3 get posted.
+Fixes: 93f06f8f0daf ("Bluetooth: remove duplicate h4_recv_buf() in header")
+Reported-by: Francesco Valla <francesco@valla.it>
+Closes: https://lore.kernel.org/lkml/6837167.ZASKD2KPVS@fedora.fritz.box/
+Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+---
+ drivers/bluetooth/bpa10x.c    | 4 +++-
+ drivers/bluetooth/btmtkuart.c | 4 +++-
+ drivers/bluetooth/btnxpuart.c | 4 +++-
+ drivers/bluetooth/hci_ag6xx.c | 2 +-
+ drivers/bluetooth/hci_aml.c   | 2 +-
+ drivers/bluetooth/hci_ath.c   | 2 +-
+ drivers/bluetooth/hci_bcm.c   | 2 +-
+ drivers/bluetooth/hci_h4.c    | 6 +++---
+ drivers/bluetooth/hci_intel.c | 2 +-
+ drivers/bluetooth/hci_ll.c    | 2 +-
+ drivers/bluetooth/hci_mrvl.c  | 6 +++---
+ drivers/bluetooth/hci_nokia.c | 4 ++--
+ drivers/bluetooth/hci_qca.c   | 2 +-
+ drivers/bluetooth/hci_uart.h  | 2 +-
+ 14 files changed, 25 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/bluetooth/bpa10x.c b/drivers/bluetooth/bpa10x.c
+index b7ba667a3d09..e305d04aac9d 100644
+--- a/drivers/bluetooth/bpa10x.c
++++ b/drivers/bluetooth/bpa10x.c
+@@ -41,6 +41,7 @@ struct bpa10x_data {
+ 	struct usb_anchor rx_anchor;
+ 
+ 	struct sk_buff *rx_skb[2];
++	struct hci_uart hu;
+ };
+ 
+ static void bpa10x_tx_complete(struct urb *urb)
+@@ -96,7 +97,7 @@ static void bpa10x_rx_complete(struct urb *urb)
+ 	if (urb->status == 0) {
+ 		bool idx = usb_pipebulk(urb->pipe);
+ 
+-		data->rx_skb[idx] = h4_recv_buf(hdev, data->rx_skb[idx],
++		data->rx_skb[idx] = h4_recv_buf(&data->hu, data->rx_skb[idx],
+ 						urb->transfer_buffer,
+ 						urb->actual_length,
+ 						bpa10x_recv_pkts,
+@@ -388,6 +389,7 @@ static int bpa10x_probe(struct usb_interface *intf,
+ 	hci_set_drvdata(hdev, data);
+ 
+ 	data->hdev = hdev;
++	data->hu.hdev = hdev;
+ 
+ 	SET_HCIDEV_DEV(hdev, &intf->dev);
+ 
+diff --git a/drivers/bluetooth/btmtkuart.c b/drivers/bluetooth/btmtkuart.c
+index d9b90ea2ad38..27aa48ff3ac2 100644
+--- a/drivers/bluetooth/btmtkuart.c
++++ b/drivers/bluetooth/btmtkuart.c
+@@ -79,6 +79,7 @@ struct btmtkuart_dev {
+ 	u16	stp_dlen;
+ 
+ 	const struct btmtkuart_data *data;
++	struct hci_uart hu;
+ };
+ 
+ #define btmtkuart_is_standalone(bdev)	\
+@@ -368,7 +369,7 @@ static void btmtkuart_recv(struct hci_dev *hdev, const u8 *data, size_t count)
+ 		sz_left -= adv;
+ 		p_left += adv;
+ 
+-		bdev->rx_skb = h4_recv_buf(bdev->hdev, bdev->rx_skb, p_h4,
++		bdev->rx_skb = h4_recv_buf(&bdev->hu, bdev->rx_skb, p_h4,
+ 					   sz_h4, mtk_recv_pkts,
+ 					   ARRAY_SIZE(mtk_recv_pkts));
+ 		if (IS_ERR(bdev->rx_skb)) {
+@@ -858,6 +859,7 @@ static int btmtkuart_probe(struct serdev_device *serdev)
+ 	}
+ 
+ 	bdev->hdev = hdev;
++	bdev->hu.hdev = hdev;
+ 
+ 	hdev->bus = HCI_UART;
+ 	hci_set_drvdata(hdev, bdev);
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index d5153fed0518..3b1e9224e965 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -212,6 +212,7 @@ struct btnxpuart_dev {
+ 	struct ps_data psdata;
+ 	struct btnxpuart_data *nxp_data;
+ 	struct reset_control *pdn;
++	struct hci_uart hu;
+ };
+ 
+ #define NXP_V1_FW_REQ_PKT	0xa5
+@@ -1756,7 +1757,7 @@ static size_t btnxpuart_receive_buf(struct serdev_device *serdev,
+ 
+ 	ps_start_timer(nxpdev);
+ 
+-	nxpdev->rx_skb = h4_recv_buf(nxpdev->hdev, nxpdev->rx_skb, data, count,
++	nxpdev->rx_skb = h4_recv_buf(&nxpdev->hu, nxpdev->rx_skb, data, count,
+ 				     nxp_recv_pkts, ARRAY_SIZE(nxp_recv_pkts));
+ 	if (IS_ERR(nxpdev->rx_skb)) {
+ 		int err = PTR_ERR(nxpdev->rx_skb);
+@@ -1875,6 +1876,7 @@ static int nxp_serdev_probe(struct serdev_device *serdev)
+ 	reset_control_deassert(nxpdev->pdn);
+ 
+ 	nxpdev->hdev = hdev;
++	nxpdev->hu.hdev = hdev;
+ 
+ 	hdev->bus = HCI_UART;
+ 	hci_set_drvdata(hdev, nxpdev);
+diff --git a/drivers/bluetooth/hci_ag6xx.c b/drivers/bluetooth/hci_ag6xx.c
+index 2d40302409ff..94588676510f 100644
+--- a/drivers/bluetooth/hci_ag6xx.c
++++ b/drivers/bluetooth/hci_ag6xx.c
+@@ -105,7 +105,7 @@ static int ag6xx_recv(struct hci_uart *hu, const void *data, int count)
+ 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
+ 		return -EUNATCH;
+ 
+-	ag6xx->rx_skb = h4_recv_buf(hu->hdev, ag6xx->rx_skb, data, count,
++	ag6xx->rx_skb = h4_recv_buf(hu, ag6xx->rx_skb, data, count,
+ 				    ag6xx_recv_pkts,
+ 				    ARRAY_SIZE(ag6xx_recv_pkts));
+ 	if (IS_ERR(ag6xx->rx_skb)) {
+diff --git a/drivers/bluetooth/hci_aml.c b/drivers/bluetooth/hci_aml.c
+index 707e90f80130..b1f32c5a8a3f 100644
+--- a/drivers/bluetooth/hci_aml.c
++++ b/drivers/bluetooth/hci_aml.c
+@@ -650,7 +650,7 @@ static int aml_recv(struct hci_uart *hu, const void *data, int count)
+ 	struct aml_data *aml_data = hu->priv;
+ 	int err;
+ 
+-	aml_data->rx_skb = h4_recv_buf(hu->hdev, aml_data->rx_skb, data, count,
++	aml_data->rx_skb = h4_recv_buf(hu, aml_data->rx_skb, data, count,
+ 				       aml_recv_pkts,
+ 				       ARRAY_SIZE(aml_recv_pkts));
+ 	if (IS_ERR(aml_data->rx_skb)) {
+diff --git a/drivers/bluetooth/hci_ath.c b/drivers/bluetooth/hci_ath.c
+index dbfe34664633..8d2b5e7f0d6a 100644
+--- a/drivers/bluetooth/hci_ath.c
++++ b/drivers/bluetooth/hci_ath.c
+@@ -191,7 +191,7 @@ static int ath_recv(struct hci_uart *hu, const void *data, int count)
+ {
+ 	struct ath_struct *ath = hu->priv;
+ 
+-	ath->rx_skb = h4_recv_buf(hu->hdev, ath->rx_skb, data, count,
++	ath->rx_skb = h4_recv_buf(hu, ath->rx_skb, data, count,
+ 				  ath_recv_pkts, ARRAY_SIZE(ath_recv_pkts));
+ 	if (IS_ERR(ath->rx_skb)) {
+ 		int err = PTR_ERR(ath->rx_skb);
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index f96617b85d87..fff845ed44e3 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -698,7 +698,7 @@ static int bcm_recv(struct hci_uart *hu, const void *data, int count)
+ 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
+ 		return -EUNATCH;
+ 
+-	bcm->rx_skb = h4_recv_buf(hu->hdev, bcm->rx_skb, data, count,
++	bcm->rx_skb = h4_recv_buf(hu, bcm->rx_skb, data, count,
+ 				  bcm_recv_pkts, ARRAY_SIZE(bcm_recv_pkts));
+ 	if (IS_ERR(bcm->rx_skb)) {
+ 		int err = PTR_ERR(bcm->rx_skb);
+diff --git a/drivers/bluetooth/hci_h4.c b/drivers/bluetooth/hci_h4.c
+index 9070e31a68bf..ec017df8572c 100644
+--- a/drivers/bluetooth/hci_h4.c
++++ b/drivers/bluetooth/hci_h4.c
+@@ -112,7 +112,7 @@ static int h4_recv(struct hci_uart *hu, const void *data, int count)
+ 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
+ 		return -EUNATCH;
+ 
+-	h4->rx_skb = h4_recv_buf(hu->hdev, h4->rx_skb, data, count,
++	h4->rx_skb = h4_recv_buf(hu, h4->rx_skb, data, count,
+ 				 h4_recv_pkts, ARRAY_SIZE(h4_recv_pkts));
+ 	if (IS_ERR(h4->rx_skb)) {
+ 		int err = PTR_ERR(h4->rx_skb);
+@@ -151,12 +151,12 @@ int __exit h4_deinit(void)
+ 	return hci_uart_unregister_proto(&h4p);
+ }
+ 
+-struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
++struct sk_buff *h4_recv_buf(struct hci_uart *hu, struct sk_buff *skb,
+ 			    const unsigned char *buffer, int count,
+ 			    const struct h4_recv_pkt *pkts, int pkts_count)
+ {
+-	struct hci_uart *hu = hci_get_drvdata(hdev);
+ 	u8 alignment = hu->alignment ? hu->alignment : 1;
++	struct hci_dev *hdev = hu->hdev;
+ 
+ 	/* Check for error from previous call */
+ 	if (IS_ERR(skb))
+diff --git a/drivers/bluetooth/hci_intel.c b/drivers/bluetooth/hci_intel.c
+index 9b353c3d6442..1d6e09508f1f 100644
+--- a/drivers/bluetooth/hci_intel.c
++++ b/drivers/bluetooth/hci_intel.c
+@@ -972,7 +972,7 @@ static int intel_recv(struct hci_uart *hu, const void *data, int count)
+ 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
+ 		return -EUNATCH;
+ 
+-	intel->rx_skb = h4_recv_buf(hu->hdev, intel->rx_skb, data, count,
++	intel->rx_skb = h4_recv_buf(hu, intel->rx_skb, data, count,
+ 				    intel_recv_pkts,
+ 				    ARRAY_SIZE(intel_recv_pkts));
+ 	if (IS_ERR(intel->rx_skb)) {
+diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
+index 7044c86325ce..6f4e25917b86 100644
+--- a/drivers/bluetooth/hci_ll.c
++++ b/drivers/bluetooth/hci_ll.c
+@@ -429,7 +429,7 @@ static int ll_recv(struct hci_uart *hu, const void *data, int count)
+ 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
+ 		return -EUNATCH;
+ 
+-	ll->rx_skb = h4_recv_buf(hu->hdev, ll->rx_skb, data, count,
++	ll->rx_skb = h4_recv_buf(hu, ll->rx_skb, data, count,
+ 				 ll_recv_pkts, ARRAY_SIZE(ll_recv_pkts));
+ 	if (IS_ERR(ll->rx_skb)) {
+ 		int err = PTR_ERR(ll->rx_skb);
+diff --git a/drivers/bluetooth/hci_mrvl.c b/drivers/bluetooth/hci_mrvl.c
+index e08222395772..8767522ec4c6 100644
+--- a/drivers/bluetooth/hci_mrvl.c
++++ b/drivers/bluetooth/hci_mrvl.c
+@@ -264,9 +264,9 @@ static int mrvl_recv(struct hci_uart *hu, const void *data, int count)
+ 				!test_bit(STATE_FW_LOADED, &mrvl->flags))
+ 		return count;
+ 
+-	mrvl->rx_skb = h4_recv_buf(hu->hdev, mrvl->rx_skb, data, count,
+-				    mrvl_recv_pkts,
+-				    ARRAY_SIZE(mrvl_recv_pkts));
++	mrvl->rx_skb = h4_recv_buf(hu, mrvl->rx_skb, data, count,
++				   mrvl_recv_pkts,
++				   ARRAY_SIZE(mrvl_recv_pkts));
+ 	if (IS_ERR(mrvl->rx_skb)) {
+ 		int err = PTR_ERR(mrvl->rx_skb);
+ 		bt_dev_err(hu->hdev, "Frame reassembly failed (%d)", err);
+diff --git a/drivers/bluetooth/hci_nokia.c b/drivers/bluetooth/hci_nokia.c
+index cd7575c20f65..1e65b541f8ad 100644
+--- a/drivers/bluetooth/hci_nokia.c
++++ b/drivers/bluetooth/hci_nokia.c
+@@ -624,8 +624,8 @@ static int nokia_recv(struct hci_uart *hu, const void *data, int count)
+ 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
+ 		return -EUNATCH;
+ 
+-	btdev->rx_skb = h4_recv_buf(hu->hdev, btdev->rx_skb, data, count,
+-				  nokia_recv_pkts, ARRAY_SIZE(nokia_recv_pkts));
++	btdev->rx_skb = h4_recv_buf(hu, btdev->rx_skb, data, count,
++				    nokia_recv_pkts, ARRAY_SIZE(nokia_recv_pkts));
+ 	if (IS_ERR(btdev->rx_skb)) {
+ 		err = PTR_ERR(btdev->rx_skb);
+ 		dev_err(dev, "Frame reassembly failed (%d)", err);
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 4cff4d9be313..888176b0faa9 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -1277,7 +1277,7 @@ static int qca_recv(struct hci_uart *hu, const void *data, int count)
+ 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
+ 		return -EUNATCH;
+ 
+-	qca->rx_skb = h4_recv_buf(hu->hdev, qca->rx_skb, data, count,
++	qca->rx_skb = h4_recv_buf(hu, qca->rx_skb, data, count,
+ 				  qca_recv_pkts, ARRAY_SIZE(qca_recv_pkts));
+ 	if (IS_ERR(qca->rx_skb)) {
+ 		int err = PTR_ERR(qca->rx_skb);
+diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
+index cbbe79b241ce..48ac7ca9334e 100644
+--- a/drivers/bluetooth/hci_uart.h
++++ b/drivers/bluetooth/hci_uart.h
+@@ -162,7 +162,7 @@ struct h4_recv_pkt {
+ int h4_init(void);
+ int h4_deinit(void);
+ 
+-struct sk_buff *h4_recv_buf(struct hci_dev *hdev, struct sk_buff *skb,
++struct sk_buff *h4_recv_buf(struct hci_uart *hu, struct sk_buff *skb,
+ 			    const unsigned char *buffer, int count,
+ 			    const struct h4_recv_pkt *pkts, int pkts_count);
+ #endif
+-- 
+2.47.3
+
 
