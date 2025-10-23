@@ -1,112 +1,200 @@
-Return-Path: <linux-kernel+bounces-867485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F165C02C33
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:39:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761A0C02C14
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 364A21AA556D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:39:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EA263ADA76
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C281334B43E;
-	Thu, 23 Oct 2025 17:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471BF34A78F;
+	Thu, 23 Oct 2025 17:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WQvTCQ2p"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbjnHl2s"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DC534B406
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 17:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56E234A77A
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 17:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761241094; cv=none; b=F2iB+AsrKBZKO51T1LOs0mSwEUhfxORtXY2W4O/xnTAEvyNUamG5K5OTFEIxQOAkGRN1r8n95Zt4dFBiECpG5BhMOpTR7k07un6UCKuCB7woFz+qhx6UC2iPfRaf/s4TylLdXYX7HDUC038oT0d1j180xUo+vtmCXRI8E8loSYg=
+	t=1761241087; cv=none; b=OltPG4YDh2Zrr+RXIYIsUEiRP/lQvnU3hcT0xis0ArVBBMx1uj8UgyFGbDx/dYFjgSFiKPSbg+2wxO1XipPATBSp8Mkth0PcW2VWfg4T8fEq9674q2qHIah8pm7mLU1oI+0jxsbPD8wWtB5jeayIMaXttg8yOISMFJkWP2+Weeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761241094; c=relaxed/simple;
-	bh=ywuqBEwRpRScnW+bb5t/i7Wkw4UY4DDO5j+kmL9KXEA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bdusQRkgcKytzY6374jsM1U8ayQqgu4l3nsWW2WPuhokvi7PnyHjqBntPmZ3sfO+Hz5T3RFr38YNHm5WatQajhnFaKHrp/Hvq1TQdxJUg9KBpR9CfjvotD1LJLH9C2sTrNKCxB0Sq41vHHzO7ia8ZAKhi6J52Jxdw4ufVHhqtqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WQvTCQ2p; arc=none smtp.client-ip=209.85.214.173
+	s=arc-20240116; t=1761241087; c=relaxed/simple;
+	bh=BNNNL0U4CXHmVf8J+8U3usUvmw4+zKRg8nKhDhzE3UQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i+lDjxt+xZTnNduzLGpuVESAUExecltObjXmm90PBIa9Yw9UFWggYsfGXAB6ZXZQYEnxYxiM5WrUsTuxh+XT851dDcdS4YNKBnOPCuT4c3U43IK3C76jMELYPC2skc3S1dFKVttzrFlUZd74ZOzuBWCB1I2QRT7BPs/xRogQylg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CbjnHl2s; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-26816246a0aso1428735ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:38:12 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3ece0e4c5faso993898f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:38:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761241092; x=1761845892; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ywuqBEwRpRScnW+bb5t/i7Wkw4UY4DDO5j+kmL9KXEA=;
-        b=WQvTCQ2poQ0X9GhbZuZkC9Z4n1R0iEJDBtYFiyVZ3meO8N9uKX1HVXbvcP+9/b0DxG
-         6iVcPY/brnKMN2r+VNHegV0SY4w/c6ERr5yDJq5z+SqusZUrRo/tJHIIHDADWh31qVxv
-         BaezDXoL7fp30b8l+GXtAzWTsh7vo1rzve9hxJlJX+75aCa3w+8N6aBdQMg11AzaNurQ
-         Ouk8ClgLzowIVgGb0ENVkbExGBkmKndvmmOBVhb0W75Haavx/RGKlx3b1ZAB9jxlXMoE
-         d/70SFMOrYugIjnaWAsHqMQO5hlAF+TWX4CkFofAPO6rujT3LcUFI2vwJmMSK3Q7xMwM
-         lmxw==
+        d=gmail.com; s=20230601; t=1761241084; x=1761845884; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E5XlDFAkiYVtnBxHoKUh/W6R9tGtiXbQgReXGUVhCqY=;
+        b=CbjnHl2s8AoIkeaLfyYnsJ+UFJnh94VbdeDH3zfz877zvIQ8fqhgb8QiZwkY3IAjSA
+         Xq6G4shzoJqfjja3dwRkmPyb67bixeF15bEUv1ip7nay2BiLjqbY9w8v5dEZf9c8XHTO
+         RpF4iTwzZpd3IaJZc7w7UkqzP1c0ch0f3bfYheOrmiAS7lOWO54XYLc6KivsOS5hVOG7
+         QLUH/58EibGbTZihsJZRz7gPS2EETAS1U2+vSa9LmS8Am6r2gyJnJ9wrtPTZXG5dqOmf
+         LJZcud8tkALkiLHXH/xx4AkdR2fYAd1TF7RPpL2zuJB6T+rrwK1QOhx6up0uOnEq2o4X
+         4u0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761241092; x=1761845892;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ywuqBEwRpRScnW+bb5t/i7Wkw4UY4DDO5j+kmL9KXEA=;
-        b=UhbcXifxRV9GEAM+hICp52pzx1+3Y0CIDc02kVQQVfvU41PW/b47uA4lg3rZLTAhoB
-         RMt8IL8PSqo5vq15ZFUf4/0rmJI70KAmk6vqokUdQ9IU2ksFEXyXPrKAgEmN7hvhRMS6
-         AIPlymKAyXB7PsPYg/K3WwGOiLQQRItkJH5Fy7SztFtnyTR68uZgVvNNqJo6vM5qSYwM
-         neHgH7HH1S9FnTpyfgYG+OiA7aRE3c2mYKa3glJ6W92txlTB9kMKpngTAw2G09LJBCJj
-         bZz0PQHbwVwaEsGIhm4rDz2u1Xs9KRk2A4Qz5E6lHKoPs4eibI/Fa059HxwQXtA15bTN
-         cWGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmnJfYN+VjQoLAXyLJlfT7eMiihJ7C7z7t3Z71IzkpbqLFV3wOteywPJdAqtMuwT+G/U5MjdNOVE58WRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfxeiPEpqsaA5XlFEAGPxqoMrytz1csVEFw8LT/sBg0HyKQ9ao
-	H1oL4QwyYwfQTAcB3tHDlpXL/kHUNHxPCruYAQi/IWS2FT1nGBTPrrc8
-X-Gm-Gg: ASbGncshXCtwBMBSSwvGp38m/JccrllFMO5aGdDGEaNDJYGG+oYH8Vbe5I0UgBjMxrM
-	Dibtyev3dFpv1mtHuwf6oEl+GKMq7QlPaeW1vAiq2yfN1pxCz72P+uxHMVrkqbmkvhdWdF6tPhK
-	47Z50InkEaGFWZ2zq809ic8A7bsfUU0WIWu3A9sx1+f3OLT6utRRMKe4eInvEZrr9+ssmECgeoh
-	x6Afk9bmRi3Y3QYR3+qgoi9xmrQ5HDDVdnGtuRbJQuVfF4tpspaj1crq/jum+fDSz4Q40/UXXoF
-	nAt+HqBdW/jYJE8T0/iDQ1Xv8qEBzCTp2tCFoB13b+gWhe/823Ba0TQHWiajGCu5Xjav+ClvYLF
-	nfUiWTR1FI7EQumH0kAgzghtN6HYvPSEB9dYQQZij1rUIPneTbpyfsozEugGE6YO3JNyUutKpHm
-	KX6w7jQLmy72SrZv8d3+4LFeDGfxLq7Y5YjpDuk1rINAQL8rQ8iYn3Wd0aGYBtQXg=
-X-Google-Smtp-Source: AGHT+IHS0h+JRFSFpKN3ABn8gJENaNAJSEiO+0aN8t2XO48O5XiQnQC/G+gPhMwXVqJDR85nhMuBag==
-X-Received: by 2002:a17:903:2a8d:b0:27e:eee6:6df2 with SMTP id d9443c01a7336-292d3fb7f47mr76907185ad.7.1761241091900;
-        Thu, 23 Oct 2025 10:38:11 -0700 (PDT)
-Received: from ranganath.. ([2401:4900:c919:de72:5515:28c0:ad28:8093])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946ddea29csm29417515ad.30.2025.10.23.10.38.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 10:38:11 -0700 (PDT)
-From: Ranganath V N <vnranganath.20@gmail.com>
-To: lucien.xin@gmail.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	horms@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sctp@vger.kernel.org,
-	marcelo.leitner@gmail.com,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	syzbot+d101e12bccd4095460e7@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	vnranganath.20@gmail.com
-Subject: Re: [PATCH] net: sctp: fix KMSAN uninit-value in sctp_inq_pop
-Date: Thu, 23 Oct 2025 23:08:01 +0530
-Message-ID: <20251023173801.11428-1-vnranganath.20@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CADvbK_c2zqQ76kzPmTovWqpRdN2ad7duHsCs9fW9oVNCLdd-Xw@mail.gmail.com>
-References: <CADvbK_c2zqQ76kzPmTovWqpRdN2ad7duHsCs9fW9oVNCLdd-Xw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1761241084; x=1761845884;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E5XlDFAkiYVtnBxHoKUh/W6R9tGtiXbQgReXGUVhCqY=;
+        b=DnCjgdTmGKtUHJL/gyHDwjRJx5tYwjMmJ/LtB7UVHyfASyDHOQTXn6j7k3dsNBLaOo
+         zPU5+C1wf4OIys4I5vbT1hYRgECUg6/klsRibRARS25r+pQsnKFi/X9LwY06ifQGWTPz
+         6VjV2Y0U/XkW3pC9o8c3Sg4+2zyVzIa6D87U4rheNMMUfpI6DZD2RlrgHlbZIPqwiyc4
+         3ffWSrhn+1PvPPuvO472vcI4Ln6ZAHti9ZJsfWmf5KKyVzpS2xNxA3UGsy1BGQjZc745
+         P6sIglT+3QqZJZs/GD1HxYk1NF3Ku+7LCvCVnn99Ih4XU9zY+7RaeKzcnhJwypCYFrjK
+         wN+g==
+X-Gm-Message-State: AOJu0YyRYiIDteGytZ67ms7Jt+whe1jlyQKzknb0eN4e3/GF1/GXHIcT
+	7h6kVmtsnb2y7mzdPAOHiyQFIpjlwc+o2yJuVjErrtXifD5jBjIC/K4M
+X-Gm-Gg: ASbGncuy+nXm7Lo5guYf4Tre7myEiSV+f6ffaUbPaFn9hW6vxKXIs+rcfShJocrBizh
+	v3RgWtqeqZrOSjQRRJOZUW3ZJFkNc1XAMJPGJj6+NX7Z1GNDinAQLdzUta3LJheEOd3PGGy1J8J
+	NYgzk71KRx0KzHeYo/ozRfToKo5kXxuSlWkKCzAVX0yO7i/bwsaPVe/eHUZNHiQK1tCbS4KCVc2
+	QMy567uB+sVtpr5Wu/joxNZQKa2lZei5p9sHbqjqU0SZNKMX9h7JWan8MbVxFhBHufgu4kOsdDc
+	EKLQPzeTi21fmIBoUue6bWOCDC09lny/yQM6Cu+H8TFzwdWk8fj8fVXj/PAEN9j7+sVen+QHqUc
+	lHS4qQqz+aK3FwECB6qVyofeyVwhLsP711lKDi6k6GxTpIAy+B0kv0wwHW6Y1xQv6AvP/DJLcBr
+	cUCDUto7yvctE=
+X-Google-Smtp-Source: AGHT+IG+NH18Fs8uvS4RwrnDeJ30YZ6KZ5D+dKbYWVTcWqduSR8Cv5M98c/yhLru7M3K4wShHifeVA==
+X-Received: by 2002:a05:6000:3113:b0:427:7d6:ce80 with SMTP id ffacd0b85a97d-42707d6d1c8mr16071326f8f.29.1761241083938;
+        Thu, 23 Oct 2025 10:38:03 -0700 (PDT)
+Received: from [192.168.1.121] ([151.49.75.135])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897e7630sm5075802f8f.10.2025.10.23.10.38.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 10:38:03 -0700 (PDT)
+Message-ID: <e6328da3-8099-4540-9cb0-4fc28b359ee7@gmail.com>
+Date: Thu, 23 Oct 2025 19:38:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/9] HID: asus: simplify RGB init sequence
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20251018101759.4089-1-lkml@antheas.dev>
+ <20251018101759.4089-2-lkml@antheas.dev>
+Content-Language: en-US, it-IT, en-US-large
+From: Denis Benato <benato.denis96@gmail.com>
+In-Reply-To: <20251018101759.4089-2-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Xin,
 
-Thank you for the feedback and response to the patch.
-I would like to know that above analysis is valid or not.
-And do you want me to test this suggestion with the syzbot?
+On 10/18/25 12:17, Antheas Kapenekakis wrote:
+> Currently, RGB initialization forks depending on whether a device is
+> NKEY. Then, NKEY devices are initialized using 0x5a, 0x5d, 0x5e
+> endpoints, and non-NKEY devices with 0x5a and then a
+> backlight check, which is omitted for NKEY devices.
+>
+> Remove the fork, using a common initialization sequence for both,
+> where they are both only initialized with 0x5a, then checked for
+> backlight support. This patch should not affect existing functionality.
+>
+> 0x5d and 0x5e endpoint initializations are performed by Windows
+> userspace programs associated with different usages that reside under
+> the vendor HID. Specifically, 0x5d is used by Armoury Crate, which
+> controls RGB and 0x5e by an animation program for certain Asus laptops.
+> Neither is used currently in the driver.
+What benefits do we get from removing the unused initialization?
 
-regards,
-Ranganath
+If this has never caused any troubles I don't see the reason for removing
+them. Moreover the lighting protocol is known and I might as well add
+support for it in the near future,
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>  drivers/hid/hid-asus.c | 56 ++++++++++++++----------------------------
+>  1 file changed, 19 insertions(+), 37 deletions(-)
+>
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index a444d41e53b6..7ea1037c3979 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -638,50 +638,32 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+>  	unsigned char kbd_func;
+>  	int ret;
+>  
+> -	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+> -		/* Initialize keyboard */
+> -		ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> -		if (ret < 0)
+> -			return ret;
+> -
+> -		/* The LED endpoint is initialised in two HID */
+> -		ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
+> -		if (ret < 0)
+> -			return ret;
+> -
+> -		ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2);
+> -		if (ret < 0)
+> -			return ret;
+> -
+> -		if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> -			ret = asus_kbd_disable_oobe(hdev);
+> -			if (ret < 0)
+> -				return ret;
+> -		}
+> -
+> -		if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+> -			intf = to_usb_interface(hdev->dev.parent);
+> -			udev = interface_to_usbdev(intf);
+> -			validate_mcu_fw_version(hdev,
+> -				le16_to_cpu(udev->descriptor.idProduct));
+> -		}
+> +	ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> +	if (ret < 0)
+> +		return ret;
+>  
+> -	} else {
+> -		/* Initialize keyboard */
+> -		ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+> -		if (ret < 0)
+> -			return ret;
+> +	/* Get keyboard functions */
+> +	ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> +	if (ret < 0)
+> +		return ret;
+>  
+> -		/* Get keyboard functions */
+> -		ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+> +	if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+> +		ret = asus_kbd_disable_oobe(hdev);
+>  		if (ret < 0)
+>  			return ret;
+> +	}
+>  
+> -		/* Check for backlight support */
+> -		if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> -			return -ENODEV;
+> +	if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+> +		intf = to_usb_interface(hdev->dev.parent);
+> +		udev = interface_to_usbdev(intf);
+> +		validate_mcu_fw_version(
+> +			hdev, le16_to_cpu(udev->descriptor.idProduct));
+>  	}
+>  
+> +	/* Check for backlight support */
+> +	if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+> +		return -ENODEV;
+> +
+>  	drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
+>  					      sizeof(struct asus_kbd_leds),
+>  					      GFP_KERNEL);
 
