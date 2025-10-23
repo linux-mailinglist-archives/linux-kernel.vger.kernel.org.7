@@ -1,121 +1,102 @@
-Return-Path: <linux-kernel+bounces-867636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D28C032A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:24:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D5C3C032AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503D43B0EAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:24:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6FF74ED3B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B7434CFC6;
-	Thu, 23 Oct 2025 19:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C484434D4F0;
+	Thu, 23 Oct 2025 19:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BeQGsgjY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m/gBCSeI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gZHa1RaS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FBB29405
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D3026FDB2;
+	Thu, 23 Oct 2025 19:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761247438; cv=none; b=rwMcu7PJ0FaMw99783ESdBY/aFaTlRiPZctU/BHwjsWP+53u4LRh/QydBTKDQhv7DLpILDlXjnUK6ICZ7LBWFaFSgiWDHCqabOT/j5yGNv/ipdDDjuzVikHuN6QN/Zr0WXtdodwmepcD7DvX/loEoVCYrsf1VGpUJ1IACV1V/nw=
+	t=1761247460; cv=none; b=WrEwAvM2e31eAjXKmFDVlBEi8dFke6n8o0O9ABRAS9BQWVgeKVI24/gVra2UcQozNvnZSe1xHecnMLO4qQq2QTPr4drGhqbTZLBjLOeWgn0beGdh1GX9BQjGrVj3+4F3HxupAioTTxq+0pCQhDcdhynsna6Y0ntiRluvUD+Hibs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761247438; c=relaxed/simple;
-	bh=dyJm5kfT+wwoAXrFOv1gzXzfXi6fTeq4CMgppAJ+OhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ax8PvHKLGF/wzoTs7vR+CT43FExI/5RezarH+rMLBlqro8oP/GB0WolyFRnCCHSuxHOuWE/v5ueXTRGK+5lEggzN4nzt08pvtE3bCqQ39AURQ1tmsnV6Vm6E0TAaIWEtJEhcGoV1FSOS3JBt+5Oxsbgkjj8Npj7Lv1PjcL7fCtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BeQGsgjY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m/gBCSeI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 23 Oct 2025 21:23:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761247434;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7ogCKyf+ZhAJJt4mNbS3YCVOVR0Q9eZHL6eEX+BzXhU=;
-	b=BeQGsgjYWkHrqj61jTAtbdLkEkbM+BrPGF0fak3f6Nl7kwgutaNbZdZI0jEZQlrtL2kmWV
-	WZ9h/S6kvquom8JHnBsL+fBYXy70DtqieGcJB32RiLgvlSS1WZWJ0r0LeZtgPEEd/y/UKu
-	iD5m+qsy/c+3biYKXrIJRD1PaQ+rDadhWDWqS8ixGERuFkmVLywROrgHCJTjLT3oJLNCnw
-	U6EH9MnFBqyWpdT/PNDtyXJRSboAlYTPevXZaDk+uIoI/v7FMbczxzRzESXGgrG3h9lfSU
-	xnFrd1x+CBMCipSd07+98oDVApltPbObyM+8ceG/fSbvTFy6hgmUAyc4acRNkw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761247434;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7ogCKyf+ZhAJJt4mNbS3YCVOVR0Q9eZHL6eEX+BzXhU=;
-	b=m/gBCSeIxN6gk9DMIZ21dwkb3pz8ZXcoe2RRMqk6rf5DA8e+oC3uTtxz9QX4L3O5MYIiMo
-	MXTGyLm05jG1pCDg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: usage of DEFINE_WAIT_OVERRIDE_MAP(LD_WAIT_SLEEP)
-Message-ID: <20251023192353.Wkng87fi@linutronix.de>
-References: <20250729114702.GA18541@redhat.com>
- <aIjCYEkgNvVpMYCS@uudg.org>
- <20250729130936.GB18541@redhat.com>
- <20250801102428.GB27835@redhat.com>
- <20250811105948.OafBprND@linutronix.de>
- <20251020145310.GA9608@redhat.com>
- <20251023135316.1ZRx0UU5@linutronix.de>
- <20251023152942.GC26461@redhat.com>
- <20251023153750.C6EU9NL6@linutronix.de>
- <20251023155339.GE26461@redhat.com>
+	s=arc-20240116; t=1761247460; c=relaxed/simple;
+	bh=gbR+ILxy7ngx0bQKjqtcEIog8d3NC2/uBdxDrlmQj6M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mh0yaMMiX3mswpvPgVE6KGj97/LvwQlk9VJasb5qoozQ+iFkyvWVUvhShUZnqxRAeqGyge/Ny+6Q9VlzdvMV7q+oRkC3e2xxO/Iko6IaewJeAMDwUF9yHy2YA7vNjiIi4haN9K+T8xtxF6x62W8O3krjh8BFmnvMvspdMNxPp6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gZHa1RaS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CFA75C4CEE7;
+	Thu, 23 Oct 2025 19:24:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761247459;
+	bh=gbR+ILxy7ngx0bQKjqtcEIog8d3NC2/uBdxDrlmQj6M=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=gZHa1RaS0GYq63IMeLBpm7DYoqNTtlacqXBSyFuqDtEsaPELUrCrrzfwyoF0h4xZG
+	 pK19LSarWGDawCdasdPFnPGETJqtXRcXxzzuTicxnRA4CCE0lI1Z5NPGlJbGSh3HKz
+	 UC7XZJ3mg4Xu7lmYPTDy7QuqOOKJ0qRqtREPeTqyrVphaYMkZy0TgS8ukg95zgmyJ3
+	 VnA+EQ+s7ZgSnXB7XlIKNkf+Pc+c65PusLzIPHIXhVnNu/Lf0WAQGV/AqiGLmp8QLb
+	 t8YfUWbpC66hP7CUXOkzCVlQ2xqNn4TMya4KNJQ0eQjaKZ+1bpU3V/tP/XcZakwo9C
+	 3zlsOZOoKMcAQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6752CCF9E5;
+	Thu, 23 Oct 2025 19:24:19 +0000 (UTC)
+From: ymodlin via B4 Relay <devnull+yogev.modlin.realsenseai.com@kernel.org>
+Subject: [PATCH v2 0/2] Since Realsense has been spin-off Intel, the
+ comment should be change.
+Date: Thu, 23 Oct 2025 22:24:13 +0300
+Message-Id: <20251023-fix-uvc-v2-0-1c93853257dc@realsenseai.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251023155339.GE26461@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN2A+mgC/2WMQQ7CIBBFr9LMWgwMtk1deQ/TBcJoJ1HaMEo0D
+ XcXu3X5/n95KwglJoFjs0KizMJzrIC7Bvzk4o0Uh8qAGlujEdWV3+qVvcLB9uFijXeDhWovieq
+ 1lc5j5YnlOafPFs7mt/43slFG0cEHbTvd9bY9JXJ3oSjkeO/nB4yllC8YFGhnpAAAAA==
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hansg@kernel.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ ymodlin <yogev.modlin@realsenseai.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761247458; l=705;
+ i=yogev.modlin@realsenseai.com; s=20251022; h=from:subject:message-id;
+ bh=gbR+ILxy7ngx0bQKjqtcEIog8d3NC2/uBdxDrlmQj6M=;
+ b=/hf5jMg/w6jaMNNETzqPUwiKuWXEwpw9vekIIFCUmHvdjMvoEnqliu92PUWPUTEsDRzA2LAw9
+ KjMSpGmePWwBLXre28crbiACLIpRgYgEeleRNTXhhqQpyV5D76cjBFt
+X-Developer-Key: i=yogev.modlin@realsenseai.com; a=ed25519;
+ pk=V3EENbzJJO6YkqjrHtGmN67ulKS2b5TU7Ze0hVi1G1o=
+X-Endpoint-Received: by B4 Relay for yogev.modlin@realsenseai.com/20251022
+ with auth_id=549
+X-Original-From: ymodlin <yogev.modlin@realsenseai.com>
+Reply-To: yogev.modlin@realsenseai.com
 
-On 2025-10-23 17:53:40 [+0200], Oleg Nesterov wrote:
-> Sebastian,
-Hi Oleg,
+Signed-off-by: ymodlin <yogev.modlin@realsenseai.com>
+---
+Changes in v2:
+- Fixed commit message formatting
+- Write 'Intel RealSense' for D400 family of depth camera comments
+- Link to v1: https://lore.kernel.org/r/20251022-fix-uvc-v1-1-e4cd03606735@realsenseai.com
 
-> sorry. I guess this is my fault, but I can't understand your reply...
-> Could you spell please?
+---
+ymodlin (2):
+      change: drop 'Intel' from RealSense camera comments
+      media: uvc: Add RealSense vendor prefix to Intel camera comments
 
-So you refer to this:
-| /* PREEMPT_RT kernels map spinlock to rt_mutex */
-| #include <linux/rtmutex.h>
-| 
-| typedef struct spinlock {
-| 	struct rt_mutex_base	lock;
-| #ifdef CONFIG_DEBUG_LOCK_ALLOC
-| 	struct lockdep_map	dep_map;
-| #endif
-| } spinlock_t;
+ drivers/media/usb/uvc/uvc_driver.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+---
+base-commit: 552c50713f273b494ac6c77052032a49bc9255e2
+change-id: 20251022-fix-uvc-2937db31ca93
 
-spinlock_t on PREEMPT_RT does not use (struct) rt_mutex as the comment
-claims. It uses just the basic building block which is "struct
-rt_mutex_base". This requires linux/rtmutex.h. 
+Best regards,
+-- 
+Yogev Modlin <yogev.modlin@realsenseai.com>
 
-spinlock_t on PREEMPT_RT uses LD_WAIT_CONFIG via SPIN_DEP_MAP_INIT as
-!PREEMPT_RT. Nothing changes here.
 
-struct rt_mutex on the other hand uses LD_WAIT_SLEEP and this one is
-like struct mutex but with PI.
-
-Sebastian
 
