@@ -1,140 +1,291 @@
-Return-Path: <linux-kernel+bounces-867173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60360C01C0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:27:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE3AC01BFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E723B501F2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB5A1AA1D07
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09AE32AADD;
-	Thu, 23 Oct 2025 14:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C923332B996;
+	Thu, 23 Oct 2025 14:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lznF4sEs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="xEyT9lP7"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EF2314B88
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF3B32AACB;
+	Thu, 23 Oct 2025 14:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761229462; cv=none; b=kqnKHv9pTS87kGcjSKkdYvg6AKT76MsmRwQuoPSTDtFsX+3WKBfjLnamx9rHlBENQc9TNEtYT9P/GOggCGmPP9Hwe9Hd5FbR4FumFXZJSyf1u+8wnucUMizAQNR+a44NrGJ85NcTECD3docFXVa7+vmsx++8FriFUxkK40AaX7s=
+	t=1761229485; cv=none; b=gHyIhvaWGlbDrSf1BSv47jnFY8Yh0UM5ZvQc75IHCXzLyVeKL8eKXl9izSTzolY6+0iYmf/iVeui41jolX2ncJTReD3+QPT54knuXGrcmRlM3/1BBX9qgPz7R719kN4heSFxOyOycUljpIrsGcStcqC4eiWE4Kp0s7RoMpWGJTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761229462; c=relaxed/simple;
-	bh=ROt2XAbOsvOTefCTKaxDf18B8nqBMHnyExoANEuIVSY=;
+	s=arc-20240116; t=1761229485; c=relaxed/simple;
+	bh=ejT+gSMRl71D9FrJAHgYWi6zvu2pJa3A5weKAUpjry4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pI62tnHIJs6to5/f8PU5TlVieMmsBEdwqaHiGrJEZ4nqtq03fHcwMoX8LSaeWfmlIlCOav/l6FjMw0rBMM5R12UYMyPYrhxpceKsjUs51kJPeFCTHQOdBjqF4LQWQlBAVo/4qhn7/dra1iYxmw+3BRfMKU2aG+nLdbOEd2kZbmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lznF4sEs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69CA0C4AF0B;
-	Thu, 23 Oct 2025 14:24:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761229461;
-	bh=ROt2XAbOsvOTefCTKaxDf18B8nqBMHnyExoANEuIVSY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lznF4sEs2VBBaG+lhkkgH9c0TVj36wEDcHlfT59uDXRO16OEMrWCUaK9wD+/J+mWM
-	 eNJBP6Xn568XTYRVkQqPbj7OnuWpsswg0RhbuljZSc8BmY8Ri95zc7R53vSJ2sVJpN
-	 EY6J3o7gcN6FJBaw2BTMB5EG4Nk5MsdkO6u3LdC7DbO+pvw8tGXKoLWhGLlsnE29FD
-	 kPkaO+2GYPq69G5noYYk8ZTSa000QI09sxP/eGPlUNXZZR0l1/aRlrjmLdLJIBYA0q
-	 0s0FPXdkAKbBdacGVfS29KcesW1P3338FBRsApHS+drI3pqsM2yI+FS3MYsAGhbX93
-	 PU5e7h0f+/W+A==
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 80382F4006B;
-	Thu, 23 Oct 2025 10:24:20 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Thu, 23 Oct 2025 10:24:20 -0400
-X-ME-Sender: <xms:lDr6aM4AmfEcoQm2fghe38n-0aLBMRusQVfx30OU1-alwNtdfCFDVg>
-    <xme:lDr6aNIMwxWBE0Jxq8ViM4ymcUw0mUmY4JykJ_K-ypRpFrSnOxL8qhYnyBE2WGUxr
-    VGxi-PB7v5zX-gjen16T7T5Ge6S-mQO8tLw93nCpojMpbCmgTvkpLw>
-X-ME-Received: <xmr:lDr6aHq2ia2nJrablGtYvGdW5nnlshrR2po8CW3vwrRkjAYylGleDqMlCZxkHQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeiieelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkrghssehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepheeikeeuveduheevtddvffekhfeufefhvedtudehheektdfhtdehjeevleeuffeg
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirh
-    hilhhlodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieduudeivdeiheeh
-    qddvkeeggeegjedvkedqkhgrsheppehkvghrnhgvlhdrohhrghesshhhuhhtvghmohhvrd
-    hnrghmvgdpnhgspghrtghpthhtohepfeeipdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopegurghvvgdrhhgrnhhsvghnsehinhhtvghlrdgtohhmpdhrtghpthhtohepuhhsrg
-    hmrggrrhhifheigedvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepugifmhifsegrmhgr
-    iihonhdrtghordhukhdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
-    dprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopegsphes
-    rghlihgvnhekrdguvgdprhgtphhtthhopegurghvvgdrhhgrnhhsvghnsehlihhnuhigrd
-    hinhhtvghlrdgtohhmpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehhphgrseiihihtohhrrdgtohhm
-X-ME-Proxy: <xmx:lDr6aL6G_T35ABDSJ_BcCtlXYXLParegxJHxYd2eod292g6Qm_niuw>
-    <xmx:lDr6aDK_bSQ_cvd3DHZB7Yb_jrbwg0zgrtFwj-4rJTDkwgND0Ueekw>
-    <xmx:lDr6aChz2NgM9ATKp_5jiTarq7TewaaTtQ-9srXP5K0fHiNU0zMtYw>
-    <xmx:lDr6aFH-L9GtaQ5DrRA7MCx3hQ2HjdbKG6B36GqTAloGJOXntcYlIg>
-    <xmx:lDr6aEJWA1SXAaIMwBBr_5e0OIBz7S1AGTCPML_lk6zLoF6t4pAtk-Hh>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Oct 2025 10:24:19 -0400 (EDT)
-Date: Thu, 23 Oct 2025 15:24:17 +0100
-From: Kiryl Shutsemau <kas@kernel.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Usama Arif <usamaarif642@gmail.com>, dwmw@amazon.co.uk, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	ardb@kernel.org, hpa@zytor.com, x86@kernel.org, apopple@nvidia.com, 
-	thuth@redhat.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org, kernel-team@meta.com, 
-	Michael van der Westhuizen <rmikey@meta.com>, Tobias Fleig <tfleig@meta.com>
-Subject: Re: [PATCH 3/3] x86/mm: Move _PAGE_BIT_NOPTISHADOW from bit 58 to
- bit 9
-Message-ID: <yv2sjut5urpzz426z4wmufshbron35ohwtqk6jzun46elbcqtf@3z54nh33yl4m>
-References: <20251022220755.1026144-1-usamaarif642@gmail.com>
- <20251022220755.1026144-4-usamaarif642@gmail.com>
- <98bc658f-2ec6-43f5-a7e1-e9424450a850@intel.com>
- <797c78f4-1a90-42da-9fed-e87682456a43@gmail.com>
- <90047889-3b90-4c6a-90ed-f155c92f7ce1@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RijFH/Lb1Hew35AUzPtLDiGQe6sC3vfVsFsSdtcP1aLewjnAybVAVbKRHh/sZ+QsltdMopKOk2HvbkW78t85GmoS+wgadgZ6xEcAMwU8fJQG42fMSYLP0fjC+eRw8na6XpF6iWuLyXMUW/FHUR4C2xYMnPhmC+eU46Da7TLnml0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=xEyT9lP7; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=7xYDDmBG3SXcp4rXu1j0cg9M+z9JOy8rvqaztOPzzns=; b=xEyT9lP76ehv1CRcrQ9rl/L8zi
+	aGo4Ct0SFk++tsbWRDrvijyrZOusk9EMnOqtnVkO4KGfFBxhLisN8wu6gvU/r3b9N+z8MqL6K/lhx
+	Yg0C02/njSCyyQoSD0WMZwc3lQNaaJXyV2IbinGY07qdmC/YQR68mBDiTk0LOOJGUIpvydv1wLhNZ
+	5FcJ32HuX5Xn6c92pcmj3yaulTXfp4n+0a3y/tqf5ZhEE6yg0+BA2CLb7yg+0xvNBR4wdcUUf3Rib
+	TLKpUdci4pY7QdtbmRN//avLOMXVxANqIghGdJ8Uk0As+7M5RsKJf9lZqWqDz+BKVDddkGFMcJ5jA
+	fJXXnOzA==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1vBwEm-000Jjc-1I;
+	Thu, 23 Oct 2025 15:24:20 +0100
+Date: Thu, 23 Oct 2025 15:24:20 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	zohar@linux.ibm.com
+Subject: Re: [PATCH v3 4/4] tpm: Allow for exclusive TPM access when using
+ /dev/tpm<n>
+Message-ID: <aPo6lF6W5id5U_i9@earth.li>
+References: <cover.1760958898.git.noodles@meta.com>
+ <61049f236fe1eaf72402895cea6892b52ce7e279.1760958898.git.noodles@meta.com>
+ <cec499d5130f37a7887d39b44efd8538dd361fe3.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <90047889-3b90-4c6a-90ed-f155c92f7ce1@intel.com>
+In-Reply-To: <cec499d5130f37a7887d39b44efd8538dd361fe3.camel@huaweicloud.com>
 
-On Thu, Oct 23, 2025 at 07:05:24AM -0700, Dave Hansen wrote:
-> On 10/22/25 16:58, Usama Arif wrote:
-> >> This isn't necessary once the previous 2 patches are applied, right?
-> > In kexec if the target kernels have patch 1 and 2, then this patch
-> > is not needed. Unfortunately, patches 1 and 2 are not livepatchable.
-> > Also backporting patches 1 and 2 to all previous kernels running in
-> > production in a large fleet is not very scalable.
-> 
-> I don't think I've ever been asked to apply a patch to make livepatching
-> easier. I'm not sure that's something we want to pollute mainline with.
+On Mon, Oct 20, 2025 at 01:53:30PM +0200, Roberto Sassu wrote:
+>On Mon, 2025-10-20 at 12:31 +0100, Jonathan McDowell wrote:
+>> From: Jonathan McDowell <noodles@meta.com>
+>>
+>> There are situations where userspace might reasonably desire exclusive
+>> access to the TPM, or the kernel's internal context saving + flushing
+>> may cause issues, for example when performing firmware upgrades. Extend
+>> the locking already used for avoiding concurrent userspace access to
+>> prevent internal users of the TPM when /dev/tpm<n> is in use.
+>>
+>> The few internal users who already hold the open_lock are changed to use
+>> tpm_internal_(try_get|put)_ops, with the old tpm_(try_get|put)_ops
+>> functions changing to obtain read access to the open_lock.  We return
+>> -EBUSY when another user has exclusive access, rather than adding waits.
+>>
+>> Signed-off-by: Jonathan McDowell <noodles@meta.com>
+>> ---
+>> v2: Switch to _locked instead of _internal_ for function names.
+>> v3: Move to end of patch series.
+>>
+>>  drivers/char/tpm/tpm-chip.c       | 53 +++++++++++++++++++++++++------
+>>  drivers/char/tpm/tpm-dev-common.c |  8 ++---
+>>  drivers/char/tpm/tpm.h            |  2 ++
+>>  drivers/char/tpm/tpm2-space.c     |  5 ++-
+>>  4 files changed, 52 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+>> index ba906966721a..687f6d8cd601 100644
+>> --- a/drivers/char/tpm/tpm-chip.c
+>> +++ b/drivers/char/tpm/tpm-chip.c
+>> @@ -144,7 +144,7 @@ void tpm_chip_stop(struct tpm_chip *chip)
+>>  EXPORT_SYMBOL_GPL(tpm_chip_stop);
+>>
+>>  /**
+>> - * tpm_try_get_ops() - Get a ref to the tpm_chip
+>> + * tpm_try_get_ops_locked() - Get a ref to the tpm_chip
+>>   * @chip: Chip to ref
+>>   *
+>>   * The caller must already have some kind of locking to ensure that chip is
+>> @@ -154,7 +154,7 @@ EXPORT_SYMBOL_GPL(tpm_chip_stop);
+>>   *
+>>   * Returns -ERRNO if the chip could not be got.
+>>   */
+>> -int tpm_try_get_ops(struct tpm_chip *chip)
+>> +int tpm_try_get_ops_locked(struct tpm_chip *chip)
+>>  {
+>>  	int rc = -EIO;
+>>
+>> @@ -185,22 +185,57 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+>>  	put_device(&chip->dev);
+>>  	return rc;
+>>  }
+>> -EXPORT_SYMBOL_GPL(tpm_try_get_ops);
+>>
+>>  /**
+>> - * tpm_put_ops() - Release a ref to the tpm_chip
+>> + * tpm_put_ops_locked() - Release a ref to the tpm_chip
+>>   * @chip: Chip to put
+>>   *
+>> - * This is the opposite pair to tpm_try_get_ops(). After this returns chip may
+>> - * be kfree'd.
+>> + * This is the opposite pair to tpm_try_get_ops_locked(). After this returns
+>> + * chip may be kfree'd.
+>>   */
+>> -void tpm_put_ops(struct tpm_chip *chip)
+>> +void tpm_put_ops_locked(struct tpm_chip *chip)
+>>  {
+>>  	tpm_chip_stop(chip);
+>>  	mutex_unlock(&chip->tpm_mutex);
+>>  	up_read(&chip->ops_sem);
+>>  	put_device(&chip->dev);
+>>  }
+>> +
+>> +/**
+>> + * tpm_try_get_ops() - Get a ref to the tpm_chip
+>> + * @chip: Chip to ref
+>> + *
+>> + * The caller must already have some kind of locking to ensure that chip is
+>> + * valid. This function will attempt to get the open_lock for the chip,
+>> + * ensuring no other user is expecting exclusive access, before locking the
+>> + * chip so that the ops member can be accessed safely. The locking prevents
+>> + * tpm_chip_unregister from completing, so it should not be held for long
+>> + * periods.
+>> + *
+>> + * Returns -ERRNO if the chip could not be got.
+>> + */
+>> +int tpm_try_get_ops(struct tpm_chip *chip)
+>> +{
+>> +	if (!down_read_trylock(&chip->open_lock))
+>> +		return -EBUSY;
+>
+>Hi Jonathan
+>
+>do I understand it correctly, that a process might open the TPM with
+>O_EXCL, and this will prevent IMA from extending a PCR until that
+>process closes the file descriptor?
+>
+>If yes, this might be a concern, and I think an additional API to
+>prevent such behavior would be needed (for example when IMA is active,
+>i.e. there is a measurement policy loaded).
 
-It is not about assisting livepatching.
+Yes, this definitely provides a path where userspace could prevent a 
+measurement hitting the TPM from IMA. I did think about this when 
+working out what to do if the lock was held elsewhere, but punted on 
+making any changes because there are several other avenues where that 
+can already happen.
 
-Machines in our fleet may switch between kernel versions using kexec.
+>> +
+>> +	return tpm_try_get_ops_locked(chip);
+>> +}
+>> +EXPORT_SYMBOL_GPL(tpm_try_get_ops);
+>> +
+>> +/**
+>> + * tpm_put_ops() - Release a ref to the tpm_chip
+>> + * @chip: Chip to put
+>> + *
+>> + * This is the opposite pair to tpm_try_get_ops(). After this returns
+>> + * chip may be kfree'd.
+>> + */
+>> +void tpm_put_ops(struct tpm_chip *chip)
+>> +{
+>> +	tpm_put_ops_locked(chip);
+>> +
+>> +	up_read(&chip->open_lock);
+>> +}
+>>  EXPORT_SYMBOL_GPL(tpm_put_ops);
+>>
+>>  /**
+>> @@ -644,10 +679,10 @@ void tpm_chip_unregister(struct tpm_chip *chip)
+>>  #ifdef CONFIG_TCG_TPM2_HMAC
+>>  	int rc;
+>>
+>> -	rc = tpm_try_get_ops(chip);
+>> +	rc = tpm_try_get_ops_locked(chip);
+>>  	if (!rc) {
+>>  		tpm2_end_auth_session(chip);
+>> -		tpm_put_ops(chip);
+>> +		tpm_put_ops_locked(chip);
+>>  	}
+>>  #endif
+>>
+>> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+>> index f2a5e09257dd..0f5bc63411aa 100644
+>> --- a/drivers/char/tpm/tpm-dev-common.c
+>> +++ b/drivers/char/tpm/tpm-dev-common.c
+>> @@ -65,7 +65,7 @@ static void tpm_dev_async_work(struct work_struct *work)
+>>
+>>  	mutex_lock(&priv->buffer_mutex);
+>>  	priv->command_enqueued = false;
+>> -	ret = tpm_try_get_ops(priv->chip);
+>> +	ret = tpm_try_get_ops_locked(priv->chip);
+>>  	if (ret) {
+>>  		priv->response_length = ret;
+>>  		goto out;
+>> @@ -73,7 +73,7 @@ static void tpm_dev_async_work(struct work_struct *work)
+>>
+>>  	ret = tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
+>>  			       sizeof(priv->data_buffer));
+>> -	tpm_put_ops(priv->chip);
+>> +	tpm_put_ops_locked(priv->chip);
+>>
+>>  	/*
+>>  	 * If ret is > 0 then tpm_dev_transmit returned the size of the
+>> @@ -220,14 +220,14 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+>>  	 * lock during this period so that the tpm can be unregistered even if
+>>  	 * the char dev is held open.
+>>  	 */
+>> -	if (tpm_try_get_ops(priv->chip)) {
+>> +	if (tpm_try_get_ops_locked(priv->chip)) {
+>>  		ret = -EPIPE;
+>>  		goto out;
+>>  	}
+>>
+>>  	ret = tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
+>>  			       sizeof(priv->data_buffer));
+>> -	tpm_put_ops(priv->chip);
+>> +	tpm_put_ops_locked(priv->chip);
+>>
+>>  	if (ret > 0) {
+>>  		priv->response_length = ret;
+>> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+>> index 02c07fef41ba..57ef8589f5f5 100644
+>> --- a/drivers/char/tpm/tpm.h
+>> +++ b/drivers/char/tpm/tpm.h
+>> @@ -272,6 +272,8 @@ struct tpm_chip *tpm_chip_alloc(struct device *dev,
+>>  				const struct tpm_class_ops *ops);
+>>  struct tpm_chip *tpmm_chip_alloc(struct device *pdev,
+>>  				 const struct tpm_class_ops *ops);
+>> +int tpm_try_get_ops_locked(struct tpm_chip *chip);
+>> +void tpm_put_ops_locked(struct tpm_chip *chip);
+>>  int tpm_chip_register(struct tpm_chip *chip);
+>>  void tpm_chip_unregister(struct tpm_chip *chip);
+>>
+>> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+>> index 60354cd53b5c..0ad5e18355e0 100644
+>> --- a/drivers/char/tpm/tpm2-space.c
+>> +++ b/drivers/char/tpm/tpm2-space.c
+>> @@ -58,10 +58,9 @@ int tpm2_init_space(struct tpm_space *space, unsigned int buf_size)
+>>
+>>  void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
+>>  {
+>> -
+>> -	if (tpm_try_get_ops(chip) == 0) {
+>> +	if (tpm_try_get_ops_locked(chip) == 0) {
+>>  		tpm2_flush_sessions(chip, space);
+>> -		tpm_put_ops(chip);
+>> +		tpm_put_ops_locked(chip);
+>>  	}
+>>
+>>  	kfree(space->context_buf);
+>
 
-We recently introduced a kernel in the fleet that enables 5-level
-paging.
-
-Kexecing into an older kernel that requires switching from 5- to 4-level
-paging which is broken because the target kernel doesn't expect
-_PAGE_NOPTISHADOW.
-
-The first two patches fix the problem for the target kernel. If we only
-apply them upstream, we would need to backport them to all kernels we
-use to address the problem.
-
-The last patch allows us to only update the kernel that has 5-level
-paging enabled, making it much easier logistically.
-
-The fix seems trivial, and I don't see any downsides.
-
-Ultimately, it helps with interoperability between different kernel
-versions and/or configurations.
+J.
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+"I'm a compsci. I don't write code." -- Noodles.  "I'm a DB coder.
+Neither do I." -- Adrian.
 
