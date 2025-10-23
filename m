@@ -1,147 +1,124 @@
-Return-Path: <linux-kernel+bounces-867782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E550C037BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:05:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48140C037D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24D3A3A695A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:05:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E5824E6714
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C818227057D;
-	Thu, 23 Oct 2025 21:04:59 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD352275AFB;
+	Thu, 23 Oct 2025 21:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LptrfI3D"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F1235B138
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D000A26561E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761253499; cv=none; b=clda4gc6scvyFwG2tOKCtqRiO3Oa4dVqHXorkD5CTdp2gD2VbPVE+6DDorQcM7PsrIMkdC9QAnzyR94L8q6O1FyDAfeIai1i/XBO/OnALZlctoMDO2jrYAZCmuUnm5fiLtpi5ZWocR9ISwTBbXvktRkg0dqSH9KMQpgTHlNolBs=
+	t=1761253667; cv=none; b=OssIua4Xso2+Pf4ZyHAsefCD/DB7DIzsBUBPoKfqcZJniDaYZeNoK1oWe0d8sCeqd66OG9HyxIQoK3bt3LqE7D8IlgwaooVtJD57BYuEVkYTJN2Pz6BQ5yEXRIEeLYpR+kk/lba2YNp/8qVnB6U1lY55dEjLpjNpS1TUltAZmE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761253499; c=relaxed/simple;
-	bh=RMEi3n8PARTMY4qA/ODdBOqZMt4BtGgB0HzAgOu1Yvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=P71YCvmOCYHABXGwU0sA1EKD2GRQvjjQ6ivCW5JRyPHDHy+dySd45IT5DYRnTujUCEoxmxNHjzaF7pdFRAVfBYFujOVV/N+tG5TY//9tfbqfM7uqQ4Qi+Kz+eaNKenrBDcYFoH7NznlxD20//QgtygwtOX3YRpkUBwMEDLJ+mFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 74B7A1DCCF9;
-	Thu, 23 Oct 2025 21:04:54 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id CFEAE20028;
-	Thu, 23 Oct 2025 21:04:52 +0000 (UTC)
-Date: Thu, 23 Oct 2025 17:05:19 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Gabriele Monaco
- <gmonaco@redhat.com>, Nam Cao <namcao@linutronix.de>
-Subject: [ GIT PULL ] rv: A couple of fixes for v6.18
-Message-ID: <20251023170519.52a6261a@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761253667; c=relaxed/simple;
+	bh=QswsVxb7CR7KAytVqgYUW39GsQhUVHWw83KELUyhChI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kr/L+VOs96OnhymAIRF3I3Lh3h48wbjp1hiozgaENm62xiGgrURKllERqxnY+yajEmZzeaBFKOXWvtKMmfeZ6m1q2xA6tVOicGhp3rghE03zfI/t3awYiViL/ep35hPrFoRcKrI4/nTO0VsiewZdnh9iUvSMiqwksTjtFNmWKVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LptrfI3D; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7a28226dd13so383998b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:07:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761253665; x=1761858465; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pRCHPQhpenSm0p43Ve07VuUVPD9MPencJKGnmFr85ho=;
+        b=LptrfI3DJU2B9m/LWQwUB+RcOK07enwCBBdMk2Hmp/mDNmqVjVtc506VcONj4QtO48
+         EjkSWMDlZpGmYT8Kt6iuW3f2548qLzwCq4+ErdGtIo0VtLs2SFJAgJr3zbt+coROAGRv
+         rFKhjyRUN145dytkMeoZuXJiV1DRCuKOfuYfUCelL09Wx+m8Zb4wb43zTIL2wGACcArm
+         yCth4DVUWmDZJ9vwPYmgrtnybHJNSJtXjigi2L2jzUdLQU0jroM/Rgx1EVEdPNlrO3WB
+         6eoAmqCw6Prdp8f3pt00yZV96rAtgVtm+9tBavdpqywM46YvuGZ0F8ycspIHWId3a+13
+         +Irw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761253665; x=1761858465;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pRCHPQhpenSm0p43Ve07VuUVPD9MPencJKGnmFr85ho=;
+        b=biVPvCJjFKSedo1098UKppCVdvfZX4XTfHtR6aOKCIErMoBiO/5M6wjTQEvP8+vkxy
+         rlgj2XsY0bVlPjWapKCCr0rcwStlXLGbSSpTkeHV5pIjJPrBdC6YaQ1wxaWVD8F5Rn0j
+         bh3iVPCh8aNhUxygU3+4XpjtyuvwMYyfRofECIknWXsWh1XNDnPfy5Yf5ACObNg9mRbj
+         xvD1Fuwsx/lRHD/bYL5intRbpKRWcZXd49xsVbssGy7Cma1m6CyXL2olCyEQL74SOoP+
+         skLdgFrVcLntTOIs22Oxug+3se3ci9wFDnfk2yne0tIs2tWHwf3lSBkg5evmTFcBJ2Am
+         jNtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWT7z0KBTMnYyvGq2rLQjpvbUjJfqHRzlFHGcNK/h05CHm9IWQ1RhenFhtCC3ec/smUeXsZJiXKmCiAdSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh86NvoMrWYhcpp3zz96jnKUt4xEMJ7lwihNcp/SspV7FPZoYL
+	/me9+IRW1d/ptCkH/ddc8a9gnsczWfrQKgEtASqWm7yAlMOo4cJmSu53
+X-Gm-Gg: ASbGncuhuz8VlzbhB9o78o03QPVnSXElbDoV1UFhPvcA7P8otDGxCBbwYYFnYsse7qc
+	jrU8zsWSilkzKHZjILJ+96WhEozO2T5FPl7HkHumxcfKiajvXh+M/7aJqXTg487EARu+M3f3ebH
+	xaAhXzoD0m9A0rRse1NG0qNk2U3/wJY0E0Pg7jS0PK5kEBHm2uhbXPZnsph/kyRVi95DxnaTTJD
+	OnlMmqQAw3WAlL3OREuxC4HlEMfx5ok+5qbtmoaKQ7qBzmikCu0/41sQAx6F25gwLX/V0+kcKyW
+	2+IjiJypbOgRrPgLDK9WcZv7fKQKq1xYbONjv/IKf9HQqZNnkCMpw5i/x+7qTseiAqDvpagQYb4
+	37rYCHk+YSCAI/YN/sFkKFdOeg5T5wTzHW7NvzpePhn0v9VGeq1nH8w5ltBYnluzXSzw0aPDh8e
+	BcV1dK3iCV9ceXpybzxHZ5vRkWd8bQReXr/L8fk/7D
+X-Google-Smtp-Source: AGHT+IEC9IGbZpflD7H2AaKcdyAZ4qswSf16TABaK+UleDIIM56YdcbNkdDFASJD7aYBk8i1wn3Wnw==
+X-Received: by 2002:a05:6a00:a15:b0:7a2:7964:64c0 with SMTP id d2e1a72fcca58-7a27964678amr4134281b3a.12.1761253664951;
+        Thu, 23 Oct 2025 14:07:44 -0700 (PDT)
+Received: from iku.. ([2401:4900:1c06:ef2:36b5:9454:6fa:e888])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274bb2fcasm3461246b3a.58.2025.10.23.14.07.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 14:07:43 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/3] clk: renesas: r9a09g056: Add DSI, CRU, ISP clock and reset support
+Date: Thu, 23 Oct 2025 22:07:21 +0100
+Message-ID: <20251023210724.666476-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: hhkz4fwib5ykyogbc3q9pc3ur9esp3jm
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: CFEAE20028
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19JtznBFKtT2CJumPAw78lqj9v3dixl5i8=
-X-HE-Tag: 1761253492-794983
-X-HE-Meta: U2FsdGVkX18WKZCcYlh8AZfNbQNUsWTxPXmwdOkVWYA2JkPbWKM8Hw093R6kJD1F171i0LAab5VSiIs+uHMDwd2TFPO4wNixDfoUFPj/y3RR+nsfqFsNCoVU6xQk6W2vPmarZpoRIVbaMt8ejTt7BR3CxovT5BbaolrzdWheURHfqswPXjxv01d/06JfymbU5JhUssPKPIBInrz4TMRsC7qOGxEU/7bHVIXMH2i1LiKmY8MB3bic5kcUP30V6HbA8UF6x7NNkhfLY6bmYFsGnHhyqMm7N3xn6pmPUQGcjnz7Prx4hWVh6hAQx3ceLAKBiu8zGkXAifw6CDp+Es60JWu+UtekpV2V
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Linus,
+Hi All,
 
-A couple of fixes for Runtime Verification
+This patch series adds clock and reset support for the DSI, LCDC, PLLVDO,
+CRU clocks, and ISP modules in the Renesas R9A09G056 SoC
 
-- A bug caused a kernel panic when reading enabled_monitors was reported.
-  Change callbacks functions to always use list_head iterators and by
-  doing so, fix the wrong pointer that was leading to the panic.
+Note, patch 1/3 is dependent on series [0].
+[0] https://lore.kernel.org/all/20251015192611.241920-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-- The rtapp/pagefault monitor relies on the MMU to be present
-  (pagefaults exist) but that was not enforced via kconfig, leading to
-  potential build errors on systems without an MMU. Add that kconfig
-  dependency.
+Cheers,
+Prabhakar
 
+Lad Prabhakar (3):
+  clk: renesas: r9a09g056: Add clocks and resets for DSI and LCDC
+    modules
+  clk: renesas: r9a09g056: Add support for PLLVDO, CRU clocks, and
+    resets
+  clk: renesas: r9a09g056: Add clock and reset entries for ISP
 
-Please pull the latest trace-rv-v6.18-rc2 tree, which can be found at:
+ drivers/clk/renesas/r9a09g056-cpg.c | 109 ++++++++++++++++++++++++++++
+ 1 file changed, 109 insertions(+)
 
+-- 
+2.43.0
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-rv-v6.18-rc2
-
-Tag SHA1: 710476ae493b02551d9987bdbd52f4c3cf3bffef
-Head SHA1: 3d62f95bd8450cebb4a4741bf83949cd54edd4a3
-
-
-Nam Cao (2):
-      rv: Fully convert enabled_monitors to use list_head as iterator
-      rv: Make rtapp/pagefault monitor depends on CONFIG_MMU
-
-----
- kernel/trace/rv/monitors/pagefault/Kconfig |  1 +
- kernel/trace/rv/rv.c                       | 12 ++++++------
- 2 files changed, 7 insertions(+), 6 deletions(-)
----------------------------
-diff --git a/kernel/trace/rv/monitors/pagefault/Kconfig b/kernel/trace/rv/monitors/pagefault/Kconfig
-index 5e16625f1653..0e013f00c33b 100644
---- a/kernel/trace/rv/monitors/pagefault/Kconfig
-+++ b/kernel/trace/rv/monitors/pagefault/Kconfig
-@@ -5,6 +5,7 @@ config RV_MON_PAGEFAULT
- 	select RV_LTL_MONITOR
- 	depends on RV_MON_RTAPP
- 	depends on X86 || RISCV
-+	depends on MMU
- 	default y
- 	select LTL_MON_EVENTS_ID
- 	bool "pagefault monitor"
-diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-index 48338520376f..43e9ea473cda 100644
---- a/kernel/trace/rv/rv.c
-+++ b/kernel/trace/rv/rv.c
-@@ -501,7 +501,7 @@ static void *enabled_monitors_next(struct seq_file *m, void *p, loff_t *pos)
- 
- 	list_for_each_entry_continue(mon, &rv_monitors_list, list) {
- 		if (mon->enabled)
--			return mon;
-+			return &mon->list;
- 	}
- 
- 	return NULL;
-@@ -509,7 +509,7 @@ static void *enabled_monitors_next(struct seq_file *m, void *p, loff_t *pos)
- 
- static void *enabled_monitors_start(struct seq_file *m, loff_t *pos)
- {
--	struct rv_monitor *mon;
-+	struct list_head *head;
- 	loff_t l;
- 
- 	mutex_lock(&rv_interface_lock);
-@@ -517,15 +517,15 @@ static void *enabled_monitors_start(struct seq_file *m, loff_t *pos)
- 	if (list_empty(&rv_monitors_list))
- 		return NULL;
- 
--	mon = list_entry(&rv_monitors_list, struct rv_monitor, list);
-+	head = &rv_monitors_list;
- 
- 	for (l = 0; l <= *pos; ) {
--		mon = enabled_monitors_next(m, mon, &l);
--		if (!mon)
-+		head = enabled_monitors_next(m, head, &l);
-+		if (!head)
- 			break;
- 	}
- 
--	return mon;
-+	return head;
- }
- 
- /*
 
