@@ -1,89 +1,88 @@
-Return-Path: <linux-kernel+bounces-866673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F53DC0068C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:13:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B53C0068F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACBD63AC05B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:13:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D3323AA58B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7AF309DD2;
-	Thu, 23 Oct 2025 10:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1A42EB86F;
+	Thu, 23 Oct 2025 10:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SdyLAsYB"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T8hhGXM+"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5326C303CB2
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5A42FABE7
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761214422; cv=none; b=tp2VuOdNa3f4eT7HaWnKUK7RXxt76WjjSueRbdHVHqFuDqMOgop9m4bl1/Pz8FR2on1uIrEYxrzk3c1+ZXTttuc66uTgcnBNFNyjVOVVePa5xAmIVcm3ZY/xqaX2e9iNVWdDiW2jJ2qwb5Rz4/UxDGRJvcAH8lm0twEDbj1+rpw=
+	t=1761214444; cv=none; b=YglJw9pRAMl2+sM/YvtCvHTsOjMrGPdm8WxZ91lspaMg/JCWb1Z4TTdhXWW8RJAqrWv0RS3K0S5gOSkEZ/wzAkeBkp6Jh5jEW6awrtfUS3DQoPc1yvCXmqz6tATIrEFkAp9L0urnV/HbngKrCKWJp1E+GlKITX3m63McqFfPnVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761214422; c=relaxed/simple;
-	bh=EKSPlmCEBkTDZ5NGBaXPaeS31CG+/vurTMFkgP0CNz0=;
+	s=arc-20240116; t=1761214444; c=relaxed/simple;
+	bh=tve8HZw51DvsoiCMwHmOwj8VViL16ytCkRksFVwW1Pc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CEbnqd0va29/zhc4eI4Cvs0+Ltkps4DpQxhdEpi14MWNBBvFoiSV2/MXH/3FVrLbUkccPbi9lq8ImmDcOmqOUy2WXVb4fL2tQgVoaZbcOsXe3+NrcujFUoO+Bpa61D3fBviuH8gsP9BBNalvaWDgx8fF+D/4Owk3Nb6X05BFAa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SdyLAsYB; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=iLQnZtPsCPJcZ5BjhYR3VBG9T/ZMqTv65YCXS/24mkopXF1JeZQQoSQJ3hPi8tabjv8tyjGxIroIkO46EkyKse8lmfIUoj65m80+mXf4yFWLsZw7tBPgHRYzkAiedP/0j54rcSCtfJHv5oDwXj3Ax6nP/vM2cz1dSLeygQqAEb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T8hhGXM+; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761214419;
+	s=mimecast20190719; t=1761214441;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=aHktMWgkA59NOlbjgywzEkURdk61yMcemvhRwsjXSDE=;
-	b=SdyLAsYBduSuF4EkQQ3EhayCtmB8kxMyPIi64PIBDFn4GtnmItAAfeOccIm2kQsLgskxE2
-	Gw+gx7mqLbfrxtbgtwbAZ99Y/RF+MWNhRxVLBmVoUBRivth+Cmqc52RHV1EPz41Inzy3Go
-	knrPGBmiGO/yY0Hva7GjPJHA+aco6/8=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=FYRDFMsX7IhpWRX+3N1D8BCmUrjohjYlAA5w2Y8gVM8=;
+	b=T8hhGXM+yFi5fgs3e3Qt77U2PuTb/Y8ne8Gr3Bou08M2FPB30kheIIHf1iSbhQ9pz42jo7
+	e9OazDI8sjLtAh0AeYPlbPC7JXzEDDsYoBgy72SHUkvQSQWfyw+dgiehpzpPjZzn8kZycA
+	jUMBqTlLrE2DOlTh+oRt63UWsr+xCak=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-340-s3eBviagNBW9sjaRfAQ7Bw-1; Thu, 23 Oct 2025 06:13:35 -0400
-X-MC-Unique: s3eBviagNBW9sjaRfAQ7Bw-1
-X-Mimecast-MFC-AGG-ID: s3eBviagNBW9sjaRfAQ7Bw_1761214415
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3ece0fd841cso288005f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:13:35 -0700 (PDT)
+ us-mta-516-lTULJgfRMdm0zVZypcZoxA-1; Thu, 23 Oct 2025 06:14:00 -0400
+X-MC-Unique: lTULJgfRMdm0zVZypcZoxA-1
+X-Mimecast-MFC-AGG-ID: lTULJgfRMdm0zVZypcZoxA_1761214439
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3f384f10762so340863f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:14:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761214414; x=1761819214;
+        d=1e100.net; s=20230601; t=1761214439; x=1761819239;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aHktMWgkA59NOlbjgywzEkURdk61yMcemvhRwsjXSDE=;
-        b=f4s3Cj9ZHiS1KD09Zc0+8OChUD675xELCAMTrNOXq4tmdivw9/CdQXBokaD9E+n01j
-         o25OEJJswHYZa/UXvgfKNJEVCA4rf352enMOCSCiLzrTBL96Y284cCC7kVKU7qzicaT4
-         7Spa7X+pNjzJb5EoLboulvEnzNqLEEH/UvWkNg+D9Pl3t4TtZxzMDZrLRxZ3HLoYYbmf
-         F0xrdrvIbLMeLBqiLOmvnD6MCdhPn+qzNDL7SsqlJSb4TNknJNcVEKfVcLuxpLwhemsE
-         Mo1wWRKwOqIHwO+R5+ZxWkqnfduvb8gi+GGmuKSlJAfybk8BPZSPZjxjjjysH9mhi3Oy
-         eH3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVF+ivoYtkyDQLaXEjS0C0U1iRDbNgmq+HfXjm5E1O7hgEwPSRWAeu6EyJh9tfIB9syN+ApMwcUktgcxaU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycmNVWfPA943tKUO4c0H04SarZTSiWp4Gcx0ci0q1gizuk0//u
-	kF3AKCaahu19eTS/khtuOCmEw++NaXA2twXrQ9qIrMc0uErXmBtg0oLUtsINUiCsuba7+cWzdCZ
-	MEhRMcJ0QT/LfjzrecCPlbf+xmUkrddZAQzIwKWzkore8Ur8kI4bWwjZoXipJOHge0pUzddkX3A
-	==
-X-Gm-Gg: ASbGncsDlP8PRV0CslAhg14s1FKI5WZxVyxF9kJlY9XTmZF6CXW/OQtAVyZKqGAXrlI
-	fO566OD6jJARnRGkmki6D6xrQjmCs7l2ghJSgphFP/dj8vJZJAg+lQIM9mOcYFHePTtYk5WhhCj
-	B41n02z1D3mF4JIWgsyRM1C1yTGXm0nNPIBw84K+800pN7wYzTS74lsxPC+XKm1GkdmSMtIdTSG
-	pHgoOWhNfG47Fobe2gdjj7h7/+30uHEf3BuXeqNG/U4DvN56+9sg/O5agQoQSN4L7cy2csWVsve
-	p31uDS+ZCQSu4UIP69F3SZxOXru6sAdch92QNdNnxt17d8+9/uSekf1u4ykFFh0QuJnywBWT0Wu
-	/UOn7JI8LtwqT5B9MGrJXWINyPwdvbuy8swokJpSOEE7vrTUQ1bqhTXIkHEoNpAa2Vz7IU9mJyE
-	JJHjySYHkNsVyEFIPBDBxxoNQHG0I=
-X-Received: by 2002:a05:6000:400d:b0:3ee:1461:1659 with SMTP id ffacd0b85a97d-42704d98980mr15581858f8f.31.1761214414547;
-        Thu, 23 Oct 2025 03:13:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFdOK/ndovI7ZRSucl6tmxIKATOgZ2nsBavhyiYYvBwP2HJKnKsVN3z8PcSUoWmo7SG+ASR4w==
-X-Received: by 2002:a05:6000:400d:b0:3ee:1461:1659 with SMTP id ffacd0b85a97d-42704d98980mr15581828f8f.31.1761214414042;
-        Thu, 23 Oct 2025 03:13:34 -0700 (PDT)
+        bh=FYRDFMsX7IhpWRX+3N1D8BCmUrjohjYlAA5w2Y8gVM8=;
+        b=ofIqAndc2x0yOodEl+xla0RM2I3xMx7nbtP5wr7/HQhqmXnb1t9AQsmbZbC9uGF2WU
+         4cBxU7FJXSUYBtB5ewlkN3VP8A2rmQ28SqswSy0aCq6OobJYbb5wVUkN5ldbGE+KduYE
+         FjZaYUAUz+limWuYeL1rX1mJ2zi7rdbcXlO67jlmyDoacSqe+FIMgNe+AeisaYAMqXXX
+         bd5CtvlPPHj5bdeol8p9/USZWOv7Ft3EO84qP73LYSu57r1qRQWlnOlzTQbZFf3flCUs
+         aHicmiGpr+YhIln2UiF0xznU9r+p+Wc5u/k8Uf714BoEkxPlqICwMfyXY3BSszrfs21t
+         KFdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrOGi+AEvKyN7UCrhdZZtSWZ0CmT/ttEBC2VN2SN7/iR3O9snKTWphoZk5J0Orr5pNnrm5KHObLhB3biQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz05g/xPqplYKadzmWI/5iK8JeCxifNEePayIWKSjS1/sZObCE1
+	0OR0F1Lct/jRKPakb6unsk2tGJqYKp8EKlARcfyUvs4Nt7AGY4RRSOFGIde2958wMOVuqTPooH8
+	8w1BoNIgZH0I/GezyG+LDfnoxdhQUElkwnWmEFAAbw9OYA355Sxr7M6QvahxYjPljJw==
+X-Gm-Gg: ASbGnctOYDXoZQlBehmGLHomDBKRV+u1ygsdr5E6uUWRJOyHisRIZe9B3X8y658XdRZ
+	w1Yfd5ebbYDjfGQIyHFNHPmNlfQmuKF1VfcB2TbQKcuWxH+/obtlD26M7hs9uKj0TdwNA/DKDgI
+	vhQVDCxd24vDpIcsblp7LxoVxH9DAvlbuH6FRhI1IJ9rquuMFfXRO63Tu7eCnI+7lN6W1OR2UCX
+	ETJ/goyb3xfjUPNDDpCUutZ1v66XavWD8VQN5jOzmaI53Ur45qRwIAdv7wM5XsgjUYwoBwkF6Vp
+	2v3g7sfgRA2l+hH/TEsjJO1chhYb7Vs6YoWor/dZlOzbZiKum+eE7/N1llua8Sqssha0JxND6FV
+	TE2FhRYtHH7gqd5PVUSq6YBeHoBQFkVoTHGk3m4vqn/Z5I4pfE+mn/DUZbaAOt3sUaXfDG+k5SE
+	5CV1zX0qA9Xrki1nc74DpPrIzYlcs=
+X-Received: by 2002:a05:6000:2406:b0:427:9d7:870f with SMTP id ffacd0b85a97d-42709d78818mr15466058f8f.5.1761214439080;
+        Thu, 23 Oct 2025 03:13:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG2y9ddCN514f4jZlZAuanJWD21VLCxDfJQeDN3Ku52N38WwDLlzbHP04E/FyV2cjTALX+UKQ==
+X-Received: by 2002:a05:6000:2406:b0:427:9d7:870f with SMTP id ffacd0b85a97d-42709d78818mr15466039f8f.5.1761214438691;
+        Thu, 23 Oct 2025 03:13:58 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897f57cesm3220279f8f.17.2025.10.23.03.13.32
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897e76b8sm3377847f8f.1.2025.10.23.03.13.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 03:13:33 -0700 (PDT)
-Message-ID: <e0886fdf-d198-4130-bd9a-be276c59da37@redhat.com>
-Date: Thu, 23 Oct 2025 12:13:32 +0200
+        Thu, 23 Oct 2025 03:13:58 -0700 (PDT)
+Message-ID: <33e299b9-8596-4ae2-b291-4b067dc32001@redhat.com>
+Date: Thu, 23 Oct 2025 12:13:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,12 +92,13 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v5] ksm: use range-walk function to jump over holes in
  scan_get_next_rmap_item
-To: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
+To: craftfever <craftfever@airmail.cc>,
+ Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
  Andrew Morton <akpm@linux-foundation.org>
 Cc: Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- craftfever <craftfever@airmail.cc>
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
 References: <20251023035841.41406-1-pedrodemargomes@gmail.com>
+ <d06f4c9d-cf63-4bc4-859d-8256e16dd68d@airmail.cc>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -145,125 +145,42 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20251023035841.41406-1-pedrodemargomes@gmail.com>
+In-Reply-To: <d06f4c9d-cf63-4bc4-859d-8256e16dd68d@airmail.cc>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 23.10.25 05:58, Pedro Demarchi Gomes wrote:
-> Currently, scan_get_next_rmap_item() walks every page address in a VMA
-> to locate mergeable pages. This becomes highly inefficient when scanning
-> large virtual memory areas that contain mostly unmapped regions, causing
-> ksmd to use large amount of cpu without deduplicating much pages.
+>>    				break;
+>>    
+>> -			folio = folio_walk_start(&fw, vma, ksm_scan.address, 0);
+>> -			if (folio) {
+>> -				if (!folio_is_zone_device(folio) &&
+>> -				     folio_test_anon(folio)) {
+>> -					folio_get(folio);
+>> -					tmp_page = fw.page;
+>> -				}
+>> -				folio_walk_end(&fw, vma);
+>> +			int found;
+>> +
+>> +			found = walk_page_range_vma(vma, ksm_scan.address,
+>> +						    vma->vm_end,
+>> +						    &ksm_next_page_ops,
+>> +						    &ksm_next_page_arg);
+>> +
+>> +			if (found > 0) {
+>> +				folio = ksm_next_page_arg.folio;
+>> +				tmp_page = ksm_next_page_arg.page;
+>> +				ksm_scan.address = ksm_next_page_arg.addr;
+>> +			} else {
+>> +				VM_WARN_ON_ONCE(found < 0);
+>> +				ksm_scan.address = vma->vm_end - PAGE_SIZE;
+>>    			}
+>>    
+>>    			if (tmp_page) {
 > 
-> This patch replaces the per-address lookup with a range walk using
-> walk_page_range(). The range walker allows KSM to skip over entire
-> unmapped holes in a VMA, avoiding unnecessary lookups.
-> This problem was previously discussed in [1].
-> 
-> Consider the following test program which creates a 32 TiB mapping in
-> the virtual address space but only populates a single page:
-> 
-> #include <unistd.h>
-> #include <stdio.h>
-> #include <sys/mman.h>
-> 
-> /* 32 TiB */
-> const size_t size = 32ul * 1024 * 1024 * 1024 * 1024;
-> 
-> int main() {
->          char *area = mmap(NULL, size, PROT_READ | PROT_WRITE,
->                            MAP_NORESERVE | MAP_PRIVATE | MAP_ANON, -1, 0);
-> 
->          if (area == MAP_FAILED) {
->                  perror("mmap() failed\n");
->                  return -1;
->          }
-> 
->          /* Populate a single page such that we get an anon_vma. */
->          *area = 0;
-> 
->          /* Enable KSM. */
->          madvise(area, size, MADV_MERGEABLE);
->          pause();
->          return 0;
-> }
-> 
-> $ ./ksm-sparse  &
-> $ echo 1 > /sys/kernel/mm/ksm/run
-> 
-> Without this patch ksmd uses 100% of the cpu for a long time (more then
-> 1 hour in my test machine) scanning all the 32 TiB virtual address space
-> that contain only one mapped page. This makes ksmd essentially deadlocked
-> not able to deduplicate anything of value.
-> With this patch ksmd walks only the one mapped page and skips the rest of
-> the 32 TiB virtual address space, making the scan fast using little cpu.
-> 
-> [1] https://lore.kernel.org/linux-mm/423de7a3-1c62-4e72-8e79-19a6413e420c@redhat.com/
-> 
-> ---
-> v5:
->    - Improve patch description
-> 
-> v4: https://lore.kernel.org/linux-mm/20251022153059.22763-1-pedrodemargomes@gmail.com/
->    - Make minimal changes to replace folio_walk by walk_page_range_vma
-> 
-> v3: https://lore.kernel.org/all/20251016012236.4189-1-pedrodemargomes@gmail.com/
->    - Treat THPs in ksm_pmd_entry
->    - Update ksm_scan.address outside walk_page_range
->    - Change goto to while loop
-> 
-> v2: https://lore.kernel.org/all/20251014151126.87589-1-pedrodemargomes@gmail.com/
->    - Use pmd_entry to walk page range
->    - Use cond_resched inside pmd_entry()
->    - walk_page_range returns page+folio
-> 
-> v1: https://lore.kernel.org/all/20251014055828.124522-1-pedrodemargomes@gmail.com/
-> 
-> Reported-by: craftfever <craftfever@airmail.cc>
-> Closes: https://lkml.kernel.org/r/020cf8de6e773bb78ba7614ef250129f11a63781@murena.io
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Co-developed-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> Fixes: 31dbd01f3143 ("ksm: Kernel SamePage Merging")
-> Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+> Thank you, it works magnificently, very pleasent. Very low CPU-consuming
+> and effective, no crashes. Is this a final version?
 
-I think we really want to
-
-	Cc: stable@vger.kernel.org
-
-Andrew can do that when applying.
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
-
-As a note, we have similar code that should probably be doing a range 
-walk instead: unmerge_ksm_pages()->break_ksm().
-
-It can be triggered on a range through unmerge_ksm_pages(), which gets 
-called from:
-
-* ksm_madvise() through madvise(MADV_UNMERGEABLE).  There are not a lot 
-of users of that function.
-
-* __ksm_del_vma() through ksm_del_vmas(). Effectively called when 
-disabling KSM for a process either through the sysctl or from s390x gmap 
-code when enabling storage keys for a VM.
-
-In both cases, it's not ksmd that's blocked, it's just that the 
-operation (trigger by the app) takes longer.
-
-So both are not as critical as this thing here, but likely we should 
-take care of it at some point.
-
-Interestingly, I converted that from a walk_page_range_vma() to 
-folio_walk_start() after converting it from follow_page() to 
-walk_page_range_vma().
-
-But we never did a range walk, we just walked individual addresses, 
-because that's what break_ksm() does.
-
-We could effectively revert e317a8d8b4f600fc7ec9725e26417030ee594f52 and 
-adjust it to perform an actual range walk by passing a range to break_ksm().
+If there is no further feedback, yes.
 
 -- 
 Cheers
