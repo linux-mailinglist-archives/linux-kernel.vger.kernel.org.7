@@ -1,168 +1,234 @@
-Return-Path: <linux-kernel+bounces-867575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41AEDC0303D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:35:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E48C03079
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D636D3B1602
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:34:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9FBC85086F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98AC34C99F;
-	Thu, 23 Oct 2025 18:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C253A34679E;
+	Thu, 23 Oct 2025 18:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pIYhaEOe"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hbYHX8F6"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBBB34679E;
-	Thu, 23 Oct 2025 18:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D950729408
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761244440; cv=none; b=kbyC1xfbwCdkb+zTYqXL/N8zazZyyo0Kiwgy4XiTUr06JdXXr6dkPpnvxr9g4A343Coyg9/wb7Y8pZI3jfjmWye6i4uXX/dPIbg6/9BOg20qZrw28EeuCrqfbg6ZNB5twi4ixlDN8xqFWBUB1OE6KbGRji6f/pe6qHk7J4NTb8c=
+	t=1761244482; cv=none; b=pSwVJkm9li8Rxz8PyEr7pbTP9yo6dOhJCJeIeDS9pywZrhv7BUQBAd+uQojy2oJtbClo8eCROOxgIlo41xzj9xoDJvZed4I5hHVsF7WPlU11sxCKOpenPyw2ZDVsazjELL+89Pg1raGlPL4tEhKi98am2yiA/gH+4Lt5ZUUs9eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761244440; c=relaxed/simple;
-	bh=WE0GiHXM5wLFmCst3tPXj2iOCj0/6Z0FGnXt6b0lhOU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=I19UPiLqFKiUUrK6NXS0BKcpA25YYRfb1mkidYiIKgpVNTRFmluESnq3UGgCDVtBqjg+fDwydNv5Q9IB0QIphHarH6M7U7CG3zXDf3+BVVU4ohAJw0wQ5jU9oMm4gUSSeGMH51wfZtyaDCFAgOIzRraiTxCDgqXcCWUO12VnRoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pIYhaEOe; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1761244417; x=1761849217; i=markus.elfring@web.de;
-	bh=WE0GiHXM5wLFmCst3tPXj2iOCj0/6Z0FGnXt6b0lhOU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pIYhaEOe9Cnm3+0JxJx5IG1rhqzaXEmXT9Yi1q4E8CoPG/KsMHvvSHti4LQbdLQ/
-	 uH/x19FxcTuOUMsm1ZNKpyACwuyZg5TBIYt1kr+BgBBiZlwnxkjjkY1A4DKyXnjjL
-	 sHfbIdaJ7EZxqHn0RA2ag7WLuIJs6Je3Ta/gl0R0cXkWt9vipZC9V5TzeX9Q9oL4a
-	 VvfffhpMO1rpV2ZRgEmjjLivZiOequ+SBjDeJIqJfsE4x4kHinUQMEeWp/3sL64rH
-	 AO/Fb+eo2nq6PcDwCOG+ABdnp9XcENuhzlhsKkvqScLY2Wbox0rfdSqjnDNLdtXYI
-	 ECoTUQSEVTTyp9pyUQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.227]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N30dT-1uBcQ01LuH-00tXZ7; Thu, 23
- Oct 2025 20:33:37 +0200
-Message-ID: <6205841f-e395-46f4-99dd-769a8bcad880@web.de>
-Date: Thu, 23 Oct 2025 20:33:36 +0200
+	s=arc-20240116; t=1761244482; c=relaxed/simple;
+	bh=9pJM7vhFYlQ3z1udIhUA2jWv28p7f4FGl0YTaHcYnaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UU5GBRiei6xrpt9yr9x2ZuVeESsA23ElCH+P1eeYl8J1luZK2O0jBpqRmbfRvMedG2RHJ5z8xeqshlJWkBvICuuRCdpwLvktypCAJ+KoMkVIHNm7ajiuLAQ7bh9gm96v1XppLwJu6H0z7W3PcfMHbykyYlkq5YyRR+ilTiUjwUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hbYHX8F6; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-339e71ccf48so1525586a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761244480; x=1761849280; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7/VA0enLRKccdP14FA/Vaa8mbbHGSiaGqmOz4vjURDc=;
+        b=hbYHX8F6K/bjtq7X5IJPENfNSLolVq+ewt7SHqaK3YkumCitDvvrbpOejDw40XFQT8
+         QykJCRNc0+t6D5LL9BOqjf/bTIf6OYOAH7u827Fa94kYJo1iybKhy8bSVr5ZS4vj8kox
+         DKHx042I7o2QvNk/52282nUAHQEREKe9P+LrZmUotAD0AFVQkVEtdhnPN94DQEbzZPyP
+         cVJ9E7wpkGSjSR/STGN4Xtp0gTipHdWHpadDZpj/UpfQbctBv//4+tNpN7s4xeYxLL2A
+         sx/tehQ22eYzlJ5FQ1Bl6CtHrgsrTXXefgk7YWv2Z1L7bno3wEkEQYT7dDqfFVcDMs/z
+         6uYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761244480; x=1761849280;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7/VA0enLRKccdP14FA/Vaa8mbbHGSiaGqmOz4vjURDc=;
+        b=YSNyHU24gK3LTlWoIxA1N9QmoYBl+LAz2HteScEl1MpK/FGCj2wXyVjiCTnia3+xg/
+         /NVRDBD808AurK0hGXRuNUNuiC7f4F2j5nHoFWW1a2nSAuSMrA8FbYV0wSjs+r64MQPk
+         0Zwj5m2VKWG/i0vghHiICb6ARhJYlykU3WEJdopkIH8hsOD89S/YLStCWGokrAboTP/o
+         LV+8AitWWSH/e7ivc38eNd3k1frGW5nzu4F+0uLV5oQxkmEugnduYH9/ZC7SoNIjFEGx
+         ra/G3bqWeNfU6kN7ZDPNahVifbdkpP5777Qu7yyTgKR5xgL38XaXTQu962/uqzW9CIKX
+         309Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV21agzTfE6duRVrsoDTtq2wo0M8qKdnt2mIkRJlil6Gixk4L1pRW+7zdyF9wlb3Y9MYEKCnxmqDLojJe8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYPb2Om7tqGo+jjKFONQImdtg1BvPmiLPVFA9BB85rXLh1PRmA
+	ID/kvtcQbomy256fKWCwInwZcloE438trIaa73/1Pznof3sjwONat0Bbb69UFi4/H0k=
+X-Gm-Gg: ASbGncspJqrrlmL9jFYiiqZepApgyYiIQPnVxCUeHFweL8kG8wFzMzXb5NITZxVD0eB
+	CQY+ReGHPWtLDZYpimiNiAyZZ7acSQxBMgdxwI1Fe8ki0gY1VRGZZk6lIblGnkk7qxh37Su8EBK
+	Sis4i4eZ+x8dN7SZNkZ7XFlnHFePgT/0iTVmVYwqCINzZE2brbZODd8vFTHZ2D2QBfmoXfO3UFp
+	00Blbloa6KysQ83azstHvyuLrruqZ4zaG36+bmwEwMM/RXEx4cyWHu5dW+jSlTimg/QTHiQR5tJ
+	/ugHlCZiARygMPnXwUABhPDF6hWhdhS6+EL0tjtLafNVv+kse6hG3uShp1yBXhL3RziP7MSCjB4
+	5diUdt6qjLrriyHO/a/PlLsTc6eGICB2RgKYr5O18Xz4jk//MYd08JBTPy8V35aCc2e6zyVCF6j
+	qYOKRbpPpaYGn9vD4uVXSB5XiepkXAcmM=
+X-Google-Smtp-Source: AGHT+IGiqCrNfq39nDPGx1DT9imwuvzaEJqhlEfe6FGy7mEh7Ihbg5SRkM8lVhCfXKJmF5QOtT3auw==
+X-Received: by 2002:a17:90b:3f8d:b0:33b:be31:8193 with SMTP id 98e67ed59e1d1-33bcf85d59dmr35534624a91.6.1761244480179;
+        Thu, 23 Oct 2025 11:34:40 -0700 (PDT)
+Received: from KASONG-MC4.tencent.com ([101.32.222.185])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33dfb7d6b54sm3876533a91.4.2025.10.23.11.34.36
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 23 Oct 2025 11:34:39 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Kairui Song <ryncsn@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Chris Li <chrisl@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	David Hildenbrand <david@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	YoungJun Park <youngjun.park@lge.com>,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2 1/5] mm, swap: do not perform synchronous discard during allocation
+Date: Fri, 24 Oct 2025 02:34:11 +0800
+Message-ID: <20251024-swap-clean-after-swap-table-p1-v2-1-c5b0e1092927@tencent.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251024-swap-clean-after-swap-table-p1-v2-0-c5b0e1092927@tencent.com>
+References: <20251024-swap-clean-after-swap-table-p1-v2-0-c5b0e1092927@tencent.com>
+Reply-To: Kairui Song <ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: ethanwu@synology.com
-Cc: ethan198912@gmail.com, fstests@vger.kernel.org,
- ceph-devel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, Zorro Lang <zlang@redhat.com>
-References: <20251009093129.2437815-1-ethanwu@synology.com>
-Subject: Re: [PATCH v3] ceph/006: test snapshot data integrity after punch
- hole operations
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251009093129.2437815-1-ethanwu@synology.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:iy6w6xSGTabOyzaJhvpou2w2xd9/o7w75dM/hfnOJk3NT3cZCHY
- zg3a8TKdmxipjBw68wK84jU/t3A5pV6niRsQioL7eBIk9+UY1wMkEQvoTOkSqZhJ7mmTx4U
- p9DcNyWyCbxN1Ziu24pXA5jEqt+Cqkd0bKmu6uwPTC3oM0lwv2UiQ3O9NFS6dmvTysHkYrl
- +18kARz7B16pTcq8/27fA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:iwgczpjhgnM=;aIeEINGLxcAP9K2sfdMcBHpM1V1
- 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
- Mn5Ii8qSDaYjyoez+WqMGX1F7Q=
 
-=E2=80=A6
-> Disclaimer: The contents of this e-mail message and any attachments are =
-confidential and are intended solely for addressee.
-
-See also once more:
-https://subspace.kernel.org/etiquette.html#do-not-include-confidentiality-=
-disclaimers
-
-
-=E2=80=A6
-> If you have received this transmission in error, any use, reproduction o=
-r dissemination of this transmission is strictly prohibited. If you are no=
-t the intended recipient, please immediately notify the sender by reply e-=
-mail or phone and delete this message and its attachments, if any.
-
-Do you expect this action to happen more often with your information?
-
-Regards,
-Markus
+From: Kairui Song <kasong@tencent.com>=0D
+=0D
+Since commit 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation=0D
+fast path"), swap allocation is protected by a local lock, which means=0D
+we can't do any sleeping calls during allocation.=0D
+=0D
+However, the discard routine is not taken well care of. When the swap=0D
+allocator failed to find any usable cluster, it would look at the=0D
+pending discard cluster and try to issue some blocking discards. It may=0D
+not necessarily sleep, but the cond_resched at the bio layer indicates=0D
+this is wrong when combined with a local lock. And the bio GFP flag used=0D
+for discard bio is also wrong (not atomic).=0D
+=0D
+It's arguable whether this synchronous discard is helpful at all. In=0D
+most cases, the async discard is good enough. And the swap allocator is=0D
+doing very differently at organizing the clusters since the recent=0D
+change, so it is very rare to see discard clusters piling up.=0D
+=0D
+So far, no issues have been observed or reported with typical SSD setups=0D
+under months of high pressure. This issue was found during my code=0D
+review. But by hacking the kernel a bit: adding a mdelay(500) in the=0D
+async discard path, this issue will be observable with WARNING triggered=0D
+by the wrong GFP and cond_resched in the bio layer for debug builds.=0D
+=0D
+So now let's apply a hotfix for this issue: remove the synchronous=0D
+discard in the swap allocation path. And when order 0 is failing with=0D
+all cluster list drained on all swap devices, try to do a discard=0D
+following the swap device priority list. If any discards released some=0D
+cluster, try the allocation again. This way, we can still avoid OOM due=0D
+to swap failure if the hardware is very slow and memory pressure is=0D
+extremely high.=0D
+=0D
+This may cause more fragmentation issues if the discarding hardware is=0D
+really slow. Ideally, we want to discard pending clusters before=0D
+continuing to iterate the fragment cluster lists. This can be=0D
+implemented in a cleaner way if we clean up the device list iteration=0D
+part first.=0D
+=0D
+Cc: stable@vger.kernel.org=0D
+Fixes: 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation fast path=
+")=0D
+Acked-by: Nhat Pham <nphamcs@gmail.com>=0D
+Signed-off-by: Kairui Song <kasong@tencent.com>=0D
+---=0D
+ mm/swapfile.c | 40 +++++++++++++++++++++++++++++++++-------=0D
+ 1 file changed, 33 insertions(+), 7 deletions(-)=0D
+=0D
+diff --git a/mm/swapfile.c b/mm/swapfile.c=0D
+index cb2392ed8e0e..33e0bd905c55 100644=0D
+--- a/mm/swapfile.c=0D
++++ b/mm/swapfile.c=0D
+@@ -1101,13 +1101,6 @@ static unsigned long cluster_alloc_swap_entry(struct=
+ swap_info_struct *si, int o=0D
+ 			goto done;=0D
+ 	}=0D
+ =0D
+-	/*=0D
+-	 * We don't have free cluster but have some clusters in discarding,=0D
+-	 * do discard now and reclaim them.=0D
+-	 */=0D
+-	if ((si->flags & SWP_PAGE_DISCARD) && swap_do_scheduled_discard(si))=0D
+-		goto new_cluster;=0D
+-=0D
+ 	if (order)=0D
+ 		goto done;=0D
+ =0D
+@@ -1394,6 +1387,33 @@ static bool swap_alloc_slow(swp_entry_t *entry,=0D
+ 	return false;=0D
+ }=0D
+ =0D
++/*=0D
++ * Discard pending clusters in a synchronized way when under high pressure=
+.=0D
++ * Return: true if any cluster is discarded.=0D
++ */=0D
++static bool swap_sync_discard(void)=0D
++{=0D
++	bool ret =3D false;=0D
++	int nid =3D numa_node_id();=0D
++	struct swap_info_struct *si, *next;=0D
++=0D
++	spin_lock(&swap_avail_lock);=0D
++	plist_for_each_entry_safe(si, next, &swap_avail_heads[nid], avail_lists[n=
+id]) {=0D
++		spin_unlock(&swap_avail_lock);=0D
++		if (get_swap_device_info(si)) {=0D
++			if (si->flags & SWP_PAGE_DISCARD)=0D
++				ret =3D swap_do_scheduled_discard(si);=0D
++			put_swap_device(si);=0D
++		}=0D
++		if (ret)=0D
++			return true;=0D
++		spin_lock(&swap_avail_lock);=0D
++	}=0D
++	spin_unlock(&swap_avail_lock);=0D
++=0D
++	return false;=0D
++}=0D
++=0D
+ /**=0D
+  * folio_alloc_swap - allocate swap space for a folio=0D
+  * @folio: folio we want to move to swap=0D
+@@ -1432,11 +1452,17 @@ int folio_alloc_swap(struct folio *folio, gfp_t gfp=
+)=0D
+ 		}=0D
+ 	}=0D
+ =0D
++again:=0D
+ 	local_lock(&percpu_swap_cluster.lock);=0D
+ 	if (!swap_alloc_fast(&entry, order))=0D
+ 		swap_alloc_slow(&entry, order);=0D
+ 	local_unlock(&percpu_swap_cluster.lock);=0D
+ =0D
++	if (unlikely(!order && !entry.val)) {=0D
++		if (swap_sync_discard())=0D
++			goto again;=0D
++	}=0D
++=0D
+ 	/* Need to call this even if allocation failed, for MEMCG_SWAP_FAIL. */=0D
+ 	if (mem_cgroup_try_charge_swap(folio, entry))=0D
+ 		goto out_free;=0D
+=0D
+-- =0D
+2.51.0=0D
+=0D
 
