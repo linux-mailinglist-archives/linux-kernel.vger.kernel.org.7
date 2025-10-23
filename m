@@ -1,59 +1,51 @@
-Return-Path: <linux-kernel+bounces-867675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 299D0C0343E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:56:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B9DC03399
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58E013B4F80
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:54:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C73864E6BDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F5A354AEE;
-	Thu, 23 Oct 2025 19:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F0D34DB57;
+	Thu, 23 Oct 2025 19:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="WJRUPPwN"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="OLiCZ3pB";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="uYAARAUu"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2C934E74A;
-	Thu, 23 Oct 2025 19:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761249191; cv=pass; b=CkHH3Pd4ROt8/yfvHJoFpmeoGj6AP+CjXYRrjIbb86buB+lOebj4mhoEx59JzIfCIQe+kcZcY7y2wKJybX/Nze6ItSvpTeylvH4ryEr7/htnSpwNuJyJT5irZx9p3iYmKC4NBYzN4TTWZP/UWrqKdXnXwaAm5g+jX/icrMKO8PU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761249191; c=relaxed/simple;
-	bh=o1TvjoihnRAbox+LWz+sl8f3Tnuapjv05AjOE7DYgwg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=e/waetuwDLHPjTKNL4trbNpwP7ZH2KojwixhRNjnXkml++F9rFeCmpsKeMv+UHCmlAUBidiAVbOAFhzJDVKnHx0TI6q477f1p3UZVedwhqL0eMFKI79TTTVdpiORIubGJ/jt6LnjcZG4hTfmG3+rWmay29c4M+hlmYtVx97fuyc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=WJRUPPwN; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1761249162; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VDR01vSCP6/d2x3JWBeIXcm/obWd21GdvcoOT1oDD3u1LpCOExNV2RVCtyjZzxEoer+JwQLN76ABjNzNKhrR24GbLeCYCFlt5DOuvdkhF49oeNHVETaUx0HODTPXHDYKb+/EVcxQB1BA32scoLtZMsWuex4ZkVppWyKcBQ9L9bk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761249162; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=uqLnB78neSi6OXDSm/nO57Oj4cmBaz+P1PW4hSeUDCY=; 
-	b=hJCURP6gO9NAdmEcVyWowbmXcSerqqJ0BKwBHOZFa0MIJ49OJdESThMh/j7c15csbkx17X89NDoiwZ2msC4vBkKPPSPLpUGFd3xhcvWpPZHS6CqqaEwrKGDLdmwVPV9b8fI1h8fnbiNkQNXkXwcLSs9BHHNGMMl8VrX9UEnhUyQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761249162;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=uqLnB78neSi6OXDSm/nO57Oj4cmBaz+P1PW4hSeUDCY=;
-	b=WJRUPPwNg+Itu0vdCkczL1rirjBcaDYTIy3Cr/Q3QDob5UYk6/nr8oj8kQDwmiPT
-	EgJ3Dgu1BnJB5zGUc81d/NmVot3XscJpseC8nAb8v59Xs6o+yNmH9F54vdvn7JYycGa
-	iObirYkGSTQ2KLTLTD85XuyGVQ3WkSiCX9yUza3o=
-Received: by mx.zohomail.com with SMTPS id 1761249161979886.3318559681989;
-	Thu, 23 Oct 2025 12:52:41 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Thu, 23 Oct 2025 21:49:42 +0200
-Subject: [PATCH v3 24/24] scsi: ufs: mediatek: Add MT8196 compatible,
- update copyright
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51A52EFDA5;
+	Thu, 23 Oct 2025 19:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761249139; cv=none; b=ttr+qC2HXWYyxSHbK7uCxPhQWQcYK+C5K5Hs1J/nGwlnuzk3QiWlnC6tznXYq0AolKVZYKYUL66DbS27INr9Mv3Oeg1FQgO5WHac069c41FylIoav1B4w25rYPVAnlLTmQoyr5TPCNncEk4NfL6Yjg+a/FCfiqc3Txr0Dpk7EHE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761249139; c=relaxed/simple;
+	bh=sHUw8TXefNVNqJ9dbeVVq2lmdHHc7gjWiH9kRpBn3sw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jF5L/wFsPv4LbMM8xzO9b6EyNhK8Umo4/P+iG0cKg7RkNOduu4TKkuR9mWzL+XQ8VdpQxuUyOcua8qk9xY6NNapeq835UHnssVhzyWOKOzy7pFJbNj7AAd0tLO7q8JRPHFdA44XrOUqulZfsFQNsODi8kXL3PfUd1XWYLvUAsbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=OLiCZ3pB; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=uYAARAUu; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Date:Subject:From; t=1761249129; bh=C46nEt0t3S5/oSHcF9wwDUt
+	5uysDMu3pgMCcP8+j3eE=; b=OLiCZ3pBa3EWbk+Jf7rJh2hWHVKF6oVINY4sOutL+zoXZWJz+X
+	WVi+vFWdYsDnOmfQCjB+GWUI3wPtJH7Z10nvPXBm7nOHZUR/gxoHeO9eDMNaVb1TxnjM/Pvqxeh
+	P0cky1JJLOxXKUeKr5g3sx/lB+IBQqCYRIaoijZ3Y2BW1Ku0OAgJaFVqnMmAjaXVc6ySPBbk8FZ
+	l5WxIzYBBv1/rnIA2QIOYqzBJ5mCrwTwuawfAZ22TiBC8u5r0g9EsmHzn4244pB2w3hUcyEUWJk
+	hr8VNUE/gTaVuK9n4DP9QNPiZcW/Dg/RZOKey3eei2zZiDBCeai62OhbmUL/eX6PQvw==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Date:Subject:From; t=1761249129; bh=C46nEt0t3S5/oSHcF9wwDUt
+	5uysDMu3pgMCcP8+j3eE=; b=uYAARAUuwSOU/7sDF65JmFQsPuDjULdenhSyxrpoXQtfTTgVDH
+	HMy/aU574LlnaThHwkIFkJiSXSm+jjKGWNAw==;
+From: Nickolay Goppen <setotau@mainlining.org>
+Subject: [PATCH v2 0/3] arm64: dts: qcom: Add support for SDM660 CDSP and
+ ADSP FastRPC
+Date: Thu, 23 Oct 2025 22:51:58 +0300
+Message-Id: <20251023-qcom-sdm660-cdsp-adsp-dts-v2-0-895ffe50ab5f@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,78 +54,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-mt8196-ufs-v3-24-0f04b4a795ff@collabora.com>
-References: <20251023-mt8196-ufs-v3-0-0f04b4a795ff@collabora.com>
-In-Reply-To: <20251023-mt8196-ufs-v3-0-0f04b4a795ff@collabora.com>
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Peter Wang <peter.wang@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>
-Cc: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
- kernel@collabora.com, linux-scsi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- linux-phy@lists.infradead.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAF6H+mgC/42PuW7DMBBEf0VgHQa8D1X5j8DF8pIJRJJNKkIMQ
+ /9uSipSpEmzwCx238w8UY0lx4r67olKXHPN89QEe+uQv8I0RJxD04gRJimhFt/9POIaRqUI9qH
+ eMOwjLBWbBM4pTTg3EbX/W4kp/xzsz8upS7x/N4vlXP46NMOTb/7ypYUglVEaqOlXtpMd1Ijb3
+ ZiXvrM8cQdOcEqCSElzwrT3IhlNtWBGBGG1Bp/QnuGa6zKXx1F3pUeIfzRbKSbYgpOJGSVBxY8
+ R8vSVpzwN73MZ0GXbthcT9yRVSwEAAA==
+X-Change-ID: 20251019-qcom-sdm660-cdsp-adsp-dts-8fabb670338e
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux@mainlining.org, Nickolay Goppen <setotau@mainlining.org>
 X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761249128; l=1423;
+ i=setotau@mainlining.org; s=20250815; h=from:subject:message-id;
+ bh=sHUw8TXefNVNqJ9dbeVVq2lmdHHc7gjWiH9kRpBn3sw=;
+ b=maJMpObJ1oFsvLNYf+84GTMwCCAs8U+EqaqViATQ1M3cJd7o/bXQOGhQFE/tIjXhM2s1G7eov
+ Hn8W1wQWopgBGQqVu9rdAsLZLhecZrBMW9wmt6DJ5F9A00wyw9EBLwq
+X-Developer-Key: i=setotau@mainlining.org; a=ed25519;
+ pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
 
-THe MT8196's UFS controller has a new compatible. Add the necessary
-struct definitions to support it.
+This series adds support for SDM660 CDSP remoteproc and also adds
+FastRPC support for ADSP.
 
-Also update the copyrights and authors, without tabs following spaces to
-avoid checkpatch errors, to list myself as having contributed to this
-driver after the preceding rework patches.
-
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
 ---
- drivers/ufs/host/ufs-mediatek.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Changes in v2:
+- As suggested by Konrad reordered properties in the cdsp_smmu node.
+- Fixed indentations for interrupts property for the cdsp_smmu.
+- Fixed formatting for the CDSP node.
+- Splitted ADSP-related commit to separate ones.
+- Link to v1: https://lore.kernel.org/r/20251019-qcom-sdm660-cdsp-adsp-dts-v1-0-9ab5f2865a6e@mainlining.org
 
-diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediatek.c
-index 932d1fdfdc65..49ab92acf3db 100644
---- a/drivers/ufs/host/ufs-mediatek.c
-+++ b/drivers/ufs/host/ufs-mediatek.c
-@@ -1,9 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (C) 2019 MediaTek Inc.
-+ * Copyright (C) 2025 Collabora Ltd.
-  * Authors:
-- *	Stanley Chu <stanley.chu@mediatek.com>
-- *	Peter Wang <peter.wang@mediatek.com>
-+ *      Stanley Chu <stanley.chu@mediatek.com>
-+ *      Peter Wang <peter.wang@mediatek.com>
-+ *      Nicolas Frattaroli <nicolas.frattaroli@collabora.com> (Major cleanups)
-  */
- 
- #include <linux/arm-smccc.h>
-@@ -2202,10 +2204,15 @@ static const struct ufs_mtk_soc_data mt8183_data = {
- 	.has_avdd09 = true,
- };
- 
-+static const struct ufs_mtk_soc_data mt8196_data = {
-+	.has_avdd09 = true,
-+};
-+
- static const struct of_device_id ufs_mtk_of_match[] = {
- 	{ .compatible = "mediatek,mt8183-ufshci", .data = &mt8183_data },
- 	{ .compatible = "mediatek,mt8192-ufshci" },
- 	{ .compatible = "mediatek,mt8195-ufshci" },
-+	{ .compatible = "mediatek,mt8196-ufshci", .data = &mt8196_data },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, ufs_mtk_of_match);
+---
+Nickolay Goppen (3):
+      arm64: dts: qcom: sdm630/660: Add CDSP-related nodes
+      arm64: dts: qcom: sdm630: Add missing vote clock and GDSC to lpass_smmu
+      arm64: dts: qcom: sdm630: Add FastRPC nodes to ADSP
 
+ arch/arm64/boot/dts/qcom/sdm630.dtsi |  40 ++++++++-
+ arch/arm64/boot/dts/qcom/sdm636.dtsi |  23 +++--
+ arch/arm64/boot/dts/qcom/sdm660.dtsi | 162 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 215 insertions(+), 10 deletions(-)
+---
+base-commit: 93f3bab4310d4ff73027cc4f87174284d4977acf
+change-id: 20251019-qcom-sdm660-cdsp-adsp-dts-8fabb670338e
+prerequisite-change-id: 20251018-qcom-sdm660-cdsp-59ad56867a18:v2
+prerequisite-patch-id: a8c9703aec1663b8226556ba1770bd6c5b4ef060
+prerequisite-patch-id: 5a49b179c69e045e8003f28e8ef0e6e003c0064a
+prerequisite-patch-id: dd158e1214a7e73ac0a8f1da9d3face61ad7d5bd
+
+Best regards,
 -- 
-2.51.1.dirty
+Nickolay Goppen <setotau@mainlining.org>
 
 
