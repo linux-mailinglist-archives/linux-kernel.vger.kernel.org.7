@@ -1,106 +1,139 @@
-Return-Path: <linux-kernel+bounces-867260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE69C02138
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:21:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40116C0205E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79F323A4B50
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:11:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887361A6665E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA19D334370;
-	Thu, 23 Oct 2025 15:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A373370FD;
+	Thu, 23 Oct 2025 15:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kd/0WRab";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ycdq+jIG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQFAk4o9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC47133344C
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83AE3370FB
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761232277; cv=none; b=fdS8AAX36m3NdVXM6ufTcfpTi2cTJHgqX4G72GN5eq5lhi1vCtj1AyldsZIF/SdUz/HbAkk7ljFx9UVB4v2p7IOE3nV+EPquG4CUK609yKd8y+UlWJpm1UzKeM2vvSV/qcPklSXYNMQsMVcu4nEppGZQQj383bA/VDBYuiA6+B4=
+	t=1761232289; cv=none; b=qQerJn7hEFVEq7ak6lCh0hvwZkOzwSQVpVMLFkhHqwXgJ0QW9uEOC6DBqmhX5g6wwhhwBYY66tE10aG7B6OLv88qE1CcUCZSLC1WqOkNccNnxsuoFCE0Y4HFQkvo37VQMfd1wfH2ObJr/dHzY4GO6BwEPeYOLnGsyhQHny2ieo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761232277; c=relaxed/simple;
-	bh=5dwU6i5sitLr16Z9Isb9fR4BLIpTXcDlO9qOTy+GlQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CBUvGjDgAij62uzgmcBhJBhbZYgcFQ86YWhDGpc3N5iIiom+PznDrSEWGnVHzh72fJNu0TK7ryUtp+crJa5ULdHxsElJtGAv4d4G1Nq5W4OdukwOsXV1aW3TMCoqJe3Ik3y7lQH699NEQkgDjPHU7yI+TL8QhGYxZA5RiaHIsJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kd/0WRab; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ycdq+jIG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 23 Oct 2025 17:11:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761232273;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8tevRDzSxVSNJnZIlEmVhPn2v+oCYBqON7T1YAaqgrg=;
-	b=kd/0WRabwkk/N3bm3iRYrZc0VAWdWmwukTqUTus+xw3Z+CQtIp42WoIHkz+ChwdqoM8cEX
-	kriNqTAnFwoSdR3u9IGNzlD9dThNm36E+bL0lOFPHNWqaiKome2c7Les5u+5nt8vNx8AGD
-	0MmOnQ6GLRGD8JOUr00tLdqOc5J9RYe4ze09BCAnOFn3aZeSil/KkZlPusClcHacq581Nc
-	fG1dnlRaHVSnbn/xZbo1BmzEACSjT1oZoKH0DYM+uITUedawh6kj243iiT5nccIF66Xwdh
-	TWCeZnGtecY930ISBqZal99z3IWZAZFeEf0Hdc4RtD3MBp+bvb9duDMpON/mhQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761232273;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8tevRDzSxVSNJnZIlEmVhPn2v+oCYBqON7T1YAaqgrg=;
-	b=Ycdq+jIGFpPAovK7f5TQpHL/RH27Ra5/QWk5meeN+/gacNcFJvqg37JaVi9FUl8j6auM5r
-	WJ9+LVranOg69pBg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Oleg Nesterov <oleg@redhat.com>, Petr Mladek <pmladek@suse.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] printk_legacy_map: use LD_WAIT_CONFIG instead of
- LD_WAIT_SLEEP
-Message-ID: <20251023151112.goqBFQcM@linutronix.de>
-References: <20251022154115.GA22400@redhat.com>
- <20251023103234.GA27415@redhat.com>
- <20251023142655.FvZkeSa-@linutronix.de>
- <87wm4lbqt2.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1761232289; c=relaxed/simple;
+	bh=HbjhGK0G5pGUlhH8u9kmGZx/g9Y6CmyLtzSy7KvwPN4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M0fr8RZKmUCGOsTi7Fsis9Q4Ww9Oa5LJlSJ6vseoMzlvm+sQeenHxyIR9nAERfVa/5uDyTdm1Wa71ArnCadTmEJKW9/q9bRaeICPUFE4m+vtt7JbKqLOVzlHl2bxIXQMeE9TcCjN3i12oErGepttxMQWlfaYl68dCbShyQq5FlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQFAk4o9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76B24C4AF09
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761232289;
+	bh=HbjhGK0G5pGUlhH8u9kmGZx/g9Y6CmyLtzSy7KvwPN4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cQFAk4o9U+xyOAJNykyTj5Eox2DeAu40D3rBnMNjkreYj4CoQdoln/3ZtajD9fSoI
+	 rlbInngI6r0mu04oelkhMxWxRMQMCFOsia9r3aK9pEEjtvVy5/tpFDqn7XkEyct7q7
+	 mbi7QEn3MmChtO2wU14Dc9s78AuSrgGSDvmoVZS8h80qU2SyZHYevpmlpfNfJsWIBu
+	 hC2NQvWjjxIlTxdtTo5u80GEFQEJXU7IF3q5lankAO22pVGS+YG55OLJH7PnyW6UY7
+	 F8e37kOdQTs+qjAGjoCpSRgV20pOXjrqpkUNQY45LK/GsCx/0gd/UO7z609Yis6bly
+	 x7y5v1zba+fLg==
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7c0e357ab51so852377a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:11:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXqXBww9QcrG4OXpQrsyY/al6roFMO10RGxo6H4sMvnfV6/38OUptL5FlDUMfgbEV2Q7u9whsyDtwrkevw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvzSTaXGTfKnLIlYfAiW7PuoHwf57OMsksGYM9s/20EHtLc0wb
+	WcCY/OkhCeoXPr3Tsk+HJeBGPjWjWTM2spOoyujpBs93ItKyY2CHUxe7jCuu6uMiAU0NI9X/ko0
+	70envIj56ZFamlsawrCdFQ6gbm7E9dVY=
+X-Google-Smtp-Source: AGHT+IEEIqXqLWdKxaISo2plnHeWBU7F4XnnYvFesimjPGTiUUnWaB+9I8ytYhWNwjgu8abqtQKl6S2MMWeJRT3YG6s=
+X-Received: by 2002:a05:6808:181e:b0:441:8f74:f0b with SMTP id
+ 5614622812f47-443a30e0ab6mr9053954b6e.53.1761232288746; Thu, 23 Oct 2025
+ 08:11:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87wm4lbqt2.fsf@jogness.linutronix.de>
+References: <20251002113404.3117429-1-srosek@google.com> <20251002113404.3117429-3-srosek@google.com>
+ <CAJZ5v0iQToOkedruYqsowSm8=fxpnyJf86JJHB36E8+aCSZ5Hw@mail.gmail.com> <CAF3aWvFSomq+cm2sj+KjkYw=WODsrwH-VLDL=yOc6o9dqc5hWA@mail.gmail.com>
+In-Reply-To: <CAF3aWvFSomq+cm2sj+KjkYw=WODsrwH-VLDL=yOc6o9dqc5hWA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 23 Oct 2025 17:11:17 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g72U3+u_KedKpZh2TuN-iYbXPcnZhN16oDvi4UqUTr7Q@mail.gmail.com>
+X-Gm-Features: AS18NWBHGY-eaK7GVSIrVckhmfz8bbUTGxn5FaIfLLu6uQlgSHMtDQwK9-F2IfE
+Message-ID: <CAJZ5v0g72U3+u_KedKpZh2TuN-iYbXPcnZhN16oDvi4UqUTr7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] ACPI: DPTF: Move INT340X device IDs to header
+To: =?UTF-8?Q?S=C5=82awomir_Rosek?= <srosek@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Alex Hung <alexhung@gmail.com>, 
+	Hans de Goede <hansg@kernel.org>, Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>, 
+	AceLan Kao <acelan.kao@canonical.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Tomasz Nowicki <tnowicki@google.com>, 
+	Stanislaw Kardach <skardach@google.com>, Michal Krawczyk <mikrawczyk@google.com>, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-10-23 17:12:49 [+0206], John Ogness wrote:
-> On 2025-10-23, Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-> >> @@ -3016,7 +3017,7 @@ bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
-> >>  static inline void printk_legacy_allow_spinlock_enter(void) { }
-> >>  static inline void printk_legacy_allow_spinlock_exit(void) { }
-> >>  #else
-> >> -static DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map, LD_WAIT_SLEEP);
-> >> +static DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map, LD_WAIT_CONFIG);
+On Thu, Oct 23, 2025 at 4:41=E2=80=AFPM S=C5=82awomir Rosek <srosek@google.=
+com> wrote:
+>
+> On Wed, Oct 22, 2025 at 8:46=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
 > >
-> > We could use this lock_map_acquire_try() directly but okay having it in
-> > one spot with a comment might have its benefit. But _why_ is here a
-> > CONFIG_PREEMPT_RT? This is supposed to work in both cases. Should a
-> > legacy driver be invoked on RT then the comment is not accurate, lockdep
-> > won't yell but we still have CONFIG_DEBUG_ATOMIC_SLEEP making its own
-> > judgement.
-> 
-> With PREEMPT_RT, legacy console printing is forced into its own
-> dedicated kthread. At runtime this is checked via
-> force_legacy_kthread(). So with PREEMPT_RT there is no need for special
-> lockdep trickery. Once we can get all the consoles switched over to
-> nbcon, !PREEMPT_RT will also not need this lockdep trickery.
+> > On Thu, Oct 2, 2025 at 1:34=E2=80=AFPM Slawomir Rosek <srosek@google.co=
+m> wrote:
+> > >
+> > > The ACPI INT340X device IDs are shared between the DPTF core
+> > > and thermal drivers, thus they are moved to the common header.
+> > >
+> > > Signed-off-by: Slawomir Rosek <srosek@google.com>
+> >
+> > I've actually started to wonder if int340x_thermal_handler is needed at=
+ all.
+> >
+> > It just creates a platform device if the given ACPI device ID is in
+> > its list,
+>
+> That's true. It creates platform device for the given ACPI device ID,
+> but only if CONFIG_INT340X_THERMAL is enabled.
+>
+> > but acpi_default_enumeration() would do that too with the
+> > caveat that it would also be done for CONFIG_INT340X_THERMAL unset.
+>
+> Not exactly. scan handler returns ret=3D1, so device is marked as enumera=
+ted
+> https://elixir.bootlin.com/linux/v6.18-rc2/source/drivers/acpi/scan.c#L23=
+14
+>
+> > That should not be a problem though because if CONFIG_INT340X_THERMAL,
+> > there are no drivers that will bind to those platform devices, so the
+> > net outcome should be the same.
+>
+> If CONFIG_INT340X_THERMAL is not set and there are no drivers to attach
+> to platform devices and int340x_thermal_handler is removed then you are
+> right, acpi_default_enumeration() will enumerate ACPI bus anyway and
+> create platform devices for all ACPI device IDs. However, for me it looks
+> like it was intentional to prevent this behaviour unless INT340X drivers
+> are "present" in the system (were enabled for build so should be).
+> I am not sure how DPTF works and what may happen if platform devices are
+> visible in sysfs while drivers are not loaded.
 
-This does not matter. My point is that there no need for this ifdefery.
-You say: This might get the nesting wrong but it is fine because the
-outer lock should be this. This does not hurt if it is also applied on
-RT. _BUT_ on RT you don't even trigger this path so this ifdef is not
-needed.
+Such a dependency would be unexpected and confusing.
 
-> John
+Also, I'm not sure why it would be useful because the lack of drivers
+means that the devices in question are not handled, so no
+functionality related to them is provided by the kernel.
 
-Sebastian
+> >
+> > Thus I'm wondering if the way to go might be to drop
+> > int340x_thermal_handler and simply keep the device IDs in the drivers
+> > that use them for device binding.
+>
+> Even better. If it's not required for DPTF to prevent enumeration
+> on the platform bus I can simply remove the scan handler.
+
+I would at least try to do that.
 
