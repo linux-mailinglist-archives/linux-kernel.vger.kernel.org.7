@@ -1,141 +1,205 @@
-Return-Path: <linux-kernel+bounces-866955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7613C012D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:39:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F3EC0138E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 82F1B355493
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:39:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7607188D0BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAA03148B5;
-	Thu, 23 Oct 2025 12:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A569313E0E;
+	Thu, 23 Oct 2025 12:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OSA9QUjA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="VvEREl5w"
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2394E2EC568;
-	Thu, 23 Oct 2025 12:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A07C3054EE;
+	Thu, 23 Oct 2025 12:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761223178; cv=none; b=hvw2kjGzjyFxg/cuRFildcg8/EI1VT7/DTVWgv3ryxKU+tqsCOEnDfmRLWqdYk54AVu2vhSY5bvhJJWcqrAKFC+yAWGcDpr1q9xXZIex34bumuDHHfBOUzIoaXGFzlpz/2R6eU8nTFGzET2bR6E3pHBQBPvp5cEngZYHwRG/1hs=
+	t=1761224074; cv=none; b=audMK7X4Cs78/tvA+qnT+Kvtm6UFp32/GIP+dXmOflFkfBKOg/InNvJIS+3C+4mPA8QhGg91Pc+fjro/ifIGBrMu8IUyv6DxKKqMtmH6BYdqJr1QzOFlJz+eA4dTg/f+tLqsqRKiryrzevgnE1+x3EgJDeMHKCvmw6VUuBqcsHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761223178; c=relaxed/simple;
-	bh=ENxKQGLphv3+AjkiaeUv+Q+GG4Ha2gwwg2AeDWQi4fI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PjaXwO/YRbFEWCcHmtfV0vp+vDIYk/tEFb2cc1SdwIs8jrllcIBY+FQwGjMDbAP9PQJoCAQ+F+zV4QDlVh9hl5DlJrcXs7h0XlxIIzAYSU3bbSFqUL6KVR0rlRvoH5MFgE5wY5O5UzyFBX80p1CpFRIvwRrOXD/7X+coxoC9ZxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OSA9QUjA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6iTve026532;
-	Thu, 23 Oct 2025 12:39:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	em6T5/MuXjt9/C6nu7UQlOYK72gnLBq+vLNDjIAMRLw=; b=OSA9QUjAdqhznGUR
-	9sawIXXfIyWZtMDXKUdup4GyHzaGvhGiiI71kurOW0c1vM+CBoOifN5SdzXKyTF5
-	rloc66kBEfsC27bM4/bnO2pR+A7Bcb5ov+1K1mlO5iAShWk9pLJNET2QLR2ux3Jo
-	FYyjKNmfym7DpntkMNyBKrNlmJKCu3dW87lhQbx6KSF6wj5tfNGmqIQlnsFKQwp3
-	6dShfLOqhvyKoNSen+J4n+ho+PrG/PLs9E3OJnuYwITlNJWQyMojS2PX7qtYh/wT
-	gqFnmZqSUesUze5uQ7+T71T3ig7g/2T5UT5zK9L3/E/MngVmFSzCDlr9pMW9Yifk
-	9XSNEQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v42kg7gm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Oct 2025 12:39:34 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59NCdXU5025137
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Oct 2025 12:39:33 GMT
-Received: from [10.151.36.184] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 23 Oct
- 2025 05:39:30 -0700
-Message-ID: <7b790b0f-9dc0-7177-836c-bbb1a342068b@quicinc.com>
-Date: Thu, 23 Oct 2025 18:09:27 +0530
+	s=arc-20240116; t=1761224074; c=relaxed/simple;
+	bh=R56Tgae5eqOMUOmvJxbrb67OfsMYj2vyvhqS4aSTFnU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CDf74tkEjwnaiALjWcAHUEzc3G9ZWCln64nkeibmKsgGbQe6sGeFEH9Jp2dBrNPwheH3h0mdiLji3YFtC7dSmoEL5KpiYgYMW9Q/nZJKGW3V1GbN7d0JizYvfPEvFJIi0lE1gpmmSAhcHakUAJt2VnMFE3HC7dmyehXk4h6j4NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=VvEREl5w; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59N6K0UW3308347;
+	Thu, 23 Oct 2025 05:41:12 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	PPS06212021; bh=N2DkoPjHYfV4u364j48gHscPKNEgjyY/o7DFyypKuiM=; b=
+	VvEREl5wO8ztAt8qO9RzI+Oxd7kwjX0/Cdy5jCfd/v0z47QzXqeOdARyqx0AWtfB
+	9xN24LX98ZuHKK2ueP7IunAy2GIol5hqh9eGC6lRqrOtLSFr4pZg60VlIA626P66
+	Xkg/hW3M1D4pHPvCxPGlvfQiC2AmkHZeztkpYiNRyKov3xyBqXZ8+jxlvmjdZYWj
+	0TZKMpnjpNTw7+flvlXJymhA6KVbBx/uG0M3sO4I2ykgh8Mt6iLBTanhSSY3Dvbm
+	LX5iNm9tioxn3NzaTh4sLa0whKeq8oHhtvlZqIZs6vOpJE6LyNt4nOmdU/TfGTlX
+	6h5bXaqkH/N5pkvW5t7asw==
+Received: from ala-exchng01.corp.ad.wrs.com ([128.224.246.36])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49vadj5q0d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 23 Oct 2025 05:41:12 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.59; Thu, 23 Oct 2025 05:41:11 -0700
+Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
+ 15.1.2507.59 via Frontend Transport; Thu, 23 Oct 2025 05:41:08 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <pabeni@redhat.com>
+CC: <dan.carpenter@linaro.org>, <davem@davemloft.net>, <edumazet@google.com>,
+        <horms@kernel.org>, <kuba@kernel.org>, <linux-hams@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <netdev@vger.kernel.org>,
+        <syzbot+2860e75836a08b172755@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH V3] netrom: Prevent race conditions between neighbor operations
+Date: Thu, 23 Oct 2025 20:41:07 +0800
+Message-ID: <20251023124107.3405829-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <7232849d-cf15-47e1-9ffb-ed0216358be8@redhat.com>
+References: <7232849d-cf15-47e1-9ffb-ed0216358be8@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 1/9] spi: dt-bindings: spi-qpic-snand: Add IPQ5424
- compatible
-Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <vkoul@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <quic_varada@quicinc.com>
-References: <20251014110534.480518-1-quic_mdalam@quicinc.com>
- <20251014110534.480518-2-quic_mdalam@quicinc.com>
- <dd1e4289-5e36-4b24-9afd-f09569459a96@sirena.org.uk>
- <96ae7d38-4ce0-fa34-e6f0-6bb6e4ceaa28@quicinc.com>
- <0a743099-face-4cc1-91ef-098a748604b7@sirena.org.uk>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <0a743099-face-4cc1-91ef-098a748604b7@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: WeLjqZzViYgfKw1VB0ES-yIzBLHsKPkO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAzMSBTYWx0ZWRfXwZWPk89gUPef
- KI/vSal51wnKsXAzh6moK4dlqc8Gy8kHTi55T3f5omPFrqjor8MacS7+hg4itSoTFJUmcEomKgb
- ELgweIW9b5g1MdHXBWJnuLrcd7ztf5f4aBLKlIfB3qn5psWkSjvG8XzhEUyRj23VuViGsI72jRy
- lpJ4pkTKGqU9ovKTdXBApUTJiXEFonYFfE9x0gnzRlJzR/Y6NMv2dz16BQviYILENU73wrf4u+N
- XdU29Pl7E8Y0D/OwTRRqHF0RwjIaeF40JZELUj33UvxqHW7nkDU6Y+Y7WQbuXAZmtJ2VP7T9gjI
- zKwnyXi3X2MR3m4LhAlpMVw87zpEY6eZT/O4b4wM/DbsHbxxtInixuRS4sZb21lf4/cNSe1CqD0
- mfjlFUUxXMgMITW5UbSKh2AvyTYffg==
-X-Authority-Analysis: v=2.4 cv=QYNrf8bv c=1 sm=1 tr=0 ts=68fa2206 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=BAz0yG0TH0QP3-mkIuYA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
- a=HhbK4dLum7pmb74im6QT:22 a=pHzHmUro8NiASowvMSCR:22 a=Ew2E2A-JSTLzCXPT_086:22
-X-Proofpoint-ORIG-GUID: WeLjqZzViYgfKw1VB0ES-yIzBLHsKPkO
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: TfujjiZhNxZ2zJOxy6LAYKu6heWEY77d
+X-Authority-Analysis: v=2.4 cv=K+4v3iWI c=1 sm=1 tr=0 ts=68fa2268 cx=c_pps
+ a=AbJuCvi4Y3V6hpbCNWx0WA==:117 a=AbJuCvi4Y3V6hpbCNWx0WA==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=edf1wS77AAAA:8 a=P-IC7800AAAA:8
+ a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=be5ax3V_b8f36URrEVAA:9
+ a=DcSpbTIhAlouE1Uv7lRv:22 a=d3PnA9EDa4IxuAV0gXij:22 a=cQPPKAXgyycSBL8etih5:22
+ a=FdTzh2GWekK77mhwV6Dw:22 a=poXaRoVlC6wW9_mwW8W4:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+ a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=SsAZrZ5W_gNWK9tOzrEV:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDExNSBTYWx0ZWRfX0NydGD5W6Qu9
+ U7+MBGGor6EA87dJFV/2H4L+rBwH7dOVjsfmeJquU3/n7XAVPI9gHP8snOfAzWhc/flpjEbEU+Y
+ awJqID0dUHXp3P1TV6z3t0cz09j91poJ/64U9sK/knDmEk94/0r13Ma2mfN2luZQlN+6LcABNCY
+ gXvlFpNYONgR2hCKsVrJnm7wL8iSEYtYggbHhT1zfoIVRxH+QUPvi05oIcR1B29XIre1UOQuAr6
+ qn0aWUYbknLUylil28M0o+IUIjyFsM655nsNXmJ3lAgtoDp6/KFGZVFSdSq9J+DHR6r67SZvbyU
+ nt/gTz0EWBMV5F5n07aumv/ktj2kYP6RHqn4ZG+HEETwhhXVTcgaQUowi/pflnaF0OJ2ADDqm6v
+ maPtquH7k26XKCOoMR1D5EUt/1WhnA==
+X-Proofpoint-GUID: TfujjiZhNxZ2zJOxy6LAYKu6heWEY77d
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- spamscore=0 bulkscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ adultscore=0 impostorscore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180031
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510230115
 
-Hi,
+On Thu, 23 Oct 2025 13:44:18 +0200, Paolo Abeni wrote:
+> > The root cause of the problem is that multiple different tasks initiate
+> > SIOCADDRT & NETROM_NODE commands to add new routes, there is no lock
+> > between them to protect the same nr_neigh.
+> >
+> > Task0 can add the nr_neigh.refcount value of 1 on Task1 to routes[2].
+> > When Task2 executes nr_neigh_put(nr_node->routes[2].neighbour), it will
+> > release the neighbour because its refcount value is 1.
+> >
+> > In this case, the following situation causes a UAF on Task2:
+> >
+> > Task0					Task1						Task2
+> > =====					=====						=====
+> > nr_add_node()
+> > nr_neigh_get_dev()			nr_add_node()
+> > 					nr_node_lock()
+> > 					nr_node->routes[2].neighbour->count--
+> > 					nr_neigh_put(nr_node->routes[2].neighbour);
+> > 					nr_remove_neigh(nr_node->routes[2].neighbour)
+> > 					nr_node_unlock()
+> > nr_node_lock()
+> > nr_node->routes[2].neighbour = nr_neigh
+> > nr_neigh_hold(nr_neigh);								nr_add_node()
+> > 											nr_neigh_put()
+> > 											if (nr_node->routes[2].neighbour->count
+> > Description of the UAF triggering process:
+> > First, Task 0 executes nr_neigh_get_dev() to set neighbor refcount to 3.
+> > Then, Task 1 puts the same neighbor from its routes[2] and executes
+> > nr_remove_neigh() because the count is 0. After these two operations,
+> > the neighbor's refcount becomes 1. Then, Task 0 acquires the nr node
+> > lock and writes it to its routes[2].neighbour.
+> > Finally, Task 2 executes nr_neigh_put(nr_node->routes[2].neighbour) to
+> > release the neighbor. The subsequent execution of the neighbor->count
+> > check triggers a UAF.
+> >
+> > The solution to the problem is to use a lock to synchronize each add a
+> > route to node, but for rigor, I'll add locks to related ioctl and route
+> > frame operations to maintain synchronization.
+> 
+> I think that adding another locking mechanism on top of an already
+> complex and not well understood locking and reference infra is not the
+> right direction.
+> 
+> Why reordering the statements as:
+> 
+> 	if (nr_node->routes[2].neighbour->count == 0 &&
+> !nr_node->routes[2].neighbour->locked)
+> 		nr_remove_neigh(nr_node->routes[2].neighbour);
+> 	nr_neigh_put(nr_node->routes[2].neighbour);
+> 
+> is not enough?
+This is not enough, the same uaf will appear, nr_remove_neigh() will also
+execute nr_neigh_put(), and then executing nr_neigh_put() again will
+trigger the uaf.
+> 
+> > syzbot reported:
+> > BUG: KASAN: slab-use-after-free in nr_add_node+0x25db/0x2c00 net/netrom/nr_route.c:248
+> > Read of size 4 at addr ffff888051e6e9b0 by task syz.1.2539/8741
+> >
+> > Call Trace:
+> >  <TASK>
+> >  nr_add_node+0x25db/0x2c00 net/netrom/nr_route.c:248
+> >
+> > Reported-by: syzbot+2860e75836a08b172755@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=2860e75836a08b172755
+> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> 
+> 
+> 
+> > ---
+> > V1 -> V2: update comments for cause uaf
+> > V2 -> V3: sync neighbor operations in ioctl and route frame, update comments
+> >
+> >  net/netrom/nr_route.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/net/netrom/nr_route.c b/net/netrom/nr_route.c
+> > index b94cb2ffbaf8..debe3e925338 100644
+> > --- a/net/netrom/nr_route.c
+> > +++ b/net/netrom/nr_route.c
+> > @@ -40,6 +40,7 @@ static HLIST_HEAD(nr_node_list);
+> >  static DEFINE_SPINLOCK(nr_node_list_lock);
+> >  static HLIST_HEAD(nr_neigh_list);
+> >  static DEFINE_SPINLOCK(nr_neigh_list_lock);
+> > +static DEFINE_MUTEX(neighbor_lock);
+> >
+> >  static struct nr_node *nr_node_get(ax25_address *callsign)
+> >  {
+> > @@ -633,6 +634,8 @@ int nr_rt_ioctl(unsigned int cmd, void __user *arg)
+> >  	ax25_digi digi;
+> >  	int ret;
+> >
+> > +	guard(mutex)(&neighbor_lock);
+> 
+> See:
+> 
+> https://elixir.bootlin.com/linux/v6.18-rc1/source/Documentation/process/maintainer-netdev.rst#L395
+Using guard is not recommended. I'll reconsider.
 
-On 10/22/2025 4:12 PM, Mark Brown wrote:
-> On Wed, Oct 22, 2025 at 12:29:01PM +0530, Md Sadre Alam wrote:
->> On 10/22/2025 12:39 AM, Mark Brown wrote:
->>> On Tue, Oct 14, 2025 at 04:35:26PM +0530, Md Sadre Alam wrote:
->>>> IPQ5424 contains the QPIC-SPI-NAND flash controller which is the same as
->>>> the one found in IPQ9574. So let's document the IPQ5424 compatible and
->>>> use IPQ9574 as the fallback.
-> 
->>> This doesn't apply against current code, please check and resend.
-> 
->> Thank you for the feedback. I’d appreciate a bit more clarity on what
->> “doesn't apply against current code” refers to in this context. I’ve
->> manually applied the patch against the latest mainline (torvalds/linux) and
->> it applied cleanly without any conflicts. Please let me know if there’s a
->> specific tree or integration point I should be checking against.
-> 
-> I tried to apply it to the spi tree
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-6.19
-I had sent v3 on the 14th, but since v2 was already applied on the 15th 
-and v3 was just a resend, the error on reapplying makes sense. 
-Everything looks in order now, and no further action is needed.
-
-Thanks,
-Alam.
+BR,
+Lizhi
 
