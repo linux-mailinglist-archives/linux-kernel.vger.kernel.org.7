@@ -1,186 +1,188 @@
-Return-Path: <linux-kernel+bounces-867125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C7BC01994
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:00:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C371C019A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 08A3835B151
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:00:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F41A1A6695C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D9C200BA1;
-	Thu, 23 Oct 2025 13:58:50 +0000 (UTC)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4435D31BC82;
+	Thu, 23 Oct 2025 13:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="V6qssH8P"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012068.outbound.protection.outlook.com [40.93.195.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9142EC0A7
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227930; cv=none; b=ukbbd/+ZLt41XnKwwec3GacKDOxVkVxxq18l+gKGSPcWd+gWjbctLjcgc1gg6LRFzrKEKNdUHnKBu48GzeC5k1EAfBBO81K7upAho9nMU+3Sw9dKxj8ZK+TaQfdHAUjgMT1g1EbHregCLWaIHEcNrh8LSRNcJdGhSiN+PMFtjPw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227930; c=relaxed/simple;
-	bh=70l9t4VdfE1npK3VaiMwUNG+xoIszb0NPTKI/djYJrM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vcg+8MtKh4JGcbrbYFmFaFbqBgjZfxfkMfIl7IYdPNi+Wi283xw0y5eoiiRfniAopb57Rb2ogtRzu/NH+v7SBU+ywDOU5Ub93D0BNn4fCxpDJw4BckEkROHtlJN2u9Xd5nPs4kS2ljgil4Pd5+dBLL82gLvIcg4z448bx9MC7VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-5db1aa8c93eso425972137.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:58:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761227927; x=1761832727;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LHznA4IxR0ryi2cJoCEHN+kBwQ2XKkkZXeR8LA/d1QU=;
-        b=KT00ND2XwOo7aZifxc8gXtwT/tbOFyzH9mqyMheHaHm6wE4CtZglHHGlIB5qRQy7HV
-         dwr/nlwU3t0iyCZmWVVtcCkqdUE1kYrsgYmsr8j8tHVhCkUDysjtJtwggh5vsS5Xi1Yp
-         NnxhxhDA4h8kochBmWYkCz8I/hXpI/ecMprTUJfgl7nFoFGOiILM4QvR9qKaN+48y2Cv
-         mXtuVbmLlnGDmhOq/1UaEVUpJrsKZCvfWMBntbETUJAQ3LiRn7iVUYQpawDkeBpdrnX4
-         QS53C6YP8YrLrnJ5aeNavJsVaJZXO6eFtLZI9dkvrYFvhk/l3n77NxSNqWznqDNY5O4N
-         KGKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRT+ckOVCNUYcIbfNObczXhxlqpom1Tmyx2rUsOAMoHoDVSw/oKISaH/kHeGQ4/e4mJCHa0IVVFH3xEXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGWExqG/u0VOTVVt5bNgI3hU00lEl96CB9jjNDKdOdDX2ivK8Q
-	7ZbLdwWT1xSbHr4z4dqfvXo7sFl9mtol3lkXO6UtdzVo1GZrwD0AGwSruDD3AVGg
-X-Gm-Gg: ASbGnctH5UscRoC7m67UYcpyeCntOAJOEpoPbXWU6toX1StxqiXAdekrXBokgML7HAq
-	IYTNB/3DHCFqOx61fh7v3Hp6G4pRPIj2OBcCIwjgLtYb+TgeArKxygibLHxcJCzJIQWFAHcxRUK
-	i2wWH2FCGVWG8ZfUA13LWNyES/DXOcK72u4ePGs5uCC3gSplbjJ/TcwLto0xRftzvYO/GXa6I6R
-	yGEXjICjoh+mDFRkFcwr6qrxulxYY5VIg+43OX5PVaxnvomfuD06f4njiHflRJ2UhrTlB+cIkMx
-	CA203GT9qfK4a3yolAM0j6bwrRPOgxo9J8iEB1J5livdP6XrFxKtavpM4lDn7QbuFPBDWMTcCf3
-	QyTA+Sr/hz4s+AQX+wv7FLZDhHI4YSFq2rcdNNh/jGoEYc8DNr/vIomqhmKOhErIHVG5By7EXs/
-	cGl+ol9T1d0pjpAjbY23agk48uWGdqmeNflzeuXQ==
-X-Google-Smtp-Source: AGHT+IHqw1wRprVYzsFDJipmjIMPPymCVaMrYiB43Q+lBlZxNeByMRbFHYy3Pn2djh4r08jeIEsC2Q==
-X-Received: by 2002:a05:6102:290e:b0:5a1:ea0:f56d with SMTP id ada2fe7eead31-5d7dd6d937dmr7869785137.32.1761227927027;
-        Thu, 23 Oct 2025 06:58:47 -0700 (PDT)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-557bdbe57c5sm766851e0c.19.2025.10.23.06.58.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 06:58:46 -0700 (PDT)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-5db374c282dso135534137.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:58:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXF5DVw4AzDDpBDkyjaCg+jhGQKjm/gmAzJjmIO8NlgO7DLYPlGZwgBanuTVcKOZS7NTaqARZf2UuVocVc=@vger.kernel.org
-X-Received: by 2002:a05:6102:c09:b0:5db:3935:1636 with SMTP id
- ada2fe7eead31-5db393518f0mr253967137.26.1761227926239; Thu, 23 Oct 2025
- 06:58:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC7828E00;
+	Thu, 23 Oct 2025 13:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761227985; cv=fail; b=iaFBv8NToLHs1UmyWsXIUlZ+PGIrG49SedPsMY9cBbMrGh6cFg71rOpgjhBxClyAVas0Oqh+QpwRKol68g47YnUWcw6oG+02xjwpKg1xl0a/65ojkyXhQACRzmX6x5Q8eG2tIVN3WLXUPPGxk3ZwvRVeSdx9m9SmU2ZuIdyjx3Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761227985; c=relaxed/simple;
+	bh=vdeI2j2aL4sOlZYMXD8cWIo4esfdj+jEP2LIwDcPU7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=NFeOY0szvhXvFP7k51QZwfO0oKQOkTkCjUezFz5CbGZoViZi92hdSUUrQecvkiGnnMQLkpTF2VRUpRGLSb1n4hiOrKe3uSqWSWUNF2/q7hNIVGWOkFQ3j3TD4f8CCcVccpJW/D8NML4ZDNOi4fJwF/5zcIHquCPLtHptZXz/Y6s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=V6qssH8P; arc=fail smtp.client-ip=40.93.195.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SakdzM5Jg5ELLemdK3zqJTi6rvQsdNaaAQeVNevU67dc58zG7HHz9CVw8pu5HOy4uIXKggzYHFJH75V0wT98q5iyI1QQ87NjcpcqzzwGS8bYgvnIGqM9Q5/0wE33zJSa8dY3aLWpu3z3+t4eRVAWUxKO/kAz4gBxosFDpSQ63m5rG5MeAaUwuNCcfLVzSprW3/h3EBwmhCHi2g/Kg5Mvk2TrXVhmwDJsFB1/N3apUtcTbQGX7FlvPbAes0/fM9b6BPADBEeE30BO8GWRX3TsJ6B5xm3jZy0gSoaEHbKXQKYgoQDWu2mbqNGD3a7YumfvsSLWRBT50h8Bs6IUzyYVMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S/E1k9lUTnvsMxCa/kjJ3lCG15IbZz2ZmYbE7HE1yyg=;
+ b=JlfjtHhjQFsbGhI+hXqBByyDQUWK8/FU/eMHVcogIn1cJYaGts/2i248R4t7gE9xjS89GGjxR6t2j6PA4SBPbgjCpPGZXEGo7+p4CT5HEj2Y5gxLQk/CsSB74NTQthQyLu70YrolTcj8eAmlKZWNvAqTt17gw/uGAYDdzFtoVceiPcPvjo9GEBt5pPiFdmGpwcLB4OTA9T53ULxdt3vIduVo5czJ1Jm7KjoFvdc1CqJSV7kP0FnSO4OG0WSY5/JORxYwZ3NCyQx54hq4pLwUXFlBV+amdy07Av4P+iswu3BWW6O0A0dswHJBfQOwlYcVsO50sFGLbtto9L+KZWMxGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S/E1k9lUTnvsMxCa/kjJ3lCG15IbZz2ZmYbE7HE1yyg=;
+ b=V6qssH8Pxubg1ViQrLGLSVNq1Fg4nyIcDBJpRnMNZDUMoU7Bzty24t1kDWt6NtVk3ZV32KSX0IICgzizy+yfiR8o/okz3tdNHQyr32fzLX+YKhKqWZGWzNxScNuHJbt9YBWMMW3OxZRonHoxHrcQOQjV1KDdyKpxlh9FTrd+gHY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ MW3PR12MB4457.namprd12.prod.outlook.com (2603:10b6:303:2e::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9228.10; Thu, 23 Oct 2025 13:59:41 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%6]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 13:59:40 +0000
+Date: Thu, 23 Oct 2025 09:59:35 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Michal Pecio <michal.pecio@gmail.com>
+Cc: Shyam-sundar.S-k@amd.com, bhelgaas@google.com, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, jdelvare@suse.com,
+	linux-edac@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux@roeck-us.net, mario.limonciello@amd.com,
+	naveenkrishna.chatradhi@amd.com,
+	platform-driver-x86@vger.kernel.org, suma.hegde@amd.com,
+	tony.luck@intel.com, x86@kernel.org
+Subject: Re: [PATCH v3 06/12] x86/amd_nb: Use topology info to get AMD node
+ count
+Message-ID: <20251023135935.GA619807@yaz-khff2.amd.com>
+References: <20250107222847.3300430-7-yazen.ghannam@amd.com>
+ <20251022011610.60d0ba6e.michal.pecio@gmail.com>
+ <20251022133901.GB7243@yaz-khff2.amd.com>
+ <20251022173831.671843f4.michal.pecio@gmail.com>
+ <20251022160904.GA174761@yaz-khff2.amd.com>
+ <20251022181856.0e3cfc92.michal.pecio@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022181856.0e3cfc92.michal.pecio@gmail.com>
+X-ClientProxiedBy: BL1PR13CA0307.namprd13.prod.outlook.com
+ (2603:10b6:208:2c1::12) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009-clk-ssc-v5-1-v5-0-d6447d76171e@nxp.com> <20251009-clk-ssc-v5-1-v5-6-d6447d76171e@nxp.com>
-In-Reply-To: <20251009-clk-ssc-v5-1-v5-6-d6447d76171e@nxp.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Oct 2025 15:58:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU-UkzLnrPpBVyMH0DtgubxE_spUYbxtpO+5dmkFFqdcQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bl-Wzz5qd5CCY2fSVugSIzDYGwiZQethxZEtHbYBjXjOaCfH3VbWwjwxpU
-Message-ID: <CAMuHMdU-UkzLnrPpBVyMH0DtgubxE_spUYbxtpO+5dmkFFqdcQ@mail.gmail.com>
-Subject: Re: [PATCH v5 6/6] clk: scmi: Add i.MX95 OEM extension support for
- SCMI clock driver
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Sebin Francis <sebin.francis@ti.com>, Brian Masney <bmasney@redhat.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|MW3PR12MB4457:EE_
+X-MS-Office365-Filtering-Correlation-Id: 66b6e7cc-d1f2-4fc6-a980-08de123c6923
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UwvuSV6bNnmPPNBTi6IYukygjR2gC+fg9j7upNsyoX5AhPpn33e9hkGzmD8w?=
+ =?us-ascii?Q?3ep7cjDWmbX3IqbeRxlrORgWeVS9S/XHGAPjFGHmb2mt3Hd4U5riMiPNyNQQ?=
+ =?us-ascii?Q?CIi11jHMNl9rY7/ySsc9OLZrSJz0ZZQ+6xcMlZyHe7jxgYGNCPHvqLLjZfV4?=
+ =?us-ascii?Q?YDZU4QIxn0kdF5B7r2Lrw0gxWw1FwH4b+aW0pmfAUd2nomtDupkLiXQd+Ohj?=
+ =?us-ascii?Q?WJHgiDNpA1TJZmABosKFoisOKzDrOjpVf1NydRaYXPsuJBSkgAn/QJFJ+ex3?=
+ =?us-ascii?Q?6fG5E7HdtPwNuoKDHOCGr0ku8arJFeHE7hudjkif/NMf8gL3l7j634+1pZFZ?=
+ =?us-ascii?Q?00QtUrjlOBG+QnUd/KaQL8BpHP85sxIXe2T/9W3ig1bvKLePIshVQIQlX7VH?=
+ =?us-ascii?Q?MXADAn6gn6Ly7Kq3ejwTV3NZJEtsM7W6L/Fr3U0qTTG276Kr88flWIyVbBtL?=
+ =?us-ascii?Q?ITys5YS84175dhfmCgmOTCcFx6rxGQsXTfOgX/4Os/cfuhfy3gPAs/6JAinu?=
+ =?us-ascii?Q?RGq+8HUCLndr93goFacsGPX/mCrzfdSzvNHoHFNTFn4P+YQhvCaM23cIULCv?=
+ =?us-ascii?Q?Tjc2sApQRiinpRNG/jVsL4TxGpC62kEQ5qmvxOAVK/JcTLNGfljq5LrUEMKy?=
+ =?us-ascii?Q?YViWCs426Z4x0WDDe+uvj0AFKrLD3CWc7RyX06xQ6y/dHdoqn6E7gyMQYt6G?=
+ =?us-ascii?Q?zINs1ktKX6s5UcFxBn+0mjTcFYQC7g3IaIhf6Gr0wC8tZwBX/pTdOMvA/S6k?=
+ =?us-ascii?Q?ApGSpUHkNOwcgc3ujVC8dVTMPOtdylNrah5ltyrMp4/hA3PjMHVubNqHcgrg?=
+ =?us-ascii?Q?ZCehFvLdJd2DWo8UFXJrOUPkzFpyWDI4a8Rcjv+EXt9d47DAwse443Yt+PE0?=
+ =?us-ascii?Q?MFtXxXoSNBGryn4vfPlnvX6blBILiP+mFl45LdG1nTXTxbXDhy34llASf75h?=
+ =?us-ascii?Q?8sOuIu/Kx1tfA+PgzDohDz/6lRe5M6szT+YRVIWQTjZJf3UIURsGtoH3D6/q?=
+ =?us-ascii?Q?m9BjeHvckytxshnfmE+beXxFeEwg9tiGrZY3Rym/t0hb7yHhO0eDfztrGpwa?=
+ =?us-ascii?Q?YWi8wxQPTRmjBcPLhV5+UL5pxtOJmr7gOdt+L7IMwEKLcyow2y5vlvBY2TdE?=
+ =?us-ascii?Q?izUfs2+Y/WMfEu/qa/edDRQoXFvqrqewts+JmxmAe3IbJ8xEEUzie1P6PNiS?=
+ =?us-ascii?Q?vOKsKQdy2wBpxAACpWfIP16ORi2BIdKhYHSVTd8XBCxtPjLqHcgtWaJ98Yw6?=
+ =?us-ascii?Q?KAAwCvlyO15CwBlkxJFV343GF6cSwC1h7dLlRP8L1Zpa+DjVhqgnjLG8wW4/?=
+ =?us-ascii?Q?1ohKgCOKMTDIS9+v1JqQZv1nKtkXSAMU2FkCHwEGYJAy+hGBTmPd+HvyXaU3?=
+ =?us-ascii?Q?GuOUmQXTuYwRRiJZ1nbPLI6XNq0UMM8GPr5UJuD+ay/EkQBSR9foRNmaSLQa?=
+ =?us-ascii?Q?nTW/IDnSXqmkfXx1U/3sDb/AKc7ZsBnf?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zCCwHBDOlXYvkYch2B1h88/VrqXH6g7akclSEBpYsjPvxrILY01oRFmRqKU0?=
+ =?us-ascii?Q?uNqknRUU08ZfBSgz6/n+ywkq05r4H8I/Hl8xzz/ZOG9U0AY5qH6+OmpY4m5Z?=
+ =?us-ascii?Q?naOHVvqt8LDhtXdD1Ib228S/Zv2jzoh188eApmdtCzCHOblmxESOfsnvwj0c?=
+ =?us-ascii?Q?2GBTsLKePdyC+5IanqSP54N+awqdOyi8kSVTT5oSGDc4LgmEZv+76uieFt4F?=
+ =?us-ascii?Q?TcmcEJYOxudXz98n/Dw3qXiiq69o+Guq3R/THl4MG7ARS8okkFcZuNdHsLnp?=
+ =?us-ascii?Q?1wuaDiXDPpB2YNk4bBIFRFQO0b7OA27CGufJ/PFiRgLe3B3G3wiiqOf7aGKV?=
+ =?us-ascii?Q?hC+a4hQ09JOpnfVeXMUOe5TgyQSuxxZEBXP3IR0+Far6Uc+z9Y0xW1jCf5Zf?=
+ =?us-ascii?Q?mud262xWnUuP1yRvA4Rfc603by5nN3bMni6eXseq2oIKkMRm4BQd1Wzbl33W?=
+ =?us-ascii?Q?q3Vy0Rv6S6YiN4Exvuffa7Pr8eYlQ6mjccDhdSsQF3MQBNencMfdXuOqgYSH?=
+ =?us-ascii?Q?un1SucGLRYh4xxmKzGDppT9iYbuvJtL/H5ImfEzUCEMszg5L6B1zrqb2Ci/u?=
+ =?us-ascii?Q?rfqxCJHL5+rRkJeVtcxciw/k5J215Xk/tlmdaxGrkpktRVNHDyyVQ8Umw/2G?=
+ =?us-ascii?Q?TN4GLXgZEhkmYIK7BrfLg2aPxnLHmOjkStF6JQFmJKyYbHMQQjeJdDgSkGq6?=
+ =?us-ascii?Q?TdRXo+DMBE1NYJLkg4JLvu2/k/ILzSaJBHx8BHpReIt5V18YxmXBiM8uffCe?=
+ =?us-ascii?Q?n4syZIz3yLaRSULM2TGY6s3urOCKThC7NDtX6421pbO747l8mi1HKsSt0SP2?=
+ =?us-ascii?Q?JlNdxucGZCY9XZdZxdSS6dlBAcsTnuGsxMIg/FtVtCNXVWqEAYEPC8kvnHkO?=
+ =?us-ascii?Q?vX3YVPsv+ngxP8ZCrDLoHzQZ0gkEgsxq8htuaWO+RiP60T3/GZZMpre2zhid?=
+ =?us-ascii?Q?eXE5mQOrxWeRioHt4YengEafqAxdWVktJ7vl3bpm3CGfj3cR+TRZ8a58h6WC?=
+ =?us-ascii?Q?UELcRnkzsR1PRl8XZId4QrcTko0p+hIEHnVWLP13aDxzIRs1EE0LJXcb8iGC?=
+ =?us-ascii?Q?FfhvdMpDQtGqWYccxf0AEz4nGR/h1JLxF5SoA5ZlcS0dgARJugNjtoXcwlsW?=
+ =?us-ascii?Q?Vr8Jm2XFGZJkTmEDi3BdSzkjNUZuVzLmuhw2LrxYamES+EQgZt/fhg5WfZkP?=
+ =?us-ascii?Q?tc+AXte3KBzl6QKfG4isG7mR/ifHkBDdlGJexWTcAMNwNg++lt6AgRoO0in3?=
+ =?us-ascii?Q?Fh7MCZhN6G+taw1GYD0J9d9omFpVho3qzIoTvFaU9MXyJutk+QHbZcoCtpky?=
+ =?us-ascii?Q?UtNsLVFhBaiTgZL1k3fliqwvzoyPrFKMKqI3l7wMQghv6oTW2zHXuTIOSc2t?=
+ =?us-ascii?Q?uRFYac9y1Y38YXvjOABmIABLn7wI4+eaw7g+CLdKnTDeX/Ip24R/XoSlzx9v?=
+ =?us-ascii?Q?XpPZaPIk7c8EvjGcPtyUvpGKykLNCW7DvVVrG32aCYPHtaKx/ll8WHR6Raxb?=
+ =?us-ascii?Q?iRgGKdTSTIIgtAQfYhv9Cjw61d1YTToyJx50cyuMZOSXLNpqsM0z8uFmJZXf?=
+ =?us-ascii?Q?MMiR7KHIi6qU0S+ZKirfZ7SeaNvSA251B8m+a2yA?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66b6e7cc-d1f2-4fc6-a980-08de123c6923
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 13:59:40.6676
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JyI3po089zPNx9thK2QgaJWggkabgcKSacNaoOhGJNbS7RBUllfpFdQJmctem7c/MLQJdLoCthr8FI7eF010Xg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4457
 
-Hi Peng,
+On Wed, Oct 22, 2025 at 06:18:56PM +0200, Michal Pecio wrote:
+> On Wed, 22 Oct 2025 12:09:04 -0400, Yazen Ghannam wrote:
+> > On Wed, Oct 22, 2025 at 05:38:31PM +0200, Michal Pecio wrote:
+> > > On Wed, 22 Oct 2025 09:39:01 -0400, Yazen Ghannam wrote:  
+> > > > Can you please share the full output from dmesg and lspci?
+> > > > 
+> > > > Also, can you please share the raw CPUID output (cpuid -r)?  
+> > > 
+> > > Not sure which "cpuid" software you mean?  
+> > 
+> > Many distros package a "cpuid" user space app that will print and decode
+> > the x86 CPUID feature bits.
+> 
+> OK, here's some "cpuid_tool" from libcpuid.
+> 
 
-On Thu, 9 Oct 2025 at 05:49, Peng Fan <peng.fan@nxp.com> wrote:
->  - Introduce 'clk-scmi-oem.c' to support vendor-specific OEM extensions
->    for the SCMI clock driver, allows clean integration of vendor-specific
->    features without impacting the core SCMI clock driver logic.
->  - Extend 'clk-scmi.h' with 'scmi_clk_oem' structure and related declarations.
->  - Initialize OEM extensions via 'scmi_clk_oem_init()'.
->  - Support querying OEM-specific features and setting spread spectrum.
->  - Pass 'scmi_device' to 'scmi_clk_ops_select()' for OEM data access.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Thanks Michal.
 
-Thanks for your patch!
+I don't see anything obviously wrong.
 
-> --- /dev/null
-> +++ b/drivers/clk/clk-scmi-oem.c
-> @@ -0,0 +1,103 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * The Vendor OEM extension for System Control and Power Interface (SCMI)
-> + * Protocol based clock driver
-> + *
-> + * Copyright 2025 NXP
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/scmi_imx_protocol.h>
-> +#include <linux/scmi_protocol.h>
-> +
-> +#include "clk-scmi.h"
-> +
-> +#define SCMI_CLOCK_CFG_IMX_SSC                 0x80
-> +#define SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK      GENMASK(7, 0)
-> +#define SCMI_CLOCK_IMX_SS_MOD_FREQ_MASK                GENMASK(23, 8)
-> +#define SCMI_CLOCK_IMX_SS_ENABLE_MASK          BIT(24)
-> +
-> +struct scmi_clk_oem_info {
-> +       char *vendor_id;
-> +       char *sub_vendor_id;
-> +       char *compatible;
-> +       const void *data;
-> +};
-> +
-> +static int
-> +scmi_clk_imx_set_spread_spectrum(struct clk_hw *hw,
-> +                                const struct clk_spread_spectrum *ss_conf)
-> +{
-> +       struct scmi_clk *clk = to_scmi_clk(hw);
-> +       int ret;
-> +       u32 val;
-> +
-> +       /*
-> +        * extConfigValue[7:0]   - spread percentage (%)
-> +        * extConfigValue[23:8]  - Modulation Frequency
+Can you please share your kernel config file for the v6.12.31 build?
 
-What is the unit of this?
-According to the code below, it is in Hz, so it is limited to 65535 Hz.
-
-> +        * extConfigValue[24]    - Enable/Disable
-> +        * extConfigValue[31:25] - Reserved
-
-Center, up, down, could be stored here, I assume?
-
-> +        */
-> +       val = FIELD_PREP(SCMI_CLOCK_IMX_SS_PERCENTAGE_MASK, ss_conf->spread_bp / 10000);
-> +       val |= FIELD_PREP(SCMI_CLOCK_IMX_SS_MOD_FREQ_MASK, ss_conf->modfreq_hz);
-> +       if (ss_conf->method != CLK_SPREAD_NO)
-> +               val |= SCMI_CLOCK_IMX_SS_ENABLE_MASK;
-> +       ret = scmi_proto_clk_ops->config_oem_set(clk->ph, clk->id,
-> +                                                SCMI_CLOCK_CFG_IMX_SSC,
-> +                                                val, false);
-> +       if (ret)
-> +               dev_warn(clk->dev,
-> +                        "Failed to set spread spectrum(%u,%u,%u) for clock ID %d\n",
-> +                        ss_conf->modfreq_hz, ss_conf->spread_bp, ss_conf->method,
-> +                        clk->id);
-> +
-> +       return ret;
-> +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Yazen
 
