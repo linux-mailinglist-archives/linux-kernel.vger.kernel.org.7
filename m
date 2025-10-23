@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-866765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C14C00976
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:56:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F456C00984
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4DED4EA1BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B13963ADF38
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1596F305063;
-	Thu, 23 Oct 2025 10:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4CC30ACF0;
+	Thu, 23 Oct 2025 10:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="yX8OD/im"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Vo4MIiRf"
 Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7606265621;
-	Thu, 23 Oct 2025 10:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CC32FF155;
+	Thu, 23 Oct 2025 10:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761216960; cv=none; b=YshuqSHhcd38nEcT8WnfLK09DP5ObA5Ks4YAU3keFv4wDqHtZXmRT/5liBpDucBsJ74xbmEgppbET/BdD2OWc0V+G8E++4RBsJNzQVmJY3kLo2Fcdrk6LJiBKLXvk05Ksq+PqSPPmehodwpiE2lCcSVYvMtXqWOq8iJ3iVspWPc=
+	t=1761217098; cv=none; b=VeL+b6Hs/aAvsVgGf/qiSZLqseVAyPl+IUL6UTU7j6WDrMs9ufFZ41oAvFkGQbxby/RM4bIamd5CWRmIC2gkwq3VKt4f0wrk7KCRtO2l3p3wWp/HETm/SjbKH1FeFA1CAdKfzZLpWQV42LK5uhX1pK5sSM96TOUgNEJMKqLquaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761216960; c=relaxed/simple;
-	bh=Sl9GzBtS8VTh0y1HpiVjHSFV21aZYl+ykG2S01BM3vg=;
+	s=arc-20240116; t=1761217098; c=relaxed/simple;
+	bh=6vn6v4MILSmOJO1xxegRdfAeOu/+fF7cc10L4LrUSRM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GVM9NcNktEaz4kGTWNIIt2sw2p91n/JXBfdTie7nbtngAjJfKgdhm5obzb8xTHb1IyKLIC51y9H5qb5DGC+T1SzvRvVmjSKtLgIwf45Op0gKu1bNw3QgTr5EZH4F5QI8T6XX9vzK5atVlHvWuhZv9zSu/VLzunZOC1OuMBzoALM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=yX8OD/im; arc=none smtp.client-ip=78.32.30.218
+	 Content-Type:Content-Disposition:In-Reply-To; b=IgnoCHViuUNSCaLKKRA3FU/NtmicwsBrUzB9i/Ym/3QG90SwUbEgLw3POmZ9KQMnTWUMvyfVRkHXZULTAkJel8fTM/OAhpHp7p1mh9p+8zioEQEMYj2DACqvNb1WTIUtKZZTXZVG2gmAqMxhTEtajTfdJp16sgYP0z4XPya0VhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Vo4MIiRf; arc=none smtp.client-ip=78.32.30.218
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -36,30 +36,44 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
 	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=LkjOKeAb49sis7EWwyWb6dVtEtQGuocPuWXQlDktOeQ=; b=yX8OD/im5FX8eC/QjhMrbbUjFn
-	PeNDZhCP4RIpJg2TVmknhZO4G/ZGcASouffR782DL2Rd/GWyV7g6MQF+fcoMbnSCkPJGeOr8gm5KU
-	H80jT0YsD1Bnj0IeXfXRKEx+x/jdEtelXZX48HLQLcwdxEbXa7nxdMKn/PQcS3W3eYlnGBbmFjfek
-	tAscqFiPtLNIUGaY8vkj9x0b2RnwlWNrdsL2/TjV9QWH7ha+VrUIV06N5h1PgGBns34H5QfbycFdf
-	l+LKaYWmhDo/ztWYWKgYWrJO0FpdDmEFvLOctBdMhKMaNZ/p2CUgJ05ob+tbX/vmTFKz+x8BGHyIL
-	tFrj05uA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47994)
+	bh=qNGKgnMkm6N0a34ArXOzNjX3fTe4GCYWTtnKll+z7TA=; b=Vo4MIiRfyHNRUscorfDM2/WOE+
+	41TOMbZ/qQpN4QtO+oFf2EFpHe03toytLAivMuDtRJF6x8M16xbeVOrA8JQl8HwymcoIzP4c4O6Jf
+	NCAmA6iZQ5I6/8i/xZbPnXziAmvjlSFD974zsQ2/HEPYDv5NqJKlQO+ZhzwQcfh05YCVc750IXVm0
+	3EybN0Xz1J5Hg7BMUp3kY2o+Sw54x9cx8nXnxw/Z+fnxc5i0T1zuxhvLhtmHfjUgBE5/GfIKvhyCc
+	r8HPePXiy+8MBBJilicxlzwsXUqg0E5L0uuE6n89f2TKdJliV0ncU+TVqkTMHhaw3jZAvBu0nJrdL
+	aJCwddtQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58128)
 	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.98.2)
 	(envelope-from <linux@armlinux.org.uk>)
-	id 1vBsz5-000000006DR-2v8s;
-	Thu, 23 Oct 2025 11:55:55 +0100
+	id 1vBt19-000000006Dh-3jCL;
+	Thu, 23 Oct 2025 11:58:04 +0100
 Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
 	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1vBsz3-000000001ci-2V28;
-	Thu, 23 Oct 2025 11:55:53 +0100
-Date: Thu, 23 Oct 2025 11:55:53 +0100
+	id 1vBt17-000000001cq-0c85;
+	Thu, 23 Oct 2025 11:58:01 +0100
+Date: Thu, 23 Oct 2025 11:58:00 +0100
 From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Qiang Ma <maqianga@uniontech.com>
-Cc: ardb@kernel.org, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/2] Remove duplicate function calls and useless message
-Message-ID: <aPoJuaoqjZ9L9ifl@shell.armlinux.org.uk>
-References: <20251023082051.75183-1-maqianga@uniontech.com>
+To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Rohan G Thomas <rohan.g.thomas@intel.com>,
+	Boon Khai Ng <boon.khai.ng@altera.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Matthew Gerlach <matthew.gerlach@altera.com>
+Subject: Re: [PATCH net v3 2/3] net: stmmac: Consider Tx VLAN offload tag
+ length for maxSDU
+Message-ID: <aPoKOIfCGvDEIWS7@shell.armlinux.org.uk>
+References: <20251017-qbv-fixes-v3-0-d3a42e32646a@altera.com>
+ <20251017-qbv-fixes-v3-2-d3a42e32646a@altera.com>
+ <aPI6MEVp9WBR3nRo@shell.armlinux.org.uk>
+ <ac0a8cd8-b1bc-4cdb-a199-cc92c748b84b@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,18 +82,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251023082051.75183-1-maqianga@uniontech.com>
+In-Reply-To: <ac0a8cd8-b1bc-4cdb-a199-cc92c748b84b@altera.com>
 Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Oct 23, 2025 at 04:20:51PM +0800, Qiang Ma wrote:
-> From: Qiang Ma <maqianga@uniontech.com>
+On Sat, Oct 18, 2025 at 07:36:26AM +0530, G Thomas, Rohan wrote:
+> Hi Russell,
 > 
-> This patchset removes duplicate function calls and useless debug message
+> Thanks, I'll update the commit message.
+> 
+> On 10/17/2025 6:14 PM, Russell King (Oracle) wrote:
+> > On Fri, Oct 17, 2025 at 02:11:20PM +0800, Rohan G Thomas via B4 Relay wrote:
+> > > From: Rohan G Thomas <rohan.g.thomas@altera.com>
+> > > 
+> > > On hardware with Tx VLAN offload enabled, add the VLAN tag length to
+> > > the skb length before checking the Qbv maxSDU if Tx VLAN offload is
+> > > requested for the packet. Add 4 bytes for 802.1Q tag.
+> > 
+> > This needs to say _why_. Please describe the problem that the current
+> > code suffers from. (e.g. the packet becomes too long for the queue to
+> > handle, which causes it to be dropped - which is my guess.)
+> > 
+> > We shouldn't be guessing the reasons behind changes.
+> > 
+> 
+> Queue maxSDU requirement of 802.1 Qbv standard requires mac to drop
+> packets that exceeds maxSDU length and maxSDU doesn't include preamble,
+> destination and source address, or FCS but includes ethernet type and VLAN
+> header.
+> 
+> On hardware with Tx VLAN offload enabled, VLAN header length is not
+> included in the skb->len, when Tx VLAN offload is requested. This leads
+> to incorrect length checks and allows transmission of oversized packets.
+> Add the VLAN_HLEN to the skb->len before checking the Qbv maxSDU if Tx
+> VLAN offload is requested for the packet.
+> 
+> This patch ensures that the VLAN header length (`VLAN_HLEN`) is
+> accounted for in the SDU length check when VLAN offload is requested.
 
-This isn't a patch set. This is a cover message with no patches threaded
-to it. This makes it difficult to find the patches.
-
-Please ensure that patches are threaded to the cover message.
+Please put that in the commit message, thanks.
 
 -- 
 RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
