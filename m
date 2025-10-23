@@ -1,315 +1,114 @@
-Return-Path: <linux-kernel+bounces-866814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077F1C00B6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:27:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F112C00B70
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:27:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D99C04E41F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF3919C8253
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9CC30DD34;
-	Thu, 23 Oct 2025 11:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C070130DEB9;
+	Thu, 23 Oct 2025 11:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gzSWBXh2"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A6h2AZl0"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF29430AAD4
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF4230DD3C
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761218841; cv=none; b=du5DcCYTybweim4Vkbig3hofuMb1Dh7j7gM2AfaVobs+Mtc3j7wFyoPiF9N1KQIVSqws6Ky/GbcILAKzSENefJkfIhJGihFyGWvylRIvpTKSQxy1wcMfhKVmMpS6Tevy5t4v1fjLPf6/XSFl1SHkOkLVWIGAEX/nt2HTbwAZQfg=
+	t=1761218845; cv=none; b=JOs9ndmwXd+RLR83/ySoCAQqb8fHaSuZZXcyuziWuBmmOCSz8Ynwf6/JfbnOE2iz2Kh3Rz8fI5zAIgXjlJuTmmjJ33bySB2PATYXJsfm0qOkNP7LkyG4s1rPSekfwtnBXyoGDzgf9+nrWDduuWFOFwNpuGF06sl6kbQ1dv7/D40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761218841; c=relaxed/simple;
-	bh=VQHXvxNXXieiyxAj+UPLqv6snrQ4UCOBTE8bOgiNP5E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fT8BUUn08DT1xCCU06qcgBamHXE8riXZn+v1tBEYOSPqkVJxu29jlMhJmlO+mC4i4PsQU33rNsE6lBdQQ2BApGqCOUVGmW5ptuZ4OX9Ez8T5eWETZRh6ouUaKKbiKs7bWx347e27833VfoBvSWBoi6cu6Ld5Js2LEIN2T8+XzKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gzSWBXh2; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0d267da41178f3ac4669621516888a06d6aa5665.camel@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761218824;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VQHXvxNXXieiyxAj+UPLqv6snrQ4UCOBTE8bOgiNP5E=;
-	b=gzSWBXh2alDmwuvqum2TWqS+NAdEmEqfbzMmm/1opvObvWcyvQvKmJ5FsmwgNB36AmNMEI
-	TVOUdvvi/GmliJmb400ulV/icT0kvcAW0Q9Bcq+WnEUt6qkhARrRVIkH7OfyReGBF4BUiB
-	MXR6/hnnIkaBMuStBl/kaO3TVfsyEvk=
-Subject: Re: [PATCH bpf-next 1/2] bpf: Skip bounds adjustment for
- conditional jumps on same register
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: KaFai Wan <kafai.wan@linux.dev>
-To: Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov
-	 <alexei.starovoitov@gmail.com>
-Cc: Yonghong Song <yonghong.song@linux.dev>, Alexei Starovoitov
- <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
- KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, KP Singh
- <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,  Shuah Khan
- <shuah@kernel.org>, Paul Chaignon <paul.chaignon@gmail.com>, Matan Shachnai
- <m.shachnai@gmail.com>, Luis Gerhorst <luis.gerhorst@fau.de>, 
- colin.i.king@gmail.com, Harishankar Vishwanathan
- <harishankar.vishwanathan@gmail.com>, bpf <bpf@vger.kernel.org>, LKML
- <linux-kernel@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK"
- <linux-kselftest@vger.kernel.org>, Kaiyan Mei <M202472210@hust.edu.cn>, 
- Yinhao Hu <dddddd@hust.edu.cn>
-Date: Thu, 23 Oct 2025 19:26:48 +0800
-In-Reply-To: <abe1bd5def7494653d52425818815baa54a3628a.camel@gmail.com>
-References: <20251022164457.1203756-1-kafai.wan@linux.dev>
-	 <20251022164457.1203756-2-kafai.wan@linux.dev>
-	 <39af9321-fb9b-4cee-84f1-77248a375e85@linux.dev>
-	 <1d03174dfe2a7eab1166596c85a6b586a660dffc.camel@gmail.com>
-	 <CAADnVQKdMcOkkqNa3LbGWqsz9iHAODFSinokj6htbGi0N66h_Q@mail.gmail.com>
-	 <abe1bd5def7494653d52425818815baa54a3628a.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1761218845; c=relaxed/simple;
+	bh=omXtqGdVwaLttMqdnLj+e50P9l/qbdlv1wXvTweGH/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i+HOuIFS8OflFQTLyR0jNa+Avcz0hUufkXFnHfF60nDSOVq0yAQGvIhPI5NkRITXQ2nMMtcGod4XwcpSpWjHSkLo/1nz3i0UwQrufwikBXiyksBxIcdougY9aP/5PafuCVp/2DAs1ESnN3Ywl4mrQbBFmyRK0j18EBOeu3+WpTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A6h2AZl0; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-471191ac79dso7536895e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:27:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761218842; x=1761823642; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z5A/JaBnPQddwxFBHkEH+pN3tR6CjA0uTWCxQ0JnFwY=;
+        b=A6h2AZl0uTC2GseDEA2suZ/jOBvgIMvIBE6rNRpTxVH6jkWpt9B2nBQOkplD2/sy6x
+         J+wDlS5hj20v3ZpTJWmL1H8VyhPY2FfK2umYGOEzSdfkTNf5xbGI4w/kAOsykCkJWR+s
+         YI1VUIf7dqOMQl2h2I6StV7MhVAN7wd1gsVXVaDLaTdGCXMwz/gNKu1umjOoaAlm1lOs
+         ps61AAacxyXiRqSnel3htnGoiQ8ZLMIhVHyiOyKdFWfiSm2C0MZDIK0WLZXQKtHtJR8J
+         mlfvxis6exuotn4n4lcDzr5mH/RNzv15Rs0vdiKha1LhQckYrvwkhIwSPd0v/QcKY30b
+         vDQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761218842; x=1761823642;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z5A/JaBnPQddwxFBHkEH+pN3tR6CjA0uTWCxQ0JnFwY=;
+        b=JHd/zWb7HHBU6Ctq0VrhxFTJ9Fn/VsEex2zs3BEE0jjJBMl6OWHqyBXipaas2JXCY4
+         D96gJ6skfADPJIByraKvDdKjp+e3o/0ZobTyMQuVFqOqP4fKlQBjd8d+tSFIfFt2Iqzd
+         A1GH22g9oyJIeD3gWQYD5p0V4BahOHl8nfGUscBFpp/Fe1o6X0tf6G5cMe5lzPHHe6GW
+         LMkYhvOLhT2PR3PAVvLie5Gc58jhLm6eGxk5x+pDWfNwuqzze3kw81KtVbm15IAGo0ty
+         kjxg4/ohVzP341lRYvulgfIPdrPPckT0AYK5zlyBIenqEfB6FJqtcr+7D/GomJUolgeh
+         9tuw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1wzVh1CWcfJcDsfZD3LQ7WaVweuDA6gWFrj1pKF9UIExyHSALd7ZCFt9Rxlkiwhc4Uf7dLXslpXbG9kk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGu8/kKO4WVsRIIhwwK0yg4ZD+07mA+XA2xE2MPOqtQZyTwOvl
+	DmSCQKlql/BUXKum67USJ7tcVIFT4gsCe2LUMWPi745E1KgXKpXsqgbr
+X-Gm-Gg: ASbGncuf20IiKZ4qXL3ZwYFnOz2S01EV21NaKYdtK2GGHJZpbFtUl9XXs3eOix5Qgze
+	rOXd59cuPKe/Fr5fkex95HqvfbBZc2K6KhN6jpBtYUOypsgNySeRDEF1wf5Q7VRa6pTVv9/QMpH
+	hAanJsCYONRNOpi1kTJYW+pX1mzGeJzCmUupN16eYfD6X75c+l0g5px/vsoNAhMFm7bwx5H9moW
+	DD5GNyO75CpK30LdqQNJUpiXG+d5r6csm2PE+bB0rpa/rQVYsToYQ0pCYfoput95WtX7rnBVWxa
+	biM+pEbhoLN0wdpS29MqBSI+I7LAUax8LQjgIjcboPUiGdjr3Br5xSH7kgJDgrXgCVK3CSwbTCp
+	jY+SOk/aCB5omnlBgCn9kQj/2+GqMf/kmCdbnDEJCIt6lRr757EuiKkY/XPfC2NX2XFXVNGRwV+
+	YCDArnRGE6RFD94YrkQTnh+wF4NzgknMqIUSx5UG8a3aFf/LM6j4coi4zeyq/tIsQ=
+X-Google-Smtp-Source: AGHT+IFWosB3kP1cunqsyc3Wf0i3HHGXOo97SMwmCET8H8ejn6hdK+I4Wg/ThmA0FKOUA8GfgazJig==
+X-Received: by 2002:a05:6000:1a8a:b0:428:3f7c:bcf8 with SMTP id ffacd0b85a97d-4283f7cbeefmr13605166f8f.29.1761218841399;
+        Thu, 23 Oct 2025 04:27:21 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897f53bcsm3516370f8f.11.2025.10.23.04.27.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 04:27:21 -0700 (PDT)
+Message-ID: <bf3d9390-f1f6-428d-b47f-81d2ed1707e9@gmail.com>
+Date: Thu, 23 Oct 2025 12:27:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] sfc: fix potential memory leak in
+ efx_mae_process_mport()
+To: Abdun Nihaal <nihaal@cse.iitm.ac.in>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, alejandro.lucero-palau@amd.com,
+ habetsm.xilinx@gmail.com, netdev@vger.kernel.org, linux-net-drivers@amd.com,
+ linux-kernel@vger.kernel.org
+References: <20251022163525.86362-1-nihaal@cse.iitm.ac.in>
+Content-Language: en-GB
+From: Edward Cree <ecree.xilinx@gmail.com>
+In-Reply-To: <20251022163525.86362-1-nihaal@cse.iitm.ac.in>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-10-22 at 13:30 -0700, Eduard Zingerman wrote:
-> On Wed, 2025-10-22 at 13:12 -0700, Alexei Starovoitov wrote:
-> > On Wed, Oct 22, 2025 at 12:46=E2=80=AFPM Eduard Zingerman <eddyz87@gmai=
-l.com> wrote:
-> > >=20
-> > > On Wed, 2025-10-22 at 11:14 -0700, Yonghong Song wrote:
-> > > >=20
-> > > > On 10/22/25 9:44 AM, KaFai Wan wrote:
-> > > > > When conditional jumps are performed on the same register (e.g., =
-r0 <=3D
-> > > > > r0,
-> > > > > r0 > r0, r0 < r0) where the register holds a scalar with range, t=
-he
-> > > > > verifier
-> > > > > incorrectly attempts to adjust the register's min/max bounds. Thi=
-s
-> > > > > leads to
-> > > > > invalid range bounds and triggers a BUG warning:
-> > > > >=20
-> > > > > verifier bug: REG INVARIANTS VIOLATION (true_reg1): range bounds
-> > > > > violation u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u32=3D[0x1, 0x0] s32=
-=3D[0x1, 0x0]
-> > > > > var_off=3D(0x0, 0x0)
-> > > > > WARNING: CPU: 0 PID: 93 at kernel/bpf/verifier.c:2731
-> > > > > reg_bounds_sanity_check+0x163/0x220
-> > > > > Modules linked in:
-> > > > > CPU: 0 UID: 0 PID: 93 Comm: repro-x-3 Tainted: G=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 W=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0
-> > > > > 6.18.0-rc1-ge7586577b75f-dirty #218 PREEMPT(full)
-> > > > > Tainted: [W]=3DWARN
-> > > > > Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS
-> > > > > 1.16.3-debian-1.16.3-2 04/01/2014
-> > > > > RIP: 0010:reg_bounds_sanity_check+0x163/0x220
-> > > > > Call Trace:
-> > > > > =C2=A0 <TASK>
-> > > > > =C2=A0 reg_set_min_max.part.0+0x1b1/0x360
-> > > > > =C2=A0 check_cond_jmp_op+0x1195/0x1a60
-> > > > > =C2=A0 do_check_common+0x33ac/0x33c0
-> > > > > =C2=A0 ...
-> > > > >=20
-> > > > > The issue occurs in reg_set_min_max() function where bounds adjus=
-tment
-> > > > > logic
-> > > > > is applied even when both registers being compared are the same.
-> > > > > Comparing a
-> > > > > register with itself should not change its bounds since the compa=
-rison
-> > > > > result
-> > > > > is always known (e.g., r0 =3D=3D r0 is always true, r0 < r0 is al=
-ways
-> > > > > false).
-> > > > >=20
-> > > > > Fix this by adding an early return in reg_set_min_max() when
-> > > > > false_reg1 and
-> > > > > false_reg2 point to the same register, skipping the unnecessary b=
-ounds
-> > > > > adjustment that leads to the verifier bug.
-> > > > >=20
-> > > > > Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
-> > > > > Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
-> > > > > Closes:
-> > > > > https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Coremail.k=
-aiyanm@hust.edu.cn/
-> > > > > Fixes: 0df1a55afa83 ("bpf: Warn on internal verifier errors")
-> > > > > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
-> > > > > ---
-> > > > > =C2=A0 kernel/bpf/verifier.c | 4 ++++
-> > > > > =C2=A0 1 file changed, 4 insertions(+)
-> > > > >=20
-> > > > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > > > > index 6d175849e57a..420ad512d1af 100644
-> > > > > --- a/kernel/bpf/verifier.c
-> > > > > +++ b/kernel/bpf/verifier.c
-> > > > > @@ -16429,6 +16429,10 @@ static int reg_set_min_max(struct
-> > > > > bpf_verifier_env *env,
-> > > > > =C2=A0=C2=A0=C2=A0 if (false_reg1->type !=3D SCALAR_VALUE || fals=
-e_reg2->type !=3D
-> > > > > SCALAR_VALUE)
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 return 0;
-> > > > >=20
-> > > > > +=C2=A0=C2=A0 /* If conditional jumps on the same register, skip =
-the adjustment
-> > > > > */
-> > > > > +=C2=A0=C2=A0 if (false_reg1 =3D=3D false_reg2)
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
-urn 0;
-> > > >=20
-> > > > Your change looks good. But this is a special case and it should no=
-t
-> > > > happen for any compiler generated code. So could you investigate
-> > > > why regs_refine_cond_op() does not work? Since false_reg1 and false=
-_reg2
-> > > > is the same, so register refinement should keep the same. Probably
-> > > > some minor change in regs_refine_cond_op(...) should work?
-> > > >=20
-> > > > > +
-> > > > > =C2=A0=C2=A0=C2=A0 /* fallthrough (FALSE) branch */
-> > > > > =C2=A0=C2=A0=C2=A0 regs_refine_cond_op(false_reg1, false_reg2, re=
-v_opcode(opcode),
-> > > > > is_jmp32);
-> > > > > =C2=A0=C2=A0=C2=A0 reg_bounds_sync(false_reg1);
-> > >=20
-> > > I think regs_refine_cond_op() is not written in a way to handle same
-> > > registers passed as reg1 and reg2. E.g. in this particular case the
-> > > condition is reformulated as "r0 < r0", and then the following branch
-> > > is taken:
-> > >=20
-> > > =C2=A0=C2=A0 static void regs_refine_cond_op(struct bpf_reg_state *re=
-g1, struct
-> > > bpf_reg_state *reg2,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u8 opcode, bool is_jmp32)
-> > > =C2=A0=C2=A0 {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ...
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case BPF_JLT: // con=
-dition is rephrased as r0 < r0
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (is_jmp32) {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- ...
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- reg1->umax_value =3D min(reg1->umax_value, reg2-
-> > > >umax_value - 1);
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- reg2->umin_value =3D max(reg1->umin_value + 1,
-> > > reg2->umin_value);
-Yes, that's the root cause.
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ...
-> > > =C2=A0=C2=A0 }
-> > >=20
-> > > Note that intent is to adjust umax of the LHS (reg1) register and umi=
-n
-> > > of the RHS (reg2) register. But here it ends up adjusting the same
-> > > register.
-> > >=20
-> > > (a) before refinement: u64=3D[0x0, 0x80000000] s64=3D[0x0, 0x80000000=
-]
-> > > u32=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
-> > > (b) after=C2=A0 refinement: u64=3D[0x1, 0x7fffffff] s64=3D[0x0, 0x800=
-00000]
-> > > u32=3D[0x0, 0x80000000] s32=3D[0x80000000, 0x0]
-> > > (c) after=C2=A0 sync=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 : u64=3D[0x1, 0x0]=
- s64=3D[0x1, 0x0] u32=3D[0x1, 0x0]
-> > > s32=3D[0x1, 0x0]
-> > >=20
-> > > At (b) the u64 range translated to s32 is > 0, while s32 range is <=
-=3D 0,
-> > > hence the invariant violation.
-> > >=20
-> > > I think it's better to move the reg1 =3D=3D reg2 check inside
-> > > regs_refine_cond_op(), or to handle this case in is_branch_taken().
-> >=20
-> > hmm. bu then regs_refine_cond_op() will skip it, yet reg_set_min_max()
-> > will still be doing pointless work with reg_bounds_sync() and sanity ch=
-eck.
-> > The current patch makes more sense to me.
->=20
-> Well, if we want to avoid useless work, we need something like:
->=20
-> @@ -16173,6 +16173,25 @@ static int is_pkt_ptr_branch_taken(struct
-> bpf_reg_state *dst_reg,
-> =C2=A0static int is_branch_taken(struct bpf_reg_state *reg1, struct bpf_r=
-eg_state
-> *reg2,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 u8 opcode, bool is_jmp32)
-> =C2=A0{
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (reg1 =3D=3D reg2) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 switch (opcode) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 case BPF_JGE:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 case BPF_JLE:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 case BPF_JSGE:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 case BPF_JSLE:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 case BPF_JEQ:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 case BPF_JSET:
+On 22/10/2025 17:35, Abdun Nihaal wrote:
+> In efx_mae_enumerate_mports(), memory allocated for mae_mport_desc is
+> passed as a argument to efx_mae_process_mport(), but when the error path
+> in efx_mae_process_mport() gets executed, the memory allocated for desc
+> gets leaked.
+> 
+> Fix that by freeing the memory allocation before returning error.
+> 
+> Fixes: a6a15aca4207 ("sfc: enumerate mports in ef100")
+> Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
 
-Others are fine, but BPF_JSET on the same register could be 0 (if value is =
-0).
-And it's unknown to take the branch if 0 within the range.
+Acked-by: Edward Cree <ecree.xilinx@gmail.com>
 
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 1;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 case BPF_JGT:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 case BPF_JLT:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 case BPF_JSGT:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 case BPF_JSLT:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 case BPF_JNE:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 default:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -1;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 }
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->=20
-> But that's too much code for an artificial case.
-> Idk, either way is fine with me.
-
-There is is_scalar_branch_taken() in is_branch_taken(), I missed it. I'll a=
-)
-check the opcode one by one in is_scalar_branch_taken(), and b) keep this p=
-atch
-for unknown BPF_JSET branch.
-
---=20
-Thanks,
-KaFai
+It might be nice to also add a comment on top of efx_mae_process_mport()
+ stating that it takes ownership of @desc from the caller.
 
