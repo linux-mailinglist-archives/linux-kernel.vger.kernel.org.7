@@ -1,217 +1,149 @@
-Return-Path: <linux-kernel+bounces-866945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B903CC01227
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:29:08 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42268C011BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62F73AEED2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:27:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E330B35A439
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6A03112C4;
-	Thu, 23 Oct 2025 12:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07B030EF96;
+	Thu, 23 Oct 2025 12:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xz/Z8lyO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YllBFYQn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0727F3009C1;
-	Thu, 23 Oct 2025 12:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34BC30148C;
+	Thu, 23 Oct 2025 12:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761222454; cv=none; b=JTfYoL+I0N9ST9Q0pnnzbd/c/Qy7Tyy0/NpoRMXhxuM73l/fCnGBWjHmccf5qEeSPEmn69JGGZNJ7NsCakZQCCgJRpqCwj0kQ4PdDXrGSb8noOP7iOCyP+7qPv9GnS2gmJuXNzDDnqHfkDqFuUyfPS05w9pCudrrZ8J9t5GhF6s=
+	t=1761222352; cv=none; b=h37QmVzFlKKcIZt6KB5lWGIK5qV5qj8UXO7Bmgi31v9cXYJS+2Re/v62F9yVAxB8dWiOdeMcUk97PdWU1pDsY+MQDv+GUT9zs7SW4jI0XMVieYbsgvCTxb6Jpfe8j6RiQwnSgdBDAxYEeHL7cveWIJAvl9/ccBsC2eq6xg7e9rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761222454; c=relaxed/simple;
-	bh=/SKJMBBXIi4BBnOq3DOm2MRNiysuabmj3qpcAOW/T14=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rOhOhSSHYJE/FuEabhXUd6vSKPQTqMHH1rMMIvIMDM1qd27+7mgVCqVp6vVnpTpaiyZXjORfuL8WPVUsTw/+p6XZu/hZviLe6uKZoNVuXRs8/ainpVtGX+0yN6Z7jnrjed2FYC/ki74bicNRI6JM3crljaYnw78cDQjTykSwvHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xz/Z8lyO; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761222453; x=1792758453;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=/SKJMBBXIi4BBnOq3DOm2MRNiysuabmj3qpcAOW/T14=;
-  b=Xz/Z8lyOu0uxkexq3N4SLJeiIu9pZ9kRh6d00i1UJuFBLAlFax4/8p0N
-   LPspWXX+PC9t56fYN19jlXfBi4yaFp+u43aXEs/rdmylJHXJYTi1MFgDC
-   A3IX7FbY4E6c00htkxTiaG3S/3Q3TvXfou8Kkg1cjjoG16hfrrxLiRA5n
-   UCW6sTDWdP9qOKFDDtDpU/nNNMM2EZH5/+yqNtYMy6v48IxS7d/AAYEae
-   wa83F4R2fA0fhRmUye30m4FXKS66V6lhy8Ns1ZoUF6xqu8XOLhMwZSAPS
-   ZzceJ90Xj4Dd7GNxInsYC+idUq2d/CiWFNr7UXhd3q2K9mcVwIHEi6lFJ
-   A==;
-X-CSE-ConnectionGUID: a2e/9EDhRTOG5r7QiNZ7qA==
-X-CSE-MsgGUID: Veidp0jIQ0qwlS9csVLaPg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74058050"
-X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
-   d="scan'208";a="74058050"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 05:27:32 -0700
-X-CSE-ConnectionGUID: eVbxBb7SQ/i8LRB8thKqYA==
-X-CSE-MsgGUID: Ius4tWmQQ0C1CmpM/ISuzg==
-X-ExtLoop1: 1
-Received: from unknown (HELO fdefranc-mobl3.igk.intel.com) ([10.237.142.160])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 05:27:21 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: linux-cxl@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shuai Xue <xueshuai@linux.alibaba.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Xiaofei Tan <tanxiaofei@huawei.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"Fabio M . De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Guo Weikang <guoweikang.kernel@gmail.com>,
-	Xin Li <xin@zytor.com>,
-	Will Deacon <will@kernel.org>,
-	Huang Yiwei <quic_hyiwei@quicinc.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Li Ming <ming.li@zohomail.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Karolina Stolarek <karolina.stolarek@oracle.com>,
-	Jon Pan-Doh <pandoh@google.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH 6/6 v6] ACPI: extlog: Trace CPER CXL Protocol Error Section
-Date: Thu, 23 Oct 2025 14:25:41 +0200
-Message-ID: <20251023122612.1326748-7-fabio.m.de.francesco@linux.intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251023122612.1326748-1-fabio.m.de.francesco@linux.intel.com>
-References: <20251023122612.1326748-1-fabio.m.de.francesco@linux.intel.com>
+	s=arc-20240116; t=1761222352; c=relaxed/simple;
+	bh=lgIiMFnGDqq2sHQoJbRahA2L1aFw8N7zO224VmtFP/k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LTPFk27w9f3QQSpSZKTFszvFlf0iFBrR6CU6Ii8o+bsmQSkblRP21dfanqv4h4EeLsRvi5RIfg+P8fc1g/4TwlpO3sZKCc5F97BK3qte3/8tbk+gBolAxH6r7t1oGA0ATBeYz+oMkRdKo0UI4W9kQDULk/jdlTTxqS7c0QaXX+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YllBFYQn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD5CC4CEE7;
+	Thu, 23 Oct 2025 12:25:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761222351;
+	bh=lgIiMFnGDqq2sHQoJbRahA2L1aFw8N7zO224VmtFP/k=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=YllBFYQnZ93A6UX7xrHZcoebrMFd9t3REBj+BMAkasmk19RTVASLmTtsnTPPRadKG
+	 oo+uXtzlNMbJ/ZXUT7qgJh4UAz13adXcXHBq1lql3qHebsSwjPE2g4ZPG9Cv3LgQHQ
+	 tL4o85FXm7cKa6x146w0brX9acsxieBIlGNJ9UGl83LxxnhxZpejDJXmpKWLQVSQWt
+	 kFstjDZYGKYb2xUprJZvZ51UDutKBioQtWpno4kVAjD1Ggemlm8TTZthVyJzBsfeeC
+	 C8x6ad8U/4bITxdZCBTbkKjWO6OBcCEO1n7D7LsrLFe0gGHrkX57uBRqOseByy14AC
+	 6k4lyFDXa4SVA==
+Message-ID: <c081ec16-adb0-41b9-8ad6-5db9ccd6242c@kernel.org>
+Date: Thu, 23 Oct 2025 14:25:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v3] media: videobuf2: forbid remove_bufs when legacy
+ fileio is active
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Tomasz Figa <tfiga@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Hans Verkuil <hverkuil@kernel.org>, stable@vger.kernel.org,
+ Shuangpeng Bai <SJB7183@psu.edu>
+References: <CGME20251023113101eucas1p2c227985b0198d888564cab00aeb94f01@eucas1p2.samsung.com>
+ <20251023113052.1303082-1-m.szyprowski@samsung.com>
+ <81a46647-c666-4475-893b-d4af043c90ea@kernel.org>
+ <85aa56ff-098b-4db1-9de5-05b0f306623f@samsung.com>
+Content-Language: en-US, nl
+In-Reply-To: <85aa56ff-098b-4db1-9de5-05b0f306623f@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When Firmware First is enabled, BIOS handles errors first and then it makes
-them available to the kernel via the Common Platform Error Record (CPER)
-sections (UEFI 2.10 Appendix N). Linux parses the CPER sections via one of
-two similar paths, either ELOG or GHES. The errors managed by ELOG are
-signaled to the BIOS by the I/O Machine Check Architecture (I/O MCA).
+On 23/10/2025 13:55, Marek Szyprowski wrote:
+> On 23.10.2025 13:36, Hans Verkuil wrote:
+>> On 23/10/2025 13:30, Marek Szyprowski wrote:
+>>> vb2_ioctl_remove_bufs() call manipulates queue internal buffer list,
+>>> potentially overwriting some pointers used by the legacy fileio access
+>>> mode. Add a vb2_verify_memory_type() check symmetrical to
+>>> vb2_ioctl_create_bufs() to forbid that ioctl when fileio is active to
+>>> protect internal queue state between subsequent read/write calls.
+>>>
+>>> CC: stable@vger.kernel.org
+>>> Fixes: a3293a85381e ("media: v4l2: Add REMOVE_BUFS ioctl")
+>>> Reported-by: Shuangpeng Bai<SJB7183@psu.edu>
+>>> Suggested-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> ---
+>>>   drivers/media/common/videobuf2/videobuf2-v4l2.c | 8 +++++---
+>>>   1 file changed, 5 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>>> index d911021c1bb0..a8a5b42a42d0 100644
+>>> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>>> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>>> @@ -1000,13 +1000,15 @@ int vb2_ioctl_remove_bufs(struct file *file, void *priv,
+>>>   			  struct v4l2_remove_buffers *d)
+>>>   {
+>>>   	struct video_device *vdev = video_devdata(file);
+>>> -
+>>> -	if (vdev->queue->type != d->type)
+>>> -		return -EINVAL;
+>>> +	int res;
+>>>   
+>>>   	if (d->count == 0)
+>>>   		return 0;
+>> Ah, no. This should still check d->type. So:
+>>
+>> 	if (d->count == 0)
+>> 		return d->type == vdev->queue->type ? 0 : -EINVAL;
+> 
+> Then frankly speaking lets get back to v1 limited to 
+> vb2_ioctl_remove_bufs(), as using vb2_verify_memory_type() in this 
+> context only makes things harder to understand:
+> 
+> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c 
+> b/drivers/media/common/videobuf2/videobuf2-v4l2.c index 
+> d911021c1bb0..f4104d5971dd 100644 --- 
+> a/drivers/media/common/videobuf2/videobuf2-v4l2.c +++ 
+> b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+> 
+> @@ -1010,6 +1015,11 @@ int vb2_ioctl_remove_bufs(struct file *file, void 
+> *priv, if (vb2_queue_is_busy(vdev->queue, file)) return -EBUSY; + if 
+> (vb2_fileio_is_active(vdev->queue)) { + dprintk(vdev->queue, 1, "file io 
+> in progress\n"); + return -EBUSY; + } + return 
+> vb2_core_remove_bufs(vdev->queue, d->index, d->count); } 
+> EXPORT_SYMBOL_GPL(vb2_ioctl_remove_bufs);
 
-Currently, ELOG and GHES show some inconsistencies in how they report to
-userspace via trace events.
+I agree. Can you post a v4?
 
-Therefore, make the two mentioned paths act similarly by tracing the CPER
-CXL Protocol Error Section (UEFI v2.10, Appendix N.2.13).
+Regards,
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
----
- drivers/acpi/acpi_extlog.c | 22 ++++++++++++++++++++++
- drivers/cxl/core/ras.c     |  6 ++++++
- include/cxl/event.h        |  2 ++
- 3 files changed, 30 insertions(+)
+	Hans
 
-diff --git a/drivers/acpi/acpi_extlog.c b/drivers/acpi/acpi_extlog.c
-index cefe8d2d8aff..b005918517d1 100644
---- a/drivers/acpi/acpi_extlog.c
-+++ b/drivers/acpi/acpi_extlog.c
-@@ -12,6 +12,7 @@
- #include <linux/ratelimit.h>
- #include <linux/edac.h>
- #include <linux/ras.h>
-+#include <cxl/event.h>
- #include <acpi/ghes.h>
- #include <asm/cpu.h>
- #include <asm/mce.h>
-@@ -160,6 +161,21 @@ static void extlog_print_pcie(struct cper_sec_pcie *pcie_err,
- 	pci_dev_put(pdev);
- }
- 
-+static void
-+extlog_cxl_cper_handle_prot_err(struct cxl_cper_sec_prot_err *prot_err,
-+				int severity)
-+{
-+	struct cxl_cper_prot_err_work_data wd;
-+
-+	if (cxl_cper_sec_prot_err_valid(prot_err))
-+		return;
-+
-+	if (cxl_cper_setup_prot_err_work_data(&wd, prot_err, severity))
-+		return;
-+
-+	cxl_cper_ras_handle_prot_err(&wd);
-+}
-+
- static int extlog_print(struct notifier_block *nb, unsigned long val,
- 			void *data)
- {
-@@ -211,6 +227,12 @@ static int extlog_print(struct notifier_block *nb, unsigned long val,
- 			if (gdata->error_data_length >= sizeof(*mem))
- 				trace_extlog_mem_event(mem, err_seq, fru_id, fru_text,
- 						       (u8)gdata->error_severity);
-+		} else if (guid_equal(sec_type, &CPER_SEC_CXL_PROT_ERR)) {
-+			struct cxl_cper_sec_prot_err *prot_err =
-+				acpi_hest_get_payload(gdata);
-+
-+			extlog_cxl_cper_handle_prot_err(prot_err,
-+							gdata->error_severity);
- 		} else if (guid_equal(sec_type, &CPER_SEC_PCIE)) {
- 			struct cper_sec_pcie *pcie_err = acpi_hest_get_payload(gdata);
- 
-diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
-index 2731ba3a0799..3f527b0c6509 100644
---- a/drivers/cxl/core/ras.c
-+++ b/drivers/cxl/core/ras.c
-@@ -105,6 +105,12 @@ static void cxl_cper_handle_prot_err(struct cxl_cper_prot_err_work_data *data)
- 		cxl_cper_trace_uncorr_prot_err(cxlmd, data->ras_cap);
- }
- 
-+void cxl_cper_ras_handle_prot_err(struct cxl_cper_prot_err_work_data *wd)
-+{
-+	cxl_cper_handle_prot_err(wd);
-+}
-+EXPORT_SYMBOL_GPL(cxl_cper_ras_handle_prot_err);
-+
- static void cxl_cper_prot_err_work_fn(struct work_struct *work)
- {
- 	struct cxl_cper_prot_err_work_data wd;
-diff --git a/include/cxl/event.h b/include/cxl/event.h
-index 94081aec597a..a37eef112411 100644
---- a/include/cxl/event.h
-+++ b/include/cxl/event.h
-@@ -340,4 +340,6 @@ cxl_cper_setup_prot_err_work_data(struct cxl_cper_prot_err_work_data *wd,
- }
- #endif
- 
-+void cxl_cper_ras_handle_prot_err(struct cxl_cper_prot_err_work_data *wd);
-+
- #endif /* _LINUX_CXL_EVENT_H */
--- 
-2.51.0
+> 
+> 
+>> Regards,
+>>
+>> 	Hans
+>>
+>>>   
+>>> +	res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
+>>> +	if (res)
+>>> +		return res;
+>>> +
+>>>   	if (vb2_queue_is_busy(vdev->queue, file))
+>>>   		return -EBUSY;
+>>>
+> Best regards
 
 
