@@ -1,163 +1,709 @@
-Return-Path: <linux-kernel+bounces-867098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2057DC01918
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:54:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2B8C019C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEA0E19A7088
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:54:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 07F55562E88
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A7532AAA8;
-	Thu, 23 Oct 2025 13:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8927E315778;
+	Thu, 23 Oct 2025 13:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iXp9T6fl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rtm0eFfB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pDNrBf7U"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFDC32860A
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6DD331A77
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227602; cv=none; b=fCp+kyklXu6pWjcDABFr8944pe++MlF925nZsK50h/c2CwR4HR3Saa5Uhrqb8c7Ti6JlI+WjjF6UBJiZsL8PE5Z6f26Sd8vFodJT34YlO4gGgYOKECVHO2bDwbkTSi+v7RfJGDcYeJ4GSAiU68p8aiRRzIejtRwsEYlILv3yR3w=
+	t=1761227632; cv=none; b=K8iQ/xYYjKX26Qo7HCljp0o4FgI0X2ooqlDyeNXJi5PM9gDPJGK+j+p96cui7SIR/qM2ggVDi4Fr4OQI9mMy7xqtY524dkBs6Kt9/MWIQ9y0wQkXGzk0iNgAbvuCoRga7eywQ0mloeMZyAtydkIlpiRARJpdw3HoxPGzJCdZQO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227602; c=relaxed/simple;
-	bh=On/yckDKKiF+EFR0uGo6hOHdxgssUvTV3nxiyNhHf6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n6YTXsuUxIoBGjulvSTvTljH8CS3plsf3q5qOJBARb28X6RAWggltRX87aYm338CV1GyJekQfm3cFPDL+cCLxZOVKIRaU5eZUzpwMyTGBXj0jKBdoBl3BxinIgvpFMnfjszWwWMBr+hTtUHoxkfbITuR99KpUcQIPSqxHFPAGgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iXp9T6fl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rtm0eFfB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 23 Oct 2025 15:53:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761227598;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sRAusrPVOYEO1ClBZpA951BRZx8PMSxnPOWyXbmsS2E=;
-	b=iXp9T6flSOXELfe2ZZmzybkkOsRgW86acJCjsGBfuSsoTAEoq+xTDvejqlumN9ShUkMc7V
-	Z8eFTaJ140miuAXk3a1PSNMPjcvjJ1vZEy2KvInzmSAga99abMpLjijh3FatjgnNWR5vw0
-	HvsM3etXucLUkGXNdrUSNbSyXl+tc1gwiZ+MAdTBdelb/RNzow+HuBdy7RqNnXGkh8LcTh
-	kBRCLArholLTNTbN/946PLdR3E38pMh7AHclKXA5/2IWXGWzfjlDpA4ZWTZJx//p5w2+a0
-	Hk8Z0geA2qxncQ44dznCTwt1qGdG+QREUObdhcoGJkUFOoZMa1Hx8LaFkNzQrQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761227598;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sRAusrPVOYEO1ClBZpA951BRZx8PMSxnPOWyXbmsS2E=;
-	b=Rtm0eFfB7vhEQc95RDb5MKDHkjj+Q9GSpZkpN28XEY4x8FrQKx4qKITMtBf83IkQsI8yF7
-	sktYxRcEY4qI5nBg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: usage of DEFINE_WAIT_OVERRIDE_MAP(LD_WAIT_SLEEP)
-Message-ID: <20251023135316.1ZRx0UU5@linutronix.de>
-References: <aGvTz5VaPFyj0pBV@uudg.org>
- <20250728201441.GA4690@redhat.com>
- <aIh5QajyaVT7MtVp@uudg.org>
- <20250729114702.GA18541@redhat.com>
- <aIjCYEkgNvVpMYCS@uudg.org>
- <20250729130936.GB18541@redhat.com>
- <20250801102428.GB27835@redhat.com>
- <20250811105948.OafBprND@linutronix.de>
- <20251020145310.GA9608@redhat.com>
+	s=arc-20240116; t=1761227632; c=relaxed/simple;
+	bh=Gy1upVPS1ozbAcwAJYibkyjlElOEZjYdHD4Exu+fm5U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ua+xyPvCNHhscjQZ8SMVZkBN7rp6hfmsCbYkyA6f6rqS7sJze1BsCVKx/W/G8pi8p/Y0wzVE9x+tt/e9vaDhWD01WwHX4IYWhztrNSuCvLyivrWPSvQrZAuUMOuX/Ql2wSZkRhA7e7Gv3a3SLSxdXB0RGdtuhZPLWj6+EsYVZRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pDNrBf7U; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-44588e94decso475825b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:53:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761227629; x=1761832429; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gWJ8sBup6T/CgTL9UDL0DGpvbdlI4z5XnB1lEfrG2NA=;
+        b=pDNrBf7UdaN2xT0Jh/lD37EgPS2Q0xzg5YzxLZ7uPHr89KxBz4UnQqqEPFvjQ18Bbc
+         H2QqSy/m65bk7uXxOeyNRourMXRfhxnaLEM5we7hEAYlFUKVx5fRkhhEY9nwMDZRNPvK
+         uWrR+HEkqpr4/P6/LyuVF7V8dmQsikBwK/Nu2grZzGxpifhNkHAN0bbvTvxUvnsCsdoT
+         rtd5rCoyENMx2SlVkkB/YH7t8XWPHDmD1SM0k+0P6VS/2/eqxtfMp5+MjZkziDjbpUNL
+         fJnn1+GBAuWG0PiV/HmBcwwEDeP7DwL40g7KsnTLzZOKLNKPFyJz5ZjVZSm6K8/prL1a
+         4CHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761227629; x=1761832429;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gWJ8sBup6T/CgTL9UDL0DGpvbdlI4z5XnB1lEfrG2NA=;
+        b=sdtd0rL+TzyAWf2ebSqWhYLEghTxubygeBCpZkHaMOzthfP+CgCCdEy8XW5QCw4zNN
+         v7WJZVds+9ps+UQ0wEYBBDWD/tZoHO9Rsee+BGl4JZLrLdXbh75iS40k2AeO6Er5EhOi
+         Ibp+NoSMVbedATIWh3ld1pAdShOKDf9hPNlTeSWLkpxS8rnoDafHZ/fJ85IVNoDU9PMJ
+         c7X625gkzXt78PIQz8ergIgqglQFU8X0wzLyTK9FZ0EJQOzUVq6RNH5rQN0vW6QTxVi1
+         wGeOZ4WL8gEA8dWv9DfX65PcraYbNa3/jYtkBhs8Q8UxpTI3GQxDjg81T0fQLYNfSf/z
+         yBSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYhO4cnegiC7r2uVdqm9Gpj8rij2x2y+LtxUBehxGjiFyCNA1SypiyS+Zs9qcV3/MPIdsEUKbaCLeuaiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEpa3eA3J9LfOeDsTJHvk1RYcj9FOopCss2apoPLnKtH/uOkkZ
+	/AvibEupnPFJjN675OUoTqVBHxpdKMGSHd+ewR2twWS8RN98TyyPwY5LE6Q92UqhyimII9JJIfh
+	p74AnYH/2x1v9lhyyFb/9Us3OGayLdlORhhlol9z4LA==
+X-Gm-Gg: ASbGncsapC04iluBqI0Zn6EoNbUgvXgtnFHwczO5cEOdoiTsK8+uuUdgXKPa8Bv9wet
+	62B1dKoQHXqPRndVwEmE7hD9KHe1ThiGo3NfmLXuiStOBOBidqCTltOnbtglVbfS1ClAlZX5Y/C
+	daiX+jYTvoHKrccqG9LJaym8Emb3ahHiAt/rRkOO9WktdOXzIPlfAtXKB9FXAVdQEk6Vi3MdeL9
+	3x2Pw3c0+ORYw63Yb6dpkjcbBm0UEcVAFk1uknIUh3osedeOaKiZM0EnPXhMfKDDT484A==
+X-Google-Smtp-Source: AGHT+IGUx1xLcyAc5CYTbRx2xHqgJQzrbezZsFK1pF/CIWEWAXeFDsw4GbOlqbF6EnZ2EoPnpz7ahACmVdCyy0yB/xU=
+X-Received: by 2002:a05:6808:22e1:b0:441:8260:d097 with SMTP id
+ 5614622812f47-44963d809a3mr2478138b6e.11.1761227628788; Thu, 23 Oct 2025
+ 06:53:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251020145310.GA9608@redhat.com>
+References: <20251021124254.1120214-1-beanhuo@iokpp.de> <20251021124254.1120214-4-beanhuo@iokpp.de>
+In-Reply-To: <20251021124254.1120214-4-beanhuo@iokpp.de>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Thu, 23 Oct 2025 15:53:37 +0200
+X-Gm-Features: AS18NWBusS87WrnvQx429gOutWfdxSXb6OuP58gy1bmEkaWSr7LyTSPA0Gl3Xv4
+Message-ID: <CAHUa44FfQAPWGgVbfrCnZfF9HkGwW=fgUhV-y9RKrUQf1V6yNg@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver for
+ UFS devices
+To: Bean Huo <beanhuo@iokpp.de>
+Cc: avri.altman@wdc.com, avri.altman@sandisk.com, bvanassche@acm.org, 
+	alim.akhtar@samsung.com, jejb@linux.ibm.com, martin.petersen@oracle.com, 
+	can.guo@oss.qualcomm.com, ulf.hansson@linaro.org, beanhuo@micron.com, 
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-10-20 16:53:10 [+0200], Oleg Nesterov wrote:
-> Hi Sebastian,
-Hi,
+Hi Bean,
 
-> > You are correct Oleg. I've been just verifying it and yes: LD_WAIT_SLEEP
-> > suppresses also mutex while the intention is to only suppress
-> > spinlock_t.
-> > We have four users in tree, based on quick check all four should use
-> > CONFIG, three of them do use SLEEP.
-> 
-> No ;)
-> 
-> I was going to send the patch which does s/SLEEP/CONFIG/, but this
-> would be wrong. printk_legacy_map can use LD_WAIT_CONFIG, but lets
-> look at debug_objects_fill_pool()
-> 
-> 	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || preemptible()) {
-> 		/*
-> 		 * Annotate away the spinlock_t inside raw_spinlock_t warning
-> 		 * by temporarily raising the wait-type to WAIT_SLEEP, matching
-> 		 * the preemptible() condition above.
-> 		 */
-> 		static DEFINE_WAIT_OVERRIDE_MAP(fill_pool_map, LD_WAIT_SLEEP);
-> 		lock_map_acquire_try(&fill_pool_map);
-> 		fill_pool();
-> 		lock_map_release(&fill_pool_map);
-> 	}
-> 
-> If CONFIG_PREEMPT_RT=y and preemptible() is true, LD_WAIT_CONFIG won't work.
-> lockdep will complain if fill_pool() takes a spinlock_t, spinlock is
-> LD_WAIT_SLEEP on RT.
+On Tue, Oct 21, 2025 at 2:43=E2=80=AFPM Bean Huo <beanhuo@iokpp.de> wrote:
+>
+> From: Bean Huo <beanhuo@micron.com>
+>
+> This patch adds OP-TEE based RPMB support for UFS devices. This enables s=
+ecure
+> RPMB operations on UFS devices through OP-TEE, providing the same functio=
+nality
+> available for eMMC devices and extending kernel-based secure storage supp=
+ort to
+> UFS-based systems.
+>
+> Benefits of OP-TEE based RPMB implementation:
+> - Eliminates dependency on userspace supplicant for RPMB access
+> - Enables early boot secure storage access (e.g., fTPM, secure UEFI varia=
+bles)
+> - Provides kernel-level RPMB access as soon as UFS driver is initialized
+> - Removes complex initramfs dependencies and boot ordering requirements
+> - Ensures reliable and deterministic secure storage operations
+> - Supports both built-in and modular fTPM configurations
+>
+> Co-developed-by: Can Guo <can.guo@oss.qualcomm.com>
+> Signed-off-by: Can Guo <can.guo@oss.qualcomm.com>
+> Reviewed-by: Avri Altman <avri.altman@sandisk.com>
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Signed-off-by: Bean Huo <beanhuo@micron.com>
+> ---
+>  drivers/misc/Kconfig           |   2 +-
+>  drivers/ufs/core/Makefile      |   1 +
+>  drivers/ufs/core/ufs-rpmb.c    | 254 +++++++++++++++++++++++++++++++++
+>  drivers/ufs/core/ufshcd-priv.h |  13 ++
+>  drivers/ufs/core/ufshcd.c      |  82 ++++++++++-
+>  include/ufs/ufs.h              |   5 +
+>  include/ufs/ufshcd.h           |   8 +-
+>  7 files changed, 358 insertions(+), 7 deletions(-)
+>  create mode 100644 drivers/ufs/core/ufs-rpmb.c
+>
+> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> index b9c11f67315f..9d1de68dee27 100644
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -106,7 +106,7 @@ config PHANTOM
+>
+>  config RPMB
+>         tristate "RPMB partition interface"
+> -       depends on MMC
+> +       depends on MMC || SCSI_UFSHCD
+>         help
+>           Unified RPMB unit interface for RPMB capable devices such as eM=
+MC and
+>           UFS. Provides interface for in-kernel security controllers to a=
+ccess
+> diff --git a/drivers/ufs/core/Makefile b/drivers/ufs/core/Makefile
+> index cf820fa09a04..51e1867e524e 100644
+> --- a/drivers/ufs/core/Makefile
+> +++ b/drivers/ufs/core/Makefile
+> @@ -2,6 +2,7 @@
+>
+>  obj-$(CONFIG_SCSI_UFSHCD)              +=3D ufshcd-core.o
+>  ufshcd-core-y                          +=3D ufshcd.o ufs-sysfs.o ufs-mcq=
+.o
+> +ufshcd-core-$(CONFIG_RPMB)             +=3D ufs-rpmb.o
+>  ufshcd-core-$(CONFIG_DEBUG_FS)         +=3D ufs-debugfs.o
+>  ufshcd-core-$(CONFIG_SCSI_UFS_BSG)     +=3D ufs_bsg.o
+>  ufshcd-core-$(CONFIG_SCSI_UFS_CRYPTO)  +=3D ufshcd-crypto.o
+> diff --git a/drivers/ufs/core/ufs-rpmb.c b/drivers/ufs/core/ufs-rpmb.c
+> new file mode 100644
+> index 000000000000..ffad049872b9
+> --- /dev/null
+> +++ b/drivers/ufs/core/ufs-rpmb.c
+> @@ -0,0 +1,254 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * UFS OP-TEE based RPMB Driver
+> + *
+> + * Copyright (C) 2025 Micron Technology, Inc.
+> + * Copyright (C) 2025 Qualcomm Technologies, Inc.
+> + *
+> + * Authors:
+> + *     Bean Huo <beanhuo@micron.com>
+> + *     Can Guo <can.guo@oss.qualcomm.com>
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/device.h>
+> +#include <linux/kernel.h>
+> +#include <linux/types.h>
+> +#include <linux/rpmb.h>
+> +#include <linux/string.h>
+> +#include <linux/list.h>
+> +#include <ufs/ufshcd.h>
+> +#include <linux/unaligned.h>
+> +#include "ufshcd-priv.h"
+> +
+> +#define UFS_RPMB_SEC_PROTOCOL          0xEC    /* JEDEC UFS application =
+*/
+> +#define UFS_RPMB_SEC_PROTOCOL_ID       0x01    /* JEDEC UFS RPMB protoco=
+l ID, CDB byte3 */
+> +
+> +static const struct bus_type ufs_rpmb_bus_type =3D {
+> +       .name =3D "ufs_rpmb",
+> +};
+> +
+> +/* UFS RPMB device structure */
+> +struct ufs_rpmb_dev {
+> +       u8 region_id;
+> +       struct device dev;
+> +       struct rpmb_dev *rdev;
+> +       struct ufs_hba *hba;
+> +       struct list_head node;
+> +};
+> +
+> +static int ufs_sec_submit(struct ufs_hba *hba, u16 spsp, void *buffer, s=
+ize_t len, bool send)
+> +{
+> +       struct scsi_device *sdev =3D hba->ufs_rpmb_wlun;
+> +       u8 cdb[12] =3D { };
+> +
+> +       cdb[0] =3D send ? SECURITY_PROTOCOL_OUT : SECURITY_PROTOCOL_IN;
+> +       cdb[1] =3D UFS_RPMB_SEC_PROTOCOL;
+> +       put_unaligned_be16(spsp, &cdb[2]);
+> +       put_unaligned_be32(len, &cdb[6]);
+> +
+> +       return scsi_execute_cmd(sdev, cdb, send ? REQ_OP_DRV_OUT : REQ_OP=
+_DRV_IN,
+> +                               buffer, len, /*timeout=3D*/30 * HZ, 0, NU=
+LL);
+> +}
+> +
+> +/* UFS RPMB route frames implementation */
+> +static int ufs_rpmb_route_frames(struct device *dev, u8 *req, unsigned i=
+nt req_len, u8 *resp,
+> +                                       unsigned int resp_len)
+> +{
+> +       struct ufs_rpmb_dev *ufs_rpmb =3D dev_get_drvdata(dev);
+> +       struct rpmb_frame *frm_out =3D (struct rpmb_frame *)req;
+> +       bool need_result_read =3D true;
+> +       u16 req_type, protocol_id;
+> +       struct ufs_hba *hba;
+> +       int ret;
+> +
+> +       if (!ufs_rpmb) {
+> +               dev_err(dev, "Missing driver data\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       hba =3D ufs_rpmb->hba;
+> +
+> +       req_type =3D be16_to_cpu(frm_out->req_resp);
+> +
+> +       switch (req_type) {
+> +       case RPMB_PROGRAM_KEY:
+> +               if (req_len !=3D sizeof(struct rpmb_frame) || resp_len !=
+=3D sizeof(struct rpmb_frame))
+> +                       return -EINVAL;
+> +               break;
+> +       case RPMB_GET_WRITE_COUNTER:
+> +               if (req_len !=3D sizeof(struct rpmb_frame) || resp_len !=
+=3D sizeof(struct rpmb_frame))
+> +                       return -EINVAL;
+> +               need_result_read =3D false;
+> +               break;
+> +       case RPMB_WRITE_DATA:
+> +               if (req_len % sizeof(struct rpmb_frame) || resp_len !=3D =
+sizeof(struct rpmb_frame))
+> +                       return -EINVAL;
+> +               break;
+> +       case RPMB_READ_DATA:
+> +               if (req_len !=3D sizeof(struct rpmb_frame) || resp_len % =
+sizeof(struct rpmb_frame))
+> +                       return -EINVAL;
+> +               need_result_read =3D false;
+> +               break;
+> +       default:
+> +               dev_err(dev, "Unknown request type=3D0x%04x\n", req_type)=
+;
+> +               return -EINVAL;
+> +       }
+> +
+> +       protocol_id =3D ufs_rpmb->region_id << 8 | UFS_RPMB_SEC_PROTOCOL_=
+ID;
+> +
+> +       ret =3D ufs_sec_submit(hba, protocol_id, req, req_len, true);
+> +       if (ret) {
+> +               dev_err(dev, "Command failed with ret=3D%d\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       if (need_result_read) {
+> +               struct rpmb_frame *frm_resp =3D (struct rpmb_frame *)resp=
+;
+> +
+> +               memset(frm_resp, 0, sizeof(*frm_resp));
+> +               frm_resp->req_resp =3D cpu_to_be16(RPMB_RESULT_READ);
+> +               ret =3D ufs_sec_submit(hba, protocol_id, resp, resp_len, =
+true);
+> +               if (ret) {
+> +                       dev_err(dev, "Result read request failed with ret=
+=3D%d\n", ret);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       if (!ret) {
+> +               ret =3D ufs_sec_submit(hba, protocol_id, resp, resp_len, =
+false);
+> +               if (ret)
+> +                       dev_err(dev, "Response read failed with ret=3D%d\=
+n", ret);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static void ufs_rpmb_device_release(struct device *dev)
+> +{
+> +       struct ufs_rpmb_dev *ufs_rpmb =3D dev_get_drvdata(dev);
+> +
+> +       rpmb_dev_unregister(ufs_rpmb->rdev);
+> +}
+> +
+> +/* UFS RPMB device registration */
+> +int ufs_rpmb_probe(struct ufs_hba *hba)
+> +{
+> +       struct ufs_rpmb_dev *ufs_rpmb, *it, *tmp;
+> +       struct rpmb_dev *rdev;
+> +       char *cid =3D NULL;
+> +       int region;
+> +       u32 cap;
+> +       int ret;
+> +
+> +       if (!hba->ufs_rpmb_wlun || hba->dev_info.b_advanced_rpmb_en) {
+> +               dev_info(hba->dev, "Skip OP-TEE RPMB registration\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       /* Check if device_id is available */
+> +       if (!hba->dev_info.device_id) {
+> +               dev_err(hba->dev, "UFS Device ID not available\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       INIT_LIST_HEAD(&hba->rpmbs);
+> +
+> +       struct rpmb_descr descr =3D {
+> +               .type =3D RPMB_TYPE_UFS,
+> +               .route_frames =3D ufs_rpmb_route_frames,
+> +               .reliable_wr_count =3D hba->dev_info.rpmb_io_size,
+> +       };
+> +
+> +       for (region =3D 0; region < ARRAY_SIZE(hba->dev_info.rpmb_region_=
+size); region++) {
+> +               cap =3D hba->dev_info.rpmb_region_size[region];
+> +               if (!cap)
+> +                       continue;
+> +
+> +               ufs_rpmb =3D devm_kzalloc(hba->dev, sizeof(*ufs_rpmb), GF=
+P_KERNEL);
+> +               if (!ufs_rpmb) {
+> +                       ret =3D -ENOMEM;
+> +                       goto err_out;
+> +               }
+> +
+> +               ufs_rpmb->hba =3D hba;
+> +               ufs_rpmb->dev.parent =3D &hba->ufs_rpmb_wlun->sdev_gendev=
+;
+> +               ufs_rpmb->dev.bus =3D &ufs_rpmb_bus_type;
+> +               ufs_rpmb->dev.release =3D ufs_rpmb_device_release;
+> +               dev_set_name(&ufs_rpmb->dev, "ufs_rpmb%d", region);
+> +
+> +               /* Set driver data BEFORE device_register */
+> +               dev_set_drvdata(&ufs_rpmb->dev, ufs_rpmb);
+> +
+> +               ret =3D device_register(&ufs_rpmb->dev);
+> +               if (ret) {
+> +                       dev_err(hba->dev, "Failed to register UFS RPMB de=
+vice %d\n", region);
+> +                       put_device(&ufs_rpmb->dev);
+> +                       goto err_out;
+> +               }
+> +
+> +               /* Create unique ID by appending region number to device_=
+id */
+> +               cid =3D kasprintf(GFP_KERNEL, "%s-R%d", hba->dev_info.dev=
+ice_id, region);
+> +               if (!cid) {
+> +                       device_unregister(&ufs_rpmb->dev);
+> +                       ret =3D -ENOMEM;
+> +                       goto err_out;
+> +               }
+> +
+> +               descr.dev_id =3D cid;
+> +               descr.dev_id_len =3D strlen(cid);
+> +               descr.capacity =3D cap;
+> +
+> +               /* Register RPMB device */
+> +               rdev =3D rpmb_dev_register(&ufs_rpmb->dev, &descr);
+> +               if (IS_ERR(rdev)) {
+> +                       dev_err(hba->dev, "Failed to register UFS RPMB de=
+vice.\n");
+> +                       device_unregister(&ufs_rpmb->dev);
+> +                       ret =3D PTR_ERR(rdev);
+> +                       goto err_out;
+> +               }
+> +
+> +               kfree(cid);
+> +               cid =3D NULL;
+> +
+> +               ufs_rpmb->rdev =3D rdev;
+> +               ufs_rpmb->region_id =3D region;
+> +
+> +               list_add_tail(&ufs_rpmb->node, &hba->rpmbs);
+> +
+> +               dev_info(hba->dev, "UFS RPMB region %d registered (capaci=
+ty=3D%u)\n", region, cap);
+> +       }
+> +
+> +       return 0;
+> +err_out:
+> +       kfree(cid);
+> +       list_for_each_entry_safe(it, tmp, &hba->rpmbs, node) {
+> +               list_del(&it->node);
+> +               device_unregister(&it->dev);
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +/* UFS RPMB remove handler */
+> +void ufs_rpmb_remove(struct ufs_hba *hba)
+> +{
+> +       struct ufs_rpmb_dev *ufs_rpmb, *tmp;
+> +
+> +       if (list_empty(&hba->rpmbs))
+> +               return;
+> +
+> +       /* Remove all registered RPMB devices */
+> +       list_for_each_entry_safe(ufs_rpmb, tmp, &hba->rpmbs, node) {
+> +               dev_info(hba->dev, "Removing UFS RPMB region %d\n", ufs_r=
+pmb->region_id);
+> +               /* Remove from list first */
+> +               list_del(&ufs_rpmb->node);
+> +               /* Unregister device */
+> +               device_unregister(&ufs_rpmb->dev);
+> +       }
+> +
+> +       dev_info(hba->dev, "All UFS RPMB devices unregistered\n");
+> +}
+> +
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("OP-TEE UFS RPMB driver");
+> diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-pri=
+v.h
+> index d74742a855b2..e63b0e9075e0 100644
+> --- a/drivers/ufs/core/ufshcd-priv.h
+> +++ b/drivers/ufs/core/ufshcd-priv.h
+> @@ -417,4 +417,17 @@ static inline u32 ufshcd_mcq_get_sq_head_slot(struct=
+ ufs_hw_queue *q)
+>         return val / sizeof(struct utp_transfer_req_desc);
+>  }
+>
+> +#ifdef CONFIG_RPMB
+> +int ufs_rpmb_probe(struct ufs_hba *hba);
+> +void ufs_rpmb_remove(struct ufs_hba *hba);
+> +#else
+> +static inline int ufs_rpmb_probe(struct ufs_hba *hba)
+> +{
+> +       return 0;
+> +}
+> +static inline void ufs_rpmb_remove(struct ufs_hba *hba)
+> +{
+> +}
+> +#endif
+> +
+>  #endif /* _UFSHCD_PRIV_H_ */
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index af7f87f27630..4e0ba344dbea 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -5254,10 +5254,15 @@ static void ufshcd_lu_init(struct ufs_hba *hba, s=
+truct scsi_device *sdev)
+>             desc_buf[UNIT_DESC_PARAM_LU_WR_PROTECT] =3D=3D UFS_LU_POWER_O=
+N_WP)
+>                 hba->dev_info.is_lu_power_on_wp =3D true;
+>
+> -       /* In case of RPMB LU, check if advanced RPMB mode is enabled */
+> -       if (desc_buf[UNIT_DESC_PARAM_UNIT_INDEX] =3D=3D UFS_UPIU_RPMB_WLU=
+N &&
+> -           desc_buf[RPMB_UNIT_DESC_PARAM_REGION_EN] & BIT(4))
+> -               hba->dev_info.b_advanced_rpmb_en =3D true;
+> +       /* In case of RPMB LU, check if advanced RPMB mode is enabled, an=
+d get region size */
+> +       if (desc_buf[UNIT_DESC_PARAM_UNIT_INDEX] =3D=3D UFS_UPIU_RPMB_WLU=
+N) {
+> +               if (desc_buf[RPMB_UNIT_DESC_PARAM_REGION_EN] & BIT(4))
+> +                       hba->dev_info.b_advanced_rpmb_en =3D true;
+> +               hba->dev_info.rpmb_region_size[0] =3D desc_buf[RPMB_UNIT_=
+DESC_PARAM_REGION0_SIZE];
+> +               hba->dev_info.rpmb_region_size[1] =3D desc_buf[RPMB_UNIT_=
+DESC_PARAM_REGION1_SIZE];
+> +               hba->dev_info.rpmb_region_size[2] =3D desc_buf[RPMB_UNIT_=
+DESC_PARAM_REGION2_SIZE];
+> +               hba->dev_info.rpmb_region_size[3] =3D desc_buf[RPMB_UNIT_=
+DESC_PARAM_REGION3_SIZE];
+> +       }
+>
+>
+>         kfree(desc_buf);
+> @@ -8187,8 +8192,11 @@ static int ufshcd_scsi_add_wlus(struct ufs_hba *hb=
+a)
+>                 ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_RPMB_WLUN), NULL);
+>         if (IS_ERR(sdev_rpmb)) {
+>                 ret =3D PTR_ERR(sdev_rpmb);
+> +               hba->ufs_rpmb_wlun =3D NULL;
+> +               dev_err(hba->dev, "%s: RPMB WLUN not found\n", __func__);
+>                 goto remove_ufs_device_wlun;
+>         }
+> +       hba->ufs_rpmb_wlun =3D sdev_rpmb;
+>         ufshcd_blk_pm_runtime_init(sdev_rpmb);
+>         scsi_device_put(sdev_rpmb);
+>
+> @@ -8456,6 +8464,63 @@ static void ufs_init_rtc(struct ufs_hba *hba, u8 *=
+desc_buf)
+>         dev_info->rtc_update_period =3D 0;
+>  }
+>
+> +/**
+> + * ufshcd_create_device_id - Generate unique device identifier string
+> + * @hba: per-adapter instance
+> + * @desc_buf: device descriptor buffer
+> + *
+> + * Creates a unique device ID string combining manufacturer ID, spec ver=
+sion,
+> + * model name, serial number (as hex), device version, and manufacture d=
+ate.
+> + *
+> + * Returns: Allocated device ID string on success, NULL on failure
+> + */
+> +static char *ufshcd_create_device_id(struct ufs_hba *hba, u8 *desc_buf)
+> +{
+> +       struct ufs_dev_info *dev_info =3D &hba->dev_info;
+> +       u8 *serial_number;
+> +       char *serial_hex;
+> +       char *device_id;
+> +       u8 serial_index;
+> +       u16 device_version;
+> +       u16 manufacture_date;
+> +       int serial_len;
+> +       int ret;
+> +
+> +       serial_index =3D desc_buf[DEVICE_DESC_PARAM_SN];
+> +
+> +       ret =3D ufshcd_read_string_desc(hba, serial_index, &serial_number=
+, SD_RAW);
+> +       if (ret < 0) {
+> +               dev_err(hba->dev, "Failed reading Serial Number. err =3D =
+%d\n", ret);
+> +               return NULL;
+> +       }
+> +
+> +       device_version =3D get_unaligned_be16(&desc_buf[DEVICE_DESC_PARAM=
+_DEV_VER]);
+> +       manufacture_date =3D get_unaligned_be16(&desc_buf[DEVICE_DESC_PAR=
+AM_MANF_DATE]);
+> +
+> +       serial_len =3D ret;
+> +       /* Allocate buffer for hex string: 2 chars per byte + null termin=
+ator */
+> +       serial_hex =3D kzalloc(serial_len * 2 + 1, GFP_KERNEL);
+> +       if (!serial_hex) {
+> +               kfree(serial_number);
+> +               return NULL;
+> +       }
+> +
+> +       bin2hex(serial_hex, serial_number, serial_len);
+> +
+> +       device_id =3D kasprintf(GFP_KERNEL, "%04X-%04X-%s-%s-%04X-%04X",
+> +                             dev_info->wmanufacturerid, dev_info->wspecv=
+ersion,
+> +                             dev_info->model, serial_hex, device_version=
+,
+> +                             manufacture_date);
 
-Where is this? This is then wrong then because _SLEEP is for MUTEX and
-those things that sleep-sleep and pretend to sleep.
 
-spinlock_t should be LD_WAIT_CONFIG. This is used in
-include/linux/spinlock_types.h via SPIN_DEP_MAP_INIT which is only
-defined once as LD_WAIT_CONFIG.
+The device ID is part of the ABI with the secure world or the firmware
+we're serving. It might be worth adding a comment so the format isn't
+changed without understanding the consequences.
 
-rt_mutex is defined as LD_WAIT_SLEEP but this one is not the one we use
-for spinlock_t.
+Cheers,
+Jens
 
-What you want to have working in the end is the following scenario:
-
-|static DEFINE_SPINLOCK(lock_spinlock);
-|static DEFINE_RAW_SPINLOCK(lock_raw_spinlock);
-|static DEFINE_RAW_SPINLOCK(lock_raw_spinlock2);
-|
-|static void lockdep_test(void)
-|{
-|        static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_CONFIG);
-|
-|        raw_spin_lock(&lock_raw_spinlock);
-|        lock_map_acquire_try(&put_task_map);
-|
-|        spin_lock(&lock_spinlock);
-|        spin_unlock(&lock_spinlock);
-|
-|        raw_spin_lock(&lock_raw_spinlock2);
-|        raw_spin_unlock(&lock_raw_spinlock2);
-|
-|        lock_map_release(&put_task_map);
-|        raw_spin_unlock(&lock_raw_spinlock);
-|}
-
-This will work. On RT as well but is wrong and will not happen due to
-the preemptible() check. On !RT it will so you want lockdep to be quiet.
-
-> 
-> Oleg.
-
-Sebastian
+> +
+> +       kfree(serial_hex);
+> +       kfree(serial_number);
+> +
+> +       if (!device_id)
+> +               dev_warn(hba->dev, "Failed to allocate unique device ID\n=
+");
+> +
+> +       return device_id;
+> +}
+> +
+>  static int ufs_get_device_desc(struct ufs_hba *hba)
+>  {
+>         int err;
+> @@ -8507,6 +8572,9 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
+>                 goto out;
+>         }
+>
+> +       /* Generate unique device ID */
+> +       dev_info->device_id =3D ufshcd_create_device_id(hba, desc_buf);
+> +
+>         hba->luns_avail =3D desc_buf[DEVICE_DESC_PARAM_NUM_LU] +
+>                 desc_buf[DEVICE_DESC_PARAM_NUM_WLU];
+>
+> @@ -8542,6 +8610,8 @@ static void ufs_put_device_desc(struct ufs_hba *hba=
+)
+>
+>         kfree(dev_info->model);
+>         dev_info->model =3D NULL;
+> +       kfree(dev_info->device_id);
+> +       dev_info->device_id =3D NULL;
+>  }
+>
+>  /**
+> @@ -8685,6 +8755,8 @@ static int ufshcd_device_geo_params_init(struct ufs=
+_hba *hba)
+>         else if (desc_buf[GEOMETRY_DESC_PARAM_MAX_NUM_LUN] =3D=3D 0)
+>                 hba->dev_info.max_lu_supported =3D 8;
+>
+> +       hba->dev_info.rpmb_io_size =3D desc_buf[GEOMETRY_DESC_PARAM_RPMB_=
+RW_SIZE];
+> +
+>  out:
+>         kfree(desc_buf);
+>         return err;
+> @@ -8871,6 +8943,7 @@ static int ufshcd_add_lus(struct ufs_hba *hba)
+>
+>         ufs_bsg_probe(hba);
+>         scsi_scan_host(hba->host);
+> +       ufs_rpmb_probe(hba);
+>
+>  out:
+>         return ret;
+> @@ -10425,6 +10498,7 @@ void ufshcd_remove(struct ufs_hba *hba)
+>                 ufshcd_rpm_get_sync(hba);
+>         ufs_hwmon_remove(hba);
+>         ufs_bsg_remove(hba);
+> +       ufs_rpmb_remove(hba);
+>         ufs_sysfs_remove_nodes(hba->dev);
+>         cancel_delayed_work_sync(&hba->ufs_rtc_update_work);
+>         blk_mq_destroy_queue(hba->tmf_queue);
+> diff --git a/include/ufs/ufs.h b/include/ufs/ufs.h
+> index 245a6a829ce9..ab8f6c07b5a2 100644
+> --- a/include/ufs/ufs.h
+> +++ b/include/ufs/ufs.h
+> @@ -651,6 +651,11 @@ struct ufs_dev_info {
+>         u8 rtt_cap; /* bDeviceRTTCap */
+>
+>         bool hid_sup;
+> +
+> +       /* Unique device ID string (manufacturer+model+serial+version+dat=
+e) */
+> +       char *device_id;
+> +       u8 rpmb_io_size;
+> +       u8 rpmb_region_size[4];
+>  };
+>
+>  #endif /* End of Header */
+> diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+> index b4eb2fa58552..959d42d9b1c8 100644
+> --- a/include/ufs/ufshcd.h
+> +++ b/include/ufs/ufshcd.h
+> @@ -826,6 +826,7 @@ enum ufshcd_mcq_opr {
+>   * @host: Scsi_Host instance of the driver
+>   * @dev: device handle
+>   * @ufs_device_wlun: WLUN that controls the entire UFS device.
+> + * @ufs_rpmb_wlun: RPMB WLUN SCSI device
+>   * @hwmon_device: device instance registered with the hwmon core.
+>   * @curr_dev_pwr_mode: active UFS device power mode.
+>   * @uic_link_state: active state of the link to the UFS device.
+> @@ -941,8 +942,8 @@ enum ufshcd_mcq_opr {
+>   * @pm_qos_mutex: synchronizes PM QoS request and status updates
+>   * @critical_health_count: count of critical health exceptions
+>   * @dev_lvl_exception_count: count of device level exceptions since last=
+ reset
+> - * @dev_lvl_exception_id: vendor specific information about the
+> - * device level exception event.
+> + * @dev_lvl_exception_id: vendor specific information about the device l=
+evel exception event.
+> + * @rpmbs: list of OP-TEE RPMB devices (one per RPMB region)
+>   */
+>  struct ufs_hba {
+>         void __iomem *mmio_base;
+> @@ -960,6 +961,7 @@ struct ufs_hba {
+>         struct Scsi_Host *host;
+>         struct device *dev;
+>         struct scsi_device *ufs_device_wlun;
+> +       struct scsi_device *ufs_rpmb_wlun;
+>
+>  #ifdef CONFIG_SCSI_UFS_HWMON
+>         struct device *hwmon_device;
+> @@ -1117,6 +1119,8 @@ struct ufs_hba {
+>         int critical_health_count;
+>         atomic_t dev_lvl_exception_count;
+>         u64 dev_lvl_exception_id;
+> +
+> +       struct list_head rpmbs;
+>  };
+>
+>  /**
+> --
+> 2.34.1
+>
 
