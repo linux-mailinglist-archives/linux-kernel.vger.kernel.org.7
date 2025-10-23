@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-867653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35259C03354
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:39:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E76C0335A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 941A93497C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:39:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87BFE1A66DBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F0434D918;
-	Thu, 23 Oct 2025 19:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D2E34D92D;
+	Thu, 23 Oct 2025 19:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XAeQ6mZa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGiw1PLt"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F63528E00;
-	Thu, 23 Oct 2025 19:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C20030B515
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761248383; cv=none; b=f68bDfuVRlUaOnsJC0BVYbTllUcnbDQJnilLvvjHCkN1Sgg1tVe4LTGX9PfFdfd1yqomkJCUJF4SNLnyiPmlz+Vmjx5lzgoWRrbPmgot1NVv7X6H9PvuNw8xiBa7ED13gUdjSvDBnHhq+XNvLsHWC/d7RWIx5CBptVf2gK8Dhho=
+	t=1761248413; cv=none; b=JyPJioDwrlYIK+CYBl9CNZL5k7NxNObZUjfjUqpxg1oZcpE//wKnh48ea9I+lNH5daOegmprs0MkEoGyZh4GjvPSoI8/I7UrlcusDsr6pQKC0bHQFl/qFI2lTKvFU/+6MrgRNzG3IEWav0dhwz300XfB21ea39JbW3EN1oNhSJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761248383; c=relaxed/simple;
-	bh=OSmpnNs0/AMNUFsS6Fsz1K/9p0tTe3Vtc+ysYl6ffNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eXUuAhkqJT4XN0trD+H1+TrgCNyJa+kPx9Ht2oblMERuQLJ7VeCTALyb/2cZaSiClz6loz6E1tMcjxZ8LBAO/hY9KuSRo9oJKB9rouJUjTvZ6tFetWzbBNdpjT+BKEnUUh0gJ7iGE96MLELEn7QS/sFWD86MZINR94/27NG6YYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XAeQ6mZa; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761248381; x=1792784381;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OSmpnNs0/AMNUFsS6Fsz1K/9p0tTe3Vtc+ysYl6ffNc=;
-  b=XAeQ6mZaj+99SBbudJtBXL7VTy5F6psQ0Rk03lHA8SrJzl+PL3fHFQ4s
-   vsAd3As4QtmFv2rSPj/OBMNxP5Bd391LI5C+me31socaDXGnL3qvHQtXM
-   OMcoR1emqtw1r7ZaGtM/Owg9natBKgj0OucERSekk+Ar39wYxZJf6+tKL
-   pBlCm0haMKeNfy9WsesZppREX7fAieQbQ6S6rj2FwxoG0YK9763t8G7+9
-   SOGzm1wTLi1sMQDZHuF69XBY1ouZG7UcAC+PdnzIdP1t6sdutSs//v3hz
-   kW1+HsawrnLSFx5Dj3eOXtFJWOfhdCwsXFyQD9gXFZs3cLbKS0vfRGp2f
-   w==;
-X-CSE-ConnectionGUID: N8c3r/eIRSaa4HjMQwZx0g==
-X-CSE-MsgGUID: n5cPS0uWTAanF4sA5a1CHA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63134815"
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="63134815"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 12:39:40 -0700
-X-CSE-ConnectionGUID: f2VFH6p4QSS41LQ8JPt06g==
-X-CSE-MsgGUID: 2AGvUH8MQj+9jbyOus63oQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="184168230"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 23 Oct 2025 12:39:37 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vC19q-000DoX-35;
-	Thu, 23 Oct 2025 19:39:34 +0000
-Date: Fri, 24 Oct 2025 03:38:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dan Carpenter <error27@gmail.com>, YiPeng Chai <YiPeng.Chai@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Tao Zhou <tao.zhou1@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/amd/ras: Fix memory corruption in
- ras_core_convert_timestamp_to_time()
-Message-ID: <202510240310.WujwpVmw-lkp@intel.com>
-References: <aPi6I5z5oenppEuu@stanley.mountain>
+	s=arc-20240116; t=1761248413; c=relaxed/simple;
+	bh=LVSTUEbnkLIAzj9Vx2EvlgOAnsoNEFWZI7Re6Fq/m9U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=agYyP/tdUJZSMIWtDK80ew06EXwYrNAbUYA54Vz9VjXxAjiBDrgmHwa1TjL/SJQdiitx/ILOT1m9KDFgAx5YHHsPT6ulLG0VFaRfFEfdP/oea3tnm/e7QyXjW1nobRMVgVbKYtnLZjjyvWewT7ukSUx+wAYfZnYvFNCXFx7lOMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MGiw1PLt; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-290cd62acc3so14219725ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761248411; x=1761853211; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LVSTUEbnkLIAzj9Vx2EvlgOAnsoNEFWZI7Re6Fq/m9U=;
+        b=MGiw1PLt2FiiYONIpQvOVqvLQuIVbbJQ6q1IXmfj09Sga9l/64PLynicJmhPrehJM4
+         CKqEIp19MJbpvwFyM00phSeggso+QJuSZ4vs8bBhAKU156viYEnMIJrTxRZX/7oxKAgh
+         fLneuqe4Uvx4M9wOL/Hv1AtDrhYfd1jlCF24KQXAvbnDk6PrRQNjbuNnSLzYxZiHNnXr
+         AjWN+i6qh5riSdqJgqpisV5OwF0h/g9vxZwOsd6CfD3Q7ys4CW/G5BOpu4cB1lJu+zNw
+         6/K3wTQpS6LcPTyZqLCP4oTlLuDGSYSTxRRWVaCRE6pNAbdDCLJmEYmPlYfhE/XlyBaC
+         Mu8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761248411; x=1761853211;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LVSTUEbnkLIAzj9Vx2EvlgOAnsoNEFWZI7Re6Fq/m9U=;
+        b=HIOZHr5oZnpImTBflfi0IrGKzeKdvZ8g2q3wpf0sPYJlB3nDnNa3Ut74JQZelJ95y5
+         3TQsQQ2PCq3uXVZtcOZENpprXtFhd2xzUEumu813LNh6VoWfi3otxPFOMPAcRJxBKPd4
+         lOvB7wsUwd6/FcmbmKl6LcpPb1cwhQiUEaqJwvp9Fmif+cVgPAlWOAtBHNiyFIi6qcze
+         llqeb7sjQm3Dj5YojdH7wCYI4Vxh2uoPmPOsnif/WJ9n2qRxEVqEdV9TCl4vb8Xe0FP9
+         QZpLtlVKOIdSxLOLCW7cCv9QfJtbouuSP7DERIVbizrfOkNcEpai7pEUQP5fGktdMbwu
+         IL7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXonwkE7N8a0qynIshkjqWQty2I06j4sTTnmGEIrWzdGFL8gPDuf+WXVkn8zAmfQKbt90XHR9x9v5ySVNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziAGVjFhR5eQtc0fu2hVgAykfy/ZHmlXfr2xmcZg6S+nSq8MJm
+	hgK9lYApZ6TvVsENOHPCRmpUNrjEW4P9tYvDYRFC3rCqRe3AQ8/oabYQwuornooQFTgZmqulhTD
+	Iiqi3sux0I5MD3TP5NPZRIhZ9dXYpH5I=
+X-Gm-Gg: ASbGncvTqAO3SBzmtlrZtWf9X3h9pakLyU0D0Q0kwRGjpnVXdAvPpY0ClvK+pki7iWq
+	wg2OBfK5QUw2pJBPFiZBQL6/cInnXHoVQ8rZjvmyEF7KJ6W9WdJQl+FS0i5gUyBnUhXLzMlI4da
+	ovLrUue/U2AzGX+jxUSTo35GTUywjMbSUBqkpmc+qvwHaDKRJXsdFX8lJBSDMSPK+N10tnSdQJF
+	XYim3jxNYy5FAm+IyfkyfRxijbnMA/4NljnHWWt9z4yJv2FVR6AU1XhmoI1SafDB9zem/OQ/Wmb
+	DxJK5WjC4E4=
+X-Google-Smtp-Source: AGHT+IEhuZTV8ezLGcrth8HESSqDZMBIJHnHiqqsyIHltjqbCmhOwj0sR/LSVQ/PCaZxbA7uEuZRcIOOcvol27U+RHg=
+X-Received: by 2002:a17:903:1a0e:b0:26a:23c7:68da with SMTP id
+ d9443c01a7336-290ca02353emr310880525ad.25.1761248411250; Thu, 23 Oct 2025
+ 12:40:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPi6I5z5oenppEuu@stanley.mountain>
+References: <20251020093941.548058-1-dolinux.peng@gmail.com>
+ <20251020093941.548058-3-dolinux.peng@gmail.com> <174642a334760af39a5e7bacdd8b977b392a82c7.camel@gmail.com>
+ <CAErzpmusSgOaROhEO25fKenvxQJU1oSPKKzUA4h67ptdQxWM7A@mail.gmail.com>
+ <7651ac9cc74e135f04ecfee8660bea0a0d3883ab.camel@gmail.com>
+ <CAErzpmtWLLYuFk3npTiOgGOKcEcH1QUGGEHLvPncVT+z261C1A@mail.gmail.com>
+ <CAADnVQKU0MnQHxxvnp9WCu_UO4fEtd_D6ckNmOd7pLg90ecF4A@mail.gmail.com>
+ <CAEf4Bzajdv3Rd1xAxm_UZWBxPc8M0=VuUkfjJvOFSObOs19GbQ@mail.gmail.com> <CAADnVQJG_tK18oxmjW37cbrxF2zPKPk_dvqXUTnOjUue7J0tLQ@mail.gmail.com>
+In-Reply-To: <CAADnVQJG_tK18oxmjW37cbrxF2zPKPk_dvqXUTnOjUue7J0tLQ@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 23 Oct 2025 12:39:57 -0700
+X-Gm-Features: AS18NWCi5yLjTclZEFhU1VH8SOuBSBCDx6iFebw-WC4t6DXqtoN0O0_X7B7k0LM
+Message-ID: <CAEf4BzYLyi6=Fyz9ziOAwkFOjUPyJmTj4c6g247XBwgwJ8m-qw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/5] btf: sort BTF types by kind and name to enable
+ binary search
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Donglin Peng <dolinux.peng@gmail.com>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, 
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
+On Thu, Oct 23, 2025 at 11:37=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Thu, Oct 23, 2025 at 9:28=E2=80=AFAM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> >
+> > Speaking of flags, though. I think adding BTF_F_SORTED flag to
+> > btf_header->flags seems useful, as that would allow libbpf (and user
+> > space apps working with BTF in general) to use more optimal
+> > find_by_name implementation. The only gotcha is that old kernels
+> > enforce this btf_header->flags to be zero, so pahole would need to
+> > know not to emit this when building BTF for old kernels (or, rather,
+> > we'll just teach pahole_flags in kernel build scripts to add this
+> > going forward). This is not very important for kernel, because kernel
+> > has to validate all this anyways, but would allow saving time for user
+> > space.
+>
+> Thinking more about it... I don't think it's worth it.
+> It's an operational headache. I'd rather have newer pahole sort it
+> without on/off flags and detection, so that people can upgrade
+> pahole and build older kernels.
+> Also BTF_F_SORTED doesn't spell out the way it's sorted.
+> Things may change and we will need a new flag and so on.
+> I think it's easier to check in the kernel and libbpf whether
+> BTF is sorted the way they want it.
+> The check is simple, fast and done once. Then both (kernel and libbpf) ca=
+n
+> set an internal flag and use different functions to search
+> within a given BTF.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on next-20251022]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Carpenter/drm-amd-ras-Fix-memory-corruption-in-ras_core_convert_timestamp_to_time/20251022-190512
-base:   next-20251022
-patch link:    https://lore.kernel.org/r/aPi6I5z5oenppEuu%40stanley.mountain
-patch subject: [PATCH next] drm/amd/ras: Fix memory corruption in ras_core_convert_timestamp_to_time()
-config: i386-randconfig-014-20251023 (https://download.01.org/0day-ci/archive/20251024/202510240310.WujwpVmw-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510240310.WujwpVmw-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510240310.WujwpVmw-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "__umoddi3" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
-ERROR: modpost: "__udivdi3" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->> ERROR: modpost: "__udivmoddi4" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I guess that's fine. libbpf can do this check lazily on the first
+btf__find_by_name() to avoid unnecessary overhead. Agreed.
 
