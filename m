@@ -1,139 +1,151 @@
-Return-Path: <linux-kernel+bounces-866783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA79CC00A28
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:09:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1023EC00A31
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A5419A51D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:09:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E3C43AF2DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B493A3043AE;
-	Thu, 23 Oct 2025 11:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4612E30C375;
+	Thu, 23 Oct 2025 11:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KdKOa3K6"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="KTtZ9kPr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZvSBd6Pk"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B096930C600
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351328C00C;
+	Thu, 23 Oct 2025 11:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761217739; cv=none; b=Y9joic6S0bHxLN5igZJ9LmIoavsy7TspF1Vt8MZe8GjMvLzSnBe4waVFrnMFPikttovoS41uWtS+5YW48ifGmXe6dIE1dxqw8cd2POoH1boqZokSYxx5Ok5Qw7DPZzdw7nyBmBgp3GYhuSPmL7IXSNBSupRG/N/IuuxYMWu4634=
+	t=1761217760; cv=none; b=F3rllKotjNB2ksrTJlYW2DdKl/pJpHv+eJr+aw3gqk8DnuMXhTMMKVCSQQTblWvn2GyF98VwoXS4S+4D+mrft9yyDyoRzZEtPBnMdwK/C4C51B5jdveK7mm2n6D8WMwFJyxHfYFPsxbnriivx2+CMCp0mOtXU2X5AeTSHHGPC2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761217739; c=relaxed/simple;
-	bh=2gtsPC5so8y6JlR/LE6EcnMO20S4+I796HirmIgdDJ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D/zxuiwkcMpe9yVWlDu2B5Hp32coyxrwFBxQRDEhrUPgYJjVhJ1tfQaqUSAO7DU7KPXl6pB4IqLrtOGjqdKaFIOrGFXy0IYygRHPzhGo6LtX9hv4wVWXwZnvA53HLAmDeGUqsDqcK4lC04XdP3Os9JxZ0oAQTWxtPpxePIOAqWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KdKOa3K6; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63e12a55270so989506a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:08:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761217735; x=1761822535; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yjVTzYMRUK9px4tCar1m0xiZ+9sd2t0ODPLBN+ZVn8M=;
-        b=KdKOa3K6waUkW0GYhOosJkCYGIJIZqrvpfFr6jzNI1/PdhZGq5ilbKjK2XZEEZbTHc
-         Cc/LT/mrSSVDE682cRd4WLqCuN3akDe5iQqKbwAJ1L2zaeISF70Tk+kPlkj8OJjLpHPi
-         UlhAu6JxbrhBkYTybov3h2fQOdwaXCkAZbDekUBS4NZHspB6eY98cdZonqd4hUrjFVdl
-         wjjTynqdzvJukc+HOztd5Sa9PKEZtPVqhcdu+T0mGvV7VYwOnEKKdVV/j7686rJWiyAU
-         o9EXG0fGjrT8BaeG9GrRFkEToJAi6d3WwHFN5+PgQvJA3aUc/MKzwXHlKlHUk7bvulS/
-         8nLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761217735; x=1761822535;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yjVTzYMRUK9px4tCar1m0xiZ+9sd2t0ODPLBN+ZVn8M=;
-        b=dUoZ31BtcG/DbhZjN9O4cQ3qWTSGcrE6FngGpbgab8dfBEEoNZ/l6cl6AapjIAei9l
-         8LZvwZXY4FgJo9m/HMKyQ0R1JrQurKSldWHXetorlvLuzJY3bg5MiovaPSqRuRna1pEL
-         iR0EyNk3USZP/s66ak4rnN8Hs/5y9SYBuRIHwv52wfgPxnKOfT+13PVUVfhiPlWchUVi
-         XmVU3mBZOwCeKRgf/eRd+edvscdPlHcxzT/0M+CTUsSDsTQQXTtoV35VWl7JVUySB699
-         cFiuV6FERtl2/i4ZEvGbVnT66/kqnAoIF0mFYmAaNmT5XrY3Y4z1AhVjrjDIGZA/kNP8
-         pYtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXK8C5afL4IjpwBzuX+NCmAjmwAWV+3Bfzk017ZbDpvu3vpICtMtjXKvXo6Qb/6FgD/P3VfYEI5lGmAzSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOXZW+0hH2vrlO47GfClV5/Wnv9ZpGQ4DhONYrE/l5riAZa/7n
-	TIC8zTKQhB3vi4ox6NKdbpT7QmMaF34Q3ukwDwvq6aMaR8RzoVVP8pPHMqeTPfcdL8zL5shJD1p
-	jAmyc+32S9CDGFGar7mW2rJBhrdr3hVQ=
-X-Gm-Gg: ASbGncsXxCVKPHJBuaGlvaQvqyE/ZUk0sqtgxpwklK3AU7Qs/vkU+x5mVvlOuU2Cyxq
-	zNyFh6gbJowQtg0FuyiNemrkznnzAipz4xKvQ/52d4qTFcsK/gsOecChW0LucbfQQ2l9KMFz9oE
-	nq8rKVj0U/ee0zz+mEQCZAa6O/aVqrPsIWo6EI85E2cfk5hfIqO3L0864SuIfZFMfGT9YxUNt4H
-	FlK3wY8ZMuulvR/Us1f2NpXv5dPVm81Jxo6YHsrJyzrarDfe02H/fDa1UojAn6V4kSHCBXmjK/H
-	o4SUCxXgyKmrcHOaodytGFCXb35vpw==
-X-Google-Smtp-Source: AGHT+IHaZkNWJBzwX+xnT6zDyIsd+FpAB6bVyKjHzY4MeJJT61pxMSaC+0svUKX7j1+JJd4Z5fMUP57lUimsGmTU5qA=
-X-Received: by 2002:a05:6402:510b:b0:639:dd3f:f25d with SMTP id
- 4fb4d7f45d1cf-63c1f631b53mr22704985a12.7.1761217734817; Thu, 23 Oct 2025
- 04:08:54 -0700 (PDT)
+	s=arc-20240116; t=1761217760; c=relaxed/simple;
+	bh=TCq9qcVCutQlKO9j2oFwyEX6973EaileswZin2dPFvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=putk1LE7xSVdnlFvmOyC4aSJ5+bMnGPrx3c0LgilaLuonQ+33tsuBKUU3S5G7O8mSq+U9WBEF977/1a+2q7BzsEufBF0IBEb6Lyg52/9vF8HUFFosOxGqDX1+lp3+0f0sTltoAD2Z6+dU1MHPuEktL9OlnSYaNK13loJHXsXniA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=KTtZ9kPr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZvSBd6Pk; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 54A967A01AA;
+	Thu, 23 Oct 2025 07:09:15 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Thu, 23 Oct 2025 07:09:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1761217755; x=
+	1761304155; bh=e9KawlaDhjJS+ZMKZhm8w/oQQAYs/+bmrKLwAa9o+Oo=; b=K
+	TtZ9kPrsDfd+3EaDrvYvKpHAYzkTIVJrAmKe43FITa5lv0nU0iv1DvSxHM2brJHP
+	gXTzRl0evfqb/S4E1iAxXB8h82GaBDpSCh81DC1kl1jdJvli7hF3tMxQW2BXQIfX
+	C9TPWrTl258e/B7muQMshy7xxhDnc2hzV4ymHyBQr0pL1R0mz0HvVqOXyxjBT1gd
+	FAK5k3Ab0NutyVxM7b/mHjEfS1zhsklO20wj3qj29BFELNA4MNl0klKX8SG3X7FK
+	Tk+j8/6L/LHxHk9wo6ugVTSkkUDpb/IU5o0y7HmBoDrLB66MxRaG7NkTnx+6b3aj
+	9+M5Dixxcx7gLWJceyAQQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761217755; x=1761304155; bh=e9KawlaDhjJS+ZMKZhm8w/oQQAYs/+bmrKL
+	wAa9o+Oo=; b=ZvSBd6PkTl7poelfrzGYRIkas/w2kqCzCVlPo33fflhWd8vbGGD
+	QpOuZsa7EN85wVTexfkKIF24Ia5/TCUpbU8qL+h3KWOp8kJ/cYsCw/m0qryEg6ND
+	D7BxD273UqTbDugWmRK8c2bZU2ObW/RUbITAwpMcIrw1eWmI5O82Zfb5UZ2q7/5W
+	fApkBz1Nk+eD+UgFEdLSpvSDaj3toTfNrTN3eyYTeHLpuHXv/fbaZV3q/7DiWzve
+	ZPiB/ockgXEUtYhDYcn/k0GNk9IF79AVhN+Q1S5GK1blhpv/J1laU8OqzQd+Hpk+
+	pvnwF2igK+u6FU/zLCBq5ehZT/EAJpI3hAA==
+X-ME-Sender: <xms:2gz6aLgPC_4h27QyswLx5Cwse3RkDSj_uz_4GZaG8mnNLHpnvEabCg>
+    <xme:2gz6aJWyRsYlYESon6RK4edRatJupDlTRapA3AHpbp1OC7G-aAelaSHYHjSyTnKfX
+    9YEjjSqwREQkeITFqtnRZ_BmWqrui-aoIUY0rsoMSJzjAWPlOIE8_M>
+X-ME-Received: <xmr:2gz6aPvrFmO55TAZcbaCU-gBvZySktHrGHEVrq2_E4mX_Q8BWgYEbXORR3UfaQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeifedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
+    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopedv
+    tddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrd
+    gtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
+    ghdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
+    epthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphht
+    thhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepsg
+    hrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdr
+    tgiipdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:2gz6aK-j5ahkGjat69k16dsaj_YxKtt6KtPiks_qU2wDXwki7BDPRg>
+    <xmx:2gz6aPuITyhUJk6Nw5pKFFQR6WrAIQmg30Seq_-GRtZp0CNvCvcnTg>
+    <xmx:2gz6aA6cv6s3eOCKW0IeSI7ZfBvceFJVxxXs8Xr538dmhrLrLBnkJg>
+    <xmx:2gz6aINJcBwkBSnrruG4pP9k_2H-RjmOYbZ2I3uAnWQ8EefKooggHA>
+    <xmx:2wz6aJnHpCeaO4Lu5OQQekx6DiIO6DwritTNhnpjWjS4xbjI3-7k-luM>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 Oct 2025 07:09:14 -0400 (EDT)
+Date: Thu, 23 Oct 2025 12:09:12 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+Message-ID: <55p3kov54tjf5cr2sm3h3z7hv5cq6nlcqihlyxa427pz5mtkuv@nddjx4onw6mq>
+References: <20251017141536.577466-1-kirill@shutemov.name>
+ <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
+ <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
+ <06333766-fb79-4deb-9b53-5d1230b9d88d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021-aheev-checkpatch-uninitialized-free-v1-1-18fb01bc6a7a@gmail.com>
- <68f7b830ec21a_10e910070@dwillia2-mobl4.notmuch> <f9cabfed7b165299b8048670e548c671f300f2b2.camel@gmail.com>
-In-Reply-To: <f9cabfed7b165299b8048670e548c671f300f2b2.camel@gmail.com>
-From: ally heev <allyheev@gmail.com>
-Date: Thu, 23 Oct 2025 16:38:43 +0530
-X-Gm-Features: AS18NWALoCjfGGgMJQ1J0KTtA-LIrHjubjnnhPj65_HytxxNdk20M4XgmPj7hPU
-Message-ID: <CAMB6jUG+ES6XY7NL5TF-hFVDmz6O5rd9T-HNk7Q+pJA2_9g4Mw@mail.gmail.com>
-Subject: Re: [PATCH] checkpatch: add uninitialized pointer with __free
- attribute check
-To: dan.j.williams@intel.com, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joe Perches <joe@perches.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Andy Whitcroft <apw@canonical.com>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, 
-	David Hunter <david.hunter.linux@gmail.com>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-pm <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <06333766-fb79-4deb-9b53-5d1230b9d88d@redhat.com>
 
-On Thu, Oct 23, 2025 at 4:01=E2=80=AFPM ally heev <allyheev@gmail.com> wrot=
-e:
-> > I would go futher and suggest that the pattern of:
-> >
-> >       type foo __free(free_foo) =3D NULL;
-> >
-> > ...be made into a warning because that easily leads to situations where
-> > declaration order is out of sync with allocation order. I.e. can be mad=
-e
-> > technically correct, but at a level of cleverness that undermines the
-> > benefit.
->
-> But, does this pattern cause any real issue? I found allocating memory
-> later useful in cases like below
->
-> arch/powerpc/perf/vpa-dtl.c
-> ```
->
->         struct vpa_pmu_buf *buf __free(kfree) =3D NULL;
->         struct page **pglist __free(kfree) =3D NULL;
->
->         /* We need at least one page for this to work. */
->         if (!nr_pages)
->                 return NULL;
->
->         if (cpu =3D=3D -1)
->                 cpu =3D raw_smp_processor_id();
->
->         buf =3D kzalloc_node(sizeof(*buf), GFP_KERNEL,
-> cpu_to_node(cpu));
-> ```
->
+On Thu, Oct 23, 2025 at 12:54:59PM +0200, David Hildenbrand wrote:
+> On 23.10.25 12:31, Kiryl Shutsemau wrote:
+> > On Wed, Oct 22, 2025 at 07:28:27PM +0200, David Hildenbrand wrote:
+> > > "garbage" as in pointing at something without a direct map, something that's
+> > > protected differently (MTE? weird CoCo protection?) or even worse MMIO with
+> > > undesired read-effects.
+> > 
+> > Pedro already points to the problem with missing direct mapping.
+> > _nofault() copy should help with this.
+> 
+> Yeah, we do something similar when reading the kcore for that reason.
+> 
+> > 
+> > Can direct mapping ever be converted to MMIO? It can be converted to DMA
+> > buffer (which is fine), but MMIO? I have not seen it even in virtualized
+> > environments.
+> 
+> I recall discussions in the context of PAT and the adjustment of caching
+> attributes of the direct map for MMIO purposes: so I suspect there are ways
+> that can happen, but I am not 100% sure.
+> 
+> 
+> Thinking about it, in VMs we have the direct map set on balloon inflated
+> pages that should not be touched, not even read, otherwise your hypervisor
+> might get very angry. That case we could likely handle by checking whether
+> the source page actually exists and doesn't have PageOffline() set, before
+> accessing it. A bit nasty.
+> 
+> A more obscure cases would probably be reading a page that was poisoned by
+> hardware and is not expected to be used anymore. Could also be checked by
+> checking the page.
 
-I will take this back. Found this in `include/linux/cleanup.h`
-```
-* Given that the "__free(...) =3D NULL" pattern for variables defined at
-* the top of the function poses this potential interdependency problem
-* the recommendation is to always define and assign variables in one
-* statement and not group variable definitions at the top of the
-* function when __free() is used.
-```
+I don't think we can check the page. Since the page is not stabilized
+with a reference, it is TOCTOU race. If there's some side effect that
+we cannot suppress on read (like _nofault() does) we are screwed.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
