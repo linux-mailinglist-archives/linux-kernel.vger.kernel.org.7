@@ -1,166 +1,160 @@
-Return-Path: <linux-kernel+bounces-867409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BB7C029EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:01:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48EDAC02A97
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0E8C566014
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:56:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 27459567333
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624F433F8BB;
-	Thu, 23 Oct 2025 16:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A94533F8B6;
+	Thu, 23 Oct 2025 16:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hB38mnwV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwDO1Qi7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7783342169;
-	Thu, 23 Oct 2025 16:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04769314D1E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761238270; cv=none; b=iq86BhQqnxAYvVtSyb4hnha8oNNL4B8HVjN+iWCo86n3l2KVVH7aLVx/kqdQGyqqt+mrzH3Rq+0b/vK56EP8vO0jqP5r1yajEl0V7Vi/5zkJuoV5wigVDJ0efqO2fcUUKQPgsksqvlR79iFv88Olnk4ZyUi/p7nmO5aQWMduggI=
+	t=1761238330; cv=none; b=NvejUnejHZxTAqEvyTDKgdyoTX2IrG6grB6/z4jBGNFdu/OPBK6eFZVepYIGWGHRJP+cSHfzfiCA1Dt5Gy1CLBRPP51aERjxzo/r5ubsoNcMfyvSrPrabiS1SkvpWcuT8A5zQxjeOurFox1jyqodsi8s2C/dJy7tB0qGouS0OdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761238270; c=relaxed/simple;
-	bh=F5ju6oKJAylkflMB3tXqXcd6vIuwrr/MPiKJ+B9Ss3Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MFZJFyztDJPzG5DP0xS3KavmiqpuGNEf0X+106j0HijVlD/QEy3DH9wkCINHrLIp6NXM9AnRBawnqhIlZSEHKhtE2z4j88AUXq2WNWV59YPgjd+2olBG0dIde+wncNfmRZzOSRiPLyC71Wlsye+H1G4Pp6tmgUrfqih8VGHRlws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hB38mnwV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8185FC4AF4D;
-	Thu, 23 Oct 2025 16:51:10 +0000 (UTC)
+	s=arc-20240116; t=1761238330; c=relaxed/simple;
+	bh=Un9cy8WvlPiOpPDaw3C6f2NQUDVmZuXpLzFqgb6+81w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cssiRdDJX0EiUhotZa4mUMmHVNJdWaKI0/GJiLzhJcsaLFfYtFvLWzgisaJohHFuuiYV6a/AJLofk7NAVdg4WukexAmvSIsrR5DMxX46pqHtBz0LxUjHyjBtsdX7IOEm2H21K0dYOVupScxKkBuduaRcixIcK8qlklcLyH/cbdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dwDO1Qi7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D864C4CEE7;
+	Thu, 23 Oct 2025 16:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761238270;
-	bh=F5ju6oKJAylkflMB3tXqXcd6vIuwrr/MPiKJ+B9Ss3Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=hB38mnwVB4iSc4U7WceEGAPxYIoQXtuvh/qLqmFMSno7Lg9kC1dbWLTSN50cSRFAv
-	 nokoc3Ywv0M/nt0XhF6tMjg2zuZxjlIr0Mc9UZ9B390Lp6AymoWQB800DEHGUAfTHf
-	 0yHxKeit5+6PtekFnJg9ZPEWL9A4aCHfNPfxlXMkQZvHIqWJhCkG8MYKl9DgR3O3uM
-	 FbQzNKxLkffKf+omorGPrDmTTlqNDI7LuWiY/eznSexT0Pd/FR1DmTM6Tvj6Dl8u3X
-	 43Mo/BqCRWxlfwPwhj7ActmhZrGqv8uSXezUTem/kJ+zbEfPx13/S7ZWvb/GBY6q1J
-	 s4oyV0aVGWTFQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDAACCD1BE;
-	Thu, 23 Oct 2025 16:51:10 +0000 (UTC)
-From: Deepak Gupta via B4 Relay <devnull+debug.rivosinc.com@kernel.org>
-Date: Thu, 23 Oct 2025 09:51:14 -0700
-Subject: [PATCH v22 09/28] riscv/mm: write protect and shadow stack
+	s=k20201202; t=1761238329;
+	bh=Un9cy8WvlPiOpPDaw3C6f2NQUDVmZuXpLzFqgb6+81w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dwDO1Qi76AcI1gfq9ZzorLbQtZ81lg9KNstGf4LsICSR0C1WnydHFvHGt3OHAN4BL
+	 XJCFh+8Blplk7/K2cyielPV2ynMeUiVtdzcs+kJSqLsEqNuPxCp6DhPwRnCuetlMHa
+	 BQUuWS3P+5lUNsHMSV54GyYjlRQrhnZLXyG+0Q90yzooVobWLkgkgPJ5cqSssv5NCE
+	 L3//YQw1Y8Qf0rCyHOsdbDTyjLRv0jY1FxE4689ydc5s3+6InMxDmILAuBEkf57Oa2
+	 FKOQc41n5c2kphR9cgzwRX23rQuHyDlIxy4GvODXpZZGHMNujqzAqEw5aTT2W0qzGp
+	 W7k0K6xU09Psw==
+From: Conor Dooley <conor@kernel.org>
+To: claudiu.beznea@tuxon.dev
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] soc: microchip: fixups per CB review
+Date: Thu, 23 Oct 2025 17:51:15 +0100
+Message-ID: <20251023-sadness-shiny-6c2f966d621e@spud>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-v5_user_cfi_series-v22-9-1935270f7636@rivosinc.com>
-References: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com>
-In-Reply-To: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Christian Brauner <brauner@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
- Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-arch@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com, 
- andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
- atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
- alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
- rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org, 
- Zong Li <zong.li@sifive.com>, Deepak Gupta <debug@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761238267; l=2474;
- i=debug@rivosinc.com; s=20251023; h=from:subject:message-id;
- bh=zG1PvbsubgVB7UstpLjRtN915FxsRLFbcnYegAn0YwA=;
- b=MOYH+M9XiFkmQH5an8qIwtNnNTe1iJrM5qBubNaFXeuZXU4mI0i4qcQSg1NxEzkrxbT0MUI7S
- ITCfjXuPAzxDXT5Plujjm5jZbk7IyOgVCHGjcXR9u7LZ4cfKuG1++rd
-X-Developer-Key: i=debug@rivosinc.com; a=ed25519;
- pk=O37GQv1thBhZToXyQKdecPDhtWVbEDRQ0RIndijvpjk=
-X-Endpoint-Received: by B4 Relay for debug@rivosinc.com/20251023 with
- auth_id=553
-X-Original-From: Deepak Gupta <debug@rivosinc.com>
-Reply-To: debug@rivosinc.com
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3106; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=WD3sVWmk63zgJPc5ZkZyYjiq6UnccQrit2LiNouJnbg=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBm/YpmTFb+E/1Iv2PRAfqPb3wsN6aqbrzi0CN768Wsqs +Gve6c7O0pZGMS4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjARtnuMDB2NLfHsZpmt1iqp M1q3OhrfvJ6ZfUL3zNqS6tjZvwvZuhn+5+f3O/+ZyXY9vSLcPvM/Y+TlrqDO9T9rZ7l6zbcIvzG JCwA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-From: Deepak Gupta <debug@rivosinc.com>
+From: Conor Dooley <conor.dooley@microchip.com>
 
-`fork` implements copy on write (COW) by making pages readonly in child
-and parent both.
+I'm gonna squash this, since only the binding is a stable tag.
 
-ptep_set_wrprotect and pte_wrprotect clears _PAGE_WRITE in PTE.
-Assumption is that page is readable and on fault copy on write happens.
-
-To implement COW on shadow stack pages, clearing up W bit makes them XWR =
-000. This will result in wrong PTE setting which says no perms but V=1 and
-PFN field pointing to final page. Instead desired behavior is to turn it
-into a readable page, take an access (load/store) fault on sspush/sspop
-(shadow stack) and then perform COW on such pages. This way regular reads
-would still be allowed and not lead to COW maintaining current behavior
-of COW on non-shadow stack but writeable memory.
-
-On the other hand it doesn't interfere with existing COW for read-write
-memory. Assumption is always that _PAGE_READ must have been set and thus
-setting _PAGE_READ is harmless.
-
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Reviewed-by: Zong Li <zong.li@sifive.com>
-Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- arch/riscv/include/asm/pgtable.h | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+CC: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+CC: Conor Dooley <conor@kernel.org>
+CC: linux-kernel@vger.kernel.org
+---
+ drivers/soc/microchip/mpfs-control-scb.c    | 15 ++++-----------
+ drivers/soc/microchip/mpfs-mss-top-sysreg.c | 12 ++++--------
+ 2 files changed, 8 insertions(+), 19 deletions(-)
 
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index b03e8f85221f..df4a04b64944 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -415,7 +415,7 @@ static inline int pte_special(pte_t pte)
+diff --git a/drivers/soc/microchip/mpfs-control-scb.c b/drivers/soc/microchip/mpfs-control-scb.c
+index d1a8e79c232e..f0b84b1f49cb 100644
+--- a/drivers/soc/microchip/mpfs-control-scb.c
++++ b/drivers/soc/microchip/mpfs-control-scb.c
+@@ -2,31 +2,24 @@
  
- static inline pte_t pte_wrprotect(pte_t pte)
+ #include <linux/array_size.h>
+ #include <linux/of.h>
+-#include <linux/of_address.h>
+ #include <linux/mfd/core.h>
+ #include <linux/mfd/syscon.h>
+-#include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ 
+ static const struct mfd_cell mpfs_control_scb_devs[] = {
+-	{ .name = "mpfs-tvs", },
++	MFD_CELL_NAME("mpfs-tvs"),
+ };
+ 
+ static int mpfs_control_scb_probe(struct platform_device *pdev)
  {
--	return __pte(pte_val(pte) & ~(_PAGE_WRITE));
-+	return __pte((pte_val(pte) & ~(_PAGE_WRITE)) | (_PAGE_READ));
+ 	struct device *dev = &pdev->dev;
+-	int ret;
+ 
+-	ret = mfd_add_devices(dev, PLATFORM_DEVID_NONE, mpfs_control_scb_devs,
+-			      1, NULL, 0, NULL);
+-	if (ret)
+-		return ret;
+-
+-	return 0;
++	return mfd_add_devices(dev, PLATFORM_DEVID_NONE, mpfs_control_scb_devs,
++			       ARRAY_SIZE(mpfs_control_scb_devs), NULL, 0, NULL);
  }
  
- /* static inline pte_t pte_mkread(pte_t pte) */
-@@ -611,7 +611,15 @@ static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
- static inline void ptep_set_wrprotect(struct mm_struct *mm,
- 				      unsigned long address, pte_t *ptep)
- {
--	atomic_long_and(~(unsigned long)_PAGE_WRITE, (atomic_long_t *)ptep);
-+	pte_t read_pte = READ_ONCE(*ptep);
-+	/*
-+	 * ptep_set_wrprotect can be called for shadow stack ranges too.
-+	 * shadow stack memory is XWR = 010 and thus clearing _PAGE_WRITE will lead to
-+	 * encoding 000b which is wrong encoding with V = 1. This should lead to page fault
-+	 * but we dont want this wrong configuration to be set in page tables.
-+	 */
-+	atomic_long_set((atomic_long_t *)ptep,
-+			((pte_val(read_pte) & ~(unsigned long)_PAGE_WRITE) | _PAGE_READ));
+ static const struct of_device_id mpfs_control_scb_of_match[] = {
+-	{.compatible = "microchip,mpfs-control-scb", },
++	{ .compatible = "microchip,mpfs-control-scb", },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, mpfs_control_scb_of_match);
+diff --git a/drivers/soc/microchip/mpfs-mss-top-sysreg.c b/drivers/soc/microchip/mpfs-mss-top-sysreg.c
+index 9b2e7b84cdba..b2244e44ff0f 100644
+--- a/drivers/soc/microchip/mpfs-mss-top-sysreg.c
++++ b/drivers/soc/microchip/mpfs-mss-top-sysreg.c
+@@ -2,14 +2,13 @@
+ 
+ #include <linux/array_size.h>
+ #include <linux/of.h>
+-#include <linux/of_address.h>
+ #include <linux/mfd/core.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ 
+ static const struct mfd_cell mpfs_mss_top_sysreg_devs[] = {
+-	{ .name = "mpfs-reset", },
++	MFD_CELL_NAME("mpfs-reset"),
+ };
+ 
+ static int mpfs_mss_top_sysreg_probe(struct platform_device *pdev)
+@@ -18,18 +17,15 @@ static int mpfs_mss_top_sysreg_probe(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	ret = mfd_add_devices(dev, PLATFORM_DEVID_NONE, mpfs_mss_top_sysreg_devs,
+-			      1, NULL, 0, NULL);
++			      ARRAY_SIZE(mpfs_mss_top_sysreg_devs) , NULL, 0, NULL);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (devm_of_platform_populate(dev))
+-		dev_err(dev, "Error populating children\n");
+-
+-	return 0;
++	return devm_of_platform_populate(dev);
  }
  
- #define __HAVE_ARCH_PTEP_CLEAR_YOUNG_FLUSH
-
+ static const struct of_device_id mpfs_mss_top_sysreg_of_match[] = {
+-	{.compatible = "microchip,mpfs-mss-top-sysreg", },
++	{ .compatible = "microchip,mpfs-mss-top-sysreg", },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, mpfs_mss_top_sysreg_of_match);
 -- 
-2.43.0
-
+2.51.0
 
 
