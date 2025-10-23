@@ -1,117 +1,168 @@
-Return-Path: <linux-kernel+bounces-866995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85B5C014E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:16:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873CEC01493
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE19B507572
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:15:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55FAF18C8807
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9940314B94;
-	Thu, 23 Oct 2025 13:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103D0319848;
+	Thu, 23 Oct 2025 13:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yTmywmVu"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7Hx349t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E6031AF0E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6945C314B84;
+	Thu, 23 Oct 2025 13:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761225249; cv=none; b=YjDa33jiAVB4hNihPUGRkyuONSz4jGe/aVRaHzP6RS8x5H+BsCJofncR7dE9vK59VUisdelUUUCYOcSFGFmHGFiSjjXKgotSB23D2MsRn7ILuUO+DG1P0FaWaXV+yV8LGgBwTp4ROFYFk9hPLDh62N7rDZmWQlOY3YJhCDZKAfI=
+	t=1761225245; cv=none; b=piGtj0V5Ioi+iFaHUSlEiChOl9kpr1SPMzHLaxgJRV35Q96lhcV/3BRANdjIfgYRQGhOZgex7ORujRDyqpvOo7peEPNZwx/BCYIJbnRvPjUm3dJqWjkLz+XWuOcG7sYvZX2/EJPbk1oFo7okNM25HCDMe/UYusPdlfS3jTmleSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761225249; c=relaxed/simple;
-	bh=rCgZQMvhqpJkSPW5CDm4P/9du6BfJf0oWn2sB/mg4js=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sR+ra9psjU0yc8/bNfpTUOCFKW8XMPUfQyaVIlXnTh78IuVllio4b1T6+yZSCaFy2AYgbBVK3GtHZo7m/cZnjfPGZ/bC9s6YV2P3771l2N/xsAkzn+CvP9Vm4qLHteLzBokhpBBeY7qMeVjixsdfsKS/bDNbJpj09UOEzOz+toQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yTmywmVu; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-373a56498b9so24652501fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:14:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761225245; x=1761830045; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gjHHHhlIwMyUNtV6qNO7lwTmbrTzq58N0AEeJA3rSmU=;
-        b=yTmywmVuSScFS3RdPhtSge+WVKsWGnYEWKzlgM+s4T+Yit0f5qQBbmAO9UXkS0su9U
-         /H2o1saHBzIL46cu+b0sNPguAdFS03ESxICuggmb5ZVHWUSxkF7NjOw0Dtge6n40J2wP
-         y9UpToZ40YDelfX4etnFsgxIoULooQTRrMXzwSOKltzJ1uL058/I193olPJ0QPgo1YYY
-         PiFBd4C+gHuBzEKYJQo7mHD73fdSTLV3NA/qNbQgEBL03MoS3Kj7RCDIqJzhqt+5BhBM
-         obJYHHJQoQia1yjJfC+Y8tfuc9jEYFOqVpbLJ8ra2fqhlv6COfsOIVVXnyYIvk+H1BHT
-         QP2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761225245; x=1761830045;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gjHHHhlIwMyUNtV6qNO7lwTmbrTzq58N0AEeJA3rSmU=;
-        b=lR990IhCT+YH360BoYxjnZf9xmA/GphRv6u35kvwXmh+ahjEsMfCe5zeK3rAXCq54e
-         L+03nd2PWlCAKXLgJ5CsYGfSQdyCpG8huQ2Z4Yz3LW3rT5k/gLbuuq8VQUljudj4DmrU
-         2s2H2XDj2zS8q/tS1JF5dUq9CazVfZTv242KCEZoob+c2KuhMeTt6uuTEqBO5WxTxJBH
-         wa7pYwwW0mwH30sev947YXTFi2My1DTpE96Mz7+79UqBFpficWDH1UAZdPb/kcm40Gqp
-         mL7VfsiFrRzCBooOGanp35EqTiQuWNb45X5zSk3dR+8ALUmqHMryzkQuN+9Jih8Hpfy9
-         lx3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVk7WphrM5cxN+AsHMg/gg09gwScwhjNdWO+PJoj7ij8/rJEMpRvCV/gjjFUfy5ZNJ5w8WcS21TM7tVldA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA9cgFNzqhjWYlXVwIt2DbG6S8ocmeCuJIZJsUk6F3zZXYntIU
-	txvp49vFn/fRwh4FNe4+sLhEgUup9av40tyHuuYWzIRlP10cTSrUQdDpoMVJaKyvmzcobbs4ITZ
-	rNG6P4ltjJZ1dd1crm4b7biC/KzNfJoxwIYiplnd/Fg==
-X-Gm-Gg: ASbGncuqiTGV2omzS7QdnNmNjnFDyonZZQJlVeFsBaZSMrF8b2rMlJotC2i97ObqQUE
-	O4oZYe+DC5C48suH8LjaD7rPoRPzblOJtSW1L0NynmAIN2QDDfJdEb3QTXp8ODf/QKvse+sAIz0
-	Gj31EhnbZP6gY30TZCcOPLJNu43bAidZF/UWiYI7vHztjNc4joD3eOD5bJoonHcNn9aQ4OUWmUb
-	0AgYi3fKe2U78VMVaPdrCyymBk8E1LwvlZtsb3221n49atW5qCkVV7UUWkk
-X-Google-Smtp-Source: AGHT+IG6Lx7X4nwjjCbscanhtEBxXyR+h33EgNAu+2QCvEvhHwb326NmDGLUdbF/Vt5osp1coGpMRs1m4S+7/7joI7g=
-X-Received: by 2002:a2e:be03:0:b0:377:d151:c090 with SMTP id
- 38308e7fff4ca-378cf8633c5mr16810071fa.1.1761225245249; Thu, 23 Oct 2025
- 06:14:05 -0700 (PDT)
+	s=arc-20240116; t=1761225245; c=relaxed/simple;
+	bh=EGs1DZThEeB7T1bTJtu2VNgy+mH8lRG20Iswu4fXJbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NX1xkFM8MLLqqQih5LDr+3A8cDSXzl9FGGDqhVxXsceqIZuseP+DR+YezzjX/TmK1e2o/FWGdFOFJNtmCeXeV5gvDEn6tyoB4mMjG1xxiWkhYNlrA9dgvEsIKwfT53DcmAJGdndXx5AvD3vtkuvtzZmUqyWhxIf61gwGLwn2Fn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7Hx349t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C748C4CEF7;
+	Thu, 23 Oct 2025 13:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761225243;
+	bh=EGs1DZThEeB7T1bTJtu2VNgy+mH8lRG20Iswu4fXJbY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k7Hx349trsWneBigD6xKiO6v0YXicg1MuJEYXO+cUmbK3iZbqRUa10G/T++X2fryo
+	 pVXFlZE9+3PDLUGp6N//z4HE1bfOjWYD6dMpXBYKcSCD1BmmOu5ZFqlZQtSE67x8a3
+	 AGxpF4b8umJSY4DX0A55FXG33qT+CFcQ5pQbO8wc5IgV59TSbLv+/SFI4XGvz80RrT
+	 cBj/quGKLje80vCZJGa5d9HKeL95ktEjkewAzn70OduOUFF5V1O05N2fZ0qdRzm8yF
+	 FVmC3taMoQAMJ3aLmH195PDB5Kye53f649to2WIkQdF4a2uXe6ZIptZ8Dh9PNHlgiC
+	 4x0jdLtPdblJQ==
+Date: Thu, 23 Oct 2025 15:14:00 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Lee Jones <lee@kernel.org>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux@ew.tq-group.com
+Subject: Re: [PATCH v3 1/4] i2c: machxo2: new driver
+Message-ID: <unkntq6gtw7bbunzjj6av7icf6u4kyhommxwqvyaiozaotyzrq@a2n3vzfmvvrg>
+References: <bc9ce42883d10d54bc0954024d7e2312ff45fdb6.1761123080.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022133425.61988-3-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20251022133425.61988-3-krzysztof.kozlowski@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 23 Oct 2025 15:13:53 +0200
-X-Gm-Features: AS18NWDfHk0wnb9yCffDQKbucYaZNvR_wj0zVimsSTgrxikTdx8n5aED-luAQ8o
-Message-ID: <CACRpkdZnmMHMWihudwYYuzCm9H_jN_0ZU5+mmS5G4R5m9XkV=w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: toshiba,visconti: Fix number of
- items in groups
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, 
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, 
-	Punit Agrawal <punit1.agrawal@toshiba.co.jp>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bc9ce42883d10d54bc0954024d7e2312ff45fdb6.1761123080.git.matthias.schiffer@ew.tq-group.com>
 
-On Wed, Oct 22, 2025 at 3:34=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+Hi Matthias,
 
-> The "groups" property can hold multiple entries (e.g.
-> toshiba/tmpv7708-rm-mbrc.dts file), so allow that by dropping incorrect
-> type (pinmux-node.yaml schema already defines that as string-array) and
-> adding constraints for items.  This fixes dtbs_check warnings like:
->
->   toshiba/tmpv7708-rm-mbrc.dtb: pinctrl@24190000 (toshiba,tmpv7708-pinctr=
-l):
->     pwm-pins:groups: ['pwm0_gpio16_grp', 'pwm1_gpio17_grp', 'pwm2_gpio18_=
-grp', 'pwm3_gpio19_grp'] is too long
->
-> Fixes: 1825c1fe0057 ("pinctrl: Add DT bindings for Toshiba Visconti TMPV7=
-700 SoC")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+...
 
-Patch applied for fixes.
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index fedf5d31f9035..e270f7d9e0254 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -855,6 +855,16 @@ config I2C_LS2X
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called i2c-ls2x.
+>  
+> +config I2C_MACHXO2
+> +	tristate "Lattice MachXO2 I2C Controller"
+> +	select REGMAP_MMIO
 
-Yours,
-Linus Walleij
+do we need "depends on HAS_IOPORT" here?
+
+> +	help
+> +	  If you say yes to this option, support will be included for the
+> +	  "Hardened I2C" controller found on the Lattice MachXO2 PLD family.
+> +
+> +	  This driver can also be built as a module.  If so, the module
+> +	  will be called i2c-machxo2.
+> +
+
+...
+
+> +static enum hrtimer_restart machxo2_restart_timer(struct machxo2_i2c *i2c)
+> +{
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&i2c->lock, flags);
+> +	if (!hrtimer_is_queued(&i2c->timer))
+> +		hrtimer_forward_now(&i2c->timer, i2c->timer_wait);
+> +	spin_unlock_irqrestore(&i2c->lock, flags);
+> +
+> +	/* Exponential backoff for timer */
+> +	i2c->timer_wait *= 2;
+
+you could use here
+
+	i2c->timer_wait = ktime_add(i2c->timer_wait, i2c->timer_wait);
+
+> +
+> +	return HRTIMER_RESTART;
+> +}
+
+...
+
+> +static int machxo2_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+> +{
+> +	struct machxo2_i2c *i2c = i2c_get_adapdata(adap);
+> +
+> +	machxo2_wait_not_busy(i2c, 1000, jiffies_to_usecs(adap->timeout) + 1);
+> +
+> +	dev_dbg(&adap->dev, "new msg: addr %02x, flags %x, nmsgs %d, len %d\n",
+> +		msgs->addr, msgs->flags, num, msgs[0].len);
+> +
+> +	i2c->msg = msgs;
+> +	i2c->pos = 0;
+> +	i2c->nmsgs = num;
+> +	i2c->error = 0;
+> +	i2c->state = MACHXO2_I2C_STATE_START;
+> +	/* Ensure that the hrtimer sees the state change */
+> +	smp_wmb();
+> +
+> +	spin_lock_irq(&i2c->lock);
+
+I would use here spin_lock_irq_irqsave()
+
+> +	hrtimer_start(&i2c->timer, 0, HRTIMER_MODE_REL);
+
+nitpick: '0' can be otherwise written as ktime_set(0, 0). Not
+important, as you wish.
+
+> +	spin_unlock_irq(&i2c->lock);
+> +
+> +	if (!wait_event_timeout(i2c->wait, i2c->state == MACHXO2_I2C_STATE_DONE,
+> +				adap->timeout)) {
+
+...
+
+> +
+> +	pdata = dev_get_platdata(&pdev->dev);
+> +	if (!pdata || !pdata->clock_khz)
+> +		return -EINVAL;
+> +
+> +	i2c->clock_khz = pdata->clock_khz;
+> +	i2c->bus_khz = pdata->bus_khz;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
+> +	if (IS_ERR(res))
+> +		return PTR_ERR(res);
+
+platform_get_resource() returns "a pointer to the resource or
+NULL on failure". So that you need to check for "!res" and return
+-ENODEV in case.
+
+Thanks,
+Andi
+
+> +
+> +	if (!devm_request_region(&pdev->dev, res->start, resource_size(res),
+> +				 pdev->name))
+> +		return dev_err_probe(&pdev->dev, -EBUSY, "Can't get I/O resource.\n");
+> +
 
