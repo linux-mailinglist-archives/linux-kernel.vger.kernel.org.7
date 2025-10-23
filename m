@@ -1,249 +1,143 @@
-Return-Path: <linux-kernel+bounces-867214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66090C01E8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F77C01EA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0EC3A632B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:48:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E075B3B03DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B69832ED45;
-	Thu, 23 Oct 2025 14:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8A833030C;
+	Thu, 23 Oct 2025 14:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="DOa9pBJR"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dXR9j7CI"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76F2322DC0
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663FE32E73E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761230887; cv=none; b=TyN5s9rbXVy9Bn4NmvDtMfVIjSSOREsdXGAJ367h5o2eGsrRCHGFsmgJH6us8KMdoA2+AtOUvaz6NIKUajnZiFCPHMuKhTaR4uieguURnVrQntIOKu/QamyvdfWS5gLZ0vZ4kBhd043R3e0VEuiR0RqnEDLO9y+Z4VjXv0sHvLI=
+	t=1761230915; cv=none; b=Qf1q62k6Upuj8BYYC4DkA/RSl2hs5QqC0xmVcxLm1ms+7NUlm13/ns5/DO9n2/bFO436FAHqTcoRtUesjDufEh6TaYcennXw9C0auXOHwxjRH2Aj+4Y8YCl73yWN0qkYhPua2wq8++OaxcE4pXR6dMyj1/NJLxtzDiBt64eKI+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761230887; c=relaxed/simple;
-	bh=yCbQ9XxHJbLX+gMA3bCythVrgdQkz4B5n1RY+AXyRAo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RliBuzYh9RLlY6msgMLNR9fVRG9zzDyfCSQR11TJsfCw8xlWyuQv1IY1+QquN07JnsTNiObrZYhCy7qyVEzSfLtSZFeIEZF6tdVTvHlvQhcs+TSrNz09gV6ZMC90ATOPESu/McoTgy41GV6BxOTE6dBfz37VgfzvRjlbM5AG4K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=DOa9pBJR; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-3c9a2fa38c1so321310fac.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:48:05 -0700 (PDT)
+	s=arc-20240116; t=1761230915; c=relaxed/simple;
+	bh=1RLm51KmhDL4fPLUXOHnRQ9p9SNejUKMXy4N86leZ2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qtg2EIDllu4VCvm/tkmRJwAV89t8+1Tg7M95uMwxecSxxp/mF65ywXxNX0IE2f/NKIv1scrQod+I3ML6QWRVQvsTstusfaCJcXwghZFYOFd49+FNlbnNb0FbEU1546+6gpIvAIdWqAs5YCPPZmarRe9ZoEV2UI1L+abizBNeffE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dXR9j7CI; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-781997d195aso671237b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:48:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=google; t=1761230885; x=1761835685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761230914; x=1761835714; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yCbQ9XxHJbLX+gMA3bCythVrgdQkz4B5n1RY+AXyRAo=;
-        b=DOa9pBJRFx+knEeb/Ywo9K/L2kURf/jMx9uFfTCQKlI2cPVdLzwIgv7VO0eN6AlZOU
-         /XBjNsoWcJhwfhMKP8NDBHqyzHCNoovr6dDZccXJc21UXnSzp83x+okJ9IwRWmIshIGl
-         kYycEBLb+ohLHMI5HewOSLfxSWHRO8QnZ+uDFkZnmUO+zrX2DuEz7sEwveT33oCwNTek
-         93nwKwVIZ4KsTTqfLmtRP3yPuZjrYfuQ6AX+DH6rhQpYoEDfuYAXCEk5JBh90vyp/90N
-         X7dLWwDXGr709BpwUCVWScWMueCx6hlZWIfHNe4mswuodnzTGRiU+IFkCt5wOdBFjEL4
-         2MjQ==
+        bh=jtgf55Q8soB7lkjT4R/RfaWXPHzbko4ONHYYpSLOq3o=;
+        b=dXR9j7CIqr3fzReU0Gg8RQwY/6p+mX3TzGwOz9/YPdc2azkpLpNBvhFNpokCXn8Sz5
+         aaiUPd78mHphDJr+IqZvL1yTfKf/nxFBu/8rmgOGnleisthL4MQugkT5sjmbyPzqI0LV
+         nAYjQxLIQNE64nsZbyJV0RswDt7DzwxoyTf3A/5S6dZM0CIBcFGgb/yPcgVlI6uSF8mR
+         rm9spHCGw2tRSfQwnyNfv5uEY6HZckymjRtO90RvDz5Q2hrWa3aUXjtlGcW1/gJ6m6+x
+         1Yp3VQ0LXmzLOsv1/E7V0gzIIGeZIYRugUbVwQCUsIo9sQv3Fr8S5pro140Ztv47UfTy
+         GU2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761230885; x=1761835685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761230914; x=1761835714;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yCbQ9XxHJbLX+gMA3bCythVrgdQkz4B5n1RY+AXyRAo=;
-        b=PH71vc1mgcjaQ0GvhiCG/GK29eJZ/n0xQfezu4VmDbKXGlouhNLWbO06wX+WjH5J1b
-         BpL9PPFgAAecRtY5X5gmrPSsaTq5LAc+LxzVuWpL7aKt40ejThSB90qzzwpHzTiAl9w+
-         3X92XoMtHOYoIXYIAOOdyoFeeCPjsjofalPJAK1ZtRKl/vTwAb7vcBNaDjVjhdq9QYXS
-         X6VOlbuF4PqX4DYSxTcLP0X90LLLKpfs1KFkR1sC4SeKNB9jMEjG7NXeNf1bFXReQKkB
-         CE0KvFZ6eDDlBSPBiiEhbrl9pgyaqBcxuSkASt4V+KyzqStJArtOEjgqR+DmQ9p4jwIH
-         lxVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUig/BmL78Rbb+D8O2GbzEFryDe+lzOFLgfZTnAF4rDMLEATsrn6otX+4J0dR11NlwAlkoI0Rqbba63Bic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjfMmSPzsloO8hTdmf1reAwewlottllpmXhe4LorBcf6/pIvht
-	pVrkczMgNIa5S91IjpdPxBEGQfnSt5FAlwtzAtwxtndrZ1YxYH+bMD1BgPdMBd+hQPYIyoLK5LG
-	V710HruJxn4l7C/zK3SDOQ4RspO5iE38HPGoNLhzK
-X-Gm-Gg: ASbGnctqpSxLJdTUdr/yf1Qemh2q2RqSwK5rM5eHrX6bcEM05QyqGkQozVxdRBKO5JR
-	abgFOL+QhBtJeFY+WO9YLMP4aK6XKLssha4dhRBQDexu86kEPbhqFGO0s17M9XWIOFEqjjxoTvE
-	EppA/wDCLNVsKD8nSkYzcgPdUfMfd/NdyqVqN0CEJxla2MYjckK+Bmc3oM3n9AgQ01ktnFnKoSt
-	mNS0u+cDziO0HGTDGUGJHWOD9hALX6TfK3efSbt7eay6ZNnh0nXpgLNMzAj0B9+6fJf48RpoMCB
-	QHvbgoYWB8JVBFj++voQ/R07pt+ftg==
-X-Google-Smtp-Source: AGHT+IFvw0XTgABjFJsYXYpUudxoEkAHEEP01CdUdwp3L8Qx0ZBVOSdQx/inF8LNyXBTTOZmTqpehickro9B2Kz6m7g=
-X-Received: by 2002:a05:6871:d10b:b0:345:ecd6:8b7 with SMTP id
- 586e51a60fabf-3cd88db4df9mr2532709fac.11.1761230884387; Thu, 23 Oct 2025
- 07:48:04 -0700 (PDT)
+        bh=jtgf55Q8soB7lkjT4R/RfaWXPHzbko4ONHYYpSLOq3o=;
+        b=kHwCeXz2jNLR/Oqn0CPO7YCkSBV8qRRj6U95JKJk1jiGqRgZAo/saeN2yljKhtpoAO
+         hoQPrxzeJoifsODzSqucrKWBAAH1NYH5oyiWxtwSti7luvdwj7PjOsXhsXuk+Ef3v9a6
+         zSRHDDekYRY9sj2rTqQ9Gzh3A/dCwFISM1J/eF192lglPN1Rz8hwnZSQ4cBLX1EJUiHo
+         n+84rxQzvZcY7eyf2M/dnPdvuvMHybXBejKBoDp8L1vlKEyL3fkTtUKXVXyix+Z3PzA5
+         l1XFpejWol8/7yglIsMQbsnmn0oZ/kBQESfx4TOgRoKpIBZ7TfvDCjA1avE6ergzcYAz
+         At6g==
+X-Forwarded-Encrypted: i=1; AJvYcCV8qEGu0gquUdxzlYmxjqs+b3Maz19mDrcMw2W1K2lE8bil4oe8VGQs4mDEt9mi1/qmfkx0NDt4LqstRaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv9qQgHkidXvb0tNxfbEfcUESeBeVxRr0XbfkU/UBPryEmwQnL
+	QH/+ew0qjZUdV3y3pCxf8c4TqcqT3ZVkaNUy9h2z1nhvSlWJ2W7eIvO7
+X-Gm-Gg: ASbGnctNAzOjpG9EAgxb24KtJ67LnG9NJj86diwC6fq4/FFnkQeGn55WZ0uIMUTPSXF
+	KjEXkXW8wQk1iAwj4mLO9ierKsU0VGad+rrn9rU5fHbSIZB9ZqAXhky8xDXzoESTCDlcbNLJAH+
+	/YMYznA1qtVoQIM+TSAXCsXSnwpt3aKms/LeAI+yMKYYW1trRWJ7cdMSthv1XyVwoFHyTZno6x5
+	aeWxU2kWGAxjfqJm7kmPZfF472rwnGeM9zk/0LXff6+6cHLAHrdNMqbLekyXYp2xZVe7GP5EPNv
+	IAJVO/Ou2mPLjrpgLhXBRFRA2ZSd86Qb1cU6FKGBA0wD+4Nz4itT1OKoYRMyGEt13D8Z9m0lLze
+	mHRdTq/fJkBee+vYQ3Ynaz+EMwXMaswxEn5Aed6puCATCE03BphQbiIA0kviS5477i00Nw56CR0
+	0CZ8a3PfddDFXC/djtdGqkQP8=
+X-Google-Smtp-Source: AGHT+IHzFewBHGqghBRejHizY3eX5Vsyf6r2hKKKFtbyXvSw4LFsDF2WHnt5wMD9J0AnknEoq5ezpw==
+X-Received: by 2002:a05:6a21:3289:b0:334:9cbd:7293 with SMTP id adf61e73a8af0-334a8617389mr29937464637.42.1761230913580;
+        Thu, 23 Oct 2025 07:48:33 -0700 (PDT)
+Received: from localhost.localdomain ([150.109.25.78])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e2247a7f1sm6045716a91.14.2025.10.23.07.48.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 07:48:33 -0700 (PDT)
+From: HaiYang Zhong <wokezhong@gmail.com>
+X-Google-Original-From: HaiYang Zhong <wokezhong@tencent.com>
+To: edumazet@google.com
+Cc: ncardwell@google.com,
+	kuniyu@google.com,
+	davem@davemloft.net,
+	dsahern@kernel.org,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wokezhong@tencent.com
+Subject: [PATCH v2 0/2] net/tcp: fix permanent FIN-WAIT-1 state and add packetdrill test
+Date: Thu, 23 Oct 2025 22:48:03 +0800
+Message-ID: <20251023144805.1979484-1-wokezhong@tencent.com>
+X-Mailer: git-send-email 2.43.7
+In-Reply-To: <CANn89i+0bmXUz=T+cGPexiMpS-epfhbz+Ds84A+Lewrj880TBg@mail.gmail.com>
+References: <CANn89i+0bmXUz=T+cGPexiMpS-epfhbz+Ds84A+Lewrj880TBg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0f006338-e69b-4b3f-b91f-0cc683544011@kernel.org>
- <20251022114527.618908-1-adriana@arista.com> <20251022201953.GA206947-robh@kernel.org>
- <CAERbo5z6BzHqQxXdxPxmxE_eDR7GGGbt3A8kB0gQiWFBE-28Ug@mail.gmail.com>
- <CAMj1kXGYinTKiyYhNYWJvoJeUJScCGnyq=ozLgjKAm7_wzG8QA@mail.gmail.com>
- <CAERbo5waY-=6BLZ2SiJSFAXzvU57mJdM9q05vAZw8zR2yExQ5w@mail.gmail.com> <CAMj1kXHin5YacS98ttzHqFqy6HMukXKoLZtr-+bLwVRsWZUugQ@mail.gmail.com>
-In-Reply-To: <CAMj1kXHin5YacS98ttzHqFqy6HMukXKoLZtr-+bLwVRsWZUugQ@mail.gmail.com>
-From: Adriana Nicolae <adriana@arista.com>
-Date: Thu, 23 Oct 2025 17:47:53 +0300
-X-Gm-Features: AWmQ_bmwEubJ_qHzUAOArVDKuoamgdMa0FuM6IkzPxP77akzotjC48951wOss6E
-Message-ID: <CAERbo5zgS8XoGcFB3wejqDpx14-SBr5oWn7pu3=PE0djRiKZqg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] DMI: Scan for DMI table from DTS info
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, krzk@kernel.org, jdelvare@suse.com, 
-	frowand.list@gmail.com, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, vasilykh@arista.com, arm.ebbr-discuss@arm.com, 
-	boot-architecture@lists.linaro.org, linux-efi@vger.kernel.org, 
-	uefi-discuss@lists.uefi.org, linux-arm-kernel@lists.infradead.org, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 23, 2025 at 4:54=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
-ote:
->
-> (cc Ilias)
->
-> On Thu, 23 Oct 2025 at 15:34, Adriana Nicolae <adriana@arista.com> wrote:
-> >
-> > On Thu, Oct 23, 2025 at 11:21=E2=80=AFAM Ard Biesheuvel <ardb@kernel.or=
-g> wrote:
-> > >
-> > > On Thu, 23 Oct 2025 at 04:21, Adriana Nicolae <adriana@arista.com> wr=
-ote:
-> > > >
-> > > > On Wed, Oct 22, 2025 at 11:19=E2=80=AFPM Rob Herring <robh@kernel.o=
-rg> wrote:
-> > > > >
-> > > > > On Wed, Oct 22, 2025 at 04:45:25AM -0700, adriana wrote:
-> > > > > > Some bootloaders like U-boot, particularly for the ARM architec=
-ture,
-> > > > > > provide SMBIOS/DMI tables at a specific memory address. However=
-, these
-> > > > > > systems often do not boot using a full UEFI environment, which =
-means the
-> > > > > > kernel's standard EFI DMI scanner cannot find these tables.
-> > > > >
-> > > > > I thought u-boot is a pretty complete UEFI implementation now. If
-> > > > > there's standard way for UEFI to provide this, then that's what w=
-e
-> > > > > should be using. I know supporting this has been discussed in con=
-text of
-> > > > > EBBR spec, but no one involved in that has been CC'ed here.
-> > > >
-> > > > Regarding the use of UEFI, the non UEFI boot is used on Broadcom iP=
-roc which
-> > > > boots initially into a Hardware Security Module which validates U-b=
-oot and then
-> > > > loads it. This specific path does not utilize U-Boot's UEFI
-> > > > implementation or the
-> > > > standard UEFI boot services to pass tables like SMBIOS.
-> > > >
-> > >
-> > > What prevents this HSM validated copy of u-boot from loading the kern=
-el via EFI?
-> > The vendor's U-Boot configuration for this specific secure boot path
-> > (involving the
-> > HSM) explicitly disables the CMD_BOOTEFI option due to security
-> > mitigations, only
-> > a subset of U-boot commands are whitelisted. We could patch the U-boot
-> > to include
-> > that but it is preferable to follow the vendor's recommandations and
-> > just patch U-boot
-> > to fill that memory location with SMBIOS address or directly with the
-> > entry point.
->
-> And what security mitigations are deemed needed for the EFI code? You
-> are aware that avoiding EFI boot means that the booting kernel keeps
-> all memory protections disabled for longer than it would otherwise. Is
-> this allowlisting based on simply minimizing the code footprint?
->
-From the information I have, it might be just minimizing the footprint
-but the vendor's U-Boot configuration for this specific path
-explicitly disables the CMD_BOOTEFI option. While the vendor cites
-security mitigations for this configuration, the specific details
-could be a set of mitigation removing different boot methods and some
-memory access commands.
+Hi Eric,
 
-The core issue is that this non-EFI boot path is the vendor-validated
-configuration. Enabling EFI would deviate from this setup, require
-significant revalidation, and could impact vendor support. Modifying
-U-Boot to populate the DT is a contained change without modifying the
-U-boot vendor configuration.
+Thank you for your review and suggestions. As requested, I've added a packetdrill test to reproduce and verify the issue.
 
-Beyond our specific vendor constraints, this DT method might be used
-by any other non-UEFI arm system needing to expose SMBIOS tables to
-the kernel.
+Changes in v2:
+- Added packetdrill test in tools/testing/selftests/net/.
+- The test reproduces the exact scenario described in the commit
+  message.
+- Test verifies that the connection eventually times out after the fix.
 
-> Introducing a non-standard mechanism means that others will now have
-> to maintain it and coexist with it, rather than simply using the
-> existing code which already fully supports what you are trying to
-> accomplish (both on the bootloader and the kernel side)
->
-> IOW, in my opinion, simply enabling CMD_BOOTEFI for your bootloader is
-> a much better choice here. I'm not a u-boot expert but as I understand
-> it, loading/authenticating the image and booting it in EFI mode are
-> two separate things, and so the secure boot path would change very
-> little.
->
-> > > > Because there's no UEFI configuration table available in this boot =
-mode, we need
-> > > > an alternative mechanism to pass the SMBIOS table address to the ke=
-rnel. The
-> > > > /chosen node seemed like the most straightforward way for the bootl=
-oader to
-> > > > communicate this non-discoverable information.
-> > > >
-> > > > I wasn't aware of the EBBR discussions covering this. I've added th=
-e
-> > > > boot-architecture and arm.ebbr-discuss lists to the Cc. If there's =
-a preferred
-> > > > EBBR-compliant way to handle this for non-UEFI boots, I'm happy to =
-adapt
-> > > > the approach.
-> > > >
-> > >
-> > > For the record, I don't see a huge problem with accepting SMBIOS
-> > > tables in this manner, but it would be better if a description of thi=
-s
-> > > method was contributed to the DMTF spec, which currently states that
-> > > the only way to discover SMBIOS tables on non-x86 systems is via the
-> > > SMBIOS/SMBIOS3 EFI configuration tables. Doing so should prevent othe=
-r
-> > > folks from inventing their own methods for their own vertically
-> > > integrated systems. (Other OSes exist, and from a boot arch PoV, we
-> > > try to avoid these Linux-only shortcuts)
-> > >
-> > > However, the DT method should *only* be used when not booting via
-> > > UEFI, to avoid future surprises, and to ensure that existing OSes
-> > > (including older Linux) can always find the SMBIOS tables when bootin=
-g
-> > > via UEFI.
-> > >
-> > > Also, I would suggest to pull the entire entrypoint into DT, rather
-> > > than the address in memory of either/both entrypoint(s). Both just
-> > > carry some version fields, and the address of the actual SMBIOS data
-> > > in memory, and the only difference between SMBIOS and SMBIOS3 is the
-> > > size of the address field (32 vs 64 bits)
-> > I understand the points raised about UEFI taking precedence and the
-> > preference for standardization (DMTF). If this DT method is accepted
-> > as a fallback only for non-UEFI boots like this one, the kernel impleme=
-ntation
-> > will respect that precedence.
-> >
-> > Regarding the alternative to place the full SMBIOS entry point structur=
-e into
-> > a DT property (as a byte array) instead of just its memory address. Bot=
-h
-> > approaches seem feasible from the U-Boot side. I opted initially for pa=
-ssing
-> > the address to reuse the existing kernel functions (dmi_smbios3_present=
- and
-> > dmi_present) which already handle mapping and validation of the entry p=
-oint
-> > read from memory (as done for the EFI case).
-> >
->
-> Actually, it appears that dmidecode expects the entrypoint data in
-> /sys/firmware/dmi/tables/smbios_entry_point, and so you will need to
-> populate that file in any case, and so pulling it into the DT node is
-> not as useful. But having both SMBIOS and SMBIOS3 is pointless, so
-> please only bother with the latter.
+The test covers:
+1. TCP connection establishment.
+2. Peer advertising zero window after receiving data.
+3. Local close() with FIN blocked in send buffer.
+4. Continuous zero window ACKs from peer.
+5. Connection timeout verification.
+
+About your question regarding the case where FIN was already sent but peer retracted RWIN:
+In that scenario, peer will drop the FIN packet due to "TCPZeroWindowDrop". The FIN will be retransmitted by RTO, not by the zero-window probe timer.
+
+I tested this with multiple kernel versions and the test reliably reproduces the issue before the fix and passes after the fix.
+
+Thank you for your guidance!
+
+Best regards,
+HaiYang Zhong
+
+HaiYang Zhong (2):
+  net/tcp: fix permanent FIN-WAIT-1 state with continuous zero window
+    packets
+  net/tcp: add packetdrill test for FIN-WAIT-1 zero-window fix
+
+ net/ipv4/tcp_input.c                          |  2 +
+ .../net/tcp_fin_wait1_zero_window.pkt         | 58 +++++++++++++++++++
+ 2 files changed, 60 insertions(+)
+ create mode 100644 tools/testing/selftests/net/tcp_fin_wait1_zero_window.pkt
+
+-- 
+2.43.7
+
 
