@@ -1,119 +1,147 @@
-Return-Path: <linux-kernel+bounces-866776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A399C009ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:03:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F13B6C009F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBD2B4EAF9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9D313AFAAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F5D30BBAE;
-	Thu, 23 Oct 2025 11:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB93430C62F;
+	Thu, 23 Oct 2025 11:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hIiRUlId"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oI5i6AjN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E15230B514
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3337530C375;
+	Thu, 23 Oct 2025 11:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761217417; cv=none; b=loGeu7LsFE5txGDsDi81+kAwnGgkiUG481MSQPSeFui3euayTqFfmRwv83AvPj5c4vuizj0KbSXklvHAmkW9tWrlgcyTAZ1so1SpaXO5DYW5FyyKlDNNUMLicGQdcdT4ruEwYp8bfYzoS5G5WuTU20+qIoyHNBfoDQUe5+XFU3U=
+	t=1761217420; cv=none; b=YXozHbNTs4eKT0gQlC0qlLJ8hgQTG6eJUc2bGMqxVY7ISwsQ9lqnTC7gKgQCqUql4oI0xPMalCgvk+3bmCcKd0yTvAhGsXT7bEgl+Hfs3CmLHQt3Zk+7qDhSZl5G6l2NakLbM/V625yXZPiCZgVJUN6L6KSPkeSSCpblZvg0rqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761217417; c=relaxed/simple;
-	bh=2/gABdtSagvvRvXcgYkvrUxlpN85FD7cuZAxp8ojVKc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bEGJKsTXLCKiVSbini8xxqDgOOiXdxoVSkMuwNebh14aJmzmMHnVnEgXt4J2o02r7iQDoQ9oVBsKSp8gVaIV07ScXlokuhvgZVBZZsBRubfUs3VAjfLNhA6mC6JS/AB6xA67G60af4TsTCeB1atenRIL3yOEA9PiJQ0GTu8tBsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hIiRUlId; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761217415;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IffLhB/dtgzsB8Rx7XpZkACOwzSFp8CqfXzEdzYdCTE=;
-	b=hIiRUlIdxT6zC8UC+G0bRntzMC2tGcX+rcAMEgKhlTSN2ykp4frJeTIZBkVOWYjvjVD7Sq
-	d7a2tuaBkrvmmGxlxMCezYQDne2KJ13NqIh2Cpem0H6d5IlBDejJeRcRzeros/hUshvW7o
-	60G1N5sG5qaovRyilCDeVbXHPYWhz10=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-361-JxMmlIizNkWm0dc3fF_VOg-1; Thu, 23 Oct 2025 07:03:33 -0400
-X-MC-Unique: JxMmlIizNkWm0dc3fF_VOg-1
-X-Mimecast-MFC-AGG-ID: JxMmlIizNkWm0dc3fF_VOg_1761217413
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4711899ab0aso4766645e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:03:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761217412; x=1761822212;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IffLhB/dtgzsB8Rx7XpZkACOwzSFp8CqfXzEdzYdCTE=;
-        b=LLI11AsJM6aDEfUdIOJM3UQtflZ7+t58bQ0mOIrQGKzQ3wqzqpoi/BmINUsEcdLX9m
-         iaHFeAg63bv5PUmUxVoDG7wmB6BpZ7yWI6ICJ5lNBcdM+GjK3poMb0FS0zyg9D/QOELt
-         snxoX0DGDSQBCNmpmoddEbx9ngPhr/ZEkWRaiC8ErNDxs8deZloloh2swzzegWZ9IPTh
-         2aUiclF0LdIs5dzpka517DtWgyh9Dv6x56AU/o3ombzvRYfZ291+Qfag3jB+gnMZsoA6
-         WFXzn66Uc630OVKy6CDm+BqcGakMXhHB+5foseBl/K/j5q9A901t41zeMLyA44TZgxXh
-         jlHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUzn23hYm8RU+f/UK4LgAh8AhkF1sxIvDPGpjbEAd7RQn56m0X1F3BTCIusqpxbMkPgQk8Kg5bCOF0XZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8t8/LNMnKKlSzsYYCIJJ1xAxeSXPxKlEXwsnzIQ4y0URnCNxB
-	ExYhEMFcGkRxbRnvYiDRcNk49hdQiIqS+S+1Op2iTWs3rCiWUFUhSUUtzONMAyZjBQMD4q4Krl/
-	+pVPwfYlxow1GHXYkeynVNLSTPTLlAbeTO9LSw2Q8kYSk2Ti7OxY34t4lK8Y0bSr1wQ==
-X-Gm-Gg: ASbGncuYbHHiStLUt9oNnEjYb4J55JBzW770USyjNt88tfevT9KGBmYuXBhCKyqM0JF
-	xViWWLyIOlcxfoo1Wogj/h9ZgCi4MXuU+4R+gRtErd7bqunJjm1buKlYeNK4qa7b/ywscSVL4W3
-	ct9BkwYY7yOqTPJLcct+yerkbugQezMC/FXV0ldwel52Yl5MaQb3V5iEVODpM1mraYbPbrrQtUo
-	HnhGuXX1XVWt9U1mSUmOrq8kRkwsiWASCnW5TQPwYEuIi/0zMGzhE1yNrMlGAeFxyeagagpfmdH
-	oTAJ8dvpFlrekdRqWLjeu0GkDAGPO1Lf8OKLpCVfGt/9nV6Hs9+sGQ9m8rE6FSuZ3fdVxFP6OF7
-	Hs7MkPDESyRJamopf9hyqdZP21WjMZGw9kA05UzRkciC0M8s=
-X-Received: by 2002:a05:600c:64cf:b0:46e:3dcb:35b0 with SMTP id 5b1f17b1804b1-4711786d332mr203648575e9.2.1761217412548;
-        Thu, 23 Oct 2025 04:03:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEcmAKT0d5E/+UDMPzD2Uu8sJN+s2YwSJhnRUKFlKICL+VtTqA3NDebN0QlDpDV/hBH/3a+iA==
-X-Received: by 2002:a05:600c:64cf:b0:46e:3dcb:35b0 with SMTP id 5b1f17b1804b1-4711786d332mr203648285e9.2.1761217412134;
-        Thu, 23 Oct 2025 04:03:32 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898ccc60sm3389854f8f.34.2025.10.23.04.03.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 04:03:31 -0700 (PDT)
-Message-ID: <1fb1a9dc-e4c0-40a0-9536-82653b5d0598@redhat.com>
-Date: Thu, 23 Oct 2025 13:03:30 +0200
+	s=arc-20240116; t=1761217420; c=relaxed/simple;
+	bh=hgYU/otvTYwYyjpmBrCCG+P8GjUEb3ooE2uhRepKbWE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=FiqTHtujGQMWMaFFtVh+UGaw7TXypITnOwvCgNUVuU+SOeIikMnL6Ov3BiGRW4b1+UN35IlN9L0zwNlfAb3LNBMLJpQAN6WMcOvhLTu2XCSNUl9DTF11bj3uDnAvKIRb9w/p5V3gNCnBfLO+L1Lko9jWvW0V7FR42joLx6LPLzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oI5i6AjN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D12C8C4CEE7;
+	Thu, 23 Oct 2025 11:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761217419;
+	bh=hgYU/otvTYwYyjpmBrCCG+P8GjUEb3ooE2uhRepKbWE=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=oI5i6AjNf9nLRpgx+TtRRPlMFvvGB53Krcu+hLbmzevmSOeL8pwcw1XCl5bh5xIra
+	 rzZ1xlUfgf3MLhlc4vEppPWONdUe0/UilNX0N+Nq3/aj9mM5ZrEkUF/m8nIcmxaIEO
+	 L279y7rMulLjLGKHjHlpdDabWgwDow6B1ucMcQTEnySRrQc9QfKzJ0jhpm2q7pTwFq
+	 vit6M1gntqMI6WVxuOKufbXAnRPphPc6+Oy7XVIXcpiTPCRaiv+Rc5pTsrfBZvBnZR
+	 L/19+j2qlWXj4/nsGxPzgEujokOZxYbEoL5lgi5j/Wa8zfMVtcUJiSimpavSCRyuOz
+	 cuspWsNXjSxHw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: alteon: migrate to dma_map_phys instead of map_page
-To: Chu Guangqing <chuguangqing@inspur.com>, jes@trained-monkey.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.xn--org-o16s
-Cc: linux-acenic@sunsite.dk, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251021020939.1121-1-chuguangqing@inspur.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20251021020939.1121-1-chuguangqing@inspur.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Thu, 23 Oct 2025 13:03:35 +0200
+Message-Id: <DDPNGUVNJR6K.SX999PDIF1N2@kernel.org>
+Subject: Re: [PATCH v3 05/10] rust: uaccess: add
+ UserSliceWriter::write_slice_file()
+Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <tmgross@umich.edu>, <mmaurer@google.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251022143158.64475-1-dakr@kernel.org>
+ <20251022143158.64475-6-dakr@kernel.org> <aPnnkU3IWwgERuT3@google.com>
+ <DDPMUZAEIEBR.ORPLOPEERGNB@kernel.org>
+ <CAH5fLgiM4gFFAyOd3nvemHPg-pdYKK6ttx35pnYOAEz8ZmrubQ@mail.gmail.com>
+In-Reply-To: <CAH5fLgiM4gFFAyOd3nvemHPg-pdYKK6ttx35pnYOAEz8ZmrubQ@mail.gmail.com>
 
-On 10/21/25 4:09 AM, Chu Guangqing wrote:
-> @@ -2362,9 +2359,8 @@ ace_map_tx_skb(struct ace_private *ap, struct sk_buff *skb,
->  	dma_addr_t mapping;
->  	struct tx_ring_info *info;
->  
-> -	mapping = dma_map_page(&ap->pdev->dev, virt_to_page(skb->data),
-> -			       offset_in_page(skb->data), skb->len,
-> -			       DMA_TO_DEVICE);
-> +	mapping = dma_map_phys(&ap->pdev->dev, skb->data,
-> +			       skb->len, DMA_TO_DEVICE, 0);
+On Thu Oct 23, 2025 at 12:37 PM CEST, Alice Ryhl wrote:
+> On Thu, Oct 23, 2025 at 12:35=E2=80=AFPM Danilo Krummrich <dakr@kernel.or=
+g> wrote:
+>>
+>> On Thu Oct 23, 2025 at 10:30 AM CEST, Alice Ryhl wrote:
+>> > On Wed, Oct 22, 2025 at 04:30:39PM +0200, Danilo Krummrich wrote:
+>> >> Add UserSliceWriter::write_slice_file(), which is the same as
+>> >> UserSliceWriter::write_slice_partial() but updates the given
+>> >> file::Offset by the number of bytes written.
+>> >>
+>> >> This is equivalent to C's `simple_read_from_buffer()` and useful when
+>> >> dealing with file offsets from file operations.
+>> >>
+>> >> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>> >> ---
+>> >>  rust/kernel/uaccess.rs | 24 ++++++++++++++++++++++++
+>> >>  1 file changed, 24 insertions(+)
+>> >>
+>> >> diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
+>> >> index 539e77a09cbc..20ea31781efb 100644
+>> >> --- a/rust/kernel/uaccess.rs
+>> >> +++ b/rust/kernel/uaccess.rs
+>> >> @@ -495,6 +495,30 @@ pub fn write_slice_partial(&mut self, data: &[u8=
+], offset: usize) -> Result<usiz
+>> >>              .map_or(Ok(0), |src| self.write_slice(src).map(|()| src.=
+len()))
+>> >>      }
+>> >>
+>> >> +    /// Writes raw data to this user pointer from a kernel buffer pa=
+rtially.
+>> >> +    ///
+>> >> +    /// This is the same as [`Self::write_slice_partial`] but update=
+s the given [`file::Offset`] by
+>> >> +    /// the number of bytes written.
+>> >> +    ///
+>> >> +    /// This is equivalent to C's `simple_read_from_buffer()`.
+>> >> +    ///
+>> >> +    /// On success, returns the number of bytes written.
+>> >> +    pub fn write_slice_file(&mut self, data: &[u8], offset: &mut fil=
+e::Offset) -> Result<usize> {
+>> >> +        if offset.is_negative() {
+>> >> +            return Err(EINVAL);
+>> >> +        }
+>> >> +
+>> >> +        let Ok(offset_index) =3D (*offset).try_into() else {
+>> >> +            return Ok(0);
+>> >> +        };
+>> >> +
+>> >> +        let written =3D self.write_slice_partial(data, offset_index)=
+?;
+>> >> +
+>> >> +        *offset =3D offset.saturating_add_usize(written);
+>> >
+>> > This addition should never overflow:
+>>
+>> It probably never will (which is why this was a + operation in v1).
+>>
+>> >       offset + written <=3D data.len() <=3D isize::MAX <=3D Offset::MA=
+X
+>>
+>> However, this would rely on implementation details you listed, i.e. the
+>> invariant that a slice length should be at most isize::MAX and what's th=
+e
+>> maximum size of file::Offset::MAX.
+>
+> It's not an implementation detail. All Rust allocations are guaranteed
+> to fit in isize::MAX bytes:
+> https://doc.rust-lang.org/stable/std/ptr/index.html#allocation
 
-It looks like here a virt_to_phys() is missing around skb->data.
+Yeah, I'm aware -- I expressed this badly.
 
-/P
+What I meant is that for the kernel we obviously know that there's no
+architecture where isize::MAX > file::Offset::MAX.
 
+However, in the core API the conversion from usize to u128 is considered
+fallible. So, applying the assumption that isize::MAX <=3D file::Offset::MA=
+X is at
+least inconsistent.
 
