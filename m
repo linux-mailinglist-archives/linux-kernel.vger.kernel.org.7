@@ -1,101 +1,232 @@
-Return-Path: <linux-kernel+bounces-867008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2140CC01551
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:21:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F7CC0153C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7E38505334
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:19:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56801A07732
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF35B2E5404;
-	Thu, 23 Oct 2025 13:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E8E314A9F;
+	Thu, 23 Oct 2025 13:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L2aFtXvs";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FRp581Xn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVdtvzMk"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7A219C556
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DABB3009C1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761225578; cv=none; b=SKF18sD+fwifTzkmINWjXJHElvJr2glKn91RlQ4XLDYdCVcY4N5QilYbUlH1ljRE1lN2zoAwUrlsBs9chsR1xNQCF/HycfjRDAnUnZzZtV6ALEVQfTmYlvAIhY3m+KokX4mB3LXUkVLvuVAd56M46Jg+0xb4IsPnCwnGYccNp0M=
+	t=1761225634; cv=none; b=N7fPEDksK4S7iFq1k6lwWENIqDAkhJI+LVdCTjxmu8OiYlcmi3dMu/s3bn3aSH4/9hIuXCBagxhCGrBo1fB92RH+srqGY6mNCv93j7RMZwrjn25arC5eTyym8i+xp4tjWXZwJBAGnUqIQEn0rHTCcf40Ah8dPHWfr3OQwiGgra8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761225578; c=relaxed/simple;
-	bh=T+F1g+ALY6wTUxOEGzwSqTW1Q6bWAtf0ZptrXp+VkG8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EXPrhdZwhEn+1HEV9YpbGF+dr+JR6YJv443uqgg93IV2bTyN/6jl4tAEKO656cBEFfpEOlplzNW+Gn9GH//v4FE5oZTz2R+YERIMsdg1rwOpwbCvGrL62D4oYxpWViuAOm+FDc33n12vWh+2heUyGu0Nk9ZWzBc82rbTVTtP0OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L2aFtXvs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FRp581Xn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761225574;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kj85f/RBw71zQsTY0GuD1EzROFtTmqxngP7pBtJuVvs=;
-	b=L2aFtXvsFEV1Sfb4e8uP5p8UgUKjC/RmcS7T9pJu2T9d+39HLYmvOKu4p+mQdqNSptMXPx
-	Rj/3gTZORRHgouAplBoqVrhfapqY21IeSc8almD/efaV/Ar17ORe1eA2nC8mr/EXdFxm/m
-	r1/Vh8OlOijVwqFrsGbq3yDcEUvUt0NlQIbPoRfSCJjpQHM1ruvu9pIHgZu7w4/D76SCcO
-	I1flc2wHpY0HbvnEVyorYz6ixe/1O3TO4mvKUliwfwLCl893TGIuEb/Lgfbjjq6nc1+YPY
-	VBEzegM6cCLu8pvyuxNCWvHoLwvotxAgTGiODOSTzcsJVRrRDFSCvIEd0P49vg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761225574;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kj85f/RBw71zQsTY0GuD1EzROFtTmqxngP7pBtJuVvs=;
-	b=FRp581XnXHBPgY5yItYCWpco3sewwnAkrsrOsuUqz4CczWhtQZPs59rjzj00CXQmIyQXRA
-	Sft+s5paPS4B78Dg==
-To: Andrew Murray <amurray@thegoodpenguin.co.uk>, Petr Mladek
- <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
- Senozhatsky <senozhatsky@chromium.org>
-Cc: linux-kernel@vger.kernel.org, Andrew Murray <amurray@thegoodpenguin.co.uk>
-Subject: Re: [PATCH v3 3/3] printk: Use console_flush_one_record for legacy
- printer kthread
-In-Reply-To: <20251020-printk_legacy_thread_console_lock-v3-3-00f1f0ac055a@thegoodpenguin.co.uk>
-References: <20251020-printk_legacy_thread_console_lock-v3-0-00f1f0ac055a@thegoodpenguin.co.uk>
- <20251020-printk_legacy_thread_console_lock-v3-3-00f1f0ac055a@thegoodpenguin.co.uk>
-Date: Thu, 23 Oct 2025 15:25:34 +0206
-Message-ID: <87zf9hbvrt.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1761225634; c=relaxed/simple;
+	bh=vuViwP/s1cMS1phQ8Gat0GObNFdBTZNa1VEQfL7iJ0s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BQD41vHz1e6QdPRIFH9NEMnTuNYZsrDRAo4afa081bMrv8fag7YZzbI5pSyQbDk7/R2VH8DKCeEV557Kd0jC0rQJKn1fpFKBAEBLEgEFiOaSSWADIe0Wr+TwwEZvkp9/H5/jOcrCC8SEXkpy5zSL0AMqQxB5T8OOXEvW7rq2FUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVdtvzMk; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b550a522a49so614897a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:20:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761225632; x=1761830432; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AF2NNx9hf0mnuYECQ9Zws6r6vEvdCmP6FSfqGkx7HaM=;
+        b=GVdtvzMkc5/EhtBAKGSGGjDCiBg+3TDwlkCVofyJ4KXMp8b14zY9/1K2k3tFp6iG4d
+         yNd9xllqdXUgI7QsWEAdhR402r+3JSsRit+epqTCdtzY+LBmNfet2VVEAfKXNHqrWaNi
+         Ytm3BUhQjiQ4oE/4tGThXNiaP9eWznQRRS5Q/zeNzSiakAAtJ+mMOyXlDuc24app7hUK
+         pLSMhG3vWDbZsDNji0Jg27jhPA25t0MDGm9OF5R2CqChyCrNIGnUxgDPBqa5RuFkznpq
+         MHqG5/Lzy5I8DHeEWe3puWbwN/sbhhOBGKQAFPSPTYyho1k3lfk80Y0T9G/JbGdnw7RP
+         q4JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761225632; x=1761830432;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AF2NNx9hf0mnuYECQ9Zws6r6vEvdCmP6FSfqGkx7HaM=;
+        b=Z4woADJyvKAiUM1NzzggZum58/tC66T3eNvtVM8p7DBUIIgQzhY0pmxa4saTt2ntol
+         lKCrrF0j7POOZPGYamz4dpBP/Fu1PApjscwPYF7A8FlBcLbYCr3zxAMGoZolV7GhPIcV
+         64Zfv2luY19pJ9U/eGC+07oYYGUFNsMecw193gn7JC0SpgHUgMYiqzibPvLlbEPmDrwO
+         FGNf2qoFazxbanzvJ83olI147fvvdsaLaIh4ZP4lvhpsRq5LrkZ27FRQMjc/jAj5ObLt
+         xuEpPdXJsuO2b9XEMZO8G8c77A7YRIQYaea/GpIhP9jX7mnIq41dO6nLGxG1SGuD45cp
+         L2JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXB3k44ehzjepbR9rGh/QXTWEzBIbhu01vyxNBMhIi2eFqYcc1UwUxvjxXn/M41Q2mrPk2SE0F/4EfzTD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6Gi+bWYYpEBsxvJUpFSNbcm4wLBEXfw3bwT0+uQfjWA+Rvi4Q
+	PLRO2/TA3mPRgldxrqCsbAfPOPkuxQKo5DvmS/wUSFgW3yZsNzoOyxxu
+X-Gm-Gg: ASbGnctXHKcLhwXpmxzfqkLaj7Jn7+KdWd6PhDCdZmLtT7fMCOu4N/jjuKR4pstbyhQ
+	dieZsZ0s1Go9d7KkdbutM3qgik2LuEkCVHeZCrN/q/Sn1ffMKEX+okpZwEbfoicRwGW2YQWyfG/
+	NtasKw7suBVQp7mJY+LpC/Kfn8dQenqDjVKfqV1rp0g0CbZDMKMrT5jlFYef3CfWEEyTIxKodqz
+	ZV7CMW3IZKTyMsWAKyuPKymNrPgoDLCq0zcVhhGuVLNymK/E5rUTPqxB2gvvgfHQxfKOM6q8Bhi
+	9GAxEEbA6Td5+dR9bKrLExIplwfLaoSbHoJu3Q65oMKHMLIw+ffRh1BfZNqEvWzznIgLdM6jCNf
+	fD3YJhgbVecwM/lGRZ8bIiu4I6bDi53CG11Sj/Qmk/GbpBl9gngKqoJHD7mBKi5PQlaLLXH5O0P
+	5kvy1u0eIh2gVtcQ6VQJ4Ahpck0QZe+xI=
+X-Google-Smtp-Source: AGHT+IHgW9BWCG5ejHfW98SHJJuOnntPPezQy1Qb2Owph8LTgzKcuyURtOIXsoNG+tj9X4I70ae6wQ==
+X-Received: by 2002:a05:6300:6141:b0:33c:741f:7abe with SMTP id adf61e73a8af0-33c742ec0c5mr3139528637.8.1761225632239;
+        Thu, 23 Oct 2025 06:20:32 -0700 (PDT)
+Received: from Black-Pearl.localdomain ([27.7.191.116])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b6cf4e2c95asm2088354a12.28.2025.10.23.06.20.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 06:20:31 -0700 (PDT)
+From: Charan Pedumuru <charan.pedumuru@gmail.com>
+Date: Thu, 23 Oct 2025 13:19:43 +0000
+Subject: [PATCH v3] dt-bindings: mmc: ti,da830-mmc: convert to DT schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251023-davinci-mmc-v3-1-5b27b9c9ecc4@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAG4r+mgC/22MywrCMBBFf0WyNpJkGnys/A9xEWfGdsC0kkhQS
+ v/dtAtRcHnu5ZxRZU7CWR1Wo0pcJMvQV4D1SmEX+pa1UGXljPPGO9AUivQoOkbUuDVN0xgEIqO
+ qcU98ledSO50rd5IfQ3ot8WLn9X+nWG01Ml9oB97RHo9tDHLb4BDV3Cnu41pj7a/rqgveUwCut
+ 4Nvd5qmNzmF4tLiAAAA
+X-Change-ID: 20250523-davinci-mmc-c704440c3dd0
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Charan Pedumuru <charan.pedumuru@gmail.com>
+X-Mailer: b4 0.14.3
 
-On 2025-10-20, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index 6c846d2d37d9d20bad58c6e3a7caada3be9552ca..2665a7a59f03b3a357b3346de1735606e77c3496 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -3644,17 +3644,26 @@ static bool legacy_kthread_should_wakeup(void)
->  
->  static int legacy_kthread_func(void *unused)
->  {
-> -	for (;;) {
-> -		wait_event_interruptible(legacy_wait, legacy_kthread_should_wakeup());
-> +	bool try_again;
-> +
-> +wait_for_event:
-> +	wait_event_interruptible(legacy_wait, legacy_kthread_should_wakeup());
-> +
-> +	do {
-> +		u64 next_seq = 0;
-> +		bool handover = false;
+Convert TI Highspeed MMC host controller binding to YAML format. Define
+'clocks' and 'interrupts' properties to resolve errors identified by
+'dt_check' and 'dtb_check'.
 
-Nit: I prefer to sort by line length:
+Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
+---
+Changes in v3:
+- Change the maintainer for the binding to "Kishon Vijay Abraham I".
+- Link to v2: https://lore.kernel.org/r/20251011-davinci-mmc-v2-1-355da3e25123@gmail.com
 
-		bool handover = false;
-		u64 next_seq = 0;
+Changes in v2:
+- Modified the commit message.
+- Removed 'interrupts' from required properties following the old binding.
+- Changed the maintainer for the binding to "Conor Dooley".
+- Link to v1: https://lore.kernel.org/r/20250523-davinci-mmc-v1-1-ceebd8352d9c@gmail.com
+---
+ .../devicetree/bindings/mmc/davinci_mmc.txt        | 32 ------------
+ .../devicetree/bindings/mmc/ti,da830-mmc.yaml      | 61 ++++++++++++++++++++++
+ 2 files changed, 61 insertions(+), 32 deletions(-)
 
-With change:
+diff --git a/Documentation/devicetree/bindings/mmc/davinci_mmc.txt b/Documentation/devicetree/bindings/mmc/davinci_mmc.txt
+deleted file mode 100644
+index 516fb0143d4c..000000000000
+--- a/Documentation/devicetree/bindings/mmc/davinci_mmc.txt
++++ /dev/null
+@@ -1,32 +0,0 @@
+-* TI Highspeed MMC host controller for DaVinci
+-
+-The Highspeed MMC Host Controller on TI DaVinci family
+-provides an interface for MMC, SD and SDIO types of memory cards.
+-
+-This file documents the properties used by the davinci_mmc driver.
+-
+-Required properties:
+-- compatible:
+- Should be "ti,da830-mmc": for da830, da850, dm365
+- Should be "ti,dm355-mmc": for dm355, dm644x
+-
+-Optional properties:
+-- bus-width: Number of data lines, can be <1>, <4>, or <8>, default <1>
+-- max-frequency: Maximum operating clock frequency, default 25MHz.
+-- dmas: List of DMA specifiers with the controller specific format
+-	as described in the generic DMA client binding. A tx and rx
+-	specifier is required.
+-- dma-names: RX and TX  DMA request names. These strings correspond
+-	1:1 with the DMA specifiers listed in dmas.
+-
+-Example:
+-mmc0: mmc@1c40000 {
+-	compatible = "ti,da830-mmc",
+-	reg = <0x40000 0x1000>;
+-	interrupts = <16>;
+-	bus-width = <4>;
+-	max-frequency = <50000000>;
+-	dmas = <&edma 16
+-		&edma 17>;
+-	dma-names = "rx", "tx";
+-};
+diff --git a/Documentation/devicetree/bindings/mmc/ti,da830-mmc.yaml b/Documentation/devicetree/bindings/mmc/ti,da830-mmc.yaml
+new file mode 100644
+index 000000000000..36b33dde086b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/ti,da830-mmc.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mmc/ti,da830-mmc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI Highspeed MMC host controller for DaVinci
++
++description:
++  The Highspeed MMC Host Controller on TI DaVinci family
++  provides an interface for MMC, SD and SDIO types of memory cards.
++
++allOf:
++  - $ref: mmc-controller.yaml
++
++maintainers:
++  - Kishon Vijay Abraham I <kishon@kernel.org>
++
++properties:
++  compatible:
++    enum:
++      - ti,da830-mmc
++      - ti,dm355-mmc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 2
++
++  dmas:
++    maxItems: 2
++
++  dma-names:
++    items:
++      - const: rx
++      - const: tx
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    mmc@1c40000 {
++        compatible = "ti,da830-mmc";
++        reg = <0x40000 0x1000>;
++        interrupts = <16 IRQ_TYPE_LEVEL_HIGH>,
++                     <17 IRQ_TYPE_LEVEL_HIGH>;
++        bus-width = <4>;
++        max-frequency = <50000000>;
++        dmas = <&edma 16>, <&edma 17>;
++        dma-names = "rx", "tx";
++    };
++...
 
-Reviewed-by: John Ogness <john.ogness@linutronix.de>
+---
+base-commit: 7bac2c97af4078d7a627500c9bcdd5b033f97718
+change-id: 20250523-davinci-mmc-c704440c3dd0
+
+Best regards,
+-- 
+Charan Pedumuru <charan.pedumuru@gmail.com>
+
 
