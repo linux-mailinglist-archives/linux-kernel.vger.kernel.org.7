@@ -1,39 +1,88 @@
-Return-Path: <linux-kernel+bounces-866763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD6BDC00966
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2BB7C00972
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B1DD1A08579
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ECA21A087D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C7330BB97;
-	Thu, 23 Oct 2025 10:54:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BDC2D9ECD
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E347330AD1D;
+	Thu, 23 Oct 2025 10:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eFvOsLQy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DC8305063
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761216886; cv=none; b=S8vlFcTTs7n0U3BOStqTmUoh66oFX/FDKfdf0FAq/IJ+gKjuX3PV9m8Tfgf8NJ0DVwaldbSzDiVhu7UetSjDOmmKkVko97VT5lIhaXVHcKWpwk9x/EJDTSMi9A4wXgHxgxI+L+JI0sGjV10sEg+gKFJ/Cn9zSB5ZPUxXPlEy99c=
+	t=1761216908; cv=none; b=WqvQVIQhrmrYD6vpuYKb/SeJNwFO2qzcVqQrmACq3rzI9cEuLDa3Jfa6Mi0KScN4VmZJ5P1RMpSh7K3BtmurZ9hleV9KRV0XarHN1L+pbLLTXEnYafcyBfa3fBZcd/AFf5Un3v7lUA/48lPZVlg0BAy3gWhA5wc9tZ2oAE1jfA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761216886; c=relaxed/simple;
-	bh=NkcPDzz6PRUjrMF/BwtUvta0I0A69Hkq2wRbQUHTNM4=;
+	s=arc-20240116; t=1761216908; c=relaxed/simple;
+	bh=ASzPyqFrZBTVAy8rDcV1xKo3KPSuUV4Ayl1O0iKTOQQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UyUfxjh5ypE41IfX64lz31oII5T3/a4QdlG40PVfdXLr1R9lqssfjzrtYfG37Bez+xOG19vQen58WdEUJBgmK9uKHi7EQSS1TpSwLktEH03B50sQ0omx40Z/EYBOFNZdTv4HJyFbV1yEdv1d2pMBYgFEVIx8bz8p2SV3srrJmvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA4891516;
-	Thu, 23 Oct 2025 03:54:34 -0700 (PDT)
-Received: from [10.1.31.176] (XHFQ2J9959.cambridge.arm.com [10.1.31.176])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C02393F63F;
-	Thu, 23 Oct 2025 03:54:39 -0700 (PDT)
-Message-ID: <fb633059-9b5b-49ea-848a-7537bb13559d@arm.com>
-Date: Thu, 23 Oct 2025 11:54:38 +0100
+	 In-Reply-To:Content-Type; b=Y9V3kdYn1selAQs0YpNDhopBWc2YkFQC7//gdRnZeKNo0dA4nLV2hkdHpt2qz3XU3TSiIfAc7GQMvVbQZTum1ozCHgY97PjaigjyiTsS0mIrsmBeBvP6u79FHhZDlP7coZrWp8tP4G8+Ypbkwc+g4kdKYPS4FN/gsLgVXbXfjbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eFvOsLQy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761216904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lbLKX68koPI4kruyudw5cKYMlwi7wHT0sON4jcBvqmQ=;
+	b=eFvOsLQy+QjRvDQbufHUx6rWTpcg8gYJrIw7WBaGHwj0j4fq+mEX2Co/WzcwQ4zhsKnhko
+	aSpLVm+n6EA9G/63VJmT6Akw+sIA4/Tmu8zIp/8sFB9022JWQjwgRGuCmqcgAjkWbyJ+hm
+	lZRqMjU8N/obGGZNZaFQqwdK4nxgLVc=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-260-f_mNPjLmOs2fEX3fhKTl0g-1; Thu, 23 Oct 2025 06:55:02 -0400
+X-MC-Unique: f_mNPjLmOs2fEX3fhKTl0g-1
+X-Mimecast-MFC-AGG-ID: f_mNPjLmOs2fEX3fhKTl0g_1761216902
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-42814749a6fso341253f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:55:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761216901; x=1761821701;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lbLKX68koPI4kruyudw5cKYMlwi7wHT0sON4jcBvqmQ=;
+        b=uMkAOfN0knwJMZbUN0Flm5BfsNyUDOYdLYVKsvgNz4sESQqSpXV7U9dKmoxiBIwxjL
+         lz5LLVoKygWSaVcdSMHstc0LAieic7zrLyIuZiIbpztPMgfTaQhryefehIFydS1xQxgK
+         e3T+FqzTGVIG7nnGjr7pe6u3pvHTYkvjnWg7brCmLyJhgnOK+YcLQN363WfjfdFDpJy0
+         cOPD2OWIOlswRaQukJ/Ab1S9dMA3NgS8uX9/BaRq6t9SlLe7HGs/P3yD9PP6kK/78L4w
+         pZeQxAQBBJnrORULusmFofcBYHfMuaLcUygSNEFmUW6QpxuoDXD3//3gVEeUQr8ylbsE
+         lsWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxaphUHKdb1yNETkdNeAVuunvFK9tW071eHneXz3L5zVkz3lIYnW+1LOa4BeVB+CKvJGmd/yT5zWJmtUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHSECv16Zlkq3CBZp2Z3JvDvDGp9k9owMc4lgphciz+zdbiWIo
+	4GLyNeJC/7pQYPk5oLS6Ym4JSA2injbj+N/Jt4GuZwfUEuU8HefaD1tf4q6hIONl95RCgJyauGK
+	SHzBS6BSq7WO3//0SMRooddkGlr43eJUHJRxk0cj7l+ub1ar4RjQl4aD1OzxJcn67OQ==
+X-Gm-Gg: ASbGncsYkbWf2nFrM3fjiEacCTLoHzX5Ef7dT12d1jK6AcsedDxYDC6mmz1+gHrbZ+s
+	h9X+DgfrdbdhfnV+LTdDT3LCiOPfRwIcGD903iKSOOMc0vzhUNMBj7zseHeCd3v4mpARiiqijXT
+	WLrZwyXD8wEnb+bfox+kH7+am4WS+GrE7BLocDkv5g4S1P+7KGDNYkxqW5X5UU5gsAQZWwFedIv
+	WMRh1P2s03VDuPG3cX6+o/Aj9i2EaoowD3oUsjZLQtK2UHEfLwu6/NbyJVod+GxggXVPE7hC4Ap
+	9XleMZLWh8zlC13MFAF29nxEVcRXKRn9XE4x6snnDGYU5xhfBfAf2w+xYuAzQ7zu40P1NikP9n5
+	c8Ax+WoIbfczflrPrCnO+fbs1YF2bFiJ5cav1of9XKZinG2FmvsnDNMnFawZdOrPPK+GAXccQTg
+	ChcGQ3G9lrIAg3YRIKE/XyFNm0W88=
+X-Received: by 2002:a05:600c:800f:b0:471:700:f281 with SMTP id 5b1f17b1804b1-471179041b6mr175144395e9.25.1761216901491;
+        Thu, 23 Oct 2025 03:55:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEyUNeHJgwXCbIligtDABnZfmVfKo4xq28X5BL2u+Iw9UgWmk5i0BeHZ0usCgIJViVp2uc3nA==
+X-Received: by 2002:a05:600c:800f:b0:471:700:f281 with SMTP id 5b1f17b1804b1-471179041b6mr175144205e9.25.1761216901065;
+        Thu, 23 Oct 2025 03:55:01 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496cf3b51sm55877895e9.9.2025.10.23.03.54.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 03:55:00 -0700 (PDT)
+Message-ID: <06333766-fb79-4deb-9b53-5d1230b9d88d@redhat.com>
+Date: Thu, 23 Oct 2025 12:54:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,233 +90,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -v3 2/2] arm64, tlbflush: don't TLBI broadcast if page
- reused in write fault
-Content-Language: en-GB
-To: Huang Ying <ying.huang@linux.alibaba.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Yang Shi <yang@os.amperecomputing.com>,
- "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Anshuman Khandual
- <anshuman.khandual@arm.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>,
- Yin Fengwei <fengwei_yin@linux.alibaba.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20251023013524.100517-1-ying.huang@linux.alibaba.com>
- <20251023013524.100517-3-ying.huang@linux.alibaba.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20251023013524.100517-3-ying.huang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251017141536.577466-1-kirill@shutemov.name>
+ <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
+ <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 23/10/2025 02:35, Huang Ying wrote:
-> A multi-thread customer workload with large memory footprint uses
-> fork()/exec() to run some external programs every tens seconds.  When
-> running the workload on an arm64 server machine, it's observed that
-> quite some CPU cycles are spent in the TLB flushing functions.  While
-> running the workload on the x86_64 server machine, it's not.  This
-> causes the performance on arm64 to be much worse than that on x86_64.
+On 23.10.25 12:31, Kiryl Shutsemau wrote:
+> On Wed, Oct 22, 2025 at 07:28:27PM +0200, David Hildenbrand wrote:
+>> "garbage" as in pointing at something without a direct map, something that's
+>> protected differently (MTE? weird CoCo protection?) or even worse MMIO with
+>> undesired read-effects.
 > 
-> During the workload running, after fork()/exec() write-protects all
-> pages in the parent process, memory writing in the parent process
-> will cause a write protection fault.  Then the page fault handler
-> will make the PTE/PDE writable if the page can be reused, which is
-> almost always true in the workload.  On arm64, to avoid the write
-> protection fault on other CPUs, the page fault handler flushes the TLB
-> globally with TLBI broadcast after changing the PTE/PDE.  However, this
-> isn't always necessary.  Firstly, it's safe to leave some stale
-> read-only TLB entries as long as they will be flushed finally.
-> Secondly, it's quite possible that the original read-only PTE/PDEs
-> aren't cached in remote TLB at all if the memory footprint is large.
-> In fact, on x86_64, the page fault handler doesn't flush the remote
-> TLB in this situation, which benefits the performance a lot.
-> 
-> To improve the performance on arm64, make the write protection fault
-> handler flush the TLB locally instead of globally via TLBI broadcast
-> after making the PTE/PDE writable.  If there are stale read-only TLB
-> entries in the remote CPUs, the page fault handler on these CPUs will
-> regard the page fault as spurious and flush the stale TLB entries.
-> 
-> To test the patchset, make the usemem.c from
-> vm-scalability (https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-scalability.git).
-> support calling fork()/exec() periodically.  To mimic the behavior of
-> the customer workload, run usemem with 4 threads, access 100GB memory,
-> and call fork()/exec() every 40 seconds.  Test results show that with
-> the patchset the score of usemem improves ~40.6%.  The cycles% of TLB
-> flush functions reduces from ~50.5% to ~0.3% in perf profile.
+> Pedro already points to the problem with missing direct mapping.
+> _nofault() copy should help with this.
 
-LGTM:
-
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+Yeah, we do something similar when reading the kcore for that reason.
 
 > 
-> Signed-off-by: Huang Ying <ying.huang@linux.alibaba.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Yang Shi <yang@os.amperecomputing.com>
-> Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Cc: Kevin Brodsky <kevin.brodsky@arm.com>
-> Cc: Yin Fengwei <fengwei_yin@linux.alibaba.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> ---
->  arch/arm64/include/asm/pgtable.h  | 14 +++++---
->  arch/arm64/include/asm/tlbflush.h | 56 +++++++++++++++++++++++++++++++
->  arch/arm64/mm/contpte.c           |  3 +-
->  arch/arm64/mm/fault.c             |  2 +-
->  4 files changed, 67 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index aa89c2e67ebc..25b3c31edb6c 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -130,12 +130,16 @@ static inline void arch_leave_lazy_mmu_mode(void)
->  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->  
->  /*
-> - * Outside of a few very special situations (e.g. hibernation), we always
-> - * use broadcast TLB invalidation instructions, therefore a spurious page
-> - * fault on one CPU which has been handled concurrently by another CPU
-> - * does not need to perform additional invalidation.
-> + * We use local TLB invalidation instruction when reusing page in
-> + * write protection fault handler to avoid TLBI broadcast in the hot
-> + * path.  This will cause spurious page faults if stale read-only TLB
-> + * entries exist.
->   */
-> -#define flush_tlb_fix_spurious_fault(vma, address, ptep) do { } while (0)
-> +#define flush_tlb_fix_spurious_fault(vma, address, ptep)	\
-> +	local_flush_tlb_page_nonotify(vma, address)
-> +
-> +#define flush_tlb_fix_spurious_fault_pmd(vma, address, pmdp)	\
-> +	local_flush_tlb_page_nonotify(vma, address)
->  
->  /*
->   * ZERO_PAGE is a global shared page that is always zero: used
-> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-> index 18a5dc0c9a54..5c8f88fa5e40 100644
-> --- a/arch/arm64/include/asm/tlbflush.h
-> +++ b/arch/arm64/include/asm/tlbflush.h
-> @@ -249,6 +249,19 @@ static inline unsigned long get_trans_granule(void)
->   *		cannot be easily determined, the value TLBI_TTL_UNKNOWN will
->   *		perform a non-hinted invalidation.
->   *
-> + *	local_flush_tlb_page(vma, addr)
-> + *		Local variant of flush_tlb_page().  Stale TLB entries may
-> + *		remain in remote CPUs.
-> + *
-> + *	local_flush_tlb_page_nonotify(vma, addr)
-> + *		Same as local_flush_tlb_page() except MMU notifier will not be
-> + *		called.
-> + *
-> + *	local_flush_tlb_contpte(vma, addr)
-> + *		Invalidate the virtual-address range
-> + *		'[addr, addr+CONT_PTE_SIZE)' mapped with contpte on local CPU
-> + *		for the user address space corresponding to 'vma->mm'.  Stale
-> + *		TLB entries may remain in remote CPUs.
->   *
->   *	Finally, take a look at asm/tlb.h to see how tlb_flush() is implemented
->   *	on top of these routines, since that is our interface to the mmu_gather
-> @@ -282,6 +295,33 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
->  	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
->  }
->  
-> +static inline void __local_flush_tlb_page_nonotify_nosync(
-> +	struct mm_struct *mm, unsigned long uaddr)
-> +{
-> +	unsigned long addr;
-> +
-> +	dsb(nshst);
-> +	addr = __TLBI_VADDR(uaddr, ASID(mm));
-> +	__tlbi(vale1, addr);
-> +	__tlbi_user(vale1, addr);
-> +}
-> +
-> +static inline void local_flush_tlb_page_nonotify(
-> +	struct vm_area_struct *vma, unsigned long uaddr)
-> +{
-> +	__local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
-> +	dsb(nsh);
-> +}
-> +
-> +static inline void local_flush_tlb_page(struct vm_area_struct *vma,
-> +					unsigned long uaddr)
-> +{
-> +	__local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
-> +	mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, uaddr & PAGE_MASK,
-> +						(uaddr & PAGE_MASK) + PAGE_SIZE);
-> +	dsb(nsh);
-> +}
-> +
->  static inline void __flush_tlb_page_nosync(struct mm_struct *mm,
->  					   unsigned long uaddr)
->  {
-> @@ -472,6 +512,22 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
->  	dsb(ish);
->  }
->  
-> +static inline void local_flush_tlb_contpte(struct vm_area_struct *vma,
-> +					   unsigned long addr)
-> +{
-> +	unsigned long asid;
-> +
-> +	addr = round_down(addr, CONT_PTE_SIZE);
-> +
-> +	dsb(nshst);
-> +	asid = ASID(vma->vm_mm);
-> +	__flush_tlb_range_op(vale1, addr, CONT_PTES, PAGE_SIZE, asid,
-> +			     3, true, lpa2_is_enabled());
-> +	mmu_notifier_arch_invalidate_secondary_tlbs(vma->vm_mm, addr,
-> +						    addr + CONT_PTE_SIZE);
-> +	dsb(nsh);
-> +}
-> +
->  static inline void flush_tlb_range(struct vm_area_struct *vma,
->  				   unsigned long start, unsigned long end)
->  {
-> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-> index c0557945939c..589bcf878938 100644
-> --- a/arch/arm64/mm/contpte.c
-> +++ b/arch/arm64/mm/contpte.c
-> @@ -622,8 +622,7 @@ int contpte_ptep_set_access_flags(struct vm_area_struct *vma,
->  			__ptep_set_access_flags(vma, addr, ptep, entry, 0);
->  
->  		if (dirty)
-> -			__flush_tlb_range(vma, start_addr, addr,
-> -							PAGE_SIZE, true, 3);
-> +			local_flush_tlb_contpte(vma, start_addr);
->  	} else {
->  		__contpte_try_unfold(vma->vm_mm, addr, ptep, orig_pte);
->  		__ptep_set_access_flags(vma, addr, ptep, entry, dirty);
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index d816ff44faff..22f54f5afe3f 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -235,7 +235,7 @@ int __ptep_set_access_flags(struct vm_area_struct *vma,
->  
->  	/* Invalidate a stale read-only entry */
->  	if (dirty)
-> -		flush_tlb_page(vma, address);
-> +		local_flush_tlb_page(vma, address);
->  	return 1;
->  }
->  
+> Can direct mapping ever be converted to MMIO? It can be converted to DMA
+> buffer (which is fine), but MMIO? I have not seen it even in virtualized
+> environments.
+
+I recall discussions in the context of PAT and the adjustment of caching 
+attributes of the direct map for MMIO purposes: so I suspect there are 
+ways that can happen, but I am not 100% sure.
+
+
+Thinking about it, in VMs we have the direct map set on balloon inflated 
+pages that should not be touched, not even read, otherwise your 
+hypervisor might get very angry. That case we could likely handle by 
+checking whether the source page actually exists and doesn't have 
+PageOffline() set, before accessing it. A bit nasty.
+
+A more obscure cases would probably be reading a page that was poisoned 
+by hardware and is not expected to be used anymore. Could also be 
+checked by checking the page.
+
+Essentially all cases where we try to avoid reading ordinary memory 
+already when creating memory dumps that might have a direct map.
+
+
+Regarding MTE and load_unaligned_zeropad(): I don't know unfortunately.
+
+On s390x, reading a "protected" page of a CoCo Vm will trigger an 
+interrupt, I'd assume _nofault would take care of this.
+
+-- 
+Cheers
+
+David / dhildenb
 
 
