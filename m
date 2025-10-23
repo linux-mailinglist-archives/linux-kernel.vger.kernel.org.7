@@ -1,270 +1,224 @@
-Return-Path: <linux-kernel+bounces-866613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4519C003CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:25:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789DFC003DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63BA21A65761
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:25:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B5024EFD05
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7B3305E31;
-	Thu, 23 Oct 2025 09:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFBE2FE067;
+	Thu, 23 Oct 2025 09:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SInV+6Nv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="ghuYLZfY";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="VZTqbGBQ"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E35304BBF
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761211518; cv=none; b=d57isHEH4IHE+4I9uQQ9F7N2mywtIuAGaBkzEM8cBBHnW1vBrwXfz+jSJ6oGH68lAGk09T88O8QohwtV9AlrkH5rWrJIyniPEGr1CZ0vCbjzYwVVmte4xsJGmsG/stmGR5YCbMeaybQudPwUpTInXwsLx6RCknmbtGhv61ixfrc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761211518; c=relaxed/simple;
-	bh=wmbjSv87Nv9bq7/iWiWTXBzwhGsEf6wKoE1uZMnunns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kdR4R6Y/oW0W/N+Mc531uibGHg87xy07ZVjP5JtsSC5D1S+l7gwaQ2Pmd0ip6yowNAUSZ2AQTlQbIt3H/T9ITkD/bqtvRhS2hDNh3x2JaSfdPbLxv4NiTpgqzPFKMyTPrlx9GHlANFTKfkSLC1Asp4E7klTtQd8KBxyQutg4fsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SInV+6Nv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N85Ks8019068
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:25:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dSvA5ngEs9hohgjB5Ua67zCoZZ2sfiQpQyL73F1VaHM=; b=SInV+6Nv4aMHarb+
-	NWFK/2S/OMbzkxzAgBbQF5fe1y5WMLvr/Gyn/ef9MW2NyYydVazkwBFwjuBbS9nI
-	1pAtAxCvp8UwDiVj1Gnog3jhXzl7bjXxnbIq5EvPE4Ul5AEsJTHQHLDUd4Q3XYmk
-	O9kVuhrdyytNBc2Al6uFoqbDoIOns6dmq3298XOcZgMHyvUDaU62TgFizNx7hNxi
-	Cl4z5ZdeCjm0FtqMfIahhSQUIfYQvtyRemw12Dm9ZJQYp3+i5ho6odreg5rh8WrS
-	/avTK/LgfSTm533KUqGKFp0w6+KNYrzTO0Tbx+eJ6kPNHyiG+wq9bZ9Z9FVx57wh
-	kv7XrA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49y67qhsth-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:25:16 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4e8aafb21d6so20314321cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:25:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761211510; x=1761816310;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dSvA5ngEs9hohgjB5Ua67zCoZZ2sfiQpQyL73F1VaHM=;
-        b=IrDbnhvCQXDl6TmiBL24CFpKGTtKcnK4qSZXuaPbKuE5m7MxmOowX+WGsj+Fumknao
-         FcyhwufVZOCAsr5zHbhNJrH5U2E+PmMrLz86g+BP22HkyGTCi3MDD7X1OvhfCDCdDW9T
-         wPh+m0tzbn8qPd34kTwMhP8AJd1A0gPxASQd1wmUQPbqhBOl0ZXYBh6IcLg4SD2yt3hI
-         Ki4MCSazs5+v/AXMcWKY5cfURXNleVV4PTTWcd3/kdCoOWwJb+Ndbe1e9cqjHcGv6Dkk
-         UvjEoUwCiy7j1TBn72txEL4vKcgRi+opGT9TSgFWMAYW4iT31USPNjM4Rx20CdFum7BR
-         dAOg==
-X-Forwarded-Encrypted: i=1; AJvYcCWreYFU85AD7F/0EIi5K1VoEVm3vW3xuqrWXmXreJgGiY98ppiKtkU/0TQLkI/sFhJBuq6TYGTYyfIOdmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwgs+r2zghaEynviLJ2uXBfqSTa6ZRL2zg4OVe0AyGO0EDGERh
-	Z3Uhzwnj1zuspnfkoF7pbU0hWTpGsNYH+TrKjpxh7CBZtjuhiOtMsrbYX0kvs7pSufx77GSwHP/
-	Lhvw0kg6NZjFiCOcUQfZeld5p2i2KDtDP/CVGY9vekzE2wos1/MyQUurMESPi/ARrS2U=
-X-Gm-Gg: ASbGncsXMIqCWpoYyTRVTTgGZm6D0l/pPEZbYbkWmlV5SRToWBFD8hxolz0kd+HUby/
-	cvzFAPhQo/FvXGo8l0XVMmza9JqVJZ+0F7bvfX3wqDfxh1EIe1S/II7zEERpZsINtZsMPDAsNcm
-	9r6D6+X+5LYLGalS1ryUHwcBGGYquB/HvrlypYKGHtmP7q3KY48Pk/yV/p4M1qYFtLjSf+ghRdc
-	yI2JuwdfWQYlOKpVvf0aV2+2PbPjdLWlPz7Y8Rq67u9vJ/tI1DjX6v397WQnz0uZLEg9vs8tbcF
-	CYtY902xVQDOQqfln9rGdiJSK/DEolIgRYFnRMIMymVqM14+XElQcIrkgKafy/jH6xd8+Mk+8cY
-	QYb6BlG+6d1hZEuarlpu0IY1utQ==
-X-Received: by 2002:a05:622a:1a08:b0:4e8:a332:ae5d with SMTP id d75a77b69052e-4e8a332af4emr245184371cf.48.1761211510232;
-        Thu, 23 Oct 2025 02:25:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEAB+oVptSREj0nu0ZIfPtl07Xl6ZMfqdzD6A25TQqGnq7DB1t0Z5Qr5ZYnfCesq9hliBUFUw==
-X-Received: by 2002:a05:622a:1a08:b0:4e8:a332:ae5d with SMTP id d75a77b69052e-4e8a332af4emr245184131cf.48.1761211509684;
-        Thu, 23 Oct 2025 02:25:09 -0700 (PDT)
-Received: from [192.168.68.121] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-429898cce3bsm2896783f8f.38.2025.10.23.02.25.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 02:25:09 -0700 (PDT)
-Message-ID: <e3bbd92e-57bc-4848-b7e4-1aa10202e9fa@oss.qualcomm.com>
-Date: Thu, 23 Oct 2025 10:25:08 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DFE2EFD8F;
+	Thu, 23 Oct 2025 09:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761211704; cv=fail; b=LyGKlCLc1uqKkChojdW2qQodqrrMNlKeqJeaeiGTIddC4YSwLG2nWvSCDr+9QSsg2xqNk7fKTj7AH6uUMFIkQCqqPrJtaOXG8cFL8p0EydTNae5TeVU+DA8EQu3SKl/sOIWAV36/crb/VHFbEOCXgG6u+wVUUBGwkM6YmTJWEp8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761211704; c=relaxed/simple;
+	bh=GQdSaDFT6H7leNNLiZdHZXnPVeHsbiqLu6aR2dighUs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=isq4j/vY+NgBaZnITGQYA7Sb93FMbLXmytkD4XiLS0k2gCDaUCPqE5j/yrMdWHzQlkrRwNrSrWdyObU3Dt1wehHzb5uPc+WFUrRcWKeVgKQ6d9nuS36Exqf3wWmqa/RcZdJGJIaVWl3c83XjKDrRufjyw3TPZ7VCH/TkgpgjxbU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=ghuYLZfY; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=VZTqbGBQ; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59MJfFfD3659668;
+	Thu, 23 Oct 2025 04:28:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=Ela5opvtkXUyLcTp
+	Jd5BdWNr34bbdtiCgdeKvScKbr4=; b=ghuYLZfYp2kVWiVohlTM4a/87jpUq3C9
+	zVQOiw5jfn7youNhbVEPUiHhcXJatl8GXJwCndqs9Wjbjc4D+TfwClRwuO8ffKAA
+	I4Uz2mcaHpIsLnNaZttU2lqdto0S2BJOjEjN+URTsPjBSjAxic0zg0//G6s8t0sa
+	zZrlDSvlXQq0Vjhr9ICEf6YmEEUD6nx3XlZPIH4xA8D3FthTZcvK7ID8nh3/mUge
+	fPBnuwqbRdBSCMu3RnYRysR3++tWbq8gsT1h1Z+OhDvffKHDcwkVijQ1eTHmYYmT
+	Ny2j2SgfwJDBN0YO+CvkXpwYkKM3heEJ2+mVklMeUzxfqpX69Cx5cw==
+Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11022115.outbound.protection.outlook.com [52.101.53.115])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 49xqmqsy2m-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 23 Oct 2025 04:28:10 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KC0RiHN36wNFjTk5u7I+kGIBUdqhsco6aYcCXbYZpQDj4xDLHnfVndyTJeFuUx+nMylyRZLChSjwJT5/8NXXrSzl/avrkgo/5ju3C24R2m59UBuXc+8MgVA166SYuvTTbKpDq8QI6CR/ifz+pzNdOEjua+Roh0FAnxlVaZwOPtobsKUFCfoy/SCV137rt67IOXYwYu5bmuijC7eApEA6sUsWf9AqbpXtUHVvovQGko23T/k8VwtF0f9qQBobXIw/9CvEONiJbOpUoShhtZEu1o7FXUzXb30oxVrM50xz0sh8Ewj91nOy8hhjFpF8HSVGkyCvd0IW5dOWmE/X47IbFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ela5opvtkXUyLcTpJd5BdWNr34bbdtiCgdeKvScKbr4=;
+ b=iBzyismYe10UhC56GuAQNF1yq6VbxtzvMwF7QOVYsKz4H6n87wr78KH99RTe0PQGFrN3ZmexVyw49cZEmY2tQzLcPZ+FyankgOZ9xmAmlD3xjPVFAEu9zAJ7VAysIAF0WFzhKmXdONDtVk2EMz8N2Q+a665YL520+Io5wH2BDE8BPusn/frZrjeyBh95WVkWiyZId/6cmkZUuUJ+GbfqUHeF82OcV1hKMe6cxDKDUsu8uhEqHlCiR6euO9rA5ft8zx6tsGly/iRFROA21ZYhkIjSt6G8OwqVKR9QCFY4BGoD7DMWzoXoTeuCCkQPCFhsm68bvK7UAdsc3+GnBN2v9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=alsa-project.org
+ smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
+ action=oreject header.from=opensource.cirrus.com; dkim=none (message not
+ signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ela5opvtkXUyLcTpJd5BdWNr34bbdtiCgdeKvScKbr4=;
+ b=VZTqbGBQgT0V1w6uelgt3ZWRWNr6jJzk6BQXxacNuJnQCbeoBpjRp79hI3d2xsrPWxqSfrfhfpX8OAy2P94q+YQHdU7Ye5Us0VVSsTDtkVTCb2l9ndfO6uyaOy3WYsWXLDN7e/E9VlCubs3t+qDZxrr3FeUGzhIZMW8KOpx/Z2k=
+Received: from MW4PR03CA0117.namprd03.prod.outlook.com (2603:10b6:303:b7::32)
+ by LV8PR19MB8598.namprd19.prod.outlook.com (2603:10b6:408:264::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
+ 2025 09:28:04 +0000
+Received: from SJ1PEPF00002314.namprd03.prod.outlook.com
+ (2603:10b6:303:b7:cafe::5d) by MW4PR03CA0117.outlook.office365.com
+ (2603:10b6:303:b7::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.12 via Frontend Transport; Thu,
+ 23 Oct 2025 09:28:01 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ SJ1PEPF00002314.mail.protection.outlook.com (10.167.242.168) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.7
+ via Frontend Transport; Thu, 23 Oct 2025 09:28:03 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 883A740654B;
+	Thu, 23 Oct 2025 09:28:01 +0000 (UTC)
+Received: from upx-mtl-008.ad.cirrus.com (upx-mtl-008.ad.cirrus.com [198.90.251.5])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 63CDB820244;
+	Thu, 23 Oct 2025 09:28:01 +0000 (UTC)
+From: Maciej Strozek <mstrozek@opensource.cirrus.com>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Maciej Strozek <mstrozek@opensource.cirrus.com>
+Subject: [PATCH] ALSA: sound: Increase max size of components field
+Date: Thu, 23 Oct 2025 10:27:41 +0100
+Message-ID: <20251023092754.84095-1-mstrozek@opensource.cirrus.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/9] ASoC: qcom: q6asm-dai: schedule all available frames
- to avoid dsp under-runs
-To: Alexey Klimov <alexey.klimov@linaro.org>, broonie@kernel.org
-Cc: perex@perex.cz, tiwai@suse.com, srini@kernel.org,
-        linux-sound@vger.kernel.org, m.facchin@arduino.cc,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20251015131740.340258-1-srinivas.kandagatla@oss.qualcomm.com>
- <20251015131740.340258-7-srinivas.kandagatla@oss.qualcomm.com>
- <DDNA1IMADB2J.1RQMGCQKDL7PG@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <DDNA1IMADB2J.1RQMGCQKDL7PG@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDE2OCBTYWx0ZWRfX3FDc7tBPrcYw
- G0mYSktSwBxC9kK5V8Py2cktYIt4H4VD0S2hAfwvRf0/CK52n+3SJ/0uvYOH3qqfHkejoN5GChq
- K8l5Fq4moeQL/KzXWYl/KUehbya7EmCL8/Eh6U5PKIFIX5UZzJ/SibXpg+GJ6ZEKDo8f7i2NhoO
- 7l8NqEykTEekuWADS6ubFnNwcYS3VncqVQ5Mr1LO/1bZvc83JTj9jiLWCJ8ux0aT3zoZyowsVQN
- XCAJXI8g0PhATkdg8QQDjWSmiayyPXo/IzBuo13ItEBWMmnO1tM38z95f//xdxN54e+a6X/CtXJ
- U/f0jxCmMZY4NnH3etvwMUlCEZLMsi+xM+u0w7CvDLNOJEHFk/QE8Zi3gmRcwCl4+Wmscqlm5rU
- oW0JLx10SG+q6ClxSJ2V4l/RkkJSzQ==
-X-Authority-Analysis: v=2.4 cv=LMRrgZW9 c=1 sm=1 tr=0 ts=68f9f47c cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=YRt9Bv_rGBO17N10jG4A:9 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-GUID: kX6UsqHEKw4WdoagRxtH-nV4HMLwm98T
-X-Proofpoint-ORIG-GUID: kX6UsqHEKw4WdoagRxtH-nV4HMLwm98T
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 priorityscore=1501 impostorscore=0 phishscore=0
- bulkscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510220168
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002314:EE_|LV8PR19MB8598:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: c5dc4ae8-497e-42a7-45de-08de1216774e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|61400799027|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xbeN+Nf+tTT8B6ksAjxDniQsigzlTjhMkwM2F62MQuzuwQLvkMr8fVjJ6G1X?=
+ =?us-ascii?Q?m00RnTvF76g1aee1FxCN3u436xp7SkhaatGy6b6e7dH5XrfxH7mSAQ4nYACD?=
+ =?us-ascii?Q?FjFXaDTalK5zYBj2Z/szKOycTSjfcP/YiSSoOWU9TWvcwf7mKbRIQuspuikK?=
+ =?us-ascii?Q?D73EoQFEXt/rAclyk9D/DFSK4zpVDhvC+NQs8EU66N86WyWT2gUql0VE16GD?=
+ =?us-ascii?Q?DSV8qXF97jlxu2n9UAZRuleP8O+lo/A/BZnQ8zthkbJnNnfcsODg8xJ154HR?=
+ =?us-ascii?Q?yYOdTW7u6ypAOmnNcy+nBqZHN+pLJfn1xfZbgbPyB9cpcnvhhjiSyaCnz0zZ?=
+ =?us-ascii?Q?i5MLE8nEbqN/H0aGJVu8LWTqW4zNQs7rFSzoONEeWW4blBXXRoxrl8q7E8pk?=
+ =?us-ascii?Q?pZOBc8txxe5k+fvfRb752FmLGgF43tPRexwiRfIN59Lm+Len5QdrhczC3bfe?=
+ =?us-ascii?Q?rm7ayqg47bWAXuXDhbOStGUA2NZmaMzld9NdK5p6xNorDCeR/tTv59XyHcPA?=
+ =?us-ascii?Q?VIwtIqw8ZhAZ7Fbpj64EG47gyfPp25/7RiRaTDY18jQcLvSH7umetfjER4G2?=
+ =?us-ascii?Q?9MPIhmb8w3GEfkZBeyMnC1GAbOHXcUxL6SNXGORRehmIL9oLYzGWdJlfRY4n?=
+ =?us-ascii?Q?rNT5kkO1WtsPjQj2JGXXBTC+dZP2HeJPdf8oQvoyi5ZYgEqY6oTsbkRvt5pm?=
+ =?us-ascii?Q?9VAj8+paPBRhc0Ge54SxJUcSlibhaVzvDWdIgdluLvxrQPu64GHPr8pwg8fd?=
+ =?us-ascii?Q?XjFlSgadIrsC26N69l4eaz62fZekQ+znRCgi1OrfGFAd9y9pFwgz7Jy5gBkR?=
+ =?us-ascii?Q?/DxmjpqwZ+geaCPYMarTMAIEzI1ydE/y1CqdoSEJ8dUnFtt5DvZyxaDf0LHP?=
+ =?us-ascii?Q?ixi3l9AbheOmc+y95iaYTLv7C82xavN9WeqOwfaUtC4Jg2yTtwgYZMErQooz?=
+ =?us-ascii?Q?BaW4cuqb5mUypb7dJKNqXlFcJWR6FKNe2Y5az0HBeNSE+P48Rp7dduEtgRmu?=
+ =?us-ascii?Q?CZ0rwcn0HkXkUmCbCuM93MmuPfnrYcgPzGLY5o6PBliTuLdH7Z4qvwKqF3nN?=
+ =?us-ascii?Q?j81aJWiDxzP/8ds6xk4QBplv+0QREtkbTB94NosxnXcORL7AVk8DKJYICJZ8?=
+ =?us-ascii?Q?Zzu+P+32TmSua0oT4xQtMpaBYlW0l5dtCpfh412s4LROW4MxGv+r2awafkJd?=
+ =?us-ascii?Q?/2e9ohmEqB4RcpjquXFOZdSwo3Bt7ZM8GvCrOz8mmx3TylPb/CnBE45XTZSc?=
+ =?us-ascii?Q?3m3SJ28GLfAXA8Wa1lKADVtKSAP88hWirIiPmOhwX8rTAVOd+oV1E2kf+9+P?=
+ =?us-ascii?Q?pj8nPnoSu7Fofj97RBGly9gBNydl8bFuKyR3ofaFZQOIHJc15uc+dkYoIRqi?=
+ =?us-ascii?Q?pjINzVdHW5XhHvyWVIGBOc/K8Ir9eBsfACY+FyLW/GhEGfZhklcsA8/7ovTa?=
+ =?us-ascii?Q?HHqV9PvDYnd2oax3anqvM3EckLIVwHzfQiltTrXjjvaszgubQKIHyC+thS8C?=
+ =?us-ascii?Q?pq5ItzY6riFvq18O1h0P2hAjUgw51qscI9yC9J2bTo1xqtaBXeMEjsbQSA?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(61400799027)(36860700013);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 09:28:03.0042
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5dc4ae8-497e-42a7-45de-08de1216774e
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-SJ1PEPF00002314.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR19MB8598
+X-Authority-Analysis: v=2.4 cv=G6gR0tk5 c=1 sm=1 tr=0 ts=68f9f52a cx=c_pps
+ a=eiJXeYcBrKiqJN7PW0oR8A==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=x6icFKpwvdMA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=w1d2syhTAAAA:8 a=1GJU7IM4rHDAiQO2ZLEA:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: A1HQrKTQ0zA6ortkWuE1zggKJ-z5Sotu
+X-Proofpoint-GUID: A1HQrKTQ0zA6ortkWuE1zggKJ-z5Sotu
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDA4NCBTYWx0ZWRfXxbUpOlUlULUt
+ fRkTQOQMPzj7Ttw0+gAkLLS8ETyyydQZci7Y4gwMwJnqWJMjiXP3aaHv3wHrQDbddc9Z/r6AEIQ
+ jLyu/58yBdV2XSeOgb1v/6QyktO1qXJk88Ym6S4MfmJgs/f2bwc/rBfR1eloDw42DJqBUoG8fQm
+ hpvXzILA+RgtXnaNZiQ/77xxDeYwNrznkgeS7mUhsB/t5Q6a+L3ywyHRskuhjg7bihVoXQvcKEO
+ 1Hc/VPwRSsKoyS72JjNf/7/1fSdj3anhgRhzBJGuYv+T8mChk1vGIu+thN3DHlijHmRy3ATIk7J
+ WawxMMizRlX4jEXaAeqWUBEuJc9bqCLTfe9vm7bykydpSKElPqMgPiSdoXGD7KaKTKdhB+XoLo+
+ +j2er9ucivi26ywwpREpL/jGaRCLRg==
+X-Proofpoint-Spam-Reason: safe
 
-On 10/20/25 5:06 PM, Alexey Klimov wrote:
-> On Wed Oct 15, 2025 at 2:17 PM BST, Srinivas Kandagatla wrote:
->> With the existing code, we are only setting up one period at a time, in a
->> ping-pong buffer style. This triggers lot of underruns in the dsp
->> leading to jitter noise during audio playback.
->>
->> Fix this by scheduling all available periods, this will ensure that the dsp
->> has enough buffer feed and ultimatley fixing the underruns and audio distortion.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->> ---
->>  sound/soc/qcom/qdsp6/q6asm-dai.c | 34 +++++++++++++++++++++++++-------
-> 
-> [..]
-> 
->> +static int q6asm_dai_ack(struct snd_soc_component *component, struct snd_pcm_substream *substream)
->> +{
->> +	struct snd_pcm_runtime *runtime = substream->runtime;
->> +	struct q6asm_dai_rtd *prtd = runtime->private_data;
->> +	int i, ret = 0, avail_periods;
->> +
->> +	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK && prtd->state == Q6ASM_STREAM_RUNNING) {
->> +		avail_periods = (runtime->control->appl_ptr - prtd->queue_ptr)/runtime->period_size;
->> +		for (i = 0; i < avail_periods; i++) {
->> +			ret = q6asm_write_async(prtd->audio_client, prtd->stream_id,
->> +					   prtd->pcm_count, 0, 0, 0);
->> +
->> +			if (ret < 0) {
->> +				dev_err(component->dev, "Error queuing playback buffer %d\n", ret);
->> +				return ret;
->> +			}
->> +			prtd->queue_ptr += runtime->period_size;
->> +		}
->> +	}
->> +
->> +	return ret;
->> +}
+The components field of snd_card can run out of space in new systems which
+use many audio devices, hence increase its size to 256 bytes.
 
-We have exactly same logic in q6apm-dai.c I will keep this as it is for
-this patch series, we can always improve this over time. Patches welcome.>
-> So when I compiled this on a common arm64 desktop machine with defconfig,
-> nothing fancy, with gcc, this loop and function really does compile with
-> udiv instruction.
-> 
-> avail_periods = (runtime->control->appl_ptr - prtd->queue_ptr)/runtime->period_size;
->      350:       f9001bf7        str     x23, [sp, #48]
->      354:       f94086a0        ldr     x0, [x21, #264]
->      358:       f9408262        ldr     x2, [x19, #256]
->      35c:       f9400000        ldr     x0, [x0]
->      360:       f9403ea1        ldr     x1, [x21, #120]
->      364:       cb020000        sub     x0, x0, x2
->      368:       9ac10800        udiv    x0, x0, x1  <--- here
->      36c:       2a0003f7        mov     w23, w0
-> 
-> What do you think about rewriting this loop without division and
-> without using additional iterator? I don't think this is a hot path
-> but anyway.
-> 
-> The first iteration that I came up with is (1):
-> 
-> 
-> diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-> index 97256313c01a..d01f805947b8 100644
-> --- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-> +++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-> @@ -310,6 +310,23 @@ static int q6asm_dai_ack(struct snd_soc_component *component, struct snd_pcm_sub
->  	int ret = 0;
->  
->  	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK && prtd->state == Q6ASM_STREAM_RUNNING) {
-> +		if (prtd->queue_ptr < runtime->control->appl_ptr) {
-This is not going to work, as we need alteast 1 period of data.> +
-> +			do {
-> +				ret = q6asm_write_async(prtd->audio_client, prtd->stream_id,
-> +							prtd->pcm_count, 0, 0, 0);
-> +
-> +				if (ret < 0) {
-> +						dev_err(component->dev, "Error queuing playback buffer %d\n", ret);
-> +						return ret;
-> +				}
-> +
-> +				prtd->queue_ptr += runtime->period_size;
-This queue_ptr can go over appl_ptr.. can impact sound quality as we
-will be queuing something that is not in the data yet.
+Along with this change, bump the CTL protocol version to 2.0.10
 
---srini> +
-> +			} while (prtd->queue_ptr < runtime->control->appl_ptr);
-> +
-> +		}
-> 
-> No division and no calculation of iterator and avail_periods.
-> 
-> Rewriting it further (2):
-> 
-> diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
-> index 97256313c01a..317f06d07a09 100644
-> --- a/sound/soc/qcom/qdsp6/q6asm-dai.c
-> +++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
-> @@ -307,9 +307,26 @@ static int q6asm_dai_ack(struct snd_soc_component *component, struct snd_pcm_sub
->  {
->  	struct snd_pcm_runtime *runtime = substream->runtime;
->  	struct q6asm_dai_rtd *prtd = runtime->private_data;
-> -	int i, ret = 0, avail_periods;
-> +	int ret = 0, diff;
->  
->  	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK && prtd->state == Q6ASM_STREAM_RUNNING) {
-> +		diff = (runtime->control->appl_ptr - prtd->queue_ptr);
-> +		
-> +		while (diff >= runtime->period_size) {
-> +			ret = q6asm_write_async(prtd->audio_client, prtd->stream_id,
-> +						prtd->pcm_count, 0, 0, 0);
-> +			
-> +			if (ret < 0) {
-> +				dev_err(component->dev, "Error queuing playback buffer %d\n", ret);
-> +				return ret;
-> +			}
-> +
-> +			prtd->queue_ptr += runtime->period_size;
-> +			diff -= runtime->period_size;
-> +		};
-> +
-> +
-> 
-> Surprisingly, in (1) the size of resulting object file is smaller than in (2):
-> 
-> With original patch:	110008 Oct 20 15:26 sound/soc/qcom/qdsp6/q6asm-dai.o
-> with (1): 		109776 Oct 20 16:53 sound/soc/qcom/qdsp6/q6asm-dai.o
-> with (2):		109896 Oct 20 16:52 sound/soc/qcom/qdsp6/q6asm-dai.o
-> 
-> I think the readability won't be damaged as a result of the rewriting
-> and the code seems to be smaller.
-> Obviusly, this needs to be verified for some corner cases and etc.
-> I'd go with (1) but it is up to you. I tested (1) and it seems to work.
-> 
-> Best regards,
-> Alexey
-> 
-> 
-> 
-> 
-> 
+Signed-off-by: Maciej Strozek <mstrozek@opensource.cirrus.com>
+---
+ include/sound/core.h        | 2 +-
+ include/uapi/sound/asound.h | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/sound/core.h b/include/sound/core.h
+index 64327e971122..0eb2e3ee0dd5 100644
+--- a/include/sound/core.h
++++ b/include/sound/core.h
+@@ -87,7 +87,7 @@ struct snd_card {
+ 	char longname[80];		/* name of this soundcard */
+ 	char irq_descr[32];		/* Interrupt description */
+ 	char mixername[80];		/* mixer name */
+-	char components[128];		/* card components delimited with
++	char components[256];		/* card components delimited with
+ 								space */
+ 	struct module *module;		/* top-level module */
+
+diff --git a/include/uapi/sound/asound.h b/include/uapi/sound/asound.h
+index 5a049eeaecce..c302698fb685 100644
+--- a/include/uapi/sound/asound.h
++++ b/include/uapi/sound/asound.h
+@@ -1058,7 +1058,7 @@ struct snd_timer_tread {
+  *                                                                          *
+  ****************************************************************************/
+
+-#define SNDRV_CTL_VERSION		SNDRV_PROTOCOL_VERSION(2, 0, 9)
++#define SNDRV_CTL_VERSION		SNDRV_PROTOCOL_VERSION(2, 0, 10)
+
+ struct snd_ctl_card_info {
+ 	int card;			/* card number */
+@@ -1069,7 +1069,7 @@ struct snd_ctl_card_info {
+ 	unsigned char longname[80];	/* name + info text about soundcard */
+ 	unsigned char reserved_[16];	/* reserved for future (was ID of mixer) */
+ 	unsigned char mixername[80];	/* visual mixer identification */
+-	unsigned char components[128];	/* card components / fine identification, delimited with one space (AC97 etc..) */
++	unsigned char components[256];	/* card components / fine identification, delimited with one space (AC97 etc..) */
+ };
+
+ typedef int __bitwise snd_ctl_elem_type_t;
+--
+2.48.1
 
 
