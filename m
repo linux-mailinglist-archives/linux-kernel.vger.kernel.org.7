@@ -1,192 +1,677 @@
-Return-Path: <linux-kernel+bounces-866981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD68C01409
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:03:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504D5C01412
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B3D04F15FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:03:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 281F84F6955
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6741D3148BF;
-	Thu, 23 Oct 2025 13:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DCB313E08;
+	Thu, 23 Oct 2025 13:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kynesim.co.uk header.i=@kynesim.co.uk header.b="fAzzQ2Zr"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjPEvMAg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38E030BF79
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B88313E1E;
+	Thu, 23 Oct 2025 13:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761224610; cv=none; b=b77JnWUhE0Ts4CIPgqUJWXULepZSEn0aXg7vHx7DCcLDVrnld0wfqq0ep0ibLUu0RGUCQKxg8zWeHEvtsjStVdanS7BybbkKj8LB3XCti3dP4wOnHihCVuRV7+nZZ5mpCSa89/vtuqaNXoAAdDG1TRDiVL/chyDgN2f7Vkc5nWA=
+	t=1761224620; cv=none; b=iXefdhppQdTjTigNSP5GYWeYCTokbV6hzu7FhCP/fSv21bRoMGnHuT4eIa+QjUqtbklIR+NvcWZspW+eFyndtdX/RyC6+8y4xmR4dxXDPgttdmMvNAftJKyH+Ton8wWr+hOn31Uhou2x2b1y+U2yItiF8oHYLQVII3P5KaT/WUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761224610; c=relaxed/simple;
-	bh=dVjSgjUVHG2gC5otLGThI0jUJVNy+z1H2EkRmkKOaKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jt7IWOg/aO5G7rgX5GcxNpPPSDS4Kgj8Ad73FMRDOdaDdzfaxZM0TVTf1PtV+P3jB4Upue/A4elmlpTo3cswGxb+JqDxIoL9bFt6fRcxyfuaTE+gHUGrzzLm3QZc6S8tHC0XwI+KVQSWUmCGtpWhsnMYyJW5sgxIFKzRIzIUYaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kynesim.co.uk; spf=pass smtp.mailfrom=kynesim.co.uk; dkim=pass (2048-bit key) header.d=kynesim.co.uk header.i=@kynesim.co.uk header.b=fAzzQ2Zr; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kynesim.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kynesim.co.uk
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b4f323cf89bso181127566b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:03:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kynesim.co.uk; s=google; t=1761224607; x=1761829407; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rQz2zzhNXcewyKRu/6/YPC764DvwqqcoBjiIwzMxqic=;
-        b=fAzzQ2ZriOVrVy9vOkCdGPDcBbRF1UD++OH8J9Wo3/WnyXUYAa1McMLp06jQ/McJ7D
-         i4wKdyRArCIPiwX8zfwpUhX82yUWnhKy/p+C+//8Q5pAI2o+w4qrI+TG61n1reVxwYwN
-         beRxktHfx5pBUVzh6nJ66sU+8xdkv+Gtmrw06OGsPaGC5NR6pofvhhEG8skPuEBq4pkL
-         Rwh3vzYMlFZLLX0zhgs9wTlRq+4IMLnmm8CPwSHPTPThaEhwZtmOOPWYL1xCVCTiSccN
-         NSwdmJQgcSj7t7OPSslAKKrVVW2E3b3oMx/rD+LQbAoxMYwQ3hTiPF0NIh4Ij36OtNnZ
-         jDzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761224607; x=1761829407;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rQz2zzhNXcewyKRu/6/YPC764DvwqqcoBjiIwzMxqic=;
-        b=kIo4+5FfLhrmmGAYLPwE34g8SdkgfuViKHWGdTrx+MYMj3AVhT4htpfTxtCu9iWeT3
-         IpYSCcEFPK5vcmZqLZwZYDnTZ2q7UIaSvUbfXJJ9AMfGZ0dUDYCNFcqzSAwsJh31gZKv
-         FGDgo9TPZ4S09yKcVzayKCSY8fQyjIb+TOQ9w3H/yWSgh5/7F4u91+DrSSlMsG8O6f+e
-         drl6VC1LweI1JUL+eP1re1PlJVM4Xghjj0MRDEhtev7I5nUM7NVEwa9kKw3Gn2sKkfx+
-         iVAD6+OFN9qbcL/VO423J+2tS6f8Qx5RMKOAwD0xAE3oCPfYmk9JfhexqyEIe97UIVkJ
-         gavQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXs+kgqAl9S8QxD7hF/DeywCi95sv3LujKhF7h/Twmk6k5yscN4pF7qgI8ahT8j6M7mUjdksMlRe/GCrTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8aejElv7l5foxdEdjL72iS6C5Uw5CaSxA5KxUbyN1XZBGYF0w
-	PR2GjpxjMhgAQAZZXX4ZSZPHpcwDOWHIx6pmNflRjccrmbhWqQJkFmKo9sUsuJx7SrGe6DB080L
-	zKZO0KDBNfzambKdIUS2gY4wNN/lvQ2zrWJQD10dkcw==
-X-Gm-Gg: ASbGncubMsgC3JQ2CvLOqMcqD3umF7H6nn35KYJT5unBZcsqt/cqrGf6RrsCLv1zKYd
-	Z8WpCayeaC42E6OHxHkSG9YxGi6twcocIaF8nBnjDWEN10K8YMDayeVCfr5Y+E5TAhedNMQ4Iuf
-	UmqYL2Cg79DsetrQmZc5e+dHZofYL+frSZiQaA6QYOAyRjjqi9XY2zwnG0Mucf6HcxlCMwVl3s5
-	3Sy1jJjCE2mPiEjljxCVK52DjjAyQF82jB7MkZ4UfOs4dqp74vkz+EtmwE=
-X-Google-Smtp-Source: AGHT+IHjEil1xwB1kyyeHzGlMRLeZxB/fmA1t+VRuvWQ8L8x/8y3yupxVI3uySMkBoo9S0ZyIP21qY8I2m5JTPfCxcY=
-X-Received: by 2002:a17:906:b80c:b0:b3d:6fff:9a0e with SMTP id
- a640c23a62f3a-b6475012762mr2293117266b.53.1761224607102; Thu, 23 Oct 2025
- 06:03:27 -0700 (PDT)
+	s=arc-20240116; t=1761224620; c=relaxed/simple;
+	bh=98TdVZ0QY4NDJCyUmfL8j3vPquXYCTOvnPUcqt5BsoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qCgyVTZ4lScJ/JdBzAaU7bOeS5rXCjWf+/N+BWBgxlW8FW0lb4XjFzNQ1zPPUY6mMgXC/L3odwHvgFomg8gtUxYJWkg3qHbOBIHg1OQsD7SXCS81vnePe4lwZAqM2i8fI51bEwzFrYCP9XDcjejWI1BqrSPFwDXfV3VwY72Dbuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BjPEvMAg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25B53C4CEE7;
+	Thu, 23 Oct 2025 13:03:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761224619;
+	bh=98TdVZ0QY4NDJCyUmfL8j3vPquXYCTOvnPUcqt5BsoI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BjPEvMAgHtnFWlmlQThGm2FbebLOl17z7Yj0xHh1qPMCWlZ/B8x4P4hudn1SVt+vT
+	 Z6Mw4p+WKrnvZA2ebGWIIfhclTEge7MGC+ezk7qfDRG8QHC18PTx59qDI62A1XN/12
+	 9zQsFa1ZQVclJYZKBeTXmyUl+Xm6H+h8Dzi4xnygfP2HzTxSfh7LVyU9fA/oGf3O4L
+	 jRPYyeL+Hswj5I/MPps87vf+9I01CowQsJEeL9U54vXOkzGCa8MiaASq46i9w19syJ
+	 WLmLpx/2DcKkzVNCasBfspcbakUPMK93YaHWRP50Gl+ESXKXMs2jTonFzycBE6YSvm
+	 quAVz3zoq6Vwg==
+Date: Thu, 23 Oct 2025 14:03:35 +0100
+From: Lee Jones <lee@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Stanislav Jakubek <stano.jakubek@gmail.com>
+Subject: Re: [PATCH v3] mfd: bcm590xx: Add support for interrupt handling
+Message-ID: <20251023130335.GM475031@google.com>
+References: <20251013-bcm590xx-irq-v3-1-0ceb060d2ee8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250913105252.26886-1-opensource206@gmail.com>
- <8199bec4-b9e1-4d6e-98da-a4d7eb667437@kernel.org> <CAKPKb8-s96v+Nh29Z5E0wgyXYgoFHJT2SHA_WpZshXspo0WY0w@mail.gmail.com>
- <f9001f98-80d6-49d5-8665-d42fcef7b07d@kernel.org>
-In-Reply-To: <f9001f98-80d6-49d5-8665-d42fcef7b07d@kernel.org>
-Reply-To: jc@kynesim.co.uk
-From: John Cox <jc@kynesim.co.uk>
-Date: Thu, 23 Oct 2025 14:03:15 +0100
-X-Gm-Features: AS18NWDf7lW6qB3D2uGVwOaERQchs1i9Lttqltolx2HpMPVt9UGchsP9jeOurqA
-Message-ID: <CAFyCYyOFFMrDetScx_8_VgRpCVyTq_O0PGn1hDt7+UwMygqeXw@mail.gmail.com>
-Subject: Re: [PATCH v3] media: v4l2-ctrls: add full AV1 profile validation in validate_av1_sequence()
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: opensource india <opensource206@gmail.com>, mchehab@kernel.org, hverkuil@kernel.org, 
-	ribalda@chromium.org, laurent.pinchart@ideasonboard.com, yunkec@google.com, 
-	sakari.ailus@linux.intel.com, james.cowgill@blaize.com, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251013-bcm590xx-irq-v3-1-0ceb060d2ee8@gmail.com>
 
-On Thu, 23 Oct 2025 at 11:44, Hans Verkuil <hverkuil+cisco@kernel.org> wrot=
-e:
->
-> On 23/10/2025 12:32, opensource india wrote:
-> > On Wed, Oct 22, 2025 at 12:44=E2=80=AFPM Hans Verkuil <hverkuil+cisco@k=
-ernel.org> wrote:
-> >>
-> >> Hi Pavan,
-> >>
-> >> On 13/09/2025 12:52, Pavan Bobba wrote:
-> >>> Complete the "TODO: PROFILES" by enforcing profile-specific and
-> >>> monochrome constraints as defined by the AV1 specification
-> >>> (Section 5.5.2, "Color config syntax").
-> >>>
-> >>> The validator now checks:
-> >>>
-> >>>  - Flags: reject any unknown bits set in sequence->flags
-> >>>  - Profile range: only profiles 0..2 are valid
-> >>>  - Profile 0: 8/10-bit only, subsampling must be 4:2:0 (sx=3D1, sy=3D=
-1),
-> >>>    monochrome allowed
-> >>>  - Profile 1: 8/10-bit only, subsampling must be 4:4:4 (sx=3D0, sy=3D=
-0),
-> >>>    monochrome forbidden
-> >>>  - Profile 2:
-> >>>     * 8/10-bit: only 4:2:2 allowed (sx=3D1, sy=3D0)
-> >>>     * 12-bit: 4:4:4 (sx=3D0, sy=3D0), 4:2:2 (sx=3D1, sy=3D0), or 4:2:=
-0 (sx=3D1, sy=3D1)
-> >>>       allowed
-> >>>  - Monochrome path (all profiles except 1): forces subsampling_x=3D1,
-> >>>    subsampling_y=3D1, separate_uv_delta_q=3D0
-> >>>
-> >>> These checks prevent userspace from providing invalid AV1 sequence
-> >>> headers that would otherwise be accepted, leading to undefined driver
-> >>> or hardware behavior.
-> >>
-> >> This patch was merged in our media-committers next branch, but I notic=
-ed that
-> >> it now fails the v4l2-compliance test for the visl driver.
-> >>
-> >> The cause is that the new validation now fails with the default values=
- for
-> >> this control as set in std_init_compound().
-> >>
-> >> You can test this yourself by loading the visl driver and then running
-> >> v4l2-compliance -d /dev/videoX -E --verbose
-> >> (-E stops at the first error)
-> >>
-> >> Can you provide a patch to initialize this control with sane values?
-> >>
-> >> Apologies for not noticing this before: there are some issues with the=
- automatic
-> >> regression tests in our CI, so the tests weren't run.
-> >>
-> >> Regards,
-> >>
-> >>         Hans
-> >>
-> >
-> > Hi Hans Verkuil,
-> >
-> > Thank you so much for the review.
-> > yes, v4l2-compliance expected to fail indeed since it is sending
-> > default values which, our newly added code rejects as per
-> > specification
-> >
-> > when you say patch, you mean patch for v4l2-compliance tool with
-> > proper values so that v4l2 core driver can accept?
->
-> No, std_init_compound() in the kernel needs to be patched so the initial
-> value of this control passes the new validation tests. The initial contro=
-l
-> values should always be sane.
+On Mon, 13 Oct 2025, Artur Weber wrote:
 
-Whilst that is a good principle it makes almost no sense in this
-context. There is almost no chance that a given bitstream will decode
-against a default sequence header and failing to set it explicitly is
-going to be a mistake on the users part. It seems to me that it is
-better to have something that is detectable as unset rather than
-something that is valid but wrong.
+> The BCM590XX supports up to 128 internal interrupts, which are used by
+> various parts of the chip. Add regmap_irq-based interrupt handling and
+> helper functions to allow subdevice drivers to easily use the interrupts.
+> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+> This patch is a prerequisite for future subdevice additions, since
+> many of them rely on the interrupts; I have a power-on key driver and
+> an RTC driver ready which both use the IRQ data/helper functions included
+> in this patch (they will be sent in subsequent patch series), and more
+> are on the way.
+> ---
+> Changes in v3:
+> - Address review comments from Lee Jones
+> - Link to v2: https://lore.kernel.org/r/20250901-bcm590xx-irq-v2-1-c593ca23b63c@gmail.com
+> 
+> Changes in v2:
+> - Rename xSROVRI IRQs to xSR_OVRI to match LDO_OVRI naming
+> - Link to v1: https://lore.kernel.org/r/20250816-bcm590xx-irq-v1-1-ccbb490628dd@gmail.com
+> ---
+> Changes in v3:
+> - Rename REG_IRQ1_MASK to REG_IRQ1MASK, to make it more obvious
+>   that it's a register name, not a mask
+> - Drop bcm590xx_devm_request_irq and bcm590xx_devm_free_irq
+> - Unwrap some lines to adjust to 100 character line lengths
+> - Drop useless comments
+> 
+> Changes in v2:
+> - Rename xSROVRI IRQs to xSR_OVRI to match LDO_OVRI naming
+> ---
+>  drivers/mfd/Kconfig          |   1 +
+>  drivers/mfd/bcm590xx.c       | 270 +++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/bcm590xx.h | 206 +++++++++++++++++++++++++++++++++
+>  3 files changed, 477 insertions(+)
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 6fb3768e3d71..e76b18e29dbc 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -175,6 +175,7 @@ config MFD_BCM590XX
+>  	tristate "Broadcom BCM590xx PMUs"
+>  	select MFD_CORE
+>  	select REGMAP_I2C
+> +	select REGMAP_IRQ
+>  	depends on I2C
+>  	help
+>  	  Support for the BCM590xx PMUs from Broadcom
+> diff --git a/drivers/mfd/bcm590xx.c b/drivers/mfd/bcm590xx.c
+> index 5a8456bbd63f..fb6afe277ebf 100644
+> --- a/drivers/mfd/bcm590xx.c
+> +++ b/drivers/mfd/bcm590xx.c
+> @@ -26,16 +26,29 @@
+>  #define BCM590XX_PMUREV_ANA_MASK	0xF0
+>  #define BCM590XX_PMUREV_ANA_SHIFT	4
+>  
+> +#define BCM590XX_REG_IRQ1		0x20
+> +#define BCM590XX_REG_IRQ1MASK		0x30
 
-I accept that it is the V4L2 way to require "valid" default values for
-all supported ctrls, but it seems to me to be actively unhelpful for
-things like SPS / VPS / Tile Group Entry where if not set correctly
-from bits of the bitstream that the kernel doesn't get to see they
-will break the stream decode.
+This isn't better.
 
-I'm not going to argue this point but I felt that I wanted to make it.
+And now the nomenclature is inconsistent with the one above.
 
-Regards
+What is a mask register?  I don't understand.
 
-John Cox
-> Regards,
->
->         Hans
->
+>  static const struct mfd_cell bcm590xx_devs[] = {
+>  	{
+>  		.name = "bcm590xx-vregs",
+>  	},
+>  };
+>  
+> +static bool bcm590xx_volatile_pri(struct device *dev, unsigned int reg)
+
+If I've asked a question or showed uncertainty about something, it
+usually means that changes need to be made.  Asking what "pri" meant
+wasn't a one time thing.  It shows that something is not clear and if
+I'm asking, others will wonder too.
+
+Can we change 'sec' to 'secondary' and 'pri' to 'primary' please?
+
+> +{
+> +	/*
+> +	 * IRQ registers are clear-on-read, make sure we don't cache them
+> +	 * so that they get read/cleared correctly
+> +	 */
+> +	return (reg >= BCM590XX_REG_IRQ1 && reg <= (BCM590XX_REG_IRQ1 + 15));
+> +}
+> +
+>  static const struct regmap_config bcm590xx_regmap_config_pri = {
+>  	.reg_bits	= 8,
+>  	.val_bits	= 8,
+>  	.max_register	= BCM590XX_MAX_REGISTER_PRI,
+> +	.volatile_reg	= bcm590xx_volatile_pri,
+>  	.cache_type	= REGCACHE_MAPLE,
+>  };
+>  
+> @@ -46,6 +59,258 @@ static const struct regmap_config bcm590xx_regmap_config_sec = {
+>  	.cache_type	= REGCACHE_MAPLE,
+>  };
+>  
+> +#define BCM590XX_REGMAP_IRQ_REG(id)	REGMAP_IRQ_REG_LINE(id, 8)
+
+It looks like this may benefit more than just this driver.
+
+Please create a generic helper in include/linux/regmap.h.
+
+Perhaps REGMAP_IRQ_REG_LINE_BYTE, or whatever the 8 represents.
+
+> +static const struct regmap_irq bcm59054_regmap_irqs[] = {
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBINS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBRM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_BATINS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_BATRM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBC_CV_LOOP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBC_CV_TMR_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_EOC),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RESUME_VBUS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBTEMPLOW),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBTEMPHIGH),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBOV),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBOV),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHGERRDIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBOV_DIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBOV_DIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBC_TF),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHG_HW_TTR_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHG_HW_TCH_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHG_SW_TMR_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHG_TCH_1MIN_BF_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USB_PORT_DIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USB_CC_REDUCE),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBUSLOWBND),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_UBPD_CHG_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBUS_VALID_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_OTG_SESS_VALID_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VB_SESS_END_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ID_RM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBUS_VALID_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VA_SESS_VALID_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VB_SESS_END_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ID_INS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_IDCHG),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RIC_C_TO_FLOAT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHGDET_LATCH),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CHGDET_TO),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ADP_CHANGE),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ADP_SNS_END),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ADP_PROB),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_ADP_PRB_ERR),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_PRESSED),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_RELEASED),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_WAKEUP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_BIT_VLD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_RESTART),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_T1),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_T2),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_T3),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_I2C_RESTART),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GBAT_PLUG_IN),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SMPL_INT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUX_INS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUX_RM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_XTAL_FAILURE),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBWV_R_10S_WAIT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MBWV_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTC_ALARM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTC_SEC),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTC_MIN),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTCADJ),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_FGC),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_BBLOW),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_DIE_OT_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_DIE_OT_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_DATA_RDY),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_IN_CON_MEAS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_UPPER),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_IGNORE),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RTM_OVERRIDDEN),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUD_HSAB_SHCKT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUD_IHFD_SHCKT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_POK_NOP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_LEN_ERR),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_RCV_ERR),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_BUSQ_RESP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_BUSQ_POS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_EOT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_XMT_END),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MIPI_INT_POS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LOWBAT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CSR_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VSR_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MSR_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDSR1_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDSR2_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_IOSR1_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_IOSR2_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RESERVED),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RFLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUDLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBLDO_OVR),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDXLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MICLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SIMLDO1_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SIMLDO2_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MMCLDO1_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CAMLDO1_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CAMLDO2_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VIBLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO1_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO2_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO3_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_RFLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_AUDLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_USBLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDXLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MICLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SIMLDO1_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SIMLDO2_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MMCLDO1_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_MMCLDO2_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CAMLDO1_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_CAMLDO2_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VIBLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_SDLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO1_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO2_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_GPLDO3_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_TCXLDO_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LVLDO1_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LVLDO2_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_TCXLDO_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LVLDO1_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_LVLDO2_SHD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBOVRV),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59054_IRQ_VBOVRI),
+> +};
+
+Wow!  These lists are intense.
+
+It's a shame we don't support ranges!
+
+> +static const struct regmap_irq_chip bcm59054_irq_chip = {
+> +	.name = "bcm59054-irq",
+> +	.irqs = bcm59054_regmap_irqs,
+> +	.num_irqs = BCM59054_IRQ_MAX,
+> +	.num_regs = 16,
+> +	.status_base = BCM590XX_REG_IRQ1,
+> +	.mask_base = BCM590XX_REG_IRQ1MASK,
+> +	.clear_on_unmask = true,
+> +};
+> +
+> +static const struct regmap_irq bcm59056_regmap_irqs[] = {
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTC_ALARM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTC_SEC),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTC_MIN),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTCADJ),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_BATINS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_BATRM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_GBAT_PLUG_IN),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_SMPL_INT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_USBINS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_USBRM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_USBOV),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_EOC),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RESUME_VBUS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHG_HW_TTR_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHG_HW_TCH_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHG_SW_TMR_EXP),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHGDET_LATCH),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHGDET_TO),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBTEMPLOW),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBTEMPHIGH),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBOV),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBOV_DIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_USBOV_DIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CHGERRDIS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_1V5_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_4V5_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_1V5_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_4V5_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBWV_R_10S_WAIT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_BBLOW),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_LOWBAT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VERYLOWBAT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_DATA_RDY),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_IN_CON_MEAS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_UPPER),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_IGNORE),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_RTM_OVERRIDDEN),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_AUD_HSAB_SHCKT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_AUD_IHFD_SHCKT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_MBC_TF),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_CSR_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_IOSR_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_SDSR_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ASR_OVRI),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_UBPD_CHG_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ACD_INS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ACD_RM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_HOLD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_F),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_R),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_OFFHOLD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_PONKEYB_RESTART),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_IDCHG),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_JIG_USB_INS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_UART_INS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ID_INS),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ID_RM),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ADP_CHANGE),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_ADP_SNS_END),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_SESSION_END_VLD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_SESSION_END_INVLD),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_VBUS_OVERCURRENT),
+> +	BCM590XX_REGMAP_IRQ_REG(BCM59056_IRQ_FGC),
+> +};
+> +
+> +static const struct regmap_irq_chip bcm59056_irq_chip = {
+> +	.name = "bcm59056-irq",
+> +	.irqs = bcm59056_regmap_irqs,
+> +	.num_irqs = BCM59056_IRQ_MAX,
+> +	.num_regs = 16,
+> +	.status_base = BCM590XX_REG_IRQ1,
+> +	.mask_base = BCM590XX_REG_IRQ1MASK,
+> +	.clear_on_unmask = true,
+> +};
+> +
+> +static int bcm590xx_irq_init(struct bcm590xx *bcm590xx)
+> +{
+> +	const struct regmap_irq_chip *irq_chip;
+> +	int ret;
+> +
+> +	if (!bcm590xx->irq) {
+> +		dev_err(bcm590xx->dev, "No IRQ configured\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	switch (bcm590xx->pmu_id) {
+> +	case BCM590XX_PMUID_BCM59054:
+> +		irq_chip = &bcm59054_irq_chip;
+> +		break;
+> +	case BCM590XX_PMUID_BCM59056:
+> +		irq_chip = &bcm59056_irq_chip;
+> +		break;
+> +	default:
+> +		dev_err(bcm590xx->dev, "Unknown device type %d\n", bcm590xx->pmu_id);
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = devm_regmap_add_irq_chip(bcm590xx->dev, bcm590xx->regmap_pri,
+> +			bcm590xx->irq, IRQF_TRIGGER_FALLING, 0,
+> +			irq_chip, &bcm590xx->irq_data);
+> +	if (ret) {
+> +		dev_err(bcm590xx->dev, "Failed to add IRQ chip for IRQ: %d: %d\n",
+> +			bcm590xx->irq, ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /* Map PMU ID value to model name string */
+>  static const char * const bcm590xx_names[] = {
+>  	[BCM590XX_PMUID_BCM59054] = "BCM59054",
+> @@ -98,6 +363,7 @@ static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri)
+>  
+>  	i2c_set_clientdata(i2c_pri, bcm590xx);
+>  	bcm590xx->dev = &i2c_pri->dev;
+> +	bcm590xx->irq = i2c_pri->irq;
+>  	bcm590xx->i2c_pri = i2c_pri;
+>  
+>  	bcm590xx->pmu_id = (uintptr_t) of_device_get_match_data(bcm590xx->dev);
+> @@ -132,6 +398,10 @@ static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri)
+>  	if (ret)
+>  		goto err;
+>  
+> +	ret = bcm590xx_irq_init(bcm590xx);
+> +	if (ret)
+> +		goto err;
+> +
+>  	ret = devm_mfd_add_devices(&i2c_pri->dev, -1, bcm590xx_devs,
+>  				   ARRAY_SIZE(bcm590xx_devs), NULL, 0, NULL);
+>  	if (ret < 0) {
+> diff --git a/include/linux/mfd/bcm590xx.h b/include/linux/mfd/bcm590xx.h
+> index 5a5783abd47b..96c7b1066365 100644
+> --- a/include/linux/mfd/bcm590xx.h
+> +++ b/include/linux/mfd/bcm590xx.h
+> @@ -50,6 +50,212 @@ struct bcm590xx {
+>  	/* Chip revision, read from PMUREV reg */
+>  	u8 rev_digital;
+>  	u8 rev_analog;
+> +
+> +	/* Interrupts */
+> +	int irq;
+> +	struct regmap_irq_chip_data *irq_data;
+> +};
+> +
+> +/* BCM59054 IRQs */
+> +
+> +enum bcm59054_irq {
+> +	BCM59054_IRQ_USBINS = 0,
+> +	BCM59054_IRQ_USBRM,
+> +	BCM59054_IRQ_BATINS,
+> +	BCM59054_IRQ_BATRM,
+> +	BCM59054_IRQ_MBC_CV_LOOP,
+> +	BCM59054_IRQ_MBC_CV_TMR_EXP,
+> +	BCM59054_IRQ_EOC,
+> +	BCM59054_IRQ_RESUME_VBUS,
+> +	BCM59054_IRQ_MBTEMPLOW,
+> +	BCM59054_IRQ_MBTEMPHIGH,
+> +	BCM59054_IRQ_USBOV,
+> +	BCM59054_IRQ_MBOV,
+> +	BCM59054_IRQ_CHGERRDIS,
+> +	BCM59054_IRQ_MBOV_DIS,
+> +	BCM59054_IRQ_USBOV_DIS,
+> +	BCM59054_IRQ_MBC_TF,
+> +	BCM59054_IRQ_CHG_HW_TTR_EXP,
+> +	BCM59054_IRQ_CHG_HW_TCH_EXP,
+> +	BCM59054_IRQ_CHG_SW_TMR_EXP,
+> +	BCM59054_IRQ_CHG_TCH_1MIN_BF_EXP,
+> +	BCM59054_IRQ_USB_PORT_DIS,
+> +	BCM59054_IRQ_USB_CC_REDUCE,
+> +	BCM59054_IRQ_VBUSLOWBND,
+> +	BCM59054_IRQ_UBPD_CHG_F,
+> +	BCM59054_IRQ_VBUS_VALID_F,
+> +	BCM59054_IRQ_OTG_SESS_VALID_F,
+> +	BCM59054_IRQ_VB_SESS_END_F,
+> +	BCM59054_IRQ_ID_RM,
+> +	BCM59054_IRQ_VBUS_VALID_R,
+> +	BCM59054_IRQ_VA_SESS_VALID_R,
+> +	BCM59054_IRQ_VB_SESS_END_R,
+> +	BCM59054_IRQ_ID_INS,
+> +	BCM59054_IRQ_IDCHG,
+> +	BCM59054_IRQ_RIC_C_TO_FLOAT,
+> +	BCM59054_IRQ_CHGDET_LATCH,
+> +	BCM59054_IRQ_CHGDET_TO,
+> +	BCM59054_IRQ_ADP_CHANGE,
+> +	BCM59054_IRQ_ADP_SNS_END,
+> +	BCM59054_IRQ_ADP_PROB,
+> +	BCM59054_IRQ_ADP_PRB_ERR,
+> +	BCM59054_IRQ_POK_PRESSED,
+> +	BCM59054_IRQ_POK_RELEASED,
+> +	BCM59054_IRQ_POK_WAKEUP,
+> +	BCM59054_IRQ_POK_BIT_VLD,
+> +	BCM59054_IRQ_POK_RESTART,
+> +	BCM59054_IRQ_POK_T1,
+> +	BCM59054_IRQ_POK_T2,
+> +	BCM59054_IRQ_POK_T3,
+> +	BCM59054_IRQ_I2C_RESTART,
+> +	BCM59054_IRQ_GBAT_PLUG_IN,
+> +	BCM59054_IRQ_SMPL_INT,
+> +	BCM59054_IRQ_AUX_INS,
+> +	BCM59054_IRQ_AUX_RM,
+> +	BCM59054_IRQ_XTAL_FAILURE,
+> +	BCM59054_IRQ_MBWV_R_10S_WAIT,
+> +	BCM59054_IRQ_MBWV_F,
+> +	BCM59054_IRQ_RTC_ALARM,
+> +	BCM59054_IRQ_RTC_SEC,
+> +	BCM59054_IRQ_RTC_MIN,
+> +	BCM59054_IRQ_RTCADJ,
+> +	BCM59054_IRQ_FGC,
+> +	BCM59054_IRQ_BBLOW,
+> +	BCM59054_IRQ_DIE_OT_R,
+> +	BCM59054_IRQ_DIE_OT_F,
+> +	BCM59054_IRQ_RTM_DATA_RDY,
+> +	BCM59054_IRQ_RTM_IN_CON_MEAS,
+> +	BCM59054_IRQ_RTM_UPPER,
+> +	BCM59054_IRQ_RTM_IGNORE,
+> +	BCM59054_IRQ_RTM_OVERRIDDEN,
+> +	BCM59054_IRQ_AUD_HSAB_SHCKT,
+> +	BCM59054_IRQ_AUD_IHFD_SHCKT,
+> +	BCM59054_IRQ_POK_NOP,
+> +	BCM59054_IRQ_MIPI_LEN_ERR,
+> +	BCM59054_IRQ_MIPI_RCV_ERR,
+> +	BCM59054_IRQ_MIPI_BUSQ_RESP,
+> +	BCM59054_IRQ_MIPI_BUSQ_POS,
+> +	BCM59054_IRQ_MIPI_EOT,
+> +	BCM59054_IRQ_MIPI_XMT_END,
+> +	BCM59054_IRQ_MIPI_INT_POS,
+> +	BCM59054_IRQ_LOWBAT,
+> +	BCM59054_IRQ_CSR_OVRI,
+> +	BCM59054_IRQ_VSR_OVRI,
+> +	BCM59054_IRQ_MSR_OVRI,
+> +	BCM59054_IRQ_SDSR1_OVRI,
+> +	BCM59054_IRQ_SDSR2_OVRI,
+> +	BCM59054_IRQ_IOSR1_OVRI,
+> +	BCM59054_IRQ_IOSR2_OVRI,
+> +	BCM59054_IRQ_RESERVED,
+> +	BCM59054_IRQ_RFLDO_OVRI,
+> +	BCM59054_IRQ_AUDLDO_OVRI,
+> +	BCM59054_IRQ_USBLDO_OVR,
+> +	BCM59054_IRQ_SDXLDO_OVRI,
+> +	BCM59054_IRQ_MICLDO_OVRI,
+> +	BCM59054_IRQ_SIMLDO1_OVRI,
+> +	BCM59054_IRQ_SIMLDO2_OVRI,
+> +	BCM59054_IRQ_MMCLDO1_OVRI,
+> +	BCM59054_IRQ_CAMLDO1_OVRI,
+> +	BCM59054_IRQ_CAMLDO2_OVRI,
+> +	BCM59054_IRQ_VIBLDO_OVRI,
+> +	BCM59054_IRQ_SDLDO_OVRI,
+> +	BCM59054_IRQ_GPLDO1_OVRI,
+> +	BCM59054_IRQ_GPLDO2_OVRI,
+> +	BCM59054_IRQ_GPLDO3_OVRI,
+> +	BCM59054_IRQ_RFLDO_SHD,
+> +	BCM59054_IRQ_AUDLDO_SHD,
+> +	BCM59054_IRQ_USBLDO_SHD,
+> +	BCM59054_IRQ_SDXLDO_SHD,
+> +	BCM59054_IRQ_MICLDO_SHD,
+> +	BCM59054_IRQ_SIMLDO1_SHD,
+> +	BCM59054_IRQ_SIMLDO2_SHD,
+> +	BCM59054_IRQ_MMCLDO1_SHD,
+> +	BCM59054_IRQ_MMCLDO2_SHD,
+> +	BCM59054_IRQ_CAMLDO1_SHD,
+> +	BCM59054_IRQ_CAMLDO2_SHD,
+> +	BCM59054_IRQ_VIBLDO_SHD,
+> +	BCM59054_IRQ_SDLDO_SHD,
+> +	BCM59054_IRQ_GPLDO1_SHD,
+> +	BCM59054_IRQ_GPLDO2_SHD,
+> +	BCM59054_IRQ_GPLDO3_SHD,
+> +	BCM59054_IRQ_TCXLDO_OVRI,
+> +	BCM59054_IRQ_LVLDO1_OVRI,
+> +	BCM59054_IRQ_LVLDO2_OVRI,
+> +	BCM59054_IRQ_TCXLDO_SHD,
+> +	BCM59054_IRQ_LVLDO1_SHD,
+> +	BCM59054_IRQ_LVLDO2_SHD,
+> +	BCM59054_IRQ_VBOVRV,
+> +	BCM59054_IRQ_VBOVRI,
+> +	BCM59054_IRQ_MAX,
+> +};
+> +
+> +/* BCM59056 IRQs */
+> +
+> +enum bcm59056_irq {
+> +	BCM59056_IRQ_RTC_ALARM = 0,
+> +	BCM59056_IRQ_RTC_SEC,
+> +	BCM59056_IRQ_RTC_MIN,
+> +	BCM59056_IRQ_RTCADJ,
+> +	BCM59056_IRQ_BATINS,
+> +	BCM59056_IRQ_BATRM,
+> +	BCM59056_IRQ_GBAT_PLUG_IN,
+> +	BCM59056_IRQ_SMPL_INT,
+> +	BCM59056_IRQ_USBINS,
+> +	BCM59056_IRQ_USBRM,
+> +	BCM59056_IRQ_USBOV,
+> +	BCM59056_IRQ_EOC,
+> +	BCM59056_IRQ_RESUME_VBUS,
+> +	BCM59056_IRQ_CHG_HW_TTR_EXP,
+> +	BCM59056_IRQ_CHG_HW_TCH_EXP,
+> +	BCM59056_IRQ_CHG_SW_TMR_EXP,
+> +	BCM59056_IRQ_CHGDET_LATCH,
+> +	BCM59056_IRQ_CHGDET_TO,
+> +	BCM59056_IRQ_MBTEMPLOW,
+> +	BCM59056_IRQ_MBTEMPHIGH,
+> +	BCM59056_IRQ_MBOV,
+> +	BCM59056_IRQ_MBOV_DIS,
+> +	BCM59056_IRQ_USBOV_DIS,
+> +	BCM59056_IRQ_CHGERRDIS,
+> +	BCM59056_IRQ_VBUS_1V5_R,
+> +	BCM59056_IRQ_VBUS_4V5_R,
+> +	BCM59056_IRQ_VBUS_1V5_F,
+> +	BCM59056_IRQ_VBUS_4V5_F,
+> +	BCM59056_IRQ_MBWV_R_10S_WAIT,
+> +	BCM59056_IRQ_BBLOW,
+> +	BCM59056_IRQ_LOWBAT,
+> +	BCM59056_IRQ_VERYLOWBAT,
+> +	BCM59056_IRQ_RTM_DATA_RDY,
+> +	BCM59056_IRQ_RTM_IN_CON_MEAS,
+> +	BCM59056_IRQ_RTM_UPPER,
+> +	BCM59056_IRQ_RTM_IGNORE,
+> +	BCM59056_IRQ_RTM_OVERRIDDEN,
+> +	BCM59056_IRQ_AUD_HSAB_SHCKT,
+> +	BCM59056_IRQ_AUD_IHFD_SHCKT,
+> +	BCM59056_IRQ_MBC_TF,
+> +	BCM59056_IRQ_CSR_OVRI,
+> +	BCM59056_IRQ_IOSR_OVRI,
+> +	BCM59056_IRQ_SDSR_OVRI,
+> +	BCM59056_IRQ_ASR_OVRI,
+> +	BCM59056_IRQ_UBPD_CHG_F,
+> +	BCM59056_IRQ_ACD_INS,
+> +	BCM59056_IRQ_ACD_RM,
+> +	BCM59056_IRQ_PONKEYB_HOLD,
+> +	BCM59056_IRQ_PONKEYB_F,
+> +	BCM59056_IRQ_PONKEYB_R,
+> +	BCM59056_IRQ_PONKEYB_OFFHOLD,
+> +	BCM59056_IRQ_PONKEYB_RESTART,
+> +	BCM59056_IRQ_IDCHG,
+> +	BCM59056_IRQ_JIG_USB_INS,
+> +	BCM59056_IRQ_UART_INS,
+> +	BCM59056_IRQ_ID_INS,
+> +	BCM59056_IRQ_ID_RM,
+> +	BCM59056_IRQ_ADP_CHANGE,
+> +	BCM59056_IRQ_ADP_SNS_END,
+> +	BCM59056_IRQ_SESSION_END_VLD,
+> +	BCM59056_IRQ_SESSION_END_INVLD,
+> +	BCM59056_IRQ_VBUS_OVERCURRENT,
+> +	BCM59056_IRQ_FGC,
+> +	BCM59056_IRQ_MAX,
+>  };
+>  
+>  #endif /*  __LINUX_MFD_BCM590XX_H */
+> 
+> ---
+> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+> change-id: 20250816-bcm590xx-irq-2d4c1cbe00b1
+> 
+> Best regards,
+> -- 
+> Artur Weber <aweber.kernel@gmail.com>
+> 
+
+-- 
+Lee Jones [李琼斯]
 
