@@ -1,173 +1,163 @@
-Return-Path: <linux-kernel+bounces-867101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7356CC01990
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:59:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2057DC01918
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB0E53B4CBB
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEA0E19A7088
 	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC5C32D42B;
-	Thu, 23 Oct 2025 13:53:31 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A7532AAA8;
+	Thu, 23 Oct 2025 13:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iXp9T6fl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rtm0eFfB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F5432C95E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFDC32860A
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227610; cv=none; b=iOCyBwK2A79W49Qpo1JAPHZl3Tpo0OcUmB+qItF+y3UQ364C/iCMsFBIsf+alw+7WfUzuwDWXXjPvseGRRMqGbaJ+Kk9TNcOGg8spox6WoybrQcb/aRSzLbF58i6R3RCCvBBGmYTT3J410/aauMRt0FDm6vS6qTSvpvIO2GW8HE=
+	t=1761227602; cv=none; b=fCp+kyklXu6pWjcDABFr8944pe++MlF925nZsK50h/c2CwR4HR3Saa5Uhrqb8c7Ti6JlI+WjjF6UBJiZsL8PE5Z6f26Sd8vFodJT34YlO4gGgYOKECVHO2bDwbkTSi+v7RfJGDcYeJ4GSAiU68p8aiRRzIejtRwsEYlILv3yR3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227610; c=relaxed/simple;
-	bh=kdE9Jg1aTTwOMfEfQ1gVdd0QwKyIOwxWFl/ZobnLhVs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lVZ4g07EWqDdNTIGTGGRCmQj7SfY1TbWM7ILMzVWMpCjkl14oYv7wP5FX0Yxq85UvyP9aP3BWJBs0CEbwF39NGd9Xh+kULbHy3F+52z61G2nuzmI5Uc0UQUehocCpKPGsU7H9kL/a2YO8hZffy4H7QubT0W6CSAHPJgTbW91qcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BA61721279;
-	Thu, 23 Oct 2025 13:53:01 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ED1B413B11;
-	Thu, 23 Oct 2025 13:52:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OMeeOTYz+mjvQQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 23 Oct 2025 13:52:54 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Thu, 23 Oct 2025 15:52:41 +0200
-Subject: [PATCH RFC 19/19] slab: remove frozen slab checks from
- __slab_free()
+	s=arc-20240116; t=1761227602; c=relaxed/simple;
+	bh=On/yckDKKiF+EFR0uGo6hOHdxgssUvTV3nxiyNhHf6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n6YTXsuUxIoBGjulvSTvTljH8CS3plsf3q5qOJBARb28X6RAWggltRX87aYm338CV1GyJekQfm3cFPDL+cCLxZOVKIRaU5eZUzpwMyTGBXj0jKBdoBl3BxinIgvpFMnfjszWwWMBr+hTtUHoxkfbITuR99KpUcQIPSqxHFPAGgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iXp9T6fl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rtm0eFfB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 23 Oct 2025 15:53:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761227598;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sRAusrPVOYEO1ClBZpA951BRZx8PMSxnPOWyXbmsS2E=;
+	b=iXp9T6flSOXELfe2ZZmzybkkOsRgW86acJCjsGBfuSsoTAEoq+xTDvejqlumN9ShUkMc7V
+	Z8eFTaJ140miuAXk3a1PSNMPjcvjJ1vZEy2KvInzmSAga99abMpLjijh3FatjgnNWR5vw0
+	HvsM3etXucLUkGXNdrUSNbSyXl+tc1gwiZ+MAdTBdelb/RNzow+HuBdy7RqNnXGkh8LcTh
+	kBRCLArholLTNTbN/946PLdR3E38pMh7AHclKXA5/2IWXGWzfjlDpA4ZWTZJx//p5w2+a0
+	Hk8Z0geA2qxncQ44dznCTwt1qGdG+QREUObdhcoGJkUFOoZMa1Hx8LaFkNzQrQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761227598;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sRAusrPVOYEO1ClBZpA951BRZx8PMSxnPOWyXbmsS2E=;
+	b=Rtm0eFfB7vhEQc95RDb5MKDHkjj+Q9GSpZkpN28XEY4x8FrQKx4qKITMtBf83IkQsI8yF7
+	sktYxRcEY4qI5nBg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
+	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
+	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wander Lairson Costa <wander@redhat.com>
+Subject: Re: usage of DEFINE_WAIT_OVERRIDE_MAP(LD_WAIT_SLEEP)
+Message-ID: <20251023135316.1ZRx0UU5@linutronix.de>
+References: <aGvTz5VaPFyj0pBV@uudg.org>
+ <20250728201441.GA4690@redhat.com>
+ <aIh5QajyaVT7MtVp@uudg.org>
+ <20250729114702.GA18541@redhat.com>
+ <aIjCYEkgNvVpMYCS@uudg.org>
+ <20250729130936.GB18541@redhat.com>
+ <20250801102428.GB27835@redhat.com>
+ <20250811105948.OafBprND@linutronix.de>
+ <20251020145310.GA9608@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-sheaves-for-all-v1-19-6ffa2c9941c0@suse.cz>
-References: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz>
-In-Reply-To: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Suren Baghdasaryan <surenb@google.com>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Alexei Starovoitov <ast@kernel.org>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
- bpf@vger.kernel.org, kasan-dev@googlegroups.com, 
- Vlastimil Babka <vbabka@suse.cz>
-X-Mailer: b4 0.14.3
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Rspamd-Queue-Id: BA61721279
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251020145310.GA9608@redhat.com>
 
-Currently slabs are only frozen after consistency checks failed. This
-can happen only in caches with debugging enabled, and those use
-free_to_partial_list() for freeing. The non-debug operation of
-__slab_free() can thus stop considering the frozen field, and we can
-remove the FREE_FROZEN stat.
+On 2025-10-20 16:53:10 [+0200], Oleg Nesterov wrote:
+> Hi Sebastian,
+Hi,
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/slub.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+> > You are correct Oleg. I've been just verifying it and yes: LD_WAIT_SLEEP
+> > suppresses also mutex while the intention is to only suppress
+> > spinlock_t.
+> > We have four users in tree, based on quick check all four should use
+> > CONFIG, three of them do use SLEEP.
+> 
+> No ;)
+> 
+> I was going to send the patch which does s/SLEEP/CONFIG/, but this
+> would be wrong. printk_legacy_map can use LD_WAIT_CONFIG, but lets
+> look at debug_objects_fill_pool()
+> 
+> 	if (!IS_ENABLED(CONFIG_PREEMPT_RT) || preemptible()) {
+> 		/*
+> 		 * Annotate away the spinlock_t inside raw_spinlock_t warning
+> 		 * by temporarily raising the wait-type to WAIT_SLEEP, matching
+> 		 * the preemptible() condition above.
+> 		 */
+> 		static DEFINE_WAIT_OVERRIDE_MAP(fill_pool_map, LD_WAIT_SLEEP);
+> 		lock_map_acquire_try(&fill_pool_map);
+> 		fill_pool();
+> 		lock_map_release(&fill_pool_map);
+> 	}
+> 
+> If CONFIG_PREEMPT_RT=y and preemptible() is true, LD_WAIT_CONFIG won't work.
+> lockdep will complain if fill_pool() takes a spinlock_t, spinlock is
+> LD_WAIT_SLEEP on RT.
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 515a2b59cb52..9b551c48c2eb 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -336,7 +336,6 @@ enum stat_item {
- 	FREE_RCU_SHEAF_FAIL,	/* Failed to free to a rcu_free sheaf */
- 	FREE_FASTPATH,		/* Free to cpu slab */
- 	FREE_SLOWPATH,		/* Freeing not to cpu slab */
--	FREE_FROZEN,		/* Freeing to frozen slab */
- 	FREE_ADD_PARTIAL,	/* Freeing moves slab to partial list */
- 	FREE_REMOVE_PARTIAL,	/* Freeing removes last object */
- 	ALLOC_FROM_PARTIAL,	/* Cpu slab acquired from node partial list */
-@@ -5036,7 +5035,6 @@ static void __slab_free(struct kmem_cache *s, struct slab *slab,
- 
- {
- 	void *prior;
--	int was_frozen;
- 	struct slab new;
- 	unsigned long counters;
- 	struct kmem_cache_node *n = NULL;
-@@ -5059,9 +5057,8 @@ static void __slab_free(struct kmem_cache *s, struct slab *slab,
- 		counters = slab->counters;
- 		set_freepointer(s, tail, prior);
- 		new.counters = counters;
--		was_frozen = new.frozen;
- 		new.inuse -= cnt;
--		if ((!new.inuse || !prior) && !was_frozen) {
-+		if (!new.inuse || !prior) {
- 			/* Needs to be taken off a list */
- 			n = get_node(s, slab_nid(slab));
- 			/*
-@@ -5083,15 +5080,10 @@ static void __slab_free(struct kmem_cache *s, struct slab *slab,
- 		"__slab_free"));
- 
- 	if (likely(!n)) {
--
--		if (likely(was_frozen)) {
--			/*
--			 * The list lock was not taken therefore no list
--			 * activity can be necessary.
--			 */
--			stat(s, FREE_FROZEN);
--		}
--
-+		/*
-+		 * The list lock was not taken therefore no list activity can be
-+		 * necessary.
-+		 */
- 		return;
- 	}
- 
-@@ -8648,7 +8640,6 @@ STAT_ATTR(FREE_RCU_SHEAF, free_rcu_sheaf);
- STAT_ATTR(FREE_RCU_SHEAF_FAIL, free_rcu_sheaf_fail);
- STAT_ATTR(FREE_FASTPATH, free_fastpath);
- STAT_ATTR(FREE_SLOWPATH, free_slowpath);
--STAT_ATTR(FREE_FROZEN, free_frozen);
- STAT_ATTR(FREE_ADD_PARTIAL, free_add_partial);
- STAT_ATTR(FREE_REMOVE_PARTIAL, free_remove_partial);
- STAT_ATTR(ALLOC_FROM_PARTIAL, alloc_from_partial);
-@@ -8753,7 +8744,6 @@ static struct attribute *slab_attrs[] = {
- 	&free_rcu_sheaf_fail_attr.attr,
- 	&free_fastpath_attr.attr,
- 	&free_slowpath_attr.attr,
--	&free_frozen_attr.attr,
- 	&free_add_partial_attr.attr,
- 	&free_remove_partial_attr.attr,
- 	&alloc_from_partial_attr.attr,
+Where is this? This is then wrong then because _SLEEP is for MUTEX and
+those things that sleep-sleep and pretend to sleep.
 
--- 
-2.51.1
+spinlock_t should be LD_WAIT_CONFIG. This is used in
+include/linux/spinlock_types.h via SPIN_DEP_MAP_INIT which is only
+defined once as LD_WAIT_CONFIG.
 
+rt_mutex is defined as LD_WAIT_SLEEP but this one is not the one we use
+for spinlock_t.
+
+What you want to have working in the end is the following scenario:
+
+|static DEFINE_SPINLOCK(lock_spinlock);
+|static DEFINE_RAW_SPINLOCK(lock_raw_spinlock);
+|static DEFINE_RAW_SPINLOCK(lock_raw_spinlock2);
+|
+|static void lockdep_test(void)
+|{
+|        static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_CONFIG);
+|
+|        raw_spin_lock(&lock_raw_spinlock);
+|        lock_map_acquire_try(&put_task_map);
+|
+|        spin_lock(&lock_spinlock);
+|        spin_unlock(&lock_spinlock);
+|
+|        raw_spin_lock(&lock_raw_spinlock2);
+|        raw_spin_unlock(&lock_raw_spinlock2);
+|
+|        lock_map_release(&put_task_map);
+|        raw_spin_unlock(&lock_raw_spinlock);
+|}
+
+This will work. On RT as well but is wrong and will not happen due to
+the preemptible() check. On !RT it will so you want lockdep to be quiet.
+
+> 
+> Oleg.
+
+Sebastian
 
