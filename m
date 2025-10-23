@@ -1,188 +1,146 @@
-Return-Path: <linux-kernel+bounces-866928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C1BFC01102
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:18:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7FA1C01110
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC9F33AA787
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:18:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47A8B1A03896
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD84313541;
-	Thu, 23 Oct 2025 12:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FTtuAEou"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF9C31329E;
+	Thu, 23 Oct 2025 12:18:28 +0000 (UTC)
+Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B087313530
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE04A313538
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761221885; cv=none; b=TSVfpUPeu1CaihWr3av2rA6mj92SjiPS3qkk95ipyuK8GMuvKhNXIwXWAhXF78lmakK+6RnPJLSk1xMGoa5ctJUElQ1u0fbc00gbVIRwXf+C3qvkus2FmNdfIZQlV4fHLBBDMIIuuM964EBrAtuDYXSwtOat2eDeqFv3+0FzMVk=
+	t=1761221905; cv=none; b=GuYozJHnynRXVJQ3uPRB+SuTN9276h9S/gZbT+7Zb/59Goam4/RgjQmj+bJ7Y3Iik+MmmgpGkcozcRjaGToGZZAKTXNbzN3v4d2HCjEDm01WSJ1Uf/IZ4DRWYfCP/C8kRDyNgpDh5erT/CmSS6vp0pna26M0iGg5VdWkWa3HAbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761221885; c=relaxed/simple;
-	bh=LWgkqKBorpr/kjhxEBAgg7GDiTpoir1TYcClkGM2qiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H8RJgXny1vMxAOt/QC58lAGqvhCepp7LBb+VR8qwZPga6+iW3Y09dk9DNb4U+jxI5GXpYr5FYh0i+ye2OPRpZjlJG77ecOXdpHTseh1l0JTS/zpWAcKlvMFCFI/0YrrPPrmu2HmjSTl2WwtCSe5wq8bLyqW4sr++bY4zNNmun7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FTtuAEou; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N7K2D3022504
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:18:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ROFrsQyZm8CifMY+KSTeuljF
-	MGnyvNU7m+oJiV21M1s=; b=FTtuAEoupXC5vdrrdyN6IxcUq+6yZemCgio0oCQD
-	O9ESPbFCoEwgoO2OgxMOD4PaaBGiBmf+bgtaj2PgIlTDRyDIqGK4mBVXszrWVpUR
-	UUNWk3SbmrypTznS/u7oqEM+4wMx0ut7ONpVxXg0S1wqoD20QmgEhwYQAsFiYupQ
-	7U7+ivuGwHVztmvC9c1vPYaBbzh/OGrF9se0c4J/FISDE2dUOihmXbGmNDOgROpU
-	bDzmlbt3MaYIQpFWQOYba6m25ah6FsUaWCdo7E6R36UNxkqTdMWoFG2lADYTOVKh
-	fwwDNkgqpLrUA4yQgPu/k3l1cBeuD+I5TmTZKWRZFYhI6w==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v1w88bgu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:18:00 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e8a2ef0249so23122271cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:18:00 -0700 (PDT)
+	s=arc-20240116; t=1761221905; c=relaxed/simple;
+	bh=6UnI/G5uFXvZM3QYOrlOsy8lHW3iy4QXrl32Cyvdw+A=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cfg68v+tDk2LAm6dn3RzQJqSG2sgwlqOJj51BmC9MQlb3LKGm4L71AUb2owleaguxbk5oF3aIcA/47dOLV+Fc/nu6EcDh5H29U8L9Yo7AE1glVxshoYZAKAwhe4omotpOA9XAwQ8CZEIlPxhzhryKbaXb8c15kFZTmnatzKTW9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=esmil.dk; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.224.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=esmil.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-63cf0df1abbso793553d50.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:18:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761221878; x=1761826678;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ROFrsQyZm8CifMY+KSTeuljFMGnyvNU7m+oJiV21M1s=;
-        b=TP+mH3P0OrBi6rkhBCa6mJ8tIKNCmLvE7nPlq+m9Hrk7l5GcqrEggX7JkbYa46O3v8
-         jwu9EJyJOvxI2+wHQztAKAzGf67KSd9RImNkaqVIrG8sa2P7ZvjcicNDSTVM5ICA0E/e
-         LpurwTYcsZBhHss7zvjfO799FOxcvrPPUs+CfZaazoH7L0J9gQmlNeN/kSLQ7hnfqoxA
-         dolPcJMqqV8E5gMt8j3HkPWDW6MoCxC497UhzN0FG8nnikX5p47oj7PQorrIdLkY40i2
-         BltIh/ACkHW9nK94WBTQQC39E7W1PNP2sh23fWbvLIFKofLlEsvKB2zf5aT7Uo7vsrO2
-         mmow==
-X-Forwarded-Encrypted: i=1; AJvYcCUkl8SwGzi6Apz3D4DufsnogrYASecvDwLBEWUmhYTKjFMSzMXvS0WlEIZlhBtEnxCm5iaYwwyzVqw3dLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyyi8Ee1cDjeRM+tbW+OfUdBJxlh8/OGPkB1g/qPlPKoMybLqFS
-	fJ5dCeSiWs2LpspwqAWqtBWxJWCbGDf2rYV5vuGo6h1Ij1WiGW5Fhx0L3OyV4H+KDkO4FCffgNo
-	baNH1Na8tFPL8cvbjmsaJkveVqv85s4GIySLrLt52M2FrIKisegVpPbXcfUxS03QmrFU=
-X-Gm-Gg: ASbGncv+UMU2qapQ9eYk/dntZQiyq8dHGyzj2xITew4+o3/JaO3eGFnu5xR26J18lOw
-	PEzWIqy7yJVN6CuvgW5PQRh7ppYzLM/J/nvSysNhmAjOdBdfN+Ue59BYd652vcDdlxsGGvjXjlz
-	JafAxKh3ES1Q3jAZddtVloyDN13kISQwHVItLMbIWDJsvpleQGvYB98wyvYCSIIKpqg+wtv/hpx
-	GiIGY5ZMiPu9hs3E5vu2I42vMi9asaq6KGllqdUC8l5yyRprpNAa45tnpSAWn17x5ylSBdnD83j
-	uKVq2y56e3SOOkGRI3ii6/PZWpU81Iz8/H4UP27YaNM2rMXnC9gbI6Xp2gOaHyxXDlXVu0tpJ+j
-	MvDbOx8JKmJ4kN36MLwSsYlcUArZyh37E+918qospfg+GhBVQzL4/prrQm4Pa9o9NRqn5XheHeL
-	dcmAWR/3h0Z0g8
-X-Received: by 2002:a05:622a:1b8d:b0:4e8:aa15:d927 with SMTP id d75a77b69052e-4e8aa15d9bfmr268551321cf.47.1761221877845;
-        Thu, 23 Oct 2025 05:17:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEM6vcDVrWNof3DbeXJ3ZyXrq6655uWMwZz0bKDp8nNSSm+wXht2S5o3XqgeX/K+hhx91DY1g==
-X-Received: by 2002:a05:622a:1b8d:b0:4e8:aa15:d927 with SMTP id d75a77b69052e-4e8aa15d9bfmr268550861cf.47.1761221877374;
-        Thu, 23 Oct 2025 05:17:57 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4aded25sm697972e87.16.2025.10.23.05.17.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 05:17:55 -0700 (PDT)
-Date: Thu, 23 Oct 2025 15:17:53 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: yuanjie yang <yuanjie.yang@oss.qualcomm.com>
-Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
-        simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
-        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
-        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
-Subject: Re: [PATCH 12/12] dt-bindings: display/msm: qcom,kaanapali-mdss: Add
- Kaanapali
-Message-ID: <3jjgcha25ieekpulyc64gafyg56n66emr2ibmtdyugfsm6tjvh@rkhrs474vgdc>
-References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
- <20251023081736.1251-1-yuanjie.yang@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1761221898; x=1761826698;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:user-agent
+         :from:references:in-reply-to:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4fF/fwVg7UrUpgvaNoDLtEEeEL936gX4ttsHTSYttVM=;
+        b=JufaDkB4VxO4Ti27vOjJCQHYzq9beWjA0PrWS72/H+zWMBNveQPnHSDo/awV/lkQnp
+         To5SuqstQHNAwj19Zdq9c8SBPlKB3j2Pz434Cbfs4SwT/nYTXBi0eGWI0kh1EjJv6Npq
+         X6oNyc9pU00qSJHiuLN1vtsC/3g0IRGSwpTMMTV4lg59Bk7UV4E4mW3fba5PAhep+vqH
+         LMii68RQZmuDoAuEFPnJLTE2m7wWgmEoosbsHgOczD9lB1jvtjtk+tU77ELYbwgwI/eL
+         A14cbSZQtHlLmUlWBzfMJ3DDD5CsLUCByIc2fnF8WWRPIEDPazoQ2KcX6VoBVh4L9kM1
+         xSrw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+WOtbmo4bm3lajszCG8ANKvcQp/5YAwGr7yhjgtcQxW74yzl/0YoExE+Xm/DZ84w3fU2IFxt44Magn5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzKLVKlR8vJ7dKH0qXxj+okBjaJ5Z1pvP7pN8KUzCOm/2ioKUm
+	O5P9MQ8AYxkNRJLl4ofeFyqePui57lo+qolGk/P3jM8HZga3N3/I8st7zgBNVT/ZQgbIasof4p5
+	mhkN/WvTb/4BLKkXLyV+d4C0TadcEPZAigw==
+X-Gm-Gg: ASbGnctvwzBRBctw48xdfzCbTkvvMBK0j2WuLt9slAZmQ1iKUsfZBJQ7evAkcKNhoZU
+	oSTa2N4EM/j7bIDRhpfb9/a8Gex7xnBJpOEYSImzcWG1G0U6NjDky1UYP/fstpJ9ghRniUVsuGN
+	ibzMV1e04/gD73ok6jk5tT/1TZ53ydTq0CALtJDwRQb9pbiCdhWTBZMpbIvKp4yYfCGQworXVQz
+	ah4GV2Wyhu/zsSSrdlQ6LdqGRdI6vsWM8EF3Cs1/r8rHcVIr815tqxurEHbNLZLIlSb2g==
+X-Google-Smtp-Source: AGHT+IEC3QHhYBZSQQPhFBXYj6WYUOW1grD9uZTJNUw3bPCmSjtWE4zRxeVpvsKcNBIq63CnLwvpseCqNRb/wfa8wBw=
+X-Received: by 2002:a05:690e:1502:b0:62f:c634:4b3f with SMTP id
+ 956f58d0204a3-63f377cd99amr1469290d50.7.1761221898433; Thu, 23 Oct 2025
+ 05:18:18 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 23 Oct 2025 05:18:16 -0700
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 23 Oct 2025 05:18:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023081736.1251-1-yuanjie.yang@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxNSBTYWx0ZWRfX9/EyLu1+SCHZ
- 183OHwn2SGKnsB5kJgRZnkNBd/2NKjZnkvEw7MMR00SqRuI5XW+/7I/9IMB5MVMTzMiD8KzDEvh
- L7/hivId/DvyPzSKzeYL9/7Njcwc3gzxjPqb0TJ21LMt4DvxoMvA4HEdiFn1IkQ6d6FrFG+8CxB
- yFatMN3BsPsW14Woci3u81EZuqHHd/0KBLq9NgR1wzGUgeSATmomuj7Sg3K8bcPpwIb4angSixr
- p+6f2oCV7N9UeACnWBw8oWHVnRG8LcaWv+IYMKln6dWywp5Oh/+RS7ADXk6bZDtf3ZHhiZTffSq
- nIX5txUVmKAXvOQEiB7RCHXLvueQqgAFHa/tlYkkksTJZFmjV/IhPr0dt9ao/IDu7jgszoeSqb0
- 3/jU7MHYJW2mHXvXdAXqVvmwolFSTA==
-X-Authority-Analysis: v=2.4 cv=bNUb4f+Z c=1 sm=1 tr=0 ts=68fa1cf8 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=UAfhHCFBB_nVBZkyMDUA:9 a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-GUID: Vl7GNr7Y1qlQ9FuKQRjYq1H5JbhnRfW2
-X-Proofpoint-ORIG-GUID: Vl7GNr7Y1qlQ9FuKQRjYq1H5JbhnRfW2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 adultscore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180015
+In-Reply-To: <CAMRc=Mc9e4P9vCt79yR1Jt5_2wxUngqAR_m1AxG=nbz=Cr3BjQ@mail.gmail.com>
+References: <20251021181631.25442-1-alitariq45892@gmail.com> <CAMRc=Mc9e4P9vCt79yR1Jt5_2wxUngqAR_m1AxG=nbz=Cr3BjQ@mail.gmail.com>
+From: Emil Renner Berthing <kernel@esmil.dk>
+User-Agent: alot/0.0.0
+Date: Thu, 23 Oct 2025 05:18:16 -0700
+X-Gm-Features: AS18NWC-riM2AFKbkUWAzUi3IEgdY1Ce6EbhwvllAw7hGVDS1TddtOVJTTQLTxk
+Message-ID: <CANBLGcygpsp=R5gM7NeuVO-JG1yfQJ_0dhnFfL1ud=291cJZAQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: starfive: use dynamic GPIO base allocation
+To: Ali Tariq <alitariq45892@gmail.com>, Hal Feng <hal.feng@starfivetech.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 04:17:36PM +0800, yuanjie yang wrote:
-> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> 
-> Add MDSS/MDP display subsystem for Qualcomm Kaanapali.
-> 
-> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> ---
->  .../display/msm/qcom,kaanapali-mdss.yaml      | 298 ++++++++++++++++++
->  1 file changed, 298 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,kaanapali-mdss.yaml
-> 
-> +
-> +  "^phy@[0-9a-f]+$":
-> +    type: object
-> +    additionalProperties: true
-> +    properties:
-> +      compatible:
-> +        const: qcom,kaanapali-dsi-phy-3nm
-> +
-> +required:
-> +  - compatible
-> +
-> +unevaluatedProperties: false
-> +
-> +
-> +            mdss_dsi0_phy: phy@ae95000 {
-> +                compatible = "qcom,kaanapali-dsi-phy-3nm", "qcom,sm8750-dsi-phy-3nm";
+Hi Ali,
 
-This doesn't match what you've written above. Was it validated?
+Quoting Bartosz Golaszewski (2025-10-22 09:23:37)
+> On Tue, Oct 21, 2025 at 8:17=E2=80=AFPM Ali Tariq <alitariq45892@gmail.co=
+m> wrote:
+> >
+> > The JH7110 pinctrl driver currently sets a static GPIO base number from
+> > platform data:
+> >
+> >   sfp->gc.base =3D info->gc_base;
+> >
+> > Static base assignment is deprecated and results in the following warni=
+ng:
+> >
+> >   gpio gpiochip0: Static allocation of GPIO base is deprecated,
+> >   use dynamic allocation.
+> >
+> > Set `sfp->gc.base =3D -1` to let the GPIO core dynamically allocate
+> > the base number. This removes the warning and aligns the driver
+> > with current GPIO guidelines.
+> >
+> > Tested on VisionFive 2 (JH7110 SoC).
+> >
+> > Signed-off-by: Ali Tariq <alitariq45892@gmail.com>
+> > ---
+> >  drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c b/drive=
+rs/pinctrl/starfive/pinctrl-starfive-jh7110.c
+> > index 05e3af75b09f..eb5cf8c067d1 100644
+> > --- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+> > +++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+> > @@ -938,7 +938,7 @@ int jh7110_pinctrl_probe(struct platform_device *pd=
+ev)
+> >         sfp->gc.set =3D jh7110_gpio_set;
+> >         sfp->gc.set_config =3D jh7110_gpio_set_config;
+> >         sfp->gc.add_pin_ranges =3D jh7110_gpio_add_pin_ranges;
+> > -       sfp->gc.base =3D info->gc_base;
+> > +       sfp->gc.base =3D -1;
+> >         sfp->gc.ngpio =3D info->ngpios;
+> >
+> >         jh7110_irq_chip.name =3D sfp->gc.label;
+> > --
+> > 2.43.0
+> >
+> >
+>
+> That's a NACK until you also remove JH7110_AON_GC_BASE and
+> JH7110_SYS_GC_BASE assignments after explaining why they are no longer
+> needed.
 
-> +                reg = <0x09ac1000 0x200>,
-> +                      <0x09ac1200 0x280>,
-> +                      <0x09ac1500 0x400>;
-> +                reg-names = "dsi_phy",
-> +                            "dsi_phy_lane",
-> +                            "dsi_pll";
-> +
-> +                clocks = <&disp_cc_mdss_ahb_clk>,
-> +                         <&rpmhcc RPMH_CXO_CLK>;
-> +                clock-names = "iface",
-> +                              "ref";
-> +
-> +                vdds-supply = <&vreg_l3i_0p88>;
-> +
-> +                #clock-cells = <1>;
-> +                #phy-cells = <0>;
-> +            };
-> +        };
-> -- 
-> 2.34.1
-> 
+Thanks for your patch, cleaning this up. As Bartosz said you'd want to clea=
+n up
+the now unused defines and the gc_base member of struct jh7110_pinctrl_soc_=
+info
+too though.
 
--- 
-With best wishes
-Dmitry
+As for why this is no longer needed, I don't think it was ever needed. It j=
+ust
+slipped through review unfortunately. Hal should be able to explain why if
+that's not the case.
+
+/Emil
 
