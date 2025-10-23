@@ -1,110 +1,145 @@
-Return-Path: <linux-kernel+bounces-867539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8E5C02DCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:12:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F03C4C02DD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC8D84ECDAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82C953AE805
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEE334B1B8;
-	Thu, 23 Oct 2025 18:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C34224891;
+	Thu, 23 Oct 2025 18:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NSoGluIG"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rc1/R/ZQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F691474CC
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FDBEEAB;
+	Thu, 23 Oct 2025 18:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761243159; cv=none; b=AgHWIig8y/O5Vlqf7bpHafzL70fDlV8sHjaB7oSRuFXavBUrHEVBo1Hum5F9TDaKMUKk6DvhoEko8S8mKUauKfQyzjODhyWWPCzV19JwSYIyXeqkolRRXvFJf63D22kTfakZWDH8h9CnLvCPwGA8OKN6HUP74VcD+Ksj19Q7lKE=
+	t=1761243330; cv=none; b=I4uQgZHinJdv7B7eOzNgUrB0gXYc4ptPSwIytd8MUXuS9hT3kQxiWi1dBg1cB2oOC8Na18XR9/hy1GtRCArFiJtw1MAyV/TSZsLuZYD8G7Kw1WTGUCV9zOfY+YakBe6wezlOgJj5ve6lPfXZWvDC9NvTJgz4mnYs0g6OnAy0g7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761243159; c=relaxed/simple;
-	bh=LBnfKUDTw6Ut96cNOQwpeXVHk5a80pg/4FNF9IBsbZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qTVyZpPRwIttkmOHWfyPK0ZD6FPXG0Oe0eKCEd5u1/dNzycOnU+ZDZ1he2jxpxxisadA1ypxnHZqPwm2aKMybl67we6tBzVhwGSOyisoeo8Jvm2zb9CFI3LnlWsWQIpok+2fz1gObqg9kWB+VY2mu4FXpnelMzFE7IBjaTrJotg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=NSoGluIG; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b67684e2904so830755a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:12:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1761243157; x=1761847957; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iOU/kElSaCjd9f7zwYG7ZjeJEeWR4TSXwf/lG3jqcY8=;
-        b=NSoGluIGHY41qA1OvvpOTRQQ5esruNqNo4EHESFCOygz2LIXbSEHSXHs7deAX4PFeZ
-         jegp4+YGfzSsFhazKbAOAeSSjcuUv8LdEMvCRlIHZkk6lAT3uIv10lH7rPmDcW0VONSv
-         A1M5yozih/39ctEtvZp5+l3kVD4Ql9wQ4Ob4NHQiUOFM7eHQNk+BSd5OnhsbTg8f8Is/
-         W2JvXpFfixNPmTe4zPfRMSm9Z2ASWiFfI6uw9tKEweWYGoZUqERgTEphct0w27cTTuF/
-         GyzUFGXN/raAqVb1HNrbebflcqiXT83q/tAyKiFrJdyL2HAadrXAwXR61J1e6k/s2+0U
-         +XlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761243157; x=1761847957;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iOU/kElSaCjd9f7zwYG7ZjeJEeWR4TSXwf/lG3jqcY8=;
-        b=H4/j647pNcA8wFkELy/vI2Mat2XyORJcVH4IoIDPpD5we5SwjhZNfx2qpbA5iRstTJ
-         u2h1J547DTADAfHtcjMGFaQGki7uohaHmmZ4JcHRfJ0gctgPWfz4J/cAx73iLSEMIPT7
-         MuVyvAr1cwN40YfYUnovu8uteyINLdAfyV2No1Hb0UOVkz8p8AUz2r6MXJlzr1Dgy22o
-         dYIDkl90PCvc1sXKbZdUf+vuIo4yrPDk71zbfIG/ZHegxPQLu76+issLkEA592xUxuhH
-         VPHQxhz6sf74f1oPiYvq3E+2FNLF0+8duopMEi0CVrA8XKhwFJ+63oZ8SW9dL+h/312R
-         +HaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYyU6rNbtsnN3egtzBEkURkBR3P0/v2be8dHenjc1CSJufl+HcqwxTDpQvbKR1ChwnkssHOEKA1dY+46A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy//FZKODZN742X2qpD4RCLvatd7suWZ1w/hX1KDYUv+n93gj1p
-	05UeC/8O1xwRm09fK6Lys7sVLr+JNgrXk4fxFAYMNwb6jwQ9o3rECxcO9hscVvoFsos=
-X-Gm-Gg: ASbGnctdcpfVxnk5F7vyiWy9dP/KXbGS5Gs0W/tFfCMxS3f9zkuQAZ4NkXDI2tRwvLh
-	h7z+GU+knz4NbilGXviy64NJevBxXdcAgrpw7S4qqE7jofEwO964FyBCHjwg/cgoRwzRYCKBRee
-	TldPaCTWo2wqQQGNL/Ku0BUv/YSW+An5/TFyqLTikwgEhplIFnOCbug3OB2fG11SIKjmr1jPAcD
-	vqvIaIYtFdjKBbQieg5fwe1YQhJqzDh/wU3W4TeGpD6QP+t0vhDjyN3BYu7IpCVV77c3mCUFXY6
-	TnuU6JpJzc0yJSxSbCXPDf1CqLqQRJ4wwPrfRSBQLO7MBmnns9R41yBsjnS16OltnIOVpC4IzUS
-	xlT8U2dqE1qnsL0D7WbU4UC1PCxSKCfw7CpTVShjhY4boHgWIN4EPzrJlT1HN
-X-Google-Smtp-Source: AGHT+IF1WEdpusCP+BeMXzNhxGYpnraKs8rtFDbaJHh+VNXtmmVcLIGFG75EjXdN+9DNv8IrhqEt/A==
-X-Received: by 2002:a17:902:e743:b0:290:ad79:c613 with SMTP id d9443c01a7336-290cb27c76cmr315785155ad.47.1761243156831;
-        Thu, 23 Oct 2025 11:12:36 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946e2578desm29726705ad.106.2025.10.23.11.12.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 11:12:36 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vBznf-00000003Bqs-16NV;
-	Thu, 23 Oct 2025 15:12:35 -0300
-Date: Thu, 23 Oct 2025 15:12:35 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Reaper Li <reaperlioc@glenfly.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/arm-smmu-v3: fix probe device bug due to
- duplicated stream IDS.
-Message-ID: <20251023181235.GH21554@ziepe.ca>
-References: <20251011023003.159922-1-reaperlioc@glenfly.com>
+	s=arc-20240116; t=1761243330; c=relaxed/simple;
+	bh=nxY+HuqTIpPkP+CSbToqpWvLHkXZOSn2v3/twOPxEK0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gL8vxyQIDU8PBgbtPtzQbQFdo2im9iv5/BmsZ4qz/nLO3wj1mVLUPJMUbiYkI2VWr6nD+Y2Dc9WnEJVZUnE5w3CE8EXYCE3su83MECr8GjXW81SzW+z5OcHBjUa9IbT+a9uqDR3dov7ckqOOnFpsYU1hNa64w7aTYSWMjj0vDzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rc1/R/ZQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C8A0C4CEE7;
+	Thu, 23 Oct 2025 18:15:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761243329;
+	bh=nxY+HuqTIpPkP+CSbToqpWvLHkXZOSn2v3/twOPxEK0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Rc1/R/ZQa1d/72zD1UgfhxRZSvRM5QVh4DIPIIflsCQp3uzoklRZVUbgxT7zDg5i0
+	 91neO92uQaWUwYSR0cTyMQ4ryqgRhRMXThQ/YkbqXywo8LFPewVgG7hrwIgCQqW4XS
+	 usfDAW1s2L1XrhlwrJQUZtgdWt06SHDC2knOfCze2XcKr4pxLXd8ba3RZAq/4iifVI
+	 iNejbVlCjcUsozOxGLGRy/5CoTE0Xkg/GBkJ5CyIS4jokDazQSd2IlJOoTQmqD/0U6
+	 VTxYVnwkR1p/H2jlPjAdb+zIv8eQkYjmMC+xi/Ji2zxf3vP61m5m8J7GD2Lt1poAKF
+	 SI67Cb6dHkW/A==
+Message-ID: <fa397247-6271-47eb-bea6-ccd83808df74@kernel.org>
+Date: Thu, 23 Oct 2025 20:15:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251011023003.159922-1-reaperlioc@glenfly.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/12] ASoC: dt-bindings: sound: cirrus: cs530x: Add
+ cs530x
+To: Vitaly Rodionov <vitalyr@opensource.cirrus.com>,
+ Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+ devicetree@vger.kernel.org
+References: <20251023090327.58275-1-vitalyr@opensource.cirrus.com>
+ <20251023090327.58275-6-vitalyr@opensource.cirrus.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251023090327.58275-6-vitalyr@opensource.cirrus.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 11, 2025 at 10:30:03AM +0800, Reaper Li wrote:
-> From: Reaper <reaperlioc@glenfly.com>
+On 23/10/2025 11:03, Vitaly Rodionov wrote:
+> This patch adds additional cs530x family variants.
 > 
-> Commit 9246b487ab3c ("PCI: Add function 0 DMA alias quirk for Glenfly Arise
-> chip ") add quirk to fix hda dma request issue, but IORT logic populaties
-> two identical IDs into the fwspec->ids array via DMA aliasing in
-> iort_pci_iommu_init() called by pci_for_each_dma_alias().
+> cirrus,cs4282 - high-performance, 32-bit resolution, stereo CODEC
+> cirrus,cs4302 - high performance stereo DAC, 2 channels
+> cirrus,cs4304 - high performance stereo DAC, 4 channels
+> cirrus,cs4308 - high performance stereo DAC, 8 channels
+> 
 
-I'd rather we not have duplicate IDs in the same fwspec, can we avoid
-that at the source?
+<form letter>
+This is a friendly reminder during the review process.
 
-Jason
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here. However, there's no need to repost
+patches *only* to add the tags. The upstream maintainer will do that for
+tags received on the version they apply.
+
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+Best regards,
+Krzysztof
 
