@@ -1,161 +1,126 @@
-Return-Path: <linux-kernel+bounces-867459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438DDC02B52
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:18:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED41C02B58
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FB85189AB8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:18:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 297584FFF94
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32474347FE4;
-	Thu, 23 Oct 2025 17:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kgpth9zE"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8DF346797;
+	Thu, 23 Oct 2025 17:17:46 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC08334405E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 17:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649D12D0C73;
+	Thu, 23 Oct 2025 17:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761239772; cv=none; b=c6mnnSPVphrZm1bDonUU3fXD4O4dbdSVdX5b3/5dCQ82nevrBUoReK+P3sG09OZ1q9WTNEabug2qBAtNtvMMBlsR+1G2PzvcfNt5xMzXpJrNE6yay9TwFL+QujdwHQaW75bE9EBZqvpoOmY9CIhQndf7c1UXK4JT/rsL4RkxG1s=
+	t=1761239866; cv=none; b=MPV7oHsewjjLl8JHqtwaEvrMWxMpGInZZILfpk3ORjJNoxTGcRhF/hdnEpUIHuMKHXhAGuT6qd9mIe5ReKL0hbFvspcoEYGAQD8V5l3qdJw0b8TUiPDUQJ0oeDQrY1mSiIPR6TQDVLYF9grwhy5NRQp1d/VLz77SeBVer0MXRYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761239772; c=relaxed/simple;
-	bh=OFXY+MUOP+8Y/CCUUhXO0LVlD5TFWIEKLsX65S4vUHI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qga0WGxMasqz4U2bH9ELLjhu8aHsVZw2Qqk6uJzDViz5UdGehONfjeo4Rg7aHKmWoNIY9OHxRWJUeNJRws4ndX1xRnwf1nqTV1ZJyY3aLMFCEiefSdpXFwwxopkW9nJgXTWmZSC+4T+B5VCQ/LIY+2SgrbOY7Bu3rFHJnvcGwAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kgpth9zE; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-87c1a760df5so15079376d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:16:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761239770; x=1761844570; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/jNMd4vA/95M+VKKUUTCyOXkzNHKfGBp1ZY+J8a7Y14=;
-        b=kgpth9zEapf2Wc+voLSmj3Rp00KQorTjuN6lu9boN4ZuR5jVcI2nSrc92fNB9XJba+
-         LeluDkJm2oQ79XkupNCqWA3J+tXkAnxfBMC3lrMCmTAtyHM+QeO9Zl2NDP9wANoT3917
-         yNKSud79l0whsTrfb3mIXcyWGwVV6UNEAGgrzz+AKccvmaPq+yZe/A5QL4eVQ+xHDTp2
-         YBM2eIF5ZC3qiGjyL1l8RXEuWb4L7NqzlHVf3Qb49w7LOn1LzG2apGQYCBpc6e7Syf0B
-         u/4TobM7HTSBR4iAxKP6EqhIuWaxa0RdB0sM2h9usJMUeDOLlNktxXN7YufroIl+Otgp
-         ndpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761239770; x=1761844570;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/jNMd4vA/95M+VKKUUTCyOXkzNHKfGBp1ZY+J8a7Y14=;
-        b=IZFYhehXG3A9L20mY9eyXL5O+X9Ga8T0mgKgAJChVg62ALp5sq6mg+Zj+9GIk4Wldt
-         X0GmqpvhSrUp/yl/SThyFokippnh2XeQtKGGYi/rMwfUAN4IXxNZEb30FNJJ4qLzysCE
-         TiZoBh96zL8BxV0zpKeX0kTwC9Gbb2q6R4zsWUKWBY+gDGiy9zejcCGlC41v6qY46xj4
-         QcyPmz2jaYy6/lshm6GOGYFsIyes/MPA7epwrCs8QjdTdVBv+DjeRVung/puAzj2/GPL
-         BAoOp1ChxVdi9LExpAG+LUhyESfnXYb3/gYleuSOPiysDVEd7WmbglNvid8EC+7FvQfi
-         mf+w==
-X-Forwarded-Encrypted: i=1; AJvYcCU04sCruo/MEMQ6toRZSKALgj3mezID99H28vjRvxEX2EhVKaY5PI6KOc1+rx3seX5ID45WvNWdndw5wfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF6eCo/UxnsBIISF+HfEvQP0irqekdyg7ZONUFk+8H9YW2XWI9
-	iPx9xCvCuYbgaoZQgBHAtRVUnPj3YE2YFlmzpOLyFBHjFvRIhD5I2zmUU/D2Pg==
-X-Gm-Gg: ASbGncsTh+vBVu1MIBMT4rPl5zq84nDeqJbR5AWMII08zL86trm2qab1p3pc9oTVEkK
-	+jk9OqWaAhlgnhvSDQ20L11UfTng+BU88u/pfDpE3HwYn0R0nGo9G5yTR3uFUQYbsSNf5P9A58n
-	/KMqIQxoqwDRluCwomOG5UT4TOmb8pj4VX+tvC5/SsBa/4CY0ETOBcTrpsWQfA5Mgs/XyF8kVl3
-	qmUqO6w6yZt96jBf0j15ZARlOlvqBTK/DliTmuYQFMw7LPtfBEfFB9W873bRZqgi5/QZMOrRXho
-	b0Gy30qyk1FozjrMUTHcBXF30+nLID+/Z+zFohpSLjPsSs4kxGq3JIrdLResoXGg1GbqXKWrhJ+
-	8qshLOCBMXPRiR8gCSjrdQKDLc5+4XXwtvM/LtvN3Be+zT5isBZOlhcZx6jN0u/Xg74Id76oN
-X-Google-Smtp-Source: AGHT+IEztWYoBs06abPB+Ng5TILZNZBwSb7b5djQJWRLRDbxap619QyU24vmkV9lb0CaXbn6mXi9sQ==
-X-Received: by 2002:ad4:5ca9:0:b0:796:3a6f:f931 with SMTP id 6a1803df08f44-87c2055e0fcmr324235476d6.12.1761239769652;
-        Thu, 23 Oct 2025 10:16:09 -0700 (PDT)
-Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87f9e824cc2sm18692156d6.61.2025.10.23.10.16.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 10:16:09 -0700 (PDT)
-From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	John Hubbard <jhubbard@nvidia.com>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH] uaccess: decouple INLINE_COPY_FROM_USER and CONFIG_RUST
-Date: Thu, 23 Oct 2025 13:16:06 -0400
-Message-ID: <20251023171607.1171534-1-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761239866; c=relaxed/simple;
+	bh=sAGYcixA8hc2rJdPBYVrw8hY9B06k+KGm7ku/lneWDM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IxNJt7C3+VAuiYk/a6yWm0cAkgZHwi7Bm9CMCywmstBkKNi/8O3CTyEqHH8iyIVQm9+aTeC9ik5tgPmaVJ5asV68f40+aCbNjO76Ergsr5r/qN6p0Sv0SUy9dV+1HUFCfxN1AGpwdeMi2aXzwHb695bufQG0cJupdoDD6fTFyAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cst132Dpbz6M4mN;
+	Fri, 24 Oct 2025 01:13:59 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 252171402F9;
+	Fri, 24 Oct 2025 01:17:41 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 23 Oct
+ 2025 18:17:40 +0100
+Date: Thu, 23 Oct 2025 18:17:38 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: David Lechner <dlechner@baylibre.com>
+CC: Frank Li <Frank.Li@nxp.com>, Jonathan Cameron <jic23@kernel.org>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy Shevchenko
+	<andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Antoni Pokusinski
+	<apokusinski01@gmail.com>, Vasileios Amoiridis <vassilisamir@gmail.com>,
+	Justin Weiss <justin@justinweiss.com>, "open list:IIO SUBSYSTEM AND DRIVERS"
+	<linux-iio@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>
+Subject: Re: [PATCH 1/1] dt-bindings: iio: pressure: Remove vdd-supply and
+ vddio-supply from required list
+Message-ID: <20251023181738.00004253@huawei.com>
+In-Reply-To: <0e00bb14-19c7-493a-9629-354bac3a273e@baylibre.com>
+References: <20251022164154.2994517-1-Frank.Li@nxp.com>
+	<0e00bb14-19c7-493a-9629-354bac3a273e@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Commit 1f9a8286bc0c ("uaccess: always export _copy_[from|to]_user with
-CONFIG_RUST") exports _copy_{from,to}_user() unconditionally, if RUST
-is enabled. This pollutes exported symbols namespace, and spreads RUST
-ifdefery in core files.
+On Wed, 22 Oct 2025 12:03:27 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-It's better to declare a corresponding helper under the rust/helpers,
-similarly to how non-underscored copy_{from,to}_user() is handled.
+> On 10/22/25 11:41 AM, Frank Li wrote:
+> > Some board designs connect vdd and vddio to the system power supply. Remove
+> > these properties from the required list and make them optional, since
+> > drivers/iio/pressure/mpl3115.c does not use them.
+> > 
+> > Fix below CHECK_DTBS warnings:
+> > arch/arm64/boot/dts/freescale/imx8qm-mek.dtb: pressure-sensor@60 (fsl,mpl3115): 'vdd-supply' is a required property
+> >         from schema $id: http://devicetree.org/schemas/iio/pressure/fsl,mpl3115.yaml#
+> >   
+> 
+> Why not just add the required properties to the .dts file?
 
-Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
----
- lib/usercopy.c         |  4 ++--
- rust/helpers/uaccess.c | 12 ++++++++++++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+That would be the ideal. 
 
-diff --git a/lib/usercopy.c b/lib/usercopy.c
-index 7b17b83c8042..b00a3a957de6 100644
---- a/lib/usercopy.c
-+++ b/lib/usercopy.c
-@@ -12,7 +12,7 @@
- 
- /* out-of-line parts */
- 
--#if !defined(INLINE_COPY_FROM_USER) || defined(CONFIG_RUST)
-+#if !defined(INLINE_COPY_FROM_USER)
- unsigned long _copy_from_user(void *to, const void __user *from, unsigned long n)
- {
- 	return _inline_copy_from_user(to, from, n);
-@@ -20,7 +20,7 @@ unsigned long _copy_from_user(void *to, const void __user *from, unsigned long n
- EXPORT_SYMBOL(_copy_from_user);
- #endif
- 
--#if !defined(INLINE_COPY_TO_USER) || defined(CONFIG_RUST)
-+#if !defined(INLINE_COPY_TO_USER)
- unsigned long _copy_to_user(void __user *to, const void *from, unsigned long n)
- {
- 	return _inline_copy_to_user(to, from, n);
-diff --git a/rust/helpers/uaccess.c b/rust/helpers/uaccess.c
-index f49076f813cd..4629b2d15529 100644
---- a/rust/helpers/uaccess.c
-+++ b/rust/helpers/uaccess.c
-@@ -13,3 +13,15 @@ unsigned long rust_helper_copy_to_user(void __user *to, const void *from,
- {
- 	return copy_to_user(to, from, n);
- }
-+
-+#ifdef INLINE_COPY_FROM_USER
-+unsigned long rust_helper__copy_from_user(void *to, const void __user *from, unsigned long n)
-+{
-+	return _inline_copy_from_user(to, from, n);
-+}
-+
-+unsigned long rust_helper__copy_to_user(void __user *to, const void *from, unsigned long n)
-+{
-+	return _inline_copy_to_user(to, from, n);
-+}
-+#endif
--- 
-2.43.0
+We had a long discussion a few years back around whether supplies like this
+should be optional or not in dt-bindings. Conclusion (I think at Mark Brown's
+suggestion) was that the rule should be if power is needed for the chip to
+function they aren't optional in DT.
+
+The driver doesn't necessarily do anything with them, though it probably
+should and adding simple support is trivial. 
+
+In a given downstream dts if people are happy to have the checks fail
+then fallback regulators can be used but the binding shouldn't reflect
+that bit of papering over missing supplies.
+
+So no to this change. 
+
+Jonathan
+
+> 
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml | 2 --
+> >  1 file changed, 2 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml b/Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml
+> > index 2933c2e10695e..04703a01cf7af 100644
+> > --- a/Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml
+> > @@ -47,8 +47,6 @@ properties:
+> >  required:
+> >    - compatible
+> >    - reg
+> > -  - vdd-supply
+> > -  - vddio-supply
+> >  
+> >  additionalProperties: false
+> >    
+> 
+> 
 
 
