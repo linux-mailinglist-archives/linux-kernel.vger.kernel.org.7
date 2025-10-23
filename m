@@ -1,143 +1,165 @@
-Return-Path: <linux-kernel+bounces-866106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57128BFEE3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:03:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86021BFEE4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3456A1A03B92
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:03:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 607593A6F58
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665E02045AD;
-	Thu, 23 Oct 2025 02:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41092AD0D;
+	Thu, 23 Oct 2025 02:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q5d4LORr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkUoTsaJ"
+Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383061A9FB3;
-	Thu, 23 Oct 2025 02:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767BF1E3DDB
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761185010; cv=none; b=iRViexsYeIXPtG+nVsED6/SPbBIh97b1Jt2O8r+b/kFmIVIuuz0jV5Y65tFKWUIj0zBLUvM+HSvUg8s9XSN/BF9EQ85d/Vpc2lqp33Ya4CkB81gV0Xr02j6CpwI7WhzRGst42biKGOqDYzkuQPh+Ka0NCpM/1wxa7PyJKHJp+Zc=
+	t=1761185460; cv=none; b=F7QcQUy2SuMwM+lMTtSUuzCGLbBzdsxE5faBpDAvODIq3BHb0j8Yv70oBiem1jbsft9WADajnPkQvmYoo39JptOcfkDtwZnJ8fPX166v4bK4VfGt0o/pLZ3IAjUeAw2E78jY1cQGYl1wmYxD98MImwilIJjF+56Sxc9GNkLipOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761185010; c=relaxed/simple;
-	bh=II/ZdmUJAzGxv3QWKqJsX3UBm0ANX86R16zcAqswtp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mcDiKVDf74un2XhGw6cqd2HlwH7PrTA2jXQSWePmEb8sdVUoUCdhqg2TEvYV/hQ4sR+JIVX3qDlfYc6BUgIvs2F2yjD1J9dSHaIO3EYn+cXFogQXcGzD7/GhWqPwVHizMD4viYGxNd7dNdv+ZBYe1O1S1KWeTTW9KIk0CEOv/vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q5d4LORr; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761185009; x=1792721009;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=II/ZdmUJAzGxv3QWKqJsX3UBm0ANX86R16zcAqswtp0=;
-  b=Q5d4LORrBu1g3srYOsxM2f88VV/qA2t7Rv/cVWU8uJNPqV+eDW/bDuSe
-   gVFF1jZgos4PIEwpzOEuZthg3hoCh8e3fvP3YBpF250z8tcvvxkXalR9m
-   UIQpHATIDCE+4UMdgky1reWOtUhjHqchSUwxHhKEx8x1s6CMlM4xSE3j8
-   sssyjVcP3Dk9B+0yC3fccedXq1e8rW5LBgTk8dV/L4xvIMiOwVhwyKNES
-   gIOGswpCPonb+SE38f00ZcmUzPTd2vrarCSGno+/RR/DxSZNRjTtwQ/As
-   K1Xg56V22hUPLw/+lJKXm63+fZMUdXQaHd5QBPhwEFHIZmHvoQG+9RWiE
-   g==;
-X-CSE-ConnectionGUID: nxa1szPtTgqiWI3il5AgYw==
-X-CSE-MsgGUID: Mz64xfB2SjOk0nezPJjd1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63267056"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63267056"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 19:03:28 -0700
-X-CSE-ConnectionGUID: 4N7oplQ1RIy9OOBPvJvjpQ==
-X-CSE-MsgGUID: Ps9BDcO6Tf2jplnBrjoDwA==
-X-ExtLoop1: 1
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 22 Oct 2025 19:03:25 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vBkfj-000Cv5-0Z;
-	Thu, 23 Oct 2025 02:03:23 +0000
-Date: Thu, 23 Oct 2025 10:03:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: muhammed.efecetin.67@gmail.com, linux-rockchip@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	heiko@sntech.de, neil.armstrong@linaro.org, lee@kernel.org,
-	rafael@kernel.org, efectn@protonmail.com, daniel.lezcano@linaro.org
-Subject: Re: [PATCH v3 3/5] mfd: add Khadas Edge 2 registers to khadas-mcu.
-Message-ID: <202510230921.N0ezsPtO-lkp@intel.com>
-References: <adbd6dd5e9ed938bab7927597b7f21eca3274b78.1761059314.git.efectn@protonmail.com>
+	s=arc-20240116; t=1761185460; c=relaxed/simple;
+	bh=LK/MCU545iyIlJWNJBzuC2+l7bxB3Gjk5BZcNhGZT8M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LwlAuOjCMWzzb+YVE12o62GEYQLF50SQqNg5lG1qao5JA2XT8sufSxZcLdC2bUx7bBKeTd79pdxZhYKeMOFnXrfKU76WtSPaSANTZ0vDfr+7PMxKL0NetZGfJZgL6SoaskpQLR+UJnwC8Jgw1dwa6r1HCON6IOLdhe8bX0DCWqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkUoTsaJ; arc=none smtp.client-ip=209.85.216.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-3307de086d8so302254a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 19:10:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761185458; x=1761790258; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OQXqtV/1uWQfXNewiRPXkUhRGITyK5eGr00S9JX7C5g=;
+        b=dkUoTsaJp29Fc5639V+e+Fgu9ZJGD1dyn7MxQrj6sJjFGEM1xifjpnRqPozZf1R+NV
+         fAKiwjH7ra4wmQaTFzhLiuB1v9gkSNXCSmJXjB+JcUsTUTEaf9mBaBgI9bqAI4N+PZTg
+         eftCfzhO6t+NfejE4soQNgAj74o8uJIlU0hpl+L1X1rqm0EJBQBPhbE9lFdcsXPtduq9
+         h2RayMWVaK3FJl0obUj1R88Gp3v/4VoLFVoc+I0so7/STO/MDD5Y72W//ukuaBoRv48i
+         vI3QV8j8+8hzzdMMSlbWVKaoM7co1ksujhx9GG1G7WvIve96pcltvg+o7hYxipNXmdKB
+         yJuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761185458; x=1761790258;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OQXqtV/1uWQfXNewiRPXkUhRGITyK5eGr00S9JX7C5g=;
+        b=M5aiMGvYdR3oVx8Qbmmh6VQGg5bdGfbVJnZOnXrqD7/BdXAuEYq9etaOWDu+AwX7WM
+         M+81m2U6jXT3GN2jiZdTffTO7G6OWAzUiAcSVnOgR0EEXxqnTdn16OwJwEbpmQbYF17a
+         r1M2q0Q+WECcjADAgN8blp2pec96FrIJmLwTXp9DDSGmxqeS5GJk3+dtchvRgziVNztO
+         VFAw+mj/Fb/hS39abV2BCDcyLXrhQANjSAdkfVX7YkyRRKxaxAKO/ACP4bXfPX/TnwUU
+         oZcjn3kRhh0qpuZhcTVY1uutZ5FZKfprx4e6SM4A1o4tHU3yOjfSDRCKzrZUGD0Oncez
+         Ktww==
+X-Forwarded-Encrypted: i=1; AJvYcCWIZwYBBpQr76UId1n/2xdt+kr77kx16AN4ePY+pBRqUnqdMTZORj/3bR2RmaAUgnEP2gtltrHpwuJCQ+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaVS4s5SmEognwe6L1d4kF6v/Z+QMmkTi/+Z6HDauiRD4zNmW0
+	dS0e0ehDlFW6xa75Xdlz9YR13BeTyZsEfimsd8uiMsNVLHClgLb3pRBKAsX62Z4MaPSXI7QT4MO
+	gRGtwqUZ78ZgEn4N4KauMHe9NMqqYurg=
+X-Gm-Gg: ASbGncsCMa/qqdrn7Y5boB2jHa5pcbMVYAAZGSWqEYr7vMF+0JTsDJTn4n6mLlBCxah
+	N+wLFFG78ye54/NcEux6iKkMiACIZzBw9/09+kuaG3x00PpOlKw2oCb7eQFv1WSl6+SoyqNwLJ6
+	gTp8Cv7b/IAfdmy5pjsG4LShjLjgj1AJNyl6NJQqIPsW16cxv02KwNWMYftwKZkUpNu+ik1deeA
+	JIJl6PrJlutitB7u8iw5IZcDp33ZDccCOBEz3muWGTYIe4e2bDKnpToy3ji+A==
+X-Google-Smtp-Source: AGHT+IH0vgBI91tHVmBwxye51nmDErzeihIRXQW2MwwIIZ/u/A9ulgOV+5Q8k6m6BkEHOHQMF8a53huNM7TMY2ohlXs=
+X-Received: by 2002:a17:90b:5386:b0:329:cb75:fef2 with SMTP id
+ 98e67ed59e1d1-33bcf85b45amr24269278a91.3.1761185457572; Wed, 22 Oct 2025
+ 19:10:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <adbd6dd5e9ed938bab7927597b7f21eca3274b78.1761059314.git.efectn@protonmail.com>
+References: <20251022030840.956589-1-Wenhua.Lin@unisoc.com> <CAAfSe-uq6GszSLgtM+UBuwJ6V1Bt0_1Ard8cb6e9MMCsdpJPqw@mail.gmail.com>
+In-Reply-To: <CAAfSe-uq6GszSLgtM+UBuwJ6V1Bt0_1Ard8cb6e9MMCsdpJPqw@mail.gmail.com>
+From: wenhua lin <wenhua.lin1994@gmail.com>
+Date: Thu, 23 Oct 2025 10:10:46 +0800
+X-Gm-Features: AS18NWDwNTU8arpSWNZRlcaFyHSGcyZrjd-l2OixTO1dXJxN-NI627aQSmAOdvo
+Message-ID: <CAB9BWhdKd93kJxPJv10X5uZ00O8d5NugoehX3_QtjmXQOMhDig@mail.gmail.com>
+Subject: Re: [PATCH] serial: sprd: Return -EPROBE_DEFER when uart clock is not ready
+To: Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: Wenhua Lin <Wenhua.Lin@unisoc.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Cixi Geng <cixi.geng@linux.dev>, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	Xiongpeng Wu <xiongpeng.wu@unisoc.com>, Zhaochen Su <Zhaochen.Su@unisoc.com>, 
+	Zhirong Qiu <Zhirong.Qiu@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Oct 22, 2025 at 2:55=E2=80=AFPM Chunyan Zhang <zhang.lyra@gmail.com=
+> wrote:
+>
+> On Wed, 22 Oct 2025 at 11:09, Wenhua Lin <Wenhua.Lin@unisoc.com> wrote:
+> >
+> > In sprd_clk_init(), when devm_clk_get() returns -EPROBE_DEFER
+> > for either uart or source clock, we should propagate the
+> > error instead of just warning and continuing with NULL clocks.
+> >
+> > Currently the driver only emits a warning when clock acquisition
+> > fails and proceeds with NULL clock pointers. This can lead to
+> > issues later when the clocks are actually needed. More importantly,
+> > when the clock provider is not ready yet and returns -EPROBE_DEFER,
+> > we should return this error to allow deferred probing.
+> >
+> > This change adds explicit checks for -EPROBE_DEFER after both:
+> > 1. devm_clk_get(uport->dev, uart)
+> > 2. devm_clk_get(uport->dev, source)
+> >
+> > When -EPROBE_DEFER is encountered, the function now returns
+> > -EPROBE_DEFER to let the driver framework retry probing
+> > later when the clock dependencies are resolved.
+> >
+> > Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
+> > ---
+> >  drivers/tty/serial/sprd_serial.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd=
+_serial.c
+> > index 8c9366321f8e..092755f35683 100644
+> > --- a/drivers/tty/serial/sprd_serial.c
+> > +++ b/drivers/tty/serial/sprd_serial.c
+> > @@ -1133,6 +1133,9 @@ static int sprd_clk_init(struct uart_port *uport)
+> >
+> >         clk_uart =3D devm_clk_get(uport->dev, "uart");
+> >         if (IS_ERR(clk_uart)) {
+> > +               if (PTR_ERR(clk_uart) =3D=3D -EPROBE_DEFER)
+> > +                       return -EPROBE_DEFER;
+> > +
+>
+> You are making this clock mandatory, sprd_serial driver could work as
+> serial ports for logs output without this "uart" clock.
 
-kernel test robot noticed the following build warnings:
+Hi chunyan:
+   Thank you very much for your review.
+   This clock is actually mandatory now=EF=BC=8Csome SPRD project use defau=
+lt 26M clock,
+   some new SPRD project use default 24M clock.  If driver can't parse
+this clock correctly,
+   driver will configure wrong baudrate and make the log garbled.
 
-[auto build test WARNING on lee-mfd/for-mfd-next]
-[also build test WARNING on lee-mfd/for-mfd-fixes rockchip/for-next rafael-pm/thermal linus/master v6.18-rc2 next-20251022]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks
 
-url:    https://github.com/intel-lab-lkp/linux/commits/muhammed-efecetin-67-gmail-com/dt-bindings-mfd-khadas-mcu-add-new-compatible-for-Khadas-Edge-2/20251021-232554
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
-patch link:    https://lore.kernel.org/r/adbd6dd5e9ed938bab7927597b7f21eca3274b78.1761059314.git.efectn%40protonmail.com
-patch subject: [PATCH v3 3/5] mfd: add Khadas Edge 2 registers to khadas-mcu.
-config: x86_64-buildonly-randconfig-002-20251023 (https://download.01.org/0day-ci/archive/20251023/202510230921.N0ezsPtO-lkp@intel.com/config)
-compiler: gcc-13 (Debian 13.3.0-16) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251023/202510230921.N0ezsPtO-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510230921.N0ezsPtO-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/mfd/khadas-mcu.c:103:35: warning: 'khadas_mcu_regmap_config_edge2' defined but not used [-Wunused-const-variable=]
-     103 | static const struct regmap_config khadas_mcu_regmap_config_edge2 = {
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/mfd/khadas-mcu.c:93:35: warning: 'khadas_mcu_regmap_config' defined but not used [-Wunused-const-variable=]
-      93 | static const struct regmap_config khadas_mcu_regmap_config = {
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/khadas_mcu_regmap_config_edge2 +103 drivers/mfd/khadas-mcu.c
-
-    92	
-  > 93	static const struct regmap_config khadas_mcu_regmap_config = {
-    94		.reg_bits	= 8,
-    95		.reg_stride	= 1,
-    96		.val_bits	= 8,
-    97		.max_register	= KHADAS_MCU_CMD_FAN_STATUS_CTRL_REG,
-    98		.volatile_reg	= khadas_mcu_reg_volatile,
-    99		.writeable_reg	= khadas_mcu_reg_writeable,
-   100		.cache_type	= REGCACHE_MAPLE,
-   101	};
-   102	
- > 103	static const struct regmap_config khadas_mcu_regmap_config_edge2 = {
-   104		.reg_bits	= 8,
-   105		.reg_stride	= 1,
-   106		.val_bits	= 8,
-   107		.max_register	= KHADAS_MCU_EDGE2_SYS_RST_REG,
-   108		.volatile_reg	= khadas_mcu_reg_volatile_edge2,
-   109		.writeable_reg	= khadas_mcu_reg_writeable_edge2,
-   110		.cache_type	= REGCACHE_MAPLE,
-   111	};
-   112	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> >                 dev_warn(uport->dev, "uart%d can't get uart clock\n",
+> >                          uport->line);
+> >                 clk_uart =3D NULL;
+> > @@ -1140,6 +1143,9 @@ static int sprd_clk_init(struct uart_port *uport)
+> >
+> >         clk_parent =3D devm_clk_get(uport->dev, "source");
+> >         if (IS_ERR(clk_parent)) {
+> > +               if (PTR_ERR(clk_parent) =3D=3D -EPROBE_DEFER)
+> > +                       return -EPROBE_DEFER;
+> > +
+> >                 dev_warn(uport->dev, "uart%d can't get source clock\n",
+> >                          uport->line);
+> >                 clk_parent =3D NULL;
+> > --
+> > 2.34.1
+> >
 
