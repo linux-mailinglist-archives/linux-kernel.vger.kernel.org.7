@@ -1,257 +1,269 @@
-Return-Path: <linux-kernel+bounces-866863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5023C00D44
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:43:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CCA4C00D65
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 751E43505DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:43:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D160C188F43E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6E030CD8D;
-	Thu, 23 Oct 2025 11:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C8830E854;
+	Thu, 23 Oct 2025 11:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NasfqWk2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ldLFkSh8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3DD30AD15
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BC42FD690;
+	Thu, 23 Oct 2025 11:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761219800; cv=none; b=k/+7+/C7tUJXUZtha0PX8XOCvyas60bP+U0CaTn/IIqkNneUj6wXZR5Q5C409I49O5HicY3gVGVG+7VRBcCBso/3GbrADMlZuySvBgjUY7hvVgHCwaiasMg/YIjWlM4DxsqUC9fjHZXKNzNP0aohRBu88A/yY9aFKj/+KKg8bF4=
+	t=1761219866; cv=none; b=QKahVgQOpL5h++pJe7QKSaVilJZAosBU2dbWBeXF+CIoI50FP0gt4DFJX12H1Ijn8wS1vfAu+TWKzA4g/2vh3vQAbaGkxdvLjoN7rpbL7DibDtk4b8N+Y2OppcGZxgRPwHdh3tBS2eBO3miIAsX0wNoIrYFclxROO4JQ/q2n3jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761219800; c=relaxed/simple;
-	bh=iOv6HrFN/GyaoxkmibXJeE3HzCloZJr9e+zIqeHbdlg=;
+	s=arc-20240116; t=1761219866; c=relaxed/simple;
+	bh=cy4V6zbnUJKpfzlYqkl2+ynvSjzII+zM16L4REe+EG0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=It572mRrN1UcpbesOmiYnLwmeBQFTIxC0WA59HFFwZMUrGShiHGH4Nht1viA3tPAT1UW1sC7zDUTXwc4obn9m086OuB1y1m1yuew7P99r28mcDQO2nNi11mjSwkUX17vFIm0+AmVh4VB7Q+WFyWlWV6TmjCnoAr+O2uYsi9josg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NasfqWk2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N72Jdq011684
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:43:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=U/OA0PZSj4gKuY85d/FcU28n
-	UQY1lg/5GJi4GwVamFc=; b=NasfqWk2ZECADNbBffa76Z/5DHnIlE36d1p3SbdH
-	sS7Oe5NMUQSXdQezZOW52Gtugyq+X7iX9mdSy9bhV9WcWwdp/YNtWsHqdnKiq+UF
-	AR0JuuoJTBpEXpVObW9gRARYcSYl1TkC+e9ZF8en9DGdJ0Ob/W0Ed9fLeF3nXiUe
-	/+Uk60be9CbaEeArKq39/acKaVq1LjpWMTjxUUhJFYqK5V0jxjd5n5B8xK4SlVqB
-	YZc48Zj+x4otifWHMUUfuIUYrhRaQs/zAosbj5eVaSd0T5dW8RwUcvjeJN9zs0Hm
-	X+urzMIe2t6V7ZqXBf9CmLwYjv5XjnEe9Axt74r6bwsxzA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49y524ae77-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:43:17 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4e8a9ec4746so38927101cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:43:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761219796; x=1761824596;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U/OA0PZSj4gKuY85d/FcU28nUQY1lg/5GJi4GwVamFc=;
-        b=W/uxQnecDJlwp75xX6KYXHW0L05+PWG1/O/x1GC1IcU+blE2ieNoeOr50MIz61Sl20
-         mccv4XpL0zXQd/Lhqtls4mj7uWxiu5P8JA2H3weEA2AcW/+pur8kASg4t5Rxu/i+BwWm
-         sXc3kvBVAfmb2kAf/0FfXcdVZ8ubdij7fZBWsPgB2KO3FV0d6DQxafaXdN+SEvhbAQVk
-         JcMCG/zOS+polvmzQovz+vIWn3s1lg+8HnUKLxywht6EmuBAH86OtjtS7mDPfkd964FS
-         liS3svtIgpghQLdwqL1SHgrLdUCmVlDEg3V90r3dcJfJt6OVY/RpXlqxlNApdraJ3d9/
-         B4mA==
-X-Forwarded-Encrypted: i=1; AJvYcCWihxtZhwEYgF2Adxm3BQ6wAIYNN6o+lzFnrah1SW7Y/NQb07OzpBpRIkDlGftpa7/StLUyNGB8w+vGCko=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0NwJwd2z+B3L1Cv+YcQKWmY6oc9INP8jitM0vXyebCUVFvvlI
-	RjTBzkKOJWnl209xPGS+fvJ15sL8r1OKBVM9pvOi+6KTx6gGqoNo8GtTcvzKAnrmdDyIiy1+8wI
-	pa5fjn1ejE6Z9teWuJEISa7G5n3p1P6PE3fMgZhOu7I/GTHuBEJnw6JDls4H5oDN78SGmqAtx7G
-	0=
-X-Gm-Gg: ASbGncun3ouZsvJB7AbrKRm/b4UQI3LKtP5c4VP6z7uuYHyCLyK/BexTWBFm4+Lck4A
-	tC+FzmYEg19aQGYBt96h+lpmw+5iJ6k3IxZy3j2IXHsIdmzzS0kyJBKvvDO411bG2zvw/VuCQ2D
-	0SAUjS3n7cAcEJNn1hBXos0gGBmec/OTK3kl3dmDrlcIFKYE5X0CqdzHgpMb/3bs9hZvUx5JMaA
-	sN68N7zpks/13df5aAXBAWqpshvYSphuN9Ick5RO4shJhbrV02uCJR7Ggh96O1qoKiO3FQPv6KE
-	0q9uDCBmBlR9e3sTEuL5LjHyuPN8IqduKLyRNivsBxaB3e89xqM0jHZ+6D4CIIUETuOP1W6KVN3
-	6Sg889zEst8KLADeUvWpbMc4HXOYhHW0/HGDZxZZaA3c/wjTeFEXiAGnQ2I5XpY0EV0sBPMocjp
-	9tS/avm1vjrm+2
-X-Received: by 2002:a05:622a:5d0:b0:4e8:97b3:abfb with SMTP id d75a77b69052e-4e89d35d2f9mr291370411cf.55.1761219795536;
-        Thu, 23 Oct 2025 04:43:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXyOFCl7kcBIEN/wDP5UVI6A64TolHRUI28nTCF4yEdOZomT5Qgfo9kDVTDA2p9pMBrG3vEQ==
-X-Received: by 2002:a05:622a:5d0:b0:4e8:97b3:abfb with SMTP id d75a77b69052e-4e89d35d2f9mr291370091cf.55.1761219795026;
-        Thu, 23 Oct 2025 04:43:15 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378d67dc640sm4062841fa.40.2025.10.23.04.43.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 04:43:14 -0700 (PDT)
-Date: Thu, 23 Oct 2025 14:43:12 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Srinivas Kandagatla <srini@kernel.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
-        Jianfeng Liu <liujianfeng1994@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        linux-arm-msm@vger.kernel.org, Xilin Wu <sophon@radxa.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        David Airlie <airlied@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-sound@vger.kernel.org
-Subject: Re: [PATCH v2] drm/display: add hw_params callback function to
- drm_connector_hdmi_audio_ops
-Message-ID: <jymgfmn5pje4qaslyaivzfm4m7ho774pid3uenj6yfrlrdk3ss@2nqojclepgsu>
-References: <20250925040530.20731-1-liujianfeng1994@gmail.com>
- <46q2pje4hginnm2wld6ejyo36hfkmkzydaa4qggx47gd2p4q4z@q6vmomtgqihv>
- <cc1afa21-8a66-4e0c-8fae-d0b07142b11d@kernel.org>
- <rydatk4grelhg6w57wwkqafq5ghccnsuiwvfqvvdv7qum5dg5a@scoc76ni7hue>
- <e69b23de-e9b6-4dfc-af01-7d2726dc23e4@oss.qualcomm.com>
- <bnrpfijh4rljdzroduqncfygysvgblljlhdpvq7ubajlbbwvwd@ohdmpjvpzj33>
- <f9c922f5-52af-45bb-a4ca-7ca80c0c3534@kernel.org>
- <7fwfxr7zqsaudselhru3jtjc2f7pdjvlaj2b464vgdlqcrljek@asci6y3ghq63>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f73Dl/4uwObM+iMligVaTTR72zL8wpZrcjtNoWOWGnEW+YkKr518pvxYjVSMsPGZAKpaKnXcIpI2jPy8EIH4SgPPIe+E+k8BdDD9uFFYXD/c7kd7eYY1UhXjPHqkCVG9b6ybT9ors4jJ99fF8GPXl9mwe3TwnKacN3ABu6kfDQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ldLFkSh8; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761219863; x=1792755863;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=cy4V6zbnUJKpfzlYqkl2+ynvSjzII+zM16L4REe+EG0=;
+  b=ldLFkSh8BYmH0fcUUwt8NhCgIh34/fp7apcAEHDhVKR7mt5oU38E8P61
+   A9ZTfvPZ6kpyy1JOXsxULoq7Fr47F0QfN+T8FAfg2f4ijeFTnS273IQup
+   fCSHwy2/19c608t6EeGaYlWKcaGMGdiWVqnLmqs7FYBliLNRiy/114t1/
+   oHWOGvQR57vlIzA9Ek9hXY8FaNS2Px/mrHbByS2XWUpWCY+8q6upf0Oa4
+   SGSxB5RAOlz/R8SWpKEzs4gxjk7JDHuXSGkTIfrc1ZRI7y5e+80BPMWHz
+   V78zRd8q+FOIjo05M/kQJhpbzP1IDuDky43vBzVQ3A2ob0XIQ0yoeYRpE
+   w==;
+X-CSE-ConnectionGUID: ZE3iSgYkTsCs/V8vjUli5w==
+X-CSE-MsgGUID: P8bD30V/SYmVDQjkEEh0hg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74823062"
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="74823062"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 04:44:23 -0700
+X-CSE-ConnectionGUID: lAhY9L45Q3OBESWWbhMiZA==
+X-CSE-MsgGUID: B9VvGqLOQLWhP4B5gy4dSg==
+X-ExtLoop1: 1
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 23 Oct 2025 04:44:18 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vBtjr-000DPt-2T;
+	Thu, 23 Oct 2025 11:44:15 +0000
+Date: Thu, 23 Oct 2025 19:44:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>, intel-xe@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	Matthew Brost <matthew.brost@intel.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Lukasz Laguna <lukasz.laguna@intel.com>,
+	=?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
+Subject: Re: [PATCH v2 22/26] drm/xe/pf: Handle VRAM migration data as part
+ of PF control
+Message-ID: <202510231918.XlOqymLC-lkp@intel.com>
+References: <20251021224133.577765-23-michal.winiarski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7fwfxr7zqsaudselhru3jtjc2f7pdjvlaj2b464vgdlqcrljek@asci6y3ghq63>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDE1NSBTYWx0ZWRfX4UCKvyjFduFm
- HSdrkcboYlArliGGKr8jIXS7uTcGwuHerEJy5cXzQDdgUl6fCsE7LfKp26eEz5G7dK/I4MynS9q
- gJojLnBBDnuF6rMjjgLM/laxLNxnIndBy0ZxIpDBbmK+F0J245DU4+in+O7T8CXuYX9lMN9H6fO
- kxoO7CleNUeXeoafoxr9s30NwIasxyjgMh8CzsWOt7YHHHvonCFz8MZGIVf7cR+xoRqPiUD1xbV
- JK0Bvq6Vjx3Q0yWoe9EeOIjn3s2+5b8VyWktyR0xDxTOiXxr66eFU+jW7pVSrPHXP0QiZ/8MMS3
- cMUUV9c/zhaiPqCf2mef5veD90f+gBQ1z9VbVY1y4mYm5XNONy88h8FNRQuRT59ONKSh8bJD2+b
- 6rFpcKKC+rVBZOQSSTqRVNEnqiu9YQ==
-X-Authority-Analysis: v=2.4 cv=Uotu9uwB c=1 sm=1 tr=0 ts=68fa14d5 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=pGLkceISAAAA:8
- a=HstBAKh7-VjeVNBl2p8A:9 a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-GUID: xYAYRI4e3RGFempBXtKIXZt-so__laZy
-X-Proofpoint-ORIG-GUID: xYAYRI4e3RGFempBXtKIXZt-so__laZy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 impostorscore=0 priorityscore=1501 clxscore=1015 spamscore=0
- adultscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510220155
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251021224133.577765-23-michal.winiarski@intel.com>
 
-On Sun, Oct 05, 2025 at 06:29:20PM +0300, Dmitry Baryshkov wrote:
-> On Sat, Oct 04, 2025 at 02:16:08PM +0100, Srinivas Kandagatla wrote:
-> > 
-> > 
-> > On 10/3/25 6:02 PM, Dmitry Baryshkov wrote:
-> > > On Fri, Oct 03, 2025 at 05:35:16PM +0100, Srinivas Kandagatla wrote:
-> > >>
-> > >>
-> > >> On 9/26/25 4:09 PM, Dmitry Baryshkov wrote:
-> > >>> On Fri, Sep 26, 2025 at 11:30:26AM +0100, Srinivas Kandagatla wrote:
-> > >>>>
-> > >>>>
-> > >>>> On 9/25/25 5:28 AM, Dmitry Baryshkov wrote:
-> > >>>>> On Thu, Sep 25, 2025 at 12:05:09PM +0800, Jianfeng Liu wrote:
-> > >>>>>> After reusing drm_hdmi_audio_* helpers and drm_bridge_connector
-> > >>>>>> integration in drm/msm/dp, we have dropped msm_dp_audio_hw_params and
-> > >>>>>> use msm_dp_audio_prepare instead. While userspace is still calling
-> > >>>>>> hw_params to do audio initialization, and we get the following errors:
-> > >>>>>>
-> > >>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-> > >>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-> > >>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-> > >>>>>> hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
-> > >>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
-> > >>>>>> qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
-> > >>>>>> qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
-> > >>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
-> > >>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
-> > >>>>>> MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
-> > >>>>>
-> > >>>>> And a call to hdmi_codec_prepare() comes only at this place.
-> > >>>>>
-> > >>>>> Srini, Mark, when selecting to only implement .prepare for codec ops I
-> > >>>>> was following the commit 2fef64eec23a ("ASoC: hdmi-codec: Add a prepare
-> > >>>>> hook"), which documents that IEC958 status bit is set after
-> > >>>>> .hw_params(), so it's only visible during .prepare(). Is it okay to
-> > >>>>> implement both callbacks? Or should the audioreach DAI driver be fixed
-> > >>>>> somehow instead (I suppose it assumes that the port is available after
-> > >>>>> .hw_params(), not sure if that assumption is correct)?
-> > >>>>>
-> > >>>>>>
-> > >>>>>> msm_dp_audio_prepare is not called because hdmi-codec driver only checks
-> > >>>>>> and runs hw_params before q6apm_lpass_dai_prepare(). This commit will
-> > >>>>>> add hw_params callback same as drm_connector_hdmi_audio_prepare, so that
-> > >>>>>> hdmi-codec driver can work with userspace alsa.
-> > >>>>>>
-> > >>>>>> Tested with Radxa Dragon Q6A.
-> > >>>>>>
-> > >>>>>> Fixes: 98a8920e7b07 ("drm/msm/dp: reuse generic HDMI codec implementation")
-> > >>>>>> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
-> > >>>>>
-> > >>>>> The patch LGTM, but I would wait for response from audio maintainers.
-> > >>>>>
-> > >>>>
-> > >>>> The ordering matters in this case as we need clocks and audio
-> > >>>> configuration on DP codec side to be setup before we start configuring
-> > >>>> the dsp pipeline. Looks like that DSP is trying to setup DP endpoint
-> > >>>> even before it is ready.
-> > >>>>
-> > >>>> q6apm prepare loads the dsp pipeline and starts configuring the
-> > >>>> endpoints, if the DP endpoint is not ready dsp would throw an error.
-> > >>>>
-> > >>>> We might be able to pull in some dsp logs to confirm this, but I dont
-> > >>>> have a setup that I can reproduce this issue.
-> > >>>
-> > >>> What would be your recommendation to proceed? Is it okay for the DAI
-> > >>> driver to depend on the .hw_params enabling the clock? Also I see that
-> > >>> the error regarding the clocks comes from .prepare callback too. What is
-> > >>> the order of .prepare callbacks()? Can we influence it?
-> > >>
-> > >> prepare follows hw-params, and prepare can be called multiple times
-> > >>
-> > >> When you mean order of prepare callbacks, you mean w.r.t codec and dsp
-> > >> backend dia link drivers ?
-> > > 
-> > > Yes. Here we got a dependency from the cpu dai to be prepare()'d after
-> > > the DP driver performs some actions, which were a part of hw_params()
-> > > callback but were moved to be executed during prepare() callback.
-> > > 
-> > > This leads me to two sets of questions:
-> > > - In which order are those callbacks executed? Can we make the ASoC
-> > >   enforce some order of DAI's prepare() callbacks?
-> > > 
-> > > - More improtantly, isn't it a sympthom of DP driver (incorrectly)
-> > >   performing too much in the .hw_params() / .prepare() callback? Should
-> > >   we move some of the setup to the .audio_startup() instead? What is the
-> > >   expected split between those callbacks?
-> > 
-> > I have not looked at full dp sequences but, if prepare is the only place
-> > when it enables the required clocks for audio block, then it is a
-> > problem, we should do it early so that DSP can enable the required
-> > configuration in prepare.
-> 
-> As I wrote, previously it was done as a part of hw_params, which is
-> also not optimal as hdmi-codec clearly defines both callbacks as
-> optional, requiring only one of them. Do you know, what is actually
-> required on the DP side for the DSP to be able to preapre()?
+Hi Michał,
 
-Srinivas, did you have a chance to look at this? Or the .hw_prepare
-ordering? I really don't want to land this fix only to face the same
-issue because on some of the platforms .hw_prepare() callbacks will be
-called in a different order.
+kernel test robot noticed the following build errors:
 
-> 
-> > 
-> > Its also doable to move out the clock related settings from  prepare to
-> > startup which should work aswell.
-> > 
-> 
-> -- 
-> With best wishes
-> Dmitry
+[auto build test ERROR on drm-xe/drm-xe-next]
+[also build test ERROR on next-20251023]
+[cannot apply to awilliam-vfio/next awilliam-vfio/for-linus drm-i915/for-linux-next drm-i915/for-linux-next-fixes linus/master v6.18-rc2]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Micha-Winiarski/drm-xe-pf-Remove-GuC-version-check-for-migration-support/20251022-064617
+base:   https://gitlab.freedesktop.org/drm/xe/kernel.git drm-xe-next
+patch link:    https://lore.kernel.org/r/20251021224133.577765-23-michal.winiarski%40intel.com
+patch subject: [PATCH v2 22/26] drm/xe/pf: Handle VRAM migration data as part of PF control
+config: arm-randconfig-r072-20251023 (https://download.01.org/0day-ci/archive/20251023/202510231918.XlOqymLC-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251023/202510231918.XlOqymLC-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510231918.XlOqymLC-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c:212:2: error: duplicate case value: 'XE_GT_SRIOV_STATE_RESTORE_DATA_DONE' and 'XE_GT_SRIOV_STATE_MISMATCH' both equal '31'
+           CASE2STR(MISMATCH);
+           ^
+   drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c:170:7: note: expanded from macro 'CASE2STR'
+           case XE_GT_SRIOV_STATE_##_X: return #_X
+                ^
+   <scratch space>:58:1: note: expanded from here
+   XE_GT_SRIOV_STATE_MISMATCH
+   ^
+   drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c:201:2: note: previous case defined here
+           CASE2STR(RESTORE_DATA_DONE);
+           ^
+   drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c:170:7: note: expanded from macro 'CASE2STR'
+           case XE_GT_SRIOV_STATE_##_X: return #_X
+                ^
+   <scratch space>:36:1: note: expanded from here
+   XE_GT_SRIOV_STATE_RESTORE_DATA_DONE
+   ^
+   1 error generated.
+
+
+vim +212 drivers/gpu/drm/xe/xe_gt_sriov_pf_control.c
+
+aed2c1d70aa008 Michal Wajdeczko 2024-03-26   99  
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  100  /**
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  101   * DOC: The VF state machine
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  102   *
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  103   * The simplified VF state machine could be presented as::
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  104   *
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  105   *	               pause--------------------------o
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  106   *	              /                               |
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  107   *	             /                                v
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  108   *	      (READY)<------------------resume-----(PAUSED)
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  109   *	         ^   \                             /    /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  110   *	         |    \                           /    /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  111   *	         |     stop---->(STOPPED)<----stop    /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  112   *	         |                  /                /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  113   *	         |                 /                /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  114   *	         o--------<-----flr                /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  115   *	          \                               /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  116   *	           o------<--------------------flr
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  117   *
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  118   * Where:
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  119   *
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  120   * * READY - represents a state in which VF is fully operable
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  121   * * PAUSED - represents a state in which VF activity is temporarily suspended
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  122   * * STOPPED - represents a state in which VF activity is definitely halted
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  123   * * pause - represents a request to temporarily suspend VF activity
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  124   * * resume - represents a request to resume VF activity
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  125   * * stop - represents a request to definitely halt VF activity
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  126   * * flr - represents a request to perform VF FLR to restore VF activity
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  127   *
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  128   * However, each state transition requires additional steps that involves
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  129   * communication with GuC that might fail or be interrupted by other requests::
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  130   *
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  131   *	                   .................................WIP....
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  132   *	                   :                                      :
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  133   *	          pause--------------------->PAUSE_WIP----------------------------o
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  134   *	         /         :                /         \           :               |
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  135   *	        /          :    o----<---stop          flr--o     :               |
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  136   *	       /           :    |           \         /     |     :               V
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  137   *	(READY,RESUMED)<--------+------------RESUME_WIP<----+--<-----resume--(PAUSED)
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  138   *	  ^ \  \           :    |                           |     :          /   /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  139   *	  |  \  \          :    |                           |     :         /   /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  140   *	  |   \  \         :    |                           |     :        /   /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  141   *	  |    \  \        :    o----<----------------------+--<-------stop   /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  142   *	  |     \  \       :    |                           |     :          /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  143   *	  |      \  \      :    V                           |     :         /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  144   *	  |       \  stop----->STOP_WIP---------flr--->-----o     :        /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  145   *	  |        \       :    |                           |     :       /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  146   *	  |         \      :    |                           V     :      /
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  147   *	  |          flr--------+----->----------------->FLR_WIP<-----flr
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  148   *	  |                :    |                        /  ^     :
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  149   *	  |                :    |                       /   |     :
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  150   *	  o--------<-------:----+-----<----------------o    |     :
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  151   *	                   :    |                           |     :
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  152   *	                   :....|...........................|.....:
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  153   *	                        |                           |
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  154   *	                        V                           |
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  155   *	                     (STOPPED)--------------------flr
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  156   *
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  157   * For details about each internal WIP state machine see:
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  158   *
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  159   * * `The VF PAUSE state machine`_
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  160   * * `The VF RESUME state machine`_
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  161   * * `The VF STOP state machine`_
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  162   * * `The VF FLR state machine`_
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  163   */
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  164  
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  165  #ifdef CONFIG_DRM_XE_DEBUG_SRIOV
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  166  static const char *control_bit_to_string(enum xe_gt_sriov_control_bits bit)
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  167  {
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  168  	switch (bit) {
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  169  #define CASE2STR(_X) \
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  170  	case XE_GT_SRIOV_STATE_##_X: return #_X
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  171  	CASE2STR(WIP);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  172  	CASE2STR(FLR_WIP);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  173  	CASE2STR(FLR_SEND_START);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  174  	CASE2STR(FLR_WAIT_GUC);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  175  	CASE2STR(FLR_GUC_DONE);
+2a8fcf7cc950e6 Michal Wajdeczko 2025-10-01  176  	CASE2STR(FLR_SYNC);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  177  	CASE2STR(FLR_RESET_CONFIG);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  178  	CASE2STR(FLR_RESET_DATA);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  179  	CASE2STR(FLR_RESET_MMIO);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  180  	CASE2STR(FLR_SEND_FINISH);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  181  	CASE2STR(FLR_FAILED);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  182  	CASE2STR(PAUSE_WIP);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  183  	CASE2STR(PAUSE_SEND_PAUSE);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  184  	CASE2STR(PAUSE_WAIT_GUC);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  185  	CASE2STR(PAUSE_GUC_DONE);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  186  	CASE2STR(PAUSE_FAILED);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  187  	CASE2STR(PAUSED);
+ed3b410584ff58 Michał Winiarski 2025-10-22  188  	CASE2STR(SAVE_WIP);
+008ba8d0525f68 Michał Winiarski 2025-10-22  189  	CASE2STR(SAVE_PROCESS_DATA);
+008ba8d0525f68 Michał Winiarski 2025-10-22  190  	CASE2STR(SAVE_WAIT_DATA);
+33cfbd2b4f240a Michał Winiarski 2025-10-22  191  	CASE2STR(SAVE_DATA_GUC);
+994e46306a1791 Michał Winiarski 2025-10-22  192  	CASE2STR(SAVE_DATA_GGTT);
+bdbad7e79b97c4 Michał Winiarski 2025-10-22  193  	CASE2STR(SAVE_DATA_MMIO);
+afa80586c0896a Michał Winiarski 2025-10-22  194  	CASE2STR(SAVE_DATA_VRAM);
+008ba8d0525f68 Michał Winiarski 2025-10-22  195  	CASE2STR(SAVE_DATA_DONE);
+ed3b410584ff58 Michał Winiarski 2025-10-22  196  	CASE2STR(SAVE_FAILED);
+ed3b410584ff58 Michał Winiarski 2025-10-22  197  	CASE2STR(SAVED);
+ed3b410584ff58 Michał Winiarski 2025-10-22  198  	CASE2STR(RESTORE_WIP);
+008ba8d0525f68 Michał Winiarski 2025-10-22  199  	CASE2STR(RESTORE_PROCESS_DATA);
+008ba8d0525f68 Michał Winiarski 2025-10-22  200  	CASE2STR(RESTORE_WAIT_DATA);
+008ba8d0525f68 Michał Winiarski 2025-10-22  201  	CASE2STR(RESTORE_DATA_DONE);
+ed3b410584ff58 Michał Winiarski 2025-10-22  202  	CASE2STR(RESTORE_FAILED);
+ed3b410584ff58 Michał Winiarski 2025-10-22  203  	CASE2STR(RESTORED);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  204  	CASE2STR(RESUME_WIP);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  205  	CASE2STR(RESUME_SEND_RESUME);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  206  	CASE2STR(RESUME_FAILED);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  207  	CASE2STR(RESUMED);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  208  	CASE2STR(STOP_WIP);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  209  	CASE2STR(STOP_SEND_STOP);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  210  	CASE2STR(STOP_FAILED);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  211  	CASE2STR(STOPPED);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28 @212  	CASE2STR(MISMATCH);
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  213  #undef  CASE2STR
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  214  	default: return "?";
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  215  	}
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  216  }
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  217  #endif
+2bd87f0fc24ae2 Michal Wajdeczko 2024-08-28  218  
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
