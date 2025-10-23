@@ -1,257 +1,108 @@
-Return-Path: <linux-kernel+bounces-867820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32AE0C038FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:35:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE79C03906
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F46E3B2034
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:35:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD3544E838E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBC7226CFE;
-	Thu, 23 Oct 2025 21:35:25 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53D7280308;
+	Thu, 23 Oct 2025 21:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="D5dLSV7c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04382BE7B6
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B43EEB3;
+	Thu, 23 Oct 2025 21:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761255324; cv=none; b=sYrwZFI2/KNwUKw8Qmy5GS9g32l902J6/Vd+YodHxmyypylVIUyoyPk3tH3R4VlhXVIUoyT4K/mFNjx3o4Lho4OmOU8gvk4Zo7O3eV7I9r0Louj/RYXxiMLL28Kv5Hib8DdVpv9w9/twBrQSG3LXcmJTKng8aTYi3/ll/YnMB+w=
+	t=1761255386; cv=none; b=jkg9cOK7oEN4Me3fzx/meABuoFRoTxUU8ZupFJuCsUjjNInqKpvVT1LzPQJTRTN+pHwnA2B99goyc8pNfzLD626lID6kdJcfZnVP+oy4nkyhjhUyeurxbA/tRcSoW7OXBwCAkJvXyOc1M1Lat7qlcPC+BiQcKzNZMmvsQqlhvIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761255324; c=relaxed/simple;
-	bh=OeqPto/PqG8I4DEhvUQT2BUN+VavuAa+M/8IJB9Px1g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=r69GwmES7ifjdqPWFrQWz0prvJ6gLnKqRZHQOq3XOJ/o/J8zq2yOEy0ONah630Ow5RT3kcLLH+UibbXaX8KDzTnzy2zbsEvQ1DAmnYzhBDIKIVRrXf9y37TS0eGHr95p7WYo4+3ss59fzVIVQkodzpMbj2lsqz2Xl8PSyL3tVsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-430cf6c6e20so17771965ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:35:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761255321; x=1761860121;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3DqmrSSmXNkGEyB/eMX6XMGKI6otJ6Nc72Pa7Dlj1ZA=;
-        b=isHH0K/9ZLiWvxthVR4VJ0ywEqZZnQymKlSj3Nsv0cewFqQg6YJvRkNJIVrcUy3aFq
-         OkgtRhscMMPxLOcpFQXtl76s5FU8B5zyr9Sv/MKBWLOb2yik1i+LVnzfKtsnt6svCAj8
-         iVwMr2O//Vwknh2chk0cQx/0XDdc0j7iI8myBHZ/e1ghQvQUyzLdw7xYUIksgDu9IOTW
-         pb9vet7tQ8QHCjX9jYU8xsXsc5dBao9TGrptb1XuR7TLirYJolTVTW9Rc9Bgr1K32Oaa
-         jPqRAm9A34eqj6+NjGgyvbVc3gZbW42oQLBPb+IHkP46r4vGPPNx11qd91QfJD1ZtgoZ
-         AGNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcpPxLvJu2UwWWX2QovWg/1NA9105LY/LBlC7V7y3T8qwFT2Rxf2xj5e03McYwmjoKtD9WcUbF5PrPZSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDcG97HuIrtm7OsTdzfNXYMFUI8DtiM321+Dli4kdmdHvz3GJX
-	NyVxw1Z1dJC7PszgKgWebVJOWMklRRVt/keXkA8oqPtfUVMuxESs98D3zqzAdg7juj6JH5oaQfM
-	auZH/VKsbASsQIrYVnkX3g+U+Q6fio0UV13210DPfqRNN+dSo3KaA66zuIn4=
-X-Google-Smtp-Source: AGHT+IH/NVs3VmuZ6OmIUBPRaZzUvi5LYHALglZxA/vuAMpxsbK+PeC9FpCy33YuShAHdKYPS7q2cCiop2k2xzDXJZpeBwNp/Dhp
+	s=arc-20240116; t=1761255386; c=relaxed/simple;
+	bh=PeQvjl8tTHsyJLNIyC0D1J39XRcadQROmtv7uZK7IMo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=GZSY0qaiFucal/+pL9eSb2n/grV1qeKQZ2Hs6pRDay+Sg5qM1b33sEYSiyHVdtgEu2wCkii02b9pc5qqiuMBsjsefXoNslLNwwc23POXNb47jWF0eR0hoPv3WtqJaCQVWDtrq7jfDpAAx5Lqc9Ro6skQW09ouOE6okRLHg7VztI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=D5dLSV7c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC59C4CEE7;
+	Thu, 23 Oct 2025 21:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761255385;
+	bh=PeQvjl8tTHsyJLNIyC0D1J39XRcadQROmtv7uZK7IMo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D5dLSV7cClMTLlP1vvO/xSsofDIiz6K30iXsothe1O5uqNMocMhnArlWU6WugZ4F0
+	 3+FNIq71QSLCs4QBTqUENXpZukkHfHAH0AfcMkDFKPnu26S55DMAgZ2SklkCX8+WQN
+	 i7Jhbbi2Hu3iBHnpF4AsyZl96QUiJpmL4TBeKlLA=
+Date: Thu, 23 Oct 2025 14:36:24 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Kiryl Shutsemau <kirill@shutemov.name>, Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Lorenzo
+ Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport
+ <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko
+ <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, Harry Yoo
+ <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt
+ <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kiryl Shutsemau <kas@kernel.org>
+Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries
+ beyond i_size
+Message-Id: <20251023143624.1732f958020254baff0a4bee@linux-foundation.org>
+In-Reply-To: <3ad31422-81c7-47f2-ae3e-e6bc1df402ee@redhat.com>
+References: <20251023093251.54146-1-kirill@shutemov.name>
+	<20251023093251.54146-2-kirill@shutemov.name>
+	<20251023134929.b72ab75a8c132a17ae68a582@linux-foundation.org>
+	<3ad31422-81c7-47f2-ae3e-e6bc1df402ee@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:ca4d:0:b0:430:b05a:ecc3 with SMTP id
- e9e14a558f8ab-430c525f52amr164228225ab.9.1761255320927; Thu, 23 Oct 2025
- 14:35:20 -0700 (PDT)
-Date: Thu, 23 Oct 2025 14:35:20 -0700
-In-Reply-To: <CADUfDZpnsv1--j02NW+d9woX1VvR7q3Ed0W_hO-GZmkCVfSH7g@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fa9f98.050a0220.346f24.0083.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] general protection fault in
- io_uring_show_fdinfo (4)
-From: syzbot <syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com>
-To: csander@purestorage.com
-Cc: axboe@kernel.dk, csander@purestorage.com, io-uring@vger.kernel.org, 
-	kbusch@kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> On Thu, Oct 23, 2025 at 2:34=E2=80=AFPM syzbot <
-> syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com> wrote:
->>
->> > On Thu, Oct 23, 2025 at 2:21=E2=80=AFPM syzbot
->> > <syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com> wrote:
->> >>
->> >> Hello,
->> >>
->> >> syzbot found the following issue on:
->> >>
->> >> HEAD commit:    aaa9c3550b60 Add linux-next specific files for 202510=
-22
->> >> git tree:       linux-next
->> >> console output:
-> https://syzkaller.appspot.com/x/log.txt?x=3D11880c92580000
->> >> kernel config:
-> https://syzkaller.appspot.com/x/.config?x=3Dc8b911aebadf6410
->> >> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3Da77f64386b3e1b2ebb51
->> >> compiler:       Debian clang version 20.1.8
-> (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.=
-1.8
->> >> syz repro:
-> https://syzkaller.appspot.com/x/repro.syz?x=3D12e73734580000
->> >> C reproducer:
-> https://syzkaller.appspot.com/x/repro.c?x=3D102f43e2580000
->> >>
->> >> Downloadable assets:
->> >> disk image:
-> https://storage.googleapis.com/syzbot-assets/44f7af9b7ca1/disk-aaa9c355.r=
-aw.xz
->> >> vmlinux:
-> https://storage.googleapis.com/syzbot-assets/9d09b0a9994d/vmlinux-aaa9c35=
-5.xz
->> >> kernel image:
-> https://storage.googleapis.com/syzbot-assets/ae729ccb2c5c/bzImage-aaa9c35=
-5.xz
->> >>
->> >> The issue was bisected to:
->> >>
->> >> commit 31dc41afdef21f264364288a30013b538c46152e
->> >> Author: Keith Busch <kbusch@kernel.org>
->> >> Date:   Thu Oct 16 18:09:38 2025 +0000
->> >>
->> >>     io_uring: add support for IORING_SETUP_SQE_MIXED
->> >>
->> >> bisection log:
-> https://syzkaller.appspot.com/x/bisect.txt?x=3D12eac614580000
->> >> final oops:
-> https://syzkaller.appspot.com/x/report.txt?x=3D11eac614580000
->> >> console output:
-> https://syzkaller.appspot.com/x/log.txt?x=3D16eac614580000
->> >>
->> >> IMPORTANT: if you fix the issue, please add the following tag to the
-> commit:
->> >> Reported-by: syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com
->> >> Fixes: 31dc41afdef2 ("io_uring: add support for
-> IORING_SETUP_SQE_MIXED")
->> >>
->> >> Oops: general protection fault, probably for non-canonical address
-> 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
->> >> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007=
-]
->> >> CPU: 0 UID: 0 PID: 6032 Comm: syz.0.17 Not tainted syzkaller #0
-> PREEMPT(full)
->> >> Hardware name: Google Google Compute Engine/Google Compute Engine,
-> BIOS Google 10/02/2025
->> >> RIP: 0010:__io_uring_show_fdinfo io_uring/fdinfo.c:103 [inline]
->> >> RIP: 0010:io_uring_show_fdinfo+0x371/0x1840 io_uring/fdinfo.c:255
->> >> Code: 0f 85 29 04 00 00 45 8b 36 44 89 f7 44 89 ee e8 a5 ec 94 00 45
-> 39 ee 76 11 e8 db ea 94 00 45 89 fd 4c 8b 3c 24 e9 c9 03 00 00 <80> 3b 00
-> 45 89 fd 0f 85 17 04 00 00 0f b6 2c 25 00 00 00 00 48 8b
->> >> RSP: 0018:ffffc9000392f928 EFLAGS: 00010293
->> >> RAX: ffffffff812b42ab RBX: dffffc0000000000 RCX: 0000000000000000
->> >> RDX: ffff888026c65ac0 RSI: 00000000000001ff RDI: 0000000000000000
->> >> RBP: 0000000000000000 R08: ffff888069c000aa R09: 1ffff1100d380015
->> >> R10: dffffc0000000000 R11: ffffed100d380016 R12: 0000000000000008
->> >> R13: 00000000000001ff R14: 0000000000000000 R15: 0000000000000000
->> >> FS:  000055556a027500(0000) GS:ffff888125f29000(0000)
-> knlGS:0000000000000000
->> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> >> CR2: 0000001b30363fff CR3: 0000000076c50000 CR4: 00000000003526f0
->> >> Call Trace:
->> >>  <TASK>
->> >>  seq_show+0x5bc/0x730 fs/proc/fd.c:68
->> >>  seq_read_iter+0x4ef/0xe20 fs/seq_file.c:230
->> >>  seq_read+0x369/0x480 fs/seq_file.c:162
->> >>  vfs_read+0x200/0xa30 fs/read_write.c:570
->> >>  ksys_read+0x145/0x250 fs/read_write.c:715
->> >>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->> >>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
->> >>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->> >> RIP: 0033:0x7f198c78efc9
->> >> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48
-> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01
-> f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
->> >> RSP: 002b:00007fffae1a3128 EFLAGS: 00000246 ORIG_RAX: 000000000000000=
-0
->> >> RAX: ffffffffffffffda RBX: 00007f198c9e5fa0 RCX: 00007f198c78efc9
->> >> RDX: 0000000000002020 RSI: 00002000000040c0 RDI: 0000000000000004
->> >> RBP: 00007f198c811f91 R08: 0000000000000000 R09: 0000000000000000
->> >> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->> >> R13: 00007f198c9e5fa0 R14: 00007f198c9e5fa0 R15: 0000000000000003
->> >>  </TASK>
->> >> Modules linked in:
->> >> ---[ end trace 0000000000000000 ]---
->> >> RIP: 0010:__io_uring_show_fdinfo io_uring/fdinfo.c:103 [inline]
->> >> RIP: 0010:io_uring_show_fdinfo+0x371/0x1840 io_uring/fdinfo.c:255
->> >> Code: 0f 85 29 04 00 00 45 8b 36 44 89 f7 44 89 ee e8 a5 ec 94 00 45
-> 39 ee 76 11 e8 db ea 94 00 45 89 fd 4c 8b 3c 24 e9 c9 03 00 00 <80> 3b 00
-> 45 89 fd 0f 85 17 04 00 00 0f b6 2c 25 00 00 00 00 48 8b
->> >> RSP: 0018:ffffc9000392f928 EFLAGS: 00010293
->> >> RAX: ffffffff812b42ab RBX: dffffc0000000000 RCX: 0000000000000000
->> >> RDX: ffff888026c65ac0 RSI: 00000000000001ff RDI: 0000000000000000
->> >> RBP: 0000000000000000 R08: ffff888069c000aa R09: 1ffff1100d380015
->> >> R10: dffffc0000000000 R11: ffffed100d380016 R12: 0000000000000008
->> >> R13: 00000000000001ff R14: 0000000000000000 R15: 0000000000000000
->> >> FS:  000055556a027500(0000) GS:ffff888125f29000(0000)
-> knlGS:0000000000000000
->> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> >> CR2: 0000001b30363fff CR3: 0000000076c50000 CR4: 00000000003526f0
->> >> ----------------
->> >> Code disassembly (best guess):
->> >>    0:   0f 85 29 04 00 00       jne    0x42f
->> >>    6:   45 8b 36                mov    (%r14),%r14d
->> >>    9:   44 89 f7                mov    %r14d,%edi
->> >>    c:   44 89 ee                mov    %r13d,%esi
->> >>    f:   e8 a5 ec 94 00          call   0x94ecb9
->> >>   14:   45 39 ee                cmp    %r13d,%r14d
->> >>   17:   76 11                   jbe    0x2a
->> >>   19:   e8 db ea 94 00          call   0x94eaf9
->> >>   1e:   45 89 fd                mov    %r15d,%r13d
->> >>   21:   4c 8b 3c 24             mov    (%rsp),%r15
->> >>   25:   e9 c9 03 00 00          jmp    0x3f3
->> >> * 2a:   80 3b 00                cmpb   $0x0,(%rbx) <-- trapping
-> instruction
->> >>   2d:   45 89 fd                mov    %r15d,%r13d
->> >>   30:   0f 85 17 04 00 00       jne    0x44d
->> >>   36:   0f b6 2c 25 00 00 00    movzbl 0x0,%ebp
->> >>   3d:   00
->> >>   3e:   48                      rex.W
->> >>   3f:   8b                      .byte 0x8b
->> >>
->> >>
->> >> ---
->> >> This report is generated by a bot. It may contain errors.
->> >> See https://goo.gl/tpsmEJ for more information about syzbot.
->> >> syzbot engineers can be reached at syzkaller@googlegroups.com.
->> >>
->> >> syzbot will keep track of this issue. See:
->> >> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->> >> For information about bisection process see:
-> https://goo.gl/tpsmEJ#bisection
->> >>
->> >> If the report is already addressed, let syzbot know by replying with:
->> >> #syz fix: exact-commit-title
->> >>
->> >> If you want syzbot to run the reproducer, reply with:
->> >> #syz test: git://repo/address.git branch-or-commit-hash
->> >> If you attach or paste a git patch, syzbot will apply it before
-> testing.
->> >>
->> >> If you want to overwrite report's subsystems, reply with:
->> >> #syz set subsystems: new-subsystem
->> >> (See the list of subsystem names on the web dashboard)
->> >>
->> >> If the report is a duplicate of another one, reply with:
->> >> #syz dup: exact-subject-of-another-report
->> >>
->> >> If you want to undo deduplication, reply with:
->> >> #syz undup
->> >
->> > #syz dup: [syzbot] [io-uring?] general protection fault in
->>
->> can't find the dup bug
->>
->> > io_uring_show_fdinfo (3)
->
-> #syz dup: [syzbot] [io-uring?] general protection fault in
+On Thu, 23 Oct 2025 22:54:49 +0200 David Hildenbrand <david@redhat.com> wrote:
 
-can't find the dup bug
+> >> Fixes: 19773df031bc ("mm/fault: try to map the entire file folio in finish_fault()")
+> > 
+> > Sep 28 2025
+> > 
+> >> Fixes: 357b92761d94 ("mm/filemap: map entire large folio faultaround")
+> > 
+> > Sep 28 2025
+> > 
+> >> Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
+> > 
+> > Jul 26 2016
+> > 
+> > eek, what's this one doing here?  Are we asking -stable maintainers
+> > to backport this patch into nine years worth of kernels?
+> > 
+> > I'll remove this Fixes: line for now...
+> 
+> Ehm, why?
 
-> io_uring_show_fdinfo (3)
+Because the Sep 28 2025 Fixes: totally fooled me and because this
+doesn't apply to 6.17, let alone to 6.ancient.
+
+> It sure is a fix for that. We can indicate to which stable 
+> versions we want to have ti backported.
+> 
+> And yes, it might be all stable kernels.
+
+No probs, thanks for clarifying.  I'll restore the
+
+	Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
+	Cc; <stable@vger.kernel.org>
+
+and shall let others sort out the backporting issues.
 
