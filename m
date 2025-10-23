@@ -1,325 +1,184 @@
-Return-Path: <linux-kernel+bounces-867661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F250FC0338D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:50:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C703CC033F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 365C63B2AA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:50:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8051A68196
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D1934DB5D;
-	Thu, 23 Oct 2025 19:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49ED6350A31;
+	Thu, 23 Oct 2025 19:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZLz2Klo4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="aoKIIAIl"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1FF347BC3;
-	Thu, 23 Oct 2025 19:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761249008; cv=none; b=mXxlX3awp0rEe8YSA+YBmeKPCJy0JuYd8AiOSZD1gBnvCLq/deU5UzblwafFDGxFaXkISHryxaW7+xDwdqiKvILpheMjQdW2W5JbD2ZhPd7nJTawFhWn4zoFh7UdSpPL/aVo615OGrgUhKoEi8jrRLVlDJEYMk4QEfPmSItVAY0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761249008; c=relaxed/simple;
-	bh=Skua1k2e3mB8SWqi2ga5oqhkJAG1HZvPfRJSsVS0qSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p9etJFLdcNdjs3LkqxcO6Z+5JmcSXuGvxHKOZicH4QmsmQHgPmIgjUvKutqJW//XUCVFE3y+w6niRkYJA59K40JBCgZMzTVgxdCbPD+MOQetmz+txgpwPkp6c5fDeX2R+4F5YREkgGlUdkoLm8x2ibvWfKpXgBKkULw6EAFmtdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZLz2Klo4; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761249007; x=1792785007;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Skua1k2e3mB8SWqi2ga5oqhkJAG1HZvPfRJSsVS0qSs=;
-  b=ZLz2Klo4R4tYYGviKTCdl5RTmMHx4SISJLC2aA5In695g4TTOwqXMQIH
-   afapLi8riDpW41ZNGN74d9arE+A9BMmGRmbkz3M4+Y7Zqu9fjjmg1GG9Y
-   iArXU5Hqnhbbh8/yqssDViFV+mN0EqT1O3ceQcjZqR1SgsvHVLgXCFrlh
-   PHGQ5mm7TeDwcfc31QxqVVZEgMLkX3SvaStdCiNqXq8LSYqFBWwCHSXXa
-   GwR/MeX6CxbWZfGaRXPYylv70EH9yb+7k/8AQRcAWOOUyxsHnYCtkfeU+
-   w5RzGxAM+ZW6VKWXHZd3NBjPkUnqrnY/o6v+clRjq8elVdkh42JI4AGME
-   w==;
-X-CSE-ConnectionGUID: fU+zXQlXQi6Kkp1SPCe0bg==
-X-CSE-MsgGUID: d+ZktQ+1SNmZ1ekorTf7fQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74870034"
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="74870034"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 12:50:04 -0700
-X-CSE-ConnectionGUID: 2Rs/IhRhSS2PSn3gAgtgDQ==
-X-CSE-MsgGUID: 6Y2P8BYzRYeQpitDQCe9ag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="207894922"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 23 Oct 2025 12:50:00 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vC1Jj-000Dp7-15;
-	Thu, 23 Oct 2025 19:49:50 +0000
-Date: Fri, 24 Oct 2025 03:49:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Caleb Sander Mateos <csander@purestorage.com>,
-	Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
-	Ming Lei <ming.lei@redhat.com>, Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Chris Mason <chris.mason@fusionio.com>,
-	David Sterba <dsterba@suse.com>
-Cc: oe-kbuild-all@lists.linux.dev, io-uring@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Caleb Sander Mateos <csander@purestorage.com>
-Subject: Re: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in
- task work dispatch
-Message-ID: <202510240319.bLypyxx1-lkp@intel.com>
-References: <20251022231326.2527838-4-csander@purestorage.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C2534FF6E;
+	Thu, 23 Oct 2025 19:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761249187; cv=pass; b=BQsm0KqIme4/JeJZ9IqUhmHNp2AhbaQsywsjK49kAMCBczeh5CredM21OZ2r82NHb9Sw0G/kbCiqMQQbnqCYlPDq10v/BVfa0GobxnO8QjCD6bP36xdKZqgn2jpDbTUHAwWboQemqBUgsRhs04y/lz2UVY227oEnYzVGtbmPLOQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761249187; c=relaxed/simple;
+	bh=ybe8GvS4IXSum1YbT//6+2TH9wDaTSPw2KVSRpEa3jc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F9Y+yC9fv4kriUEFXitKdarJuS38mw+8MoXOEcWr3nRnmi8648jyoO1CDMx/RSHALpPQTAUNMhXhWvwPkdx5e3hsbeBEGSQiOHrV9Y5UsNrCbcesziGpPtqFGL3/8asCjRnahpqHc8r/vOxg5gjgaQ0iRyIKA4lNt70QmiA6BLg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=aoKIIAIl; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761249014; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ho87PT3dCkvouPFOWzH7THguM+jZR1FMkLFJkno6XwXP3pukEl/ZXpJzpMwh3hEOr2V5gBZdNlpGjTU5/EOk05fsyXqnzTsJ/UIO2SnD8xQ6vutp0FdHCiUmpeD/Wkx0GfQI5lkJ/+qxU8gI4SZ5UDPL2+CjISH545EPQmN5fkc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761249014; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=yY00MRaGZJKQVqmTEqvL4/4Frt/VqsFNgh9CjLnUkm0=; 
+	b=KqcIGg5CwaXsSyl1bHxTQ4eRDXJJF/+hnDAKOp5DBUycTor9AYjJSW3PQnbx3ctm+Qc9ijWkvX938hYPH4v54dTVdEvJg9r9dUxlwiN6lR+O8tXQ5LOZypG9vq1vSENKgK1Pz8kqNNtgWometnds1PwjHHNqE3QS9QkDC0GBxcs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761249014;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=yY00MRaGZJKQVqmTEqvL4/4Frt/VqsFNgh9CjLnUkm0=;
+	b=aoKIIAIlhmSiUXEFb1gMK6i8Ip+292MyRBivKosdtoE/4Zrp4jFmzCVomkenbnzi
+	Ow7nsJzBKOrz3CJa4rwZgct2JbA5mLNfXGzgaWXX5MZCgrR5a9azK1fmsBGKbCsCidf
+	4R+yqVpSegsKD3eJ2mzylW0zvVcAjnv19/y4uz6A=
+Received: by mx.zohomail.com with SMTPS id 1761249012363518.5992664462382;
+	Thu, 23 Oct 2025 12:50:12 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH v3 00/24] MediaTek UFS Cleanup and MT8196 Enablement
+Date: Thu, 23 Oct 2025 21:49:18 +0200
+Message-Id: <20251023-mt8196-ufs-v3-0-0f04b4a795ff@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022231326.2527838-4-csander@purestorage.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL6G+mgC/23OTQ7CIBCG4as0rMUU6P/KexgXMJ1aElsUaFPT9
+ O4i3ahx+ZE877ASh1ajI02yEouzdtqMYYhDQqCX4xWpbsMmPOU5S1lGB1+xuqBT5yggZKqWdYm
+ 5IAHcLXZ6ibHzZd8WH1No+v2RKOmQghkG7ZtkxMXTvcsFeYNeO2/sM35mZlH8uzszmlJW5y2gq
+ oSC6gTmdpPKWHkM8Zia+ScvvjgPHEQpKpFBhqX85du2vQADStefGAEAAA==
+X-Change-ID: 20251014-mt8196-ufs-cec4b9a97e53
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Peter Wang <peter.wang@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>
+Cc: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
+ kernel@collabora.com, linux-scsi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-phy@lists.infradead.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.3
 
-Hi Caleb,
+In this series, the existing MediaTek UFS binding is expanded and
+completed to correctly describe not just the existing compatibles, but
+also to introduce a new compatible in the from of the MT8196 SoC.
 
-kernel test robot noticed the following build errors:
+The resets, which until now were completely absent from both the UFS
+host controller binding and the UFS PHY binding, are introduced to both.
+This also means the driver's undocumented and, in mainline, unused reset
+logic is reworked. In particular, the PHY reset is no longer a reset of
+the host controller node, but of the PHY node.
 
-[auto build test ERROR on axboe-block/for-next]
-[also build test ERROR on kdave/for-next linus/master v6.18-rc2]
-[cannot apply to mszeredi-fuse/for-next linux-nvme/for-next next-20251023]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This means the host controller can reset the PHY through the common PHY
+framework.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Caleb-Sander-Mateos/io_uring-expose-io_should_terminate_tw/20251023-071617
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
-patch link:    https://lore.kernel.org/r/20251022231326.2527838-4-csander%40purestorage.com
-patch subject: [PATCH 3/3] io_uring/uring_cmd: avoid double indirect call in task work dispatch
-config: arm-randconfig-002-20251024 (https://download.01.org/0day-ci/archive/20251024/202510240319.bLypyxx1-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510240319.bLypyxx1-lkp@intel.com/reproduce)
+The resets remain optional.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510240319.bLypyxx1-lkp@intel.com/
+Additionally, a massive number of driver cleanups are introduced. These
+were prompted by me inspecting the driver more closely as I was
+adjusting it to correspond to the binding.
 
-All error/warnings (new ones prefixed by >>):
+The driver still implements vendor properties that are undocumented in
+the binding. I did not touch most of those, as I neither want to
+convince the bindings maintainers that they are needed without knowing
+precisely what they're for, nor do I want to argue with the driver
+authors when removing them.
 
->> block/ioctl.c:781:8: error: return type defaults to 'int' [-Wimplicit-int]
-     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> block/ioctl.c:781:8: error: function declaration isn't a prototype [-Werror=strict-prototypes]
-   block/ioctl.c: In function 'DEFINE_IO_URING_CMD_TASK_WORK':
->> block/ioctl.c:784:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     784 | {
-         | ^
-   block/ioctl.c:798:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     798 | {
-         | ^
-   block/ioctl.c:853:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     853 | {
-         | ^
->> block/ioctl.c:781:8: error: type of 'blk_cmd_complete' defaults to 'int' [-Wimplicit-int]
-     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> block/ioctl.c:876: error: expected '{' at end of input
-   block/ioctl.c: At top level:
->> block/ioctl.c:781:8: warning: 'DEFINE_IO_URING_CMD_TASK_WORK' defined but not used [-Wunused-function]
-     781 | static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> block/ioctl.c:772:13: warning: 'blk_cmd_complete' defined but not used [-Wunused-function]
-     772 | static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int issue_flags)
-         |             ^~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
->> drivers/nvme/host/ioctl.c:410:8: error: return type defaults to 'int' [-Wimplicit-int]
-     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
-         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/nvme/host/ioctl.c:410:8: error: function declaration isn't a prototype [-Werror=strict-prototypes]
-   drivers/nvme/host/ioctl.c: In function 'DEFINE_IO_URING_CMD_TASK_WORK':
->> drivers/nvme/host/ioctl.c:414:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     414 | {
-         | ^
-   drivers/nvme/host/ioctl.c:441:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     441 | {
-         | ^
-   drivers/nvme/host/ioctl.c:534:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     534 | {
-         | ^
-   drivers/nvme/host/ioctl.c:544:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     544 | {
-         | ^
-   drivers/nvme/host/ioctl.c:575:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     575 | {
-         | ^
-   drivers/nvme/host/ioctl.c:605:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     605 | {
-         | ^
-   drivers/nvme/host/ioctl.c:620:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     620 | {
-         | ^
-   drivers/nvme/host/ioctl.c:632:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     632 | {
-         | ^
-   drivers/nvme/host/ioctl.c:643:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     643 | {
-         | ^
-   drivers/nvme/host/ioctl.c:666:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     666 | {
-         | ^
-   drivers/nvme/host/ioctl.c:676:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     676 | {
-         | ^
-   drivers/nvme/host/ioctl.c:777:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     777 | {
-         | ^
-   drivers/nvme/host/ioctl.c:805:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     805 | {
-         | ^
-   drivers/nvme/host/ioctl.c:842:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
-     842 | {
-         | ^
->> drivers/nvme/host/ioctl.c:410:8: error: type of 'nvme_uring_task_cb' defaults to 'int' [-Wimplicit-int]
-     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
-         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/nvme/host/ioctl.c:872: error: expected '{' at end of input
-   drivers/nvme/host/ioctl.c: At top level:
->> drivers/nvme/host/ioctl.c:410:8: warning: 'DEFINE_IO_URING_CMD_TASK_WORK' defined but not used [-Wunused-function]
-     410 | static DEFINE_IO_URING_CMD_TASK_WORK(nvme_uring_task_cb)
-         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/nvme/host/ioctl.c:401:13: warning: 'nvme_uring_task_cb' defined but not used [-Wunused-function]
-     401 | static void nvme_uring_task_cb(struct io_uring_cmd *ioucmd,
-         |             ^~~~~~~~~~~~~~~~~~
->> drivers/nvme/host/ioctl.c:329:12: warning: 'nvme_user_cmd64' defined but not used [-Wunused-function]
-     329 | static int nvme_user_cmd64(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-         |            ^~~~~~~~~~~~~~~
->> drivers/nvme/host/ioctl.c:281:12: warning: 'nvme_user_cmd' defined but not used [-Wunused-function]
-     281 | static int nvme_user_cmd(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-         |            ^~~~~~~~~~~~~
->> drivers/nvme/host/ioctl.c:206:12: warning: 'nvme_submit_io' defined but not used [-Wunused-function]
-     206 | static int nvme_submit_io(struct nvme_ns *ns, struct nvme_user_io __user *uio)
-         |            ^~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+Due to the "Marie Kondo with a chainsaw" nature of the driver cleanup
+patches, I humbly request that reviewers do not comment on displeasing
+code they see in the context portion of a patch before they've read the
+whole patch series, as that displeasing code may in fact be reworked in
+a subsequent patch of this series. Please keep comments focused on the
+changed lines of the diff; I know there's more that can be done, but it
+doesn't necessarily need to be part of this series.
 
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+Changes in v3:
+- Split mediatek,ufs bindings change into two patches, one for
+  completing the existing binding, one for the MT8196
+- Add over a dozen driver cleanup patches
+- Add explicit support for the MT8196 compatible to the driver
+- Note: next-20251023, on which I based this, currently has a broken
+  build due to an unrelated OPP core change that was merged with no
+  build testing. I can't use next-20251022 either, as that lacks the
+  recent mediatek UFS changes. It is what it is.
+- Link to v2: https://lore.kernel.org/r/20251016-mt8196-ufs-v2-0-c373834c4e7a@collabora.com
 
-vim +/int +781 block/ioctl.c
+Changes in v2:
+- Reorder define in mtk_sip_svc.h
+- Use bulk reset APIs in UFS host driver
+- Link to v1: https://lore.kernel.org/r/20251014-mt8196-ufs-v1-0-195dceb83bc8@collabora.com
 
-   771	
- > 772	static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int issue_flags)
-   773	{
-   774		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-   775	
-   776		if (bic->res == -EAGAIN && bic->nowait)
-   777			io_uring_cmd_issue_blocking(cmd);
-   778		else
-   779			io_uring_cmd_done(cmd, bic->res, issue_flags);
-   780	}
- > 781	static DEFINE_IO_URING_CMD_TASK_WORK(blk_cmd_complete)
-   782	
-   783	static void bio_cmd_bio_end_io(struct bio *bio)
- > 784	{
-   785		struct io_uring_cmd *cmd = bio->bi_private;
-   786		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-   787	
-   788		if (unlikely(bio->bi_status) && !bic->res)
-   789			bic->res = blk_status_to_errno(bio->bi_status);
-   790	
-   791		io_uring_cmd_do_in_task_lazy(cmd, blk_cmd_complete);
-   792		bio_put(bio);
-   793	}
-   794	
-   795	static int blkdev_cmd_discard(struct io_uring_cmd *cmd,
-   796				      struct block_device *bdev,
-   797				      uint64_t start, uint64_t len, bool nowait)
- > 798	{
-   799		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-   800		gfp_t gfp = nowait ? GFP_NOWAIT : GFP_KERNEL;
-   801		sector_t sector = start >> SECTOR_SHIFT;
-   802		sector_t nr_sects = len >> SECTOR_SHIFT;
-   803		struct bio *prev = NULL, *bio;
-   804		int err;
-   805	
-   806		if (!bdev_max_discard_sectors(bdev))
-   807			return -EOPNOTSUPP;
-   808		if (!(file_to_blk_mode(cmd->file) & BLK_OPEN_WRITE))
-   809			return -EBADF;
-   810		if (bdev_read_only(bdev))
-   811			return -EPERM;
-   812		err = blk_validate_byte_range(bdev, start, len);
-   813		if (err)
-   814			return err;
-   815	
-   816		err = filemap_invalidate_pages(bdev->bd_mapping, start,
-   817						start + len - 1, nowait);
-   818		if (err)
-   819			return err;
-   820	
-   821		while (true) {
-   822			bio = blk_alloc_discard_bio(bdev, &sector, &nr_sects, gfp);
-   823			if (!bio)
-   824				break;
-   825			if (nowait) {
-   826				/*
-   827				 * Don't allow multi-bio non-blocking submissions as
-   828				 * subsequent bios may fail but we won't get a direct
-   829				 * indication of that. Normally, the caller should
-   830				 * retry from a blocking context.
-   831				 */
-   832				if (unlikely(nr_sects)) {
-   833					bio_put(bio);
-   834					return -EAGAIN;
-   835				}
-   836				bio->bi_opf |= REQ_NOWAIT;
-   837			}
-   838	
-   839			prev = bio_chain_and_submit(prev, bio);
-   840		}
-   841		if (unlikely(!prev))
-   842			return -EAGAIN;
-   843		if (unlikely(nr_sects))
-   844			bic->res = -EAGAIN;
-   845	
-   846		prev->bi_private = cmd;
-   847		prev->bi_end_io = bio_cmd_bio_end_io;
-   848		submit_bio(prev);
-   849		return -EIOCBQUEUED;
-   850	}
-   851	
-   852	int blkdev_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
- > 853	{
-   854		struct block_device *bdev = I_BDEV(cmd->file->f_mapping->host);
-   855		struct blk_iou_cmd *bic = io_uring_cmd_to_pdu(cmd, struct blk_iou_cmd);
-   856		const struct io_uring_sqe *sqe = cmd->sqe;
-   857		u32 cmd_op = cmd->cmd_op;
-   858		uint64_t start, len;
-   859	
-   860		if (unlikely(sqe->ioprio || sqe->__pad1 || sqe->len ||
-   861			     sqe->rw_flags || sqe->file_index))
-   862			return -EINVAL;
-   863	
-   864		bic->res = 0;
-   865		bic->nowait = issue_flags & IO_URING_F_NONBLOCK;
-   866	
-   867		start = READ_ONCE(sqe->addr);
-   868		len = READ_ONCE(sqe->addr3);
-   869	
-   870		switch (cmd_op) {
-   871		case BLOCK_URING_CMD_DISCARD:
-   872			return blkdev_cmd_discard(cmd, bdev, start, len, bic->nowait);
-   873		}
-   874		return -EINVAL;
-   875	}
+---
+Nicolas Frattaroli (24):
+      dt-bindings: phy: Add mediatek,mt8196-ufsphy variant
+      dt-bindings: ufs: mediatek,ufs: Complete the binding
+      dt-bindings: ufs: mediatek,ufs: Add mt8196 variant
+      scsi: ufs: mediatek: Move MTK_SIP_UFS_CONTROL to mtk_sip_svc.h
+      phy: mediatek: ufs: Add support for resets
+      scsi: ufs: mediatek: Rework resets
+      scsi: ufs: mediatek: Rework 0.9V regulator
+      scsi: ufs: mediatek: Rework init function
+      scsi: ufs: mediatek: Rework the crypt-boost stuff
+      scsi: ufs: mediatek: Rework probe function
+      scsi: ufs: mediatek: Remove vendor kernel quirks cruft
+      scsi: ufs: mediatek: Use the common PHY framework
+      scsi: ufs: mediatek: Switch to newer PM ops helpers
+      scsi: ufs: mediatek: Remove mediatek,ufs-broken-rtc property
+      scsi: ufs: mediatek: Rework _ufs_mtk_clk_scale error paths
+      scsi: ufs: mediatek: Add vendor prefix to clk-scale-up-vcore-min
+      scsi: ufs: mediatek: Clean up logging prints
+      scsi: ufs: mediatek: Rework ufs_mtk_wait_idle_state
+      scsi: ufs: mediatek: Don't acquire dvfsrc-vcore twice
+      scsi: ufs: mediatek: Rework hardware version reading
+      scsi: ufs: mediatek: Back up idle timer in per-instance struct
+      scsi: ufs: mediatek: Make scale_us in setup_clk_gating const
+      scsi: ufs: mediatek: Remove ret local from link_startup_notify
+      scsi: ufs: mediatek: Add MT8196 compatible, update copyright
 
+ .../devicetree/bindings/phy/mediatek,ufs-phy.yaml  |  16 +
+ .../devicetree/bindings/ufs/mediatek,ufs.yaml      | 196 ++++-
+ drivers/phy/mediatek/phy-mtk-ufs.c                 |  71 ++
+ drivers/ufs/host/ufs-mediatek-sip.h                |   9 -
+ drivers/ufs/host/ufs-mediatek.c                    | 935 +++++++++------------
+ drivers/ufs/host/ufs-mediatek.h                    |  17 +-
+ include/linux/soc/mediatek/mtk_sip_svc.h           |   3 +
+ 7 files changed, 650 insertions(+), 597 deletions(-)
+---
+base-commit: a92c761bcac3d5042559107fa7679470727a4bcb
+change-id: 20251014-mt8196-ufs-cec4b9a97e53
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
 
