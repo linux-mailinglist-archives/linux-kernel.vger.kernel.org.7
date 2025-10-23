@@ -1,119 +1,100 @@
-Return-Path: <linux-kernel+bounces-867330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886C6C024B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:03:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B685C024B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBB253A18DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:01:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17BAB1890EA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121B8270ED2;
-	Thu, 23 Oct 2025 16:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7B37262B;
+	Thu, 23 Oct 2025 16:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5UmEEzd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vD3nbmvi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C44326E718;
-	Thu, 23 Oct 2025 16:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE1C26158B
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761235289; cv=none; b=bRumun6yZtMRth+c50W6yaG/zv3sw4zy7CBvmmNukrvrd6kFQYtHcSLl/AP40m9cif9Q3ZW8BCXdT293APnCJ89VZxU0KZ1eXgjv++81vv6ZKzJZPJiwOLRxVxyC4j21cG74v314jwfyIt+kJ17apSunsKKQ5eQly69ePqCjUbU=
+	t=1761235317; cv=none; b=CAVDHq8Ykf+fLGKihkFIIDkALs5hCxh/8eZEVTs1TyOGjNJ9SCs3e6M636sXj0gfrfUghZ3E14/+V0U9A6uqUUUkKoGw9mnqylOPcoBlZ3zZdEncEz/UNJeBEL3FYEO8+PR1LF2I8vveDhIOuV6WTFT1liR46EaGsRXQO7CH/a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761235289; c=relaxed/simple;
-	bh=QR0xo9kwz4C5B32D+8W39liiu/5N5EbAo7By0ltQ3So=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWCbiXKZzbQHsUtcbpp9sVK7Bc6Kk9JU2IeIhwWgGW6eLr/LamLSVEjCh0QuEOA8t8x2sk/vdE5eYYNTn3CBqLmo/JzGj/XMFncmd1fI4PGwJG0ue4Dt15Np0LG8Y73DI3oSSwUrnKJy7dCPHbQIWJEYGcm99SkEwtNQAIEvl8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5UmEEzd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37CDBC4CEFD;
-	Thu, 23 Oct 2025 16:01:29 +0000 (UTC)
+	s=arc-20240116; t=1761235317; c=relaxed/simple;
+	bh=0+JbNYp9OjiNwE8w+NF/xy7YhffXNXh52qvMJgHorlc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sY/nw6QN6/tOD77aIlYmsdC8X8NnA/zJcGbg8p7Ayq+xsKI/4kMTyyWG955banrGOqFaYgs395R/DgWuOuLIkY9ROStJ6sLyPQ0aMzcP7W7omeCy6alOlhBnYeLGwNam/8KYdsSyzGtRW8vYOeWePn2F3S3OCyCgeKQngnBHcyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vD3nbmvi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF776C4CEFF
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:01:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761235289;
-	bh=QR0xo9kwz4C5B32D+8W39liiu/5N5EbAo7By0ltQ3So=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L5UmEEzdgVMM2s3DmIzIkfVrcjFHhMCeIXoKlqvXiVAI8ZwCCQuWsvYOr371c5XPw
-	 eGveeU5fB/WE/TmLBQx9GcrnCoNpGSBB8ZRyNw1PEfEeloWpcoVOFRS8J+VMveE4bJ
-	 jiZj2EOxzfExM667AaeSQ2ZJOweEGywkCrdmzLK9/eCtnAFnDA6NdXaJ1dUnh+viQP
-	 YaOcKd1iWUk6hUxjgeLPf/epNdnwdLVPCBsc/gXG3jPx8z1Iwi0JpOm9jfijj4VWM9
-	 eabJcM7Tc4kcSIdp07X08DhOq2UFUz+QjMMQx2c8OCSve+HVp3JJa2gzruZYXandds
-	 rF1Y2JB0GA7mA==
-Date: Thu, 23 Oct 2025 09:01:28 -0700
-From: Kees Cook <kees@kernel.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3 2/9] net/l2tp: Add missing sa_family validation in
- pppol2tp_sockaddr_get_info
-Message-ID: <202510230900.5754A094@keescook>
-References: <20251020212125.make.115-kees@kernel.org>
- <20251020212639.1223484-2-kees@kernel.org>
- <52c7bbac-da08-44d5-b1ec-315ce001b42a@redhat.com>
+	s=k20201202; t=1761235316;
+	bh=0+JbNYp9OjiNwE8w+NF/xy7YhffXNXh52qvMJgHorlc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=vD3nbmviBOHebz37IPOHRh+YXPZSDO2TnIhe5pnHRgR9rkFuvt8e3hPgAPPOAaIq/
+	 LTZIztqGzNL2YFKZfykQIVPfSIe6DiWQqay115PEMoDXHx36ilduWjnghA5fhI6eXi
+	 +BXFi6HzeibaMngeAUKM9URp3iOq47OuW3T+xUyhmmgQQiOY/pW0lW86HOL3UZDukY
+	 cvhye3vrxeAEo+72wXVhshihLScQp1gM/pk8/+L3gYNmNdrlkqTGgtOIteQeGu5Vid
+	 XuPZ/mu03KFraecUGPUKYUebhPMVrS33FYHheGnDFSIoz+9brM0qj5/z/8zYwreuiI
+	 W+QmVXXKgBJOA==
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-443ac11a7b7so284308b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:01:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWd+gA0sQ49LhgoBMbsOSEkHbEViPXAljKlBivq5M16nLBN0bfH17kr1QjoPvd7IwgdAzwOm7ltQ56DdUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzVjcDQ/iu9WDRUIRsyKEMrxbjGpAG8SeX8CJLvpOWGMOLL5Le
+	icKDWzSPiFhgO4CZDFNS2+T0vFpYa2QplvKM7avW0xrPgigWuVmQs2+pa8dseZcB1pLIM2FILBF
+	Vy1rC6edGaGAHK9WemX1zZmCGNQMTLnc=
+X-Google-Smtp-Source: AGHT+IHiGnwIpk7R96EUMLR2U+zETEbhiRbXkeUMvwgxxxFx0kRAAb7OL3pmxzxwhe6y2KQDpyKO8wZwSwihJbrttlU=
+X-Received: by 2002:a05:6808:2229:b0:442:5fa:28ff with SMTP id
+ 5614622812f47-443a2efcd3cmr10789234b6e.15.1761235316075; Thu, 23 Oct 2025
+ 09:01:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <52c7bbac-da08-44d5-b1ec-315ce001b42a@redhat.com>
+References: <20251022204523.10752-1-tony.luck@intel.com> <CAJZ5v0hhnAq-HJhXU8VTAWKNg0PJkYbeocCKEffYOurZn0U81Q@mail.gmail.com>
+ <SJ1PR11MB60835AF413CB53076304AABCFCF0A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+In-Reply-To: <SJ1PR11MB60835AF413CB53076304AABCFCF0A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 23 Oct 2025 18:01:44 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0io8xoh2zgdo7A6sMRA9XU=s8_EF0PcUpgkH8xmui3YAw@mail.gmail.com>
+X-Gm-Features: AS18NWD8JuCE3XwDXOCuivlqkn_kHwCOCiP4HApOB4ugkIQ716nGSYmIF5zXxdI
+Message-ID: <CAJZ5v0io8xoh2zgdo7A6sMRA9XU=s8_EF0PcUpgkH8xmui3YAw@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: MRRM: Check revision of MRRM table
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, 
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 12:47:32PM +0200, Paolo Abeni wrote:
-> On 10/20/25 11:26 PM, Kees Cook wrote:
-> > While reviewing the struct proto_ops connect() and bind() callback
-> > implementations, I noticed that there doesn't appear to be any
-> > validation that AF_PPPOX sockaddr structures actually have sa_family set
-> > to AF_PPPOX. The pppol2tp_sockaddr_get_info() checks only look at the
-> > sizes.
-> > 
-> > I don't see any way that this might actually cause problems as specific
-> > info fields are being populated, for which the existing size checks are
-> > correct, but it stood out as a missing address family check.
-> > 
-> > Add the check and return -EAFNOSUPPORT on mismatch.
-> > 
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> >  net/l2tp/l2tp_ppp.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
-> > index 5e12e7ce17d8..b7a9c224520f 100644
-> > --- a/net/l2tp/l2tp_ppp.c
-> > +++ b/net/l2tp/l2tp_ppp.c
-> > @@ -535,6 +535,13 @@ struct l2tp_connect_info {
-> >  static int pppol2tp_sockaddr_get_info(const void *sa, int sa_len,
-> >  				      struct l2tp_connect_info *info)
-> >  {
-> > +	const struct sockaddr_unspec *sockaddr = sa;
-> > +
-> > +	if (sa_len < offsetofend(struct sockaddr, sa_family))
-> > +		return -EINVAL;
-> > +	if (sockaddr->sa_family != AF_PPPOX)
-> > +		return -EAFNOSUPPORT;
-> 
-> I fear we can't introduce this check, as it could break existing
-> user-space application currently passing random data into sa_family but
-> still able to connect successfully.
+On Thu, Oct 23, 2025 at 5:56=E2=80=AFPM Luck, Tony <tony.luck@intel.com> wr=
+ote:
+>
+> >> Before trying to parse the MRRM table, check that the table revision
+> >> is the one that is expected.
+> >
+> > OK, so should there be a Fixes: tag?  Or is it just a tidy-up of the co=
+de?
+>
+> I'd be surprised if this table changed. But the h/w team that proposed th=
+e
+> MRRM table nagged me to check the revision "just in case". Which seems
+> like good practice.
+>
+> Might as well add a Fixes to get this back ported in case someone locks o=
+nto
+> v6.16 or v6.17.
+>
+> Fixes: b9020bdb9f76 ("ACPI: MRRM: Minimal parse of ACPI MRRM table")
+>
+> Would you like me to post a V2, or can you just edit this in as you apply=
+?
 
-Isn't sa_family kind of the critical determining factor on how the
-network stack decides to handle sockaddr stuff? I'll drop it for now,
-I guess, but that's surprising to me.
-
--Kees
-
--- 
-Kees Cook
+No worries, I can edit it.
 
