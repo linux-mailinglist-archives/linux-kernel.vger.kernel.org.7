@@ -1,183 +1,207 @@
-Return-Path: <linux-kernel+bounces-867698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B0A8C03505
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:04:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC2CC034ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CAFF3A57B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:02:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96F334F645D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F082534679D;
-	Thu, 23 Oct 2025 20:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149BD34B664;
+	Thu, 23 Oct 2025 20:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E2XGvs29"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZcO4Injm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R+iqC5+F";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qKV61hF2";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xm/iPv/T"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4042C21EA
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20992C21EA
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761249756; cv=none; b=FallijiaDYK/6w4hR1NdkK55pV8dMfYU86pyDYqD0hBibmLR88cpRGFF2QfkmDuGY78sOmB5uOSoIZ22H9V74oVmlRosKWiHw/2tDWSP22rqEAGK64PPgHjyCn697kf6Zb6BTceUPFZ6ScS9N5ENzzd7Pjx5gac0zF92zNqtllI=
+	t=1761249765; cv=none; b=qj3iKmIcL1KpKw23qc4CNvR/eXSfaZzaFBAXB0QD3Z6JC3ZfJB9lmaH3zYwKPiPNm3Ma6FmYZ/ZHMz6aoPH6XJA7rR7f1dTEHHKDdGSW4QUyA1b/YcdPOBfyGFnsKCUFJvjJcGyjTUJnuH8s0Stn3P/mAXhTzMJJqO/tejDWnMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761249756; c=relaxed/simple;
-	bh=gqYyJRYTyw1c6geq3zHKwBnJ5/1lEskxou871hP1uWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=txQIYD0B3rWfqG+4hWZGKQiwihcemRBrcsqE5lf/PzXjqwluBGp9svPyD5QgW+/FiGwARKzuhoK3NT3SGqNznuskX/dk8DHGigaka/oNmBmIm0ZQEdwolgvFr9DvZ3YBek+EffgYN+UC09SnvH+04dButB2JNPlcyO7kQ1No2So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E2XGvs29; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761249753;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1761249765; c=relaxed/simple;
+	bh=LulGrsvuQHHRUckW5n9m0iIQV7lVfYvpx4KBlcjJZoY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BZgbIlmm7nG3dbkqHihDQFSUgoGOHB0J0rA3kCKn5YriiHEtgvJotr0UorDC0v7gZs5GagOaLsPDQYcCWKa2h8OYafyvEO9e97idMAitR2hzL3sk8EPZcYxBhQxlq7bcGzPp++vT/KLPVklKZP8iLLphh26k4cP0K9vTftD4E5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZcO4Injm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R+iqC5+F; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qKV61hF2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xm/iPv/T; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D2073211C8;
+	Thu, 23 Oct 2025 20:02:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761249756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=y4TTOO2cgFz3W+ccXXdCSitozQat0wJ24BVv7Ue1CUk=;
-	b=E2XGvs2959tlE5Irc7FxY3Kz5vPem/jgKlW0/qAtNOKQNCR7NELGDJD5+ix/sm5Wg5mvwn
-	13+Lmht31QdnUsafjOImbOL+Z8hv2Zvt00e8tq4dx4AEGR+SaT0QBgKqVQyxly/I26eep4
-	z+ae2Ga4vUDp3pIdJ69F8W7oxv7Tzdk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-258-00UhaverM-CzujnJ_jXznQ-1; Thu, 23 Oct 2025 16:02:32 -0400
-X-MC-Unique: 00UhaverM-CzujnJ_jXznQ-1
-X-Mimecast-MFC-AGG-ID: 00UhaverM-CzujnJ_jXznQ_1761249751
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-471168953bdso14435655e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:02:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761249751; x=1761854551;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y4TTOO2cgFz3W+ccXXdCSitozQat0wJ24BVv7Ue1CUk=;
-        b=Kk5Y4SC5wwRicEQ9LUkk0neIugxAt2g9bD2e3GTBLFVbRy6DEwbve1yK2oo5XutZL2
-         pYEepDKnm2k4q/BfV0rRcWmV04HVGj5GyaaYHm3SPMYmLJKd0/i6I5ukdlhxZU7du86A
-         ex6XWuViXsA89+1UCpJLYNh0XfafnrYlxmINH1YxkY2OOD2pjg3Zyd8KxOczPyYM1SrO
-         zqk7mDPBt600rRmBDw1IhLPDaEwU0zZabzB4Wetz3leg0zNvRp9p68JKcO642ZCpB309
-         dUrNEQHwpzKAd91Oidg3RCj3e2sBFMXHDgDvNAd6SymsnDGYJ1kXHM9FYwEjfXxuSciM
-         +VHw==
-X-Gm-Message-State: AOJu0YzNbqRWXec5SNRIau8e0lRE6YmNOIBKIW5x3BFrLJyW82YGnJ7u
-	Jx5xW7pTO0vAG0Spm8+ZI8ipEKCIMDkIGK3HAuebeqElAi60+mJv4EZ2MjE/zI/4+4znsGzaxFd
-	82+0u/+9mMksFLgKHhO10dMMDuh0iz1KuwqU4pY/kZTCnw1eC5LsYyWDDZI9IYO66vg==
-X-Gm-Gg: ASbGnctDtpGPI6qRKjDNHSla+p1ZIsImF+Zb58Qj4yYhzsACD8XdY9F46hXB9t2KctD
-	mqMNBbAn9zGOsAjueNgBQbebPSpX4PJfcy17038eSNqLFzAivRfb8rYBYZmrvKJ8d00h8u1uRcB
-	2/Bkqq71sytw0KtCps8Xo13PVf+pMPgii17ngKQGvWaZ34J7jLRy+FJ4bYAcKVeldLWPSW9sK1y
-	LVa6T5RHaGh+R2F/b4a/V3sMA6aCTw7ryVnrl8ICHmU9JxMbcv+sK7tO6r25urRdziEHWgapjQ1
-	lrb1f8rn2HhOQ1o8C8Gvi82AMruiSS2xmGwwD/4c3xMGRBsTwKoR1bLzH/77eS9xYPsHVHBxho5
-	xOtiKVYKuk1NhlGLHYe+MkbQWAZRRusAFRYq6SOGxfryZ71Nv97f+3vC4L59mu0Shv0sWYjG73R
-	f2tlFiWNW6eJ4N1Lax80ksZCzjTfU=
-X-Received: by 2002:a05:600c:1f13:b0:46e:3b58:1b40 with SMTP id 5b1f17b1804b1-475d24125f6mr1089465e9.4.1761249751031;
-        Thu, 23 Oct 2025 13:02:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEMw+Op04CJGmhD/YPV6zz3oVUY6+u4w9wry9vJKgjouN71r54k9F5kFdt15tjjDg/5cU58MA==
-X-Received: by 2002:a05:600c:1f13:b0:46e:3b58:1b40 with SMTP id 5b1f17b1804b1-475d24125f6mr1089255e9.4.1761249750674;
-        Thu, 23 Oct 2025 13:02:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475caea0468sm54964965e9.8.2025.10.23.13.02.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 13:02:30 -0700 (PDT)
-Message-ID: <8d5243ec-3edd-49a6-ab51-16643a709d84@redhat.com>
-Date: Thu, 23 Oct 2025 22:02:28 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4JDNZhRiPwyWEYFhKSyRh4BLLaCKF97jtf+7yMjZR4=;
+	b=ZcO4InjmOJYb7+pJOgxVbEblkxS1VHeM/GdoDbhiXh4BKse+ts+lijr8S2yHdv9D+GtkQB
+	fRDocDi2bcH1IKNn0W1Du1S1oJWDfV0cHSIFhlLwyJT7ZNpOTcLeMsbyTMLSEUdTL4KmGj
+	Q6mT7oq5tqZ+HHvMaLu6XHL8wlcQqg0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761249756;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4JDNZhRiPwyWEYFhKSyRh4BLLaCKF97jtf+7yMjZR4=;
+	b=R+iqC5+F5JRiOVdme1BnKWItT+UbVpTrog5loP1kTp84jIxdpMBozQrDJViX4xQDqrAsWc
+	g+keTx6PaQpK7TAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qKV61hF2;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="xm/iPv/T"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761249752; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4JDNZhRiPwyWEYFhKSyRh4BLLaCKF97jtf+7yMjZR4=;
+	b=qKV61hF2EmCTw58oGSViB9Mp42S7eJoHfRghZgni6LGuabFjcm8n9MFhQ01DEK6B2vxGsl
+	c44xT2j5QDI4l7n6/YVj7DxYeNq+OY0nRiocE1wWzzAVoBCcJ326BfwlAi8b1cwdmeRn8B
+	C2hjOENL4y93A4g73CmymZJkUo3Aed0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761249752;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4JDNZhRiPwyWEYFhKSyRh4BLLaCKF97jtf+7yMjZR4=;
+	b=xm/iPv/TMIYR9IZjlFhdxqOzO9ZKjnTSc/ayyIQ7/upn0y5ZCor5n0H8k52q9Up46O1J+p
+	rhsO661BlUsSV+Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A5B58139D2;
+	Thu, 23 Oct 2025 20:02:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ihVMJ9iJ+mgDHwAAD6G6ig
+	(envelope-from <akumar@suse.de>); Thu, 23 Oct 2025 20:02:32 +0000
+From: Avinesh Kumar <akumar@suse.de>
+To: ltp@lists.linux.it, Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: arnd@kernel.org, brauner@kernel.org, jack@suse.cz,
+ regressions@lists.linux.dev, arnd@arndb.de, linux-kernel@vger.kernel.org,
+ lkft-triage@lists.linaro.org, viro@zeniv.linux.org.uk,
+ benjamin.copeland@linaro.org, linux-fsdevel@vger.kernel.org,
+ aalbersh@kernel.org, lkft@linaro.org, dan.carpenter@linaro.org
+Subject:
+ Re: [LTP] [PATCH v2] ioctl_pidfd05: accept both EINVAL and ENOTTY as valid
+ errors
+Date: Thu, 23 Oct 2025 22:02:32 +0200
+Message-ID: <12786420.O9o76ZdvQC@thinkpad>
+In-Reply-To: <20251023164401.302967-1-naresh.kamboju@linaro.org>
+References: <20251023164401.302967-1-naresh.kamboju@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/13] powerpc/mm: replace batch->active with
- in_lazy_mmu_mode()
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
- <20251015082727.2395128-10-kevin.brodsky@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251015082727.2395128-10-kevin.brodsky@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: D2073211C8
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	CTE_CASE(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.51
 
-On 15.10.25 10:27, Kevin Brodsky wrote:
-> The generic lazy_mmu layer now tracks whether a task is in lazy MMU
-> mode. As a result we no longer need to track whether the per-CPU TLB
-> batch struct is active - we know it is if in_lazy_mmu_mode() returns
-> true.
-
-It's worth adding that disabling preemption while enabled makes sure 
-that we cannot reschedule while in lazy MMU mode, so when the per-CPU 
-TLB batch structure is active.
+Hi,
 
 
--- 
-Cheers
+On Thursday, October 23, 2025 6:44:01 PM CEST Naresh Kamboju wrote:
+> Newer kernels (since ~v6.18-rc1) return ENOTTY instead of EINVAL when
+> invoking ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid). Update the
+> test to accept both EINVAL and ENOTTY as valid errors to ensure
+> compatibility across different kernel versions.
+> 
+> Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
 
-David / dhildenb
+Tested-by: Avinesh Kumar <akumar@suse.de>
+Reviewed-by: Avinesh Kumar <akumar@suse.de>
+
+Regards,
+Avinesh
+
+> ---
+>  testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+> index d20c6f074..744f7def4 100644
+> --- a/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+> +++ b/testcases/kernel/syscalls/ioctl/ioctl_pidfd05.c
+> @@ -4,8 +4,8 @@
+>   */
+>  
+>  /*\
+> - * Verify that ioctl() raises an EINVAL error when PIDFD_GET_INFO is used. This
+> - * happens when:
+> + * Verify that ioctl() raises an EINVAL or ENOTTY (since ~v6.18-rc1) error when
+> + * PIDFD_GET_INFO is used. This happens when:
+>   *
+>   * - info parameter is NULL
+>   * - info parameter is providing the wrong size
+> @@ -14,6 +14,7 @@
+>  #include "tst_test.h"
+>  #include "lapi/pidfd.h"
+>  #include "lapi/sched.h"
+> +#include <errno.h>
+>  #include "ioctl_pidfd.h"
+>  
+>  struct pidfd_info_invalid {
+> @@ -43,7 +44,12 @@ static void run(void)
+>  		exit(0);
+>  
+>  	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO, NULL), EINVAL);
+> -	TST_EXP_FAIL(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid), EINVAL);
+> +
+> +	/* Expect ioctl to fail; accept either EINVAL or ENOTTY (~v6.18-rc1) */
+> +	int exp_errnos[] = {EINVAL, ENOTTY};
+> +
+> +	TST_EXP_FAIL_ARR(ioctl(pidfd, PIDFD_GET_INFO_SHORT, info_invalid),
+> +			exp_errnos, ARRAY_SIZE(exp_errnos));
+>  
+>  	SAFE_CLOSE(pidfd);
+>  }
+> 
+
+
+
 
 
