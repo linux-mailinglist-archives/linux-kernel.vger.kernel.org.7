@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-866873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD7CC00E14
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:49:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE52C00E1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2DDF14FD4DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:49:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAA021A06F7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AA630E83E;
-	Thu, 23 Oct 2025 11:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4077630E854;
+	Thu, 23 Oct 2025 11:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BrTp11Tg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b76Z/p52"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CA030ACE1
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238D63009CA
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761220146; cv=none; b=ARAT5JQ+j9q2Y31QBtbTY4OjTm1MMzGKeoCsozXJN4imcF2Og3NuIJj2AVEqmY7GyqRMNQHnJeBL7RvGp8cyZnCyjH+SxAZNjmDHYR4Gu85W8n3LD0A0bKqqrDQ/rUM//r69uzVH9ZBRpLU2WE9L82RfcZbmhl03O61xV9p+S9c=
+	t=1761220172; cv=none; b=uEGyzTPJMIORvy6KSY0iKTZ4imYTLhAnDLZME6kVnDkkW7xOXN3QCgSmZfdz3PX1nwt/VjbfeaPurQAkkOdacjKAqZoprqIWkdYMgGByFOwQx/iV0yFQeZX3baBbw52n8E+CStHj78xnBtzDegi9dVUCluwv4aSVkpSqVTNpSs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761220146; c=relaxed/simple;
-	bh=4dgoVQlnEo4oODVa6YMvMXaJOlp99dhpE2pG4GcsxJM=;
+	s=arc-20240116; t=1761220172; c=relaxed/simple;
+	bh=ggm7K33F2Lvf8aetxoMCpPifvf34MtktdbfMQDbo63U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jSzPISaV80l3YPXdd+14yp5H7VJm1cKI4CviAEUFj0VGirHze8fQOF/WIY4/PCK4PGuqmg5WU9fQC86s4AQb5hUXZAErQ1qMzXxpOgWm2o4EPMRSlCq95uWbM2ccWheks+ph7MBudRT2l1CIe/JtHxKbbW1sqFZOrnaEGeJ4L3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BrTp11Tg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6qMJe029135
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:49:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+0Pbe/M8gSqUaSIRE3HIPvDZn2zygmrcLdsFcuo0zoM=; b=BrTp11TgbKo8PYk1
-	EN1/4XeUyWLbVij/x/3psUVKGG5BHT3vNFcEwOZ5u2bcRyIuhoCnGnKNIiOu+YnM
-	1/ENhRYsqMuL24zGiWIy1FmP0pTsZf4uN0GqqGfKAUHcCOuNeab2oPHWixrL4ZON
-	4Ri7dpjWkCASFQrbXk1N+KfkfwZyqKEhMPJeVbzGOdJgbPfI2b2Cvo9H/EUfzSip
-	kTNXb/VHWmurnKoyDLLajJv5j5L1cVV59afUFyoVr8FiQNfZ75sVU6T4+a3zdSoJ
-	h+yFK5vj5+GtKVDr70vkLCGBIE8/Jf54jtJ8yanTs6Qhkv42ceVWDUkaIZJZS8oW
-	yBf1Vg==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49w08wdwn1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:49:04 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e8a9ec4746so39192241cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:49:03 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=elhxs8pWHWLSGIqzb2TcJgTcxU896NgWJkup9zcVCXBbPoAkXXsCsACx01ik5noAw/g+Y7nuVxijEt7HTm5YQK/Q4FjpROl+2nkD1u87szAGituCLSH3lOHmf2+7I634JEPlD88am69az/b4VEH0omOfafZt6kjk37gZI7T2E/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b76Z/p52; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761220168;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JCBxlSGX2oKy9c5VZTiKe/QSwX2dngLFxql68g6Ybmk=;
+	b=b76Z/p52zxZo7xjt83fwpgJer/gtHjQ0IVS5U/7X99UJJVTJziZ4Fez5Lm7ic/OZUsSq8y
+	56eqaXhnACeA0OkH81MYSYGHMlKBrdXMfyMc6gMjBbDYQnqT6TjQ4SUmb0yK9T6aHp4bL5
+	vVQ1OZmVHiNmcDlc9uMF9H711hBNZ1k=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-638-JUEhfr3TNhS69CNcGVqRHg-1; Thu, 23 Oct 2025 07:49:25 -0400
+X-MC-Unique: JUEhfr3TNhS69CNcGVqRHg-1
+X-Mimecast-MFC-AGG-ID: JUEhfr3TNhS69CNcGVqRHg_1761220164
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-4256fae4b46so439555f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:49:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761220143; x=1761824943;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+0Pbe/M8gSqUaSIRE3HIPvDZn2zygmrcLdsFcuo0zoM=;
-        b=B0eKtMj9Z0Zhu3wvH/DawUrV1nSoVxApUkEgUBwnsjNcL64MJ/wvBb72qlE72lcc/9
-         ZvCF9skPaDWO5oBGGuRAEXdApN8hEH94Jxaz5SQ7AvAieCl4vVKY+TNZi7bU6EM/9KKb
-         RwoloWpvwiE2vq7h2Kvk4P/XGp/R5zfuUU1juijLxCmCnFamceY3L+xfQ/DiruFrbM/l
-         Pmc++QR2qQjHwuGdS/fq6rQrWv4EqnJll+fWS+OsNUyMYOTpxXZu5GMtGg6+lTIpJYe5
-         hJUysfvrHwwIOaXoVPMa2+niT6MjL/xCd6C87iloL6sA96P5ob+r2i1LQw8JfSIl5yyX
-         Yx5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUivG0HivMsHHxC8zyuHQAe8eaz0cty+XJ6AakxAFmqMRsxe0ldvDJKuAQTZRR8lNtPtWiwaJxI/MaRR8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1alvgOhm0E/N+FI21IVDzPU5NwzQ2lFbQwENZN5rdpO7ky2LF
-	Hw6dBTEhJmt2kdOuiAjj4/x3FMsokYMHLEtyVnDzPEjDlk6LD7dTpvwY1Fc5DWIHEU34Fdm4CPY
-	/bO7NmixOxMlXnnLnEz6tc4/fsJvp2flsZay9fJIoZNd+abE3Fc9QrSsa8H1/YDgW7P8=
-X-Gm-Gg: ASbGncv1GOIdtXKyCG+UcXWYXt4E5m1NHrZD0ilGu+U2gUImJCmXnEVSvVuS6+I2SKM
-	iS5vKVl3nFHLkY1CuqKvVOMuXrfn3Q+P3il/VkzGNmg0Zr4exEXTNhYnqiZiyZT+4cPfEeUQjUE
-	lHsgCULN5HGpL1V0xDOdAFxDhc9cyNr7E+vBlx4sFiuwQmDgvjOw7KKSlEXJpry3ItyaEqeuupN
-	2O2Hfs0VHBC93Tq9hE1XBOS3v67v3B7kZeLm7C34Fc7llC1jpmZNPzVCWO/+ALElmGQdCQfVcZV
-	jGlgKKM67hmWwW9ij6gHw5D9JOYbLr6ceP5JEf2W/Wdg0vFxANOxRrv7UusUcJkAGTlFMpfQn73
-	obdHfrtVPNS4H0jqTCa3jHGyaDg==
-X-Received: by 2002:ac8:5fd0:0:b0:4b5:e9e3:3c90 with SMTP id d75a77b69052e-4e89d1d7746mr304723751cf.9.1761220142698;
-        Thu, 23 Oct 2025 04:49:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEndSouLbaMqStBpGLIXSKQaZY6PXSsB/L1/iDncCBlOBKARZQJeEDJAjh9nsoFFo47+XIJuQ==
-X-Received: by 2002:ac8:5fd0:0:b0:4b5:e9e3:3c90 with SMTP id d75a77b69052e-4e89d1d7746mr304723361cf.9.1761220142226;
-        Thu, 23 Oct 2025 04:49:02 -0700 (PDT)
-Received: from [192.168.68.121] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-475c4369b33sm92047225e9.14.2025.10.23.04.49.00
+        d=1e100.net; s=20230601; t=1761220164; x=1761824964;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JCBxlSGX2oKy9c5VZTiKe/QSwX2dngLFxql68g6Ybmk=;
+        b=VDhRyp73PoRm82oO23BOwiYB9f7c9R32h9BuDU7C+D6BGvvm72fw1cEHkx4MeQhP5Y
+         cV9zS45JQs49lw31E6lVJ7fPxJkRLn/THyYzeIEU6f2v5E/qMeSdDDjcSHBcC7E9hcLy
+         8bTXJbi2QhGutazlkEPw+OrNxRLjV6Os9jEYnvR/thQC3P1a3XZC3mJEHU13jhqqir7R
+         jujrc1yBxPFDkUl5ajW6ay0pbTHXyrKcXSWnMrBS6xhH836/r/8kAq17RCfsMxhiyFql
+         V+1i8TUzRiCfyYFTcNR9yybchK9ZXFkSQuBCLJ7CySWFABmayZ5dZY3aEbPaADvzO5vr
+         76pg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUV4BSXDMM/XB/ipe8g7agb7+UVp4rx4N8WHtU6YczVHmVK9QvQLOp+yzvJCPDIWB+/EHdHiAlAZJthTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3yfOf3SSRrMKD28kLgnZlGvE6s5JneERINnKGVMCU0/aG4Xfe
+	NHpegR2eedQOe/RZBZR0rf4ffQLOFnFH2RL7xSbESIcl9AXLsIYz82rZHsea36yxWNn5DEaXVfa
+	QgXxqqUuNK019y4kO1BhvA2oV35R5rO5qEuJI4zjrpUuNaL+j+DzEIS+6+19p1TzTHA==
+X-Gm-Gg: ASbGncuqglobw76/OvKtuR6g/WZ7MmEbKIO/9jqt9REJ8VC5djuQJeOVN5yho2Bc3a9
+	Ky9rwN1beR5XwuLUtscI0nrQKz63eC2El7fPTpCxdj1Vv9bR/p2muQxwenBhVOoks0u10gebly8
+	mVT+jEkoKHpvDL32pmYACfAFd1c6oyIeMXXt10j9rXz+A2TiiHEp2nEdGvzQWHUdk925aX/qB8L
+	c6wEe8PkYyiZR8Kasbnlybe2s7PEIK7nOxCfUn6Iy+/BGttoFr5tSRh5p5TDa1c5o6g+cv40DmJ
+	FlpuTC7CTtTnYwin13qTQp3Yxj1EqR5O8HB8xE9kjGe1Ui0Zm8zYWLo20ZZ3OulSdu31iLNczuj
+	iDA8A278sOfrlm3ODS3QpPZZxCKGgMfk/4bT+i/OSokqkSEPz4aHde2lITIxKwYhUQ5JgrKWxRJ
+	y6glLvc3ZFFjjdqnoaBj4Xd2PO7V0=
+X-Received: by 2002:a05:6000:470a:b0:427:491:e77d with SMTP id ffacd0b85a97d-42704da9e16mr15577041f8f.36.1761220164344;
+        Thu, 23 Oct 2025 04:49:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJfOXZJEHV2NsbUj6aOO2PBD6VL5w9K1QsDgEyX5FiTcCiFyrw8Szd74pXh3vMEb+fyU8utQ==
+X-Received: by 2002:a05:6000:470a:b0:427:491:e77d with SMTP id ffacd0b85a97d-42704da9e16mr15577028f8f.36.1761220163874;
+        Thu, 23 Oct 2025 04:49:23 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898acc63sm3522878f8f.27.2025.10.23.04.49.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 04:49:01 -0700 (PDT)
-Message-ID: <f1338318-0135-415e-ab65-482cef20f919@oss.qualcomm.com>
-Date: Thu, 23 Oct 2025 12:48:59 +0100
+        Thu, 23 Oct 2025 04:49:23 -0700 (PDT)
+Message-ID: <f57d73e3-fb6c-4c01-9897-c9686889fec2@redhat.com>
+Date: Thu, 23 Oct 2025 13:49:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,190 +90,157 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/display: add hw_params callback function to
- drm_connector_hdmi_audio_ops
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
-        Jianfeng Liu <liujianfeng1994@gmail.com>,
-        Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        linux-arm-msm@vger.kernel.org, Xilin Wu <sophon@radxa.com>,
-        David Airlie <airlied@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-sound@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250925040530.20731-1-liujianfeng1994@gmail.com>
- <46q2pje4hginnm2wld6ejyo36hfkmkzydaa4qggx47gd2p4q4z@q6vmomtgqihv>
- <cc1afa21-8a66-4e0c-8fae-d0b07142b11d@kernel.org>
- <rydatk4grelhg6w57wwkqafq5ghccnsuiwvfqvvdv7qum5dg5a@scoc76ni7hue>
- <e69b23de-e9b6-4dfc-af01-7d2726dc23e4@oss.qualcomm.com>
- <bnrpfijh4rljdzroduqncfygysvgblljlhdpvq7ubajlbbwvwd@ohdmpjvpzj33>
- <f9c922f5-52af-45bb-a4ca-7ca80c0c3534@kernel.org>
- <7fwfxr7zqsaudselhru3jtjc2f7pdjvlaj2b464vgdlqcrljek@asci6y3ghq63>
- <jymgfmn5pje4qaslyaivzfm4m7ho774pid3uenj6yfrlrdk3ss@2nqojclepgsu>
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251017141536.577466-1-kirill@shutemov.name>
+ <dcdfb58c-5ba7-4015-9446-09d98449f022@redhat.com>
+ <hb54gc3iezwzpe2j6ssgqtwcnba4pnnffzlh3eb46preujhnoa@272dqbjakaiy>
+ <06333766-fb79-4deb-9b53-5d1230b9d88d@redhat.com>
+ <56d9f1d9-fc20-4be8-b64a-07beac3c64d0@redhat.com>
+ <5b33b587-ffd1-4a25-95e5-5f803a935a57@redhat.com>
+ <7fmiqrcyiccff5okrs7sdz3i63mp376f2r76e4r5c2miluwk76@567sm46qop5h>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <jymgfmn5pje4qaslyaivzfm4m7ho774pid3uenj6yfrlrdk3ss@2nqojclepgsu>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <7fmiqrcyiccff5okrs7sdz3i63mp376f2r76e4r5c2miluwk76@567sm46qop5h>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: lfDWI0ebZT5184sYSgSwa4XJCdGknIrw
-X-Proofpoint-GUID: lfDWI0ebZT5184sYSgSwa4XJCdGknIrw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE5MDA5MCBTYWx0ZWRfX+xTp5hZAjKzG
- l5HWauAiQEhh1g6eS3WiHlU8Mk/zt0G6awJ/gitciIYpOHpXuGT9BUiofBWRZ4L0+qYQWr2XGy9
- a6vfoyYkbPZiX6D0mLfDvUivJiae4CuVc/UCAcgL+QvaAlea8tH7vpl6/vuEsv49yoLQiv/7QAm
- RLQ+avAkMa4aGctjNJThIW9DGH8nIqL7hRHr8grPuMe4Vu1WSVMpT8xKlKOYlVI4LeoyNrrvsPE
- j9gJdD3QcdOyU75W17SS58dMrYmZco5cRjQbaPSE+6EDhpZd5107wW2LP3X+DQinZjgr714wLoU
- KRtbMY6+OXMpPfz6vAVNURaY3YYhiMblVwFGD8TrZHMkHH63dceyB9mSSMqUBIrnkUlYtf5tlZD
- UTx2gNnKT45eWIJGL7pCUdEQ+TQqZQ==
-X-Authority-Analysis: v=2.4 cv=V5NwEOni c=1 sm=1 tr=0 ts=68fa1630 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=pGLkceISAAAA:8 a=flf6Z5GiNIarb4g2JskA:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
- spamscore=0 suspectscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510190090
 
-
-
-On 10/23/25 12:43 PM, Dmitry Baryshkov wrote:
-> On Sun, Oct 05, 2025 at 06:29:20PM +0300, Dmitry Baryshkov wrote:
->> On Sat, Oct 04, 2025 at 02:16:08PM +0100, Srinivas Kandagatla wrote:
->>>
->>>
->>> On 10/3/25 6:02 PM, Dmitry Baryshkov wrote:
->>>> On Fri, Oct 03, 2025 at 05:35:16PM +0100, Srinivas Kandagatla wrote:
+On 23.10.25 13:40, Kiryl Shutsemau wrote:
+> On Thu, Oct 23, 2025 at 01:11:43PM +0200, David Hildenbrand wrote:
+>> On 23.10.25 13:10, David Hildenbrand wrote:
+>>> On 23.10.25 12:54, David Hildenbrand wrote:
+>>>> On 23.10.25 12:31, Kiryl Shutsemau wrote:
+>>>>> On Wed, Oct 22, 2025 at 07:28:27PM +0200, David Hildenbrand wrote:
+>>>>>> "garbage" as in pointing at something without a direct map, something that's
+>>>>>> protected differently (MTE? weird CoCo protection?) or even worse MMIO with
+>>>>>> undesired read-effects.
 >>>>>
->>>>>
->>>>> On 9/26/25 4:09 PM, Dmitry Baryshkov wrote:
->>>>>> On Fri, Sep 26, 2025 at 11:30:26AM +0100, Srinivas Kandagatla wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 9/25/25 5:28 AM, Dmitry Baryshkov wrote:
->>>>>>>> On Thu, Sep 25, 2025 at 12:05:09PM +0800, Jianfeng Liu wrote:
->>>>>>>>> After reusing drm_hdmi_audio_* helpers and drm_bridge_connector
->>>>>>>>> integration in drm/msm/dp, we have dropped msm_dp_audio_hw_params and
->>>>>>>>> use msm_dp_audio_prepare instead. While userspace is still calling
->>>>>>>>> hw_params to do audio initialization, and we get the following errors:
->>>>>>>>>
->>>>>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->>>>>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->>>>>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->>>>>>>>> hdmi-audio-codec hdmi-audio-codec.0.auto: hdmi_codec_hw_params() started
->>>>>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: q6apm_lpass_dai_prepare() started
->>>>>>>>> qcom-apm gprsvc:service:2:1: Error (1) Processing 0x01001002 cmd
->>>>>>>>> qcom-apm gprsvc:service:2:1: DSP returned error[1001002] 1
->>>>>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to start APM port 104
->>>>>>>>> q6apm-lpass-dais 3700000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC error (-22): at snd_soc_dai_prepare() on DISPLAY_PORT_RX_0
->>>>>>>>> MultiMedia2 Playback: ASoC error (-22): at dpcm_run_update_startup() on MultiMedia2 Playback
->>>>>>>>
->>>>>>>> And a call to hdmi_codec_prepare() comes only at this place.
->>>>>>>>
->>>>>>>> Srini, Mark, when selecting to only implement .prepare for codec ops I
->>>>>>>> was following the commit 2fef64eec23a ("ASoC: hdmi-codec: Add a prepare
->>>>>>>> hook"), which documents that IEC958 status bit is set after
->>>>>>>> .hw_params(), so it's only visible during .prepare(). Is it okay to
->>>>>>>> implement both callbacks? Or should the audioreach DAI driver be fixed
->>>>>>>> somehow instead (I suppose it assumes that the port is available after
->>>>>>>> .hw_params(), not sure if that assumption is correct)?
->>>>>>>>
->>>>>>>>>
->>>>>>>>> msm_dp_audio_prepare is not called because hdmi-codec driver only checks
->>>>>>>>> and runs hw_params before q6apm_lpass_dai_prepare(). This commit will
->>>>>>>>> add hw_params callback same as drm_connector_hdmi_audio_prepare, so that
->>>>>>>>> hdmi-codec driver can work with userspace alsa.
->>>>>>>>>
->>>>>>>>> Tested with Radxa Dragon Q6A.
->>>>>>>>>
->>>>>>>>> Fixes: 98a8920e7b07 ("drm/msm/dp: reuse generic HDMI codec implementation")
->>>>>>>>> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
->>>>>>>>
->>>>>>>> The patch LGTM, but I would wait for response from audio maintainers.
->>>>>>>>
->>>>>>>
->>>>>>> The ordering matters in this case as we need clocks and audio
->>>>>>> configuration on DP codec side to be setup before we start configuring
->>>>>>> the dsp pipeline. Looks like that DSP is trying to setup DP endpoint
->>>>>>> even before it is ready.
->>>>>>>
->>>>>>> q6apm prepare loads the dsp pipeline and starts configuring the
->>>>>>> endpoints, if the DP endpoint is not ready dsp would throw an error.
->>>>>>>
->>>>>>> We might be able to pull in some dsp logs to confirm this, but I dont
->>>>>>> have a setup that I can reproduce this issue.
->>>>>>
->>>>>> What would be your recommendation to proceed? Is it okay for the DAI
->>>>>> driver to depend on the .hw_params enabling the clock? Also I see that
->>>>>> the error regarding the clocks comes from .prepare callback too. What is
->>>>>> the order of .prepare callbacks()? Can we influence it?
->>>>>
->>>>> prepare follows hw-params, and prepare can be called multiple times
->>>>>
->>>>> When you mean order of prepare callbacks, you mean w.r.t codec and dsp
->>>>> backend dia link drivers ?
+>>>>> Pedro already points to the problem with missing direct mapping.
+>>>>> _nofault() copy should help with this.
 >>>>
->>>> Yes. Here we got a dependency from the cpu dai to be prepare()'d after
->>>> the DP driver performs some actions, which were a part of hw_params()
->>>> callback but were moved to be executed during prepare() callback.
+>>>> Yeah, we do something similar when reading the kcore for that reason.
 >>>>
->>>> This leads me to two sets of questions:
->>>> - In which order are those callbacks executed? Can we make the ASoC
->>>>   enforce some order of DAI's prepare() callbacks?
+>>>>>
+>>>>> Can direct mapping ever be converted to MMIO? It can be converted to DMA
+>>>>> buffer (which is fine), but MMIO? I have not seen it even in virtualized
+>>>>> environments.
 >>>>
->>>> - More improtantly, isn't it a sympthom of DP driver (incorrectly)
->>>>   performing too much in the .hw_params() / .prepare() callback? Should
->>>>   we move some of the setup to the .audio_startup() instead? What is the
->>>>   expected split between those callbacks?
+>>>> I recall discussions in the context of PAT and the adjustment of caching
+>>>> attributes of the direct map for MMIO purposes: so I suspect there are
+>>>> ways that can happen, but I am not 100% sure.
+>>>>
+>>>>
+>>>> Thinking about it, in VMs we have the direct map set on balloon inflated
+>>>> pages that should not be touched, not even read, otherwise your
+>>>> hypervisor might get very angry. That case we could likely handle by
+>>>> checking whether the source page actually exists and doesn't have
+>>>> PageOffline() set, before accessing it. A bit nasty.
+>>>>
+>>>> A more obscure cases would probably be reading a page that was poisoned
+>>>> by hardware and is not expected to be used anymore. Could also be
+>>>> checked by checking the page.
+>>>>
+>>>> Essentially all cases where we try to avoid reading ordinary memory
+>>>> already when creating memory dumps that might have a direct map.
+>>>>
+>>>>
+>>>> Regarding MTE and load_unaligned_zeropad(): I don't know unfortunately.
 >>>
->>> I have not looked at full dp sequences but, if prepare is the only place
->>> when it enables the required clocks for audio block, then it is a
->>> problem, we should do it early so that DSP can enable the required
->>> configuration in prepare.
->>
->> As I wrote, previously it was done as a part of hw_params, which is
->> also not optimal as hdmi-codec clearly defines both callbacks as
->> optional, requiring only one of them. Do you know, what is actually
->> required on the DP side for the DSP to be able to preapre()?
-> 
-> Srinivas, did you have a chance to look at this? Or the .hw_prepare
-> ordering? I really don't want to land this fix only to face the same
-> issue because on some of the platforms .hw_prepare() callbacks will be
-> called in a different order.
-> 
-Dmitry, few days back Krzysztof was enabling DP audio on T14s, and we
-have seen that the DSP is not happy and returning error 1 when we try to
-prepare the dp port. The exact reason is codec is not ready at that point.
-
-
-By adding this patch, Krzystof managed to get DP working.
-XElite platforms were working before 2fef64eec23a ("ASoC: hdmi-codec:
-Add a prepare) patch was merged, basically 2fef64eec23a broke what was
-working before.
-
-Am happy with this patch, better move to hw_params instead of prepare.
-
-
---srini
-
->>
+>>> Looking into this, I'd assume the exception handler will take care of it.
 >>>
->>> Its also doable to move out the clock related settings from  prepare to
->>> startup which should work aswell.
+>>> load_unaligned_zeropad() is interesting if there is a direct map but the
+>>> memory should not be touched (especially regarding PageOffline and
+>>> memory errors).
 >>>
+>>> I read drivers/firmware/efi/unaccepted_memory.c where we there is a
+>>> lengthy discussion about guard pages and how that works for unaccepted
+>>> memory.
+>>>
+>>> While it works for unaccepted memory, it wouldn't work for other random
 >>
->> -- 
->> With best wishes
->> Dmitry
+>> Sorry I meant here "while that works for load_unaligned_zeropad()".
 > 
+> Do we have other random reads?
+> 
+> For unaccepted memory, we care about touching memory that was never
+> allocated because accepting memory is one way road.
+
+Right, but I suspect if you get a random read (as the unaccepted memory 
+doc states) you'd be in trouble as well.
+
+The "nice" thing about unaccepted memory is that it's a one way road 
+indeed, and at some point the system will not have unaccepted memory 
+anymore.
+
+> 
+> I only know about load_unaligned_zeropad() that does reads like this. Do
+> you know others?
+
+No, I am not aware of others. Most code that could read random memory 
+(kcore, vmcore) was fixed to exclude pages we know are unsafe to touch.
+
+Code where might speculatively access the "struct page" after it might 
+already have been freed (speculative pagecache lookups, GUP-fast) will 
+just back off and never read page content.
+
+We avoid such random memory reads as best we can, as it's just a pain to 
+deal with (like load_unaligned_zeropad(), which i would just wish we 
+could get rid of now that it's present again in my memory. :( ).
+
+-- 
+Cheers
+
+David / dhildenb
 
 
