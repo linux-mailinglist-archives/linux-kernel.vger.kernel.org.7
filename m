@@ -1,201 +1,264 @@
-Return-Path: <linux-kernel+bounces-866180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123A2BFF1A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:19:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A428ABFF1A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA3413A98D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF2D3A98E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B96F2236E0;
-	Thu, 23 Oct 2025 04:18:56 +0000 (UTC)
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0990C1D63F3;
+	Thu, 23 Oct 2025 04:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OuIsVnnO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC7AD515;
-	Thu, 23 Oct 2025 04:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761193135; cv=none; b=I85FNrlh+JMZ6XRBeoy0F9/5NT5fc96glTGSVxiWPB1dJ3pHkQdK55HQ6xMCmC+GxMhffauj/isI3E9y0hTcdBhOFxtgC0SurNr3poX65FuhfN2A3j+133JOi7AI+fY49ZaiPbJhQq0837jAUxK2db00Acjdq7n6bCF4uoxJQ30=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761193135; c=relaxed/simple;
-	bh=5PlYfvWue8wrQ0HBq8FrPBtbXXrcTWm+68baTyfeAwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PopULCRL/b+kxwvtSfdtQKBX33RRRjUGIEKLSXcEuGUoKSTwP5qzIAiCVULKh6r+790O0U+PsYPSTYJFqmY7IwWvsVNRJeJ8fji694zGuddyyLqFZ/ULR7Rr+iFn2acB68z44L/YnsHJ5UxAD7aIWYUPqFs5mQVES8DbjLcGlGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=52.59.177.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip3t1761193099t60baf72f
-X-QQ-Originating-IP: GCzqp74BjwXRcZSUfMy4Sx/Rx0qnce6x/ev10AZZ/UA=
-Received: from [IPV6:240f:10b:7440:1:e4c5:315f ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 23 Oct 2025 12:18:14 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4133063992032992874
-Message-ID: <FB49B2F64A16962F+d1dca436-509a-4edc-a93b-ffd297ef8a80@radxa.com>
-Date: Thu, 23 Oct 2025 13:18:13 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66649235063
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761193138; cv=fail; b=hGSOrMi00YUbcjPXsp/4CjB1nC7uGeesr1OC90pjyr0VGMrSdhE+ExqFNhUC1Jg2tsCAjB6FE85St4rHzMR6iF8aMxDWooBuQk/O3k2Ca3YjHR4Odl/kwKa95X0ETyPRdORljp/sXSdTHDrQNsh76yVbQwxGShgDuR5/Ajb4B28=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761193138; c=relaxed/simple;
+	bh=0e6BDcUfMycwede2ofjq0msvUcMsa10HicMOYcSpIgA=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Om8n0I3gyUCF0WbC0suCGNi7/hewOXTgVsoZeo/2ggHf77t9+Th4ykTet9UJYoV5S9mZuQqizgs7hFHzWEQFimF1at1ciOSX0qo/m90W76cZM2l2i78tuBvwKXKHHoMmx/eJwl0QkNddeaO8PKB0rjZ1vk+psJcIkL9Qahix/VY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OuIsVnnO; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761193137; x=1792729137;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=0e6BDcUfMycwede2ofjq0msvUcMsa10HicMOYcSpIgA=;
+  b=OuIsVnnO2pBB/3fKn2YQrIQye0/VCmtEJTR/84xw5QMepybdD5iGFbXy
+   vBB1FKmxiUrAwnRi/wvelycFiglv91DrHE6BHg8v17wRTVNj/AlwmKqx9
+   mAp2BfX2JdqXtWCWK4ANSm9I4efQmz/QHj4m5FOLp5uV0MFVpJbSO69XH
+   SpaaUqerLiDugjwHnoVH+GhRYd1B5gmOgQZyiqPrHvCf4uwtAvXxjvPN8
+   yke5c4XilPs/tKg0cKdoGfFHDay20rDqTY4hAtJWMIKu53EJxPTddApbI
+   eUdgEBhzGuka9ljVu6EekrG13N5cAxR5fdNR6iF5PKh0Ct8av+FdP+BTT
+   w==;
+X-CSE-ConnectionGUID: foy8JvXnQ46lMJrU/MR0vw==
+X-CSE-MsgGUID: r1oBW3jUT7WHuWtJHcGxNw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="65967827"
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="65967827"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 21:18:56 -0700
+X-CSE-ConnectionGUID: xhhsdoYMQS+1kqAqaQlnIw==
+X-CSE-MsgGUID: jZCVRHfxQOyAXfecGC8PTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
+   d="scan'208";a="189177988"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 21:18:54 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 22 Oct 2025 21:18:55 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 22 Oct 2025 21:18:55 -0700
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.17) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 22 Oct 2025 21:18:55 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I/bLNH95gbbqn6f1mDqZ/tWvz+fr3pEPkskUdQJ/MTXdjYuwRp/0+9ObqAYxY6TBxcSEwO9sTGuX2nU9pfCVW6MLH9t7XEBINjDqewUCD9ElMBuDTjL0AAP+La//vTQyyCbFB35GUkKs//0ozqbHRQGanINskvzVfzob2curIkakZkWiL9mO27uOJnBMyV2/7Ed/fDR4tauAK2R+K/FF09JPHYC80um9inC9oFCSTLGuRemfln8pOLdVrr1bsHpNIuBGygKoId3UtQiWbdndrOTsddouuuZhFSIvF84l6MgF8mtPKkl4wyolYXv+yXuhycoU/yurX12CuXOsIRlknA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eycxYI1YH28Gx+rLFRMPC6xBkyr9uBO3H4uqrRtraT0=;
+ b=f7gVmhp2TeiMi/pLXjRVRE8qqKsfciCSN8FLK6BpvURtTWnl7A2sJBGa/xoXC3D+nl5su9oz9L8XHOR4JS06hcUHceQFM+yxmAi7iytX4h5WTstS86CESyVDsl6JSdbyTw6qwP8lGd5BHczJWkJ+ivjFVoIRhlm8oW6VvRXvjPz9GiyonLmUrC7XU6w9VlgFwuOE7/bdDsnKJHr9fvYRdwRtkY490UqtCIMuewyPEdduJFe6ia8piTbJuNT8HjJJsxyQBS49j2WdvRl4NIqWhsmKEW20h7ZBcvl71k58D2MC4EKxj5nOwWjmmByOWe0AoLNt6RQAopbLqv1HDQXJCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by DS7PR11MB5965.namprd11.prod.outlook.com (2603:10b6:8:70::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
+ 2025 04:18:53 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.9228.015; Thu, 23 Oct 2025
+ 04:18:53 +0000
+Message-ID: <0b9d5e86-b858-4fce-adc2-e5adae25e775@intel.com>
+Date: Wed, 22 Oct 2025 21:18:51 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 07/31] x86,fs/resctrl: Rename struct rdt_mon_domain
+ and rdt_hw_mon_domain
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
+ Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>, Chen Yu <yu.c.chen@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20251013223348.103390-1-tony.luck@intel.com>
+ <20251013223348.103390-8-tony.luck@intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251013223348.103390-8-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0342.namprd03.prod.outlook.com
+ (2603:10b6:303:dc::17) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
-To: Bjorn Helgaas <helgaas@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: Christian Zigotzky <chzigotzky@xenosoft.de>,
- linux-rockchip@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-References: <20251022191313.GA1265088@bhelgaas>
-Content-Language: en-US
-From: FUKAUMI Naoki <naoki@radxa.com>
-In-Reply-To: <20251022191313.GA1265088@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: MjqaYNLY8QZG1tZzDhvx287W+4c6EfdSGBwmOxr9FxwYeNCVD3oqhX1f
-	l9h3kN3pIMG+ZQndCsdj0GzkRc1PC9I96k9R4X7B6zMawJ33ngcP602d25FnSKPiGbC6XNF
-	Na5Up5X7hAkM2A+orhEapSIl2omvOP1Ieh2aErTarEMurIw7Glv4rskzBWQEyjR7ycSXyl5
-	S25Z/NhanApG0EgP7ysGlcegv6rf60phplpfBnyIt4tU7ldM7IV3+fZ/+i1YzStho2+tIc/
-	XL0l4R1fcn52YNJ/ebqbw+Fmp1LsTHj28KlW/eH5wI1cMxRA90JsVXPoaX4uiRYUNwyQmhQ
-	ovl5o0htzmkqzrKdiyt6WelXvTT3ZuHz5Fi5RENxiZ9BQ4cLOPtEgeituccNVer4o6KCb4J
-	J3wlv4jQwXG/V0qU8uQftl6S2rmwvS0WNXyVWf108KY855kfjV5ri6/fjw6g7glaW3Q95tl
-	Sqe6zdSxSch40IsvFo5jMBOj8fIX5bDmvxK8iLPVy5/+S5IV/Q8vvk+PgriEYkz3nFzLD8o
-	m3vME8TSaGHeJn/JKFu7AFf2LHLzFkqLaMKHj4BaujlQoA8r8y4L9vWbMj88sGn+hcH7H+m
-	6nuEUpkPwXmVEKIg4RBJvWlOCSUM903jbWR8D+RvSBOj2NZhBHPBY6JsI+H1Os8hM37dAn3
-	r+xCC4yvfV6wR3iqg8pcxwS/GMFwLna8pkPk2sZ8uCyAkIj/HGDCmGwF6LdO+79jcGqaohm
-	B5pY4ttu1LoO3upo+BPT2sgn43mEFhetgorOXNwq+UUOu/8nQot6XWvBXbtQ2DckRjrBwRV
-	7mIeDm482awGT+fGrz5vhVQ191duYUxm5cu0c9WfW+fURIqvtJSZkcrqA10TAAAW1P9ABVB
-	jOkl0GaqMTeQ8yMeBEYv8ThjV5UQQQebfLoS+JPz1bIF3Wj/soMFpPri3NDBgaiTvJe+7Fv
-	VHkmkZNgYcWxOj6MFSwkQkUE9xk4XK8ZdaO64XYOobQe5GNyuea6lCKlB
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DS7PR11MB5965:EE_
+X-MS-Office365-Filtering-Correlation-Id: 119237a8-14d4-4ff7-2e45-08de11eb467c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?UnFoenVlNCtrblRWa09sWkNjbUZyTVdSV05lOUpISFJLbkxPaFZNMWFjT3U2?=
+ =?utf-8?B?Y3FGUkx0eUhtbEh2dmxKa0h0VW5kUTVyQzhobVFDY1RhS1FGWXJjbkljb3Nx?=
+ =?utf-8?B?VmQ2cVJkejh0a29xbGJPcmR2djlpNnZBbkdUWFlLY2lXdE5TV1RucTg3cG5P?=
+ =?utf-8?B?RW9NN2t6RXA1SXB0UDJDZFpjRGJucUk3bGxmQTBFTVVIVE42YXF3MmtKTW8y?=
+ =?utf-8?B?ZUp2blZvaUQzbFhXSlV0aTRHNkdwQlhuVUVjUE4vUlc3emFnYk1MSnJHMFRY?=
+ =?utf-8?B?dDZiUGt1d25KWTJzaS90a3NnVzZlMFFqMWFzTXNmZmxIZ1Q0ZHVRSU50Ync3?=
+ =?utf-8?B?RHQvRTljUEh5NE9BWFFmelJIM1g5STFIa3k0SVNxbEVHQk9nR3RLMi8rckla?=
+ =?utf-8?B?aHA5QU8rN3VqZ0NZZXZQZGRvbWJkVzV2Q3M0NzQ3alRDU0MvdzkveUJYVzEv?=
+ =?utf-8?B?UlIyU3FaY1VqOEJMZXNNdk5EVVFVM0Q1VUVSUzR4eHgwL1UzMFdJRnhsdlA3?=
+ =?utf-8?B?SmhpOExEanU0cUlMOXFDeC9XQkcvSklWdG5qMk96M1REOWZLTVRTTktiVzQ4?=
+ =?utf-8?B?b1RhU3g3MTNTNEt0K3k3d3JiblNMOG5KY2JuR0hQTVBOeGRhVTR4U3RLd3lj?=
+ =?utf-8?B?ckRabjhqcExLTm0vRS9xZDFqeTBxVllManNzYmZiK0k5dnR2cDZ1SDRYWWN3?=
+ =?utf-8?B?TWJ6SmNweWNIN0tqNy9qb0hMeXRWS1Badmp6c3JNVFVRZ2R1elB1VjYzZm5K?=
+ =?utf-8?B?cncvRCtOcjlFL1VVcjhnYVdoNTdWY1NHczZyM2pCaU1oTVRFdlhQYUFGMW9B?=
+ =?utf-8?B?Ykx6UjZWK29rRGM3M3M1WGZ5dG5wQVRQczVZMFZkRlZwdWtYcEt6MEhicWpD?=
+ =?utf-8?B?bExtZExKNU5KNWdXREt3a3FCcy9zSkc5bzJTMTNFb2RIODY4dENBbkRVd0tt?=
+ =?utf-8?B?NHpnTC9VbHV6T3UzR0FLZk1QaGJWbVV1R05kbmk0R3IxVzF0RTNkSjN2eEQ4?=
+ =?utf-8?B?R0IrVENmVWxKUWEyS01JMGJGRC9HZEZ4RlhveDVoTWN1S2l2ZG9vUHRCeDNm?=
+ =?utf-8?B?ZjVsKzN3VDE2U2JkbFEwam92dSsyNE41bVZ1cDcwdFpQaUVkVk12WG5tMDFu?=
+ =?utf-8?B?eHJxWktiQ2hYZ0M1bnNTbnR4TTRhNEZDaXhlTVAzSXVkejF5aWVUSlB1d3RZ?=
+ =?utf-8?B?aDhsUzNrTFl6eXdxV2lDYVFLYXZxbytsTXdJQXFwdDNWOXJtaERzeGpwY0pX?=
+ =?utf-8?B?VmlIMVQyd3A2azFQaGFHTjNoUzltYXRwQ2FWVkNXK1NMSTlLbEYwQ1NudG1x?=
+ =?utf-8?B?UjVianF5TCtZRW9aclJMeWJJMytJVGMycXFaeWsyS3ZsZXNzSXMyTWJYNTU0?=
+ =?utf-8?B?MzN6LzRGeE0wYWxuSUlxaUtLRVRSRW9Nc09ka2YrOWVYc2hLWE9kN3VGR0l3?=
+ =?utf-8?B?UXprSExrTmFsZzI0NEdSa0xvenFQV1JiOUF2RXdtRldrbzRla2tZMmE4YU8r?=
+ =?utf-8?B?OFBVcjk0Wm9hMHJkZG5ibnByM2o5V0Y5aDlCWURpaWxWOUJZWFYxeXEzQzlP?=
+ =?utf-8?B?YzBNWWc4RkplZkcrUjUzaUlaNmphTzdXbUhOZnJrQ2xsbWxHRUN4WWJVcFZN?=
+ =?utf-8?B?S1RVTFpXNzByQnNadWExemJaeHpYc3ZaZFJEK1duSkVmMWVqWGp2UDdtcVg5?=
+ =?utf-8?B?YXhQM0duRXEwdDE3NXJTbThYRk9BY1pTV002YlBtVzI0cFk3eFJsQVIvTEkv?=
+ =?utf-8?B?amRYTnNkMmRleTljR3Vjd3c4ZnFGaWtEci9YQlQzdG5BSlNPZXhBYXVSTkUr?=
+ =?utf-8?B?elBrNXR3cjJBYkFJLzV5dE9kekZDNmlZZitUSEs5YmN5YzVtVTZYN0pneDFq?=
+ =?utf-8?B?WVJPT3RUdlVNcm00NmY0QVRaek05cFIyVno5dFM2Zi9lZjAzNWJOWFBhT3hF?=
+ =?utf-8?Q?0a7tDrK+wbWhvBJZb5brW9StE7tPwGxN?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Y2xnUGsyNktkOWtIZG1KK2gzSkpqR0g2cnlQNG5pVHNYQmw3dDlicXRKUDQ4?=
+ =?utf-8?B?THFlOWdqYURLYXl5Q0pBVGVpOFNFdHlLcTFxVGVQTXEzYm1uL2UzaGtXL3M3?=
+ =?utf-8?B?ejB3UHdOdGVvS0R6dHhxOEdSOWQzK2JZSmtwRk94OGc0VE5JQXNPckp0Tm5v?=
+ =?utf-8?B?dkpuQ3c5NEVuSTNxWTVwclVJY094UzdJUkxYS3Y4TGdUdGhTM2tJZ0M2UTRs?=
+ =?utf-8?B?RTBkMlhJVVcrazZBMjd5QWQvQmFKRC9VZGVHM0FDVEVqVHM0c3c2Wm5kTS9n?=
+ =?utf-8?B?RzFDMG1idTFYMHNmTm1QSXU5QTJ0ZDhkRVpvWnpXb0FhMnZpVmV2OWJpVGdD?=
+ =?utf-8?B?WjRiRjJONGlRWE5ESS9xZHIvcDU5Q3lMcjNmajBhaFgyV2s5cXlxc2NJcXBE?=
+ =?utf-8?B?V1JWcjRLRVhDSENFM1NubmY5bDRWOHVMYlRoT0U2blNWVmVaQVlGQ1dYaGU2?=
+ =?utf-8?B?eU52VG9TK0pSZ3lwdnRvRHRvMGtiM0F0QmRWR3o4RDFyTXVQd1hvSFhvVFZU?=
+ =?utf-8?B?UmZxOFI2ZkFqd051YnRydmREZ1pnZFI1aXdpQ3NpUXFud1Y0aGlJVlRUT3Zz?=
+ =?utf-8?B?ckxnWU13WHpMODJjRWk4eWdzb0c0dFpXNkIycGtFNGEvZmJydTVwL0xzRThl?=
+ =?utf-8?B?RjRQZ3dyZy9pbU1oWGQvUW5zOUprUUw5d2tRT1dLK2VMZkxRZEs2YkVwOHEw?=
+ =?utf-8?B?bUtaWHBubGZGanZOUFcrUG9TSzBHZWlYVnY2Vk5yeFpKUC9HQXRVejZiNjlG?=
+ =?utf-8?B?RW1QYVNQdFNrQmluTWg1WjRxQWdoMnFnTzI0eUhOaWFSdjdjM0dZV1NaQ0ZE?=
+ =?utf-8?B?RDExaXZaVHUwV1pOWmRPZm9KeElrSEtpeVFKRlRNTmp2T1loOTNoYlZjSndu?=
+ =?utf-8?B?QXBURG1EL2FEaU1KTE0rTUpoVmp6YklFNEtrSXFmVDhtWVd5SUVNMXV6d0Vr?=
+ =?utf-8?B?LzJpQ0hHb1c1NUlucmpnaVFlMmVDUFJDY1Vob2dyK25OZTVpSDVBeEsxUUYv?=
+ =?utf-8?B?eDljV1dBam1GZ1BoYXd2dFBSZmJ1V05PYUozY2R4azVEMXVEOW5lTmlIcU1w?=
+ =?utf-8?B?YWVISE4zQ09ocGhHSHNXNFo2eE5qOEd3QWNNM1dQNmQ2SUNrV011SWM0aDhV?=
+ =?utf-8?B?YlJMWVhEZjc2b3JsQi9aaU5Eek5yaytMZzFvRTY0NEd0QUFhQVN5WFFIZzNU?=
+ =?utf-8?B?M2grV1BBb253TmNycjg2ZmNGWVphU3I3bkFOZ3ZIMnZlL1dpbC9kaHk4VStU?=
+ =?utf-8?B?YURXMjVMaXBEYW04ZGlSdTZLSFVmMWRKMXJDSzdCZXI1bmtXVk9TeGFSaEtQ?=
+ =?utf-8?B?eXAvalZ2WEoxRmtHdkl1UDNiVXROL0N3Z0MwWVBxOXVIQm1MSFd3U1M1NXZ5?=
+ =?utf-8?B?WGZKU00yVml6OEloNUlMYVlwbFJxL3oxc0t0d042RVVXVnpjYVIzYVdIT01t?=
+ =?utf-8?B?UWc2Zmpzd2xCNlVXb25hQ3VDMWowMnlBNXdGS1QvaDB5SjBaL3pGTmFyblMv?=
+ =?utf-8?B?Q05rVm54RjJtZnV6OTN5SitHL1lHUUt2d1ZvYnJiK1hRNUZRRTAzN3EwaENS?=
+ =?utf-8?B?RjZONVl1bzlvZjZtRFBEbFR1enh0VWo2Wk8vUDU5NGd4WnhNSFg3dmZ4RjA2?=
+ =?utf-8?B?R3BSajVUbUlXS2lMZklLTlM4bEEvSEJMU3ZhOVNRMFRRRzJ4S2dYMW02aEpG?=
+ =?utf-8?B?cVFENVNOZDR4dG0ybGRyTjBlTlMveExXbm1JUEFsVXMxMlltTWRLcFhDYTB4?=
+ =?utf-8?B?VWVlSkwzRjdXeFVHN2ZOOHJqQmZZS0NhNmVZdG1VWjVPNnJLeUdzYnhCU3p0?=
+ =?utf-8?B?NG9CeFV3dXM4ZEN3RDNEMSttMFlpU3ZkY1FLOGE3OTh1cys1RlRDalFsWUpq?=
+ =?utf-8?B?OEZqbVp5RXJ6Sy9CQ3Y3R3EzbmpwNDJ2SHd2MFJXQVpyam5ocjlyZFMzcndV?=
+ =?utf-8?B?NVlsekNiNTJlVFJsZFBCeHQ5aEovbFZDNnhvYjhlTWFsSWRqYXJFaDNMK3dX?=
+ =?utf-8?B?Y2ljTzJvYVRtNEovZlVJN3ByTWhQeVlFMmYxY2ZEcDhDTHRUMk5rTFp1aGwv?=
+ =?utf-8?B?QWZOSU0rM28xODZSMjNRU2NkeHFkUHk2MkN2bGlrdFVnOEw2YlNQSFZtaDdt?=
+ =?utf-8?B?OGhsVVZDcFlpV0dMSXcxSGxBK0h2VmdzQkM0Rnh6OXZva1JvR2tad00rczEx?=
+ =?utf-8?B?VkE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 119237a8-14d4-4ff7-2e45-08de11eb467c
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 04:18:53.1803
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: temULc20khBvpC/53ob6U4WxAIYQULnbM7qKsFGPjylGLJ6z4AvDoKQElW9hKyF5kNNWHRkHvdpDFelhuvQ/k7xZbsppUBPZeMQhaC7X7fY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB5965
+X-OriginatorOrg: intel.com
 
-Hi Bjorn,
+Hi Tony,
 
-On 10/23/25 04:13, Bjorn Helgaas wrote:
-> Christian, Naoki, any chance you could test this patch on top of
-> v6.18-rc1 to see whether it resolves the problem you reported?
+On 10/13/25 3:33 PM, Tony Luck wrote:
+> The upcoming telemetry event monitoring are not tied to the L3
+> resource and will have a new domain structures.
 > 
-> I'd like to verify that it works before merging it.
-
-I'll be testing now. May I test on v6.18-rc2 without the following patch?
-
-  "PCI: dw-rockchip: Prevent advertising L1 Substates support"
-
-Best regards,
-
---
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
-
-> On Mon, Oct 20, 2025 at 05:12:07PM -0500, Bjorn Helgaas wrote:
->> From: Bjorn Helgaas <bhelgaas@google.com>
->>
->> f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree
->> platforms") enabled Clock Power Management and L1 Substates, but that
->> caused regressions because these features depend on CLKREQ#, and not all
->> devices and form factors support it.
->>
->> Enable only ASPM L0s and L1, and only when both ends of the link advertise
->> support for them.
->>
->> Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
->> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
->> Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@xenosoft.de/
->> Reported-by: FUKAUMI Naoki <naoki@radxa.com>
->> Link: https://lore.kernel.org/r/22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com/
->> ---
->>
->> Mani, not sure what you think we should do here.  Here's a stab at it as a
->> strawman and in case anybody can test it.
->>
->> Not sure about the message log message.  Maybe OK for testing, but might be
->> overly verbose ultimately.
->>
->> ---
->>   drivers/pci/pcie/aspm.c | 34 +++++++++-------------------------
->>   1 file changed, 9 insertions(+), 25 deletions(-)
->>
->> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
->> index 7cc8281e7011..dbc74cc85bcb 100644
->> --- a/drivers/pci/pcie/aspm.c
->> +++ b/drivers/pci/pcie/aspm.c
->> @@ -243,8 +243,7 @@ struct pcie_link_state {
->>   	/* Clock PM state */
->>   	u32 clkpm_capable:1;		/* Clock PM capable? */
->>   	u32 clkpm_enabled:1;		/* Current Clock PM state */
->> -	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
->> -					   override */
->> +	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
->>   	u32 clkpm_disable:1;		/* Clock PM disabled */
->>   };
->>   
->> @@ -376,18 +375,6 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
->>   	pcie_set_clkpm_nocheck(link, enable);
->>   }
->>   
->> -static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
->> -						   int enabled)
->> -{
->> -	struct pci_dev *pdev = link->downstream;
->> -
->> -	/* For devicetree platforms, enable ClockPM by default */
->> -	if (of_have_populated_dt() && !enabled) {
->> -		link->clkpm_default = 1;
->> -		pci_info(pdev, "ASPM: DT platform, enabling ClockPM\n");
->> -	}
->> -}
->> -
->>   static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
->>   {
->>   	int capable = 1, enabled = 1;
->> @@ -410,7 +397,6 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
->>   	}
->>   	link->clkpm_enabled = enabled;
->>   	link->clkpm_default = enabled;
->> -	pcie_clkpm_override_default_link_state(link, enabled);
->>   	link->clkpm_capable = capable;
->>   	link->clkpm_disable = blacklist ? 1 : 0;
->>   }
->> @@ -811,19 +797,17 @@ static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
->>   	struct pci_dev *pdev = link->downstream;
->>   	u32 override;
->>   
->> -	/* For devicetree platforms, enable all ASPM states by default */
->> +	/* For devicetree platforms, enable L0s and L1 by default */
->>   	if (of_have_populated_dt()) {
->> -		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
->> +		if (link->aspm_support & PCIE_LINK_STATE_L0S)
->> +			link->aspm_default |= PCIE_LINK_STATE_L0S;
->> +		if (link->aspm_support & PCIE_LINK_STATE_L1)
->> +			link->aspm_default |= PCIE_LINK_STATE_L1;
->>   		override = link->aspm_default & ~link->aspm_enabled;
->>   		if (override)
->> -			pci_info(pdev, "ASPM: DT platform, enabling%s%s%s%s%s%s%s\n",
->> -				 FLAG(override, L0S_UP, " L0s-up"),
->> -				 FLAG(override, L0S_DW, " L0s-dw"),
->> -				 FLAG(override, L1, " L1"),
->> -				 FLAG(override, L1_1, " ASPM-L1.1"),
->> -				 FLAG(override, L1_2, " ASPM-L1.2"),
->> -				 FLAG(override, L1_1_PCIPM, " PCI-PM-L1.1"),
->> -				 FLAG(override, L1_2_PCIPM, " PCI-PM-L1.2"));
->> +			pci_info(pdev, "ASPM: DT platform, enabling%s%s\n",
->> +				 FLAG(override, L0S, " L0s"),
->> +				 FLAG(override, L1, " L1"));
->>   	}
->>   }
->>   
->> -- 
->> 2.43.0
->>
+> Rename the L3 resource specific domain data structures to include
+> "l3_" in their names to avoid confusion between the different
+> resource specific domain structures:
+> rdt_mon_domain		-> rdt_l3_mon_domain
+> rdt_hw_mon_domain	-> rdt_hw_l3_mon_domain
 > 
+> No functional change.
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
+Some style hiccups with the changes added since the RB tag:
+
+...
+
+> @@ -242,9 +242,9 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_domain_hdr *hdr,
+>  			   u32 unused, u32 rmid, enum resctrl_event_id eventid,
+>  			   u64 *val, void *ignored)
+>  {
+> -	struct rdt_hw_mon_domain *hw_dom;
+> +	struct rdt_hw_l3_mon_domain *hw_dom;
+>  	struct arch_mbm_state *am;
+> -	struct rdt_mon_domain *d;
+> +	struct rdt_l3_mon_domain *d;
+
+This is a new hunk and it needs to change to maintain reverse fir order.
+
+>  	u64 msr_val;
+>  	u32 prmid;
+>  	int cpu;
+
+...
+
+> @@ -3194,7 +3194,7 @@ static int mon_add_all_files(struct kernfs_node *kn, struct rdt_domain_hdr *hdr,
+>  			     bool do_sum)
+>  {
+>  	struct rmid_read rr = {0};
+> -	struct rdt_mon_domain *d;
+> +	struct rdt_l3_mon_domain *d;
+>  	struct mon_data *priv;
+>  	struct mon_evt *mevt;
+>  	int ret, domid;
+
+Another new hunk that needs to change to maintain reverse fir order.
+
+Reinette
 
 
