@@ -1,108 +1,189 @@
-Return-Path: <linux-kernel+bounces-867908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD1EC03E1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3340BC03E70
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 42FA33563C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:49:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A8644356595
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF25296BD4;
-	Thu, 23 Oct 2025 23:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438FD2DE6F7;
+	Thu, 23 Oct 2025 23:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwuz6ea3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k4wVXkmy"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E833B19F;
-	Thu, 23 Oct 2025 23:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1CD1990D9
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 23:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761263356; cv=none; b=REUCOTEBpYfJOd+BOu1mkIpJ0dElSN3rpIkpFyo+tQE49bNWxMMLAp1Qs2mJNitzkG2pt/jGFyI6LZpLTcfW6bhjbOJRv0oEAu62wGnDlo5zxdhPUgRuoRlma6IejyBDgDRfZuYexGH3P7FGY/xqORvWUgt+0zuVYKupw/g/JXA=
+	t=1761263582; cv=none; b=qZ37719r8LK6h5UfBP5eaujqKkrCsoN8kurN7s03actrcd11hK+Ks9TVdOKEMvmGy9p0qlhmd+y0l7fFBp25/7EmQdc9eh0ljsTx6f+qZngWQ5+m24f3aEeXQWv4dFR3Mx5Ytxr7NarajXPH+82m55xRrExDnOHbGUtDB2CSILs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761263356; c=relaxed/simple;
-	bh=OgUs8+SZL9e0RkdhmEIGg0+WlPaKEnZD3S+5P/6E54o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I8OPfih2NO8je6drans4R4blsqO4dopjIvpGVqZb8V0PoH0hgJKtnJqhFXADxlLKR4IUG0C+HcSOp4s/3Q+grAkcV19e3ZFpiovqTqT/wcWLa5WX/LeltFX7nwy2/acTk5rn/R+hJj+twWOoW0bbxTCuqgb9BjVuu9OhM0YxCAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dwuz6ea3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A08C4CEE7;
-	Thu, 23 Oct 2025 23:49:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761263355;
-	bh=OgUs8+SZL9e0RkdhmEIGg0+WlPaKEnZD3S+5P/6E54o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dwuz6ea3xZNk32GCU1TiKaOiJOk3daD9BobjH9e+NU4YBIaNbsuDaN4IJmtYHF1dc
-	 YvfwKyUbMx/RFKpoLjDqXxyMf/MnlaQfFd2vYV87nFEzTCJ9mgnWkhEsNiyJO6wIan
-	 ftV3a+a/YtVWxDvsLi3KCQd73LHAgl4wi4JGpi2G2LPVuDN6ccoGlUVQuIOXRFaR6h
-	 T/FSIzU28lgHTeIz46CQJyjjPYvyWTNCvLptpvQpe70bPlLWish2U2GOhSAk4B0KEo
-	 VDqp9IRqJaXqsKkq0A2BafmMwJhggbuL6qF6V6MeRYW57TyKm4iIhZ7TLYt4imKB62
-	 qWEvfxdCDFsYw==
-Date: Fri, 24 Oct 2025 00:49:11 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Shuming Fan <shumingf@realtek.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the sound-asoc-fixes
- tree
-Message-ID: <86578286-39f7-4d08-a41b-cd7e15f1bfaa@sirena.org.uk>
-References: <20251024101931.49f46027@canb.auug.org.au>
+	s=arc-20240116; t=1761263582; c=relaxed/simple;
+	bh=AT3+wNihqmSYhjuBv/jofqfpVzIh8fFWtMB1yLIwi3E=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=rqYXluUNGypyb+3W3SLS+BRwdzwdxT9N+95UP9j3hTY7n5JBVPjmkGjhPN/avNKQgcji24ksh9EuEWGzLHQxlAeLWgzvS31a3FQqsRgAOHEJzO0ZOeVvLN4CUzgBHKpA7arUfJaWFd5zd/H+Awf6/lHS7CSV0Nj1+p4/vzy2V+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k4wVXkmy; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33bbbb41a84so3082869a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761263580; x=1761868380; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eo2oCT09CGUkGtiJETLA5OKUbDW0FKSCX+nZlCeQsGg=;
+        b=k4wVXkmyhyqE9l48IJCLR9XPDG1UoTKsy9jmc5uMJFWTWMywf+DoPWrg2gHCuuqVYr
+         LeCUKQ6rVFOZ3IdqCgaf3gLEP+R6kAeYJ6vru8xogcHofAqs0i3RcTgtq150S9d8f6c/
+         ysCzsBZGiS4S4Si6DGe2UgqUevd6olZ/o8vgLrI0tZQBYM6rBecHctibwKw6pZMIvTnD
+         bQCwq3C6wXXs9Ao6TuO3Hmia2d7HcQiTZGQkXahVHFrXFxzFXOxmi0Wp2prR6ih4UUyG
+         T874NM7LkFEuXMv2a21EohwkciFnboHNC/4y9dZQ5fQzxhBkAn3W1viKYTEXDM5jfsKn
+         J6WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761263580; x=1761868380;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eo2oCT09CGUkGtiJETLA5OKUbDW0FKSCX+nZlCeQsGg=;
+        b=vlL9Akq0A2v5/9/JActZzy6q3Z2g52pLtM2BZs+e+D42iYz6FTsmpr5SFaJdoEEjEk
+         txk/jjPp6+3/6sdBGiydD8+ia1d7NyWqC+6YAt1jQkBziytz9okTCvahojyrwnpb7zfv
+         DM88fJVUpT9YhyplRpsNEDlWOVSnZN2UVzLb/vjJzqiexIT8aTlB3CMkHgioLRPwLoGG
+         KHsn+oYKuqRJzxS+bZgIwZIArUIMzqbX7/xo/5jlSeCTSbIf2BDeb+gxn+7oq3qunidc
+         a95kB1UYQOCTyZHbEodZrpZVsEaNjok/w4nEr343nq2/pepaL0YtegbBMMYXpwLeXZ+r
+         CPRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgs4SAqUPDPv/FfbJ5fdxtuOtAAIlxbRwq07aVtUoGDHBnTdmRmbqOc54KVfnmdfiNiO8kYqtVw39Jdqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJkuqVlJWXeIZZ2TQ5uS3B31moyLECmwIm2DbwtWhoIt4wuHEw
+	PnLl9xQd8kW7pmv/DTCIoZxawTOUf3RebAeSjdI2ivon8HePsHM9Wz039wfFMY1GFFoZixwruhD
+	32GCmoQ==
+X-Google-Smtp-Source: AGHT+IEQOeSykRo4Rj5MaMzLbvjbffFfTFsbM/EOLn0WBNXCeu8l+VNyetqRrDtzeRuqnAV/p+uqxvFuzh4=
+X-Received: from pjbsd7.prod.google.com ([2002:a17:90b:5147:b0:33b:b3b8:216b])
+ (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5105:b0:32e:e3af:45f6
+ with SMTP id 98e67ed59e1d1-33bcf87b6a4mr33427079a91.10.1761263580523; Thu, 23
+ Oct 2025 16:53:00 -0700 (PDT)
+Date: Thu, 23 Oct 2025 23:52:38 +0000
+In-Reply-To: <20251023191807.74006-2-stefan.wiehler@nokia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z0vbGTRn6nOXX5RP"
-Content-Disposition: inline
-In-Reply-To: <20251024101931.49f46027@canb.auug.org.au>
-X-Cookie: I've got a bad feeling about this.
+Mime-Version: 1.0
+References: <20251023191807.74006-2-stefan.wiehler@nokia.com>
+X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
+Message-ID: <20251023235259.4179388-1-kuniyu@google.com>
+Subject: Re: [PATCH net] sctp: Hold RCU read lock while iterating over address list
+From: Kuniyuki Iwashima <kuniyu@google.com>
+To: stefan.wiehler@nokia.com
+Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org, 
+	lucien.xin@gmail.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	kuniyu@google.com
+Content-Type: text/plain; charset="UTF-8"
 
+From: Stefan Wiehler <stefan.wiehler@nokia.com>
+Date: Thu, 23 Oct 2025 21:18:08 +0200
+> With CONFIG_PROVE_RCU_LIST=y and by executing
+> 
+>   $ netcat -l --sctp &
+>   $ netcat --sctp localhost &
+>   $ ss --sctp
+> 
+> one can trigger the following Lockdep-RCU splat(s):
+> 
+>   WARNING: suspicious RCU usage
+>   6.18.0-rc1-00093-g7f864458e9a6 #5 Not tainted
+>   -----------------------------
+>   net/sctp/diag.c:76 RCU-list traversed in non-reader section!!
+> 
+>   other info that might help us debug this:
+> 
+>   rcu_scheduler_active = 2, debug_locks = 1
+>   2 locks held by ss/215:
+>    #0: ffff9c740828bec0 (nlk_cb_mutex-SOCK_DIAG){+.+.}-{4:4}, at: __netlink_dump_start+0x84/0x2b0
+>    #1: ffff9c7401d72cd0 (sk_lock-AF_INET6){+.+.}-{0:0}, at: sctp_sock_dump+0x38/0x200
+> 
+>   stack backtrace:
+>   CPU: 0 UID: 0 PID: 215 Comm: ss Not tainted 6.18.0-rc1-00093-g7f864458e9a6 #5 PREEMPT(voluntary)
+>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+>   Call Trace:
+>    <TASK>
+>    dump_stack_lvl+0x5d/0x90
+>    lockdep_rcu_suspicious.cold+0x4e/0xa3
+>    inet_sctp_diag_fill.isra.0+0x4b1/0x5d0
+>    sctp_sock_dump+0x131/0x200
+>    sctp_transport_traverse_process+0x170/0x1b0
+>    ? __pfx_sctp_sock_filter+0x10/0x10
+>    ? __pfx_sctp_sock_dump+0x10/0x10
+>    sctp_diag_dump+0x103/0x140
+>    __inet_diag_dump+0x70/0xb0
+>    netlink_dump+0x148/0x490
+>    __netlink_dump_start+0x1f3/0x2b0
+>    inet_diag_handler_cmd+0xcd/0x100
+>    ? __pfx_inet_diag_dump_start+0x10/0x10
+>    ? __pfx_inet_diag_dump+0x10/0x10
+>    ? __pfx_inet_diag_dump_done+0x10/0x10
+>    sock_diag_rcv_msg+0x18e/0x320
+>    ? __pfx_sock_diag_rcv_msg+0x10/0x10
+>    netlink_rcv_skb+0x4d/0x100
+>    netlink_unicast+0x1d7/0x2b0
+>    netlink_sendmsg+0x203/0x450
+>    ____sys_sendmsg+0x30c/0x340
+>    ___sys_sendmsg+0x94/0xf0
+>    __sys_sendmsg+0x83/0xf0
+>    do_syscall_64+0xbb/0x390
+>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>    ...
+>    </TASK>
+> 
+> Fixes: 8f840e47f190 ("sctp: add the sctp_diag.c file")
+> Signed-off-by: Stefan Wiehler <stefan.wiehler@nokia.com>
+> ---
+> It might be sufficient to add a check for one of the already held locks,
+> but I lack the domain knowledge to be sure about that...
+> ---
+>  net/sctp/diag.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/net/sctp/diag.c b/net/sctp/diag.c
+> index 996c2018f0e6..1a8761f87bf1 100644
+> --- a/net/sctp/diag.c
+> +++ b/net/sctp/diag.c
+> @@ -73,19 +73,23 @@ static int inet_diag_msg_sctpladdrs_fill(struct sk_buff *skb,
+>  	struct nlattr *attr;
+>  	void *info = NULL;
+>  
+> +	rcu_read_lock();
+>  	list_for_each_entry_rcu(laddr, address_list, list)
+>  		addrcnt++;
+> +	rcu_read_unlock();
+>  
+>  	attr = nla_reserve(skb, INET_DIAG_LOCALS, addrlen * addrcnt);
+>  	if (!attr)
+>  		return -EMSGSIZE;
+>  
+>  	info = nla_data(attr);
+> +	rcu_read_lock();
+>  	list_for_each_entry_rcu(laddr, address_list, list) {
+>  		memcpy(info, &laddr->a, sizeof(laddr->a));
+>  		memset(info + sizeof(laddr->a), 0, addrlen - sizeof(laddr->a));
+>  		info += addrlen;
 
---z0vbGTRn6nOXX5RP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+looks like TOCTOU issue exists here, we should check
+the boundary like this:
 
-On Fri, Oct 24, 2025 at 10:19:31AM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the sound-asoc-fixes tree, today's linux-next build
-> (x86_64 allmodconfig) failed like this:
->=20
-> sound/soc/sdw_utils/soc_sdw_utils.c:316:18: error: 'struct asoc_sdw_codec=
-_info' has no member named 'name_prefix'
->   316 |                 .name_prefix =3D "rt1320",
->       |                  ^~~~~~~~~~~
-> sound/soc/sdw_utils/soc_sdw_utils.c:316:32: error: initialization of 'int=
-' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
->   316 |                 .name_prefix =3D "rt1320",
->       |                                ^~~~~~~~
+		if (!--addrcnt)
+			break;
 
-And I do x86 allmodconfig builds which should stop something that breaks
-getting published...
+Otherwise KASAN would complain about an out-of-bound write.
 
---z0vbGTRn6nOXX5RP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj6vvYACgkQJNaLcl1U
-h9DoPQf+J4uAmcxOitdMZ73ee3uAWkDR8s8dOgooOfOKT9fNnuzf8K63Z9r84dny
-wIolarq6O4Wux+THWNmHM2Kcxj5Gn11jikH6JhY5SWvRkUG25mdVencPwgIsVyR5
-gGY1lt46ZznMCBf0B315UnjU/o0yISlN2fN9uHeAc1f0fuaypYyU31SpZ1MtWQRm
-f5PXOhQnn+nbEJQQx1Qo5jO4DTJ3C3OKO2llluFLaUazCRgA4KareZ+ZkMqpAiyM
-Gr6Hh7QVXD1XPd0tMvBUJq0h3naljootsctO7NCRNBmS6seAWoKfP4ZXM0++MeJD
-4jXJNAv4Ol5g91zgCYHSGoYi4qkbvg==
-=eMwf
------END PGP SIGNATURE-----
-
---z0vbGTRn6nOXX5RP--
+>  	}
+> +	rcu_read_unlock();
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.51.0
 
