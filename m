@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-867359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C27C02622
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:17:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C81C02650
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 19ACD56634E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:15:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05ADD4F7254
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D84928D850;
-	Thu, 23 Oct 2025 16:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7F8259CB9;
+	Thu, 23 Oct 2025 16:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WYSwDUhq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SW9p5SZ1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2632882A6
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC3D20C023
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761236080; cv=none; b=TszXLpKMyXcdD4jvkHEqI5KsxvCIp6gzEWhXLthHhEV1Ez14kYRK63xQPGwd69WZc6U9iJh+VF6W+Wum+SgQBpqI9JcTjROFlQGl19pIQNWPi5oMxZPzEbQrpZilpfq9S921O6xG6CQoRFm9+7emUv2cA2Dw570C1xU/7BmHfY8=
+	t=1761236169; cv=none; b=rp3j05OUWnssyQYDnx9rhddTP6FP5p6bTxOntNKaOzplopvmRk26I5mQ15PA8oUnl94tumpjzD3SzAfGG8i1nUcva2ILLThcl1ru50aPHWCTj3Dbjguntfdu92bqstxytm/mEEBlw9a+Ka/goRAqDqsXe/bw98rZbAXZgPMQXRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761236080; c=relaxed/simple;
-	bh=vFYoSYTGyB/NYB7UIddMfOV8esqvQn0hyGvAAAvg0E0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bxqUh+X7f3MQjCh0GH8lgj6PYvl1bkYSs1IwBsfYqj3EhXjUfn9GZB4uzCp8jJtnh5ulXojUyFl6f5nAtrDyUAYGwz7qGBDZwRhmBWUk8e67xEUKPrvxMoS21aBL7uiN8rjQj9zkxktzikTyeJsU6V3Tttc0CyGj4ZuVtlhIcCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WYSwDUhq; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1761236169; c=relaxed/simple;
+	bh=4HHE1j1g63Gm8p3KR4LspqWQ1i6IE8nwZ6aSeWWsy9Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YKYiYvXmb4Gh5LkywChSNFT+LQoiiKfMXnsJZvveloJc9w43/hem/hgNKNbiEXrsQYAjth1xg3YFz+s1ut8LLuHLn125cfevjgg67jV0i9s0vOJTTF5Kj0Lsl/XXqW/Ihv+C50Qa5/bM+odkQrB2IhwvCFDRTnue1s8I7EATyDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SW9p5SZ1; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761236077;
+	s=mimecast20190719; t=1761236165;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=k0dhmDMYo3HiSSPV4Zrtr3RDrc7RUUpux3gluKAN+yE=;
-	b=WYSwDUhqbAqzEUi3BCCduvXMMUVRN3vQn+TwKyCyZpWiL6FfmajkIOejZGXAq4EEtPglzz
-	VEv1ExJ/GjBljkoOb4eQ1lBe7c2wENRPcIDzZUi/I/ohv/qXCEnHI0NoZ0MiwBODXH1ZEa
-	1YH00/uhduAA+u23mWxe+7QP40fsVwU=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=JF8+qm2b7jZrTE48PPY/DK3wP+sibwHsCL/pU7PiDjM=;
+	b=SW9p5SZ1DkunhlaLOVnaq8z/wpuB5pQz9/SemQ8OR4HzRXK1Rldbr74Nm4ArQ8S6nFx1tw
+	e2nvI4OlgPVd5KSi+bsGtTnZ8yrzumGR27oSqsEisw5LOB4sEdKwPfrt9xwOllWu8fbiZS
+	KKl59iqAYN1Y6q5B6SJmfcZPtgVzcOQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-456--9x1ND1NM5Kfg1i9dJJQyw-1; Thu, 23 Oct 2025 12:14:36 -0400
-X-MC-Unique: -9x1ND1NM5Kfg1i9dJJQyw-1
-X-Mimecast-MFC-AGG-ID: -9x1ND1NM5Kfg1i9dJJQyw_1761236075
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-4284525aecbso696598f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:14:35 -0700 (PDT)
+ us-mta-255-ah84QavwNmmaUfZf0rmXJg-1; Thu, 23 Oct 2025 12:16:03 -0400
+X-MC-Unique: ah84QavwNmmaUfZf0rmXJg-1
+X-Mimecast-MFC-AGG-ID: ah84QavwNmmaUfZf0rmXJg_1761236163
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-471125c8bc1so14476915e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:16:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761236075; x=1761840875;
+        d=1e100.net; s=20230601; t=1761236163; x=1761840963;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
+         :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=k0dhmDMYo3HiSSPV4Zrtr3RDrc7RUUpux3gluKAN+yE=;
-        b=EPn2EQu+wVjBG77og8VxINovuzKqmPJmgWuSRiKMDkyJFx9e3U/rSCVEU1ax7PLVq9
-         f69QtC6ll8Yw01M/CveL6qj/hzRNabdIivsv8MZ5aRjgaH/feezs5U/BVs5VBav6Ehcy
-         CBGkt3esVIpjJkEsRJthLWAgK8KShhZNnSfzmi1d5Px73d4pNuCiULdBDCBAZnoxMrCV
-         7yOqxn15VdTfWoC/kFmNfmHYdJosQneTpHqa1E7jrj4nrCRoqJce4Nvy5i+QaekHc/AA
-         ui+OvKi7HIYowhvnkI1wuk49fzBYvKn1FhRJ9Qxeyh//yIe8ltZAx15wkm1bsF2skRV2
-         o/7w==
-X-Forwarded-Encrypted: i=1; AJvYcCU2AHKydJpTDMgQAnWc5Q2f2Q0ryff7Z3bNljjkbpvoGKLV4mmz6UEHRF6tuAEBUBVrkDIg6mSD+ZT3EHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH4+M/H2WEY3dbm037WGKvc06LR4wFSmsKrodco5agsjWvaB1o
-	3TStuK/LcjaioJrYd4Fqwnp/w71g1yEmnS5kcm/SfX+x77bcuUXDxg1bVIhoFyvaQGdznQPM5Kn
-	r/nQdXif9Vzwf1j+uqgDGUjcFIqQiazPX9okw/BlEDcwhBTaPFSPrGPHvLtUnrHBOQw==
-X-Gm-Gg: ASbGnctq1Po6JMDAqOWzskL3+aUE6w7rJ319fDKeLIbTKo0GqMEY7PZllz4YJE9abil
-	NViTUx5+BuF5rB3+HMm0Ejg++qFhkfNpgYGIZIWbnxJtZKuZgpRFyaBnETjF74FlYP46KyBYRje
-	5nulFn+iW8gXGthxZCxzY7LoemNz+haLOt1TWim9TEHqEJRaV/hCPDPIQDAcrrIrhFjET87TXmB
-	CUOr0dVIj/RhRGFV+R6YGnsoOa/O7M+5WafUMgve3aJbhS/hLegrMVel1rsndD7wUOU7UWXyVTc
-	QZ1bCMfkSvIQpMqnwWrGDP1Bnjyxa2EzDqkBvUwomz+5qCB60bknzerJu9/vJh8S5010rK0NA2W
-	XFPtdmhbkI1YcNX0Vl5Ye3yhKZGYNWNjq7iU8ACuOz+5EWvs4oNV0b1GyeKv4/1or7vgT89Dv5F
-	HpNlGDAD85sDclgt+Ln8IQGuB0OyQ=
-X-Received: by 2002:a05:6000:2389:b0:427:151:3db6 with SMTP id ffacd0b85a97d-42704d8e226mr18440206f8f.24.1761236074745;
-        Thu, 23 Oct 2025 09:14:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGMl8voI5z2PSFRyYE4kSrkNvMWAwhecqefVjAYNEcQcmIlYYmJhCc3BoVGRfcbppN1W9F1PQ==
-X-Received: by 2002:a05:6000:2389:b0:427:151:3db6 with SMTP id ffacd0b85a97d-42704d8e226mr18440161f8f.24.1761236074258;
-        Thu, 23 Oct 2025 09:14:34 -0700 (PDT)
+        bh=JF8+qm2b7jZrTE48PPY/DK3wP+sibwHsCL/pU7PiDjM=;
+        b=LdY+tIzau4wrMrD9h5qtGhTn7viDgF4A+yZjvMq4ZHT8e91RqTAuQov9ZUuv+HERA2
+         eU5XKvB8DbFyJW4rZ3v61iQ18TIk4gUg+NV8GFOiY0bFVd9gN5wN2YITBmaLwhVLg1HM
+         5pwp1hu9nf5xBkOHIBP+ikEdv5NbQ1r4M7GBIlbXY3fFdC2N78OHln/793t02H33H/tb
+         ywhVICfmluePammI451xe29smenp4E+MuplReZaB2UJaUVmRxWqoYBimXe2YGl1zfIoD
+         RUaLU0sseisz/DI9VXRqJEwawzYKPZcoWYpCJyKoU1T6/tdsNTjDOwf5vtzRuyrwEsPI
+         Mdsg==
+X-Forwarded-Encrypted: i=1; AJvYcCW794aNn70u4SVvfmvrmKxVDUCmUUS/WkKAupwe/eWQwYckX79o3aGlrsHP/mb+PvgUV6ZGOk+OafA57Jw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaLpJrqMDwFgaSpW+EsVK1wNa4wOdFCPlj/BW9eV+rQeuGWcCd
+	ixEzXSQhkFa/CKW9NDCOqr6VsDpCAp8uru3sLdyDUie0bMXE+dEzpqljmqmMRwP/5Y3ESiEw3od
+	JFO9NTijmMLBPVMapHG/vMOTchRQ9Yqmz3Z94+bK7HrQOCwFvGKiSNIFDACTEUR49Fg==
+X-Gm-Gg: ASbGncv6ejTeVDKzIRcTGwDZF52CVqXfsWmnfDpPWF+RYnkc5XrhgSkgTdnEnV10k1T
+	XFqv5VYgtA+IxmAi29dQYWmpWQGJWDq6TnOsUX2le3elKTR8HzKfPcF7nUNOarl0RBPFWf4D/vp
+	r+ty98RGu1BwhDhC7+v1oX6uLt1nm4oMf0HSvwxaJPRPqYwuGHPgyY6Tgouw4C21/ktJCaAzG6Q
+	7ylyjxrPI2mKcE2JRLsSQWJgpPYNKfq/YnuZ9ItHssRA6ytYZKH37Zs0WqDXPrqimyHYiqjwo6Q
+	XwMCW0faWk5k86tIX3m6WStWuGLIkkicPlnrkBYCl8xZPqc5i+RFTPKj6BUgw12X5KVFQRng7/+
+	p1qemjjnwhYevZDejl9ueg0FFBlkjvwVkaTAOYwMKnJDfEU0+vxo03CvPqTCEsKdq5Ohq6mkY9f
+	sAAF8j5mlfuaCdLxVwlMxusCWjnq8=
+X-Received: by 2002:a05:600c:190f:b0:46e:49fd:5e30 with SMTP id 5b1f17b1804b1-471178705b0mr189600935e9.6.1761236162671;
+        Thu, 23 Oct 2025 09:16:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFGxwA3SATV0YOnZsaSJoH7DQG6AfDDy7Cc5CBBqZ0685TqgbVdTbAExPm3EWf90r/qAD3W5w==
+X-Received: by 2002:a05:600c:190f:b0:46e:49fd:5e30 with SMTP id 5b1f17b1804b1-471178705b0mr189600715e9.6.1761236162256;
+        Thu, 23 Oct 2025 09:16:02 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c427f685sm106391125e9.2.2025.10.23.09.14.33
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c427f77bsm107646305e9.3.2025.10.23.09.16.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 09:14:33 -0700 (PDT)
-Message-ID: <f0715f2c-ee27-4e13-84d0-5df156410527@redhat.com>
-Date: Thu, 23 Oct 2025 18:14:32 +0200
+        Thu, 23 Oct 2025 09:16:01 -0700 (PDT)
+Message-ID: <c6b60121-61ed-493b-baa5-3d55db68435a@redhat.com>
+Date: Thu, 23 Oct 2025 18:16:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,20 +90,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm/shmem: fix THP allocation and fallback loop
+Subject: Re: [PATCH v2 0/1] mm/ksm: recover from memory failure on KSM page by
+ migrating to healthy duplicate
+To: Long long Xia <xialonglong2025@163.com>, linmiaohe@huawei.com,
+ lance.yang@linux.dev
+Cc: markus.elfring@web.de, nao.horiguchi@gmail.com,
+ akpm@linux-foundation.org, wangkefeng.wang@huawei.com, qiuxu.zhuo@intel.com,
+ xu.xin16@zte.com.cn, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20251016101813.484565-1-xialonglong2025@163.com>
+ <7e533422-1707-4fea-9350-0e832cf24a83@redhat.com>
+ <122ef241-787d-4e8c-82cf-01ff318293a6@163.com>
 From: David Hildenbrand <david@redhat.com>
-To: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Hugh Dickins
- <hughd@google.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Liam Howlett <liam.howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Mariano Pache <npache@redhat.com>, Matthew Wilcox <willy@infradead.org>,
- Ryan Roberts <ryan.roberts@arm.com>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>,
- stable@vger.kernel.org
-References: <20251023065913.36925-1-ryncsn@gmail.com>
- <774c443f-f12f-4d4f-93b1-8913734b62b2@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -149,74 +146,60 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <774c443f-f12f-4d4f-93b1-8913734b62b2@redhat.com>
+In-Reply-To: <122ef241-787d-4e8c-82cf-01ff318293a6@163.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23.10.25 18:13, David Hildenbrand wrote:
-> On 23.10.25 08:59, Kairui Song wrote:
->> From: Kairui Song <kasong@tencent.com>
->>
->> The order check and fallback loop is updating the index value on every
->> loop, this will cause the index to be wrongly aligned by a larger value
->> while the loop shrinks the order.
->>
->> This may result in inserting and returning a folio of the wrong index
->> and cause data corruption with some userspace workloads [1].
->>
->> Cc: stable@vger.kernel.org
->> Link: https://lore.kernel.org/linux-mm/CAMgjq7DqgAmj25nDUwwu1U2cSGSn8n4-Hqpgottedy0S6YYeUw@mail.gmail.com/ [1]
->> Fixes: e7a2ab7b3bb5d ("mm: shmem: add mTHP support for anonymous shmem")
->> Signed-off-by: Kairui Song <kasong@tencent.com>
->>
->> ---
->>
->> Changes from V2:
->> - Introduce a temporary variable to improve code,
->>     no behavior change, generated code is identical.
->> - Link to V2: https://lore.kernel.org/linux-mm/20251022105719.18321-1-ryncsn@gmail.com/
->>
->> Changes from V1:
->> - Remove unnecessary cleanup and simplify the commit message.
->> - Link to V1: https://lore.kernel.org/linux-mm/20251021190436.81682-1-ryncsn@gmail.com/
->>
->> ---
->>    mm/shmem.c | 9 ++++++---
->>    1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index b50ce7dbc84a..e1dc2d8e939c 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -1882,6 +1882,7 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
->>    	struct shmem_inode_info *info = SHMEM_I(inode);
->>    	unsigned long suitable_orders = 0;
->>    	struct folio *folio = NULL;
->> +	pgoff_t aligned_index;
->>    	long pages;
->>    	int error, order;
->>    
->> @@ -1895,10 +1896,12 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
->>    		order = highest_order(suitable_orders);
->>    		while (suitable_orders) {
->>    			pages = 1UL << order;
->> -			index = round_down(index, pages);
->> -			folio = shmem_alloc_folio(gfp, order, info, index);
->> -			if (folio)
->> +			aligned_index = round_down(index, pages);
->> +			folio = shmem_alloc_folio(gfp, order, info, aligned_index);
->> +			if (folio) {
->> +				index = aligned_index;
->>    				goto allocated;
->> +			}
+On 21.10.25 16:00, Long long Xia wrote:
+> Thanks for the reply.
 > 
-> Was the found by code inspection or was there a report about this?
+> I do some simple tests.
+> I hope these findings are helpful for the community's review.
+> 
+> 1.Test VM
+> Configuration
+> Hardware: x86_64 QEMU VM, 1 vCPU, 256MB RAM per guest
+> Kernel: 6.6.89
+> 
+> Testcase1: Single VM and enable KSM
+> 
+> - VM Memory Usage:
+>     * RSS Total  = 275028 KB (268 MB)
+>     * RSS Anon   = 253656 KB (247 MB)
+>     * RSS File   = 21372 KB (20 MB)
+>     * RSS Shmem  = 0 KB (0 MB)
+> 
+> a.Traverse the stable tree
+> b. pages on the chain
+> 2 chains detected
+> Chain #1: 51 duplicates, 12,956 pages (~51 MB)
+> Chain #2: 15 duplicates, 3,822 pages (~15 MB)
+> Average: 8,389 pages per chain
+> Sum: 16778 pages (64.6% of ksm_pages_sharing + ksm_pages_shared)
+> c. pages on the chain
+> Non-chain pages: 9,209 pages
+> d.chain_count = 2, not_chain_count = 4200
+> e.
+> /sys/kernel/mm/ksm/ksm_pages_sharing = 21721
+> /sys/kernel/mm/ksm/ksm_pages_shared = 4266
+> /sys/kernel/mm/ksm/ksm_pages_unshared = 38098
+> 
+> 
+> Testcase2: 10 VMs and enable KSM
+> a.Traverse the stable tree
+> b.Pages on the chain
+> 8 chains detected
+> Chain #1: 458 duplicates, 117,012 pages (~457 MB)
+> Chain #2: 150 duplicates, 38,231 pages (~149 MB)
+> Chain #3: 10 duplicates, 2,320 pages (~9 MB)
+> Chain #4: 8 duplicates, 1,814 pages (~7 MB)
+> Chain #5-8: 4, 3, 3, 2 duplicates (920, 720, 600, 260 pages)
 
-Answering my own question, the "Link:" above should be
+Thanks, so I assume the top candidates is mostly zeropages and stuff 
+like that.
 
-Closes: 
-https://lore.kernel.org/linux-mm/CAMgjq7DqgAmj25nDUwwu1U2cSGSn8n4-Hqpgottedy0S6YYeUw@mail.gmail.com/
-
+Makes sense to me then, it would be great to add that as motivation to 
+the cover letter!
 
 -- 
 Cheers
