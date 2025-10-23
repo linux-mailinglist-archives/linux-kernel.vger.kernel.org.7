@@ -1,162 +1,145 @@
-Return-Path: <linux-kernel+bounces-867221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4426AC01EDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:57:39 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD3CC01E69
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5169C3A32A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:51:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4FE5535A194
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76393314C0;
-	Thu, 23 Oct 2025 14:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8AC330B27;
+	Thu, 23 Oct 2025 14:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHnzFiO0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L/1zdoR0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F0130E0F9;
-	Thu, 23 Oct 2025 14:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9980330B35
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761231067; cv=none; b=D1CSFd3aKcXWcyQKGGAkPX9V8eFLyjP6yDNocD1EEDHVBZbBo8nMSnC7dIxFh9gL9bwqzxxXAnivuay6yw58/zBTQ8pUsgN1fgwQBjXorpnG8zqULFTf9Ulplnmx4uW5hQe9ORnh/Ad++xiggGI0kzvCE0NH/F9LJ1TduSbbHq0=
+	t=1761231076; cv=none; b=p0gP/I3Bt+KoEVg6LCNUi0pOFZJ7LHDSa6kfGQ2GnlR5oJIFTvZw2uTGg1yqJRUUI3xAUpRyoAbv6wg4aDqF9T6s7whkDJUkTnTE36RfYC+DzZEr5uv5YGcPOmA9R0Nm8wtIvD9ol3hul6gOepWRHLbvrdbLqNce5Iejg3EmxOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761231067; c=relaxed/simple;
-	bh=ez3PbUsv1rESznuMiJLqjOGEvPB7lEbaKFWMyfGuR24=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tq+PHcNIW531PqVYVGNZfQNMeaHc7mSn7HIb7jJm6mx390lNzl5XDWNi8wyT2NSrpe9jvnidfoHsEHhx4LEvZsfxbtxWTHMGH1pHjRnRYWMK7a3tKNhmYMeHE64/tFb2PfurpKzrR5vE3li27mhpHHbCwgT8mAzR2pyTHtIoP5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHnzFiO0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 104C0C4CEF7;
-	Thu, 23 Oct 2025 14:51:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761231066;
-	bh=ez3PbUsv1rESznuMiJLqjOGEvPB7lEbaKFWMyfGuR24=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JHnzFiO06tWmdtxo01tQB8+t4UW5oEUH/c182+Qlqw3JFk0qfYlUX30uXGCJDCmoL
-	 KKfT9MFpe5vEr/17FCOlP0s7j4RGqLJwGKE0DotxclxyO0cqbLq+nKa7C2tA+eN76k
-	 OV7kqnsh/hazV45WCeORtBcaO63fzzWWvI2wtSynPd+K+YJ63fdqHwSee9WzJTn52Q
-	 jXzLpwTyjAH4GBiS8OalknizPk2LVJYyJcw0f7Bduql4/lx1E8QJUPtNDHf/na5lME
-	 tXrA9OcFUtnTxy8BZLLH3/ZgeQ4JvTiAB2CRH1Un9OaCVOmxDEEU65GmtPW8iZwfSK
-	 pUwc8vfAY9tiw==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Doug Smythies <dsmythies@telus.net>
-Cc: 'Frederic Weisbecker' <frederic@kernel.org>,
- 'LKML' <linux-kernel@vger.kernel.org>,
- 'Peter Zijlstra' <peterz@infradead.org>,
- 'Christian Loehle' <christian.loehle@arm.com>,
- 'Linux PM' <linux-pm@vger.kernel.org>, Doug Smythies <dsmythies@telus.net>
-Subject:
- Re: [PATCH v1 1/3] cpuidle: governors: menu: Avoid selecting states with too
- much latency
-Date: Thu, 23 Oct 2025 16:51:02 +0200
-Message-ID: <5040239.GXAFRqVoOG@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <004501dc43c9$ec8aa930$c59ffb90$@telus.net>
-References:
- <2804546.mvXUDI8C0e@rafael.j.wysocki> <5043159.31r3eYUQgx@rafael.j.wysocki>
- <004501dc43c9$ec8aa930$c59ffb90$@telus.net>
+	s=arc-20240116; t=1761231076; c=relaxed/simple;
+	bh=nTCm0E0DZEOw4bT7skogqqCxkYln9uhSiEPtufpsYKY=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=bH++Qb8iXuD/45BBWDtxNwOzcu4eLXethfhrdSaatejoWWSQQ50OcVP7Kr1hR0AOWrpcWN8E2zVEhEf2C33gEkcl1sWPzW3s5p9dZCoh3jBe1KO02j75zIGTz7jmLFWHCt/dQi310X18PTY9+37/Y6TWM9RgVzLeh72lEOhsTys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L/1zdoR0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59NEKRc9005710
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:51:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=nTCm0E0DZEOw4bT7skogqq
+	CxkYln9uhSiEPtufpsYKY=; b=L/1zdoR0nzKChbSOBfI11NXGJYfTYc2yVUaXun
+	UsqK4nhA2hk/su05B+O/CtUt+IuKCHaw0Fs11zqaTJp0VZQEKDWCI3NRhf+MWrO6
+	4U7oDpUCJmRX2SNTSeX3WaJyqN6RL867/HtBomi5k+q12KIkB65R//Emg83uoQbw
+	cAJHYWB0thVKBzdUg86d2aEiYoRF7o5d86s6/PTeTHLlToaEkFyFzSaAIU4abcm5
+	D8dN+00UkFLW+is2J2HUr1Ols+MEBe0J9xRHlT+VGEtLrQNHNnb4ahbFIblOhcQJ
+	v7eNhRktlpIrA3FHNXVWyfIhJ4EeJlnutls1i1giLkSQ+YOQ==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v27j8r1w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:51:13 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-78108268ea3so1932755b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:51:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761231072; x=1761835872;
+        h=content-transfer-encoding:subject:cc:to:content-language:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nTCm0E0DZEOw4bT7skogqqCxkYln9uhSiEPtufpsYKY=;
+        b=LgXHWpxsujOCceeLfIXgoRV3R/xAGc/+La9iCJuCurrwUdE9ZpeVsnr9rwBhMy2v5r
+         OV3A0258H+2pQ6jp183gLKdQWFAWdDukegRiCG885tYIiuoxdFLdf2DC+S+7DYg/3NgD
+         jn+dZRFoSOVSzUHhQeMmkqXuYlixoKf5gCfNcRgAQPv4ZMTaQxcvnbSvfgrRkSCFEPsP
+         tbc2cOTurXIelELvFAGXg7jsGjB+1EQJ7EkfcHV2rjM6d/qKd60q0xVsNHso14lfNyxT
+         CyBPEq45i5kRE1e/tpszuwZbKXa6vYdQ0N/EELMTuaIpQ8osjPAg1fVqS1Xq8sltuyi7
+         4qMA==
+X-Gm-Message-State: AOJu0YyDMO2Y4jc3rvd1V6dmcK/pUgUFzK33JZJzvxYaaadMtevvZkxi
+	9DVX9IRHA2vrrFI9nFfBsqV4+oIKkyKZF6uTRnkpgiCqpRlIIesfNcapmrCEBoAxMOszW4lw/DB
+	BzShwNXiV9ZHG1p7ZsqqZYxOklKDFQ7AbNL36FrlkREqrxE6oKyLFl0+TLzOZtPXzcAbDzhU8II
+	w=
+X-Gm-Gg: ASbGncttiGgwLoQEyr4R2jIRNp+Rhf3mjj04rrG/+iajHT3iKbNadYH0aeTWy8ZSOXd
+	+rKqofSyOAgV7p4pjp9BREP+/YycwOvySigskH0GL2y69SgaNhV6fuK4NH6SXoPVSJO3cDMaOz8
+	kG5gmnpb0jk895yBd9CMPxOD7xHzsigzBjBAtmXPbHKO5XSk6lvRDNVce8p+T7chwx14AfaT/8Z
+	vqnr26DFbY/mOdxG/DOqksrWL/eMrjh+JcadDNKNedGF3jCLgNeHj+ongWf+RIQPW8AqBKFsPoU
+	eOsl7n28WB5rmBFMfYRuij97RSlQl4LZVL5U1H3UWyK7Ix2Z6pHlUCcG4sCFXWU51oGxe5mo86C
+	6veODpbr646V4f/3dS1CRnkHQVtY/Sryn4nCOdPf4LwA8HebUD169kx7mOeg=
+X-Received: by 2002:a05:6300:6141:b0:334:98bd:4520 with SMTP id adf61e73a8af0-33b68abc66bmr7983561637.12.1761231071984;
+        Thu, 23 Oct 2025 07:51:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEjYteMI/fKDfe3PsFg3JdwCyweVgkVyz6Gs/nneMcRLDPxCcWHB0xwF9Tfecaj6oyZtJxGTQ==
+X-Received: by 2002:a05:6300:6141:b0:334:98bd:4520 with SMTP id adf61e73a8af0-33b68abc66bmr7983519637.12.1761231071435;
+        Thu, 23 Oct 2025 07:51:11 -0700 (PDT)
+Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4c05165sm2299203a12.13.2025.10.23.07.51.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 07:51:11 -0700 (PDT)
+Message-ID: <54b7bc6c-8e30-4924-b700-bcb87b79be5a@oss.qualcomm.com>
+Date: Thu, 23 Oct 2025 07:51:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+To: linux-sparse@vger.kernel.org
+Cc: linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Will sparse ever work correctly with guard?
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxOCBTYWx0ZWRfX2nkpD9a6rYto
+ lv1Qu7w6MrRw9OdFiytWyzrlZiQ9PHI5vxCFxkG2c+uAyqCkSFDsQxBot5zI2tZSxylX1S095IO
+ U/ohM0bB7yjpNOiZK9vz+xL2t0RU6ER9nAFkk1xIBoytpsM9vCPTqXjc49COELlNsHXI3CcZA4Q
+ cJRYJXoMgmJH/4MnzGbs8lV3pnvZFo0qZRs5oF0FPhOX9MBsMtStpUWB4AvvzBROxicGIcAOtb+
+ 0cSAjXa+nr07alsoavoA0lGl/I1DfUPp9vgkfabtSt7wCU+DmnE2QQOPI4mDLyu+Tfj6QnYagYT
+ USBHEUu7+IElePAhGwNaKmCJLvJuLGHIL9CSYIhMyU5upslXP8JnNrp7adNhIHflmoh1CMa7v46
+ 5wyqMk6WXapntpc0oX0xFNH1l9ZQLA==
+X-Authority-Analysis: v=2.4 cv=G4UR0tk5 c=1 sm=1 tr=0 ts=68fa40e1 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=pGLkceISAAAA:8 a=3lU2tRPfHO6n-GZdqYUA:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: ptF5oYNDWEijZdyq4qHbCVTukfZh5Zhs
+X-Proofpoint-ORIG-GUID: ptF5oYNDWEijZdyq4qHbCVTukfZh5Zhs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-23_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 clxscore=1015
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510180018
 
-Hi Doug,
+In code I maintain there are places where we are now trying to use guard to
+cleanup locks. But 'make W=1 C=1' is complaining:
 
-On Thursday, October 23, 2025 5:05:44 AM CEST Doug Smythies wrote:
-> Hi Rafael,
-> 
-> Recent email communications about other patches had me
-> looking at this one again. 
-> 
-> On 2025.08.13 03:26 Rafael wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> ... snip...
-> 
-> > However, after the above change, latency_req cannot take the predicted_ns
-> > value any more, which takes place after commit 38f83090f515 ("cpuidle:
-> > menu: Remove iowait influence"), because it may cause a polling state
-> > to be returned prematurely.
-> >
-> > In the context of the previous example say that predicted_ns is 3000 and
-> > the PM QoS latency limit is still 20 us.  Additionally, say that idle
-> > state 0 is a polling one.  Moving the exit_latency_ns check before the
-> > target_residency_ns one causes the loop to terminate in the second
-> > iteration, before the target_residency_ns check, so idle state 0 will be
-> > returned even though previously state 1 would be returned if there were
-> > no imminent timers.
-> >
-> > For this reason, remove the assignment of the predicted_ns value to
-> > latency_req from the code.
-> 
-> Which is okay for timer-based workflow,
-> but what about non-timer based, or interrupt driven, workflow?
-> 
-> Under conditions where idle state 0, or Polling, would be used a lot,
-> I am observing about a 11 % throughput regression with this patch
-> And idle state 0, polling, usage going from 20% to 0%. 
-> 
-> From my testing of kernels 6.17-rc1, rc2,rc3 in August and September
-> and again now. I missed this in August/September:
-> 
-> 779b1a1cb13a cpuidle: governors: menu: Avoid selecting states with too much latency - v6.17-rc3
-> fa3fa55de0d6 cpuidle: governors: menu: Avoid using invalid recent intervals data - v6.17-rc2
-> baseline reference: v6.17-rc1
-> 
-> teo was included also. As far as I can recall its response has always been similar to rc3. At least, recently.
-> 
-> Three graphs are attached:
-> Sampling data once per 20 seconds, the test is started after the first idle sample,
-> and at least one sample is taken after the system returns to idle after the test.
-> The faster the test runs the better.
-> 
-> Test computer:
-> Processor: Intel(R) Core(TM) i5-10600K CPU @ 4.10GHz
-> Distro: Ubuntu 24.04.3, server, no desktop GUI.
-> CPU frequency scaling driver: intel_pstate
-> HWP: disabled.
-> CPU frequency scaling governor: performance
-> Ilde driver: intel_idle
-> Idle governor: menu (except teo for one compare test run)
-> Idle states: 4: name : description:
->   state0/name:POLL                desc:CPUIDLE CORE POLL IDLE
->   state1/name:C1_ACPI          desc:ACPI FFH MWAIT 0x0
->   state2/name:C2_ACPI          desc:ACPI FFH MWAIT 0x30
->   state3/name:C3_ACPI          desc:ACPI FFH MWAIT 0x60
+warning: context imbalance in '<function>' - wrong count at exit
 
-OK, so since the exit residency of an idle state cannot exceed its target
-residency, the appended change (on top of 6.18-rc2) should make the throughput
-regression go away.
+And lore shows this is not a new complaint:
+[PATCH v2] parse: handle __cleanup__ attribute
+https://lore.kernel.org/all/Zag2fYsyJDtDR7a6@google.com/
 
----
- drivers/cpuidle/governors/menu.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+For some reason scoped_guard doesn't have this issue:
+Re: [PATCH v1 3/3] cgroup: add lock guard support for others
+https://lore.kernel.org/all/722C5824-0381-4E43-B8AE-AE8503CFF51E@gmail.com/
 
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -321,10 +321,13 @@ static int menu_select(struct cpuidle_dr
- 
- 		/*
- 		 * Use a physical idle state, not busy polling, unless a timer
--		 * is going to trigger soon enough.
-+		 * is going to trigger soon enough or the exit latency of the
-+		 * idle state in question is greater than the predicted idle
-+		 * duration.
- 		 */
- 		if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
--		    s->target_residency_ns <= data->next_timer_ns) {
-+		    s->target_residency_ns <= data->next_timer_ns &&
-+		    s->exit_latency_ns <= predicted_ns) {
- 			predicted_ns = s->target_residency_ns;
- 			idx = i;
- 			break;
+But using scoped_guard then requires an additional level of indentation in the
+code.
 
+So I'm wondering if there is any chance that sparse will be able to handle
+guard in the same manner as scoped_guard?
 
+The code I maintain currently has no sparse issues, so if this cannot be fixed
+then I'll have to decide whether to use scoped_guard (and indent the body of
+those functions) or just keep the traditional "goto cleanup" code.
 
+/jeff
 
