@@ -1,188 +1,172 @@
-Return-Path: <linux-kernel+bounces-866522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942EABFFFDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:45:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE97BFFFF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52DD23AE24A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:45:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 444084FB08B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF1A3019DA;
-	Thu, 23 Oct 2025 08:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D20E302171;
+	Thu, 23 Oct 2025 08:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QGXNGFRo"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fx/E6O7D"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191F3302CB9
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0F726E146;
+	Thu, 23 Oct 2025 08:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761209099; cv=none; b=cPXXeKTPLMJbhLsmx6xIpLOyOwsEXrFWx4ekZXMEA8cR/KW0ZjhHYRNpkANV4WfW23nQXZ3v0+luZa1mfNzk+rBQ/foppGwKx830ohlNmQgUVQNuc4zSIsfDRYyYgWh9nqODOt0aNQ+I/kccP/Hm9G6AwrNgz+/JlD9vQtwtG7k=
+	t=1761209142; cv=none; b=piGH7FTGmuKRdxVNUINxyBtzaC4SdS7dtufyE+f0j/VgYla5jmAWYO0PscO6UfdLGMEz2Q3KceIq5Luthhbrtz/D8gc5tS4MfUTW1QPuheyMkpui+sijqTtQXOvcozfz8Yfh9g8gA1oMjjaLwgFKSS27eDZiaA+Kfqn43x8FCBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761209099; c=relaxed/simple;
-	bh=NBRovJaqkNcGG3lLAI5DbYycB/1E0nG5kKP88TENNd8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=InGmSHpf3/LZTnB2OY2rHMoLVDluULfzKNdQANzA4uJbq4QWYjFP84cH99fMQ0OUFj2lWEqClH1tMZrYZLP5Ui7W33r5mZotuYfwHtWaP67WJj5emhi3kxjDeB3WxBJGfJFzGROr1zBOoWJRLR+8NXqO6CRl1W+rTDc7aYY/FRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QGXNGFRo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6dfcF000663
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:44:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PMOYKcOfCkL0s0KLPZmt9lLeSz9YVBHmXBnbsduDHcg=; b=QGXNGFRoc+NG4GqS
-	GSv1DA4pfUiUKvaOilnpwGm/QRIGl8VNiUGHTmLbW2ZaC2z0ZKIr4RBlkr/k80ik
-	tuMWhC1nTweFkstmIaKUdMRuwv8FLGrqxPE7+PN8BsjQADSjHeu9I/ycN+XH8xu+
-	CIWDrJB7+c4PFPDUTyyvK3AruH80ossTFfrwYflUeeYhtHieM3xFs3dlCTzkz/eJ
-	WtKnIHGxApZCmWDgISUN9xoSPSNXHKS+UwROlZpxnoa5H0XzWkZQigso/91QyInC
-	9l27nMbNoyqOEVldJLkHKhqRmnhxbB7SkOQI7JgfZYontQK8hvdSvDoLzNAQAM9K
-	PgMnOQ==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49w08wdbgw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:44:57 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b6cf1b799dcso438418a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:44:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761209096; x=1761813896;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PMOYKcOfCkL0s0KLPZmt9lLeSz9YVBHmXBnbsduDHcg=;
-        b=Ea7MUFZ94lgQbu5DJc6qamioMjQT7SA5po5qpFVHV8gTE/LHKOt+SZU/nmcKSYPL7m
-         +3lU+2bP8ZUqihdyElMLwYZNfhxO7HichcGsz7p8bDi4MS8M8//edFeCOPxYZB4oEYPH
-         hYU1UCmVFY03HCIIXsZwJtmLiCJ3QjZdjJkIiSeikun416olVraimfBKTvj6VmZlLrPz
-         sKH+d8elh1bEHZhfKEpL/gj25guwAbLEjHUNQzWPe3xUgH22DfqTT+YnZYLiPJcL5t4y
-         XVzRgNxKRpzB3TbW35h4M/6U0mMUD7towb1+yuBazi9hzqy8DqcCExBTdb5qz5Lg5NKl
-         inHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXi+3spfGBWp2zfO3KtJkJ1JU1pw8nuY9g9sEnMjTNotwYoWM9bS5vImYNYS/myBSJgL/YTuUz+gIzmOeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykvRYNLKX+gXVzzbfYGd1wirBLAKRhm3LDo3aTj+IeQWL49j13
-	oifOnw8JxgPAo95+UZ4PpZMGIRe9UExzKb9medTK4pee6wpXdxTiqUAknhTB8OxR+gi15g63mca
-	CQ4NVQRhWIVd9pTcup7OWp0Iwm14PmNW1ytpqiHqLCXeuFyabBVSBDGM0RaJUiZJErhU=
-X-Gm-Gg: ASbGncslrdazV1HXpCTZQEc+9txPDwSrnDcN+PUgp+HoKtccfWC626Kr6PuQ+1wppL7
-	GBuviKYWeM7yAvvUlwZ9egbOd2hPaZgGEj2zg5M88ROGU+96NVeDa+wuZZHvcN2si4Ja2cNc/6W
-	BzeJrT56tuDDDA7+ReH3vXkCkx3sOrEjw4dLaivQ6DG0RyKMs5cJHFmhWu6vv4HaS0R+MD2z6TR
-	Xv08idpOl2bHpWpMGyphrB52O8ypjKuWaPOJDgM3FEnZoDBh/vyRmKTQawDalQkIixti9RM/6gd
-	zF7VS4W7vL8gK69Q/csZ7gwVDKjWBuEHutT0aPiu/PMp+yvm1Od3vv2UsHxUB0wBrMGvNVf1CVF
-	blNE+5u26Z1p5nqW/YQBap+S/9cTNjGH0cQ==
-X-Received: by 2002:a17:90b:3942:b0:336:bfce:3b48 with SMTP id 98e67ed59e1d1-33bcf87f431mr33777082a91.9.1761209096378;
-        Thu, 23 Oct 2025 01:44:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6QS0adJF6pTnwXOGYcJh2KTc8Y209+IAOSTNKlkqPHVZXptbGoDdmb5Pwbd310OlsY3Ervg==
-X-Received: by 2002:a17:90b:3942:b0:336:bfce:3b48 with SMTP id 98e67ed59e1d1-33bcf87f431mr33777043a91.9.1761209095912;
-        Thu, 23 Oct 2025 01:44:55 -0700 (PDT)
-Received: from hu-jprakash-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4c056fbsm1391414a12.17.2025.10.23.01.44.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 01:44:55 -0700 (PDT)
-From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-Date: Thu, 23 Oct 2025 14:14:37 +0530
-Subject: [PATCH v2 2/2] regulator: rpmh-regulator: Add RPMH regulator
- support for PMR735D
+	s=arc-20240116; t=1761209142; c=relaxed/simple;
+	bh=mska27xKT3EyztX10JDYKLSZS1LLb/NIROqYMNvXfP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lQSWwOXV81R3xz7ir6lx03iVJejQT6oevE+NXerSer5SmV6zz1ghTNYquCndXlVIuavkTv/U8QDFahronqjZVZoIKnu+SMeVgL8hGjCvrT63B3ieaXbvJyWRX9SPHLZP08Ch2gr6lY0RRCq9qaE/U2k278CSS1ktZ65TIWoTx+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fx/E6O7D; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761209141; x=1792745141;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mska27xKT3EyztX10JDYKLSZS1LLb/NIROqYMNvXfP4=;
+  b=fx/E6O7DwTsa7kkOQKUHkKZYcmfeyB4u9tqVRoLZUSFdokAb+RvsjAfA
+   n1UPtnQ82PLf2WFeKyqKFpMfC0uYrjzZkMfMPY8UTRRePMadUzEbWsdUK
+   bPX2YDV009lXLLT1Fdyxwzpmci/5ikoiezi/P4l7lEOBu6rvKhuXx1YC8
+   ZNaH5Ta1vlvUygboqFZY8z2Clgiq3OylYm43AHtEbLPmJN5OAAhEx641K
+   kk0MD4FFqkv2RVLNhMJ+l92NjDx2DMbCfpkz4Wh++uGJSThLXWyWiG8tG
+   vO6Muf6mrIpUx+Pcdh+Yh1D5doDU0T86EqAEzJgljZniSjU1rNIsnX68h
+   Q==;
+X-CSE-ConnectionGUID: 2hJkV6P6Rxy6mLke//OzRw==
+X-CSE-MsgGUID: iwppBcb7TU+8j1M2rR0DHg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63411697"
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="63411697"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 01:45:40 -0700
+X-CSE-ConnectionGUID: Ucc0EPCqSiCBkTSZJ6NNCw==
+X-CSE-MsgGUID: M6DulzDDRF26JDQ0xCqgcQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="183995303"
+Received: from bkammerd-mobl.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.221.165])
+  by orviesa007.jf.intel.com with SMTP; 23 Oct 2025 01:45:30 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 23 Oct 2025 11:45:29 +0300
+Date: Thu, 23 Oct 2025 11:45:28 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Chaoyi Chen <kernel@airkyi.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v7 2/9] drm/bridge: Implement generic USB Type-C DP HPD
+ bridge
+Message-ID: <aPnrKFWTvpuRTyhI@kuha.fi.intel.com>
+References: <20251023033009.90-1-kernel@airkyi.com>
+ <20251023033009.90-3-kernel@airkyi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-pmr735d_regulator-v2-2-452e1b28cd38@oss.qualcomm.com>
-References: <20251023-pmr735d_regulator-v2-0-452e1b28cd38@oss.qualcomm.com>
-In-Reply-To: <20251023-pmr735d_regulator-v2-0-452e1b28cd38@oss.qualcomm.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
-        jingyi.wang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        kamal.wadhwa@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        dmitry.baryshkov@oss.qualcomm.com, aiqun.yu@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761209080; l=1846;
- i=jishnu.prakash@oss.qualcomm.com; s=20251014; h=from:subject:message-id;
- bh=NBRovJaqkNcGG3lLAI5DbYycB/1E0nG5kKP88TENNd8=;
- b=veWw1zkUQrhmC9aqOesX0Xm8cjMxPGs6W6jFTMl1E4EGD6hB4IkF/4NCNAlt3flfczEKPFM3n
- oFLyxFa5L3GAWcE5rtzUkl4fVivWAaFWJHJVYgW8KBijS9rz6vKWrtB
-X-Developer-Key: i=jishnu.prakash@oss.qualcomm.com; a=ed25519;
- pk=g89pXdLVwRjdTeQ+uX1QzvBO346E3hQAc1N7fcTXgmk=
-X-Proofpoint-ORIG-GUID: Wt8Hgpa5aQbbN0mPNQHkYOvz3uP3KGmT
-X-Proofpoint-GUID: Wt8Hgpa5aQbbN0mPNQHkYOvz3uP3KGmT
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE5MDA5MCBTYWx0ZWRfX4PDHotiHfOyC
- ZTln0xWP2esotDuolLR4AqQvEFx7rRNeaJFxIv7kamhkD1ULrek49g1vlpRXtY0TJxYGibw0OG4
- 6GjJhE9DiXMNjboucW38hVaHN0nJd5C8v/DcjBLss5Kav9vUyNIGtn/Xvs82Gp7Q3e14OdCwACZ
- hH2eXfuOs4ae20Lmtp2kU9OqZON6brhVfORl1KZB3YCZcyIMCYb1zBYWJ9JUD3/YPRsuBfKOnlv
- i1HWh4M4LioFtPU1QOsad0venA7ZOPMiNvG9HHZf+4fzvphkhhN5NUpuVTYQuhFz7Eu5+ybU7Fs
- STvIbFnFpfH2dvKYrvWmFPsap+thOodIiSv2yZwt+2BZz5uznbIlISmvf3Jdg1sbnqPtL8puiiq
- h7/9gOahAGXj2HOtFvroCVkR9ccWng==
-X-Authority-Analysis: v=2.4 cv=V5NwEOni c=1 sm=1 tr=0 ts=68f9eb09 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=ufI_WnuctKyF2eFgXJIA:9 a=QEXdDO2ut3YA:10
- a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
- spamscore=0 suspectscore=0 clxscore=1015 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510190090
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023033009.90-3-kernel@airkyi.com>
 
-Add support for PMR735D PMIC voltage regulators which are present on
-Kaanapali boards.
+On Thu, Oct 23, 2025 at 11:30:02AM +0800, Chaoyi Chen wrote:
+> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> 
+> Several USB-C controller drivers have already implemented the DP HPD
+> bridge function provided by aux-hpd-bridge.c, but there are still
+> some USB-C controller driver that have not yet implemented it.
+> 
+> This patch implements a generic DP HPD bridge based on aux-hpd-bridge.c,
+> so that other USB-C controller drivers don't need to implement it again.
+> 
+> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> ---
+>  drivers/gpu/drm/bridge/Kconfig                | 11 ++++
+>  drivers/gpu/drm/bridge/Makefile               |  1 +
+>  .../gpu/drm/bridge/aux-hpd-typec-dp-bridge.c  | 51 +++++++++++++++++++
+>  3 files changed, 63 insertions(+)
+>  create mode 100644 drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
+> 
+> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> index b9e0ca85226a..9f31540d3ad8 100644
+> --- a/drivers/gpu/drm/bridge/Kconfig
+> +++ b/drivers/gpu/drm/bridge/Kconfig
+> @@ -33,6 +33,17 @@ config DRM_AUX_HPD_BRIDGE
+>  menu "Display Interface Bridges"
+>  	depends on DRM && DRM_BRIDGE
+>  
+> +config DRM_AUX_TYPEC_DP_HPD_BRIDGE
+> +	tristate "TypeC DP HPD bridge"
+> +	depends on DRM_BRIDGE && OF && TYPEC
+> +	select DRM_AUX_HPD_BRIDGE
+> +	help
+> +	  Simple USB Type-C DP bridge that terminates the bridge chain and
+> +	  provides HPD support.
+> +
+> +	  If the USB-C controller driver has not implemented this and you need
+> +	  the DP HPD support, say "Y" or "m" here.
 
-Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
----
- drivers/regulator/qcom-rpmh-regulator.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+You don't need to depend on DRM_BRIDGE separately, but do you really
+need a separate module for this in the first place?
 
-diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
-index 0a561f1d9452..6e4cb2871fca 100644
---- a/drivers/regulator/qcom-rpmh-regulator.c
-+++ b/drivers/regulator/qcom-rpmh-regulator.c
-@@ -1735,6 +1735,17 @@ static const struct rpmh_vreg_init_data pmr735b_vreg_data[] = {
- 	{}
- };
- 
-+static const struct rpmh_vreg_init_data pmr735d_vreg_data[] = {
-+	RPMH_VREG("ldo1",   LDO,  1,  &pmic5_nldo515,      "vdd-l1-l2-l5"),
-+	RPMH_VREG("ldo2",   LDO,  2,  &pmic5_nldo515,      "vdd-l1-l2-l5"),
-+	RPMH_VREG("ldo3",   LDO,  3,  &pmic5_nldo515,      "vdd-l3-l4"),
-+	RPMH_VREG("ldo4",   LDO,  4,  &pmic5_nldo515,      "vdd-l3-l4"),
-+	RPMH_VREG("ldo5",   LDO,  5,  &pmic5_nldo515,      "vdd-l1-l2-l5"),
-+	RPMH_VREG("ldo6",   LDO,  6,  &pmic5_nldo515,      "vdd-l6"),
-+	RPMH_VREG("ldo7",   LDO,  7,  &pmic5_nldo515,      "vdd-l7"),
-+	{}
-+};
-+
- static const struct rpmh_vreg_init_data pm660_vreg_data[] = {
- 	RPMH_VREG("smps1", SMPS, 1,  &pmic4_ftsmps426, "vdd-s1"),
- 	RPMH_VREG("smps2", SMPS, 2,  &pmic4_ftsmps426, "vdd-s2"),
-@@ -1950,6 +1961,10 @@ static const struct of_device_id __maybe_unused rpmh_regulator_match_table[] = {
- 		.compatible = "qcom,pmr735b-rpmh-regulators",
- 		.data = pmr735b_vreg_data,
- 	},
-+	{
-+		.compatible = "qcom,pmr735d-rpmh-regulators",
-+		.data = pmr735d_vreg_data,
-+	},
- 	{
- 		.compatible = "qcom,pm660-rpmh-regulators",
- 		.data = pm660_vreg_data,
+>  config DRM_CHIPONE_ICN6211
+>  	tristate "Chipone ICN6211 MIPI-DSI/RGB Converter bridge"
+>  	depends on OF
+> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> index 245e8a27e3fc..e91736829167 100644
+> --- a/drivers/gpu/drm/bridge/Makefile
+> +++ b/drivers/gpu/drm/bridge/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_DRM_AUX_BRIDGE) += aux-bridge.o
+>  obj-$(CONFIG_DRM_AUX_HPD_BRIDGE) += aux-hpd-bridge.o
+> +obj-$(CONFIG_DRM_AUX_TYPEC_DP_HPD_BRIDGE) += aux-hpd-typec-dp-bridge.o
+
+Instead, why not just make that a part of aux-hpd-bridge
+conditionally:
+
+ifneq ($(CONFIG_TYPEC),)
+        aux-hpd-bridge-y        += aux-hpd-typec-dp-bridge.o
+endif
+
+
+thanks,
 
 -- 
-2.25.1
-
+heikki
 
