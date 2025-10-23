@@ -1,128 +1,467 @@
-Return-Path: <linux-kernel+bounces-867195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E889C01D93
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:42:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FEC3C01CEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4488E3B9898
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:34:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D965B1885489
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980F432E137;
-	Thu, 23 Oct 2025 14:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB3C32D442;
+	Thu, 23 Oct 2025 14:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lxf/SOFG"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jlI05AIe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429C91DFDA1
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A62232B998;
+	Thu, 23 Oct 2025 14:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761230059; cv=none; b=PuFtQkJAQZBVvk9m82OVPwbvadsbp0Ub4XR0GbcP2lbva4h4w/uT9VuJBXyc+RmIBKughjWOEuTSUIH7DdJy40s3WpHOD7qNX30h2DVzI+Bk40FQqP1Ws+fMj0KSrSjTNJfdIZOpH6H2YyB7F/vbgxrtd7JeRZyNxUJ6ht0q5bQ=
+	t=1761230142; cv=none; b=Gg8hLjctz19CjXJM5T9Qy6ZI1C7ezoQ/LHTKcKCZzP6W84HX4FQKS4Sr9p4HLnx94oV+pweFEQWcL7Z7FX9rYaWU4D9Qml8QwjW/toP5tsrM0geoy/mHBE1bUQQeB0ziziTz2gRBZAiSvI9adGfKZxVlXQZISQnbfXiov+/jrIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761230059; c=relaxed/simple;
-	bh=/QeC+4KBQYT3wohYuPFOfqIAJyHO1wZV9UiHSECbF+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rgi68rbwUDeOl0Z0IWNNYGfltPT2cMYjRSqiPnhrqfySqgKMBWrDl2cuzBE1Wj84FChwYuqdsetvz1ii3TgvUIK/CsrRp8wfbbgcWBYdBui5HFRTnGkNnQuaKYv/tbhkcJCpHN0Vha9x/OkVuEaemGWm8uuN0w3zNvPCEtNoHBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lxf/SOFG; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-88e525f912fso96261885a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:34:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761230057; x=1761834857; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ty8jqgEMWrkU/Nsac/whYt2eOAER5E6EFOQ1MIoYtJs=;
-        b=Lxf/SOFGFAM7eVPDXAQhd1Enwft6Uq3rhsdzAfPR5okP8jkVsZfuBXe/cr2XbnZwI2
-         0OIjUp+cHoHPceboKQtp3MgNMDgRa70y4km1HSv/HWELXd/yVrxVE7IxJMmc7zhhUmav
-         FI7QjjX5odF40uyiNDRAmwSgAc3QQAt5A8io/k/X/UcfCGqtjH1xTu3W3JDeMoxsrhlV
-         btWTclQZOrY64E6aC2jPzN8GE9QAsZdmcc3X0762pr1n3ohbAizhYbEcG2D6e+jX2YZ8
-         a6yhxUJTzF/Wfsdr1DWU6HHf3VpVeXqQMnsOOqnILq1cL7o4eIF/WDhbAm49NCuQ7DiH
-         6jUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761230057; x=1761834857;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ty8jqgEMWrkU/Nsac/whYt2eOAER5E6EFOQ1MIoYtJs=;
-        b=oqtew7oqXmi+R/xtFOyRg8fyNGHRDRUm0Pxf4NVZYv+bqnDNi8BiFDdJhrnSBw2c0i
-         1S+KtNn1E2lso8TcFMT5mMyjzPANDbvIYzXrWrtppfKtuWuTepSNLz1aRvp4ohuu+hx8
-         mi7Cdpaqag0N3q8Nl5j72Vr6SvB1zP26BzbcIYRPnAOidqzkhTkvRIvfWBCXrPrO3VW1
-         zHyTD8O3J4vL4GVWF5rMA01H1u9edfEtmq+LJPp9dSQp2a9JYfGTt2iNU7MQAgz3jVgS
-         3xtv7mAnIhAarFKNOsIn56PjhZYZkjmpGV66WWPuW27cTo/uQltoPnW3k0gSxamQ10j+
-         pWVg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2pHu8WGuapXmcFWYXURfjrrtBMeicxcnaRR26FknrKGEnNcWneIRpxi+vZ4seepuB+hsf4f/24TmoTyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYtasu2+IUJg+19/4Q/LP3op5I80aNgDjA/7Fs9xec0xaNKRj8
-	wSEjHUvy5SDoBRAiLemqODJeE31vC8PSUA7RJ+zYxN+pSaXTdcY7squP
-X-Gm-Gg: ASbGnctsvRDtOVJSHrCNsqcRcSVAktYrYv3F1m9JKPZPFvwcjL0kJzTAWesnAyPnnLT
-	FGSrGwvuAHvm9pDtRZ+CMNmcbe2qyU7OHq40bRsA3bbeOvMwVhn0fRKEKQ4cd2Nbs8dG11aOjgs
-	rrpPe1rtDEziNORVCQkovcWjIp2wEHJ0VCmLieT7+vP8t6EuPoepDkiFrsafkN15qSFSgpn50Ca
-	8wxi/0lfYgZeKpwBLAjRf/O8tgxXJZqsuKWx1WNXyIda3ZPV4K+bRWVqIUEtunVcNOXZZveRROu
-	lWbf0XNv7fHE/c8Rb58dHdYAuBmKQSkpF+MxnZpwe99Oxpq/2kOMII+vCUOWl24oyHYdrOLKhRG
-	lcgjJ+fTMXPpJqQw7had/PuJSie8UnDSDtBZtcsQiaHZUpvFFZtg14uwNi/E6x7XA1BLfC2zLOi
-	gbg7x0gTObMVX1yxksTxEiN8cCzRKMzm8WQ5ZqdweAqg==
-X-Google-Smtp-Source: AGHT+IFk6zsFnw4L+tiI4iBc7mZ7I1pnhPccFZ233koLT7AqMhpvx2+P+Rp5WpaB7Fl/vtbeBra1Bg==
-X-Received: by 2002:a05:620a:4512:b0:892:5412:b742 with SMTP id af79cd13be357-89c11e630d8mr327291585a.55.1761230056821;
-        Thu, 23 Oct 2025 07:34:16 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1145:4:6893:5f51:a77:210a? ([2620:10d:c091:500::5:8f1b])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89c11698b74sm171117185a.30.2025.10.23.07.34.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 07:34:16 -0700 (PDT)
-Message-ID: <ae217501-b1e0-4f85-a965-a99d1c44a55b@gmail.com>
-Date: Thu, 23 Oct 2025 10:34:15 -0400
+	s=arc-20240116; t=1761230142; c=relaxed/simple;
+	bh=+bfCyD1LrfAqT8UxB7jhqeKAoDRRJaBrt5HDM8ZZtEE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f8DFsb0WtB/GQCpfrc6d4GlZwLKJ2Xu1jRdZlj/IrdbaRD2J2wKeTgDDwDj60wo58NUS+BiWml2rYDBYj5K2K9lFFtPi1mC2GPVMachN24NFsKBBODlER+b8M1Bqxi0rPbtNnAsR1TSN6Lw++l9sltMIpJi/JAAro6BCg9dzmaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jlI05AIe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0908C4CEF7;
+	Thu, 23 Oct 2025 14:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761230142;
+	bh=+bfCyD1LrfAqT8UxB7jhqeKAoDRRJaBrt5HDM8ZZtEE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jlI05AIe87lSBXutjFO6a4YADsjG11OLSC2y4NBSCnX7MrB5QjUmPJKpWWEkNtsQq
+	 6/tT3eXVelnPdR92MSP6hZqx2cP0zjGxo/cQ0Y3m1hWzXDNKnikmANVm1QBDuTQVTO
+	 v0uK87Pj/8NuzLrLKybifw3rfiziEhE/4ZjRpe8Y=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	torvalds@linux-foundation.org,
+	stable@vger.kernel.org
+Cc: lwn@lwn.net,
+	jslaby@suse.cz,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Linux 6.6.114
+Date: Thu, 23 Oct 2025 16:35:37 +0200
+Message-ID: <2025102338-kick-avatar-03ef@gregkh>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net/mlx5: Implement swp_l4_csum_mode via devlink
- params
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>,
- Tariq Toukan <tariqt@nvidia.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Leon Romanovsky <leon@kernel.org>,
- Mark Bloch <mbloch@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Vlad Dumitrescu <vdumitrescu@nvidia.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org
-References: <20251022190932.1073898-1-daniel.zahka@gmail.com>
- <uqbng3vzz2ybmrrhdcocsfjtfxitck2rs76hcrsk7aiddjssp2@haqcnmzrljws>
-Content-Language: en-US
-From: Daniel Zahka <daniel.zahka@gmail.com>
-In-Reply-To: <uqbng3vzz2ybmrrhdcocsfjtfxitck2rs76hcrsk7aiddjssp2@haqcnmzrljws>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+I'm announcing the release of the 6.6.114 kernel.
 
+All users of the 6.6 kernel series must upgrade.
 
-On 10/23/25 8:18 AM, Jiri Pirko wrote:
-> Wed, Oct 22, 2025 at 09:09:31PM +0200, daniel.zahka@gmail.com wrote:
->> swp_l4_csum_mode controls how L4 transmit checksums are computed when
->> using Software Parser (SWP) hints for header locations.
->>
->> Supported values:
->>   1. device_default: use device default setting.
-> Is this different between devices/fw_versions?
+The updated 6.6.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-6.6.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
 
-That is what I presume. I believe the current setting for 
-swp_l4_csum_mode is ultimately encoded in the capabilities advertised to 
-the driver during initialization. For example, I am mostly interested in 
-mlx5e_psp_init(), which depends on:
+thanks,
 
-     if (!MLX5_CAP_ETH(mdev, swp_csum_l4_partial)) {
-         mlx5_core_dbg(mdev, "SWP L4 partial checksum not supported\n");
-         return 0;
-     }
+greg k-h
 
-My guess is that "device_default" means that this bit would depend on 
-the device/fw_version.
+------------
+
+ Documentation/arch/arm64/silicon-errata.rst          |    2 
+ Documentation/networking/seg6-sysctl.rst             |    3 
+ Makefile                                             |    2 
+ arch/arm64/Kconfig                                   |    1 
+ arch/arm64/include/asm/cputype.h                     |    2 
+ arch/arm64/kernel/cpu_errata.c                       |    1 
+ arch/riscv/kernel/probes/kprobes.c                   |   13 -
+ block/bdev.c                                         |   17 +
+ block/blk-zoned.c                                    |    5 
+ block/fops.c                                         |   16 +
+ block/ioctl.c                                        |    6 
+ drivers/accel/qaic/qaic_control.c                    |    2 
+ drivers/base/power/runtime.c                         |   44 +++
+ drivers/bluetooth/btusb.c                            |    2 
+ drivers/cpufreq/cppc_cpufreq.c                       |   14 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c     |    5 
+ drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c              |    2 
+ drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c                |    7 
+ drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c                |    7 
+ drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu7_hwmgr.c  |    3 
+ drivers/gpu/drm/bridge/lontium-lt9211.c              |    3 
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c           |   98 ++------
+ drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c            |    9 
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c                |   38 +--
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.h                |    6 
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c                |   10 
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c         |    2 
+ drivers/gpu/drm/scheduler/sched_main.c               |   13 -
+ drivers/hid/hid-input.c                              |    5 
+ drivers/hid/hid-multitouch.c                         |   28 +-
+ drivers/iio/imu/inv_icm42600/inv_icm42600.h          |    8 
+ drivers/iio/imu/inv_icm42600/inv_icm42600_core.c     |   35 +-
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h  |    2 
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c    |    2 
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c   |  225 +++++++------------
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-pipe.c  |    2 
+ drivers/net/can/m_can/m_can_platform.c               |    2 
+ drivers/net/can/usb/gs_usb.c                         |   23 -
+ drivers/net/ethernet/amd/xgbe/xgbe-drv.c             |    1 
+ drivers/net/ethernet/amd/xgbe/xgbe-mdio.c            |    1 
+ drivers/net/ethernet/broadcom/tg3.c                  |    5 
+ drivers/net/ethernet/dlink/dl2k.c                    |   23 +
+ drivers/net/ethernet/intel/ixgbevf/defines.h         |    6 
+ drivers/net/ethernet/intel/ixgbevf/ipsec.c           |   10 
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf.h         |   13 +
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c    |   46 +++
+ drivers/net/ethernet/intel/ixgbevf/mbx.h             |    8 
+ drivers/net/ethernet/intel/ixgbevf/vf.c              |  194 +++++++++++++---
+ drivers/net/ethernet/intel/ixgbevf/vf.h              |    5 
+ drivers/net/ethernet/realtek/r8169_main.c            |    5 
+ drivers/net/usb/lan78xx.c                            |   38 ++-
+ drivers/net/usb/r8152.c                              |    7 
+ drivers/nvme/host/multipath.c                        |    6 
+ drivers/pci/controller/cadence/pci-j721e.c           |   64 +++++
+ drivers/pci/controller/dwc/pcie-tegra194.c           |   10 
+ drivers/pci/pci-sysfs.c                              |   10 
+ drivers/phy/cadence/cdns-dphy.c                      |  131 ++++++++---
+ drivers/usb/gadget/function/f_acm.c                  |   42 +--
+ drivers/usb/gadget/function/f_ecm.c                  |   48 +---
+ drivers/usb/gadget/function/f_ncm.c                  |   78 ++----
+ drivers/usb/gadget/function/f_rndis.c                |   85 ++-----
+ drivers/usb/gadget/udc/core.c                        |    3 
+ fs/btrfs/extent_io.c                                 |    2 
+ fs/btrfs/free-space-tree.c                           |   15 -
+ fs/btrfs/relocation.c                                |   13 -
+ fs/dax.c                                             |    2 
+ fs/dcache.c                                          |    2 
+ fs/eventpoll.c                                       |  145 ++----------
+ fs/ext4/ext4_jbd2.c                                  |   11 
+ fs/ext4/inode.c                                      |    8 
+ fs/ext4/super.c                                      |   17 -
+ fs/f2fs/data.c                                       |    2 
+ fs/hfsplus/unicode.c                                 |   24 ++
+ fs/jbd2/transaction.c                                |   13 -
+ fs/nfsd/blocklayout.c                                |    5 
+ fs/nfsd/blocklayoutxdr.c                             |    7 
+ fs/nfsd/export.c                                     |   60 ++++-
+ fs/nfsd/export.h                                     |    2 
+ fs/nfsd/flexfilelayout.c                             |    8 
+ fs/nfsd/flexfilelayoutxdr.c                          |    3 
+ fs/nfsd/nfs4layouts.c                                |    1 
+ fs/nfsd/nfs4proc.c                                   |   34 +-
+ fs/nfsd/nfs4xdr.c                                    |   14 -
+ fs/nfsd/nfsfh.c                                      |   12 -
+ fs/nfsd/xdr4.h                                       |   36 ++-
+ fs/nilfs2/the_nilfs.c                                |    3 
+ fs/ocfs2/super.c                                     |    6 
+ fs/quota/dquot.c                                     |   13 -
+ fs/quota/quota_v1.c                                  |    3 
+ fs/quota/quota_v2.c                                  |    9 
+ fs/smb/client/inode.c                                |    6 
+ fs/smb/client/misc.c                                 |   17 +
+ fs/smb/client/smb2ops.c                              |    8 
+ fs/smb/server/ksmbd_netlink.h                        |    3 
+ fs/smb/server/server.h                               |    1 
+ fs/smb/server/smb2pdu.c                              |    4 
+ fs/smb/server/transport_ipc.c                        |    1 
+ fs/smb/server/transport_tcp.c                        |   69 ++---
+ fs/smb/server/transport_tcp.h                        |    1 
+ fs/xfs/libxfs/xfs_log_format.h                       |   30 ++
+ fs/xfs/scrub/reap.c                                  |   19 +
+ fs/xfs/xfs_log.c                                     |    8 
+ fs/xfs/xfs_log_priv.h                                |    4 
+ fs/xfs/xfs_log_recover.c                             |   34 ++
+ fs/xfs/xfs_ondisk.h                                  |    2 
+ include/linux/cpufreq.h                              |    3 
+ include/linux/mm.h                                   |    2 
+ include/linux/pci.h                                  |   14 +
+ include/linux/pm_runtime.h                           |    4 
+ include/linux/quota.h                                |    2 
+ include/linux/usb/gadget.h                           |   25 ++
+ include/net/ip_tunnels.h                             |   15 +
+ kernel/padata.c                                      |    6 
+ kernel/sched/fair.c                                  |   38 +--
+ mm/shmem.c                                           |    7 
+ net/ipv4/ip_tunnel.c                                 |   14 -
+ net/ipv4/tcp_output.c                                |   19 +
+ net/ipv6/ip6_tunnel.c                                |    3 
+ net/tls/tls_main.c                                   |    7 
+ net/tls/tls_sw.c                                     |   33 ++
+ rust/bindings/bindings_helper.h                      |    2 
+ rust/bindings/lib.rs                                 |    1 
+ sound/firewire/amdtp-stream.h                        |    2 
+ sound/soc/codecs/idt821034.c                         |   12 -
+ sound/soc/codecs/nau8821.c                           |   53 +++-
+ sound/usb/card.c                                     |   10 
+ tools/testing/selftests/bpf/prog_tests/arg_parsing.c |   12 -
+ 127 files changed, 1542 insertions(+), 923 deletions(-)
+
+Akhil P Oommen (1):
+      drm/msm/a6xx: Fix PDC sleep sequence
+
+Alexey Simakov (1):
+      tg3: prevent use of uninitialized remote_adv and local_adv variables
+
+Alok Tiwari (1):
+      drm/rockchip: vop2: use correct destination rectangle height check
+
+Amit Chaudhary (1):
+      nvme-multipath: Skip nr_active increments in RETRY disposition
+
+Andrii Nakryiko (1):
+      selftests/bpf: make arg_parsing.c more robust to crashes
+
+Bence Csókás (1):
+      PM: runtime: Add new devm functions
+
+Benjamin Tissoires (1):
+      HID: multitouch: fix sticky fingers
+
+Boris Burkov (1):
+      btrfs: fix incorrect readahead expansion length
+
+Brian Norris (1):
+      PCI/sysfs: Ensure devices are powered for config reads (part 2)
+
+Celeste Liu (2):
+      can: gs_usb: gs_make_candev(): populate net_device->dev_port
+      can: gs_usb: increase max interface to U8_MAX
+
+Christoph Hellwig (2):
+      xfs: rename the old_crc variable in xlog_recover_process
+      xfs: fix log CRC mismatches between i386 and other architectures
+
+Christophe Leroy (1):
+      ASoC: codecs: Fix gain setting ranges for Renesas IDT821034 codec
+
+Chuck Lever (1):
+      NFSD: Define a proc_layoutcommit for the FlexFiles layout type
+
+Cristian Ciocaltea (3):
+      ASoC: nau8821: Cancel jdet_work before handling jack ejection
+      ASoC: nau8821: Generalize helper to clear IRQ status
+      ASoC: nau8821: Add DMI quirk to bypass jack debounce circuit
+
+Darrick J. Wong (2):
+      block: fix race between set_blocksize and read paths
+      xfs: use deferred intent items for reaping crosslinked blocks
+
+Deepanshu Kartikey (1):
+      ext4: detect invalid INLINE_DATA + EXTENTS flag combination
+
+Devarsh Thakkar (2):
+      phy: cadence: cdns-dphy: Fix PLL lock and O_CMN_READY polling
+      phy: cadence: cdns-dphy: Update calibration wait time for startup state machine
+
+Dmitry Safonov (1):
+      net/ip6_tunnel: Prevent perpetual tunnel growth
+
+Dmitry Torokhov (1):
+      HID: hid-input: only ignore 0 battery events for digitizers
+
+Eric Dumazet (1):
+      tcp: fix tcp_tso_should_defer() vs large RTT
+
+Eugene Korenevsky (1):
+      cifs: parse_dfs_referrals: prevent oob on malformed input
+
+Fabian Vogt (1):
+      riscv: kprobes: Fix probe address validation
+
+Filipe Manana (2):
+      btrfs: fix clearing of BTRFS_FS_RELOC_RUNNING if relocation already running
+      btrfs: do not assert we found block group item when creating free space tree
+
+Greg Kroah-Hartman (1):
+      Linux 6.6.114
+
+Gui-Dong Han (1):
+      drm/amdgpu: use atomic functions with memory barriers for vm fault info
+
+Guoniu Zhou (1):
+      media: nxp: imx8-isi: m2m: Fix streaming cleanup on release
+
+Huang Xiaojia (1):
+      epoll: Remove ep_scan_ready_list() in comments
+
+I Viswanath (1):
+      net: usb: lan78xx: fix use of improperly initialized dev->chipid in lan78xx_reset
+
+Ingo Molnar (1):
+      sched/balancing: Rename newidle_balance() => sched_balance_newidle()
+
+Jaegeuk Kim (1):
+      f2fs: fix wrong block mapping for multi-devices
+
+Jakub Acs (1):
+      mm/ksm: fix flag-dropping behavior in ksm_madvise
+
+Jan Kara (1):
+      vfs: Don't leak disconnected dentries on umount
+
+Jean-Baptiste Maneyrol (1):
+      iio: imu: inv_icm42600: reorganize DMA aligned buffers in structure
+
+Jedrzej Jagielski (2):
+      ixgbevf: fix getting link speed data for E610 devices
+      ixgbevf: fix mailbox API compatibility by negotiating supported features
+
+Jiaming Zhang (1):
+      ALSA: usb-audio: Fix NULL pointer deference in try_to_register_card
+
+Kaustabh Chakraborty (3):
+      drm/exynos: exynos7_drm_decon: fix uninitialized crtc reference in functions
+      drm/exynos: exynos7_drm_decon: properly clear channels during bind
+      drm/exynos: exynos7_drm_decon: remove ctx->suspended
+
+Kemeng Shi (1):
+      quota: remove unneeded return value of register_quota_format
+
+Konrad Dybcio (1):
+      drm/msm/adreno: De-spaghettify the use of memory barriers
+
+Kuen-Han Tsai (6):
+      usb: gadget: Store endpoint pointer in usb_request
+      usb: gadget: Introduce free_usb_request helper
+      usb: gadget: f_ecm: Refactor bind path to use __free()
+      usb: gadget: f_acm: Refactor bind path to use __free()
+      usb: gadget: f_ncm: Refactor bind path to use __free()
+      usb: gadget: f_rndis: Refactor bind path to use __free()
+
+Laurent Pinchart (1):
+      media: nxp: imx8-isi: Drop unused argument to mxc_isi_channel_chain()
+
+Linmao Li (1):
+      r8169: fix packet truncation after S4 resume on RTL8168H/RTL8111H
+
+Marc Kleine-Budde (1):
+      can: m_can: m_can_plat_remove(): add missing pm_runtime_disable()
+
+Marek Vasut (1):
+      drm/bridge: lt9211: Drop check for last nibble of version register
+
+Mario Limonciello (1):
+      drm/amd: Check whether secure display TA loaded successfully
+
+Mark Rutland (2):
+      arm64: cputype: Add Neoverse-V3AE definitions
+      arm64: errata: Apply workarounds for Neoverse-V3AE
+
+Nam Cao (1):
+      eventpoll: Replace rwlock with spinlock
+
+Namjae Jeon (1):
+      ksmbd: browse interfaces list on FSCTL_QUERY_INTERFACE_INFO IOCTL
+
+Nicolas Dichtel (1):
+      doc: fix seg6_flowlabel path
+
+Niklas Cassel (1):
+      PCI: tegra194: Reset BARs when running in PCIe endpoint mode
+
+Oleksij Rempel (1):
+      net: usb: lan78xx: Add error handling to lan78xx_init_mac_address
+
+Piotr Kwapulinski (2):
+      PCI: Add PCI_VDEVICE_SUB helper macro
+      ixgbevf: Add support for Intel(R) E610 device
+
+Rafael J. Wysocki (1):
+      cpufreq: CPPC: Avoid using CPUFREQ_ETERNAL as transition delay
+
+Raju Rangoju (1):
+      amd-xgbe: Avoid spurious link down messages during interface toggle
+
+Randy Dunlap (1):
+      ALSA: firewire: amdtp-stream: fix enum kernel-doc warnings
+
+Ryusuke Konishi (1):
+      nilfs2: fix deadlock warnings caused by lock dependency in init_nilfs()
+
+Sabrina Dubroca (5):
+      tls: trim encrypted message to match the plaintext on short splice
+      tls: wait for async encrypt in case of error during latter iterations of sendmsg
+      tls: always set record_type in tls_process_cmsg
+      tls: wait for pending async decryptions if tls_strp_msg_hold fails
+      tls: don't rely on tx_work during send()
+
+Sascha Hauer (1):
+      net: tls: wait for async completion on last message
+
+Scott Mayhew (1):
+      nfsd: decouple the xprtsec policy check from check_nfsd_access()
+
+Sean Nyekjaer (2):
+      iio: imu: inv_icm42600: Simplify pm_runtime setup
+      iio: imu: inv_icm42600: Avoid configuring if already pm_runtime suspended
+
+Sergey Bashirov (3):
+      NFSD: Rework encoding and decoding of nfsd4_deviceid
+      NFSD: Minor cleanup in layoutcommit processing
+      NFSD: Fix last write offset handling in layoutcommit
+
+Shashank A P (1):
+      fs: quota: create dedicated workqueue for quota_release_work
+
+Shuhao Fu (1):
+      smb: client: Fix refcount leak for cifs_sb_tlink
+
+Siddharth Vadapalli (2):
+      PCI: j721e: Enable ACSPCIE Refclk if "ti,syscon-acspcie-proxy-ctrl" exists
+      PCI: j721e: Fix programming sequence of "strap" settings
+
+Thadeu Lima de Souza Cascardo (1):
+      HID: multitouch: fix name of Stylus input devices
+
+Theodore Ts'o (1):
+      ext4: avoid potential buffer over-read in parse_apply_sb_mount_options()
+
+Timur Kristóf (1):
+      drm/amd/powerplay: Fix CIK shutdown temperature
+
+Tomi Valkeinen (1):
+      phy: cdns-dphy: Store hs_clk_rate and return it
+
+Tvrtko Ursulin (1):
+      drm/sched: Fix potential double free in drm_sched_job_add_resv_dependencies
+
+Viacheslav Dubeyko (1):
+      hfsplus: fix slab-out-of-bounds read in hfsplus_strcasecmp()
+
+Vincent Guittot (1):
+      sched/fair: Fix pelt lost idle time detection
+
+Xiao Liang (1):
+      padata: Reset next CPU when reorder sequence wraps around
+
+Xing Guo (1):
+      selftests: arg_parsing: Ensure data is flushed to disk before reading.
+
+Yeounsu Moon (1):
+      net: dlink: handle dma_map_single() failure properly
+
+Yi Cong (1):
+      r8152: add error handling in rtl8152_driver_init
+
+Youssef Samir (1):
+      accel/qaic: Treat remaining == 0 as error in find_and_map_user_pages()
+
+Yuezhang Mo (1):
+      dax: skip read lock assertion for read-only filesystems
+
+Zenm Chen (1):
+      Bluetooth: btusb: Add USB ID 2001:332a for D-Link AX9U rev. A1
+
+Zhang Yi (2):
+      jbd2: ensure that all ongoing I/O complete before freeing blocks
+      ext4: wait for ongoing I/O to complete before freeing blocks
+
+Zhanjun Dong (1):
+      drm/i915/guc: Skip communication warning on reset in progress
+
 
