@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-867319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA01C023F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:51:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E527C023E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D7F43AD0EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:50:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C4C44F7D45
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489561ACEDF;
-	Thu, 23 Oct 2025 15:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA67223D7E2;
+	Thu, 23 Oct 2025 15:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="fsFHcWfw";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="Q7mEOAEG"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="IVCet5yb";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="YJBXPGjk"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D0C24A046
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EA11ACEDF
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761234585; cv=fail; b=F6c1cNK5uzS/66oTjxqOThvyUGljwqCM41TCcokOikbBMIR/cbkuo0QejUgZqJ8fPZqeFL5jas/BYZkUUtFjmL+h89xeoTjQoYpwbLUc/syF5bV1oTxNiQirnv+jcJap+E9dkb+ItNLoMIxMramEZe486YvKkQ0qR9gxeq8nyXQ=
+	t=1761234580; cv=fail; b=TZfrh8IGwz8RWfBSoQFWvbyYay37e1Bymgmduse01/TQzBEDEHRlRDawA9TEebr2IzgvRO+7xx6FK//LUlajn5vKkK05Yq70k8zE1IPqgnEnJ8653So2JRf5+BjN/dcSW8FcmHbRwYCz2j5z+PLKjJORQwH2B/gc4FZ/AfHXowg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761234585; c=relaxed/simple;
-	bh=11It8BgFnEx9YFTbVcu0IeG+k0+qx2i+EC+dVcJYeMY=;
+	s=arc-20240116; t=1761234580; c=relaxed/simple;
+	bh=wd2v+8QLAwKVKJozhbnDQY5wJ2Ld0ibXmAQr0rJKmpI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n9PfmuIABWPOBseVE6MpdDlECrQsoqW0ZcU1Xmys+DmRiAGSwxUL9mb15LYOtvPXSqm2QYKymcRSrD14V7NUG2DbsRa9l1JGxtVxJFq/lYQGJq0BPWQw1X/2NVStIf3D4AKu1BpvkxC8/FMjQqcIZ2zG18dqYdLDfWJLk+lYHB8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=fsFHcWfw; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=Q7mEOAEG; arc=fail smtp.client-ip=67.231.152.168
+	 MIME-Version:Content-Type; b=N+T/jD26VCcQxHRmeWJdvcsB5m8IDHWBcgkEVCidoeAxY6p9IRYO7dibtSzSeZzfJeXoglEK3UF6qLLRUpBU1HVmnyMepyJ/IyY5/2MoTvrAyzLYkb9xKx6hWWfisOu0gb0+//cJWb+gLv/S+SoJYoGmLIZd2fdeki6pYMlWXTk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=IVCet5yb; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=YJBXPGjk; arc=fail smtp.client-ip=67.231.149.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59N3tFkm3459041;
-	Thu, 23 Oct 2025 10:49:11 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59NFWx5V3660629;
+	Thu, 23 Oct 2025 10:49:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=7C6BReVylQ9/h0LtgbuOirvobKnI7Sss6TuzimHw0fY=; b=
-	fsFHcWfw4pw1FuZP8lF9+3/td9LXJ+bRYIpT60IKJwz5ibIAr+mQclstX/r3ErHN
-	LolI83jqfRWlwV+ksucIT3d7S2I0K+LKJThacVA6S9THLAOCy9zR8wkMCpWK7LRl
-	6IunrYDED/XTuatl6Y1wwkSEtoNasyRpQhXjLZ6ZI6H/E1DYGmBzr7UXZkURE9EO
-	I+Sx7jMksV2Y0t4ly08dGBrYSPPGel5h33uNGwKeCQ2bMVlxZw3rye0+CAA2L79f
-	WrDF/9RKdZ6po+t9fQJJqzpd6xBfZDltxPYVOBcYE9CAEWc88dgLQTnC0bqf/jaJ
-	FJf8inK17jJHuoVD7WV9tw==
-Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazon11022093.outbound.protection.outlook.com [52.101.43.93])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 49xs382dxk-1
+	PODMain02222019; bh=7gtUXHNLtB3jlsdSLjjKYllmtXchjjDwrkS76MsoQBA=; b=
+	IVCet5ybUiAwtHaGjZEnxPRQJ0MccHfdqYnEZ6dmyCFc4CHJ+uyC24H4fPXmxgFl
+	pjmgMvRmV39zPR4kBmhHjUXEkHfU8ZRD+ecq1avBUYkuNxaOCEX7a0Po2k9+MdCa
+	sB5QE6E5eD6uR6yRWQZoM9Vg4WCiNk0nxJP+GvhxG0KizuWZN334G+Av1aJfMUoW
+	J1aADdBrbknBiuiqKdu7SChQVZubozL1rawbWaj9B4Cwvv9tkhdDrZzE38VlD5S6
+	8zGD3468MlMcJply+MMK5PxQGeUDhy9DZz/jDv+LV3GFXLlDKOZVQDdzMHVqIHCr
+	HfCrDRQfNfU+E4t3xwAlWQ==
+Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11022089.outbound.protection.outlook.com [52.101.53.89])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 49xqmqtfp7-1
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 23 Oct 2025 10:49:11 -0500 (CDT)
+	Thu, 23 Oct 2025 10:49:14 -0500 (CDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hKrvBl9YwbSyMW7Q87wXNbiDRV9bOyEb6dx5THnoR4rYjB/+5V/sikkIObLnQdPNc9eEfsDiy+nlpfGyNL70bSBAWYOwq+tKNmbBXCFJWbYoskbujEs1v/lcgPTm7TZUIxKWI4tKLmfw+Id3JwOV4kkNbuUJuseq6Q7rLnko9U+ijNhcBbZ3hRC/8JUgLDYmi8NPbX6cRXCj0b/MkL7707VOabBKDl/i1pNa2EMEChi0nkF0nqAq1i/qabfHmn3cYBzed2GZIpJyOOGiYxoGUSHPWPNGzNBC9r9rxE/E2OoiWhP1y5qw31r+aiwaXJQvt9yanBZC27Si/VS7Jem52A==
+ b=e3O0qHfGITRUBLhoWAEfxHs6v2xIkJWRRyKexvHD1g6kQSSfW9b3oadsaDZzHnl2l/DaBDdl8SBHUM08XCJ7Jm9WrqtwQ7pdgLVnBMjvZYRffIPQOsUvUD3qT3cgbD3L8hlJW3pmEfXZrX7omYKkwN8OkGobrBr92g/D6dBev8xa6mdLLWqlMEtNkp6lETWW6Up0kSJCf6QIWhUPx8iIOQykibpX5Tt1GHMaXzXYlij1fwEPt/bCCbbEaRKytTGswZFuE5t+LaKY893HZircvKksj9NID6BJNfI8FNMF8qlnE6S9Qim/D4DRpMvCYnInuDOrxutYfHAu3WAlDxt+Sg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7C6BReVylQ9/h0LtgbuOirvobKnI7Sss6TuzimHw0fY=;
- b=uA4iX8R7g0Qs5qGclxyj0k1+7fgM+DkHl5K4lzuuuSPpehU+fMnTN4fjOdvB7ELOnZJoRH6MnUSO5YsUQ5eSy6HMefBH/iZKUBIL/XUM0/QdII/8ex09GEY21YwZNW7VjrKD8YOjMYKUjFLIsUUp95phc097Kw2CLT6h0ytSWh7Dbwo50vyKkmlll0DjDO5lebFTGLQkB846cYXnCN4W2c/cp5J1W1RfguDx+qnFBJI8Ryd+k/2mIH8vOQLCQyEeAZO3rU8A+/FcPO6sO9E518iPvw5XHh/GuTmBFRSDavQs+9CxynP5oxjmZsB4gGECPAd3+ht80Zh5Vh8QRceNVQ==
+ bh=7gtUXHNLtB3jlsdSLjjKYllmtXchjjDwrkS76MsoQBA=;
+ b=VpoRWK5IQ9DIDwuNEM1rt2B2VJ+3IHpPfR2b/yaLHcipf+C/1hycz+GCCiG7pjUEW8VkbFJLsaLqeGNUqoDyqaMWwqvfzlF/2ZzLso2TKaCR39qJO8gOiTdUIy/2iNIbUf+PH5MtQShM0bKaLcgUtkY73vg82fW/X8BBR8fjbZawuVVjVhGjjfhhdNRq54E6VWf0iz/xA39LaiIRNcOixuIGgkeKJ59s43Ytqy7Q6CBofqz8dK+41TpH6DyK3EY3FALkChPFVIDr0MlP7OebeKNCaunr2tFyhAk8zdE0JIpuILJA8JH2yorOJ4f9BQh6i6fk4LiUOoi3FExRDrPFRw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  84.19.233.75) smtp.rcpttodomain=infradead.org
  smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
@@ -63,17 +63,17 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7C6BReVylQ9/h0LtgbuOirvobKnI7Sss6TuzimHw0fY=;
- b=Q7mEOAEGo5Z912ojuEnsnkaxn4HEiLZZNpBNBghVsF8QIIPQTNEOSYEN5w+cvSdME9EN+xy0BEjj305KzlKbtLGeqsQ5yn7COd8dVZ49kVA8zwx3kssFBHDbX68qKww6izPypjCqDTV3kglvuTS/wgoECj1cHI1rYBOlHoD4uHM=
-Received: from BN9PR03CA0856.namprd03.prod.outlook.com (2603:10b6:408:13d::21)
- by CH2PR19MB8896.namprd19.prod.outlook.com (2603:10b6:610:284::18) with
+ bh=7gtUXHNLtB3jlsdSLjjKYllmtXchjjDwrkS76MsoQBA=;
+ b=YJBXPGjk36f2o8JZBE90KjM2GgIvbtdmwbiRomnTVMpUZm3lVlbAMM/MuA1GML/cLpWpmIl7gHAUYTwEfP+fGwkTK/1XU372zqsDCoYAVl40R6cc0tuSHAfyHioAn75IFSL/IjLAiR5Q6Xtu4MeE4TDIz3t82qYGJn/uTlWyo4w=
+Received: from PH7PR02CA0010.namprd02.prod.outlook.com (2603:10b6:510:33d::29)
+ by DS4PR19MB9001.namprd19.prod.outlook.com (2603:10b6:8:2a6::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
- 2025 15:49:08 +0000
-Received: from BN3PEPF0000B070.namprd21.prod.outlook.com
- (2603:10b6:408:13d:cafe::eb) by BN9PR03CA0856.outlook.office365.com
- (2603:10b6:408:13d::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.17 via Frontend Transport; Thu,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
+ 2025 15:49:09 +0000
+Received: from SJ1PEPF000023D4.namprd21.prod.outlook.com
+ (2603:10b6:510:33d:cafe::a8) by PH7PR02CA0010.outlook.office365.com
+ (2603:10b6:510:33d::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.13 via Frontend Transport; Thu,
  23 Oct 2025 15:49:08 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
  smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
@@ -83,21 +83,21 @@ Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
  receiver=protection.outlook.com; client-ip=84.19.233.75;
  helo=edirelay1.ad.cirrus.com;
 Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- BN3PEPF0000B070.mail.protection.outlook.com (10.167.243.75) with Microsoft
+ SJ1PEPF000023D4.mail.protection.outlook.com (10.167.244.69) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.0
  via Frontend Transport; Thu, 23 Oct 2025 15:49:07 +0000
 Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id F3DA8406552;
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id F3B0840654B;
 	Thu, 23 Oct 2025 15:49:05 +0000 (UTC)
 Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id E51F5822540;
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id E74AD822541;
 	Thu, 23 Oct 2025 15:49:05 +0000 (UTC)
 From: Charles Keepax <ckeepax@opensource.cirrus.com>
 To: tglx@linutronix.de
 Cc: peterz@infradead.org, broonie@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] genirq/chip: Add buslock back in to irq_set_handler()
-Date: Thu, 23 Oct 2025 16:48:59 +0100
-Message-ID: <20251023154901.1333755-2-ckeepax@opensource.cirrus.com>
+Subject: [PATCH 2/3] genirq/manage: Add buslock back in to __disable_irq_nosync()
+Date: Thu, 23 Oct 2025 16:49:00 +0100
+Message-ID: <20251023154901.1333755-3-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251023154901.1333755-1-ckeepax@opensource.cirrus.com>
 References: <20251023154901.1333755-1-ckeepax@opensource.cirrus.com>
@@ -110,92 +110,92 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B070:EE_|CH2PR19MB8896:EE_
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D4:EE_|DS4PR19MB9001:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 8f4eb92d-7230-42ef-b7e3-08de124bb35e
+X-MS-Office365-Filtering-Correlation-Id: b79ebdc3-01c7-4ebe-4ae6-08de124bb386
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|61400799027;
+	BCL:0;ARA:13230040|61400799027|82310400026|376014|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UExLGo0zXHnR2cbzfnU6RkrQlSVOSheOX3c1fXjwNpIzRhD4JgS/g0GdPQ8d?=
- =?us-ascii?Q?FH0xUYCrhA8Z5k8N6OdbOf5tk8IZYPkox7gOLxXuyHOXnBfEonmZag/jeaPP?=
- =?us-ascii?Q?rW6Wfq/EGFy/uPL5zBfmA2ELfKSjgFEMnimXBRGuCD1PY2EKrOl/F8yMAvc4?=
- =?us-ascii?Q?Gh0Ck3nh28hqNvfEulZOXDZE7e+Rv+is9uS3kHC4Tw3i+ORMeMVR2UbkNFj+?=
- =?us-ascii?Q?Qp3G+4KSF780qadrzW5cf9K6Rv1RZHw5YmPaN65JqTEuw8hbuCFrYW5zfNBg?=
- =?us-ascii?Q?mJiYzyDPTDk9709OYf9F+RpEfXCZ5NYApAM7tONFnJQlGG9xqgLAqdBECt0l?=
- =?us-ascii?Q?uQNZy/9js0Ii6GjfkOfojVj2jynqmLVcjqR8veLWDAfdmUPXbgc3UIn9nCS/?=
- =?us-ascii?Q?zxnIkq4yNNlW1xJdCy1JcSnJrUsPc9Vsf1YWe7xt8BRSPsObYBpt3FGV/3v3?=
- =?us-ascii?Q?h3CTtKGad9uiWeHz9UrqWoMhzp1oBuSIXm5EwMs1I8COr0Tkcxvk0WXopVcf?=
- =?us-ascii?Q?DAsrQ1pJz6GvF7FioSDGyGKhv35ywWpFlvIe0npGaV20y2itJPJM3Qeu1BCU?=
- =?us-ascii?Q?qJ9lDliqRbiSTJ0Fn42moC8bTUq/6vGRXBEb1FKa85JEHuNiYdZX7XbZbi7b?=
- =?us-ascii?Q?9TbudWEWn3mFSGpHzXNxtZGIBC6WMZPRz/L3ReES9O2np9s/4Hp5Ay818Q1a?=
- =?us-ascii?Q?qqR5TGOdkgt19nY2V+EQkuYKCOZxN+Q04vErwwNrDnyAirDJsFW+CIQ624QI?=
- =?us-ascii?Q?6rx1+yEzuIZqT46WXC9gGGOkX9Gcu3E0iuq+WUcF+KfuZT1v8RXy/1uBgX+k?=
- =?us-ascii?Q?Ba3v4jz/z6tF+YgK/DnJ22wztZaCHkEZuCTY+Kd3PRFT1uxcscwdhv8ZrVTW?=
- =?us-ascii?Q?xA2I4jyUspuAmoVSMYPx7x7qHFRSZZuYy9+iExtkLNwvzOM0Ok91+3zP/mX7?=
- =?us-ascii?Q?oKvb+u00owdt7Snk8hBiEESSMON2mK112zfVnUhHeoCl8Bg6JZewEiM4yHup?=
- =?us-ascii?Q?y7nAn7hJLUVaKAeWaX9uEAkcNixSzJ227wef/Ksm246KDALkwaai/si2csZs?=
- =?us-ascii?Q?Mg9mu+lShIlh6K1apVaU12+9bq8re4ASVy+dZ5vt5MTsT5z4ekXacsfxaUKt?=
- =?us-ascii?Q?bHlnQ9i/VoBRF3PNLHg++04UvXbOlm6khjteJtdNVizBP6Fg6k/1hkGEjEfO?=
- =?us-ascii?Q?7kjwhM1nx0F/YtlNbbskBwxF7nFhL4X4X2wqZOvBs+td0Ve7zhksPArf2s5j?=
- =?us-ascii?Q?wBZcYED8a7QMQ33MQb9g+RREJhXlRlCSN1aU2qEMWaBm5G/gh5MsQMKOHG0L?=
- =?us-ascii?Q?iDANQBdjTs8WKMPWXA6h8wGFzP4peDicDDaXP9PPtsPR2AWzA9gWUnZ4B9qY?=
- =?us-ascii?Q?RwRewhLsxAIRV3LdnmUZbiqVSNx23PTORDR3Hb3FBF9/KbWrmJA0Wxa0ufnL?=
- =?us-ascii?Q?oAc/BN0xO6OSabejrxDzfQ5T0WTy2+xgAlb5QSfAJ1bBPRJkJGenmy2oURp0?=
- =?us-ascii?Q?1FhzsuRFORkEVpiCZL6TA0FMBw6TkTBJibsH73dR2kPOKam/pb7g+c1/P6KR?=
- =?us-ascii?Q?5tXpDdeJm2B+FYv1PA8=3D?=
+	=?us-ascii?Q?cKr3yJi9QH+bo6iioCv+UJdHBgA9BlT8FPnSDskXdICUetqLbuQwQtaMHSc/?=
+ =?us-ascii?Q?5/gNsSUH+2TOMvGBNxxit5jSVWMmiotl2k9C4rQ3DSb+PSFgRN8VH7GkZSLF?=
+ =?us-ascii?Q?1DAlchnSScZWR0GIC8yAJ5PRX/pToStLWKSAajYDPpcyuXhcXEsUahzHTkuO?=
+ =?us-ascii?Q?FmrnamDlXxwz6nxf8ux2sojRf+FOgiiWwjNalmhqbetuDK3gkStc7fkieN5z?=
+ =?us-ascii?Q?g3ImXmh4H+j2Brc0TM0Z4VJq1tQPhBkw8rUqJIoPppJ6dYGp8lx/Gj4hh7pb?=
+ =?us-ascii?Q?8dBLppSjpXD+3YzR1txT8UNDTkTsgIlhUQq/QBVhBFC2jYRsQTV1tOLykNI5?=
+ =?us-ascii?Q?YfAav8BJmqqgsPwtaAQP79uDKljGeyMHCUQXPD4B0/VAJc7gGzdRUA2bgM7m?=
+ =?us-ascii?Q?iFV9TbYSa0DSUfKV+ijjEnYQVbKoowOXUajP0i4SvKastLzBJuZHhntN3B48?=
+ =?us-ascii?Q?7fQLKPoSUiSi+BINLeIotLyYxebUZL17roPpaN2RSjpVCEBiOdiUgj9sfDf3?=
+ =?us-ascii?Q?TuG7G0m/6JFMujtZBDGIiD3eHPiFlJ8hMYlXqRcvf7QlIbaLujucNVc3DdDT?=
+ =?us-ascii?Q?9/Q9JnuvxvS1RUS1/Lp3bVS7Vhj9QcbacQnk2pinVYcBnu4Bl5cQxodX+GT9?=
+ =?us-ascii?Q?CRF3K+vYOmOFEQMT4CnIY+MP0Fvlnm5j+WVfIwWHGzRVwhY4J+CZ3CV9NYy4?=
+ =?us-ascii?Q?mZ20pfY3zRX4kZ+I3YzmwNbdmW/+qwbXUrgVzkX3fERDGiCTwIAtpPXD0vUB?=
+ =?us-ascii?Q?NI18TZ5wWQ5J7SuwU0wv/PBeYJr/DqWxvyimHo5Ubbo/2kjurB4w5KewZ7d4?=
+ =?us-ascii?Q?vFOnyiSFhIBdknwkcO2PsRIxjgvTX2qBuQoInEDcJDPdwMXlibqMzEPR8s+I?=
+ =?us-ascii?Q?XXGZXABlsaPDSVy2h16DfZghWnaaBJZ8lSyy4tczENmxn0LcIdEs92MtCb+e?=
+ =?us-ascii?Q?gvP5bCkR12kCgmOFzX2YiQs9LXEQy+JP84p/N6y8eqG4bxvQBLdRdOR2geY7?=
+ =?us-ascii?Q?hZT4RxFeBj7lpkG0EOembcyos1aGQu6GUVCULNcTQG+hobPGZQnJd/dKIlqO?=
+ =?us-ascii?Q?KqK+5Bvy1MC1CUN40n4+9sQ4yvzhwhbv6cGdW9Fd4YX+PZ3yTtwzl6WceK/U?=
+ =?us-ascii?Q?mReyoMvsz5Aixomo9X+gmYdOYiMAs4tGZZ9HU7zGDjHFNyGzIM9jHOXu9FeF?=
+ =?us-ascii?Q?dihDebcSPNySD1LaqOSUOcQY1x/QjB0kH/UkXxdqFP8YQWXakuZJPx4rC2kL?=
+ =?us-ascii?Q?+DK9OgI2OJgYkV+KWvnn27wlDBWmdSIqvcveYwMY8XAgIP//I5JIyBGcki4u?=
+ =?us-ascii?Q?ds+dpdKoG+VxmymAq32m0OpjrbNfWliZZyu5l0ph09k7vymK69OXor+W+S/i?=
+ =?us-ascii?Q?3WbH4kFejhWZIYiJJjm+p8KAKE2b7UJPD8NFNcHbX62QhPifvtZ4HsnDF1KJ?=
+ =?us-ascii?Q?AgwDgWSOP8E+OXssWAu4hA78A1ipeqxNnzYRCLu2K6K3rxNMLvXF/BqBhGCd?=
+ =?us-ascii?Q?UsfyQJVDMRZiDeu9LcDIKw5CHeR2q+a1o7Rh49+Smbu6y4com0397SQV93PQ?=
+ =?us-ascii?Q?uyrsYXZD88EW/eTr+Vo=3D?=
 X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(61400799027);DIR:OUT;SFP:1102;
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(61400799027)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1102;
 X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 15:49:07.2225
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 15:49:07.3610
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f4eb92d-7230-42ef-b7e3-08de124bb35e
+X-MS-Exchange-CrossTenant-Network-Message-Id: b79ebdc3-01c7-4ebe-4ae6-08de124bb386
 X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-BN3PEPF0000B070.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-SJ1PEPF000023D4.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR19MB8896
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDE0NCBTYWx0ZWRfX5CPoM+Z//Pax
- 8eQ3l6UTMNr5Q2iZaDN8eOBAzwK9JxgeTPAQ0rp0OK9fZIt6rmsPu3RTP25CR1ANJJ6U2KM8EpF
- m2z2CKNV88Gi4hYGcSaXErMEPn4dtemQq/axuX1cHgVRl59xsp+PsEOEHMa2qsRVRaZolOd4fZF
- 3v4LJEKnprHfrQlJgtL7oMAJ/qK4uWvqS67eE3Sy3OU/OpnTviikdKCXVpNyh1Vo2O70EPwA0oo
- +FtBNU6+QMaCiqIsuzc3ua1wKnyim/uFN9f2LOq5FBdo1SCHKksI68I2nfy/Ix+2ZWvUhvDaz1i
- UpPdUbFke4LzRDQdpPCvCHsslivyviHRXmqC3XFjbHObXQMBjq0Vi9lmvnPDfYrYOznj4Wcpb6L
- QlG6cOpleZXgRdvGEGULuCQPTSWt2g==
-X-Authority-Analysis: v=2.4 cv=W4g1lBWk c=1 sm=1 tr=0 ts=68fa4e77 cx=c_pps
- a=+CKpLqsC5QamL8vULJ+FWg==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR19MB9001
+X-Authority-Analysis: v=2.4 cv=G6gR0tk5 c=1 sm=1 tr=0 ts=68fa4e7a cx=c_pps
+ a=eNyQiorQ2xlxnIB2M60cKA==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
  a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
  a=x6icFKpwvdMA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=w1d2syhTAAAA:8 a=QDk8zecZgZoI6ZYqeuUA:9
-X-Proofpoint-GUID: PkpaV-FNmC1YnBnTyKegvOaqVyoONyj7
-X-Proofpoint-ORIG-GUID: PkpaV-FNmC1YnBnTyKegvOaqVyoONyj7
+X-Proofpoint-ORIG-GUID: oYIvk90dxWsmCoOZkaAU0vQIJNrb4dZA
+X-Proofpoint-GUID: oYIvk90dxWsmCoOZkaAU0vQIJNrb4dZA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDE0NCBTYWx0ZWRfXymIc/LfUFUlF
+ eRklbg8kag6DrhKJ5jCYGKZBUFCbEKxZEsjHQr0w5AueQnxCO6wbynYuUZjWxtHOgONU03m3hwM
+ lJKmCmCBoYoSe0SoBvx0uZMmEYKjRkDD1RG4qhtS7ExI2C8E+KT25wAVKO8tw44N/weDAb5qlyb
+ EH7755pvCMdbVY3EAr96yvax3+QFYXtCWwnYo0V3/6MYxw0LWhIK8C8ORnNxRvwW+w+OFC5AYNr
+ otKiJiNQN3rguvkhO+8xy+aRxX8/uG0rVVKHPRX3/rVacEXwkE5tV7kakhPtP+xbHZ1ozYUIo9+
+ SoXhmvis/oFY1lt7pjqi+gohhrV9YejFbNcL1ccbyLcBd4RZCRJFkFNDlkfoeXGmGbusOsmBzUY
+ IrM+8y3JO7aQahImlcun3/ZXdBMnJA==
 X-Proofpoint-Spam-Reason: safe
 
 The locking was changed from a buslock to a plain lock, but the patch
 description states there was no functional change. Assuming this was
 accidental so reverting to using the buslock.
 
-Fixes: 5cd05f3e2315 ("genirq/chip: Rework irq_set_handler() variants")
+Fixes: 1b7444446724 ("genirq/manage: Rework __disable_irq_nosync()")
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- kernel/irq/chip.c | 2 +-
+ kernel/irq/manage.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index 3ffa0d80ddd19..d1917b28761a3 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -1030,7 +1030,7 @@ __irq_do_set_handler(struct irq_desc *desc, irq_flow_handler_t handle,
- void __irq_set_handler(unsigned int irq, irq_flow_handler_t handle, int is_chained,
- 		       const char *name)
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index c94837382037e..7d68fb5dc2428 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -659,7 +659,7 @@ void __disable_irq(struct irq_desc *desc)
+ 
+ static int __disable_irq_nosync(unsigned int irq)
  {
--	scoped_irqdesc_get_and_lock(irq, 0)
-+	scoped_irqdesc_get_and_buslock(irq, 0)
- 		__irq_do_set_handler(scoped_irqdesc, handle, is_chained, name);
- }
- EXPORT_SYMBOL_GPL(__irq_set_handler);
+-	scoped_irqdesc_get_and_lock(irq, IRQ_GET_DESC_CHECK_GLOBAL) {
++	scoped_irqdesc_get_and_buslock(irq, IRQ_GET_DESC_CHECK_GLOBAL) {
+ 		__disable_irq(scoped_irqdesc);
+ 		return 0;
+ 	}
 -- 
 2.47.3
 
