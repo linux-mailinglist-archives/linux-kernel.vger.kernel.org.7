@@ -1,250 +1,161 @@
-Return-Path: <linux-kernel+bounces-867340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3B5C0251C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:08:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B857C025DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:15:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668CD189B5A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:08:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DFE3563355
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFDD2798F3;
-	Thu, 23 Oct 2025 16:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA57629ACF0;
+	Thu, 23 Oct 2025 16:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k1pwrSbl"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=42.fr header.i=@42.fr header.b="NxBP1aD2"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC96257AC2
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1F2299A8C
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761235677; cv=none; b=jQVayAQs0ObnCBV3fAeFc69JfHLb6NlZ9V3iB6MMCAvKDe37AbwTfqGKTzrMVtHKl7c00ubmEt1XEYsQqaHUwlj4CbkQzEGb8ua+nNi9WVRbizKbHtGIsX44fGVIGSl9qw+g/bVXbSDN8KqqC2W0eBx7uOm+dOZcp0X6i+sGyn0=
+	t=1761235905; cv=none; b=FmFv+41W26JMY/TbZo6UafRZL/ZunWJfV0jbVJB+R0/VYbAZ6eNQdQxolPlnkKi4tZhNEu1xpQGHUBq//RT6CjXKfU5OPupqkoS7tTRFKyf7IF7zTZk1NY0tt2YoFq8zDwIUowxxxjQAmqugSijZUkA/0ZeChaCJ8MSKTrnDDKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761235677; c=relaxed/simple;
-	bh=1nVKA7foUkRSyS9Wrqb+5MZp+cy2gWR48rPSz2xIT74=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TTFtgF+NROJ4PIxcJQ/sMEFGkVmcT1WK/NmM4i4IWOP4Q5+qZkouXvexS1NwxvR3zO1zNrPpZQPkY3/RTQkdIdGWk5naWXBRBxU0L2EKsx5vUpSWfKizlxMQ424/HcJCRVXR5md/Ze1BHRxRIL3cPPHN2rOn9Kf4uq/laXAmdBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k1pwrSbl; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b62ebb4e7c7so811700a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:07:55 -0700 (PDT)
+	s=arc-20240116; t=1761235905; c=relaxed/simple;
+	bh=nUteSuOJ9LX9qDQVOKziBVr0BfsdekpVG7OD+xDvs0A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KohapvWUw+N+DqBx5p2e8S+WcycttKpqEwhJxtBzS7+SNBN4aTv1VfxP3pqyD7HwY+obbDGfmp+9nAu7cE+h7RIWv3aNJON+IGpYse0eLkDJ94O03x3d4LpP1JRrrqqP0kmSOdnMNOzU4GrHqeHlvLX7XxRRYV8L3emSeogsf2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=42.fr; spf=pass smtp.mailfrom=42.fr; dkim=pass (2048-bit key) header.d=42.fr header.i=@42.fr header.b=NxBP1aD2; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=42.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=42.fr
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42701b29a7eso573494f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:11:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761235675; x=1761840475; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iw+RxJFrvLXotShsX3G3u/lNQNdh4+3g/W60yOnZyHo=;
-        b=k1pwrSblX6uuqh7hx65iIw56Swxet+M2XtgT3ZB1JZVnp7+vByNEl6aCwrRDMQEBvG
-         MSqpIuxF4BgByv/kYhv83XG9KVJ4wXpBecXuWrRPeorNk67BEMW7ABJfYLLPISYdwNeX
-         k+OoxwxyKyTnOIpDcgejrSLpbWz46fUHUW52m/ALiNBa8xV8VGKW7EAGPFMgXnP6hdEV
-         WFprarvXrINWZ1w2kSuxIRf7K+597XK54x4FiuCNFswneM8p+bzJq5xvjl/JUooItw/p
-         gPHhgg8PAF2onNxpnAwVK+k5wga+Luot5147YsdKTj+k9pkQw2UDiqOjY2Gqf+xfvIcl
-         caIw==
+        d=42.fr; s=gw; t=1761235901; x=1761840701; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3m9ah5kbgDLsSRMenHAMj3Q4xRuIZKbPu+Dxwh5kMt0=;
+        b=NxBP1aD2f7NUEHt0f46KvaLX0Eu3b2V60gHnF/g/kYm5ue4a/YW7pU2dpLCjt0UZb4
+         EgQLSeq7jccy6LALn5pVWVw9rorWCniIssLZPso2JWnSzE+bJZ2gzUWP2+gFg5mtuZ9S
+         3mZjbIO4TF1u2mGL/cs3wef1N7MXSiLTMhTP5KIklqJEmae3bcNVDrrzI2sX5hysOe//
+         HEpa/ZKahC/FVKQQ7cM7I+/x+rFT0vDNt2Y/2CFsR03H3mLuQz4vlF+TcovrccMoOc9B
+         muBc4U332Djsfj2EpbP4Mza0xRTmiPKeZkE8j50hQCaztudS2jZj/l30Y7O4fv71BSBa
+         bEOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761235675; x=1761840475;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iw+RxJFrvLXotShsX3G3u/lNQNdh4+3g/W60yOnZyHo=;
-        b=v1CldYLhUxU0xCxMHFjAtt/jOKqlBk2N9lEtjbwZERExks8nIUm7gmUGDq0vzfIvSm
-         mDC74iIK69vsx6CxFl6JQocP5akfRYLwI6gHKgQB2dshPih5QEtCcNg4Rodm6yaUDEor
-         S940t86aqjXTl+BVwwhye9Yl3zR/cZ8li6jmFuwaaHY8iHAZIy++ktk00pPRXKNoJadp
-         tlTeLQ4AkSwnYWGAIeuqHcR5fUmK6rpplG9wckUs2L9N5Jz/nAAq7IncSOVOrXoKtBC2
-         Bx+il/hfKHrBU3WwQkgUyKczaI+wa4gecKfSN6JQpf1y3sOcsVBOLkRF6rjjS4ZAGFba
-         7oSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8CoNQDoa5DIUYrUByBXJM+b2Cj4PyK3t/qHPDric9hqkX1KznzQeUDHb3B/xuQmq/0ZEFK+wOf9iJbv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypHDNUwp7IF3YuWHuGHVN7/PrE6hdSwBCQDQKVv0PZuiwK40m2
-	cWM/qzDymp5b5eKuF7m3jpdSD5+fiy7BfqVNeeIBydrxv0RN3QB3bEK1dTscP3thzlVffIgSYkT
-	8A3xcYg==
-X-Google-Smtp-Source: AGHT+IF6SU0i3VjzGwoS1hsfvvAoYKHCfX1teOWArnTGZGjyd5oKJzCEyV/9N1Mdqw+d1V9YcutI70FGQeE=
-X-Received: from pjte14.prod.google.com ([2002:a17:90a:c20e:b0:33b:ca21:e3e7])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c02:b0:32e:3686:830e
- with SMTP id 98e67ed59e1d1-33fafc1ce07mr4286914a91.23.1761235675127; Thu, 23
- Oct 2025 09:07:55 -0700 (PDT)
-Date: Thu, 23 Oct 2025 09:07:53 -0700
-In-Reply-To: <20251020161352.69257-2-kalyazin@amazon.com>
+        d=1e100.net; s=20230601; t=1761235901; x=1761840701;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3m9ah5kbgDLsSRMenHAMj3Q4xRuIZKbPu+Dxwh5kMt0=;
+        b=TxobpxCEQe8m6GjJWPOfkLbxuHFstoRGPc6W6nk9Kh29uZIdum3Bri3qZaxVgF9s4a
+         A6t4kTB6mrmhR4l2E05Pd0Fxe/WPGNzEZqxMxoe/98TZ8zREDgxVuFOVv2F5ZP4Y7yv3
+         kmsNKdDwq4NxTNEUPP0CR6NFzjttszB+38yKs8IkJaxXaKxm9HLdFFFvouG4mEku5LhQ
+         Hw3DL7EhcgshlAwO2fq+OToeZq6Db0SuBFt601bfSk4zjsRTTACk0beM3EvbsUb13pBr
+         Obh6cLjh7YBnyT9fdkkx/yJq0SblGFnRd1c2zf08h/6TWoOaVY33CvN5HayIieR9EOhD
+         JAbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkB5b35DAY9flA3C9LlKuaC9cxbwB9nR/8smZYE5N9vYyJFkJneBYm4JKozx5p25+yZLeenGdb40sZ0aI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMM/OTmen9Zb6MiG7kzA69TVH3tYiNT2JiqQ9QHLHc0HB+X7SH
+	gtNnmP6Q38Ht7xaB582WsC5q+ZjyMEjhEtfLEkU7OZFV7qhV11b+G5KRbmxOh4zORIM=
+X-Gm-Gg: ASbGncta2rnq46f0x/Rc6nSal9vWyHe8Qd02djVr8caEmnuHlnYzX6ZKZWF/qEEbQ9b
+	1ljliJasPdLaElWx3tmbpv+C7XI4gz4aHdaQ2/BNB/iLaNQLFulr3nLmRQWqYikPOIIVW2b5cfa
+	aQkEMlpV2n4nrzGDum+FpY7tPplC5Xu8TlpsxPdzKTM1s29ORmfXkY7Vm1BoEQa/zvlNf0lATFa
+	I0c0BaiGPX3uz/xa1WWEIICAIz3CmxWz5t4ouA2IEZZFUYhJSPZgwxTzWiWhydP4UXAxOCOyfOK
+	3DOomtvVVeS0e83KZiytqaEvSr1W70nY5zNOoeQ/l07vcQ9Yst39vCZsB1x7gMLoK2qut1H7Brj
+	dBzEXZQ2CyuLmv3sa9TDakbWzGhy1HvGqp8aR3ZzEr+bmaVdV46xKynDAqVmcOGttQ9vQGwSd7A
+	==
+X-Google-Smtp-Source: AGHT+IH0/HC+MxAgbHtrHb8ogRis9t+C7apRxSN2Uz8hQycBWUjbbsufH11Skh1m0YQyGENnztKy1A==
+X-Received: by 2002:a05:6000:984:b0:428:5673:11df with SMTP id ffacd0b85a97d-428567313d7mr4621322f8f.15.1761235901402;
+        Thu, 23 Oct 2025 09:11:41 -0700 (PDT)
+Received: from wow-42.42.school ([62.210.35.5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4298b9963ccsm3017836f8f.7.2025.10.23.09.11.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 09:11:41 -0700 (PDT)
+From: Paul SAGE <paul.sage@42.fr>
+To: paul.sage@42.fr,
+	vinc@42.fr
+Cc: Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Michael Chan <mchan@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] tg3: replace placeholder MAC address with device property
+Date: Thu, 23 Oct 2025 18:08:42 +0200
+Message-ID: <20251023160946.380127-1-paul.sage@42.fr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251020161352.69257-1-kalyazin@amazon.com> <20251020161352.69257-2-kalyazin@amazon.com>
-Message-ID: <aPpS2aqdobVTk_ed@google.com>
-Subject: Re: [PATCH v6 1/2] KVM: guest_memfd: add generic population via write
-From: Sean Christopherson <seanjc@google.com>
-To: Nikita Kalyazin <kalyazin@amazon.co.uk>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "shuah@kernel.org" <shuah@kernel.org>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "david@redhat.com" <david@redhat.com>, 
-	"jthoughton@google.com" <jthoughton@google.com>, "patrick.roy@linux.dev" <patrick.roy@linux.dev>, 
-	Jack Thomson <jackabt@amazon.co.uk>, Derek Manwaring <derekmn@amazon.com>, 
-	Marco Cali <xmarcalx@amazon.co.uk>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 20, 2025, Nikita Kalyazin wrote:
-> From: Nikita Kalyazin <kalyazin@amazon.com>
-> 
-> write syscall populates guest_memfd with user-supplied data in a generic
-> way, ie no vendor-specific preparation is performed.  If the request is
-> not page-aligned, the remaining bytes are initialised to 0.
-> 
-> write is only supported for non-CoCo setups where guest memory is not
-> hardware-encrypted.
+On some systems (e.g. iMac 20,1 with BCM57766), the tg3 driver reads a default placeholder mac address (00:10:18:00:00:00) from the mailbox.
+The correct value on those systems are stored in the 'local-mac-address' property.
 
-Please include all of the "why".  The code mostly communicates the "what", but
-it doesn't capture why write() support is at all interesting, nor does it explain
-why read() isn't supported.
+This patch, detect the default value and tries to retrieve the correct address from the device_get_mac_address function instead.
 
-> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
-> ---
->  virt/kvm/guest_memfd.c | 48 ++++++++++++++++++++++++++++++++++++++++++
+The patch has been tested on two different systems:
+- iMac 20,1 (BCM57766) model which use the local-mac-address property
+- iMac 13,2 (BCM57766) model which can use the mailbox, NVRAM or MAC control registers
 
-There's a notable lack of uAPI and Documentation chanegs.  I.e. this needs a
-GUEST_MEMFD_FLAG_xxx along with proper documentation.
+Co-developed-by: Vincent MORVAN <vinc@42.fr>
+Signed-off-by: Vincent MORVAN <vinc@42.fr>
+Signed-off-by: Paul SAGE <paul.sage@42.fr>
+---
+ drivers/net/ethernet/broadcom/tg3.c | 12 ++++++++++++
+ drivers/net/ethernet/broadcom/tg3.h |  2 ++
+ 2 files changed, 14 insertions(+)
 
-And while it's definitely it's a-ok to land .write() in advance of the direct map
-changes, we do need to at least map out how we want the two to interact, e.g. so
-that we don't end up with constraints that are impossible to satisfy.
+diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
+index d78cafdb2094..55c2f2804df5 100644
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -17042,6 +17042,14 @@ static int tg3_get_invariants(struct tg3 *tp, const struct pci_device_id *ent)
+ 	return err;
+ }
+ 
++static int tg3_is_default_mac_address(u8 *addr)
++{
++	u32 addr_high = (addr[0] << 16) | (addr[1] << 8) | addr[2];
++	u32 addr_low = (addr[3] << 16) | (addr[4] <<  8) | addr[5];
++
++	return addr_high == BROADCOM_OUI && addr_low == 0;
++}
++
+ static int tg3_get_device_address(struct tg3 *tp, u8 *addr)
+ {
+ 	u32 hi, lo, mac_offset;
+@@ -17115,6 +17123,10 @@ static int tg3_get_device_address(struct tg3 *tp, u8 *addr)
+ 
+ 	if (!is_valid_ether_addr(addr))
+ 		return -EINVAL;
++
++	if (tg3_is_default_mac_address(addr))
++		device_get_mac_address(&tp->pdev->dev, addr);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/net/ethernet/broadcom/tg3.h b/drivers/net/ethernet/broadcom/tg3.h
+index a9e7f88fa26d..9fb226772e79 100644
+--- a/drivers/net/ethernet/broadcom/tg3.h
++++ b/drivers/net/ethernet/broadcom/tg3.h
+@@ -14,6 +14,8 @@
+ #ifndef _T3_H
+ #define _T3_H
+ 
++#define BROADCOM_OUI			0x00001018
++
+ #define TG3_64BIT_REG_HIGH		0x00UL
+ #define TG3_64BIT_REG_LOW		0x04UL
+ 
+-- 
+2.51.0
 
->  1 file changed, 48 insertions(+)
-> 
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index 94bafd6c558c..f4e218049afa 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -380,6 +380,8 @@ static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
->  
->  static struct file_operations kvm_gmem_fops = {
->  	.mmap		= kvm_gmem_mmap,
-> +	.llseek		= default_llseek,
-> +	.write_iter     = generic_perform_write,
->  	.open		= generic_file_open,
->  	.release	= kvm_gmem_release,
->  	.fallocate	= kvm_gmem_fallocate,
-> @@ -390,6 +392,49 @@ void kvm_gmem_init(struct module *module)
->  	kvm_gmem_fops.owner = module;
->  }
->  
-> +static int kvm_kmem_gmem_write_begin(const struct kiocb *kiocb,
-> +				     struct address_space *mapping,
-> +				     loff_t pos, unsigned int len,
-> +				     struct folio **foliop,
-> +				     void **fsdata)
-
-Over-aggressive wrapping, this can be
-
-
-static int kvm_kmem_gmem_write_begin(const struct kiocb *kiocb,
-				     struct address_space *mapping, loff_t pos,
-				     unsigned int len, struct folio **folio,
-				     void **fsdata)
-
-or
-
-static int kvm_kmem_gmem_write_begin(const struct kiocb *kiocb,
-				     struct address_space *mapping,
-				     loff_t pos, unsigned int len,
-				     struct folio **folio, void **fsdata)
-
-if we want to bundle pos+len.
-
-> +{
-> +	struct file *file = kiocb->ki_filp;
-
-ki_filp is already a file, and even if it were a "void *", there's no need for a
-local variable.
-
-> +	struct inode *inode = file_inode(file);
-> +	pgoff_t index = pos >> PAGE_SHIFT;
-> +	struct folio *folio;
-> +
-> +	if (!kvm_gmem_supports_mmap(inode))
-
-Checking for MMAP is neither sufficient nor strictly necessary.  MMAP doesn't
-imply SHARED, and it's not clear to me that mmap() support should be in any way
-tied to WRITE support.
-
-> +		return -ENODEV;
-> +
-> +	if (pos + len > i_size_read(inode))
-> +		return -EINVAL;
-> +
-> +	folio = kvm_gmem_get_folio(inode, index);
-
-Eh, since "index" is only used once, my vote is to use "pos" and do the shift
-here, so that it's obvious that the input to kvm_gmem_get_folio() is being checked.
-
-> +	if (IS_ERR(folio))
-> +		return -EFAULT;
-
-Why EFAULT?
-
-> +
-> +	*foliop = folio;
-
-There shouldn't be any need for a local "folio".  What about having the "out"
-param be just "folio"?
-
-E.g.
-
-static int kvm_kmem_gmem_write_begin(const struct kiocb *kiocb,
-				     struct address_space *mapping,
-				     loff_t pos, unsigned int len,
-				     struct folio **folio, void **fsdata)
-{
-	struct inode *inode = file_inode(kiocb->ki_filp);
-
-	if (!kvm_gmem_supports_write(inode))
-		return -ENODEV;
-
-	if (pos + len > i_size_read(inode))
-		return -EINVAL;
-
-	*folio = kvm_gmem_get_folio(inode, pos >> PAGE_SHIFT);
-	if (IS_ERR(*folio))
-		return PTR_ERR(*folio);
-
-	return 0;
-}
-
-
-> +	return 0;
-> +}
-> +
-> +static int kvm_kmem_gmem_write_end(const struct kiocb *kiocb,
-> +				   struct address_space *mapping,
-> +				   loff_t pos, unsigned int len,
-> +				   unsigned int copied,
-> +				   struct folio *folio, void *fsdata)
-> +{
-> +	if (copied && copied < len) {
-
-Why check if "copied" is non-zero?  I don't see why KVM should behave differently
-with respect to unwritten bytes if copy_folio_from_iter_atomic() fails on the
-first byte or the Nth byte.
-
-> +		unsigned int from = pos & ((1UL << folio_order(folio)) - 1);
-
-Uh, isn't this just offset_in_folio()?
-
-> +
-> +		folio_zero_range(folio, from + copied, len - copied);
-
-I'd probably be in favor of omitting "from" entirely, e.g.
-
-	if (copied < len)
-		folio_zero_range(folio, offset_in_folio(pos) + copied,
-				 len - copied);
-
-> +	}
-> +
-> +	folio_unlock(folio);
-> +	folio_put(folio);
-> +
-> +	return copied;
-> +}
 
