@@ -1,175 +1,96 @@
-Return-Path: <linux-kernel+bounces-867011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2877C0154E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:21:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5AFC01563
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 007F63ADE33
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:21:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1980C502ECA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE9A314D20;
-	Thu, 23 Oct 2025 13:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17BB28E00;
+	Thu, 23 Oct 2025 13:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="2F8bN3nk"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCLJ65ZC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562F62C11FD;
-	Thu, 23 Oct 2025 13:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCDB2D8376
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761225673; cv=none; b=Z354Dfo7+vEkGiTOH0HExOludKK/ii8Nud9qPdf4I2meCqaY21t1r44VNhe+pGoi8V8+hKsXOo2eGdXpFBK2+YJ9CkMccrGeLc50Yf0ZK1yrPV40auw93vBUNFD/oXkDVg9fXGexw04tpZjq9xnRn69IAhZKyk1Vu9cgkQHPr5A=
+	t=1761225669; cv=none; b=bMemtK6h7MVOi+q4LkvN0nPuFgOUUsk1K1xAgP2fPjV2cGh2V52c8aFKuJHz7qMqOSEgAKP2+2UgBWSKQtSGlBhpM4eMmV6PqVrGgXUX7tcMasm5uHt0J1LLQ2S+Zi96RpS4jaQrpg1d59K3C1LvhU63dVLEBfapQ+DrNeEWm7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761225673; c=relaxed/simple;
-	bh=qb9wmhqplV3wjQdDGHKfi28mg6LC6D8Mi1D0V2AIouU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y7OgB7NPPOV9NqwdLzKx3O8M7M1p5viOLDEm5n9QQ4Wku9IdXnwpinsqUXaWzx6YKujjYD5sS0CXmzANI57CkYx9aHu18e0GjcvSdUYeIc3LYpmlyu5zaleinJ44jfc25AfXY7eSYJrdSWm6sntsBraDaSyH/Tl1keYp0jZgemA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=2F8bN3nk; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 7BC5A1A1619;
-	Thu, 23 Oct 2025 13:21:06 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 461466068C;
-	Thu, 23 Oct 2025 13:21:06 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6A9F7102F2469;
-	Thu, 23 Oct 2025 15:20:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761225665; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=IvA5a3iMkBEy7rcJCILOgoju8BwbH24xyx5w5WRuw0E=;
-	b=2F8bN3nkWjZxmp1IJX8wJxx8IAuxhGX+qWcH7u9JEzWGPjBMSq55sPp1up2WNHHA0gwAL8
-	wz9vb0pYmCvhB6jXU9wQv0dd1DHfQqb9RbWjybldJuBrzHEaDfQSfD3+3IhIFUPeW+0EVg
-	IykD2sBLXEWWunG/ZC4W6VZvwcIBjNdeBsK6qHpKyJ/SbGtLJl98smbTEE17dw3BFQT+Nc
-	SmrGTzXtRZmRSnxY4PY6SpPhtQgEqG3ait/xq5VaA8+brI5kue+Gq9sKKJGFa+B2mIo72n
-	OnGWyMa6JnImuEC/aqlivwFX9uBb0cQB3q2xv1Z/Jm75asN5hN1sx17c6Zv98g==
-Date: Thu, 23 Oct 2025 15:20:48 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Hoan Tran
- <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan
- <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, Phil
- Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, Pascal Eberhard
- <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v5 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-Message-ID: <20251023152048.0e70a362@bootlin.com>
-In-Reply-To: <CAMuHMdWY=FbO6YG1jrd0OWfrpPpBzrqmBVcWnw7TnnsKPGgr8A@mail.gmail.com>
-References: <20251020080648.13452-1-herve.codina@bootlin.com>
-	<20251020080648.13452-8-herve.codina@bootlin.com>
-	<CAMuHMdV03D_3b_JA2vzW4tE_QbkkT1bN1dm+zLLLX24oDHMj0Q@mail.gmail.com>
-	<20251022150339.4c48649e@bootlin.com>
-	<CAMuHMdWY=FbO6YG1jrd0OWfrpPpBzrqmBVcWnw7TnnsKPGgr8A@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1761225669; c=relaxed/simple;
+	bh=Dl27z3p3NRNn1JZ+UxgPKaTrAMjCktyLObHgoPG3ObI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ttyFochhr2boXRlTJo4UfMLGzZxxGb6XmjpL+fmxLk+J0he6+q0f87gmnI0tI9QrcazS6vHSCXH8ves3Qa3d/FnyH1GX64WpL2SSEw9Z/yNKlEcgWvmmt4T6WxoNRFD59rj5X2D3EHdU+CUqww9IWAYvi80nv0DfEMUk/Hq0gHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCLJ65ZC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C5B2C4CEFB;
+	Thu, 23 Oct 2025 13:21:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761225668;
+	bh=Dl27z3p3NRNn1JZ+UxgPKaTrAMjCktyLObHgoPG3ObI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NCLJ65ZCY9g5JNNCuSt1sxPrgzdhk/H750je4yr8gWwtpYPc6jTdcBBr4Tly1serB
+	 drzpEM00Nu3gU5qMb/4RkOKxHdqwrKxhwhxyM8mKe31iEU9Vc8OXHJeeww3+oVjc1H
+	 vKECDfGUorXyqmti+Z4GYV8zwpNqgAqo8VxIAp8Q3VPK9UBq14+3IIMyQ4rjCmxQDn
+	 9VZX89l7abr/A7XLXx0yWEb8exmVINKRfntboC4OTXzQjEEyNHhN9MunpWmqge3o2v
+	 XpKEdIH9/AmKKZ4ivKsHVMoLAmp6RZkYEyjqD1et8wTgzz/oRZPgOxbLGs1wat8gqJ
+	 yEPXExsxD9ZvQ==
+Date: Thu, 23 Oct 2025 14:21:04 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Sander Vanheule <sander@svanheule.net>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v4 2/2] regmap: warn users about uninitialized flat cache
+Message-ID: <55d53394-1f79-4257-a513-32dee1704e65@sirena.org.uk>
+References: <20251022200408.63027-1-sander@svanheule.net>
+ <20251022200408.63027-3-sander@svanheule.net>
+ <9b5eaedd-f068-4209-af4a-215716e279a7@sirena.org.uk>
+ <833a6495c2b16e1da90c19826839191eec21e6f2.camel@svanheule.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
-
-Hi Geert,
-
-On Thu, 23 Oct 2025 13:30:53 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-
-> >
-> > I have in mind a use case that can lead to a non-contiguous mapping.
-> >
-> > The RZ/N1 SoC embeds a Cortex-M3 CPU. This CPU can use GPIOs and
-> > some of them for interrupt purpose. In that case, those GPIOs have
-> > to be routed to the interrupt line expected by the Cortex-M3.
-> >
-> > And so, we have some interrupts reserved for CPUs running Linux and
-> > some others for the Cortex-M3.
-> >
-> > Among those reserved interrupts may some are not used.
-> >
-> > for instance:
-> >   Interrupt 103, 102: Reserved and used by Linux
-> >   Interrupt 103: Reserved for Linux but not used -> Hole in the mapping
-> >   Interrupt 104: Reserved and used my Cortex-M3 (need to be routed by Linux)  
-> 
-> 102 does not seem to  be correct?
-
-My bad, my example was wrong.
-   Interrupt 103, 104: Reserved and used by Linux
-   Interrupt 105: Reserved for Linux but not used -> Hole in the mapping
-   Interrupt 106: Reserved and used my Cortex-M3 (need to be routed by Linux) 
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tJoBJcSH8M1CwOxe"
+Content-Disposition: inline
+In-Reply-To: <833a6495c2b16e1da90c19826839191eec21e6f2.camel@svanheule.net>
+X-Cookie: I've got a bad feeling about this.
 
 
-> 
-> > I don't know if this use case is relevant but I think we should be too restrictive
-> > on the mapping and so accept holes.
-> >
-> > With that in mind, I let you confirm that you still prefer to have a mapping
-> > without any holes. A future patch to support that is always possible.  
-> 
-> While that would indeed be a non-discontiguous mapping, I do not see how
-> it is related to rzn1_irqmux_output_lines[] in the driver.  That array
-> would still contain the same contiguous values 103..110, right?
+--tJoBJcSH8M1CwOxe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The array rzn1_irqmux_output_lines is still contiguous yes but the mapping
-defined in irq-map property no.
+On Thu, Oct 23, 2025 at 03:12:59PM +0200, Sander Vanheule wrote:
 
-Looking back again at your proposal, indeed I can remove the following loop:
-	for (i = 0; i < output_lines_count; i++) {
-               if (parent_args->args[1] == output_lines[i])
-                       return i;
-	} 
+> If it's okay for you, I would change it back to a dev_warn_once() with a
+> test_bit() check.
 
-With just
-	if (parent_args->args[1] >= RZN1_IRQMUX_SPI_BASE &&
-            parent_args->args[1] < RZN1_IRQMUX_SPI_BASE + RZN1_IRQMUX_NUM_IRQS) {
-		return parent_args->args[1] - RZN1_IRQMUX_SPI_BASE;
+That sounds good.
 
-	dev_err(dev, "Invalid GIC interrupt %u\n", parent_args->args[1]);
-	return -EINVAL;
+--tJoBJcSH8M1CwOxe
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> Sorry, I haven't been following the development of this driver that
-> closely (RZ/N1 is completely different from e.g. R-Car, and I never
-> had access to an RZ/N1 platform), so perhaps I am missing something.
-> Why does the user have to specify an interrupt-map in DT? Can't the
-> driver create the mapping dynamically, based actual usage of the
-> GPIOs? I.e. the first 8 GPIOs that ask for interrupt functionality
-> receive it, and are mapped to an available GIC interrupt?
-> I believe this is how rzg2l-irqc works, mapping up to 32 GPIO interrupts
-> to 32 GIC (TINT) interrupts.
+-----BEGIN PGP SIGNATURE-----
 
-I think the main difference with rzg2l-irqc is that the RZ/N1 irq mux is
-clearly not an interrupt controller.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj6K78ACgkQJNaLcl1U
+h9DWcgf9FjDHOELBqIIKY9xdAYd+y8uP9JNT1dgrsQ91m2IXT//WfRiLcqJn9fGS
+USN+Mbz5V5F6TcZnpQJk6Jqy/Kq+SpEz53gaCkYWWBcMAw1O4wtWgB3l9tZV1IcB
+Tib0xvryklmev1wfUMsEFd2mz5XX0mykQ6cPjJa2IafHrsP56ICtiiZQTdEeLCUu
+OJXSqaFhKhf6u6imODmCCHrbQS4XsTaAEErijXzSuSHqI0mU10EKfGR/BUuJXWD7
+xsd+LbEB8OMDTs+sV1ugnkQhz8CX19/mfgDSqzxwLOqNEAdVF8sDHtMNDtEFz7Aw
+rKjP9ndgoobfww9gXGtDWDkgkgaK3w==
+=WGxZ
+-----END PGP SIGNATURE-----
 
-It is just a mux with 96 inputs (GPIO lines coming from several GPIO
-controller) and 8 outputs (connected to the GIC).
-
-It is represented as an interrupt nexus node and has an interrupt-map property.
-to describe the routing.
-
-The interrupt-map property cannot be dynamically created.
-
-Also, the routing is necessary even if the related GPIO is not used by Linux.
-This GPIO can be used as a GPIO input interrupt line by the Cortex M3.
-
-If the irq mux driver performs the routing only on Linux GPIO usage, it will
-not route GPIOs depending on Cortex M3 internal usage.
-
-Best regards,
-Hervé
+--tJoBJcSH8M1CwOxe--
 
