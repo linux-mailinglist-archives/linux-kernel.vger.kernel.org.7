@@ -1,103 +1,112 @@
-Return-Path: <linux-kernel+bounces-866795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E9CC00A7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:13:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F21EAC00A9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D28219A6881
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:14:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA6105056FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8EB30E836;
-	Thu, 23 Oct 2025 11:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8474F30CD88;
+	Thu, 23 Oct 2025 11:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="yMN8qMWm"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/9otqDC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949CC30CD85;
-	Thu, 23 Oct 2025 11:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB63530C345
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761217957; cv=none; b=ZsD5sUXXmxpiT2xVoF60fiJRpYlmYTQEyuQ5kXDVqqYnGO49IJ8UQv7WK3vKzY+D3IMCS+UllZ5YoM3pmC8BAReOGzOdzAOvhgkHNHOGvIAAwxUiE/oCg9JGVENOHvkxwt0WViMjtg6fVp8jftwIE2KfKlnV56x4X3aWzzb56Kw=
+	t=1761217982; cv=none; b=gqyp7NKVm9UU0iX/l1Ze7xbu9O/ZodpYEs/id4Rkb/DCgnCasycur4zU94LPIm2e/CjdVImTplLDlsDVHMTcUQYO7TrGViy+VZwRHsE7u1LAAcMcI4nhIkTYXFaHMkufkaglSMw4vXPQWckP6gafvWbc3on4MdGxMlzamKv2gf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761217957; c=relaxed/simple;
-	bh=p9Nkqd9QkB+VyozIo+QIngFT9Gp4OeAxXgdz3aW/ePs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q1KVABMjiI67tdq35OIuoQ+BHVg9LuOzerCxNIlUC2UFIJWEtlIA+3CmsSzpUT7Uvq9GSEL0/dHre05Xqj7VZxubuzCANXbw2VkSNhPAcQSPiA6eVYCrugncEsQ/NhHl+1la9PDBYcDs+1iWRjEEgcWJVbpefWuM6a6b+ggBPxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=yMN8qMWm; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type;
-	bh=c9r5W/KsY8w9shEEuLt5rFhhVh41VepTKr0R2XZHIdI=; b=yMN8qMWmkQEZsxHY/Xto3vO3ak
-	Y2TqtbuNvwJJFlhGLdzZh8XDs632pmECzFWzU7EZYK51xA458czcBc77jkEU++NyW2s6e0oO3PFRQ
-	SK71D9+GdIOLqfEeYqbVewI6tN9RGg1l+3abcDLGxkKovp2sPnv+2Xi06S8LKYtTsC1bLfdfj46ni
-	FFEnHP25nZ1xo36MjebGAlWb6L8ucGn7MqoB7c/Fsg+bDriA0BwMTjGvyaV1suDkjRGncOBuwB/2S
-	6qmg02jVMDIMnqYCfnll/Ihm9G0Hy4jEBGnmUQwYf2A0ysY7eX0el5B8pd2iNn/tE/+N2VU55TMCM
-	PCBPdSrA==;
-Received: from i53875a07.versanet.de ([83.135.90.7] helo=phil.fritz.box)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vBtEz-0002w5-Ek; Thu, 23 Oct 2025 13:12:21 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	jonas@kwiboo.se
-Subject: [PATCH v2 5/5] MAINTAINERS: add dwmac-rk glue driver to the main Rockchip entry
-Date: Thu, 23 Oct 2025 13:12:12 +0200
-Message-ID: <20251023111213.298860-6-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251023111213.298860-1-heiko@sntech.de>
-References: <20251023111213.298860-1-heiko@sntech.de>
+	s=arc-20240116; t=1761217982; c=relaxed/simple;
+	bh=VSofXPKltqSzfUAWfolhUYjZILc/jZGqF+OMoYUXiPg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kSJT6AnLcpZHp+8/Q9XV43vmDp1GN0ke9A6/CaQygQql8ys4Kx70hBAWDAjgmnubq7AqFk4z2PGp8AJxCQ9eZaacNz5e0SXaNWS8pD84lBTjuHP31ErVwavaKvEvBYirXBGoDIogQKCo1rSPzKKrAdxyOCtLpi/ankSzzD6pek8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/9otqDC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D31FC116D0
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:13:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761217982;
+	bh=VSofXPKltqSzfUAWfolhUYjZILc/jZGqF+OMoYUXiPg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=f/9otqDCFyr/bE8MPe6ch3MwaJ1kyi5Kq9EIZzV9+hO+1AqinNOOZIBZfpxkZRBqx
+	 bptX2Z7iZb5DDWZPoMUACkW/5EdPelk3FYviPAFMHF+r1xSgv+FD44cW5wPzUX7Vyc
+	 UPCAoHqzRafCo4j3+dqcrjFjn6PVF/Z7dw9lvFYJ6AmGmD8inamXBApCsgijcdvu3k
+	 yXw1KqlJ3tglPWS5WMKmaV+7TnJPTBD6NZi4BjsttO4YmL8W2P0xo+qTjb1yXtETSh
+	 XAnPXhkXsJd8nEoZ9xMO9tYn/xk0twYm9keODkjt+L08SGR9DeHjrO2bSqxLW2ppEq
+	 Fk5NvYeEA7B8Q==
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b4539dddd99so136043166b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:13:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUlbOnfqrl4mLrLZNq+mLRwaHvbt8kXXmyey1Ycb2D3iWzURgrHZ176YCQ/6XPEWhXlyqb8+ZB1T4GS2Yw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymnjvc7g2gpDcyB1Kg2ZZEXzWB/5Af1Yb9J1tGHFAzOoYqzxd6
+	gGIJTuGltFk7Q0G/R3FDIPKMtI7pJ01wfVtRAt6A56GfTZ8BzwEc9UfS0UsiOdMKGshga2yrbcE
+	cwE8OOHxIgTuq306AAb0lmyMTovw2vw==
+X-Google-Smtp-Source: AGHT+IHXTXK9Inhzp31f6w2tfR0eGiG69ffpyx6TLgXjLoQig5J/jMOVgrMAnyrlyG50AeAs4SS7Rb45JstbYWrnInk=
+X-Received: by 2002:a17:907:9690:b0:b46:8bad:6970 with SMTP id
+ a640c23a62f3a-b6d51c05e68mr217698766b.36.1761217981126; Thu, 23 Oct 2025
+ 04:13:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251022165509.3917655-2-robh@kernel.org> <87ms5iqf5b.fsf@bootlin.com>
+In-Reply-To: <87ms5iqf5b.fsf@bootlin.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 23 Oct 2025 06:12:48 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL+DY4j62m3_BVjC7_o9Hbx4a54UORDNBC+Pg0YAQCO+w@mail.gmail.com>
+X-Gm-Features: AWmQ_bmtPaFimucwq25igSrk9S_iboFzoF-uoqSjxWerG3P5s9m5XHzlE7aUD-4
+Message-ID: <CAL_JsqL+DY4j62m3_BVjC7_o9Hbx4a54UORDNBC+Pg0YAQCO+w@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: arm: Convert Marvell CP110 System
+ Controller to DT schema
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Richard Cochran <richardcochran@gmail.com>, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The dwmac-rk glue driver is currently not caught by the general maintainer
-entry for Rockchip SoCs, so add it explicitly, similar to the i2c driver.
+On Thu, Oct 23, 2025 at 1:57=E2=80=AFAM Miquel Raynal <miquel.raynal@bootli=
+n.com> wrote:
+>
+> Hi Rob,
+>
+> > Convert the Marvell CP110 System Controller binding to DT schema
+> > format.
+> >
+> > There's not any specific compatible for the whole block which is a
+> > separate problem, so just the child nodes are documented. Only the
+> > pinctrl and clock child nodes need to be converted as the GPIO node
+> > already has a schema.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+>
+> [...]
+>
+> > +  "#clock-cells":
+> > +    const: 2
+> > +    description: >
+>
+> I am surprised you prefer a description to a constraint expressed with
+> yaml. Yet, I am totally fine with it.
 
-The binding document in net/rockchip-dwmac.yaml already gets caught by
-the wildcard match.
+I don't, but no one has come up with a way to put constraints here and
+then apply them to 'clocks' properties as appropriate.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+>
+> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 545a4776795e..5b9c056b47cd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3296,6 +3296,7 @@ F:	drivers/*/*/*rockchip*
- F:	drivers/*/*rockchip*
- F:	drivers/clk/rockchip/
- F:	drivers/i2c/busses/i2c-rk3x.c
-+F:	drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
- F:	sound/soc/rockchip/
- N:	rockchip
- 
--- 
-2.47.2
+Thanks.
 
+Rob
 
