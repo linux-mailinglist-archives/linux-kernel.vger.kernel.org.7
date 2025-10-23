@@ -1,98 +1,93 @@
-Return-Path: <linux-kernel+bounces-867218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5449BC01EBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A3BC01ED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8912F3B26A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:49:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61C7B3A3D6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9489C33030C;
-	Thu, 23 Oct 2025 14:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C95A330B2F;
+	Thu, 23 Oct 2025 14:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AahZCQgi"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJOUNYYW"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7376A33291E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D081932ED40
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761230923; cv=none; b=sdkZ5nqvqUGnpRiE6sr5Nxeq2y0+KJXTxb8uvV81MBmoOymbIlMRScZ8klLfQlqrdUknCEWn/OzzqLCFmsyQmXch3GGK+AR9r6+8WBYj5WsEx4erz+BXkLq6bJ4oSKxLeJqDBttNwFFPV9t21af/6H4SiSkqHgo+q/HOZuOycrk=
+	t=1761231033; cv=none; b=MQeaDyu9JzHK2OO6aoNtVQoWHYGKrdkvWVp7I8ylzQtqPFsIY4yMaquKN1NYs92LsmakD71UOI7wF+wKFeQDSInE8LBfr8tzMaCiLh3UpGOUKXpMAFpsfF/iCzY/7Ma3LfGADVuncfOxMJRm1/66fnmMD3SZJjyCsTuBKlL6hy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761230923; c=relaxed/simple;
-	bh=dkFalx35Mf7Ek+Fkx2R9b5eye892DdLAQIXR7osART4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zc0noZR/8QBWHtOQIWshaPLl4WW85EMSnZCQE/X9S8szdzTGV8CdGaRqrRIQI2G8cZ5MFac/xCrvCyhIusOxb/kTUx8+ZkIs0NxegGYVgXBFFIOf8C2Y9YQ3VLZrnKkMGfwyGTW2+zu6g1aYLrdIDwaPJ4ZG2pLciUzmDkMy8nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AahZCQgi; arc=none smtp.client-ip=209.85.216.45
+	s=arc-20240116; t=1761231033; c=relaxed/simple;
+	bh=waBTP7RtsmhC1WI2NmWFK1HTs2arG4JeVs+IEMQ0HQY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EH6UAp5SU6e0PKjMScgi41hmf8GZtQ8XpY3i3DWiVGzGxkTAfe7IX5y46N1zSf81UC10nAyogxpfnyNPtFDX0lwhuVh3IfdPD7qU944whG7RweO7OfEdrJKPwTLPMh5N69fPTqN4NxHNVGj47Nq6Om1Bhl0Cb26h8WGnbqlWvGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJOUNYYW; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-33d896debe5so1160157a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:48:42 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so7773605e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:50:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761230922; x=1761835722; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nIyY0jwm6XINDoeFBx1e+QKbqj3iHSEYcQQKVDLzBek=;
-        b=AahZCQgigInt18CzimkQzS7fm1Jsg7vvjabfSvE+CtBKINbREkkUtT/drKmlvuHJeu
-         xss1X+cqxIib5+ki4zGVvBjRQxhLOQjnUbkXksj4d0ewo3jTfYgo0IbTFrb1qDor6E2d
-         0P/On70TnntK6c1Zx6WhvNKUskjKYqRSKDiBsR1pWK9r5cmCsD/dOvgaUSuINGxAo6S1
-         tkmcl+yv5/289leB6N+gQhIm90J1z871YfSLHBRsdg/f+oAN+WcOXut8figzin2nPIor
-         dwSTbTDQk2VLoWwtVXKWSqFFKgmKojHuHygIwhKVvVg7MGnQIX6Kg2q7l/7kq2HGsniZ
-         Uj8A==
+        d=gmail.com; s=20230601; t=1761231030; x=1761835830; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FassfAN01QkxVDyy+Sa+b0ImlRDr/lRNphkFcyroU20=;
+        b=MJOUNYYWLMw7HcqSw6agbDQdkiAGR+T8i/4u+wu5uRk8mrBejYpLzAvM1XkfyIZNG2
+         o3LuQ86oHQgHRBDwFlxX3KVyFPy7gHKSw9+Q/RuvaNlI5OqiIcuOnad+dnUB7KQDx5rP
+         N408xobqk5EbAgZHR1xK1shlotJOt1Mxe2+oWx3dEVziSIySyxpMUfboWWRAIIoroOdr
+         IB4zXM2VMSWhXyLmAKgXDZfKmZvymHYXQvODPIVHbNzsBEcjL5j8q1LnLKaTrtgCg24B
+         Qqbk5xsYBvXFOYaOPXkeEpsL0rMS+0oqsvqztAPiIYIj8pJttI4M1UVM0YFiThTScpIW
+         VP6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761230922; x=1761835722;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nIyY0jwm6XINDoeFBx1e+QKbqj3iHSEYcQQKVDLzBek=;
-        b=Z/6xgHGpziTd44ps954T5IMdTunzBZwYIXX7zZdJmlEEsfQoB8U276XoGKiEw4HqH/
-         LhRYU1jAXMEiZJCmeBjlqM36c5VXV/7M8uwNvMH457sjS/e6kkg9r3tLjkKvY3YJky9D
-         2QAWSiYd7b74I/ge3RdZHU9RO661wp/i16gMDkGzs84cgOq6irTOeIuwp6l9ysxV2XBT
-         a1CjXra2vV4UoP5tuwq+kKHqhBFaK4YMhf8zx1QsL+mD2IFzQudybGW/T4owNxnJU3Tj
-         wSMwEyB0UIBs+y85tZ+udatpxx/lnLKXCkxmgle6iZdaqFpdYr4e0UHPEqaZTLK03xLK
-         PwWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbE2xyjZ3Uv7xGzhEnHFuT1gR4cCY+U6KVXbuOVoLVhVesBsHgfUXJpjNhNQuXThx+F4qUjU1D+wDe4DM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwScyFQ+KpWDRKLH4sV879WVtt9aGiFG8BfHGkZqGZ8XT212rG
-	ExDhbym9heZ4g5e4W9EZ9eeMJEOUIWpEqS4Btb4PP0Ge40jldzmNHgc5
-X-Gm-Gg: ASbGncsG+NcnqmsFgiLD8PhMgjqj3OzdXczPxoEdeTF5I/X1apNsDTzQ6igJ+mPZ/eh
-	cg5q9QBv8bMpCg9o40fNvhRDjoTuxOC1DhUMP1jwElJ52uPadnOJlJ6MhhFBcHkbby4VvdIk893
-	JNBgyydi1upvN3Qwovodbr/2B5H2DQ7oaCKg01zxr/b9JWSPFDYpmXDNeG/I4FyB3A1VEr70hjl
-	3GQdxiwreNQJ5NSkdtUB5gIa1GpWiCNpbupDC1KY8NcMf0lm3x6Rw4066pzEheLKw2iNCf0iGDN
-	Da+/Ql/emXpEGPBK2xsdtAV7nNwuS+uusa7E2DDOixSa59YgDAWMuMUaHpXA0Bmyt001/15xzvd
-	hVGQLYSbZ6SkboeXtEa/j0DiaZGwUoR2BmafZX5I+P5H2FCcC8EptY3HwiSzStGsfwFQDOVKU3Q
-	C6Iq4YBmBzZmOzqQkXuARvtB8=
-X-Google-Smtp-Source: AGHT+IEXALud1vKs7yhSWKIJW7KB5/rjyWchLWdA7m4PkitrT3UlKVgb0yRvPH+Kg5clS7uGqXVOgA==
-X-Received: by 2002:a17:90b:35cf:b0:330:793a:4240 with SMTP id 98e67ed59e1d1-33bcf918506mr28258906a91.31.1761230921710;
-        Thu, 23 Oct 2025 07:48:41 -0700 (PDT)
-Received: from localhost.localdomain ([150.109.25.78])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e2247a7f1sm6045716a91.14.2025.10.23.07.48.39
+        d=1e100.net; s=20230601; t=1761231030; x=1761835830;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FassfAN01QkxVDyy+Sa+b0ImlRDr/lRNphkFcyroU20=;
+        b=Lu2mn3GTXX88ssLHLJde2N6nBiShvybBBKWl6tK1Xw3AEGI3Dj/A17WyHCkvZdiuNq
+         1YvLz+5Uf17h0ckMY0rxtanH/yls704E/lWEMQpQPynNao2H+oJH8OEXnMchgC4VQFxF
+         9NVBjRD6KuA3ulFQ97Sgtp/701e+EqBTuyRyxvkZvSgPdneh5EQ5ImHf+KShiRHbQhCe
+         WJTWlvKa0nRZc/uwwzfGBC/HSqDAe2xn368AHojPlOftYpNAvbYko7qTwh/6Gdejvd/W
+         Ej0lGUfuo++ToHrnJ+TtzEO3vS295ppUX+zNb/XOEKdziSodxRlH9fUhdwlMMpLMKKwG
+         Er1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXypnAcdhtH8Yt2rewxa7+T8hF9Gz7HhpGfJmAvj9wLlcFntSka/sh6F9u5ynZRW16ttwxxlkE1qyj0ib4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygGj1simdYpb1DwramKCVb1w055aQ8n6zBcXuV/ovexDqu4iVo
+	+uSqD9V/H6bNPL3CduMcbz7UjCrHNqvZ8NBikmdr1E43tbUSKBtAh9N0
+X-Gm-Gg: ASbGncsl9L4TzRCUe5Ft33Cj0Btgjg31NGoyp3ngY/c4XphvD7UYIGRKTcrr1+fi6vS
+	08VK+j+Y63DSMW1FkG9DhEmrJuFNJ71Y3URi0zxxoyBhKQFTD0gbrjq62yQ02gM64nWEWjDiCxB
+	vA7JwhBrPcB3Z+ZQGvWc63KE1/8dKhG9++p90lu4p4ZhVqUrVL8IRCZgD0MSAGEmn/pAMajDrzD
+	E8dvCHKhc23YIBjOrdnBOK19OSQwBrBsy8NnLk7uch8P1/lr44iRLenwM5oySH7BXZb8B8GmHTt
+	4te3dhOayFdNjq1wX12dlyHhM5hZt0ONw8+Z5xbMQu9isGHID3NhyDGoWEt3nE/fWZ8n5HxGOkN
+	sqANWZKLXh9I7+Z91pYwylAsa9sZS5prAMfdOxvXtSmnCAvDNyLwcaqBPBdnxM4kNBDt3RwqLHQ
+	MAW4tAfEQ0hfGnugpIr+jMKlISuabCJZ/ZxPSJShpXr+A=
+X-Google-Smtp-Source: AGHT+IEs+GoltQcKBTrzCzP/DJpfopqS9pIvzCpIjkp1sHlc6JzXCwJNHAdY8xhjwduT8SXTQCUp/w==
+X-Received: by 2002:a05:600c:3b03:b0:471:14af:c715 with SMTP id 5b1f17b1804b1-47117874978mr181531815e9.3.1761231030000;
+        Thu, 23 Oct 2025 07:50:30 -0700 (PDT)
+Received: from localhost.localdomain ([2001:b07:aac:705d:f374:5673:9521:bde3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c428f709sm102312175e9.8.2025.10.23.07.50.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 07:48:41 -0700 (PDT)
-From: HaiYang Zhong <wokezhong@gmail.com>
-X-Google-Original-From: HaiYang Zhong <wokezhong@tencent.com>
-To: edumazet@google.com
-Cc: ncardwell@google.com,
-	kuniyu@google.com,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
+        Thu, 23 Oct 2025 07:50:29 -0700 (PDT)
+From: Emanuele Ghidoli <ghidoliemanuele@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	wokezhong@tencent.com
-Subject: [PATCH v2 2/2] net/tcp: add packetdrill test for FIN-WAIT-1 zero-window fix
-Date: Thu, 23 Oct 2025 22:48:05 +0800
-Message-ID: <20251023144805.1979484-3-wokezhong@tencent.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <20251023144805.1979484-1-wokezhong@tencent.com>
-References: <CANn89i+0bmXUz=T+cGPexiMpS-epfhbz+Ds84A+Lewrj880TBg@mail.gmail.com>
- <20251023144805.1979484-1-wokezhong@tencent.com>
+	stable@vger.kernel.org
+Subject: [PATCH v1] net: phy: dp83867: Disable EEE support as not implemented
+Date: Thu, 23 Oct 2025 16:48:53 +0200
+Message-ID: <20251023144857.529566-1-ghidoliemanuele@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,87 +96,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add packetdrill test to reproduce and verify the permanent FIN-WAIT-1
-state issue when continuous zero window packets are received.
+From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 
-The test simulates:
-- TCP connection establishment
-- Peer advertising zero window
-- Local FIN blocked in send buffer due to zero window
-- Continuous zero window ACKs from peer
-- Verification of connection timeout (after fix)
+While the DP83867 PHYs report EEE capability through their feature
+registers, the actual hardware does not support EEE (see Links).
+When the connected MAC enables EEE, it causes link instability and
+communication failures.
 
-Signed-off-by: HaiYang Zhong <wokezhong@tencent.com>
+The issue is reproducible with a iMX8MP and relevant stmmac ethernet port.
+Since the introduction of phylink-managed EEE support in the stmmac driver,
+EEE is now enabled by default, leading to issues on systems using the
+DP83867 PHY.
+
+Call phy_disable_eee during phy initialization to prevent EEE from being
+enabled on DP83867 PHYs.
+
+Link: https://e2e.ti.com/support/interface-group/interface/f/interface-forum/1445244/dp83867ir-dp83867-disable-eee-lpi
+Link: https://e2e.ti.com/support/interface-group/interface/f/interface-forum/658638/dp83867ir-eee-energy-efficient-ethernet
+Fixes: 2a10154abcb7 ("net: phy: dp83867: Add TI dp83867 phy")
+Cc: stable@vger.kernel.org
+Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
 ---
- .../net/tcp_fin_wait1_zero_window.pkt         | 58 +++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 tools/testing/selftests/net/tcp_fin_wait1_zero_window.pkt
+ drivers/net/phy/dp83867.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/tools/testing/selftests/net/tcp_fin_wait1_zero_window.pkt b/tools/testing/selftests/net/tcp_fin_wait1_zero_window.pkt
-new file mode 100644
-index 000000000000..86ceb95de744
---- /dev/null
-+++ b/tools/testing/selftests/net/tcp_fin_wait1_zero_window.pkt
-@@ -0,0 +1,58 @@
-+// Test for permanent FIN-WAIT-1 state with continuous zero-window advertisements
-+// Author: HaiYang Zhong <wokezhong@tencent.com>
+diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
+index deeefb962566..36a0c1b7f59c 100644
+--- a/drivers/net/phy/dp83867.c
++++ b/drivers/net/phy/dp83867.c
+@@ -738,6 +738,12 @@ static int dp83867_config_init(struct phy_device *phydev)
+ 			return ret;
+ 	}
+ 
++	/* Although the DP83867 reports EEE capability through the
++	 * MDIO_PCS_EEE_ABLE and MDIO_AN_EEE_ADV registers, the feature
++	 * is not actually implemented in hardware.
++	 */
++	phy_disable_eee(phydev);
 +
-+
-+0.000 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
-+0.000 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
-+0.000 bind(3, ..., ...) = 0
-+0.000 listen(3, 1) = 0
-+
-+0.100 < S 0:0(0) win 65535 <mss 1460>
-+0.100 > S. 0:0(0) ack 1 <mss 1460>
-+0.100 < . 1:1(0) ack 1 win 65535
-+0.100 accept(3, ..., ...) = 4
-+
-+// Send data to fill receive window
-+0.200 write(4, ..., 5) = 5
-+0.200 > P. 1:6(5) ack 1
-+
-+// Advertise zero-window
-+0.200 < . 1:1(0) ack 6 win 0
-+
-+// Application closes connection, sends FIN (but blocked by zero window)
-+0.200 close(4) = 0
-+
-+//Send zero-window probe packet
-++0.200 > . 5:5(0) ack 1
-++0.400 > . 5:5(0) ack 1
-++0.800 > . 5:5(0) ack 1
-++1.600 > . 5:5(0) ack 1
-++3.200 > . 5:5(0) ack 1
-++6.400 > . 5:5(0) ack 1
-++12.800 > . 5:5(0) ack 1
-+
-+// Continuously sending zero-window ACKs
-+30.000 < . 1:1(0) ack 6 win 0
-+
-+// Key verification points
-+// Without fix: waiting for packet timeout due to timer reset
-+// With fix: this probe is sent as scheduled
-++22.000~+23.000 > . 5:5(0) ack 1
-+
-+// More zero-window ACKs from peer
-+60.000 < . 1:1(0) ack 6 win 0
-+90.000 < . 1:1(0) ack 6 win 0
-++16.000~+19.000 > . 5:5(0) ack 1
-+120.000 < . 1:1(0) ack 6 win 0
-+150.000 < . 1:1(0) ack 6 win 0
-+180.000 < . 1:1(0) ack 6 win 0
-+210.000 < . 1:1(0) ack 6 win 0
-++0.000~+5.000  > . 5:5(0) ack 1
-+240.000 < . 1:1(0) ack 6 win 0
-+270.000 < . 1:1(0) ack 6 win 0
-+300.000 < . 1:1(0) ack 6 win 0
-+330.000 < . 1:1(0) ack 6 win 0
-+360.000 < . 1:1(0) ack 6 win 0
-+
-+// Connection reset after zero-window probe timeout
-++0.000 > R 6:6(0)
+ 	if (phy_interface_is_rgmii(phydev) ||
+ 	    phydev->interface == PHY_INTERFACE_MODE_SGMII) {
+ 		val = phy_read(phydev, MII_DP83867_PHYCTRL);
 -- 
-2.43.7
+2.43.0
 
 
