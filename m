@@ -1,52 +1,47 @@
-Return-Path: <linux-kernel+bounces-867638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B5BC032B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:24:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5CA4C032C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F33A1A6491E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:25:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30CA14E93A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B63B34D91E;
-	Thu, 23 Oct 2025 19:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBC834CFC8;
+	Thu, 23 Oct 2025 19:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZPffygOM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZunOBhgW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5845234CFC8;
-	Thu, 23 Oct 2025 19:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D7A26FDB2;
+	Thu, 23 Oct 2025 19:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761247460; cv=none; b=lyBLX9B7rGtYl1FbhEY+T7s1jXFXh7LHEWhBAOicEoFlzcn8O3sSb521vz0ebqd7xmWVurHvEbZ3tstvtvJ6eXXoPEJMKRFvlMXm4AqzdmsNfHPVvWx+ah1A8RdrOpZUPBDW8nZoFIGlu3B87mM7XULomfRQ9FbU/+3i9ulKCoM=
+	t=1761247529; cv=none; b=O6KelR8EH7MxgEacXv8kXJsO5bU/gRcRDVr7gJCvSDwqjvoreip37miXHCBYN8JVvhTX8QWFBRSQ29Jltp6ORf4RNVYiFbcCnrvSL+h+vcgK8g3zwlMQz7GjByP9sEWMmoVmLXckwS5mJZiKpbhtcs2octr34C01InLaIUB8efY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761247460; c=relaxed/simple;
-	bh=x3Iel7e3TIG8TOAMR8VNovnrkUc0hLPTIjmEWChRMBE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m6HBK3ugkBcdLxlWS2/eQ8fJ3V25hVyzLAtqmix9vlw83RhYdvmXL8gjaXx83PKbe4Dhj6MUw5ZwoJm5RnGoTF3sz/Hm4ixzxLafCfE/Sf6wgBzJawqXr3qIPHtok6C96+nuX0zcTwzW1MJb6BqISF2n7Mj1zWI/LKMQnGxxfmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZPffygOM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 057BDC4CEFD;
-	Thu, 23 Oct 2025 19:24:20 +0000 (UTC)
+	s=arc-20240116; t=1761247529; c=relaxed/simple;
+	bh=SxeCPtVXN96k6/3jzE911HEut+z3rMSWiGO603OzLjA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=l/4Aymj5PDq/znkKlIuwirEjECP6iDEYLjjjhY3UFgticDqxCd2IgEh0Q4b4ah2odCDbRuN/JGWWfvdEKhqO/Tzj17nq+U0ofwVpW32lkK7W29FFHqFs2gpEavT6smN8UIM0bzAko2E2Jc7NHA7btfJZUXc+EVsoPVqf7nUoGXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZunOBhgW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D10CFC4CEE7;
+	Thu, 23 Oct 2025 19:25:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761247460;
-	bh=x3Iel7e3TIG8TOAMR8VNovnrkUc0hLPTIjmEWChRMBE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ZPffygOMKFkUTOVQHlYaw3dEixP3scqi7ZX6DBOZaq8SOVj650sEgN1184jNPzEYe
-	 4bta4ewsOoZ7upNG53RitnkSPlgRIDlbhiwJZc5F7eHU1H4lVWxlGO9swesjKxjDoB
-	 gPRfagY+xafGycx6csj4U11rbexbNpMQ+aQ11nCf7AB/u2bfuvw+xSpDi+uDueXsmY
-	 ADQOwDMgGnYhc08e8GDnPGNRHt6Pu1MbHUXn8ZceKhT+SPDlFfRlY7m1V6KSwygNUE
-	 6eza6pyMqcx/DiBKBcQOqw0imuj/eMbSOobHMukEFztkx207nSfES9joJSk4Tbm92W
-	 4HPYXa6o4otmw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAC5CCF9E5;
-	Thu, 23 Oct 2025 19:24:19 +0000 (UTC)
-From: ymodlin via B4 Relay <devnull+yogev.modlin.realsenseai.com@kernel.org>
-Date: Thu, 23 Oct 2025 22:24:15 +0300
-Subject: [PATCH v2 2/2] media: uvc: Add RealSense vendor prefix to Intel
- camera comments
+	s=k20201202; t=1761247528;
+	bh=SxeCPtVXN96k6/3jzE911HEut+z3rMSWiGO603OzLjA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ZunOBhgWZ0/bddAkC1/4GNqm3ECAnmtss60tAWR96YTikMyGs0dM6M5ZS52Y6xnKS
+	 4uP+vSRxeSIfC6DzfcQ3OgcKMl+Ox2QnajJ9NaBUgh2WZHY5pNRwtOUKloYZsT0edA
+	 7ZRf0YdokMqpf/CMI5s0ZQW/NdlC/eHdjRlYhVSGtB4tW3w+Y8Vh94aTM0LsfsUJ7i
+	 HRhwCoMVCnODyEtlL7QTN+8ZyTkkU6fA0R1DN9n8SMVMrBPpNVHpWlLWJNQd+whXkx
+	 wtTWlut84+wDzxCQdRzrPUqxBetf4VXre1YUg6wR6boWS2EojTjp8HEQjD/Hb5oudb
+	 Z988pDo6QPXIw==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Thu, 23 Oct 2025 21:25:20 +0200
+Subject: [PATCH] MAINTAINERS: Update Kconfig section
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,125 +50,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-fix-uvc-v2-2-1c93853257dc@realsenseai.com>
-References: <20251023-fix-uvc-v2-0-1c93853257dc@realsenseai.com>
-In-Reply-To: <20251023-fix-uvc-v2-0-1c93853257dc@realsenseai.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hansg@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- ymodlin <yogev.modlin@realsenseai.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761247458; l=4001;
- i=yogev.modlin@realsenseai.com; s=20251022; h=from:subject:message-id;
- bh=ABdr+wkWJwGbsZdorE7WJmV7KucbGjsqeVTDQNBUj5c=;
- b=FD86vL8cay22dp8QSk6Y8UM2DT8Sh9t0IzKOm73wlj4fWzzVaeZ5WQ5B4+7YTe7Gj379JhHfW
- s0DNIJeEx63CM+iXEGpWIyOpBKWCjQYskI5a7SkOtaytihZBAsnyXX4
-X-Developer-Key: i=yogev.modlin@realsenseai.com; a=ed25519;
- pk=V3EENbzJJO6YkqjrHtGmN67ulKS2b5TU7Ze0hVi1G1o=
-X-Endpoint-Received: by B4 Relay for yogev.modlin@realsenseai.com/20251022
- with auth_id=549
-X-Original-From: ymodlin <yogev.modlin@realsenseai.com>
-Reply-To: yogev.modlin@realsenseai.com
+Message-Id: <20251023-update-kconfig-maintainers-v1-1-0ebd5b4ecced@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAB+B+mgC/x3MTQqAIBBA4avIrBsopYKuEi38GWuILLQikO6et
+ HiLb/MyJIpMCQaRIdLNifdQ0FQC7KLDTMiuGGQt26aWCq/D6ZNwtXvwPOOmOZwligldp3rqtTH
+ SOyiDI5Ln55+P0/t+FCIS1GwAAAA=
+X-Change-ID: 20251023-update-kconfig-maintainers-d637e7abb2fd
+To: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1794; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=SxeCPtVXN96k6/3jzE911HEut+z3rMSWiGO603OzLjA=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDBm/GtWdLJ+9klv9fZ/wy5KiyBzGOd+cGHL8p4gVzN6+j
+ YGlMTSmo5SFQYyLQVZMkaX6sepxQ8M5ZxlvnJoEM4eVCWQIAxenAEwk4SXDPyXJyL+sK94uSHdh
+ ++U05+RRz/cCC8WZfjBM2ar/YdGUubcZGV61rb9TNee3WUbrKrYl4XoPrbOFb8c+23W77fny1Bn
+ bVnAAAA==
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-From: ymodlin <yogev.modlin@realsenseai.com>
+Masahiro Yamada stepped down as Kbuild and Kconfig maintainer in
+commit 8d6841d5cb20 ("MAINTAINERS: hand over Kbuild maintenance"),
+leaving Kconfig officially orphaned and handing Kbuild over to Nicolas
+and myself. Since then, there have been a few simple patches to Kconfig
+that have ended up on the linux-kbuild mailing list without clear
+direction on who will take them, as they are not really sent to anybody
+officially, although the list is obviously watched by the Kbuild
+maintainers.
 
-Update comment strings for 'Intel RealSense' depth cameras to include
-the "RealSense" vendor prefix for better identification.
+Make Nicolas and I official maintainers of Kconfig in "Odd Fixes"
+status, similiar to Kbuild, so that the subsystem has clear points of
+contact for contributors, even if significant contributions may not be
+accepted.
 
-Signed-off-by: ymodlin <yogev.modlin@realsenseai.com>
+Additionally, add the Kbuild tree to this section.
+
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 ---
- drivers/media/usb/uvc/uvc_driver.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+We are going to de facto maintain this so we might as well make it
+official :) I will take this via kbuild-fixes at some point.
+---
+ MAINTAINERS | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index b1457678833e..dbdacc64ea6b 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -3142,7 +3142,7 @@ static const struct usb_device_id uvc_ids[] = {
- 	  .bInterfaceSubClass	= 1,
- 	  .bInterfaceProtocol	= 0,
- 	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_DISABLE_AUTOSUSPEND) },
--	/* Realsense D410/ASR depth camera */
-+	/* Intel Realsense D410/ASR depth camera */
- 	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
- 				| USB_DEVICE_ID_MATCH_INT_INFO,
- 	  .idVendor		= 0x8086,
-@@ -3151,7 +3151,7 @@ static const struct usb_device_id uvc_ids[] = {
- 	  .bInterfaceSubClass	= 1,
- 	  .bInterfaceProtocol	= 0,
- 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
--	/* Realsense D415/ASRC depth camera */
-+	/* Intel Realsense D415/ASRC depth camera */
- 	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
- 				| USB_DEVICE_ID_MATCH_INT_INFO,
- 	  .idVendor		= 0x8086,
-@@ -3160,7 +3160,7 @@ static const struct usb_device_id uvc_ids[] = {
- 	  .bInterfaceSubClass	= 1,
- 	  .bInterfaceProtocol	= 0,
- 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
--	/* Realsense D430/AWG depth camera */
-+	/* Intel Realsense D430/AWG depth camera */
- 	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
- 				| USB_DEVICE_ID_MATCH_INT_INFO,
- 	  .idVendor		= 0x8086,
-@@ -3169,7 +3169,7 @@ static const struct usb_device_id uvc_ids[] = {
- 	  .bInterfaceSubClass	= 1,
- 	  .bInterfaceProtocol	= 0,
- 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
--	/* Realsense RealSense D4M */
-+	/* Intel Realsense RealSense D4M */
- 	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
- 				| USB_DEVICE_ID_MATCH_INT_INFO,
- 	  .idVendor		= 0x8086,
-@@ -3178,7 +3178,7 @@ static const struct usb_device_id uvc_ids[] = {
- 	  .bInterfaceSubClass	= 1,
- 	  .bInterfaceProtocol	= 0,
- 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
--	/* Realsense D435/AWGC depth camera */
-+	/* Intel Realsense D435/AWGC depth camera */
- 	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
- 				| USB_DEVICE_ID_MATCH_INT_INFO,
- 	  .idVendor		= 0x8086,
-@@ -3187,7 +3187,7 @@ static const struct usb_device_id uvc_ids[] = {
- 	  .bInterfaceSubClass	= 1,
- 	  .bInterfaceProtocol	= 0,
- 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
--	/* Realsense D435i depth camera */
-+	/* Intel Realsense D435i depth camera */
- 	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
- 				| USB_DEVICE_ID_MATCH_INT_INFO,
- 	  .idVendor		= 0x8086,
-@@ -3196,7 +3196,7 @@ static const struct usb_device_id uvc_ids[] = {
- 	  .bInterfaceSubClass	= 1,
- 	  .bInterfaceProtocol	= 0,
- 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
--	/* Realsense D405 Depth Camera */
-+	/* Intel Realsense D405 Depth Camera */
- 	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
- 				| USB_DEVICE_ID_MATCH_INT_INFO,
- 	  .idVendor		= 0x8086,
-@@ -3205,7 +3205,7 @@ static const struct usb_device_id uvc_ids[] = {
- 	  .bInterfaceSubClass	= 1,
- 	  .bInterfaceProtocol	= 0,
- 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
--	/* Realsense D455 Depth Camera */
-+	/* Intel Realsense D455 Depth Camera */
- 	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
- 				| USB_DEVICE_ID_MATCH_INT_INFO,
- 	  .idVendor		= 0x8086,
-@@ -3214,7 +3214,7 @@ static const struct usb_device_id uvc_ids[] = {
- 	  .bInterfaceSubClass	= 1,
- 	  .bInterfaceProtocol	= 0,
- 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
--	/* Realsense D421 Depth Module */
-+	/* Intel Realsense D421 Depth Module */
- 	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
- 				| USB_DEVICE_ID_MATCH_INT_INFO,
- 	  .idVendor		= 0x8086,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 545a4776795e..1471e1bf1510 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13415,9 +13415,12 @@ F:	mm/kasan/
+ F:	scripts/Makefile.kasan
+ 
+ KCONFIG
++M:	Nathan Chancellor <nathan@kernel.org>
++M:	Nicolas Schier <nicolas@fjasle.eu>
+ L:	linux-kbuild@vger.kernel.org
+-S:	Orphan
++S:	Odd Fixes
+ Q:	https://patchwork.kernel.org/project/linux-kbuild/list/
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kbuild/linux.git
+ F:	Documentation/kbuild/kconfig*
+ F:	scripts/Kconfig.include
+ F:	scripts/kconfig/
 
--- 
-2.43.0
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251023-update-kconfig-maintainers-d637e7abb2fd
 
+Best regards,
+--  
+Nathan Chancellor <nathan@kernel.org>
 
 
