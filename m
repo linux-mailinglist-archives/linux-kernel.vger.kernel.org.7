@@ -1,121 +1,119 @@
-Return-Path: <linux-kernel+bounces-866754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1661C00924
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:48:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DA2C0092A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5AB3A41AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:48:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE863A3F10
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9090D30AAD7;
-	Thu, 23 Oct 2025 10:48:51 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74D529B8C7;
+	Thu, 23 Oct 2025 10:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/Qh9TlN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEAD305976;
-	Thu, 23 Oct 2025 10:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536AC3093DE
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761216531; cv=none; b=f4zisOxSEnfGntuC9QByn6qatQLNkgFq1ehV3vD5TeDoIxDAELULpIkLqPA8Wp5U51jyj/yalYLjmedZlFW8m/efL/A4xcLRLIZLE1qq5GVpaefokZNjDaql089W9YjS3sJVgHWKEMwvMmyfkkH8lXlFLumY5NTTUmySv75Selk=
+	t=1761216618; cv=none; b=fAl0n6RfMIZQtTopYHl6KEU3kLHYUkQnxiMVT8MEMKqJat5Q2DzpfHi6oTH623wlokMZqoGBpXTm4ddtmcR8pNZeoCXDSmEdKXgcjvmIGCW+b+eVYRRnlCetRk7Kw9Io50NBuqbv7w64KK8YxKNBdnJzS60YnVxnbiCjg7gvEkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761216531; c=relaxed/simple;
-	bh=VAJLIHvhq9TGk4g9+TgP+hMqcTQmsvrkNo/JZVVF4xk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MzRlwHEusnTJGjhknFOtfRhWplMeThLC1JtRfDOE0iEbx/phOLREfUZHVW6IGltcpzrroJkyyF0i67FR2cu+13zsFYsa8/O0a+23E6chWfqcNZN9BNlO2q0dWF/YKDDRoPoBv1csFH9/3wiNnfixRBDAk9zo32YPiDHYb1y14sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id D164A200C2C2;
-	Thu, 23 Oct 2025 12:48:45 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id C07944A12; Thu, 23 Oct 2025 12:48:45 +0200 (CEST)
-Date: Thu, 23 Oct 2025 12:48:45 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com,
-	kbusch@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
-	mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
-	terry.bowman@amd.com, tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v6 3/5] PCI/AER: Report fatal errors of RCiEP and EP if
- link recoverd
-Message-ID: <aPoIDW_Yt90VgHL8@wunner.de>
-References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
- <20251015024159.56414-4-xueshuai@linux.alibaba.com>
- <aPYKe1UKKkR7qrt1@wunner.de>
- <6d7143a3-196f-49f8-8e71-a5abc81ae84b@linux.alibaba.com>
- <aPY--DJnNam9ejpT@wunner.de>
- <43390d36-147f-482c-b31a-d02c2624061f@linux.alibaba.com>
- <aPZGNP79kJO74W4J@wunner.de>
- <30fe11dd-3f21-4a61-adb0-74e39087c84c@linux.alibaba.com>
+	s=arc-20240116; t=1761216618; c=relaxed/simple;
+	bh=hHgcggWZ/t9HSfTPGxpCUE3xglrsVpf1BDu/EKLJTIo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZoWw0Neg3ed2pzlJZQC0o9cWV2umz4q1QA24yCRQTfW94wzZIBqRFImMPhax2DkJxSqPHN1+AaJR/mqUwJtZ+O7/WDzJSRHnVpy4XCqHiZxQ+o7w5eYVxyfBqvL2ZLfpH4h85Uk3Vn3sKb4p5mTw9hlpzTZQMuKITOmJC8zLIRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/Qh9TlN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD282C19421
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:50:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761216617;
+	bh=hHgcggWZ/t9HSfTPGxpCUE3xglrsVpf1BDu/EKLJTIo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Z/Qh9TlNZMhSikFb104aHroPLsZVaxMwcRwB29PXAHj66rbIOKhxo3caSslysOhOR
+	 eBbNQVbhOjZAZEOlKwuO5USFhDUzMfjJs0PWGHWUi4UraPXrkRL0v2l8CJVnk8PLqg
+	 oHW3Nj+Pp8avk8Ycp6EhO8PoMY8AP3qLVf6FEy5bfgzoC9bVUoSYzg23pXJWxFzLja
+	 ZXUQsoUtClErPrYg3NpHlz3CkJpCCzVfEn91OwhrGGP/lw60N4sFJddjR6UMEmgm9Y
+	 j9lXsPdY2+JF6A6CwdysIS+LDNZSm6O7kOQgkMiUk9OdKli/JWvmGTCgF9KCgvdNoY
+	 LBHGbaV+f6Q1A==
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-444d3df546bso314269b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:50:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWuOasojlJyMHaHXgk8HN1tGbPUbiw5V075MQP3qUUwozVD1vAL0gCpK8Eh6vglQhIoIIqe2YGzRdzZQ3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyshNxbFcjMdCqVwpV6jVRb3imKXRmDWeDradw4WMk3HELltKq
+	c3m1c1Lboq9S+nIJ7M9O5QbBw+GXL+eQ0WylRxXXXzaQPZjGQpGmFuiivPTHkeUkHy0df63hw6T
+	2ymKvgjCISLt0MGlA608JFH4cxCUMCOY=
+X-Google-Smtp-Source: AGHT+IGCfWJiyXHV8J67lDH/mXJwOHR5+Oi30gvPpLfBalmvkb+jEOEeqsxZwOcsTBY210AxGsxZJVUKyrgU9edhkdc=
+X-Received: by 2002:a05:6808:1383:b0:43f:6d5a:9cdc with SMTP id
+ 5614622812f47-443a2e90a97mr9424461b6e.23.1761216617126; Thu, 23 Oct 2025
+ 03:50:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30fe11dd-3f21-4a61-adb0-74e39087c84c@linux.alibaba.com>
+References: <20251022222830.634086-1-wusamuel@google.com>
+In-Reply-To: <20251022222830.634086-1-wusamuel@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 23 Oct 2025 12:50:04 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0j6SzpA-Zp-v19RTAmGSzejGfwzjsq4UvAkKLDXCPJEPA@mail.gmail.com>
+X-Gm-Features: AS18NWCa1bh2sNhE6H6CvJh4kNdHo4_Cr9awNuc0JLJhc7_KwxGiNro4tzk46-4
+Message-ID: <CAJZ5v0j6SzpA-Zp-v19RTAmGSzejGfwzjsq4UvAkKLDXCPJEPA@mail.gmail.com>
+Subject: Re: [PATCH v1] Revert "PM: sleep: Make pm_wakeup_clear() call more clear"
+To: Samuel Wu <wusamuel@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 11:20:58PM +0800, Shuai Xue wrote:
-> 2025/10/20 22:24, Lukas Wunner:
-> > On Mon, Oct 20, 2025 at 10:17:10PM +0800, Shuai Xue wrote:
-> > > > >     .slot_reset()
-> > > > >       => pci_restore_state()
-> > > > >         => pci_aer_clear_status()
-> > > > 
-> > > > This was added in 2015 by b07461a8e45b.  The commit claims that
-> > > > the errors are stale and can be ignored.  It turns out they cannot.
-> > > > 
-> > > > So maybe pci_restore_state() should print information about the
-> > > > errors before clearing them?
-> > > 
-> > > While that could work, we would lose the error severity information at
-> > 
-> > Wait, we've got that saved in pci_cap_saved_state, so we could restore
-> > the severity register, report leftover errors, then clear those errors?
-> 
-> You're right that the severity register is also sticky, so we could
-> retrieve error severity directly from AER registers.
-> 
-> However, I have concerns about implementing this approach:
-[...]
-> 3. Architectural consistency: As you noted earlier, "pci_restore_state()
-> is only supposed to restore state, as the name implies, and not clear
-> errors." Adding error reporting to this function would further violate
-> this principle - we'd be making it do even more than just restore state.
-> 
-> Would you prefer I implement this broader change, or shall we proceed
-> with the targeted helper function approach for now? The helper function
-> solves the immediate problem while keeping the changes focused on the
-> AER recovery path.
+On Thu, Oct 23, 2025 at 12:29=E2=80=AFAM Samuel Wu <wusamuel@google.com> wr=
+ote:
+>
+> This reverts commit 56a232d93cea0ba14da5e3157830330756a45b4c.
+>
+> The original patch changes the position of pm_wakeup_clear() for the
+> suspend call path, but other call paths with references to
+> freeze_processes() were not updated. This means that other call paths,
+> such as hibernate(), will not have pm_wakeup_clear() called.
+>
+> Suggested-by: Saravana Kannan <saravanak@google.com>
+> Signed-off-by: Samuel Wu <wusamuel@google.com>
+> ---
+>  kernel/power/process.c | 1 +
+>  kernel/power/suspend.c | 1 -
+>  2 files changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/power/process.c b/kernel/power/process.c
+> index 8ff68ebaa1e0..dc0dfc349f22 100644
+> --- a/kernel/power/process.c
+> +++ b/kernel/power/process.c
+> @@ -132,6 +132,7 @@ int freeze_processes(void)
+>         if (!pm_freezing)
+>                 static_branch_inc(&freezer_active);
+>
+> +       pm_wakeup_clear(0);
+>         pm_freezing =3D true;
+>         error =3D try_to_freeze_tasks(true);
+>         if (!error)
+> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+> index 4bb4686c1c08..b4ca17c2fecf 100644
+> --- a/kernel/power/suspend.c
+> +++ b/kernel/power/suspend.c
+> @@ -595,7 +595,6 @@ static int enter_state(suspend_state_t state)
+>         }
+>
+>         pm_pr_dbg("Preparing system for sleep (%s)\n", mem_sleep_labels[s=
+tate]);
+> -       pm_wakeup_clear(0);
+>         pm_suspend_clear_flags();
+>         error =3D suspend_prepare(state);
+>         if (error)
+> --
 
-My opinion is that b07461a8e45b was wrong and that reported errors
-should not be silently ignored.  What I'd prefer is that if
-pci_restore_state() discovers unreported errors, it asks the AER driver
-to report them.
-
-We've already got a helper to do that:  aer_recover_queue()
-It queues up an entry in AER's kfifo and asks AER to report it.
-
-So far the function is only used by GHES.  GHES allocates the
-aer_regs argument from ghes_estatus_pool using gen_pool_alloc().
-Consequently aer_recover_work_func() uses ghes_estatus_pool_region_free()
-to free the allocation.  That prevents using aer_recover_queue()
-for anything else than GHES.  It would first be necessary to
-refactor aer_recover_queue() + aer_recover_work_func() such that
-it can cope with arbitrary allocations (e.g. kmalloc()).
-
-Thanks,
-
-Lukas
+Applied as 6.18-rc material, thanks!
 
