@@ -1,184 +1,323 @@
-Return-Path: <linux-kernel+bounces-867656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42499C03366
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:42:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220AFC0336C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 107D31A60BBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:43:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EF134E1322
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC5034D925;
-	Thu, 23 Oct 2025 19:42:34 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F11734D91C;
+	Thu, 23 Oct 2025 19:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="utGkHyZg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8A62C0290
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CB13081B8
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761248554; cv=none; b=VvM21ZyTPVArJJO1xk5g84Adm+O1gRsIO1E84EHInoCS2dSRUA8XjmFYCvMybs14hkQIZWVD1VL83Ro3CMag0GKA7M24VjEw800RA5NtoY1zbzPFZ7ZqnWVJOiEhPzoFECOC/qwDIobZeJPjSKAmAS8b4NMpUPkTESRxpoKZkhQ=
+	t=1761248634; cv=none; b=OV7kuzRsLNstHYufWPMtvDBBAyNE5otdwaMU4H7qXNousaJi1iv2+GaBv9O2G1I7cweH0+4/Z9QGk6TcaPyzCgPTKVfkpzyN5Z9zNpPU3HuCnl4evzlpJBVeqFNh8rhxOVGt/5SZw0+8Ppa8wxq8gxFSF/labo1w6JqyeZEqLeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761248554; c=relaxed/simple;
-	bh=nc9chtan1UtEearFWNoBUIjrkWURXLLcAz1SOVyBjKM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UFlIW4/LcGivCv7W29szDbNMVNYFCUWrKfxzHD/5MooBuOuLvo11jbRamMYjv3uRw+0b1w+40H4zWZTWeSxPepA1LfF4MEHsGwAsqLxLLDah3E4sKWM+afRTnZNAU7xtI2YqOLgcOnhomWzTMU146JWv0+Jib8hg/dwhSYnrRMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-430b3c32f75so14184905ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:42:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761248551; x=1761853351;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T/j66UHV7eWVXQ/5NgxI2zhfNUEsUpY/obl+Xu6nLmY=;
-        b=fjt458h4VPQPP2sZzU39YPJoEyY2GrnJE6Bhjrj8Q3NoJVI/Lczc4MJ/0TvwweXHnP
-         Joy+0Rf02JZFiGMXzCve7qEMvX/SMJ9nAj3pTtOSIPbDMQVRk6r+iOx4rXWNAT2/OUAx
-         4wuMsw78nzAS8tL2xvpAQhiHklIJVKZvenZ7FZAixpEJPlhIuS945xUCKFmG2Bp/CR/I
-         ANJySAZwQWIp1zpCQyX6NTI6yfXP04Z8O1kEywt57fy1uORoYY9uyjTBVCY+WK7K8V7C
-         ddaklUJtnP0I/uMbEkND2taftEwUoi1G91RrplkEQNhLmK4IpDhtLpPXM2F382aG8hUE
-         hb1w==
-X-Gm-Message-State: AOJu0Yx557Rlz2+yPLNXIGAOP9rmtnlK4tU9J02VK/0KnUOFNKyOfgw+
-	guGMrMIEF75M6DC23yD3fFXjKVqvvSeyI7lexAfwBc1P3yZBj++B1rs8GJCXkEWe7sXfkUIrQe8
-	Niw6Vx1leCv3Gy7KnkTVj5ZdWjZfvgshigrNNA87F+hRzuXN2JiE8nvbQSsftaw==
-X-Google-Smtp-Source: AGHT+IFGDHTbq1mWl/KscoUgy+vojUnD69RAha1l0VUZk1AMrW2N9mgdZ0coSHa0v43SVdEFl/k7HBBAtJq88Wfc0VuArkPpOymy
+	s=arc-20240116; t=1761248634; c=relaxed/simple;
+	bh=yfg9AWL9wGxOd/1dxStLCQQ4YVBSCNAfIYcp1q1d/nQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vf5nhVwihcb34jpGj1SuDaQW5eqkfZvkLeACTZKp9l2bxrZMRuG/QcIPkkU3UsjH5ldBmm4JkMWHfmcTNmSC+Uq268wZwJYv3LJTY4EPZSG+ybbMnDOTkgsfSyD+KSGkYJRIS36WBh/7nmPuew9l5M5oQ5XGEp8yjP8BeNPpAy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=utGkHyZg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 199B5C19422
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:43:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761248634;
+	bh=yfg9AWL9wGxOd/1dxStLCQQ4YVBSCNAfIYcp1q1d/nQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=utGkHyZgfrqmoUojTQa33NTfFKzM89lHnEooR3AFNYFvDq7wdPZOQGnt09ZsmeQTr
+	 HreQYYxaI32WYL6pJfTsND9HWSXxFmznzMPDizCxB30n8dxV3y1fYe4n0DKtKu2/eQ
+	 eFxGnhaZKn4izMWa5d4nbRApdBw7B6G7y8I1vRFrJVQocNqs/nQ3ZsivVqVPCzZija
+	 pbH0VdEbhsSq372kMLOIahZpszcnlEWfPQzjZWXrL+iy29aRry/OwT5nIfYhFTArZe
+	 ZVapNnSEkyehMdtQsDgvvmu9I8siTXagjVNshmLAYdw3e3BDdy+v2qsAi/MDP7Pt/U
+	 Znx/o+m0+SK/Q==
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-4491510f005so361138b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:43:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1yYRJN8ILfW3pW/1MHU83nR1AgqC2ZMEuAsVcytw7p1AxJY8VXN7dHNl8kR1XXAyBHTiBGoqMFwpFWUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpVYQN1uKRbbiv+AqHhWy/9F2jbYRvZ7UvHoQ1bghKTB/MDRA1
+	Ep9486XpukvEX+MUbImGL/jsp3tevv/hRNPRLAESTAi8XBEcVF1sm3Mook7ByrrsOv7k4l+XnwM
+	FrgoBdalS2KfgtCThCvgLB1n6hWvRJEA=
+X-Google-Smtp-Source: AGHT+IFG5oyWxy+zrxDrirg9KK0X9AIkfWwJdMjTKQ1xCh4JYegXUoDz7qA89sp2mRelO8mc1ZmBepDTQr6kons/T/0=
+X-Received: by 2002:a05:6808:4489:b0:441:bd1f:58c3 with SMTP id
+ 5614622812f47-443a3137afemr11642864b6e.53.1761248633251; Thu, 23 Oct 2025
+ 12:43:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1745:b0:42f:94fd:318f with SMTP id
- e9e14a558f8ab-430c521f9e2mr336072655ab.9.1761248551518; Thu, 23 Oct 2025
- 12:42:31 -0700 (PDT)
-Date: Thu, 23 Oct 2025 12:42:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fa8527.a70a0220.3bf6c6.00b6.GAE@google.com>
-Subject: [syzbot] [media?] WARNING in dtv5100_i2c_msg
-From: syzbot <syzbot+a83ee2dae0e6cc6cd3aa@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	mchehab@kernel.org, syzkaller-bugs@googlegroups.com
+References: <20251017233907.2305303-1-wusamuel@google.com>
+In-Reply-To: <20251017233907.2305303-1-wusamuel@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 23 Oct 2025 21:43:41 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g37NNj3inHcrZG8NHeTAGAncLAY7t9Yj3bTAv7GgAQJQ@mail.gmail.com>
+X-Gm-Features: AS18NWCVD6C2OL7DzZWK4U1tNrNEr0wgYfnxbuUrCjcN-g41DISYupFUjldHi7c
+Message-ID: <CAJZ5v0g37NNj3inHcrZG8NHeTAGAncLAY7t9Yj3bTAv7GgAQJQ@mail.gmail.com>
+Subject: Re: [PATCH v5] PM: Support aborting sleep during filesystem sync
+To: Samuel Wu <wusamuel@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, tuhaowen@uniontech.com, 
+	Saravana Kannan <saravanak@google.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sat, Oct 18, 2025 at 1:39=E2=80=AFAM Samuel Wu <wusamuel@google.com> wro=
+te:
+>
+> At the start of suspend and hibernate, filesystems will sync to save the
+> current state of the device. However, the long tail of the filesystem
+> sync can take upwards of 25 seconds. If during this filesystem sync
+> there is some wakeup or abort signal, it will not be processed until the
+> sync is complete; from a user's perspective, this looks like the device
+> is unresponsive to any form of input.
+>
+> This patch adds functionality to handle a sleep abort signal when in
+> the filesystem sync phase of suspend or hibernate. This topic was first
+> discussed by Saravana Kannan at LPC 2024 [1], where the general
+> consensus was to allow filesystem sync on a parallel thread. In case of
+> abort, the suspend process will stop waiting on an in-progress
+> filesystem sync, and continue by aborting suspend before the filesystem
+> sync is complete.
+>
+> Additionally, there is extra care needed to account for back-to-back
+> sleeps while maintaining functionality to immediately abort during the
+> filesystem sync stage. This patch handles this by serializing the
+> sequence with an invariant; a subsequent sleep's filesystem sync
+> operation will only start when the previous sleep's filesystem sync has
+> finished. While waiting for the previous sleep's filesystem sync to
+> finish, the subsequent sleep will still abort early if a wakeup event is
+> triggered, solving the original issue of filesystem sync blocking abort.
 
-syzbot found the following issue on:
+It would be good to spell out the rationale for starting another
+filesystem sync when suspend starts while the previous sync is still
+in progress.
 
-HEAD commit:    1c64efcb083c Merge tag 'rust-rustfmt' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a9752f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9ad7b090a18654a7
-dashboard link: https://syzkaller.appspot.com/bug?extid=a83ee2dae0e6cc6cd3aa
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: i386
+> [1]: https://lpc.events/event/18/contributions/1845/
+>
+> Suggested-by: Saravana Kannan <saravanak@google.com>
+> Signed-off-by: Samuel Wu <wusamuel@google.com>
+> ---
+> Changes in v5:
+> - Update spin_lock() to spin_lock_irqsave() since abort can be in IRQ con=
+text
+> - Updated changelog description to be more precise regarding continuing a=
+bort
+>   sleep before fs_sync() is complete
+> - Rename abort_sleep_during_fs_sync() to pm_stop_waiting_for_fs_sync()
+> - Simplify from a goto to do-while in pm_sleep_fs_sync()
+> - v4 link: https://lore.kernel.org/all/20250911185314.2377124-1-wusamuel@=
+google.com
+>
+> Changes in v4:
+> - Removed patch 1/3 of v3 as it is already picked up on linux-pm
+> - Squashed patches 2/3 and 3/3 from v3 into this single patch
+> - Added abort during fs_sync functionality to hibernate in addition to su=
+spend
+> - Moved variables and functions for abort from power/suspend.c to power/m=
+ain.c
+> - Renamed suspend_fs_sync_with_abort() to pm_sleep_fs_sync()
+> - Renamed suspend_abort_fs_sync() to abort_sleep_during_fs_sync()
+> - v3 link: https://lore.kernel.org/all/20250821004237.2712312-1-wusamuel@=
+google.com/
+>
+> Changes in v3:
+> - Split v2 patch into 3 patches
+> - Moved pm_wakeup_clear() outside of if(sync_on_suspend_enabled) conditio=
+n
+> - Updated documentation and comments within kernel/power/suspend.c
+> - v2 link: https://lore.kernel.org/all/20250812232126.1814253-1-wusamuel@=
+google.com/
+>
+> Changes in v2:
+> - Added documentation for suspend_abort_fs_sync()
+> - Made suspend_fs_sync_lock and suspend_fs_sync_complete declaration stat=
+ic
+> - v1 link: https://lore.kernel.org/all/20250815004635.3684650-1-wusamuel@=
+google.com
+>
+>  drivers/base/power/wakeup.c |  8 ++++
+>  include/linux/suspend.h     |  4 ++
+>  kernel/power/hibernate.c    |  5 ++-
+>  kernel/power/main.c         | 75 +++++++++++++++++++++++++++++++++++++
+>  kernel/power/suspend.c      |  7 +++-
+>  5 files changed, 96 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+> index d1283ff1080b..689c16b08b38 100644
+> --- a/drivers/base/power/wakeup.c
+> +++ b/drivers/base/power/wakeup.c
+> @@ -570,6 +570,13 @@ static void wakeup_source_activate(struct wakeup_sou=
+rce *ws)
+>
+>         /* Increment the counter of events in progress. */
+>         cec =3D atomic_inc_return(&combined_event_count);
+> +       /*
+> +        * wakeup_source_activate() aborts sleep only if events_check_ena=
+bled
+> +        * is set (see pm_wakeup_pending()). Similarly, abort sleep durin=
+g
+> +        * fs_sync only if events_check_enabled is set.
+> +        */
+> +       if (events_check_enabled)
+> +               pm_stop_waiting_for_fs_sync();
+>
+>         trace_wakeup_source_activate(ws->name, cec);
+>  }
+> @@ -899,6 +906,7 @@ EXPORT_SYMBOL_GPL(pm_wakeup_pending);
+>  void pm_system_wakeup(void)
+>  {
+>         atomic_inc(&pm_abort_suspend);
+> +       pm_stop_waiting_for_fs_sync();
+>         s2idle_wake();
+>  }
+>  EXPORT_SYMBOL_GPL(pm_system_wakeup);
+> diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+> index b02876f1ae38..dc6829b3836f 100644
+> --- a/include/linux/suspend.h
+> +++ b/include/linux/suspend.h
+> @@ -450,6 +450,8 @@ void restore_processor_state(void);
+>  extern int register_pm_notifier(struct notifier_block *nb);
+>  extern int unregister_pm_notifier(struct notifier_block *nb);
+>  extern void ksys_sync_helper(void);
+> +extern void pm_stop_waiting_for_fs_sync(void);
+> +extern int pm_sleep_fs_sync(void);
+>  extern void pm_report_hw_sleep_time(u64 t);
+>  extern void pm_report_max_hw_sleep(u64 t);
+>  void pm_restrict_gfp_mask(void);
+> @@ -505,6 +507,8 @@ static inline void pm_restrict_gfp_mask(void) {}
+>  static inline void pm_restore_gfp_mask(void) {}
+>
+>  static inline void ksys_sync_helper(void) {}
+> +static inline pm_stop_waiting_for_fs_sync(void) {}
+> +static inline int pm_sleep_fs_sync(void) {}
+>
+>  #define pm_notifier(fn, pri)   do { (void)(fn); } while (0)
+>
+> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+> index 14e85ff23551..9c8db4b3c114 100644
+> --- a/kernel/power/hibernate.c
+> +++ b/kernel/power/hibernate.c
+> @@ -824,7 +824,10 @@ int hibernate(void)
+>         if (error)
+>                 goto Restore;
+>
+> -       ksys_sync_helper();
+> +       error =3D pm_sleep_fs_sync();
+> +       if (error)
+> +               goto Restore;
+> +
+>         if (filesystem_freeze_enabled)
+>                 filesystems_freeze();
+>
+> diff --git a/kernel/power/main.c b/kernel/power/main.c
+> index 3cf2d7e72567..81a53d833358 100644
+> --- a/kernel/power/main.c
+> +++ b/kernel/power/main.c
+> @@ -570,6 +570,81 @@ bool pm_sleep_transition_in_progress(void)
+>  {
+>         return pm_suspend_in_progress() || hibernation_in_progress();
+>  }
+> +
+> +static bool pm_sleep_fs_sync_queued;
+> +static DEFINE_SPINLOCK(pm_sleep_fs_sync_lock);
+> +static DECLARE_COMPLETION(pm_sleep_fs_sync_complete);
+> +
+> +/**
+> + * pm_stop_waiting_for_fs_sync - Abort fs_sync to abort sleep early
+> + *
+> + * This function causes the suspend process to stop waiting on an in-pro=
+gress
+> + * filesystem sync, such that the suspend process can be aborted before =
+the
+> + * filesystem sync is complete.
+> + */
+> +void pm_stop_waiting_for_fs_sync(void)
+> +{
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
+> +       complete(&pm_sleep_fs_sync_complete);
+> +       spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags);
+> +}
+> +
+> +static void sync_filesystems_fn(struct work_struct *work)
+> +{
+> +       unsigned long flags;
+> +
+> +       ksys_sync_helper();
+> +       spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
+> +       pm_sleep_fs_sync_queued =3D false;
+> +       complete(&pm_sleep_fs_sync_complete);
+> +       spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags);
+> +}
+> +static DECLARE_WORK(sync_filesystems, sync_filesystems_fn);
+> +
+> +/**
+> + * pm_sleep_fs_sync - Trigger fs_sync with ability to abort
+> + *
+> + * Return 0 on successful file system sync, otherwise returns -EBUSY if =
+file
+> + * system sync was aborted.
+> + */
+> +int pm_sleep_fs_sync(void)
+> +{
+> +       bool need_pm_sleep_fs_sync_requeue;
+> +       unsigned long flags;
+> +
+> +       do {
+> +               spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
+> +               reinit_completion(&pm_sleep_fs_sync_complete);
+> +               /*
+> +                * Handle the case where a sleep immediately follows a pr=
+evious
+> +                * sleep that was aborted during fs_sync. In this case, w=
+ait for
+> +                * the previous filesystem sync to finish. Then do anothe=
+r
+> +                * filesystem sync so any subsequent filesystem changes a=
+re
+> +                * synced before sleeping.
+> +                */
+> +               if (pm_sleep_fs_sync_queued) {
+> +                       need_pm_sleep_fs_sync_requeue =3D true;
+> +               } else {
+> +                       need_pm_sleep_fs_sync_requeue =3D false;
+> +                       pm_sleep_fs_sync_queued =3D true;
+> +                       schedule_work(&sync_filesystems);
+> +               }
+> +               spin_unlock_irqrestore(&pm_sleep_fs_sync_lock, flags);
+> +
+> +               /*
+> +                * Completion is triggered by fs_sync finishing or an abo=
+rt sleep
+> +                * signal, whichever comes first
+> +                */
+> +               wait_for_completion(&pm_sleep_fs_sync_complete);
+> +               if (pm_wakeup_pending())
+> +                       return -EBUSY;
+> +       } while (need_pm_sleep_fs_sync_requeue);
+> +
+> +       return 0;
+> +}
 
-Unfortunately, I don't have any reproducer for this issue yet.
+If I'm not mistaken, the mechanism by which one more sync is started
+right after completing the previous one (that was in progress when
+suspend started) can be designed differently.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5e186ec77007/disk-1c64efcb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6b834b72dada/vmlinux-1c64efcb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3ba22aa75c23/bzImage-1c64efcb.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a83ee2dae0e6cc6cd3aa@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-memcpy: detected field-spanning write (size 4096) of single field "st->data" at drivers/media/usb/dvb-usb/dtv5100.c:58 (size 80)
-WARNING: CPU: 1 PID: 20467 at drivers/media/usb/dvb-usb/dtv5100.c:58 dtv5100_i2c_msg+0x2ac/0x330 drivers/media/usb/dvb-usb/dtv5100.c:58
-Modules linked in:
-CPU: 1 UID: 0 PID: 20467 Comm: syz.1.4196 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:dtv5100_i2c_msg+0x2ac/0x330 drivers/media/usb/dvb-usb/dtv5100.c:58
-Code: d1 e8 d8 5c 0b fa c6 05 1c 33 d3 07 01 90 b9 50 00 00 00 48 c7 c7 e0 7b 32 8c 4c 89 e6 48 c7 c2 60 7c 32 8c e8 c5 79 ce f9 90 <0f> 0b 90 90 e9 34 ff ff ff 44 89 e9 80 e1 07 38 c1 0f 8c e2 fe ff
-RSP: 0018:ffffc9000ff6f8a0 EFLAGS: 00010246
-RAX: dd4b062c6f0c5d00 RBX: ffff88802fb10000 RCX: 0000000000080000
-RDX: ffffc9000be3b000 RSI: 00000000000054be RDI: 00000000000054bf
-RBP: 0000000000000102 R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1bfa650 R12: 0000000000001000
-R13: ffff8880543d4300 R14: 00000000000000c7 R15: 0000000080007700
-FS:  0000000000000000(0000) GS:ffff888125e0d000(0063) knlGS:00000000f5436b40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000080000100 CR3: 0000000047562000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- dtv5100_i2c_xfer+0x269/0x3c0 drivers/media/usb/dvb-usb/dtv5100.c:81
- __i2c_transfer+0x874/0x2170 drivers/i2c/i2c-core-base.c:-1
- i2c_transfer+0x25b/0x3a0 drivers/i2c/i2c-core-base.c:2317
- i2cdev_ioctl_rdwr+0x460/0x740 drivers/i2c/i2c-dev.c:306
- compat_i2cdev_ioctl+0x5a8/0x5c0 drivers/i2c/i2c-dev.c:575
- __do_compat_sys_ioctl fs/ioctl.c:695 [inline]
- __se_compat_sys_ioctl fs/ioctl.c:638 [inline]
- __ia32_compat_sys_ioctl+0x543/0x840 fs/ioctl.c:638
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0xb6/0x2b0 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x34/0x80 arch/x86/entry/syscall_32.c:331
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf7f41539
-Code: 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000f543655c EFLAGS: 00000206 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000000707
-RDX: 00000000800002c0 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   4:	10 07                	adc    %al,(%rdi)
-   6:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   a:	10 08                	adc    %cl,(%rax)
-   c:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  20:	00 51 52             	add    %dl,0x52(%rcx)
-  23:	55                   	push   %rbp
-  24:	89 e5                	mov    %esp,%ebp
-  26:	0f 34                	sysenter
-  28:	cd 80                	int    $0x80
-* 2a:	5d                   	pop    %rbp <-- trapping instruction
-  2b:	5a                   	pop    %rdx
-  2c:	59                   	pop    %rcx
-  2d:	c3                   	ret
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	90                   	nop
-  31:	90                   	nop
-  32:	90                   	nop
-  33:	90                   	nop
-  34:	90                   	nop
-  35:	90                   	nop
-  36:	90                   	nop
-  37:	90                   	nop
-  38:	90                   	nop
-  39:	90                   	nop
-  3a:	90                   	nop
-  3b:	90                   	nop
-  3c:	90                   	nop
-  3d:	90                   	nop
-  3e:	90                   	nop
-  3f:	90                   	nop
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+1. Use a dedicated ordered workqueue for the sync work items.
+2. Use a counter instead of the two boolean vars for synchronization.
+3. In pm_sleep_fs_sync(), if the counter is less than 2, increment the
+counter and queue up a sync work item.
+4. In sync_filesystems_fn(), decrement the counter.
 
