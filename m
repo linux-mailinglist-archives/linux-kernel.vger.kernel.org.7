@@ -1,87 +1,76 @@
-Return-Path: <linux-kernel+bounces-867524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41AC8C02D4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:02:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446C0C02D75
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 004524FB863
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:02:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FABF188669E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6948334B431;
-	Thu, 23 Oct 2025 18:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9A634B1A9;
+	Thu, 23 Oct 2025 18:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cPOD1Keg"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mQleghFZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F104A184
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966D32D73B5;
+	Thu, 23 Oct 2025 18:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761242501; cv=none; b=CeR3jTuZDtZUP8IZTlqvLpk+WBu/6pib8dubmDL+3Lo6+honwqXzmy4JjNXWGehc8bXEyAPmyrwZVGmm9ChEwWDiY4PtwKgkfTYaRA0NSDp5gEuPh5KUNaLIs6ZGzwe6ljEsInDxaou0RlMyNI/HQ88MPvR2EBgP/fCkLk1muzo=
+	t=1761242648; cv=none; b=ME6iczredQmc3wb7301Dad9UQbaIQbqLuCQeErtkFt3NJZTp0YE3Ux/2zQ+d0JYi2cTDMsWHwVeKeVD1WfqDj+7z73reLUUeqvtjKlKkMlILBVATcTkow4dgCvp4n+z3ZzdcQZcjj2zG5EGPzZnMReWBMgSKup1iheL4NTFYUgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761242501; c=relaxed/simple;
-	bh=+11krxrYSQBIL8PS8v62mSeTP8oZ51XSj0cM3YuN+vU=;
+	s=arc-20240116; t=1761242648; c=relaxed/simple;
+	bh=moFoF9gqNdCQFpUxyhy2PJhjL2j71/N1hATC3N0gGt0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KNvBH7h0TkBSI/Oto2qVSTG1IryLPZxWGa7BU2HI1TDAJqgiNxjV7tPSZXHwI+fCqtNMisgJPHlOXDewmfALMtK5wJaKS+fy5C2Q8Mk28H9USGJEKBYEPz4HEqw2WWoWgTt97vAYOxigymCXnE7jtEoypzlkzF830lmU3R7uoBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cPOD1Keg; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3304dd2f119so979121a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:01:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761242498; x=1761847298; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2fVJOJqOl/DPUXtsK6eZUYyA/D6xvUpAsP3hFipiCWw=;
-        b=cPOD1KegM61aTrEPJxaRI9ZtHfLplA8R4BbE7ei2hOB1ghzLSxecOR2ToC6QybmS00
-         jhai4f6HXSEgAXDL/RKFnn1BuAJ5CYtepJFfA8Haw+z31+yKJmDB4kdFxbX4cVNAIlSc
-         HB1zQo4eQaf4mb41PEQTLRldGNzOFUcCkjne0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761242498; x=1761847298;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2fVJOJqOl/DPUXtsK6eZUYyA/D6xvUpAsP3hFipiCWw=;
-        b=UMtqvwG1+UJqYM7c0GZfX8/GOaR6dkAiohFUE1ZbBVL46XyaiU26Acr26WWymsq2uJ
-         nqR7jVSdwc2ryPc15T0r4YR2BGH6TfQVBhGX9Wm+aKRYPXxZdqK/LLRojty3hylDb5A9
-         uxec+3spbc62mgVuIcJogiX0N+FGcS1vhNFl0TbjzC3cWHL1YGREXJoUWachXE67QgWY
-         KRPXbyki/g+yfk2HW8chzQKpviLRFl86/jsBmi6v6zaSKRNYVgGKy2bDhWO8Ob7be0ot
-         0HLaerGfCy04wF4dwsXeXldAbxuKC76qr2/lNm31iHq8tUH1iGu1qslsLQ7bV6RlLR1z
-         4cNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXY0wg6AVKsXr9H4YsAf/ij+cIF0G4ennLZSBtG17RTofdQjprI3KCVsKj5NqBGOxfIct5YJPo4fnyhYEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/s7EsaWAppGXlW/3gfr8O2emE8S4v70wwkELBeIpRF9wQs9DB
-	GBpTKUghbmxHD3buLj8ul8xak3vmQQuharWi/VO4GF87XerkQTm132DYdQ+izbIPYgf7yb6b5Do
-	ZuNs=
-X-Gm-Gg: ASbGncv2oUOTuPwJrn27jQX9wOE95aG0/wgkcXduiWZadVkYdSBOf3VxvFYEM65fvUb
-	ecQ7T/qUSydtUCyn9VZPF0EbtTxjB4a0FeyYgrO+n5IfxEX8aACv5mYHn8nszFnZ6d3IDLtfhks
-	dT5ZB4UfUlBefNIoKWbBTVJW0FNgcTyMnMkh/mC1l13ojrnvoklg232CvrCoq5TF8JPaWtrKB9U
-	szduSlAf43VK5i2OWX1akeRX6yESTShIV/UjTTXRDXysSrfkgDOIKiuob+43Mdl8z3fWVqQujah
-	YLYwmzNWeAbTKMyhbmQ/QtY5sZrIs9q2FYQMxsO3lXTUawXuBW+27j6oAc+RsZjV921QwaHnj3Z
-	kcuWKQasntRu75xhYJNxpPpRZCpJPymV4diny2Jly8dUA8FawpNXxTDNGD/qwYmPaoBzCCN6yb5
-	DTuNAZtIwDQUDkro3aPf3qpT2jo+jUD8LPELjicHP7fWu/bsdw
-X-Google-Smtp-Source: AGHT+IHMEl1/yOcEnK1WSum08iBEotApLa8nOZXGnnHDG0khuXHK2NNe5VrwxePf061sm8+ZE7PtOQ==
-X-Received: by 2002:a17:90b:1b4a:b0:32e:1b1c:f8b8 with SMTP id 98e67ed59e1d1-33bcf8f7cd5mr35772646a91.26.1761242498180;
-        Thu, 23 Oct 2025 11:01:38 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e7c:8:839c:d3ee:bea4:1b90])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-33faff37afesm3047298a91.1.2025.10.23.11.01.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 11:01:37 -0700 (PDT)
-Date: Thu, 23 Oct 2025 11:01:35 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] PCI/PM: Ensure power-up succeeded before restoring MMIO
- state
-Message-ID: <aPptf2gLpoWL3Ics@google.com>
-References: <20250821075812.1.I2dbf483156c328bc4a89085816b453e436c06eb5@changeid>
- <20251023172547.GA1301778@bhelgaas>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dUHHxOZhPi7VUZHn9FGkfQ9u9VnsBYdMvqlhv/sqBjq4+HzUVGxdOBy1MXnazzfXckHqY//22iEj5RsJXIQoFmwf+kglQBycmXXWY8/6rURQx/nfanIjQ0nJmbtXb5jqJ2reQHZ4jM5YkezKWWTJragSKut+4M05gwQi9wqoLco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mQleghFZ; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761242647; x=1792778647;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=moFoF9gqNdCQFpUxyhy2PJhjL2j71/N1hATC3N0gGt0=;
+  b=mQleghFZ4hPsiM8Fn4Cu6HRJy6hP4EBL/Tm5zIbGbZgoTPueoPzQ4X4j
+   9ul+/BA9zJ4SqAE1LKZPzHDLmEQgKKOPhINzYb2/UrMiSfwCq9TQQW8e+
+   lyaNLE+z0x7z7GMIpGSJHUplBa8Bxk6NylliIhccHv9oDY1beDZGa94o+
+   1LU+0miHWb9kCircMQqFMt0u9JU3jhb+04+ywZFZJswegxNBJvplD2nQ0
+   nqWt5lJWVdsqfMyb0cX63zbfj5VZyovMjVZBaYPxjUbjuzqH76i6I2E8L
+   KKqGd/FK009k8FTKRlgs1BtJO9XnWKE1WLJ9HRW3TRlnZKlRTBKGup0I6
+   g==;
+X-CSE-ConnectionGUID: zn9wqzC5TuazgI+k8q5oZA==
+X-CSE-MsgGUID: 9+FDensVQGO91Lj8EV0+Eg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63516987"
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="63516987"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:04:05 -0700
+X-CSE-ConnectionGUID: DXYsynzcST6UBuV8rwnSuQ==
+X-CSE-MsgGUID: UF0PhuyCQZ6YMjDDG4Vfrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="184701939"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 11:04:03 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vBzfN-000000020jU-01c7;
+	Thu, 23 Oct 2025 21:04:01 +0300
+Date: Thu, 23 Oct 2025 21:04:00 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: alexandre.belloni@bootlin.com, thierry.reding@gmail.com,
+	jonathanh@nvidia.com, linux-rtc@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] rtc: tegra: Add ACPI support
+Message-ID: <aPpuEOz88D01HjMk@smile.fi.intel.com>
+References: <20251023093042.770798-1-kkartik@nvidia.com>
+ <20251023093042.770798-2-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,116 +79,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251023172547.GA1301778@bhelgaas>
+In-Reply-To: <20251023093042.770798-2-kkartik@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Bjorn,
+On Thu, Oct 23, 2025 at 03:00:41PM +0530, Kartik Rajput wrote:
+> Add ACPI support for Tegra RTC, which is available on Tegra241 and
+> Tegra410. Both Tegra241 and Tegra410 use the same ACPI ID 'NVDA0280'.
+> When ACPI boot is used, the RTC clock is configured by UEFI before
+> the kernel boots. On device-tree boot, the probe must fail if clocks are
+> not provided in the device-tree.
 
-On Thu, Oct 23, 2025 at 12:25:47PM -0500, Bjorn Helgaas wrote:
-> [+cc Mario, Rafael]
-> 
-> On Thu, Aug 21, 2025 at 07:58:12AM -0700, Brian Norris wrote:
-> > From: Brian Norris <briannorris@google.com>
-> > 
-> > As the comments in pci_pm_thaw_noirq() suggest, pci_restore_state() may
-> > need to restore MSI-X state in MMIO space. This is only possible if we
-> > reach D0; if we failed to power up, this might produce a fatal error
-> > when touching memory space.
-> > 
-> > Check for errors (as the "verify" in "pci_pm_power_up_and_verify_state"
-> > implies), and skip restoring if it fails.
-> > 
-> > This mitigates errors seen during resume_noirq, for example, when the
-> > platform did not resume the link properly.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Brian Norris <briannorris@google.com>
-> > Signed-off-by: Brian Norris <briannorris@chromium.org>
-> > ---
-> > 
-> >  drivers/pci/pci-driver.c | 12 +++++++++---
-> >  drivers/pci/pci.c        | 13 +++++++++++--
-> >  drivers/pci/pci.h        |  2 +-
-> >  3 files changed, 21 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> > index 302d61783f6c..d66d95bd0ca2 100644
-> > --- a/drivers/pci/pci-driver.c
-> > +++ b/drivers/pci/pci-driver.c
-> > @@ -557,7 +557,13 @@ static void pci_pm_default_resume(struct pci_dev *pci_dev)
-> >  
-> >  static void pci_pm_default_resume_early(struct pci_dev *pci_dev)
-> >  {
-> > -	pci_pm_power_up_and_verify_state(pci_dev);
-> > +	/*
-> > +	 * If we failed to reach D0, we'd better not touch MSI-X state in MMIO
-> > +	 * space.
-> > +	 */
-> > +	if (pci_pm_power_up_and_verify_state(pci_dev))
-> > +		return;
-> 
-> The MSI-X comment here seems oddly specific.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-It's just as "oddly specific" as the existing comment in
-pci_pm_thaw_noirq(), as mentioned in the commit message :)
+-- 
+With Best Regards,
+Andy Shevchenko
 
-The key point for MSI-X is that unlike the rest of pci_restore_state(),
-it requires touching memory space. While config registers are OK to
-touch in D3, memory space is not.
 
-> On most platforms, config/mem/io accesses to a device not in D0 result
-> in an error being logged, writes being dropped, and reads returning ~0
-> data.
-
-On my arm64 / pcie-designware-based platforms, that is mostly similar,
-but there are some cases that are different. See below:
-
-> I don't know the details, but I assume the fatal error is a problem
-> specific to arm64.
-
-Maybe. See my response here also:
-
-  Re: [PATCH] PCI/sysfs: Ensure devices are powered for config reads
-  https://lore.kernel.org/all/aNMoMY17CTR2_jQz@google.com/
-
-In particular, when resuming the system in a case where the link was in
-L2 and failed to resume properly, the PCIe controller may not be alive
-enough even to emit completion timeouts. So it might hit case (a):
-
-  "PCIe HW is not powered [...] and this tends to be SError, and a
-  crash."
-
-Memory space is unique, because while config accesses can be
-intercepted/avoided by driver software, memory accesses cannot.
-
-> If the device is not in D0, we can avoid the problem here, but it
-> seems like we're just leaving a landmine for somebody else to hit
-> later.  The driver will surely access the device after resume, won't
-> it?
-
-It's a possible landmine, yes. Although in my case, the link can go
-through error recovery and restore itself later in the resume process.
-
-> Is it better to wait for a fatal error there?
-> 
-> Even if we avoid errors here, aren't we effectively claiming to have
-> restored the device state, which is now a lie?
-
-I'm not sure we claim that. The device will stay in PCI_D3cold, and
-pdev->state_saved will remain true.
-
-But yes, it's a tricky situation to decide what to do next. My basic
-assertion is that it's not OK to continue to restore state though.
-
-Alternatives: pci_dev_set_disconnected()? pcie_do_recovery() /
-pci_channel_io_frozen?
-
-> Even on other platforms, if the writes that are supposed to restore
-> the state are dropped because the device isn't in D0, the result is
-> also not what we expect, and something is probably broken.
-
-Sure. IMO, that's even more reason not to run pci_restore_state(),
-because that will erroneously drop the state, and we'll have zero chance
-of restoring it later.
-
-Brian
 
