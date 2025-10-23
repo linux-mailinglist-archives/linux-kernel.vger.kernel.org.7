@@ -1,131 +1,122 @@
-Return-Path: <linux-kernel+bounces-866505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D13DBFFF19
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:33:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BAEBFFF28
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72123A9747
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:33:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 646583AE93C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DDD30102B;
-	Thu, 23 Oct 2025 08:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D5D301037;
+	Thu, 23 Oct 2025 08:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hn3uAyTp"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cM7Lod8F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B572F7469
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE172FE04C
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761208401; cv=none; b=WjrBwVxg9Xb428KY940idoHmoTCP+8ZWiGbJ6esN4u7VkrFpS7gFpL5YcRT1ifJc0zOqxkTHKTlEdqn0MmEYcEe4t8lrPLH4JN62+Lin67RQYyrdc9LTX7aZIb/HnHBoM902BX0XKFnor55Azug0TJNNe++cFzxb/wRBkwAn0Zw=
+	t=1761208507; cv=none; b=OLY/hSv9fsUG4Q7HMSDKpdhZe1J/Aktsac9ynFqLvzYgpOYelpm1WL+eAtQsZ27z2e6YZCrT/pLc8+Fx0aB9fkqNSwgb6LwCL+Z2FdY/qt67SFk54leytkpLg2HEB5LD0Ra2nI8OcRTkoPidkKRjMy5o8WO+Oj6WqE4peQGur2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761208401; c=relaxed/simple;
-	bh=95BBx0N6TTDSlDipX2dEd1oikvREJqh2uSWq00ZjafQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LS5sIEfbCxf8f0mMMeFd52oImdTP/IS8T18HBF7WLPVMihJWGrUGo89AkpqAoFR0Q4BOeLCyI8tIdZW+8NwuOkhJ2QbDlxuSCkUdXATyTOJ5/6mxxP0HuX9tt503X2NJKpIbxQBZ25DMc7QZU38nDVBCf/P4f6abVzHt4uAKT/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hn3uAyTp; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47106a388cfso2431075e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:33:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761208398; x=1761813198; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ie4N2D7WeIm5MD0Mtp2EzbYFuA7xB5fPMSvsn6jA/5I=;
-        b=Hn3uAyTpgM6AxQwBhn79nMJJpIGmutBZP7OiQ/6je5F1gGtQgFTwS3c2vCl+kdm87g
-         adymo8b+gouE3YfDnJ9CsPL81M4r+nwx7MoprZgX2Xliu4c1s0IeGp+1ce0pS8GISy5J
-         zOdKRxEsb5SPdTpp0xMj+w5FYJpjNImT+qGbDeR/aqIHOm2rp2iNX2sdMDSoI/J03JyW
-         CSgT1VyXE5z+83Nu7fDnlXbxTvKVMhLgP+wUAJYiHNEDq+Un4oCLM6sijCOtTh8TkqnE
-         EX/oNt2Tx82jhpHpDuTGSZ8O1GvfKZnXFdBGL/KnSR3d5bxbwb9GjD0srJz+I0IN5C2P
-         K8kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761208398; x=1761813198;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ie4N2D7WeIm5MD0Mtp2EzbYFuA7xB5fPMSvsn6jA/5I=;
-        b=EyBHoIai5OnGBZlquWHjJfIJ4bv4aSedODbMUzP5NkHXQeZFyppuseLf625ehtgCj1
-         n0zZRZw/HTvkHtD9clsPEccWyBI37Jn6DhvcQ7wHDP1uSgmuyxTulJw5pzPYplid5ekI
-         AVHB/kSBAhS5aKzt/Ft4LZDqpLDz5DdSvu8PMGB3ctj2LAXebf0wtHqAqjSqb3gpdbEc
-         wYoqcKHLM26yiZ20jh05azlAVWeZv/+TcrQvmBeoX+BMd1Cr6YncQDWnKvFF5jUK9eXn
-         4j0Vlb5LNvNevwVb1YhAhKZj24Hghvrz8POeZmyBkIy71kBDNVl9Bupd5qsc0zM3SrHd
-         rcBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIbjcdNLyMfmNRHxBrEGd8zaeNYmeoUkmY4lB665m11itX6+IykUZSc6zQJwrl4qxQARw5J4WJVnApUaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu2OtbOsM4RLvaAdLBb8ngP50crm1xxTn0nivYpMUmTpNAU6M3
-	kGo4WWJBsqrK2pg1hI/tNj6NwhAaSGrxL8bdY6fn+z4m15QwdyKK2LypeB2cb1naRuzTP0Tn4On
-	MsCCM/5I8EM0PqxtOrg==
-X-Google-Smtp-Source: AGHT+IGHUa/yiToOj16eIMkm1RBlK751eMwtuxfS81sGj6nLXimsltw19mYAVHQ2QyRYiBwmDUvGAwA04Or+SbA=
-X-Received: from wmmr6.prod.google.com ([2002:a05:600c:4246:b0:46f:aa50:d702])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3e07:b0:471:c04:a352 with SMTP id 5b1f17b1804b1-4711787674fmr164862685e9.4.1761208398380;
- Thu, 23 Oct 2025 01:33:18 -0700 (PDT)
-Date: Thu, 23 Oct 2025 08:33:17 +0000
-In-Reply-To: <20251022143158.64475-5-dakr@kernel.org>
+	s=arc-20240116; t=1761208507; c=relaxed/simple;
+	bh=bVtvp3MLF47bsFgFrN+KuyvROdXjdq8WgvgvNvEKbxI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RSb6/++pnPpKe8xmGBOow1JBRJgUxaOIBlQHlL0vjbPYkX9cgfubeBF/rqu1HRsj4vN6Ag9NZ4+PO5cvZbsxm8BTvHP81JZBoeBpSujZVeBw0RRIDlGs90Y9HaJ2tXsnzMsQZ2yfXbe0jXGfSHZJ1yIuPxe/Y0xfnzeDArSVPIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cM7Lod8F; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761208504;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=c/siw8ZRuLKXXTv+YJVAOyEvr/nMP9ZYmhTuasRVQ4Q=;
+	b=cM7Lod8F1lVtATkh8T5xmEwwHJDXPEpthzZNFZAW/D434ysHQEplgmcibFIrx38qK2wIDr
+	4nPBlInvBg37UZoWoeKB08PL/a0/kSxBBcnQATyUry6QLHaFIkPUVKgr/T4YrMPsUV6lzR
+	HYc6AX2X5dRXH+p6E2xMbNwDdrB5eWE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-689-PsQz1Wz5MSOJRntEtwGw6Q-1; Thu,
+ 23 Oct 2025 04:35:01 -0400
+X-MC-Unique: PsQz1Wz5MSOJRntEtwGw6Q-1
+X-Mimecast-MFC-AGG-ID: PsQz1Wz5MSOJRntEtwGw6Q_1761208499
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 237451800245;
+	Thu, 23 Oct 2025 08:34:59 +0000 (UTC)
+Received: from antares.redhat.com (unknown [10.45.226.86])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CE48D180045B;
+	Thu, 23 Oct 2025 08:34:53 +0000 (UTC)
+From: Adrian Moreno <amorenoz@redhat.com>
+To: netdev@vger.kernel.org
+Cc: toke@redhat.com,
+	Adrian Moreno <amorenoz@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Xiao Liang <shaw.leon@gmail.com>,
+	Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+	Cong Wang <cong.wang@bytedance.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] rtnetlink: honor RTEXT_FILTER_SKIP_STATS in IFLA_STATS
+Date: Thu, 23 Oct 2025 10:34:48 +0200
+Message-ID: <20251023083450.1215111-1-amorenoz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251022143158.64475-1-dakr@kernel.org> <20251022143158.64475-5-dakr@kernel.org>
-Message-ID: <aPnoTV4kPz5NHGBE@google.com>
-Subject: Re: [PATCH v3 04/10] rust: uaccess: add UserSliceWriter::write_slice_partial()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Wed, Oct 22, 2025 at 04:30:38PM +0200, Danilo Krummrich wrote:
-> The existing write_slice() method is a wrapper around copy_to_user() and
-> expects the user buffer to be larger than the source buffer.
-> 
-> However, userspace may split up reads in multiple partial operations
-> providing an offset into the source buffer and a smaller user buffer.
-> 
-> In order to support this common case, provide a helper for partial
-> writes.
-> 
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Matthew Maurer <mmaurer@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Gathering interface statistics can be a relatively expensive operation
+on certain systems as it requires iterating over all the cpus.
 
-This code is ok
+RTEXT_FILTER_SKIP_STATS was first introduced [1] to skip AF_INET6
+statistics from interface dumps and it was then extended [2] to
+also exclude IFLA_VF_INFO.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+The semantics of the flag does not seem to be limited to AF_INET
+or VF statistics and having a way to query the interface status
+(e.g: carrier, address) without retrieving its statistics seems
+reasonable. So this patch extends the use RTEXT_FILTER_SKIP_STATS
+to also affect IFLA_STATS.
 
-but:
+[1] https://lore.kernel.org/all/20150911204848.GC9687@oracle.com/
+[2] https://lore.kernel.org/all/20230611105108.122586-1-gal@nvidia.com/
 
-> +    /// Writes raw data to this user pointer from a kernel buffer partially.
-> +    ///
-> +    /// This is the same as [`Self::write_slice`] but considers the given `offset` into `data` and
-> +    /// truncates the write to the boundaries of `self` and `data`.
-> +    ///
-> +    /// On success, returns the number of bytes written.
-> +    pub fn write_slice_partial(&mut self, data: &[u8], offset: usize) -> Result<usize> {
-> +        let end = offset
-> +            .checked_add(self.len())
-> +            .unwrap_or(data.len())
-> +            .min(data.len());
-> +
-> +        data.get(offset..end)
-> +            .map_or(Ok(0), |src| self.write_slice(src).map(|()| src.len()))
+Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+---
+ net/core/rtnetlink.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Isn't it more readable to write it like this?
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 8040ff7c356e..88d52157ef1c 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -2123,7 +2123,8 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb,
+ 	if (rtnl_phys_switch_id_fill(skb, dev))
+ 		goto nla_put_failure;
+ 
+-	if (rtnl_fill_stats(skb, dev))
++	if (~ext_filter_mask & RTEXT_FILTER_SKIP_STATS &&
++	    rtnl_fill_stats(skb, dev))
+ 		goto nla_put_failure;
+ 
+ 	if (rtnl_fill_vf(skb, dev, ext_filter_mask))
+-- 
+2.51.0
 
-	let Some(src) = data.get(offset..end) else {
-	    return Ok(0);
-	};
-	
-	self.write_slice(src)?;
-	Ok(src.len())
-
-Alice
 
