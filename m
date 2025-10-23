@@ -1,308 +1,206 @@
-Return-Path: <linux-kernel+bounces-867709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AEA7C03556
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:13:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C03C0355C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F323ADCF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:12:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CCB43AE677
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AEE34D4C1;
-	Thu, 23 Oct 2025 20:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2673134DB54;
+	Thu, 23 Oct 2025 20:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZCAbHQm9"
-Received: from mail-yx1-f97.google.com (mail-yx1-f97.google.com [74.125.224.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="mNiBy30M"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D5CEEB3
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBAD2DCC03;
+	Thu, 23 Oct 2025 20:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761250375; cv=none; b=Ji9mU9twQFQQTVH5YB6n2IEjY43hbMuhRklUW2tw6e2d+2Zo1PzwTmbBVVHBGYtemw6dLlpchXoG59JtdLNawYGA2L3aJ9qnclM/WqkYzRa26VnZuKu6gRo0X6iamowvUHj2fVh+FnjYCVl/qoA1flWsefyToLG/OlF/UHH6mLQ=
+	t=1761250425; cv=none; b=HVK2KnMuhMXrDjLUaCFg5lyOauZLFmlg+rSvElqT4g/06n34cRSHVi/JoNxvSyabw3iEHWSvwHyL/KQuV0riuudOK7B7WkCx6VEKLyyp96S8nQ7r1D7p/JrhitcsLcTw3mKUY04I1+Tf/AyDTksO3pFNjAmxPtAwPvtomlbvswg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761250375; c=relaxed/simple;
-	bh=OCnaonNsZfwYtY8w20ajyelkETsp5k33ujjnYrk5kNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SkoBmBPPd34LcZqN6lqAP+rg5SL4TXDUZy9DwW+bCS+JylLBy1PGSN83WGKTYfPHFCtHlnNF7+VjcLlmPLpXjWfwSOY8gEAQ4JjBEl+CPXaLbFvNoFCKfcXTutXNebQlwSW+Zwqs54Cdrbk8pJcHXr2Be9Mp3qM+3cx/5+Ez++o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZCAbHQm9; arc=none smtp.client-ip=74.125.224.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-yx1-f97.google.com with SMTP id 956f58d0204a3-63d0692136bso1564082d50.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:12:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761250372; x=1761855172;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FfKzLamtfyKDr/ZoLAnuN3X3QCSid0OYX3ziX7Skv84=;
-        b=tafca2nr1mTjmnJFkPtS5cEC4qbL7xnCZ2fW+mrXZU0HU3KGMuxX92XFeBUgM0j5RV
-         fSiNbQtRFDS6TqHn7kSuDPC/X1QLJs3hwjUjBBudQftDddo+3C/p55KdJ1VS3THL/iJE
-         7keHTPo8l0Kev5zjaBOfHejrYGNRpXnFohf9ImdM4uqkF7K63ocl4ywnevg6nIel9fpl
-         wNEp5JrPDyRaHN+NPDeee1+87zqAVhyB1oQNYAMau3c5kEVbNGKmQmEJALVLE5ee6ZA2
-         6ZBolX7jm2azv0tb65SF+HB/qu03gEuuYRb5QoOT9HL8xhOIJiV2dYHirVjyM5PYnNtH
-         3FUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfDa2JE8RQGJgtTKM5YhSUkenexq6lR/4dlUiHRE22rF2lFNLODJxsuNPlYiQGCMTiRThXZCVV6XJZK1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzOik+hnqG6LLPKZRua85N2+a5n1dIVk6986hYaZhBfNEYIWpt
-	DHI+zLV6qbIEDBhHjjalitAFKldeHIff9xRUjy4K0GgUx8310X85CNIwNEhlonJwMFb8oYhzIP9
-	EMsUiFaQ1jINW0I0vdUoZfWPUvgc1TMPG/lz3LGN68he2rCAOjIUkoKyhlTRbluOXtFv9oI5JEd
-	ZDycNJffOuH0/JqWvzHdq6vNAL1p0H1rn9WKMAt3gUNqLZs793q02Qb4AKw2uAyi3o+QeDzzad3
-	B63meit0r9zuZE3
-X-Gm-Gg: ASbGncu9uCkFISctLVN9kftVWHw88K2KJ3K+Dwbwk7Nas1UKQGRyzf14X7u5lqDbBzx
-	CrNydYqzsPK1sDvgIl7K7+35VQ+FEr6HAlm7nhINpEXWnVa9Vpmo2k3sw0qQdUN9Zy+zphGJx0i
-	go+M20F0l+KVXXpWtBu1lP5QUnGqP/kQK7WZ9jYgckkv3Be2VwYxtSu3VP2JCgtiJ/QKRElHHVm
-	k3B8R3/OYVoATLfIwdJvBWXXTHCcM2bRGP8votezGQ5Gxw2P2fj6TOoohcC4lCPqIKpUnO0cV+8
-	ilhHglkRmI9BZXzCkV212X8UtL419Ym95W0szhCE+62YDQz+EGSVtae/9aRA+lzlkA1Tw+bROKz
-	Xpoj4dVM+6qV5oJGZJboEIWa3AT19pQMFCf+nN7A+5TudTBe3hkAnjsuDg1EevC2MBEI+6RmoFc
-	Azuzt0JXpknXIRXttG9RQEh6iTpI4ihKg=
-X-Google-Smtp-Source: AGHT+IHM6PeA2ZUSFAY0Rd1xKWYNlOkOHisF8hzCfd/oxsyXHP3NvXjqlvP7M2C8PdokXmM7JHmPQ6hQW1Qb
-X-Received: by 2002:a05:690e:408b:b0:63e:2324:9ddb with SMTP id 956f58d0204a3-63e23249e5fmr17588140d50.65.1761250372177;
-        Thu, 23 Oct 2025 13:12:52 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
-        by smtp-relay.gmail.com with ESMTPS id 00721157ae682-785cd6c35e9sm1444567b3.19.2025.10.23.13.12.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Oct 2025 13:12:52 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-426ec5e9278so781948f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:12:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1761250370; x=1761855170; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FfKzLamtfyKDr/ZoLAnuN3X3QCSid0OYX3ziX7Skv84=;
-        b=ZCAbHQm9whaD5BUcRzXSRrvnVnJc4/enkuN0sKv1zOZN4hsKbO137w1XJIgtMUb8Bu
-         ccs3asmz9jJpS/gFWffin9Y0XQcLT2Ar4najFdk8MWI4jhPCGOR0ocDKD0xpNSz6R28C
-         lQkc1Mbzu4RMEcPPOJoBG+mkiNFLDauZWN4VI=
-X-Forwarded-Encrypted: i=1; AJvYcCUCmaQ4Wo4fa6B25pcod7Cc+M+Qsd49ptTuVXGktXWOB6RDtSSNXe2Qo3jy3OfeDij174xxNE9EzlliTKI=@vger.kernel.org
-X-Received: by 2002:a05:6000:310d:b0:3fb:9950:b9eb with SMTP id ffacd0b85a97d-42704d90129mr14161476f8f.28.1761250370397;
-        Thu, 23 Oct 2025 13:12:50 -0700 (PDT)
-X-Received: by 2002:a05:6000:310d:b0:3fb:9950:b9eb with SMTP id
- ffacd0b85a97d-42704d90129mr14161465f8f.28.1761250369926; Thu, 23 Oct 2025
- 13:12:49 -0700 (PDT)
+	s=arc-20240116; t=1761250425; c=relaxed/simple;
+	bh=PjnRGjtlO1HEPYlFuE1Vrq/O2rITjL30nou3cAeplSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m4UbtClIAgtzy57ml4wvcsixB13a8bNERCuM3IHZEjKuMj3WHRqajUDsdpYCQHkn5kK18AH/SFEp15agNLYZeVRkPyNccdSGnStz7iCJSqBLElbHW5j2yEPZ0h7fC6Je8pCZoqXTxZ9LbfzmBcbbGeg1vqGtkfCmXEj3PmmNuKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=mNiBy30M; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1761250416; x=1761855216; i=w_armin@gmx.de;
+	bh=PjnRGjtlO1HEPYlFuE1Vrq/O2rITjL30nou3cAeplSo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=mNiBy30Mnk2lET3vzJ4F+xRpGl0kCofU4VdPK1U4fGWFuRxEtLAnY1GLNlofmGvn
+	 k2g6x2sQt7Ptv/v/WwGxpUdlX2ujGwVdgJq2IDQ1EbEl3zAcxcuACH9SvbE9dueFP
+	 xdgldfDUWl4O3R3WeuaQkLJiYkE+/GNn+d6dk6sRkGK/Ec4s+zdbsKQ5Da414navz
+	 ykTDMCCzY2y1c2pXtQaLUniYAR20/13akp/8b/7frkttwotcNemZ0C9yVTedIYm0n
+	 px0KGQD77tx56yRUFbDRjf8TOUJnx7Q+zZsKSE24mfGBP8jZq/MRl/le8UWNzacTw
+	 bzN6PSZXLZJ9UIZBiw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.24] ([93.202.247.91]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N9dsb-1u9Nw52U6P-014COw; Thu, 23
+ Oct 2025 22:13:36 +0200
+Message-ID: <de8dc59e-d301-4954-b39c-f032b6aa0db9@gmx.de>
+Date: Thu, 23 Oct 2025 22:13:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919032936.2267240-1-ryasuoka@redhat.com> <aPEFs0kYfXGZUHCA@zeus>
-In-Reply-To: <aPEFs0kYfXGZUHCA@zeus>
-From: Ian Forbes <ian.forbes@broadcom.com>
-Date: Thu, 23 Oct 2025 15:12:38 -0500
-X-Gm-Features: AWmQ_blwB_gCW_dFnQhGJNNmgUmY3G8S1CM4WFjSPbYzJfqKKWDZTnBoJ8EvTPw
-Message-ID: <CAO6MGtj5LCKBJfTETPb_dUBSVO3de8hZLUMSm5thyeMeY8bEXw@mail.gmail.com>
-Subject: Re: [PATCH drm-misc-next v3 0/1] add drm_panic_support for vmwgfx-stdu
-To: Ryosuke Yasuoka <ryasuoka@redhat.com>
-Cc: zack.rusin@broadcom.com, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	jfalempe@redhat.com, bcm-kernel-feedback-list@broadcom.com, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000b5d99e0641d90eb7"
-
---000000000000b5d99e0641d90eb7
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] ACPI fan _DSM support
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: lenb@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251007234149.2769-1-W_Armin@gmx.de>
+ <ec099f39-89a2-46ee-a10c-1350ecf7fc83@gmx.de>
+ <CAJZ5v0h8w0wrO5ziqQchN_f5Cb=Duqfc6=uOzR_-pk5_UcJ95g@mail.gmail.com>
+ <CAJZ5v0idydJCQqnEs38KJT+1TmVJuhLeCFikypDLD1Yd_8zWhg@mail.gmail.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <CAJZ5v0idydJCQqnEs38KJT+1TmVJuhLeCFikypDLD1Yd_8zWhg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:k2WBDIDLwCM2jvlN9KDj+t4vAzVyeI3SZRSQ9S0dN16Z4tjjeLg
+ RFfVqY3zR/lkG/AKsWs0SHDKqyNCo9ddMCUMxS6Wnoym7MoHC9S8L+Sln343oe0TRNbt56B
+ IitA+O/6z2DwCIzU5BbHmjMiotdUBapI6/vlPg2AdxTFOFHaSRDjhN5Cb9K4UFBLZUbpcqr
+ aTz7i7nD3c4Zd9RPNMEhQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:A0olCMeADvk=;jkqqeZ45FHJP8atn4WdQSg7TQwh
+ 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
 
-If it doesn't work on vbox that's not really our problem. I've sent my
-version [1] that works on Workstation and ESXI.
-Since it has less code it has a much higher chance of succeeding in a
-panic situation which is what we care about.
-Feel free to add whatever tags you feel are appropriate on that patch revie=
-w.
+Am 23.10.25 um 21:22 schrieb Rafael J. Wysocki:
 
-[1] https://lore.kernel.org/dri-devel/20251023200447.206834-1-ian.forbes@br=
-oadcom.com/T/#u
-
-Ian,
-
-On Thu, Oct 16, 2025 at 9:48=E2=80=AFAM Ryosuke Yasuoka <ryasuoka@redhat.co=
-m> wrote:
->
-> On Fri, Sep 19, 2025 at 12:29:29PM +0900, Ryosuke Yasuoka wrote:
-> > Add drm_panic support for stdu in vmwgfx. This patch was tested in a VM
-> > with VMSVGA on Virtual Box.
-> >
-> > Based on the feedback for v2 patch, I've made the following updates in
-> > my v3 patch.
-> > - Use MEMREMAP_WB | MEMREMAP_DEC flags for memremap
-> > - Use vmw_priv->initial_height and initial_width for sb and VRAM
-> > - Move all panic related functions to the vmwgfx_kms.c file
-> > - Ensure if the current display unit is 0 in get_scanout_buffer()
-> >
-> > I did not apply all of Ian's feedback in this v3 patch for the reasons
-> > outlined below.
-> >
-> > > 1. You can call `vmw_kms_write_svga` directly in `panic_flush`. There
-> > > is no need to mark the buffer as dirty or send any commands.
-> >
-> > In my test environment (VirtualBox), the panic screen appears unstably
-> > without dirty command's submission. Without it, the screen sometimes
-> > appears immediately as expected, and at other times, there's a delay
-> > of 15 to 20 seconds. I've also observed that it sometimes only appears
-> > after switching between the VirtualBox console window and other windows=
+> On Thu, Oct 23, 2025 at 11:59=E2=80=AFAM Rafael J. Wysocki <rafael@kerne=
+l.org> wrote:
+>> On Wed, Oct 22, 2025 at 11:41=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wr=
+ote:
+>>> Am 08.10.25 um 01:41 schrieb Armin Wolf:
+>>>
+>>>> Microsoft has designed a _DSM interface for the ACPI fan device [1]
+>>>> that allows the OS to set fan speed trip points. The ACPI firmware
+>>>> will notify the ACPI fan device when said trip points are triggered.
+>>>>
+>>>> Unfortunately some device manufacturers (like HP) blindly assume that
+>>>> the OS will use this _DSM interface and thus only update the fan spee=
+d
+>>>> value returned by the _FST control method when sending a notification
+>>>> to the ACPI fan device. This results in stale fan speed values being
+>>>> reported by the ACPI fan driver [2].
+>>>>
+>>>> The first patch performs a simple cleanup in order to reduce the usag=
+e
+>>>> of the acpi_device struct. The second patch fixes an issue with some
+>>>> 64-bit ACPI implementations where an invalid value was reported
+>>>> instead of the standard ACPI placeholder value (0xFFFFFFFF). The thir=
+d
+>>>> patch fixes an unrelated issue inside the hwmon support code while th=
+e
+>>>> next two patches add support for the ACPI fan notifications as
+>>>> specified in ACPI 11.2.3. The last patch finally adds support for the
+>>>> Microsoft _DSM interface.
+>>>>
+>>>> All patches where tested with a custom SSDT [3] and the acpi_call [4]
+>>>> kernel module and appear to work just fine.
+>>> Any thought on this?
+>> Not yet, but I'm going to get to it today.
+>>
+>>> I tested it with a custom SSDT, so i can prove that those patches work=
 .
-> >
-> > With command submission, we can stably get a panic screen. Even if it
-> > fails, we may get the panic screen ultimately. Therefore, I think we
-> > should retain vmw_kms_panic_do_bo_dirty() to submit commands.
-> >
-> > > 2. The format should be hardcoded to RGB565 to minimize the risk of
-> > > overrunning VRAM. Adjust the pitch accordingly to 2x width.
-> >
-> > While it's possible to output the panic screen with RGB565 by adjusting
-> > pitch and width, and BPP on the (virtual) hardware side, this approach
-> > causes debugfs to fail. It appears that the BPP must be reset after the
-> > panic screen is displayed, and there is no way to wait for the screen
-> > to be fully displayed within the drm_panic handler code.
-> >
-> > In my test environment, as VRAM has enough space even when using
-> > XRGB8888 (32 bits), I think the risk of overruning VRAM is low. So I've
-> > kept the default format and CPP size.
-> >
-> > v1:
-> > https://lore.kernel.org/all/20250901083701.32365-1-ryasuoka@redhat.com/
-> >
-> > v2:
-> > https://lore.kernel.org/all/20250908141152.221291-2-ryasuoka@redhat.com=
-/
-> > - Map a scanout_buffer to VRAM in .get_scanout_buffer
-> > - And then write to VRAM directly using fifo in legacy mode to avoid
-> > allocations or command submissions.
-> >
-> >
-> > Ryosuke Yasuoka (1):
-> >   drm/vmwgfx: add drm_panic support for stdu mode
-> >
-> >  drivers/gpu/drm/vmwgfx/vmwgfx_drv.h  |   4 +
-> >  drivers/gpu/drm/vmwgfx/vmwgfx_kms.c  | 165 +++++++++++++++++++++++++++
-> >  drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c |   2 +
-> >  3 files changed, 171 insertions(+)
-> >
-> >
-> > base-commit: d41c79838c47bc822534cd53628fe5e0f8ad2424
-> > --
-> > 2.51.0
->
-> Hi all,
->
-> This is a gentle reminder for this v3 patch.
-> I would appreciate any feedback when you have a chance.
->
-> Ian, your feedback on v1 and v2 were very helpful. I would appreciate it
-> if you could take another look when you have a moment.
->
-> Any comments are welcome.
->
-> Thank you
-> Ryosuke
->
+>> OK
+> I've applied two first patches for 6.19 and the third one for 6.18-rc, a=
+s a fix.
 
---000000000000b5d99e0641d90eb7
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+Please note that the third patch depends on the first patch! Otherwise you=
+ will
+get a runtime error when acpi_fan_hwmon_read() tries to cast the platform =
+device
+to a ACPI device.
 
-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
-V0fYJUiKJMCwvDmndOil8EtMA8j2T6taUZoQINiKQ0oDWgY6eYVv7AdPVIeOOs3noCyUL8AyA7Bl
-yoOPBB2/gk8VGcolEKgAAj+3hPbBF/d19x1bZzU3wABizBomVwykx5ms1nVXDbQajz8jqYECKWh9
-3OMo7BuC3TAClu5mLr2zs0Ccpp6NRRkjTF8WtCJ+jSnjFJGLAgMBAAGjggHYMIIB1DAOBgNVHQ8B
-Af8EBAMCBaAwgZMGCCsGAQUFBwEBBIGGMIGDMEYGCCsGAQUFBzAChjpodHRwOi8vc2VjdXJlLmds
-b2JhbHNpZ24uY29tL2NhY2VydC9nc2djY3I2c21pbWVjYTIwMjMuY3J0MDkGCCsGAQUFBzABhi1o
-dHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3I2c21pbWVjYTIwMjMwZQYDVR0gBF4wXDAJ
-BgdngQwBBQMBMAsGCSsGAQQBoDIBKDBCBgorBgEEAaAyCgMCMDQwMgYIKwYBBQUHAgEWJmh0dHBz
-Oi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwQQYDVR0fBDowODA2
-oDSgMoYwaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3I2c21pbWVjYTIwMjMuY3JsMCIG
-A1UdEQQbMBmBF2lhbi5mb3JiZXNAYnJvYWRjb20uY29tMBMGA1UdJQQMMAoGCCsGAQUFBwMEMB8G
-A1UdIwQYMBaAFAApNp5ceroPry1QLdugI4UYsKCSMB0GA1UdDgQWBBSvJWzgGK7aSByS+CQVBVfM
-Xgm5azANBgkqhkiG9w0BAQsFAAOCAgEAfrWiLF3zrYq7D+KPNRaAP70FbxHeaiUfn27Hbu37Eefz
-xeJTcFZH04IEtXqpM3NWYZm4A/dFn/VQPbLCRaeXzpT2TESVH6EFY7BEF0rnSSlUbFyi000MnSH3
-h5m+MoyE+PzLqfzLBZS+EU/haCpPy6Nqhs3fPKG3w5VTnUPsAxXK7rSmkIDVNsvwRttuMq9KHJzH
-Bx51dP/z3mel4OuMjgrwHk5uNY1Sn1MZAUQztVUsWguyfoKcmhxXbBccR5DdEfBgDEbq8bicPQ3J
-kqEy1QZXJfHlJuAJIiEw7odGctwqLeGCU6cBLhnsg54ngjO3uYC6tIySul55MRxFKE8HIwIrx+D5
-2SwhDeVLZ8sTK40uPzW5xg5laOWVCvmy2b+cHCGzarUeIlYdtw0ejdH9Hbkm0G7IrDvjkhPa64gR
-6Q+m5CGRDk+8iWhieH6WFE4HL++BpZhoi+YsOkGU3DK0dA+pxQnXNcNw1s0eNbSUVwQzmlC4LqiK
-Gj5JV81HTPLhoAya57a9i28Fp5qHZiFnCq4HMvwiwY7IWe+UwUuueU199aTK80xNiS553vHc6FpI
-/vxGy+LveJqEtodfKqQKwDOVu//c1Lz3uergJHqFYTMykk5U95J3FG5q/7Mqe4RF6E9OgtuAJidS
-6Ca5anjLQ/qzIfTjoXX7TJSjPztehRQxggJXMIICUwIBATBiMFIxCzAJBgNVBAYTAkJFMRkwFwYD
-VQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBD
-QSAyMDIzAgx2/5+PPF/QoW30N7swDQYJYIZIAWUDBAIBBQCggccwLwYJKoZIhvcNAQkEMSIEILwK
-q+o3rnSJM+at5TvoiyKUdvZFFeNneK4koKCKjoqXMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEw
-HAYJKoZIhvcNAQkFMQ8XDTI1MTAyMzIwMTI1MFowXAYJKoZIhvcNAQkPMU8wTTALBglghkgBZQME
-ASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQcwCwYJ
-YIZIAWUDBAIBMA0GCSqGSIb3DQEBAQUABIIBAG5kjOK8mVQWzgbKj2Bdi/Phz6H8Qtz5acoZn47G
-x5VuCpiRImy8rqpceLCTA8qAJgOPYl89Ia90WqjYgBQpx6bHodpQqAerWk3EMUMjCSDEu/e/bD65
-dzLg19OTyE+fLkE6PDa+IsZbd2Ldo/3XtSiZLQL9znOZkLjv3TVoxNm40QayZJKDNG4CwWbNQVih
-wdNm4YNvvHQuyz5vRI5/fhg7CqNVY6DCFPDWNRRD7NUD3paoGVRuFwUR5jh8M8nXfKdw15EfRvdD
-TqDlCBIvNolUZeeobMtmSRlRwgqkojOVCqjiLgIddMtQX3IzN6QE6R8Llr9CklXTkl+4duMNWcM=
---000000000000b5d99e0641d90eb7--
+> My understanding is that patches [4-5/6] are preparations for the last
+> one that needs a pointer to the MSFT documentation it is based on.
+
+I understand, i will send a v3 series without the first three patch and th=
+is
+issue being addressed.
+
+Thanks,
+Armin Wolf
+
 
