@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-867086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258EAC018A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:52:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74EB0C018C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8B7519A59CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:52:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B12C2504783
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0049630ACE9;
-	Thu, 23 Oct 2025 13:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BB031A072;
+	Thu, 23 Oct 2025 13:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhi7z7SM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezmCck8H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D000309DA0;
-	Thu, 23 Oct 2025 13:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF65315D5B;
+	Thu, 23 Oct 2025 13:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227515; cv=none; b=aNmNyQKf+hkSXaWZi8Gk3BG28fil/Xl4tjr00+IUnzNZERUc86tPiqaw4sgcFlRUdHANGeprUWpZIx9uhLQESAeiOqR0/PlC9Slm+bg/DmQvQ1XgFKLBlLHB5ZdWFiWHuNbs4HW50OAJJIAQqevfXTuHR5XJ+2Di9Y3wuRxY9SA=
+	t=1761227516; cv=none; b=Et6K6rAcNUrKy5l4ZavkvWKhn6QRzNthNcv2cbgyl/xzW4PGiwIlq5iu6Su8vG6q0o1nko2v2GojiUeG9BkMOpiweYnFoxwCh6DcNTc9Kde6mWos4fvJTK6KQmQy7dclH90gOLH+JHO989Iw5HsdSJrlfeFFbyx92eI+SOBXnYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227515; c=relaxed/simple;
-	bh=sMS1bB1kvZStN3PnuknRJAFqV2WBA0nPK4ke8KvoOU0=;
+	s=arc-20240116; t=1761227516; c=relaxed/simple;
+	bh=DXeHBjKEeneTJZlQx6fpzgXCOREPFNRGyyrxXvEZiNk=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=h1dQ14QO5GVuIS26swD/JsTlJzaWBcHEmkrZuSPtVS0CQR2pepYBPFkAV+jRbv5l2qogph67q/lQOUTngQr08jlO6lSbCtawoYacpNvDUPTJShHBhYfDTBo06YyXdBiaRtZrPlfxf2j2sCmjuncsDDLbJ32RWx6Tzciwmd+m+dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mhi7z7SM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74577C4CEE7;
-	Thu, 23 Oct 2025 13:51:54 +0000 (UTC)
+	 Message-Id:Subject; b=tN9nvcUDddolaUsVdm6ysmY90Dqrm6mZbrioPWlq/J8L7w0F2Uo82dvRuimK92JA/zdMbxJLWtn9dtSKhGLX8iWc7mhv+iON+bEz+qSQu/eXYsRKywLY98rCkInjQIWpfQmm1a22Q3hfH6lDOYy8ZThJqFY6f4nJLoXfYK76ZGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ezmCck8H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 323C2C4CEE7;
+	Thu, 23 Oct 2025 13:51:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761227514;
-	bh=sMS1bB1kvZStN3PnuknRJAFqV2WBA0nPK4ke8KvoOU0=;
+	s=k20201202; t=1761227516;
+	bh=DXeHBjKEeneTJZlQx6fpzgXCOREPFNRGyyrxXvEZiNk=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=mhi7z7SM+JBeSJ5R3vvG0rWB86SUfXm3UcCm+b49/ivGLORjdXpjZUvGDy8jL3OoR
-	 GH4IMiQLzw+JtIBpeToGAGRuAvtCVqJ0IgLtd8nbflBTwfKVDBbzkbU7Po+rfaE0r6
-	 2+xQ+IprJbNE7BNd8dBGTZWqwdcpAv1nkmoJ+goDTcCBJaDt929mrcFMjmik3AYzXS
-	 u1LlrSm7BHBM1pbSU5umybTaKfywMKSD/naxkKu06kiHTg90vtHgHuD1txn6Ihfewj
-	 NOtW1JxLTL+Iz1482C+oL/P+BrQssKk7VtBQHvVXliYysu8c8qL+Gvvv9ZMGKtOnwS
-	 CnP7vNDNCN4LA==
-Date: Thu, 23 Oct 2025 08:51:52 -0500
+	b=ezmCck8HjERzYtIbyeAk8k8JFFC7WAL+MzMBmlQHocwoefe7nXgZFuSEJV7oHoNys
+	 IJyxU4mnGm/kkFZMoj96m3/Cs8Z5GbcPhGHaqOBBgHWoSPpnHnqyNyFFDB68QmZttj
+	 I2fN+FSPIb4Zy/ld+mJyvpcCRiDJm+P67+lzeFGuqopXhAs5Jn7jPmCumUZMzViHnJ
+	 +CcYunoaVNrcd6BqZ+ajONsql5vxd3s8Y2G/gv5YDWXNU9ZJFEXoJ667oLAiiZn2Nm
+	 i1XYz/fp29FGwj+xFwLisKahgfuRoM454NpgEs0ef+fYwq/FozPmLCX7eBlMb9WUEd
+	 DFM6RI3YbNDzw==
+Date: Thu, 23 Oct 2025 08:51:54 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,101 +50,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-In-Reply-To: <20251022084052.218043-1-krishna.kurapati@oss.qualcomm.com>
-References: <20251022084052.218043-1-krishna.kurapati@oss.qualcomm.com>
-Message-Id: <176122700560.2723198.8931067346416497101.robh@kernel.org>
-Subject: Re: [PATCH v8 0/3] Introduce USB DT support for SM8750
+Cc: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20251022133616.74492-2-krzysztof.kozlowski@linaro.org>
+References: <20251022133616.74492-2-krzysztof.kozlowski@linaro.org>
+Message-Id: <176122700613.2723214.10060174362415881339.robh@kernel.org>
+Subject: Re: [PATCH] arm64: dts: toshiba: tmpv7708: Align node names with
+ DT bindings
 
 
-On Wed, 22 Oct 2025 14:10:49 +0530, Krishna Kurapati wrote:
-> Add support for the PHYs and controllers used for USB on SM8750 SoCs.
+On Wed, 22 Oct 2025 15:36:17 +0200, Krzysztof Kozlowski wrote:
+> DT bindings expect node names to follow certain pattern, dtbs_check
+> warnings:
 > 
-> Version-6 of this series has all the binding/driver/dt patches acked.
-> But only the phy changes have been merged.
+>   tmpv7708-rm-mbrc.dtb: pmux@24190000 (toshiba,tmpv7708-pinctrl):
+>     'pwm_mux' does not match any of the regexes: '-pins$', '^pinctrl-[0-9]+$'
+>   tmpv7708-rm-mbrc.dtb pmux@24190000 (toshiba,tmpv7708-pinctrl):
+>     $nodename:0: 'pmux@24190000' does not match '^(pinctrl|pinmux)(@[0-9a-f]+)?$'
+>   tmpv7708-rm-mbrc.dtb: wdt@28330000 (toshiba,visconti-wdt):
+>     $nodename:0: 'wdt@28330000' does not match '^(timer|watchdog)(@.*|-([0-9]|[1-9][0-9]+))?$'
 > 
-> Version 7 was a rebase to get acked patches merged. But comments came
-> in to use flattened bindings.
-> 
-> The v8 for usb patch has been split and sent out separately [1].
-> 
-> Cover letter heading has been modified to remove phy context.
-> 
-> Defconfig patch has been resent by Jingyi on [2].
-> 
-> [1]: https://lore.kernel.org/all/20251021050954.3462613-1-krishna.kurapati@oss.qualcomm.com/
-> [2]: https://lore.kernel.org/all/20251021-knp-usb-v2-4-a2809fffcfab@oss.qualcomm.com/
-> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
-> Changes in v8:
-> - Using Flattened DT representation.
-> - Removed obtained RB tags since the code has changed significantly.
-> - Modified Author mail address from quicinc to oss.qualcomm.com
-> - Link to v7: https://lore.kernel.org/all/20251015105231.2819727-1-krishna.kurapati@oss.qualcomm.com/
-> 
-> Changes in v7:
-> - Rebased on top of linux next
-> - Split usb patch and sent out separately.
-> - Link to v6: https://lore.kernel.org/all/20250527-sm8750_usb_master-v6-0-d58de3b41d34@oss.qualcomm.com/
-> 
-> Changes in v6:
-> - Change readl_relaxed/writel_relaxed calls to just readl/writel in the readback function
-> - Updated languange in the defconfig commit to specify SM8750 as a Qualcomm SoC
-> - Link to v5: https://lore.kernel.org/r/20250421-sm8750_usb_master-v5-0-25c79ed01d02@oss.qualcomm.com
-> 
-> Changes in v5:
-> - Removed refclk_src from the QMP PHY driver as that is no longer used.
-> - The decision to move the TCSR clkref property from controller --> phy
-> node was made in v4, and the refclk_src was a lingering change that was
-> meant to be removed.  CXO is the parent clock for TCSR clkref, so CXO
-> clk will be voted for as well.
-> - Relocate the SM8750 compatible within the qcom,dwc3 bindings.  This is
-> to take into account the change in clock list.
-> - Link to v4: https://lore.kernel.org/r/20250409-sm8750_usb_master-v4-0-6ec621c98be6@oss.qualcomm.com
-> 
-> Changes in v4:
-> - Made some fixups to the M31 eUSB2 driver
-> - Moved TCSR refclk_en to the QMP PHY DT node
-> - Link to v3: https://lore.kernel.org/r/20250324-sm8750_usb_master-v3-0-13e096dc88fd@quicinc.com
-> 
-> Changes in v3:
-> - Split platform DTs into separate commits.
-> - Fixed up M31 eUSB2 PHY driver with feedback received.
-> - Reordered DT properties based on feedback.
-> - Rewrote commit message for enabling EUSB driver.
-> - Link to v2: https://lore.kernel.org/r/20250304-sm8750_usb_master-v2-0-a698a2e68e06@quicinc.com
-> 
-> Changes in v2:
-> - Added new QMP PHY register definitions for v8 based QMP phys.
-> - Made changes to clean up some code in the M31 eUSB2 PHY driver based
-> on feedback received.
-> - Added bulk regulator operations in M31 eUSB2 PHY, to ensure that
-> both the vdd and vdda12 regulators are properly voted for.
-> - Removed external references to other dt bindings in M31 example for
-> the DT bindings change.
-> - Split DT patches between SoC and plaform changes, as well as the
-> PHY subsystem Kconfig changes when introducing the M31 eUSB2 PHY.
-> - Added orientation switch and port definitions in the DT changes.EDITME: describe what is new in this series revision.
-> - Link to v1: https://lore.kernel.org/r/20250113-sm8750_usb_master-v1-0-09afe1dc2524@quicinc.com
-> 
-> Wesley Cheng (3):
->   arm64: dts: qcom: sm8750: Add USB support to SM8750 SoCs
->   arm64: dts: qcom: sm8750: Add USB support for SM8750 MTP platform
->   arm64: dts: qcom: sm8750: Add USB support for SM8750 QRD platform
-> 
->  arch/arm64/boot/dts/qcom/sm8750-mtp.dts |  22 ++++
->  arch/arm64/boot/dts/qcom/sm8750-qrd.dts |  22 ++++
->  arch/arm64/boot/dts/qcom/sm8750.dtsi    | 158 ++++++++++++++++++++++++
->  3 files changed, 202 insertions(+)
-> 
-> --
-> 2.34.1
-> 
-> 
+>  arch/arm64/boot/dts/toshiba/tmpv7708.dtsi      | 4 ++--
+>  arch/arm64/boot/dts/toshiba/tmpv7708_pins.dtsi | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 > 
 
 
@@ -164,20 +97,22 @@ make sure dt-schema is up to date:
 
 This patch series was applied (using b4) to base:
  Base: attempting to guess base-commit...
- Base: tags/v6.17-10290-g67e1b0052f6b (exact match)
- Base: tags/v6.17-10290-g67e1b0052f6b (use --merge-base to override)
+ Base: tags/v6.18-rc1-10-gc35cf4fe4b85 (exact match)
+ Base: tags/v6.18-rc1-10-gc35cf4fe4b85 (use --merge-base to override)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20251022084052.218043-1-krishna.kurapati@oss.qualcomm.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/toshiba/' for 20251022133616.74492-2-krzysztof.kozlowski@linaro.org:
 
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: usb@a600000 (qcom,sm8750-dwc3): compatible:0: 'qcom,sm8750-dwc3' is not one of ['qcom,ipq4019-dwc3', 'qcom,ipq5018-dwc3', 'qcom,ipq5332-dwc3', 'qcom,ipq5424-dwc3', 'qcom,ipq6018-dwc3', 'qcom,ipq8064-dwc3', 'qcom,ipq8074-dwc3', 'qcom,ipq9574-dwc3', 'qcom,milos-dwc3', 'qcom,msm8953-dwc3', 'qcom,msm8994-dwc3', 'qcom,msm8996-dwc3', 'qcom,msm8998-dwc3', 'qcom,qcm2290-dwc3', 'qcom,qcs404-dwc3', 'qcom,qcs615-dwc3', 'qcom,qcs8300-dwc3', 'qcom,qdu1000-dwc3', 'qcom,sa8775p-dwc3', 'qcom,sar2130p-dwc3', 'qcom,sc7180-dwc3', 'qcom,sc7280-dwc3', 'qcom,sc8180x-dwc3', 'qcom,sc8180x-dwc3-mp', 'qcom,sc8280xp-dwc3', 'qcom,sc8280xp-dwc3-mp', 'qcom,sdm660-dwc3', 'qcom,sdm670-dwc3', 'qcom,sdm845-dwc3', 'qcom,sdx55-dwc3', 'qcom,sdx65-dwc3', 'qcom,sdx75-dwc3', 'qcom,sm4250-dwc3', 'qcom,sm6115-dwc3', 'qcom,sm6125-dwc3', 'qcom,sm6350-dwc3', 'qcom,sm6375-dwc3', 'qcom,sm8150-dwc3', 'qcom,sm8250-dwc3', 'qcom,sm8350-dwc3', 'qcom,sm8450-dwc3', 'qcom,sm8550-dwc3', 'qcom,sm865
- 0-dwc3', 'qcom,x1e80100-dwc3']
-	from schema $id: http://devicetree.org/schemas/usb/qcom,snps-dwc3.yaml
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: usb@a600000 (qcom,sm8750-dwc3): compatible:0: 'qcom,sm8750-dwc3' is not one of ['qcom,ipq4019-dwc3', 'qcom,ipq5018-dwc3', 'qcom,ipq5332-dwc3', 'qcom,ipq5424-dwc3', 'qcom,ipq6018-dwc3', 'qcom,ipq8064-dwc3', 'qcom,ipq8074-dwc3', 'qcom,ipq9574-dwc3', 'qcom,milos-dwc3', 'qcom,msm8953-dwc3', 'qcom,msm8994-dwc3', 'qcom,msm8996-dwc3', 'qcom,msm8998-dwc3', 'qcom,qcm2290-dwc3', 'qcom,qcs404-dwc3', 'qcom,qcs615-dwc3', 'qcom,qcs8300-dwc3', 'qcom,qdu1000-dwc3', 'qcom,sa8775p-dwc3', 'qcom,sar2130p-dwc3', 'qcom,sc7180-dwc3', 'qcom,sc7280-dwc3', 'qcom,sc8180x-dwc3', 'qcom,sc8180x-dwc3-mp', 'qcom,sc8280xp-dwc3', 'qcom,sc8280xp-dwc3-mp', 'qcom,sdm660-dwc3', 'qcom,sdm670-dwc3', 'qcom,sdm845-dwc3', 'qcom,sdx55-dwc3', 'qcom,sdx65-dwc3', 'qcom,sdx75-dwc3', 'qcom,sm4250-dwc3', 'qcom,sm6115-dwc3', 'qcom,sm6125-dwc3', 'qcom,sm6350-dwc3', 'qcom,sm6375-dwc3', 'qcom,sm8150-dwc3', 'qcom,sm8250-dwc3', 'qcom,sm8350-dwc3', 'qcom,sm8450-dwc3', 'qcom,sm8550-dwc3', 'qcom,sm865
- 0-dwc3', 'qcom,x1e80100-dwc3']
-	from schema $id: http://devicetree.org/schemas/usb/qcom,snps-dwc3.yaml
+arch/arm64/boot/dts/toshiba/tmpv7708-visrobo-vrb.dtb: pinctrl@24190000 (toshiba,tmpv7708-pinctrl): spi0-pins:groups: ['spi0_grp', 'spi0_cs0_grp'] is too long
+	from schema $id: http://devicetree.org/schemas/pinctrl/toshiba,visconti-pinctrl.yaml
+arch/arm64/boot/dts/toshiba/tmpv7708-visrobo-vrb.dtb: pinctrl@24190000 (toshiba,tmpv7708-pinctrl): spi0-pins:groups: ['spi0_grp', 'spi0_cs0_grp'] is too long
+	from schema $id: http://devicetree.org/schemas/pinctrl/toshiba,visconti-pinctrl.yaml
+arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dtb: pinctrl@24190000 (toshiba,tmpv7708-pinctrl): pwm-pins:groups: ['pwm0_gpio16_grp', 'pwm1_gpio17_grp', 'pwm2_gpio18_grp', 'pwm3_gpio19_grp'] is too long
+	from schema $id: http://devicetree.org/schemas/pinctrl/toshiba,visconti-pinctrl.yaml
+arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dtb: pinctrl@24190000 (toshiba,tmpv7708-pinctrl): pwm-pins:groups: ['pwm0_gpio16_grp', 'pwm1_gpio17_grp', 'pwm2_gpio18_grp', 'pwm3_gpio19_grp'] is too long
+	from schema $id: http://devicetree.org/schemas/pinctrl/toshiba,visconti-pinctrl.yaml
 
 
 
