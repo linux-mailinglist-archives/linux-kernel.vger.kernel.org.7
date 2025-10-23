@@ -1,142 +1,381 @@
-Return-Path: <linux-kernel+bounces-867335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16459C024E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:05:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1665AC024F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837C03AF7FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:04:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DFF424EE201
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772B926ED5C;
-	Thu, 23 Oct 2025 16:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E502701B4;
+	Thu, 23 Oct 2025 16:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XD1O3/eK"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="k6CK3FaL"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0A21DDC35
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8D8246BDE;
+	Thu, 23 Oct 2025 16:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761235459; cv=none; b=OcfQNBA0JF5+gn+yTztLbqVjvG7cEdIHyurI074sC68G1hcr6Nzs7NlRk0lf/TxaGKeyX/RWg1AOuvisSeKeDLeawNUCIiv2mshBwYAQJ6RY2/cn6zdYycxKYQ5EXj4BeCbzsQ7a8nK0g2Phr0wzptNP33FDidR1FmXjgtJImzM=
+	t=1761235556; cv=none; b=K4mCHwJ6QQbEf7c6NwC8CSkrf9NmcjzPDaRSRwM4nn0gjQMmYmD8QpMJhxi37uW+NJWHAd7oihfULrRtqjYhJgzSoAxe+MTBJZ+dIiEes/VsVj/bg4/qlp6N55Hd2dzgQq6Ix+L4QkVVsQC4PiA7QWWxGUVJb4EeZDfJC74BcU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761235459; c=relaxed/simple;
-	bh=BZs/EKkft0iiyczp7niO50EAP/xvjEqxKm4Yz1szu7Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kadq2NvfH2LhlTgFm0kVZhWAVMePguwm5DKzF15+zcsfJxjH+lG8+kitf+FYIijRuWBOpIThFmenJ47HSHJJJ2V2b4YrdqtJnkymsQ11jaJ/6vJfJmM64xgh6UpuIfHTusczmkH0qiC9smpRuKoUIOSNTNu5Qnj71t6zkz2ISAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XD1O3/eK; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33082c95fd0so1103365a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:04:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761235458; x=1761840258; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=qh+XTkdUsVoqfUCJ1tlaETEztr9dvLetJyhEnaoDJ2E=;
-        b=XD1O3/eKCa9gtdjCCVrb9cUSrznkvswSr8ngKuov0cBWSsv5U63026rt1l5WXuadh0
-         JW3iiUY1LroUhuv1ZZpTwQlIky47u1MX5dybUuv1Ow30/O+8JDp7SOWNhkKVMqZtX/3C
-         9D5zo/DIsXcf5g1yDjzRRZ2qSsvuOgv97EEUW5JNkWWW6DgX0vCcf7iW6DmLOvnWlxMw
-         fNzoURuBqTe/EMSn8gOS3bOjjV+B84xKZFWzNK6Rat1eq5z7JW0RjlKhGABRNuSfHVbw
-         sBMy4/4TCWGyFQ8R1bGWSucPPxGhkUI7xYycpDpKmKYCs3tAlHT8UGT5BS8FGPbMlGmk
-         d9KQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761235458; x=1761840258;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qh+XTkdUsVoqfUCJ1tlaETEztr9dvLetJyhEnaoDJ2E=;
-        b=cbjlPrJtEyU99/uXfQc6fc2k+HKVIk6he6WoXFPf3NjmHEgjLGltLJTKFNiSOVsOj7
-         yomUocWacllMLjvslm4TAtLQhdaTXlqLxHKH/3OuAbtZj0w6G7KhZ0+CXKf52ZS012Ky
-         sTn/BgUo3TqAgi76U7vDbvqIj5HiunmI8zJlshj7HQuyIHTOYBOhAHNjcjjUP/8Y+1k1
-         UsKv4q8xoj2W/wwGE9km3Y0LdtBnrQ2cqVVkVbYkF25Z7JCuAB/+Sfm6PIDej4cf4ObH
-         GUT//1IfujTvW8pfAxQ+7/2bF910ywmXmNKL6wQfxfi8SVQsRcX+OHp8uPARDMFUwdlB
-         4mEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVi8gvaBNG3jsvWwbcgX02tv1qTtdDuXLsTRR9vwCAW3UEupTh3HOGNNfdiYqoSaQk89CDlNrjgxleNAkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrjA/aFQkZAzc4kEs0b4MEzUDRuMmVvES+cAe6yUC14hMd0JYA
-	NkMJE5ULeSiypFMRS1ONxK54iPM8m9aEd8ID1QJ+DW1oV4z3BXfsTGSY
-X-Gm-Gg: ASbGncuWvxQaMgfVTJ9XY1rBNprCOpN+Itw6uZKY78p3vvg4z04njlLTt10FCWMOWJ6
-	TmonuIHmDndhAi0IqPg4Ilmu8Zjv9kxftCApVqU5smh0IhdsDnBD5Igp5sTvO+VvBCBbxbJSvwo
-	Mh1KpcpXeIHZXK9faR/gr6VDmb1Ea6DEFawOhhjIrwF62OcN8qYiziKLdQnThTMCJeWn+ggfeDh
-	LXJbP5MnXVDEWQ7yJJc0TndmeNln2YiZt2yYyKQI8dhr4zgjJPqlvWHP4NE38jdPjH340wYkZDH
-	WCkU1CSIUToOO05k13JwJOK+rWP20TPD5eo0ZSEBX1qxX6MhdY5IWr/O/U+CcNmVIPBYVDHzUhQ
-	6q9As6qaMCiibbDwo5xw5QakGAYhdL+QSj6ZhfwuYRte0yIzNxcidkb0F9gGAiAkZGDuI/uwTLx
-	sTa2RwuldZXYNV8ITR1ZX3hshz7UANn0iEZg==
-X-Google-Smtp-Source: AGHT+IEZI4ev2IBH4muhdtA8NDFE8NYLvVDhQkEqcYXbzc7+4M5oYKr1bimv/qoYUS2iAVBmMesOAA==
-X-Received: by 2002:a17:90b:3144:b0:335:2b86:f319 with SMTP id 98e67ed59e1d1-33bcf919094mr34693477a91.35.1761235457698;
-        Thu, 23 Oct 2025 09:04:17 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33faff37afesm2815913a91.1.2025.10.23.09.04.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 09:04:16 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: Rob Herring <robh@kernel.org>
-Cc: Saravana Kannan <saravanak@google.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Han Gao <rabenda.cn@gmail.com>,
-	Paul Walmsley <pjw@kernel.org>
-Subject: [PATCH] of: Skip devicetree kunit tests when RISCV+ACPI doesn't populate root node
-Date: Thu, 23 Oct 2025 09:04:14 -0700
-Message-ID: <20251023160415.705294-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1761235556; c=relaxed/simple;
+	bh=km3SFfNSk328jceaoImIdjtS2MbFWXbnoCDL4mMHSE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ePEcvVPkB+0ReVGsDcdJuAjnkGvQKCoIzksfTe71axfbAGvPnnN+Qv6j+NfPgMDx8UdxBe/KR9wqJXbcdQs+vRCQCBpFqxi9yThQbWt2tvkE6WrOcNfb4yhmMeDWXTJ4nj5w0Une6box+P+QqGbEpEeFHPBFnv32jBKXAIymBKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=k6CK3FaL; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N8JWcv014261;
+	Thu, 23 Oct 2025 16:04:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=NcW2s3
+	Fa+q4vWajBFsclXMOAOSDRCnv8z8Qb6vE7ohA=; b=k6CK3FaLLc7xFjQIr8BUd1
+	EDRrtPNXywRn/lscS+tLIq1BPthOAxAoW3g8HMNoyziKANzoIHCaT6ZXTEncDcjb
+	QdvmQWSl5GOasxtPPD0yY66FSHANlesCCRnnCRnLk7L3Pl7lrTP3naQQ2MerEra4
+	nB75u5zNs95+wNs5HpYmuAWH8X4vx8wuIBz2eghcDAgGmQbWhz22l82ZnP4hLfIa
+	uoAg+ejuSLDh9Ns2fbn9EyxSoKzAZuSeTtSuF/Lt5TxJGgujscG9OIEE96vu0GCq
+	N6e7PW/hF7Ofwlm0X6PKkbD/OKP/+gTNluigA4aBkFAQ8Du4pqS86mIoo0+7LR6g
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31chsy6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 Oct 2025 16:04:43 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59NFrvGr009892;
+	Thu, 23 Oct 2025 16:04:42 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31chsy3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 Oct 2025 16:04:42 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59NDI0B5017052;
+	Thu, 23 Oct 2025 16:04:41 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vnky6rs1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 Oct 2025 16:04:41 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59NG4ck436569352
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 23 Oct 2025 16:04:38 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E5F4B20040;
+	Thu, 23 Oct 2025 16:04:37 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E4C6820043;
+	Thu, 23 Oct 2025 16:04:35 +0000 (GMT)
+Received: from [9.111.177.23] (unknown [9.111.177.23])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 23 Oct 2025 16:04:35 +0000 (GMT)
+Message-ID: <f855f1d2-35dd-48bd-8de5-25d850d02d37@linux.ibm.com>
+Date: Thu, 23 Oct 2025 18:04:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 06/15] unwind_user/sframe: Add support for reading
+ .sframe contents
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
+        Steven Rostedt <rostedt@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Florian Weimer <fweimer@redhat.com>, Kees Cook <kees@kernel.org>,
+        "Carlos O'Donell" <codonell@redhat.com>, Sam James <sam@gentoo.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Michal Hocko
+ <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        "Steven Rostedt (Google)" <rostedt@goodmis.org>
+References: <20251022144326.4082059-1-jremus@linux.ibm.com>
+ <20251022144326.4082059-7-jremus@linux.ibm.com>
+Content-Language: en-US
+From: Jens Remus <jremus@linux.ibm.com>
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <20251022144326.4082059-7-jremus@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: fgZdUdnGXaTGdSaxwNUvOB3JNAYR6LNi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXxYbS0I7ozNJu
+ olD9B0XrJZvSbfWDUx+3Sqi8NpgFB0qU0t9tF3zQUoxXU6konKgOnhszhPE8oKGWiHUdHJDRcxd
+ 8ViieVm5wekdYLpFm+A73xS51SQcgkuIqX0ZHn44aDXIv9mKhhgTU+DAWt+oY3jEf9jyb+boa+4
+ 2xXTCGYi1ry0HDJGM/YBzRGIE6ezhP4kJnR18shXPDs6fjx3gE9FoSvvMsORWfBL99cPC2Uzglh
+ yxkGESRMvyU6jsqz+4p8osiKrJ/pnJIambuKHpfbM4t7mWotdI+baOH96LqBsK+tqCHsKUE0Ynh
+ 69QOh0bOVtLgmzhG4Fdq55SCCx5oLsMJ1ERVjiS8s9cs0pOygX5YySe6VpgcegnZsG2yX7z2rDZ
+ jEXEfZR1fIaRadv1ly56Js+HF/U+HA==
+X-Proofpoint-GUID: j-aP8M5YiDrfT85xUy7fTFBSirXnKljV
+X-Authority-Analysis: v=2.4 cv=SKNPlevH c=1 sm=1 tr=0 ts=68fa521b cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=s6ekHP1XpJ6eNOeT0-oA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=DXsff8QfwkrTrK3sU8N1:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=bWyr8ysk75zN3GCy5bjg:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-23_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 suspectscore=0 clxscore=1015 priorityscore=1501
+ spamscore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-Starting with commit 69a8b62a7aa1 ("riscv: acpi: avoid errors caused by
-probing DT devices when ACPI is used"), riscv images no longer populate
-devicetree if ACPI is enabled. This causes unit tests to fail which require
-the root node to be set.
+Hi Steve, et al.,
 
-  # Subtest: of_dtb
-  # module: of_test
-  1..2
-  # of_dtb_root_node_found_by_path: EXPECTATION FAILED at drivers/of/of_test.c:21
-  Expected np is not null, but is
-  # of_dtb_root_node_found_by_path: pass:0 fail:1 skip:0 total:1
-  not ok 1 of_dtb_root_node_found_by_path
-  # of_dtb_root_node_populates_of_root: EXPECTATION FAILED at drivers/of/of_test.c:31
-  Expected of_root is not null, but is
-  # of_dtb_root_node_populates_of_root: pass:0 fail:1 skip:0 total:1
-  not ok 2 of_dtb_root_node_populates_of_root
+as discussed during yesterdays SFrame call I will be sending two RFC
+fixup patches shortly as POC to demonstrate how this patch and
+"[PATCH v11 14/15] unwind_user/sframe: Add .sframe validation option"
+could benefit from introducing an internal FDE representation (e.g.
+struct sframe_fde_internal) similar to the used internal FRE
+representation (struct sframe_fre).
 
-Skip those tests for RISCV if the root node is not populated.
+On 10/22/2025 4:43 PM, Jens Remus wrote:
 
-Fixes: 69a8b62a7aa1 ("riscv: acpi: avoid errors caused by probing DT devices when ACPI is used")
-Cc: Han Gao <rabenda.cn@gmail.com>
-Cc: Paul Walmsley <pjw@kernel.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/of/of_kunit_helpers.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
 
-diff --git a/drivers/of/of_kunit_helpers.c b/drivers/of/of_kunit_helpers.c
-index 7b3ed5a382aa..f6ed1af8b62a 100644
---- a/drivers/of/of_kunit_helpers.c
-+++ b/drivers/of/of_kunit_helpers.c
-@@ -18,8 +18,9 @@
-  */
- void of_root_kunit_skip(struct kunit *test)
- {
--	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ACPI) && !of_root)
--		kunit_skip(test, "arm64+acpi doesn't populate a root node");
-+	if ((IS_ENABLED(CONFIG_ARM64) || IS_ENABLED(CONFIG_RISCV)) &&
-+	    IS_ENABLED(CONFIG_ACPI) && !of_root)
-+		kunit_skip(test, "arm64/riscv+acpi doesn't populate a root node");
- }
- EXPORT_SYMBOL_GPL(of_root_kunit_skip);
- 
+> +static __always_inline int __read_fde(struct sframe_section *sec,
+> +				      unsigned int fde_num,
+> +				      struct sframe_fde *fde,
+> +				      unsigned long *fde_start_base)
+
+The goal would be to eliminate the passing through of fde_start_base as
+well as the various computations of the effective function start address
+(= *fde_start_base + fde->start_addr) throughout this module.  The
+internal FDE representation could then simply convey the effective
+function start address via an "unsigned long func_start_addr" field.
+
+> +{
+> +	unsigned long fde_addr, ip;
+> +
+> +	fde_addr = sec->fdes_start + (fde_num * sizeof(struct sframe_fde));
+> +	unsafe_copy_from_user(fde, (void __user *)fde_addr,
+> +			      sizeof(struct sframe_fde), Efault);
+> +
+> +	ip = fde_addr + fde->start_addr;
+> +	if (ip < sec->text_start || ip > sec->text_end)
+> +		return -EINVAL;
+> +
+> +	*fde_start_base = fde_addr;
+> +	return 0;
+> +
+> +Efault:
+> +	return -EFAULT;
+> +}
+> +
+> +static __always_inline int __find_fde(struct sframe_section *sec,
+> +				      unsigned long ip,
+> +				      struct sframe_fde *fde,
+> +				      unsigned long *fde_start_base)
+
+fde_start_base would get eliminated.
+
+> +{
+> +	unsigned long func_addr_low = 0, func_addr_high = ULONG_MAX;
+> +	struct sframe_fde __user *first, *low, *high, *found = NULL;
+> +	int ret;
+> +
+> +	first = (void __user *)sec->fdes_start;
+> +	low = first;
+> +	high = first + sec->num_fdes - 1;
+> +
+> +	while (low <= high) {
+> +		struct sframe_fde __user *mid;
+> +		s32 func_off;
+> +		unsigned long func_addr;
+> +
+> +		mid = low + ((high - low) / 2);
+> +
+> +		unsafe_get_user(func_off, (s32 __user *)mid, Efault);
+> +		func_addr = (unsigned long)mid + func_off;
+> +
+> +		if (ip >= func_addr) {
+> +			if (func_addr < func_addr_low)
+> +				return -EFAULT;
+> +
+> +			func_addr_low = func_addr;
+> +
+> +			found = mid;
+> +			low = mid + 1;
+> +		} else {
+> +			if (func_addr > func_addr_high)
+> +				return -EFAULT;
+> +
+> +			func_addr_high = func_addr;
+> +
+> +			high = mid - 1;
+> +		}
+> +	}
+> +
+> +	if (!found)
+> +		return -EINVAL;
+> +
+> +	ret = __read_fde(sec, found - first, fde, fde_start_base);
+
+fde_start_base would get eliminated.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* make sure it's not in a gap */
+> +	if (ip < *fde_start_base + fde->start_addr ||
+> +	    ip >= *fde_start_base + fde->start_addr + fde->func_size)
+
+Would simplify to:
+
+	if (ip < fde->func_start_addr ||
+	    ip >= fde->func_start_addr + fde->func_size)
+
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +
+> +Efault:
+> +	return -EFAULT;
+> +}
+
+> +static __always_inline int __find_fre(struct sframe_section *sec,
+> +				      struct sframe_fde *fde,
+> +				      unsigned long fde_start_base,
+
+fde_start_base would get eliminated.
+
+> +				      unsigned long ip,
+> +				      struct unwind_user_frame *frame)
+> +{
+> +	unsigned char fde_type = SFRAME_FUNC_FDE_TYPE(fde->info);
+> +	struct sframe_fre *fre, *prev_fre = NULL;
+> +	struct sframe_fre fres[2];
+> +	unsigned long fre_addr;
+> +	bool which = false;
+> +	unsigned int i;
+> +	u32 ip_off;
+> +
+> +	ip_off = ip - (fde_start_base + fde->start_addr);
+
+Would simplify to:
+
+	ip_off = ip - fde->func_start_addr;
+
+> +
+> +	if (fde_type == SFRAME_FDE_TYPE_PCMASK)
+> +		ip_off %= fde->rep_size;
+> +
+> +	fre_addr = sec->fres_start + fde->fres_off;
+> +
+> +	for (i = 0; i < fde->fres_num; i++) {
+> +		int ret;
+> +
+> +		/*
+> +		 * Alternate between the two fre_addr[] entries for 'fre' and
+> +		 * 'prev_fre'.
+> +		 */
+> +		fre = which ? fres : fres + 1;
+> +		which = !which;
+> +
+> +		ret = __read_fre(sec, fde, fre_addr, fre);
+> +		if (ret)
+> +			return ret;
+> +
+> +		fre_addr += fre->size;
+> +
+> +		if (prev_fre && fre->ip_off <= prev_fre->ip_off)
+> +			return -EFAULT;
+> +
+> +		if (fre->ip_off > ip_off)
+> +			break;
+> +
+> +		prev_fre = fre;
+> +	}
+> +
+> +	if (!prev_fre)
+> +		return -EINVAL;
+> +	fre = prev_fre;
+> +
+> +	frame->cfa_off = fre->cfa_off;
+> +	frame->ra_off  = fre->ra_off;
+> +	frame->fp_off  = fre->fp_off;
+> +	frame->use_fp  = SFRAME_FRE_CFA_BASE_REG_ID(fre->info) == SFRAME_BASE_REG_FP;
+> +
+> +	return 0;
+> +}
+> +
+> +int sframe_find(unsigned long ip, struct unwind_user_frame *frame)
+> +{
+> +	struct mm_struct *mm = current->mm;
+> +	struct sframe_section *sec;
+> +	struct sframe_fde fde;
+> +	unsigned long fde_start_base;
+
+fde_start_base would get eliminated.
+
+> +	int ret;
+> +
+> +	if (!mm)
+> +		return -EINVAL;
+> +
+> +	guard(srcu)(&sframe_srcu);
+> +
+> +	sec = mtree_load(&mm->sframe_mt, ip);
+> +	if (!sec)
+> +		return -EINVAL;
+> +
+> +	if (!user_read_access_begin((void __user *)sec->sframe_start,
+> +				    sec->sframe_end - sec->sframe_start))
+> +		return -EFAULT;
+> +
+> +	ret = __find_fde(sec, ip, &fde, &fde_start_base);
+
+fde_start_base would get eliminated.
+
+> +	if (ret)
+> +		goto end;
+> +
+> +	ret = __find_fre(sec, &fde, fde_start_base, ip, frame);
+
+fde_start_base would get eliminated.
+
+> +end:
+> +	user_read_access_end();
+> +	return ret;
+> +}
+Regards,
+Jens
 -- 
-2.45.2
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
 
 
