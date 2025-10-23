@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-867350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C4DC02570
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:12:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8687C02573
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F6963A636D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A68833A5691
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BA22BEFF2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02672C11EA;
 	Thu, 23 Oct 2025 16:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Njn0NklU"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="FzwL4OJs"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF832882A6;
-	Thu, 23 Oct 2025 16:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5841D296BC4;
+	Thu, 23 Oct 2025 16:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761235854; cv=none; b=XkzKh5P3VFIGe+wqQVi1s5SJqhbtyEZ+A/mSATGTp3opGx7jVNMR8e5y0YBRCk/RhwsY9ybpiFq9l7nB0hwBk2WfFc0BvAzBL1t3W+im1dXfMlovahfuJmyY35vKK9lqc/+ic1PTkIsXFgos/hJOSS1bD2NYYcT0ncwKA3QMSbg=
+	t=1761235856; cv=none; b=hxYtZONheVgfhht/Gt5UpEHAnlDccVKaPAAB/K6/0lTDpQ19+rdLR+PuIr9wt4W5mbAyfemVUam/aAuR23C5BuNT4BX9NQMKuzqauhH3FJ88ELBXUMluEGCB9+EUP+92EPGtrdIlmMJjYvz1hVcGUPPCP3hwVeJdY8KMQHxiSl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761235854; c=relaxed/simple;
-	bh=GXP3AsEBJRlrI5Px1+f+ZXn0gQuTFpvOmI0BUCuE+yQ=;
+	s=arc-20240116; t=1761235856; c=relaxed/simple;
+	bh=B3WMrEoBGqxwlKaiXZCd7ySlsfrFx7s1x23iMC5lcXM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SSh5/HbNtTrpcqpLRHce2+z2kTo29joU09zOoVxmElmP9eNWrLMOmy7aGYgqvMJtgm0jJFJrSh7HvCiw3TGIJ95YFGqlRIwr1RWHFxdLj6LfWkhlVHq69MDBiHVAUxJagDDSV0Mv14n2isDRZw7Lpb+9IZj8CxQF7LppTSk/C3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Njn0NklU; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version:Content-Type; b=KjCWZ9mhgKC6/7PWUvHIycu7VlYq+CPgOVBVanVNwzl0uInvHlpYWfzVB8ggpz92cBS5Hl1AWeu5PqIuiqhuL4BIw9nPDoR7HFUDr/z1N8c2iW6Gytzs5faP/wSx7I8q4RsUBxvR4hENU762UhWFaRyxLaNp0AZKnhAt1neyCYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=FzwL4OJs; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C324540B41
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B717840B42
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1761235849; bh=sR/lP58tIJyHcilyEmgV29zZ+b0N+5E3LuZI7egPUxA=;
+	t=1761235850; bh=RtbYJANxx8V4mpWmI9ykigw4M/n+z/0Lqbs+aZPz0xU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Njn0NklUPqaRC9qVqAUr6hZFERBrcJKmZKCtjRw6O2y4cKFBMQp0Lw89kzppdOHoY
-	 FP3QSOajQSFGItXXfCqAdYDoYPDz39rwfBriHIM4DPw4S/YFCUBYv+PNcZ1QLCy2wE
-	 F+KgANVtBzJca+lu5d/3Mt0+cCe1BNDVx7+N86xntmo2Yk551dodGwouaXmn2WuXzt
-	 DQhq6wg7IQVaHeHkXWf5WphgvTdJ0gmu7iYbezxT7sloWVb2yh6xekoxJ+KUPaitin
-	 WjCwE6NYCV6opR3U2LpKAfZSy+ePMEzLbr7BH9/UhlWtH3AYkoe/6Nn3ZjjEG+SSYn
-	 3uWpD36V3VIUw==
+	b=FzwL4OJsf+uQ95LmsdQ4xZ646p2uX0QtWprLEjVnpxihfA0s/sthFt4/+IRlbHwYW
+	 V6rLJX6av0ic7kMdT/GR3aFgUrngTQ5FZsFkCGcYoa5qO2VkKk+QF53Q7cPobMn/UW
+	 CFP0/EJQ7tFeK6UovWO0Avcy9BjKWfWuxYsXQtnmcNc29jUWH835zse47nPUMtPk6B
+	 QqYXzyVkqktzkCD3aercBe11ApJF4rcfeocpwDO/0ym3NX21pbWOKZs/500F33EY4t
+	 POZTuPSiigb6X5DAt9P8wAnEeg8at5MsnLC4Q1R/0UaYFamqM0Mu5Vx9jRzalFVnHh
+	 Fd8hANWYpS8xA==
 Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id C324540B41;
-	Thu, 23 Oct 2025 16:10:48 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPA id B717840B42;
+	Thu, 23 Oct 2025 16:10:49 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -51,9 +51,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Randy Dunlap <rdunlap@infradead.org>,
 	Jani Nikula <jani.nikula@linux.intel.com>,
 	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v2 08/10] docs: move split-man.pl to tools/docs
-Date: Thu, 23 Oct 2025 10:10:16 -0600
-Message-ID: <20251023161027.697135-9-corbet@lwn.net>
+Subject: [PATCH v2 09/10] docs: move find-unused-docs.sh to tools/docs
+Date: Thu, 23 Oct 2025 10:10:17 -0600
+Message-ID: <20251023161027.697135-10-corbet@lwn.net>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251023161027.697135-1-corbet@lwn.net>
 References: <20251023161027.697135-1-corbet@lwn.net>
@@ -66,78 +66,71 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-...and update all references to it.
+...and update references accordingly.
 
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- Documentation/doc-guide/kernel-doc.rst                    | 6 +++---
- Documentation/translations/it_IT/doc-guide/kernel-doc.rst | 2 +-
- Documentation/translations/zh_CN/doc-guide/kernel-doc.rst | 6 +++---
- {scripts => tools/docs}/split-man.pl                      | 0
- 4 files changed, 7 insertions(+), 7 deletions(-)
- rename {scripts => tools/docs}/split-man.pl (100%)
+ Documentation/doc-guide/contributing.rst                    | 2 +-
+ Documentation/translations/zh_CN/doc-guide/contributing.rst | 2 +-
+ {scripts => tools/docs}/find-unused-docs.sh                 | 6 +++---
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+ rename {scripts => tools/docs}/find-unused-docs.sh (85%)
 
-diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-guide/kernel-doc.rst
-index dd5854b4131c..6eaf127c5cca 100644
---- a/Documentation/doc-guide/kernel-doc.rst
-+++ b/Documentation/doc-guide/kernel-doc.rst
-@@ -584,15 +584,15 @@ from the kernel git tree::
+diff --git a/Documentation/doc-guide/contributing.rst b/Documentation/doc-guide/contributing.rst
+index 662c7a840cd5..f8047e633113 100644
+--- a/Documentation/doc-guide/contributing.rst
++++ b/Documentation/doc-guide/contributing.rst
+@@ -152,7 +152,7 @@ generate links to that documentation.  Adding ``kernel-doc`` directives to
+ the documentation to bring those comments in can help the community derive
+ the full value of the work that has gone into creating them.
  
-   $ tools/docs/kernel-doc -man \
-     $(git grep -l '/\*\*' -- :^Documentation :^tools) \
--    | scripts/split-man.pl /tmp/man
-+    | tools/docs/split-man.pl /tmp/man
+-The ``scripts/find-unused-docs.sh`` tool can be used to find these
++The ``tools/docs/find-unused-docs.sh`` tool can be used to find these
+ overlooked comments.
  
- Some older versions of git do not support some of the variants of syntax for
- path exclusion.  One of the following commands may work for those versions::
+ Note that the most value comes from pulling in the documentation for
+diff --git a/Documentation/translations/zh_CN/doc-guide/contributing.rst b/Documentation/translations/zh_CN/doc-guide/contributing.rst
+index 394a13b438b0..b0c8ba782b16 100644
+--- a/Documentation/translations/zh_CN/doc-guide/contributing.rst
++++ b/Documentation/translations/zh_CN/doc-guide/contributing.rst
+@@ -124,7 +124,7 @@ C代码编译器发出的警告常常会被视为误报，从而导致出现了
+ 这使得这些信息更难找到，例如使Sphinx无法生成指向该文档的链接。将 ``kernel-doc``
+ 指令添加到文档中以引入这些注释可以帮助社区获得为编写注释所做工作的全部价值。
  
-   $ tools/docs/kernel-doc -man \
-     $(git grep -l '/\*\*' -- . ':!Documentation' ':!tools') \
--    | scripts/split-man.pl /tmp/man
-+    | tools/docs/split-man.pl /tmp/man
+-``scripts/find-unused-docs.sh`` 工具可以用来找到这些被忽略的评论。
++``tools/docs/find-unused-docs.sh`` 工具可以用来找到这些被忽略的评论。
  
-   $ tools/docs/kernel-doc -man \
-     $(git grep -l '/\*\*' -- . ":(exclude)Documentation" ":(exclude)tools") \
--    | scripts/split-man.pl /tmp/man
-+    | tools/docs/split-man.pl /tmp/man
-diff --git a/Documentation/translations/it_IT/doc-guide/kernel-doc.rst b/Documentation/translations/it_IT/doc-guide/kernel-doc.rst
-index bac959b8b7b9..91184d48e750 100644
---- a/Documentation/translations/it_IT/doc-guide/kernel-doc.rst
-+++ b/Documentation/translations/it_IT/doc-guide/kernel-doc.rst
-@@ -604,4 +604,4 @@ Come utilizzare kernel-doc per generare pagine man
- Se volete utilizzare kernel-doc solo per generare delle pagine man, potete
- farlo direttamente dai sorgenti del kernel::
+ 请注意，将导出的函数和数据结构引入文档是最有价值的。许多子系统还具有供内部
+ 使用的kernel-doc注释；除非这些注释放在专门针对相关子系统开发人员的文档中，
+diff --git a/scripts/find-unused-docs.sh b/tools/docs/find-unused-docs.sh
+similarity index 85%
+rename from scripts/find-unused-docs.sh
+rename to tools/docs/find-unused-docs.sh
+index 1fb265a0ffd0..2f2195a77c60 100755
+--- a/scripts/find-unused-docs.sh
++++ b/tools/docs/find-unused-docs.sh
+@@ -5,10 +5,10 @@
+ # This script detects files with kernel-doc comments for exported functions
+ # that are not included in documentation.
+ #
+-# usage: Run 'scripts/find-unused-docs.sh directory' from top level of kernel
++# usage: Run 'tools/docs/find-unused-docs.sh directory' from top level of kernel
+ # 	 tree.
+ #
+-# example: $scripts/find-unused-docs.sh drivers/scsi
++# example: $tools/docs/find-unused-docs.sh drivers/scsi
+ #
+ # Licensed under the terms of the GNU GPL License
  
--  $ tools/docs/kernel-doc -man $(git grep -l '/\*\*' -- :^Documentation :^tools) | scripts/split-man.pl /tmp/man
-+  $ tools/docs/kernel-doc -man $(git grep -l '/\*\*' -- :^Documentation :^tools) | tools/docs/split-man.pl /tmp/man
-diff --git a/Documentation/translations/zh_CN/doc-guide/kernel-doc.rst b/Documentation/translations/zh_CN/doc-guide/kernel-doc.rst
-index fb2bbaaa85c1..7f20171259d0 100644
---- a/Documentation/translations/zh_CN/doc-guide/kernel-doc.rst
-+++ b/Documentation/translations/zh_CN/doc-guide/kernel-doc.rst
-@@ -484,16 +484,16 @@ kernel-doc扩展包含在内核源代码树中，位于 ``Documentation/sphinx/k
+@@ -18,7 +18,7 @@ if ! [ -d "Documentation" ]; then
+ fi
  
-   $ tools/docs/kernel-doc -man \
-     $(git grep -l '/\*\*' -- :^Documentation :^tools) \
--    | scripts/split-man.pl /tmp/man
-+    | tools/docs/split-man.pl /tmp/man
+ if [ "$#" -ne 1 ]; then
+-	echo "Usage: scripts/find-unused-docs.sh directory"
++	echo "Usage: tools/docs/find-unused-docs.sh directory"
+ 	exit 1
+ fi
  
- 一些旧版本的git不支持路径排除语法的某些变体。
- 以下命令之一可能适用于这些版本::
- 
-   $ tools/docs/kernel-doc -man \
-     $(git grep -l '/\*\*' -- . ':!Documentation' ':!tools') \
--    | scripts/split-man.pl /tmp/man
-+    | tools/docs/split-man.pl /tmp/man
- 
-   $ tools/docs/kernel-doc -man \
-     $(git grep -l '/\*\*' -- . ":(exclude)Documentation" ":(exclude)tools") \
--    | scripts/split-man.pl /tmp/man
-+    | tools/docs/split-man.pl /tmp/man
- 
-diff --git a/scripts/split-man.pl b/tools/docs/split-man.pl
-similarity index 100%
-rename from scripts/split-man.pl
-rename to tools/docs/split-man.pl
 -- 
 2.51.0
 
