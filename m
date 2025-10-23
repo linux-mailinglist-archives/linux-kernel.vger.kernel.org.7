@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-866961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37558C01340
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:46:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D3CFC01343
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9730C4E93D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:46:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9DCC189B738
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8C14086A;
-	Thu, 23 Oct 2025 12:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C288527E1D7;
+	Thu, 23 Oct 2025 12:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hqdpin9J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPmwVnmg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1518219E8
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFEF219E8
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761223582; cv=none; b=FDKfKeE3BiUHTSmICmsZVZt8hT0Ds87MLAzOQ+EFE7b8ooJmszb3ON9/SQnujopi/84v2YPUVqcpDglFGt9uiFAsrPV/QwtmHoYa/cR8D6NWxBiZxkhfjG8842zUTxfenNY2kub1YQhazagHQcpiWZ6gld1+q1v26D8bYwO4YaE=
+	t=1761223594; cv=none; b=m/DncoLpg00MlQg253rGoXyViAq//98e33stlcIBRX/h12dxLIWjTqTpXmdh86cdsdwMECC9+qFoF46cvlz3+43wtCa3qqXs5pAODWvBblktblwEaszu/IVX3tTRAlRQJp/aX7NTfkMAef8FzOzkKfkmZskpxLKk6tTMw8PYvIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761223582; c=relaxed/simple;
-	bh=Sizf7CGeACdwP7gOc5o1U4haoeWMTWq90HUAkt/cODY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=CfD2YncSvS07bf2vgMs/2GiALzWmN1acMwvR95+RUhaGi8jL1vnErwPdQL2YEIuPf4IcecOKU9uLmeAZBD0rbLZbiRA/7trZyBNTUQ7x84bG404SxdA3CEBAH+vVQXhaY0Z6MjTszdT1J3RB3WJDvd4qtgeQgN3Wb9eTnSGsJbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hqdpin9J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 780EFC4CEF7
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:46:22 +0000 (UTC)
+	s=arc-20240116; t=1761223594; c=relaxed/simple;
+	bh=DFEDw9V38UP3Bs6hX39P0fGR/xMwmTioMP+51jWrgck=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m+SFoYdN88Mr3GPGaAef8n89RzF4guBvH0hDqWZFedYp1sPLls0Rmoh77kObXadMseCtXZuRg88COwRGBlfyk2O39TQ3sg5JCFlVPB/579Fg/0eXuzZx5eRE+xZIDdkV3wEVuzPFCLA9lLhpnW4r/Ad2a1NA4trs2LcEwt2eofo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPmwVnmg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2450C4CEF7;
+	Thu, 23 Oct 2025 12:46:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761223582;
-	bh=Sizf7CGeACdwP7gOc5o1U4haoeWMTWq90HUAkt/cODY=;
-	h=From:Date:Subject:To:Cc:From;
-	b=hqdpin9JHOvvwCEmLhnNbj1Ay+lVvqZEGDQM6WUUMvq7Z2BnfuKKWk296WeF/vtfD
-	 ydNGqqZ+8ow00z6BGS49o5hKNQjFfDdt2sBxvKQNz4L5PicY9KlNnRdHb8UgGAHyap
-	 MM9dLXGk20SdgJRoz61Cph/ZpuoKsM1N3dfTWwlyO1ndQvfeY3wJsK4E8fNqAVw5Vq
-	 96c+OzFd/mJGAlSsD8w4G2wQ/blssiBpY9241A/8T5oax2E41rYksjrpyxP2NIJ3ho
-	 xMUU18xBqO0qn1MJ4zTp5MEpyNLOgjwPJ2mNso0FoJNbPP1aWeGwgOdQFGQahGI4gX
-	 ywWDa9jjQsgrQ==
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-4441ccde23dso331937b6e.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:46:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUwYUGQ/QpADrLz5s79mRJD4eWKuX5K0blhtdB9yT5oCRxsCl22elamRA6RBD01XJSy2Cjby3ENSXGs1/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjKnvs19A7tDdBv8CwwWnrFKznz/8BY7BnvdV7RNI6q98XoX1P
-	NQxUdKP2CPeC5SEo0P7cJpsEA+yCZ4liyEjVb2JeoN656fjLVfcIkKxu9zx6DlborzQFxqNI8Rn
-	kZJdpMDMQgbSMANE/TOk12eB1pANHklg=
-X-Google-Smtp-Source: AGHT+IHOn8VUQsDPmWsiYFCKPqh/+AVdKwBQAHtuCTh8mhrqvInJacgO2I2XTeiGIxF8SMEI+t8beoax3YHZT/p+u8A=
-X-Received: by 2002:a05:6808:2f12:b0:443:a060:28e5 with SMTP id
- 5614622812f47-44bd4307e34mr832695b6e.48.1761223581811; Thu, 23 Oct 2025
- 05:46:21 -0700 (PDT)
+	s=k20201202; t=1761223593;
+	bh=DFEDw9V38UP3Bs6hX39P0fGR/xMwmTioMP+51jWrgck=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oPmwVnmgTYzISULpyoj5DppAAn+4dav+Mu3A+v7JVZBI3bKtQxyCzDhXYfJByGMNA
+	 cIBuY5jTyd9H0saaNf4ezrtwFGp69siRpP97akz/R9b4OsK9g0fGZPbbvjIdcypOx8
+	 aA1TVLKkv/61ImzdmmVbbmfPfp3YyicO3JP32fx2y6bkihczwwRv/62cNhKtFpsTNn
+	 0Upzel2GKEBqLjINJTDH5KkSDoqQwW5peWufz86rrQZVpV3y6FR6pwgGFyKvYPlMiP
+	 GsG3Wfk7FFx9sUnCzaLxVfh7EVHJCxlxl+IQNBpwLoyoYhejTBazCYR7J06eGWnZzG
+	 PAwjndzG9ZuXw==
+From: Borislav Petkov <bp@kernel.org>
+To: X86 ML <x86@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>
+Subject: [PATCH] x86/microcode/AMD: Limit Entrysign signature checking to known generations
+Date: Thu, 23 Oct 2025 14:46:29 +0200
+Message-ID: <20251023124629.5385-1-bp@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 23 Oct 2025 14:46:10 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iGoHmc0bV2WC-pvok6a-teOR76XnmSUu_LBromN-kFRQ@mail.gmail.com>
-X-Gm-Features: AS18NWCGVExabVNosS-Hym7XJ6gfOtuPFAH_FVR5bTGW_F-oXKAIVG3ckszRQr8
-Message-ID: <CAJZ5v0iGoHmc0bV2WC-pvok6a-teOR76XnmSUu_LBromN-kFRQ@mail.gmail.com>
-Subject: [GIT PULL] Power management fixes for v6.18-rc3
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+From: "Borislav Petkov (AMD)" <bp@alien8.de>
 
-Please pull from the tag
+Limit Entrysign sha256 signature checking to CPUs in the range Zen1-Zen5.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-6.18-rc3
+X86_BUG cannot be used here because the loading on the BSP happens way
+too early, before the cpufeatures machinery has been set up.
 
-with top-most commit b62bd2cf7e991efbc823665e54dd7d7d8372c33b
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+---
+ arch/x86/kernel/cpu/microcode/amd.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
- Merge branches 'pm-cpuidle' and 'pm-cpufreq'
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index cdce885e2fd5..2a251de66b9d 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -233,13 +233,31 @@ static bool need_sha_check(u32 cur_rev)
+ 	return true;
+ }
+ 
++static bool cpu_has_entrysign(void)
++{
++	unsigned int fam   = x86_family(bsp_cpuid_1_eax);
++	unsigned int model = x86_model(bsp_cpuid_1_eax);
++
++	if (fam == 0x17)
++		return true;
++
++	if (fam == 0x19) {
++		if (model <= 0x2f ||
++		    (0x40 <= model && model <= 0x4f) ||
++		    (0x60 <= model && model <= 0x6f))
++			return true;
++	}
++
++	return false;
++}
++
+ static bool verify_sha256_digest(u32 patch_id, u32 cur_rev, const u8 *data, unsigned int len)
+ {
+ 	struct patch_digest *pd = NULL;
+ 	u8 digest[SHA256_DIGEST_SIZE];
+ 	int i;
+ 
+-	if (x86_family(bsp_cpuid_1_eax) < 0x17)
++	if (!cpu_has_entrysign())
+ 		return true;
+ 
+ 	if (!need_sha_check(cur_rev))
+-- 
+2.51.0
 
-on top of commit 211ddde0823f1442e4ad052a2f30f050145ccada
-
- Linux 6.18-rc2
-
-to receive power management fixes for 6.18-rc3.
-
-These revert a cpuidle menu governor commit leading to a performance
-regression, fix an amd-pstate driver regression introduced recently,
-and fix new conditional guard definitions for runtime PM.
-
- - Add missing _RET == 0 condition to recently introduced conditional
-   guard definitions for runtime PM (Rafael Wysocki)
-
- - Revert a cpuidle menu governor change that introduced a serious
-   performance regression on Chromebooks with Intel Jasper Lake
-   processors (Rafael Wysocki)
-
- - Fix an amd-pstate driver regression leading to EPP=0 after
-   hibernation (Mario Limonciello)
-
-Thanks!
-
-
----------------
-
-Mario Limonciello (AMD) (1):
-      cpufreq/amd-pstate: Fix a regression leading to EPP 0 after hibernate
-
-Rafael J. Wysocki (2):
-      Revert "cpuidle: menu: Avoid discarding useful information"
-      PM: runtime: Fix conditional guard definitions
-
----------------
-
- drivers/cpufreq/amd-pstate.c     |  6 +++++-
- drivers/cpuidle/governors/menu.c | 21 +++++++++------------
- include/linux/pm_runtime.h       |  8 ++++----
- 3 files changed, 18 insertions(+), 17 deletions(-)
 
