@@ -1,143 +1,234 @@
-Return-Path: <linux-kernel+bounces-866323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2CBBFF76F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:10:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A42CBFF77E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CEEC3A5AA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:10:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC318188E473
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945FD2C029F;
-	Thu, 23 Oct 2025 07:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0806423D288;
+	Thu, 23 Oct 2025 07:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YylWJdDA"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OODg5w6E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8562BEC34
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C56026F29B;
+	Thu, 23 Oct 2025 07:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761203423; cv=none; b=EY77HCyvZBGvVEPVzWdXlr4muvjkFZ4+eXZKgNe9pHCVRiLOXmTuHRE0I87s3f+Uvc2eXu2QIWb90wA1zeZhrNltuxJ6xELnsFG+YZTwOHpTJKDXltGBs0NLXB3pwrxePUSBHI7swtVRlpk/1igOyxJv3vo547EvkqUqNm4S3yE=
+	t=1761203638; cv=none; b=hM8vi0J7xDKrT6KLx7xMqiiQMbiH/I5psJzxwoJ7ZlO2VB5xe4Bb28Us5tJdc7CFQLyjiA7zzALO80eS4YUGGnZZ54ht6yTescULqG/zOtFM5KunZpIy8Zxw/HKilJ8hr/sPLjMCLXVL+ItR41XrLTsbqJkxhXRrDZxDgI+t3gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761203423; c=relaxed/simple;
-	bh=atSHiBv6EOD3kMNIDMzYEJsOitPHWi/LcNVnt9jVTkU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fuVHb5Ot5NQArzqCxvN/MdC+ApQIrHI7SQtnC1MHVKTRwh25XOb+JJhj/mp8cEbAtPui53Y/Mcyf6V0eTpSsSVakecXJG0rbI/gy01Lz/7qqcwfsSdoGxms++PA47OgGDV5p7gPoMAO+FI8Pu5nTZjDOjAlwr5WdCkon9sQErTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YylWJdDA; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27eec33b737so6874735ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:10:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761203421; x=1761808221; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ojo0D0SUrVi8rANl2uoQB3ZeIV6seeVTI9tIuETGh2U=;
-        b=YylWJdDAWIKc4/vBOz+vbSYll8wN63MLpsI9Q0obiDNraaiEQFbeM0U0YwKnDsnpIz
-         fS5KZ03I5LZ5/ny42IoAM4R3KyGX1r/L8rPaypxUWT25ZQxy6iCsqJ9Ww5ufi+qEkFDK
-         baCUwAyA+Z475dvwyd5zAmHrZWPiKArdx/2bTy/Wjt8ku7VBmTThtxzvtTxeDSkjnnaZ
-         P9hu3lawAU0RGgdItt8HoCy4yIU5gPWNWnEV1TphPEz1uxIb86DXgyNxUrOUgrwWEnE8
-         q8GxG/x7byEFSmRe2np4MBJJu4MqMEm8wK1jplX5wSVGl6tnmyXVICRJu7dxSj2kVjM/
-         ll6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761203421; x=1761808221;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ojo0D0SUrVi8rANl2uoQB3ZeIV6seeVTI9tIuETGh2U=;
-        b=lQYRaQ0xc4qY7Tu+EL3lhq0FPnrPR7RI1rPbMR0ho+y2QK2t7lAnWcuxqxi4SVFwHr
-         jqFWwr6BGTiVHaedgozMhFpC8dOTIUiBnBm8n1wYiyMvKap6QKYDhtkvkIm8D0UXuwVE
-         lUAGEWlVzRcBPVgsJf7L5bwwEqVbHb8cHh9NnUXsiSruypewJabS5hxr1d7QfW6lmuHR
-         tuEko3UJuCUvukUStGLcmGinNTz/tPLUpu1qRvvPOkoG2SOtxOxhyEBf1nenBN1T5RLk
-         u9USUFEw3gyrHRLUK1kxS8QlIE5EeFY/kzUwM/HA6NjWxc39vH3c5idhnvEGzng4cOiO
-         E8jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxv6ofmU1Rt0iI8Y3lPDmcPw810ZG9F53qLyLSqGvIOnuOzWTODNM81eZ6StuuUF8De7X/kkh+Agt6Ctw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1CCDJghI4TCd9jpyURqxa7MkrEl92eyRE0xqOjwdNcDbR3UZ4
-	wcWvB4y+pznr9y3LqcA5QBdHcbRfQ1QfzFCsSwnaSdhhMvMcnANIZU1B0qpMWd8Br2+vKL0nCsF
-	tjI9MNfkyti8yGf8fZ2/1QuV4+ffivAw=
-X-Gm-Gg: ASbGncsssylhXiRHHaVBGWvtJKqU6oqyMaHQFZRrL2uPXf2gzAisrb62JpB0ukDIMvh
-	vp/v3WWZv+tpJQgDtkkNh8w1wlFBKG8NyhoJRvwcA/aSf6sSQ78pT6XS671Ewd3KvEYu7UheQzL
-	x/QYrf4HE28Xf3jms1oPOYM68YymUY6ntQNu7l27KocJCpwPTBsN0wPhG+YUvs2GkasItc9KLkx
-	N3SIrzp+F+a9FkVn+8CJk/kLoV9FBMdY0SK4K45WQEZN7pStSb7n1NO1O+2dEGbVUFLK3e5V0tx
-	QWGACA661Oc9Ng==
-X-Google-Smtp-Source: AGHT+IEtJBcARSautKMltyAqLGBQ/Gd8B1xihDkjxP19PBXKTkpvD+Eo/uq58hE6h11K8gLvUb2NUw09soHy4QEpmTY=
-X-Received: by 2002:a17:903:46c7:b0:274:aab9:4ed4 with SMTP id
- d9443c01a7336-290cb65f861mr305187765ad.57.1761203421516; Thu, 23 Oct 2025
- 00:10:21 -0700 (PDT)
+	s=arc-20240116; t=1761203638; c=relaxed/simple;
+	bh=2Z6faUlpxxg8NJ99mOXDv3nxN6IIqbuwazngqBJ2agg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qmlv5X32U2mGQ3BGHQmieRcI/dP+DgvsSZpSNZ79TQyr/1CixSRuI+MHUoJN4SmXAsl3VuprpYNjqnyhW0NraabieaukomzitbF1Pc+lqmroQrGiGn5qHuFj5XbQzsp8KTY9yXToaHaaiytFY05prpgckLBdVb26KOy7SFm2gdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OODg5w6E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24502C4CEE7;
+	Thu, 23 Oct 2025 07:13:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761203637;
+	bh=2Z6faUlpxxg8NJ99mOXDv3nxN6IIqbuwazngqBJ2agg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OODg5w6EFB/hjsGbHVp2Vq9m7F+hBZgNtIuU5LNZe2mYTpdNyCVCbIXUA3Vdvyk52
+	 ErhoZo9K7Z89GKXdanMvWKrAWUrbXY67tNn6zxtWL+7BzQSgaPo52fDLmUpan2VWdD
+	 rE2qNVF+7AsYdvGZDRWtc/a8+uxAsg54+3aw866XKzV9gBQuY2ujGksVFsgziH3ktL
+	 opVRerWZOfIvj8VhNQRP2iKDKInrAtXVwvVYm96tdy08q1RKVcXFwAqP524kuC2LgX
+	 DtWdWbTC1YhHlmVgdTf6JFxr4NPdwQYSVh2DnnrfeRw81pRGpc9vwOUINW3WpTOZVf
+	 BlAC0rtfGtWXA==
+Date: Thu, 23 Oct 2025 10:13:49 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net,
+	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	masahiroy@kernel.org, ojeda@kernel.org, pratyush@kernel.org,
+	rdunlap@infradead.org, tj@kernel.org
+Subject: Re: [PATCHv7 1/7] kho: allow to drive kho from within kernel
+Message-ID: <aPnVrZC4Fz273lLn@kernel.org>
+References: <20251022005719.3670224-1-pasha.tatashin@soleen.com>
+ <20251022005719.3670224-2-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023064538.368850-1-shengjiu.wang@nxp.com> <20251023064538.368850-3-shengjiu.wang@nxp.com>
-In-Reply-To: <20251023064538.368850-3-shengjiu.wang@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Thu, 23 Oct 2025 10:12:39 +0300
-X-Gm-Features: AS18NWCgBWlr59lTgB1C8kcLIypbCmmlbtXSZ7g6CCjdzuXK7TY5j-4JWGWmtC0
-Message-ID: <CAEnQRZB+rFudpHB7TKFOCumh4Ni9q-421X3jRL2y8UbV74e-xQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ASoC: fsl_micfil: correct the endian format for DSD
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
-	nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, 
-	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022005719.3670224-2-pasha.tatashin@soleen.com>
 
-oldest - > most significant bit.
+On Tue, Oct 21, 2025 at 08:57:13PM -0400, Pasha Tatashin wrote:
+> Allow kernel to drive finalize and abort without requiring triggers
+> from the userspace.
+> 
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
 
-With that,
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-
-
-On Thu, Oct 23, 2025 at 9:48=E2=80=AFAM Shengjiu Wang <shengjiu.wang@nxp.co=
-m> wrote:
->
-> The DSD format supported by micfil is that oldest bit is in bit 31, so
-> the format should be DSD little endian format.
->
-> Fixes: 21aa330fec31 ("ASoC: fsl_micfil: Add decimation filter bypass mode=
- support")
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 > ---
->  sound/soc/fsl/fsl_micfil.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/sound/soc/fsl/fsl_micfil.c b/sound/soc/fsl/fsl_micfil.c
-> index aabd90a8b3ec..cac26ba0aa4b 100644
-> --- a/sound/soc/fsl/fsl_micfil.c
-> +++ b/sound/soc/fsl/fsl_micfil.c
-> @@ -131,7 +131,7 @@ static struct fsl_micfil_soc_data fsl_micfil_imx943 =
-=3D {
->         .fifos =3D 8,
->         .fifo_depth =3D 32,
->         .dataline =3D  0xf,
-> -       .formats =3D SNDRV_PCM_FMTBIT_S32_LE | SNDRV_PCM_FMTBIT_DSD_U32_B=
-E,
-> +       .formats =3D SNDRV_PCM_FMTBIT_S32_LE | SNDRV_PCM_FMTBIT_DSD_U32_L=
-E,
->         .use_edma =3D true,
->         .use_verid =3D true,
->         .volume_sx =3D false,
-> @@ -823,7 +823,7 @@ static int fsl_micfil_hw_params(struct snd_pcm_substr=
-eam *substream,
->                 break;
->         }
->
-> -       if (format =3D=3D SNDRV_PCM_FORMAT_DSD_U32_BE) {
-> +       if (format =3D=3D SNDRV_PCM_FORMAT_DSD_U32_LE) {
->                 micfil->dec_bypass =3D true;
->                 /*
->                  * According to equation 29 in RM:
-> --
-> 2.34.1
->
->
+>  include/linux/kexec_handover.h | 15 +++++++
+>  kernel/kexec_handover.c        | 75 +++++++++++++++++++++-------------
+>  2 files changed, 61 insertions(+), 29 deletions(-)
+> 
+> diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handover.h
+> index 25042c1d8d54..04d0108db98e 100644
+> --- a/include/linux/kexec_handover.h
+> +++ b/include/linux/kexec_handover.h
+> @@ -67,6 +67,10 @@ void kho_memory_init(void);
+>  
+>  void kho_populate(phys_addr_t fdt_phys, u64 fdt_len, phys_addr_t scratch_phys,
+>  		  u64 scratch_len);
+> +
+> +int kho_finalize(void);
+> +int kho_abort(void);
+> +
+>  #else
+>  static inline bool kho_is_enabled(void)
+>  {
+> @@ -139,6 +143,17 @@ static inline void kho_populate(phys_addr_t fdt_phys, u64 fdt_len,
+>  				phys_addr_t scratch_phys, u64 scratch_len)
+>  {
+>  }
+> +
+> +static inline int kho_finalize(void)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static inline int kho_abort(void)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+>  #endif /* CONFIG_KEXEC_HANDOVER */
+>  
+>  #endif /* LINUX_KEXEC_HANDOVER_H */
+> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
+> index de4466b47455..6458f369a346 100644
+> --- a/kernel/kexec_handover.c
+> +++ b/kernel/kexec_handover.c
+> @@ -1087,7 +1087,7 @@ static int kho_out_update_debugfs_fdt(void)
+>  	return err;
+>  }
+>  
+> -static int kho_abort(void)
+> +static int __kho_abort(void)
+>  {
+>  	int err;
+>  	unsigned long order;
+> @@ -1120,7 +1120,27 @@ static int kho_abort(void)
+>  	return err;
+>  }
+>  
+> -static int kho_finalize(void)
+> +int kho_abort(void)
+> +{
+> +	int ret = 0;
+> +
+> +	if (!kho_enable)
+> +		return -EOPNOTSUPP;
+> +
+> +	guard(mutex)(&kho_out.lock);
+> +	if (!kho_out.finalized)
+> +		return -ENOENT;
+> +
+> +	ret = __kho_abort();
+> +	if (ret)
+> +		return ret;
+> +
+> +	kho_out.finalized = false;
+> +
+> +	return kho_out_update_debugfs_fdt();
+> +}
+> +
+> +static int __kho_finalize(void)
+>  {
+>  	int err = 0;
+>  	u64 *preserved_mem_map;
+> @@ -1163,12 +1183,32 @@ static int kho_finalize(void)
+>  abort:
+>  	if (err) {
+>  		pr_err("Failed to convert KHO state tree: %d\n", err);
+> -		kho_abort();
+> +		__kho_abort();
+>  	}
+>  
+>  	return err;
+>  }
+>  
+> +int kho_finalize(void)
+> +{
+> +	int ret;
+> +
+> +	if (!kho_enable)
+> +		return -EOPNOTSUPP;
+> +
+> +	guard(mutex)(&kho_out.lock);
+> +	if (kho_out.finalized)
+> +		return -EEXIST;
+> +
+> +	ret = __kho_finalize();
+> +	if (ret)
+> +		return ret;
+> +
+> +	kho_out.finalized = true;
+> +
+> +	return kho_out_update_debugfs_fdt();
+> +}
+> +
+>  static int kho_out_finalize_get(void *data, u64 *val)
+>  {
+>  	mutex_lock(&kho_out.lock);
+> @@ -1178,35 +1218,12 @@ static int kho_out_finalize_get(void *data, u64 *val)
+>  	return 0;
+>  }
+>  
+> -static int kho_out_finalize_set(void *data, u64 _val)
+> +static int kho_out_finalize_set(void *data, u64 val)
+>  {
+> -	int ret = 0;
+> -	bool val = !!_val;
+> -
+> -	mutex_lock(&kho_out.lock);
+> -
+> -	if (val == kho_out.finalized) {
+> -		if (kho_out.finalized)
+> -			ret = -EEXIST;
+> -		else
+> -			ret = -ENOENT;
+> -		goto unlock;
+> -	}
+> -
+>  	if (val)
+> -		ret = kho_finalize();
+> +		return kho_finalize();
+>  	else
+> -		ret = kho_abort();
+> -
+> -	if (ret)
+> -		goto unlock;
+> -
+> -	kho_out.finalized = val;
+> -	ret = kho_out_update_debugfs_fdt();
+> -
+> -unlock:
+> -	mutex_unlock(&kho_out.lock);
+> -	return ret;
+> +		return kho_abort();
+>  }
+>  
+>  DEFINE_DEBUGFS_ATTRIBUTE(fops_kho_out_finalize, kho_out_finalize_get,
+> -- 
+> 2.51.0.915.g61a8936c21-goog
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
