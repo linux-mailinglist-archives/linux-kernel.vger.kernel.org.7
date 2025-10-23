@@ -1,152 +1,145 @@
-Return-Path: <linux-kernel+bounces-867234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9220FC01F4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:00:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE253C01F6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 381A635A5C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:00:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32BB93AB349
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD8D3370FD;
-	Thu, 23 Oct 2025 14:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16170333725;
+	Thu, 23 Oct 2025 14:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PlaN2aSD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NFZJ4ezu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC88333452;
-	Thu, 23 Oct 2025 14:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3466333441
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761231577; cv=none; b=L+rZXW6zn7NUwKMzQgw8hJrycoZI7ivsTFynM44ftTH43y8D5987QuxI/xj1sV/XEZQ+xKkkChoY4fv4gKF2I2F/lF7lk0daG21cPoqbkxhJ+VAFvFJ49R2H8JHlRlH0yvAnluPz/wtdkJ/WlyEdfRxzsWzzfMgfnWtm6KMq/NA=
+	t=1761231575; cv=none; b=n7knw7qwPw7LXsOABO5LZFsGlbWYFkJY9kntpyNsppTmv5HHoBO898K9DJAmW7xdKfnnab+DeJDbdVXH73eQMmQqydJhx/y1Zd49ARMb0iFViTSsQDiJkcCAP/XeyGIoF5lCePOTHyzId8u0PUYv+/aw/6/XDianikiEY2QGLOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761231577; c=relaxed/simple;
-	bh=mEGb7sJhxpAsby+nkcgfpSTFUr7uvLYxKEWGdriM7AU=;
-	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QzDgmZKuUVwAhzf0aL11WouBOSczoege5Ntng2Gjj/PJgeGsCb7zixQ4e0rcyVXUVcr1anDjfEGN3CFbzsALGt9uIbLKpcjQuPbUoyA83FHTzlotF/Hdz6I7gLYM2dh48UbPsvl9SwGoOLn5eWGYOAQEpMO9qTxIrNZVo3PVqSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PlaN2aSD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A20C4CEE7;
-	Thu, 23 Oct 2025 14:59:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761231576;
-	bh=mEGb7sJhxpAsby+nkcgfpSTFUr7uvLYxKEWGdriM7AU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=PlaN2aSDl2VV3R1B6IKJF7dgbpvailfkTYGlNomAs923Npb2aqkM3bsEP4o1uQyX8
-	 8rVbvDEcjo8Tl7QADG0jePlA8fEgNRvYatTK3Y+689/1xNumbJV3DYllezuoAO/j0m
-	 YRVR6IJnEcaJburMly0URgF4aiNWpAMkg+ffSyu8Es8XnP7b5VR7YHevTaUIhtx30y
-	 21n2dhBwF7tENaohgFfatLGFzdtU8wkDFNzlkWyJ4Mz4AvMqmt/KVGNBRkr8iZzBTW
-	 hUOTNjuVzjE9x8n67xO88inHC7MklA+E5NLKMUrFcvx9vSJd0Si4TF19wtX8xfBUJ0
-	 kCxYUb6291oiw==
-Subject: [PATCH net V1 1/3] veth: enable dev_watchdog for detecting stalled
- TXQs
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-To: netdev@vger.kernel.org, makita.toshiaki@lab.ntt.co.jp
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>,
- Eric Dumazet <eric.dumazet@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, ihor.solodrai@linux.dev,
- toshiaki.makita1@gmail.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
-Date: Thu, 23 Oct 2025 16:59:31 +0200
-Message-ID: <176123157173.2281302.7040578942230212638.stgit@firesoul>
-In-Reply-To: <176123150256.2281302.7000617032469740443.stgit@firesoul>
-References: <176123150256.2281302.7000617032469740443.stgit@firesoul>
-User-Agent: StGit/1.5
+	s=arc-20240116; t=1761231575; c=relaxed/simple;
+	bh=JNBnkDYH4wR6V0MiUiS+6gufeKxWGxxvHeOWw3deuWs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DaAb1gsyjGakRAln9FFam68eQ7VQR+9vWpCxrxXO247OksmLumnzjjC8EkJetQSewdmykAjQ7vG419qU3IrS1B7DnUUWly2+xe32lAUt7wOCjjcl/xsfsOvfRG6lFI7HUrSGzYR6W7+8ULHWVq+02VpU9rUoa+k4oflrG2U7YO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NFZJ4ezu; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761231574; x=1792767574;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=JNBnkDYH4wR6V0MiUiS+6gufeKxWGxxvHeOWw3deuWs=;
+  b=NFZJ4ezuEN/e8lrkdYgw4aOokEmRY2a7Wfkd+q4ELtH12KKgBxkN7YEj
+   Fy15D3hvytQu21mFwgP6gOnFP01APsV7U7u50Fr5Y2ZL7iFCJvQmm0g0L
+   RIDeDOFdzhRR/+OnY3qbkIAUvU+7MDCiwrq1GG/tcc392DXa7Um71ZvYo
+   aYaj9H5tvK2vW7ucV3UK6zeJTztZe8eEQfzGOdiwzB1Rsa7PLVDdzG5BO
+   GOknEH/GidMCdFdaMAKdVv975Uyi6//ZrWwCEf5enO1iR9mOYsAMjmN8g
+   HaEs0gyvf3MPc24xMlWoxPcoQiZqQ87UYFtwn/nj5SeLAjfg6dmsSTKX7
+   Q==;
+X-CSE-ConnectionGUID: STV3BOxFRBWR2GQdc0HY7Q==
+X-CSE-MsgGUID: eZFrDrW1ThSz6Ip7VnspWg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="88868916"
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="88868916"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 07:59:33 -0700
+X-CSE-ConnectionGUID: tzLhNoYGQEemqX2ire/dTQ==
+X-CSE-MsgGUID: AipfVlmhTUSHyRh/ny/32g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="183349396"
+Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.109.4]) ([10.125.109.4])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 07:59:32 -0700
+Message-ID: <f703de61-5616-40b8-b9b5-08529f711e64@intel.com>
+Date: Thu, 23 Oct 2025 07:59:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] NTB: ntb_transport: Remove unused 'retries' field
+ from ntb_queue_entry
+To: Koichiro Den <den@valinux.co.jp>, ntb@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Cc: jdmason@kudzu.us, allenbh@gmail.com
+References: <20251023072105.901707-1-den@valinux.co.jp>
+ <20251023072105.901707-2-den@valinux.co.jp>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251023072105.901707-2-den@valinux.co.jp>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The changes introduced in commit dc82a33297fc ("veth: apply qdisc
-backpressure on full ptr_ring to reduce TX drops") have been found to cause
-a race condition in production environments.
 
-Under specific circumstances, observed exclusively on ARM64 (aarch64)
-systems with Ampere Altra Max CPUs, a transmit queue (TXQ) can become
-permanently stalled. This happens when the race condition leads to the TXQ
-entering the QUEUE_STATE_DRV_XOFF state without a corresponding queue wake-up,
-preventing the attached qdisc from dequeueing packets and causing the
-network link to halt.
 
-As a first step towards resolving this issue, this patch introduces a
-failsafe mechanism. It enables the net device watchdog by setting a timeout
-value and implements the .ndo_tx_timeout callback.
+On 10/23/25 12:21 AM, Koichiro Den wrote:
+> Drop the unused field 'retries' from struct ntb_queue_entry for
+> simplicity's sake.
+> 
+> Signed-off-by: Koichiro Den <den@valinux.co.jp>
 
-If a TXQ stalls, the watchdog will trigger the veth_tx_timeout() function,
-which logs a warning and calls netif_tx_wake_queue() to unstall the queue
-and allow traffic to resume.
-
-The log message will look like this:
-
- veth42: NETDEV WATCHDOG: CPU: 34: transmit queue 0 timed out 5393 ms
- veth42: veth backpressure stalled(n:1) TXQ(0) re-enable
-
-This provides a necessary recovery mechanism while the underlying race
-condition is investigated further. Subsequent patches will address the root
-cause and add more robust state handling in ndo_open/ndo_stop.
-
-Fixes: dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to reduce TX drops")
-Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
----
- drivers/net/veth.c |   16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-index a3046142cb8e..7b1a9805b270 100644
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -959,8 +959,10 @@ static int veth_xdp_rcv(struct veth_rq *rq, int budget,
- 	rq->stats.vs.xdp_packets += done;
- 	u64_stats_update_end(&rq->stats.syncp);
- 
--	if (peer_txq && unlikely(netif_tx_queue_stopped(peer_txq)))
-+	if (peer_txq && unlikely(netif_tx_queue_stopped(peer_txq))) {
-+		txq_trans_cond_update(peer_txq);
- 		netif_tx_wake_queue(peer_txq);
-+	}
- 
- 	return done;
- }
-@@ -1373,6 +1375,16 @@ static int veth_set_channels(struct net_device *dev,
- 	goto out;
- }
- 
-+static void veth_tx_timeout(struct net_device *dev, unsigned int txqueue)
-+{
-+	struct netdev_queue *txq = netdev_get_tx_queue(dev, txqueue);
-+
-+	netdev_err(dev, "veth backpressure stalled(n:%ld) TXQ(%u) re-enable\n",
-+		   atomic_long_read(&txq->trans_timeout), txqueue);
-+
-+	netif_tx_wake_queue(txq);
-+}
-+
- static int veth_open(struct net_device *dev)
- {
- 	struct veth_priv *priv = netdev_priv(dev);
-@@ -1711,6 +1723,7 @@ static const struct net_device_ops veth_netdev_ops = {
- 	.ndo_bpf		= veth_xdp,
- 	.ndo_xdp_xmit		= veth_ndo_xdp_xmit,
- 	.ndo_get_peer_dev	= veth_peer_dev,
-+	.ndo_tx_timeout		= veth_tx_timeout,
- };
- 
- static const struct xdp_metadata_ops veth_xdp_metadata_ops = {
-@@ -1749,6 +1762,7 @@ static void veth_setup(struct net_device *dev)
- 	dev->priv_destructor = veth_dev_free;
- 	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
- 	dev->max_mtu = ETH_MAX_MTU;
-+	dev->watchdog_timeo = msecs_to_jiffies(5000);
- 
- 	dev->hw_features = VETH_FEATURES;
- 	dev->hw_enc_features = VETH_FEATURES;
-
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
+>  drivers/ntb/ntb_transport.c | 11 ++---------
+>  1 file changed, 2 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
+> index eb875e3db2e3..39b2398b95a6 100644
+> --- a/drivers/ntb/ntb_transport.c
+> +++ b/drivers/ntb/ntb_transport.c
+> @@ -113,7 +113,6 @@ struct ntb_queue_entry {
+>  	void *buf;
+>  	unsigned int len;
+>  	unsigned int flags;
+> -	int retries;
+>  	int errors;
+>  	unsigned int tx_index;
+>  	unsigned int rx_index;
+> @@ -1630,9 +1629,7 @@ static void ntb_async_rx(struct ntb_queue_entry *entry, void *offset)
+>  	if (res < 0)
+>  		goto err;
+>  
+> -	if (!entry->retries)
+> -		qp->rx_async++;
+> -
+> +	qp->rx_async++;
+>  	return;
+>  
+>  err:
+> @@ -1910,9 +1907,7 @@ static void ntb_async_tx(struct ntb_transport_qp *qp,
+>  	if (res < 0)
+>  		goto err;
+>  
+> -	if (!entry->retries)
+> -		qp->tx_async++;
+> -
+> +	qp->tx_async++;
+>  	return;
+>  
+>  err:
+> @@ -2273,7 +2268,6 @@ int ntb_transport_rx_enqueue(struct ntb_transport_qp *qp, void *cb, void *data,
+>  	entry->buf = data;
+>  	entry->len = len;
+>  	entry->flags = 0;
+> -	entry->retries = 0;
+>  	entry->errors = 0;
+>  	entry->rx_index = 0;
+>  
+> @@ -2323,7 +2317,6 @@ int ntb_transport_tx_enqueue(struct ntb_transport_qp *qp, void *cb, void *data,
+>  	entry->len = len;
+>  	entry->flags = 0;
+>  	entry->errors = 0;
+> -	entry->retries = 0;
+>  	entry->tx_index = 0;
+>  
+>  	rc = ntb_process_tx(qp, entry);
 
 
