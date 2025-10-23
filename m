@@ -1,151 +1,170 @@
-Return-Path: <linux-kernel+bounces-867376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B612C02713
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:27:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81E9EC0271C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E5324E4478
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:27:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F5519A4520
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476DA2D739C;
-	Thu, 23 Oct 2025 16:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93BC2F1FD2;
+	Thu, 23 Oct 2025 16:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQEz05TZ"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Prdk/SBo"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7212D592B
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746A92D6401
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761236841; cv=none; b=s6s5S5L/Yfkxcl+m/WM0Pq+Z3XkTOlyZNEYeWf1i8cpz4sH/Rz5RN/Azc5nnCitIOO8w56w7ry4NbiXnDFHJUdNXUgVqh21XCuaOGIwTBUe4Jpp6e4xsxdGmflJNADIdB9oLuXpcF/cQrkaBuBjNvQCWHwqlLyVk5fy9q3IsoqU=
+	t=1761236858; cv=none; b=AkNuOFSkL1zwofZsv/J9Bsa6y6I9UY/kZ+wFzOp+kyHqmDF5pnA51p8Qw3sTAsvDyWGf1Oo7ANC+O5h69vw3VbXi7Lpr/6HRnwgLEErrwP27RL0nL4kiCY6OcTaX+4BIvLToJtjeIcwOaFhdGS/JssNZTSGJoQ5bwe1VWGLB+Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761236841; c=relaxed/simple;
-	bh=eIKrqlXU/8n9AqT0k1+v3qjg2Q9CMZzbVJvOLiJgpEo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nm79U7t0cgxbAtrCHp1Sipx27PWm4Bhl8aFoMBW7gEG0bvKcDmSrrlldLOx3XCDV8eIqsV9qs7WtYdF8Coyy1QgjLsTjk4FFwrRusZfPMOmAN6kmUjovi1FRpJFKr+lDX2uICcNXS9aXPzCRAtolFdzSU2tWmVTgLJnQ9CmVRZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQEz05TZ; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-87c20106cbeso13945126d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:27:18 -0700 (PDT)
+	s=arc-20240116; t=1761236858; c=relaxed/simple;
+	bh=97MO41jRSpevZOQY5X/s6jqv4fmMPnX3F7sJNNlsleo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fi9m+kbvFOpLeIHLjlyt4TzpBZBKfKbJxjHKvaA0LrkCBj0JFl+tDCIT7MujVlCRMcbAa4w9Y6AMJDvYRwAFxX2sjG2kuNvo/7JOM1eyK3ytiqqbEbpBZ5ww4sDh29hYJxvqCsslPdfzNiPsR2VPLWizWobLTPug4Gk70D3tr+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Prdk/SBo; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-63c21467e5bso1840773a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:27:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761236838; x=1761841638; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1761236855; x=1761841655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2imvIwdo3P7V8AuAbuO7jvkCgPpqmVrl6exJRyM00DU=;
-        b=KQEz05TZ80Z8FaTDYpyks3wM809T9FmSZ1mAadKM0nn8RCiyzsFyl4JwFTCxpuz1pe
-         kheMGCswjGQEbyByrZL1bnUknNblylIJ5P2BrCjwu4dkcDgDdNkYga1jK9UrwhPHhZJJ
-         QWwQaVEidby/f+FG4HkV+/UCH3naPtF1+z5VIe+Ai3u3o1guq2xok/dTJ0Jujc0N3FkQ
-         5d2sPQxUWpJrcr2cqr57SGYHjkBv7Nz67SWNm9IDM0soVQrA+IqNE0WzQWArhjZLqUjl
-         hb/n1WBFnAKdNZ+i5b3/eqTcm6Jqg6KZiBJexKlrSfYPsFj9Chr5vmdawaKuKancynmU
-         71Jg==
+        bh=97MO41jRSpevZOQY5X/s6jqv4fmMPnX3F7sJNNlsleo=;
+        b=Prdk/SBofghIdtzCeMBtAvJyI7nlROk7g2TwGmQ3o5R9VZEILaksGldZ+H2+iWi+s6
+         l9FTfZS16hPTzScJA8prerCGLoP8y5i0SMRHOavog3f5yLoguaOY27V0bQjIYLQxzDPB
+         YRNs1PweZsaccigXXB26VDi6eTdwxqA7xvgL6sJJ3JJVbW/L5weyVsJ86S5NOj5LPNfU
+         lBnesfC7nyGsGXVmCIbuR2WyESddOYcgzF+I2kXb/RjmVSVad6+BvHP7phcphn3ElSUx
+         WGg/iCfqqncmWwMLn/dLnmM7aK69LVSCwJrok4e+iWRH+mv24SY0z8jy461KcIaPov0O
+         Kp/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761236838; x=1761841638;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761236855; x=1761841655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2imvIwdo3P7V8AuAbuO7jvkCgPpqmVrl6exJRyM00DU=;
-        b=PzR/RRlzd8ZBiA8AU001dvB9Y1xR1FSVjpEz9X/xF9f/qSoBW8zE64Y0kDaCOuYZ6s
-         wnMZefXv+eQqQhgYy1on8OYt7lG8K9kwu7uD0wV9k895hXGaE6T+7ASmEwQVBF6mJ+WB
-         40xTnJejQIhoUJMqxHmnQfSdMbhhhGwR5bNsLA1Ag2gJD3eGzB8O4MFDTBl8U2nk9KHb
-         n/frSwO4s5b6D2Hpu1QTAeKgf/RMy1/09YVmjw6jepURqsDmOcRxotoQ5Cj16N69O7qz
-         ABny3bP1JgG6Hr/1FpSWw5bB+fJ2MuC9d35nT/HUS87Hyht6v+amuNgbTMSkuW789Xkk
-         mWbw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2yGHLEUK3qrEZjFTzSeWp3zP+4OhOz3CNCMgybLHbxyU9k/xqCmgt6xPVRCmxti/F25qQ5wsqjkZcs34=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1tIGoqf1RK5SEf+fM5j+UWGxy5BJhl1veOzEFE5bvUyTt4TYG
-	mPxXGALw49lDRAwmye+/+cn1imp4oj1vbYYK4rCJTKoeMILm+Kz9TNYv
-X-Gm-Gg: ASbGnctqvOIanOBmfvar8b5XuJOYUGB9AkMJXdRfhwuRGmhE0RCO/FXPB20sZ08I4WO
-	0Zk+6XZEG0EJ4tWSMpUou2mVEkoKIANX9CgWJHJp/N+syOs2a28ZGQN9JsbelV6Z/lvMMjhYv6p
-	uAgZlD8xd4VstXvdH+NQdRt/TkMkfzWqi3t3cpW8mBZT9iUeWt4K3HhuamD6Y3w3TND6d63zECu
-	Ofj3cYEY1GucJj+1FmTY5x2kDEv5p6LOLCAg4PUHzJM//SbDDrLQNB2bnUj/zSmuTPc9jflguOJ
-	1Cxfa1QR3hRhJoXtFcwOm5iV42IHdLjBa6Wa4nyjsaVbMw9OJoS+aX3IbH5EKOXGwWJ/MEf1oIg
-	E+cBisEt6lBH+HKehz8ckXBgOsPPFiEWu/L6Ui8FdpKlFN9sVfjZeVpn5/IaAkkIQ0bsN8fqoaD
-	RoIqI6TXZa0Z+UYPquMC667qJWfDck3dbTk3h5hDgwQbbDuuDKLDLLAA1nVjwdy+HAf96EXdKi4
-	R+dt5olCt83LMyddRlHtZNPnSUQKFlv2OpDSpg+ZPs=
-X-Google-Smtp-Source: AGHT+IG/t8sPFUNbEssBw0o8EJ7IDLcRUAqafB6jh5jOeBHVSLTybCLKZLOZDFW2qLfhUheRhw2XiQ==
-X-Received: by 2002:a05:6214:260a:b0:87c:2919:7db3 with SMTP id 6a1803df08f44-87c291981c2mr239330876d6.51.1761236837786;
-        Thu, 23 Oct 2025 09:27:17 -0700 (PDT)
-Received: from seungjin-HP-ENVY-Desktop-TE02-0xxx.dartmouth.edu ([129.170.197.114])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87f9e7fc743sm18286456d6.52.2025.10.23.09.27.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 09:27:17 -0700 (PDT)
-From: pip-izony <eeodqql09@gmail.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol@kernel.org>
-Cc: Seungjin Bae <eeodqql09@gmail.com>,
-	Kyungtae Kim <Kyungtae.Kim@dartmouth.edu>,
-	Jimmy Assarsson <extja@kvaser.com>,
-	linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] can: kvaser_usb: leaf: Fix potential infinite loop in command parsers
-Date: Thu, 23 Oct 2025 12:27:09 -0400
-Message-ID: <20251023162709.348240-1-eeodqql09@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAAsoPpV7Kzap1Sn8QFtBbvwW-DJMTTcU_bBOUDYYC286Uaddtg@mail.gmail.com>
-References: <CAAsoPpV7Kzap1Sn8QFtBbvwW-DJMTTcU_bBOUDYYC286Uaddtg@mail.gmail.com>
+        bh=97MO41jRSpevZOQY5X/s6jqv4fmMPnX3F7sJNNlsleo=;
+        b=E5hxfUVUo36xsJSGMIWblP8NkQqAA9LffUolUide1jfeBrKU9KfJLloJtKeTG+jKBF
+         f58SXfL2v7lM5KnMYJmQ7F60XtMMK2blqXDSJJtC5VWcICK+P5UOmxmmMxsQZp3ThxqT
+         XEAO6JI3cGS7ecp8ybVwjpTsgN+6S/naZTQ0wtvSH9ecvsZj431YTQ9t4dLSTaIRkhNE
+         r/BOLGDtfNSzXLUmPv3FfrPGxIT2zbreF6LUzSsr4n784yA4gY9062KN4Eqkb+yA6QBw
+         Urebt08Nsg861bz8eFHPqyHjVlwQw/5Wycan4zMXDNimWBl2C6z+rzc897reNiNihrAR
+         HhIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUL19NbLeRyje3WF5tWUJSUkbsGGFR03+csm0GpBAWIvF5wvGHPurvvykbRhPnasTbXerHnIqcaasTPPqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2vr1SEGpBpSFibG/1o2T/wTP6DClMXnFNRT9w24K0RlBJe8Hx
+	rqlPIImgH3fZz5ByyhhlSnKRO4btQf+bl78b8M5OPo6oqYs9EBN9vxpF7Ne81mbwOjlgtgrfcR6
+	ClNHM+aBlLhLW249sqc63PJmyHAuqC2HsjUF1pDcS
+X-Gm-Gg: ASbGncsuKZSun9/r78V6y5ymI7X2tggk4mXu4pMWTt75FaUZ2FNj0nN4y1FQPogv4Gt
+	PsowkYOb7JSz0HYK4BAsxMOVgG1hgpB+SgmRb3tCb6MlND6l55gfjuWkRF4n3ni+TVGNb1osv8/
+	GOQ+ugvqEaamt09m2iHhwYJHkw7TZulTXW1CBk9H1jeujGX+IK8Eg4dmRvX/Dk0pPlSv2yJmv+G
+	eA9M+aOEPiZweXQIcBETHRQVI8AHi5d3sx+sLGgGYuzAYx/Ey+483VQlO9WM7jmmMXZ5ceHlzF0
+	seHWffc305LinNGQsvVqK7d8OA==
+X-Google-Smtp-Source: AGHT+IGRu6yI1emkCCw3nvVlzdH/6fU0sebXYjptgLv/4PO9Xk3ol/HgZ5f+hbDRyxJrRiKEy/KfoNbWzUlcluN7VUM=
+X-Received: by 2002:a50:9e2a:0:b0:639:e9a4:a5f1 with SMTP id
+ 4fb4d7f45d1cf-63c1f6cef09mr20904049a12.27.1761236854479; Thu, 23 Oct 2025
+ 09:27:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251002113404.3117429-1-srosek@google.com> <20251002113404.3117429-3-srosek@google.com>
+ <CAJZ5v0iQToOkedruYqsowSm8=fxpnyJf86JJHB36E8+aCSZ5Hw@mail.gmail.com>
+ <CAF3aWvFSomq+cm2sj+KjkYw=WODsrwH-VLDL=yOc6o9dqc5hWA@mail.gmail.com> <CAJZ5v0g72U3+u_KedKpZh2TuN-iYbXPcnZhN16oDvi4UqUTr7Q@mail.gmail.com>
+In-Reply-To: <CAJZ5v0g72U3+u_KedKpZh2TuN-iYbXPcnZhN16oDvi4UqUTr7Q@mail.gmail.com>
+From: =?UTF-8?Q?S=C5=82awomir_Rosek?= <srosek@google.com>
+Date: Thu, 23 Oct 2025 18:27:23 +0200
+X-Gm-Features: AWmQ_blF7s0d_2rpPBOJV_yCAuUzVG3-BC5mVNgcU7WAEA9ki3dMFD97y8RMCx8
+Message-ID: <CAF3aWvFc5ZZo3VaJSr68FwGuCFYJU=tXsJ6Fm1vmNLs4B=+8dg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] ACPI: DPTF: Move INT340X device IDs to header
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Alex Hung <alexhung@gmail.com>, Hans de Goede <hansg@kernel.org>, 
+	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>, AceLan Kao <acelan.kao@canonical.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Zhang Rui <rui.zhang@intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Tomasz Nowicki <tnowicki@google.com>, 
+	Stanislaw Kardach <skardach@google.com>, Michal Krawczyk <mikrawczyk@google.com>, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Seungjin Bae <eeodqql09@gmail.com>
+On Thu, Oct 23, 2025 at 5:11=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Thu, Oct 23, 2025 at 4:41=E2=80=AFPM S=C5=82awomir Rosek <srosek@googl=
+e.com> wrote:
+> >
+> > On Wed, Oct 22, 2025 at 8:46=E2=80=AFPM Rafael J. Wysocki <rafael@kerne=
+l.org> wrote:
+> > >
+> > > On Thu, Oct 2, 2025 at 1:34=E2=80=AFPM Slawomir Rosek <srosek@google.=
+com> wrote:
+> > > >
+> > > > The ACPI INT340X device IDs are shared between the DPTF core
+> > > > and thermal drivers, thus they are moved to the common header.
+> > > >
+> > > > Signed-off-by: Slawomir Rosek <srosek@google.com>
+> > >
+> > > I've actually started to wonder if int340x_thermal_handler is needed =
+at all.
+> > >
+> > > It just creates a platform device if the given ACPI device ID is in
+> > > its list,
+> >
+> > That's true. It creates platform device for the given ACPI device ID,
+> > but only if CONFIG_INT340X_THERMAL is enabled.
+> >
+> > > but acpi_default_enumeration() would do that too with the
+> > > caveat that it would also be done for CONFIG_INT340X_THERMAL unset.
+> >
+> > Not exactly. scan handler returns ret=3D1, so device is marked as enume=
+rated
+> > https://elixir.bootlin.com/linux/v6.18-rc2/source/drivers/acpi/scan.c#L=
+2314
+> >
+> > > That should not be a problem though because if CONFIG_INT340X_THERMAL=
+,
+> > > there are no drivers that will bind to those platform devices, so the
+> > > net outcome should be the same.
+> >
+> > If CONFIG_INT340X_THERMAL is not set and there are no drivers to attach
+> > to platform devices and int340x_thermal_handler is removed then you are
+> > right, acpi_default_enumeration() will enumerate ACPI bus anyway and
+> > create platform devices for all ACPI device IDs. However, for me it loo=
+ks
+> > like it was intentional to prevent this behaviour unless INT340X driver=
+s
+> > are "present" in the system (were enabled for build so should be).
+> > I am not sure how DPTF works and what may happen if platform devices ar=
+e
+> > visible in sysfs while drivers are not loaded.
+>
+> Such a dependency would be unexpected and confusing.
+>
+> Also, I'm not sure why it would be useful because the lack of drivers
+> means that the devices in question are not handled, so no
+> functionality related to them is provided by the kernel.
+>
+> > >
+> > > Thus I'm wondering if the way to go might be to drop
+> > > int340x_thermal_handler and simply keep the device IDs in the drivers
+> > > that use them for device binding.
+> >
+> > Even better. If it's not required for DPTF to prevent enumeration
+> > on the platform bus I can simply remove the scan handler.
+>
+> I would at least try to do that.
 
-The `kvaser_usb_leaf_wait_cmd()` and `kvaser_usb_leaf_read_bulk_callback`
-functions contain logic to zero-length commands. These commands are used
-to align data to the USB endpoint's wMaxPacketSize boundary.
-
-The driver attempts to skip these placeholders by aligning the buffer
-position `pos` to the next packet boundary using `round_up()` function.
-
-However, if zero-length command is found exactly on a packet boundary
-(i.e., `pos` is a multiple of wMaxPacketSize, including 0), `round_up`
-function will return the unchanged value of `pos`. This prevents `pos`
-to be increased, causing an infinite loop in the parsing logic.
-
-This patch fixes this in the function by using `pos + 1` instead.
-This ensures that even if `pos` is on a boundary, the calculation is
-based on `pos + 1`, forcing `round_up()` to always return the next
-aligned boundary.
-
-Fixes: 7259124eac7d ("can: kvaser_usb: Split driver into kvaser_usb_core.c and kvaser_usb_leaf.c")
-Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
----
- v1 -> v2: Apply the same infinite loop fix to kvaser_usb_leaf_wait_cmd()
- 
- drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c b/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c
-index c29828a94ad0..1167d38344f1 100644
---- a/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c
-+++ b/drivers/net/can/usb/kvaser_usb/kvaser_usb_leaf.c
-@@ -685,7 +685,7 @@ static int kvaser_usb_leaf_wait_cmd(const struct kvaser_usb *dev, u8 id,
- 			 * for further details.
- 			 */
- 			if (tmp->len == 0) {
--				pos = round_up(pos,
-+				pos = round_up(pos + 1,
- 					       le16_to_cpu
- 						(dev->bulk_in->wMaxPacketSize));
- 				continue;
-@@ -1732,7 +1732,7 @@ static void kvaser_usb_leaf_read_bulk_callback(struct kvaser_usb *dev,
- 		 * number of events in case of a heavy rx load on the bus.
- 		 */
- 		if (cmd->len == 0) {
--			pos = round_up(pos, le16_to_cpu
-+			pos = round_up(pos + 1, le16_to_cpu
- 						(dev->bulk_in->wMaxPacketSize));
- 			continue;
- 		}
--- 
-2.43.0
-
+Makes sense, so I'll give it a try. Removing handler will result with
+only two patches, one to update dts_doc_thermal kconfig and second
+to remove the dptf scan handler, the rest won't be needed for a new
+patchset. Should I send it as v4?
 
