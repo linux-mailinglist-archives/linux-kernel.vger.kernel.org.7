@@ -1,170 +1,168 @@
-Return-Path: <linux-kernel+bounces-867437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE62C02AC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:11:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B4FC02A53
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3402584018
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:02:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 735A019A3D76
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46653446BE;
-	Thu, 23 Oct 2025 16:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB39234573D;
+	Thu, 23 Oct 2025 16:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uvvgHPmW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RImSYiwN"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA92343218
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79C334321A
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761238375; cv=none; b=fdGE8cSNCYNgD5C9rukWqv/nvfvbyAK02KMQ0qWYwwt4P6Enbl2R1NhNPAaoFlSLCi9htEh3fXWNfPGrAjWia/0XegrZZyaxbzWbbtdCSW+nsD4WyG/wjLnRkxLX0MpnnvyUukMPEO5DOskSmyC1gsJt1WFQ/zvKhe1PGuPtSws=
+	t=1761238509; cv=none; b=XDnImw59SulScJA5zgkKmqp8spDUFp4xZRkBbUNOLFqrSU5aIqPj+itv65OAVlNVagdpnNWjuuXR1ga9Ix8OizpfBM2oi+FtY5nGCsDsLxVv1miA3+9o2J5CCDzV8sCQxtGxJXSzaaC+IuodRTlAlmQZUlYZOk4B5pGqX56RKAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761238375; c=relaxed/simple;
-	bh=YY6kRpNmd8dl7oFFOoorQW2xHd3JC+1v0+OJXJv8TBE=;
+	s=arc-20240116; t=1761238509; c=relaxed/simple;
+	bh=YrDC/3mfpaef0fGHbDOJscgvzXVsxuu7Gw87FelYM1w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=erIYMhLNA0K7KpHr4PdsftLUeBWriiIXWht3qlxVg/uEP+Q8qPM6BH/IQmH0FnHFNkOpOK9QGQE1ZAgZYCAy2cWc+OaxTuDXuxKupc5+gotEPWfP3Q/fl4NRfI2FvJWk7kn3JhNoTYAzMvrJWTYwxz6DsOdvOj6uIZnrr6DzXTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uvvgHPmW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86945C4CEFF
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:52:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761238374;
-	bh=YY6kRpNmd8dl7oFFOoorQW2xHd3JC+1v0+OJXJv8TBE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uvvgHPmWaketdKAwhNIm3Ol+uKqtmQoYZX8a22R3w7kN2YaNV5d81l7AViQpYWJ8u
-	 C59V03q7vZXV+PG5fxwUs+h4iAIt2JSGI3v1AnUOPSC7mh3Q7zhy39W3lGoxNpXNNV
-	 6bK1d4cvMYpwNdcr7cmRWEXhUUEAKcBkhLGPaZwWvntRpY9UptTF7Lk4VXvRmeUSqi
-	 2e4TUoDCyJIxFGrfpDMzIAWK2rmjp/XwETNg1iks+IWXoj3YAyrIycG1ffFmH42ab5
-	 BHZnogUtXyRUsIGbc8SBQs1wdlIbnMYYirDQJm48SSENkIrAsfKnpXh0p9VYvgRSu9
-	 oh9tJw+G5ddsw==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-6536cbc8426so357907eaf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:52:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV9qm4vode9L9l17mnl6WVZoo9S/C91hJc0Y3OH4Ss/tswv1dfWrURjxt9Gy1t1WyHzMgDIr128kP3+3cE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8usuJGbPhgzIeYkBTmt8nM7DJo2OBGKcSspRwd7orbUvyWhS9
-	cisGlxdxQvY3qPhCC8k9T7GKvX3LiV3DApbVMmneOt3Q7xEW8hYfimYdBopoGRoIGMlxqevurhF
-	3iJ92U2xaQrsnux9jQo05h7CukBW3S7Q=
-X-Google-Smtp-Source: AGHT+IEVOwqyMDHBoizFrpcSD0zS6S82A5hx6oqhxOS9knu8P2OEsTjlf0/AZWUZNCFXMraZoQv8a6I7j3Xa/aCrjnc=
-X-Received: by 2002:a05:6808:1a0d:b0:441:d0be:3f0c with SMTP id
- 5614622812f47-443a314f73bmr11465579b6e.46.1761238373795; Thu, 23 Oct 2025
- 09:52:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZDBY57fI8nrqCnCY4dFmSBunotpaAtU6p/2MVujbt8j9v5idZOVC3UMJlX0aXRYG3XI4cikz9VkfM3BoNCd97B2rBKpfTk6+S2boaehOqfN74o7TCzKVtxLvVNLefppaOId6cvoBFTNcDaKDzR3XIKniwcXP4Oh8Ove4l4mAGB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RImSYiwN; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-290da96b37fso1225ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:55:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761238507; x=1761843307; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CyiR0u8ocZvunIC/RiElNF1L/aM7gxJVr3g92t8HgY4=;
+        b=RImSYiwNjdL23VQBmaOWO87uzg1OhoeLtFZwu0lCtGbmDVcNgjRLWpAqHIhkE5rOnt
+         Q7Povhw4pqzLib9aa3j7hvfFsi/o0MrQTosDAAgD51zJ/j2Gjz6j4ZTLYEW6dnt5YcZ7
+         KLNRX/GRLviUm8+IdI838RYHGIHn9rE6HUxuCmGlM+XtoFv6KVfzZ9bymmmlRuYnIHkt
+         WGGIOpupGkmJuK29uxZU6aBSMMJHdW2qEj+ksReAPjsi1lK1jAnHr3yapc0LIBtYauSj
+         urp27OinzXCW4ELq9avfE2efVepezBl8ucBO0kCvq+n+Lr0lT4GGAclcnryZ1M8+y4nm
+         hW2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761238507; x=1761843307;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CyiR0u8ocZvunIC/RiElNF1L/aM7gxJVr3g92t8HgY4=;
+        b=geXlBCwKH67EKfX//DS13/ON4YrACn03BhtC6lVbKZkwTCo1zRFjOGQFK3b4vMdGJp
+         EfNev1bm5+9eAJXZxx8rTq3dTTcFBcEBeIgtl5RV0GxyG2gX6KQiqg6mY0KCQDuOTUpf
+         chHN19nBafc4sZX+EZpnx3ZsIkG/M4hT42NZltcssRcgEMy/8nrmXtlqFqWVKtLwJRgA
+         wm0OoD/F1cSejXQ4/scwKYgg75Bw58bbU7VnLghhBg8gzHwYYlbEw8ziJlZJyZ7bA2U3
+         sSAyZiNtrht8hWEewN9yndjk7ld1LCyxKwCthwvMgdvWJb5NFJDRGTKpbOpRoDCOfZ+G
+         oyxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIovuvs5IXg4caNDnFS3LJu5MyNKpHMsxdqzbHN+Jfu53YijdAVMGsV1CCwji1FIXXDp5bKqIBMwqSzpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDHWYvZPgxRB7uqd/TWPqWtg+1vl1aYUJxvCx9kDkQmzyKjDfB
+	+EFpqD5tGtkSbn2zIzG5WTae9CuhzljOjBWPmz3t0RP/pGJD7pdxlUE7hZs75axiDq+ewxVn8Tc
+	6imNh2pKqoyGnW4+o+aFQugRztd9e0aLIo9juJxdf
+X-Gm-Gg: ASbGncufCeOMCXTc9BeGrVQVNm8M1S1FcQo7CdhX0pBGD8ZB7y09qYM13wbeFoye/S1
+	J2It2TMUJjN2S8VSMNvea0Xh7iz0BlyrYAzzYouFr78dmawXO+9d/Yn5vDmm+HurMVJerBCFL6k
+	rKeT4RWbQ+MBtxWNOjvd/GNN4kqiVqaJbVEAumCu+8D4MaUTphGq7MdlsK+dpKLAC0R7+VkyZHT
+	iJV7udn7izk2a5YZ/BKjU/rdrPIAO2YiRT0mMdcbTmsTVINXseRf1FQ3auNK7oJ4e3WcUeOviMl
+	8OS0Usi/TVuxbJfT7A==
+X-Google-Smtp-Source: AGHT+IFKbuM72mJEDTm+SxvDAF7Q/UY5oa8t6CSwb/j80tiy08frgGSldBorFS7vvcpu0oujlmcNXpyG8/Flcsl68pE=
+X-Received: by 2002:a17:902:d512:b0:26e:ac44:3b44 with SMTP id
+ d9443c01a7336-294872d7c8emr884775ad.10.1761238506433; Thu, 23 Oct 2025
+ 09:55:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2804546.mvXUDI8C0e@rafael.j.wysocki> <5043159.31r3eYUQgx@rafael.j.wysocki>
- <004501dc43c9$ec8aa930$c59ffb90$@telus.net> <5040239.GXAFRqVoOG@rafael.j.wysocki>
- <001a01dc4436$80b80aa0$82281fe0$@telus.net>
-In-Reply-To: <001a01dc4436$80b80aa0$82281fe0$@telus.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 23 Oct 2025 18:52:41 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iinZJczWzp-kOmRnOCEv17FPVQZOjvs0zm4uQG-F024w@mail.gmail.com>
-X-Gm-Features: AS18NWChh31LyIomfuDo4NhxKaKQN1tUlb2dm-_Wq_QG-k0iRZPZyb8vEXVOhS4
-Message-ID: <CAJZ5v0iinZJczWzp-kOmRnOCEv17FPVQZOjvs0zm4uQG-F024w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/3] cpuidle: governors: menu: Avoid selecting states
- with too much latency
-To: Doug Smythies <dsmythies@telus.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Christian Loehle <christian.loehle@arm.com>, Linux PM <linux-pm@vger.kernel.org>
+References: <20250901160930.1785244-1-pbonzini@redhat.com> <20250901160930.1785244-5-pbonzini@redhat.com>
+ <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
+ <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com> <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
+ <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com> <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
+ <DM8PR11MB575071F87791817215355DD8E7E7A@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <27d19ea5-d078-405b-a963-91d19b4229c8@suse.com> <5b007887-d475-4970-b01d-008631621192@intel.com>
+ <CAGtprH-WE2_ADCCqm2uCvuDVbx61PRpcqy-+krq13rss2T_OSg@mail.gmail.com>
+ <CAGtprH_sedWE_MYmfp3z3RKY_Viq1GGV4qiA0H5g2g=W9LwiXA@mail.gmail.com>
+ <08d64b6e-64f2-46e3-b9ef-87b731556ee4@intel.com> <CAGtprH860CZk3V_cpYmMz4mWps7mNbttD6=GV-ttkao1FLQ5tg@mail.gmail.com>
+ <56d5fe5268af7d743f4962cfcc48145e6c0d3db5.camel@intel.com>
+In-Reply-To: <56d5fe5268af7d743f4962cfcc48145e6c0d3db5.camel@intel.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Thu, 23 Oct 2025 09:54:53 -0700
+X-Gm-Features: AS18NWBwejBgFHJB2xNBPonhiSr_vJQRjOTN-d8yNLfO9ZNitoThOG8nf0Onj28
+Message-ID: <CAGtprH-WuXg8aNe=xyQxzmwJQS0kOVLDRPQnC9vxCaQF2+VqJQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
+ partial write erratum
+To: "Huang, Kai" <kai.huang@intel.com>
+Cc: "Hansen, Dave" <dave.hansen@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "Gao, Chao" <chao.gao@intel.com>, 
+	"ashish.kalra@amd.com" <ashish.kalra@amd.com>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
+	"Reshetova, Elena" <elena.reshetova@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kas@kernel.org" <kas@kernel.org>, 
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "seanjc@google.com" <seanjc@google.com>, 
+	"nik.borisov@suse.com" <nik.borisov@suse.com>, "hpa@zytor.com" <hpa@zytor.com>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "sagis@google.com" <sagis@google.com>, 
+	"Chen, Farrah" <farrah.chen@intel.com>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
+	"bp@alien8.de" <bp@alien8.de>, "Chatre, Reinette" <reinette.chatre@intel.com>, 
+	"jgross@suse.com" <jgross@suse.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"Williams, Dan J" <dan.j.williams@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 6:03=E2=80=AFPM Doug Smythies <dsmythies@telus.net>=
- wrote:
+On Wed, Oct 22, 2025 at 2:05=E2=80=AFPM Huang, Kai <kai.huang@intel.com> wr=
+ote:
 >
-> On 2025.10.23 07:51 Rafael wrote:
 >
-> > Hi Doug,
+> > * Modifying the logic in this patch [2] to enable kdump and keep kexec
+> > support disabled in this series
+>
+> Resetting TDX private is a complete solution which allows to enable both
+> kdump and kexec.  If we choose to reset TDX private memory, then we can
+> just revert [2].
+>
 > >
-> > On Thursday, October 23, 2025 5:05:44 AM CEST Doug Smythies wrote:
-> >> Hi Rafael,
-> >>
-> >> Recent email communications about other patches had me
-> >> looking at this one again.
-> >>
-> >> On 2025.08.13 03:26 Rafael wrote:
-> >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>
-> >> ... snip...
-> >>
-> >>> However, after the above change, latency_req cannot take the predicte=
-d_ns
-> >>> value any more, which takes place after commit 38f83090f515 ("cpuidle=
-:
-> >>> menu: Remove iowait influence"), because it may cause a polling state
-> >>> to be returned prematurely.
-> >>>
-> >>> In the context of the previous example say that predicted_ns is 3000 =
-and
-> >>> the PM QoS latency limit is still 20 us.  Additionally, say that idle
-> >>> state 0 is a polling one.  Moving the exit_latency_ns check before th=
+> > as a viable direction upstream for now until a better solution comes al=
+ong?
+>
+> The alternative could be to simply modify [2] to allow kdump (but leave
+> TDX private memory untouched to the new kernel) but not normal kexec.  Th=
 e
-> >>> target_residency_ns one causes the loop to terminate in the second
-> >>> iteration, before the target_residency_ns check, so idle state 0 will=
- be
-> >>> returned even though previously state 1 would be returned if there we=
-re
-> >>> no imminent timers.
-> >>>
-> >>> For this reason, remove the assignment of the predicted_ns value to
-> >>> latency_req from the code.
-> >>
-> >> Which is okay for timer-based workflow,
-> >> but what about non-timer based, or interrupt driven, workflow?
-> >>
-> >> Under conditions where idle state 0, or Polling, would be used a lot,
-> >> I am observing about a 11 % throughput regression with this patch
-> >> And idle state 0, polling, usage going from 20% to 0%.
-> >>
-> >> From my testing of kernels 6.17-rc1, rc2,rc3 in August and September
-> >> and again now. I missed this in August/September:
-> >>
-> >> 779b1a1cb13a cpuidle: governors: menu: Avoid selecting states with too=
- much latency - v6.17-rc3
-> >> fa3fa55de0d6 cpuidle: governors: menu: Avoid using invalid recent inte=
-rvals data - v6.17-rc2
-> >> baseline reference: v6.17-rc1
-> >>
-> >> teo was included also. As far as I can recall its response has always =
-been similar to rc3. At least, recently.
-> >>
-> >> Three graphs are attached:
-> >> Sampling data once per 20 seconds, the test is started after the first=
- idle sample,
-> >> and at least one sample is taken after the system returns to idle afte=
-r the test.
-> >> The faster the test runs the better.
-> >>
-> >> Test computer:
-> >> Processor: Intel(R) Core(TM) i5-10600K CPU @ 4.10GHz
-> >> Distro: Ubuntu 24.04.3, server, no desktop GUI.
-> >> CPU frequency scaling driver: intel_pstate
-> >> HWP: disabled.
-> >> CPU frequency scaling governor: performance
-> >> Ilde driver: intel_idle
-> >> Idle governor: menu (except teo for one compare test run)
-> >> Idle states: 4: name : description:
-> >>   state0/name:POLL                desc:CPUIDLE CORE POLL IDLE
-> >>   state1/name:C1_ACPI          desc:ACPI FFH MWAIT 0x0
-> >>   state2/name:C2_ACPI          desc:ACPI FFH MWAIT 0x30
-> >>   state3/name:C3_ACPI          desc:ACPI FFH MWAIT 0x60
-> >
-> > OK, so since the exit residency of an idle state cannot exceed its targ=
-et
-> > residency, the appended change (on top of 6.18-rc2) should make the thr=
-oughput
-> > regression go away.
+> risk of doing so has already been covered in this thread AFAICT:
 >
-> Indeed, the patch you appended below did make the
-> throughput regression go away.
->
-> Thank you.
+>  1) If the kdump kernel does partial write to vmcore, the kdump kernel ma=
+y
+>     see unexpected #MCE.
 
-OK, this is not an unreasonable change, so let me add a changelog to
-it and submit it.
+Ideally a kdump kernel should not write to vmcore.
+
+>  2) As Elena pointed out, if the old kernel has bug and somehow already
+>     does partial write to TDX private memory (which leads to poison), the
+>     consumption of such poison may be deferred to the kdump kernel.
+
+Is this case very different from hardware memory failures leading to
+poisoned memory ranges? i.e. kdump solution has an existing scenario
+of possible poison consumption during generation of kdump.
+
+Is it okay to advertise kdump functionality to be the best effort and
+live with this caveat until a cleaner solution comes along?
+
+>
+> >
+> > If not, can kdump be made optional as Juergen suggested?
+>
+> IIUC Juergen suggested:
+>
+>   Then we could add a kernel boot parameter to let the user opt-in
+>   for kexec being possible in spite of the potential #MC.
+>
+> I don't have opinion on this, other than that I think the boot parameter
+> only makes sense if we do the "alternative" mentioned above, i.e., not
+> resetting TDX private memory.
+>
+> >
+> > [1] https://lore.kernel.org/lkml/6960ef6d7ee9398d164bf3997e6009df3e88cb=
+67.1727179214.git.kai.huang@intel.com/
+> > [2] https://lore.kernel.org/all/20250901160930.1785244-5-pbonzini@redha=
+t.com/
 
