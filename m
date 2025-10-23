@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-867754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64DC1C03701
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:52:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B496C03719
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 887E1505469
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:51:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45DB3B3DF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1772C3745;
-	Thu, 23 Oct 2025 20:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3BA2C15BB;
+	Thu, 23 Oct 2025 20:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pIB0NClm"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iCfyKqwg"
 Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC8C2C15BB
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A732D0298
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761252660; cv=none; b=NQuHiG94zJ/btD6/k4EICgdQfOUOz00flIw3TksrzV1pshWg2+cQDImmMNqqSr1zwU7BMBzEGaYxRGcToQSsGP0ePmzv0bxw5i9lwbYAM7ohIanaQdeHv/sDteZZk/QSbYmOUVNfGvzUHqgCjQSPJfRq1Ql37BzPXcVi+W175Mk=
+	t=1761252664; cv=none; b=a9ts4J4EmLBehggVn2+ySg5XwhTLHvpd+e/bA7oRxTKEDTYAwMHpGIwPwLeEW9MHwgT0hxpq2sdIfWz5Q7ZrzmpgYVwYpC8vfPYgU7E4wd4tCMjF0SGJS7EF/rJ2RQ2FiF/+2Azk2xhb2nrBvFBgVlf9E32a4P1Pyh/ynz/72ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761252660; c=relaxed/simple;
-	bh=C/1zX22wjI4qtmE/Rs+0jxW/rC4laO75J74Tq/ISSYo=;
+	s=arc-20240116; t=1761252664; c=relaxed/simple;
+	bh=CESpfuQKSTARvsi02223z0qLzhBNqlIQPJ9hcvIXEto=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uRRo2UZzKI6tVxWwXU7A1NGMdTKz0EKrNwMzMWgfrmn0tOmhe0Xo6pPERMp3QWI4nMYCZR/xX/UStg4gnqdjEfeV5JgJ0Zy24IlygnIZAxreuSFyH9K54l2lFwkXFw4fsFcKOIQ6DnNsl/gOXOJlWKnCjwxZIKPA2291STkfZq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pIB0NClm; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=UUQNkfUYTNVq6CzgzGuzWvCDIhsiloHcObDy4Cpa9LcO/II+63ZNwjomKYtTDXApVxj3vcuBib18Cmbzk0V+NoUiJRH7QwrZCLvRLh1h53n1Hp4WNgcBQrM3g+v6xU+1+u8qn2+hM6JwxpP6C72Vr7v8HsUflvIc8XG0I7VIriM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iCfyKqwg; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3307af9b55eso978637a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:50:59 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33428befbbaso1469049a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:51:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761252658; x=1761857458; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1761252661; x=1761857461; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n3ErCVLsFFmYy6ztYolejF5Ple6tVW26MCiEzz3ldVw=;
-        b=pIB0NClmaULvLSTNIHcjIhIQz2exfmdB0n7aPUlM2BudOddYi9/tdy3QsMLB116Zyk
-         0R9up3sxyKMTBQyUNimYHGMXdD/u7SNZUWFFmUJdBom6mywJxCcahQXUJyCyryKh5Fqt
-         cu1l+Boj3wrje/zynYz68QeWN8d8hO/t5I8qu/9jgUXm3OTGG2FMhMrYC4DAR79o16IF
-         zrj2ruM2OYZ8/pmvIfJmzueZuFm3jAls/NSBRnzMyssQQeZd0LKMAb9ursVzARTq9iap
-         DFMreHkKM07mt5FKUrz22bsK8XN1fl7LXSyA/WfBxmPwFeV0KCJXrcLLDxJrFpDc8CLe
-         BrgQ==
+        bh=t8LUdY9Gbr3c9MBtkrMrb9ELOUUlz3DwF1vW+da8Cus=;
+        b=iCfyKqwghetGnOVwe7cBH63Hi/oXTxTk56X3X4HIV9cJ8JN7tGwppDNdGoGmCUDOro
+         e9SZ295apS49mWIqy1E2g6tIVvYqmpr7ZUuNDFaKwj+Ej4z91eJD9wEst1+FdUVVOyQw
+         EZ/sZz30avVCQGWvSA081AxNZDlmAAJJLbfwzIIF6GmDtwyJq7EgQ+TsNQhWHnT3Mm2I
+         ZPOY6X8njyFQNcpGpiczXs2T+o9MRsncUbywgyncvo/eIgHXiq9+DQWt2eo4gcqcGUOd
+         Zg9t1QA13SynhHE1dXcy8DC6Acxo4SP1vBWkHtkRWLi9hgz9RQmzcDhp0LYzDCwHJSEp
+         eTuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761252658; x=1761857458;
+        d=1e100.net; s=20230601; t=1761252661; x=1761857461;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n3ErCVLsFFmYy6ztYolejF5Ple6tVW26MCiEzz3ldVw=;
-        b=huHvYVrDFQgXaIGBboujd73mW81uIaAIJJZsXMKJGLDA5dErMXZks4qk/u75hGT+Wb
-         bKe0WptOeTGil0s2869Tk055qvHcK3v0O3e/uOOU9ptm+KMuuy4NTn38+VXXH+Gbgv6l
-         5+ZxAeLogbEFDvGzXLIHw4FxLovP0eFkm2qTewu7wp2ywH5qmslGBnb8c7Du+ZX2Oozu
-         aVDIvLbpc/rvLe7RQtoOkKekjvRKJOooFczndelQUmBFQZcgJNnLiaQdYI1ZHr88fnK7
-         NYBZSM1PEPrhOeLZIzm4TWqH6q5k9QQSeOmly1lOzVxYMxBllpLL/enpSB/EBOe/qQmr
-         /M3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXRmsCfv54dhUUyVtgp+AMryUcJ2no9yim4sZsRdt/dgZf5/xYurqj3Y6IlkKDRnhamYYZGaLr2wBMyhcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUvIAulcWGSFEPgSVT3iXZ1S7eq1FftOC9EJpUyyaXamRfzGG2
-	CxOSoe4n3Az3ew1gycLBlnJ8PX33x6Nk9KttbEkcZZAiCihmM7Me9qcKAQjftyeSoUQeWmv2+PZ
-	wybfP1/mWb/EJxY3fxQF7OMR2vc3kOA==
-X-Google-Smtp-Source: AGHT+IHJvKbU9UgJaSGXWAUX+DnipcUlKhq0hmwyYZnhUYzOqrdpDg7R1VNHjGHXBcYDkXnRvHh8GcGOhqCddYEK0g4=
-X-Received: from pjbsb7.prod.google.com ([2002:a17:90b:50c7:b0:33b:51fe:1a94])
+        bh=t8LUdY9Gbr3c9MBtkrMrb9ELOUUlz3DwF1vW+da8Cus=;
+        b=bIRe/xvPlVoxDHEdx8M/DDfep81T6D1lsgEbTMR8HFv/kA9g0Ev6+q952/aOlaMxVg
+         g+1BsUux1Hm3xRIRUyAcGwx3g96yaVOeeJC1RFDPhHbpDExA86pc4xapjMgAHjiZDQ5d
+         ssfpoGe8largJNwhAxluXOjGodIyqMdt+YOpOB66fM4taQSqNljVLMNKx8ueYDQjDcBx
+         ifH5Ukl7HJmDXta195n9mMyb/wagTObgKPRPI14nyt7MHADB/iqj9znqxPL0MbWXg2HF
+         WUCYnG1/oNTjJ97JMPZJ2ri4Z2ri/Si0wuxBFnjlFrLo6XEaR9wrUkBc3iEnDnh7kHvz
+         KHBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV38cFshNsyEpdtg8evSCvbNklcyi8LV3h037D3AmPfhY09N3Kf5ylF3/2frTmX9pb1f58+YXYyQawDoZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTSofmte1GilSyOGprjGZI0EkYOMDMSL4R+qdIYU4PwREX3i8K
+	X+vdjwFfMuy8eR2tl8jtL6EoMAMajWCtLCYYAculZnq178vZcyw//ybUexbg7Gt6x36Hvvd3l5N
+	PoY21Z7WBY0EPK/BjpnaAhJ1ixq3lbg==
+X-Google-Smtp-Source: AGHT+IGZwCLIN0qBdss7bwnQG0xdzE5CJ3qy6ePDJaDdI1o3uYJcy1pIi0nEoqY8x0tKoW4cyHmd0aXb3yasAgkkA78=
+X-Received: from pjnj13.prod.google.com ([2002:a17:90a:840d:b0:329:7261:93b6])
  (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:33c3:b0:32e:8c14:5d09 with SMTP id 98e67ed59e1d1-33fafb97551mr5184629a91.7.1761252658519;
- Thu, 23 Oct 2025 13:50:58 -0700 (PDT)
-Date: Thu, 23 Oct 2025 20:50:31 +0000
+ 2002:a17:90b:28c4:b0:330:852e:2bcc with SMTP id 98e67ed59e1d1-33bcf8e6348mr33498556a91.21.1761252660734;
+ Thu, 23 Oct 2025 13:51:00 -0700 (PDT)
+Date: Thu, 23 Oct 2025 20:50:32 +0000
 In-Reply-To: <20251023205041.2027336-1-willmcvicker@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251023205041.2027336-1-willmcvicker@google.com>
 X-Mailer: git-send-email 2.51.1.821.gb6fe4d2222-goog
-Message-ID: <20251023205041.2027336-6-willmcvicker@google.com>
-Subject: [PATCH 5/7] clocksource/drivers/exynos_mct: Fix uninitialized irq
- name warning
+Message-ID: <20251023205041.2027336-7-willmcvicker@google.com>
+Subject: [PATCH 6/7] clocksource/drivers/exynos_mct: Add module support
 From: Will McVicker <willmcvicker@google.com>
 To: Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
 	Will Deacon <will@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
@@ -92,86 +91,169 @@ Cc: Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>,
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-The Exynos MCT driver doesn't set the clocksource name until the CPU
-hotplug state is setup which happens after the IRQs are requested. This
-results in an empty IRQ name which leads to the below warning at
-proc_create() time. When this happens, the userdata partition fails to
-mount and the device gets stuck in an endless loop printing the error:
+From: Donghoon Yu <hoony.yu@samsung.com>
 
-  root '/dev/disk/by-partlabel/userdata' doesn't exist or does not contain a /dev.
+On Arm64 platforms the Exynos MCT driver can be built as a module. On
+boot (and even after boot) the arch_timer is used as the clocksource and
+tick timer. Once the MCT driver is loaded, it can be used as the wakeup
+source for the arch_timer.
 
-To fix this, we just need to initialize the name before requesting the
-IRQs.
-
-Warning from Pixel 6 kernel log:
-
-[  T430] name len 0
-[  T430] WARNING: CPU: 6 PID: 430 at fs/proc/generic.c:407 __proc_create+0x258/0x2b4
-[  T430] Modules linked in: dwc3_exynos(E+)
-[  T430]  ufs_exynos(E+) phy_exynos_ufs(E)
-[  T430]  phy_exynos5_usbdrd(E) exynos_usi(E+) exynos_mct(E+) s3c2410_wdt(E)
-[  T430]  arm_dsu_pmu(E) simplefb(E)
-[  T430] CPU: 6 UID: 0 PID: 430 Comm: (udev-worker) Tainted:
-         ... 6.14.0-next-20250331-4k-00008-g59adf909e40e #1 ...
-[  T430] Tainted: [W]=WARN, [E]=UNSIGNED_MODULE
-[  T430] Hardware name: Raven (DT)
-[...]
-[  T430] Call trace:
-[  T430]  __proc_create+0x258/0x2b4 (P)
-[  T430]  proc_mkdir+0x40/0xa0
-[  T430]  register_handler_proc+0x118/0x140
-[  T430]  __setup_irq+0x460/0x6d0
-[  T430]  request_threaded_irq+0xcc/0x1b0
-[  T430]  mct_init_dt+0x244/0x604 [exynos_mct ...]
-[  T430]  mct_init_spi+0x18/0x34 [exynos_mct ...]
-[  T430]  exynos4_mct_probe+0x30/0x4c [exynos_mct ...]
-[  T430]  platform_probe+0x6c/0xe4
-[  T430]  really_probe+0xf4/0x38c
-[...]
-[  T430]  driver_register+0x6c/0x140
-[  T430]  __platform_driver_register+0x28/0x38
-[  T430]  exynos4_mct_driver_init+0x24/0xfe8 [exynos_mct ...]
-[  T430]  do_one_initcall+0x84/0x3c0
-[  T430]  do_init_module+0x58/0x208
-[  T430]  load_module+0x1de0/0x2500
-[  T430]  init_module_from_file+0x8c/0xdc
-
+Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
+Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
 Signed-off-by: Will McVicker <willmcvicker@google.com>
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
-Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+[original commit from https://android.googlesource.com/kernel/gs/+/8a52a8288ec7d88ff78f0b37480dbb0e9c65bbfd]
+Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
+Tested-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
 ---
- drivers/clocksource/exynos_mct.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/clocksource/Kconfig      |  3 +-
+ drivers/clocksource/exynos_mct.c | 56 +++++++++++++++++++++++++++-----
+ 2 files changed, 49 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index ffcd23668763..9450cfaf982f 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -451,7 +451,8 @@ config ATMEL_TCB_CLKSRC
+ 	  Support for Timer Counter Blocks on Atmel SoCs.
+ 
+ config CLKSRC_EXYNOS_MCT
+-	bool "Exynos multi core timer driver" if COMPILE_TEST
++	tristate "Exynos multi core timer driver" if ARM64
++	default y if ARCH_EXYNOS || COMPILE_TEST
+ 	depends on ARM || ARM64
+ 	depends on ARCH_ARTPEC || ARCH_EXYNOS || COMPILE_TEST
+ 	help
 diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 1429b9d03a58..fece6bbc190e 100644
+index fece6bbc190e..a87caf3928ef 100644
 --- a/drivers/clocksource/exynos_mct.c
 +++ b/drivers/clocksource/exynos_mct.c
-@@ -465,8 +465,6 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
- 		per_cpu_ptr(&percpu_mct_tick, cpu);
- 	struct clock_event_device *evt = &mevt->evt;
+@@ -15,9 +15,11 @@
+ #include <linux/cpu.h>
+ #include <linux/delay.h>
+ #include <linux/percpu.h>
++#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_irq.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
+ #include <linux/clocksource.h>
+ #include <linux/sched_clock.h>
  
--	snprintf(mevt->name, sizeof(mevt->name), "mct_tick%d", cpu);
+@@ -217,6 +219,7 @@ static struct clocksource mct_frc = {
+ 	.mask		= CLOCKSOURCE_MASK(32),
+ 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+ 	.resume		= exynos4_frc_resume,
++	.owner		= THIS_MODULE,
+ };
+ 
+ /*
+@@ -241,7 +244,7 @@ static cycles_t exynos4_read_current_timer(void)
+ }
+ #endif
+ 
+-static int __init exynos4_clocksource_init(bool frc_shared)
++static int exynos4_clocksource_init(bool frc_shared)
+ {
+ 	/*
+ 	 * When the frc is shared, the main processor should have already
+@@ -336,6 +339,7 @@ static struct clock_event_device mct_comp_device = {
+ 	.set_state_oneshot	= mct_set_state_shutdown,
+ 	.set_state_oneshot_stopped = mct_set_state_shutdown,
+ 	.tick_resume		= mct_set_state_shutdown,
++	.owner			= THIS_MODULE,
+ };
+ 
+ static irqreturn_t exynos4_mct_comp_isr(int irq, void *dev_id)
+@@ -476,6 +480,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
+ 	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT |
+ 			CLOCK_EVT_FEAT_PERCPU;
+ 	evt->rating = MCT_CLKEVENTS_RATING;
++	evt->owner = THIS_MODULE;
+ 
+ 	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
+ 
+@@ -511,7 +516,7 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
+ 	return 0;
+ }
+ 
+-static int __init exynos4_timer_resources(struct device_node *np)
++static int exynos4_timer_resources(struct device_node *np)
+ {
+ 	struct clk *mct_clk, *tick_clk;
+ 
+@@ -539,7 +544,7 @@ static int __init exynos4_timer_resources(struct device_node *np)
+  * @local_idx: array mapping CPU numbers to local timer indices
+  * @nr_local: size of @local_idx array
+  */
+-static int __init exynos4_timer_interrupts(struct device_node *np,
++static int exynos4_timer_interrupts(struct device_node *np,
+ 					   unsigned int int_type,
+ 					   const u32 *local_idx,
+ 					   size_t nr_local)
+@@ -653,7 +658,7 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
+ 	return err;
+ }
+ 
+-static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
++static int mct_init_dt(struct device_node *np, unsigned int int_type)
+ {
+ 	bool frc_shared = of_property_read_bool(np, "samsung,frc-shared");
+ 	u32 local_idx[MCT_NR_LOCAL] = {0};
+@@ -701,15 +706,48 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
+ 	return exynos4_clockevent_init();
+ }
+ 
 -
- 	evt->name = mevt->name;
- 	evt->cpumask = cpumask_of(cpu);
- 	evt->set_next_event = exynos4_tick_set_next_event;
-@@ -567,6 +565,14 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
- 	for (i = MCT_L0_IRQ; i < nr_irqs; i++)
- 		mct_irqs[i] = irq_of_parse_and_map(np, i);
+-static int __init mct_init_spi(struct device_node *np)
++static int mct_init_spi(struct device_node *np)
+ {
+ 	return mct_init_dt(np, MCT_INT_SPI);
+ }
  
-+	for_each_possible_cpu(cpu) {
-+		struct mct_clock_event_device *mevt =
-+		    per_cpu_ptr(&percpu_mct_tick, cpu);
+-static int __init mct_init_ppi(struct device_node *np)
++static int mct_init_ppi(struct device_node *np)
+ {
+ 	return mct_init_dt(np, MCT_INT_PPI);
+ }
+-TIMER_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
+-TIMER_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
 +
-+		snprintf(mevt->name, sizeof(mevt->name), "mct_tick%d",
-+			 cpu);
-+	}
++static int exynos4_mct_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	int (*mct_init)(struct device_node *np);
 +
- 	if (mct_int_type == MCT_INT_PPI) {
- 
- 		err = request_percpu_irq(mct_irqs[MCT_L0_IRQ],
++	mct_init = of_device_get_match_data(dev);
++	if (!mct_init)
++		return -EINVAL;
++
++	return mct_init(dev->of_node);
++}
++
++static const struct of_device_id exynos4_mct_match_table[] = {
++	{ .compatible = "samsung,exynos4210-mct", .data = &mct_init_spi, },
++	{ .compatible = "samsung,exynos4412-mct", .data = &mct_init_ppi, },
++	{}
++};
++MODULE_DEVICE_TABLE(of, exynos4_mct_match_table);
++
++static struct platform_driver exynos4_mct_driver = {
++	.probe		= exynos4_mct_probe,
++	.driver		= {
++		.name	= "exynos-mct",
++		.of_match_table = exynos4_mct_match_table,
++	},
++};
++
++static __init int exynos_mct_init(void)
++{
++  return platform_driver_register(&exynos4_mct_driver);
++}
++module_init(exynos_mct_init);
++
++MODULE_DESCRIPTION("Exynos Multi Core Timer Driver");
++MODULE_LICENSE("GPL");
 -- 
 2.51.1.821.gb6fe4d2222-goog
 
