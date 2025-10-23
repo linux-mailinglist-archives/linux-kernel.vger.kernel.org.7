@@ -1,165 +1,155 @@
-Return-Path: <linux-kernel+bounces-867556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F838C02F4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:29:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE72DC0304F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F9B8560812
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:28:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C3F2567B1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B288E34D4F1;
-	Thu, 23 Oct 2025 18:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF4834BA2D;
+	Thu, 23 Oct 2025 18:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d44D9cIt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkbTB+21"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBFD23F40D;
-	Thu, 23 Oct 2025 18:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D5634B198;
+	Thu, 23 Oct 2025 18:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761244089; cv=none; b=apmGDwmZazhVXaPe+G55IMAcTbAYui5vCdznRhKMD1bCk8hAwOZzjKcA7sCVK+tOSNYMvYwf5GuFOQW3t38LuMxQVbN1vxkKcE6mQjqwwS8wEEuzT7zINfN5Am2qYGv7lpdkVSKszkxWo4MuUUgo4SkDSKZDjrJx6G433l3bPC4=
+	t=1761244211; cv=none; b=YY0VsXFc5by16Prb4jwpdOSYI3nC1NneFRUtt6W0Yb6Lx6qT2JTzPAKB4l+M889M585RPDoI93lB7xObrSTxOdeM7Ft3LSVXcnk42rxfyNysF4itqeGskgFmcXL71GfpksqtpRBa7Ag2jAn9T+O1GJD8zjwwj6RY/y6ExXUVNBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761244089; c=relaxed/simple;
-	bh=cGxtT7v2QVMLn1P8NSEXbxLIEFsg1vLsHaVWtilPBJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bTbBoEDBTJjNEMOKvhqqDCF6A6A94lZCc6yxThiIp1/xxXesyGhDHNpNvGX+SJfcP3v6IlNzoHT/U4JxWb8AuasvbEV2jBpcWiGomZ5qNGVmG5AoTkSubMpgSdGAtNy76zdUQSqmngoHRyU20Kk0oGOq648e40hTrOsEzoeocP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d44D9cIt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34E70C4CEFF;
-	Thu, 23 Oct 2025 18:28:04 +0000 (UTC)
+	s=arc-20240116; t=1761244211; c=relaxed/simple;
+	bh=ctSOOTT2O05fA9DTO6U9cx0ctplKI+PVoY2b8nJ8W74=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=tZXaxKeuvx6g+SqG1QTr69oeukWiUGyKekTm0uifw3oRXxIpp5/CZMtOIXTu62g/7G0eOr2jzhv53Zxsm9dgdDIceFWD3D1ELoNPEwQLwSmnp6WzjQdRLZP5JFQEr/70npv73q8Wryluk6cUDq2X5RxTQ4lBuKiP/H6paCQgtN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkbTB+21; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A765C4CEE7;
+	Thu, 23 Oct 2025 18:30:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761244087;
-	bh=cGxtT7v2QVMLn1P8NSEXbxLIEFsg1vLsHaVWtilPBJY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d44D9cItbQrcUg9iAmRA0Vs/DVqR+y0ypS8CepbttdCZ0quavmx1O5RuHNLBQ+VVS
-	 Hk9CB2f0ii7zfWJET2k2ktByN18QFNj7RuwS+E60fNAqsfB+U+jd75LxA0v+MsfKCG
-	 pROr3dfPhBazSFR4t1gzPXCBkKTBQ5yhB34OJqc1E09BdynZid7mDKMO2A9Ja1qsOo
-	 bQvjMiOr/sxY8PzMSvTtbmu1SfAaVa/3KsuA7jMuAnty9u9OpZm6TBYZq5yZTrI8JM
-	 1IieU8qkXXu/XkyFWrxtvd+N2LpnC5OA5SGucqrFNsfiRa6K8cdQsny/O6a5Xf4qR9
-	 3MOIOFlebcXhg==
-Date: Thu, 23 Oct 2025 19:28:01 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: John Madieu <john.madieu.xa@bp.renesas.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 05/10] dt-bindings: thermal: r9a09g047-tsu: document
- RZ/T2H and RZ/N2H
-Message-ID: <20251023-provider-obsession-a03de6982b72@spud>
-References: <20251023081925.2412325-1-cosmin-gabriel.tanislav.xa@renesas.com>
- <20251023081925.2412325-6-cosmin-gabriel.tanislav.xa@renesas.com>
+	s=k20201202; t=1761244208;
+	bh=ctSOOTT2O05fA9DTO6U9cx0ctplKI+PVoY2b8nJ8W74=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=SkbTB+21ChSHJquQXaq6RbYVwUsFJfRA8wQP1H2henPAllrtScPaYRaryg1bQh/9r
+	 TByAFl0SQ1Z5JrXhGowt53T8lzFXaMvFPcTzPnst6KFSfJOIrfM9jV4dNAZK9AUnk6
+	 AYfz2WVelWcmFdSTJLAm74R6Fc+cVj2KHk4hjj5LS4BC1HG19fCJ+6j41qtNMpH79F
+	 HSP+aL6PVHarIt7rfQLC+X8IRtp0p8U9JoVw7yPoiX687Zn9P3JI0/9wmTJVpc9rJz
+	 bGZby/ILpu3Lv+VI+gqtRkoBdxrPbuCdegh4UJnmpHJpidyV0FAEU/scKEv4QTdLrN
+	 CY1u3UMETiJjA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ztccTYdyCrUtiwjn"
-Content-Disposition: inline
-In-Reply-To: <20251023081925.2412325-6-cosmin-gabriel.tanislav.xa@renesas.com>
-
-
---ztccTYdyCrUtiwjn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 23 Oct 2025 20:30:03 +0200
+Message-Id: <DDPWYPG6IGBS.3K4HZRJN0UX0N@kernel.org>
+Subject: Re: [PATCH v5 5/7] revocable: Add fops replacement
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Tzung-Bi Shih"
+ <tzungbi@kernel.org>, "Benson Leung" <bleung@chromium.org>, "Rafael J .
+ Wysocki" <rafael@kernel.org>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah
+ Khan" <shuah@kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <chrome-platform@lists.linux.dev>,
+ <linux-kselftest@vger.kernel.org>, "Laurent Pinchart"
+ <laurent.pinchart@ideasonboard.com>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Wolfram Sang" <wsa+renesas@sang-engineering.com>, "Simona Vetter"
+ <simona.vetter@ffwll.ch>, "Dan Williams" <dan.j.williams@intel.com>
+To: "Jason Gunthorpe" <jgg@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251017162116.GA316284@nvidia.com>
+ <aPT-7TTgW_Xop99j@tzungbi-laptop> <20251020115734.GH316284@nvidia.com>
+ <aPcQ99MZse5zmv3o@google.com> <20251021121536.GG316284@nvidia.com>
+ <aPo6CZyT_IGWmu-O@tzungbi-laptop> <20251023145131.GI262900@nvidia.com>
+ <2025102321-struggle-fraying-52ff@gregkh>
+ <20251023155746.GL262900@nvidia.com>
+ <DDPU75QB8MQ6.3HZ5N0GYKQ9QU@kernel.org>
+ <20251023164809.GN262900@nvidia.com>
+In-Reply-To: <20251023164809.GN262900@nvidia.com>
 
-On Thu, Oct 23, 2025 at 11:19:19AM +0300, Cosmin Tanislav wrote:
-> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs include a
-> Temperature Sensor Unit (TSU). The device provides real-time temperature
-> measurements for thermal management, utilizing a single dedicated
-> channel for temperature sensing.
->=20
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-> ---
->  .../thermal/renesas,r9a09g047-tsu.yaml        | 22 ++++++++++++++++---
->  1 file changed, 19 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-=
-tsu.yaml b/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.=
-yaml
-> index 8d3f3c24f0f2..3cb66b51831d 100644
-> --- a/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
-> @@ -16,7 +16,14 @@ description:
-> =20
->  properties:
->    compatible:
-> -    const: renesas,r9a09g047-tsu
-> +    oneOf:
+On Thu Oct 23, 2025 at 6:48 PM CEST, Jason Gunthorpe wrote:
+> On Thu, Oct 23, 2025 at 06:20:02PM +0200, Danilo Krummrich wrote:
+>> On Thu Oct 23, 2025 at 5:57 PM CEST, Jason Gunthorpe wrote:
+>> > IMHO the rust code does it principally because the sync unregister
+>> > life cycle model does not fit naturally into rust.
+>>=20
+>> That's not the case.
+>>=20
+>> In fact, we try to give as much "sync" guarantees as possible. For insta=
+nce,
+>> when a driver registers an IRQ the irq::Registration API enforces that t=
+he IRQ
+>> is unregistered before the registering device is unbound.
+>>=20
+>> As a consequence, the IRQ callback can provide a &Device<Bound>, which a=
+cts as a
+>> "cookie" that proves that for this scope (IRQ callback) the device is gu=
+aranteed
+>> to be bound.
+>>=20
+>> With this "cookie" we can then directly access device resources (such as=
+ I/O
+>> memory) that is within a Devres (and hence a Revocable) container direct=
+ly,
+>> *without* any locking. I.e. we can safely bypass the Revocable and hence=
+ its
+>> overhead.
+>
+> It is good news to hear it, but I think you are making the point I was
+> trying to make.
+>
+> In rust if you have a Device<bound> and you skip the revocable
+> locking, I'd argue that you don't need "revocable" at all, just
+> enforcement of a Device<bound>.
+>
+> IOW the presence of revocable in rust, with all the locking, is
+> because the sync life cycle model is not available.
 
-> +      - items:
-> +          - const: renesas,r9a09g047-tsu # RZ/G3E
-> +      - items:
-> +          - const: renesas,r9a09g077-tsu # RZ/T2H
+That's not the reason, it *is* available.
 
-These two should just go together in an enum, no need to overcomplicate
-things with items like this. Items is only needed when you have more
-than one.
-pw-bot: changes-requested
+Requiring a &Device<Bound> "cookie" to be able to access a device resource
+directly is one part of it. The other one is to ensure that the device reso=
+urce
+is actually released once the device is unbound.
 
-Cheers,
-Conor.
+When a device is unbound the Revocable within a Devres container automatica=
+lly
+drops the device resource (i.e. calls the destructor, which, for instance,
+unmaps and releases an MMIO memory region).
 
-> +      - items:
-> +          - const: renesas,r9a09g087-tsu # RZ/N2H
-> +          - const: renesas,r9a09g077-tsu # RZ/T2H
-> =20
->    reg:
->      maxItems: 1
-> @@ -59,12 +66,21 @@ required:
->    - compatible
->    - reg
->    - clocks
-> -  - resets
->    - power-domains
->    - interrupts
->    - interrupt-names
->    - "#thermal-sensor-cells"
-> -  - renesas,tsu-trim
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r9a09g047-tsu
-> +    then:
-> +      required:
-> +        - resets
-> +        - renesas,tsu-trim
-> =20
->  additionalProperties: false
-> =20
-> --=20
-> 2.51.1.dirty
->=20
+Subsequently, it also ensures that the device resources can't be accessed
+anymore, even if a driver would hold on to the corresponding object instanc=
+e:
 
---ztccTYdyCrUtiwjn
-Content-Type: application/pgp-signature; name="signature.asc"
+Obviously, it can't be accessed with a &Device<Bound> anymore, because it i=
+s
+impossible that the caller is within a scope where a &Device<Bound> is pres=
+ent.
 
------BEGIN PGP SIGNATURE-----
+And an access with Revocable::try_access() will fail as well, because Revoc=
+able
+knows internally that the destructor of the wrapped object was called alrea=
+dy.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPpzsQAKCRB4tDGHoIJi
-0jLUAP9gk1QFec0eyq7sJ7ydWHY9nm23V1ez/A8cZ5mitKk57wEA1gTFHul1tHzp
-Ho7K/mCR0kYFT4WNKfTrmnJZ5qruYAk=
-=ufQ1
------END PGP SIGNATURE-----
+So, what we achieve is that as long as the driver uses safe code (i.e. no u=
+nsafe
+{}), there is no way for a driver to mess this up and produce a bug that af=
+fects
+the rest of the kernel.
 
---ztccTYdyCrUtiwjn--
+While at the same time there is zero overhead in "sync" scopes, and non-"sy=
+nc"
+scopes, which we unfortunately need in some rare cases, are still supported=
+ in a
+safe way.
+
+> Sounds like the idea is that the sync model will be widely available
+> and the revocable lock will rarely be used?
+
+That is correct.
 
