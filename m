@@ -1,119 +1,424 @@
-Return-Path: <linux-kernel+bounces-867481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 306C7C02C06
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:37:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48620C02C0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED9F3A25C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:37:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80C244EB280
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2957934A766;
-	Thu, 23 Oct 2025 17:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401F934A777;
+	Thu, 23 Oct 2025 17:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aMDL39t7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="clt6I3it"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AA0236453;
-	Thu, 23 Oct 2025 17:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761241067; cv=none; b=hxABUoBzH/gpe5j5oj1AHpVavihfHKARHDgXOuJx48DRiRzJHeKY3dG3BAB4ypHIpIe9eH3XLm2XGtZTDZrO3ulbDOMiIlenXtgipdlSaJluBaefujZGzlUjHhPEGYzSrfuge1XeqVDWejfKRqGPzqabskoTF9E5oOjaWgG4kfg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761241067; c=relaxed/simple;
-	bh=lzcFnpcqKVPEICy/2QE1hnpva5jbOl2bOYeT8Uaf9Qw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KAnmxUAW2xQzXKRb0PAe2TAJwhOrUmm+n0XF9VIDPH7PXjdptcq0KCKdrsFB1pe/+MhQ9gnx8FIIrzz+9Gh97phqC9d4hbGvkQRrn5zr8zPpuKpv0p2oJH8RlCUTuHys1S0JWLc1NnabUgG6s6ZZgO9BNz7C0TY7atXp8Tqp5T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aMDL39t7; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D5B236453;
+	Thu, 23 Oct 2025 17:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761241082; cv=fail; b=HFZqDxuJZYmAF24C3NFLyU4IN/jCFtPDeGc+eiwoLJVE8L67UGobFsG9HlTTQ05zBKWyqcZV084eCarnH4DV/Nfqh3Ii4NAvpVygaq/+Aa7p9Fbi9UolxEwnOdO5sGCpRWyMHvcXm0gSY3MIYKH5ztQg7xHiernTrWGUUDhAoe0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761241082; c=relaxed/simple;
+	bh=BWltu0/2nTjb032X/G1Z7VnHbXl11yhTm9aMyIL0gbY=;
+	h=Message-ID:Date:From:Subject:To:CC:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NDGB6Et0hmHBnRFQYsRQ7N/ZjPW5xtFoi3JNmVbhSaGMPCXahUjz5MLUn5+Jvagl3D/osCdL/gbOAbNCRF+jVnbfL9DCcWoeGFokA5UkQ2FJsbJYjsDgWZtjT8CfjLDhLjY1VEoTaUhK9td8r8qIzDIV9wywFXKXjhksYsuxzGs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=clt6I3it; arc=fail smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761241066; x=1792777066;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=lzcFnpcqKVPEICy/2QE1hnpva5jbOl2bOYeT8Uaf9Qw=;
-  b=aMDL39t73nv21hpJLgmEOE24kBEzLeZWx3M1PxcG6+QWuXGzQqwMtdjs
-   lwJOY3Y9/TRu9dQxT9NE+e+rdOlGoFG7awyjl2LarnzTqG/yG2vixyBdq
-   8apshZvirQ0DOg1PPFd6/80i3eVp5SuDRxs1tfm3iEjEzhe4sSUSiJpd4
-   lcejXhlxXtpX8NXB7TAS7y2YnXEGQX9rakQHTaD99+vIZmLjf61O7UgJW
-   XnE8Vu8IHWJGlzWEowfsu3GC399nW8+ug4mFY/Q7XP9xeg5Wqz/LOhOD0
-   2BOC2UBkPQFxF90OqWk4WIHW9Uww7sAuBXALDcCw5aCQiuSskURBRNOxo
-   w==;
-X-CSE-ConnectionGUID: z+hb8kxPTbaV8utc6Uv/9g==
-X-CSE-MsgGUID: 7bN4UnRySkqgFhOzFwu6Mg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63459236"
+  t=1761241081; x=1792777081;
+  h=message-id:date:from:subject:to:cc:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=BWltu0/2nTjb032X/G1Z7VnHbXl11yhTm9aMyIL0gbY=;
+  b=clt6I3it/ETyy9qgOjS8iZmaVz4yDD3SmvRKI8I9ggAwxMtCcb675/5h
+   NWFAy2Z9yUyY1hggaSpBk0cb7/ru1AVRIWbq3pk53WgP5vP4VzHv1u9bg
+   +JOY2ULoQ8AjQ6DIJyUuqAcXSLdUHGXlcZnRGhT+qcDkAGT0CbycVL+1L
+   cC6iaZyzXQiGauYzgB41ZlDUEcs0bcVzO2impkyz8Wg3sMSZzz99Vd7Z6
+   YNbSlShWOmZLqSBGSaChhW1JrUutZ7w/Zw6Irzt06wm+tRoi3rY0F7z35
+   Q175eSXqUrjwlBfZ4Y7S2tJLZhRvN5pwTF+aSPmGNKRIWGib1u6d9SALR
+   g==;
+X-CSE-ConnectionGUID: w3YC3reiQlmyAniJ0aWlFA==
+X-CSE-MsgGUID: bpf+v+aGT6uSYlRNruHM6Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73710197"
 X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="63459236"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 10:37:45 -0700
-X-CSE-ConnectionGUID: eZL2laQuT0W+6mnmBxoEXg==
-X-CSE-MsgGUID: Fbsuxk7LRQ2lxB0shpB1BA==
+   d="scan'208";a="73710197"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 10:38:00 -0700
+X-CSE-ConnectionGUID: DXkr89KdTkmpcJkK6IHqEw==
+X-CSE-MsgGUID: xAf8R4vCTMKLZWa7c+/lvg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="183440547"
-Received: from unknown (HELO [10.241.241.181]) ([10.241.241.181])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 10:37:44 -0700
-Message-ID: <725ad7f4-f383-4dd8-8134-0ae2fc3d37b2@intel.com>
-Date: Thu, 23 Oct 2025 10:37:42 -0700
+   d="scan'208";a="188510585"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 10:38:00 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 23 Oct 2025 10:37:59 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Thu, 23 Oct 2025 10:37:59 -0700
+Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.58) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 23 Oct 2025 10:37:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZLlP4DD+F5To2EHDpC8o5yASvGQkFuYtdS+7UuJBcZoJGyDF4uDhQRfa7uKIzS8DQJkw5NYKdcBfjkziXLF5ge3Bm9m41Vl55/AktxDWx/QnDWgROApvvhWKVca4H3Ax3mWnJ83uuiDSIclXYmccBnq3fdYq6I5B3lvV+Es4+lx8e3KYs+BeVrfZs6/gnoqmsgoeLmEpnFkl3f+n+AY2v9Hb9mgAlNoGMQaO4qJuavD/WLh1+hsaqippUn+V92lhSmrDNWqbEqtLcRJ4gOAiXRDCizt1kAsIpg2jnbSTO2u8bZwh+zTWv9vkYaDeb59tkisM07cZ91WN4/siuk1EjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TrgbKWTMRz3tDCSXj/GysUStWFEQAFHlbXh1VzLoi/4=;
+ b=wnGXRBrOp7gfm2MP2K1TFq9/qnLgd2ktoQ3c54i49tbL6DeeR6VxbW4eMgghnKCMa6zn1g0otf3LKudaowol6Gbb0x+gu88Tq0hLbHsFa/SXBOkjmZF3SNAxrV3b2yu28MaWN1c8+YSVxCCiKmxR7OM2aK0hoHlYIZLfAbhMafhdpV88hlGe5JU4Q0CM0GbIAtXWxLVJlpKwQTYAL2/wRWDnKWVqxwubgugDB8lWY2Ze7B1mj3y7VURhKnRiy4NZhRRFyRNCH0eklBqnoVzvDYn4jaBxXfkNTfxwgA/mz7ZsXT/RFSaBsCK9umstKX/bvHYeqyn2+854kaJZWQWecQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN0PR11MB6011.namprd11.prod.outlook.com (2603:10b6:208:372::6)
+ by SA1PR11MB6944.namprd11.prod.outlook.com (2603:10b6:806:2bb::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
+ 2025 17:37:57 +0000
+Received: from MN0PR11MB6011.namprd11.prod.outlook.com
+ ([fe80::bbbc:5368:4433:4267]) by MN0PR11MB6011.namprd11.prod.outlook.com
+ ([fe80::bbbc:5368:4433:4267%6]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 17:37:56 +0000
+Message-ID: <687d4d54-09d6-4e30-921b-66c0e9bd0d51@intel.com>
+Date: Thu, 23 Oct 2025 19:37:48 +0200
+User-Agent: Mozilla Thunderbird
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+Subject: Re: [PATCH v2 11/26] drm/xe/pf: Increase PF GuC Buffer Cache size and
+ use it for VF migration
+To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>, "Alex
+ Williamson" <alex.williamson@redhat.com>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, =?UTF-8?Q?Thomas_Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
+	<kevin.tian@intel.com>, <intel-xe@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Matthew Brost
+	<matthew.brost@intel.com>
+CC: <dri-devel@lists.freedesktop.org>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Lukasz
+ Laguna" <lukasz.laguna@intel.com>
+References: <20251021224133.577765-1-michal.winiarski@intel.com>
+ <20251021224133.577765-12-michal.winiarski@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251021224133.577765-12-michal.winiarski@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: VIYP296CA0001.AUTP296.PROD.OUTLOOK.COM
+ (2603:10a6:800:29d::17) To MN0PR11MB6011.namprd11.prod.outlook.com
+ (2603:10b6:208:372::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] perf/x86/intel: Add PMU support for WildcatLake
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250908061639.938105-1-dapeng1.mi@linux.intel.com>
-Content-Language: en-US
-From: "Chen, Zide" <zide.chen@intel.com>
-In-Reply-To: <20250908061639.938105-1-dapeng1.mi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR11MB6011:EE_|SA1PR11MB6944:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2008c787-5e0f-4dc4-0f68-08de125ae68c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?bDJaUFNJYm9XK3RONVc0MUVEdVo1Z0xhdmdCSzR0eUZVNmJrc2tXdDFoUEJM?=
+ =?utf-8?B?K3lrb0VYTXhid2w3ZllUQTBocXNMK0ZQQWNQNjZta0RrUTkxWHlSSjF3VnJ6?=
+ =?utf-8?B?TmhXVktkajBhc25ldEZaSG05SUdxVFJjSmRmeXBsT244cjBybncya0ZjcFNK?=
+ =?utf-8?B?c2MxdzZOek1reFQ2cTlVcFppQ0lDbmtGWTJ4MkY3dmNIUkl1NER6YUpWNGtp?=
+ =?utf-8?B?ckErMGNJZTcySkE4Sk1jT1VLc3d4RXVDRXBEWGJPWVlxTDNPWWxIa3NMUTJz?=
+ =?utf-8?B?OEd1clVPUXRxR2ovUHFhREYwN29JamZkY0R6YzZDSzg2RVIxRlg1YytBcnBU?=
+ =?utf-8?B?WVBqNXZxY25HMUx5YTNTcDFGY2x3SHFxSGZIWHA1VXRzZjBCckdHUlFUY2lO?=
+ =?utf-8?B?T2JQWlR3Ni9VM1RLNHY1b0FVU0V4QXN0NW9VdjRGV1FCMEZpRVBGdXpmVVFq?=
+ =?utf-8?B?SGcwSUNDRVdVVmRZN3dJc3ZTb0JBRjNqY0phN28zenA3aVNxVjVXdkthTnRW?=
+ =?utf-8?B?b0xMR29wdXAxY1JhYlB1a2tScXJpV1VNdXk2dW1vNmplcGgxWEhVS1gyakpF?=
+ =?utf-8?B?RmRkQkdrZHZJY2tLMGo1Rm9HQTZLSW9Id3gzTFJic1Y0dUhYaUFRSjNGeWlV?=
+ =?utf-8?B?WDRrdHFxMk9rS2IvbHRvNjIrc3hHVGJkTURYZzhNMEIzb1JFTGpqOGk1NnVr?=
+ =?utf-8?B?Z09oUkdqbTYreXZOcktuVDZXQjJ2T1VMc0lTWmJrNzA0L2pMbHM3ZUhINzVV?=
+ =?utf-8?B?bW01VlBCMlhHMlV2Qlk5amVpSUd0dlEwTWRWUHpQd0ZydW0wOVRWcFQ1SXpv?=
+ =?utf-8?B?aUxTRW12dFphMHJwd21hZno4WS9PWldPbW1FM21FTTlTaXNxbWdYLzhJa0or?=
+ =?utf-8?B?UHpGQ1RLY0lZNk15WjlvSG1xNGVrR1BhMC84S0h6Qzc2aDVSb2YvOWk3ZFN2?=
+ =?utf-8?B?eVJSUlJ0eUxqdXQ0OXVSRFViUjUvc3J3cUk0WXV3bmdoY2dGL0laT2Q4R3pz?=
+ =?utf-8?B?RkkxNVptcytITVovZUVQdldqR0EwMEtwOVRjbkNPb0hCanV0T0lkamRzQUYr?=
+ =?utf-8?B?TjRoZDZlelNVTkRzZUs4N2xzdzNWUU5jTEkvdnFoSWNhSC9QcjFLWmVyanlw?=
+ =?utf-8?B?SHFUQ2tSZFhLMzRZZitCek5aYmlqVkdtY20vZDBlcTVycTR3K3hnOStmOWRW?=
+ =?utf-8?B?TlMrYTgxWDBoN1Q0dUZaWjdxVWNBUWY4OXk1WUhFQisvaHNGSUFWcy90Ynl0?=
+ =?utf-8?B?Q1A4MThZZmw1UU1LY2EwUFBJWEJyYzRHQjBPTDFlNlJ6Ykd2TUFtTFJwa0E1?=
+ =?utf-8?B?RHhZWGVTU2ZFS2dGaXk0MXBpK3JZZHdqR290VW1hTWdadUlHSmpUUTNJRjFr?=
+ =?utf-8?B?eHNBbXNSRXhlaWhHUDVBVSsxZXBDWEVhaThkazR4eFhrT2paaC9VT0hWdlZN?=
+ =?utf-8?B?dHZvRWM0YUkxSWdhK0IvR29IS3pBTEl1M3h3M2h0TjAxK0xwUGJ0MGJHZjY2?=
+ =?utf-8?B?algxdExxakhZYkF6U2ErNTNDY1AvMGFOeVEvdkxBUzhhWU1PWkFTVWtrTlA1?=
+ =?utf-8?B?N1hZM2VyS21KbUJrWWI3Ylhpd3o1NjJSSEJHRzlxa0pjcHJhTXNSTVl6ek5J?=
+ =?utf-8?B?d1IvRVkweHNac0JRUG9Dd0w2SDR2VitGOWVrUVpIWWlXaFJPbmhhREI5cE51?=
+ =?utf-8?B?bTc1cW5UVnliV0VyeTZ2RVdOMENuSHY2VE5jN3ZGaVJtOUhkNEc0VHhjY0dJ?=
+ =?utf-8?B?WXNJWVdVRWdjVkxhYWVSeFk1bkJoc0pqZHhaR3NlWDBRWGhwZ0h1NUl6aW83?=
+ =?utf-8?B?WXQwQjFHOTFINzJFWHkyeGpFaXp6eWwwcFpvNnVFcGZQejRKME4vSU5kU2Z4?=
+ =?utf-8?B?aFNhYVFBTG1TdHRSNzU1NFlmV25xV1hoQ2ZqbytqSFRlTnA1N0JBcFgrdUVp?=
+ =?utf-8?B?TlZjZEdzZ3M2eGVuRFlhZVRidGRKeXFldjRLd1pRWFdGanI4MEQrdlVFQkcz?=
+ =?utf-8?Q?hepX9UZSHgUlwhuIT0/M0s4Msfe0Xo=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6011.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?R1A4U2NuVVJnV0s4TmxkQ1lHRWdTSXNyTzYxQzJVdUs5K0M4em5LZnVraWhm?=
+ =?utf-8?B?ZjBzc2JIWk5KVGgvWnByL2tmTlg3UHpTUFpWd3pRcVhyUW1tcllKV3lhRzdi?=
+ =?utf-8?B?UXUzNkpBUStOakdUWCtWd2hFTlhCUGxkWmgyaTlaS2ExTHNoL0VFa080L2hE?=
+ =?utf-8?B?alJDdXRXZXZpWHlGelZISGZUcXBnb3QrTnhmdjc4NUlSQVNaeFQ1OUlRcEk2?=
+ =?utf-8?B?bXlCZU95QklQUkhyNnFJSC92eHhLR3UwSWJYTkdTcFN6TTcwNStWSUpzMG9D?=
+ =?utf-8?B?eDlWdmFHRUhNQVozMDFZMjgzTFlMWVNJd09GbW05UVVHU254cmZ1R3UwTjNa?=
+ =?utf-8?B?eVhQcFFRaGMvdzNzcThoL3pBSThJVENkdTgxUWQydmhDME1QWFYzQTFuRDFW?=
+ =?utf-8?B?S3ozYzlkV1VnbEJjcjNxb1h6a2gwU1FLU09ZQm1uMjgvdzgxMk1qMmdkN1Bv?=
+ =?utf-8?B?VFRZYmY0dTFCc0QyNHp3WHphU0prV3JmU2NPN0xvY2d5M014MzFqQVpTRUxo?=
+ =?utf-8?B?K2VTL2UwSDFaSURuUERDdWZETVVOQUQ3a1pIMkdJblFwSnM5eUJ4cjA4OHk0?=
+ =?utf-8?B?bDByZUM0QWgzYUg4NVVLZDQ3N2U3czRya2lxS2QyNjZEQ3YyWktmRllKejI3?=
+ =?utf-8?B?cDQxZnF6MGxBa25idVlJUUtJTEE2YXNKbEhwSWNsUHR1NFB5Uno3OEsza0c5?=
+ =?utf-8?B?N0M4R0xmb1NDdW53SE9KSWd1WWJGekRQMUtPbzJ1Qnhrank4djc3NDdKWUJl?=
+ =?utf-8?B?citrcDlRblVxTkduSTN0VGhOTTN4NDJzK1V5OXJCeUhUNzMzQjVKOGJxVHFC?=
+ =?utf-8?B?Q1Z1Wkc2YzkvZHZQcGNxa2w0Wk8xdDhqb1VocFBjRkJzV2huWUV4YTAzNkV1?=
+ =?utf-8?B?YUVwOFN6TW5YVzZtZkhIeUgrRDY5cEUzY0FLUnRXcWxKbkcwUk9YSWhCRVJU?=
+ =?utf-8?B?cHNXcnlQOHlMMGdVbGxXS1F0MG1OUU5YRzFvbkdDTnlOOXhOajZZR1dhYk9v?=
+ =?utf-8?B?YjhPek5LT2wrT0NiT0U3Z2svanNYSzIyYmlNcUxOcHF4M1N4WXRaMEV6U2M1?=
+ =?utf-8?B?WnVyQ0d2UUtSaVVDUi9WN2JzOEJUN2JBT0RORHhYNkxTNWtHNjFZZGE2M1VQ?=
+ =?utf-8?B?dHdNd3kvS1RqS2F0UVVVK1piTWpWWktKV29ZL0NZVElpR2tGbEFYbGJEUWd4?=
+ =?utf-8?B?M0QySWNFZlRTUmNsWUI3Zlk4SWd5YlJFYlZuanErWGcwQ1J1YlMyL1A2NnNT?=
+ =?utf-8?B?ME9OZkZIYzRaNldLOUVDc2NFZ2xkU1BuejFFRldjR0lYUUZjWlVzL2M5bnJr?=
+ =?utf-8?B?S2VDUlVFK0xTeklzbDU2YjAzU2I5dmloRWJZWG5vbUNqdHFWdlpMVWJlYWRL?=
+ =?utf-8?B?VENwS2ZZU1pvVVliQzBhSCtZQnBnOXJ3RWdTRHlGaDZUQUo5cS9QT0h0WVUw?=
+ =?utf-8?B?VFk5QUJIaEdqSGRBUzQ1UG1xcVNtNGhTMHhrMi9kRjRXSFZKOXNvR3RKWTVa?=
+ =?utf-8?B?R1RZZGhQWGN5SHRZc3lsZCtacVE4bVlyVm04S1J2anlLdFB1VWZHNnV4Q29h?=
+ =?utf-8?B?dG03UkFKWjV2L3JFYTF0SEswUEJrY3p0WlZhK2kzL0VwWkxtWEhVTjR1OFZv?=
+ =?utf-8?B?MWM5ekpMWEs5NXpIOWpINGdiZnJYcW1tTzdVZUtEMjhNYlhoSzArN1Zqdi9K?=
+ =?utf-8?B?dXh4MWkrWXBzY09oTHlCWVFIV1BPNzhCQjU2TS8yL2h5eHBlVVNoN0pveEJT?=
+ =?utf-8?B?VGtOTUdFb1BYbEQ4TlN3eEd2N1BuUCtNYjIyOXgwV2VONjVhc0Z0OGN5RXNq?=
+ =?utf-8?B?TStDQUhKWDJmdEFMTEFhTU52RWpuWHhxc0tBRE50RzZoUkNJRmR5Zzg4dmw1?=
+ =?utf-8?B?NHhITmhSeGhWYUdXbU9nbjBJVWNwMzNUYTJxTjFLSlAwa052QnEwMFV4VUVZ?=
+ =?utf-8?B?aUFXL0xsS290MWlMZUlONFJEQkdybFlpbGVjRHc3ZW5PWUVYZGlzZDhWU2NW?=
+ =?utf-8?B?SFFoNDREWVh3c3BPTDVEcVRrd0cxcFFhZ3p6QVVRYmh6WjJaait4SE1sbTBW?=
+ =?utf-8?B?UXVJWlM1Z296eEtaMm9OejFPV0pRRjZWQXE2QUJNVjFnbVdLbzV1dWxLN1Jo?=
+ =?utf-8?B?TmJKM1RNRHQrZ0lvWEIzV3VNZHhMNWR3eGlRNWdBcXRqek1sdzZhQzJlaW5i?=
+ =?utf-8?B?d0E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2008c787-5e0f-4dc4-0f68-08de125ae68c
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6011.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 17:37:56.8450
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aTIxMdhywJFrtd/cfKycpAlpM30mQodWjU58Lu5MoCasLRb50ttUEEHtcYOb2s8rgxqQOYAFOxipvrNiD3CChghEEyDCdscnDmQFGdAihN0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6944
+X-OriginatorOrg: intel.com
 
 
 
-On 9/7/2025 11:16 PM, Dapeng Mi wrote:
-> WildcatLake is a variant of PantherLake and shares same PMU features,
-> so directly reuse Pantherlake's code to enable PMU features for
-> WildcatLake.
+On 10/22/2025 12:41 AM, Michał Winiarski wrote:
+> Contiguous PF GGTT VMAs can be scarce after creating VFs.
+> Increase the GuC buffer cache size to 4M for PF so that we can fit GuC
+> migration data (which currently maxes out at just under 4M) and use the
+
+but the code below still uses 8M
+
+> cache instead of allocating fresh BOs.
 > 
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-
-For the patch set:
-
-Reviewed-by: Zide Chen <zide.chen@intel.com>
-
+> Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
 > ---
->  arch/x86/events/intel/core.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c | 46 ++++++-------------
+>  drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h |  3 ++
+>  drivers/gpu/drm/xe/xe_guc.c                   | 12 ++++-
+>  3 files changed, 28 insertions(+), 33 deletions(-)
 > 
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index 28f5468a6ea3..fe65be0b9d9c 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -7596,6 +7596,7 @@ __init int intel_pmu_init(void)
->  		break;
+> diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> index 4e26feb9c267f..04fad3126865c 100644
+> --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.c
+> @@ -11,7 +11,7 @@
+>  #include "xe_gt_sriov_pf_helpers.h"
+>  #include "xe_gt_sriov_pf_migration.h"
+>  #include "xe_gt_sriov_printk.h"
+> -#include "xe_guc.h"
+> +#include "xe_guc_buf.h"
+>  #include "xe_guc_ct.h"
+>  #include "xe_sriov.h"
+>  #include "xe_sriov_migration_data.h"
+> @@ -57,73 +57,55 @@ static int pf_send_guc_query_vf_state_size(struct xe_gt *gt, unsigned int vfid)
 >  
->  	case INTEL_PANTHERLAKE_L:
-> +	case INTEL_WILDCATLAKE_L:
->  		pr_cont("Pantherlake Hybrid events, ");
->  		name = "pantherlake_hybrid";
->  		goto lnl_common;
-> 
-> base-commit: 16ed389227651330879e17bd83d43bd234006722
+>  /* Return: number of state dwords saved or a negative error code on failure */
+>  static int pf_send_guc_save_vf_state(struct xe_gt *gt, unsigned int vfid,
+> -				     void *buff, size_t size)
+> +				     void *dst, size_t size)
+>  {
+>  	const int ndwords = size / sizeof(u32);
+> -	struct xe_tile *tile = gt_to_tile(gt);
+> -	struct xe_device *xe = tile_to_xe(tile);
+>  	struct xe_guc *guc = &gt->uc.guc;
+> -	struct xe_bo *bo;
+> +	CLASS(xe_guc_buf, buf)(&guc->buf, ndwords);
+>  	int ret;
+>  
+>  	xe_gt_assert(gt, size % sizeof(u32) == 0);
+>  	xe_gt_assert(gt, size == ndwords * sizeof(u32));
+>  
+> -	bo = xe_bo_create_pin_map_novm(xe, tile,
+> -				       ALIGN(size, PAGE_SIZE),
+> -				       ttm_bo_type_kernel,
+> -				       XE_BO_FLAG_SYSTEM |
+> -				       XE_BO_FLAG_GGTT |
+> -				       XE_BO_FLAG_GGTT_INVALIDATE, false);
+> -	if (IS_ERR(bo))
+> -		return PTR_ERR(bo);
+> +	if (!xe_guc_buf_is_valid(buf))
+> +		return -ENOBUFS;
+> +
+> +	memset(xe_guc_buf_cpu_ptr(buf), 0, size);
+
+hmm, I didn't find in the GuC spec that this buffer must be zeroed, so why bother?
+
+>  
+>  	ret = guc_action_vf_save_restore(guc, vfid, GUC_PF_OPCODE_VF_SAVE,
+> -					 xe_bo_ggtt_addr(bo), ndwords);
+> +					 xe_guc_buf_flush(buf), ndwords);
+>  	if (!ret)
+>  		ret = -ENODATA;
+>  	else if (ret > ndwords)
+>  		ret = -EPROTO;
+>  	else if (ret > 0)
+> -		xe_map_memcpy_from(xe, buff, &bo->vmap, 0, ret * sizeof(u32));
+> +		memcpy(dst, xe_guc_buf_sync_read(buf), ret * sizeof(u32));
+
+nit: given this usage, maybe one day we should add optimized variant that copies directly to dst?
+
+	xe_guc_buf_sync_into(buf, dst, size);
+
+>  
+> -	xe_bo_unpin_map_no_vm(bo);
+>  	return ret;
+>  }
+>  
+>  /* Return: number of state dwords restored or a negative error code on failure */
+>  static int pf_send_guc_restore_vf_state(struct xe_gt *gt, unsigned int vfid,
+> -					const void *buff, size_t size)
+> +					const void *src, size_t size)
+>  {
+>  	const int ndwords = size / sizeof(u32);
+> -	struct xe_tile *tile = gt_to_tile(gt);
+> -	struct xe_device *xe = tile_to_xe(tile);
+>  	struct xe_guc *guc = &gt->uc.guc;
+> -	struct xe_bo *bo;
+> +	CLASS(xe_guc_buf_from_data, buf)(&guc->buf, src, size);
+>  	int ret;
+>  
+>  	xe_gt_assert(gt, size % sizeof(u32) == 0);
+>  	xe_gt_assert(gt, size == ndwords * sizeof(u32));
+>  
+> -	bo = xe_bo_create_pin_map_novm(xe, tile,
+> -				       ALIGN(size, PAGE_SIZE),
+> -				       ttm_bo_type_kernel,
+> -				       XE_BO_FLAG_SYSTEM |
+> -				       XE_BO_FLAG_GGTT |
+> -				       XE_BO_FLAG_GGTT_INVALIDATE, false);
+> -	if (IS_ERR(bo))
+> -		return PTR_ERR(bo);
+> -
+> -	xe_map_memcpy_to(xe, &bo->vmap, 0, buff, size);
+> +	if (!xe_guc_buf_is_valid(buf))
+> +		return -ENOBUFS;
+>  
+>  	ret = guc_action_vf_save_restore(guc, vfid, GUC_PF_OPCODE_VF_RESTORE,
+> -					 xe_bo_ggtt_addr(bo), ndwords);
+> +					 xe_guc_buf_flush(buf), ndwords);
+>  	if (!ret)
+>  		ret = -ENODATA;
+>  	else if (ret > ndwords)
+>  		ret = -EPROTO;
+>  
+> -	xe_bo_unpin_map_no_vm(bo);
+>  	return ret;
+>  }
+>  
+> diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
+> index e2d41750f863c..4f2f2783339c3 100644
+> --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
+> +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_migration.h
+> @@ -11,6 +11,9 @@
+>  struct xe_gt;
+>  struct xe_sriov_migration_data;
+>  
+> +/* TODO: get this information by querying GuC in the future */
+> +#define XE_GT_SRIOV_PF_MIGRATION_GUC_DATA_MAX_SIZE SZ_8M
+
+so it's 8M or 4M ?
+
+maybe wrap that into function now
+
+  u32 xe_gt_sriov_pf_migration_guc_data_size(struct xe_gt *gt)
+  {
+        if (xe_sriov_pf_migration_supported(gt_to_xe))
+		return SZ_4M; /* TODO: ... */
+	return 0;
+  }
+
+> +
+>  int xe_gt_sriov_pf_migration_init(struct xe_gt *gt);
+>  int xe_gt_sriov_pf_migration_save_guc_state(struct xe_gt *gt, unsigned int vfid);
+>  int xe_gt_sriov_pf_migration_restore_guc_state(struct xe_gt *gt, unsigned int vfid);
+> diff --git a/drivers/gpu/drm/xe/xe_guc.c b/drivers/gpu/drm/xe/xe_guc.c
+> index 7c65528859ecb..cd6ab277a7876 100644
+> --- a/drivers/gpu/drm/xe/xe_guc.c
+> +++ b/drivers/gpu/drm/xe/xe_guc.c
+> @@ -24,6 +24,7 @@
+>  #include "xe_gt_printk.h"
+>  #include "xe_gt_sriov_vf.h"
+>  #include "xe_gt_throttle.h"
+> +#include "xe_gt_sriov_pf_migration.h"
+>  #include "xe_guc_ads.h"
+>  #include "xe_guc_buf.h"
+>  #include "xe_guc_capture.h"
+> @@ -40,6 +41,7 @@
+>  #include "xe_mmio.h"
+>  #include "xe_platform_types.h"
+>  #include "xe_sriov.h"
+> +#include "xe_sriov_pf_migration.h"
+>  #include "xe_uc.h"
+>  #include "xe_uc_fw.h"
+>  #include "xe_wa.h"
+> @@ -821,6 +823,14 @@ static int vf_guc_init_post_hwconfig(struct xe_guc *guc)
+>  	return 0;
+>  }
+>  
+> +static u32 guc_buf_cache_size(struct xe_guc *guc)
+> +{
+> +	if (IS_SRIOV_PF(guc_to_xe(guc)) && xe_sriov_pf_migration_supported(guc_to_xe(guc)))
+> +		return XE_GT_SRIOV_PF_MIGRATION_GUC_DATA_MAX_SIZE;
+
+then
+	u32 size = XE_GUC_BUF_CACHE_DEFAULT_SIZE;
+
+	if (IS_SRIOV_PF(guc_to_xe(guc)))
+		size += xe_gt_sriov_pf_migration_guc_data_size(guc_to_gt(guc));
+
+	return size;
+
+> +	else
+> +		return XE_GUC_BUF_CACHE_DEFAULT_SIZE;
+> +}
+> +
+>  /**
+>   * xe_guc_init_post_hwconfig - initialize GuC post hwconfig load
+>   * @guc: The GuC object
+> @@ -860,7 +870,7 @@ int xe_guc_init_post_hwconfig(struct xe_guc *guc)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = xe_guc_buf_cache_init(&guc->buf, XE_GUC_BUF_CACHE_DEFAULT_SIZE);
+> +	ret = xe_guc_buf_cache_init(&guc->buf, guc_buf_cache_size(guc));
+>  	if (ret)
+>  		return ret;
+>  
 
 
