@@ -1,151 +1,115 @@
-Return-Path: <linux-kernel+bounces-866236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237E6BFF430
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:40:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5F4BFF43C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1FD63A65B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:39:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD39619A5FC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 05:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCBF265621;
-	Thu, 23 Oct 2025 05:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5D926F47D;
+	Thu, 23 Oct 2025 05:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2RoKxBn"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="St0G8EnO"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB3EDDC3
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E6126F2AC
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761197994; cv=none; b=eX+5OlWTRo33EZQVXewrZRtZ5cib5gZbKPuAcuQPjunkf6wwSJcxmlxyjTmI2OA9tt4aMHCk3nhYN0YQxbVzojRaz1YTuBHIkg5eenfrM3zqCp/bDnotW4/FKvSaPrhFI4e9doZ/AHfF9h2p6Hm04nHGLipqpQ0yiYBMBoLh/eo=
+	t=1761198107; cv=none; b=uNw4NIMXwEll6qJdGfLlp7e2TWdSSK8vfX2M2sc9lT1yR4a0fJ367KMz5yye3Y3usOipIs1X2j2KVR0TbH5435MdnBsZq7YEsf/rIAMrKzeKlNfSN4pNE3XjdnHwoKuTQEDgX6/sTThkt81BwJI0YvbTbnhW5GjD+Tnbj0eheHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761197994; c=relaxed/simple;
-	bh=FsKIh8Sr2YempVn4RfoujlQjHMyiuNGVB5flJcwQHSo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KXEobhNP7R3k99IDZF4MY7GyqX6/qo67HePrb353i/iRx1wqDuXhTtSSp4JpfBpBw1SLLatbn/sv0P/y1all2N/wM/j1QwBA5VN4am8yYVDjhC6aERltYk+tggmsAbMsxDOjhBrLxbk1h2+a5xgOhpR2T5wA8JLCQpULVt6RRnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2RoKxBn; arc=none smtp.client-ip=209.85.222.178
+	s=arc-20240116; t=1761198107; c=relaxed/simple;
+	bh=fwXNHVV2OsfDgklhZiAQIp1sKiKkUwVMzcFG2SCy8y8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ettb45ZA/ldBSe4Hx9fYXPImA1/l5Nu1Y9P8GPK0hk0e8v4bow2pPP62+9iZEqDEsu4WECXNr4AOQF3likIxAAMOJXD5tWP0CeeVdQmwXVeLQFpQ+sfb8pbSA+7usP8/6FR2daUxa2tDzuf5SmC4j1CTxsviRPJsfujzItKiH8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=St0G8EnO; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-88f86727622so49085885a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:39:52 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-57992ba129eso512916e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 22:41:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761197991; x=1761802791; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FsKIh8Sr2YempVn4RfoujlQjHMyiuNGVB5flJcwQHSo=;
-        b=k2RoKxBn+OX2ZZzGHGW6meZ/o/uTw1VDjCY4LJzsFjk92PaTYIcXVOjtQrqS1/dKjL
-         zu+HoFu/QEWWVsRnq17yAQGR/6uvZk3MGtCRiBO70IN/zAsNKws8dpqqpqq+vaDj9VlM
-         4o9yPR8z2TxBRyHfq7mkqwFBDWQsWicZOLUjx9/03OjZteLtzn7tC7wogsOJ9zhn7TgB
-         Fes/5rzf0GCL28KHv2W421d8wHMMrNs2xFTNuQX3roRM8YTg8GeBHDKWdEuzKm8TK8WA
-         8fe8VuL31viOAQvQt2NIlqmFn8BvQvGB+UPysu9GGr8gI0PWNPqW0j/KNzAkgMWLxHjl
-         C3bA==
+        d=gmail.com; s=20230601; t=1761198104; x=1761802904; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oVmnu0DcZ8PNVbYItIhiUlRCiDcnVxMhr+Gj1/Vdtvg=;
+        b=St0G8EnO/7ctw7wWYLzFsPxXP3X47Mvrz4Bt6ld4C1OZxhq0oW8RJSXr0o4p3sh4AZ
+         cBCyB1hFmqnPCAUT7McibacyiQ7uq6kOPzX61uNLiyWR1uEsC5AAEzQ/BWAkEPwoF1NP
+         QQlT4AVxdljnwS6M9uo1/kaT8AN7rVWFKdhI6ueelYQzDJoALUUXHE6ux70AVfKT2jYu
+         adOScAIdGDFuhPfiO9JVprOkOqyLJRAl3F/viyoVMW7pYHBDQVf6us5WVVGrPqUxkaRT
+         5EV/QB0768DM+DriYoFQ6x3tnILCjGPw1cnOheJdk2OCmqT3pnYt1kF64GP71Vx6J1gn
+         oW9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761197991; x=1761802791;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FsKIh8Sr2YempVn4RfoujlQjHMyiuNGVB5flJcwQHSo=;
-        b=djXSVzJZRDGF/InFOB1Dgzt3N9I9qRN0A9ecnhQnetoyP3qDwp+IzeEOiPGTpYzdEW
-         qHFOzXseVWrSueFOWbcMawJSEEbjdan9AwqH51WI59HqlfV2qLeYzIDYl/fDxk0FgwG7
-         UMYEr0RuOigK9WzyUfLydfIaXSGbEecCR6W036rvyzmKDVqgVcBYnEV68z934oMsKX34
-         mO+5BYDlkh0nW8W1Km36Z9G/QpfrsCffwuR7GPuIfuOAK6y4lOMSF1GJe1nNCv6garAh
-         yrmnd0B/o+sevALQzxOKWoJILqIfHz0ijGKFBcweUsxvMAQ7o7FEZ7wH8+l0vpo27DkK
-         HIkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWj8Z0miFIaa0OcwrMpxoYX8pQZF+IGqxb8HScDjNETZxhmmHf5SBC3BqfITaoK+qnTUCHPTKXpaPXR9RQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq1AojPZq/6sIfYBeI3K+oE9agmRVcc3pyenlMBWSQQUYBVzEF
-	D6qgJTlBH1PMpPOzvaoVGSGZb2HZIUoUuFl+YYqQEB6OQLhb/Dvflx0vbUxSOMNPbLKxZg0NRtp
-	V1VpwLxexZ8BPD+O4Hk29sK51GRD+dWw=
-X-Gm-Gg: ASbGncvHKN8kE7fiVwarzNn/YfNJFeMqzpo7yCSCBo+e8jcMhogIcBz/jdsUlJpyMuF
-	hKPSXbC1d0GoT3BEZezVNM1BWukki2eZxYEDBBzZ9K6s85U6nQN8iLMXILasZ///2FqAYSDbEFR
-	in/4Cuh4hZ6PoOZDtLak0n0X+6ElVKcVS2ZBeBDI/XKUVpJWCj11gx/oN6Yxvlc6/1Qsj/WEUES
-	th9ajnH5PATyW8Jd03G+3yU5mrFR9XrIjL4uxX1g81II31oU2wjCDd7L1y6LOjzmpqPfi3X1B/L
-	0HIexj8vjSJuz/Rn
-X-Google-Smtp-Source: AGHT+IFTcAOtXGOZhl7XZO47Jw5as7yHXv1okWMKdwokC78k4R5PlQjBIcNv/sxneXQntHqjozJlsExm4jwJsJf+GKs=
-X-Received: by 2002:a05:620a:2990:b0:82e:ce61:f840 with SMTP id
- af79cd13be357-89070fc102bmr2871005985a.84.1761197991234; Wed, 22 Oct 2025
- 22:39:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761198104; x=1761802904;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oVmnu0DcZ8PNVbYItIhiUlRCiDcnVxMhr+Gj1/Vdtvg=;
+        b=HBy9vIPf62aZaKdT7mqowRfhXFP3UOWB6AUzaJK8NV17uI/fh0vX5EgudqpHs1wwKu
+         GX9BZVoDhbymxdjBXFXrAfQZNVfz15NYEdFkdaFrS6CS9z9LrM/SvIO/jDXI/dsVZtnA
+         EojPj3thkl+PR5bfWl2NXOy+rbFff0UL3s9PfCDEm42ciSqQSm7r3VKx61ZXz46hV1E6
+         fQ/quKyteZlDG3IcXmTyn0HhSJFulsw3gKH6cSIjKS+3DrWCzObWmJZNyT5hseRzl6Ee
+         hqsNECyNnLv6MmcUt+t5KPBXL9VmIJ3w0v0m4m+zzat8wxOlG4DOeYFAxoNjyT51ZV/h
+         br/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWTa59RM2lU9e4MdpBV2WO+KmJm90w5RgEgpAgg2KJtQ7gjEGM4jVYnSShPpRDvPCIbUu7VuLmXTdxQ8As=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeSTqymZq06zLZLsGjmXIwn3yPsC2kaZd2yiugPFExGYXI2oNO
+	vCeseEkqjuOeAaUWdNXMWdAxb9PI69rnEH6xLifUvE1NwqQkA8XA4Mh+
+X-Gm-Gg: ASbGnctN7t9GpaqfQ8/5S+Trsr2WlL26drhbgkyGwFAsZtCIBn6JuD73dnepfk4ec7B
+	mXY+9mTeLtNIPgEPy3LSrgLhTak5WepBUM7pI4VTKi3SnsR/PlNKeAeZ/PL56eC5RWXmuHvK1a6
+	S9OHkPL1bXNROpYrjZitKAuKtqLHGZFBNiD++wzE1uJCZf70z8GpUujTIuf/nFIa5/zfaw7khg/
+	1V+68cdCkUKlo/Gq+gLv5mRcv/YJnJjhpu3AeQOf3Sn5pMaaWbBhKiiyUyYTpd5fWIqICC4I5EF
+	WUCeJ6fb1c8ASVgCr72Y56rEbbtRrzbaAspq21Pf/vUdXce+xatwg5AXxO1GnMDFSG9gzwyNuRw
+	4GRmiE9VSqDIbkzvQQw55lKav9FbGhiZMHwBnFpIvNk8N5UOf28ZR/ujA9Elub/wde5y40z0+Zr
+	Vccfb68gxwg/mMxlpflEJLTP08+waWVsxQuJb77yHuj9542/RvQlBsDao53UlmmnbWb/D8
+X-Google-Smtp-Source: AGHT+IFvTCGfh+EzRAJlvDZiUcGcWmXgVO1C2EBm2Vftv1WhIVV0oVHchDQFJ2UcgQEiCnOaTQzqpA==
+X-Received: by 2002:a05:6512:3d21:b0:592:f4e8:720c with SMTP id 2adb3069b0e04-592f5a712d8mr391894e87.56.1761198103848;
+        Wed, 22 Oct 2025 22:41:43 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4adf080sm454893e87.18.2025.10.22.22.41.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 22:41:43 -0700 (PDT)
+Message-ID: <e215a74f-4c66-4e8e-bb10-b90d782de2bf@gmail.com>
+Date: Thu, 23 Oct 2025 08:41:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
- <20251013092038.6963-3-ying.huang@linux.alibaba.com> <CAGsJ_4xaA8QRjP9H=n1hQfEfGop7vOd5Y=J+KQzuOyfa8GK-kQ@mail.gmail.com>
- <87a51jfl44.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zPH0fwBOLQwh1y6jG3tCXHLGRCTyVVSCWb+NfLCEMV0Q@mail.gmail.com>
- <871pmv9unr.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zW6ogVdi=t9JCuvGD9N21mA_ORXRCakw4Av68d9n+DDw@mail.gmail.com>
- <875xc78es0.fsf@DESKTOP-5N7EMDA> <CAGsJ_4zKGS-Xd-58ufXGoyRfaZWd8wTgv0b6ibHJ2aS14mQqtw@mail.gmail.com>
- <87a51j6zg7.fsf@DESKTOP-5N7EMDA> <CAGsJ_4y32i3aNYPum=8J3_Kt6vOSisr_jg6btB-YG1uQBqHG7Q@mail.gmail.com>
- <87ms5j4444.fsf@DESKTOP-5N7EMDA> <CAGsJ_4xhJSLnXOZy4kPmnif5Paq+OPN_Ww+rPk2WO4-ADSC0Yw@mail.gmail.com>
- <87qzuu1kg2.fsf@DESKTOP-5N7EMDA>
-In-Reply-To: <87qzuu1kg2.fsf@DESKTOP-5N7EMDA>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 23 Oct 2025 18:39:39 +1300
-X-Gm-Features: AS18NWDKv8WT7U0pZbWb-8Jorrgh3QZSKh6u4PKNw3UoBHBCpCMmg3gw3nK3q9o
-Message-ID: <CAGsJ_4z7SASir4gWThfePdnvw82TB8E6rXnzJ=CieaFnJpJt7g@mail.gmail.com>
-Subject: Re: [PATCH -v2 2/2] arm64, tlbflush: don't TLBI broadcast if page
- reused in write fault
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Yang Shi <yang@os.amperecomputing.com>, "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>, 
-	Anshuman Khandual <anshuman.khandual@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Kevin Brodsky <kevin.brodsky@arm.com>, 
-	Yin Fengwei <fengwei_yin@linux.alibaba.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] dt-bindings: mfd: rohm,bd96801-pmic: Correct
+ timeout-sec length and reference watchdog schema
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Timothy Pearson <tpearson@raptorengineering.com>
+References: <20251020-dt-bindings-watchdog-timeout-v1-0-d0f3235eb327@linaro.org>
+ <20251020-dt-bindings-watchdog-timeout-v1-3-d0f3235eb327@linaro.org>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20251020-dt-bindings-watchdog-timeout-v1-3-d0f3235eb327@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> >
-> > A:
-> > write pte
-> > don't broadcast pte
-> > tlbi
-> > don't broadcast tlbi
-> >
-> > with
-> >
-> > B:
-> > write pte
-> > broadcast pte
->
-> I suspect that pte will be broadcast, DVM broadcast isn't used for
-> the memory coherency IIUC.
+Thanks Krzysztof!
 
-I guess you=E2=80=99re right. By =E2=80=9Cbroadcast,=E2=80=9D I actually me=
-ant the PTE becoming visible
-to other CPUs. With a dsb(ish) before tlbi, other cores=E2=80=99 TLBs can l=
-oad the new
-PTE after their TLB is shoot down. But as you said, if the hardware doesn=
-=E2=80=99t
-propagate the updated PTE faster, it doesn=E2=80=99t seem to help reduce pa=
-ge faults.
+On 20/10/2025 19:52, Krzysztof Kozlowski wrote:
+> The parent node of ROHM BD96801 PMIC is also holding properties for the
+> watchdog, thus it should reference watchdog.yaml schema.  OTOH, the
+> timeout-sec property is used only as one number.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-As a side note, I=E2=80=99m curious about the data between dsb(nsh) and dsb=
-(ish) on
-your platform. Perhaps because the number of CPU cores is small, I didn=E2=
-=80=99t see
-any noticeable difference between them on phones.
+Acked-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
->
-> > tlbi
-> > don't broadcast tlbi
-> >
-> > I guess the gain comes from "don't broadcat tlbi" ?
-> > With B, we should be able to share many existing code.
->
-> Ryan has some plan to reduce the code duplication with the current
-> solution.
 
-Ok.
-
-Thanks
-Barry
 
