@@ -1,149 +1,138 @@
-Return-Path: <linux-kernel+bounces-866938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42268C011BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA890C01212
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E330B35A439
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:25:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7760E359ADA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07B030EF96;
-	Thu, 23 Oct 2025 12:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B53231353B;
+	Thu, 23 Oct 2025 12:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YllBFYQn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=vyos.io header.i=@vyos.io header.b="bbtY+p9Q"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34BC30148C;
-	Thu, 23 Oct 2025 12:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B9729A9E9
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761222352; cv=none; b=h37QmVzFlKKcIZt6KB5lWGIK5qV5qj8UXO7Bmgi31v9cXYJS+2Re/v62F9yVAxB8dWiOdeMcUk97PdWU1pDsY+MQDv+GUT9zs7SW4jI0XMVieYbsgvCTxb6Jpfe8j6RiQwnSgdBDAxYEeHL7cveWIJAvl9/ccBsC2eq6xg7e9rc=
+	t=1761222500; cv=none; b=VfBs09QbngxVDn2DGi22vGJpLApGuR8xrI5wzfw4miuy3lMDYSXQjjD0lkLBdOaLZ0bKdRlJHu5CJZMrFZEpJrBJLkab8nehAEqRjhvuOzMTrMcEqTGzlRsVvJRtQN3d8kSE3roS8/g6bOCrFK6cokY6Lkino5hD5D/ht0H2XK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761222352; c=relaxed/simple;
-	bh=lgIiMFnGDqq2sHQoJbRahA2L1aFw8N7zO224VmtFP/k=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LTPFk27w9f3QQSpSZKTFszvFlf0iFBrR6CU6Ii8o+bsmQSkblRP21dfanqv4h4EeLsRvi5RIfg+P8fc1g/4TwlpO3sZKCc5F97BK3qte3/8tbk+gBolAxH6r7t1oGA0ATBeYz+oMkRdKo0UI4W9kQDULk/jdlTTxqS7c0QaXX+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YllBFYQn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD5CC4CEE7;
-	Thu, 23 Oct 2025 12:25:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761222351;
-	bh=lgIiMFnGDqq2sHQoJbRahA2L1aFw8N7zO224VmtFP/k=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=YllBFYQnZ93A6UX7xrHZcoebrMFd9t3REBj+BMAkasmk19RTVASLmTtsnTPPRadKG
-	 oo+uXtzlNMbJ/ZXUT7qgJh4UAz13adXcXHBq1lql3qHebsSwjPE2g4ZPG9Cv3LgQHQ
-	 tL4o85FXm7cKa6x146w0brX9acsxieBIlGNJ9UGl83LxxnhxZpejDJXmpKWLQVSQWt
-	 kFstjDZYGKYb2xUprJZvZ51UDutKBioQtWpno4kVAjD1Ggemlm8TTZthVyJzBsfeeC
-	 C8x6ad8U/4bITxdZCBTbkKjWO6OBcCEO1n7D7LsrLFe0gGHrkX57uBRqOseByy14AC
-	 6k4lyFDXa4SVA==
-Message-ID: <c081ec16-adb0-41b9-8ad6-5db9ccd6242c@kernel.org>
-Date: Thu, 23 Oct 2025 14:25:48 +0200
+	s=arc-20240116; t=1761222500; c=relaxed/simple;
+	bh=NRuEiGlR1P7yV/PP+dLzB7hBSKXtU0GCDSnidNKRMNs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X7sRgFUPIDuRGaLqSfOUE7FqT60dsczGVwdojgcOZSI5ROThy1K0KQbBJ8WlJxvRw8OjQZQO9YLSpDv6YAX+KtLfYTfP6bmf+NF5YtUKRTEGZaI20nYpG9U1m5zEJVEd6qayjkuHtdYaUKaaVEjudAhpvaugtEixkHT842tkgy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vyos.io; spf=pass smtp.mailfrom=vyos.io; dkim=pass (2048-bit key) header.d=vyos.io header.i=@vyos.io header.b=bbtY+p9Q; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vyos.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vyos.io
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-7815092cd0bso9094567b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:28:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=vyos.io; s=google; t=1761222498; x=1761827298; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NRuEiGlR1P7yV/PP+dLzB7hBSKXtU0GCDSnidNKRMNs=;
+        b=bbtY+p9Qq5lccw1lrW2Zhz115uH37ukbn9sKwqBv8MLeogoWgB7AadXOH7agN4VapP
+         OYxBz6EUx/xth5Rv4tDLM6Z0vVB7dg9Jz6S+Y/tiyFhsszcz6972jlPI73ht/Zq9AcdA
+         NM6tnVh2aUC0gHFjuM36ZeOK1V2lbZ6fGtvza71MpQs6rTFaslITLCdv6zbqz5FwVIJS
+         +cfE4uh1LOIjBec5xhX5kave/wi1N/6fcRqr1hpDRvdSk9ZkBwA7diE8LJJD3Yi+uxdR
+         zyUw2OUwHs2fDoSllsdJht0snufbZr1OJZnJ1jf2+D0O6ctH74vMPabmDgS2ioHm0/Cn
+         D0fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761222498; x=1761827298;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NRuEiGlR1P7yV/PP+dLzB7hBSKXtU0GCDSnidNKRMNs=;
+        b=Fy/zk4nV2h5AjnxxsgY/nHvyCw9IgC+BTBDZBCVDVAgonF5HSc7Jpx+WAMTMFcKc3I
+         EKAIsm/ERcVxw8UGIOoYcSR9+nB1nAm6PLNi1tzWz9JHG1z7C+/Ge9iFkU3VSy0ZvZf3
+         tIDvWeRGCGpWjDyKMpY/2A9m5OjNT4R+6FIaJ4g0MtgnwNPL/mAt7yOu4ctjdPeyCtCR
+         JAiCgrUVFXKm0IMVBLMbC/0keH0jsD6AzjjpXd+yUjq459Z8n0r+ZqVAyVnIqg6qAAIs
+         MEX/51dXKyVtb8G2P6UUsD/yuHfgUXJXwOYIrgv5co1dn6Wsbki9MCJfNPr0hOO+aoOS
+         w85A==
+X-Forwarded-Encrypted: i=1; AJvYcCU2qmTAN8h7B9jrIC+B+/omg1rIeMTpNZmQSa1J3yGUooRK5GuVCqUY8gcY77sYYSby/yymNhppfQBdcTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWP7+bePs9RwJenk87FPDcaLHdPl0/x2DpdV4Hqbe97aMlvOzI
+	D3E6VaZzMKe3fJN4OGqY4MfP0oPLslx5/IhYy/1rXBZHPTpmCuuTMrHQpQMq+ZWJH7uNJliNHq7
+	t0afG0excXFOlLlfQUy+e77FWiey7tRMdaKthXvwqbA==
+X-Gm-Gg: ASbGncsbvZld7N4VGKAnB8w+KNiykC9GKpf2SkeMdZC+Yn6iHMPQ8bjX+HXFnIdKTcz
+	UphzcHi3plfUYMRaWLDrXX970xj4lvQe5j3UcYexBQkO5lZf9jgpU//vhO5z+GOE2bfL5hnCq8b
+	Vs2kwuFdKuqYVteyRwy2oihcmbxmaQAe7l9FJklYhSCEPMeES0wisEUse9x0wDl3ltwHhjwdhh/
+	1VqnKnnwKXly5mVvKOtOOZhUSgw3zhs8AUdOBAwrQZeN7mXbdgn3Dajjy4MfX50UwCHBLHU
+X-Google-Smtp-Source: AGHT+IHPdOwhOaGe9iCo/jmJBjE5mGyJmdeKgFJXCNxjw25XlX18zDCJznwpoZz2/B7vt5wZIicUgZEuvLAzx18kSkA=
+X-Received: by 2002:a05:690c:600f:b0:721:6b2e:a08a with SMTP id
+ 00721157ae682-7836d2d6737mr364106547b3.37.1761222498021; Thu, 23 Oct 2025
+ 05:28:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v3] media: videobuf2: forbid remove_bufs when legacy
- fileio is active
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Tomasz Figa <tfiga@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Hans Verkuil <hverkuil@kernel.org>, stable@vger.kernel.org,
- Shuangpeng Bai <SJB7183@psu.edu>
-References: <CGME20251023113101eucas1p2c227985b0198d888564cab00aeb94f01@eucas1p2.samsung.com>
- <20251023113052.1303082-1-m.szyprowski@samsung.com>
- <81a46647-c666-4475-893b-d4af043c90ea@kernel.org>
- <85aa56ff-098b-4db1-9de5-05b0f306623f@samsung.com>
-Content-Language: en-US, nl
-In-Reply-To: <85aa56ff-098b-4db1-9de5-05b0f306623f@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251021133918.500380-1-a.melnychenko@vyos.io>
+ <20251021133918.500380-2-a.melnychenko@vyos.io> <aPeZ_4bano8JJigk@strlen.de>
+ <aPghQ2-QVkeNgib1@calendula> <aPi8h_Ervgips4X4@strlen.de> <CANhDHd_iPWgSuxi-6EVWE2HVbFUKqfuGoo-p_vcZgNst=RSqCA@mail.gmail.com>
+In-Reply-To: <CANhDHd_iPWgSuxi-6EVWE2HVbFUKqfuGoo-p_vcZgNst=RSqCA@mail.gmail.com>
+From: Andrii Melnychenko <a.melnychenko@vyos.io>
+Date: Thu, 23 Oct 2025 14:28:06 +0200
+X-Gm-Features: AS18NWCPma5wE5y2xe9JBDWGT4k5clLS_A4FnlSPmz2JjrF1PCHSnh_T4kzSeHM
+Message-ID: <CANhDHd_xhYxWOzGxmumnUk1f6gSWZYCahg0so+AzOE3i12bL9A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] nft_ct: Added nfct_seqadj_ext_add() for NAT'ed conntrack.
+To: Florian Westphal <fw@strlen.de>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>, kadlec@netfilter.org, phil@nwl.cc, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	horms@kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 23/10/2025 13:55, Marek Szyprowski wrote:
-> On 23.10.2025 13:36, Hans Verkuil wrote:
->> On 23/10/2025 13:30, Marek Szyprowski wrote:
->>> vb2_ioctl_remove_bufs() call manipulates queue internal buffer list,
->>> potentially overwriting some pointers used by the legacy fileio access
->>> mode. Add a vb2_verify_memory_type() check symmetrical to
->>> vb2_ioctl_create_bufs() to forbid that ioctl when fileio is active to
->>> protect internal queue state between subsequent read/write calls.
->>>
->>> CC: stable@vger.kernel.org
->>> Fixes: a3293a85381e ("media: v4l2: Add REMOVE_BUFS ioctl")
->>> Reported-by: Shuangpeng Bai<SJB7183@psu.edu>
->>> Suggested-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> ---
->>>   drivers/media/common/videobuf2/videobuf2-v4l2.c | 8 +++++---
->>>   1 file changed, 5 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
->>> index d911021c1bb0..a8a5b42a42d0 100644
->>> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
->>> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
->>> @@ -1000,13 +1000,15 @@ int vb2_ioctl_remove_bufs(struct file *file, void *priv,
->>>   			  struct v4l2_remove_buffers *d)
->>>   {
->>>   	struct video_device *vdev = video_devdata(file);
->>> -
->>> -	if (vdev->queue->type != d->type)
->>> -		return -EINVAL;
->>> +	int res;
->>>   
->>>   	if (d->count == 0)
->>>   		return 0;
->> Ah, no. This should still check d->type. So:
->>
->> 	if (d->count == 0)
->> 		return d->type == vdev->queue->type ? 0 : -EINVAL;
-> 
-> Then frankly speaking lets get back to v1 limited to 
-> vb2_ioctl_remove_bufs(), as using vb2_verify_memory_type() in this 
-> context only makes things harder to understand:
-> 
-> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c 
-> b/drivers/media/common/videobuf2/videobuf2-v4l2.c index 
-> d911021c1bb0..f4104d5971dd 100644 --- 
-> a/drivers/media/common/videobuf2/videobuf2-v4l2.c +++ 
-> b/drivers/media/common/videobuf2/videobuf2-v4l2.c
-> 
-> @@ -1010,6 +1015,11 @@ int vb2_ioctl_remove_bufs(struct file *file, void 
-> *priv, if (vb2_queue_is_busy(vdev->queue, file)) return -EBUSY; + if 
-> (vb2_fileio_is_active(vdev->queue)) { + dprintk(vdev->queue, 1, "file io 
-> in progress\n"); + return -EBUSY; + } + return 
-> vb2_core_remove_bufs(vdev->queue, d->index, d->count); } 
-> EXPORT_SYMBOL_GPL(vb2_ioctl_remove_bufs);
+Hi all,
 
-I agree. Can you post a v4?
+I've taken a look at the `nat_ftp` test from nftables. It actually
+passes fine, I've tried to modify the test, add IPv4 and force
+PASV/PORT mode - everything works.
+Currently, I'm studying the difference between NFT rulesets.
+Primarily, I'm testing on 2 kernels: 6.6.108 and 6.14.0-33.
 
-Regards,
 
-	Hans
+On Wed, Oct 22, 2025 at 3:01=E2=80=AFPM Andrii Melnychenko
+<a.melnychenko@vyos.io> wrote:
+>
+> Hi all,
+>
+> > BTW, this fixes DNAT case, but SNAT case is still broken because flag
+> > is set at a later stage, right?
+>
+> I've checked SNAT with the "PORT" FTP command - didn't reproduce the bug.
+> I assume that `nft_nat_eval()` -> `nf_nat_setup_info()` sets up seqadj
+> for the SNAT case.
 
-> 
-> 
->> Regards,
->>
->> 	Hans
->>
->>>   
->>> +	res = vb2_verify_memory_type(vdev->queue, vdev->queue->memory, d->type);
->>> +	if (res)
->>> +		return res;
->>> +
->>>   	if (vb2_queue_is_busy(vdev->queue, file))
->>>   		return -EBUSY;
->>>
-> Best regards
 
+
+--=20
+
+Andrii Melnychenko
+
+Phone +1 844 980 2188
+
+Email a.melnychenko@vyos.io
+
+Website vyos.io
+
+linkedin.com/company/vyos
+
+vyosofficial
+
+x.com/vyos_dev
+
+reddit.com/r/vyos/
+
+youtube.com/@VyOSPlatform
+
+Subscribe to Our Blog Keep up with VyOS
 
