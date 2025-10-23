@@ -1,150 +1,169 @@
-Return-Path: <linux-kernel+bounces-866611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF94C003C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CAD6C003CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 670FC5028F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:22:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 23B85501505
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8AE30217A;
-	Thu, 23 Oct 2025 09:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4754A30594F;
+	Thu, 23 Oct 2025 09:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="NfiqOg+/"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kmqhZ7I/"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63A61990D9
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5B230594A
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761211375; cv=none; b=Z7chWbIpBLvvx5MRvZuak3NTyZpLKyhmQfIH7sqbx+NKFNMbEndarCxWp2iQwwwwAA2XlmVC5G4zNZW1dMwFKUtoZIgfxhqCFPblVIwVPJ8ox3wOjqKW+IBG8Q/q+ltn3EojiSmLyUwG51klHxPN1Bmixzy0om3sNgKstpODVeU=
+	t=1761211467; cv=none; b=u+18iaSzcLfcE//8ZfayAX54bHtXKj7+K022qVDyVX2SGny+AHO5CemRFG6g/DUFTn6XQf9rI2dMqEBz4VH+5J9SbRRSUYQahulCXPg7i8Rh7/HvASrk+H3Xna2Xi3GQUftd6/4NF5JENRdjQNNXB8iYhKs0Ay5dvzEmn0OmJuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761211375; c=relaxed/simple;
-	bh=MmxmGHctKx7kK+Uo36QkuOd3XsUhd7hcJDU/dGKBmRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XF0yxQ825YEmzSh3dOICLo4BxEa5BL4WR7SulWYOAhlbSePDG3DU55lJf6P1fYYglcHEDSUFhRVkyw9ujafVUrA1vx9MsDmaqUyf6f0owjMnjEOqdg8UKDex16MYzncVIkauicGxkfSqCuxf6p4mIl7LIM1hGhTCRhJMkfrdrP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=NfiqOg+/; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=uaeh
-	pVOpUf/cS5+cRmy5O8nlh0SiDkHpiLE/Lc4/G3k=; b=NfiqOg+/Cg8RKkmcycE3
-	CHVR1V020X5xIQRnVa/mJrEdgWuF0MNIIqk/8lFWAISva0LOoOQg2BhIprjv1mV6
-	riOlmdmAWtMgVD+f+bAtQvb3v2/5u3xAKs92HpZQuCpWlVXwnL1xWH/3kFm6c1hv
-	Qnrr35FwH86g04JHAK+Wyf3U7HcWlZJWuTel9PUH8zoihBWiR1h9E/onAqmoxBdC
-	Pjhe8cbVZ4AIoHS+/mOVWMkZxI3wYmbAE94iyZjtX6eQmZ973nfi0TfWDFoM6THf
-	bM+2t8aojoXktOJsQ+KfzJONnieAJSHMYfAIbdP9lodmMcN3L+/coh14yoVRRojX
-	rQ==
-Received: (qmail 2145142 invoked from network); 23 Oct 2025 11:22:50 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Oct 2025 11:22:50 +0200
-X-UD-Smtp-Session: l3s3148p1@Z84b+s9BYlptKPAY
-Date: Thu, 23 Oct 2025 11:22:49 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if
- possible
-Message-ID: <aPnz6U-fcodRoobU@shikoro>
-References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
- <20251015205919.12678-6-wsa+renesas@sang-engineering.com>
- <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
- <aPEAx8ZGHBcWZKJF@shikoro>
- <CAMRc=McsbAirEYjoo455mbKU495VEvPmMEqBmZCq2hw113YHOg@mail.gmail.com>
- <aPIfF-3SgzW5V_gs@shikoro>
- <CAMRc=MfVPO292xmnXBWJzWuhNADA_u1yvpJ4kkK8TgZyQgaP+A@mail.gmail.com>
- <aPInv9NELU7N9QDn@shikoro>
- <CAMRc=MdWS2OSeJAkTRnAFMtXcVukwQ=JAWwJ3OHxogmgZnan6g@mail.gmail.com>
- <5c9761d5a6a14d4c250df6cc4201bca72d963133.camel@pengutronix.de>
+	s=arc-20240116; t=1761211467; c=relaxed/simple;
+	bh=7hxDrmYfmL4uCb+rlo+l53xmaOBb8MRgWfHj7qMo3xk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LS05KHB2CwvhNs4aqbTVg7HaFgNL20v/vLT5pf7e4gC2Znh3w4o7yEX0XBZsQFxAQ5Zi2Xbitx4xNT70z+9MkygjhECoFIz/ezSpEexDvECd6hjEq4rMzA5aGBcs9xjUp6zBP3Cz0I9yPz9jmnfl8wZMrcvqIhFF834NkLtz5Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kmqhZ7I/; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-33be037cf73so666888a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:24:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761211465; x=1761816265; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cBsArCoDTqCrmuwrG6XV4XY+7kFJVzv0tmu/UB8VHY0=;
+        b=kmqhZ7I/80Wx6X5WRo9guZVTmUrApHWNUYZZ6vSc0pO6ttnffxvUkmq9XAlU+AdPRK
+         4xcbK6WsGPFDH4I3HQFhNQTKfzSeeUBcqp060Z5DhbiVKYSG0W0jAN5HpPA2y3fkqP94
+         DbLph4+xznvPZIsfmDR++lc8rPeyZ9PtWC6A34PfydOC/6V+xpZQl1hcTcy1hiqKRDi+
+         aEseNiL5XVOK2NClvKltfY8Yw3lgByT7kwYNEWbcJwB6CcQw876W+zKeGoGfryOBte2B
+         dSzhU5xq2K2IIkwi/HehyKskmS9gFpWciJODQduygpeP+noH7otC7qaZ1PHjALiM8pOZ
+         BZGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761211465; x=1761816265;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cBsArCoDTqCrmuwrG6XV4XY+7kFJVzv0tmu/UB8VHY0=;
+        b=cCM5v5Qh5WsqwAjuE84jBpcldJrYK67uOMAj4rsHMLNrZzxP0Z/MYgiVajQmG/ZKTV
+         R/A1gCHRgHPKQi85sEIlLpZpEHvMkPhQNL4UntHFbSTZFNHB7GUePynYIGDO3oeoIovA
+         bWpQONxsPYDmuRxcRQVcH7fdaQuhZxGXNYFE1Vs8BdcBkqu4rsiBxKbz9Fx/TAdxvgjK
+         MrRbEff7Mj/UdjkweXMYD+yQO/eXrXCHzz7vcSuo7Nr7UJDAc8gub0hGvluiHTT8LkEv
+         H7a1ttr6tgj/9DUu6Es+EaKrqBb+ge3nHq7q3brulacOZVUPgDt63NdPpvjKT2GB6S/d
+         oGXQ==
+X-Gm-Message-State: AOJu0YzNzHgqrX1DAAUB/v9/pXQkjpxjqucSQxH2EE8fuiBND0Lj7jOX
+	81GxJ1rpFbHbfgnMdm47CKR1cJDFKH22KqHCC3RUEPc9wHxRxQ4wrzdG
+X-Gm-Gg: ASbGnctqQ7pIQOdovJGY+vTXo529pMHMZveXpJnj3FhPq7b9xfvDusII62cIIOOhyum
+	Ay5OJxvhECb1iYihAoxcafpFKO9JuRGhw+YhM5oW3bxHb4uML/fyivgAdwQmxvvCkjo7wxQYKIU
+	FC1MPbUkwIwkszqwn5Zy7QppXJa9DfyngZEjG7+T60XcYk8A61Q5Sewq5sEps8ZUURpxh6jwnU4
+	8UHu1gZBZjOaLiRJ1ByszT5vwR41b983Icibv88wKISk56KF+rcSOyI2Y9uplWXf2yx2fy33imn
+	/9K57N2Ie9XodL5wg7Dr+nD6FhmclwZhWuTbnbaeJpB1w35b0rACmgDEGLqutD1lffWDepFEZBV
+	WPmAKU6Pkrza36poigLAPQPyKi9ENop8zKK7xIEwmQH+8Mot4GaDNkCfqi+H2dzeMqrbsz5Zw38
+	8s
+X-Google-Smtp-Source: AGHT+IHalUr6vNOs8qfPskNhGYDAxFHbdZVf1HZccpt0SFrfqRTHW6rBhGI+3XgWrGyDBSunsm9tbA==
+X-Received: by 2002:a17:90b:3f10:b0:32e:7270:94aa with SMTP id 98e67ed59e1d1-33bcf8e726bmr30461923a91.19.1761211465292;
+        Thu, 23 Oct 2025 02:24:25 -0700 (PDT)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e224a2f28sm5108282a91.19.2025.10.23.02.24.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 02:24:24 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id CFDEE4458010; Thu, 23 Oct 2025 16:24:21 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Networking <netdev@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Karsten Keil <isdn@linux-pingi.de>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH net] MAINTAINERS: mark ISDN subsystem as orphan
+Date: Thu, 23 Oct 2025 16:24:06 +0700
+Message-ID: <20251023092406.56699-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mKofs96cu7kGmLt9"
-Content-Disposition: inline
-In-Reply-To: <5c9761d5a6a14d4c250df6cc4201bca72d963133.camel@pengutronix.de>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2105; i=bagasdotme@gmail.com; h=from:subject; bh=7hxDrmYfmL4uCb+rlo+l53xmaOBb8MRgWfHj7qMo3xk=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBk/Px+MDO8p+DXzUdRFOaOW14u3JcYekrVQyZYoio15v 6StTdK5o5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABPp5WH473A1+OAaAet5j54z 3SxlY25ZOP3KrACn8E/C//NzrGz6VjIybJ57+pA1v30//8zjGWLZzyc2Hw8vq5QwDc7cve7VI25 WVgA=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
+We have not heard any activities from Karsten in years:
 
---mKofs96cu7kGmLt9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  - Last review tag was nine years ago in commit a921e9bd4e22a7
+    ("isdn: i4l: move active-isdn drivers to staging")
+  - Last message on lore was in October 2020 [1].
 
-Hi Philipp,
+Furthermore, messages to isdn mailing list bounce.
 
-> > > I dunno for how many drivers this is really applicable, but I really
-> > > liked the cleanup of the pca954x driver.
->=20
-> That cleanup might have been a little premature, given that the reset-
-> gpio driver currently only works on OF-based platforms, and even there
-> only with gpio controllers with #gpio-cells =3D <2>.
+Mark the subsystem as orphan to reflect these.
 
-I see. That kind of spoils my assumption that it is a fallback supported
-by the core. Darn, I would still like to have it, but it seems more
-complicated than I have time for it :(
+[1]: https://lore.kernel.org/all/0ee243a9-9937-ad26-0684-44b18e772662@linux-pingi.de/
 
-> How about selecting RESET_GPIO from I2C_MUX_PCA954x? It already depends
-> on GPIOLIB. Although I don't like the idea of drivers being converted
-> en masse, all selecting RESET_GPIO ...
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+netdev maintainers: I have sent request message to Karsten off-list prior to
+sending this patch. Please hold off applying it until a week later when I
+will inform whether he responds or not.
 
-Well, on top of that, reset is optional with this driver, so selecting
-it doesn't feel proper.
+ CREDITS     | 4 ++++
+ MAINTAINERS | 8 ++------
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-> To be honest, I don't like either very much.
->=20
-> Yes, the reset-gpio driver is only about three pages in size, but
-> force-enabling it for nearly everyone, just because some hardware
-> designs like to share resets a little too much, feels wrong to me,
-> especially in its current state.
+diff --git a/CREDITS b/CREDITS
+index 903ea238e64f3c..fa5397f4ebcdd0 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -2036,6 +2036,10 @@ S: Botanicka' 68a
+ S: 602 00 Brno
+ S: Czech Republic
+ 
++N: Karsten Keil
++E: isdn@linux-pingi.de
++D: ISDN subsystem maintainer
++
+ N: Jakob Kemi
+ E: jakob.kemi@telia.com
+ D: V4L W9966 Webcam driver
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 545a4776795e67..8d2dbb07c44099 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13246,10 +13246,8 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nab/target-pending.git mast
+ F:	drivers/infiniband/ulp/isert
+ 
+ ISDN/CMTP OVER BLUETOOTH
+-M:	Karsten Keil <isdn@linux-pingi.de>
+-L:	isdn4linux@listserv.isdn4linux.de (subscribers-only)
+ L:	netdev@vger.kernel.org
+-S:	Odd Fixes
++S:	Orphan
+ W:	http://www.isdn4linux.de
+ F:	Documentation/isdn/
+ F:	drivers/isdn/capi/
+@@ -13258,10 +13256,8 @@ F:	include/uapi/linux/isdn/
+ F:	net/bluetooth/cmtp/
+ 
+ ISDN/mISDN SUBSYSTEM
+-M:	Karsten Keil <isdn@linux-pingi.de>
+-L:	isdn4linux@listserv.isdn4linux.de (subscribers-only)
+ L:	netdev@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ W:	http://www.isdn4linux.de
+ F:	drivers/isdn/Kconfig
+ F:	drivers/isdn/Makefile
 
-I understand the argument of 'too limited in the current state'. I don't
-get the 'share too much' argument? The fallback would remove open-coded
-"reset-gpios" handling and sync it with generic reset handling?
+base-commit: c0178eec8884231a5ae0592b9fce827bccb77e86
+-- 
+An old man doll... just what I always wanted! - Clara
 
-> And just default-enabling it doesn't solve the regression problem when
-> updating preexisting configs.
-
-Yes.
-
-Well, at least patch 1 seems okay, so users at least get notified of the
-problem...
-
-All the best,
-
-   Wolfram
-
-
---mKofs96cu7kGmLt9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmj58+UACgkQFA3kzBSg
-KbaifQ//Q3wcCTFzd3BHSUa+0++ku3/boJCNnTrasBVNJeGvrUsI0HblrxxqB+D0
-oSfi7y2UvH8DyeARLoBd6nKDZlE+KEbG0PEcZXSkkKlqrMpNpH9X0eWBLO3PCWBh
-zlI73MIirI3/PBDwi/5YPkkuynw5A7OgyGnxHy5xxj8obnIa70h5w/DpdSMNgSD8
-KaCVFhAHUb3hNNOW8IyQxgkYTijj0zFs2bbdj4Heat9v0dtsiuKKChY+RazaeBMM
-4u13pzuxyrTFSl3yQ6EDxZcmn3tkkZW+HTMBrhPFnmf1SNEpKGgGOEsGOraLqmhe
-lOqB2I+H43T9+IVhcTsFwAd0vRvQrz6sVYrYmicLJt1WzBf/6gFmaYtLSPCUo9ju
-zSvp1vEqqyaHdkAcjT/DDRtWljKxU59JXHSdeROKld+maRLUdHsmU8dJviutAfUB
-QhRw9mja7q3ahBsHoCBoSBdQ+Sb2UM6D1uLq+o6ugd7f+/1X8OFMXe358Ym+5QYT
-fbAqp5CddWDLVJNA/po2dFL6uTZu4+y+zjYLr+lb6AlNi04ppS5N9Xnliz3Duuul
-nHMwqgU0cVerXdjqecDeC2vTyJoG5fcDty75jR5RGAFYkBspQvSwLCCYN9cLt2CQ
-mNVWYKUmf2cidYWLAIhVrdLg/MxcIMA6XwLjhohdwEoZ8qHV7xk=
-=CZiO
------END PGP SIGNATURE-----
-
---mKofs96cu7kGmLt9--
 
