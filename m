@@ -1,229 +1,267 @@
-Return-Path: <linux-kernel+bounces-866603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA8A9C0037F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:21:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EFA2C0034C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 254C33B03A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:19:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C381F18831E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3752FD7D8;
-	Thu, 23 Oct 2025 09:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B316B2FF155;
+	Thu, 23 Oct 2025 09:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Xxy3QOUc"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013034.outbound.protection.outlook.com [40.93.196.34])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="ocu75XEK"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011008.outbound.protection.outlook.com [52.101.70.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C014B2FD69D;
-	Thu, 23 Oct 2025 09:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E582FB09E;
+	Thu, 23 Oct 2025 09:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.8
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761211098; cv=fail; b=cOL/q0hk2S4HObE9o1aVy4Pfz3VLtel+7UhNcxt6cXQ74uEdjmnkpgLdAoYGbNZd31i+Hq+eFRyfw5TrAgJ9+nwBaDP6WpOoWJKGwj19WXYKSqgjorVt8hR5gSMVUZ/8XoVpMsbLA5o0syaHtVF/CEQSSuBH7ZPa/jk2Tz9VCOg=
+	t=1761211170; cv=fail; b=GAOl+lV3PZ9+4e7YjyoD7e8D4X8kjS/mL/gucp2GVs252i+TCVidj31LMzbeYgPMB/mEk6HtYmZVTGoGBrzycPNER5GsYUcwnAGd4MPzZJxnXofn+B6tDj7jiyIFHWvcxEEJIby9oj7HVPOYSUglQ3XWCZPQ/iTntHHREC6Sho0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761211098; c=relaxed/simple;
-	bh=reGdWMpEUnkYHkraXym/2KHUGmWnK1tYLDmSZvb7jt8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fgxAznDNZ7faY5HVr01bygZK6xRt9WPD+57M+TcSK+6O/NKLAELUzdLG3Pw+neJi0Z4sonLh99GOfnrTIfEoBKYMspMoXLhmv6o+HpJ6pdmeKQ1Ozun/aVs5AiAcNjJz/8sCW7i6V0AQG77WU+0CVXJk1aKzbgsUfXoWqCbxeqE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Xxy3QOUc; arc=fail smtp.client-ip=40.93.196.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1761211170; c=relaxed/simple;
+	bh=W210yvxgT8CXTcovjCjC1QQNu3yaXu1HzprMuyvqEtw=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=h6K/yd2QTh/2Z6Nt8CZoPUa7q8wLsOtqYMtqAqcz5kljyiP9ND8eMc7nz/g2EknyZfM4qvUDn0y4M2MtLMxvnYuFZOTlZ7RBqLWugcmRtsmgcLIu+d0isyexFr27wK2u1z1h8j4RDDw3OLIdL7gU81a/Xm/nm+Z8qHxAnhL/ETc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=ocu75XEK; arc=fail smtp.client-ip=52.101.70.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MBQQFyP2XIC51TSWGtGjinrd+Uh3x7wTuBdlQcddus+14snTLm100y/yucfzLJTC4xfGgqWF+Tj+oViAuf1oMwKgBKPcAkXLyHjSYwjGhqZNEHoR3lVEysUdpM5Gy4McZW8iL69k0g5+Eq49gl/1J1poCTRNkhhIVuH7HdZEbNNe7PrBci0O0HDE39RRbuR+CJfXGI8IxYPPix45Cgg5EmvYiICbEINLmtCsT3+Y8YURXHur30epGB5oYUSCZ2dWGVDIJZmNkuiLDGjnt/yho3QyaMk8coo8yZLz196ziWBhgW9cM+J2Ok+abP/30v70dkxBosPR+fR94NFvdGz6Ng==
+ b=NkJVZXb4RxJHvfCnTbPScMBcH5g8s7N1LqDt6GrcOVzIZ5uIslYlQvehccPMtiR+hsfibA7doHekDxfhcGcYSgOM5rWxeMnAYzfAB4BmNXB6c4aBTCjLtaQbRQ6VFAoCoOhyApAIVnfoU0YlL6RwWQXYu/5t45doPei205z50S7zJcmTLmSEsM/HO25IsknDujVYk5mCgBRmC37yMDdB6ZEm+lDw0/FbXBPr45Yj8FYQmaxt5tAQln9f53mIdZo5liDw6Nanbg2uwIPdXSr56Snl7VeKTXHI5v5IswWbN4QdjRnLEjd4kvHyVBeOBcf6tjoA0eRcL6JayLMWUm1FVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TfdeAM4BQKA15F7TE9b10BYOmZsoj/T+r01MZ4dOlxI=;
- b=BEN5B8d6QBLC0s65OE3iYA6HBL6afypJDMTDcRmmFCTKkwNtjwH60q7J2/EaQbC5aUVXTYrUM0ueaRsyb4BsID3E1rs+Z7iaTd6GUdkjZN04x3LHbd59Hu4krK23qIFplk+nysO6J/LWvnyYul//qX6sp2q4xcyIKHhU8JAFqsPtVI7a2Pn63PfV0W8/Kbs3aAaQ7HSeqCa2LdQZQlL4TjNolwd7afwMHDdd+aS/Pwx6VyhArAcybsWueULjqqpSjKqGwQHM+pafzaY2dyNAlBeddSWBTABzHrhHqXrJ2L2SfBh7WQBhOKiMOlNW9+e4wEpWZLOqhw+zPrEl460kAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=nl0jSy4Z3VzK7MtGN7lUzvL80Dco2juySfwPtB9LE1c=;
+ b=V6LLuK0LQQfs42p3m5hFiG44ocrNB6d7VpA0SJ83J347w47NvLOIqSk4L/jJEF2ZTWWupviQYo8DUTuREbOlAfchYO5NcHE9K+9MzpZ9R8EhQBTplwxsRYb1BL29VOgXSSjQs2RrhkM4ScrXMNYxaQik8ETr60W0LtORRq4aer9AlkI0lFHB4s+y5k8jsEcOHGHyi0gK7Ni2gbcRRHK8s1fVO3kfQ0NBSqzAu4UJVu5c6af/xUceuc1KhNw17A6N7l6u0kx6ivuiguDftQIgnRo1Nsell3XK+89/J9EXcfJ33vP+bMhlh3WwgOsiXeruAfc5bV5EV0Ufsi8PyvQs7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TfdeAM4BQKA15F7TE9b10BYOmZsoj/T+r01MZ4dOlxI=;
- b=Xxy3QOUcej6VHpaDuKu+YLP5TrdK6kAbyKBr9ANb5TFg4nrbZk+CvR9Keg+4Y1dZ5Ox+9xf2rFJ0345TAt0/6mOKNGkoIGXSsQhqvrweYOaHSYrs1oFlambUH8oYEWs9oK1VHDVtWc9l1SVuKmpRIflkIufc+iMayNGLNq2ENJ7dHuHEsw7Gt4RAUnWfzq7zz89I4JnVxZ++zXKU9CQKm+nOCAdZUB96xnSxzreuPh9iObgUcja/SUwjNBLEzwrI2wcm1Q2G79Z1Q0i/p3Te6czjnBSZEkdnVEGWxW4bS8lMSqpIAULmJcSq8uCQBHEphsEhKpNmoNGphlkeCtVqAA==
-Received: from BLAP220CA0006.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:32c::11)
- by BL3PR12MB6569.namprd12.prod.outlook.com (2603:10b6:208:38c::9) with
+ bh=nl0jSy4Z3VzK7MtGN7lUzvL80Dco2juySfwPtB9LE1c=;
+ b=ocu75XEKvDCl8Gwt3oKsYQ+I2TtQvudK3CRMrIjIWyKRUznz20uDJ1Q6m7WxR99WJ8AvnmIr8MFxvv9ykxblk7XBqa8GetkSpwC/fEauzcTaguRlS0BqistpebjYHNI4xnz5wxtCxzIqjsJ9/iX1el9/9Myj3pwbR2IFaLTX/Lx659/elL+cb69oSdF4wH/eKXdehMxD5Ds5KguYgSlt1Czmdcth1emv1Yfm+AoieXwqUYaM8ANaPaa6wHL9iUGn/gA5YBV6tYD2B1wihPhp+yaUGKiCEYtScj5/5S3M7IituroYQWfKJzSEDNtZu2ZJUL95Touc7cCqhzCKnSJvEg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AS8SPRMB0023.eurprd04.prod.outlook.com (2603:10a6:20b:44e::21)
+ by PA1PR04MB10556.eurprd04.prod.outlook.com (2603:10a6:102:48e::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
- 2025 09:18:09 +0000
-Received: from BN2PEPF00004FC0.namprd04.prod.outlook.com
- (2603:10b6:208:32c:cafe::2c) by BLAP220CA0006.outlook.office365.com
- (2603:10b6:208:32c::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.17 via Frontend Transport; Thu,
- 23 Oct 2025 09:18:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN2PEPF00004FC0.mail.protection.outlook.com (10.167.243.186) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Thu, 23 Oct 2025 09:18:09 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 23 Oct
- 2025 02:17:53 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 23 Oct
- 2025 02:17:53 -0700
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server id 15.2.2562.20 via Frontend Transport; Thu, 23
- Oct 2025 02:17:49 -0700
-From: Tariq Toukan <tariqt@nvidia.com>
-To: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>
-CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	<netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Moshe Shemesh
-	<moshe@nvidia.com>, Shay Drori <shayd@nvidia.com>
-Subject: [PATCH net-next 5/5] net/mlx5: Add balance ID support for LAG multiplane groups
-Date: Thu, 23 Oct 2025 12:17:00 +0300
-Message-ID: <1761211020-925651-6-git-send-email-tariqt@nvidia.com>
-X-Mailer: git-send-email 2.8.0
-In-Reply-To: <1761211020-925651-1-git-send-email-tariqt@nvidia.com>
-References: <1761211020-925651-1-git-send-email-tariqt@nvidia.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
+ 2025 09:19:24 +0000
+Received: from AS8SPRMB0023.eurprd04.prod.outlook.com
+ ([fe80::1394:27d9:e69a:1798]) by AS8SPRMB0023.eurprd04.prod.outlook.com
+ ([fe80::1394:27d9:e69a:1798%5]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 09:19:24 +0000
+From: Guoniu Zhou <guoniu.zhou@oss.nxp.com>
+Subject: [PATCH v7 0/5] Add MIPI CSI-2 support for i.MX8ULP
+Date: Thu, 23 Oct 2025 17:19:41 +0800
+Message-Id: <20251023-csi2_imx8ulp-v7-0-5ecb081ce79b@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC3z+WgC/13P326DIBTH8VdpuB5GDn+EXvU9lmUBgUqyioFq3
+ BrffdhsqXp5Lj7f/M4DZZeCy+h8eqDkppBD7MvRvJ1Q2+n+6nCw5UZQA68lUbjNAT7DbZbj14C
+ VNVQKa4WxHhUyJOfD/My9f5Tbp3jD9y45vY3AGgJakZooyjgm+DrGPozVTxfHS8y56uehauNtT
+ XYh32P6fg6cYA3/ZQD2WybANQahGWNUMSX45b+yLpnolvIDpYVSLiXXRgsw7Z6yLZUHygrV4FV
+ jCDdGyT3lL6pqcqC8UNEowSxhDfF0T8WGkuZAxfor1ZRzJcF5/6LLsvwCRjKjANUBAAA=
+X-Change-ID: 20250819-csi2_imx8ulp-9db386dd6bdf
+To: Rui Miguel Silva <rmfrfs@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Frank Li <Frank.Li@nxp.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Guoniu Zhou <guoniu.zhou@nxp.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761211202; l=3019;
+ i=guoniu.zhou@nxp.com; s=20250815; h=from:subject:message-id;
+ bh=W210yvxgT8CXTcovjCjC1QQNu3yaXu1HzprMuyvqEtw=;
+ b=7l8fH3vcjKPHdOqkiHpbN8+2tyCmVAsQN/yUf8NPip/mYJfk+jhAC5ovyHqBWA2lCTMj2c3AW
+ Sv47Ntz78SEDx8K3Js8MaXDetDMDgfXBRbkIWZJzmy5+xWGxzPS0azY
+X-Developer-Key: i=guoniu.zhou@nxp.com; a=ed25519;
+ pk=MM+/XICg5S78/gs+f9wtGP6yIvkyjTdZwfaxXeu5rlo=
+X-ClientProxiedBy: SI2PR04CA0008.apcprd04.prod.outlook.com
+ (2603:1096:4:197::20) To AS8SPRMB0023.eurprd04.prod.outlook.com
+ (2603:10a6:20b:44e::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
+X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FC0:EE_|BL3PR12MB6569:EE_
-X-MS-Office365-Filtering-Correlation-Id: 418bdeb1-c3d0-462c-e0bb-08de12151587
+X-MS-TrafficTypeDiagnostic: AS8SPRMB0023:EE_|PA1PR04MB10556:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96e9bc08-b538-4757-cb36-08de121541ec
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+ BCL:0;ARA:13230040|366016|19092799006|1800799024|52116014|7416014|376014|38350700014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hIr9h2FtRdFmz5tj1rO2tkQnhzyKiRoVo8rr5zmd9khriycDkxvWx9gI503B?=
- =?us-ascii?Q?EA5/z2lvQV0//kgbG19u11i13DRxZHPJ0/j86wWsKqv2jg445ypKAypMm3S9?=
- =?us-ascii?Q?zyAZdtuBZhsV2eRLhbVnnV4JPRtejqgciBMXqPVMh+t4wEarNsMX5cdVFNj2?=
- =?us-ascii?Q?oRjnCar5aGFhjvRZZpVAYy5JdWZfYZXXfDrFwGfAs4iL+QqgLLaNwAP20gdS?=
- =?us-ascii?Q?uerxm46venB60G5LNcHKvlYTK1yCEymCfLriE2+S+HMA5+nhj/UtDUFUV3LE?=
- =?us-ascii?Q?1d1Qz2/3vDIxrLidS7Cy1ELKWyagNVh4S+ZI1EvwVsSWIQwSUKbhX37LfbOQ?=
- =?us-ascii?Q?uKuRNTjXhZmokINg6jKnxq0T5VhzED6rtzQkABAb9Byku4TBiLNbNzAsgzRH?=
- =?us-ascii?Q?IQ8srZIYJFgyIMUIAdOrQ6PmsE8Nqhq4mN/ypj2+C8gHC7ogAN2BLgjaVH95?=
- =?us-ascii?Q?SgBK20Yqzqy6+Oj9iykpbd/dl1TIEB7nhrLlF6gYnzTeYgNfF9mSlMdbtMWh?=
- =?us-ascii?Q?uRNbnAeTX4QIPosnW5akD0FyLEO2lBcvx0DIw/O8KcH1p8njgRfWfX9uIugA?=
- =?us-ascii?Q?BuXPON9RXbVT1zaPKDn/jgwqKu/wWWPERID9+srwlGMUYkLMOe6GK7bv2ReO?=
- =?us-ascii?Q?2vyaZtSClE8sWCTRyhFJrdL4V0mfigSmSBOZYrZDjM+YZMXc3ApfUsHCMp88?=
- =?us-ascii?Q?qoftmIoKWG6CDIyTO5gL+dCWVcykMBU++N5qaQ8ff8AhXcStlFCJrgu9/Mm6?=
- =?us-ascii?Q?h5+ws2UX6WlGiw6xg3vNNTjhLEV75a5L1N8w9lPmrz1/Q1rMHpRIrLbDdje1?=
- =?us-ascii?Q?Cq/A4NPEbNr90NVIFo9GSFUoNQzlY4oWX6lGWHEZ4wIqHD5iWtaWMLVR0rke?=
- =?us-ascii?Q?ZpO/Ke+vghm+2YnWePWYDoER4CLmDwQJ+xjbknTHgS/vXgNh0xijrzuQcc3c?=
- =?us-ascii?Q?7LSI1FKWoHnT1Jh3YPKdLdXBSiqJN02vy7/PJThXT6HkYYsMT/rfDPsjLAPT?=
- =?us-ascii?Q?Na1DFleOk0KEvuGytxNcvV73j9MDc/Lf7rp/qgqUT6eTlOocUPUeWo+Tp+4g?=
- =?us-ascii?Q?ozNj2SMRi+A1hgCCVcJ08V4DdwmE3S3HJb7PyyYjKVNV3SVihlyXwdv+Rs8C?=
- =?us-ascii?Q?rwUNbdcZk7E6x+Sz3tPpN9yd87tG1jZYw6xZfQPSeFD5V4xiVhk0AN8x+CWP?=
- =?us-ascii?Q?ztG6xqO14d4AIAaQcIJASWna9VwVDp4ZXD27rTaS+0iurifTy8Cxp+5dJt5i?=
- =?us-ascii?Q?FqGbLC0iwjRSq2bEEQ01U7zv+sh92RtUn9bTmDe3Gx7ThvX/g9O6TCLgMFH0?=
- =?us-ascii?Q?H3xLqliDQY0QrQe4JZh+ntBodjkDZFfl7H8ylOsQSIVpXGn3RFF8PUaSjV0C?=
- =?us-ascii?Q?83/Ck8SRiy2UQ+t8J6Vsk1yxd+xCEf+XDAJL+UktyBg6Gfie2eOKdGG4GSej?=
- =?us-ascii?Q?/9Yblka2V4iuRNfRd38ersMkzct5CDu/p1JVLJ286cElzLZ8CoMFG/l9Mxxc?=
- =?us-ascii?Q?Q5aEohhixMRA3a4QJtrOSzTcFOa80ADL4AqiTla2RAoAYFAfL2adPdfdqt0j?=
- =?us-ascii?Q?pM5Ght6W+eZmUJmtdcA=3D?=
+ =?utf-8?B?YVJ1UjdPYSt3citkZmpRTDhhV3lpRGlVaDU3SklJTkhod2pscGh2WkpWOVpi?=
+ =?utf-8?B?ajVkaStDaSs4OXM2bEhTMmRmcU1VN0NidEJNUklvM2VEWkdMSzZoWlBybnpp?=
+ =?utf-8?B?cnIrNWRMUUxnT2xpa2RwOXhkZHFCaUVzZVRiUFR1T0V4T0duT0taN1E3N2Z4?=
+ =?utf-8?B?QTVLTEdZaVlVUG9DRGgzRzJvZ1NGMlIzb2NKNW5pK20vTzlNRDZUQ2w5WjBa?=
+ =?utf-8?B?NUtBRDVHMnJaMWowTW1UbmtTMEtQdThtUDBrY2t4SDVTZlNvNTlzZFhhQ1ZK?=
+ =?utf-8?B?YXdkdFNnQUdjcHZyTEsrQTJCbWRKV3JVWFVuYjJ3Y3Zoek0yS1hqcUFWRWxt?=
+ =?utf-8?B?dnQwR29lT0paWU16MmNlalVZUlJnVG9nQU9Bb01yRmprWmhwNE5XUTUxZGVj?=
+ =?utf-8?B?dVJLbmhzdEtwbC9CTkJxYzBEYUNnenRIVkxDdFRGMnJpUVVPb1g3bEpyN0xN?=
+ =?utf-8?B?R3J3dWpZYnozOVorSUpabDhkdEdESWhiTmRqVG5Sb1ZvWWNZY05jRjdCcnJ1?=
+ =?utf-8?B?Y2VHaWRrdkNFUW9oRG1OS2xxcnQ5OExsWVJ3L1BoVVR5ZVE1Ym5xQzY4bnVE?=
+ =?utf-8?B?MXVsR2NDU05SdHZKLzVEMmdubmJlaktWcHVwU3k2cWNiVVNjUHdvTmk1akVa?=
+ =?utf-8?B?RlhDNThxUU03QXo4T0xkbnBqUnV1ZzBISVRmbWEyS1doODdaSlJGaXJoN0c5?=
+ =?utf-8?B?eGVFajNXVzRtRTR0TGtYRzJBSk1Wa1Q0RWdiL2NtOEhDcE5abVhBbi9DdGdk?=
+ =?utf-8?B?ZDk3ZUdQWk9JczJ5VjJ3RW55L0pUS3BoWXR3RWNGMjNFdXk5MS94WlpjaUls?=
+ =?utf-8?B?NXZYVzM1YlRlL2pjSDdoeEQ0d1dKOURWQ1pDYmRDclFNQkVyajZwNElMZm9Q?=
+ =?utf-8?B?UWZFTEVaeXZWS0ZIZ0xQVEhTeVlwSHdBRTh2b0o3TWdwamE0OFltWis1aElv?=
+ =?utf-8?B?SmFseVVaalMxYk5LaHUzYkV0TnVZbk9RWEFWcHJ6VXExQUd6TngveksrK1lJ?=
+ =?utf-8?B?YUpqQ1RrcS9rM1VmZmtaeFhDOU9tSVFWa0JqeFlEKy9UMk9pYnd0NHZ6QnlQ?=
+ =?utf-8?B?NmxKWnJQZTF5b3Q1VGVGaHkwN29mZTBNcG9zQkEvVlFFTk1JWUNSOW9ScUsz?=
+ =?utf-8?B?NGZlTVVKZGw1ZVNnWVRya3M4QTFUeTJwNU5WazJscUcrako1Tm1ycFhtM2ZS?=
+ =?utf-8?B?R2dMdTZLQXNrc0lzTVd0clErZnBSbVBRL2p0N0tEeHdkWW1QandxeXJFaGZl?=
+ =?utf-8?B?Wnh5NDRNWGFNd0NvT08xaDN5cVpkdXdsQnJZTUtWeVBGc3JQalFUZkhwMkhC?=
+ =?utf-8?B?QnhDRGRQQ2pKa1dOK2s4QUdzVUR3M2xML0FUZ3JZbGovT2VkQXdWS2tReHk3?=
+ =?utf-8?B?RytyL1pXRDVFK2IvUWlGZUhHVXduQkpRZXE4V1BOVUJTUTRLNkFUYThqZ285?=
+ =?utf-8?B?MEszQVFtVzNOcHpER0VtRWdhMEpvV3FrVFVENTgrdG01cGxwU3F3S3BBTytK?=
+ =?utf-8?B?cDhGNWtNWkFyTEUwbUxXUkY4YURzYWVUVml3Z2lIc2g3M256bytNK1VVbEt5?=
+ =?utf-8?B?QVNpSmRLZGtFaEV3MENzdDdjOTFlTldtNG5id3h1WUdhdHdZOWtCUDJKZ1dm?=
+ =?utf-8?B?bSthZy9Ja0NhUUdHRmtIMU9DQjVlQXRrd1VtTnhobUdoMkxhbUZid282S2lt?=
+ =?utf-8?B?VVlkK0gyVDlTanBGdTFrR3MrYkFBMEhrVGRhaUlibDZDOUNyR3g2NkNmS3or?=
+ =?utf-8?B?T2FoNS9VNk5GRit2YndNTkE5ZWxhV1EzWjZvMmN0dnA4UndrT0plOGt0R3FN?=
+ =?utf-8?B?YThyQ2VydWhzTUw4SnRnYWhnYnRIR0FpSU1CTmdnbG5OMmViNDhqYzU4ZlNY?=
+ =?utf-8?B?SHYzY20ySmdaTGRETFVXaVRHWDV2N1ljNVBrQWxhcVArT2V5bks4QUJqYzNZ?=
+ =?utf-8?B?RXRaUGxveThocFYzenI4YjZDTXpZMWZmV1lieVNtbmFnMHhlV3hSUlBCU1FG?=
+ =?utf-8?B?Y2Y2Nnh6UlZLY1VWL3NVei85c015YWRLR0VVbWxZL1dFOVJ5Y3ZQL1VINDFK?=
+ =?utf-8?B?MmIrRFVOSTZFNHpNSTJlSEd0dnYrZU13ODNFQT09?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 09:18:09.6226
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8SPRMB0023.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(52116014)(7416014)(376014)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?V0lwWjlESVFBNXAxTFpWbWdVdW1LT2RGRzBpNmoyNmF4MlI4Mi9KeU1ZVnpT?=
+ =?utf-8?B?eHFhSXBjUU9lY0U3SnFFbU5yeG05SW5Jd2RaUmNxbGx6L3p3M01vcXNUb2pB?=
+ =?utf-8?B?aHdpZDlCRVNydjFZNTZReCtDUVcxM1p5R0wzWmtpWkI0RVBsb0lmb05PWXdr?=
+ =?utf-8?B?d0xkYWtYdkNvVGJhWHpiTWwyMFRhRFJmWUNQUmZ1dHY2QmRaWTNTaFFDeXlP?=
+ =?utf-8?B?UWVCQ3RKYjFnUHhMcjY0eUtLUXY1ZnZYR05jNFRFMVA0VlJha0VjWDZZNXcx?=
+ =?utf-8?B?VUhDWWpEWFZSaTBzTjVpSzRNOHB3VGQxbktMWDdNanBVeUV0clNORFpKVG41?=
+ =?utf-8?B?YTcxU29tN1k0NlhhMlhBa3lNZENFTkFFWnRJQ3Fqc1FWUnFrc0tnNmF6ZVg0?=
+ =?utf-8?B?dTJCMFdueWlTaEFFL3RHTXJ6UmZHb1VtYlEvemdVRW1ZYlZKR0Qzd09zZ2VW?=
+ =?utf-8?B?Wis4M3lhbnhDbXJ6eGh4VStsbTZuOUE2aHozNzdrSW1Yc1JWVjM0VnFFck1n?=
+ =?utf-8?B?c3NBR2tMQ3dNRkFtQzFHZnRIZnJ6YnVGY2RGTnZYaHltclZuMU9VeXhMbXpn?=
+ =?utf-8?B?d2dmbWNEdTE2czA4V0dhQjJ0cjZFbXJGYWlkTXorY1RkeUN5akJ5UFB2NDho?=
+ =?utf-8?B?S284d3RVQU15SDZKb0s1Vm9Ycnp4ZzZ6N0w1Yk5SNUpmSkZEdzR6ZFVBRVVB?=
+ =?utf-8?B?YThRa3ZEcTh6WmVQY2FjUDBleUR5RmtoYmdzZE1qRW5hUEFHMzlSUTFobHEw?=
+ =?utf-8?B?L3liRi9jUUVOYnVsalp5bStWOHNNeWI3ZlU1MVdWc2R0dUtrUk1PdHFwU1Nx?=
+ =?utf-8?B?UUlaNTdpeHFnRitkWmZ1ZUsxcWkybHlxWTNySG15NStRbWpJSVlUZ3oyMVk5?=
+ =?utf-8?B?UDkzRWxjdGYwM3g2bDdkNkNWMDJUeFVDdHBjWTQyYzIxNm5EckxmWnhtMFA4?=
+ =?utf-8?B?cDBQY0lzL3Njb1FXZytIT3pqNG1hT0FpS2Z3VWYyNnNpL0p1bWVidGZ6cS9H?=
+ =?utf-8?B?U3ZMcXdzM2tXUzV1QnNkODRwRzFIejN2Nko2TEQ5UkpzcktQSUJQUDZzL3NZ?=
+ =?utf-8?B?MkZrRThhMDhNTTA5Tk9mWHQ2S0R3cTBVYmlNNEs2MkxEd254dmY4VW03cm45?=
+ =?utf-8?B?NmZaTy9TRWc3cmdIc3IvZGN5RU9HMVNibnkzeUZjZlh3YSs4Z1g0eUxzSE9k?=
+ =?utf-8?B?Q09rOXhhbnhBcGpJNitkMGtTZU9TYkJENjdIdmNLdjcrM1VFQnRwVFcwOXVw?=
+ =?utf-8?B?Nko1aG1yYTVZbG1JdGUwVW1RZ2Z2c2QyRm9Jbkl5c2hQckh3cS9icUJYZmZa?=
+ =?utf-8?B?N2FhQU1VMUQzaVpUczhCVUg1SHRJZ2x0a3RYT3A3dHhnN3o4VnRMdmV5dHF4?=
+ =?utf-8?B?Y3M2TXpsS284UEI2K0prWkZvbEZjUFpMcFBBazhCdVdMNzM4a2VzZW1lWml4?=
+ =?utf-8?B?VmdKc2FreHI4SW1SVUsyMjlJOXdCc0FEUnpCSTlGNWxkR1JpMlNZS3VsTm8r?=
+ =?utf-8?B?blM0dFFSdlNCMDlXK1FhaGNUc0hvZXMyRkZ5MDFnbWI1SUdTbUN3MlJrR1lJ?=
+ =?utf-8?B?UHRtMjFZLy9ncmhTY0Z1VWUzSnlmRThqUlIyL1BKZHdkRnBjZnFaVW91Q3N0?=
+ =?utf-8?B?KzVzQUg5dko1TWx2b0k1bVozM3RsLy9BcjNNdVZSLzRqNS9kSDYyOGE2dlQz?=
+ =?utf-8?B?TmhWYm9IOERVYjlnR3VCN3ZlbzlkWGUvTi96SmdiVVdTcGhsSVNJaUU3ZlQr?=
+ =?utf-8?B?a2ZUVWpXOGs0UitrcDQvOVhpbnEwY1ZJaFl2b1JxS29XWlNnWG9ndEgxZUdv?=
+ =?utf-8?B?UjdFMnhZaFl5NytIOUV3V3FjWWZ6RlVUNWNYK3BRQmovZkNIdTRPamsxNzBS?=
+ =?utf-8?B?T3BTZDkwZ2FkeGVGL3VpN2d4OEdqdmJadUQyMEhrVDZiU1dIWXJwK3E5UzQ4?=
+ =?utf-8?B?M21YaWZpdWd0Wll4TlFPRnAwRnBVaTMyQlZZMGJBQ1E4YWdSR2FHVHBzTGhN?=
+ =?utf-8?B?VkFvY2hpaTM1YUV0UDR0ZEdJUkZlVmtDall5aVRCdWNWNURtK1RDZ0h5SW9v?=
+ =?utf-8?B?bFZFZ2pzZjc3VjFLLzVPU2RaN3hGRmxrRWU1T2VvYnorayt2MGJmK3l3MWQ5?=
+ =?utf-8?Q?igBr6JIgz8Wh3hUnRr+TpBf2e?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96e9bc08-b538-4757-cb36-08de121541ec
+X-MS-Exchange-CrossTenant-AuthSource: AS8SPRMB0023.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 09:19:24.4273
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 418bdeb1-c3d0-462c-e0bb-08de12151587
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF00004FC0.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6569
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4Ac+UR4k/hnBDUvZae4WKnaM3hTk8SbQ72WD5ZVKh0R7ItHN4yDcAP1/eigJ5SQqQcIIeoypmomHiP9+qyVeDw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10556
 
-From: Mark Bloch <mbloch@nvidia.com>
+The serial adds MIPI CSI-2 support for i.MX8ULP.
 
-Implement balance ID support for multiplane LAG configurations. This
-feature enables per-multiplane group load balancing by extending the
-software system image GUID with a balance ID component.
-
-Key implementations:
-- Enable lag_per_mp_group capability when supported by hardware.
-- Append load_balance_id to software system image GUID when conditions
-  are met.
-- Increase MLX5_SW_IMAGE_GUID_MAX_BYTES from 8 to 9 to accommodate the
-  extra byte.
-
-The balance ID is appended to the system image GUID only when both
-load_balance_id and lag_per_mp_group capabilities are available, ensuring
-backward compatibility while enabling enhanced LAG functionality.
-
-This enhancement allows for more granular load balancing control in complex
-multi-plane LAG deployments, improving network performance and flexibility.
-
-Signed-off-by: Mark Bloch <mbloch@nvidia.com>
-Reviewed-by: Moshe Shemesh <moshe@nvidia.com>
-Reviewed-by: Shay Drori <shayd@nvidia.com>
-Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/main.c  | 5 +++++
- drivers/net/ethernet/mellanox/mlx5/core/vport.c | 4 ++++
- include/linux/mlx5/driver.h                     | 2 +-
- 3 files changed, 10 insertions(+), 1 deletion(-)
+Changes in v7:
+- No functional changes, only move patch 2 after patch 4 to avoid dependency issues.
+- Rebased on latest media/next
+- Link to v6: https://lore.kernel.org/r/20250917-csi2_imx8ulp-v6-0-23a355982eff@nxp.com
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-index 1126e4db0318..cc6374b4e0b8 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-@@ -575,6 +575,11 @@ static int handle_hca_cap_2(struct mlx5_core_dev *dev, void *set_ctx)
- 		do_set = true;
- 	}
- 
-+	if (MLX5_CAP_GEN_2_MAX(dev, lag_per_mp_group)) {
-+		MLX5_SET(cmd_hca_cap_2, set_hca_cap, lag_per_mp_group, 1);
-+		do_set = true;
-+	}
-+
- 	/* some FW versions that support querying MLX5_CAP_GENERAL_2
- 	 * capabilities but don't support setting them.
- 	 * Skip unnecessary update to hca_cap_2 when no changes were introduced
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/vport.c b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
-index 4224e2750865..992873536c1b 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/vport.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
-@@ -1203,6 +1203,10 @@ void mlx5_query_nic_sw_system_image_guid(struct mlx5_core_dev *mdev, u8 *buf,
- 
- 	memcpy(buf, &fw_system_image_guid, sizeof(fw_system_image_guid));
- 	*len += sizeof(fw_system_image_guid);
-+
-+	if (MLX5_CAP_GEN_2(mdev, load_balance_id) &&
-+	    MLX5_CAP_GEN_2(mdev, lag_per_mp_group))
-+		buf[(*len)++] = MLX5_CAP_GEN_2(mdev, load_balance_id);
- }
- 
- static bool mlx5_vport_use_vhca_id_as_func_id(struct mlx5_core_dev *dev,
-diff --git a/include/linux/mlx5/driver.h b/include/linux/mlx5/driver.h
-index dcf262aa9ea6..046396269ccf 100644
---- a/include/linux/mlx5/driver.h
-+++ b/include/linux/mlx5/driver.h
-@@ -1380,6 +1380,6 @@ static inline struct net *mlx5_core_net(struct mlx5_core_dev *dev)
- 	return devlink_net(priv_to_devlink(dev));
- }
- 
--#define MLX5_SW_IMAGE_GUID_MAX_BYTES 8
-+#define MLX5_SW_IMAGE_GUID_MAX_BYTES 9
- 
- #endif /* MLX5_DRIVER_H */
+Changes in v6:
+- s/existed/existing/ in patch 1 commit log.
+- Delete the compatible between 8ulp and 8qxp since 8ulp need one more clock.
+- Update compatible string in dts for csi node.
+- Add one new patch to handle 8ulp in driver.
+    media: imx8mq-mipi-csi2: Add support for i.MX8ULP
+- Link to v5: https://lore.kernel.org/r/20250901-csi2_imx8ulp-v5-0-67964d1471f3@nxp.com
+
+Changes in v5:
+- Delete else: block and move clock constrains to each case.
+- List exact cases, but put imx8qxp/qm in one if:then: block to avoid
+  repetitive code since they are same.
+- Link to v4: https://lore.kernel.org/all/20250828-csi2_imx8ulp-v4-0-a2f97b15bb98@nxp.com
+
+Changes in v4:
+- Change csr clock name to pclk which is more readability.
+- Add restriction to i.MX8ULP and the other variants remain the same as previous versions.
+- Update commit log in patch 1 to describe why add new compatible string for i.MX8ULP.
+- Link to v3: https://lore.kernel.org/all/20250825-csi2_imx8ulp-v3-0-35885aba62bc@nxp.com
+
+Changes in v3:
+- Correct the order of "fsl,imx8qm-mipi-csi2","fsl,imx8qm-mipi-csi2".
+- Correct the order of minItems and maxItems.
+- Restict all variants.
+- Change pclk clock name to csr to match IP port name.
+- Align description about csr clock with IP datasheet.
+- Add reasons for adding a fourth clock(csr) in patch 1 commit log.
+- Link to v2: https://lore.kernel.org/all/20250822-csi2_imx8ulp-v2-0-26a444394965@nxp.com
+
+Changes in v2:
+- Add more description about pclk clock.
+- Change minItems/maxItems to 2 for resets property.
+- Better to handle "fsl,imx8ulp-mipi-csi2" variant.
+- Move comment to the top of reset_control_deassert().
+- Move dts patch as the last one.
+- Add "fsl,imx8qxp-mipi-csi2" to compatible string list of csi node.
+- Remove patch 5 in v1.
+- Link to v1: https://lore.kernel.org/all/20250812081923.1019345-1-guoniu.zhou@oss.nxp.com
+
+---
+Guoniu Zhou (5):
+      media: dt-bindings: nxp,imx8mq-mipi-csi2: Add i.MX8ULP compatible string
+      media: imx8mq-mipi-csi2: Use devm_clk_bulk_get_all() to fetch clocks
+      media: imx8mq-mipi-csi2: Explicitly release reset
+      media: imx8mq-mipi-csi2: Add support for i.MX8ULP
+      arm64: dts: imx8ulp: Add CSI and ISI Nodes
+
+ .../bindings/media/nxp,imx8mq-mipi-csi2.yaml       | 41 ++++++++++++-
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi         | 67 ++++++++++++++++++++++
+ drivers/media/platform/nxp/imx8mq-mipi-csi2.c      | 61 ++++++--------------
+ 3 files changed, 124 insertions(+), 45 deletions(-)
+---
+base-commit: 1fdb55ed40fa5ebe6934bd6b93036c714ebb5ef8
+change-id: 20250819-csi2_imx8ulp-9db386dd6bdf
+
+Best regards,
 -- 
-2.31.1
+Guoniu Zhou <guoniu.zhou@nxp.com>
 
 
