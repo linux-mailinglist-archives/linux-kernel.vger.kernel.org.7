@@ -1,198 +1,229 @@
-Return-Path: <linux-kernel+bounces-866308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35651BFF6EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:57:49 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40063BFF6CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DE343AA340
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:57:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 05B843588C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E866C1B7F4;
-	Thu, 23 Oct 2025 06:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4471D6194;
+	Thu, 23 Oct 2025 06:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="aFgQ2Ehz"
-Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="khCqelEB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75A62BE620
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFAD2566F2
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761202623; cv=none; b=dLLsKuZebK2GIM9DiWrgJzv3iKFPxfJJDkvrKLaX+v3yaR8L6xa87OvSx7WaOxkztuH9aFRMllrFeY/p3LfXlPXsRpOYg5ZSqpE6TyKY9Vn974j+PXl0ktWPrs2Friy7xlRYFTXJ6TFDqM/mzJyznJdrMoymcr/Nmti9tM6KV2A=
+	t=1761202612; cv=none; b=prf0IEPmBTEH1ot1bLxPbWSejXCJBLP3ice724e39fKDeDccC5jBrcmEW89Hoq1SlNkqdyDo5mdITOgg6Yz8jBaaElHEj5TypC3U13GnFguJfMxBG4coy2O4THd8DaURfC4VKjU3+KOnB8WXzxVe0kzZyog0oNHegxtMOqR83Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761202623; c=relaxed/simple;
-	bh=gSjnScR02V4S8DYfAOXlQG7AHQ0VZOuy0vgD6CF7/Wc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PIgLb0xKEaVCvGnmRVNlgY/A1M/arxE7U0/vAt4GNJc1V7es0trwzUxZwGhdsRSlgbZYZra0KgYOg8+nO/v0qYpcX3HLszcHoFewSb/5lL8ldlFZt1Y55xXgkxIUf78DzWnFORhWaxDlYP5CzUHLy6L6wFSVwm3Pqko8Cwa53zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=aFgQ2Ehz; arc=none smtp.client-ip=88.99.38.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay12 (localhost [127.0.0.1])
-	by relay12.grserver.gr (Proxmox) with ESMTP id 408FCBDA22
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:56:52 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay12.grserver.gr (Proxmox) with ESMTPS id 55E71BDA1F
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:56:51 +0300 (EEST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 9FC2B201B63
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:56:50 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1761202611;
-	bh=778AAfPAeLmP3Ine3jLlCZ7+L5aBSPJLRaC3Bdozzpg=;
-	h=Received:From:Subject:To;
-	b=aFgQ2EhzPaqVCHoH3L73x2cRj2ROmfAW6IqtXhPH2Uj9xVznJRUXONKSprki99sQJ
-	 i/F+0riLd/lMPl9G8aQJ+BKt5LBjbX6b0mQ0G5OGK98FRCMhTaiVzdatY89TOCSF3r
-	 Le9v+M7XmXLAa6esQVECr2lFQ6VsNF347R42x+RtZK9XvKHC8iXbqf2Z938pjSfgvp
-	 hchr/A3F6SkXcgF4Jd7yeS0gpJ/Fo4ehCLsWtVbJECcRRnZRCyUUC2AUgQQ9Do/QMQ
-	 YfTSnnpQlqzm5oieK+FGa0hESDmEwpvsBecYybjatw+OGr47LGEHGIhqOWy1b6EZSx
-	 Rk+KyhqJ0DwNg==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.167.46) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lf1-f46.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lf1-f46.google.com with SMTP id
- 2adb3069b0e04-59052926cf9so526998e87.1
-        for <linux-kernel@vger.kernel.org>;
- Wed, 22 Oct 2025 23:56:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCVKzikhYXfWceS+1rGyHnX0Uy1RTUJKqCm1aNWMR5Xo7zNJGVkmeFJSAlzwWMMuxQ8EPKiF6ZnyPmbBZsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwHwLzaDEa7PpliDPYssC2YSOH3oy9bg7A/QqNpR2pAU1BR3LT
-	7Vgb91ryBEQ9MBnDCypMyGGbSqepomi8wq2Chf6qrxSvQTXVwsMwc9Cw96CAnj3KS5t1Vbic+qi
-	YcMsx+IyMP0G7B7QZQg70e03oHMgs/Xw=
-X-Google-Smtp-Source: 
- AGHT+IFO/7PZLoDhDWs+FcqHXfC/yTXf9/+SGznP7sA2dRey8Da8zaXRQEhBHak9pTbVneTzKO0CtYnoUah1FtRNe3U=
-X-Received: by 2002:a05:651c:507:b0:372:9d94:8697 with SMTP id
- 38308e7fff4ca-378d6f8729bmr3510971fa.44.1761202610101; Wed, 22 Oct 2025
- 23:56:50 -0700 (PDT)
+	s=arc-20240116; t=1761202612; c=relaxed/simple;
+	bh=BW+kg8htBMkugNFEx4R0pb35ItCAPtb2W8sPE7A0J6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ifKbUvdFIk1jkYhANEWwr4fQa8FYlAt0wJY9MB+WWfJ89fbk6i0EyR2bCfCX0iENW1goBTapqgXIwogIy1LzfWFbZupegq7zFH1PhPiwWeexMmC0Y1P+w+7yX08+mqwhImz2WINAF0UeD8zkjWuLKc545Fje+yBIKnLqrD6mlag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=khCqelEB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N6Id7s020167
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:56:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+efyRDA4riV9spYnZlw/APnqKUaUaN3qfqzGJ8qH2uc=; b=khCqelEBy4lVeQ7+
+	FYXiHgICW1lqub4Fz526fKpkit0d1GcoHObWhLZfP4e+1w5eMhN8G9m92i8kOQbu
+	pk6tdkx9zXgqdiF3kCVo2ncrZoUNjwSuwsJghNhwBdxlGuzvtFQMbfSevvJ//YN2
+	xaBzoYaf1mCYqA/vu9vEJu7lwl1UdnkxeqFlr/AhRNGDBdgGOkcKltniP2j4DY89
+	mSdzsn4y/O47MJJd281VFpl0ABxugU/dlhSaPBX1+UHisWZapQFH0zWSaPTvlucQ
+	Z76p1tLGpXpgKa4LLIrOoNibnam0TYiW29b4eCiRWWTONiGwArDeBYkCbNgRv4e+
+	axpTAA==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v08pqjvb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:56:49 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-290c07feb72so4358135ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:56:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761202608; x=1761807408;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+efyRDA4riV9spYnZlw/APnqKUaUaN3qfqzGJ8qH2uc=;
+        b=w3FI8fORyqavxQnhjIpYqZPAmAsXaddUGyASKC6aueBCu92+R7VfIeKGHHKGXThHLY
+         xyKve3cT2DOYMTdBzYv0hF5xSKs4i9BNUirQtoa5NpsyS6hz/KAlBI4iJ1aLgMdSlOgn
+         H75S/xZbMddE7qjBDJxZy5R6yduV61Htwkt2RzCJJEC5rRlwrvDxSCi/L4LNMZ2xDAeb
+         mfDlVMmve4R6FGuCFOqE7VVzt1O5Wh5U3RvAJVVhoc1dPvdIQzAsvsKDArXBODtaCq/j
+         BNW4VceaT0Fc5OGUlglAzhxnVZs+yWGYD0gVO5QkDYeZrEDDkGYrB34nGz59TlDBKTQR
+         N7fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTNlEX7TaD1TTY4h4TXutFA3g0YMxr7NQZuDYKtYmw0ewIn3AY+lnI28LEK5qJCsNIVZyRsxaR8xH5lfs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypVz2VGVh2pgFPNpg66klfVrzOCkuJq+lsKsCgxI5veunxTln4
+	EbUsEUAPMwIhDxAkuiOJq4nZ3Gf4L9CejQgp6uPOwGd2nuDYEPu4yFUYRmtmNl/f2jaa3xByoXc
+	J5YYaJL+GPq5I78FDmLyFg6e8CaMlF2pfFk3iypQ+dmy4sf3Go16eAb/xM1KfWQN3umk=
+X-Gm-Gg: ASbGnctAafQ/d9GKgcirrlT4OrEKmeCS4Ac5jchQC5cf3nRowI70uJMzB6V8LaCL5x5
+	qU/xOzJZiDuY9Zxw7svpf7gUAQahFUAArVEZhhJCIgwmG+vwRxksWl8haapOlxzCc9pW5qVB25a
+	Y+uvUJFrki7gOFGrZKbNgTfLoTz4YKL1j0TRNInQoqsV1gicmc9uXoCAg/x6AHONHSSJKGMXIXi
+	fVFYXuWqgGbvNxwdjHNYOj6f4hYPwD3Q/ulbXKTbYOETXeK+R7+5SfCc3jmU3tiXR4MZoTMZ6eY
+	BsRSiHWTXkCOByOodM3dk11nhy/8vA0c6V8B+GzyPPPGBwMEeHF53xxXzpb/iWlogzo49H/ZXvH
+	KFcip8pWxqvf6aqew9aZm5WDhpEM=
+X-Received: by 2002:a17:902:e5ce:b0:290:af0e:1191 with SMTP id d9443c01a7336-2946dea1368mr22465265ad.21.1761202607976;
+        Wed, 22 Oct 2025 23:56:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUW0YEaHqb+o6OIwpRYA3a26EAhwWv+kJ8gb2tFkO8g+VN+YewDwGtLNYa5D2L0rAadSuNVg==
+X-Received: by 2002:a17:902:e5ce:b0:290:af0e:1191 with SMTP id d9443c01a7336-2946dea1368mr22464925ad.21.1761202607483;
+        Wed, 22 Oct 2025 23:56:47 -0700 (PDT)
+Received: from [10.217.217.147] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946de02357sm13016435ad.41.2025.10.22.23.56.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Oct 2025 23:56:47 -0700 (PDT)
+Message-ID: <c2429e35-7d33-4500-8e0d-a992cad99f63@oss.qualcomm.com>
+Date: Thu, 23 Oct 2025 12:26:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251018101759.4089-6-lkml@antheas.dev>
- <202510222013.EBLC609m-lkp@intel.com>
-In-Reply-To: <202510222013.EBLC609m-lkp@intel.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Thu, 23 Oct 2025 08:56:37 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwGDBj2e83JBW71G_z6hMD5PsOXTQLqFVdPKZ6sU54tsGw@mail.gmail.com>
-X-Gm-Features: AS18NWDd23NLIOTVOY058aR91_4SrQH2cNUKcz3swTq1pi3O6MGGrLrEkyO9gzg
-Message-ID: 
- <CAGwozwGDBj2e83JBW71G_z6hMD5PsOXTQLqFVdPKZ6sU54tsGw@mail.gmail.com>
-Subject: Re: [PATCH v7 5/9] platform/x86: asus-wmi: Add support for multiple
- kbd led handlers
-To: kernel test robot <lkp@intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
-	Corentin Chary <corentin.chary@gmail.com>,
- "Luke D . Jones" <luke@ljones.dev>,
-	Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Denis Benato <benato.denis96@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <176120261086.2780964.5704374054020934449@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/9] clk: qcom: Update TCSR clock driver for Kaanapali
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com
+References: <20250924-knp-clk-v1-0-29b02b818782@oss.qualcomm.com>
+ <20250924-knp-clk-v1-5-29b02b818782@oss.qualcomm.com>
+ <jr6qz23acm2ipspsvyxjpabg3b4bspapia2pqd7b2grrtvnct5@v7mjwnr5o6qa>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <jr6qz23acm2ipspsvyxjpabg3b4bspapia2pqd7b2grrtvnct5@v7mjwnr5o6qa>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMCBTYWx0ZWRfX4tTmfVMgX5yD
+ 8ZkeA0yW3SCBXdBhGeDCaU1tz6ulxQrF/wOGBl+R3+XrpLjLysd0JOULKMQ894v9O180mNqVvWE
+ ZQFJP3rv4GJx4P7Rirtijg7YsAA/rvsaTpv6trSR9b2fP/AFk9l5tqukhqLVgqvFC7ITdBgd749
+ oN2G0XihBXJHGWHqEG8im3za3uRLUXMSYtUZ8+pppNhP5SG3DO9NZZjD3bOHc6WQlwVvsvcw+PV
+ 9IXfpA/Hs/1m8R9y73oCUHJVyZf1Wl1teINWfjKwsIDQ2HnsOLPfNd8pq8oInJTd7+OjX+cm27r
+ KMSu6sVjYF01g6WjgK0UEIru4t4WJxST5iEGezTFAl8CLfXaGSdouO4Gn9JTvvW3ckyXFN98VSS
+ NF+ZtpUdP0qBsSGOSwVn+To5VHsW2A==
+X-Proofpoint-GUID: 4n_DpnqZHE6sIt5O25Av_tUw5BgGRXRx
+X-Authority-Analysis: v=2.4 cv=Up1u9uwB c=1 sm=1 tr=0 ts=68f9d1b1 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=peCUsVMnvPp5iizJ5UwA:9 a=QEXdDO2ut3YA:10
+ a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-ORIG-GUID: 4n_DpnqZHE6sIt5O25Av_tUw5BgGRXRx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180000
 
-On Wed, 22 Oct 2025 at 15:38, kernel test robot <lkp@intel.com> wrote:
->
-> Hi Antheas,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on 3a8660878839faadb4f1a6dd72c3179c1df56787]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Antheas-Kapenekakis/HID-asus-simplify-RGB-init-sequence/20251018-182410
-> base:   3a8660878839faadb4f1a6dd72c3179c1df56787
-> patch link:    https://lore.kernel.org/r/20251018101759.4089-6-lkml%40antheas.dev
-> patch subject: [PATCH v7 5/9] platform/x86: asus-wmi: Add support for multiple kbd led handlers
-> config: i386-randconfig-141-20251020 (https://download.01.org/0day-ci/archive/20251022/202510222013.EBLC609m-lkp@intel.com/config)
-> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202510222013.EBLC609m-lkp@intel.com/
->
-> New smatch warnings:
-> drivers/platform/x86/asus-wmi.c:1623 kbd_led_update_all() warn: always true condition '(value >= 0) => (0-u32max >= 0)'
->
-> Old smatch warnings:
-> drivers/platform/x86/asus-wmi.c:2288 asus_new_rfkill() warn: '*rfkill' is an error pointer or valid
->
-> vim +1623 drivers/platform/x86/asus-wmi.c
->
->   1589
->   1590  static void kbd_led_update_all(struct work_struct *work)
->   1591  {
->   1592          enum led_brightness value;
->   1593          struct asus_wmi *asus;
->   1594          bool registered, notify;
->   1595          int ret;
-                              /\ value should have been an int and
-placed here. It can take the value -1 hence the check
 
-Are there any other comments on the series?
 
-The only issue I am aware of is that Denis identified a bug in asusd
-(asusctl userspace program daemon) in certain Asus G14/G16 laptops
-that cause laptop keys to become sticky, I have had users also report
-that bug in previous versions of the series. WIthout asusd running,
-keyboards work fine incl. with brightness control (did not work
-before). Given it will take two months for this to reach mainline, I
-think it is a fair amount of time to address the bug.
+On 10/20/2025 4:33 PM, Dmitry Baryshkov wrote:
+> On Wed, Sep 24, 2025 at 03:58:57PM -0700, Jingyi Wang wrote:
+>> From: Taniya Das <taniya.das@oss.qualcomm.com>
+>>
+>> The TCSR clock controller found on Kaanapali provides refclks for PCIE, USB
+>> and UFS. Update the SM8750 driver to fix the offsets for the clocks.
+>>
+>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>> ---
+>>  drivers/clk/qcom/tcsrcc-sm8750.c | 34 ++++++++++++++++++++++++++++++++--
+>>  1 file changed, 32 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/tcsrcc-sm8750.c b/drivers/clk/qcom/tcsrcc-sm8750.c
+>> index 242e320986ef..f905f3824d7e 100644
+>> --- a/drivers/clk/qcom/tcsrcc-sm8750.c
+>> +++ b/drivers/clk/qcom/tcsrcc-sm8750.c
+>> @@ -100,21 +100,51 @@ static const struct regmap_config tcsr_cc_sm8750_regmap_config = {
+>>  	.fast_io = true,
+>>  };
+>>  
+>> +static const struct regmap_config tcsr_cc_kaanapali_regmap_config = {
+>> +	.reg_bits = 32,
+>> +	.reg_stride = 4,
+>> +	.val_bits = 32,
+>> +	.max_register = 0x18,
+>> +	.fast_io = true,
+>> +};
+>> +
+>>  static const struct qcom_cc_desc tcsr_cc_sm8750_desc = {
+>>  	.config = &tcsr_cc_sm8750_regmap_config,
+>>  	.clks = tcsr_cc_sm8750_clocks,
+>>  	.num_clks = ARRAY_SIZE(tcsr_cc_sm8750_clocks),
+>>  };
+>>  
+>> +static const struct qcom_cc_desc tcsr_cc_kaanapali_desc = {
+>> +	.config = &tcsr_cc_kaanapali_regmap_config,
+>> +	.clks = tcsr_cc_sm8750_clocks,
+>> +	.num_clks = ARRAY_SIZE(tcsr_cc_sm8750_clocks),
+>> +};
+>> +
+>>  static const struct of_device_id tcsr_cc_sm8750_match_table[] = {
+>> -	{ .compatible = "qcom,sm8750-tcsr" },
+>> +	{ .compatible = "qcom,kaanapali-tcsr", .data = &tcsr_cc_kaanapali_desc},
+>> +	{ .compatible = "qcom,sm8750-tcsr", .data = &tcsr_cc_sm8750_desc},
+>>  	{ }
+>>  };
+>>  MODULE_DEVICE_TABLE(of, tcsr_cc_sm8750_match_table);
+>>  
+>>  static int tcsr_cc_sm8750_probe(struct platform_device *pdev)
+>>  {
+>> -	return qcom_cc_probe(pdev, &tcsr_cc_sm8750_desc);
+>> +	const struct qcom_cc_desc *desc;
+>> +
+>> +	desc = device_get_match_data(&pdev->dev);
+>> +
+>> +	if (device_is_compatible(&pdev->dev, "qcom,kaanapali-tcsr")) {
+>> +		tcsr_ufs_clkref_en.halt_reg = 0x10;
+>> +		tcsr_ufs_clkref_en.clkr.enable_reg = 0x10;
+>> +
+>> +		tcsr_usb2_clkref_en.halt_reg = 0x18;
+>> +		tcsr_usb2_clkref_en.clkr.enable_reg = 0x18;
+>> +
+>> +		tcsr_usb3_clkref_en.halt_reg = 0x8;
+>> +		tcsr_usb3_clkref_en.clkr.enable_reg = 0x8;
+>> +	}
+> 
+> Granted the size of the driver, it doesn't feel like these two entries
+> belong to the same driver. Please split it to a separate one.
+> 
 
-Antheas
+Sure Dmitry, I was looking for re-usability, but if it improves
+readability and clarity, I can split it in a separate driver.
 
->   1596
->   1597          asus = container_of(work, struct asus_wmi, kbd_led_work);
->   1598
->   1599          scoped_guard(spinlock_irqsave, &asus_ref.lock) {
->   1600                  registered = asus->kbd_led_registered;
->   1601                  value = asus->kbd_led_wk;
->   1602                  notify = asus->kbd_led_notify;
->   1603          }
->   1604
->   1605          if (!registered) {
->   1606                  /*
->   1607                   * This workqueue runs under asus-wmi, which means probe has
->   1608                   * completed and asus-wmi will keep running until it finishes.
->   1609                   * Therefore, we can safely register the LED without holding
->   1610                   * a spinlock.
->   1611                   */
->   1612                  ret = devm_led_classdev_register(&asus->platform_device->dev,
->   1613                                              &asus->kbd_led);
->   1614                  if (!ret) {
->   1615                          scoped_guard(spinlock_irqsave, &asus_ref.lock)
->   1616                                  asus->kbd_led_registered = true;
->   1617                  } else {
->   1618                          pr_warn("Failed to register keyboard backlight LED: %d\n", ret);
->   1619                          return;
->   1620                  }
->   1621          }
->   1622
-> > 1623          if (value >= 0)
->   1624                  do_kbd_led_set(&asus->kbd_led, value);
->   1625          if (notify) {
->   1626                  scoped_guard(spinlock_irqsave, &asus_ref.lock)
->   1627                          asus->kbd_led_notify = false;
->   1628                  led_classdev_notify_brightness_hw_changed(&asus->kbd_led, value);
->   1629          }
->   1630  }
->   1631
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
->
+>> +
+>> +	return qcom_cc_probe(pdev, desc);
+>>  }
+>>  
+>>  static struct platform_driver tcsr_cc_sm8750_driver = {
+>>
+>> -- 
+>> 2.25.1
+>>
+> 
+
+-- 
+Thanks,
+Taniya Das
 
 
