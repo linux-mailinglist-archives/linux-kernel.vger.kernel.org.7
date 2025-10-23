@@ -1,232 +1,175 @@
-Return-Path: <linux-kernel+bounces-867009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F7CC0153C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:20:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2877C0154E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56801A07732
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:21:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 007F63ADE33
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E8E314A9F;
-	Thu, 23 Oct 2025 13:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE9A314D20;
+	Thu, 23 Oct 2025 13:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVdtvzMk"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="2F8bN3nk"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DABB3009C1
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562F62C11FD;
+	Thu, 23 Oct 2025 13:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761225634; cv=none; b=N7fPEDksK4S7iFq1k6lwWENIqDAkhJI+LVdCTjxmu8OiYlcmi3dMu/s3bn3aSH4/9hIuXCBagxhCGrBo1fB92RH+srqGY6mNCv93j7RMZwrjn25arC5eTyym8i+xp4tjWXZwJBAGnUqIQEn0rHTCcf40Ah8dPHWfr3OQwiGgra8=
+	t=1761225673; cv=none; b=Z354Dfo7+vEkGiTOH0HExOludKK/ii8Nud9qPdf4I2meCqaY21t1r44VNhe+pGoi8V8+hKsXOo2eGdXpFBK2+YJ9CkMccrGeLc50Yf0ZK1yrPV40auw93vBUNFD/oXkDVg9fXGexw04tpZjq9xnRn69IAhZKyk1Vu9cgkQHPr5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761225634; c=relaxed/simple;
-	bh=vuViwP/s1cMS1phQ8Gat0GObNFdBTZNa1VEQfL7iJ0s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BQD41vHz1e6QdPRIFH9NEMnTuNYZsrDRAo4afa081bMrv8fag7YZzbI5pSyQbDk7/R2VH8DKCeEV557Kd0jC0rQJKn1fpFKBAEBLEgEFiOaSSWADIe0Wr+TwwEZvkp9/H5/jOcrCC8SEXkpy5zSL0AMqQxB5T8OOXEvW7rq2FUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVdtvzMk; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b550a522a49so614897a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761225632; x=1761830432; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AF2NNx9hf0mnuYECQ9Zws6r6vEvdCmP6FSfqGkx7HaM=;
-        b=GVdtvzMkc5/EhtBAKGSGGjDCiBg+3TDwlkCVofyJ4KXMp8b14zY9/1K2k3tFp6iG4d
-         yNd9xllqdXUgI7QsWEAdhR402r+3JSsRit+epqTCdtzY+LBmNfet2VVEAfKXNHqrWaNi
-         Ytm3BUhQjiQ4oE/4tGThXNiaP9eWznQRRS5Q/zeNzSiakAAtJ+mMOyXlDuc24app7hUK
-         pLSMhG3vWDbZsDNji0Jg27jhPA25t0MDGm9OF5R2CqChyCrNIGnUxgDPBqa5RuFkznpq
-         MHqG5/Lzy5I8DHeEWe3puWbwN/sbhhOBGKQAFPSPTYyho1k3lfk80Y0T9G/JbGdnw7RP
-         q4JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761225632; x=1761830432;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AF2NNx9hf0mnuYECQ9Zws6r6vEvdCmP6FSfqGkx7HaM=;
-        b=Z4woADJyvKAiUM1NzzggZum58/tC66T3eNvtVM8p7DBUIIgQzhY0pmxa4saTt2ntol
-         lKCrrF0j7POOZPGYamz4dpBP/Fu1PApjscwPYF7A8FlBcLbYCr3zxAMGoZolV7GhPIcV
-         64Zfv2luY19pJ9U/eGC+07oYYGUFNsMecw193gn7JC0SpgHUgMYiqzibPvLlbEPmDrwO
-         FGNf2qoFazxbanzvJ83olI147fvvdsaLaIh4ZP4lvhpsRq5LrkZ27FRQMjc/jAj5ObLt
-         xuEpPdXJsuO2b9XEMZO8G8c77A7YRIQYaea/GpIhP9jX7mnIq41dO6nLGxG1SGuD45cp
-         L2JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXB3k44ehzjepbR9rGh/QXTWEzBIbhu01vyxNBMhIi2eFqYcc1UwUxvjxXn/M41Q2mrPk2SE0F/4EfzTD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6Gi+bWYYpEBsxvJUpFSNbcm4wLBEXfw3bwT0+uQfjWA+Rvi4Q
-	PLRO2/TA3mPRgldxrqCsbAfPOPkuxQKo5DvmS/wUSFgW3yZsNzoOyxxu
-X-Gm-Gg: ASbGnctXHKcLhwXpmxzfqkLaj7Jn7+KdWd6PhDCdZmLtT7fMCOu4N/jjuKR4pstbyhQ
-	dieZsZ0s1Go9d7KkdbutM3qgik2LuEkCVHeZCrN/q/Sn1ffMKEX+okpZwEbfoicRwGW2YQWyfG/
-	NtasKw7suBVQp7mJY+LpC/Kfn8dQenqDjVKfqV1rp0g0CbZDMKMrT5jlFYef3CfWEEyTIxKodqz
-	ZV7CMW3IZKTyMsWAKyuPKymNrPgoDLCq0zcVhhGuVLNymK/E5rUTPqxB2gvvgfHQxfKOM6q8Bhi
-	9GAxEEbA6Td5+dR9bKrLExIplwfLaoSbHoJu3Q65oMKHMLIw+ffRh1BfZNqEvWzznIgLdM6jCNf
-	fD3YJhgbVecwM/lGRZ8bIiu4I6bDi53CG11Sj/Qmk/GbpBl9gngKqoJHD7mBKi5PQlaLLXH5O0P
-	5kvy1u0eIh2gVtcQ6VQJ4Ahpck0QZe+xI=
-X-Google-Smtp-Source: AGHT+IHgW9BWCG5ejHfW98SHJJuOnntPPezQy1Qb2Owph8LTgzKcuyURtOIXsoNG+tj9X4I70ae6wQ==
-X-Received: by 2002:a05:6300:6141:b0:33c:741f:7abe with SMTP id adf61e73a8af0-33c742ec0c5mr3139528637.8.1761225632239;
-        Thu, 23 Oct 2025 06:20:32 -0700 (PDT)
-Received: from Black-Pearl.localdomain ([27.7.191.116])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b6cf4e2c95asm2088354a12.28.2025.10.23.06.20.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 06:20:31 -0700 (PDT)
-From: Charan Pedumuru <charan.pedumuru@gmail.com>
-Date: Thu, 23 Oct 2025 13:19:43 +0000
-Subject: [PATCH v3] dt-bindings: mmc: ti,da830-mmc: convert to DT schema
+	s=arc-20240116; t=1761225673; c=relaxed/simple;
+	bh=qb9wmhqplV3wjQdDGHKfi28mg6LC6D8Mi1D0V2AIouU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y7OgB7NPPOV9NqwdLzKx3O8M7M1p5viOLDEm5n9QQ4Wku9IdXnwpinsqUXaWzx6YKujjYD5sS0CXmzANI57CkYx9aHu18e0GjcvSdUYeIc3LYpmlyu5zaleinJ44jfc25AfXY7eSYJrdSWm6sntsBraDaSyH/Tl1keYp0jZgemA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=2F8bN3nk; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 7BC5A1A1619;
+	Thu, 23 Oct 2025 13:21:06 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 461466068C;
+	Thu, 23 Oct 2025 13:21:06 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6A9F7102F2469;
+	Thu, 23 Oct 2025 15:20:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761225665; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=IvA5a3iMkBEy7rcJCILOgoju8BwbH24xyx5w5WRuw0E=;
+	b=2F8bN3nkWjZxmp1IJX8wJxx8IAuxhGX+qWcH7u9JEzWGPjBMSq55sPp1up2WNHHA0gwAL8
+	wz9vb0pYmCvhB6jXU9wQv0dd1DHfQqb9RbWjybldJuBrzHEaDfQSfD3+3IhIFUPeW+0EVg
+	IykD2sBLXEWWunG/ZC4W6VZvwcIBjNdeBsK6qHpKyJ/SbGtLJl98smbTEE17dw3BFQT+Nc
+	SmrGTzXtRZmRSnxY4PY6SpPhtQgEqG3ait/xq5VaA8+brI5kue+Gq9sKKJGFa+B2mIo72n
+	OnGWyMa6JnImuEC/aqlivwFX9uBb0cQB3q2xv1Z/Jm75asN5hN1sx17c6Zv98g==
+Date: Thu, 23 Oct 2025 15:20:48 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Hoan Tran
+ <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan
+ <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, Phil
+ Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Pascal Eberhard
+ <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v5 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
+ Interrupt Multiplexer
+Message-ID: <20251023152048.0e70a362@bootlin.com>
+In-Reply-To: <CAMuHMdWY=FbO6YG1jrd0OWfrpPpBzrqmBVcWnw7TnnsKPGgr8A@mail.gmail.com>
+References: <20251020080648.13452-1-herve.codina@bootlin.com>
+	<20251020080648.13452-8-herve.codina@bootlin.com>
+	<CAMuHMdV03D_3b_JA2vzW4tE_QbkkT1bN1dm+zLLLX24oDHMj0Q@mail.gmail.com>
+	<20251022150339.4c48649e@bootlin.com>
+	<CAMuHMdWY=FbO6YG1jrd0OWfrpPpBzrqmBVcWnw7TnnsKPGgr8A@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251023-davinci-mmc-v3-1-5b27b9c9ecc4@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAG4r+mgC/22MywrCMBBFf0WyNpJkGnys/A9xEWfGdsC0kkhQS
- v/dtAtRcHnu5ZxRZU7CWR1Wo0pcJMvQV4D1SmEX+pa1UGXljPPGO9AUivQoOkbUuDVN0xgEIqO
- qcU98ledSO50rd5IfQ3ot8WLn9X+nWG01Ml9oB97RHo9tDHLb4BDV3Cnu41pj7a/rqgveUwCut
- 4Nvd5qmNzmF4tLiAAAA
-X-Change-ID: 20250523-davinci-mmc-c704440c3dd0
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Charan Pedumuru <charan.pedumuru@gmail.com>
-X-Mailer: b4 0.14.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Convert TI Highspeed MMC host controller binding to YAML format. Define
-'clocks' and 'interrupts' properties to resolve errors identified by
-'dt_check' and 'dtb_check'.
+Hi Geert,
 
-Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
----
-Changes in v3:
-- Change the maintainer for the binding to "Kishon Vijay Abraham I".
-- Link to v2: https://lore.kernel.org/r/20251011-davinci-mmc-v2-1-355da3e25123@gmail.com
+On Thu, 23 Oct 2025 13:30:53 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Changes in v2:
-- Modified the commit message.
-- Removed 'interrupts' from required properties following the old binding.
-- Changed the maintainer for the binding to "Conor Dooley".
-- Link to v1: https://lore.kernel.org/r/20250523-davinci-mmc-v1-1-ceebd8352d9c@gmail.com
----
- .../devicetree/bindings/mmc/davinci_mmc.txt        | 32 ------------
- .../devicetree/bindings/mmc/ti,da830-mmc.yaml      | 61 ++++++++++++++++++++++
- 2 files changed, 61 insertions(+), 32 deletions(-)
+> >
+> > I have in mind a use case that can lead to a non-contiguous mapping.
+> >
+> > The RZ/N1 SoC embeds a Cortex-M3 CPU. This CPU can use GPIOs and
+> > some of them for interrupt purpose. In that case, those GPIOs have
+> > to be routed to the interrupt line expected by the Cortex-M3.
+> >
+> > And so, we have some interrupts reserved for CPUs running Linux and
+> > some others for the Cortex-M3.
+> >
+> > Among those reserved interrupts may some are not used.
+> >
+> > for instance:
+> >   Interrupt 103, 102: Reserved and used by Linux
+> >   Interrupt 103: Reserved for Linux but not used -> Hole in the mapping
+> >   Interrupt 104: Reserved and used my Cortex-M3 (need to be routed by Linux)  
+> 
+> 102 does not seem to  be correct?
 
-diff --git a/Documentation/devicetree/bindings/mmc/davinci_mmc.txt b/Documentation/devicetree/bindings/mmc/davinci_mmc.txt
-deleted file mode 100644
-index 516fb0143d4c..000000000000
---- a/Documentation/devicetree/bindings/mmc/davinci_mmc.txt
-+++ /dev/null
-@@ -1,32 +0,0 @@
--* TI Highspeed MMC host controller for DaVinci
--
--The Highspeed MMC Host Controller on TI DaVinci family
--provides an interface for MMC, SD and SDIO types of memory cards.
--
--This file documents the properties used by the davinci_mmc driver.
--
--Required properties:
--- compatible:
-- Should be "ti,da830-mmc": for da830, da850, dm365
-- Should be "ti,dm355-mmc": for dm355, dm644x
--
--Optional properties:
--- bus-width: Number of data lines, can be <1>, <4>, or <8>, default <1>
--- max-frequency: Maximum operating clock frequency, default 25MHz.
--- dmas: List of DMA specifiers with the controller specific format
--	as described in the generic DMA client binding. A tx and rx
--	specifier is required.
--- dma-names: RX and TX  DMA request names. These strings correspond
--	1:1 with the DMA specifiers listed in dmas.
--
--Example:
--mmc0: mmc@1c40000 {
--	compatible = "ti,da830-mmc",
--	reg = <0x40000 0x1000>;
--	interrupts = <16>;
--	bus-width = <4>;
--	max-frequency = <50000000>;
--	dmas = <&edma 16
--		&edma 17>;
--	dma-names = "rx", "tx";
--};
-diff --git a/Documentation/devicetree/bindings/mmc/ti,da830-mmc.yaml b/Documentation/devicetree/bindings/mmc/ti,da830-mmc.yaml
-new file mode 100644
-index 000000000000..36b33dde086b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/ti,da830-mmc.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/ti,da830-mmc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI Highspeed MMC host controller for DaVinci
-+
-+description:
-+  The Highspeed MMC Host Controller on TI DaVinci family
-+  provides an interface for MMC, SD and SDIO types of memory cards.
-+
-+allOf:
-+  - $ref: mmc-controller.yaml
-+
-+maintainers:
-+  - Kishon Vijay Abraham I <kishon@kernel.org>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,da830-mmc
-+      - ti,dm355-mmc
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 2
-+
-+  dmas:
-+    maxItems: 2
-+
-+  dma-names:
-+    items:
-+      - const: rx
-+      - const: tx
-+
-+required:
-+  - compatible
-+  - reg
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    mmc@1c40000 {
-+        compatible = "ti,da830-mmc";
-+        reg = <0x40000 0x1000>;
-+        interrupts = <16 IRQ_TYPE_LEVEL_HIGH>,
-+                     <17 IRQ_TYPE_LEVEL_HIGH>;
-+        bus-width = <4>;
-+        max-frequency = <50000000>;
-+        dmas = <&edma 16>, <&edma 17>;
-+        dma-names = "rx", "tx";
-+    };
-+...
+My bad, my example was wrong.
+   Interrupt 103, 104: Reserved and used by Linux
+   Interrupt 105: Reserved for Linux but not used -> Hole in the mapping
+   Interrupt 106: Reserved and used my Cortex-M3 (need to be routed by Linux) 
 
----
-base-commit: 7bac2c97af4078d7a627500c9bcdd5b033f97718
-change-id: 20250523-davinci-mmc-c704440c3dd0
+
+> 
+> > I don't know if this use case is relevant but I think we should be too restrictive
+> > on the mapping and so accept holes.
+> >
+> > With that in mind, I let you confirm that you still prefer to have a mapping
+> > without any holes. A future patch to support that is always possible.  
+> 
+> While that would indeed be a non-discontiguous mapping, I do not see how
+> it is related to rzn1_irqmux_output_lines[] in the driver.  That array
+> would still contain the same contiguous values 103..110, right?
+
+The array rzn1_irqmux_output_lines is still contiguous yes but the mapping
+defined in irq-map property no.
+
+Looking back again at your proposal, indeed I can remove the following loop:
+	for (i = 0; i < output_lines_count; i++) {
+               if (parent_args->args[1] == output_lines[i])
+                       return i;
+	} 
+
+With just
+	if (parent_args->args[1] >= RZN1_IRQMUX_SPI_BASE &&
+            parent_args->args[1] < RZN1_IRQMUX_SPI_BASE + RZN1_IRQMUX_NUM_IRQS) {
+		return parent_args->args[1] - RZN1_IRQMUX_SPI_BASE;
+
+	dev_err(dev, "Invalid GIC interrupt %u\n", parent_args->args[1]);
+	return -EINVAL;
+
+> 
+> Sorry, I haven't been following the development of this driver that
+> closely (RZ/N1 is completely different from e.g. R-Car, and I never
+> had access to an RZ/N1 platform), so perhaps I am missing something.
+> Why does the user have to specify an interrupt-map in DT? Can't the
+> driver create the mapping dynamically, based actual usage of the
+> GPIOs? I.e. the first 8 GPIOs that ask for interrupt functionality
+> receive it, and are mapped to an available GIC interrupt?
+> I believe this is how rzg2l-irqc works, mapping up to 32 GPIO interrupts
+> to 32 GIC (TINT) interrupts.
+
+I think the main difference with rzg2l-irqc is that the RZ/N1 irq mux is
+clearly not an interrupt controller.
+
+It is just a mux with 96 inputs (GPIO lines coming from several GPIO
+controller) and 8 outputs (connected to the GIC).
+
+It is represented as an interrupt nexus node and has an interrupt-map property.
+to describe the routing.
+
+The interrupt-map property cannot be dynamically created.
+
+Also, the routing is necessary even if the related GPIO is not used by Linux.
+This GPIO can be used as a GPIO input interrupt line by the Cortex M3.
+
+If the irq mux driver performs the routing only on Linux GPIO usage, it will
+not route GPIOs depending on Cortex M3 internal usage.
 
 Best regards,
--- 
-Charan Pedumuru <charan.pedumuru@gmail.com>
-
+Hervé
 
