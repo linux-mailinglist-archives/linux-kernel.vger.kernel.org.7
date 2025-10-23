@@ -1,185 +1,166 @@
-Return-Path: <linux-kernel+bounces-866123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C5CBFEF04
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:30:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B18DBFEF0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD0419A1A6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:30:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEBA119C458F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45551219A8A;
-	Thu, 23 Oct 2025 02:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB073B1BF;
+	Thu, 23 Oct 2025 02:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f7s//+BL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="p05JYWE/"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010051.outbound.protection.outlook.com [52.101.61.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FF81A9FAA;
-	Thu, 23 Oct 2025 02:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761186575; cv=none; b=UqJzRkW2ZMx9/m2XqmIeFniz7tgvMrl6p5FTHzYRsR1OXCwOxalFc4ysnwSik5dgtxLylMvmDaoCO9xJHIYhRrFummS4bYNejJZgh359J3Zl5jDmlpGBJTMCCoNtDnOIAuvOdioKpWdlvXYLumJgcf5uE99q+g4bKXW4DNi8uY4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761186575; c=relaxed/simple;
-	bh=mhVovYrN43YXZHi0w7HO1gTno9goaEA7sg/nYs14rAg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RFsx2fGK5iWLIFPpTDHoktF2aYy49G3WKx7xL3NFgjIwg23a0gw6wSwvW1g+LFZwP4nE+sPrVeapscuWFacap5rI9iHEncU1oCXNzjoNx9UwlOA5fNTQGjdqlym6Vk5wlYeVvc5Gbcg0EEML/L3Ev66GqtloAzuZatPpplHCJvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f7s//+BL; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761186573; x=1792722573;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mhVovYrN43YXZHi0w7HO1gTno9goaEA7sg/nYs14rAg=;
-  b=f7s//+BLqLPk8tAuGUHeh4JE5CiW+gqPLA1PH7gJAuQKbHhwLL3B39D+
-   Sg5GCArVICCf5t4Zhsf2tFaDbYObfehL3JIKg0KD2A429UNcD0xfn9cYw
-   upTgLi59ud644eGwPdSKc4uP+eZyoFqrKXHezKYhQzGtYsXp+tWQhx+/1
-   PZ1ck4nZjIRXNtN1RpOH03789Ehri9XdAU0rlS6NqiG0kjlDMTAjCIZ8N
-   xRFg0G+gTv/Nh0tzF+GGG+Un4vpwj2DrTYt4ctbFaXBc0RrYG0jA37kbm
-   Sf80fGvWG3sP5DPIsezM14HPdXiIIsr+Bj/5q46IB8tNNpqBmIVZ7r/Ua
-   Q==;
-X-CSE-ConnectionGUID: S07AW26USYGdUnQBKmDIZA==
-X-CSE-MsgGUID: gX0/cyQbSHeFff6gXdSU6g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74016098"
-X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="74016098"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 19:29:33 -0700
-X-CSE-ConnectionGUID: lqGJ9xqWRsq7YZHRRpD5fw==
-X-CSE-MsgGUID: Je5oPvzaTnmff52U59Kz/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="188318580"
-Received: from unknown (HELO [10.238.3.234]) ([10.238.3.234])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 19:29:29 -0700
-Message-ID: <aa0667d2-c0ad-4a40-898b-cf1363a0941f@linux.intel.com>
-Date: Thu, 23 Oct 2025 10:29:27 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A711A28E00
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761186854; cv=fail; b=r+F73t/GNcCI5xSyT54mqJdTKbpuO+vcU3bU8nDhHCAHDOcWcBEUaiDZTs0Dl8X20Uybv076zaUOdEDvu9h1KKIrq5KZf6oYU3/mPg/yI3Y2VLy+2t8flxz0jLi2HiC4i9FdvpWgOvrD1fWffVw1om4KdoYi2+TiDLAnQ1RZbvc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761186854; c=relaxed/simple;
+	bh=ekd7TVev7ZKV9iODsnb1MrkOrWElbz5jnhjMsMOsNfM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TiUQwclpgnQsVCIqNKQeNQHillAVnV2AAun22Y98Ho/g+OAbN9zTTEYGXeCPPFfGF92mtrhWaaDqE93kIw54vNM6pX7S7dC0pwUYjQGLqMrYfyLrG12XlQP7M93SXQ4y+AFQ08MW6GgnkjjxBbptl1dHXv7zTYrGO6M97SrU+2I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=p05JYWE/; arc=fail smtp.client-ip=52.101.61.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bBkVzB6/B4PVCijJd3v6JXCocGbHoonncs+5Mwm/BKj1xapH5OX3cQzFFr1hCBJitiYNmIjdWFIpTEJlSAC5+j+ONWK3IYr9fFkNhNfj+fOrLU42MR8gkWGov1olFVV/4aa8EYiES9udn89C7xtl9GjxEz69VISDwG6Xk0VJuvj0Eb/Ao+frHxa8romE3KUD0dnzzIT2e6Gv8CD2iDNxoW2EBp7LiSCDoEdNiEh7KZ96n6oUr2ynabSAevieiUkV+NmnoqUyKXkT3lixtqfV8OV6M2b+6zP0iRQ4RMLwjOtkqDKoN1sDdNxipbYTg4tmF9prk0DJ6ohrweEjojAFaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2TYLufM5miJya5tRdQOWx4jbp67jsRCxBjSkSqRwlTc=;
+ b=ycXl5Q4xQqoKlVGeiPWafZf3sG+9SOJ0/YB4msG4dW8pD7MV4iSCumES0NvLhxOFfbgjLZw4UqxDlhNOxtD8jr3N9WCvssLGo3LCFevn4xg8rt5oyF5jrR/vJyj2r14HgS1J/dqnzsHcJkX9Po9PI3IWnJQ7RmA3Hqvkrh8GWbrDtBfrsm/5+ZSDzU1k19xkzosf2HM45MfCkuI+eGE8BT8BvwoMWe62G+UG11n5CEYCr3wZla9nrrEwkO4K4LfiF3RjMKF6gYKCB2Vc2Nx0NdhAwPLtsvNz27NJwUXdygqL5xZLBF+6qv8EwXdwSRXvRKBSpGiVRfbmosBXi1+L2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2TYLufM5miJya5tRdQOWx4jbp67jsRCxBjSkSqRwlTc=;
+ b=p05JYWE/HrFaIkrxN/AsK7kQ7h+jEbcq837P+Bg6jLdQrweiDBIXiQHF77zbuc20d3n8VDGc4AZiUX90Y+M1q1JKxOHfN2Yy5II7GZUA265rZmD2HJsvvNJwvck0dKbUyF1Ysr8ke7zz74vOibMfXkyKD5muPy4F5JOKnxPJ3LQ2zkhrjAAlFEGITiUAnWATAGRR9asb1ZdJTzVZG2/e1BogmY7sOLu5XXx8Li/5F/8TT46Tw3Y3tPE0jUTvtlNd57RXnY3oS7osz2zqX5w/1SyxRtQ4hjaYdF64LZYugVz5RW71yhVDcv5w53UH4Pgb/KXGD39EgaRyCksjRjyR0Q==
+Received: from CH0PR13CA0059.namprd13.prod.outlook.com (2603:10b6:610:b2::34)
+ by PH7PR12MB7209.namprd12.prod.outlook.com (2603:10b6:510:204::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
+ 2025 02:34:08 +0000
+Received: from CH1PEPF0000A346.namprd04.prod.outlook.com
+ (2603:10b6:610:b2:cafe::cf) by CH0PR13CA0059.outlook.office365.com
+ (2603:10b6:610:b2::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.11 via Frontend Transport; Thu,
+ 23 Oct 2025 02:34:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH1PEPF0000A346.mail.protection.outlook.com (10.167.244.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.7 via Frontend Transport; Thu, 23 Oct 2025 02:34:08 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 22 Oct
+ 2025 19:33:54 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 22 Oct
+ 2025 19:33:54 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 22 Oct 2025 19:33:52 -0700
+Date: Wed, 22 Oct 2025 19:33:51 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+CC: <jgg@nvidia.com>, <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>,
+	<will@kernel.org>, <joro@8bytes.org>, <kevin.tian@intel.com>,
+	<jsnitsel@redhat.com>, <vasant.hegde@amd.com>, <iommu@lists.linux.dev>,
+	<santosh.shukla@amd.com>, <sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
+	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
+	<gptran@google.com>, <kpsingh@google.com>, <joao.m.martins@oracle.com>,
+	<alejandro.j.jimenez@oracle.com>
+Subject: Re: [PATCH v4 11/16] iommu/amd: Introduce struct amd_iommu_viommu
+Message-ID: <aPmUD3U764IPo/et@Asurada-Nvidia>
+References: <20251021014324.5837-1-suravee.suthikulpanit@amd.com>
+ <20251021014324.5837-12-suravee.suthikulpanit@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v8 02/12] perf/x86/intel: Fix NULL event access and
- potential PEBS record loss
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>, kernel test robot <oliver.sang@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>
-References: <20251015064422.47437-1-dapeng1.mi@linux.intel.com>
- <20251015064422.47437-3-dapeng1.mi@linux.intel.com>
- <fcb09e14-970c-4ebd-82f2-a12150fe3708@linux.intel.com>
- <20251022112432.GN4067720@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20251022112432.GN4067720@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251021014324.5837-12-suravee.suthikulpanit@amd.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A346:EE_|PH7PR12MB7209:EE_
+X-MS-Office365-Filtering-Correlation-Id: b7ce11ae-74ef-4664-ed47-08de11dca496
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?va9EsNL92SjxyDnGmuUFR0YnXQc4PDf8JyiyhIXfzpodbykI2xumqtrCu+M9?=
+ =?us-ascii?Q?RrsjJtoD/XfD40CDGOfw6Q8XRMqvof6/rkTHa2hxHICFnLUrC3JnQSgTuA0Z?=
+ =?us-ascii?Q?fv4VglXS42ZIYPlUamshd3d6jmpvgARKfhPjKOSeAPn2d0E5BrqBtvudtOBi?=
+ =?us-ascii?Q?cXi7rJkcI7Pcv3WYhVtJNbBI5t7XU+7Iy7zCZmCNNmW9FxGlFdeaAOqJcD9a?=
+ =?us-ascii?Q?Otw75sapWyXH7w/s0OZksh7+jIWG230FYvYFkM3MSYzTlpSE5jkH2WdnEGZQ?=
+ =?us-ascii?Q?8IoTPjlZIm7j3QFvwaEEdC9/hv9GTqHmH/Q2leJ+9Hi8nri2OzWZeH8bqB32?=
+ =?us-ascii?Q?AD18LKa/aPqZ+K1QcpK4BxSwxKArDBtAQ1aHM6xmtD1aS+4IPgzU1skqHYXK?=
+ =?us-ascii?Q?OtWN5NJBCKtLR51YbzsCj648+3SiMXGtPJRKraw7YdLf2LOilpq4hb0/F6RF?=
+ =?us-ascii?Q?ztXwoVzPMysNM4T6Nsia0hfgX1cWC/gumtCKgFWpg0GxJE9n8UWEAqku4gEI?=
+ =?us-ascii?Q?cEkmdmfFujlQcILP4lwTPvl3yDCo8HaS18P9NcN4D9wU6mkGd4KWtU7+36Vl?=
+ =?us-ascii?Q?V1tZqLSAMdzzsJl3UrFKaOZfGlIzZcxdTw30Iama4Qh1g+Y0ydID+BldZwDe?=
+ =?us-ascii?Q?o+zqHPVHMOhF1UAerxsNXzI9Hms8cPg2AGs5siMGh0CAWc/ngdl2mKu2zXz4?=
+ =?us-ascii?Q?818DhWLjSxM5XFP9BZhaoEnDW731WrK3mMYm30OX6kGITnqsRO/TOloh22FU?=
+ =?us-ascii?Q?PSHpRNEL9asYwGoWeZIhuuSmbqXBtAuE/s+p7rLaKQh1/pVkK80MJsoX9PBi?=
+ =?us-ascii?Q?8xX5fuFOf17KYWJUnPv1Gh8USM2HyGFucKmkLYO3g9scwneBiiwmFZUVtxMf?=
+ =?us-ascii?Q?GWaCN1ouO03bOKRs12ULKUanFgi3JxMRfJT+Mif4x444NSGn3nsMY46mgUI2?=
+ =?us-ascii?Q?FBODPk2Z8sfPFB3Bh3c9SKQGHG9AHDwamgth/CCk4wZhtZiMGuX83nDrnFJS?=
+ =?us-ascii?Q?utKpIBkoMaVc7N1YrxGdLIyudbykVsZPNnauPnugf5spCMSjubhxW1WYbG2U?=
+ =?us-ascii?Q?3lqclSjwYvwuFwQHD0sMFh+3LrbvNXv/WNBhcsmQDSEZYBuRNhQx3HBTNMop?=
+ =?us-ascii?Q?NmtxyZlyaOzeF9rwtonv5lYno3eAD8Cc3AHKu3kyaaQL7s0mK9ts+mvQ0OxP?=
+ =?us-ascii?Q?4xU7VZ+5odJFBdkysfQ9vNB6PGW9gZk96mwru/2dCM+HmxTBFk+d1a51895H?=
+ =?us-ascii?Q?olLlYgUIAGS82D27cmUldD1vLVCEEEmdR7tVHkdl70t7Jp9Q+Pe8DxYRctaO?=
+ =?us-ascii?Q?gY4QB+REPfa9pP8Rt/DlNTgbDNKeyiJV76+pH2XYPYuT7CqKdjm3PBLbZuU1?=
+ =?us-ascii?Q?Q4rP4jQjUzD5OV+dHrYjdiVbAFUD1V0eJvjsdk77JFYZQuiR3Cc0k7a8tSvN?=
+ =?us-ascii?Q?I8iL7BoqygECyO+hj7XXeBniBlApAnXU6LYn+2mVE8ehBKCq1YHiszaPQvnZ?=
+ =?us-ascii?Q?PcIfqpnqs1AdQLSgnUCqt0kfoxJ1CssVEICcwkJWHilksRrvV9Lvtzazl0X2?=
+ =?us-ascii?Q?oxhoKvF/G/Atla9wr/8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 02:34:08.3508
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7ce11ae-74ef-4664-ed47-08de11dca496
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000A346.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7209
 
+On Tue, Oct 21, 2025 at 01:43:19AM +0000, Suravee Suthikulpanit wrote:
+> Which stores reference to nested parent domain assigned during the call to
+> struct iommu_ops.viommu_init(). Information in the nest parent is needed
+> when setting up the nested translation.
+> 
+> Note that the viommu initialization will be introduced in subsequent
+> commit.
+> 
+> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 
-On 10/22/2025 7:24 PM, Peter Zijlstra wrote:
-> On Wed, Oct 22, 2025 at 04:12:14PM +0800, Mi, Dapeng wrote:
->
->> Just think twice about this fix, it seems current fix is incomplete.
->> Besides the PEBS handler, the basic PMI handler could encounter same issue,
->> like the below code in handle_pmi_common(),
->>
->>     for_each_set_bit(bit, (unsigned long *)&status, X86_PMC_IDX_MAX) {
->>         struct perf_event *event = cpuc->events[bit];
->>         u64 last_period;
->>
->>         handled++;
->>
->>         if (!test_bit(bit, cpuc->active_mask))
->>             continue;
->>
->> Although the NULL event would not be accessed by checking
->> the cpuc->active_mask, the potential overflow process of these NULL events
->> is skipped as well, it may cause data loss.
->>
->> Moreover, current approach defines temporary variables to snapshot the
->> active events, the temporary variables may consume too much stack memory
->> (384 bytes).
->>
->> So I enhance the fix as below. Do you have any comment on this? Thanks.
-> So I didn't like the previous and I like this even less. What about
-> something like this instead?
->
-> I quickly went through the cpuc->event[ users and they all either check
-> active_mask or, in case of the PEBS stuff, check pebs_enabled mask
-> (which should be a subset of active_mask).
->
-> (the PEBS last case depends on count being 0 for all counters that are
-> not set in pebs_enabled)
-
-Yes.
-
-
->
-> WDYT?
->
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 745caa6c15a3..74479f9d6eed 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -1344,6 +1344,7 @@ static void x86_pmu_enable(struct pmu *pmu)
->  				hwc->state |= PERF_HES_ARCH;
->  
->  			x86_pmu_stop(event, PERF_EF_UPDATE);
-> +			cpuc->events[hwc->idx] = NULL;
->  		}
->  
->  		/*
-> @@ -1365,6 +1366,7 @@ static void x86_pmu_enable(struct pmu *pmu)
->  			 * if cpuc->enabled = 0, then no wrmsr as
->  			 * per x86_pmu_enable_event()
->  			 */
-> +			cpuc->events[hwc->idx] = event;
->  			x86_pmu_start(event, PERF_EF_RELOAD);
->  		}
->  		cpuc->n_added = 0;
-> @@ -1531,7 +1533,6 @@ static void x86_pmu_start(struct perf_event *event, int flags)
->  
->  	event->hw.state = 0;
->  
-> -	cpuc->events[idx] = event;
->  	__set_bit(idx, cpuc->active_mask);
->  	static_call(x86_pmu_enable)(event);
->  	perf_event_update_userpage(event);
-> @@ -1610,7 +1611,6 @@ void x86_pmu_stop(struct perf_event *event, int flags)
->  	if (test_bit(hwc->idx, cpuc->active_mask)) {
->  		static_call(x86_pmu_disable)(event);
->  		__clear_bit(hwc->idx, cpuc->active_mask);
-> -		cpuc->events[hwc->idx] = NULL;
->  		WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
->  		hwc->state |= PERF_HES_STOPPED;
->  	}
-> @@ -1648,6 +1648,7 @@ static void x86_pmu_del(struct perf_event *event, int flags)
->  	 * Not a TXN, therefore cleanup properly.
->  	 */
->  	x86_pmu_stop(event, PERF_EF_UPDATE);
-> +	cpuc->events[event->hw.idx] = NULL;
->  
->  	for (i = 0; i < cpuc->n_events; i++) {
->  		if (event == cpuc->event_list[i])
-
-This is a much prettier fix. Thanks.👍 
-
-It looks good to me. I did basic tests with this fix, and didn't find any
-issues. But considering this is a such fundamental change, I would do more
-tests later. 
-
-
->
+Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
 
