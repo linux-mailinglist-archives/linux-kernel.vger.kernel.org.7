@@ -1,345 +1,236 @@
-Return-Path: <linux-kernel+bounces-867712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E54C03577
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:15:44 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F8FC0357A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B2E94FBDF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:15:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5C147358AD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFA026D4E5;
-	Thu, 23 Oct 2025 20:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D25F254855;
+	Thu, 23 Oct 2025 20:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TngDqzM+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eG3TFEJp"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134C618FDDE;
-	Thu, 23 Oct 2025 20:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761250531; cv=fail; b=QmpqYHyz23DzED2TEJ1mAtGmCFxIx5oKEEDRjUAAYfQxvPPT2Xhowfrvhj1VsDUWZ2FfZiEdrtRNMvWsTwKQ1BPXFeVMvh3WyAV269EEejkxRmq2b09NwdMtg8rvOlYyUOpUjjDDmZWJCe5ZepZvVj2F3GESCV7bEisb2roYXK0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761250531; c=relaxed/simple;
-	bh=hPfbhKEZBIyL1nU496gJ3nHoigG7mm4AcrB3VyyMVcw=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FuH2ywllqDftfd3pH3X7udQ5MAPZBvgvpwyaqVRnFiMseBp4RvtEoJ31LyTGe1lDO6aQFGfscSPLolko4+8pfasM+n7IgEme+f6P7qTFliUThT58Z+/Qy33173b1WTyNfeHve2woGo98ty1YXiD5S85Dnv2nLvBuX4tkokUIGcM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TngDqzM+; arc=fail smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761250529; x=1792786529;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=hPfbhKEZBIyL1nU496gJ3nHoigG7mm4AcrB3VyyMVcw=;
-  b=TngDqzM+okQU3W6aWpKZefwyc9DrCqAOdtIAnX7IIl/nAZl9+W0VuAyF
-   p4mhKt3sbzzvtV3oCldX0yiUyw9JQJTrzAXeCTTdKA3xwnesnHiBiUqqa
-   lPkpeb2rr3Qk3BZZVRxC8ccMuZ9HNFPxYUp/KXzdq75pZboDEd2yTzbIJ
-   Wr8mmRMGgxuWGyLoBGONHNQgw0k2X6+MIK61JPv0L0Q4tzJVH/KrOpPX1
-   Ktm3QIMXpvAD6zCqi9xvOuG5a7lYE839R+9QC4Vlmlp5Ru3Ao9XtSA8Hk
-   gmlmDuVKY/swob4j0EJTrMqgA/Ep58MaFh/nnrM/HSJR6AN0tBIIoTEpS
-   g==;
-X-CSE-ConnectionGUID: H26URO14TiitRu1sjWBXHg==
-X-CSE-MsgGUID: 1pZEcG3eTjawmTt1H6DZ4w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63335921"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63335921"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 13:15:28 -0700
-X-CSE-ConnectionGUID: dRmjy88rTK2BJd+L5JnDDQ==
-X-CSE-MsgGUID: AbY/zILXTT+LRQFSp8Ws0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="184729858"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 13:15:27 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 23 Oct 2025 13:15:27 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 23 Oct 2025 13:15:27 -0700
-Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.9) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 23 Oct 2025 13:15:27 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pp5BkMeOokINNpeZvm4g49TD6IzsRc9b46qEz9AZ3dT5VJKzxgfW6V+6LiQuRvwRe3HYhR90YCG+tD4a5cZ17SNGupIqmsJXLuS7aXcqXynT4r0oDnWAE+88pb3iVwy9GrU1mmD+nvp2Mjhwfwgeqc4GftMEP7XggnspirUN6d7OFDqO96ZlRQjRfoeMFrXCVjTnygx2XdNQHLVmdd65qApNFSQNFshUrZvJFhlC/LtP47mBYULSzW8dl2pS7y/pTjJ/PXcPbCZcAfaC6hGZgnCpcbZQaN9KkAlDWlmGiO63IO21s8q9vPNO7/jBy6A4QqHrwE6uDm9wFjWXEDxCIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zGeLMHY60u7lP6alhmA4giZnX5NoIE+isSCvYioAO9Y=;
- b=rZdGNLvIC5SW8lq4D9/poXwWnbIo+f8j1lVZLn087l/whSwGRuaaXT9GROQgsORuKITZ1apYGF4YBsPg+av9QGboaY49lYklU8q6/pMG+Cuzj8l+i5oXaKFl7SzkVJpM3MeV2yI2g+GaVLpmaQ+sJDWdU0gvyeOswowhfiDwFJra8X5WcgHia6JXHhUh8j96NVP65ded88pxoUSTlhBcbPOWg/4+yDy7p/uwrVD/G7VttF+eBwynJD2/aVX0hW8KVynbDPet4L2UjI1IbTvtrN/qV9ttJJRns8ZA0qy+8KrXrrY8zgiPDxrhjF08XGFqhuEQtHuX4S01CEVyLYfiuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6011.namprd11.prod.outlook.com (2603:10b6:208:372::6)
- by CY8PR11MB7847.namprd11.prod.outlook.com (2603:10b6:930:7c::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
- 2025 20:15:17 +0000
-Received: from MN0PR11MB6011.namprd11.prod.outlook.com
- ([fe80::bbbc:5368:4433:4267]) by MN0PR11MB6011.namprd11.prod.outlook.com
- ([fe80::bbbc:5368:4433:4267%6]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 20:15:17 +0000
-Message-ID: <37294c22-8f2f-4d14-9fcd-18730cc13564@intel.com>
-Date: Thu, 23 Oct 2025 22:15:10 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 24/26] drm/xe/pf: Enable SR-IOV VF migration for PTL
- and BMG
-To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>, "Alex
- Williamson" <alex.williamson@redhat.com>, Lucas De Marchi
-	<lucas.demarchi@intel.com>, =?UTF-8?Q?Thomas_Hellstr=C3=B6m?=
-	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
-	<kevin.tian@intel.com>, <intel-xe@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Matthew Brost
-	<matthew.brost@intel.com>
-CC: <dri-devel@lists.freedesktop.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Lukasz
- Laguna" <lukasz.laguna@intel.com>
-References: <20251021224133.577765-1-michal.winiarski@intel.com>
- <20251021224133.577765-25-michal.winiarski@intel.com>
-Content-Language: en-US
-From: Michal Wajdeczko <michal.wajdeczko@intel.com>
-In-Reply-To: <20251021224133.577765-25-michal.winiarski@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: VI1PR0902CA0059.eurprd09.prod.outlook.com
- (2603:10a6:802:1::48) To MN0PR11MB6011.namprd11.prod.outlook.com
- (2603:10b6:208:372::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EFD142E83
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761250600; cv=none; b=IsrL78jzBxHVa6+GJ4tT0vjcEyxGt8snp1cBRvGQr6ry0IUgfjneO6I3yGNjr3AM/H1xkmWtHQ17P1pxth79Cvk/XAbZR6exU/NjE8n6QK+5aD1fvkeuRZfBHTRZe1rEq1L47p35uPakWK4zmFkiC/1EO1IYgNMjyyRSvxbfqFo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761250600; c=relaxed/simple;
+	bh=fr+n8Ww5AbeMinkrbVJ0IIZGzI37BKWE2kT8u6n1VAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cOI9eXA1syQUDpFBdV8ITuQMJlnEPtGkIs+1JIf7/SEWua0b45TIUNjVTfAZHyzM7hUbGduGKrxYsWewoiPPw7rbzZELxndl+pqFXgk5KRgh9bG9xfg0BNxtzRgTAPof8BSuqCWvTUJVjq56BYW3pAXKa4oVxKprtMOWNOXvAbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eG3TFEJp; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42702037a01so199716f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761250597; x=1761855397; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=kR18xZLkIBD/v+YYlolu57R5lqheAjboSLyrb0PLlFA=;
+        b=eG3TFEJpGaKSt5FipHNQt74HtKVr8BORKVwDO5mV7ekjObPJ+m8OqMob1xvb0arrTX
+         6BQDFiIhVO2FJvtwmPV9oGy+3Bwb2hjJX8P+XgWatgadO2bnrAUW/b7/h+CLZRjIShHO
+         ihyi5efcwEjmzClsDOaDGg+YWqFhKsYhB6cMtqYyAqnXgGYQwjKawFXoUFy1wb3gGNzh
+         RhXOWIqXCTTo2WB9UkW0jJfYFt6Z8c1QD8e2P/QAoYbt0bqSginZkFWvF+UMagZAGkoW
+         Hqef6ERm007HKNG0BLqi+k17yNv8USSeAVQwFe5s2kuZpRs0bFQa7tXcHCVgDzWfotdk
+         EwUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761250597; x=1761855397;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kR18xZLkIBD/v+YYlolu57R5lqheAjboSLyrb0PLlFA=;
+        b=doI/hqUG/bMFKlsSC9+9PJyKr3WEiIA70doge/vDz+7VlpxYSGjW1u56LCcZcBEmdZ
+         HmJGZOO40tej+BeT4ivk2Bz3Zsr6CB5jv0ion9Tt1uVcksQYdiiry7C747dJNzhk0/M8
+         Bn1U9niSMwkDOq8q+vvEb3P4jUX7p04l4DTkvnfritrOr1zrvENKXWRhN6xkcRZT5DTv
+         ZaP0ciOTT3j6JgZGSwH2vYNS1/F6DK6bvaYUYKRMW/2U/fcbEp+yRGB14eJfn4dN5Cih
+         6xmAa2qNMnEYhZHjzZqCz89WSjtNolNgNiU9N+az2Ygh18Qhzt6k0hBYsJA0QMYnjRD7
+         5hyw==
+X-Gm-Message-State: AOJu0YzvAnFcuUYJhSDMWtgRq8LqQDjM9lkehA2D3YfXQO0Mwt4V2J91
+	Bps6vLqd18CV1HRMHFFwTW4xxe/rT9isq99h6Taud5y+u+qEW3H/KAgQu02VCWYxdfY=
+X-Gm-Gg: ASbGnctSOMxUY9+e5xEug7RhmH1nd5DoXaa2mOhb/Le6DHV9Wt02/gAh+dtikAKvc1A
+	OTgwizLahc4lk/uXA9vno3bsG+lIycVY36N8CvdYXxzkrS4O3iTjObDgewftlbg6n1rs9KjFgun
+	w3VfBrfVLK/98UH4Ks9ar7nW3l2Vdu75/autoLtetpmwKeeGWPSzNZfBdPshs/s5NvHJeW0YMc3
+	L0yg++jNYRCVaLLD9hPEQLqvkU0H++t1hsUZF1pEYPA55gaJYBBzFF1bEigTxPFI8Gh9Q94Vova
+	8CTGJUDOJhEjHFOv/+6uRFM3DRPHa+JNZiYpoq3lAuymnHiTmjwMLW9Gm4UfEjKnQWv26b0/7D6
+	ipX1+fLod8+XP+ehTwsAoElbgKR3JDL2/fCrZWy6nTOzIXZw5AfTx+N9Op/M9P3hAe0tk1FCDT3
+	7bgWKpA5kMxMNqkwKRfj/f
+X-Google-Smtp-Source: AGHT+IGDdj2clyde62LaWC85mqGvgAg4Mcphg+WaGFRuMk1QFzv1PKO3ZTThd0ZWB4kpfNj4J8wWgw==
+X-Received: by 2002:a05:6000:2681:b0:429:8c97:f9c2 with SMTP id ffacd0b85a97d-4298c97fb46mr917173f8f.10.1761250596713;
+        Thu, 23 Oct 2025 13:16:36 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898ec1dfsm5702040f8f.43.2025.10.23.13.16.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 13:16:36 -0700 (PDT)
+Message-ID: <82770e98-a9f7-4a89-a076-01394cf6b880@linaro.org>
+Date: Thu, 23 Oct 2025 22:16:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6011:EE_|CY8PR11MB7847:EE_
-X-MS-Office365-Filtering-Correlation-Id: b92c07bf-114d-4658-f598-08de1270e1b8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?b3JheFNFa3c4bElmRHdiamRuR2ZSWER5TXpDdlVpcE03Zy9oUmdzYlJCZXND?=
- =?utf-8?B?eXRSZ2RkN2YzRnZEVE52dFFaOTJONTRyUFpPV0Q2R256SmF3WW4wVmV3TjdO?=
- =?utf-8?B?bEhwSTRJcjJnZkZUWlQyekZBUENNQmxCVjJsUDJZaFk5QzhCN2NodHRBTkc3?=
- =?utf-8?B?UEplT0tiZzRLdlVHbDhYWlNPaVdWRUwyRlNBeGRUeFFUcDB2aGVmZGhzUERx?=
- =?utf-8?B?eWpJaGtUTEV3a1ByRy94aHRqSTgxZGd0LzVvZlpXdDdqUzUyU3lubnZMZW85?=
- =?utf-8?B?eWNudFlVN0Z6WnVWMDNTOXovdkh5S0NuZy9BLzNYVkUyQkFtN0JTc0ZmSjF4?=
- =?utf-8?B?K3N6ZFdzd3VIRzltVFRHZWRRamJWNktpWHh3bDA4K1l2Y1hKMGRyY1NmMitp?=
- =?utf-8?B?QWdVTlZKWGM2ZVBqTDI2dHJSNjk4SmNNUDVaM2ZGUEJwVmdMMStrUU90MDFH?=
- =?utf-8?B?YWZhTHB2WVQ4d1BWU05uaW91U0FJT2dtOGtMMW5laDZYVThqRVRueEJNOE9E?=
- =?utf-8?B?U0RYWEFndVk2VGJsMmM4Wk5ndmRhVVBxNUFwdVRVK25Dczk0WGgwS1BNd2xR?=
- =?utf-8?B?YnRFWGtCOGhmUFZSeW5YYTFIUXVKMXBOK3hudzROMlFCOTJlcmVKMUd1WXZr?=
- =?utf-8?B?dUJUQW8wTUFKdkRJb2RPeERMemJnOGFyNDVZbHNJY0pXQXBFRWluOXl2eHpp?=
- =?utf-8?B?ZHQ0eUdJMnBuRU5KMTFkRG05Y1hodEY0WlZ4UHNzeXFOeDQ4VDBPSmg5eTF6?=
- =?utf-8?B?S2o5MXpGNHpxVk5RL00xblN0a01zN1ExQW1PTnRBTzNuNmZ0RGZWVVZpVUwr?=
- =?utf-8?B?USt0QmVWaGZlaTQ1OTVweFhPaThlRUNYYVZBdzlWRzVKajdIMTVidFdidzRR?=
- =?utf-8?B?cGNIUzdDZDh1QVRoTGhJUjlFWm5zWEJMVVhrdXN6ZHBsT2g1QytmVTRiSmNF?=
- =?utf-8?B?MDNCNEpoc1FiZG9wbTFmc1NnRWQxMC9RbUUyL2pHNzVheHgvNWNhcWVUUjhl?=
- =?utf-8?B?Q3M4dlZhLzRoV05tRWdHTFp0eUtaSnArWFdaV0x5R010cythaHhEaysrczhF?=
- =?utf-8?B?NjBHenR6YVNia3o5Y21XU0RPaTAxZVN0bkZWakpmaitXZ3NzQjd0SjB2b25p?=
- =?utf-8?B?R01wSElKWkRQd3JoSHlIS3c2ejQxK2NZdEhuNm54Q1Y3RlhNcDhDazRXUUFT?=
- =?utf-8?B?YXZGN3FNeCtlRm5OSnlHb3dqTWlBcVVpR3lOOTBoNmdUSE1QMUlYN1ZwSzdE?=
- =?utf-8?B?Z1hQanVXNFhkRzU1SFJxYURweWNwN0ZFL1VkeU5rU0ZaWXJmME9xMzlIKzBt?=
- =?utf-8?B?VEVubEJWMlRLYlkzMFZDK1BXYVE0WW1JZFJnNHdsYXR3Y0ZSeGtxaGhLNXcw?=
- =?utf-8?B?SENqdEhYam8zb2d5VExxN0hCc2pmM2hLSlRNUmVPcXZQYXppdEMyN3l5ZFdR?=
- =?utf-8?B?TndOUnd1ZTErRXFHaTBqd1UrWFAyRHVXOVhUWm12U2xXV3NJeXE4RHVBeGdo?=
- =?utf-8?B?bGd6cnVocjB2cTJ3YXYxbmFwTUhsOFAvcCtXVWJYajlKeS8yUURpQythUEFX?=
- =?utf-8?B?NGVyWkFXTFFYbjMxOWpZNEhxQWF5Sm96UTIzT2Z5NDJCVVhSVXBURzJ4cUw4?=
- =?utf-8?B?WTNzRkxDVnZiNVMzQ0VYcHZManV1ZXAzN3UyWC9YRGRudW1tZjZpaE9UdC9D?=
- =?utf-8?B?Q2pCTUEvem0rOTZ1WElHYkJtdE9sV21Gc3hpTzBEOUFGT0FRYTVpYW5VVzAv?=
- =?utf-8?B?eCtCY1g2alZ5TUFUL2kvUnFXMTRweTV2ZHBkU2VieFNRYXV6bHRhai91OFlD?=
- =?utf-8?B?dnovRUxXQ3RINTdXNXN0eUs5MW4vMUVTMFdScDFSVlgzRkEySVN3cmRTanVR?=
- =?utf-8?B?Y2ZEUlJJb0dBYkVoMjZSbjZseW55RXkzV0JQL0hLSVFCTjlEK2h4d2FBRFlF?=
- =?utf-8?B?L2w5cGRvRE1Ga3hzUEFxMnIwWG1Va1JOQWZoRWlZVEd4SFZvb09RNVRYMnVO?=
- =?utf-8?Q?XDyOMc/7n7lNf5vzdSWEUgGIJTbWzg=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6011.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RjMvVDVTWnhCQ3BsKzVJMU4wMG5ZZ05Hb0hDYnF5cnRobUxacEdVTlE5SndM?=
- =?utf-8?B?eEI4N1JaOXhkbndQbU5ha2pGSWRCRHFoOThzTWphZTJtZEM3WkNSenNqZUVM?=
- =?utf-8?B?c2FsQVZ5U1JSN2UxTnNHVllaR3NlcTcxRFhkQndiaVFMVnJBK2tTbHZwNTNS?=
- =?utf-8?B?S3NSamtPb01udllrRXZLMTFmQVdaM2FSUEh1dlFWV2FDR2RndUhpOXNiRngy?=
- =?utf-8?B?K0pka09wVHBHVkx0enpXbDBSUUo3T0hXVEFneVpuQTRCS3dSdzd2bjVJQ3A3?=
- =?utf-8?B?eE9vc3p1dy9HQ3h3eHBhd2xtWlBDeFhiNEZHUWlvZkFWV3pOMTAraGc0Njhq?=
- =?utf-8?B?UGFUN1pXTXB4ZUNtWjVrak9XdVB6TE1sZ1AyVk9OUnpTMmNIUHBhZzdUdFFo?=
- =?utf-8?B?bWFVZVEvMm00VGNKZE9qTGlTY1lLNWxTMm93NVZ4cW5idmpwL2Zza05pMGNI?=
- =?utf-8?B?Q0NWY2tXUHJtZmptTmpjRjZlckF0OFRWc0Z2S0tuSHp2cUNvcy9zcDM2eGZt?=
- =?utf-8?B?WVEvZVJoRDhvMStoVlZ6anJqR1dHcm04WG4xcnNqRXJYemorTFgwdlNld3pr?=
- =?utf-8?B?YXY3b0ZlTEJtaCtRblg5R0hCOENNL0Urd0c2NUNBYktJTXdQaVFvbHZsWjBl?=
- =?utf-8?B?YWZMVUE4cjU2WlZjQ0drb2ZHWGdFVDVnaXNaMFNZR2c2bHRWNjZJWjlQWktj?=
- =?utf-8?B?bVpGc1FIT1FzQ0l5RzRodGptL05jYXB6aE1VNkh4RjY1ekJ0QXpDSVZ2VjFy?=
- =?utf-8?B?azZxZ2kvalNSV1d2aEpWVmFiMERJaHU0YjBsdWpCR1dseUJNNGhuQ2VjQ3VI?=
- =?utf-8?B?MmZUT0hmSEdsQ1RIdU9kcHVESU5mQkZFMXVrS2c0bkVOSlhPbHY4dzdLSlVq?=
- =?utf-8?B?TGphVnhXLzFTQllzN2s1TzdWTGFJVjIzWEVXMmllWEE4UFdKdWNIbFo0QmJU?=
- =?utf-8?B?ZHpXVW1TZkFDSEpHSk5IVXU2QXA1eVRzMjdXazhSYUVYblBhUStOZ20ySkhT?=
- =?utf-8?B?ZzFkUFRPbWw1YW1NUXJ6Mytxd3JPYUdZa3Jsekd6L2Q4eGRJd2xiS2ZMNTl2?=
- =?utf-8?B?ZVBPOWkyY3pVeDdXS1NQVGtVa1dQRUhIb0JsM2FjNzZtSDZMNnBOT0RBbmNC?=
- =?utf-8?B?eTlMOHJXQWJVaXJiU3cvbFllZ3F4RGtSNjZ5cHV1dzBOWFdVMndnS1VhZm1P?=
- =?utf-8?B?UVROSExDampONXYyMmZBM0VvbWJ3bUU3cFNYVms3NjUyWVhtZ2IxYUxKUnpJ?=
- =?utf-8?B?dHgzWEZWU0YvRkpQVVBsZy9ITDU2SXh5TmNrSXc0OVE1RVFNM1ZTa2xMVDUy?=
- =?utf-8?B?WU5LYWFUTzRTWUJyaTdmTW4wY1hqR3dZWGQ0Zk01QVE2K2psZzNLejFwMjBO?=
- =?utf-8?B?Y3h4QmV2UTUxZ1VFY1FIUGdSL3p4dEl0bmlNRGVvc2JCS2c2ZFQwYnl1ZFNx?=
- =?utf-8?B?eU4xUzE5NWNVODJjNC85NlZnWU4xYnBGT2FEK0FVY0YxSVhvdjlzeTBjOXdR?=
- =?utf-8?B?VUovSHoxUmlsaldTNGZLWFR6NjcxYmsyL0F3OS96RVFOZlZOUWplVDBKeUVS?=
- =?utf-8?B?ejdidlgrTmxrckVIS0VzVm8zZ1ZRNGtzOEQzZHBEY0hIV0Z2MjdBbjZsYUFs?=
- =?utf-8?B?OHY5OFZQNytUQ0ZaZkFYMkFyZVJKKy9lTlBNaWhLR2hSd2dEL3FDWmFzZzZ1?=
- =?utf-8?B?Q0VmRHBwTjUrajdJMElESFNwaXRLK2NOVzYxR3A2cVJLOTg3RERXS0JrQlJW?=
- =?utf-8?B?Tms0Yk9JOGFNcHVmcTlWSHd1Vk9FSmtGOVNUdld1czFVdnEyTzFJVzJRamg4?=
- =?utf-8?B?Q0o4ZXU4Qko4L1dQSjZiWW5pWitNcjV2WkFpTW5hNUZMYXo3TTdEZ2FlNll6?=
- =?utf-8?B?M01OM2hSQVZhRTIyZDFraUFEdGdSQ3p3NmVMenhNMExIM1QwYzFIQUVqL0RQ?=
- =?utf-8?B?N1VleVN5UmQ5MVNkUEZDU3liM3V5OUxaNmNaZExtcjMvZ3ZyTGFwTmJiVlJp?=
- =?utf-8?B?ZUZLS04wM2pVTVQzSzhqL2psd28vWmFLWG0wQ3kxOE03WUtNTVRTRTZsRCtC?=
- =?utf-8?B?NU5aSFZ2aFZabEpKWFg1U25wNFNNT2l3TW43MkxSRkRCUldvQjhJM1o1Q1ds?=
- =?utf-8?B?MXlWZTV4bDdybEw4blZ4VHB4VjgrVWlFYWc2REZiak85RU53V3MyNHFHc0xH?=
- =?utf-8?B?eUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b92c07bf-114d-4658-f598-08de1270e1b8
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6011.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 20:15:16.9268
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZblUMdnp4JSFZQFx3AF0Y7/JaPMNGJoRr31ID6LBLx5Zdh6utGbG3BjK0cCUx4mrFX9lJYFY8NLa4qckBwgUhm+izDdqHuAH7VVw9IxQO74=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7847
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: defconfig: Enable i.MX95 configs for booting
+ and Ethernet
+To: Marek Vasut <marek.vasut@mailbox.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Peng Fan <peng.fan@nxp.com>, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+ =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
+References: <20251023-upstream-imx95-smarc-defconfig-v1-1-62c6e6f5b315@toradex.com>
+ <3381308.aeNJFYEL58@steina-w>
+ <e6b282cf-e9de-43b7-a8d4-30e67cefe430@linaro.org>
+ <5d042f21-274e-4b69-849a-3342d77942eb@mailbox.org>
+ <00555ed7-1aee-459a-ae60-0242809d7b85@linaro.org>
+ <07aba8d4-533d-40f7-bcd3-548704d7d228@mailbox.org>
+ <f1bc82c0-8800-42e5-8a4d-aea209acd0f2@linaro.org>
+ <656164be-5ce7-4f9e-b6cd-0eb1b9305132@mailbox.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <656164be-5ce7-4f9e-b6cd-0eb1b9305132@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-
-On 10/22/2025 12:41 AM, Michał Winiarski wrote:
-> All of the necessary building blocks are now in place for PTL and BMG to
-> support SR-IOV VF migration.
-> Enable the feature without the need to pass feature enabling debug flags
-> for those platforms.
+On 23/10/2025 22:05, Marek Vasut wrote:
+> On 10/23/25 6:01 PM, Krzysztof Kozlowski wrote:
+>> On 23/10/2025 17:53, Marek Vasut wrote:
+>>> On 10/23/25 5:32 PM, Krzysztof Kozlowski wrote:
+>>>> On 23/10/2025 17:27, Marek Vasut wrote:
+>>>>> On 10/23/25 5:22 PM, Krzysztof Kozlowski wrote:
+>>>>>> On 23/10/2025 16:03, Alexander Stein wrote:
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> Am Donnerstag, 23. Oktober 2025, 14:19:15 CEST schrieb João Paulo Gonçalves:
+>>>>>>>> From: João Paulo Gonçalves <joao.goncalves@toradex.com>
+>>>>>>>>
+>>>>>>>> Enable the necessary missing configs for the i.MX95 to boot and also
+>>>>>>>> have Ethernet working:
+>>>>>>>>
+>>>>>>>> * CONFIG_NXP_ENETC4 for the network controller driver
+>>>>>>>> * CONFIG_NXP_NETC_BLK_CTRL for the NETC hardware domain controller
+>>>>>>>> * CONFIG_PINCTRL_IMX_SCMI for the pinctrl driver
+>>>>>>>> * CONFIG_CLK_IMX95_BLK_CTL for the shared hardware domain controller
+>>>>>>>>
+>>>>>>>> Signed-off-by: João Paulo Gonçalves <joao.goncalves@toradex.com>
+>>>>>>>> ---
+>>>>>>>>     arch/arm64/configs/defconfig | 4 ++++
+>>>>>>>>     1 file changed, 4 insertions(+)
+>>>>>>>>
+>>>>>>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>>>>>>>> index e3a2d37bd10423b028f59dc40d6e8ee1c610d6b8..787d3ae3f5afeac486a905e0943e7b0e1dcee3a9 100644
+>>>>>>>> --- a/arch/arm64/configs/defconfig
+>>>>>>>> +++ b/arch/arm64/configs/defconfig
+>>>>>>>> @@ -354,8 +354,10 @@ CONFIG_FSL_FMAN=y
+>>>>>>>>     CONFIG_FSL_DPAA_ETH=y
+>>>>>>>>     CONFIG_FSL_DPAA2_ETH=y
+>>>>>>>>     CONFIG_FSL_ENETC=y
+>>>>>>>> +CONFIG_NXP_ENETC4=m
+>>>>>>>>     CONFIG_FSL_ENETC_VF=y
+>>>>>>>>     CONFIG_FSL_ENETC_QOS=y
+>>>>>>>> +CONFIG_NXP_NETC_BLK_CTRL=m
+>>>>>>>
+>>>>>>> Are you sure this should be module? Shouldn't NFS boot be supported by
+>>>>>>> default? I might be wring here though.
+>>>>>>
+>>>>>>
+>>>>>> NFS root is supported already with this being module. Yes, it must be a
+>>>>>> module, cannot be built in.
+>>>>> It seems I am using it as built-in on MX95 Verdin (patch is posted on
+>>>>> the ML), and yes, I do boot from NFS root without any initrd/initramfs.
+>>>>> It has to be built-in for that use case to work.
+>>>>
+>>>>
+>>>> Every arm64 platform is supposed to use initramfs and we already use all
+>>>> over the place.
+>>>
+>>> Shouldn't the platform also be at least bootable with the defconfig ? If
+>>> yes, then initramfs is a mandatory requirement for a NFS root boot (not
+>>> a ... supposed to ... optional one), which does not seem to be the case
+>>> until now.
+>>
+>> It always was a requirement, nothing new here.
 > 
-> Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
-> ---
->  drivers/gpu/drm/xe/xe_device.h             | 5 +++++
->  drivers/gpu/drm/xe/xe_device_types.h       | 2 ++
->  drivers/gpu/drm/xe/xe_pci.c                | 8 ++++++--
->  drivers/gpu/drm/xe/xe_pci_types.h          | 1 +
->  drivers/gpu/drm/xe/xe_sriov_pf_migration.c | 4 +++-
->  5 files changed, 17 insertions(+), 3 deletions(-)
+> Is this requirement documented anywhere then ?
+
+
+Dunno, just dozen of emails.
+
 > 
-> diff --git a/drivers/gpu/drm/xe/xe_device.h b/drivers/gpu/drm/xe/xe_device.h
-> index 32cc6323b7f64..0c4404c78227c 100644
-> --- a/drivers/gpu/drm/xe/xe_device.h
-> +++ b/drivers/gpu/drm/xe/xe_device.h
-> @@ -152,6 +152,11 @@ static inline bool xe_device_has_sriov(struct xe_device *xe)
->  	return xe->info.has_sriov;
->  }
->  
-> +static inline bool xe_device_has_sriov_vf_migration(struct xe_device *xe)
-> +{
-> +	return xe->info.has_sriov_vf_migration;
-> +}
-> +
->  static inline bool xe_device_has_msix(struct xe_device *xe)
->  {
->  	return xe->irq.msix.nvec > 0;
-> diff --git a/drivers/gpu/drm/xe/xe_device_types.h b/drivers/gpu/drm/xe/xe_device_types.h
-> index 02c04ad7296e4..8973e17b9a359 100644
-> --- a/drivers/gpu/drm/xe/xe_device_types.h
-> +++ b/drivers/gpu/drm/xe/xe_device_types.h
-> @@ -311,6 +311,8 @@ struct xe_device {
->  		u8 has_range_tlb_inval:1;
->  		/** @info.has_sriov: Supports SR-IOV */
->  		u8 has_sriov:1;
-> +		/** @info.has_sriov_vf_migration: Supports SR-IOV VF migration */
-> +		u8 has_sriov_vf_migration:1;
->  		/** @info.has_usm: Device has unified shared memory support */
->  		u8 has_usm:1;
->  		/** @info.has_64bit_timestamp: Device supports 64-bit timestamps */
-> diff --git a/drivers/gpu/drm/xe/xe_pci.c b/drivers/gpu/drm/xe/xe_pci.c
-> index c3136141a9536..d4f9ee9d020b2 100644
-> --- a/drivers/gpu/drm/xe/xe_pci.c
-> +++ b/drivers/gpu/drm/xe/xe_pci.c
-> @@ -362,6 +362,7 @@ static const struct xe_device_desc bmg_desc = {
->  	.has_heci_cscfi = 1,
->  	.has_late_bind = true,
->  	.has_sriov = true,
-> +	.has_sriov_vf_migration = true,
->  	.max_gt_per_tile = 2,
->  	.needs_scratch = true,
->  	.subplatforms = (const struct xe_subplatform_desc[]) {
-> @@ -378,6 +379,7 @@ static const struct xe_device_desc ptl_desc = {
->  	.has_display = true,
->  	.has_flat_ccs = 1,
->  	.has_sriov = true,
-> +	.has_sriov_vf_migration = true,
->  	.max_gt_per_tile = 2,
->  	.needs_scratch = true,
->  	.needs_shared_vf_gt_wq = true,
-> @@ -657,6 +659,7 @@ static int xe_info_init_early(struct xe_device *xe,
->  	xe->info.has_pxp = desc->has_pxp;
->  	xe->info.has_sriov = xe_configfs_primary_gt_allowed(to_pci_dev(xe->drm.dev)) &&
->  		desc->has_sriov;
-> +	xe->info.has_sriov_vf_migration = desc->has_sriov_vf_migration;
->  	xe->info.skip_guc_pc = desc->skip_guc_pc;
->  	xe->info.skip_mtcfg = desc->skip_mtcfg;
->  	xe->info.skip_pcode = desc->skip_pcode;
-> @@ -1020,9 +1023,10 @@ static int xe_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->  		xe_step_name(xe->info.step.media),
->  		xe_step_name(xe->info.step.basedie));
->  
-> -	drm_dbg(&xe->drm, "SR-IOV support: %s (mode: %s)\n",
-> +	drm_dbg(&xe->drm, "SR-IOV support: %s (mode: %s) (VF migration: %s)\n",
->  		str_yes_no(xe_device_has_sriov(xe)),
-> -		xe_sriov_mode_to_string(xe_device_sriov_mode(xe)));
-> +		xe_sriov_mode_to_string(xe_device_sriov_mode(xe)),
-> +		str_yes_no(xe_device_has_sriov_vf_migration(xe)));
->  
->  	err = xe_pm_init_early(xe);
->  	if (err)
-> diff --git a/drivers/gpu/drm/xe/xe_pci_types.h b/drivers/gpu/drm/xe/xe_pci_types.h
-> index a4451bdc79fb3..40f158b3ac890 100644
-> --- a/drivers/gpu/drm/xe/xe_pci_types.h
-> +++ b/drivers/gpu/drm/xe/xe_pci_types.h
-> @@ -48,6 +48,7 @@ struct xe_device_desc {
->  	u8 has_mbx_power_limits:1;
->  	u8 has_pxp:1;
->  	u8 has_sriov:1;
-> +	u8 has_sriov_vf_migration:1;
->  	u8 needs_scratch:1;
->  	u8 skip_guc_pc:1;
->  	u8 skip_mtcfg:1;
-> diff --git a/drivers/gpu/drm/xe/xe_sriov_pf_migration.c b/drivers/gpu/drm/xe/xe_sriov_pf_migration.c
-> index 88babec9c893e..a6cf3b57edba1 100644
-> --- a/drivers/gpu/drm/xe/xe_sriov_pf_migration.c
-> +++ b/drivers/gpu/drm/xe/xe_sriov_pf_migration.c
-> @@ -50,7 +50,9 @@ bool xe_sriov_pf_migration_supported(struct xe_device *xe)
->  
->  static bool pf_check_migration_support(struct xe_device *xe)
->  {
-> -	/* XXX: for now this is for feature enabling only */
-> +	if (xe_device_has_sriov_vf_migration(xe))
-> +		return true;
-
-but from the PF POV, are there any differences in migration between platforms which already have .has_sriov flag?
-
-and on the VF side we decided just to rely on the xe_has_memirq() flag, maybe we can do the same her on PF side?
-
-note that all pre-PTL platforms require .force_probe flag anyway,
-and that's we also enabled unconditional .has_sriov flag for them
+>>> I would argue the ethernet MAC support should be built-in to achieve
+>>> maximum utility with the defconfig.
+>>
+>> No, you missed my earlier point - all decent platforms already use
+>> initramfs since it is really not complicated.
+> 
+> Is my understanding correct, that the in-kernel defconfig is not meant 
+> for practical use and is meant mainly for build-testing/build-coverage ?
 
 
-btw, IIRC we also should check for min GuC version on PTL for proper CCS migration,
-IMO the PF shall reject VF migration on older GuC
+It is 100% practical use - we all test our boards on defconfig. It is
+not build testing, but actual runtime usage and testing. And as
+mentioned many times - being able to only toggle KASAN for defconfig and
+still fit in boot partition size is pretty useful.
 
-> +
->  	return IS_ENABLED(CONFIG_DRM_XE_DEBUG);
->  }
->  
 
+Best regards,
+Krzysztof
 
