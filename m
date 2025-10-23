@@ -1,146 +1,295 @@
-Return-Path: <linux-kernel+bounces-866975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F9AC013D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:58:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BDB1C013EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6491F4E3690
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94CD83ACC33
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD53D3148C1;
-	Thu, 23 Oct 2025 12:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B76C31196F;
+	Thu, 23 Oct 2025 12:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="f6yIZXKu"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="19OppV/K";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="42G4UDpO";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="O2YtpurY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kvr9kMkq"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB4C30BB80
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D30A302747
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761224310; cv=none; b=rNhhEZ1snVJHkCU47eHIToRnqPNaB6mcA+fX3dO91qDvL59GcfQ4Ym8Li65VERBOe+Yde++8aiZqKdFnbgb7N1WtdPYioY7g3AI/ii/i4Cj4re3VVBAnToC+33YCIwl/AkxcdIjInEs9U+w7oyXUQlk9/rgLTmR24dnxW64F49Y=
+	t=1761224388; cv=none; b=ruFOvry6L5+R58EJgLiZkXMxKDkurOt372dalkuJzhsn7sTgYo3uDGKqrKjcmrBN2mMblbdiEWMbk7q8gtJnphy0UDkwK+Gs1RyYdjkBL9niDJd5Ium0NpaGwc7iss3O9tL6shNKn0zf2kFQrRDUgKDe5vphtCJt0VuaIckgupQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761224310; c=relaxed/simple;
-	bh=xjeehlY0ayWZ3bhz/kWBr2+l/5odZE4178lrQkJI3IY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uQo+f80R6Bwf5LtKUSV8Mjp3O/XhE4Lo+SsJQnOjn6jWUeDEqsc/HVMBkPhdcZqDqNiQjs9F3+xgyyFfULykPWLW2FK5aMXi1M6sSh+3haj7Hz87ewMxh09ixBh8qISs9K6mUBDSzV5AsnIvEpApSpW7dY0AscP0tX2qXqbzmZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=f6yIZXKu; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b5c18993b73so144578966b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:58:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761224306; x=1761829106; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xjeehlY0ayWZ3bhz/kWBr2+l/5odZE4178lrQkJI3IY=;
-        b=f6yIZXKuOJEWRW81QXwDzxPRtSUgK2O3Dq48iDRNZ2098e5Yd7PsPoXHoTk8r6hj/H
-         msU7FG9vGt3rG6/EYfn7ZlPopXpbw+/9/9q8GPkANeB8EGJFhDaR6DgPVQOPUPjI0QOp
-         CXFayOUmIxrkE0FQb3hn/KJh/yPL+SUnKNf63tWkgR3BN6uEFdNoKCZyq764Vw5XW6i6
-         tgcrw1jlGTzaJbcpuT1b+BXyZUg+sTDdPhNGII2fZn2LxRBYuBNAVpGv5ZT5naRf8cdA
-         luLvA7bMae9nYU85kIg/IiN+SGrDNMw9IK7j3T1WASg34ZsZt51hkNgmuHzxn/Z3QHes
-         rcrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761224306; x=1761829106;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xjeehlY0ayWZ3bhz/kWBr2+l/5odZE4178lrQkJI3IY=;
-        b=WZPY6N2rDXCXd7pB7AVSZTeH1L8owyllqdSuxetPJMW3Qg4GLwGTGUm3N4OaMbvalA
-         na9VlJVZMniXlEOWq3etgRdNeXDb0d+7+lHCGCgc3R+r9p8Xl4YtzXgcrGdZfJMC8ZAx
-         wfu8EqpNqcaBY+YxmbYNjhoSVtb8097XzTN+zPyVGlhLEVvbpGKME++t13E4/3kaVw6O
-         Zrpl4WzlKmsWp4L2Xrh+dYywI+EHB19gRJqSANMg91BWmNndAZKEkZLDPwYTWSIO7oqR
-         q/RhguOe0w0Rd0SuhQdHPv5nO8O2JOl225nYtLYWzjQKEmCc3GypVW3D9LHdNd2QbcKP
-         2n/w==
-X-Forwarded-Encrypted: i=1; AJvYcCV9ZfMLL+eBHQBt9Bp3DehhH9qxZ2PtEbvGrDGYtiL7tnmls2Zw4bmX3cGeChzMq9azO541UDIPuNUCndk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzRHp02R+bRyC1kU1Wxc0Co2gigP/DuT+Pw18JoBk9KhI6SGXx
-	ASN4qS9lzNN4E59RmQMsjvvtVZlJH6MQ80u13SSSFJXiu6Dd1n4FSJDymnHqokTlg5w=
-X-Gm-Gg: ASbGncukuVjB0rV9ToZqW578yzPJpqTkVP3PcdLtztDe44/OUABhQOw8v699U9gxYe0
-	D/tktwiEbPAkZvrT8LMpEUHamXCPkHCgsv/5m/GEBRilp7ryRYJPTjbisnzzjtrDjwS52ZHcawh
-	uRIGj8nzp7e2/kY5ERewVsQQ1VPcCuTKNg5pLoy+zI94lTXcEp4fd+Li/hGEpCjlSQN/LLfYJZV
-	Lw3vHRIzCKOPeXW1yWbGv+/xAPv3+ZV1r4aaN6nUN1h5VCA4rOdvKxWOTQB4ufptdKKF8jfI7PD
-	ooHPJQ3RvP19Wk+hrjKFyrHv6OXWnlVX1qyuYyr4PXtlU38NHVJQF0ZBw9lxZjXz1LODigebGoM
-	coiUzkq7GYwbKX1r3EMNM3b5jrFjASPIl+GXcVv96rxE1REp7s/84aSN1dffy4DYDeAytCUSn9E
-	p9tjcVfaQ8Cy0SeIY=
-X-Google-Smtp-Source: AGHT+IH8+w2hScL952t99dlA5WzytVfJZrsnO3QY3tAYI5JKTW4feC+qQ/6KlSZu1F3zvRjTIGTR4w==
-X-Received: by 2002:a17:907:5c8:b0:b40:2873:a60c with SMTP id a640c23a62f3a-b6472c5c6ddmr2987323466b.3.1761224305719;
-        Thu, 23 Oct 2025 05:58:25 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b6d511d11eesm227985566b.12.2025.10.23.05.58.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 05:58:25 -0700 (PDT)
-Date: Thu, 23 Oct 2025 14:58:22 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Rakuram Eswaran <rakuram.e96@gmail.com>
-Cc: chenhuacai@kernel.org, dan.carpenter@linaro.org, 
-	david.hunter.linux@gmail.com, khalid@kernel.org, linux-kernel-mentees@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, lkp@intel.com, 
-	skhan@linuxfoundation.org, ulf.hansson@linaro.org, zhoubinbin@loongson.cn
-Subject: Re: [PATCH v2] mmc: pxamci: Simplify pxamci_probe() error handling
- using devm APIs
-Message-ID: <itxfh366j3yhshvp5abji6xussdk2fc7zrtvc3zzk27y5ouwpb@fvvxnpg3keus>
-References: <pvid2ycmgbkbmegnnzwl4hyev6e2smusxk5olkuqxfwxzykz2e@jlvolirolrxl>
- <20251023115819.11094-1-rakuram.e96@gmail.com>
+	s=arc-20240116; t=1761224388; c=relaxed/simple;
+	bh=wkOI/xZOCxIvEJ0EunQj6b9gGg9eq+gkOWlojwuHaus=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mUm+pCYiW75oZ5J4u2bozU0ygqPJj00lnG+28d/GoEs7MVWojafHrv+cmtXO5iSPvoFhtgddowfyCgB5NyHaR8VE0pbaqKexxczyh/zKKmSDBiYAGABLBi1i4HSW+szOOpS9JKqge6+PR/QBOI9D6r2yPXsF1fv1zuNT/k5mS5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=19OppV/K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=42G4UDpO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=O2YtpurY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kvr9kMkq; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3B9511F441;
+	Thu, 23 Oct 2025 12:59:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761224380; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lLm9LdBx7gu+c99Yn0HQHE1LkyJE3l/KYkfgmbBJat0=;
+	b=19OppV/KDKZ8CpLv4tmFR12O22d/u0cEcaupPyfBSP58HmevMmRefSSJ9OokMUshSi/sT9
+	sNZSXuH1pl81FouRq5e5tzLT144UQ//dTza9O1d+VMvgEIrmORhWPFFAxJ+pPlzRIwb+Yz
+	9xgULfr79wE2hzz2WJSP8ANEX9gxa2w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761224380;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lLm9LdBx7gu+c99Yn0HQHE1LkyJE3l/KYkfgmbBJat0=;
+	b=42G4UDpOW5H882499R5lROQGeJNcnBJWK1joZWqSJgH9oFIwpTNhbFHYLv+aLFvXA131mf
+	cRRYEwt6qu11ztCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=O2YtpurY;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=kvr9kMkq
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761224376; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lLm9LdBx7gu+c99Yn0HQHE1LkyJE3l/KYkfgmbBJat0=;
+	b=O2YtpurYkaRA8IMXCFtcOW8N/P0Jj4YXiTwprE6IH9sMz0WCEjG+cWSCJ9xqHRvSBSACWh
+	zvP9pgC5O+rseEyWwWaxf7jGK5VT40uPfq0pC+fTyhUOb2xcOYmMs9vf+A0XwLPuqkVB7L
+	AdMKKVhou4Tw64g5gyJ3h6tAeUmq5RI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761224376;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lLm9LdBx7gu+c99Yn0HQHE1LkyJE3l/KYkfgmbBJat0=;
+	b=kvr9kMkqT7VPI/YXZsaanKYy5gOYwaiqUt0MOpmVtBaO6/bCPhV/NVi/0I3IChoYohnFvT
+	zzCIhM2mWi2ODRDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E2A1E13285;
+	Thu, 23 Oct 2025 12:59:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BvAeNrcm+mh2DgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 23 Oct 2025 12:59:35 +0000
+Message-ID: <3bc25289-57c8-4c7c-84dd-5ec961c8b2ac@suse.de>
+Date: Thu, 23 Oct 2025 14:59:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wntpsxgdxjl2stru"
-Content-Disposition: inline
-In-Reply-To: <20251023115819.11094-1-rakuram.e96@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/tidss: Add some support for splash-screen
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Maxime Ripard <mripard@kernel.org>, Devarsh Thakkar <devarsht@ti.com>
+Cc: Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-kernel@vger.kernel.org
+References: <20250908-tidss-splash-v2-1-e388b0581dfa@ideasonboard.com>
+ <348086ac-b5bc-4ca9-9e5b-82106d319eeb@ti.com>
+ <qljdrluxqi3abg7opwvp24ki7255jxrpowf47rpumzlcbnlnon@pccj5wm2kbxt>
+ <0d1affe1-1e3c-452a-9052-104acaabef62@suse.de>
+ <7ebf501a-68f5-4644-9419-49e391caacd8@ideasonboard.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <7ebf501a-68f5-4644-9419-49e391caacd8@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 3B9511F441
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[iki.fi,linux.intel.com,gmail.com,ffwll.ch,lists.freedesktop.org,ideasonboard.com,vger.kernel.org];
+	DKIM_TRACE(0.00)[suse.de:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.51
 
+Hi
 
---wntpsxgdxjl2stru
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] mmc: pxamci: Simplify pxamci_probe() error handling
- using devm APIs
-MIME-Version: 1.0
+Am 22.10.25 um 18:37 schrieb Tomi Valkeinen:
+> Hi,
+>
+> On 22/10/2025 17:59, Thomas Zimmermann wrote:
+>> Hi
+>>
+>> Am 22.10.25 um 16:06 schrieb Maxime Ripard:
+>>> Hi,
+>>>
+>>> On Wed, Oct 22, 2025 at 07:25:10PM +0530, Devarsh Thakkar wrote:
+>>>> On 08/09/25 14:43, Tomi Valkeinen wrote:
+>>>>> Currently when the driver's probe is called, we do a full DSS reset. If
+>>>>> the bootloader has set up a splash-screen, the reset will disable the
+>>>>> video output, and after that it may still take time until the
+>>>>> display is
+>>>>> usable (all the kernel modules have been loaded) and even more time
+>>>>> until the userspace is able to use the display.
+>>>>>
+>>>>> If fbdev is enabled, in a perfect case tidss would take over the fb
+>>>>> memory set up by the bootloader, and use that memory for tidss's fbdev,
+>>>>> thus retaining the splash-screen. However, we're not there yet.
+>>>>>
+>>>>> As a partial solution, this patch changes the driver so that the driver
+>>>>> will not reset (or change) the DSS registers until tidss_runtime_get()
+>>>>> is called when the display is being set up (because of fbdev
+>>>>> modesetting
+>>>>> or modesetting from the userspace).
+>>>>>
+>>>>> This is achieved in two parts:
+>>>>>
+>>>>> 1. Probe
+>>>>>
+>>>>> At probe time, in dispc_init_hw(), we check if the DSS is idle
+>>>>> (videoports disabled). If yes, do a reset and continue as before. If
+>>>>> not, we know that there's a splash-screen, and we set the
+>>>>> 'tidss->boot_enabled_vp_mask' field to reflect the enabled VPs.
+>>>>>
+>>>>> We then enable the corresponding VP clocks (to ensure they stay on),
+>>>>> set
+>>>>> the IRQENABLE to 0 to make sure we won't get any interrupts, and then
+>>>>> exit leaving the fclk and VP clocks enabled, and the runtime PM status
+>>>>> active.
+>>>>>
+>>>>> 2. Runtime get
+>>>>>
+>>>>> Later, when the tidss_runtime_get() is called the first time, we check
+>>>>> the 'boot_enabled_vp_mask'. If set, we know that we have the
+>>>>> splash-screen showing on the screen, and thus the clocks are enabled
+>>>>> and
+>>>>> runtime PM status is active. This indicates that
+>>>>> pm_runtime_resume_and_get() call just before in tidss_runtime_get() did
+>>>>> not cause a runtime_resume callback to get called, so we need to do
+>>>>> that
+>>>>> manually.
+>>>>>
+>>>>> We call dispc_splash_fini() which essentially returns the DSS into the
+>>>>> state where it would be in a non-splash-screen case:
+>>>>> dispc_splash_fini()
+>>>>> will do a DSS reset, manually call the runtime_resume callback, and
+>>>>> then
+>>>>> call clk_disable_unprepare() and pm_runtime_put_noidle() to counter the
+>>>>> actions at probe time.
+>>>>>
+>>>>> Finally 'boot_enabled_vp_mask' is set to zero to mark that we're no
+>>>>> longer in the "splash-screen mode".
+>>>>>
+>>>>> A note about fbdev emulation:
+>>>>>
+>>>>> If fbdev emulation is enabled in the DRM, tidss will set up an fbdev.
+>>>>> This will cause a modeset, and the blank framebuffer from tidss's fbdev
+>>>>> will be shown instead of the splash-screen.
+>>>>>
+>>>>> I see two improvements to this: either we should memcpy the pixel data
+>>>>> from the bootloader's splash-screen to the new fbdev buffer, or the
+>>>>> fbdev could use the splash-screen directly as its buffer. I have done
+>>>>> some hacks for the former, but I'm not sure how to implement either of
+>>>>> these properly.
+>>> I still think it's not the kind of driver-specific driver behaviour we
+>>> want to have.
+>>>
+>>> Even more so when we have a generic solution to this problem in the
+>>> works.
+>> I agree with that sentiment. We want atomic-state readout plus a
+>> bootsplash DRM client. This would give us flicker-free booting with
+>> smooth transitions across drivers and user space.
+> I like the sound of it. What does a bootsplash DRM client do? Would this
+> give us the ability for the userspace to do some small modifications to
+> the fb (e.g. progress bar), and would it work with a built-in dummy
+> driver (simpledrm), and the main DRM driver as a module?
 
-Hello Rakuram,
+Plymouth currently shows the image that it finds in 
+/sys/firmware/acpi/bgrt/ . The bootsplash client would do the same. I 
+think we could also make the client more flexible so that it shows the 
+Tux logo or a preconfigured image. Animation is not likely to happen 
+within the kernel.
 
-On Thu, Oct 23, 2025 at 05:28:17PM +0530, Rakuram Eswaran wrote:
-> On Tue, 21 Oct 2025 at 14:01, Uwe Kleine-K=F6nig <u.kleine-koenig@baylibr=
-e.com> wrote:
-> > Yes, I suggest to make restructuring .remote a separate patch. (But
-> > removing dma_release_channel belongs into the patch that introduces devm
-> > to allocate the dma channels.)
->=20
-> I believe ".remote" is a typo and you're referring to the _remove() funct=
-ion.=20
-> Removing if(mmc) condition check from pxamci_remove() can be handled in a=
-=20
-> separate cleanup patch, while removing redundant dma_release_channel()
-> will be included in v3.=20
->=20
-> Is my above understanding correct?
-
-ack. remote vs. remove is one of my most-committed typos :-D
+The client would work with any driver. But by the time the kernel can 
+load the native driver's module, it's better to switch to Plymouth anyway.
 
 Best regards
-Uwe
+Thomas
 
---wntpsxgdxjl2stru
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+>   Tomi
+>
 
------BEGIN PGP SIGNATURE-----
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmj6JmwACgkQj4D7WH0S
-/k7lgggAtXPs8vnFmq/fg2Ty175E+kYXR84uN5u6308vPn6bCdVgHaU62FeL4JO1
-uCQWviLkqvGqfNYKlurKsn4vSdeRK1katvsYi6BTqanuYAMcZljEO8ht0vuTYJqr
-KoFx/M7XEQun2GqDJvDr4weHJ2WgdFg4gCFuFnFxEpW2fZAaQ+MC0U0Ya69Dwf5B
-dH5fBXIdpV/9HQSceLe62tE9h5Rv3Dn7tU9FcYS5dI7vS883B1BZkrOb4e7oUary
-ED+3wJXueKXHod0aF0agKQSVyrJ/9d7XYfpQIIdYpnsLyZFAERarM+6OtWl3f0Zt
-KM5dl0uekQzPkWrWcGV2Ig06F6bDlg==
-=frsd
------END PGP SIGNATURE-----
 
---wntpsxgdxjl2stru--
 
