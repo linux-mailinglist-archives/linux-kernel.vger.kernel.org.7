@@ -1,87 +1,89 @@
-Return-Path: <linux-kernel+bounces-866199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA980BFF24F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:40:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F476BFF25B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 575EA3A9CED
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:39:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 881414F2034
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 04:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C053A247293;
-	Thu, 23 Oct 2025 04:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8342D42056;
+	Thu, 23 Oct 2025 04:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Yl144q6a"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cdQHj14s"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEB823A9AE
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC502475CE
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761194394; cv=none; b=CeULC753b6kvKq79+mMUQYs23kfpiEa7rb3iiYe9DfFT+h6oV2cZMusXLnlv5HidD62pEw5PAJ8vr56APUEiqoTXAvW/KTwbotX3J5gfWUjoTh+nwobYFjS0JOipZ4F7SvYflenoz9B2LBOZDlDQ9JAIvTwQnxGDq258jxDo3JA=
+	t=1761194397; cv=none; b=ojCbzxR4pRyXGzpT+x41KgAJyXd+mcyMIqgpH0Xx2ArIOYwBXOaSL2FVVxnlXZLvvlV9rR1yjRoEv2LnVUe02UrnWKDIlrhPFecv/FU4mv6qeOztYvdkapL/snJyWbBJeZ6tO2fw+dRvn57u4yHo3V2XslIOm3sLMJXIf5VQoT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761194394; c=relaxed/simple;
-	bh=nyYBG+C521Gf1LNyIwasfoR5n1BHZIoeUKviWVU75tQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sCbLxLjsOv1h++uHEF9LPC5xoH2Hu0yX/rYmYZjmTbSNMQb1HwGxIZE2G1dJIOXCamMOrojmMHqq6mhQaJ0oWeOQJfPz5lfA6R9Ez8AIsjg4BwCEmEuOtKgPaCQscjLsKSKOfEUNGD2UNM3BpF5t8S/8lpCSUrjf442Km7rlk1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Yl144q6a; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1761194397; c=relaxed/simple;
+	bh=2YXzWT4uFDf8CoTmhrz0psEHILwes0H3rkqIid7e/3w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Scovc0xmQq32x8KYblKP9MEWoeFNCZY4W8xVNQgPaXFfkXiGnsz3fCkZqZoi8hqx5H6pmKNnhOwgbYu7rC0gPwqlB1Bbq7nghBxz2mN5z/c95rTVfo72wUiidOMyK5Rv/QfQt4euYPZu+fTrSXczOq5bu5ZXqmOqC2cU+c0jSVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cdQHj14s; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MIemb7018576
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:39:50 GMT
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MIeqp2023034
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:39:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=d6kkudxWu0dxDCjlg0gydr
-	n4lcJ8I6aqJcWerzC/ZQI=; b=Yl144q6atOBXe3SPe84OsNOtbYO2j0vP8LHqx/
-	dv8X/SGYsUa/sw+SlWHZQetcOz0MnWCf/x/y+fXyj1UmGd/YHlt6qLd/AhJ6+a3l
-	202OvjoVYvkqG9z6WNRZJOlTOrcroJwuAuLQQU7kqOzT2ZmNKOb4oNgzlMrad/Ee
-	ba5sJKTKT0oJmQXWcvbP5rrNH82qphUWDeIKLTvMXJZzobdvj8F1heFscwhE5ByL
-	ae8N2hWDUItRq0Mz0yYVb+2V3yLxC7rSEsCxtdfVhoEqUnSJX+l6I9Ha+3hCGI6L
-	0/vA3OFOgH5PQGNOVLgisPWIZFD6Sxb4dp0XLUmBL/hODNYQ==
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tLAj8QTiM5i/yJsXqtteQjnX24PsjYgoBjsarJ4Hd/Y=; b=cdQHj14shX5f+JpD
+	y7BNFLS4SOUfa3P+JMYgivhY/YyYg+akyF/ghnqP24lcg17EIcoYhplqFfGC8Pp+
+	1JDltHxiW+hcu5yq4Rf5HHPhKCeOAhW+sD+pmesivhQUHZLRKFxrYqETpVc3MKQU
+	ggBW8HrpMmEzXuBmF2nyVOf/Co72Kq7RG8bt9/MODYmaRftPdy/6ZbN6wRl03uim
+	H7bO5KUd/5Iu/6gtWt7DMcwWsQ6jnR9/L5gbuT0w+Pw+73mTCyaoequZ9xJC6Ua7
+	Xw2zlple1kINeNfsqT2O4Ph+tSRglhi+eU+W75YK2t1fQ6OzvijbubNop7qj3mNf
+	O+6nXw==
 Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v08pq85h-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v1w8715p-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:39:50 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-290b13e3ac0so3903865ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 21:39:50 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:39:54 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-290da17197eso6091555ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 21:39:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761194389; x=1761799189;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d6kkudxWu0dxDCjlg0gydrn4lcJ8I6aqJcWerzC/ZQI=;
-        b=TMclNMrYdVNko9K843zZ1k8mOWLt2YkrmXVuRE4bqnE8G0kFIqwM4jSJfPIsWXhfxJ
-         SZ7sYGN2DlojRlJQQwpAvKEDdqsNKUHDz6MvtI+Z04S7odbTYQjTxpz6houxv99LTvJ5
-         gMtERsVyS2bzyTxCpcSs+J+pQgUSHWfgScfs1TlYKRBIv1Z7JxlKfJdSZR1P7fhPwO9h
-         iCkXrREduMEfchzktX6jREO0ohObi+5mjbz3SzXjY5qbJ5/r5B6I9bDTsE73todtCOMX
-         zQjPKS/F3SKBqML8F7woWA5+G0zJsacSumvnePJ1IrbRu7l1HJQ06PE/6DRaHqe2Fw86
-         dIvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzeE8XXaBaAmRFsvDUQbbG0f7DFG293UoPIXnAn64lP4TJAqgSfwGiTZ9ujp53JOZtcDbZpOwcQ0H4jPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbOn+dNI0wGELP/5l52bSWUS793RgW+sAepTJ4IKolNYxYw7om
-	uN3gISAQG9TsfHHgCWcplF67moGZBPoWN/p9K2lM00SF65891zwIuWEpjGAsCcY0RPxGMp2dwRq
-	Y7o+23wIp9OKXTg27xO/ct8uRsEvIkgkH+nUnL6VUvrAwETCyCeNkRrbdhlHnGc4VNHw=
-X-Gm-Gg: ASbGncuh/tosGII1nGyD2p2/bFvubidFpHLt5/c/7jt5cQcxM8caMF0NqcvfMXrny/H
-	YYOE2uqXQzIkC/yA0CffT9+/C0K1u22djfmN8nU1rA7NJ/KMfUUux/xaVRYGfBNEoRACSvO+xvh
-	n1MMXlieHKAgD3r5oJu+8o2Ey0XiKU4N2TGKzEJ0Lqa+gzDDpPrUB5FIeqW/zX5MOM2LxeUV8Hl
-	1qc4i1v93grtx8MaFKjgYBo8UfdA9kpx2Wnl+REhBjeLrWNySSsYxsLzYGLu/5vyepRtLVCpqxt
-	b4xq4w1jCRqJeqStckccm5bX2stKUYc+nYs2rl6cpmwvBNXHHJxgZZFzhHvMs64TSk5WthDd+WW
-	ogdGO2Ajn4rMGulA77IlWLw==
-X-Received: by 2002:a17:902:ce0e:b0:273:c463:7b2c with SMTP id d9443c01a7336-290c9c89680mr264622185ad.3.1761194388619;
-        Wed, 22 Oct 2025 21:39:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGe14IfMJmE3gpP70RjdmEvG7bvtjETCimcF/KuJ3HjZi1sWXgTDwZnoAK6qBWI375OY6jIcw==
-X-Received: by 2002:a17:902:ce0e:b0:273:c463:7b2c with SMTP id d9443c01a7336-290c9c89680mr264621965ad.3.1761194388187;
-        Wed, 22 Oct 2025 21:39:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761194393; x=1761799193;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tLAj8QTiM5i/yJsXqtteQjnX24PsjYgoBjsarJ4Hd/Y=;
+        b=nCgW8WvKbCRTylfrr4mWCYE3wmsQtaHAS2jeKKm9Sb8PQ59MM2S6CpUNv5cAXHF7dg
+         G5LEo5iQlGZ3lwPtK8toMhSvVkg2GW0JO3s7VGjoudTabFGKdRyMeLdK05wGodL6uFGO
+         oKSkLIWpMhcU6PlLBYVmUk2LjA1AqLCvRk59e0Ci9zn0sdkzwTDtKUvDRu3YVxRgm5LC
+         a5y3+9VqBWbKLD6xdyKRPYpSvYXkE4hZqAccMQguCbz5Jvx2rZbzX6Z2v5a+qtBoi96u
+         XiXCeCzhM1G/qWUtmwlO5ZYsywYWt+aN7k1TlVx/CHZ2as0JLJY7/wVLgijJ03T3wtIf
+         PZuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDib6BfryXIq1Eaxg9xjkIewDJdQus4AOjy7GpY02EbNbLpcSwNczEahMLrcshldgp/2OE1KphTC1/qPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Pz6OM6UfLhCWhWCv202F0t07FpBAWgPclHlHYZ0zMAHYzM1s
+	ayWaFJBxFBUf/rm1APhWnz+iRNNR2UZEqe2nxAIW/bXQautDHPJCUINlW2PLrcG6WwfF6seBnra
+	fNDMnazqoIbTkl7eJmvG9Bxijj2ZGOaFEFBu6iA5DsEDvXd/8Z7COQM6e25vtYfxFKBI=
+X-Gm-Gg: ASbGncvF0hTYgLcjeMjhAaDRC1jl0mjrKHrs6HKRcQEuTU1ZjIhT9wg3REHDcKPebbk
+	gIDMzCCVs1X4GjWXhWkIMa2BFpo97anssSH3YvR/hA0qW/eRYH1jFqrJlhzogoAu2k1NoKn0lrH
+	EISwkdy/H6u9CONqHbv4Lyf4csPxaJTMSnRCNDBRT908NuNJvEs1j7/Ur5qkvjk+4QBaWvzCYHE
+	tVlyZFUKLs35d2Nzbx1l1GPW2Z/rfj/VeSC2VfiIpRjGBuXRfOqXTKF2xhesj66YjAkZP9Omm0P
+	Dhwmzom5M7PEz+qO+2TDYzKWraWrM26z5HhiC6o2HiIx+1szUgJhw+9od560u86mKgT+RlSIzKh
+	G4co26gkvkpiUWSR5eXwSqw==
+X-Received: by 2002:a17:902:ce12:b0:26b:da03:60db with SMTP id d9443c01a7336-290c9ca6b1cmr284456525ad.13.1761194392695;
+        Wed, 22 Oct 2025 21:39:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHLGS7oHblx0K/GM8zdAwh0guSmP+poBBmYBkoETI8Wbx/dhFtFCFQxbqiQiTc+fSuAC7854w==
+X-Received: by 2002:a17:902:ce12:b0:26b:da03:60db with SMTP id d9443c01a7336-290c9ca6b1cmr284456345ad.13.1761194392223;
+        Wed, 22 Oct 2025 21:39:52 -0700 (PDT)
 Received: from [169.254.0.6] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4e0a3f0sm754187a12.20.2025.10.22.21.39.44
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4e0a3f0sm754187a12.20.2025.10.22.21.39.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 21:39:47 -0700 (PDT)
+        Wed, 22 Oct 2025 21:39:51 -0700 (PDT)
 From: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
-Subject: [PATCH 0/2] Add interconnect support for Kaanapali SoC
-Date: Thu, 23 Oct 2025 04:39:31 +0000
-Message-Id: <20251023-knp-interconnect-v1-0-df13182aceac@oss.qualcomm.com>
+Date: Thu, 23 Oct 2025 04:39:32 +0000
+Subject: [PATCH 1/2] dt-bindings: interconnect: document the RPMh
+ Network-On-Chip interconnect in Kaanapali SoC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,11 +92,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAIOx+WgC/1WNywrDIBQFfyW4rqDmaX6lZKHXayNtTKo2FEL+v
- fZF6XLgzJyNRAwOI+mLjQRcXXSzz8APBYFR+RNSZzITwUTNJG/p2S/U+YQBZu8REq06ECC5trb
- uSNaWgNbdX8njkFmriFQH5WF8hiYVs/wZBrze8mV6r3+PffH3B5czhYYZWVVSdE3Zr5x8yzBPk
- 0t9oVAYwVjW2saITpYIylpRG12aFq3kkilguiHDvj8AU//12vYAAAA=
-X-Change-ID: 20250917-knp-interconnect-48c2c91bff58
+Message-Id: <20251023-knp-interconnect-v1-1-df13182aceac@oss.qualcomm.com>
+References: <20251023-knp-interconnect-v1-0-df13182aceac@oss.qualcomm.com>
+In-Reply-To: <20251023-knp-interconnect-v1-0-df13182aceac@oss.qualcomm.com>
 To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
@@ -104,66 +104,326 @@ To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMCBTYWx0ZWRfXzCXaazk3YXMH
- yeYX2i+24snaBm/do7J98rvtoikCEOfSkNlBXOxlavcVoeelyYfb/PaQTfxMByiHBr/LdYaskYT
- NvBk5G30Aai+F+F7HNMIHh/FrTBfPVNqiWcZypkqYy8MSrZUxL1RgJjaQ0E2b97I2isWXnUwZmu
- QOStLk++U+T3iJq63ILBOQQgXprnfvoOAOUyLrlC1XJusz7LT/VGwNiYG/k6iTdGsOj45sqkR5Q
- ghQLJa32a6A6gOTel+shcRPpWLuvrtCRJKqT3LM6kairwdYWb7oL9cuzWXT+90NRzR9N8+jRMvU
- WfhhDO6Ufa1KJpji/gHkPJMIiMlgnKEDBl82dCncr5QYrd9/M+AEsPmn0iOYJRmQGpPCRQATngO
- bmquU11eKdiASAjiLPuc3YcGSz70WQ==
-X-Proofpoint-GUID: wAivjaLhA8JXe0CFtOojnrVt14P81-B2
-X-Authority-Analysis: v=2.4 cv=Up1u9uwB c=1 sm=1 tr=0 ts=68f9b196 cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxNSBTYWx0ZWRfX+KU2dR1VILLq
+ wddlpQuLr5r7Y0VDFmG3jJPgePkyzZm1+4ohe9hoXdR+e6OutSFMFvCG2jn66U5EaEDk9qDU3Dd
+ FXZyuSjYjlK0WHXDTQsyHLTnNVY7ki2cd3BSYM+TCOiyy7EYzy8quNY/9Qh7ldrej0GSR3I4x1X
+ IheMtwqonznecAdkN0kM5F3eY4pWOWvSDQD6boD41pGy7pDFVKqojrJpf020/LAsGBOGD4hQUFN
+ cF2u0AhWTufSPIirgd8G0voIlQVr25NZQzmfryt7s2GlqPEr+eJDKv0hdfjjvZ9Qk/vafuwo9HL
+ xap8HxGnmwFdqG++90lRz4ffJJz9NT2VO4XaVSsgCFD6UPvuEIDWScuA5HnwTkIOWaU7bCJEUdA
+ qkJ/x1uaTkCqlJsLtezJYj0BTtx9ow==
+X-Authority-Analysis: v=2.4 cv=bNUb4f+Z c=1 sm=1 tr=0 ts=68f9b19a cx=c_pps
  a=cmESyDAEBpBGqyK7t0alAg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
  a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=_cDidGYXCDOhaqYtY5wA:9 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-ORIG-GUID: wAivjaLhA8JXe0CFtOojnrVt14P81-B2
+ a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=IFSB1yzq2gCOkJebH6QA:9 a=QEXdDO2ut3YA:10
+ a=1OuFwYUASf3TG4hYMiVC:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-GUID: kjcqs3ePUbVo9luzrLbXfVSIkyXUfe5H
+X-Proofpoint-ORIG-GUID: kjcqs3ePUbVo9luzrLbXfVSIkyXUfe5H
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015
- impostorscore=0 bulkscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ bulkscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 adultscore=0 spamscore=0 impostorscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180000
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180015
 
-Add interconnect dt-bindings and driver support for Qualcomm Kaanapali SoC.
+Document the RPMh Network-On-Chip Interconnect of the Kaanapali platform.
 
-bindings file depends on Kaanapali gcc patch header file:
-https://lore.kernel.org/all/20250924-knp-clk-v1-0-29b02b818782@oss.qualcomm.com/
-
-Changes since V1:
-  - Added b4 dependency on the clock patch [Rob]
-  - Updated the Module Description to "Qualcomm Kaanapali NoC driver"
-    [Dmitry]
-
+Signed-off-by: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
 ---
-Raviteja Laggyshetty (2):
-      dt-bindings: interconnect: document the RPMh Network-On-Chip interconnect in Kaanapali SoC
-      interconnect: qcom: add Kaanapali interconnect provider driver
+ .../bindings/interconnect/qcom,kaanapali-rpmh.yaml | 126 +++++++++++++++++
+ .../dt-bindings/interconnect/qcom,kaanapali-rpmh.h | 149 +++++++++++++++++++++
+ 2 files changed, 275 insertions(+)
 
- .../bindings/interconnect/qcom,kaanapali-rpmh.yaml |  126 ++
- drivers/interconnect/qcom/Kconfig                  |    9 +
- drivers/interconnect/qcom/Makefile                 |    2 +
- drivers/interconnect/qcom/kaanapali.c              | 1868 ++++++++++++++++++++
- .../dt-bindings/interconnect/qcom,kaanapali-rpmh.h |  149 ++
- 5 files changed, 2154 insertions(+)
----
-base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
-change-id: 20250917-knp-interconnect-48c2c91bff58
-prerequisite-change-id: 20250917-knp-clk-c60d94492863:v1
-prerequisite-patch-id: 74589b64dc18360c773f802e493e02d52ce48ce8
-prerequisite-patch-id: 0838e4968ea7bf2c6fcf1831c18e043b081b986e
-prerequisite-patch-id: bad55c083296ece4f87573e6abfac5bd8623d52a
-prerequisite-patch-id: 4b369fae9593dd9daa252dbf5e289979fef92079
-prerequisite-patch-id: a5098157b969d17b6c7d6fa26b9fe034119599f4
-prerequisite-patch-id: 649808efe6118765b742a53c5439515e7466bc0c
-prerequisite-patch-id: 8e17e701a84a458666012e6ac5d00e280e8b5dab
-prerequisite-patch-id: 7e58c87a2d504fc1eb4285e8dcd6d031f229fe08
-prerequisite-patch-id: 7ce134f219cc6d8589337762b92bdcb9210dd05d
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.yaml b/Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..574150cc4930a250f81c717b10a49dc7af349c1d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interconnect/qcom,kaanapali-rpmh.yaml
+@@ -0,0 +1,126 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/interconnect/qcom,kaanapali-rpmh.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm RPMh Network-On-Chip Interconnect on KAANAPALI
++
++maintainers:
++  - Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
++
++description: |
++  RPMh interconnect providers support system bandwidth requirements through
++  RPMh hardware accelerators known as Bus Clock Manager (BCM). The provider is
++  able to communicate with the BCM through the Resource State Coordinator (RSC)
++  associated with each execution environment. Provider nodes must point to at
++  least one RPMh device child node pertaining to their RSC and each provider
++  can map to multiple RPMh resources.
++
++  See also: include/dt-bindings/interconnect/qcom,kaanapali-rpmh.h
++
++properties:
++  compatible:
++    enum:
++      - qcom,kaanapali-aggre-noc
++      - qcom,kaanapali-clk-virt
++      - qcom,kaanapali-cnoc-main
++      - qcom,kaanapali-cnoc-cfg
++      - qcom,kaanapali-gem-noc
++      - qcom,kaanapali-lpass-ag-noc
++      - qcom,kaanapali-lpass-lpiaon-noc
++      - qcom,kaanapali-lpass-lpicx-noc
++      - qcom,kaanapali-mc-virt
++      - qcom,kaanapali-mmss-noc
++      - qcom,kaanapali-nsp-noc
++      - qcom,kaanapali-pcie-anoc
++      - qcom,kaanapali-system-noc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 2
++    maxItems: 3
++
++required:
++  - compatible
++
++allOf:
++  - $ref: qcom,rpmh-common.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,kaanapali-clk-virt
++              - qcom,kaanapali-mc-virt
++    then:
++      properties:
++        reg: false
++    else:
++      required:
++        - reg
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,kaanapali-pcie-anoc
++    then:
++      properties:
++        clocks:
++          items:
++            - description: aggre-NOC PCIe AXI clock
++            - description: cfg-NOC PCIe a-NOC AHB clock
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,kaanapali-aggre-noc
++    then:
++      properties:
++        clocks:
++          items:
++            - description: aggre UFS PHY AXI clock
++            - description: aggre USB3 PRIM AXI clock
++            - description: RPMH CC IPA clock
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,kaanapali-aggre-noc
++              - qcom,kaanapali-pcie-anoc
++    then:
++      required:
++        - clocks
++    else:
++      properties:
++        clocks: false
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,kaanapali-gcc.h>
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    clk_virt: interconnect-0 {
++      compatible = "qcom,kaanapali-clk-virt";
++      #interconnect-cells = <2>;
++      qcom,bcm-voters = <&apps_bcm_voter>;
++    };
++
++    aggre_noc: interconnect@16e0000 {
++      compatible = "qcom,kaanapali-aggre-noc";
++      reg = <0x016e0000 0x42400>;
++      #interconnect-cells = <2>;
++      clocks = <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
++               <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
++               <&rpmhcc RPMH_IPA_CLK>;
++      qcom,bcm-voters = <&apps_bcm_voter>;
++    };
+diff --git a/include/dt-bindings/interconnect/qcom,kaanapali-rpmh.h b/include/dt-bindings/interconnect/qcom,kaanapali-rpmh.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..dde3f9abd67764421f54f8d222979727905a0a73
+--- /dev/null
++++ b/include/dt-bindings/interconnect/qcom,kaanapali-rpmh.h
+@@ -0,0 +1,149 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
++ */
++
++#ifndef __DT_BINDINGS_INTERCONNECT_QCOM_KAANAPALI_H
++#define __DT_BINDINGS_INTERCONNECT_QCOM_KAANAPALI_H
++
++#define MASTER_QSPI_0				0
++#define MASTER_CRYPTO				1
++#define MASTER_QUP_1				2
++#define MASTER_SDCC_4				3
++#define MASTER_UFS_MEM				4
++#define MASTER_USB3				5
++#define MASTER_QUP_2				6
++#define MASTER_QUP_3				7
++#define MASTER_QUP_4				8
++#define MASTER_IPA				9
++#define MASTER_SOCCP_PROC			10
++#define MASTER_SP				11
++#define MASTER_QDSS_ETR				12
++#define MASTER_QDSS_ETR_1			13
++#define MASTER_SDCC_2				14
++#define SLAVE_A1NOC_SNOC			15
++#define SLAVE_A2NOC_SNOC			16
++
++#define MASTER_QUP_CORE_0			0
++#define MASTER_QUP_CORE_1			1
++#define MASTER_QUP_CORE_2			2
++#define MASTER_QUP_CORE_3			3
++#define MASTER_QUP_CORE_4			4
++#define SLAVE_QUP_CORE_0			5
++#define SLAVE_QUP_CORE_1			6
++#define SLAVE_QUP_CORE_2			7
++#define SLAVE_QUP_CORE_3			8
++#define SLAVE_QUP_CORE_4			9
++
++#define MASTER_CNOC_CFG				0
++#define SLAVE_AHB2PHY_SOUTH			1
++#define SLAVE_AHB2PHY_NORTH			2
++#define SLAVE_CAMERA_CFG			3
++#define SLAVE_CLK_CTL				4
++#define SLAVE_CRYPTO_0_CFG			5
++#define SLAVE_DISPLAY_CFG			6
++#define SLAVE_EVA_CFG				7
++#define SLAVE_GFX3D_CFG				8
++#define SLAVE_I2C				9
++#define SLAVE_I3C_IBI0_CFG			10
++#define SLAVE_I3C_IBI1_CFG			11
++#define SLAVE_IMEM_CFG				12
++#define SLAVE_IPC_ROUTER_CFG			13
++#define SLAVE_CNOC_MSS				14
++#define SLAVE_PCIE_CFG				15
++#define SLAVE_PRNG				16
++#define SLAVE_QDSS_CFG				17
++#define SLAVE_QSPI_0				18
++#define SLAVE_QUP_1				19
++#define SLAVE_QUP_2				20
++#define SLAVE_QUP_3				21
++#define SLAVE_QUP_4				22
++#define SLAVE_SDCC_2				23
++#define SLAVE_SDCC_4				24
++#define SLAVE_SPSS_CFG				25
++#define SLAVE_TCSR				26
++#define SLAVE_TLMM				27
++#define SLAVE_UFS_MEM_CFG			28
++#define SLAVE_USB3				29
++#define SLAVE_VENUS_CFG				30
++#define SLAVE_VSENSE_CTRL_CFG			31
++#define SLAVE_CNOC_MNOC_CFG			32
++#define SLAVE_PCIE_ANOC_CFG			33
++#define SLAVE_QDSS_STM				34
++#define SLAVE_TCU				35
++
++#define MASTER_GEM_NOC_CNOC			0
++#define MASTER_GEM_NOC_PCIE_SNOC		1
++#define SLAVE_AOSS				2
++#define SLAVE_IPA_CFG				3
++#define SLAVE_IPC_ROUTER_FENCE			4
++#define SLAVE_SOCCP				5
++#define SLAVE_TME_CFG				6
++#define SLAVE_APPSS				7
++#define SLAVE_CNOC_CFG				8
++#define SLAVE_DDRSS_CFG				9
++#define SLAVE_BOOT_IMEM				10
++#define SLAVE_IMEM				11
++#define SLAVE_PCIE_0				12
++
++#define MASTER_GPU_TCU				0
++#define MASTER_SYS_TCU				1
++#define MASTER_APPSS_PROC			2
++#define MASTER_GFX3D				3
++#define MASTER_LPASS_GEM_NOC			4
++#define MASTER_MSS_PROC				5
++#define MASTER_MNOC_HF_MEM_NOC			6
++#define MASTER_MNOC_SF_MEM_NOC			7
++#define MASTER_COMPUTE_NOC			8
++#define MASTER_ANOC_PCIE_GEM_NOC		9
++#define MASTER_QPACE				10
++#define MASTER_SNOC_SF_MEM_NOC			11
++#define MASTER_WLAN_Q6				12
++#define MASTER_GIC				13
++#define SLAVE_GEM_NOC_CNOC			14
++#define SLAVE_LLCC				15
++#define SLAVE_MEM_NOC_PCIE_SNOC			16
++
++#define MASTER_LPIAON_NOC			0
++#define SLAVE_LPASS_GEM_NOC			1
++
++#define MASTER_LPASS_LPINOC			0
++#define SLAVE_LPIAON_NOC_LPASS_AG_NOC		1
++
++#define MASTER_LPASS_PROC			0
++#define SLAVE_LPICX_NOC_LPIAON_NOC		1
++
++#define MASTER_LLCC				0
++#define SLAVE_EBI1				1
++
++#define MASTER_CAMNOC_HF			0
++#define MASTER_CAMNOC_NRT_ICP_SF		1
++#define MASTER_CAMNOC_RT_CDM_SF			2
++#define MASTER_CAMNOC_SF			3
++#define MASTER_MDP				4
++#define MASTER_MDSS_DCP				5
++#define MASTER_CDSP_HCP				6
++#define MASTER_VIDEO_CV_PROC			7
++#define MASTER_VIDEO_EVA			8
++#define MASTER_VIDEO_MVP			9
++#define MASTER_VIDEO_V_PROC			10
++#define MASTER_CNOC_MNOC_CFG			11
++#define SLAVE_MNOC_HF_MEM_NOC			12
++#define SLAVE_MNOC_SF_MEM_NOC			13
++#define SLAVE_SERVICE_MNOC			14
++
++#define MASTER_CDSP_PROC			0
++#define SLAVE_CDSP_MEM_NOC			1
++
++#define MASTER_PCIE_ANOC_CFG			0
++#define MASTER_PCIE_0				1
++#define SLAVE_ANOC_PCIE_GEM_NOC			2
++#define SLAVE_SERVICE_PCIE_ANOC			3
++
++#define MASTER_A1NOC_SNOC			0
++#define MASTER_A2NOC_SNOC			1
++#define MASTER_APSS_NOC				2
++#define MASTER_CNOC_SNOC			3
++#define SLAVE_SNOC_GEM_NOC_SF			4
++
++#endif
 
-Best regards,
 -- 
-Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>
+2.43.0
 
 
