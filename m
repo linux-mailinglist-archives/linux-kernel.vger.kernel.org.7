@@ -1,155 +1,161 @@
-Return-Path: <linux-kernel+bounces-867458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D5AC02B37
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:17:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438DDC02B52
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D457735AF7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:17:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FB85189AB8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE069347FC1;
-	Thu, 23 Oct 2025 17:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32474347FE4;
+	Thu, 23 Oct 2025 17:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LxwnwsQM"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kgpth9zE"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EC0238C2A
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 17:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC08334405E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 17:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761239771; cv=none; b=eUr6yudXuTg77Tk+xT1cP3vaUEe5FrqiAkKx5MvPu1/E1V7AGVYveGITTnloCswQWGaybWPQNCrIX6FcuzoESLuLZ/OZho4FDEwJEQpcA/6glZ28eSWmSPNyVUUnCnOQZIo9HLjha1RayYH7gHrkCgDjJcjkkEGGVky2QVSx1tQ=
+	t=1761239772; cv=none; b=c6mnnSPVphrZm1bDonUU3fXD4O4dbdSVdX5b3/5dCQ82nevrBUoReK+P3sG09OZ1q9WTNEabug2qBAtNtvMMBlsR+1G2PzvcfNt5xMzXpJrNE6yay9TwFL+QujdwHQaW75bE9EBZqvpoOmY9CIhQndf7c1UXK4JT/rsL4RkxG1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761239771; c=relaxed/simple;
-	bh=3vjklBZDK91NfPPKB/m+mZXiuBD949DF/IdVW5vVnss=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GnCMTUl/r60gnnaqZSuA2rJT/87rxde+nZJgFYgP5tTmGtImKuXs9A/+ZJBxrkTK6DaKADKycuCIFRYogUeUCMgAU8uYIrFH8ITjhXvHSj6rlIfYlxbfXbK7mnF5vyhjFQwzvI1foPDFbg2j1nYzA2CXaMhzGl4LNzNblNI7BTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LxwnwsQM; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-27c62320f16so10739055ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:16:07 -0700 (PDT)
+	s=arc-20240116; t=1761239772; c=relaxed/simple;
+	bh=OFXY+MUOP+8Y/CCUUhXO0LVlD5TFWIEKLsX65S4vUHI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qga0WGxMasqz4U2bH9ELLjhu8aHsVZw2Qqk6uJzDViz5UdGehONfjeo4Rg7aHKmWoNIY9OHxRWJUeNJRws4ndX1xRnwf1nqTV1ZJyY3aLMFCEiefSdpXFwwxopkW9nJgXTWmZSC+4T+B5VCQ/LIY+2SgrbOY7Bu3rFHJnvcGwAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kgpth9zE; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-87c1a760df5so15079376d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:16:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761239767; x=1761844567; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/DTN4f9sYvKKbqzH4zMTtt+lW5xHHb7Uewe/2Me0Lwc=;
-        b=LxwnwsQMjWRMGpoXy31nd6AyCrOukM0uUMX7deu20qo7q30KMCjEEZDYhkC40aOus+
-         dESIMOiz59htetzN1GY+a8d39hT5AwOH2LqpPmPqsN806OVexEEppo/cfCrs6l75beiN
-         ttzi/+XVmKZsgLSonurq+SM+UjFV6WqRIckRbo8jONK1rJFyMUSfcdAuL79XjfckdTkx
-         qVkqUu7cHFjAXeiAuRtY6BUprhRaLtAviTIC90i+MPxtZzwfBtUGIx+fdAB6fayacJnL
-         q3B/8iiudaM1yFOowITDFdKAXmNeWYPPKfIER8Ll0hxwryvbM0KaRrW4lmGmVT92L3Dy
-         WoRQ==
+        d=gmail.com; s=20230601; t=1761239770; x=1761844570; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/jNMd4vA/95M+VKKUUTCyOXkzNHKfGBp1ZY+J8a7Y14=;
+        b=kgpth9zEapf2Wc+voLSmj3Rp00KQorTjuN6lu9boN4ZuR5jVcI2nSrc92fNB9XJba+
+         LeluDkJm2oQ79XkupNCqWA3J+tXkAnxfBMC3lrMCmTAtyHM+QeO9Zl2NDP9wANoT3917
+         yNKSud79l0whsTrfb3mIXcyWGwVV6UNEAGgrzz+AKccvmaPq+yZe/A5QL4eVQ+xHDTp2
+         YBM2eIF5ZC3qiGjyL1l8RXEuWb4L7NqzlHVf3Qb49w7LOn1LzG2apGQYCBpc6e7Syf0B
+         u/4TobM7HTSBR4iAxKP6EqhIuWaxa0RdB0sM2h9usJMUeDOLlNktxXN7YufroIl+Otgp
+         ndpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761239767; x=1761844567;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/DTN4f9sYvKKbqzH4zMTtt+lW5xHHb7Uewe/2Me0Lwc=;
-        b=idx10RUDwAYfdhz6yyrgws06lv0+C7sRpanpj20kKA8KDbDNKw5eLVI5oF4cYeDGkv
-         qIsBKtnKkqUwZIWkdiNajCxNtouIZhF4oK3lBjgtzIBMMIyRPz+Ub1enveMW0/af4Kex
-         QE2vevdvAowGpUgDvSsuS8u09+/jVMnqGYYIxbqQwRJpEzXKb8osNxlev8MU2wKCrT1K
-         weISfQzL0r0yIz3sNcv1PzyVEZu7sbDzRLe9KU2hqmqLNJc5FfZZoTj2iyIin35qVt+o
-         KlRAe5UKBUD8n1VWOvS3DeBeV6e51zmYjicOPqKtj9Nxqa9of7tEm/xnwY4GPpa43p2X
-         eIAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXk/YVFnXohBwALLIiyERfXioxh3IAUA9vn/DvmcqmJOiempinZ9XfZLBHDOXM0SzO1lWmGgqBCt91Mo/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzKf4FJaxkzV0qX3HX54F4ElOULmpZsrPQLVTeB0unuT33lXM6
-	RDZE1KyMYh2QZhanGnq6maTK92pOikgJGeoIDRmRd2SDJsS3uiMOXVXxqFelQc0jbzeuvjx8G8k
-	Pjk3AFg==
-X-Google-Smtp-Source: AGHT+IHWPgGmZKfo+3ImlZCUG7AewIscdCvWipQB1xDHXcjZQxceHYcdCY71wfIfELDOVuODkQ3p+Aq3kE8=
-X-Received: from pjkm11.prod.google.com ([2002:a17:90a:730b:b0:33b:e0b5:6112])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e88e:b0:267:da75:e0f
- with SMTP id d9443c01a7336-290c9c897bbmr312407025ad.11.1761239766935; Thu, 23
- Oct 2025 10:16:06 -0700 (PDT)
-Date: Thu, 23 Oct 2025 10:16:05 -0700
-In-Reply-To: <20251013151502.6679-3-jackabt.amazon@gmail.com>
+        d=1e100.net; s=20230601; t=1761239770; x=1761844570;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/jNMd4vA/95M+VKKUUTCyOXkzNHKfGBp1ZY+J8a7Y14=;
+        b=IZFYhehXG3A9L20mY9eyXL5O+X9Ga8T0mgKgAJChVg62ALp5sq6mg+Zj+9GIk4Wldt
+         X0GmqpvhSrUp/yl/SThyFokippnh2XeQtKGGYi/rMwfUAN4IXxNZEb30FNJJ4qLzysCE
+         TiZoBh96zL8BxV0zpKeX0kTwC9Gbb2q6R4zsWUKWBY+gDGiy9zejcCGlC41v6qY46xj4
+         QcyPmz2jaYy6/lshm6GOGYFsIyes/MPA7epwrCs8QjdTdVBv+DjeRVung/puAzj2/GPL
+         BAoOp1ChxVdi9LExpAG+LUhyESfnXYb3/gYleuSOPiysDVEd7WmbglNvid8EC+7FvQfi
+         mf+w==
+X-Forwarded-Encrypted: i=1; AJvYcCU04sCruo/MEMQ6toRZSKALgj3mezID99H28vjRvxEX2EhVKaY5PI6KOc1+rx3seX5ID45WvNWdndw5wfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF6eCo/UxnsBIISF+HfEvQP0irqekdyg7ZONUFk+8H9YW2XWI9
+	iPx9xCvCuYbgaoZQgBHAtRVUnPj3YE2YFlmzpOLyFBHjFvRIhD5I2zmUU/D2Pg==
+X-Gm-Gg: ASbGncsTh+vBVu1MIBMT4rPl5zq84nDeqJbR5AWMII08zL86trm2qab1p3pc9oTVEkK
+	+jk9OqWaAhlgnhvSDQ20L11UfTng+BU88u/pfDpE3HwYn0R0nGo9G5yTR3uFUQYbsSNf5P9A58n
+	/KMqIQxoqwDRluCwomOG5UT4TOmb8pj4VX+tvC5/SsBa/4CY0ETOBcTrpsWQfA5Mgs/XyF8kVl3
+	qmUqO6w6yZt96jBf0j15ZARlOlvqBTK/DliTmuYQFMw7LPtfBEfFB9W873bRZqgi5/QZMOrRXho
+	b0Gy30qyk1FozjrMUTHcBXF30+nLID+/Z+zFohpSLjPsSs4kxGq3JIrdLResoXGg1GbqXKWrhJ+
+	8qshLOCBMXPRiR8gCSjrdQKDLc5+4XXwtvM/LtvN3Be+zT5isBZOlhcZx6jN0u/Xg74Id76oN
+X-Google-Smtp-Source: AGHT+IEztWYoBs06abPB+Ng5TILZNZBwSb7b5djQJWRLRDbxap619QyU24vmkV9lb0CaXbn6mXi9sQ==
+X-Received: by 2002:ad4:5ca9:0:b0:796:3a6f:f931 with SMTP id 6a1803df08f44-87c2055e0fcmr324235476d6.12.1761239769652;
+        Thu, 23 Oct 2025 10:16:09 -0700 (PDT)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87f9e824cc2sm18692156d6.61.2025.10.23.10.16.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 10:16:09 -0700 (PDT)
+From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	John Hubbard <jhubbard@nvidia.com>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: [PATCH] uaccess: decouple INLINE_COPY_FROM_USER and CONFIG_RUST
+Date: Thu, 23 Oct 2025 13:16:06 -0400
+Message-ID: <20251023171607.1171534-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251013151502.6679-1-jackabt.amazon@gmail.com> <20251013151502.6679-3-jackabt.amazon@gmail.com>
-Message-ID: <aPpi1c-8EpWuo87B@google.com>
-Subject: Re: [PATCH v2 2/4] KVM: selftests: Fix unaligned mmap allocations
-From: Sean Christopherson <seanjc@google.com>
-To: Jack Thomson <jackabt.amazon@gmail.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, pbonzini@redhat.com, 
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
-	catalin.marinas@arm.com, will@kernel.org, shuah@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	isaku.yamahata@intel.com, roypat@amazon.co.uk, kalyazin@amazon.co.uk, 
-	jackabt@amazon.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 13, 2025, Jack Thomson wrote:
-> From: Jack Thomson <jackabt@amazon.com>
-> 
-> When creating a VM using mmap with huge pages, and the memory amount does
-> not align with the underlying page size. The stored mmap_size value does
-> not account for the fact that mmap will automatically align the length
-> to a multiple of the underlying page size. During the teardown of the
-> test, munmap is used. However, munmap requires the length to be a
-> multiple of the underlying page size.
+Commit 1f9a8286bc0c ("uaccess: always export _copy_[from|to]_user with
+CONFIG_RUST") exports _copy_{from,to}_user() unconditionally, if RUST
+is enabled. This pollutes exported symbols namespace, and spreads RUST
+ifdefery in core files.
 
-What happens when selftests use the wrong map_size?  E.g. is munmap() silently
-failing?  If so, then I should probably take this particular patch through
-kvm-x86/gmem, otherwise it means we'll start getting asserts due to:
+It's better to declare a corresponding helper under the rust/helpers,
+similarly to how non-underscored copy_{from,to}_user() is handled.
 
-  3223560c93eb ("KVM: selftests: Define wrappers for common syscalls to assert success")
+Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+---
+ lib/usercopy.c         |  4 ++--
+ rust/helpers/uaccess.c | 12 ++++++++++++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-If munmap() isn't failing, then that begs the question of what this patch is
-actually doing :-)
+diff --git a/lib/usercopy.c b/lib/usercopy.c
+index 7b17b83c8042..b00a3a957de6 100644
+--- a/lib/usercopy.c
++++ b/lib/usercopy.c
+@@ -12,7 +12,7 @@
+ 
+ /* out-of-line parts */
+ 
+-#if !defined(INLINE_COPY_FROM_USER) || defined(CONFIG_RUST)
++#if !defined(INLINE_COPY_FROM_USER)
+ unsigned long _copy_from_user(void *to, const void __user *from, unsigned long n)
+ {
+ 	return _inline_copy_from_user(to, from, n);
+@@ -20,7 +20,7 @@ unsigned long _copy_from_user(void *to, const void __user *from, unsigned long n
+ EXPORT_SYMBOL(_copy_from_user);
+ #endif
+ 
+-#if !defined(INLINE_COPY_TO_USER) || defined(CONFIG_RUST)
++#if !defined(INLINE_COPY_TO_USER)
+ unsigned long _copy_to_user(void __user *to, const void *from, unsigned long n)
+ {
+ 	return _inline_copy_to_user(to, from, n);
+diff --git a/rust/helpers/uaccess.c b/rust/helpers/uaccess.c
+index f49076f813cd..4629b2d15529 100644
+--- a/rust/helpers/uaccess.c
++++ b/rust/helpers/uaccess.c
+@@ -13,3 +13,15 @@ unsigned long rust_helper_copy_to_user(void __user *to, const void *from,
+ {
+ 	return copy_to_user(to, from, n);
+ }
++
++#ifdef INLINE_COPY_FROM_USER
++unsigned long rust_helper__copy_from_user(void *to, const void __user *from, unsigned long n)
++{
++	return _inline_copy_from_user(to, from, n);
++}
++
++unsigned long rust_helper__copy_to_user(void __user *to, const void *from, unsigned long n)
++{
++	return _inline_copy_to_user(to, from, n);
++}
++#endif
+-- 
+2.43.0
 
-> Update the vm_mem_add method to ensure the mmap_size is aligned to the
-> underlying page size.
-> 
-> Signed-off-by: Jack Thomson <jackabt@amazon.com>
-> ---
->  tools/testing/selftests/kvm/lib/kvm_util.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-> index c3f5142b0a54..b106fbed999c 100644
-> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
-> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-> @@ -1051,7 +1051,6 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
->  	/* Allocate and initialize new mem region structure. */
->  	region = calloc(1, sizeof(*region));
->  	TEST_ASSERT(region != NULL, "Insufficient Memory");
-> -	region->mmap_size = mem_size;
->  
->  #ifdef __s390x__
->  	/* On s390x, the host address must be aligned to 1M (due to PGSTEs) */
-> @@ -1060,6 +1059,11 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
->  	alignment = 1;
->  #endif
->  
-> +	alignment = max(backing_src_pagesz, alignment);
-> +	region->mmap_size = align_up(mem_size, alignment);
-> +
-> +	TEST_ASSERT_EQ(guest_paddr, align_up(guest_paddr, backing_src_pagesz));
-> +
->  	/*
->  	 * When using THP mmap is not guaranteed to returned a hugepage aligned
->  	 * address so we have to pad the mmap. Padding is not needed for HugeTLB
-> @@ -1067,12 +1071,6 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
->  	 * page size.
->  	 */
->  	if (src_type == VM_MEM_SRC_ANONYMOUS_THP)
-> -		alignment = max(backing_src_pagesz, alignment);
-> -
-> -	TEST_ASSERT_EQ(guest_paddr, align_up(guest_paddr, backing_src_pagesz));
-> -
-> -	/* Add enough memory to align up if necessary */
-> -	if (alignment > 1)
->  		region->mmap_size += alignment;
->  
->  	region->fd = -1;
-> -- 
-> 2.43.0
-> 
 
