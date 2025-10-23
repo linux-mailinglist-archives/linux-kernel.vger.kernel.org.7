@@ -1,288 +1,516 @@
-Return-Path: <linux-kernel+bounces-867658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05782C03372
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:46:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36C1BC03378
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A68E44E883D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:46:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11DCE19C5FA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B983F347BC3;
-	Thu, 23 Oct 2025 19:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2C734D93D;
+	Thu, 23 Oct 2025 19:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="il3KoVlt"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="SKuaxuvK"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A13D1C84C0;
-	Thu, 23 Oct 2025 19:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761248782; cv=none; b=acSQrQzdw+Be66BXOXAn/55+KzElMqvpSd73+oEKFxcLgbxK3PagTU9P/+JMaWkaCpMRWF+R+wNeyrl4BaZZu/4xMSzdKCVypfW7qUL3ZWdt1gGKRkXsu2RXdQLdNypVI788t2D21/Oui1Q5keFsPSgXOhOJRhlFYoetRFBZi1A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761248782; c=relaxed/simple;
-	bh=KKFSCrkYKiHFsGtOVseMby2CyZjFoxswfFb6ypbEFpk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cyqnwrAlB4DcR9HMO2wuMmhd13PPzFzdI/LpyZtjNGH5XhFCV7hY9HFNPAvLYEJF6ynoFs2w+Qc9WYfeO/EbCNp6jBFkeyqErnC4wPPcq4hce3baO13DKpA2FRA728GECjfS69wnYPBtMbGT/xNQvhp0gq1Q0SJvNgc2DEGTxo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=il3KoVlt; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=bpNI0HuA3PADHUPJY21BNj2h2p3hk8LZedpLkbW++zU=; b=il3KoVlta/gxNiStDgUViksEdI
-	FNOqMM7f68LyfeUzuh0QWA/W8HOvLRYebqvy46ghkaRKlOrTYThXQ+6v+JLX4bCXVJ1ZBCGQSwraX
-	FbORV3zKseL8K3so0WBFUL9PQKBdqHfyuiXKPwsdJEM4ECYXLIqfCnCG7znV8qjV/2FWMv1gk0MDy
-	0r+texIR3p9VuKAcrg23EbsM/LWDS4Lv9/YIOSyjgHuS85SLHQZJkd3XJ4Xr9AMu36FicQdQwAb3J
-	8qMIsFDvLnlwVqjE4jsI9uwF28gfibTJchSezJiUcj+hcvg+YiIVO+UglIgOkxYxopTRpi8syyzQK
-	xqW5dqkw==;
-Received: from [50.53.43.113] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vC1GK-00000007P3s-24rJ;
-	Thu, 23 Oct 2025 19:46:16 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH] platform/x86: ISST: isst_if.h: fix all kernel-doc warnings
-Date: Thu, 23 Oct 2025 12:46:14 -0700
-Message-ID: <20251023194615.180824-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.51.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DE31C84C0;
+	Thu, 23 Oct 2025 19:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761248844; cv=pass; b=a9yoXideawXV7Sc8CzEBIopr0zgbG/YMfozFFQ/KnDBQMBA6V43jiA4TqlEBijDhnhhJJRGc5JpGqZ1GzMMqv3xBTtgNhae2AyD+FMfFgY45xNkC/VPBxmai+0hYvSRtRXGnEydhSf79yx5/pr7BcDdUFBIfbmeaNp/L1oE/O1Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761248844; c=relaxed/simple;
+	bh=sOUzdsCQrin9Vns3z8yCuBEZzYcbtQhh9eGlF0IfCNg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pl1GEWvFT+F3yl1G4ujV8/NkhZDWmmEHYqHlmB3SMgt4F25uogPpWPLP6bJhsyc0X0yC+fjY07a12xO5rUeaF/rJFaESZeK268hdkk7GqSdXXmbVpLd8ZPNV3hZfg2TQTIX59PJ7BtClz/k5z1o9eshFXMrUrGIH7/NRSqaf50c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=SKuaxuvK; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761248811; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=RSuCB4y/2Gu0f9TuYJWFsi8x3HneptjchXqJFHbAn5GMXvMs7AlAeCd0qiOwKA+7b/74Y1FbMj46RsWvQm7e8Kh+hFKZ3WnDIvzA6gGHnGByhSQaKws3qcJmBF+hAZF18IKG3B35b51hvW0mA2zn2lJzKWy3B2BizPu0NjLUyqg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761248811; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2LXMk4fSYFXCz/XASw/ADkOFspKOj1JZNNr1Is04a1Q=; 
+	b=QEeOLY3ikzvdyRmsjzXczXGEM9bVmf6CeBtOPlM5UNAqNzgq2wzBnQ277tBQGRBSLur0t+frIYFrqFYZQhcact77Nka4HQgIBA/tOSjew2gZP5wNC7iVSmxPj+duGpVapa8nVMRekAaqyfejRsytBO8vMYo6L2wUA4P15vRhBk4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761248811;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=2LXMk4fSYFXCz/XASw/ADkOFspKOj1JZNNr1Is04a1Q=;
+	b=SKuaxuvK4hCAH0bi/n7y9DpFetkLCKtuTtt7Hjk28bF6ZpXQCAvnOCY0iKR4mnCl
+	IUFVnmfDZHl+jgx3AD3G2iS9ld/tOog5BskGyCQmgYKf+FpCm3NzeBAvgkQVVlPMubK
+	mCf/WzA+8Jm6n2w95zLGx1OOrM73B+Zb/XdvG5MQ=
+Received: by mx.zohomail.com with SMTPS id 1761248809255622.4787882910312;
+	Thu, 23 Oct 2025 12:46:49 -0700 (PDT)
+Message-ID: <63d3ab1a-fc8d-4560-87a7-39b079779515@collabora.com>
+Date: Thu, 23 Oct 2025 15:46:47 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 09/15] media: rkvdec: Add RCB and SRAM support
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Heiko Stuebner <heiko@sntech.de>, Ricardo Ribalda <ribalda@chromium.org>,
+ Hans Verkuil <hverkuil@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ Yunke Cao <yunkec@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ James Cowgill <james.cowgill@blaize.com>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com, Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Diederik de Haas <didi.debian@cknow.org>, linux-kernel@vger.kernel.org
+References: <20251022174508.284929-1-detlev.casanova@collabora.com>
+ <20251022174508.284929-10-detlev.casanova@collabora.com>
+ <35a4ac73-9a30-43af-97b0-7e99c106a3ba@kwiboo.se>
+Content-Language: en-US
+From: Detlev Casanova <detlev.casanova@collabora.com>
+In-Reply-To: <35a4ac73-9a30-43af-97b0-7e99c106a3ba@kwiboo.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Fix all kernel-doc warnings in <uapi/linux/isst_if.h>:
+Hi Jonas,
 
-- don't use "[]" in the variable name in kernel-doc
-- add a few missing entries
-- change "power_domain" to "power_domain_id" in kernel-doc to match
-  the struct member name
-- add a leading '@' on a few existing kernel-doc lines
-- use '_' instead of '-' in struct member names
-
-Examples (but not all 27 warnings):
-
-Warning: include/uapi/linux/isst_if.h:63 struct member 'cpu_map'
- not described in 'isst_if_cpu_maps'
-Warning: ../include/uapi/linux/isst_if.h:95 struct member 'req_count'
- not described in 'isst_if_io_regs'
-Warning: include/uapi/linux/isst_if.h:132 struct member 'mbox_cmd'
- not described in 'isst_if_mbox_cmds'
-Warning: ../include/uapi/linux/isst_if.h:183 struct member 'supported'
- not described in 'isst_core_power'
-Warning: ../include/uapi/linux/isst_if.h:206 struct member
- 'power_domain_id' not described in 'isst_clos_param'
-Warning: ../include/uapi/linux/isst_if.h:239 struct member 'assoc_info'
- not described in 'isst_if_clos_assoc_cmds'
-Warning: ../include/uapi/linux/isst_if.h:286 struct member 'sst_tf_support'
- not described in 'isst_perf_level_info'
-Warning: ../include/uapi/linux/isst_if.h:375 struct member 'trl_freq_mhz'
- not described in 'isst_perf_level_data_info'
-Warning: ../include/uapi/linux/isst_if.h:475 struct member 'max_buckets'
- not described in 'isst_turbo_freq_info'
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
-Question:  struct sst_header (in isst_tpmi_core.c) says:
- * @cap_mask:		Bitmask of the supported sub features. 1=the sub feature is enabled.
- *			0=disabled.
- *			Bit[8]= SST_CP enable (1), disable (0)
- *			bit[9]= SST_PP enable (1), disable (0)
-but cap_mask is a u8 field. Should these Bit numbers be 0 and 1?
-The source code seems to use BIT(0) and BIT(1) for these.
-
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org
----
- include/uapi/linux/isst_if.h |   50 +++++++++++++++++----------------
- 1 file changed, 27 insertions(+), 23 deletions(-)
-
---- linux-next-20251022.orig/include/uapi/linux/isst_if.h
-+++ linux-next-20251022/include/uapi/linux/isst_if.h
-@@ -52,7 +52,7 @@ struct isst_if_cpu_map {
- /**
-  * struct isst_if_cpu_maps - structure for CPU map IOCTL
-  * @cmd_count:	Number of CPU mapping command in cpu_map[]
-- * @cpu_map[]:	Holds one or more CPU map data structure
-+ * @cpu_map:	Holds one or more CPU map data structure
-  *
-  * This structure used with ioctl ISST_IF_GET_PHY_ID to send
-  * one or more CPU mapping commands. Here IOCTL return value indicates
-@@ -82,8 +82,8 @@ struct isst_if_io_reg {
- 
- /**
-  * struct isst_if_io_regs - structure for IO register commands
-- * @cmd_count:	Number of io reg commands in io_reg[]
-- * @io_reg[]:	Holds one or more io_reg command structure
-+ * @req_count:	Number of io reg commands in io_reg[]
-+ * @io_reg:	Holds one or more io_reg command structure
-  *
-  * This structure used with ioctl ISST_IF_IO_CMD to send
-  * one or more read/write commands to PUNIT. Here IOCTL return value
-@@ -120,7 +120,7 @@ struct isst_if_mbox_cmd {
- /**
-  * struct isst_if_mbox_cmds - structure for mailbox commands
-  * @cmd_count:	Number of mailbox commands in mbox_cmd[]
-- * @mbox_cmd[]:	Holds one or more mbox commands
-+ * @mbox_cmd:	Holds one or more mbox commands
-  *
-  * This structure used with ioctl ISST_IF_MBOX_COMMAND to send
-  * one or more mailbox commands to PUNIT. Here IOCTL return value
-@@ -152,7 +152,7 @@ struct isst_if_msr_cmd {
- /**
-  * struct isst_if_msr_cmds - structure for msr commands
-  * @cmd_count:	Number of mailbox commands in msr_cmd[]
-- * @msr_cmd[]:	Holds one or more msr commands
-+ * @msr_cmd:	Holds one or more msr commands
-  *
-  * This structure used with ioctl ISST_IF_MSR_COMMAND to send
-  * one or more MSR commands. IOCTL return value indicates number of
-@@ -167,8 +167,9 @@ struct isst_if_msr_cmds {
-  * struct isst_core_power - Structure to get/set core_power feature
-  * @get_set:	0: Get, 1: Set
-  * @socket_id:	Socket/package id
-- * @power_domain: Power Domain id
-+ * @power_domain_id: Power Domain id
-  * @enable:	Feature enable status
-+ * @supported:	Power domain supports SST_CP interface
-  * @priority_type: Priority type for the feature (ordered/proportional)
-  *
-  * Structure to get/set core_power feature state using IOCTL
-@@ -187,11 +188,11 @@ struct isst_core_power {
-  * struct isst_clos_param - Structure to get/set clos praram
-  * @get_set:	0: Get, 1: Set
-  * @socket_id:	Socket/package id
-- * @power_domain:	Power Domain id
-- * clos:	Clos ID for the parameters
-- * min_freq_mhz: Minimum frequency in MHz
-- * max_freq_mhz: Maximum frequency in MHz
-- * prop_prio:	Proportional priority from 0-15
-+ * @power_domain_id:	Power Domain id
-+ * @clos:	Clos ID for the parameters
-+ * @min_freq_mhz: Minimum frequency in MHz
-+ * @max_freq_mhz: Maximum frequency in MHz
-+ * @prop_prio:	Proportional priority from 0-15
-  *
-  * Structure to get/set per clos property using IOCTL
-  * ISST_IF_CLOS_PARAM.
-@@ -209,7 +210,7 @@ struct isst_clos_param {
- /**
-  * struct isst_if_clos_assoc - Structure to assign clos to a CPU
-  * @socket_id:	Socket/package id
-- * @power_domain:	Power Domain id
-+ * @power_domain_id:	Power Domain id
-  * @logical_cpu: CPU number
-  * @clos:	Clos ID to assign to the logical CPU
-  *
-@@ -228,6 +229,7 @@ struct isst_if_clos_assoc {
-  * @get_set:	Request is for get or set
-  * @punit_cpu_map: Set to 1 if the CPU number is punit numbering not
-  *		   Linux CPU number
-+ * @assoc_info: CLOS data for this CPU
-  *
-  * Structure used to get/set associate CPUs to clos using IOCTL
-  * ISST_IF_CLOS_ASSOC.
-@@ -257,7 +259,7 @@ struct isst_tpmi_instance_count {
- /**
-  * struct isst_perf_level_info - Structure to get information on SST-PP levels
-  * @socket_id:	Socket/package id
-- * @power_domain:	Power Domain id
-+ * @power_domain_id:	Power Domain id
-  * @logical_cpu: CPU number
-  * @clos:	Clos ID to assign to the logical CPU
-  * @max_level: Maximum performance level supported by the platform
-@@ -267,8 +269,8 @@ struct isst_tpmi_instance_count {
-  * @feature_state: SST-BF and SST-TF (enabled/disabled) status at current level
-  * @locked: SST-PP performance level change is locked/unlocked
-  * @enabled: SST-PP feature is enabled or not
-- * @sst-tf_support: SST-TF support status at this level
-- * @sst-bf_support: SST-BF support status at this level
-+ * @sst_tf_support: SST-TF support status at this level
-+ * @sst_bf_support: SST-BF support status at this level
-  *
-  * Structure to get SST-PP details using IOCTL ISST_IF_PERF_LEVELS.
-  */
-@@ -289,7 +291,7 @@ struct isst_perf_level_info {
- /**
-  * struct isst_perf_level_control - Structure to set SST-PP level
-  * @socket_id:	Socket/package id
-- * @power_domain:	Power Domain id
-+ * @power_domain_id:	Power Domain id
-  * @level:	level to set
-  *
-  * Structure used change SST-PP level using IOCTL ISST_IF_PERF_SET_LEVEL.
-@@ -303,7 +305,7 @@ struct isst_perf_level_control {
- /**
-  * struct isst_perf_feature_control - Structure to activate SST-BF/SST-TF
-  * @socket_id:	Socket/package id
-- * @power_domain:	Power Domain id
-+ * @power_domain_id:	Power Domain id
-  * @feature:	bit 0 = SST-BF state, bit 1 = SST-TF state
-  *
-  * Structure used to enable SST-BF/SST-TF using IOCTL ISST_IF_PERF_SET_FEATURE.
-@@ -320,7 +322,7 @@ struct isst_perf_feature_control {
- /**
-  * struct isst_perf_level_data_info - Structure to get SST-PP level details
-  * @socket_id:	Socket/package id
-- * @power_domain:	Power Domain id
-+ * @power_domain_id:	Power Domain id
-  * @level:	SST-PP level for which caller wants to get information
-  * @tdp_ratio: TDP Ratio
-  * @base_freq_mhz: Base frequency in MHz
-@@ -341,8 +343,8 @@ struct isst_perf_feature_control {
-  * @pm_fabric_freq_mhz: Fabric (Uncore) minimum frequency
-  * @max_buckets: Maximum trl buckets
-  * @max_trl_levels: Maximum trl levels
-- * @bucket_core_counts[TRL_MAX_BUCKETS]: Number of cores per bucket
-- * @trl_freq_mhz[TRL_MAX_LEVELS][TRL_MAX_BUCKETS]: maximum frequency
-+ * @bucket_core_counts: Number of cores per bucket
-+ * @trl_freq_mhz: maximum frequency
-  * for a bucket and trl level
-  *
-  * Structure used to get information on frequencies and TDP for a SST-PP
-@@ -402,7 +404,7 @@ struct isst_perf_level_fabric_info {
- /**
-  * struct isst_perf_level_cpu_mask - Structure to get SST-PP level CPU mask
-  * @socket_id:	Socket/package id
-- * @power_domain:	Power Domain id
-+ * @power_domain_id:	Power Domain id
-  * @level:	SST-PP level for which caller wants to get information
-  * @punit_cpu_map: Set to 1 if the CPU number is punit numbering not
-  *		   Linux CPU number. If 0 CPU buffer is copied to user space
-@@ -430,7 +432,7 @@ struct isst_perf_level_cpu_mask {
- /**
-  * struct isst_base_freq_info - Structure to get SST-BF frequencies
-  * @socket_id:	Socket/package id
-- * @power_domain:	Power Domain id
-+ * @power_domain_id:	Power Domain id
-  * @level:	SST-PP level for which caller wants to get information
-  * @high_base_freq_mhz: High priority CPU base frequency
-  * @low_base_freq_mhz: Low priority CPU base frequency
-@@ -453,9 +455,11 @@ struct isst_base_freq_info {
- /**
-  * struct isst_turbo_freq_info - Structure to get SST-TF frequencies
-  * @socket_id:	Socket/package id
-- * @power_domain:	Power Domain id
-+ * @power_domain_id:	Power Domain id
-  * @level:	SST-PP level for which caller wants to get information
-  * @max_clip_freqs: Maximum number of low priority core clipping frequencies
-+ * @max_buckets: Maximum trl buckets
-+ * @max_trl_levels: Maximum trl levels
-  * @lp_clip_freq_mhz: Clip frequencies per trl level
-  * @bucket_core_counts: Maximum number of cores for a bucket
-  * @trl_freq_mhz: Frequencies per trl level for each bucket
+On 10/22/25 17:07, Jonas Karlman wrote:
+> Hi Detlev,
+>
+> On 10/22/2025 7:45 PM, Detlev Casanova wrote:
+>> The RCB (Rows and Cols Buffers) are a set of buffers used by other
+>> variations of the decoder to store temporary data.
+>>
+>> Those variation come with a dedicated SRAM area used to store those
+>> buffers for better performances.
+>>
+>> The buffer sizes are either the width or height of the frame being
+>> decoded multiplied by a documented factor and can be stored either
+>> in SRAM or RAM.
+>> A fallback to RAM is provided if the SRAM is full (e.g.: multiple
+>> streams are being decoded at the same time).
+>>
+>> To manage the different kind of allocation, an enum is added to the
+>> rkvdec_aux_buf struct to specify how the buffer was allocated, and
+>> so, how to free it.
+>>
+>> This commit is in preparation of other variants support.
+>>
+>> Tested-by: Diederik de Haas <didi.debian@cknow.org>  # Rock 5B
+>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+>> ---
+>>   .../media/platform/rockchip/rkvdec/Makefile   |   1 +
+>>   .../platform/rockchip/rkvdec/rkvdec-rcb.c     | 173 ++++++++++++++++++
+>>   .../platform/rockchip/rkvdec/rkvdec-rcb.h     |  29 +++
+>>   .../media/platform/rockchip/rkvdec/rkvdec.c   |  27 ++-
+>>   .../media/platform/rockchip/rkvdec/rkvdec.h   |  13 ++
+>>   5 files changed, 241 insertions(+), 2 deletions(-)
+>>   create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-rcb.c
+>>   create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-rcb.h
+>>
+>> diff --git a/drivers/media/platform/rockchip/rkvdec/Makefile b/drivers/media/platform/rockchip/rkvdec/Makefile
+>> index 1b4bc44be23e..3d75103e536d 100644
+>> --- a/drivers/media/platform/rockchip/rkvdec/Makefile
+>> +++ b/drivers/media/platform/rockchip/rkvdec/Makefile
+>> @@ -7,4 +7,5 @@ rockchip-vdec-y += \
+>>   		   rkvdec-h264-common.o \
+>>   		   rkvdec-hevc.o \
+>>   		   rkvdec-hevc-common.o \
+>> +		   rkvdec-rcb.o \
+>>   		   rkvdec-vp9.o
+>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-rcb.c b/drivers/media/platform/rockchip/rkvdec/rkvdec-rcb.c
+>> new file mode 100644
+>> index 000000000000..5a4959c239e3
+>> --- /dev/null
+>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-rcb.c
+>> @@ -0,0 +1,173 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Rockchip video decoder Rows and Cols Buffers manager
+>> + *
+>> + * Copyright (C) 2025 Collabora, Ltd.
+>> + *  Detlev Casanova <detlev.casanova@collabora.com>
+>> + */
+>> +
+>> +#include "rkvdec.h"
+>> +#include "rkvdec-rcb.h"
+>> +
+>> +#include <linux/types.h>
+>> +#include <linux/iommu.h>
+>> +#include <linux/genalloc.h>
+>> +
+>> +struct rkvdec_rcb_config {
+>> +	struct rkvdec_aux_buf *rcb_bufs;
+>> +	size_t rcb_count;
+>> +};
+>> +
+>> +static size_t rkvdec_rcb_size(const struct rcb_size_info *size_info,
+>> +			      unsigned int width, unsigned int height)
+>> +{
+>> +	return size_info->multiplier * (size_info->axis == PIC_HEIGHT ? height : width);
+>> +}
+>> +
+>> +dma_addr_t rkvdec_rcb_buf_dma_addr(struct rkvdec_ctx *ctx, int id)
+>> +{
+>> +	return ctx->rcb_config->rcb_bufs[id].dma;
+>> +}
+>> +
+>> +size_t rkvdec_rcb_buf_size(struct rkvdec_ctx *ctx, int id)
+>> +{
+>> +	return ctx->rcb_config->rcb_bufs[id].size;
+>> +}
+>> +
+>> +int rkvdec_rcb_buf_count(struct rkvdec_ctx *ctx)
+>> +{
+>> +	return ctx->rcb_config->rcb_count;
+>> +}
+>> +
+>> +void rkvdec_free_rcb(struct rkvdec_ctx *ctx)
+>> +{
+>> +	struct rkvdec_dev *dev = ctx->dev;
+>> +	struct rkvdec_rcb_config *cfg = ctx->rcb_config;
+>> +	unsigned long virt_addr;
+>> +	int i;
+>> +
+>> +	if (!cfg)
+>> +		return;
+>> +
+>> +	for (i = 0; i < cfg->rcb_count; i++) {
+>> +		size_t rcb_size = cfg->rcb_bufs[i].size;
+>> +
+>> +		if (!cfg->rcb_bufs[i].cpu)
+>> +			continue;
+>> +
+>> +		switch (cfg->rcb_bufs[i].type) {
+>> +		case RKVDEC_ALLOC_SRAM:
+>> +			virt_addr = (unsigned long)cfg->rcb_bufs[i].cpu;
+>> +
+>> +			if (dev->iommu_domain)
+>> +				iommu_unmap(dev->iommu_domain, virt_addr, rcb_size);
+>> +			gen_pool_free(dev->sram_pool, virt_addr, rcb_size);
+>> +			break;
+>> +		case RKVDEC_ALLOC_DMA:
+>> +			dma_free_coherent(dev->dev,
+>> +					  rcb_size,
+>> +					  cfg->rcb_bufs[i].cpu,
+>> +					  cfg->rcb_bufs[i].dma);
+>> +			break;
+>> +		}
+>> +	}
+>> +
+>> +	if (cfg->rcb_bufs)
+>> +		devm_kfree(dev->dev, cfg->rcb_bufs);
+>> +
+>> +	devm_kfree(dev->dev, cfg);
+>> +}
+>> +
+>> +int rkvdec_allocate_rcb(struct rkvdec_ctx *ctx,
+>> +			const struct rcb_size_info *size_info,
+>> +			size_t rcb_count)
+>> +{
+>> +	int ret, i;
+>> +	u32 width, height;
+>> +	struct rkvdec_dev *rkvdec = ctx->dev;
+>> +	struct rkvdec_rcb_config *cfg;
+>> +
+>> +	ctx->rcb_config = devm_kzalloc(rkvdec->dev, sizeof(*ctx->rcb_config), GFP_KERNEL);
+> Should we allocate a rcb_config when rcb_count = 0 or size_info is NULL?
+Yes, maybe we could improve a bit for variants that don't use RCBs.
+>> +	if (!ctx->rcb_config)
+>> +		return -ENOMEM;
+>> +
+>> +	cfg = ctx->rcb_config;
+>> +
+>> +	cfg->rcb_bufs = devm_kzalloc(rkvdec->dev, sizeof(*cfg->rcb_bufs) * rcb_count, GFP_KERNEL);
+> This would try to allocate 0 bytes if rcb_count = 0.
+0 bytes allocation is OK, it will return ZERO_SIZE_PTR, which is also 
+safe to use with kfree.
+>> +	if (!cfg->rcb_bufs) {
+>> +		ret = -ENOMEM;
+>> +		goto err_alloc;
+>> +	}
+>> +
+>> +	width = ctx->decoded_fmt.fmt.pix_mp.width;
+>> +	height = ctx->decoded_fmt.fmt.pix_mp.height;
+>> +
+>> +	for (i = 0; i < rcb_count; i++) {
+>> +		void *cpu = NULL;
+>> +		dma_addr_t dma;
+>> +		size_t rcb_size = rkvdec_rcb_size(&size_info[i], width, height);
+>> +		enum rkvdec_alloc_type alloc_type = RKVDEC_ALLOC_SRAM;
+>> +
+>> +		/* Try allocating an SRAM buffer */
+>> +		if (ctx->dev->sram_pool) {
+>> +			if (rkvdec->iommu_domain)
+>> +				rcb_size = ALIGN(rcb_size, 0x1000);
+>> +
+>> +			cpu = gen_pool_dma_zalloc_align(ctx->dev->sram_pool,
+>> +							rcb_size,
+>> +							&dma,
+>> +							0x1000);
+>> +		}
+>> +
+>> +		/* If an IOMMU is used, map the SRAM address through it */
+>> +		if (cpu && rkvdec->iommu_domain) {
+>> +			unsigned long virt_addr = (unsigned long)cpu;
+>> +			phys_addr_t phys_addr = dma;
+>> +
+>> +			ret = iommu_map(rkvdec->iommu_domain, virt_addr, phys_addr,
+>> +					rcb_size, IOMMU_READ | IOMMU_WRITE, 0);
+>> +			if (ret) {
+>> +				gen_pool_free(ctx->dev->sram_pool,
+>> +					      (unsigned long)cpu,
+>> +					      rcb_size);
+>> +				cpu = NULL;
+>> +				goto ram_fallback;
+>> +			}
+>> +
+>> +			/*
+>> +			 * The registers will be configured with the virtual
+>> +			 * address so that it goes through the IOMMU
+>> +			 */
+>> +			dma = virt_addr;
+>> +		}
+>> +
+>> +ram_fallback:
+>> +		/* Fallback to RAM */
+>> +		if (!cpu) {
+>> +			cpu = dma_alloc_coherent(ctx->dev->dev,
+>> +						 rcb_size,
+>> +						 &dma,
+>> +						 GFP_KERNEL);
+>> +			alloc_type = RKVDEC_ALLOC_DMA;
+>> +		}
+>> +
+>> +		if (!cpu) {
+>> +			ret = -ENOMEM;
+>> +			goto err_alloc;
+>> +		}
+>> +
+>> +		cfg->rcb_bufs[i].cpu = cpu;
+>> +		cfg->rcb_bufs[i].dma = dma;
+>> +		cfg->rcb_bufs[i].size = rcb_size;
+>> +		cfg->rcb_bufs[i].type = alloc_type;
+>> +
+>> +		cfg->rcb_count += 1;
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +err_alloc:
+>> +	rkvdec_free_rcb(ctx);
+>> +
+>> +	return ret;
+>> +}
+>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-rcb.h b/drivers/media/platform/rockchip/rkvdec/rkvdec-rcb.h
+>> new file mode 100644
+>> index 000000000000..30e8002555c8
+>> --- /dev/null
+>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-rcb.h
+>> @@ -0,0 +1,29 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Rockchip video decoder Rows and Cols Buffers manager
+>> + *
+>> + * Copyright (C) 2025 Collabora, Ltd.
+>> + *  Detlev Casanova <detlev.casanova@collabora.com>
+>> + */
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +struct rkvdec_ctx;
+>> +
+>> +enum rcb_axis {
+>> +	PIC_WIDTH = 0,
+>> +	PIC_HEIGHT = 1
+>> +};
+>> +
+>> +struct rcb_size_info {
+>> +	u8 multiplier;
+>> +	enum rcb_axis axis;
+>> +};
+>> +
+>> +int rkvdec_allocate_rcb(struct rkvdec_ctx *ctx,
+>> +			const struct rcb_size_info *size_info,
+>> +			size_t rcb_count);
+>> +dma_addr_t rkvdec_rcb_buf_dma_addr(struct rkvdec_ctx *ctx, int id);
+>> +size_t rkvdec_rcb_buf_size(struct rkvdec_ctx *ctx, int id);
+>> +int rkvdec_rcb_buf_count(struct rkvdec_ctx *ctx);
+>> +void rkvdec_free_rcb(struct rkvdec_ctx *ctx);
+>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> index a7af1e3fdebd..5dd486edd64d 100644
+>> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> @@ -10,6 +10,7 @@
+>>    */
+>>   
+>>   #include <linux/clk.h>
+>> +#include <linux/genalloc.h>
+>>   #include <linux/interrupt.h>
+>>   #include <linux/iommu.h>
+>>   #include <linux/module.h>
+>> @@ -28,6 +29,7 @@
+>>   
+>>   #include "rkvdec.h"
+>>   #include "rkvdec-regs.h"
+>> +#include "rkvdec-rcb.h"
+>>   
+>>   static bool rkvdec_image_fmt_match(enum rkvdec_image_fmt fmt1,
+>>   				   enum rkvdec_image_fmt fmt2)
+>> @@ -771,6 +773,7 @@ static int rkvdec_start_streaming(struct vb2_queue *q, unsigned int count)
+>>   {
+>>   	struct rkvdec_ctx *ctx = vb2_get_drv_priv(q);
+>>   	const struct rkvdec_coded_fmt_desc *desc;
+>> +	const struct rkvdec_config *cfg = ctx->dev->variant->config;
+>>   	int ret;
+>>   
+>>   	if (V4L2_TYPE_IS_CAPTURE(q->type))
+>> @@ -780,13 +783,22 @@ static int rkvdec_start_streaming(struct vb2_queue *q, unsigned int count)
+>>   	if (WARN_ON(!desc))
+>>   		return -EINVAL;
+>>   
+>> +	ret = rkvdec_allocate_rcb(ctx, cfg->rcb_size_info, cfg->rcb_num);
+> The older variants do not seem to use rcb and there does not seem to be
+> any check check for rcb_num > 0 in rkvdec_allocate_rcb().
+>
+> Do we need to protect the call here or bail out early inside the func?
+We don't need to protect it, but we can certainly avoid allocating 
+things if not needed.
+>
+> Regards,
+> Jonas
+>
+>> +	if (ret)
+>> +		return ret;
+>> +
+>>   	if (desc->ops->start) {
+>>   		ret = desc->ops->start(ctx);
+>>   		if (ret)
+>> -			return ret;
+>> +			goto err_ops_start;
+>>   	}
+>>   
+>>   	return 0;
+>> +
+>> +err_ops_start:
+>> +	rkvdec_free_rcb(ctx);
+>> +
+>> +	return ret;
+>>   }
+>>   
+>>   static void rkvdec_queue_cleanup(struct vb2_queue *vq, u32 state)
+>> @@ -822,6 +834,8 @@ static void rkvdec_stop_streaming(struct vb2_queue *q)
+>>   
+>>   		if (desc->ops->stop)
+>>   			desc->ops->stop(ctx);
+>> +
+>> +		rkvdec_free_rcb(ctx);
+>>   	}
+>>   
+>>   	rkvdec_queue_cleanup(q, VB2_BUF_STATE_ERROR);
+>> @@ -1350,6 +1364,10 @@ static int rkvdec_probe(struct platform_device *pdev)
+>>   		return ret;
+>>   	}
+>>   
+>> +	rkvdec->sram_pool = of_gen_pool_get(pdev->dev.of_node, "sram", 0);
+>> +	if (!rkvdec->sram_pool && rkvdec->variant->config->rcb_num > 0)
+>> +		dev_info(&pdev->dev, "No sram node, RCB will be stored in RAM\n");
+>> +
+>>   	pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
+>>   	pm_runtime_use_autosuspend(&pdev->dev);
+>>   	pm_runtime_enable(&pdev->dev);
+>> @@ -1358,7 +1376,8 @@ static int rkvdec_probe(struct platform_device *pdev)
+>>   	if (ret)
+>>   		goto err_disable_runtime_pm;
+>>   
+>> -	if (iommu_get_domain_for_dev(&pdev->dev)) {
+>> +	rkvdec->iommu_domain = iommu_get_domain_for_dev(&pdev->dev);
+>> +	if (rkvdec->iommu_domain) {
+>>   		rkvdec->empty_domain = iommu_paging_domain_alloc(rkvdec->dev);
+>>   
+>>   		if (IS_ERR(rkvdec->empty_domain)) {
+>> @@ -1372,6 +1391,10 @@ static int rkvdec_probe(struct platform_device *pdev)
+>>   err_disable_runtime_pm:
+>>   	pm_runtime_dont_use_autosuspend(&pdev->dev);
+>>   	pm_runtime_disable(&pdev->dev);
+>> +
+>> +	if (rkvdec->sram_pool)
+>> +		gen_pool_destroy(rkvdec->sram_pool);
+>> +
+>>   	return ret;
+>>   }
+>>   
+>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.h b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
+>> index 3b1cc511412e..74f71542e031 100644
+>> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
+>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
+>> @@ -19,6 +19,7 @@
+>>   #include <media/v4l2-ctrls.h>
+>>   #include <media/v4l2-device.h>
+>>   #include <media/v4l2-ioctl.h>
+>> +#include <media/v4l2-mem2mem.h>
+>>   #include <media/videobuf2-core.h>
+>>   #include <media/videobuf2-dma-contig.h>
+>>   
+>> @@ -29,6 +30,7 @@
+>>   #define RKVDEC_QUIRK_DISABLE_QOS	BIT(0)
+>>   
+>>   struct rkvdec_ctx;
+>> +struct rkvdec_rcb_config;
+>>   
+>>   struct rkvdec_ctrl_desc {
+>>   	struct v4l2_ctrl_config cfg;
+>> @@ -117,6 +119,8 @@ struct rkvdec_coded_fmt_desc {
+>>   struct rkvdec_config {
+>>   	const struct rkvdec_coded_fmt_desc *coded_fmts;
+>>   	size_t coded_fmts_num;
+>> +	const struct rcb_size_info *rcb_size_info;
+>> +	size_t rcb_num;
+>>   };
+>>   
+>>   struct rkvdec_dev {
+>> @@ -129,6 +133,8 @@ struct rkvdec_dev {
+>>   	void __iomem *regs;
+>>   	struct mutex vdev_lock; /* serializes ioctls */
+>>   	struct delayed_work watchdog_work;
+>> +	struct gen_pool *sram_pool;
+>> +	struct iommu_domain *iommu_domain;
+>>   	struct iommu_domain *empty_domain;
+>>   	const struct rkvdec_variant *variant;
+>>   };
+>> @@ -141,6 +147,7 @@ struct rkvdec_ctx {
+>>   	struct v4l2_ctrl_handler ctrl_hdl;
+>>   	struct rkvdec_dev *dev;
+>>   	enum rkvdec_image_fmt image_fmt;
+>> +	struct rkvdec_rcb_config *rcb_config;
+>>   	void *priv;
+>>   };
+>>   
+>> @@ -149,10 +156,16 @@ static inline struct rkvdec_ctx *file_to_rkvdec_ctx(struct file *filp)
+>>   	return container_of(file_to_v4l2_fh(filp), struct rkvdec_ctx, fh);
+>>   }
+>>   
+>> +enum rkvdec_alloc_type {
+>> +	RKVDEC_ALLOC_DMA  = 0,
+>> +	RKVDEC_ALLOC_SRAM = 1,
+>> +};
+>> +
+>>   struct rkvdec_aux_buf {
+>>   	void *cpu;
+>>   	dma_addr_t dma;
+>>   	size_t size;
+>> +	enum rkvdec_alloc_type type;
+>>   };
+>>   
+>>   void rkvdec_run_preamble(struct rkvdec_ctx *ctx, struct rkvdec_run *run);
 
