@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-867187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AEF5C01D20
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:38:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E822C01CAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA773B2549
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:31:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3ECF6546C64
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1D0328609;
-	Thu, 23 Oct 2025 14:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0802932D439;
+	Thu, 23 Oct 2025 14:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oaoMS5IW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jx4Dsg5h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1373328E0;
-	Thu, 23 Oct 2025 14:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F9F32D433;
+	Thu, 23 Oct 2025 14:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761229842; cv=none; b=lB2wIhVQ+8oiSZt2FiBLJXLuctkb+Ni6RbDvyzWRqVtpMCf+dxBFrCPt3079s61qAabKPtGkWIs/aEsmejs682HPHRcr4cS2yFoxDWkTVk2LHkTm5DDXERQ9rVwkjLoCOwSWUSlP5uvr/gUyHDqL/SFVM6s9PeByeU+Yjr8B8os=
+	t=1761229845; cv=none; b=hZx36E8g0AxOut+DHNEXABFCAKePmz/p7r0Giu9olLaCeLdQOIJAgeqo0ytdO7nvFsMUj4nINuQyWHq+4+c/6tJ9r2yUrVn+sOjn7SEvLl0a96BUm/q9WpTGNHBVjlhWRGrd7xzHCgdEcP9LSPEJgaqoon1lFUSKT9rMvRHbw9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761229842; c=relaxed/simple;
-	bh=KKelnfCVSkqGfD/vx5rJBlReymKdSnPUEgmqAjBvnWQ=;
+	s=arc-20240116; t=1761229845; c=relaxed/simple;
+	bh=KCOKaI58Dqzg6Z/GWXMTAoM3n8N68zryV6zLecW4Hg4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=t5CD6ZmjSZXCRNN9ciK1N85cbw+xl58MwKxmXEWv64RTQdpFUzAGcVIETAhAZIw7wUlgo5fbZOsuBHJHzy9HONKTghgslOqrEai0uCD03yYKPzjWq0Dc0XRWAudGKnrE4sAbnyVcwVPh7uQfwIXUoGfK43m+ASeu30lmsScrp+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oaoMS5IW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B0F4C4CEF7;
-	Thu, 23 Oct 2025 14:30:39 +0000 (UTC)
+	 MIME-Version; b=kE5O3ECEUVur6y/vBnt99PWUkl8OFRu7Np3y7EeaoqR1N6lZxj1ZNPtc/gYZmfZIWFim2+uenyBLX6LbeHqE6qzcYma1kRnHOsGKQEiNjd9BSdK0TTyPI1Tlae7u/GPKUu9ggltfPVGA5W4357hT02OgRVK3ekSVjP5hGHMRQFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jx4Dsg5h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73951C4CEFF;
+	Thu, 23 Oct 2025 14:30:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761229841;
-	bh=KKelnfCVSkqGfD/vx5rJBlReymKdSnPUEgmqAjBvnWQ=;
+	s=k20201202; t=1761229844;
+	bh=KCOKaI58Dqzg6Z/GWXMTAoM3n8N68zryV6zLecW4Hg4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oaoMS5IWKn09HH1Iw8y4mS8NYzgZ+j+8ai1+ykb2cuEA9dKN6TRAp34bmiSZ2foYZ
-	 kvkUd4x46kK5ITscsZGS2nxjTxYCWiPW3b0/sdQaV7PS4o0mNjyj8V+S75fOnRPIwl
-	 GTlqompY+aSI5A+7rMfU41iuuW7epavWKCxwTTbKfNFqD/vOSHncyIAKZpH0l/cSWC
-	 QbyNgQXgUn2gnnQz74o5cstNQJNrghrCGRNNdUB+oBspT3tPnSWsjtEjAi8oQKzhKG
-	 SnjxNRRdQor6OV1otmPBktZvUruprJCzj7DIj4iLuPnf2YRjW3Fem69jfPoHdZM9i2
-	 1qX1nAqqb7Idg==
+	b=jx4Dsg5h37BhCHR27HmHVAovcAiL6og0kPvboXmWRvUt18NnZBVT4eYiMCflNrSOR
+	 nnzbnCrWn35VqVC6Wv61tm/SUBY291w8elnR+nzB5/KBhVSPGgbGlIF9HlqtHmzVDO
+	 GpJfQW5uOnLU9IYCeiW7Y50pHZ8eqgj5PL4Wjt6i4nVOCIqZwTKIWKKLDfzEBWHACV
+	 j8JCC+/1HyoS0PgWjfBkdM/SOc3/lypCPbBGqGtq27iVfd7Ae07oh5NUefDYqVrip6
+	 ksOKSjyq0e2eSXCtOAuxLNuS1PjdMo9rZQvcg33CySbpyrHT/33E8lIgOP/7Wp/yMc
+	 bAuSzPtaxD7oQ==
 From: Philipp Stanner <phasta@kernel.org>
 To: Matthew Brost <matthew.brost@intel.com>,
 	Danilo Krummrich <dakr@kernel.org>,
@@ -51,9 +51,9 @@ To: Matthew Brost <matthew.brost@intel.com>,
 Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	linux-media@vger.kernel.org
-Subject: [PATCH v2 1/4] drm/sched: Remove out of place resubmit docu
-Date: Thu, 23 Oct 2025 16:30:28 +0200
-Message-ID: <20251023143031.149496-3-phasta@kernel.org>
+Subject: [PATCH v2 2/4] drm/sched: Add a TODO list
+Date: Thu, 23 Oct 2025 16:30:29 +0200
+Message-ID: <20251023143031.149496-4-phasta@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251023143031.149496-2-phasta@kernel.org>
 References: <20251023143031.149496-2-phasta@kernel.org>
@@ -65,44 +65,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The documentation for drm_sched_backend_ops.run_job() details that that
-callback can be invoked multiple times by the deprecated function
-drm_sched_resubmit_jobs(). It also contains an unresolved TODO.
+The DRM GPU scheduler contains a huge number of problems. These should
+be documented for (new) contributors to pick up work.
 
-It is not useful to document side effects of a different, deprecated
-function in the docu of run_job(): Existing users won't re-evaluate
-their usage  of the deprecated function by reading the non-deprecated
-one, and new users must not use the deprecated function in the first
-place.
-
-Remove the out of place documentation.
+Add a TODO list with an example entry.
 
 Signed-off-by: Philipp Stanner <phasta@kernel.org>
 ---
- include/drm/gpu_scheduler.h | 10 ----------
- 1 file changed, 10 deletions(-)
+ drivers/gpu/drm/scheduler/TODO | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 drivers/gpu/drm/scheduler/TODO
 
-diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-index fb88301b3c45..9c629bbc0684 100644
---- a/include/drm/gpu_scheduler.h
-+++ b/include/drm/gpu_scheduler.h
-@@ -429,16 +429,6 @@ struct drm_sched_backend_ops {
- 	 *
- 	 * @sched_job: the job to run
- 	 *
--	 * The deprecated drm_sched_resubmit_jobs() (called by &struct
--	 * drm_sched_backend_ops.timedout_job) can invoke this again with the
--	 * same parameters. Using this is discouraged because it violates
--	 * dma_fence rules, notably dma_fence_init() has to be called on
--	 * already initialized fences for a second time. Moreover, this is
--	 * dangerous because attempts to allocate memory might deadlock with
--	 * memory management code waiting for the reset to complete.
--	 *
--	 * TODO: Document what drivers should do / use instead.
--	 *
- 	 * This method is called in a workqueue context - either from the
- 	 * submit_wq the driver passed through drm_sched_init(), or, if the
- 	 * driver passed NULL, a separate, ordered workqueue the scheduler
+diff --git a/drivers/gpu/drm/scheduler/TODO b/drivers/gpu/drm/scheduler/TODO
+new file mode 100644
+index 000000000000..79044adb7d01
+--- /dev/null
++++ b/drivers/gpu/drm/scheduler/TODO
+@@ -0,0 +1,12 @@
++=== drm_sched TODO list ===
++
++* Example Entry
++  - Difficulty: hard
++  - Contact:
++    - Danilo Krummrich <dakr@kernel.org>
++    - Philipp Stanner <phasta@kernel.org>
++  - Description:
++    This is an example.
++  - Tasks:
++	1. Read the example entry.
++	2. Remove the entry once solved (never in this case)
 -- 
 2.49.0
 
