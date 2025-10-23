@@ -1,166 +1,237 @@
-Return-Path: <linux-kernel+bounces-866630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C05C0047E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:37:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121EEC004A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094E43A3C5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:37:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EE0F19A360D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA7229BDA3;
-	Thu, 23 Oct 2025 09:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C293093D2;
+	Thu, 23 Oct 2025 09:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PxBvhXIA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LU/5yS3R";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uL1pIUmR";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hny0RdB4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t7GXBfMY"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CE33090C6
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598953090C4
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761212209; cv=none; b=CqIuEkdp6N34bBCQJv9GC8q8phjpHZlFvR6ROfWvoRKKUjzLWXZhkTXXbA3ys/AGWor3BNbLAJV/QyCT7YCuKarPSS05cAgnFZheLpCzhh1eP0mr38HUgUQ2RWrfJEMUuoPFD+o1DlQ8Djvrxe72YFhnA0I/aOvUiXnfcY0DtPc=
+	t=1761212257; cv=none; b=GLY4FQMDo98ZaNfVdJBxyCTpRGOYpOEHXdSX78JHYcZwuGHMC9TwoBSGP/0AiFJdSaFWQ/K8Xx8GncG0WplcxWvG3wny+spP8ESvLHiYCw4A9m7P23C9MUHP+9rTjTHOlHtGQt1r4qeHsI8+dOWWv2Hm/YhSV0FfLppNsvmH4eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761212209; c=relaxed/simple;
-	bh=31I2NZ9E16fvkibGKYsHIzjfGNy5b9QV8vluRHj+fjc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HZt7rDZZquO/QlD+hZTLxzSMrWWhqEf9JB0HPhhsEc2i0r4qgzbrwwUNuP6jaqxT8FHKilcUjJ3dYtcn3m9BRmkqZtF/A2wVS32JSXGP+XJ+TUskNbxTgNPUOeM3WIo3JjmGRnNAjjN1Xzx9u4gsVJgMr0iiuKBGVxAz4yp8IHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PxBvhXIA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N7FCOQ011761
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:36:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	K+iM28/6ufZlmOomF1p5E1/bkuTFa6Bw8f1OnjTV6/Y=; b=PxBvhXIASB+Tew5z
-	LahhQmxH6wst8V0qUTE1SOLZ+qyg1Ns1EuO374nnKPigUFPguw8M1zXnOPCOm+hj
-	FYdSNj0llMpTRgFFzQR/Qoirqy3EB8EJ9e3OM0dceb0YSOhas16XVE8LqFc6hsVW
-	3DJEfJlNrZR9Z7w4RWDwm8a7k1U0vF9KVS0IdTrrm8uHZj5LGkftPZ43ide3mn8V
-	Fu2BKMPimHQ3yZEp0h0uAnuail5MIj/gJaetzq5EoY1oe0hNbSgfDx7gX7Sk1tuT
-	WiINMPjOcX04IcGvJr2Ap+W/M0mK2ys/ksYG7ysTU6mL+ki+03rxUIDHpkz1ftsN
-	eN6aIQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49y524a1vk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:36:47 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-89083a0e150so14050685a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:36:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761212206; x=1761817006;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K+iM28/6ufZlmOomF1p5E1/bkuTFa6Bw8f1OnjTV6/Y=;
-        b=V/Z9xRMs4FsYbNm6RfSI98gjbQlCzm+14RM0Gd1IE0M2u0ruiV73xo+pEhq5T1yBkC
-         20oOTGC3sl2C3Vkx+epISC5rV6xid+Yqpn4a6YYGTb9y2bkHlcxxNq5rnITyPSSIqk+w
-         UeqIVHJAxNwVBYi+LAkHA5vxrmZlGE+wk7E7FGQE2AVG19aak+is4rr5c63c6SDhmH2o
-         IJZVAbq374bpyI2+Gj0uRtr8n0LKK4WOteYR1rd/w1dUXDadcHQhGbqf7f2qV1MKpQiJ
-         KDcG293fCMsTT3cJ5jpJhc/miCU+c15PjG5X122wQHbqWNP5//Zb9u5EGdMv58Q3vps3
-         O/dA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjgME+m1CqbRq+4khz0Hd56faByXgEAFRKWl8Ks53nCJlEkS7kf7zssK7B4g75AkAfF+4GD9hZlXZMkMk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4Z+9wqFHPXZXoYnWAz5z+tcNVnIcVy3O7CZYpoxkrwnd4K41w
-	8Nt/iFxcGrFVlXhJr5KSYy0EnzCx+Yf28e3zkLhRDONIXXykEoCzWiLi6urM4sC1z8z7SToB1QG
-	m1YCrI5+n8cAPr3CWFJffrXw2TJMNtosXzmj3Vn3vSEEyNkhAPZdYTDpxOcGq85H9m+o=
-X-Gm-Gg: ASbGnctZiDrWjb04EqzfsoKidipwg4qk32U+a/rKO8TdpKBdF25e9ZpStGn6vptCqn4
-	efdvNSPTjEXTSMOFpJFiUnxRxiFC0FUhsQEvayjTgLxrOiYTLdXJaCwfiLIedeno8CPLf/RKdb2
-	2UAi/nax1zcfofr9cCWzULkqI1NHmQCMEj0zvKuBGck21St5FMWMuKAygdzUk+MlTnov2yo1hur
-	01R+srFbr8o16Cr5kn1uWX9prtSwxQblbafZGtQFafcuvUR53nF7wXeNYwQ1AyP6CiRa2jNHUfP
-	9NSpitK7gpy+WvMOGLBG3Sy3Jg0Wn7HpTRroAw0QT6z5kWWNU8rcRZ4h6119tl/18e3KEAKf99n
-	6NDWYqujJbDML8QbtKbUsol2ECcZFBbvQk60bITidD7lk5TcX8xiuJpY5
-X-Received: by 2002:a05:620a:190e:b0:85a:4bc8:3d2d with SMTP id af79cd13be357-890706fe6admr2117633485a.8.1761212206517;
-        Thu, 23 Oct 2025 02:36:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH6mY50FZNSqye8z3osZjKohykPCr4NQ1LXRm9tZBZ3NgHs0Ck4cRYybkcjDjgqxKHupXrKRw==
-X-Received: by 2002:a05:620a:190e:b0:85a:4bc8:3d2d with SMTP id af79cd13be357-890706fe6admr2117630485a.8.1761212205954;
-        Thu, 23 Oct 2025 02:36:45 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d5147240csm159119066b.73.2025.10.23.02.36.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 02:36:45 -0700 (PDT)
-Message-ID: <10999a80-df1a-45c5-ba1e-e64b2afeeb4f@oss.qualcomm.com>
-Date: Thu, 23 Oct 2025 11:36:42 +0200
+	s=arc-20240116; t=1761212257; c=relaxed/simple;
+	bh=o5BtFZIm837qddv5i2fr1EKRdue0SPouZ8RzRp+CGfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fRRz8m6M9hdeiOzKnvFFuMXCIGYjmE3IhvJ9aVgpz9If54FVZKqUXqSG1VJVd6k2MfNsf+oEs8BizVl2o9jiVKzffSfz9XpSN5P3toRMS2vUnXwxUjCUjjxWtvWI7HfBV/kQ2JsqTXD/fHOSwqEYtROz6oSWT7swfwq7cVb8TSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LU/5yS3R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uL1pIUmR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hny0RdB4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t7GXBfMY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4DB9F1F388;
+	Thu, 23 Oct 2025 09:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761212249; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxP+/O6Wpl//xRTgUvAUeHTOU3h8ER8X0cqpJ8cKmpk=;
+	b=LU/5yS3RC8FrIC0QpaOAIilIPVo0TLduOY3AWCPGA6BobFE13lTDpn9+SV11lJn77agCcE
+	vEnPPmZhYkQfdWV36//PsiBLWrlST69ajpllUQejLV4wcMewonZiPDPhTJgbY4eeOJajff
+	sWQlnfK4uOKW1bSkXzv/aHDYPSCcwhY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761212249;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxP+/O6Wpl//xRTgUvAUeHTOU3h8ER8X0cqpJ8cKmpk=;
+	b=uL1pIUmRTNpECOZgs8QebhRKXbKiSIfrdEkqBgjXzUuHEluM4CX4BmxRWl10xHD2+jvCCO
+	o6EbLcyHQ1IYQsCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761212245; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxP+/O6Wpl//xRTgUvAUeHTOU3h8ER8X0cqpJ8cKmpk=;
+	b=hny0RdB44tCxXfVG5kXbxljg2OduQjTiDJvUtB3QjYmX442ek9QsNEGU8MdsY1l1zC+p12
+	lOs2MdTGzr/j1ZUidiC4CE7KFg0XDJLIBa03Nslhgf+bEKdSFiTbj6wlEDSnTeqlK+lobV
+	YoOOkUPOMjIBXOPGz3lFDjIbiqqgkCY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761212245;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mxP+/O6Wpl//xRTgUvAUeHTOU3h8ER8X0cqpJ8cKmpk=;
+	b=t7GXBfMY7/0bvXiEGsumtSau/j3cPXl0f1UuZvT6uW5Zspqndd1KD40xRT7otK/IxMmgTh
+	CqtbykZbOZK+WXDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4078813285;
+	Thu, 23 Oct 2025 09:37:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Abi6D1X3+WgsSAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 23 Oct 2025 09:37:25 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D80CBA054D; Thu, 23 Oct 2025 11:37:24 +0200 (CEST)
+Date: Thu, 23 Oct 2025 11:37:24 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Kiryl Shutsemau <kirill@shutemov.name>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH] mm/filemap: Implement fast short reads
+Message-ID: <dupgze7vl2vvndyasmm34ebhzxzumv3sz425qvbquruzvqgf4r@q66h2eeaxs7h>
+References: <20251017141536.577466-1-kirill@shutemov.name>
+ <20251019215328.3b529dc78222787226bd4ffe@linux-foundation.org>
+ <44ubh4cybuwsb4b6na3m4h3yrjbweiso5pafzgf57a4wgzd235@pgl54elpqgxa>
+ <aPgZthYaP7Flda0z@dread.disaster.area>
+ <CAHk-=wjaR_v5Gc_SUGkiz39_hiRHb-AEChknoAu9BUrQRSznAw@mail.gmail.com>
+ <aPiPG1-VDV7ZV2_F@dread.disaster.area>
+ <CAHk-=wjVOhYTtT9pjzAqXoXdinrV9+uiYfUyoQ5RFmTEvua-Jg@mail.gmail.com>
+ <aPneVmBuuTHGQBgl@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/12] dt-bindings: display/msm: qcom,kaanapali-mdss: Add
- Kaanapali
-To: "Rob Herring (Arm)" <robh@kernel.org>,
-        yuanjie yang <yuanjie.yang@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, mripard@kernel.org,
-        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
-        marijn.suijten@somainline.org, abhinav.kumar@linux.dev,
-        simona@ffwll.ch, devicetree@vger.kernel.org,
-        tingwei.zhang@oss.qualcomm.com, krzk+dt@kernel.org,
-        freedreno@lists.freedesktop.org, neil.armstrong@linaro.org,
-        quic_mkrishn@quicinc.com, linux-arm-msm@vger.kernel.org,
-        lumag@kernel.org, airlied@gmail.com, sean@poorly.run,
-        maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
-        jonathan@marek.ca, robin.clark@oss.qualcomm.com,
-        quic_khsieh@quicinc.com, conor+dt@kernel.org,
-        yongxing.mou@oss.qualcomm.com
-References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
- <20251023081736.1251-1-yuanjie.yang@oss.qualcomm.com>
- <176121209123.1694835.2815069098750745260.robh@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <176121209123.1694835.2815069098750745260.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDE1NSBTYWx0ZWRfX56Uljw6tbGMx
- kb2CDYg755xuT2SqMp8SdHsxApjFv0azde5k1IM+T72QLk+exGEiHEjTpygh6dnoBfE3wVOkORH
- W87pWdCJ30o/gXPEJ5HnddnJ4lKpkKFKshrLH3KCdnNOVTMgs28TysdjymFMfjbzHIJAxduX5rU
- p69blEwALDna95JJt2mC655xDGAwg1cXTEppcPcZ2deNZKkMErPZNSp6IKn02qNZxbDz8tGA96/
- bWuMd201bx520z3cXP3PZdnbl523wJQlg8HQzb9QyIlPamuUPNhw8QWTSSuznTtJLxSF0gJcMX5
- ChMrGDGuYmKpQKVMP8oJmWPhfPPs8SvrK9jCepCdYx4MxJfTCatPODtuEybe1NvCvylhb7+YU46
- PjCE5GynvmJDvnu7CmrXImfyz8VcgQ==
-X-Authority-Analysis: v=2.4 cv=Uotu9uwB c=1 sm=1 tr=0 ts=68f9f72f cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=SdGosrV6Qt3YffhYJa8A:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-GUID: l9zj5ZyP2roznEp1ggbxES82taa16Hvl
-X-Proofpoint-ORIG-GUID: l9zj5ZyP2roznEp1ggbxES82taa16Hvl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 impostorscore=0 priorityscore=1501 clxscore=1015 spamscore=0
- adultscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510220155
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPneVmBuuTHGQBgl@dread.disaster.area>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On 10/23/25 11:34 AM, Rob Herring (Arm) wrote:
+On Thu 23-10-25 18:50:46, Dave Chinner wrote:
+> On Wed, Oct 22, 2025 at 05:31:12AM -1000, Linus Torvalds wrote:
+> > On Tue, 21 Oct 2025 at 22:00, Dave Chinner <david@fromorbit.com> wrote:
+> > >
+> > > On Tue, Oct 21, 2025 at 06:25:30PM -1000, Linus Torvalds wrote:
+> > > >
+> > > > The sequence number check should take care of anything like that. Do
+> > > > you have any reason to believe it doesn't?
+> > >
+> > > Invalidation doing partial folio zeroing isn't covered by the page
+> > > cache delete sequence number.
+> > 
+> > Correct - but neither is it covered by anything else in the *regular* read path.
+> > 
+> > So the sequence number protects against the same case that the
+> > reference count protects against: hole punching removing the whole
+> > page.
+> > 
+> > Partial page hole-punching will fundamentally show half-way things.
 > 
-> On Thu, 23 Oct 2025 16:17:36 +0800, yuanjie yang wrote:
->> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
->>
->> Add MDSS/MDP display subsystem for Qualcomm Kaanapali.
->>
->> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
->> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
->> ---
->>  .../display/msm/qcom,kaanapali-mdss.yaml      | 298 ++++++++++++++++++
->>  1 file changed, 298 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,kaanapali-mdss.yaml
->>
+> Only when you have a busted implementation of the spec.
 > 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> Documentation/devicetree/bindings/display/msm/qcom,kaanapali-mdss.example.dts:26:18: fatal error: dt-bindings/interconnect/qcom,kaanapali-rpmh.h: No such file or directory
->    26 |         #include <dt-bindings/interconnect/qcom,kaanapali-rpmh.h>
+> Think about it: if I said "partial page truncation will
+> fundamentally show half-way things", you would shout at me that
+> truncate must -never- expose half-way things to buffered reads.
+> This is how truncate is specified to behave, and we don't violate
+> the spec just because it is hard to implement it.
 
-Please do what you did with the other clocks and simply refer to it
-as some vague &rpmhcc_xo_clk which doesn't actually need to be defined
+Well, as a matter of fact we can expose part-way results of truncate for
+ext4 and similar filesystems not serializing reads to truncate with inode
+lock. In particular for ext4 there's the i_size check in filemap_read() but
+if that passes before the truncate starts, the code copying out data from
+the pages can race with truncate zeroing out tail of the last page.
 
-Konrad
+> We've broken truncate repeatedly over the past 20+ years in ways
+> that have exposed stale data to users. This is always considered a
+> critical bug that needs to be fixed ASAP.
+
+Exposing data that was never in the file is certainly a critical bug.
+Showing a mix of old and new data is not great but less severe and it seems
+over the years userspace on Linux learned to live with it and reap the
+performance benefit (e.g. for mixed read-write workloads to one file)...
+
+<snip>
+
+> Hence there is really only one behaviour that is required: whilst
+> the low level operation is taking place, no external IO (read,
+> write, discard, etc) can be performed over that range of the file
+> being zeroed because the data andor metadata is not stable until the
+> whole operation is completed by the filesystem.
+> 
+> Now, this doesn't obviously read on the initial invalidation races
+> that are the issue being discussed here because zero's written by
+> invalidation could be considered "valid" for hole punch, zero range,
+> etc.
+> 
+> However, consider COLLAPSE_RANGE.  Page cache invalidation
+> writing zeros and reads racing with that is a problem, because
+> the old data at a given offset is non-zero, whilst the new data at
+> the same offset is alos non-zero.
+> 
+> Hence if we allow the initial page cache invalidation to race with
+> buffered reads, there is the possibility of random zeros appearing
+> in the data being read. Because this is not old or new data, it is
+> -corrupt- data.
+
+Well, reasons like this are why for operations like COLLAPSE_RANGE ext4
+reclaims the whole interval of the page cache starting with the first
+affected folio to the end. So again user will either see old data (if it
+managed to get the page before we invalidated the page cache) or the new
+data (when it needs to read from the disk which is properly synchronized
+with COLLAPSE_RANGE through invalidate_lock). I don't see these speculative
+accesses changing anything in this case either.
+ 
+> Put simply, these fallocate operations should *never* see partial
+> invalidation data, and so the "old or new data" rule *must* apply to
+> the initial page cache invalidation these fallocate() operations do.
+> 
+> Hence various fallocate() operations need to act as a full IO
+> barrier. Buffered IO, page faults and direct IO all must be blocked
+> and drained before the invalidation of the range begins, and must
+> not be allowed to start again until after the whole operation
+> completes.
+
+Hum, I'm not sure I follow you correctly but what you describe doesn't seem
+like how ext4 works. There are two different things - zeroing out of
+partial folios affected by truncate, hole punch, zero range (other
+fallocate operations don't zero out) and invalidation of the page cache
+folios. For ext4 it is actually the removal of folios from the page cache
+during invalidation + holding invalidate_lock that synchronizes with reads.
+As such zeroing of partial folios *can* actually race with reads within
+these partial folios and so you can get a mix of zeros and old data from
+reads.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
