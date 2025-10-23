@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-867706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A38AC03535
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:08:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 763FCC03544
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6523A4FB165
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:08:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C503ACAA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6EF2D6620;
-	Thu, 23 Oct 2025 20:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBC534D4EE;
+	Thu, 23 Oct 2025 20:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bCF3xmyq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h/LiE1VL"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9EB2FE045
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B6428E00
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761250131; cv=none; b=Gng76JnhPr2WILifE7JzOAvANvTK5rTgJwPPB68Yogw+yWdZYCgZpZMPXeGgpjK9fRgoFQjaohapUVy8RM6ZTE2nlJTlTqBP1sa1vlfKl2Wz/3lkXBkYtSKuVyOFcjzsT/2d7EKJoD/n56Oj5dkhu+eUx3gpmCoADC4fZi9lUz8=
+	t=1761250248; cv=none; b=Ivehvu1ReMmGFtx2Gfemeo/dw+ZifNUaaEptcc5EUkqlLeMT1LKonN3C34gpNdnHYVO5R2E3nAOAnNhlH8SpPCDO7n3EKrWW/W1w4Fms1hp6e6+9ahBAKMkog+zSS3kJCxs6ugTFW5jLD+gOWYmZUf5A4zCY1Zqb0Pqo16e2Aq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761250131; c=relaxed/simple;
-	bh=jd0foNsVUx7vuW7hrJkNLuYHmDwu7znPWPNmcR7yp+0=;
+	s=arc-20240116; t=1761250248; c=relaxed/simple;
+	bh=ho4xjozFBlQsv6WUbw/2CElrlgJeMb1GsjDzweKmAvI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Th39dldbftJ0wvlp+wZ7H4JlR2W6RsYAFIFjAPQP6iuvUR0Vx4n5T2jWaqmqBf98V1jV3rPFDRy0xfZWiCg0C/qLZJeS5s4y1IPU1Izc4e/dzJqCpcnzgaaIZQJGuw6KiAB0gXgnlJWsnSu5eS5lgWC1IGAb3eTjillTMScUofc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bCF3xmyq; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=C4hSdWKxZCIeSSXMjCEXSSt1AFKSNjFUSgBPRsmkcHRNLpLYY7uaVSuGbYCXZq5tNeRPf/3NRLzFu8h2Zp900NbxTpgdpjtib2F1tF6hy1lDNMp4xGKwT7oEifGi2iKyIIUvF7JdE0zOIl0UjF6QKxS6jFTK4kScfhPdMyqK4m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h/LiE1VL; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761250129;
+	s=mimecast20190719; t=1761250246;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3/xqA5Sno72zZ6iNEmFJ5mtAMbJynT1rhUprvMytuFY=;
-	b=bCF3xmyqGhAxt2D2zsQiWIznqj3FOVeCl8+sQxO6yKNFtnMpL135Jc/DC0DOkc1XLWUoc2
-	pXdCjS8oBzwVVJ+12YJR+8XrsXAnhVOMz+56GtAw8+/GYjuqBssaC6vW/Gpnz3v8BQlVns
-	H/8D9KEJKADshfRX0oPJFucs6QKMZ7g=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=vF8Hb3hnoXfLSdgr9uXEesJUum0OfpN/YlQIs62F7QU=;
+	b=h/LiE1VLs76LoKbFzr32dVFOaHAicbQTFrMx7VjHQvFzjSLnZZlN3mCT7kVMnKE+2Ji+6Q
+	Zk8ofKlt4iffiKUoeL8WbmY5j9rEe1mqHBeG5regsDPXCfT/Rs14xBgZMTCK7Ihlc7xOPE
+	E92aNOSvYX1DuHMegPx3Es8RSpikEQY=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-616-W4Appp-FMU2fFaGApEqT9Q-1; Thu, 23 Oct 2025 16:08:47 -0400
-X-MC-Unique: W4Appp-FMU2fFaGApEqT9Q-1
-X-Mimecast-MFC-AGG-ID: W4Appp-FMU2fFaGApEqT9Q_1761250127
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4710c04a403so10668575e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:08:47 -0700 (PDT)
+ us-mta-218-NO6y2YFZOpy3-GNxXimjoA-1; Thu, 23 Oct 2025 16:10:44 -0400
+X-MC-Unique: NO6y2YFZOpy3-GNxXimjoA-1
+X-Mimecast-MFC-AGG-ID: NO6y2YFZOpy3-GNxXimjoA_1761250243
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-47114d373d5so10072305e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:10:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761250126; x=1761854926;
+        d=1e100.net; s=20230601; t=1761250243; x=1761855043;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3/xqA5Sno72zZ6iNEmFJ5mtAMbJynT1rhUprvMytuFY=;
-        b=Y8sg82GW9Pr1aSqw2EEDjUlZ8DuRdAj6AftcusPsdVA7arjwbsR2YhxguglpBe1J8T
-         q0G6+KznSQaxf0gOQk6z2dKC6cCkq6Q+Ucb7SssbY6TFYtfSPoN99KKBH34vcoYcPiPT
-         fyigpt+IHs8yDm1DhFz99ELbiGhhGGbP6Ce5QELJ7wYiVxKHKAWZ6e/9WJ8U4NxkKhYi
-         XcCgpYWxHhey6vvDCBOW6ECw+m1N/0reRxQ+okvAFly4oV+57nEzgHdmisaArQEvjUPU
-         jZmK8sqcVPLYgOyEJdgsk6iDLbyyAYSJShZKekxCH03YdI37c7CFIRRY3lJ/sDDEnfx3
-         v5cg==
-X-Gm-Message-State: AOJu0YwAVxJg1rlIxNqog88lqzrkSadgv3592D191UH2xSYvJPZTrIed
-	skhOFzrVQB1zdQDMuuRvmujwqt0KjwG1kiilvEOxiACjO+YncQouV8ysSG8XGRuss5R45hRAiC/
-	3TptevO6DHol2Ze7oW2oOEJLFIZfZMk0gNzfcZ33bSAxZKPEVEkvZ6F+Jb9rk6QPz+A==
-X-Gm-Gg: ASbGncvEFTRhRN4RvS8pkih/w+tVuJ6lztpqYk2v9FNX9K2y/2Da1tpIFF0BA5dOZfU
-	NIGMBJf5Y4Xq8XzrbloEPvUgYE8wgzdpUZrQtUAU0kSsRcKBPTobVr0ATuM9IBsDi8rZgtYMHdp
-	mjuV9yjpU8gyr309MWIEhkQ8VMbQmqzLB3oD1zVzcFOz7ggwYiyj3ZcTOx0c8pNZ71VwX17O+5c
-	u12Kie6k90cnnlZ6Z52fH9KIdaplMqL0PmTrNgxEl+JeKKHWwFWRzR1//2Put8no5uE9bFw/hj1
-	pnFImnRaEcEt+1W7xv0LeCAyobqTX2txkP5U830IXTWpBOCzu0OGlvuwWZciYzXKt6yJGFmaD1X
-	8V6etunEWSaPDHWIwAE3wSxeQoYbmLD8LOg1vi13duafyMrgynfymXBKYiJVGjOqFW+mzFvO+Pw
-	C3qJX0ZLa5VTDxC49KoDTgWpMirpc=
-X-Received: by 2002:a05:600c:4fd4:b0:471:13dd:bae7 with SMTP id 5b1f17b1804b1-4711791c5dfmr213019125e9.30.1761250126417;
-        Thu, 23 Oct 2025 13:08:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFhLOfkc2goKkbSV/WelWxssM1PnfK27SOZ93tRWz4irrY4Van7GhpXF/QUV/ppkvRzGCYJqQ==
-X-Received: by 2002:a05:600c:4fd4:b0:471:13dd:bae7 with SMTP id 5b1f17b1804b1-4711791c5dfmr213018935e9.30.1761250125948;
-        Thu, 23 Oct 2025 13:08:45 -0700 (PDT)
+        bh=vF8Hb3hnoXfLSdgr9uXEesJUum0OfpN/YlQIs62F7QU=;
+        b=oc8x0pPPAsoZ9GecVYty6i9ulJt+D372tYGoCpfWRMvPdFIJqNSYMUZ5ZoDaJwZZiy
+         4BKiEIBM2fhW26NjHJCDoMQ1lYR9oX7TEkYNvbS1L0N+z2t8NBJncPZzp6xdu0nI0t4c
+         GIrPR2F2zKMCeCZCyARvJBP3xjTzoOO0fXC/K1+FDiwiwD4EaXstS0auIhg8GbHkDLk9
+         k5x5jOmI1c4+o+qh39eL4brUr6w7IgfOUaMtqR5DjNdGPTQlfah91gXiK0Y+hWo6ReL3
+         2Uw4OdJgH/kqGoJGntg3oH3gGr45CFYBKambYCepUeHUApniJn4pPJ2jjgbg52cHd2Lz
+         OpNA==
+X-Gm-Message-State: AOJu0YzDf+guXKTFjUMAtW5eq7LJinjmxQeKwhDcIKpJ3oTuG+ZJayGS
+	f9zuLP9cNUUyJnGrgb9xNt0NShN2sPZyksac6E7lo5l1x9uyzyvJ1EKcLTwG3rrvBOi1Be9Rygs
+	0ThE0CdXecL6ge7PVy9BxqSiUY8QSS2rgeDXA0VQY1H0cdcWx3R3oE8bcKsSCIUasq7Z6GRLjQQ
+	==
+X-Gm-Gg: ASbGnctKBDzhFGj9u3UNslILXbyhc6pcbMu0iinPFM0LRgo2AmdJrc5oTlwLgXzg/ay
+	GZRyLiti4Kf6n0WNbbbCwAGA2GKJpQxHDDFryfDNRXyge7BodugL6rRT5iQ/zbimIeiXBbQCme8
+	OC1CxAO/4HehQObzT9cxngF9YGMNLOG+/4TuFc82R3ylR9RjYVN1dsoILehLsMnfWgmQfrYg7o2
+	kFBS7S8FGu9mveTMr9RfhNt5fOVtFLzrhULPMsnti1wcTgBMsfuWIU+rwbueUV60jaytOdv8Ckb
+	Sn9tnJWRc2pHU+XYrl9y03iSuCFGsi1Flemvt3TcRjnmT9hxiXiozDBrGxeJrtb3L9gvL/W2yku
+	FmvX0F+FmSWeQQBoSzCC1seyzQ+lSV3NUFMxEUgv1H10Eum56KOA6fNIHu2NtozicjvQl/UZlth
+	rZ9fQwU9sAZkIAQ56Zb6XoQ5ftWuA=
+X-Received: by 2002:a05:600c:6291:b0:471:a43:123f with SMTP id 5b1f17b1804b1-471178a6882mr200628595e9.9.1761250243303;
+        Thu, 23 Oct 2025 13:10:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEznsO/mZG7bXXGeVpf9lUsRK7DtoSEnI7rqyr8WVIAgGuBjLQ7Sb3p9c9Pj2m7/SEml5RHBQ==
+X-Received: by 2002:a05:600c:6291:b0:471:a43:123f with SMTP id 5b1f17b1804b1-471178a6882mr200628295e9.9.1761250242917;
+        Thu, 23 Oct 2025 13:10:42 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4342373sm135497185e9.12.2025.10.23.13.08.43
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898cceebsm5532934f8f.37.2025.10.23.13.10.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 13:08:45 -0700 (PDT)
-Message-ID: <28f2ebe9-cfed-41c3-803f-8756dca0e300@redhat.com>
-Date: Thu, 23 Oct 2025 22:08:43 +0200
+        Thu, 23 Oct 2025 13:10:42 -0700 (PDT)
+Message-ID: <3d6bba2d-9739-41d0-8f3a-f8b11620c33f@redhat.com>
+Date: Thu, 23 Oct 2025 22:10:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,8 +90,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/13] mm: bail out of lazy_mmu_mode_* in interrupt
- context
+Subject: Re: [PATCH v3 13/13] mm: introduce arch_wants_lazy_mmu_mode()
 To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
  Andreas Larsson <andreas@gaisler.com>,
@@ -113,7 +113,7 @@ Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
  linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
  sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
 References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
- <20251015082727.2395128-13-kevin.brodsky@arm.com>
+ <20251015082727.2395128-14-kevin.brodsky@arm.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -160,55 +160,28 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20251015082727.2395128-13-kevin.brodsky@arm.com>
+In-Reply-To: <20251015082727.2395128-14-kevin.brodsky@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 15.10.25 10:27, Kevin Brodsky wrote:
-> The lazy MMU mode cannot be used in interrupt context. This is
-> documented in <linux/pgtable.h>, but isn't consistently handled
-> across architectures.
+> powerpc decides at runtime whether the lazy MMU mode should be used.
 > 
-> arm64 ensures that calls to lazy_mmu_mode_* have no effect in
-> interrupt context, because such calls do occur in certain
-> configurations - see commit b81c688426a9 ("arm64/mm: Disable barrier
-> batching in interrupt contexts"). Other architectures do not check
-> this situation, most likely because it hasn't occurred so far.
-> 
-> Both arm64 and x86/Xen also ensure that any lazy MMU optimisation is
-> disabled while in interrupt mode (see queue_pte_barriers() and
-> xen_get_lazy_mode() respectively).
-> 
-> Let's handle this in the new generic lazy_mmu layer, in the same
-> fashion as arm64: bail out of lazy_mmu_mode_* if in_interrupt(), and
-> have in_lazy_mmu_mode() return false to disable any optimisation.
-> Also remove the arm64 handling that is now redundant; x86/Xen has
-> its own internal tracking so it is left unchanged.
+> To avoid the overhead associated with managing
+> task_struct::lazy_mmu_state if the mode isn't used, introduce
+> arch_wants_lazy_mmu_mode() and bail out of lazy_mmu_mode_* if it
+> returns false. Add a default definition returning true, and an
+> appropriate implementation for powerpc.
 > 
 > Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 > ---
->   arch/arm64/include/asm/pgtable.h | 17 +----------------
->   include/linux/pgtable.h          | 16 ++++++++++++++--
->   include/linux/sched.h            |  3 +++
->   3 files changed, 18 insertions(+), 18 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 944e512767db..a37f417c30be 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -62,37 +62,22 @@ static inline void emit_pte_barriers(void)
->   
->   static inline void queue_pte_barriers(void)
->   {
-> -	if (in_interrupt()) {
-> -		emit_pte_barriers();
-> -		return;
-> -	}
-> -
+> This patch seemed like a good idea to start with, but now I'm not so
+> sure that the churn added to the generic layer is worth it.
 
-That took me a while. I guess this works because in_lazy_mmu_mode() == 0 
-in interrupt context, so we keep calling emit_pte_barriers?
+Exactly my thoughts :)
 
+I think we need evidence that this is really worth it for optimizing out 
+basically a counter update on powerpc.
 
 -- 
 Cheers
