@@ -1,105 +1,159 @@
-Return-Path: <linux-kernel+bounces-866491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C0DBFFE80
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:25:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28AE5BFFE83
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B6C24FB3CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:25:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E288F1A60ED3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0AF2FD685;
-	Thu, 23 Oct 2025 08:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56D92F6198;
+	Thu, 23 Oct 2025 08:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gSgWDDHn"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJW/jBvn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D072F90CC
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212012F39CD
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761207883; cv=none; b=HE+MxeC+Q/Idcjx+Kxzvlz1cBiotiE9okEuf+VjxWgEpxWQnA0qssHc6ct4Iq7EX7frZbiMNIRhZWVgAk3k1f2Fcu9vAf+UwEq+wN53piLDE5YjtVutBAtu9NCxzxsTf+6JlfggMYzLGa9yyqhgdlus6LD0G1GxOPtiG2I0POXY=
+	t=1761207909; cv=none; b=jvNH8gkUzO/RqRknRYzOaF+tBk418pHasD5dl3UAQ8Lu66taCfBOVthR68/pZTE4u/F8NU98KiME9h9U7wsen0mOeUvDEAUj/BopQBaymp2YgNkBswrPolOUGV5bnXlYoNpr83ZYsR1cS6WsnK7haaSelqXln1HOiWq+MuIWn1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761207883; c=relaxed/simple;
-	bh=mPm/G6LF4D7ftdatB1aDagh6p6TkQy5ofCUYvdeEZZw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=P3vXOSSqiGUNFrpyVt9I5t4eseBr4uc0oKWZA1/BhtKwFyBpDzeLv9gQLlq9TH2vu+L1m7zFJ/kcWbiyP5NDjxzD4sVvlTx2XW3GcYnu+gpJWHkyDTwIDGSbB1bmOuiVbBDYLE4J7eheJVLsLcOazj5GETr1FHMZEVziRas6jYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gSgWDDHn; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-47113dcc1e0so2923995e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:24:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761207879; x=1761812679; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWL5Ken7nj71m4OC5w42brfuU7IImlNx1mbsco2vxt8=;
-        b=gSgWDDHnJGYmwGIdrypEmDfwxnwApsgt5olDxGaNmLchNQkxd3U386wYSPuwGuD3Wb
-         lVJ+VIGL+XENccQk2WSCNOv+dA/KaGobnkX7/wehuacDNggG8592qIellNTkXZ6uwKCi
-         6BtaoCWE9Dqy8jKV4QnYT4KedW4vEpzFXDm4WbkTbg2MmRg2OKyQT0xzqOw7Dr/dTmaL
-         hjRIC7/eVY6bRTOG2dyVGjeFdZeG7N4d19j9NRT88eiDDHzrAYiEhvQV+pMGnKC5kI6q
-         NUKCuhKB04gqEXazZ63QyCLQi/n7w/bc5HH0qFl9yI1KQgU6Ymxwl6iasovtNsHolLnJ
-         S27Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761207879; x=1761812679;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWL5Ken7nj71m4OC5w42brfuU7IImlNx1mbsco2vxt8=;
-        b=TSfw62gCypchSlq1Xh4ww7l7xTdhySOLUz2wpp6pDanfTmlnLHR4AGlIOUxieA/Lzy
-         mv1QFTyZx5zLqN98HOfUEoxpBYljlZoGpnpfCkOY503tt2WzH9yKIzzoNrjU0QEyMeoo
-         FDOAJD+z0CTQJvHQ+UCS0r2d1QGoKElHdB7aJK8scak65XK12IBOpn+1FNYdM6LirPUo
-         H3EsIcukc//Pe0nts2TaSHRtnj5D3Xl4l3OsQ8f0v/midkwh2RJm2AsV8AidxLl/VDAh
-         gbaZLoeH7aWvMIOU2veIJZ/6ODL50EfPPiipk6jt8rure73kdeBedtrWsk+gPFUlChhe
-         F7Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXt8iP/4lWrvZmT6xri4dNp3Q8DqPw7XZ7buZgDbhJa5qS+kWnZY4f1cZ9OWiIqIXHmZwLtVu6Bao+Pfag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkEXJqKzxKDYnM5z3ecUPaW7RAXuVl3O/0HZcEwoIJ80YiIA9Y
-	slYRurxWvv94j7+toSC4iGkU5ex8p5RxGnbOMcrwobQrSScJ+JmdaFgveurDFVxB/nG8lhpEgs4
-	3S7nzLNiD8oSvyW27VQ==
-X-Google-Smtp-Source: AGHT+IG9CY0EOkHtRRihqXWBOF4xpRsbIyChrOM1QL3oPkUpG+EWq+Zl74uct5FqSuMTOhxCZDqRJe4FTo9EuzY=
-X-Received: from wmwj10.prod.google.com ([2002:a05:600d:82aa:b0:46e:3212:7c8f])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:5299:b0:471:95a:60b1 with SMTP id 5b1f17b1804b1-471179192d4mr213973515e9.32.1761207879258;
- Thu, 23 Oct 2025 01:24:39 -0700 (PDT)
-Date: Thu, 23 Oct 2025 08:24:38 +0000
-In-Reply-To: <20251022143158.64475-8-dakr@kernel.org>
+	s=arc-20240116; t=1761207909; c=relaxed/simple;
+	bh=8uFSr6rrAqRbXJyqL++cJk6NZkw/N9HzJnLXjE8DGCw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y1mXjLm8KBNxggdFbqEhfWg9RG0ewbcmEmxKWOwyJ+++JACKbfUMe92/qXo8XUvRZ7MJUCTTPmhiLJIaL5HWu9Wyudc5saIqgZLJhYLXV67b/2RRwD4VxukvzVvIYNkkdYoaYGtZwqTZkLooyD/njbY7ZgZjriR49ckzkvkpw4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJW/jBvn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 889EFC4AF09
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:25:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761207907;
+	bh=8uFSr6rrAqRbXJyqL++cJk6NZkw/N9HzJnLXjE8DGCw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GJW/jBvnRT77pUoElHY4MI+M8h7Lb2CPmZH1H9Rh7RdxaJ9QYhUfuHE2vQ2+BV5Sd
+	 cg0GnzOpmcM8C4JS02qnvvjDtvnQr3lUpQjcr8AjQAmRCgzPgT5sYbdHIF3oCd8Oax
+	 EyC1uklPKUlcRmQvOAvrrfkqsy5dRRAECJPEldJaMZQ3p7jMpEwQKZDCbuOFhQaRLU
+	 S0bg1BWJ/efFfmTkEnL4yZCp5Y6l5WszOLkl8ak/ttqT/3QqMHGG03iOuAVzIW7JEO
+	 q7pNo3Fmfx8sHw9lQ2IOcqxvrkvn7PzLnC4fG4BXiToVM5xp6LYFeiYGdUvd3fxa22
+	 BZziQk3yBbuUQ==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-591ebf841ddso694403e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:25:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUehxHRtRu7D7uKPWe2lcZqNP01kWjjImxooEaD109onEoC9VJPRfB1pGpaIb3fpR1IV9ZS2Sz4VGjW8DU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaiwoRVhqihlluyzWM/myls/WPRrjQMkVL6tYx8xOw2DVnncqC
+	9aLX0dpme2XsjPikN/x9RYHSLsRLZrvnDldg5mCdVdg01TEe/LRx+jDVDy0EAKblHJw3q5mj2Y4
+	4Cfkt7h5DSysw3ogYtbtCngKVya0MkxQ=
+X-Google-Smtp-Source: AGHT+IFqxCRVEmx55DEcN0eJFnMLXpSkmlRfev16YFdxPuXEJ4mAx0bSIsmzzz9jkU7OKoN6o4/LXEDo/QTVrb+7eC8=
+X-Received: by 2002:a05:6512:3b88:b0:55f:435e:36bd with SMTP id
+ 2adb3069b0e04-591d846bbfcmr7204989e87.0.1761207905935; Thu, 23 Oct 2025
+ 01:25:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251022143158.64475-1-dakr@kernel.org> <20251022143158.64475-8-dakr@kernel.org>
-Message-ID: <aPnmRmTHLQn8FVyy@google.com>
-Subject: Re: [PATCH v3 07/10] rust: debugfs: support blobs from smart pointers
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20251022233743.1134103-1-mclapinski@google.com>
+In-Reply-To: <20251022233743.1134103-1-mclapinski@google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 23 Oct 2025 10:24:54 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFqwOYBNPzNYo2vjPycjyO5SrEnk_wRVDw_dhGd8qT2qQ@mail.gmail.com>
+X-Gm-Features: AS18NWDYkROAgecZyBS_FDHCff6W_5tLYQcUqfJKBxEipeFY6nP-phMCDUvL4gE
+Message-ID: <CAMj1kXFqwOYBNPzNYo2vjPycjyO5SrEnk_wRVDw_dhGd8qT2qQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] x86/boot/compressed: Fix avoiding memmap in
+ physical KASLR
+To: Michal Clapinski <mclapinski@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Chris Li <chrisl@kernel.org>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 22, 2025 at 04:30:41PM +0200, Danilo Krummrich wrote:
-> Extend Rust debugfs binary support to allow exposing data stored in
-> common smart pointers and heap-allocated collections.
-> 
-> - Implement BinaryWriter for Box<T>, Pin<Box<T>>, Arc<T>, and Vec<T>.
-> - Introduce BinaryReaderMut for mutable binary access with outer locks.
-> - Implement BinaryReaderMut for Box<T>, Vec<T>, and base types.
-> - Update BinaryReader to delegate to BinaryReaderMut for Mutex<T>,
->   Box<T>, Pin<Box<T>> and Arc<T>.
-> 
-> This enables debugfs files to directly expose or update data stored
-> inside heap-allocated, reference-counted, or lock-protected containers
-> without manual dereferencing or locking.
-> 
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Matthew Maurer <mmaurer@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Hi Michal,
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Thanks for the patch.
+
+On Thu, 23 Oct 2025 at 01:37, Michal Clapinski <mclapinski@google.com> wrote:
+>
+> The intent of the code was to cancel KASLR if there are more than 4
+> memmap args. Unfortunately, it was only doing that if the memmap args
+> were comma delimited, not if they were entirely separate.
+> So it would disable physical KASLR for:
+> memmap=1G!4G,1G!5G,1G!6G,1G!7G,1G!8G
+> since the whole function is just called once and we hit the `if` at
+> the end of the function.
+>
+> But it would not disable physical KASLR for:
+> memmap=1G!4G memmap=1G!5G memmap=1G!6G memmap=1G!7G memmap=1G!8G
+> since the whole function would be called 5 times and the last `if`
+> would never trigger.
+>
+> For the second input, the code would avoid the first 4 memmap regions
+> but not the last one (it could put the kernel there).
+>
+> The new code disables physical KASLR for both of those inputs.
+>
+
+Should we just disable physical KASLR if memmap= appears at all?
+
+> Signed-off-by: Michal Clapinski <mclapinski@google.com>
+> Suggested-by: Chris Li <chrisl@kernel.org>
+> Fixes: d52e7d5a952c ("x86/KASLR: Parse all 'memmap=' boot option entries")
+> ---
+> The patch was suggested by Chris and I modified it a little without his
+> knowledge. I don't know which tags are appropriate.
+
+I think this is fine, unless Chris has a different opinion? In any
+case, you might add a link to the original submission.
+
+
+> ---
+>  arch/x86/boot/compressed/kaslr.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> index 3b0948ad449f..649264503ce6 100644
+> --- a/arch/x86/boot/compressed/kaslr.c
+> +++ b/arch/x86/boot/compressed/kaslr.c
+> @@ -162,14 +162,18 @@ static void mem_avoid_memmap(char *str)
+>  {
+>         static int i;
+>
+> -       if (i >= MAX_MEMMAP_REGIONS)
+> -               return;
+> -
+> -       while (str && (i < MAX_MEMMAP_REGIONS)) {
+> +       while (str) {
+>                 int rc;
+>                 u64 start, size;
+> -               char *k = strchr(str, ',');
+> +               char *k;
+> +
+> +               if (i >= MAX_MEMMAP_REGIONS) {
+> +                       /* Too many memmap regions, disable physical KASLR. */
+> +                       memmap_too_large = true;
+> +                       return;
+> +               }
+>
+> +               k = strchr(str, ',');
+>                 if (k)
+>                         *k++ = 0;
+>
+> @@ -190,10 +194,6 @@ static void mem_avoid_memmap(char *str)
+>                 mem_avoid[MEM_AVOID_MEMMAP_BEGIN + i].size = size;
+>                 i++;
+>         }
+> -
+> -       /* More than 4 memmaps, fail kaslr */
+> -       if ((i >= MAX_MEMMAP_REGIONS) && str)
+> -               memmap_too_large = true;
+>  }
+>
+>  /* Store the number of 1GB huge pages which users specified: */
+> --
+> 2.51.1.814.gb8fa24458f-goog
+>
 
