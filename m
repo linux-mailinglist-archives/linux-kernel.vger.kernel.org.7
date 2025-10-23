@@ -1,132 +1,96 @@
-Return-Path: <linux-kernel+bounces-866534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3940C0008A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:55:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDB2C000A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42F731887AA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:55:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D37EB19A78E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF797303A2C;
-	Thu, 23 Oct 2025 08:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1309A304962;
+	Thu, 23 Oct 2025 08:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Dh+noOqF"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="JmJGuWUp"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5182FB632;
-	Thu, 23 Oct 2025 08:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EC03016FD;
+	Thu, 23 Oct 2025 08:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761209713; cv=none; b=jQpCXn5BC4m3v41MRO7TWqyj7IIxkW/OuI5bJUAerZDZNRzqTPcApbKL4P3pVdoIJpSEQbtblVWEgP7grFRIaEh1Wdr4kE2DY1X2dS76oV2lB/w8zvoOYqz6iND6rWTs/ixZR6hsrmrgpdeO16yIP+wdq2XTEZX6h/wSl2q35tc=
+	t=1761209803; cv=none; b=qoIgAA9NkhYQlSAzbVIxLeLyy2pUQ4Tt5c/SNBDOl/LK7GHPsjTuGFp9cHFdquhplUzo2rRgdpj39Jln2AoaPbbQVFc59IaAXdX+9XK0uAVfMKlV/yEoNNW6ddQVgawyHuoafr81b9oLK5Nr0k98tvJMoh9w6ol3oPtI30LwtgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761209713; c=relaxed/simple;
-	bh=vnI0o5WV/8375Q9X3ezTYN6ydp49H3sIrzgEDjPS0M0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SSlPzAybM0+t6qeSOeiSQ3e7A/xgqhGYRDEf7hHM/DKWtx34NlC7TbNZ7afw5Z4PiwAmOyBDTOrI3aDyw7/d5OWVU7ljeeX0aOmOe3yAxoGLZZtvjxvrha8rpUeaLxXOfXsRZBgWsD01akQmyDquiIoAbS5cbPXEMPiwzONOabs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Dh+noOqF; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 2014E4E4129D;
-	Thu, 23 Oct 2025 08:55:09 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id D88146062C;
-	Thu, 23 Oct 2025 08:55:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4431B102F2459;
-	Thu, 23 Oct 2025 10:55:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761209707; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=JJYzWRervYd6xbaGyN0P+R856qBpgbVlxMHKNl9v3HA=;
-	b=Dh+noOqF8/+jpFrrF36/6zTmuFM+BcOLEgl7rR5koN0gDqES3Y9Vc4aTxVof+1szs0h4+Z
-	j8yzHp/1NOYNXyXi18QELWmyZvXr/sjZJeDoJHLlqkFh4CyWMx96xXiiBQJIX6iPQN0utc
-	y77gPkWk7nIjkfwB7ernZXMvUHH9W1o6cScnw3NcwUPb4QolxQF9DXE5ZFl4sWrwUOJ3k7
-	gRVAK6PVW8nl8XEh8mWdv4OXamJzB/DVAPzr1N5o0808HrN80pDz+KM9ZredUFsUvL3dgF
-	8j4X0axfYUa2MmZ/IS1QWxI8V1B3kZyIyXSfxgK3E00sLHJeIFnF3vJKQRGYfA==
-Date: Thu, 23 Oct 2025 10:55:03 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Geert Uytterhoeven
- <geert+renesas@glider.be>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Magnus
- Damm <magnus.damm@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: Add the Renesas RZ/N1 ADC
-Message-ID: <20251023105445.1adb2e86@bootlin.com>
-In-Reply-To: <20251017090742.49f2d628@bootlin.com>
-References: <20251015142816.1274605-1-herve.codina@bootlin.com>
-	<20251015142816.1274605-2-herve.codina@bootlin.com>
-	<aPEoqkdatl4G82co@shikoro>
-	<20251017090742.49f2d628@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1761209803; c=relaxed/simple;
+	bh=o5TYKn6ZQH/S68mLBVpwQgYkziwY+xEZaTQuco5M3fk=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=doM48xM9aiZYP8pkoEzaaqvXepUM2HO25Ek4keEguFdDyktb0sJyKUgFCp4EYkiW3tVOOePrIshZk+W1EyAd/P3EViTysF6U54R8BrKCoU+4V3Z7dmraMswg2W2NSY86GSRGyNawC1p/pRs7sdPWi95uah1+D9rPSYyV+JTTkXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=JmJGuWUp; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from smtpclient.apple ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 59N8u2r02714832
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Thu, 23 Oct 2025 01:56:02 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 59N8u2r02714832
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025092201; t=1761209763;
+	bh=JkYq4hrpelkGO9/OGZ4oRjizRD+TRVSJxcppXgRv3ag=;
+	h=From:Subject:Date:References:Cc:In-Reply-To:To:From;
+	b=JmJGuWUp5yLfz5o2+s+JvcH57zosOu5EHH9HlVz9A8wS2NEqE7sTV1GCwnuP1EQ6t
+	 6rl6OU7snYnMOjBLIgFt+9mYBY46y4pIaEz9M8vaK7eIiE0Hqfp3NPs9fTuhbhLj4U
+	 HwXJzsp2eGB0h/lmwECvCUmKcLLkFiGB++xdsl9sREE8j+Xtzh0SPOuTklHma8r/aq
+	 n7qdw3DhSIowQHs69igtnTPpuROs2UibRYF0HWbVWURD9hdnT4RcbAHOQpmjHNsX52
+	 nrkY2DWob/FbqpKPRc7R8+shzr2CxXdXd+A5h+bYwdSAXL8mKeyQkwgEKUiuCcAUU2
+	 2SuE6X/8qXpKQ==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Xin Li <xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
-
-Hi Wolfram, Geert,
-
-On Fri, 17 Oct 2025 09:07:42 +0200
-Herve Codina <herve.codina@bootlin.com> wrote:
-
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    items:
-> > > +      - enum:
-> > > +          - renesas,r9a06g032-adc   # RZ/N1D
-> > > +      - const: renesas,rzn1-adc    
-> > 
-> > Do you know of other SoCs with this IP core? If it is only RZ/N for now,
-> > we could go with const for N1D. All other N1 variants cannot run Linux
-> > because of no SDRAM controller.
-> >   
-> 
-> I know only about RZ/N1 family.
-> 
-> I will keep only "renesas,r9a06g032-adc" in the next iteration.
-> 
-
-May be I misunderstood.
-
-Most of other bindings related to rzn1d have the both r9a06g032 and
-rzn1 compatible string.
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v8 05/21] x86/cea: Export API for per-CPU exception stacks for KVM
+Date: Thu, 23 Oct 2025 01:55:51 -0700
+Message-Id: <C28589B9-F758-4851-A6FD-41001C99137D@zytor.com>
+References: <20251023080627.GV3245006@noisy.programming.kicks-ass.net>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, pbonzini@redhat.com, seanjc@google.com,
+        corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        luto@kernel.org, andrew.cooper3@citrix.com, chao.gao@intel.com,
+        hch@infradead.org
+In-Reply-To: <20251023080627.GV3245006@noisy.programming.kicks-ass.net>
+To: Zijlstra Peter <peterz@infradead.org>
+X-Mailer: iPhone Mail (23A355)
 
 
-Would you expect:
+>> FRED introduced new fields in the host-state area of the VMCS for stack
+>> levels 1->3 (HOST_IA32_FRED_RSP[123]), each respectively corresponding to=
 
-  - a) renesas,r9a06g032-adc and renesas,rzn1-adc
+>> per-CPU exception stacks for #DB, NMI and #DF.  KVM must populate these
+>> fields each time a vCPU is loaded onto a CPU.
+>=20
+>> +noinstr unsigned long __this_cpu_ist_top_va(enum exception_stack_orderin=
+g stack)
+>> +{
+>> +    return __this_cpu_ist_bottom_va(stack) + EXCEPTION_STKSZ;
+>> +}
+>> +EXPORT_SYMBOL(__this_cpu_ist_top_va);
+>=20
+> This has no business being a !GPL export. But please use:
+>=20
+> EXPORT_SYMBOL_FOR_MODULES(__this_cpu_ist_top_val, "kvm");
+>=20
+> (or "kvm-intel", depending on which actual module ends up needing this
+> symbol).
 
-    compatible:
-      items:
-        - const: renesas,r9a06g032-adc   # RZ/N1D
-        - const: renesas,rzn1-adc
+Will do =E2=80=9Ckvm-intel=E2=80=9D because that is the only module uses the=
+ APIs.=
 
-or
-
- - b) renesas,r9a06g032-adc only
-
-    compatible:
-      const: renesas,r9a06g032-adc
-
-Can you confirm your expectation?
-
-Best regards,
-Hervé
 
