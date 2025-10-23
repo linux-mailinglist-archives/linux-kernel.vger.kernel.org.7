@@ -1,153 +1,142 @@
-Return-Path: <linux-kernel+bounces-867618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9DE5C03208
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:03:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2FBCC0320E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 272EB3A1991
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9F6A3A2625
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABC134C143;
-	Thu, 23 Oct 2025 19:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B2734C809;
+	Thu, 23 Oct 2025 19:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBxltq1H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b="gyAWoTId"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B504527467E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1364C27467E;
+	Thu, 23 Oct 2025 19:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761246207; cv=none; b=Vy58ArLlEdjR4QGFSM/y0xaYHWK1fPPlxW3MIP5TRJjwZcI1xRjnnaSOYMw/QEVnDZtdwLcgFbNBTpIH+fl2LPXx21+ere76JUVptk/ExtlCV/uqX7LB8BgBbNLVlmWi+BMZRbAlGvhIzVzEX10qd9t+4frxFjZ/azWRAIQu8Fo=
+	t=1761246259; cv=none; b=ZL+tWtFAOAFJ9BP+7MS80mUPxi72/Pi1S4x8vnlgEbIohXz7hu7ivV1n3o0ZYhWMUUXj+qWUbLf1e1eQ3Gc+Zoku4cBHzp+Xmq8Vh63lzkGX1RkARViBTJja5AynX8gtSekSNEg9y+2mluRKgnuxLCpOG/7N3GZzjwUIglDtkUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761246207; c=relaxed/simple;
-	bh=jF4QxaOOV7BenJ0JZ6Ow6uSb2fxSAcL6IJ/z1Z5H/lM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kHv8x9WmEVelGShoKmIbSUO55Ano4hg3ws1rU6fzOZhz1CO8HESXlftPHgmTGVd0mgEHQ43f86C5CwqyZFVDKa2xbfchf7cbEmpAsoErs2ZgMHiVkJnOSPk6CmFlHl1fmNo5cm2sP9Cz0SR4YjaKM79bSGn10+3bPPOWFPSKzzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PBxltq1H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DE9EC116B1
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:03:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761246207;
-	bh=jF4QxaOOV7BenJ0JZ6Ow6uSb2fxSAcL6IJ/z1Z5H/lM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PBxltq1HSz7wGLkbSNpYCnm0mC9Ys8TzbXORIPbxotWACCgL9Xfj5hl+r/qHyV2ig
-	 4lnjDlB4/UtYaHs5D81RCJf+GnBmCn6F9SQV+HQ6rbtjDRM+AFVhjzojC9k8FzZMkX
-	 M+tXVAQ4btTv5M+QV5SfnVbZwgNCWjqOjHP7a2h8Fn+86/DzQzI/tJhWH69cj3XbLK
-	 5Bdqqu6VIWfcfrJf6igaZLFVlM7XWuz1iBQiUAvu6Per2ifGtaze4casXprsbZyFI1
-	 iTKWb+cgjbabU9AmJurjMLDLWC5Na0If8sPg5SGk2Lhr6mux74uJmYAbMPpeISVZ2G
-	 ZRZmZ+/OlXZEA==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-4439f1df5f6so366338b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:03:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUPB3QLiVNUA9d4MFGkg7U3KOPrghLEt5n1oKH9s0GDrARlXYyInz7p6ITr4uvaeAkv7hmT+ZL6DFdsnw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJCxoaQuVmS4Yy5GetabIASuP4o34kvUah8Xd5sEnr6MWn+kqX
-	P4sBYWoPWj23NTd/RVDUgmUF+rsdZF1iZADWeLojqMR2z5cN3pBYuYgoQ+KxBp9EdzGS3ia2Mm7
-	t2Iq8Za+C3u5GYOJcVJhplYZVzrajsGE=
-X-Google-Smtp-Source: AGHT+IEPRBHAjsdcilrTqwwguunsLPHTYuaz5DDb0+ikA4JiSTezczQo7UoF0rcuBIerbAUkyM7gTcWYeF4lZqFVkW8=
-X-Received: by 2002:a05:6808:4f50:b0:43f:b3e0:7959 with SMTP id
- 5614622812f47-443a30139b7mr11630703b6e.49.1761246206614; Thu, 23 Oct 2025
- 12:03:26 -0700 (PDT)
+	s=arc-20240116; t=1761246259; c=relaxed/simple;
+	bh=d/erygPoiHqkkNHP5PnCMMv/LWWb+FmWY1h3Nkz4ewM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GpXJMgLj5oFXNrLD0vPJFWczKGEsZ9tCg86f5S3ggFl0r9hGIKMASeFLiZePLlRIAgXZK06i5JYhZa9lnVJ3PjcmcLc3tMCrZq09dq8AsEZutJf1Tj1NSyTLlucIBGAxCuIFgOuXKBGWLLNCDpt7W42mGvCT7DgZR+xVGs/5fX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de; spf=pass smtp.mailfrom=hauke-m.de; dkim=pass (2048-bit key) header.d=hauke-m.de header.i=@hauke-m.de header.b=gyAWoTId; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hauke-m.de
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cswSC3NY2z9v3Z;
+	Thu, 23 Oct 2025 21:04:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hauke-m.de; s=MBO0001;
+	t=1761246251;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y+oODwYQ9lwCe9K/U/bcB93zGBEd5OOIcO9Gk5OEwZY=;
+	b=gyAWoTIdPUmPAVVSpBiAqYhyXGXQWQnr/zxymmoNXkUC7ALR0KovpU6BRPZVh0jqE2dh8E
+	6nuzcoxuMsc6CwxgBXMuXa8n5AbpD/UTxqN5bBqV6t5YHTuR+wy6Xt8XDaIrYW1rawZLQS
+	xdZyqv0xPyUDOBm6e6KBQne/Rjzo7ibXn2lXxPTvJlaqUEjiLUYjs3O0acTmzg1X1mQEkX
+	N3CIQFXusvdSMlIVK/xvWAKatfycuUC7A0aQmeES4wOOnCcSn9ThnAqJdKBHaFGImtd7on
+	A6trL2dRq0ESIZ49+AqhX4jE7LVFICpAtwXRBt4QE1bupK9IN50u0G2pkOVmlg==
+Message-ID: <7b379440-be1a-4a2c-86e0-9d69d6835095@hauke-m.de>
+Date: Thu, 23 Oct 2025 21:04:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007234149.2769-1-W_Armin@gmx.de> <20251007234149.2769-4-W_Armin@gmx.de>
-In-Reply-To: <20251007234149.2769-4-W_Armin@gmx.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 23 Oct 2025 21:03:15 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hA3eqJEmr=TCdRTQXybdpudLc31Xfre7ea72aHgzpXbw@mail.gmail.com>
-X-Gm-Features: AS18NWAa4GfxmMauVB78Bvpyahe4TIiqnrwsgYvENjy10G0GKjOiJqhjR95cR9k
-Message-ID: <CAJZ5v0hA3eqJEmr=TCdRTQXybdpudLc31Xfre7ea72aHgzpXbw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] ACPI: fan: Use platform device for devres-related actions
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net-next v5 0/7] net: dsa: lantiq_gswip: use regmap for
+ register access
+To: Daniel Golle <daniel@makrotopia.org>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+ Lukas Stockmann <lukas.stockmann@siemens.com>,
+ Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+ Peter Christen <peter.christen@siemens.com>,
+ Avinash Jayaraman <ajayaraman@maxlinear.com>, Bing tao Xu
+ <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+ Juraj Povazanec <jpovazanec@maxlinear.com>,
+ "Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+ "Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+ "Livia M. Rosu" <lrosu@maxlinear.com>, John Crispin <john@phrozen.org>
+References: <cover.1761045000.git.daniel@makrotopia.org>
+Content-Language: en-US
+From: Hauke Mehrtens <hauke@hauke-m.de>
+In-Reply-To: <cover.1761045000.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 8, 2025 at 1:42=E2=80=AFAM Armin Wolf <W_Armin@gmx.de> wrote:
->
-> Device-managed resources are cleaned up when the driver unbinds from
-> the underlying device. In our case this is the platform device as this
-> driver is a platform driver. Registering device-managed resources on
-> the associated ACPI device will thus result in a resource leak when
-> this driver unbinds.
->
-> Ensure that any device-managed resources are only registered on the
-> platform device to ensure that they are cleaned up during removal.
->
-> Fixes: 35c50d853adc ("ACPI: fan: Add hwmon support")
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+On 10/21/25 13:16, Daniel Golle wrote:
+> This series refactors the lantiq_gswip driver to utilize the regmap API
+> for register access, replacing the previous approach of open-coding
+> register operations.
+> 
+> Using regmap paves the way for supporting different busses to access the
+> switch registers, for example it makes it easier to use an MDIO-based
+> method required to access the registers of the MaxLinear GSW1xx series
+> of dedicated switch ICs.
+> 
+> Apart from that, the use of regmap improves readability and
+> maintainability of the driver by standardizing register access.
+> 
+> When ever possible changes were made using Coccinelle semantic patches,
+> sometimes adjusting white space and adding line breaks when needed.
+> The remaining changes which were not done using semantic patches are
+> small and should be easy to review and verify.
+> 
+> The whole series has been
+> Tested-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 > ---
->  drivers/acpi/fan.h       | 4 ++--
->  drivers/acpi/fan_core.c  | 2 +-
->  drivers/acpi/fan_hwmon.c | 8 ++++----
->  3 files changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/acpi/fan.h b/drivers/acpi/fan.h
-> index 022bc215cdbc..0d73433c3889 100644
-> --- a/drivers/acpi/fan.h
-> +++ b/drivers/acpi/fan.h
-> @@ -98,9 +98,9 @@ int acpi_fan_create_attributes(struct acpi_device *devi=
-ce);
->  void acpi_fan_delete_attributes(struct acpi_device *device);
->
->  #if IS_REACHABLE(CONFIG_HWMON)
-> -int devm_acpi_fan_create_hwmon(struct acpi_device *device);
-> +int devm_acpi_fan_create_hwmon(struct device *dev);
->  #else
-> -static inline int devm_acpi_fan_create_hwmon(struct acpi_device *device)=
- { return 0; };
-> +static inline int devm_acpi_fan_create_hwmon(struct device *dev) { retur=
-n 0; };
->  #endif
->
->  #endif
-> diff --git a/drivers/acpi/fan_core.c b/drivers/acpi/fan_core.c
-> index ea2c646c470c..46e7fe7a506d 100644
-> --- a/drivers/acpi/fan_core.c
-> +++ b/drivers/acpi/fan_core.c
-> @@ -347,7 +347,7 @@ static int acpi_fan_probe(struct platform_device *pde=
-v)
->         }
->
->         if (fan->has_fst) {
-> -               result =3D devm_acpi_fan_create_hwmon(device);
-> +               result =3D devm_acpi_fan_create_hwmon(&pdev->dev);
->                 if (result)
->                         return result;
->
-> diff --git a/drivers/acpi/fan_hwmon.c b/drivers/acpi/fan_hwmon.c
-> index 5581aa6fdfa0..47a02ef5a606 100644
-> --- a/drivers/acpi/fan_hwmon.c
-> +++ b/drivers/acpi/fan_hwmon.c
-> @@ -162,12 +162,12 @@ static const struct hwmon_chip_info acpi_fan_hwmon_=
-chip_info =3D {
->         .info =3D acpi_fan_hwmon_info,
->  };
->
-> -int devm_acpi_fan_create_hwmon(struct acpi_device *device)
-> +int devm_acpi_fan_create_hwmon(struct device *dev)
->  {
-> -       struct acpi_fan *fan =3D acpi_driver_data(device);
-> +       struct acpi_fan *fan =3D dev_get_drvdata(dev);
->         struct device *hdev;
->
-> -       hdev =3D devm_hwmon_device_register_with_info(&device->dev, "acpi=
-_fan", fan,
-> -                                                   &acpi_fan_hwmon_chip_=
-info, NULL);
-> +       hdev =3D devm_hwmon_device_register_with_info(dev, "acpi_fan", fa=
-n, &acpi_fan_hwmon_chip_info,
-> +                                                   NULL);
->         return PTR_ERR_OR_ZERO(hdev);
->  }
-> --
+> Changes since v4:
+>   * use REGMAP_UPSHIFT(2) macro instead of -2 value for reg_shift
+> 
+> Changes since v3:
+>   * unlock mutex in error path
+>   * simplify some of the manually converted register reads by changing
+>     the type to u32 instead of using a u32 tmp variable and then assigning
+>     the value to the previously used u16 variable.
+> 
+> Changes since v2:
+>   * correctly target net-next tree (fix typo in subject)
+> 
+> Changes since RFC:
+>   * drop error handling, it wasn't there before and it would anyway be
+>     removed again by a follow-up change
+>   * optimize more of the regmap_write_bits() calls
+> 
+> 
+> Daniel Golle (7):
+>    net: dsa: lantiq_gswip: clarify GSWIP 2.2 VLAN mode in comment
+>    net: dsa: lantiq_gswip: convert accessors to use regmap
+>    net: dsa: lantiq_gswip: convert trivial accessor uses to regmap
+>    net: dsa: lantiq_gswip: manually convert remaining uses of read
+>      accessors
+>    net: dsa: lantiq_gswip: replace *_mask() functions with regmap API
+>    net: dsa: lantiq_gswip: optimize regmap_write_bits() statements
+>    net: dsa: lantiq_gswip: harmonize gswip_mii_mask_*() parameters
+> 
+>   drivers/net/dsa/lantiq/Kconfig        |   1 +
+>   drivers/net/dsa/lantiq/lantiq_gswip.c | 471 +++++++++++++-------------
+>   drivers/net/dsa/lantiq/lantiq_gswip.h |   6 +-
+>   3 files changed, 243 insertions(+), 235 deletions(-)
+> 
+I reviewed the series and it looks good to me.
 
-Applied as 6.18-rc material, thanks!
+Acked-by; Hauke Mehrtens <hauke@hauke-m.de>
+
 
