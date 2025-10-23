@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-866806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 929B3C00B05
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:21:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6639C00B32
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C01718960A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:21:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79E764EC3ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5997330DD0B;
-	Thu, 23 Oct 2025 11:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B768E30DEAC;
+	Thu, 23 Oct 2025 11:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZTH3qzor"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GW4zf9KK"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4AF309F0D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166C830DD05
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761218489; cv=none; b=X5fVbeB8pUvND2yEnyo1dO3BS1PU47zQHkfB4LGfrhh6yg9XnVZ6fvjp7u7TqvA/czElR49i4+hj+S8QgIaBXJWiv3bLMh9nQXR2ljLjYzSRBGhsWjcuj5HJaJ06wrw87szO4mDXQY8MGz47wgiJkksjGS5dnJhCFx0ywbXXCkc=
+	t=1761218496; cv=none; b=cYcFQUN2DE2/1Ca6SpnvZC1G+qSNGXiSTje9NPQyH3PrP9pSmSmhXVRkzJs8lSZGCnH8PgibwPKHJApr9CDOD9+1WOM9MJkwykky0Wp4n6BwSJcZYK9/gG6cOdTGfASEIMj0h6JO702AE0uhnR4W0GNIq0cD3zGeGlmS+Vdonko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761218489; c=relaxed/simple;
-	bh=GRKxdnG6EAwEEwZaN9kIsS0ShqlDa1LWlfGj40dNoY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Nt2egNfQmxnTbPk8CU8GamnZ96UoypF8SsbciOwi3WCI+72ZwEZ6aVzHiYlgh4XxGzQ9yK8FE9rmxq6laOyDFfQ7aouIYOWe1ep8SAw3obk+cqlI7XKKs0Hpi/iwSpUtZ3/vZRCpHi6FboF6GI4NVqwvraOJePuIzHKWpqsjfhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZTH3qzor; arc=none smtp.client-ip=209.85.214.173
+	s=arc-20240116; t=1761218496; c=relaxed/simple;
+	bh=CmjkxUl2B4gcVD2tZkJFcLi96gcIgTB3FlH827BDatg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rwhjd1Q8yQjAHx1m4um43UEHMQHPLHzDjJLETHu/bySljfsdmDhC5bjKqvWAyWEWVTdaczFyHEcXqu+/3s93gTL1XuM9prey7MnHHiOwTFezRJJjHkL4h8n1+UGPGIbtxyJfBFNTTtsrTHD3ZTY17xqqYucK0djg8C16t6VnfLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GW4zf9KK; arc=none smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-290a3a4c7ecso7920095ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:21:28 -0700 (PDT)
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b6ceba7c97eso624201a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:21:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761218487; x=1761823287; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vlgvmBPLgehoAq+qXl2/qSo9ZfDpQHfJlMq911IhmcY=;
-        b=ZTH3qzorLlyhg44IF0SOwB0byWrHK8kkx+CksB6NauiL5t/ela9vS6vR6OK4wsstYo
-         H3xVVad1c+6FYVg6ufgtgpHpIMufPOTfJ9FHSs3IG/vIu2QLfVpMBuz8RHWWDH3B6XLj
-         GAQ4GrOmkc9j/CLj61mG9HyL5Lqanl8mnen3mJUMfY8uuS/BRlvxpb/fAA5XzS5A8DzQ
-         Z86KK9/+pBGDcemyD5CmY8fQOqxK6xxUW0yYqgMAmpLaNPfg1mz7GC3wbW+dlEDQ/oEF
-         wPMeVTkTIuQ106PxEL66EkYoMqEpqo88kcN1r9Sik0X6NMKZKaBVgAp3Q5k72mtXJ8JR
-         xwhQ==
+        d=gmail.com; s=20230601; t=1761218494; x=1761823294; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xdknUZBEvMejmz26Y7kCdJWkxsoHQ3qjiKzOInvA+JE=;
+        b=GW4zf9KKV2oPpnt9BzF5YIzmaIpApee7BNzXY2nf0u5zQ/veV+wej2ii4VvDt3C8h1
+         o9uvq9tiVdxi6OPj6Zaix+cAhQ6Z/Qvv2J129lyIxKeLVtlA6uVpYNQnIMQNhgWFRQbZ
+         pqq1AfGigaMwwXcFcWseIU+e730O/NM0sd9gB+1CuLruoS3E4l3MiQULKhn6z0m5W7T4
+         Vudl4qaRsKuscbYi65Ea/w7e1J0cVo+R1KS3pSXoBncJH04GxAxWLML9LhY539eQl60j
+         DYtJ5xDsVbWpjYetDLVXWfOf60Z6wn5x3bZ7MFTH1jZurVautlHfjOsoZrK4ln1Alt9m
+         sFtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761218487; x=1761823287;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vlgvmBPLgehoAq+qXl2/qSo9ZfDpQHfJlMq911IhmcY=;
-        b=h0nW1MsazxrbEVbBYshopt5fyrTjGeuJ/z6d4SFxlsWzr/wnfRFBBPuy/Ja/Ro8PtF
-         jLwSBp6yfuUfxohtBRGMR2Vmu3e1OVzzsKtSsOaxBJ7v5NFhA6nP2V5jB3vNHuF6ra8/
-         +SKYqS7UByPJd0pnd/hcbsKfV34ScS8o4cjHVj/y0Ebu32gqF3j+3nngOOOz42rwMiLB
-         eZI5tU1Qt9zqLno9ku/fNl4LocH3ZSLCz64gr7OIen8lgtdRr80ihZHEs3JaekfxoigW
-         nBXdE7d92+MX2WoaJ9xQOkEtAjfDeprOuFsjRSqPtUJnhv5rpXjOeA8UfvTUP4ikeBv6
-         TZRg==
-X-Forwarded-Encrypted: i=1; AJvYcCXyTcgwYwogozw8SM6AtRUQ/X3ObIkn8oGFInXZQSPnVlIhfWav8rEctu/14XRUqF86bE5tutBqxQS1anU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp1q5ui2zSR+izgQ80IBG9GWBB/7TgwGjo4R+abCUITkq+Nopz
-	A0a+B5lQaxQaTZJk/san/HaX1WrkXrhDSAddBBETyoldhJvPD+D+KcnKCDJeFvCI
-X-Gm-Gg: ASbGncvrpksdKGXSh1VypQmo+lH/3cv9MEisB0PnOt5UsDo4hgRQXLTMjG9fg4kHWrG
-	J0X/hfPvOdYx8O91/bBKxkAFbcyxF2LiLI1UogflV30yI8ISHGNCv5QPkIAyMEHZ5+9DqyJqZRn
-	fzdMS4fO3JRLkKYP7xsbLFnc6xGC0uTD9KoIgbucrZlzRoVfL67/gGZVfDDRBlft6casHb942+U
-	+e9R0HybfrzmKHh1B+Nj2Qc8VjCzQIxKM88ZI9572DU/7KpH6wEmR1GT6WCf/SIrXWfmjKd8Kn9
-	a4Tx4HlpuW2SUbVAXSU+UCOwb4CAVCuieOOC66FQDWVp8boTjGhkO2aoh1IWDF2urIQsrh9gLHx
-	MsIY2UvTABEv5aKXIuAsN4qdz+DspKCRY/WJI6OI9x1VAviKa8yTvFOWoUYXyQZ+RITVme/XS6M
-	gfhieungnUbzZHaz9lsjQ=
-X-Google-Smtp-Source: AGHT+IFqM1qThq8uRjoxvPG6LNB2Te+R9PY3nw4Tc7SvEuUzlsBFl9YlVcL0VToRy2HrIgcsKyGcVA==
-X-Received: by 2002:a17:902:d503:b0:290:91b0:def4 with SMTP id d9443c01a7336-290ca21635emr336955825ad.29.1761218487485;
-        Thu, 23 Oct 2025 04:21:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761218494; x=1761823294;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xdknUZBEvMejmz26Y7kCdJWkxsoHQ3qjiKzOInvA+JE=;
+        b=L1+b3FHRm50tVVQHbFz93uL2QSTy1fqvoE+51bZLOVaRm9xknBqPUHcDPvRxyCrlYU
+         glzXt9Bg9KyiFmVHXJ4CKS6gsAcGrBSj5nBOpxkJLE40uStvALkFYJPGAN5G7xSjXGfP
+         9EtTSakVY9Ky6Y0tCGA27yJEAV7sdqOBRGgui2ETQeFmSEdne+DvZwpyVqRpUS+ZULHP
+         kopFnVQbZxRvN9o53osBy1oE38gyaAawdVaKMdXfDYB8e3Ev1YZ51saYG4dzZwF3uUaD
+         jokguTAbhFgcCvk7zbF/aXN51yJ9iiWPROEbgWqhL42L/+zS4nYnvXI6EFq20zWKdOoD
+         IIfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDUcwVzJDMQ4Q7wmGAI9E/N6P/fNbY3Coj6XLzksKSIiUpnGP1nHjII0rjJ/JZYkstYcyYo2Ti57V94Ak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBFm6W4AwtgYcWQh33eTtAwwdoI6QyAQQ9EcOQQNYPiDz/nqQv
+	D3/WyxnQxm8+/XYFkEVhBp+B5pdn9wbtEGHvbbyyRUUoYun0npo9RAck
+X-Gm-Gg: ASbGnctEzBRFOu3x1GyuJ1UTLq8gb+8145NdOL1R80laY0jqL/6m72j+J00XlnycRga
+	VGYD0iUTjYN7ICpT8HDXIAMt83ML7Uo4Mxqn7NDjGBLXiaXAd7Vns1UxBpSw7nrUMzRXOCp/pNt
+	Mv+sjqvnm5pPtJxwzWC2HRsMZlFLKTXBFk+u0RbYp9XfyI78uF1/sN7yjrlICfNvO2Uert/Is8w
+	MFlon7D8gz865gN04VwPgD0cnXFgLMx9SphKTjQnC/Ab/1Z0FapvWBgkJVDCF8RNXog3sUFf+ti
+	6ZEdW+liMkHJSlDLcZH1FH9fFA0aT+7X6f05EE20gbnFZz3a48Xoi7pnd+7lgoFffgfY3sftP5V
+	AymK5ghwRMp4ozmZILJILStex/qPvpOVyfdXJRXQRK2f5fENn9xuoqlUMMIXPGfuWZA0iTqQzFq
+	/R3kitQwswZu0HgLqsgADu0eL9PeeXmw==
+X-Google-Smtp-Source: AGHT+IHhR2GItXtV6WNlADwI9HrIc3aHaXMzVFncN4DWgVReWJcQFzyOQdmWPBHS+USEe+R+b9Z10w==
+X-Received: by 2002:a17:902:ce12:b0:267:a55a:8684 with SMTP id d9443c01a7336-290c9c93abbmr268228055ad.2.1761218494270;
+        Thu, 23 Oct 2025 04:21:34 -0700 (PDT)
 Received: from iku.. ([2401:4900:1c06:ef2:36b5:9454:6fa:e888])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dded613sm20226885ad.37.2025.10.23.04.21.22
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dded613sm20226885ad.37.2025.10.23.04.21.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 04:21:26 -0700 (PDT)
+        Thu, 23 Oct 2025 04:21:33 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
@@ -86,11 +88,14 @@ Cc: netdev@vger.kernel.org,
 	Prabhakar <prabhakar.csengg@gmail.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next v3 0/2] net: ravb: Fix SoC-specific configuration
-Date: Thu, 23 Oct 2025 12:21:09 +0100
-Message-ID: <20251023112111.215198-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	=?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH net-next v3 1/2] net: ravb: Make DBAT entry count configurable per-SoC
+Date: Thu, 23 Oct 2025 12:21:10 +0100
+Message-ID: <20251023112111.215198-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251023112111.215198-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20251023112111.215198-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,40 +107,111 @@ Content-Transfer-Encoding: 8bit
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi All,
+Avoid wasting coherent DMA memory by allocating the descriptor base
+address table sized for the actual number of DBAT/CDARq entries supported
+by the SoC. Some platforms (for example GBETH) only provide two CDARq
+entries; previously the driver always allocated space for 22 entries which
+needlessly consumed memory on those systems.
 
-This series addresses several issues in the Renesas Ethernet AVB (ravb)
-driver related to SoC-specific resource configuration.
+Pass the per-SoC dbat_entry_num via struct ravb_hw_info and use it for
+allocation and initialization in probe. This sizes the table correctly and
+removes the unnecessary memory overhead on SoCs with fewer DBAT entries.
 
-The series includes the following changes:
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+v2->v3:
+- Reworded commit message for clarity.
 
-- Make DBAT entry count configurable per SoC
-The number of descriptor base address table (DBAT) entries is not uniform
-across all SoCs. Pass this information via the hardware info structure and
-allocate resources accordingly.
+v1->v2:
+- Added Reviewed-by tag from Niklas.
+---
+ drivers/net/ethernet/renesas/ravb.h      | 2 +-
+ drivers/net/ethernet/renesas/ravb_main.c | 9 +++++++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-- Allocate correct number of queues based on SoC support
-Use the per-SoC configuration to determine whether a network control queue
-is available, and allocate queues dynamically to match the SoC's
-capability.
-
-Note, these patches were posted previously [0] as fixes but based on the
-discussion there, I've reworked them based on feedback from Jakub and
-dropped the fixes tag and Cc to stable, hence sending them for net-next.
-
-[0] https://lore.kernel.org/all/20251017151830.171062-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-
-Cheers,
-Prabhakar
-
-Lad Prabhakar (2):
-  net: ravb: Make DBAT entry count configurable per-SoC
-  net: ravb: Allocate correct number of queues based on SoC support
-
- drivers/net/ethernet/renesas/ravb.h      |  2 +-
- drivers/net/ethernet/renesas/ravb_main.c | 16 +++++++++++-----
- 2 files changed, 12 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+index 7b48060c250b..d65cd83ddd16 100644
+--- a/drivers/net/ethernet/renesas/ravb.h
++++ b/drivers/net/ethernet/renesas/ravb.h
+@@ -1017,7 +1017,6 @@ enum CSR2_BIT {
+ #define CSR2_CSUM_ENABLE (CSR2_RTCP4 | CSR2_RUDP4 | CSR2_RICMP4 | \
+ 			  CSR2_RTCP6 | CSR2_RUDP6 | CSR2_RICMP6)
+ 
+-#define DBAT_ENTRY_NUM	22
+ #define RX_QUEUE_OFFSET	4
+ #define NUM_RX_QUEUE	2
+ #define NUM_TX_QUEUE	2
+@@ -1062,6 +1061,7 @@ struct ravb_hw_info {
+ 	u32 rx_max_frame_size;
+ 	u32 rx_buffer_size;
+ 	u32 rx_desc_size;
++	u32 dbat_entry_num;
+ 	unsigned aligned_tx: 1;
+ 	unsigned coalesce_irqs:1;	/* Needs software IRQ coalescing */
+ 
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 9d3bd65b85ff..69d382e8757d 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2694,6 +2694,7 @@ static const struct ravb_hw_info ravb_gen2_hw_info = {
+ 	.rx_buffer_size = SZ_2K +
+ 			  SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
+ 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
++	.dbat_entry_num = 22,
+ 	.aligned_tx = 1,
+ 	.gptp = 1,
+ 	.nc_queues = 1,
+@@ -2717,6 +2718,7 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
+ 	.rx_buffer_size = SZ_2K +
+ 			  SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
+ 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
++	.dbat_entry_num = 22,
+ 	.internal_delay = 1,
+ 	.tx_counters = 1,
+ 	.multi_irqs = 1,
+@@ -2743,6 +2745,7 @@ static const struct ravb_hw_info ravb_gen4_hw_info = {
+ 	.rx_buffer_size = SZ_2K +
+ 			  SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
+ 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
++	.dbat_entry_num = 22,
+ 	.internal_delay = 1,
+ 	.tx_counters = 1,
+ 	.multi_irqs = 1,
+@@ -2769,6 +2772,7 @@ static const struct ravb_hw_info ravb_rzv2m_hw_info = {
+ 	.rx_buffer_size = SZ_2K +
+ 			  SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
+ 	.rx_desc_size = sizeof(struct ravb_ex_rx_desc),
++	.dbat_entry_num = 22,
+ 	.multi_irqs = 1,
+ 	.err_mgmt_irqs = 1,
+ 	.gptp = 1,
+@@ -2794,6 +2798,7 @@ static const struct ravb_hw_info gbeth_hw_info = {
+ 	.rx_max_frame_size = SZ_8K,
+ 	.rx_buffer_size = SZ_2K,
+ 	.rx_desc_size = sizeof(struct ravb_rx_desc),
++	.dbat_entry_num = 2,
+ 	.aligned_tx = 1,
+ 	.coalesce_irqs = 1,
+ 	.tx_counters = 1,
+@@ -3025,7 +3030,7 @@ static int ravb_probe(struct platform_device *pdev)
+ 	ravb_parse_delay_mode(np, ndev);
+ 
+ 	/* Allocate descriptor base address table */
+-	priv->desc_bat_size = sizeof(struct ravb_desc) * DBAT_ENTRY_NUM;
++	priv->desc_bat_size = sizeof(struct ravb_desc) * info->dbat_entry_num;
+ 	priv->desc_bat = dma_alloc_coherent(ndev->dev.parent, priv->desc_bat_size,
+ 					    &priv->desc_bat_dma, GFP_KERNEL);
+ 	if (!priv->desc_bat) {
+@@ -3035,7 +3040,7 @@ static int ravb_probe(struct platform_device *pdev)
+ 		error = -ENOMEM;
+ 		goto out_rpm_put;
+ 	}
+-	for (q = RAVB_BE; q < DBAT_ENTRY_NUM; q++)
++	for (q = RAVB_BE; q < info->dbat_entry_num; q++)
+ 		priv->desc_bat[q].die_dt = DT_EOS;
+ 
+ 	/* Initialise HW timestamp list */
 -- 
 2.43.0
 
