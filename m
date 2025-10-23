@@ -1,143 +1,149 @@
-Return-Path: <linux-kernel+bounces-866481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BE4BFFE3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:23:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C30BFFE22
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA173ACB54
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:23:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93BD64F9915
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65D82FFDDA;
-	Thu, 23 Oct 2025 08:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACD02F6563;
+	Thu, 23 Oct 2025 08:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bYb/5IzA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="HXPa/5G4"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BD52F49EB
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C878F2F3C30
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761207714; cv=none; b=kv61RNTzH2HBfrNoOZgNXzYNoimgNqnKgKF9cCQ2lWX+jbcVkn2eAeaHdqtOvLej6yZB+yQG4Is/fTRVnof6eH+Ik2IkR6oRPQ8kLl1X5f1/JzehhNQDAp3ifUl1tmeTbhTKkwooKU1z6CvXtleLfxX+1WQauqHD9mNbDxHmazc=
+	t=1761207711; cv=none; b=PvFI6B/jX8xb6LLBkO4WI5QZ2qSYEx3IO6E1qw63YNdkjq9jvp0unJ3HhpKyJB+1586t/6x6+9k78ypQVxrTPpNfa0U+Gp3VWC/dRwUg8gX/ufapEjhO/haWf1zGQyAC9oVwvin4EUpQCMIVCQxTW3/sar7MBUaA9EWU0bh5UYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761207714; c=relaxed/simple;
-	bh=Mq7wTbaDVrxT5aUwhMPrXpPQYEJ56iNmucEbpajeaW4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f30nugN/MQgDeAq0XnOOT2/vFrWfk0DRymdD4pL5iU1Xx1o3L5QFlAQA9aJzak38mpRifk+cxC1RweY2zRLmm5WtxebZJR5MyMjKzCVvOnFWr3+AKG+3FB8VBwibKTAl+P3mBV0SpuqpbyNw+nysvCq1u6eYTRfXuq1TL6dPA58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bYb/5IzA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD853C19421
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761207713;
-	bh=Mq7wTbaDVrxT5aUwhMPrXpPQYEJ56iNmucEbpajeaW4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bYb/5IzAiRYC+or/Q8dBd12Jn6lz/LZcxJEms7PXqNQjIZPbIl/TZkioFwLPQFXr5
-	 ubOPwq+pvakPSbgPE0V8MA053A8LvvijWONqHCfLrQSMLiniBfemwM8JtdgobJhLil
-	 damyu+Tox2rPfSL7dB+Lo1MBBjogPnN9Rg8qA5YxdiVH7eKXIicrnfE7f57G6Ib0+P
-	 O0UqbBhkqiOeNJ684Sf5mk10I/nQyoENN9NLAqzWsh+TX75L5skzIzXo/evGyvpNzn
-	 hLD3jsGJR6uAZsh7DpJyPZOIStyI4aQLo22WvU2JUPTC3ew2PkhU1g7buNK4A7I0LN
-	 FgBcY4aBLWRZw==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-57a960fe78fso758158e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:21:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVC06A4ThSZVhOfxC2+xXRK2U4zMBVBJIOMYq6ef6mxUtRnWrCxjS40AVQuSk1WaGlJyghEB+d/L8cnJIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSRjiFGKMP2EEXhpbjZjRX+xYfWKDwDcY39zq9Q0TnnzwlUFzS
-	7cDRFcx0GUw2pnyWTC5Ri5//o62fqIoNDmn4Rnq8nFUZHaCurlrpnvDygBj/A2Wfqn1H21Ui7KZ
-	LRwNXjcXTlT+L36knjB+uebC2O94ANO0=
-X-Google-Smtp-Source: AGHT+IGXuEQHrmcpO18jgiQje5gxecX+jQhPRhIZD8/umfhj/iVRHLDn4WDCLHjK5/dO5vBUN3lPnOpu+1uaOPX8hXA=
-X-Received: by 2002:a05:6512:3a90:b0:579:f4b3:bd2d with SMTP id
- 2adb3069b0e04-591d8591713mr8820336e87.57.1761207712093; Thu, 23 Oct 2025
- 01:21:52 -0700 (PDT)
+	s=arc-20240116; t=1761207711; c=relaxed/simple;
+	bh=pgRaKIs6od0eFwYqqrJU6RY3VmvIaH4v1rOFEhr8j0U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tphwuAka47TcoUherGJLK2lhAWJSaVnyUxjt+Gl33RVUZ7in4Leq1citnU8GpC25hsZpwTI4b9zKHq2h7SYrIH/zMefTTjGFBV5hyGbDkLY/eibFJ/+JYIchwTlzznenMDaK/1gGlrDWjoK445miRLnSzWFKYjxgTyhfBtw7kPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=HXPa/5G4; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-378d65d8184so6610311fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:21:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google; t=1761207707; x=1761812507; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TByexTGBy5Gp/RFWC94cXxG9Os7YYgZ+RwohhIq2r5M=;
+        b=HXPa/5G45sACGko3ijOusMNI2kznEwecri4PKOyPqiaTL0ftCfrVcPzDI5N3jfQB3h
+         r6YzGSDui88JzjVV/9k8kJOUsGXvl6E/eF3UGrcxlz9+3rjuRLkTiIj5duii4QYV8aL+
+         4iuvKeQGU2v3Q+8dlj14TeuoSyWktW8cN/3Ag=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761207707; x=1761812507;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TByexTGBy5Gp/RFWC94cXxG9Os7YYgZ+RwohhIq2r5M=;
+        b=ZI9AR8VoO25s+/dao9MxNPiLY3u7lCt1Ynl3KMpnsz3bzV9gfynEjbu5rFBg9wlSY6
+         1ZbSuboOKilhbTXO77EhpMLELUDOWgukKY1dDgQpfCAZi8Cxh3Kpe0kclFY307KD4vJd
+         lIYmPRw+8Z//wmHT3hXCumDz1EFZGfzVZZAwNJM8VdupJX4lQac4CVNvBjNwioFyif+A
+         hIsQ9iaxDQy5msYW1fmrlueEhFKOB6EP0RVjWnW7+iK+0hhELrhtvQssPv752/lVShX2
+         MLcJJIJISn7lapkyKT9Pk384k7o0Fso/cJgaBBIYL/P7RqL4ng4Fryln/uUoD4a6Flvv
+         B3oA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFaaFMmSScMpfTlp/mIvF4A1CNQTWlI4V2Zf3u/RF+qoC3QUrQa65tPRXCfyEW8yOziwxuzMubC0JtXYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQXCles9zjIdzgq/MAUsjhOPspIsmnhxmqJp96h2l1ipmiIg8w
+	rE6q94mbzcVSstX0YcuoB1GOFYWG4JIiLqsPnp/gBtlAbH+vJYUcv2naoR9bKjNPy18R9OPvKYD
+	ziFERQlw=
+X-Gm-Gg: ASbGnctl6z6ELJkhbn1If884mAYuqc+ZF3P2iLEDBXhYQDGRgW8VUKgefkxBEVcoiwy
+	fbL2RSxZ441vOkC5HMU2hWs+zNbSuMulSsMzUHfQ7ZVW0vjeT2KpwLt7Ek3KRNlQqaU45SFyszn
+	LEKF4mV2p0C2v06/CjsgeT8DUo6go7Z/PvTNAhVOsy32WzvQNUA8kNtFDpNbrr/i2Cb1JLziDRo
+	fXA0FgyBvp3dTWnmseJKYxxf5IQ2+kuPtJBT1wY71ODnrr+g8VCrNs4LXew8tBtdm6Gy71U1zdc
+	oz8vv4zyUr5OT7/hBxUyx7RPOZkr6YVHnMa/m+Sax1/87Dbg+16D9MmJtHZtyJ1UXakX8OGGsWL
+	6W0C8uHDpkhvgu+8YRyk22mm44TIKPAk9Zc6TM9iEMwuJXEdhiUTWYR2YOOrguJWeT/xEBModVC
+	XdWAr0HKCCZRk+6Q==
+X-Google-Smtp-Source: AGHT+IF5PkyzpJwpjSOJHc7K9JLi3coycHYDHHhCZspJ09bDYqz9X5m4UzYaiIOgYvkJOFHvN40npQ==
+X-Received: by 2002:a2e:bd83:0:b0:36d:4996:1c4d with SMTP id 38308e7fff4ca-37797831b7cmr67162081fa.9.1761207706694;
+        Thu, 23 Oct 2025 01:21:46 -0700 (PDT)
+Received: from localhost ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4d168d4sm534702e87.56.2025.10.23.01.21.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 01:21:46 -0700 (PDT)
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	David Sterba <dsterba@suse.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH] fs/pipe: stop duplicating union pipe_index declaration
+Date: Thu, 23 Oct 2025 10:21:42 +0200
+Message-ID: <20251023082142.2104456-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0f006338-e69b-4b3f-b91f-0cc683544011@kernel.org>
- <20251022114527.618908-1-adriana@arista.com> <20251022201953.GA206947-robh@kernel.org>
- <CAERbo5z6BzHqQxXdxPxmxE_eDR7GGGbt3A8kB0gQiWFBE-28Ug@mail.gmail.com>
-In-Reply-To: <CAERbo5z6BzHqQxXdxPxmxE_eDR7GGGbt3A8kB0gQiWFBE-28Ug@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 23 Oct 2025 10:21:40 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGYinTKiyYhNYWJvoJeUJScCGnyq=ozLgjKAm7_wzG8QA@mail.gmail.com>
-X-Gm-Features: AS18NWAyqpmDp3gFCmfLNnMi4KMri802uIuHk78GHsmKD8sw7K_d0CMpt3v68sU
-Message-ID: <CAMj1kXGYinTKiyYhNYWJvoJeUJScCGnyq=ozLgjKAm7_wzG8QA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] DMI: Scan for DMI table from DTS info
-To: Adriana Nicolae <adriana@arista.com>
-Cc: Rob Herring <robh@kernel.org>, krzk@kernel.org, jdelvare@suse.com, 
-	frowand.list@gmail.com, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, vasilykh@arista.com, arm.ebbr-discuss@arm.com, 
-	boot-architecture@lists.linaro.org, linux-efi@vger.kernel.org, 
-	uefi-discuss@lists.uefi.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 23 Oct 2025 at 04:21, Adriana Nicolae <adriana@arista.com> wrote:
->
-> On Wed, Oct 22, 2025 at 11:19=E2=80=AFPM Rob Herring <robh@kernel.org> wr=
-ote:
-> >
-> > On Wed, Oct 22, 2025 at 04:45:25AM -0700, adriana wrote:
-> > > Some bootloaders like U-boot, particularly for the ARM architecture,
-> > > provide SMBIOS/DMI tables at a specific memory address. However, thes=
-e
-> > > systems often do not boot using a full UEFI environment, which means =
-the
-> > > kernel's standard EFI DMI scanner cannot find these tables.
-> >
-> > I thought u-boot is a pretty complete UEFI implementation now. If
-> > there's standard way for UEFI to provide this, then that's what we
-> > should be using. I know supporting this has been discussed in context o=
-f
-> > EBBR spec, but no one involved in that has been CC'ed here.
->
-> Regarding the use of UEFI, the non UEFI boot is used on Broadcom iProc wh=
-ich
-> boots initially into a Hardware Security Module which validates U-boot an=
-d then
-> loads it. This specific path does not utilize U-Boot's UEFI
-> implementation or the
-> standard UEFI boot services to pass tables like SMBIOS.
->
+Now that we build with -fms-extensions, union pipe_index can be
+included as an anonymous member in struct pipe_inode_info, avoiding
+the duplication.
 
-What prevents this HSM validated copy of u-boot from loading the kernel via=
- EFI?
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+Do we want to do this as well? At the very least it would give some
+more test coverage if this could be in -next for most of a cycle.
 
-> Because there's no UEFI configuration table available in this boot mode, =
-we need
-> an alternative mechanism to pass the SMBIOS table address to the kernel. =
-The
-> /chosen node seemed like the most straightforward way for the bootloader =
-to
-> communicate this non-discoverable information.
->
-> I wasn't aware of the EBBR discussions covering this. I've added the
-> boot-architecture and arm.ebbr-discuss lists to the Cc. If there's a pref=
-erred
-> EBBR-compliant way to handle this for non-UEFI boots, I'm happy to adapt
-> the approach.
->
+Context for new people:
 
-For the record, I don't see a huge problem with accepting SMBIOS
-tables in this manner, but it would be better if a description of this
-method was contributed to the DMTF spec, which currently states that
-the only way to discover SMBIOS tables on non-x86 systems is via the
-SMBIOS/SMBIOS3 EFI configuration tables. Doing so should prevent other
-folks from inventing their own methods for their own vertically
-integrated systems. (Other OSes exist, and from a boot arch PoV, we
-try to avoid these Linux-only shortcuts)
+https://lore.kernel.org/lkml/CAHk-=wjeZwww6Zswn6F_iZTpUihTSNKYppLqj36iQDDhfntuEw@mail.gmail.com/
+https://lore.kernel.org/linux-kbuild/20251020142228.1819871-1-linux@rasmusvillemoes.dk/
 
-However, the DT method should *only* be used when not booting via
-UEFI, to avoid future surprises, and to ensure that existing OSes
-(including older Linux) can always find the SMBIOS tables when booting
-via UEFI.
+ include/linux/pipe_fs_i.h | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
-Also, I would suggest to pull the entire entrypoint into DT, rather
-than the address in memory of either/both entrypoint(s). Both just
-carry some version fields, and the address of the actual SMBIOS data
-in memory, and the only difference between SMBIOS and SMBIOS3 is the
-size of the address field (32 vs 64 bits)
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index 9d42d473d201..80539972e569 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -44,12 +44,6 @@ typedef unsigned int pipe_index_t;
+ typedef unsigned short pipe_index_t;
+ #endif
+ 
+-/*
+- * We have to declare this outside 'struct pipe_inode_info',
+- * but then we can't use 'union pipe_index' for an anonymous
+- * union, so we end up having to duplicate this declaration
+- * below. Annoying.
+- */
+ union pipe_index {
+ 	unsigned long head_tail;
+ 	struct {
+@@ -87,14 +81,7 @@ struct pipe_inode_info {
+ 	struct mutex mutex;
+ 	wait_queue_head_t rd_wait, wr_wait;
+ 
+-	/* This has to match the 'union pipe_index' above */
+-	union {
+-		unsigned long head_tail;
+-		struct {
+-			pipe_index_t head;
+-			pipe_index_t tail;
+-		};
+-	};
++	union pipe_index;
+ 
+ 	unsigned int max_usage;
+ 	unsigned int ring_size;
+
+base-commit: 778740ee2d00e5c04d0c8ffd9c3beea89b1ec554
+-- 
+2.51.0
+
 
