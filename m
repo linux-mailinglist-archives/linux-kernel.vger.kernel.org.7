@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-866744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0158BC008BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:42:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A430C008C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF2419C6761
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:42:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 211444F993D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D86308F3E;
-	Thu, 23 Oct 2025 10:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4416630AACD;
+	Thu, 23 Oct 2025 10:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMZmyn7B"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wg+2Fk1r"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F6428A1F1
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D803074B1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761216132; cv=none; b=c5pxrzAQ8/cMMIpYE59ppyoMMnUwbos6ZQmxDsIE3dnCRnkZFXemrVhwYFWFvsn5EbIW/UK+tITpdcuZ56IQZGJhNGOXWhpeYFzB1xmqxnJX/nrsbVhronuLNlyxte5aOtDLjKWw9ZgCLAGVuAa5SMWqJzCaYoZDUSzljd147Pg=
+	t=1761216195; cv=none; b=g7htCzg3lkdHEQhtFAvjg0U9pd8L7BIdH0jIIIUY9Co7O/oxzDGRGqnhjdFIWmKkxo+xcdMrpQo97s55smWbhYWAVJsjyRPWPTm4+PAVzLuVnWX+1MhFuSkSnoFka+Q8q9k6ETDllaCQiOwXFEF7tOp6kKr4fuAfp+Bo1xlC3R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761216132; c=relaxed/simple;
-	bh=jyg2eZ/1XdoAlTqduehdddaNsDWPY2qdFBzk6zBgRik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JZSJ4BLShQW2p49S/j+bYY0PfcY8lBOwaayV37363sJ/qtLpxWXsaCLnuooJBg6m0LfZ4Z7AcoMY32jqtCdJMawEru8iLB1LSfjqb6mAHDFO7QNetwNvwKLLTrzGKRDOCIck5YSgSBJwucHUS563TFCmi0+zdyZTme9d1c+2I4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMZmyn7B; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c3d913b3bso1209170a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:42:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761216127; x=1761820927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eNwYeVe3zrzgI77kfJc6mmnbUyU3J+W0mAD5mBv2bvM=;
-        b=KMZmyn7B/WFxXkWm30Gzod9FYX4imYKhDQ9n1mJTerhcsgny+cgqDx+hERs+OAOARl
-         j9j5G0crdnySPQ0Tuv7uzQkUTF6OaFlYnvKyzM4BzQAq4w0DOUxGTwVD5dzewb8DajjA
-         NfH5APIxlzWnR3+FoRyz67FRmy7k4mtHcfxlTM0TFbOn+G52nu0pPdcWyvTTKw0BIPpM
-         Mp6Cp2v+WWHTERxkowt5/9tOkSaorOxci/ahr5N+pC2w/lUua6eEjg6bKgR658/nxFE2
-         ffjOM/9n7vSEYkTvjkSH4Wsabm3gcHPe5YBtV2VwoOK/UX3Yq8pidgxPDkUwIKcGkSnb
-         H2bQ==
+	s=arc-20240116; t=1761216195; c=relaxed/simple;
+	bh=PSq4rzHsTZYmnPW7B8CFsP6cGQe5nHJwDQGMbKTQhlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UAb5TWGGQPbyF4UQ7Oeg6YIq6GCB8OFffiUaFcBX7BwaLpifUy3WMs3mo5TD0ZUiYvDVdE0+X+N1TtkGbB7cH2HygaywoIizxSknG6nwy+/LYReiCPborQlnTd/JDf1osXogYv5jVwvlfL3Chie+HmiyJ1fBFUICcuMIrAopCjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wg+2Fk1r; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761216193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2itfR4P5vWlnhxtQmgFjh+n2XUI3sGLIeHL7uzBaLr4=;
+	b=Wg+2Fk1rKYh4Nd+M/CzDit32eSiJ1J4iqc5JTikhTBMrGq1XhZ94UM7xZ9XtrbozUj/euB
+	O0OYfsQbSuPiQhCtfI0XNwVVbdRcXl6+a3/VwooTDm2mPlB/TN6w7CejrLRC1SFiPXe+VD
+	RxviOo1BzUTCitWCVfF83WrS2MmTlPM=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-137-rrc4yReVPE22vYmNHi3_TQ-1; Thu, 23 Oct 2025 06:43:09 -0400
+X-MC-Unique: rrc4yReVPE22vYmNHi3_TQ-1
+X-Mimecast-MFC-AGG-ID: rrc4yReVPE22vYmNHi3_TQ_1761216189
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-429893e2905so472219f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:43:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761216127; x=1761820927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eNwYeVe3zrzgI77kfJc6mmnbUyU3J+W0mAD5mBv2bvM=;
-        b=Ito2zaPeaMXuUoQnbK80F2yL33EYI256e4JWfOWSjArtEaY9kTxVXfID11+FAYhQyT
-         agVUKaSMqnKVP25GoiFfyvns7WfCDGcKnxeRxoLs5UejCkF4EVYZXTup9R1Eij3MUDMv
-         CNP8nokDSneTfOkdYeIPAWp7srwsAM0L9OCwCrz2vAa8lIGxZXLBui/BaqBvLvLqHvyp
-         42NqWM1V9nmp/fBwTgnKcvMB70G7bmrK26lXmrUoHvOpJtSQrAFT5SoUM8NLxnAg/IHd
-         znMd76eXO5h1mN9wmU/cc6WUUWOeLFCoGAR+9yaUYk31AouDrEkGqVrTQBfGTA92pa1K
-         mlNg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4Z60UkjvXHHNnGlKsFXdT9DnfpgEE0C41aFoNuvlLBwqx9K2UTebPkyHN0j2DdwLqgSHR7mc2XSstx9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCioynZXqngUFnP+tLALeTDUB14HG6JbdhWCEHtnW4JQFZSpp2
-	UAckpAqfWwWxhuxHAwpPn1ThjyZq53ZN3Xro9vToX4iTOFDJGrOeY4RAC4g+YpxDz3xzMq9CtPD
-	fLopZFj82HdTr/vBK6U46DBBUwEs25IQ=
-X-Gm-Gg: ASbGncuGR1+SKfSPpp6DxYMTmP0C8V9YkKfSwVXrL89FXqUt69o415xGEs7CbfVmgSZ
-	YyYc0gDrhlMxurd7rODovUhMS/Lw30fatIS8qFAclCAotKcBwZodfGU3Y/EroZgh0bTzuzlxfHo
-	s8X7u2Zce04ZhAWKSPNGa0P4r9vWVC4mWa7XCjlIcf5iY6ozS6wHsIbb0hOhKuYnQNnNwYReKHW
-	27la7KEJFuw6N84eY5QESwThSriyx0KgupQngUBS8uoCaG3RgmHYa+cazc8d8frKX5HpVlWzc7b
-	1gGgjfi0tG6XH/v4BuHz8Hsm0AzylQ==
-X-Google-Smtp-Source: AGHT+IHj9sqZlFAd6qPNTa4C/OpRKo92Gcn6zexlmgF4iPE+98wHJzEkw8o+T+JQbLSjLVQOB0m1KT0oZjfCmtuivL8=
-X-Received: by 2002:a05:6402:90c:b0:63c:489f:df5 with SMTP id
- 4fb4d7f45d1cf-63e3e10eee3mr2179427a12.16.1761216127196; Thu, 23 Oct 2025
- 03:42:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761216188; x=1761820988;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2itfR4P5vWlnhxtQmgFjh+n2XUI3sGLIeHL7uzBaLr4=;
+        b=olwjkXKA0nEa9Wm/2pBanudQkqtWfEdhr1gYtCGE7/GEAluj21XgtHGT5hitoTfi+B
+         FFaDk5lAMSx7D75q1UdVxw7YPML6HmtTTSnuync2s7YbLOPwn2nYHrZ2BWvMXm+yTT0/
+         Ij3ln9b2ySh2Vc9lVFjlyag2vLM2gviOdrBuVbXu26yivXaUJAFrXJBqTRry9/CrmFH0
+         CTOrSakfB6BUbDFz0j4LbtihqD8ptI7SZcrevzb3Zw7hndSRFIlvXDg/yJDu+E7aemxF
+         61gZcwbCeLhA9FWUGvJRG0yYCHZ1iFLzZVQV0tPwcONS/cqXqnQAVf/ZWLF4oTpeZSvK
+         UX0g==
+X-Forwarded-Encrypted: i=1; AJvYcCX4ye9XxYcqOOCCOYM1/N1oRc1plh4Lqwbf2LHTB35Kp/PnLj7IogZgQueuj50i0Il1VjxtccHOU9mpnNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5Z7m2SE57wXcnNkpyrwW/GXhS18Cy6X+6qSoHmMxfAwyc+v5T
+	82FOrl3YxhAEGYQpLJMH9flqypHD5WU+Qiw9uD0EB1uchC3v5oQXGbk+TOtdDi9qeYXhdQJa7bp
+	bhRUoVEEILxq/Qqtsuw/UsPnBHth+fEfRUhjr2pPOw9/LjFgKohc8DIUNeTDNKSfEDw==
+X-Gm-Gg: ASbGnctqMRUT/2K7nSvRgyg/uCcyNJ1pASChRunNQIh2raLeOY6IROFqoDo5KzZfE29
+	IXyJREsVduKYh2eWCPLYBBcwTmKGozcZDC4Kbk+vCd5+ebK8rJVPv2EQWbKhjJEY9F6dogxpGNI
+	vUt0LgsL4Sthkvc+YjnVL8UIekpCpVkEylva5zssdC/yeBWuwHEm8WqU7mVHgzncA9fX71SApsW
+	x0hOSJklUgaVW06jIfXxGRFrlmpmaFlq6glk+pm1YSLthDir7m+zLbBJK8G/XnPFXRgtr7Wkubt
+	4evhy04WCjrxas8/xVwJATHMVPWwJXn28o6eHUcTcoWFfWrGHyC2UDgMZ5jQbELMac9s41oJOF+
+	bPi4FOVUk7I8lOVMSOiaoOjk+a/TIu1+sgkVmpFgZn5sAKKk=
+X-Received: by 2002:a05:600c:3b83:b0:46e:3d41:6001 with SMTP id 5b1f17b1804b1-47117925171mr243743995e9.34.1761216188616;
+        Thu, 23 Oct 2025 03:43:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHeZ82VrSnvpK1c3qyzIXLRxmMNdmjxKL2P/cuqpRB9ovXOV8FGWqUSGpOdh0UCletrBUBh+w==
+X-Received: by 2002:a05:600c:3b83:b0:46e:3d41:6001 with SMTP id 5b1f17b1804b1-47117925171mr243743745e9.34.1761216188204;
+        Thu, 23 Oct 2025 03:43:08 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475cae92067sm31140865e9.4.2025.10.23.03.43.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 03:43:07 -0700 (PDT)
+Message-ID: <268ee657-903a-4271-9e17-fcf1dc79b92c@redhat.com>
+Date: Thu, 23 Oct 2025 12:43:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021-aheev-checkpatch-uninitialized-free-v1-1-18fb01bc6a7a@gmail.com>
- <aPiG_F5EBQUjZqsl@stanley.mountain>
-In-Reply-To: <aPiG_F5EBQUjZqsl@stanley.mountain>
-From: ally heev <allyheev@gmail.com>
-Date: Thu, 23 Oct 2025 16:11:55 +0530
-X-Gm-Features: AS18NWBdMh0RmpDPGmhjn_SnwsO6o_RPLnVM52wrjLiLq5epUawW0vv-w1GvPEY
-Message-ID: <CAMB6jUGhcJ=W3s96jRBHHTyPfBm+-+d6-VQQ3mXft7=fBJ0jvg@mail.gmail.com>
-Subject: Re: [PATCH] checkpatch: add uninitialized pointer with __free
- attribute check
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Joe Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>, Andy Whitcroft <apw@canonical.com>, 
-	workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, David Hunter <david.hunter.linux@gmail.com>, 
-	Shuah Khan <skhan@linuxfoundation.org>, linux-pm@vger.kernel.org, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/9] net: Add struct sockaddr_unspec for sockaddr of
+ unknown length
+To: Kees Cook <kees@kernel.org>, Jakub Kicinski <kuba@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Simon Horman <horms@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>,
+ Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20251020212125.make.115-kees@kernel.org>
+ <20251020212639.1223484-1-kees@kernel.org>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20251020212639.1223484-1-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 22, 2025 at 12:55=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
->
-> I made a list of the warnings this generates (on Monday's linux-next).
->
-> None of the warnings are real bugs.  Every single one of these has the
-> assignment as the first statement after the declaration block.  We have
-> had bugs because of this before but Smatch and (I think) Clang detect
-> them so they don't last for long.
->
-> regards,
-> dan carpenter
->
-> arch/powerpc/platforms/82xx/km82xx.c:30:
-> crypto/asymmetric_keys/x509_cert_parser.c:63:
-> crypto/asymmetric_keys/x509_public_key.c:151:
-> drivers/firmware/arm_scmi/shmem.c:199:
-> drivers/net/ethernet/intel/ice/ice_flow.c:1576:
-> drivers/net/ethernet/intel/idpf/idpf_virtchnl.c:1015:
-> drivers/net/ethernet/microsoft/mana/gdma_main.c:1508:
-> drivers/net/wireless/intel/iwlwifi/fw/uefi.c:821:
-> drivers/net/wireless/intel/iwlwifi/mld/d3.c:1788:
-> drivers/opp/core.c:1413:
-> drivers/opp/core.c:1480:
-> drivers/opp/core.c:1797:
-> drivers/opp/core.c:1888:
-> drivers/opp/core.c:2874:
-> drivers/opp/core.c:2935:
-> drivers/opp/core.c:2989:
-> drivers/opp/core.c:3065:
-> drivers/opp/core.c:3085:
-> drivers/opp/core.c:3104:
-> drivers/opp/core.c:312:
-> drivers/opp/core.c:330:
-> drivers/opp/core.c:412:
-> drivers/opp/core.c:450:
-> drivers/opp/core.c:608:
-> drivers/opp/cpu.c:157:
-> drivers/opp/cpu.c:204:
-> drivers/opp/cpu.c:59:
-> drivers/opp/of.c:1272:
-> drivers/opp/of.c:1331:
-> drivers/opp/of.c:1428:
-> drivers/opp/of.c:1469:
-> drivers/opp/of.c:149:
-> drivers/opp/of.c:1505:
-> drivers/opp/of.c:174:
-> drivers/opp/of.c:276:
-> drivers/opp/of.c:352:
-> drivers/opp/of.c:409:
-> drivers/opp/of.c:48:
-> drivers/opp/of.c:98:
-> drivers/scsi/scsi_debug.c:2964:
-> drivers/tee/qcomtee/call.c:648:
-> fs/overlayfs/params.c:451:
+On 10/20/25 11:26 PM, Kees Cook wrote:
+> Add flexible sockaddr structure to support addresses longer than the
+> traditional 14-byte struct sockaddr::sa_data limitation without
+> requiring the full 128-byte sa_data of struct sockaddr_storage. This
+> allows the network APIs to pass around a pointer to an object that
+> isn't lying to the compiler about how big it is, but must be accompanied
+> by its actual size as an additional parameter.
+> 
+> It's possible we may way to migrate to including the size with the
+> struct in the future, e.g.:
+> 
+> struct sockaddr_unspec {
+> 	u16 sa_data_len;
+> 	u16 sa_family;
+> 	u8  sa_data[] __counted_by(sa_data_len);
+> };
 
-Thanks for reporting these. I will try to get to these in later
-patches. But, how do we test the changes?
-KTODO: run checkpatch with uninitialized pointer with __free attribute
-check and fix the errors
+Side note: sockaddr_unspec is possibly not the optimal name, as
+AF_UNSPEC has a specific meaning/semantic.
+
+Name-wise, I think 'sockaddr_sized' would be better, but I agree with
+David the struct may cause unaligned access problems.
+
+/P
+
 
