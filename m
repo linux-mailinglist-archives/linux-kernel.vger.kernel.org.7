@@ -1,96 +1,166 @@
-Return-Path: <linux-kernel+bounces-867010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5AFC01563
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:22:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD9CC0155D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1980C502ECA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB722189DE97
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17BB28E00;
-	Thu, 23 Oct 2025 13:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19214314D13;
+	Thu, 23 Oct 2025 13:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCLJ65ZC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/VTBQNS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCDB2D8376
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B54314A8B;
+	Thu, 23 Oct 2025 13:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761225669; cv=none; b=bMemtK6h7MVOi+q4LkvN0nPuFgOUUsk1K1xAgP2fPjV2cGh2V52c8aFKuJHz7qMqOSEgAKP2+2UgBWSKQtSGlBhpM4eMmV6PqVrGgXUX7tcMasm5uHt0J1LLQ2S+Zi96RpS4jaQrpg1d59K3C1LvhU63dVLEBfapQ+DrNeEWm7k=
+	t=1761225705; cv=none; b=tna6XG7cyCKR+3ga9hTsz+8LrRIP14Dtm0MvDoeqV/3ZnsppJ32ltBkTL/TMI7rDf7hYsmXptmMDhjLUoZfXIzsXGvf+tD+iumflIAeV3PkyPoj620WucwkDuAeMmB6EaTyKneVcQ2NvpTlHkK7bouZpd3vH4M3MotHNjDTJwP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761225669; c=relaxed/simple;
-	bh=Dl27z3p3NRNn1JZ+UxgPKaTrAMjCktyLObHgoPG3ObI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ttyFochhr2boXRlTJo4UfMLGzZxxGb6XmjpL+fmxLk+J0he6+q0f87gmnI0tI9QrcazS6vHSCXH8ves3Qa3d/FnyH1GX64WpL2SSEw9Z/yNKlEcgWvmmt4T6WxoNRFD59rj5X2D3EHdU+CUqww9IWAYvi80nv0DfEMUk/Hq0gHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCLJ65ZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C5B2C4CEFB;
-	Thu, 23 Oct 2025 13:21:07 +0000 (UTC)
+	s=arc-20240116; t=1761225705; c=relaxed/simple;
+	bh=FaEhqmiDrc4mURvUAlo6RVL1sWzWFreUhEGoKE3IWaU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=unFrfSz0RoJbiQbTdUNhOexvOs1EbPShGa9tIdm+TZGIiZ2JSkDE4zw9VB6u55zx1btSDlKlrB/fFXF6f7RWz83cc4H0az/BGN74llpeKtQf3KTs9IiIlBW5z1KaUKdGXvcprbgeJ2xtVCLoulMWWLP9a3J6N9wwveDfUmtMkF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/VTBQNS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 643A3C4CEE7;
+	Thu, 23 Oct 2025 13:21:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761225668;
-	bh=Dl27z3p3NRNn1JZ+UxgPKaTrAMjCktyLObHgoPG3ObI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NCLJ65ZCY9g5JNNCuSt1sxPrgzdhk/H750je4yr8gWwtpYPc6jTdcBBr4Tly1serB
-	 drzpEM00Nu3gU5qMb/4RkOKxHdqwrKxhwhxyM8mKe31iEU9Vc8OXHJeeww3+oVjc1H
-	 vKECDfGUorXyqmti+Z4GYV8zwpNqgAqo8VxIAp8Q3VPK9UBq14+3IIMyQ4rjCmxQDn
-	 9VZX89l7abr/A7XLXx0yWEb8exmVINKRfntboC4OTXzQjEEyNHhN9MunpWmqge3o2v
-	 XpKEdIH9/AmKKZ4ivKsHVMoLAmp6RZkYEyjqD1et8wTgzz/oRZPgOxbLGs1wat8gqJ
-	 yEPXExsxD9ZvQ==
-Date: Thu, 23 Oct 2025 14:21:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sander Vanheule <sander@svanheule.net>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v4 2/2] regmap: warn users about uninitialized flat cache
-Message-ID: <55d53394-1f79-4257-a513-32dee1704e65@sirena.org.uk>
-References: <20251022200408.63027-1-sander@svanheule.net>
- <20251022200408.63027-3-sander@svanheule.net>
- <9b5eaedd-f068-4209-af4a-215716e279a7@sirena.org.uk>
- <833a6495c2b16e1da90c19826839191eec21e6f2.camel@svanheule.net>
+	s=k20201202; t=1761225705;
+	bh=FaEhqmiDrc4mURvUAlo6RVL1sWzWFreUhEGoKE3IWaU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=g/VTBQNSI+wN9wH0vYdqElRgOjF0U5PnrM5/qCUKr4ouEOPXBEcD5lrIAofWII4gX
+	 czBJoVwqWxLfuRugp2MMfPWHzou1Xnrp5X1syS3HDtWCZWMYaxz1WS+/zp/4DA08FC
+	 M48q8Wpy+ZXUp/V9ONnc3HndIqvV2uLTGeUCcSNmSOys6+/8b1+xTZMS5+g7bIm+Lh
+	 3WPeBC4C41ojiDjDaOuwm2h7eagHrUG9xex0kBgrJ+1TyxAH2FKF6Rem5OpISmtfA9
+	 lBJZbHNl6mzw0PS9D+uM6zmmk9XJuFCmaXV52X2JrT22HQxe0Jrk98WU/t3K/2hKMB
+	 Ym8NBgCMzvdkg==
+Message-ID: <1877f731-1599-414d-a40e-38aec05a33c0@kernel.org>
+Date: Thu, 23 Oct 2025 15:21:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tJoBJcSH8M1CwOxe"
-Content-Disposition: inline
-In-Reply-To: <833a6495c2b16e1da90c19826839191eec21e6f2.camel@svanheule.net>
-X-Cookie: I've got a bad feeling about this.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/7] dt-bindings: memory: introduce DDR4
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Julius Werner <jwerner@chromium.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+References: <20250930-b4-ddr-bindings-v8-0-fe4d8c015a50@gmail.com>
+ <20250930-b4-ddr-bindings-v8-2-fe4d8c015a50@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250930-b4-ddr-bindings-v8-2-fe4d8c015a50@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On 30/09/2025 10:46, Clément Le Goffic wrote:
+> From: Clément Le Goffic <clement.legoffic@foss.st.com>
+> 
+> Introduce JEDEC compliant DDR bindings, that use new memory-props binding.
 
 
---tJoBJcSH8M1CwOxe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+If there is going to be resend, then please repeat here applicable part
+of compatible format, e.g. why it's like that.
 
-On Thu, Oct 23, 2025 at 03:12:59PM +0200, Sander Vanheule wrote:
+> 
+> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
+> Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
+> ---
+>  .../memory-controllers/ddr/jedec,ddr4.yaml         | 34 ++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml
+> new file mode 100644
+> index 000000000000..a2eb6f63c0ce
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml
+> @@ -0,0 +1,34 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,ddr4.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: DDR4 SDRAM compliant to JEDEC JESD79-4D
+> +
+> +maintainers:
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +
+> +allOf:
+> +  - $ref: jedec,sdram-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - pattern: "^ddr4-[0-9a-f]{4},[a-z]{1,20},[0-9a-f]{2}$"
 
-> If it's okay for you, I would change it back to a dev_warn_once() with a
-> test_bit() check.
+Why double ','? I would imagine last ',' to be '-':
+ddrX-YYYY,AAAA...-ZZ
 
-That sounds good.
+Sorry if we discuss that already, but then please remind me and this
+would need addressing in commit msg.
 
---tJoBJcSH8M1CwOxe
-Content-Type: application/pgp-signature; name="signature.asc"
+> +      - const: jedec,ddr4
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj6K78ACgkQJNaLcl1U
-h9DWcgf9FjDHOELBqIIKY9xdAYd+y8uP9JNT1dgrsQ91m2IXT//WfRiLcqJn9fGS
-USN+Mbz5V5F6TcZnpQJk6Jqy/Kq+SpEz53gaCkYWWBcMAw1O4wtWgB3l9tZV1IcB
-Tib0xvryklmev1wfUMsEFd2mz5XX0mykQ6cPjJa2IafHrsP56ICtiiZQTdEeLCUu
-OJXSqaFhKhf6u6imODmCCHrbQS4XsTaAEErijXzSuSHqI0mU10EKfGR/BUuJXWD7
-xsd+LbEB8OMDTs+sV1ugnkQhz8CX19/mfgDSqzxwLOqNEAdVF8sDHtMNDtEFz7Aw
-rKjP9ndgoobfww9gXGtDWDkgkgaK3w==
-=WGxZ
------END PGP SIGNATURE-----
-
---tJoBJcSH8M1CwOxe--
+Best regards,
+Krzysztof
 
