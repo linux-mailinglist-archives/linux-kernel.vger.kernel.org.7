@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-866581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0382EC0024F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:12:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 515EBC00270
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30C7C3A7D37
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:12:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A06E188AA07
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9A32F9995;
-	Thu, 23 Oct 2025 09:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BD62FB628;
+	Thu, 23 Oct 2025 09:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhXEyOTw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="Ng68Cg/S"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEE52F6587;
-	Thu, 23 Oct 2025 09:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AAF2F9C37;
+	Thu, 23 Oct 2025 09:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761210728; cv=none; b=GJXx0cj5dXYPzaVU+nlsfWoplr657Z+otH5yEy8uLbKRqNo0PtYXmDRPpWJLj3SfjYOtUSWpZZuyqE8Cd83FcNrqAemWb8XQoMwNAuYOXtEdSHKviQZDs9DEfIKO0pCU+UXF4Tlo57NnzDmj5N69DFShCT25p76YQpBAyUN3PR4=
+	t=1761210758; cv=none; b=Ct9hRsv4olyEhz0lBOyKVoF60CFj9NiWadRPOYBuxK8SQ2VKRKkpaMX+7OkaHVA31LWgKl+GfPBXmV8X/jMbKkJnRIuW8qLdMjlI8FPZ5zAy2j0g292Gsrk23ZKYO93kMILKJ+rYp5HuTpjD7B5bET3N3EI75qlyJqV/QRJraaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761210728; c=relaxed/simple;
-	bh=4fQns59QMA3pai7ttXXV7GO218fuxTEHJzSTkeLaOGQ=;
+	s=arc-20240116; t=1761210758; c=relaxed/simple;
+	bh=Au4M4ajM2Qer0brKpjP6qDjkprWx/qHTP/pDYkB9CKk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lCZlEU2mDAGqkfiiHjB0JAXosfHXXxSP3SElq70ncXWR0MYR/veMVaXegJvqUwmTLrtoCVj8+fbsdpJG8Uuwg8ZdIamsE5Uu7i4TLzyDIrVYfaiXJnhCWBP9h9DvGsx8DuZDE9wkq6ayGM/nCk+tAUxyaZPL2CImVdhIT6SvuKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhXEyOTw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E09BC4CEE7;
-	Thu, 23 Oct 2025 09:12:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761210725;
-	bh=4fQns59QMA3pai7ttXXV7GO218fuxTEHJzSTkeLaOGQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RhXEyOTw+Nv0PVa1o3YFTeWUCdbHCgKh6zEBhmXkZKML+wiA+jidi6IpfvNu5N68g
-	 TxHEYYUSNZnLmD2cj/nBirivk2DaLWkO6RSBh1vjJaRJdjvmqkQiCKPSqxuE4qt67j
-	 Dapwxx1Xw3bePtz51R441Du2xHZMmOQ04QpMi9vrKJBA5m8BIbpwVFMGuCFM9AuI+4
-	 rNedVDfDAWPLSXJS+V9rNuWuOHts8wsFtRVV43Ql08Quhg2X5YbkP/P4IIr0fOnyHo
-	 ZGKbK6BQCiUulrW7bu+t8qttLuzzaX6ILOOTHJCy9oprUUo1ITCdrW71x9knp8XIn4
-	 tW2MxbddPK5hA==
-Date: Thu, 23 Oct 2025 10:12:00 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=cOkEbaXFttDodpr+DLbgegiqZ0N/+vTH2FljFyYRKakdtajCFMMX4XmHju5z7fhdzNrcJ4Fkz+cTYyFxWRzDVbRxUPKF+UUdwAb8OseXe0Sw5iCp2j/NebM4Go/tIS1B9EX+ZrEW5cuVnMbch5aOTgruvCVnIJevjTfyM4N9tEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=Ng68Cg/S; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id DD70F1C008F; Thu, 23 Oct 2025 11:12:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1761210753;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aktiGT3qaNGuhoLaDOBQgVEKItTjB5lAUMaRWvoHUBk=;
+	b=Ng68Cg/S/+IO3SnbpS6Lloeb7Nb4lJrr9pBcDuxcvJf8xpNTTqCDjxrzJn9hPf9DKSB774
+	U0FBoJnD85//ksL7pJY5sukB82RZgROrfmfaZtBMy2QHTRzZyl7XRTEPkdYkbJmHo4xdeq
+	v5SvvxWkPGdY2JL0ldlYfoJ3XritslQ=
+Date: Thu, 23 Oct 2025 11:12:33 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Paul Sajna <sajattack@postmarketos.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/9] soc: microchip: add mfd drivers for two syscon
- regions on PolarFire SoC
-Message-ID: <20251023-lard-browbeat-daade890b4df@spud>
-References: <20251013-album-bovine-faf9f5ebc5d4@spud>
- <20251013-patient-matrimony-6162c8f92e2e@spud>
- <41dbea85-8aa1-4034-8106-e28c37e398b8@tuxon.dev>
+	Conor Dooley <conor+dt@kernel.org>,
+	David Heidelberg <david@ixit.cz>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	phone-devel@vger.kernel.org,
+	Amir Dahan <system64fumo@protonmail.com>,
+	Christopher Brown <crispybrown@gmail.com>
+Subject: Re: [PATCH v2 03/13] arm64: dts: qcom: sdm845-lg-judyln: Add battery
+ and charger
+Message-ID: <aPnxgXU7VFCpvk2w@duo.ucw.cz>
+References: <20250916-judyln-dts-v2-0-5e16e60263af@postmarketos.org>
+ <20250916-judyln-dts-v2-3-5e16e60263af@postmarketos.org>
+ <772be3c8-751b-4f96-8ed1-fc8033babe74@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KI7GN8NHbpEH6S+z"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Dp7LmNbBIZtGMwtq"
 Content-Disposition: inline
-In-Reply-To: <41dbea85-8aa1-4034-8106-e28c37e398b8@tuxon.dev>
+In-Reply-To: <772be3c8-751b-4f96-8ed1-fc8033babe74@oss.qualcomm.com>
 
 
---KI7GN8NHbpEH6S+z
+--Dp7LmNbBIZtGMwtq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 07:04:33AM +0300, Claudiu Beznea wrote:
-> On 10/13/25 20:45, Conor Dooley wrote:
-
-> > +}
-> > +
-> > +static const struct of_device_id mpfs_control_scb_of_match[] =3D {
-> > +	{.compatible =3D "microchip,mpfs-control-scb", },
+On Wed 2025-09-17 15:47:47, Konrad Dybcio wrote:
+> On 9/17/25 3:09 AM, Paul Sajna wrote:
+> > From: Christopher Brown <crispybrown@gmail.com>
+> >=20
+> > Values based on lineageos kernel
 >=20
-> This looks un-documented.
+> A link for reference would be nice to see
+>=20
+> >=20
+> > Signed-off-by: Christopher Brown <crispybrown@gmail.com>
+> > ---
+> >  arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts | 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> >=20
+> > diff --git a/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts b/arch/arm64=
+/boot/dts/qcom/sdm845-lg-judyln.dts
+> > index 49225e4fa80e5f45a36964d5d733dc238e4413f8..be488891d0ab01c5bfd3762=
+514fbf1c3bbf6845a 100644
+> > --- a/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
+> > +++ b/arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts
+> > @@ -37,6 +37,14 @@ key-thinq {
+> >  			interrupts =3D <89 IRQ_TYPE_LEVEL_LOW>;
+> >  		};
+> >  	};
+> > +
+> > +	battery: battery {
+> > +		compatible =3D "simple-battery";
+> > +
+> > +		charge-full-design-microamp-hours =3D <3000000>;
+> > +		voltage-min-design-microvolt =3D <3200000>;
+>=20
+> 3.2 is rather low.. are you sure?
 
-It is actually documented, this stuff all took so long to get done that
-parts got applied piecemeal along the way, including any of the MFD
-bits.
+In flashlights (etc), Li-IONs are often pulled down to 3.00V. It does
+not have any great advantage because it goes down from 3.3 to 3.0V
+pretty quickly, but it is not completely insane.
 
-I'll fix these things up separately, cos I already applied the first two
-patches here and just squash it in.
+Actually, under load, it may make sense: internal voltage will be
+higher at that point.
 
---KI7GN8NHbpEH6S+z
+Best regards,
+								Pavel
+
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, Netanyahu and Musk!
+
+--Dp7LmNbBIZtGMwtq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPnxYAAKCRB4tDGHoIJi
-0rJYAQCgpkpqZSL7x7t82+VYX7l3XaRLUIGDEYkTvHJp0wOEVAD/RFe9FOMiRRhm
-r3FYvXwt1EoKcNCFEZiNkhB9BkaO5Ag=
-=Eqsv
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaPnxgQAKCRAw5/Bqldv6
+8mmYAJ4sxugGVJtZwmgCyFuQAGHI1EPpJQCgmz10yfgAa5WOAb8dM3gnTw5pEc0=
+=RY6z
 -----END PGP SIGNATURE-----
 
---KI7GN8NHbpEH6S+z--
+--Dp7LmNbBIZtGMwtq--
 
