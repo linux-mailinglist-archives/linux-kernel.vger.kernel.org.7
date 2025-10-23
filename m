@@ -1,104 +1,155 @@
-Return-Path: <linux-kernel+bounces-867457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B503DC02B4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:18:38 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D5AC02B37
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1046E4ED7C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:17:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D457735AF7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB09347BBD;
-	Thu, 23 Oct 2025 17:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE069347FC1;
+	Thu, 23 Oct 2025 17:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrpkYfcJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LxwnwsQM"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01969346797;
-	Thu, 23 Oct 2025 17:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EC0238C2A
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 17:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761239764; cv=none; b=UMLXGvTJqcZIlnfp1WqEc/UWCJZCUywxF8ewHxHSeET7SkW+vlWSa2yzDQOJrca0yd2KPgWUzqDGS6ccmWWrlOFAeaRA4TEpaxh/yGHFqNsfLmaHQWxNalVtl+B7TpHeL17ojLzXMYoPVraoU6YoKQyK7HH6kMCTzBKsQ8QV8js=
+	t=1761239771; cv=none; b=eUr6yudXuTg77Tk+xT1cP3vaUEe5FrqiAkKx5MvPu1/E1V7AGVYveGITTnloCswQWGaybWPQNCrIX6FcuzoESLuLZ/OZho4FDEwJEQpcA/6glZ28eSWmSPNyVUUnCnOQZIo9HLjha1RayYH7gHrkCgDjJcjkkEGGVky2QVSx1tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761239764; c=relaxed/simple;
-	bh=OUQyFuTsycRdDJyc4s7jio9r2I2Q187UaqN1mLSvjPc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fgz7ZcJAHiI+mgHW2rkx20mBMEu4z4D7v3xXsPSv4dVkmlMzftg9HtT3CKXxULzJZKVK52WcR/ixArR3DegeCqt2ZoRjeMIvY5At+3lCHB2zdwcmmWImKHGEi/kX8L8SORAXIh/2g4soF2npEx4UOY7LE1YCr2Udk0x1ZuCrvgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrpkYfcJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFD4C116B1;
-	Thu, 23 Oct 2025 17:16:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761239763;
-	bh=OUQyFuTsycRdDJyc4s7jio9r2I2Q187UaqN1mLSvjPc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LrpkYfcJ0XaHZv+npKsnZvpSxmMXlkAuGd+5ayAAY78rw2S+aliNApv3vf3RgLbiT
-	 nlf6ZhOhblexQzwhPrzuWdpng4OjFsM0opsXhzOo+gMcEwB0SPV9g2uLhE1wCUpnwA
-	 qZKzcGNHQCwHlU3PyZA8BmbnXvzyoC9yWjeKw7qbJRXBg//ZBMjA8ZH9XtWgm66ca0
-	 digOVgEszw1qgAI1nfJb/FntE/UGpDhqUsuVZxZXMXN5rnWcrrbGMJ69FcdJ/yJuQc
-	 jLZzdGfCdn4RbC/qtNc0VeGdPrUm0z4ka/8CTq3RcM/qdRysbGaJRqQgzh75/FIaXF
-	 fKQoLhwUuHxkw==
-From: Conor Dooley <conor@kernel.org>
-To: linus.walleij@linaro.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Valentina.FernandezAlanis@microchip.com
-Subject: [PATCH v4 5/5] MAINTAINERS: add Microchip RISC-V pinctrl drivers/bindings to entry
-Date: Thu, 23 Oct 2025 18:15:01 +0100
-Message-ID: <20251023-footing-tiger-61835aac1321@spud>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251023-stopwatch-cough-47d5497be5aa@spud>
-References: <20251023-stopwatch-cough-47d5497be5aa@spud>
+	s=arc-20240116; t=1761239771; c=relaxed/simple;
+	bh=3vjklBZDK91NfPPKB/m+mZXiuBD949DF/IdVW5vVnss=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GnCMTUl/r60gnnaqZSuA2rJT/87rxde+nZJgFYgP5tTmGtImKuXs9A/+ZJBxrkTK6DaKADKycuCIFRYogUeUCMgAU8uYIrFH8ITjhXvHSj6rlIfYlxbfXbK7mnF5vyhjFQwzvI1foPDFbg2j1nYzA2CXaMhzGl4LNzNblNI7BTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LxwnwsQM; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-27c62320f16so10739055ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:16:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761239767; x=1761844567; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/DTN4f9sYvKKbqzH4zMTtt+lW5xHHb7Uewe/2Me0Lwc=;
+        b=LxwnwsQMjWRMGpoXy31nd6AyCrOukM0uUMX7deu20qo7q30KMCjEEZDYhkC40aOus+
+         dESIMOiz59htetzN1GY+a8d39hT5AwOH2LqpPmPqsN806OVexEEppo/cfCrs6l75beiN
+         ttzi/+XVmKZsgLSonurq+SM+UjFV6WqRIckRbo8jONK1rJFyMUSfcdAuL79XjfckdTkx
+         qVkqUu7cHFjAXeiAuRtY6BUprhRaLtAviTIC90i+MPxtZzwfBtUGIx+fdAB6fayacJnL
+         q3B/8iiudaM1yFOowITDFdKAXmNeWYPPKfIER8Ll0hxwryvbM0KaRrW4lmGmVT92L3Dy
+         WoRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761239767; x=1761844567;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/DTN4f9sYvKKbqzH4zMTtt+lW5xHHb7Uewe/2Me0Lwc=;
+        b=idx10RUDwAYfdhz6yyrgws06lv0+C7sRpanpj20kKA8KDbDNKw5eLVI5oF4cYeDGkv
+         qIsBKtnKkqUwZIWkdiNajCxNtouIZhF4oK3lBjgtzIBMMIyRPz+Ub1enveMW0/af4Kex
+         QE2vevdvAowGpUgDvSsuS8u09+/jVMnqGYYIxbqQwRJpEzXKb8osNxlev8MU2wKCrT1K
+         weISfQzL0r0yIz3sNcv1PzyVEZu7sbDzRLe9KU2hqmqLNJc5FfZZoTj2iyIin35qVt+o
+         KlRAe5UKBUD8n1VWOvS3DeBeV6e51zmYjicOPqKtj9Nxqa9of7tEm/xnwY4GPpa43p2X
+         eIAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXk/YVFnXohBwALLIiyERfXioxh3IAUA9vn/DvmcqmJOiempinZ9XfZLBHDOXM0SzO1lWmGgqBCt91Mo/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzKf4FJaxkzV0qX3HX54F4ElOULmpZsrPQLVTeB0unuT33lXM6
+	RDZE1KyMYh2QZhanGnq6maTK92pOikgJGeoIDRmRd2SDJsS3uiMOXVXxqFelQc0jbzeuvjx8G8k
+	Pjk3AFg==
+X-Google-Smtp-Source: AGHT+IHWPgGmZKfo+3ImlZCUG7AewIscdCvWipQB1xDHXcjZQxceHYcdCY71wfIfELDOVuODkQ3p+Aq3kE8=
+X-Received: from pjkm11.prod.google.com ([2002:a17:90a:730b:b0:33b:e0b5:6112])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e88e:b0:267:da75:e0f
+ with SMTP id d9443c01a7336-290c9c897bbmr312407025ad.11.1761239766935; Thu, 23
+ Oct 2025 10:16:06 -0700 (PDT)
+Date: Thu, 23 Oct 2025 10:16:05 -0700
+In-Reply-To: <20251013151502.6679-3-jackabt.amazon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1422; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=yIOJ8zWE39Nk9VFv1VjhPf9MABofVWCX3ryvpaofjMU=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBm/kibuXMJzncUhek3nqunTeZ/tW/7Cco/N6qoXwSebD vO216rN7yhlYRDjYpAVU2RJvN3XIrX+j8sO5563MHNYmUCGMHBxCsBEtDYxMnwSurz6WtQy7U6p 0NZgy5x5v9nln++rPbH4P3f3tAcyVdsYGS45vVjkevW18xc3Z6VFsm9mvnJsjMp84LVa5GL4m40 x9uwA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251013151502.6679-1-jackabt.amazon@gmail.com> <20251013151502.6679-3-jackabt.amazon@gmail.com>
+Message-ID: <aPpi1c-8EpWuo87B@google.com>
+Subject: Re: [PATCH v2 2/4] KVM: selftests: Fix unaligned mmap allocations
+From: Sean Christopherson <seanjc@google.com>
+To: Jack Thomson <jackabt.amazon@gmail.com>
+Cc: maz@kernel.org, oliver.upton@linux.dev, pbonzini@redhat.com, 
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
+	catalin.marinas@arm.com, will@kernel.org, shuah@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	isaku.yamahata@intel.com, roypat@amazon.co.uk, kalyazin@amazon.co.uk, 
+	jackabt@amazon.com
+Content-Type: text/plain; charset="us-ascii"
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On Mon, Oct 13, 2025, Jack Thomson wrote:
+> From: Jack Thomson <jackabt@amazon.com>
+> 
+> When creating a VM using mmap with huge pages, and the memory amount does
+> not align with the underlying page size. The stored mmap_size value does
+> not account for the fact that mmap will automatically align the length
+> to a multiple of the underlying page size. During the teardown of the
+> test, munmap is used. However, munmap requires the length to be a
+> multiple of the underlying page size.
 
-Add the new gpio2 and iomux0 drivers and bindings to the existing entry
-for Microchip RISC-V devices.
+What happens when selftests use the wrong map_size?  E.g. is munmap() silently
+failing?  If so, then I should probably take this particular patch through
+kvm-x86/gmem, otherwise it means we'll start getting asserts due to:
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- MAINTAINERS | 4 ++++
- 1 file changed, 4 insertions(+)
+  3223560c93eb ("KVM: selftests: Define wrappers for common syscalls to assert success")
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 46126ce2f968..5d4825073fcd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22089,6 +22089,8 @@ F:	Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
- F:	Documentation/devicetree/bindings/i2c/microchip,corei2c.yaml
- F:	Documentation/devicetree/bindings/mailbox/microchip,mpfs-mailbox.yaml
- F:	Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
-+F:	Documentation/devicetree/bindings/pinctrl/microchip,mpfs-pinctrl-iomux0.yaml
-+F:	Documentation/devicetree/bindings/pinctrl/microchip,pic64gx-pinctrl-gpio2.yaml
- F:	Documentation/devicetree/bindings/pwm/microchip,corepwm.yaml
- F:	Documentation/devicetree/bindings/riscv/microchip.yaml
- F:	Documentation/devicetree/bindings/soc/microchip/microchip,mpfs-sys-controller.yaml
-@@ -22102,6 +22104,8 @@ F:	drivers/gpio/gpio-mpfs.c
- F:	drivers/i2c/busses/i2c-microchip-corei2c.c
- F:	drivers/mailbox/mailbox-mpfs.c
- F:	drivers/pci/controller/plda/pcie-microchip-host.c
-+F:	drivers/pinctrl/pinctrl-mpfs-iomux0.c
-+F:	drivers/pinctrl/pinctrl-pic64gx-gpio2.c
- F:	drivers/pwm/pwm-microchip-core.c
- F:	drivers/reset/reset-mpfs.c
- F:	drivers/rtc/rtc-mpfs.c
--- 
-2.51.0
+If munmap() isn't failing, then that begs the question of what this patch is
+actually doing :-)
 
+> Update the vm_mem_add method to ensure the mmap_size is aligned to the
+> underlying page size.
+> 
+> Signed-off-by: Jack Thomson <jackabt@amazon.com>
+> ---
+>  tools/testing/selftests/kvm/lib/kvm_util.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+> index c3f5142b0a54..b106fbed999c 100644
+> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
+> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+> @@ -1051,7 +1051,6 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+>  	/* Allocate and initialize new mem region structure. */
+>  	region = calloc(1, sizeof(*region));
+>  	TEST_ASSERT(region != NULL, "Insufficient Memory");
+> -	region->mmap_size = mem_size;
+>  
+>  #ifdef __s390x__
+>  	/* On s390x, the host address must be aligned to 1M (due to PGSTEs) */
+> @@ -1060,6 +1059,11 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+>  	alignment = 1;
+>  #endif
+>  
+> +	alignment = max(backing_src_pagesz, alignment);
+> +	region->mmap_size = align_up(mem_size, alignment);
+> +
+> +	TEST_ASSERT_EQ(guest_paddr, align_up(guest_paddr, backing_src_pagesz));
+> +
+>  	/*
+>  	 * When using THP mmap is not guaranteed to returned a hugepage aligned
+>  	 * address so we have to pad the mmap. Padding is not needed for HugeTLB
+> @@ -1067,12 +1071,6 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+>  	 * page size.
+>  	 */
+>  	if (src_type == VM_MEM_SRC_ANONYMOUS_THP)
+> -		alignment = max(backing_src_pagesz, alignment);
+> -
+> -	TEST_ASSERT_EQ(guest_paddr, align_up(guest_paddr, backing_src_pagesz));
+> -
+> -	/* Add enough memory to align up if necessary */
+> -	if (alignment > 1)
+>  		region->mmap_size += alignment;
+>  
+>  	region->fd = -1;
+> -- 
+> 2.43.0
+> 
 
