@@ -1,113 +1,156 @@
-Return-Path: <linux-kernel+bounces-867058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00CC5C017FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:42:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46616C018CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC241A646A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E10CF3B066B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD947319870;
-	Thu, 23 Oct 2025 13:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947C2315778;
+	Thu, 23 Oct 2025 13:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sNraloUD"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="LtPJVx9a"
+Received: from smtp88.ord1d.emailsrvr.com (smtp88.ord1d.emailsrvr.com [184.106.54.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBE4314D15
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233DC313E0F
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761226453; cv=none; b=mew7Otk79jzZV2FSh7zKtvVFoq+vKIsaJG1MKECZarxeKneTFkIrWsBScsGfTEpmLxcAs21gkqpIQAqMJdhSrGD8K2RXRsD/WPpBTGdRIDmyi6oNx7ttOwHjhkx2QjK2Wbyv2q9HqYIMkDL+w6r4Eo99Cqih6vIyewznRe8KRlA=
+	t=1761227500; cv=none; b=LZW5JhzQbNTMKqSfbo6cX26K8yVaL2JASQK2C3FVb/6tC1Bhod/3rYw/sqk1FeTUShDTK2TUvHvIvrCqKDfcuARgrsKs0A9kLZiZRigb6yV0Swnhvphtw1oZit86hxsDTcVoroJ+4wsqEP2PnW+E1wxy1XTnaRv3HIW4VTXpIms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761226453; c=relaxed/simple;
-	bh=bSW7rfgtDQGPDS4VUfy3VAbqzFM7dWBO3YRWYHobxFc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Xm8R403TlmOyNYuDXU6y+ABPODXlhuMqGZApKVIUgZsVSHmeZY86NsdGOg3f79FjkTF87HoHg0BKo+q66Y5OYC5TLx51y8XK35PbIM4MRm1vUSkunslEPO9PGMdjUWfiE0DTA2Urqpu+obIT4UaOnoQBdvPaxaDKiPNb/h6Qf84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sNraloUD; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-471d83da4d1so365465e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:34:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761226448; x=1761831248; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kn0n93gjogjSKpUc9SVWlrCOjCRjVkd4BQ8C0NGtc/U=;
-        b=sNraloUDRIzWKp8sxjib3o25Il9pF5s2T6luMBW0HkSEQO9LYLKQe6J/rPkchDMZVF
-         /Q8yutidAOZIvJoQJQdfqk5EsgV2sGcnikR34ydDoOwZf+lHQwnwAOsda+0yTM/x4WS3
-         wfblT56+vjC85mPcRecZJRDGurNkawgeKu/eO7tUej1smVHuVBKl9OGjtpyYZK+zAuvr
-         D6QFyI+J+TYDUL5YkhejmyAAmFsgVBHOHz61dkIH0xkIlxkpqlX7xdAaGq+6jeCLg7ZM
-         EIFNhQbyGewxiXieYw59xhvJx7Eky1ZcF5fpfyJMBuZmubu/sdDBlMYyprnc3BLnURp1
-         Ktyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761226448; x=1761831248;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kn0n93gjogjSKpUc9SVWlrCOjCRjVkd4BQ8C0NGtc/U=;
-        b=oV7F1YLndKtRx7dF+Tf8Enh7QX8+YmKz49hQogEicBX6jMIYN8dOK4WV0q0idA5V9U
-         gq0Ppaye5bXHopDM3weBcNlfvbixAeHgLmO1UKu9xIKXDgNgSfPQk0MVV7UfuxAWeJ1c
-         0Ds+RS9GHPAeOsBr6RKc8kAGL9Pmm69SJVFePuzsxy+DBvJUEEQGnzTKVdZ3WnqWHm9Z
-         agv6qXmvsvjrIN0rh/oWPaf7m/ttL7TbQZ2+Pz066A1f522atbsduy7orOS/F5+ObyFX
-         0zoU8U3euSIqh3r3saxVciTM+LNnZcjPzDGJoA8z7kIrw2jokuhOb1OOo9kFDyfhDv/z
-         Fwwg==
-X-Gm-Message-State: AOJu0YyfJtGvgaKraxUl15DwsUOA+oGN64Nt33Tvo26IBGd8ito1JMoH
-	FXX+9m3CKl8kl+hE7EyNv5OmIi0PUXWYbCKW1Pbu9tt/bgeDGHILjb7gm7pzW/Q9BZ0=
-X-Gm-Gg: ASbGnctAZPJdU3CjlE1ddtHuptPgGvSzOr5ByX6So8arRNSfJRuTiYmEMLIjpXY//LZ
-	fszNWr59VmMS3LsmJ9HYhkRGYXR9seMszLdN6yJm2jpZerQWTDktiCje9PUi0Oig4lMEIqWW4oL
-	5s7uzvDTFclpy0pjanoQMRnJ82lXHt4T5WSpLypzJ1mqKEGJ1jp6ZVgkjFrGoxC/c3BFc5DbFEE
-	duq8XXlnBPGE/fNMkvtST2hFcV5PNjbKyDiiMcI7CuSv2FBuOhg+DaTorwfbEh3eeGNyrREV+gG
-	DFkb2RWuccmqInMyYs7bDRWBmmDBoCS6XyxptesoT8kkdOnL4hjjwwj3F2gwC76K60UKvAVQBXK
-	DKtFZard2DwViYt0+Xr2uPbQzosXPahGShjXUr/dvxs4PrcujemN007G98njVDzDDKHFcynn/v9
-	sp0NFh8SVlY0PuSgA+5JrY3dHFUTo=
-X-Google-Smtp-Source: AGHT+IFsde65CJFTvtkSZupSMvUZM0RX7wQDUIPA6gojMigbtbuO0hwv7Ss3zHX5Cl6STVOTHym5aw==
-X-Received: by 2002:a05:600c:350d:b0:471:3b6:e24 with SMTP id 5b1f17b1804b1-474944c2050mr39159615e9.8.1761226448360;
-        Thu, 23 Oct 2025 06:34:08 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897e75a0sm4037198f8f.5.2025.10.23.06.34.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 06:34:07 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Biju Das <biju.das.jz@bp.renesas.com>
-Cc: linux-kernel@vger.kernel.org, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- Biju Das <biju.das.au@gmail.com>, linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20251019180940.157088-1-biju.das.jz@bp.renesas.com>
-References: <20251019180940.157088-1-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v3] memory: renesas-rpc-if: Add suspend/resume support
-Message-Id: <176122644698.70962.12759967875481339805.b4-ty@linaro.org>
-Date: Thu, 23 Oct 2025 15:34:06 +0200
+	s=arc-20240116; t=1761227500; c=relaxed/simple;
+	bh=JcZg/isUw4CxnJKAK4LeFdSuwxs63Lfq7Mj8qUD8Ylo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OwcOk5E7l3lIY91IiiqH2wgYW0hc9eglk9l7JRuGWnPg6dJrzNKm/QQactj1LT+PoWT48bNl24oVVat9Nc7QAmient639ofHrNNh/KRJE8J83T14dFmPFtwDYeA0eN1AWFtuGqfdtuSeIrooM2N/P6r7j2gDGavZUQSEW5VYCg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=LtPJVx9a; arc=none smtp.client-ip=184.106.54.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1761226449;
+	bh=JcZg/isUw4CxnJKAK4LeFdSuwxs63Lfq7Mj8qUD8Ylo=;
+	h=Date:Subject:To:From:From;
+	b=LtPJVx9aqlOguaYQuZomlq7Cqh+ngvHPLfjfVBpXQFFxk8VdZgTIi46yKSyqLmHXR
+	 JBVQwcGQqwQNU3Z4G3oqh26SG63u63d4iMjuI9i+MVjbkGEjND1RG2e1mw0soQx9Rv
+	 nYH084R1oUldnvlkI/Klnow7UQMLQCCk2LUCVqTY=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp4.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id E92674022E;
+	Thu, 23 Oct 2025 09:34:07 -0400 (EDT)
+Message-ID: <61f72946-1d7f-4e31-bc1d-85b779681987@mev.co.uk>
+Date: Thu, 23 Oct 2025 14:34:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] comedi: multiq3: sanitize config options in
+ multiq3_attach()
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+ H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
+ syzbot+7811bb68a317954a0347@syzkaller.appspotmail.com
+References: <20251023132205.395753-1-n.zhandarovich@fintech.ru>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+In-Reply-To: <20251023132205.395753-1-n.zhandarovich@fintech.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+X-Classification-ID: 70c2a07d-7fdb-4c55-93a9-2b8517daffa8-1-1
 
-
-On Sun, 19 Oct 2025 19:09:38 +0100, Biju Das wrote:
-> On RZ/G3E using PSCI, s2ram powers down the SoC. Add suspend/resume
-> callbacks to control spi/spix2 clocks.
+On 23/10/2025 14:22, Nikita Zhandarovich wrote:
+> Syzbot identified an issue [1] in multiq3_attach() that induces a
+> task timeout due to open() or COMEDI_DEVCONFIG ioctl operations,
+> specifically, in the case of multiq3 driver.
 > 
+> This problem arose when syzkaller managed to craft weird configuration
+> options used to specify the number of channels in encoder subdevice.
+> If a particularly great number is passed to s->n_chan in
+> multiq3_attach() via it->options[2], then multiple calls to
+> multiq3_encoder_reset() at the end of driver-specific attach() method
+> will be running for minutes, thus blocking tasks and affected devices
+> as well.
 > 
+> While this issue is most likely not too dangerous for real-life
+> devices, it still makes sense to sanitize configuration inputs. Enable
+> a sensible limit on the number of encoder chips (4 chips max, each
+> with 2 channels) to stop this behaviour from manifesting.
+> 
+> [1] Syzbot crash:
+> INFO: task syz.2.19:6067 blocked for more than 143 seconds.
+> ...
+> Call Trace:
+>   <TASK>
+>   context_switch kernel/sched/core.c:5254 [inline]
+>   __schedule+0x17c4/0x4d60 kernel/sched/core.c:6862
+>   __schedule_loop kernel/sched/core.c:6944 [inline]
+>   schedule+0x165/0x360 kernel/sched/core.c:6959
+>   schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7016
+>   __mutex_lock_common kernel/locking/mutex.c:676 [inline]
+>   __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
+>   comedi_open+0xc0/0x590 drivers/comedi/comedi_fops.c:2868
+>   chrdev_open+0x4cc/0x5e0 fs/char_dev.c:414
+>   do_dentry_open+0x953/0x13f0 fs/open.c:965
+>   vfs_open+0x3b/0x340 fs/open.c:1097
+> ...
+> 
+> Reported-by: syzbot+7811bb68a317954a0347@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=7811bb68a317954a0347
+> Fixes: 77e01cdbad51 ("Staging: comedi: add multiq3 driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+> ---
+> v1 -> v2: Lower limit to 8 channels instead of 16 per Ian Abbott's
+> <abbotti@mev.co.uk> suggestion.
+> 
+> v2 -> v3: Switch to less confusing macro name MULTIQ3_MAX_ENC_CHANS,
+> adjust comments accordingly, as well as commit description itself.
+> 
+>   drivers/comedi/drivers/multiq3.c | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/comedi/drivers/multiq3.c b/drivers/comedi/drivers/multiq3.c
+> index 07ff5383da99..ac369e9a262d 100644
+> --- a/drivers/comedi/drivers/multiq3.c
+> +++ b/drivers/comedi/drivers/multiq3.c
+> @@ -67,6 +67,11 @@
+>   #define MULTIQ3_TRSFRCNTR_OL		0x10	/* xfer CNTR to OL (x and y) */
+>   #define MULTIQ3_EFLAG_RESET		0x06	/* reset E bit of flag reg */
+>   
+> +/*
+> + * Limit on the number of optional encoder channels
+> + */
+> +#define MULTIQ3_MAX_ENC_CHANS		8
+> +
+>   static void multiq3_set_ctrl(struct comedi_device *dev, unsigned int bits)
+>   {
+>   	/*
+> @@ -312,6 +317,10 @@ static int multiq3_attach(struct comedi_device *dev,
+>   	s->insn_read	= multiq3_encoder_insn_read;
+>   	s->insn_config	= multiq3_encoder_insn_config;
+>   
+> +	/* sanity check for number of encoder channels */
+> +	if (s->n_chan > MULTIQ3_MAX_ENC_CHANS)
+> +		s->n_chan = MULTIQ3_MAX_ENC_CHANS;
+> +
+>   	for (i = 0; i < s->n_chan; i++)
+>   		multiq3_encoder_reset(dev, i);
+>   
 
-Applied, thanks!
+Looks good. Thanks for the fix!
 
-[1/1] memory: renesas-rpc-if: Add suspend/resume support
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/42ec0bc61f052beb0d9a6a889fe746591de74508
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
 
