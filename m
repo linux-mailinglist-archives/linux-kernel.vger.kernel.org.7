@@ -1,193 +1,202 @@
-Return-Path: <linux-kernel+bounces-867332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E9FC024BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:03:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C183C024DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDC2189B82E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:02:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4693A1DEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35B026E6F5;
-	Thu, 23 Oct 2025 16:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7A026ED42;
+	Thu, 23 Oct 2025 16:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Dh6m46YM"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010063.outbound.protection.outlook.com [52.101.46.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="h5gBVAcR"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BFF26E719
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761235329; cv=fail; b=jazks1FooRLVx//tPln2aTftBipqIenF2hNpBEw+ADziHhRxcbUuYwY7sW9cXJ1EeSnCVtNAZFIP6sJ+Lj3YD1jk1JNTMz3viMxlUt4rxA3xnhfUVVx9x5CWxbCntF+ch26odj8nP07Hb74Gki+5FLcaLdz/EdY9VlN/eMbKBQo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761235329; c=relaxed/simple;
-	bh=Ys1tT75AKsUHmTcgGBe4LLNfDrUccGZMXCpOiH0wFbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WBmQDBSHB157s2/54+lxd0UhJZXL3DMXqyHexrPdTynxT77TtTDVlcdVG4WdPn7DE/lXABUjA5UDxpv/WgAEDttAMrsUZO3TuM5TN3omW7BF9bFYnlhDvsNUhXNAs4qcX+XlNDdsj4cbS2M6l3iKXMgPnSA3y8pqCzRTPzlzcdk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Dh6m46YM; arc=fail smtp.client-ip=52.101.46.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=unAa6jMFEo2Fr6FKjEDwVWUDh18RdaG4TfLp3hyy4eJOZSITBMqIpzLdl50d3ExAutoG3LEdoZ7roX2z9KY+5UiPruXsn2iQdSkT2DzO9yNIk2REMom0t88KNo1sVx5LgjOLWgbBJXxbB07DdVAtyX0j7aMa3UsXmxX6EgDWG7tiPjeu4zfi+ocV7ZjbMdtQmSZlwcHtb+DT4vPsaUbJeK2MXYSR6XyCdzhafd5fbNhEMsH9zDjULlPYsNghnv2mxcbzioipLt6EEcLzxsMWyQPy5/+d8Iuk7cqCoEAITo4ZFTFF6H4/OeYMw2y2zzwd+TR8ACaaUb96Rl+qHV74rQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EFOYrXw+UnMf7QJB6t43sbdRZ1QiLrprA/G4hxc+Rz8=;
- b=PiJhv5MzVZqT1lz3QiMhvAkMPFDDBvMu1pSsDIW96KOfzgcMKymomaj7P4+xQlEP9XeOE2zQIEZB1Z5SYIQhBCTXEmwAaqNZ//y49CZYl5/72H+G/5yhn1KezeCMAqSbbhoOFLeKsplhMi+FMLVi6pGf1/iHZA3RLsvBZZMnpTVF7hNwK01yN3hQeI/Fyq60RN+n/LffyE7Xo3Qn7p5TGi553Fh3J5UUwFsLntry/2tY2Ij/mGpVzw6l+nJKHZ5Eh+P50aG2MI7JrGrZ2QvO1vCWWlk+IpZuIPO499OV35KN3VNh1t92fXK7+xIg5tFwTMiVZPWR7lfvBJhyMjLk8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EFOYrXw+UnMf7QJB6t43sbdRZ1QiLrprA/G4hxc+Rz8=;
- b=Dh6m46YMviu0YW9+b9M1NVxxu7qS/9Q0Qvdy1FFAwszQRPMC8WniaAkaYgva86cBAYfKQO1R2GXr5sgX6VOPy+pnPBZjE3RsSoQ3a8PUKGAPYEV/rcD1MtRzgy6xt0Y5m/QN74xiJAaEBrGjHNy4iO6RQXIEwDAjDnYtLeAfzrbZBIN6LLWa1ghKKqWBaYXKXPzbXqiDQMQt2FQ3eU6xZ4p/KXWMDnQDv/+5t6pgX+o+YfJB9nTnyNfUtb/hbh0AJF1YRWmveu7bTMK7e4Cuikfq8KIw4eqo3SwdRSiI8CtNstoiKH9qQkk1fPwoIBLjXbYme0fCGRyZkPmwur30Ow==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
- by DS2PR12MB9640.namprd12.prod.outlook.com (2603:10b6:8:27d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
- 2025 16:01:59 +0000
-Received: from MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
- ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 16:01:56 +0000
-Date: Thu, 23 Oct 2025 13:01:54 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Wei Wang <wei.w.wang@hotmail.com>
-Cc: suravee.suthikulpanit@amd.com, thomas.lendacky@amd.com, jroedel@suse.de,
-	kevin.tian@intel.com, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: Re: [PATCH v1] iommu/amd: Set C-bit only for RAM-backed PTEs in
- IOMMU page tables
-Message-ID: <20251023160154.GM262900@nvidia.com>
-References: <SI2PR01MB439358422CCAABADBEB21D7CDCF0A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SI2PR01MB439358422CCAABADBEB21D7CDCF0A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
-X-ClientProxiedBy: BN9PR03CA0755.namprd03.prod.outlook.com
- (2603:10b6:408:13a::10) To MN2PR12MB3613.namprd12.prod.outlook.com
- (2603:10b6:208:c1::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FE626E6F5
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761235382; cv=none; b=Bd008PmYjTxoZEkhftNJbpAbPTQv/eJcPCIPwNbCul8wn9RqnmDnI7EomF/0Wcr8ZjAsBJkWHujUVa1sUZFgldsVsZkQs+7yHIA7xVE6bSnC+aOIQQTkDZGQ5uQQ31AEoPTY4SZFkEv2uIC86/5j+7EQn0o+gU+o+zCQmTsXVC0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761235382; c=relaxed/simple;
+	bh=0T40hKL26YolCQLnSKyrMR+Bn6Jtsl61c5TdM8zx1cU=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bhp4zFHL3bplN9FugUR10vqBYnFyPcZOMhmNFcB8xYY7GP+1XpgphzNYkQou2IpvxCxfKnLElGDUh9T3sgqVOmEuFdfrtz9xc9cUyCR8pCtlWc/wjG691QUUEF7xJVo/7jcE6I2BaBCcJ8ypUDawGfu0AiTPNrbPi33A5aNay54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=telus.net; spf=pass smtp.mailfrom=telus.net; dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b=h5gBVAcR; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=telus.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=telus.net
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7a27bf4fbcbso659459b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:03:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=telus.net; s=google; t=1761235380; x=1761840180; darn=vger.kernel.org;
+        h=thread-index:content-language:content-transfer-encoding
+         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JH/e1IwTn9e6m+oKiv8OxIW1/g/8aOTw78lb+wUnrjs=;
+        b=h5gBVAcRfECI+2e7VzYBsITH7sOL8JUDpVx5uOgTdnG40wXbEblSR8v6v9ICxTCX6r
+         hucMxHUrcjaCV9oXVdEZUVC/tbglXsBY/F6aTnAE9XWijToJMXAsf1Yq/v98JCFMWy7w
+         Apgwa6jn1Kio5JiX9aVYrFhaMGRcOUMt1wLrl7w9deQqQJ6jagpGU9cqxiDDWztsJf+L
+         8bsHdLYiSQqEs+0qDUUC4sLPjfHUm+o9We3iZyI3KV2sestiIFwz7ZAIyT/d8sFtANfk
+         SjwXWNjy3Zjt90vCqO4+/K2Fl0KVvNuryxFQ6hRstLQL4etUVKc2Ns1KUZkOgJgTBQT+
+         J0CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761235380; x=1761840180;
+        h=thread-index:content-language:content-transfer-encoding
+         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JH/e1IwTn9e6m+oKiv8OxIW1/g/8aOTw78lb+wUnrjs=;
+        b=OgeH4jwaUZ0bfEk83U8pkG21FgeI7yJ3IRoV/b7nVsPLk9tISDDZPI2RbaUzuHIfvq
+         DEbpus+XM6YtCsDi2UNKB9NbEVBp8xMpHeW7XgGBBietGykvSKNn6ZCcwp85agsyn89S
+         YZkNE7mdbnHFAxc0Fhy+0/pEhyjBctLehPCj8FLaGLb6BoGxSMvqzwXw9/VoBY7RpAeC
+         0uxOParVIr79bop49tWODPl9Q53twf5qlWtfPUgXqoNc7uIfvfr8CGoNVPV+j+KE4VLR
+         N7w+3fDefRs9RO+amoFzWFXTs/2pAqiTSeGZ7Ab6YAfhuxiG5gu8K0H28afwC5bxFYgG
+         E0GA==
+X-Forwarded-Encrypted: i=1; AJvYcCXttheqgeKdxHKxJtvwCW4BeK7+eeOJtfxB2+PBXXbTBW4bug2PSDtkVirj+zZ0OUGN60Gudjys3cSqw/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5daKsFigwuhYWAB7ii0eWZT1lLCdu616VOJa2+2HGeREoxIGk
+	98akJKcs0FxgESU300zB7XRN5yaaQZCBkFIx2QZtHG1ktrjrFV/PWXToO36D/XZ+Xn8=
+X-Gm-Gg: ASbGncusxE85ORXiHkp/3o4wSelkjmYhVPNjaZIQQ6Lptq3xYPEaCOOAyCkJXoabj0j
+	kvpWlN56NPw2LDNCKcMqiOzBX6IjlZBJa5dU2zenG1ARV3HBayvUICwtL9iaewAg8I53LaSuLAp
+	y0SXu+Vz/0XkqX3jAmGIECcrnPSPtZb+GuNqOPiGX2Mh34RSoEgMaprxMFfUwVZAH8atEXL+WKe
+	n0ANQlbNmR3L58q2BoO7UDY84fyexJ+nKPQdx4qwXmIgoewoWip1ac2Y6J0Kce0+Nrm3gm0dX8x
+	Tq315SbFqGWtSPjLXxmJUzzxk+3EH6ej5tjSDCAIweOOOIGk6NQWIzh6mfrKbvCStpdfubFld10
+	wCPDXFMAox+vo4MXhe1kEdfCkDq5qYY9Fn2B3lS5TjkLaF3NWgz0diRZglP1/I9M5klr8aQlCnT
+	D82nbr6aJoXsLeVVdzYc9Wa/VoFQk0l/PvRmOj+Y2PKw8+
+X-Google-Smtp-Source: AGHT+IHa6CnmrO8xJXDnGny1Z43wB3uTWDalpzMKHlkKpTQZZnEYpOXUYPsP9QurSz3gT7q6oOes7g==
+X-Received: by 2002:a05:6a00:93d7:b0:7a2:6db4:4c81 with SMTP id d2e1a72fcca58-7a26db44de0mr4051337b3a.3.1761235378739;
+        Thu, 23 Oct 2025 09:02:58 -0700 (PDT)
+Received: from DougS18 (s66-183-142-209.bc.hsia.telus.net. [66.183.142.209])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274a9cec5sm2992577b3a.20.2025.10.23.09.02.57
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Oct 2025 09:02:58 -0700 (PDT)
+From: "Doug Smythies" <dsmythies@telus.net>
+To: "'Rafael J. Wysocki'" <rafael@kernel.org>
+Cc: "'Frederic Weisbecker'" <frederic@kernel.org>,
+	"'LKML'" <linux-kernel@vger.kernel.org>,
+	"'Peter Zijlstra'" <peterz@infradead.org>,
+	"'Christian Loehle'" <christian.loehle@arm.com>,
+	"'Linux PM'" <linux-pm@vger.kernel.org>,
+	"Doug Smythies" <dsmythies@telus.net>
+References: <2804546.mvXUDI8C0e@rafael.j.wysocki> <5043159.31r3eYUQgx@rafael.j.wysocki> <004501dc43c9$ec8aa930$c59ffb90$@telus.net> <5040239.GXAFRqVoOG@rafael.j.wysocki>
+In-Reply-To: <5040239.GXAFRqVoOG@rafael.j.wysocki>
+Subject: RE: [PATCH v1 1/3] cpuidle: governors: menu: Avoid selecting states with too much latency
+Date: Thu, 23 Oct 2025 09:02:57 -0700
+Message-ID: <001a01dc4436$80b80aa0$82281fe0$@telus.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|DS2PR12MB9640:EE_
-X-MS-Office365-Filtering-Correlation-Id: dad426da-ce32-4961-5007-08de124d7d64
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?k/lDv9BnQ33H6ucXs/QdMzD24or++KFR3IGTYPyevN+yox1CkkCzrkNMHtHd?=
- =?us-ascii?Q?JKdPJVtWmI26RkxCLdj9IUlHviFX8Uq3y+atR1q5odKTZdIeBJ37RGssS1+R?=
- =?us-ascii?Q?YxlHoPbgHPrIjOlcT5FAIPAd96nvzRxyCxPaiWOUHGox0lvaTvMaoZO8zaOx?=
- =?us-ascii?Q?ysQ/Ckr4lNdwZAvbDRNKPYkHODfkmMHRuXmI1JlBQ5NjEV9OHY1a5IaYWfSQ?=
- =?us-ascii?Q?mGF5LAXDSEqz1/pFMdLvN08HbEDz8ASJJAcpLao0hQKeh9mS46Oc0sCcMSEv?=
- =?us-ascii?Q?eZ/RDbECNFw1Hg7w5xdys+oY6cJEd/RAKchAEavcvVF2hFHj+MCJGF9XZ0jI?=
- =?us-ascii?Q?JIWq//4NZ1Q4W0FCzIZHTIL6/3mDgR5yPvMTMmjBFRG+LY3GjLzwxznhJmXD?=
- =?us-ascii?Q?0O833mPzP7zuO0w+4aYS1KUCYHRrXZ29vrsSJ0y8Xuo1ObzpJivAF+418MtL?=
- =?us-ascii?Q?qFOY+qZO/gbiMyDYjUifhjbh/+F9goOdRwLExCRUCGG+5f9scFk9hroR3M2s?=
- =?us-ascii?Q?AHlZ0iqGEfkuRWTX6JcX1g3jssdmU9jX8z7CaBHSdnEqeT7KuJKkmF7lgX6Y?=
- =?us-ascii?Q?/L8/XFYibDhCDvVZE6SQLUlQINwoFvyeOJ3m0d2qCfgDzGkZJJBjwwEwNNVZ?=
- =?us-ascii?Q?LoOHPxERE57km8apKc9CIPOHYGbboe7IXWOO0hR+HhV9VguMQojwBzHqCoc0?=
- =?us-ascii?Q?0V0nQEXdvNFvQRKOUN7uHHHdzL+mFi3/NV3bTQ8INdAU4QR5/TVEBgDtatRp?=
- =?us-ascii?Q?kqHRHzgSr/EDas0swqBuCuTXdGEjVcpYr7J52LDXODSdPwGn5FPwzrZ/77GX?=
- =?us-ascii?Q?lPbT3xNm+taeRcKmV5duHoUNCsMjeg1vnPH3avPuD13DcgTfNwsK/B2unkH2?=
- =?us-ascii?Q?JzmofYAp28j4AivtLVifaXeoMh1yejnGhLvPpU3Jxpkgg98rGgGP3B5o3iZR?=
- =?us-ascii?Q?HpRzJ9FyjrK5ok84qt1cQ9nwN6V6Pyl+v8Kv1sIORigu8/MtIpbfm7E/HPlZ?=
- =?us-ascii?Q?5wS7I6rJVfnG6gknwBpl066yLE41T/IwgAh7BOI0DkYzohva5WUkatUVdGwi?=
- =?us-ascii?Q?c7+gJVzf7YLqskX9ZdJq5V95Kg/rs4gj5z4izissCks4ct31qDu1bhoBCXfF?=
- =?us-ascii?Q?ppLjxOX+Acx/B2b2s3HcMhTWCM2JBVBK3NTlQMRFV1wJRUZYuCO2AshwtZHK?=
- =?us-ascii?Q?ggLdstFHAy/ADjmXlRo78+X/sPCSG1kTzEijbpKSKKqvoFLfYpdpQx5Yeyw0?=
- =?us-ascii?Q?KPPwxuGX4kqy3IW2in9mcw0s8JAft0uNyZWykhaY7Po4Eq6wqs8yUUj5KzHI?=
- =?us-ascii?Q?mr0cu2ckX1jEZYtBRw/gc9OhG1ebG7OUtpWJ4KAeYBoIYp0l71DRypld8FvI?=
- =?us-ascii?Q?5YyDSxdI5Wb6N1XwE1HRcDfGaQkbqRK6hwsL9n0IEREgb99/R4a1tA5fdzbX?=
- =?us-ascii?Q?Xne1a3g67DdBXDwYLZmclHfal03dePeq?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Nw8//2N9nyZvHo4IUrni3yLF0CmC2DyvwkbLQ5apikJ+EYdOPnhOFAFQN4eA?=
- =?us-ascii?Q?eb54lEvGmiOi5AzcD5XQtLKz460FVsq38h8w6Tk86XYBhCXnaDIoM7gQstrg?=
- =?us-ascii?Q?eiPOdHrWxrHBT1qpN4RuWHIjyzopb5FC2gVoUZFpVi5+kIXPAoABlK+K4gI7?=
- =?us-ascii?Q?PoTn9e8WnEF/6gAStJ/oJTU3ot7UVuyOes0Ce8rLk0mM40n3LhvFllgSkk10?=
- =?us-ascii?Q?YihbFR7qeWdlNfjbXphT78b7xyT4q8pBdBD3E8WVR6z9aHqnrXbr5TmRPpgo?=
- =?us-ascii?Q?BlIXOvTJupTFoX87Icor6/NOO1RhUSwtKWo6LPKUMU3mFBZcrp5nBVSofi3A?=
- =?us-ascii?Q?ym8KGRVsPG1DDjJn0F+F/m2myWipRuRoXv1BL46qh7vBkQdZmsS3qOfK9kbK?=
- =?us-ascii?Q?SsMTZ81iSQng2njVmD1mp0H1nwzfM9jSNYh2cA5klkm4ZXuzrsAVW+FzE88e?=
- =?us-ascii?Q?cr/ZunMlxKNFqPxGhH6+/3/KEI2KrRwHEvImTiwfkYmVMfA0aYDyT6nsz3hg?=
- =?us-ascii?Q?Oy29z1572PUHmMIToNxdXyuFsmI7+LUCoU4TYE9/3adJQjyB1qZvRRypXaeo?=
- =?us-ascii?Q?5wcf6v0jef4rOM6hbdacui5Qu7SshnR1owo20+WBx+2a2vtadxMRHZRIoMKa?=
- =?us-ascii?Q?k4BvUSSFFBmi6g+/gzgC8qEMKhOGAfqKP1ZX+K5mcCKZT5T25NN/U62n6P7A?=
- =?us-ascii?Q?amaydzjSYCYkoPP5go7ldUlAoRZfU0G5eVbZtlIQl+qKJ7ozkQTchHKPYeDp?=
- =?us-ascii?Q?9JZeyMz1EAz/6U4cFZrUhLrincw91AHTUoRIAwupfhWJKkptRgHBy0U2BHsa?=
- =?us-ascii?Q?tBQue7W2tz5xrPiFpAq+u4VCuIMieIbaor3hfozYL8UKkruQxPtod/wB5GC3?=
- =?us-ascii?Q?SAxjDujUdmccrWXFHokdNr6Cj6kV0M+SLJcoQU2cSbTw0SsdFOnUWRKd2d+p?=
- =?us-ascii?Q?qzGe99e6g//Pt68bbDXqf2Xt1diZmEctxpsczW8DKRMvqaE+wsANdhhBFyq1?=
- =?us-ascii?Q?643Gep8nHjoOGIOzWBbkAliaO7hAWfNzGmhwcmQUlPU4cLKGKN530AJ2N9yH?=
- =?us-ascii?Q?D+3lxOwFyXItgXs2oS1ZrlnIrZnPVZmEJhmDMDpgzLFJGa7BuOGzyPDqDzVc?=
- =?us-ascii?Q?nJ6VFTSBdXb2muyGGeEX04Px+TAk0omjBzYGWHG9R1C8+XYztJEyOtAxwGKN?=
- =?us-ascii?Q?d2SMJ3vr9GnnNbHt1dbsyGuYqciYAi/3V1MMwq8J0ZZUjPvtTGlpsaKqbfXZ?=
- =?us-ascii?Q?PhA3Wa9iG9KJPab9eueJbIhXrmw7TdZHS+0H2UaCUFwZwr7RyBqaeO9w2AyV?=
- =?us-ascii?Q?7uHWk6GG1jVdhe+SgUMYn72zm8lipH1lQjF5pBhhRw3IeYP0VRAY3EeeBlUr?=
- =?us-ascii?Q?Yy0Q4SZPnRazsDLqzU+d+OzXSapCi+dCfC/xoQMOuhkXOBtwVs5gGTMldyH1?=
- =?us-ascii?Q?kPQhBgfoyPY+SwoQZmm08+QvSzCiJX97r+D1zrUC93vk0pH3jJujVy5jgIBP?=
- =?us-ascii?Q?zZashlwLOJ44ICzsvaOrXv4Bjn6UEwTvcyjWnAAgjRJFf+WbdFoctVXEbIh3?=
- =?us-ascii?Q?0+x/gF7Kr8+zP4NYXhqb38MlNFwpPV/oU2TPmcqg?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dad426da-ce32-4961-5007-08de124d7d64
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 16:01:56.0994
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9cmQu0TdF9lfbcMNfbhEZR/+vRt1iPgqFsj0r7cJDuVury7qkuVKpB9uZitnicXg
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9640
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-ca
+Thread-Index: AQFe4hIXA7yjTyFTeu7yKR6UgyMZTANsg+YRAdzC7nACxm/pQLWKKQyg
 
-On Thu, Oct 23, 2025 at 11:15:43PM +0800, Wei Wang wrote:
-> When SME is enabled, iommu_v1_map_pages() currently sets the C-bit for
-> all physical addresses. This is correct for RAM, since the C-bit is
-> required by SME to indicate encrypted memory and ensure proper
-> encryption/decryption.
-> 
-> However, applying the C-bit to MMIO addresses is incorrect. Devices and
-> PCIe switches do not interpret the C-bit currently, and doing so can break
-> PCIe peer-to-peer communication. To avoid this, only set the C-bit when
-> the physical address is backed by RAM, and leave MMIO mappings unchanged.
-> 
-> Fixes: 2543a786aa25 ("iommu/amd: Allow the AMD IOMMU to work with memory encryption")
-> Signed-off-by: Wei Wang <wei.w.wang@hotmail.com>
+On 2025.10.23 07:51 Rafael wrote:
+
+> Hi Doug,
+>
+> On Thursday, October 23, 2025 5:05:44 AM CEST Doug Smythies wrote:
+>> Hi Rafael,
+>> 
+>> Recent email communications about other patches had me
+>> looking at this one again. 
+>> 
+>> On 2025.08.13 03:26 Rafael wrote:
+>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>
+>> ... snip...
+>> 
+>>> However, after the above change, latency_req cannot take the predicted_ns
+>>> value any more, which takes place after commit 38f83090f515 ("cpuidle:
+>>> menu: Remove iowait influence"), because it may cause a polling state
+>>> to be returned prematurely.
+>>>
+>>> In the context of the previous example say that predicted_ns is 3000 and
+>>> the PM QoS latency limit is still 20 us.  Additionally, say that idle
+>>> state 0 is a polling one.  Moving the exit_latency_ns check before the
+>>> target_residency_ns one causes the loop to terminate in the second
+>>> iteration, before the target_residency_ns check, so idle state 0 will be
+>>> returned even though previously state 1 would be returned if there were
+>>> no imminent timers.
+>>>
+>>> For this reason, remove the assignment of the predicted_ns value to
+>>> latency_req from the code.
+>> 
+>> Which is okay for timer-based workflow,
+>> but what about non-timer based, or interrupt driven, workflow?
+>> 
+>> Under conditions where idle state 0, or Polling, would be used a lot,
+>> I am observing about a 11 % throughput regression with this patch
+>> And idle state 0, polling, usage going from 20% to 0%. 
+>> 
+>> From my testing of kernels 6.17-rc1, rc2,rc3 in August and September
+>> and again now. I missed this in August/September:
+>> 
+>> 779b1a1cb13a cpuidle: governors: menu: Avoid selecting states with too much latency - v6.17-rc3
+>> fa3fa55de0d6 cpuidle: governors: menu: Avoid using invalid recent intervals data - v6.17-rc2
+>> baseline reference: v6.17-rc1
+>> 
+>> teo was included also. As far as I can recall its response has always been similar to rc3. At least, recently.
+>> 
+>> Three graphs are attached:
+>> Sampling data once per 20 seconds, the test is started after the first idle sample,
+>> and at least one sample is taken after the system returns to idle after the test.
+>> The faster the test runs the better.
+>> 
+>> Test computer:
+>> Processor: Intel(R) Core(TM) i5-10600K CPU @ 4.10GHz
+>> Distro: Ubuntu 24.04.3, server, no desktop GUI.
+>> CPU frequency scaling driver: intel_pstate
+>> HWP: disabled.
+>> CPU frequency scaling governor: performance
+>> Ilde driver: intel_idle
+>> Idle governor: menu (except teo for one compare test run)
+>> Idle states: 4: name : description:
+>>   state0/name:POLL                desc:CPUIDLE CORE POLL IDLE
+>>   state1/name:C1_ACPI          desc:ACPI FFH MWAIT 0x0
+>>   state2/name:C2_ACPI          desc:ACPI FFH MWAIT 0x30
+>>   state3/name:C3_ACPI          desc:ACPI FFH MWAIT 0x60
+>
+> OK, so since the exit residency of an idle state cannot exceed its target
+> residency, the appended change (on top of 6.18-rc2) should make the throughput
+> regression go away.
+
+Indeed, the patch you appended below did make the
+throughput regression go away.
+
+Thank you.
+
+>
 > ---
->  drivers/iommu/amd/io_pgtable.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> drivers/cpuidle/governors/menu.c |    7 +++++--
+> 1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> --- a/drivers/cpuidle/governors/menu.c
+> +++ b/drivers/cpuidle/governors/menu.c
+> @@ -321,10 +321,13 @@ static int menu_select(struct cpuidle_dr
 > 
-> diff --git a/drivers/iommu/amd/io_pgtable.c b/drivers/iommu/amd/io_pgtable.c
-> index 70c2f5b1631b..6f395940d0a4 100644
-> --- a/drivers/iommu/amd/io_pgtable.c
-> +++ b/drivers/iommu/amd/io_pgtable.c
-> @@ -353,6 +353,9 @@ static int iommu_v1_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
->  	if (!(prot & IOMMU_PROT_MASK))
->  		goto out;
->  
-> +	if (sme_me_mask && page_is_ram(PHYS_PFN(paddr)))
-> +		paddr = __sme_set(paddr);
+> 		/*
+> 		 * Use a physical idle state, not busy polling, unless a timer
+> -		 * is going to trigger soon enough.
+> +		 * is going to trigger soon enough or the exit latency of the
+> +		 * idle state in question is greater than the predicted idle
+> +		 * duration.
+> 		 */
+> 		if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
+> -		    s->target_residency_ns <= data->next_timer_ns) {
+> +		    s->target_residency_ns <= data->next_timer_ns &&
+> +		    s->exit_latency_ns <= predicted_ns) {
+> 			predicted_ns = s->target_residency_ns;
+> 			idx = i;
+> 			break;
 
-It needs to use the IOMMU_MMIO flag not page_is_ram, which I think got
-mangled by the time it reached here..
 
-Though broadly this points to a larger problem, the iommu domain code
-should not be trying to guess if a mapping is private or not, this
-needs to be passed in from higher level code which knows what state
-the PFN is..
-
-Jason
 
