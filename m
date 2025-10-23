@@ -1,202 +1,148 @@
-Return-Path: <linux-kernel+bounces-866255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C2BBFF4F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:13:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44DCBFF4F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E964C3A61F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:13:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DCDB24FD257
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71C8284671;
-	Thu, 23 Oct 2025 06:12:57 +0000 (UTC)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A576A279324;
+	Thu, 23 Oct 2025 06:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iVOn6FW1"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CC927AC4D;
-	Thu, 23 Oct 2025 06:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C06D27E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 06:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761199977; cv=none; b=R3+T8q0IeU5Nr9JgiDIHyqhZlBvAPR2ehdPGWMteYBHFuC1RYWvCbDRVNPYUt+YK4Sa2UBzspLizFxrY3PsBF1869W7ln+esGV51yVGNFFrQRPp3PS0v6mC6D1FjV3po/3zH6UOfuxPU/Ob1CjEz2a5RRU0ju50LqfkAR9QcT4Y=
+	t=1761199985; cv=none; b=uEy4/P8mfBelXxPmQ2pUtRIwhzx/Z062U4NGF6PaGPDEWTbF3qVivq++6D/FztBHhrebzW1ruEhebruglGNeOHseOl+raiTpyXoqCs3+sjZ7Py6JY9pfBlzmjTwPSeRqcFuIxQXOAl7W9ub3+BaeCAvNcwooq1JuFP8gAq1nz9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761199977; c=relaxed/simple;
-	bh=GvqU9uGGx+KJM1yhuHMieGDlGEi9DwW5CHDBghxQKy0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i3aqVvicK0tZcOJEY53QRUZuaNhYLKjAla9xzatC327FWO7xNZCNnSoQBvHE9AYclH7VoL1PuBGjyrvAHhg3S2rFECqS/nOi5kxdVbFbKCYwqriWps3kr4lPP1XSyVw20fV8+l8glwikGtXOV8+UWnhF0DGQcIoSOzEaZEmODno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip4t1761199936tb3585278
-X-QQ-Originating-IP: SKDmvKPX8O6anW4D6mauzpeuJa6t2OsditiZvwm93CA=
-Received: from [IPV6:240f:10b:7440:1:e4c5:315f ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 23 Oct 2025 14:12:12 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3584863861311309371
-Message-ID: <4B275FBD7B747BE6+a3e5b367-9710-4b67-9d66-3ea34fc30866@radxa.com>
-Date: Thu, 23 Oct 2025 15:12:11 +0900
+	s=arc-20240116; t=1761199985; c=relaxed/simple;
+	bh=yK/y50RG0cqg3DIEhXB2FdIgP0CqmybxyY6OaVPU4P8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lSoQ+vGkfgT2ugkfVHShw8oX46ZEXnM0MrzORtZP1PrggiKdkBp1D6as2KqtUmdCqUzXeu5TAtyn7n/0S+gjjPCXvjwbgIX5rsfSA0dgOGwvLlCOioy9JVCZiIMXYzzbUQmWcXfhtW1VRMo4/5b4zxMIr3fw332xW5B+iBB8w/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iVOn6FW1; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so431623b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 23:13:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1761199983; x=1761804783; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cfYLHJECru5yKWiwVRB/EPZo/QvW+dt1xe/Pn9UG9Mc=;
+        b=iVOn6FW1U8M61EZb539NNGCtcyRKL4cWDAqm8zznqtxUICgsDgD07RseXabR2Ndweu
+         pq+lmuuzN4VEiu3srN7vCBoNC9JgYk9F3MGljLflrWQOB2kNrO62IChesJJMzKd+wrUB
+         Nf8z7jGSdBBOuNe7oUj1Ovm19uKfC0BJ0M6Xo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761199983; x=1761804783;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cfYLHJECru5yKWiwVRB/EPZo/QvW+dt1xe/Pn9UG9Mc=;
+        b=dgU42yb2xhe3cDeOGsLPbjFpLhAx5h++MXyZUVXBEe0VwVbYrRdiopz933ezPb+vxv
+         +9QIq3V6cnZRuz6s3jCjqCxbuPq5ycdgsG11asbz6tkKDUCU+KWZQ64gYSn4xEW1r1d/
+         zX1jcicYwgaTRp0QvFJpVgJSY5OpVNckFPDQl9j4cKy3QFJKbvXDXLZyq5NzkGqSZ7w6
+         jEgCN95tEXTfE5+7CQOZZqmHV1dimjo3udGooYiEarn/jFJU0kqrA6S41LoRqGWYJcPF
+         wsoZyBmj2Y5R4a4ZGOtuUDOLecSNU/bLQpmUPiwthCSZiC4aktu8jiOAgwkpY9EpzV+p
+         Q/ig==
+X-Forwarded-Encrypted: i=1; AJvYcCU2qb4RBwNShrrrbouSpd2P8dKmSlAqgw9MUB24ADSHmFEmeRdveMXxV1XAO9kI35cvqvwgXU6389gOwIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKgd11vUsGQq0kCXPQh31f5w9QQRJ//2ryefjko1na2vNZdYRn
+	V+nXi+4BbiCfPYsNaq9PooLkiMcheSQ3SKf+DyOYshK4QXLQBCfR1PNYErSs0UuwIA==
+X-Gm-Gg: ASbGncsuaUcxBnGORuxJmyDZsQcIgmvYSRDJrm8DP+M0N2oM+Y+IHH3iPOeV383vLqA
+	Izr/pqRJMUIWdEaAb4yLP+VjkU5z4JVzOuiH+J+Hv1jMOfQulQWYepglR7dXBw3xFYsrPtZEf+m
+	Mk7HQGgj/QnjjeMjcjg5ewpFEZPcuVmdw7E2szEqjlbH12GVORuc05Po7Gok4sxEmRItHyrhWrD
+	VOdDvlRphUEZy2GmwQjOfu4JQiMmtDQyXOrJQxrDcdOnFLBo6vKIVonewbij3P6xqhP9DfSsGq/
+	9FkrOYhi+KZuFc0eQ9ioIvQBa5chXhif3hmt+1XeVuz8It9vfvzebrB4V0F42f6AOIcju9R+WRT
+	2QZVpYEGxfvlL6s29ODkaxF/n6oS0MskwvNluex8KiRol722BvxvnLyE541x79Ys1pq3OTEtmgw
+	zA1610F/7rOs7qvsoLf+k4YJF5b3T9nmAS8hhZC4/rVrmskw0E1iEDsq0=
+X-Google-Smtp-Source: AGHT+IFzzK4Jax0Ss6/pV/yJrywiuEK8413jdinEbd3nP6IJYuh1YVPYCUBIwSddX/cP8cDYcweEog==
+X-Received: by 2002:a05:6a20:e713:b0:33b:5563:d6e with SMTP id adf61e73a8af0-33b684d0c51mr5253718637.5.1761199982790;
+        Wed, 22 Oct 2025 23:13:02 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2a00:79e0:201d:8:adb:6017:6b6b:ea1a])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4e2d81dsm1021648a12.30.2025.10.22.23.12.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Oct 2025 23:13:02 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	sound-open-firmware@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] ASoC: SOF: Fix function topology name check in profile info output
+Date: Thu, 23 Oct 2025 14:12:24 +0800
+Message-ID: <20251023061226.1127345-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.51.1.814.gb8fa24458f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
-To: Bjorn Helgaas <helgaas@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: Christian Zigotzky <chzigotzky@xenosoft.de>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-References: <20251020221217.1164153-1-helgaas@kernel.org>
-Content-Language: en-US
-From: FUKAUMI Naoki <naoki@radxa.com>
-In-Reply-To: <20251020221217.1164153-1-helgaas@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: N3gATt1+RV61wWrmTsis+KI3BuzDlPCoZbfQnE2543/08BoenZcpNGXS
-	IAB6Oe1BddqoAcfNvMWjllDWK9O6n0BavNzB3cGKh9bKxCfKY84dyu8+UnIvnl6gabzZSZ9
-	030czqHPzo/wG1AyS7oEoLM9fFOQ5XElHLiSY9NGyQHXh6Uxgtt2JZQ2v50qWhvaoH+CwVv
-	Xcio8X6JggPKKX/P/Nd8qn7RSxD1p5jGO1bwb42iBJXmhzt6dbBJJoCs2KZww/pXXvTl7UK
-	DMrBLiFie+/GhoEwbJCJ+DTGkqx1AhKeGvelRuULYg/WP00i2HKJlIFFcsX+MVuMb0kiunI
-	OfpkBVwaJFbknO756nBqzmZ1H39vxj0wovsXE7T/KO6B0PGSOhuXv87HsrPDXEamJTjuXge
-	014yUd9iYnSnv5pOerQwIJYowY18pixZMIYD3wMCwRcdsWggJBUOjZrU/wMJaEbNuTuY9rk
-	9nJXxIW7Unf7ZVrh6BVb2FgBlXcWvnk46L+UVO7y3zsWCjkfa2tvYIzUFNKApyJIixleOA8
-	gVk9PI+mdu6Vo9GOUb66SKWM2I9pgFfBGOyuqeLtvDEYlUzk6FTUxOQab8pa+ymDOKpaTjj
-	grg7rC4A8+8LIf03h+6C+Zonk1W4ss1BurBaL+esGFtEsqP1WTm9AGmHXHKR7sshWNaL6aa
-	nCk9ejxbIYtIxmpOZJDAYEPkSCI3WzT38tK3ugC5m1zcou06c8GalZ7E0VTqOZOYqAOExyG
-	daUB8nyNFcFj6YCXJpmoCzO0gCzPWvsgnMQGWOEZMjkH1BfELA678jUS367hFCHPLYTxV//
-	naYcIsDceeyP/MxcWgHj6OUlWnsBbbmeMfF7l/CGsTseYZfYceCCNbOCIIveIff2TnjmC3r
-	MHtz1XtTlaLAB4YvGYhWkAFha9VCBz/8hxJj1wiH7pR42FkdkA/srNouE0RHce3hOk8ew6V
-	SMXSoj5hXBOBqEmwLWgDqJuapVYe6X+Pqm8E2/Fa66gpJU0zCJ5IYDlsdOBmynxrhlNQ=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
 
-Hi Bjorn,
+The function topology feature, and the plat_data->machine field that
+specifies this feature, is ACPI specific. The check didn't take this
+into consideration, which causes a NULL pointer dereference splat on
+OF platforms:
 
-On 10/21/25 07:12, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree
-> platforms") enabled Clock Power Management and L1 Substates, but that
-> caused regressions because these features depend on CLKREQ#, and not all
-> devices and form factors support it.
-> 
-> Enable only ASPM L0s and L1, and only when both ends of the link advertise
-> support for them.
-> 
-> Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
-> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
-> Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@xenosoft.de/
-> Reported-by: FUKAUMI Naoki <naoki@radxa.com>
-> Link: https://lore.kernel.org/r/22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com/
+    BUG: KASAN: null-ptr-deref in sof_create_ipc_file_profile (sound/soc/sof/fw-file-profile.c:291 sound/soc/sof/fw-file-profile.c:340) snd_sof
+    Read of size 8 at addr 00000000000000c8 by task (udev-worker)/247
 
-I've confirmed that this patch resolves the PCIe (M.2) Wi-Fi freezes or 
-probe failures, as well as the NVMe SSD I/O errors occurring since 
-v6.18-rc1.
+    CPU: 7 UID: 0 PID: 247 Comm: (udev-worker) Not tainted 6.18.0-rc2-next-20251023-03804-g93b191bc0c26-dirty #747 PREEMPT  ba3c303a11d89508de4087cb5b4f8985b6d87b6f
+    Hardware name: Google Ciri sku2 board (DT)
+    Call trace:
+    [KASAN stuff]
+    sof_create_ipc_file_profile (sound/soc/sof/fw-file-profile.c:291 sound/soc/sof/fw-file-profile.c:340) snd_sof
+    snd_sof_device_probe (sound/soc/sof/core.c:304 sound/soc/sof/core.c:388 sound/soc/sof/core.c:460 sound/soc/sof/core.c:719) snd_sof
+    sof_of_probe (sound/soc/sof/sof-of-dev.c:84) snd_sof_of
+     platform_probe (drivers/base/platform.c:1405)
+    [...]
 
-Specifically, I verified this with the following configuration:
+Check that the ACPI specific field is actually valid before accessing
+it.
 
-  ROCK 5A & M.2 RTL8852BE
-  ROCK 5B & M.2 MT7921E, NVMe SSD
-  ROCK 5T & on-board AX210, NVMe SSD x2
-  ROCK 5 ITX+ & M.2 MT7922E, NVMe SSD x2
+This was seen on a MediaTek based Chromebook.
 
-Therefore,
+Fixes: 2b92b98cc476 ("ASoC: SOF: Don't print the monolithic topology name if function topology may be used")
+Cc: Bard Liao <yung-chuan.liao@linux.intel.com>
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+ sound/soc/sof/fw-file-profile.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-  Tested-by: FUKAUMI Naoki <naoki@radxa.com>
-
-Best regards,
-
---
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
-
-> ---
-> 
-> Mani, not sure what you think we should do here.  Here's a stab at it as a
-> strawman and in case anybody can test it.
-> 
-> Not sure about the message log message.  Maybe OK for testing, but might be
-> overly verbose ultimately.
-> 
-> ---
->   drivers/pci/pcie/aspm.c | 34 +++++++++-------------------------
->   1 file changed, 9 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index 7cc8281e7011..dbc74cc85bcb 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -243,8 +243,7 @@ struct pcie_link_state {
->   	/* Clock PM state */
->   	u32 clkpm_capable:1;		/* Clock PM capable? */
->   	u32 clkpm_enabled:1;		/* Current Clock PM state */
-> -	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
-> -					   override */
-> +	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
->   	u32 clkpm_disable:1;		/* Clock PM disabled */
->   };
->   
-> @@ -376,18 +375,6 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
->   	pcie_set_clkpm_nocheck(link, enable);
->   }
->   
-> -static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
-> -						   int enabled)
-> -{
-> -	struct pci_dev *pdev = link->downstream;
-> -
-> -	/* For devicetree platforms, enable ClockPM by default */
-> -	if (of_have_populated_dt() && !enabled) {
-> -		link->clkpm_default = 1;
-> -		pci_info(pdev, "ASPM: DT platform, enabling ClockPM\n");
-> -	}
-> -}
-> -
->   static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
->   {
->   	int capable = 1, enabled = 1;
-> @@ -410,7 +397,6 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
->   	}
->   	link->clkpm_enabled = enabled;
->   	link->clkpm_default = enabled;
-> -	pcie_clkpm_override_default_link_state(link, enabled);
->   	link->clkpm_capable = capable;
->   	link->clkpm_disable = blacklist ? 1 : 0;
->   }
-> @@ -811,19 +797,17 @@ static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
->   	struct pci_dev *pdev = link->downstream;
->   	u32 override;
->   
-> -	/* For devicetree platforms, enable all ASPM states by default */
-> +	/* For devicetree platforms, enable L0s and L1 by default */
->   	if (of_have_populated_dt()) {
-> -		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
-> +		if (link->aspm_support & PCIE_LINK_STATE_L0S)
-> +			link->aspm_default |= PCIE_LINK_STATE_L0S;
-> +		if (link->aspm_support & PCIE_LINK_STATE_L1)
-> +			link->aspm_default |= PCIE_LINK_STATE_L1;
->   		override = link->aspm_default & ~link->aspm_enabled;
->   		if (override)
-> -			pci_info(pdev, "ASPM: DT platform, enabling%s%s%s%s%s%s%s\n",
-> -				 FLAG(override, L0S_UP, " L0s-up"),
-> -				 FLAG(override, L0S_DW, " L0s-dw"),
-> -				 FLAG(override, L1, " L1"),
-> -				 FLAG(override, L1_1, " ASPM-L1.1"),
-> -				 FLAG(override, L1_2, " ASPM-L1.2"),
-> -				 FLAG(override, L1_1_PCIPM, " PCI-PM-L1.1"),
-> -				 FLAG(override, L1_2_PCIPM, " PCI-PM-L1.2"));
-> +			pci_info(pdev, "ASPM: DT platform, enabling%s%s\n",
-> +				 FLAG(override, L0S, " L0s"),
-> +				 FLAG(override, L1, " L1"));
->   	}
->   }
->   
-
+diff --git a/sound/soc/sof/fw-file-profile.c b/sound/soc/sof/fw-file-profile.c
+index 4a2afc04f338..76bde2e0be1d 100644
+--- a/sound/soc/sof/fw-file-profile.c
++++ b/sound/soc/sof/fw-file-profile.c
+@@ -288,7 +288,8 @@ static void sof_print_profile_info(struct snd_sof_dev *sdev,
+ 	if (profile->fw_lib_path)
+ 		dev_info(dev, " Firmware lib path: %s\n", profile->fw_lib_path);
+ 
+-	if (plat_data->machine->get_function_tplg_files && !plat_data->disable_function_topology)
++	if (plat_data->machine && plat_data->machine->get_function_tplg_files &&
++	    !plat_data->disable_function_topology)
+ 		dev_info(dev, " Topology file:     function topologies\n");
+ 	else
+ 		dev_info(dev, " Topology file:     %s/%s\n",
+-- 
+2.51.1.814.gb8fa24458f-goog
 
 
