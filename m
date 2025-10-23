@@ -1,233 +1,202 @@
-Return-Path: <linux-kernel+bounces-867314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E59C023DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:49:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA01C023F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C35E501298
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:49:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D7F43AD0EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0424823E347;
-	Thu, 23 Oct 2025 15:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489561ACEDF;
+	Thu, 23 Oct 2025 15:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="JrIYCLdr"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="fsFHcWfw";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="Q7mEOAEG"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075392367DC
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761234549; cv=none; b=ZA8MGB1q1aW+US9+gW4g1nUbK5MpblBahVI/LRucqz7gD1XDJlOMAGTwNsIlsEBa0qflMyqBeBfBEdTJ1RytYNNq/A24vj1Xc6LybaXSYnIOVurHjLCnkRO9S0bUzQWxYp82pqv0wsheBwMB5tNz3Dfcjz4595SyVEqnNJs+39Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761234549; c=relaxed/simple;
-	bh=TR0vyrIj5zOAmrWtxwLaf9B/tGNGrD4OYYiP6WG1Udc=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=QlGWYWG+QesMcmcvA63C3ARkLYueb7hqIW7X8SWEuKKgUds4LIUJKcaMbJjNC2nhgkaRD2+NlpIDt8Ijf25PYPhBKW8LMt8dlJFscShAlVL24krNIVYpZGb9Hc/dNwUblDu3GZETXPmpdUgFRsrcAh6z34IIi/UXAw4oGLlrJ0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=JrIYCLdr; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-33e0008d3b3so1086184a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:49:04 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D0C24A046
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761234585; cv=fail; b=F6c1cNK5uzS/66oTjxqOThvyUGljwqCM41TCcokOikbBMIR/cbkuo0QejUgZqJ8fPZqeFL5jas/BYZkUUtFjmL+h89xeoTjQoYpwbLUc/syF5bV1oTxNiQirnv+jcJap+E9dkb+ItNLoMIxMramEZe486YvKkQ0qR9gxeq8nyXQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761234585; c=relaxed/simple;
+	bh=11It8BgFnEx9YFTbVcu0IeG+k0+qx2i+EC+dVcJYeMY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n9PfmuIABWPOBseVE6MpdDlECrQsoqW0ZcU1Xmys+DmRiAGSwxUL9mb15LYOtvPXSqm2QYKymcRSrD14V7NUG2DbsRa9l1JGxtVxJFq/lYQGJq0BPWQw1X/2NVStIf3D4AKu1BpvkxC8/FMjQqcIZ2zG18dqYdLDfWJLk+lYHB8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=fsFHcWfw; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=Q7mEOAEG; arc=fail smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59N3tFkm3459041;
+	Thu, 23 Oct 2025 10:49:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=7C6BReVylQ9/h0LtgbuOirvobKnI7Sss6TuzimHw0fY=; b=
+	fsFHcWfw4pw1FuZP8lF9+3/td9LXJ+bRYIpT60IKJwz5ibIAr+mQclstX/r3ErHN
+	LolI83jqfRWlwV+ksucIT3d7S2I0K+LKJThacVA6S9THLAOCy9zR8wkMCpWK7LRl
+	6IunrYDED/XTuatl6Y1wwkSEtoNasyRpQhXjLZ6ZI6H/E1DYGmBzr7UXZkURE9EO
+	I+Sx7jMksV2Y0t4ly08dGBrYSPPGel5h33uNGwKeCQ2bMVlxZw3rye0+CAA2L79f
+	WrDF/9RKdZ6po+t9fQJJqzpd6xBfZDltxPYVOBcYE9CAEWc88dgLQTnC0bqf/jaJ
+	FJf8inK17jJHuoVD7WV9tw==
+Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazon11022093.outbound.protection.outlook.com [52.101.43.93])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 49xs382dxk-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 23 Oct 2025 10:49:11 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hKrvBl9YwbSyMW7Q87wXNbiDRV9bOyEb6dx5THnoR4rYjB/+5V/sikkIObLnQdPNc9eEfsDiy+nlpfGyNL70bSBAWYOwq+tKNmbBXCFJWbYoskbujEs1v/lcgPTm7TZUIxKWI4tKLmfw+Id3JwOV4kkNbuUJuseq6Q7rLnko9U+ijNhcBbZ3hRC/8JUgLDYmi8NPbX6cRXCj0b/MkL7707VOabBKDl/i1pNa2EMEChi0nkF0nqAq1i/qabfHmn3cYBzed2GZIpJyOOGiYxoGUSHPWPNGzNBC9r9rxE/E2OoiWhP1y5qw31r+aiwaXJQvt9yanBZC27Si/VS7Jem52A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7C6BReVylQ9/h0LtgbuOirvobKnI7Sss6TuzimHw0fY=;
+ b=uA4iX8R7g0Qs5qGclxyj0k1+7fgM+DkHl5K4lzuuuSPpehU+fMnTN4fjOdvB7ELOnZJoRH6MnUSO5YsUQ5eSy6HMefBH/iZKUBIL/XUM0/QdII/8ex09GEY21YwZNW7VjrKD8YOjMYKUjFLIsUUp95phc097Kw2CLT6h0ytSWh7Dbwo50vyKkmlll0DjDO5lebFTGLQkB846cYXnCN4W2c/cp5J1W1RfguDx+qnFBJI8Ryd+k/2mIH8vOQLCQyEeAZO3rU8A+/FcPO6sO9E518iPvw5XHh/GuTmBFRSDavQs+9CxynP5oxjmZsB4gGECPAd3+ht80Zh5Vh8QRceNVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=infradead.org
+ smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
+ action=oreject header.from=opensource.cirrus.com; dkim=none (message not
+ signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1761234544; x=1761839344; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6l6v5GKhdHV57QLrRcfX0OseV//0wL094GM3Lc9kONI=;
-        b=JrIYCLdrrQi3ahtK48HYqNZOktXIXOwDg/XD/YrSkNwKbbWxVpEAjHDZ7apWAM2rUA
-         wzr2+FQu9q1EL5TUQOy5qRUJngDnp878XToShB7p6graYiBlQ0P7ilSVPr8YanLcCfA2
-         7Vq+TJio+1qbqkTcZPeJOIXUwzrmtq4e/JORW1qCz2dmZ+1iA/OeVauUWB7C8/d9Zq+f
-         LpDJfD/5MfrtzKpmE1BNOqeDDobImMYKcq/eLrJQhV0H1j7nInY0nwHOmhIarCAUX7nm
-         l7s8T7gIGUfekTrWwShX7Y7RiJM6m7UH2686hmUxKBz6L1J9LsYBVVaK8ZQgAQdNynZr
-         BAsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761234544; x=1761839344;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6l6v5GKhdHV57QLrRcfX0OseV//0wL094GM3Lc9kONI=;
-        b=qbiIjtQ6iHuvKpkWUngHHxkvoUz8CIBq5ElVuecbfNSSJZd+sooYhxsTGLQLPl7GBu
-         EjrnNE5Y0aOUnAKooqH4EmTsL77HlVaWwzK07q22nVk+gDFEvq8uSRoLF7zF7r6HdMoe
-         wA+AArwUMqYDMQspfqtP2WJ27R4ih+qPElmxEOTYsR3jphq4PK4QKQsO59nDOmZUsQgf
-         jcsGXnXF/k13LUiCUSoZT4hpQ/t54bYkmIxocBDDl3ttBb9Bv7RVlPK7JiAC+byFPOtt
-         OhvMDDc6Dvp7/JbNYPG8Lf2U6nEMNW0n4H4cm86avlwbbo7d8DZWURmNzkuVtsG9NvLa
-         WLqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5r5VXjURQrlWvltxb+kHACuJKgwqBr74A9xgrqqzt7/Ght+SrOAnO927DUKgvbm9Ak8HXeeMvo9ymCeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyto/qzxTE3q/NG5hySygsT6p+oTvKdvf+jsqqsPBxj09mKLXrC
-	aHxWrJZ9LZ7vzCDXHFloB9uepStWdcFhodHGMx02FxhXvk26sHdrnRa0F8zEcZDLjJM=
-X-Gm-Gg: ASbGncuKqyhvFTiDpZnBi/wNllRY+vgiaigSLKZdzq7qus8KzYhwHmb3X5A1nxkVWcx
-	+EQHlymjgJ9/ISFMjQmPYPijtBTD5CKRDdm6RIgnEGYVwPSJ2ptZJcmexUVaPdBdPqa6BK6+mVa
-	n7oNpi7mRMdBh/YKxCGqL2Mnz1FKonRW3IdYDSmLYKJiFw39poOQJZx9Pw/q4+gZaGGygCAzfF7
-	1ePTeQDg54FZj2e6Ec3BPuSCaYoAu0x04e/Ed4HxvPbj9+QP5Q/TIV1ER2napEdLGk5hp0wt5fU
-	pqZ4VWIt4qRepiioueyWJ/etNhVi3Sc9g22zWio6uqAW2zlEwgMhXUMQmUArtzrswvtCtO2ccJf
-	YjBz2d/yuUeeXVTYAoAtm74QQnuzm796MbLhQ9d+5vt8Sm7MLObO/QBYz0tQ0Ltt8VMPuHjgidZ
-	OzPRWtbf1cYmaK9XKcNeSVoNTP8s59l7NZgSPbpTzM2SLrPf1r
-X-Google-Smtp-Source: AGHT+IH3PwWqpiI3zcpwER2AyB/rp+AS9Y6D6TVLAKwCB2BvEfgzPHpJN6qvv4GuH89JR9PFSabRKQ==
-X-Received: by 2002:a17:90b:5291:b0:32e:859:c79 with SMTP id 98e67ed59e1d1-33bcec1ab25mr31330207a91.0.1761234544113;
-        Thu, 23 Oct 2025 08:49:04 -0700 (PDT)
-Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4c13d58sm2446777a12.15.2025.10.23.08.49.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Oct 2025 08:49:03 -0700 (PDT)
-From: Andreas Dilger <adilger@dilger.ca>
-Message-Id: <AF891D9F-C006-411C-BC4C-3787622AB189@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_48E99939-A914-48C4-B30B-0EEA6EDDC0B0";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7C6BReVylQ9/h0LtgbuOirvobKnI7Sss6TuzimHw0fY=;
+ b=Q7mEOAEGo5Z912ojuEnsnkaxn4HEiLZZNpBNBghVsF8QIIPQTNEOSYEN5w+cvSdME9EN+xy0BEjj305KzlKbtLGeqsQ5yn7COd8dVZ49kVA8zwx3kssFBHDbX68qKww6izPypjCqDTV3kglvuTS/wgoECj1cHI1rYBOlHoD4uHM=
+Received: from BN9PR03CA0856.namprd03.prod.outlook.com (2603:10b6:408:13d::21)
+ by CH2PR19MB8896.namprd19.prod.outlook.com (2603:10b6:610:284::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
+ 2025 15:49:08 +0000
+Received: from BN3PEPF0000B070.namprd21.prod.outlook.com
+ (2603:10b6:408:13d:cafe::eb) by BN9PR03CA0856.outlook.office365.com
+ (2603:10b6:408:13d::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.17 via Frontend Transport; Thu,
+ 23 Oct 2025 15:49:08 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ BN3PEPF0000B070.mail.protection.outlook.com (10.167.243.75) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.0
+ via Frontend Transport; Thu, 23 Oct 2025 15:49:07 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id F3DA8406552;
+	Thu, 23 Oct 2025 15:49:05 +0000 (UTC)
+Received: from ediswws07.ad.cirrus.com (ediswws07.ad.cirrus.com [198.90.208.14])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id E51F5822540;
+	Thu, 23 Oct 2025 15:49:05 +0000 (UTC)
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: tglx@linutronix.de
+Cc: peterz@infradead.org, broonie@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] genirq/chip: Add buslock back in to irq_set_handler()
+Date: Thu, 23 Oct 2025 16:48:59 +0100
+Message-ID: <20251023154901.1333755-2-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251023154901.1333755-1-ckeepax@opensource.cirrus.com>
+References: <20251023154901.1333755-1-ckeepax@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [RFC, PATCH 0/2] Large folios vs. SIGBUS semantics
-Date: Thu, 23 Oct 2025 09:48:58 -0600
-In-Reply-To: <aPoTw1qaEhU5CYmI@dread.disaster.area>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>,
- Rik van Riel <riel@surriel.com>,
- Harry Yoo <harry.yoo@oracle.com>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Shakeel Butt <shakeel.butt@linux.dev>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Darrick J. Wong" <djwong@kernel.org>,
- linux-mm <linux-mm@kvack.org>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-References: <20251020163054.1063646-1-kirill@shutemov.name>
- <aPbFgnW1ewPzpBGz@dread.disaster.area>
- <d7s4dpxtfwf2kdp4zd7szy22lxrhdjilxrsrtpm7ckzsnosdmo@bq43jwx7omq3>
- <aPoTw1qaEhU5CYmI@dread.disaster.area>
-X-Mailer: Apple Mail (2.3273)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B070:EE_|CH2PR19MB8896:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 8f4eb92d-7230-42ef-b7e3-08de124bb35e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|61400799027;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UExLGo0zXHnR2cbzfnU6RkrQlSVOSheOX3c1fXjwNpIzRhD4JgS/g0GdPQ8d?=
+ =?us-ascii?Q?FH0xUYCrhA8Z5k8N6OdbOf5tk8IZYPkox7gOLxXuyHOXnBfEonmZag/jeaPP?=
+ =?us-ascii?Q?rW6Wfq/EGFy/uPL5zBfmA2ELfKSjgFEMnimXBRGuCD1PY2EKrOl/F8yMAvc4?=
+ =?us-ascii?Q?Gh0Ck3nh28hqNvfEulZOXDZE7e+Rv+is9uS3kHC4Tw3i+ORMeMVR2UbkNFj+?=
+ =?us-ascii?Q?Qp3G+4KSF780qadrzW5cf9K6Rv1RZHw5YmPaN65JqTEuw8hbuCFrYW5zfNBg?=
+ =?us-ascii?Q?mJiYzyDPTDk9709OYf9F+RpEfXCZ5NYApAM7tONFnJQlGG9xqgLAqdBECt0l?=
+ =?us-ascii?Q?uQNZy/9js0Ii6GjfkOfojVj2jynqmLVcjqR8veLWDAfdmUPXbgc3UIn9nCS/?=
+ =?us-ascii?Q?zxnIkq4yNNlW1xJdCy1JcSnJrUsPc9Vsf1YWe7xt8BRSPsObYBpt3FGV/3v3?=
+ =?us-ascii?Q?h3CTtKGad9uiWeHz9UrqWoMhzp1oBuSIXm5EwMs1I8COr0Tkcxvk0WXopVcf?=
+ =?us-ascii?Q?DAsrQ1pJz6GvF7FioSDGyGKhv35ywWpFlvIe0npGaV20y2itJPJM3Qeu1BCU?=
+ =?us-ascii?Q?qJ9lDliqRbiSTJ0Fn42moC8bTUq/6vGRXBEb1FKa85JEHuNiYdZX7XbZbi7b?=
+ =?us-ascii?Q?9TbudWEWn3mFSGpHzXNxtZGIBC6WMZPRz/L3ReES9O2np9s/4Hp5Ay818Q1a?=
+ =?us-ascii?Q?qqR5TGOdkgt19nY2V+EQkuYKCOZxN+Q04vErwwNrDnyAirDJsFW+CIQ624QI?=
+ =?us-ascii?Q?6rx1+yEzuIZqT46WXC9gGGOkX9Gcu3E0iuq+WUcF+KfuZT1v8RXy/1uBgX+k?=
+ =?us-ascii?Q?Ba3v4jz/z6tF+YgK/DnJ22wztZaCHkEZuCTY+Kd3PRFT1uxcscwdhv8ZrVTW?=
+ =?us-ascii?Q?xA2I4jyUspuAmoVSMYPx7x7qHFRSZZuYy9+iExtkLNwvzOM0Ok91+3zP/mX7?=
+ =?us-ascii?Q?oKvb+u00owdt7Snk8hBiEESSMON2mK112zfVnUhHeoCl8Bg6JZewEiM4yHup?=
+ =?us-ascii?Q?y7nAn7hJLUVaKAeWaX9uEAkcNixSzJ227wef/Ksm246KDALkwaai/si2csZs?=
+ =?us-ascii?Q?Mg9mu+lShIlh6K1apVaU12+9bq8re4ASVy+dZ5vt5MTsT5z4ekXacsfxaUKt?=
+ =?us-ascii?Q?bHlnQ9i/VoBRF3PNLHg++04UvXbOlm6khjteJtdNVizBP6Fg6k/1hkGEjEfO?=
+ =?us-ascii?Q?7kjwhM1nx0F/YtlNbbskBwxF7nFhL4X4X2wqZOvBs+td0Ve7zhksPArf2s5j?=
+ =?us-ascii?Q?wBZcYED8a7QMQ33MQb9g+RREJhXlRlCSN1aU2qEMWaBm5G/gh5MsQMKOHG0L?=
+ =?us-ascii?Q?iDANQBdjTs8WKMPWXA6h8wGFzP4peDicDDaXP9PPtsPR2AWzA9gWUnZ4B9qY?=
+ =?us-ascii?Q?RwRewhLsxAIRV3LdnmUZbiqVSNx23PTORDR3Hb3FBF9/KbWrmJA0Wxa0ufnL?=
+ =?us-ascii?Q?oAc/BN0xO6OSabejrxDzfQ5T0WTy2+xgAlb5QSfAJ1bBPRJkJGenmy2oURp0?=
+ =?us-ascii?Q?1FhzsuRFORkEVpiCZL6TA0FMBw6TkTBJibsH73dR2kPOKam/pb7g+c1/P6KR?=
+ =?us-ascii?Q?5tXpDdeJm2B+FYv1PA8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(61400799027);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 15:49:07.2225
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f4eb92d-7230-42ef-b7e3-08de124bb35e
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-BN3PEPF0000B070.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR19MB8896
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDE0NCBTYWx0ZWRfX5CPoM+Z//Pax
+ 8eQ3l6UTMNr5Q2iZaDN8eOBAzwK9JxgeTPAQ0rp0OK9fZIt6rmsPu3RTP25CR1ANJJ6U2KM8EpF
+ m2z2CKNV88Gi4hYGcSaXErMEPn4dtemQq/axuX1cHgVRl59xsp+PsEOEHMa2qsRVRaZolOd4fZF
+ 3v4LJEKnprHfrQlJgtL7oMAJ/qK4uWvqS67eE3Sy3OU/OpnTviikdKCXVpNyh1Vo2O70EPwA0oo
+ +FtBNU6+QMaCiqIsuzc3ua1wKnyim/uFN9f2LOq5FBdo1SCHKksI68I2nfy/Ix+2ZWvUhvDaz1i
+ UpPdUbFke4LzRDQdpPCvCHsslivyviHRXmqC3XFjbHObXQMBjq0Vi9lmvnPDfYrYOznj4Wcpb6L
+ QlG6cOpleZXgRdvGEGULuCQPTSWt2g==
+X-Authority-Analysis: v=2.4 cv=W4g1lBWk c=1 sm=1 tr=0 ts=68fa4e77 cx=c_pps
+ a=+CKpLqsC5QamL8vULJ+FWg==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=x6icFKpwvdMA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=w1d2syhTAAAA:8 a=QDk8zecZgZoI6ZYqeuUA:9
+X-Proofpoint-GUID: PkpaV-FNmC1YnBnTyKegvOaqVyoONyj7
+X-Proofpoint-ORIG-GUID: PkpaV-FNmC1YnBnTyKegvOaqVyoONyj7
+X-Proofpoint-Spam-Reason: safe
 
+The locking was changed from a buslock to a plain lock, but the patch
+description states there was no functional change. Assuming this was
+accidental so reverting to using the buslock.
 
---Apple-Mail=_48E99939-A914-48C4-B30B-0EEA6EDDC0B0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
+Fixes: 5cd05f3e2315 ("genirq/chip: Rework irq_set_handler() variants")
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ kernel/irq/chip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index 3ffa0d80ddd19..d1917b28761a3 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -1030,7 +1030,7 @@ __irq_do_set_handler(struct irq_desc *desc, irq_flow_handler_t handle,
+ void __irq_set_handler(unsigned int irq, irq_flow_handler_t handle, int is_chained,
+ 		       const char *name)
+ {
+-	scoped_irqdesc_get_and_lock(irq, 0)
++	scoped_irqdesc_get_and_buslock(irq, 0)
+ 		__irq_do_set_handler(scoped_irqdesc, handle, is_chained, name);
+ }
+ EXPORT_SYMBOL_GPL(__irq_set_handler);
+-- 
+2.47.3
 
-> On Oct 23, 2025, at 5:38 AM, Dave Chinner <david@fromorbit.com> wrote:
-> 
-> On Tue, Oct 21, 2025 at 07:16:26AM +0100, Kiryl Shutsemau wrote:
->> On Tue, Oct 21, 2025 at 10:28:02AM +1100, Dave Chinner wrote:
->>> In critical paths like truncate, correctness and safety come first.
->>> Performance is only a secondary consideration.  The overlap of
->>> mmap() and truncate() is an area where we have had many, many bugs
->>> and, at minimum, the current POSIX behaviour largely shields us from
->>> serious stale data exposure events when those bugs (inevitably)
->>> occur.
->> 
->> How do you prevent writes via GUP racing with truncate()?
->> 
->> Something like this:
->> 
->> 	CPU0				CPU1
->> fd = open("file")
->> p = mmap(fd)
->> whatever_syscall(p)
->>  get_user_pages(p, &page)
->>  				truncate("file");
->>  <write to page>
->>  put_page(page);
-> 
-> Forget about truncate, go look at the comment above
-> writable_file_mapping_allowed() about using GUP this way.
-> 
-> i.e. file-backed mmap/GUP is a known broken anti-pattern. We've
-> spent the past 15+ years telling people that it is unfixably broken
-> and they will crash their kernel or corrupt there data if they do
-> this.
-> 
-> This is not supported functionality because real world production
-> use ends up exposing problems with sync and background writeback
-> races, truncate races, fallocate() races, writes into holes, writes
-> into preallocated regions, writes over shared extents that require
-> copy-on-write, etc, etc, ad nausiem.
-> 
-> If anyone is using filebacked mappings like this, then when it
-> breaks they get to keep all the broken pieces to themselves.
-
-Should ftruncate("file") return ETXTBUSY in this case, so that users
-and applications know this doesn't work/isn't safe?  Unfortunately,
-today's application developers barely even know how IO is done, so
-there is little chance that they would understand subtleties like this.
-
-Cheers, Andreas
-
->> The GUP can pin a page in the middle of a large folio well beyond the
->> truncation point. The folio will not be split on truncation due to the
->> elevated pin.
->> 
->> I don't think this issue can be fundamentally fixed as long as we allow
->> GUP for file-backed memory.
-> 
-> Yup, but that's the least of the problems with GUP on file-backed
-> pages...
-> 
->> If the filesystem side cannot handle a non-zeroed tail of a large folio,
->> this SIGBUS semantics only hides the issue instead of addressing it.
-> 
-> The objections raised have not related to whether a filesystem
-> "cannot handle" this case or not. The concerns are about a change of
-> behaviour in a well known, widely documented API, as well as the
-> significant increase in surface area of potential data exposure it
-> would enable should there be Yet Another Truncate Bug Again Once
-> More.
-> 
-> -Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
-> 
-
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_48E99939-A914-48C4-B30B-0EEA6EDDC0B0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmj6TmsACgkQcqXauRfM
-H+CY1w/+JoC6DHdgP5p4CEVNhByOccTqDc9/xK5kbk0cN1d/jNA0jaz3s/jLATWn
-DMDa3ZsuYDyYNk1KhlbLNZ/k1MJEh8mxq4pqUrmu4PpMFrO2037t0lkPdYxcakkW
-+idSJxoIYQcCGS42vOUZ6gL40RIRLDdY/5zgCvysIF4aIbYyp/NJj58BBuzHahC4
-MlejI5KKvqxYtvhCeCt0lGbSc4a/rmoI02hhKngMZ865oM2sEdSNQpjE6/J9COz7
-XwbWqa9mth0aa5vuUt/RcL9jkFshItIUmhs4DxUtdHfXPSG4hDwM0jsJnNdRD/SM
-RQY30IoDVBoefkwdhs+fvGbUivgw0LSgba56P+AjLChp6FAX1ASh3ML+4zxspqs4
-fPxiX7BS7+ojkg0VtKEKJPk5Q6+4a1T3flIBq6tDE4UwISC63Vb4qA1CPCVbyVeU
-zKAkfNMzSOlOMOYKAj51Nx9mj6NxZXLJvrS7jMCKiWh1m7B6a9GuDs7yQ5QQ+Q5v
-PfheQd2jmcYXXRZpyzu3qhzJzPGpJ6seMJCZHwBQ3jg2zfiv+7gyGwedVKy/xb+j
-Cd2xi0wN9hrGFKO2Ya2Zd7VIHkkWnjErwOm1x4QNsiqj9D6Hc9yJkHCG0dRb1Lwv
-4064fTxGFyNuIujVcvPB6rXpKVJGhLEayMqrVtDjuzoJtA9vQJ4=
-=kl6f
------END PGP SIGNATURE-----
-
---Apple-Mail=_48E99939-A914-48C4-B30B-0EEA6EDDC0B0--
 
