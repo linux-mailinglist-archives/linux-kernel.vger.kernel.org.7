@@ -1,105 +1,157 @@
-Return-Path: <linux-kernel+bounces-866073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5539DBFED48
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:23:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4BFCBFED45
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 03:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E1B919C5DEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:24:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A46524EFF15
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 01:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597EA1E47CC;
-	Thu, 23 Oct 2025 01:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F371ACEAF;
+	Thu, 23 Oct 2025 01:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aIRX/LnA"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LBRBSITn"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9FD19CC28
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7884502A
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761182545; cv=none; b=N+WnfYOCCEEB7YIfE/yXUI4+fMHO3dEAOGHNAJuwSLka7YsqLkqQh+ChxDbkza+bYKGap5voemJer2Lhif9E3AkoRwWpgrhOQzHrbmVOYzgZ9brWCG3HKa2dPPN5+pSfBWW44AZLjvuJZj1/f1taRb+gcsoBh3b/A1nCh5eTx9U=
+	t=1761182534; cv=none; b=XtybkBEvvXrKkBSj+Dk1U5U8dyF8WJagI5bRZVqqcUoqKQMJ5gQlTAOYHIbMzOZIUVv092IRgUudIVAxy8FtP88/86yHG+4LVILBXPWBxR3thFgqMo05Ky5+K118pHFC68ObeD8bbZ24/plNn0V2ZV2WY5l9zNNLcZtFgclgAgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761182545; c=relaxed/simple;
-	bh=gFkuFBYwfXjWA+JokwbpcI+zh7N26aE7upFroO/KxXM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WGIxy0yx29Dmdi+MZJsu5fok0Z8KM84ZwrwmwXfBM+yuGQ5p7W0D6h9LtjxSue0S74OEEVB796tvilLvVhXOl7SesF8VwEyVx02nYpE2SkJ8btjtlFj4vXiX5PXVhlVhx/AeuKQX/QwRwL5e/9gki7Q9on7gIORZLPewLDS/oCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aIRX/LnA; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761182530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=lS0mhQ5R43bGQo27SjH0eAhLsgCq0WUEHmFOE5SKzxw=;
-	b=aIRX/LnASeyDPiwS8a8wyOgL5oKFWk9ymcuT75gnJ0IZOacm3dSpZH/R38T3ReMFFQ40uZ
-	YTSnRX+CgIa/HmXPWYBgk26GFQnodLiOWZUrN0yWnumG744hcTGdK1gW1qKEFdtFIcbgPu
-	4TDa5R6gAwW0HHQ2ZhxTRUnlAtZ7YEo=
-From: Hao Ge <hao.ge@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Hao Ge <gehao@kylinos.cn>
-Subject: [PATCH] slab: Fix obj_ext is mistakenly considered NULL due to race condition
-Date: Thu, 23 Oct 2025 09:21:17 +0800
-Message-Id: <20251023012117.890883-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1761182534; c=relaxed/simple;
+	bh=gDPUKctcf380ybDTEmE0TEsWMcviF8EedHQAtRmMmI4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=h+gG+RmJzuKGc4srf2pqyjvnJnqtQOXAUBARBEGmloL9Ns+KzkSM1ShEA3MN28JRTrkTcnQOgwiqg9vZtRNC14E9jTt5vEBSr8SkT3GYAptx+OvfHME3mTzHFPg4MNWgU2evIjRQefOA4KTnLZAXLbZ/nI2L5qVIcaK2OJ4mUHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LBRBSITn; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761182529; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=2IDMW7CBAbRVu3DReKyJ3tXIFVRCpnWKhvXJ2ha+0SM=;
+	b=LBRBSITn+lYzPaJmzq9qZgM0i315LC7+D34GBE4WYvXKVNdoll+Ohyvu6jloRZxYnZg8g2Hdnq3IHWxs6rhTJZA+zfCLyRxzB4feovYus3LDn2iY5kiTVzPw3Y2SwzQPMcdvGTeCZ4DsVriJ52fic1ibwlXJJt3WUCebp8tnuew=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WqooiVd_1761182526 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 23 Oct 2025 09:22:07 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
+ <will@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,  David
+ Hildenbrand <david@redhat.com>,  Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>,  Vlastimil Babka <vbabka@suse.cz>,  Zi Yan
+ <ziy@nvidia.com>,  Baolin Wang <baolin.wang@linux.alibaba.com>,  Ryan
+ Roberts <ryan.roberts@arm.com>,  Yang Shi <yang@os.amperecomputing.com>,
+  "Christoph Lameter (Ampere)" <cl@gentwo.org>,  Dev Jain
+ <dev.jain@arm.com>,  Anshuman Khandual <anshuman.khandual@arm.com>,
+  Yicong Yang <yangyicong@hisilicon.com>,  Kefeng Wang
+ <wangkefeng.wang@huawei.com>,  Kevin Brodsky <kevin.brodsky@arm.com>,  Yin
+ Fengwei <fengwei_yin@linux.alibaba.com>,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  linux-mm@kvack.org
+Subject: Re: [PATCH -v2 2/2] arm64, tlbflush: don't TLBI broadcast if page
+ reused in write fault
+In-Reply-To: <CAGsJ_4xhJSLnXOZy4kPmnif5Paq+OPN_Ww+rPk2WO4-ADSC0Yw@mail.gmail.com>
+	(Barry Song's message of "Wed, 22 Oct 2025 23:52:23 +1300")
+References: <20251013092038.6963-1-ying.huang@linux.alibaba.com>
+	<20251013092038.6963-3-ying.huang@linux.alibaba.com>
+	<CAGsJ_4xaA8QRjP9H=n1hQfEfGop7vOd5Y=J+KQzuOyfa8GK-kQ@mail.gmail.com>
+	<87a51jfl44.fsf@DESKTOP-5N7EMDA>
+	<CAGsJ_4zPH0fwBOLQwh1y6jG3tCXHLGRCTyVVSCWb+NfLCEMV0Q@mail.gmail.com>
+	<871pmv9unr.fsf@DESKTOP-5N7EMDA>
+	<CAGsJ_4zW6ogVdi=t9JCuvGD9N21mA_ORXRCakw4Av68d9n+DDw@mail.gmail.com>
+	<875xc78es0.fsf@DESKTOP-5N7EMDA>
+	<CAGsJ_4zKGS-Xd-58ufXGoyRfaZWd8wTgv0b6ibHJ2aS14mQqtw@mail.gmail.com>
+	<87a51j6zg7.fsf@DESKTOP-5N7EMDA>
+	<CAGsJ_4y32i3aNYPum=8J3_Kt6vOSisr_jg6btB-YG1uQBqHG7Q@mail.gmail.com>
+	<87ms5j4444.fsf@DESKTOP-5N7EMDA>
+	<CAGsJ_4xhJSLnXOZy4kPmnif5Paq+OPN_Ww+rPk2WO4-ADSC0Yw@mail.gmail.com>
+Date: Thu, 23 Oct 2025 09:22:05 +0800
+Message-ID: <87qzuu1kg2.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Hao Ge <gehao@kylinos.cn>
+Barry Song <21cnbao@gmail.com> writes:
 
-If two competing threads enter alloc_slab_obj_exts(), and the
-thread that failed to allocate the object extension vector exits
-after the one that succeeded, it will mistakenly assume slab->obj_ext
-is still empty due to its own allocation failure. This will then trigger
-warnings enforced by CONFIG_MEM_ALLOC_PROFILING_DEBUG checks in
-the subsequent free path.
+> On Wed, Oct 22, 2025 at 11:34=E2=80=AFPM Huang, Ying
+> <ying.huang@linux.alibaba.com> wrote:
+>>
+>> Barry Song <21cnbao@gmail.com> writes:
+>>
+>> > On Wed, Oct 22, 2025 at 10:46=E2=80=AFPM Huang, Ying
+>> > <ying.huang@linux.alibaba.com> wrote:
+>> >
+>> >> >
+>> >> > I agree. Yet the ish barrier can still avoid the page faults during=
+ CPU0's PTL.
+>> >>
+>> >> IIUC, you think that dsb(ish) compared with dsb(nsh) can accelerate
+>> >> memory writing (visible to other CPUs).  TBH, I suspect that this is =
+the
+>> >> case.
+>> >
+>> > Why? In any case, nsh is not a smp domain.
+>>
+>> I think dsb(ish) will be slower than dsb(nsh) in theory.  I guess that
+>> dsb just wait for the memory write to be visible in the specified
+>> shareability domain instead of making write faster.
+>>
+>> > I believe a dmb(ishst) is sufficient to ensure that the new PTE writes
+>> > are visible
+>>
+>> dmb(ishst) (smp_wmb()) should pair with dmb(ishld) (smp_rmb()).
+>>
+>> > to other CPUs. I=E2=80=99m not quite sure why the current flush code u=
+ses dsb(ish);
+>> > it seems like overkill.
+>>
+>> dsb(ish) here is used for tlbi(XXis) broadcast.  It waits until the page
+>> table change is visible to the page table walker of the remote CPU.
+>
+> It seems we=E2=80=99re aligned on all points[1], although I=E2=80=99m not=
+ sure whether
+> you have data comparing A and B.
+>
+> A:
+> write pte
+> don't broadcast pte
+> tlbi
+> don't broadcast tlbi
+>
+> with
+>
+> B:
+> write pte
+> broadcast pte
 
-Therefore, let's add an additional check when alloc_slab_obj_exts fails.
+I suspect that pte will be broadcast, DVM broadcast isn't used for
+the memory coherency IIUC.
 
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> tlbi
+> don't broadcast tlbi
+>
+> I guess the gain comes from "don't broadcat tlbi" ?
+> With B, we should be able to share many existing code.
+
+Ryan has some plan to reduce the code duplication with the current
+solution.
+
+> [1]
+> https://lore.kernel.org/linux-mm/20251013092038.6963-1-ying.huang@linux.a=
+libaba.com/T/#m54312d4914c69aa550bee7df36711c03a4280c52
+
 ---
- mm/slub.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index d4403341c9df..42276f0cc920 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2227,9 +2227,12 @@ prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
- 	slab = virt_to_slab(p);
- 	if (!slab_obj_exts(slab) &&
- 	    alloc_slab_obj_exts(slab, s, flags, false)) {
--		pr_warn_once("%s, %s: Failed to create slab extension vector!\n",
--			     __func__, s->name);
--		return NULL;
-+		/* Recheck if a racing thread has successfully allocated slab->obj_exts. */
-+		if (!slab_obj_exts(slab)) {
-+			pr_warn_once("%s, %s: Failed to create slab extension vector!\n",
-+				     __func__, s->name);
-+			return NULL;
-+		}
- 	}
- 
- 	return slab_obj_exts(slab) + obj_to_index(s, slab, p);
--- 
-2.25.1
-
+Best Regards,
+Huang, Ying
 
