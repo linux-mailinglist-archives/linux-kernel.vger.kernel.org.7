@@ -1,92 +1,138 @@
-Return-Path: <linux-kernel+bounces-866316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4400BFF739
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:04:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B07ABFF73F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B24854F13E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:04:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6886618C62E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353EF2BE7BB;
-	Thu, 23 Oct 2025 07:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142312BEC55;
+	Thu, 23 Oct 2025 07:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nlr6XBmJ"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUCtRuLS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED903296BA8
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5702223D288;
+	Thu, 23 Oct 2025 07:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761203070; cv=none; b=P++yikaN1G6pqgAxL4VoCoFEUNxDlBKFWxCAmHrckCJr8qF2BCje4l6CD4yj4rTcCzbC8iEsIp06k1OY6wGgjCx7p9NA+Z9JkYtF1kxWSb2SEUYyQ7lS6IyMFhkvYFVjwtJ/SKxX3Ejs+iGwlC1rVQHEV1emioG+u+GyRmqMXmw=
+	t=1761203089; cv=none; b=RSHfA+bKlpHlCVqAPvze8aIhfXvM356f5sbw88/Sdfs8Q09kkNJvlkhzh6OI5uYLOI9iqDgpwdQ/uGu6CRz0vZgi3nqueigN2P32ifDyizX+I+f/7cf2KbJ6W3KqeAgxXW/kTGu9eBJPoCTCi48Up7RveXz6LjC9r/R8B/ku5jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761203070; c=relaxed/simple;
-	bh=44kSWjXhylp0VcoDGtJsPwzuZs4JwGw1Dq5stSGOOJA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=c856vRlgf9Uxi/Xl8ywP78dv44fJ+pqxkin4btC4ethAmnkXucz+wHM8XwYS90fPn2ykdg0KWy0j18Ir5WPaz/La7tSf2cYKnmftxSg7ozibxxx/307YA7pXRDS3KzXxzA1DyzajDVNg0JZnyV9D8JuCOmbv4K7cwo4UPlJObQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nlr6XBmJ; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 248471A15EA;
-	Thu, 23 Oct 2025 07:04:25 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E6D596062C;
-	Thu, 23 Oct 2025 07:04:24 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9C558102F2408;
-	Thu, 23 Oct 2025 09:04:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761203064; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=A6EIv7MbbGBRMKtax/govJMi5UBAxZZaOhBy6c7KAOM=;
-	b=nlr6XBmJgAKd4tnoGws3RG7ArQpPQ538EUt70eafCV+kpVf43I+E/6P21S2CibNHQ7YGoU
-	a5wpzmVfYbGna1syZEzT3TYL2nS0vvlePMFg2xb3QKYws3bIb8B5RrYt4kQcTgoxuhEhf4
-	jBh+ZxDvfD3i3i36Ty58EsHgA9tCQj3kleq1tUkfik54orKniD3NnR87Bp5NPnezs8dcdZ
-	6XxWEwSb6NSfe+5uGZ8YiN9d8vsj/mFpr3wGyE2vgjRenB1SB9X5QceQhByTdxMweUJEDC
-	W8SWJ3tVo1tMrawUQanAHrn+H9xDxlLjQKzO1CSzlayqMixXg864BZyYvHPN/Q==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: richard@nod.at, vigneshr@ti.com, niravkumarlaxmidas.rabara@altera.com
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org
-In-Reply-To: <20251023033201.2182-1-niravkumarlaxmidas.rabara@altera.com>
-References: <20251023033201.2182-1-niravkumarlaxmidas.rabara@altera.com>
-Subject: Re: [PATCH] mtd: rawnand: cadence: fix DMA device NULL pointer
- dereference
-Message-Id: <176120306155.174442.12328338821059704795.b4-ty@bootlin.com>
-Date: Thu, 23 Oct 2025 09:04:21 +0200
+	s=arc-20240116; t=1761203089; c=relaxed/simple;
+	bh=k8U6qSlJM/fWtU7OiPvtfXvMhWe75vynGRggydWDHPI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bvHNuzEdrnH3D0EaMLMMIr0MOTv/n9Y98pNCNp4CEyWTnbbQMfWh0r/cUnjjYd3kxjTM4l+wBver3enevbWf3ERxelDjjoDHjgFbeekgbrHXA7oUcXvshv9gQmFcNH0U8As2/mY+9KVDPZ4/0hbEXq1lktpEdYNKbCRy1CycVQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUCtRuLS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86654C4CEE7;
+	Thu, 23 Oct 2025 07:04:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761203088;
+	bh=k8U6qSlJM/fWtU7OiPvtfXvMhWe75vynGRggydWDHPI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HUCtRuLSGalwcocYtmOPNj5aRmJal9BaCq5d6wBC2iW/YNm8cz5hrQSUR5JXE7JBi
+	 ZgVmwfb9C7rDU0lfyqOOYYaso7n6O2+NEZ1R4cBZXvhZGNij9QJ9lx+laViLBIklA3
+	 /4hrQuL0SomnetZfrP03QiVYkit1JD76FxyR/sDvOpkcPppuzc6CVF+PZbmD8HLxx3
+	 GPX6PQRRR1wA6CBYt9EMDfFmFDxOJNHLuL5FpcjZF2LOASnatspcSz79k9Prfo85Kk
+	 RTsL+UzSV+xtqVW6zXny/bxpIcirDgra1mP+g6JeWj/kl39KP9svv/5vScajrTe/ft
+	 1vN3dYuVOtgRg==
+Message-ID: <a1c28952-d08f-4629-84f4-e17646f6e554@kernel.org>
+Date: Thu, 23 Oct 2025 09:04:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: arm: aspeed: Add compatible for Facebook
+ Anacapa BMC
+To: "Shen, Peter" <Peter.Shen@amd.com>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Joel Stanley <joel@jms.id.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <DS7PR12MB61187E5845B076BF7C7EFE0995F0A@DS7PR12MB6118.namprd12.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <DS7PR12MB61187E5845B076BF7C7EFE0995F0A@DS7PR12MB6118.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 23 Oct 2025 11:32:01 +0800, niravkumarlaxmidas.rabara@altera.com wrote:
-> The DMA device pointer `dma_dev` was being dereferenced before ensuring
-> that `cdns_ctrl->dmac` is properly initialized.
+On 23/10/2025 08:52, Shen, Peter wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
+
+
+No, you cannot send such headers. We don't care about your corporate rules.
+
+Also your patchset has completely broken threading.
+
 > 
-> Move the assignment of `dma_dev` after successfully acquiring the DMA
-> channel to ensure the pointer is valid before use.
+> From 3129809145bd283bc52b4e105ea66d217166bb5c Mon Sep 17 00:00:00 2001
+> From: Peter Shen <peter.shen@amd.com>
+> Date: Thu, 23 Oct 2025 13:49:52 +0800
+> Subject: [PATCH 1/2] dt-bindings: arm: aspeed: Add compatible for Facebook
+>  Anacapa BMC
 > 
-> 
-> [...]
+> This patch adds the compatible string for the Facebook Anacapa BMC
 
-Applied to mtd/fixes, thanks!
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
 
-[1/1] mtd: rawnand: cadence: fix DMA device NULL pointer dereference
-      commit: 5c56bf214af85ca042bf97f8584aab2151035840
 
-Patche(s) should be available on mtd/linux.git and will be
-part of the next PR (provided that no robot complains by then).
-
-Kind regards,
-Miquèl
-
+Best regards,
+Krzysztof
 
