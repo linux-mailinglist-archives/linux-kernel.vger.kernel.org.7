@@ -1,225 +1,250 @@
-Return-Path: <linux-kernel+bounces-867338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A75C02511
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:07:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3B5C0251C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 477674E67B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:07:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668CD189B5A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DBF275AE4;
-	Thu, 23 Oct 2025 16:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFDD2798F3;
+	Thu, 23 Oct 2025 16:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hYEAcFaB"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k1pwrSbl"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CF526ED49;
-	Thu, 23 Oct 2025 16:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC96257AC2
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 16:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761235617; cv=none; b=gSeoDpwnfVmrXt47dChI6D6iXC5J3mAkuXbMvjMQ/uJyr1cNd6x30P7IvMs2IHSrQCKH8heJ2GM2kfFsfqYz8x87R9tzPtzSCFhTrcj+7mqI9Hb/Yu8vqaj4iM3pyHm1mQ9/apkonsOFPGQFJWsfWfLaGGsZqflpz87SSDHgU9U=
+	t=1761235677; cv=none; b=jQVayAQs0ObnCBV3fAeFc69JfHLb6NlZ9V3iB6MMCAvKDe37AbwTfqGKTzrMVtHKl7c00ubmEt1XEYsQqaHUwlj4CbkQzEGb8ua+nNi9WVRbizKbHtGIsX44fGVIGSl9qw+g/bVXbSDN8KqqC2W0eBx7uOm+dOZcp0X6i+sGyn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761235617; c=relaxed/simple;
-	bh=Rkr2/K5WyituUirf0rxUaWGpUEtb9xPCsKzFDn4yonI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=onn6UaY+YnRW0PO104F++Y9/RAoaBdLW3KZLqUM21w7O5ImmCZwbQJqe6rEfB/TUam0LzhZs4O77ZTeOWABnB7a6zJUa0BBbm1HhGnVSNt66XBKaXHwH72r5Ln4VNRMOKlS4UsY/HWbt/XRfTINAhdXz4wULHYMMvhoP2LDtQeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hYEAcFaB; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N7psvY027549;
-	Thu, 23 Oct 2025 16:05:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=HRKplFgc/N23qIp2s
-	TDF45qMxKOLUtK3bExzmctco20=; b=hYEAcFaBVwAUiN0NTaIMptAk+WPdTS67+
-	Qtte2gen6qAzvGM0a858JeyD+fvkgLI2aCOG4QOA11LzwVxBFGuVvN/Yi5JxSdVD
-	96/URo/fMi/E+xclZbJVSTg5Ui4UGSmWrI8eZYbYxVQ2ao1eXBAUlxFyBK4J16UJ
-	z28sklUPgNoyVv/0BwFXUWHmDSMLRTVgpprQXGgRBVLEnnNUn19nsRC3czKDD98/
-	pcQtvtsZjlbuvm2fJJg/YUyEqlfcEypU3K4s/Jnj6g+NrvTVmm/RWkB8+CyEB0Q2
-	uwjGMC5HqRWo1+E4qJmE0WgXR76//hoJJmsRvbq6BScwHKSH3A+uw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v33fk7xt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Oct 2025 16:05:55 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59NG5Rtp014464;
-	Thu, 23 Oct 2025 16:05:55 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v33fk7xn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Oct 2025 16:05:54 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59NE0lhC024987;
-	Thu, 23 Oct 2025 16:05:53 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vpqk6jqj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Oct 2025 16:05:53 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59NG5n9q43188482
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 23 Oct 2025 16:05:49 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7CE3120043;
-	Thu, 23 Oct 2025 16:05:49 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F0A742004E;
-	Thu, 23 Oct 2025 16:05:48 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 23 Oct 2025 16:05:48 +0000 (GMT)
-From: Jens Remus <jremus@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
-        Steven Rostedt <rostedt@kernel.org>
-Cc: Jens Remus <jremus@linux.ibm.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Florian Weimer <fweimer@redhat.com>, Kees Cook <kees@kernel.org>,
-        "Carlos O'Donell" <codonell@redhat.com>, Sam James <sam@gentoo.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [RFC PATCH 2/2] fixup! unwind_user/sframe: Add .sframe validation option
-Date: Thu, 23 Oct 2025 18:05:45 +0200
-Message-ID: <20251023160545.549532-2-jremus@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251023160545.549532-1-jremus@linux.ibm.com>
-References: <20251022144326.4082059-1-jremus@linux.ibm.com>
- <20251023160545.549532-1-jremus@linux.ibm.com>
+	s=arc-20240116; t=1761235677; c=relaxed/simple;
+	bh=1nVKA7foUkRSyS9Wrqb+5MZp+cy2gWR48rPSz2xIT74=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=TTFtgF+NROJ4PIxcJQ/sMEFGkVmcT1WK/NmM4i4IWOP4Q5+qZkouXvexS1NwxvR3zO1zNrPpZQPkY3/RTQkdIdGWk5naWXBRBxU0L2EKsx5vUpSWfKizlxMQ424/HcJCRVXR5md/Ze1BHRxRIL3cPPHN2rOn9Kf4uq/laXAmdBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k1pwrSbl; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b62ebb4e7c7so811700a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:07:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761235675; x=1761840475; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iw+RxJFrvLXotShsX3G3u/lNQNdh4+3g/W60yOnZyHo=;
+        b=k1pwrSblX6uuqh7hx65iIw56Swxet+M2XtgT3ZB1JZVnp7+vByNEl6aCwrRDMQEBvG
+         MSqpIuxF4BgByv/kYhv83XG9KVJ4wXpBecXuWrRPeorNk67BEMW7ABJfYLLPISYdwNeX
+         k+OoxwxyKyTnOIpDcgejrSLpbWz46fUHUW52m/ALiNBa8xV8VGKW7EAGPFMgXnP6hdEV
+         WFprarvXrINWZ1w2kSuxIRf7K+597XK54x4FiuCNFswneM8p+bzJq5xvjl/JUooItw/p
+         gPHhgg8PAF2onNxpnAwVK+k5wga+Luot5147YsdKTj+k9pkQw2UDiqOjY2Gqf+xfvIcl
+         caIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761235675; x=1761840475;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iw+RxJFrvLXotShsX3G3u/lNQNdh4+3g/W60yOnZyHo=;
+        b=v1CldYLhUxU0xCxMHFjAtt/jOKqlBk2N9lEtjbwZERExks8nIUm7gmUGDq0vzfIvSm
+         mDC74iIK69vsx6CxFl6JQocP5akfRYLwI6gHKgQB2dshPih5QEtCcNg4Rodm6yaUDEor
+         S940t86aqjXTl+BVwwhye9Yl3zR/cZ8li6jmFuwaaHY8iHAZIy++ktk00pPRXKNoJadp
+         tlTeLQ4AkSwnYWGAIeuqHcR5fUmK6rpplG9wckUs2L9N5Jz/nAAq7IncSOVOrXoKtBC2
+         Bx+il/hfKHrBU3WwQkgUyKczaI+wa4gecKfSN6JQpf1y3sOcsVBOLkRF6rjjS4ZAGFba
+         7oSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8CoNQDoa5DIUYrUByBXJM+b2Cj4PyK3t/qHPDric9hqkX1KznzQeUDHb3B/xuQmq/0ZEFK+wOf9iJbv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypHDNUwp7IF3YuWHuGHVN7/PrE6hdSwBCQDQKVv0PZuiwK40m2
+	cWM/qzDymp5b5eKuF7m3jpdSD5+fiy7BfqVNeeIBydrxv0RN3QB3bEK1dTscP3thzlVffIgSYkT
+	8A3xcYg==
+X-Google-Smtp-Source: AGHT+IF6SU0i3VjzGwoS1hsfvvAoYKHCfX1teOWArnTGZGjyd5oKJzCEyV/9N1Mdqw+d1V9YcutI70FGQeE=
+X-Received: from pjte14.prod.google.com ([2002:a17:90a:c20e:b0:33b:ca21:e3e7])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c02:b0:32e:3686:830e
+ with SMTP id 98e67ed59e1d1-33fafc1ce07mr4286914a91.23.1761235675127; Thu, 23
+ Oct 2025 09:07:55 -0700 (PDT)
+Date: Thu, 23 Oct 2025 09:07:53 -0700
+In-Reply-To: <20251020161352.69257-2-kalyazin@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FMYWBuos c=1 sm=1 tr=0 ts=68fa5263 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VnNF1IyMAAAA:8 a=RXKZOtKmAAAA:8
- a=QM4A5weLxKa4Be6FPkMA:9 a=UFF3uGjEBZWolfm0k6KQ:22 a=poXaRoVlC6wW9_mwW8W4:22
- a=DXsff8QfwkrTrK3sU8N1:22 a=p-dnK0njbqwfn1k4-x12:22 a=7aar8cbMflRChVwg8ngv:22
-X-Proofpoint-GUID: JQOQOsgBFhMmP2VrUNQfgcLdi1PTmTK7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX7i7elW/X49hm
- rd4PYzXvuZOcz+YChHWDjPYMaoks8NQ6lv4D+jK8NDgGKbOyFW0Q5nnVNsOVZS+msSRFtuelnBl
- kboV7c7ljE9Xxvu1QpTNQiaSZyLr1bPAdCizLxsEKGWC+P2q9aV/m5WaN4DcK58sRrOGBpsfrbu
- ewfRBloJPYeB7Dm0bFRBky0A6qVcoiD5L/pFsICGXhbzonBeszCYrFV2VXdjl4xvsNs4sCiT6qI
- sQY/Y4NFTz7z3Rvdra3u9ICOZb0TqAtLC8fzGzDtbHHp7SeZqwi+xc85mMRwisesQNHDx/yK0zO
- WoyPX9h4aN3kQFgDUl1/RidYa6GME/RoFerXW33s3Rnmqn93SRMMsD6lJ84umhPQ078TQQKDTbm
- AovBvFswYrncVfmtPncAJsdz2t+bMw==
-X-Proofpoint-ORIG-GUID: 2pQ0g_imgIn4r0izGJe5pHdkYBlMN7vJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-23_01,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 phishscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+Mime-Version: 1.0
+References: <20251020161352.69257-1-kalyazin@amazon.com> <20251020161352.69257-2-kalyazin@amazon.com>
+Message-ID: <aPpS2aqdobVTk_ed@google.com>
+Subject: Re: [PATCH v6 1/2] KVM: guest_memfd: add generic population via write
+From: Sean Christopherson <seanjc@google.com>
+To: Nikita Kalyazin <kalyazin@amazon.co.uk>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "shuah@kernel.org" <shuah@kernel.org>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "david@redhat.com" <david@redhat.com>, 
+	"jthoughton@google.com" <jthoughton@google.com>, "patrick.roy@linux.dev" <patrick.roy@linux.dev>, 
+	Jack Thomson <jackabt@amazon.co.uk>, Derek Manwaring <derekmn@amazon.com>, 
+	Marco Cali <xmarcalx@amazon.co.uk>
+Content-Type: text/plain; charset="us-ascii"
 
-This RFC fixup is POC to demonstrate how the SFrame validation code
-would adjust if introducing an internal FDE representation (struct
-sframe_fde_internal) similar to the used internal FRE representation
-(struct sframe_fre) in the SFrame reading code.  The goal is to
-eliminate the passing through of fde_start_base in many places as well
-as the various computations of the effective function start address
-(= *fde_start_base + fde->start_addr) throughout this module.  The
-internal FDE representation simply conveys the effective function start
-address via the "unsigned long func_start_addr" field.
+On Mon, Oct 20, 2025, Nikita Kalyazin wrote:
+> From: Nikita Kalyazin <kalyazin@amazon.com>
+> 
+> write syscall populates guest_memfd with user-supplied data in a generic
+> way, ie no vendor-specific preparation is performed.  If the request is
+> not page-aligned, the remaining bytes are initialised to 0.
+> 
+> write is only supported for non-CoCo setups where guest memory is not
+> hardware-encrypted.
 
-Signed-off-by: Jens Remus <jremus@linux.ibm.com>
----
- kernel/unwind/sframe.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Please include all of the "why".  The code mostly communicates the "what", but
+it doesn't capture why write() support is at all interesting, nor does it explain
+why read() isn't supported.
 
-diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
-index f88fc2c92c58..f2977c010117 100644
---- a/kernel/unwind/sframe.c
-+++ b/kernel/unwind/sframe.c
-@@ -354,21 +354,21 @@ int sframe_find(unsigned long ip, struct unwind_user_frame *frame)
- #ifdef CONFIG_SFRAME_VALIDATION
- 
- static int safe_read_fde(struct sframe_section *sec,
--			 unsigned int fde_num, struct sframe_fde *fde,
--			 unsigned long *fde_start_base)
-+			 unsigned int fde_num, struct sframe_fde_internal *fde)
- {
- 	int ret;
- 
- 	if (!user_read_access_begin((void __user *)sec->sframe_start,
- 				    sec->sframe_end - sec->sframe_start))
- 		return -EFAULT;
--	ret = __read_fde(sec, fde_num, fde, fde_start_base);
-+	ret = __read_fde(sec, fde_num, fde);
- 	user_read_access_end();
- 	return ret;
- }
- 
- static int safe_read_fre(struct sframe_section *sec,
--			 struct sframe_fde *fde, unsigned long fre_addr,
-+			 struct sframe_fde_internal *fde,
-+			 unsigned long fre_addr,
- 			 struct sframe_fre *fre)
- {
- 	int ret;
-@@ -388,18 +388,18 @@ static int sframe_validate_section(struct sframe_section *sec)
- 
- 	for (i = 0; i < sec->num_fdes; i++) {
- 		struct sframe_fre *fre, *prev_fre = NULL;
--		unsigned long ip, fde_start_base, fre_addr;
--		struct sframe_fde fde;
-+		unsigned long ip, fre_addr;
-+		struct sframe_fde_internal fde;
- 		struct sframe_fre fres[2];
- 		bool which = false;
- 		unsigned int j;
- 		int ret;
- 
--		ret = safe_read_fde(sec, i, &fde, &fde_start_base);
-+		ret = safe_read_fde(sec, i, &fde);
- 		if (ret)
- 			return ret;
- 
--		ip = fde_start_base + fde.start_addr;
-+		ip = fde.func_start_addr;
- 		if (ip <= prev_ip) {
- 			dbg_sec("fde %u not sorted\n", i);
- 			return -EFAULT;
-@@ -416,8 +416,8 @@ static int sframe_validate_section(struct sframe_section *sec)
- 			ret = safe_read_fre(sec, &fde, fre_addr, fre);
- 			if (ret) {
- 				dbg_sec("fde %u: __read_fre(%u) failed\n", i, j);
--				dbg_sec("FDE: start_addr:0x%x func_size:0x%x fres_off:0x%x fres_num:%d info:%u rep_size:%u\n",
--					fde.start_addr, fde.func_size,
-+				dbg_sec("FDE: func_start_addr:0x%lx func_size:0x%x fres_off:0x%x fres_num:%d info:%u rep_size:%u\n",
-+					fde.func_start_addr, fde.func_size,
- 					fde.fres_off, fde.fres_num,
- 					fde.info, fde.rep_size);
- 				return ret;
--- 
-2.48.1
+> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
+> ---
+>  virt/kvm/guest_memfd.c | 48 ++++++++++++++++++++++++++++++++++++++++++
 
+There's a notable lack of uAPI and Documentation chanegs.  I.e. this needs a
+GUEST_MEMFD_FLAG_xxx along with proper documentation.
+
+And while it's definitely it's a-ok to land .write() in advance of the direct map
+changes, we do need to at least map out how we want the two to interact, e.g. so
+that we don't end up with constraints that are impossible to satisfy.
+
+>  1 file changed, 48 insertions(+)
+> 
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 94bafd6c558c..f4e218049afa 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -380,6 +380,8 @@ static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
+>  
+>  static struct file_operations kvm_gmem_fops = {
+>  	.mmap		= kvm_gmem_mmap,
+> +	.llseek		= default_llseek,
+> +	.write_iter     = generic_perform_write,
+>  	.open		= generic_file_open,
+>  	.release	= kvm_gmem_release,
+>  	.fallocate	= kvm_gmem_fallocate,
+> @@ -390,6 +392,49 @@ void kvm_gmem_init(struct module *module)
+>  	kvm_gmem_fops.owner = module;
+>  }
+>  
+> +static int kvm_kmem_gmem_write_begin(const struct kiocb *kiocb,
+> +				     struct address_space *mapping,
+> +				     loff_t pos, unsigned int len,
+> +				     struct folio **foliop,
+> +				     void **fsdata)
+
+Over-aggressive wrapping, this can be
+
+
+static int kvm_kmem_gmem_write_begin(const struct kiocb *kiocb,
+				     struct address_space *mapping, loff_t pos,
+				     unsigned int len, struct folio **folio,
+				     void **fsdata)
+
+or
+
+static int kvm_kmem_gmem_write_begin(const struct kiocb *kiocb,
+				     struct address_space *mapping,
+				     loff_t pos, unsigned int len,
+				     struct folio **folio, void **fsdata)
+
+if we want to bundle pos+len.
+
+> +{
+> +	struct file *file = kiocb->ki_filp;
+
+ki_filp is already a file, and even if it were a "void *", there's no need for a
+local variable.
+
+> +	struct inode *inode = file_inode(file);
+> +	pgoff_t index = pos >> PAGE_SHIFT;
+> +	struct folio *folio;
+> +
+> +	if (!kvm_gmem_supports_mmap(inode))
+
+Checking for MMAP is neither sufficient nor strictly necessary.  MMAP doesn't
+imply SHARED, and it's not clear to me that mmap() support should be in any way
+tied to WRITE support.
+
+> +		return -ENODEV;
+> +
+> +	if (pos + len > i_size_read(inode))
+> +		return -EINVAL;
+> +
+> +	folio = kvm_gmem_get_folio(inode, index);
+
+Eh, since "index" is only used once, my vote is to use "pos" and do the shift
+here, so that it's obvious that the input to kvm_gmem_get_folio() is being checked.
+
+> +	if (IS_ERR(folio))
+> +		return -EFAULT;
+
+Why EFAULT?
+
+> +
+> +	*foliop = folio;
+
+There shouldn't be any need for a local "folio".  What about having the "out"
+param be just "folio"?
+
+E.g.
+
+static int kvm_kmem_gmem_write_begin(const struct kiocb *kiocb,
+				     struct address_space *mapping,
+				     loff_t pos, unsigned int len,
+				     struct folio **folio, void **fsdata)
+{
+	struct inode *inode = file_inode(kiocb->ki_filp);
+
+	if (!kvm_gmem_supports_write(inode))
+		return -ENODEV;
+
+	if (pos + len > i_size_read(inode))
+		return -EINVAL;
+
+	*folio = kvm_gmem_get_folio(inode, pos >> PAGE_SHIFT);
+	if (IS_ERR(*folio))
+		return PTR_ERR(*folio);
+
+	return 0;
+}
+
+
+> +	return 0;
+> +}
+> +
+> +static int kvm_kmem_gmem_write_end(const struct kiocb *kiocb,
+> +				   struct address_space *mapping,
+> +				   loff_t pos, unsigned int len,
+> +				   unsigned int copied,
+> +				   struct folio *folio, void *fsdata)
+> +{
+> +	if (copied && copied < len) {
+
+Why check if "copied" is non-zero?  I don't see why KVM should behave differently
+with respect to unwritten bytes if copy_folio_from_iter_atomic() fails on the
+first byte or the Nth byte.
+
+> +		unsigned int from = pos & ((1UL << folio_order(folio)) - 1);
+
+Uh, isn't this just offset_in_folio()?
+
+> +
+> +		folio_zero_range(folio, from + copied, len - copied);
+
+I'd probably be in favor of omitting "from" entirely, e.g.
+
+	if (copied < len)
+		folio_zero_range(folio, offset_in_folio(pos) + copied,
+				 len - copied);
+
+> +	}
+> +
+> +	folio_unlock(folio);
+> +	folio_put(folio);
+> +
+> +	return copied;
+> +}
 
