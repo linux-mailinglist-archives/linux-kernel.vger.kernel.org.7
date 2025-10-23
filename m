@@ -1,248 +1,224 @@
-Return-Path: <linux-kernel+bounces-867859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CE8C03AAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 00:22:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC37C03AB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 00:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C7413B20BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:22:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB9684E3327
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CBE284B2E;
-	Thu, 23 Oct 2025 22:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E335280018;
+	Thu, 23 Oct 2025 22:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y8t7KadA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2SbePHD9"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4023D1C3C11;
-	Thu, 23 Oct 2025 22:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761258115; cv=fail; b=IEQC4Q7CH3cyUEkc+g9cgSzHdRsAVrjhOENPsnTChWtIFeXfZkIy9QN9vY4CHlblQ1ozVQIZQ4YM1HG7gaXbknpK/WWHPywnZazco8f3opq41EeOQ4PQTjx7UEZYH3USSseu62t4VE42OWv5P/sxWIbFoQm45dAvcMrx8fxNY/M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761258115; c=relaxed/simple;
-	bh=WIdEWNXS8v2m2QouRgmwZlY0R59t3YhEUuEmyXxF28g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OJNllKHxvcRFWl+D/mYtv4LtOpKnKF2HnqQzNeIQcYEsVvMA2iBE6oPeFFAXz+G2koukwRvXKkC7jLeIEDfk+NI8utPKZCjEjH+CO9zOcX0mCooodzTDJLIVbWiBFPDzctXsRewvSh2oQa4XCDkV8sUdp1MWM4CnIYc0KtQ+YIE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y8t7KadA; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761258114; x=1792794114;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=WIdEWNXS8v2m2QouRgmwZlY0R59t3YhEUuEmyXxF28g=;
-  b=Y8t7KadAgrmOmaVtrE3iCBHATuMhWIHbhqoVWUG+qVvObBC7dtqjmoUu
-   firvFfSTYUwOmmG7+IWsnkSyryNQnD82kESnKOMYIKI0K05ok/AzYSvMX
-   KqYMByIDU1EsB0D6X84mdkSfEejvB4nIwd67tJelxhwMt4CGXkTpH9Ky2
-   Fv+KXrfQs4Iw6Hvg8Sv4fP9sCH8d0oNOQbpZKJDfOIzBWkggM4ppwnExt
-   nwTEHhgr0oBXZ4XZGxnQuSAIP8M81TvNepSJI0kQIkuhDlokHEWFJSITj
-   NS327Bsw3KMVvrAbVsplSBo8SButzKMXzGgmWD/v1iN5YtQ4u4h31qvXy
-   A==;
-X-CSE-ConnectionGUID: h7vkGLimQN+BsWeF8SPIIg==
-X-CSE-MsgGUID: abAjeoyJR0KUkyTgV1mdLg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74044429"
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="74044429"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 15:21:54 -0700
-X-CSE-ConnectionGUID: W52qiHJNTr+N10LUhWSHww==
-X-CSE-MsgGUID: Fo/2O6DbT5Wqx1/gBvm2bg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
-   d="scan'208";a="188334278"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 15:21:53 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 23 Oct 2025 15:21:52 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 23 Oct 2025 15:21:52 -0700
-Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.53) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 23 Oct 2025 15:21:50 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jrBUlVp+WKjlnfjLx8os24BUC5gb9LFIeyDFqi501hyD2PoY0NJC7Q+NgAgX+ZydNhKKDK7eX1N1sS5dkv/+a+s4cewr8oeEpWryU3ZJvHwX70o6VkrkXzaBfz8CopsjTlHdPaHEaA8Y7IvJ3VVot0xW6K4QaQFvdJQzhafm7afJj9/2NiM+248NmQRNXakt/dvz2D5Xiwwc7M2OEIw7buWGa7SNZwLQikiw/QtL8wmw94DMmKePR/9tHALTzC8yZWLDgBfpwUqBajE0Ovh8ovYuXdMwolt2fb6oxK4faONte+zqCE2Syf+JjeXM71BtfA++P8pDrHFS95Y1baC++A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WIdEWNXS8v2m2QouRgmwZlY0R59t3YhEUuEmyXxF28g=;
- b=cpnOv9QNaVEvGQJ/7KGo4fEL4yhpv+uQ4OYeAU03n5vsAcwWMDtJycm2FadUFFrqW1aYqp9oPt/wpULU8hLpkagozKT54IK6ToeI9T/a3G2aR2MTQYaGMKz1sqll2ZhZ1RyP9/ukTAAYNI64zuFFHWILcRc7ijOWlMdjETtwi9v+lQzDaAeu5IKYPUjJL/H//OH/DGr+w4q5M8hU/+EIKlQZU35e10CD76ddE9P/6JvRIT95NX7IuJMQGHXeSO7wW4TFYuGSmtkfqiIN5oHydPRJIFfkB0eIncOLcMTOzgs3dmNUiSUSDRqxldRI8nX/4TpC1CNQ2MoqPcs8Gl7Rmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com (2603:10b6:208:31f::10)
- by CH3PR11MB8750.namprd11.prod.outlook.com (2603:10b6:610:1c7::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
- 2025 22:21:44 +0000
-Received: from BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66]) by BL1PR11MB5525.namprd11.prod.outlook.com
- ([fe80::1a2f:c489:24a5:da66%6]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 22:21:44 +0000
-From: "Huang, Kai" <kai.huang@intel.com>
-To: "chenhuacai@kernel.org" <chenhuacai@kernel.org>, "frankja@linux.ibm.com"
-	<frankja@linux.ibm.com>, "maz@kernel.org" <maz@kernel.org>,
-	"borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>, "pjw@kernel.org"
-	<pjw@kernel.org>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"kas@kernel.org" <kas@kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"maobibo@loongson.cn" <maobibo@loongson.cn>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "maddy@linux.ibm.com" <maddy@linux.ibm.com>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, "imbrenda@linux.ibm.com"
-	<imbrenda@linux.ibm.com>, "zhaotianrui@loongson.cn"
-	<zhaotianrui@loongson.cn>, "anup@brainfault.org" <anup@brainfault.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-coco@lists.linux.dev"
-	<linux-coco@lists.linux.dev>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"michael.roth@amd.com" <michael.roth@amd.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Weiny, Ira" <ira.weiny@intel.com>,
-	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
-	"ackerleytng@google.com" <ackerleytng@google.com>, "kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>, "kvm-riscv@lists.infradead.org"
-	<kvm-riscv@lists.infradead.org>, "Annapurve, Vishal" <vannapurve@google.com>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "Edgecombe,
- Rick P" <rick.p.edgecombe@intel.com>, "linux-mips@vger.kernel.org"
-	<linux-mips@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v3 11/25] KVM: TDX: Avoid a double-KVM_BUG_ON() in
- tdx_sept_zap_private_spte()
-Thread-Topic: [PATCH v3 11/25] KVM: TDX: Avoid a double-KVM_BUG_ON() in
- tdx_sept_zap_private_spte()
-Thread-Index: AQHcPv2kW3nEIamKR0CJVbn4fX3MRLTQWNSA
-Date: Thu, 23 Oct 2025 22:21:44 +0000
-Message-ID: <e92db81d74acf960741b4d2eeaa47639e5d76218.camel@intel.com>
-References: <20251017003244.186495-1-seanjc@google.com>
-	 <20251017003244.186495-12-seanjc@google.com>
-In-Reply-To: <20251017003244.186495-12-seanjc@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5525:EE_|CH3PR11MB8750:EE_
-x-ms-office365-filtering-correlation-id: 7f209c99-ab24-47e6-a9f3-08de12828c7e
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?UytDTDdKNEJ5eldhT3R5RWkxb3FMQ2g5cnd3cytNc3pmRDRxVXhVakN1dVNj?=
- =?utf-8?B?a1gzZEJsQitzSGFSQW9mR1FTWTFQWmVXUEt4Q24xTnRPa1dMV2c2ajZ0Z1I4?=
- =?utf-8?B?a3laamZRdGIxOG9FdFI3WFBkdHVrdlQ2U0JyWksrU2F1dkNCZlVMNlF3T2Nr?=
- =?utf-8?B?dFlMTzNVSDAyV0NRM1FjbG5Ub09QVmJhNVJidlI3WkFnUk9YR3NqZUpLUjls?=
- =?utf-8?B?SDFqSWR4eDJYS0c5RjcyS2dHMGYyenhsNFF2S2xoZzhRR3dFS2dRRHRuWU9Z?=
- =?utf-8?B?OGRhRG9PMWJaekZyRmZhMkp2WFQvcHI1NlNYcVBmczJ0UTlETW0wVG94ZnBY?=
- =?utf-8?B?VFZOMFJFWnJ3QjRRSWk2UndUMnd0OEFORkNIeStNRStBNFE5S0t5aFRHcUo0?=
- =?utf-8?B?M0E4ZmdPekVJN21uQk41UFJ0UTY2TGkrZkhpOS9yeEhJSm1oQmFGSFMxMytW?=
- =?utf-8?B?NjdadW42VlY5SkRBeVVZVnRyRGcwYm9nUmlNckRTeEt6QjZkNlpGNkJyQU43?=
- =?utf-8?B?NE9LaHpoUzdNbUJqRnJ0V2l2dHM3U3BReEo0YTFENlFTRTBubkY4Q2xMeEd0?=
- =?utf-8?B?MU9NTkQyYWdQcG5NUlo3MHJiS1VXdXY2UGRIcE5zV0dlNVd2OTB4cTJDYmEz?=
- =?utf-8?B?UHhXRWdBdmFDS3orSEJBV3F6MnBWa0NCTUJraU1OekVGb1pTN2V0ZnE3UThS?=
- =?utf-8?B?bjZNSXZyYXpTZG1wanIwb083bE01dG93Z3lWazhZaGZnMU1CS1YxUWFmdUUw?=
- =?utf-8?B?a0FBWUZ1b2RXQVZsL1ZwRWtJMTFuZENTd3Q2ZnlBR3hBZmpjNHllTjJPbHRi?=
- =?utf-8?B?b1BBdnhUWTBiTGxCY0FLajBwYnV5U1pDZGRha2E2eS83RjNsRnFQWk9RcHI2?=
- =?utf-8?B?TFVXdE5oWDhzYnM4eGM2cVk2RnJCa1RhNS9Qa0crUmdFSEJ1d09RM3FsUy9B?=
- =?utf-8?B?Uy92Nk9DdkdwQWNybHJscEJZdUdUVExBUW5udm8xTEtuNDYwMVhoWTNvR3A5?=
- =?utf-8?B?czZBajkxblU3Mm82aFFReFBhYXc2aE1tNVMwTWRCTExkems0SkJVVXJ5KzVi?=
- =?utf-8?B?UnJrSk9nMk9mUC9za05ldFZtRmFFZ0V5T2xtL1U5TkNlU1BtZm5hRzNvY2tn?=
- =?utf-8?B?eFcwZTlLaEpmVUZ2UUhqOXZ3WWpwMVMvNTBYVVlMNjhRZFNiNE5MZ1F2akZB?=
- =?utf-8?B?aWlOTGNTSjhKc1RSellQZndGZ2JaOWdCZ2pjS2drYzJ4UmN3WXBqNUx6ZG1C?=
- =?utf-8?B?NWlQSncvYXR5VXIzT090cWtxejRJenRnUVYwczA4ckoxdlo1emhGSUpjem9L?=
- =?utf-8?B?bW5KK2k1TXJHWk81bG5sVXBKODJ3QUhxUHF2M2FsOTY4V01BZGVOL0J1SDJr?=
- =?utf-8?B?b3lhbTI2QXYrQXcvc05oS2RuTWxRclJEcDFxdWg1aWh4T0RadFlqYWphU3o1?=
- =?utf-8?B?Q2pMRmRPOGZsQ2ZaQlBubnppWnNMdEY4T0UvL2UwV3UwU3UrRWw1NVBXL0VY?=
- =?utf-8?B?ckhaZmdKN0hmV2FKbVI3NGNXQnNIMitvVk9QbjBMMmZQY3V1bnh4b2FBaDdQ?=
- =?utf-8?B?RjdwampMTHpldFZKOTVlTVYwQzd2QkZROTRCSVZ6Y0lzSFlNNlpRZlpzUFJy?=
- =?utf-8?B?VkEydVVCNUxWbHlMUlhCM003WVBSZDMwYlFxa3hHUjJQZjR6b1JUT0FkRGE4?=
- =?utf-8?B?UDR0L096RU9yR0ZSU3YrY1dXakNLbUJtUnJuUWM4dTFWZnV0ZTloNjMzSXR4?=
- =?utf-8?B?Z24vQjRqMmo3TkxjSnYxci9CQ0h6cGhwQll3S1ROTmhiL0VscjlWUVBDay9H?=
- =?utf-8?B?b3pDd0tXTU83bTkrTXd4R2lheU8zand1S0JCWkVYYUZVb1QxZGt0VjRlUy9Z?=
- =?utf-8?B?QXduRzRWRUQ5UWRCSTZOSGdpZ0JtM01xV216ZXpPRjFQRUpheWhQa0JtaWdh?=
- =?utf-8?B?djU2SXozQ2VxRXVIMWN4bUkyYlY0dlJ4bWRlWkN0TStHYm84Tmx2U0pIb0M1?=
- =?utf-8?B?dE9wTWFUY2hoNXcyMCsyQ3RXZHp2MFFrNmE3TzVJRlBZTVZkTTZyRjQ4NXpu?=
- =?utf-8?B?eVBvejI3SW1abzJjY1FJZFlDbmxlV1V3dHp5UT09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5525.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?eFdjNlJxTDZpalczazRpK1VFSWxEVTFNT2ZFK1JjbnNHL2MrYVFhb0k1WEFS?=
- =?utf-8?B?RCs2S0Jvd0hnT0RnYjhWck1HTko0RUk4WXFNTjFaOUhoSllZUVdVeXdQNzE0?=
- =?utf-8?B?YkgvQXhmV1YyQ01wOUszYWE3V3JJYjFFRWxPTXpNWG9UZVZhd21BTXhneDBW?=
- =?utf-8?B?Nm45RU1rOXI1WVlodWZyR3VIMTFOM0lrWUdoNkpjdFdpeTZtQVlTeEhQc0pU?=
- =?utf-8?B?TENnb3UzVTR0blpUQm1kVm1tWHdudWtyaTIrYlNOeWx0Y0dORDdYa1hXaVlr?=
- =?utf-8?B?VG5IL2hzRDJzYWRDU2VSSGtqU0pWR0tGdENHbU5ZNEpJS0Nham5VWDNMQmlH?=
- =?utf-8?B?TkdXMlU3REFjWXFLc2FnVlhUYjlZdU0rVk5qa3ptOEpscy9HUndvNlp1SU8y?=
- =?utf-8?B?bDNFMHlhbk5OamZ6eGlyWVFVa0x3OXV3cmdZRjZ0N25hNWVuMy9ObHVzUEFC?=
- =?utf-8?B?eENTY1JKN2JuREFsSjFRbEovd3RsaTFZcVBvQXB2TlJlbHd0VnpVVy9hMEdm?=
- =?utf-8?B?eEtIRjZZM0xhb3FJTFJ0ZnVEWmdieEovQ1dFdy92K2VHeStMbXdQeGRzakhO?=
- =?utf-8?B?QUVibzJFL0dycW96end3NzErUHR5c25BQzErSlRpb2R2REZSaHBOOXFCWDdC?=
- =?utf-8?B?OS9Ja2dGWHFQQWxWbTJYZnRuM2pqS3E2dmIyWG1rSG54dGt3ZXkyRFI2aHVx?=
- =?utf-8?B?Qzh3ZVFneVU1bEhKSmtKaFdxRlJ0Q2F2WTlhRmlMdVNqc09rNjREUkNpdTIv?=
- =?utf-8?B?eUdqVkNqZU1pVFljalhCYlovT2toaFFQemVueGo2YjJXZmN5c2xkRU9PQVJG?=
- =?utf-8?B?NjdFaVFOdjBtbEwxQ3llRU1LWXp4blRuUlMzVHZuSEgxYnZuOCtyK2llK0Ra?=
- =?utf-8?B?Ni9ueHlJSHNVV1ZzZXUwUGUrcVVwOCtTV3Z2Y1hWa1BrQlBuWnZ1U0tOVXp6?=
- =?utf-8?B?djJIWkdSOXVYcGt0cnlUeWNwdWQ0OWdaTTN2dEJSL0pZMkp0c1VHVEFJbzg2?=
- =?utf-8?B?OWkrMkNhcGRGK3hLQjkyRVkwM2x1cTZOcWxXdllGZC95K21oNmRSZi8vZkR3?=
- =?utf-8?B?QXRETnZYejA2azZOSCs0TnBhczVwKzdqdkxpR21QNmRZckZEcmRCR0c0d3pu?=
- =?utf-8?B?MTRIQVZmY3A4dGR3NTI2dlliaUQvaEgvM1VtTUgvZC9rUjNkb3lIQUxGcm0x?=
- =?utf-8?B?SURyNmhHMHdHbXQvOGNjczZuTmdkTFN3ZENvYW1MSU5ZVkxCRjV6cjRsTnhP?=
- =?utf-8?B?MVBFd1ZsaFgxbjJRRXRGZDI0NC84SFR5SlhJN21UdDRRYUxFQkNqaEtkazF2?=
- =?utf-8?B?eTBaQzBOTkRVbTRjVkRnNndONUt3c2Q2RHFWL3RRdkgrMHEyU0R6RHhWTmlU?=
- =?utf-8?B?S0JJMEl1YXBDOFNqRFQrN0tyZWNpNjR2aGhQWEhlOUwxNGpRUHZNbzZPTVhs?=
- =?utf-8?B?ZVJZTjcrNlpnNE9oQkpwbFdYeUNEYTJJaHdwYWFRUWhLMTNrNFJXQUsxOG03?=
- =?utf-8?B?TmFHZkJnWDJ1Z25qLytYdko3Qmw2cUt5V0VjREJuWUsya2pWN0J3VHFCVnhr?=
- =?utf-8?B?UGd0WExORUpqYzRzajJkWDhBR0RvNkVLS05ZekxUcUhtV0NDVjJuQkhTNWtK?=
- =?utf-8?B?dGRmTkw1YXZIdmpVSG01YWJ0VG1VWjgzVkVhckpZSG11dmhJN2pkS2F3WkEw?=
- =?utf-8?B?UkIxYXJ6ZExSV211ZmRlTE9SbHE4R3J0SWIvY3hyQ0w5eVprT2RkVEM0WEk1?=
- =?utf-8?B?Q1hQM2krYUFiV3Raa21PRzI1MmxBdUZyYUNyaStaUnJ1dWpOV0Y3NHIvbkNi?=
- =?utf-8?B?ekFJYXVNUjNoVk9xNHFGbnNFVXF0QndHT2FqYklhV1ZnN3ZLZFZ5UVp3RzZ1?=
- =?utf-8?B?VVRtdXhOQVF5SW04U3llbjlVTVV4NUxBLzF2a2phQmhTUUJmZkdrMVlHYjV3?=
- =?utf-8?B?N09Gd24wclF1dzlRa0NON081elVXeENVcWVSLzArVHhnbzc3KzNEUmxyaTVW?=
- =?utf-8?B?bDAxUVVrcXZBQ3B4YzZ4VUF5K0oycWJXQVV6VGlHbkNqRDFydjdCc1lCM09j?=
- =?utf-8?B?QjBWaFQvaFBFRkhxazUwYTdrTjdRckRYUUFmaUFXU0REb0d2T3J0Y3I0YVlV?=
- =?utf-8?Q?Ha++Csql+tvc2GthOXH8QdqNd?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9E8CACE1E28AEA429C8B038046340DF9@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E705C23C8CD
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 22:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761258192; cv=none; b=Xg2EdmYRJ3gCwM+hsexFQ3QHu+akOK1yDTCX3G/wzFn1pBJoHczTfPn5rKcwST/GlZIC5eNz64B00pOfMrBERgjqpOQQvYSRKehwUezymIFkujaixmiuoeCL8Qqr64XYVLAekUbZ1h9L+7AUax+93YpvHI+9COUay7L9JS3CfOQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761258192; c=relaxed/simple;
+	bh=MVe+v9KcwNtkJuqhP8yhYRz/ezPwcZFtou635fuXLm8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gbxvRKPKE6X6GaDoI4dpoDtH9IBd1tTlQNQYGINnS3DOaHKg366JhLTXTdUg+juBjCxMc1Pvr+8f21FWeFWYjoiLgEM4VaIdu6dd0LKzEeXc/Dn7uS8l3dwnBbHNNjRyBf7lyC8FxihniRxQBzOA2IdShvl1c4ZHg3BHxPY425I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2SbePHD9; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-87de60d0e3eso13358096d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:23:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761258189; x=1761862989; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a+oAqH47cRsHD+glZ5Q5KatVvZ4QYYjYdLprWcY98JU=;
+        b=2SbePHD9MK4625pBVlDRRqQLLVmlle4EuuSU7pOpOxgnHApbO0fe56Fan10aOPouph
+         nt4EdYXjVixN3IxJZeBeR9SRUJJaYNLxj87H4BVM7V3E8qr/pLmfgk8JUAbZJSSvuv/H
+         dX7NQIH1kcrFB/+7+kz19/eZ0J3UJDjXdYpHlw26PafS6FQ2yzAWFCfGYTfqvjsAkf0Q
+         m4EgnV5Kz4xtJmk44cMuUutEsS/oIboidavTswSjg0kGyjudoLXrjNJeUE56mAXiGp8h
+         KxeLtyd/ELzGs0Q9ITCBmFIrEP/x2VOcKUWs5tq3jORpp0uz+gvDp20MCPoMcqvQXF5w
+         KGGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761258189; x=1761862989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a+oAqH47cRsHD+glZ5Q5KatVvZ4QYYjYdLprWcY98JU=;
+        b=Xjjo4meSe3TFmYMdjN1JtlEIr5w96kGsxA/Y7/j67ZqN3CFpyWk8g9y54FscT8x2s6
+         ZZUzpYi4kuUL5KPbI66zU3pqDjyasIY1fxs0dpjEaCg07fLY41HCI5S5YEJKewD/6a6G
+         T1ghQipv+tfVQBmg52zfYv5ieacj5WGJ/VLe/8EoSTQpXYV3B2VGLfeqcoWVmOhftVhg
+         yMNTEIa1TGW5lseJvwRDn82rfGWSEDlLgiDPFvLo/AlAIwsiuC9yuFxIkf1vIRjoHlrY
+         tavKJozPUjjZELmZF451TMMNbOTgNfdasE26Sul8mvoWwix6VgolLkubcyQOm80nQc5+
+         SsvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6fpSrJYjwy5VJTN/XPqia0JON6XXhbnAxN1kCbotiGWFEfcwhnnmn/i7tvgBidzPnPZfqORzUzA1YL2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySxrQ8J6tqfNMqSWccN9/6s/mJvQOKOF/p5lZ9OXpLRdYLl+hH
+	UBcnG8v1vSxVhRWR4iLnH+fzLEt4aVO5ObHc6x2QH5fWFBKtNGaxk1y0+z4M2Q2aPtxglMFe2K8
+	4iqLEFVdrjyG/2JQj8ShNALfyNpsJMMr1ulyOy1MJ
+X-Gm-Gg: ASbGncscrFhWpzx91JoPt0iKj4qqPDKuoDv1amgajGHqBx3L0fQ29gVNhFLqO++04Dz
+	Zu6lFzYpk4oElSPM6U63hf3cXJfsh5dxCVOqtXc/JgxrrsceZzbgPARquf9SDibDwHHOGesrcYN
+	JljvzrljzeonX7TW26vofrfdbFTl8kDtUKR0VLrqS9+WnWmVQvgfpnqj3WFbwPLNqyvr2rjYMr2
+	SS+tk6PwbyTtArnUiqvE0toLY4TQr8U4umMysGjoxetOHEpy0Dy3F9//Iz80JSC5bLcKLmAbjIj
+	v2Rc1NtxTomAwTydNEBhBnVAng==
+X-Google-Smtp-Source: AGHT+IGuCtYibPzQqqrjGNwM0zHaChLdpzHrb0geAS9qmAdlqFhgbwbFHzP5YvFRilqFdVAT8PX1Hff+wlSfn57dinQ=
+X-Received: by 2002:ad4:4ea4:0:b0:81c:6455:ec77 with SMTP id
+ 6a1803df08f44-87f9ee7d0f6mr50574026d6.40.1761258188413; Thu, 23 Oct 2025
+ 15:23:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5525.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f209c99-ab24-47e6-a9f3-08de12828c7e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2025 22:21:44.4855
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XT6nu+7tBxEK9FZ6kgT3mc7pzOOJ+g2YmY5hu7YdY/cg6ywt5PzRPlNm1VuG6BztIijqLsYKsT4EvPZlCiCN9w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8750
-X-OriginatorOrg: intel.com
+References: <20251017235159.2417576-1-royluo@google.com> <20251017235159.2417576-2-royluo@google.com>
+ <20251023-collie-of-impossible-plenty-fc9382@kuoka>
+In-Reply-To: <20251023-collie-of-impossible-plenty-fc9382@kuoka>
+From: Roy Luo <royluo@google.com>
+Date: Thu, 23 Oct 2025 15:22:31 -0700
+X-Gm-Features: AWmQ_bmWas4lIuJKQxW2zSsbNKRRFte9quUEFbVLot4b-vV1AO7q94wTEgHcExg
+Message-ID: <CA+zupgwQTLEs8_7i-VsGbGV7O2Y3XFA1C3aV7iuv2HLOwKns3w@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: phy: google: Add Google Tensor G5 USB PHY
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
+	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVGh1LCAyMDI1LTEwLTE2IGF0IDE3OjMyIC0wNzAwLCBTZWFuIENocmlzdG9waGVyc29uIHdy
-b3RlOg0KPiBSZXR1cm4gLUVJTyBpbW1lZGlhdGVseSBmcm9tIHRkeF9zZXB0X3phcF9wcml2YXRl
-X3NwdGUoKSBpZiB0aGUgbnVtYmVyIG9mDQo+IHRvLWJlLWFkZGVkIHBhZ2VzIHVuZGVyZmxvd3Ms
-IHNvIHRoYXQgdGhlIGZvbGxvd2luZyAiS1ZNX0JVR19PTihlcnIsIGt2bSkiDQo+IGlzbid0IGFs
-c28gdHJpZ2dlcmVkLiAgSXNvbGF0aW5nIHRoZSBjaGVjayBmcm9tIHRoZSAiaXMgcHJlbWFwIGVy
-cm9yIg0KPiBpZi1zdGF0ZW1lbnQgd2lsbCBhbHNvIGFsbG93IGFkZGluZyBhIGxvY2tkZXAgYXNz
-ZXJ0aW9uIHRoYXQgcHJlbWFwIGVycm9ycw0KPiBhcmUgZW5jb3VudGVyZWQgaWYgYW5kIG9ubHkg
-aWYgc2xvdHNfbG9jayBpcyBoZWxkLg0KPiANCj4gUmV2aWV3ZWQtYnk6IFJpY2sgRWRnZWNvbWJl
-IDxyaWNrLnAuZWRnZWNvbWJlQGludGVsLmNvbT4NCj4gUmV2aWV3ZWQtYnk6IEJpbmJpbiBXdSA8
-YmluYmluLnd1QGxpbnV4LmludGVsLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogU2VhbiBDaHJpc3Rv
-cGhlcnNvbiA8c2VhbmpjQGdvb2dsZS5jb20+DQo+IA0KDQpSZXZpZXdlZC1ieTogS2FpIEh1YW5n
-IDxrYWkuaHVhbmdAaW50ZWwuY29tPg0K
+On Wed, Oct 22, 2025 at 11:43=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
+>
+> On Fri, Oct 17, 2025 at 11:51:58PM +0000, Roy Luo wrote:
+> > Document the device tree bindings for the USB PHY interfaces integrated
+> > with the DWC3 controller on Google Tensor SoCs, starting with G5
+> > generation. The USB PHY on Tensor G5 includes two integrated Synopsys
+> > PHY IPs: the eUSB 2.0 PHY IP and the USB 3.2/DisplayPort combo PHY IP.
+> >
+> > Due to a complete architectural overhaul in the Google Tensor G5, the
+> > existing Samsung/Exynos USB PHY binding for older generations of Google
+> > silicons such as gs101 are no longer compatible, necessitating this new
+> > device tree binding.
+> >
+> > Signed-off-by: Roy Luo <royluo@google.com>
+> > ---
+> >  .../bindings/phy/google,gs5-usb-phy.yaml      | 104 ++++++++++++++++++
+> >  1 file changed, 104 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/phy/google,gs5-us=
+b-phy.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.y=
+aml b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
+> > new file mode 100644
+> > index 000000000000..c92c20eba1ea
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/phy/google,gs5-usb-phy.yaml
+> > @@ -0,0 +1,104 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +# Copyright (C) 2025, Google LLC
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/phy/google,gs5-usb-phy.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Google Tensor Series (G5+) USB PHY
+> > +
+> > +maintainers:
+> > +  - Roy Luo <royluo@google.com>
+> > +
+> > +description: |
+> > +  Describes the USB PHY interfaces integrated with the DWC3 USB contro=
+ller on
+> > +  Google Tensor SoCs, starting with the G5 generation.
+> > +  Two specific PHY IPs from Synopsys are integrated, including eUSB 2.=
+0 PHY IP
+> > +  and USB 3.2/DisplayPort combo PHY IP.
+> > +  The hardware can support three PHY interfaces, which are selected us=
+ing the
+> > +  first phandle argument in the PHY specifier::
+>
+> Just one ':', anyway this sentence and below does not belong to
+> description but to phy-cells. You describe the cells.
+>
+> Or just mention the header with IDs - here or in phy-cells.
+>
+> > +    0 - USB high-speed.
+> > +    1 - USB super-speed.
+> > +    2 - DisplayPort
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: google,gs5-usb-phy
+> > +
+> > +  reg:
+> > +    items:
+> > +      - description: USB2 PHY configuration registers.
+> > +      - description: USB 3.2/DisplayPort combo PHY top-level registers=
+.
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: u2phy_cfg
+> > +      - const: dp_top
+> > +
+> > +  "#phy-cells":
+> > +    const: 1
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: USB2 PHY clock.
+> > +      - description: USB2 PHY APB clock.
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: usb2_phy
+>
+> core
+>
+> > +      - const: u2phy_apb
+>
+> apb
+>
+
+Just to provide the full context, these two clocks/resets
+(usb2_phy and u2phy_apb) are specifically for eUSB2 PHY.
+USB3/DP combo PHY has its own clock/reset that hasn't
+been added yet, we would have to differentiate them once
+USB3 support is added in the future.
+I'm fine with the suggested name change, and we can
+address the naming again when USB3 is ready for
+integration.
+
+Regards,
+Roy Luo
+
+> > +
+> > +  resets:
+> > +    items:
+> > +      - description: USB2 PHY reset.
+> > +      - description: USB2 PHY APB reset.
+> > +
+> > +  reset-names:
+> > +    items:
+> > +      - const: usb2_phy
+> > +      - const: u2phy_apb
+>
+> Same here
+>
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+>
+> Best regards,
+> Krzysztof
+>
 
