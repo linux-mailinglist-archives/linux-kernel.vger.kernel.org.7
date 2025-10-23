@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-867861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52F6C03ABA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 00:24:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17168C03AC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 00:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF19B1A62B35
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:24:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A64A3B6CD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1028C280308;
-	Thu, 23 Oct 2025 22:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D252123C8CD;
+	Thu, 23 Oct 2025 22:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZX9+ush9"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="M6Pzk/1a"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880F886340
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 22:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854C4274B37
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 22:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761258268; cv=none; b=iLrg/5dJLr9C4eQ5uArrO1Kf5pzLug7cPDmv5BEqKJYoGF81NLlYjBL+rPv7iNgvlCcUsfOyeo1jLz5mEu8+WnFunCc9lqVz5TVCnZ8yaZApRRa9hz/3s4Mpf0ZlEYOtl4PfK2VxnjTZBgHm3RTjFjkpjXwEaaQg8g0Mvu9LmGc=
+	t=1761258271; cv=none; b=IUISt/HJq5L/uXahGjjBr9+XigfoptajujF/U32OSefwlykb7XwnBgKdUMW5wICD51M0X4QrvQTPS8W93Mu4zn6GggqZsID3K0A2ONhltzvg8Wk8lellASvVS6LJY5z2dHONFSESeEKGhe4R/+ZwDZEhB22P5pkXsUsWp3dQ/o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761258268; c=relaxed/simple;
-	bh=RI61nj5Xpi3g63pf6MmrqXj3YI71ZQ8vNKUPxwaYJkY=;
+	s=arc-20240116; t=1761258271; c=relaxed/simple;
+	bh=tQUHVxMwXzLpv0w082mzRfb3N1f6TYLa9SBugRmql/k=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=pVXz4QFUDrngBzMmQT6bqP2v9ZqV9i4nCo60TXTsPrtUkYpCLurTYcKfyHhGRtqk7vShKe+CeHdjJUDanRRvNODCTHcvZGNv5g5sw4SmFzk6SqbM6Kka/NwFz3DXQazWsAbIu4ReMqIlt4PkuJEqLZpebb4q+pXDhdKSnffDUQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZX9+ush9; arc=none smtp.client-ip=209.85.219.48
+	 References:In-Reply-To; b=UF1BAJM6mlqa+y4QZgasICdAk0U2p7zkn416m5XbYS4qxtS/DW8VMSwb5kR3CvIa1Tohkv6S6lT1njYzRdVLztPb+jOKko5U7YmZQ1vxJofGWtWmMF94K0rX0mlF0GFF+bQyue+DuK28qR8K/qvNmGaKYSbraaUWF3/MrJJ+jh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=M6Pzk/1a; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-87c11268b97so13952976d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:24:26 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4e89e689ec7so8661371cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:24:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1761258265; x=1761863065; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1761258267; x=1761863067; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9ltpHz74jq2314hEgAIMxZgJUxyrXRNrY30m3sAX6Y0=;
-        b=ZX9+ush9E9fMDqGpCpziy2RhwCNo7k1a0fMcmSGzSAhpwHNDe+ZTq/TWZ0Gzu0aB5r
-         mnqOQ5Mee3TenzjjSVj0mz7dN+uPOTjrdoQZqH6E33LftU+PVmxEqm5qdwlngN67Vwmk
-         PR2zgZkfRQvuOwx0ohwrpxgKWafXtzAajDXDGihCoM6P3LXLGMiAsM+MRM7Xzl2NWKxF
-         +yxnjJx9rRfPJFbQm25+2Rc4PRoWb9CIY0SIvOJQaxm7Qf2xmZqWMUs/mSBwkeW5n7BT
-         dLfveqmGlKoZG6k79VPFrpCz6FjwPjyN8oaeLcBwY4b1fjy+mWoqpmADlK1Y/Kcil/9M
-         Huyg==
+        bh=vtxaoQ9Z3EpBGRZ2g5cKDxZnBVsB91/aTgSB/xLsQVQ=;
+        b=M6Pzk/1a3HBQYYG4ABm8oGfuNzMcRcBziaJymp3XtGeQ/3siFdxDr30GG4ac5BNEPa
+         bKNatwLYlQhNkJ6OAMfka8qlHPlPds+SKiySkAoWNQVL/uIR71cl0bi+e9pdPmTcrp8q
+         PnkcZDYUV3RhZNRBnp6g4AfJIQxE6KPAMVNXS72VC15Tj45ybAMQaIZJZEipHK7hsLH2
+         YmGZrTFPputoL+6TUqrFvhHntnRmWOjwmtA5BiJBIVuvA79BWEOlmX/z2jQ5gFzi/FRL
+         DtJ8UuXk7fq+IEggpgJFPM5E29JZT41Wy1j/xjtMrNYZLFdNDaucYG2YQ+LUmLXT097u
+         ySIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761258265; x=1761863065;
+        d=1e100.net; s=20230601; t=1761258267; x=1761863067;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=9ltpHz74jq2314hEgAIMxZgJUxyrXRNrY30m3sAX6Y0=;
-        b=Zz3KtuqsyCJF/f9juTSHHl5uuLmb+Sszt5Ld4NpXrgq7Hs1X6rWCnFpNt+i8yTReCU
-         LO4PUK+lkqKFEXYbRfxmgDM6KhVjbMSXR6IEtWqi2RHM61flUrlhvLRXzIRTe/xKRRII
-         yz4HaRhEf29gsiwKhCJ3FrcWHvN92jzvmS4AF7rDsvvmBnyaJc5Kp4Wd4/LklFrSJecI
-         b39TO01iWJ9JRnrbMkfg+0ir9pwYwptGYi5VmvV1SlEbxA0LBLGOtRdNDxLAR0ndYi09
-         MXxNqjVKhr3ytDelMykfesnlBXBHgJ4AEZXVvVldOD/KNygllHcwf+gKQiWGdXRlfEp2
-         iB+g==
-X-Gm-Message-State: AOJu0Yxg9jxdhKTD43Ts9qupy5XOwCIb00RvEVQ2sLa72NDBGsSoCr9P
-	qLwR3ckqqZFnGVNUcJ9i1OnTjDCd82Imu1svzr1Lvr5DQFxRFsYZ2DUdDpeh0v0CZQ==
-X-Gm-Gg: ASbGncuC3N8AuxKlGeXgGSjBpJaAQlFuzGbP0wl3xutysccvFCPNMDvbXvcwfJJNOT0
-	rVxp6DPm8BqthFYjxVxYDyO408mV5CKcqcYk+Bbk+Q/sN8encPGMExHBZwHhP/KxoMyZGdqHjB0
-	xgN7N6rk1kKXYqP8ySYj9QWNLvh0L/DfpCjPmTKQzPnpZ6i/hlpAKl1eJJzldlQz2So2lham2/s
-	pF1Y4K5+lfemh9JGtJsB1iYr5fekwogM+xkezT+XrlQ0pklEzzMoP6LIPYlY7mJGTZYFDjP7OJs
-	PtRef34rcWalrBsm4cKKdBVZVazSE8/y0cPAKXwp+LLeP20sd/nCpHbnMhICzM6EVBOwoByXk/W
-	fed/5OVaRiPxSWITe2B/HeVktaLTNeOY/7kOVxvWqHZOEDUElMKNremaZEH+VJ/kOs6uSWfcJCZ
-	7l56smzcdxEhUVzrCOvot05VK59FwL43h8xUYhPpO1AaNXVwmVQ/Fyuh1A
-X-Google-Smtp-Source: AGHT+IE8jv3Je8Ul7XlJ8/oqI6J54riHmM5iZFaCaN+Iyggje6kxt1OT1o4JcVmt60o1zEpBWQteiQ==
-X-Received: by 2002:ad4:5ece:0:b0:878:6fa3:842d with SMTP id 6a1803df08f44-87fb62a1d27mr1305436d6.0.1761258265418;
-        Thu, 23 Oct 2025 15:24:25 -0700 (PDT)
+        bh=vtxaoQ9Z3EpBGRZ2g5cKDxZnBVsB91/aTgSB/xLsQVQ=;
+        b=HMXZWaQGNpsM4yLJ3pE8Yw+xvPQS7/1RJnGXkFkZQ4qRFrpB3zb0y7Ilz/ND3QhRye
+         TQsU0LtwvlfHJGdjUTtAKFZCijDc+4bK4iKfsSz/uVYVhC4/n9TTqMgPj76301bE8udK
+         NMiTmC6T6/rO+nt7LV7+gEGSep6T7HFQHViRFfBZ493uTWhliG1rRsH8RS8NbYpqzo/1
+         kZfD1gyYY3FBQ7CQOMPgfWh1z+0mUmJNAVk2g8yja60LvMcZqwe6U/2Et8mmpJLUhjO3
+         /1tgchlg0uwc3b/nnn0lpHTQsZN1ZD5TMd0NHZMdFJgS9X58+sl9DOs0/E5L0BTQcOvO
+         pR6Q==
+X-Gm-Message-State: AOJu0YzXN+/nGny0L1L+ig1ITiMm8UrKKHtRbg3IgaSe8lXjhLGkd4/A
+	EWlMG7pnQ99nfldXY7GsENZt8AV1qyIYNHNPKBpkFKi5dZI2QMK94wVjVpy2Q9zW/g==
+X-Gm-Gg: ASbGncs2Te7Bro8bPQfuksqHgQAcv8etjJAJL0XdphMhgvQEX1DxvAXPV5UtOmxpS5B
+	VflwS9boKM+6swtwlaf6UiqxkcbtMkVNEU+2LVfJ0fHiGKhdzx7WMk6PpO5NF6LXGEc8ZiAtPBD
+	o4V/R3Y7Iq/vjiXZc4CT6hHYTzLo5eFeraFQClDBRJOGpX0ReaClN7iYFWCSMWr2HmxWHk0IRTF
+	Z4ZlU5yCNiRTkNVLcRRhG3KwgxesCo4Nn+CEdYA5MBWDvlK74Byw29v78KOHIIcp6IoEkmBrlu9
+	xu7yGKyDTZNzRN0UysfHT6YBKJHpsIOR7sAD7MRisFL7gNV2DZnG+hzGt6WmdGo4NBtAMFXe1lS
+	ob2ebQki1aTtYvQJ7GeWVC/dsrIaIQY+eqkBxyq+/3JNBKpnJeBtUDqv9vunTTaHeXQWdfZ/A+5
+	RKtbWDv8+ywpsgt2lLKCCLkvclc05T8ITnZ927+ASS6JBIUg==
+X-Google-Smtp-Source: AGHT+IF8p9h39szTOQkqhtXLji1wf/d6knDKyufDRGAAT1jl+xN4lNrSho8hIqCX+Yo8MxHz2my0fQ==
+X-Received: by 2002:ac8:598b:0:b0:4e8:96ed:2e65 with SMTP id d75a77b69052e-4e89d28eecamr308215931cf.22.1761258267424;
+        Thu, 23 Oct 2025 15:24:27 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87f9e82908bsm23214256d6.58.2025.10.23.15.24.24
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89c0e48fc92sm251416485a.16.2025.10.23.15.24.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 15:24:24 -0700 (PDT)
-Date: Thu, 23 Oct 2025 18:24:24 -0400
-Message-ID: <5364449d2011c1d394a7bb30109b923d@paul-moore.com>
+        Thu, 23 Oct 2025 15:24:26 -0700 (PDT)
+Date: Thu, 23 Oct 2025 18:24:25 -0400
+Message-ID: <20c1a5de781c4013cec218b4d74aee9a@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,53 +86,22 @@ X-Mailer: pstg-pwork:20251022_1923/pstg-lib:20251023_1801/pstg-pwork:20251022_19
 From: Paul Moore <paul@paul-moore.com>
 To: Hongru Zhang <zhanghongru06@gmail.com>, stephen.smalley.work@gmail.com, omosnace@redhat.com
 Cc: linux-kernel@vger.kernel.org, selinux@vger.kernel.org, zhanghongru@xiaomi.com
-Subject: Re: [PATCH v4 1/3] selinux: Introduce a new config to make avc cache  slot size adjustable
-References: <cc48748e9dcfa63fbbaeabad0b2536a0f602cb1d.1761217900.git.zhanghongru@xiaomi.com>
-In-Reply-To: <cc48748e9dcfa63fbbaeabad0b2536a0f602cb1d.1761217900.git.zhanghongru@xiaomi.com>
+Subject: Re: [PATCH v4 2/3] selinux: Move avtab_hash() to a shared location for  future reuse
+References: <a878f27f8148bb4cc662755f6e69400632183477.1761217900.git.zhanghongru@xiaomi.com>
+In-Reply-To: <a878f27f8148bb4cc662755f6e69400632183477.1761217900.git.zhanghongru@xiaomi.com>
 
 On Oct 23, 2025 Hongru Zhang <zhanghongru06@gmail.com> wrote:
 > 
-> On mobile device high-load situations, permission check can happen
-> more than 90,000/s (8 core system). With default 512 cache nodes
-> configuration, avc cache miss happens more often and occasionally
-> leads to long time (>2ms) irqs off on both big and little cores,
-> which decreases system real-time capability.
-> 
-> An actual call stack is as follows:
->  => avc_compute_av
->  => avc_perm_nonode
->  => avc_has_perm_noaudit
->  => selinux_capable
->  => security_capable
->  => capable
->  => __sched_setscheduler
->  => do_sched_setscheduler
->  => __arm64_sys_sched_setscheduler
->  => invoke_syscall
->  => el0_svc_common
->  => do_el0_svc
->  => el0_svc
->  => el0t_64_sync_handler
->  => el0t_64_sync
-> 
-> Although we can expand avc nodes through /sys/fs/selinux/cache_threshold
-> to mitigate long time irqs off, hash conflicts make the bucket average
-> length longer because of the fixed size of cache slots, leading to
-> avc_search_node() latency increase.
-> 
-> So introduce a new config to make avc cache slot size also configurable,
-> and with fine tuning, we can mitigate long time irqs off with slightly
-> avc_search_node() performance regression.
-> 
-> Theoretically, the main overhead is memory consumption.
+> This is a preparation patch, no functional change.
 > 
 > Signed-off-by: Hongru Zhang <zhanghongru@xiaomi.com>
 > ---
->  security/selinux/Kconfig | 11 +++++++++++
->  security/selinux/avc.c   |  6 +++---
->  2 files changed, 14 insertions(+), 3 deletions(-)
+>  security/selinux/include/hash.h | 46 +++++++++++++++++++++++++++++++++
+>  security/selinux/ss/avtab.c     | 41 +----------------------------
+>  2 files changed, 47 insertions(+), 40 deletions(-)
+>  create mode 100644 security/selinux/include/hash.h
 
-Merged into selinux/dev, thanks!
+Merged into selinux/dev, thanks.
 
 --
 paul-moore.com
