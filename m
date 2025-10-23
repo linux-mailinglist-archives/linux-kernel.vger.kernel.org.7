@@ -1,120 +1,239 @@
-Return-Path: <linux-kernel+bounces-866432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7257CBFFBFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:58:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6EEBFFC03
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7DB83A9E25
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:58:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA1A94E38D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3B02E0417;
-	Thu, 23 Oct 2025 07:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B272E282C;
+	Thu, 23 Oct 2025 07:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jTvZwyCl"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q5XU/NyV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7WYOY9iu";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UZ87einC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eiDd0Uc4"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FEC22DFF0D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1D52E228D
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761206300; cv=none; b=pVGUr8aT2Vd1bmFrXpHDHJejG72HKGa7WkAR99d7bqh3fCEIKILq/BwISLrR4MLZ4+eLpjq8hzu5kvL5KvgOfgRgvgOWeFOe4xTghLMsvUMgoHk+yU40HHNMb0EY+hrQRavi8Q4/rTggAgO8Vvhs20Gjqw9an4h+0MB0MxOjysc=
+	t=1761206364; cv=none; b=KHuIZD7XakfrbOD7RdFywWTIkMiqXlAPJ9ew4kNy8Vro7plDRj477EULXcnaB4TxSNWb+0JsO+g+ese+8CRvwBSPaEcGfiJcCz4J2GpG9OZ+02kS6SuYmmGIAsJo2ef9fqJ47OhRUPr1H1hlw8ehajElIkjUs3Ui144i8g4U3RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761206300; c=relaxed/simple;
-	bh=V56wDzpr+FK/urAryAZ1emGQhQ+cHHyjui2JOXvsrfg=;
+	s=arc-20240116; t=1761206364; c=relaxed/simple;
+	bh=h9L+3MVsfWqXkWgKfFaSz+emT304I/13ICnE9PDFfR8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lcbvg5TH6WHZ07ceiWWG08+PdFu4zHgYkZc0saebKxZAkA4Ix7R70o4baPiU+e+vph2UPBFTgJUfdTDt5FexaD9M020PF2bltAuLNBdzOtX/kOnuaxH/K48GvvQLxtH5v9BLAd84/ZQhyOSVq6SQx0fhTZOOve2DsaX+1BoaXk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jTvZwyCl; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so4701465e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:58:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761206297; x=1761811097; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fQ7/jSo7tNBTZd/AumHePa99ISr2zgcjojKglbLQ6TA=;
-        b=jTvZwyClULm7JNOQbvohcgc+Ox6/EfQnpbVqjWcw5LgYqakW2Z/vSh3IRmvFnPcZJX
-         l/5OzDs1lpDTTqZir/bksuonHsme3i3vXyu8PqpgK3bF+thTKVRlh/EE4cLbYBEQdGee
-         9pNs5ValN2XoGlFrWkpKqtJMiRRhBdsuNo+MvwagPwfhttQTv7VdVUJYVylVOm8C4tlk
-         CjqENXEfFjyIBlscVldhWV3un2fukIdz7RzR2Q/q26Ncw/XC0aJBVv5u5MHgB2GDBUJX
-         0tUTbigcz23BZm+dGfy7OPvkbAsfPiVFVYaTcTZmn6IxG+FjNxsYW0+9f/lu0J3UjNXV
-         aLkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761206297; x=1761811097;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fQ7/jSo7tNBTZd/AumHePa99ISr2zgcjojKglbLQ6TA=;
-        b=FDus/VnlO+fVabLZ5gsu6qNVh9mBH3mptY6rhV/nBo7KFZul69fR26iEeKWvk3kOJF
-         v5ibewHzmx3Br/1U+2kypKh8qzqz9Ae6/aOvv09PRSl12+iePoAalLF5qPvEsfzXJM1L
-         kHNaZCc3wGtig0k7f5zdfc3NY2lgdx/wyu1u5gsWew7GZsS2Q/TK4qpuilHu6xgRuUdc
-         JvE6iD4rg/McwUA/2aMLRD6gWXpYkfKAXlOd/CybrTr5C+UONAUJuh8p41EF/TnW5AQ+
-         +RlZ54qygS8VM/w8Zp2bHF6WGaT9UUWhAI0Vhb1QQZwB0lLChnt9qxLM9B/D1DGWcbvs
-         T95g==
-X-Forwarded-Encrypted: i=1; AJvYcCXn9Zmih/Z69GOMoqDjlNmkuH3AqZZTci3DXdNWcs+xNpmIZNMHN74FdX2EW7cyR41CxziblpXDw1E6Frc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyARWFoQBwKJ2taagcmPBLp+RxgEZr21Rg+qFg3foGzNR6ZCYvg
-	5VgDAYOHeq+pV5NyeasbprMlXJMJKBKO3fWYv64m3leyTPpvMctMlSYK
-X-Gm-Gg: ASbGnctQdY60oz3sZneQJYzggWNdNYvhQ0iN1tFJJWhNNVNZrSDr1UIHMmvmPrX2lXq
-	g2yssSN2U7uHuQilokN5jw8Ne4sEIP0gz/rcP3ma68WF7nN7iUMsj9X5meejgXdcvnkYX7sODwL
-	fc16kaqHKCakISyO0Tqtn7YZ5EI5BVlkRcFqU4gEw2wmN+ccTDYCL45Ih5QZo3M6UbJaqH4xQIS
-	1u9NTecnBcFQ3erm8PN15NVaYIJ9LlQOGzjJVIzgxhxRlp8hYfFt9vpK2/kqLxFnnvxS93r3fMr
-	5GOIgWkyqMANb+Ba3ePQLE4fn70ZSaENlSHa5a43woRr7fQv1h8AZs4fSnmfPsLhe7YTME7Dmng
-	fYGLwzWPoloio6fmmpQnmrPiLOPtD3/0xY8Q9I0a0xxyu0yKBwIKu6lqt6HMSr81N2xelpCUW3d
-	ohkNooCnnwSMpRuDra2DeIaDoS
-X-Google-Smtp-Source: AGHT+IH1MMAfSJxCVNQWeVW46sI3k3nHOhskn/OU83kIm3TVkiWr3RGyFq8Jge1vnvirJ7cC5+EzHw==
-X-Received: by 2002:a05:600c:444d:b0:46d:45e:3514 with SMTP id 5b1f17b1804b1-471178b13c6mr160678435e9.17.1761206297352;
-        Thu, 23 Oct 2025 00:58:17 -0700 (PDT)
-Received: from gmail.com ([51.154.250.126])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475caf2f3bbsm22103695e9.16.2025.10.23.00.58.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 00:58:17 -0700 (PDT)
-Date: Thu, 23 Oct 2025 07:58:16 +0000
-From: Vaibhav Gupta <vaibhavgupta40@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Michael Buesch <m@bues.ch>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] gpio: bt8xx: use generic power management
-Message-ID: <aPngGCKnyFheybg_@gmail.com>
-References: <CAMRc=Mf4FnBoZfdR3gG47te=X53jASzb6MVnUmNw2q1rtUwxzQ@mail.gmail.com>
- <20251022192901.GA1265216@bhelgaas>
- <aPneCYtkbxWp4Hox@gmail.com>
- <CAMRc=MdbHqMJv4otgG0Cwc1KcK2WbL4JL0Q75PRqv8582yexyg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YT2rOeN7RbnUZoY8FTXgBFmGnL0UqY4j9LkNDY8La8g5zGhmRKIlA5nUnGf76x/Y1N5IMWWBFGqqQNDJK2bADAoA4xWaf/rqqyQYRQCNIhn0ubU195b2GDljsaIclJZEFpBS4Rnaf0/QGLLJeEvHjEJjgkzTCBUB+OQaD5e5S34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q5XU/NyV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7WYOY9iu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UZ87einC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eiDd0Uc4; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 95F751F445;
+	Thu, 23 Oct 2025 07:59:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761206356; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0BjVMY+y9vsTstYFa6ma+sphPLgyQjk9w3dI5GO2fh0=;
+	b=Q5XU/NyVuCe6wYCJ+yGhovcJxODFtjWWpBEPmyIg7MiJKzHpK8TDpQvzLX2fJtwhxfBcs1
+	lJzZHdlzmg7HrHisehmQJmNYCQckCWMD5JMdu9y2mpmj4hhxsPL08ftAUPJgUQLr467xxr
+	TZrRKUlGoPhgb9NQQt67Ang9YDoPkiU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761206356;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0BjVMY+y9vsTstYFa6ma+sphPLgyQjk9w3dI5GO2fh0=;
+	b=7WYOY9iuckh9s/rhCpPEtxguuhDEI/V6zL0eEaPyUGk5n2ove/t7y05cQzqFZ4RBAKPfWU
+	nm8iQQ2eKx8iroDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UZ87einC;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=eiDd0Uc4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761206352; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0BjVMY+y9vsTstYFa6ma+sphPLgyQjk9w3dI5GO2fh0=;
+	b=UZ87einC71rhEmuw8dkfjZoxvOBH0cI8AoOwr03avVxB12j63Dc5WPw1V3vSHK4F49PGK0
+	WQrzzXeWyTlCY3ueLI06JVeM84mJw8xZlxXgbY1FAqdSQbJ4/3H2AvVk/hKFzDHuVaW1ev
+	LIDTt9/Br7qzl8xc5um+kajcntRMP6o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761206352;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0BjVMY+y9vsTstYFa6ma+sphPLgyQjk9w3dI5GO2fh0=;
+	b=eiDd0Uc4B+OS0QQZFfQa0x/QY6GV88zG9StdwhTLgnLh8ur7HIzVl4Q30E+sPODorQKpbf
+	vdBwfucCDu6/VBDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 893A413285;
+	Thu, 23 Oct 2025 07:59:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hrh6IVDg+WgCaQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 23 Oct 2025 07:59:12 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 31640A28A6; Thu, 23 Oct 2025 09:59:12 +0200 (CEST)
+Date: Thu, 23 Oct 2025 09:59:12 +0200
+From: Jan Kara <jack@suse.cz>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, 
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] jbd2: allocate lock_class_key for jbd2_handle
+ dynamically
+Message-ID: <vgpy66rcs3mvitijmt2v2yfwuhkijh33z3s76ghlsqq6yjgmtw@prlpxdeoitif>
+References: <e42f1471-a88a-4938-8743-1d5b171c47ec@I-love.SAKURA.ne.jp>
+ <fwsxrb7ugi5zeosugo6hyjdbhw36ppa5kekfi6n7we2vvi3r7m@ljrizqoagsg7>
+ <93744126-237b-4e36-8a62-a33e1fb52051@I-love.SAKURA.ne.jp>
+ <mjzb7q6juxndqtmoaee3con6xtma5vfzkgfcicjjmt7ltv2gtt@ps2np5r36vn3>
+ <96c8fca1-7568-46c8-a5ad-af4699b95d5e@I-love.SAKURA.ne.jp>
+ <doq4csrkuhpha7v5lunesdrscmqmjvt3flids3iai2gvpbhp3j@mxldi4yvvymw>
+ <a6fcc693-42f0-4d70-a1af-fc1bfb328eb7@I-love.SAKURA.ne.jp>
+ <rajbaoxp7zvaiftmuip4mxdvrdxthhgvbjvtuq3zrwijtdab2j@ouligqrqxyth>
+ <987110fc-5470-457a-a218-d286a09dd82f@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdbHqMJv4otgG0Cwc1KcK2WbL4JL0Q75PRqv8582yexyg@mail.gmail.com>
+In-Reply-To: <987110fc-5470-457a-a218-d286a09dd82f@I-love.SAKURA.ne.jp>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 95F751F445
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.01
 
-On Thu, Oct 23, 2025 at 09:55:39AM +0200, Bartosz Golaszewski wrote:
-> On Thu, Oct 23, 2025 at 9:49 AM Vaibhav Gupta <vaibhavgupta40@gmail.com> wrote:
-> >
-> > Hello Bjorn!
-> > Thanks for the review and mentioning the diff between v1 and v6.
-> >
-> > Hey Randy!
-> > Please let me know if the diff mentioned by Bjorn is enough or should I send a
-> > new patch-mail describing the v1-v6 diff?
-> >
+On Wed 22-10-25 20:11:37, Tetsuo Handa wrote:
+> syzbot is reporting possibility of deadlock due to sharing lock_class_key
+> for jbd2_handle across ext4 and ocfs2. But this is a false positive, for
+> one disk partition can't have two filesystems at the same time.
 > 
-> Yes, it's enough, I could have looked it up myself but I shouldn't
-> have to. Please, next time just list changes under each new iteration.
-> Preferably just use b4, it helps with version management.
+> Reported-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Tested-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
+
+Thanks! Tha patch looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/jbd2/journal.c    | 6 ++++--
+>  include/linux/jbd2.h | 6 ++++++
+>  2 files changed, 10 insertions(+), 2 deletions(-)
 > 
-> Bart
-
-Noted. My patches will be more clear from next time. Thanks for the reviews and
-comments.
-
-- Vaibhav
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index d480b94117cd..f43474002f50 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -1521,7 +1521,6 @@ static journal_t *journal_init_common(struct block_device *bdev,
+>  			struct block_device *fs_dev,
+>  			unsigned long long start, int len, int blocksize)
+>  {
+> -	static struct lock_class_key jbd2_trans_commit_key;
+>  	journal_t *journal;
+>  	int err;
+>  	int n;
+> @@ -1530,6 +1529,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
+>  	if (!journal)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> +	lockdep_register_key(&journal->jbd2_trans_commit_key);
+>  	journal->j_blocksize = blocksize;
+>  	journal->j_dev = bdev;
+>  	journal->j_fs_dev = fs_dev;
+> @@ -1560,7 +1560,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
+>  	journal->j_max_batch_time = 15000; /* 15ms */
+>  	atomic_set(&journal->j_reserved_credits, 0);
+>  	lockdep_init_map(&journal->j_trans_commit_map, "jbd2_handle",
+> -			 &jbd2_trans_commit_key, 0);
+> +			 &journal->jbd2_trans_commit_key, 0);
+>  
+>  	/* The journal is marked for error until we succeed with recovery! */
+>  	journal->j_flags = JBD2_ABORT;
+> @@ -1611,6 +1611,7 @@ static journal_t *journal_init_common(struct block_device *bdev,
+>  	kfree(journal->j_wbuf);
+>  	jbd2_journal_destroy_revoke(journal);
+>  	journal_fail_superblock(journal);
+> +	lockdep_unregister_key(&journal->jbd2_trans_commit_key);
+>  	kfree(journal);
+>  	return ERR_PTR(err);
+>  }
+> @@ -2187,6 +2188,7 @@ int jbd2_journal_destroy(journal_t *journal)
+>  		jbd2_journal_destroy_revoke(journal);
+>  	kfree(journal->j_fc_wbuf);
+>  	kfree(journal->j_wbuf);
+> +	lockdep_unregister_key(&journal->jbd2_trans_commit_key);
+>  	kfree(journal);
+>  
+>  	return err;
+> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+> index 43b9297fe8a7..f5eaf76198f3 100644
+> --- a/include/linux/jbd2.h
+> +++ b/include/linux/jbd2.h
+> @@ -1253,6 +1253,12 @@ struct journal_s
+>  	 */
+>  	struct lockdep_map	j_trans_commit_map;
+>  #endif
+> +	/**
+> +	 * @jbd2_trans_commit_key:
+> +	 *
+> +	 * "struct lock_class_key" for @j_trans_commit_map
+> +	 */
+> +	struct lock_class_key	jbd2_trans_commit_key;
+>  
+>  	/**
+>  	 * @j_fc_cleanup_callback:
+> -- 
+> 2.47.3
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
