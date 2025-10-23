@@ -1,132 +1,158 @@
-Return-Path: <linux-kernel+bounces-866446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7858BFFC6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:07:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF10DBFFCBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E28F24EE561
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 064DC1A04A14
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06657229B38;
-	Thu, 23 Oct 2025 08:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fpCxyfcx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C752ECD34;
+	Thu, 23 Oct 2025 08:08:12 +0000 (UTC)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9EB2EACFE
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7BA2EB84B
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761206830; cv=none; b=oUW1sprc03ecgN9xoyMoQcyIZ7FLw5NdvOdQesE3rxhP0Qd7AoJxCgriJjGVsrSVKUQETBsZZYnA0krkrNo28iRi84lf/++DpL1wVfXhpVkHLE647eEUA6RzIs705Si1HGliQs7GYqM16LBbOeLY2ADZBs0TEvA6RgiIcNCAK0A=
+	t=1761206891; cv=none; b=qGzxOCYhVpC8TPjh1Glz/WXYz8WQjdsp+pmcv1vD93qq9ZT6FI/tY/80DnpzqQ4ifP48YCmiBrtFX6X0LQby2mdoZZToTj8jl3ceLr6uCn3c3hGkP22eYHzsd7bJ8c3zUgXFBI9eyUn0jtVm6NxfHn08xALMLR47hjjwhAOZPVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761206830; c=relaxed/simple;
-	bh=VysN6EHYkdOUpoEuRAyXlfItg/cHXm73ASmOEB5VMaw=;
+	s=arc-20240116; t=1761206891; c=relaxed/simple;
+	bh=YSlV3Ui/R8OX+GLrbep0IihwU6AoVM62SupLufD3Caw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qFUorwMwG5dDme716Rll8Dx9t8xiQwkMI2vF83mq0AM9avTI+RfOBR9IlIhBIIZfgpLe/4W4sf7TtWXsz3OXPnpkqgiVjhDN4qAY0OWPrL9qo+cBkDvuWKMwU2uIdmqI9j1Gct8pV1AxT3kE+QDQG9LcoUYhpG+O94M/9wgrWvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fpCxyfcx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C57C3C16AAE
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:07:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761206829;
-	bh=VysN6EHYkdOUpoEuRAyXlfItg/cHXm73ASmOEB5VMaw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fpCxyfcxWolccjVuj+7ltJnTVlv9CldLMHV7ZNavYsxW82P1lUZ7eu5RIQMU1r+0z
-	 Q3xnepx2lNUunvzZwfJFUOJxd0kx9eQBXPIwycYoC4rzTpRt4bwwhKpiQgAWDn8XEF
-	 2r6OTz3xOYCAvs/iJOSTNcC3xU0yXsUPUwQCv8BtFXd9qBVT25rO1LjKq8+/3y173E
-	 8XXuZL2HWIFV0I9aE2zabqYfwMVfljAoRdly3c3X/Qg8thLDjNDORjENu973pfSO34
-	 2D7+P7SyQyXJoNBUHy4sAQuwQKVAJktid2w0h072k+rwxGw3hvZu1SDWuFKoYQLvzE
-	 kBX1tiFV19OTA==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-57bd482dfd2so574000e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:07:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUwQRIyUOg5rVwJ10YoZIzVLZci9FHeHnvU6JGkMu9ct6drkPpr6Puxq3ZhTgIRjSzepK3H5KTpdLjXTAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwMEFNzaFcpICJhfiT9Ah2QYgkrdtmlsMb5UBTz3fh/MFX3Yxn
-	M37wdssZG4AP764SoHxQenY3tKXSJUWxKZ70wcZaHFrAgqkvlwcSh2eOsC+fTOJjQuWlR0iIrGL
-	ozTz006imf79GFHd42YbLMr31Vr7upHY=
-X-Google-Smtp-Source: AGHT+IH2k0BakTqpQ5lQqnKMRD6Z7aVcR5hL4BYeIHS6Ze64OfFlym0sW70AuM9NoMi3ufQme1oL95mzMLwh7Wx0wW8=
-X-Received: by 2002:a05:6512:b1e:b0:58a:92cc:5819 with SMTP id
- 2adb3069b0e04-591d853543dmr8192834e87.36.1761206828188; Thu, 23 Oct 2025
- 01:07:08 -0700 (PDT)
+	 To:Cc:Content-Type; b=EWFNJ/oF+eIDfFzRktKmrShJIFFNTTDGT0bam/st6B+eoUD9f/XO0OyiDK5SFviVOqyjL/Oc8WD+mE2IojXF82rsFsEgi+QtnHbi+OsLYHrcAbIzXzfreswNK82OgPEs9NJ9rTL8a5kCmXKSdH39vf0DuxzRBb66g4sZ45Shw+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-8eafd5a7a23so1081002241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:08:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761206888; x=1761811688;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nolr+eNt6aVR4bnXOrSXLAjzFqxSLYKSdI0s7QV7cbw=;
+        b=rmAmeKy9oDVWgVJvfshf6XWXAGazOPXfZm5wtPwpCvl9VAL8AzbybJqr0geKTwmaZU
+         FRD+QRbrwVCosqcprcmnfOn5RoroSYgsoUXqmgMckxClvMtAgN5DyJJqX7qKb6xUT7lf
+         Z7ttthNf2z2BvXrPTHUvql0O4ehgn+NVDiYuUwSe81HMle56UA+FLdfw+1Zhur8+emdX
+         4skRjNl0KmVuRJd4y5BeUhu2GysnYTmzd/Wr6rgmoOe/ZXvQDjuksboec57OsAuR77xq
+         Lq3rh7mCN+ddztjlkdfLRo4IV77dbyW7OXujHXRhAMh2h+bk1mB9iUZN/k9BqaAkdkh5
+         nfSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVr9t/a/MQt4pH4rjcGZFcq8UdhMvh1Np1aEzsvGoazwIHPPcZybOZpBG/B+rvlxZtRl4IH8BG2bYpVgYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwckxPQPLjFBJ/aUOGanhaJUUAR9iup/RJCUdjRf6A4NBZ7STbv
+	QH5N44hSDwvsFbqEsgCdTfqEzBYik6R4/J5EBK9bRwLS++fnJlMmeSN6eLTyX+cx
+X-Gm-Gg: ASbGncusABwZdzcy9EW/+nAlnwSv26vfDcL8nE5S/oqJaOyVoUFRBz3ui1kljWov4+9
+	YnIRnAxpc3Fdqh6S36qJabwlSqhwgje3ANzyQd8BLRAxJuD6zjhHP50GOYno5Ds2qGuiVP3/gz+
+	WGvm773boFTtTenGfp8x5uuTKuzFN3t2xZW4YQhpHqGskapaFHJrPWf0MlkLQfshG69WjhY4UQv
+	ZYUADvNIfONigh4fxTHjOOBJ6KBJBHahiut/i3Nh+dFIjqTelS6SqnKVjOQ0JAOE+FHdiZEaI/p
+	wi59m7iW2zPUhKpVbj85qEFQ72aj9wK9mRM0KlzhTyrq/nNAo78+3UHUhou0jHsT1lFT1uWPiJw
+	jYw/8tyebw47WbMPhSYIyzQ6uSydKcgeBP0WlU2SWr2qU3AqNxNV2g9dY6pANqwLoy1PZS8hGIA
+	dNWy4Uw/r7cNhcozwN7ZMWUzzoY6pjx3HZ436MnLIjcBXYjHft
+X-Google-Smtp-Source: AGHT+IFceGww1RkGxMHoyAFx4u/DgrLL171E79wpinnGVgMolFIvq2PT40I+/2xyyriR95CVc4yFyg==
+X-Received: by 2002:a05:6122:8285:b0:54a:a3b1:db63 with SMTP id 71dfb90a1353d-556964fab2fmr2442249e0c.6.1761206887620;
+        Thu, 23 Oct 2025 01:08:07 -0700 (PDT)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-557bef22a61sm544423e0c.24.2025.10.23.01.08.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 01:08:07 -0700 (PDT)
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5d5fbfca7e2so603052137.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 01:08:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXWR224uKmExLXBRFVXxLxyCqaO2CyQOZ8vXjvYPUmo7tQlqvlYef/P3vwkG+ZVAwbiINuBf9pYASs0Rng=@vger.kernel.org
+X-Received: by 2002:a05:6102:81c6:b0:5d5:f6ae:3902 with SMTP id
+ ada2fe7eead31-5db23866f45mr1605522137.19.1761206887227; Thu, 23 Oct 2025
+ 01:08:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
- <CAMj1kXGvSnCMRVCW7eAxgLRWMEV3QRj3Dqg3PmZchZJNpnLK9w@mail.gmail.com>
- <CAAhV-H4UKdso0BokAqvjYeBLr-jbjFAaQX4z=1ztpBamqrOEEg@mail.gmail.com>
- <CAMj1kXEXDC_oq4aWbkR5dqYBix2d1xJEdaj-v747e1nOA0Q_Yg@mail.gmail.com>
- <rhnei6wovxmoqs36wdysomfsul3faxtmgde73wrrqdt3qo3b2j@akd7vzne76rq>
- <CAMj1kXF+hDJy0vRWNgwoijHxvA-scvhGODMj9A3dv19v3jf2yw@mail.gmail.com>
- <lgyzruqczm7uti2lfbhfhr5hyzpnm7wtvgffa2o7nigx76g6i3@wlffltvmhhez>
- <CAMj1kXFDquPxCYSBWgjikS=209pSJ_kth67M0RDeuetV9CPYAw@mail.gmail.com>
- <wlx6pt5crtfdwtop4w5vjznjfarrwitq44wdbufncjdvtsx647@tgobruak66yb>
- <CAMj1kXFfEBkcc-aiwGrRR-pKg4LBbS7weK0pEpZJsKOk5pbkuA@mail.gmail.com>
- <jxfb5a2c2qber623l2gwewirwod54bbgfnvt7t7f3jah2ea33g@2uyhy3auzmpx>
- <d9f3352a-1c1f-464a-a8fd-741cd96b5f8e@loongson.cn> <CAAhV-H6m5vszCyiF3qi94cpHBPVuqM2xH93D=gfsQqOSYvC-sA@mail.gmail.com>
- <33612d85-e70b-26da-8460-ea6b9064ce08@loongson.cn> <CAAhV-H5ZSTFDxvm-W1CrgEoQ5d_jw5yVsfetQ_J_qL5pqLtzgg@mail.gmail.com>
-In-Reply-To: <CAAhV-H5ZSTFDxvm-W1CrgEoQ5d_jw5yVsfetQ_J_qL5pqLtzgg@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 23 Oct 2025 10:06:57 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGk0udgM67wrWqahqK8H0uE8emQj51SmJey+7fE-FTjdA@mail.gmail.com>
-X-Gm-Features: AS18NWDF5CVCCcvajdSpES8CkYD2Jn1SbZ6xM-qrHn3BdntYv4P4IHkWBRJpQ1c
-Message-ID: <CAMj1kXGk0udgM67wrWqahqK8H0uE8emQj51SmJey+7fE-FTjdA@mail.gmail.com>
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251022124350.4115552-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20251022124350.4115552-1-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Oct 2025 10:07:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWTe8t8O2H+hPU6=WC6V_YGHwTd7sF1htuhX8mVC_fUqA@mail.gmail.com>
+X-Gm-Features: AS18NWCVYlN6uQfMDhc6d_B3LlrJdzYInr_Xaym6zmDpvYwmst5OSgE2t6h-cSM
+Message-ID: <CAMuHMdWTe8t8O2H+hPU6=WC6V_YGHwTd7sF1htuhX8mVC_fUqA@mail.gmail.com>
+Subject: Re: [PATCH] usb: renesas_usbhs: Fix synchronous external abort on unbind
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, kuninori.morimoto.gx@renesas.com, 
+	geert+renesas@glider.be, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, 23 Oct 2025 at 10:01, Huacai Chen <chenhuacai@kernel.org> wrote:
->
-> On Thu, Oct 23, 2025 at 2:55=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.=
-cn> wrote:
-> >
-> > Hi Josh and Ard,
-> >
-> > On 2025/10/20 =E4=B8=8B=E5=8D=882:55, Huacai Chen wrote:
-> > > On Mon, Oct 20, 2025 at 9:24=E2=80=AFAM Tiezhu Yang <yangtiezhu@loong=
-son.cn> wrote:
-> > >>
-> > >> Hi Josh, Ard and Huacai,
-> > >>
-> > >> On 2025/10/18 =E4=B8=8A=E5=8D=881:05, Josh Poimboeuf wrote:
-> > >>
-> > >> ...
-> > >>
-> > >>> But IIUC, the libstub code runs *very* early, and wouldn't show up =
-in a
-> > >>> stack trace anyway, because there are no traces of it on the stack =
-once
-> > >>> it branches to head.S code (which doesn't save the link register).
-> > >>
-> > >> Thanks for your discussions.
-> > >>
-> > >> Are you OK with this current patch?
-> > > For me the current patch is just OK.
-> >
-> > We have discussed this a few times but there is almost no consensus
-> > of what should happen next and nothing changes.
-> >
-> > Could you please give me a clear reply? Then I can make progress for
-> > the following series:
-> >
-> > https://lore.kernel.org/loongarch/20250917112716.24415-1-yangtiezhu@loo=
-ngson.cn/
-> For me, this patch is OK, ignore __efistub_ prefix in objtool is also
-> OK [1]. But I cannot accept the way that modifying the efistub part
-> only for LoongArch.
->
-> Clear enough?
->
+Hi Claudiu,
 
-LoongArch is the only architecture which has the problem, so I don't
-see a reason to modify other architectures.
+On Wed, 22 Oct 2025 at 15:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> A synchronous external abort occurs on the Renesas RZ/G3S SoC if unbind is
+> executed after the configuration sequence described above:
+
+[...]
+
+> The issue occurs because usbhs_sys_function_pullup(), which accesses the IP
+> registers, is executed after the USBHS clocks have been disabled. The
+> problem is reproducible on the Renesas RZ/G3S SoC starting with the
+> addition of module stop in the clock enable/disable APIs. With module stop
+> functionality enabled, a bus error is expected if a master accesses a
+> module whose clock has been stopped and module stop activated.
+>
+> Disable the IP clocks at the end of remove.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: f1407d5c6624 ("usb: renesas_usbhs: Add Renesas USBHS common code")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/usb/renesas_usbhs/common.c
+> +++ b/drivers/usb/renesas_usbhs/common.c
+> @@ -813,18 +813,18 @@ static void usbhs_remove(struct platform_device *pdev)
+>
+>         flush_delayed_work(&priv->notify_hotplug_work);
+>
+> -       /* power off */
+> -       if (!usbhs_get_dparam(priv, runtime_pwctrl))
+> -               usbhsc_power_ctrl(priv, 0);
+> -
+> -       pm_runtime_disable(&pdev->dev);
+> -
+>         usbhs_platform_call(priv, hardware_exit, pdev);
+>         usbhsc_clk_put(priv);
+
+Shouldn't the usbhsc_clk_put() call be moved just before the
+pm_runtime_disable() call, too, cfr. the error path in usbhs_probe()?
+
+>         reset_control_assert(priv->rsts);
+>         usbhs_mod_remove(priv);
+>         usbhs_fifo_remove(priv);
+>         usbhs_pipe_remove(priv);
+> +
+> +       /* power off */
+> +       if (!usbhs_get_dparam(priv, runtime_pwctrl))
+> +               usbhsc_power_ctrl(priv, 0);
+> +
+> +       pm_runtime_disable(&pdev->dev);
+>  }
+>
+>  static int usbhsc_suspend(struct device *dev)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
