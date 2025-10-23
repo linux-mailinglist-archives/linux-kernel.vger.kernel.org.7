@@ -1,99 +1,87 @@
-Return-Path: <linux-kernel+bounces-866618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A55C003F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:31:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB493C00415
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78FBE1A65A21
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:31:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59D21188AA79
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB266308F1E;
-	Thu, 23 Oct 2025 09:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="F5Xi9F95"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798D13081D4;
+	Thu, 23 Oct 2025 09:32:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CA1308F0B;
-	Thu, 23 Oct 2025 09:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964E93081A5
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761211853; cv=none; b=n7Y4Ph3aKELnxm1oH2ShSVwacJ9EShdGAa/wVl/hIGIPq0FeSEA0UQiJKwNCSVSZXTR0Ofr1ygvL9N+AbaFNUbgdxKeR3YU1raktBHUXDV9Pu9aaz4g99VKqETD/NMPj+UVrRIylLIo7zwsVIxrHg3dJJTC7xgwQkaRp30ul+04=
+	t=1761211926; cv=none; b=bHR4gMBTgtv65/dM4t1oq+TFEYKOQysTgSUyl0o0FXT9br0LCEYGGxbarJHK0etsXMVyLfkR3P2MHUiA8UX0u37Qhpbza/QTifEWSvkJeMdNFPY0gfXK3iLGrXSWo5GxRPAQca/AANkQbsrwtnB5eJjbp4e42YQsHEFMAAnG+Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761211853; c=relaxed/simple;
-	bh=oorMr3OL1HxVI9uAYh/f+Fad6W0DVA3ddaEhO1SCEO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XS5vHjww3RuLVWE4/h5oRcuX5ZwFpIrkwBIUQf+iWrUeCRICWFC1tU348UpOfosbjUBJ5ZAnMLUXRhYIYYmz2TedTPuQYOji/GuqPUn3mDCBSbXstK9zhw7F2501DB++jbTTX9DVz2WkA0Sd5UP8aROuZwxWkYj31SZsyGuHRe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=F5Xi9F95; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 1753D4E412A0;
-	Thu, 23 Oct 2025 09:30:49 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id DBF576062C;
-	Thu, 23 Oct 2025 09:30:48 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5A056102F245C;
-	Thu, 23 Oct 2025 11:30:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761211848; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=88pDVkrbzXLWUMF+6eEu2ubK5cD6gW9j9QnD38550iE=;
-	b=F5Xi9F95xMaK6NgEKPwqvC/kfJL5COPl5Ifj29T/GULYo2wdEUO9izF85NnMDOcvstmGJy
-	7Ak8+EhQ3zdu4mAPXIrFbtgJeO0C1UDGJFOTFGCFaIvxznCGL52QoUPJvOcB1uzxtPyFYt
-	oMHikxhksEF8shT87TeS0lLCScyiUV33KRQuOF1x48CfTsp39DWPDlPlLoRz2nw+q1sOoN
-	WNmJUZstvcX1yr7sXmWdBO6141WN9i8Mu6r3PHG7OS82XO1q2dSmjHvATIsjAaDqkqsl2N
-	iDZyyep+WhPb1Vynl6o1IpjxH4nSCDZDMDF+KZxHrAgwGFkQyOdyL509cLBADA==
-Date: Thu, 23 Oct 2025 11:30:43 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: FUKAUMI Naoki <naoki@radxa.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Manivannan Sadhasivam
- <manivannan.sadhasivam@oss.qualcomm.com>, Christian Zigotzky
- <chzigotzky@xenosoft.de>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
- linux-rockchip@lists.infradead.org
-Subject: Re: [RESEND] Re: [PATCH] PCI/ASPM: Enable only L0s and L1 for
- devicetree platforms
-Message-ID: <20251023113043.2caffec9@bootlin.com>
-In-Reply-To: <B08A289028EE2F0D+c2d1f2e5-d7c6-497a-82bd-92ae477e1016@radxa.com>
-References: <20251022191313.GA1265088@bhelgaas>
-	<340D76D438E6105B+58e7f834-75f7-40c5-a46a-677cb279a02d@radxa.com>
-	<B08A289028EE2F0D+c2d1f2e5-d7c6-497a-82bd-92ae477e1016@radxa.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1761211926; c=relaxed/simple;
+	bh=+6slzJasBPgf8DaQYB9nLQ+CxAn3jBPfN2anMtXIJ3M=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ke6qBnQ8tzYkY5qCUe1qVuT1eYAZ6inzMgPp7PoS3S8A6pH4XdrbeGZ2tvRXDNLYNa8aSSQnlSVQcAFct/Z8V8hP+FLMZ+9jq/SY2Ak+/GbrY74zdev5mc4zfk7vxGtqHhI2G5PmJzgOfFQp/OI93HwlNlHMwW/HCbBSaxYOctI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430db6d358bso28603055ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:32:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761211922; x=1761816722;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tHmLM4WYoYQHrTqyhBDObKTnjVI5RI6oZmd0aefTWp0=;
+        b=SSdWo0VubvTA7luwOPnFP7pp0MX6zTA5Pbnm7KbeHUpT7piQqoDn/RlrdllnG8ILyt
+         PrIsGepbh7rBKOzjDbbBIc6J4/QVu3hsL4DZDLuImCnqfy8XKl1pqKn+TFB2WgCOkSYX
+         SJ0vbLBV/7oHSez7BUT6S9PYp0EgxoAGE++9o/Br34dbBmGU6dyRMUANjcHT+9Qx3VEv
+         t4ihIr3+Kc8lHEZYmiVM56CGzzDmJhli537W2InFo3BQNOMTJChoZATrFh/FqjeN8mdf
+         U0U/CUgM0a6Mc7IF33ZfaU1LsVxl7CkwK69lyJ7bt3j4PAGG+onWTEe9Jx4Txle9LDU6
+         mwDA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2lLOa74wttw1R1SX3tW8l94hf+McApsnrl2wynq6P+9X1gHAbdrgmL033DtUqCjIJZGG4GZuzirFvH0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAzFjPh6pJI5GrLUwigAuy+KTEowckP/dhEXmI8yByCVRegKNA
+	RdwAASlqVOVJufEmiXMGdy3GveawoaAr61MxkaETZPnKAAUld9ZFczvhZrGoPcV4eUAoorsGMdn
+	HJj8D2LJEQaVrwaxYDpflFHAh6gKOhs0nB0aGExqpur+NoCdux5LJRfrfh1w=
+X-Google-Smtp-Source: AGHT+IHOCbKdQcMGwtjKgyN1gYWRl+Nc8j2CNe9gcve7GieRBMlg4Ry4pht7y+w7pRm+PcZvHZs8NDo9l47kdhq64kyi5LT1oAeg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Received: by 2002:a05:6e02:3c05:b0:430:ac49:b3b1 with SMTP id
+ e9e14a558f8ab-430c5247174mr390187105ab.12.1761211922679; Thu, 23 Oct 2025
+ 02:32:02 -0700 (PDT)
+Date: Thu, 23 Oct 2025 02:32:02 -0700
+In-Reply-To: <CADfthj2Ycc0apak2Y_fpix4SWhLT9Xq89pJ=gCENGrkv1R++hQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68f9f612.050a0220.346f24.0074.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] WARNING in ocfs2_unlink
+From: syzbot <syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com>
+To: albinbabuvarghese20@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hello,
 
-On Thu, 23 Oct 2025 14:01:59 +0900
-FUKAUMI Naoki <naoki@radxa.com> wrote:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-...
+Reported-by: syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com
+Tested-by: syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com
 
-> 
-> maybe https://lore.kernel.org/all/20251015101304.3ec03e6b@bootlin.com/
-> (then +Cc: linux-arm-kernel@lists.infradead.org?)
-> 
+Tested on:
 
-For information, I tested the patch and I can confirm that my issue is
-still there with the patch applied.
+commit:         43e9ad0c Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14d8c3e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a1215729170d20fc
+dashboard link: https://syzkaller.appspot.com/bug?extid=55c40ae8a0e5f3659f2b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16974614580000
 
-The only way to fix it seems to either fully disable ASPM or move to
-performance ASPM policy.
-
-Maybe my issue is simply a broken ASPM either on my host or my endpoint.
-
-Best regards,
-Hervé
+Note: testing is done by a robot and is best-effort only.
 
