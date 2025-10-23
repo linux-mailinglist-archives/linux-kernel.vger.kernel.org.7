@@ -1,157 +1,197 @@
-Return-Path: <linux-kernel+bounces-866642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DECAC00532
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:43:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D368C0055F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1270E347241
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:43:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FBE53B0869
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7B02D9784;
-	Thu, 23 Oct 2025 09:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D73301015;
+	Thu, 23 Oct 2025 09:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k+kq5ORK"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dP9LsCas"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D28030AAAF
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7008F3090E5
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761212459; cv=none; b=nACBXBYEuyiPTXiIziPN6aJ7EDhYV7UO6w7KUyH9C3pTl9K3Y/OB8E/gJTp4CocEUik5w9SpVjsUHKUURx7qIJlV9VhPSIT0CNkkE4RF0N5ug1QbgMhh3P0RkbaKQTanJqqxBu948Ma+xhXlpClLWVfKWlTP1fiMBjwQhh2qTWk=
+	t=1761212512; cv=none; b=hfsVDwW9CNeRjfQuqcEij4Zht6exhskTpgDRdG50cW5HDv6BNUAftEo/xDykPt8lb+ghnNnt6oLOgahtGuKZ2Ke1KzrixRtAMtVE0ioa5moqIhVSqvhg/6Lqkv0wY/cACfjHZKVVBxg0XW4oD3TJzSHRE7j2xK+xZ3AaGlZMZJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761212459; c=relaxed/simple;
-	bh=XFs6GYFcsW+Swxxh1r01dqycQAXpAky0WH44+J03lMw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F5YhKK5Susxbbk58jKAiR/A8g8TFhzC5hSkjV/osLrb0rw9gKIhJXnz4o6JI94JPJkLdcgCgdj6MNilPI/DQmTDgSeBWX/DecIhTO0W2ap8Ul7xeQqtRIKpcz1gbrtBXXZHKozqbd5xPNPpqht00vC73i5gCfuR9lMD2UEBgMjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k+kq5ORK; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-470ff9b5820so804925e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:40:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761212455; x=1761817255; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=54eD926wH0mql4NxC+CJBCpNd7LiNPQ+SiCFUqnjFLY=;
-        b=k+kq5ORKm4xUhB4gdvAenM/YSUVBmfhoPunILSKzBKHFncG0VVj1kzyyPgb0nzZXmW
-         P2i74pU79vfj1aJGEbzty2MXcJfWPzWOGnW+MawljQfUPE8KdFdAVW1snfvRd7QOn3RA
-         bi6wYEI6jOomJ/4sAY3t47HNG9Es04Fc2VwhKPi+zu7WeFD6MwmbvtUrfSZD7MlJa5pX
-         W3LgGkQzHetrGEjowoBClBr+cwoyFOwUg2ZVQrO5BBJHIvCr4xKs8yolhsGVgFXmRYDf
-         W6Dqf4xLY+3AGapMd3xX6m5NvvVcdfti2iW5RzB1DFLB9DdzijSTj5NBlE1tfvFHcFqI
-         kwvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761212455; x=1761817255;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=54eD926wH0mql4NxC+CJBCpNd7LiNPQ+SiCFUqnjFLY=;
-        b=wr0NVIp4baMCKvSZpxA1pMKLg/bLNJphcNN0wbHmyVap8R7+QepnAstL7zPeUzQ3xC
-         5aDGcJ2unpRPbcAGxHjDE568qb7hhe/HvrH87ExSsrk7wPUjTdmN5CJUzxO964rUr03K
-         L/oUARxycSZkpjhWjBAgs4vXdJJMURnS+p4l1VovrnONrx4BHsjLTVt6hG94oLTAKccl
-         66GyY6WynCDz+ASccLdehgS/ZqEKrZoEvl+alHFqwjIQyJkXRpt2MHl3nazrlKKgLXfd
-         EuLJB1N8kjC4Kl5cZL/zLjpc9SZlRNJXGPZihdyly265uRjpCoKDcT130zRgrSxTiY7B
-         Abwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUoY4gCy3U6ssd8gGvkfOdVNFT0o5MKZLUjWaSgjxReMetEqInH0GZ2Oq9WJIoU7zcUYm61JCg1IitWeY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf0qx1jc8K1DvNMriXxz5AaMGCmiMH5szKvoEbnVTzT219N61I
-	sfRJ/A9K9AbnsbenvSRu6TpND+6Zr2gJ31ncMXSkokaGfCrdKrqWjoJxEGIqmAWG/0Q=
-X-Gm-Gg: ASbGnctbBoXQeWfdD09lWxcHaNnvBAKrstL0GG/c0dFwo2hpnmu5gVPPym08/VZT7nE
-	UYj5WPe8ryIoqWZuWp/8/UiKtuInIq89qA2Vo81cSa+FrVOwsgqmm6h2ROFazocIbob+OFHSsJH
-	0RTgQpWUJXv0vl7cT7DZ/aRe0oWbcVs3Q0KKq/cHjT1+t4mh57lTnP9+iV8OdyChoWAvkSpzsyO
-	V9UnKkF5zlDfKOyriQ278MuEbBn5U9Qijzv9c+GXnP5423IDLo9M91Kcy3ZLNUmfDeCoCtyPHYJ
-	Qjl9CqqKriKIzkPBJQFBAu6Qj5nfgkSXimbnhSPz6SIgJYJM3IJtbQ/WZaSbSh0fLKYf2VISQ9Z
-	9F2ob8hJbc3CIVWcNPtI9Vtf4g3z79Ze0BBIdGjIbCiyMsD14LZAVzTNiJb1vxvPXVvaYIydDzg
-	PyG9khKyNxu/Cc00rwFHjxaCQasyPOsfA=
-X-Google-Smtp-Source: AGHT+IEOetk0z4M/6d9ebdfW5x8jDx4XZLzEvCka+bNwZq3unLJPpG99NlPBddRaMwqqPNkdl/9MpQ==
-X-Received: by 2002:a5d:5d0a:0:b0:426:f590:3cab with SMTP id ffacd0b85a97d-42704ca9e0amr8476968f8f.0.1761212455558;
-        Thu, 23 Oct 2025 02:40:55 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898acc63sm2973975f8f.27.2025.10.23.02.40.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 02:40:55 -0700 (PDT)
-Message-ID: <72c4a0a6-3c5e-4cc1-bdd7-c4795a4218a6@linaro.org>
-Date: Thu, 23 Oct 2025 11:40:53 +0200
+	s=arc-20240116; t=1761212512; c=relaxed/simple;
+	bh=x39im17yCpKlBZK/OHzKxjKDvrvbrR9VUmbw5G3Mn5Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nlez+ZeDZEMlynLPcfI88eIRt4edcY3+hL0Zk/ce1GqykcZW57lQgdmadD1pJmtmohRdwF0LiIUYGWoUOSbhebl65CkQGNYT/HK2LAtOIFDihXr8LJqNUU5GYrGcE/nooNc89hQmSfeCKQYsbOkGIzYTso/fd51xVE+VTXitnds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dP9LsCas; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C6C3C116C6
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:41:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761212512;
+	bh=x39im17yCpKlBZK/OHzKxjKDvrvbrR9VUmbw5G3Mn5Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dP9LsCas8r39cetxoBMH1TYsC96yxmMVIvM/r3khzXhORq95c4D/IDRstcDghULeV
+	 l9c/3ytfXNKbI17fEA+6f0I2OmT3ixJnG0XnZmoJwIQKo2lu6XPL4mY9X4ue2CZbIM
+	 Ju28DsF64+CgWglBJpsNsYalbHMnij/yExBbeghbEeohWPFdfRGTpqEZEnvDIU0Xn9
+	 e4eW7pxBbZOdCTsBWOjt4Kdz0Xbmlr1nxS3COtzwpfUF9/oOKWYxjziTVe1pf8/fij
+	 8bCvbwqEw+5gGEJjlbJspMwB8pdkdHhY0gVy9CZL/kUVCx24dYRxxEHpW0MRtFcdcw
+	 HraksUPBlOs7g==
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7c28559bb45so502435a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:41:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXLm2dXihfvRumKzFImVT+qTrDDYnbYmkYwwo4CE+YdS1kn5H4yxlfCQtaziJZYFrcZD6YS9efDWxWkDPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6dyuoSBh3+8JBWJTES/uSPlJXLl9z4QfpGHCV1oPj+nsYLuJM
+	59yMBQUvZslj7DQbCjb6bjyA45JfypmTYy2ZqMCLEqUfZ+qkCIGehmaxCcA9aLayrrnff9XIxSN
+	wCsOk2elvAq+WcKdS/9xbd/3zhNLn1R0=
+X-Google-Smtp-Source: AGHT+IHx6vGcGv+vrMCHVYpCy9BVAaGKKr2CW9FBcS0RiH5DcbhljvnheCDcmlpQzXIY6wqKg6m4mu4Ybp34n+1tPz8=
+X-Received: by 2002:a05:6808:190d:b0:442:9a9f:daa9 with SMTP id
+ 5614622812f47-443a314f730mr11086008b6e.45.1761212511413; Thu, 23 Oct 2025
+ 02:41:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/2] ASoC: codecs: pm4125: Two minor fixes for
- potential issues
-To: Srinivas Kandagatla <srini@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20251023-asoc-regmap-irq-chip-v1-0-17ad32680913@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20251023-asoc-regmap-irq-chip-v1-0-17ad32680913@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251022141434.v3.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
+In-Reply-To: <20251022141434.v3.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 23 Oct 2025 11:41:38 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ieBdfuu_OF5YQsgsgy_L3H-UkVvn+kk45UFDfJSBtj0g@mail.gmail.com>
+X-Gm-Features: AS18NWDdb53hqfTM27k2OD16kpBKtv8BqC3y9LRdXe9K1AoiTPRwUbDpxSMcJ78
+Message-ID: <CAJZ5v0ieBdfuu_OF5YQsgsgy_L3H-UkVvn+kk45UFDfJSBtj0g@mail.gmail.com>
+Subject: Re: [PATCH v3] PCI/PM: Prevent runtime suspend before devices are
+ fully initialized
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Lukas Wunner <lukas@wunner.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 23/10/2025 11:02, Krzysztof Kozlowski wrote:
-> I marked these as fixes, but the issue is not likely to trigger in
-> normal conditions.
-> 
-> Not tested on hardware, please kindly provide tested-by, the best with
-> some probe bind/unbind cycle.
+On Wed, Oct 22, 2025 at 11:15=E2=80=AFPM Brian Norris <briannorris@chromium=
+.org> wrote:
+>
+> Today, it's possible for a PCI device to be created and
+> runtime-suspended before it is fully initialized. When that happens, the
+> device will remain in D0, but the suspend process may save an
+> intermediate version of that device's state -- for example, without
+> appropriate BAR configuration. When the device later resumes, we'll
+> restore invalid PCI state and the device may not function.
+>
+> Prevent runtime suspend for PCI devices by deferring pm_runtime_enable()
+> until we've fully initialized the device.
+>
+> More details on how exactly this may occur:
+>
+> 1. PCI device is created by pci_scan_slot() or similar
+> 2. As part of pci_scan_slot(), pci_pm_init() enables runtime PM; the
+>    device starts "active" and we initially prevent (pm_runtime_forbid())
+>    suspend -- but see [*] footnote
+> 3. Underlying 'struct device' is added to the system (device_add());
+>    runtime PM can now be configured by user space
+> 4. PCI device receives BAR configuration
+>    (pci_assign_unassigned_bus_resources(), etc.)
+> 5. PCI device is added to the system in pci_bus_add_device()
+>
+> The device may potentially suspend between #3 and #4.
+>
+> [*] By default, pm_runtime_forbid() prevents suspending a device; but by
+> design [**], this can be overridden by user space policy via
+>
+>   echo auto > /sys/bus/pci/devices/.../power/control
+>
+> Thus, the above #3/#4 sequence is racy with user space (udev or
+> similar).
+>
+> Notably, many PCI devices are enumerated at subsys_initcall time and so
+> will not race with user space. However, there are several scenarios
+> where PCI devices are created later on, such as with hotplug or when
+> drivers (pwrctrl or controller drivers) are built as modules.
+>
+> [**] The relationship between pm_runtime_forbid(), pm_runtime_allow(),
+> /sys/.../power/control, and the runtime PM usage counter can be subtle.
+> It appears that the intention of pm_runtime_forbid() /
+> pm_runtime_allow() is twofold:
+>
+> 1. Allow the user to disable runtime_pm (force device to always be
+>    powered on) through sysfs.
+> 2. Allow the driver to start with runtime_pm disabled (device forced
+>    on) and user space could later enable runtime_pm.
+>
+> This conclusion comes from reading `Documentation/power/runtime_pm.rst`,
+> specifically the section starting "The user space can effectively
+> disallow".
+>
+> This means that while pm_runtime_forbid() does technically increase the
+> runtime PM usage counter, this usage counter is not a guarantee of
+> functional correctness, because sysfs can decrease that count again.
+>
+> Link: https://lore.kernel.org/all/20251016155335.1.I60a53c170a8596661883b=
+d2b4ef475155c7aa72b@changeid/
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Cc: <stable@vger.kernel.org>
+> Reviewed-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
+> ---
+>
+> Changes in v3:
+>  * Add Link to initial discussion
+>  * Add Rafael's Reviewed-by
+>  * Add lengthier footnotes about forbid vs allow vs sysfs
+>
+> Changes in v2:
+>  * Update CC list
+>  * Rework problem description
+>  * Update solution: defer pm_runtime_enable(), instead of trying to
+>    get()/put()
+>
+>  drivers/pci/bus.c | 3 +++
+>  drivers/pci/pci.c | 1 -
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> index f26aec6ff588..fc66b6cb3a54 100644
+> --- a/drivers/pci/bus.c
+> +++ b/drivers/pci/bus.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/proc_fs.h>
+>  #include <linux/slab.h>
+>
+> @@ -375,6 +376,8 @@ void pci_bus_add_device(struct pci_dev *dev)
+>                 put_device(&pdev->dev);
+>         }
+>
+> +       pm_runtime_enable(&dev->dev);
+> +
+>         if (!dn || of_device_is_available(dn))
+>                 pci_dev_allow_binding(dev);
+>
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index b14dd064006c..f792164fa297 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3226,7 +3226,6 @@ void pci_pm_init(struct pci_dev *dev)
+>         pci_pm_power_up_and_verify_state(dev);
+>         pm_runtime_forbid(&dev->dev);
+>         pm_runtime_set_active(&dev->dev);
 
-The email prefix should be "RFT", not "RFC". I miss here testing...
+Actually, I think that the two statements above can be moved too.
 
-Best regards,
-Krzysztof
+The pm_runtime_forbid() call doesn't matter until runtime PM is
+enabled and it is better to do pm_runtime_set_active() right before
+enabling runtime PM.
+
+> -       pm_runtime_enable(&dev->dev);
+>  }
+>
+>  static unsigned long pci_ea_flags(struct pci_dev *dev, u8 prop)
+> --
 
