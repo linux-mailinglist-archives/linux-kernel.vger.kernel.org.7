@@ -1,221 +1,294 @@
-Return-Path: <linux-kernel+bounces-866032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D0BBFEB02
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:07:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30DFDBFEB44
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 02:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DDF32505440
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B11FA19A23FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 00:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66641EA84;
-	Thu, 23 Oct 2025 00:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0421922615;
+	Thu, 23 Oct 2025 00:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="japWMUgj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFQKLLtt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D75DBA3D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1982FEACD;
+	Thu, 23 Oct 2025 00:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761177970; cv=none; b=bD/xD6xnb56/5Z4oZyivfiioZ7RZ+zlEumgTL3g8EYBW1A9GcnUPy43VFk1UORPYY6r6IOMoYYPONmsj5nBptUU6DAYIhySDa5vdKI8nhkG4DL4vGSxsHKcTnu4yVG79HRC2KpkS2rIGBaCzAEwcEVa3Xmkc7zXTMlpYlt6KXOI=
+	t=1761178152; cv=none; b=jrJeGTumqZIP/nEHS3sObuoWud7gO0P/VI0/wdiD/Zw/S1y1LD/XQik5/zXSvAsE5m4aiXUiu7F1tmyOgUZTlcAQb6e9aj5bXugBbE0gjCZhV0msv16iOiSGR71Uj6yqdmsbOm29MwGknJ75Y2Ya40+59j5VJMf2dGVMYSSMays=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761177970; c=relaxed/simple;
-	bh=VwFu2pqCUART756V66FC3WXoUKMk9AaNAqLUtmNd/0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GlKEaWzLCNFD47nHJ7gbMDMBKb78/vfVWeqeHCQ6xXBGPrn4sWsiHROzbkAIG03aDVgnn6tu3gQh0aVGt7u8u89orHw3V7uX298mW1rGTaBe/5rlimozsvMV9cYj+S1SaAZvIpbRFv3zmaPDJy2AQRiyG9/ihUJLkqLjWy9ik4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=japWMUgj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59MIenmL016177
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:06:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=YwXZ5EJgF3RkMDIp30Ap678K
-	ahXPe1cvGbyvyzD4Fnw=; b=japWMUgjE8nQcrGptptNoSttn8Ogbpv1yYLNr4ha
-	Q39CrCxGNupnXejONRySS/6ELfIh0m6xBTCToB40El5q1c5iRuERXMy/g2dTNY+V
-	2TaiinEnw37yx5DblQNyRgJelyaz743ojzkHd2g7L36bf0dphAouC8fucGznFH1K
-	8W0rrbMDcM2rGXIiLHLi7KUgtwIWA6+aJvKPKG0nvtHgb/3mkSbUguoBRu2SagDi
-	Uvj/zHHpjRC/fkSjxOKR1VQPVj9DnPDlAzqmSiidy8dvIYx8zAZjzzz4zpn4rA4C
-	MszCi3mtVT9tsbQAXoY4FZE6EH6hKRR6/xPSyHr5NmMmmg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xkpsc1un-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:06:06 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4e8adba545aso6018401cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Oct 2025 17:06:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761177965; x=1761782765;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YwXZ5EJgF3RkMDIp30Ap678KahXPe1cvGbyvyzD4Fnw=;
-        b=T2SG1H8ARZGLgkhqLuvu2L1uKJxBegoQOUOUTW4LMBLqsRFOk+UxYxDeFMZh4iEP3E
-         7Y1W5hxqG5soLR9fZ3LDMbpkV4bu7lXURqRJQ3dab7cLDIOMR1/X9xsnQu4/Nmj8zBRC
-         6/dvnRUcpM2ptqHW2/8lnNClL5dUdHUT4ofv31MS7mcct3tZtqQvGbHqiyEv+DJgBp8F
-         E1kq/hmaZXbJqlHOhkLHk5FnZOb0LPHs0RqTvEK2onp7j0jj9KD66reuy3dO+lbmMqDf
-         px26wd+cnauMk0MhNYII98DuQf7SiegF1XaJ4ubT7AEGSJBvfwNqJupVAz41aQZQth1D
-         hh3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXfmtcUpe7GlOu+rxXZSaEhRYHOUj6zSl9AdTkNPqQtvG8pOjha0fX72aPHrLMSB6Ga+pQiFNE0h/6NB8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPTopOnF9OV4xjfaOpsiRcQUhHzYm7j6SEqgWaQALMm770PA9A
-	/JB3kqVAW8ql7ovtmH0bhdnVbB8wuvzReB//cUheh33n0aYnfXhZfiz0/EjpQRVEGugr7NGiCMz
-	B08nbZwfspz4SwSehdM5N57w3Jrd/Jpx2iYlTDNjlonBJLg8XaT8dbMQtb3xW5QHeKmQ=
-X-Gm-Gg: ASbGncsYooxBbJfY0tiSAIzlv64KWdmzy4LqdBPRmQPh+ZT5IDcXFAcM2fuIVLWTfLr
-	2FlkLusKIvleVWa3ABnbYsbqAURQsDQUJDJ5e7kucrkWWaGtJ7BAWwWSHjA9NlmVLpVTm56rqdO
-	miNLv/TAec/KDiPpmNnftjptjR0Tdlok+vmyHkHIIWGVIWXZR57rEYSuGX4PHusdNOIdPQPDeSF
-	5ue+f/w+rBdfPSLPlRqPAJoskO9xQtYlBQgLpP1LIsP7aTvvF60pYH6XQKotQu2f8j56ChNqXE3
-	Ua2Kt19G2xzpDPda3P9wWqvN570qdEkN2OpEG7mbm3HWnNG2lL4cvu7n9e0vHnYjFrfo8a537VA
-	ATf/wB9C4WE7PTvQWUjJ8G+IaDqV0AFJZaN+KZwXeQB07rOnPYfx54q977cgTF85C9KFJPT7vwO
-	BDpat0Eg4kT5w+
-X-Received: by 2002:a05:622a:138e:b0:4e8:a9f6:355 with SMTP id d75a77b69052e-4e8a9f605c3mr220955051cf.72.1761177964894;
-        Wed, 22 Oct 2025 17:06:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEDNjOTVSPDTOLMhvrhjQF/rHxfIIgpodkg14JMuex89C+8dkQsRhvtmM3bkDBHfMKN9H52zw==
-X-Received: by 2002:a05:622a:138e:b0:4e8:a9f6:355 with SMTP id d75a77b69052e-4e8a9f605c3mr220954581cf.72.1761177964404;
-        Wed, 22 Oct 2025 17:06:04 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4adecb3sm237171e87.12.2025.10.22.17.06.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Oct 2025 17:06:02 -0700 (PDT)
-Date: Thu, 23 Oct 2025 03:06:00 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Robert Marko <robimarko@gmail.com>,
-        Das Srinagesh <quic_gurus@quicinc.com>, aiqun.yu@oss.qualcomm.com,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Eugen Hristev <eugen.hristev@linaro.org>
-Subject: Re: [PATCH v2 1/4] dt-bindings: soc: qcom: Add qcom,kaanapali-imem
- compatible
-Message-ID: <mwin3lfvpcwxxhsub2whcpibuayk36f4ljrodvithfygqad5w4@cg4h6peh4v4a>
-References: <20251022-knp-soc-binding-v2-0-3cd3f390f3e2@oss.qualcomm.com>
- <20251022-knp-soc-binding-v2-1-3cd3f390f3e2@oss.qualcomm.com>
- <g2iviaqetgxf5ycz2otzkpmmc4goo7xuyjmttuu254bfzqqvkf@4vybjh4eghpm>
- <4eebcb7d-1eca-4914-915a-d42232233f9f@oss.qualcomm.com>
- <dwfvko3hszsoh4ihnz3qdpsugmocbkrbhosijdw5q3bxh64kuo@o74as2li74px>
- <lz4sbvzfiij3qsa4d7jeblmi2vfubc4ltf435sh6tcs53l6fbq@7f3tfm7yiyjc>
+	s=arc-20240116; t=1761178152; c=relaxed/simple;
+	bh=vCz8WiAq/PiG2iOCDmerY0sUy0nHqJY1FRkBgAlBoEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iMC10QHjbwo4UAtSRcX28SlzKdCNOqpDjORP0cH9L6NWXgfy2a8B9Ubpkutca0KSF4OJ3A08IEIgWOVHw9E4shypdpLSF+/g65bLiE1yUYhCwPr2wbVmF8j26RlHX4xAE5RNeTAqncpMJhouPEFYLyXPIP6TX8ULNTmIpVQyod4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GFQKLLtt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B650C4CEE7;
+	Thu, 23 Oct 2025 00:09:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761178152;
+	bh=vCz8WiAq/PiG2iOCDmerY0sUy0nHqJY1FRkBgAlBoEQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GFQKLLtt4hSpToub39Br6yoKbtONyv6XQOSOd+0sSIzW0KG96XK8TCXqg4ac131io
+	 TNFMvfyoWS5K5aEJAzxCfD8qHLfqpHlLoeF6i0IrGmBgZc11/sz5+X0vL8PHPPHJpC
+	 hT536r2JXoeYKlC3xMVFhlrjk23FMTqKyHR7qvBCd46EQwarSEK4CRAYHZzXRhgKfo
+	 tejGhaIawfC7amIheQT5JdCWBuxLtnxyamJHizG4XkmgUbGZVPNEwOLP/Dt+3hsohk
+	 aDwTcY6Ock7QPQwTsPH/Hi6J4fe2M9i62KQ9AsWPnswp5jxKzB3C3jNxQzwJE9UTdD
+	 YlPnzmZVwanBg==
+Date: Wed, 22 Oct 2025 17:09:09 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Mina Almasry <almasrymina@google.com>, Pavel Begunkov
+ <asml.silence@gmail.com>, netdev@vger.kernel.org, Andrew Lunn
+ <andrew@lunn.ch>, davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Donald
+ Hunter <donald.hunter@gmail.com>, Michael Chan <michael.chan@broadcom.com>,
+ Pavan Chebbi <pavan.chebbi@broadcom.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Stanislav
+ Fomichev <sdf@fomichev.me>, Joshua Washington <joshwash@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>, Jian Shen
+ <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>, Jijie Shao
+ <shaojijie@huawei.com>, Sunil Goutham <sgoutham@marvell.com>, Geetha
+ sowjanya <gakula@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>,
+ hariprasad <hkelam@marvell.com>, Bharat Bhushan <bbhushan2@marvell.com>,
+ Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, Mark
+ Bloch <mbloch@nvidia.com>, Alexander Duyck <alexanderduyck@fb.com>,
+ kernel-team@meta.com, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Joe
+ Damato <joe@dama.to>, David Wei <dw@davidwei.uk>, Willem de Bruijn
+ <willemb@google.com>, Breno Leitao <leitao@debian.org>,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>
+Subject: Re: [PATCH net-next v4 00/24][pull request] Queue configs and large
+ buffer providers
+Message-ID: <20251022170909.70f1d1e7@kernel.org>
+In-Reply-To: <avwfxfpogp7u7ef5wqrfkqsgvzmnytxblwul7e53eaje3zyqyc@7wvlrocyre6j>
+References: <cover.1760364551.git.asml.silence@gmail.com>
+	<20251013105446.3efcb1b3@kernel.org>
+	<CAHS8izOupVhkaZXNDmZo8KzR42M+rxvvmmLW=9r3oPoNOC6pkQ@mail.gmail.com>
+	<20251014184119.3ba2dd70@kernel.org>
+	<CAHS8izOnzxbSuW5=aiTAUja7D2ARgtR13qYWr-bXNYSCvm5Bbg@mail.gmail.com>
+	<20251016184031.66c92962@kernel.org>
+	<avwfxfpogp7u7ef5wqrfkqsgvzmnytxblwul7e53eaje3zyqyc@7wvlrocyre6j>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lz4sbvzfiij3qsa4d7jeblmi2vfubc4ltf435sh6tcs53l6fbq@7f3tfm7yiyjc>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE5MCBTYWx0ZWRfX0qPB6yK04d/E
- YSGqcoe8sVQO/+Eo39ROGsrKM5vFVqG89qQgX5Kxce1D5ReoS50+pa2PvsKZhC+20brfxNj9E+q
- kcaxz+rRnqsbZaaehnd+FCQerHqT80VxVbDwpNtHUJ/rVyV1cSxfJTD7MI5Ia72kkiXYFmIXhO8
- OIBZPxptV034mHJKD+wseWnsLLfB3dDcjkkyQci97DZJ88E0WO5Cb+FFR+zVM067lz1M9nqUF9k
- rVtQpuDGwaae2od8dekNL0Ny3vXaeZcZZfVbztMzljD5YXRVpSgL/5rseKbgiVPEQjWNycJlxAD
- Zl+zkLGpxfBv8w+QLcb+YW70uncGsK+7ApbzjvSnkO2oiLmpPgDnBywRaL/T+PNTXNyo6ojZGbt
- pCVFTGgN7TqmLDXgA+JrY4EnngPcGA==
-X-Authority-Analysis: v=2.4 cv=FbM6BZ+6 c=1 sm=1 tr=0 ts=68f9716e cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
- a=EUspDBNiAAAA:8 a=Cw9dS9RSUmV-52qKxfUA:9 a=CjuIK1q_8ugA:10
- a=a_PwQJl-kcHnX1M80qC6:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: RroXrT481FJlkCkzeTxpUCnYE1K510os
-X-Proofpoint-ORIG-GUID: RroXrT481FJlkCkzeTxpUCnYE1K510os
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 spamscore=0 impostorscore=0 clxscore=1015 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510210190
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 22, 2025 at 05:42:58PM -0500, Bjorn Andersson wrote:
-> On Wed, Oct 22, 2025 at 12:34:58PM +0300, Dmitry Baryshkov wrote:
-> > On Wed, Oct 22, 2025 at 05:05:30PM +0800, Jingyi Wang wrote:
-> > > 
-> > > 
-> > > On 10/22/2025 4:49 PM, Dmitry Baryshkov wrote:
-> > > > On Wed, Oct 22, 2025 at 12:28:41AM -0700, Jingyi Wang wrote:
-> > > >> Document qcom,kaanapali-imem compatible.
-> > > >>
-> > > >> Reviewed-by: Eugen Hristev <eugen.hristev@linaro.org>
-> > > >> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> > > >> ---
-> > > >>  Documentation/devicetree/bindings/sram/qcom,imem.yaml | 1 +
-> > > >>  1 file changed, 1 insertion(+)
-> > > >>
-> > > >> diff --git a/Documentation/devicetree/bindings/sram/qcom,imem.yaml b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
-> > > >> index 6a627c57ae2f..1e29a8ff287f 100644
-> > > >> --- a/Documentation/devicetree/bindings/sram/qcom,imem.yaml
-> > > >> +++ b/Documentation/devicetree/bindings/sram/qcom,imem.yaml
-> > > >> @@ -19,6 +19,7 @@ properties:
-> > > >>        - enum:
-> > > >>            - qcom,apq8064-imem
-> > > >>            - qcom,ipq5424-imem
-> > > >> +          - qcom,kaanapali-imem
-> > > > 
-> > > > Can you use mmio-sram instead?
-> > > > 
-> > > 
-> > > Here is the node: 
-> > > 
-> > > 		sram@14680000 {
-> > > 			compatible = "qcom,kaanapali-imem", "syscon", "simple-mfd";
-> > > 			reg = <0x0 0x14680000 0x0 0x1000>;
-> > > 			ranges = <0 0 0x14680000 0x1000>;
-> > > 
-> > > 			#address-cells = <1>;
-> > > 			#size-cells = <1>;
-> > > 
-> > > 			pil-reloc@94c {
-> > > 				compatible = "qcom,pil-reloc-info";
-> > > 				reg = <0x94c 0xc8>;
-> > > 			};
-> > > 		};
-> > > 
-> > > other qualcomm are also using imem, could you please give more details on why
-> > > we should use mmio-sram here?
+On Wed, 22 Oct 2025 13:17:43 +0000 Dragos Tatulea wrote:
+> On Thu, Oct 16, 2025 at 06:40:31PM -0700, Jakub Kicinski wrote:
+> > On Wed, 15 Oct 2025 10:44:19 -0700 Mina Almasry wrote:  
+> > > I think what you're saying is what I was trying to say, but you said
+> > > it more eloquently and genetically correct. I'm not familiar with the
+> > > GRO packing you're referring to so. I just assumed the 'buffer sizes
+> > > actually posted to the NIC' are the 'buffer sizes we end up seeing in
+> > > the skb frags'.  
 > > 
-> > https://lore.kernel.org/linux-arm-msm/e4c5ecc3-fd97-4b13-a057-bb1a3b7f9207@kernel.org/
+> > I don't think that code path exists today, buffers posted are frags
+> > in the skb. But that's easily fixable.
+> >   
+> > > I guess what I'm trying to say in a different way, is: there are lots
+> > > of buffer sizes in the rx path, AFAICT, at least:
+> > > 
+> > > 1. The size of the allocated netmems from the pp.
+> > > 2. The size of the buffers posted to the NIC (which will be different
+> > > from #1 if the page_pool_fragment_netmem or some other trick like
+> > > hns3).
+> > > 3. The size of the frags that end up in the skb (which will be
+> > > different from #2 for GRO/other things I don't fully understand).
+> > > 
+> > > ...and I'm not sure what rx-buf-len should actually configure. My
+> > > thinking is that it probably should configure #3, since that is what
+> > > the user cares about, I agree with that.
+> > > 
+> > > IIRC when I last looked at this a few weeks ago, I think as written
+> > > this patch series makes rx-buf-len actually configure #1.  
 > > 
+> > #1 or #2. #1 for otx2. For the RFC bnxt implementation they were
+> > equivalent. But hns3's reading would be that it's #2.
+> > 
+> > From user PoV neither #1 nor #2 is particularly meaningful.
+> > Assuming driver can fragment - #1 only configures memory accounting
+> > blocks. #2 configures buffers passed to the HW, but some HW can pack
+> > payloads into a single buf to save memory. Which means that if previous
+> > frame was small and ate some of a page, subsequent large frame of
+> > size M may not fit into a single buf of size X, even if M < X.
+> > 
+> > So I think the full set of parameters we should define would be
+> > what you defined as #1 and #2. And on top of that we need some kind of
+> > min alignment enforcement. David Wei mentioned that one of his main use
+> > cases is ZC of a buffer which is then sent to storage, which has strict
+> > alignment requirements. And some NICs will internally fragment the
+> > page.. Maybe let's define the expected device behavior..
+> > 
+> > Device models
+> > =============
+> > Assume we receive 2 5kB packets, "x" means bytes from first packet,
+> > "y" means bytes from the second packet.
+> > 
+> > A. Basic-scatter
+> > ----------------
+> > Packet uses one or more buffers, so 1:n mapping between packets and
+> > buffers.
+> >                        unused space
+> >                       v
+> >  1kB      [xx] [xx] [x ] [yy] [yy] [y ]
+> > 16kB      [xxxxx            ] [yyyyy             ]
+> > 
+> > B. Multi-packet
+> > ---------------
+> > The configurations above are still possible, but we can configure 
+> > the device to place multiple packets in a large page:
+> >  
+> >                  unused space
+> >                 v
+> > 16kB, 2kB [xxxxx |yyyyy |...] [..................]
+> >       ^
+> >       alignment / stride
+> > 
+> > We can probably assume that this model always comes with alignment
+> > cause DMA'ing frames at odd offsets is a bad idea. And also note
+> > that packets smaller that alignment can get scattered to multiple
+> > bufs.
+> > 
+> > C. Multi-packet HW-GRO
+> > ----------------------
+> > For completeness, I guess. We need a third packet here. Assume x-packet
+> > and z-packet are from the same flow and GRO session, y-packet is not.
+> > (Good?) HW-GRO gives us out of order placement and hopefully in this
+> > case we do want to pack:
+> > 
+> > 16kB, 2kB [xxxxxzzzzz |.......] [xxxxx.............]
+> >                      ^
+> >       alignment / stride
+> >   
+>                                    ^^^^^
+>                                    is this y?
+
+Yes, my bad
+
+> Not sure I understand this last representation: if x and z are 5kB
+> packets each and the stride size is 2kB, they should occupy 5 strides:
 > 
-> I considered exactly this when I wrote the binding back then...
+> 16kB, 2kB [xx|xx|xz|zz|zz|.......] [yy|yy|y |............]
 > 
-> But the binding defines mmio-sram as "Simple IO memory regions to be
-> managed by the genalloc API." and the Linux sram driver follows that and
-> registers a gen_pool across the sram memory region.
+> I think I understand the point, just making sure that I got it straight.
+> Did I?
+
+Yes, that's right. I was trying to (poorly) express that the alignment
+is not:
+
+  16kB, 2kB [xx|xx|x |zz|zz|z |.....] [yy|yy|y |............]
+
+IOW that HW-GRO is expected to pack (at least by default).
+
+> > End of sidebar. I think / hope these are all practical buffer layouts
+> > we need to care about.
+> > 
+> > 
+> > What does user care about? Presumably three things:
+> >  a) efficiency of memory use (larger pages == more chance of low fill)
+> >  b) max size of a buffer (larger buffer = fewer iovecs to pass around)
+> >  c) alignment
+> > I don't think we can make these map 1:1 to any of the knobs we discussed
+> > at the start. (b) is really neither #1 (if driver fragments) nor #2 (if
+> > SW GRO can glue back together).
+> > 
+> > We could simply let the user control #1 - basically user control
+> > overrides the places where driver would previously use PAGE_SIZE.
+> > I think this is what Stan suggested long ago as well.
+> >
+> > But I wonder if user still needs to know #2 (rx-buf-len) because
+> > practically speaking, setting page size >4x the size of rx-buf-len
+> > is likely a lot more fragmentation for little extra aggregation.. ?  
+> So how would rx-buf-len be configured then? Who gets to decide if not the
+> user: the driver or the kernel?
+
+Driver.
+
+> I don't understand what you mean by "setting page size >4x the size of
+> rx-buf-len". I thought it was the other way around: rx-buf-len is an
+> order of page size. Or am I stuck in the mindset of the old proposal?
+
+Yes, rx-buf-len is a good match for model A (basic-scatter).
+But in other models it becomes a bit difficult to define the exact
+semantics. 
+
+> > Tho, admittedly I think user only needs to know max-rx-buf-len
+> > not necessarily set it.
+> > 
+> > The last knob is alignment / reuse. For allowing multiple packets in
+> > one buffer we probably need to distinguish these cases to cater to
+> > sufficiently clever adapters:
+> >  - previous and next packets are from the same flow and
+> >    - within one GRO session
+> >    - previous had PSH set (or closed the GRO for another reason,
+> >      this is to allow realigning the buffer on GRO session close)
+> >   or
+> >    - the device doesn't know further distinctions / HW-GRO
+> >  - previous and next are from different flows
+> > And the actions (for each case separately) are one of:
+> >  - no reuse allowed (release buffer = -1?)
+> >  - reuse but must align (align to = N)
+> >  - reuse don't align (pack = 0)
+> >   
+> I am assuming that different HW will support a subset of these
+> actions and/or they will apply differently in each case (hence the 4
+> knobs?).
+
+Yup! All the knobs are optional, we can also define extra ones if use
+cases come up and HW can support it. Hopefully we can get selftests 
+to validate the devices behave as configured.
+
+> For example, in mlx5 the actions would work only for the second case
+> (at the end of a GRO session).
+
+Nice, I think that's the most useful one.
+
+Not sure whether we should define all 4 from the start, or just
+document them as a "plan", what the implicit default is expected 
+to be (e.g. HW-GRO packs within a session) and then add as HW/users 
+come around.
+
+> > So to restate do we need:
+> >  - "page order" control
+> >  - max-rx-buf-len
+> >  - 4 alignment knobs?
+> >  
+> We do need at least 1 alignment knob.
 > 
-> I believe IMEM is SRAM (it's at least not registers), but its memory
-> layout is fixed, so it's not a pool in any form.
-> 
-> 
-> What Krzysztof says makes sense, but rather than just throwing a yak at
-> Jingyi, it would be nice if you provided some guidance on how you would
-> like to see this turn out.
+> > Corner cases
+> > ============
+> > I. Non-power of 2 buffer sizes
+> > ------------------------------
+> > Looks like multiple devices are limited by width of length fields,
+> > making max buffer size something like 32kB - 1 or 64kB - 1.
+> > Should we allow applications to configure the buffer to 
+> > 
+> >     power of 2 - alignment 
+> > 
+> > ? It will probably annoy the page pool code a bit. I guess for now
+> > we should just make sure that uAPI doesn't bake in the idea that
+> > buffers are always power of 2.  
+> What if the hardware uses a log scheme to represent the buffer
+> length? Then it would still need to align down to the next power of 2?
 
-I tested, pretty same approach seems to work:
+Yes, that's fine, pow-of-2 should obviously work. I was trying to say
+that we shouldn't _require_ power-of-2 in uAPI, because devices with
+are limited to (power-of-2 - 1) would strand ~half of the max length.
 
-	sram@14680000 {
-		compatible = "mmio-sram";
-		reg = <0x0 0x14680000 0x0 0x1000>;
-		ranges = <0 0 0x14680000 0x1000>;
+> > II. Fractional page sizes
+> > -------------------------
+> > If the HW has max-rx-buf-len of 16k or 32k, and PAGE_SIZE is 64k
+> > should we support hunking devmem/iouring into less than a PAGE_SIZE?  
 
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		pil-reloc-sram@94c {
-			compatible = "qcom,pil-reloc-info";
-			reg = <0x94c 0xc8>;
-		};
-	};
-
-
--- 
-With best wishes
-Dmitry
+Thanks for the comments!
 
