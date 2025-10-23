@@ -1,109 +1,128 @@
-Return-Path: <linux-kernel+bounces-866397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1BEBBFFA92
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:40:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C2ABFFA5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E6A74FBC3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:36:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A62303AD42B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC7527A465;
-	Thu, 23 Oct 2025 07:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0A72C15AE;
+	Thu, 23 Oct 2025 07:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EpQxEKn9"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KC6vHDl5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0329EDDC3
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EFC2C0F81;
+	Thu, 23 Oct 2025 07:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761204960; cv=none; b=Lw6LEMujHXAo6FAqJv5tcc2dX3iqOheOdhiePv+lqCGW4Wx6U4e06ZKnx364WcWulPnf93O34Zt3oleXPBoB0FclOcSzT/WaOXZNfuOIguttfizdfKTlOtGtgqoXQYYZd6KbW4m7rbI0OR+hOFi7m76JDHQPW8BbqUjEkp2gxBM=
+	t=1761204964; cv=none; b=BoWLFegsBc3AatQdfeY6y5rB5fa3aUSn2ISM6920Yd1GMqmn6aUhFbMKagK0puh1LJlpBKPlkBWODRg43bu+vH3OE4wziXeytMPvFkSZr4WeH5mVSNvCyV/Lq7S7Qr8WHgJ4km5PaSP24raIwIdLADHrmJ4oE7V+yGHvqCNGDQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761204960; c=relaxed/simple;
-	bh=nwJyJEU5maxkZelRR+G61NdovwyL4hcRCCkUlipo/Ak=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KHrPV3liOVWeF2y7VeDgPw7tJia2Fh0Pj+Iq5ZJV2AwfwZTm1+rsqUue4r19XCO6MOtLthqSKGBr/cZQ1u4vnw/YOSucB/+SI+i/vQBC3oyOKRkquQvXYuubhCG+dNDB0wLE4pWY9HcCHFMnMyPiEWj17mRWBHYTe9b/msWJNJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EpQxEKn9; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-475c1f433d8so3475355e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:35:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761204957; x=1761809757; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nwJyJEU5maxkZelRR+G61NdovwyL4hcRCCkUlipo/Ak=;
-        b=EpQxEKn9gRK1edoTN/jsZ8sTeh4A5timaj6T4SZfo6lB7cKPzwm2oEiWYOfdR1o9TO
-         abMDSBpKk2yvoaQdUnTNThDBNO8DBGJPiOe9mnt8wVhsW2vqwOSli+ZjNxxVCoGwMkQk
-         UNDnWYN2hTwQMPZgZ+LythekKSUKJV1lW4OSkJiPqycFfQ/FIQUxs5hBUtdfmnYl/1iB
-         GfwvUv0eEBtrTarkshTrtbDDBxn47UA/JFzBh4iV1c5LL70S1GAYjwMe7CfcygcLBm3g
-         8amRGCiXqyuDbh4P5cgJmk9Pc8mOnmqkIW1optlS8H9lM8A6I9H2cDu/R0EnfJS1mky+
-         FhQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761204957; x=1761809757;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nwJyJEU5maxkZelRR+G61NdovwyL4hcRCCkUlipo/Ak=;
-        b=MVnJWxtLqVfWuR0kBTp4WRiP5cVirEkQbViKzWwGJFoqvp1fj9g4pc56gRaGAkXfuO
-         l2Fd4HK9/QNQwE1QDrApYFVkv7hAQvb5BoXlQaykUa6FHOgOUql0xY6YxSBWyMUaR1e9
-         gmFGjuuYob+DgfRFOf005MLyiTS6dzE1nin4EjDxte2gaOOS1DzYrChHqjE+QMpJP3Q+
-         IyppIv20hRXqSItjZPtabi15dMkKp4CgLfp2Hf6MkdX+zsjnIvbtHalfY309Q5EQ5ZHt
-         8t7197OHt+pEHyiZv5teD/Vw2b/acHF/rjsAcdkb2YMV8CFRe09qWXhwlnKEE3AXMEsv
-         v9Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCVO1brBrgNZHrbyxx4sSTO9OzkBJH4VZp9rlGmsiMm4UF9Mcj3N4LStUAkOz1AwUzo2ywbjRR01FoJN0eQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJWAq1cxrQj6I3Dav3v6PQ9f8lDfp/2wRQyLmH1st4zrtM3rdS
-	whw68iq+GW7COsYxJBvJEDVd7NkidCF12lJqd1nxwXRJk7bPBURCL+SZvKD9zXDl+YA=
-X-Gm-Gg: ASbGncuAH6v2pQoDqzMQtRbbjNxuxStftGr2YzL28MCKaceSoby5ZTWuh2hIpWewhFW
-	wfW8svrnYeuuxfJqicdfEHe720nxb5XQ2bcZutCa5SekcpZC2NAnDtQexQopxIqHknPDV/zHsfH
-	rpBl2/vvv9sCiaNu0PyEW1hNt99kQvo3dc6oX0f1bLiOYZzqEod3/FaQDbIi4vLJtJKr+DPugLO
-	4qMdsPhLQBuqlUbcmxjTluCmjMERTpEhNtuKrcOfKQtVGYpAqPCRK5kJ1/HhL9QhBtLxAiJfgzX
-	oAbZAGL5mSpEOMW8D+bOxMvDpLoAVa8Z3Tw3RnLQYGqqhTHY8NsuXtWK3yeELsUH7GFveBkqBqX
-	3SB/jszSYyDNvBT1QHPh3IQhFOpPz0pwLei31DLdI0uZAXnt/Lv6r53GeCvn8ZL3PvKEBW84wFU
-	oton/4jqCC
-X-Google-Smtp-Source: AGHT+IFK/1BB2uEat5p1r8woPESD/DsfHS90lenaxSW5z/swFxmF+0BESbOT8FwArT5vdTSsYQ4A0w==
-X-Received: by 2002:a05:600c:621b:b0:46e:48fd:a1a9 with SMTP id 5b1f17b1804b1-4711791fbbbmr177250155e9.33.1761204957225;
-        Thu, 23 Oct 2025 00:35:57 -0700 (PDT)
-Received: from [10.11.12.107] ([79.115.63.145])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47494ae5510sm53341735e9.3.2025.10.23.00.35.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 00:35:56 -0700 (PDT)
-Message-ID: <0972738d-0c64-4d9d-9867-895222a8f535@linaro.org>
-Date: Thu, 23 Oct 2025 08:35:55 +0100
+	s=arc-20240116; t=1761204964; c=relaxed/simple;
+	bh=2pljTtaPlENS87LA/GONT1o4bDh6GkU5GHWm7MU7xBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ri7jLrr+1/d+iGFLKqQJy3LtyrJ9CNH8IMSk3sRnNtj/1TMWfdGN7+1/ReCk9MOdAx/icCr5tHj13mj/6uEUD9ghtwSAj14oSikUTYXf8kK/sNJDVOdA81YaUrShZP+N64wui5kVygogesXF1Ibsm5Ve+c4eycUNJ/XdkK52iYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KC6vHDl5; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761204962; x=1792740962;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2pljTtaPlENS87LA/GONT1o4bDh6GkU5GHWm7MU7xBU=;
+  b=KC6vHDl57+6Jcwy2P9R3D5jxDEYfIPibHimVBzZfv/Gg/c0R8s4NbWup
+   04J+Uh4ULMdAX5eiTiTniQ/G3wU+n37PgUVwEf1JaOh2Vb8/YWgRBD+1/
+   Kg/bvHkJKol4RcOyECCqL+mRJaJ6cbbzMD/QeVXwZWUnXhO+hZhnvx1qV
+   RpemqJEkVVMQ9H7Jl4Tn5X5dQXV+kQfhwNwUXx0cdQT5i02PnEuOwKjIQ
+   i9IveBFA9bbMtm8Fy+1+0RGJAla1jZr8QrybfvlV8xiGRYFyJZYci8Iiw
+   1griukSTgE6TiLBGxGF2Xs09vWvFDjDYNjxV5YMFqPDzIY/olFoVhLxUx
+   A==;
+X-CSE-ConnectionGUID: A/3DQxNZT6e5HSEq2AZkPw==
+X-CSE-MsgGUID: FyorJxB8TuaJF7PalffsHA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74484625"
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="74484625"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 00:36:02 -0700
+X-CSE-ConnectionGUID: kWBtQPJMQS2kuQJkY0IlNw==
+X-CSE-MsgGUID: 5pVIH9xvSs+Wqf+6MXzYbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="183981247"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.163])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 00:36:00 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vBprZ-00000001sFx-2efz;
+	Thu, 23 Oct 2025 10:35:57 +0300
+Date: Thu, 23 Oct 2025 10:35:57 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: alexandre.belloni@bootlin.com, thierry.reding@gmail.com,
+	jonathanh@nvidia.com, linux-rtc@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rtc: tegra: Add ACPI support
+Message-ID: <aPna3Q9L4Rc9Ufxt@smile.fi.intel.com>
+References: <20251022063645.765599-1-kkartik@nvidia.com>
+ <aPkPkHr0Hp_MabPx@smile.fi.intel.com>
+ <f4defdc9-2cc0-45a0-a391-cb8678eb1b23@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] mtd: spi-nor: sfdp: introduce smpt_read_dummy fixup
- hook
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Takahiro Kuwano <tkuw584924@gmail.com>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
- Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
-References: <20251022-s25fs-s-smpt-fixup-v1-0-ce26d4084b2d@infineon.com>
- <20251022-s25fs-s-smpt-fixup-v1-1-ce26d4084b2d@infineon.com>
- <59c3d45b-13ff-4393-a87c-f0504f224acb@linaro.org>
-Content-Language: en-US
-In-Reply-To: <59c3d45b-13ff-4393-a87c-f0504f224acb@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4defdc9-2cc0-45a0-a391-cb8678eb1b23@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
+
+On Thu, Oct 23, 2025 at 12:14:13PM +0530, Kartik Rajput wrote:
+> On 22/10/25 22:38, Andy Shevchenko wrote:
+> > On Wed, Oct 22, 2025 at 12:06:45PM +0530, Kartik Rajput wrote:
+
+...
+
+> > > -     info->clk = devm_clk_get(&pdev->dev, NULL);
+> > > -     if (IS_ERR(info->clk))
+> > > -             return PTR_ERR(info->clk);
+> > > +     if (dev_of_node(&pdev->dev)) {
+> > > +             info->clk = devm_clk_get(&pdev->dev, NULL);
+> > > +             if (IS_ERR(info->clk))
+> > > +                     return PTR_ERR(info->clk);
+> > > +     }
+> > > 
+> > >        ret = clk_prepare_enable(info->clk);
+> > 
+> > Since we still call CLK APIs unconditionally here, shouldn't be the whole
+> > approach just to move to _optional() CLK API?
+> > 
+> >          info->clk = devm_clk_get_optional(&pdev->dev, NULL);
+> > 
+> > I haven't checked the code below, but maybe even one can incorporate _enabled
+> > to this as well (in a separate change as it's not related to this patch
+> > directly).
+> 
+> The reason I did not use the _optional API is because the clocks are required
+> for the device-tree. Therefore, it must fail if clocks are not provided on
+> device-tree boot.
+
+I see, please mention this in the commit message. And perhaps add a patch to
+convert to devm_clk_get_enabled().
+
+On top of that you also can convert driver to use pm_sleep_ptr() and drop ugly
+ifdeffery. But this is really out of scope, and up to you to decide.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-On 10/23/25 8:25 AM, Tudor Ambarus wrote:
-> The patch looks okay to me.
-with a bit of more context into the commit message, you can also add:
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
