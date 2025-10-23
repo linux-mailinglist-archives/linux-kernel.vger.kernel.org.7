@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-867087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EB0C018C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:53:02 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DC5C018B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B12C2504783
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:52:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C0D3835AAF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BB031A072;
-	Thu, 23 Oct 2025 13:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4551931E10F;
+	Thu, 23 Oct 2025 13:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezmCck8H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0Ghzo5q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF65315D5B;
-	Thu, 23 Oct 2025 13:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E47F30CDA9;
+	Thu, 23 Oct 2025 13:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761227516; cv=none; b=Et6K6rAcNUrKy5l4ZavkvWKhn6QRzNthNcv2cbgyl/xzW4PGiwIlq5iu6Su8vG6q0o1nko2v2GojiUeG9BkMOpiweYnFoxwCh6DcNTc9Kde6mWos4fvJTK6KQmQy7dclH90gOLH+JHO989Iw5HsdSJrlfeFFbyx92eI+SOBXnYw=
+	t=1761227518; cv=none; b=JAFbYJjI84yExhvEYsyUiXYnvHx9ThU03PHcsJPsx2LfWqYSBaxSF7FNPi0RJFyZsB0SKgrvwlu0WiQQp74k0vgR44sAeUxUCylOA/tjFu/sTP/+tYecH0IEsJKUAAXb/1InprHyljb6pQAYGnlWT1U0N7idMILmNMti3e9xLJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761227516; c=relaxed/simple;
-	bh=DXeHBjKEeneTJZlQx6fpzgXCOREPFNRGyyrxXvEZiNk=;
+	s=arc-20240116; t=1761227518; c=relaxed/simple;
+	bh=T6Q2aEP5PbzrJSzaFyZjXRnYX5iQKPyJsLn+R8QxcLg=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=tN9nvcUDddolaUsVdm6ysmY90Dqrm6mZbrioPWlq/J8L7w0F2Uo82dvRuimK92JA/zdMbxJLWtn9dtSKhGLX8iWc7mhv+iON+bEz+qSQu/eXYsRKywLY98rCkInjQIWpfQmm1a22Q3hfH6lDOYy8ZThJqFY6f4nJLoXfYK76ZGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ezmCck8H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 323C2C4CEE7;
-	Thu, 23 Oct 2025 13:51:56 +0000 (UTC)
+	 Message-Id:Subject; b=H5gpwuHBAyLffvNZw5Nzb6UBTSEUx9l1pdS2sSv04ghc0cblpxOTJxGawTWXlZ2LF9hWh8ZZJZt6xbm+w8bKGYGSStXqokvJQpnwYX3dN3kRhq1FlwpAayAVJv5W0Y/RSbwO00Kx1oHTmx6efUFu1wHdVdgEVnuWUYozVcpegng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0Ghzo5q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8300C4CEF7;
+	Thu, 23 Oct 2025 13:51:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761227516;
-	bh=DXeHBjKEeneTJZlQx6fpzgXCOREPFNRGyyrxXvEZiNk=;
+	s=k20201202; t=1761227518;
+	bh=T6Q2aEP5PbzrJSzaFyZjXRnYX5iQKPyJsLn+R8QxcLg=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ezmCck8HjERzYtIbyeAk8k8JFFC7WAL+MzMBmlQHocwoefe7nXgZFuSEJV7oHoNys
-	 IJyxU4mnGm/kkFZMoj96m3/Cs8Z5GbcPhGHaqOBBgHWoSPpnHnqyNyFFDB68QmZttj
-	 I2fN+FSPIb4Zy/ld+mJyvpcCRiDJm+P67+lzeFGuqopXhAs5Jn7jPmCumUZMzViHnJ
-	 +CcYunoaVNrcd6BqZ+ajONsql5vxd3s8Y2G/gv5YDWXNU9ZJFEXoJ667oLAiiZn2Nm
-	 i1XYz/fp29FGwj+xFwLisKahgfuRoM454NpgEs0ef+fYwq/FozPmLCX7eBlMb9WUEd
-	 DFM6RI3YbNDzw==
-Date: Thu, 23 Oct 2025 08:51:54 -0500
+	b=t0Ghzo5qgQYwPXyP0oYkOO/O8+exGyUn//IoCTCfh9DNSzMI/nHti2h+v9O+FYjiA
+	 FYzc+3IPNFADvafz8atB6AuTDDH/mm7zlsoyXh65mgkTm+ia0/UAJZ45BPsZpXrmyz
+	 I+Wt9D7x2ziiwuVY7oZG+MmbgVDpAPyAiY103hrasBZ5R5dMLCnmPBeGPQG1Vw/5kC
+	 P4pHsOWhDI0lXHyUKRBnW6YGFrLqxG2Kstea6cV4lLuBZFcwbpDOzAgOrR5y3tYxIV
+	 rVOFFt/PFr/vfvFUoyxRBKLh2XShLaXyhClLDtoW3okHnojpVu8hdc0ihoAkf91f76
+	 63uioq58gMQgA==
+Date: Thu, 23 Oct 2025 08:51:56 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,34 +50,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20251022133616.74492-2-krzysztof.kozlowski@linaro.org>
-References: <20251022133616.74492-2-krzysztof.kozlowski@linaro.org>
-Message-Id: <176122700613.2723214.10060174362415881339.robh@kernel.org>
-Subject: Re: [PATCH] arm64: dts: toshiba: tmpv7708: Align node names with
- DT bindings
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, Lei Xu <lei.xu@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Daniel Baluta <daniel.baluta@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org, 
+ Danwei Luo <danwei.luo@nxp.com>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+ Fabio Estevam <festevam@gmail.com>, Haidong Zheng <haidong.zheng@nxp.com>
+To: Fabian Pflug <f.pflug@pengutronix.de>
+In-Reply-To: <20251022-fpg-nxp-imx93-frdm-v3-0-03ec40a1ccc0@pengutronix.de>
+References: <20251022-fpg-nxp-imx93-frdm-v3-0-03ec40a1ccc0@pengutronix.de>
+Message-Id: <176122700666.2723251.16850924180146120380.robh@kernel.org>
+Subject: Re: [PATCH v3 0/2] Add devicetree for NXP i.MX93 FRDM board
 
 
-On Wed, 22 Oct 2025 15:36:17 +0200, Krzysztof Kozlowski wrote:
-> DT bindings expect node names to follow certain pattern, dtbs_check
-> warnings:
+On Wed, 22 Oct 2025 16:05:21 +0200, Fabian Pflug wrote:
+> I could not test all features of the board, therefore a lot of stuff is
+> omitted from the devicetree. but this is enough to have the board boot
+> via eMMC or SD-Card, debug via debug USB connector and have a network
+> connection.
 > 
->   tmpv7708-rm-mbrc.dtb: pmux@24190000 (toshiba,tmpv7708-pinctrl):
->     'pwm_mux' does not match any of the regexes: '-pins$', '^pinctrl-[0-9]+$'
->   tmpv7708-rm-mbrc.dtb pmux@24190000 (toshiba,tmpv7708-pinctrl):
->     $nodename:0: 'pmux@24190000' does not match '^(pinctrl|pinmux)(@[0-9a-f]+)?$'
->   tmpv7708-rm-mbrc.dtb: wdt@28330000 (toshiba,visconti-wdt):
->     $nodename:0: 'wdt@28330000' does not match '^(timer|watchdog)(@.*|-([0-9]|[1-9][0-9]+))?$'
+> The FRDM i.MX 93 development board is a low-cost and compact development
+> board featuring the i.MX93 applications processor.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> It features:
+> - Dual Cortex-A55
+> - 2 GB LPDDR4X / LPDDR4
+> - 32 GB eMMC5.1
+> - MicroSD slot
+> - GbE RJ45 x 2
+> - USB2.0 1x Type C, 1x Type A
+> 
+> This file is based upon the one provided by nxp in their own kernel and
+> yocto meta layer for the device, but adapted for mainline.
+> 
+> Signed-off-by: Fabian Pflug <f.pflug@pengutronix.de>
 > ---
->  arch/arm64/boot/dts/toshiba/tmpv7708.dtsi      | 4 ++--
->  arch/arm64/boot/dts/toshiba/tmpv7708_pins.dtsi | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
+> Changes in v3:
+> - Add Signed-off for original NXP contributors.
+> - Fixed whitespace errors (Thanks Francesco Valla)
+> - Added mu1 with status okay (Thanks Francesco Valla)
+> - Removed address cells from lpi2c3 (Thanks Frank Li)
+> - Configure pin for watchdog (Thanks Peng Fan)
+> - Updated regulator config
+> - Configure i2c0
+> - Link to v2: https://lore.kernel.org/r/20250526-fpg-nxp-imx93-frdm-v2-0-e5ad0efaec33@pengutronix.de
+> 
+> Changes in v2:
+> - 1/2: remove CAN node, as it has not been tested.
+> - 1/2: ran dt-format (Thanks Frank Li)
+> 	But also reordered some nodes afterwards again to have
+> 	regulator-min before regulator-max, have the pinmux at the end
+> 	of the file, and have the regulator-name as the first node
+> 	inside the regulators.
+> 	Re-added comments, that were deleted.
+> - 1/2: changes subjet to ar64:dts (Thanks Fabio Estevan)
+> - 1/2: removed reg_vdd_12v (Tanks Fabio Estevan)
+> - 1/2: added aliases for rtc, emmc, serial (Thanks Fabio Estevan)
+> - reordered the series to have documentation before dts. (Thanks
+>   Krzystof Kozlowski)
+> - Link to v1: https://lore.kernel.org/r/20250523-fpg-nxp-imx93-frdm-v1-0-546b2d342855@pengutronix.de
+> 
+> ---
+> Fabian Pflug (2):
+>       dt-bindings: arm: fsl: add i.MX93 11x11 FRDM board
+>       arm64: dts: freescale: add support for NXP i.MX93 FRDM
+> 
+>  Documentation/devicetree/bindings/arm/fsl.yaml     |   1 +
+>  arch/arm64/boot/dts/freescale/Makefile             |   1 +
+>  arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 658 +++++++++++++++++++++
+>  3 files changed, 660 insertions(+)
+> ---
+> base-commit: 552c50713f273b494ac6c77052032a49bc9255e2
+> change-id: 20250523-fpg-nxp-imx93-frdm-5cc180a1fda9
+> 
+> Best regards,
+> --
+> Fabian Pflug <f.pflug@pengutronix.de>
+> 
+> 
 > 
 
 
@@ -96,23 +149,17 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.18-rc1-10-gc35cf4fe4b85 (exact match)
- Base: tags/v6.18-rc1-10-gc35cf4fe4b85 (use --merge-base to override)
+ Base: 552c50713f273b494ac6c77052032a49bc9255e2 (use --merge-base to override)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/toshiba/' for 20251022133616.74492-2-krzysztof.kozlowski@linaro.org:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20251022-fpg-nxp-imx93-frdm-v3-0-03ec40a1ccc0@pengutronix.de:
 
-arch/arm64/boot/dts/toshiba/tmpv7708-visrobo-vrb.dtb: pinctrl@24190000 (toshiba,tmpv7708-pinctrl): spi0-pins:groups: ['spi0_grp', 'spi0_cs0_grp'] is too long
-	from schema $id: http://devicetree.org/schemas/pinctrl/toshiba,visconti-pinctrl.yaml
-arch/arm64/boot/dts/toshiba/tmpv7708-visrobo-vrb.dtb: pinctrl@24190000 (toshiba,tmpv7708-pinctrl): spi0-pins:groups: ['spi0_grp', 'spi0_cs0_grp'] is too long
-	from schema $id: http://devicetree.org/schemas/pinctrl/toshiba,visconti-pinctrl.yaml
-arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dtb: pinctrl@24190000 (toshiba,tmpv7708-pinctrl): pwm-pins:groups: ['pwm0_gpio16_grp', 'pwm1_gpio17_grp', 'pwm2_gpio18_grp', 'pwm3_gpio19_grp'] is too long
-	from schema $id: http://devicetree.org/schemas/pinctrl/toshiba,visconti-pinctrl.yaml
-arch/arm64/boot/dts/toshiba/tmpv7708-rm-mbrc.dtb: pinctrl@24190000 (toshiba,tmpv7708-pinctrl): pwm-pins:groups: ['pwm0_gpio16_grp', 'pwm1_gpio17_grp', 'pwm2_gpio18_grp', 'pwm3_gpio19_grp'] is too long
-	from schema $id: http://devicetree.org/schemas/pinctrl/toshiba,visconti-pinctrl.yaml
+arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dtb: hdmi@4c (ite,it6263): 'ports' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/ite,it6263.yaml
+arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dtb: hdmi@4c (ite,it6263): 'data-mapping' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/ite,it6263.yaml
 
 
 
