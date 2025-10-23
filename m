@@ -1,184 +1,241 @@
-Return-Path: <linux-kernel+bounces-866811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A870DC00B2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:23:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15DD0C00B57
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9BB1A61ED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:23:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A9034F494B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73082FB627;
-	Thu, 23 Oct 2025 11:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DED730DD22;
+	Thu, 23 Oct 2025 11:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ke2f1D9k"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JXG23Q2/"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66ACD2DECB1
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 11:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663A32FB627;
+	Thu, 23 Oct 2025 11:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761218595; cv=none; b=dluycwhg1pDATZX8JkdBZ4aGlbiBD99zwFNOWNK/+qMhgejZNpY+nch/o6r6CCrUvBy7RpnH/iMp3VIPb1UwQxWXJertjiPKOYf1+AKilOahotBdbUWflHZXOO+M9aDYx88RRN748ZRUZpOVFnvKAnghhOw/TBwS1y0ZiOJn5jg=
+	t=1761218716; cv=none; b=dAdFQ+2dTkqv//Tq0gGWkWmF8zPFQKlJfABUsmspIhLuTbCojOr9h2dMqQr0MrTVPh2vNc5gQT8CaZgdYfROeLyATDn04icexEnRZA6dvJGI287NEGcMlvaQAKI+LTpZaIEfr4N/MwYKRni/bjX6UXuHYJeOmKw/Ky1JFDk+Bbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761218595; c=relaxed/simple;
-	bh=EejjgDdqkl4dBbr+6AbIsNlOUfcuNaN1bBULFXf19rU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hy92IgWiRynlfrMRfUk91QgMsPGcxlLZ3qZAz0wv1LG1I1MZgaOeaoRjP5oR2tRRBblcnFiGDMGN9/9UM6rr3MhCSmIPHezNHJtq4++9A/gmiWvYEmn421F/f6+D+JVwrLDBm/ig4sftnc5w4gtDLexablGl46hkZVg1PFrbvwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ke2f1D9k; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so473841f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 04:23:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1761218591; x=1761823391; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nDB7YhxbGJEC3m48FGyuTUiZ3NJbd0w6RqSoQlZXD2s=;
-        b=ke2f1D9k+NzuFAjLYXCRVzkDbFZelDzS6YTAq0oFB2X558cZegQ1PnqhxvtPyIUrtH
-         v4vkRmT8GjXcIun0l0dR9SWb6vvj+DsIpkuwCdsru1hhup1jRIQ7+I2jL5rlEKHFA/PI
-         YeMJXuj0RQ6t3PLQnoTNA/d/rizUFebpxLZG1UD5ac5SHf4Nb9/ttWmTPZWOedsAe37z
-         KBpFy+wOH9IZHzx1O4KuEa8WizZ2btQfmmpahTXEEcsIlR9LrOb5ncOb4g05GY2/svgp
-         uxAfa9pbwU/vBFwRj+jsGceuqsonxcRpOGPwBsydrBlTKwfxE/I9eJyIEKAN4ZbNNp+0
-         UV7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761218591; x=1761823391;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nDB7YhxbGJEC3m48FGyuTUiZ3NJbd0w6RqSoQlZXD2s=;
-        b=meabIAJIZHVG2tl5pqwNwdyvqf5dNzhrg8uA09XNOPx1XVFwRC+PRNUD7Z6D6yvHqM
-         BxCYGIvioDo+95Oj56frstX58Iq5G5el2Xm1QDCHycgAdqo488IJeh6Z4/yD5Q0jGArj
-         R+DLEoRTVIZ+AvfVIGari5h7LdWEhw+XmBff1K6qpbjxsSqRhpCdWu73/mRHOwjnXsxk
-         hZ7RCHaEAMvnQjjMbMCGORhnctxx7HLXay0lqHm9yEmVo7HR82R4eyUgseydWTjGW+9Z
-         +ht4f75uygp9Z/iIwgKDam1WSv8a4a/K9Rl7qlToRdfdnRehS3U62o2JgmhEDhylai/T
-         i+lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFiuDaE23qjZNACQ71PRRFMVQRjqW8bqr4x12XZk6On6SoeEYrF3tvl4/Kzh8Fdj9zinARZuyN4r7zkDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUCS4b1YED0Zcfna4WKqpFPntORf1anKgTPm9WGDbb32FScjDD
-	JwbiwXQIhvDusfhkh8jUl7h/cJ+LPQ5z0bXht/dpKj5w6rB24OPea/HrmnTuhx4eEN4=
-X-Gm-Gg: ASbGncuFZ4GQUmxbuGDNZYtxsCFrMtINxrdaW4Wjb6tmR3UMdYjaF3XV4LgABdT53mZ
-	6/y1xf8jGk2pz4ltiraKHQyTjt4Z9WczSWD1xGjg1DAn5fNiVbAOi6Rx77/8dC8hoAkAQoPsyqD
-	/uUtPRurAAhGfbHrTzoy6Bg/wmZLi0JGPLqM0XZWjKut0bVf6YvuABLpuQDsvcT0MoEt7cK6kCI
-	wQ8zJzRjxX/RSEiAqKaDHAFlLLe1HHexxMnxNEOMVAHuvV+wQVFj41pXmaA9+17MyehjE9Rutzw
-	tVbvcRsc0LuCAoTf77gpPXs9Ac8Ww5VSh7g8uwK/jPwaBLZ4EExDUDgsT9iuJUVrJ7TT5whjYQp
-	3NisUdR3Hv0cbAYDyPn9cu/TzKjUo7pp0Rgi5i5OSl/50BcnzeQkcj8JgmR1U6Ca6FLdu33ortw
-	FQAmbeuPCD
-X-Google-Smtp-Source: AGHT+IEMbLOeinwVvTuX2oj8cLK0836RwRcKtO4iOIjx+CcUWlYhQo8Bx0cOvk+DQVI9vd0jTJuklQ==
-X-Received: by 2002:a05:6000:4185:b0:429:8cd3:886 with SMTP id ffacd0b85a97d-4298cd30f25mr236889f8f.11.1761218590672;
-        Thu, 23 Oct 2025 04:23:10 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4298bd78c69sm1639717f8f.4.2025.10.23.04.23.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 04:23:08 -0700 (PDT)
-Message-ID: <f09bf940-3d45-49b1-8d7f-9c1a96acb187@tuxon.dev>
-Date: Thu, 23 Oct 2025 14:23:07 +0300
+	s=arc-20240116; t=1761218716; c=relaxed/simple;
+	bh=jtfaiYxi21p3JRhsM/AbKWpIRMV0WBghY+kW+uhb3hk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ia0IvhFOe7W7P/bjnJgmDePv8M4yokWQb0FaWZj2YY0uH4dVMQotyTVIwf505BSrZg/XkKW24yY6+OxAg7QyxEWFYs5Ftlt6K66ogs7WYi5aCU2JefbTDDxdbZWqTdyg5RWu7zBvIlaXUwn1tI1cVCLmDfX6Gaok+tcHO21KFBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JXG23Q2/; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id CCB8B177F;
+	Thu, 23 Oct 2025 13:23:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761218607;
+	bh=jtfaiYxi21p3JRhsM/AbKWpIRMV0WBghY+kW+uhb3hk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JXG23Q2/F1/uxCU4Ifak2veQ1KgctOVOb+9ZDkjeVXdJRs/ZWdlT2Nwk6LMi5Uggu
+	 Vx9Eqgw4qFDTb8JtfFDUxlOHd1UnHWUuwHQgJ+AVjInVPmfkztpB3d2M1lAk6u8rhL
+	 HXEbGjso5q4EY7E0ZTWA+f/N9SN4q7rZdAJbEXfw=
+Date: Thu, 23 Oct 2025 14:24:59 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: uvcvideo: Create a specific id namespace for
+ output entities
+Message-ID: <20251023112459.GJ19043@pendragon.ideasonboard.com>
+References: <20251022-uvc-grandstream-laurent-v1-1-0925738a3484@chromium.org>
+ <20251022120849.GD727@pendragon.ideasonboard.com>
+ <CANiDSCvtqe8MKpb=O-=Mv28dK+g=REi7kpdr-eyAD-mLLpzQJw@mail.gmail.com>
+ <20251022124937.GE727@pendragon.ideasonboard.com>
+ <CANiDSCscZgwUM0VCpdMvNKq0U2a6kOPbJmd4G8iY3EpsPQvZNw@mail.gmail.com>
+ <20251022131236.GG19043@pendragon.ideasonboard.com>
+ <CANiDSCsVOsCDjg_KU8Y82h9Ujfro4nQ=f4B1BezAkQtJUKFczg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/6] PCI: rzg3s-host: Add Renesas RZ/G3S SoC host
- driver
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
- robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
- conor+dt@kernel.org, magnus.damm@gmail.com, p.zabel@pengutronix.de,
- linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20251007133657.390523-1-claudiu.beznea.uj@bp.renesas.com>
- <20251007133657.390523-3-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdXF14x68Wk5YdOBS2D2N6LtnQjfGzrsMdSJegX-gc3faQ@mail.gmail.com>
- <6c69d2a2-5dfe-450f-8a39-2ef6e7a6dbea@tuxon.dev>
- <CAMuHMdXLiN0kUVJtdEYVnsmnCEbN4hSs5KEhMXJhf7p29xv=0Q@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAMuHMdXLiN0kUVJtdEYVnsmnCEbN4hSs5KEhMXJhf7p29xv=0Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiDSCsVOsCDjg_KU8Y82h9Ujfro4nQ=f4B1BezAkQtJUKFczg@mail.gmail.com>
 
-Hi, Geert,
-
-On 10/23/25 14:02, Geert Uytterhoeven wrote:
-> Hi Claudiu,
+On Wed, Oct 22, 2025 at 03:14:09PM +0200, Ricardo Ribalda wrote:
+> On Wed, 22 Oct 2025 at 15:12, Laurent Pinchart wrote:
+> > On Wed, Oct 22, 2025 at 03:08:58PM +0200, Ricardo Ribalda wrote:
+> > > On Wed, 22 Oct 2025 at 14:49, Laurent Pinchart wrote:
+> > > > On Wed, Oct 22, 2025 at 02:29:15PM +0200, Ricardo Ribalda wrote:
+> > > > > On Wed, 22 Oct 2025 at 14:09, Laurent Pinchart wrote:
+> > > > > > On Wed, Oct 22, 2025 at 11:55:16AM +0000, Ricardo Ribalda wrote:
+> > > > > > > Nothing can be connected from an output entity. Which means that no
+> > > > > >
+> > > > > > s/output entity/output terminal. Same below.
+> > > > > >
+> > > > > > Did you mean s/from an/to an/ ?
+> > > > > >
+> > > > > > > other entity can reference an output entity as baSourceId.
+> > > > > > >
+> > > > > >
+> > > > > > Some output terminals have controls, so we need to preserve their ID.
+> > > > > > That's why my proposal only set the UVC_TERM_OUTPUT bit for the
+> > > > > > *streaming* output terminals, not for all output terminals.
+> > > > > >
+> > > > > > > Use this fact to move all the output entities to a different namespace
+> > > > > > > id.
+> > > > > > >
+> > > > > > > The output entities are usually named after the dev_name() of the usb
+> > > > > > > device, so there should not be any uAPI change from this change.
+> > > > > > >
+> > > > > > > Although with this change we can handle some id collisions
+> > > > > > > automagically, change the logic of uvc_alloc_new_entity() to keep
+> > > > > > > showing a warning when a camera has invalid descriptors. Hopefully this
+> > > > > > > message will help vendors fix their invalid descriptors.
+> > > > > > >
+> > > > > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > > > > ---
+> > > > > > > Hi, this patch fixes support for some devices with invalid USB
+> > > > > > > descriptor.
+> > > > > > >
+> > > > > > > It is orthogonal to:
+> > > > > > > https://lore.kernel.org/linux-media/20251021184213.GC19043@pendragon.ideasonboard.com/T/#t
+> > > > > > >
+> > > > > > > Some devices will be fixed by the other patch, other devices will be
+> > > > > > > fixed by this. In my opinion is worth to land both patches.
+> > > > > > >
+> > > > > > > Tested with GRANDSTREAM GUV3100 in a 6.6 kernel.
+> > > > > > > ---
+> > > > > > >  drivers/media/usb/uvc/uvc_driver.c | 23 +++++++++++++++++++----
+> > > > > > >  1 file changed, 19 insertions(+), 4 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> > > > > > > index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..40f8ae0df89e104992f5d55af3d3539dea3d146e 100644
+> > > > > > > --- a/drivers/media/usb/uvc/uvc_driver.c
+> > > > > > > +++ b/drivers/media/usb/uvc/uvc_driver.c
+> > > > > > > @@ -165,10 +165,14 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
+> > > > > > >       return NULL;
+> > > > > > >  }
+> > > > > > >
+> > > > > > > +#define ENTITY_HARDWARE_ID(id) ((id) & ~UVC_TERM_OUTPUT)
+> > > > > >
+> > > > > > This needs a UVC_ prefix, and should probably go to uvcvideo.h. You can
+> > > > > > also & 0xff, as the UVC descriptors store IDs in 8-bit fields.
+> > > > > >
+> > > > > > > +
+> > > > > > >  static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
+> > > > > > >  {
+> > > > > > >       struct uvc_streaming *stream;
+> > > > > > >
+> > > > > > > +     id = ENTITY_HARDWARE_ID(id);
+> > > > > > > +
+> > > >
+> > > > Another comment, I would have done this in the (single) caller, to keep
+> > > > operating on real ids in this function. Or we could pass a struct
+> > > > uvc_entity instead of an int id and rename the function to
+> > > > uvc_stream_for_terminal(), which could better encapsulate the purpose.
+> > >
+> > > Like the second option better.
+> >
+> > I think I do too.
+> >
+> > > > > > >       list_for_each_entry(stream, &dev->streams, list) {
+> > > > > > >               if (stream->header.bTerminalLink == id)
+> > > > > > >                       return stream;
+> > > > > > > @@ -810,10 +814,12 @@ static struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
+> > > > > > >       }
+> > > > > > >
+> > > > > > >       /* Per UVC 1.1+ spec 3.7.2, the ID is unique. */
+> > > > > > > -     if (uvc_entity_by_id(dev, id)) {
+> > > > > > > -             dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n", id);
+> > > > > > > +     if (uvc_entity_by_id(dev, ENTITY_HARDWARE_ID(id)))
+> > > > > > > +             dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n",
+> > > > > > > +                     ENTITY_HARDWARE_ID(id));
+> > > > > >
+> > > > > > It's not an error anymore if there's no collision of the full 16-bit ID,
+> > > > > > right ? Should it be demoted to a dev_warn() ?
+> > > > >
+> > > > > if it is OK with you I'd rather keep the dev_err(). If an ISP
+> > > > > manufacturer tests their camera in Linux I want them to really notice
+> > > > > that there is an error.
+> > > >
+> > > > Yes I'm OK with that. It shouldn't happen. We want a dev_err_and_blame()
+> > > > that prints a message to the kernel log and posts messages on social
+> > > > networks to blame the hardware manufacturer.
+> > > >
+> > > > > Besides that, I have implemented all your proposed changes.
+> > > > >
+> > > > > I cannot test it until tomorrow in real hardware. But the changes are
+> > > > > trivial, let me know if I shall send the v2 right now or wait til it
+> > > > > is tested.
+> > > >
+> > > > Up to you, I don't mind either way.
+> > > >
+> > > > If we merge "[PATCH v2] media: uvcvideo: Use heuristic to find stream
+> > > > entity" first, do you plan to revert it to get this patch merged ?
+> > >
+> > > I think they solve two different issues:
+> > >
+> > > - Output terminal id collides with another entity id.
+> > > - Incorrect bTerminalLink
+> >
+> > Do we know of any device affected by that issue ?
 > 
-> On Thu, 23 Oct 2025 at 12:54, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
->> On 10/23/25 11:00, Geert Uytterhoeven wrote:
->>> On Tue, 7 Oct 2025 at 15:37, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
->>>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
->>>> only as a root complex, with a single-lane (x1) configuration. The
->>>> controller includes Type 1 configuration registers, as well as IP
->>>> specific registers (called AXI registers) required for various adjustments.
->>>>
->>>> Hardware manual can be downloaded from the address in the "Link" section.
->>>> The following steps should be followed to access the manual:
->>>> 1/ Click the "User Manual" button
->>>> 2/ Click "Confirm"; this will start downloading an archive
->>>> 3/ Open the downloaded archive
->>>> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
->>>> 5/ Open the file r01uh1014ej*-rzg3s.pdf
->>>>
->>>> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
->>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>
->>> Thanks for your patch!
->>>
->>>> --- /dev/null
->>>> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
->>>
->>>> +static void rzg3s_pcie_irq_compose_msi_msg(struct irq_data *data,
->>>> +                                          struct msi_msg *msg)
->>>> +{
->>>> +       struct rzg3s_pcie_msi *msi = irq_data_get_irq_chip_data(data);
->>>> +       struct rzg3s_pcie_host *host = rzg3s_msi_to_host(msi);
->>>> +       u32 drop_mask = RZG3S_PCI_MSIRCVWADRL_ENA |
->>>> +                       RZG3S_PCI_MSIRCVWADRL_MSG_DATA_ENA;
->>>
->>> This should include bit 2 (which is hardwired to zero (for now)),
->>> so I think you better add
->>>
->>>     #define RZG3S_PCI_MSIRCVWADRL_ADDR  GENMASK(31, 3)
->>>
->>>> +       u32 lo, hi;
->>>> +
->>>> +       /*
->>>> +        * Enable and msg data enable bits are part of the address lo. Drop
->>>> +        * them.
->>>> +        */
->>>> +       lo = readl_relaxed(host->axi + RZG3S_PCI_MSIRCVWADRL) & ~drop_mask;
->>>
->>> ... and use FIELD_GET() with the new definition here.
->>
->> Bits 31..3 of RZG3S_PCI_MSIRCVWADRL contains only bits 31..3 of the MSI
->> receive window address low, AFAIU. Using FIELD_GET() for bits 31..3 on the
->> value read from RZG3S_PCI_MSIRCVWADRL and passing this value to
->> msg->address_lo will lead to an NVMe device not working.
-> 
-> Oops, yes you are right, I went a bit too far with the FIELD_GET()
-> suggestion. But replacing drop_mask by RZG3S_PCI_MSIRCVWADRL_ADDR
-> would still be worthwhile, IMHO.
+> I bet you there is one :)
 
-OK, you mean updating it like:
+I'd rather be cautious and address that if the issue arises. Enabling
+non-compliant behaviour has the drawback of making issues less visible
+to vendors, so I would prefer not working around problems unless we know
+they exist.
 
-+#define RZG3S_PCI_MSIRCVWADRL_ADDR  GENMASK(31, 3)
+> > >  We can have the two patches in.  If there is any conflict because we
+> > > land one and then the other I can send a v3 fixing the conflict. Or a
+> > > maintainer can do that, they should be trivial conflicts.
+> > >
+> > > > > > > +
+> > > > > > > +     if (uvc_entity_by_id(dev, id))
+> > > > > > >               id = UVC_INVALID_ENTITY_ID;
+> > > > > > > -     }
+> > > > > > >
+> > > > > > >       extra_size = roundup(extra_size, sizeof(*entity->pads));
+> > > > > > >       if (num_pads)
+> > > > > > > @@ -969,6 +975,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+> > > > > > >       struct usb_host_interface *alts = dev->intf->cur_altsetting;
+> > > > > > >       unsigned int i, n, p, len;
+> > > > > > >       const char *type_name;
+> > > > > > > +     unsigned int id;
+> > > > > > >       u16 type;
+> > > > > > >
+> > > > > > >       switch (buffer[2]) {
+> > > > > > > @@ -1107,8 +1114,16 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+> > > > > > >                       return 0;
+> > > > > > >               }
+> > > > > > >
+> > > > > > > +             /*
+> > > > > > > +              * Nothing can be connected from an output terminal. To avoid
+> > > > > > > +              * entity-id's collisions in devices with invalid USB
+> > > > > > > +              * descriptors, move the output terminal id to its own
+> > > > > > > +              * namespace.
+> > > > > > > +              */
+> > > > > > > +             id = buffer[3] | UVC_TERM_OUTPUT;
+> > > > > > > +
+> > > > > > >               term = uvc_alloc_new_entity(dev, type | UVC_TERM_OUTPUT,
+> > > > > > > -                                         buffer[3], 1, 0);
+> > > > > > > +                                         id, 1, 0);
+> > > > > > >               if (IS_ERR(term))
+> > > > > > >                       return PTR_ERR(term);
+> > > > > > >
+> > > > > > >
+> > > > > > > ---
+> > > > > > > base-commit: ea299a2164262ff787c9d33f46049acccd120672
+> > > > > > > change-id: 20251022-uvc-grandstream-laurent-3f9abb8a0d5b
 
-// ...
+-- 
+Regards,
 
-
--    lo = readl_relaxed(host->axi + RZG3S_PCI_MSIRCVWADRL) & ~drop_mask;
-+    lo = readl_relaxed(host->axi + RZG3S_PCI_MSIRCVWADRL) &
-          RZG3S_PCI_MSIRCVWADRL_ADDR;
-
-Thank you for your review,
-Claudiu
+Laurent Pinchart
 
