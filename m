@@ -1,130 +1,138 @@
-Return-Path: <linux-kernel+bounces-867520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2FBCC02D3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:01:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54F50C02D48
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E29C335976D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:01:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A47D188C55C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5BF34D93A;
-	Thu, 23 Oct 2025 17:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38FC34B681;
+	Thu, 23 Oct 2025 18:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="C22663pv"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HH6Lm4W0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36AC34D4D4
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 17:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB3F34B1A6;
+	Thu, 23 Oct 2025 18:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761242377; cv=none; b=HwA0qRx8aaKGDyzPoFZAna2oqSdvNILqsGPn+HdIQQjpQRvrM8s+4DfzC2mEe0pq8cUaetndaEXtIN5LMTyaJVURHNIq85pInjMgqnaFcykU4SY/5JtpaOrm80AMbizruZ0PZ/r5T3NBLzJcm5L8yzMfqj+T/8USavYa/g2Aitc=
+	t=1761242404; cv=none; b=jSLNcES/KNuuCGxKt3n4GTExDbttzu5ZoyvTGVYsi9TzAWJ1tSBSOU41xr6RgxexGSkNQZZQApj/bZL7eJNtHOdBVODMRTxutpzBj41Eg13B184V3kM2/gUMRmoC3v52B28nFSuk1M3p5vw4pJo3vyFtMIZUxzooaU0AbaC4MwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761242377; c=relaxed/simple;
-	bh=5K6yqKFIUhX7WHvLgQtvAcryO3l2vC0j/sf1x7a2qPo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a7sXaxiZtxA6OvgWoXEym7aLPJ/vmpO7u8ht6JQ9sY2E2Pp2D5EedAQIWFlbRlpTuJBfQ5X8oEsJJQ6ZVN4wSR46Ixz5iOdcEOyQaTewhLpJAbT6lTy71kTN97M1uG4OatkDhX+kYWQJ7NCwmS5orRZ5z1onksKW2sDSNIXF4vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=C22663pv; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-33ba5d8f3bfso979174a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:59:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1761242375; x=1761847175; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n4A20c4iE5OCTLQsbFf/dnrtJtYgptzbIxA7b1V4Ehw=;
-        b=C22663pvARXhaJw2zPJTpwvG1d+QAihlVOM27zCU/+6w0mos1PbIfxzmGa3pF4HOwa
-         n09UbYjfpqBot1x+im0M/V7hMTTUtWdMdMTRGhv7PR4Hl1B3KBJMmLLJXWGzWtGFAar7
-         OQszf4kf4nRKzSScYIyktdx8XTMrKCH9c+tOvy3nOkVaO7lTsw+h92xTxEluB41B6BEj
-         W+VD+lLh846UN1bSeym6JLOGhor4FrSOX74uG2avKpH8bFo8vhOKstIKulPQDvSVE/d6
-         YzDPbkl6ZOA0rDHhw4WSvlELe1L2m8jgjNOXgSXCuj0CBVbx8F0WNhaM3FTlzcrc/gEw
-         oVZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761242375; x=1761847175;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n4A20c4iE5OCTLQsbFf/dnrtJtYgptzbIxA7b1V4Ehw=;
-        b=VIRNrx7WiWkPk/SJgl5rdBQwCIiAA0uIKxGHOLQaO6abt0whev3hn0yjd2QSOO+DHI
-         /7zqjPyBhcvHg8LGZc2VBrCByEFQvQkF7GgqqmzyPLcCRoVgyzT8fp7l5p6zBQUXZfQt
-         Zb5RW7nQuIsfITx+rva9NXCY5dRZeS7lZ/tEp+KqlKNWYcSOmyzBCVKowL4m2kchzXP/
-         fG3tOEgdzlpMf+aKpyvzb0XrAxJSGDqT7w1Z/6mvJnYe7DYd+cBzRAAYXsGrK8Imuh8s
-         VPDHUMMkRiGbCoOX/Vcmb8AdBLtG22ennRXN02tEPTO2+CpEl1DQIT3RMVvsNVTraMz8
-         YXnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTNkGmwsXEE7sCsAPDPgoCkiu4yZGGPYZdZNyV0fYqZbPvn9A9cqUUC0LIKSXJTxAYmYY8dTwJ1HmbQDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZphJoMaH9q2yTX1p0ebvjkI/SbI30ePuOPxmQCZqKu0OZmhXA
-	hzE+RdtPef1zTnEAPa3Drrht5OZMvLyHGpffaUQVEa6ygWYXtHhJ2fm4NkVy4EvtRRA=
-X-Gm-Gg: ASbGnctmd/BxAzZU5z0FL6g5CNI8ORuWSp79mfDK/uzN5xhnEp8iOnAAzqh7g41LO7x
-	ZSlNB/bUK2uIPCd9esIYC6JFucodZLFYtT6CQIoHUHwM0ZN2OO/OeOuY9y5uPzbWNYQ+28aULyT
-	SBX8pqupHXDIZom9cig1C95cvcGjbpnngwGeDE9DdSLWmiupkXgpvwze085Go12SIyozw2ywyO/
-	Tb8PI70kQwkTnfgqKBXyACxn4Rr87GoaM0sDVSjXrPLk8XDd0QEWPleDMBxrbXAYYgo661PTFtH
-	5N+nO80Uv0ADHCBY6W3w9z6fZUtuUbwohbueI7UV5KbhXG9q51loZ8A//U3Jy6DMli5s95Mrue2
-	ulgPvaYPeK9TVWdewEbOwL3ao2MwKm6u9jrqFtCLNWuwjZCUbuDpvUQDL3EKXNkmm0h3NvIs4bM
-	+rpp6JqKn0OCY4mCiQYwke/1zGw5/sCJYKhA==
-X-Google-Smtp-Source: AGHT+IE97/1pEPN/LuV4xxuaKmjoVVAInH5LYa39rU238Esh33gdeg6v8zj+rsYvlz1t0Nfc0Ga6dw==
-X-Received: by 2002:a17:90b:28c4:b0:327:c0c6:8829 with SMTP id 98e67ed59e1d1-33bcf8e4f50mr32926807a91.24.1761242375280;
-        Thu, 23 Oct 2025 10:59:35 -0700 (PDT)
-Received: from zoltan.localdomain ([208.115.86.150])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e223d1265sm6447431a91.3.2025.10.23.10.59.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 10:59:34 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: pjw@kernel.org,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	conor.dooley@microchip.com,
-	dlan@gentoo.org
-Cc: Frank.li@nxp.com,
-	guodong@riscstar.com,
-	fustini@kernel.org,
-	geert+renesas@glider.be,
-	cyy@cyyself.name,
-	heylenay@4d2.org,
-	apatel@ventanamicro.com,
-	joel@jms.id.au,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 9/9] riscv: defconfig: enable SPI_FSL_QUADSPI as a module
-Date: Thu, 23 Oct 2025 12:59:21 -0500
-Message-ID: <20251023175922.528868-10-elder@riscstar.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251023175922.528868-1-elder@riscstar.com>
-References: <20251023175922.528868-1-elder@riscstar.com>
+	s=arc-20240116; t=1761242404; c=relaxed/simple;
+	bh=is0kS7LD/8ncxJVQOKHRS2haY2ZGilHSHz8iGcccZbo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WCsfJYhTCIw2z14Wwd98EpNoOgpQ+cRMEqQ2eNfAx08BQsF640mlJ0pXaoHDrwgxjdcBeAMDc0UfMtlZYQZQMdNxnn9jowjMVTz9GP+YI1uGhxhE7AhphaA6ptoNdDDyl5sVizZDAlnrgm5KBHrg4ZWlJrq2e6Dn/on3hBFDiUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HH6Lm4W0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 98495C113D0;
+	Thu, 23 Oct 2025 18:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761242403;
+	bh=is0kS7LD/8ncxJVQOKHRS2haY2ZGilHSHz8iGcccZbo=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=HH6Lm4W0v691uO1k+jw68/Opopv3d+OagIajP+7NKY51YQc8EblFwiAqdfpbz7Ycy
+	 1JJ8/au2b23XWF4btWcFunhawKTl0NWBMZ8eaUOYXXjJx0aJ1FrK/BesYEwgpfX+9H
+	 8qzuZwBPb56KMIjBlxQzc6/owSFDwI+7AwoTFdmWLyTR54AMo8Khnjc4/ThuQhMz1T
+	 3h1W4w3MmG9KFYHQOSYWtKGgC8nIidA4ImU/wB1MhXa/GbvJhsBi54cG8JxIGdb2M0
+	 ValHO6KmO1Cm0qsBZm+Q9KV++xfGgRA7L1ccdU2zapY1gKgH/jM8vT8DIA8pIvq42H
+	 1C0GSmkFNiN4Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF7ACCF9E5;
+	Thu, 23 Oct 2025 18:00:03 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Date: Thu, 23 Oct 2025 20:00:02 +0200
+Subject: [PATCH] docs: dt-bindings: Extend the ordering list with a blank
+ newline before status
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251023-docs-dt-newline-v1-1-1bf5e0040c0b@ixit.cz>
+X-B4-Tracking: v=1; b=H4sIACFt+mgC/x3MQQqAIBBG4avErBswS4KuEi0qf2sgLDQqkO6et
+ PwW7yWKCIJIXZEo4JIou8+oyoLmdfQLWGw2aaVNpXTNdp8j25M97k08uIXB1NQOylnK1RHg5Pm
+ P/fC+H2hU5vVhAAAA
+X-Change-ID: 20251023-docs-dt-newline-7e5eb43fe0fd
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1596; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=jfI7bnd7GDYMrmutx004zTtdSqiNRLQra6bhxGa9W30=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBo+m0hayS94Fa/yGgP2C6hYxl850hG0N03OmAlu
+ WTyHv0eamWJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaPptIQAKCRBgAj/E00kg
+ cvHwD/9RQmgpVxnghzO89wQCoUZ9+cq/4wSh9vOx9pOEcMjA/E/pNPQFHrHEsiPmCYuxCbZPLUh
+ Yx9ZIazraG2YIMH7+CQ/z9POUrOaB/YI0rUPgDw1bTygfoF9n2YsxX38G5/zZWldVmWRwai1Xs3
+ EICRYhv69zNZ+Cl3crXq8R5eXih0ge8xTvMpXoEtpESTHbi+ze5o6BKUi2iU9ETpCHpItbSLoCo
+ tA8pV98T3LM1fNevPM3qXVrfdT0pVzAMia4kJZgBfF+DSbG0onXQz2bXdtwYFyennSlJm+/c9hH
+ 2vwGCR2ZkXW477YizfK++4388A7jPPw5PvgFlUwCwp5b1ht6fd21fRpCMViYVX7lo+W3KnQ3UcT
+ hUhN92BstR0GsK4k7z5NcjF7Z3yXtjx7M0h8HBlFupqsoyrgTOViCXgD8oJRoRbI0GgPaK2qsxE
+ +sO11M/lQqbOtd2sY6wwIfIyFN+R5P01E3TDl2TiTiySidLubI+saxbL7S6iREh38zcWbfSAy3l
+ 4C6FYjMt1KP4yQGxiqQuxHWDyXi9NqMm1dD4MIx3yars8avafdHvSVi8Eq4unor3MKxhqGKsnjo
+ ML+BgkJZhBvSFEmS5iqXXZi9IxzNc+EjyuVCcoJOWuhbKhPXSZJEltgOwJ2e842P6kHJEslfuPu
+ Xjb4rsWxC6jQ4dw==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
-The SpacemiT K1 SoC QSPI IP uses the Freescale driver.  Enable it as a
-module in the default kernel configuration for RISC-V.
+From: David Heidelberg <david@ixit.cz>
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
+For better readability, it is recommended to insert a newline before the
+'status' property. Adjust the examples accordingly.
+
+Signed-off-by: David Heidelberg <david@ixit.cz>
 ---
- arch/riscv/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/dts-coding-style.rst | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index fc2725cbca187..48afe30d42e88 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -158,6 +158,7 @@ CONFIG_I2C_DESIGNWARE_CORE=y
- CONFIG_I2C_MV64XXX=m
- CONFIG_SPI=y
- CONFIG_SPI_CADENCE_QUADSPI=m
-+CONFIG_SPI_FSL_QUADSPI=m
- CONFIG_SPI_PL022=m
- CONFIG_SPI_SIFIVE=y
- CONFIG_SPI_SUN6I=y
+diff --git a/Documentation/devicetree/bindings/dts-coding-style.rst b/Documentation/devicetree/bindings/dts-coding-style.rst
+index 202acac0507ab..4a02ea60cbbe2 100644
+--- a/Documentation/devicetree/bindings/dts-coding-style.rst
++++ b/Documentation/devicetree/bindings/dts-coding-style.rst
+@@ -120,7 +120,8 @@ The following order of properties in device nodes is preferred:
+ 4. Standard/common properties (defined by common bindings, e.g. without
+    vendor-prefixes)
+ 5. Vendor-specific properties
+-6. "status" (if applicable)
++6. "status" (if applicable), preceded by a blank line if there is content
++   before the property
+ 7. Child nodes, where each node is preceded with a blank line
+ 
+ The "status" property is by default "okay", thus it can be omitted.
+@@ -150,6 +151,7 @@ Example::
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		vendor,custom-property = <2>;
++
+ 		status = "disabled";
+ 
+ 		child_node: child-class@100 {
+@@ -165,6 +167,7 @@ Example::
+ 		vdd-1v8-supply = <&board_vreg4>;
+ 		vdd-3v3-supply = <&board_vreg2>;
+ 		vdd-12v-supply = <&board_vreg3>;
++
+ 		status = "okay";
+ 	}
+ 
+
+---
+base-commit: efb26a23ed5f5dc3554886ab398f559dcb1de96b
+change-id: 20251023-docs-dt-newline-7e5eb43fe0fd
+
+Best regards,
 -- 
-2.43.0
+David Heidelberg <david@ixit.cz>
+
 
 
