@@ -1,146 +1,128 @@
-Return-Path: <linux-kernel+bounces-867465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65062C02B82
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:25:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9816CC02B88
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 19:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6E373AF379
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:25:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17C904EBE53
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F33347BB7;
-	Thu, 23 Oct 2025 17:25:43 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC962246762;
+	Thu, 23 Oct 2025 17:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSzrOFAd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9697F29B793;
-	Thu, 23 Oct 2025 17:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416AE346E7C;
+	Thu, 23 Oct 2025 17:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761240343; cv=none; b=HVFi30s/kaxzCKTJmDWENXJnsMNbTkIHnvygTSkAK425aoxAj7qkZz0oyppXrfjnc4gO7veMi56C/8O/Yr+dKLj47pqXU/5K3Diy5FMqI10TueFn6gL86ihtXwQc3Z/qzZbJ7a/hbGonJGNhrX52Gt+F01fyhiV1lczSZNWBBqE=
+	t=1761240349; cv=none; b=A2ju6/QZBbOk9yTho3C03ZB628lO803Z7FV/wil7r5IW38XKXoQIxTWgyc6+yjxUsIZwVbn3jI71zi8KK8COrWvJY0pzmVQBch7ueVLVO//jeyfaxdSgPEfsLcvLb3WErKUrqujRkjBUT99Eiw52eG/zPmi/9mVPGv5MNU8YrWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761240343; c=relaxed/simple;
-	bh=9c3jFP7HcUJ7ZrWMij/S2fNE8Kn0ggPJcf6DUIM6C9Y=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OG2JfX2QTTdb2SjfGghKA1h+sOzE+idwf+CMlG1IxYcPSRQlng99EwwYuep0Xk4S1LS3oqYbVTgOGSy5YoWQhZADtelT0y2Ve6YEkNj3rwIJ45UdjNIwfUWxqamB2fphz90D/+ypOfQ1gr0Efh65eVPBEeCjW9EWHm7JNAoWMHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cstBF4GMnz6M4kP;
-	Fri, 24 Oct 2025 01:21:57 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6CBDE1402FD;
-	Fri, 24 Oct 2025 01:25:39 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 23 Oct
- 2025 18:25:38 +0100
-Date: Thu, 23 Oct 2025 18:25:37 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-CC: Jonathan Cameron <jic23@kernel.org>, <dlechner@baylibre.com>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<nuno.sa@analog.com>, <andy@kernel.org>, <marcelo.schmitt1@gmail.com>,
-	<vassilisamir@gmail.com>, <salah.triki@gmail.com>,
-	<skhan@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<akhileshpatilvnit@gmail.com>
-Subject: Re: [PATCH v2 2/2] iio: pressure: adp810: Add driver for adp810
- sensor
-Message-ID: <20251023182537.000069be@huawei.com>
-In-Reply-To: <20251021-54542-354166@bhairav-test.ee.iitb.ac.in>
-References: <cover.1760374257.git.akhilesh@ee.iitb.ac.in>
-	<0b72866f4e5ac28c78f6d683a1ca659a4239b68e.1760374257.git.akhilesh@ee.iitb.ac.in>
-	<20251018174746.4a76af1d@jic23-huawei>
-	<20251021-54542-354166@bhairav-test.ee.iitb.ac.in>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761240349; c=relaxed/simple;
+	bh=p/dJ/vApunxA+s6QBIXAzaXcbKhQS7npxWsjnyA0BqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Gc8hu6zO3wWs/7H+AyDjzWMFa+pkH7sj7AWzDy9ZjHpeCWwuen+I0A+eHANZapKjVDYUm0ktooYUbGCdzXN3C4xb7rgeYJEuoSwci8OD7Mexx6ze2rhKZbAsjRyWfyqltbvZnGu3wTLwjmmk3lFsDECPgAT1EMFID5wh0PC9YjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSzrOFAd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3073C4CEE7;
+	Thu, 23 Oct 2025 17:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761240349;
+	bh=p/dJ/vApunxA+s6QBIXAzaXcbKhQS7npxWsjnyA0BqE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=OSzrOFAdUP2+iq21SXDJvO7gcOdJgs7IBoI58rESwucSX/8yODMGX20mkY1IDDj+0
+	 i2lYBECfK2uXw0n8gk9gR34ZAuntJK+Flw4POjd+ptdrCFntp5iO68sGdfG/1D8P6Y
+	 rbZ9MpUQU7LOaJP/s0c2DvqywAjrpY+j3OS/5Xd87HkZsHaB/nRK4jP4eB97AeR8Hr
+	 8zzqsnKUQtUxFRZFXF+oB7l5GD/La2IN5zZs5HmZ2EcpbTrESxx8NAv7K5jWd6PNc7
+	 uN33qIZoywxxKVHjqgkfhNju2vKaJrHQo6ePBZgeTHKlEOJUeQBAqCP/WtEUFnJ3sv
+	 8se7tyNt+mwQQ==
+Date: Thu, 23 Oct 2025 12:25:47 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, Brian Norris <briannorris@google.com>,
+	stable@vger.kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] PCI/PM: Ensure power-up succeeded before restoring MMIO
+ state
+Message-ID: <20251023172547.GA1301778@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821075812.1.I2dbf483156c328bc4a89085816b453e436c06eb5@changeid>
 
-On Tue, 21 Oct 2025 11:15:42 +0530
-Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
+[+cc Mario, Rafael]
 
-> On Sat, Oct 18, 2025 at 05:47:46PM +0100, Jonathan Cameron wrote:
-> > On Mon, 13 Oct 2025 22:32:35 +0530
-> > Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
-> >   
-> > > Add driver for Aosong adp810 differential pressure and temperature sensor.
-> > > This sensor provides an I2C interface for reading data.
-> > > Calculate CRC of the data received using standard crc8 library to verify
-> > > data integrity.
-> > > 
-> > > Tested on TI am62x sk board with sensor connected at i2c-2.
-> > > 
-> > > Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>  
-> > 
-> > A few comments inline and it seems your rebase when wrong and you've
-> > picked up unrelated build file changes.
-> > 
-> > Thanks
-> > 
-> > Jonathan  
+On Thu, Aug 21, 2025 at 07:58:12AM -0700, Brian Norris wrote:
+> From: Brian Norris <briannorris@google.com>
 > 
-> Hi Jonathan, Thanks for the review, I will share v3 addressing these comments.
+> As the comments in pci_pm_thaw_noirq() suggest, pci_restore_state() may
+> need to restore MSI-X state in MMIO space. This is only possible if we
+> reach D0; if we failed to power up, this might produce a fatal error
+> when touching memory space.
 > 
-> Regards,
-> Akhilesh
+> Check for errors (as the "verify" in "pci_pm_power_up_and_verify_state"
+> implies), and skip restoring if it fails.
 > 
-> >   
-> > > diff --git a/drivers/iio/pressure/Makefile b/drivers/iio/pressure/Makefile
-> > > index 6482288e07ee..a21443e992b9 100644
-> > > --- a/drivers/iio/pressure/Makefile
-> > > +++ b/drivers/iio/pressure/Makefile
-> > > @@ -5,6 +5,7 @@
-> > >  
-> > >  # When adding new entries keep the list in alphabetical order
-> > >  obj-$(CONFIG_ABP060MG) += abp060mg.o
-> > > +obj-$(CONFIG_ADP810) += adp810.o
-> > >  obj-$(CONFIG_ROHM_BM1390) += rohm-bm1390.o
-> > >  obj-$(CONFIG_BMP280) += bmp280.o
-> > >  bmp280-objs := bmp280-core.o bmp280-regmap.o
-> > > @@ -15,6 +16,7 @@ obj-$(CONFIG_DPS310) += dps310.o
-> > >  obj-$(CONFIG_IIO_CROS_EC_BARO) += cros_ec_baro.o
-> > >  obj-$(CONFIG_HID_SENSOR_PRESS)   += hid-sensor-press.o
-> > >  obj-$(CONFIG_HP03) += hp03.o
-> > > +obj-$(CONFIG_HP206C) += hp206c.o
-> > >  obj-$(CONFIG_HSC030PA) += hsc030pa.o
-> > >  obj-$(CONFIG_HSC030PA_I2C) += hsc030pa_i2c.o
-> > >  obj-$(CONFIG_HSC030PA_SPI) += hsc030pa_spi.o
-> > > @@ -34,11 +36,9 @@ obj-$(CONFIG_SDP500) += sdp500.o
-> > >  obj-$(CONFIG_IIO_ST_PRESS) += st_pressure.o
-> > >  st_pressure-y := st_pressure_core.o
-> > >  st_pressure-$(CONFIG_IIO_BUFFER) += st_pressure_buffer.o
-> > > +obj-$(CONFIG_IIO_ST_PRESS_I2C) += st_pressure_i2c.o
-> > > +obj-$(CONFIG_IIO_ST_PRESS_SPI) += st_pressure_spi.o
-> > >  obj-$(CONFIG_T5403) += t5403.o
-> > > -obj-$(CONFIG_HP206C) += hp206c.o  
-> > 
-> > Rebase gone wrong I assume.    
+> This mitigates errors seen during resume_noirq, for example, when the
+> platform did not resume the link properly.
 > 
-> These are intentional changes.
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Brian Norris <briannorris@google.com>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> ---
 > 
-> This addresses Andy's suggestion in v1, to keep entries alphabetically
-> arranged in Makefile. Along with adp810 location, fixed other files as well
-> hp206 and st_pressure_* to make entries alphabetically arranged in
-> the entire Makefile.
+>  drivers/pci/pci-driver.c | 12 +++++++++---
+>  drivers/pci/pci.c        | 13 +++++++++++--
+>  drivers/pci/pci.h        |  2 +-
+>  3 files changed, 21 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index 302d61783f6c..d66d95bd0ca2 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -557,7 +557,13 @@ static void pci_pm_default_resume(struct pci_dev *pci_dev)
+>  
+>  static void pci_pm_default_resume_early(struct pci_dev *pci_dev)
+>  {
+> -	pci_pm_power_up_and_verify_state(pci_dev);
+> +	/*
+> +	 * If we failed to reach D0, we'd better not touch MSI-X state in MMIO
+> +	 * space.
+> +	 */
+> +	if (pci_pm_power_up_and_verify_state(pci_dev))
+> +		return;
 
-That reorder of others needs to be a separate patch so that it can
-explicitly call out that it is tidying up ordering.
+The MSI-X comment here seems oddly specific.
 
-Jonathan
+On most platforms, config/mem/io accesses to a device not in D0 result
+in an error being logged, writes being dropped, and reads returning ~0
+data.
 
+I don't know the details, but I assume the fatal error is a problem
+specific to arm64.
 
+If the device is not in D0, we can avoid the problem here, but it
+seems like we're just leaving a landmine for somebody else to hit
+later.  The driver will surely access the device after resume, won't
+it?  Is it better to wait for a fatal error there?
 
+Even if we avoid errors here, aren't we effectively claiming to have
+restored the device state, which is now a lie?
 
+Even on other platforms, if the writes that are supposed to restore
+the state are dropped because the device isn't in D0, the result is
+also not what we expect, and something is probably broken.
+
+Bjorn
 
