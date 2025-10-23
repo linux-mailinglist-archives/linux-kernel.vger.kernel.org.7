@@ -1,171 +1,158 @@
-Return-Path: <linux-kernel+bounces-866685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F05FC006F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:19:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E9DC006F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49F0819C20E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:20:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 76D5E4FD693
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E52301486;
-	Thu, 23 Oct 2025 10:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VNax37lN"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE589309EEB;
+	Thu, 23 Oct 2025 10:19:50 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9666D2D5944
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 10:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABADD305976;
+	Thu, 23 Oct 2025 10:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761214785; cv=none; b=ZJD8M9VSHx8jqMG5ocZF34qT16S5mObTtSEALdDsLAnFxuszJp2GjHnqF0JM27eaG+lpyhHhI6LlUh2A/1ziprAB8Tp9YG2+D/iUO3g/ggthzndHfPYZe1dESobBV49Aj5X/MsiMB/qIDi4n0kkx+ACROrnhvaxocHx1uBbEwgs=
+	t=1761214790; cv=none; b=Lv8pDbjF23IanhukTYdN42pf8v7Z9HCe/8XeXjuTaZr0j+Nx8nibLMhxBlyLn1BI6bexCTO2AZwFGubxRSNk2d4GaIKHSeviNjNTr+oUeDj4Irg60YNf5bTlhGt9zkJC2etFWwlBZI/QlCAW0leQHGwuhElUJ8CGHXbJGgklKXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761214785; c=relaxed/simple;
-	bh=sP1yFN5X69EjHA1XrQLO6NIRH09PVVmY0gD8350XCKU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ahmh7hHwfEhx9DZTnzOI2TPNL4gHWgcRh7B7jr451GK/Cy0muFy/BkGJLMo6YjBA9x0xKcvY5LqN5AqAT369AIflKAkeD5GOOEL0iy8rTc+lScBUmIPQqZ4Vyhyw5pYtDMvsZKogh+ITj3NmHpT4XISilMC4NwbUC1W9uzumsiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VNax37lN; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-426ff579fbeso105749f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 03:19:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761214782; x=1761819582; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YHLKzDlOLcS1osErm5kDOBwxCW+aeEx4uEbgTKleyko=;
-        b=VNax37lNKW8+UFKTUjmxnZDf5U5C1pWp9yjAH6XcSkGmzGEaKPlHH0Q+x40S5RCQHa
-         7n65aGv3SUQCG/zIKhJykbTZnnIevX1ulSQJq6co1OfBJ3wITO8/LXVdMBiuTs5pGZ4i
-         JyTO5eE3daSf9/jk0GJ1oamy726Io9QE+44KkE46d5ggTJeGC2FNjn0PJbTgdHFe7siZ
-         CCieXtblN9r2nVBKyhaIl0APRfFH+8gSSyvXaPGJ5aQhl5dDqY3Z9SoLcagcBMvB39CT
-         AGytT8XsgoMaHnthJtRqg42pmPthKIC9qsHMOqmHRcf5gxlFchVoIUMGHKvE+E9ao3+c
-         kvZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761214782; x=1761819582;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YHLKzDlOLcS1osErm5kDOBwxCW+aeEx4uEbgTKleyko=;
-        b=sViJc0a4uHMJtQufMOAE/XELaLbQ02CtW54oIt/nU0InPbcLAS0L2+xW/oPzSvBvmr
-         ljvwFxtbDe+pHTo2GdLhpgg2XgxAKKfQmX/cxN0LhTvdQn4LBPhxxFbULc0NM8jWGZTg
-         awCDjwDc4Xb+ny7FyIPi2lUXKjyMqkKxAmwBHzT0VSzIJvPNJXxNMTzWnHoUGXr7R78m
-         nFoOVqzExc9H/s9zKVAn+Xt2Elxssy7a0ixe/2qOBvQjsEGEDCIyICFfz6cLIqs24zor
-         CPiWf+KdtLMo7E/x69edAb0/kjB2pjpIiJm7egqFxTwLng+Qvbjdo/g9MyzxaURvKgV5
-         CDwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhPJcW8KUtUcZU3eG8amtxPEQeDXaeggnYx6tt4mHY8hOepUNM/8LB//sckDR1wvJkOK3kXfUIvsW6UH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeUXwbs0ctY/MjjWsAC24VUt3fHVCKsVVfk9WXL1C0rpjxV9eq
-	waMVV8oJcp95+aCHLmZvNcRGo8ZhE2O1Zqqp+NaFKRp/cZRkfm38m2KVkB+TcSubcYNMBTjyitU
-	5JSQ3
-X-Gm-Gg: ASbGncvgnm9aYz6XAjnqAqNmFgOR5QbHnX70DTmdDofcEileyZRLn+JujUGWwekM514
-	SA1GJs1XXnLJVeoBZ61rRQE5ivkgXGKvQGdYv4uWpFqwBJAKI+tt8znXyDwmXuFglXRGHePD6uT
-	46jNJ2ndKmofRpWDOk+kR6er/ZcyQwzp6x5A7CvziI280lG2jYpcYJI8brUzixAwkqHJqBwgZeE
-	KKHYl7Z0We2JNjZ4typqq6Ir4FksUTv76CSw3vLCpquwyJ7FVDdtAvKg1fOpeG84TadmgE4vuAJ
-	9YdHAOfc0c7K5sWiXmN3fLqw0cBKJg2jYAVsMQwKCYNDZVh3YysWmjjUrF1q7d9c/3wukvpNNtK
-	Yt75DnTui9XBu9ZxChPBBYEMPSGZ01yFb7jEkjvCnotrBrBYl5HesPLl1SjYFVr1gmwF9ircB3c
-	yf8lbJiAssVBJWtyU0PWELWw==
-X-Google-Smtp-Source: AGHT+IHj7IggOZbvGodn+nW38DF7QGidxY4FbIRHzT1uITsjCrIDo/bUdySa+7xP5mlr//VmMJpJdA==
-X-Received: by 2002:a05:6000:1863:b0:3fc:854:8b84 with SMTP id ffacd0b85a97d-4284e54a7fbmr3485801f8f.3.1761214781926;
-        Thu, 23 Oct 2025 03:19:41 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897f57efsm3149173f8f.18.2025.10.23.03.19.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 03:19:41 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Lee Jones <lee@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	stable@vger.kernel.org
-Subject: [RFT PATCH] mfd: max77620: Fix potential IRQ chip conflict when probing two devices
-Date: Thu, 23 Oct 2025 12:19:40 +0200
-Message-ID: <20251023101939.67991-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1761214790; c=relaxed/simple;
+	bh=4BkSBKzEX9jV9K9sd9sISF9TzT01yQgYZ1Xm0Ub9M7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FQ9kIQ86rx4+ervkUr1y5UsLLInW2sGXaqiavrfSIUnLOq3G4IHzYxwavg/lUpN+onUxhyvIsnJcKl9Y0sUbseqreZkwYnLbB5axKKCIWnNx6tpNW9FibC7F89OH1aMaBlnT+ezBGSKDPclvR/ZoV3qTIAkP3XFLtBgM5oZfCSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cshjR6bYkzJsZ2;
+	Thu, 23 Oct 2025 18:14:51 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id E6FD618048F;
+	Thu, 23 Oct 2025 18:19:43 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 23 Oct 2025 18:19:43 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 23 Oct
+ 2025 18:19:43 +0800
+Message-ID: <da38cf78-bd18-49ee-a25d-c4b446cfa2fa@huawei.com>
+Date: Thu, 23 Oct 2025 18:19:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 7/9] ACPI: processor: idle: Remove died codes about the
+ verification of cstate count
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <Sudeep.Holla@arm.com>,
+	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>
+References: <20250929093754.3998136-1-lihuisong@huawei.com>
+ <20250929093754.3998136-8-lihuisong@huawei.com>
+ <CAJZ5v0j4F5fPwhKup768EUdgWfUHXATiK0zuNwK2fJyC2fqy2A@mail.gmail.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <CAJZ5v0j4F5fPwhKup768EUdgWfUHXATiK0zuNwK2fJyC2fqy2A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-MAX77620 is most likely always a single device on the board, however
-nothing stops board designers to have two of them, thus same device
-driver could probe twice. Or user could manually try to probing second
-time.
 
-Device driver is not ready for that case, because it allocates
-statically 'struct regmap_irq_chip' as non-const and stores during
-probe in 'irq_drv_data' member a pointer to per-probe state
-container ('struct max77620_chip').  devm_regmap_add_irq_chip() does not
-make a copy of 'struct regmap_irq_chip' but store the pointer.
-
-Second probe - either successful or failure - would overwrite the
-'irq_drv_data' from previous device probe, so interrupts would be
-executed in a wrong context.
-
-Fixes: 3df140d11c6d ("mfd: max77620: Mask/unmask interrupt before/after servicing it")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
----
-
-Not tested on hardware
----
- drivers/mfd/max77620.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-index 21d2ab3db254..3af2974b3023 100644
---- a/drivers/mfd/max77620.c
-+++ b/drivers/mfd/max77620.c
-@@ -254,7 +254,7 @@ static int max77620_irq_global_unmask(void *irq_drv_data)
- 	return ret;
- }
- 
--static struct regmap_irq_chip max77620_top_irq_chip = {
-+static const struct regmap_irq_chip max77620_top_irq_chip = {
- 	.name = "max77620-top",
- 	.irqs = max77620_top_irqs,
- 	.num_irqs = ARRAY_SIZE(max77620_top_irqs),
-@@ -498,6 +498,7 @@ static int max77620_probe(struct i2c_client *client)
- 	const struct i2c_device_id *id = i2c_client_get_device_id(client);
- 	const struct regmap_config *rmap_config;
- 	struct max77620_chip *chip;
-+	struct regmap_irq_chip *chip_desc;
- 	const struct mfd_cell *mfd_cells;
- 	int n_mfd_cells;
- 	bool pm_off;
-@@ -508,6 +509,14 @@ static int max77620_probe(struct i2c_client *client)
- 		return -ENOMEM;
- 
- 	i2c_set_clientdata(client, chip);
-+
-+	chip_desc = devm_kmemdup(&client->dev, &max77620_top_irq_chip,
-+				 sizeof(max77620_top_irq_chip),
-+				 GFP_KERNEL);
-+	if (!chip_desc)
-+		return -ENOMEM;
-+	chip_desc->irq_drv_data = chip;
-+
- 	chip->dev = &client->dev;
- 	chip->chip_irq = client->irq;
- 	chip->chip_id = (enum max77620_chip_id)id->driver_data;
-@@ -544,11 +553,9 @@ static int max77620_probe(struct i2c_client *client)
- 	if (ret < 0)
- 		return ret;
- 
--	max77620_top_irq_chip.irq_drv_data = chip;
- 	ret = devm_regmap_add_irq_chip(chip->dev, chip->rmap, client->irq,
- 				       IRQF_ONESHOT | IRQF_SHARED, 0,
--				       &max77620_top_irq_chip,
--				       &chip->top_irq_data);
-+				       chip_desc, &chip->top_irq_data);
- 	if (ret < 0) {
- 		dev_err(chip->dev, "Failed to add regmap irq: %d\n", ret);
- 		return ret;
--- 
-2.48.1
-
+在 2025/10/22 3:51, Rafael J. Wysocki 写道:
+> On Mon, Sep 29, 2025 at 11:38 AM Huisong Li <lihuisong@huawei.com> wrote:
+>> The acpi_processor_setup_cstates and acpi_processor_setup_cpuidle_cx will
+>> be called after successfully obtaining the power information. These setup
+>> functions have their own main role, but also verify the validity of cstate
+>> count.
+>>
+>> Actually, the acpi_processor_get_power_info_cst() will return failure
+>> if the cstate count is zero and acpi_processor_get_power_info() will return
+>> failure.
+>>
+>> So the verification of cstate count in these functions are died code.
+> It is useless overhead rather because the conditions checked cannot be true.
+Yes.
+This patch actually prepares for patch 8/9 and patch 9/9.
+>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+>> ---
+>>   drivers/acpi/processor_idle.c | 22 +++++++---------------
+>>   1 file changed, 7 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+>> index 92b231f5d514..2d672afc7498 100644
+>> --- a/drivers/acpi/processor_idle.c
+>> +++ b/drivers/acpi/processor_idle.c
+>> @@ -732,8 +732,8 @@ static int __cpuidle acpi_idle_enter_s2idle(struct cpuidle_device *dev,
+>>          return 0;
+>>   }
+>>
+>> -static int acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
+>> -                                          struct cpuidle_device *dev)
+>> +static void acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
+>> +                                           struct cpuidle_device *dev)
+>>   {
+>>          int i, count = ACPI_IDLE_STATE_START;
+>>          struct acpi_processor_cx *cx;
+>> @@ -753,14 +753,9 @@ static int acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
+>>                  if (count == CPUIDLE_STATE_MAX)
+>>                          break;
+>>          }
+>> -
+>> -       if (!count)
+>> -               return -EINVAL;
+>> -
+>> -       return 0;
+>>   }
+>>
+>> -static int acpi_processor_setup_cstates(struct acpi_processor *pr)
+>> +static void acpi_processor_setup_cstates(struct acpi_processor *pr)
+>>   {
+>>          int i, count;
+>>          struct acpi_processor_cx *cx;
+>> @@ -822,11 +817,6 @@ static int acpi_processor_setup_cstates(struct acpi_processor *pr)
+>>          }
+>>
+>>          drv->state_count = count;
+>> -
+>> -       if (!count)
+>> -               return -EINVAL;
+>> -
+>> -       return 0;
+>>   }
+>>
+>>   static inline void acpi_processor_cstate_first_run_checks(void)
+>> @@ -1246,7 +1236,8 @@ static int acpi_processor_setup_cpuidle_states(struct acpi_processor *pr)
+>>          if (pr->flags.has_lpi)
+>>                  return acpi_processor_setup_lpi_states(pr);
+>>
+>> -       return acpi_processor_setup_cstates(pr);
+>> +       acpi_processor_setup_cstates(pr);
+>> +       return 0;
+>>   }
+>>
+>>   /**
+>> @@ -1266,7 +1257,8 @@ static int acpi_processor_setup_cpuidle_dev(struct acpi_processor *pr,
+>>          if (pr->flags.has_lpi)
+>>                  return 0;
+>>
+>> -       return acpi_processor_setup_cpuidle_cx(pr, dev);
+>> +       acpi_processor_setup_cpuidle_cx(pr, dev);
+>> +       return 0;
+>>   }
+>>
+>>   static int acpi_processor_get_power_info(struct acpi_processor *pr)
+>> --
+>> 2.33.0
+>>
 
