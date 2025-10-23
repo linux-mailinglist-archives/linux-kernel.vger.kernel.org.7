@@ -1,234 +1,202 @@
-Return-Path: <linux-kernel+bounces-866253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8114CBFF4E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:12:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C2BBFF4F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C3D3A9077
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:12:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E964C3A61F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 06:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C095E280035;
-	Thu, 23 Oct 2025 06:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bybPLchg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71C8284671;
+	Thu, 23 Oct 2025 06:12:57 +0000 (UTC)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5634227FD49;
-	Thu, 23 Oct 2025 06:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761199914; cv=fail; b=kpRThna4BcQUTmWc9+G9ak7Jju5QfRtYwxLcAEJv5ZdPj690dZuh3NxFNKM0rwApTaonyh62NFKyHSE1RMsF5HqEDQUxNnMMOKDI0gk1N5TcMKoaVw94rvRgngf4+OoOjkc21dMlO8RHHTh2NGePavBVT+T/RyR6KCZ/5v3EPxY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761199914; c=relaxed/simple;
-	bh=zF/1AfaH5yWtK91o1aSNbqnBlB3PR+XMyJ5B36zrIl8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fNbmReTzOqwOZn5CpajrVllhqO0jZWqF/XLqaeRZs8viTke9DrLansN8KAt/auEA8f7fk6WHHyPqG9S4XTXcGizjvLoNnuWAEPlqIy2kMp7zSc3um9AVguf0HNL/HpW3fE9drDDStIUJFumvZqQ9CJcbZh4wx8AhAI+ZjA43fPQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bybPLchg; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761199914; x=1792735914;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=zF/1AfaH5yWtK91o1aSNbqnBlB3PR+XMyJ5B36zrIl8=;
-  b=bybPLchgSoKqj/roHS9qlQ1VDHpAQbybZ+PB/BWnr6wY06SO8uib2ASo
-   gxrJlpN7iphKl2ffG6r8kcZRl6G1z/p/tRsazDQyEyvygt46zQQnTFZ3l
-   U6vpjG64RWshhDjD2kcV/UHCbHk8SvkSWem62BmuYGXdB3sJkvn19q6mt
-   5EgedS4G2QLEXhZNkO1UNgFaXlrJlREF9JNlwGO8nvJxJXexipU9LwkCF
-   1hifg/cpQfIxD3oTvVlPIOFBDnZC4F/pBcKzEJM/moRH3mYujirgAnf59
-   z2+3JhjsKjJ+K1Wn9+WBWsS5ZQa3RUzeLOUMlqUf181zDBIAAdzJ96Mzi
-   w==;
-X-CSE-ConnectionGUID: cMK0W1LBTAO8MkCr7MUbxw==
-X-CSE-MsgGUID: llaH3OP+QLSxFvO1z4S6ig==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63398894"
-X-IronPort-AV: E=Sophos;i="6.19,248,1754982000"; 
-   d="scan'208";a="63398894"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 23:11:53 -0700
-X-CSE-ConnectionGUID: iRXINAL4TSyuQ1UHe4Xkvw==
-X-CSE-MsgGUID: N9fY/ETdTeGqc2EPtbpEww==
-X-ExtLoop1: 1
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2025 23:11:52 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 22 Oct 2025 23:11:51 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 22 Oct 2025 23:11:51 -0700
-Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.25) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 22 Oct 2025 23:11:51 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vXHnEiKw2bp4xLdaCnUisR++Cxo7j+o2sE8e/97++XpocQO41+5KVyjsGfTq/F2QQHVvnfh86iJEaQrXFtVVUWpiXVpcPwS3MYJUe5BzF5PBQlBp5cHQPhFARLTuI83Ek2W6AHlQZe07YyLbJIWqJ3cGWAWbHCWCXLBvYIGhsQ4YwntZfUdpAPxi1NMatwk/81KCGmgtyEhJjdYSxs6/bF75rUUEyi/orru+3rMxVj5gWZz11zSgZTILxVFha8/cWDEnI1JbWEYNDRUggatffIwvSnMOiQ1+PndFD0OWevgS9Rj7DeJesXGwooZ2XvVUtVfctAz6ZncqQBsPChpHGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Q89LMnZpegaGEdaD20s9FdjwKFXrLbvMK1Mw2yRsa1U=;
- b=AovYpK9Gt07Mrtov9whrf9mjcPLuneNQ/1gZ61MzxEakwnssT2QEn3Y2y8BsRSvDNwzRgr/sZSH+jM9asZKr84kCIzYmRlG3680CUJpQET6RwgpNtppvba5xZNv3lsm9tTCoM7cj28NQaXHgMBsxq2kTbUv18yefRcoV7ZEqydubQbgJiFY87PReISCvFLhLERdoTnrufVUPMdQz/hw//odGTCJGt8HLrn59K6BkpCIsBAb9NalXg3E7mntGy8T6x5nyjhaptQkaBxASHzCfhCPll2G7sSTJbHK7yGVPgdiufQUdNv3W0Ex3y1oCliP3BxGPLj40ZOikfQJ05WpwBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ0PR11MB6815.namprd11.prod.outlook.com (2603:10b6:a03:484::14)
- by DM3PPF7468F7991.namprd11.prod.outlook.com (2603:10b6:f:fc00::f2d) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
- 2025 06:11:44 +0000
-Received: from SJ0PR11MB6815.namprd11.prod.outlook.com
- ([fe80::5fdb:7ce4:1375:3a71]) by SJ0PR11MB6815.namprd11.prod.outlook.com
- ([fe80::5fdb:7ce4:1375:3a71%5]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 06:11:44 +0000
-From: "Sarkar, Tirthendu" <tirthendu.sarkar@intel.com>
-To: Your Name <alessandro.d@gmail.com>
-CC: Jason Xing <kerneljasonxing@gmail.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "Fijalkowski, Maciej"
-	<maciej.fijalkowski@intel.com>, "David S. Miller" <davem@davemloft.net>,
-	Alexei Starovoitov <ast@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Daniel Borkmann <daniel@iogearbox.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>, Paolo Abeni <pabeni@redhat.com>,
-	"Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>, Stanislav Fomichev
-	<sdf@fomichev.me>, "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net v2 1/1] i40e: xsk: advance next_to_clean on status
- descriptors
-Thread-Topic: [PATCH net v2 1/1] i40e: xsk: advance next_to_clean on status
- descriptors
-Thread-Index: AQHcQrC93ElBT1jzGkCik6J1gjAaa7TNfZuAgAAjr/CAALsdAIAA4wHg
-Date: Thu, 23 Oct 2025 06:11:44 +0000
-Message-ID: <SJ0PR11MB6815F7E1AD7F8D437C4589F690F0A@SJ0PR11MB6815.namprd11.prod.outlook.com>
-References: <20251021173200.7908-1-alessandro.d@gmail.com>
- <20251021173200.7908-2-alessandro.d@gmail.com>
- <CAL+tcoCwGQyNSv9BZ_jfsia6YFoyT790iknqxG7bB7wVi3C_vQ@mail.gmail.com>
- <SA1SPRMB0026CD60501E3684B5EC67F290F3A@SA1SPRMB0026.namprd11.prod.outlook.com>
- <aPkGKqZjauLHYfka@lima-default>
-In-Reply-To: <aPkGKqZjauLHYfka@lima-default>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR11MB6815:EE_|DM3PPF7468F7991:EE_
-x-ms-office365-filtering-correlation-id: 35b333d8-30e4-4825-ba13-08de11fb0a66
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700021;
-x-microsoft-antispam-message-info: =?us-ascii?Q?LKcAvUv9UETrUyJSrof56cAiD+YHeXnrf1vZOi0gyURgCD7vFcH3kgQGIQ2B?=
- =?us-ascii?Q?ELdb9UW92rn2DrPOC5cfbwj5T889WoxNp77R7n2TZS0O44r1AO4iwwtf5g9e?=
- =?us-ascii?Q?D6O95gZuU4nlSoCIcJSb6ZKrFEuhGj3lNFU/1o4zMKJ+D7ej36w3MJ+5Ne+B?=
- =?us-ascii?Q?sftKjdXABJP3Oh0RVX9PEHxre0ese14P+pszIV+T92SbGV+u9j5jb4R6rHqW?=
- =?us-ascii?Q?0BMqzptmNXGNFijcYbJOlZ2+ACmE/ZwLeiNWe4hDpOipkqvp3SpU7+uLDEFG?=
- =?us-ascii?Q?0ai/YWNRWpIJ+bikkG0Qc+2G5Xre9zmLR2Z4M1IkUg3v68z3pM9SuISAwJVe?=
- =?us-ascii?Q?QjOh2q8M6xkbIIjXVWTpvt8VzeE7eSf9JvDi0+Ir0aWMGRwLRwfRkrTnySUQ?=
- =?us-ascii?Q?QFuF0TYIHuzDK/MsKV/5MgVKCiBLTm9UTJI2hH51o3ebgXQTO+gKydPRcGOf?=
- =?us-ascii?Q?oc2rAZ+BKJG416OdfdRuLJCaTtKODOADgLnKhyhWThOmsdfZZUGmSZa9GnWr?=
- =?us-ascii?Q?24sZxxygQ40VO5/7QjINFD5dFUOji9mFs5F4I8lCk05uIbKegNt+SOjrq0ge?=
- =?us-ascii?Q?hgDxWQ14U4vCA1JJ0BV1mqWPIz6eZXSLKCdZ4c0/qSCE5yVfSiIG4fp+QH3Z?=
- =?us-ascii?Q?jxQobfl6ZkZgR5gd7Gs+zyy3I79TBnwALrc+L+ciTQNyEHSHoeg5od0T4a3S?=
- =?us-ascii?Q?+zFVNng5jWQkIt5bs9qGd6ME3cmcpZvGl13LC2jgmLTJ6TuD/P9ml2jR/mY6?=
- =?us-ascii?Q?e1zGg3QaRamvj0dAaoh3k9wCTjrvDFq6xDz///n/qToHmJCDhiqWVOCPXzGo?=
- =?us-ascii?Q?VOl+8btBxRc8JzSqeq09O1W+mUj1p4Yu8e/PwgL90ACBbE8EFUBgAy8QVroX?=
- =?us-ascii?Q?gFwTBD0doDELwmt9n/ewKIq7kGbHAEkDTzDqv79jntPHcKMWuHRp+rCYji+b?=
- =?us-ascii?Q?VGKOQBek3+s/n46ZTMkubxjEEL1UYnHWIjUXzdWoU5c8QRMim0EnxauAvuJA?=
- =?us-ascii?Q?FmCOfpujiX70Y0zkr6O5/F8YfgHSzd8TT3HtnHFc/hMyRe9SJbIKjVZI6260?=
- =?us-ascii?Q?FlpM+cXRbGMnJCNrn1dCPSHU1aDj9F6rbWboylDSNOhGUHTx/mul0ZTA1wi+?=
- =?us-ascii?Q?A4bu6UFlcjenMZLw1N4DrKvPDi3kiRiIXcXW2DvcRI1gptxxyjGOUJkOsn/S?=
- =?us-ascii?Q?5Ugm1A/9nsJzO/82OW/u4QyY7refd9ylxDW6xAGXdag+xWuWRHugWrqB0wxT?=
- =?us-ascii?Q?HJJOmlvfkpEY//ubeDYR92SdpwLOxsoMEZSCVuuG/XEn1QhpHBNnX5CIjLvb?=
- =?us-ascii?Q?+xTUjX9fedpjbbQdSgwN8gncMDJ5c8/92UGQ0h2ouLGS2ywAt0j3Djn1vtaQ?=
- =?us-ascii?Q?99aYcSYLLh6g2SBQ2UOGX3LtqZ0uWW2Rqjjw6925eiddVID0Q83xf6nVkh+Y?=
- =?us-ascii?Q?6Nuf5kySauiJyYyQ5h1Yquu7CuxtAVXQHMD3BdYctvOlHTQ+Axix2CTEt83m?=
- =?us-ascii?Q?Kln57U/ONl6FXglbnnoLzmGFUCAEPZrL2e0G?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB6815.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Hnngl1JPoGPlmsRLLbrLhUsPNE7imGXEJWiy8mgTnEoO/0F0CbLaps48FTwF?=
- =?us-ascii?Q?mub7zNKJ4tbCE9DZRQNTGqEZy6YZUOKcQzONBqGyf4TM3R6I8Vcp4tW/Frsi?=
- =?us-ascii?Q?4uigQ+O+pEDcVremb9rvG7wk6ENgLuzEDIX37ruuz1dpl2cswwCXs967tvAW?=
- =?us-ascii?Q?y1a263RBcH1GwtGRjJuiVz9EURl+D+Z1Mu5zE0+JmGt+uIjgwVWJqp51JaNy?=
- =?us-ascii?Q?WN60+aD9AVVFkNJ0fzP+RQrL8L/AgB7sA7WNjoHOyowMkMlBopLKBdG/iuMG?=
- =?us-ascii?Q?P4cnXgmyt1QjAfKxWnX7ERPB3Au6P7Lm5aVXilBVpEdCKBWVO5tk+7YG6z/z?=
- =?us-ascii?Q?fXuez+teuu9+KvNoIQ0u3lgUqTDA9V1IWfY5nUUzQHmY2dLXTDeX4/oKKBZH?=
- =?us-ascii?Q?kgZ/v+/48r+1GZbff04Uu5SeUZpn2zDgdAUaTpbGKwqiA0XHEyKkWTC7JWId?=
- =?us-ascii?Q?cgQSD+CJCRIIadh4D4Lt8jySyG1uHDQqMVn3vAh94TSUR/+YwlsHtj01Zq+R?=
- =?us-ascii?Q?MDVEHSMrubmDD25dvpjrgr9nHhFCEEoZjUk4ix/N1BehnpM8/0n9DxcTi8if?=
- =?us-ascii?Q?+WY/vqW7vXoB03LLKbu6UV2spUJWZnP69Q2rwx4BnCpE02wSROLGT05nYUUK?=
- =?us-ascii?Q?rQHPZHxq36k+RYWFN/6/41lgr03eaNrwAyIKwCYosJ9lvZQsDPK271WiFgc/?=
- =?us-ascii?Q?T7pYcVIoD28tXIX52ZuqlvXdbhM2TKfSeKyQdBBUUKkg5WnaiQgAzQ0EzCLx?=
- =?us-ascii?Q?eRFyg14rhuGVR9VGRA4BYHIfv3Ac1Cs4NiFvniazbdkp2z+H3xLHzSpJf7S3?=
- =?us-ascii?Q?RqgRRBSdA13tEpyBRVnn0XZ1hQHNorRLqUVl5h36y+YsgY9WvzyGmxGV/Q1I?=
- =?us-ascii?Q?fwrEqcDvvkToci8WQcYHuNFhzyVgLU2DsdN0muD07dvfTFD24Mgah3KZhj1q?=
- =?us-ascii?Q?5rjFCfCGWZhDc270oP9F9gfPKq3QN4J65Pz2GlnLI+NTNQ6keqDtkw5yo0Ox?=
- =?us-ascii?Q?+bia4yTHymLBzeas9D4SqgosJYXPcveoBsmtO3HGAyFKIdW0BG3nuOuxbBBC?=
- =?us-ascii?Q?z2YTetSQXW8ALqCyXB2uv/ZIoGDhRP4wzt3hL0E/NEZokBcSkmp1vDirLjkl?=
- =?us-ascii?Q?0G33fNruior8Z7MCi9eG6WwTLQqleBvPMKp9I+nU8QL2NIwHgFV7PwHJ+jH+?=
- =?us-ascii?Q?ktqP2wUjBi48dftJdK2+/IQ7cj25q5SfiObm/c4iz4JwUsufFLK2xFjlpCz1?=
- =?us-ascii?Q?D/Mm6Bd2ChcGS7tLXnKrEcSRISp1AR5pEm6Asx1OB6Hj9EUuFPD0RTC4w9nA?=
- =?us-ascii?Q?3bC0k4kphlD4dad0O9OoUdsAgEMvsTQsSJ/ET5wjQuL5gfCyKEWRVlBn2tsT?=
- =?us-ascii?Q?YdmJeqGQFpHBXbQltDSsv/aePySn2xn/BySBOYf42RkMxN79XQ/BL4eSXn9o?=
- =?us-ascii?Q?0ZNeXBCDlbczvI1Fb/X+ITsILeDOsbwMID6aAQVgAkHZ1S1+zPWVDN5AwMbX?=
- =?us-ascii?Q?lonUr+x84+d770MFJ6McHryO3xyZhJNH/o5cgDOcmUe8u4gdu3hN+gi4t7if?=
- =?us-ascii?Q?SPpbg9/tGh4m/jWIxFxlavT4DOIRuflckgFhjIZ5?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CC927AC4D;
+	Thu, 23 Oct 2025 06:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761199977; cv=none; b=R3+T8q0IeU5Nr9JgiDIHyqhZlBvAPR2ehdPGWMteYBHFuC1RYWvCbDRVNPYUt+YK4Sa2UBzspLizFxrY3PsBF1869W7ln+esGV51yVGNFFrQRPp3PS0v6mC6D1FjV3po/3zH6UOfuxPU/Ob1CjEz2a5RRU0ju50LqfkAR9QcT4Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761199977; c=relaxed/simple;
+	bh=GvqU9uGGx+KJM1yhuHMieGDlGEi9DwW5CHDBghxQKy0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i3aqVvicK0tZcOJEY53QRUZuaNhYLKjAla9xzatC327FWO7xNZCNnSoQBvHE9AYclH7VoL1PuBGjyrvAHhg3S2rFECqS/nOi5kxdVbFbKCYwqriWps3kr4lPP1XSyVw20fV8+l8glwikGtXOV8+UWnhF0DGQcIoSOzEaZEmODno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip4t1761199936tb3585278
+X-QQ-Originating-IP: SKDmvKPX8O6anW4D6mauzpeuJa6t2OsditiZvwm93CA=
+Received: from [IPV6:240f:10b:7440:1:e4c5:315f ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 23 Oct 2025 14:12:12 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 3584863861311309371
+Message-ID: <4B275FBD7B747BE6+a3e5b367-9710-4b67-9d66-3ea34fc30866@radxa.com>
+Date: Thu, 23 Oct 2025 15:12:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB6815.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35b333d8-30e4-4825-ba13-08de11fb0a66
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2025 06:11:44.1766
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7P8xHyyFaF/ybd+FL2cN3c/mg+z3oii6d7PA4QKuHVzseeMHlKlVdl9sN5u1GyXrP5BNpXCPkSnpMLCs9tuU0cDUvCzsYPYJJjQi4tJfoZo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPF7468F7991
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
+To: Bjorn Helgaas <helgaas@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Cc: Christian Zigotzky <chzigotzky@xenosoft.de>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+References: <20251020221217.1164153-1-helgaas@kernel.org>
+Content-Language: en-US
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <20251020221217.1164153-1-helgaas@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: N3gATt1+RV61wWrmTsis+KI3BuzDlPCoZbfQnE2543/08BoenZcpNGXS
+	IAB6Oe1BddqoAcfNvMWjllDWK9O6n0BavNzB3cGKh9bKxCfKY84dyu8+UnIvnl6gabzZSZ9
+	030czqHPzo/wG1AyS7oEoLM9fFOQ5XElHLiSY9NGyQHXh6Uxgtt2JZQ2v50qWhvaoH+CwVv
+	Xcio8X6JggPKKX/P/Nd8qn7RSxD1p5jGO1bwb42iBJXmhzt6dbBJJoCs2KZww/pXXvTl7UK
+	DMrBLiFie+/GhoEwbJCJ+DTGkqx1AhKeGvelRuULYg/WP00i2HKJlIFFcsX+MVuMb0kiunI
+	OfpkBVwaJFbknO756nBqzmZ1H39vxj0wovsXE7T/KO6B0PGSOhuXv87HsrPDXEamJTjuXge
+	014yUd9iYnSnv5pOerQwIJYowY18pixZMIYD3wMCwRcdsWggJBUOjZrU/wMJaEbNuTuY9rk
+	9nJXxIW7Unf7ZVrh6BVb2FgBlXcWvnk46L+UVO7y3zsWCjkfa2tvYIzUFNKApyJIixleOA8
+	gVk9PI+mdu6Vo9GOUb66SKWM2I9pgFfBGOyuqeLtvDEYlUzk6FTUxOQab8pa+ymDOKpaTjj
+	grg7rC4A8+8LIf03h+6C+Zonk1W4ss1BurBaL+esGFtEsqP1WTm9AGmHXHKR7sshWNaL6aa
+	nCk9ejxbIYtIxmpOZJDAYEPkSCI3WzT38tK3ugC5m1zcou06c8GalZ7E0VTqOZOYqAOExyG
+	daUB8nyNFcFj6YCXJpmoCzO0gCzPWvsgnMQGWOEZMjkH1BfELA678jUS367hFCHPLYTxV//
+	naYcIsDceeyP/MxcWgHj6OUlWnsBbbmeMfF7l/CGsTseYZfYceCCNbOCIIveIff2TnjmC3r
+	MHtz1XtTlaLAB4YvGYhWkAFha9VCBz/8hxJj1wiH7pR42FkdkA/srNouE0RHce3hOk8ew6V
+	SMXSoj5hXBOBqEmwLWgDqJuapVYe6X+Pqm8E2/Fa66gpJU0zCJ5IYDlsdOBmynxrhlNQ=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-> From: Your Name <alessandro.d@gmail.com>
-> Sent: 22 October 2025 21:58
->=20
-> On Wed, Oct 22, 2025 at 05:41:06AM +0000, Sarkar, Tirthendu wrote:
-> > > From: Jason Xing <kerneljasonxing@gmail.com>
-> >
-> > I believe the issue is not that status_descriptor is getting into
-> > multi-buffer packet but not updating next_to_clean results in
-> > I40E_DESC_UNUSED() to return incorrect values.
->=20
-> I don't think this is true? next_to_clean can be < next_to_process by
-> design, see
->=20
-> 	if (next_to_process !=3D next_to_clean)
-> 		first =3D *i40e_rx_bi(rx_ring, next_to_clean);
->=20
-> at the start of i40e_clean_rx_irq_zc. This condition is normal and means
-> when we exited the function - for example because we ran out of budget -
-> we were in the middle of a multi-buffer packet and now we must continue.
->=20
+Hi Bjorn,
 
-Ah, yes. Missed that. BTW, we won't run out of budget when we see status_de=
-scriptor or in the middle of a multi-buffer packet since those do not incre=
-ase total_rx_packets.=20
-However,  if we see a status descriptor and no packets after that (size =3D=
- 0), we will break the loop thus making next_to_clean and next_to_process o=
-ut-of-sync with next_to_clean still pointing to status descriptor when we r=
-esume.
+On 10/21/25 07:12, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree
+> platforms") enabled Clock Power Management and L1 Substates, but that
+> caused regressions because these features depend on CLKREQ#, and not all
+> devices and form factors support it.
+> 
+> Enable only ASPM L0s and L1, and only when both ends of the link advertise
+> support for them.
+> 
+> Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devicetree platforms")
+> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
+> Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@xenosoft.de/
+> Reported-by: FUKAUMI Naoki <naoki@radxa.com>
+> Link: https://lore.kernel.org/r/22594781424C5C98+22cb5d61-19b1-4353-9818-3bb2b311da0b@radxa.com/
 
-Thanks,
-Tirthendu
+I've confirmed that this patch resolves the PCIe (M.2) Wi-Fi freezes or 
+probe failures, as well as the NVMe SSD I/O errors occurring since 
+v6.18-rc1.
+
+Specifically, I verified this with the following configuration:
+
+  ROCK 5A & M.2 RTL8852BE
+  ROCK 5B & M.2 MT7921E, NVMe SSD
+  ROCK 5T & on-board AX210, NVMe SSD x2
+  ROCK 5 ITX+ & M.2 MT7922E, NVMe SSD x2
+
+Therefore,
+
+  Tested-by: FUKAUMI Naoki <naoki@radxa.com>
+
+Best regards,
+
+--
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
+
+> ---
+> 
+> Mani, not sure what you think we should do here.  Here's a stab at it as a
+> strawman and in case anybody can test it.
+> 
+> Not sure about the message log message.  Maybe OK for testing, but might be
+> overly verbose ultimately.
+> 
+> ---
+>   drivers/pci/pcie/aspm.c | 34 +++++++++-------------------------
+>   1 file changed, 9 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 7cc8281e7011..dbc74cc85bcb 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -243,8 +243,7 @@ struct pcie_link_state {
+>   	/* Clock PM state */
+>   	u32 clkpm_capable:1;		/* Clock PM capable? */
+>   	u32 clkpm_enabled:1;		/* Current Clock PM state */
+> -	u32 clkpm_default:1;		/* Default Clock PM state by BIOS or
+> -					   override */
+> +	u32 clkpm_default:1;		/* Default Clock PM state by BIOS */
+>   	u32 clkpm_disable:1;		/* Clock PM disabled */
+>   };
+>   
+> @@ -376,18 +375,6 @@ static void pcie_set_clkpm(struct pcie_link_state *link, int enable)
+>   	pcie_set_clkpm_nocheck(link, enable);
+>   }
+>   
+> -static void pcie_clkpm_override_default_link_state(struct pcie_link_state *link,
+> -						   int enabled)
+> -{
+> -	struct pci_dev *pdev = link->downstream;
+> -
+> -	/* For devicetree platforms, enable ClockPM by default */
+> -	if (of_have_populated_dt() && !enabled) {
+> -		link->clkpm_default = 1;
+> -		pci_info(pdev, "ASPM: DT platform, enabling ClockPM\n");
+> -	}
+> -}
+> -
+>   static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>   {
+>   	int capable = 1, enabled = 1;
+> @@ -410,7 +397,6 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
+>   	}
+>   	link->clkpm_enabled = enabled;
+>   	link->clkpm_default = enabled;
+> -	pcie_clkpm_override_default_link_state(link, enabled);
+>   	link->clkpm_capable = capable;
+>   	link->clkpm_disable = blacklist ? 1 : 0;
+>   }
+> @@ -811,19 +797,17 @@ static void pcie_aspm_override_default_link_state(struct pcie_link_state *link)
+>   	struct pci_dev *pdev = link->downstream;
+>   	u32 override;
+>   
+> -	/* For devicetree platforms, enable all ASPM states by default */
+> +	/* For devicetree platforms, enable L0s and L1 by default */
+>   	if (of_have_populated_dt()) {
+> -		link->aspm_default = PCIE_LINK_STATE_ASPM_ALL;
+> +		if (link->aspm_support & PCIE_LINK_STATE_L0S)
+> +			link->aspm_default |= PCIE_LINK_STATE_L0S;
+> +		if (link->aspm_support & PCIE_LINK_STATE_L1)
+> +			link->aspm_default |= PCIE_LINK_STATE_L1;
+>   		override = link->aspm_default & ~link->aspm_enabled;
+>   		if (override)
+> -			pci_info(pdev, "ASPM: DT platform, enabling%s%s%s%s%s%s%s\n",
+> -				 FLAG(override, L0S_UP, " L0s-up"),
+> -				 FLAG(override, L0S_DW, " L0s-dw"),
+> -				 FLAG(override, L1, " L1"),
+> -				 FLAG(override, L1_1, " ASPM-L1.1"),
+> -				 FLAG(override, L1_2, " ASPM-L1.2"),
+> -				 FLAG(override, L1_1_PCIPM, " PCI-PM-L1.1"),
+> -				 FLAG(override, L1_2_PCIPM, " PCI-PM-L1.2"));
+> +			pci_info(pdev, "ASPM: DT platform, enabling%s%s\n",
+> +				 FLAG(override, L0S, " L0s"),
+> +				 FLAG(override, L1, " L1"));
+>   	}
+>   }
+>   
+
+
 
