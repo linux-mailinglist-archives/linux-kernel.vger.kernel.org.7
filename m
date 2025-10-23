@@ -1,125 +1,138 @@
-Return-Path: <linux-kernel+bounces-867165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEED8C01B88
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:20:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1306FC01BED
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 516BD1AA1893
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:21:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B63F5420C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165CF221542;
-	Thu, 23 Oct 2025 14:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F8A32AADD;
+	Thu, 23 Oct 2025 14:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PkZlHRgh"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WlxHAt0E"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6DB315783;
-	Thu, 23 Oct 2025 14:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D362C08BA;
+	Thu, 23 Oct 2025 14:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761229224; cv=none; b=ki4hHSPkO8iLM4H6TLfk1pLoNAmJANvak+RSLBEYnp5S+mN8HjbhDLwdAeuYv31hZ5HQDcUBlmV3pRzAQQKlFK0gY8mtbugK9shhfxdIqEKzMsW7dT8WUbRElVF2cV5zutsrmvpkbk+n1dGWfDD0km6oI2wWx1SgcUEyUg9drsU=
+	t=1761229261; cv=none; b=mbvcXErvcHN7x5fR0NVIQbdV5eynlEmZUYlZhXk/nAp0p5bIKrr5NV3LLhe8hdqt5w0/Yt5G4Ff+bgQRoURLT2E3krZl8UH/nE658/xUBo374j8i9byLjw26AopTKPvxWsjTFIGHvIUN9gYwedjvMGsKCH9tuOz4mvCSNdtmiF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761229224; c=relaxed/simple;
-	bh=t4XAMtlQ87nQTynvcekkQhTGmcfXyfcCovczOm0sFp8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=u+2i0ezaPEVoGippc1uQdEBtCHh9NbU2801EiokXuCXB9ztDBT1MkJgN8BUI3EWXffr9W249FWBwEVqmZppUu8zd90MmMDHNWgqNsKHvOK4POUV5QpPC3D00Ppx77O4+fvhs6bgW8r6ZfyanVUQwaho6NS1xCKJ72mnl3msnJ80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PkZlHRgh; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 12F2E1A160D;
-	Thu, 23 Oct 2025 14:20:21 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id DAF436068C;
-	Thu, 23 Oct 2025 14:20:20 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 95066102F2467;
-	Thu, 23 Oct 2025 16:20:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761229219; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=t4XAMtlQ87nQTynvcekkQhTGmcfXyfcCovczOm0sFp8=;
-	b=PkZlHRghL79Owhl/cu3HX506BAbg9Ulr67THDScpepEFLIyIBSX8QZ6wjhov7HI3MkhflN
-	YbNKiCbCXUmuH00e5dIQQvFIl74MSCulsjRB1L7W42oLGMKu7ymEPTF/9tiauPI0BzNHRK
-	nOIiWenY8PIitQUtDl1ICo+fOoAjZ18BO6cVs3oDs9uN1wrwC1p5kE7RZ1BHoDVxRpy8hs
-	j3+wbOK/PQxzQ+hLCJKzK5PvXJRT5ouuuotfkDdL5xEcO0xtwJTdihBuOTRGIzj+LQ8kfk
-	98JXEzm8nqU2JZhyj0EDfYpSSCelX/AFFwjSt8+t115//coe18INk75gCdtIsw==
+	s=arc-20240116; t=1761229261; c=relaxed/simple;
+	bh=MoezKNfdkUtsNKTPQI5tJ50Aziu4yWWFWjvh13jJ15s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lq5Hsng8cTWitbycGWxUIq0sPo2nu9tiSgqHJXO5Wtn+NhGhFKm2hElb/tkSVSdaREidBkpr93lM/6VdhQ1is5ySrfFCFB/oVwb56Drsa8LSZ+HihGsOpTfdfggHDOrLN6fHO83uVR/Ub8AWNUsAszplq2N/ib0Uku5XEK38/EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WlxHAt0E; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761229260; x=1792765260;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MoezKNfdkUtsNKTPQI5tJ50Aziu4yWWFWjvh13jJ15s=;
+  b=WlxHAt0EW1qO450Qbl+Nhnw7JEO+Faj+bBwWxnj9uhtnP9UACovr9a4M
+   61dR+bXVC7cFTOuWT8xvBL/UbaHIDAuIV1rxJeDg6EM/9g7z+fFheokyu
+   FwwmqOnH1l7ugjnCadrWg700ZKobEdjhD4SzIUtgXFQSpc1dWoH+6HyUB
+   8Z6xACqGmN/k8wFLP6xFDVdLNA+33oG77VsQ/7l4vc0rM7zHFZXOsv+Uf
+   ViuJYUGfRSLW6cx4mgCcVH2bIq53T/GAYS4bspZWpyURqjMtd/C9awOHt
+   UHZSKZfKOH/cNxherPJht3EWGiY+Lxd7GW5mDOi/Rfh7KqDrp0aXhn3xt
+   Q==;
+X-CSE-ConnectionGUID: 7HNTnkIPSQ6xcrMtTlhhbA==
+X-CSE-MsgGUID: ZKBdrPrGTm2v0A+wbI+Z/w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="50978285"
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="50978285"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 07:20:49 -0700
+X-CSE-ConnectionGUID: dJ3OQvWoRwWd3Mh0vvxkFQ==
+X-CSE-MsgGUID: ozqvHb8fRxCQL1BurpHtPA==
+X-ExtLoop1: 1
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.125.108.251]) ([10.125.108.251])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 07:20:48 -0700
+Message-ID: <bd629133-0ddc-47fe-b6e1-24ec8adbea67@intel.com>
+Date: Thu, 23 Oct 2025 07:20:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 04/21] x86/cea: Prefix event stack names with ESTACK_
+To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: pbonzini@redhat.com, seanjc@google.com, corbet@lwn.net,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+ peterz@infradead.org, andrew.cooper3@citrix.com, chao.gao@intel.com,
+ hch@infradead.org
+References: <20251014010950.1568389-1-xin@zytor.com>
+ <20251014010950.1568389-5-xin@zytor.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20251014010950.1568389-5-xin@zytor.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 Oct 2025 16:20:16 +0200
-Message-Id: <DDPRNG6XVUMS.3RIOD71L748WE@bootlin.com>
-Cc: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Andrew Lunn"
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Nicolas Ferre" <nicolas.ferre@microchip.com>, "Claudiu Beznea"
- <claudiu.beznea@tuxon.dev>, "Russell King" <linux@armlinux.org.uk>,
- <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, =?utf-8?q?Beno=C3=AEt_Monin?=
- <benoit.monin@bootlin.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>
-To: "Andrew Lunn" <andrew@lunn.ch>, "Maxime Chevallier"
- <maxime.chevallier@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH net-next v2 5/5] net: macb: Add "mobileye,eyeq5-gem"
- compatible
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251022-macb-eyeq5-v2-0-7c140abb0581@bootlin.com>
- <20251022-macb-eyeq5-v2-5-7c140abb0581@bootlin.com>
- <ef92f3be-176d-4e83-8c96-7bd7f5af365f@bootlin.com>
- <51833ec4-e417-4ba3-a6d1-c383ee9ea839@lunn.ch>
-In-Reply-To: <51833ec4-e417-4ba3-a6d1-c383ee9ea839@lunn.ch>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
 
-On Wed Oct 22, 2025 at 9:33 PM CEST, Andrew Lunn wrote:
-> On Wed, Oct 22, 2025 at 10:09:49AM +0200, Maxime Chevallier wrote:
->> Hi,
->>=20
->> On 22/10/2025 09:38, Th=C3=A9o Lebrun wrote:
->> > Add support for the two GEM instances inside Mobileye EyeQ5 SoCs, usin=
-g
->> > compatible "mobileye,eyeq5-gem". With it, add a custom init sequence
->> > that must grab a generic PHY and initialise it.
->> >=20
->> > We use bp->phy in both RGMII and SGMII cases. Tell our mode by adding =
-a
->> > phy_set_mode_ext() during macb_open(), before phy_power_on(). We are
->> > the first users of bp->phy that use it in non-SGMII cases.
->> >=20
->> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
->>=20
->> This seems good to me. I was worried that introducing the unconditionnal
->> call to phy_set_mode_ext() could trigger spurious errors should the
->> generic PHY driver not support the requested interface, but AFAICT
->> there's only the zynqmp in-tree that use the 'phys' property with macb,
->> and the associated generic PHY driver (drivers/phy/phy-zynqmp.c) doesn't
->> implement a .set_mode, so that looks safe.
->
-> I was thinking along the same lines, is this actually safe? It would
-> be good to add something like this to the commit message to indicate
-> this change is safe, the needed code analysis has been performed.
+On 10/13/25 18:09, Xin Li (Intel) wrote:
+> Add the ESTACK_ prefix to event stack names to improve clarity and
+> readability.  Without the prefix, names like DF, NMI, and DB are too
+> brief and potentially ambiguous.
+> 
+> This renaming also prepares for converting __this_cpu_ist_top_va from
+> a macro into a function that accepts an enum exception_stack_ordering
+> argument, without requiring changes to existing callsites.
 
-Sure, will integrate a summary similar to my reply to Maxime's message.
-https://lore.kernel.org/lkml/DDOQYH87ZV1H.1QZH1R36WMIC6@bootlin.com/
+Yup, the rename looks good.
 
-Thanks,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 
