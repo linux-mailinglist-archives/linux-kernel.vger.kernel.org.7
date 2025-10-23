@@ -1,55 +1,80 @@
-Return-Path: <linux-kernel+bounces-867880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AD16C03B8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 00:53:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218EAC03B87
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 00:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 497DD3A93DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:53:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9314A1AA4683
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1189528A72B;
-	Thu, 23 Oct 2025 22:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9419D286D5D;
+	Thu, 23 Oct 2025 22:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="Ld0msfZ0"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dl0P3UBP"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880C529D266
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 22:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26E1184
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 22:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761260022; cv=none; b=heJs8IJQOYACMT2+tfo60IX/MPo15E7IxfR7uvZ9uzmPX2ozzV2DOtlbBl/8600JGDr9zXim5+unlVsDfAq2D0Sx68w8sxB+IXsdJcGINmgcckJkl2CYyBhzjlr8hK76TtJ4OOxceOg3Yz2wPloxJnHFZ5NXJch0CqLy2+gmRCc=
+	t=1761260015; cv=none; b=ERtylbiL9/ZUofKj5E2cawpDv7dNWT6VQv574+UUxV/l5plyqhUaJ1mz/d4XPHqN4vMcc2IgKC6JyPgkpPkYZlvduNqVR46aAHDs9tXn5pX6f4ZRw/ELelkeWxN5A0NC85Kmix1EYLspm0u8y2xOiPWi7E+awYVs0wr20hIp/6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761260022; c=relaxed/simple;
-	bh=DCAF7TtHftTvDj1OSSV058dCzxlVEwOr29KkxAHMvfQ=;
+	s=arc-20240116; t=1761260015; c=relaxed/simple;
+	bh=wp0Qp3uPaMoX0jA6DpU13Ox/9HuvNei+eCmrBiVz7/g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fSoFIrrJVCmAhLvej8gExF97Kfy2yqm+pblMxGsnuIT1tsSzNR8Jyh3l463CjJ5scWhB8XoOjLdzWhOAJvET5CMiF5BRVzdY3z/XGebsZiKTALPKTwiyXRnEIewzZp1s1bTFUNKcaPCXHY4ETl5UTDTTrH6lWDH4VptYJP2t/M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=Ld0msfZ0; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1761260013;
- bh=AG2rFEpBv1gq95qUgCmaFP4trd4HB0CSXHRiD4voN58=;
- b=Ld0msfZ0tariHjuUPM5iQccX9hPHoj14dldgEM2PlnTKI8nVXvhZie8IjcLikHgbnEstYJ394
- foawQkYy7GfJ0e6hHa6Uf85bf7hSUOJXEz3pHY3YhYjhTA2zCFLdnIGEIK3jHW+PFIDQjTIxgzH
- B7rUxCOUJMaVty1rOLt5lIxDar4FgF8Z7UJ9oV36u/fpMh1i3UJOlBU+AK5sUvC4NkrZb5MxnUE
- RztFEhIqdUQdvzaugZHS9+0hZE07AWiemB4lFv/wTxviRYZOlMofnRdnFPt4Y6K+kt4dcj7waDy
- 4h5C3bmt7/9UfNpvlgQaRQDyFIXFI18nq8xExlJ5OX+A==
-X-Forward-Email-ID: 68fab1e82a3297951990cdf1
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 1.3.0
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <d28c81b0-3d50-46f7-876e-d634bcab2cd0@kwiboo.se>
-Date: Fri, 24 Oct 2025 00:53:20 +0200
+	 In-Reply-To:Content-Type; b=s0IXnwdB5SnkPhgrdBiy8clCKjpT0bcx94ceVhf0CuSxVfir+do5bASGsywN2lBqomR6tX4Qz/4sHJc91++EPlJTqSOnjy5pdQRngAMlOTYFd8UI92bUFhjFobjqY1IaqOhzumULmyXd49T2D5QwMVmmX/JuB4llF5tdQyLh6tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dl0P3UBP; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4710ff3ae81so4619745e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:53:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761260012; x=1761864812; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c9XWWQ/zB2k8rSoSKBXeLswAT4u6X6JqIy6JUmHLGkY=;
+        b=dl0P3UBPItPJzsW0y2CzJP3GqmA2BrGZz+HYaw0WEj5ejBQtEsGp5OFAvwt1IRwhO1
+         +QzAb1YpvY3rRSwjS78pScq279zbfLe9mxnVeVJzvCdHYgzcUgezF+nc+iQ30UGgQST8
+         lGkoyQ+XBI/TMhIW9ITDCONNHv5jhaaWGs4eJlu8lvLK55XH+UzO3BgmBZB1JoQGC0L2
+         nN7r9NdjRjhZjwd3td/agdbPJGHuvhwgsl2ixum92UM2Wn7WtARWiCoIgZv21Xn2jlVj
+         HGjWFHhfpUkZsBBVhEeZ285ZiyDKDuZAotIziTd1Ww6WRuJYg0A1ihedj4lnMw0VeeMb
+         He5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761260012; x=1761864812;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c9XWWQ/zB2k8rSoSKBXeLswAT4u6X6JqIy6JUmHLGkY=;
+        b=AlzhiFU4KBXk03prUVd0RFTMfAF5jNoQIyGDNWTlyhwdU96czqiIL8lGaagbXcU8K8
+         2plXqPp6Ys9aTHMkbaZIDXbPzM68J8bpCjuBzcCG3yGljh/ZKww0iHUevbZ4G+WUNBMs
+         uqQlbuJAg7Spn1bJyCB4aDqYemVo5sBZppe9tWA9L2viRqsIN17qQB6PgjLjqWe5SQ50
+         7ANsCdnXnlCSPCpM0U0z4UEz8V5E7CAeEyRgkzD3foyWeAEn8Vd1Bw8/Rex/iwYOmiuO
+         +vve0/b+QjhmlO8LnmDzQVcU5uVR9PNdke73+fP6VWLtzM/TrZOfV9xi13S5INOM+8OG
+         ROKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbtBH8AHi4z72RmIS9gYRQbyl5lEwNCvd6pN+1fjwqvtwAehsxnMPqhXhAbykgtpI7o+d0YbLYHF0BHnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz9QDA50QJBKm+H+Cs4dcJAxMFABA5k/pbg/aCIs7n99PDAHlr
+	0HY0vR8fqBpMJ7vlKWXHNI61Ls9fbSHPwEiPdUosKSvHRHKRyFuF1sR+
+X-Gm-Gg: ASbGncsB7yHvW3a2Z+fLA3v8dbQzJMN0ukCSJHScMp0yuXOpGHc88wTtpDlks8/ykhA
+	nsB4EvlYaKzvalAX9DVtprfvBsYJiyM2fWen4D3ReJLkXyiDKKidKQG4UacllRZ64zEF7ff7K48
+	XOTSq1CDMTcntvj0Qk8WrRjLrAZjbVdVCwqY6bnM85g7d2KlfIK8Q2/LGGnXp84E6kKKfWBohOd
+	9CRg8FJZu/6Nqf0EJs8U1iXuhRAN5h6zkEyhnlChqpWbxrrAqoiZgo+Ubn+z6OaYJiVEgO1nbMT
+	IEQFjQaw/OJwmihRz1FptiO8djVNfRsBzWIdELpKHeErWy056qN0vUpoEC+pPDojnPGBDvMU9oy
+	mUSzGyFTVJ57zCysHw+vtmyHIDG7fCr36kJeK7kSQJnjDZE0wyMbgEsPy/91gXRgQrAhhCqMUiy
+	ayxbeM+zmEV5Y=
+X-Google-Smtp-Source: AGHT+IH4OBhgW4sCyAhMwGOnKHeNR0V09d/a8qkchAKk44irEOwnukh9k00Hfb/iKGiF5yI370r2cw==
+X-Received: by 2002:a05:600c:8b8c:b0:46e:4287:a85e with SMTP id 5b1f17b1804b1-471178a4af1mr159390945e9.13.1761260011829;
+        Thu, 23 Oct 2025 15:53:31 -0700 (PDT)
+Received: from [192.168.1.121] ([151.61.20.236])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475cae9f571sm60537695e9.7.2025.10.23.15.53.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 15:53:31 -0700 (PDT)
+Message-ID: <b91de7c7-74b8-4cf5-82a4-f3d4eaf418d4@gmail.com>
+Date: Fri, 24 Oct 2025 00:53:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,118 +82,203 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 12/15] media: rkvdec: Add H264 support for the VDPU381
- variant
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Heiko Stuebner <heiko@sntech.de>, Ricardo Ribalda <ribalda@chromium.org>,
- Hans Verkuil <hverkuil@kernel.org>, Hans de Goede <hansg@kernel.org>,
- Yunke Cao <yunkec@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- James Cowgill <james.cowgill@blaize.com>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- kernel@collabora.com, Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Diederik de Haas <didi.debian@cknow.org>, linux-kernel@vger.kernel.org
-References: <20251023214247.459931-1-detlev.casanova@collabora.com>
- <20251023214247.459931-13-detlev.casanova@collabora.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20251023214247.459931-13-detlev.casanova@collabora.com>
+Subject: Re: [PATCH v7 1/9] HID: asus: simplify RGB init sequence
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+References: <20251018101759.4089-1-lkml@antheas.dev>
+ <20251018101759.4089-2-lkml@antheas.dev>
+ <e6328da3-8099-4540-9cb0-4fc28b359ee7@gmail.com>
+ <CAGwozwG+gf09PQf9o9YkKFYVgVn-1w5CDVrpOe4uFavVYCNijQ@mail.gmail.com>
+ <3947f772-691b-46a2-af68-15825e7f4939@gmail.com>
+ <CAGwozwFbQWyuQB6EwLMLon5muff2WudR+oVL62DqP_MXGW+p-Q@mail.gmail.com>
+Content-Language: en-US, it-IT, en-US-large
+From: Denis Benato <benato.denis96@gmail.com>
+In-Reply-To: <CAGwozwFbQWyuQB6EwLMLon5muff2WudR+oVL62DqP_MXGW+p-Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Detlev,
 
-On 10/23/2025 11:42 PM, Detlev Casanova wrote:
-> This decoder variant is found in Rockchip RK3588 SoC family.
-> 
-> Like for rkvdec on rk3399, it supports the NV12, NV15, NV16 and NV20
-> output formats and level up to 5.1.
-> 
-> The maximum width and height have been significantly increased
-> supporting up to 65520 pixels for both.
-> 
-> Also make sure to only expose the first core and ignore the other
-> until mutli-core is supported.
-> 
-> Fluster score for JVT-AVC_V1 is 129/135.
-> 
-> Tested-by: Diederik de Haas <didi.debian@cknow.org>  # Rock 5B
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> ---
->  .../media/platform/rockchip/rkvdec/Makefile   |   1 +
->  .../rockchip/rkvdec/rkvdec-h264-common.h      |   2 +
->  .../rockchip/rkvdec/rkvdec-vdpu381-h264.c     | 469 ++++++++++++++++++
->  .../rockchip/rkvdec/rkvdec-vdpu381-regs.h     | 427 ++++++++++++++++
->  .../media/platform/rockchip/rkvdec/rkvdec.c   | 127 +++++
->  .../media/platform/rockchip/rkvdec/rkvdec.h   |   4 +
->  6 files changed, 1030 insertions(+)
->  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-h264.c
->  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-regs.h
+On 10/23/25 23:30, Antheas Kapenekakis wrote:
+> On Thu, 23 Oct 2025 at 22:05, Denis Benato <benato.denis96@gmail.com> wrote:
+>>
+>> On 10/23/25 20:06, Antheas Kapenekakis wrote:
+>>> On Thu, 23 Oct 2025 at 19:38, Denis Benato <benato.denis96@gmail.com> wrote:
+>>>> On 10/18/25 12:17, Antheas Kapenekakis wrote:
+>>>>> Currently, RGB initialization forks depending on whether a device is
+>>>>> NKEY. Then, NKEY devices are initialized using 0x5a, 0x5d, 0x5e
+>>>>> endpoints, and non-NKEY devices with 0x5a and then a
+>>>>> backlight check, which is omitted for NKEY devices.
+>>>>>
+>>>>> Remove the fork, using a common initialization sequence for both,
+>>>>> where they are both only initialized with 0x5a, then checked for
+>>>>> backlight support. This patch should not affect existing functionality.
+>>>>>
+>>>>> 0x5d and 0x5e endpoint initializations are performed by Windows
+>>>>> userspace programs associated with different usages that reside under
+>>>>> the vendor HID. Specifically, 0x5d is used by Armoury Crate, which
+>>>>> controls RGB and 0x5e by an animation program for certain Asus laptops.
+>>>>> Neither is used currently in the driver.
+>>>> What benefits do we get from removing the unused initialization?
+>>>>
+>>>> If this has never caused any troubles I don't see the reason for removing
+>>>> them. Moreover the lighting protocol is known and I might as well add
+>>>> support for it in the near future,
+>>> I already have a patch that adds RGB and delay inits that endpoint. It
+>>> got removed to make this easier to merge. See [1].
+>>>
+>>> [1] https://lore.kernel.org/lkml/20250324210151.6042-10-lkml@antheas.dev/
+>> I have to main concerns about this:
+>>
+>> 1. taking away initialization commands in one patchset to make it
+>> easier to merge another unrelated patch doesn't seem the right thing
+>> to do if the other patch it's not in the same series.
+>>
+>> I can see [1] has been removed from the set for a later moment in time,
+>> it's fine if it needs more work, just send something that function in the
+>> same way and do not remove initialization commands when unnecessary,
+>> especially since there will be for sure future development.
+> The initialization was removed as part of general cleanup. Not to make
+> it easier to merge the RGB patch. In addition, the RGB patch only runs
+> the init in a lazy fashion, so if nobody uses the RGB sysfs the init
+> does not run and the behavior is the same.
+There are a few problems here:
+1. sope creep: either do a cleanup or solve bugs. The fact that your flow z13
+doesn't load hid-asus correctly has nothing to do with the initialization of anime.
+The fact that hid-asus is driving leds instead of asus-wmi has nothing to do with
+anime matrix initialization either.
+2. not sending the initialization can get hardware misbehave because it
+is left in an uninitialized state.
+3. there are absolutely zero reasons to do that. There are even less reasons
+as to do it as part of this patchset.
 
-[snip]
+>> 2. Your patchset resolves around keyboard backlight control and how
+>> the keyboard device is exposed to userspace: it's fine but I do not see
+>> the point in removing initialization commands that has nothing to do
+>> with the issue we are trying to solve here.
+>>
+>> Please leave 0x5E and 0x5D initialization commands where they are now.
+> I mean the second part of the patchset does that. The first part is a
+> cleanup. What would be the reason for keeping 0x5E and 0x5D? They are
+> only used when initializing those endpoints to write further commands
+> to them and for identification. The current driver does not write
+> commands to those endpoints and identifies itself over 0x5A.
+There are no bugs opened that ties initialization of devices to bugs.
+Quite the opposite: I can guarantee you that removing part of the
+init will introduce regressions.
 
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> index f043b07c8e7d..bc3e35b82a11 100644
-> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+The onus is on you to provide strong evidence that the removal is
+a necessary act.
 
-[snip]
+Regardless it is not in the scope of this patchset: remove it.
+> I do get that it is a bit risky as some laptops might be hardcoded to
+> wait for 0x5D to turn on RGB. Which is why we had the last patch until
+> V4. But we have yet to find a laptop that has this problem, so I find
+> it difficult to justify keeping the init.
+Yes it's risky to remove initialization sequences for a device that is
+in every modern ASUS laptop and is tied to the EC.
+> Do note that you might need to add the 0x5D init to your userspace
+> program for certain laptops if you haven't already. But that is ok,
+> since in doing so you are also validating you are speaking to an Asus
+> device, which is important.
+This doesn't make much sense: why would anyone remove
+a command from the kernel, that can be very well essential to some models
+(sleep can break, for example) just to add it back in a userspace program?
 
-> +/*
-> + * Some SoCs, like RK3588 have multiple identical VDPU cores, but the
-> + * kernel is currently missing support for multi-core handling. Exposing
-> + * separate devices for each core to userspace is bad, since that does
-> + * not allow scheduling tasks properly (and creates ABI). With this workaround
-> + * the driver will only probe for the first core and early exit for the other
-> + * cores. Once the driver gains multi-core support, the same technique
-> + * for detecting the first core can be used to cluster all cores together.
-> + */
-> +static int rkvdec_disable_multicore(struct rkvdec_dev *rkvdec)
-> +{
-> +	struct device_node *node = NULL;
-> +	const char *compatible;
-> +	bool is_first_core;
-> +	int ret;
-> +
-> +	/* Intentionally ignores the fallback strings */
-> +	ret = of_property_read_string(rkvdec->dev->of_node, "compatible", &compatible);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* The first compatible and available node found is considered the main core */
-> +	do {
-> +		node = of_find_compatible_node(node, NULL, compatible);
-> +		if (of_device_is_available(node))
-> +			break;
-> +	} while (node);
-> +
-> +	if (!node)
-> +		return -EINVAL;
-> +
-> +	is_first_core = (rkvdec->dev->of_node == node);
-> +
-> +	of_node_put(node);
-> +
-> +	if (!is_first_core) {
-> +		dev_info(rkvdec->dev, "missing multi-core support, ignoring this instance\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	return 0;
-> +}
+What does it mean I have to validate I am speaking to an asus device?
+Software selects devices by known attribute, one of them is the vid:pid....
+Beside what does this have to do with the removal of initialization commands
+from the kernel?
 
-The addition of rkvdec_disable_multicore should probably be split into a
-separate patch.
+Even late initializing devices can lead to problems. Windows doesn't do that:
+as soon as asus drivers are loaded all relevant initialization sequences are 
+sent; Windows is the only officially supported OS: do not introduce commands
+flow divergence without strong reasons backing it up.
 
-Please leave some more time for review before sending next version. I
-will try to do a more in depth review of this series this weekend, more
-feedback will follow.
-
-Regards,
-Jonas
-
-[snip]
+> Antheas
+>
+Denis
+>>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+>>>>> ---
+>>>>>  drivers/hid/hid-asus.c | 56 ++++++++++++++----------------------------
+>>>>>  1 file changed, 19 insertions(+), 37 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+>>>>> index a444d41e53b6..7ea1037c3979 100644
+>>>>> --- a/drivers/hid/hid-asus.c
+>>>>> +++ b/drivers/hid/hid-asus.c
+>>>>> @@ -638,50 +638,32 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
+>>>>>       unsigned char kbd_func;
+>>>>>       int ret;
+>>>>>
+>>>>> -     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+>>>>> -             /* Initialize keyboard */
+>>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+>>>>> -             if (ret < 0)
+>>>>> -                     return ret;
+>>>>> -
+>>>>> -             /* The LED endpoint is initialised in two HID */
+>>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
+>>>>> -             if (ret < 0)
+>>>>> -                     return ret;
+>>>>> -
+>>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2);
+>>>>> -             if (ret < 0)
+>>>>> -                     return ret;
+>>>>> -
+>>>>> -             if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+>>>>> -                     ret = asus_kbd_disable_oobe(hdev);
+>>>>> -                     if (ret < 0)
+>>>>> -                             return ret;
+>>>>> -             }
+>>>>> -
+>>>>> -             if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+>>>>> -                     intf = to_usb_interface(hdev->dev.parent);
+>>>>> -                     udev = interface_to_usbdev(intf);
+>>>>> -                     validate_mcu_fw_version(hdev,
+>>>>> -                             le16_to_cpu(udev->descriptor.idProduct));
+>>>>> -             }
+>>>>> +     ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+>>>>> +     if (ret < 0)
+>>>>> +             return ret;
+>>>>>
+>>>>> -     } else {
+>>>>> -             /* Initialize keyboard */
+>>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
+>>>>> -             if (ret < 0)
+>>>>> -                     return ret;
+>>>>> +     /* Get keyboard functions */
+>>>>> +     ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+>>>>> +     if (ret < 0)
+>>>>> +             return ret;
+>>>>>
+>>>>> -             /* Get keyboard functions */
+>>>>> -             ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
+>>>>> +     if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
+>>>>> +             ret = asus_kbd_disable_oobe(hdev);
+>>>>>               if (ret < 0)
+>>>>>                       return ret;
+>>>>> +     }
+>>>>>
+>>>>> -             /* Check for backlight support */
+>>>>> -             if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+>>>>> -                     return -ENODEV;
+>>>>> +     if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
+>>>>> +             intf = to_usb_interface(hdev->dev.parent);
+>>>>> +             udev = interface_to_usbdev(intf);
+>>>>> +             validate_mcu_fw_version(
+>>>>> +                     hdev, le16_to_cpu(udev->descriptor.idProduct));
+>>>>>       }
+>>>>>
+>>>>> +     /* Check for backlight support */
+>>>>> +     if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
+>>>>> +             return -ENODEV;
+>>>>> +
+>>>>>       drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
+>>>>>                                             sizeof(struct asus_kbd_leds),
+>>>>>                                             GFP_KERNEL);
 
