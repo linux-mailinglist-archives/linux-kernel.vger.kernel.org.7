@@ -1,156 +1,238 @@
-Return-Path: <linux-kernel+bounces-867274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F5FC02158
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:23:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDA6C02164
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 842975020D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:22:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 04CAE4FA699
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1E31474CC;
-	Thu, 23 Oct 2025 15:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27433385BD;
+	Thu, 23 Oct 2025 15:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="IoeEQV1t"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5683321CC
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="El791BPw"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF6A3385B3;
+	Thu, 23 Oct 2025 15:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761232885; cv=none; b=GtF1EhF/J1Cje5pkJ+g5Fsp5bCf/yxMRtwb1YeAFrW3QxP+fO2H6W7Jm1neJVneT8mnxm9etpc4cAx/s1xPBqasAtG7DR12S+tCtrNRacl9Q2beNmWASMEkMKf685dsLb4u6NviHoSQg9qnfK6evNsIKyHGXfGyLp8h8LCvgsIA=
+	t=1761232906; cv=none; b=RItlGbAiLWi69RSKGQZsrIJMd8fjlQSbVELvGqQ411QbV8xlTFdTIYMZ0JC5aTQr5owIBHK3lW129HIuOjLuckChwoPFEzPaeuaSkzhQKF1Gh+kS2ULnqL8qVwt7pNzGpF0nq3dzSWLfDW0FXrUv2G8t05T8xIoALytCTHElQNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761232885; c=relaxed/simple;
-	bh=CGISLCO6vtKrWLEE0J1rr2/FzdKkOGoQWqx53TjAihk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YaSsz4ed+5kHdR9yhU+Zl13CdoJM0zSkwU/ePhC0Z3WyclqaF/Z0eePf+szlDtQkmHutrsm9OTqSFvidnaO1wXuGD/rWzAJ2T4Qj94kGQkj4FFzQgO4MfvnLdeb0T53iF7/H5lA1WDEmKeAHSFLQ0EdlmWRFbdEJvSqD9z5qZFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=IoeEQV1t; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-940d27610b8so33713639f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:21:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1761232882; x=1761837682; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eTi1JnqCKHk9CMi6oZs8NpNwJOlI22nEpI+ixQdEx4E=;
-        b=IoeEQV1tecaH4z8hrPBkGLlPNb+XtC0iNWilokub6Hso3qz3jyoGzUiF9wqIwnHnvz
-         VrmmD/kQY5Q0omCIkm2dEWKaDFccxP8EOyUWwjzKBjGBTGqNxFPt6Q/flRUWWmEzkzgO
-         aUj1yosxHFRmx8WdKwrvbtYctkL1v+XyDoLb/glwb86HiE/n1RNmQWJ7Jetf/jR15ElR
-         bke0H1lYTdNoUfeBkpEqR2ntj5K09Prpk74sN6L1Hp30Hw8g3wbASY/nSKxtUCe2fSr2
-         59Nr8jKPfyo65zZQlRQxyIdlWXmk6eExk+45Xf+t4Rdg2E4tZP+uujZACpB64I9Sm6eX
-         vW1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761232882; x=1761837682;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eTi1JnqCKHk9CMi6oZs8NpNwJOlI22nEpI+ixQdEx4E=;
-        b=mVHnPXnMqEmA4vZp1vVlM5ltukXVO4m2Sgj0WR/d2xl5cqGwaxD3IBoxnE2tcBz3LT
-         YOCQBHTxMjRHw13OcRroqhASWcwGf0bnqHoQF5mqCICVKsB2FvDs/VYHHGbZe+oIGTvu
-         QJggY1NsOHc9xETKvbvXOXDbt7J1Eo1usEx3kD10VxLxL7psDNM1I5/uFOb+A2z8CgGE
-         qkUyb8gBMTUS8JBRiEDxxbJoOsooF+egUAlOFNkabE66AArMAPrZV5XnO63gSuYfun0E
-         G/IHrshlW0zYsX81VbWYrrrZrTl0Qz9GrlSrxqk9OUmLwEzX8KGvl3Xs9p6YmVhVz8xI
-         AM/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXR6uEgnFH8y7KD4mPTPoEKG7ZoS8QgSb6RcJI0lDfcXKp9FEAih98RLAePKCgXXG1YoCkwBjABvzaCvYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0gS4y8FYzXRztaTGqDK/mxXzmZC+UbWl1ELgS4nfV5p0okoVo
-	ADKMQJQYNdDjnOgcRhBM410ROHzmkC9UAID58eCtemkCnCG/eJF/ExJ6dtBA+O/fQSJ2RjCRVnf
-	SvHpHZ2S47ROGcazbo0UNKErxOs5QPTg0gdi/dM82BA==
-X-Gm-Gg: ASbGnctIIqR+7CEEF+coo1g0CFoPWihGCXiPGd2AYJw8R1dFPFDREhmJ+glD4Us6COY
-	mwnsUzdm22CJqKj73UVedUejE5Ce7pEELk22rglGjndpkyYGDsXkoroMCWkTtvtyMJQpFoqPSM0
-	JG7xZk5UN/f8WcpO5wO3o0e3ZEWYFyn5VLNKoZvVVOfvAnNInPtOLVNjlmSAcLtBQubXpJKxSIi
-	yGu0GoL2d9+a2ZPJI1ehG0QRZuAV+gniJfizNTv74Hl586RosndqdBVUQ==
-X-Google-Smtp-Source: AGHT+IEcTxhl1si9kJX0DM7rywKfW7m2SfbjsObGtiwxypKDvFzMXKuyZB3SDip0x3INk6dXj2IZwIAa7Xc+NtZO05U=
-X-Received: by 2002:a05:6e02:16ce:b0:42f:9e92:a434 with SMTP id
- e9e14a558f8ab-430c52b5a2cmr294238555ab.21.1761232882405; Thu, 23 Oct 2025
- 08:21:22 -0700 (PDT)
+	s=arc-20240116; t=1761232906; c=relaxed/simple;
+	bh=Py1H9BtYJNnlOXcTky/cHvzK7ZOHkwlwPFQcY7GBHUg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dhe9YMNaky+R4a+vDqoxqduhTIqifiydbOGLIN5D/l/137m6MhPJPIqEaaZsAXYHBKVufnm8Eg/+vIY5xNpJ40hQe9KNjs6oyXjsN+j/H1pqSV3RGtPbadRcu0mxVdtBDSjwQI7Fe32q6jCuoqW92ncEul2CSXDEmfdHn/dhkm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=El791BPw; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.64.46] (unknown [4.194.122.144])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C97E7201725B;
+	Thu, 23 Oct 2025 08:21:37 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C97E7201725B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1761232903;
+	bh=7yByHz4nEOFScL3ZiG5hNxqEWRfpfTW2wTv+vbIobVQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=El791BPwoua1G3ocRSGRiLZ2zQGhsfmDjWNUfx/4wD9B7M0ZprVUfJVsnR/Hn9z4b
+	 XyYJE4izAF+hQwVYCADiYn3uvxifNhFtqUzIClQFAlku0Q5Amn9nDB+Wya7hni26NU
+	 tumIWVea5pX3raKC5VXAdqdI/AJsuJOoER7oaHHM=
+Message-ID: <0f9f9d71-d12a-4b52-8477-46a66a534eda@linux.microsoft.com>
+Date: Thu, 23 Oct 2025 20:51:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020-printk_legacy_thread_console_lock-v3-0-00f1f0ac055a@thegoodpenguin.co.uk>
- <20251020-printk_legacy_thread_console_lock-v3-2-00f1f0ac055a@thegoodpenguin.co.uk>
- <873479daeh.fsf@jogness.linutronix.de> <aPpBpzjm2TpnbiNs@pathway.suse.cz>
-In-Reply-To: <aPpBpzjm2TpnbiNs@pathway.suse.cz>
-From: Andrew Murray <amurray@thegoodpenguin.co.uk>
-Date: Thu, 23 Oct 2025 16:21:11 +0100
-X-Gm-Features: AWmQ_bkO5iqCfHeoevc0uL9QstFNAO4q1A9bGHqZLSvgrLITC7sFb5IzT9adu4I
-Message-ID: <CALqELGypz6m5JM3ht5kzGCLA=dq7WRTBWw8yZfQxoydbccVWhg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] printk: console_flush_one_record() code cleanup
-To: Petr Mladek <pmladek@suse.com>
-Cc: John Ogness <john.ogness@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 0/2] Drivers: hv: Introduce new driver - mshv_vtl
+To: Michael Kelley <mhklinux@outlook.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>,
+ Mukesh Rathor <mrathor@linux.microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ Christoph Hellwig <hch@infradead.org>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>,
+ ALOK TIWARI <alok.a.tiwari@oracle.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>
+References: <20251017074507.142704-1-namjain@linux.microsoft.com>
+ <SN6PR02MB4157AE454F412993BC1D4BFDD4F6A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157AE454F412993BC1D4BFDD4F6A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 23 Oct 2025 at 15:54, Petr Mladek <pmladek@suse.com> wrote:
->
-> On Thu 2025-10-23 15:24:14, John Ogness wrote:
-> > On 2025-10-20, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
-> > > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> > > index 1c048c66d09919967e57326e1732bd17c10f3c76..6c846d2d37d9d20bad58c6e3a7caada3be9552ca 100644
-> > > --- a/kernel/printk/printk.c
-> > > +++ b/kernel/printk/printk.c
-> > > @@ -3142,31 +3142,33 @@ static inline void printk_kthreads_check_locked(void) { }
-> > >   * context.
-> > >   *
-> > >   * @next_seq is set to the sequence number after the last available record.
-> > > - * The value is valid only when there is at least one usable console and all
-> > > - * usable consoles were flushed.
-> > > + * The value is valid only when all usable consoles were flushed. It is
-> > > + * when the function returns true (can do the job) and @try_again parameter
-> > > + * is set to false, see below.
-> > >   *
-> > >   * @handover will be set to true if a printk waiter has taken over the
-> > >   * console_lock, in which case the caller is no longer holding the
-> > >   * console_lock. Otherwise it is set to false.
-> > >   *
-> > > - * @any_usable will be set to true if there are any usable consoles.
-> > > + * @try_again will be set to true when it still makes sense to call this
-> > > + * function again. The function could do the job, see the return value.
-> > > + * And some consoles still make progress.
-> > >   *
-> > > - * Returns true when there was at least one usable console and a record was
-> > > - * flushed. A returned false indicates there were no records to flush for any
-> > > - * of the consoles. It may also indicate that there were no usable consoles,
-> > > - * the context has been lost or there is a panic suitation. Regardless the
-> > > - * reason, the caller should assume it is not useful to immediately try again.
-> > > + * Returns true when the function could do the job. Some consoles are usable,
-> > > + * and there was no takeover and no panic_on_other_cpu().
-> > >   *
-> > >   * Requires the console_lock.
-> > >   */
-> > >  static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *handover,
-> > > -                                bool *any_usable)
-> > > +                                bool *try_again)
-> > >  {
-> > >     struct console_flush_type ft;
-> > > -   bool any_progress = false;
-> > > +   int any_usable = false;
-> >
-> > Nit: This should be a bool.
->
-> Great catch! No need to resend the patch. I could fix this when committing.
->
-> > With the change:
-> >
-> > Reviewed-by: John Ogness <john.ogness@linutronix.de>
->
-> Thanks for the review.
 
-You can also add my reviewed-by with this change:
 
-Reviewed-by: Andrew Murray <amurray@thegoodpenguin.co.uk>
+On 10/18/2025 12:02 AM, Michael Kelley wrote:
+> From: Naman Jain <namjain@linux.microsoft.com> Sent: Friday, October 17, 2025 12:45 AM
+>>
+>> Introduce a new mshv_vtl driver to provide an interface for Virtual
+>> Machine Monitor like OpenVMM and its use as OpenHCL paravisor to
+>> control VTL0 (Virtual trust Level).
+>> Expose devices and support IOCTLs for features like VTL creation,
+>> VTL0 memory management, context switch, making hypercalls,
+>> mapping VTL0 address space to VTL2 userspace, getting new VMBus
+>> messages and channel events in VTL2 etc.
+>>
+>> OpenVMM : https://openvmm.dev/guide/
+>>
+>> Changes since v8:
+>> https://lore.kernel.org/all/20251013060353.67326-1-namjain@linux.microsoft.com/
+>> Addressed Sean's comments:
+>> * Removed forcing SIGPENDING, and other minor changes, in
+>>    mshv_vtl_ioctl_return_to_lower_vtl after referring
+>>    to Sean's earlier changes for xfer_to_guest_mode_handle_work.
+>>
+>> * Rebased and resolved merge conflicts, compilation errors on latest
+>>    linux-next kernel tip, after Roman's Confidential VM changes,
+>>    which merged recently. No functional changes.
+> 
+> Did your testing against the latest linux-next included testing with
+> CONFIG_X86_KERNEL_IBT=y?  This is Indirect Branch Tracking, which would
+> have generated a fault with your v7 series and earlier because of the indirect
+> call instruction when doing VTL Return through the hypercall page (which
+> doesn't have the needed ENDBR64 instruction). But now that VTL Return is
+> doing a static call, that should be direct, which won't trigger an IBT fault.
+> 
+> To confirm that you really are running with IBT enabled, you should see
+> 
+> [    0.047008] CET detected: Indirect Branch Tracking enabled
+> 
+> in the VTL2 dmesg output.  And "ibt" should appear in the
+> "flags" output line of 'cat /proc/cpuinfo' (or the 'lscpu' command).
+> 
+> Michael
 
-Thanks,
 
-Andrew Murray
+Hi Michael,
+I have now tested with and without IBT, and in case of IBT enabled, I do 
+see the log you pasted for IBT in VTL2 logs and there are no failures.
 
->
-> Best Regards,
-> Petr
+However, this additional testing uncovered another issue here where 
+there is a crash in VTL0, some time after boot, due to rbp clobbering in 
+mshv_vtl_return_hypercall() wrapper function.
+
+Thanks a lot Michael for helping me offline on this, to understand and 
+identify the issue.
+
+
+
+Hi Peter, Paolo, Sean,
+Here is the summary of the problem and the fix:
+
+Assembly code make a call to mshv_vtl_return_hypercall() after handling 
+rbp properly. However, current wrapper function in C updates rbp to rsp 
+before making the static call. This creates problems.
+
+<-snippet->
+
+arch/x86/hyperv/mshv_vtl_asm.S:
+	/* make a hypercall to switch VTL */
+	call mshv_vtl_return_hypercall
+
+arch/x86/hyperv/hv_vtl.c:
+noinstr void mshv_vtl_return_hypercall(void)
+{
+	asm volatile ("call " STATIC_CALL_TRAMP_STR(__mshv_vtl_return_hypercall) :
+		      ASM_CALL_CONSTRAINT);
+}
+
+(gdb) disassemble mshv_vtl_return_hypercall
+Dump of assembler code for function mshv_vtl_return_hypercall:
+    0xffffffff886981a0 <+0>:     push   %rbp
+    0xffffffff886981a1 <+1>:     mov    %rsp,%rbp
+    0xffffffff886981a4 <+4>:     call   0xffffffff886a77a8 
+<__SCT____mshv_vtl_return_hypercall>
+    0xffffffff886981a9 <+9>:     pop    %rbp
+    0xffffffff886981aa <+10>:    jmp    0xffffffff886a7670 
+<__x86_return_thunk>
+
+<-end->
+
+
+This is fixed after removing ASM_CALL_CONSTRAINT from above function 
+which makes sure it does not add save/restore rbp logic before the 
+assembly call instructions.
+
+
+<-snippet->
+
+(gdb) disassemble mshv_vtl_return_hypercall
+Dump of assembler code for function mshv_vtl_return_hypercall:
+    0xffffffff886981a0 <+0>:     call   0xffffffff886a77a8 
+<__SCT____mshv_vtl_return_hypercall>
+    0xffffffff886981a5 <+5>:     jmp    0xffffffff886a7670 
+<__x86_return_thunk>
+End of assembler dump.
+
+<-end->
+
+But then we see a warning reported by objtool for frame pointer, but 
+since this is expected, I will need to add STACK_FRAME_NON_STANDARD_FP 
+to suppress it.
+
+vmlinux.o: warning: objtool: mshv_vtl_return_hypercall+0x4: call without 
+frame pointer save/setup
+
+
+During code review, I found CR2 handling was missing after making 
+mshv_vtl_return_hypercall call in assembly, which I will *additionally* 
+fix in next version.
+
+Pasting the diff at the end, on top of this patch, which should fix 
+these issues.
+
+Please let me know if I should be doing it differently or if you foresee 
+any issues with this approach.
+
+Regards,
+Naman
+
+------------------------
+diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
+index 636e9253b81e..c61d2dce4d68 100644
+--- a/arch/x86/hyperv/hv_vtl.c
++++ b/arch/x86/hyperv/hv_vtl.c
+@@ -258,9 +258,9 @@ DEFINE_STATIC_CALL_NULL(__mshv_vtl_return_hypercall, 
+void (*)(void));
+
+  noinstr void mshv_vtl_return_hypercall(void)
+  {
+-       asm volatile ("call " 
+STATIC_CALL_TRAMP_STR(__mshv_vtl_return_hypercall) :
+-                     ASM_CALL_CONSTRAINT);
++       asm volatile ("call " 
+STATIC_CALL_TRAMP_STR(__mshv_vtl_return_hypercall));
+  }
++STACK_FRAME_NON_STANDARD_FP(mshv_vtl_return_hypercall);
+
+  extern void __mshv_vtl_return_call(struct mshv_vtl_cpu_context *vtl0);
+
+diff --git a/arch/x86/hyperv/mshv_vtl_asm.S b/arch/x86/hyperv/mshv_vtl_asm.S
+index 4085073a5876..5f4b511749f8 100644
+--- a/arch/x86/hyperv/mshv_vtl_asm.S
++++ b/arch/x86/hyperv/mshv_vtl_asm.S
+@@ -65,6 +65,9 @@ SYM_FUNC_START(__mshv_vtl_return_call)
+         mov 16(%rsp), %rcx
+         mov 24(%rsp), %rax
+
++       mov %rdx, MSHV_VTL_CPU_CONTEXT_rdx(%rax)
++       mov %cr2, %rdx
++       mov %rdx, MSHV_VTL_CPU_CONTEXT_cr2(%rax)
+         pop MSHV_VTL_CPU_CONTEXT_rcx(%rax)
+         pop MSHV_VTL_CPU_CONTEXT_rax(%rax)
+         add $16, %rsp
 
