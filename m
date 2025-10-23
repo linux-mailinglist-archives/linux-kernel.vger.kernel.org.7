@@ -1,200 +1,193 @@
-Return-Path: <linux-kernel+bounces-866383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22967BFF95A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:29:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58102BFFA3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55EFC1A0643D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:29:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFE10566863
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CA52DA771;
-	Thu, 23 Oct 2025 07:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3442DEA6F;
+	Thu, 23 Oct 2025 07:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="TYst9UIl"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011018.outbound.protection.outlook.com [40.107.74.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kmF6Bm9c"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496782BF016;
-	Thu, 23 Oct 2025 07:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761204162; cv=fail; b=X3T4X96yzWs0QpNKGfekYhPMJW0vgWwhQmjZUYBjz/BbXwvaLOZveZ+kAKQ6EIhSZQ/PqmtWr2oKfRZpvUspKggdLJnLfJcpIhDyAucqcCWZetob19mR0fjR0W3ZFpSDYnUQFIeYtusJX5yTqNJdLo6tKihO9o7bbHxzsR5ebTo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761204162; c=relaxed/simple;
-	bh=j0RbVc/w1A5+67juDnqX5T63O/pkzOqCTEano98BZxo=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=KAKkMVBU+oO4OzkPpKmehtVuftmHLejD3IteRUMVtS9K1q2gpxGa1bTWvAK3Y1eXCCooGv3+3EGmGZM/avm+IyNl973nB7njpOIpib6zpxIi/QuuufExHG+yJ3rsd5c39KURQzNBYZhxly/f0L3RvzzaacqTMo6p+FKJv1A+t3A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=TYst9UIl; arc=fail smtp.client-ip=40.107.74.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aLL0wSEVtkD2rjoGIzKoUwFSWnfbLzrGbhh/a+YBrlN1XYhAHudcTG5pF2R3y6wnOcEHulT74q8tihTYLfWMVOMK7EzR7E9JuDhcsRnLmC/8QyKYoNdGgTxx232KuqGGud9FE2mNudaYCtQk1V5J+jXkfrDqtAC6fzPl5eFavq5clsgeGlgqf8x57XJs3zNa2jEu9VKUnsDazWWSxUtnNQ1N5EpIwAJ3Ppd/iFAOZxfAwkAYu9RYPszkVHaXfVYLtxapm5/7MXvkMEWuxlICL9l4lvooGSuaqFeiMXB1nw5WXB3XmUCpHb8nXP6bxBboEkSC28rUwkHSeAvVqo1PZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4FJRbf8WJqrSjuh3efEqUMf/ZQ4YzhgWaOqcb88zv7g=;
- b=Lug4iDQv0ItdPQk7wX7YATNVG9GuH2H9Ned1DguDYpXZ5CnZg5pncRBk09wnUxa4Dzxd6ldNve75S202Xa4SKyP1+lyVWvFY+e2myKR1CF4gedlwS17xciGT2QCNszvDYAr6Qjva+8EpaT4AGz1hLVeMqdbYo1x7jnb+2XbIB5XXfydQvW0ynhBBku+pjYNyZ0ITu7qPEvlql7K3MdHZMFPU7LH96DKvgHRHLC70sCkHJyXxwXgw54cognAbqbZcEKxiCSyuqL1AZgHfSuaeXa8y3rhtobkdW0HGSnh38PeivaB9orp/qZxFTehITDqCqfp6OsvLyChAGBUhAubAlg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
- header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4FJRbf8WJqrSjuh3efEqUMf/ZQ4YzhgWaOqcb88zv7g=;
- b=TYst9UIlQ6wwynatthVaDHebpuvv/5TPXvO+BmGytXtXcXsv63dPKkgAnGOmqwlcqYOAxDN6XO4APY/2YOeGz0aVth9Ea7dxSPBpJtKhlXgRZfQSkvB1EoJWrfYWP6kbaERQrRTP49nMxDU8GwXD074icvOGFhOTQOB05+GeO+g=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=valinux.co.jp;
-Received: from OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:10d::7)
- by OS7P286MB7183.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:456::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
- 2025 07:22:39 +0000
-Received: from OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
- ([fe80::80f1:db56:4a11:3f7a]) by OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
- ([fe80::80f1:db56:4a11:3f7a%5]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 07:22:39 +0000
-From: Koichiro Den <den@valinux.co.jp>
-To: linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: marek.vasut+renesas@gmail.com,
-	yoshihiro.shimoda.uh@renesas.com,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com
-Subject: [PATCH] PCI: dwc: rcar-gen4-ep: Program Resizable BARs and drop 1MiB BAR limit
-Date: Thu, 23 Oct 2025 16:22:17 +0900
-Message-ID: <20251023072217.901888-1-den@valinux.co.jp>
-X-Mailer: git-send-email 2.48.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY4P286CA0027.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:2b0::9) To OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:10d::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EBC2BE7BB
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761204347; cv=none; b=iUpylcn1q1vi61mza3naPLYL2Tz5E2O4J6qx9PKbeVqIArlWYZH2GuLKQ1GQmcabzxhAy4xb1qo3rgbdhEwjbm+vUB9UFpifHf4GsS1bC7ZyuFot6pEjR5jxEMg961JJV1YVcLRIWTEf46L8mVmh+5oXuQ/4Z9qtdAJdrBT6VMI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761204347; c=relaxed/simple;
+	bh=Fzd1/33bhqG2vNUwxnZ9ga9aIr6yWlevkViCOkqrbyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jlnmwjMrNgaEeQrF6yP6WVNjofqEAHr1hnSP72IZXPAGzSWBdYhxgTINV8yLSrgsb/hEIqI9Csc7WN0pC7bD+M4BJdmbPXSSgWWxr3w0DJy45lvV6kSwL1OU2ED22LYg2/ZxgXx/byefDnOWWm+e8bM6xQYPtg0dF+fD+dCdA1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kmF6Bm9c; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47117e75258so3177555e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:25:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761204344; x=1761809144; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vSw39SqLym77Kz0EfuXzuM8L9Cr8WdrcJwSU8kcy73A=;
+        b=kmF6Bm9cmhMcldduHVo7S8koPJra4X3GjfeUI1KXUBojiUSmC6QGnKMuJhstYVGmsW
+         2HPY4d/lKzOzdZ+Nq+ksR+8Xyylt896qt35OhrbSNhyPx3u14hv0cbOcejQDPb1UqD0/
+         5tR+pDIvBK5StfZ3jil9ZlFFtBfYKPj/hUMRKs2zEVNlTZTv9Yh36y0wkP2t7Dnrbm++
+         4a9DQ9EGgg0f9oCL299SpiwHmm8le/WJTwpF3eWb10mBPvqYudxcXegUTzCSAEfcSLmf
+         5huF+e19DLVyOBO2My6cmm+N2d8aORVw2gSVxA37yw/hZiNPLD48G/vS//7s//M02sqb
+         W6yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761204344; x=1761809144;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vSw39SqLym77Kz0EfuXzuM8L9Cr8WdrcJwSU8kcy73A=;
+        b=H74jLd1mAS5QhXZOTsyyhdhh/g6/nc6FSeNhRSnHAZAmaJaQobhf0UuvAM6tW1xNeY
+         9cjvGJDpAFh5PoR86orOxYmqRIR3k2zdARe2R5EVHzeo/rHKkUri3hNpwAsM/xXbjSHO
+         +0Xz111BJ1b8Z+hx7bv5fhxHbfV2gXZBNPmc78TNp5l9XD+t7VuW47CPMdV0ZY0PGmrV
+         lRpz7Yu4Nzrs3SS95WGbSGmoK/ecJuXkbOcaKwz7g2tt5szrbOuMmyJ6PQJhOlrvyWaS
+         uIhyTCrgNAt+mq8LjDH0BwKfMylKsfiwh4pJsRdnjS9zwSRAH3NtXjArvE4aoUhbHfbq
+         F2bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZkBvs43yRGq5Z7FIkj0z3J1Gg1WenupxOJ0RmuquPOFQFsA9jN5+crbj+upHAFLY8ZU5hCJFpQmXAvxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4RPo23lYUz1mTUOZG1scZBNzheZ6DZuEF1C9BXuui/pCIP3W4
+	VN3NSrfx+hMqF5MyGiT6sqbxlofsksGsdJ1PF3MzNGFZVU+pWzAjgTlKcvhz+EcBS1E=
+X-Gm-Gg: ASbGnctS2mW6aiwe+MNWLY8JxGiziJqar1JCYMnmuvPuD8Kin1kj3R+huWE+CFZ5OyN
+	RoNpaXwppL7XpKYVHMMfA4JAV5zN9o0SlIHeVAwCPkYoNLX6Of0G0l24nDvHFHXLGUcednaVlHD
+	QNX565iFcqVJvhLbStj3IAv3hfvCj61+BTciEsA2zoGuizYiLvyqtg4ZQoxidmVKLIgr1gCK+jE
+	MSHMHzZYRaedsXycqiGZxevMDuvr11eWRh7kh390rcLHC6n7xgVLvhvA4Z8NE+w8LAVIC0qv5cX
+	ttHiARjuhPVChc8Vc6TiIqXX5/P1QFIK+hyqy24zNe/oYHgm8LIpxjVpbzXG/nm8VZoc8Z0EpAD
+	gCQKyfbBOO4yG6ubeD9/HEbkkQqOMrMUFj6MsNRGId9jdOjDod9hIwg7oWHt19U1OnNIM+wpwl8
+	iJYZoarUkO
+X-Google-Smtp-Source: AGHT+IF9nR8Ok+zwbm9/f5vQvS2ChRoQgsa3Zb3XVq4vKe0l+/WhD27/DmLD8deyWjml5hAHlzgCiw==
+X-Received: by 2002:a05:600c:4686:b0:46f:b340:75e7 with SMTP id 5b1f17b1804b1-475caf92ae1mr9003785e9.8.1761204343558;
+        Thu, 23 Oct 2025 00:25:43 -0700 (PDT)
+Received: from [10.11.12.107] ([79.115.63.145])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4369b5esm94386495e9.15.2025.10.23.00.25.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 00:25:42 -0700 (PDT)
+Message-ID: <59c3d45b-13ff-4393-a87c-f0504f224acb@linaro.org>
+Date: Thu, 23 Oct 2025 08:25:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS3P286MB0979:EE_|OS7P286MB7183:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d00ed10-25a9-4e1c-cdba-08de1204f28b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jrxTKK3JGbVa5cffXp0ITAmOodHytaR5kZIjXhToZ2AW9kxSsgRqCmj5e2Xq?=
- =?us-ascii?Q?uUW32oD2yoA1u4ASGYejE5jwJbKaq2tYcoGuMtYVyD+OepDqVFyGlBPIlHBA?=
- =?us-ascii?Q?Xr00o9ojJ5oXteqlhVVNVLTzhbgn/sZ751t0YXS6PKzkL6EEFGZkZvc+Q96R?=
- =?us-ascii?Q?Oc9wf7ZL/TYhjtMbtLgfMxT8VtX5WbMBe5ajv1FLXL1tp9RgKKCMccQQgNZ/?=
- =?us-ascii?Q?bDfL+/wCbTc0FAlcNqHAoWb+5jGnkjC2uBHQ2ZtqDmTke7DRu3HGaweeDtVj?=
- =?us-ascii?Q?Q+NJ4cCbM/pWMQr1+J71H0IS9F0sxGQXBg/7pu/xnKZVqnIfGXaitpfua5sF?=
- =?us-ascii?Q?+MYVp4ojX+C7h0h4bdWKh0c+W7PRs3efeBYBYcEWFTtWhb5jDDI6HTnJX+jN?=
- =?us-ascii?Q?4aFN3v1QXmfVFlNU1vKnefVybPHwSNaaZs4vFagA5y9ok/67JryVDxXNzgOL?=
- =?us-ascii?Q?5bCliP6nLjppZS19yX6EqH6GRqGBx+aWVml2Pqkxfllb2lFkVB+dErDKXyFY?=
- =?us-ascii?Q?jlXTg9hshcbfVOyHL2lGXDJvEykiOeiUK7hxEhe9eXAB1avPb5DQ7Dsbu3uw?=
- =?us-ascii?Q?K3pEhcwy4XE+JC4dM9nZWF500oLCOSZghxo2VWMLsbrGaz1mxF6dBZqStEYe?=
- =?us-ascii?Q?MSYTIKw7rO/Y0Yn/PEVqGmW47VlpJZIaP4ZRu9jTrHeHLTZhg36s8fnQ0Tk3?=
- =?us-ascii?Q?nCXQCMIexiRHBj66p25KsRrr5Ho3WrKkk/stjTWCzs9EB3gT0kArtv6ha60U?=
- =?us-ascii?Q?dp3aVNKrMsR0nEFslmgdGmSWAlSjHej+FqAAppZ5ZwJDc3FBgrXC9GvSw57D?=
- =?us-ascii?Q?IbEMbObZtV/ENZeAcVyYYdPdzBy/gWNewDTEE6s70Fx+AyTlXiv3KuEzuCeI?=
- =?us-ascii?Q?bz2UHllupyFUdxBSd3rM5UejVIUZ+DLxi/d3XP4iy2fmcfRCCFSFl3bPnKX4?=
- =?us-ascii?Q?2htlYAQ7UXBb2UHHa8E+AusFr6hfLrIpwdxcZWWouJNnDHbiMnBA5rMnwmPi?=
- =?us-ascii?Q?dZuyyAQJO3WrJ9hyEBfaBOb4Nomb821/FPlopm5q6j7kgnJ0/rCYzlMG0NPw?=
- =?us-ascii?Q?RqxJhWEssnIXw187LhVWdNor5Jh66JaVH+FD91sUWpw/r9i7ipkHBd3m0H8Y?=
- =?us-ascii?Q?dMXg4pDE97EI/CGcLhyJBBTX3rWmZnNmZ4YXhMpaj0/GeZ7Y4zccp6OjrOSv?=
- =?us-ascii?Q?R8IEvJQm2MEpa5uQf3YKf1jNSG3a4TtGJkZlGF7w/kqTApAme93wqz/VqaZA?=
- =?us-ascii?Q?cXTSbeKPsI6MlZSPzwmaVMghpiCBXV/REkhUz3VFWGMjObf3SLq9tgRiobvp?=
- =?us-ascii?Q?no9QMN0ZK65SKxwybpO094fw4TMv1Y88uowP+ktk3YHJd66yuCGOaGzA1cLx?=
- =?us-ascii?Q?vwlLaQiB4/pLo5VIdtt7/5E17uw9lpUTl2EMa3XG41zB37PyAaUVHOX2YGRv?=
- =?us-ascii?Q?uJPtC+4z9LJMgIfnxljcnlewvjokQ0j9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UBirglBtXUba/1+kS8pyARlAMtfLX787jWjSAO5q2CpDCjDRzjczKykRbvO/?=
- =?us-ascii?Q?YnE8YAViLJ7dfrd+cyOTZOiLpZQG8rPJG90UM1L0Xr38kPGredK5hmawclLa?=
- =?us-ascii?Q?HcHpGHgpe9euHt45EC93MzLU0x7ssmgsFtheo3qBgLlDh5xj68BEG12RPwPa?=
- =?us-ascii?Q?/q/acCnjFpfdakfJT1Cci1luNRCeBb5iGKD/MArDp2E4UGVsHxN5INlAmwia?=
- =?us-ascii?Q?5yj1jJa/9bK4UgtMuGE7Lnwn28w7p2VwFz0ANdUKFdS3uov2LYtZSWmkMN47?=
- =?us-ascii?Q?hnb7La0eNXtIxcev1w3J9OsOwW5Mw4sNuqlaSvH6MB6hskKDPIK5pUFpS3rI?=
- =?us-ascii?Q?QPc2xxjbYf0L/HGXi6fiacfLLpivWN4BK/BxTtPt/Suu0OkFCcNAHQ0JwZZV?=
- =?us-ascii?Q?wYmwhss856sfErDKP6lTzI0irZbHSVpMO9sAv21vv+XNnIaJnNm3SnXWaRD6?=
- =?us-ascii?Q?jGuY64rGJ0EudPtKS0NrN3ulzYOTZTLGGCt2Cu5UwH1etmINyLnxyKj3MGU2?=
- =?us-ascii?Q?NmenJRDGHQFDuzYBiE+mazv4Lf9UQ+zsfbnEwba5DU2NNaPyw9PY6A5TH+If?=
- =?us-ascii?Q?5PE0lbgvQQH9lrZO97FGQcfy3RTJ9dU360Af6FgDyYCNH/XfSLBpG2qe7fAF?=
- =?us-ascii?Q?ID4P2qHUkf/ZOqdn5WUtka6vCt5Om7JJMPf7uidwnfUssq9//uLO1J6OcGXk?=
- =?us-ascii?Q?G5UH8cxwTBbalLDMaEGXzJl2s3LlujYO0tfFStOm4m3M4n4Qy5QnHf+PehkJ?=
- =?us-ascii?Q?ktnyIPAGJmcsCUdoWMnGQVJ94M48lj4YmcKJ+44f4CjAzjhxY7vQc5imJpx1?=
- =?us-ascii?Q?pfdswuDQ5v+dM91V7/HFXktLAscwOwbn44mRwE82ztWGcQ5DZJhN2A+a5nOk?=
- =?us-ascii?Q?fcA/CCaONCm1WQHOMn4y2MHTX/weJyV/qynu9jQx9g1KmX71yx1YFoNFoevs?=
- =?us-ascii?Q?QEDx2i6dYTUhf9RYButIf/I6YAyueIb5Tfkf+IfgOKm18hPFPy8txt3IGugm?=
- =?us-ascii?Q?genFpUuis4knmXMhPtnb3cpmHEHRvxQafyJ1x8zqJUxevG1fBlzo8uLf5xcO?=
- =?us-ascii?Q?yuMdW1g0cfGJc6OmVXzoANYg/6QrfLfe0erors17/S4605+zjAojLneEUOmI?=
- =?us-ascii?Q?ktmcw261RpedGwk6W6G2/Y/L7D2SYLpmIm08mUK4uwng8FC1j73k9MpvYuZe?=
- =?us-ascii?Q?R7NskNmAdbDKdIfS46BoAF8N//qBLy7mWd5uJyvv/PwogAGNwfpyN3blJFZR?=
- =?us-ascii?Q?wi0COKqs0yusSc220+TYD8OYZjJhUZP2nlCakTHXq93aS3wgpKjo3udIPxJi?=
- =?us-ascii?Q?e9qru9N6dP+ttGDQ+5Xfi5QjanvtqvReYpdayaoALu/e5k3K4axTYup+gINo?=
- =?us-ascii?Q?v72Hy6n890gANa0ZF4yaxnC7oGAYLICjxdhgwAa5+cvCXkyFxHUjvlqfuGeE?=
- =?us-ascii?Q?rUBUjyrCM7WlO3jh/n2pEJa1jOdr3aT/ee9Nu6VsY5bj/RHt86qRtwSqY0h1?=
- =?us-ascii?Q?+cHa2mGzL5FK66LG1EOTfT5VVK6MbwZNMn9pusCxwaHhEfaOaK1py5bq6lJD?=
- =?us-ascii?Q?+QGCxXNxgtS8BR5Y0N7EfiYarZPkFFLqq9iw2fUrUJ8dSuF/29msyYubEbpo?=
- =?us-ascii?Q?Xf6tN8X6SokPo7omKylAQBs=3D?=
-X-OriginatorOrg: valinux.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d00ed10-25a9-4e1c-cdba-08de1204f28b
-X-MS-Exchange-CrossTenant-AuthSource: OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 07:22:39.3419
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rqi5MoxS68E1pNEQXONRjb6BQ4baPtVOahm6K/8Bc86QtmUdlIkzz88fBA317w2G8ISspMy3oPnG1iwvHrXUrA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7P286MB7183
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] mtd: spi-nor: sfdp: introduce smpt_read_dummy fixup
+ hook
+To: Takahiro Kuwano <tkuw584924@gmail.com>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
+References: <20251022-s25fs-s-smpt-fixup-v1-0-ce26d4084b2d@infineon.com>
+ <20251022-s25fs-s-smpt-fixup-v1-1-ce26d4084b2d@infineon.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20251022-s25fs-s-smpt-fixup-v1-1-ce26d4084b2d@infineon.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-R-Car Gen4 (S4) exposes BAR0 and BAR2 as Resizable BARs. Program them
-accordingly by using dw_pcie_ep_set_bar_resizable() instead of the
-programmable BAR path.
+Hi, Takahiro,
 
-Before this change the driver left the Resizable BAR capability
-untouched and only wrote the BAR register, so the RC enumerated BAR0/2
-as 1 MiB regardless of the size requested by the endpoint function. For
-example, configuring a 2 MiB window for pci-epf-vntb still produced:
+On 10/22/25 11:07 AM, Takahiro Kuwano wrote:
+> SMPT contains config detection info that descibes opcode, address, and
 
-  ntb_hw_epf 0000:01:00.0: \
-  Size:0x0000000000200000 is greater than the MW size 0x0000000000100000
+typo: describes> dummy cycles to read sector map config. The dummy cycles parameter can
+> be 'variable' and should be determined in device specific fixup hook.
 
-Program the Resizable BAR control so the RC sees the requested size and
-ntb_transport can use larger memory windows.
+This doesn't describe why we need the hook. I'd advise to describe what
+value has nor->read_dummy before the fixup hook (zero you said), why the
+zero value does always fit some flashes like the IFX one, which for that
+particular read reg command it always needs 8 dummy cycles. This also
+reveals that the SMPT table on that flash instead of defining
+SMPT_CMD_READ_DUMMY_IS_VARIABLE is should have actually used the number of
+needed dummy cycles: 8.
 
-Signed-off-by: Koichiro Den <den@valinux.co.jp>
----
- drivers/pci/controller/dwc/pcie-rcar-gen4.c | 2 ++
- 1 file changed, 2 insertions(+)
+Please adapt and add something around these lines, otherwise in 5 years
+from now we'll forget what was this about.
 
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index 80778917d2dd..dbad741b8286 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -421,7 +421,9 @@ static int rcar_gen4_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
- 
- static const struct pci_epc_features rcar_gen4_pcie_epc_features = {
- 	.msi_capable = true,
-+	.bar[BAR_0] = { .type = BAR_RESIZABLE, },
- 	.bar[BAR_1] = { .type = BAR_RESERVED, },
-+	.bar[BAR_2] = { .type = BAR_RESIZABLE, },
- 	.bar[BAR_3] = { .type = BAR_RESERVED, },
- 	.bar[BAR_4] = { .type = BAR_FIXED, .fixed_size = 256 },
- 	.bar[BAR_5] = { .type = BAR_RESERVED, },
--- 
-2.48.1
+The patch looks okay to me.
+Cheers,
+ta
 
+> 
+> Inroduce smpt_read_dummy() in struct spi_nor_fixups. It is called when
+> the dummy cycle field in SMPT config detection is 'varialble'.
+> 
+> Signed-off-by: Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
+> ---
+>  drivers/mtd/spi-nor/core.h |  3 +++
+>  drivers/mtd/spi-nor/sfdp.c | 18 ++++++++++++++++--
+>  2 files changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/core.h b/drivers/mtd/spi-nor/core.h
+> index ceff412f7d65ab7b856795ca5c092cddbf598cd6..5ad46d95d09cc9d527f71579a71eed210e726f68 100644
+> --- a/drivers/mtd/spi-nor/core.h
+> +++ b/drivers/mtd/spi-nor/core.h
+> @@ -409,6 +409,8 @@ struct spi_nor_flash_parameter {
+>   *                flash parameters when information provided by the flash_info
+>   *                table is incomplete or wrong.
+>   * @post_bfpt: called after the BFPT table has been parsed
+> + * @smpt_read_dummy: called during SMPT table is being parsed. Used to fix the
+> + *                   number of dummy cycles in read register ops.
+>   * @post_sfdp: called after SFDP has been parsed (is also called for SPI NORs
+>   *             that do not support RDSFDP). Typically used to tweak various
+>   *             parameters that could not be extracted by other means (i.e.
+> @@ -426,6 +428,7 @@ struct spi_nor_fixups {
+>  	int (*post_bfpt)(struct spi_nor *nor,
+>  			 const struct sfdp_parameter_header *bfpt_header,
+>  			 const struct sfdp_bfpt *bfpt);
+> +	void (*smpt_read_dummy)(const struct spi_nor *nor, u8 *read_dummy);
+>  	int (*post_sfdp)(struct spi_nor *nor);
+>  	int (*late_init)(struct spi_nor *nor);
+>  };
+> diff --git a/drivers/mtd/spi-nor/sfdp.c b/drivers/mtd/spi-nor/sfdp.c
+> index 21727f9a4ac6926080a116e30830c9533122fdad..9a47dcaca06ae2ad85ac8503658083b1d56d8b96 100644
+> --- a/drivers/mtd/spi-nor/sfdp.c
+> +++ b/drivers/mtd/spi-nor/sfdp.c
+> @@ -699,6 +699,17 @@ static u8 spi_nor_smpt_addr_nbytes(const struct spi_nor *nor, const u32 settings
+>  	}
+>  }
+>  
+> +static void spi_nor_smpt_read_dummy_fixups(const struct spi_nor *nor,
+> +					   u8 *read_dummy)
+> +{
+> +	if (nor->manufacturer && nor->manufacturer->fixups &&
+> +	    nor->manufacturer->fixups->smpt_read_dummy)
+> +		nor->manufacturer->fixups->smpt_read_dummy(nor, read_dummy);
+> +
+> +	if (nor->info->fixups && nor->info->fixups->smpt_read_dummy)
+> +		nor->info->fixups->smpt_read_dummy(nor, read_dummy);
+> +}
+> +
+>  /**
+>   * spi_nor_smpt_read_dummy() - return the configuration detection command read
+>   *			       latency, in clock cycles.
+> @@ -711,8 +722,11 @@ static u8 spi_nor_smpt_read_dummy(const struct spi_nor *nor, const u32 settings)
+>  {
+>  	u8 read_dummy = SMPT_CMD_READ_DUMMY(settings);
+>  
+> -	if (read_dummy == SMPT_CMD_READ_DUMMY_IS_VARIABLE)
+> -		return nor->read_dummy;
+> +	if (read_dummy == SMPT_CMD_READ_DUMMY_IS_VARIABLE) {
+> +		read_dummy = nor->read_dummy;
+> +		spi_nor_smpt_read_dummy_fixups(nor, &read_dummy);
+> +	}
+> +
+>  	return read_dummy;
+>  }
+>  
+> 
 
