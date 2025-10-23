@@ -1,105 +1,262 @@
-Return-Path: <linux-kernel+bounces-867169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 776A1C01BDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:23:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014E7C01C3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0647188273D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:22:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649553A1DFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBDA32AADD;
-	Thu, 23 Oct 2025 14:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V5my/Pqn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19650329C54;
-	Thu, 23 Oct 2025 14:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1409332AABB;
+	Thu, 23 Oct 2025 14:22:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9231F1E3787
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761229327; cv=none; b=sowpM3ctdKsQvSIgpriDT8LwXHNYUTx3Nla2mbOWAXpVlfHKQ5ZbVoj1juF1BN4WyGDZSsshJxiGIBUnYQLvkSYjuUYUbj9xBXe5ef8u4qgcpPRw2pc8oOlFvv3DPgRVOuUqtz7/1zE3IlRAR3M9sDYwmXAwZjU5ief2hGccjsE=
+	t=1761229378; cv=none; b=fOmuyMpbCjV2/OCiwCVLv2ycFsKBcVSyC4p9EsVs/4Ze/Vrq/CjzrtYxEWHV4U690G8Ee2q4vA6p/oHPJadJdBQyNnRBXgGm91evn1EnNntqjN2Au+/n0zat0xljnIbotCtxDvQNrzjSzITwxbhHgiSb4WHZIWcD0pQwSjEeLOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761229327; c=relaxed/simple;
-	bh=BwVZtl/HIj1iRCV/Fdz6OwZ0QLc/wzCP70++aKaFxFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QcEV7bfnvZbvqeEHmcsr9Ixkyr6/9tr+kyIW3hAThUjwBbs0CrAzOQrKCBN8OwdsaJ38F3DgUwAXHKAGiut5aV4+ZKg9UagRbmkzC1tMW9UhRhiyRCJtF2Pc8Mb6MLqmWuQd3A4cTToIXfVJlfPlDl1uRmqtihBfDNUBsgioB+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V5my/Pqn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1742C4CEE7;
-	Thu, 23 Oct 2025 14:22:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761229326;
-	bh=BwVZtl/HIj1iRCV/Fdz6OwZ0QLc/wzCP70++aKaFxFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V5my/Pqn+1981uSoUy1l6CF8qdPds2iW1umFa2+sJbOMddFl325hLnidhmRzyZS14
-	 sfY9Cb8pTSgxLuWXxkIazCxqx+TlbQEmyuql5YftNlW9CCHSwpO6p4ikuaTUbPOCEU
-	 uAbN8RK3cfK3D2FcKrwq6kX3nEiYX36Knn/aNRk+FKSOY8BSA/32CLDbsf9QC4zV/1
-	 zczToWolqvpLRYeUUdqgcJAsP4sDpJPw2/8GIJcCRqV/rJMxs0M+o+/Ed3fl0r1E8M
-	 MJjdHAK2VW2jVMvreSpSnn2S5E/CxfsWB0/vE62rbB3dGcRkrrIIkDQ1UJfep36nf3
-	 JHGseOPCCsZww==
-Date: Thu, 23 Oct 2025 22:22:01 +0800
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Benson Leung <bleung@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kselftest@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v5 5/7] revocable: Add fops replacement
-Message-ID: <aPo6CZyT_IGWmu-O@tzungbi-laptop>
-References: <20251016054204.1523139-6-tzungbi@kernel.org>
- <20251016123149.GA88213@nvidia.com>
- <aPGryj-V5PQZRtoI@google.com>
- <20251017134916.GK3901471@nvidia.com>
- <aPJp3hP44n96Rug9@tzungbi-laptop>
- <20251017162116.GA316284@nvidia.com>
- <aPT-7TTgW_Xop99j@tzungbi-laptop>
- <20251020115734.GH316284@nvidia.com>
- <aPcQ99MZse5zmv3o@google.com>
- <20251021121536.GG316284@nvidia.com>
+	s=arc-20240116; t=1761229378; c=relaxed/simple;
+	bh=wawE4tOBNViDG3oWou5Y/iQ9tu7gPHKh0r76UgdjiKY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BSQBimvaZkXSmf/J18Pttu9jalga57u0aLYXkIFcCN/CWYjiKm4f6Wk4GoSjw8AO4LkqXaCW8Snwq17B57vaL3LQnuTHbrcpWF3fkKlXHxlWyS/gohxSulBBkgoC6gTWvxbMXNkGw8fpAGu2hVSeAiQXWxYTZrLLSph86JPX06Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A9111516;
+	Thu, 23 Oct 2025 07:22:48 -0700 (PDT)
+Received: from [10.57.36.33] (unknown [10.57.36.33])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F10ED3F59E;
+	Thu, 23 Oct 2025 07:22:52 -0700 (PDT)
+Message-ID: <3c8d8fd9-d51d-4caa-ab9d-06a3f6cbaa5c@arm.com>
+Date: Thu, 23 Oct 2025 16:22:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021121536.GG316284@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/panthor: Fix UAF race between device unplug and FW
+ event processing
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+ Steven Price <steven.price@arm.com>
+Cc: Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20251022103014.1082629-1-ketil.johnsen@arm.com>
+ <20251022143751.769c1f23@fedora>
+ <e257f8fe-fe9e-40bf-bd5a-6dad0c3d72e0@arm.com>
+ <20251022160033.2f645528@fedora>
+ <1cffaf6a-7e99-416f-af50-5659b1738af2@arm.com>
+ <20251022173217.1105681b@fedora>
+Content-Language: en-US
+From: Ketil Johnsen <ketil.johnsen@arm.com>
+In-Reply-To: <20251022173217.1105681b@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 21, 2025 at 09:15:36AM -0300, Jason Gunthorpe wrote:
-> On Tue, Oct 21, 2025 at 04:49:59AM +0000, Tzung-Bi Shih wrote:
+On 22/10/2025 17:32, Boris Brezillon wrote:
+> On Wed, 22 Oct 2025 15:28:51 +0100
+> Steven Price <steven.price@arm.com> wrote:
 > 
-> > I didn't get the idea.  With a mutex, how to handle the opening files?
-> > 
-> > Are they something like: (?)
-> > - Maintain a list for opening files in both .open() and .release().
-> > - In misc_deregister_sync(), traverse the list, do something (what?), and
-> >   wait for the userspace programs close the files.
+>> On 22/10/2025 15:00, Boris Brezillon wrote:
+>>> On Wed, 22 Oct 2025 14:36:23 +0100
+>>> Steven Price <steven.price@arm.com> wrote:
+>>>    
+>>>> On 22/10/2025 13:37, Boris Brezillon wrote:
+>>>>> On Wed, 22 Oct 2025 12:30:13 +0200
+>>>>> Ketil Johnsen <ketil.johnsen@arm.com> wrote:
+>>>>>      
+>>>>>> The function panthor_fw_unplug() will free the FW memory sections.
+>>>>>> The problem is that there could still be pending FW events which are yet
+>>>>>> not handled at this point. process_fw_events_work() can in this case try
+>>>>>> to access said freed memory.
+>>>>>>
+>>>>>> This fix introduces a destroyed state for the panthor_scheduler object,
+>>>>>> and we check for this before processing FW events.
+>>>>>>
+>>>>>> Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
+>>>>>> Fixes: de85488138247 ("drm/panthor: Add the scheduler logical block")
+>>>>>> ---
+>>>>>> v2:
+>>>>>> - Followed Boris's advice and handle the race purely within the
+>>>>>>    scheduler block (by adding a destroyed state)
+>>>>>> ---
+>>>>>>   drivers/gpu/drm/panthor/panthor_sched.c | 15 ++++++++++++---
+>>>>>>   1 file changed, 12 insertions(+), 3 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+>>>>>> index 0cc9055f4ee52..4996f987b8183 100644
+>>>>>> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+>>>>>> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+>>>>>> @@ -315,6 +315,13 @@ struct panthor_scheduler {
+>>>>>>   		 */
+>>>>>>   		struct list_head stopped_groups;
+>>>>>>   	} reset;
+>>>>>> +
+>>>>>> +	/**
+>>>>>> +	 * @destroyed: Scheduler object is (being) destroyed
+>>>>>> +	 *
+>>>>>> +	 * Normal scheduler operations should no longer take place.
+>>>>>> +	 */
+>>>>>> +	bool destroyed;
+>>>>>
+>>>>> Do we really need a new field for that? Can't we just reset
+>>>>> panthor_device::scheduler to NULL early enough in the unplug path?
+>>>>> I guess it's not that simple if we have works going back to ptdev
+>>>>> and then dereferencing ptdev->scheduler, but I think it's also
+>>>>> fundamentally broken to have scheduler works active after the
+>>>>> scheduler teardown has started, so we might want to add some more
+>>>>> checks in the work callbacks too.
+>>>>>      
+>>>>>>   };
+>>>>>>   
+>>>>>>   /**
+>>>>>> @@ -1765,7 +1772,10 @@ static void process_fw_events_work(struct work_struct *work)
+>>>>>>   	u32 events = atomic_xchg(&sched->fw_events, 0);
+>>>>>>   	struct panthor_device *ptdev = sched->ptdev;
+>>>>>>   
+>>>>>> -	mutex_lock(&sched->lock);
+>>>>>> +	guard(mutex)(&sched->lock);
+>>>>>> +
+>>>>>> +	if (sched->destroyed)
+>>>>>> +		return;
+>>>>>>   
+>>>>>>   	if (events & JOB_INT_GLOBAL_IF) {
+>>>>>>   		sched_process_global_irq_locked(ptdev);
+>>>>>> @@ -1778,8 +1788,6 @@ static void process_fw_events_work(struct work_struct *work)
+>>>>>>   		sched_process_csg_irq_locked(ptdev, csg_id);
+>>>>>>   		events &= ~BIT(csg_id);
+>>>>>>   	}
+>>>>>> -
+>>>>>> -	mutex_unlock(&sched->lock);
+>>>>>>   }
+>>>>>>   
+>>>>>>   /**
+>>>>>> @@ -3882,6 +3890,7 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
+>>>>>>   	cancel_delayed_work_sync(&sched->tick_work);
+>>>>>>   
+>>>>>>   	mutex_lock(&sched->lock);
+>>>>>> +	sched->destroyed = true;
+>>>>>>   	if (sched->pm.has_ref) {
+>>>>>>   		pm_runtime_put(ptdev->base.dev);
+>>>>>>   		sched->pm.has_ref = false;
+>>>>>
+>>>>> Hm, I'd really like to see a cancel_work_sync(&sched->fw_events_work)
+>>>>> rather than letting the work execute after we've started tearing down
+>>>>> the scheduler object.
+>>>>>
+>>>>> If you follow my suggestion to reset the ptdev->scheduler field, I
+>>>>> guess something like that would do:
+>>>>>
+>>>>> void panthor_sched_unplug(struct panthor_device *ptdev)
+>>>>> {
+>>>>>          struct panthor_scheduler *sched = ptdev->scheduler;
+>>>>>
+>>>>> 	/* We want the schedu */
+>>>>> 	WRITE_ONCE(*ptdev->scheduler, NULL);
+>>>>>
+>>>>> 	cancel_work_sync(&sched->fw_events_work);
+>>>>>          cancel_delayed_work_sync(&sched->tick_work);
+>>>>>
+>>>>>          mutex_lock(&sched->lock);
+>>>>>          if (sched->pm.has_ref) {
+>>>>>                  pm_runtime_put(ptdev->base.dev);
+>>>>>                  sched->pm.has_ref = false;
+>>>>>          }
+>>>>>          mutex_unlock(&sched->lock);
+>>>>> }
+>>>>>
+>>>>> and
+>>>>>
+>>>>> void panthor_sched_report_fw_events(struct panthor_device *ptdev, u32 events) {
+>>>>> 	struct panthor_scheduler *sched = READ_ONCE(*ptdev->scheduler);
+>>>>>
+>>>>> 	/* Scheduler is not initialized, or it's gone. */
+>>>>>          if (!sched)
+>>>>>                  return;
+>>>>>
+>>>>>          atomic_or(events, &sched->fw_events);
+>>>>>          sched_queue_work(sched, fw_events);
+>>>>> }
+>>>>
+>>>> Note there's also the path of panthor_mmu_irq_handler() calling
+>>>> panthor_sched_report_mmu_fault() which will need to READ_ONCE() as well
+>>>> to be safe.
+>>>
+>>> This could be hidden behind a panthor_device_get_sched() helper, I
+>>> guess. Anyway, it's not so much that I'm against the addition of an
+>>> extra bool, but AFAICT, the problem is not entirely solved, as there
+>>> could be a pending work that gets executed after sched_unplug()
+>>> returns, and I adding this bool check just papers over the real bug
+>>> (which is that we never cancel the fw_event work).
+>>>    
+>>>>
+>>>> I agree having an extra bool is ugly, but it easier to reason about than
+>>>> the lock-free WRITE_ONCE/READ_ONCE dance. It worries me that this will
+>>>> be regressed in the future. I can't immediately see how to wrap this in
+>>>> a helper to ensure this is kept correct.
+>>>
+>>> Sure, but you're not really catching cases where the work runs after
+>>> the scheduler component has been unplugged in case someone forgot to
+>>> cancel some works. I think I'd rather identify those cases with a
+>>> kernel panic, than a random UAF when the work is being executed.
+>>> Ultimately, we should probably audit all works used in the driver, to
+>>> make sure they are properly cancelled at unplug() time by the relevant
+>>> <component>_unplug() functions.
+>>
+>> Yes I agree, we should have a cancel_work_sync(&sched->fw_events_work)
+>> call somewhere on the unplug path. That needs to be after the job irq
+>> has been disabled which is currently done in panthor_fw_unplug().
 > 
-> You don't need any list, we don't want to close files.
-> 
-> Something like this, it is very simple. You can replace the rwsem with
-> a srcu. srcu gives faster read locking but much slower sync.
-> 
-> [...]
+> Not necessarily. If we prevent any further FW events to queue the
+> fw_events work, we can just cancel it in the sched_unplug() path, after
+> we've transition to this "sched-is-gone" state.
 
-I see.  The idea is basically the same but don't use revocable at all.
+I don't see how panthor_sched_report_fw_events() could easily avoid 
+queuing more work, without making this more complicated than it already 
+is with this patch.
 
-I was misunderstanding about the "sync" we were discussing for
-misc_deregister_sync().  The "sync", is analogous to synchronize_srcu()
-of revocable_provider_revoke() in the revocable version [1], doesn't wait
-for closing all opened files.
+panthor_sched_unplug() need to know that 
+panthor_sched_report_fw_events() won't schedule more work before it can
+safely proceed and cancel pending work.
 
-[1] https://lore.kernel.org/chrome-platform/aPT-7TTgW_Xop99j@tzungbi-laptop/
+Ideally we would have disabled/suspended the IRQs to achieve this but 
+that happens later in panthor_fw_unplug().
+
+If we hold the sched->lock in panthor_sched_report_fw_events() over both 
+the checking of schedulers validity and enqueuing of more work, then we 
+achieve that, but modprobe will crash, since 
+panthor_sched_report_fw_events() will be called during FW init, before 
+ptdev->scheduler is assigned for the first time.
+
+If we go down that route, then we need to also check if scheduler is 
+valid in panthor_sched_report_fw_events(), and only take the lock if so. 
+More complexity!
+Otherwise we must introduce another mechanism to synchronize from 
+panthor_sched_report_fw_events() back to panthor_sched_unplug(), but 
+that would also add more complexity.
+
+PS: We can not hold the sched->lock while cancelling the work either, as 
+process_fw_events_work() already takes the lock. This will deadlock!
+
+I'm currently not able to see how we can make this fix any simpler.
+
+Also, In my mind, the root of the pain is that scheduler and FW module 
+are two "equal" modules. If the scheduler owned the FW module, then this 
+would be more straight forward. panthor_sched_unplug() would then just 
+stop scheduling new work, "unplug" FW and then cancel any pending work. 
+But that would of course be a much bigger change, potentially 
+introducing a lot of other complications.
+
+--
+Ketil
 
