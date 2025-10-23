@@ -1,140 +1,137 @@
-Return-Path: <linux-kernel+bounces-866884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 801C5C00F07
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:00:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46ED4C00F10
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 353AF3A4A61
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:00:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56CC04FEC30
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 12:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145CD30F800;
-	Thu, 23 Oct 2025 12:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C87128726D;
+	Thu, 23 Oct 2025 12:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P2iIn5B1"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="drOJuOUf"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8ECE30EF9D;
-	Thu, 23 Oct 2025 12:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF467306B10
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 12:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761220813; cv=none; b=Zczmi5kO9ZTB4CtvsWxp7Wk2qwnJ+J+i6kvzNrnohRTHp+oOQfNqNSv98q2QaxU8LkgV/zS6kn2Bi5oSA28V9BjSnVmGG15NR6tM3XYoyYsQ6mQb09Rsp6WOvpMGuVhNaVtdk0m8fzcc1W107N9nImK7GeePFcCHnKKX7v/mi4g=
+	t=1761220861; cv=none; b=OwNjgjMNVTcIOSDq++e82Ec1X/zvlj+Zu+1t3meuundX2WUXYVYhzTObRrLU3gZFFeA6jwAL5bQFn7jcdKSzzZn66lllEGFDTPveCjfbwexnK39F62eGUKs3zod5kIl3wmYSyZv/IE+WtsvgcSD9B3DxcW81rp9yAKV2R3j9chk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761220813; c=relaxed/simple;
-	bh=XZNLK3hKGFznou+fNvWgMSs5kfYGdkg1ZtKr+DYHU4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V2cGsVHht8s1e7MVwIrIVa+4RGe8jGTGNeDmkFH5fjPyOE4Vh/c84e5yRsVz2mCVo3i73Tnw9dQkFq6bPIlz6fIQ8KaSA00VfdLb2mL2JHYJSniBAd919H9g0CkuO/vINH6x+VqG+DpninBt5winxUREFQZsqGoymTRnNYA9/rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P2iIn5B1; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N3bN8Y006824;
-	Thu, 23 Oct 2025 12:00:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=stK1Zk
-	5MUrjtZnm8vJGvyJzUkES95uzRDeHMdMapYSs=; b=P2iIn5B1//Go3GjfhlUfJ8
-	eABz82/x5P8CyNYy/+/cyuWf0Cr5lquT64hhuJ3uyCqRt+IE0Q9YYE72hp2xUrJo
-	twlPou9GElmsFu1S4n7gsV2myz+mbWVP8pE4cucVIsODc3VazBUwOpfaRSze2LQO
-	SWvNymaOoWELuHHaHX+tr0fH9gmydvx2mCx4B5k2AefektZ3GIMssa3zstJFzt2e
-	3/VAOgO896fHw2DthITVJ5MeyH4OzKec/zkwkpnKpfjPiYx5AhVxq1AeOmFYQu5k
-	NbxJc9lkkZzRms+b1J5lBfW/hdmo9ak+C5LGuCONIdBvE9G2LDo5XTRSNi8AzfZA
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v3271xv8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Oct 2025 12:00:10 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59NBmeM5011066;
-	Thu, 23 Oct 2025 12:00:10 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqx1d858-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Oct 2025 12:00:09 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59NC06LN48169284
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 23 Oct 2025 12:00:06 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1B0B720043;
-	Thu, 23 Oct 2025 12:00:06 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DDE1420040;
-	Thu, 23 Oct 2025 12:00:05 +0000 (GMT)
-Received: from osiris (unknown [9.155.211.25])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 23 Oct 2025 12:00:05 +0000 (GMT)
-Date: Thu, 23 Oct 2025 14:00:03 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Farhan Ali <alifm@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com,
-        agordeev@linux.ibm.com, gor@linux.ibm.com
-Subject: Re: [PATCH v1 1/1] s390/pci: Restore IRQ unconditionally for the
- zPCI device
-Message-ID: <20251023120003.9536Ca9-hca@linux.ibm.com>
-References: <20251022164727.882-1-alifm@linux.ibm.com>
- <20251023074028.9536A84-hca@linux.ibm.com>
- <d611c17f342acc0d00b9921686474007a7d29213.camel@linux.ibm.com>
+	s=arc-20240116; t=1761220861; c=relaxed/simple;
+	bh=yuHlcBvMU39XZw+RlZWu9sOz8ZVcjnOe56nu//g1X+Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fz+mK5YS2//ElllzSAFCo9DyRsOmAvyGWQYVH136TnPk5ECwfMabItniTBy3/LBakD5wvNVLahYpUXyTBSb367Ocz7TE3hW75KKIDfnW96/YQc37lVrjpV5gahVN0y0QjjW89iAXjvOUbjmvvTOqaQAPvCrEYBZGDuY0I0zc0Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=drOJuOUf; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46fcf9f63b6so4137535e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 05:00:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761220858; x=1761825658; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zhlXGYq2HGvqmjv/3QsUATN1M3pTJKS77k0qTGaV5fA=;
+        b=drOJuOUfReoojLGiXZsOawgnom1jHH8RJhvgZ1NmuXXzgjzQ5w1FgiRgMJ8ayd5cQ+
+         jKQ9zKIxMpY2fWLsvKso3zfoWt8O1lzFiyvUrvMkHsVYc4F5MJgCQXRHRL8p+eR7oMvw
+         nIV4Z+T039uP7Zuue10lMm8XmvfwTFBsxGrlO6WSQVg0fKgWlSMLQo/GaYHyl7biwajV
+         Xz1tJZvUUygzia3sGCH+ApXg0hSUc+qA22a/9XiDL4SqB9q4yodF0PNxiJ2qXe2u3CUN
+         JL9e+hbNREBAczHENGFZ7728GYv5O7RxWARW0bEhylThJlEG1eLzCEXg0iZpjoMXFCe4
+         lMVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761220858; x=1761825658;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zhlXGYq2HGvqmjv/3QsUATN1M3pTJKS77k0qTGaV5fA=;
+        b=b5acOBbWnRF71b79J1nlEpwFqxcII6ekLHkRWGbEn3sCYuhd0XdhicW7PIR2zT5wyS
+         rZb0YGJ8NHSS07RZpZkivBZ1+LGPrSo5nesL4IbpcnzzwCKcQ0eQ7UyqU5ChERdUX0Av
+         4eSDsCB2xei9PZIEkh7grFKY4XrdozeHMb6KBDGMtSX8VTP5vLtVrGKHjKakLh8G8CIr
+         ODsOewfpaHBtV6EuKUdUA+p7xOlgwtOaJ88cNe7sXArps90OuKmSrFH9Eg/zPpgWnC0x
+         ssaSveBeI59m8jeTBpRpBTfgM5K+dIw/xPzy1usKWN4kcrq+c6p6t0n64q4AnsPr/YIJ
+         X6nw==
+X-Forwarded-Encrypted: i=1; AJvYcCVoaqDUYP4blPZaKdURQE8KFOKhjaJwiGM7Xaf/2MV/TAEvcLXqJrb6zyy7rrVhsW3B0mxcq8RfkVxudiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXWMG8Ayg+VQqO4aJ+0uBhp+lf7hxvxMfkG31QLrWpOFFxL1fp
+	OrsqTncL0zfJUQKE2aPdDp893orIjmSyz13JB4fXORRAAFSn5hT9U5tT
+X-Gm-Gg: ASbGnctRw7W8f4WbMbwmpANvK41BYLoGEssB8x2iH/tw/+/azmfNJdaMDr4Y99kqjRJ
+	A+qhRA52SeHpI+lD3wy5XuUM0UWR27zUrOQ/4k+c9KrIudl/8wBZXZPJ1/xPQcIKbmuFpogtJfx
+	PDm1haIUIkyhMNh+BsVDeTWbIvVmk38wJjBnR687NVLV0g7Uctuzua7JIAL6RPpz9KsPbgyi+VK
+	Au9cNkpsnem1dCKZlDKaud5/8jFupcigBoqE852YN0OaIjxPwCYOlnlOo2WgF58HZmW4qlzgOmp
+	lruiIbus9ET1YYtJxTyFqJiv1t4f842Or4rumQDrJ6Jl2Vu0KArc2hGAxTuaVs1jvPwnScIOTPr
+	q7L4h7Ryaax0Jjj7MXnF0MdyV1H3vNpPkxQOX/yR+PW2iCzPzMPe/fGqsg0Gtf/bxb7YKthHHTu
+	0c+yo01uk3M1tPSOU=
+X-Google-Smtp-Source: AGHT+IFMx+Pkya8XqVebTsjHsurSRMujmDLqw3GL1L2QyXDmCmrTsLd7PCMaI/thM/LSWD0nJkY+QA==
+X-Received: by 2002:a05:600c:548a:b0:471:ff3:7514 with SMTP id 5b1f17b1804b1-47117877736mr184545915e9.12.1761220858287;
+        Thu, 23 Oct 2025 05:00:58 -0700 (PDT)
+Received: from shift.. ([86.124.201.90])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c43900e1sm109604435e9.17.2025.10.23.05.00.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 05:00:57 -0700 (PDT)
+From: Cezar Chiru <chiru.cezar.89@gmail.com>
+To: andi.shyti@kernel.org,
+	wsa+renesas@sang-engineering.com
+Cc: linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Cezar Chiru <chiru.cezar.89@gmail.com>
+Subject: [PATCH v9 0/3] Improve usage of 'ret' variable and make pcf_doAdress() void
+Date: Thu, 23 Oct 2025 15:00:40 +0300
+Message-ID: <20251023120043.8661-1-chiru.cezar.89@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d611c17f342acc0d00b9921686474007a7d29213.camel@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=EJELElZC c=1 sm=1 tr=0 ts=68fa18ca cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=8nJEP1OIZ-IA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=qS5ouzKY-k1a6jQLhV4A:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX0ylv/7WdYLIO
- NSU1oJBevnOPxVQNjp7OZUXLoblp+KEwtGakCATygXx8QEfvg0zOAFfffmHTvrJjjuDD0jojwDG
- mjfXuVLR2egyJvz24OzlgzSsiCscPAck6678izLJyHb9Pqn82e4t+Dfa6y6W3fsZ7jTUNHwEK6M
- sEglv/LQvFxmurmTAylzxkuTNIWQ/WkHr747Bse4g8EMlrpwp40jai8EW73vtrJ2ywnPVubiEtG
- frQHD1ahrWxkpgKx6g12R2HS5T8Nw7Qt3bS+iQr7xQoBKaU9e1kWhnHGVjs2kGclaEVoDfQPqjs
- iK4570GXWuAR37faN5l3CFgIcxolpZhKcREYKA2qcjFO1tuFVXnLOdgqZ03hQyQLG09H7uz9kVU
- zhLNyCkP6c8+QTJWeh5nPWDDT9Z+BA==
-X-Proofpoint-GUID: BIwotFXZAG1_KM7ucV7k8xXWq1locIjC
-X-Proofpoint-ORIG-GUID: BIwotFXZAG1_KM7ucV7k8xXWq1locIjC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 spamscore=0
- malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-On Thu, Oct 23, 2025 at 01:18:54PM +0200, Niklas Schnelle wrote:
-> On Thu, 2025-10-23 at 09:40 +0200, Heiko Carstens wrote:
-> > On Wed, Oct 22, 2025 at 09:47:26AM -0700, Farhan Ali wrote:
-> > > Commit c1e18c17bda6 ("s390/pci: add zpci_set_irq()/zpci_clear_irq()"),
-> > > introduced the zpci_set_irq() and zpci_clear_irq(), to be used while
-> > > resetting a zPCI device.
-...
-> > The above sounds like this fixes a regression. Is there a reason why
-> > there are no Fixes and stable tags?
-> 
-> It doesn't have a fixes tag because at the moment the problem is
-> theoretical because no driver uses plain pci_restore_state() in
-> recovery. Farhan is working on patches where this would be used in
-> vfio-pci / PCI pass-through scenarios though.
-> 
-> The existing drivers re-use their shutdown and initialization routines
-> to restore state and end up calling arch_teardown_msi_irqs() and
-> arch_setup_msi_irqs() so it works out ok there. 
-> 
-> That said, I agree this could and probably should carry a fixes tag
-> since the logic is kind of broken even if it doesn't break anything at
-> the moment.
+Hello maintainers,
+This patch series is a response to Change Requests made by Andi Shyti on
+[PATCH v7 0/3] i2c: pcf8584: Fix errors and warnings reported by checkpatch
+and more specific on PATCH: i2c: pcf8584: Move 'ret' variable inside for
+loop, break if ret < 0.
+Also a comment from Andy Shevchenko on "[PATCH v8 1/1] i2c: pcf8584: Move
+'ret' variable inside for loop, break if ret < 0." about using 'goto out;'
+instead of break since the goto out; was used in other error path branches
+so it makes sense to be consistent.
 
-Can then somebody :) provide a tag, please? I'll add it when applying;
-no need for a new version.
+2 new patches have been introduced into this patch series and they are
+dependent on each other that's why the need for a new patch series v9.
+
+Change Requests:
+ -remove initialization of 'ret' variable inside for loop of pcf_xfer() as
+ it is not needed
+ -change pcf_doAddress() function type from int to void as it always
+ returns 0.
+ -change if (ret < 0) break; with if (ret < 0) goto out; to be consistent
+ -change pcf_doAddress() function name to pcf_send_address()
+
+Testing:
+ *built kernel and modules with I2C_ALGOPCF=m and my 3 patches applied on
+ top of 6.18.0-rc1.
+ *installed kernel and external modules generated by build on my laptop
+ *rebooted and loaded i2c-algo-pcf.ko without i2c_debug parameter.
+ *when loading the .ko with i2c_debug parameter an error is seen in dmesg
+ and this is expected as the parameter was removed.
+ *No success message related to i2c_algo_pcf was seen in dmesg but also
+ no failures.
+ *Module loading and unloading successful.
+ *No PCF8584 Hardware was available
+
+Cezar Chiru (3):
+  i2c: pcf8584: Move 'ret' variable inside for loop, goto out if ret <
+    0.
+  i2c: pcf8584: Make pcf_doAddress() function void
+  i2c: pcf8584: Change pcf_doAdress() to pcf_send_address()
+
+ drivers/i2c/algos/i2c-algo-pcf.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+--
+2.43.0
+
 
