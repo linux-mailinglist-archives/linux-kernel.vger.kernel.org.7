@@ -1,197 +1,196 @@
-Return-Path: <linux-kernel+bounces-866643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D368C0055F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:45:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43125C00556
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FBE53B0869
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:43:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D3BED4E47ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D73301015;
-	Thu, 23 Oct 2025 09:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA753093AD;
+	Thu, 23 Oct 2025 09:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dP9LsCas"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D7gMHjC9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7008F3090E5
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771142D9784;
+	Thu, 23 Oct 2025 09:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761212512; cv=none; b=hfsVDwW9CNeRjfQuqcEij4Zht6exhskTpgDRdG50cW5HDv6BNUAftEo/xDykPt8lb+ghnNnt6oLOgahtGuKZ2Ke1KzrixRtAMtVE0ioa5moqIhVSqvhg/6Lqkv0wY/cACfjHZKVVBxg0XW4oD3TJzSHRE7j2xK+xZ3AaGlZMZJk=
+	t=1761212679; cv=none; b=oSAh7KXHU3+QRJjIM8wC11b4NipnuluNqEUQ7oT2VKr7SVj+ULRtxprkeVkIeL5VlF76BHlq+joPGoYEqLNkmSTB594vYLLMk27c3nulmlED6OeBBmQmDXZG6j3zU0pYnR9Sld/IRevp64eEgEgTwGp54p/QkH8w6chCXn5tSfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761212512; c=relaxed/simple;
-	bh=x39im17yCpKlBZK/OHzKxjKDvrvbrR9VUmbw5G3Mn5Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nlez+ZeDZEMlynLPcfI88eIRt4edcY3+hL0Zk/ce1GqykcZW57lQgdmadD1pJmtmohRdwF0LiIUYGWoUOSbhebl65CkQGNYT/HK2LAtOIFDihXr8LJqNUU5GYrGcE/nooNc89hQmSfeCKQYsbOkGIzYTso/fd51xVE+VTXitnds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dP9LsCas; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C6C3C116C6
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:41:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761212512;
-	bh=x39im17yCpKlBZK/OHzKxjKDvrvbrR9VUmbw5G3Mn5Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dP9LsCas8r39cetxoBMH1TYsC96yxmMVIvM/r3khzXhORq95c4D/IDRstcDghULeV
-	 l9c/3ytfXNKbI17fEA+6f0I2OmT3ixJnG0XnZmoJwIQKo2lu6XPL4mY9X4ue2CZbIM
-	 Ju28DsF64+CgWglBJpsNsYalbHMnij/yExBbeghbEeohWPFdfRGTpqEZEnvDIU0Xn9
-	 e4eW7pxBbZOdCTsBWOjt4Kdz0Xbmlr1nxS3COtzwpfUF9/oOKWYxjziTVe1pf8/fij
-	 8bCvbwqEw+5gGEJjlbJspMwB8pdkdHhY0gVy9CZL/kUVCx24dYRxxEHpW0MRtFcdcw
-	 HraksUPBlOs7g==
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7c28559bb45so502435a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:41:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXLm2dXihfvRumKzFImVT+qTrDDYnbYmkYwwo4CE+YdS1kn5H4yxlfCQtaziJZYFrcZD6YS9efDWxWkDPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6dyuoSBh3+8JBWJTES/uSPlJXLl9z4QfpGHCV1oPj+nsYLuJM
-	59yMBQUvZslj7DQbCjb6bjyA45JfypmTYy2ZqMCLEqUfZ+qkCIGehmaxCcA9aLayrrnff9XIxSN
-	wCsOk2elvAq+WcKdS/9xbd/3zhNLn1R0=
-X-Google-Smtp-Source: AGHT+IHx6vGcGv+vrMCHVYpCy9BVAaGKKr2CW9FBcS0RiH5DcbhljvnheCDcmlpQzXIY6wqKg6m4mu4Ybp34n+1tPz8=
-X-Received: by 2002:a05:6808:190d:b0:442:9a9f:daa9 with SMTP id
- 5614622812f47-443a314f730mr11086008b6e.45.1761212511413; Thu, 23 Oct 2025
- 02:41:51 -0700 (PDT)
+	s=arc-20240116; t=1761212679; c=relaxed/simple;
+	bh=5x8jLsSxghG7IaRrLPPl0lFfXXLzEE7sGy+TAsSxs/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XvLOsxvChgbUIWQUfEFQ3SyBUW2fOkyF9++MLfA005BH2Ca41R9NF4hhQDTBbmw3K3k01wP32wu07DViBFR+YJ4rw5wf5yP0NJY54bwPN8V2bh14Q39fkAZ5/0EPnCUiM5+mUdA7/Nj3YIGxFtV4pgvU4Vpnn5GGbKv+GVNVqJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D7gMHjC9; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761212678; x=1792748678;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5x8jLsSxghG7IaRrLPPl0lFfXXLzEE7sGy+TAsSxs/Y=;
+  b=D7gMHjC9QJZkPcEehLGajenWIKg6nz5fvJkCe0o/A/t+xl7cTZSXv0uv
+   TNaudOoNaGKGS7nrOz9ndqWD3rwcYuXoVgpjH9Extp0V9acpUTk4hUPTd
+   54458aO7kXVQUK71hIf8j+qmjonPXacFJ7V96ttwO+W+32Q56zV+aH678
+   FhchFn2Z06RiG+8m0vsx6OreKu7VmvQB8irNKaIR8ZjfSJ8oRd5yeLLti
+   S011ul0n+gtBiKKmbVAVclfI8KiRltrZZJA3tdcm0VlN7amijzgL4fY0c
+   hHI+tObYrdVed1qJ+o1kr7vdj5GUPQLVYuOJRBTOIdU/fWKXVoDU6T9YK
+   Q==;
+X-CSE-ConnectionGUID: 2ijdlID+T5+Q0WxjEdYI3w==
+X-CSE-MsgGUID: +X843B9VQK6plg2J0Yat7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80814390"
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="80814390"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 02:44:37 -0700
+X-CSE-ConnectionGUID: iLOeuevISgC6L9OMMBEeEA==
+X-CSE-MsgGUID: YhP6hwNSQqC/F6AV1drOTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="221305921"
+Received: from bkammerd-mobl.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.221.165])
+  by orviesa001.jf.intel.com with SMTP; 23 Oct 2025 02:44:26 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 23 Oct 2025 12:44:25 +0300
+Date: Thu, 23 Oct 2025 12:44:25 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Chaoyi Chen <kernel@airkyi.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v7 1/9] usb: typec: Add notifier functions
+Message-ID: <aPn4-S7upPOOtenr@kuha.fi.intel.com>
+References: <20251023033009.90-1-kernel@airkyi.com>
+ <20251023033009.90-2-kernel@airkyi.com>
+ <aPni4AeDaem_rfZH@kuha.fi.intel.com>
+ <aPnvoSRJefwDlpNO@kuha.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022141434.v3.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
-In-Reply-To: <20251022141434.v3.1.I60a53c170a8596661883bd2b4ef475155c7aa72b@changeid>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 23 Oct 2025 11:41:38 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ieBdfuu_OF5YQsgsgy_L3H-UkVvn+kk45UFDfJSBtj0g@mail.gmail.com>
-X-Gm-Features: AS18NWDdb53hqfTM27k2OD16kpBKtv8BqC3y9LRdXe9K1AoiTPRwUbDpxSMcJ78
-Message-ID: <CAJZ5v0ieBdfuu_OF5YQsgsgy_L3H-UkVvn+kk45UFDfJSBtj0g@mail.gmail.com>
-Subject: Re: [PATCH v3] PCI/PM: Prevent runtime suspend before devices are
- fully initialized
-To: Brian Norris <briannorris@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Lukas Wunner <lukas@wunner.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPnvoSRJefwDlpNO@kuha.fi.intel.com>
 
-On Wed, Oct 22, 2025 at 11:15=E2=80=AFPM Brian Norris <briannorris@chromium=
-.org> wrote:
->
-> Today, it's possible for a PCI device to be created and
-> runtime-suspended before it is fully initialized. When that happens, the
-> device will remain in D0, but the suspend process may save an
-> intermediate version of that device's state -- for example, without
-> appropriate BAR configuration. When the device later resumes, we'll
-> restore invalid PCI state and the device may not function.
->
-> Prevent runtime suspend for PCI devices by deferring pm_runtime_enable()
-> until we've fully initialized the device.
->
-> More details on how exactly this may occur:
->
-> 1. PCI device is created by pci_scan_slot() or similar
-> 2. As part of pci_scan_slot(), pci_pm_init() enables runtime PM; the
->    device starts "active" and we initially prevent (pm_runtime_forbid())
->    suspend -- but see [*] footnote
-> 3. Underlying 'struct device' is added to the system (device_add());
->    runtime PM can now be configured by user space
-> 4. PCI device receives BAR configuration
->    (pci_assign_unassigned_bus_resources(), etc.)
-> 5. PCI device is added to the system in pci_bus_add_device()
->
-> The device may potentially suspend between #3 and #4.
->
-> [*] By default, pm_runtime_forbid() prevents suspending a device; but by
-> design [**], this can be overridden by user space policy via
->
->   echo auto > /sys/bus/pci/devices/.../power/control
->
-> Thus, the above #3/#4 sequence is racy with user space (udev or
-> similar).
->
-> Notably, many PCI devices are enumerated at subsys_initcall time and so
-> will not race with user space. However, there are several scenarios
-> where PCI devices are created later on, such as with hotplug or when
-> drivers (pwrctrl or controller drivers) are built as modules.
->
-> [**] The relationship between pm_runtime_forbid(), pm_runtime_allow(),
-> /sys/.../power/control, and the runtime PM usage counter can be subtle.
-> It appears that the intention of pm_runtime_forbid() /
-> pm_runtime_allow() is twofold:
->
-> 1. Allow the user to disable runtime_pm (force device to always be
->    powered on) through sysfs.
-> 2. Allow the driver to start with runtime_pm disabled (device forced
->    on) and user space could later enable runtime_pm.
->
-> This conclusion comes from reading `Documentation/power/runtime_pm.rst`,
-> specifically the section starting "The user space can effectively
-> disallow".
->
-> This means that while pm_runtime_forbid() does technically increase the
-> runtime PM usage counter, this usage counter is not a guarantee of
-> functional correctness, because sysfs can decrease that count again.
->
-> Link: https://lore.kernel.org/all/20251016155335.1.I60a53c170a8596661883b=
-d2b4ef475155c7aa72b@changeid/
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> Cc: <stable@vger.kernel.org>
-> Reviewed-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
-> ---
->
-> Changes in v3:
->  * Add Link to initial discussion
->  * Add Rafael's Reviewed-by
->  * Add lengthier footnotes about forbid vs allow vs sysfs
->
-> Changes in v2:
->  * Update CC list
->  * Rework problem description
->  * Update solution: defer pm_runtime_enable(), instead of trying to
->    get()/put()
->
->  drivers/pci/bus.c | 3 +++
->  drivers/pci/pci.c | 1 -
->  2 files changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> index f26aec6ff588..fc66b6cb3a54 100644
-> --- a/drivers/pci/bus.c
-> +++ b/drivers/pci/bus.c
-> @@ -14,6 +14,7 @@
->  #include <linux/of.h>
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/proc_fs.h>
->  #include <linux/slab.h>
->
-> @@ -375,6 +376,8 @@ void pci_bus_add_device(struct pci_dev *dev)
->                 put_device(&pdev->dev);
->         }
->
-> +       pm_runtime_enable(&dev->dev);
-> +
->         if (!dn || of_device_is_available(dn))
->                 pci_dev_allow_binding(dev);
->
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index b14dd064006c..f792164fa297 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -3226,7 +3226,6 @@ void pci_pm_init(struct pci_dev *dev)
->         pci_pm_power_up_and_verify_state(dev);
->         pm_runtime_forbid(&dev->dev);
->         pm_runtime_set_active(&dev->dev);
+On Thu, Oct 23, 2025 at 12:04:44PM +0300, Heikki Krogerus wrote:
+> On Thu, Oct 23, 2025 at 11:10:20AM +0300, Heikki Krogerus wrote:
+> > Hi,
+> > 
+> > > diff --git a/include/linux/usb/typec_notify.h b/include/linux/usb/typec_notify.h
+> > > new file mode 100644
+> > > index 000000000000..a3f1f3b3ae47
+> > > --- /dev/null
+> > > +++ b/include/linux/usb/typec_notify.h
+> > > @@ -0,0 +1,17 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > +
+> > > +#ifndef __USB_TYPEC_NOTIFY
+> > > +#define __USB_TYPEC_NOTIFY
+> > > +
+> > > +#include <linux/notifier.h>
+> > > +
+> > > +enum usb_typec_event {
+> > > +	TYPEC_ALTMODE_REGISTERED
+> > > +};
+> > 
+> > Don't you need to know when the altmode is removed?
+> 
+> I noticed that you don't because drm_dp_hpd_bridge_register() is
+> always resource managed. But I think you could still send an event
+> also when the altmode is removed already now. That way it does not
+> need to be separately added if and when it is needed.
 
-Actually, I think that the two statements above can be moved too.
+Hold on! Every bus has already a notifier chain. That's the one that
+we should also use. Sorry for not noticing that earlier.
 
-The pm_runtime_forbid() call doesn't matter until runtime PM is
-enabled and it is better to do pm_runtime_set_active() right before
-enabling runtime PM.
+So let's just export the bus type in this patch - you can then use
+bus_register_notifier() in your driver:
 
-> -       pm_runtime_enable(&dev->dev);
->  }
->
->  static unsigned long pci_ea_flags(struct pci_dev *dev, u8 prop)
-> --
+diff --git a/drivers/usb/typec/bus.c b/drivers/usb/typec/bus.c
+index a884cec9ab7e..65ded9e3cdaa 100644
+--- a/drivers/usb/typec/bus.c
++++ b/drivers/usb/typec/bus.c
+@@ -547,3 +547,4 @@ const struct bus_type typec_bus = {
+        .probe = typec_probe,
+        .remove = typec_remove,
+ };
++EXPORT_SYMBOL_GPL(typec_bus);
+diff --git a/drivers/usb/typec/bus.h b/drivers/usb/typec/bus.h
+index 643b8c81786d..af9edb3db9d0 100644
+--- a/drivers/usb/typec/bus.h
++++ b/drivers/usb/typec/bus.h
+@@ -5,7 +5,6 @@
+ 
+ #include <linux/usb/typec_altmode.h>
+ 
+-struct bus_type;
+ struct typec_mux;
+ struct typec_retimer;
+ 
+@@ -28,7 +27,6 @@ struct altmode {
+ 
+ #define to_altmode(d) container_of(d, struct altmode, adev)
+ 
+-extern const struct bus_type typec_bus;
+ extern const struct device_type typec_altmode_dev_type;
+ 
+ #define is_typec_altmode(_dev_) (_dev_->type == &typec_altmode_dev_type)
+diff --git a/include/linux/usb/typec.h b/include/linux/usb/typec.h
+index 309251572e2e..c6fd46902fce 100644
+--- a/include/linux/usb/typec.h
++++ b/include/linux/usb/typec.h
+@@ -20,12 +20,15 @@ struct typec_port;
+ struct typec_altmode_ops;
+ struct typec_cable_ops;
+ 
++struct bus_type;
+ struct fwnode_handle;
+ struct device;
+ 
+ struct usb_power_delivery;
+ struct usb_power_delivery_desc;
+ 
++extern const struct bus_type typec_bus;
++
+ enum typec_port_type {
+        TYPEC_PORT_SRC,
+        TYPEC_PORT_SNK,
+
+thanks,
+
+-- 
+heikki
 
