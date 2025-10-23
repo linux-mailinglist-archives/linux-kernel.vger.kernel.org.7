@@ -1,157 +1,194 @@
-Return-Path: <linux-kernel+bounces-867265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6A2C02092
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:14:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAB9C02152
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25A74188BD88
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:15:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C85A33A21C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35CB33345D;
-	Thu, 23 Oct 2025 15:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E5B333736;
+	Thu, 23 Oct 2025 15:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLV15zP3"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="gAzQAR1q"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazolkn19013078.outbound.protection.outlook.com [52.103.74.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7E8332EC8
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761232474; cv=none; b=d6T1hvGjNoYWOFJC3XTV11rciuQNmeg2zIJprFsJW9pkf2RF00h4O25GU/dwHjYs48Mvf/s38jRt5YtYDbKWBCSsxoVBrEZ34afUiD8Kmb7Hx1embNDbYT9JG8s8/Yyzg2zEy/58d7pKWNSkf6SHOfMDfjBB1BgGt9uyHU0HcM8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761232474; c=relaxed/simple;
-	bh=IlUUH9LIumXJC7hPJml9W0fQIcePXt8C72UdTwhHdhs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XDXHmUu1vBNJcziYA/dl+/vm7eKArwZxp/6fYhr6DqHWYC2MVoMFKMokB76Z0gFlOEgm/otPZi0zCOy+YNp9ZTfsZtCxBjFDt8+C5NYeJYfYBeYaYPuqCZcBizWLi/VQzxhZuVJPrEcS79i03hJULsLG/tOGd26UzmeODGBAqKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FLV15zP3; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-339d7c403b6so1095291a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:14:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761232471; x=1761837271; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vkqLO4+M3z7w/Lrmi0Fd0kvLJlcc3V6C2w66dX/d/Xw=;
-        b=FLV15zP3k8p+Ylipj9P2be1to839gkkbWuBHc7AF2ZzUTT50qplv2DhIA+5wNbhJvK
-         QHlJ9Stru6EsBNm/IzR1XoKQY0u7r8ZE8ZOK6bdUKVdzcXo8VgGBEBLJJQtS1NndDmRG
-         v1yDw0ZANnv+ja0EjnDRP7rWkKRcdIYcRVvfaqNVIzoBcwV7YEqLmmx6KQp5aeEXx4yG
-         tIZT8nAWLcc0efFTWi7ghKFWdJAWXvzEgGu/30TK2PSYS/AccxOlfYWSZuDcCgTbbexO
-         New1KMrI09iux4rf9VIvmy/2lrEOfHR/Hy4aXCeO2Eo+Mut45Uk3atXEHvOnrcee2nGs
-         tmgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761232471; x=1761837271;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vkqLO4+M3z7w/Lrmi0Fd0kvLJlcc3V6C2w66dX/d/Xw=;
-        b=I2oeR6u0kwyLfFATs3raWG7kYkgPSJWgo0t1WbWalRJ+GMOHZB+ERx+LFtWiO4n5Li
-         /JldKODjgtpsfU72TffNU3LXFrNxtFOXZcuiFJELCCma3sTXL30C2YxrWFI/K9j5DhjP
-         vsuvQrpLj4kAfSHK6nFUdEGytONd9u7V3Q5yBMMi3O7J3Sn+9UbELnRoA29d5YdTVmlI
-         2yG4RkZX0vJWCMa8+X/DRG2tPqKwCNGAUTSq/PbAnNkoR76xMBkt8LdTa0JQg8JyNFZ4
-         y3VqKKBcc7Fy/yQQ3xr9IN1TXYgn+9WpWkxtoKlrSJ4lYY3ajapmVcyqjYsSh3+GABJ3
-         0OSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjCKtQOF9v2fJ5ro8+ztED1+/kp2IQEvmsR6WOXlmSNbmdI/WpwUfiiyhAdbt5qciEp+vgapcf71MTO90=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXTpMrtRz6uZ/0DawrnP+UiStdNWPMo0RP88VTOdVyfBAViyuN
-	qLy+VlCwItt+TFfXTSYAKJTZfbQFlFM8HRy+OYq1cqV3OBs2tya0iz90
-X-Gm-Gg: ASbGncsrSOvPNxGewAMyfZ4InLT4iazeAzpzC7TUza1ZwDXXi5aE+XqSdEWoHlXeiHs
-	meA0yudCUF6mvE7XbjxcrFNK4KUvHP/ImifDOWiW+kJdiU2Jiboo0kkjjLSM8EEPklRcPnqFzF9
-	oLK/dh8jtCMixW4LDPcYmJsfGUK3s98QhYrfoExrDGnQUmmVidkveYwxkqifsW81BziiAOtqkNE
-	/tteU7jwS8BPVEMUaMlNZ9/8UzOBZSDQ072m5EVewXvTcbjLe6od+tZMK5NsbAZAKjA3Pm9lkan
-	fscGg4YvJ7/D2KFlLTlAPPgmoKY61DQWTNLm9e5Ms3UWxN6rLHoz5R4vDbHGox2jbfZY1HvusJy
-	3vZoT2zMLez2aRYLjBn2i/s9bEo10tTqb1ifX282CsTncJ5F9cGvBSs8r+mpp7pnU3oDGK8Brdd
-	C7oEMwNqJF+7a910KexOtge59yLm7aU4SzRDUZ72wb+smTPD6g7m2XlILR
-X-Google-Smtp-Source: AGHT+IFxcOTWNeoO0U9x1abyfX1fIUDpLCIWWsm5Uw/xj/ptlbhHm2XiUrn0s7mXgS6AUwx9tm10+Q==
-X-Received: by 2002:a17:90b:5623:b0:33b:d371:1131 with SMTP id 98e67ed59e1d1-33bd3711391mr30176242a91.34.1761232471346;
-        Thu, 23 Oct 2025 08:14:31 -0700 (PDT)
-Received: from ?IPv6:2401:4900:88f6:3367:7bc9:63ec:e54:c1d0? ([2401:4900:88f6:3367:7bc9:63ec:e54:c1d0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fb00500b8sm2704496a91.6.2025.10.23.08.14.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 08:14:30 -0700 (PDT)
-Message-ID: <a56a858531e86a456c3a6c213c9f562add517d83.camel@gmail.com>
-Subject: Re: [PATCH] checkpatch: add uninitialized pointer with __free
- attribute check
-From: ally heev <allyheev@gmail.com>
-To: Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
- Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Andy Whitcroft <apw@canonical.com>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>,
- David Hunter <david.hunter.linux@gmail.com>, Shuah Khan
- <skhan@linuxfoundation.org>, Viresh Kumar	 <vireshk@kernel.org>, Nishanth
- Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,  linux-pm
- <linux-pm@vger.kernel.org>, dan.j.williams@intel.com
-Date: Thu, 23 Oct 2025 20:44:23 +0530
-In-Reply-To: <5e11f1bacb6430e1331f02e3e0e326a78e5b0d12.camel@perches.com>
-References: 
-	<20251021-aheev-checkpatch-uninitialized-free-v1-1-18fb01bc6a7a@gmail.com>
-	 <5e11f1bacb6430e1331f02e3e0e326a78e5b0d12.camel@perches.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C5C22332E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.74.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761232570; cv=fail; b=RoGrVgzQYHMin1D9XNPHs13Y9u71xWk0p89k8VFMvve5xT9rlfPgbT2lUWUyhmkxR06ZRXOD0UzneB+M/2u4+OB5hJy3kqvU3pZzfAgOWOGayuVp8jOBrmLkLOdkdO0zJLPeUsKdwLCIOWIz5c6lg5dMl8o4EJMWSonHf5rdv4E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761232570; c=relaxed/simple;
+	bh=R2R07wavmKKakWnWFoYwlIED9e18Ld7tgw9bL3t1iHI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=QfRhUalnP3/Z0JhNn1lxDPx/9J9B6mCHgdiNwj4+WiuuRT+L7l4U9zdv0fsX+V6/UKtQOUWdAzhZ+NqLSdv7jis7pNNMovhfqKnPRsDZr9JimW3inHr/M24F9+QJm4TPG42qtwkB2mNl68cqboeguB/FzWySVpNt9KmoZKBwUGw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=gAzQAR1q; arc=fail smtp.client-ip=52.103.74.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZL8QAPO+QipiYl7iHLp4faD44ekkubhYSOmo8OLB3mnje5RfxDX8mBtYnRkA4lYH4r6rGE6G38/G5wjjmf9ezkoLR0mUI0GJWBba5fIuvVIEtumYNDZ8ke7rrUynBbmq5RYdte0Kb7Ne1l/0M1VHW3i2ZO8nGA11z35gzGOqN0hcT/6kLLrFwUVCrzDzmPIMKHjqVCLFMRLzmNxnrAPVsP1dRbk5Stqsdmq8kG/1c6WudNAF+23HINAndDFhR+7tzxNWTegWdNpIac7MP3mseUXenV66KCwU/57zFlfguTSu7lBlmbsKHJrSLuNGNK8ppV+nMQ4bp0fusH59oNz/kg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ODz2xOcRIo3gctDJP18X51SbzYUeiQL0uxdYxaLBRrM=;
+ b=iRhYeqp34gHdyy2ZCL9taB9AROgqqF2WELs4zmrSMa2aInbfHHz2n46OIvyZ1OFQBk59MLus6LPo+y2ZpTGbByQYmUWDbZCwItcN20G9s74eWP6jgHn0PNHuxxNfjHFiMvCsjPLOxytjrFZFIiaE+fsHrcFSlFldZESRpGpgGoLTZ5nDpJHSfaRRfDJOoW1Tlt5ap2pWqsIF2ojvrv1NBUTAhmsAmtoKsdZLC2q/Uh6/gDiGSLjPOIbf/5rUtUbga9PbMNX8Js2ZH8aU8qjwjJ2lW1I+LXd+Y+riqy4TLM3Zs7SMSro0OWnX7CTPxMAgnnaCqJbHLCNR9UnPP67K2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ODz2xOcRIo3gctDJP18X51SbzYUeiQL0uxdYxaLBRrM=;
+ b=gAzQAR1qSoEhksyGDP7Jk0yXMYqdbxuoi97XS7BCeRGZLf42x5x4zBvWRxrl+ikYlBdteon9VLHBRX3+zgA772W9Xq/I6u7HbKkPP54VYvxAvcaMFdN9TXyQ2ocWFE4uZxLIrFmbSr+k1UVTonDEyh/MDp3DjhTUAdxLIbExrOfousVnAYwZaG5jpeBFtGiU5yDi1bQjZ572hkDMbSv0GGXa/8uAeABXGGCSC1p6MKGU5iiujkmknQFyQHq+shN2xWaGOZATodPMIHe5yqCNL6DX0yInCnAb2HmJQ7KOoqNARZM8cYbnr0SBC3SK02/1DVLav9Z81ELkwzG8gRwDMQ==
+Received: from SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:1b0::7) by TYZPR01MB4212.apcprd01.prod.exchangelabs.com
+ (2603:1096:400:1c3::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
+ 2025 15:16:05 +0000
+Received: from SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+ ([fe80::5e86:f04a:37e5:64f1]) by SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+ ([fe80::5e86:f04a:37e5:64f1%5]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 15:16:05 +0000
+From: Wei Wang <wei.w.wang@hotmail.com>
+To: suravee.suthikulpanit@amd.com,
+	thomas.lendacky@amd.com,
+	jroedel@suse.de
+Cc: kevin.tian@intel.com,
+	jgg@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev,
+	Wei Wang <wei.w.wang@hotmail.com>
+Subject: [PATCH v1] iommu/amd: Set C-bit only for RAM-backed PTEs in IOMMU page tables
+Date: Thu, 23 Oct 2025 23:15:43 +0800
+Message-ID:
+ <SI2PR01MB439358422CCAABADBEB21D7CDCF0A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+X-Mailer: git-send-email 2.51.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY4P286CA0079.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:36d::8) To SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:1b0::7)
+X-Microsoft-Original-Message-ID:
+ <20251023151543.362291-1-wei.w.wang@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR01MB4393:EE_|TYZPR01MB4212:EE_
+X-MS-Office365-Filtering-Correlation-Id: 72c5c726-a2e9-4e31-1e57-08de12471579
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799012|41001999006|15080799012|23021999003|461199028|9112599006|8060799015|5062599005|5072599009|40105399003|53005399003|3412199025|440099028|3420499032|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dv0NjBQfgYnn7gRK0mJmQxEmqymYb3vbW8sbXHnwzbndAakWmrLbBWMD0xEt?=
+ =?us-ascii?Q?eOMUN4s+Ct4io4TbmQs594MKVsTzaXGN/rdKq55dhCoetjaz6TtPob33N3Rh?=
+ =?us-ascii?Q?mK9D+jJZWy17wpDyZ2z+zfcf53Z2MJrXSvrZFuwV7uvnZkKuLjkOUWAa5M1H?=
+ =?us-ascii?Q?pMQ1TRb3DHM3fuEGvFWlxbMwEzjftmuvBuh9X/U4arsyFq43MWDmUoe0VlvX?=
+ =?us-ascii?Q?WsbKKpUvfsrcSmb0CHPlFVIjV+imZYLe4Ro/3DU/TH1aGxe8qhu3XPDwvpQC?=
+ =?us-ascii?Q?8xd29/4PuCWkKra0pooUUtS7jk9GtycB8bq0fz3A8zancDK5o5N6ykpAPI18?=
+ =?us-ascii?Q?7n/dnrezLDIUX77H6MWUgu/cAHsGpZyalY77vwE/3k19By2lG/G8Pw5ydVaN?=
+ =?us-ascii?Q?oChk8yWFVQuaAVOUuZoTNY9RlmIV6Gi8pPt/S3uyuD7zd57HXn+4QUIXyck1?=
+ =?us-ascii?Q?k+XLg7HOP7yHgA66c3OqkbwdXS40itQ23QyWL7KK6cw37DOc/QjXy4hq8FHg?=
+ =?us-ascii?Q?PoSI651ciM7ejiA4JDxyYQ8vbOviNxwaTU41BpeRTHuAZQqVcD1nM4Bx6szk?=
+ =?us-ascii?Q?pOcme8J8cMPbgZIy69E7daZbiYcONBjEGaP+IE9Hf0FFk9qM0igkQw9y9g62?=
+ =?us-ascii?Q?EmA3dguRY8MEM015JFQOdBvwTmAVltfbUDJhPwAswhUB+hRXSSo5xmCUwPTT?=
+ =?us-ascii?Q?MQfzIlvSB+ptjbCMZ8SgFIZn1eucymm2C7xqks8jXG14OHLDKjDHpnVveS50?=
+ =?us-ascii?Q?oGxvwRpqF6I/TNJUGyMwtfZ3ENq5h7fTdba0wLyDQOITPP0Xzw5m3IjPAlGJ?=
+ =?us-ascii?Q?OX7y/1N/HE8PpPK0ViG/s4GR4SlgQIs1JEWFO5/yvTwmXcqvF1XI3/dkhDLA?=
+ =?us-ascii?Q?JN/t631tIzeQxK/QVO4nhMpyW7vJAWSXs49QrKP0DcFErZmZCd7jJf6wGjQM?=
+ =?us-ascii?Q?t4e2ojcj9OWx8cOLVpZxY9xFARsyHnMQMApaSgeQgLrynzjte0WPAC7qOwvV?=
+ =?us-ascii?Q?ktFIy7b8ilkmCYnWKg4mfaQzTdKlNcZUyfVYfHsmVK7JfNH2qkX6l/i2sIRm?=
+ =?us-ascii?Q?Tcwxz8Q/k/ZAZTuKKOllpp1WS+8+2xsk2yRScCdu0lE5PLf5+jSAWe+UT6+j?=
+ =?us-ascii?Q?Vc3jIUGea4b33zYcesbzaLFvHeCw0yeLxgAH0QFSZvmByjXA0QI5cs0NJHdm?=
+ =?us-ascii?Q?9XBD5ZPF6SRZBiCF4R3AUu9kXQFFAXVWU5E7L5grPE4c3Yrbx0/ubKNVBfl/?=
+ =?us-ascii?Q?6qcwM6daXJdXFltkBArzIv9vbzB/AXxmvRViu5wMv+TBu16WS/7iPX6gO+Y/?=
+ =?us-ascii?Q?1gE=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Xso4dHkTpgtVDUhp/q/MxjXP0JkYwIkhEYAO9qPUC+7QiK7q3whUQsQVKBrw?=
+ =?us-ascii?Q?SFfCcyJKAr7qmUSNeQCrkaga/QjEAdX9Lm2rZc/RP/BRs4bAMQr3DIx3tEX4?=
+ =?us-ascii?Q?bUML8l+SlPrzmDhpXPR0uOMVjNfko7q4qxYfNt01S53u2bLIRxshfomEpMAA?=
+ =?us-ascii?Q?aVkVQA6thkpUSjG9P9ZZpUfLALTCHCtCEKz9xVT/E//H3Qxs5AFer/D9PWJ9?=
+ =?us-ascii?Q?KHxouNyncxd1IUdAS67ksoBoSkVSilh4rUjyP7IyWmtcXUeAPFZuEdK4BLBi?=
+ =?us-ascii?Q?9f3vzsKOjDC8NHGWlJxl0zXNXv3z3XqJTze1eHedKPNqn/axRB5xBcbAvxae?=
+ =?us-ascii?Q?zIXXY0j2d1fnf3JaZLsE46cmEHu+GLtcP76aM49MXiPiLOqwvRjTiYE9srWX?=
+ =?us-ascii?Q?/4kQSN4bEi358KafT2lxFN921pbvM3lsSAe2L0H6xY2Ss1vkswkL2MbpepJi?=
+ =?us-ascii?Q?A979/qSIVubAPtuhlgfo1hIHGyLIV+F2Z0bQ3YqENuhLiLIQZ578OJpsYrvK?=
+ =?us-ascii?Q?8yKLbxGyBP8R8OIlxrOnsDRk8Juw8QgOLceRKoX1fPy9niX51RuWMm4TbUdY?=
+ =?us-ascii?Q?TpV6fCLEtnO4W4d5zE4xCh14NMM6wBOFhwAMbK/qA5kYPD10W6LMLakQ400u?=
+ =?us-ascii?Q?J31moGIyxp3MRvcK0oMbCF4zlkmsISXKN3SAcygRHgA8fSFU4hXZDUvuCt1+?=
+ =?us-ascii?Q?jsxgCNu0wjyl/aOpKDXc/e9X5Oxv5giR+v4W7pQjoSC6mFi/1bxauZoWNirC?=
+ =?us-ascii?Q?H3dQYl2ba2XkfOl2wQTSyUvzLSwB7A008EQFk44BIV9/se6rKA4ZYWGlRCj/?=
+ =?us-ascii?Q?u1uV5bokS00/uCzwgvdRBmOMufZPKnr/7Yh7jFyGhKPPF/ZKiV1XDg9hFpzr?=
+ =?us-ascii?Q?C/egye2DdptxYWRmL5p6z2CiK0BzCNX27bRfyPDer3pblcBbEs3jc1xbbMYW?=
+ =?us-ascii?Q?vx9OW/wRH4a/tnrSE32n+lGaS2jF7XHMbYbJxz/9B6lsniCnZnZ+YMX+k436?=
+ =?us-ascii?Q?HtQXHnq9xJ7s9DdOLRVeCuPngMf2mBqijGhFgxYWs/eAh6ARcAsM+GBM49BW?=
+ =?us-ascii?Q?txx+xz+gDe7ZGlUWgADjrm0wOboD7XQ9/sodQ5eb6UWXzJcYi1ssrftpUx9D?=
+ =?us-ascii?Q?X9OaUVyvYgVYKSkX/3xR8jd10qH5xAW+M1T3ow07fM/t4eVvVrA/KDDne3zX?=
+ =?us-ascii?Q?IUHvYkGibvALiaMGdY9biilcr9ho6hLUAfqScFQ6htYdX+v1hi/uAMlugtw?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: sct-15-20-9052-0-msonline-outlook-827b9.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72c5c726-a2e9-4e31-1e57-08de12471579
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 15:16:05.0907
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR01MB4212
 
-On Tue, 2025-10-21 at 10:06 -0700, Joe Perches wrote:
-> On Tue, 2025-10-21 at 17:00 +0530, Ally Heev wrote:
-> > uninitialized pointers with __free attribute can cause undefined
-> > behaviour as the memory allocated to the pointer is freed
-> > automatically when the pointer goes out of scope.
-> > add check in checkpatch to detect such issues
->=20
-> Seems sensible.  Couple minor points below:
->=20
-> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> []
-> > @@ -7721,6 +7721,12 @@ sub process {
-> >  				ERROR("MISSING_SENTINEL", "missing sentinel in ID array\n" . "$her=
-e\n$stat\n");
-> >  			}
-> >  		}
-> > +
-> > +# check for uninitialized pointers with __free attribute
-> > +		if ($line =3D~ /\s*$Type\s*($Ident)\s+__free\s*\(\s*$Ident\s*\)\s*;/=
-) {
->=20
-> The leading \s* isn't useful, but \b should be used.
+When SME is enabled, iommu_v1_map_pages() currently sets the C-bit for
+all physical addresses. This is correct for RAM, since the C-bit is
+required by SME to indicate encrypted memory and ensure proper
+encryption/decryption.
 
-Sure
+However, applying the C-bit to MMIO addresses is incorrect. Devices and
+PCIe switches do not interpret the C-bit currently, and doing so can break
+PCIe peer-to-peer communication. To avoid this, only set the C-bit when
+the physical address is backed by RAM, and leave MMIO mappings unchanged.
 
->=20
-> Perhaps verify that $Type is a pointer as well
->=20
-> 		if ($line =3D~ /\b($Type)\s*($Ident)\s*__free\s*\(\s*$Ident\s*\)\s*;/ &=
-&
-> 		    $1 =3D~ /\*\s*$/) {
->=20
-> to avoid things like:
->=20
-> drivers/net/ethernet/microsoft/mana/gdma_main.c:	cpumask_var_t cpus __fre=
-e(free_cpumask_var);
->=20
->=20
-> > +			WARN("UNINITIALIZED_PTR_WITH_FREE",
-> > +			      "pointer '$1' with __free attribute should be initialized\n" =
-. $herecurr);
->=20
-> 			pointer '$2' etc
->=20
+Fixes: 2543a786aa25 ("iommu/amd: Allow the AMD IOMMU to work with memory encryption")
+Signed-off-by: Wei Wang <wei.w.wang@hotmail.com>
+---
+ drivers/iommu/amd/io_pgtable.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Nice find. Thanks!=20
+diff --git a/drivers/iommu/amd/io_pgtable.c b/drivers/iommu/amd/io_pgtable.c
+index 70c2f5b1631b..6f395940d0a4 100644
+--- a/drivers/iommu/amd/io_pgtable.c
++++ b/drivers/iommu/amd/io_pgtable.c
+@@ -353,6 +353,9 @@ static int iommu_v1_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
+ 	if (!(prot & IOMMU_PROT_MASK))
+ 		goto out;
+ 
++	if (sme_me_mask && page_is_ram(PHYS_PFN(paddr)))
++		paddr = __sme_set(paddr);
++
+ 	while (pgcount > 0) {
+ 		count = PAGE_SIZE_PTE_COUNT(pgsize);
+ 		pte   = alloc_pte(pgtable, iova, pgsize, NULL, gfp, &updated);
+@@ -368,10 +371,10 @@ static int iommu_v1_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
+ 			updated = true;
+ 
+ 		if (count > 1) {
+-			__pte = PAGE_SIZE_PTE(__sme_set(paddr), pgsize);
++			__pte = PAGE_SIZE_PTE(paddr, pgsize);
+ 			__pte |= PM_LEVEL_ENC(7) | IOMMU_PTE_PR | IOMMU_PTE_FC;
+ 		} else
+-			__pte = __sme_set(paddr) | IOMMU_PTE_PR | IOMMU_PTE_FC;
++			__pte = paddr | IOMMU_PTE_PR | IOMMU_PTE_FC;
+ 
+ 		if (prot & IOMMU_PROT_IR)
+ 			__pte |= IOMMU_PTE_IR;
+-- 
+2.43.0
 
-> And this would not find uses like the below where another definition
-> is done before a definition with __free on the same line:
->=20
-> crypto/testmgr.c:       u8 *ptr, *key __free(kfree);
-
-I will add the check for each pointer defined on the same line
 
