@@ -1,204 +1,250 @@
-Return-Path: <linux-kernel+bounces-867761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57537C03728
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:53:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 815A7C03731
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 22:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0107C1AA0AB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:53:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1082F56376A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA09285C9F;
-	Thu, 23 Oct 2025 20:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD2126A1B9;
+	Thu, 23 Oct 2025 20:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="6qO79VKQ"
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IZguN+QE"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40322749C4
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C028726561E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761252740; cv=none; b=FVK+gzFsISu/NNs3almPd7THGIaHKP6XeRCLrwwpXuJhAe3yJUhmNUoMOEMuStFhdAqoQxc6aNnLdacb+uiM5exLAyIfkYdpJoTuaJWQcUUA1fTB8+MfuAfp+jugRMlM3q8sCAvKE1kM6wy370AuZLYeTgUYFvzKjG1e+7VCt/0=
+	t=1761252783; cv=none; b=V+x26xX56GVo0PxtxipkEXQp8WzOBJRqvBZM5Hjg2ZCNoj4vSTpHQpotrllKf1SOavBV+vj7hANhjcHn4B1Qc/LoCEoA81V2cqFJ96RNKcA739tMiRZWHJCB5oRcgDyOSyxs1b692fC6NAMzradw0EMoslGhXL66xdI5k4JxsXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761252740; c=relaxed/simple;
-	bh=Y0ghMmSRlBnRBNnP6sWrVTt2Vnuy3f0n2nTNALKNFX8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hQOfrjsMAn9DDkyVkKT5zfNM9s8KqDOCYDDVtsdHj+bnSVwy5/ffnjt3Akp9u9Y9cx6Ngv5lJeMpizQngkfFBBbs0Efm+AvQle+rQXht0n4YbtS8lLUUhdQDgkV47m+n0VPxXWu8SM5vg9zJrnC7Vg0j+yZV5EEBT0LaKvjH7l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=6qO79VKQ; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-	by m0089730.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 59NJSPON2199286
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:52:17 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=5BTw0dteahU9kWyz5zYz
-	xzqs6ncqPTxI2RXvfgSYzz0=; b=6qO79VKQ9qGwCshB8X6vfPSWDZf3lHHEm56/
-	/2nnul/jlhzyXkWvBzc8+vPmyvBIIQwhvfTBv7tVCL3MiODJp9nOlREPgQ/HhXAJ
-	DxiKPpODDmeOHtSh6mkJq5G8ikvpZvmGKsVNY4pbA0A5ZDAeZo6w50+WEkyAB9DU
-	9p92jxuU+6LXHaZhpojhE8FZLgxg2/4QX5w4ZsX7U4orncHWDdWBqN+O3sOP6f/N
-	h3FABrllJoV/ueSrwqY9H2Zt+ZcAMoJ5dvz/i+Xo5/m/6tzOryqB9/SHUSbQFKyD
-	QHShAbhf0Jk2od7bIMHblNuiIOZ9h9UbdZWDvXIf/RKr2JQJjg==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by m0089730.ppops.net (PPS) with ESMTPS id 49ytj4rk39-4
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:52:17 -0700 (PDT)
-Received: from twshared7571.34.frc3.facebook.com (2620:10d:c0a8:1c::11) by
- mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Thu, 23 Oct 2025 20:52:14 +0000
-Received: by devgpu012.nha5.facebook.com (Postfix, from userid 28580)
-	id A3D9A14A0E3; Thu, 23 Oct 2025 13:52:04 -0700 (PDT)
-Date: Thu, 23 Oct 2025 13:52:04 -0700
-From: Alex Mastro <amastro@fb.com>
-To: Alex Williamson <alex@shazbot.org>
-CC: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
-        Jason Gunthorpe
-	<jgg@ziepe.ca>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, David
- Matlack <dmatlack@google.com>
-Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
- limit
-Message-ID: <aPqVdAB9F9Go5X3n@devgpu012.nha5.facebook.com>
-References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
- <20251015132452.321477fa@shazbot.org>
- <3308406e-2e64-4d53-8bcc-bac84575c1d9@oracle.com>
- <aPFheZru+U+C4jT7@devgpu015.cco6.facebook.com>
- <20251016160138.374c8cfb@shazbot.org>
- <aPJu5sXw6v3DI8w8@devgpu012.nha5.facebook.com>
- <20251020153633.33bf6de4@shazbot.org>
- <aPe0E6Jj9BJA2Bd5@devgpu012.nha5.facebook.com>
+	s=arc-20240116; t=1761252783; c=relaxed/simple;
+	bh=8zqWw3/DzF0JbCkSbYoLHCYTqNuxWleoVqC0QqgZxyA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Ud05QH6pIORwX/oM0BcTJzwcsLsGjNtA/xdMXnoDp8ENbk6XrrOkoMG5jeS094At/YF9IzJzglFcoUGWZJ8XkrQ8zW9E4szK3oHAidNjxfjZNycP4JR+fZQVkeSdjvW57TyeX/NtW2iUVqQOBD+UXSgAelZ1xmfJiq6xSAgOqCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IZguN+QE; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--willmcvicker.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33d75897745so2749549a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:53:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761252781; x=1761857581; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=J/CuDqQKYrCjFmmuQ7Z7ZrmkPpP9qzjAbWKHA6vZ3F0=;
+        b=IZguN+QEv/6Rqf5gBuTdSpyzv8l1PNMDdrObBmXp/KA478Z9Y4s0O+IhUaF/IBNCmy
+         V/rG/nbuLDdiJMJxe7XD3KJbMvy8g3wzn8vSdEhyiUlXJjWPtkuZT1ZyiLqPeHMErTU1
+         tguu0GxDwKpj2lIQBzklQRnH3tV/vjAejHNgQeyRRcc4QTU53oXgxkgvB/cE7mb3BSoL
+         d4Y8lQwK1RSGN78jhiPwpXt/H1qHObG+d691l/bTq8BhCTA53gSKFeVGaAYLG2SFxqaW
+         uegiJGlMUh9W8uCwxhvoEXzlvobQIcsIja4Znk0oLfX1ixz0PMFHMgO4bt1pbC6OmisD
+         YebA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761252781; x=1761857581;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J/CuDqQKYrCjFmmuQ7Z7ZrmkPpP9qzjAbWKHA6vZ3F0=;
+        b=GwVOIe+jqPLVyjxCJrPGzVD/jqNtY3W74IF2zAoXo798Y/1kJaFVhHtiFyqsyXtx8y
+         C7fp/urjU9EvYzJxsHZIH2wDXo4BYLfi/1HAcaHphPtMOn7w4d0p8gwEL37BPv82o99V
+         ifNIG4bEWRahiMw5xl4No3Z3y/W/oPpFWv5gAbCgm3eKlTCQWx5DpMfZRYrtV3DW+Bgy
+         8iSmUmsHE9AsJfSFs2Jx+fzy/qBpwrRSR/CkX5us2haznGMMWIYeEuomrmF/IlCqiIu/
+         U+UiH4LZu1SFdbEqiu46XUgDSPsj0sYAHyGPjlS2EjGm+czBVHZFV8DIZjxVQpG4sEog
+         kGwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrIqqSLU9qHRo5OfIj6gHFiArldza/jkThh5/JkfccUmfacvdYgjVZEyASiCMA9f+zbNGzoJhw/ItPNcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpgzUoy1bO0vblxBrJPstMHddmq+Qz9aEnOI0z5FA8QpxtTK0l
+	nVYUxZWYCRvFSsTSs9rpgVhuPKJKgxEDz2YXhrUjr8tBAvF0EhL5i01uAIPsxZCz9D8H+eUKyb8
+	k/imB8GWZPDHWFL/P1WHAE/S/ifDuWA==
+X-Google-Smtp-Source: AGHT+IGZvHNJGclbnOO89EdnWsplsVqZZL3bkVnC1Rtv/HGE80CAIib3aGdWGelvHoICVxdGo3zKFru6mHmHYcDQ2mg=
+X-Received: from pjbpb12.prod.google.com ([2002:a17:90b:3c0c:b0:33b:ba24:b207])
+ (user=willmcvicker job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:4f41:b0:32d:17ce:49d5 with SMTP id 98e67ed59e1d1-33bcf8ec618mr37022882a91.23.1761252781064;
+ Thu, 23 Oct 2025 13:53:01 -0700 (PDT)
+Date: Thu, 23 Oct 2025 20:52:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aPe0E6Jj9BJA2Bd5@devgpu012.nha5.facebook.com>
-X-FB-Internal: Safe
-X-Proofpoint-ORIG-GUID: 7ZM_zjIwah9pGDyMDfBH6aBncg2iTtBw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDE5MSBTYWx0ZWRfX4mdzhfI4dfzX
- dIxxvzJtB9Vu4MXStsDrAJjB2ASFThoJHxM+tcCEKl2EAzwXQAffhlnSSRTBwHzwaq4Io9DhUXl
- Po2JmbA0j8n+2piXjZcuJ4Y/PH5kd4iRsOfZIiqkV+2wry8eJYR+GUtu1aJm+RufoKmC1ZF4xwZ
- o1WSJiy6ArooTOl58L++NgYHhrzdIaZs78hjNQxLKdMJ2CxTnk/+cXD3blLwzq1nSGp5in6OeUL
- RxmsNzQetxqRIZ46ZN6Yf7PmleUTrJolEX8KEWXiBq3djVSo45pk3CrhOv4+qmhkEjoxUf/jxQ1
- fk8L3txYhIh7vYJteR82fICdvgjBUrzQtVErqp+lx7Kju5UW+sSmCf3EdGeJkIlWn/AjwcP1pFY
- q0TQyHaswjTOTRpNRxmG9eX2UWHsDw==
-X-Authority-Analysis: v=2.4 cv=DvZbOW/+ c=1 sm=1 tr=0 ts=68fa9581 cx=c_pps
- a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=uBoCfNncoQk3cw2uPvAA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: 7ZM_zjIwah9pGDyMDfBH6aBncg2iTtBw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-23_03,2025-10-22_01,2025-03-28_01
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.821.gb6fe4d2222-goog
+Message-ID: <20251023205257.2029526-1-willmcvicker@google.com>
+Subject: [PATCH v5 0/7] Add module support for Arm64 Exynos MCT driver
+From: Will McVicker <willmcvicker@google.com>
+To: Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Hosung Kim <hosung0.kim@samsung.com>, 
+	Will McVicker <willmcvicker@google.com>, Ingo Molnar <mingo@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, John Stultz <jstultz@google.com>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+	kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-One point to clarify
+This series adds support to build the Arm64 Exynos MCT driver as a module.
+This is only possible on Arm64 SoCs since they can use the Arm architected
+timer as the clocksource. Once the Exynos MCT module is loaded and the
+device probes, the MCT is used as the wakeup source for the arch_timer to
+ensure the device can wakeup from the "c2" idle state.
 
-> On Mon, Oct 20, 2025 at 03:36:33PM -0600, Alex Williamson wrote:
-> > Along with the tag, it would probably be useful in that same commit to
-> > expand on the scope of the issue in the commit log.  I believe we allow
-> > mappings to be created at the top of the address space that cannot be
-> > removed via ioctl,
+These patches are originally from the downstream Pixel 6 (gs101) kernel
+found at [1] and have been adapted for upstream. Not only has the Exynos MC=
+T
+driver been shipping as a module in the field with Android, but I've also
+tested this series with the upstream kernel on my Pixel 6 Pro.
 
-True
+To verify the module on Pixel 6 Pro is used and the arch_timer is used as t=
+he
+main clocksource, I ran these tests:
+---
+# lsmod | grep exynos_mct
+exynos_mct             20480  9 [permanent]
 
-> > but such inconsistency should result in an application error due to the
-> > failed ioctl
+# cat /proc/interrupts | grep -E "mct|arch_timer"
+ 23:        759       1009        741        477        601        405     =
+  1350        789    GICv3  30 Level     arch_timer
+117:          1          0          0          0          0          0     =
+     0          0    GICv3 785 Level     mct_comp_irq
+118:       2126          0          0          0          0          0     =
+     0          0    GICv3 789 Level     mct_tick0
+119:          0       1442          0          0          0          0     =
+     0          0    GICv3 790 Level     mct_tick1
+120:          0          0       4617          0          0          0     =
+     0          0    GICv3 791 Level     mct_tick2
+121:          0          0          0       2617          0          0     =
+     0          0    GICv3 792 Level     mct_tick3
+122:          0          0          0          0       4173          0     =
+     0          0    GICv3 793 Level     mct_tick4
+123:          0          0          0          0          0       2217     =
+     0          0    GICv3 794 Level     mct_tick5
+124:          0          0          0          0          0          0     =
+  1618          0    GICv3 795 Level     mct_tick6
+125:          0          0          0          0          0          0     =
+     0        894    GICv3 796 Level     mct_tick7
 
-Actually, the ioctl does not fail in the sense that the caller gets an errno.
-Attempting to unmap a range ending at the end of address space succeeds (returns
-zero), but unmaps zero bytes. An application would only detect this if it
-explicitly checked the out size field of vfio_iommu_type1_dma_unmap. Or
-attempted to create another overlapping mapping on top of the ranges it expected
-to be unmapped.
+# cat /sys/devices/system/clocksource/clocksource0/current_clocksource
+arch_sys_counter
+---
 
-Annotated below:
+I also compile tested for ARCH=3DARM DEFCONFIG=3Dmulti_v7_defconfig with th=
+e
+following debug configs to ensure the section mismatches are fixed:
+  CONFIG_DEBUG_SECTION_MISMATCH=3Dy
+  # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 916cad80941c..039cba5a38ca 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -165,19 +165,27 @@ vfio_iommu_find_iommu_group(struct vfio_iommu *iommu,
- static struct vfio_dma *vfio_find_dma(struct vfio_iommu *iommu,
- 				      dma_addr_t start, size_t size)
- {
-+	// start == ~(dma_addr_t)0
-+	// size == 0
- 	struct rb_node *node = iommu->dma_list.rb_node;
- 
- 	while (node) {
- 		struct vfio_dma *dma = rb_entry(node, struct vfio_dma, node);
- 
-+		// never true because all dma->iova < ~(dma_addr_t)0
- 		if (start + size <= dma->iova)
- 			node = node->rb_left;
-+		// traverses right until we get to the end of address space
-+		// dma, then we walk off the end because
-+		// ~(dma_addr_t)0 >= 0 == true
-+		// node = NULL
- 		else if (start >= dma->iova + dma->size)
- 			node = node->rb_right;
- 		else
- 			return dma;
- 	}
- 
-+	// This happens
- 	return NULL;
- }
- 
-@@ -201,6 +209,8 @@ static struct rb_node *vfio_find_dma_first_node(struct vfio_iommu *iommu,
- 			node = node->rb_right;
- 		}
- 	}
-+	// iova >= start + size == true, due to overflow to zero => no first
-+	// node found
- 	if (res && size && dma_res->iova >= start + size)
- 		res = NULL;
- 	return res;
-@@ -1397,6 +1407,7 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
- 		if (iova || size)
- 			goto unlock;
- 		size = U64_MAX;
-+	// end of address space unmap passes these checks
- 	} else if (!size || size & (pgsize - 1) ||
- 		   iova + size - 1 < iova || size > SIZE_MAX) {
- 		goto unlock;
-@@ -1442,18 +1453,23 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
- 	 * mappings within the range.
- 	 */
- 	if (iommu->v2 && !unmap_all) {
-+		// passes this check as long as the unmap start doesn't split an
-+		// existing dma
- 		dma = vfio_find_dma(iommu, iova, 1);
- 		if (dma && dma->iova != iova)
- 			goto unlock;
- 
-+		// dma = NULL, we pass this check
- 		dma = vfio_find_dma(iommu, iova + size - 1, 0);
- 		if (dma && dma->iova + dma->size != iova + size)
- 			goto unlock;
- 	}
- 
- 	ret = 0;
-+	// n = NULL
- 	n = first_n = vfio_find_dma_first_node(iommu, iova, size);
- 
-+	// loop body never entered
- 	while (n) {
- 		dma = rb_entry(n, struct vfio_dma, node);
- 		if (dma->iova >= iova + size)
-@@ -1513,6 +1529,7 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
- 	/* Report how much was unmapped */
- 	unmap->size = unmapped;
- 
-+	// return 0
- 	return ret;
- }
- 
+Any additional testing is much appreciated!
+
+Thanks,
+Will
+
+Note1, instructions to build and flash a Pixel 6 device with the upstream
+kernel can be found at [2].
+
+Note2, this series is based off of krzk/for-next commit 73f7017e6636 ("Merg=
+e
+branch 'fixes' into for-next").
+
+[1] https://android.googlesource.com/kernel/gs/+log/refs/heads/android-gs-r=
+aviole-5.10-android12-d1
+[2] https://git.codelinaro.org/linaro/googlelt/pixelscripts/-/blob/clo/main=
+/README.md?ref_type=3Dheads
+
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Donghoon Yu <hoony.yu@samsung.com>
+Cc: Hosung Kim <hosung0.kim@samsung.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>
+Cc: John Stultz <jstultz@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Youngmin Nam <youngmin.nam@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+
+---
+Changes in v5:
+- Fixed section mismatch issues.
+- Addressed Arnd's concerns regarding potential issues with unloading and/o=
+r
+  unbinding the driver.
+- Fixed SoB concerns to clarify the development chain from AOSP to Linux.
+- Pulled in https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprows=
+ki@samsung.com/
+  to limit percpu interrupts only for ARM64.
+
+Changes in v4:
+- Missed the "v3" string in the previous series for the actual patches
+- Re-generated patches with --base a15edf91668beefdb5171c53fa698c9b43dd1e0d
+  for kernel test robot.
+
+Changes in v3:
+- Rebased on top of Daniel's timer modularization prep series [3] and
+  krzk/for-next commit a15edf91668b ("Merge branch 'next/dt64' into
+  for-next")
+- Added owner references to Exynos MCT clocksource and clockevent objects.
+- Dropped #ifdef MODULE conditional section in favor of just using
+  module_platform_driver() which will properly handle setting up the
+  of_device_id table based on if the driver is built-in or a module.
+- Update commit message for patch 2 based on John's feedback.
+- Dropped DT change from v2 as it was picked up by Krzysztof for CPU Idle.
+
+Changes in v2:
+- Re-worked patch v1 5 based on Rob Herring's review to use the compatible
+  data for retrieving the mct_init function pointer.
+- Updated the Kconfig logic to disallow building the Exynos MCT driver as
+  a module for ARM32 configurations based on Krzysztof Kozlowski's findings=
+.
+- Added comments and clarified commit messages in patches 1 and 2 based on
+  reviews from John Stultz and Youngmin Nam.
+- Fixed an issue found during testing that resulted in the device getting
+  stuck on boot. This is included in v2 as patch 5.
+- Collected *-by tags
+- Rebased to the latest linux-next/master.
+---
+
+Donghoon Yu (2):
+  clocksource/drivers/exynos_mct: Don't register as a sched_clock on
+    arm64
+  clocksource/drivers/exynos_mct: Add module support
+
+Hosung Kim (1):
+  clocksource/drivers/exynos_mct: Set local timer interrupts as percpu
+
+Marek Szyprowski (1):
+  clocksource/drivers/exynos_mct: Use percpu interrupts only on ARM64
+
+Will McVicker (3):
+  ARM: make register_current_timer_delay() accessible after init
+  clocksource/drivers/exynos_mct: Fix uninitialized irq name warning
+  arm64: exynos: Drop select CLKSRC_EXYNOS_MCT
+
+ arch/arm/lib/delay.c             |  2 +-
+ arch/arm64/Kconfig.platforms     |  1 -
+ drivers/clocksource/Kconfig      |  3 +-
+ drivers/clocksource/exynos_mct.c | 81 ++++++++++++++++++++++++++------
+ 4 files changed, 70 insertions(+), 17 deletions(-)
+
+
+base-commit: 73f7017e663620a616171cc80d62504a624dc4de
+--=20
+2.51.1.821.gb6fe4d2222-goog
+
 
