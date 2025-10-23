@@ -1,142 +1,211 @@
-Return-Path: <linux-kernel+bounces-866321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8ECBBFF766
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84403BFF769
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BE3E19A75F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:09:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32D7419A7A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A2B2BCF43;
-	Thu, 23 Oct 2025 07:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00A7298987;
+	Thu, 23 Oct 2025 07:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lbkC7Nqi"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcJFhi8t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B39239E80
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E794E27990A;
+	Thu, 23 Oct 2025 07:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761203324; cv=none; b=ViBkroNI+BAiS0MDHHC2Jw1RjqDqnHZsQyNzgNJmsLzYHhDspg/hI/L3ENLU3CNeaU5niCxi7f/dbk0WuCcj1ptCOmswQ7HOgjKH8lgkReHB7P1ZdysN7X8U1MOs8M6b0OnrDylEx5nCkIOyVUWZd5rLMnogrS8IYcp+P32p+kI=
+	t=1761203415; cv=none; b=NQ8J8bhKorEJvlQler5gDJo9jRLDG7tBX2vBcvtPbAL9Bqb9ICGPZUytlThJjAbdRjkcUVkzxn4LJsvFJrdqmFseBqbFL3drvIgmZgVfuT6cKjmm7odFgtipPqSiO1GbTrs5zs1VSNyYYtVIq3uDgXx+57kxQRA7bR4HfJmqlHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761203324; c=relaxed/simple;
-	bh=7NwiN/K8SGK+Ygyet595Hy+1Nxn5KCZoHo1ul8wBViA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CnAxFnx8RG+swVewYOPh6dh+GNoTr9XMwC0uxEe5K/5z6mBjh0PWqxhDnSlQpg1vEP84mOFgv1nWmCE2TYPrY2A4XJNE7iNMEpjUTgJg92pd3v2Gm9oyucsyC9f0Nx2Z8JhhhV3YQMlACemWSgno5JsP/M13fyLaEKuydyA1qMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lbkC7Nqi; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-475c696ab23so2108775e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 00:08:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761203321; x=1761808121; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AM6QKcwomZS5ILh9rEXNjcNyg7KgGv74b4bvo9G7Kp8=;
-        b=lbkC7NqifFyc1F3EZAzZLywqG5Ulb5RgbsqnN9jklPfeat5M+70OY0CYWU9Nnj81UK
-         R/Kg73vTXWX2+XRALzinluRJFwSYyLtKE9wrsq7GJC1MLRZVgndtEpKYHR68OkmEt4tg
-         vyzoh5a3C3JD3EmCbY0vLk6fLo+RkvHQOAQ6fOuVP0NlsrxH9H7aW0hwZ5PE9pIsgXNe
-         cj+TLjZCopvWCWmQbXpw7tdau0i/SOdABvaWaNpzZ6pgXnHFKG+gjnTYmSL29O//jDmk
-         ntEzsa/UsYPtNUTYj0Y1447wfZ8fhoGjWFkLuDg37Y46BOHk8V0TAl2nWFD6/3Buewka
-         N75w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761203321; x=1761808121;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AM6QKcwomZS5ILh9rEXNjcNyg7KgGv74b4bvo9G7Kp8=;
-        b=PsQ/zdl+QnjJ96+QKB9HD76CwD0Br5q0zz4CdfAZmiROM9HQmwa+fFuY9kp8PoZElk
-         2pL3IGloroQn68MiLis2TKC3JHpTK0BdY0ZxygSOmI8HHJeOsJ9dHHyqikTCBWg9xzMX
-         l3dHJz4dRSwJo7DiJ98s2TLGsRsVcDbBbmp86e4/Az6QmFuTZaZmAgW5zpx78PofsV2+
-         iu9cEoKr9kvSlzBTT/Cm7SUMRwGjC7ullFGYJRfV0j6FYXn51SDi1Pgj0C7T6VG5OCR8
-         vX4OtHxFbQrbxUFU1RG5emou7BIgZ8wLg1OzfRjwmcHyiqXLb8MOWl/WQoZVoa/ZkZ72
-         Cj/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVXDKCht+8G8LMNbt0ohKGW00+vDma/cypV6E1sR0MFJvzJLzo2F1Hsdtzs9AYvzKf2pX9pRW/XNZzOeBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFSUBOQ9lTTSveLblYG7RQZwTfoY58UW/eQ8rsxSgw8/6UqNjb
-	iRdTY+7uw/PZiAFHqY19SwZANsCvQtXhcFo9JE37+oo9DlBqLpWe2+kf
-X-Gm-Gg: ASbGncsXP9VGz4VsiVZU5qO/C0fEcH4psz3pEbj6gTu4fx5NYXVUvt/Z+MfzkspcI3A
-	AWOTehUErAP0NHXNYV+/rCoguXAkrV7ls8W72F4Mc7o4NtDfnWMcD+70xCMQOU+WZ9Nw/QgRkqO
-	w9yT3NAIP6MSr+0fsjXDeMT6+KPSnP4NndwW+9IuE3Z0tKd7riPYUvNWfEpPgx2tB6K2bhvoV31
-	AiVf4pnyNXhNBSIWEgs06HURQUBGJz/Dl/W05Z0/3wk/OBrGts4PNFgQcA/CqJ/FzBgxXjax5x1
-	R4yOxqsYLEr0ZcT7ISmjWfscbVAwxO4YeGtQPbZMV90IMHKkcFTNPUcKh/d7x/w8gI3I3/ctHKV
-	b4B1txHC90q8n42hc4Rnyhug1gbGTPK6OVw9v1A8ysG2FOg9m2s2G/OVIoqhCM0oFUjw4h3P/N5
-	lgOc6AJHJjwQWRuihj/np4pSo=
-X-Google-Smtp-Source: AGHT+IENim35HOxVARbSDioYu5EEQEHmf8ELuhvz8cK4iifEtwKu94+xGBpW12KkX7avks399OoeFQ==
-X-Received: by 2002:a05:600d:416b:b0:46e:45f7:34f3 with SMTP id 5b1f17b1804b1-47117874b06mr185455635e9.8.1761203321082;
-        Thu, 23 Oct 2025 00:08:41 -0700 (PDT)
-Received: from [10.221.206.54] ([165.85.126.46])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496d4b923sm50682035e9.14.2025.10.23.00.08.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 00:08:40 -0700 (PDT)
-Message-ID: <efab6280-a27b-4ba8-b744-9d1e12bd418e@gmail.com>
-Date: Thu, 23 Oct 2025 10:08:41 +0300
+	s=arc-20240116; t=1761203415; c=relaxed/simple;
+	bh=3eigXBLiimevcUcf8KdhhD/v0+6ZZjko+MbkPytVjq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P9MbRriVZ1klkjPGyfkkfvs+D9X7hTV2Ej8KgtRhNP03OtJeLHo8n2OtKe2RH4ZN+lVqiw/rqr8Nflkmieiini7dmsOmw9mYy9Paek/dNx3eGGqs3CGFBervN+ddVAP+pLUoyTTPG+ZhdeBc8UDaQLX7nG3M8kiMlLLOJbgqGTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcJFhi8t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49433C4CEE7;
+	Thu, 23 Oct 2025 07:10:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761203414;
+	bh=3eigXBLiimevcUcf8KdhhD/v0+6ZZjko+MbkPytVjq0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WcJFhi8tSHC6qd0/sKDdW4POrtY8pODQNVNADd8AbwXFN47Qw7Av6RR1wEc8y4kIg
+	 JriUhZcFP08MpUvg7WoV5KC/BLx+T15pEJUTAZL4YKbdd0QUPaMUqNe6eKQei9BIPt
+	 iZD6Lzb1MPz+qfvA9FiR+0j5SDrjIUzzy36JQEVxXKzf8CYmxDuEhZgEq0imUVzddw
+	 FJQ6UC2tuwX6mBhwn7+8RGIo714r6Xcq43rmXGtlGUfLOhwwKygTbmAvh1S+7Y81rB
+	 UNChcCRiu/B5WjBWPYRF0OnYurR8gHb34HJqm738Db4V7qykDKpHPE+nJCi3XDtEMS
+	 a7N2hWzjZKP2Q==
+Date: Thu, 23 Oct 2025 10:10:01 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+	Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v7 7/8] mm: Introduce deferred freeing for kernel page
+ tables
+Message-ID: <aPnUyYS8N9Lp59vS@kernel.org>
+References: <20251022082635.2462433-1-baolu.lu@linux.intel.com>
+ <20251022082635.2462433-8-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] driver core: auxiliary bus: Fix sysfs creation on
- bind
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Tariq Toukan <tariqt@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
- Mark Bloch <mbloch@nvidia.com>, Gal Pressman <gal@nvidia.com>,
- Aya Levin <ayal@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, Simon Horman <horms@kernel.org>,
- Shay Drory <shayd@nvidia.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Parav Pandit <parav@nvidia.com>,
- Amir Tzin <amirtz@nvidia.com>
-References: <1761200367-922346-1-git-send-email-tariqt@nvidia.com>
- <2025102355-abstract-subgroup-aa97@gregkh>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <2025102355-abstract-subgroup-aa97@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022082635.2462433-8-baolu.lu@linux.intel.com>
 
-
-
-On 23/10/2025 9:47, Greg Kroah-Hartman wrote:
-> On Thu, Oct 23, 2025 at 09:19:27AM +0300, Tariq Toukan wrote:
->> From: Amir Tzin <amirtz@nvidia.com>
->>
->> In case an auxiliary device with IRQs directory is unbinded, the
->> directory is released, but auxdev->sysfs.irq_dir_exists remains true.
->> This leads to a failure recreating the directory on bind [1].
->>
->> Using the attributes group visibility interface, expose the IRQs
->> attributes group if"f the xarray storing IRQs entries is not empty. Now
->> irq_dir_exists field is redundant and can be removed.
->>
->> [1]
->> [] mlx5_core.sf mlx5_core.sf.2: mlx5_irq_affinity_request:167:(pid 1939):
->>     Failed to create sysfs entry for irq 56, ret = -2
->> [] mlx5_core.sf mlx5_core.sf.2: mlx5_eq_table_create:1195:(pid 1939):
->>     Failed to create async EQs
->> [] mlx5_core.sf mlx5_core.sf.2: mlx5_load:1362:(pid 1939):
->>     Failed to create EQs
->>
->> Fixes: a808878308a8 ("driver core: auxiliary bus: show auxiliary device IRQs")
->> Signed-off-by: Amir Tzin <amirtz@nvidia.com>
->> Reviewed-by: Mark Bloch <mbloch@nvidia.com>
->> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
->> ---
->>   drivers/base/auxiliary.c       |  13 +++-
->>   drivers/base/auxiliary_sysfs.c | 117 +++++++++++++++++++++++++--------
->>   include/linux/auxiliary_bus.h  |  26 ++++++--
+On Wed, Oct 22, 2025 at 04:26:33PM +0800, Lu Baolu wrote:
+> From: Dave Hansen <dave.hansen@linux.intel.com>
 > 
-> Why would auxbus patches go through the net tree?
+> This introduces a conditional asynchronous mechanism, enabled by
+> CONFIG_ASYNC_KERNEL_PGTABLE_FREE. When enabled, this mechanism defers the
+> freeing of pages that are used as page tables for kernel address mappings.
+> These pages are now queued to a work struct instead of being freed
+> immediately.
+> 
+> This deferred freeing allows for batch-freeing of page tables, providing
+> a safe context for performing a single expensive operation (TLB flush)
+> for a batch of kernel page tables instead of performing that expensive
+> operation for each page table.
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
+> ---
+>  mm/Kconfig           |  3 +++
+>  include/linux/mm.h   | 16 +++++++++++++---
+>  mm/pgtable-generic.c | 37 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 53 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 0e26f4fc8717..a83df9934acd 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -908,6 +908,9 @@ config PAGE_MAPCOUNT
+>  config PGTABLE_HAS_HUGE_LEAVES
+>  	def_bool TRANSPARENT_HUGEPAGE || HUGETLB_PAGE
+>  
+> +config ASYNC_KERNEL_PGTABLE_FREE
+> +	def_bool n
+> +
+>  # TODO: Allow to be enabled without THP
+>  config ARCH_SUPPORTS_HUGE_PFNMAP
+>  	def_bool n
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 52ae551d0eb4..d521abd33164 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3031,6 +3031,14 @@ static inline void __pagetable_free(struct ptdesc *pt)
+>  	__free_pages(page, compound_order(page));
+>  }
+>  
+> +#ifdef CONFIG_ASYNC_KERNEL_PGTABLE_FREE
+> +void pagetable_free_kernel(struct ptdesc *pt);
+> +#else
+> +static inline void pagetable_free_kernel(struct ptdesc *pt)
+> +{
+> +	__pagetable_free(pt);
+> +}
+> +#endif
+>  /**
+>   * pagetable_free - Free pagetables
+>   * @pt:	The page table descriptor
+> @@ -3040,10 +3048,12 @@ static inline void __pagetable_free(struct ptdesc *pt)
+>   */
+>  static inline void pagetable_free(struct ptdesc *pt)
+>  {
+> -	if (ptdesc_test_kernel(pt))
+> +	if (ptdesc_test_kernel(pt)) {
+>  		ptdesc_clear_kernel(pt);
+> -
+> -	__pagetable_free(pt);
+> +		pagetable_free_kernel(pt);
+> +	} else {
+> +		__pagetable_free(pt);
+> +	}
+>  }
+>  
+>  #if defined(CONFIG_SPLIT_PTE_PTLOCKS)
+> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+> index 567e2d084071..1c7caa8ef164 100644
+> --- a/mm/pgtable-generic.c
+> +++ b/mm/pgtable-generic.c
+> @@ -406,3 +406,40 @@ pte_t *__pte_offset_map_lock(struct mm_struct *mm, pmd_t *pmd,
+>  	pte_unmap_unlock(pte, ptl);
+>  	goto again;
+>  }
+> +
+> +#ifdef CONFIG_ASYNC_KERNEL_PGTABLE_FREE
+> +static void kernel_pgtable_work_func(struct work_struct *work);
+> +
+> +static struct {
+> +	struct list_head list;
+> +	/* protect above ptdesc lists */
+> +	spinlock_t lock;
+> +	struct work_struct work;
+> +} kernel_pgtable_work = {
+> +	.list = LIST_HEAD_INIT(kernel_pgtable_work.list),
+> +	.lock = __SPIN_LOCK_UNLOCKED(kernel_pgtable_work.lock),
+> +	.work = __WORK_INITIALIZER(kernel_pgtable_work.work, kernel_pgtable_work_func),
+> +};
+> +
+> +static void kernel_pgtable_work_func(struct work_struct *work)
+> +{
+> +	struct ptdesc *pt, *next;
+> +	LIST_HEAD(page_list);
+> +
+> +	spin_lock(&kernel_pgtable_work.lock);
+> +	list_splice_tail_init(&kernel_pgtable_work.list, &page_list);
+> +	spin_unlock(&kernel_pgtable_work.lock);
+> +
+> +	list_for_each_entry_safe(pt, next, &page_list, pt_list)
+> +		__pagetable_free(pt);
+> +}
+> +
+> +void pagetable_free_kernel(struct ptdesc *pt)
+> +{
+> +	spin_lock(&kernel_pgtable_work.lock);
+> +	list_add(&pt->pt_list, &kernel_pgtable_work.list);
+> +	spin_unlock(&kernel_pgtable_work.lock);
+> +
+> +	schedule_work(&kernel_pgtable_work.work);
+> +}
+> +#endif
+> -- 
+> 2.43.0
 > 
 
-It shouldn't...
-Honest mistake passing the argument to my script.
-
+-- 
+Sincerely yours,
+Mike.
 
