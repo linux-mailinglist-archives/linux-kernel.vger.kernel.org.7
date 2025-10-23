@@ -1,237 +1,120 @@
-Return-Path: <linux-kernel+bounces-866631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121EEC004A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:37:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E60C004C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 11:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EE0F19A360D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:38:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C0213AFAED
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C293093D2;
-	Thu, 23 Oct 2025 09:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00763090E5;
+	Thu, 23 Oct 2025 09:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LU/5yS3R";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uL1pIUmR";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hny0RdB4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t7GXBfMY"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="t77gdKo6"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598953090C4
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCDB3093DE
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 09:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761212257; cv=none; b=GLY4FQMDo98ZaNfVdJBxyCTpRGOYpOEHXdSX78JHYcZwuGHMC9TwoBSGP/0AiFJdSaFWQ/K8Xx8GncG0WplcxWvG3wny+spP8ESvLHiYCw4A9m7P23C9MUHP+9rTjTHOlHtGQt1r4qeHsI8+dOWWv2Hm/YhSV0FfLppNsvmH4eM=
+	t=1761212295; cv=none; b=NFv/eSUG8fXycRB/k9+hP0mrvTvitvtjMZSxpsWITtY93cIyvimkIBNsuUEryITxyHWaGbMCd+5ckC5p1B4McAfd/wgJgpuA/8A2kgKrd4fbGy47Gi+vwrgAzRaKcNFnp46MVVJ/Ggszs/2xuyWK7ln4DF/rvlVHPwjrs48wDN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761212257; c=relaxed/simple;
-	bh=o5BtFZIm837qddv5i2fr1EKRdue0SPouZ8RzRp+CGfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fRRz8m6M9hdeiOzKnvFFuMXCIGYjmE3IhvJ9aVgpz9If54FVZKqUXqSG1VJVd6k2MfNsf+oEs8BizVl2o9jiVKzffSfz9XpSN5P3toRMS2vUnXwxUjCUjjxWtvWI7HfBV/kQ2JsqTXD/fHOSwqEYtROz6oSWT7swfwq7cVb8TSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LU/5yS3R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uL1pIUmR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hny0RdB4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t7GXBfMY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4DB9F1F388;
-	Thu, 23 Oct 2025 09:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761212249; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mxP+/O6Wpl//xRTgUvAUeHTOU3h8ER8X0cqpJ8cKmpk=;
-	b=LU/5yS3RC8FrIC0QpaOAIilIPVo0TLduOY3AWCPGA6BobFE13lTDpn9+SV11lJn77agCcE
-	vEnPPmZhYkQfdWV36//PsiBLWrlST69ajpllUQejLV4wcMewonZiPDPhTJgbY4eeOJajff
-	sWQlnfK4uOKW1bSkXzv/aHDYPSCcwhY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761212249;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mxP+/O6Wpl//xRTgUvAUeHTOU3h8ER8X0cqpJ8cKmpk=;
-	b=uL1pIUmRTNpECOZgs8QebhRKXbKiSIfrdEkqBgjXzUuHEluM4CX4BmxRWl10xHD2+jvCCO
-	o6EbLcyHQ1IYQsCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761212245; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mxP+/O6Wpl//xRTgUvAUeHTOU3h8ER8X0cqpJ8cKmpk=;
-	b=hny0RdB44tCxXfVG5kXbxljg2OduQjTiDJvUtB3QjYmX442ek9QsNEGU8MdsY1l1zC+p12
-	lOs2MdTGzr/j1ZUidiC4CE7KFg0XDJLIBa03Nslhgf+bEKdSFiTbj6wlEDSnTeqlK+lobV
-	YoOOkUPOMjIBXOPGz3lFDjIbiqqgkCY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761212245;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mxP+/O6Wpl//xRTgUvAUeHTOU3h8ER8X0cqpJ8cKmpk=;
-	b=t7GXBfMY7/0bvXiEGsumtSau/j3cPXl0f1UuZvT6uW5Zspqndd1KD40xRT7otK/IxMmgTh
-	CqtbykZbOZK+WXDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4078813285;
-	Thu, 23 Oct 2025 09:37:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Abi6D1X3+WgsSAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 23 Oct 2025 09:37:25 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D80CBA054D; Thu, 23 Oct 2025 11:37:24 +0200 (CEST)
-Date: Thu, 23 Oct 2025 11:37:24 +0200
-From: Jan Kara <jack@suse.cz>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Kiryl Shutsemau <kirill@shutemov.name>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH] mm/filemap: Implement fast short reads
-Message-ID: <dupgze7vl2vvndyasmm34ebhzxzumv3sz425qvbquruzvqgf4r@q66h2eeaxs7h>
-References: <20251017141536.577466-1-kirill@shutemov.name>
- <20251019215328.3b529dc78222787226bd4ffe@linux-foundation.org>
- <44ubh4cybuwsb4b6na3m4h3yrjbweiso5pafzgf57a4wgzd235@pgl54elpqgxa>
- <aPgZthYaP7Flda0z@dread.disaster.area>
- <CAHk-=wjaR_v5Gc_SUGkiz39_hiRHb-AEChknoAu9BUrQRSznAw@mail.gmail.com>
- <aPiPG1-VDV7ZV2_F@dread.disaster.area>
- <CAHk-=wjVOhYTtT9pjzAqXoXdinrV9+uiYfUyoQ5RFmTEvua-Jg@mail.gmail.com>
- <aPneVmBuuTHGQBgl@dread.disaster.area>
+	s=arc-20240116; t=1761212295; c=relaxed/simple;
+	bh=FVhPIuwvuLptQuHFQTFgTVKX2ix+VKy8esMcqqCSasw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qg5VUAdhDFeV6AujivPQTB6WMT/jUkbwOfnY4KLDz8+mqukUP6NexIXI0XP7vGHcWAOorYqDLNcUMF5iYCG+mNkITvII4vz7GCXc5vLEnZZ0pZKnxPethgR8yEsgxQyL3Wod+IomBux0yTYGbxkJiceHX0maDLvKKBNE3Tcdo3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=t77gdKo6; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-57f0aa38aadso369314e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 02:38:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761212291; x=1761817091; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FVhPIuwvuLptQuHFQTFgTVKX2ix+VKy8esMcqqCSasw=;
+        b=t77gdKo67//NOrQqDbGYp8NOnxu+I1AawdX2YqbKMd4yYAjUpLVqP8MCfHVx4T+Uv4
+         KDSzsw6D2HU5ad/XJjxlDUhOKeg/0SKqCz9w8Fme5sZbMz1uTjb989Y8j00uueEpKQCE
+         iGBW2VBw+KJROfjHLqLZmxdFvlVi7fd/Isi9dXmGNg8ADJEVPgebitEJtot/AirdlpHN
+         hMyxTZHmwRTJ3YyiCaEpYG4AG62f8NdvCerN3cCnKqH5UOG0ZG+9+Md/mmU/PdaaTu7O
+         Y98d6M1DHcLxAyO8PiS3xrgSqwQ8V1wSouyizQkn7Cm1yj8R3xDMnYyBVnR36wpHawtM
+         QkOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761212291; x=1761817091;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FVhPIuwvuLptQuHFQTFgTVKX2ix+VKy8esMcqqCSasw=;
+        b=hX7KNaRrWKxxZocRTKbwrWw361pSLGWdXgXlKtJ0Y75W4t+vwp29fZRLaJk5TU9vlY
+         3bSFWTarwP6YeaJY84ZXw9/y59Lvuw24VY6kuaM8K+mMszbJ8B+PRn4jXFc9ZDlcF9Co
+         TGXU35T1G6sGAK5P+QGWKozxEHo7tc5Q22A9i7N1/LARz93yZ86BoXOK2GgJJwmPbQUl
+         KPR0FrfuYhTb284fxt+ZFhXzk9W+gUIQ0pilfcwbW4CFEymewEvkNsUSeSMpwi+24kK3
+         cIowpJHX086wb5gAhWDhxJqNztFIQQ/Xfzxm7C4tAAo4uRqIttAiZj0OSfYvY14rdaEr
+         NtcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOUWDyq50NMgg30Xd78PPgHDJW3pCXvJZbVO8A5rFONaS7+B1U2655cknlR3U4dQxN23Tt3/Op2umtV+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxQEaAJazhoqCdWcDg5YUdxxIcfT0DlQB6taoj2Zv+EH8eKJiP
+	1JByWA1UxEzUK5sQTKlS3vdoVi8AH+MenYWEwLGOE4z+QimfOGCY0UYv4g+LzmHbp9w9FBOMYXv
+	epO4AW26VtZpa0ApweZg8xK766LADaaK7KKZX6U51fw==
+X-Gm-Gg: ASbGncvcng4ZH5UKo6f5Vm0Now1Hj64y+ZZWGbFPKDxOXif48P65LWRB2Wsj7jOVC9/
+	uxo0B21P0zQ3erPiZad7YGwZx6RoxbRGKLOuzHEvs8aDzA6xp3x1Hsv+APQyg7+SjiWx9sKFRgZ
+	v8vfT8982DloYVANzJhK0QNg3AeVFjnlahahKK2pB1b4rNWjHHX0koVWWlTveGM3xmY+olpEmVn
+	oqrlbshRb3ZHKfGLtMgl1d+jMPi1XEcGWjmwqg9iI0DZc4Y0ovDKK8tZFkypheh7DAhUaz8QYDx
+	E7C4zGqdey382/B9U/ngml9TDg==
+X-Google-Smtp-Source: AGHT+IHvued6APKHSuhZW+U5ogxN76QdmgJk0+xSehag34epjDmyx7iYvyVhmHhVufJMQ4zetnHzORBL85OdiThnUlk=
+X-Received: by 2002:a05:6512:3085:b0:57b:5794:ccd9 with SMTP id
+ 2adb3069b0e04-591d84eb75amr7545365e87.9.1761212291492; Thu, 23 Oct 2025
+ 02:38:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPneVmBuuTHGQBgl@dread.disaster.area>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
+ <20251015205919.12678-6-wsa+renesas@sang-engineering.com> <CAMuHMdXqHncXxBZ00mxV=pzdgQEU4ju2F9XMejnibbu=QnLfDg@mail.gmail.com>
+ <aPEAx8ZGHBcWZKJF@shikoro> <CAMRc=McsbAirEYjoo455mbKU495VEvPmMEqBmZCq2hw113YHOg@mail.gmail.com>
+ <aPIfF-3SgzW5V_gs@shikoro> <CAMRc=MfVPO292xmnXBWJzWuhNADA_u1yvpJ4kkK8TgZyQgaP+A@mail.gmail.com>
+ <aPInv9NELU7N9QDn@shikoro> <CAMRc=MdWS2OSeJAkTRnAFMtXcVukwQ=JAWwJ3OHxogmgZnan6g@mail.gmail.com>
+ <5c9761d5a6a14d4c250df6cc4201bca72d963133.camel@pengutronix.de> <aPnz6U-fcodRoobU@shikoro>
+In-Reply-To: <aPnz6U-fcodRoobU@shikoro>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 23 Oct 2025 11:37:59 +0200
+X-Gm-Features: AS18NWBd32y6WQwlZDUB-bYljhxAaJsH-bovfKz7DtPPPXHzv_tRrFcKoye_mtE
+Message-ID: <CAMRc=MejA6DsnOW3hS+aFtecXn38UypJU2TUrAWPoo9Ly341uw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] reset: always include RESET_GPIO driver if possible
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	linux-renesas-soc@vger.kernel.org, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 23-10-25 18:50:46, Dave Chinner wrote:
-> On Wed, Oct 22, 2025 at 05:31:12AM -1000, Linus Torvalds wrote:
-> > On Tue, 21 Oct 2025 at 22:00, Dave Chinner <david@fromorbit.com> wrote:
-> > >
-> > > On Tue, Oct 21, 2025 at 06:25:30PM -1000, Linus Torvalds wrote:
-> > > >
-> > > > The sequence number check should take care of anything like that. Do
-> > > > you have any reason to believe it doesn't?
-> > >
-> > > Invalidation doing partial folio zeroing isn't covered by the page
-> > > cache delete sequence number.
-> > 
-> > Correct - but neither is it covered by anything else in the *regular* read path.
-> > 
-> > So the sequence number protects against the same case that the
-> > reference count protects against: hole punching removing the whole
-> > page.
-> > 
-> > Partial page hole-punching will fundamentally show half-way things.
-> 
-> Only when you have a busted implementation of the spec.
-> 
-> Think about it: if I said "partial page truncation will
-> fundamentally show half-way things", you would shout at me that
-> truncate must -never- expose half-way things to buffered reads.
-> This is how truncate is specified to behave, and we don't violate
-> the spec just because it is hard to implement it.
+On Thu, Oct 23, 2025 at 11:22=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Hi Philipp,
+>
+> > > > I dunno for how many drivers this is really applicable, but I reall=
+y
+> > > > liked the cleanup of the pca954x driver.
+> >
+> > That cleanup might have been a little premature, given that the reset-
+> > gpio driver currently only works on OF-based platforms, and even there
+> > only with gpio controllers with #gpio-cells =3D <2>.
+>
+> I see. That kind of spoils my assumption that it is a fallback supported
+> by the core. Darn, I would still like to have it, but it seems more
+> complicated than I have time for it :(
+>
 
-Well, as a matter of fact we can expose part-way results of truncate for
-ext4 and similar filesystems not serializing reads to truncate with inode
-lock. In particular for ext4 there's the i_size check in filemap_read() but
-if that passes before the truncate starts, the code copying out data from
-the pages can race with truncate zeroing out tail of the last page.
+As soon as my two other reset series land in next, I will finish my
+work on converting the reset core to fwnode which should help.
 
-> We've broken truncate repeatedly over the past 20+ years in ways
-> that have exposed stale data to users. This is always considered a
-> critical bug that needs to be fixed ASAP.
-
-Exposing data that was never in the file is certainly a critical bug.
-Showing a mix of old and new data is not great but less severe and it seems
-over the years userspace on Linux learned to live with it and reap the
-performance benefit (e.g. for mixed read-write workloads to one file)...
-
-<snip>
-
-> Hence there is really only one behaviour that is required: whilst
-> the low level operation is taking place, no external IO (read,
-> write, discard, etc) can be performed over that range of the file
-> being zeroed because the data andor metadata is not stable until the
-> whole operation is completed by the filesystem.
-> 
-> Now, this doesn't obviously read on the initial invalidation races
-> that are the issue being discussed here because zero's written by
-> invalidation could be considered "valid" for hole punch, zero range,
-> etc.
-> 
-> However, consider COLLAPSE_RANGE.  Page cache invalidation
-> writing zeros and reads racing with that is a problem, because
-> the old data at a given offset is non-zero, whilst the new data at
-> the same offset is alos non-zero.
-> 
-> Hence if we allow the initial page cache invalidation to race with
-> buffered reads, there is the possibility of random zeros appearing
-> in the data being read. Because this is not old or new data, it is
-> -corrupt- data.
-
-Well, reasons like this are why for operations like COLLAPSE_RANGE ext4
-reclaims the whole interval of the page cache starting with the first
-affected folio to the end. So again user will either see old data (if it
-managed to get the page before we invalidated the page cache) or the new
-data (when it needs to read from the disk which is properly synchronized
-with COLLAPSE_RANGE through invalidate_lock). I don't see these speculative
-accesses changing anything in this case either.
- 
-> Put simply, these fallocate operations should *never* see partial
-> invalidation data, and so the "old or new data" rule *must* apply to
-> the initial page cache invalidation these fallocate() operations do.
-> 
-> Hence various fallocate() operations need to act as a full IO
-> barrier. Buffered IO, page faults and direct IO all must be blocked
-> and drained before the invalidation of the range begins, and must
-> not be allowed to start again until after the whole operation
-> completes.
-
-Hum, I'm not sure I follow you correctly but what you describe doesn't seem
-like how ext4 works. There are two different things - zeroing out of
-partial folios affected by truncate, hole punch, zero range (other
-fallocate operations don't zero out) and invalidation of the page cache
-folios. For ext4 it is actually the removal of folios from the page cache
-during invalidation + holding invalidate_lock that synchronizes with reads.
-As such zeroing of partial folios *can* actually race with reads within
-these partial folios and so you can get a mix of zeros and old data from
-reads.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Bart
 
