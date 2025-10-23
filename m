@@ -1,119 +1,174 @@
-Return-Path: <linux-kernel+bounces-866403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC35FBFFAAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:41:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5DBBFFA98
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 09:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 802964E5568
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:39:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4A9189C6CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 07:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49B32BF012;
-	Thu, 23 Oct 2025 07:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B1C2C0F76;
+	Thu, 23 Oct 2025 07:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFwALB0c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sktw0Hg5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07206254876;
-	Thu, 23 Oct 2025 07:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B681625A2C2;
+	Thu, 23 Oct 2025 07:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761205186; cv=none; b=JOEOVDnRySIinPk6BWaE288+IpCuKjdFQcgkQy4o9SOFv5/SQJDqc3aujo82OMu3FEGaXWpRrPoX0MOZRiWpr28v+PzgF2SgbLnxhrHwpzM+lN91wtVmftDm05QnkXI/rvBTWZ2/0oVTYZAFaIViYsXH05/NaJRU66Dk6dhRZTg=
+	t=1761205211; cv=none; b=tHmt/INZBv2KevztMrH6D4c/1bnN3dBh9dN0lx7ftxMpKdKKlFhQ0sGqEjOR3RTixUWMQkWmukvCA6NTathkQSWctEWhHTV/BsAlRuz5RG5qlUBAF4Y+V7qYb4d0jROvnCTrn8I3aGwfV5N/1V91u4U8JI0d/uF2N6jMSL2F0B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761205186; c=relaxed/simple;
-	bh=/Y2hL14e1iVQLoCNujnXvEmMm2MILBfzDLZAAGFs1V0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDKB0Fx6s7XizJGhMLaoTWL3IW/QoPuYq+u+ItAlOGyc4wZTXy/URwNvBiJIHcBkkhlWWAns9c8+akK6SB/9czlPmsaTaqwNDV+VPdjKCTX963ySVPxzU0AOUnTWgvpldSa3hItWZwqpOVcfJynFxp3GfGopOpMk2vMFJKc3omU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFwALB0c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126D6C4CEE7;
-	Thu, 23 Oct 2025 07:39:41 +0000 (UTC)
+	s=arc-20240116; t=1761205211; c=relaxed/simple;
+	bh=szyGqN3TXOcLCSffBTn0lmb7kdYN84EVq7CSaDXUt1c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pbmRh2vMapAaXUkOfnavCNa4m0lMmC4QKloyDidfG1X6dKuaNeCTf7ynVZfM5cZH/bjh93jWarNwKTVeilQev5OUZWBz1Bod92Avim7NnmpRDcdCBMzgsBO800dtw9o/9KmNc61d59mR0VpIb08XqFe7zgDPMRJ532kIrEYJYvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sktw0Hg5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F10EC4CEE7;
+	Thu, 23 Oct 2025 07:40:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761205185;
-	bh=/Y2hL14e1iVQLoCNujnXvEmMm2MILBfzDLZAAGFs1V0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZFwALB0cl8RKUGdmrRE5YDwPArX/Kp7yJ7OsI7IImhMPoUlK5PHtiSsb4vqWKo6Zr
-	 fnrXT2K73NZaRGq8perxlcbCzVZfSOMz1BrMEC5d3umLBhR7PaGiVU/jG3fr8z7NUj
-	 7pUppziVYtNITXR0VY0AHAi7szjRCKPb2od5STBHnK6X8DVxeb3OHJbDHISjyX4sLt
-	 kXzL6BP9I4hnG19PYBISFcnMCZkckvThOFdRje+uThSzgTW5zXtcdpJuak6qYvIuqe
-	 jP56d7ZtAOBRHzdwlACr9TNmlgbzeB1XilpvY2VsuKhnDuPX30nbB+pUN69XaQ4vkk
-	 D2b8lKR2x00NQ==
-Date: Thu, 23 Oct 2025 10:39:38 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: dan.j.williams@intel.com
-Cc: Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, jane.chu@oracle.com,
-	=?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] nvdimm: allow exposing RAM carveouts as NVDIMM
- DIMM devices
-Message-ID: <aPnbuurCUlErW0Yf@kernel.org>
-References: <20251015080020.3018581-1-rppt@kernel.org>
- <20251015080020.3018581-2-rppt@kernel.org>
- <68f2da6bd013e_2a201008c@dwillia2-mobl4.notmuch>
- <aPjujSjgLSWsAtsb@kernel.org>
- <68f968d34154f_10e9100e0@dwillia2-mobl4.notmuch>
+	s=k20201202; t=1761205209;
+	bh=szyGqN3TXOcLCSffBTn0lmb7kdYN84EVq7CSaDXUt1c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Sktw0Hg5pb/mFci+l3llJFVN+dwD1TValA+FIuBw63WpzmwpVUOedSRcgvP9ISyyN
+	 XTkgitX7wWZZUL/WH6oSiinaWvQD8pWOTpyUZje5qkSY4aDoHMdNxJr5KL3eZ3fKxd
+	 e0yiQpN0xrEHcIobp9/JmTFotAYfZ3vfEqRQaoP7bNN9dD97P4vsfN8E9Y7zFqnM/8
+	 EBpSIV5phzQI4YJdqenfMZNLRM7ChvOYztcz4McQbcb54SWfrphAOwfVNxXWa5LvPr
+	 BLoArQtTvGcldX/C6T/igm5TIOaL7zKRjmNNzLO+Axaef9n+lnRqNH5yevMcwZ8vDg
+	 o2BuYUceB+ozQ==
+Message-ID: <9a31dd0e-ecb5-4392-8442-f1f966385306@kernel.org>
+Date: Thu, 23 Oct 2025 09:40:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68f968d34154f_10e9100e0@dwillia2-mobl4.notmuch>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ARM: dts: aspeed: Add Device Tree for Facebook
+ Anacapa BMC
+To: "Shen, Peter" <Peter.Shen@amd.com>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Joel Stanley <joel@jms.id.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <DS7PR12MB61185AE82E4DFCAAD531EF0E95F0A@DS7PR12MB6118.namprd12.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <DS7PR12MB61185AE82E4DFCAAD531EF0E95F0A@DS7PR12MB6118.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 04:29:23PM -0700, dan.j.williams@intel.com wrote:
-> Mike Rapoport wrote:
-> [..]
-> > > > +config RAMDAX
-> > > > +	tristate "Support persistent memory interfaces on RAM carveouts"
-> > > > +	depends on OF || X86
-> > > 
-> > > I see no compile time dependency for CONFIG_OF. The one call to
-> > > dev_of_node() looks like it still builds in the CONFIG_OF=n case. For
-> > > CONFIG_X86 the situation is different because the kernel needs
-> > > infrastructure to build the device.
-> > > 
-> > > So maybe change the dependency to drop OF and make it:
-> > > 
-> > > 	depends on X86_PMEM_LEGACY if X86
-> > 
-> > We can't put if in a depends statement :(
+On 23/10/2025 08:52, Shen, Peter wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
 > 
-> Ugh, yeah, whoops.
+> From 1650273aeda32263e2a0dd43b2c578849d406250 Mon Sep 17 00:00:00 2001
+> From: Peter Shen <peter.shen@amd.com>
+> Date: Thu, 23 Oct 2025 13:52:06 +0800
+> Subject: [PATCH 2/2] ARM: dts: aspeed: Add Device Tree for Facebook Anacapa
+>  BMC
 > 
-> > My intention with "depends on OF || X86" was that if it's not really
-> > possible to use this driver if it's not X86 or OF because there's nothing
-> > to define a platform device for ramdax to bind.
-> > 
-> > Maybe what we actually need is
-> > 
-> > 	select X86_PMEM_LEGACY_DEVICE if X86
-> > 	default n
-> > so that it could be only explicitly enabled in the configuration and if it
-> > is, it will also enable X86_PMEM_LEGACY_DEVICE on x86.
-> > With default set to no it won't be build "accidentailly", but OTOH cloud
-> > providers can disable X86_PMEM_LEGACY and enable RAMDAX and distros can
-> > build them as modules on x86 and architectures that support OF. 
-> > 
-> > What do you think?
+> Add the initial device tree source file for the Facebook Anacapa BMC
+> platform, based on the Aspeed AST2600 SoC.
 > 
-> Perhaps:
+> This device tree configures the platform-specific peripherals and
+> aliases for OpenBMC usage.
 > 
->     depends on X86_PMEM_LEGACY || OF || COMPILE_TEST
+> Signed-off-by: Peter Shen <peter.shen@amd.com>
+> ---
+>  arch/arm/boot/dts/aspeed/Makefile             |    1 +
+>  .../aspeed/aspeed-bmc-facebook-anacapa.dts    | 1230 +++++++++++++++++
+>  2 files changed, 1231 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-anacapa.dts
+> 
+> diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
+> index 0f0b5b707654..e1b2fc7b8c08 100644
+> --- a/arch/arm/boot/dts/aspeed/Makefile
+> +++ b/arch/arm/boot/dts/aspeed/Makefile
+> @@ -17,6 +17,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
+>       aspeed-bmc-asus-x4tf.dtb \
+>       aspeed-bmc-bytedance-g220a.dtb \
+>       aspeed-bmc-delta-ahe50dc.dtb \
+> +     aspeed-bmc-facebook-anacapa.dtb \
+>       aspeed-bmc-facebook-bletchley.dtb \
+>       aspeed-bmc-facebook-catalina.dtb \
+>       aspeed-bmc-facebook-clemente.dtb \
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-anacapa.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-anacapa.dts
+> new file mode 100644
+> index 000000000000..379fa63846f4
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-anacapa.dts
+> @@ -0,0 +1,1230 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +/dts-v1/;
+> +#include "aspeed-g6.dtsi"
+> +#include <dt-bindings/gpio/aspeed-gpio.h>
+> +#include <dt-bindings/i2c/i2c.h>
+> +
+> +/ {
+> +     model = "Facebook Anacapa BMC";
+> +     compatible = "facebook,anacapa-bmc", "aspeed,ast2600";
+> +
+> +    aliases {
+> +        serial0 = &uart1;
+> +        serial2 = &uart3;
 
-Works for me :)
- 
-> ...because it is awkward to select symbols that has dependencies that
-> may be missing, and it shows that this driver has no compile time
-> dependencies on those symbols.
+We do not indent with spaces. Please read kernel coding style document
+before posting patches.
 
--- 
-Sincerely yours,
-Mike.
+Best regards,
+Krzysztof
 
