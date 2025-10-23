@@ -1,202 +1,288 @@
-Return-Path: <linux-kernel+bounces-867551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF628C02ED8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:27:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDDADC02EE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 20:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E658A3AFA59
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:27:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A7A5E4FCFEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0402E34AAF2;
-	Thu, 23 Oct 2025 18:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E408034679E;
+	Thu, 23 Oct 2025 18:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="x3vT1EJf"
-Received: from mail1.manjaro.org (mail1.manjaro.org [142.132.176.110])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="STR6h+9K"
+Received: from relay13.grserver.gr (relay13.grserver.gr [178.156.171.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE56E19047A;
-	Thu, 23 Oct 2025 18:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.132.176.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3E62C0287
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.156.171.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761244062; cv=none; b=RbcphTC52uzxgc5QyPooNBt0D05pnuXqYKURAdm5+oZOFy2jxUYqKnOe513481TEz0uUpFkzUQYRul1UHPVx7hMuUCokkII9df3Q0X1+FI0s8UVNTsxW2GQOdKEwAk5MEZqr3nnqOX/EDH4BOihtrA7/ZO1frBfV/oFF+TYuDys=
+	t=1761244071; cv=none; b=SZjSbyaaG5l2J2iLRc/Kh4gbkFe6RS+d4tYMBfJwpdyMPT1/xvQT1jkNuFhI+lljc1C6Q/cvfyLynZOxddODWy29L830uuPsR1M9s888rycr1W7gHSSItDKja4aQTqbT/E3wOTNBcHlEjjBh2xkWCbKbQHOOKrNnwzs6PgnQc+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761244062; c=relaxed/simple;
-	bh=mpxxEpRF1Ee5jHpfoBtWNo2E4L+uVUHU0d48UK/2fts=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=bgjAuddhA7EpitBk6cnqSAOQ8UqhSSGymwonkt+bNuhA2NiFYArcqmVPyzJuJQsK6CkQEyoQumPw3yBV7pZRmoCp0rzSx+OtLuJAK32/lwHFxISu8SkwxoLDTdl4e1r0ODzcrFvjUrxdTbCZrEdvRZZRHr4LAllGosq1SAal5Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=x3vT1EJf; arc=none smtp.client-ip=142.132.176.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPA id 58F2D40D25;
-	Thu, 23 Oct 2025 20:27:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=dkim;
-	t=1761244050; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=wMO+SCV0l5dh/TBWZh1mnrGafB3FTHbpefBDO3evOwI=;
-	b=x3vT1EJfPxqfvf6DDV90OVcHLztgqacXNaWxXyOwo0jNBDwyLCyeJv+Ph7niMcJnYDzjBG
-	J2UzZzAjq5i3/7WU/eAXEAMb6jgGRiRpLoww3MWmxhS+RtWLCXhJxmEuov4NulcMgpz5PG
-	w1GIi7xYmiBEH/4rLkLz+Fe4Xp6LKm4+7n2zwSIFFAGAZeOBEX3Cd0uhcrFSJYSM+4Dg7y
-	Y+p5mV9ipeAg9wQd8MQGJbqePWEDXiYtY+pdnPNA4lvoTUJyj/LwwX19qiQuaHv70L7Gi9
-	Y+LjMR4vDEkJcmcKkKSsFfSUNcozLPKt+1hwz1nu9t0VQ0cUmKUG331JrfXwew==
-From: "Dragan Simic" <dsimic@manjaro.org>
-In-Reply-To: <20251023180645.1304701-1-helgaas@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-References: <20251023180645.1304701-1-helgaas@kernel.org>
-Date: Thu, 23 Oct 2025 20:27:25 +0200
-Cc: linux-pci@vger.kernel.org, "Manivannan Sadhasivam" <manivannan.sadhasivam@oss.qualcomm.com>, "Christian Zigotzky" <chzigotzky@xenosoft.de>, "FUKAUMI Naoki" <naoki@radxa.com>, "Herve Codina" <herve.codina@bootlin.com>, "Diederik de Haas" <diederik@cknow-tech.com>, linuxppc-dev@lists.ozlabs.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, "Bjorn Helgaas" <bhelgaas@google.com>, "Shawn Lin" <shawn.lin@rock-chips.com>
-To: "Bjorn Helgaas" <helgaas@kernel.org>
+	s=arc-20240116; t=1761244071; c=relaxed/simple;
+	bh=Dqmhx2T8Z4PUBHkc0XnnJwfmL/y9EVJ2+HpMIXQjexM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rEeESvEnxAMHoaf/ZZy8noI7oLlW+vm/WFTgqBZepI6HMZHu/41E9Xa7Froszy+uFEOSQAcVqYi8Q8+E0dp/wbPwLX8Kx0enhyJyQ9tMWmhWAumj75xlx/Ri5WfoDU13HmD9/aUgmy/LVDrpubw5j2r9p0lo3T/DFNIt85L3lH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=STR6h+9K; arc=none smtp.client-ip=178.156.171.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay13 (localhost [127.0.0.1])
+	by relay13.grserver.gr (Proxmox) with ESMTP id 932495E58B
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:27:47 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay13.grserver.gr (Proxmox) with ESMTPS id 1C9785E69E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:27:46 +0300 (EEST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id ADB021FF4AB
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:27:44 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1761244065;
+	bh=YS/72VHhH/g/YFNa4ff51+NZvroLJ77Vov5cSnMbTD4=;
+	h=Received:From:Subject:To;
+	b=STR6h+9KU33zjx6WcsZxbS8t20kUKaRCrgMth2qoyeW/q3VGgzPK+mzGr5256gFuP
+	 CjNpebttAm896jRpPbbdJ/BQl+ZuhccMqo1wCZqlEeqLg4EBCDvN+9cbF7qILw1RHW
+	 UftKx6YBEgtV+KiXcGKcBStFPjtK1h2D07k5p9hW+UlJDS+Zd1JuzONJHcqOFnOPFp
+	 9CmecZ7o4XwbAJg/eNIbYrKUw+V/GeN7URBXTFNP8R0F04NA8ONdkxN6mearoSVJbN
+	 4HkG7e4eEraRDJkcBsFaWTFIWI1LvZn6DWjZCWIAQyMuhhceUpMqnS2+9bPol1Fahs
+	 7kbZLg7GNeSdw==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.179) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f179.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f179.google.com with SMTP id
+ 38308e7fff4ca-378d61ce75aso10498421fa.1
+        for <linux-kernel@vger.kernel.org>;
+ Thu, 23 Oct 2025 11:27:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXtLD3zq5KcOSncSyUfzzsglkIm1lobXoNh0GCc8SrkdGFr06pnqyxKyoyybz/JALT06DIHWEbc+BqTpOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Xx4SEWS3AxTsydN6PwQL/6xr3utD2CsdQODYHV1wvt1gJL6O
+	ZExO0HY+fjiE5QEF2b1Ec/15YyFnNQji8Ijg4yvkUff2Km8IwPQUewNXKSVvOst63L4xsdC4u4H
+	F4Xh8Mv4AH9cEIizLMnhlxge1FX+Ix0k=
+X-Google-Smtp-Source: 
+ AGHT+IHilJ4ewlHSY4xggMhYaacCiDaa1aE1mkJY+Ltinfbu2Uaioj7vl798C2CEKwXIMBC7drdEmuXC3d2pPsrSukk=
+X-Received: by 2002:a05:651c:3136:b0:376:3792:1a9b with SMTP id
+ 38308e7fff4ca-378cf944538mr19889991fa.21.1761244064142; Thu, 23 Oct 2025
+ 11:27:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <da79f38f-fdb9-0101-67cc-144ef8d6e1d1@manjaro.org>
-Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?PCI/ASPM=3A?= Enable only L0s and L1 
- for devicetree platforms
-User-Agent: SOGoMail 5.12.3
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: None
+References: <20251018101759.4089-1-lkml@antheas.dev>
+ <20251018101759.4089-5-lkml@antheas.dev>
+ <f1d2dece-6e51-4092-9f2e-58dc93508a25@gmail.com>
+In-Reply-To: <f1d2dece-6e51-4092-9f2e-58dc93508a25@gmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Thu, 23 Oct 2025 20:27:32 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGzN9Z5iQAVeYbmmAAf9jxhTw5Yy8f36BfwYdgN45kqNA@mail.gmail.com>
+X-Gm-Features: AWmQ_bms1zXHxIp5gYKbu1d_fiWt-GifAEGH7Jd-F-Qmm03vnpBn86iRp-VuEP8
+Message-ID: 
+ <CAGwozwGzN9Z5iQAVeYbmmAAf9jxhTw5Yy8f36BfwYdgN45kqNA@mail.gmail.com>
+Subject: Re: [PATCH v7 4/9] HID: asus: prevent binding to all HID devices on
+ ROG
+To: Denis Benato <benato.denis96@gmail.com>
+Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <176124406495.1372877.8375875577423272325@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-Hello Bjorn,
+On Thu, 23 Oct 2025 at 20:23, Denis Benato <benato.denis96@gmail.com> wrote:
+>
+>
+> On 10/18/25 12:17, Antheas Kapenekakis wrote:
+> > Currently, when hid-asus is not loaded, NKEY keyboards load as ~6
+> > event devices with a pretty ASUSTEK name. When it loads, it concatenates
+> > all applications per HID endpoint, renames them, and prints errors
+> > when some of them do not have an input device.
+> >
+> > Therefore, change probe so that this is no longer the case. Stop
+> > renaming the devices, omit the check for .input which causes errors on
+> the devices -> devices
+> > e.g., the Z13 for some hiddev only devices, and add
+> > HID_QUIRK_INPUT_PER_APP so that each application gets its own event.
+>
+> event -> event device (or evdev?)
+>
+> It is not clear from the message what HID_QUIRK_INPUT_PER_APP has to do with
+> renaming the devices/having one evdev vs multiple: please make
+> it explicit in the commit message (and perhaps make explicit if (and how),
+> in case it could make any difference, how programs might change
+> theirs behavior as a consequence).
+>
+> I like the fact that userspace only sees one keyboard for what is,
+> effectively, one keyboard device.
+>
+> The code looks good to me: make the commit message more
+> explanatory and I'll include my reviewed-by.
 
-On Thursday, October 23, 2025 20:06 CEST, Bjorn Helgaas <helgaas@kernel=
-.org> wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
->=20
-> f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for devic=
-etree
-> platforms") enabled Clock Power Management and L1 PM Substates, but t=
-hose
-> features depend on CLKREQ# and possibly other device-specific
-> configuration.  We don't know whether CLKREQ# is supported, so we sho=
-uldn't
-> blindly enable Clock PM and L1 PM Substates.
->=20
-> Enable only ASPM L0s and L1, and only when both ends of the link adve=
-rtise
-> support for them.
->=20
-> Fixes: f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states fo=
-r devicetree platforms")
-> Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
-> Link: https://lore.kernel.org/r/db5c95a1-cf3e-46f9-8045-a1b04908051a@=
-xenosoft.de/
-> Reported-by: FUKAUMI Naoki <naoki@radxa.com>
-> Closes: https://lore.kernel.org/r/22594781424C5C98+22cb5d61-19b1-4353=
--9818-3bb2b311da0b@radxa.com/
-> Reported-by: Herve Codina <herve.codina@bootlin.com>
-> Link: https://lore.kernel.org/r/20251015101304.3ec03e6b@bootlin.com/
-> Reported-by: Diederik de Haas <diederik@cknow-tech.com>
-> Link: https://lore.kernel.org/r/DDJXHRIRGTW9.GYC2ULZ5WQAL@cknow-tech.=
-com/
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> Tested-by: FUKAUMI Naoki <naoki@radxa.com>
-> ---
-> I intend this for v6.18-rc3.
->=20
-> I think it will fix the issues reported by Diederik and FUKAUMI Naoki=
- (both
-> on Rockchip).  I hope it will fix Christian's report on powerpc, but =
-don't
-> have confirmation.  I think the performance regression Herve reported=
- is
-> related, but this patch doesn't seem to fix it.
->=20
-> FUKAUMI Naoki's successful testing report:
-> https://lore.kernel.org/r/4B275FBD7B747BE6+a3e5b367-9710-4b67-9d66-3e=
-a34fc30866@radxa.com/
+If I respin the series to a v8 I will reword this patch subject.
 
-I'm more than happy with the way ASPM patches for DT platforms and
-Rockchip SoCs in particular are unfolding!  Admittedly, we've had
-a rough start with the blanket enabling of ASPM, which followed the
-theory, but the theory often differs from practice, so the combined
-state of this and associated patches from Shawn should be fine.
+Antheas
 
-Thank you very much for all the effort that included quite a lot
-of back and forth, and please feel free to include
-
-Acked-by: Dragan Simic <dsimic@manjaro.org>
-
-> ---
->  drivers/pci/pcie/aspm.c | 34 +++++++++-------------------------
->  1 file changed, 9 insertions(+), 25 deletions(-)
->=20
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index 7cc8281e7011..79b965158473 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -243,8 +243,7 @@ struct pcie=5Flink=5Fstate {
->  	/* Clock PM state */
->  	u32 clkpm=5Fcapable:1;		/* Clock PM capable? */
->  	u32 clkpm=5Fenabled:1;		/* Current Clock PM state */
-> -	u32 clkpm=5Fdefault:1;		/* Default Clock PM state by BIOS or
-> -					   override */
-> +	u32 clkpm=5Fdefault:1;		/* Default Clock PM state by BIOS */
->  	u32 clkpm=5Fdisable:1;		/* Clock PM disabled */
->  };
-> =20
-> @@ -376,18 +375,6 @@ static void pcie=5Fset=5Fclkpm(struct pcie=5Flin=
-k=5Fstate *link, int enable)
->  	pcie=5Fset=5Fclkpm=5Fnocheck(link, enable);
->  }
-> =20
-> -static void pcie=5Fclkpm=5Foverride=5Fdefault=5Flink=5Fstate(struct =
-pcie=5Flink=5Fstate *link,
-> -						   int enabled)
-> -{
-> -	struct pci=5Fdev *pdev =3D link->downstream;
-> -
-> -	/* For devicetree platforms, enable ClockPM by default */
-> -	if (of=5Fhave=5Fpopulated=5Fdt() && !enabled) {
-> -		link->clkpm=5Fdefault =3D 1;
-> -		pci=5Finfo(pdev, "ASPM: DT platform, enabling ClockPM\n");
-> -	}
-> -}
-> -
->  static void pcie=5Fclkpm=5Fcap=5Finit(struct pcie=5Flink=5Fstate *li=
-nk, int blacklist)
->  {
->  	int capable =3D 1, enabled =3D 1;
-> @@ -410,7 +397,6 @@ static void pcie=5Fclkpm=5Fcap=5Finit(struct pcie=
-=5Flink=5Fstate *link, int blacklist)
->  	}
->  	link->clkpm=5Fenabled =3D enabled;
->  	link->clkpm=5Fdefault =3D enabled;
-> -	pcie=5Fclkpm=5Foverride=5Fdefault=5Flink=5Fstate(link, enabled);
->  	link->clkpm=5Fcapable =3D capable;
->  	link->clkpm=5Fdisable =3D blacklist ? 1 : 0;
->  }
-> @@ -811,19 +797,17 @@ static void pcie=5Faspm=5Foverride=5Fdefault=5F=
-link=5Fstate(struct pcie=5Flink=5Fstate *link)
->  	struct pci=5Fdev *pdev =3D link->downstream;
->  	u32 override;
-> =20
-> -	/* For devicetree platforms, enable all ASPM states by default */
-> +	/* For devicetree platforms, enable L0s and L1 by default */
->  	if (of=5Fhave=5Fpopulated=5Fdt()) {
-> -		link->aspm=5Fdefault =3D PCIE=5FLINK=5FSTATE=5FASPM=5FALL;
-> +		if (link->aspm=5Fsupport & PCIE=5FLINK=5FSTATE=5FL0S)
-> +			link->aspm=5Fdefault |=3D PCIE=5FLINK=5FSTATE=5FL0S;
-> +		if (link->aspm=5Fsupport & PCIE=5FLINK=5FSTATE=5FL1)
-> +			link->aspm=5Fdefault |=3D PCIE=5FLINK=5FSTATE=5FL1;
->  		override =3D link->aspm=5Fdefault & ~link->aspm=5Fenabled;
->  		if (override)
-> -			pci=5Finfo(pdev, "ASPM: DT platform, enabling%s%s%s%s%s%s%s\n",
-> -				 FLAG(override, L0S=5FUP, " L0s-up"),
-> -				 FLAG(override, L0S=5FDW, " L0s-dw"),
-> -				 FLAG(override, L1, " L1"),
-> -				 FLAG(override, L1=5F1, " ASPM-L1.1"),
-> -				 FLAG(override, L1=5F2, " ASPM-L1.2"),
-> -				 FLAG(override, L1=5F1=5FPCIPM, " PCI-PM-L1.1"),
-> -				 FLAG(override, L1=5F2=5FPCIPM, " PCI-PM-L1.2"));
-> +			pci=5Finfo(pdev, "ASPM: default states%s%s\n",
-> +				 FLAG(override, L0S, " L0s"),
-> +				 FLAG(override, L1, " L1"));
->  	}
->  }
+> Thanks,
+> Denis
+>
+> > When this is done, the probes are called multiple times. Due to this,
+> > the rgb check needs to be moved into probe, and the report fixup should
+> > be skipped for non-vendor endpoints (prevents multiple prints).
+> >
+> > Reviewed-by: Luke D. Jones <luke@ljones.dev>
+> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > ---
+> >  drivers/hid/hid-asus.c | 59 +++++++++++++++++++++++++++---------------
+> >  1 file changed, 38 insertions(+), 21 deletions(-)
+> >
+> > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> > index 03f0d86936fc..bbbac98f76c6 100644
+> > --- a/drivers/hid/hid-asus.c
+> > +++ b/drivers/hid/hid-asus.c
+> > @@ -47,6 +47,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+> >  #define T100CHI_MOUSE_REPORT_ID 0x06
+> >  #define FEATURE_REPORT_ID 0x0d
+> >  #define INPUT_REPORT_ID 0x5d
+> > +#define HID_USAGE_PAGE_VENDOR 0xff310000
+> >  #define FEATURE_KBD_REPORT_ID 0x5a
+> >  #define FEATURE_KBD_REPORT_SIZE 64
+> >  #define FEATURE_KBD_LED_REPORT_ID1 0x5d
+> > @@ -89,6 +90,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+> >  #define QUIRK_ROG_NKEY_KEYBOARD              BIT(11)
+> >  #define QUIRK_ROG_CLAYMORE_II_KEYBOARD BIT(12)
+> >  #define QUIRK_ROG_ALLY_XPAD          BIT(13)
+> > +#define QUIRK_SKIP_REPORT_FIXUP              BIT(14)
+> >
+> >  #define I2C_KEYBOARD_QUIRKS                  (QUIRK_FIX_NOTEBOOK_REPORT | \
+> >                                                QUIRK_NO_INIT_REPORTS | \
+> > @@ -125,7 +127,6 @@ struct asus_drvdata {
+> >       struct input_dev *tp_kbd_input;
+> >       struct asus_kbd_leds *kbd_backlight;
+> >       const struct asus_touchpad_info *tp;
+> > -     bool enable_backlight;
+> >       struct power_supply *battery;
+> >       struct power_supply_desc battery_desc;
+> >       int battery_capacity;
+> > @@ -316,7 +317,7 @@ static int asus_e1239t_event(struct asus_drvdata *drvdat, u8 *data, int size)
+> >  static int asus_event(struct hid_device *hdev, struct hid_field *field,
+> >                     struct hid_usage *usage, __s32 value)
+> >  {
+> > -     if ((usage->hid & HID_USAGE_PAGE) == 0xff310000 &&
+> > +     if ((usage->hid & HID_USAGE_PAGE) == HID_USAGE_PAGE_VENDOR &&
+> >           (usage->hid & HID_USAGE) != 0x00 &&
+> >           (usage->hid & HID_USAGE) != 0xff && !usage->type) {
+> >               hid_warn(hdev, "Unmapped Asus vendor usagepage code 0x%02x\n",
+> > @@ -931,11 +932,6 @@ static int asus_input_configured(struct hid_device *hdev, struct hid_input *hi)
+> >
+> >       drvdata->input = input;
+> >
+> > -     if (drvdata->enable_backlight &&
+> > -         !asus_kbd_wmi_led_control_present(hdev) &&
+> > -         asus_kbd_register_leds(hdev))
+> > -             hid_warn(hdev, "Failed to initialize backlight.\n");
+> > -
+> >       return 0;
+> >  }
+> >
+> > @@ -1008,15 +1004,6 @@ static int asus_input_mapping(struct hid_device *hdev,
+> >                       return -1;
+> >               }
+> >
+> > -             /*
+> > -              * Check and enable backlight only on devices with UsagePage ==
+> > -              * 0xff31 to avoid initializing the keyboard firmware multiple
+> > -              * times on devices with multiple HID descriptors but same
+> > -              * PID/VID.
+> > -              */
+> > -             if (drvdata->quirks & QUIRK_USE_KBD_BACKLIGHT)
+> > -                     drvdata->enable_backlight = true;
+> > -
+> >               set_bit(EV_REP, hi->input->evbit);
+> >               return 1;
+> >       }
+> > @@ -1133,8 +1120,10 @@ static int __maybe_unused asus_reset_resume(struct hid_device *hdev)
+> >
+> >  static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
+> >  {
+> > -     int ret;
+> > +     struct hid_report_enum *rep_enum;
+> >       struct asus_drvdata *drvdata;
+> > +     struct hid_report *rep;
+> > +     int ret, is_vendor = 0;
+> >
+> >       drvdata = devm_kzalloc(&hdev->dev, sizeof(*drvdata), GFP_KERNEL);
+> >       if (drvdata == NULL) {
+> > @@ -1218,18 +1207,42 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
+> >               return ret;
+> >       }
+> >
+> > +     /* Check for vendor for RGB init and handle generic devices properly. */
+> > +     rep_enum = &hdev->report_enum[HID_INPUT_REPORT];
+> > +     list_for_each_entry(rep, &rep_enum->report_list, list) {
+> > +             if ((rep->application & HID_USAGE_PAGE) == HID_USAGE_PAGE_VENDOR)
+> > +                     is_vendor = true;
+> > +     }
+> > +
+> > +     /*
+> > +      * For ROG keyboards, make them HID/hiddev compliant by creating one
+> > +      * input per application. For interfaces other than the vendor one,
+> > +      * disable report fixups.
+> > +      */
+> > +     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
+> > +             if (!is_vendor)
+> > +                     drvdata->quirks |= QUIRK_SKIP_REPORT_FIXUP;
+> > +             hdev->quirks |= HID_QUIRK_INPUT_PER_APP;
+> > +     }
+> > +
+> >       ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+> >       if (ret) {
+> >               hid_err(hdev, "Asus hw start failed: %d\n", ret);
+> >               return ret;
+> >       }
+> >
+> > +     if (is_vendor && (drvdata->quirks & QUIRK_USE_KBD_BACKLIGHT) &&
+> > +         !asus_kbd_wmi_led_control_present(hdev) &&
+> > +         asus_kbd_register_leds(hdev))
+> > +             hid_warn(hdev, "Failed to initialize backlight.\n");
+> > +
+> >       /*
+> > -      * Check that input registration succeeded. Checking that
+> > -      * HID_CLAIMED_INPUT is set prevents a UAF when all input devices
+> > -      * were freed during registration due to no usages being mapped,
+> > -      * leaving drvdata->input pointing to freed memory.
+> > +      * For ROG keyboards, skip rename for consistency and ->input check as
+> > +      * some devices do not have inputs.
+> >        */
+> > +     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD)
+> > +             return 0;
+> > +
+> >       if (!drvdata->input || !(hdev->claimed & HID_CLAIMED_INPUT)) {
+> >               hid_err(hdev, "Asus input not registered\n");
+> >               ret = -ENOMEM;
+> > @@ -1352,6 +1365,10 @@ static const __u8 *asus_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+> >               rdesc = new_rdesc;
+> >       }
+> >
+> > +     /* Vendor fixups should only apply to NKEY vendor devices. */
+> > +     if (drvdata->quirks & QUIRK_SKIP_REPORT_FIXUP)
+> > +             return rdesc;
+> > +
+> >       if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD &&
+> >                       *rsize == 331 && rdesc[190] == 0x85 && rdesc[191] == 0x5a &&
+> >                       rdesc[204] == 0x95 && rdesc[205] == 0x05) {
+>
 
 
