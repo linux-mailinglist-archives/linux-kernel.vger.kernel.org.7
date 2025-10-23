@@ -1,136 +1,139 @@
-Return-Path: <linux-kernel+bounces-866458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-866457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B75BFFCF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:11:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0062EBFFCEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 10:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68D7A4F5E47
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:11:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 731E33A7E29
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 08:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DF82EB85B;
-	Thu, 23 Oct 2025 08:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C4D2EB86F;
+	Thu, 23 Oct 2025 08:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E/ncisCb"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QkwmgCx6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114412EAD10;
-	Thu, 23 Oct 2025 08:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6F624634F;
+	Thu, 23 Oct 2025 08:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761207065; cv=none; b=V11ALrQhrZFFgewFWi5/Reo6wqBOOrW+ghRE4ByGu7dWIh1Xv+5l1REAV0SuuGD1fMlwbUt0iaf36gwT8QugVtydud6cbFzCp01YJZpe1+7CIa9AEpUrRSGGYdR8NxO00D2Q9cCS3rQK/H50J1x5kH9VaE5GA1buONLn+pmyruE=
+	t=1761207041; cv=none; b=MUVggGO5cpHtXZ0iNBX9YWehrrY9MrROBf4ecaHp1IbtT4oOvCT7VydIwQCDRhDFU6ccAnw0qpa9P3XIBpsaplv5n+WbCzsYrrplZRDusA2FtpZqwhkdmY2sEX/wW/Dn8LMcoscbFEWcBJYcVuQgLFGyYIFpjcAvtS92N+nnTQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761207065; c=relaxed/simple;
-	bh=IOzK0+6vzTLzNAB4j/CCNSfdjshRGV+NGA7tvCQjke4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kz7vP/6K+Y/R8rbfp+WAs/f6MYTXoh40PhL/mcVWH7f8YQkamlhUvgWpUQ/aCbGvQP1uqB8+jmx4mus+FqOm74soEr3r4Jc85/M8XuvT5ly8vZ4j1cQAuEiU/UeyhbWsZ/oJ49rSdX024SBtkMf3pWdUgwFaOrrY/QbK8CcxkQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=E/ncisCb; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59N8Am9X483021;
-	Thu, 23 Oct 2025 03:10:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1761207048;
-	bh=mvitnbkjcLAPoCX0wHi6huodXxXSf+n5ic/epN0KCNA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=E/ncisCbT+ddeWJ5/EgdoFSv4WoQmsskRT5yFbVikwmLxKdAHccYOY/o98GEtNicz
-	 Vy2rxVeOPKQL2jEMm0RJ/F+1v1nFjGUwA/2SDoRqfIYl9J27uMxqB3XxjgZdKXcVfH
-	 8/sVEp0xtQXwBNM/COesSQUlu6h8oeQJCLGSvFzo=
-Received: from DLEE210.ent.ti.com (dlee210.ent.ti.com [157.170.170.112])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59N8AmKN2247619
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 23 Oct 2025 03:10:48 -0500
-Received: from DLEE203.ent.ti.com (157.170.170.78) by DLEE210.ent.ti.com
- (157.170.170.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 23 Oct
- 2025 03:10:48 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE203.ent.ti.com
- (157.170.170.78) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 23 Oct 2025 03:10:48 -0500
-Received: from [172.24.233.103] (uda0132425.dhcp.ti.com [172.24.233.103])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59N8AiYh2549946;
-	Thu, 23 Oct 2025 03:10:45 -0500
-Message-ID: <3c131320-7be9-4223-b3c2-11beb435abd5@ti.com>
-Date: Thu, 23 Oct 2025 13:39:16 +0530
+	s=arc-20240116; t=1761207041; c=relaxed/simple;
+	bh=X9A+e5HX8/DxioXkaxwvZdY29MB1MDYbmVYOX4ols5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qnxqtHK3ZgikSTUzSBsbXllkUUtn78DnqJFcP5eXA/5AuNULaEipTvaRkt+fsQqtFngMUwvjwgLl07LckSWO4FQmaWtN2NAfD7uyA6EibGRrcVxZBezZi32b5rN5bn7jKFhJ2fZgyOAHfEMrMHvaFIr+sgJGFPCXma5Mz8OqxdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QkwmgCx6; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761207039; x=1792743039;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=X9A+e5HX8/DxioXkaxwvZdY29MB1MDYbmVYOX4ols5k=;
+  b=QkwmgCx6ZjHE7F0BLdTLUfNuHCcuyNn8jIceT8CsRK79k5xjCxnhXze1
+   XO9z/YKcoDblkxrmUTIPOe0cWMV5qqgkAvl0hk8R8b+C803hQqOkzcKu5
+   fNt874eGFwWQSNx0NEHoqSTjdN++GTr0AwUB4S4cewrTbuSZ80aIPZVLZ
+   dtEUP4xWSeQd4d7DxgS5b+CWKXET7XJjvNqmxSI6E9S19vMpJKVvITJ+t
+   3YD9VqENoCVgyxgFNQyfapK5OIiKg2/YMuU/dpNwvCjLWUIDfUKuoOqun
+   zxGwp69eRaQMdJ9lZXb/qOklZJY/Ff4oGTT648shVFtEWIjveGx+tr+av
+   Q==;
+X-CSE-ConnectionGUID: aXYzEv/qTLyoIgMXB/n+6g==
+X-CSE-MsgGUID: YKpVJcArS4e0sCOa8NVd+Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74039083"
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="74039083"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 01:10:20 -0700
+X-CSE-ConnectionGUID: U/yJ+8RYQ+2huY61DLG6tw==
+X-CSE-MsgGUID: qjW+PJi/SHi+vFM/FDi4jw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,249,1754982000"; 
+   d="scan'208";a="183988336"
+Received: from bkammerd-mobl.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.221.165])
+  by orviesa007.jf.intel.com with SMTP; 23 Oct 2025 01:10:09 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 23 Oct 2025 11:10:08 +0300
+Date: Thu, 23 Oct 2025 11:10:08 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Chaoyi Chen <kernel@airkyi.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v7 1/9] usb: typec: Add notifier functions
+Message-ID: <aPni4AeDaem_rfZH@kuha.fi.intel.com>
+References: <20251023033009.90-1-kernel@airkyi.com>
+ <20251023033009.90-2-kernel@airkyi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: ti: k3-am642-tqma64xxl: add boot phase tags
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Nishanth Menon
-	<nm@ti.com>, Tero Kristo <kristo@kernel.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux@ew.tq-group.com>
-References: <20251006095036.16367-1-matthias.schiffer@ew.tq-group.com>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <20251006095036.16367-1-matthias.schiffer@ew.tq-group.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023033009.90-2-kernel@airkyi.com>
 
-Hi Matthias,
+Hi,
 
-On 06/10/25 15:20, Matthias Schiffer wrote:
-> Similar to other AM64x-based boards, add boot phase tags to make the
-> Device Trees usable for firmware/bootloaders without modification.
-> 
-> Supported boot devices are eMMC/SD card, SPI-NOR and USB (both mass
-> storage and DFU). The I2C EEPROM is included to allow the firmware to
-> select the correct RAM configuration for different TQMa64xxL variants.
-> 
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> ---
->  .../dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts     | 18 ++++++++++++++++++
->  arch/arm64/boot/dts/ti/k3-am642-tqma64xxl.dtsi | 12 ++++++++++++
->  2 files changed, 30 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-> index 8f64d6272b1ba..81e9e047281fd 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am642-tqma64xxl-mbax4xxl.dts
-> @@ -167,6 +167,7 @@ reg_pwm_fan: regulator-pwm-fan {
->  	};
->  
->  	reg_sd: regulator-sd {
-> +		bootph-all;
+> diff --git a/include/linux/usb/typec_notify.h b/include/linux/usb/typec_notify.h
+> new file mode 100644
+> index 000000000000..a3f1f3b3ae47
+> --- /dev/null
+> +++ b/include/linux/usb/typec_notify.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef __USB_TYPEC_NOTIFY
+> +#define __USB_TYPEC_NOTIFY
+> +
+> +#include <linux/notifier.h>
+> +
+> +enum usb_typec_event {
+> +	TYPEC_ALTMODE_REGISTERED
+> +};
 
-Here and elsewhere:
+Don't you need to know when the altmode is removed?
 
-Per [1] boot-phase tags would need to go just after all the std/common
-properties and just before vendor properties
+> +
+> +int typec_register_notify(struct notifier_block *nb);
+> +int typec_unregister_notify(struct notifier_block *nb);
+> +
+> +void typec_notify_event(unsigned long event, void *data);
 
-[1] https://docs.kernel.org/devicetree/bindings/dts-coding-style.html
+Declare typec_notify_event() in drivers/usb/typec/bus.h
 
->  		compatible = "regulator-fixed";
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&main_mmc1_reg_pins>;
-> @@ -245,6 +246,7 @@ icssg1_phy0c: ethernet-phy@c {
->  
->  
->  &main_gpio0 {
-> +	bootph-all;
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&main_gpio0_digital_pins>,
->  		    <&main_gpio0_hog_pins>;
-> @@ -263,6 +265,7 @@ &main_gpio0 {
->  };
+thanks,
 
- [...]
 -- 
-Regards
-Vignesh
-https://ti.com/opensource
-
+heikki
 
