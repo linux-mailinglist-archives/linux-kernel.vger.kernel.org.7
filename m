@@ -1,159 +1,142 @@
-Return-Path: <linux-kernel+bounces-867181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C44C01CC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:33:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A97C02055
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF93D3A34D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:28:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8DE23B6208
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCCB32C336;
-	Thu, 23 Oct 2025 14:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8932F32AAC8;
+	Thu, 23 Oct 2025 15:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbPv22rD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="VHMFae26"
+Received: from smtp119.ord1d.emailsrvr.com (smtp119.ord1d.emailsrvr.com [184.106.54.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3991B32B996
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFF9219EB
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761229704; cv=none; b=VgJWnV99+hb5n9KR/CEpMFzuY6v1MysTmiaPsUP9l2NgnkxkSqFF8ZanznpjzuqgkMsb9eVBp813OW/YuNeWAAXaKkH1/0Agj7kOEUvWjCn6nikA/vCN6cJ4tr5hhmpcZ3GQgp72e0XE3qNrQFvlUoDZjJ/i5Ed3o3TO5Q1iLlY=
+	t=1761232006; cv=none; b=fv9Vm8+xl94ABzPLqJ2Dij5DMTS+eGwctgk40Xg1EJa2UE/Xm4LmJUgLFq0vkK8rYvS7m7Zv54ftigcV4hPkzAzyPZ9nMlMbqDVz9bJAWxkPynqa4LVRxsUmGX06sNtccnb89gnnnaMTvW5CbaLcRqw6+X0gUpeAGx7sa8mrhlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761229704; c=relaxed/simple;
-	bh=ktjU2yXCJgq2bB7I9SbX6Ro6Bzsh2cM+rlZxZ8BLoUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k96Z9ux8n/f3DW4G+wRDA/oE68gJMwfI6cRjMrVTfebqVgok1FRD2zqa5/fSw3RD+yLvlTMSfSw6aAMHKPJWLT8QQr6IiOJfrfvzulZurH8q+bIJ+8DmLGTlygnEUSqRFFsLcU++b7R39L/KCqhAieG47cvmRRYTs6Jyhzn1xws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbPv22rD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D27CC113D0;
-	Thu, 23 Oct 2025 14:28:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761229703;
-	bh=ktjU2yXCJgq2bB7I9SbX6Ro6Bzsh2cM+rlZxZ8BLoUA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tbPv22rDJ+3HBD+yUrUyBNTl/Rm6IxXQwdUtzY+JO0kAfOaYYt5TgPaMI0PmcLBuM
-	 yx3fi6+AOEAlXqh1q6Q8q9asTgkQg018QhdW4TczT3PLaNg2YqzMPRwtOZpCYof0r/
-	 xVW2e1/Yxw3P00RynFoOuJsrO+pxGA3te7jgOgNi5AODQcNs9vz5pKfA1QfdzB3hLn
-	 EuUZaKHudWO0fpd+GVKgzDlHSfEVn5ih794A63ouOiXcRxOa4tVxCeLvW0FJj5a7hp
-	 wuXQ7yQ6Sn5IDmGWhR3O4Vqx5eQiBujQYjR1mWbKebTxr0gbnJjcTiuRYtDV98mJ16
-	 hM2X1Jg5hROGg==
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id AC9ADF40066;
-	Thu, 23 Oct 2025 10:28:22 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Thu, 23 Oct 2025 10:28:22 -0400
-X-ME-Sender: <xms:hjv6aGOi0mrMuKXJJ15dg6zBxYd4OdEBbhNvJlMtOwT1UMwmQTHVMA>
-    <xme:hjv6aPoKuhsat5yBXqVEKWfPSqiackNjcH0g632uqEd3yOlu1VD5dmwqk1wSTm4XH
-    bpgjq08QwMehToRfXUIp6XFP24iaGvuIlDiAnUN-NNhWKhEhxpfnKs>
-X-ME-Received: <xmr:hjv6aBTLVYC1qR7zilHNAX8SLVBftK8ZvDPeGn_wrcpKTbC7hBToY9oUVgzArg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeiieelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkrghssehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepheeikeeuveduheevtddvffekhfeufefhvedtudehheektdfhtdehjeevleeuffeg
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirh
-    hilhhlodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieduudeivdeiheeh
-    qddvkeeggeegjedvkedqkhgrsheppehkvghrnhgvlhdrohhrghesshhhuhhtvghmohhvrd
-    hnrghmvgdpnhgspghrtghpthhtohepfeegpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopegrrhgusgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuhhsrghmrggrrhhifh
-    eigedvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepugifmhifsegrmhgriihonhdrtgho
-    rdhukhdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtth
-    hopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopegsphesrghlihgvnhek
-    rdguvgdprhgtphhtthhopegurghvvgdrhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrd
-    gtohhmpdhrtghpthhtohephhhprgesiiihthhorhdrtghomhdprhgtphhtthhopeigkeei
-    sehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:hjv6aHa7B4Rcj9GdVNw1UP_OxKt8J0nxVT5AEwIy6vY7JfIlIPlV4g>
-    <xmx:hjv6aNM6n_KjHP_w-GsznfEvTzu9V6Ieldd2-kW12GiqFAgIkxgN0g>
-    <xmx:hjv6aC40t26fpQMlt_iDn2DEQrqcoV4oBuLHmCsHh1P04-Erj_ipdQ>
-    <xmx:hjv6aAdXTNPjWHRoVpFkdsGPoNO0WmTRZIwFuMzMGDHd1J4HtzXPsQ>
-    <xmx:hjv6aG7b1fnaT7pBD1qCZp1RS1P-5u-1JAkM87nE0-rVNvhqjjQ3zukH>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Oct 2025 10:28:21 -0400 (EDT)
-Date: Thu, 23 Oct 2025 15:28:19 +0100
-From: Kiryl Shutsemau <kas@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Usama Arif <usamaarif642@gmail.com>, dwmw@amazon.co.uk, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, x86@kernel.org, apopple@nvidia.com, thuth@redhat.com, 
-	nik.borisov@suse.com, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, 
-	kernel-team@meta.com, Michael van der Westhuizen <rmikey@meta.com>, 
-	Tobias Fleig <tfleig@meta.com>
-Subject: Re: [PATCH 2/3] efi/libstub: Fix page table access in 5-level to
- 4-level paging transition
-Message-ID: <lbkjggisugaccdowww6zlux6w6jpf2izm54myfrla2lgvcomb7@52kd6ferku5r>
-References: <20251022220755.1026144-1-usamaarif642@gmail.com>
- <20251022220755.1026144-3-usamaarif642@gmail.com>
- <CAMj1kXEYYSc8=qMmDW6E2kRFawK34okGvq=rTuhvv5hVPsd-iw@mail.gmail.com>
+	s=arc-20240116; t=1761232006; c=relaxed/simple;
+	bh=wrxa66l/KvBgvDwVqMPPP5q0JPvo30D9eKiiHrXxG3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S6roNXqLaUvKHDSiNv+3X9xmReADicg+1Hd5Y21xtNSvW9K3pTZz/4sQSKwty8XzAfGkpCgo5XnNdHnBbA+G1iecgE/xvcdrbDd414mr3IJQuHdCQJkK3O1OOf5zrvHTz3vYwb3EKUpeejBexmtlZcg30hJ4dA0UjnDHr26FIuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=VHMFae26; arc=none smtp.client-ip=184.106.54.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1761229710;
+	bh=wrxa66l/KvBgvDwVqMPPP5q0JPvo30D9eKiiHrXxG3Y=;
+	h=Date:Subject:To:From:From;
+	b=VHMFae265OnJte/Tp+v5uXfa0f1ouzAWSoQH3OQHez2ZgNzrUPIJXGDfwbhfq49jV
+	 c+lJ7PgEsqZMH071HLesEpCIzOachHAe0plMyx8HBAOIpJWSMn9psUaMKHx7Rq7i0/
+	 ysCd6Pz4G3BLmEek4j4CVYRyS+qmiTNFNqLDsaqc=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp23.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 69E95201FD;
+	Thu, 23 Oct 2025 10:28:29 -0400 (EDT)
+Message-ID: <a687f917-6e4f-4452-8189-d4b539c533f0@mev.co.uk>
+Date: Thu, 23 Oct 2025 15:28:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXEYYSc8=qMmDW6E2kRFawK34okGvq=rTuhvv5hVPsd-iw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] comedi: pcl818: fix null-ptr-deref in
+ pcl818_ai_cancel()
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+ H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20251023141457.398685-1-n.zhandarovich@fintech.ru>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+In-Reply-To: <20251023141457.398685-1-n.zhandarovich@fintech.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Classification-ID: db0f39ec-b1e3-48ab-a982-5e5e01151f00-1-1
 
-On Thu, Oct 23, 2025 at 04:13:26PM +0200, Ard Biesheuvel wrote:
-> On Thu, 23 Oct 2025 at 00:08, Usama Arif <usamaarif642@gmail.com> wrote:
-> >
-> > When transitioning from 5-level to 4-level paging, the existing code
-> > incorrectly accesses page table entries by directly dereferencing CR3
-> > and applying PAGE_MASK. This approach has several issues:
-> >
-> > - __native_read_cr3() returns the raw CR3 register value, which on
-> >   x86_64 includes not just the physical address but also flags Bits
-> >   above the physical address width of the system (i.e. above
-> >   __PHYSICAL_MASK_SHIFT) are also not masked.
-> > - The pgd value is masked by PAGE_SIZE which doesn't take into account
-> >   the higher bits such as _PAGE_BIT_NOPTISHADOW.
-> >
-> > Replace this with proper accessor functions:
-> > - read_cr3_pa(): Uses CR3_ADDR_MASK properly clearing SME encryption bit
-> >   and extracting only the physical address portion.
-> > - mask pgd value with PTE_PFN_MASK instead of PAGE_MASK, accounting for
-> >   flags above physical address (_PAGE_BIT_NOPTISHADOW in particular).
-> >
-> > Fixes: cb1c9e02b0c1 ("x86/efistub: Perform 4/5 level paging switch from the stub")
-> > Co-developed-by: Kiryl Shutsemau <kas@kernel.org>
-> > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
-> > Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> > Reported-by: Michael van der Westhuizen <rmikey@meta.com>
-> > Reported-by: Tobias Fleig <tfleig@meta.com>
-> > ---
-> >  drivers/firmware/efi/libstub/x86-5lvl.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/firmware/efi/libstub/x86-5lvl.c b/drivers/firmware/efi/libstub/x86-5lvl.c
-> > index f1c5fb45d5f7c..34b72da457487 100644
-> > --- a/drivers/firmware/efi/libstub/x86-5lvl.c
-> > +++ b/drivers/firmware/efi/libstub/x86-5lvl.c
-> > @@ -81,8 +81,11 @@ void efi_5level_switch(void)
-> >                 new_cr3 = memset(pgt, 0, PAGE_SIZE);
-> >                 new_cr3[0] = (u64)cr3 | _PAGE_TABLE_NOENC;
-> >         } else {
-> > +               pgd_t *pgdp;
-> > +
-> > +               pgdp = (pgd_t *)read_cr3_pa();
+On 23/10/2025 15:14, Nikita Zhandarovich wrote:
+> Syzbot identified an issue [1] in pcl818_ai_cancel(), which stems from
+> the fact that in case of early device detach via pcl818_detach(),
+> subdevice dev->read_subdev may not have initialized its pointer to
+> &struct comedi_async as intended. Thus, any such dereferencing of
+> &s->async->cmd will lead to general protection fault and kernel crash.
 > 
-> Shouldn't this be using native_read_cr3_pa()?
+> Mitigate this problem by removing a call to pcl818_ai_cancel() from
+> pcl818_detach() altogether. This way, if the subdevice setups its
+> support for async commands, everything async-related will be
+> handled via subdevice's own ->cancel() function in
+> comedi_device_detach_locked() even before pcl818_detach(). If no
+> support for asynchronous commands is provided, there is no need
+> to cancel anything either.
+> 
+> [1] Syzbot crash:
+> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] SMP KASAN PTI
+> KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+> CPU: 1 UID: 0 PID: 6050 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+> RIP: 0010:pcl818_ai_cancel+0x69/0x3f0 drivers/comedi/drivers/pcl818.c:762
+> ...
+> Call Trace:
+>   <TASK>
+>   pcl818_detach+0x66/0xd0 drivers/comedi/drivers/pcl818.c:1115
+>   comedi_device_detach_locked+0x178/0x750 drivers/comedi/drivers.c:207
+>   do_devconfig_ioctl drivers/comedi/comedi_fops.c:848 [inline]
+>   comedi_unlocked_ioctl+0xcde/0x1020 drivers/comedi/comedi_fops.c:2178
+>   vfs_ioctl fs/ioctl.c:51 [inline]
+>   __do_sys_ioctl fs/ioctl.c:597 [inline]
+> ...
+> 
+> Reported-by: syzbot+fce5d9d5bd067d6fbe9b@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=fce5d9d5bd067d6fbe9b
+> Fixes: 00aba6e7b565 ("staging: comedi: pcl818: remove 'neverending_ai' from private data")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+> ---
+> v1 -> v2: Switch to a better, more logical approach, put forward by
+> Ian Abbott <abbotti@mev.co.uk>, instead of doing an awkward
+> check in pcl818_ai_cancel() itself. Adjust commit description.
+> 
+> P.S. I've chosen to keep the old Fixes: tag. Not sure it's best,
+> but it's at least partially correct.
+> 
+>   drivers/comedi/drivers/pcl818.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/comedi/drivers/pcl818.c b/drivers/comedi/drivers/pcl818.c
+> index 4127adcfb229..06fe06396f23 100644
+> --- a/drivers/comedi/drivers/pcl818.c
+> +++ b/drivers/comedi/drivers/pcl818.c
+> @@ -1111,10 +1111,9 @@ static void pcl818_detach(struct comedi_device *dev)
+>   {
+>   	struct pcl818_private *devpriv = dev->private;
+>   
+> -	if (devpriv) {
+> -		pcl818_ai_cancel(dev, dev->read_subdev);
+> +	if (devpriv)
+>   		pcl818_reset(dev);
+> -	}
+> +
+>   	pcl818_free_dma(dev);
+>   	comedi_legacy_detach(dev);
+>   }
 
-Perhaps. But I don't think it makes a difference.
+Looks good. Thanks for the patch!
 
-We don't have paravirt in stub/decompressor, do we?
-
-> And is there any reason
-> to re-read CR3 here, rather than update the code that populates the
-> cr3 variable? The preceding other branch of the if() should probably
-> use the same sanitised value of CR3, no?
-
-Good point.
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
 
