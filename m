@@ -1,210 +1,221 @@
-Return-Path: <linux-kernel+bounces-867323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C9FC02437
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:55:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F1DC02440
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4F924F3BAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:55:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 55C744F3639
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE2F23F429;
-	Thu, 23 Oct 2025 15:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F29024A079;
+	Thu, 23 Oct 2025 15:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nv6vZYDI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HCtZkHbe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713A223CF12;
-	Thu, 23 Oct 2025 15:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761234915; cv=none; b=p+EFQs4O86fykYmF6kIrXdSlzI5WA3JqIfoK9dWo4XBjDGCZBLvZefSMO6bvzeZdoQt3+ssiwpPKVaq/OjsLeqq1qPhFuMmocc8yOx/aql37tpmX4juO/s8OcTwFZCZ7u7YOCWPQV/YC7tRxUdnmosaIeFDPmhrc0KQAvMV1ivs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761234915; c=relaxed/simple;
-	bh=1QpoQFpPQ94aZbwr72YQxHT323Coj8A+g67bYc56XnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=EU53Vjba8tun13ayIUMqjJ6759Yq7LzBi2Dfq55dctPdP+NCA4EGdObDtsBMtTzUe/pBwqHNYglFWYCMDjS9YEyPtAxKzLB9vSKtUHtdzfbY8WM+Zbr7muMPCzEy5yUWxSHpFWK/kTGGDC5rkifqI6BrjoCu+fhRr2KmBxHcaLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nv6vZYDI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA69EC4CEE7;
-	Thu, 23 Oct 2025 15:55:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761234914;
-	bh=1QpoQFpPQ94aZbwr72YQxHT323Coj8A+g67bYc56XnI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=nv6vZYDIq4am/DtLED1qWXVAd2mLG+N0czCN9jA1x9/ayvMuLkUTjlElJaRnzJLDw
-	 UQH6d8lBkhDAVuswDv9zAPnGQkloIBAAkB/6LDzgYKOV0bX290FLLvIRbqdKiLDZFe
-	 Gl7OqgIWM9Ode8EkIGfu1ABY127HikycA/qKBnJLiwFeYH3R8paBUlK6taUvhjAn2z
-	 6/OjnBAwkxM1pO+Cdkpew56iPnH/MZyWqW1nRnKGCYSSgR+M7g1XBASKosE/6todZf
-	 RzDMnjS2StUDsoaQ+8U9xvG1zBiyWu1SuUoSQuCQbfhkqgEzeqLGXxNJjJmE+Er1D6
-	 IaA8F+Mhiuk5g==
-Date: Thu, 23 Oct 2025 10:55:13 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v5 2/6] PCI: rzg3s-host: Add Renesas RZ/G3S SoC host
- driver
-Message-ID: <20251023155513.GA1292722@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88364D8CE;
+	Thu, 23 Oct 2025 15:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761234980; cv=fail; b=q4+LL4IkPWCJvHGWxvJ5jwUgesalpASn+/Sd7skaxOD1Td0SObpNTPL4sCNKaZ/VNLq9Pvq5x8Sh9aCIV5YK+yDGkGBI05L22gkeEmS88DgJRp3Q3sPORBbtdNqWsejuP0KSm6MEhExl77L/VjffqQOw6RvWmgxp3y+/+p+ADfU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761234980; c=relaxed/simple;
+	bh=2fwIma9HGs719/z1cRQNFg4MRggpcp7AiHJAN9AtDQg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=l7cmr1p+hn+6H00bGPjKXUHJTvqut7GZ/fcvHhDZrNFgFfIG2iSIDnKBoDIAkAafs4O7R++PIL4Fu8oJHZhwbe2cHh/cALxSdHgvlPSykOHeX+DZ6EGET9fnwG4pqsRvvxZ3ffmkinMqt8iZWBeV2EtInVfbURwY2to3M6VhkcM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HCtZkHbe; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761234979; x=1792770979;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=2fwIma9HGs719/z1cRQNFg4MRggpcp7AiHJAN9AtDQg=;
+  b=HCtZkHbeQK5KLfm6xGx60S9OLNx9U3/hu9lHK3w8Jx4/YqGyCyZaw6Qi
+   Mv+il0ayKTcUDFUSMT+WHLqL5Dx7h7FVCGwYK3uafL5BwzozXn24QZbDq
+   qa9KN5BJ+baLBZdXXL3YSNBmcE6RgfiDOcrtL+h9nb2tAI6x5URef+G6v
+   zFVIXLhAFnY5v0qm/P3e9AffIjwbj5kS6eVyqSS3JGDKXMK23e8W/UdlE
+   gZX4mSwLnnVjSNgYaiUSUNi/WXy8N6IOUjgyPjoohrlJymlBujM45t7XV
+   FQYjDmczkoFwv2WcYkfVY27eXV6/ZZrv6FLH/6h0jqy1mQdQfcfoW63a0
+   g==;
+X-CSE-ConnectionGUID: bJ8bqxB8SF+WDdj+oMxrSA==
+X-CSE-MsgGUID: mwG/9eEpSq2zCNWnRCGsjw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="66023978"
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="66023978"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 08:56:18 -0700
+X-CSE-ConnectionGUID: TMq67bFBRK6UFgtVHr0oJQ==
+X-CSE-MsgGUID: HKebI8OsT9WepWe5IQO5eA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; 
+   d="scan'208";a="188253428"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 08:56:17 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 23 Oct 2025 08:56:16 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Thu, 23 Oct 2025 08:56:16 -0700
+Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.0) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 23 Oct 2025 08:56:16 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EIN7pf7so0SQa1pydBiJYGf2lovxVCnMH6XdWxmdPMnM5HieUYT1dydi1BFyY8pynhh1W89nO8NCfsClZT5Zbd9CdR6C/+2RNOrZEuYfsTssEz6f5OgV14Acp3BOr7l1AlVbPB4cEFNJu8LKTsFkL9Q5vJTrP74oO2wdwlmtRKT7Q/tXJEPfUNX7Ti/tG2WD7WVPtJ4aLw76fp80JsssblUsBpb+r4HcQQiZJ3zieJ4QVS6Km8+fsRGqTyhvEKrmb4wI1ynr051yv50LNqwzrNoB8wINkm/bA4Gqwu4HjwaKqhu+YcPY5rwU3wfF24O/jLW1u09Td2knzZt6rbrtgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2fwIma9HGs719/z1cRQNFg4MRggpcp7AiHJAN9AtDQg=;
+ b=ceZApzTjc5DcbSBUE7Myb98Ms+y2Ffeya9iB+rWbyazHpdwhVChZsd0VRbf+aney+vFDALWXOPqQ8AGc0kTmOXsC5ojDkoSsxjviZZkW6s8GtxwDP+H/hZxgHFRX71gW/w58UtO4fNI1Dcd/GQGm8poSQG6dW+ulDNu4t1hMlD0I/8DJadWOzdW9egzoqf/7RCUXnfqTbMDAUNudKfVxU1G6yMjTBTo+RJZikVkW148w1Mkxo6GfqEiCgW1Sk25MuYnGLf+bkGEOPlTAoI4An3SHN2S7ijzFqHCKUQKaMaPttHqkQHDlXlJIQyqQ5IaxqD6LZ/TI1gqfudlA4C+VyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by DM4PR11MB8178.namprd11.prod.outlook.com (2603:10b6:8:18f::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
+ 2025 15:56:13 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 15:56:13 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: RE: [PATCH] ACPI: MRRM: Check revision of MRRM table
+Thread-Topic: [PATCH] ACPI: MRRM: Check revision of MRRM table
+Thread-Index: AQHcQ5TS7dKbeU8BuEi/R4g/wDd/fLTPf/6AgABhywA=
+Date: Thu, 23 Oct 2025 15:56:13 +0000
+Message-ID: <SJ1PR11MB60835AF413CB53076304AABCFCF0A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20251022204523.10752-1-tony.luck@intel.com>
+ <CAJZ5v0hhnAq-HJhXU8VTAWKNg0PJkYbeocCKEffYOurZn0U81Q@mail.gmail.com>
+In-Reply-To: <CAJZ5v0hhnAq-HJhXU8VTAWKNg0PJkYbeocCKEffYOurZn0U81Q@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|DM4PR11MB8178:EE_
+x-ms-office365-filtering-correlation-id: 643b5033-d2b0-44ee-6339-08de124cb122
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?TGZENzQxSm1XdGJrNXNwa1hEOU40eTVlcDFtbTV5aXdjMzF1SEFPenZ3UFBq?=
+ =?utf-8?B?RlBEU09SQ1dNbEV6emxySUVsMXBjOFh2Mmd3dUR2TVFKNGJoMlpUUlpzSktz?=
+ =?utf-8?B?OEN0V082ZEgrNFhaa0I1a0gxdWhDd0t5UmhLVXo1TWZnckZHSVZrVkc3T3o1?=
+ =?utf-8?B?MTdERVIwZnVlajVPaklJV3ZXSHdXbXZoYWtrbnJ6eTJkZVgyS3owaGJBTWFX?=
+ =?utf-8?B?MWk5NnpkbTR0VmFVZ1YvVUw1SjI2dFhIbVFQZDYrZEhqaGVMazRRejJIQmNZ?=
+ =?utf-8?B?QTRFN3hwQ055dm5lcGRPd3c3SVFoWTQ3UGxDanFZdENUUlZjSy84b1hBRXpu?=
+ =?utf-8?B?ME9KdjE4a05SL0g2OVVyYlJsWE13RG9YZkFFT2Q5aDZqMXpUbVM2cXllVTJJ?=
+ =?utf-8?B?blJrYU13NEs3RzdyU1JKMUtqdjNUd0pFOTI4NWZnc1Y0SnZlTHAwTVJkZjhr?=
+ =?utf-8?B?VnE2eGNtQ2F1TnFsSS9WQk1qaWM1ZXpDbzVHaXJMb1JaU3h6L0ZuWDNrb1RI?=
+ =?utf-8?B?Sk82K0JEMElETC9oN25Wb0g2Nk1TQ0owZVNTSHQyRXcxK3AzaVZpeC8xRjRU?=
+ =?utf-8?B?azNrdm1wLzY1aE12UG9nN2orekNOM2xHNmo1aURLUVNVRU53RFJIY3NaKzRQ?=
+ =?utf-8?B?eGlZVlZTMFQ5dHVQS2pzcm5odUkwc3dyU3NwZEdubTZtMHlHTEtEQzBHTWlj?=
+ =?utf-8?B?RFFMLzlZQVlia0pkdi9IVTdpRXpXWTdpRmxBZ25GbC9RaStqRGFISk9XNGZ5?=
+ =?utf-8?B?WCtudWdpZXNHY25DMzNvdGxIa0VzWWM3Uk11b1JkWXBlKy9oOVhPUWd1UGNi?=
+ =?utf-8?B?WmhGdTJYVzBMT2NBZmROWERSNWtjeTRIcGVlTnZKMFRqbW1rZ3BtdEtDMC83?=
+ =?utf-8?B?YVQyWUsrS2xBb1dNSHJmYjM4U2xhVzVlZE5mV01tVGRySWs4cGtrcWRtdmVQ?=
+ =?utf-8?B?RlJiWkpJdDdGSXZnd0lVSEY3Y21oajdHT3ZMcmVBVGVPbUgwMFFjZk5keUxB?=
+ =?utf-8?B?MllYbzBhY2FoWjUvcm50THdDTWlXbmZNZTJjeTNaOG9vZ3krNmovRDlKM0VS?=
+ =?utf-8?B?dDNQakhHWDE4UFdqekNRRUg2LytDMWViaDFBTGxBYTBlNFI1VjhWeG4wKzVx?=
+ =?utf-8?B?MExYaEpYMWRnT1REUEhFZ0ZLaUZiUFBFVzI0elh6cEcvdnB5YkVkcnRtTFVY?=
+ =?utf-8?B?UDJZMjR0QXV5NXRyVXl1a3ZndndicFY0eUFCdERIeEJaSGhYdkRwMGFURXcy?=
+ =?utf-8?B?UVMwSkI3TCtiUk1CQ3lyMjU3enJjSFhPRDl1bTA3VjAyTUxVd2grdDV2Z2tI?=
+ =?utf-8?B?R2Q3UHk4ZHEvQm80bE9COVlSL1hmRSswVWtDcGpxQkJsZTZMYTAvVjRid1d5?=
+ =?utf-8?B?KzVNdlBDeHpEemVvK0JXL3AreEk0SGJKTVpab3hSczhKMWJZS2kyblM0Ujdm?=
+ =?utf-8?B?a05QQlVyWWNMUTlCdW9Idnc0eVpJMmZxVFJ3bXd3Sm9LSHloTFNtMHppN1lW?=
+ =?utf-8?B?TW1QL25WUzl3Ylp2SVV0TXBqdzlsLyt6NkZia0N4ZVlyUmxyZjZ5aEVUcmtq?=
+ =?utf-8?B?RFpiR21Uc2ZkTXUrZ3JUUkZYMmRJNkVLSE9ublJHcVpoV3ZwamJQV0xCc1A0?=
+ =?utf-8?B?MUhESzNReVpKcWdVeEQ0Ty92enQxeWdoSllWSzYxbHRybVNBcXlOWDZob2x6?=
+ =?utf-8?B?LzdMR1g5ektUc1NpQzBYRGVOMURsU0Q2eEhyU09ZbllDN0xucURDbGxoTnBo?=
+ =?utf-8?B?MllYUU1tRjBFbUhUQWIyOVN4cG1tcDlQa3dlbWRJZnE4ZlNDTkQxM3dyd3A3?=
+ =?utf-8?B?SG9INWdmYjl5U1ZyRW52RzI3ZWxnZDN5S2NxTzNVMkJMQU9OYzI3RzUrY2V5?=
+ =?utf-8?B?SGtXYWpYc0M4Y1VsdS9jc2xhNk05Rk1KajVSclNYMmpUaHdLYnl2SldSYlEy?=
+ =?utf-8?B?ZDA4dzcyUkkxTm5WMFdmc3pKSHpqTkVkczgzYUJHbisyTC9XcDlWeVM3ZWgw?=
+ =?utf-8?B?SFFiV3Z1emY5Qjc4SjUzTTNuT1RKb1dlVkhnU0pPT1VoUFpsa25sSlRFZUUv?=
+ =?utf-8?Q?X9FPoq?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?b0NkUSs3dFNUZE1TQXVXUzZ6eUMwbjREMXVWajhvU3VmbDdEN0VaTTZaN1VO?=
+ =?utf-8?B?ems1cGMvbjBNdHozSVM3QjBoZDI5eVZtSjdEZ1lFNkwwWURieG9vcHhDNkFj?=
+ =?utf-8?B?MFcwOHNoR1JUdDhjY2YrR2hLeFR1RGJucEJCY1NkVWdScWp4MEtvN0ZBak5F?=
+ =?utf-8?B?STVmL3dsVmpWMkZhclhJOVNaMklkcU02ZTd4SU1mT1E3b2Fpck1CZDdWbndF?=
+ =?utf-8?B?WHZGV0RoeTNPZisvSG1nd1h1ZFlLV3JkOGs3Nmh6ZHhaSTJkZjFjSW8xTlJ3?=
+ =?utf-8?B?Y2lSUTlJdlIrRGlub2tsczdJOWNESUlKWThjNmFKR2FvK1JrdXhuMW5UMU5N?=
+ =?utf-8?B?d3A1MG4rUHJydkNhTTVFUUE4UXRZNnhzZ1hyR0hjbU9mNkhzeERONHM0bEI3?=
+ =?utf-8?B?UFNmTnRsWWZqVi8wVUh4bXlJRUNhWEVpaVhiSmlsYnFnK0FBY0FrYXJvS3Jq?=
+ =?utf-8?B?MnBCaXUvaFVSRlU0ZGFVRGlUSUVYUDBiRWVvNUhqWGpLeTdwWmowbTFlelFv?=
+ =?utf-8?B?dmNyR0Rsck16MmJTR0pHd2hYUjZhKzNoSyt0OTBFNXRKaHNGbkEwRG9BbWsr?=
+ =?utf-8?B?anlDQmt1UmZoazVVanRYZGNVOHhtVXFMTWhEYlg4Y1VlL0YwbzVWdlFEQlpq?=
+ =?utf-8?B?WHc2S2YvVVptR2RsL2NURFNBVVdxNm1LRTNBOXN5Um94TEpSWFQxa3ZxTzJ5?=
+ =?utf-8?B?M0VHNExORDJWME9JUG15cjN3NmxoekRNRFFSd3Y3d0d5MmpaVzIvc29LVjM5?=
+ =?utf-8?B?M3RxUlhVSTEyQjdxNFBXQzRCNzdGbHF1Q1g3ZWNmZzcvZUx1OCthNDFmeUhm?=
+ =?utf-8?B?WWRxTFhRd3FLa2dPalVSNnZNcE9HTXl0ZFhmTWRNQjUwdGNCNHorcFNGVWNU?=
+ =?utf-8?B?Wm5RbnJmSDRFYitacVBlV3dHZFhaVTVWMjhXZ0FEMEVINXhLbUJGdTJzWTh1?=
+ =?utf-8?B?WlB2dGxRaGZ0a21Ycy9NVFM1NTk0bE8yWExvK1hEZE5IMklpQlVQMjM2WGJC?=
+ =?utf-8?B?czBMMjVRVUsyUllhcHFBME11ZlBXZnZnRkdGSkhrZlF1dnh4Ylg5OWR1ejFp?=
+ =?utf-8?B?SDlDMFZ3YUg5b2pBVVVDQndKbmtuYnpvMCtpa3N6UTJBaHVQN09wTUFRNGtl?=
+ =?utf-8?B?M2dMSUo2bVRNTGJUV0FvcGZWY1RDWTQ0MEE0b2NnNXdkUVdxOHZrWXhLTDli?=
+ =?utf-8?B?YStwQTk0a1kvZ3dHUEN5THJId3hJaFpNV01aUEhGclNjRUJNZE93SGlLSnE1?=
+ =?utf-8?B?R0dUM1JCWC9haWR3cW5BUCtZOEppS3k0Y09FYkpmS3VWQlZNN1haYlhiSUJB?=
+ =?utf-8?B?NFZyQ2hzME1kT3AvWitRMy93SDVwc1htaEZRS0NqL09nQUlvSUEzSTZaOGYx?=
+ =?utf-8?B?TzNmd3VrMEhxMHRScHRGSEJQbllBWW5NTTBCdm51cHVtVkpNTkdhMlpKSExh?=
+ =?utf-8?B?UnZwWVJOWHlwT3hZUTlSTElXVUo0VXFOQWdOcEFBOWtKWExoSFlNUy9pOWRm?=
+ =?utf-8?B?K25lQi9iREJ4clVTZUhOZ1BJeFo4VGtCM1RxMUJqd0tOTlBydHQzQ0x2Nmg1?=
+ =?utf-8?B?OEQ4ZmdnTkhUV2c1V1R4RHkvN1hHeWRSeVNYKzhyOHdiR1dHamNZV25OcTQ2?=
+ =?utf-8?B?SytES0xkRXFLb1hPN2hNYzQ0VDJpWHRWdm9hNTNLWHJNMmoyS1pNd0tXaFJ3?=
+ =?utf-8?B?NEJoZng4a01ZWnJrbFlBUmFFa1NiOUdkSWU4SGNCbENlc1Njb0RHN21TcjZM?=
+ =?utf-8?B?L1BlZkQxbzQ3N0lHNmZiVGVkblZ6MGt1QTJydXM1WXRZU2Z3Y1JFV3lIY0xJ?=
+ =?utf-8?B?U3R2SFFSbkJtTHVXUzZqVU1WckpZb0tHRnhaZWNzZ252VzZRZDVsS2lRQVg1?=
+ =?utf-8?B?U0FUMlpBaGdPSW5RUG95RE9SemxZUlVKRkRkaC9CUktzOU1NK2ZrVkphVXp3?=
+ =?utf-8?B?N0UvMXZaNTFuTllOODhDOWEvY05POUEyY0IweFZsOHhqSXFiS2M4U0h2dEZT?=
+ =?utf-8?B?SDd0N1ZVSERuSzJGYUlwaDFLVFBBUWFTV2Z3eFJnMFVDVGQwZ2ZLK2VrSzlx?=
+ =?utf-8?B?WWQxNGtHT3cwRVNrU2JQdTJYTkp3cmlBRHRVYzR5SGdncGpyTVZ2bE93QUo0?=
+ =?utf-8?Q?jte8=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <51af454f-6322-47c3-9e93-4fc07efc2b8d@tuxon.dev>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 643b5033-d2b0-44ee-6339-08de124cb122
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2025 15:56:13.1669
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: x3a6pzAgJDIrZ3FHHoxAGzl4v90LHbG5e4cK7dYfRA1MDQoOgk1gzYp8A5X9l/daiPjSSLbxxQuEAvMOBziPKQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8178
+X-OriginatorOrg: intel.com
 
-On Thu, Oct 23, 2025 at 08:11:17AM +0300, Claudiu Beznea wrote:
-> On 10/22/25 22:49, Bjorn Helgaas wrote:
-> > On Tue, Oct 07, 2025 at 04:36:53PM +0300, Claudiu wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
-> >> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
-> >> only as a root complex, with a single-lane (x1) configuration. The
-> >> controller includes Type 1 configuration registers, as well as IP
-> >> specific registers (called AXI registers) required for various adjustments.
-
-> >> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
-> > 
-> >> +#define RZG3S_PCI_MSIRCVWMSKL			0x108
-> >> +#define RZG3S_PCI_MSIRCVWMSKL_MASK		GENMASK(31, 2)
-> > 
-> > Unfortunate to have to add _MASK here when none of the other GENMASKs
-> > need it.  Can't think of a better name though.
-> 
-> Most of the register offsets and fields defines tried to use the naming
-> from the HW manual. ...
-
-It's OK as-is.
-
-> >> +static int rzg3s_pcie_msi_enable(struct rzg3s_pcie_host *host)
-> >> +{
-> >> +	struct platform_device *pdev = to_platform_device(host->dev);
-> >> +	struct rzg3s_pcie_msi *msi = &host->msi;
-> >> +	struct device *dev = host->dev;
-> >> +	const char *devname;
-> >> +	int irq, ret;
-> >> +
-> >> +	ret = devm_mutex_init(dev, &msi->map_lock);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	msi->irq = platform_get_irq_byname(pdev, "msi");
-> >> +	if (msi->irq < 0)
-> >> +		return dev_err_probe(dev, irq ? irq : -EINVAL,
-> >> +				     "Failed to get MSI IRQ!\n");
-> >> +
-> >> +	devname = devm_kasprintf(dev, GFP_KERNEL, "%s-msi", dev_name(dev));
-> >> +	if (!devname)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	ret = rzg3s_pcie_msi_allocate_domains(msi);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	ret = request_irq(msi->irq, rzg3s_pcie_msi_irq, 0, devname, host);
-> > 
-> > Should this be devm_request_irq()?  Most drivers use it, although
-> > pci-tegra.c and pcie-apple.c do not.  Maybe there's some special
-> > rule about using request_irq() even though the driver uses devm in
-> > general?  I dunno.
-> 
-> In general is not good to mix devm cleanups with driver specific
-> one.
-> 
-> As it was requested to drop the devm cleanups from this driver
-> (especially devm_pm_runtime_enable() which enables the also the
-> clocks) I switched the initial devm_request_irq() to request_irq()
-> to avoid keeping the interrupt requested on error path, after
-> driver's probed was executed, until devm cleanups are called, and
-> potentially having it firing w/o hardware resourced being enabled
-> (e.g. clocks), and potentially reading HW registers.
-
-I couldn't find that request to drop devm, and I don't see where
-devm_pm_runtime_enable() enables clocks.
-
-> E.g., accessing the HW registers while clocks are disabled on the
-> SoC I'm working with leads to synchronous aborts.
-> 
-> So, I only kept the devm helpers for memory allocations, resets
-> assert/de-assert and the mutex initialization.
-
-I'm OK with request_irq() here since you have a good reason.  This
-problem of accessing registers while clocks are disabled sounds
-familiar, so I think other hardware has a similar issue.  It would be
-nice if everybody handled it the same way.
-
-I don't know enough to identify other similar hardware and see how
-they handled it (or identify drivers that *don't* handle it).  It
-might be worth a one-line comment here to help future code readers.
-
-> >> +static int rzg3s_pcie_intx_setup(struct rzg3s_pcie_host *host)
-> >> +{
-> >> +	struct device *dev = host->dev;
-> >> +
-> >> +	for (int i = 0; i < PCI_NUM_INTX; i++) {
-> >> +		struct platform_device *pdev = to_platform_device(dev);
-> > 
-> > Looks like this should be outside the loop.
-> 
-> OK, I kept it here as it is used only inside this block.
-
-Ah, I see the motivation.  I suppose the compiler is smarter than I am
-and hoists it out of the loop anyway, but I think it is easier for
-humans to read if the loop only contains things that change for each
-iteration.
-
-> >> +		char irq_name[5] = {0};
-> >> +		int irq;
-> >> +
-> >> +		scnprintf(irq_name, ARRAY_SIZE(irq_name), "int%c", 'a' + i);
-> >> +
-> >> +		irq = platform_get_irq_byname(pdev, irq_name);
-> >> +		if (irq < 0)
-> >> +			return dev_err_probe(dev, -EINVAL,
-> >> +					     "Failed to parse and map INT%c IRQ\n",
-> >> +					     'A' + i);
-> >> +
-> >> +		host->intx_irqs[i] = irq;
-> >> +		irq_set_chained_handler_and_data(irq,
-> >> +						 rzg3s_pcie_intx_irq_handler,
-> >> +						 host);
-> >> +	}
-
-> +     host->intx_domain = irq_domain_create_linear(of_fwnode_handle(dev->of_node),
-> +                                                  PCI_NUM_INTX,
-> +                                                  &rzg3s_pcie_intx_domain_ops,
-> +                                                  host);
-> ...
-> +     irq_domain_update_bus_token(host->intx_domain, DOMAIN_BUS_WIRED);
-> +
-
-Can we use dev_fwnode(dev) here instead of of_fwnode_handle() so it
-matches the one in rzg3s_pcie_msi_allocate_domains()?
-
-I think irq_domain_update_bus_token() is needed here because
-host->intx_domain and msi->domain are identified by the same fwnode,
-and this will be easier to see if we get the fwnode the same way.
-
-(See 61d0a000b774 ("genirq/irqdomain: Add irq_domain_update_bus_token
-helper").  I wish irq_domain_update_bus_token() had a function comment
-to this effect.  Maybe even a mention in Documentation/.)
-
-It would also help code readers if we could use function names similar
-to other drivers.  For instance, rzg3s_pcie_intx_setup() creates the
-INTx IRQ domain, but no other driver uses a name like *_intx_setup().
-The general consensus seems to be *_pcie_init_irq_domain().
-
-Bjorn
+Pj4gQmVmb3JlIHRyeWluZyB0byBwYXJzZSB0aGUgTVJSTSB0YWJsZSwgY2hlY2sgdGhhdCB0aGUg
+dGFibGUgcmV2aXNpb24NCj4+IGlzIHRoZSBvbmUgdGhhdCBpcyBleHBlY3RlZC4NCj4NCj4gT0ss
+IHNvIHNob3VsZCB0aGVyZSBiZSBhIEZpeGVzOiB0YWc/ICBPciBpcyBpdCBqdXN0IGEgdGlkeS11
+cCBvZiB0aGUgY29kZT8NCg0KSSdkIGJlIHN1cnByaXNlZCBpZiB0aGlzIHRhYmxlIGNoYW5nZWQu
+IEJ1dCB0aGUgaC93IHRlYW0gdGhhdCBwcm9wb3NlZCB0aGUNCk1SUk0gdGFibGUgbmFnZ2VkIG1l
+IHRvIGNoZWNrIHRoZSByZXZpc2lvbiAianVzdCBpbiBjYXNlIi4gV2hpY2ggc2VlbXMNCmxpa2Ug
+Z29vZCBwcmFjdGljZS4NCg0KTWlnaHQgYXMgd2VsbCBhZGQgYSBGaXhlcyB0byBnZXQgdGhpcyBi
+YWNrIHBvcnRlZCBpbiBjYXNlIHNvbWVvbmUgbG9ja3Mgb250bw0KdjYuMTYgb3IgdjYuMTcuDQoN
+CkZpeGVzOiBiOTAyMGJkYjlmNzYgKCJBQ1BJOiBNUlJNOiBNaW5pbWFsIHBhcnNlIG9mIEFDUEkg
+TVJSTSB0YWJsZSIpDQoNCldvdWxkIHlvdSBsaWtlIG1lIHRvIHBvc3QgYSBWMiwgb3IgY2FuIHlv
+dSBqdXN0IGVkaXQgdGhpcyBpbiBhcyB5b3UgYXBwbHk/DQoNCi1Ub255DQoNCg0KDQoNCg==
 
