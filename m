@@ -1,85 +1,101 @@
-Return-Path: <linux-kernel+bounces-867268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF92C02131
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:21:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE718C02194
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0385A50926C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B30E33AB556
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4CD337116;
-	Thu, 23 Oct 2025 15:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1777F33374C;
+	Thu, 23 Oct 2025 15:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="A9UOhvMm"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013016.outbound.protection.outlook.com [52.101.72.16])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hcyC2PgE";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="IYpha8HK"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822A1333724;
-	Thu, 23 Oct 2025 15:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A0232C336
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761232732; cv=fail; b=PcsUBM0OaRnhutmKxOtqMoG8a1cu5PS+xlo1jJeCVapbqD8MoeW5DyhTyFwnxdX4QMW654wBNWBIj5TiLXn87eSzpAfuJSrSCk/8854ftsKCUWC78qgXrhegwZzAJE4MSYSIAg+srPg5SwvFqtyluyG5D3yKpdADBweGT4C7sOs=
+	t=1761232769; cv=fail; b=dStQjo3u+zEnr8gEehO6TGwP0Q97q4/cAGSplZrMVYs79VqE3U0A46WeeL0mnwzDfezLLf5lAv/yitK1lnGxw6jsBNmbLO0IdcCkjWNjEqKyzSbbEP+s1ha4kUKHUWEeBbKle5/2mHp2WhClOi5trMQuyMKG3bQFJX5vrZRMyfI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761232732; c=relaxed/simple;
-	bh=dA5ORzx2X1tIDj9fYAdFWwMkCoHY+cbChpbjd4hAC7k=;
+	s=arc-20240116; t=1761232769; c=relaxed/simple;
+	bh=2MY6pwbOiGRqHZg8d6bmtMiiMoEfQF5WuAnVPFlU99Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SmzcNJOkjS3lfTMeRiD+h3UE87RxRle2tFZWlA5awa02v/ODUFeVg/p2Y7ZKWh+eubP37ZSZeoc3ZXBv2bHIgCnAw/LJFTvPQI295eS61pJe2Hy72/mVTO/s4oYFrENTHDfe+0L68s28mUblV/5CPFiOwDRulOYDKEklZchXRR0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=A9UOhvMm; arc=fail smtp.client-ip=52.101.72.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	 Content-Disposition:In-Reply-To:MIME-Version; b=SSzlqO08iLHRNbjdLqGptezDDzVUUT7Yt7WQhoQeJlZWpeb10TqqH+Rp/J121QB1W5s7Nkpb/T3yQ/O9jkuS6iDX872LB9xhZD0MZTEiipZ42LGLjhujkT3jzF8n4q4Wn8R7j2yJjn9MvwKA3NPqdPS/I7CEgN1W4t3oWgr3l/8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=hcyC2PgE; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=IYpha8HK; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59NBRGcs019578;
+	Thu, 23 Oct 2025 15:19:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=89+XgsTFpOq1pRGIAr
+	ynkgXUGW54jQ+sLlTYfopzO3w=; b=hcyC2PgEmPG1QZDnQz4dszuF7r39MTaVQx
+	HPYqki5rAL2nkqiCHy0gz9zVbVLrCuAImrkH12XL3oSdiWTW6ZWzhi5XmnhVl0sJ
+	N2BJol6dQhu8wqQBN3PLqiuW3k7bLt4WpuyD6GKSGKpiNZBSrIWXovAMmYpJa/YJ
+	cz8sPUQYsz3z6kmXYReKyfJ+4mhHIk+kDN9WZSCzIFAJowlqaUVDrcjmMTVlyxX7
+	LbypWyqnJnwBLw6h1FfkskbxRVwcYJPwoxW5CmshblgeyOEzBhRIjNVu/5Rg7tmD
+	k3leK2Nx/tlyPPC//CF1/H/pTZMlXy0IFrK4YMJtKaJ9niGSUq/g==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49xv3k2ru0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 23 Oct 2025 15:19:10 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59NEODQT000849;
+	Thu, 23 Oct 2025 15:19:09 GMT
+Received: from ph8pr06cu001.outbound.protection.outlook.com (mail-westus3azon11012019.outbound.protection.outlook.com [40.107.209.19])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49v1bep3mr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 23 Oct 2025 15:19:09 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AUlu/vunRoIKP4zjaE7gqbpTYHPzBbKPnNm97C5nsQEUUddUVpKfI6WoVNBBi3TtEck4O1fbY3sWYa2JPymPIznN1Ly/Rqr3ZGiILybu8Jy7TZ5Jy10KzNmg8MkHjI+v20Cf3JtAdege93OO6QYnwnhlcigoMimSlcRQ942Auyxqz8GviRryFjyJd0LDbkyn4yekkYR+E6P1iJUQT8Qi80XDY4iRMqrSl/ULKplQkOACX25iN6hH3Cl/NIQGN4JEAFdMnHWFLn9S2kO8eyO8xPL6i3U5g/EdByPLY0r1/ojjEVCGaIw2IAf9YmHPt9YhiMlpo6ht3/10oNUOegkIsg==
+ b=d54Mn58VaHlN3AHsZtJzcPyWRlrzVtJh4yxDabRgS0U4t5qmDkCLgYy6q0++CgMaHBgc1z2oWpenh2T0rdGx9IdCj6HyvduCTB6/BVe8rhGZ6WHjJi/C7IsLHb6z7iT5zWRBiNhYlcD6hnu+d8mdVLJzE/UuDeW4HKskHqluV0ZnJCzeI0GAHyzkicbi/QK8q0ugbLXwjZYwtyl5Mq9tgLNqa/NOhhgeT65G+ghbJxX4BgIqx5xeauOSkYtFi6CzSY72FUhA3qDoweVL8JYhjv2v/PiSAPRcQL3GaP36R5WG1V2KV5eHWbKadVayzYxpNHiVXZfqU8xylMoWshBALg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+tBuAFVlPQGEF9LCPPhiXoCwvBQTpr82cCfi1vhrXGk=;
- b=isc1t5+GHCtqHXsft+2n13QDBgElukhIv26oRibE1oxpwqu+K8X+khOe2qw/n8xUMi/2CepUnN8HqPQheDfbeKUArz+LP2CYNDW5aKJaze2yI/WYn9k54Q+qOy3yIWGFuOL9L8jEM75mGXNoBdrm9qr+jcfe+GCWMV0jxXDrweuV35pUkBgUVJtT32E66T1aTh4qu+wfmf0y9lcQVKBlEi5YLwEdihOIm9eouclcUzMbUuf1NjKHbdhYWPETP4JxsYeDv8eZhi8lUxEztf1lTts/UzoKFWR2iJAxs3UJQuGW3n/XIgmFiraoHempCKmSu4CHq/qoozoZZnqLmhf6Dw==
+ bh=89+XgsTFpOq1pRGIArynkgXUGW54jQ+sLlTYfopzO3w=;
+ b=PxrD4OouxHgM8kon0DvpJyrtyFsNY3X9sQGG97EbYo9O0xb1WmSX/DzMnrvgAzeOH5HFk8fva4pNU1Q425r+G0K/j5adBLN/PYvKVUvHWvAjs+7OZlHu2MsFweawviRyGW4LNYiZZCjFZs3aQ4CMffXVmgQsOjY4fTqOM9DK8mMSwos2h7poc873rOQlHOw8o1AZYj000Sj//Qj8Kt9KN23SIZRhF0wvYnCltEpj/zcEL4azrnLlcSGpHo/vdOQ8FWqTklob+4DU9Fh5QQBRwicLhSjzs+m26L5TEXllfH6eXeN7gpFqidFBiH0/ogECqhU514ixWHblCexrWBYlPg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+tBuAFVlPQGEF9LCPPhiXoCwvBQTpr82cCfi1vhrXGk=;
- b=A9UOhvMmQniB2b/2neAA8Mtz+Wcjz1FmgMh/46I0B6PWABJK7ZelbFIfoIc9fp+rIKPaWSGAhtwPiWdo9eFR7MJLwqvnRmlepGeA0ogVs7/U10wJllBmr5VZK1Cpe6QO3tJaYy+fbRUvLDtR8FPsVORpRdWUkhkxWPklAOAPb/WA/7zHNaTJkN0vlFsxQMHtpmxswSUkDRc6wNg+fRXomFNJjOuat44nuxdgDyCMYUgPJRAcGN3N4f0D9PGgMOIAgIRdo9hRYv3Kf7xEGsQesPvYJ0MXuvVb1ReN/TlscB7/xbUrQrSvugd+6ciZJxTe/uPFBT9KUq78834qJmWQEw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by AS8PR04MB7957.eurprd04.prod.outlook.com (2603:10a6:20b:2a2::6) with
+ bh=89+XgsTFpOq1pRGIArynkgXUGW54jQ+sLlTYfopzO3w=;
+ b=IYpha8HKwdAyZH9h45nBXilrBs1la7iXlOHAroK3xVV6NCyJ34z8Mxj4pedXHbLHGQuyHMqwqIpCbEJ1odpl/fLoyRHAHzRAhim4fIYkfecDHX4eABX/DrWkY9A3WZtmhxHmLx3K7aiZRF/IcTUA6MCdMEY4ucTid2GQOTJMaFI=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by LV3PR10MB8132.namprd10.prod.outlook.com (2603:10b6:408:291::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
- 2025 15:18:47 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 15:18:47 +0000
-Date: Thu, 23 Oct 2025 11:18:37 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 1/5] i3c: Add HDR API support
-Message-ID: <aPpHTej/vKfiN68k@lizhi-Precision-Tower-5810>
-References: <20251014-i3c_ddr-v6-0-3afe49773107@nxp.com>
- <20251014-i3c_ddr-v6-1-3afe49773107@nxp.com>
- <aPnmCwwZVZ5egqkP@smile.fi.intel.com>
+ 2025 15:19:07 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 15:19:07 +0000
+Date: Thu, 23 Oct 2025 16:19:04 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        "Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: fs/proc/base.c:3279:4-39: opportunity for
+ str_yes_no(mm_flags_test ( MMF_VM_MERGE_ANY , mm )) (fwd)
+Message-ID: <2c8494de-2e5f-443e-94aa-14b166941199@lucifer.local>
+References: <a6e8f771-3934-61fa-ee3c-585dc6531da@inria.fr>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aPnmCwwZVZ5egqkP@smile.fi.intel.com>
-X-ClientProxiedBy: PH8P222CA0026.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:510:2d7::10) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+In-Reply-To: <a6e8f771-3934-61fa-ee3c-585dc6531da@inria.fr>
+X-ClientProxiedBy: LO0P123CA0011.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:354::15) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,244 +103,206 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AS8PR04MB7957:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf3f93a3-8b2b-42b1-e300-08de12477688
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|LV3PR10MB8132:EE_
+X-MS-Office365-Filtering-Correlation-Id: 677724e6-2c3d-4abe-007a-08de12478233
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|366016|19092799006|52116014|38350700014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XiOVZyY8bH1AivaIIZWbnrGnfdHTBJjD8jPuNJfgjSYHSEeKUvoAUUBueoIl?=
- =?us-ascii?Q?ORGWn08MchBZnawvsWFSMr9zAL1kE9C1jQsA+b/lhH0doHliZAgYsvFc3m2J?=
- =?us-ascii?Q?SsYWLQP1fuiwWXaXZmslKf8W/ClyjMixClVsWDPT+889pNnucSIskFluUCXY?=
- =?us-ascii?Q?WaZ08HVq8Ul1daQLvsqs9NZRuPm2iMQ3B4WwaSYedunG6roNn7iLIQ3yi+kT?=
- =?us-ascii?Q?9jXb+BvG1uY8qvIc8WWETKdSuUICZVw2Owy0bcx1Xhx40KaJwIzrYXFJmO1j?=
- =?us-ascii?Q?R0k+TKvPK8EONzMCg5G0uB1bPrSuSGQpc0KN20K9eWtvL0ydN1Hq0hfkEMbe?=
- =?us-ascii?Q?nePL0bx7Jj7JXGx92miCFwWyxgW7eDmMvklG2457PXNfzXm7yhbiVx8yHuc4?=
- =?us-ascii?Q?qat4DGEMJPOKRriYIGxhtgfu6T83H3zVBTRMVMM+Y3QSDSdskl9AJUypS91r?=
- =?us-ascii?Q?5oxRSTIA3wciudGUTTmqnD7Vw9BTBOq0Mvcwv5pX7h/hZLQ3XCJy9KaX8tpI?=
- =?us-ascii?Q?pVMBMOIIXjU9oOGqMQWcKr1qQRMog4i5x8wPAy574VZnMMVJH6WblX7NKTwA?=
- =?us-ascii?Q?tvmV6N/agceeE9tN/AI/5+UeXNrPxdPqapcoXm/vO7Yme53hU6LwTQ/z25eq?=
- =?us-ascii?Q?sT1GFdRUMNMhyxXCbRUTYCrVq0FMvxp1JE++sXENF25P28Z/SCAJM/nkPXyV?=
- =?us-ascii?Q?LP9fOsVISjpdBkCOQWoTZkvN35aI5gDhZm2Eanx9g7Kw3tDfO1oatkB2jjBy?=
- =?us-ascii?Q?Ib9RblzcMEs7qSMANwaek+xqksUc43m/LwmTp1nLpumymL+plK9XzdlQJTVG?=
- =?us-ascii?Q?YIaXBWNQhV5jvn42ROWL9mdrAHLaHO7ygLec4oaFLXIvk8V4Po8xoDjKkwk+?=
- =?us-ascii?Q?iXefaqDg/pDJRgi+hCMsYNS71KZkHRzPLbAAT9xhn+HSlqhd35nz2t6hCrnq?=
- =?us-ascii?Q?AkZfGWuFN3To4XOa72rkwXV8KbWdtYY1hML+cWljgshhYsK9CWaQNvgDe50C?=
- =?us-ascii?Q?CELpkwSlYEYO/pt8teFuo3SX4jjHRO8HJJSMtGnKKNk5qBx03DC6SIQJziXt?=
- =?us-ascii?Q?3LDy5FuXNYWJtsqChZmpdQSgkU/XbylaRDcZ9CyO1KDziD8PNp83JB/e5zEm?=
- =?us-ascii?Q?X2xISPlFkiQCRPNusOq4IP57KpkNSF2aPTarzpteR+tPaczAfbz5pCX9eqjp?=
- =?us-ascii?Q?01m9kwhNS/8iNE8IFIFaxXx4/PON4bjhmPiYqSgelKHnknITi/J88dPJ3Tvk?=
- =?us-ascii?Q?I1BFqaGL6KyuEIFUYEZFpYZFsGWK+/FdywqG/JvgDPRuPR1NFQYKvI+rSJuE?=
- =?us-ascii?Q?29lHtRyw4SNV/V9TSsEe8um3TvO4ITBCa3ZYFItAX5eVNC2WCrxpWMnt+mru?=
- =?us-ascii?Q?gpkBjBrt+ftyeIE8qhIc9r1eB/Y8rSqIegOjjiT8F8RKgnLuqTjFvNNBhCog?=
- =?us-ascii?Q?bqnRjSGjkwG97EnvSME0CpUVlOPfhLA272QZzYnKyxxFpAypxx6SMqL7pW5d?=
- =?us-ascii?Q?CWBX7pBdtW04cN457YH99hNigjs3Wt9HvbJz?=
+	=?us-ascii?Q?NjHH54hxJPKBvCcopbTeGb80Yx1TeouYKnda/PsfQNBkLclGTYXTtQSrQQaJ?=
+ =?us-ascii?Q?o7yRjLgOdFLfWtlIRLhKUi+q2qhDwNqq2O3VGe4v4urEJ1ak6CGSgqxFeljz?=
+ =?us-ascii?Q?l/GR8xUJWx61IKxaobmK1SDKhQpeTMZdTmNX7qE4SHW0zAxdUKY6BAksZtcP?=
+ =?us-ascii?Q?Q2CDqfHfROTcyUmWotCNK0eEQBhyaadgi4ZO4kwfXaPODmj9d7iS3zo9yUPW?=
+ =?us-ascii?Q?X8K7Lh3fzjLLx/DlHhUuA23hBhwcxof9b63tVsdRf7zLCsJ3Fu78UYMZw8Yi?=
+ =?us-ascii?Q?92bYxlyX6vmgyAM/rpD5JShsajNY+paCha3bSHBhbNiyPEwuT0dnrwFGIzJc?=
+ =?us-ascii?Q?iVfoUQg81WnbJbkGzHYDVLXJ5gumUmmo17HCuNO3Apj1iYIHJ99o0wExtsKq?=
+ =?us-ascii?Q?Q0nip15zW8aDSFJxdU7+Hfsis+yQe6DQRMagN1nSrcmRzvEQF9jm0hDhCyJt?=
+ =?us-ascii?Q?wG9H+BUBJMWpJwQtsek/pFThHE95VGx9xrX6EGTRDX798ADQzDOVYGEC5RI5?=
+ =?us-ascii?Q?UzxAthWzEGjHA3nK3XsqXspTt05VxOLHuN2gtgW3E0U6iCNC+ZbsyQtmvxPn?=
+ =?us-ascii?Q?cwb8rDMXdi+bwkahOHUCew3zcpDnyBw953FTlDXtZJFYeMxuoGSF7CUremLE?=
+ =?us-ascii?Q?0LygNZJLw45CbKxZbgw2Se1iz0iXYFEKVmMRD0qU0/B5d4CzHeWHOOcDXmjw?=
+ =?us-ascii?Q?lQG94HWEjB92jNYt+jCokj7CXK9+X7HmUlAelc/FEaUpMuiwcgsZ2d+4vBZt?=
+ =?us-ascii?Q?Nc0ViXBtbJSJZmrDgjZ6+XHv+pjbzk2sb14cBmyW1UuMmzv0Cl7cy0MXJLHR?=
+ =?us-ascii?Q?YrbWPDxMV5S77CaKLvYxeTmWaz7EAoE67QR1eDk+4gJvXjGVQj3mp2BSfjlw?=
+ =?us-ascii?Q?fCsKDSo7xdVi0CRDyfbBWlDkQSxrNvkS1dcQ6Gn7MI750fqInrxNCsGZjHiz?=
+ =?us-ascii?Q?d81P4NTUsT7R9T02yC5XqR6VwrSIYdGZTMtTCz3hPCf24kpH4S+4j6F4Zx1M?=
+ =?us-ascii?Q?Nw2M2VlYmR4KTYNNtgaGXRPNBNcHxppmjuk5CM3PnSVV74SceDiB8qo1y18V?=
+ =?us-ascii?Q?oUyUlBWI/0EhtyQOIYXMVdEyIYsrnW2xPND022E5+A27KitXP48Ui4A0VggT?=
+ =?us-ascii?Q?lYrl/4l1R8Zf+mwT0Er2UJhQ21alc3ra9LA/Qx1DmrPmRfqWncFmwnfzssbe?=
+ =?us-ascii?Q?oUN/9UhkDsAwFgLZtnSmb+OEOy+flbccR3yEaMaMmct0vxipnGs1mi7ekcqk?=
+ =?us-ascii?Q?RQQ0/QMqvTpWU1B8J1B5d1JqugcRCdEMHUSSKjBsLgnzYon1NzH1sQ/5E6Tr?=
+ =?us-ascii?Q?tOatm1F++kTrE9SDAVn38xK10ZbKYIr9cfgS1JRmzX+PmqQcASaorSTdqxpb?=
+ =?us-ascii?Q?iV8Ns6XwfHr8R+/qnX4sAstEWJLxyzr9ty+IWNBwluNicwT8IDVW6/Y9sE0x?=
+ =?us-ascii?Q?fYIM7EJlYhoomm6wju6DcAoMaPsdM+54/S51fBbDptTk3H0RcTExZA=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(19092799006)(52116014)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4+CAfuHPojpejzcF/jq2TWCKElhmvZVPzZJ7PIF2tHdna3/bklFkWiB9enWl?=
- =?us-ascii?Q?sGrb2WwZPQ2/e4kHJoDNm7PYz2XftHGVmpWmH41kLupZbCq6zBzCz3OXUhEF?=
- =?us-ascii?Q?BPdrA3qHr2GULfaEZe074rxm9kwFrSxcszZepUr8FOdcxP12ectJClEzARGx?=
- =?us-ascii?Q?h/V3Ezg99+/XgHajqmqOeq19xugTeXnPLbORuamd4c3d7i8+4HLimWY7pC9r?=
- =?us-ascii?Q?Nd6aZUtT3JCdTyeVIOAc7uJCzQ0t0LCjJUyH2p1TCIVjXixlCLbVlIRyrgA8?=
- =?us-ascii?Q?VSBsOY3yXiRhbczl9tE/J4AeuevcWZOmFVVum/hN9oBKicqL5Ibxvtzaer7w?=
- =?us-ascii?Q?BozOBqm7IuCeGzlU9hHqg51MLXUBl53cTkyfaWn3mD5wDQxOOsfCWYn4FK6h?=
- =?us-ascii?Q?PDYtlinT5fnjiV0ZyIYA+8mHlgPcOVcAuQLtd0mc7/BTwq9bvABzdXOLihmR?=
- =?us-ascii?Q?TQ5Bn/chJukOBgP3FR70vWy71L9gGrxySU59sH5/xTZbbKK0yGVYKrWdCFXQ?=
- =?us-ascii?Q?LEwimRtMWPV7bU4RS9XUyvAZlONgadTBYElb7UPIOtXiq9QQJn40O4Ih1oQn?=
- =?us-ascii?Q?DifTJUJOVGGc8NM+zi+b4ZYhiYgLxqZlwxKc866Oeg+lwd2cgqgYv4zzUPf+?=
- =?us-ascii?Q?BWETbDyCsy0r8mUjbmURHnT396Vj7E6zTE+f5irfZrhOTSnIffEESSmGmKgv?=
- =?us-ascii?Q?KWlNygk6tUculqswe5TYn+KlVcowXrKqDIi2rXJ+6X24Nc/d3Uj4TGnzo3Bc?=
- =?us-ascii?Q?A9rxAYPDpyYgFu3jmqZcCm/o5AXuUpXClUtHoAZldqU0PEa9DuyQIXqiMHSG?=
- =?us-ascii?Q?/VmUZ4td/gQspj5aFLcbp2jutFodomcK2ORF4F+88bzHItodkmYjmeXEled4?=
- =?us-ascii?Q?PKrJgOrrdjtciX/UX96pT4pArfgkxOcXlEQY2sO8pM9Lh58kuXpzZez82SZR?=
- =?us-ascii?Q?/zLc9exhYHgh43i6m1HdDmTTMBzpvftTWCOnzIXAKTe1qfgRNcNAsZKvsDJh?=
- =?us-ascii?Q?YSrtoIYdPJ4R5KnCTlE2oknlWp5f6PYOsKPJScudTkSyPIJYrRF3p0xM4neb?=
- =?us-ascii?Q?A/rvvdFStPTJJv21k2LcLVt0Hb7eTE/thz5iziiypo9CYO+C2lRmXlGbZmZe?=
- =?us-ascii?Q?10pl+TKNUI78sNff5JSkIQLPO7YPqvPzdTzlJN7SCMckR/J9ToEkt9jciI6m?=
- =?us-ascii?Q?2ToAxv2UwV2dQKM9R/kNCrRre0QDho9qOkTrzNVJKyqeQFiIINi5dU74oHn9?=
- =?us-ascii?Q?F/UFPznK8Io81NH6jaqjou9clZG1TZiJVSFsi86kZ2TVCUNcDSCTxfRU66Iw?=
- =?us-ascii?Q?psc8gM5DQDB4ntvQirG4dWL2Pc38kPVOqAEbmtMN3i7HCwnDXDUb9Y3emK94?=
- =?us-ascii?Q?4w4JM8gWQAURgyGfCyt8nxrX1n+fowpS9vOaXWL/5qWC46kS9zy+rMvfQIiL?=
- =?us-ascii?Q?b2DVhBg/zvNsQCW++niXF1LJy+ys2w0G56UA+LO/VLoASSd6RWFKFrnv1Tgz?=
- =?us-ascii?Q?p2S2cM4qWFn+XIeksS2t41JgL4YTkWb0pnTobQ7OhlGw7nsLxmd9uXMtNWDz?=
- =?us-ascii?Q?jiT5bPGhNdf7T7suJL8=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf3f93a3-8b2b-42b1-e300-08de12477688
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+	=?us-ascii?Q?XakAXwfFuuLd9vN+BBRnMluvhsTQ0VNtdUyiXt5tr2ikIaTnyrB3oDCtyBQj?=
+ =?us-ascii?Q?WVLZgzf6p3Jy/TMe4dssArdCrDE5xXHbapz1OT9IRnKUclPbjId182fdmV+4?=
+ =?us-ascii?Q?QyinpwjaNszZwfMRNs+qzfhCuUAPLaY6bCnxrNG16cmkoxSe0sAFtGV/R5aQ?=
+ =?us-ascii?Q?hrzeaocwJkiE9BjIKDIyseC2NPn3w7oW4p3Zvx/nY7cZSM56OIV75ZhHhRNs?=
+ =?us-ascii?Q?u0n0GUPFirAZ9caMyoX/cTdxhKFxz34xF3uwWKHuKVra9ijA3lKQBgZUy6Kp?=
+ =?us-ascii?Q?K7j7r6/liowHKiAvXge72lb8bHa5PM04ATWG4IF1kFU8J1IOk4pkrBepibKy?=
+ =?us-ascii?Q?Vpxg6ACms0T0NcRIYPmE9aLrgpR4S6m4o1Z8zm/1d60emwGukalH69W2qJ5t?=
+ =?us-ascii?Q?gUtYD+hUR5RKpdPblNeu6LJXlJuZHjT0ew8UAry8Zc8HXyBNrV1H3FPG4679?=
+ =?us-ascii?Q?1mmIw7XQfLei7UTn3tSJifbGYg04Ri7yZfrO9TwDZItzVQGIca0tkkQix5Jo?=
+ =?us-ascii?Q?V6wyNVs680ynAVzAUOa5kHtm/SgzA6GQMR64q2jLiy9n08oCL16c2yPuZeGh?=
+ =?us-ascii?Q?jSBtrcUdqZwh+5Muqtj4/YphS4WZGdAuxQ4UVzDRCmuMgfRvRta98hbw0xj0?=
+ =?us-ascii?Q?4vUWGAThWlZYtdmopz8oZ0ZEia3nDJkjeZnfrCbLEhFAPBCQPfMe209OYYCY?=
+ =?us-ascii?Q?xDW7dy1QPVVR+3Q+JvSubykwFi8tvUN8gA0WAKY3Hag+z/OEkA7v7xwJ5gJh?=
+ =?us-ascii?Q?JQxXiAda8C7i5jnkSOHw4VoNmsJX3WLMUqHqO2hk1pp+ieo6UB618f5jk79c?=
+ =?us-ascii?Q?0Of3iBRhr7cGxvHu1Yoj3wg+Fif68PinfmpsazJsxdhMYJHCOStVkvkqjDR0?=
+ =?us-ascii?Q?dqq/5Dlv7ERL/wO/+TCjFMzOJ6QcQwVEqyXSxAYhanrfq0TWItWWH2BV9Bz/?=
+ =?us-ascii?Q?mk7g27ccGkGrez9TZ3cqMdI4oILysrNCJNkExnMXBwuVVHfQ2oFO/Temdoiw?=
+ =?us-ascii?Q?ggKucOWJJqdxxTQUiE10T7G+7JEGulnvzhcCDMNNe/zCJ5grFqjzF9SSd5w9?=
+ =?us-ascii?Q?fEl1k9tF7eHM8Y0pupkz4fBZG94tNXzj6iOTi8KC1yscU89Hql55q+41F+24?=
+ =?us-ascii?Q?44z5fHrEa7zYdIuFJ/aK+gZp+4BQzmTO4IkBaYc5vkKJTut1DzzB6nH67TOa?=
+ =?us-ascii?Q?0JtHutE01dTzJHFZGiFPqg1mEqRcIsFz6/6Nm4BL+MHSQ5pTJ2V3Bt6yBhyT?=
+ =?us-ascii?Q?Kfj65/Yv27BNr7bRze71toL4jwI8J3qOsjh166cH0DnnB6dQ/u0xkivM4bXt?=
+ =?us-ascii?Q?uR7NdlTeNC97Wyn3ZrFxcOXZbUhWYBoyOQ7FxMBsu62huP/l/Mz2CXmimysX?=
+ =?us-ascii?Q?fsz9I6ysEvlmi8nbj2nSOBz+D3ZZfAV8Uc+G4x9JPyw33yor1+YSgmmkS3tv?=
+ =?us-ascii?Q?xezZ8R7o/JglKh7sLm/+ydd2gkjQuWDFH2NacIw7kdM1QiZvt5NWMR69kXnT?=
+ =?us-ascii?Q?cEfnryRxbuHvoZBfTtCfcB3i2BpavAUIC7OAzF5ECq9odQATIDJ6WAJT3uUM?=
+ =?us-ascii?Q?omnvSUmQfot4s3+jYL+v/RlFRadRhcdSva44c+LZP3vSA0+UwTKMB4x9NNU2?=
+ =?us-ascii?Q?7Q=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	NkTUFxobU2lDm4n9aCUw7Amq4qaGszLNBTCbWqu+aY5YiInpbPM90hAcfP7hUBzz0CK3i4TbVdpLp6AOve9Cbkg6NHggIQqRaLl7xLNmeYrvZAHS/bgNc8fC8ViLwAFzRPeTdoJFx/0MZKckwf2rLB1zRYwaR9v4Y6cO9PPLtq0GC9NooXjwsb9XeOblxAIE79bbErU1uifJCS37QTOnvKZA5ElbagL92zbRdYojKP1S+NtbY1UPiJFyTSXCYpU6WOnrUfaNj3ZOPpEOjgE3nWCvu/4RqZ5DVBzO3bRUWbpC/ny7trtFrR7QkukvzilBcZ5UnVbDijxiC8ibsmEvMkbixoq3vMw4geAwfw35NPzd6qFDIz7+8ZiU7lMqM7pmgfiNYm14a3FBcnoStUF+FXyxEzxvqplu0fxOzXUusHQ0QTZ5Xq5Q/mxOKtZLBQuM6UQCDc8DdIcPpL7wFjB47QZCWVUfr0L3NgbGQAXt76YQN4yriTq1O+MtZW2TE5Kq3AqFjGRz1kEukxVVmIcIrdpYnbd5GFCY/Uyg9sBbjD2WNNTkNsH9PKCTz7SVIJbeV4NgGOKh+lR3eIpfP4I9YY8ypv3j04nTKVFsFCX2gU0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 677724e6-2c3d-4abe-007a-08de12478233
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 15:18:47.5769
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 15:19:07.1263
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9/CvyAMDs2JNNnJ1lW8KJqihwKaBEWNoHZVNcZC3yb6Dcq+uwupO0a64ZbTs7uB2CtwLXVUip1AHQipmHHS1dQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7957
+X-MS-Exchange-CrossTenant-UserPrincipalName: DnyfkOrdNdc5Fa92xwKex69qKnLKQ8QLfuhq/+G4NITufzj1QJmbX2iDxq7CWfZ2ZAs+ojvSrwyZracVLstCMirR61t23JrbcTUS6ddYJVk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB8132
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-23_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ suspectscore=0 spamscore=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510020000 definitions=main-2510230140
+X-Proofpoint-GUID: YKjfdaG-gQllpMfs7VzgujO_D-SXlyNW
+X-Authority-Analysis: v=2.4 cv=bLgb4f+Z c=1 sm=1 tr=0 ts=68fa476e b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=i3X5FwGiAAAA:8 a=QyXUC8HyAAAA:8 a=NEAV23lmAAAA:8
+ a=yPCof4ZbAAAA:8 a=Z4Rwk6OoAAAA:8 a=37rDS-QxAAAA:8 a=u8nmidXnuLdj62qIATEA:9
+ a=CjuIK1q_8ugA:10 a=mmqRlSCDY2ywfjPLJ4af:22 a=HkZW87K1Qel5hWWM3VKY:22
+ a=k1Nq6YrhK2t884LQW06G:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDA3MSBTYWx0ZWRfXxpcNyX0W+mxC
+ hAsIHYWLhlqtcfG4UJJNlYR81HqjXXUeRU8Xaj+QX5YktqGZ5nZ2sPZW9OYPO5peRY9MQAkHahd
+ vpLP+QhEGZda0Uvxdo+rJc7+r58RCpFJjvcvsd3FK10Eug+fczdlFZ7IyiDQtOuqFgPjILOZcnk
+ 2mZSyOcKt92vfVNQbZZEYeEoEJeV3qa1yXAsf3iKhhBowJazXAOvEsFwTyHg/dTK3/GJ9SMcW3S
+ 2Dlbfc3RjC1Hv2D9h+m6hTV8uP5zxFGd1lVc6pHTIpN4RvPV/HDOtu6feYrCDSmlE4O7tHFPUSE
+ p+Ujbc8jBRDKnjAYEcNNgidQNuvykEKqSnZ50D6N2iXMDdvGcT1rvWxXOfSzo+yicBg4aFS2k2E
+ DFL+MYDlYFzoKkZsZCz9LxLSFPOpAQ==
+X-Proofpoint-ORIG-GUID: YKjfdaG-gQllpMfs7VzgujO_D-SXlyNW
 
-On Thu, Oct 23, 2025 at 11:23:39AM +0300, Andy Shevchenko wrote:
-> On Tue, Oct 14, 2025 at 12:40:00PM -0400, Frank Li wrote:
-> > Rename struct i3c_priv_xfer to struct i3c_xfer, since private xfer in the
-> > I3C spec refers only to SDR transfers. Ref: i3c spec ver1.2, section 3,
-> > Technical Overview.
-> >
-> > i3c_xfer will be used for both SDR and HDR.
-> >
-> > Rename enum i3c_hdr_mode to i3c_xfer_mode. Previous definition need match
-> > CCC GET_CAP1 bit position. Use 31 as SDR transfer mode.
-> >
-> > Add i3c_device_do_xfers() with an xfer mode argument, while keeping
-> > i3c_device_do_priv_xfers() as a wrapper that calls i3c_device_do_xfers()
-> > with I3C_SDR for backward compatibility.
-> >
-> > Introduce a 'cmd' field in struct i3c_xfer as an anonymous union with
-> > 'rnw', since HDR mode uses read/write commands instead of the SDR address
-> > bit.
-> >
-> > Add .i3c_xfers() callback for master controllers. If not implemented, fall
-> > back to SDR with .priv_xfers(). The .priv_xfers() API can be removed once
-> > all controllers switch to .i3c_xfers().
-> >
-> > Add 'mode_mask' bitmask to advertise controller capability.
+On Thu, Oct 23, 2025 at 04:58:56PM +0800, Julia Lawall wrote:
 >
-> ...
 >
-> >  static int i3c_master_check_ops(const struct i3c_master_controller_ops *ops)
-> >  {
-> > -	if (!ops || !ops->bus_init || !ops->priv_xfers ||
-> > +	if (!ops || !ops->bus_init ||
-> >  	    !ops->send_ccc_cmd || !ops->do_daa || !ops->i2c_xfers)
-> >  		return -EINVAL;
-> >
-> > +	if (!ops->priv_xfers && !ops->i3c_xfers)
-> > +		return -EINVAL;
+> ---------- Forwarded message ----------
+> Date: Thu, 23 Oct 2025 15:29:09 +0800
+> From: kernel test robot <lkp@intel.com>
+> To: oe-kbuild@lists.linux.dev
+> Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
+> Subject: fs/proc/base.c:3279:4-39: opportunity for str_yes_no(mm_flags_test (
+>     MMF_VM_MERGE_ANY , mm ))
 >
-> I would find the logically coupled proto-based xfers:
+> BCC: lkp@intel.com
+> CC: oe-kbuild-all@lists.linux.dev
+> CC: linux-kernel@vger.kernel.org
+> TO: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> CC: Andrew Morton <akpm@linux-foundation.org>
+> CC: Linux Memory Management List <linux-mm@kvack.org>
+> CC: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> CC: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 >
-> 	if (!ops->i2c_xfers && !ops->i3c_xfers)
-> 		return -EINVAL;
+> Hi Lorenzo,
+>
+> FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   43e9ad0c55a369ecc84a4788d06a8a6bfa634f1c
+> commit: d14d3f535e13ff0661b9a74133a8d6b9f9950712 mm: convert remaining users to mm_flags_*() accessors
+> date:   6 weeks ago
+> :::::: branch date: 6 hours ago
+> :::::: commit date: 6 weeks ago
+> config: m68k-randconfig-r063-20251023 (https://download.01.org/0day-ci/archive/20251023/202510231541.uVpbrSce-lkp@intel.com/config)
+> compiler: m68k-linux-gcc (GCC) 8.5.0
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Julia Lawall <julia.lawall@inria.fr>
+> | Closes: https://lore.kernel.org/r/202510231541.uVpbrSce-lkp@intel.com/
+>
+> cocci warnings: (new ones prefixed by >>)
+>    fs/proc/base.c:3286:4-29: opportunity for str_yes_no(ksm_process_mergeable ( mm ))
+> >> fs/proc/base.c:3279:4-39: opportunity for str_yes_no(mm_flags_test ( MMF_VM_MERGE_ANY , mm ))
 
-Not exactly, priv_xfers is old API, which supported now. I plan remove it
-after remove all from i3c master controller driver after this patch merged.
+Thanks, I just happened to update this code to use the new mm flag
+interface, so this was existing code :)
 
-i2c_xfers: must be no NULL
-
-priv_xfers and i3c_xfers, one of both should be no NULL.
-
-i2c_xfer is NULL, should be return -EINVAL, but you logic may success if
-i3c_xfers is not NULL.
-
->
->
-> >  	if (ops->request_ibi &&
-> >  	    (!ops->enable_ibi || !ops->disable_ibi || !ops->free_ibi ||
-> >  	     !ops->recycle_ibi_slot))
->
-> >  }
->
-> ...
->
-> > -enum i3c_hdr_mode {
-> > +enum i3c_xfer_mode {
-> > +	/* The below 3 value (I3C_HDR*) must match GETCAP1 Byte bit position */
-> >  	I3C_HDR_DDR,
-> >  	I3C_HDR_TSP,
-> >  	I3C_HDR_TSL,
-> > +	/* Use for default SDR transfer mode */
-> > +	I3C_SDR = 0x31,
->
-> Why has this a specific value, while the rest have not? If it's HW mandated,
-> the all of them has to be assigned properly to avoid potential bugs.
->
-> >  };
->
-> ...
->
-> >  /**
-> > - * struct i3c_priv_xfer - I3C SDR private transfer
-> > + * struct i3c_xfer - I3C data transfer
-> >   * @rnw: encodes the transfer direction. true for a read, false for a write
-> > + * @cmd: Read/Write command in HDR mode, read: 0x80 - 0xff, write: 0x00 - 0x7f
-> >   * @len: transfer length in bytes of the transfer
-> >   * @actual_len: actual length in bytes are transferred by the controller
-> >   * @data: input/output buffer
->
-> >   * @data.out: output buffer. Must point to a DMA-able buffer
-> >   * @err: I3C error code
-> >   */
-> > -struct i3c_priv_xfer {
-> > -	u8 rnw;
-> > +struct i3c_xfer {
-> > +	union {
-> > +		u8 rnw;
-> > +		u8 cmd;
-> > +	};
->
-> What field is used to distinguish the union member in current use?
-> In another word, union must be accompanied with a selector.
-
-This struct use only for i3c_device_do_xfers(), which pass i3c_xfer_mode
-informaiton. argument 'mode' will distrigiush rnw/cmd.
-
-i3c_xfer[] array don't allow switch transfer mode during whole i3c
-transcation. So doesn't put mode in here.
+Cheers, Lorenzo
 
 >
-> >  	u16 len;
-> >  	u16 actual_len;
-> >  	union {
+> vim +3279 fs/proc/base.c
 >
-> >  	enum i3c_error_code err;
-> >  };
->
-> ...
->
-> > +/* keep back compatible */
-> > +#define i3c_priv_xfer i3c_xfer
->
-> How many of the current users do this? Can't we just rename treewide?
-
-git grep -r priv_xfer drivers/
-drivers/base/regmap/regmap-i3c.c:       struct i3c_priv_xfer xfers[] = {
-drivers/base/regmap/regmap-i3c.c:       return i3c_device_do_priv_xfers(i3c, xfers, 1);
-drivers/base/regmap/regmap-i3c.c:       struct i3c_priv_xfer xfers[2];
-drivers/base/regmap/regmap-i3c.c:       return i3c_device_do_priv_xfers(i3c, xfers, 2);
-drivers/hwmon/lm75.c:   struct i3c_priv_xfer xfers[] = {
-drivers/hwmon/lm75.c:   ret = i3c_device_do_priv_xfers(i3cdev, xfers, 2);
-drivers/hwmon/lm75.c:   struct i3c_priv_xfer xfers[] = {
-drivers/hwmon/lm75.c:   return i3c_device_do_priv_xfers(i3cdev, xfers, 1);
-drivers/i3c/device.c:int i3c_device_do_xfers(struct i3c_device *dev, struct i3c_priv_xfer *xfers,
-drivers/i3c/master.c:   if (!ops->priv_xfers && !ops->i3c_xfers)
-drivers/i3c/master.c:   if (!master->ops->priv_xfers)
-drivers/i3c/master.c:   return master->ops->priv_xfers(dev, xfers, nxfers);
-drivers/i3c/master/dw-i3c-master.c:static int dw_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
-drivers/i3c/master/dw-i3c-master.c:                                 struct i3c_priv_xfer *i3c_xfers,
-drivers/i3c/master/dw-i3c-master.c:     .priv_xfers = dw_i3c_master_priv_xfers,
-drivers/i3c/master/i3c-master-cdns.c:static int cdns_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
-drivers/i3c/master/i3c-master-cdns.c:                                 struct i3c_priv_xfer *xfers,
-drivers/i3c/master/i3c-master-cdns.c:   .priv_xfers = cdns_i3c_master_priv_xfers,
-drivers/i3c/master/mipi-i3c-hci/core.c:static int i3c_hci_priv_xfers(struct i3c_dev_desc *dev,
-drivers/i3c/master/mipi-i3c-hci/core.c:                       struct i3c_priv_xfer *i3c_xfers,
-drivers/i3c/master/mipi-i3c-hci/core.c: .priv_xfers             = i3c_hci_priv_xfers,
-drivers/i3c/master/renesas-i3c.c:static int renesas_i3c_priv_xfers(struct i3c_dev_desc *dev, struct i3c_priv_xfer *i3c_xfers,
-drivers/i3c/master/renesas-i3c.c:       .priv_xfers = renesas_i3c_priv_xfers,
-drivers/i3c/master/svc-i3c-master.c:    struct i3c_priv_xfer *xfer;
-drivers/i3c/master/svc-i3c-master.c:     * at svc_i3c_master_priv_xfers().
-drivers/i3c/master/svc-i3c-master.c:static int svc_i3c_master_i3c_xfers(struct i3c_dev_desc *dev, struct i3c_priv_xfer *xfers,
-drivers/net/mctp/mctp-i3c.c:    struct i3c_priv_xfer xfer = { .rnw = 1, .len = mi->mrl };
-drivers/net/mctp/mctp-i3c.c:    rc = i3c_device_do_priv_xfers(mi->i3c, &xfer, 1);
-drivers/net/mctp/mctp-i3c.c:    struct i3c_priv_xfer xfer = { .rnw = false };
-drivers/net/mctp/mctp-i3c.c:    rc = i3c_device_do_priv_xfers(mi->i3c, &xfer, 1);
-
-After this patch merged, I can clean up it at difference subsytem. After
-all cleanup done, we can safely remove this define.
-
-Frank
+> 7c23b3300116907 Josh Poimboeuf  2017-02-13  3251
+> 7609385337a4feb xu xin          2022-04-28  3252  #ifdef CONFIG_KSM
+> 7609385337a4feb xu xin          2022-04-28  3253  static int proc_pid_ksm_merging_pages(struct seq_file *m, struct pid_namespace *ns,
+> 7609385337a4feb xu xin          2022-04-28  3254  				struct pid *pid, struct task_struct *task)
+> 7609385337a4feb xu xin          2022-04-28  3255  {
+> 7609385337a4feb xu xin          2022-04-28  3256  	struct mm_struct *mm;
+> 7609385337a4feb xu xin          2022-04-28  3257
+> 7609385337a4feb xu xin          2022-04-28  3258  	mm = get_task_mm(task);
+> 7609385337a4feb xu xin          2022-04-28  3259  	if (mm) {
+> 7609385337a4feb xu xin          2022-04-28  3260  		seq_printf(m, "%lu\n", mm->ksm_merging_pages);
+> 7609385337a4feb xu xin          2022-04-28  3261  		mmput(mm);
+> 7609385337a4feb xu xin          2022-04-28  3262  	}
+> 7609385337a4feb xu xin          2022-04-28  3263
+> 7609385337a4feb xu xin          2022-04-28  3264  	return 0;
+> 7609385337a4feb xu xin          2022-04-28  3265  }
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3266  static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3267  				struct pid *pid, struct task_struct *task)
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3268  {
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3269  	struct mm_struct *mm;
+> 3ab76c767bc783c xu xin          2025-01-10  3270  	int ret = 0;
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3271
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3272  	mm = get_task_mm(task);
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3273  	if (mm) {
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3274  		seq_printf(m, "ksm_rmap_items %lu\n", mm->ksm_rmap_items);
+> c2dc78b86e0821e Chengming Zhou  2024-05-28  3275  		seq_printf(m, "ksm_zero_pages %ld\n", mm_ksm_zero_pages(mm));
+> d21077fbc2fc987 Stefan Roesch   2023-04-17  3276  		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
+> d21077fbc2fc987 Stefan Roesch   2023-04-17  3277  		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
+> 3ab76c767bc783c xu xin          2025-01-10  3278  		seq_printf(m, "ksm_merge_any: %s\n",
+> d14d3f535e13ff0 Lorenzo Stoakes 2025-08-12 @3279  				mm_flags_test(MMF_VM_MERGE_ANY, mm) ? "yes" : "no");
+> 3ab76c767bc783c xu xin          2025-01-10  3280  		ret = mmap_read_lock_killable(mm);
+> 3ab76c767bc783c xu xin          2025-01-10  3281  		if (ret) {
+> 3ab76c767bc783c xu xin          2025-01-10  3282  			mmput(mm);
+> 3ab76c767bc783c xu xin          2025-01-10  3283  			return ret;
+> 3ab76c767bc783c xu xin          2025-01-10  3284  		}
+> 3ab76c767bc783c xu xin          2025-01-10  3285  		seq_printf(m, "ksm_mergeable: %s\n",
+> 3ab76c767bc783c xu xin          2025-01-10  3286  				ksm_process_mergeable(mm) ? "yes" : "no");
+> 3ab76c767bc783c xu xin          2025-01-10  3287  		mmap_read_unlock(mm);
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3288  		mmput(mm);
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3289  	}
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3290
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3291  	return 0;
+> cb4df4cae4f2bd8 xu xin          2022-08-30  3292  }
+> 7609385337a4feb xu xin          2022-04-28  3293  #endif /* CONFIG_KSM */
+> 7609385337a4feb xu xin          2022-04-28  3294
 >
 > --
-> With Best Regards,
-> Andy Shevchenko
->
->
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
