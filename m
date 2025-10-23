@@ -1,47 +1,79 @@
-Return-Path: <linux-kernel+bounces-867292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BA0C0223C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:33:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2023CC0227B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 17:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA64B50015A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:33:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9C87506A1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AA033C53F;
-	Thu, 23 Oct 2025 15:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7234B33CE9B;
+	Thu, 23 Oct 2025 15:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWdbPyqa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/PN+dW7"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD6A3148DA;
-	Thu, 23 Oct 2025 15:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167002EB85B
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 15:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761233576; cv=none; b=uduOZJg1rlb91dQv+K4xwdgw2ziqncPk69kYjtBSkfTp02ZjmYCruWASoiEpGkq87cu/2e/x0LdmgN8UNBj0kmTaRCmuuwbhYCI4SP1WZeqRpNPMZt4mlywWcohexUt/xB2rh4iOztkx8fgBpc3BTdnijKD4CdUFMXLed9mpgeg=
+	t=1761233664; cv=none; b=NdxkF+wzU/yRcWDdpvEbNjvpZHZPaqJ8U9OaqW3bGW7C3sc3VJHnTMdu6K9MJ4H3+5kZD9385X6L7vWXXFLvjSxq050Z5ETWdyCQun7I66uOFEfnJQ9yL8KI13xCR4hgZXnEFLTtgvDDP7Yz03QKV6mM8fLdyhA8ZQshND4gHzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761233576; c=relaxed/simple;
-	bh=XWgIjgaPWWRK/K8ZkgpeSuSzQfaMGgBfkWqh/08psNA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=buIWr5s4BvKD6nFP8murTR7FKQIDffuRNIP994XvcsBokfyp3Ppek7xLo4ZDbcvWqxuwRML22UKG8Awtq4nEdFqqEkTkROs3GGQykKJWhltEcsnZjC3ggANiVTaDLVd6aacJO9nI+A8RKC7CZEQE/hmQG7OxXVF1HV3p/tgQtIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWdbPyqa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69860C4CEE7;
-	Thu, 23 Oct 2025 15:32:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761233576;
-	bh=XWgIjgaPWWRK/K8ZkgpeSuSzQfaMGgBfkWqh/08psNA=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=UWdbPyqa/eWAUCsL6TzPRPggAxQQWmRNHjOxYHtiy6evueRxeUvtKRb9dGW4c90P6
-	 pIyKAY0bmo/d3iOZDbOnOMMsnZemCOa5XWa+mclxGf0qrZzpec7LhB07pIAeHVCeRl
-	 022nX9pTHkr9sNamsXdGzG05MgKbb+xc34827N7qToLfBDp4DclZxIbvhZSX+pTwAk
-	 kUzBEZPF6Z+1v4KTXLxMnJFw0TDObLMn2dgBHvV62yI4ENPa7CrqpFPGE0WkctCV/o
-	 iY5UEyA7FT07n7EDezsQjWrBNDWMA/O3XMw3XlhYaCZFUxVqMRNLGaqYFBQVKLSCkS
-	 gLLCcyLy6yghQ==
-Message-ID: <07ebf7d9-0071-483c-a68e-645853e83831@kernel.org>
-Date: Thu, 23 Oct 2025 17:32:51 +0200
+	s=arc-20240116; t=1761233664; c=relaxed/simple;
+	bh=+FWrq9t+LpEEPkX1kLDEfprCCwBEjif0N3WmRzg2vRE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=RPcYJQxFNAgxIegZsZ/0SkywOB/thzpJq1Fa0sDadkj4LgW8R65kItArx1dgCE6b3bWzAhQryECn3XuFIZ16EqGEremIT6XZOMLJstar30GxfQlDu95iT3mscDHNBqfvYf8kQpV9gMCMnZHhOvsyjkwWAhYhm8eyIZX5arBfeDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C/PN+dW7; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-592f7733dd6so913629e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 08:34:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761233661; x=1761838461; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pcsguXi4wRVn67EPCkjWEWJxtm/162QjxoyyBYOm4oI=;
+        b=C/PN+dW7YNYePSpyKzMnPWkLCMia5gtjmOqOUVZurnfBzc6CF6Ja/zeDnNC3aKmrVi
+         2EUn6+1VKT9PK4gYyRwDPoQzt5xepxcmlR3iMO8q8l39f8f8eAOOIbiCHyJ/dkIMIKOW
+         vJ3czPljDa9TC9tbfwqDX/LOA/GL7eq7XK2bdAVb5yLNpf9uxQU0WahWr7G51PGC3H4U
+         EXVlYDggYd6cyJU0JDa7wzLCKdTA7lfG3AFfL5KUML9hExgX0t+4HWSExpbwAauY0mZI
+         yQWjA8QqZsrYNDI0ScjHJYgWtghFULhCgTp5yEyU1+FpwcHhJcGNrUaSn9T3ZiWtl5g+
+         T7BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761233661; x=1761838461;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pcsguXi4wRVn67EPCkjWEWJxtm/162QjxoyyBYOm4oI=;
+        b=fjsb3RSoNp2ODus+6V5mDlxnrz5KRmE1X/AeK15IguJ/LopCQbrMcQ209lNv8zsEE+
+         Gk1GPrLZiAQBI+hLa9V5E3i600nERtNay05w4wICSXPVtEnMOpp/LGK27UmSDq0uPvuX
+         m35jWdQq6d9WYZhYnTCNhqXUagSrZYZSs3CnzjL9LN0hSH9TiyuoSD5JqC/aEzI7n9lx
+         xam/DeByC+Y9ykeZZt+taCVxg3yOjVMxpPcXWlO02uCFxDgOgQZPj89XBTWC940nvJhj
+         Ko0tchXhVdk2jshMUQKqgY4Sn0QK4VI6GPit/9ZS735XcotEatBYnrauaYIt7nEjrfAa
+         xfow==
+X-Forwarded-Encrypted: i=1; AJvYcCVxBkmnfz7hwgteLXr88u1Wtp2KMYkXfuVukzVbEUmYW6A+3cAZdE9+NcGJ9Jm3H+nHkmrpp7YpYg1bBEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcl1xlB6pH/GvqddZj6tDPalhs06VGVHPFWeyh277d9/VSVEDz
+	rACxqXVXuFOtCjZIob6RaWxKRKWXeluGA9BvIakGIdqU3ivbVyokyhYteXIYPBqd
+X-Gm-Gg: ASbGncuVYx5Vf4R0H+K1uNqHrszuM0cmYO67gV4xO3D9rfxw8bP6Smw2LKbBFAX6rDR
+	QT0C8fBa9cnoCIc3IfUuXKPLS8+t9JOIkFAEdUEqgLTrGWIxcz2bWBKqh99NNfCopWUWkECEChr
+	x3bFqoq3PZmKA0aRustX5Cj+jk8EFRkLxzv0qaUxaqQBvk325TpTF+M6mYpdzhXUiTY7GRXbpHL
+	C4VNjTXLXkZut74X3ZB9b79KHR82zsL8h6uSvEew9Ffrvj0X16VC5dnRg10RmP4eNN3KR2RnPN9
+	RPw2x+cbCt0TtduxaLxbDr8cMKxR7DXMFVfhZYH63lIVZDxx9aXoNcBK0UX64V9sgEgMK5CQ+u2
+	Mh50uje0vsF7IE3xxtxuIn8FmPw/1sFZUOg9V2CIGt65LhmG6ag59Vw42qUt5FqEApT7T0RAY3+
+	tVLXR5e8zTzBy/YZhNrRbutQ==
+X-Google-Smtp-Source: AGHT+IFg2iGaLSTCORRq6yFX+F0ZfolbELu+uhZ3vqVTBoLeRZ/i1Z92m8xQW1IjBnuZFmYlMihMfQ==
+X-Received: by 2002:a05:6512:b1e:b0:58a:92cc:5819 with SMTP id 2adb3069b0e04-591d853543dmr8845614e87.36.1761233660774;
+        Thu, 23 Oct 2025 08:34:20 -0700 (PDT)
+Received: from [10.128.170.160] ([77.234.210.12])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4d20743sm821516e87.86.2025.10.23.08.34.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 08:34:19 -0700 (PDT)
+Message-ID: <ac949c74-90c2-4b9a-b7fd-1ffc5c3175c7@gmail.com>
+Date: Thu, 23 Oct 2025 18:34:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,107 +81,213 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v5 5/7] revocable: Add fops replacement
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Tzung-Bi Shih <tzungbi@kernel.org>, Benson Leung <bleung@chromium.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
- linux-kselftest@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Simona Vetter <simona.vetter@ffwll.ch>,
- Dan Williams <dan.j.williams@intel.com>
-References: <20251016054204.1523139-6-tzungbi@kernel.org>
- <20251016123149.GA88213@nvidia.com> <aPGryj-V5PQZRtoI@google.com>
- <20251017134916.GK3901471@nvidia.com> <aPJp3hP44n96Rug9@tzungbi-laptop>
- <009c8e5e-02d3-4017-bb84-e3a8f01b9dc9@kernel.org>
- <20251017163738.GB316284@nvidia.com>
- <bee969ed-c050-43a4-961c-07443a45943c@kernel.org>
- <20251017184415.GE316284@nvidia.com> <DDKXACTUJ9IT.3W11J2HE7SLJW@kernel.org>
- <20251017225632.GF316284@nvidia.com>
 Content-Language: en-US
-In-Reply-To: <20251017225632.GF316284@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+To: clm@fb.com, dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Vyacheslav Kovalevsky <slava.kovalevskiy.2014@gmail.com>
+Subject: Symlink entry is not persisted after rename if system crashes
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Sat Oct 18, 2025 at 12:56 AM CEST, Jason Gunthorpe wrote:
-> On Fri, Oct 17, 2025 at 11:41:56PM +0200, Danilo Krummrich wrote:
->> On Fri Oct 17, 2025 at 8:44 PM CEST, Jason Gunthorpe wrote:
->> > On Fri, Oct 17, 2025 at 08:19:06PM +0200, Danilo Krummrich wrote:
->> >> On 10/17/25 6:37 PM, Jason Gunthorpe wrote:
->> >> > On Fri, Oct 17, 2025 at 06:29:10PM +0200, Danilo Krummrich wrote:
->> >> > 
->> >> >> I'm not sure about MISC device though. Unless there's a good reason,
->> >> >> I think MISC device should be "fenced" instead.
->> >> > 
->> >> > misc is a very small wrapper around raw fops, and raw fops are
->> >> > optimized for performance. Adding locking that many important things
->> >> > like normal files don't need to all fops would not be agreed.
->> >> > 
->> >> > The sketch in this series where we have a core helper to provide a
->> >> > shim fops that adds on the lock is smart and I think could be an
->> >> > agreeable way to make a synchronous misc and cdev unregister for
->> >> > everyone to trivially use.
->> >> 
->> >> Sure, for MISC devices without a parent for instance there are no device
->> >> resources to access anyways.
->> >
->> > There are many situations with misc that can get people into trouble without
->> > parent:
->> >
->> >  misc_deregister(x);
->> >  timer_shutdown_sync(y);
->> >  kfree(z);
->> >
->> > For example. It is is buggy if the fops touch y or z.
->> >
->> > This is why a _sync version is such a nice clean idea because with 5
->> > letters the above can just be fixed.
->> >
->> > Wrapping everything in a revocable would be a huge PITA.
->> 
->> That's a bit of a different problem though. Revocable clearly isn't the
->> solution. _sync() works, but doesn't account for the actual problem, which is
->> that the file private has at least shared ownership of y and z.
->> 
->> So, it's more of an ownership / lifetime problem. The file private data should
->> either own y and z entirely or a corresponding reference count that is dropped
->> in fops release().
->
-> I think both versions are popular in the kernel.. You can legimately
-> treat y and z the same as device resources without creating a
-> correctness problem and it is less code.
->
-> You can also do refcounts.
->
-> For instance at least in C you'd never argue that people should use
-> refcount private data when they use a timer or irq subsystem. You'd
-> use a simple sync cleanup and be done with it.
+Under some circumstances, new directory entry of a symbolic link is not 
+persisted after rename if the file system crashes.
 
-Don't get me wrong, I'm well aware that there are multiple ways to achieve
-correctness, and I know what's common, not common, etc.
 
-And I also don't mean to say "just reference count your private data", which in
-a lot of (maybe even most) cases clearly is the wrong thing to do (compared to
-specific objects contained within the private data).
 
-What I'm saying is that it's better to think about the lifetime of an object and
-what it is owned by.
+Detailed description
 
-Let's say we have a memory allocation of some object X, then the question is who
-owns this object. Is it the module, the file private data, device private data,
-interrupt handler, etc.
+====================
 
-If it is only owned by a single thing (e.g. file private), then it's simple:
-allocate and initialize in open(), release in release(), and only ever access
-in other fops.
 
-However, if we have shared ownership of an object, and it is contained in
-multiple different private data objects, then reference count is much more
-robust, compared to having your driver manually keeping track of how it can
-synchronize against all the owners of that object.
+Hello, we are doing research on testing file system crash consistency. 
+During
+
+testing we found this issue with btrfs file system. In short, a symbolic 
+link
+
+is created and renamed. Directory entries are synced using `fsync` after 
+every
+
+step. However, after a crash, the symbolic link new directory entry is not
+
+persisted (symbolic link has the old name). Read the test below for more
+
+details.
+
+
+
+System info
+
+===========
+
+
+Linux version 6.18.0-rc2 (root@ubuntu) (gcc (Ubuntu 15.2.0-4ubuntu4) 
+15.2.0,
+
+GNU ld (GNU Binutils for Ubuntu) 2.45) #2 SMP PREEMPT_DYNAMIC Thu Oct 23
+
+12:32:29 UTC 2025
+
+
+Also tested on Linux 6.14.11.
+
+
+Operating System: Ubuntu 25.10
+
+CPU architecture: x86_64
+
+
+btrfs-progs version: v6.16
+
+-EXPERIMENTAL -INJECT -STATIC +LZO +ZSTD +UDEV +FSVERITY +ZONED 
+CRYPTO=builtin
+
+
+Tested on QEMU emulator version 10.1.1.
+
+
+
+How to reproduce
+
+================
+
+
+```
+
+#include <errno.h>
+
+#include <fcntl.h>
+
+#include <stdio.h>
+
+#include <string.h>
+
+#include <sys/stat.h>
+
+#include <sys/types.h>
+
+#include <unistd.h>
+
+
+int main() {
+
+int status;
+
+int root_fd;
+
+int dir_fd1;
+
+int dir_fd2;
+
+
+status = mkdir("dir", S_IRWXO);
+
+printf("MKDIR: %d\n", status);
+
+
+status = open(".", O_RDONLY | O_DIRECTORY);
+
+printf("OPEN: %d\n", status);
+
+root_fd = status;
+
+
+// persist `dir`
+
+status = fsync(root_fd);
+
+printf("FSYNC: %d\n", status);
+
+
+status = symlink("foobar", "dir/slink-old");
+
+printf("SYMLINK: %d\n", status);
+
+
+status = open("dir", O_RDONLY | O_DIRECTORY);
+
+printf("OPEN: %d\n", status);
+
+dir_fd1 = status;
+
+
+// persist `slink-old`
+
+status = fsync(dir_fd1);
+
+printf("FSYNC: %d\n", status);
+
+
+status = rename("dir/slink-old", "dir/slink-new");
+
+printf("RENAME: %d\n", status);
+
+
+status = open("dir", O_RDONLY | O_DIRECTORY);
+
+printf("OPEN: %d\n", status);
+
+dir_fd2 = status;
+
+
+// persist `slink-new`
+
+status = fsync(dir_fd2);
+
+printf("FSYNC: %d\n", status);
+
+}
+
+```
+
+
+Short test summary:
+
+
+1. Directory `dir` is created.
+
+2. Directory `.` is fsynced (`dir` entry should persist).
+
+3. New symbolic link `slink-old` is created in `dir`.
+
+4. Directory `dir` is fsynced using descriptor 1 (`slink-old` entry should
+
+persist).
+
+5. Link is renamed from `slink-old` to `slink-new`.
+
+6. Directory `dir` is fsynced using decriptor 2 (`slink-new` entry should
+
+persist).
+
+
+Steps:
+
+
+1. Create and mount new btrfs file system in default configuration.
+
+2. Change directory to root of the file system and run the compiled test.
+
+3. Cause hard system crash (e.g. QEMU `system_reset` command).
+
+4. Remount file system after crash.
+
+5. Observe that `dir` directory contains entry named `slink-old` instead of
+
+`slink-new`.
+
+
+Notes:
+
+
+- In other file systems (ext4, xfs, nilfs2) the `dir` will contain new
+
+(`slink-new`) entry, not the old one.
+
+- The problem only affects symlinks, but not regular files.
+
+- The problem only arises if `dir` fsyncs are made using different
+
+descriptors.
+
 
