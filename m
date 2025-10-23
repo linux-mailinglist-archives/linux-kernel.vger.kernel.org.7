@@ -1,122 +1,106 @@
-Return-Path: <linux-kernel+bounces-867054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638E9C01753
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:37:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A82C01774
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 15:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF94E35A913
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:37:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF9D1508F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 13:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52929314D39;
-	Thu, 23 Oct 2025 13:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F112315D2E;
+	Thu, 23 Oct 2025 13:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bd5itopO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="reJdxXwR"
+Received: from smtp72.ord1d.emailsrvr.com (smtp72.ord1d.emailsrvr.com [184.106.54.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34F428E00;
-	Thu, 23 Oct 2025 13:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1428530B527
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 13:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761226266; cv=none; b=M0LvKUY/10q5p2FDgg3EUHcH6Ls13MagYEIrAt+8tzljLE7kLIP/I3GEnC0xRKDCKqFcG2uI4A3nfMxA1Cl+6Skcf3bySlUicdljjCtKcosuMgCoV57mpfu7nS2ndEn8QRam+aHe2v7YQquQ0D5VUvKoH/72+82yXR2IVIkQajU=
+	t=1761226278; cv=none; b=Ync5uvZemauPgNGhqDKKA6iuGlSjMymldrFzKRWXdZQLnJjweitgObsAGjS2cgEt10/UJvg8pWQrtFs/rBTzCoHfnKEPf7QSSVmr8e5lq3+9mnFSX5ms0xg0L4zOBP6slAw2DJDkiyRSMSvYdfAPKzJRxFJbJm0h0+PprdUGxzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761226266; c=relaxed/simple;
-	bh=XqRmK0MZlaU2At8JXpDWFcOda0194aVh/uzRd9dH8N4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OBFLeCrYafQrAZ0hlykdx+lKSm/G8Fkcx1daw/BPJSyRatEY0TUcPWO/YP6C3t06s25YP3lw9gnfXEKLuypdIQY6TF3TJjrAuDz3yqY9jAJMBfpVj0PvG93xvMRRNditx6IFYhCPmCDjmPliO4XtF/ET5qSFsl/F2xMut5tGXiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bd5itopO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 460F6C4CEF7;
-	Thu, 23 Oct 2025 13:31:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761226265;
-	bh=XqRmK0MZlaU2At8JXpDWFcOda0194aVh/uzRd9dH8N4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bd5itopOM5mU+dW25Uowyeuwa/21vubCtI88fOy4p8KUXzYul7gbmYPsFiH75z7si
-	 dRdg2o+bTpw7rxytFwP5zQWIhFn3xmhyNnw+15+EWSBIZsq87v6BzTVa8xU3GKH3hb
-	 q0veKio2usvtduYIaGdOD5UH/RBwuOKDOuMxBrIwePrashNT/Y4xrAIjdyBHxrz4xQ
-	 N969lkKG3RBgSbn/YJicpvym8WRGpNc6/SjtijoZBXdcyvoFFUlgLAcWIwJ16d5ES7
-	 OMHi2hPfSocFUxCevYpu/Ud/N2a5gYS3CcqaFpmfTuqVSjiGUSrKC5rzS82FORfq/3
-	 8Kq8uaFisOMsw==
-Date: Thu, 23 Oct 2025 14:31:00 +0100
-From: Simon Horman <horms@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
-	Carolina Jubran <cjubran@nvidia.com>,
-	Dragos Tatulea <dtatulea@nvidia.com>
-Subject: Re: [PATCH net-next 2/7] net/mlx5e: Use TIR API in
- mlx5e_modify_tirs_lb()
-Message-ID: <aPouFMQsE48tkse9@horms.kernel.org>
-References: <1761201820-923638-1-git-send-email-tariqt@nvidia.com>
- <1761201820-923638-3-git-send-email-tariqt@nvidia.com>
+	s=arc-20240116; t=1761226278; c=relaxed/simple;
+	bh=AjvD6E5DxGjC8FjVAXMd7fROHx2OLDQ+ie9jtVc/HF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nLaWsnskw0QS3B9t1RGsEqy7efIQpAaLDFSn3VIj5YmeLCPxazYQnXojZXK9PGUEoo0ZLrkEOvyRbblQMu+irz48IurXhes6ZFA5BC939EzA7uEUYD81f163j7Rm68+yh+SsJw7FxtuUp9zgF/n9S5lT7Diym60mOsycV6cBtAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=reJdxXwR; arc=none smtp.client-ip=184.106.54.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1761226276;
+	bh=AjvD6E5DxGjC8FjVAXMd7fROHx2OLDQ+ie9jtVc/HF0=;
+	h=Date:Subject:To:From:From;
+	b=reJdxXwRySyZXm8FNW7Rzq1cczOG4DvMlrtkZUnwNnHfCnxOVp/aYPEW1n9H1DUQN
+	 JHP7e/7glWogdQerNupU5Bkh2/z1Vs2Idx4KI+xQwP9O3zw6uMersLxs8yTtkihvux
+	 8vtk/cf3/MtKhn3/ETcZPoEvXnOt728BjS2asJ7Y=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp10.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 3DB41A02CE;
+	Thu, 23 Oct 2025 09:31:15 -0400 (EDT)
+Message-ID: <1d416774-596e-42c4-b458-da1f7cb89f36@mev.co.uk>
+Date: Thu, 23 Oct 2025 14:31:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1761201820-923638-3-git-send-email-tariqt@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re:
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ H Hartley Sweeten <hsweeten@visionengravers.com>,
+ Nikita Zhandarovich <n.zhandarovich@fintech.ru>, lvc-project@linuxtesting.org
+References: <20251023132706.7983-1-abbotti@mev.co.uk>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+In-Reply-To: <20251023132706.7983-1-abbotti@mev.co.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Classification-ID: 8b417956-c629-4bd1-8779-d4fd0d8cb256-1-1
 
-On Thu, Oct 23, 2025 at 09:43:35AM +0300, Tariq Toukan wrote:
-
-...
-
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_common.c b/drivers/net/ethernet/mellanox/mlx5/core/en_common.c
-> index 376a018b2db1..fad6b761f622 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_common.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_common.c
-> @@ -250,43 +250,30 @@ void mlx5e_destroy_mdev_resources(struct mlx5_core_dev *mdev)
->  int mlx5e_modify_tirs_lb(struct mlx5_core_dev *mdev, bool enable_uc_lb,
->  			 bool enable_mc_lb)
-
-...
-
->  	list_for_each_entry(tir, &mdev->mlx5e_res.hw_objs.td.tirs_list, list) {
-> -		tirn = tir->tirn;
-> -		err = mlx5_core_modify_tir(mdev, tirn, in);
-> +		err = mlx5e_tir_modify(tir, builder);
->  		if (err)
->  			break;
->  	}
->  	mutex_unlock(&mdev->mlx5e_res.hw_objs.td.list_lock);
->  
-> -	kvfree(in);
-> +	mlx5e_tir_builder_free(builder);
->  	if (err)
->  		mlx5_core_err(mdev,
->  			      "modify tir(0x%x) enable_lb uc(%d) mc(%d) failed, %d\n",
-> -			      tirn,
-> +			      mlx5e_tir_get_tirn(tir),
-
-Sorry, for not noticing this before sending my previous email.
-
-Coccinelle complains about the line above like this:
-
-.../en_common.c:276:28-31: ERROR: invalid reference to the index variable of the iterator on line 265
-
-I think this is a false positive because the problem only occurs if
-the list iteration runs to completion. But err guards against
-tir being used in that case.
-
-But, perhaps, to be on the safe side, it would be good practice
-to stash tir somewhere?
-
->  			      enable_uc_lb, enable_mc_lb, err);
->  
->  	return err;
-> -- 
-> 2.31.1
+On 23/10/2025 14:06, Ian Abbott wrote:
+> Comedi allows legacy devices to be configured manually (with sys admin
+> privileges) with ioctl calls at run time by specifying parameters such
+> as board name, base port number and IRQ level.  If not done correctly
+> for the actual hardware being configured, there could be problems caused
+> by unexpected interrupts (not to mention problems due to reading or
+> writing incorrect hardware registers!).
 > 
+> These patches protect various functions in the core comedi module from
+> these problems by adding checks that the structures that the function
+> uses are in a valid state, and remain in a valid state until no longer
+> required by the function.
 > 
+> Some low-level Comedi drivers use these structures directly outside of
+> the core commedi function calls, and may also need fixing.  That has not
+> been done yet in this patch series, but it provides a mechanism to do
+> so.
+> 
+> 1) comedi: Add reference counting for Comedi command handling
+> 2) comedi: Use reference count for asynchronous command functions
+> 
+>   drivers/comedi/comedi_buf.c      | 274 ++++++++++++++++++++++++++-------------
+>   drivers/comedi/comedi_fops.c     | 134 ++++++++++++++-----
+>   drivers/comedi/comedi_internal.h |  12 ++
+>   drivers/comedi/drivers.c         | 134 ++++++++++++++-----
+>   include/linux/comedi/comedidev.h |   7 +
+>   5 files changed, 401 insertions(+), 160 deletions(-)
+> 
+> The alignment of the diff output in the second patch turned out a bit
+> wonky due to similar changes in different sections of the files.  I can
+> split the patch if deemed necessary.
+
+Sorry, I forgot to fill in the subject line when composing the intro. 
+I'll resend it.
+
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
 
