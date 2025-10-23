@@ -1,106 +1,103 @@
-Return-Path: <linux-kernel+bounces-867391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B72C0279D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:40:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A1E2C027A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 18:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF5261A6346B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:41:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D78024F2767
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC592334370;
-	Thu, 23 Oct 2025 16:40:47 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEE5334C19;
+	Thu, 23 Oct 2025 16:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IWvEJ/yF"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E49C308F38;
-	Thu, 23 Oct 2025 16:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF53225F78F;
+	Thu, 23 Oct 2025 16:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761237647; cv=none; b=okK5RoYnjym61kCEH6wciS1MoM19Gjw0EszRI+WwMhY/t+saNjJjSQmahucRvlmmqcPlTKjF39us2isRpPwcKAih6ZwJOcyOYCfKhC9AanvMOwqGV8OyZFNxPlOBoeZFOBkW5uobIF183cCZ3VBxktW8QAY3pLIlSGjZ2ddkiq8=
+	t=1761237786; cv=none; b=pNQISvW8Joqu000NyaViuxGnuo7+0tvh1EhdnOoD1EORO7lPUPkQN3/NFDB8/0FnlhGTy/XQjEW9lPCCkw/2BPVDP4tBcGEMwmbCseHdKowqfOFu/z3j/4n7W+A4CvCGU9pXWm4ANdwZmADDCx1erQWk/CBKOIbVzLWvFSBgKEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761237647; c=relaxed/simple;
-	bh=rnsLj7G2Q4LWV1AO4LqUJD5jb2kwyjL7kpPO+GtVgdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ayz8C1xdwRnXXkZytfndeqUilXz7KIWSFvBDdAG0XokM9wRIsDqV/b+jUk93Qgf+B+ufSkohWLPvLkVRSMVdDuf7/5iYrlA3P/7+aTKdUAbU3mq7Ypx/R3ikdDh/9btsWfXhZph4s8bhOIDxNM11L8kLDnE8c6T9GmONUtBzKaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id 1C1C6C0C03;
-	Thu, 23 Oct 2025 16:40:36 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 1C16719;
-	Thu, 23 Oct 2025 16:40:31 +0000 (UTC)
-Date: Thu, 23 Oct 2025 12:40:57 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Arnaldo
- Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>,
- Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>,
- Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus
- <jremus@linux.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>, Florian Weimer
- <fweimer@redhat.com>, Sam James <sam@gentoo.org>, Kees Cook
- <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
-Subject: Re: [PATCH v16 0/4] perf: Support the deferred unwinding
- infrastructure
-Message-ID: <20251023124057.2a6e793a@gandalf.local.home>
-In-Reply-To: <20251023150002.GR4067720@noisy.programming.kicks-ass.net>
-References: <20251007214008.080852573@kernel.org>
-	<20251023150002.GR4067720@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761237786; c=relaxed/simple;
+	bh=vW/R4oAoa6bwaldSmiwg8qvyvnlmurH/Wn2P6wAkCIA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C6hMy6X2N/y4jaVgHZu3GQGYSKTaJKsZf/HevzGAsK+2iGuN+0BwMcajy3X8t9GpPe7zjpWbLByS9+vvdHT9frAdeJrk9UAhDGhFozVbtRHxnz+lD9/GHWxc7Ql3lfLWw8SN5M5W32NFl9k3X5qw4UE3Oiuvy2zsDkhO/0vQSTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IWvEJ/yF; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=IRY2FjbeHDdDgTVzISAQCqDTP8DpvEw9s72ecDZ0g5s=; b=IWvEJ/yFn6O6hcWDJtPU8QgoL+
+	akAWIWRagbZAm5ssLe/RoZSH3jCZNw4vZXTuzmyg6E9xbZM5RTUidV+vXvEBx65CprHt3kTjwQZCF
+	pS6NzhZPRnSnHv5KM/Eccua9W/s0325HPqqyXi+wy2daViCpWJ40EgPbSaHkBni3uWCtxE4MbMgZg
+	onfD6xEDO4Lsi8D3v4EpQTIvewWMhKSCQZy+qviNOVk3Mnc/p4OqM05Zd18swIaYdzZEyhJKGPgyU
+	lcQtBPM85jxTiAsa+3EQwDZ3ZDZ81iko0Lcdmdp33wzSQ4NcUtZYyfct0c6Pcb1SQc8uc0o5mUvd6
+	xABzhhcw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vByOz-00000006w39-2YW4;
+	Thu, 23 Oct 2025 16:43:01 +0000
+Message-ID: <b77b8a60-2809-4849-8a6e-a391eacf050b@infradead.org>
+Date: Thu, 23 Oct 2025 09:43:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] Documentation: ARCnet: Update obsolete
+ contact info
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux Networking <netdev@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Michael Grzeschik <m.grzeschik@pengutronix.de>,
+ Avery Pennarun <apenwarr@worldvisions.ca>
+References: <20251023025506.23779-1-bagasdotme@gmail.com>
+ <295b96fd-4ece-4e11-be1c-9d92d93b94b7@infradead.org>
+ <aPnqn6jDiJkZiUfR@archie.me>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <aPnqn6jDiJkZiUfR@archie.me>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 4ghmzc64qshrjyu9b44bi1ze1a7zh14x
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 1C16719
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/vS1yPcV24TdOmvaIXpwP/jWrmfBeXtwA=
-X-HE-Tag: 1761237631-199775
-X-HE-Meta: U2FsdGVkX1/KkQayy8T8nBvljuDSAC4RsHEqtrM3F6Pudd/lnjCVzSCIxptS//mwcDPMu4ogrFlzkh85nZ5lmKGYP/TNSa4Mi+yXVqZXYDJDTgTUc8OZtwjuhyGhO1pY0YDzmd9ISyCdoeymCDptCYRq1Ao36PzorqdffVgGDAwgtFgSj6hAav3C1hd2GSo0srCRd1nerjiTzSQ7cSLHzQAHR2CjsHT9x/TzlTracVJNef3RcpWo6f6jjTKN+1qlvmsOcpqynWpUy7zWGBdQPH0qVq4s41RUBNZ1sUFJfH3ZOvvFdJvOVfmjvHQZl6a6c/TiUwEA6D9Ew4KCMNUN4X0qvzjqNhRJuPk3XgTin57C0tnYviom2CEXvXLD7IQS
 
-On Thu, 23 Oct 2025 17:00:02 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
 
-> +/* Deferred unwinding callback for task specific events */
-> +static void perf_unwind_deferred_callback(struct unwind_work *work,
-> +					 struct unwind_stacktrace *trace, u64 cookie)
-> +{
-> +	struct perf_callchain_deferred_event deferred_event = {
-> +		.trace = trace,
-> +		.event = {
-> +			.header = {
-> +				.type = PERF_RECORD_CALLCHAIN_DEFERRED,
-> +				.misc = PERF_RECORD_MISC_USER,
-> +				.size = sizeof(deferred_event.event) +
-> +					(trace->nr * sizeof(u64)),
-> +			},
-> +			.cookie = cookie,
-> +			.nr = trace->nr,
-> +		},
-> +	};
-> +
-> +	perf_iterate_sb(perf_callchain_deferred_output, &deferred_event, NULL);
-> +}
-> +
 
-So "perf_iterate_sb()" was the key point I was missing. I'm guessing it's
-basically a demultiplexer that distributes events to all the requestors?
+On 10/23/25 1:43 AM, Bagas Sanjaya wrote:
+> On Wed, Oct 22, 2025 at 09:21:43PM -0700, Randy Dunlap wrote:
+>> I'm wondering about one thing in arcnet-hardware.rst:
+>>   it refers to www.arcnet.com.
+>> Did you happen to try that web site?
+>> Looks like it is something about AIoT.
+> 
+> And it's membership application form, though. (I'm on the err side to not
+> enter my personal data there.)
 
-If I had know this, I would have done it completely different.
+Same here.
 
--- Steve
+>> I found the ARCnet Trade Association at
+>>   www.arcnet.cc
+> 
+> That's ARCNET Resource Center.
+
+OK, the ATA is  https://arcnet.cc/abtata.htm
+
+I suggest changing the link.  what do you think?
+
+-- 
+~Randy
+
 
