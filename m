@@ -1,239 +1,99 @@
-Return-Path: <linux-kernel+bounces-867818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD011C038E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:34:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D46C038F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D722019A8C6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:34:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39E9A4EAB6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2753A2C0282;
-	Thu, 23 Oct 2025 21:34:16 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10ECC27E7EC;
+	Thu, 23 Oct 2025 21:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="js3riS21"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32FC2356D9
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEA9EEB3;
+	Thu, 23 Oct 2025 21:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761255255; cv=none; b=f4NapX9PIkt1O2K4zuBGAMRX1kkOCF4YtwV+8iJwZwGNY0IbpeDFLr94ncP3BjjPeSnFRFhirV6fVP1UDH2tbamhejV3wF/3OWisbQIo8rycz3bZCBiK89RmPGp6rIIz73wqdlLrdGcRSFLbEGpLrBbMGWN+xTftJ3Ahd/R+J4Q=
+	t=1761255319; cv=none; b=LsBEclzJ/aE+RMLQNgWxj4YcQHowaWnDweWXEO0SPQBB3hmFqgTyjVgJs1sykkjPXGTuQfP5WF4QKc6zFO2tIUx9Ysk8sOY9eKfLTLUF/MnVZyyoqPxweiWeGB4zYQR2YhvbZlBd90WVcmHs03nvlHd8PpHZUkNT+pY/hiAy3Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761255255; c=relaxed/simple;
-	bh=b9mJ0wfHCdFAxMXdIFdF1OEj7j462EBU3I7Rxg8e0nU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=JM9sqrHjZhtu305nN5s7yv44hfO0f1CGo3NBQse3I/URsBQrpWnWqLgr4u8ig3nuM4QyzYU5uY8ka6zeJvD0N+I30TgH1hHhBZJ9yUqWgl5YWXPwxbshCVS3nfsUNEt9Thgtj+0VYQYDKISHCdqGd+awlu6b4fhVMdfQ6wx5nVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-940f5d522efso371826239f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:34:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761255253; x=1761860053;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=loe8th7Xg9hRopVA0WvfRwtb93WZHAknxHHhI585kIM=;
-        b=f69dloDBfw8390UR6vcetE+XZ6He+OX5XsGe1IzwuRUSXzFuo/p9DP/aiS1+zlkxUC
-         DaoQ+k/BZe6znuykTdS6LdJ/v4Z39LAoqwhZjbnGl8XpVgZqx5mL2XRC5xKAbSu6NrbO
-         QrT8Dxmtu23QX4ao9fAHgMqw/nNUbSfPo/G9ri+SDUPkYQKDY6lZ7Kqpg9QNpj8MnegV
-         KABjDZeO/9s70P6/KLbBwheKU0NCfx75/h7b3zC/FWQ1Y5gsYiVBWasBEuCygCqhLaT6
-         d6HEGbwWZSaldIrHiWjxRIpOMqWFEPCc4eq4ZzKcHnY1/eNSbeDb7nmxf+DfFd1kNS5k
-         0+Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCWet3xYHMVhV7k7HZ6sy71eL1ccgOAAUmq9djky2GrBg3jVAw2Xp+qYLA3Aw2CjwcmEdMocZYWtBC4jgIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCRlcTH70JUm1+ZWOCWf+XH17QPxb5TPLAysgIWYIDM/vum0fx
-	8bdAAqy6SiowYFmDFhdNES9wRxPZd0Fg9JmucCm8Dv8C6iX4MEYPSqDzPX0cvlayy1qKIvo93tM
-	Rm6fFsrDJ1W2qOTCQy5RfYZPKQe6WhgMVe7BLvQhNCVAzevsHpqa+QIgTQQQ=
-X-Google-Smtp-Source: AGHT+IH75gHK6dAsXoGW8erErOQGTqLjf8vOAntJk6lzGTmhBleUeT2KX6rneyVPyH5+/Yvbs6I+46DO7YFT74TCH0t4qkC7RUNv
+	s=arc-20240116; t=1761255319; c=relaxed/simple;
+	bh=ZamVdUSILnPeyXRyMlRxKlWxFuBToagv7jcffP0neYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S1dphsFVG+Q5+VCo8Lv0yH3ISaOnlRS5qVmLKfn4ZRz6v5VfqULvHHJ/BAjTdfIihOcfdYf7EwsHIwOcc6V0PghhNmfTFgxO2ui8IQjbsHagd0L+bYgGPbaYTA6XeRF2jZGZWVfu41+rjty38S4VweBGa/BAlmf48mlu7wATHhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=js3riS21; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 23 Oct 2025 14:35:05 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761255314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ErOQJZYuBYGdBpUlkz7xxYDD/7HNDrO9In4Qqb0EuxE=;
+	b=js3riS21e66az6Tr38Wp8ZB1PttEvYubbxImrS9U11/r3WOoOSUygYo+4HZmx20Bia1XmG
+	vY2PhoZc1GDaXnexuFX7GVOQy1zV1Cf8mfxBbuf7LWncUCkny89N7J8htGD88NU1E/0i8r
+	qzsKb/PlZx3RailoFTTtJ6clPPEAe0w=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: manually uninline __memcg_memory_event
+Message-ID: <jnzfiyojjwvrj3eemqmpigfyjxucdqe44fjy36nxkly6urtn7u@a6pfcppla3r6>
+References: <20251021234425.1885471-1-shakeel.butt@linux.dev>
+ <aPorFhxQc7K5iLZc@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3287:b0:430:a3b0:8458 with SMTP id
- e9e14a558f8ab-431dc139f2cmr67391585ab.3.1761255253090; Thu, 23 Oct 2025
- 14:34:13 -0700 (PDT)
-Date: Thu, 23 Oct 2025 14:34:13 -0700
-In-Reply-To: <CADUfDZqUS_gk=u+fx5QVp7+gNGTSt438YG+Z-FBZP8kougK3Fw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fa9f55.a70a0220.3bf6c6.00cc.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] general protection fault in
- io_uring_show_fdinfo (4)
-From: syzbot <syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com>
-To: csander@purestorage.com
-Cc: axboe@kernel.dk, csander@purestorage.com, io-uring@vger.kernel.org, 
-	kbusch@kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPorFhxQc7K5iLZc@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
-> On Thu, Oct 23, 2025 at 2:21=E2=80=AFPM syzbot
-> <syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com> wrote:
->>
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    aaa9c3550b60 Add linux-next specific files for 20251022
->> git tree:       linux-next
->> console output: https://syzkaller.appspot.com/x/log.txt?x=3D11880c925800=
-00
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc8b911aebadf=
-6410
->> dashboard link: https://syzkaller.appspot.com/bug?extid=3Da77f64386b3e1b=
-2ebb51
->> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b79=
-76-1~exp1~20250708183702.136), Debian LLD 20.1.8
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12e7373458=
-0000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D102f43e25800=
-00
->>
->> Downloadable assets:
->> disk image: https://storage.googleapis.com/syzbot-assets/44f7af9b7ca1/di=
-sk-aaa9c355.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/9d09b0a9994d/vmlin=
-ux-aaa9c355.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/ae729ccb2c5c/=
-bzImage-aaa9c355.xz
->>
->> The issue was bisected to:
->>
->> commit 31dc41afdef21f264364288a30013b538c46152e
->> Author: Keith Busch <kbusch@kernel.org>
->> Date:   Thu Oct 16 18:09:38 2025 +0000
->>
->>     io_uring: add support for IORING_SETUP_SQE_MIXED
->>
->> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D12eac6145=
-80000
->> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D11eac6145=
-80000
->> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16eac6145800=
-00
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the com=
-mit:
->> Reported-by: syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com
->> Fixes: 31dc41afdef2 ("io_uring: add support for IORING_SETUP_SQE_MIXED")
->>
->> Oops: general protection fault, probably for non-canonical address 0xdff=
-ffc0000000000: 0000 [#1] SMP KASAN PTI
->> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
->> CPU: 0 UID: 0 PID: 6032 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(=
-full)
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS =
-Google 10/02/2025
->> RIP: 0010:__io_uring_show_fdinfo io_uring/fdinfo.c:103 [inline]
->> RIP: 0010:io_uring_show_fdinfo+0x371/0x1840 io_uring/fdinfo.c:255
->> Code: 0f 85 29 04 00 00 45 8b 36 44 89 f7 44 89 ee e8 a5 ec 94 00 45 39 =
-ee 76 11 e8 db ea 94 00 45 89 fd 4c 8b 3c 24 e9 c9 03 00 00 <80> 3b 00 45 8=
-9 fd 0f 85 17 04 00 00 0f b6 2c 25 00 00 00 00 48 8b
->> RSP: 0018:ffffc9000392f928 EFLAGS: 00010293
->> RAX: ffffffff812b42ab RBX: dffffc0000000000 RCX: 0000000000000000
->> RDX: ffff888026c65ac0 RSI: 00000000000001ff RDI: 0000000000000000
->> RBP: 0000000000000000 R08: ffff888069c000aa R09: 1ffff1100d380015
->> R10: dffffc0000000000 R11: ffffed100d380016 R12: 0000000000000008
->> R13: 00000000000001ff R14: 0000000000000000 R15: 0000000000000000
->> FS:  000055556a027500(0000) GS:ffff888125f29000(0000) knlGS:000000000000=
-0000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000001b30363fff CR3: 0000000076c50000 CR4: 00000000003526f0
->> Call Trace:
->>  <TASK>
->>  seq_show+0x5bc/0x730 fs/proc/fd.c:68
->>  seq_read_iter+0x4ef/0xe20 fs/seq_file.c:230
->>  seq_read+0x369/0x480 fs/seq_file.c:162
->>  vfs_read+0x200/0xa30 fs/read_write.c:570
->>  ksys_read+0x145/0x250 fs/read_write.c:715
->>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
->>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->> RIP: 0033:0x7f198c78efc9
->> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 =
-f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 f=
-f ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
->> RSP: 002b:00007fffae1a3128 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
->> RAX: ffffffffffffffda RBX: 00007f198c9e5fa0 RCX: 00007f198c78efc9
->> RDX: 0000000000002020 RSI: 00002000000040c0 RDI: 0000000000000004
->> RBP: 00007f198c811f91 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->> R13: 00007f198c9e5fa0 R14: 00007f198c9e5fa0 R15: 0000000000000003
->>  </TASK>
->> Modules linked in:
->> ---[ end trace 0000000000000000 ]---
->> RIP: 0010:__io_uring_show_fdinfo io_uring/fdinfo.c:103 [inline]
->> RIP: 0010:io_uring_show_fdinfo+0x371/0x1840 io_uring/fdinfo.c:255
->> Code: 0f 85 29 04 00 00 45 8b 36 44 89 f7 44 89 ee e8 a5 ec 94 00 45 39 =
-ee 76 11 e8 db ea 94 00 45 89 fd 4c 8b 3c 24 e9 c9 03 00 00 <80> 3b 00 45 8=
-9 fd 0f 85 17 04 00 00 0f b6 2c 25 00 00 00 00 48 8b
->> RSP: 0018:ffffc9000392f928 EFLAGS: 00010293
->> RAX: ffffffff812b42ab RBX: dffffc0000000000 RCX: 0000000000000000
->> RDX: ffff888026c65ac0 RSI: 00000000000001ff RDI: 0000000000000000
->> RBP: 0000000000000000 R08: ffff888069c000aa R09: 1ffff1100d380015
->> R10: dffffc0000000000 R11: ffffed100d380016 R12: 0000000000000008
->> R13: 00000000000001ff R14: 0000000000000000 R15: 0000000000000000
->> FS:  000055556a027500(0000) GS:ffff888125f29000(0000) knlGS:000000000000=
-0000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000001b30363fff CR3: 0000000076c50000 CR4: 00000000003526f0
->> ----------------
->> Code disassembly (best guess):
->>    0:   0f 85 29 04 00 00       jne    0x42f
->>    6:   45 8b 36                mov    (%r14),%r14d
->>    9:   44 89 f7                mov    %r14d,%edi
->>    c:   44 89 ee                mov    %r13d,%esi
->>    f:   e8 a5 ec 94 00          call   0x94ecb9
->>   14:   45 39 ee                cmp    %r13d,%r14d
->>   17:   76 11                   jbe    0x2a
->>   19:   e8 db ea 94 00          call   0x94eaf9
->>   1e:   45 89 fd                mov    %r15d,%r13d
->>   21:   4c 8b 3c 24             mov    (%rsp),%r15
->>   25:   e9 c9 03 00 00          jmp    0x3f3
->> * 2a:   80 3b 00                cmpb   $0x0,(%rbx) <-- trapping instruct=
-ion
->>   2d:   45 89 fd                mov    %r15d,%r13d
->>   30:   0f 85 17 04 00 00       jne    0x44d
->>   36:   0f b6 2c 25 00 00 00    movzbl 0x0,%ebp
->>   3d:   00
->>   3e:   48                      rex.W
->>   3f:   8b                      .byte 0x8b
->>
->>
->> ---
->> This report is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this issue. See:
->> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->> For information about bisection process see: https://goo.gl/tpsmEJ#bisec=
-tion
->>
->> If the report is already addressed, let syzbot know by replying with:
->> #syz fix: exact-commit-title
->>
->> If you want syzbot to run the reproducer, reply with:
->> #syz test: git://repo/address.git branch-or-commit-hash
->> If you attach or paste a git patch, syzbot will apply it before testing.
->>
->> If you want to overwrite report's subsystems, reply with:
->> #syz set subsystems: new-subsystem
->> (See the list of subsystem names on the web dashboard)
->>
->> If the report is a duplicate of another one, reply with:
->> #syz dup: exact-subject-of-another-report
->>
->> If you want to undo deduplication, reply with:
->> #syz undup
->
-> #syz dup: [syzbot] [io-uring?] general protection fault in
+On Thu, Oct 23, 2025 at 03:18:14PM +0200, Michal Hocko wrote:
+> On Tue 21-10-25 16:44:25, Shakeel Butt wrote:
+> > The function __memcg_memory_event has been unnecessarily marked inline
+> > even when it is not really performance critical. It is usually called
+> > to track extreme conditions. Over the time, it has evolved to include
+> > more functionality and inlining it is causing more harm.
+> > 
+> > Before the patch:
+> > $ size mm/memcontrol.o net/ipv4/tcp_input.o net/ipv4/tcp_output.o
+> >    text    data     bss     dec     hex filename
+> >   35645   10574    4192   50411    c4eb mm/memcontrol.o
+> >   54738    1658       0   56396    dc4c net/ipv4/tcp_input.o
+> >   34644    1065       0   35709    8b7d net/ipv4/tcp_output.o
+> > 
+> > After the patch:
+> > $ size mm/memcontrol.o net/ipv4/tcp_input.o net/ipv4/tcp_output.o
+> >    text    data     bss     dec     hex filename
+> >   35137   10446    4192   49775    c26f mm/memcontrol.o
+> >   54322    1562       0   55884    da4c net/ipv4/tcp_input.o
+> >   34492    1017       0   35509    8ab5 net/ipv4/tcp_output.o
+> > 
+> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> 
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
-can't find the dup bug
+Thanks.
 
-> io_uring_show_fdinfo (3)
+> 
+> As the only user is in tree should we make that EXPORT_SYMBOL_GPL
+> instead?
+
+I just followed the file convention i.e. all other exports in
+memcontrol.c are like that. I would keep this as is unless you have
+strong opinion otherwise.
 
