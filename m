@@ -1,122 +1,242 @@
-Return-Path: <linux-kernel+bounces-867154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F0CC01B75
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:20:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2CCC01BE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 16:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D64D9502253
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:15:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DAF23B1E22
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 14:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BABF329C51;
-	Thu, 23 Oct 2025 14:15:13 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639FA32779B;
+	Thu, 23 Oct 2025 14:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="Vff9Wc+O"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED6432860A
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E8632860A
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761228912; cv=none; b=ERobEOsC5LG/eobanQS2YUyXE5KRS992mn4YWCdTozTinfrazOug7w/Aky2DoDBPqgq0i6UrIJI4SZula609ezoF8L/Lg/81oVGEG8P9R1QriNcBEKo7379AFAeFIyiUUSl3h65p/1KhzlI52w/X42nup6lL/D54JCy0mV/qMAI=
+	t=1761228958; cv=none; b=BCSa+pEUeOuwsROSekPsud7/YV/hOXp5j/kVX72TOu1UFDvp2yHYMB4m5DX1YSG7CZBPaFjsIKeMRCZ6p0jaikRPE2+wxPRnc6OvXWiGedwiPmLerEKhEy/XmwsEZNEHQXhNvKlb1Zus7DWsBLrFdFPkZzXd/yWHl/1M8r7rd68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761228912; c=relaxed/simple;
-	bh=CdGzPayY2HtafoVKU/xmDaM2LdM3QDNgNvm+GrBaNmg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TAo7m68g4xtbdVnO+lFJ5d07PozNTkJFxPvZHugHRXDmIWxeoyuod9m7GVRKAg/oPXSGjTxPIVvKgatRwMpJvvYM9OI6NF34dQ5fe4rdEWiRpzU0AZLELIMVqULb3zySUmcHSHrCNQSmz+PZ1JLhSWTlRg3l6upaSPKlxkQq3AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 23 Oct
- 2025 17:15:06 +0300
-Received: from localhost (10.0.253.101) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 23 Oct
- 2025 17:15:06 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten
-	<hsweeten@visionengravers.com>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH v2] comedi: pcl818: fix null-ptr-deref in pcl818_ai_cancel()
-Date: Thu, 23 Oct 2025 17:14:56 +0300
-Message-ID: <20251023141457.398685-1-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761228958; c=relaxed/simple;
+	bh=La81eW4v0yruMqAG7pyWKPXE9t1yZcIi/tuE29sb5AI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fKxceARcW96d5WiJ+zko16ree/PxbwjW5k6qFIzZoY8l4JIansufjmuiZ0zYYsghb4SIK90rd+x6gLKocgJyKlIf7WbMpkwdzcftAW5C15z2pNhDHVTIWz/ZPczjO892ce+Cfud/j0ZcvFlN9LCT2Jjiim1FP3Ej5Hc0V1PDg2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=Vff9Wc+O; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-378ddb31efaso7233511fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 07:15:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03; t=1761228954; x=1761833754; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FnmzaZy4L/iYlPObH/mLNJiUdG2gST8lT8jLSfDBEeA=;
+        b=Vff9Wc+O22gzyaGqiVCvoWrsOk5a66kSUAIhTFUlqWhUULBNE4lNdMY+chtHKXbVHi
+         7J0YHO9nqqySmHNU2jMBUtBdzhuDSkGt6zoCZk7G3c+B/hkWZYsLRucdYSMpFF6H441F
+         6iavBq0MLKr+nEKBEKkJXOzRfF2pmrO28bCF2QfqW/t4m8gHds+VO1dHdk74zfMktbNc
+         MQiN3jFMYLJAuj5KWK8C01JZCt5j3Do9oILssUp+KgZ64o4jjWFLT2aqjKL54WdjQY9l
+         2Pr1XpZLHdsM7G/nAzylNyyte416w6NvLmlAAI7CwpcuJPD9P+TKNJoO6LYvvSM59KMZ
+         510w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761228954; x=1761833754;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FnmzaZy4L/iYlPObH/mLNJiUdG2gST8lT8jLSfDBEeA=;
+        b=iW6vwEumKFNKHtT889LCowJZlzNe8JWBUa7EArtnePoytwvBg9eMt+b6lCcu66aQtg
+         9eh/NodaryQim2j3G5FvV3902uAYd3l/50Efun8M4lQ/P5JSaynBdZs60tJQiUMHWeLx
+         9URUEiuuOEKOtQ9BOC00OH/aaeIjero05X2TSF428Tcdyg+wFi61xxzt6oZv5CK494fq
+         exDdWTruDZp9j+jsWIszujcnWh8WzoLGi5nDXBiEfzmsBSXAhQrshxak5+SNBLOM7VQF
+         H37FNQT5GcslW+BT6Zy4cYW1oaWICtmA1V5Pt9vWz1Kdh8aOJiiDkcLl6v/h75fgpLGg
+         4kfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXt5LRkXulXZUiyWnn6WRMHVwRAadS0Hej4pXlMSiNIw6IM18/9oQbESdImUfvIAAdLDUa+kpvNpEReNeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbAGrcKTO2c+ZQFWwP4/EruXd+dNXciXHe4u3kAzu/ntdtQjWw
+	XLcQuXlCDwm8XgLwbTfEU85FgVT6JpusVi4maNxn6+uHRUtTMCU49CNJaLFVtxBTKWOHA5vWQtp
+	ylrDPuKDcUahhODp24eY8zKiP7k1deQw=
+X-Gm-Gg: ASbGncsrZE6MCytxg4f75nG+VSt+xMxXEL9V0XxzXNfSMoXfvVn5uBQeYmn0TARC8Tr
+	DeckGKs8niO8VMUDh5oUZmXNzh4at0Jhhs8oevSHOivTaI0tmMObuad04CWSfteobqu1l51gVpP
+	qLPmCmilWpxH7sFINFYNakeb9ONqXsOc7tQ+x5CBtEt9g3L9sB5Xags9NfIAcyt4zONIbuLnL2E
+	kC8+xlw8fRQXCWg+cNt0pW4tdxTzckVbRRS+/K45pwajbhvS3/sg1pczxV3
+X-Google-Smtp-Source: AGHT+IFIEg9F3wCW2DjE72mm8ubEmFJpMVM/CxWOCwjxKYaiEKwJ/npB9DMzTCtDvWviGrdQzHR9avtVt8eUYtm8heA=
+X-Received: by 2002:a05:651c:199e:b0:36c:ebb0:821c with SMTP id
+ 38308e7fff4ca-37797831bfbmr71129001fa.7.1761228954181; Thu, 23 Oct 2025
+ 07:15:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+References: <20251023-lockd-owner-v1-1-1d196b0183d1@kernel.org>
+In-Reply-To: <20251023-lockd-owner-v1-1-1d196b0183d1@kernel.org>
+From: Olga Kornievskaia <aglo@umich.edu>
+Date: Thu, 23 Oct 2025 10:15:42 -0400
+X-Gm-Features: AWmQ_bl9LY18HUud66HWLCTuVHA73J6fbzjK7A4y_hLW0wHInsec9HTsdyfuLkQ
+Message-ID: <CAN-5tyFFx+_WnLbHq0bLH0uQ7XkK=wh2urooqvauTW-hxxz7cw@mail.gmail.com>
+Subject: Re: [PATCH] lockd: don't allow locking on reexported NFSv2/3
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, Mike Snitzer <snitzer@kernel.org>, 
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Syzbot identified an issue [1] in pcl818_ai_cancel(), which stems from
-the fact that in case of early device detach via pcl818_detach(),
-subdevice dev->read_subdev may not have initialized its pointer to
-&struct comedi_async as intended. Thus, any such dereferencing of
-&s->async->cmd will lead to general protection fault and kernel crash.
+On Thu, Oct 23, 2025 at 9:13=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> Since commit 9254c8ae9b81 ("nfsd: disallow file locking and delegations
+> for NFSv4 reexport"), file locking when reexporting an NFS mount via
+> NFSv4 is expressly prohibited by nfsd. Do the same in lockd:
+>
+> Add a new  nlmsvc_file_cannot_lock() helper that will test whether file
+> locking is allowed for a given file, and return nlm_lck_denied_nolocks
+> if it isn't.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Mitigate this problem by removing a call to pcl818_ai_cancel() from
-pcl818_detach() altogether. This way, if the subdevice setups its
-support for async commands, everything async-related will be
-handled via subdevice's own ->cancel() function in
-comedi_device_detach_locked() even before pcl818_detach(). If no
-support for asynchronous commands is provided, there is no need
-to cancel anything either.
+Tested-by: Olga Kornievskaia <okorniev@redhat.com>
 
-[1] Syzbot crash:
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
-CPU: 1 UID: 0 PID: 6050 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full)
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:pcl818_ai_cancel+0x69/0x3f0 drivers/comedi/drivers/pcl818.c:762
-...
-Call Trace:
- <TASK>
- pcl818_detach+0x66/0xd0 drivers/comedi/drivers/pcl818.c:1115
- comedi_device_detach_locked+0x178/0x750 drivers/comedi/drivers.c:207
- do_devconfig_ioctl drivers/comedi/comedi_fops.c:848 [inline]
- comedi_unlocked_ioctl+0xcde/0x1020 drivers/comedi/comedi_fops.c:2178
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:597 [inline]
-...
-
-Reported-by: syzbot+fce5d9d5bd067d6fbe9b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=fce5d9d5bd067d6fbe9b
-Fixes: 00aba6e7b565 ("staging: comedi: pcl818: remove 'neverending_ai' from private data")
-Cc: stable@vger.kernel.org
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
----
-v1 -> v2: Switch to a better, more logical approach, put forward by
-Ian Abbott <abbotti@mev.co.uk>, instead of doing an awkward
-check in pcl818_ai_cancel() itself. Adjust commit description.
-
-P.S. I've chosen to keep the old Fixes: tag. Not sure it's best,
-but it's at least partially correct.
-
- drivers/comedi/drivers/pcl818.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/comedi/drivers/pcl818.c b/drivers/comedi/drivers/pcl818.c
-index 4127adcfb229..06fe06396f23 100644
---- a/drivers/comedi/drivers/pcl818.c
-+++ b/drivers/comedi/drivers/pcl818.c
-@@ -1111,10 +1111,9 @@ static void pcl818_detach(struct comedi_device *dev)
- {
- 	struct pcl818_private *devpriv = dev->private;
- 
--	if (devpriv) {
--		pcl818_ai_cancel(dev, dev->read_subdev);
-+	if (devpriv)
- 		pcl818_reset(dev);
--	}
-+
- 	pcl818_free_dma(dev);
- 	comedi_legacy_detach(dev);
- }
+> ---
+> Regardless of how we fix the bug that Olga found recently, I think we
+> need to do this as well. We don't allow locking when reexporting via v4,
+> and I don't think we want to allow it when reexporting via v2/3 either.
+> ---
+>  fs/lockd/svclock.c          | 12 ++++++++++++
+>  fs/lockd/svcshare.c         |  6 ++++++
+>  include/linux/lockd/lockd.h |  9 ++++++++-
+>  3 files changed, 26 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
+> index c1315df4b350bbd753305b5c08550d50f67b92aa..cd42e480a7000f1b3ec7fca5e=
+cc7fb8dc4755a09 100644
+> --- a/fs/lockd/svclock.c
+> +++ b/fs/lockd/svclock.c
+> @@ -495,6 +495,9 @@ nlmsvc_lock(struct svc_rqst *rqstp, struct nlm_file *=
+file,
+>                                 (long long)lock->fl.fl_end,
+>                                 wait);
+>
+> +       if (nlmsvc_file_cannot_lock(file))
+> +               return nlm_lck_denied_nolocks;
+> +
+>         if (!locks_can_async_lock(nlmsvc_file_file(file)->f_op)) {
+>                 async_block =3D wait;
+>                 wait =3D 0;
+> @@ -621,6 +624,9 @@ nlmsvc_testlock(struct svc_rqst *rqstp, struct nlm_fi=
+le *file,
+>                                 (long long)lock->fl.fl_start,
+>                                 (long long)lock->fl.fl_end);
+>
+> +       if (nlmsvc_file_cannot_lock(file))
+> +               return nlm_lck_denied_nolocks;
+> +
+>         if (locks_in_grace(SVC_NET(rqstp))) {
+>                 ret =3D nlm_lck_denied_grace_period;
+>                 goto out;
+> @@ -678,6 +684,9 @@ nlmsvc_unlock(struct net *net, struct nlm_file *file,=
+ struct nlm_lock *lock)
+>                                 (long long)lock->fl.fl_start,
+>                                 (long long)lock->fl.fl_end);
+>
+> +       if (nlmsvc_file_cannot_lock(file))
+> +               return nlm_lck_denied_nolocks;
+> +
+>         /* First, cancel any lock that might be there */
+>         nlmsvc_cancel_blocked(net, file, lock);
+>
+> @@ -715,6 +724,9 @@ nlmsvc_cancel_blocked(struct net *net, struct nlm_fil=
+e *file, struct nlm_lock *l
+>                                 (long long)lock->fl.fl_start,
+>                                 (long long)lock->fl.fl_end);
+>
+> +       if (nlmsvc_file_cannot_lock(file))
+> +               return nlm_lck_denied_nolocks;
+> +
+>         if (locks_in_grace(net))
+>                 return nlm_lck_denied_grace_period;
+>
+> diff --git a/fs/lockd/svcshare.c b/fs/lockd/svcshare.c
+> index ade4931b2da247abd23bd16923f1d2388dc6ce00..88c81ce1148d92bd29ec580ac=
+399ac944ba5ecf8 100644
+> --- a/fs/lockd/svcshare.c
+> +++ b/fs/lockd/svcshare.c
+> @@ -32,6 +32,9 @@ nlmsvc_share_file(struct nlm_host *host, struct nlm_fil=
+e *file,
+>         struct xdr_netobj       *oh =3D &argp->lock.oh;
+>         u8                      *ohdata;
+>
+> +       if (nlmsvc_file_cannot_lock(file))
+> +               return nlm_lck_denied_nolocks;
+> +
+>         for (share =3D file->f_shares; share; share =3D share->s_next) {
+>                 if (share->s_host =3D=3D host && nlm_cmp_owner(share, oh)=
+)
+>                         goto update;
+> @@ -72,6 +75,9 @@ nlmsvc_unshare_file(struct nlm_host *host, struct nlm_f=
+ile *file,
+>         struct nlm_share        *share, **shpp;
+>         struct xdr_netobj       *oh =3D &argp->lock.oh;
+>
+> +       if (nlmsvc_file_cannot_lock(file))
+> +               return nlm_lck_denied_nolocks;
+> +
+>         for (shpp =3D &file->f_shares; (share =3D *shpp) !=3D NULL;
+>                                         shpp =3D &share->s_next) {
+>                 if (share->s_host =3D=3D host && nlm_cmp_owner(share, oh)=
+) {
+> diff --git a/include/linux/lockd/lockd.h b/include/linux/lockd/lockd.h
+> index c8f0f9458f2cc035fd9161f8f2486ba76084abf1..330e38776bb20d09c20697fc3=
+8a96c161ad0313a 100644
+> --- a/include/linux/lockd/lockd.h
+> +++ b/include/linux/lockd/lockd.h
+> @@ -12,6 +12,7 @@
+>
+>  /* XXX: a lot of this should really be under fs/lockd. */
+>
+> +#include <linux/exportfs.h>
+>  #include <linux/in.h>
+>  #include <linux/in6.h>
+>  #include <net/ipv6.h>
+> @@ -307,7 +308,7 @@ void                  nlmsvc_invalidate_all(void);
+>  int           nlmsvc_unlock_all_by_sb(struct super_block *sb);
+>  int           nlmsvc_unlock_all_by_ip(struct sockaddr *server_addr);
+>
+> -static inline struct file *nlmsvc_file_file(struct nlm_file *file)
+> +static inline struct file *nlmsvc_file_file(const struct nlm_file *file)
+>  {
+>         return file->f_file[O_RDONLY] ?
+>                file->f_file[O_RDONLY] : file->f_file[O_WRONLY];
+> @@ -318,6 +319,12 @@ static inline struct inode *nlmsvc_file_inode(struct=
+ nlm_file *file)
+>         return file_inode(nlmsvc_file_file(file));
+>  }
+>
+> +static inline bool
+> +nlmsvc_file_cannot_lock(const struct nlm_file *file)
+> +{
+> +       return exportfs_cannot_lock(nlmsvc_file_file(file)->f_path.dentry=
+->d_sb->s_export_op);
+> +}
+> +
+>  static inline int __nlm_privileged_request4(const struct sockaddr *sap)
+>  {
+>         const struct sockaddr_in *sin =3D (struct sockaddr_in *)sap;
+>
+> ---
+> base-commit: 316f960d9ffb8439e0876dc2eab812e55f3ccb2a
+> change-id: 20251023-lockd-owner-a529e45d8622
+>
+> Best regards,
+> --
+> Jeff Layton <jlayton@kernel.org>
+>
+>
 
