@@ -1,145 +1,254 @@
-Return-Path: <linux-kernel+bounces-867816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE00CC038E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:34:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84309C038E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 23:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979E43A3A81
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:34:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7770819A3741
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 Oct 2025 21:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B0C27E04C;
-	Thu, 23 Oct 2025 21:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7521E27E7EC;
+	Thu, 23 Oct 2025 21:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="So2QKNNg"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="K4/iINgZ"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A48136349
-	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBE2136349
+	for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761255248; cv=none; b=By6wZCT3ILJtYWkiBSWznuSHOuBjlRoUXYdqKfU2EEYa10yn6Y7eXYpIcgsVzwQCShl6IW7kUso7am7Q1r3DJ4pYt6k6r1cAjP67GHwtmoKyJWsBLwz3kcd8kKeXFsV7GraWSa7pTS3WPcRyS4zfuzMwc7nA0cwItQPytEkyL+Q=
+	t=1761255254; cv=none; b=Nyd+XfIJe1cPEcP6bDZQZI23/2Gu6wpAeH1UTX+NZ373yQf/2dnXXifppGnCZJ6j/BPFUUC0Lgh8GymjqiV58RyswC/vwJYjPtfyyP2+Lb2N688BPcDcuN9s+m2KodYUd9/90URK8ZvUfYkqA/5MDxPPQeO0822jpOvCfmKcTHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761255248; c=relaxed/simple;
-	bh=QrDsumBR7XmAXhTajPbH62vMSoYGzD7KDyrcNpl1qMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MWABuylczVgZDuDJ1PiQjA+X6ix4CmB053VC0eF6g9VqkG6soxGVDjxHqN/XeDCAMvGAtBFzLRw+pQz9O6VqIDKgBargTOPw2vWcGKvqxPoauWyfY7GPXe9Oz5KWAdpI2zcjInFL/kdILVCR3tx3iXhaqADLRPz/YU4dkqsFsDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=So2QKNNg; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-33be037cf73so1493815a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:34:07 -0700 (PDT)
+	s=arc-20240116; t=1761255254; c=relaxed/simple;
+	bh=zKsP8dHKf8yQOzK9i+S0TaAtt4DnK1GHWRxhsZoCz+4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EBLkyDXQngdGRXM6uFC3Rc0Sn30fy8Stif/PL/0pvoIJM15asgsTSD+9r6Y8oQcnmTJsLlNx1oLP1i3q4JTzBl4oTKtSZ08Ziy76qL9HM0IdsIEUPhxnhoX0ePKffvDP7afOCNhCR1lelmaKcKgg3UiBEwjU5YFpb/eauKznAbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=K4/iINgZ; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-269640c2d4bso2078725ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 14:34:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761255246; x=1761860046; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=q2pvfpdVDgSz+tiqLq0LEmu6krJe5n3X3t1r06M3DaI=;
-        b=So2QKNNgz1ATgQrl3e+Xr+vCfYF4tbJFsCV59f6j7YDRjo8X0dLnSlx9t0fJ9uU7wB
-         7EHYYEb43mJQE7tOb0kSOJq5hZ+kWqzMm3MhNWODf7guMHEvD/CQuiL0AjpSDfQ/HaSW
-         uUHqdP6kMCzAYu+4/LpgtJoX8fTB44dtcFVMzln1ARY91IgbdnmYUTH6iAtKRzxpAmOx
-         Bt6ZVekrDR25uInq/85hfm6t0dOPXaYBGGwFWfv0NqOH6uSapGweTcOBG73gohUsPz0E
-         pN1dunbOSeA28W8SYxO3fY4MUsGpYkauwgyyq2VmHU/jt1h66U2xzAbcDQ5FbVoWwK1C
-         fPXw==
+        d=purestorage.com; s=google2022; t=1761255252; x=1761860052; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qmXne/HpAUaogOSdpIX9KC9MtAaj0qp7mmdNBZpis4w=;
+        b=K4/iINgZIueOF6YGIxvLWj1/IKbCntDJgXb3Mzlco641wiBApQa+Xdh+ZvSqTPFAPk
+         0nk2+fy8u8/aNgq6Qw+KJ4Xyjc2CDjaq2VR2Sf74Gocu46M7P1o2FseiV4YJYJSs1JPs
+         TJWZMEdkD+Q+81kRE4bxIhIiLu/v/7sjKa9+A45ZUbwQTVgV4TaYEExAfuo2R/iljBOE
+         oESPddiKFYK34zB0rlppFMYy7MeqP81j9CV4NMvqMXAdEvmXhFeTXYG3Ov7V2izXR0Oh
+         /upOZ835Xfs7/SdwnkfvQrrjrqtkG4oCXhpzCEMwxXGysV3W/zKR+QwBW5r0ay/vLYq6
+         1tTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761255246; x=1761860046;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q2pvfpdVDgSz+tiqLq0LEmu6krJe5n3X3t1r06M3DaI=;
-        b=d9I/eLuir2CUk20mhzRxdUwOV1Y8bZdAwMiegbG5RiuMCYc4kQOo92YM4Eb4fiXv40
-         iPGBLZrD4Rw2s2L8XzTHNziUWN0XVW1QrTfq9S14KIxg75qrXg1xyc8t+494mSEHWKIT
-         3fizo6YBSI624y//ujJb2Li4vfa23zxgFUTPTpsk+SxcdMbjXortNsHtjH4GYDaCnrhE
-         slbb3K2aTFcuuqTktC5+Rf/sdmsJriFea62XdEkrCyjnxm6nffZYVBRPtd+n+u8kBniQ
-         JaU9j3FS+biS6U3ZWrktn11hKCClTSiIt5G2g8hlOqkIdVy5k2eAXFU1+X7/RjGaIVDg
-         ZWXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmrBEX8I/LJLJPwsLg8+AkrOD7SEYupqmyJe6TB74U57f0qdbSS1wnYkoAMO2bQaqWLuhMv6SN6AvF+S8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV3xyVY5XbnbcjiV9z+kT4vjCOUDo8y1KM3c8lvsIEGf6YW4T3
-	Ig//tmuhKNx0vH/U5DeT48E07UwjU2L7Ir7IuCrX902IPslE2SRjhAhO
-X-Gm-Gg: ASbGnct3FpgW7AhuGJFVYpl8rwOxj4ZIvRSbNg/BtL1PCkc36DjQi4o2g9p1nvbD7zW
-	o2/6wVMQ+XH2ygtIZ09FEz51xC25sWRHe+HZDDqhIDbGOvntgv6FePNY9z/ddzBBVmBaG5jghxE
-	S0A6yRsmoi23Wgohsi6GiU3gCcyF/EJE+USHC23nSBT7NjV41llpWqmem759Wv/xSINHTDH++UE
-	84ClcsDVKi6ZgmWVT7Rd0Mm1Yehda3EVhf74iCKMSUeVBjHjtFeeIV7Yt1QaIDEaTnKmjYpgRzh
-	/VLR2dnQ75BdmmVbDCI6OQzUSoSt5BP/1P7BV8RiqRysmjOSeIMHtkTW2ercJSxhAuIXYVaXciU
-	1JnKJe5fuShFWbTyvuGzbYw9t7hA5czmE/cdps+5MzrTzGezoaxetqeiDpCkdyXKvY2/wn+Y5p6
-	IJZlcym0r73CLBZPpg1OOnHpx1C/03Ww==
-X-Google-Smtp-Source: AGHT+IF3YGWDNWYMokVO+WXERUpBjg0IQ+EhQnmcd8t7unNBGwlJ5PPtm2xykzvuMO9uNrjZL1vC5Q==
-X-Received: by 2002:a17:90b:3e43:b0:339:cece:a99 with SMTP id 98e67ed59e1d1-33bcf86c699mr37737123a91.13.1761255246585;
-        Thu, 23 Oct 2025 14:34:06 -0700 (PDT)
-Received: from iku.. ([2401:4900:1c06:ef2:36b5:9454:6fa:e888])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fb017249asm3450734a91.14.2025.10.23.14.34.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 14:34:05 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v2] dt-bindings: display: renesas,rzg2l-du: Add support for RZ/V2N SoC
-Date: Thu, 23 Oct 2025 22:33:50 +0100
-Message-ID: <20251023213350.681602-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1761255252; x=1761860052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qmXne/HpAUaogOSdpIX9KC9MtAaj0qp7mmdNBZpis4w=;
+        b=OSDbMXWvdjeVZ029xOuhbOTd9pOs9Rs+SsgCiSFvhg7z4Co18zBFayiI9BI0DyRXTm
+         wbKR5n65JjFHz7wfvi4euSRlfN+iDNtKleOtfUq/P+KnjTyP3jgYMfropm12ZDHdBItQ
+         udOUjydmSy7675/QKvnTOlYf6SEkxI5Z2ScUpwudEqw3EYy62JXfNOA3f+AMAK4TlxzI
+         XHenclefVaySiTw+hv9dmuCGmA/DA/+PM9wF62IX0eHM1chwyHw7SqwuL/5QJovxNzUT
+         9bP4/7T1KTUgshXwxQRLbFPm7yOPQifQUKgtLsUr9ScFANOhlraGXseNCTdJNaTd+ISm
+         WvNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgTCn0PB54zgwmmZSk2KVbXl50MRvzqnuXmQ1x2CgsG1X8tTxgPy3KNq7oRfnyHuvG+joUNBuK8J8kJDM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGjXupwQxvilGW9AhN+XYItkLCDcDgsi39M53sfYiagTeYb9Ba
+	p/NnUQdNc52xWiSftyBGjHi6oG24zSlJnVGIg/jK32s6gDssdzkFh3JM5PzeO3bQ01utP4QOzfS
+	Dl9Fi4j1nGFQSfgIVscO5s3mLIkskTxrebMgWbmfYs8N7gGOQZYUadRms0A==
+X-Gm-Gg: ASbGncs7TxXcSLhOhZNQL6EOSoLyxYY/WIJAedj+wPLflnCtuE19TSllvBFNV3w7NuM
+	UWwDTXdl9hOlHaQf8/kj6uOtVdAdMIyMuG3RSPjo29RbucaOUQzfbKpmi0gldzgDBUokpvYnDut
+	7sDYV8w+hU3YPp4Sm9QB94bRI66ndLMfQ6QuS7v9m2/uyMsphC/HaG/Dpf0d6QA0dr2ruZUqoi+
+	nJR8ZokWE1a8wldIGm2BlG8OGfwGZWary2Y2v/kE2WXdrd3WzONReVioE8CIRpDvNLyCaL0qNP3
+	gfzbm86Bn322QFEIPtU=
+X-Google-Smtp-Source: AGHT+IGd78+JiwzikwJEVd6ymCJ10GLaYCB9X40ihyUXvS0aK/SLH09nV/urBH/Co1SII1Kpt/ZYuqjUuAMpfiSpEyM=
+X-Received: by 2002:a17:903:3d0f:b0:274:944f:9d84 with SMTP id
+ d9443c01a7336-290ccaccc47mr164262585ad.11.1761255251764; Thu, 23 Oct 2025
+ 14:34:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <68fa9c5e.a70a0220.3bf6c6.00c9.GAE@google.com>
+In-Reply-To: <68fa9c5e.a70a0220.3bf6c6.00c9.GAE@google.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Thu, 23 Oct 2025 14:34:00 -0700
+X-Gm-Features: AS18NWBkKZEOPS_2aeIAJ2AnO0KE3pGJ8tRaenjQsYbg5sXp_knzSkrSbu0JtG8
+Message-ID: <CADUfDZqUS_gk=u+fx5QVp7+gNGTSt438YG+Z-FBZP8kougK3Fw@mail.gmail.com>
+Subject: Re: [syzbot] [io-uring?] general protection fault in
+ io_uring_show_fdinfo (4)
+To: syzbot <syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com>
+Cc: axboe@kernel.dk, io-uring@vger.kernel.org, kbusch@kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Oct 23, 2025 at 2:21=E2=80=AFPM syzbot
+<syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    aaa9c3550b60 Add linux-next specific files for 20251022
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D11880c9258000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc8b911aebadf6=
+410
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Da77f64386b3e1b2=
+ebb51
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b797=
+6-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12e73734580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D102f43e258000=
+0
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/44f7af9b7ca1/dis=
+k-aaa9c355.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/9d09b0a9994d/vmlinu=
+x-aaa9c355.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/ae729ccb2c5c/b=
+zImage-aaa9c355.xz
+>
+> The issue was bisected to:
+>
+> commit 31dc41afdef21f264364288a30013b538c46152e
+> Author: Keith Busch <kbusch@kernel.org>
+> Date:   Thu Oct 16 18:09:38 2025 +0000
+>
+>     io_uring: add support for IORING_SETUP_SQE_MIXED
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D12eac61458=
+0000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D11eac61458=
+0000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16eac61458000=
+0
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+a77f64386b3e1b2ebb51@syzkaller.appspotmail.com
+> Fixes: 31dc41afdef2 ("io_uring: add support for IORING_SETUP_SQE_MIXED")
+>
+> Oops: general protection fault, probably for non-canonical address 0xdfff=
+fc0000000000: 0000 [#1] SMP KASAN PTI
+> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> CPU: 0 UID: 0 PID: 6032 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(f=
+ull)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 10/02/2025
+> RIP: 0010:__io_uring_show_fdinfo io_uring/fdinfo.c:103 [inline]
+> RIP: 0010:io_uring_show_fdinfo+0x371/0x1840 io_uring/fdinfo.c:255
+> Code: 0f 85 29 04 00 00 45 8b 36 44 89 f7 44 89 ee e8 a5 ec 94 00 45 39 e=
+e 76 11 e8 db ea 94 00 45 89 fd 4c 8b 3c 24 e9 c9 03 00 00 <80> 3b 00 45 89=
+ fd 0f 85 17 04 00 00 0f b6 2c 25 00 00 00 00 48 8b
+> RSP: 0018:ffffc9000392f928 EFLAGS: 00010293
+> RAX: ffffffff812b42ab RBX: dffffc0000000000 RCX: 0000000000000000
+> RDX: ffff888026c65ac0 RSI: 00000000000001ff RDI: 0000000000000000
+> RBP: 0000000000000000 R08: ffff888069c000aa R09: 1ffff1100d380015
+> R10: dffffc0000000000 R11: ffffed100d380016 R12: 0000000000000008
+> R13: 00000000000001ff R14: 0000000000000000 R15: 0000000000000000
+> FS:  000055556a027500(0000) GS:ffff888125f29000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000001b30363fff CR3: 0000000076c50000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  seq_show+0x5bc/0x730 fs/proc/fd.c:68
+>  seq_read_iter+0x4ef/0xe20 fs/seq_file.c:230
+>  seq_read+0x369/0x480 fs/seq_file.c:162
+>  vfs_read+0x200/0xa30 fs/read_write.c:570
+>  ksys_read+0x145/0x250 fs/read_write.c:715
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f198c78efc9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fffae1a3128 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> RAX: ffffffffffffffda RBX: 00007f198c9e5fa0 RCX: 00007f198c78efc9
+> RDX: 0000000000002020 RSI: 00002000000040c0 RDI: 0000000000000004
+> RBP: 00007f198c811f91 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f198c9e5fa0 R14: 00007f198c9e5fa0 R15: 0000000000000003
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:__io_uring_show_fdinfo io_uring/fdinfo.c:103 [inline]
+> RIP: 0010:io_uring_show_fdinfo+0x371/0x1840 io_uring/fdinfo.c:255
+> Code: 0f 85 29 04 00 00 45 8b 36 44 89 f7 44 89 ee e8 a5 ec 94 00 45 39 e=
+e 76 11 e8 db ea 94 00 45 89 fd 4c 8b 3c 24 e9 c9 03 00 00 <80> 3b 00 45 89=
+ fd 0f 85 17 04 00 00 0f b6 2c 25 00 00 00 00 48 8b
+> RSP: 0018:ffffc9000392f928 EFLAGS: 00010293
+> RAX: ffffffff812b42ab RBX: dffffc0000000000 RCX: 0000000000000000
+> RDX: ffff888026c65ac0 RSI: 00000000000001ff RDI: 0000000000000000
+> RBP: 0000000000000000 R08: ffff888069c000aa R09: 1ffff1100d380015
+> R10: dffffc0000000000 R11: ffffed100d380016 R12: 0000000000000008
+> R13: 00000000000001ff R14: 0000000000000000 R15: 0000000000000000
+> FS:  000055556a027500(0000) GS:ffff888125f29000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000001b30363fff CR3: 0000000076c50000 CR4: 00000000003526f0
+> ----------------
+> Code disassembly (best guess):
+>    0:   0f 85 29 04 00 00       jne    0x42f
+>    6:   45 8b 36                mov    (%r14),%r14d
+>    9:   44 89 f7                mov    %r14d,%edi
+>    c:   44 89 ee                mov    %r13d,%esi
+>    f:   e8 a5 ec 94 00          call   0x94ecb9
+>   14:   45 39 ee                cmp    %r13d,%r14d
+>   17:   76 11                   jbe    0x2a
+>   19:   e8 db ea 94 00          call   0x94eaf9
+>   1e:   45 89 fd                mov    %r15d,%r13d
+>   21:   4c 8b 3c 24             mov    (%rsp),%r15
+>   25:   e9 c9 03 00 00          jmp    0x3f3
+> * 2a:   80 3b 00                cmpb   $0x0,(%rbx) <-- trapping instructi=
+on
+>   2d:   45 89 fd                mov    %r15d,%r13d
+>   30:   0f 85 17 04 00 00       jne    0x44d
+>   36:   0f b6 2c 25 00 00 00    movzbl 0x0,%ebp
+>   3d:   00
+>   3e:   48                      rex.W
+>   3f:   8b                      .byte 0x8b
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-Document support for the DU IP found on the Renesas RZ/V2N (R9A09G056) SoC.
-The DU IP is functionally identical to that on the RZ/V2H(P) SoC, so no
-driver changes are needed. The existing `renesas,r9a09g057-du` compatible
-will be used as a fallback for the RZ/V2N SoC.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v2
-- Added Reviewed-by and Acked-by tags.
-
-v1: https://lore.kernel.org/all/20250609231905.511904-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
----
- .../devicetree/bindings/display/renesas,rzg2l-du.yaml          | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-index 1e32d14b6edb..2cc66dcef870 100644
---- a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-+++ b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
-@@ -25,6 +25,9 @@ properties:
-           - enum:
-               - renesas,r9a07g054-du    # RZ/V2L
-           - const: renesas,r9a07g044-du # RZ/G2L fallback
-+      - items:
-+          - const: renesas,r9a09g056-du # RZ/V2N
-+          - const: renesas,r9a09g057-du # RZ/V2H(P) fallback
- 
-   reg:
-     maxItems: 1
--- 
-2.43.0
-
+#syz dup: [syzbot] [io-uring?] general protection fault in
+io_uring_show_fdinfo (3)
 
