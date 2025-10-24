@@ -1,123 +1,225 @@
-Return-Path: <linux-kernel+bounces-869463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94A2C07F2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:44:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7677C07F37
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6AD4040A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:44:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D383AFF52
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766F32FDC4B;
-	Fri, 24 Oct 2025 19:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E332737EB;
+	Fri, 24 Oct 2025 19:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mV9PV9dd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XOTtBc1Y"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="asj41cun";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JMsIy8TC"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F4020CCCA;
-	Fri, 24 Oct 2025 19:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AF0267386;
+	Fri, 24 Oct 2025 19:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761335054; cv=none; b=i7Kv8Ku88YphSnad8AyKwP8lZ1vnywJqhz8HCyLhijS8UrDzkctef9btyne2KzxfXS0hBAsl8jl4m4QNz5URxq1Aa0kA+BTwVArx8MvbJPogWdmVDc249TUNK9xBNh2ZmVbkvSOkeE3BOGCk4Hb7ssbv2vFAngIoR708RjZE8VU=
+	t=1761335122; cv=none; b=dP1GgK/Lvap6uf46JO6qLw/nNYDtDNuXcksOnJkLfwCb0HndVkYRiiYUl6o3GYDqwEpY9VmQL4qqRwZ3ZZnFg/gphv5gXSzRVrXFx/En91A8z7Y+39Ypx270wKJHczlXe4+jZGYqBgOBCIX9f1PxCVqMqvDyXk23qJQS9bdHPAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761335054; c=relaxed/simple;
-	bh=Oo6Q5FijZZnFxQ0PMsOVHjkx1Dg6buBWnKtlwko7Emk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a95A9IKpWRInpfDy1A37B74Xf2wxUoynl4czrgajUNsjkJ73KF+7E3Gf4HBn+JFj9oGmPV0AthUPIkaBtoVa1MFoMUwdna5n40xC5I6Yx0Fhc17Uz0dU+VXWWSd8LjRk8a04fAre1tc9fvE44qO9AnCwMceb7KeGcRvDc/phPk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mV9PV9dd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XOTtBc1Y; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1761335122; c=relaxed/simple;
+	bh=8nFXK5nFENB05JkBLB4xY93q889Ty6mxyA+v2J653PM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=IjmziyqM0zrTRORT2vGIqm5NLGMpRco2KExmKrrKrCnGRj+un5JYO1uiL1n56BYpoS5pBrXcpCkJ/fep0Xdc2eIb+UptV88URW7ieuhO7tI+ygYC4vOTiVjAUzsNgkJMjlNPjAqM+q/0Y8f6m1apFU3zKMb0Tcvrj45V6AOaDmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=asj41cun; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JMsIy8TC; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
+Date: Fri, 24 Oct 2025 19:45:17 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761335051;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=2020; t=1761335119;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=j1tfRYGYM66U+KpSa00BpGxDI+hyT7SSps99obN09Nw=;
-	b=mV9PV9ddpcoU02So0SXkS4ZFsu2V7qAr7LEgSfPB2WToEgUpusnbyDadgwVWZmbRTkyXGp
-	xvX0UNKOV52ySDi0s+OUqSFEjqwtQ3Fp3XT2KXtNj7xH/noSieu7qQOSb0twLqPsuQdu52
-	W2PSv38g55SZ107p2MYvIYFIfSG0AV4Ewb0llS3O3Q67LebNBdkvyw1t5kOWxeQINrrY8B
-	C8rRWxdkMOnEatj0FnKC2APzd3PznfAfj8C8OdFbrVF6/FaJX2T9wcnIwKDGZ3u/WFdrfc
-	nyEjip3DXjmNs4Vo88BJmJaGYic+FCBz4AXwhPL0pYDclJkETSnxhof/6+A92g==
+	bh=2NsyTE2+GfqF++Z+t8uD4oJ12+yHpiYRqmYfV30CpGA=;
+	b=asj41cunbqQ5n6hYSaTaOlNw5nWJ/tzREafYJl75qekI696f41F5QJswem3sp0pwVnf1sd
+	BIbZDDWWGCESsO8FyP9HJSmCH27vgy07pNObtbl6vu/hwDMo8VnixaB5uyz0w5qLkwMZwf
+	9pWdFo0V+UPsVIUd3lWUZMcGIFb7ixP4T3uq14yaCSWCVHMMdxupDcvJgywoG5H8gLX2wg
+	BHloh9HAhOR9pLXBuLfjhySpsIUypsmWPPnYcDa/oUuH8EaiHNrvKsQ7CPMIrrEvYAnFRI
+	3iKZBMPJlJjYJR4BnGJyG34JDlc488/DVP42OAyo4nq0BSTQJTGIEXtJtE/Uiw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761335051;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=2020e; t=1761335119;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=j1tfRYGYM66U+KpSa00BpGxDI+hyT7SSps99obN09Nw=;
-	b=XOTtBc1YJh7Jq5lFhBgh4lK2u78F4KjnvZsO7hd4iln28ghgXC9efMVHBaCCiM8FiD7nn2
-	aO4ycaAyDVrtNpDg==
-To: Xie Yuanbin <qq570070308@gmail.com>, linux@armlinux.org.uk,
- mathieu.desnoyers@efficios.com, paulmck@kernel.org, pjw@kernel.org,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
- borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net,
- andreas@gaisler.com, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, luto@kernel.org,
- peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
- jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
- anna-maria@linutronix.de, frederic@kernel.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
- qq570070308@gmail.com, thuth@redhat.com, riel@surriel.com,
- akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- segher@kernel.crashing.org, ryan.roberts@arm.com,
- max.kellermann@ionos.com, urezki@gmail.com, nysal@linux.ibm.com
-Cc: x86@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-perf-users@vger.kernel.org, will@kernel.org
-Subject: Re: [PATCH 3/3] Set the subfunctions called by finish_task_switch
- to be inline
-In-Reply-To: <20251024183541.68955-2-qq570070308@gmail.com>
-References: <20251024182628.68921-1-qq570070308@gmail.com>
- <20251024183541.68955-1-qq570070308@gmail.com>
- <20251024183541.68955-2-qq570070308@gmail.com>
-Date: Fri, 24 Oct 2025 21:44:10 +0200
-Message-ID: <87placw0dx.ffs@tglx>
+	bh=2NsyTE2+GfqF++Z+t8uD4oJ12+yHpiYRqmYfV30CpGA=;
+	b=JMsIy8TCNqUTQ7n+r+dvpfk0oDm5kfdflE+sq1cbnqdP34WsE7IHkM1RXn2t1egIS3gh8r
+	9fZS/sEer+mcGiCg==
+From: "tip-bot2 for Matthew Wilcox (Oracle)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: core/core] treewide: Remove in_irq()
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251024180654.1691095-1-willy@infradead.org>
+References: <20251024180654.1691095-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <176133511760.2601451.11756138328464524645.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 25 2025 at 02:35, Xie Yuanbin wrote:
->  #ifndef MODULE
->  #define finish_arch_post_lock_switch \
->  	finish_arch_post_lock_switch
-> -static inline void finish_arch_post_lock_switch(void)
-> +static __always_inline void finish_arch_post_lock_switch_ainline(void)
->  {
->  	struct mm_struct *mm = current->mm;
->  
->  	if (mm && mm->context.switch_pending) {
->  		/*
->  		 * Preemption must be disabled during cpu_switch_mm() as we
->  		 * have some stateful cache flush implementations. Check
->  		 * switch_pending again in case we were preempted and the
->  		 * switch to this mm was already done.
->  		 */
->  		preempt_disable();
->  		if (mm->context.switch_pending) {
->  			mm->context.switch_pending = 0;
->  			cpu_switch_mm(mm->pgd, mm);
->  		}
->  		preempt_enable_no_resched();
->  	}
->  }
-> +static inline void finish_arch_post_lock_switch(void)
-> +{
-> +	finish_arch_post_lock_switch_ainline();
+The following commit has been merged into the core/core branch of tip:
 
-What is exactly the point of this indirection. Why can't you just mark
-finish_arch_post_lock_switch() __always_inline and be done with it?
+Commit-ID:     70e0a80a1f3580ccf5bc1f34dbb433c67d9d8d00
+Gitweb:        https://git.kernel.org/tip/70e0a80a1f3580ccf5bc1f34dbb433c67d9=
+d8d00
+Author:        Matthew Wilcox (Oracle) <willy@infradead.org>
+AuthorDate:    Fri, 24 Oct 2025 19:06:51 +01:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 24 Oct 2025 21:39:27 +02:00
 
+treewide: Remove in_irq()
 
+This old alias for in_hardirq() has been marked as deprecated since
+2020; remove the stragglers.
+
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://patch.msgid.link/20251024180654.1691095-1-willy@infradead.org
+---
+ drivers/bus/fsl-mc/mc-sys.c | 2 +-
+ drivers/md/dm-vdo/logger.c  | 2 +-
+ include/linux/lockdep.h     | 2 +-
+ include/linux/preempt.h     | 2 --
+ kernel/bpf/syscall.c        | 4 ++--
+ kernel/time/timer.c         | 2 +-
+ lib/locking-selftest.c      | 4 ++--
+ 7 files changed, 8 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/bus/fsl-mc/mc-sys.c b/drivers/bus/fsl-mc/mc-sys.c
+index b22c59d..31037f4 100644
+--- a/drivers/bus/fsl-mc/mc-sys.c
++++ b/drivers/bus/fsl-mc/mc-sys.c
+@@ -248,7 +248,7 @@ int mc_send_command(struct fsl_mc_io *mc_io, struct fsl_m=
+c_command *cmd)
+ 	enum mc_cmd_status status;
+ 	unsigned long irq_flags =3D 0;
+=20
+-	if (in_irq() && !(mc_io->flags & FSL_MC_IO_ATOMIC_CONTEXT_PORTAL))
++	if (in_hardirq() && !(mc_io->flags & FSL_MC_IO_ATOMIC_CONTEXT_PORTAL))
+ 		return -EINVAL;
+=20
+ 	if (mc_io->flags & FSL_MC_IO_ATOMIC_CONTEXT_PORTAL)
+diff --git a/drivers/md/dm-vdo/logger.c b/drivers/md/dm-vdo/logger.c
+index 3f7dc2c..76a987c 100644
+--- a/drivers/md/dm-vdo/logger.c
++++ b/drivers/md/dm-vdo/logger.c
+@@ -34,7 +34,7 @@ static const char *get_current_interrupt_type(void)
+ 	if (in_nmi())
+ 		return "NMI";
+=20
+-	if (in_irq())
++	if (in_hardirq())
+ 		return "HI";
+=20
+ 	if (in_softirq())
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index 67964dc..dd63410 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -616,7 +616,7 @@ do {									\
+ #define lockdep_assert_in_softirq()					\
+ do {									\
+ 	WARN_ON_ONCE(__lockdep_enabled			&&		\
+-		     (!in_softirq() || in_irq() || in_nmi()));		\
++		     (!in_softirq() || in_hardirq() || in_nmi()));	\
+ } while (0)
+=20
+ extern void lockdep_assert_in_softirq_func(void);
+diff --git a/include/linux/preempt.h b/include/linux/preempt.h
+index 1022021..d964f96 100644
+--- a/include/linux/preempt.h
++++ b/include/linux/preempt.h
+@@ -134,11 +134,9 @@ static __always_inline unsigned char interrupt_context_l=
+evel(void)
+=20
+ /*
+  * The following macros are deprecated and should not be used in new code:
+- * in_irq()       - Obsolete version of in_hardirq()
+  * in_softirq()   - We have BH disabled, or are processing softirqs
+  * in_interrupt() - We're in NMI,IRQ,SoftIRQ context or have BH disabled
+  */
+-#define in_irq()		(hardirq_count())
+ #define in_softirq()		(softirq_count())
+ #define in_interrupt()		(irq_count())
+=20
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 8a12974..6cde6a4 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2330,7 +2330,7 @@ static void bpf_audit_prog(const struct bpf_prog *prog,=
+ unsigned int op)
+ 		return;
+ 	if (audit_enabled =3D=3D AUDIT_OFF)
+ 		return;
+-	if (!in_irq() && !irqs_disabled())
++	if (!in_hardirq() && !irqs_disabled())
+ 		ctx =3D audit_context();
+ 	ab =3D audit_log_start(ctx, GFP_ATOMIC, AUDIT_BPF);
+ 	if (unlikely(!ab))
+@@ -2428,7 +2428,7 @@ static void __bpf_prog_put(struct bpf_prog *prog)
+ 	struct bpf_prog_aux *aux =3D prog->aux;
+=20
+ 	if (atomic64_dec_and_test(&aux->refcnt)) {
+-		if (in_irq() || irqs_disabled()) {
++		if (in_hardirq() || irqs_disabled()) {
+ 			INIT_WORK(&aux->work, bpf_prog_put_deferred);
+ 			schedule_work(&aux->work);
+ 		} else {
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index 553fa46..282a8e5 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -2472,7 +2472,7 @@ void update_process_times(int user_tick)
+ 	run_local_timers();
+ 	rcu_sched_clock_irq(user_tick);
+ #ifdef CONFIG_IRQ_WORK
+-	if (in_irq())
++	if (in_hardirq())
+ 		irq_work_tick();
+ #endif
+ 	sched_tick();
+diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
+index ed99344..d939403 100644
+--- a/lib/locking-selftest.c
++++ b/lib/locking-selftest.c
+@@ -202,7 +202,7 @@ static void init_shared_classes(void)
+ 	local_irq_disable();			\
+ 	__irq_enter();				\
+ 	lockdep_hardirq_threaded();		\
+-	WARN_ON(!in_irq());
++	WARN_ON(!in_hardirq());
+=20
+ #define HARDIRQ_EXIT()				\
+ 	__irq_exit();				\
+@@ -2512,7 +2512,7 @@ DEFINE_LOCK_GUARD_0(NOTTHREADED_HARDIRQ,
+ 	do {
+ 		local_irq_disable();
+ 		__irq_enter();
+-		WARN_ON(!in_irq());
++		WARN_ON(!in_hardirq());
+ 	} while(0), HARDIRQ_EXIT())
+ DEFINE_LOCK_GUARD_0(SOFTIRQ, SOFTIRQ_ENTER(), SOFTIRQ_EXIT())
+=20
 
