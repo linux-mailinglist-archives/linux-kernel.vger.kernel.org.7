@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-868918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3574AC067CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:27:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08DEC06823
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB2024F365E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:26:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E7B73BF6B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F5F3203AF;
-	Fri, 24 Oct 2025 13:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D08831D36F;
+	Fri, 24 Oct 2025 13:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJQxfl9U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q82RxeHx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB1B31E0FD
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7388320A1A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761312360; cv=none; b=S9SddsHz+cw40yWmfnY58cka5TgyFU+XjBpCzTc92iz+TyoZZB0Yp6kXnH/Ev8dzPPrIYVX19o9WhcI4US72bLuumvBoWZvM+WbzzmG/E+XXx68R3O8+RisQY/wgkPZHFzwcak/rkEDaoZWWan5Tb6S7eOzNrB/O+MyIQLEOmdc=
+	t=1761312362; cv=none; b=qdw0TFGyqAYsRxaNCOvRbVPZvTxuMEDxs5U9WNwOo6QYGxKmIme7lmV/RNw9MiquM/id4l/m2Tlp08A+UJRnC25GRfmUMKDV8T7AfJhRo6DOmAMS2Z8QRsHj/a8cBQzr/cbjmAhNTvMzJ2zXj9hoREQnOfgRxksnerA+ZwMUe/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761312360; c=relaxed/simple;
-	bh=fY1ij3id1DmAx5iQpPb3kIdcEzsoQu3dp77o1unz2j4=;
+	s=arc-20240116; t=1761312362; c=relaxed/simple;
+	bh=lNiRZwtesmiFcKiHJWflQehWlUXukBZMLmjaD5n1mCc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E+7YXHd1oOJJAqk/8T1jMJvShN5AP2ra8Diy0D5weVDOHjOxOF/TrwUVB3D1BQ3fguxqQZ3WpOdY9eZYe8aLOn5uC0oztEwCuOQBHJBBcOXjOJ62+Gau9SP52TztRd5KALCr2vOtx2HPnLNcVO70wWiZNgsa1qPEXYzKeYNKi5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJQxfl9U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C0BC4CEFF;
-	Fri, 24 Oct 2025 13:25:58 +0000 (UTC)
+	 MIME-Version; b=FIqqgxA0nQBpCj59UA/RyrlNdxD8MYZf+3Ygixh1AHsbgjjqVKTOGLGZUCtvXBxsBkxHaLZTCM/8r4cOBYzhpU9bV6wUvvd1lCjyCT8DQcZM8riLeW6pxnUxxMfCalqnl6gg0JcKK7h2/phdW13ZPdbXF8ctrTFmbN9sh8l7Vwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q82RxeHx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87D59C4CEF1;
+	Fri, 24 Oct 2025 13:26:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761312360;
-	bh=fY1ij3id1DmAx5iQpPb3kIdcEzsoQu3dp77o1unz2j4=;
+	s=k20201202; t=1761312361;
+	bh=lNiRZwtesmiFcKiHJWflQehWlUXukBZMLmjaD5n1mCc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IJQxfl9UCaK0s46rGdxuoczHrOPUep51SUbri8lupcN82mCmB2oncyAl9MgtEe5V1
-	 9NLzXJapBrM17B+cXA+H7fX4BNSJs+c6MHT/+3CJHTKPGwQCyrnSbbUiVQnLAg1U9+
-	 64AZq5tDSZDzqTpgRtH3c/AyVYd++O7xN/2uQdM/rIdqaz02NgMGyz0snGgIiSiPcD
-	 0R+N9OEfEOy3mrx5omr5/gs0+sSNTmc3aQ2/3PZAsyAjBrPE+ST/BNujPWw4ic+RUS
-	 vxAlAkIsIARTFTvXAM20Zs9rjMsG+48DwaZbgHXK7OY+6ALocWMJpOGe83O1VI8x4R
-	 +mdB8SS+nPoaw==
+	b=Q82RxeHxgjGxZWN16Dqhqw/nHK0LGV9qYpFai9Snpj6Z82SWY8dNfkYrhAr0qYOHe
+	 EGJ/5BfIJeKWfP3o5QXsLmkN2QAZuh2jHplSheGpTZu8uYy/S3dO+DwMiUvsELQzbn
+	 1zwnYi+oNPbiN31KfMi2KwoBLgk/enZ2YgBbFL7xzw+ybt8QCSFh8ZOmpuT+kp8K6g
+	 2iC1Kcc4HgiBeT8jjb+vTf+UebadGw9+EWnxkl5vmPYHHol+LOPhuIvmBMBpiKgDKe
+	 Yo34K00ptfSK3SSyGL3oGQgjLhDvWtV3RgwdCH0ZDSh3FJo3YCLRL4scxbCrNa2aT5
+	 jLvNh8PSFzyPw==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: LKML <linux-kernel@vger.kernel.org>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: [PATCH 5/6] timers/migration: Remove unused "cpu" parameter from tmigr_get_group()
-Date: Fri, 24 Oct 2025 15:25:35 +0200
-Message-ID: <20251024132536.39841-6-frederic@kernel.org>
+Subject: [PATCH 6/6] timers/migration: Remove dead code handling idle CPU checking for remote timers
+Date: Fri, 24 Oct 2025 15:25:36 +0200
+Message-ID: <20251024132536.39841-7-frederic@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251024132536.39841-1-frederic@kernel.org>
 References: <20251024132536.39841-1-frederic@kernel.org>
@@ -59,34 +59,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+Idle migrators don't walk the whole tree in order to find out if there
+are timers to migrate because they recorded the next deadline to be
+verified within a single check in tmigr_requires_handle_remote().
+
+Remove the related dead code and data.
+
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- kernel/time/timer_migration.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ kernel/time/timer_migration.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
 diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index bddd816faaeb..73d9b0648116 100644
+index 73d9b0648116..19ddfa96b9df 100644
 --- a/kernel/time/timer_migration.c
 +++ b/kernel/time/timer_migration.c
-@@ -1511,8 +1511,7 @@ static void tmigr_init_group(struct tmigr_group *group, unsigned int lvl,
- 	group->groupevt.ignore = true;
- }
+@@ -504,11 +504,6 @@ static bool tmigr_check_lonely(struct tmigr_group *group)
+  * @now:		timer base monotonic
+  * @check:		is set if there is the need to handle remote timers;
+  *			required in tmigr_requires_handle_remote() only
+- * @tmc_active:		this flag indicates, whether the CPU which triggers
+- *			the hierarchy walk is !idle in the timer migration
+- *			hierarchy. When the CPU is idle and the whole hierarchy is
+- *			idle, only the first event of the top level has to be
+- *			considered.
+  */
+ struct tmigr_walk {
+ 	u64			nextexp;
+@@ -519,7 +514,6 @@ struct tmigr_walk {
+ 	unsigned long		basej;
+ 	u64			now;
+ 	bool			check;
+-	bool			tmc_active;
+ };
  
--static struct tmigr_group *tmigr_get_group(unsigned int cpu, int node,
--					   unsigned int lvl)
-+static struct tmigr_group *tmigr_get_group(int node, unsigned int lvl)
- {
- 	struct tmigr_group *tmp, *group = NULL;
+ typedef bool (*up_f)(struct tmigr_group *, struct tmigr_group *, struct tmigr_walk *);
+@@ -1119,15 +1113,6 @@ static bool tmigr_requires_handle_remote_up(struct tmigr_group *group,
+ 	 */
+ 	if (!tmigr_check_migrator(group, childmask))
+ 		return true;
+-
+-	/*
+-	 * When there is a parent group and the CPU which triggered the
+-	 * hierarchy walk is not active, proceed the walk to reach the top level
+-	 * group before reading the next_expiry value.
+-	 */
+-	if (group->parent && !data->tmc_active)
+-		return false;
+-
+ 	/*
+ 	 * The lock is required on 32bit architectures to read the variable
+ 	 * consistently with a concurrent writer. On 64bit the lock is not
+@@ -1172,7 +1157,6 @@ bool tmigr_requires_handle_remote(void)
+ 	data.now = get_jiffies_update(&jif);
+ 	data.childmask = tmc->groupmask;
+ 	data.firstexp = KTIME_MAX;
+-	data.tmc_active = !tmc->idle;
+ 	data.check = false;
  
-@@ -1636,7 +1635,7 @@ static int tmigr_setup_groups(unsigned int cpu, unsigned int node,
- 		root_mismatch = tmigr_root->numa_node != node;
- 
- 	for (i = start_lvl; i < tmigr_hierarchy_levels; i++) {
--		group = tmigr_get_group(cpu, node, i);
-+		group = tmigr_get_group(node, i);
- 		if (IS_ERR(group)) {
- 			err = PTR_ERR(group);
- 			i--;
+ 	/*
 -- 
 2.51.0
 
