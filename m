@@ -1,63 +1,87 @@
-Return-Path: <linux-kernel+bounces-869003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B07C06B0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:25:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DDFC06B15
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C08FD1B858DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:25:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EDC2402F45
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD52021CFF6;
-	Fri, 24 Oct 2025 14:25:24 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E711E221FC7;
+	Fri, 24 Oct 2025 14:26:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773F52153D3;
-	Fri, 24 Oct 2025 14:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90CE203706
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761315924; cv=none; b=hr5YcODzZ9qMS/eqxTmPU5zkVSQaitJ+n8+XsELazluE9WSJdl5Y4JqyyK34Jadaa+rzSKRfdbPFz31l+GWUQWOp34ZqUVbrh7JXA5HQJLBnxOQ+X47Oa0kT0IQ8J9fVuj1iygQlpwvE9netA7mUhxkCl/H3S8FI+w4Iktk4QbU=
+	t=1761315964; cv=none; b=q5yuxfdfeQVv3pirZvf2epQadOT8k7R/KKgeL8f6okY5UXA7rldCIWhzzTxDxaR8bWCvFj73vrVcmmkDzu0HmJuIzUpm2iJxqxJIS+7dLtpXRokvLUPhyZ38D8cXOCMOZVAsDvZdg2ZHEJMjqvrBo9/McAma1kRMsO49fsdZP8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761315924; c=relaxed/simple;
-	bh=Dp2tMX7zMN7M2u0nEysiM+LRLHt/4c33JDnqsbwNJqA=;
-	h=From:Subject:Date:Message-ID:To; b=lf4iy2r7saBBg/KEpYByzlnOFcxLFopLvTerk8tXTYyuPdGOnP1PnNGGRA8jxe5/sIqukqTHmnWd3wk1ssYCF2VLQ5bV4OjUingGpkbvYQ6opHFAsxUsWFaMqwNb6xYlYo1+oDv3XRZW6k6ZXAfYMVCY8SGWQ4z3Ny4Zd0KkDyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEAF3C4CEF1;
-	Fri, 24 Oct 2025 14:25:23 +0000 (UTC)
-From: Clark Williams <williams@redhat.com>
-Subject: [ANNOUNCE] 6.6.113-rt64
-Date: Fri, 24 Oct 2025 14:24:33 -0000
-Message-ID: <176131587397.2087940.9909280471524573596@demetrius>
-To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <joseph.salisbury@oracle.com>,Luis Claudio R. Goncalves <lgoncalv@redhat.com>,Stable RT List <stable-rt@vger.kernel.org>
+	s=arc-20240116; t=1761315964; c=relaxed/simple;
+	bh=L9GuY12nXVi+xmOy3Z+ONG2yV3BvDvi6jOkaR9AXtgM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Y74qkF6Lod9w8luWyjmjJ3IyfHbhr4/k0kR6TMnlubS01rWWM/E/6tyCmdAYgK9WGL8IntC4+V1obYeSjDgXzuKhnoOc/8DE8oNSfUxWNHIldHaOHX+09wMdIepIkksrgxBfpAviDmMIOwfgNSE0LyDDnRnhSfQrqO79/eKyrI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430cf6c6e20so26253835ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:26:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761315962; x=1761920762;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I+izLjw2ZkxvWcDREvi4+nhe7gxfAPmKZIDS4bQp0DY=;
+        b=k3TduyTYniW4NvP0o6MG4K+xJ/LMQaOon1Ew+Td4kzI2QWH3Zrim1afgASnWZmcPyY
+         MggnxGM7ik5ns9sP2EurRj1Eb6HW2QDs79KiqAi+XOLcitVItlYL3O9TmvL3kiIxt4hr
+         VCdSjHmtTMhoFR2RvQVaB/oyFBDY86JXjGEVU/Lv3hSR1nw2DxXiYLUkMlkyDgwJLl8q
+         38g8vLUJ5yQ+op82MJ64StKFMjFGBBQS1Mw1pu4uZMXrpw/gYICkzfskVjBxj8jSpGY0
+         3EdZXl1xPwqJy5iN5qUH70CVm6W+xSuYDlL8Q5gnDFiS7/V+5vUNtJCQ8ihsgB4ycFpu
+         S6Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5iuzXE0RVLBSq9rt7G8cSDmEnThMWnMf4QddX7shg5nRh5UmReNlfiTHJbMoJK8OkSxp86Y0WDvefoOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8RXpvmrdBVN43bgTfWFIV0SE+dIspeaQzIz6fTOawGoa2WlUJ
+	h7TJoG7s9g/2yIVfc0fKGLLBSwcmPiUDQXhoKUg+F5R/mqEFE/u7tI6wVOl9zroH5zNYLtd/hQ9
+	k3lX4eXaIFLbP8jScjrtLTE4GxqoYcGWVx7A5almz8x2jRl6Kvvl43g91weg=
+X-Google-Smtp-Source: AGHT+IFLaGBegS2CqaypP67YgfTVhNwZhPmDtWVpN1qErUmpWfnIxBs6aOh/HD4G6U73ziiKxzd7C4lIFtMG8dS0w6Cp9b7wGKM0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:3785:b0:42e:d74:7252 with SMTP id
+ e9e14a558f8ab-430c531e3bamr406954765ab.31.1761315962099; Fri, 24 Oct 2025
+ 07:26:02 -0700 (PDT)
+Date: Fri, 24 Oct 2025 07:26:02 -0700
+In-Reply-To: <20251024071535.FSE50%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fb8c7a.050a0220.346f24.00fe.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_commit_truncate
+From: syzbot <syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello RT-list!
+Hello,
 
-I'm pleased to announce the 6.6.113-rt64 stable release.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-You can get this release via the git tree at:
+Reported-by: syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com
+Tested-by: syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+Tested on:
 
-  branch: v6.6-rt
-  Head SHA1: 5da32bb3192889530bd76fc4f0adb75c54044cfe
+commit:         4fc43deb Linux 6.12.55
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=17197734580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8c2405120cc7eb82
+dashboard link: https://syzkaller.appspot.com/bug?extid=c16daba279a1161acfb0
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=114eae7c580000
 
-Or to build 6.6.113-rt64 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.6.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.6.113.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/6.6/patch-6.6.113-rt64.patch.xz
-
-
-Enjoy!
-Clark
+Note: testing is done by a robot and is best-effort only.
 
