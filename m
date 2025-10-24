@@ -1,186 +1,185 @@
-Return-Path: <linux-kernel+bounces-868075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14911C044B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:00:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C753C044C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18BE24E3A5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:00:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 322693B729D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4783279DB3;
-	Fri, 24 Oct 2025 04:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB0D27F017;
+	Fri, 24 Oct 2025 04:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="POgetCVj"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010025.outbound.protection.outlook.com [52.101.61.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wv22Z3RW"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470FB274FE8
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761278421; cv=fail; b=JOX9VLZna3sNWeXXvTec5k3EaFD6Dp8LuzKexRC1EOkgwdw90/OTGNaKUkDJrDEqbDmurnW1gsvkWqpFytjmSXbJBsBV/Z5ApFGgb6Edkb5OucjT/oj47f5FBvhX9wgDFvlTIp/Md49dgYkWjMscpScecvJqdRhFCM0w79fhTHw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761278421; c=relaxed/simple;
-	bh=3jrvSR/A1WYZAZCm7KzmM5PlQ1PoXFgrYJOIBfz/rvU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cFRo6pNXrQ79OGfW4Yu+5udPCdxoLj5ncs4JcHEOQcVZWfaDAN3r8XuMm++sVSadPpMMCV2Drf29zP6WKx4e6lwnr9ius5+E8Nmt1E1XSFCAmkFyVLAI+voK4KviXvH8gajEuGE3TR0c/iM/iuvVgJWJ/6qyCSnA5eipfdTuB/o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=POgetCVj; arc=fail smtp.client-ip=52.101.61.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Dc1ADsUzfX28ON5HWcNj0FmW+dGInp3dcYMEjtbVI1lJzHlL54VEt/0N1KOlZGFWJPT9xdCcLUX5fPzrJCmYBuM4L6F7ZgTrUeI4sTYnuVgPvZV93ZYN39y7//L51/WftPjLmuc729KNF1ecQrldvjXNTtdLSQMp+vrr9T/PZ2UaiX+jpY+Bc8yb16GM+HF5EywtSgwf+woO6nS8LmXOooz6hrhpmfE5r9zhw3oRRG9mwV3QJOzFKa2Gzt8x8+wS7qZL/n5y7brosw0m3zI2DYQwpY55Fc2BjDg0/bqCvoVPQzBp2QCYXbxYFuO4GNeRdxr9bOEizFWxCeSzUNZxdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=adyzwE05n2AZXe026ytqdSt7BuJTUfcblt5oksk6zXI=;
- b=VBBSHy0JxrxiLrRVpDEIpabl3PdljCN+rot/ciqJZwe27tXZaarrmnohlxMlwH/cWxvUqhAtMaHql2q/MT+6PIRmW8rNannGEdSq3eTCiiEGrczzugg+taAQ0739+FjHZfQXVR+u8KTBImR4SvzOgT4lxP0WbgXe+yGUNq+LAnD5ybQIyunZw+HZkLV1/eHlKyVza1bFBqWmy5kIapqNbn51+Dgq8603FQnBrCI8eB+AXv7kkVNyZYFjmh525WC+6fo/JwwZrNoLCgQt7UZ54b9J2GFeAWewBgV4MqDAfMokT/wqGV18EbDd7k4N/RU7kufz+xyNV5ytbgNESQHWbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
- is 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com;
- dmarc=temperror action=none header.from=amd.com; dkim=none (message not
- signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=adyzwE05n2AZXe026ytqdSt7BuJTUfcblt5oksk6zXI=;
- b=POgetCVjDC1GrR3pZQSCiKKRlHuFf5RadDZyH9VhhEntT+yN91p21xhlAzRzOW1X0OwXJUXIsDDd6CKu+BV4vibUrV8jKZ9g4aQX0x1qjqqJYTKGC4obVhVk0103TzQdFz9POMG14xiscZuwmyWzhRJcV6gIMj5vjZ2WxfPTk5M=
-Received: from BYAPR06CA0032.namprd06.prod.outlook.com (2603:10b6:a03:d4::45)
- by CH0PR12MB8461.namprd12.prod.outlook.com (2603:10b6:610:183::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 04:00:14 +0000
-Received: from SJ1PEPF00002321.namprd03.prod.outlook.com
- (2603:10b6:a03:d4:cafe::5) by BYAPR06CA0032.outlook.office365.com
- (2603:10b6:a03:d4::45) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.12 via Frontend Transport; Fri,
- 24 Oct 2025 04:00:14 +0000
-X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
- 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=temperror action=none header.from=amd.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of amd.com: DNS Timeout)
-Received: from satlexmb08.amd.com (165.204.84.17) by
- SJ1PEPF00002321.mail.protection.outlook.com (10.167.242.91) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Fri, 24 Oct 2025 04:00:12 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 23 Oct
- 2025 21:00:07 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 23 Oct
- 2025 23:00:07 -0500
-Received: from [10.85.36.188] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 23 Oct 2025 21:00:04 -0700
-Message-ID: <1fa78304-b194-4d34-888a-c387859ef72d@amd.com>
-Date: Fri, 24 Oct 2025 09:30:02 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068AD2690D5
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761278469; cv=none; b=ShuAqPr9tI3v5A592dMmnF5t2IS+F0frkJ1fl6lExtYjknicKVo6xMUo2rXhl7GKGWv01UcCbLiW9ZmbLDs1PqE4srwN+HIsJl1K+YStJuWILvCzdaxbOsBmNxICtvTsR2dyiQ+DeTj8/hSgYxxqlLkVuRk6kQgMdYG5nb32pXM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761278469; c=relaxed/simple;
+	bh=V10J8FMQ/2czcpCw//K/+x+vSWrM+ulV22C6o6B0ctI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H8iNEs3LyfhKPG/B2Bh0O3X3UpXHPcEEoyHkxwCQ54tpzTydbUL3Q0bd4hzrS503zv0fux3423QZ17lW7CifLZbm4jqJUPG/p9fsqKS4mvQ+YBVudKXfHkLVKOMawXzf6Q3v5rh3wHVEHuZexhBj9Mc8jUSaRmAGtcrkConu3Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wv22Z3RW; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso2879667a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:01:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761278464; x=1761883264; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bX+AGT1PAEb2wRzHRL+8B92/Z4uxx2bE66SuwJSj7jg=;
+        b=Wv22Z3RWn9GAhWb+ereUD8xrek7UWUNZEA8rYX9psbY1+q1IvDaKWBReyP740V0QLY
+         oculeB54tOBrIy56+LajplQlhljD7vRu6QwRCedu6iNMewYzgnrKh/vMgfNrXaNSYL6S
+         HfQMRLE3bHQiyFR1/mjmjrg1os8qqCnJP4U5STKEkrIwwNSIErW8N8UmAmXTz5A8X/oQ
+         EqnoqdTndxDIsrySee8ba0ixuUFdBORWmCB5q1xKfCqBkGOPAwYCo3WHvP4IuzVl5VDB
+         RA80Wy4l5rx8/nHQTiVMZ0D1LofLwOejHMEVaxcTlb91GRWJmHIQsNJiK5ZrJRBqzOPC
+         x1Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761278464; x=1761883264;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bX+AGT1PAEb2wRzHRL+8B92/Z4uxx2bE66SuwJSj7jg=;
+        b=hfy3y8nfoPnPusdJQo+XL/gw1XtV4+Ts4aE5+9WCWHYzmlE87QPimYgiOGldXjKQx3
+         FAGK6kISqRwVfQQBzjuOPmcpLuXuYYF3O58Q/WmyAKPQRhggouN7MZTbw/K5ScMHh2oF
+         Y5AISfW1hVx8WJ3RODqi2K39CT1bf7rPJAo60Id+ZU5T0PMtuMFD3HT+49Cu8orEEeVE
+         rFxNe7jjKsY+zSrt0s5ziCZYjgA+UiEOrdQ9e6BerywasomKbZpBDLRm92ByD7v3Euph
+         rnU4T7abcuh+r4qs6WJAFPxodsgFlEjs6CgnOYyPvR5V/r0d9sIRSK5jyu0vbf008SNH
+         32TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUduV3anqyNJhVAoAkjjXAlPxdenJ18d4YEyYpnMKsrxr6Tqpc/M9qddyyb4326GtZhHxA5+7c0tixMeFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysA38fDkvd8V7JH3sItRcFp4c41UtlkiplqKh001y/zcfqu+Fs
+	mP4V1ZAJ4uZgAFrWR5hx/LCIqgWvdLpnHp8UUIrwt0niVA6sOU64SWi/hgZEfO9gOCLK4MT2Ew+
+	g5Q3Jz9wVeQfXvFX4yrAYHlBnsWWNO6g=
+X-Gm-Gg: ASbGncu69Tdb6VolDu8Ri72aDK3lVhQIqv155WzF9CUQ/mydYW5UEPR7sJDeS5mMkKL
+	RSpSCEpQ6ujRURu+pMOylT24UufH0RvBSruuZ014/+hM1d6iSi873WrYn6EtXd13TzTqERonKN/
+	1eeo+uxBvl/LtguVHtJE7iUujGuEq0EjSH00Q56VIyKp/Noa/2IUT5IqO5ZbQ4jHmSwjMq83Oqk
+	oryt99Wt6OJTH9FekjmyUj/oHpMJb9movJBOWIKsF8JaC4/8mpsBw57kVo=
+X-Google-Smtp-Source: AGHT+IHncX413Zw579qxe0Qf5NgqYwOEtK2z/nG3SfbdqAmW/ND46AejAhP+66pY1PNOOUa4grOi1M19bZwDtf3Z0pg=
+X-Received: by 2002:a05:6402:1449:b0:63c:2d72:56e3 with SMTP id
+ 4fb4d7f45d1cf-63e6007c37cmr933871a12.23.1761278463985; Thu, 23 Oct 2025
+ 21:01:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: sched: update_entity_lag does not handle corner case with task in
- PI chain
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-CC: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>, Phil Auld <pauld@redhat.com>, "Valentin
- Schneider" <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
-	<dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman
-	<mgorman@suse.de>, Shizhao Chen <shichen@redhat.com>,
-	<linux-kernel@vger.kernel.org>, Omar Sandoval <osandov@fb.com>, Xuewen Yan
-	<xuewen.yan@unisoc.com>
-References: <aPN7XBJbGhdWJDb2@uudg.org>
- <20251018195730.GJ3419281@noisy.programming.kicks-ass.net>
- <c10f6fda-aa8c-4d8e-a315-3c084af08862@amd.com> <aPgm6KvDx5Os2oJS@uudg.org>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <aPgm6KvDx5Os2oJS@uudg.org>
+References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
+ <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com>
+ <CACePvbWs3hFWt0tZc4jbvFN1OXRR5wvNXiMjBBC4871wQjtqMw@mail.gmail.com>
+ <CAMgjq7BD6SOgALj2jv2SVtNjWLJpT=1UhuaL=qxvDCMKUy68Hw@mail.gmail.com>
+ <CACePvbVEGgtTqkMPqsf69C7qUD52yVcC56POed8Pdt674Pn68A@mail.gmail.com>
+ <CACePvbWu0P+8Sv-sS7AnG+ESdnJdnFE_teC9NF9Rkn1HegQ9_Q@mail.gmail.com>
+ <CAMgjq7BJcxGzrnr+EeO6_ZC7dAn0_WmWn8DX8gSPfyYiY4S3Ug@mail.gmail.com>
+ <CAMgjq7CsYhEjvtN85XGkrONYAJxve7gG593TFeOGV-oax++kWA@mail.gmail.com> <aPc3lmbJEVTXoV6h@yjaykim-PowerEdge-T330>
+In-Reply-To: <aPc3lmbJEVTXoV6h@yjaykim-PowerEdge-T330>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 24 Oct 2025 12:00:27 +0800
+X-Gm-Features: AWmQ_bkc9YwuZtUhzw52MpHd91KHJZxGIdtGa9Ii8w-Tgx94sUw-dZLiUembJcI
+Message-ID: <CAMgjq7CELW_s5ok-2NHSFzK3SQKQKHB3VRLGnFaGGxe5c-eCvA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm, swap: do not perform synchronous discard during allocation
+To: YoungJun Park <youngjun.park@lge.com>
+Cc: Chris Li <chrisl@kernel.org>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002321:EE_|CH0PR12MB8461:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9f10aa79-3c8a-4dcb-203e-08de12b1d520
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UmVMRmhYdlRtUnZjT0dDY251RzFFQ0ZhTk5yazYrZGx4b1U4Qytub0phSklQ?=
- =?utf-8?B?OElidVgwVXBUNjB6cWtmSHJLN2lQNkZSVktWSDYvaUNDZ3YvYUdkcDJHd0JW?=
- =?utf-8?B?ZkdtTTg3WHRDcGJTb3NNQ1NCdHVnaWFOVEFPV3Ura2JlRjBqb1czMkVlVzNH?=
- =?utf-8?B?cUk2SXVSVTlsRDRMOGRhc1NMdmtXaGR3NkhxSUdxcjJWVnA0NE9KcmUySFk5?=
- =?utf-8?B?MmxCZldsQS9RYkJ2N3VJemJLU20rRE9ZTExGdEFMbjVSdk4reE8yc1hkYmFN?=
- =?utf-8?B?QXJ4VDdRN3p5RnU3aHp2RkcxbWl4REhyZW00QndNaVI2dUJvVWovS2NzMEM3?=
- =?utf-8?B?Y0NQeFUraVRFNkZHQTFlWWFBMEN0WXhzSldoYTFra0l3OUV6cEd2djJ6ZWZ5?=
- =?utf-8?B?MVNyNEF3dVZCTVIwSzh4ZjBXcTJLR2VDTEo5YzltVzZqV1ZOMTgwNHc2em00?=
- =?utf-8?B?UGhKRC9tZTNtb1Jkb3huUXdVVU9qQStncGtMa1pJZjkwZEVUYzh4SUNQS1k3?=
- =?utf-8?B?YTZLWG5XaUlYTlVtOE1hV0FKUlVTNkZrc1ZqMGlxOFVmaXBSdUdlejhIK1NP?=
- =?utf-8?B?SU1lUE5FL04yZTFydkFkWDhFeWFMMG5JRGVvTEd0WTArMFJVcmpWOHhRYm9p?=
- =?utf-8?B?cTRrTDd6dmQ4WDE1S0ZFNWJMR2N2VGZIanlQSmJWejRkbStwd3Q0Qm8reGhX?=
- =?utf-8?B?cG9UeWhSM3ZLQ1JHaVZ4V3NNdDlzQzhNT3E0UllLWlBVK1dZWEpOVTdUVk11?=
- =?utf-8?B?aHRLV3NicFNmZEtqcDRGRng2NXROaW5jTmd0eGg5NGNTSnFWbWR6aWFld2xY?=
- =?utf-8?B?YmpNVWxpRFNzakhKb1I3c2p5a3B5TXpWVWF5d01oTVNPR1k4Qmw3SUNkT0dJ?=
- =?utf-8?B?dDRWYkFLQzBnRkZUWG9SQ2UxZ2ZRUlNXRnd3Tm9aZlEwSjg0Yit5SWh5ZzVt?=
- =?utf-8?B?R01CVlBneXJUWHhVZnlaT3dQS2NadG1QT1pPOGk1VFF2V2p5NGYxYVhLVUJG?=
- =?utf-8?B?WEUwbE5CZVZVWU5xZW1wRWlXSkV2MjBENWNnSXJXWEFHT2ZQaFZQOHIzU2Jn?=
- =?utf-8?B?eUlPN1p2djF0TGZPYVRYaFJpdnl2MXNyS09rY0ZVZGFDc05JZXdnUlFvaWd3?=
- =?utf-8?B?L2hxNGZkd1BXSkhxYStjekdnUXR4YlVpME15N1crZmdYMG5scE5sMURMVm82?=
- =?utf-8?B?YkhnSHdiT0xlUlVGRlVESytENk8rbjhUSlcrREFqcTBLMHBUOWJuTWxYYVY2?=
- =?utf-8?B?alRHUXJ3Z2dKN0dzcFZMWDRQcG1BZ1dURWRhUWIyaFN6T0JRV1NNNTVuT2Vj?=
- =?utf-8?B?Ny9vNlRGR3ZPdE14SUR6Y3gvK1piRCtYcmJPUmhJaHdHRC9HcllIZzJSVjdF?=
- =?utf-8?B?ZlRDR0dXaTNBVjdIcmhzQ21aYU8xd0c4OFBCUHM0KzM5UEVxUFZFNXNoRktN?=
- =?utf-8?B?dTFKYkVNejhHSmVwM0pyWDI4bjJYaUlTWmFtRVJ3QiszaXl4ZTFDTy9YSjQ5?=
- =?utf-8?B?T1YweSt5TVp0eS8wMVV2RVhXS3ZrdkdiYm5aV3JQU0VNZEt3NkJ4dlkyRmor?=
- =?utf-8?B?VmtTZGlPQ2UzNENTVE5wNmdyS3RUR0EyQVgrM3MzcFRYTGlSR2lrUUt6Um0z?=
- =?utf-8?B?bXRHWTJQSXMydWo4NWpkeUU2SzB5NFdISG9MTUN4ZTJNWWdEU1p4bHR2YThh?=
- =?utf-8?B?YzkxeEF0SkgxcUZ6d0wvOEl2Zy8rTVEzbkUvK1RQbDV5UXA3TWRaWEVOUjdM?=
- =?utf-8?B?UUlIV2RqSWdSbVM0dzhYbTI1WFR0QTVzejdsVksrVGdhcUUxcFYrTmxPd202?=
- =?utf-8?B?ZEhBditCWFNLQ3ZqUGhtK241RmR4VzAvOFRHeHV2RjBrd1VwNHBDZUJlV2tL?=
- =?utf-8?B?bzdVbUZMSjNLalFVbEVUblg1WE1saW9zZXp0R3FtK0JsalVBcG1sUnVrVDd0?=
- =?utf-8?B?YjFHajZxOHZHcThzWm9wNzNyS1ZJK3AySW0zSHlxZEJtSWMzOFZXcVd4cUdy?=
- =?utf-8?B?anlFQjkwUllmM1JpZGRGU1g5UE5SZlA1L1N1WFFtYzNFeHpTSTZIV1o1MXR1?=
- =?utf-8?B?RUhIWEQ0MCtFSmJkOTZSRG5BaGMvU05HdDBGdz09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 04:00:12.6012
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f10aa79-3c8a-4dcb-203e-08de12b1d520
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002321.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8461
+Content-Transfer-Encoding: quoted-printable
 
-Hello Luis,
+On Tue, Oct 21, 2025 at 3:34=E2=80=AFPM YoungJun Park <youngjun.park@lge.co=
+m> wrote:
+>
+> > > Thanks, I was composing a reply on this and just saw your new comment=
+.
+> > > I agree with this.
+> >
+> > Hmm, it turns out modifying V1 to handle non-order 0 allocation
+> > failure also has some minor issues. Every mTHP SWAP allocation failure
+> > will have a slight higher overhead due to the discard check. V1 is
+> > fine since it only checks discard for order 0, and order 0 alloc
+> > failure is uncommon and usually means OOM already.
+>
+> Looking at the original proposed patch.
+>
+>  +      spin_lock(&swap_avail_lock);
+>  +      plist_for_each_entry_safe(si, next, &swap_avail_heads[nid], avail=
+_lists[nid]) {
+>  +              spin_unlock(&swap_avail_lock);
+>  +              if (get_swap_device_info(si)) {
+>  +                      if (si->flags & SWP_PAGE_DISCARD)
+>  +                              ret =3D swap_do_scheduled_discard(si);
+>  +                      put_swap_device(si);
+>  +              }
+>  +              if (ret)
+>  +                      break;
+>
+> if ret is true and we break,
+> wouldn=E2=80=99t that cause spin_unlock to run without the lock being hel=
+d?
 
-On 10/22/2025 6:05 AM, Luis Claudio R. Goncalves wrote:
->> v6.18 kernels will get rid of this issue as a part of per-task throttle
->> feature and stable should pick up the fix for same on the thread soon. 
-> 
-> Thank you! You were right, your patch in that thread seems to have fixed
-> the issue I reported.
-> 
-> I read the thread you mentioned, built a test kernel with the patch and have
-> been running tests for more than 6h now without a single backtrace. As reported
-> earlier, I was able to hit the bug within 15 minutes without the patch.
+Thanks for catching this! Right, I need to return directly instead of
+break. I've fixed that.
 
-Thank you for confirming! Greg has picked the patches for both
-v6.17 stable and v6.12 stable so the upcoming stable releases and the
-RT releases based on them should solve this issues. Thank you again
-for testing the fix.
+>
+>  +              spin_lock(&swap_avail_lock);
+>  +      }
+>  +      spin_unlock(&swap_avail_lock); <- unlocked without lock grab.
+>  +
+>  +      return ret;
+>  +}
+>
+> > I'm not saying V1 is the final solution, but I think maybe we can just
+> > keep V1 as it is? That's easier for a stable backport too, and this is
+> > doing far better than what it was like. The sync discard was added in
+> > 2013 and the later added percpu cluster at the same year never treated
+> > it carefully. And the discard during allocation after recent swap
+> > allocator rework has been kind of broken for a while.
+> >
+> > To optimize it further in a clean way, we have to reverse the
+> > allocator's handling order of the plist and fast / slow path. Current
+> > order is local_lock -> fast -> slow (plist).
+> > We can walk the plist first, then do the fast / slow path: plist (or
+> > maybe something faster than plist but handles the priority) ->
+> > local_lock -> fast -> slow (bonus: this is more friendly to RT kernels
+>
+> I think the idea is good, but when approaching it that way,
+> I am curious about rotation handling.
+>
+> In the current code, rotation is always done when traversing the plist in=
+ the slow path.
+> If we traverse the plist first, how should rotation be handled?
 
--- 
-Thanks and Regards,
-Prateek
+That's a very good question, things always get tricky when it comes to
+the details...
 
+> 1. Do a naive rotation at plist traversal time.
+> (But then fast path might allocate from an si we didn=E2=80=99t select.)
+> 2. Rotate when allocating in the slow path.
+> (But between releasing swap_avail_lock, we might access an si that wasn=
+=E2=80=99t rotated.)
+>
+> Both cases could break rotation behavior =E2=80=94 what do you think?
+
+I think cluster level rotating is better, it prevents things from
+going too fragmented and spreads the workload between devices in a
+helpful way, but just my guess.
+
+We can change the rotation behavior if the test shows some other
+strategy is better.
+
+Maybe we'll need something with a better design, like a alloc counter
+for rotation. And if we look at the plist before the fast path we may
+need to do some optimization for the plist lock too...
 
