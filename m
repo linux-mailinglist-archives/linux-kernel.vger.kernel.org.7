@@ -1,87 +1,193 @@
-Return-Path: <linux-kernel+bounces-868450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556B0C05415
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:10:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A1EC0539D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:02:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83C54212AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:58:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F7C6500D8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3EE307AD4;
-	Fri, 24 Oct 2025 08:58:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39383081BE;
+	Fri, 24 Oct 2025 09:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z+Ih01Gl"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECAC307AD9
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996D43081A1;
+	Fri, 24 Oct 2025 09:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761296286; cv=none; b=pZe/DUSuzeJ+WtNGwYVb1tnb5opfsCsAmGx97be7uwO+/Uw1B9ZBkAg99w01xJY3/R7Zoj7Snwx572BVPYyvaW8LmFez5XPTaVpfl0LkaTb1RHZh/FAI9qqYxi0Xha498+X84nhPTD52g3qtSdxj6MstfljzDZbEYQ6wRgJbNcw=
+	t=1761296413; cv=none; b=k9gr3FZ/ldwjePQCn/cAXDXDTsH6uasSm+LUfnX8+B/UgjhgXVXPr3FQI9SCNWF8iDdo7jISegkT+fBQuvDl3VLDxEE/2YVsR7OWwSw3SsDCeUJ9xV1ce9t2tpyrc616d7VTyxFfFxnGrDswQ7FBe6eJx17B9px5rtq8XKqCzEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761296286; c=relaxed/simple;
-	bh=zwlYTCIQGLY0yh41zuHU3+Xs80pLScow7jcNxPi3euQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YjRpz3qp8Y6l7ZL78NydADJjvdEdKEegvGed2iDjjhStUBxuEzSDEePW5Id21MC7bW34BCN4yHesxwarkj5NseqqtavxtwykPoRml+wlK447/9rXJmftC/bsAfh+m8EaSt+mfVIYJScgJtMQ3KfqCbWHPz3+SMzHegtn5hFemJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-93e7ff77197so520458739f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:58:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761296284; x=1761901084;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6yahXNlFQ7S9MhfLB3CntrMuPhNaVCH9GfWsJAYRWWo=;
-        b=a3QyrFCKwU7mOJ6BlFsI1hbMyCGd1ESYsQvet0HL6x7DLOQfvar+jF+iaHLPP3xzx5
-         5ZhIfZmjvcjxZhHU8GvlIQ/zMhh39xfUb8hzDprRR3IMUE+ElniifECMvlxA7Kk9H9bI
-         +Q4QLYXySXmTklRLJkE2vMWGP6MJT8zPqxz8m72+P71DSGMZdUC54lc/1WCXYhueaH7N
-         ECH58X0gxaXCCepJW790OFrZS0i+gGDkn7lxmB0UACStekO+steLiwF2XAs09oH37baE
-         AIjT/JGB0bfJbg73GT6o00Voz8uphSe0fCEpvfFoTc1qMMIzN2uhlSqv02mpE+74p+It
-         /Rdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmlCUw+JYPq4v4Y0XYTMr4dKO+bkxenGz1Br9KQvnIOCk3sbPL8oD+7TjQaWD19faP8H7tsRzxh+310V0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzyHNWDMGQSIfiloUx7JZgJtBs1KKvrRJuqzYAdm0ZonPtXR78
-	WLY6d/iBJ7Ecxiu42TUZW7B3hhPhOJdEtDqjGGynm5AXSP/4YRShb11vx0vFB3+EKVz8bwchMIu
-	7JvrRrNkMLb5LcjvOOq3I/3KbU2e2uEm6WaunWfr4HG3snjXz5zghkPxrrNM=
-X-Google-Smtp-Source: AGHT+IG8wiUajVSQP2OPdwWx8twW9WropJ0zVkOe31SY83Hqj88ejRhX/tbbVE0fSzyU12O2JSudXrB6oK/DKIzrERM9KIi16J5F
+	s=arc-20240116; t=1761296413; c=relaxed/simple;
+	bh=2pMVFWg8Y6Z3M92SWEe9ppFW6tJnoGWLUlAABysjQQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ih9t9browXx5YJ7dTxGbxuQ4ZFm1uT4vSLUojxgIgr8VNVhyVAAlh+FkbZ80pz+dKVfTqd475xme4JociPTAIN8leAhVnCZtyPUVVh5Q2e+Bk4EEHJNLfAp8ACqgq0i+MTyq75BD4w0zjCNLFBYXa79kj8C9lsyBlUV+tsIF4TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z+Ih01Gl; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761296409;
+	bh=2pMVFWg8Y6Z3M92SWEe9ppFW6tJnoGWLUlAABysjQQk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z+Ih01GlT6BodeX3GlGgwYg6VLTjgEpcqYwyjvEiVWQizs287I2ZJqyz+QgwB+qz1
+	 kVQYm/rtyMAiU3u8+oMr+VOzWiTw/qIagpFzrY1gluVx9lgoFZyiJYtF2MPlmdL7tP
+	 +72OtL2qF5CloRaxNlJ0+djuz/A6GbuApoSS0E6a/Bg9IZSDFuHz4nRdawkouzpEZs
+	 v//qEcehVBI0ku9LgqzuJOK1QmVsO7RWgNFOrkHzoCYBSxIholKwQy+9oVRzPFlu6a
+	 Ip0tcmR9mk4D//bKKN68q8BN4tRRwCpkXxFU2dS8TafQ38dC1QiC6yaVc310c0cEMD
+	 ICif9p0Al3FRA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 856A917E00AC;
+	Fri, 24 Oct 2025 11:00:08 +0200 (CEST)
+Message-ID: <66066ad6-0501-4f56-833b-16f63d06c9dc@collabora.com>
+Date: Fri, 24 Oct 2025 11:00:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:b84:b0:940:da70:9dc1 with SMTP id
- ca18e2360f4ac-940da70a124mr2705056239f.8.1761296284004; Fri, 24 Oct 2025
- 01:58:04 -0700 (PDT)
-Date: Fri, 24 Oct 2025 01:58:03 -0700
-In-Reply-To: <20251024071521.W4ZcY%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb3f9b.050a0220.346f24.00b2.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_log_needs_flush (2)
-From: syzbot <syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/24] MediaTek UFS Cleanup and MT8196 Enablement
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Peter Wang <peter.wang@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
+ kernel@collabora.com, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-phy@lists.infradead.org
+References: <20251023-mt8196-ufs-v3-0-0f04b4a795ff@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251023-mt8196-ufs-v3-0-0f04b4a795ff@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Il 23/10/25 21:49, Nicolas Frattaroli ha scritto:
+> In this series, the existing MediaTek UFS binding is expanded and
+> completed to correctly describe not just the existing compatibles, but
+> also to introduce a new compatible in the from of the MT8196 SoC.
+> 
+> The resets, which until now were completely absent from both the UFS
+> host controller binding and the UFS PHY binding, are introduced to both.
+> This also means the driver's undocumented and, in mainline, unused reset
+> logic is reworked. In particular, the PHY reset is no longer a reset of
+> the host controller node, but of the PHY node.
+> 
+> This means the host controller can reset the PHY through the common PHY
+> framework.
+> 
+> The resets remain optional.
+> 
+> Additionally, a massive number of driver cleanups are introduced. These
+> were prompted by me inspecting the driver more closely as I was
+> adjusting it to correspond to the binding.
+> 
+> The driver still implements vendor properties that are undocumented in
+> the binding. I did not touch most of those, as I neither want to
+> convince the bindings maintainers that they are needed without knowing
+> precisely what they're for, nor do I want to argue with the driver
+> authors when removing them.
+> 
+> Due to the "Marie Kondo with a chainsaw" nature of the driver cleanup
+> patches, I humbly request that reviewers do not comment on displeasing
+> code they see in the context portion of a patch before they've read the
+> whole patch series, as that displeasing code may in fact be reworked in
+> a subsequent patch of this series. Please keep comments focused on the
+> changed lines of the diff; I know there's more that can be done, but it
+> doesn't necessarily need to be part of this series.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On all of the new commits that don't have the tag:
 
-Reported-by: syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com
-Tested-by: syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Tested on:
+Thanks for finally doing a partial refactor of this driver - this finally brings
+it to entirely different quality standards.
 
-commit:         8e6e2188 Linux 6.1.157
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=15be9be2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1c4111dd2cd8811f
-dashboard link: https://syzkaller.appspot.com/bug?extid=c24237f0eee59c0c2abb
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=117c7734580000
+For all that you've done, MT8196 enablement is "just a plus". The very important
+and fun part here is the whole refactoring.
 
-Note: testing is done by a robot and is best-effort only.
+Well done!
+
+Cheers,
+Angelo
+
+> ---
+> Changes in v3:
+> - Split mediatek,ufs bindings change into two patches, one for
+>    completing the existing binding, one for the MT8196
+> - Add over a dozen driver cleanup patches
+> - Add explicit support for the MT8196 compatible to the driver
+> - Note: next-20251023, on which I based this, currently has a broken
+>    build due to an unrelated OPP core change that was merged with no
+>    build testing. I can't use next-20251022 either, as that lacks the
+>    recent mediatek UFS changes. It is what it is.
+> - Link to v2: https://lore.kernel.org/r/20251016-mt8196-ufs-v2-0-c373834c4e7a@collabora.com
+> 
+> Changes in v2:
+> - Reorder define in mtk_sip_svc.h
+> - Use bulk reset APIs in UFS host driver
+> - Link to v1: https://lore.kernel.org/r/20251014-mt8196-ufs-v1-0-195dceb83bc8@collabora.com
+> 
+> ---
+> Nicolas Frattaroli (24):
+>        dt-bindings: phy: Add mediatek,mt8196-ufsphy variant
+>        dt-bindings: ufs: mediatek,ufs: Complete the binding
+>        dt-bindings: ufs: mediatek,ufs: Add mt8196 variant
+>        scsi: ufs: mediatek: Move MTK_SIP_UFS_CONTROL to mtk_sip_svc.h
+>        phy: mediatek: ufs: Add support for resets
+>        scsi: ufs: mediatek: Rework resets
+>        scsi: ufs: mediatek: Rework 0.9V regulator
+>        scsi: ufs: mediatek: Rework init function
+>        scsi: ufs: mediatek: Rework the crypt-boost stuff
+>        scsi: ufs: mediatek: Rework probe function
+>        scsi: ufs: mediatek: Remove vendor kernel quirks cruft
+>        scsi: ufs: mediatek: Use the common PHY framework
+>        scsi: ufs: mediatek: Switch to newer PM ops helpers
+>        scsi: ufs: mediatek: Remove mediatek,ufs-broken-rtc property
+>        scsi: ufs: mediatek: Rework _ufs_mtk_clk_scale error paths
+>        scsi: ufs: mediatek: Add vendor prefix to clk-scale-up-vcore-min
+>        scsi: ufs: mediatek: Clean up logging prints
+>        scsi: ufs: mediatek: Rework ufs_mtk_wait_idle_state
+>        scsi: ufs: mediatek: Don't acquire dvfsrc-vcore twice
+>        scsi: ufs: mediatek: Rework hardware version reading
+>        scsi: ufs: mediatek: Back up idle timer in per-instance struct
+>        scsi: ufs: mediatek: Make scale_us in setup_clk_gating const
+>        scsi: ufs: mediatek: Remove ret local from link_startup_notify
+>        scsi: ufs: mediatek: Add MT8196 compatible, update copyright
+> 
+>   .../devicetree/bindings/phy/mediatek,ufs-phy.yaml  |  16 +
+>   .../devicetree/bindings/ufs/mediatek,ufs.yaml      | 196 ++++-
+>   drivers/phy/mediatek/phy-mtk-ufs.c                 |  71 ++
+>   drivers/ufs/host/ufs-mediatek-sip.h                |   9 -
+>   drivers/ufs/host/ufs-mediatek.c                    | 935 +++++++++------------
+>   drivers/ufs/host/ufs-mediatek.h                    |  17 +-
+>   include/linux/soc/mediatek/mtk_sip_svc.h           |   3 +
+>   7 files changed, 650 insertions(+), 597 deletions(-)
+> ---
+> base-commit: a92c761bcac3d5042559107fa7679470727a4bcb
+> change-id: 20251014-mt8196-ufs-cec4b9a97e53
+> 
+> Best regards,
+
 
