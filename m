@@ -1,121 +1,127 @@
-Return-Path: <linux-kernel+bounces-868525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C24FEC05650
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:45:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F8DC056E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 298694E39FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CFB13B8EEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1C530C356;
-	Fri, 24 Oct 2025 09:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0849F30C634;
+	Fri, 24 Oct 2025 09:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XEqtNiAg";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SuyNgfMw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SzwYlJEq"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F90430BF64;
-	Fri, 24 Oct 2025 09:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684C530DEA0;
+	Fri, 24 Oct 2025 09:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761299094; cv=none; b=To6IdyLQtlQBJ+udnIBpnByr2Yfg5VFFbMZ2LmjbHgh34L+paS901G72srdJIlh+GuLIEFQvPH/75L9uaZkqoh38KcZHen6RiayPWKKBPsD4Ar7vpuJFggChT2d/NDscaQdYuMSkaBAehuRrUSynKlYxmGroxTphueP9jvghu9s=
+	t=1761299124; cv=none; b=I8RMdgpO0FCL9l12InxSDGI83EouaAGp4rLpHqy+KpLi9pG76L3Hu1SpM9b73CtZL249KTH4E7MGZ47EqkV44QxhsmStvLdnaIn7OeiCT+iGYssx6knNQyuVs3XJ8zP/lzeji3KRhzmvc+sh5fJja8zFGg2gcFURqxkTbedIA7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761299094; c=relaxed/simple;
-	bh=/2HRTFh2VM5YW/xSRMuiW0yfeOgMt3QGvQ6iF68F4+M=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=pWslEUGzzPQcj8WUstJLRw8opEjacmCaBI6d8tiaz6Mjj21mUooLDVE3FCyc93JkFsjtxDiycFP1c0VZ570PV6bK1o4RFdaBrkBzw6+/kbJN3EUchlgzVdnfpbEvsyBW8VaoFYX8CHzRvJZnNRBzqTr64JPWR+gjgSWUTWcWtNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XEqtNiAg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SuyNgfMw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 24 Oct 2025 09:44:50 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761299091;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gJdS0dDLofa3GlcxsYCcaSbp/BJwXVNV7qhRt12qEBc=;
-	b=XEqtNiAgY7jVkByuhnL2VwJYUllkqfRy5EluhiCIKXIinx6Cqw0iniN2ZAdckkgNL1P0+L
-	o0jtLquUzH3ft5hKnjRE4g7Sg5vPvi/LLG/Uc7xs8KjQ2wD6dJTj6Byd1mgysysF2eIl4k
-	ImXrhKPrUjUtqH8ECQcgCjOImy17InKfJG7BGsADHGXLZpktSw01f5Rj/GZt3YgIYUPDh4
-	KSiIbJvsHIF6GkoTVz1lO+dN/JH4VzMPYHMblc5dFedtWZ6k7w0BqnDTLgkznVEaYAy5Eg
-	ni1MkpWrLIxRlpZx1I0McE6R+xLV5fIUE0g9C3nj974MXBsoJKamJELRPCgLuw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761299091;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gJdS0dDLofa3GlcxsYCcaSbp/BJwXVNV7qhRt12qEBc=;
-	b=SuyNgfMwYEonPxH9QKVk2Hpw5YXD0rcY/Lxa7R+bwR1l3VbccVqY6to+yEzkw19Kse25Gw
-	53eNJWwKLqBMYCBA==
-From: "tip-bot2 for Charles Keepax" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] genirq/manage: Add buslock back in to
- __disable_irq_nosync()
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20251023154901.1333755-3-ckeepax@opensource.cirrus.com>
-References: <20251023154901.1333755-3-ckeepax@opensource.cirrus.com>
+	s=arc-20240116; t=1761299124; c=relaxed/simple;
+	bh=cVx7atmHtPvg8dKzH3g4atr5NjXtz5VOAFhwQdAsO3E=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rCqbq4G0ubSardna1s8wEQinGvx8jkwm3eLdmkZdnmJCJdMAXprkTYeELuQclvU6FBRSjRw9vUA7C4yqUkH8YZN8zALTTdjlIbkQkRs88JffnfhScqUwxuKOf+mrJTU7y/UhkEVz5anIjhO166nWjyI0U3W7c43Dpz6MUxi17bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SzwYlJEq; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59O9j9W1726933;
+	Fri, 24 Oct 2025 04:45:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1761299109;
+	bh=eYrtYxUv6A51odEg2u6qENZ+oiyy0ej6DjO9vrLDx+0=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=SzwYlJEqg7pZv8CMXW+6p18Ps/+HwSELVAwFldtkqW2svv9y+Y5QLxnajZ0yUaJ0u
+	 z3fQsTfstsELdRjOaQBYYukYTnq5nE03wa0Y4godW4sBmjezXJoYdWC/IYhPAngnvb
+	 GBfkpOub+v5DVbgcNaTzYB4uEzNnYQPbAL60dcA8=
+Received: from DFLE201.ent.ti.com (dfle201.ent.ti.com [10.64.6.59])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59O9j9Ih3378299
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 24 Oct 2025 04:45:09 -0500
+Received: from DFLE210.ent.ti.com (10.64.6.68) by DFLE201.ent.ti.com
+ (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 24 Oct
+ 2025 04:45:08 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE210.ent.ti.com
+ (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 24 Oct 2025 04:45:08 -0500
+Received: from abhilash-HP.dhcp.ti.com (abhilash-hp.dhcp.ti.com [10.24.68.198])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59O9isvl148409;
+	Fri, 24 Oct 2025 04:45:05 -0500
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+To: <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <hverkuil+cisco@kernel.org>
+CC: <sakari.ailus@linux.intel.com>, <bparrot@ti.com>,
+        <jai.luthra@ideasonboard.com>, <dale@farnsworth.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>,
+        <y-abhilashchandra@ti.com>
+Subject: [PATCH V5 2/4] media: ti: vpe: Export vpdma_load_firmware() function
+Date: Fri, 24 Oct 2025 15:14:50 +0530
+Message-ID: <20251024094452.549186-3-y-abhilashchandra@ti.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251024094452.549186-1-y-abhilashchandra@ti.com>
+References: <20251024094452.549186-1-y-abhilashchandra@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176129909038.2601451.751277171615788851.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The following commit has been merged into the irq/urgent branch of tip:
+Export vpdma_load_firmware() function which is needed by TI VIP to load
+the VPDMA firmware.
 
-Commit-ID:     56363e25f79fe83e63039c5595b8cd9814173d37
-Gitweb:        https://git.kernel.org/tip/56363e25f79fe83e63039c5595b8cd98141=
-73d37
-Author:        Charles Keepax <ckeepax@opensource.cirrus.com>
-AuthorDate:    Thu, 23 Oct 2025 16:49:00 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 24 Oct 2025 11:38:39 +02:00
-
-genirq/manage: Add buslock back in to __disable_irq_nosync()
-
-The locking was changed from a buslock to a plain lock, but the patch
-description states there was no functional change. Assuming this was
-accidental so reverting to using the buslock.
-
-Fixes: 1b7444446724 ("genirq/manage: Rework __disable_irq_nosync()")
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://patch.msgid.link/20251023154901.1333755-3-ckeepax@opensource.ci=
-rrus.com
+Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
 ---
- kernel/irq/manage.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/ti/vpe/vpdma.c | 3 ++-
+ drivers/media/platform/ti/vpe/vpdma.h | 3 +++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index c948373..7d68fb5 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -659,7 +659,7 @@ void __disable_irq(struct irq_desc *desc)
-=20
- static int __disable_irq_nosync(unsigned int irq)
+diff --git a/drivers/media/platform/ti/vpe/vpdma.c b/drivers/media/platform/ti/vpe/vpdma.c
+index 29ee1918bc1c..573aa83f62eb 100644
+--- a/drivers/media/platform/ti/vpe/vpdma.c
++++ b/drivers/media/platform/ti/vpe/vpdma.c
+@@ -1135,7 +1135,7 @@ static void vpdma_firmware_cb(const struct firmware *f, void *context)
+ 	release_firmware(f);
+ }
+ 
+-static int vpdma_load_firmware(struct vpdma_data *vpdma)
++int vpdma_load_firmware(struct vpdma_data *vpdma)
  {
--	scoped_irqdesc_get_and_lock(irq, IRQ_GET_DESC_CHECK_GLOBAL) {
-+	scoped_irqdesc_get_and_buslock(irq, IRQ_GET_DESC_CHECK_GLOBAL) {
- 		__disable_irq(scoped_irqdesc);
- 		return 0;
- 	}
+ 	int r;
+ 	struct device *dev = &vpdma->pdev->dev;
+@@ -1152,6 +1152,7 @@ static int vpdma_load_firmware(struct vpdma_data *vpdma)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(vpdma_load_firmware);
+ 
+ int vpdma_create(struct platform_device *pdev, struct vpdma_data *vpdma,
+ 		void (*cb)(struct platform_device *pdev))
+diff --git a/drivers/media/platform/ti/vpe/vpdma.h b/drivers/media/platform/ti/vpe/vpdma.h
+index 5b3a0cd49a3c..1fc53fb33497 100644
+--- a/drivers/media/platform/ti/vpe/vpdma.h
++++ b/drivers/media/platform/ti/vpe/vpdma.h
+@@ -281,4 +281,7 @@ void vpdma_dump_regs(struct vpdma_data *vpdma);
+ int vpdma_create(struct platform_device *pdev, struct vpdma_data *vpdma,
+ 		void (*cb)(struct platform_device *pdev));
+ 
++/* load vpdma firmware*/
++int vpdma_load_firmware(struct vpdma_data *vpdma);
++
+ #endif
+-- 
+2.34.1
+
 
