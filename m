@@ -1,118 +1,87 @@
-Return-Path: <linux-kernel+bounces-868831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78959C0642A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:31:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F38EEC06430
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E58D3A96E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:31:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBB4D4EFD6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466553164CE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8BF3191CA;
 	Fri, 24 Oct 2025 12:31:06 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D384313C695
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341F230E0D0
 	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761309065; cv=none; b=Ny6yf9wuclxV9Iet5NfBBUsa0C14+RMjlNsFD8Y5kk/hYLai+fLvsMJvkaZUZ7nXjR7rzVNxEzqdY6NzWfmMApl4JG6asIdG8ECCaEeBb+kMKBdEYIDIdQ9iHn548q81+K43/8FFfSND2Jnfvi/oxvT+c+WOiOFvkTqAjaU2EQA=
+	t=1761309066; cv=none; b=T019hvA1pUTY5dOPvvMUJrTpt9s2DMLqyGXZTqrEcU9VH6zsNXh4VXE8V8rAdlp7Fp7vxHphGIm+0AIYd5uvDjr/ubbVSYDydIoFyoLMs4TizzArEMSyDb/mwXXdhK/PrToMxt/RIMKRW+F8A9u7jyfk/2j1d5o1WMwCkawJudo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761309065; c=relaxed/simple;
-	bh=Q1sk4AdrzZT3+Y0gKCMUvozYWgb4PmEeF5wsEbjHQa4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RSUskMNkbRDz8n5Bi63YoHGvP8Wo7D2XwHSnAHumadmo7aYLQ44cqEjxZaCabz5PC35XNfhzmVMFjeNpDNWuKpc9mRzW34Lyn86PWRdGU56N/Qdy16TA0NBkhuhSIuX+JyZTxfPL+FIE7uPmjB7xj5jZ1Jl3LAciWynROJby7aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.pengutronix.de)
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1vCGwe-0002Ya-Bf; Fri, 24 Oct 2025 14:31:00 +0200
-From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
- Dooley <conor+dt@kernel.org>,  Dinh Nguyen <dinguyen@kernel.org>,  Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,  Alexandre Torgue
- <alexandre.torgue@foss.st.com>,  Matthew Gerlach
- <matthew.gerlach@altera.com>,  kernel@pengutronix.de,
-  netdev@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-stm32@st-md-mailman.stormreply.com,
-  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 01/10] net: stmmac: dwmac-socfpga: don't set has_gmac
-In-Reply-To: <92e953b8-4581-4647-8173-6c7fa05a7895@bootlin.com> (Maxime
-	Chevallier's message of "Fri, 24 Oct 2025 14:11:45 +0200")
-References: <20251024-v6-12-topic-socfpga-agilex5-v5-0-4c4a51159eeb@pengutronix.de>
-	<20251024-v6-12-topic-socfpga-agilex5-v5-1-4c4a51159eeb@pengutronix.de>
-	<92e953b8-4581-4647-8173-6c7fa05a7895@bootlin.com>
-User-Agent: mu4e 1.12.13; emacs 30.2
-Date: Fri, 24 Oct 2025 14:30:57 +0200
-Message-ID: <87tszo7a7y.fsf@pengutronix.de>
+	s=arc-20240116; t=1761309066; c=relaxed/simple;
+	bh=QyTFPsJkDI5GpoB+DJmqdR4TCywTQpDTTI/wtnCPc8g=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=p76L6gMTllk7GDXIjxtNBzeUEPYgKmUgjSCeZ8nOehnsUY6NngM8bUEnXEz67wf+N6r5ypVlvJ9iIYruCEgr8AUVG8wkUpHYDwJ4WK2MPwJM9g1/AuiW348eC31OMjJ/ZgbDq5IMkcqbKQWnmYn5xkZqkM0LOwUn+wjPMlkm+zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-93eaaa7435bso177631039f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:31:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761309062; x=1761913862;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fb9Wfq6QoHJKFSw9JBezoKHPd6ZFPkg51aOEjN6bte4=;
+        b=pt+wwIQaU3hlCwLBBHI9dCBEULyzhVtZNcMzWEtmudTaemT5U6jabiuP+XIR9bBCcH
+         AHQuoS89+iqdumjGSm4Ob7whqGYojU2scAIwidcMHIoyLgbUE1YThu82qO3QyYJEe9BM
+         AiqNBWWdKsogJ1fvy62hmbt3f/xApF0FpaQAD6kv/zxb2FcdrQs2JMakRIjBTxUFuok9
+         IPbkyMKg7XRksVPAqlqH110jNu26FNGKblTChcJyGyJI/j7qbrVQrDb+m4bTqYdDiSQw
+         Io0hlVRPvGN4cuvw8rlYfQ5j1L4OoYhFnSLAqt6McQ7fAQukyEc/vJriBaOaAv7Rcu1r
+         Qqlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNdnV7EtQvr8PfDtUaLCiG5CK0Sw5z9kyToGPu8EkDWHzZmzn30ZsYX/Q+LdL37LtE8gF+GK+9pgbk6rs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiJw+WjqWPTSxW0Dq05bliYajeEgh5VmqWTdkGvozXIW1FG+MG
+	Zokb3WCMLStiyVmqMlAKaCKwoDbvUZqI2HincecawrThMlMJNbex9WWOOV9931t/M+e3qDadnmj
+	f/rv22IgVmNtR0qOqy/T5kowthUwfcJEuTIt8OKdvrZptOJAjAGyow/KmM4k=
+X-Google-Smtp-Source: AGHT+IHLlm5v4l+lh22gZ/4F4BTwWgt1Y6JS7tTLewkbfln0+HkC4n8iHdyFkV8CLuVR/h/vAkYpry/EEjcOYMynWLmWZ1vleCLD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Received: by 2002:a92:cda3:0:b0:3f3:4562:ca92 with SMTP id
+ e9e14a558f8ab-430c525f520mr199237815ab.10.1761309062222; Fri, 24 Oct 2025
+ 05:31:02 -0700 (PDT)
+Date: Fri, 24 Oct 2025 05:31:02 -0700
+In-Reply-To: <20251024071519.Hoge8%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fb7186.050a0220.346f24.00d6.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_claim_suballoc_bits
+From: syzbot <syzbot+5054473a31f78f735416@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
-Hi Maxime,
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On 2025-10-24 at 14:11 +02, Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+Reported-by: syzbot+5054473a31f78f735416@syzkaller.appspotmail.com
+Tested-by: syzbot+5054473a31f78f735416@syzkaller.appspotmail.com
 
-> Hi Steffen
-> 
-> On 24/10/2025 13:49, Steffen Trumtrar wrote:
-> > Instead of setting the has_gmac or has_xgmac fields, let
-> > stmmac_probe_config_dt()) fill these fields according to the more
-> > generic compatibles.
-> > 
-> > Without setting the has_xgmac/has_gmac field correctly, even basic
-> > functions will fail, because the register offsets are different.
-> > 
-> > Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-> > ---
-> >  drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-> > index 354f01184e6cc..7ed125dcc73ea 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-> > @@ -497,7 +497,6 @@ static int socfpga_dwmac_probe(struct platform_device *pdev)
-> >  	plat_dat->pcs_init = socfpga_dwmac_pcs_init;
-> >  	plat_dat->pcs_exit = socfpga_dwmac_pcs_exit;
-> >  	plat_dat->select_pcs = socfpga_dwmac_select_pcs;
-> > -	plat_dat->has_gmac = true;
-> 
-> Note that this field is now gone as per :
-> 
->   26ab9830beab ("net: stmmac: replace has_xxxx with core_type")
-> 
-> You'll need to rebase the series :)
->
+Tested on:
 
-I see, bad timing, but luckily an easy patch :)
+commit:         8e6e2188 Linux 6.1.157
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e993e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3fff88b67220f824
+dashboard link: https://syzkaller.appspot.com/bug?extid=5054473a31f78f735416
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=174e63cd980000
 
-
-Best regards,
-Steffen
-
--- 
-Pengutronix e.K.                | Dipl.-Inform. Steffen Trumtrar |
-Steuerwalder Str. 21            | https://www.pengutronix.de/    |
-31137 Hildesheim, Germany       | Phone: +49-5121-206917-0       |
-Amtsgericht Hildesheim, HRA 2686| Fax:   +49-5121-206917-5555    |
+Note: testing is done by a robot and is best-effort only.
 
