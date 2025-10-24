@@ -1,160 +1,136 @@
-Return-Path: <linux-kernel+bounces-867985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C20BC04111
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:59:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 003CEC04117
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 083594E703E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:59:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9EB11898380
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B272D1E98F3;
-	Fri, 24 Oct 2025 01:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274061E98F3;
+	Fri, 24 Oct 2025 02:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F7K31CFr"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="djn2EYtd"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846C51D435F
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F511547C9
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761271186; cv=none; b=kz7SEB4Ol6TuZraZEbBg3Y7q8gpj2OpwzDXYlcYldjBHTa3Oj1F3ey6FPqAVr8z54QZj/25YRBabvGqt4ZtjXmB1u3Y1N4r8+HCcQm6J8adG9KoQU18VKA1Oxew56Q4x4Lhoy2Lv/4dg8ru2UGtX97zxA3aCYITLCgQVbDiCSiw=
+	t=1761271238; cv=none; b=G7CBZSqwXfDVFCsurdYAd3S8Ffn3t1j/LU1DvL8UFXMgrqiZMyZkygOcnvBwTrCzPDwOhFN2DUesq3LozLzW4KaeXWqYO+ykc+T7z0RWLfGVMB6PKAjvxUIjM8SlcO4EO3uEeMiZ7ebFItkud6rcE82xaGCPjX644k2uCWKkZQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761271186; c=relaxed/simple;
-	bh=aeWewlhGQ0C6l2wHmmqYhcrMOrNsxoaaBwSfmH+Hy5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LncqwD8jYKNkfOaI1psUV24jy5aMPW9HNsdVltx8Z0rCwppRo2YKdslQ0Ps+TjNW9UFzoWk3ZB23PNYN/glsGHnFghj5b/r3QKv2lsl8qI1d4kVsML/7BeWg5jnWRNIUeTGUfScfXopAepYWEFv+Qa/R2M7kOcD+BOqlfXUYjkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F7K31CFr; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-63c4c346bd9so2960572a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:59:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761271183; x=1761875983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7rB4FXl5hyvE6TowvU8+Yj1ALYmBSYmfZvdeiCwkdjI=;
-        b=F7K31CFrev1YOLGkw/BYW+QnT9lGr9+gokUGwxWe5m3kCpSCwBMRAjFIcp3yyfH+3R
-         aYQcc/0B0nR26FiEPbCJVr4f+FFUMmezJInHKUTFLZT+tYPYdclm/qRSEfz8Pz01WZ6+
-         xTJT/iz1rrCq9JdS+E0epJyh1k0vCbkyqb42js5yC62pJSDZ4zzVXfuVySYDpBDaGMFg
-         mU6wdiKm1B1yVB+8N7Bw2kWSNeSLZp88OPJ8YkbihsViMIYk7WRwlSq2FRQ5JIg6NRQ5
-         EhJn1Nb1c13VFOTwW0uBjoYk6qSEl9DSiF8IqAXqyK09Sqk0JIAtsfbOikRq1BzysJKp
-         slcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761271183; x=1761875983;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7rB4FXl5hyvE6TowvU8+Yj1ALYmBSYmfZvdeiCwkdjI=;
-        b=N6wj6mgF7kGQPscJhX7i4jEtMqShUAAb6dbnaOZLgOgtJQ/gjPHPXrBUEZmpjDzGKM
-         aiLJ0ljEGChGFBY6tWEUqC+F4/X5TlvPG+9zPFgGFovS82502CFnRBKGaKS3IqIfuZud
-         gmqe160y/T4XDGtgzoFwXPeQ7AXqVtmDoq4xDAG4Ya/y9/V3zEDbtXMc0YZ2oxrK+QfS
-         tSyGEg2eCY8iqGt5TD4c8JVhB5NBcSwuZ8V8rC7alHSTHAHZx3ZcTp+RafJs2LT6shIn
-         6RjPzlB+ufXua+bbH7skAVhTD1sRLH66oLzzPW454ujRT9Na05B90ZGFfW9CLunbAlL+
-         ywMw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+YRGPA/r/B0q3M8Q4i7FwHPwzJ35hvNu+K7jd43OBt/RcK8vohIm2lN2R7plqH8Lo2mXW7O8k+ZtbQ+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzls8rzGCI2a3ER481u0Kps8t/rDxJHhcTClHovCe25faQ9wjPS
-	uD3kJ9nOnSg85RkyqwR4FeJ6UpdIWwmJuVkFUBpjxd24EUO0qBKqQRIgqButVgR46f2G3J8BoRD
-	gVotayNbcX9QbJQzchmUePP2+Ps+uqoM=
-X-Gm-Gg: ASbGncuv/FFTRjrCMAYHkIf/3qfpSm3jHbmefHM58HezI5vWt9rm75Os/tYGqielPFE
-	1o0DrCJQTXbvwSQjIoY7NKHpzr9UxsfXZeEUXyODg1tLZ96us5BCZTZ7BetJ9ygR42o/z/JstLB
-	jNgmqm21jc6+2IxSiZByqcVH/eRNvXUjNpej9Q5VocHk2EF3YlRHR1B/gYY6NjSFgLUbLIuTjlY
-	u6sZw1AUBt+JBwvDj2cZvmrF9gsBWd8xDLJ7RAEsbn1jQvaRmVY5leNwujcEIC53JKXdAC6
-X-Google-Smtp-Source: AGHT+IFAdu5tYoXGsiciHSKWPq7w8AF+ekApybceaHvXUAVQHFQ/qsK4oBOnm6T+K20KSc4r3DBCR+JBRtu4RApd2/o=
-X-Received: by 2002:a05:6402:524c:b0:639:ff5f:bdfb with SMTP id
- 4fb4d7f45d1cf-63c1f6b0b58mr27634437a12.19.1761271182583; Thu, 23 Oct 2025
- 18:59:42 -0700 (PDT)
+	s=arc-20240116; t=1761271238; c=relaxed/simple;
+	bh=MDygD7E0EDvvNYl24YlMqIZMRV2LfeVwEaH4xUJIZv4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kwpoEpA4wz7mayokUSvJ1ljS5j8T0RxcAy9sdGA27U/gFCNE2kEwRXOtrGJkAv/6CbRNdlwJ6l6TqXqn6BUsmPkchdpeeYb6Sqw4c5pT1ZoPdFnemd8mibQZwNJ+ij9HRX0OD/bxi0vm8J0HbAI1Dwi1STqwH+1vq95OoWctNx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=djn2EYtd; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761271226; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=L8/7AoCHvUPhdFk/Qd1hWlG/hm2n0G0zQ46sK7h9NoY=;
+	b=djn2EYtd9gl7PrJfR0xTnvAKxvX83HmN8H4wizZMkoWRZ981eGtxZ68b86AHsDre2hkqs3G17mS4Qr+eJit/vYh+GW5tIJgGGUpONEuhgmqDxoN+JzgtmbXozazq7W9uAHEUqV6prSrzl1F5is9TIuxe7OLl2MvCwjNQqI7jlxw=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WqsUhQ8_1761271225 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 24 Oct 2025 10:00:26 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-mm@kvack.org,  Andrew Morton <akpm@linux-foundation.org>,  David
+ Hildenbrand <david@redhat.com>,  linux-kernel@vger.kernel.org,  Catalin
+ Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH V3] mm/debug_vm_pgtable: Add [pte|pmd]_mkwrite_novma()
+ tests
+In-Reply-To: <20251024013137.136926-1-anshuman.khandual@arm.com> (Anshuman
+	Khandual's message of "Fri, 24 Oct 2025 02:31:37 +0100")
+References: <20251024013137.136926-1-anshuman.khandual@arm.com>
+Date: Fri, 24 Oct 2025 10:00:25 +0800
+Message-ID: <87h5vpvz2e.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020093941.548058-1-dolinux.peng@gmail.com>
- <20251020093941.548058-3-dolinux.peng@gmail.com> <174642a334760af39a5e7bacdd8b977b392a82c7.camel@gmail.com>
- <CAErzpmusSgOaROhEO25fKenvxQJU1oSPKKzUA4h67ptdQxWM7A@mail.gmail.com>
- <7651ac9cc74e135f04ecfee8660bea0a0d3883ab.camel@gmail.com>
- <CAErzpmtWLLYuFk3npTiOgGOKcEcH1QUGGEHLvPncVT+z261C1A@mail.gmail.com>
- <CAADnVQKU0MnQHxxvnp9WCu_UO4fEtd_D6ckNmOd7pLg90ecF4A@mail.gmail.com>
- <CAEf4Bzajdv3Rd1xAxm_UZWBxPc8M0=VuUkfjJvOFSObOs19GbQ@mail.gmail.com>
- <CAADnVQJG_tK18oxmjW37cbrxF2zPKPk_dvqXUTnOjUue7J0tLQ@mail.gmail.com> <CAEf4BzYLyi6=Fyz9ziOAwkFOjUPyJmTj4c6g247XBwgwJ8m-qw@mail.gmail.com>
-In-Reply-To: <CAEf4BzYLyi6=Fyz9ziOAwkFOjUPyJmTj4c6g247XBwgwJ8m-qw@mail.gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Fri, 24 Oct 2025 09:59:29 +0800
-X-Gm-Features: AWmQ_bl5c-H7_mPtbkQyyIYah1HW3fReM7rZN1BaHNNaBN4HCCBC6bsrF_EF6EI
-Message-ID: <CAErzpmtMPuGBhisLOaZMyzM5u3=0QrmZcuWqNgbMrceEEPN3TA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/5] btf: sort BTF types by kind and name to enable
- binary search
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Alan Maguire <alan.maguire@oracle.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=ascii
 
-On Fri, Oct 24, 2025 at 3:40=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
+Anshuman Khandual <anshuman.khandual@arm.com> writes:
+
+> Add some [pte|pmd]_mkwrite_novma() relevant tests.
 >
-> On Thu, Oct 23, 2025 at 11:37=E2=80=AFAM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Thu, Oct 23, 2025 at 9:28=E2=80=AFAM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > >
-> > >
-> > > Speaking of flags, though. I think adding BTF_F_SORTED flag to
-> > > btf_header->flags seems useful, as that would allow libbpf (and user
-> > > space apps working with BTF in general) to use more optimal
-> > > find_by_name implementation. The only gotcha is that old kernels
-> > > enforce this btf_header->flags to be zero, so pahole would need to
-> > > know not to emit this when building BTF for old kernels (or, rather,
-> > > we'll just teach pahole_flags in kernel build scripts to add this
-> > > going forward). This is not very important for kernel, because kernel
-> > > has to validate all this anyways, but would allow saving time for use=
-r
-> > > space.
-> >
-> > Thinking more about it... I don't think it's worth it.
-> > It's an operational headache. I'd rather have newer pahole sort it
-> > without on/off flags and detection, so that people can upgrade
-> > pahole and build older kernels.
-> > Also BTF_F_SORTED doesn't spell out the way it's sorted.
-> > Things may change and we will need a new flag and so on.
-> > I think it's easier to check in the kernel and libbpf whether
-> > BTF is sorted the way they want it.
-> > The check is simple, fast and done once. Then both (kernel and libbpf) =
-can
-> > set an internal flag and use different functions to search
-> > within a given BTF.
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Huang Ying <ying.huang@linux.alibaba.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+> These tests clear on arm64 platform after the following recent patch.
 >
-> I guess that's fine. libbpf can do this check lazily on the first
-> btf__find_by_name() to avoid unnecessary overhead. Agreed.
+> https://lore.kernel.org/all/20251015023712.46598-1-ying.huang@linux.alibaba.com/
+>
+> Changes in V3:
+>
+> - Added a new test combination per Huang
+>
+> Changes in V2:
+>
+> https://lore.kernel.org/all/20251022032951.3498553-1-anshuman.khandual@arm.com/
+>
+> - Added a new test combination per Huang
+>
+> Changes in V1:
+>
+> https://lore.kernel.org/all/20251021024424.2390325-1-anshuman.khandual@arm.com/
+>
+>  mm/debug_vm_pgtable.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+> index 830107b6dd08..133543ca2821 100644
+> --- a/mm/debug_vm_pgtable.c
+> +++ b/mm/debug_vm_pgtable.c
+> @@ -102,6 +102,12 @@ static void __init pte_basic_tests(struct pgtable_debug_args *args, int idx)
+>  	WARN_ON(pte_write(pte_wrprotect(pte_mkwrite(pte, args->vma))));
+>  	WARN_ON(pte_dirty(pte_wrprotect(pte_mkclean(pte))));
+>  	WARN_ON(!pte_dirty(pte_wrprotect(pte_mkdirty(pte))));
+> +
+> +	WARN_ON(!pte_dirty(pte_mkwrite_novma(pte_mkdirty(pte))));
+> +	WARN_ON(pte_dirty(pte_mkwrite_novma(pte_mkclean(pte))));
+> +	WARN_ON(!pte_write(pte_mkdirty(pte_mkwrite_novma(pte))));
+> +	WARN_ON(!pte_write(pte_mkwrite_novma(pte_wrprotect(pte))));
+> +	WARN_ON(pte_write(pte_wrprotect(pte_mkwrite_novma(pte))));
+>  }
+>  
+>  static void __init pte_advanced_tests(struct pgtable_debug_args *args)
+> @@ -195,6 +201,13 @@ static void __init pmd_basic_tests(struct pgtable_debug_args *args, int idx)
+>  	WARN_ON(pmd_write(pmd_wrprotect(pmd_mkwrite(pmd, args->vma))));
+>  	WARN_ON(pmd_dirty(pmd_wrprotect(pmd_mkclean(pmd))));
+>  	WARN_ON(!pmd_dirty(pmd_wrprotect(pmd_mkdirty(pmd))));
+> +
+> +	WARN_ON(!pmd_dirty(pmd_mkwrite_novma(pmd_mkdirty(pmd))));
+> +	WARN_ON(pmd_dirty(pmd_mkwrite_novma(pmd_mkclean(pmd))));
+> +	WARN_ON(!pmd_write(pmd_mkdirty(pmd_mkwrite_novma(pmd))));
+> +	WARN_ON(!pmd_write(pmd_mkwrite_novma(pmd_wrprotect(pmd))));
+> +	WARN_ON(pmd_write(pmd_wrprotect(pmd_mkwrite_novma(pmd))));
+> +
+>  	/*
+>  	 * A huge page does not point to next level page table
+>  	 * entry. Hence this must qualify as pmd_bad().
 
-Thank you for all the feedback. Based on the suggestions above, the sorting
-implementation will be redesigned in the next version as follows:
+LGTM, feel free to add my
 
-1. The sorting operation will be fully handled by pahole, with no dependenc=
-y on
-libbpf. This means users can benefit from sorting simply by upgrading their
-pahole version.
+Reviewed-by: Huang Ying <ying.huang@linux.alibaba.com>
 
-2. The kernel and libbpf will only be responsible for:
-    2.1. Checking whether the BTF data is sorted
-    2.2. Implementing binary search for sorted BTF
+in the future versions.
 
-Regarding the sorting check overhead: if the runtime cost is sufficiently s=
-mall,
-it can be performed during BTF parsing. Based on my local testing with vmli=
-nux
- BTF (containing 143,484 btf_types), this check takes at most 1.5 milliseco=
-nds
-during boot. Is this 1.5ms overhead acceptable?
-
-Are there any other suggestions?
+---
+Best Regards,
+Huang, Ying
 
