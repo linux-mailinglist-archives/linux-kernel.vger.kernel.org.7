@@ -1,193 +1,150 @@
-Return-Path: <linux-kernel+bounces-868146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2030CC0478F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:17:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C1CC0479B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444FD3B3A64
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4A03A9CF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFE525784F;
-	Fri, 24 Oct 2025 06:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AC726ED3C;
+	Fri, 24 Oct 2025 06:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M33umFR/"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gr3OEBRv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F5B25A640
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536FA244692;
+	Fri, 24 Oct 2025 06:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761286640; cv=none; b=D2GUKR3RyxmfOuEwu2vTZIyi/7srvPp/hNjAg9XUqNb+pJSHGreRRGjWIUoNQw9UHq0mHJT2l+ZQFj+kYvxOULoqNHLCIqFXu/5Hku10mG0/m9A32n5K67QfzARLctb+sSJfW6JXN6Hj7gHrdAGFAt4HZ9tpMFs4Ujqps3Iu2YQ=
+	t=1761286708; cv=none; b=bgEQ+LJG0ndfHjaJKJvVPj8SJq4ApPzv3JqBd5wnKKbsitJSRikNVHpYMlu8Atg4b+ePSGh8SYTGLVg0taqMbPn1nYXrZhE8MO4Fm81Ya+cWkj9HAtSABBnsOK+ylgsCNNQAknJsrhgyt5JsPjbEfBudHKKJiPOzmlHe76QMWJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761286640; c=relaxed/simple;
-	bh=56hNuT/xUKtLWXLBHxCtWU4pY9tz9h+vffMnxjNaQR0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NU94PKzzIhvEYD86G85Tc8ZK3l8kJKqpF7pVObLCzjEBTw4StX/g23dlgY7tX6/tiShi2tmEC0LRJDy5dZF8X7Fu9o8cec0kGF5zbfpokJY9P3w1egU4bb7qCfM6t4st6dpzsKS/HZLRApeEtkEnFXJVgmAQBxczeKUX8B8MNhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M33umFR/; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b6d2f5c0e8eso355718566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 23:17:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761286637; x=1761891437; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CvQDWtdQ2sodUGWH+64s7RFvD8lI9WBRcaVgkVNkp50=;
-        b=M33umFR/y6xIzhgcuH8h+3PJFMMjy8ZqC6BFCKznEezK/A4UXcd3ylhbTEc/fszt4O
-         BNq2kYrUWMqWDFmnuYW4ZlbgtrH0Vv1q+IU28pAo2Be3VeTxziZYDLEqocG+IDeY4xsJ
-         BQDk0QIEeb5yuw4NmvHK7rCr8Dw6Qc5BNBkNuzazeztERqXJ5C5IS7XhBxxB5H8bq+HI
-         ya5yWfESOYqUI/oBQs0mzIkrJTsDv+A7XW3b+eZ62qPfhTnIUi5ZIXXT0sOJu7WfbfI2
-         FCRTuCgdfvEu6wGIzTq2zcb5e9rpp9VYAS5TIelib8Ie3HJ7ESspKHe1b9qvsVybqUIL
-         3H2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761286637; x=1761891437;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CvQDWtdQ2sodUGWH+64s7RFvD8lI9WBRcaVgkVNkp50=;
-        b=ljCmN6EL6w1Z7WZRb6SfI1AEh0c8vZAQtMjRpBaq5SIkDgb71sqdwCbIXOoVi0OrtB
-         FpmVkISk+aQTg/izfSDcwGy8TM+gqJcwsv9Cf0CWmCTjNB8LUKiy77W1uw03ppX6Xs6D
-         ZpE0qGAl6X4pTfUafUbcZA2JZ0TSluhRD9j7+k100+RDR5L8kk237BiP9gi2q3k5h3tp
-         y80mentfpQhI1mBA8Wt9/TnSbDw+wbn6D/XvNaoj1TgeTfxgVCwJ/Fgf0IaUtR9DmBFo
-         QpTBeZcIOrFMM57iA2nZ4J1rNbfpLYPpoaBc0oaxzD4zzYRSfjihuEkWYf3KG4dczp6a
-         SgYA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6U6PXH4dGA1g1bEZL60PymEGQSFhmj60+KjJzBVdly6fo9nqZHiU/mYcUNpk6wFK2ojMZuMP1mfU1l4o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6yGLx4PudPg7AxDH80/0Nf0VZh8RFRCasofxETWML6xOe3mZ8
-	vZ2O9kTFInJ6cqFnrbYlbzKfGUJ6yx3zcz85QmZt9I1vLoHyU5gjGDDJgaWBMxHVOLyAjG+wK/7
-	0Ant0zeTTzgSw0zrPPRqQ/IJmn/tid4Y=
-X-Gm-Gg: ASbGnct+jImyo+/ngwIvNZIoaRnoST2gYXHuDWqUMngjJ39siZ2H54uPqaJUFUdil9m
-	G79RGl+WoIOc4oscL3HMAAbZn2lVssMhw+lnfs87EvaYwkhnmT748a7/C8+ETC2Ll1Q0bHGO88Y
-	uZ9GM3sJ09dYzKRNfh5i7zOSBocQzdZsx7aX4leLILRY5EjTLfPC/KWzj/LOkkyEMiyMDDCkAQZ
-	l+xJyOrvw1cBTC19Mya3iRBa8NY4rJpi1oSnDmMetf+iAJs9GnvMHrEkQ0hQPkXsMO72A==
-X-Google-Smtp-Source: AGHT+IEYzJae7VoT/c7FHoFZ2w1f+vGPYbQGnE984l0qzu5gM1i4HI97k5jQZaiikEMv2TwzZxE5MWhZESWWNIE+YQ8=
-X-Received: by 2002:a17:907:1c1e:b0:b2b:59b5:ae38 with SMTP id
- a640c23a62f3a-b6d51bfb0e1mr629125966b.40.1761286636888; Thu, 23 Oct 2025
- 23:17:16 -0700 (PDT)
+	s=arc-20240116; t=1761286708; c=relaxed/simple;
+	bh=otP3CpiGIOqKwLKCN+7lYOuUDnbiuEe7mgJT8H8REYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cyaeO+xjC2EEpGXg2yQISXUuHBO1bdF2BUt4cgxSeugW+AyfK0Vbim9GTBw/f1wlx7rwgmj/Cu5xN6+N+kLmW5a/uTwbZd2m1BuI+22pRiMZUVSoaV9RKUdqjGcl4Xs9dreDf6ena1MDX6wecCxX5Dd+t96OZfdtbdbIpT2cuEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gr3OEBRv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09318C4CEF1;
+	Fri, 24 Oct 2025 06:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761286707;
+	bh=otP3CpiGIOqKwLKCN+7lYOuUDnbiuEe7mgJT8H8REYA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gr3OEBRvpmqjGna1dNVkurplu8aP8C2V0ItwZCjnFOQ1vJTzZODoPQYrW96/C7Nnz
+	 42tYtzCnjbo/JlP2OX6jp6aQ2sVSp6pJS7K0nZH+VzAngbbN8MwC41VwqsZ7pC1ViQ
+	 IvHjllMTmlB0OFB6in8Zex9EJIani1xHwX2U6UDCIFFG3UDU7pDQvKtcePjUawAVjH
+	 xWQAD69BjjxQ2oi4CRSviNr15hDp2+NxOmGysGVLRmE1lFJAEBMxrM9opqrP6k6eoW
+	 wwp1KSd/zYD8ZR4Mei+lou0t8r7Jcvj7UlGgwGXas/DsfTQFZJ0ZUaF/O/fp2zvQ0q
+	 qt0mtsxBV4uSQ==
+Message-ID: <c45309cf-bd2c-41fe-b893-7e0a91de84a8@kernel.org>
+Date: Fri, 24 Oct 2025 08:18:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926072905.126737-1-linux.amoon@gmail.com>
- <20250926072905.126737-4-linux.amoon@gmail.com> <ose3ww7me26byqwsyk33tipylkx3kolnc3mjwrlmjwsmza2zf3@os7lkt4svaqi>
- <CANAwSgT0VRFFpKv3saJTAA99oGoAHhP+bx6Xe-QGf5b4Dgik=A@mail.gmail.com> <6eqqafz2dojo533fw2j7say3p37simug5bol2s5dvcpac77jzb@2x22ekyl4qdq>
-In-Reply-To: <6eqqafz2dojo533fw2j7say3p37simug5bol2s5dvcpac77jzb@2x22ekyl4qdq>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Fri, 24 Oct 2025 11:47:02 +0530
-X-Gm-Features: AS18NWB79LzUXZfNM_Vk4QnYlquHYcZbCYFtcNRut2QcVzty8nJpzlwr2rljOfc
-Message-ID: <CANAwSgSeOrVjkuFbPKAPXDnCrsApcgePEs3D6MWwtsu9nYNesw@mail.gmail.com>
-Subject: Re: [PATCH v1 3/5] PCI: tegra: Use readl_poll_timeout() for link
- status polling
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Mikko Perttunen <mperttunen@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] iio: pressure: adp810: Add driver for adp810 sensor
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Akhilesh Patil <akhilesh@ee.iitb.ac.in>, jic23@kernel.org,
+ dlechner@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, nuno.sa@analog.com, andy@kernel.org,
+ marcelo.schmitt1@gmail.com, vassilisamir@gmail.com, salah.triki@gmail.com,
+ skhan@linuxfoundation.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ akhileshpatilvnit@gmail.com
+References: <cover.1760184859.git.akhilesh@ee.iitb.ac.in>
+ <8c202e7ccd332b26217d529a7a73b7a3ef0726ea.1760184859.git.akhilesh@ee.iitb.ac.in>
+ <CAHp75VdGJfMALGOFvkOW=JZ0yHE2QbRSzNs2Xd42-Weec1GmQw@mail.gmail.com>
+ <95c1ba99-510b-4efb-9b6d-4c1103fc43a5@kernel.org>
+ <aPp5OYcPxNNIOgB6@smile.fi.intel.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aPp5OYcPxNNIOgB6@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Manivannan,
+On 23/10/2025 20:51, Andy Shevchenko wrote:
+> On Sun, Oct 12, 2025 at 05:12:26AM +0200, Krzysztof Kozlowski wrote:
+>> On 11/10/2025 16:10, Andy Shevchenko wrote:
+>>> On Sat, Oct 11, 2025 at 3:25 PM Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
+>>>> +AOSONG ADP810 DIFFERENTIAL PRESSURE SENSOR DRIVER
+>>>> +M:     Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+>>>> +L:     linux-iio@vger.kernel.org
+>>>> +S:     Maintained
+>>>> +F:     Documentation/devicetree/bindings/iio/pressure/aosong,adp810.yaml
+>>>> +F:     drivers/iio/pressure/adp810.c
+>>>
+>>> Some tools will report an orphaned yaml file if you apply patch 1
+>>> without patch 2.
+>>
+>> You mean checkpatch? That warning is not really relevant. Adding
+>> maintainers entry here for both files is perfectly fine and correct.
+> 
+> It's relevant as long as I see (false positive) warnings from it. Can somebody
 
-On Tue, 21 Oct 2025 at 07:13, Manivannan Sadhasivam <mani@kernel.org> wrote=
-:
->
-> On Mon, Oct 20, 2025 at 05:47:15PM +0530, Anand Moon wrote:
-> > Hi Manivannan,
-> >
-> > Thanks for your review comment.
-> >
-> > On Sun, 19 Oct 2025 at 13:20, Manivannan Sadhasivam <mani@kernel.org> w=
-rote:
-> > >
-> > > On Fri, Sep 26, 2025 at 12:57:44PM +0530, Anand Moon wrote:
-> > > > Replace the manual `do-while` polling loops with the readl_poll_tim=
-eout()
-> > > > helper when checking the link DL_UP and DL_LINK_ACTIVE status bits
-> > > > during link bring-up. This simplifies the code by removing the open=
--coded
-> > > > timeout logic in favor of the standard, more robust iopoll framewor=
-k.
-> > > > The change improves readability and reduces code duplication.
-> > > >
-> > > > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > > > Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> > > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > > ---
-> > > > v1: dropped the include  <linux/iopoll.h> header file.
-> > > > ---
-> > > >  drivers/pci/controller/pci-tegra.c | 37 +++++++++++---------------=
-----
-> > > >  1 file changed, 14 insertions(+), 23 deletions(-)
-> > > >
-> > > > diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/contr=
-oller/pci-tegra.c
-> > > > index 07a61d902eae..b0056818a203 100644
-> > > > --- a/drivers/pci/controller/pci-tegra.c
-> > > > +++ b/drivers/pci/controller/pci-tegra.c
-> > > > @@ -2169,37 +2169,28 @@ static bool tegra_pcie_port_check_link(stru=
-ct tegra_pcie_port *port)
-> > > >       value |=3D RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT;
-> > > >       writel(value, port->base + RP_PRIV_MISC);
-> > > >
-> > > > -     do {
-> > > > -             unsigned int timeout =3D TEGRA_PCIE_LINKUP_TIMEOUT;
-> > > > +     while (retries--) {
-> > > > +             int err;
-> > > >
-> > > > -             do {
-> > > > -                     value =3D readl(port->base + RP_VEND_XP);
-> > > > -
-> > > > -                     if (value & RP_VEND_XP_DL_UP)
-> > > > -                             break;
-> > > > -
-> > > > -                     usleep_range(1000, 2000);
-> > > > -             } while (--timeout);
-> > > > -
-> > > > -             if (!timeout) {
-> > > > +             err =3D readl_poll_timeout(port->base + RP_VEND_XP, v=
-alue,
-> > > > +                                      value & RP_VEND_XP_DL_UP,
-> > > > +                                      1000,
-> > >
-> > > The delay between the iterations had range of (1000, 2000), now it wi=
-ll become
-> > > (250, 1000). How can you ensure that this delay is sufficient?
-> > >
-> > I asked if the timeout should be increased for the loops, but Mikko
-> > Perttunen said that 200ms delay is fine.
-> >
->
-> readl_poll_timeout() internally uses usleep_range(), which transforms the=
- 1000us
-> delay into, usleep_range(251, 1000). So the delay *could* theoretically b=
-e 251us
-> * 200 =3D ~50ms.
->
-> So I doubt it will be sifficient, as from the old code, it looks like the
-> hardware could take around 200ms to complete link up.
->
-Instead of implementing a busy-waiting while loop with udelay, a more
-efficient and responsive approach is to use the readl_poll_timeout()
-function. This function periodically polls a memory-mapped address, waiting
-for a condition to be met or for a specified timeout to occur.
 
-If there are any issues with HW, we could extend the timeout to compensate.
-> - Mani
-Thanks
--Anand
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
+No, it is not relevant. Just because tool is inefficient does not allow
+you to point such nitpicks. You as reviewer are supposed to find
+difference which checkpatch warnings are important and which are not and
+DO NOT bother contributors with useless points that there is some
+orphaned file according to checkpatch.
+
+
+> shut the checkpatch up about missing DT files in the MAINTAINERS?
+
+That would be great but, if no one does it your comments on "orphaned
+file" are counter productive.
+
+Best regards,
+Krzysztof
 
