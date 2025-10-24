@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-869274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 000E3C077B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:09:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968A8C077ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF3801B88BCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 216613B3F5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B5B31D751;
-	Fri, 24 Oct 2025 17:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EE533FE17;
+	Fri, 24 Oct 2025 17:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="f6NhLz7f"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KCwrSrbu"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85B21EFF8B
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF95B1DFE22
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761325628; cv=none; b=NBnhT4iIacrN4yT3RFREBnKiWLxAhY/ln6X9jukLg7DWvlnYRTUwn3/3TgcQuW/dMpI/XYI6P941fZ1tzGUIPS9UAJzcaMJ5nnW0Qg4sFJDlwXYiwsdX0Dg96CvlT0zL6m+t1yd5AHwbHCyWZcxtInhCV6oukZXEfY5UjBqsYoo=
+	t=1761325629; cv=none; b=as4TBq9jaqx+tFafyXdspT3P7dob3ECf/Bvh/2cbQWr4MD1rR5Fexa+QNkZ9B+bLl/TpPNbqzSy1XuKJIDQYHTWTc1tziF1y/zLgUm2IgU4dk75ZWYSSFWbkNVbgVf8EQzhYxqFoNjcfBgRyL2YutBHRYrdEx0hi0YC3+h/txiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761325628; c=relaxed/simple;
-	bh=bm7qKyas3/K7dfZdBRUukM4arBqH/DL6nfMkyng71Sc=;
+	s=arc-20240116; t=1761325629; c=relaxed/simple;
+	bh=w9ejRtO+ZLg5CHBUs0+6HaHm72+PHbE63jAWOtUg3yk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NnFKi9KZvhyJxjUloSfLYLGdDhyZ5vu9Wc4/KMh9CK7dgQ3b4lv20ZT2pU/fRYUK9a0DcQtwicqF7v+ilHIbglDKPFDtsFwZXiI2LhwfVsclo+xjXsAGOmmt0ByGekiQOvEIUwRc5aQj70fDTSXleSoDEZ/SnaR9l0ieqj91Kp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=f6NhLz7f; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version; b=qetekbInvBjRRlYturPcj5wdBtnjzdRZV/PP+fSvL+uHiZcU3fQiRiZZLU5DklxNt+/zAwmYaHOJ4twX4omddh1wQ5hnw/bJQze6Hy2wApbmhDWh07xDGIFIGwPnuoYsY9Lh6iBORytj+IL3LNHSdgM0oBuL9mkqGpMhwltze4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KCwrSrbu; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-40d0c517f90so222365f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:07:05 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3f4319b8c03so324557f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:07:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761325624; x=1761930424; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1761325625; x=1761930425; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QkvZhdbwE0zHe1scRt6PXV1u04HKt3doe8wAYGFveK0=;
-        b=f6NhLz7fUC/pcx+52XXk1RxUFna+MLKEg9MM16lAvdDPH/CLFYowV0Q+8VWY9EzAEe
-         IjqZHcp0hszfLPMcxQmx6E7nSW4qWezMVQNyzAwKWdER9EsqO6oI4Bqf86IfR1FHqQoP
-         bdOO8NnkZXC1a7tbeYPEsohFZ1JkQLcHp8ugsfZoKdXJ/9ogsWDL0AUh4oHYSsSP1hJs
-         0NoQoZTobiJGlKxuWEUbFUxkGNxIN6hkiam8rsH/OPtzit7FQ2UyHSYuHOpNAVzIwYVI
-         VO/Y0uDVyyr+03HiKG6QCqSrQagO0SqPfdhr6rOD+HYb3XNOzAOO7o1KouVWVrBiMLkH
-         nXEw==
+        bh=wTI0WrdtdIM0l0EagSMX46E8zaYjfQnvEEG1YbIgJSk=;
+        b=KCwrSrbuEY1C+4/sMFaa565Sif6IElPS4jkWMhJU1buAtRbhcG2nCjKmPp/Qj1F3Fu
+         BYOg+sZj9sY75ONGFHvHn+/kPjfYAbdZW6ApHKX7x7SyRzXUEoMdIxzeMD0ZWUel5GGk
+         qnKWBIp1H2O4NISPCsyKmvk1hiqCdufQqxb07MhxDRY8ABX3IdlbPq3sIhAR0/2uK//p
+         9aiw+tN+AskQJCvcjB+oIPTl+LWuW4XlviEHwJlsKKkwgErn42npUW4bnMW9vu5DiyWJ
+         I7f5V1X9oB8SZBNa3rxzJpMj136/GlJ4P64HAYPHZMGfnYSvlvRG/p157kSdswxJdcDX
+         V8iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761325624; x=1761930424;
+        d=1e100.net; s=20230601; t=1761325625; x=1761930425;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QkvZhdbwE0zHe1scRt6PXV1u04HKt3doe8wAYGFveK0=;
-        b=OvCaLTvlxBljoQkwOu47dMO0aMuRZ2+9FS/Mk6hN8IuXTUT8N7l//bgMxT/EopGRCL
-         DLRRcf3omhWBASl7Qq66mq4iilmBGLcIpb1DwJARLumAF4JnqzYFvtOT9LzCXHYYDM1B
-         QNKcJjfRvtt7zdKaaBcDRzhFobwGacPK3pE5stlVM1NDSxTWmmOWKUHaMF6TYp8Dsfwf
-         pI24TSXbtgvgCzZpTTomkpCMN3xCEWVefw5jqZNp9oHgQn3yL75V4vLO49aug49LSeCq
-         jDd5IqhMrrgsMTFSgSQ3AED6HyrAMx1Uo6ZsmZktaS3HPsO1soUdzDdeamFHt9bRbuT1
-         ae4w==
-X-Forwarded-Encrypted: i=1; AJvYcCW8X/k50SAvpWgJ3ZsVOPRi3gUycgGRFH2mKrAm6Rs39SKdCbfVHoaWWC4rfj7u/1Q3HglTGOIkF/hdrG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw26WMXgsNmpWrJ1FzBvSx73VAYtr19ZoKx+f9RnDUkRwMnSuW0
-	VmELq57tfh5fX+zD9jkTk5OfFz5nYQN2JE7s9uH0ef9MkiKj5O8J+ObBKKS0Yfl9buY=
-X-Gm-Gg: ASbGnctyCPWLTn9Lso9y4MTVT6sXAZAWtUcGqabhqksMO0jv73GGHDfzEwgMT1O3+zD
-	VyNnWvrVGnq4LRASmEUTITO2Ed6ECI5tjuBZlFrFbdS4tup/OCUm+gJWp0kxdjPnn1aGZn2dAuM
-	mjh1SHF81eDv3gcvP7uySqbuUaUuZbAEwSV3DmCPz7sYFkN79heZ8UtzNYmSECAXKQ9fdhHSJBn
-	y2ZvfoSGMjqPmTHKlR/JbDQPzUIBgVrp/atTULep8DNNmpSu+siGmNwCdMUXwOrjF2MjXF6rncE
-	Oc1O20vq5u/9NP2nAgNqalqM5C2LoNBhds/tYbTr6N7Bye5c6dVqNjDCZE0n3B+sMBqDKLw/G/0
-	ftxBGhGRIf0nfhwko7QHJAF0kOfzOP3By/9m8exT4g7+9+QLPxtuwy6MLIQ18Oi+KLnnyFoqYST
-	Y9kbECVoKBgrrBMQ/Ned+mip7UuLh+2Q+21k66w3MX6qb1H+Lv6A4X0Lu1apYQjb0GSR7bJEehL
-	ln+CQ==
-X-Google-Smtp-Source: AGHT+IFOdIsSVVzn/A38btcKv1b4yLc5cSpEdQBdQ3LC20PhUez9LVJyrDwpHJch1FqbP+zb9YQfjw==
-X-Received: by 2002:a5d:5d0a:0:b0:426:f590:3cab with SMTP id ffacd0b85a97d-42704ca9e0amr10525949f8f.0.1761325623887;
-        Fri, 24 Oct 2025 10:07:03 -0700 (PDT)
+        bh=wTI0WrdtdIM0l0EagSMX46E8zaYjfQnvEEG1YbIgJSk=;
+        b=TjTwBdUa5h84rucgnaFg7pksasqxTlH4sRPmf5gN4ouQK8Lhe5fmDBBtMdKTu/rm4F
+         liqtEdA/iYjAjMWMGGcfky1x8CtKeaJlzP37m+2ktHUy26lRoMXikY5f/W8Ep3f9Be7A
+         nl4xDnoB+CR7uIaYbJjqbpweRQzKn+0xgz6V8qK8VUbreuHKFBpLA5ajOHGxQ3F1gIik
+         UHd1muNjWml+dYcjXPR3t8Edf3Qu7naZYCHMH3BCgd6QmOXoSyFck36JZbJp12ywv+Fe
+         XJLIZRqHhlOxDC/RXX41QuLrbl6tBbsQ6543NBLSmT+tNHoBPSmWxlSTT5NaqLtQ92Y8
+         3DzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1q6g6rstQSOmjsBs02+h665OZ3MYF5aMzs58guTaBiWiwlLIgPBJePIpmGo121qRJ38/3RUUQe5P0228=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5svLR9JZeWYZeXJkRNWN9dKoIxl8QcW+L4DsBggChlbPxIsIa
+	NxHhMQqs5Dff2m7AX09XsZXrpcNk5wtSuQB9XSx3MyNsTS7jl8de2XzPiuz6um+Ktjc=
+X-Gm-Gg: ASbGnct89iSnJk34b2ZSB1EXcb7v+InBmI0YsuspVpJUN6lZ9gNTpGh1TRSCLvL+Oyx
+	qi3C7UwOVYXi4eYMQxv+hj1ZHlsO13FmgJCiM+KFI0a5YQCa33bUe+nmxAXtA4DkA7nvrXCQrDc
+	ZddIIbaOlZkv4Tkn3QEIOejoXflQ5NJw6fPNQfeX53+YYQZTPJDbind3vMXiBcUE9l5hoHNUsYM
+	zqGOrYf28TI1zhzuhAQpV0V/bioyo2LUL2UW5xwkGbP5fVkMjPSWvqQu+F9pYa68NkeGq7s/JsC
+	jE7sEBNuLSK5oYSE8TJCGx3o3bEU5/lCSdl6ciArf0s3Vz4IXEcBuR8zvCYOVby7wtfOiMzsLQ0
+	obQuC13O8aOcIsSaWgWQotbj85q6Z0Bmv0P4ARVTYoj5K3eo4nrflUsJG5WB0NQmvBHb4F0QVdg
+	xpQAtOM4Z1uiJY4fAc8hJ4BLyFJwIasMsegwG85bSX2UzjjY4lvPpWc1K/dKtUPiAi53lAdHfv3
+	Par2VJDQMxuGmXP
+X-Google-Smtp-Source: AGHT+IH88Xk2C96TCjVzuAAuYBe7oCUt2+32odpGfIEDb57P3nOWXPyKaYzrle+HrREbbngoJJbt7g==
+X-Received: by 2002:a05:6000:2911:b0:3ed:e1d8:bd7c with SMTP id ffacd0b85a97d-4284e531aeemr6206406f8f.2.1761325624937;
+        Fri, 24 Oct 2025 10:07:04 -0700 (PDT)
 Received: from localhost (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429898ec1dfsm10336995f8f.43.2025.10.24.10.07.03
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429898acd69sm10349411f8f.24.2025.10.24.10.07.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 10:07:03 -0700 (PDT)
+        Fri, 24 Oct 2025 10:07:04 -0700 (PDT)
 From: Petr Tesarik <ptesarik@suse.com>
 To: Vlastimil Babka <vbabka@suse.cz>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -84,9 +84,9 @@ To: Vlastimil Babka <vbabka@suse.cz>,
 Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Petr Tesarik <ptesarik@suse.com>
-Subject: [PATCH 1/3] slab: constify slab debug strings
-Date: Fri, 24 Oct 2025 19:06:52 +0200
-Message-ID: <819095b921f6ae03bb54fd69ee4020e2a3aef675.1761324765.git.ptesarik@suse.com>
+Subject: [PATCH 2/3] slab: convert setup_slub_debug() to use __core_param_cb()
+Date: Fri, 24 Oct 2025 19:06:53 +0200
+Message-ID: <9674b34861394088c7853edf8e9d2b439fd4b42f.1761324765.git.ptesarik@suse.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1761324765.git.ptesarik@suse.com>
 References: <cover.1761324765.git.ptesarik@suse.com>
@@ -98,80 +98,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since the string passed to slab_debug is never modified, use pointers to
-const char in all places where it is processed.
+Use __core_param_cb() to parse the "slab_debug" kernel parameter instead of
+the obsolescent __setup(). For now, the parameter is not exposed in sysfs,
+and no get ops is provided.
 
-No functional changes intended.
+There is a slight change in behavior. Before this patch, the following
+parameter would silently turn on full debugging for all slabs:
+
+  slub_debug_yada_yada_gotta_love_this=hail_satan!
+
+This syntax is now rejected, and the parameter will be passed to user
+space, making the kernel a holier place.
 
 Signed-off-by: Petr Tesarik <ptesarik@suse.com>
 ---
- mm/slub.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ mm/slub.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
 diff --git a/mm/slub.c b/mm/slub.c
-index 708848d3512c5..26faebcf27a2b 100644
+index 26faebcf27a2b..b124087b95f32 100644
 --- a/mm/slub.c
 +++ b/mm/slub.c
-@@ -978,7 +978,7 @@ static slab_flags_t slub_debug = DEBUG_DEFAULT_FLAGS;
- static slab_flags_t slub_debug;
- #endif
- 
--static char *slub_debug_string;
-+static const char *slub_debug_string __ro_after_init;
- static int disable_higher_order_debug;
- 
- /*
-@@ -1785,8 +1785,8 @@ static inline int free_consistency_checks(struct kmem_cache *s,
-  *
-  * returns the start of next block if there's any, or NULL
-  */
--static char *
--parse_slub_debug_flags(char *str, slab_flags_t *flags, char **slabs, bool init)
-+static const char *
-+parse_slub_debug_flags(const char *str, slab_flags_t *flags, const char **slabs, bool init)
- {
- 	bool higher_order_disable = false;
- 
-@@ -1863,14 +1863,15 @@ parse_slub_debug_flags(char *str, slab_flags_t *flags, char **slabs, bool init)
+@@ -1863,7 +1863,7 @@ parse_slub_debug_flags(const char *str, slab_flags_t *flags, const char **slabs,
  		return NULL;
  }
  
--static int __init setup_slub_debug(char *str)
-+static int __init setup_slub_debug(char *val)
+-static int __init setup_slub_debug(char *val)
++static int __init setup_slub_debug(const char *str, const struct kernel_param *kp)
  {
  	slab_flags_t flags;
  	slab_flags_t global_flags;
--	char *saved_str;
--	char *slab_list;
-+	const char *saved_str;
-+	const char *slab_list;
+@@ -1871,10 +1871,9 @@ static int __init setup_slub_debug(char *val)
+ 	const char *slab_list;
  	bool global_slub_debug_changed = false;
  	bool slab_list_specified = false;
-+	const char *str = val;
+-	const char *str = val;
  
  	global_flags = DEBUG_DEFAULT_FLAGS;
- 	if (*str++ != '=' || !*str)
-@@ -1935,9 +1936,9 @@ __setup_param("slub_debug", slub_debug, setup_slub_debug, 0);
-  */
- slab_flags_t kmem_cache_flags(slab_flags_t flags, const char *name)
- {
--	char *iter;
-+	const char *iter;
- 	size_t len;
--	char *next_block;
-+	const char *next_block;
- 	slab_flags_t block_flags;
- 	slab_flags_t slub_debug_local = slub_debug;
+-	if (*str++ != '=' || !*str)
++	if (!str || !*str)
+ 		/*
+ 		 * No options specified. Switch on full debugging.
+ 		 */
+@@ -1918,11 +1917,15 @@ static int __init setup_slub_debug(char *val)
+ 	     static_branch_unlikely(&init_on_free)) &&
+ 	    (slub_debug & SLAB_POISON))
+ 		pr_info("mem auto-init: SLAB_POISON will take precedence over init_on_alloc/init_on_free\n");
+-	return 1;
++	return 0;
+ }
  
-@@ -1961,7 +1962,7 @@ slab_flags_t kmem_cache_flags(slab_flags_t flags, const char *name)
- 			continue;
- 		/* Found a block that has a slab list, search it */
- 		while (*iter) {
--			char *end, *glob;
-+			const char *end, *glob;
- 			size_t cmplen;
+-__setup("slab_debug", setup_slub_debug);
+-__setup_param("slub_debug", slub_debug, setup_slub_debug, 0);
++static const struct kernel_param_ops param_ops_slab_debug __initconst = {
++	.flags = KERNEL_PARAM_OPS_FL_NOARG,
++	.set = setup_slub_debug,
++};
++__core_param_cb(slab_debug, &param_ops_slab_debug, NULL, 0);
++__core_param_cb(slub_debug, &param_ops_slab_debug, NULL, 0);
  
- 			end = strchrnul(iter, ',');
+ /*
+  * kmem_cache_flags - apply debugging options to the cache
 -- 
 2.51.0
 
