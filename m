@@ -1,153 +1,204 @@
-Return-Path: <linux-kernel+bounces-868258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A30C04B6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:27:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13979C04B7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C720F4E603D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:27:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0DE54E37B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09AF2D24B5;
-	Fri, 24 Oct 2025 07:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92BF2D595B;
+	Fri, 24 Oct 2025 07:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bvMK2BVO"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1mIjjqM"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3989154425
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977562D46C6
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761290831; cv=none; b=FuaQGSQUdIuUvI8PVfPIbibIQyJeUDlwlXtZUHigrU3O9XspKKXFfoTDf/H4bxdietJndW13Rdv1XBRVv/snSfGELCmuEBYN7UXD3T1ZSo/qVB+cFDCbUPne2xIV+1yEDm/EU+DblRMCx9hSqY0eCEH54hikRn+JLHUOkMpoAfQ=
+	t=1761290930; cv=none; b=jWMld+qCbrFUtypx0pSTmyosrEV7t7jZs0tYpQKKi6uxwDaQaLNH0osKk53u3Vv1aDWKMFPgIBY8wqV8IH0AGVl+D4zhlTlfVuqixL5KFxx0Lt2RAb8sVfZ+Dei42vdEPOlqvObT+b1y0RoGs5w5IAx61zpSplGr1DuZ9ckxk0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761290831; c=relaxed/simple;
-	bh=/BLTvTwqCvhPGzBXJFBOTeWjUAQCkVERsrzmbYn/0UM=;
+	s=arc-20240116; t=1761290930; c=relaxed/simple;
+	bh=PDOmGa80IgV5TpNTwO8LtYP/7lNrk6vcGBSxu7/+wIA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qAQDR/2BOI47yiEYkIusx1aeSO2ULztLzCYShga9wNuqOOKNDtnJA1D8qB4TwnWF4PydnLZt3J4qnJgr8RYAHtFBKPPemcOBaLCLpCUBYUl8PGozYiDRcbt/dG57+oBwzkBw8x+JFRE+z6I2QRtWlh4FVWRNKq6ShtxQhRhIeBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bvMK2BVO; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <8b3b0e36-510f-4c50-aa22-0aa5317c5a42@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761290817;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L2TzmbB7HxpppHgs/uBUluEzwrDLmfnuy6xEXrU1u5I=;
-	b=bvMK2BVO3ZKrLYqWxotDoKO/n7gJP5ySEwsiQHD2ZEgfSlt2n/Wp5ehqnBWgp5c0hWsIXz
-	rikU4IwtA7kwllRPBtD7RIdBA5E6d1EbmvJLFBcmE5biLRTsHlUMwQgspPMWUYIqU8eA/0
-	K412WmvFgrA7bgSVI2630+z4nwlFdog=
-Date: Fri, 24 Oct 2025 15:26:07 +0800
+	 In-Reply-To:Content-Type; b=tyS4ZAq6MAO7U5DkBX24VpwUTtMJiKIKIF++nLMq0O+OoEysE/xbB0L+QDhw9kExUwTQAd+yrLd+3IlK/7iaYNtk8qw6r/m7mUizdsj1lrKfLUL0ynkiiMNn2F+XI407CMTx2iULKbl5YFCQ5EQGebvCgtb3idCvfzEtlD8hh/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1mIjjqM; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4e896e91368so21711911cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:28:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761290927; x=1761895727; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=NLq4EMqV8KeUwDEw9NmG3B9JiKdj+/ZaWJacLQX9P6s=;
+        b=L1mIjjqMhnpalFGwZCOsQPjBL47QbgpGIynEmixgy4cFtEhrTEFf6j1imGvhmTUWSn
+         lRNlnV3WPZ26/1Yomkr69RzJA4itnFT3a1TD7DV27oWjTtN9WoscGY5DMLo3m7yfDyXa
+         M8zrf6nOmQQC0buCmYxhoseWFoC5K6RyDWwc+8y5ZxJVWJK9N7uLVunofO99JHbp4aNq
+         5vz6H7VJxm+fifLxkCkhvmoGBc87oW0tpRygoStq7VmyzIzTwsogeNCRhYJudQ36pPCY
+         GgnqkrmxHKi+i+S9GE3liSoU3I+Re9MpE8IlnScoCZrhoMiY3Rxb9IctBifbUSB1Cjj2
+         5rUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761290927; x=1761895727;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NLq4EMqV8KeUwDEw9NmG3B9JiKdj+/ZaWJacLQX9P6s=;
+        b=S7N4C2UHG4uInLV6A/bmfVc7RxOlQQiKoz1z765ur4tvOGmecx4MCuwXF4SWz/KnWH
+         ok6Bn2e/2lNajRZ0Ea9nqdUtC/lkwt72ArYP6p5UMZvNfPBQkLvLgbAdod2aVwW+jmTm
+         WjrWHnar243r1U+ADXV3YBoBUK3knBAt84BF7h3PFgMQbdVYM7vP8dbwmcef22Y/YOhE
+         7iKaDNcQn7FchkKIGdM8/S0Lc7LgVbgx7D6RMmMsv2IKx+dcT67UC6lE8mLEkRQCxlZp
+         iP0lKCjYkyVMvfB/zH+r20Sqi9SWkMJmyPX9kmSu4xjGhTCCld4+NXzPSIX+NEnGywPh
+         l3cw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOJ8hQmHdvVfLdFUIi+8PoYTXfb1LH1ZrXboRHfh9G8gn96REeSSk96h6nZfSevg+lWw/3CzR0PQELx64=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTnZI3lE5nxafDSHQzz2bQaHyVRqC4cfdPa85o73f4rgSQolFD
+	0kyC62han8iyw6BMQrMBcOgG5gPrMXCf3hpvL21Gs3Dk662UPXfjGmqj
+X-Gm-Gg: ASbGncvf8r1cMevcgzxakeGVLccDVUcR6v2OzCXJ1QO9cMyQoC3rg/qZc2V2h08YD5o
+	KDPvspIEaTEvB32dZFPR3J36fWiQhLO01m/1q72W/4Ok64v1oGgVimgKlF3CLJQ/cBOeQomPfhm
+	Z1d8Kt1ZrUENqlQjL9sauEw4DUYN9QSZIkCa4UCzmhi8KD8L/b2OG1mN7LqH7nKOGur0cwVr3FC
+	EITMmqIENUbyirweEO2SjbgzxupIJo16JzVoQR1uZ0T/kc75s7cOhOWTb/Z5SvaiQxNMvx0KcAt
+	kJE3SVTmHHpciWKmq6I14nxSIj0G8r4BIfTWa5EdcWVhJ64SrEC9YplzdrDSQOFBo+DLddbVK+o
+	5/UmcIKdOhs69KukwxqGT7q4EoFNvjhp5a1O70XhKO/lkm1WGN5ofKYMLVHmbkgci9WIrpT1LA+
+	xsJUo7ZUegVLJVqUZEos5HwCgY+6QsL6Tt0SVXUjNGUmOVWuPgg7VuCiIk7sVNuSrt88QB0X3Q8
+	OgwoWcTn8k=
+X-Google-Smtp-Source: AGHT+IFB/J0PxbyfsY1NyO2f1J9ko14ZR5Rtgtn2rAFKHvR5BmlJZbOSMCfUnRud8Xjevkvi+qaweQ==
+X-Received: by 2002:a05:622a:1646:b0:4e8:b19c:d5d2 with SMTP id d75a77b69052e-4eb810813d3mr61575701cf.32.1761290927436;
+        Fri, 24 Oct 2025 00:28:47 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-4eb80380104sm30138711cf.0.2025.10.24.00.28.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 00:28:46 -0700 (PDT)
+Message-ID: <91288aa0-0088-4b50-8b33-661d8c0c25ae@gmail.com>
+Date: Fri, 24 Oct 2025 09:28:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] LoongArch: kexec_file: print out debugging message if
- required
-To: Huacai Chen <chenhuacai@kernel.org>, Qiang Ma <maqianga@uniontech.com>
-Cc: kernel@xen0n.name, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20251021091114.982820-1-maqianga@uniontech.com>
- <CAAhV-H5P9GGbSz0=J+a1hVkLVLwQWq1LfH7dxq4XHLqpgx7wDQ@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <CAAhV-H5P9GGbSz0=J+a1hVkLVLwQWq1LfH7dxq4XHLqpgx7wDQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] dt-bindings: remoteproc: qcom,sm8550-pas: Add
+ Kaanapali CDSP
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com
+References: <20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com>
+ <20250924-knp-remoteproc-v1-2-611bf7be8329@oss.qualcomm.com>
+ <CAJKOXPc57_0pJ2ZWf2cKSKAcQMc3S_mHKQxJDzWH7t=mgim3CA@mail.gmail.com>
+ <5820a9a9-4474-4c4d-905c-0efd9442e5e1@oss.qualcomm.com>
+ <o6dzhmlicwiezmxlb5uqitx7e3pjpyuhbjqfumivbdkru42hvn@r4ksfa6m5nd2>
+ <540b1de6-c959-4911-925f-8163f5fa5147@oss.qualcomm.com>
+ <fdfzoemfxdz2p622hvixpaznh2n22hweit2e43plfu2kdd6kad@reulvi4vs5v4>
+ <cdc01b6d-370d-45dd-a3fd-9866d2a5f36d@gmail.com>
+ <7952ed3d-f019-4593-af43-b2df7f738d04@oss.qualcomm.com>
+ <c0e6b667-2e87-4419-81ad-3366ed56830e@gmail.com>
+ <1f98f83f-328f-47c8-84e7-2c77abb37a6a@oss.qualcomm.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Autocrypt: addr=k.kozlowski.k@gmail.com; keydata=
+ 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
+ PN9NZAOyb771QoVr8A==
+In-Reply-To: <1f98f83f-328f-47c8-84e7-2c77abb37a6a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On 10/24/25 15:04, Huacai Chen wrote:
+On 24/10/2025 04:10, Jingyi Wang wrote:
+>>>
+>>> Hi Krzysztof，
+>>>
+>>> I tested with falling back to sm8650 cdsp but it will fail with:
+>>> [    4.739615] qcom_q6v5_pas 26300000.remoteproc: unable to resolve shareable memory-region index 0
+>>>
+>>> sm8550 and kaanapali define 2 memory regions: 
+>>> "memory-region = <&cdsp_mem>, <&q6_cdsp_dtb_mem>;"
+>>>
+>>> sm8650 and sm8750 define 3 memory regions:
+>>> "memory-region = <&cdsp_mem>, <&q6_cdsp_dtb_mem>, <&global_sync_mem>;"
+>>> with the driver:
+>>>
+>>> static const struct qcom_pas_data sm8650_cdsp_resource = {
+>>>         .crash_reason_smem = 601,
+>>>         .firmware_name = "cdsp.mdt",
+>>>         .dtb_firmware_name = "cdsp_dtb.mdt",
+>>>          <...>
+>>>         .region_assign_idx = 2,
+>>>         .region_assign_count = 1,
+>>>         .region_assign_shared = true,
+>>>         .region_assign_vmid = QCOM_SCM_VMID_CDSP,
+>>> };
+>>>
+>>> When kaanapali fallback to sm8650 it cannot parse this region_assign_idx.
+>>>
+>>> So shall we still fallback to sm8550 or define a new node "kaanapali_cdsp_resource"
+>>> in the driver?
+>>
+>> And partially the point here is that you might need the third region, no?
+>> Best regards,
+>> Krzysztof
+> 
+> On kaanapali, the global_sync_mem region is not managed by kernel, so it should
+> be removed.
 
-> Hi, Youling,
->
-> What do you think about this?
->
-> Huacai
->
-> On Tue, Oct 21, 2025 at 5:12 PM Qiang Ma <maqianga@uniontech.com> wrote:
->> When specifying '-d' for kexec_file_load interface, loaded locations
->> of kernel/initrd/cmdline etc can be printed out to help debug.
 
-Although kexec_image_info() could be considered for removal in the case 
-of kexec_file,
-in the context of kexec_load, when using the -d parameter of 
-kexec-tools, although the
-userspace program outputs extensive debugging information, it is 
-recommended to retain
-this information during the debugging phase to verify the accuracy of 
-data transmission
-after it is passed into the kernel.
+OK, then please mention this in the commit msg, so it is clear why this
+is not compatible with previous generation.
 
-Thanks,
-Youling.
->>
->> Commit eb7622d908a0 ("kexec_file, riscv: print out debugging message
->> if required") fixes the same issue on RISC-V.
->>
->> So, remove kexec_image_info() because the content has been printed
->> out in generic code.
->>
->> And on Loongson-3A5000, the printed messages look like below:
->>
->> [  288.667939] kexec_file: kernel: 00000000d9aad283 kernel_size: 0x2e77f30
->> [  288.668414] kexec_file(EFI): No LoongArch PE image header.
->> [  288.703104] kexec_file: Loaded initrd at 0x80000000 bufsz=0x1637cd0 memsz=0x1638000
->> [  288.703674] kexec_file(ELF): Loaded kernel at 0x9c20000 bufsz=0x27f1800 memsz=0x2950000
->> [  288.704092] kexec_file: nr_segments = 2
->> [  288.704277] kexec_file: segment[0]: buf=0x00000000cc3e6c33 bufsz=0x27f1800 mem=0x9c20000 memsz=0x2950000
->> [  288.741213] kexec_file: segment[1]: buf=0x00000000bb75a541 bufsz=0x1637cd0 mem=0x80000000 memsz=0x1638000
->> [  288.757182] kexec_file: kexec_file_load: type:0, start:0xb15d000 head:0x18db60002 flags:0x8
->>
->> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
->> ---
->>   arch/loongarch/kernel/machine_kexec.c | 22 ----------------------
->>   1 file changed, 22 deletions(-)
->>
->> diff --git a/arch/loongarch/kernel/machine_kexec.c b/arch/loongarch/kernel/machine_kexec.c
->> index e4b2bbc47e62..2d64b7c81e5e 100644
->> --- a/arch/loongarch/kernel/machine_kexec.c
->> +++ b/arch/loongarch/kernel/machine_kexec.c
->> @@ -39,34 +39,12 @@ static unsigned long systable_ptr;
->>   static unsigned long start_addr;
->>   static unsigned long first_ind_entry;
->>
->> -static void kexec_image_info(const struct kimage *kimage)
->> -{
->> -       unsigned long i;
->> -
->> -       pr_debug("kexec kimage info:\n");
->> -       pr_debug("\ttype:        %d\n", kimage->type);
->> -       pr_debug("\tstart:       %lx\n", kimage->start);
->> -       pr_debug("\thead:        %lx\n", kimage->head);
->> -       pr_debug("\tnr_segments: %lu\n", kimage->nr_segments);
->> -
->> -       for (i = 0; i < kimage->nr_segments; i++) {
->> -               pr_debug("\t    segment[%lu]: %016lx - %016lx", i,
->> -                       kimage->segment[i].mem,
->> -                       kimage->segment[i].mem + kimage->segment[i].memsz);
->> -               pr_debug("\t\t0x%lx bytes, %lu pages\n",
->> -                       (unsigned long)kimage->segment[i].memsz,
->> -                       (unsigned long)kimage->segment[i].memsz /  PAGE_SIZE);
->> -       }
->> -}
->> -
->>   int machine_kexec_prepare(struct kimage *kimage)
->>   {
->>          int i;
->>          char *bootloader = "kexec";
->>          void *cmdline_ptr = (void *)KEXEC_CMDLINE_ADDR;
->>
->> -       kexec_image_info(kimage);
->> -
->>          kimage->arch.efi_boot = fw_arg0;
->>          kimage->arch.systable_ptr = fw_arg2;
->>
->> --
->> 2.20.1
->>
+Best regards,
+Krzysztof
 
