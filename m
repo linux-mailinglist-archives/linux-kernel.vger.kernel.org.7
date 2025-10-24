@@ -1,134 +1,234 @@
-Return-Path: <linux-kernel+bounces-869572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D662C0831E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:32:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89290C08303
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B571D4FBFB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:31:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 316E91C2039C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5B130AACD;
-	Fri, 24 Oct 2025 21:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B41309DCF;
+	Fri, 24 Oct 2025 21:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HyL8oXea"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBQW66xd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E754309DDC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8D475809;
 	Fri, 24 Oct 2025 21:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761341470; cv=none; b=NwoWHwSlLr+F2TCuNsYK/MYQv952YOsVCTn8KrRZ7ocIGVcR8jUcc8ElL8qH3+ds5WD+4b9vJarcSY5+THsrEDVmIMPdUptkdEmhXibsDcXr/EncgfRRDB7hEgh35rWxaRZ0dclLSql9rsqistZNC9NV7mp3cZfYG3XNdRRBuk0=
+	t=1761341469; cv=none; b=W1ZyvDnsTOfqmmTMQ5z60I4FSmsCjKwFpw0Y0452CxcgDXmGf6MCf4EZLQNScL+R5cAo7E1VnfyIsmWdbig52omklpYPKLM5z/2Pj2XT29MkCiL+U7PykNH5LF/X/ewj63MY95ts7y9Q3yYVxpkEXRJkRhF1bSIkHLfvil6cAG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761341470; c=relaxed/simple;
-	bh=a5nWUpgjX/SlORZFuatSeSBNce6QWI/+338uOL8xONg=;
+	s=arc-20240116; t=1761341469; c=relaxed/simple;
+	bh=iQDu9KC5sD+ItNRHrzjtO65uP6xTrysOY0tRBMoc5s4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FjY29lKc2YHC33hMaKJp2nvRi8PiQHeKG0GbJ47kVQorNVd4Q2Z1yY9lKSg8M6pkYFWQmcSoat4uIh7cWZNwyVSLe2Fxb/UW8JFiJMNTuKbzZduuZcoijBWBEE807WQaoh75mejUr80P/Uc4OuCnF3kkpYZkYFltWdLpJpB8AhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HyL8oXea; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2417FC4CEFB;
+	 Content-Type:Content-Disposition:In-Reply-To; b=HIlxtt8Nio1LMVoUqSIRxxNPVWPZRf1zCLfOQSmwdkI9FypvMxYUL47g80zXJ33Cni9cl4MoJlYf5GykSIrC1DpCrpFH15x5Ke6Y559GwMhY8rxa7dlAARWawXL9esKHCDEYEnLCxwHSEL6GkkTs4cdwm2qcDVyOntQe8Iw0B8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBQW66xd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9BB3C4CEF1;
 	Fri, 24 Oct 2025 21:31:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761341469;
-	bh=a5nWUpgjX/SlORZFuatSeSBNce6QWI/+338uOL8xONg=;
+	bh=iQDu9KC5sD+ItNRHrzjtO65uP6xTrysOY0tRBMoc5s4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HyL8oXeaWrFMDlD9J8tvQ+EpR0SEF9YQaVtb9n7hr8mf6qkeMarkAs63/SjVBsxbU
-	 lIEcBEySOLQ9o83+yugk/MKmKn4Xd8qmMN9m6KaB6aGgQ788ff7+1w5nZioSOTWNgi
-	 a2x52tiEce1NT5KTnI3PltTCiDs3m6FgoJWutnJaSWdE8ogTJ0sE3aJb2NWzWMNG9D
-	 ebtrFBA/pQNapiMmuyFZEwfpxiSeE2esfOqgtSdy9hFPzn7pSpaf+BRHvXEsnFu38o
-	 nInC9D/uAEmsBA2FUMjt6fgTVZXRBs7Tm1uoQ+6i3SS1r9Y8+/pVRlBQtwDQ7l+9hK
-	 srfU/xPq05sDg==
-Date: Fri, 24 Oct 2025 22:31:06 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
-	Jinchao Wang <wangjinchao600@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ian Rogers <irogers@google.com>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v5 6/8] selftests: tracing: Add a basic testcase for
- wprobe
-Message-ID: <aPvwGhMBJqMKcC9D@finisterre.sirena.org.uk>
-References: <175859019940.374439.7398451124225791618.stgit@devnote2>
- <175859026716.374439.14852239332989324292.stgit@devnote2>
+	b=bBQW66xdqKosVkU7SxiZ/0PMK9kQ1KfHPoux3oR0xLniv5aHATn7er+ChFSESMRpf
+	 a+UjF561m9EJ4I2ham1n8ym+q6h7hH8wUaWE7vNbrtntjsZyVzjtalCtASGhG3YzUG
+	 /7kwCEL9EAu6+J+AdCsulpZOJXEBfrd79jAkyG9Wkyl70g7t1TLDuY5rOorsRk60oe
+	 GU8DcBuI0tR1o622yUvoO9B+XKjIS4RzxCyhtdSk7BBGD90cN/yRyLRfn8Q5iEcCy7
+	 UkbKIESPHEI1yVPM1S7FexBpvJHHMgXA7kumrOibBwyp62ejofMaXFJj5SAHT7AiPg
+	 oIMFloq7wfaKw==
+Date: Fri, 24 Oct 2025 16:31:07 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ranganath V N <vnranganath.20@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+	khalid@kernel.org, linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] dt_bindings: sound: ti,pcm186x: convert to dtschema
+Message-ID: <20251024213107.GA2841379-robh@kernel.org>
+References: <20251021-dtbs-v1-1-493c1aa253bc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fjZBpNS/k9vJ6kRK"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <175859026716.374439.14852239332989324292.stgit@devnote2>
-X-Cookie: Don't read everything you believe.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251021-dtbs-v1-1-493c1aa253bc@gmail.com>
 
+On Tue, Oct 21, 2025 at 08:33:40PM +0530, Ranganath V N wrote:
+> convert the Texas Instruments PCM186x Universal audio ADC bindings to DT schema.
 
---fjZBpNS/k9vJ6kRK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Your patch fails to apply with "b4 am" due to the following:
 
-On Tue, Sep 23, 2025 at 10:17:47AM +0900, Masami Hiramatsu (Google) wrote:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->=20
-> Add 'add_remove_wprobe.tc' testcase for testing wprobe event that
-> tests adding and removing operations of the wprobe event.
+WARNING: Message contains suspicious unicode control characters!                                         
+         Subject: [PATCH] dt_bindings: sound: ti,pcm186x: convert to dtschema
+            Line: +﻿# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause          
+            -------^                                                                                       
+            Char: ZERO WIDTH NO-BREAK SPACE (0xfeff)                                                       
+         If you are sure about this, rerun with the right flag to allow.
 
-Since this series has landed in -next we've been seeing hangs on a range
-of arm64 platforms running the ftrace tests, it looks like it's all of
-them.  Unfortunately the systems lock up with no output as soon as they
-start trying to do something with wprobes:
+Please fix and resend. Some comments below.
 
-# ok 19 Generic dynamic event - add/remove kprobe events
-# ok 20 Generic dynamic event - add/remove synthetic events
-# ok 21 Generic dynamic event - add/remove tracepoint probe events
-# ok 22 Generic dynamic event - add/remove tracepoint probe events on module
-# ok 23 Generic dynamic event - add/remove/test uprobe events
+> 
+> Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
+> ---
+> Convert the Texas Instruments PCM186x audio ADC bindings to DT schema.
+> ---
+>  .../devicetree/bindings/sound/pcm186x.txt          | 42 --------------
+>  .../devicetree/bindings/sound/ti,pcm186x.yaml      | 67 ++++++++++++++++++++++
+>  2 files changed, 67 insertions(+), 42 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/pcm186x.txt b/Documentation/devicetree/bindings/sound/pcm186x.txt
+> deleted file mode 100644
+> index 1087f4855980..000000000000
+> --- a/Documentation/devicetree/bindings/sound/pcm186x.txt
+> +++ /dev/null
+> @@ -1,42 +0,0 @@
+> -Texas Instruments PCM186x Universal Audio ADC
+> -
+> -These devices support both I2C and SPI (configured with pin strapping
+> -on the board).
+> -
+> -Required properties:
+> -
+> - - compatible : "ti,pcm1862",
+> -                "ti,pcm1863",
+> -                "ti,pcm1864",
+> -                "ti,pcm1865"
+> -
+> - - reg : The I2C address of the device for I2C, the chip select
+> -         number for SPI.
+> -
+> - - avdd-supply: Analog core power supply (3.3v)
+> - - dvdd-supply: Digital core power supply
+> - - iovdd-supply: Digital IO power supply
+> -        See regulator/regulator.txt for more information
+> -
+> -CODEC input pins:
+> - * VINL1
+> - * VINR1
+> - * VINL2
+> - * VINR2
+> - * VINL3
+> - * VINR3
+> - * VINL4
+> - * VINR4
+> -
+> -The pins can be used in referring sound node's audio-routing property.
+> -
+> -Example:
+> -
+> -	pcm186x: audio-codec@4a {
+> -		compatible = "ti,pcm1865";
+> -		reg = <0x4a>;
+> -
+> -		avdd-supply = <&reg_3v3_analog>;
+> -		dvdd-supply = <&reg_3v3>;
+> -		iovdd-supply = <&reg_1v8>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/sound/ti,pcm186x.yaml b/Documentation/devicetree/bindings/sound/ti,pcm186x.yaml
+> new file mode 100644
+> index 000000000000..f1ade490f688
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/ti,pcm186x.yaml
+> @@ -0,0 +1,67 @@
+> +﻿# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/ti,pcm186x.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments PCM186x Universal Audio ADC
+> +
+> +maintainers:
+> +  - Ranganath V N <vnranganath.20@gmail.com>
+> +
+> +description: |
 
-the next test being add_remove_wprobe.tc, which doesn't seem to
-complete.  Full log (for what little it's worth):
+Don't need '|' unless there is formatting.
 
-   https://lava.sirena.org.uk/scheduler/job/2000440#L1860
+> +  The Texas Instruments PCM186x family are multi-channel audio ADCs
+> +  that support both I2C and SPI control interfaces, selected by
+> +  pin strapping. These devices include on-chip programmable gain
+> +  amplifiers and support differential or single-ended analog inputs.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,pcm1862
+> +      - ti,pcm1863
+> +      - ti,pcm1864
+> +      - ti,pcm1865
+> +    description:
+> +      Must be one of the supported PCM186x models.
 
-I turned on -vvv logging and that generated the rather spectacularly
-more verbose:
+Drop the description.
 
-   https://lava.sirena.org.uk/scheduler/job/2000676/log_file/plain
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: |
+> +      For I2C, this is the 7-bit slave address of the device.
+> +      For SPI, this is the chip-select number.
 
-(in a somewhat processed format unfortunately.).  Looking at that log I
-do notice a bunch of "unexpected operators" reported by the shell, these
-systems are running dash not bash, though that doesn't seem related.  It
-looks like the script hangs in reset_trigger_file while grepping the
-trigger files rather than actually trying to do the test.
+That's true for every I2C or SPI device. Drop.
 
-Sorry about the delay in reporting this.
+> +
+> +  avdd-supply: true
+> +
+> +  dvdd-supply: true
+> +
+> +  iovdd-supply: true
+> +
+> +  '#sound-dai-cells':
+> +    const: 0
+> +    description: Number of cells used to identify a DAI endpoint (fixed to 0).
 
---fjZBpNS/k9vJ6kRK
-Content-Type: application/pgp-signature; name="signature.asc"
+That's true for every DAI and stated by the constraints already. Drop.
 
------BEGIN PGP SIGNATURE-----
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - avdd-supply
+> +  - dvdd-supply
+> +  - iovdd-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        pcm186x: audio-codec@4a {
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmj78BYACgkQJNaLcl1U
-h9AkyQf/e3e7F7Pk3OKUC6Sce26wTUo8MDGLo0PgSFK+bCCeLWau+ZqDOUr9a5mZ
-dge4XBD6WJ1HMCDcU3qLdCXrHwmspyDA/LijDx/TcmChx1qnWYJtT/CfPLoSP9Y4
-fs9A6ckI+P3ZO82/4bEwxMu9e0vDsKKOikzoOdZn0O8iTMauwpqbot/if0oMIPPA
-ddHn84SkdqyXCjJe8KOEp3cfYIg/D3oa9h/mJJVaJWaz/H8C97jkkZgiob6Xcem3
-TzjGQpLtFx8wbERoS6c4NtI3SfCZkBXhBaVEHcAl0/iv56xnedDn/JcCEkIVxqE1
-E97DvONInVFwS/6rrs3eTE45VFAeHQ==
-=/RTT
------END PGP SIGNATURE-----
+Drop unused labels.
 
---fjZBpNS/k9vJ6kRK--
+> +            compatible = "ti,pcm1865";
+> +            reg = <0x4a>;
+> +
+> +            avdd-supply = <&reg_3v3_analog>;
+> +            dvdd-supply = <&reg_3v3>;
+> +            iovdd-supply = <&reg_1v8>;
+> +        };
+> +    };
+> 
+> ---
+> base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+> change-id: 20251021-dtbs-3a31f699c461
+> 
+> Best regards,
+> -- 
+> Ranganath V N <vnranganath.20@gmail.com>
+> 
 
