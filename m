@@ -1,153 +1,103 @@
-Return-Path: <linux-kernel+bounces-868601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BAC5C059A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:36:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8309C059C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CCC33AE3C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:30:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B663B747F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4CB30FF25;
-	Fri, 24 Oct 2025 10:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF976310763;
+	Fri, 24 Oct 2025 10:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWjDwZ9n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/d2Y+U8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5084230FC11;
-	Fri, 24 Oct 2025 10:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65A72C08C5;
+	Fri, 24 Oct 2025 10:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761301814; cv=none; b=HLuTO47xOO31CC7NGW8FZYCj86TX0uQzTbZU59WP6rGSQbeMY+l9t1TxnDjlP7Suq4bOHYSCtyDxgUab0Ngqhym9bEaPamBHFsrwVutyK3lY2XjcxCT0cqbotMapxTn7yHDn6h+Xr3nogh2AVCpmpGFmpr3wQSn58CMxNu2Ym1A=
+	t=1761301843; cv=none; b=WqszXQ8Y1GDhUpTUg/4Blg8h60kIOww2lHd7bdc1E5ECjLi8LEM9hShjyATOBDbKwo7ObuBo6lNVlH1Pn3aHzwn3zx3999FjBRwTzxlOKoFCew6LNvvc7Y5CQrPHfPO6S83gYCcNTy9zDD3g3bN1XJDkiBR0yyOz3t4GtdNYIOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761301814; c=relaxed/simple;
-	bh=JU9mlLt5OFRo9F3ipiVVfRJPb3nIO9fCv0eDi81ROAw=;
+	s=arc-20240116; t=1761301843; c=relaxed/simple;
+	bh=xjBMkmI+qsDoGp9ZiRzBUp/jILZSgk47twlvE8podR4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZMeHxXTZGi2yUyEBjsCe+6PHFRpwTwRNZcyfjtG5Dhx/e8N3D/mJG4lrJbEH2D7Wd0qQF4kxdOw7WstvrNL9+s7XgCS+1BKjlr/4n9wptWAtiBZea7/LXFgrKu2j669qyKi7gJK/thK69Q0d8QgyeTManHj72FNUIFDG3MEIgx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GWjDwZ9n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF0A9C4CEF5;
-	Fri, 24 Oct 2025 10:30:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=V3tLwzIjbKeEYPSi2uB1jC8xElcJElsFUQBW+bL3lag82L5dWdGogO0j2ND7PJNmpxax1BRahWTKnVW+FwatlmBO0j0TZaCR8rUzoFUPWoMS+UDuM5Akun5De4LI/orJEy7f4PX/+EC41MlB1w3ZYxwADrK6fwIjDdmBSK+BABM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/d2Y+U8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E75CC4CEF1;
+	Fri, 24 Oct 2025 10:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761301813;
-	bh=JU9mlLt5OFRo9F3ipiVVfRJPb3nIO9fCv0eDi81ROAw=;
+	s=k20201202; t=1761301842;
+	bh=xjBMkmI+qsDoGp9ZiRzBUp/jILZSgk47twlvE8podR4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GWjDwZ9npxXBtV2wwplsijKuUsN0XUNVpsE05e6x/WQuRcMorBffSwDuHBbrW15kC
-	 Tv1HyF+JDvnLqZ3EQoqMdRUX4xBLxYUUMHgCaIx+SrlMwrvEAJPjUh+kg2cwE7q6ko
-	 Iypv+pjIalmm+SxDbaLkPvrDWdwTFVXu2JzNq0l3tq7kConUDhsDI2Xp48Mh4idl4F
-	 samQXBBSIHg35Ebu29n64Q8Pj0BRmkVTc2Fqhp96tvPyxh6K/HVlA1331/2/WQl64Q
-	 RpIhVDJaAmSlbgwWH2X5UZjDY4yNOo79AUA8xvxwalNDuYrNXnqDwS0eRZN6JrDn4Z
-	 dljrzU5iAzZ0A==
-Date: Fri, 24 Oct 2025 11:30:08 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Brian Masney <bmasney@redhat.com>
-Subject: Re: [PATCH v5 5/9] clk: microchip: mpfs: use regmap for clocks
-Message-ID: <20251024-vocalist-irritable-dcac9f7db3ce@spud>
-References: <20251013-album-bovine-faf9f5ebc5d4@spud>
- <20251013-undercook-flatfoot-70dca974cd19@spud>
- <ab443375-524d-4e6c-a640-7e580c2d0c64@tuxon.dev>
- <20251024-dimness-everyday-1c074ce1f203@spud>
+	b=l/d2Y+U8bQs8VF+XsPwC/lo+bxBE0j4eWS6VDHNCD/dOyGEFM7pOVi7s1xB8wyT1F
+	 jv0kcNfIyneAU7DFc2XMuu8oHJ2C93dqlydWRrXYT3RCBqDbolkiQ18EsFfqCwzdIT
+	 F0FJ+u2jbBRNARJVywQ0ZMr1PM6LZQ50TTD9W4llmkHp0cxkQM8R7YTAZNZuhKj472
+	 K02nhKLn9f/Q1d19EUPlbhQT59235yFCKn8XDWmWaJOjbnUv34C0E0GbdT7yY2B8c1
+	 q4jVSAnw+7Qfl9JCs14YGXOOwUUitTY/lsolUgoznKOAtNMsr23PjYx6i1nIOnN4f/
+	 YsZZGbsmS20jw==
+Date: Fri, 24 Oct 2025 12:30:37 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Guenter Roeck <linux@roeck-us.net>, 
+	Jonathan Cameron <jic23@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Georgi Djakov <djakov@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Joerg Roedel <joro@8bytes.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, dmaengine@vger.kernel.org, 
+	linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-media@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, linux-pwm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-crypto@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Remove extra blank lines
+Message-ID: <fncqrwr6pi3ttxkf44hncy35ogxqdvql52hdcycq4yakbkeose@gv6lxr6a4uri>
+References: <20251023143957.2899600-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cmdZOH2jDCUBULep"
-Content-Disposition: inline
-In-Reply-To: <20251024-dimness-everyday-1c074ce1f203@spud>
-
-
---cmdZOH2jDCUBULep
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251023143957.2899600-1-robh@kernel.org>
 
-On Fri, Oct 24, 2025 at 11:20:23AM +0100, Conor Dooley wrote:
-> On Thu, Oct 23, 2025 at 07:06:01AM +0300, Claudiu Beznea wrote:
-> > On 10/13/25 20:45, Conor Dooley wrote:
-> > > From: Conor Dooley <conor.dooley@microchip.com>
-> > > +static int mpfs_cfg_clk_set_rate(struct clk_hw *hw, unsigned long ra=
-te, unsigned long prate)
-> > > +{
-> > > +	struct mpfs_cfg_hw_clock *cfg_hw =3D to_mpfs_cfg_clk(hw);
-> > > +	struct mpfs_cfg_clock *cfg =3D &cfg_hw->cfg;
-> > > +	unsigned long flags;
-> > > +	u32 val;
-> > > +	int divider_setting;
-> >=20
-> > This could be moved near flags to keep the reverse christmas tree order=
- as
-> > in the rest of this patch.
->=20
-> The driver doesn't (intentionally) use reverse christmas tree. If it
-> does, that's just a byproduct of putting bigger types before smaller
-> ones.
->=20
-> > > +	divider_setting =3D divider_get_val(rate, prate, cfg->table, cfg->w=
-idth, 0);
-> > > +
-> > > +	if (divider_setting < 0)
-> > > +		return divider_setting;
-> > > +
-> > > +	spin_lock_irqsave(&mpfs_clk_lock, flags);
-> >=20
-> > As spin locking is introduced in this file by this patch, you can go
-> > directly w/ cleanup helpers for locking.
+Hi Rob,
 
-Actually, if using regmap_update_bits(), locking might be entirely
-removable. Depends on if there's some rmw sequence that can't move to
-that.
+On Thu, Oct 23, 2025 at 09:37:56AM -0500, Rob Herring (Arm) wrote:
+> Generally at most 1 blank line is the standard style for DT schema
+> files. Remove the few cases with more than 1 so that the yamllint check
+> for this can be enabled.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-> >=20
-> > > +
-> > > +	regmap_read(cfg->map, cfg->map_offset, &val);
-> > > +	val &=3D ~(clk_div_mask(cfg->width) << cfg_hw->cfg.shift);
-> >=20
-> > Why cfg_hw->cfg.shift here --------------------^ but cfg->shift on the =
-next
-> > line?
-> >=20
-> > > +	val |=3D divider_setting << cfg->shift;
-> > > +	regmap_write(cfg->map, cfg->map_offset, val);
-> >=20
-> > Can't the regmap_read() + updated + regmap_write() be replaced by
-> > regmap_update_bits() ?
->=20
-> Yeah, I suppose it could. Ultimately what's here is a revert of with
-> readl()/writel() replaced by regmap operations directly, so the answer
-> to the above three items is that that's how they were done before the
-> patch I am reverting. That's probably the answer to 90% of the things
-> you've said here, this is how they were done prior to the commit I am
-> reverting.
->=20
+Acked-by: Andi Shyti <andi.shyti@kernel.org>
 
-
-
---cmdZOH2jDCUBULep
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPtVMAAKCRB4tDGHoIJi
-0uf0AQDkUwMVo2nLuCjUiqS8lzzjgsUHyqv+EenABprkO/fhJAEAzoGnYa8a2STF
-Q4Yml7WMygK6osuskoNBZTG8Nj5Trw0=
-=qgBc
------END PGP SIGNATURE-----
-
---cmdZOH2jDCUBULep--
+Thanks,
+Andi
 
