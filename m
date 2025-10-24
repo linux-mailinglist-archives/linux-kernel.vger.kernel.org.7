@@ -1,172 +1,119 @@
-Return-Path: <linux-kernel+bounces-867962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B4CC04050
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:21:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39AC8C04056
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCC0A3B748C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:21:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10E4F4EA8E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0BE1A2547;
-	Fri, 24 Oct 2025 01:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EF919AD89;
+	Fri, 24 Oct 2025 01:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mjMGLQG6"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="UWyeWCEi"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010941A23A5
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCA012CD88
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761268898; cv=none; b=FmXbKrHMgKJUyQWlfVe/C8QLfmqSuOYwipxhDarG6OwDmEezrWGsdntffkCj/YNtQSJ5tboTcqjTKuvJeO/J9hHQenVoxXDJwe6cSeDspF4DZUDrOmPtPUEOfcdlrpWbpBICCFb1w19sbn3NXk6/DvpLw25xQ5RbHf7vq/qAqX8=
+	t=1761269051; cv=none; b=qJ0EoxHlfelYvTKHnOJRL2UUSA3WI6zwdODwDdGOdr5tyueJyANvZo+bMCnIhlRjxg9HTM7ibmpbMB0V9CRGdvRGKfMfqdRMEGkP70Efijz9QvTuqxWOizCqIGaTePYaGZyBZi8mnNNry2BAVrWbqKBoIj+HjVe0Z3bGG9PV17w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761268898; c=relaxed/simple;
-	bh=7uktLTVlrJm7nB0yUepAnFd9bHjFwk36Uk/OBvinjps=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KleDn5Uy/qPz6KvpJ/WOKJGOQ26g/+kZz4AkmKQ2hyc0fCeBprdanw1GrGwi1I9eWamrReeHyXvDh7r0C53F3x3KiJxF85RwIxXaN/GERThpsVGQrSqhehP5u7b1nRZZATWmk5c0G/S+2H4vOds0DTc0dbmrnyC8236HKirO3PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mclapinski.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mjMGLQG6; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mclapinski.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-47111dc7c5dso10293565e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:21:36 -0700 (PDT)
+	s=arc-20240116; t=1761269051; c=relaxed/simple;
+	bh=GZ6+RXvaozdz90ufV3otdMXTNSyTmQqCHnU52s/BGDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tmQjl0LwWKRIaI+cnfLOIARn1XpG6/6wI1cHGV+2ex1TNRoBM1m3KWbat/gAPMa/6nYXvonFAzXIm4gz2ocq0+YgumXhgNor7kPY3pOKAevgyhxmKjd1vhalzmgDaKhtJ27LbUNLPdg16ELTYTHDxAIDxXtqtHumZaS7TE++tmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=UWyeWCEi; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b5c18993b73so264512266b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:24:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761268895; x=1761873695; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LmD4KoyqZKUw57P8WwHSWBVJ5vxbTrg41hvD9Exq1hg=;
-        b=mjMGLQG647lSHk8ylmnbY89JVQYOwqSRWg8yDy7cXIoMNj/qbZ1N97Gq7jOscEYOgJ
-         Knt+eBffgjrBIdfuNrx+HOt8anPZbaT19SaW++lHzUlk84OVLiwnBfbDYrqvH5xHaoli
-         eaIkuUE7Gbig7zoIDNrsPBO0Kw0NK+3TJy6jpWkWsuUgIeVm7/rqCYxnYk0xtbl0BGgw
-         Qi8I/gHza4T+chG/o/N+XLdbJ1M/HihbiYVOBGyy0SOaFd7PiYW79eTesPJHjC4d05gr
-         xEveFXLTveWLxj5uIe/zP0VBYigHHXeTOEPw/mmY9Lu4TF2bI2B3skkw8RzUydat8l2N
-         F4ag==
+        d=soleen.com; s=google; t=1761269047; x=1761873847; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W+Ewuo9a/2we8RgcxmU8qjQ8t+tF8hL7x4+dIkq7Jb0=;
+        b=UWyeWCEi/C1SLWAXgTozqR3mmAhDzz4NAkRxMVSVvVL944bfGfZZhXI4nD0EYQberK
+         k/KuaJkscv0qQ310t/6dcJsNqpypXPLqoN2HsxqyF6r8P9HX+Fz0MiszeCoo0nAQiyED
+         AgF9eDpOn5QcTHWSmGvGa7N47kXKDeF3EC7w+ILGDHd03l2Uy5zj6x9ZMRsuXAWN1GTh
+         q5MYYmdu9sPd7Nx0LhrjrTsK1Gxu3nHA0tdu/SwI+VB8GdBBjiF+VV71rnp9kPSNeMTM
+         mW9XnnZhCQX7ly0ZQp813av+HgR1DxrWQ7JzQ9wzvSPvwMSd+cNJHBu871/NC8AOhzdP
+         MmGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761268895; x=1761873695;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LmD4KoyqZKUw57P8WwHSWBVJ5vxbTrg41hvD9Exq1hg=;
-        b=mSF5gUN4aLpzC2dcyYza7lK+fdpeyBaqQpqLfmq8AIL7C2TtloMxYiri86sGHfnyCv
-         0Oji8VzYcEPRnsBfbN4F5iAIrr4zvAVw3SKW9mz/CmOuSOViT9EGl0p2U9B31rd/IvGe
-         vWXXgN7uJqAofXP5NBh/NQDzb14NNiMGqPB4C+tkuMazgVyUMBD8JiVP3CMVQaI1MXD0
-         wwDnSnR6OR7NOVVXvqAjcQJbuTitYPZKTVGfmEEnEAE5giNhDb5vBjY1KzUvtZqWTr8M
-         6nUQQCGuwCVkyyHbdeAy0DgFX5LN+3kunoHQXo4iAXAlzCIlOLB8M6Qtut2qbk7jhdO9
-         hwRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJfZmpJQ0Od6HXJ9ZSzvz7GP5NvJKPL5IDwrbFjwxrSZUAnQ1zBxKb+LBt227KjlgGb21yd8LERPs+zdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfiUDh5/1IO4oiGQpcXpR0dSJ8yXnoCbYmwNpJp/WIbawpV2Fj
-	GqvCB2dr/BeQJQ6oVgmOiIfaQAQAtPTlf7MVsEkT9yfyZ5r11ynDVCR2hhZ9KPdAY90b4jabvCR
-	JlBC20R9gjXScELyKAEprjQ==
-X-Google-Smtp-Source: AGHT+IGu3wOBe55z+Y8FldXJmulA4Ot9s9N1XFNSpEp8SZhKSHZbJJRFrsWPO5D8uzOhVCBt4ECj3Xzzht0Oqp7n
-X-Received: from wmcn19.prod.google.com ([2002:a05:600c:c0d3:b0:46f:aa50:d705])
- (user=mclapinski job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3e8c:b0:46e:6339:79c5 with SMTP id 5b1f17b1804b1-475d241ce79mr5272425e9.5.1761268895505;
- Thu, 23 Oct 2025 18:21:35 -0700 (PDT)
-Date: Fri, 24 Oct 2025 03:21:24 +0200
+        d=1e100.net; s=20230601; t=1761269047; x=1761873847;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W+Ewuo9a/2we8RgcxmU8qjQ8t+tF8hL7x4+dIkq7Jb0=;
+        b=bdFqOxx4T1vhXRbpB8tALBlUOHOWV4/bSrI0P0L+oupJHqjWY6j+7I3KIprhjwhkRB
+         enW5vRyy959UVMdo/VF1bOmgXkTXOdjLD0Jx4vroxqtB57b8s9i8OAYAeTw9p46WOUJx
+         a+e+TBZpfontbqHp8E2WRsEXuwxCsHCUMCsLPVbERn0szQxLbW3VnMz+qwXTKpHlBZgG
+         CuQ4F0myarXast6Tagf7VEUTTDEN0b8lu2FWyitxwdcb8c4OujF6TdtpvYb2ks8LLq1M
+         J5Ovrb08mBNmG1BoRP+B2fns+8Q1RVGlwDvRF609A+I+WuGZzBfoFwo6G35hOxEeTGPA
+         fZWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTcFoJXXGjUhdoEhDSnPY0zjs5Uys/gCVopFWSYY2dD47g2YliLdhYGVWTY9Ra/knRFYouaMCxxWQ0EEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywMGCeJYzKzjIWtzpisimcqFRAlR1md8pTNHBnanZ3lWfNaPiF
+	b5IBirUJNO3etwqxmzfglIgeyHncJ3kacHPAqfR3/nLxCsqRTml2WQok1xzkHwdrThyMIPFMdFx
+	c3E8F+ZemELMjoAZFBx6wZeWNYzf5VJDGQT85D4vxTQ==
+X-Gm-Gg: ASbGncsCgKcpqpGQ3HuItmiu/hIRrZxXLdfmGDv48P0GIFNu8y1zCAGIeAINzAIylFD
+	BE8aZhJwua1uKCatAl/uYvzx5TfU0x+uqMKudo/ZmzogtwQJ1Q2SeWiLuNP76q0gqA+uVFvTmDR
+	9RxnYBiPtI78NUkfOPREKlYbtg1oS+aDBhonKknqBtpE+TTJcAFp1NGKkJm0n4jsqjE5t9xOrNr
+	eISbe42sZ2hhtu20VZ+fm6PfSFb5Y7Rv6uHfY0QNCKku0fV7RFN5+lNrF3ScifR2uQbOlK7joFU
+	fW8=
+X-Google-Smtp-Source: AGHT+IGPGFOQwXjv/FxDxf/tnyuTjxtvPtbnk93Nmt5FLlBDIFGiWQ5Zxzwcgqg1tu3cm4Iarmy9Tfwt6vB7TvUL9y4=
+X-Received: by 2002:a17:907:d649:b0:b3c:200b:4364 with SMTP id
+ a640c23a62f3a-b6d6fe0424amr55993066b.27.1761269046741; Thu, 23 Oct 2025
+ 18:24:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.1.821.gb6fe4d2222-goog
-Message-ID: <20251024012124.1775781-1-mclapinski@google.com>
-Subject: [PATCH v2 1/1] dax: add PROBE_PREFER_ASYNCHRONOUS to all dax drivers
-From: Michal Clapinski <mclapinski@google.com>
-To: Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
-	Michal Clapinski <mclapinski@google.com>
+MIME-Version: 1.0
+References: <20251020100306.2709352-1-jasonmiu@google.com> <20251020100306.2709352-2-jasonmiu@google.com>
+ <20251023234532.GA846943@nvidia.com>
+In-Reply-To: <20251023234532.GA846943@nvidia.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 23 Oct 2025 21:23:30 -0400
+X-Gm-Features: AWmQ_bmMOAwY_P1hjpj1ykwuacULXmguJ7YYyQlMD3h9K2SSIMuIchdHSzMvpu8
+Message-ID: <CA+CK2bCR0r61cnVxff6XSPoVN+ZxxS8rLHy0Mp6922xypCP8jA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] kho: Adopt KHO radix tree data structures
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Jason Miu <jasonmiu@google.com>, Alexander Graf <graf@amazon.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+	Changyuan Lyu <changyuanl@google.com>, David Matlack <dmatlack@google.com>, 
+	David Rientjes <rientjes@google.com>, Mike Rapoport <rppt@kernel.org>, 
+	Pratyush Yadav <pratyush@kernel.org>, kexec@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Comments in linux/device/driver.h say that the goal is to do async
-probing on all devices. The current behavior unnecessarily slows down
-the boot by synchronously probing dax devices, so let's change that.
+On Thu, Oct 23, 2025 at 7:45=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
+>
+> On Mon, Oct 20, 2025 at 03:03:04AM -0700, Jason Miu wrote:
+>
+> > +static struct kho_radix_tree *kho_alloc_radix_tree(void)
+> >  {
+> > +     return (struct kho_radix_tree *)get_zeroed_page(GFP_KERNEL);
+> > +}
+>
+> I was reading the thread over here:
+>
+> https://lore.kernel.org/all/20151222210435.GB20997@ZenIV.linux.org.uk/
+>
+> And I guess this stuff should just use
+>   kzalloc(sizeof(struct kho_radix_tree), GFP_KERNEL);
 
-For thousands of devices, this change saves >1s of boot time.
+kzalloc() uses slab, which in turn may use kfence objects, and kfence
+can allocate memory from KHO scratch area, leading to memory
+corruptions. Let's not use slab allocator for KHO preserved and
+metadata memory, it is not a good choice.
 
-Signed-off-by: Michal Clapinski <mclapinski@google.com>
----
- drivers/dax/cxl.c       | 1 +
- drivers/dax/device.c    | 3 +++
- drivers/dax/hmem/hmem.c | 2 ++
- drivers/dax/kmem.c      | 3 +++
- drivers/dax/pmem.c      | 1 +
- 5 files changed, 10 insertions(+)
-
-diff --git a/drivers/dax/cxl.c b/drivers/dax/cxl.c
-index 13cd94d32ff7..90734ddbd369 100644
---- a/drivers/dax/cxl.c
-+++ b/drivers/dax/cxl.c
-@@ -38,6 +38,7 @@ static struct cxl_driver cxl_dax_region_driver = {
- 	.id = CXL_DEVICE_DAX_REGION,
- 	.drv = {
- 		.suppress_bind_attrs = true,
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 	},
- };
- 
-diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index 2bb40a6060af..74f2381a7df6 100644
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -470,6 +470,9 @@ static int dev_dax_probe(struct dev_dax *dev_dax)
- static struct dax_device_driver device_dax_driver = {
- 	.probe = dev_dax_probe,
- 	.type = DAXDRV_DEVICE_TYPE,
-+	.drv = {
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-+	},
- };
- 
- static int __init dax_init(void)
-diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
-index c18451a37e4f..5a6d99d90f77 100644
---- a/drivers/dax/hmem/hmem.c
-+++ b/drivers/dax/hmem/hmem.c
-@@ -45,6 +45,7 @@ static struct platform_driver dax_hmem_driver = {
- 	.probe = dax_hmem_probe,
- 	.driver = {
- 		.name = "hmem",
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 	},
- };
- 
-@@ -131,6 +132,7 @@ static struct platform_driver dax_hmem_platform_driver = {
- 	.probe = dax_hmem_platform_probe,
- 	.driver = {
- 		.name = "hmem_platform",
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 	},
- };
- 
-diff --git a/drivers/dax/kmem.c b/drivers/dax/kmem.c
-index c036e4d0b610..4bfaab2cb728 100644
---- a/drivers/dax/kmem.c
-+++ b/drivers/dax/kmem.c
-@@ -274,6 +274,9 @@ static struct dax_device_driver device_dax_kmem_driver = {
- 	.probe = dev_dax_kmem_probe,
- 	.remove = dev_dax_kmem_remove,
- 	.type = DAXDRV_KMEM_TYPE,
-+	.drv = {
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-+	},
- };
- 
- static int __init dax_kmem_init(void)
-diff --git a/drivers/dax/pmem.c b/drivers/dax/pmem.c
-index bee93066a849..737654e8c5e8 100644
---- a/drivers/dax/pmem.c
-+++ b/drivers/dax/pmem.c
-@@ -77,6 +77,7 @@ static struct nd_device_driver dax_pmem_driver = {
- 	.probe = dax_pmem_probe,
- 	.drv = {
- 		.name = "dax_pmem",
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 	},
- 	.type = ND_DRIVER_DAX_PMEM,
- };
--- 
-2.51.1.821.gb6fe4d2222-goog
-
+Pasha
 
