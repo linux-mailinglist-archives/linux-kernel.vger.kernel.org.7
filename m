@@ -1,137 +1,232 @@
-Return-Path: <linux-kernel+bounces-869149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1318FC071A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:54:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D59C071B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B21AD3596BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B9523B7161
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B72F31D38F;
-	Fri, 24 Oct 2025 15:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A70E322C9A;
+	Fri, 24 Oct 2025 15:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uQTRZnrQ"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iORofc3j"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0F0315D31
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B484E31D38F
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761321281; cv=none; b=Rx8D4hciGLWhUAroQN/lbBPG+4ilrgM+RfvGP/sfMPwTWN2GwplZbygaDKamIU/pSNIm11iYHBoA7bDZ+jKy8QQjTrv1j+kaeEEVeyY2BXGeRHxto/bM13C8Mr5GKsr23Cpw83PvPGnB3t/78WmREvBHLDcqBor/0/OfqH7bu4w=
+	t=1761321312; cv=none; b=PmqDfXl+KxjvRWGcHxxqLfoqjYUGTraXavidxAuxnT2O9Xj/EhoDJZQ4OjwnwfHMjXof0kYgZPlcNBRuujuttvra2rmzd+5SUJHhZ9SO6OrIGeePvMDRsIocpd1wr3ZzFJDbd6lMktEsuKx7eSGw1bASyAe2fBuIUxdSDTVaMXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761321281; c=relaxed/simple;
-	bh=9W0jOqh0WFB83c/hgolD1lDfJvFPAIhOpkeDEgaA6gY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WP2se9+BRI3QducbaHFi2o8DVx0paOZPMW3/KsXOQQpEndi+cYwKuHLWJZ84oBTzMcqYdoNhmrRFJFwUtDQuWrOMxzf/7hpxdVYsncp01M57JPyVY4I6ZctgE2Hr0mfifMztgsiujxET+38L74p9E4ZCCfLS6/zUkEPaQAtoE2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uQTRZnrQ; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so2296932b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:54:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761321280; x=1761926080; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SNrPSnUwQSgek1TWOY7IJ65SZA0nkgGonkU8txu9DEo=;
-        b=uQTRZnrQVi97SUFOjaA7DAbbz0wZ42XI2Vojd3qRAGTY5E9SD2f7aNFB2NuX5LFIrg
-         qK+Vy4FNrn5pqfKAI1LiP5eGY80JV4n0I6gyljU+J61xhSlGcUDj3xsiIGjYn4Uy9/zJ
-         9/J9fleYvSVPydHezRuCrpHJprsLG2Zq8Fx6PbFtVFUohx2wKk4vTK3NfDN9YwGcH9Jx
-         zfvroltqfzMhASP0N46BS8267doMyjyPxQ09om6QGXC3mY2NmmJhTE4LPSLwp3ppzz+C
-         ci9fpBRz8RC7/DNqrDjV2SBFbXhbPoqqVSM4N67cXkfKdy7rj07maamEpnnzGMtLHVcW
-         /lfg==
+	s=arc-20240116; t=1761321312; c=relaxed/simple;
+	bh=XUUjiT/LL39HQxlWRGK1kB2VdbDdz5ho6javHy1jlVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kFL4xVp8vbAm7nLtJL+cAK5IkyPhlGgLXF5XkR3i92AityHIIrF2Ox2kJmPalHz51fMgAXKlV15r010C8UoUhyBycyt5+7Bb3RRF0pJpwEnI2JycpqxqxR68TTxuyJzLrGXPnZOFTYfoFIrmZ7qfHaWxx/lYaVQRdDasCBk+Dq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iORofc3j; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761321308;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PJ8CBgdnp0x5YCgKtD8+31O84jKpAdCiNyX8xfEa5uQ=;
+	b=iORofc3ju0YtE/zZ/qeGK+v2wNVj9D5r2WcK6bW/3RO1nLfWqY73YgqzAbHDoaAGsMQO8m
+	T7+3tAWnHPiFvdQC65ukdgYD54uynDgdSZsAAkSRUDKRUxSJhYXVOydrK5DxLXP7h5+lb7
+	xPsoWGEHLtvISpGtvVMbVQc/N8st2N8=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-391-AmoO3quiMGStIPji8-u0sg-1; Fri, 24 Oct 2025 11:55:05 -0400
+X-MC-Unique: AmoO3quiMGStIPji8-u0sg-1
+X-Mimecast-MFC-AGG-ID: AmoO3quiMGStIPji8-u0sg_1761321304
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b4813c6cbeeso310424666b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:55:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761321280; x=1761926080;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SNrPSnUwQSgek1TWOY7IJ65SZA0nkgGonkU8txu9DEo=;
-        b=hGmLUurSEpPUOprg0erFGojxi58L5kM+l6kb6nYoY7UG59zpvQIrfBHycggfLAteDo
-         zeFhSTRG9Lo+8qG4w0Jn7MrZkd050+S4FpDvMzXCZ18s/vCdJueRXlBHg76SEH2P9497
-         uqVYQAmW2Z7U4JoK5uipkP2CJXToLwgiv+BX1nZuLGO6ME46/xrW8ktlrkTC/NExOy44
-         V50KIRcTmWYjys7D/T/6wgiZjfAumkMGk2AOpqEoR3hzw7Q772gD2ZtiX6lfiRIZwGVf
-         41YuxkWbtiJKSpaRkzHYl4C/rRe8Byr313ct+ocvkz7y3cOhMV7zx6m6ppyaDpm3Ee12
-         gdeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWszbR2giH6wKSTVrySp3EpJ8KXlVn3eefWPHZqtkkDQZyiMs5C0Z3Iif+8c/RbakwC1MpkND8FY/etFnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD0FdpvsW5ccdPsZxX3xnNo80UiQNi94OzSwCPBSqB6BjLBPNu
-	vj27e+vb1Mrcw+TczQcc74yDxzHaviv4HjdEDVzqwqQ6GGv1ElUB8i00r403qV6xSg==
-X-Gm-Gg: ASbGncvhszkTnF5LJ5d98+McP3MB+xmS3Z21jA03Q3/QO3Ezs8dnaIU6b+Q8iT8XFHd
-	TpO5clYmO7qTiAJPvWPh0J9m68aBHxO6Ag1N6/9Hyr+1+SO+hXfFqC7mAackKDGNH5xcvI6n2bk
-	Vo+qIOP7G0aX8azMJtO3uNDCIfc5w4v7ySypouYBZSh1DbODs9os9kZ0QRroirCc4cfG2gdUvW7
-	DtoAFxpM0o+tec5zhpVNKiWI2yef07Ir7dT3RpycRsh/8cSH7Qj5pkn+lb+UU1Rk/Dc1kW6d24A
-	mp3zVR/VDNHIZOYBsAEeFi4fRhXEYfo+N9DJm9WjK4Hk8V0JL5rTEyvjcBujU9+2wtBk0UN+bDx
-	8b0vLYyI+OB6F4uJoW43a9LKfDgT6oCX3EpZIYxOsmaXD5XITJzXs6I823l6WbZWvnXeCVpG9iK
-	0waCdsJ89IOqf9enHetDd5nXl4sT1OuRNjvp9V/3TIWQDUadpT
-X-Google-Smtp-Source: AGHT+IFKK/nc8huqNArnVsQcPMFPGO2/41KstRTfEUMyU+vcdTuI3QzEMa2HNBjhFdRtL+9SlQ1fRQ==
-X-Received: by 2002:a05:6a00:13aa:b0:772:6856:e663 with SMTP id d2e1a72fcca58-7a284dbb2c9mr3491514b3a.8.1761321279403;
-        Fri, 24 Oct 2025 08:54:39 -0700 (PDT)
-Received: from google.com (80.88.82.34.bc.googleusercontent.com. [34.82.88.80])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274a9e8fasm6403828b3a.29.2025.10.24.08.54.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 08:54:39 -0700 (PDT)
-Date: Fri, 24 Oct 2025 15:54:35 +0000
-From: William McVicker <willmcvicker@google.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Youngmin Nam <youngmin.nam@samsung.com>,
-	Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	John Stultz <jstultz@google.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v5 4/7] clocksource/drivers/exynos_mct: Use percpu
- interrupts only on ARM64
-Message-ID: <aPuhO5wn8O85krV3@google.com>
-References: <20251023205257.2029526-1-willmcvicker@google.com>
- <CGME20251023205313eucas1p2164ef0c1db80bccd2bbd6a79e809a1cb@eucas1p2.samsung.com>
- <20251023205257.2029526-5-willmcvicker@google.com>
- <c09387b9-3fcc-4d0e-8e29-21dee196014a@samsung.com>
+        d=1e100.net; s=20230601; t=1761321304; x=1761926104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PJ8CBgdnp0x5YCgKtD8+31O84jKpAdCiNyX8xfEa5uQ=;
+        b=r7uzVxLeP9g9J25suR2oL4+2REwnjU7BOnmrhoCqwozqO+3Hbf+pBbAEPw0YSxCKuF
+         5HxNfo1mf9Ov8KtN7lzDqu9Deft/W5RhEHRkQFSUnP9vyCSKrNtIiYuIzTesaS/jjwhk
+         CCzDJTsGeuFhoRz7vRXkIkw7t/KiWXYRPkBYjEV5z5vDHgN9zcVOwjKFQgbrZymOX0j7
+         wXZUwZpVIqyQtPRLEx2OkDN5mBZ6tMyUEnSKhnqUZ6y3XFJZFHHnloZO5msB7Dk/M4FI
+         ilD/5Ac7TJ+TsuN8+wU/BVcqogOZSVtt0DU88TacBpiNu8OKRyAOhRFrjh7+S1iv47o6
+         0emA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRz8JAeNWfsUqyWu1IqrR/BuTod79p9R30U9L3nHYlJkLUG0wVi8NfCMhw9qPmMthinxxzc6kA2Awxrug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytJSxE7dSW4J3LiPasUbtseArpGIN1114gKmAP9fPBmWg5rMjZ
+	kfJvVi/tRQr1uo4d2wvqst4QRWLO27yLbmFN9WkOFVx7crLLC+Obfpkr/LHK0j7+nw2n+bwL+KR
+	yBoYWROgArUPyDc1ayEqCRLGs4or1UZPJNDz6kUFuALvGBSlorOhcZ1HxiBTEHy6g+tkE+WHuGb
+	TDiUXBSX8YZu/zzsELqZhIkHTqcd8jjSPtixocQBVB
+X-Gm-Gg: ASbGncvH306VzDZX9Ozye4/SkGLeb5ccipU2AmRiqJgq84/zRHfWMK4JauINKkbPpqv
+	geGeMAHdZlzJ9mwv0lXobo/dar9Ugyc+SVqaFz5AOOrXCxcerZ6P9gFRVDg1ALjYYEQY7L8yQGh
+	NXUZ/XpIduPXoghzJev7O+PveOWMSYCc3IgY/5h5hqan9LF/fSZYmlkT9I
+X-Received: by 2002:a17:907:9448:b0:b04:626e:f43d with SMTP id a640c23a62f3a-b64751284f6mr3012891466b.47.1761321303757;
+        Fri, 24 Oct 2025 08:55:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEoFO2lt2SNKwryeKYy2tueF7Ewy+SHv0qWkyzbxhfUjzu6PXuLi7pGKg6VF6E0uZH8YqujQA1JKEKxkPE9qq4=
+X-Received: by 2002:a17:907:9448:b0:b04:626e:f43d with SMTP id
+ a640c23a62f3a-b64751284f6mr3012889366b.47.1761321303380; Fri, 24 Oct 2025
+ 08:55:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c09387b9-3fcc-4d0e-8e29-21dee196014a@samsung.com>
+References: <20251022123644.1560744-1-rrobaina@redhat.com> <cd4576d9d4a00366283a116ab14231f5@paul-moore.com>
+In-Reply-To: <cd4576d9d4a00366283a116ab14231f5@paul-moore.com>
+From: Ricardo Robaina <rrobaina@redhat.com>
+Date: Fri, 24 Oct 2025 12:54:51 -0300
+X-Gm-Features: AS18NWC7wcZUbzwsc4ajI_C_1nQT7HFinNeXWRIipzFTOwu9q12KDZ3DloNlX1I
+Message-ID: <CAABTaaA6BvcYP7_0KrOtXW7ehNH=RrZk4QFWoPujevXOJEY=Sw@mail.gmail.com>
+Subject: Re: [PATCH v2] audit: merge loops in __audit_inode_child()
+To: Paul Moore <paul@paul-moore.com>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, eparis@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/24/2025, Marek Szyprowski wrote:
-> On 23.10.2025 22:52, Will McVicker wrote:
-> > From: Marek Szyprowski <m.szyprowski@samsung.com>
+On Thu, Oct 23, 2025 at 3:41=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Oct 22, 2025 Ricardo Robaina <rrobaina@redhat.com> wrote:
 > >
-> > For some unknown reasons forcing percpu interrupts for local timers
-> > breaks CPU hotplug for 'little' cores on legacy ARM 32bit Exynos based
-> > machines (for example Exynos5422-based Odroid-XU3/XU4 boards). Use percpu
-> > flag only when driver is compiled for newer ARM64 architecture.
+> > Whenever there's audit context, __audit_inode_child() gets called
+> > numerous times, which can lead to high latency in scenarios that
+> > create too many sysfs/debugfs entries at once, for instance, upon
+> > device_add_disk() invocation.
 > >
-> > Fixes: f3cec54ee3bf ("clocksource/drivers/exynos_mct: Set local timer interrupts as percpu")
-> 
-> This tag doesn't make sense in this patchset. Simply squash this change 
-> with the previous one, adding the following tags:
-> 
-> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Link: 
-> https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprowski@samsung.com/ 
+> >    # uname -r
+> >    6.17.0-rc3+
+> >
+> >    # auditctl -a always,exit -F path=3D/tmp -k foo
+> >    # time insmod loop max_loop=3D1000
+> >    real 0m42.753s
+> >    user 0m0.000s
+> >    sys  0m42.494s
+> >
+> >    # perf record -a insmod loop max_loop=3D1000
+> >    # perf report --stdio |grep __audit_inode_child
+> >    37.95%  insmod  [kernel.kallsyms]  [k] __audit_inode_child
+> >
+> > __audit_inode_child() searches for both the parent and the child
+> > in two different loops that iterate over the same list. This
+> > process can be optimized by merging these into a single loop,
+> > without changing the function behavior or affecting the code's
+> > readability.
+> >
+> > This patch merges the two loops that walk through the list
+> > context->names_list into a single loop. This optimization resulted
+> > in around 54% performance enhancement for the benchmark.
+> >
+> >    # uname -r
+> >    6.17.0-rc3+-enhanced
+> >
+> >    # auditctl -a always,exit -F path=3D/tmp -k foo
+> >    # time insmod loop max_loop=3D1000
+> >    real 0m19.388s
+> >    user 0m0.000s
+> >    sys  0m19.149s
+> >
+> > Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
+> > ---
+> >  kernel/auditsc.c | 39 +++++++++++++++++----------------------
+> >  1 file changed, 17 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index d1966144bdfe..8cebc016d9eb 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -2416,41 +2416,36 @@ void __audit_inode_child(struct inode *parent,
+> >       if (inode)
+> >               handle_one(inode);
+> >
+> > -     /* look for a parent entry first */
+> >       list_for_each_entry(n, &context->names_list, list) {
+> > -             if (!n->name ||
+> > -                 (n->type !=3D AUDIT_TYPE_PARENT &&
+> > -                  n->type !=3D AUDIT_TYPE_UNKNOWN))
+> > +             /* can only match entries that have a name */
+> > +             if (!n->name)
+> >                       continue;
+> >
+> > -             if (n->ino =3D=3D parent->i_ino && n->dev =3D=3D parent->=
+i_sb->s_dev &&
+> > -                 !audit_compare_dname_path(dname,
+> > -                                           n->name->name, n->name_len)=
+) {
+> > +             /* look for a parent entry first */
+> > +             if (!found_parent &&
+> > +                 (n->ino =3D=3D parent->i_ino && n->dev =3D=3D parent-=
+>i_sb->s_dev &&
+> > +                  !audit_compare_dname_path(dname, n->name->name, n->n=
+ame_len))) {
+> >                       if (n->type =3D=3D AUDIT_TYPE_UNKNOWN)
+> >                               n->type =3D AUDIT_TYPE_PARENT;
+>
+> As mentioned in my feedback on your v1 patch, we can probably set
+> n->type equal to AUDIT_TYPE_PARENT without checking n->type first
+> as it we want this set to AUDIT_TYPE_PARENT regardless.
+>
+> Please either fix this, or explain why it needs to be the way that it
+> is in your v2 patch.
+>
+> >                       found_parent =3D n;
+> > -                     break;
+> > -             }
+> > -     }
+> > -
+> > -     cond_resched();
+> > -
+> > -     /* is there a matching child entry? */
+> > -     list_for_each_entry(n, &context->names_list, list) {
+> > -             /* can only match entries that have a name */
+> > -             if (!n->name ||
+> > -                 (n->type !=3D type && n->type !=3D AUDIT_TYPE_UNKNOWN=
+))
+> > +                     if (found_child)
+> > +                             break;
+> >                       continue;
+> > +             }
+> >
+> > -             if (!strcmp(dname->name, n->name->name) ||
+> > -                 !audit_compare_dname_path(dname, n->name->name,
+> > +             /* is there a matching child entry? */
+> > +             if (!found_child &&
+> > +                 (n->type =3D=3D type || n->type =3D=3D AUDIT_TYPE_UNK=
+NOWN) &&
+> > +                 (!strcmp(dname->name, n->name->name) ||
+> > +                  !audit_compare_dname_path(dname, n->name->name,
+> >                                               found_parent ?
+> >                                               found_parent->name_len :
+> > -                                             AUDIT_NAME_FULL)) {
+> > +                                             AUDIT_NAME_FULL))) {
+> >                       if (n->type =3D=3D AUDIT_TYPE_UNKNOWN)
+> >                               n->type =3D type;
+> >                       found_child =3D n;
+> > -                     break;
+> > +                     if (found_parent)
+> > +                             break;
+> >               }
+> >       }
+> >
+> > --
+> > 2.51.0
+>
+> --
+> paul-moore.com
+>
 
-Okay, no problem!
+Hi Paul,
 
---Will
+Thanks for the heads-up!
+Now I realize I misunderstood that piece of your review the first time
+I read it. I'll fix it and post a newer version of this patch shortly.
+
 
