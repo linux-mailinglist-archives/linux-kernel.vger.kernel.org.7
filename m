@@ -1,140 +1,261 @@
-Return-Path: <linux-kernel+bounces-868216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA32C04A7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:15:09 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C04C04A87
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 16CF24F94F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:15:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 97FC6359F4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE442C027A;
-	Fri, 24 Oct 2025 07:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ex1t4OPx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B342C159E;
+	Fri, 24 Oct 2025 07:15:23 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEEB29D26E;
-	Fri, 24 Oct 2025 07:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAC52C0292
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761290049; cv=none; b=dNU3t8d0OIVlTGQXmtuZY0WJWIzBfLy7/v2h9sIItLa/kl5NosToHi5QZI50lKiikpGkwmN94RURGBXLfd8Cskw6Bynlo3B2ViHExjekK5wWPagpUReEfP0fGAtN/VMuX76Yibej/6dmnsCaSEz7FK183zBdAa+BPyhVz6pQgFg=
+	t=1761290122; cv=none; b=RJB1Pm+1VpyHpgg4pT59BieQaJj2aArpTUntkje4WHt1zHdcCyCdgvE0Brni55AGGmauqxiipUlccWBjMJbD68PIagqRHgfjCWzZHeYsZbokJ0nSgJc4hIEAeW79DeosWmbeNuY1u9V4KbUXRaXT5yaTEVk62UX7Gh5lZRA3PTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761290049; c=relaxed/simple;
-	bh=tixsbOhPpx+6hLtcafF4AhfrtkXskRGuW6voP6ka0TU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IjKS8wvZ2v/vaQX346M4FlILQuuNdY/UrCXXc5yWuWHgj9YZGcI+hsOoumui1qMgBRitElYrv1M1+uv/i0i7aYdbD0td7WNYQKPZUvLlfBb0QtkoVsmPVc73gIH9L9Bmbo/vdPpmXhudve8wImvhLkzy0w8pmhrvSIfhoPwHeco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ex1t4OPx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30551C4CEF1;
-	Fri, 24 Oct 2025 07:14:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761290048;
-	bh=tixsbOhPpx+6hLtcafF4AhfrtkXskRGuW6voP6ka0TU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ex1t4OPx1GNhOGgxZG9mfTnTw6vg7QdtA/sCWg+iWh3jsuMYZI9yMUgqkPiIElcTp
-	 qb6WczdXr4o3U9dAaNA5iG2HH1NfR16Ork7l3Il5Zta32w7HUou1h+s5ROTuFB1zAZ
-	 TgZ8sYNWK60atK1vpk1vYQhxqwmgv/YHigW3PEYOBkNTMZzHD4preROzq6TB1w+QvX
-	 taPyrRNHrs7o4UKI8Z/TqDPTTtlRHvf30sttXdLnsT1UVoPLFqTKXHW0V/5AKBqakB
-	 777b+6NHPduvK/0TGOPWMTStTjCfsgOTZ2k4+VHN/5hPGL0VDcmWxRscQVMy4rcRtn
-	 /zsWNUNhuc6Gg==
-Date: Fri, 24 Oct 2025 09:14:05 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, sugar.zhang@rock-chips.com, 
-	heiko@sntech.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	conor+dt@kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	huangtao@rock-chips.com, finley.xiao@rock-chips.com
-Subject: Re: [PATCH v4 6/7] dt-bindings: clock: rockchip: Add RK3506 clock
- and reset unit
-Message-ID: <20251024-wonderful-banana-bumblebee-273c8f@kuoka>
-References: <20251021065232.2201500-1-zhangqing@rock-chips.com>
- <20251021065232.2201500-7-zhangqing@rock-chips.com>
+	s=arc-20240116; t=1761290122; c=relaxed/simple;
+	bh=vpjK0hE8YXRo0KuVf6oDc7peRJobCW/rH+1ac96XXxc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dMaAE+kwpvImqqja8p3IEa+f6c/WNJH7pjrK1T+hKopj6ygx4+n6C5P2WWGI+uIYvSX6V7PpNiGwgmuXM2wob1r1PHt5gu+GxHAyT0LFowI08B/AmhTOaWMF8xT7rpp0O7E3KQFBqc8R0qeSrOAXZhsranoHZwG24lRXOODHP4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430ced58cd2so58256785ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:15:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761290119; x=1761894919;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3W0XWln4jrXi/FR5HXl0w/n/mi429O4MQ0jEz2lDFVw=;
+        b=frv3wUHo+peupJLwDPi0W6BCJReyyRnjp8mTupx+szBoQuzoEVWp+SJtsR3QESeWr5
+         kUUWy8Tp4rvjIjpo6v0BbdFeEF/E8dd8r4SL7Vci8ye1o2joZhsTGGg2IUicf5Pb3K7+
+         h5aFhYRmTti5HoiTyyaEQ/spYBowqMvzAz1eueTYvzy4EtvaYr3DUzPScD0yD5mFXqPg
+         i1kNIL/dGHu7pjTuvm7P4BHX0SY/oxXp+Sm1B8O6cCQZVDYWufR5VPktmXVR9C5YfdJQ
+         57coKuEaBe/8QCVWbiGtF8grmtZBZkOUNzLFx3jaBpHqZk4erdILX/NdGBbnPECGFw26
+         MgRg==
+X-Gm-Message-State: AOJu0YySDmMzBRe9viZ19ntZ00jH8KQv/wyvtNsZeUUefDdb5njzwAdW
+	qi8lSmrI9/Res89+rHsddjG+5MlYewdiLf/AxMA8ZFTYLU9z17fX/OzKTKmXb1sx8QbC2r7bX1F
+	AP3xNHzcjycJDCcDZZT69UHfXr0vTzZdqBlUP5lz0r4KX/6pXsrQgFWDHQ70=
+X-Google-Smtp-Source: AGHT+IEcqzdCjqTKmhGTmYteFvJ9WpYrb1HfhFOEg1fd0RSFXSTQ+O5BKh4zyN+MnQu9COLmFzSCoSRJqQveJdCV4mK3pPZsMEIp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251021065232.2201500-7-zhangqing@rock-chips.com>
+X-Received: by 2002:a05:6e02:3f07:b0:431:d83a:9ba with SMTP id
+ e9e14a558f8ab-431d83a0be5mr99039145ab.26.1761290119757; Fri, 24 Oct 2025
+ 00:15:19 -0700 (PDT)
+Date: Fri, 24 Oct 2025 00:15:19 -0700
+In-Reply-To: <66f86aaa.050a0220.4a974.000e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fb2787.050a0220.346f24.009a.GAE@google.com>
+Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+ linux-6.1.y
+From: syzbot <syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 21, 2025 at 02:52:31PM +0800, Elaine Zhang wrote:
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-> new file mode 100644
-> index 000000000000..43e192d9b2af
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3506-cru.yaml
-> @@ -0,0 +1,45 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/rockchip,rk3506-cru.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip RK3506 Clock and Reset Unit (CRU)
-> +
-> +maintainers:
-> +  - Finley Xiao <finley.xiao@rock-chips.com>
-> +  - Heiko Stuebner <heiko@sntech.de>
-> +
-> +description: |
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Do not need '|' unless you need to preserve formatting.
+***
 
-> +  The RK3506 CRU generates the clock and also implements reset for SoC
-> +  peripherals.
-> +
+Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+Author: dmantipov@yandex.ru
 
-...
-
-> diff --git a/include/dt-bindings/clock/rockchip,rk3506-cru.h b/include/dt-bindings/clock/rockchip,rk3506-cru.h
-> new file mode 100644
-> index 000000000000..f629b6fa75c3
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/rockchip,rk3506-cru.h
-> @@ -0,0 +1,285 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2023-2025 Rockchip Electronics Co., Ltd.
-> + * Author: Finley Xiao <finley.xiao@rock-chips.com>
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3506_H
-> +#define _DT_BINDINGS_CLK_ROCKCHIP_RK3506_H
-> +
-> +/* cru plls */
-> +#define PLL_GPLL			1
-
-Other binding starts from 0, so be consistent.
-
-> +#define PLL_V0PLL			2
-> +#define PLL_V1PLL			3
-> +
-> +/* cru-clocks indices */
-
-You should not have holes in indices. These are abstract numbers, not
-hardware values.
-
-
-> +#define ARMCLK				15
-
-...
-
-
-> +#ifndef _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
-> +#define _DT_BINDINGS_REST_ROCKCHIP_RK3506_H
-> +
-> +/* CRU-->SOFTRST_CON00 */
-> +#define SRST_NCOREPORESET0_AC		0
-
-Here ^^^ starts with 0, not 1.
-
-Best regards,
-Krzysztof
-
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 7f11ffacc915..e606826045b5 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -6155,6 +6155,9 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 	int status;
+ 	struct inode *inode = NULL;
+ 	struct buffer_head *bh = NULL;
++	struct ocfs2_dinode *di;
++	struct ocfs2_truncate_log *tl;
++	unsigned int tl_count, tl_used;
+ 
+ 	inode = ocfs2_get_system_file_inode(osb,
+ 					   TRUNCATE_LOG_SYSTEM_INODE,
+@@ -6172,6 +6175,19 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 		goto bail;
+ 	}
+ 
++	di = (struct ocfs2_dinode *)bh->b_data;
++	tl = &di->id2.i_dealloc;
++	tl_used = le16_to_cpu(tl->tl_used);
++	tl_count = le16_to_cpu(tl->tl_count);
++	if (unlikely(tl_count > ocfs2_truncate_recs_per_inode(osb->sb) ||
++		     tl_count == 0 || tl_used > tl_count)) {
++		status = -EFSCORRUPTED;
++		iput(inode);
++		brelse(bh);
++		mlog_errno(status);
++		goto bail;
++	}
++
+ 	*tl_inode = inode;
+ 	*tl_bh    = bh;
+ bail:
+diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
+index de6fd4a09ffd..10d0618a0ddf 100644
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -302,8 +302,21 @@ static int ocfs2_check_dir_entry(struct inode *dir,
+ 				 unsigned long offset)
+ {
+ 	const char *error_msg = NULL;
+-	const int rlen = le16_to_cpu(de->rec_len);
+-	const unsigned long next_offset = ((char *) de - buf) + rlen;
++	unsigned long next_offset;
++	int rlen;
++
++	if (offset > size - OCFS2_DIR_REC_LEN(1)) {
++		/* Dirent is (maybe partially) beyond the buffer
++		 * boundaries so touching 'de' members is unsafe.
++		 */
++		mlog(ML_ERROR, "directory entry (#%llu: offset=%lu) "
++		     "too close to end or out-of-bounds",
++		     (unsigned long long)OCFS2_I(dir)->ip_blkno, offset);
++		return 0;
++	}
++
++	rlen = le16_to_cpu(de->rec_len);
++	next_offset = ((char *) de - buf) + rlen;
+ 
+ 	if (unlikely(rlen < OCFS2_DIR_REC_LEN(1)))
+ 		error_msg = "rec_len is smaller than minimal";
+@@ -778,6 +791,14 @@ static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
+ 	struct ocfs2_extent_block *eb;
+ 	struct ocfs2_extent_rec *rec = NULL;
+ 
++	if (le16_to_cpu(el->l_count) !=
++	    ocfs2_extent_recs_per_dx_root(inode->i_sb)) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %lu has invalid extent list length %u\n",
++				  inode->i_ino, le16_to_cpu(el->l_count));
++		goto out;
++	}
++
+ 	if (el->l_tree_depth) {
+ 		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
+ 				      &eb_bh);
+@@ -3416,6 +3437,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
+ 		offset += le16_to_cpu(de->rec_len);
+ 	}
+ 
++	if (!last_de) {
++		ret = ocfs2_error(sb, "Directory entry (#%llu: size=%lld) "
++				  "is unexpectedly short",
++				  (unsigned long long)OCFS2_I(dir)->ip_blkno,
++				  i_size_read(dir));
++		goto out;
++	}
++
+ 	/*
+ 	 * We're going to require expansion of the directory - figure
+ 	 * out how many blocks we'll need so that a place for the
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index a1f3b25ce612..7115d2091cb9 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -1419,6 +1419,14 @@ int ocfs2_validate_inode_block(struct super_block *sb,
+ 		goto bail;
+ 	}
+ 
++	if ((le16_to_cpu(di->i_dyn_features) & OCFS2_INLINE_DATA_FL) &&
++	    le32_to_cpu(di->i_clusters)) {
++		rc = ocfs2_error(sb, "Invalid dinode %llu: %u clusters\n",
++				 (unsigned long long)bh->b_blocknr,
++				 le32_to_cpu(di->i_clusters));
++		goto bail;
++	}
++
+ 	rc = 0;
+ 
+ bail:
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index b1e32ec4a9d4..6acf13adfb55 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -98,7 +98,13 @@ static int __ocfs2_move_extent(handle_t *handle,
+ 
+ 	rec = &el->l_recs[index];
+ 
+-	BUG_ON(ext_flags != rec->e_flags);
++	if (ext_flags != rec->e_flags) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %llu has corrupted extent %d with flags 0x%x at cpos %u\n",
++				  (unsigned long long)ino, index, rec->e_flags, cpos);
++		goto out;
++	}
++
+ 	/*
+ 	 * after moving/defraging to new location, the extent is not going
+ 	 * to be refcounted anymore.
+@@ -1032,6 +1038,12 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
+ 	if (range.me_threshold > i_size_read(inode))
+ 		range.me_threshold = i_size_read(inode);
+ 
++	if (range.me_flags & ~(OCFS2_MOVE_EXT_FL_AUTO_DEFRAG |
++			       OCFS2_MOVE_EXT_FL_PART_DEFRAG)) {
++		status = -EINVAL;
++		goto out_free;
++	}
++
+ 	if (range.me_flags & OCFS2_MOVE_EXT_FL_AUTO_DEFRAG) {
+ 		context->auto_defrag = 1;
+ 
+diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
+index 166c8918c825..d11a0b83baba 100644
+--- a/fs/ocfs2/suballoc.c
++++ b/fs/ocfs2/suballoc.c
+@@ -645,6 +645,16 @@ ocfs2_block_group_alloc_discontig(handle_t *handle,
+ 	return status ? ERR_PTR(status) : bg_bh;
+ }
+ 
++static int ocfs2_check_chain_list(struct ocfs2_chain_list *cl,
++				  struct super_block *sb)
++{
++	if (le16_to_cpu(cl->cl_count) != ocfs2_chain_recs_per_inode(sb))
++		return -EINVAL;
++	if (le16_to_cpu(cl->cl_next_free_rec) > le16_to_cpu(cl->cl_count))
++		return -EINVAL;
++	return 0;
++}
++
+ /*
+  * We expect the block group allocator to already be locked.
+  */
+@@ -667,6 +677,10 @@ static int ocfs2_block_group_alloc(struct ocfs2_super *osb,
+ 	BUG_ON(ocfs2_is_cluster_bitmap(alloc_inode));
+ 
+ 	cl = &fe->id2.i_chain;
++	status = ocfs2_check_chain_list(cl, alloc_inode->i_sb);
++	if (status)
++		goto bail;
++
+ 	status = ocfs2_reserve_clusters_with_limit(osb,
+ 						   le16_to_cpu(cl->cl_cpg),
+ 						   max_block, flags, &ac);
+@@ -1923,6 +1937,9 @@ static int ocfs2_claim_suballoc_bits(struct ocfs2_alloc_context *ac,
+ 	}
+ 
+ 	cl = (struct ocfs2_chain_list *) &fe->id2.i_chain;
++	status = ocfs2_check_chain_list(cl, ac->ac_inode->i_sb);
++	if (status)
++		goto bail;
+ 
+ 	victim = ocfs2_find_victim_chain(cl);
+ 	ac->ac_chain = victim;
 
