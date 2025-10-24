@@ -1,203 +1,201 @@
-Return-Path: <linux-kernel+bounces-869000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F07EC06B09
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:25:31 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1713BC06AF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08720400135
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:24:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 68933356962
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE351E260A;
-	Fri, 24 Oct 2025 14:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E0F1E991B;
+	Fri, 24 Oct 2025 14:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="l09QKyzT"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazolkn19012055.outbound.protection.outlook.com [52.103.66.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="U+z7lKKK"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F15E202963
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761315839; cv=fail; b=s0MnkM+YCe4EttB3WiffLm7B4hBM/iR5hQBFM5z7CfztUNifPBq2mW6hgnEDmfsrDmK4L1m0Mlu/fTa/XN0NoJDP74R8fkdHEjNJtp9w8tHbMedWpMpyRlokBcwsqoc1cX/z+n3ysE/hKUu2Un6H1AbOJxiZZFGjQom6SYZqyns=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761315839; c=relaxed/simple;
-	bh=1B7Z/9LS9YZHWTkR08D+p8ImMK/aG9DYI2kZFhB325A=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=eqY+5tFWbIrhGpcffG2+4uxu89TBRCen6h1yy4N42IpbqdewNiEt+laYHb6vaAXQxM66Bi4fmffvk8BAUD2wDvtYx9pRdMc3NzA77DUOHweRFuKe8rlMkzyPPeTAEjCa3XaRDBA5G7IpjFaCB/kqzzdM216cWdrJc+k6d3bPkPo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=l09QKyzT; arc=fail smtp.client-ip=52.103.66.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DoxYOeMQarYareWJ97efaqEXLS+VAut5XW2tSvyRHBGC3Iy6V3X6LMvOslP/FsGWjhtGSV2LssGHka7XHuHp102zb8wgsGkcraDEtp/IHj87HaW9ZscPeoCXmoC7hRMYYowSrJC/5GZWtwXUTtihhk9MgzOlgMemPo87MAwChm/lHIDAbRIE7AR+nxmscsHjY45NUvWnN0nGbHhiJocKqUpTTo2AFEDrr4cyi8TUhsET6tN0oTyD4i8bwag1f9uwu6DYT+kg6+bnz+Hp2cKabD11b3Yabjkj4te9b2pzYTZRV3DyNrvXoJ3jomu8Ipo2JR1RCWxfrHhvNMkMQHoG6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1B7Z/9LS9YZHWTkR08D+p8ImMK/aG9DYI2kZFhB325A=;
- b=eZ5HjsXgBBkrj2vzyixrsGj/CgZtDChOf+U4Ax965npcPS9e0phrF1zj4DCj4IdV/REBQsQDAaGd+opa29FahvGs8k/TO1ex2uvy2w/7uTdAgDaOkoNlehUUCOr3B9EH1ZGrVpRwu854mhyfLR4ACxZDu1ebx/xa5HYOMmC2iu9FZIoVfM27WmxnguH+ZddmeRiMd/b3IGZDvztVvpAkrL1eLdGeYZp8J6UQXAq8hiw7cp5ugHD8I9LAw7HDGE+M8X3fGjiqFVku7wptKS1ZDUwyKSj7OP003gQn9GV6YuYG9VRfl+dQFBra+RuASfA3W0zER/hHQ06wfNaJDAm/ZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1B7Z/9LS9YZHWTkR08D+p8ImMK/aG9DYI2kZFhB325A=;
- b=l09QKyzTCHfXtFfgDnXLVL1AOChx6QsFAqof2FwACvDhJIHCu1xe2CrVczo0xfA36gALhK4bJ7+nNmWRchj5WvyWmgeYX5zzcY2v37esPcltcp3j4WuIz7MxiF1WKmxgulRMlLKfiezBBa2vo12UjZuJ1bJ437CZ+nUyytrJgNSyRnKpPR5UjeXETLNXhtS/G4hWwsd/btTpy/8qCCGkt6th1cY9ksLl5OR2xAEtVzjMkpLpknXlrpD9Z7p5bp06wPJnaF0nUvjXiqPDtukLJ1LKkAuOECIHJUM7UfHSSMsoe+wBgN+8k4db1cCx+kiBgUxIWRM14tP6e0WsSrzcFA==
-Received: from SI2PR01MB4393.apcprd01.prod.exchangelabs.com
- (2603:1096:4:1b0::7) by SEZPR01MB5488.apcprd01.prod.exchangelabs.com
- (2603:1096:101:127::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 14:23:54 +0000
-Received: from SI2PR01MB4393.apcprd01.prod.exchangelabs.com
- ([fe80::5e86:f04a:37e5:64f1]) by SI2PR01MB4393.apcprd01.prod.exchangelabs.com
- ([fe80::5e86:f04a:37e5:64f1%5]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 14:23:54 +0000
-From: Wei Wang <wei.w.wang@hotmail.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: "suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "joro@8bytes.org"
-	<joro@8bytes.org>, "kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
-Subject: Re: [PATCH v1] iommu/amd: Set C-bit only for RAM-backed PTEs in IOMMU
- page tables
-Thread-Topic: [PATCH v1] iommu/amd: Set C-bit only for RAM-backed PTEs in
- IOMMU page tables
-Thread-Index: AQHcRC/z/2IcAo5ooUGdDRtk1NmW6bTP5FMAgACWJjCAALMxgIAAIhhu
-Date: Fri, 24 Oct 2025 14:23:54 +0000
-Message-ID:
- <SI2PR01MB43936BE606220BBABCFA30DCDCF1A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
-References:
- <SI2PR01MB439358422CCAABADBEB21D7CDCF0A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
- <20251023160154.GM262900@nvidia.com>
- <SI2PR01MB4393D52AD53469388BED8E6CDCF1A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
- <20251024114039.GA847003@nvidia.com>
-In-Reply-To: <20251024114039.GA847003@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SI2PR01MB4393:EE_|SEZPR01MB5488:EE_
-x-ms-office365-filtering-correlation-id: da5a1a5a-e8fc-4203-4ecc-08de1308f602
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|41001999006|12121999013|8060799015|8062599012|15080799012|15030799006|19110799012|9112599006|31061999003|40105399003|440099028|3412199025|102099032|3420499032;
-x-microsoft-antispam-message-info:
- =?Windows-1252?Q?q7y9/6yYswJl7vRfPS0ky9EIB/3EMGYxin8m6yHENBC1XrngSwf7AaY/?=
- =?Windows-1252?Q?asfxBL9RUWWgi04gfUZrCE+0N4lAL28zKN6rC8vNEg/42dujwAWE1dWb?=
- =?Windows-1252?Q?ivKLqD4sDOsQHotMP8c0psEvommxboWhLmgjhs81VTvRSFOCGNEiOu34?=
- =?Windows-1252?Q?/sJKI+qpvBFmgFVMlBPkwa4jWTSM2mGdoxFD8DISXFCl9GX1KCj7H/vP?=
- =?Windows-1252?Q?zdPpiJfOFx900cQILWFrpKy7nheBPLfheCjg8wr83ctrj+0L7zJXrbzC?=
- =?Windows-1252?Q?CYIDGy7pXv0JmUIx9UXu7+wraMoFIp3xEYkQVRzsIVODYNE9QKTZj9CO?=
- =?Windows-1252?Q?Vng51ElzNxXjqMxaV1fyfAW40X9eGzUMoHmu/tLAxk2AKsWdAMApm4pA?=
- =?Windows-1252?Q?ZzDRsjSB+omGdjqOcxfHJ0igqsouQgcX6yXjECuPG+ixx/jxqSHC+5kI?=
- =?Windows-1252?Q?aSdyjbt881BH+MjlFjbCjtZby1IUcK5iQ6lhrp5OfIlpWj+QnmTqfATD?=
- =?Windows-1252?Q?w6g1KzezcRFDARlFNa2QVOE3iYBm5+nYw0sn3d9hq3+m+DKJ4DcD8mUa?=
- =?Windows-1252?Q?zpemJenPBLou8YhJqwmAne0/L3yTjJT4jq7Targ++uAQ8QvhfrOkWJiG?=
- =?Windows-1252?Q?XmaRoj8nGnENDG8g6h7nHdc7N/i3ZJx6bCHpc2VFB7ztSDpS1wocxMLX?=
- =?Windows-1252?Q?bv5qWKnR29xfpzmYrSG3B31X75Um+M43k5c5GtWJ8X9o2ZvHnR/eR4Vw?=
- =?Windows-1252?Q?ydHieVMR4f/RW1Jts72UsPUxdFlWrVoAjEN+6uQFUIYClwjsITtulLCn?=
- =?Windows-1252?Q?gRpLbQp5QYQT9K9yPpQI/6tqind3k3h2K1I16swtPNtAcGo95GjLTcIK?=
- =?Windows-1252?Q?2yf2QtGh0POGMQqSFs8su6/Ly7sf4glTAl3JwzQiVRs/gfmbVJ161bZV?=
- =?Windows-1252?Q?LdO0X8BkUCez9E+AyoPuswsRUG33zoDr2NWo2Rw8ynAMotWWs5AZFPyy?=
- =?Windows-1252?Q?ujDSN1X1mjqJnlOgkCcoJ8VBLHjYLFsqvnmcFed/rQHHNA7/7E853wpL?=
- =?Windows-1252?Q?WzwS+SfAYx894cERNylJKhkh/qxiSHP52Am2uLxGVKfnZgik9a8n8ueI?=
- =?Windows-1252?Q?NazIj/vI2bUJk5pSXxcdtuC41zXVuLiOPlcwklGaYnHx0Gw1cQ2QY7pb?=
- =?Windows-1252?Q?/khfzYgaB0QK/f3C2ag0NevS1Wx9rKtPnyjeSS5GcNofg4k2lJxSb65R?=
- =?Windows-1252?Q?kZwnjRE1kJmzFGRGpQ2mw+fMXhOVomo3vg89BR7sIp5BYzwxzTLF7tWV?=
- =?Windows-1252?Q?X2LEuRibpyzFo6gpBrjDPKMe7qVHMMlkCEae1+/N6ieAjkKTF1HZ5gT8?=
- =?Windows-1252?Q?i62Zrh42llcyMA=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?Windows-1252?Q?k8KOnnsaBYw+tdmzabmnuV99rcywWnVfgdiSKs7pnSNluJShsW7VtMj4?=
- =?Windows-1252?Q?sXoyTlpGti/gyBgGCUamqfmgvg1nPFMY8oY58lA+UVRLy2As9ouGgRK6?=
- =?Windows-1252?Q?u3LcpQ6sVWyOoKpOsXfeG+2WwNq7AouiO5mBIEjMTNAmBRTFv2RHa8kt?=
- =?Windows-1252?Q?zg2UD87LfTTSygNQKUSTO/5AoRX1Mpe70Tjaa4UvaLPlCgWqmfL1v2tA?=
- =?Windows-1252?Q?c7hdxpX5X6mKwCf9ANR/mgxLtV0QDlkBpYwCSvUxqvAzvg9Ah5U3RBdP?=
- =?Windows-1252?Q?8+Sb5i43RJ0CSTNa0uAMydTHcvn2Qa2VIN4i12FASTNpTJBu374wEfpv?=
- =?Windows-1252?Q?7k/Y5HC/OlyALYhqHmI2KUJBeduEOW8LIoNW845BLr1slbjdWL8c97Ui?=
- =?Windows-1252?Q?/PcOqBipOpn1hvoqJAE0barO4/VhFwZp3KUFK3/Ea3pNw7xF6O7j/2er?=
- =?Windows-1252?Q?poXPOqw+AcGe2ShP05NXz2HrduOigX2FkdDQ5CBVoGrtJLKRVr3Xh5Ys?=
- =?Windows-1252?Q?L/4JGZ2iJscBav70FEqwZf272b7DvOWNNrslqayHIgSjjnidsWW0Z9/q?=
- =?Windows-1252?Q?lQ8Ba6TmeVnK3CzK+dqouve7CUnk2mtVGmGv+J2Sl1YkAkzR1ObwDP5+?=
- =?Windows-1252?Q?KZJyakpAZiU+Db8mFrGdAHjG8srjVh3iPY8poeCM57/iYIfwIMTKA2S5?=
- =?Windows-1252?Q?PqOfB74a1KH+zJx+vpBeIJLtpBz/M+PvPO8v1EoxEyJWKc8nIJIR8jwV?=
- =?Windows-1252?Q?Aq1YR9XhhNJKGUnEjFmqRma+4yH+t+vc/cW+XCgMLJzR61ZH07vJHYMF?=
- =?Windows-1252?Q?kipdaAy489dkoexaXNRSQd5cIfwe1sfuo2W5Yf0P4ci6SYB1VVxNpgAi?=
- =?Windows-1252?Q?qfg1mSEXFBscht4SIxplt0iTygGdSiB+PqsK0M25aZ+dS0jEjF8s4/hL?=
- =?Windows-1252?Q?qEA0nGxnW4T1kJtW3riuuKcPNohbm8eEPv+mDQeK3JxG97jQdYW2UefU?=
- =?Windows-1252?Q?FCqGCvkgd5gIRgk2Q8Y7a+XZtCFxOUCb7qpkt+KzzbkGpmFbGZd/33iW?=
- =?Windows-1252?Q?5wQ1s3QEUhbe+02LUTBILRND4hTc6D6C4If2EH/Wuzb2npu1jrGFiRn0?=
- =?Windows-1252?Q?4UgQHjFCXMIMuz+hO2GNMwTRwAtVNjEoY5t7p9ZIzEBqpNalsyA8AQA5?=
- =?Windows-1252?Q?hcErW5EHzkOlLqZcYSdPkVxrXIKni6HixhzA3/nM8jDuY1+HpFnUeo8Q?=
- =?Windows-1252?Q?UL/z1hd5dE893BKTyMlaEMDU0llHx/lrlQ6Z3DW1YQoKdCq01zY9MEwZ?=
- =?Windows-1252?Q?YTsoajzmgfcMbRrZIJRsFgm8+N4=3D?=
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE7820B7EE;
+	Fri, 24 Oct 2025 14:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761315851; cv=none; b=UetQKSH7gpI+dI4JqnoDv2Xj+vZ+oxHWcclbxuIKwTZibt1P/rmOpbihmBc99f3uVMmds9JnT3HHTAxmKTCwgihv+mmCouSadvjfScNFKh2+VYsPqUJ8F1crhWIzuRF8JufFe6ZMUPrnLpFq5l0GaC8UCkaksBOujlizQnjJrEw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761315851; c=relaxed/simple;
+	bh=ppRVyfRVIH8bZsZWAE5rWCDKac3K8OKO5jqyS8t/g1M=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=UgBzgRmFwW6AFgzj5lUyu2yEBirbVGR6oiFFsDO/swq/whA2w7Yx+ayG/6p6134YIPDi7IBzrgzOcen7akhpmrsck+BlBxG0AqjCL6d6F8rHIQsn2jvUL8ET7Mj6gUv4CHuVtxtLMwc6BtQlGJibEt3bbdqr/PbNV0iiwnyw//s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=U+z7lKKK; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OA2nCk023244;
+	Fri, 24 Oct 2025 14:24:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
+	 bh=QTv5l8HYsmXSaBkMSL5ZDaSrsBFiVYOpAyIiO0ly0rU=; b=U+z7lKKKbjXr
+	HLDG3Zc7L9QsfRKFx06zgpP6WhgYwkk94lFm02+yTgixgWacf0+bMFZNW9cReS8V
+	zz0Yff4Wuqzd53o1xMhsKkckW4RcC2lypY1T5oy9VHjTcbUsBXlHAD/KZp0OwCOn
+	01z36FmXyqrw6KJb0P1U+Fkrx/W523iKOTciKVA+tSSBz9dKZudRPyU+GxAAQ4wn
+	KkGFKqe46z4FBgNxzI7zsw5e9BBYhsonlhlRet0HP9KdSRnLuRuk87bnV+Z+PW9j
+	0ItC6cNvJllKH9Vvvyw/A8icsd+CJXvep7/aBi1My9XnnkbqAhEjAQkCRSECv/Y6
+	vJ8O7ddaeg==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v3277rhh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Oct 2025 14:24:02 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59OAkYeV011015;
+	Fri, 24 Oct 2025 14:24:01 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqx1k6gp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Oct 2025 14:24:01 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59OEO1vH26673758
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 Oct 2025 14:24:01 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3AD3358056;
+	Fri, 24 Oct 2025 14:24:01 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C57CF58052;
+	Fri, 24 Oct 2025 14:24:00 +0000 (GMT)
+Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 24 Oct 2025 14:24:00 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-9052-0-msonline-outlook-827b9.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR01MB4393.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: da5a1a5a-e8fc-4203-4ecc-08de1308f602
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2025 14:23:54.0918
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR01MB5488
+Date: Fri, 24 Oct 2025 16:24:00 +0200
+From: Harald Freudenberger <freude@linux.ibm.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Holger Dengler <dengler@linux.ibm.com>,
+        David Howells
+ <dhowells@redhat.com>, Ard Biesheuvel <ardb@kernel.org>,
+        "Jason A .
+ Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 15/17] lib/crypto: s390/sha3: Migrate optimized code into
+ library
+Reply-To: freude@linux.ibm.com
+Mail-Reply-To: freude@linux.ibm.com
+In-Reply-To: <20251021154906.GB83624@google.com>
+References: <20251020005038.661542-1-ebiggers@kernel.org>
+ <20251020005038.661542-16-ebiggers@kernel.org>
+ <51fc91b6-3a6e-44f7-ae93-aef0bcb48964@linux.ibm.com>
+ <20251020175736.GC1644@sol>
+ <29e766ca-54e4-453d-9dfc-ea47e2a1f860@linux.ibm.com>
+ <5895ed68-dd6e-4f3d-9e6f-c27459556ff7@linux.ibm.com>
+ <20251021154906.GB83624@google.com>
+Message-ID: <b9094694cb5bc3ec0f479f3c6df909c9@linux.ibm.com>
+X-Sender: freude@linux.ibm.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=EJELElZC c=1 sm=1 tr=0 ts=68fb8c02 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=_Sl0zld_v68khJEgkSQA:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX/7qZ6wKRafKZ
+ mK/7ISmrSIyR9IBlUhFX14cubGLJSW4l1mNog/XzaYNg9VJBvgUceJCtyF3hemj0Cc+0OmCCjO6
+ v0Mbwi/cm0IauQI4PXp66wOM0la49kM2giHe334oaCU92VgQaU4yqNgyUmvuvIKYhL7yHfQu1q1
+ XuI+2wAK5AC1RmK0WR8YnSmsjMztB99IKqbe80TxZXBBSxglbUbqeyz6q8Bd/lPoPMSvBvrietL
+ remlo8xYOWdyu9Qd4C9iDYkZc5lK+cD47CotJ2cHKKZqjXcwpiR8xCt0BCep0qBrcm9+glWcQ9j
+ rrWEN0SOrehzh5SbmG1gldwlGQaNkhdLkJKJsa0EfFQ3MyG7Dj+jeelslCZefpCOEDh6eZMZjNV
+ 91fbD2VkqnhjsIZqg2qhNQXdTXleag==
+X-Proofpoint-GUID: pafbIPS1SsUnA0ap6FIduDkkgGpA_N8g
+X-Proofpoint-ORIG-GUID: pafbIPS1SsUnA0ap6FIduDkkgGpA_N8g
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-24_02,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0 clxscore=1011
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-On Friday, October 24, 2025 11:40 AM, Jason Gunthorpe wrote:=0A=
-> It is not a santiy check, a sanity check would fail the mapping. This=0A=
-> is changing what PTE is created by trying to guess properties about=0A=
-> the pfn.=0A=
-=0A=
-It's a check and handling for now. If, later, it becomes necessary for call=
-ers=0A=
-to pass an IOMMU_* flag to request the Private bit and upon the=0A=
-check (via page_is_ram) failure, an error will be returned to the caller. =
-=0A=
-=0A=
-> IOMMU driver to validate whether a user-supplied address _can_ be mapped=
-=0A=
-> with the Private bit (RAM is the case that "can" currently, and since the=
- driver=0A=
-> can already determine whether a PFN is RAM or not, I'm not sure why it ne=
-eds=0A=
-> an interface for users to tell the driver).=0A=
-=0A=
-> As I understand AMD's architecture the hypervisor runs with all ram as=0A=
-> encrypted and has to set the C bit for any dram. The MMIO is only=0A=
-> protected by the RMP and does not have a C bit set.=0A=
-=0A=
-> So even in a TDISP world with private MMIO we still end up with=0A=
-> system DRAM being treated differently than MMIO.=0A=
-=0A=
-Yes. In fact, the mentioned P2P broken issue also occurs on the host (this=
-=0A=
-is the primary case that the patch aims to address). The SME feature is use=
-d=0A=
-in the host/native environment (not discussing the SNP guest case), and in=
-=0A=
-this context the C-bit is added to the host physical address.=0A=
-=0A=
-> It really does seem like IOMMU_MMIO is the right direction here.=0A=
-=0A=
-> Again we should not be trying to guess if something is "ram" or not=0A=
-> deep inside the iommu code. We have IOMMU_MMIO specifically to tell=0A=
-> the iommu if it is ram or not.=0A=
-=0A=
-Sorry I think my main confusion here is why this is considered a =91guess=
-=92 of RAM.=0A=
-The function page_is_ram() clearly returns whether it is RAM, right? If so,=
-=0A=
-why is there a need to add an interface and require users (e.g., p2pdma,=0A=
-vfio etc.) to tell the IOMMU driver that it is RAM or not?=0A=
+On 2025-10-21 17:49, Eric Biggers wrote:
+> On Tue, Oct 21, 2025 at 10:43:00AM +0200, Holger Dengler wrote:
+>> Hi Eric,
+>> 
+>> On 21/10/2025 09:24, Holger Dengler wrote:
+>> > On 20/10/2025 19:57, Eric Biggers wrote:
+>> [...]>> - Risk of bugs.  QEMU doesn't support the s390 SHA-3 
+>> instructions, so no
+>> >>   one except the s390 folks can test the code.  I can try to write code
+>> >>   for you, but I can't test it.  And the s390 SHA-3 code has had bugs;
+>> >>   see commits 992b7066800f, 68279380266a5, 73c2437109c3.
+>> >>
+>> >>   The first priority should be correctness.
+>> >
+>> > Let me figure out, if me and my colleagues can do the testing for you.
+>> > Unfortunately, I'll be unavailable for the next two weeks. But I'll come back
+>> > with a solution for the testing.
+>> 
+>> I talked to Harald: we can do the testing for you on our development 
+>> machines.
+>> Please send new series to us or provide them in your git repo.
+> 
+> Thanks!  I'll Cc both of you on v2 when I send it later.  For now, this
+> series (v1) can be found in lore at
+> https://lore.kernel.org/linux-crypto/20251020005038.661542-1-ebiggers@kernel.org/T/#u
+> And as mentioned in the cover letter it's also retrievable from git:
+> 
+>     git fetch
+> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
+> sha3-lib-v1
+> 
+> v1 already has the s390 optimized implementations of
+> sha3_absorb_blocks() and sha3_keccakf().  If you could enable the
+> following:
+> 
+>     CONFIG_CRYPTO_LIB_SHA3_KUNIT_TEST=y
+>     CONFIG_CRYPTO_LIB_BENCHMARK=y
+> 
+> ... and then show the results for sha3_kunit before and after the 
+> commit
+> "lib/crypto: s390/sha3: Migrate optimized code into library", that 
+> would
+> be helpful.
+> 
+> In v2, I'll look into providing overrides for the one-shot functions
+> sha3_{224,256,384,512}() too.  If it works out, I'll ask you to re-test
+> with that additional change as well.
+> 
+> - Eric
+
+I pulled your repository and checked out the branch sha3-lib-v1 and
+while the kernel build runs I get link errors:
+
+ld: crypto/sha3.o: in function `crypto_sha3_512_digest':
+/root/ebiggers-linux/crypto/sha3.c:80:(.text+0xaa): undefined reference 
+to `sha3_512'
+ld: crypto/sha3.o: in function `crypto_sha3_384_digest':
+/root/ebiggers-linux/crypto/sha3.c:73:(.text+0xea): undefined reference 
+to `sha3_384'
+ld: crypto/sha3.o: in function `crypto_sha3_256_digest':
+/root/ebiggers-linux/crypto/sha3.c:66:(.text+0x12a): undefined reference 
+to `sha3_256'
+ld: crypto/sha3.o: in function `crypto_sha3_224_digest':
+/root/ebiggers-linux/crypto/sha3.c:59:(.text+0x1aa): undefined reference 
+to `sha3_224'
+ld: crypto/sha3.o: in function `sha3_final':
+/root/ebiggers-linux/./include/crypto/sha3.h:188:(.text+0x1f0): 
+undefined reference to `__sha3_squeeze'
+ld: crypto/sha3.o: in function `sha3_update':
+/root/ebiggers-linux/./include/crypto/sha3.h:172:(.text+0x232): 
+undefined reference to `__sha3_update'
+
+with a s390 defconfig kernel configuration an a s390 debug_defconfig 
+kernel configuration.
 
