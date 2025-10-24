@@ -1,124 +1,102 @@
-Return-Path: <linux-kernel+bounces-868094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B3EC0458A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:40:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B7EC0457A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 834BB19A75F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:40:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B97434EBA90
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3620259CB3;
-	Fri, 24 Oct 2025 04:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E984E22A7E9;
+	Fri, 24 Oct 2025 04:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="tTUfW6pz"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="r/y7rmdI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D72A125A9;
-	Fri, 24 Oct 2025 04:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761280817; cv=pass; b=orbGDxAFcNJuTs3hYNvcO6LQ+Ohs+79hRopuUImGyn7VSnVBULovN0OFRZARpYxpabK2t3lNjWATVAiihGVWXy63YV50S2Aj/4WivBhzCQt0S7N+ryouSWqQCbK8VE2mV/PFrsU567CvYFEpvFU1RrB5OU87dBDBzHmzT8yzQCg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761280817; c=relaxed/simple;
-	bh=8xOh9GUFAGCox7+nAnKlrlJYUUu28V2s9qrW5IXPRKo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=CnfDOacookq7nAM6EsvyeXL7IJ6+2YvGv+xatvYr5q6e6ol1I6vAnRVOtWGfM0dlCceVkrc/8+WfQvGYwYNYKf7uDEZ2IXdyKgwgYyGBkL5B8n4PV1Z19ZVU/SqcRZYn4DvJVJRlTBddNT93YtDsCYdFnCWtsBrkVG2MdHszhr8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xenosoft.de; spf=none smtp.mailfrom=xenosoft.de; dkim=pass (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b=tTUfW6pz; arc=pass smtp.client-ip=85.215.255.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xenosoft.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=xenosoft.de
-ARC-Seal: i=1; a=rsa-sha256; t=1761280092; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=pmeDQOkGAYfpG9ulR3RtsQiQ+CTCWFh30kP2trRjiD4fNmtSYF8WkejbFsD2+r5fyg
-    97kIYrNXxDTlgkr6WS7IqUQ/tqjtSe2r/HtWR2IhR5NyQP/lgJHanl0SnwnWiE6lxQWl
-    EyRb/ct3HAS80szrCsyiCrwNudvrTjoWZ/N//CbOIpihNX6jrQl6cr1CoiPkFNO4GOdO
-    lcFcM8uDn4e/p3vZ39SbNQ2wXAeiVNCPATf/YcIgOI0TwwH7SJUeKj4ig/ue/l040k/0
-    FvTvgQCpAffw792RNhbRXv8sy49XgbiGgaEpcGKTBtz5hf9y+PJkvCt5zILPDbk2hvUe
-    PnHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1761280092;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=oK2G3VTMLLo2HkG9J5SCJGjImSRIoXFlhPE5LjCqFBc=;
-    b=ZMPYvrGnFNf5W0TBJPG+0ko4+FUMruGHCeNB58f51anumH1AZAuoQfgrXfqf8K8W3i
-    ZkMrRa5xP3Ik3UpCrtPQqvyBVmRn0a1eVyMbC493k8oMysAzQBKEZBfvZqbIW99/EkAL
-    YlorDZKrYo91z7E3+a7ZMFznonFj6e3vfSuDiwp2NXZJEO8J5MFK+sn7OZtsXdMLsjfn
-    zfw78WtzB7kd53iF2GwnBQ5Mh6+L9FSD0HqVWjAVpswyi0jCQQNEjvSPcui+C2DyBp9Y
-    0+NBL8QWrzGrVqdh1Ebp38ek92XjXgoqKrnvmphx81GKxTHFfZZ/84RbQxMWfw66n/QO
-    nx/g==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1761280092;
-    s=strato-dkim-0002; d=xenosoft.de;
-    h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=oK2G3VTMLLo2HkG9J5SCJGjImSRIoXFlhPE5LjCqFBc=;
-    b=tTUfW6pzZ4tvboyY5Cnxn65DZ1wIeYbY1MWSfZRblGiIC9H/bFZR82VMDdexAsG6/t
-    S68MGFE+knoO9gupyypUYaxeC991Ta8uBHkQ+j5/CmIB0JTFlMIZT5xDk/qDEr/tfzKi
-    6j6KRwVEBQmq79u2DPBA3mX5ikQRGMwp3rIanqdz4SvHnmrNMJWcW/fUxuTYCapfuYTb
-    M5vL1H1r2jR+DMGOYzal7+BXu8eIp97V3PZtVS8HD+FapCsfMTjQ4i1eux+WNzKOCuPu
-    4Kr5fWWvfQ9qoAkB7Q5EhZhn2kkMKBsIYE3iQH5CfpeLATfLAy9cVmdHNELAOgk2tnCs
-    IjHg==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGN0rBVhd9dFr4thIFiqT9BURIi+l6Rvg"
-Received: from void-ppc.a-eon.tld
-    by smtp.strato.de (RZmta 53.4.2 DYNA|AUTH)
-    with ESMTPSA id e2886619O4SB2Ej
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Fri, 24 Oct 2025 06:28:11 +0200 (CEST)
-Subject: Re: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
-To: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
- FUKAUMI Naoki <naoki@radxa.com>, Herve Codina <herve.codina@bootlin.com>,
- Diederik de Haas <diederik@cknow-tech.com>, Dragan Simic
- <dsimic@manjaro.org>, linuxppc-dev@lists.ozlabs.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>, mad skateman <madskateman@gmail.com>,
- hypexed@yahoo.com.au, "R.T.Dickinson" <rtd2@xtra.co.nz>
-References: <20251023182525.GA1306699@bhelgaas>
-From: Christian Zigotzky <chzigotzky@xenosoft.de>
-Organization: A-EON Open Source
-Message-ID: <b48b7ec8-09dd-fce4-c957-5fbbf66acd4e@xenosoft.de>
-Date: Fri, 24 Oct 2025 06:28:11 +0200
-X-Mailer: BrassMonkey/33.8.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06EE125A9;
+	Fri, 24 Oct 2025 04:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761280294; cv=none; b=FN+dmbkt++BZt/NjTUeKzSWH5EtLnEhgBB1mQ0XW8nSl1NhyDBZFwsXSrBbvMhUtwMDCZ97pjkAa/fqUfYMJpBHGkN2iBKVfuitnDwKlDVtGTD1NSz+3DeSNbUoJh18UcrI+Ip7euAgcXZ8Ea2w4ulOMl/XShsKt7nuvCOc0Enc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761280294; c=relaxed/simple;
+	bh=yx4K1K85toZ/E5o6jya7RkVBvy1UnqNR5rY2AuzuhCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=JQGU+0EMdPrBQy39sGE47ZUAPs6+wfdXk7bXIKaCRvHpATK6Kjv3umJMXGXwr9GT9p2GTmlZzzsAbQF0Gi9h5tUr0HgQnV8b8rjDYW+2eZIFmhXGyGd9lFSVRve3hWGA845a2XKSlcQtY0ASmTbzLXZ+hnoYarIpQE/sbfcd40U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=r/y7rmdI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761280287;
+	bh=LSeXo3qHPEQXI4tmXQ+7HeGWbGKJODt/U5vq8NEzn2o=;
+	h=Date:From:To:Cc:Subject:From;
+	b=r/y7rmdIC3ECGkj4e8FHVLyh8pPQr9Ong4qb2TMVlpbKmyiipESQfGlsdV2eXlnLU
+	 CaiOcWdspQ4CDosUj4dqd6bNANsEC1udKMx4QCtg8qbIfP4yyb03mO2LMwUUzPtqYz
+	 BREyeGsqXPUj682/Woq5wHA1J8uQ3/Ir6toNQ7upMC2CrC/86O3I17FOX4io4tDbC5
+	 roWmKKVPN2G7OAoIq7d7/A91ql6Y9z2603JoAVB+Z44QY8QJNeQSFO1IwsDm3C/z4Z
+	 CHzXnCE2uctjMzaqDCSlD0ipHw0ewasgEGxxsyD/iBhIqPZB/YC92ksgLbI/HwDxj8
+	 zol2BR387cbaA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ct92l5ZTQz4wCR;
+	Fri, 24 Oct 2025 15:31:27 +1100 (AEDT)
+Date: Fri, 24 Oct 2025 15:31:26 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the mm-hotfixes tree
+Message-ID: <20251024153127.25f42dbd@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20251023182525.GA1306699@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_//8=NumWf4XcSTcOl0zH4O/y";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 23/10/25 20:25, Bjorn Helgaas wrote:
- >> ---
- >> I intend this for v6.18-rc3.
- >>
- >> I think it will fix the issues reported by Diederik and FUKAUMI 
-Naoki (both
- >> on Rockchip).  I hope it will fix Christian's report on powerpc, but 
-don't
- >> have confirmation.
- >>
+--Sig_//8=NumWf4XcSTcOl0zH4O/y
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hello Bjorn,
+Hi all,
 
-Thanks a lot for fixing the issue. :-)
+The following commit is also in Linus Torvalds' tree as a different commit
+(but the same patch):
 
-I will test the RC3 of kernel 6.18 with activated CONFIG_PCIEASPM and 
-CONFIG_PCIEASPM_DEFAULT next week.
+  d8858aa4bc8f ("MAINTAINERS: add Mark Brown as a linux-next maintainer")
 
-Have a nice weekend,
+This is commit
 
-Christian
+  6fab32bb6508 ("MAINTAINERS: add Mark Brown as a linux-next maintainer")
 
--- 
-Sent with BrassMonkey 33.8.2 
-(https://github.com/chzigotzky/Web-Browsers-and-Suites-for-Linux-PPC/releases/tag/BrassMonkey_33.8.2)
+in Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_//8=NumWf4XcSTcOl0zH4O/y
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmj7AR8ACgkQAVBC80lX
+0GzXAgf43a0ANoIAuzqU0n5fykQfEUYPHhgcW17wNcFYZkNDDT1vHymCuzJDVO0q
+hhVmd6nIN06QZ8/tIRRhFVH1rXG6meyzS6DFe0LOLSIQvVWjOumpkqOrR9s+F20j
+BYusm9F1c7ZDa2o9cd58oZDvN45nAXaOe+ZRXK01ggmse94nOXo+Df3MyYdt8VuG
+LWBaeXDtjUNadYA5OHcx3AkXRJeGSKQMQXWjX6FFQ3xjsQmzKa5ev93CWSNFlQHv
+Mz0zLGdoDq73zVS9TTNI8Qq6Y3OLXX7d5sPRhXM0F5tst/+CSnnPhvwlpt+CTNEl
+aAls2PRw7Hrv1U8RjdAsey72s6Xw
+=w6yn
+-----END PGP SIGNATURE-----
+
+--Sig_//8=NumWf4XcSTcOl0zH4O/y--
 
