@@ -1,87 +1,141 @@
-Return-Path: <linux-kernel+bounces-868566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03DA0C057C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:07:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CF1C057CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A29F635BCFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:07:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9E041A04041
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8B930E0CD;
-	Fri, 24 Oct 2025 10:07:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC6930E84E;
+	Fri, 24 Oct 2025 10:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CcZskTxT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9012305065
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A355F305065;
+	Fri, 24 Oct 2025 10:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761300425; cv=none; b=E50Aj1Qhco50rZEgEb0Mkt3n2gV27zthdqjD6AaxS79yeepnOIrEg5NKyVTpGqOhU7WwLZpniWGHEaGVM9z5jT1FnykANvtO6u7gkCiKxGdWIf6T8V5EMY7WihefprxVAz9rcxUx/O0hCkZIhLMS86PxS/koDGeBgWsDigZtnCo=
+	t=1761300428; cv=none; b=HDl+aAahiRNcd/yCrbS0KEymbQnu7kjfDIDJ1KT4nKMltUlViQh5k9kOkIs3j1VSLzF1jKny0eITgemCnnWKPA9Bx7nCGLEXwIQB7YMsakl8Jv+pj8umWSsIef27TIARM3LHMYj8whdeNqLdFqSdTym22+fBbqHFKAMNXk1/kJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761300425; c=relaxed/simple;
-	bh=A0u1gdBVEqlexyaGLsNkxkc2ESY/wvnWkypSVwAwJH8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sc2Ed6V0YdSAmz9+JVn+dQQCYknMJsANQ9Db3BWQW/MDVrToXihZ2OzvqjD5v8DgCmg50G4w7Lz1WCHghbN9BMjX7WtHntprnu234D82Cj/hIeWERQEwu3+WM1YoeuIrl9UxUmB30nDzbjWxLdTxwgIma1RQLqYqvusBcl/2bVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430e1a4a129so25838015ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:07:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761300423; x=1761905223;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OlQSyaENlrmR7LLSxbKe8y5pt5vkHo3J3pHWdTyCYJw=;
-        b=L5ssM0ThUtbnZtG3r8ua+tboJftH3ip5b6q6sluGMXMpGSl32yU+5tJ8REGoprryVe
-         p/NOeVnbINtYL6gke4hzl0zR3trck7X4hz3ITaPpfomcJIMOE0F9xDlZv4sP//WUoUVv
-         HhAUCWLwb/fzT+0cFOH8LAOLNCqNJxMqJXtaYmolWEES8i3RiYl9+NFhMRSy8o8eeoeg
-         uWpbo/iGWaKmuJRszLmzZJdA5qY/hI4fY8XEydqb10KdzOmRtTc7a51EP9eliKbRpZpU
-         kchBP+qFLY5ao8iKSNI+z2IRrX/eQSMbCU1zJpJxLMf0wTKhQHrC7r/EbPSyKfedTPCl
-         vidA==
-X-Forwarded-Encrypted: i=1; AJvYcCVf/TJltOVV4+VamfGpj87FdsdrSHp3i/1bLQdqIrJ18i/fHjCjgsfEqWThCgqsp2YnY5zPezLlzdicc9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt7QXeaRcXXJgiOTZpa9UzxZeYkWxVRMJP30Uvt0WyqausAqDM
-	bhlK8sgiqWoJGIswOb9EcxPRgSbLPeh2cUXpl9WmasGOy0+Ga18PZQXUx04Oo8Q81bjpl65iXAi
-	RuMm0y6bvVS6VYAxn+o3D09ogtosYQT+kyh14mXdD5i3cVAONJfW8goCaB4E=
-X-Google-Smtp-Source: AGHT+IF/KEo+wAquhsjNRv+8AqvrG32ct/q6guSDi7rv4+t941ezr+lPUaL6oDyv7WCCnhmEi2lSwXzHOAl2tMkMoh2mN2d/xO2A
+	s=arc-20240116; t=1761300428; c=relaxed/simple;
+	bh=mAvyMZkDKEDQzM0cbfFWpMpv34LC/VLxM5Txgp0+6eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=icjqC0lP+CK++b8e1KpRqgcW9jGf9+NWHpxQBKZlR2dTVEc6KX2FzdsR+UQhEzDki7NwiPcf9LIG4geHAgRSF5mFgXJ1t8xLnLV4lk5gMlJuQLECVgR+NCUWi8c2CfM01ePB+PmvKa7e/3g3Ngm739xxRJa3PMUwA5DUkwwL5eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CcZskTxT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D68D6C4CEF5;
+	Fri, 24 Oct 2025 10:07:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761300428;
+	bh=mAvyMZkDKEDQzM0cbfFWpMpv34LC/VLxM5Txgp0+6eo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CcZskTxTuVZTuy3uofRPvFha3nbGrmDbzJJteid6JGgVpeGmvo36leJYLYmH73zj0
+	 wMc9mt5Jkxr/3Cwzswxak9gdaC3byg2lztBpPDHu3zi6vu3hzJVUGlQVngrMLxuZlX
+	 rM9cbLDkS7lBtf2z8+rv/POmkY1RydtVhIPRIPF/PoVSSrJTH8r+09A15qUYjhdzec
+	 Sinm1jN797NhM6lSrqf8wOv8WLJ83S+fy+vHDP4WmQcxe9/R6NSGu/s9rd0tN8UdAY
+	 tgBpd7yn1lnFlENN+9ZUrXop7JsPhLwwwretliTcI/jLwrLvjM+4PBIEXCcwt/4iNY
+	 7ONb1IoC40XyA==
+Date: Fri, 24 Oct 2025 11:07:03 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/9] reset: mpfs: add non-auxiliary bus probing
+Message-ID: <20251024-void-esteemed-832b3bf5b965@spud>
+References: <20251013-album-bovine-faf9f5ebc5d4@spud>
+ <20251013-crane-utilize-cff9298291a4@spud>
+ <60544429-3eeb-41df-b42c-613da651b4a1@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2610:b0:42f:880a:cff7 with SMTP id
- e9e14a558f8ab-431ebe0582bmr24941095ab.13.1761300422814; Fri, 24 Oct 2025
- 03:07:02 -0700 (PDT)
-Date: Fri, 24 Oct 2025 03:07:02 -0700
-In-Reply-To: <20251024071520.ZEdh5%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb4fc6.a70a0220.3bf6c6.018c.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
-From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tXetbUU2Jb29E84+"
+Content-Disposition: inline
+In-Reply-To: <60544429-3eeb-41df-b42c-613da651b4a1@tuxon.dev>
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+--tXetbUU2Jb29E84+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
-Tested-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
+On Thu, Oct 23, 2025 at 07:06:48AM +0300, Claudiu Beznea wrote:
+> Hi, Conor,
+>=20
+> On 10/13/25 20:45, Conor Dooley wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > While the auxiliary bus was a nice bandaid, and meant that re-writing
+> > the representation of the clock regions in devicetree was not required,
+> > it has run its course. The "mss_top_sysreg" region that contains the
+> > clock and reset regions, also contains pinctrl and an interrupt
+> > controller, so the time has come rewrite the devicetree and probe the
+> > reset controller from an mfd devicetree node, rather than implement
+> > those drivers using the auxiliary bus. Wanting to avoid propagating this
+> > naive/incorrect description of the hardware to the new pic64gx SoC is a
+> > major motivating factor here.
+> >=20
+> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > ---
+> > v4:
+> > - Only use driver specific lock for non-regmap writes
+> >=20
+> > v2:
+> > - Implement the request to use regmap_update_bits(). I found that I then
+> >   hated the read/write helpers since they were just bloat, so I ripped
+> >   them out. I replaced the regular spin_lock_irqsave() stuff with a
+> >   guard(spinlock_irqsave), since that's a simpler way of handling the t=
+wo
+> >   different paths through such a trivial pair of functions.
+> > ---
+> >  drivers/reset/reset-mpfs.c | 83 ++++++++++++++++++++++++++++++--------
+> >  1 file changed, 66 insertions(+), 17 deletions(-)
+> >=20
+> > diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
+> > index f6fa10e03ea8..8e5ed4deecf3 100644
+> > --- a/drivers/reset/reset-mpfs.c
+> > +++ b/drivers/reset/reset-mpfs.c
+> > @@ -7,13 +7,16 @@
+> >   *
+> >   */
+> >  #include <linux/auxiliary_bus.h>
+> > +#include <linux/cleanup.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/io.h>
+> > +#include <linux/mfd/syscon.h>
+>=20
+> Should you add a depends on MFD_SYSCON ?
 
-Tested on:
+Perhaps, but it's a NOP. This driver depends on the clock driver, which
+does have a depends on MFD_SYSCON. I'll add it, but makes no difference
+to either the build or functionality.
 
-commit:         8e6e2188 Linux 6.1.157
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=17bb6d42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ef8bef4a2b3407ea
-dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=117a8c92580000
+--tXetbUU2Jb29E84+
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Note: testing is done by a robot and is best-effort only.
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPtPxwAKCRB4tDGHoIJi
+0uinAQDqJ3CDE8D9ZdZAqPBDpFO+5LryRbw842V3DiYnWn1NWAD8DNk95ic8DX2M
+KR1ygcP7Fu/7AD8lobFc4LKzSL1XSg4=
+=L2vi
+-----END PGP SIGNATURE-----
+
+--tXetbUU2Jb29E84+--
 
