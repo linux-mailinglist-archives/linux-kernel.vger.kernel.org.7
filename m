@@ -1,153 +1,141 @@
-Return-Path: <linux-kernel+bounces-868604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC08C059EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:38:55 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380D1C05988
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 708323BE8D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:32:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF4EF353734
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BA030FF20;
-	Fri, 24 Oct 2025 10:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lX5o5lSL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A86930FC34;
+	Fri, 24 Oct 2025 10:33:41 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E0826F2BD;
-	Fri, 24 Oct 2025 10:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D258730CD9D;
+	Fri, 24 Oct 2025 10:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761301968; cv=none; b=TUD4qBCros4agD8aRQMwHDATu8Tp+Fs0ZWMU0MyBNmqYUVY/TR9c4IunQ53AVuET1IH6OUlqN70eoK3ShrSqFSeySftqAyQdVCvcpKJTV3q5Twc7m2emnSL9YW+pItm3WhD/F5avPoEkAe0k/WDyOzpZLyldx4vvAx81bOn7IZs=
+	t=1761302020; cv=none; b=Wj+Zf1W9Glee+trWWfTVRdjgQQXn50ZWn4kk6Xp6+KqcjPN7fZMUzLPwAwrSDJbJlk5/c/uKx93D1bpQf5n3neY55no2WGA9fMCZxnA7LwG7mClEhDVFlUkeB8ewOeDnUTZ864sx0oGdBFPkPck8kI11CqBcy9+TjmMcAQwhvgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761301968; c=relaxed/simple;
-	bh=tKXOV20AUg8P4v3Ae4bzYimBTaokjawTTrJ7Uz/5YwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oQlpjJVEs3Bn4mo9BnaXZIeRgvNZDoq9zrl5mJqx8uXkOg+1yqiKvhfnZup/9GM8/IUcsJo/97rgYFDTUGmCu3XhrlcaVDjhrriGYbHuiwSBLp3ySptWbFRZAdYuc40qc3m9U/YwofPy5zPclaU5BENXoxiRlxM6kFtjIZiZfIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lX5o5lSL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B08C4CEF1;
-	Fri, 24 Oct 2025 10:32:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761301967;
-	bh=tKXOV20AUg8P4v3Ae4bzYimBTaokjawTTrJ7Uz/5YwA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lX5o5lSLWbgVGl2/g0nIX+enmLGp6T4rXgOcXL4L+b+s0zjqr29XskreNo6AxqQrf
-	 gMts8KtrIBxyr/BJhBa3uyRyC91u4rVXhT4pQWJhWyc2bKUb8O9a+QTNKGfEt5wivD
-	 61OspIk/KYTUbPVpnGyXw41sdBjXk7gr4zR+xGBgo+BrusLb9fgHJkv3mO5dX9WkRc
-	 na77c3SpJg2q419uftLPqBBxanSgvqlr6Mq9mlpZZvlawnT4JjO0+dScEZO44wF/kZ
-	 bg1RtVZYzIdbTzZ655NZ9kQqEmUdxeilnd/jNzq4OmqeSNSFInWKKadyN//22ETwG/
-	 FhOCvs1MZhrzA==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vCF6M-000000003Lh-0Car;
-	Fri, 24 Oct 2025 12:32:54 +0200
-Date: Fri, 24 Oct 2025 12:32:54 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 0/3] USB-Serial serdev support
-Message-ID: <aPtV1qNu3aVrS4LS@hovoldconsulting.com>
-References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
- <Zt7kCxawoszunWq3@hovoldconsulting.com>
- <20240917044948.i2eog4ondf7vna7q@pengutronix.de>
- <Z8_wcASfJ8SeAQ8l@hovoldconsulting.com>
- <20250313194044.t2t3c7j6ktvshjhs@pengutronix.de>
- <aPogbAozezmqSMuU@hovoldconsulting.com>
- <20251023134828.2dzq2rhtjplqyyaj@pengutronix.de>
- <aPs3BX9-og6wJIWR@hovoldconsulting.com>
- <20251024092738.zao47ehvzckkrsf3@pengutronix.de>
+	s=arc-20240116; t=1761302020; c=relaxed/simple;
+	bh=RKAk5FqmohFPTcleZaKxhNVhdl2kBLBX7lQbpIY+VAY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UyG4gBzQL51xAQPq+uVi//1wtNeQx8PVtHMsHmDH7yaeQY7Rr86LC+NnlUAeJ/sh6gt7ySGUMU2TR8tj/cr4ff0+GfI8i9m3BZxL+TM9wDBf2x7dit4aAeFUWY9oenGTLyF5HQo3YPnl9d7FNN3vGfwtaiJGPhKaU0+OgkzKYSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ctK0m2mF5z6GDDv;
+	Fri, 24 Oct 2025 18:30:16 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 667CD140372;
+	Fri, 24 Oct 2025 18:33:34 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 24 Oct
+ 2025 11:33:33 +0100
+Date: Fri, 24 Oct 2025 11:33:29 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<arm-scmi@vger.kernel.org>, <sudeep.holla@arm.com>,
+	<james.quinlan@broadcom.com>, <f.fainelli@gmail.com>,
+	<vincent.guittot@linaro.org>, <etienne.carriere@st.com>,
+	<peng.fan@oss.nxp.com>, <michal.simek@amd.com>, <quic_sibis@quicinc.com>,
+	<dan.carpenter@linaro.org>, <d-gole@ti.com>, <souvik.chakravarty@arm.com>
+Subject: Re: [PATCH 06/10] firmware: arm_scmi: Add System Telemetry driver
+Message-ID: <20251024113329.0000146e@huawei.com>
+In-Reply-To: <aPeu2E-jfhcw7P_q@pluto>
+References: <20250925203554.482371-1-cristian.marussi@arm.com>
+	<20250925203554.482371-7-cristian.marussi@arm.com>
+	<20251020172328.00002fc3@huawei.com>
+	<aPdf9lyY9ysq2mPx@pluto>
+	<20251021161529.00001468@huawei.com>
+	<aPeu2E-jfhcw7P_q@pluto>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024092738.zao47ehvzckkrsf3@pengutronix.de>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Fri, Oct 24, 2025 at 11:27:38AM +0200, Marco Felsch wrote:
-> On 25-10-24, Johan Hovold wrote:
-> > On Thu, Oct 23, 2025 at 03:48:28PM +0200, Marco Felsch wrote:
-> > > On 25-10-23, Johan Hovold wrote:
-> > > > On Thu, Mar 13, 2025 at 08:40:44PM +0100, Marco Felsch wrote:
-> > > > > On 25-03-11, Johan Hovold wrote:
-> > > > > > On Tue, Sep 17, 2024 at 06:49:48AM +0200, Marco Felsch wrote:
-> > > > > > > On 24-09-09, Johan Hovold wrote:
+On Tue, 21 Oct 2025 17:03:36 +0100
+Cristian Marussi <cristian.marussi@arm.com> wrote:
 
-> > It's still one of the issues that need to addressed.
-> 
-> Yes but this shouldn't be an issue with this patchset. So far the
-> smallest DT-describale USB entities are the interfaces.
-
-It is an issue with this patchset since any binding for USB serdev will
-need to take both kind of devices into account. Period.
-
-> > > > > > > > Second, and more importantly, you do not address the main obstacle for
-> > > > > > > > enabling serdev for USB serial which is that the serdev cannot handle
-> > > > > > > > hotplugging.
+> On Tue, Oct 21, 2025 at 04:15:29PM +0100, Jonathan Cameron wrote:
+> > On Tue, 21 Oct 2025 11:27:02 +0100
+> > Cristian Marussi <cristian.marussi@arm.com> wrote:
+> >   
+> > > On Mon, Oct 20, 2025 at 05:23:28PM +0100, Jonathan Cameron wrote:  
+> > > > On Thu, 25 Sep 2025 21:35:50 +0100
+> > > > Cristian Marussi <cristian.marussi@arm.com> wrote:
+> > > >     
+> > > > > Add a new SCMI System Telemetry driver which gathers platform Telemetry
+> > > > > data through the new the SCMI Telemetry protocol and expose all of the
+> > > > > discovered Telemetry data events on a dedicated pseudo-filesystem that
+> > > > > can be used to interactively configure SCMI Telemetry and access its
+> > > > > provided data.    
+> > > >    
+> > > 
+> > > Hi,
+> > >    
+> > > > I'm not a fan of providing yet another filesystem but you didn't  
 > > 
-> > > > You will also see the following kind of warnings in the logs:
-> > > > 
-> > > > ttyUSB ttyUSB0: tty_hangup: tty->count(1) != (#fd's(0) + #kopen's(0))
-> > > > ttyUSB ttyUSB0: tty_port_close_start: tty->count = 1 port count = 0
-> > > > 
-> > > > which are due to the fact that serdev does not support hangups which are
-> > > > used during teardown of USB serial ports.
-> > > 
-> > > IIRC I added the following patch to solve this:
-> > > 
-> > >  - [PATCH 1/3] serdev: ttyport: make use of tty_kopen_exclusive
-> > > 
-> > > Sorry for not remembering the details since this conversation/patchset
-> > > is quite old but still one of our top prios.
+> > "did" was what this was meant to say.
 > > 
-> > That suppresses the first warning but doesn't address the underlying
-> > issue (that hangups are built around file handles which serdev does not
-> > use). And you will still see the second one when the serdev driver tries
-> > to close the already hung up port during deregistration.
+> > Sorry for the confusing garbage comment from me!
+> >   
+> > > > lay out reasoning in the cover letter.    
+> > > 
+> > > Sorry, I dont understand..you mean here that I did NOT provide enough reasons
+> > > why I am adopting a new FS approach ? ... or I misunderstood the English ?
+> > > 
+> > > .. because I did provide a lot of reasons (for my point-of-view) to go
+> > > for a new FS in the cover-letter...
+> > >   
+> > > > 
+> > > > One non trivial issue is that you'll have to get filesystem review on this.
+> > > > My review is rather superficial but a few things stood out.    
+> > > 
+> > > Well yes I would have expected that, but now the FS implementation
+> > > internals of this series is definetely immature and to be reworked (to
+> > > the extent of using a well-know deprecated FS mount api at first..)
+> > > 
+> > > So I posted this V1 to lay-out the ideas and the effective FS API layout
+> > > but I was planning to extend the review audience once I have reworked fully
+> > > the series FS bits in the next V2...  
+> > 
+> > I'd suggest ABI docs for v2. That will match what you have in the cover letter
+> > but put it in the somewhat formal description format of Documentation/ABI/
+> >   
 > 
-> Can you please elaborate how I can check this? I'm not aware of any
-> warning yet, but I only tested the hot-(un)plug. If I got your right, I
-> should see the issue once I unload the serdev driver, right?
-
-You should see it in your test setup as well. Unless the bluetooth
-driver you use is doing something funky (e.g. not closing the port).
-
-I'm testing with a mock gnss device here.
-
-> > Also, that commit message needs to more work since you don't really
-> > motivate why you think it's needed (e.g. as serdev ports can't be shared
-> > with user space).
+> Oh yes of course... the while docs/ stuff is still TBD...btw I am not even
+> sure if the whole driver will be required to be moved into fs/ as a
+> requirement while doing filesystem review...I suppose I will leave this
+> sort of reworks for the next reviews cycles....
 > 
-> Maybe it needs some adaptions but:
+> ...and...if I may ask... is it linux-fsdevel the ML for this fs-related
+> stuff I suppose...not sure about maintainers looking at MAINTAINERS ...
+
+Seems resonable but beyond that I have no idea.
+
+Give it a go and see what happens.  Probably also include kernfs related folk
+directly. They are likely to have opinions and might review if they have time.
+
+
+Jonathan
 > 
-> | The purpose of serdev is to provide kernel drivers for particular serial
-> | device, serdev-ttyport is no exception here. Make use of the
-> | tty_kopen_exclusive() funciton to mark this tty device as kernel
-> | internal device.
+> Thanks a lot for having a look Jonathan.
+> Cristian
 > 
-> the last sentence should address your point that serdev ports can't be
-> shared with user-space.A
 
-No, my point was that serdev devices *are* not shared with user space,
-you don't need to use that new kopen helper for that.
-
-> > If it's just about suppressing the warning you could possibly just have
-> > set that new flag.
-> 
-> Which new flag? As I have written in my commit message: "Make use of ...
-> to mark this tty device as kernel internal device". I thought this was
-> the purpose of tty_kopen_exclusive().
-
-That helper sets the new TTY_PORT_KOPENED flag which suppresses the
-warning on hangups.
-
-Johan
 
