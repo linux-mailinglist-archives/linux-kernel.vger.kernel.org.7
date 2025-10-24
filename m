@@ -1,89 +1,83 @@
-Return-Path: <linux-kernel+bounces-867953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB71C04004
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:12:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2F2C0400F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA0311AA23DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:12:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7A2D3B2862
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126C11991C9;
-	Fri, 24 Oct 2025 01:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1AD19E7D1;
+	Fri, 24 Oct 2025 01:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGsO2UBi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNtTK093"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0EA145A05;
-	Fri, 24 Oct 2025 01:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D243757EA;
+	Fri, 24 Oct 2025 01:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761268347; cv=none; b=Cl0Eac9dYj68FycjyfyRZFw2xQgKGikDaKSiK42eESQW+6bBRlqwftUcLabaSZyILXWjc7dXX0sYnERF8n5/TRg8LWB23IesWhip8bOL+c8Dut+QO3yBiVHp3PeHo9JGGQvobfXxQBf8tLqaXCTCRDNKKuvuRUUuRhYHaRtfkok=
+	t=1761268426; cv=none; b=YPt9pg64U6qxs7UTjEa7rXxkBbEP2K+4JFlRE23h7s77FfEiYv8nN3asuVxddEO1kph906v6xsIr6fwtSYoNLJu1/EKtdELeTNKP0UwKDP+gB3NjG1wYxwv63AqosOVJAe2JMQSUtmm/xI0CRF/ceSqHqlaNyi8WcN6tf/maHO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761268347; c=relaxed/simple;
-	bh=nuz9wjsSyzrS89RXOZqaiUwefxbGsE7lwnuoYYdkIYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ePzNXMnjKvN/oodowQmLnf6i20p3nMJ92O9HYmehJ540h/xE/t+DTybAstz3FOdfAAtrgMJC9ykZ4/pdTpelZC3pAoeMKzs0qVlsgR2HfJ0HFYeO9mcByyphomaVZK2yrowFhMNyhM/qtqX4Dog9z94GaqXGgt5YNfRp3NI01f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGsO2UBi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B49B9C4CEE7;
-	Fri, 24 Oct 2025 01:12:26 +0000 (UTC)
+	s=arc-20240116; t=1761268426; c=relaxed/simple;
+	bh=E52/C2NI1v8LOeNlODaaZwoSzzKa4S3nQNDgy67egio=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cHrHOOzkJLmveeZANYODO2zTXICwZnTLMZz5AhTSp1Mdmu5nQnL+wmw63TQg3CwIsed1LBVXGxRvTlNWMJwp76nUGXyc8960LaJ1eOlKhfILX0ld96QlB4wyqAvZT1weYskFbdFF4xydePMl1mFz9N5Ao/i9ICkiII/tfxBif6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NNtTK093; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C47D5C4CEE7;
+	Fri, 24 Oct 2025 01:13:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761268346;
-	bh=nuz9wjsSyzrS89RXOZqaiUwefxbGsE7lwnuoYYdkIYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rGsO2UBihKP+9bT2D9hy84LxBAgT0o7t6f98Pjpfvsze1XDdSWWW6gT/lvc883ReE
-	 BUQ/+OLw/ZrbS5/P6S/NCEkK7XX+9jsFI8X0A1kHwkfHqm4Wt1z8AOnFt/RLi6ZjjY
-	 zLaqMcSfcIwBGUJfW081fNaBDHCgmX2PRrf8BnqBEa7JtUfIJBat6PfPQ8ypEFOeEC
-	 GuXmIPIBaQA/Z6hv+3GKuMxCk7xSMAywffMKWQQ4L3qUIN+kqvTmqkhej2maJDwF+z
-	 XO0XP+ZVwgbSxmOvISXglJf5sL5vJpTz3VIK1wFb8a4P02Wjr1zFHEgVTkJA/0qenS
-	 fAYpUXpore9uA==
-Date: Thu, 23 Oct 2025 15:12:25 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Emil Tsalapatis <emil@etsalapatis.com>, sched-ext@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 sched_ext/for-6.19] sched_ext/tools: Add compat layer
- for kfuncs using struct *_args
-Message-ID: <aPrSeQ9560YjwXlB@slm.duckdns.org>
-References: <20251023080130.76761-1-arighi@nvidia.com>
+	s=k20201202; t=1761268425;
+	bh=E52/C2NI1v8LOeNlODaaZwoSzzKa4S3nQNDgy67egio=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NNtTK093imMpKanJSxAsIZmnS8ey1uab6wfwn+tI9uMTJlDmexMFDgg+gvV5Zd4nx
+	 LnIoKrQTk/JWVlYy19tad6hDNIiipggQ4qMoENFfcPLLoDSPT1dTh6N78Nr/OhoDvB
+	 tMfgm6k9kl85NsXHVaji+1rWne0+kSi7mskQXzf736FKGE9TwmGqoO540eqAM8hDKv
+	 2ZFINyal8rmWZYmH4fNXrfEOzKsABIin9zEZi3CuBj1RyB4WBGNyNlWgNv5BS6KL2X
+	 SgnU9uI1FQOKrI7rrdvOV/Gi097hwejFgosOVjTHKnBPVcdsMdeXBgJSCrWPM/B7He
+	 tqJILxY+5TQNQ==
+Date: Thu, 23 Oct 2025 18:13:43 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Kory Maincent
+ <kory.maincent@bootlin.com>, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Nishanth Menon <nm@ti.com>,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
+ linux-doc@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk
+ <roan@protonic.nl>
+Subject: Re: [PATCH net-next v7 2/5] ethtool: netlink: add
+ ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
+Message-ID: <20251023181343.30e883a4@kernel.org>
+In-Reply-To: <20251020103147.2626645-3-o.rempel@pengutronix.de>
+References: <20251020103147.2626645-1-o.rempel@pengutronix.de>
+	<20251020103147.2626645-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023080130.76761-1-arighi@nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Mon, 20 Oct 2025 12:31:44 +0200 Oleksij Rempel wrote:
+> +      -
+> +        name: supported-caps
+> +        type: nest
+> +        nested-attributes: bitset
+> +        enum: phy-mse-capability
 
-On Thu, Oct 23, 2025 at 10:01:30AM +0200, Andrea Righi wrote:
-> +#define scx_bpf_select_cpu_and_args __COMPAT_scx_bpf_select_cpu_and_args
-> +struct __COMPAT_scx_bpf_select_cpu_and_args {
-> +	s32 prev_cpu;
-> +	u64 wake_flags;
-> +	u64 flags;
-> +};
-> +
-> +#define scx_bpf_dsq_insert_vtime_args __COMPAT_scx_bpf_dsq_insert_vtime_args
-> +struct __COMPAT_scx_bpf_dsq_insert_vtime_args {
-> +	u64 dsq_id;
-> +	u64 slice;
-> +	u64 vtime;
-> +	u64 enq_flags;
-> +};
-
-I think this makes the inline compat wrapper to always pick the compat
-interface as it'd do bpf_core_type_exists() on the __COMPAT prefixed type
-name which doesn't exist in the kernel.
-
-Thanks.
-
--- 
-tejun
+This is read only, does it really have to be a bitset?
+YNL will generate the string table automatically for user space to map
+the bits to names. And we have to do a bunch of const_ilog2() and render
+the MASK in the uAPI...
 
