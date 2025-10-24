@@ -1,231 +1,240 @@
-Return-Path: <linux-kernel+bounces-869087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99DC0C06EA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:17:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A36C06EDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1FDEB35CCE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:17:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBA40402B0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231573254AA;
-	Fri, 24 Oct 2025 15:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C258317710;
+	Fri, 24 Oct 2025 15:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gDnU6DHI"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fnidcWJf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885D8322C99;
-	Fri, 24 Oct 2025 15:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B07E3093D3;
+	Fri, 24 Oct 2025 15:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761319047; cv=none; b=f7DC6fT8/M1McPZw2zp8u8tPt6IxViGBAJyoYTlcaOhdJAJLaaB6xcJuD9z8ApurpDZbAYTXbzgZC7zBEkwTSXZ+Bvs/C8bks7cEe5wIkC0ThoYt/B9YI0eOcM0IpN44BuTBdplBD2yz6HliFp0mgifU+Vy0Oix7nPJDtrtfiUY=
+	t=1761319053; cv=none; b=bQeA8G9d6Dmha2cvJmE5Mq+x8WPzByjSN2+RHGCfeW8+k3CsEhjay4H2hn6RiPmTxH9cr16NrbjfMCm43n5zjNcCL6WVxFfj98BzLUJt9pQQqPHkZ8Ce3oWnK7pxP6lQrDbzPhBeuQbHPjysZKtptbZfXHlunNUBk7g1o3pnYQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761319047; c=relaxed/simple;
-	bh=vX6q5KsWvP/pqF1uXTr61P+nn+J2TSZ+8mTaeYcEPG8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=B2fKrJkK8PgPF6jiAEEGPJ/Is90WKLkFOKyCEEi3h0NJ+Xptda+p12VEjMpXcu9RyAOJMMJY7PEbVUgi1gwjwlhxB/rrUibV1Sbjbb4tuWgVJvQ/N9lEcjR42FI6SY6gs/xTUKpcJZ0Zi+W1R0fulZZyTUKR2jECoM61oLLxf0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gDnU6DHI; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vX6q5KsWvP/pqF1uXTr61P+nn+J2TSZ+8mTaeYcEPG8=; b=gDnU6DHIdceHt5TWtp/21TLKxG
-	bT1wzsEr2z4OfNLbuXGb/Ro4AFnwD3sE52NY83fR9ieUwW3++4Vbdlivr6tKMTxJKEgK7vSXaTk/6
-	FlOq0rg9uKxjcP2m0YoALKLYtt7MFUra347J67q3tsKaT18UHNM7bhlTlLmjdwroHsrgFzJJjHoaB
-	/bztisngf7nkDl05L64bo+nRvlesqYJqVBBJXJZsouTKNEOgZtZcUbdDTudf5IGr2MfNpyJQcDk5n
-	q4XHcqmpyDW/6JkaGWr9As1wex7kvmTF8YJfbtqj4IH8ksKLDblU1JkzzsVECbtAxPBhbGRvC5pB2
-	WJLEMgqw==;
-Received: from [2001:8b0:10b:5:d8ad:45c0:47cf:4bed] (helo=u09cd745991455d.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCJXb-00000003dWb-3ylw;
-	Fri, 24 Oct 2025 15:17:21 +0000
-Message-ID: <7324616a8d2631aa8132f725f9f6551e3e6b21dd.camel@infradead.org>
-Subject: Re: [PATCH v3 11/13] x86/xen: use lazy_mmu_state when
- context-switching
-From: David Woodhouse <dwmw2@infradead.org>
-To: Kevin Brodsky <kevin.brodsky@arm.com>, David Hildenbrand
- <david@redhat.com>,  linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev
- <agordeev@linux.ibm.com>,  Andreas Larsson <andreas@gaisler.com>, Andrew
- Morton <akpm@linux-foundation.org>, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@alien8.de>, Catalin
- Marinas <catalin.marinas@arm.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>,  Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,  Juergen
- Gross <jgross@suse.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Madhavan Srinivasan
- <maddy@linux.ibm.com>,  Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko
- <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, Nicholas Piggin
- <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Ryan Roberts
- <ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>, Thomas
- Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, Will
- Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-Date: Fri, 24 Oct 2025 16:17:20 +0100
-In-Reply-To: <6ed9f404-9939-4e9f-b5aa-4253bef46df1@arm.com>
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
-	 <20251015082727.2395128-12-kevin.brodsky@arm.com>
-	 <f0067f35-1048-4788-8401-f71d297f56f3@redhat.com>
-	 <348e5f1c5a90e4ab0f14b4d997baf7169745bf04.camel@infradead.org>
-	 <6ed9f404-9939-4e9f-b5aa-4253bef46df1@arm.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-YI9KzXTKaCZlBvC3KOA8"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1761319053; c=relaxed/simple;
+	bh=RNj00qgzBnBj+fWK9DQNur4wUMvK1F1KP/Ib1c7V6fQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qSPcveR0H1MfDVBKv9msNk8D2M0QP8k8k/3rLXWyGTnOMuu518KcnYespCuH5r/SX/gX7uUIbvrUHPSg5k7zXj0IhpHt3cZAMVsfhSwYYio1WaeGLE6tKTPqzp5FOiRgJIur4Dl2gPCkSZHXQJKNodypDnHSCnrgmfXMqPAlF1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fnidcWJf; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761319051; x=1792855051;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RNj00qgzBnBj+fWK9DQNur4wUMvK1F1KP/Ib1c7V6fQ=;
+  b=fnidcWJfpjH8xqg6sXlOjorweRSGj1Kxj9dhvrIqBI5I5VnohhwJVDhK
+   hyHc/EJ+B+fc6hyGFuhjPXBM2FVTOUxrBTOhtoO4jA7LM1aDF5eyrnHpY
+   BPYmOT6+Rj4kF3UOcyDmIw3XlY5fGqagmx2llUk8hpHUKb6dRaoO4t8HJ
+   DKAmHezskJdtrj6fgFYGjNwjZ2jkde34qBsSjyGrvNy9VBPKD+silwhfv
+   xX0UGASPgjl0xi/eZrvzkHivBvI95UUM+gKM96/KU84Wv5qQEAIkSLr8d
+   4uBJ+OBCjO4L6IylMBLH5y/cnUwFeixT6X2CBXRqaoZGntDz38/AuyzH7
+   w==;
+X-CSE-ConnectionGUID: wfjd4SPVSueCATyrx9f5AA==
+X-CSE-MsgGUID: VkQoLETwSkWLtdFcqMLCoA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73790716"
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="73790716"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 08:17:30 -0700
+X-CSE-ConnectionGUID: UlODLOwjQkyrdeMABv4F1A==
+X-CSE-MsgGUID: OVoN73+USM+HxLAtG1WNFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="184828576"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.134])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 08:17:27 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 9CF5B120A92;
+	Fri, 24 Oct 2025 18:17:23 +0300 (EEST)
+Date: Fri, 24 Oct 2025 18:17:23 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 3/9] software node: allow referencing firmware nodes
+Message-ID: <aPuYg0ws8Q2sp7Wv@kekkonen.localdomain>
+References: <20251022-reset-gpios-swnodes-v2-0-69088530291b@linaro.org>
+ <20251022-reset-gpios-swnodes-v2-3-69088530291b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022-reset-gpios-swnodes-v2-3-69088530291b@linaro.org>
 
+Hi Bartosz,
 
---=-YI9KzXTKaCZlBvC3KOA8
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Wed, Oct 22, 2025 at 03:41:02PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> At the moment software nodes can only reference other software nodes.
+> This is a limitation for devices created, for instance, on the auxiliary
+> bus with a dynamic software node attached which cannot reference devices
+> the firmware node of which is "real" (as an OF node or otherwise).
 
-On Fri, 2025-10-24 at 17:05 +0200, Kevin Brodsky wrote:
-> On 24/10/2025 16:47, David Woodhouse wrote:
-> > On Thu, 2025-10-23 at 22:06 +0200, David Hildenbrand wrote:
-> > > On 15.10.25 10:27, Kevin Brodsky wrote:
-> > > > We currently set a TIF flag when scheduling out a task that is in
-> > > > lazy MMU mode, in order to restore it when the task is scheduled
-> > > > again.
-> > > >=20
-> > > > The generic lazy_mmu layer now tracks whether a task is in lazy MMU
-> > > > mode in task_struct::lazy_mmu_state. We can therefore check that
-> > > > state when switching to the new task, instead of using a separate
-> > > > TIF flag.
-> > > >=20
-> > > > Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> > > > ---
-> > >=20
-> > > Looks ok to me, but I hope we get some confirmation from x86 / xen
-> > > folks.
-> >=20
-> > I know tglx has shouted at me in the past for precisely this reminder,
-> > but you know you can test Xen guests under QEMU/KVM now and don't need
-> > to actually run Xen? Has this been boot tested?
->=20
-> I considered boot-testing a Xen guest (considering the Xen-specific
-> changes in this series), but having no idea how to go about it I quickly
-> gave up... Happy to follow instructions :)
+That's not entirely true: you can add a software node as a secondary to an
+existing OF or ACPI fwnode. This has not been used widely and it's not very
+convenient to set up.
 
-https://qemu-project.gitlab.io/qemu/system/i386/xen.html covers booting
-Xen HVM guests, and near the bottom PV guests too (for which you do
-need a copy of Xen to run in QEMU with '--kernel xen', and your
-distro's build should suffice for that).
+Additional properties in ACPI or OF nodes will still need the secondary
+node, after these patches.
 
-Let me know if you have any trouble. Here's a sample command line which
-works here...
+> 
+> Make it possible for a software node to reference all firmware nodes in
+> addition to static software nodes. To that end: use a union of different
+> pointers in struct software_node_ref_args and add an enum indicating
+> what kind of reference given instance of it is. Rework the helper macros
+> and deprecate the existing ones whose names don't indicate the reference
+> type.
+> 
+> Software node graphs remain the same, as in: the remote endpoints still
+> have to be software nodes.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/base/swnode.c    | 14 ++++++++++----
+>  include/linux/property.h | 40 +++++++++++++++++++++++++++++++++-------
+>  2 files changed, 43 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
+> index b7c3926b67be72671ba4e4c442b3acca80688cf7..d08b914c07691336540cdf1dfbd77a697e7b4521 100644
+> --- a/drivers/base/swnode.c
+> +++ b/drivers/base/swnode.c
+> @@ -535,9 +535,12 @@ software_node_get_reference_args(const struct fwnode_handle *fwnode,
+>  	ref_array = prop->pointer;
+>  	ref = &ref_array[index];
+>  
+> -	refnode = software_node_fwnode(ref->node);
+> -	if (!refnode)
+> -		return -ENOENT;
+> +	if (ref->swnode)
+> +		refnode = software_node_fwnode(ref->swnode);
+> +	else if (ref->fwnode)
+> +		refnode = ref->fwnode;
+> +	else
+> +		return -EINVAL;
+>  
+>  	if (nargs_prop) {
+>  		error = fwnode_property_read_u32(refnode, nargs_prop,
+> @@ -634,7 +637,10 @@ software_node_graph_get_remote_endpoint(const struct fwnode_handle *fwnode)
+>  
+>  	ref = prop->pointer;
+>  
+> -	return software_node_get(software_node_fwnode(ref[0].node));
+> +	if (!ref->swnode)
+> +		return NULL;
+> +
+> +	return software_node_get(software_node_fwnode(ref[0].swnode));
+>  }
+>  
+>  static struct fwnode_handle *
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index 50b26589dd70d1756f3b8644255c24a011e2617c..52e784a3dfd4c93cee8b35e1cef5e0600639ecc5 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -355,23 +355,37 @@ struct software_node;
+>  
+>  /**
+>   * struct software_node_ref_args - Reference property with additional arguments
+> - * @node: Reference to a software node
+> + * @swnode: Reference to a software node
+> + * @fwnode: Alternative reference to a firmware node handle
+>   * @nargs: Number of elements in @args array
+>   * @args: Integer arguments
+>   */
+>  struct software_node_ref_args {
+> -	const struct software_node *node;
+> +	const struct software_node *swnode;
+> +	struct fwnode_handle *fwnode;
+>  	unsigned int nargs;
+>  	u64 args[NR_FWNODE_REFERENCE_ARGS];
+>  };
+>  
+> -#define SOFTWARE_NODE_REFERENCE(_ref_, ...)			\
+> +#define __SOFTWARE_NODE_REF(_ref, _type, _node, ...)		\
+>  (const struct software_node_ref_args) {				\
+> -	.node = _ref_,						\
+> +	._node = _ref,						\
+>  	.nargs = COUNT_ARGS(__VA_ARGS__),			\
+>  	.args = { __VA_ARGS__ },				\
+>  }
+>  
+> +#define SOFTWARE_NODE_REF_SWNODE(_ref, ...)			\
+> +	__SOFTWARE_NODE_REF(_ref, SOFTWARE_NODE_REF_SWNODE,	\
+> +			    swnode, __VA_ARGS__)
+> +
+> +#define SOFTWARE_NODE_REF_FWNODE(_ref, ...)			\
+> +	__SOFTWARE_NODE_REF(_ref, SOFTWARE_NODE_REF_FWNODE,	\
+> +			    fwnode, __VA_ARGS__)
+> +
+> +/* DEPRECATED, use SOFTWARE_NODE_REF_SWNODE() instead. */
+> +#define SOFTWARE_NODE_REFERENCE(_ref, ...)			\
+> +	SOFTWARE_NODE_REF_SWNODE(_ref, __VA_ARGS__)
+> +
+>  /**
+>   * struct property_entry - "Built-in" device property representation.
+>   * @name: Name of the property.
+> @@ -463,14 +477,26 @@ struct property_entry {
+>  #define PROPERTY_ENTRY_STRING(_name_, _val_)				\
+>  	__PROPERTY_ENTRY_ELEMENT(_name_, str, STRING, _val_)
+>  
+> -#define PROPERTY_ENTRY_REF(_name_, _ref_, ...)				\
+> +#define __PROPERTY_ENTRY_REF(_type, _name, _ref, ...)			\
+>  (struct property_entry) {						\
+> -	.name = _name_,							\
+> +	.name = _name,							\
+>  	.length = sizeof(struct software_node_ref_args),		\
+>  	.type = DEV_PROP_REF,						\
+> -	{ .pointer = &SOFTWARE_NODE_REFERENCE(_ref_, ##__VA_ARGS__), },	\
+> +	{ .pointer = &_type(_ref, ##__VA_ARGS__), },			\
+>  }
+>  
+> +#define PROPERTY_ENTRY_REF_SWNODE(_name, _ref, ...)			\
+> +	__PROPERTY_ENTRY_REF(SOFTWARE_NODE_REF_SWNODE,			\
+> +			     _name, _ref, __VA_ARGS__)
+> +
+> +#define PROPERTY_ENTRY_REF_FWNODE(_name, _ref, ...)			\
+> +	__PROPERTY_ENTRY_REF(SOFTWARE_NODE_REF_FWNODE,			\
+> +			    _name, _ref, __VA_ARGS__)
+> +
+> +/* DEPRECATED, use PROPERTY_ENTRY_REF_SWNODE() instead. */
+> +#define PROPERTY_ENTRY_REF(_name, _ref, ...)				\
+> +	PROPERTY_ENTRY_REF_SWNODE(_name, _ref, __VA_ARGS__)
+> +
+>  #define PROPERTY_ENTRY_BOOL(_name_)		\
+>  (struct property_entry) {			\
+>  	.name = _name_,				\
+> 
 
-qemu-system-x86_64 -display none --accel kvm,xen-version=3D0x40011,kernel-i=
-rqchip=3Dsplit -drive file=3D/var/lib/libvirt/images/fedora28.qcow2,if=3Dxe=
-n -kernel ~/git/linux-2.6/arch/x86/boot/bzImage -append "root=3D/dev/xvda1 =
-console=3DttyS0" -serial mon:stdio
+-- 
+Regards,
 
---=-YI9KzXTKaCZlBvC3KOA8
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
-ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
-AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
-BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
-MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
-a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
-jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
-GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
-aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
-nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
-8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
-IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
-KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
-BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
-QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
-QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
-ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
-/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
-uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
-xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
-W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
-c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
-VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
-NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
-DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
-sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
-w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
-i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
-kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
-0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
-ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
-blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
-hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
-VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
-HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
-ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
-AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
-cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
-cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
-AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
-aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
-hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
-iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
-8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
-JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
-xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
-EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
-B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
-MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
-KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
-Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
-nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
-WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
-W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
-nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
-g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
-9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
-9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
-sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
-a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
-ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
-AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
-dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
-MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
-YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
-4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
-6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
-QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
-nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
-MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
-VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
-ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MTAyNDE1MTcy
-MFowLwYJKoZIhvcNAQkEMSIEIIUU83TFm9d5DeqzChjuYLSRaIbNzIAsod/MspuHnzkaMGQGCSsG
-AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
-cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
-VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
-cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAtCYQJZ65jySB
-ggxFo1IeuLM9/NpiFSWEHe6gqDHUdt1IPg1boHBROVnNBUdiWwfIMK5n1C3GTfokgSIa+07t5Lnt
-Vx/xCqFDvpJpvZaOHSIY0B1wh543U501BBOyGYRjHId8gPD/1q10+XuuAQ2Vxtl3qq8z76bbGYCs
-7pEYo5tyGGcpmX1RPTl9R6/k5Va8q41sud+qUPqDTu44AuionVzsRgYW3gr0Sj1Dh9zqlod0+eo1
-MawTB7qZxvGKb44374TDmwMFTb4WEf5vs9qRAqB51rrxHgyIk2Zbt6KR3RltCxpRV5BiPZF7t9Pa
-N6EAPLmbs3ArPHgUiAaLZEMEbjPN2ltxg+yNx6Y4lNPAQvHDbMtgbqWz+y03kWqED9qyOwD5C/PD
-pg/8KLQ0JMq8WGHib+FN+z/wS4MaJR6W+9tOUVkKpPiSB1vXJAUARaFa2E8niyFpzm+haTr452Xd
-LL0vO+kSiSv0QKBvKQB9KbL5cJzn06K2mgCt0snHOcRWUQHETSmvLsgGT0N4FrMnrr8LxUaBhv9A
-eTTl/gRgVni08bazozq9Ulwvk5PvnbUMSSQ6pbgqcp3X6R2IiCNOeqam+OoqbMr2viVk3g0BvtWw
-K1Q9zPY9RjSEYwP+GrtzxjDRh/rB8geb+8JvvdB1UPMFYiHbHwEeWgbIdtAIrWQAAAAAAAA=
-
-
---=-YI9KzXTKaCZlBvC3KOA8--
+Sakari Ailus
 
