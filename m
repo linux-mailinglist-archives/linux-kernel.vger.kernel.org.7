@@ -1,194 +1,266 @@
-Return-Path: <linux-kernel+bounces-868652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0087FC05BED
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:01:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C28BC05C5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 362AC1B847D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:59:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 348743B4F30
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC9C319867;
-	Fri, 24 Oct 2025 10:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B0C32E6A7;
+	Fri, 24 Oct 2025 10:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="punztuo6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="h2I/49gu";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oMttgZbw";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KkRLmoUy"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BNIc0i3p"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27B2319612
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3C132B994;
+	Fri, 24 Oct 2025 10:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303237; cv=none; b=XgchqZShDCFsEugkRrBuqOfIC5DnSFhCDxjWwnPIu2ulZuf6cokhMLN5blho6F0sIx3AjrzK8D6oyjNtjkIcjjn0zfEt7slWG425jYS5embTE4KOTkbyHZ3Z5RTfGB25nVSiFQp0PAQCEtysDHkViMkZf9PYa9IWCqGdDRUHLec=
+	t=1761303300; cv=none; b=SOs+cLu1L2HgTMAEteOjVi5x49lnSMZ3Ot6MgmzKcFx4r2/MnaGdZM953EoczXGs4r39Te37oLyiimdP8V4L8iGsTcOLwVt1/VyTcsa7bC/EIhZLaAFdJdXNvexgMNfNVs1MbSrXYXOowvb9WLy/VdQUfmZTUCRyc0JSMlvBQRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303237; c=relaxed/simple;
-	bh=373bn+ShfYcEHNa0mqCDHwdvs6aidNMl7+nO7IxphvA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mC6sBdu6aIIqDkmmKjPQjMQMSnywLelRYZhH5eJtqxnueLUQVEEpPM9ccqueEtHBQNqm0CPwKPJbgE3h5skeuc8ejkqsToFk+RkJGaMX543Cq3fzLkFAKTj2lCvkVIKrs+Le8s9JmtLUbMmej1qv3KvgMp+x3+xI6RNTs8LU0dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=punztuo6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=h2I/49gu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oMttgZbw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KkRLmoUy; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B79881F441;
-	Fri, 24 Oct 2025 10:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761303229; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jHproW064/cQsrAvcneFDyvLUlQ+uWAIIu/ECDFOabk=;
-	b=punztuo6MxaVQQWWGIR4+L2viFFil6cMK8AWJhL7TYNWQv9MDZ3FP4/9pUFcM9kxbbaytb
-	5BAiFBdMhPrhCNs6azx4QX1DJL/5HQZ51onpRCMrIm4vC9z+qNIIl42owCLm/KZFECLuPU
-	JmdBRbadbuiButVq4ktMXkp8gH2qlEI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761303229;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jHproW064/cQsrAvcneFDyvLUlQ+uWAIIu/ECDFOabk=;
-	b=h2I/49gu2SITzlZPJaoI0cwCaSBla3lPfOxKQ2RoWLm2DqyUhdKcC/LJnCyoih/rLBhr2O
-	JBWoEcxQLWAfRQBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=oMttgZbw;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=KkRLmoUy
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761303225; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jHproW064/cQsrAvcneFDyvLUlQ+uWAIIu/ECDFOabk=;
-	b=oMttgZbwzE2oSrCDPGCAAWMQOI0/DHWCMtmYVLDjEhww7cDJNbGkNTUz4vLL6ZwLPVpGIv
-	TvdV8TyMScfstVK3x+2Sil3+i3Q8dYqRwJBlNI94VObv+3BXTKSirVLDB5Wy9Ja5L4aCYj
-	CTm1dPPRAzMA7WOZJEBONSY+JOBUDqs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761303225;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jHproW064/cQsrAvcneFDyvLUlQ+uWAIIu/ECDFOabk=;
-	b=KkRLmoUysHAfYmka1NAARfJNaCvDPmjWKBHqzc7RAsLNxPQC2/hnsTr1RcJK5N0R42RIwB
-	/6VWQU7aC/0Gp9CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1666A13693;
-	Fri, 24 Oct 2025 10:53:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8ol+Arla+2hKaQAAD6G6ig
-	(envelope-from <sjaeckel@suse.de>); Fri, 24 Oct 2025 10:53:45 +0000
-Message-ID: <db92fcc8-114d-4e85-9d15-7860545bc65e@suse.de>
-Date: Fri, 24 Oct 2025 12:53:44 +0200
+	s=arc-20240116; t=1761303300; c=relaxed/simple;
+	bh=hMgfbwNdXRVvqD2iJJippNUrfL2xFzWMsc+JsKsrLbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EIYqCu5fP/5wEMqNolAHdECtwXjjeFY54LIzK9OSc1x7bq9ffo+qWAZBDmw6HDObo/+J7ZXQw3R8equgMqBc7ujyDbxS46KHEutgKAWy5OMWZfch5axr+mWH2+4LGrhC947TwXsS8uJ6Lxd2Z0mgzAlFdCeJXFMQG87IBHztzgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BNIc0i3p; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 67000A8F;
+	Fri, 24 Oct 2025 12:53:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761303190;
+	bh=hMgfbwNdXRVvqD2iJJippNUrfL2xFzWMsc+JsKsrLbg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BNIc0i3p+BVJu4pE3k2xdcXpPdfHhLX5/exQ9Zz6QDaOed2Z+z7MjQGZ6dc0iH75j
+	 eE5C1p6TS2DCLmEGlVuWSk+DJJWMe2k01XhhVvjD7fgF86iAZPXv40NgiwSQUqy4Ci
+	 Q/K6L2iwM9LnDNcl2JTW3+TegyAjxPHkoITIzO2U=
+Date: Fri, 24 Oct 2025 13:54:41 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: uvcvideo: Create a specific id namespace for
+ output entities
+Message-ID: <20251024105441.GB13023@pendragon.ideasonboard.com>
+References: <20251022-uvc-grandstream-laurent-v1-1-0925738a3484@chromium.org>
+ <20251022120849.GD727@pendragon.ideasonboard.com>
+ <CANiDSCvtqe8MKpb=O-=Mv28dK+g=REi7kpdr-eyAD-mLLpzQJw@mail.gmail.com>
+ <20251022124937.GE727@pendragon.ideasonboard.com>
+ <CANiDSCscZgwUM0VCpdMvNKq0U2a6kOPbJmd4G8iY3EpsPQvZNw@mail.gmail.com>
+ <20251022131236.GG19043@pendragon.ideasonboard.com>
+ <CANiDSCsVOsCDjg_KU8Y82h9Ujfro4nQ=f4B1BezAkQtJUKFczg@mail.gmail.com>
+ <20251023112459.GJ19043@pendragon.ideasonboard.com>
+ <CANiDSCuex8w8GvMuKMyZw5sBCeW0wLteRJy97LG5Z_TDbWZ71w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Steffen Jaeckel <sjaeckel@suse.de>
-Subject: Re: CVE-2025-39898: e1000e: fix heap overflow in e1000_set_eeprom
-To: cve@kernel.org, linux-kernel@vger.kernel.org,
- linux-cve-announce@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@kernel.org>, anthony.l.nguyen@intel.com,
- Vitaly Lifshits <vitaly.lifshits@intel.com>, dima.ruinskiy@intel.com,
- Mikael Wessel <post@mikaelkw.online>,
- Mor Bar-Gabay <morx.bar.gabay@intel.com>, davem@davemloft.net,
- kuba@kernel.org, pabeni@redhat.com, edumazet@google.com,
- andrew+netdev@lunn.ch
-References: <2025100116-CVE-2025-39898-d844@gregkh>
-Content-Language: en-US
-In-Reply-To: <2025100116-CVE-2025-39898-d844@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: B79881F441
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[netdev];
-	RCVD_TLS_ALL(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiDSCuex8w8GvMuKMyZw5sBCeW0wLteRJy97LG5Z_TDbWZ71w@mail.gmail.com>
 
-Hi Greg,
+On Thu, Oct 23, 2025 at 01:47:39PM +0200, Ricardo Ribalda wrote:
+> On Thu, 23 Oct 2025 at 13:25, Laurent Pinchart wrote:
+> > On Wed, Oct 22, 2025 at 03:14:09PM +0200, Ricardo Ribalda wrote:
+> > > On Wed, 22 Oct 2025 at 15:12, Laurent Pinchart wrote:
+> > > > On Wed, Oct 22, 2025 at 03:08:58PM +0200, Ricardo Ribalda wrote:
+> > > > > On Wed, 22 Oct 2025 at 14:49, Laurent Pinchart wrote:
+> > > > > > On Wed, Oct 22, 2025 at 02:29:15PM +0200, Ricardo Ribalda wrote:
+> > > > > > > On Wed, 22 Oct 2025 at 14:09, Laurent Pinchart wrote:
+> > > > > > > > On Wed, Oct 22, 2025 at 11:55:16AM +0000, Ricardo Ribalda wrote:
+> > > > > > > > > Nothing can be connected from an output entity. Which means that no
+> > > > > > > >
+> > > > > > > > s/output entity/output terminal. Same below.
+> > > > > > > >
+> > > > > > > > Did you mean s/from an/to an/ ?
+> > > > > > > >
+> > > > > > > > > other entity can reference an output entity as baSourceId.
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > Some output terminals have controls, so we need to preserve their ID.
+> > > > > > > > That's why my proposal only set the UVC_TERM_OUTPUT bit for the
+> > > > > > > > *streaming* output terminals, not for all output terminals.
+> > > > > > > >
+> > > > > > > > > Use this fact to move all the output entities to a different namespace
+> > > > > > > > > id.
+> > > > > > > > >
+> > > > > > > > > The output entities are usually named after the dev_name() of the usb
+> > > > > > > > > device, so there should not be any uAPI change from this change.
+> > > > > > > > >
+> > > > > > > > > Although with this change we can handle some id collisions
+> > > > > > > > > automagically, change the logic of uvc_alloc_new_entity() to keep
+> > > > > > > > > showing a warning when a camera has invalid descriptors. Hopefully this
+> > > > > > > > > message will help vendors fix their invalid descriptors.
+> > > > > > > > >
+> > > > > > > > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > > > > > > > ---
+> > > > > > > > > Hi, this patch fixes support for some devices with invalid USB
+> > > > > > > > > descriptor.
+> > > > > > > > >
+> > > > > > > > > It is orthogonal to:
+> > > > > > > > > https://lore.kernel.org/linux-media/20251021184213.GC19043@pendragon.ideasonboard.com/T/#t
+> > > > > > > > >
+> > > > > > > > > Some devices will be fixed by the other patch, other devices will be
+> > > > > > > > > fixed by this. In my opinion is worth to land both patches.
+> > > > > > > > >
+> > > > > > > > > Tested with GRANDSTREAM GUV3100 in a 6.6 kernel.
+> > > > > > > > > ---
+> > > > > > > > >  drivers/media/usb/uvc/uvc_driver.c | 23 +++++++++++++++++++----
+> > > > > > > > >  1 file changed, 19 insertions(+), 4 deletions(-)
+> > > > > > > > >
+> > > > > > > > > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> > > > > > > > > index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..40f8ae0df89e104992f5d55af3d3539dea3d146e 100644
+> > > > > > > > > --- a/drivers/media/usb/uvc/uvc_driver.c
+> > > > > > > > > +++ b/drivers/media/usb/uvc/uvc_driver.c
+> > > > > > > > > @@ -165,10 +165,14 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
+> > > > > > > > >       return NULL;
+> > > > > > > > >  }
+> > > > > > > > >
+> > > > > > > > > +#define ENTITY_HARDWARE_ID(id) ((id) & ~UVC_TERM_OUTPUT)
+> > > > > > > >
+> > > > > > > > This needs a UVC_ prefix, and should probably go to uvcvideo.h. You can
+> > > > > > > > also & 0xff, as the UVC descriptors store IDs in 8-bit fields.
+> > > > > > > >
+> > > > > > > > > +
+> > > > > > > > >  static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
+> > > > > > > > >  {
+> > > > > > > > >       struct uvc_streaming *stream;
+> > > > > > > > >
+> > > > > > > > > +     id = ENTITY_HARDWARE_ID(id);
+> > > > > > > > > +
+> > > > > >
+> > > > > > Another comment, I would have done this in the (single) caller, to keep
+> > > > > > operating on real ids in this function. Or we could pass a struct
+> > > > > > uvc_entity instead of an int id and rename the function to
+> > > > > > uvc_stream_for_terminal(), which could better encapsulate the purpose.
+> > > > >
+> > > > > Like the second option better.
+> > > >
+> > > > I think I do too.
+> > > >
+> > > > > > > > >       list_for_each_entry(stream, &dev->streams, list) {
+> > > > > > > > >               if (stream->header.bTerminalLink == id)
+> > > > > > > > >                       return stream;
+> > > > > > > > > @@ -810,10 +814,12 @@ static struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
+> > > > > > > > >       }
+> > > > > > > > >
+> > > > > > > > >       /* Per UVC 1.1+ spec 3.7.2, the ID is unique. */
+> > > > > > > > > -     if (uvc_entity_by_id(dev, id)) {
+> > > > > > > > > -             dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n", id);
+> > > > > > > > > +     if (uvc_entity_by_id(dev, ENTITY_HARDWARE_ID(id)))
+> > > > > > > > > +             dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n",
+> > > > > > > > > +                     ENTITY_HARDWARE_ID(id));
+> > > > > > > >
+> > > > > > > > It's not an error anymore if there's no collision of the full 16-bit ID,
+> > > > > > > > right ? Should it be demoted to a dev_warn() ?
+> > > > > > >
+> > > > > > > if it is OK with you I'd rather keep the dev_err(). If an ISP
+> > > > > > > manufacturer tests their camera in Linux I want them to really notice
+> > > > > > > that there is an error.
+> > > > > >
+> > > > > > Yes I'm OK with that. It shouldn't happen. We want a dev_err_and_blame()
+> > > > > > that prints a message to the kernel log and posts messages on social
+> > > > > > networks to blame the hardware manufacturer.
+> > > > > >
+> > > > > > > Besides that, I have implemented all your proposed changes.
+> > > > > > >
+> > > > > > > I cannot test it until tomorrow in real hardware. But the changes are
+> > > > > > > trivial, let me know if I shall send the v2 right now or wait til it
+> > > > > > > is tested.
+> > > > > >
+> > > > > > Up to you, I don't mind either way.
+> > > > > >
+> > > > > > If we merge "[PATCH v2] media: uvcvideo: Use heuristic to find stream
+> > > > > > entity" first, do you plan to revert it to get this patch merged ?
+> > > > >
+> > > > > I think they solve two different issues:
+> > > > >
+> > > > > - Output terminal id collides with another entity id.
+> > > > > - Incorrect bTerminalLink
+> > > >
+> > > > Do we know of any device affected by that issue ?
+> > >
+> > > I bet you there is one :)
+> >
+> > I'd rather be cautious and address that if the issue arises. Enabling
+> > non-compliant behaviour has the drawback of making issues less visible
+> > to vendors, so I would prefer not working around problems unless we know
+> > they exist.
+> 
+> My main goal right now is to solve the regression.
+> 
+> If you think that this approach is best, please add your review-by and
+> the following tags to the patch. And let's start landing into upstream
+> asap.
 
-On 2025-10-01 09:43, Greg Kroah-Hartman wrote:
-> From: Greg Kroah-Hartman <gregkh@kernel.org>
-> 
-> Description
-> ===========
-> 
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> e1000e: fix heap overflow in e1000_set_eeprom
-> 
-> Fix a possible heap overflow in e1000_set_eeprom function by adding
-> input validation for the requested length of the change in the EEPROM.
-> In addition, change the variable type from int to size_t for better
-> code practices and rearrange declarations to RCT.
-> 
-> The Linux kernel CVE team has assigned CVE-2025-39898 to this issue.
-> 
-> 
-> Affected and fixed versions
-> ===========================
-> 
-> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 5.4.299 with commit ea832ec0583e2398ea0c5ed8d902c923e16f53c4
-> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 5.10.243 with commit ce8829d3d44b8622741bccca9f4408bc3da30b2b
-> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 5.15.192 with commit 99a8772611e2d7ec318be7f0f072037914a1f509
-> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.1.151 with commit b48adcacc34fbbc49046a7ee8a97839bef369c85
-> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.6.105 with commit 50a84d5c814039ad2abe2748aec3e89324a548a7
-> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.12.46 with commit b370f7b1f470a8d5485cc1e40e8ff663bb55d712
-> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.16.6 with commit 0aec3211283482cfcdd606d1345e1f9acbcabd31
-> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.17 with commit 90fb7db49c6dbac961c6b8ebfd741141ffbc8545
-> 
-> [...]
+I've done so in v2. Could you check if you're OK with the proposed
+changes for the commit message and comment ? I'll then send a v3 with
+all the tags (or you can do so yourself to ack the proposed changes),
+and Hans or Mauro can pick the patch up as a fix.
 
-we believe that this CVE is invalid since the sole caller is 
-`net/ethtool/ioctl.c:ethtool_set_eeprom()`, which already does all the 
-necessary checks before invoking a driver specific implementation.
+Thanks for testing the proposed change, I appreciate it.
 
+> We can discuss later if we want an extra patch or if we want to wait
+> for another report.
+> 
+> Reported-by: Angel4005 <ooara1337@gmail.com>
+> Closes: https://lore.kernel.org/linux-media/CAOzBiVuS7ygUjjhCbyWg-KiNx+HFTYnqH5+GJhd6cYsNLT=DaA@mail.gmail.com/
+> Fixes: 0e2ee70291e6 ("media: uvcvideo: Mark invalid entities with id
+> UVC_INVALID_ENTITY_ID")
+> 
+> > > > >  We can have the two patches in.  If there is any conflict because we
+> > > > > land one and then the other I can send a v3 fixing the conflict. Or a
+> > > > > maintainer can do that, they should be trivial conflicts.
+> > > > >
+> > > > > > > > > +
+> > > > > > > > > +     if (uvc_entity_by_id(dev, id))
+> > > > > > > > >               id = UVC_INVALID_ENTITY_ID;
+> > > > > > > > > -     }
+> > > > > > > > >
+> > > > > > > > >       extra_size = roundup(extra_size, sizeof(*entity->pads));
+> > > > > > > > >       if (num_pads)
+> > > > > > > > > @@ -969,6 +975,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+> > > > > > > > >       struct usb_host_interface *alts = dev->intf->cur_altsetting;
+> > > > > > > > >       unsigned int i, n, p, len;
+> > > > > > > > >       const char *type_name;
+> > > > > > > > > +     unsigned int id;
+> > > > > > > > >       u16 type;
+> > > > > > > > >
+> > > > > > > > >       switch (buffer[2]) {
+> > > > > > > > > @@ -1107,8 +1114,16 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+> > > > > > > > >                       return 0;
+> > > > > > > > >               }
+> > > > > > > > >
+> > > > > > > > > +             /*
+> > > > > > > > > +              * Nothing can be connected from an output terminal. To avoid
+> > > > > > > > > +              * entity-id's collisions in devices with invalid USB
+> > > > > > > > > +              * descriptors, move the output terminal id to its own
+> > > > > > > > > +              * namespace.
+> > > > > > > > > +              */
+> > > > > > > > > +             id = buffer[3] | UVC_TERM_OUTPUT;
+> > > > > > > > > +
+> > > > > > > > >               term = uvc_alloc_new_entity(dev, type | UVC_TERM_OUTPUT,
+> > > > > > > > > -                                         buffer[3], 1, 0);
+> > > > > > > > > +                                         id, 1, 0);
+> > > > > > > > >               if (IS_ERR(term))
+> > > > > > > > >                       return PTR_ERR(term);
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > ---
+> > > > > > > > > base-commit: ea299a2164262ff787c9d33f46049acccd120672
+> > > > > > > > > change-id: 20251022-uvc-grandstream-laurent-3f9abb8a0d5b
 
-Cheers
-Steffen
 -- 
-Steffen Jaeckel                       Kernel Network Engineer
-sjaeckel@suse.de
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Regards,
+
+Laurent Pinchart
 
