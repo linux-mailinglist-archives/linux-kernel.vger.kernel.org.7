@@ -1,239 +1,366 @@
-Return-Path: <linux-kernel+bounces-868847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B6FC064ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:47:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83074C06586
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BAB31A6365E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0EC1C06FBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8313195E6;
-	Fri, 24 Oct 2025 12:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B064831C584;
+	Fri, 24 Oct 2025 12:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="QElQObTh"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023126.outbound.protection.outlook.com [40.107.44.126])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ld84bBZk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C491C1C701F;
-	Fri, 24 Oct 2025 12:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.126
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761310050; cv=fail; b=Bj9/EYZUHEeKHpt9q5Lq65O7rY/vxE4WC/vQLC7csNhtezv950i49zv03QSADGpEm15/82ZcJJumgiTDiIEkoKEOhVi94FuKheAL9IDRrPk3ERXeBDpUz6gP/QitPBSkGsyLbvRjT6Nuf2kNht1UF5wOHrBFVA+Z/AVDJjq5p1Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761310050; c=relaxed/simple;
-	bh=k8fs8K18Ckut9+qdapZDWOtchjF1W6ghig1SjXdNzMY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FPh7ZzM+r++FClILt6Qd6GASZswikYKEclT6DeAU0j+I9LQqaublR1w+pk/mr+vpxBBJzUqKuibbmXmJ55VvSYc2kR8IhyM2x+1iuBAJoGwOrfWt4zUD9w3k6x4hUvEXIbNzySxVrDdBH/e1LHiOBZDC7mFUrpuOJ/n3Lfr1/bg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=QElQObTh; arc=fail smtp.client-ip=40.107.44.126
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JwTKaywM8CANiSNeUOO8MAlwqSKEcHmDV2xAa+Qk0OhMLiqhOW53ZtOl+WPvsAJaOO+7df0EyCG1tHdH13iw6sztuF9kI6Yqv8RsJ6LV1+FKW0bfwHlOl6xHTed4XaXAX1j9KloNddiDykBYEDXnuANH3hWwMAsP0QG07UkO9H+xHGsO9WawqY+qKcIKqcqvl1bnt7IqSbmF6LAosP6MAmOf0mVlTzDzrhZsf1BGsIUSUzdgRAHhq+IG00jZjJOy5Vx9+8aBcorcWJPmyut6JfCEaUIJwROVLEgUKFZrBMd1XyjNArHK08wv9ctMHEwwnfYMKjQ/geph4FxURLAEzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k8fs8K18Ckut9+qdapZDWOtchjF1W6ghig1SjXdNzMY=;
- b=Vgc3mhx/ZekMJkhe3eiTBG+VlE3xhKTQmL0+hb4sJ0y9+z077lPicesM0G4CIR9ZJ/iuxoB1g7ZvrYjpCLXqbElpTxrrv3eYolBa1iJb5BdJBQYx9o8mZR6kJKlfdCvyDeu+Y+K8hmQfrLzfz6SXqiRsOZzhnuWsuH7hEY5UZreQSmRTEaLkAgl4y1VGnUtAAB5Zj237CPVOTws/Kreo092mzsUrhz+ZStpH6q9+yNH99YPHBXe/kbM1dL9O66ISKbLVyiJrvjjhUwmnXITElX4vAT1GNOdcBzh8f3USPD4VVVFEizDAs9i6hHoDaYlv6SBfQUZJr4J2xyPSw0wiwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k8fs8K18Ckut9+qdapZDWOtchjF1W6ghig1SjXdNzMY=;
- b=QElQObThaTAI+lE45w0FFAiw0g9jSD4ndPifEryO3XkjbdBeW/5vNRtMkNdGw6gWAE2jOfc7ybH+EWZAdqzkM+NxjsdsKYw9OYbarXIFOGJmmXk8YHSWhjQaZOoPMSB4TZuQ9FzvXhCG+QyrqLiLQ3Y9jHA3r1rvask1K2ra6ovHKo1Mbr1EHB7ix7eU4CKiMqXji4DymKgXU4UH1e2AHhNav+r6C2s1cVwCJ6YBMPtUEAYQXcMoJ2JLQyeolUlKD5BvYgRq1munN5oZpj4RwrXUuG6YftTYqzvBU+3Zg6jpRymEhD32rYgHjyaIIQucaxuWVG4i5WnsjTsXMdhbhg==
-Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com (2603:1096:408::791)
- by SEYPR06MB6929.apcprd06.prod.outlook.com (2603:1096:101:1d9::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 12:47:25 +0000
-Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
- ([fe80::df4f:b1a1:1825:4a80]) by TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
- ([fe80::df4f:b1a1:1825:4a80%7]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 12:47:24 +0000
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Jeremy Kerr
-	<jk@codeconstruct.com.au>
-CC: "benh@kernel.crashing.org" <benh@kernel.crashing.org>, "joel@jms.id.au"
-	<joel@jms.id.au>, "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"naresh.solanki@9elements.com" <naresh.solanki@9elements.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v20 1/4] dt-bindings: i2c: Split AST2600 binding into a
- new YAML
-Thread-Topic: [PATCH v20 1/4] dt-bindings: i2c: Split AST2600 binding into a
- new YAML
-Thread-Index:
- AQHcQisKZrgNdIKVU0mDlJSyYndfALTQ3zKAgAABb4CAABJSgIAAAs0AgAAJqYCAAEBPgIAABHKw
-Date: Fri, 24 Oct 2025 12:47:24 +0000
-Message-ID:
- <TY2PPF5CB9A1BE6E6E8FA67CDC03A55A439F2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
-References: <20251021013548.2375190-1-ryan_chen@aspeedtech.com>
- <20251021013548.2375190-2-ryan_chen@aspeedtech.com>
- <20251024-dark-ringtail-of-defiance-1daabd@kuoka>
- <2939cae6-2e8a-4528-8e27-8c932e2f82de@kernel.org>
- <bf3d6690b9124ecf74df6c0f9f1c0f72ae1db9f7.camel@codeconstruct.com.au>
- <8341a903-639b-471a-8425-a98c473f5ab0@kernel.org>
- <7a650d60cabcbd33b65c954b0c9c5918dfcabb09.camel@codeconstruct.com.au>
- <563d6efb-966e-41e7-aade-ddec2abc7568@kernel.org>
-In-Reply-To: <563d6efb-966e-41e7-aade-ddec2abc7568@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY2PPF5CB9A1BE6:EE_|SEYPR06MB6929:EE_
-x-ms-office365-filtering-correlation-id: 53559583-7315-471b-2a40-08de12fb7b47
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?UU5NOHIxczRGUWxSYXlVZ281bXozd1NZVHdhMWhYdjdob2NacDRkSThPRytW?=
- =?utf-8?B?RHhBV0R0bDRMU0NKK0RFVHA2ZWJodEdmaDFmZXQwM25ldjc3dGc3eW9iT1Fk?=
- =?utf-8?B?bldQQWNZbkV6YVhSQ3pIc1c2QjM0blAveFNBRFRGc0R4VEpjWDMyNE1ZWmVH?=
- =?utf-8?B?UG1SQkd5UTdPVzF3bG5mWnQzLzZVdWdlUllUd3JWeVhOTzFqdGdXYjhKS2lO?=
- =?utf-8?B?N09MZHU3UVFrRzBLendRUGNIcVpwKzlnaGo4WEZyWHpFQ2RFVlpnOGluVURa?=
- =?utf-8?B?OXVmY2ozR3hQK1JuU2h2TjhCekZZVUhLVGFCYkhjQy81QitqYXZSVHZlY0Z1?=
- =?utf-8?B?VU9ZeHdTZVB1RCtVVk9wOVNkcWpTeWtObUZCYksxZ0lrRWc2U2xFK3MveVEz?=
- =?utf-8?B?cGtBTDJSVjUzcFJTME1FdnF5cWJ0VVlHZjVZREtDTitRM2YzV2kxQUpOaFVm?=
- =?utf-8?B?VHJOdXR4OXpqTThrUjlTczNEaWQzNEpEdjB2UnJwbG9ReXp3dTNUS29TYTc1?=
- =?utf-8?B?dkpjQmJyN01Nbjl5ekpOZ2kwejd0dXhiOEY0QzMwZDFkSCtIOWtpNTVqb0dH?=
- =?utf-8?B?ZUF1YmRMVmd5cFNQTTFlc3FRYnhmakozeXQ3bjZUaitNTUhFQXp3amNFUnR2?=
- =?utf-8?B?cWE0Y09oQ2RISENPamREMHF5ZitDdit6Q3hCeFBjUGY2SDlHVlRJK1l2OUF3?=
- =?utf-8?B?UTZiUFVPcXlXRUNpdFdGeTRwUzZ0NGxKSEJUeThoRm9LNDVBNUZ3ZmE5VDhL?=
- =?utf-8?B?alM1SjM2OWc2M0pIbC9vaktNT1Z4Lzh1VWhqN3NQN2VQUUphTkMvSHpvaG5G?=
- =?utf-8?B?L0c1Qm1acGN6ck5qNG1hRkpwRTdlYmwyODd2aHE5d2ZkZ1BoSWlGUHpjeHlK?=
- =?utf-8?B?Q0dQdHowOWNnaDlPWjFDWEtLbFhQYWx0U2hlRWN3akV2VG5SRFh3QWhlN2Jx?=
- =?utf-8?B?TWo5bDkyRHNadlJnV1dpa1hGWkhIYWdvdHhWUFRhNGlJL0lRYS9SeDRWSDhT?=
- =?utf-8?B?MUFwWHhQSHI5U3haYWQ5bjJEM0xjSU9UVGxrdnB0dXFJUXdSK1k4aU9POS84?=
- =?utf-8?B?dkNkU0k3YVdSZ0ZEdzIxMWNGUHBhR2JSd2pUcXBBaHY1NjkrWUQxMVMzeEk1?=
- =?utf-8?B?bGdKOS9JUWk5NnkwZ3RyNS80V1FvdkVubHpPOG1pNko2NTZEQnBJZHo4Qnhk?=
- =?utf-8?B?aEEyNEFsczFJcno2RDZ3YTZTbDdQRVZJbFBBbENGYnJQUTlGaVdkS3l0cEx0?=
- =?utf-8?B?UmRIcG44WFVZMXJXTjViS1VJY2pxSmdEWUJESS91ZU9ERVJMQlRhdnFDU1BV?=
- =?utf-8?B?dVFkN3Z5WVlUYm1mY1BZUGRDcWNxU0NacktYc21WdkpSaDhiajdxM1hoamNx?=
- =?utf-8?B?OEs5U1NMVFNXbGFEcHhKUDVIM1FtRmMyVzQzbWpYc2RBNHNVeGVwM3FWU2gz?=
- =?utf-8?B?Qldhdm84SmtjZ05wNURSa3RwSE5vQmZzTFBLWTY0cnV2L2lITzQ4ODMrOUJo?=
- =?utf-8?B?TVRRVG5ib0YwWUxUTC93d1VzYjZObHI0a0llS1RteUh2TVFjS2ZqcjFxKy9J?=
- =?utf-8?B?NXNpZUhsWGZXa01MVkxmeWhsaXBXSVo4K0JqZjhmYlFVZnlZbW4rOUtTZzE2?=
- =?utf-8?B?R0FHRTV2SkJiNm5BK0x0WmxPamFMSS9hRGxobk8zd09xdWFYZnhlQXdSTXlZ?=
- =?utf-8?B?TlJ5Wjh2M0VzcWljWGRqd1dYbkprdnJCSC9uNURtSzVaSmc4TkxQZGM4NFRN?=
- =?utf-8?B?QWw1QXV2eGF4Yk1UaXQxa3Q5Ly9iSFhGQ1QxVklZNnowZUYvcHN5a2psczBT?=
- =?utf-8?B?ejNpSk0zV29KMEFGVEF4Zjd2cVUvd1JFNDh1RDRTV3FySEhkVnBYbHRRTjUr?=
- =?utf-8?B?QVZ0WTY4dUpPN3VhY3lRUEVLakM3SURmcG5DeGxYTkxkN0lMQldxd01OdFA0?=
- =?utf-8?B?RWVaeW1MRjVtRXpuWERsS2ZDa2hOYnRDOTBMUlJGMGE1QWRvQ0I4TlkwUDVP?=
- =?utf-8?B?d2dNS1RBNC9HTGlYQnJTbkE4T0RUK3VvdVpzU3hDM2dQdUJqN1FpbjduZm1L?=
- =?utf-8?Q?tC9gdR?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?b0JmazNPd3RtbWZNQ01remlyZVczZFA1MkxqWE8raUVIL0JuczJaOG01WkFU?=
- =?utf-8?B?MURZVjFHL2ZlekpCNDc4Sk9qbkZPQmlCaVJ3b0d1VHdoMHVFTDVzcnBJVHdo?=
- =?utf-8?B?TzdUbzZENmtabXN3elljNU9TVFI5QTU1Q3pXb0d1aGJMekVrZ0NJS2dtT1F4?=
- =?utf-8?B?S216YUx1K2V3eFdrQXUxb1lXZU15VGN6VUVCL0puYVhnc1pvamdRUStVSi95?=
- =?utf-8?B?TkRrZm9mVGZTc3E2dmtTcmdLTm9QSDhYZFUvWjdkSVdkYUxENVZEZ3VsV0Zp?=
- =?utf-8?B?Yjh1OE1sQzMwcHpEbit0M2dLMk5mdmhJOURSd2Yxak41enFQU3R5MEorT0kw?=
- =?utf-8?B?VDdhdzkxb3dLZktTbG53ZDJ5QnVDWlQxRFo5eE4rSEJKSktGUXlabjZLVGFU?=
- =?utf-8?B?QzNFSEdSRUR5QlZOMnhCK2VkMURxUXpGN2lLbFZkQkVOb3l2eTM1eUVtTWsr?=
- =?utf-8?B?dVdWQURDNTVaeU1OcDEwam5LaFlvZjBGbnMvcUw1ZEF4VXJoQVpaSmE0UGo0?=
- =?utf-8?B?WGtOU2I5SGkzUHhIZHdFMW02R0ZjVHlQQzFWZGgwQlk1TUYwQlozVTR0QkMr?=
- =?utf-8?B?T3F1Z0lDZnQxUE9nOWVrV1VqRUN6SlVDSityUzVNOFdSSms4aUV3eHU5ME5L?=
- =?utf-8?B?RldBUHR3WXR4aDN1N0QrREl1eWthODJpbkF3azRGM1VScXhFdGNEa2dZQm9m?=
- =?utf-8?B?NUc1Z0N0QkpMejdxZFpqUGltVkFMcHNWSkZ1amxGQ1VwQzdHY2N2VHF0eGxH?=
- =?utf-8?B?NForUDF0ejVuMFlQeXBoaythM1FUWTNRZm91ZjA4TVhiSFNHakZNdVBkSVRp?=
- =?utf-8?B?S1MxZnRSN3dWVXBPdHh3UmhOcVhkemhBUlpIaDk3aXRXc1dWOTVyMm9yYjhv?=
- =?utf-8?B?cGVPckY5M25Wd1h1QWNxdS92azNTZkNiam9wb0V6WDgyL1VvZUJ6dkFHU2gv?=
- =?utf-8?B?SEorKy9TMVJqYVM5bUt6Ni8rZkhJN2s5ZmtyNFZRZ1VyWmZHN2RoY3BoOXlt?=
- =?utf-8?B?dzBCRC9oMnJ3eSs1T0xHcFpCYzVBSWNRclR5L0ZEWTNHZjMvYVdDcElNT0hE?=
- =?utf-8?B?TVJRam8wdUt4dTVaOXVFaTlMYXd0cDMzQjZMMGExV1ZsQmMwditGVDc4V2tH?=
- =?utf-8?B?RW1Pa2poamJpdlUrSmJxUkMxaFZ6V2dxNUhDazFoUSt1MGZhZXUxazVRU2pK?=
- =?utf-8?B?ZnIrSDVKbDdoWEt5UEFWVmVqalZmOG1YTTJVK2ExamJKOUdSSlFvSExKK0JT?=
- =?utf-8?B?YmlaODE3Q2xyM3h3VTBuQWFVM3JuWHEyditneFdwTHZBclE0dGxlVjNRVnl6?=
- =?utf-8?B?R2xwS0hmMWk1bnJlSThQL2NxNUY1bk9Xb3pBaXRCVmI2MlFUMHBTMXlyanJj?=
- =?utf-8?B?UWdwdFFDVE10ZGd5d3BqY21DQ0pDOVlMYzlWOTlybHViNzFnTld0NHNTclJL?=
- =?utf-8?B?V2FSbVhnWlR5dCtjWEVLd3VuWG93MkpZdTVBT2pEZW8xaFRrd0pNUSsvWWpz?=
- =?utf-8?B?SUNHVUV5M0pvNHlDRll0c21rMlZMM2FmS0lyYmdOYVFxUWNDTDJYT1JTcWVo?=
- =?utf-8?B?SWMrVG9vVDlieTlzZkZhTGUrUGpMM3I1Wnd6dXM1emY5dXV4NGx1UHJUeSt2?=
- =?utf-8?B?RmFtWTV0MThZcFZTK3Jvays5UDBURFYrRktoN0tnUitwQ0xzOHdYK1hjaFBs?=
- =?utf-8?B?aW9PdXNmWnl5dUxyNGVHdGt6bjFVVllEMEpqZldYN3JRL3RndlcvOXVWQlFh?=
- =?utf-8?B?NnFPaXBML00vcG45dU9ManhHTkNMUDgxRmxNUVVGdng5ZTRNOStGZGZZREFE?=
- =?utf-8?B?ZVhwVkxjc1QzMXFWS1NoTlZuU0l2OG9MeUNKSkZob0ZtMyt4bjU1NzBZRmVi?=
- =?utf-8?B?Wk1RS3VvQ0t3L1hoRE0vYkJxQklNUUVTeUUwMk9WN1NPcy83TElTQnV1MUFq?=
- =?utf-8?B?cEZhMHBhY1d2UnlYNlFJVTNUbnIzT0xMcGc3YkF2L1NLVzlBc1hJZExyN1dW?=
- =?utf-8?B?WlBtbEhNOHlBTm5pemJhQTI2Y1lSY3RFVE14bzdSSW9TY3UxOVpwblk4YXhp?=
- =?utf-8?B?UjZPTlV1WUUxcGpYM0NjbjhFQVY5U092RFRyOEJGdXBYNmtLY0M3YmhhN29t?=
- =?utf-8?Q?NpULX1Bc+c9nMTHHusWc/4kww?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9B02E1C4E;
+	Fri, 24 Oct 2025 12:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761310296; cv=none; b=F5FvqpT8lMiZ02vcX0s1Cl0iGq1d2G0rmFk5ssIeGT39OwZH1ka9UwO3tXu2U3qV4hUAX61koCgt863H3WskuG97EUSz3OopwLC95E5aIQDWffIeuQDtinvJzapZF7j+r2R5mIdF92uMzYHsYUl0aUSY9bAnztv6WtduloJEkHw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761310296; c=relaxed/simple;
+	bh=PzY46h6D8GKq516oWnd/c/gcVF4boxSOUQ0m5tpCpbQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WwV1ikPjZ5lVeuo/0gOPbj5ZiQzGVL4yVjhFNaJggFsRUD/XKOrYjWZWCY53N4jqDdSYH+r+Uzx1/39t/a0Vr0pq+awMQJWDSlbLhM5MyzPjhgnGrmpht/vSeEEnAwL48SHXdyl+FzUFCUXULYeKk7VH+LZv+kG0k58mr2vPvCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ld84bBZk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DA809C4CEFF;
+	Fri, 24 Oct 2025 12:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761310295;
+	bh=PzY46h6D8GKq516oWnd/c/gcVF4boxSOUQ0m5tpCpbQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ld84bBZkECcl4whQpEHZe2sWruCpDnUQqErxp69xlfAMmMa22FuQxefng7O1oVxb4
+	 dpPUaa6lm5sJDYWCQCQXvCC5UTgTGvCJ3hMx/OILQfcxqtQ/fZPXy0dsIkfRxcz+B7
+	 RdfjuSFZ6JZ5CW2pru4/tmv7ClfX8A5TIYH6+aAzQRuH7iPPHpKMjxTj4sPFuU4q2w
+	 hT+wmqTglICWKF54zDChKfDRdlIiT+dLzMbmGdY3wtbLKrd0zmpYnrpdd9nk7L0enX
+	 UnnSx9jV3W/BeiqaLR/rK8+PyEhaN8PZrSi5RK38Hsw+uoiNEW64HT3lMxYRBGL1AD
+	 pvLYnW01ETtRA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3651CCF9E0;
+	Fri, 24 Oct 2025 12:51:35 +0000 (UTC)
+From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
+Subject: [PATCH v14 00/18] media: rockchip: add a driver for the rockchip
+ camera interface
+Date: Fri, 24 Oct 2025 14:51:29 +0200
+Message-Id: <20240220-rk3568-vicap-v14-0-b38b6da0fc80@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53559583-7315-471b-2a40-08de12fb7b47
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2025 12:47:24.7149
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MwDgGeLtD0TauORohsXUKf3+PjdV2ZgYJjA1sm4nYKzB7EIlJRkfN3obhjozbCy8iKjgVhb8ZNXEsfi8JlxqSX/2aWJ8WgY1yUeC+ELhcOY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6929
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFJ2+2gC/33SwW4cIQwG4FeJ5lwibAwDPeU9qhwMmC7qZmc1s
+ 5q0ivbdyyRq063YORrE9xvZb8Mic5Vl+PrwNsyy1qVOp1YAfXkY0oFP30XV3A4G1EgaUav5h7H
+ Oq7UmPqsYoikhoC1EQ3sSeREVZz6lw/boRQ65qhXMdneepdSf71nfnlt9qMtlmn+9R6+wnX6Gr
+ E55dZnONd3mraC0Quc1Q2FHOj69Tsfy0fbjSS7DBq/4FwOE8T6GDYuQyfuSks6mi5k/mNWo3X3
+ MNMyFDAWC2ES6i9E/GIT7GDVMgnZOaxYT+5j9xMxeZ7ZhpeVZtIaKSV3M3Q7gVnBNyFhsiSJgL
+ Tyl6XjkOM38mKaXD2DcA8YGjNZDycGxMdwD/B7gGxBySDFRtEi5B4Q9IDSAk0CbTSL22ANA7wm
+ gtwlj9jxG1CFSl4BdYltfLlo4syWx3W8A7hLb0iaXoyRxMQbfJcwusa1qZnAUKYAv8j9xvV5/A
+ 6PiaRgZBAAA
+To: Mehdi Djait <mehdi.djait@linux.intel.com>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Gerald Loacker <gerald.loacker@wolfvision.net>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Markus Elfring <Markus.Elfring@web.de>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Kever Yang <kever.yang@rock-chips.com>, 
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Collabora Kernel Team <kernel@collabora.com>, 
+ Paul Kocialkowski <paulk@sys-base.io>, 
+ Alexander Shiyan <eagle.alexander923@gmail.com>, 
+ Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, 
+ Michael Riesch <michael.riesch@collabora.com>, 
+ Michael Riesch <michael.riesch@collabora.com>, 
+ Mehdi Djait <mehdi.djait@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Bryan O'Donoghue <bod@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761310293; l=12462;
+ i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
+ bh=PzY46h6D8GKq516oWnd/c/gcVF4boxSOUQ0m5tpCpbQ=;
+ b=nR91rqIRZpjzjpEUMaNrKrvlloeGX4tnyN7UcFmsE1wrdR7Z2NbgdfGXpY5fv5UfTa5PSGZFQ
+ fZKdoNqf1yoBOeRowAWgL9ENUXsPMzi8wo4FAGhr1KhgpEpUJnVKON1
+X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
+ pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
+X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
+ with auth_id=371
+X-Original-From: Michael Riesch <michael.riesch@collabora.com>
+Reply-To: michael.riesch@collabora.com
 
-PiBTdWJqZWN0OiBSZTogW1BBVENIIHYyMCAxLzRdIGR0LWJpbmRpbmdzOiBpMmM6IFNwbGl0IEFT
-VDI2MDAgYmluZGluZyBpbnRvIGEgbmV3DQo+IFlBTUwNCj4gDQo+IE9uIDI0LzEwLzIwMjUgMTA6
-NDAsIEplcmVteSBLZXJyIHdyb3RlOg0KPiA+IEhpIEtyenlzenRvZiwNCj4gPg0KPiA+PiBPbiAy
-NC8xMC8yMDI1IDA5OjU2LCBKZXJlbXkgS2VyciB3cm90ZToNCj4gPj4+IEhpIEtyenlzenRvZiwN
-Cj4gPj4+DQo+ID4+Pj4gQWx0aG91Z2ggbm93IEkgc2F3IG5leHQgcGF0Y2gsIHNvIGNsZWFybHkg
-dGhpcyBjb21taXQgaXMNCj4gPj4+PiBpbmNvbXBsZXRlLg0KPiA+Pj4NCj4gPj4+IFRoZSBzcGxp
-dCB0aGF0IFJ5YW4gaGFzIGRvbmUgaGVyZSAtIGJ5IHNoaWZ0aW5nIHRvIGFuIGlkZW50aWNhbA0K
-PiA+Pj4gc2VwYXJhdGUgYmluZGluZywgdGhlbiBtYWtpbmcgdGhlIGNoYW5nZXMgZXhwbGljaXQg
-LSBhbGxvd3MgdXMgdG8NCj4gPj4+IHJldmlldyB0aGUgYWN0dWFsIGNoYW5nZXMgd2l0aG91dCBs
-b3NpbmcgdGhlbSBpbiB0aGUgbW92ZS4gU291bmRzDQo+ID4+PiBsaWtlIGEgYmVuZWZpdCB0byBt
-ZT8NCj4gPj4NCj4gPj4gTm90IHJlbGF0ZWQuIEkgY29tbWVudGVkIHRoYXQgcmF0aW9uYWxlIGlz
-IGluY29tcGxldGUuIFdlIGRvIG5vdCBtb3ZlDQo+ID4+IHBhcnRzIG9mIGJpbmRpbmdzIGJlY2F1
-c2UgbmV3IGRldmljZSBpcyBzb21ld2F5IGRpZmZlcmVudC4gVGhlcmUgYXJlDQo+ID4+IGh1bmRy
-ZWRzIG9mIGJpbmRpbmdzIHdoaWNoIGNvdmVyIGRpZmZlcmVudCBkZXZpY2VzLiBXZSBtb3ZlIHRo
-ZW0NCj4gPj4gYmVjYXVzZSB0aGUgYmluZGluZyBpcyBkaWZmZXJlbnQuDQo+ID4NCj4gPiBPSywg
-YnV0IGluIHRoYXQgY2FzZSBJIHRoaW5rIHdlJ3JlIGFmdGVyIGd1aWRhbmNlIG9uIHRoZSB0aHJl
-c2hvbGQgZm9yDQo+ID4gImRpZmZlcmVuY2UiIGhlcmUuDQo+ID4NCj4gPj4gTm90IG11Y2ggZGlm
-ZmVyZW50IHRoYW4gZXZlcnkgb3RoZXIgc29jLiBBbGwgb2YgdGhlbSBhcmUgc2VwYXJhdGUgSVBz
-Lg0KPiA+PiBMb29rIGF0IGFueSBTYW1zdW5nLCBOWFAgb3IgUXVhbGNvbW0gYmluZGluZy4gU2Vw
-YXJhdGUgSVBzLg0KPiA+DQo+ID4gU28sIHNvbWV0aGluZyBsaWtlIHRoaXM/DQo+ID4NCj4gPiAg
-ICAgYWxsT2Y6DQo+ID4gICAgICAgLSAkcmVmOiAvc2NoZW1hcy9pMmMvaTJjLWNvbnRyb2xsZXIu
-eWFtbCMNCj4gPiAgICAgICAtIGlmOg0KPiA+ICAgICAgICAgICBwcm9wZXJ0aWVzOg0KPiA+ICAg
-ICAgICAgICAgIGNvbXBhdGlibGU6DQo+ID4gICAgICAgICAgICAgICBjb250YWluczoNCj4gPiAg
-ICAgICAgICAgICAgICAgZW51bToNCj4gPiAgICAgICAgICAgICAgICAgICAtIGFzcGVlZCxhc3Qy
-NjAwLWkyYy1idXMNCj4gPiAgICAgICAgIHRoZW46DQo+ID4gICAgICAgICAgIHJlcXVpcmVkOg0K
-PiA+ICAgICAgICAgICAgIC0gYXNwZWVkLGdsb2JhbC1yZWdzDQo+IA0KPiANCj4gZWxzZToNCj4g
-ICBwcm9wZXJ0aWVzOg0KPiAgICAuLi4gOiBmYWxzZQ0KPiANCj4gPg0KPiA+DQoNCkkgd2lsbCBt
-b2RpZnkgd2l0aCBmb2xsb3dpbmcuDQppZjoNCiAgcHJvcGVydGllczoNCiAgICBjb21wYXRpYmxl
-Og0KICAgICAgY29udGFpbnM6DQogICAgICAgIGVudW06DQogICAgICAgICAgLSBhc3BlZWQsYXN0
-MjYwMC1pMmMtYnVzDQp0aGVuOg0KICByZXF1aXJlZDoNCiAgICAtIGFzcGVlZCxnbG9iYWwtcmVn
-cw0KZWxzZToNCiAgcHJvcGVydGllczoNCiAgICBhc3BlZWQsdHJhbnNmZXItbW9kZTogZmFsc2UN
-CiAgICBhc3BlZWQsZ2xvYmFsLXJlZ3M6IGZhbHNlDQoNCj4gPiBJIGNhbid0IHNlZSBob3cgd2Ug
-Y291bGQgcmVwcmVzZW50IGFzcGVlZCx0cmFuc2Zlci1tb2RlIHRob3VnaCwgYXMNCj4gPiBpdCdz
-IG9wdGlvbmFsIG9uIGFzcGVlZCxhc3QyNjAwLWkyYy1idXMsIGJ1dCBwcm9oaWJpdGVkIG9uIG90
-aGVycy4gQW55DQo+ID4gaGludHMgb24gdGhhdD8NCj4gDQo+IA0KPiBJdCdzIHNob3duIGluIHRo
-ZSBleGFtcGxlLXNjaGVtYSwgaWYgd2UgZ28gdGhhdCB3YXkuDQo+IA0KPiBCZXN0IHJlZ2FyZHMs
-DQo+IEtyenlzenRvZg0K
+Habidere,
+
+This series introduces support for the Rockchip Camera Interface (CIF),
+which is featured in many Rockchip SoCs in different variations.
+For example, the PX30 Video Input Processor (VIP) is able to receive
+video data via the Digital Video Port (DVP, a parallel data interface)
+and transfer it into system memory using a double-buffering mechanism
+called ping-pong mode.
+The RK3568 Video Capture (VICAP) unit, on the other hand, features a
+DVP and a MIPI CSI-2 receiver that can receive video data independently
+(both using the ping-pong scheme).
+The different variants may have additional features, such as scaling
+and/or cropping.
+Finally, the RK3588 VICAP unit constitutes an essential piece of the
+camera interface with one DVP, six MIPI CSI-2 receivers, scale/crop
+units, and a data path multiplexer (to scaler units, to ISP, ...).
+
+The v14 of the series adds a media controller centric V4L2 device driver
+for the Rockchip CIF with
+ - support for the PX30 VIP (not tested, though, due to the lack of HW)
+ - support for the RK3568 VICAP, including
+    - capturing frames from the DVP
+    - capturing frames from the MIPI CSI-2 receiver
+ - abstraction for the ping-pong scheme to allow for future extensions
+ - abstraction for the INTERFACE and CROP parts to allow for future
+   extensions
+ - initial support for different virtual channels (not tested, though,
+   due to the lack of HW)
+and a V4L2 subdevice driver for the Rockchip MIPI CSI-2 Receiver.
+
+The RK3568 DVP has been tested by Gerald on a WolfVision PF5 hardware,
+the RK3568 MIPI CSI-2 have been tested by me on a Radxa ROCK 3A + Radxa
+Camera 8M.
+
+The driver can be readily extended to provide support for the RK3588
+VICAP variant. In order to keep things simple, however, this extension
+shall be submitted separately.
+
+Looking forward to your comments!
+
+To: Mehdi Djait <mehdi.djait@linux.intel.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Théo Lebrun <theo.lebrun@bootlin.com>
+To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: Gerald Loacker <gerald.loacker@wolfvision.net>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+To: Kever Yang <kever.yang@rock-chips.com>
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Collabora Kernel Team <kernel@collabora.com>
+To: Paul Kocialkowski <paulk@sys-base.io>
+To: Alexander Shiyan <eagle.alexander923@gmail.com>
+To: Val Packett <val@packett.cool>
+To: Rob Herring <robh@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
+Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
+
+Changes in v14:
+- rkcsi: fixed invalid format handling in _set_fmt() (v4l2-compliance)
+- rkcif-interface: fixed crop, reset crop at source when sink format
+  is changed (v4l2-compliance)
+- rebased onto media-committers/next
+- Link to v13: https://lore.kernel.org/r/20240220-rk3568-vicap-v13-0-da164b4918fe@collabora.com
+
+Changes in v13:
+- fixed interrupt names in CSI-2 reciever bindings example (Rob's bot)
+- revised Radxa Camera 8M device tree overlay
+- Link to v12: https://lore.kernel.org/r/20240220-rk3568-vicap-v12-0-c6dbece6bb98@collabora.com
+
+Changes in v12:
+- added Radxa Camera 8M device tree overlay
+- rebased onto v6.18-rc1
+- fixed IOMMU pagefaults caused by wrong VLW (Mehdi)
+- fixed indentation of register defines in -regs.h (Sakari)
+- renamed CSI-2 receiver interrupts (Rob)
+- added MEDIA_BUS_TYPE_* as comments in DT bindings (Bryan)
+- added newline in rkcif-dev.c (Bryan)
+- Link to v11: https://lore.kernel.org/r/20240220-rk3568-vicap-v11-0-af0eada54e5d@collabora.com
+
+Changes in v11:
+- rkcif: split large driver patch (6/13 of v10) into smaller
+  patches (6-11/17 of v11) (Bryan)
+- rkcsi: replaced devm_reset_control_array_get_exclusive with 
+  devm_reset_control_get_exclusive (Philipp)
+- Link to v10: https://lore.kernel.org/r/20240220-rk3568-vicap-v10-0-62d8a7b209b4@collabora.com
+
+Changes in v10:
+- rkcsi: fixed error handling in rkcsi_start (Bryan)
+- rkcsi: fixed interrupt references in device tree and bindings
+  (Rob's bot)
+- added missing call to rkcif_mipi_stop_streaming from rkcif_mipi_isr
+  (Mehdi)
+- renamed remaining instances "cif_" -> "rkcif_" in functions
+- Link to v9: https://lore.kernel.org/r/20240220-rk3568-vicap-v9-0-ace1e5cc4a82@collabora.com
+
+Changes in v9:
+- added compatible for RK3588 MIPI CSI-2 receiver, thus dropped
+  Krzysztof's R-b
+- added interrupts to rkcsi DT binding and RK356x DT
+- added variant specific callback to rkcif-capture-mipi that puts
+  together the CTRL0 register content (which varies between RK3568
+  and RK3588)
+- fixed v4l2_fill_pixfmt_mp() return value handling (Mehdi)
+- Link to v8: https://lore.kernel.org/r/20240220-rk3568-vicap-v8-0-9d9cbc4b524d@collabora.com
+
+Changes in v8:
+- rebased onto v6.16-rc1
+- fixed RKCIF_MIPI_MAX value in rkcif-common.h
+- fixed rkcsi Kconfig (kernel test robot)
+- sorted rkcsi DT bindings document properly, completed example
+  (Krzysztof)
+- squashed the defconfig patches (Krzysztof), dropped Bryan's R-b
+- Link to v7: https://lore.kernel.org/r/20240220-rk3568-vicap-v7-0-7581fd96a33a@collabora.com
+
+Changes in v7:
+- moved MIPI CSI-2 receiver driver into separate directory (Laurent)
+- rkcsi: fixed return values (Bryan)
+- rkcsi: fixed v4l2_get_link_freq to use pad instead of control
+  handler (Sakari)
+- rkcsi: added data-lanes property (Mehdi)
+- rkcif: fixed formatting (Bryan)
+- fixed "int" -> "unsigned int" in all for loops (Sakari)
+- rkcif-stream: fixed minimum number of required buffers (Mehdi)
+- rkcif-stream: used guards for the spinlock (Markus and Mehdi)
+- rkcif-stream: made driver less noisy with dev_dbg (Mehdi)
+- rkcif-stream: fixed issues detected by v4l2-compliance (Mehdi)
+- rkcif-dvp-capture: fixed return value propagation in _register()
+  (Mehdi)
+- removed stray "phy-names" from required properties (Rob's bot)
+- Link to v6: https://lore.kernel.org/r/20240220-rk3568-vicap-v6-0-d2f5fbee1551@collabora.com
+
+Changes in v6:
+- rebased onto v6.15-rc1
+- renamed "MIPI CSI HOST" -> "MIPI CSI RECEIVER" (Laurent)
+- s/@wolfvision.net/@collabora.com where appropriate
+- renamed DVP delay property and moved it to the endpoint (Sakari)
+- implemented DT review comments (Krzysztof and Sakari)
+- implemented driver review comments (Sakari)
+- fixed issues raised by media-ci (yet again)
+- added documentation including a RK3568 topology (new patch 1)
+  (Sakari)
+- added patch that enables rkcif in the defconfig (new patch 9)
+- Link to v5: https://lore.kernel.org/r/20250306-v6-8-topic-rk3568-vicap-v5-0-f02152534f3c@wolfvision.net
+
+Changes in v5:
+- fixed issues raised by media-ci
+- fixed dt bindings (comments by Rob and Sakari)
+- fixed probe on systems with no DVP in DT (comment by Alexander)
+- fixed error path in register offset calculation
+- split off MIPI CSI host driver into separate module (comment
+  by Mehdi)
+- added MODULE_DEVICE_TABLE() for both drivers (comment by Mehdi)
+- Link to v4: https://lore.kernel.org/r/20250219-v6-8-topic-rk3568-vicap-v4-0-e906600ae3b0@wolfvision.net
+
+Changes in v4:
+- added support for the MIPI CSI-2 receiver (new patches 4, 6, 7, 10)
+- fixed asserts on stream stop
+- fixed register address lookup
+- fixed link validiation callback
+- fixed issues raised by Rob's bot, kernel test robot, and media-ci
+- Link to v3: https://lore.kernel.org/r/20250206-v6-8-topic-rk3568-vicap-v3-0-69d1f19e5c40@wolfvision.net
+
+Changes in v3:
+- renamed the driver "cif" -> "rkcif"
+- rebased onto v6.14-rc1
+- abstracted the generic INTERFACE+CROP part
+- addressed comments by Rob and Sakari
+- added V4L2 MPLANE formats to DVP
+- added patch that enables the RK3568 VICAP DVP on PF5 IO Expander
+- fixed formatting issues raised by media-ci bot
+- Link to v2: https://lore.kernel.org/r/20241217-v6-8-topic-rk3568-vicap-v2-0-b1d488fcc0d3@wolfvision.net
+
+Changes in v2:
+- merged with Mehdi's v13
+- refactored the complete driver towards a media controller centric driver
+- abstracted the generic ping-pong stream (can be used for DVP as well as for CSI-2)
+- switched to MPLANE API
+- added support for notifications
+- Link to v1: https://lore.kernel.org/r/20240220-v6-8-topic-rk3568-vicap-v1-0-2680a1fa640b@wolfvision.net
+
+---
+Mehdi Djait (2):
+      media: dt-bindings: add rockchip px30 vip
+      arm64: dts: rockchip: add the vip node to px30
+
+Michael Riesch (16):
+      Documentation: admin-guide: media: add rockchip camera interface
+      media: dt-bindings: video-interfaces: add defines for sampling modes
+      media: dt-bindings: add rockchip rk3568 vicap
+      media: dt-bindings: add rockchip rk3568 mipi csi-2 receiver
+      media: rockchip: add driver for the rockchip mipi csi-2 receiver
+      media: rockchip: add driver for the rockchip camera interface
+      media: rockchip: rkcif: add abstraction for interface and crop blocks
+      media: rockchip: rkcif: add abstraction for dma blocks
+      media: rockchip: rkcif: add support for px30 vip dvp capture
+      media: rockchip: rkcif: add support for rk3568 vicap dvp capture
+      media: rockchip: rkcif: add support for rk3568 vicap mipi capture
+      arm64: defconfig: enable rockchip camera interface and mipi csi-2 receiver
+      arm64: dts: rockchip: add vicap node to rk356x
+      arm64: dts: rockchip: add mipi csi-2 receiver node to rk356x
+      arm64: dts: rockchip: enable vicap dvp on wolfvision pf5 io expander
+      arm64: dts: rockchip: add radxa camera 8m on rock 3a csi port
+
+ .../admin-guide/media/rkcif-rk3568-vicap.dot       |  21 +
+ Documentation/admin-guide/media/rkcif.rst          |  83 ++
+ Documentation/admin-guide/media/v4l-drivers.rst    |   1 +
+ .../bindings/media/rockchip,px30-vip.yaml          | 124 +++
+ .../bindings/media/rockchip,rk3568-mipi-csi.yaml   | 146 ++++
+ .../bindings/media/rockchip,rk3568-vicap.yaml      | 172 ++++
+ MAINTAINERS                                        |  17 +
+ arch/arm64/boot/dts/rockchip/Makefile              |   5 +
+ arch/arm64/boot/dts/rockchip/px30.dtsi             |  12 +
+ .../dts/rockchip/rk3568-rock-3a-radxa-cam8m.dtso   | 103 +++
+ .../rk3568-wolfvision-pf5-io-expander.dtso         |  20 +
+ arch/arm64/boot/dts/rockchip/rk356x-base.dtsi      |  78 ++
+ arch/arm64/configs/defconfig                       |   2 +
+ drivers/media/platform/rockchip/Kconfig            |   2 +
+ drivers/media/platform/rockchip/Makefile           |   2 +
+ drivers/media/platform/rockchip/rkcif/Kconfig      |  18 +
+ drivers/media/platform/rockchip/rkcif/Makefile     |   8 +
+ .../platform/rockchip/rkcif/rkcif-capture-dvp.c    | 865 +++++++++++++++++++++
+ .../platform/rockchip/rkcif/rkcif-capture-dvp.h    |  25 +
+ .../platform/rockchip/rkcif/rkcif-capture-mipi.c   | 777 ++++++++++++++++++
+ .../platform/rockchip/rkcif/rkcif-capture-mipi.h   |  23 +
+ .../media/platform/rockchip/rkcif/rkcif-common.h   | 250 ++++++
+ drivers/media/platform/rockchip/rkcif/rkcif-dev.c  | 303 ++++++++
+ .../platform/rockchip/rkcif/rkcif-interface.c      | 442 +++++++++++
+ .../platform/rockchip/rkcif/rkcif-interface.h      |  31 +
+ drivers/media/platform/rockchip/rkcif/rkcif-regs.h | 153 ++++
+ .../media/platform/rockchip/rkcif/rkcif-stream.c   | 638 +++++++++++++++
+ .../media/platform/rockchip/rkcif/rkcif-stream.h   |  32 +
+ drivers/media/platform/rockchip/rkcsi/Kconfig      |  16 +
+ drivers/media/platform/rockchip/rkcsi/Makefile     |   3 +
+ drivers/media/platform/rockchip/rkcsi/rkcsi.c      | 742 ++++++++++++++++++
+ include/dt-bindings/media/video-interfaces.h       |   4 +
+ 32 files changed, 5118 insertions(+)
+---
+base-commit: ea299a2164262ff787c9d33f46049acccd120672
+change-id: 20240220-rk3568-vicap-b9b3f9925f44
+
+Best regards,
+-- 
+Michael Riesch <michael.riesch@collabora.com>
+
+
 
