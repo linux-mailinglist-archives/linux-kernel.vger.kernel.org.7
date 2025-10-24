@@ -1,146 +1,176 @@
-Return-Path: <linux-kernel+bounces-869425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D87C07DA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:12:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 776D2C07DB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E5719A7DB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:12:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B07C1400E66
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE89357A3A;
-	Fri, 24 Oct 2025 19:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58ADE357A43;
+	Fri, 24 Oct 2025 19:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="djkYqlQ2"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GyvaR0KI"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A89335773C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A34E2FDC5A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761333134; cv=none; b=mRlPcuSaoHXj7XARyl0CwH2L7iaE2TRoTlgPL/I7CJQexIUBDiGmFjJpoGcWvtXsQtAFzH36DjfIzykSgrucxUqWoEoj26eYzYcM1IDSGUJEc5wg5R9+eRwA1r10vCkFWEqMe/Z7RCbW+jSe3bUKp7eGTuK0brGzK+IJfrIARIo=
+	t=1761333282; cv=none; b=maJe0aoQJMI0G3Yah+TFqSG+LRFcf8cWdckGBev9ajID0/jG2KVN6GVL/vJf2AtvFblOmMYlJil5n/dx9sbpUJJVo0qvqzxh64ZwofZ3TNBjyQJ/xs3j0NZKcEMYtDKqrsfizbxgc7iqcvUW8+2OCY9iqpL6kI9YsJTEsDAMsT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761333134; c=relaxed/simple;
-	bh=1HPzzMYQqxXuYn0hH8eWdbKEvenGvJhB7Md6BvkK5BU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HSxFnF8hiTUWdhjEtHswDQepfmLyboyLr7TfQvktHdTU/Nyw9wq2Lp6m4EEQpB+E6eOzHR8kaR5wbighVhwMTJOX5QoanMlIRRDUk00O8hy5o937ENuvg9s7nhx2m2deq9pah4Vn71rEND/JZ7tTeddHB+wfYukyfjahE/ksYL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=djkYqlQ2; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-8901a7d171bso237676285a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:12:12 -0700 (PDT)
+	s=arc-20240116; t=1761333282; c=relaxed/simple;
+	bh=r01d6ZHjzcSVwVCjU7ETbJdfwKw99RUgoFktr0GxX9U=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ckVu8rzZ7tiVVFkwXEOi5aaTtDYf//dcpl+nt2tTQ2unhUVys/zveX/54Hkk6e2qyyMSzt3ohP4T2s9Shn+PSes9qil2a1zGOCFuQMj7+sDFWNcjTo6JVr/Efj5i16D+0m96I44lyLa3XShQrul8aDNpS5h2YjAUW7tt2FQHJXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GyvaR0KI; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33d75897745so4942204a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:14:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1761333132; x=1761937932; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BCR40IXSwb8+XBgjln+OQr+nWcDb8wZGch2v8uE7uTg=;
-        b=djkYqlQ2uBE1MVPYP1auCvtzMJ0Wu2EtdfpvkXLGD90SupS9f9s9/4rdKlaMhfEJox
-         DX/90A+NeF8nW1jkcJ3QJFRXNWojxQIuy6d97DSYvgLqJLVlDYpn0GN6Fo0WgvyM4pH8
-         Do0eRekndgYnh3AbtIMo0dTPH5EaHXWzEFzHMt3jiqHF5oFC2dS27VmhFEggEA5KM5xM
-         B5BT2gQH81z4fIfWm8uW8m/1Id4k3mjfbTaD9gvQUr+TESeom1DF+ui2wUjr/CgaY4+P
-         T16BZt1efnbfpsmkhUb4PW6+F3Fh55DVIgQNJJeehyKgzH6KB2UkkUuOSU0AjqDlm1V6
-         ebqw==
+        d=google.com; s=20230601; t=1761333280; x=1761938080; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YJ7VKxqgcYGkrDkh0ZdG/Ic/hnfsPssf2nnP96CS4RQ=;
+        b=GyvaR0KIidZvNaIMlN57LT+Ror1WIyVEoleP+b39VCAPJd88Xmd1d2nDzg4xBRwiYG
+         7EApfCkjPnllQaHD3tsf5kMLOq7RjTapp+WM2IJ2QZijdh5HT+hoV4V98Cnl3D3UnayH
+         HZzDqpbdURr2OyJ5oIdBMnXrIS7OsgO+eIwSVMqDY4AMINs5H3/GPfbaZE053lRS4odk
+         JPhh/NBPCqeYKNZLON0A+WrOYVnK0CXEj0o9nq7G3yc38Isy7JWDV7RxHMBKMXRrKNv6
+         VUPe4u0Eyy6JIuZqcG/cdcTNXqmkaX6isbgfXtBgU/abwag1yDxuPR/wNO9/eDEprhhy
+         rdIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761333132; x=1761937932;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BCR40IXSwb8+XBgjln+OQr+nWcDb8wZGch2v8uE7uTg=;
-        b=LhGt+CXYU7J3V0lvF/cclH5HatxYE2Uh5eJ0Avy15LDZaJptSKPSa2cmDWCG0QdMQF
-         1LVwKX6B683wE519MBoWuZGjfdykuMXRROpNGTKxiXW3s6lTMvhmwLMSHKqhg8kA45ZL
-         AHkv2YkSdpvf1ZKMYU9mp3KVDrWLVjWzjbwvlbOL+Bvptc5LRqSQCBHBq7vNe4w3k0bs
-         n/DwsaIJXutGkJydgUYU3kN90Zza8DwOjgZ+mC9lpMyBjAaPeQTExwLzab1y0u+VqJrz
-         tzJCSoqjWJZmM517curc2+ATN6LTd9TGJSgEyrr9XJnXqt6apnlcqTBJ7RKR2N9obm1Z
-         QBLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEzH6CnfUHA9B1aielLRB6L/+szeDQrUZAO51viVnGUOnMD7cfPcF1sDiSii2S0eE9JShCeCwzs/pV1g4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr66xbPb0aok7BNrdCPvrI/ZnDJdyVlLWyBHvtQFQNcv31uku6
-	45JljunqTwiCpB2uoGRrcd8zON7lz9xR393NnILk3jefmtBYsrrNgxpdE5IAY1tENBY=
-X-Gm-Gg: ASbGncvcYrFB37tNrjYI5nWB3q75l91Y54GosGf4I1vzX5J7jeXPCR6zjaTetDFQ3bh
-	xSpZAgGQNXdmBXovws5em03cfQd4XZtJNS0DqUhtbKmCX1PXXYcXoNyW7OMU4366abrQ4p31Z2s
-	gLR6A80gLzsRSyhm+ki6/Njqnd4htdTLW/JbWQytC4rmgNoDfG491OnFr7zUWWl8oZYhCBHvoVX
-	6dO+suNCmLTlHBxN6CskZICwBW5FcNqKZVxCJzTikkeLGXmhDc5NfHeQQlpOR+U8nrzjxJv/CSj
-	pchg84gAuCGfjckiFNzPTHw/yfWWfOurED0WUkI9FOSxKwI/YNjWAgJRGM0cBURfFzJc31M26bm
-	qllaDawnUmXLOf9IU9ilto2Qob5Uc4OldH8rh2xl7DSXlI26J40I/js1bdvi2AQ+OxhiDOr0Icu
-	fT1353Ra9q1cintciuqYEzd9xd8jK/ZvzgHGDTl0Z/cAO46MgTU4a1qUDnO8E=
-X-Google-Smtp-Source: AGHT+IE/iLPq0l1+7yrz/BbyhVyC9k5N0OQCI/Q9HFSHISzKMdQEsDIOj6nKXRkCdZrjDczCxThRnw==
-X-Received: by 2002:a05:620a:178c:b0:892:eb85:53cd with SMTP id af79cd13be357-892eb855743mr2482012485a.42.1761333131934;
-        Fri, 24 Oct 2025 12:12:11 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eb805e0869sm40330861cf.1.2025.10.24.12.12.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 12:12:11 -0700 (PDT)
-Date: Fri, 24 Oct 2025 15:12:08 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Lance Yang <lance.yang@linux.dev>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-	Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-	Byungchul Park <byungchul@sk.com>,
-	Ying Huang <ying.huang@linux.alibaba.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH 05/12] fs/proc/task_mmu: refactor pagemap_pmd_range()
-Message-ID: <aPvPiI4BxTIzasq1@gourry-fedora-PF4VCD3F>
-References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
- <2ce1da8c64bf2f831938d711b047b2eba0fa9f32.1761288179.git.lorenzo.stoakes@oracle.com>
- <aPu4LWGdGSQR_xY0@gourry-fedora-PF4VCD3F>
- <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
+        d=1e100.net; s=20230601; t=1761333280; x=1761938080;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YJ7VKxqgcYGkrDkh0ZdG/Ic/hnfsPssf2nnP96CS4RQ=;
+        b=XkNUC8wt42So8SDvNgaWwcg0+6bg165NsaWv/JYE3CMSidJLVgvKxUsn/zxmE2/GyW
+         CZiKzDFMOEJLqw7445dqy4xlkPFw9KHfMeFEkZrLoQSMsxRqCbiivBe09AhZPu12bMY/
+         h/Ap0us2taP+hOpagiTjIF7LWrPaofauJ9CTdy1gaJS2E/qEKRSfCPNSFQ6Cg9Gr9Yp4
+         WSVkvJHzdTNLedNp8dGhqry3rQuZwFCuQBLFPfpgMFnLJGgriB8tXK/zpSXQBNeOOQco
+         jPElqBbHFtzlGaR5GfUdpNKkXhAcjLDS3pRzLBJueWhzMXswqSKO5ywYy69WhAT5WCt+
+         XP6w==
+X-Forwarded-Encrypted: i=1; AJvYcCU+GQw6IacUM29N5kj0+5n/f2NoD4/LVOHvXMzSUwZ1suS25c5gA3qco2CzHVV/hSamIpcL0aa7Try2Gus=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM5NMAVAmpD7f1DO6pIDCD7XAE091Q/dMe8OWiXSeLnTkSIuzJ
+	DA8m5lk9kAzaWByqr3chJw29pBuMUyjVaCK+pqxGXtGTLy6MxqMqd55kw7mgsB3mGsBaOvktpk6
+	E+zHQGw==
+X-Google-Smtp-Source: AGHT+IGQUcXhaUyYtcYPYco6iLoOhEvWu/QxGfnz2Mts5MYJwUkgpZCBax7BqxbvW/Sv+kRqMnztb80M51U=
+X-Received: from pjtf6.prod.google.com ([2002:a17:90a:c286:b0:33d:61e3:893])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3e43:b0:32e:7270:9499
+ with SMTP id 98e67ed59e1d1-33bcec297c9mr35662928a91.0.1761333280563; Fri, 24
+ Oct 2025 12:14:40 -0700 (PDT)
+Date: Fri, 24 Oct 2025 12:14:39 -0700
+In-Reply-To: <68fb1966.050a0220.346f24.0093.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
+Mime-Version: 1.0
+References: <68fa7a22.a70a0220.3bf6c6.008b.GAE@google.com> <68fb1966.050a0220.346f24.0093.GAE@google.com>
+Message-ID: <aPvQHxLIVpMykkG5@google.com>
+Subject: Re: [syzbot] [kvm?] KASAN: slab-use-after-free Write in kvm_gmem_release
+From: Sean Christopherson <seanjc@google.com>
+To: syzbot <syzbot+2479e53d0db9b32ae2aa@syzkaller.appspotmail.com>
+Cc: david@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pbonzini@redhat.com, syzkaller-bugs@googlegroups.com, tabba@google.com, 
+	xiaoyao.li@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Oct 24, 2025 at 07:19:11PM +0100, Lorenzo Stoakes wrote:
-> On Fri, Oct 24, 2025 at 01:32:29PM -0400, Gregory Price wrote:
+On Thu, Oct 23, 2025, syzbot wrote:
+> syzbot has bisected this issue to:
 > 
-> A next step will be to at least rename swp_entry_t to something else, because
-> every last remnant of this 'swap entries but not really' needs to be dealt
-> with...
->
+> commit d1e54dd08f163a9021433020d16a8f8f70ddc41c
+> Author: Fuad Tabba <tabba@google.com>
+> Date:   Tue Jul 29 22:54:40 2025 +0000
+> 
+>     KVM: x86: Enable KVM_GUEST_MEMFD for all 64-bit builds
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12a663cd980000
+> start commit:   43e9ad0c55a3 Merge tag 'scsi-fixes' of git://git.kernel.or..
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=11a663cd980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16a663cd980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=67b63a24f3c26fca
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2479e53d0db9b32ae2aa
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=173ecd2f980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14bc2be2580000
+> 
+> Reported-by: syzbot+2479e53d0db9b32ae2aa@syzkaller.appspotmail.com
+> Fixes: d1e54dd08f16 ("KVM: x86: Enable KVM_GUEST_MEMFD for all 64-bit builds")
 
-hah, was just complaining about this on the other patch.
+LOL, I was about to say that I suspected that this bug existed since guest_memfd
+was first added, but that syzbot only now found the issue due to us enabling
+KVM_GUEST_MEMFD broadly.  syzbot beat me to the punch.
 
-ptleaf_entry_t?
+#syz test
 
-:shrug:
-
-keep fighting the good fight
-~Gregory
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 427c0acee9d7..3741ea23e330 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -708,23 +708,11 @@ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
+        return r;
+ }
+ 
+-void kvm_gmem_unbind(struct kvm_memory_slot *slot)
++static void __kvm_gmem_unbind(struct kvm_memory_slot *slot, struct gmem_file *f)
+ {
+        unsigned long start = slot->gmem.pgoff;
+        unsigned long end = start + slot->npages;
+-       struct gmem_file *f;
+ 
+-       /*
+-        * Nothing to do if the underlying file was already closed (or is being
+-        * closed right now), kvm_gmem_release() invalidates all bindings.
+-        */
+-       CLASS(gmem_get_file, file)(slot);
+-       if (!file)
+-               return;
+-
+-       f = file->private_data;
+-
+-       filemap_invalidate_lock(file->f_mapping);
+        xa_store_range(&f->bindings, start, end - 1, NULL, GFP_KERNEL);
+ 
+        /*
+@@ -732,6 +720,35 @@ void kvm_gmem_unbind(struct kvm_memory_slot *slot)
+         * cannot see this memslot.
+         */
+        WRITE_ONCE(slot->gmem.file, NULL);
++}
++
++void kvm_gmem_unbind(struct kvm_memory_slot *slot)
++{
++       /*
++        * Nothing to do if the underlying file was _already_ closed, as
++        * kvm_gmem_release() invalidates and nullifies all bindings.
++        */
++       if (!slot->gmem.file)
++               return;
++
++       CLASS(gmem_get_file, file)(slot);
++
++       /*
++        * However, if the file is _being_ closed, then the bindings need to be
++        * removed as kvm_gmem_release() might not run until after the memslot
++        * is freed.  Note, modifying the bindings is safe even though the file
++        * is dying as kvm_gmem_release() nullifies slot->gmem.file under
++        * slots_lock, and only puts its reference to KVM after destroying all
++        * bindings.  I.e. reaching this point means kvm_gmem_release() can't
++        * concurrently destroy the bindings or free the gmem_file.
++        */
++       if (!file) {
++               __kvm_gmem_unbind(slot, slot->gmem.file->private_data);
++               return;
++       }
++
++       filemap_invalidate_lock(file->f_mapping);
++       __kvm_gmem_unbind(slot, file->private_data);
+        filemap_invalidate_unlock(file->f_mapping);
+ }
 
