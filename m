@@ -1,265 +1,137 @@
-Return-Path: <linux-kernel+bounces-869148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28741C071B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:55:11 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1318FC071A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD49A1C267B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:54:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B21AD3596BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FB832B99B;
-	Fri, 24 Oct 2025 15:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B72F31D38F;
+	Fri, 24 Oct 2025 15:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NE6w9z8Q"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010060.outbound.protection.outlook.com [52.101.201.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uQTRZnrQ"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC3B202C5C;
-	Fri, 24 Oct 2025 15:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761321261; cv=fail; b=edolTqWBXeV4+ddZdIMYnJZ+yL159chjZ6rf4JVXKxdwDOzuIVMTq4hWduUAefbtkUMob3ua/kCNKBU2ZYIK8MyHChQ4rsPXtzMr4W6kWRcJyCWNCXjAt2hXEuwohXGIcXJAGOS0JcGK0PvR9vfJncMKoBzgtQ5Prve/yebc6P8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761321261; c=relaxed/simple;
-	bh=p6F9ZoxvXYmPFe5e9visH2r4lmRazRqxDQlL8AIB0YE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qhBUseLM4mNUo88JWUP5y7oi6ny5Sd21/CFkYoYEruDhy4rZF08K93ATOyMx4BX5ObH/noUI786CEP2O3vkHLxFSH9XEJrdRPnx/3Wo7MIUwlZiv/tbtU3Ab14HKtt7ovpPn53np1uakRpZ2B6TJwpwEraO7YXMzCPukYIiH3Pc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NE6w9z8Q; arc=fail smtp.client-ip=52.101.201.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WIMDNPN//0APKZfmgqaqMjHVB54EBqnWholWFsvFHzFjD6zBivFpVJODbiHsr0mMMM7r2mWV/DDWO0aFkAWnWikRR2r7LFKnSKy8VHx2Co0pTlfI+07zix8BQdoQJYtdWHvLOxvNzCJM2omIeLMaQXaqQ3my16ARxb4odlOAIfnvAdHKGSisDuOmcSYKjJcVvUJ+ckNUkpgUCmwiHGi+doglyrkAP6F6FaSFK/guhbiUJo622d2zrTasnErf4VS2fkfVG1AH2XX4K9pXoutQd9kuw8bJE8K3kIbef/XNrxL8wyYvorB9Jg9jdyzUuuyHm42+0yOsFsjrfvSIFu2sBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MG8NdhVduVTqEuGupedkprRX9bGPvUu1hpT4KNQ11M4=;
- b=h3Z0rfSZjdiUHoLJPy4/P4YCuCrR8VgO6eOvsLu96HS2y/UPUfQcXdHSop5DuBUcYM6Bev7hXvEqM5nNOFxy2xnhbt4x0N+/5+gATV8TbmcCKwZezD/zTERuzyjPx7C/ME/Cc5kjmllPFqq/S1I15qiECf1LTiGXezCJR/Np67RQGgtJ2qKkFg9Hr0WT9JnkRn3ptxg7XOfX2jSiWddkEyUBePAWKNilZ5L2fdlBLaLYVLr9zfPNZeeSopB54zNJHuisimYmJb6+J0tN2sOTeFl13P2dwjoSklDiW00M62dRGfifI5UiuSp4rGyrtbJH5F2ASolGlUOfqnxlcYsxHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MG8NdhVduVTqEuGupedkprRX9bGPvUu1hpT4KNQ11M4=;
- b=NE6w9z8QcEk8IeAMCGF3le3yd3oZ7E/9ER6BrLAm/ZJwdWWcehdRVnEaCnp38LEEcW++bdaJkaZxqbHckA9kBNUhEzJ1vFRtjOMVct25iDlGXIFmAeoVetMPw65zZEVU/a86ln6D6RAGS9RDVh4Jbc3Wmet4xsD3QNTbfsxvdxU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by MW6PR12MB8707.namprd12.prod.outlook.com (2603:10b6:303:241::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 15:54:16 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 15:54:14 +0000
-Message-ID: <61da9864-b7c8-43f1-b437-36756077b545@amd.com>
-Date: Fri, 24 Oct 2025 10:54:12 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] drm/amdgpu: only send the SMU RLC notification on
- S3
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- Alex Deucher <alexander.deucher@amd.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Perry Yuan <perry.yuan@amd.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20251024152152.3981721-1-lkml@antheas.dev>
- <20251024152152.3981721-4-lkml@antheas.dev>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20251024152152.3981721-4-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7P222CA0016.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:124::16) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0F0315D31
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761321281; cv=none; b=Rx8D4hciGLWhUAroQN/lbBPG+4ilrgM+RfvGP/sfMPwTWN2GwplZbygaDKamIU/pSNIm11iYHBoA7bDZ+jKy8QQjTrv1j+kaeEEVeyY2BXGeRHxto/bM13C8Mr5GKsr23Cpw83PvPGnB3t/78WmREvBHLDcqBor/0/OfqH7bu4w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761321281; c=relaxed/simple;
+	bh=9W0jOqh0WFB83c/hgolD1lDfJvFPAIhOpkeDEgaA6gY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WP2se9+BRI3QducbaHFi2o8DVx0paOZPMW3/KsXOQQpEndi+cYwKuHLWJZ84oBTzMcqYdoNhmrRFJFwUtDQuWrOMxzf/7hpxdVYsncp01M57JPyVY4I6ZctgE2Hr0mfifMztgsiujxET+38L74p9E4ZCCfLS6/zUkEPaQAtoE2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uQTRZnrQ; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so2296932b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:54:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761321280; x=1761926080; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SNrPSnUwQSgek1TWOY7IJ65SZA0nkgGonkU8txu9DEo=;
+        b=uQTRZnrQVi97SUFOjaA7DAbbz0wZ42XI2Vojd3qRAGTY5E9SD2f7aNFB2NuX5LFIrg
+         qK+Vy4FNrn5pqfKAI1LiP5eGY80JV4n0I6gyljU+J61xhSlGcUDj3xsiIGjYn4Uy9/zJ
+         9/J9fleYvSVPydHezRuCrpHJprsLG2Zq8Fx6PbFtVFUohx2wKk4vTK3NfDN9YwGcH9Jx
+         zfvroltqfzMhASP0N46BS8267doMyjyPxQ09om6QGXC3mY2NmmJhTE4LPSLwp3ppzz+C
+         ci9fpBRz8RC7/DNqrDjV2SBFbXhbPoqqVSM4N67cXkfKdy7rj07maamEpnnzGMtLHVcW
+         /lfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761321280; x=1761926080;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SNrPSnUwQSgek1TWOY7IJ65SZA0nkgGonkU8txu9DEo=;
+        b=hGmLUurSEpPUOprg0erFGojxi58L5kM+l6kb6nYoY7UG59zpvQIrfBHycggfLAteDo
+         zeFhSTRG9Lo+8qG4w0Jn7MrZkd050+S4FpDvMzXCZ18s/vCdJueRXlBHg76SEH2P9497
+         uqVYQAmW2Z7U4JoK5uipkP2CJXToLwgiv+BX1nZuLGO6ME46/xrW8ktlrkTC/NExOy44
+         V50KIRcTmWYjys7D/T/6wgiZjfAumkMGk2AOpqEoR3hzw7Q772gD2ZtiX6lfiRIZwGVf
+         41YuxkWbtiJKSpaRkzHYl4C/rRe8Byr313ct+ocvkz7y3cOhMV7zx6m6ppyaDpm3Ee12
+         gdeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWszbR2giH6wKSTVrySp3EpJ8KXlVn3eefWPHZqtkkDQZyiMs5C0Z3Iif+8c/RbakwC1MpkND8FY/etFnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD0FdpvsW5ccdPsZxX3xnNo80UiQNi94OzSwCPBSqB6BjLBPNu
+	vj27e+vb1Mrcw+TczQcc74yDxzHaviv4HjdEDVzqwqQ6GGv1ElUB8i00r403qV6xSg==
+X-Gm-Gg: ASbGncvhszkTnF5LJ5d98+McP3MB+xmS3Z21jA03Q3/QO3Ezs8dnaIU6b+Q8iT8XFHd
+	TpO5clYmO7qTiAJPvWPh0J9m68aBHxO6Ag1N6/9Hyr+1+SO+hXfFqC7mAackKDGNH5xcvI6n2bk
+	Vo+qIOP7G0aX8azMJtO3uNDCIfc5w4v7ySypouYBZSh1DbODs9os9kZ0QRroirCc4cfG2gdUvW7
+	DtoAFxpM0o+tec5zhpVNKiWI2yef07Ir7dT3RpycRsh/8cSH7Qj5pkn+lb+UU1Rk/Dc1kW6d24A
+	mp3zVR/VDNHIZOYBsAEeFi4fRhXEYfo+N9DJm9WjK4Hk8V0JL5rTEyvjcBujU9+2wtBk0UN+bDx
+	8b0vLYyI+OB6F4uJoW43a9LKfDgT6oCX3EpZIYxOsmaXD5XITJzXs6I823l6WbZWvnXeCVpG9iK
+	0waCdsJ89IOqf9enHetDd5nXl4sT1OuRNjvp9V/3TIWQDUadpT
+X-Google-Smtp-Source: AGHT+IFKK/nc8huqNArnVsQcPMFPGO2/41KstRTfEUMyU+vcdTuI3QzEMa2HNBjhFdRtL+9SlQ1fRQ==
+X-Received: by 2002:a05:6a00:13aa:b0:772:6856:e663 with SMTP id d2e1a72fcca58-7a284dbb2c9mr3491514b3a.8.1761321279403;
+        Fri, 24 Oct 2025 08:54:39 -0700 (PDT)
+Received: from google.com (80.88.82.34.bc.googleusercontent.com. [34.82.88.80])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274a9e8fasm6403828b3a.29.2025.10.24.08.54.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 08:54:39 -0700 (PDT)
+Date: Fri, 24 Oct 2025 15:54:35 +0000
+From: William McVicker <willmcvicker@google.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Youngmin Nam <youngmin.nam@samsung.com>,
+	Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	John Stultz <jstultz@google.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v5 4/7] clocksource/drivers/exynos_mct: Use percpu
+ interrupts only on ARM64
+Message-ID: <aPuhO5wn8O85krV3@google.com>
+References: <20251023205257.2029526-1-willmcvicker@google.com>
+ <CGME20251023205313eucas1p2164ef0c1db80bccd2bbd6a79e809a1cb@eucas1p2.samsung.com>
+ <20251023205257.2029526-5-willmcvicker@google.com>
+ <c09387b9-3fcc-4d0e-8e29-21dee196014a@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MW6PR12MB8707:EE_
-X-MS-Office365-Filtering-Correlation-Id: e87bb652-a966-485d-8675-08de131594f9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?STJwTUpSb3BPaUNuTXhlL2tlWHRhSVdHK1NxZHpVdkNDcmcxaGdJSG9SMnZY?=
- =?utf-8?B?NVNRZ09Xa3crQWY5ODVBMTRqOW1tWHd3RHA2MzM3K3YzaS81anRmcm0zVmlW?=
- =?utf-8?B?cXB2UStYNXAvQ0d4Uk81NkdZNTRJUERtY2pqSWJWdmRlQm1CMEVrakpzY2RV?=
- =?utf-8?B?Q3BtRlVSZnhKYjd6SVZtelJZN1MwSEVQVFNJVFRTSUdXeElkZnZUZVhVTVgr?=
- =?utf-8?B?cVpBdXBtOTM2T3BLT3hxYmNlTXpWekl6UzBIaHFpOTN6VnZCYlpkYlBaS3J2?=
- =?utf-8?B?aGNVdnpyQU1pYXJjNWpTcnRGclRFaGR4NlNlV0I2MVZhQVNtWlAyelNNcWVF?=
- =?utf-8?B?NE44ZGJYMnNpU0ZOdTdpWjNXQ0xuU0JKUUpvaXZackRXYW1qTklWeE1PeGlW?=
- =?utf-8?B?UUFhdHJSTGRmL0ZOZjI1Mm1kV0F4Wk4xTXlMdTlZbUNaVUdxQjN4MUJ3NzZC?=
- =?utf-8?B?VERRc3g0eDVOcVNMaGhLMS9NMUVoNjlpbUV1aTBRWFRudG9US05DaTNsRWRu?=
- =?utf-8?B?M3kvQzJHTWdGRXQ5QXZjTlJKSnVoTW9pY2pCdW9RcFdHZVJSNHl1cTY0Nkk3?=
- =?utf-8?B?bTBhdWhzZ2xFNXR3VFNaeXZtMnZSVU40cVpKelhCUHRRY0tPMnIxYWlSMG1B?=
- =?utf-8?B?czM5c1VIQUVjRllBVngwVTA4STVwN21MR0VwZjlGc3VHUkhyZkN6c3c0WEpT?=
- =?utf-8?B?SXd0clg3RVk5cE4xdXFDRHJrK1N1V3ZBd2VRdFB1WFVkN0sraldEdDJ3dG5s?=
- =?utf-8?B?cnRmTFZyWXBObkNJL05MVERBM2pmTFdIUnptbFFzZVpEL09xLzA3U2ZRMVhB?=
- =?utf-8?B?aEJRc3JlRWsvQ1EvUCtZNTBaTFhWS25zcGprbXRsS1lNRzJXVkpLS2dHOXVv?=
- =?utf-8?B?SFRERDlBS0dJZEZDK2lpSnpFU1phUTlSRlJTTjI3TDZ2UnQ0d0M5cExzWWh3?=
- =?utf-8?B?ZTRHeE5jV2Foa1lMMWNiTld5UFFwZHVhSmNmOWhVN1Vwd0t2Vk5UVlY2bWdR?=
- =?utf-8?B?eWRxK0IwcUh6eGdCU09xS1JtV0VxdkRTSFpCSnBDaHJxenlZbUZ4dEdwOTEw?=
- =?utf-8?B?cmVpb1Y0SGNMcXB0azlhQ3FPUTd5WjFEUFlBdmJOdHFJSUhBYUhkV0MxU3d4?=
- =?utf-8?B?MVhJUjJTcGhoS3RMbEhoWlBvUEhJWVVtSDYxMmI4Qmp3R25jcFc1Sk5ET2J3?=
- =?utf-8?B?R21iQVAwOXpqNkVsN3JWNGtBakhxN1JoZzlPclBhM0gvZURIRXJzL2tRd3A4?=
- =?utf-8?B?Ty9UbE1JWVAzZEY3azFzQjE3WXFpdjdZRWt0cjdwV24vWHh5cjJQWXM2YWRn?=
- =?utf-8?B?cVNwUU5OWHp6Tkx5RzdsNmZnNE4xcUw4bWpZZ2hMb3VNRHkxOVVNRDIrdkgr?=
- =?utf-8?B?WGMvYjFBMlhTRDIzRlVmYWNDclE0Sm9JNXNaK2F2cC9mOUVBZzlSY08vNWlT?=
- =?utf-8?B?UFRsYkttK2pIZlo2VFVWYmVDdzFBRDZCUmZJNGxMemR4Mnc5ZWhlOWt2RUxx?=
- =?utf-8?B?MDZKR2FkbVVsTW5uWG41Z1JHd2t4cW9xdllJamtkbTVaMldiTHZwRzByK1N0?=
- =?utf-8?B?ay82QmZWVGFEWlBnd1E2M055dUJHaGczUkVuUGdTUmZTSmhOU0NWeSs5eEVj?=
- =?utf-8?B?N2habmZoajYveERYUnFBWm5nTmpwNDV0ckZpUU1QbWgrYzJLamNkMktzUm5D?=
- =?utf-8?B?aGUwZFdvOEpoOHlMZENFQmVoRlZqQ1dlV2lkeVhheW9FWEdhdWFRM2FrRVZl?=
- =?utf-8?B?ZEVENmhzZmd1RHFYLzllaXdXUzdFVGtYYjczMzdLQWhhS3YyUjFBeEpOZkI1?=
- =?utf-8?B?MlZwQnZNbkxjTjdTUmJOS2lkMUxtUE5zOUZGWFVmckJSNENuRVJnUlp1bGx6?=
- =?utf-8?B?WlJxTG5wK2dQWURzSE84R0pVRUcvNng4YTVIdjltVzd6L3c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VGJmekZEMEJiUlcvV05TUjNybzBuakZWWXpSek5QN25laHk0eHFUTE5lYUxI?=
- =?utf-8?B?QXJmVTVNcHlwLzZkRGcveVZybk9nSWpXWWlRRW5XYmVqdTdpcE1rcG8vTGFX?=
- =?utf-8?B?MkdpdGk1TGNmUC9JU1ArRGU3MVMvWHBkemxHMktpRHpCZ3kwU0dxUkxoRmlY?=
- =?utf-8?B?UTBGallSb2JadlJyeE93eVVCcmtYdHdoL3ZSVlVXblp1bnFJdTU2dHlGNWNK?=
- =?utf-8?B?aDBMRitxNFliR3U0OXdjMlNFaE1PaUlvdGRncFhGNURrWUJZNkVIbmJnSEJk?=
- =?utf-8?B?cTJzUXBiQ3YwYTlPdE9UMm1lbHB1eFVPV0IyMnlVMDU2eHhwVWJrRVhkVEVU?=
- =?utf-8?B?c0hpSmVkSENFUllKSjdLYVlMYlVkdWJmMmtKSERiRnh4L25LallQenJnS0pw?=
- =?utf-8?B?d3d6dXVJbFVTc1RSZEdoS2RabGYvaHJBODk4V3dUMW1CL1FsSUhVQkNaamxx?=
- =?utf-8?B?L29yWHZ3aUJRUHlzV3VQdENmREFqLzFPM0x2YkMxNXM2WlFXenN1bEVDamh6?=
- =?utf-8?B?R0NHZC95bENaYmI4UHluRTE4cmRKNkRGMmZiM09LNXk4SGNMdlhOZkJJaTZh?=
- =?utf-8?B?L2JJRDhoVmR5NDNwbXI2YXBLN09mZUFZdFVhZkEvNTN1NnMzTnVuRksydVQz?=
- =?utf-8?B?YlcybGJybGtPS29IOFZVN1V3L2ZtSTk3amlMYXhtcGdaVE9MWElRc2FEaXFP?=
- =?utf-8?B?M0FaNnIyajZYcGtDSDN1UmVDeTRuUjNMelU2ZU1HQ3dXNnRtbklETEx6bWg4?=
- =?utf-8?B?Z0tKVkQ5SEZmREJpdWg0NnEyb3ZSN1FvdzVORklqd08rNzB3OFFGRjdFOWhm?=
- =?utf-8?B?djFNdEJMcm04V1ZhNkpwa2x6UUxzTGoyamQwbVRoTHJHU0ZtVXRkRGY0VkJj?=
- =?utf-8?B?OGFCcTh5SDlwcStLaVRibU1aZ29Ockh4WFRuWjFxdDdtQkxqcXhqVTI5S0ZG?=
- =?utf-8?B?TTFQTWp5YXppMFE1RlNsTldFMG5hNHJqdVVuNC92Tkt2UCtFdkpsWlhnME1L?=
- =?utf-8?B?b3FlU0ZZZTNmYkNCeE5uOWRFaURwQmcrbmlFbXlVdVJQVGFKMytBSDF4STkr?=
- =?utf-8?B?RE9UMjJ1NXVtb2Mvc1hZc2NWbEtUTW8xTTFPdWFxL2dwZk9vaGhRVGJoYjJX?=
- =?utf-8?B?OVAxUHYzVEhyNnc2dzVHeXc2M2EvNXlIWVFneHpsK0V1TjEyLzkrbU45SUYv?=
- =?utf-8?B?Q0QvSm5tOGY1VVdZSDJ5VmhPTllRYzZLVGUxMjhpS1JGaXkyM1dqWXppcDhZ?=
- =?utf-8?B?TldYOVFGb0YzTDhiUWY2VGh6QWN1TkZYWlpDYllLODRSOHlGZWQxeFZab0N2?=
- =?utf-8?B?RFVyRlRMenRaQUZkbkJ1elBDUWluNkxOMVRGaEpLN09XWHBHTlMzOWFRa2s5?=
- =?utf-8?B?bFh4RGl2RWROSElsVWlyNnZBdy9DNjRsaEJlTzV6VE4yVWNOMkkzWVBLNnEy?=
- =?utf-8?B?MnExcWpuSmF3S09SY3dOb1FqSE1pUFd0MThBWE9mS2VjMU5UcW96TkZhNk5Z?=
- =?utf-8?B?YTlBOTkwc0hpUmlUWEg5VDI0ZmxkQ3FBWnNRSGgyMnRUSE5UMisxQ1lnOU03?=
- =?utf-8?B?MVZ3UjB5MnNqejZEViswallna2hxVE9ETXhZU0RyL1dkY3NhckJpTGdtTnBs?=
- =?utf-8?B?ZUxudVQ1K0RaYlZERTB0SUtQN2lOVkd0MFFBaEZCeTBCTWEwQnd6RWF1TEdz?=
- =?utf-8?B?bWFCVzJtdlZ4STEyTGVqenVkeEhpeWtMRXB4UjJIemJlVFNpUDNra3EveUxZ?=
- =?utf-8?B?bklrcWpvRk9JZ3RqNlEwMHhSZnlLYW9aSU4zWkRJZzZHSTBlZzlsRFpIVW81?=
- =?utf-8?B?d1NCQUV3Nkt4ZGVIR0tOL2VKbjRXd0I2MVZDdUdxanVhaE45aWFMQWN2eW5C?=
- =?utf-8?B?NEpYaHl0cHRKYUk0dWg0Qkt6b1h6QmFldTJJSUxJQnVET2M0UE9DMFA2TWE5?=
- =?utf-8?B?ak93SHFGOXBRL041THExUnZscWZHZmNOc2l2VTJwTTRaQjIyVUhJa0ZCRXVl?=
- =?utf-8?B?dlVDUE5PR1dVdERacnBDOEJCekFRVzFKQnhFQm9XOFRjMEF1VkwzdFNIQVdG?=
- =?utf-8?B?RGc2SWt1b1NadGJIb1p4R2ZJVUd1ZThSUTVKcUxoVEVnYnJ3L1lpR2Z3SWRt?=
- =?utf-8?Q?mvBcgdrWFqikpoFX7QtiMxHvi?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e87bb652-a966-485d-8675-08de131594f9
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 15:54:14.8966
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GLKg1AU/+2dOaeT70Sy8lsYd+Qzz0SJh+Ypy44EuD7q/zTb3UpvdFfxB4qmsiQ2VxhLgo18UXkcaUwP9gBLWJw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8707
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c09387b9-3fcc-4d0e-8e29-21dee196014a@samsung.com>
 
-
-
-On 10/24/2025 10:21 AM, Antheas Kapenekakis wrote:
-> From: Alex Deucher <alexander.deucher@amd.com>
+On 10/24/2025, Marek Szyprowski wrote:
+> On 23.10.2025 22:52, Will McVicker wrote:
+> > From: Marek Szyprowski <m.szyprowski@samsung.com>
+> >
+> > For some unknown reasons forcing percpu interrupts for local timers
+> > breaks CPU hotplug for 'little' cores on legacy ARM 32bit Exynos based
+> > machines (for example Exynos5422-based Odroid-XU3/XU4 boards). Use percpu
+> > flag only when driver is compiled for newer ARM64 architecture.
+> >
+> > Fixes: f3cec54ee3bf ("clocksource/drivers/exynos_mct: Set local timer interrupts as percpu")
 > 
-> For S0ix, the RLC is not powered down. Rework the Van Gogh logic to
-> skip powering it down and skip part of post-init.
+> This tag doesn't make sense in this patchset. Simply squash this change 
+> with the previous one, adding the following tags:
 > 
-> Fixes: 8c4e9105b2a8 ("drm/amdgpu: optimize RLC powerdown notification on Vangogh")
-> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4659
-> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-> Tested-by: Antheas Kapenekakis <lkml@antheas.dev>
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_device.c       | 8 +++++---
->   drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c        | 6 ++++++
->   drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c | 3 +++
->   3 files changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> index 3d032c4e2dce..220b12d59795 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> @@ -5243,9 +5243,11 @@ int amdgpu_device_suspend(struct drm_device *dev, bool notify_clients)
->   	if (amdgpu_sriov_vf(adev))
->   		amdgpu_virt_release_full_gpu(adev, false);
->   
-> -	r = amdgpu_dpm_notify_rlc_state(adev, false);
-> -	if (r)
-> -		return r;
-> +	if (!adev->in_s0ix) {
-> +		r = amdgpu_dpm_notify_rlc_state(adev, false);
-> +		if (r)
-> +			return r;
-> +	}
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Link: 
+> https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprowski@samsung.com/ 
 
-Just FYI this is going to clash with my unwind failed suspend series [1].
+Okay, no problem!
 
-This is fine, just whichever "lands" first the other will need to rework 
-a little bit and I wanted to mention it.
-
-Link: 
-https://lore.kernel.org/amd-gfx/20251023165243.317153-2-mario.limonciello@amd.com/ 
-[1]
-
-This does have me wondering though why amdgpu_dpm_notify_rlc_state() is 
-even in amdgpu_device_suspend()?  This is only used on Van Gogh.
-Should we be pushing this deeper into amdgpu_device_ip_suspend_phase2()?
-
-Or should we maybe overhaul this to move the RLC notification into a 
-.set_mp1_state callback instead so it's more similar to all the other ASICs?
-
->   
->   	return 0;
->   }
-> diff --git a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
-> index fb8086859857..244b8c364d45 100644
-> --- a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
-> +++ b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
-> @@ -2040,6 +2040,12 @@ static int smu_disable_dpms(struct smu_context *smu)
->   	    smu->is_apu && (amdgpu_in_reset(adev) || adev->in_s0ix))
->   		return 0;
->   
-> +	/* vangogh s0ix */
-> +	if ((amdgpu_ip_version(adev, MP1_HWIP, 0) == IP_VERSION(11, 5, 0) ||
-> +	     amdgpu_ip_version(adev, MP1_HWIP, 0) == IP_VERSION(11, 5, 2)) &&
-> +	    adev->in_s0ix)
-> +		return 0;
-> +
-
-How about for GPU reset, does PMFW handle this too?
-
->   	/*
->   	 * For gpu reset, runpm and hibernation through BACO,
->   	 * BACO feature has to be kept enabled.
-> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
-> index 2c9869feba61..0708d0f0938b 100644
-> --- a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
-> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
-> @@ -2217,6 +2217,9 @@ static int vangogh_post_smu_init(struct smu_context *smu)
->   	uint32_t total_cu = adev->gfx.config.max_cu_per_sh *
->   		adev->gfx.config.max_sh_per_se * adev->gfx.config.max_shader_engines;
->   
-> +	if (adev->in_s0ix)
-> +		return 0;
-> +
->   	/* allow message will be sent after enable message on Vangogh*/
->   	if (smu_cmn_feature_is_enabled(smu, SMU_FEATURE_DPM_GFXCLK_BIT) &&
->   			(adev->pg_flags & AMD_PG_SUPPORT_GFX_PG)) {
-
+--Will
 
