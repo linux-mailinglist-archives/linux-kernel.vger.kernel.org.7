@@ -1,171 +1,186 @@
-Return-Path: <linux-kernel+bounces-869547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE3B1C0823C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:00:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C6BC0824B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5D736357133
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:00:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46BF519A6671
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BF62DA75A;
-	Fri, 24 Oct 2025 21:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F75C2FE581;
+	Fri, 24 Oct 2025 21:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iH4iJt5X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aamgM5GC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532802FCC1D
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 21:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31B32F5A27;
+	Fri, 24 Oct 2025 21:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761339611; cv=none; b=JSvSX//Ws2rR5EETh4muv6Wg5x/jFxsAl+HRCM0gKyctMrQpGBd6gr71LT1rypBnAZkE8a3vWg/gxCi06ZQTXZlUpqcNhITYYt4PHzxMUu84enzf0W328i8SJcYB+KwZrkiI+LSKCOPQ8s1Xrn8RNxGEz6I67HeCslmI6g7qrps=
+	t=1761339930; cv=none; b=XBc3bmzQUJzVRywh63ne8QyFWBpOjLAdyzpLFoXDlkARuFhGk9ZcZ6jId4pKrMdqJh7s9fHyQP64M0lxQ0GnMGuPvP54c1n/ztiVlM9/j4x3xNzxEzamoKA+8uuE7uQR9DyjEndu92HOyMw6UOQSoSqFJa3DMBxLqXI/7bGH4nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761339611; c=relaxed/simple;
-	bh=ZPgjwfZPJ4N5YUXQKwtdNaeTaiAVXpDtI0YR8v3s0pI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XsAsCOGYIlyMkj0JRV0V+miOmddFKU6ax5gpnrZNCbDU65CfFoa7Wz762OsMWfX5b6rtNSu3D/zJ3t/RnRzvjs5x/p6vHV6QDTU05VeUN3g2gbQVAXerPZXodYxORTWZc1pi1QrhIv0GPnBRSljJtuAuC7rPNocko/8qk4f2HUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iH4iJt5X; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761339608;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5kBJfzZ98Wj4hO7jbrTSDKgQFWU3QI5hycI3xZokODY=;
-	b=iH4iJt5Xfy3Tpa+W2orbWWyoqg3E/XHCwtsPNc46OISqwYX3fuDsKlTo4arw944Hk8ZG/a
-	jPiTGr9PdlQXhRKvU+UonECYZqJtTiQT9TXf7D6cfI5whXt3MZXiZavtH3NmlTVAv2Grj3
-	dTRpICReFegUSEARJVl8hdH1Wj+v5BY=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-676-aX4iQX6oPxeUDViVo6DTPg-1; Fri, 24 Oct 2025 17:00:06 -0400
-X-MC-Unique: aX4iQX6oPxeUDViVo6DTPg-1
-X-Mimecast-MFC-AGG-ID: aX4iQX6oPxeUDViVo6DTPg_1761339606
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e88947a773so111453761cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:00:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761339606; x=1761944406;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5kBJfzZ98Wj4hO7jbrTSDKgQFWU3QI5hycI3xZokODY=;
-        b=xG3IBYRbpzB9ymcf7f2rOr4b8dQd47eTmQF4nn5cxkPhbssCHg2V04ZBgfJhGExyXH
-         msMqlfVHlxhy0Py4Mm1zkSFIlPdRzF9/BZ8z0WT0V5slW5LFVDm6qHKxPgnZ8Zqd7/dj
-         b9EBv/rJXSXo6SBTE55W8TmP3/xPlXuUsGaEW6hLFulei+7ASuorvB/RHqiilZMC0BMp
-         BnPdxDBkNUUlCkfenq5kmEzWPJyOCztaWOF1Nq6FdDS126jRUxu5TCC2r3CBAULa9eRN
-         VSKfuJkn8yqFqwh1e3TK543bzNNid8rfNUuAqZD6BThokhGxOabUfM/7YxVpzGpKZMFw
-         JWcg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6RXJP1HJY/69XqzqDnaFBaQ2BweN05lRkYU+Yb7pLfXH3Kxkb3OvMWKTgGcNi5B7vaAzlRLKisFBfCU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww1oMnnMk4gYkx2NbHuK/JGC3PrQ/Y9/piQmUKLzd2yeiD09WB
-	I5dK2xeVhXpZvzj81JnVpKR5UUVsP0oDIRZbBU+s3MjbL/SsMW3Ym+RfbbAh5d2EnUltYQLeyfI
-	DP1vUoQHW85uAjlV+T4e4VgGLN/Q43NZsPGxFezk8Yw1ywYexd6VcsqJKSr0mEBpQ3w==
-X-Gm-Gg: ASbGncuxH0eWMgvXgPDW1BFqrU8KWpJAv7k9UG+R0gJGAa2640SsoJYSSaByT9QsCHJ
-	Fk/PoGnnShecdr4Pp44ch2kPl9vITOn2epysU+6bpiLwkq9k3gcYeyRL/yjustQPa5isevmWlBm
-	j+LisjdDWFu9A31ZMnKF91Emqj4Y5vbKYhfnEKPOxmzxcmNConwUMZNXYPxRKdNfgqwbQuoUzWq
-	PC2Fw3TzOZuY29HD1P0aaVaARoPmKszf32ftd+55Wz+zMXQCL2ItCrbPQulMS8sdJkqvZ7NHYjW
-	IwJ5Wdzx2owuas/U1LTtKva/8126c0yJ1y3aUHOXv/ocsSDrY8VykZSxamdE8KZgnVEb1oFVWcX
-	ZWCz34Y1L34gDzLY/+mxm8w73tXst9M8=
-X-Received: by 2002:a05:622a:138a:b0:4e8:947e:16ef with SMTP id d75a77b69052e-4e89d265f9fmr382356551cf.21.1761339605865;
-        Fri, 24 Oct 2025 14:00:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFLNVhaK81BrJnKYK1JoNVu0V1nl9SpXqeB0PT9Cm45xU7eGhzyqHOxksmutDw6Htl+hrp3CQ==
-X-Received: by 2002:a05:622a:138a:b0:4e8:947e:16ef with SMTP id d75a77b69052e-4e89d265f9fmr382356031cf.21.1761339605381;
-        Fri, 24 Oct 2025 14:00:05 -0700 (PDT)
-Received: from crwood-thinkpadp16vgen1.minnmso.csb ([2601:447:c680:2b50:ee6f:85c2:7e3e:ee98])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba37fa7b9sm1065531cf.17.2025.10.24.14.00.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 14:00:04 -0700 (PDT)
-Message-ID: <de1ec7fcc1711e3062cc321ab55552339630de30.camel@redhat.com>
-Subject: Re: [PATCH] genirq/manage: Reduce priority of forced secondary IRQ
- handler
-From: Crystal Wood <crwood@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner
-	 <tglx@linutronix.de>
-Cc: Lukas Wunner <lukas@wunner.de>, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot	 <vincent.guittot@linaro.org>, Clark Williams
- <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Dietmar
- Eggemann <dietmar.eggemann@arm.com>, Ben Segall	 <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, Valentin Schneider	 <vschneid@redhat.com>,
- linux-kernel@vger.kernel.org, Attila Fazekas	 <afazekas@redhat.com>,
- linux-pci@vger.kernel.org, 	linux-rt-devel@lists.linux.dev, Bjorn Helgaas
- <helgaas@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, Oliver
- OHalloran <oohall@gmail.com>
-Date: Fri, 24 Oct 2025 16:00:02 -0500
-In-Reply-To: <20251024133332.wSQOgUZb@linutronix.de>
-References: 
-	<83f58870043e2ae64f19b3a2169b5c3cf3f95130.1757346718.git.lukas@wunner.de>
-	 <87348g95yd.ffs@tglx> <aM_5uXlknW286cfg@wunner.de>
-	 <1b3684b424af051b5cb1fbce9ab65fc5cdf2b1a1.camel@redhat.com>
-	 <20251024133332.wSQOgUZb@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761339930; c=relaxed/simple;
+	bh=yqjOmeyOStyzHa6rkxxBBSdormUDzt2x9tFpGUGYYG0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XdkQVt22oqINEtGuRB1ZeJBaFFz7dO/I9frhGxj+ytG/ViFTMvLz1cjkUCcBzb8vVpTGYKqke3P1VzycGYhVmk8AaVTaUE6qUIJq6sz/aTu826LeZVS7mlGyJyUvcOpffFPQzi8wM7wW7BPCLN2ai6Wxxnsfp6xMkxpbCCD3JnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aamgM5GC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DE6BC4CEFF;
+	Fri, 24 Oct 2025 21:05:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761339930;
+	bh=yqjOmeyOStyzHa6rkxxBBSdormUDzt2x9tFpGUGYYG0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=aamgM5GCMRvc3usJuK5T4s3bgYGGVsH/4wka7drAzIorTyFDjaMyO7HtBEoxBMFbm
+	 DFyN1QUzIugHMJWLJKV6nVknuGEcCh3f/QW5RzLIg+liyRvvxmqKw0e+B9Jy28PXpH
+	 LhJZmFmW3QZcB52n/aXDPDlWyMgLTT35I5tDaHjEl+sayW20Mm0klyoQTHw13AYpeX
+	 fNlEin8NvaI0EX1CJdxmQsych7nNRzOTQhN9Qq5uK6dQ7MLl/LAT0wSfx1OIyukqhx
+	 8BYhw5xDtQ8CwSp3bH4+KSYgxJ4JfUZsORc+mP7hz4t8eF4miBx95Uuik5TQP2ffZM
+	 NVZxC5zw66cqQ==
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Frank Li <Frank.li@nxp.com>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Rob Herring <robh@kernel.org>,
+	"David E . Box" <david.e.box@linux.intel.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Chia-Lin Kao <acelan.kao@canonical.com>,
+	Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>,
+	Han Jingoo <jingoohan1@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH] Revert "PCI: qcom: Remove custom ASPM enablement code"
+Date: Fri, 24 Oct 2025 16:04:57 -0500
+Message-ID: <20251024210514.1365996-1-helgaas@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-10-24 at 15:33 +0200, Sebastian Andrzej Siewior wrote:
-> On 2025-10-03 13:25:53 [-0500], Crystal Wood wrote:
-> > On Sun, 2025-09-21 at 15:12 +0200, Lukas Wunner wrote:
-> > > On Sat, Sep 20, 2025 at 11:20:26PM +0200, Thomas Gleixner wrote:
-> > > > I obviously understand that the proposed change squashs the whole c=
-lass
-> > > > of similar (not yet detected) issues, but that made me look at that
-> > > > particular instance nevertheless.
-> > > >=20
-> > > > All aer_irq() does is reading two PCI config words, writing one and=
- then
-> > > > sticking 64bytes into a KFIFO. All of that is hard interrupt safe. =
-So
-> > > > arguably this AER problem can be nicely solved by the below one-lin=
-er,
-> > > > no?
-> > >=20
-> > > The one-liner (which sets IRQF_NO_THREAD) was what Crystal originally
-> > > proposed:
-> > >=20
-> > > https://lore.kernel.org/r/20250902224441.368483-1-crwood@redhat.com/
-> >=20
-> > So, is the plan to apply the original patch then?
->=20
-> Did we settle on something?
-> I wasn't sure if you can mix IRQF_NO_THREAD with IRQF_ONESHOT for shared
-> handlers. If that is a thing, we Crystal's original would do it.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Do you mean mixing IRQF_NO_THREAD on this irq (which should eliminate
-the forced IRQF_ONESHOT) with another shared irq that still has
-IRQF_ONESHOT?
+This reverts commit a729c16646198872e345bf6c48dbe540ad8a9753.
 
-I suspect it was a non-issue because of IRQCHIP_ONESHOT_SAFE disabling
-the forced oneshot (the other irq was pciehp).  Given that these are
-pcie-specific, do they ever get used without MSI (which sets
-IRQCHIP_ONESHOT_SAFE)[1]?
+Prior to a729c1664619 ("PCI: qcom: Remove custom ASPM enablement code"),
+the qcom controller driver enabled ASPM, including L0s, L1, and L1 PM
+Substates, for all devices powered on at the time the controller driver
+enumerates them.
 
-The issue seems to be that the type of oneshot we want for forced
-threading (unmask after the first user-supplied handler) is different
-from what we want for explicit IRQF_ONESHOT (unmask after the last
-user-supplied handler).  If we separated those, then the semantics
-would better match non-RT, and we'd only need to care about mixing
-when it comes to explicit IRQF_NOSHOT.
+ASPM was *not* enabled for devices powered on later by pwrctrl (unless the
+kernel was built with PCIEASPM_POWERSAVE or PCIEASPM_POWER_SUPERSAVE, or
+the user enabled ASPM via module parameter or sysfs).
 
-> Then there is the question if we want to go the "class" problem to
-> ensure that one handler can preempt the other.  And maybe I should
-> clean up few ones tglx pointed out that provide a primary handler for
-> no reason=E2=80=A6
+After f3ac2ff14834 ("PCI/ASPM: Enable all ClockPM and ASPM states for
+devicetree platforms"), the PCI core enabled all ASPM states for all
+devices whether powered on initially or by pwrctrl, so a729c1664619 was
+unnecessary and reverted.
 
-Either way works for me, as long as we pick at least one :-)
+But f3ac2ff14834 was too aggressive and broke platforms that didn't support
+CLKREQ# or required device-specific configuration for L1 Substates, so
+df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
+enabled only L0s and L1.
 
--Crystal
+On Qualcomm platforms, this left L1 Substates disabled, which was a
+regression.  Revert a729c1664619 so L1 Substates will be enabled on devices
+that are initially powered on.  Devices powered on by pwrctrl will be
+addressed later.
 
-[1] I realize that the answer to "has any hardware designer ever
-done this weird and bad thing?" is usually yes. :-P
+Fixes: df5192d9bb0e ("PCI/ASPM: Enable only L0s and L1 for devicetree platforms")
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/controller/dwc/pcie-qcom.c | 32 ++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+index 6948824642dc..c48a20602d7f 100644
+--- a/drivers/pci/controller/dwc/pcie-qcom.c
++++ b/drivers/pci/controller/dwc/pcie-qcom.c
+@@ -247,6 +247,7 @@ struct qcom_pcie_ops {
+ 	int (*get_resources)(struct qcom_pcie *pcie);
+ 	int (*init)(struct qcom_pcie *pcie);
+ 	int (*post_init)(struct qcom_pcie *pcie);
++	void (*host_post_init)(struct qcom_pcie *pcie);
+ 	void (*deinit)(struct qcom_pcie *pcie);
+ 	void (*ltssm_enable)(struct qcom_pcie *pcie);
+ 	int (*config_sid)(struct qcom_pcie *pcie);
+@@ -1038,6 +1039,25 @@ static int qcom_pcie_post_init_2_7_0(struct qcom_pcie *pcie)
+ 	return 0;
+ }
+ 
++static int qcom_pcie_enable_aspm(struct pci_dev *pdev, void *userdata)
++{
++	/*
++	 * Downstream devices need to be in D0 state before enabling PCI PM
++	 * substates.
++	 */
++	pci_set_power_state_locked(pdev, PCI_D0);
++	pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
++
++	return 0;
++}
++
++static void qcom_pcie_host_post_init_2_7_0(struct qcom_pcie *pcie)
++{
++	struct dw_pcie_rp *pp = &pcie->pci->pp;
++
++	pci_walk_bus(pp->bridge->bus, qcom_pcie_enable_aspm, NULL);
++}
++
+ static void qcom_pcie_deinit_2_7_0(struct qcom_pcie *pcie)
+ {
+ 	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
+@@ -1312,9 +1332,19 @@ static void qcom_pcie_host_deinit(struct dw_pcie_rp *pp)
+ 	pcie->cfg->ops->deinit(pcie);
+ }
+ 
++static void qcom_pcie_host_post_init(struct dw_pcie_rp *pp)
++{
++	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
++	struct qcom_pcie *pcie = to_qcom_pcie(pci);
++
++	if (pcie->cfg->ops->host_post_init)
++		pcie->cfg->ops->host_post_init(pcie);
++}
++
+ static const struct dw_pcie_host_ops qcom_pcie_dw_ops = {
+ 	.init		= qcom_pcie_host_init,
+ 	.deinit		= qcom_pcie_host_deinit,
++	.post_init	= qcom_pcie_host_post_init,
+ };
+ 
+ /* Qcom IP rev.: 2.1.0	Synopsys IP rev.: 4.01a */
+@@ -1376,6 +1406,7 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
+ 	.get_resources = qcom_pcie_get_resources_2_7_0,
+ 	.init = qcom_pcie_init_2_7_0,
+ 	.post_init = qcom_pcie_post_init_2_7_0,
++	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+ 	.deinit = qcom_pcie_deinit_2_7_0,
+ 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+ 	.config_sid = qcom_pcie_config_sid_1_9_0,
+@@ -1386,6 +1417,7 @@ static const struct qcom_pcie_ops ops_1_21_0 = {
+ 	.get_resources = qcom_pcie_get_resources_2_7_0,
+ 	.init = qcom_pcie_init_2_7_0,
+ 	.post_init = qcom_pcie_post_init_2_7_0,
++	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+ 	.deinit = qcom_pcie_deinit_2_7_0,
+ 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+ };
+-- 
+2.43.0
 
 
