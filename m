@@ -1,136 +1,87 @@
-Return-Path: <linux-kernel+bounces-868413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445D3C052EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:51:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A83C052B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ECE3C58143B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:41:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C6CE56362A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C6B30594A;
-	Fri, 24 Oct 2025 08:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NX2s72mv"
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B1C3081CB;
+	Fri, 24 Oct 2025 08:39:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077053064A1
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5D63064AE
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761295141; cv=none; b=tr9AigUHRPmbJ3JxlFxvkRgMjw+PnzBtyyZbme1eL0v4WwFrVz+QZ9KMYccW6Z742eXyC4uZkxCTUo1D5A7prKNLSaTizg7Bm2kgOTudRz8cvkh9v5hhyC354ggyc75a6d7gaet43umqhf95ccjxxB42SJRokjmFjFmpo4YiKCc=
+	t=1761295147; cv=none; b=BKq0cIdeSJsC6Cr3lwClEHvKsxp3P/oagrhBTKKuIo8HCEVzlYs9CQafhlV19SIRTA/RGjOh7iRNWOi6DPxFFhPbjakKs8oSJS2VNCBU/UNU7CIp4nmGEewMgYgFVxSmlSfnAaXRo0sB6mc40eS4ZFWLDKlCAAismjWcvpeApRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761295141; c=relaxed/simple;
-	bh=WXCqwiJaVzwif74IHtQzyPxXFrlHw+EGeR8pfbgmG08=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hv7z6RmA1FGKLDXBTsOVXey0G40GBWm9JaIw4O8EOEozucs9Ec0BQwzSMzRNJVSufdZF4aaxJkkRIzgW6z3OQk6aEr/Gl6KCuA8slBEolOzClNoXfE4DVEoCn/p1d1EXqG/cO5XnbkpmPIsPbHenadaurMkGdGjrdsXee2HB2tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NX2s72mv; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-b3b27b50090so335567266b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:38:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761295137; x=1761899937; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NOoOk6fIvEaDShhUmAzlzdMKvgXXV9HjXrl++QyhiQI=;
-        b=NX2s72mv9cBjMc5Fwa+10R5tk+AsdfpiTQVwN3tMWFthG3RwMzxr9zNDiPxGRXXpgA
-         yDVLTyg7oKTd6tu0LrL6z0aC97r181X17EiWbDfV7forO0DkaQIR294mt2gZ0eYHqK1J
-         JEWmDLnxerR0oSNlvxEQ+2V9snXLKou2wIU07eLQWIdmHGVKMiAMOYFZoq+ybN7yg1EW
-         GG3wKIso9Pb2vXuwrFmuS/dZtDrFq6hsAyiSLxZOVwSM51KU645Lcmoz/85H0b47VMFF
-         ZQWOIerznZh3a8JCloR5FjKu4zWwowiZYtO6ZYBtuC3E7I0d+Pt4i445kE24u6AqzKbz
-         7jZw==
+	s=arc-20240116; t=1761295147; c=relaxed/simple;
+	bh=c1DE5SEv+nYwXoWem78B7cAamAhqO42laA4vmCmQRj0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eq2J6lQp8mFaVWLbj+dBpKEe/x1ZT8J2gjJqcezlv6Kn7T+H3KzW514fmKCCkFRebvqn2+XF2Vg8sT0rz2w9QMTFbAIX2zb2/J87D5cCnGXX7TkRgz/QL7SaJSaHKf80erNmNnDDVs5Br7TrTdGf1TbtuE1XYbp5KKIM49in2YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93e7f4f7bb1so146256239f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:39:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761295137; x=1761899937;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NOoOk6fIvEaDShhUmAzlzdMKvgXXV9HjXrl++QyhiQI=;
-        b=ra9WUv3wKZyXuKcfifEYUniaISDHiFYa9lZ4wUTqX6Cfy+MINHNEfEwGXs9hHeggaJ
-         XiGjXoMgQDDA3p0SW7yn+/g7LdVuyKxrvA2cAXHQR6UWMGYLUEuFjbJbkKJ3bi+vTslo
-         Vdgb/WmqvnNDKfd9mPbdJybd0AQj+9GrDLSc0eHUfW/KPNDFEhQDERDINQViIk+fGkLH
-         x4hvMxBmfuVdO3yp3oQhxG0a6s77WA2d6L/+zhoDmTVTgqeUPpk317IEbmsoIoYZJa5B
-         ralq+6QPww2g/TgiTrgwK9OEMVtXXhBNdrsZai6GoVVM9h+uDg/qL/QYz4z1+bqgQc1N
-         1jAA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+39q6ntRi7ME4/0KMOo3VdmedKHHdGm/WhTzU9eDnJAFW4cjNqdQvmBNTfHwDSH8u4l5bOKTGBP61ZKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuOvmnMkk+2IVIPBfXf5OpPV7FZXE7iWMGGQdgUcVn+SPq4flc
-	N6uYIH1Bbbpb+vzpp9lW4S4EjuVnoGKSWBxoX8SzqFYzc9BQN079ltdkyImoVGZretT7ZV/GqQz
-	el/Lwdwp7n4SaffggEfd2cVmmbob8+S8=
-X-Gm-Gg: ASbGnctgzTkVYrf2eMQ+ddxxDdvLZgthpT7RFsMDfh/OeAVI8h4E9ybrCwRlW5zTy3L
-	ek48JOTl0VN12DAXg1k1lQOvIn+SF86oFwDePqOq0b/eUOg1Y3ZVVMRls3yf9ub7cdrTTU2yqom
-	yc9ZOqgRBQJ61d+f/nrKSgulPBf3GXIEjGdh46MIJdLXR+xkDKdR2ki306MUODy0wGOJ8284nQ3
-	l8G49Q6C3/UuF5VDOUwCJ+DTk8k/rlsP5GIhiRiR1VwxTOnYPoiOogHVGgO4WNlCX2oGAjK
-X-Google-Smtp-Source: AGHT+IFix1z6tMmwfjPEG1oQQ06cd/niYVFK7A3ERyfKb9o0nkBTriHS7CNo7xGrw+fDhLGT1YJYfTTjX20y7ecwqRg=
-X-Received: by 2002:a17:907:948f:b0:b57:2b82:732b with SMTP id
- a640c23a62f3a-b6475706215mr3433422466b.54.1761295136987; Fri, 24 Oct 2025
- 01:38:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761295144; x=1761899944;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cFVIzwwtUriiIye9BhKbf8fKTbh3kwvsVK/aPGeC/jk=;
+        b=B/vpj3BaR3+tOROtBi82J2+IJHukWlqdGox/S1TXyd6Y8iOcFAdUJ9Xh4i9mEPloX/
+         4Tgfg9e4fwNmSzVWisOIH1M5Rco/cFEWvoWxMTKJ58FGR4++U6fxxoJbaUCZUOdC65OP
+         GV4jZqv5rRy7QReQiZOWkGuRpIZkt93QQOhu9OLVOs8hN/rlmSAAqMLNcKjibSm+OJ3f
+         XrTa4PfeFPwPtbmK+xmlzQpb2cY/yD4KMVCXpUvUWJiwTadGRS+xIpZ0pota2dkggep4
+         fvqdIA3VYnwfet+j/a6AT42QOuhGsYAhgnlmMAiaz1tpbthVuPXSxqqPM5uhnpvgy8Ve
+         bvRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/OR8tmNSH7Q+q0wBhHArK1b1IhyKIAdie70OAZcrFjY5HfxDz7bxGa+5xoo17qZHRj+aX3qR9Q/jUvJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvvkNJOPgdJK4olGpuqoeKnIAX2QkX04anR1Pr9C1qBlmJF+Nd
+	iIaYv0OE3zqlpcyiCJ31JrHDZ8fXQO6SQYDkWPoVtfKgAPCZgDs14zK5L5AaPvqdUedEVKKLiUE
+	rO9Y2mInML9Eb9ig2cT874edeV8OTR68wGeaGA2rplwy5xNmFUz4f4bUN4Wc=
+X-Google-Smtp-Source: AGHT+IFbgP15d1KG3sTJARVfg/QRFaekcgt0cd08TpADIs+YBYQRwB2nAhV3L1e3cqNfuOes5gfvSXJM8+FZ1znw0TKZ+7X91D10
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251012173035.12536-1-raskar.shree97@gmail.com> <20251018160400.6921df6c@jic23-huawei>
-In-Reply-To: <20251018160400.6921df6c@jic23-huawei>
-From: Shrikant <raskar.shree97@gmail.com>
-Date: Fri, 24 Oct 2025 14:08:44 +0530
-X-Gm-Features: AS18NWBKc75onvPQ2KcRtEzbrT_rOdOOZhjS01vyTKH3-6a5Fttp43NYSt_gDrg
-Message-ID: <CAHc1_P6a=6MGT4_6mmMLzBXz8WxVv1C29iwDwXrDywV+Z2k-0g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] iio: health: max30100: Add DT LED pulse-width support
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, matt@ranostay.sg, 
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+X-Received: by 2002:a05:6e02:378e:b0:42f:95ab:2364 with SMTP id
+ e9e14a558f8ab-430c52a03f3mr349333755ab.26.1761295144636; Fri, 24 Oct 2025
+ 01:39:04 -0700 (PDT)
+Date: Fri, 24 Oct 2025 01:39:04 -0700
+In-Reply-To: <20251024071520.3EwpH%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fb3b28.050a0220.346f24.00b1.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in __ocfs2_move_extent
+From: syzbot <syzbot+727d161855d11d81e411@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 18, 2025 at 8:34=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Sun, 12 Oct 2025 23:00:33 +0530
-> Shrikant Raskar <raskar.shree97@gmail.com> wrote:
->
-> > Add Device Tree support for configuring the LED pulse-width of the MAX3=
-0100
-> > sensor, and updates the driver to read and apply this property.
-> >
-> > Testing:
-> > - Verify DT property read successfully in probe().
-> > - Verify default fallback to 1600 us when DT property is omitted.
-> > - Confirm SPO2_CONFIG register programmed correctly using regmap_read()=
-.
-> > - Validate different DT pulse-width values (200, 400, 800, 1600 us)
-> >   are applied correctly.
-> > - Validate probe() failure for invalid LED pulse-width
-> > - Tested-on: Raspberry Pi 3B + MAX30100 breakout board
-> >
-> > Changelog:
-> > Changes from v2:
-> > - Fix DT binding schema errors
-> > - Add default value
-> > - Remove changelog from commit message
-> > - Add missing header file
-> >
-> > Shrikant Raskar (2):
-> >   dt-bindings: iio: health: max30100: Add LED pulse-width property
-> >   iio: health: max30100: Make LED pulse-width configurable via DT
-> >
-> >  .../bindings/iio/health/maxim,max30100.yaml   |  8 ++++
-> >  drivers/iio/health/max30100.c                 | 38 +++++++++++++++++--
-> >  2 files changed, 43 insertions(+), 3 deletions(-)
-> >
-> >
-> > base-commit: 8bd9238e511d02831022ff0270865c54ccc482d6
->
-> Applied to the togreg branch of iio.git and pushed out as testing for now
-Thanks for the update. I really appreciate your time and support!
+Hello,
 
-Regards,
-Shrikant
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+727d161855d11d81e411@syzkaller.appspotmail.com
+Tested-by: syzbot+727d161855d11d81e411@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         8e6e2188 Linux 6.1.157
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a1ae7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=68b0957bf02e2346
+dashboard link: https://syzkaller.appspot.com/bug?extid=727d161855d11d81e411
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=124eae7c580000
+
+Note: testing is done by a robot and is best-effort only.
 
