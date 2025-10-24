@@ -1,139 +1,219 @@
-Return-Path: <linux-kernel+bounces-867975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD00C040B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:49:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C73C040B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:49:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 97219354CAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:49:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AB673B6F47
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265081E1E00;
-	Fri, 24 Oct 2025 01:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fmu6rQ2G"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DF71C5D59;
+	Fri, 24 Oct 2025 01:49:09 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1769D1DE3B5
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7E524B28
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761270554; cv=none; b=aV58K41moyIcxNb2qsf3ufskgXIcI1vGrZ+h261OKL3NBQJs5p8/yF7C7U0sRTgkZ73bd0GTHgukoAof49QuB2fwbu6lM+ppqjwWQeHNiwvHQik3u4fwjhzUv7qHqvNZnbDpXfUy0YQbiW2GFwUDIUHTSW2PsZKBtZFHAMJFyyo=
+	t=1761270549; cv=none; b=jEy7Z7nCvSXYioX1D2ibFeq3Eo2TH5OgeDHClBJPklw5wJQQOzwG3enJA+30lZZAjGepZjrda8jkZAoEXN+N66aBNnfYBuW6RVsJEOdr0m3mbNC8KsphYu9gHV583Zn07RUTg8iLch/Uvg9IucCCwDsvckuxgCXWWliIvh2lV/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761270554; c=relaxed/simple;
-	bh=Yl3u9R8DqGEdSBgxABIdGTVu2hAd+PBgi0XIyNSnalU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mgRCBIdn+sSahD4PE9qWWDCv54/zDQR0ynowjP/SwGYt80e+BBKGyu85OLubXttnchf5Sk47dW2P0DyC1RCH9QBKiPOQv8fUpLLmx2qESVvDOauv0YGvBn4bN2/2t4EfG41JIGml/3Wvk/Ys+FKdkaD1pac3MC67NzdYa5H/c60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fmu6rQ2G; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761270548;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iaP1LO38e4/f4gjNwkOlGA5+LCuZXp5lWw5XIw2ivgU=;
-	b=fmu6rQ2GbKY40pn1Zvl5I7WK95VtZL48Y2Hz6lsVvx/EKdb5PL7D3vhGsmcjvD41aBa5LZ
-	Ewy2FLQ+Ek84EX9yJ1oN45EMwiDphglXUyGPGya32IKc2cwL8GIp3xGqwbFA3te4C4VT02
-	gNpyrJnFB3xipGmF5yafi+cidEhsURQ=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-225-hcU1l2v0O6m-PEbEevz9Bw-1; Thu, 23 Oct 2025 21:49:05 -0400
-X-MC-Unique: hcU1l2v0O6m-PEbEevz9Bw-1
-X-Mimecast-MFC-AGG-ID: hcU1l2v0O6m-PEbEevz9Bw_1761270544
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-81a8065daf4so16214076d6.0
+	s=arc-20240116; t=1761270549; c=relaxed/simple;
+	bh=egWONB+Q9woZ5GHpkV5xtTo1YNtpNqtK+b6mcu4XsDQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=KZsgL+MXlZxTJE+Q3lSyG3lQZniRZNmwgnG6JODwoFu4JtSygFSrIA2j9zhlLkBvUwENHV42Ric0mDykglfGpy00To3eEm2O06znRDkrcFyK8+liKGhOspWFPh+O2ZfjmL+U6YvICu76DRvFI5l5ADXtiINOGpyiEMslsV/eD1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-93e8db8badeso162758639f.3
         for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:49:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1761270544; x=1761875344;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iaP1LO38e4/f4gjNwkOlGA5+LCuZXp5lWw5XIw2ivgU=;
-        b=clRGTqgoLezeqGWRoikV55K/00h7RXTJSTKPr2D3xjFeeMEuvKAtLGzf3IIoMoOB9t
-         /UAs4PUHdf3Dvln2+B5KDeU6F7ppQaiM+nl748XZ0oHZQrvqHn/ZiEHs41RrK2cN6xTY
-         wSKUlj4mD5EN20S6dXy87q6/7hi0T2DNAp/73uPnY9amFdRUQwIQ71h1MXO5qyA95q7K
-         lnSiQON89OEjFK+AUSH6cwQTXvculC40QWFcP0ysteae13lP6Nq3Hc8vsAvrNK/b7sLU
-         YUh9thlqvd1t0kxuKz3A5Y2g7ogyOziqkGzhKzyp4ZZyBSVzyKH5Y5L8+soMaSZ14CKE
-         fOnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUU9VGXgwfAjASW9WzIfL9A15atT7G3xmtdov27EeIG3SACpPryudeM+l3LDDuIPNiQt85/1oD8jn/Svq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCJhvrcsbqVvXHiiRo8u1FhHiQFdJlZIZ/lHtgcet9iZ8HH+hF
-	/0u3bV0F6hO8u0I+RORcRu6IXvqrYBYQac5K3ztZecAi5kew08ot+117oz+Z3yTtRDgJXGXkM5k
-	CMYKmVUd5SUy5k3swE7nvTNFtTZh+5HDfEjffMKGeCKXijQujBoeXOOiWuZq6y7QD9g==
-X-Gm-Gg: ASbGncsuNiikZ/TXqfcFQAGM4uMBt6c/5wlXSAcWJUUz6ieRDKfUD6Sx1+2gAbJ/1W7
-	OxJroZ+G7o76MKWyaHG3etLj2cHXQUEUligM/9un0p2ipOFxUREBj+yAECmyiBaRiUxZ95D2Xsa
-	Tbd1Io5SpZEWeGVpX78Ry/r0g37dEMiTgwVt1nZ67Kqm2/OOMyslhf3deEo/vA+dcF5mqR4UBFD
-	vDvx7MUcYXjvt4jkcqdknkjUuy/JGTTwFim/5K7rSmss1DpTVy5UAevJI55ftSCQGzl75zNQmCo
-	C2kn279aiW3nVSgxaEO5OfwVZ3QuDNBtEv9gcELLMdtQTNZA6P+FrR8k7a5dZvj4/xIiS/4WNz4
-	RWzWyR52g4AH5v97HhqQKHyel5X61sbs=
-X-Received: by 2002:ad4:5c44:0:b0:839:112c:1332 with SMTP id 6a1803df08f44-87c206398e4mr381179056d6.55.1761270544561;
-        Thu, 23 Oct 2025 18:49:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHkekBeKt/UBYBK9lMa4hj3CeOCtL78ldOAual+TkPrSzY56RttSscXLjrpnEwizYLA7MNPfQ==
-X-Received: by 2002:ad4:5c44:0:b0:839:112c:1332 with SMTP id 6a1803df08f44-87c206398e4mr381178896d6.55.1761270544218;
-        Thu, 23 Oct 2025 18:49:04 -0700 (PDT)
-Received: from crwood-thinkpadp16vgen1.minnmso.csb ([2601:447:c680:2b50:ee6f:85c2:7e3e:ee98])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fb5681868sm4474386d6.52.2025.10.23.18.49.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 18:49:03 -0700 (PDT)
-Message-ID: <ecedb0d1f2d0e51c56e462adf75df47e8d593a8c.camel@redhat.com>
-Subject: Re: [PATCH 3/4] rtla/timerlat: Add example for BPF action program
-From: Crystal Wood <crwood@redhat.com>
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, LKML
- <linux-kernel@vger.kernel.org>,  Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, John Kacur <jkacur@redhat.com>, Luis
- Goncalves	 <lgoncalv@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>,
- Wander Lairson Costa <wander@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>
-Date: Thu, 23 Oct 2025 20:49:02 -0500
-In-Reply-To: <CAP4=nvQGM_L3dpVpb36umrwZiCT+S4kGQOfENHBXRRNcy0MA8g@mail.gmail.com>
-References: <20251017144650.663238-1-tglozar@redhat.com>
-	 <20251017144650.663238-4-tglozar@redhat.com>
-	 <c52490c9c2f682fd3c30d6f8a198be2ba408c4fe.camel@redhat.com>
-	 <CAP4=nvT8VGpYrqQDztmB1WJPEb6JXvUuL201ksWq6eSV7kn-oA@mail.gmail.com>
-	 <aa0bbfeec78bc90966e660af91eb39acccb77d73.camel@redhat.com>
-	 <20251021130232.2ca75863@gandalf.local.home>
-	 <321181e1e5060f0c68e0430d69e0e89688b08235.camel@redhat.com>
-	 <CAP4=nvQGM_L3dpVpb36umrwZiCT+S4kGQOfENHBXRRNcy0MA8g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K2En65YS+uGCs830ApQ+MZXgMX+DVb/d3oDp1knOVt8=;
+        b=LsmLJ0SUzpIdaSvGqB71C6EGojW5Sg9mXUIuIfv3mJTFKneDmfXASMFN91qXvjAk4n
+         KfJ6ReUIDDWi5qysGtWQq0XpoJhU/JNo6qlNswUTVAqh5IM8XQWnWbYGF65ZtTgkaRNN
+         rfelqkkis5eNADCZttIb50ybo4F+cLCZl51/m8HLdYI3PfmPBCT+LLIMVdCep2GKVBKD
+         443F7D3qHTYSpY48i6topDJb5OnZJlqFSr2d3eVCKaa/IkmV2Wf5ybrjq3WV8OH5GTyt
+         RSSNKXdMoV7fjZ0hGpgzWUp/Q5HhD3f9LNDRpmKFCSSL/x6M8szgEeGa6cUHGMxJfqni
+         6Skw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2y+qJpoxBaVeF/NvY83b9ObwpSCBGOE4iaNfPB8/uE3YqaxvxKfGlKCeKT8sP4V+r7nH/BsobCqPKQDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEDmj6WcctAIV2ga+08+0pBQxW0eN/DAB3ABiuI5/jO8RkPemV
+	ApTjOW3otYPney/y5Difsm3ZdvvQoPxEd4D7vfgRCMD5+Y/P6Ep1/t9hGvGFI52Vp59p1mFw87g
+	6aMMZ/lYP5v2KGMxf6KqbsGoF4l6T7Ttkrit3wGL221rLRlHepeFhy5Rq660=
+X-Google-Smtp-Source: AGHT+IEUnJnNCMANUAcMmLgFG4Vc7eKcUcCpL3CQjp1OrL0XuqGqfVNAu8VdYdORCXhzpx1rVzgRbGka+JGENVWhERP0gFAJXKTm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1745:b0:42f:94fd:318f with SMTP id
+ e9e14a558f8ab-430c521f9e2mr347494925ab.9.1761270544628; Thu, 23 Oct 2025
+ 18:49:04 -0700 (PDT)
+Date: Thu, 23 Oct 2025 18:49:04 -0700
+In-Reply-To: <CAHxJ8O90xfWT+5st_bkmg39pVsewvchf46ZPCzSzHHcbPUY-iA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fadb10.050a0220.346f24.008b.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] WARNING in ocfs2_unlink
+From: syzbot <syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com>
+To: eraykrdg1@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 2025-10-23 at 09:27 +0200, Tomas Glozar wrote:
-> =C3=BAt 21. 10. 2025 v 19:32 odes=C3=ADlatel Crystal Wood <crwood@redhat.=
-com> napsal:
-> >=20
-> > On Tue, 2025-10-21 at 13:02 -0400, Steven Rostedt wrote:
-> > >=20
-> > > Note, trace_array_printk() (which trace_array_init_printk()) only wor=
-ks for
-> > > instances and does not print into the top level trace buffer.
-> >=20
-> > Yes, it's for instances, such as the ones rtla creates.
-> >=20
-> > -Crystal
-> >=20
->=20
-> Right, it actually works with the trace instance, when set up properly:
-[snip]
->  Saving trace to timerlat_trace.txt
->     timerlatu/0-47791   [000] ...22 863353.286497: bpf_trace_printk:
-> Latency: 21282
+Hello,
 
-OK, but as far as I can tell there's no way to get the non-BPF "stop
-tracing hit" messages without adding a call to trace_array_init_printk()
-into trace_osnoise.c.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+possible deadlock in l2cap_conn_del
 
--Crystal
+(syz-executor,6305,1):ocfs2_read_locked_inode:597 ERROR: status = -117
+(syz-executor,6305,1):ocfs2_validate_inode_block:1465 ERROR: Invalid dinode #17057: i_mode is zero!
+(syz-executor,6305,1):ocfs2_read_locked_inode:597 ERROR: status = -117
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor/6305 is trying to acquire lock:
+ffff88802ed7c040 ((work_completion)(&(&conn->info_timer)->work)){+.+.}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ffff88802ed7c040 ((work_completion)(&(&conn->info_timer)->work)){+.+.}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ffff88802ed7c040 ((work_completion)(&(&conn->info_timer)->work)){+.+.}-{0:0}, at: start_flush_work kernel/workqueue.c:4179 [inline]
+ffff88802ed7c040 ((work_completion)(&(&conn->info_timer)->work)){+.+.}-{0:0}, at: __flush_work+0xd2/0xbc0 kernel/workqueue.c:4237
+
+but task is already holding lock:
+ffff88802ed7c338 (&conn->lock#2){+.+.}-{4:4}, at: l2cap_conn_del+0x70/0x680 net/bluetooth/l2cap_core.c:1762
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&conn->lock#2){+.+.}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
+       __mutex_lock+0x17d/0x12e0 kernel/locking/mutex.c:760
+       l2cap_info_timeout+0x60/0xa0 net/bluetooth/l2cap_core.c:1668
+       process_one_work kernel/workqueue.c:3263 [inline]
+       process_scheduled_works+0xa55/0x16b0 kernel/workqueue.c:3346
+       worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
+       kthread+0x711/0x8a0 kernel/kthread.c:463
+       ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #0 ((work_completion)(&(&conn->info_timer)->work)){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       touch_work_lockdep_map kernel/workqueue.c:3951 [inline]
+       start_flush_work kernel/workqueue.c:4205 [inline]
+       __flush_work+0x6b8/0xbc0 kernel/workqueue.c:4237
+       __cancel_work_sync+0xbe/0x110 kernel/workqueue.c:4393
+       l2cap_conn_del+0x4f0/0x680 net/bluetooth/l2cap_core.c:1796
+       hci_disconn_cfm include/net/bluetooth/hci_core.h:2121 [inline]
+       hci_conn_hash_flush+0x10d/0x230 net/bluetooth/hci_conn.c:2602
+       hci_dev_close_sync+0xa0a/0x11b0 net/bluetooth/hci_sync.c:5303
+       hci_dev_do_close net/bluetooth/hci_core.c:501 [inline]
+       hci_unregister_dev+0x21a/0x510 net/bluetooth/hci_core.c:2715
+       vhci_release+0x152/0x1a0 drivers/bluetooth/hci_vhci.c:690
+       __fput+0x44c/0xa70 fs/file_table.c:468
+       task_work_run+0x1d4/0x260 kernel/task_work.c:227
+       exit_task_work include/linux/task_work.h:40 [inline]
+       do_exit+0x6b5/0x2300 kernel/exit.c:966
+       do_group_exit+0x21c/0x2d0 kernel/exit.c:1107
+       __do_sys_exit_group kernel/exit.c:1118 [inline]
+       __se_sys_exit_group kernel/exit.c:1116 [inline]
+       __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1116
+       x64_sys_call+0x21f7/0x2200 arch/x86/include/generated/asm/syscalls_64.h:232
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&conn->lock#2);
+                               lock((work_completion)(&(&conn->info_timer)->work));
+                               lock(&conn->lock#2);
+  lock((work_completion)(&(&conn->info_timer)->work));
+
+ *** DEADLOCK ***
+
+5 locks held by syz-executor/6305:
+ #0: ffff888026654dc8 (&hdev->req_lock){+.+.}-{4:4}, at: hci_dev_do_close net/bluetooth/hci_core.c:499 [inline]
+ #0: ffff888026654dc8 (&hdev->req_lock){+.+.}-{4:4}, at: hci_unregister_dev+0x212/0x510 net/bluetooth/hci_core.c:2715
+ #1: ffff8880266540b8 (&hdev->lock){+.+.}-{4:4}, at: hci_dev_close_sync+0x5b3/0x11b0 net/bluetooth/hci_sync.c:5291
+ #2: ffffffff8f1f8ca8 (hci_cb_list_lock){+.+.}-{4:4}, at: hci_disconn_cfm include/net/bluetooth/hci_core.h:2118 [inline]
+ #2: ffffffff8f1f8ca8 (hci_cb_list_lock){+.+.}-{4:4}, at: hci_conn_hash_flush+0xa1/0x230 net/bluetooth/hci_conn.c:2602
+ #3: ffff88802ed7c338 (&conn->lock#2){+.+.}-{4:4}, at: l2cap_conn_del+0x70/0x680 net/bluetooth/l2cap_core.c:1762
+ #4: ffffffff8dd3cc20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #4: ffffffff8dd3cc20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ #4: ffffffff8dd3cc20 (rcu_read_lock){....}-{1:3}, at: start_flush_work kernel/workqueue.c:4179 [inline]
+ #4: ffffffff8dd3cc20 (rcu_read_lock){....}-{1:3}, at: __flush_work+0xd2/0xbc0 kernel/workqueue.c:4237
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 6305 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ touch_work_lockdep_map kernel/workqueue.c:3951 [inline]
+ start_flush_work kernel/workqueue.c:4205 [inline]
+ __flush_work+0x6b8/0xbc0 kernel/workqueue.c:4237
+ __cancel_work_sync+0xbe/0x110 kernel/workqueue.c:4393
+ l2cap_conn_del+0x4f0/0x680 net/bluetooth/l2cap_core.c:1796
+ hci_disconn_cfm include/net/bluetooth/hci_core.h:2121 [inline]
+ hci_conn_hash_flush+0x10d/0x230 net/bluetooth/hci_conn.c:2602
+ hci_dev_close_sync+0xa0a/0x11b0 net/bluetooth/hci_sync.c:5303
+ hci_dev_do_close net/bluetooth/hci_core.c:501 [inline]
+ hci_unregister_dev+0x21a/0x510 net/bluetooth/hci_core.c:2715
+ vhci_release+0x152/0x1a0 drivers/bluetooth/hci_vhci.c:690
+ __fput+0x44c/0xa70 fs/file_table.c:468
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0x6b5/0x2300 kernel/exit.c:966
+ do_group_exit+0x21c/0x2d0 kernel/exit.c:1107
+ __do_sys_exit_group kernel/exit.c:1118 [inline]
+ __se_sys_exit_group kernel/exit.c:1116 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1116
+ x64_sys_call+0x21f7/0x2200 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7814385d29
+Code: Unable to access opcode bytes at 0x7f7814385cff.
+RSP: 002b:00007ffc212d6318 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f7814401919 RCX: 00007f7814385d29
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: 000000000000000d R08: 00007ffc212d40b6 R09: 00007ffc212d75d0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc212d75d0
+R13: 00007f78144018f4 R14: 00007ffc212d8690 R15: 0000000000000001
+ </TASK>
+
+
+Tested on:
+
+commit:         6fab32bb MAINTAINERS: add Mark Brown as a linux-next m..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=178fb734580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a1215729170d20fc
+dashboard link: https://syzkaller.appspot.com/bug?extid=55c40ae8a0e5f3659f2b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1361c614580000
 
 
