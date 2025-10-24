@@ -1,98 +1,145 @@
-Return-Path: <linux-kernel+bounces-869222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE892C07562
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:34:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1C1C0755F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2FF83B626F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:33:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C181C40FD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3D526E701;
-	Fri, 24 Oct 2025 16:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C15E27E7F0;
+	Fri, 24 Oct 2025 16:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmTlFHF7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S+guq7qX"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D381A2264C4;
-	Fri, 24 Oct 2025 16:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466FA267714
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761323602; cv=none; b=PBUKRdrlSl2Ge3AMJxrpl0R40dcBsmzdXj2RFj2xSD/9seY4RSSUdyZ8gF8HHY7/Ed8IwFsdoVksw61yAEMleaQKWcGMKJ/Xu7LQhhSnDKA4mh5VbTRsGfq8dmruqEJA6wzx04GqWftvUSuQDc9viP/pXRCKJgUmKfmtHJsGNpo=
+	t=1761323623; cv=none; b=FFiuIrXqBnl67WasQlULkv2FB9MfJ3vM64Iy5Iju/OT/W+V0uRcpUDoVm1n0lJ5nAXDMxREeZdYwX3QNYyO3T50XSlCbd00Qy31UKvj2cv1FnNmIxgcebdBqtArij1BnRWx9i3xkQmxfz6T8TD1IkbK/PNSdH+Ip4tzwTUDUEpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761323602; c=relaxed/simple;
-	bh=XMFgwNWwAN/K20/zNCeSu65GygTTYqfFzRDZdRxe48g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=O9vgHclnk01Yfq+PXGUASDR1OkLtXHUQG3hc3xn2pScmk8YlIYXi2yh3Dddw3BA6tCg5S9s3WzgyjWMAtktn5WgXOvdsWtpH54K4RJsUb76OIMUewSe8uJNW7IRnCVICVfFNTxFYK+HBtF3kIOVbBNlLnBebat3NOBVOOyZqivQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TmTlFHF7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 240A6C4CEF1;
-	Fri, 24 Oct 2025 16:33:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761323602;
-	bh=XMFgwNWwAN/K20/zNCeSu65GygTTYqfFzRDZdRxe48g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=TmTlFHF7zZ8dPZGX3jEH/pSYjzxolXyF5dUE0S+bL+Nq+hpo1P9ou18OJNUiu6KBI
-	 NSS3Xm5dytcFzfJ7puDv1DsP7KGA2uEMxJXDWWiL3vGS/ELCNIULr40DEEajfZrYqy
-	 qTpYAvlJQobc9AHEDUYmaq0s961QH7d8g/xPl1jFWOAEVLEPQOV8Paa8m14RPAPxot
-	 NH+OqVP2QIpszLJHcV4EnBFFxrsuP9ac79OdrpmNJfnG+aj598hT+O64jUZa9Y9OFL
-	 LUz2EMmzrLKkbiTR1MVOlnkTT5nZOOEwemDPmZEmex3FgyirppOmfweer1mxPrJE+Z
-	 N446Xpue2eMkg==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
-  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
-  masahiroy@kernel.org,  ojeda@kernel.org,  pratyush@kernel.org,
-  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org
-Subject: Re: [PATCH v8 5/8] kho: don't unpreserve memory during abort
-In-Reply-To: <20251024161002.747372-6-pasha.tatashin@soleen.com> (Pasha
-	Tatashin's message of "Fri, 24 Oct 2025 12:09:59 -0400")
-References: <20251024161002.747372-1-pasha.tatashin@soleen.com>
-	<20251024161002.747372-6-pasha.tatashin@soleen.com>
-Date: Fri, 24 Oct 2025 18:33:19 +0200
-Message-ID: <mafs0bjlwdzu8.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1761323623; c=relaxed/simple;
+	bh=Z5gHvRc1WODjsQTzSZtHdDP0DGz77od9Vxxo/tfntr0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mp2lh7FTQvoILg6D7RDp85rsk2XwDMUzk4LlTcgl7M0NOnIQs6G75c1tZjnnVCgrTMqNn6aPUdSsdS26K3sbFG5tPlaPAZ43/p3pD/okz+WAfx0MI7CwHqWaJAUDOsx+ntWWiVKsTmR72BAldo4js36dRaYHEYEm9rm8I+2jRwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S+guq7qX; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b522037281bso1398372a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761323621; x=1761928421; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XmFbq4MgFLvSavBU+dsE5BY6fpPsL4/gR9QPfUGTSHw=;
+        b=S+guq7qXK+4NrsVNV/bpyJ9RE8uOU1+4Xl8ecVZ4N1l/fGdcYuqBIsZtCvukd0sf2d
+         PIVIsBo58cHgL8/QfPHW2L9iu01UXiNp5JhleUsXiQ0z/HGveo2lfPckObD27r/LvqQh
+         PdnF6OrbwiaM4BfpK4dELTdp2eEpF7QRD0RDTN8nb+A+3RAHMyKtSN4gX6c8s4c9RVmq
+         t2oAMewsLDHpysnFczekizuwWsn6LEMIgI4+IsFzphgcOVDWjsBoS0f3zo5CHz9POjqP
+         xKcJWQiWeNaI2A6Lhzp+KH62uTERX01QcqFE9tdxRuV8s2UistWMLP6mEI+xNz24y8Tk
+         W6RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761323621; x=1761928421;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XmFbq4MgFLvSavBU+dsE5BY6fpPsL4/gR9QPfUGTSHw=;
+        b=Pwip5bH/SyychOVXjVW19ms2wQd6lSeAOuXK68ASiDVz7RZRI/EX8T/NVJ0g+iXYd+
+         MfZUbCLjS6+rJuraqW4Gff/IMcb4FHQkVFq/PMSapR8e/QYiqeTxgNzVTnQyXxQiqvFQ
+         tpID7kgCVc+DD45OVYpQBy2XwAOwuGRVENZ4FGFUitm4chCEMaD573Cs3+IJW9nwLChl
+         siA+sPsD/wpPRv5KlvSooIz7Te7DD3+CfdJkBt/OiejgWsnpFGgVW5JT/FIOfsaIv68Q
+         BmEZ3u9oFE6eAFmKSQk94ClRd+fN4hJ9HnRS6VN9hxCBDhc3CCaXMtY2ugTXsDYuLlwn
+         +Hig==
+X-Forwarded-Encrypted: i=1; AJvYcCXw1eTPAUvPCQkAcazKw2CjAxVimyk/FNn3asshvXT9cr6BbuxqThBNZ792/TlApRu6SenLLYGnjqOiRkQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrCRJxPjexUZIBpmGgC7Cuxpt8rBSpi9B0d5wpVdKmobEYUSf0
+	JJIvtPUjwVrYtgeJ1qCusIGfM5d1zpg+XmGnjb5YclU4ZhQ6MyeG/6aRauDQJvlDLwjKrkXVJS8
+	fMeL1dw==
+X-Google-Smtp-Source: AGHT+IFeKRRbqSfdPI99mHeasG8LL+kiQGTQFDWiy/7cdPCFgXLMLE3NirNFzhTfpVhc/qoTuLXwCz2Ncvs=
+X-Received: from pjot2.prod.google.com ([2002:a17:90a:9502:b0:32f:3fab:c9e7])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:244b:b0:30f:7840:2c96
+ with SMTP id adf61e73a8af0-334a8629ec6mr34771147637.47.1761323620638; Fri, 24
+ Oct 2025 09:33:40 -0700 (PDT)
+Date: Fri, 24 Oct 2025 09:33:39 -0700
+In-Reply-To: <5dea4a3d-c7b7-48f0-b2d5-7597e0cd5f00@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-14-seanjc@google.com>
+ <5dea4a3d-c7b7-48f0-b2d5-7597e0cd5f00@linux.intel.com>
+Message-ID: <aPuqYz3ly5a3__mf@google.com>
+Subject: Re: [PATCH v3 13/25] KVM: TDX: Fold tdx_mem_page_record_premap_cnt()
+ into its sole caller
+From: Sean Christopherson <seanjc@google.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	"Kirill A. Shutemov" <kas@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Ira Weiny <ira.weiny@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Michael Roth <michael.roth@amd.com>, Yan Zhao <yan.y.zhao@intel.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Ackerley Tng <ackerleytng@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 24 2025, Pasha Tatashin wrote:
+On Fri, Oct 24, 2025, Binbin Wu wrote:
+>=20
+>=20
+> On 10/17/2025 8:32 AM, Sean Christopherson wrote:
+> > Fold tdx_mem_page_record_premap_cnt() into tdx_sept_set_private_spte() =
+as
+> > providing a one-off helper for effectively three lines of code is at be=
+st a
+> > wash, and splitting the code makes the comment for smp_rmb()  _extremel=
+y_
+> > confusing as the comment talks about reading kvm->arch.pre_fault_allowe=
+d
+> > before kvm_tdx->state, but the immediately visible code does the exact
+> > opposite.
+> >=20
+> > Opportunistically rewrite the comments to more explicitly explain who i=
+s
+> > checking what, as well as _why_ the ordering matters.
+> >=20
+> > No functional change intended.
+> >=20
+> > Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+>=20
+> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+>=20
+> One nit below.
+>=20
+> [...]
+> > +	/*
+> > +	 * If the TD isn't finalized/runnable, then userspace is initializing
+> > +	 * the VM image via KVM_TDX_INIT_MEM_REGION.  Increment the number of
+> > +	 * pages that need to be mapped and initialized via TDH.MEM.PAGE.ADD.
+> > +	 * KVM_TDX_FINALIZE_VM checks the counter to ensure all mapped pages
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0^
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 Nit: Is pre-mapped better?
 
-> KHO allows clients to preserve memory regions at any point before the
-> KHO state is finalized. The finalization process itself involves KHO
-> performing its own actions, such as serializing the overall
-> preserved memory map.
->
-> If this finalization process is aborted, the current implementation
-> destroys KHO's internal memory tracking structures
-> (`kho_out.ser.track.orders`). This behavior effectively unpreserves
-> all memory from KHO's perspective, regardless of whether those
-> preservations were made by clients before the finalization attempt
-> or by KHO itself during finalization.
->
-> This premature unpreservation is incorrect. An abort of the
-> finalization process should only undo actions taken by KHO as part of
-> that specific finalization attempt. Individual memory regions
-> preserved by clients prior to finalization should remain preserved,
-> as their lifecycle is managed by the clients themselves. These
-> clients might still need to call kho_unpreserve_folio() or
-> kho_unpreserve_phys() based on their own logic, even after a KHO
-> finalization attempt is aborted.
->
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-
-Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
-
-[...]
-
--- 
-Regards,
-Pratyush Yadav
+Yeah, updated (and then it gets deleted a few commits later :-) ).
 
