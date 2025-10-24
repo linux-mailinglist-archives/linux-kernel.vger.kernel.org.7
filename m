@@ -1,187 +1,201 @@
-Return-Path: <linux-kernel+bounces-869068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E140C06DF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:08:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17488C06DF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD06B3ADA88
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:08:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 31BCB4F3449
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E162430E0EE;
-	Fri, 24 Oct 2025 15:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4EB322A25;
+	Fri, 24 Oct 2025 15:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnAun89p"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FhmK00P2"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C378C2DA765
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D056E1EEA5F;
+	Fri, 24 Oct 2025 15:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761318499; cv=none; b=TcEvx9Nayi75ZzPL4zCK3MLhyVYc6IV7VLfTEO+5hAPcXUL9HT9vKX0zPs0WZghFyxYREkAzfF34DFCc/hKu9vPq3VCo6VVpHQaVkcRgUEKAS69zLv0ROXUqU8zPIrKUPo4VQQ7uI2MjnjfG5HpH1EJtjF0AygizgOj7xInKS+Y=
+	t=1761318570; cv=none; b=rshCRHVG+kuNpYVcHtYKROr7ir0ZGK/SJlFUp9PHqJPkxBQIDZL3EP0ZpXMttWjSEg0Vqz01GfFtWktG5hsexvYdCAMZJqLHJ0Y5fuJ9fQJ/7rMpUcBTVYDbUQWrA/t8vsk6u27GkDVDW7o/IX+P910EaHpzaJoTX+iyaK9DzHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761318499; c=relaxed/simple;
-	bh=Gg1nmF2BIwqahLlAKHrDdQElBJulqFj/VnBEXgD8/+M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YytsLMcPeKkYyTNe/ZCBSSNTjT9M+kf/I5ClGRz2T4lXBhgyRulfvAvaIAoKewDp1Qul5Fh81RbUU+fk598OEPw6ia6mcTyHPDY7qcExta/kvrIG+N2A7jlt2qqcuqcJHVBG4i0a4nab9Dq+HaAklqOYSthOKbXt1Fw50aoFovQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnAun89p; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-339d7c4039aso2141249a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:08:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761318497; x=1761923297; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k5kuodqL1XE4BwxT+c9wdfrA/FtLyiL1+q+ub9Uk7uI=;
-        b=EnAun89pyTrJgxUFpbSTXx5Ja0hCXY4VfC5cLjuy6BnooYgt3rzZQ7kLk68XB0izhd
-         ye0SZYQEePaCpVdBz0NRQlTuPYv3diej4wK3hdnteLODYSQkmAtu8zzUl/z1YxGCD4sf
-         WNQoA0c3NrWR5ZQ79via0RgcTn2n+GiBqLPRZ5uz+9dufaf/myzDtERHXCo3sB/79b0G
-         AQ1ttweGxr2lVCF4t8scwINDrrhVaJ9/x7wMu2yEOx4l4LwSNRtaIvz0DjrvWz9qWUzU
-         gIN8mGUyTwDyOeJ6Ew0MIOvERF41bIjcYKCHsA+3RjXWzSWVReIir15JX5EQ1S+VrJ65
-         8NUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761318497; x=1761923297;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k5kuodqL1XE4BwxT+c9wdfrA/FtLyiL1+q+ub9Uk7uI=;
-        b=v68FVAxX2oRznS5aB+lSbO+vwe5uDlglZkhKHYvcMOHz65KlYhFL8n0SHTPRUBO2It
-         svEvkxFlBD/it0F/4NBbXFO9JPlUDlFjqIw1TMdwfgj3VwzrjX/uCQuolmChWdcBH0LI
-         Z/oumNbNDwulSAC4AIOGFyY0nrlL/Z3x8y+uyyfzQ21JcMXaTDlVEJFTpsY4USwUDRKX
-         txNhbr2dWUruIMegpCROFDhHlfyDG1URD9iF0MATLO6YLM9phQOoztScJ+MdNEcylkCN
-         s4E9VYCOBCf1pRkvMFVfLwxTM68BNJQcKPwcOWEkGtL1jLZcKs6G/QoV/dlbOqP28qti
-         9PQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLrRmby6rMojeWMyVQEYJz/A5GF5JkvqH7I5SBIEMHd4ylz7gy25BjJHLQneXRR4nWms2M095XMEqvLx4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiCSVU5ivOTtL3YvxKXuOZ93bSLq0bCKgpTMAeeIxaVDF1t3Ec
-	SyfU9Tr713ArzUgX66iZY9dMwo6w+qEGUX/fQPkS2GIyUTUzA1FBkCdH
-X-Gm-Gg: ASbGnctUWcZXSbh+VxfHFcAGIhix5jONpC5xaMMoXxkT9zIF6tU82NzPPVzX27LaG5O
-	DWOClNgE/EhLQY0RweQMIYv73ihuwPa/sHqeNnn/1oE6vZktgIlB51CcObh+Fv/CusRz2NGSKct
-	sCQKN2FzHcabyGUsL427RotTsJwznWNwYVtWX7iSZcUNHxJmy9KVQPdw690ZwAcMez0V6u+Wo9Z
-	cjuKcvUe6pesJtdW7mKhj0iw31bwFXAEDJ89mnzBfQA0UNYTsovnCPTZb9lLbOy23GwjghLthXf
-	jojF5ET9KWanfZLL3CT5zG5CMTqYsvfYwronCaXd/TpmZMRnrEJ42JxD/xR+2lHc9q4KmNjcPWd
-	QroIIrouIXikLcnFf/qUNmGiSkkhp9NpUuCQHFP/Ndtr6yR/lkUixAnblFOVXMeUm3MkGVFmfFK
-	26namAurRLdKbVD0aGMyup7uxu
-X-Google-Smtp-Source: AGHT+IEIvsCPeZId5sB7KWJU1zEUO/VQOzw5rKKQ7D/ehXSXh4dGRIiEaa8KnJaPfgpC64pTh/Lipg==
-X-Received: by 2002:a17:90b:4f:b0:33b:bf8d:6172 with SMTP id 98e67ed59e1d1-33bcf92aae9mr35463946a91.34.1761318496553;
-        Fri, 24 Oct 2025 08:08:16 -0700 (PDT)
-Received: from minh.192.168.1.1 ([2001:ee0:4f4c:210:4deb:2cfc:5afd:7727])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-33dfb1db6aasm5934227a91.0.2025.10.24.08.08.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 08:08:16 -0700 (PDT)
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-To: netdev@vger.kernel.org
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Gavin Li <gavinl@nvidia.com>,
-	Gavi Teitz <gavi@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Bui Quang Minh <minhquangbui99@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH net v5] virtio-net: fix received length check in big packets
-Date: Fri, 24 Oct 2025 22:06:49 +0700
-Message-ID: <20251024150649.22906-1-minhquangbui99@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761318570; c=relaxed/simple;
+	bh=2VNR8XoIOwaf624U2b/YCYF0muysmE7tCqlFX4iKGG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cCz7lB/LqBV+qqU2bxOSGkjbR+pawwvFTCrdvWtZQriLtylw0iLpkum6sKXJ5H8AVO9m/HeA04xsYdTKdgiuATufJv8dGvs/mC0uqVnVvhHbtIMG8Bdm+3e1Mwp8OOFeb3iSOhXFYm8aB+hXGGkO3OQFFgM1TaLdc+i6PE0nh20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FhmK00P2; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O8Zp3P019199;
+	Fri, 24 Oct 2025 15:09:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=LBjQJ/
+	Qnf0ZzsMSALsPsTqlreILwQzI4kb8r29WtHgg=; b=FhmK00P2wmxxDiyFTny8WA
+	mFWfhavQDahSLS8lDETkg9Af4vH7YvcVdbK6BQ/moFEowb7sCOz+Yc78K1IJo/td
+	wfm9y/Y8znEc/ONPLx3j7S5sMmZCmKZwvUvADxlmTk95gw2mLiY1soVK9dN0RoLQ
+	RTXsLZoAEenokSl/ovLBeDJI0dEger1wviTPBYF/wymFNZDih/YiKAPUdGUrMbrc
+	NPeQmEzy4WTZWOYM2InZS8r+cdF/CMD7lYCMrROw4K0nkymkuWkLx5jcWiKT5Zgg
+	I0x+xo652sSe1VpLty7al27nd3/yYkNO7bFytSjlcX6wBqLeu5WEvDf40nxsjqkQ
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v32hx906-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Oct 2025 15:09:09 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59OECZuQ024940;
+	Fri, 24 Oct 2025 15:09:08 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vpqkbjtn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Oct 2025 15:09:08 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59OF94Qw38863354
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 Oct 2025 15:09:04 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 91EF920040;
+	Fri, 24 Oct 2025 15:09:04 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2D4482004D;
+	Fri, 24 Oct 2025 15:09:03 +0000 (GMT)
+Received: from [9.111.177.85] (unknown [9.111.177.85])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 24 Oct 2025 15:09:03 +0000 (GMT)
+Message-ID: <acacc4b6-9f4a-48f0-9660-035f0ed4b0fd@linux.ibm.com>
+Date: Fri, 24 Oct 2025 17:09:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 0/4] perf: Support the deferred unwinding
+ infrastructure
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+        Kees Cook <kees@kernel.org>, "Carlos O'Donell" <codonell@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+References: <20251007214008.080852573@kernel.org>
+ <20251023150002.GR4067720@noisy.programming.kicks-ass.net>
+ <20251024092926.GI4068168@noisy.programming.kicks-ass.net>
+ <20251024104119.GJ4068168@noisy.programming.kicks-ass.net>
+ <a59509f0-5888-4663-9e82-98e27fc3e813@linux.ibm.com>
+ <20251024140815.GE3245006@noisy.programming.kicks-ass.net>
+ <20251024145156.GM4068168@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Jens Remus <jremus@linux.ibm.com>
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <20251024145156.GM4068168@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXwn0ztPV6VCxx
+ mqVtDnwJFCw+Xsx9IAYSbseHdCQBXPvtnqmjBY8QIrMKUgP9jGlp6NRTs4sWoDl6C7RpS4aTnal
+ wr5zFyUdGTinrNTdrtKxQ65kQf71gMnXEMPd0688fJ4XeZL2nmHY6YC9FoGHCsvMmxfgCjv6WBd
+ WOB73t2iRdWvdye4u6ojtPjhRo/bSo5pgbGp2YBiGy7F/VFQg8Gkfj1Re63ckZp4TtDdft47Err
+ ZH8ukwr9M25nSREABzr0L1zajEZGIqyiBZPgMa7hbYae3IP88Fm4DvzgL+bmFjq0Grfv0CHMEzq
+ pUJk6nvDvP5oVoFSX2SZmdCyh66HwOqRpW7GPV58BC6fWXAPVTRg2i+A2pMYbTJaGA32r0qDAhw
+ HCS9eeSSIurkolEx/cNNQz8gZUeY1A==
+X-Authority-Analysis: v=2.4 cv=OrVCCi/t c=1 sm=1 tr=0 ts=68fb9695 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=JfrnYn6hAAAA:8 a=hbS3uXWvOy2FqYBBbSQA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=nl4s5V0KI7Kw-pW0DWrs:22
+ a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-GUID: IiTz9DjyHpRsceOsENGaYzwdwiYzzKw-
+X-Proofpoint-ORIG-GUID: IiTz9DjyHpRsceOsENGaYzwdwiYzzKw-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-24_02,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ clxscore=1015 bulkscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-Since commit 4959aebba8c0 ("virtio-net: use mtu size as buffer length
-for big packets"), when guest gso is off, the allocated size for big
-packets is not MAX_SKB_FRAGS * PAGE_SIZE anymore but depends on
-negotiated MTU. The number of allocated frags for big packets is stored
-in vi->big_packets_num_skbfrags.
+Hello Peter,
 
-Because the host announced buffer length can be malicious (e.g. the host
-vhost_net driver's get_rx_bufs is modified to announce incorrect
-length), we need a check in virtio_net receive path. Currently, the
-check is not adapted to the new change which can lead to NULL page
-pointer dereference in the below while loop when receiving length that
-is larger than the allocated one.
+very nice!
 
-This commit fixes the received length check corresponding to the new
-change.
+On 10/24/2025 4:51 PM, Peter Zijlstra wrote:
 
-Fixes: 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big packets")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
----
-Changes in v5:
-- Move the length check to receive_big
-- Link to v4: https://lore.kernel.org/netdev/20251022160623.51191-1-minhquangbui99@gmail.com/
-Changes in v4:
-- Remove unrelated changes, add more comments
-- Link to v3: https://lore.kernel.org/netdev/20251021154534.53045-1-minhquangbui99@gmail.com/
-Changes in v3:
-- Convert BUG_ON to WARN_ON_ONCE
-- Link to v2: https://lore.kernel.org/netdev/20250708144206.95091-1-minhquangbui99@gmail.com/
-Changes in v2:
-- Remove incorrect give_pages call
-- Link to v1: https://lore.kernel.org/netdev/20250706141150.25344-1-minhquangbui99@gmail.com/
----
- drivers/net/virtio_net.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+> Subject: unwind_user/x86: Teach FP unwind about start of function
+> From: Peter Zijlstra <peterz@infradead.org>
+> Date: Fri Oct 24 12:31:10 CEST 2025
+> 
+> When userspace is interrupted at the start of a function, before we
+> get a chance to complete the frame, unwind will miss one caller.
+> 
+> X86 has a uprobe specific fixup for this, add bits to the generic
+> unwinder to support this.
+> 
+> Suggested-by: Jens Remus <jremus@linux.ibm.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index a757cbcab87f..2c3f544add5e 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -910,17 +910,6 @@ static struct sk_buff *page_to_skb(struct virtnet_info *vi,
- 		goto ok;
- 	}
- 
--	/*
--	 * Verify that we can indeed put this data into a skb.
--	 * This is here to handle cases when the device erroneously
--	 * tries to receive more than is possible. This is usually
--	 * the case of a broken device.
--	 */
--	if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
--		net_dbg_ratelimited("%s: too much data\n", skb->dev->name);
--		dev_kfree_skb(skb);
--		return NULL;
--	}
- 	BUG_ON(offset >= PAGE_SIZE);
- 	while (len) {
- 		unsigned int frag_size = min((unsigned)PAGE_SIZE - offset, len);
-@@ -2107,9 +2096,19 @@ static struct sk_buff *receive_big(struct net_device *dev,
- 				   struct virtnet_rq_stats *stats)
- {
- 	struct page *page = buf;
--	struct sk_buff *skb =
--		page_to_skb(vi, rq, page, 0, len, PAGE_SIZE, 0);
-+	struct sk_buff *skb;
-+
-+	/* Make sure that len does not exceed the allocated size in
-+	 * add_recvbuf_big.
-+	 */
-+	if (unlikely(len > vi->big_packets_num_skbfrags * PAGE_SIZE)) {
-+		pr_debug("%s: rx error: len %u exceeds allocate size %lu\n",
-+			 dev->name, len,
-+			 vi->big_packets_num_skbfrags * PAGE_SIZE);
-+		goto err;
-+	}
- 
-+	skb = page_to_skb(vi, rq, page, 0, len, PAGE_SIZE, 0);
- 	u64_stats_add(&stats->bytes, len - vi->hdr_len);
- 	if (unlikely(!skb))
- 		goto err;
+> +++ b/kernel/unwind/user.c
+
+> +static int unwind_user_next_fp(struct unwind_user_state *state)
+> +{
+> +	struct pt_regs *regs = task_pt_regs(current);
+> +
+> +	const struct unwind_user_frame fp_frame = {
+> +		ARCH_INIT_USER_FP_FRAME(state->ws)
+> +	};
+> +	const struct unwind_user_frame fp_entry_frame = {
+> +		ARCH_INIT_USER_FP_ENTRY_FRAME(state->ws)
+> +	};
+> +
+> +	if (state->topmost && unwind_user_at_function_start(regs))
+> +		return unwind_user_next_common(state, &fp_entry_frame);
+
+IIUC this will cause kernel/unwind/user.c to fail compile on
+architectures that will support HAVE_UNWIND_USER_SFRAME but not
+HAVE_UNWIND_USER_FP (such as s390), and thus do not need to implement
+unwind_user_at_function_start().
+
+Either s390 would need to supply a dummy unwind_user_at_function_start()
+or the unwind user sframe series needs to address this and supply
+a dummy one if FP is not enabled, so that the code compiles with only
+SFRAME enabled.
+
+What do you think?
+
+> +
+> +	return unwind_user_next_common(state, &fp_frame);
+> +}
+Thanks and regards,
+Jens
 -- 
-2.43.0
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
 
 
