@@ -1,100 +1,209 @@
-Return-Path: <linux-kernel+bounces-868058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5E4C0441C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:30:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D3BC04443
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1AD2B4EB0D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:30:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7285219A5C1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A20426F462;
-	Fri, 24 Oct 2025 03:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3B1272816;
+	Fri, 24 Oct 2025 03:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MCmyaho3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="nx3aiPBG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IDRUQL3I"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D62526CE0A;
-	Fri, 24 Oct 2025 03:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468224F5E0;
+	Fri, 24 Oct 2025 03:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761276599; cv=none; b=fmfYKZu9iOcUK6ZqUDxf491pHH/SE8So22UmpT8Ir/NzFpWrQedDn6pVg/TDOSoEyC1h9heSyg2ghWWjkTxDhDrW7kWHRCtlLHk7PVGJxPp2KdCidTdbSO+6Hd29WeTYartJ2jSwFAy0H5wJSYnyyhV+5Ub6hh9OAWbBhLa/q2k=
+	t=1761276825; cv=none; b=Qep4ObK7nbG6zJYPWDAdVEynjY+/fj4dgyksfyutA+nGKK2/lM+bIqFt125V9a8KFcOb6TTBD407Jm+Gldw683Kudij1EEyWcum7m3E7ooBr52aBkJ+0NRJuNOxr9n8Y2Mc0G3AXOG1uU4Me59T09EEiaU9en0b/3060uqG/U4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761276599; c=relaxed/simple;
-	bh=dw7PBOXGc2HtIYPfqP+CIdoC2IoORW63uomW2/Jytr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=R5zeN5BHWxCLuD6YqNU93WKhYmfR8tf0J0iekefb3ho+YsOVfVJTbqeEZz9aTpc+Q257pSvr7UxHwoLiEsn8hJXJT675fB/O2vpcMvYz6AamYXnRXvHKU/xsq69NNhFcXINmdXwsvJDy5f75KO6h2KR/PVYXxvhSJM4ln8KtH/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MCmyaho3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F747C4CEE7;
-	Fri, 24 Oct 2025 03:29:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761276599;
-	bh=dw7PBOXGc2HtIYPfqP+CIdoC2IoORW63uomW2/Jytr8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=MCmyaho3k96GhAPpIRBE6c0xNy/NGPRGrQd2pLm2dS8LSE6RfoT7bbH4e5jzxKNaL
-	 2KFyTcomib/ZoXRZrC7Ok0OQ6BZG8AjhEc/oLEgp1EtiNZ1GsCWgdiazVieo10KZbw
-	 1yVK50xJarxPq4mCgDFyB9V4ebNB29V87VLuO3iacJx/ZeiNLluuIPu61lepT9t3kw
-	 UhwgD0J/tXf9ptemutUGEOUVANVW7SA5RpLskPllk0KOywDhcxTGePAkXwUOQALzwq
-	 w1U9h3pmkuUu8XfTLpZMibFPrAJLh9giAOHrKfnHivUBEQul6CnLoAryqgTr1s4Ss5
-	 ufrYSQrxDw/SA==
-Message-ID: <a1e9afd0-b977-42c8-88cb-e82ea89dedaf@kernel.org>
-Date: Thu, 23 Oct 2025 22:29:49 -0500
+	s=arc-20240116; t=1761276825; c=relaxed/simple;
+	bh=sRuvlioDBWR5tiiyL0vKApMcmiSStmC55EJ+Rap/oUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JSKNn9Id50yDq8xsPhtVgMEly1NZ2CMZV6gbpeIUbVh1gDdO6wLKBOomBbmSdxJ02mIOxg5K9oTyQyjO1lHoB06XLSV5x2sMMDZXexRnNL2U43LPRJElSlOq3TO3iuH3Ed87/LrzVutOddnkEWXF00dSt/JE9kkfL3EdrFElgtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=nx3aiPBG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IDRUQL3I; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 24CE6EC020E;
+	Thu, 23 Oct 2025 23:33:42 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Thu, 23 Oct 2025 23:33:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1761276822; x=1761363222; bh=6Qk94gauP4
+	S6c5TS85B+XqqLkzd0ro5T/4n/atTJLjM=; b=nx3aiPBGrPSQ/PiiPhX6q8lt6n
+	9SGptk/5s0jwAbjuPbs69yBsnxF6a88GGz6xBC3/EDlal86wlF/ClNB8C7jkySkM
+	Ba1Gg099qAt2ndTcCrF945/+FFLAq4gMdGk/aduO2tNTgXqq3+yu3Nn60Op10kxP
+	McczkivT5U9H/w/8m8C2B9e+5nnZePC/cwdbUcxZ7tCVShKOXfwAwjJL8MSNbHXP
+	6Li3Num3Xce5BGpuqBfz0yMjB/1xxKoOCRSlZE9MzOVJDzjd8ThJ+UExc+uMjvLc
+	IsbKVVNo4fR2tD+NTdIXHXry8hzGQMStWTNkguQEGQglkSMwaoYkwu5LorZQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761276822; x=1761363222; bh=6Qk94gauP4S6c5TS85B+XqqLkzd0ro5T/4n
+	/atTJLjM=; b=IDRUQL3I5OcXnFn/0NzqP1oLDouv4AQ0C4qB6xa6BXa+RIbtSaM
+	HOjR5LF5spf3hTexbiA0fmxNiusXNLilJmU2EybpF2PzIhq18DICpHLgtWGaMglJ
+	n9wMxm8gRKMyWspkfYISbg1BiG6SQjGR8/9XqrOlDk1t40rwdJ7gVf/MdNIJ/P9b
+	uPFhveqzKu7J1WhzYCnxGfZX2kV7G9rjEA7UI2VO+jsbEqwRJOlQqXjDWstk8rhv
+	ED4QS9w+7IpA829Z7zdyle67u7LnLU8jwFKhQDh1q7dfd8khHfYPURwVej3lqQAY
+	xQ+mMut+ns6Hn+lxoTK2UZylYV7HtgM8m/Q==
+X-ME-Sender: <xms:lfP6aO9KSrRK9op2v0DUi1c_1LPrFK7OtO1ENhzacsdJeMdlALcERQ>
+    <xme:lfP6aKl0LdD_glT5ikdcStJBb7sZe9Gznf8XF4lI4SAiDTq9W8MbzfJURIUse1eOn
+    E83Uw89I12PVeFJS8KB24hDfFGR7EDFGj2TSwefoApG7BdpQQWxQDw>
+X-ME-Received: <xmr:lfP6aBCdwWOfJ3tOVoVPBNgmhur-8HH8cF8aOcCSB0xc26F5gGnDyJWM9ob9r2CaRrtVEIUDAKP9bnQhIbMHaOZOe7reSNn8sw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeekvdejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheprfgvthgvrhcu
+    jfhuthhtvghrvghruceophgvthgvrhdrhhhuthhtvghrvghrseifhhhoqdhtrdhnvghtqe
+    enucggtffrrghtthgvrhhnpeffgefgtdegueetffdtkeefveeflefhudeifedvgffhgeei
+    heethfeggfekleelfeenucffohhmrghinhepmhhitghrohhsohhfthdrtghomhenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehpvghtvghrrdhh
+    uhhtthgvrhgvrhesfihhohdqthdrnhgvthdpnhgspghrtghpthhtohepuddupdhmohguvg
+    epshhmthhpohhuthdprhgtphhtthhopehjuggvnhhoshgvsehgohhoghhlvgdrtghomhdp
+    rhgtphhtthhopehjihhkohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghnth
+    hishhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegumhhithhrhidrthhorhhokhhh
+    ohhvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpd
+    hrtghpthhtoheprhihuggsvghrghessghithhmrghthhdrohhrghdprhgtphhtthhopehl
+    ihhnuhigqdhinhhpuhhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:lfP6aLWqfdTtmlBIcCqKwt9t4qIUbGn10eCC6GqFj6zUw_BT4YpBpg>
+    <xmx:lfP6aH-GDX420mv4VjrxzZqP1binp0D6NZ0lXSBbfV9zjf3etxijMw>
+    <xmx:lfP6aFSbWiTl7YHFV63RX1cJa7DSGbPh844KPFHuCOHz6l-O7ZGKNA>
+    <xmx:lfP6aEQxHDJu3kj0XDu0T6WN3vN4ubS6pvsbPuxOzk8ORaYAuBDywA>
+    <xmx:lvP6aDUJkVZKToe-Lps70CkyCtf3taW8cU4p5h0RBCaeOV0Bb0m1mjWy>
+Feedback-ID: i7ce144cd:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 Oct 2025 23:33:38 -0400 (EDT)
+Date: Fri, 24 Oct 2025 13:30:45 +1000
+From: Peter Hutterer <peter.hutterer@who-t.net>
+To: Jonathan Denose <jdenose@google.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Angela Czubak <aczubak@google.com>,
+	Sean O'Brien <seobrien@google.com>
+Subject: Re: [PATCH v3 03/11] Input: add INPUT_PROP_HAPTIC_TOUCHPAD
+Message-ID: <20251024033045.GA48918@quokka>
+References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
+ <20250818-support-forcepads-v3-3-e4f9ab0add84@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] arm64: dts: socfpga: agilex5: add VGIC maintenance
- interrupt
-To: niravkumar.l.rabara@intel.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, nirav.rabara@altera.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250311033601.1940199-1-niravkumar.l.rabara@intel.com>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20250311033601.1940199-1-niravkumar.l.rabara@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250818-support-forcepads-v3-3-e4f9ab0add84@google.com>
 
-
-
-On 3/10/25 22:36, niravkumar.l.rabara@intel.com wrote:
-> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+On Mon, Aug 18, 2025 at 11:08:44PM +0000, Jonathan Denose wrote:
+> From: Angela Czubak <aczubak@google.com>
 > 
-> Add VGIC maintenance interrupt and interrupt-parent property for
-> interrupt controller, required to run Linux in virtualized environment.
+> INPUT_PROP_HAPTIC_TOUCHPAD property is to be set for a device with simple
+> haptic capabilities.
 > 
-> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+> Signed-off-by: Angela Czubak <aczubak@google.com>
+> Co-developed-by: Jonathan Denose <jdenose@google.com>
+> Signed-off-by: Jonathan Denose <jdenose@google.com>
 > ---
->   arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 3 +++
->   1 file changed, 3 insertions(+)
+>  Documentation/input/event-codes.rst    | 14 ++++++++++++++
+>  include/uapi/linux/input-event-codes.h |  1 +
+>  2 files changed, 15 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> index 51c6e19e40b8..75397e84bd2c 100644
-> --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> @@ -75,8 +75,11 @@ intc: interrupt-controller@1d000000 {
->   		#address-cells = <2>;
->   		#size-cells = <2>;
->   		interrupt-controller;
-> +		interrupt-parent = <&intc>;
->   		#redistributor-regions = <1>;
->   		redistributor-stride = <0x0 0x20000>;
-> +		/* VGIC maintenance interrupt */
-> +		interrupts = <GIC_PPI 25 IRQ_TYPE_LEVEL_HIGH>;
->   
->   		its: msi-controller@1d040000 {
->   			compatible = "arm,gic-v3-its";
+> diff --git a/Documentation/input/event-codes.rst b/Documentation/input/event-codes.rst
+> index b4557462edd7b3fef9e9cd6c2c3cb2d05bb531ab..1ead9bb8d9c6451a81426665baab643f9e50216a 100644
+> --- a/Documentation/input/event-codes.rst
+> +++ b/Documentation/input/event-codes.rst
+> @@ -400,6 +400,20 @@ can report through the rotational axes (absolute and/or relative rx, ry, rz).
+>  All other axes retain their meaning. A device must not mix
+>  regular directional axes and accelerometer axes on the same event node.
+>  
+> +INPUT_PROP_HAPTIC_TOUCHPAD
+> +--------------------------
+> +
+> +The INPUT_PROP_HAPTIC_TOUCHPAD property indicates that device:
+> +- supports simple haptic auto and manual triggering
+> +- can differentiate between at least 5 fingers
+> +- uses correct resolution for the X/Y (units and value)
+> +- reports correct force per touch, and correct units for them (newtons or grams)
+> +- follows the MT protocol type B
+> +
+> +Summing up, such devices follow the MS spec for input devices in
+> +Win8 and Win8.1, and in addition support the Simple haptic controller HID table,
+> +and report correct units for the pressure.
 
-Applied!
+I'm a bit late to the party here but I just had to deal with a related
+bug and I'm wondering if you'd be open to loosening the definition of
+INPUT_PROP_HAPTIC_TOUCHPAD to include touchpads that are *physically*
+haptic touchpads but do not support userspace control of the
+haptics (lack of driver support, usually).
 
-Thanks,
-Dinh
+We currently lack support for those "pressurepads" - in theory they
+should report pressure resolution but the number of quirks we ship in
+libinput indicates none or few of them do. Those devices *should*
+report HID 0x0D usage 0x55 and identify them as pressurepads [1] because
+otherwise Windows probably wouldn't work (unfortunately I don't have
+access to any of those devices to verify).
 
+By using this prop for all pressurepads including those not exposing
+actual haptic effects the definition would become:
+
+INPUT_PROP_HAPTIC_TOUCHPAD
+--------------------------
+
+The INPUT_PROP_HAPTIC_TOUCHPAD property indicates that device:
+- can differentiate between at least 5 fingers
+- uses correct resolution for the X/Y (units and value)
+- follows the MT protocol type B
+- may support simple haptic auto and manual triggering and if so:
+  - reports correct force per touch, and correct units for them (newtons or grams)
+
+And then we can hook up the 0x55 usage to set that property and leave it
+up to the client to check if the FF_ bits are in place to verify it's a
+haptic-haptic touchpad?
+
+This would save us from needing a separate INPUT_PROP_PRESSUREPAD.
+
+Cheers,
+  Peter
+
+[1] https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/touchpad-windows-precision-touchpad-collection#device-capabilities-feature-report
+
+
+> +
+>  Guidelines
+>  ==========
+>  
+> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+> index 3b2524e4b667d1e7cc02ff5cb674e7c2ac069a66..efe8c36d4ee9a938ffb1b0dd0ddd0ec6a3fcb8fe 100644
+> --- a/include/uapi/linux/input-event-codes.h
+> +++ b/include/uapi/linux/input-event-codes.h
+> @@ -27,6 +27,7 @@
+>  #define INPUT_PROP_TOPBUTTONPAD		0x04	/* softbuttons at top of pad */
+>  #define INPUT_PROP_POINTING_STICK	0x05	/* is a pointing stick */
+>  #define INPUT_PROP_ACCELEROMETER	0x06	/* has accelerometer */
+> +#define INPUT_PROP_HAPTIC_TOUCHPAD	0x07	/* is a haptic touchpad */
+>  
+>  #define INPUT_PROP_MAX			0x1f
+>  #define INPUT_PROP_CNT			(INPUT_PROP_MAX + 1)
+> 
+> -- 
+> 2.51.0.rc1.193.gad69d77794-goog
+> 
+> 
 
