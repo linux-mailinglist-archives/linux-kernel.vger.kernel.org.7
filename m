@@ -1,121 +1,111 @@
-Return-Path: <linux-kernel+bounces-868435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4919C05289
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:47:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2EAC052A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 794BE19A0AAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:47:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3AFF1898650
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66F730649D;
-	Fri, 24 Oct 2025 08:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B412305E1B;
+	Fri, 24 Oct 2025 08:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fF/h/IEp"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CtKgrNZC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E035A1E1C1A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B3B2D640D;
+	Fri, 24 Oct 2025 08:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761295603; cv=none; b=F9YNPgYPelBH2kg1ktp24PXsstCCOqu66CizGVsZnFo/RrzMUtZLue5dUMhibLsyErxavQAXg95V914CUhCtOG3Gw6PHZ+1pmKzmqyxEQzOe+5y33x0OHJOLEB+S7pmponMM0Xfd967G9zawkhXJzBcHTLUj0ujb04qknLdUU2Y=
+	t=1761295653; cv=none; b=ISehAI5fRO6Brce10LogGXMjclQRE7DtzR5sYmXEVU4qZzXoO6LeOUPCDtr75hMtZ+sG0armN0Rmq7kxsL00Qbj50zDDV61NXzBIFLhR3+qs8x5QRgZHH1ml/t2isgrtdcWsrUGP2HdXjHJwe8V2la0H/oiGv0B7OtD9+ZkQvdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761295603; c=relaxed/simple;
-	bh=7NTSYxzKGmhxTqjYGUpBrKwqj3vK5IEOp4i6e4/crwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FNuLJ8sKalXq85RrUwBRGgot6/XoU9Mq4nMOTSR1OPP28qX2sImTe/0IDcl2Bm2sJDEUSQBCgtCHivjN0hWyCUCjRz57Kd4eYwUBTX2rnmeekVkVSXfUAmkvN4KPCfG/TNQRIIClDbJzt2kp4MJEXrZNL5qpvRjYcynWnR5SNj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fF/h/IEp; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 252BFC0C41C;
-	Fri, 24 Oct 2025 08:46:19 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E676660703;
-	Fri, 24 Oct 2025 08:46:38 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E84D1102F2418;
-	Fri, 24 Oct 2025 10:46:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761295598; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=/FJvkjQlV+KcGybdpGHVwySBniEBQVrsx6zHgsH/Pm8=;
-	b=fF/h/IEpLmEYbGv8AIc21gmNOHFWK3B8F/+Czaw1MnNl2oiavQ842+VmD66TRUKib0YWKx
-	YoPH1Tx0VXwdrqpn4Xw9Y271XqVglfNrno0bzj27T0OcKAkRZPPNc9brloyCFCSSHXNf7p
-	5bZm73prx9a9l+nnWrjn7X/QsQA8CwS/FGBKDd4uqbLv7wvJ+rrChrcnQ0L1F8SVcd+MMp
-	VAEmU6VLE47rzEaF8Uxzwf6i35m5FZTzjXkD2+1lUJMtttwqg8hbF8mmYL8lG9bhKw6QJC
-	qhcsRPXzHsNTi3Z7bAwWUw2+eobj1thoWMOYJuMiN3zrR3watF80WpbuFFTPXQ==
-Message-ID: <e9aa0470-2bd2-4825-8333-ad9dbc7f40a0@bootlin.com>
-Date: Fri, 24 Oct 2025 10:46:14 +0200
+	s=arc-20240116; t=1761295653; c=relaxed/simple;
+	bh=ItL3HwUX3mQOlR0jmO7bG+3JhJbzVE20bcx4/PFrwe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bPvpA5hkQ6Ji7I0Auo5/8aSf+kE7034aFoDeuYT7lB0BDJBFj0G8+hwtXcCaGBIbKd3eStviAQKzjUs+opioaKqgrvoMsz40gmJKqzEk2UAaaFiWU4HcYaaEDKU5v+dwkBjF6kpWhW++lfu4vC0fwatARrKnHop2IQMdlrsCQjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CtKgrNZC; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761295653; x=1792831653;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ItL3HwUX3mQOlR0jmO7bG+3JhJbzVE20bcx4/PFrwe4=;
+  b=CtKgrNZCeJgd9JfeJbH66Y7dlbEvka59UIpdqvo18ICU8GqoOqWFYvPT
+   8gSzs8dgw3zfUe6+cwWSrdETzybMBZvXZ7IpzRLtueS3zgdS68bwKllY4
+   6M0MDtVy0dU03cDbeCHK8gg28MZz4RHky3H0C66rbtehLE7kRrIjUriSs
+   P+kBrDEjrOBhmKgycTzfaTfYIRibNtP+tjx4eYwcbJlqXfIMlHZJs6+N6
+   4+HcDroURKQCdKBz5qao6K5LkhNdtqZfKPYcr6uMytQXArEPDLp6Gqkmc
+   Qi93bQJVISIHuGLNr1C4piK6w6jgjSwmSfBRuNrDqmDxxGFG4GbvBLU8i
+   g==;
+X-CSE-ConnectionGUID: ldijfceWS/m2qeLyjnbvgg==
+X-CSE-MsgGUID: xvR+EfYvTKOjfcTj1Y0sLw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67120439"
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="67120439"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 01:47:32 -0700
+X-CSE-ConnectionGUID: Vq3kYvgSReaaTsSq7YMbQg==
+X-CSE-MsgGUID: yV2kuODqQvCiRogo7q4h6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="183986609"
+Received: from opintica-mobl1 (HELO ashevche-desk.local) ([10.245.245.60])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 01:47:29 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vCDSH-000000026dm-2uGy;
+	Fri, 24 Oct 2025 11:47:25 +0300
+Date: Fri, 24 Oct 2025 11:47:25 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Chu Guangqing <chuguangqing@inspur.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	subhajit.ghosh@tweaklogic.com, javier.carrasco.cruz@gmail.com,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] iio: light: apds9960: convert to use maple tree
+ register cache
+Message-ID: <aPs9HdeTZKoqFqdk@smile.fi.intel.com>
+References: <20251024073823.35122-1-chuguangqing@inspur.com>
+ <20251024073823.35122-5-chuguangqing@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC net-next] net: loopback: Extend netdev features with new
- loopback modes
-To: Hariprasad Kelam <hkelam@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Sunil Goutham <sgoutham@marvell.com>,
- Geetha sowjanya <gakula@marvell.com>, Subbaraya Sundeep
- <sbhatta@marvell.com>, Bharat Bhushan <bbhushan2@marvell.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
- Jianbo Liu <jianbol@nvidia.com>, Edward Cree <ecree.xilinx@gmail.com>,
- Breno Leitao <leitao@debian.org>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Russell King <linux@armlinux.org.uk>
-References: <20251024044849.1098222-1-hkelam@marvell.com>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20251024044849.1098222-1-hkelam@marvell.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024073823.35122-5-chuguangqing@inspur.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi,
+On Fri, Oct 24, 2025 at 03:38:23PM +0800, Chu Guangqing wrote:
+> The maple tree register cache is based on a much more modern data structure
+> than the rbtree cache and makes optimisation choices which are probably
+> more appropriate for modern systems than those made by the rbtree cache.
 
-+Russell +Oleksij
+...
 
-On 24/10/2025 06:48, Hariprasad Kelam wrote:
-> This patch enhances loopback support by exposing new loopback modes
-> (e.g., MAC, SERDES) to userspace. These new modes are added extension
-> to the existing netdev features.
-> 
-> This allows users to select the loopback at specific layer.
-> 
-> Below are new modes added:
-> 
-> MAC near end loopback
-> 
-> MAC far end loopback
-> 
-> SERDES loopback
-> 
-> Depending on the feedback will submit ethtool changes.
+>  	.reg_defaults = apds9960_reg_defaults,
+>  	.num_reg_defaults = ARRAY_SIZE(apds9960_reg_defaults),
 
-Good to see you're willing to tackle this work. However as Eric says,
-I don't think the netdev_features is the right place for this :
- - These 3 loopback modes here may not be enough for some plaforms
- - This eludes all PHY-side and PCS-side loopback modes that we could
-   also use.
+^^^^ Be careful with such cases, the cache implementations may behave
+differently. Have you tested this on the actual HW?
 
-If we want to expose these loopback modes to userspace, we may actually
-need a dedicated ethtool netlink command for loopback configuration and
-control. This could then hit netdev ethtool ops or phy_device ethtool
-ops depending on the selected loopback point.
+>  	.max_register = APDS9960_REG_GFIFO_DIR(RIGHT),
+> -	.cache_type = REGCACHE_RBTREE,
+> +	.cache_type = REGCACHE_MAPLE,
+>  };
 
-If you don't want to deal with the whole complexity of PHY loopback, you
-can for now only hook into a newly introduced netdev ethtool ops dedicated
-to loopback on the ethnl side, but keep the door open for PHY-side
-loopback later on.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Maxime
 
 
