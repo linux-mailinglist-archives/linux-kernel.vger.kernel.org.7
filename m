@@ -1,154 +1,292 @@
-Return-Path: <linux-kernel+bounces-868637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F22C05AD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:52:07 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3E4C05AE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 542834E5DFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:52:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 06E9A35C37B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCDC31354F;
-	Fri, 24 Oct 2025 10:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CE831065B;
+	Fri, 24 Oct 2025 10:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SuzXCVTo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FOUnRbb/"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069AF31329C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED3F313E0B;
+	Fri, 24 Oct 2025 10:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303041; cv=none; b=uRYjxj+yWrJl0poxGCcSQNAtY37pUmulBlMZG9LzVW3ICi+mEDjyPNYpnSXs5WT39EC12EB1P9ofjw0ZaDq4aVdDx9ASt31rUuyTdZKfvZ50XYvvglxYlIvwFOTnsLR7XjkRRawCr95jhSgNvxUN8l+sgffsrVOdFxwVf5YrDig=
+	t=1761303048; cv=none; b=Z4wrgNlZejngS5dh2NDhKUdSIf9hctxwR384dImnHU2KZkAsWSTjfEWxHvQpw6XFzfxNNQWoWXZPafZ2G77tavzZyKWl8AcncHesXn4vZGzN82+mo2bir/vvDcqzMbs3gb0cpe4boKs/rPKAE45TMlDb1PlMo0Eaap1p8Og3wW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303041; c=relaxed/simple;
-	bh=WPGiDfcWovbn61egHdhHxs84SiuVP8EjCt0AvyxtedE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uVAmTc3Ua9TxitVn2zqFq1Qqq0lEJQopI8r4xmqMSNKE56soZOG8X+E+upceq83IJ7BhDQb6CeLwTpPnC/aLIn7+Yqh9XP0fTCdL5hyjMjtq0MCvGmfw23oLX/XNmw3nV8NT3nxbSXPL/Asvxr3m205bkzYWgHC2UwipFuT6zEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SuzXCVTo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O3MHx4021689
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:50:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=i9RE9ZFSbYk
-	I2uHWWS1BVwm3WmE2jqPOJsoCfsqTrAk=; b=SuzXCVToIetAtNwUmPP2nCww3A9
-	Y1TMmnCILe3kQ53ORblD8wbqTDX/2kojvgbM068z89peP9HVeSTNHw0E6KqnY4oc
-	heBvno3Ucwy139glDBqX8XcNzkeLfF8RyJntIzGpvPlydL3q7ewWLAcrP44Sm21H
-	d1C+xEmaLNJmju1Gn+2KAeBSdlO+5of7jIuyIP+ybnX8aWnmIbQtuqopVjR4dqVv
-	fRay1HpBXw1/piFHy9vzDdC9bd49uVNSFmEC0oqwz8757aiV9YbcaVOtE+M1Yp+U
-	Gf59J3byAQASucpJB/0qb/Ajnc530AV+6BMqI1FiPPC6KIyLjE0u6LeUkpw==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49y5x8nxvk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:50:39 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-286a252bfbfso48883765ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:50:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761303038; x=1761907838;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i9RE9ZFSbYkI2uHWWS1BVwm3WmE2jqPOJsoCfsqTrAk=;
-        b=JOp0RXYIvkNvIZ1YiH040FdG1ztAw1BezwV10IPtKfNHsP2DBL3DtCoFIFz+GdrJkB
-         RNmjh3AxnIy0pxDvpoI8201ugzE8myjQLTXC31STXbxK69ZpP7B5lK7qEr7ajpxtX6Zh
-         UGdcfHMWDTsKTKLnJvslkkwdz1J5Ltq6Kj9a0JWK2FsAU8B/kDag0O7XLmKrJtE1YqQW
-         VU9I36MPZEgl1mv+bI8Y6ScrN7Q29ewEVL2zyYzwbtuVNgMQnbgYy+uGmgh1Cob0/zmw
-         RoangWozNZjsjTne0eqPjd7rrVmFRKtsmxa5TC1wGejMj883SietSwxnQKfYyJaP1QxN
-         DYMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0eTGCJngIxFf1VCUXNO8ixPG1TIJ5s2AKAI1yNxzIqJfMQp1VSbjYn3zHbs4xbgJ6a6u2xMUuRDsFMjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww3q2vgEYdX9DHwA5dyj2h7SjG2wbsMYQj66m2SiFQmQHVk7kk
-	oQC0BX0L2nH0+uxWkoaR8Uj+Nf6Sm1/AU98N2a5a6AWQhi0zaR08ID64CBS1bI26nv4qVU671Fw
-	CFkrBzicxA+aPAHKhUpcCJO9ItkKDAxKKGGr0C368MNcgzaRFqZmLLSg+c9bi2GzhMjrRbsuixm
-	U=
-X-Gm-Gg: ASbGncuJqrr0bKcMn62VphxvmE08qXy8gG3vgU0ULhuY5kMFITcsctP15Stb5pZSnzY
-	nhhJNQYcCbVr5zekTq/u/GWSn/X/zuAZafeB++bOK8peyy7ZPEkTiTLLIR/vkRctsFjldFjukXS
-	egWpD2ZulFs35nzteOtWSAnLj3SuWmTfJzHNqOUGLknjTeHc5qbQ+oSEzhdBjSHcfNhUeUAr658
-	EvvFqtrXIuDBrbZx01MWKXZrC3LpXzDJxYvzde/5/e650XwrNBGfyUSP09GaqreZzq+niStZHRk
-	yikQ+DQwcGx7kEkDEbmG5HoocSPFpOLZHenbfWAZJsVWRnsGxmtw9yusODBSB54/NC856xOKs0M
-	lkxHsjC/XP9SAgFUKGiYH6tUY75zmbNnSHoDt
-X-Received: by 2002:a17:902:fc4b:b0:290:a70e:6261 with SMTP id d9443c01a7336-290c9c93c30mr349390065ad.11.1761303037632;
-        Fri, 24 Oct 2025 03:50:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGXw79W9RUWBmxKCdwnYGEXSMksO/yt2QD3Y/MhqjoK4q5FjIhJjYCm5PRw7UriDx5DKmsJKg==
-X-Received: by 2002:a17:902:fc4b:b0:290:a70e:6261 with SMTP id d9443c01a7336-290c9c93c30mr349389865ad.11.1761303037233;
-        Fri, 24 Oct 2025 03:50:37 -0700 (PDT)
-Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946e23e4b3sm51236775ad.103.2025.10.24.03.50.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 03:50:36 -0700 (PDT)
-From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-        Shazad Hussain <quic_shazhuss@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Subject: [PATCH 2/2] arm64: dts: qcom: lemans: Add missing quirk for HS only USB controller
-Date: Fri, 24 Oct 2025 16:20:19 +0530
-Message-Id: <20251024105019.2220832-3-krishna.kurapati@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251024105019.2220832-1-krishna.kurapati@oss.qualcomm.com>
-References: <20251024105019.2220832-1-krishna.kurapati@oss.qualcomm.com>
+	s=arc-20240116; t=1761303048; c=relaxed/simple;
+	bh=gILShCqjLwGOVMcmYbpFkut+nFsCzpM8IeAUzKBlCRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VJfNsH7iegAH0tjsug683vT0yHSwBhBk7Oh4uySK7adxkIVpmVP9lBQMSdOmRGke19koyKjyrzVAfG/EAAnf+jdhrMKOVmKeAtdTF5/jva5SAdPi5DL4UD+CKhlB0givMqsrfhoM5XbiIn5l9XSfFiqH8TmwHm2RBiBM/Eu89jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FOUnRbb/; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-161-16.bb.dnainternet.fi [82.203.161.16])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id DD77B7E9;
+	Fri, 24 Oct 2025 12:48:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761302932;
+	bh=gILShCqjLwGOVMcmYbpFkut+nFsCzpM8IeAUzKBlCRw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FOUnRbb/qAOjKd7TYRM5Pxvn8GXbEt+joG+/UQYbpF582A9HBLK8qjRNsXLn7LKMC
+	 2Jg1LMcKq8EBramg0bpdTP1cd0qoeRvAOhnsc+yBLZmT7mcpl3vbzlLaQ4e+3Zmx+v
+	 fa/9PhXf4ABzKu+BTr5vE+p7F8GQFm35gGmzdx/E=
+Date: Fri, 24 Oct 2025 13:50:23 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: uvcvideo: Create a specific id namespace for
+ output entities
+Message-ID: <20251024105023.GA13023@pendragon.ideasonboard.com>
+References: <20251022-uvc-grandstream-laurent-v2-1-8c5c20d6c571@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: gCE8C0cWgq33P-UQB7QNJgSiq2bqXZMb
-X-Proofpoint-GUID: gCE8C0cWgq33P-UQB7QNJgSiq2bqXZMb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDE2NCBTYWx0ZWRfX85PBzYdFGUAh
- RW01AtIp8zUk13f4di0WdtB3ZZG2dXjwScRUC4cp5twfjPobeXAlPQW7LBVSTxAK7ldGTbVSgQG
- P1UwhQfkq5iKY92Eja4ykIZkk2rj0V+2x94EV7LhlzOHRoVU0K8pLdvbM3bRiTslFVgDpWy4kpy
- e+jlAcB0HUJHNLZMzKsfqgg46gl9+CtgGV74CQkviiz4DyJ0wKn/5d74849pF9/ZYvFt/tbTThC
- ky3xBfEI5Bd4U+GkskUe8bw6GC1fIK25VrlC6dxXm9d1mBh8LRjn6M6Dm34DGt4rVoZ9wOCa8pF
- ko+YYUsrqxd9FIHnbfQ3PRB1hQFwSZ1Q0Q3IbbWM2smoOJuKAD5v4WxWGw8F5FTUCGxWCgp/vv+
- FrxvsxyUnxQ+PJecSItLK+Fl8mPP3w==
-X-Authority-Analysis: v=2.4 cv=UOTQ3Sfy c=1 sm=1 tr=0 ts=68fb59ff cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=d1616NNI0-D16vPRn74A:9 a=dwazZoRKGdePyhm7:21 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-24_01,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 suspectscore=0 adultscore=0 clxscore=1015 phishscore=0
- bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510220164
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251022-uvc-grandstream-laurent-v2-1-8c5c20d6c571@chromium.org>
 
-The PIPE clock is provided by the USB3 PHY, which is predictably not
-connected to the HS-only controller. Add "qcom,select-utmi-as-pipe-clk"
-quirk to  HS only USB controller to disable pipe clock requirement.
+On Wed, Oct 22, 2025 at 01:12:09PM +0000, Ricardo Ribalda wrote:
+> Nothing can be connected to an output terminal. Which means that no
+> other entity can reference an output terminal as baSourceId.
+> 
+> Use this fact to move all the output streaming entities, which have no
+> controls, to a different namespace.
+> 
+> The output entities are usually named after the dev_name() of the usb
+> device, so there should not be any uAPI change from this change.
+> 
+> Although with this change we can handle some id collisions
+> automagically, change the logic of uvc_alloc_new_entity() to keep
+> showing a warning when a camera has invalid descriptors. Hopefully this
+> message will help vendors fix their invalid descriptors.
 
-Fixes: de1001525c1a ("arm64: dts: qcom: sa8775p: add USB nodes")
-Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/lemans.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+This is one of the commits that I expect we'll go back to in the future
+when trying to remember why we namespace the streeaming terminal IDs.
+Let's make the rationale very clear, and also mention the name of the
+devices we know to be affected.
 
-diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-index cf685cb186ed..c2d2200d845b 100644
---- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-+++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-@@ -4106,6 +4106,7 @@ usb_2: usb@a400000 {
- 					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_USB2 0>;
- 			interconnect-names = "usb-ddr", "apps-usb";
- 
-+			qcom,select-utmi-as-pipe-clk;
- 			wakeup-source;
- 
- 			iommus = <&apps_smmu 0x020 0x0>;
+----
+Some devices, such as the Grandstream GUV3100 and the LSK Meeting Eye
+for Business & Home, exhibit entity ID collisions between units and
+streaming output terminals.
+
+The UVC specification requires unit and terminal IDs to be unique, and
+uses the ID to reference entities:
+
+- In control requests, to identify the target entity
+- In the UVC units and terminals descriptors' bSourceID field, to
+  identify source entities
+- In the UVC input header descriptor's bTerminalLink, to identify the
+  terminal associated with a streaming interface
+
+Entity ID collisions break accessing controls and make the graph
+description in the UVC descriptors ambiguous. However, collisions where
+one of the entities is a streaming output terminal and the other entity
+is not a streaming terminal are less severe. Streaming output terminals
+have no controls, and, as they are the final entity in pipelines, they
+are never referenced in descriptors as source entities. They are
+referenced by ID only from innput header descriptors, which by
+definition only reference streaming terminals.
+
+For these reasons, we can work around the collision by giving streaming
+output terminals their own ID namespace. Do so by setting bit
+UVC_TERM_OUTPUT (15) in the uvc_entity.id field, which is normally never
+set as the ID is a 8-bit value.
+
+This ID change doesn't affect the entity name in the media controller
+graph as the name isn't constructed from the ID, so there should not be
+any impact on the uAPI.
+
+Although this change handles some ID collisions automagically, keep
+printing an error in uvc_alloc_new_entity() when a camera has invalid
+descriptors. Hopefully this message will help vendors fix their invalid
+descriptors.
+----
+
+> 
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+> Hi, this patch fixes support for some devices with invalid USB
+> descriptor.
+> 
+> It is orthogonal to:
+> https://lore.kernel.org/linux-media/20251021184213.GC19043@pendragon.ideasonboard.com/T/#t
+> 
+> Some devices will be fixed by the other patch, other devices will be
+> fixed by this. In my opinion is worth to land both patches.
+
+I would prefer merging this fix only (or rather, if we merge the other
+one as a quick fix, reverting it once we merge this one). The rationale
+is that enabling non-compliant behaviour should be limited to issues we
+know about, otherwise it could encourage making more non-compliant
+devices.
+
+The UVC specification states
+
+  Each Unit and Terminal within the video function is assigned a unique
+  identification number, the Unit ID (UID) or Terminal ID (TID),
+  contained in the bUnitID or bTerminalID field of the descriptor. The
+  value 0x00 is reserved for undefined ID, effectively restricting the
+  total number of addressable entities in the video function (both Units
+  and Terminals) to 255.
+
+To me it's clear that the unit and terminal IDs share the same
+namespace, but I suppose some vendors can overlook that. When combined
+with the fact that the streaming output terminals do not have controls,
+and therefore do not need to be addressable and lookup up by ID for
+anything else than matching with a streaming interface, this makes me
+think that ID collision between a streaming output terminal and another
+unit will likely be the most common case.
+
+> Tested with GRANDSTREAM GUV3100 in a 6.6 kernel.
+> ---
+> Changes in v2:
+> - Change Macro name
+> - Apply quirk only to TT_STEAMING
+> - Add missing suggested by
+> - uvc_stream_for_terminal
+> - Note, v2 has not been tested yet in real hardware, only v1.
+> - Link to v1: https://lore.kernel.org/r/20251022-uvc-grandstream-laurent-v1-1-0925738a3484@chromium.org
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c | 31 ++++++++++++++++++++++++-------
+>  drivers/media/usb/uvc/uvcvideo.h   |  3 ++-
+>  2 files changed, 26 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..c0a2c05b0f13a8c3b14018c47dfb0be2614340ce 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -165,8 +165,10 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
+>  	return NULL;
+>  }
+>  
+> -static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
+> +static struct uvc_streaming *uvc_stream_for_terminal(struct uvc_device *dev,
+> +						     struct uvc_entity *term)
+>  {
+> +	u16 id = UVC_HARDWARE_ENTITY_ID(term->id);
+>  	struct uvc_streaming *stream;
+>  
+>  	list_for_each_entry(stream, &dev->streams, list) {
+> @@ -810,10 +812,12 @@ static struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
+>  	}
+>  
+>  	/* Per UVC 1.1+ spec 3.7.2, the ID is unique. */
+> -	if (uvc_entity_by_id(dev, id)) {
+> -		dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n", id);
+> +	if (uvc_entity_by_id(dev, UVC_HARDWARE_ENTITY_ID(id)))
+> +		dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n",
+> +			UVC_HARDWARE_ENTITY_ID(id));
+> +
+> +	if (uvc_entity_by_id(dev, id))
+>  		id = UVC_INVALID_ENTITY_ID;
+> -	}
+>  
+>  	extra_size = roundup(extra_size, sizeof(*entity->pads));
+>  	if (num_pads)
+> @@ -969,6 +973,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+>  	struct usb_host_interface *alts = dev->intf->cur_altsetting;
+>  	unsigned int i, n, p, len;
+>  	const char *type_name;
+> +	unsigned int id;
+>  	u16 type;
+>  
+>  	switch (buffer[2]) {
+> @@ -1107,8 +1112,20 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
+>  			return 0;
+>  		}
+>  
+> +		id = buffer[3];
+> +
+> +		/*
+> +		 * Nothing can be connected to an output terminal. To avoid
+> +		 * entity-id's collisions in devices with invalid USB
+> +		 * descriptors, move the output terminal id to its own
+> +		 * namespace. Do this only for UVC_TT_STREAMING entities, to
+> +		 * avoid changing the id of terminals with controls.
+> +		 */
+
+How about expanding this too, similarly to the commit message to avoid
+digging all the information from the git history ? I've found that
+explaining hacks in more details helped me before when I had to rework
+the code years later.
+
+		/*
+		 * Some devices, such as the Grandstream GUV3100 and the LSK
+		 * Meeting Eye for Business & Home, exhibit entity ID collisions
+		 * between units and streaming output terminals. Move streaming
+		 * output terminals to their own ID namespace by setting bit
+		 * UVC_TT_STREAMING (15), above the ID's 8-bit value. The bit is
+		 * ignored in uvc_stream_for_terminal() when looking up the
+		 * streaming interface for the terminal.
+		 *
+		 * This hack is safe to enable unconditionally, asthe ID is not
+		 * used for any other purpose (streaming output terminals have
+		 * no controls and are never referenced as sources in UVC
+		 * descriptors). Other types output terminals can have controls,
+		 * so limit usage of this separate namespace to streaming output
+		 * terminals.
+		 */
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +		if (type & UVC_TT_STREAMING)
+> +			id |= UVC_TERM_OUTPUT;
+> +
+>  		term = uvc_alloc_new_entity(dev, type | UVC_TERM_OUTPUT,
+> -					    buffer[3], 1, 0);
+> +					    id, 1, 0);
+>  		if (IS_ERR(term))
+>  			return PTR_ERR(term);
+>  
+> @@ -2105,8 +2122,8 @@ static int uvc_register_terms(struct uvc_device *dev,
+>  		if (UVC_ENTITY_TYPE(term) != UVC_TT_STREAMING)
+>  			continue;
+>  
+> -		stream = uvc_stream_by_id(dev, term->id);
+> -		if (stream == NULL) {
+> +		stream = uvc_stream_for_terminal(dev, term);
+> +		if (!stream) {
+>  			dev_info(&dev->intf->dev,
+>  				 "No streaming interface found for terminal %u.",
+>  				 term->id);
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index ed7bad31f75ca474c1037d666d5310c78dd764df..3f2e832025e712585edc324afa6cad760d4edafc 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -41,7 +41,8 @@
+>  #define UVC_EXT_GPIO_UNIT		0x7ffe
+>  #define UVC_EXT_GPIO_UNIT_ID		0x100
+>  
+> -#define UVC_INVALID_ENTITY_ID          0xffff
+> +#define UVC_HARDWARE_ENTITY_ID(id)	((id) & 0xff)
+> +#define UVC_INVALID_ENTITY_ID		0xffff
+>  
+>  /* ------------------------------------------------------------------------
+>   * Driver specific constants.
+> 
+> ---
+> base-commit: ea299a2164262ff787c9d33f46049acccd120672
+> change-id: 20251022-uvc-grandstream-laurent-3f9abb8a0d5b
+
 -- 
-2.34.1
+Regards,
 
+Laurent Pinchart
 
