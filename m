@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-868452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB25C05376
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:00:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1053BC05430
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 852C51AE0B1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:00:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B88B427F04
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7DF307AEA;
-	Fri, 24 Oct 2025 09:00:30 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EF42C027B;
+	Fri, 24 Oct 2025 09:00:42 +0000 (UTC)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789B72BE04D
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910532D249E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761296429; cv=none; b=AgsWIvIXqDnbEVQkMnpPhBMmMeQ8lapUTJdjgOQXZtgq0WtXyHJRveFz+HL1h3tdvQC8qIYIDxoyUTrASwOzz5H7e6rLtZue235Cv8CjmNReYQgh71QWJc8kfTd3rRQbm+7mgsu9MCTlePxURmskX4aq1hvCv1hD5Cve57kj1VI=
+	t=1761296441; cv=none; b=W7xf+rvaLU7WkjyBG+WqKZfZ/8ra2hjDy5Wzp7VNIS0qYHETIwJM2dYC59amb0M/+ievmQHs96Mr5TC5wv0tKdwJv0NbwtaU2Sebm/mhBtPrlQs2MQpbWzrYn54bc9m0sNEQsjWWPGO8q/lU2Nvbo3crOe6ZIlKA5mtlM5aiWgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761296429; c=relaxed/simple;
-	bh=00xjuejMwv1ZZNVxoCzBqp+1AOs7D7t7BV9XQH/RAx0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pPWRIJURtqnFT1UXW5M9YgGwEN1Wueqg8pxFgabbI/kOcL8XnfRVsKMETlfE6soA142n1m9Agzjf7McqSPFT/6cfH4RoZllRzKob2GaRjOi4bugOug7zi98usvuVDNoySRRqRx6AR6KRsOmyPOl5CpogJp5JAl5VCsfAr5MgIuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ctGvR2g0sz2Cfyf;
-	Fri, 24 Oct 2025 16:55:31 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8DE151A016C;
-	Fri, 24 Oct 2025 17:00:23 +0800 (CST)
-Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 24 Oct 2025 17:00:23 +0800
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 24 Oct 2025 17:00:22 +0800
-Message-ID: <15381f48-35c8-497c-908d-03fc16a62b08@huawei.com>
-Date: Fri, 24 Oct 2025 17:00:19 +0800
+	s=arc-20240116; t=1761296441; c=relaxed/simple;
+	bh=VTwfEDA9O/4R6v1xPBzrfJocZUu/+v/Lfn5nRGgSQOA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a8nJGQhh0pVMrAD8/kXQvn1AOmPTf3UZblUTNuav/z6Z/2XW/dERmdauXHuhKsLJh3ui+wlz05KmLL3HOza7UP4lwBSVi8+P+8d1CeQ39+68D7eVKlsSHHStv5Gnzo4GvPXIQN3IRmRucga4b+zSqAlNBk38pWHqKfod3/Frhq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-54a8f6a2d80so126596e0c.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:00:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761296438; x=1761901238;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3v1IEsc7lG0F5yaUsZFsiMjA7EGPtVnzD5XrOqlrERI=;
+        b=d+Kd4OqEahK+D1AR+wYwdBDTns/Hcfyx91KZKZihov9KYHwn7w1TNE+LJk8U6JVHYv
+         g8NQ3x3dqOeKF/YNcHyjdyTMlpp+O0SUQntbB5jkMvDJTlpT9Eu0nu0fY7UDaN6TcCZW
+         V65NhSoLka2dXHMbqs/wFbETr/ot/q3oc0FjYIGzq765SCiIOg9+X8lhL224nGP4Gn5+
+         CSFEhLGM57KHxPIArlXlA8GbUuDISLuKeCJ8xr/4rLLT+7/HpeeXlF//2rQh5r6c1g/v
+         xQH/N+VRxUMtuUzk4Ed/CFZ+sr7Ulz3Ky2n3epT2uxgYUWlI9NeoRtqxvoxgwO/ZssMP
+         9eBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzQW8VXa8P64wLpFRu7wNnGWmoCcydHjgtzuNcXm7iQ7wTnS4exdzT3ESYz1rpMLBujF6dliXzfwjfTZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/nkEIpemeHHkUZtY2+CQB/6VluwV+iiBdIk11lJx57bT4N5g4
+	i8bJjhCDtHN0XBKtQmSoS0cmd2GXdVZApbUIFwJ14wI8gX8nhe23ZLfg6lj2Waka
+X-Gm-Gg: ASbGnctyX0fSmg16pJc/bcBZEF+J9dHNFvOrqYJ6v6EzHKWwosqlXH01V14sNgwF0Kv
+	4P0rKWyyuQQ6XyeJQjWRATKFL1JboUQplw1gqZmHntKmEGgiHGlEOS4KHk3r/siydkoEldBpO8v
+	1RmUnXl3LLzsyAybQaezcWECr9OYgGjzHuwlBcBTRZ27reaFBKPUvbNhT3Xnv817RdcbsP9iO/8
+	dG61MGYPX5jZJmIla8Z+QcgEUwVRtfTPuSz8DkouK8dtxnDy7XqecSjKzRE59nPcZy/L6gTmUju
+	4rg965oW09EiF35ijv71F7zx3mpvlw1w8D7+EWJ2PhhGvApf4Qz2pYfUxdsgoKFuqxIhWG8gjJI
+	62jlFV2xeRFlFSvAegknalOs2dmQHxWC32YzKX/1c12gIaqlSC8kU7mflCXq8Q2RjMKNJbX8Xm/
+	zYDopbyLz1rZl/roehCuU27d2K2cK/VGL7fQ/+RloyAjb/85zx0vvJN9k2Ffg=
+X-Google-Smtp-Source: AGHT+IFYasdu6cJNw4E0h2HsKoeMpZPjU97hOokFhMZqTDS/dMuUULOzkhRptuyhRkH1oHMnUiDSPg==
+X-Received: by 2002:a05:6122:65a4:b0:552:2c5a:c057 with SMTP id 71dfb90a1353d-5564ef828d9mr7103194e0c.13.1761296438143;
+        Fri, 24 Oct 2025 02:00:38 -0700 (PDT)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-557bd8e5e87sm1842396e0c.11.2025.10.24.02.00.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 02:00:37 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-934ad40c2c2so675489241.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:00:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCURg/74/B79SheE1uO+K7n+CORnWEpIeLxi5Rso1tHt4WOHuOvoBlcZxQB7uhvD1NPvgdouVMppfAQ+EVU=@vger.kernel.org
+X-Received: by 2002:a05:6102:6a81:b0:5db:341e:94c2 with SMTP id
+ ada2fe7eead31-5db341e98c9mr1497710137.4.1761296437697; Fri, 24 Oct 2025
+ 02:00:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 drm-dp 0/4] Fix hibmc driver bugs
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <dmitry.baryshkov@oss.qualcomm.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<fengsheng5@huawei.com>, <libaihan@huawei.com>, <shenjian15@huawei.com>,
-	<shaojijie@huawei.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <shiyongbang@huawei.com>
-References: <20251017095907.2060834-1-shiyongbang@huawei.com>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <20251017095907.2060834-1-shiyongbang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemq100007.china.huawei.com (7.202.195.175)
+References: <20251022074100.1994447-1-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20251022074100.1994447-1-cosmin-gabriel.tanislav.xa@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 24 Oct 2025 11:00:26 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWaw0DXz7AgdLORDerNqGD=juJvHOAevTODpMiniDyRjw@mail.gmail.com>
+X-Gm-Features: AS18NWA1mnJX-CfRjNX5MadNbQ2xKcHaLUi92Y49yOhA0Cb_I7az37noXQXhEEo
+Message-ID: <CAMuHMdWaw0DXz7AgdLORDerNqGD=juJvHOAevTODpMiniDyRjw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: renesas: rzg2l: remove useless wrappers
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Friendly ping, just a gentle reminder since this series has been around a while.
+On Thu, 23 Oct 2025 at 20:27, Cosmin Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> rzg2l_gpio_irq_set_type() and rzg2l_gpio_irqc_eoi() only call the
+> equivalent parent functions, replace their usage with the parent
+> functions and remove them.
+>
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 
-Thanks,
-Baihan.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v6.19.
 
+Gr{oetje,eeting}s,
 
-> From: Baihan Li <libaihan@huawei.com>
->
-> There are some bugfix for hibmc-drm driver.
-> ---
-> ChangeLog:
-> v8 -> v9:
->    - refactor the hibmc_dp_check_hpd_status(), and add some checks
->      in dp_encoder_enable.
-> v7 -> v8:
->    - fix build errors reported by kernel test robot <lkp@intel.com>
->      Closes: https://lore.kernel.org/oe-kbuild-all/202509241625.o4mNleVb-lkp@intel.com/
-> v6 -> v7:
->    - add the check about branch devices, suggested by Dmitry Baryshkov.
-> v5 -> v6:
->    - use HPD status in DP detect_ctx(), suggested by Dmitry Baryshkov.
-> v4 -> v5:
->    - Because some of patches are applied, this series only contains the rest of them.
->    - fix the commit and DP detect_ctx(), suggested by Dmitry Baryshkov.
->    - fix bugfix commit ID, suggested by Dmitry Baryshkov.
->    - remove the 08/11 patch, I'll add in next series.
->    - combined 9 and 11 patch together, suggested by Dmitry Baryshkov.
-> v3 -> v4:
->    - remove link training process in hibmc_dp_detect(), suggested by Dmitry Baryshkov.
->    - remove if (dev->registered), suggested by Dmitry Baryshkov.
->    - remove non-related changes, suggested by Dmitry Baryshkov.
->    - Remove the clock check, suggested by Dmitry Baryshkov.
->    - ( I'll add them in next series after redesigning this part)
->    - add KVM edid in commit message, suggested by Dmitry Baryshkov.
->    - fix magic values, suggested by Dmitry Baryshkov.
->    - fix the commit subjects, suggested by Dmitry Baryshkov.
-> v2 -> v3:
->    - fix hibmc_connector_get_modes() and hibmc_vdac_detect() to realize BMC KVM, suggested by Dmitry Baryshkov.
->    - fix the issue commit ID, suggested by Dmitry Baryshkov.
->    - split into 2 commits, suggested by Dmitry Baryshkov.
->    - add more comments in commit log, suggested by Dmitry Baryshkov.
-> ---
->
-> Baihan Li (4):
->    drm/hisilicon/hibmc: fix dp probabilistical detect errors after HPD
->      irq
->    drm/hisilicon/hibmc: add dp mode valid check
->    drm/hisilicon/hibmc: fix no showing problem with loading hibmc
->      manually
->    drm/hisilicon/hibmc: Adding reset colorbar cfg in dp init.
->
->   drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  4 +
->   .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  2 +
->   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 40 +++++++++-
->   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  8 ++
->   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  3 +
->   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 77 ++++++++++++++++++-
->   6 files changed, 128 insertions(+), 6 deletions(-)
->
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
