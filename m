@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-868807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A44C062F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:13:09 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5DEC0630F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CAB6C4E0364
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:13:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 568CC347DF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3F5313539;
-	Fri, 24 Oct 2025 12:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKvfsL01"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D652D5924;
-	Fri, 24 Oct 2025 12:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1D830BB89;
+	Fri, 24 Oct 2025 12:13:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E161FC3;
+	Fri, 24 Oct 2025 12:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761307980; cv=none; b=Cd1+GI4Q1+TQdVGjqeTiY23m8PdBUTDLrscoNTaDLZi77oB9NZX1T8mQQpj1eFlfkZyuNRmKFe9zlIhq5JSIkDiysZqbel+bDXcb4tUtA7gVlot6ocZfAPyS/+nPJJNEmQQIBkPRyZJW39Ss5tAlqovpfXRItE43OcNhVs02850=
+	t=1761308029; cv=none; b=tLouTISTxspmwPd6ut101FNEp2FSviy/W2mujysL7GHYmF6y+B7aoIxO9YzJO5jPRisBh4tHBFMa5tAXPnelihji8IrbC0qDFojVO7r7ol4rUbpoJgXgGkLdytxv/cbJzp3akan4dce4QbcdX/3ooHellNV1u//2qVTgqAtNrhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761307980; c=relaxed/simple;
-	bh=OUk76ys6nMYdTGFO9m0BC6J/XiUc43vsBYgM5iphDsI=;
+	s=arc-20240116; t=1761308029; c=relaxed/simple;
+	bh=X3sXu4j8MfMq52gqBAavsMTcndSosYtjB52S1c8LUjs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PovncGRmmr8PLEKNY79XlOUvAy1gj2Hklp9HA4DUYiaJgl0Lmza8V0LvpcWMuRa9oHrAq4TDoenQiHrio4OpjnTT0qvAblYFdo8qGfJ0kLkKISQVscnDLX4sBegTMezmUoNtm+EgLCSMtortBwa5tUuu2QdiZ3Gwsbp85Q3v1qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKvfsL01; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D608AC4CEF1;
-	Fri, 24 Oct 2025 12:12:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761307979;
-	bh=OUk76ys6nMYdTGFO9m0BC6J/XiUc43vsBYgM5iphDsI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KKvfsL016APxbCetUhGFzBkdrNnbXJrbu9QqLvml7A0H5TmGT9VKfKC4Q4gOE1Ayu
-	 p0cFFzA087tdWMnri0ZNtgEE4Ly3eKBPEqM18dJuqOLZ0HPn/MhBql7M/s+329FFp8
-	 lcBpyXEULsBsrLvrasfRQSXvoJj2G2wm4BHKvkVGXCsGjcWWiNebbRy3zIkHEpi141
-	 onbxiNmYbmKPUBougQcJ9UwqDw7jp7Wg2jIdciYo3Z1qNwFO7eCyEKuHPJC3BX2JhD
-	 41BTg6sN6z4uUSTWMgGi1pItjxuKwVtp9LueSPyOumGdiizabputuHu+iVzmNedH27
-	 JP3ejm2KpXwEw==
-Message-ID: <89812f66-25a6-4f9e-aa4f-74adbf116db8@kernel.org>
-Date: Fri, 24 Oct 2025 14:12:55 +0200
+	 In-Reply-To:Content-Type; b=EN+RDv7kBWDzrEj9xItGj4uae7MN6v81d0BtxwG5xZU5UcId1jtNY5Ge2o2UkOtDc2h+h/9ydgnpOgRl9D2iB+bTNsRQG/jdKYKjE3lHsyBLP3ksjZxGpPetDT2g1exU4a+JONK0cD1gO2DzoH4eP/avGZlxcXVgBFDJLRRdVis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5EA231515;
+	Fri, 24 Oct 2025 05:13:38 -0700 (PDT)
+Received: from [10.44.160.74] (e126510-lin.lund.arm.com [10.44.160.74])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6C2833F66E;
+	Fri, 24 Oct 2025 05:13:38 -0700 (PDT)
+Message-ID: <390e41ae-4b66-40c1-935f-7a1794ba0b71@arm.com>
+Date: Fri, 24 Oct 2025 14:13:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,32 +41,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma-fence: Correct return of dma_fence_driver_name()
-To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Cc: phasta@kernel.org, Sumit Semwal <sumit.semwal@linaro.org>,
- Gustavo Padovan <gustavo@padovan.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20251024075019.162351-2-phasta@kernel.org>
- <11b7a8a5-170f-4815-a8ac-5dba2d8e67a1@igalia.com>
- <5de88e79575e06c053f2d61f7bb58bf9cf5b556e.camel@mailbox.org>
- <1d0bbdcf-f4d6-49c0-bbdf-364c2af80868@igalia.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <1d0bbdcf-f4d6-49c0-bbdf-364c2af80868@igalia.com>
+Subject: Re: [PATCH v3 06/13] mm: introduce generic lazy_mmu helpers
+To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
+ <20251015082727.2395128-7-kevin.brodsky@arm.com>
+ <73b274b7-f419-4e2e-8620-d557bac30dc2@redhat.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <73b274b7-f419-4e2e-8620-d557bac30dc2@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 10/24/25 1:31 PM, Tvrtko Ursulin wrote:
-> Also, the short name can be reduced from a verbose starting point similar to yours:
-> 
->  "unknown-driver-is-detached-from-the-signaled-fence"
->  "driver-detached-from-the-fence"
->  "driver-detached"
-> 
-> Or keep "detached-driver" as good enough. Mea culpa for typing it up transposed. :)
+On 23/10/2025 21:52, David Hildenbrand wrote:
+> On 15.10.25 10:27, Kevin Brodsky wrote:
+>> [...]
+>>
+>> * madvise_*_pte_range() call arch_leave() in multiple paths, some
+>>    followed by an immediate exit/rescheduling and some followed by a
+>>    conditional exit. These functions assume that they are called
+>>    with lazy MMU disabled and we cannot simply use pause()/resume()
+>>    to address that. This patch leaves the situation unchanged by
+>>    calling enable()/disable() in all cases.
+>
+> I'm confused, the function simply does
+>
+> (a) enables lazy mmu
+> (b) does something on the page table
+> (c) disables lazy mmu
+> (d) does something expensive (split folio -> take sleepable locks,
+>     flushes tlb)
+> (e) go to (a)
 
-"detached-driver" is misleading, just because the fence is signaled it doesn't
-mean that the driver is detached.
+That step is conditional: we exit right away if pte_offset_map_lock()
+fails. The fundamental issue is that pause() must always be matched with
+resume(), but as those functions look today there is no situation where
+a pause() would always be matched with a resume().
+
+Alternatively it should be possible to pause(), unconditionally resume()
+after the expensive operations are done and then leave() right away in
+case of failure. It requires restructuring and might look a bit strange,
+but can be done if you think it's justified.
+
+>
+> Why would we use enable/disable instead?
+>
+>>
+>> * x86/Xen is currently the only case where explicit handling is
+>>    required for lazy MMU when context-switching. This is purely an
+>>    implementation detail and using the generic lazy_mmu_mode_*
+>>    functions would cause trouble when nesting support is introduced,
+>>    because the generic functions must be called from the current task.
+>>    For that reason we still use arch_leave() and arch_enter() there.
+>
+> How does this interact with patch #11? 
+
+It is a requirement for patch 11, in fact. If we called disable() when
+switching out a task, then lazy_mmu_state.enabled would (most likely) be
+false when scheduling it again.
+
+By calling the arch_* helpers when context-switching, we ensure
+lazy_mmu_state remains unchanged. This is consistent with what happens
+on all other architectures (which don't do anything about lazy_mmu when
+context-switching). lazy_mmu_state is the lazy MMU status *when the task
+is scheduled*, and should be preserved on a context-switch.
+
+>
+>>
+>> Note: x86 calls arch_flush_lazy_mmu_mode() unconditionally in a few
+>> places, but only defines it if PARAVIRT_XXL is selected, and we are
+>> removing the fallback in <linux/pgtable.h>. Add a new fallback
+>> definition to <asm/pgtable.h> to keep things building.
+>
+> I can see a call in __kernel_map_pages() and
+> arch_kmap_local_post_map()/arch_kmap_local_post_unmap().
+>
+> I guess that is ... harmless/irrelevant in the context of this series?
+
+It should be. arch_flush_lazy_mmu_mode() was only used by x86 before
+this series; we're adding new calls to it from the generic layer, but
+existing x86 calls shouldn't be affected.
+
+- Kevin
 
