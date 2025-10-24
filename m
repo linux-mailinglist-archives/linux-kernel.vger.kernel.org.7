@@ -1,126 +1,304 @@
-Return-Path: <linux-kernel+bounces-868809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9637EC06321
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:15:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2BFC0632D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 236914E4AEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:15:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38AB1A0740A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A1D314B87;
-	Fri, 24 Oct 2025 12:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cJ77kMA1"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BA8298CA2
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD07B313E03;
+	Fri, 24 Oct 2025 12:16:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179C6314B65;
+	Fri, 24 Oct 2025 12:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761308137; cv=none; b=ar23uhJTZZRdOU44njEZYlZknw2iusOOiyI6jzHlj2n4VDrhwBQUifue5c/pCY5vSdAOIVXr+l8Gz2j/tEurhK0QU5WnGAKhEwUa78SMyRtJcQB7fJu1E25LZ3oLrwbQz47ad3tsCQ7jUTV5OPKqrJIxyiPFYtFyHVrl6DrouMg=
+	t=1761308207; cv=none; b=EO1EK6aAoMzqMnlzTYOj86F3i3qiCf0lA+WtOGod1X9NZc22OgH0vz5ZxRrb+JiEZXkphTbbxDorJRsHI4RPdLI5MhVLT/nnvgZDyh/R9UJm29IIOovNfpRx9RAwVp+s7c06qhcjqzUciTi8YiESG/30yQ9edPN0H7ToWUBnow8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761308137; c=relaxed/simple;
-	bh=1QYFOnhEDNlrBEyVN+IEYzwowhQlYIEJHN3U3pBB4Ck=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hqR8A/zAuCqH220XlubDycW/97p2bLh5bgXgc7fODcs+jSKWYSF2Jx3VjqHSvxH5MuraWt0dN9NSLTB5r3SbGmg7HCUP8fVURkKA/3CQKCb11z+WOwkIuE2V8P/dZI+VtDvKAL6gcsNF9TLTShLTgKYhQMmjg5c1ZqmkxY+UBew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cJ77kMA1; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-63e0b49cd15so2141417a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:15:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761308134; x=1761912934; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VYIbCMuRi13fdYnbnhpcKoD3rM3DmFSEXS9pBiRUSxc=;
-        b=cJ77kMA1wwRM4RrnEvo6LlLMWEer+iJh2jplK4o2wNvSxaji2HKmbcLaVBP4If82Xn
-         6VFSFU0Guoq+YCma+FsFNQdou38TKB+TUzYObcPSra/bloERvGs23t+a39Gq4lOlFEJN
-         05N8CdGMed6ZTcgfQ/kFQMASsMlFAFUzkGozn9kgwBkc01y7D4bTy44G0VTgv005FCU2
-         Hagfzsmfzn1pZR2PdvUGAP0wAR0YJV0f28CD8Qq5v+rWotIc1B9iGUdGHabQj6d/bbBH
-         0UVQo8KC31E+avuIfouoEsRJ8m6EJnAOddJ2fHd4TTOPvA1P1TpdyvuON+ovgSAXqIxN
-         uAnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761308134; x=1761912934;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VYIbCMuRi13fdYnbnhpcKoD3rM3DmFSEXS9pBiRUSxc=;
-        b=om1RarDsowQp4RT/2VBDZ/t0KVAkOfjA8AXlz8GZ3q0HskcG5xyfeKjw4VPqXCVoby
-         mqg6NkrY12zzP4cAHp0txA0pdcgP9GjwMptS5bPFabJUGPFdq3f/3KNWQKRtNNoQNmdm
-         16oqcsGGUKAaiFHHtySoZQCtp+R77o4AiUeF7O8AVMS14s9XGcwJ1xinzRmpiDOKulxn
-         wh0oDk60PD0lcmA6sh+DcTwzg8IfguBS5OY1Lc8nww3NW52SmTY0FGUrzK1xGA17lEEI
-         U4fmT9JszgzXwFODaRg8z6h3ODfTLyt8IYRbdjxOGl0qpSlX2IWFkQ9CeAuDqWcTSWFA
-         Wu/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU7gL6w/ln1K7oYO+5hyGbHR1jp1kG+VHYuvMS4etuj7YZyKdR+3H/z19Jzu9pdGGKRs4j+BM/9vd0TftQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZeKOUrRvB0OMS8QaKwGYTUU7TkQypBBt8vhFXXAgWVQLN94t3
-	2UtM/HPlLT2moxSlp6EE2iNt7G8LJIm4d06gGbrdMZIk7sqcnEcLiBotchYKSKSMGYRMLPQravq
-	Jbb00V+b7WogIohcXnA==
-X-Google-Smtp-Source: AGHT+IFKGYbprr7tWKIreIWGEx72f2mseKaij75eArsKsTtRHf0EN2H2ZyWU9vKva3onEuRE1wLgAY5783wz1i4=
-X-Received: from edt20.prod.google.com ([2002:a05:6402:4554:b0:637:4e1f:94b])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:847:b0:63c:18e:1dee with SMTP id 4fb4d7f45d1cf-63e3e4791a6mr5530880a12.24.1761308134211;
- Fri, 24 Oct 2025 05:15:34 -0700 (PDT)
-Date: Fri, 24 Oct 2025 12:15:33 +0000
-In-Reply-To: <20251022143158.64475-2-dakr@kernel.org>
+	s=arc-20240116; t=1761308207; c=relaxed/simple;
+	bh=uP/rxN2bRwMLh2GALLbrzV+vL7uIUOOM5XeCDOOe+d0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jv2FkZRY588lW20jmPr0yE78Q6IjPJM09qXzBE2M8RrQT8kCj8//bL2LS6uHY6RcSUqbyB/MmHsitxJe9zQymMU8/hhYftOfK1LpZJSDXxI84kS1B/pcP441PsCgUsJvhTHLs1lBk+AgUpQ8oyjdDZ3ZF9RCJE7S+bhtrhpn2xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73CC91515;
+	Fri, 24 Oct 2025 05:16:36 -0700 (PDT)
+Received: from [10.44.160.74] (e126510-lin.lund.arm.com [10.44.160.74])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E88963F66E;
+	Fri, 24 Oct 2025 05:16:36 -0700 (PDT)
+Message-ID: <7a4e136b-66a5-4244-ab07-f0bcc3a26a83@arm.com>
+Date: Fri, 24 Oct 2025 14:16:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251022143158.64475-1-dakr@kernel.org> <20251022143158.64475-2-dakr@kernel.org>
-Message-ID: <aPtt5XyE_pBoiarD@google.com>
-Subject: Re: [PATCH v3 01/10] rust: fs: add new type file::Offset
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/13] mm: enable lazy_mmu sections to nest
+To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
+ <20251015082727.2395128-8-kevin.brodsky@arm.com>
+ <2073294c-8003-451a-93e0-9aab81de4d22@redhat.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <2073294c-8003-451a-93e0-9aab81de4d22@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 22, 2025 at 04:30:35PM +0200, Danilo Krummrich wrote:
-> Add a new type for file offsets, i.e. bindings::loff_t. Trying to avoid
-> using raw bindings types, this seems to be the better alternative
-> compared to just using i64.
-> 
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/fs/file.rs | 142 ++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 141 insertions(+), 1 deletion(-)
-> 
-> diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
-> index cf06e73a6da0..681b8a9e5d52 100644
-> --- a/rust/kernel/fs/file.rs
-> +++ b/rust/kernel/fs/file.rs
-> @@ -15,7 +15,147 @@
->      sync::aref::{ARef, AlwaysRefCounted},
->      types::{NotThreadSafe, Opaque},
->  };
-> -use core::ptr;
-> +use core::{num::TryFromIntError, ptr};
-> +
-> +/// Representation of an offset within a [`File`].
-> +///
-> +/// Transparent wrapper around `bindings::loff_t`.
-> +#[repr(transparent)]
-> +#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Default)]
-> +pub struct Offset(bindings::loff_t);
+On 23/10/2025 22:00, David Hildenbrand wrote:
+> [...]
+>
+>
+>>
+>> In summary (count/enabled represent the values *after* the call):
+>>
+>> lazy_mmu_mode_enable()        -> arch_enter()        count=1 enabled=1
+>>      lazy_mmu_mode_enable()    -> ø            count=2 enabled=1
+>>     lazy_mmu_mode_pause()    -> arch_leave()     count=2 enabled=0
+>
+> The arch_leave..() is expected to do a flush itself, correct?
 
-There is no invariant on this type, so the field can be public.
+Correct, that's unchanged.
 
-	pub struct Offset(pub bindings::loff_t);
+>
+>>     lazy_mmu_mode_resume()    -> arch_enter()     count=2 enabled=1
+>>      lazy_mmu_mode_disable()    -> arch_flush()     count=1 enabled=1
+>> lazy_mmu_mode_disable()        -> arch_leave()     count=0 enabled=0
+>>
+>> Note: in_lazy_mmu_mode() is added to <linux/sched.h> to allow arch
+>> headers included by <linux/pgtable.h> to use it.
+>>
+>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+>> ---
+>> Alexander Gordeev suggested that a future optimisation may need
+>> lazy_mmu_mode_{pause,resume}() to call distinct arch callbacks [1]. For
+>> now arch_{leave,enter}() are called directly, but introducing new arch
+>> callbacks should be straightforward.
+>>
+>> [1]
+>> https://lore.kernel.org/all/5a0818bb-75d4-47df-925c-0102f7d598f4-agordeev@linux.ibm.com/
+>> ---
+>
+> [...]
+>
+>>   +struct lazy_mmu_state {
+>> +    u8 count;
+>
+> I would have called this "enabled_count" or "nesting_level".
 
-Otherwise LGTM:
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Might as well be explicit and say nesting_level, yes :)
 
-Alice
+>
+>> +    bool enabled;
+>
+> "enabled" is a bit confusing when we have lazy_mmu_mode_enable().
+
+Agreed, hadn't realised that.
+
+> I'd have called this "active".
+
+Sounds good, that also matches batch->active on powerpc/sparc.
+
+>
+>> +};
+>> +
+>>   #endif /* _LINUX_MM_TYPES_TASK_H */
+>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+>> index 194b2c3e7576..269225a733de 100644
+>> --- a/include/linux/pgtable.h
+>> +++ b/include/linux/pgtable.h
+>> @@ -228,28 +228,89 @@ static inline int pmd_dirty(pmd_t pmd)
+>>    * of the lazy mode. So the implementation must assume preemption
+>> may be enabled
+>>    * and cpu migration is possible; it must take steps to be robust
+>> against this.
+>>    * (In practice, for user PTE updates, the appropriate page table
+>> lock(s) are
+>> - * held, but for kernel PTE updates, no lock is held). Nesting is
+>> not permitted
+>> - * and the mode cannot be used in interrupt context.
+>> + * held, but for kernel PTE updates, no lock is held). The mode
+>> cannot be used
+>> + * in interrupt context.
+>> + *
+>> + * The lazy MMU mode is enabled for a given block of code using:
+>> + *
+>> + *   lazy_mmu_mode_enable();
+>> + *   <code>
+>> + *   lazy_mmu_mode_disable();
+>> + *
+>> + * Nesting is permitted: <code> may itself use an enable()/disable()
+>> pair.
+>> + * A nested call to enable() has no functional effect; however
+>> disable() causes
+>> + * any batched architectural state to be flushed regardless of
+>> nesting. After a
+>> + * call to disable(), the caller can therefore rely on all previous
+>> page table
+>> + * modifications to have taken effect, but the lazy MMU mode may
+>> still be
+>> + * enabled.
+>> + *
+>> + * In certain cases, it may be desirable to temporarily pause the
+>> lazy MMU mode.
+>> + * This can be done using:
+>> + *
+>> + *   lazy_mmu_mode_pause();
+>> + *   <code>
+>> + *   lazy_mmu_mode_resume();
+>> + *
+>> + * This sequence must only be used if the lazy MMU mode is already
+>> enabled.
+>> + * pause() ensures that the mode is exited regardless of the nesting
+>> level;
+>> + * resume() re-enters the mode at the same nesting level. <code>
+>> must not modify
+>> + * the lazy MMU state (i.e. it must not call any of the lazy_mmu_mode_*
+>> + * helpers).
+>> + *
+>> + * in_lazy_mmu_mode() can be used to check whether the lazy MMU mode is
+>> + * currently enabled.
+>>    */
+>>   #ifdef CONFIG_ARCH_LAZY_MMU
+>>   static inline void lazy_mmu_mode_enable(void)
+>>   {
+>> -    arch_enter_lazy_mmu_mode();
+>> +    struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>> +
+>> +    VM_BUG_ON(state->count == U8_MAX);
+>
+> No VM_BUG_ON() please.
+
+I did wonder if this would be acceptable!
+
+What should we do in case of underflow/overflow then? Saturate or just
+let it wrap around? If an overflow occurs we're probably in some
+infinite recursion and we'll crash anyway, but an underflow is likely
+due to a double disable() and saturating would probably allow to recover.
+
+>
+>> +    /* enable() must not be called while paused */
+>> +    VM_WARN_ON(state->count > 0 && !state->enabled);
+>> +
+>> +    if (state->count == 0) {
+>> +        arch_enter_lazy_mmu_mode();
+>> +        state->enabled = true;
+>> +    }
+>> +    ++state->count;
+>
+> Can do
+>
+> if (state->count++ == 0) {
+
+My idea here was to have exactly the reverse order between enable() and
+disable(), so that arch_enter() is called before lazy_mmu_state is
+updated, and arch_leave() afterwards. arch_* probably shouldn't rely on
+this (or care), but I liked the symmetry.
+
+>
+>>   }
+>>     static inline void lazy_mmu_mode_disable(void)
+>>   {
+>> -    arch_leave_lazy_mmu_mode();
+>> +    struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>> +
+>> +    VM_BUG_ON(state->count == 0);
+>
+> Dito.
+>
+>> +    VM_WARN_ON(!state->enabled);
+>> +
+>> +    --state->count;
+>> +    if (state->count == 0) {
+>
+> Can do
+>
+> if (--state->count == 0) {
+>
+>> +        state->enabled = false;
+>> +        arch_leave_lazy_mmu_mode();
+>> +    } else {
+>> +        /* Exiting a nested section */
+>> +        arch_flush_lazy_mmu_mode();
+>> +    }
+>>   }
+>>     static inline void lazy_mmu_mode_pause(void)
+>>   {
+>> +    struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>> +
+>> +    VM_WARN_ON(state->count == 0 || !state->enabled);
+>> +
+>> +    state->enabled = false;
+>>       arch_leave_lazy_mmu_mode();
+>>   }
+>>     static inline void lazy_mmu_mode_resume(void)
+>>   {
+>> +    struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>> +
+>> +    VM_WARN_ON(state->count == 0 || state->enabled);
+>> +
+>>       arch_enter_lazy_mmu_mode();
+>> +    state->enabled = true;
+>>   }
+>>   #else
+>>   static inline void lazy_mmu_mode_enable(void) {}
+>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>> index cbb7340c5866..2862d8bf2160 100644
+>> --- a/include/linux/sched.h
+>> +++ b/include/linux/sched.h
+>> @@ -1441,6 +1441,10 @@ struct task_struct {
+>>         struct page_frag        task_frag;
+>>   +#ifdef CONFIG_ARCH_LAZY_MMU
+>> +    struct lazy_mmu_state        lazy_mmu_state;
+>> +#endif
+>> +
+>>   #ifdef CONFIG_TASK_DELAY_ACCT
+>>       struct task_delay_info        *delays;
+>>   #endif
+>> @@ -1724,6 +1728,18 @@ static inline char task_state_to_char(struct
+>> task_struct *tsk)
+>>       return task_index_to_char(task_state_index(tsk));
+>>   }
+>>   +#ifdef CONFIG_ARCH_LAZY_MMU
+>> +static inline bool in_lazy_mmu_mode(void)
+>
+> So these functions will reveal the actual arch state, not whether
+> _enabled() was called.
+>
+> As I can see in later patches, in interrupt context they are also
+> return "not in lazy mmu mode". 
+
+Yes - the idea is that a task is in lazy MMU mode if it enabled it and
+is in process context. The mode is never enabled in interrupt context.
+This has always been the intention, but it wasn't formalised until patch
+12 (except on arm64).
+
+- Kevin
 
