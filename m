@@ -1,84 +1,92 @@
-Return-Path: <linux-kernel+bounces-869297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29392C078ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:35:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7A9C07902
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCF454ECD81
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:35:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 087FC1C4094B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0F234575E;
-	Fri, 24 Oct 2025 17:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2862345CA6;
+	Fri, 24 Oct 2025 17:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b="zUrOfAjA"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4HZhtmT"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F47D515
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56B22D6401
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761327324; cv=none; b=ITAqgAI9D//VBhSnC6YsXp5b/5PlGw77vM6w9sCZ9DwHW14YlbtbX+M9F2anWyQZQBuEWPRzLtUJeKM2zdhhdS2f5p3yxEtIsos0IvsxjuicJdmGLIkVRjPRTFcrEIMpJdEPhiwJfW0YDsl88+ofg91ZRsMoS6Gk9Yo3q79BJ6A=
+	t=1761327726; cv=none; b=IGL+J52wlJwRhK06qbuUipH2lyCfXgt7apJwMkzTmArre/GvGJ00wYeemVH4DY3NM5cWO6ce1M8Ud7iaRBYms6xDmWT47o/PY5mnOqfHE0FfbNK9ymrcyciH2Ms1x7ml1lsrH7ces7Gtpmi7sULIxvMlZLVF93wHiZGm0wXrGhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761327324; c=relaxed/simple;
-	bh=mXbvfEQIbRLg6rG81hv/RTX5vCliwJPhPkv+p8Gh0do=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=THFJ9kAtQ07lFhC3owiOLJaTG45jkJDrq3yOlHtQBUFkXr97bNZNK1y1Dyj0w+3FH2gvZKMP4V4uH+kc7/HroYOK7RTihwwWYyTdYvosOMp7285HfS/90RdcAaYswMdJJKaUWSVBm9KvZMHswfEJ6IvVPER+lKV9U4nmN/KmgFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in; spf=pass smtp.mailfrom=cse.iitm.ac.in; dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b=zUrOfAjA; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.iitm.ac.in
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-33db8fde85cso2508721a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:35:20 -0700 (PDT)
+	s=arc-20240116; t=1761327726; c=relaxed/simple;
+	bh=i3jJ7co8m6Rp6VhynG4AQYYabRnZVYzJAJnExjOrQWM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X7/8LWUrgXWTbz3gvz0EavEga2hxqmGM9IYrsfkZj2F6zvLRotNMejxxTongdpyH4X5ryK/0+WzZk/sifo7GRanGkesmlgDNx4LADbpjO/wVKw6BMTZy2b6tqiC3wZUY2JRzNbkaUTJKU6xnj5yb9a7h1qW49/0kRH2nbBPL99s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f4HZhtmT; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b403bb7843eso494488066b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:42:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cse-iitm-ac-in.20230601.gappssmtp.com; s=20230601; t=1761327319; x=1761932119; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761327721; x=1761932521; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wXMbYT70NLPu6BzjWG2yQn0RfjMWdVCvvig5iK24b+8=;
-        b=zUrOfAjA4gbwpwVBPIWeL/yJ24jwA6Cy+Jn7x5i34KlWaMH7oxDOeahosptwn7JAkB
-         By1TeAhEJIOo8wghuoC/58w9xT57DyWDZPwA3naA8z0Jf94dYA3V7PsLxDHMUMMUdEKP
-         TLyVvZabXAAZO/g30iGA2NHwB7UK6Pqu/ncNG8htfq8cjTOiEvs1jI2QTBwSVae5zW81
-         0GCVMtUcrLDOB4d7sWG+7dTh9kHrTflfU2THsu2AjqrnXPXTzjLvo6hXjyYv8kRUnODP
-         TLhweAizn2zTJi5wHKkSGiaU1k4a7ndDp2+SAjSFDJSYZsARKAmFyxQ0qoat87CPi/0o
-         LIMg==
+        bh=bzLI87gVSsw12bcRQHm4zXKzF2cdEbYasj1bN4s+jM0=;
+        b=f4HZhtmTpl3lqIq+9rAS2gJOwo66mUWkoUDstJElNtDebKt3r3jW8cuXBS6BiQ3e1s
+         Jw/w9q7pPx1O1XGhP5B7ruzMhRYP2nuyF0ikdYCbJTh3ZTkisWvUeyI/YyuM5T2W+DEY
+         eCe+i3bS/VhbTEbvbIuprBNb8HSJaBd4cf0DX5iUH/3WJdtJZj1TlQOlYL465QfrBGQ1
+         KzbjtRRMlGfx6nGTdQ7Nw24AL3CNC7lAut+Mebif+QbgLEnYw0Ct6V5X054OVyYfXLxI
+         2osW72SHSvWmAI+WP533T/q4r/boc5BdDdxDqNJupzYpYhQc3yj0F6KI4by7Rw+/dzmI
+         D3Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761327319; x=1761932119;
+        d=1e100.net; s=20230601; t=1761327721; x=1761932521;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wXMbYT70NLPu6BzjWG2yQn0RfjMWdVCvvig5iK24b+8=;
-        b=tQ0s+PanoLtUMyTkz3+tRctMcybjXfRZ/EqdtUVzOrQuhb5AUbvKk/pbIIT+mHBLzz
-         CCIDKfmjAjs3DMGHGffqa8XDjxjQjz8hwJCnRsmSkZgfGpvwqQV7t+LxeQ9NFChW4u2n
-         qjrJWoWmgD6i4WyLDtSkQlvLT9JvUaLm7UC6vzh5s2Bykt31nIPD5O0sDDWK1n5QdXAK
-         +aRBy1yc2jf0UyKWc9B1wKb2NggnplN5CUQ6U9BKK1Ol06TKk8MJH/pfo+FYmjLuTh5g
-         fB3/mqwZjOywkPGHtVSe2I+mzq3kKFGkhH/ZcvUoNrDDghwFeZvyfXX6qmyS1VCr6Vp4
-         3edw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyBrh/GVIXd8qUcW1XK0/uUqdumqhsK5mbOWCdWEClQXfUAZyL6a22Hc1Sm6iMR0CeJWXs8AFM3bfGWd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQr4jjJ5483/FI0D5UwZYLHLAyzYQAS7ie//1Zp1QRBfRC6Z4H
-	CrrOGCqX9KEJgPNAXGkIF1e9VWQ47/uWqCAwSSCFcaesaHMRhsrwRDLqVGMePjwpDfE=
-X-Gm-Gg: ASbGnctz+hJZZBIklFfpt43lQAw9BzBIZBYjovl7nVFxS9pXS1E3/d+64Up7T4gnqH6
-	hiPoncnT334enc7GqRAZ5LzzVK26SsiBHi+ZAN/EhQ8txwEb6esnrE22msuKaE2INx4Y0XtAF/0
-	Xv360GP5e7VJYgZhOt8+arqiuOirXBCyqYhz1yjKnNkmXNEy7uAVTQ+f4Dj4cVfnVE81ShZyZaR
-	grD+BGCB4zpH5pv4uxmM00x+5bBP0nA5RV4TEaAEhqPz3fmjZh2Z2Ikc/i1eCg6Nst0GPdwNX3y
-	IzCBHY7U9RYCqMKQjGiyMDzSXflXmLsjwu43UjL0qhbrLiZybvzxs+n42FRbsHyOH3Igq6rwt8h
-	aEKhq4QzSz1KvOrqomYqs6/YXWASqB8Burnyn9t7bydOR9C4RW3mjqKmb8nWg19/8R3Uk0liBq0
-	jXUc9N1C9JnZ0BU2sSw3awCg==
-X-Google-Smtp-Source: AGHT+IHbzB1znYk97aCgMkkEMmeYysmxrGDyagwXbgG0SJG4dkZL522tTgvCl4oWdxBmjUyWPIlk9A==
-X-Received: by 2002:a17:90b:2d8b:b0:336:bfcf:c50d with SMTP id 98e67ed59e1d1-33bcf86c98bmr34552973a91.14.1761327319578;
-        Fri, 24 Oct 2025 10:35:19 -0700 (PDT)
-Received: from localhost.localdomain ([49.37.223.8])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-33e224a2652sm9915918a91.18.2025.10.24.10.35.16
+        bh=bzLI87gVSsw12bcRQHm4zXKzF2cdEbYasj1bN4s+jM0=;
+        b=PD8uLTOfz/mICYQat9d+5jTvv2x64bAnhw0ohcnKOf4cjxjuYr//j0Zzbg7RGZrQoo
+         7MqRrqpe9956u6/DFO9w8qJx8WXs004bc0XOKfwS2kZdRMt1te3W7lQEt9XKGwa+n8I3
+         eanHlee8smOJ1cneTyzmzVIuqyMMx2slfQLG978oKumlr8gWoE14Jmb6X/l7UDUYgNYh
+         t8LxAfvFOUMUlAXGBm6yy11Z22AYYAtuH3cXdoB9MmCnzBe5AvYh0suCXhH5gokb+gNR
+         YYrwj3xGDFWM9hiVoXH9/IVraVDCHpHa8pdmD0jA3tDdzFcy/8mxHxM0oyIzOQxxXOx5
+         Y4+g==
+X-Forwarded-Encrypted: i=1; AJvYcCW6u1LnDb+CrogYznKlj+PYBXWVd9bCJo+70vMxf/4Z0+AdoVe0UXaqXkh4Uz3PN/cMaTJ2HQouG12Qy7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2wA9L3F4TU5ASzBXjUQ8W5K0/AsjNJifHWTQLOCK+KjtOPkHG
+	Xpsu4o5/3wVT+6yFZtLuLc4sFlsazbDJjoLYbtLj98C999rUJWAdrigm
+X-Gm-Gg: ASbGnctWbOzcee5s/HwZqESLWkB4wQ+o7+BXE05B2BQZ+jU8PXflNw4nM6lD1g/l/FQ
+	hz8yMbwo/0knczGNxgyntkykP5PLGXIQFRWi0DUH2R1zoYHQ4aP2DSiWo82NjeBkVIl4sOJNp18
+	stKbtyTUWoJkmi1goseiyRCdfquKpmW3locFax/G9MbXV7KJY4gMPxtJb9tXxpGcUZ6Us0bv7vZ
+	VkKWYiEoBdG0xjuiOQLM15WiWpu9AftPxJzkx7Yf1n+1Z8R+GOVd8n1hTMUtLqiDzp4KoCODjhR
+	u72Cqu2Nmj9kIVcLJzpqRvntKgw8P7lIKdenVbGpizWGqxYjTEUdYHUlc+OXv9QUZk8fORN5I3k
+	D5VIzrGY7te8Ji4lyGUOXiNaRD9ypKfmpbfu7x49ZG3Gii5a4ZxU2Q8m9MEXE4ltxSdHih+txsU
+	7ZqBn3JKG0JIXpJgrKNSSy7m/joqLdXKJ+lee6yBQPJI2NsEcDF/+ug1kR2wI=
+X-Google-Smtp-Source: AGHT+IGsywe6fvei+hAvPha34NkEyxNo/q2u1ZRQacwWPUUZaTx/YX5nzymYXv40loyt4fMWa8J9Eg==
+X-Received: by 2002:a17:906:fe45:b0:b60:d888:32d9 with SMTP id a640c23a62f3a-b6471d45a8cmr3700021066b.11.1761327720554;
+        Fri, 24 Oct 2025 10:42:00 -0700 (PDT)
+Received: from alina-IdeaPad-Gaming-3-15ARH05.. (pool185-5-252-158.as6723.net. [185.5.252.158])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d5130d517sm586822666b.3.2025.10.24.10.41.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 10:35:18 -0700 (PDT)
-From: Abdun Nihaal <nihaal@cse.iitm.ac.in>
-To: isdn@linux-pingi.de
-Cc: Abdun Nihaal <nihaal@cse.iitm.ac.in>,
-	netdev@vger.kernel.org,
+        Fri, 24 Oct 2025 10:42:00 -0700 (PDT)
+From: Mykola Kvach <xakep.amatop@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Cenk Uluisik <cenk.uluisik@googlemail.com>,
+	Johan Jonker <jbx6244@gmail.com>,
+	Michael Riesch <michael.riesch@collabora.com>
+Cc: Jimmy Hon <honyuenkwun@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net] isdn: mISDN: hfcsusb: fix memory leak in hfcsusb_probe()
-Date: Fri, 24 Oct 2025 23:04:55 +0530
-Message-ID: <20251024173458.283837-1-nihaal@cse.iitm.ac.in>
+Subject: [PATCH] arm64: dts: rockchip: orangepi-5: fix PCIe 3.3V regulator voltage
+Date: Fri, 24 Oct 2025 20:38:20 +0300
+Message-ID: <20251024173830.49211-1-xakep.amatop@gmail.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -88,41 +96,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In hfcsusb_probe(), the memory allocated for ctrl_urb gets leaked when
-setup_instance() fails with an error code. Fix that by freeing the urb
-before freeing the hw structure.
+The vcc3v3_pcie20 fixed regulator powers the PCIe device-side 3.3V
+rail for pcie2x1l2 via vpcie3v3-supply. The DTS mistakenly set its
+regulator-min/max-microvolt to 1800000. Correct both to 3300000
+to match the rail name, the PCIe/M.2 power requirement, and the
+actual hardware wiring on Orange Pi 5.
 
-Fixes: 69f52adb2d53 ("mISDN: Add HFC USB driver")
-Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
+Signed-off-by: Mykola Kvach <xakep.amatop@gmail.com>
 ---
- drivers/isdn/hardware/mISDN/hfcsusb.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
-index e54419a4e731..378d0c92622b 100644
---- a/drivers/isdn/hardware/mISDN/hfcsusb.c
-+++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
-@@ -1904,7 +1904,6 @@ setup_instance(struct hfcsusb *hw, struct device *parent)
- 	mISDN_freebchannel(&hw->bch[1]);
- 	mISDN_freebchannel(&hw->bch[0]);
- 	mISDN_freedchannel(&hw->dch);
--	kfree(hw);
- 	return err;
- }
- 
-@@ -2109,8 +2108,11 @@ hfcsusb_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 		hw->name, __func__, driver_info->vend_name,
- 		conf_str[small_match], ifnum, alt_used);
- 
--	if (setup_instance(hw, dev->dev.parent))
-+	if (setup_instance(hw, dev->dev.parent)) {
-+		usb_free_urb(hw->ctrl_urb);
-+		kfree(hw);
- 		return -EIO;
-+	}
- 
- 	hw->intf = intf;
- 	usb_set_intfdata(hw->intf, hw);
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
+index ad6d04793b0a..83b9b6645a1e 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
+@@ -14,8 +14,8 @@ vcc3v3_pcie20: regulator-vcc3v3-pcie20 {
+ 		gpios = <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
+ 		regulator-name = "vcc3v3_pcie20";
+ 		regulator-boot-on;
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
+ 		startup-delay-us = <50000>;
+ 		vin-supply = <&vcc5v0_sys>;
+ 	};
 -- 
 2.43.0
 
