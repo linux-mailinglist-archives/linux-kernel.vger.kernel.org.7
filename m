@@ -1,222 +1,247 @@
-Return-Path: <linux-kernel+bounces-869077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CB3C06E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 796B0C06E6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15131402A55
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:13:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E222E3B298F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621E932548F;
-	Fri, 24 Oct 2025 15:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35AE322DA8;
+	Fri, 24 Oct 2025 15:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cmuXuzrc"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+GMbHLJ"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F0432548D;
-	Fri, 24 Oct 2025 15:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F2F322C7D
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761318825; cv=none; b=FU3RPtdqPwz2Ty7xHSVI9F+T1mEo8dYtkRuyTWkslrMe80LTwYanFPQ4lZ+M69maboBzLR5rZlCy7Hh3rRtSJ0zh51GrRUbzE5UgCcRN7q/0d54HrzHkmtXuJWMeb1FbglRcJDBB+8yNjYYO5fcwezJaf6+nzhr3mg51qnAc9PQ=
+	t=1761318866; cv=none; b=SppDX2LCe5rQ2zZzfhlItnPXIRvou0FZLKkXvoiI4nCRhsWZvlTn5LW3jxOCi5wHVLqjzZ/xLlE3CKep9WEVxbfW7ddDesqehqJiP1hrRQuhEkYPMamgpgWA7HbO75ALRL5nXOaCss03L9GJMTb9EK5NzTHHfEb069HJt0/1Wgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761318825; c=relaxed/simple;
-	bh=eNmn1fLSP0kLi7slmOYWgfO5ZBIDJASSsEVFNGUunrQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jajHEMLSFF9OnPQ02IxF/13qkejP3WJJq3uiwHUDC6xTrtTFjovk3CDoQsNLgT1T79GCE6E9i1IsePkOomJ6n3rSUK7svsPhK/ZjTWwc78GCUfUcq5HLsWapIhLXBdRPy/5pyNyhc+xUG0+RoPkE7wMsjAURQk8iUtXN3sYxMDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cmuXuzrc; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=eNmn1fLSP0kLi7slmOYWgfO5ZBIDJASSsEVFNGUunrQ=; b=cmuXuzrcDcR6cnPGY4MRqMreBj
-	vsM7jnlVM/+OE68sC0BPMMkrhGkqWhl505LUs1mT2X1dAlOPetjXYW7NYM2cOQ+JSQQQDTx5QJUwz
-	RA70hV92sxISNR3XEM7wCF9RXl7VOWC8E3Im64m2c8Un9W2HmQFk/+GgXgoNyiX/DvRLP2VhuAGeS
-	YXjRtyLV0b/WmoZdKb6LLPANyYXzK521ghoXuEfx1pEYs0WWTpsJbErr4s9GRlRoK9VXCl8Umdclh
-	GRacGbWse9kAFeENwXm4PVN/f4p8KjvrwEKEwxWs1zbsndok5ApCKT8hKr8eirIqp1IDCRursE8Ht
-	DQqEp8sQ==;
-Received: from [2001:8b0:10b:5:d8ad:45c0:47cf:4bed] (helo=u09cd745991455d.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCJU1-00000003aD0-2Hm3;
-	Fri, 24 Oct 2025 15:13:38 +0000
-Message-ID: <cbe0d305cce6d76e00b64e7209f15b4645c15033.camel@infradead.org>
-Subject: Re: [PATCH v3 11/13] x86/xen: use lazy_mmu_state when
- context-switching
-From: David Woodhouse <dwmw2@infradead.org>
-To: David Hildenbrand <david@redhat.com>, Kevin Brodsky
- <kevin.brodsky@arm.com>,  linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev
- <agordeev@linux.ibm.com>,  Andreas Larsson <andreas@gaisler.com>, Andrew
- Morton <akpm@linux-foundation.org>, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@alien8.de>, Catalin
- Marinas <catalin.marinas@arm.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>,  Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,  Juergen
- Gross <jgross@suse.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Madhavan Srinivasan
- <maddy@linux.ibm.com>,  Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko
- <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, Nicholas Piggin
- <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Ryan Roberts
- <ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>, Thomas
- Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, Will
- Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-Date: Fri, 24 Oct 2025 16:13:37 +0100
-In-Reply-To: <70723f4a-f42b-4d94-9344-5824e48bfad1@redhat.com>
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
-	 <20251015082727.2395128-12-kevin.brodsky@arm.com>
-	 <f0067f35-1048-4788-8401-f71d297f56f3@redhat.com>
-	 <348e5f1c5a90e4ab0f14b4d997baf7169745bf04.camel@infradead.org>
-	 <70723f4a-f42b-4d94-9344-5824e48bfad1@redhat.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-UlpuaII3GiKqUgTxbKZN"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1761318866; c=relaxed/simple;
+	bh=/g3JKMg0E1LetZr1FVgvL3SUb0e3wf+Hm2PB2HucCBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rha1NDvx4MzGRGVj1VGpS7idXrrRTgO88Pr5ZWpw4ZDRNbiB+NXZK4f33IZH/OSRow1w2jtFtTDkWBGDeM6glUnrSJ2I4PnCPLtl6kEGC+qhGmh1aPhriafbEX+cT3iApOhqvA9Lu9xRdIrj5gGkTzAQAAFt9Z/4Ithikxm2F6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+GMbHLJ; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4710665e7deso10733805e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:14:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761318863; x=1761923663; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Xb1iOk36N91mas4Cq5cRC/PrSP6DadKgPF6bPCQmBE=;
+        b=C+GMbHLJHz9L7m0bmImL8a1ELWicVQW9JhUwtr2qLp5pWrSUUw1Pz8omk3g6nlewyI
+         p1ZTL/AqQulQwo1DJyfs/cfTa2jkwG7edONYC5rpNUPBtJk5EZ3OjfCN4ULSU1wCAp4/
+         W9qQtiwtMjD032W/ufiyIuz72vApv+l1HnIvmgK5Dm3tRfnkeibD8cn3A1HGzeYcYFn7
+         Rz/lltVtYoozGq5UKbQAxEykoxfUIBT9w8NwBR/KKns6vIsNjCPqtVJCCIMVuLBxQeA/
+         bIp5eEBJVja3HWSzNE+P0MBOTg/3eziFHzAwHMqT9lF6KH6+Xy3nN4rCSaRHUa5y64lQ
+         z3IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761318863; x=1761923663;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Xb1iOk36N91mas4Cq5cRC/PrSP6DadKgPF6bPCQmBE=;
+        b=dx5FSLubfwVI0ehsxzFUsHcStUO+SV00Y81Np9FuAaDlKAnRwGSrsZ3hdmc3mqQQHb
+         FM9fQjR4mhJEmhC41yjN2dDrKZpzzT+13iU5Lik1r/FppY+9iAklms4n+2MJldH2VbFy
+         MyWeiDpEkNjAckf2hs5i+MPq18vjJwc7QRTFRUigyyriCDR8INMrMOfNugQqP9BmzBz/
+         PPL2OQX3/4LB+bAiOlxPvdyWjgUPi1fbFze6aqtxBC69KEac1oUcSR9pzVgZkSTkND2M
+         bW6RrNIhDaC7uzwafUjlNT3VfRpQaGQC8nigYjyJHRwDL1APmJaay1ZMrKUzoGTurxzo
+         4H6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXSeIkDkSWHOc/JMqMYzyop/eCfN4mKQ5jzaHTre649rjgm1O7TpPkq6he6zNhlhOLk5MIFaAlPzvhdZjQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsacbkFo8dtmPtHMvY2/EPiQUateLfqvimbbqUz2qShDIiGqO9
+	T6sJZj2h1QzGP8qdlsQ5gtYViDktvviVlAXX2fcP0obpSc+b2Vi5v7fI
+X-Gm-Gg: ASbGncvQneR17h5/w1MURxznMcwQ9o/WpexOXuoIAobAz3iCelHpUEmLCZf6v6FtLsc
+	KlhHBCZH5274SssQMH00anF/mr+u1fVXzhKvxFgAy9zVG5Vzkgrsj88HQH1+HC1L3FqkV3qLX+h
+	3s/rBcmn0Np0YmUZ5E1eCWS0jtaZ/8twRvEijgJKcjWJQk4eGvcV7LlmybAGA5A7SU9C1KBkQe+
+	r5dVU5V0TYt8MHsSWLlRfnvHu4uyoEvUp24/OEucj4IeZh4LrREboWVudsZd5Cr6QZHDmonDTTV
+	iHSDsdwh2QYYo1RArOvyHg3+O1dFhOJGJS/goelFsMeoxCNtgE8nQiSdga7ghn6fxiYGqREoZ22
+	28tML2JrevFD7x7Yd64r4cjA2r8aHhtF2egJKzRVmrasLTYU6RaFO6cOd/CzGdahUbD069xslgJ
+	RBR5AL2XKtNqKJEhNMXH6x
+X-Google-Smtp-Source: AGHT+IE4w//uQGSAi5tqfRdUfcGhOr1Jz/5zPaPVehBcOpQFdZyB7QRU2MAgBZyfmYynLj3u+5+sTw==
+X-Received: by 2002:a05:600c:1554:b0:46e:206a:78cc with SMTP id 5b1f17b1804b1-475cb044e25mr59411265e9.28.1761318862319;
+        Fri, 24 Oct 2025 08:14:22 -0700 (PDT)
+Received: from fedora ([37.29.213.75])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496c14a26sm86965605e9.4.2025.10.24.08.14.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 08:14:21 -0700 (PDT)
+Date: Fri, 24 Oct 2025 17:14:18 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	victoria@system76.com, sebastian.wick@redhat.com,
+	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 05/22] drm/vkms: Introduce config for plane color encoding
+Message-ID: <aPuXyp43xtlVUHTw@fedora>
+References: <20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com>
+ <20251018-vkms-all-config-v1-5-a7760755d92d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251018-vkms-all-config-v1-5-a7760755d92d@bootlin.com>
 
+On Sat, Oct 18, 2025 at 04:01:05AM +0200, Louis Chauvet wrote:
+> VKMS driver supports all the color encoding on planes, but for testing it
+> can be useful to only advertise few of them. This new configuration
+> interface will allow configuring the color encoding per planes.
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_config.c | 15 +++++++++++++++
+>  drivers/gpu/drm/vkms/vkms_config.h | 30 ++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/vkms/vkms_plane.c  |  6 ++----
+>  3 files changed, 47 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
+> index b8cabe6f6cf8..5353719a476d 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.c
+> +++ b/drivers/gpu/drm/vkms/vkms_config.c
+> @@ -156,6 +156,13 @@ static bool valid_plane_properties(const struct vkms_config *config)
+>  			drm_info(dev, "Configured default rotation is not supported by the plane\n");
+>  			return false;
+>  		}
+> +
+> +		if ((BIT(vkms_config_plane_get_default_color_encoding(plane_cfg)) &
+> +		     vkms_config_plane_get_supported_color_encoding(plane_cfg)) !=
+> +		    BIT(vkms_config_plane_get_default_color_encoding(plane_cfg))) {
 
---=-UlpuaII3GiKqUgTxbKZN
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Could you document what kind of value should be stored when using
+vkms_config_plane_set_default_color_encoding(), please?
 
-On Fri, 2025-10-24 at 16:51 +0200, David Hildenbrand wrote:
-> On 24.10.25 16:47, David Woodhouse wrote:
-> > On Thu, 2025-10-23 at 22:06 +0200, David Hildenbrand wrote:
-> > > On 15.10.25 10:27, Kevin Brodsky wrote:
-> > > > We currently set a TIF flag when scheduling out a task that is in
-> > > > lazy MMU mode, in order to restore it when the task is scheduled
-> > > > again.
-> > > >=20
-> > > > The generic lazy_mmu layer now tracks whether a task is in lazy MMU
-> > > > mode in task_struct::lazy_mmu_state. We can therefore check that
-> > > > state when switching to the new task, instead of using a separate
-> > > > TIF flag.
-> > > >=20
-> > > > Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> > > > ---
-> > >=20
-> > >=20
-> > > Looks ok to me, but I hope we get some confirmation from x86 / xen
-> > > folks.
-> >=20
-> >=20
-> > I know tglx has shouted at me in the past for precisely this reminder,
-> > but you know you can test Xen guests under QEMU/KVM now and don't need
-> > to actually run Xen? Has this been boot tested?
->=20
-> And after that, boot-testing sparc as well? :D
+I'm confused by the use of BIT() here but not in the next commit
+("drm/vkms: Introduce configfs for plane color encoding") during
+a similar validation.
 
-Also not that hard in QEMU, I believe. Although I do have some SPARC
-boxes in the shed...
+> +			drm_info(dev, "Configured default color encoding is not supported by the plane\n");
+> +			return false;
+> +		}
+>  	}
+>  	return true;
+>  }
+> @@ -375,6 +382,10 @@ static int vkms_config_show(struct seq_file *m, void *data)
+>  			   vkms_config_plane_get_supported_rotations(plane_cfg));
+>  		seq_printf(m, "\tdefault rotation: 0x%x\n",
+>  			   vkms_config_plane_get_default_rotation(plane_cfg));
+> +		seq_printf(m, "\tsupported color encoding: 0x%x\n",
+> +			   vkms_config_plane_get_supported_color_encoding(plane_cfg));
+> +		seq_printf(m, "\tdefault color encoding: %d\n",
 
+Is this one expressed in decimal rather than hex on purpose?
 
---=-UlpuaII3GiKqUgTxbKZN
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+> +			   vkms_config_plane_get_default_color_encoding(plane_cfg));
+>  	}
+>  
+>  	vkms_config_for_each_crtc(vkmsdev->config, crtc_cfg) {
+> @@ -418,6 +429,10 @@ struct vkms_config_plane *vkms_config_create_plane(struct vkms_config *config)
+>  	vkms_config_plane_set_name(plane_cfg, NULL);
+>  	vkms_config_plane_set_supported_rotations(plane_cfg, DRM_MODE_ROTATE_MASK);
+>  	vkms_config_plane_set_default_rotation(plane_cfg, DRM_MODE_ROTATE_0);
+> +	vkms_config_plane_set_supported_color_encoding(plane_cfg, BIT(DRM_COLOR_YCBCR_BT601) |
+> +							BIT(DRM_COLOR_YCBCR_BT709) |
+> +							BIT(DRM_COLOR_YCBCR_BT2020));
+> +	vkms_config_plane_set_default_color_encoding(plane_cfg, DRM_COLOR_YCBCR_BT601);
+>  
+>  	xa_init_flags(&plane_cfg->possible_crtcs, XA_FLAGS_ALLOC);
+>  
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+> index 3c3cbefcc67f..11160c3c13bc 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.h
+> +++ b/drivers/gpu/drm/vkms/vkms_config.h
+> @@ -45,6 +45,8 @@ struct vkms_config {
+>   *         It can be used to store a temporary reference to a VKMS plane during
+>   *         device creation. This pointer is not managed by the configuration and
+>   *         must be managed by other means.
+> + * @default_color_encoding: Default color encoding that should be used by this plane
+> + * @supported_color_encoding: Color encoding that this plane will support
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
-ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
-AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
-BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
-MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
-a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
-jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
-GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
-aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
-nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
-8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
-IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
-KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
-BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
-QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
-QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
-ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
-/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
-uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
-xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
-W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
-c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
-VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
-NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
-DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
-sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
-w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
-i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
-kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
-0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
-ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
-blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
-hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
-VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
-HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
-ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
-AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
-cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
-cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
-AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
-aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
-hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
-iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
-8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
-JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
-xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
-EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
-B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
-MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
-KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
-Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
-nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
-WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
-W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
-nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
-g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
-9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
-9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
-sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
-a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
-ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
-AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
-dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
-MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
-YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
-4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
-6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
-QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
-nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
-MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
-VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
-ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MTAyNDE1MTMz
-N1owLwYJKoZIhvcNAQkEMSIEIBS2c2CYN69lzB90uM49t/lF1BNIwOpZ6X89gEyzl9XSMGQGCSsG
-AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
-cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
-VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
-cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAAJ/TYa0lfOGp
-Q0VR5GPbq8+nscvUoGvOpahth6n1O22m0RXsnVa+FN8lDTzwjHgMxjWgmBB/Y2N1krr/LHQF2t6e
-B5n913XDbhQficu9PFF22DDBqf2pH5GQBYMsgUsSn78V7DsTRYtXdXmorFkRKpIDuTMLWcSIQn7k
-gw1KlRXWW18cL6bJhkfF76Rly55Kk8ANSkv6NjJaUQ/nwnyN86hS6iP8t4UMfr95LPZCANXrGPar
-XTMbTXjQpE4rAWwa0F9zYsdRqS1cm3bC7jlvUaj4sa3o0Lo8DBbrOWV2pBbZb5A8gvbFc1CSBfkf
-wPmfgQtBV/dTm/v7tLV+XQqxlbWxkVX4/pnTDTYJh3B3ptfSjcFfNQhSQ+f7mu+kD6l6J1FLS5M6
-OZ5W0xfedyXIfATXrr6Yu7k1HT5mb16kM5Sdfmau3I5IqP2alunQ2o1WuS1US8/HVenxfQ0m/HJl
-e6qYWM516w+TWbIJRQGKP0q2U/UHT9Y5chHefvq+xHBYJiMOXu285icnkQND2dzQswtL0oZ/CLcL
-4n8Gijg+UPjQGY9iQpUzWgnD1w35ZjIZ/ymeuvzlWpKcBLSxMUTtFhxW488KzODVmvDWDU4S8N+1
-y4GStDb9afAzAMTexWQZ8abw9Df3q7TfKqoXaebtp76MNk2ydvAruvyKDSuLkKMAAAAAAAA=
+To be consistent with "supported_rotations", should this prop
+be "supported_color_encodings"?
 
-
---=-UlpuaII3GiKqUgTxbKZN--
+>   */
+>  struct vkms_config_plane {
+>  	struct list_head link;
+> @@ -54,6 +56,8 @@ struct vkms_config_plane {
+>  	enum drm_plane_type type;
+>  	unsigned int default_rotation;
+>  	unsigned int supported_rotations;
+> +	enum drm_color_encoding default_color_encoding;
+> +	unsigned int supported_color_encoding;
+>  	struct xarray possible_crtcs;
+>  
+>  	/* Internal usage */
+> @@ -344,6 +348,32 @@ vkms_config_plane_set_supported_rotations(struct vkms_config_plane *plane_cfg,
+>  	plane_cfg->supported_rotations = supported_rotations;
+>  }
+>  
+> +static inline enum drm_color_encoding
+> +vkms_config_plane_get_default_color_encoding(struct vkms_config_plane *plane_cfg)
+> +{
+> +	return plane_cfg->default_color_encoding;
+> +}
+> +
+> +static inline void
+> +vkms_config_plane_set_default_color_encoding(struct vkms_config_plane *plane_cfg,
+> +					     enum drm_color_encoding default_color_encoding)
+> +{
+> +	plane_cfg->default_color_encoding = default_color_encoding;
+> +}
+> +
+> +static inline unsigned int
+> +vkms_config_plane_get_supported_color_encoding(struct vkms_config_plane *plane_cfg)
+> +{
+> +	return plane_cfg->supported_color_encoding;
+> +}
+> +
+> +static inline void
+> +vkms_config_plane_set_supported_color_encoding(struct vkms_config_plane *plane_cfg,
+> +					       unsigned int supported_color_encoding)
+> +{
+> +	plane_cfg->supported_color_encoding = supported_color_encoding;
+> +}
+> +
+>  /**
+>   * vkms_config_plane_set_name() - Set the plane name
+>   * @plane_cfg: Plane to set the name to
+> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+> index 6e6bfe1b7400..5869000415e4 100644
+> --- a/drivers/gpu/drm/vkms/vkms_plane.c
+> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
+> @@ -239,12 +239,10 @@ struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+>  					   vkms_config_plane_get_supported_rotations(config));
+>  
+>  	drm_plane_create_color_properties(&plane->base,
+> -					  BIT(DRM_COLOR_YCBCR_BT601) |
+> -					  BIT(DRM_COLOR_YCBCR_BT709) |
+> -					  BIT(DRM_COLOR_YCBCR_BT2020),
+> +					  vkms_config_plane_get_supported_color_encoding(config),
+>  					  BIT(DRM_COLOR_YCBCR_LIMITED_RANGE) |
+>  					  BIT(DRM_COLOR_YCBCR_FULL_RANGE),
+> -					  DRM_COLOR_YCBCR_BT601,
+> +					  vkms_config_plane_get_default_color_encoding(config),
+>  					  DRM_COLOR_YCBCR_FULL_RANGE);
+>  
+>  	return plane;
+> 
+> -- 
+> 2.51.0
+> 
 
