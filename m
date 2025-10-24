@@ -1,345 +1,167 @@
-Return-Path: <linux-kernel+bounces-868728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7C9C05FB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:33:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A04C0602E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE7519A0C94
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C0D3B66A5
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCE831354F;
-	Fri, 24 Oct 2025 11:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD4B3148C4;
+	Fri, 24 Oct 2025 11:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m/mileyD"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Swhj3Ppo"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A487930ACE8
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221183148B8
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303863; cv=none; b=pdEEE5bv9PPFUDAjIMpn9ITp22BLdZkXPsTJHnS3qMkvnlh86drnp//dWMpJFrYcXM0JXFcHlRqkHSmUHUq2OEoDm0FgDcnLnnl+rsXiKVy2ufz9NyVdzUnekISiXfTa0jFh9PVDNillVYUz6G0kIYXz8RlkS/1rU7/ubPfIQVg=
+	t=1761303987; cv=none; b=EL+Ryeh5YFHk91YqXCqPraRUNbet+KRg/vrNt/dvsweIpjCigEUNR2S1M/hriEJPpRGz7bIeVtZpgk6SlhYo0VqqV9YtbPCQJofmDzXP9bRyY4BSXDkdFbEjR26JAPgllAOkcGrbYSYENXEKKWQ+K5v6jG/33GFw22n8b4AYyKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303863; c=relaxed/simple;
-	bh=N/LkMxqWZfGFt+lUavSzVXDPUUptuIBdJnMWyN6jpFo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V38bua5lQrI0l+cv+ARpvKf9W8SdhPTWMhE5C4Gnx9inmlvQ6JRrTuIFggNMAokz1zvjwIezkuxyHDlqY2gv8rCyKSNmfVO2PMSKDmgo4gPk3KxqyNoSofUTlQ+DztdFCawe9M417HQXDu5G4GWgkCLmA9GvreroWSTauQWBewY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=m/mileyD; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-592f7733dd6so2072020e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761303859; x=1761908659; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OixUxqKkm/aXWEHIX9oHHPbNt7HSU7JRNNBfqWDsTp0=;
-        b=m/mileyDvYn0zs+PxfZy8a20U6lspLUtRGq7uVoxcYhjz7U3D3LfIbEaCjBvkl9CUW
-         rrvcQSGuWljgxsxT/TsjMrtNsN2M3pcXph5+ZKGLd72ZTiuJIZWuj8RXPZzE7YMU7wx6
-         7YMOZyWOH65CEuzFgXBRaY4W+k9JRhIi4gMAo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761303859; x=1761908659;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OixUxqKkm/aXWEHIX9oHHPbNt7HSU7JRNNBfqWDsTp0=;
-        b=oj9uVr1QiUzAlCAQVlWIzukQhEbB6PZShC/R5Y5aPCqGlfpUZjSFifUW56XX0Ircfc
-         qJYj7tvF0a6k/1cww/moxAuFUfMmVrvWlra/CVdNUQnXwsOLtxGtYQLmhqtNiQLnc/Fm
-         hoJji4u/w/kJnceFtHfWd+gDS9lEazAGj1L3l0+cJ5ROoMjYTVvjE00f/COvsjPk6bCf
-         3YiZZjsU8R3jtRLTBAdRy0F26Ap7AR0rbEk00iMx8db9LinRFCKhP3HkuAMHwe9f9NJn
-         NvVq8LiWreH4HWktft+P/HuAHk3eDyaDKDg3jyj1bQDFDqTlrgHIVT9KDTf2/xGYghr7
-         /5Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxZ8T+ovDlxgwsoFo+6Fp98j4aWzn40u4JaZ9ioeLGMQFk3sBRJNA+L2HpUcuQdV/JIiBxb4XVgiJobMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxbwf5Va7UfSIuB72idXeInt5zk83EmlK+sQzzT/AJBBjBCH2os
-	3Oh/YHj0pXToCjIvq/W5lYTwisr5KXvcDLnxvtORD1us97WIaKylb1FuPK6woeRhY287lC/zU29
-	+sV0=
-X-Gm-Gg: ASbGnctfas7pBTN5hVUz1EElgYpYn1+qqggvAX9lvZFXlOW0uAiYZEst2I5PvOB4DhK
-	O0qSfCSN7iZT5K7kMddAfzvgdUfIgDgqcezIlaNcQR180vvPQOkpHFUasnjaVoKO3zPVvlsmgu2
-	ERU/AeHaikXyX3miXYgDDWmhPwAnRKmu8L4uWrHLZH0tK03Jjz1p51PyIuJVP83rGYvQK5yGcCi
-	PjSsHAgU63KTnavUWyqOsPpBVoKyJdkpCEtmgUbVebGdz2uEyh2at8WzhLS0FVh5PVAZj2toIaS
-	BqHgMSvgZJ2k42fCvywuwOtU4plb3xXOq+yv0YWiYZxE4yzlsW7yawRPkrHdyMMMNSk9Tb/9hz+
-	6+czNKYqAUa+XN97nwpzVfexXmeol8g3b50X41dGMkpQ9jIQGPBE+e/ybBnLkeT8WNRBVSqimN3
-	LVlPSVj4j+3BIIOf9+gwU/7mCPXyWXq1R6t9sXRQ==
-X-Google-Smtp-Source: AGHT+IFJkn5I7DbJQOq65rjG9nKu9gmcCcxmfd8Ivpf1J0XfdDgh0DqvlHhPkCXbhDelYzMcfqmd7A==
-X-Received: by 2002:a05:6512:2213:b0:592:fd2d:71be with SMTP id 2adb3069b0e04-592fd2d7272mr617700e87.34.1761303859215;
-        Fri, 24 Oct 2025 04:04:19 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-592f4adedcbsm1556511e87.24.2025.10.24.04.04.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 04:04:19 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-592f7733dd6so2071982e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:04:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXmkiAJt+vMAZEmel3HW1N+Ng02ge+rF9En92jc6wBcHBEujCwInFRM4IP2oCLz0uZuwrPspsPSCBW9DIc=@vger.kernel.org
-X-Received: by 2002:a05:6512:110b:b0:592:f9ca:feef with SMTP id
- 2adb3069b0e04-592f9cb0158mr1487100e87.46.1761303858039; Fri, 24 Oct 2025
- 04:04:18 -0700 (PDT)
+	s=arc-20240116; t=1761303987; c=relaxed/simple;
+	bh=Ct3RskfS9yGio0szwRQlmSe/vn07IcVq84eKpJj1W7c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RoaRZwlAKJZB/Yokonb/iwVM4ZQ5KCORCWY4nPTjnRQNuX6JqMOWedt2/OePMGqdPq7MsxDznmbzX3mDNWVe3/hrslsw5wDXLeLGi6qHWaVZflLp93vH/TOI+Rox4VQLWH81kwDyiyDYR//vJ3BinBddBcMnxzr7Nv0zhrBpfT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Swhj3Ppo; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59NJxlxn004702;
+	Fri, 24 Oct 2025 11:06:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=UeCuEQVHAnAaIsPQ3B/TgqZ/BFog
+	CSgrx+enGmZQux4=; b=Swhj3PpoFveI1UPHj3szZVeLnPNi4tSkVtowA9UoW+45
+	9qQeaMvgS81g7EndxMUtS3ewQtNvc/kz6eR5JBPwCgfyWuBIsQwuNRrS6ycTHIUm
+	mhbPk4ZxSMtAKdOMDnxv4w/j9KPLm5VPZYPlkZpugLeO9L3DsaAi3Y6lDulmf6t9
+	tQui9mg2r1SgQB3YXtf/3TrbqoyLRIwzneTaFIks2Z4gycoR3spxz8J/9PdJj43b
+	i7o9S6s7EE/HZg1kL5v9X9i9sMLCOfAVPt9sGy7taWEYdn72d+KgGfDFo1ce+tqe
+	NPwxshHxcnyp54rak7q18fyKkgOWsEM2bTAEmlkflQ==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v31cnfaw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Oct 2025 11:06:08 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59O9fnNF032142;
+	Fri, 24 Oct 2025 11:06:08 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vp7napec-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Oct 2025 11:06:07 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59OB63Wb61800846
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 Oct 2025 11:06:03 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C76852004B;
+	Fri, 24 Oct 2025 11:06:03 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 94EE920043;
+	Fri, 24 Oct 2025 11:06:03 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 24 Oct 2025 11:06:03 +0000 (GMT)
+From: Gerd Bayer <gbayer@linux.ibm.com>
+Subject: [PATCH v3 0/2] nvme-pci: Log failures to probe
+Date: Fri, 24 Oct 2025 13:05:30 +0200
+Message-Id: <20251024-nvme_probefail-v3-0-5386f905378b@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022-uvc-grandstream-laurent-v2-1-8c5c20d6c571@chromium.org> <20251024105023.GA13023@pendragon.ideasonboard.com>
-In-Reply-To: <20251024105023.GA13023@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 24 Oct 2025 13:04:05 +0200
-X-Gmail-Original-Message-ID: <CANiDSCsB2mEf2JGUTNgkrgYo8LYgSNyD126-Hq_Ek__O3KtxTQ@mail.gmail.com>
-X-Gm-Features: AS18NWBZsk5ZdDyQRJov65alLMEf__U466EPG4MMa-dtknKLy7ex5GjHrVI4AjI
-Message-ID: <CANiDSCsB2mEf2JGUTNgkrgYo8LYgSNyD126-Hq_Ek__O3KtxTQ@mail.gmail.com>
-Subject: Re: [PATCH v2] media: uvcvideo: Create a specific id namespace for
- output entities
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHpd+2gC/2XMSwqDMBSF4a1Ixo3cXOOro+6jlGI0qRd8kbTBI
+ u69UToodvgfON/CnLakHTtHC7Pak6NxCJGcIla31fDQnJrQDAFTASLlg+/1fbKj0qaijidlngm
+ ESuaiZOE0WW1o3sHrLXRL7jna9+57sa1fCuFIecGBVxIBZNaUhYFLR8Nrjkn1cT32bOM8/hL4R
+ 2AgMFOqMaXEAvSRWNf1AxBbg+HzAAAA
+X-Change-ID: 20251015-nvme_probefail-3976120a4719
+To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
+Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chaitanya Kulkarni <kch@nvidia.com>,
+        Wilfred Mallawa <wilfred.mallawa@wdc.com>,
+        John Garry <john.g.garry@oracle.com>, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Gerd Bayer <gbayer@linux.ibm.com>
+X-Mailer: b4 0.14.2
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: V8HgxT0Kmk0Hnieurcz85xjnnblC4AIi
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX/IIEL0z107Lw
+ uDogcYas4xbgo1p5Xw1zS+47Gt2AV3AE/ELgJ4K0Chyk3+ZK7kxK/mkPiyzk3rJm3yScdZgFceA
+ bEeC0OzRS44z27+7FqnsIdBKVrwAbisRIexhBvFPvbuMkLxB3UkQBlonQxwwdUSGmOKzkYIX09V
+ VdnTxCo4P4OF8IkFaQLkXP8i82Xu1PON5oXLfz/Ixg3AmG+Eim+6reGckMeyh27xabFxgX7IZqw
+ PSKK6P0oZqqT0elA3nj5ReHNd1vQuY4/PaSl6oSB+6qW7pnQfbKH+KIE4yaUjXm5mHGA5WT8OGt
+ x5dHWXVBvypKZgoEId4VEFTXvAqddqTR+H4EMJLcqYyHaxhkmpA4mZvYkhbRiOneGG4OsemGT1L
+ BWMyupcNb7Ztyt4gMYszxsUKDs/5Kw==
+X-Proofpoint-GUID: V8HgxT0Kmk0Hnieurcz85xjnnblC4AIi
+X-Authority-Analysis: v=2.4 cv=SKNPlevH c=1 sm=1 tr=0 ts=68fb5da0 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=4PydOPZSPFsZ0nwRxBgA:9 a=QEXdDO2ut3YA:10
+ a=HhbK4dLum7pmb74im6QT:22 a=cPQSjfK2_nFv0Q5t_7PE:22 a=pHzHmUro8NiASowvMSCR:22
+ a=Ew2E2A-JSTLzCXPT_086:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-24_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 suspectscore=0 clxscore=1015 priorityscore=1501
+ spamscore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-Hi Laurent
+Hi,
 
-On Fri, 24 Oct 2025 at 12:50, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Wed, Oct 22, 2025 at 01:12:09PM +0000, Ricardo Ribalda wrote:
-> > Nothing can be connected to an output terminal. Which means that no
-> > other entity can reference an output terminal as baSourceId.
-> >
-> > Use this fact to move all the output streaming entities, which have no
-> > controls, to a different namespace.
-> >
-> > The output entities are usually named after the dev_name() of the usb
-> > device, so there should not be any uAPI change from this change.
-> >
-> > Although with this change we can handle some id collisions
-> > automagically, change the logic of uvc_alloc_new_entity() to keep
-> > showing a warning when a camera has invalid descriptors. Hopefully this
-> > message will help vendors fix their invalid descriptors.
->
-> This is one of the commits that I expect we'll go back to in the future
-> when trying to remember why we namespace the streeaming terminal IDs.
-> Let's make the rationale very clear, and also mention the name of the
-> devices we know to be affected.
->
-> ----
-> Some devices, such as the Grandstream GUV3100 and the LSK Meeting Eye
-> for Business & Home, exhibit entity ID collisions between units and
-> streaming output terminals.
->
-> The UVC specification requires unit and terminal IDs to be unique, and
-> uses the ID to reference entities:
->
-> - In control requests, to identify the target entity
-> - In the UVC units and terminals descriptors' bSourceID field, to
->   identify source entities
-> - In the UVC input header descriptor's bTerminalLink, to identify the
->   terminal associated with a streaming interface
->
-> Entity ID collisions break accessing controls and make the graph
-> description in the UVC descriptors ambiguous. However, collisions where
-> one of the entities is a streaming output terminal and the other entity
-> is not a streaming terminal are less severe. Streaming output terminals
-> have no controls, and, as they are the final entity in pipelines, they
-> are never referenced in descriptors as source entities. They are
-> referenced by ID only from innput header descriptors, which by
-> definition only reference streaming terminals.
->
-> For these reasons, we can work around the collision by giving streaming
-> output terminals their own ID namespace. Do so by setting bit
-> UVC_TERM_OUTPUT (15) in the uvc_entity.id field, which is normally never
-> set as the ID is a 8-bit value.
->
-> This ID change doesn't affect the entity name in the media controller
-> graph as the name isn't constructed from the ID, so there should not be
-> any impact on the uAPI.
->
-> Although this change handles some ID collisions automagically, keep
-> printing an error in uvc_alloc_new_entity() when a camera has invalid
-> descriptors. Hopefully this message will help vendors fix their invalid
-> descriptors.
-> ----
->
-> >
-> > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> > Hi, this patch fixes support for some devices with invalid USB
-> > descriptor.
-> >
-> > It is orthogonal to:
-> > https://lore.kernel.org/linux-media/20251021184213.GC19043@pendragon.ideasonboard.com/T/#t
-> >
-> > Some devices will be fixed by the other patch, other devices will be
-> > fixed by this. In my opinion is worth to land both patches.
->
-> I would prefer merging this fix only (or rather, if we merge the other
-> one as a quick fix, reverting it once we merge this one). The rationale
-> is that enabling non-compliant behaviour should be limited to issues we
-> know about, otherwise it could encourage making more non-compliant
-> devices.
->
-> The UVC specification states
->
->   Each Unit and Terminal within the video function is assigned a unique
->   identification number, the Unit ID (UID) or Terminal ID (TID),
->   contained in the bUnitID or bTerminalID field of the descriptor. The
->   value 0x00 is reserved for undefined ID, effectively restricting the
->   total number of addressable entities in the video function (both Units
->   and Terminals) to 255.
->
-> To me it's clear that the unit and terminal IDs share the same
-> namespace, but I suppose some vendors can overlook that. When combined
-> with the fact that the streaming output terminals do not have controls,
-> and therefore do not need to be addressable and lookup up by ID for
-> anything else than matching with a streaming interface, this makes me
-> think that ID collision between a streaming output terminal and another
-> unit will likely be the most common case.
->
-> > Tested with GRANDSTREAM GUV3100 in a 6.6 kernel.
-> > ---
-> > Changes in v2:
-> > - Change Macro name
-> > - Apply quirk only to TT_STEAMING
-> > - Add missing suggested by
-> > - uvc_stream_for_terminal
-> > - Note, v2 has not been tested yet in real hardware, only v1.
-> > - Link to v1: https://lore.kernel.org/r/20251022-uvc-grandstream-laurent-v1-1-0925738a3484@chromium.org
-> > ---
-> >  drivers/media/usb/uvc/uvc_driver.c | 31 ++++++++++++++++++++++++-------
-> >  drivers/media/usb/uvc/uvcvideo.h   |  3 ++-
-> >  2 files changed, 26 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > index fb6afb8e84f00961f86fd8f840fba48d706d7a9a..c0a2c05b0f13a8c3b14018c47dfb0be2614340ce 100644
-> > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > @@ -165,8 +165,10 @@ static struct uvc_entity *uvc_entity_by_reference(struct uvc_device *dev,
-> >       return NULL;
-> >  }
-> >
-> > -static struct uvc_streaming *uvc_stream_by_id(struct uvc_device *dev, int id)
-> > +static struct uvc_streaming *uvc_stream_for_terminal(struct uvc_device *dev,
-> > +                                                  struct uvc_entity *term)
-> >  {
-> > +     u16 id = UVC_HARDWARE_ENTITY_ID(term->id);
-> >       struct uvc_streaming *stream;
-> >
-> >       list_for_each_entry(stream, &dev->streams, list) {
-> > @@ -810,10 +812,12 @@ static struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
-> >       }
-> >
-> >       /* Per UVC 1.1+ spec 3.7.2, the ID is unique. */
-> > -     if (uvc_entity_by_id(dev, id)) {
-> > -             dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n", id);
-> > +     if (uvc_entity_by_id(dev, UVC_HARDWARE_ENTITY_ID(id)))
-> > +             dev_err(&dev->intf->dev, "Found multiple Units with ID %u\n",
-> > +                     UVC_HARDWARE_ENTITY_ID(id));
-> > +
-> > +     if (uvc_entity_by_id(dev, id))
-> >               id = UVC_INVALID_ENTITY_ID;
-> > -     }
-> >
-> >       extra_size = roundup(extra_size, sizeof(*entity->pads));
-> >       if (num_pads)
-> > @@ -969,6 +973,7 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
-> >       struct usb_host_interface *alts = dev->intf->cur_altsetting;
-> >       unsigned int i, n, p, len;
-> >       const char *type_name;
-> > +     unsigned int id;
-> >       u16 type;
-> >
-> >       switch (buffer[2]) {
-> > @@ -1107,8 +1112,20 @@ static int uvc_parse_standard_control(struct uvc_device *dev,
-> >                       return 0;
-> >               }
-> >
-> > +             id = buffer[3];
-> > +
-> > +             /*
-> > +              * Nothing can be connected to an output terminal. To avoid
-> > +              * entity-id's collisions in devices with invalid USB
-> > +              * descriptors, move the output terminal id to its own
-> > +              * namespace. Do this only for UVC_TT_STREAMING entities, to
-> > +              * avoid changing the id of terminals with controls.
-> > +              */
->
-> How about expanding this too, similarly to the commit message to avoid
-> digging all the information from the git history ? I've found that
-> explaining hacks in more details helped me before when I had to rework
-> the code years later.
+occasionally, an NVMe drive fails to reply to MMIO reads despite the PCI
+link being operational. In these situations (obviously not on the
+boot-device :) it is preferred to have this reported in the kernel log
+instead of deducing that something is wrong by comparing expectated vs.
+observed number of nvme devices.
 
-I always like your comments :)
+ - 1/2 adds a clear indication that the device driver failed to probe an
+   NVMe drive and will not register a nvme device.
+ - 2/2 adds a debug log that allows to further zoom in on the exact
+   failure
 
->
->                 /*
->                  * Some devices, such as the Grandstream GUV3100 and the LSK
->                  * Meeting Eye for Business & Home, exhibit entity ID collisions
-I would not even Mention the LSK, they are abusing a vid:pid,.... up to you.
->                  * between units and streaming output terminals. Move streaming
->                  * output terminals to their own ID namespace by setting bit
->                  * UVC_TT_STREAMING (15), above the ID's 8-bit value. The bit is
-UVC_TERM_OUTPUT
->                  * ignored in uvc_stream_for_terminal() when looking up the
->                  * streaming interface for the terminal.
->                  *
->                  * This hack is safe to enable unconditionally, asthe ID is not
-as the
->                  * used for any other purpose (streaming output terminals have
->                  * no controls and are never referenced as sources in UVC
->                  * descriptors). Other types output terminals can have controls,
->                  * so limit usage of this separate namespace to streaming output
->                  * terminals.
->                  */
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> > +             if (type & UVC_TT_STREAMING)
-> > +                     id |= UVC_TERM_OUTPUT;
-> > +
-> >               term = uvc_alloc_new_entity(dev, type | UVC_TERM_OUTPUT,
-> > -                                         buffer[3], 1, 0);
-> > +                                         id, 1, 0);
-> >               if (IS_ERR(term))
-> >                       return PTR_ERR(term);
-> >
-> > @@ -2105,8 +2122,8 @@ static int uvc_register_terms(struct uvc_device *dev,
-> >               if (UVC_ENTITY_TYPE(term) != UVC_TT_STREAMING)
-> >                       continue;
-> >
-> > -             stream = uvc_stream_by_id(dev, term->id);
-> > -             if (stream == NULL) {
-> > +             stream = uvc_stream_for_terminal(dev, term);
-> > +             if (!stream) {
-> >                       dev_info(&dev->intf->dev,
-> >                                "No streaming interface found for terminal %u.",
-> >                                term->id);
-> > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> > index ed7bad31f75ca474c1037d666d5310c78dd764df..3f2e832025e712585edc324afa6cad760d4edafc 100644
-> > --- a/drivers/media/usb/uvc/uvcvideo.h
-> > +++ b/drivers/media/usb/uvc/uvcvideo.h
-> > @@ -41,7 +41,8 @@
-> >  #define UVC_EXT_GPIO_UNIT            0x7ffe
-> >  #define UVC_EXT_GPIO_UNIT_ID         0x100
-> >
-> > -#define UVC_INVALID_ENTITY_ID          0xffff
-> > +#define UVC_HARDWARE_ENTITY_ID(id)   ((id) & 0xff)
-> > +#define UVC_INVALID_ENTITY_ID                0xffff
-> >
-> >  /* ------------------------------------------------------------------------
-> >   * Driver specific constants.
-> >
-> > ---
-> > base-commit: ea299a2164262ff787c9d33f46049acccd120672
-> > change-id: 20251022-uvc-grandstream-laurent-3f9abb8a0d5b
->
-> --
-> Regards,
->
-> Laurent Pinchart
+I've split this into two patches, since 2/2 might be less important wrt
+to back-ports, etc.
 
+Thanks,
+Gerd
 
+Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
+---
+Changes in v3:
+- Both patches: Added Christop Helwig's R-b's
+- Patch 2/2: add newline (per John Garry)
+- Link to v2: https://lore.kernel.org/r/20251022-nvme_probefail-v2-0-26bbdf94280e@linux.ibm.com
 
+Changes in v2:
+- Patch 1/2:
+  - Replace dev_err() with dev_err_probe(), now last before return
+  - Drop R-b from Wilfred Mallawa
+- Patch 2/2: Reword as suggested by Christoph Hellwig, pick up R-b's
+- Link to v1: https://lore.kernel.org/r/20251020-nvme_probefail-v1-0-a420046d98f0@linux.ibm.com
+
+---
+Gerd Bayer (2):
+      nvme-pci: Print error message on failure in nvme_probe
+      nvme-pci: Add debug message on fail to read CSTS
+
+ drivers/nvme/host/pci.c | 2 ++
+ 1 file changed, 2 insertions(+)
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251015-nvme_probefail-3976120a4719
+
+Best regards,
 -- 
-Ricardo Ribalda
+Gerd Bayer <gbayer@linux.ibm.com>
+
 
