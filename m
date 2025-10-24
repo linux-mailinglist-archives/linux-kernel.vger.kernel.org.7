@@ -1,252 +1,169 @@
-Return-Path: <linux-kernel+bounces-867993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9045DC0416E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:10:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBA0C04183
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 62AE24E6654
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:10:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC4CA3B7E3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462EC223DEA;
-	Fri, 24 Oct 2025 02:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8B4225401;
+	Fri, 24 Oct 2025 02:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C/z3P8Gh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHHH1mlM"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6281C5D59
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8911472633
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761271818; cv=none; b=OpWXn/v2mvLCQ7L3k99wdi6oDievSdZv1OwRYTP5TK+4n9FOnulgGjCebMTNQafK+Txj31ukFNcYtowdw63JJVM6FPMyAUMQmIDhWU7andOCj9DeIC1qAwQC0m/j6ldFyK4ssSK4OZyV34jNuHApFLWS6cJTEtkkMIYxx2nkR+A=
+	t=1761271880; cv=none; b=nfYmEkE2EOL0vOQTs4tC06g6K2rUNJ0DpES6o4P7Nklp1DfZS9s88sMf1F3MmzxcDFJpJ6PL92ylO9ByxvRk/BumN/snUSNwuD8I2B2MFDa3e41Iz3H17tc4knQCJM4YWbKlJXei5hm9iVediH+PABQSU9tFQPuBqaa3KTvnp/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761271818; c=relaxed/simple;
-	bh=bWhghqbkZF5R6OM/wCGrP0IOos+1Kse2GUZQVx+q0nY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DLaL8PuGZOYTuiNAN3x8TJiEQBqRqvA+T698G0+u0Qn8/QrEPwp5kTwSIcaXKCk1M/HmKP4O/gymjFCrLKOwR+L2UiuOJborNK0OzBjnJswE4/ACyWmxsiB+R6g0+5pdAOhXCIayo8vSotm6z012HVnHtMaG/Ull01HfGTqIyak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C/z3P8Gh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59NEYF4I007459
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:10:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PGCvJi9rEoMOgH9ee/rqu2BrVYz/eqz38q5hdOmWyuU=; b=C/z3P8Gh3PHag14N
-	Pjfp0iJb/cqnKyA1AVEapwbGM/cJfYmN8DWtrIyANYnt3O/SxvWyxKBG1CnVpm1i
-	xiaeyezCZl0+/zDaqLQJW4YAlNRe+6c5OVsmgu0x4F3e5qisqxDc3QE6IOMrLk78
-	yRJNl7uTKrqzirSsLiMOHoOmSYRZR2iqZSGOIJ9KtiOEr+l50NMUCMDvdcpNM9P7
-	kU3Y+DvJCvmYm6EX1MQLOytQ4zfZxbBLfkzUlAHAFR0JS4fuw8sKl3P0f1hDtOI0
-	zSCAh6sfZRvOJ1ybyrqX6wbD8UlEX/BYbBw/X4eGrIqCZ7ABrICt+hCgRQPeFULs
-	xfc3ZQ==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v344ahj1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:10:15 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-28a5b8b12bbso40507815ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:10:15 -0700 (PDT)
+	s=arc-20240116; t=1761271880; c=relaxed/simple;
+	bh=2HKWTq9bYPI9IRNhEkPDZsu1MxYbn9ll23LkJz1BkFo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uyK7+b5iq3mThi8llBBIhksGaL52km5q1q3ydX1ZJafYhbgEoV/5iLeQxw3L2mktMX/vYliF1e5yd3UeFiYNu4RpGG7FRL8k92WpQzcPZxN166z/6YPrXke69ZTlOZrEryJ/AC36xv8BHn2A5gH5AJuLv9m1nqz6TAgr/lDmkwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHHH1mlM; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-33bda2306c5so1543025a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:11:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761271878; x=1761876678; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iIMtRFCdsmjJp3brOQhbUpPZt9mi1Wgypme0Ijm/Bxo=;
+        b=JHHH1mlMK93oKmK/c2QjFixiw/SNyytCpGn1CPrKYnc9R18YwdcXSxN6cbtjN+QcdT
+         SXjQvvn6WX4AFZcKE5g6CRIP7pIWcGwL28KXXYpz5ODyDCb4lB0bkXwRMPGfzMAKrB4U
+         2wfSfHh5hHzBfFkmADn+Xsp9DT6oExnZzXvnwo+JUqeakS5l56rHP9UV8WuYnEwJziZl
+         uxEtV7Z/peumHM3dF/+Qm0jSEmZ2P392CxU+eVRaKpS5N8gss2wCi6F9vp6QpcwTMTYg
+         byhV/4Nod27m+0EMGpsFQ2nAkz22TQDFUh22HM2zqx3n7akN9fpXcxQtqxDmRcXuR8+R
+         jZZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761271815; x=1761876615;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PGCvJi9rEoMOgH9ee/rqu2BrVYz/eqz38q5hdOmWyuU=;
-        b=mzQPDRyH5lDHsaX8L605+Cuw9riqH68CYIRwIA6k73r3dhNdre9CuSxtGfXqu1JfSz
-         wCaQNjPc1rK2kCdnMYjtJYH8+08NWsGSKk2dDsVdyf1kNlHm7Bf0PNJUv1mBzBa3LylA
-         do/VBm3ocH0D2ellEioRF0to9jI5cQLBO1GBjVEhIDKVfm/zfXwbgcOMaz8WnMR9dVVW
-         Mt8mWQuWQRPgL0Y5TyK4TtK3zv6JrcRQpsG2p4LgyaWTMkeqGhb1yocY7xvxCA5rxPP7
-         GUcDdw6HtiQdnwCLTceYjrg16uVSiTAr+ToTCzL1OChZJWQzaTY5I3GVTq5KpD0q7L+Y
-         6WXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXMFscAMqbseeQkNjh5r+UfBKDVEKxVSMA8nVlSpLUJrPfV4wl9aHmfzponooWXpHXd4SDIOOCTuOS3D8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN/ALV6vy6nstPPMitCuR/RbCaWHWYPwtJRliOKgNHHQfPNwcV
-	Ya7OjPQ0eIr7zwSkYuXdjKjdCvcGh2eOC07glGoihiz0TdBrjRFb9LDXl7vbDbsPN3ZYyJvblN3
-	DwKyY5lML2senbCdT/qknISfgwrkA+/OG2EO6HxrJGUUv1L7poC5rELHIusgAf+9ic30=
-X-Gm-Gg: ASbGncslcls+o3URFlS/rMPH+hNEome6beVqEiZy2AXUz5Z3loT65Fz712l28Uvd4aY
-	CRlgNyNxhu/GQVD/tLvo7x1D7Yei8zq4EmNgdnrwk4IP+E1kuaU5JyVzbJy5l/VSrdKFrQu7FDw
-	mhr5YeWdvPTrMWdnSxbiRnQi9Ac0EGXcbqvmKQd10xNl18Lh26xz+KSqjTgUNh5Hi6nxkHlJ2z+
-	8ZjwZmyGQM3zIHaGBK5INPUDdCIdovOzNyc/7EwTMZN2ghNtyih7xmj3uuQDcDGwB3qPwcHEUY0
-	P+X84UvcftbezCiGv5m5XqLwE018ad4ZVcidCz1noYmbHUcR8HrQDr/MXBO0o950yLg8L+RBBQG
-	bVYvPkufCpSZqT8nU//DUztFvObUdqUCxi8L2FOX6vQa1lBqouOJtyP5XFVvW4H3VaQvEmg==
-X-Received: by 2002:a17:903:2444:b0:264:8a8d:92e8 with SMTP id d9443c01a7336-2948ba950b8mr7646635ad.59.1761271814906;
-        Thu, 23 Oct 2025 19:10:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH0Th1WmQpEggqKtoeq8EtSC4CLCeFVp3H06Pt4dnKJUtaqYK88vCk/JQeaiuW7BPm22gLpXg==
-X-Received: by 2002:a17:903:2444:b0:264:8a8d:92e8 with SMTP id d9443c01a7336-2948ba950b8mr7646255ad.59.1761271814441;
-        Thu, 23 Oct 2025 19:10:14 -0700 (PDT)
-Received: from [10.133.33.160] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dfc274csm38536765ad.74.2025.10.23.19.10.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 19:10:13 -0700 (PDT)
-Message-ID: <1f98f83f-328f-47c8-84e7-2c77abb37a6a@oss.qualcomm.com>
-Date: Fri, 24 Oct 2025 10:10:05 +0800
+        d=1e100.net; s=20230601; t=1761271878; x=1761876678;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iIMtRFCdsmjJp3brOQhbUpPZt9mi1Wgypme0Ijm/Bxo=;
+        b=YN4vbOhsJiXD70AzxOEGkQwWHtWPpwtc40gWq4HnJPgKSDNUPWk334oA7NCelrQ0AM
+         xLl0P/5AOM3GeYp6H2raUdi0opcgF4ib4KtuU0coXft3/FPiENppkD51FcFRiS2Q6uYb
+         ySBlc7hkc9NDzyGHaJSyYZC2QqzWif4MJc3391aZNGdGtM9djkRsRnmLFf/JbAVOebk9
+         23811r0kFtuXKdTtTHqfYA4jh6MFfrABwi8YM4d5mW0Usy4piWNkFSIWMiI6ifIsLvAe
+         jE7YtcLTOSsyePnB69xkvLt0/MUP/JVE02R4JNWsEO9dmIn3z0q0CoENCXBpV+z1yjkd
+         TJVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzOdsbZhbxC1Bh65fInUYx+XU1T7n4U41gy3YKkln6ZGPUiXS4AUlrOllyPZ6HiCiHHXPIYfmnxF7uN14=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0VmuB2PK+NnhjuvA1e05WVvHoH9L70p3L7f43A9D9HGDpzT8N
+	LkjsEj2OmzWvdl/KqinuLmCEwJbljCGUxXt1wtDMaQGnbhwVRLaf+Ra0
+X-Gm-Gg: ASbGncsNpBkKpamdlv3u+80/Da3T50ujjVnU+srIMMunpw5cflcxeg10OOtQjiMzAfp
+	nBTcxVdpxgmUN/BsfGmEU0SZboElNDlKQhpt64yGb4/ngq3aLtr/G1YKipox/y5TpDFESTMNbPI
+	ZMR4A5AEuPvdiDUUfZogFcOfo1P/rBhVGrAcwjpWUgzRcWDaoNjkIJeMU24eGwpdqR+cQZpfcLb
+	+cFJuzwpZc21cUQy0a/HBo2RPzdR5ImWwMgu74daECx7PXDvg0wCs042OOixImbLZWIUJawSq24
+	fGXXfZzSMZbl0AMGGYHrlL3mLCNz64nnKl0ujfO3CNPiuqueT3sgMMwaEDZedD8oHmECOMOp0Mg
+	pXM9UVBEamDwHTsd44cNGbUTRnW3kO1CmGuyRQjwPMqkET0gZ6pVMOSYwc3A8wv+L5xwFoV/R0H
+	ewPike5UcM1xrhwh/Yiml5IMukgEAvjd1ZiVvR
+X-Google-Smtp-Source: AGHT+IFD75N03XrwMjNRmyxSMWMxZp+UXCEbbO3kw9IuJAvapfBkWSQMRThlDmpY+YsYkZGyYzgU0Q==
+X-Received: by 2002:a17:90b:48c8:b0:33b:ba55:f5dd with SMTP id 98e67ed59e1d1-33bcf93ab88mr29913628a91.37.1761271877829;
+        Thu, 23 Oct 2025 19:11:17 -0700 (PDT)
+Received: from [192.168.0.69] ([159.196.5.243])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fb0196831sm3967266a91.20.2025.10.23.19.11.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 19:11:17 -0700 (PDT)
+Message-ID: <cd557c5b11b04da060f07d3849dc46e7b3625ed1.camel@gmail.com>
+Subject: Re: [PATCH net-next v8 1/2] net/tls: support setting the maximum
+ payload size
+From: Wilfred Mallawa <wilfred.opensource@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>, Sabrina Dubroca <sd@queasysnail.net>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, "David S .
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>,  Jonathan Corbet	 <corbet@lwn.net>, Simon Horman
+ <horms@kernel.org>, John Fastabend	 <john.fastabend@gmail.com>, Shuah Khan
+ <shuah@kernel.org>
+Date: Fri, 24 Oct 2025 12:11:11 +1000
+In-Reply-To: <20251023184404.4dd617f0@kernel.org>
+References: <20251022001937.20155-1-wilfred.opensource@gmail.com>
+	 <20251023184404.4dd617f0@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] dt-bindings: remoteproc: qcom,sm8550-pas: Add
- Kaanapali CDSP
-To: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com
-References: <20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com>
- <20250924-knp-remoteproc-v1-2-611bf7be8329@oss.qualcomm.com>
- <CAJKOXPc57_0pJ2ZWf2cKSKAcQMc3S_mHKQxJDzWH7t=mgim3CA@mail.gmail.com>
- <5820a9a9-4474-4c4d-905c-0efd9442e5e1@oss.qualcomm.com>
- <o6dzhmlicwiezmxlb5uqitx7e3pjpyuhbjqfumivbdkru42hvn@r4ksfa6m5nd2>
- <540b1de6-c959-4911-925f-8163f5fa5147@oss.qualcomm.com>
- <fdfzoemfxdz2p622hvixpaznh2n22hweit2e43plfu2kdd6kad@reulvi4vs5v4>
- <cdc01b6d-370d-45dd-a3fd-9866d2a5f36d@gmail.com>
- <7952ed3d-f019-4593-af43-b2df7f738d04@oss.qualcomm.com>
- <c0e6b667-2e87-4419-81ad-3366ed56830e@gmail.com>
-Content-Language: en-US
-From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-In-Reply-To: <c0e6b667-2e87-4419-81ad-3366ed56830e@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: LjayAy9YMgHeJG72UfqKFb4sxVywLqdq
-X-Proofpoint-ORIG-GUID: LjayAy9YMgHeJG72UfqKFb4sxVywLqdq
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMyBTYWx0ZWRfXyPyRBO+YvClv
- 81xRrQkDreXPj/UVwdMrK4tnd/R3Opc6M3C8PSDKg//LvvbBAnoUpoLUng8VOp9tRX/npS6EmRb
- RRQjxKbG4devZrsFTaedKvcoE3D2HK+1P3oSjf8YqYtXURBVwIhKSu4psX/zxS5LVzzNOnfR6Ui
- n2MWXh2iUxpS209MN0qvc18KzzQIJzftt5p2yKu7DQZYNQp/v2S+rfJAmzySLYirD2xF+gqzQ5S
- sPr3C0vkZGEG5y7bMLDEIDwJQF6gz15ZKbSAAhpzUPTZ4ip3bSUQGHTRaxnKwtNyNW3bDuH0qha
- jQbz3qC1i50GHhjleQC2g1pVQcYsHeFMZ+IPWBHLikoIDGAjTkxvDmX72sclCkiY95oXj9sle8J
- N+oDd9wVJvkbhDMzV01rcfbTVQqKoQ==
-X-Authority-Analysis: v=2.4 cv=E/vAZKdl c=1 sm=1 tr=0 ts=68fae007 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=UIbmj66A9DVWYICVwn8A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-23_03,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180023
 
+On Thu, 2025-10-23 at 18:44 -0700, Jakub Kicinski wrote:
+> On Wed, 22 Oct 2025 10:19:36 +1000 Wilfred Mallawa wrote:
+> > +TLS_TX_MAX_PAYLOAD_LEN
+> > +~~~~~~~~~~~~~~~~~~~~~~
+> > +
+> > +Specifies the maximum size of the plaintext payload for
+> > transmitted TLS records.
+> > +
+> > +When this option is set, the kernel enforces the specified limit
+> > on all outgoing
+> > +TLS records. No plaintext fragment will exceed this size. This
+> > option can be used
+> > +to implement the TLS Record Size Limit extension [1].
+> > +
+> > +* For TLS 1.2, the value corresponds directly to the record size
+> > limit.
+> > +* For TLS 1.3, the value should be set to record_size_limit - 1,
+> > since
+> > +=C2=A0 the record size limit includes one additional byte for the
+> > ContentType
+> > +=C2=A0 field.
+> > +
+> > +The valid range for this option is 64 to 16384 bytes for TLS 1.2,
+> > and 63 to
+> > +16384 bytes for TLS 1.3. The lower minimum for TLS 1.3 accounts
+> > for the
+> > +extra byte used by the ContentType field.
+> > +
+> > +[1] https://datatracker.ietf.org/doc/html/rfc8449
+>=20
+> Sorry for not paying attention to the last few revisions.
+>=20
+> So we decided to go with the non-RFC definition of the sockopt
+> parameter? Is there a reason for that? I like how the "per RFC"
+> behavior shifts any blame away from us :)
+>=20
 
+Hey Jakub,
 
-On 10/23/2025 2:28 PM, Krzysztof Kozlowski wrote:
-> On 23/10/2025 06:07, Jingyi Wang wrote:
->>
->>
->> On 10/9/2025 6:29 PM, Krzysztof Kozlowski wrote:
->>> On 29/09/2025 19:03, Dmitry Baryshkov wrote:
->>>> On Mon, Sep 29, 2025 at 05:41:10PM +0800, Jingyi Wang wrote:
->>>>>
->>>>>
->>>>> On 9/29/2025 5:34 PM, Dmitry Baryshkov wrote:
->>>>>> On Mon, Sep 29, 2025 at 02:20:54PM +0800, Jingyi Wang wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 9/25/2025 9:48 AM, Krzysztof Kozłowski wrote:
->>>>>>>> On Thu, 25 Sept 2025 at 08:37, Jingyi Wang <jingyi.wang@oss.qualcomm.com> wrote:
->>>>>>>>>
->>>>>>>>> Add remote processor PAS loader for Kaanapali CDSP processor, compatible
->>>>>>>>> with earlier SM8550 with minor difference: one more sixth "shutdown-ack"
->>>>>>>>> interrupt.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->>>>>>>>> ---
->>>>>>>>>  .../bindings/remoteproc/qcom,sm8550-pas.yaml          | 19 +++++++++++++++++++
->>>>>>>>>  1 file changed, 19 insertions(+)
->>>>>>>>>
->>>>>>>>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->>>>>>>>> index be9e2a0bc060..031fdf36a66c 100644
->>>>>>>>> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->>>>>>>>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->>>>>>>>> @@ -35,6 +35,9 @@ properties:
->>>>>>>>>        - items:
->>>>>>>>>            - const: qcom,sm8750-cdsp-pas
->>>>>>>>>            - const: qcom,sm8650-cdsp-pas
->>>>>>>>> +      - items:
->>>>>>>>> +          - const: qcom,kaanapali-cdsp-pas
->>>>>>>>> +          - const: qcom,sm8550-cdsp-pas
->>>>>>>>
->>>>>>>>
->>>>>>>> This time maybe without HTML:
->>>>>>>>
->>>>>>>> This looks wrong. This is not compatible with SM8550.
->>>>>>>
->>>>>>> Could you point out what is the difference from your perspecetive?
->>>>>>> it is the same as SM8550 except for there is one more interrupt,
->>>>>>> which is also described in this patch.
->>>>>>
->>>>>> I'd second Krzysztof here. Your description points out that it is _not_
->>>>>> compatible to SM8550.
->>>>>>
->>>>>
->>>>> Here is the binding for sm8750 cdsp. Fallback to sm8650 but describe the
->>>>> difference in interrupt:
->>>>> https://lore.kernel.org/all/20250221160036.159557-1-krzysztof.kozlowski@linaro.org/
->>>>
->>>> Interesting. Let's wait for Krzysztof's response then.
->>>>
->>>
->>>
->>> Because it is evolution of sm8750, so it did not go back to old design.
->>> from three generations ago. This is compatible with sm8750 or with sm8650.
->>>
->>>
->>> Best regards,
->>> Krzysztof
->>
->> Hi Krzysztof，
->>
->> I tested with falling back to sm8650 cdsp but it will fail with:
->> [    4.739615] qcom_q6v5_pas 26300000.remoteproc: unable to resolve shareable memory-region index 0
->>
->> sm8550 and kaanapali define 2 memory regions: 
->> "memory-region = <&cdsp_mem>, <&q6_cdsp_dtb_mem>;"
->>
->> sm8650 and sm8750 define 3 memory regions:
->> "memory-region = <&cdsp_mem>, <&q6_cdsp_dtb_mem>, <&global_sync_mem>;"
->> with the driver:
->>
->> static const struct qcom_pas_data sm8650_cdsp_resource = {
->>         .crash_reason_smem = 601,
->>         .firmware_name = "cdsp.mdt",
->>         .dtb_firmware_name = "cdsp_dtb.mdt",
->>          <...>
->>         .region_assign_idx = 2,
->>         .region_assign_count = 1,
->>         .region_assign_shared = true,
->>         .region_assign_vmid = QCOM_SCM_VMID_CDSP,
->> };
->>
->> When kaanapali fallback to sm8650 it cannot parse this region_assign_idx.
->>
->> So shall we still fallback to sm8550 or define a new node "kaanapali_cdsp_resource"
->> in the driver?
-> 
-> And partially the point here is that you might need the third region, no?
-> Best regards,
-> Krzysztof
+We've made the change from record_size_limit to max_payload_len mainly
+because:
 
-On kaanapali, the global_sync_mem region is not managed by kernel, so it should
-be removed.
+In the previous record_size_limit approach for TLS 1.3, we need to
+account for the ContentType byte. Which complicates get/setsockopt()
+and tls_get_info(), where in setsockopt() for TLS 1.3 we need to
+subtract 1 to the user provided value and in getsockopt() we need add 1
+to keep the symmetry between the two (similarly in tls_get_info()). The
+underlying assumption was that userspace passes up directly what the
+endpoint specified as the record_size_limit.
 
-Thanks,
-Jingyi
+With this approach we don't need to worry about it and we can pass the
+responsibility to user-space as documented, which I think makes the
+kernel code simpler.
 
+> > +	err =3D nla_put_u16(skb, TLS_INFO_TX_MAX_PAYLOAD_LEN,
+> > +			=C2=A0 ctx->tx_max_payload_len);
+> > +
+>=20
+> nit: unnecessary empty line
+
+Ah! will fixup for V9
+
+Regards,
+Wilfred
+
+>=20
+> > +	if (err)
+> > +		goto nla_failure;
 
