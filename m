@@ -1,449 +1,337 @@
-Return-Path: <linux-kernel+bounces-868287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89121C04C6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:41:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9461EC04CBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C711C35A69D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:41:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BE961AA2A09
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41F62E8DFA;
-	Fri, 24 Oct 2025 07:41:11 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACFF2EC0B1;
+	Fri, 24 Oct 2025 07:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UEl/6oRP";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="svbtnMW1"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3032E764E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761291670; cv=none; b=nOSpvZIGJcbYhS4QXZ9m/jMpFquRpiWtjdX7LTVmWyNqAYN/ahTcvaEzkD7eO/Tu4yFqWnIG72s4fmEuX+0aXlN30jpRAzVEA+YwNt2PRGbc1zs2Tpu/iHSBEXeBUdYH7t/5uoA8U2yo6jieBA1F7CA3pMRSjzqmuEVyIVrX4UM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761291670; c=relaxed/simple;
-	bh=lzpaUplrCHF9olKACFhJg6dFyfdBL5Fslceg8xxCgmA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QO+y76ggA8Hv+30wRHyaYTGFIUT+e0PNQKsomVUaIIq/YkNi/+Q1TSS+fXfhw0l7FOdIOA81IVtBa/RJSzjmEKnXKHT3QqeeyA/T6mcFzJtmy00c5D8C8JRqlFQjTdSdYuY7jab4N6wp2clmXs5FJtrr/ByvVXbXJ5eQcD2t+1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-431d84fdb91so51078695ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:41:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761291667; x=1761896467;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MLcjvQzS/DKCv60hZAIV5yiYMhGV7OOllvxKnrvZi1E=;
-        b=PQIK5C+rkXxUX886FaDX6qPuL6idV1eqI6EsD6PgVOjeR8mkkJSpCIA1Ao/7ZNvdD6
-         qTqyLQjR+Dtem7emm2rd8i2+BzSZoSfs6Qa5M+6qmMqxmuzz5piGvc9krsGqISOR90iR
-         bQ5c/2o/PejPl8crNvK+zd0P6pjf44jnKVcSEEjfIRLpFJ5JKPF4F9kfMpMdbMqnx1JZ
-         Uixp9H2qiBnuoTNy5z2UGH6vr4gTxbDJn55jbqSXGMlLWzT88Prl2xJbrdkmx7XHCsvs
-         oG/dp7Liq+J+cRcOWkuBABmDIixpVi9IGHjx1oPWTYJQnD4vGy4XFk4XnO+LL/26VbX9
-         Wn5w==
-X-Forwarded-Encrypted: i=1; AJvYcCX2jbxA3GP6toHuoZWjyd9sLw7VzmSS36IEqUM27nMb1NqRp757j+Pdsc/EZ5VzD1XsK6yaF/7NQlQ3BBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxPcsERngxhEIpYrcd345VT/vokDDW+j+N0LgcFwR6b3KOSK6U
-	R3u8VDzP1EXFTf7qspOz2q66WPSradYdxq5IptTgJV+qCXMxEL5S6FcrdHBcxJfIMg2HTMMoZ6w
-	0ZuKYBxrzAE0aTyC74kwg5+4GQPqudUCpSNUNm/Ck73xOfuZy1TUPF4Kk/2I=
-X-Google-Smtp-Source: AGHT+IGuxP+fTijy8r5756Oj57hYHsoFLcHiukETuSPqCYIU81UMrlVOXpuwpQ4c6c3pKVVco4lCxywlk7VkojmpxUQM9SxgrnB3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBE82EBB8F;
+	Fri, 24 Oct 2025 07:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761291779; cv=fail; b=cZBDlF1Sw3oQl3kiNlm9NZrAspfvIe3Ct6RPrcu5O0dh63B/V2BHpTOBpwqx8178SWa95hY4mI+CW8QBMIGqMXnqeCevBX3VadoKYu8bQpYvSol3OgZksWIO4F0JOSyHDSJqwyAtIEh/pE3etx+/a9N5IJHrlLX54XXbxCdPju0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761291779; c=relaxed/simple;
+	bh=Zigb7uAzz/L5UBmBkAqoPlrtqGlJP4sbwHF9J8lWeGA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=BhQ53jKwA5bgaN6qtTMjRI7qbCRXLsYe8bnFgRm+excLtUe3UXJ8jwhmV7rnnz8m8LzHI+EdzRD80aWqFJIw7sWfLFpJoJESOLs3U4ValaIcnZlu+QrfkJtkWSNPa2Gdsppvu6hWEAY7kGevioizTzyQac1BuBZYabMONOc7xhQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UEl/6oRP; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=svbtnMW1; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O3Nwjt029460;
+	Fri, 24 Oct 2025 07:41:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=sSZYVBFcW/5v7hpq
+	9Q73Mb0dFXewwstI6n5IO7o9pE0=; b=UEl/6oRPCB+PGVtv6LpPi8O7azm6SXqC
+	cHKMvdHKy67ULH6PE75km92b9l3TIl53539F3J3lYAxlxvLuKR4r1V5WAQgYgMsQ
+	Y0Pj+a02oa8RYXD6AJtWt/zRHLE9xC40eRTbqxXpBrXL4rnXNAALbLa98erDWax7
+	fpGFQna4YV3eKEEQ0qU3gYdVD298DfQdqbzXNjavoSmfIHUk676VMXTKatHhx/pq
+	LNOWp2Ny1F3HWncPFhIqs33lUrH7Nc1aWmxAbqMoK8/MSMfxhT8vzudbT6o5hb5l
+	q2KfBifvCdTHB0gXbYWvXdOwOeQgcOxqfmhpH4yfdXEYoXVIvORXww==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49xvd0v4j7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 Oct 2025 07:41:44 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59O5XXRc025338;
+	Fri, 24 Oct 2025 07:41:43 GMT
+Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11012020.outbound.protection.outlook.com [52.101.53.20])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49xwka2vqr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 Oct 2025 07:41:43 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RJF9S5RpxvkEZacBq1Kqc6WW/B+SiJg/sq6N+Oz3E0WnREXu2M4iROzVeM8p43crsJ5DkaxC6xVMYdNbXlboR1YC5JR7L6RzsjVLdYr/lQ9VmlKFd1MNTKiEQdWyq/X0CeyxTokxi2jA7o5gk7yu48GDBbrkhRiIVu/wWf54qFkQNRm63G5K4AqEC3y5ugMHNDcA7nRF71lWXCCqSNmgBJlPn/UShoIXUAk2S/7fb81oHaZY44TQH5lO4A2JhP9RqojrHbZ+TRMWGMnpsQ8ICxO9qz1Ftkmsg0q9GdwyEs9w9ShrvHGYwHAQ9VF2JBprJfznFlC9GFBrgAMHlZQPZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sSZYVBFcW/5v7hpq9Q73Mb0dFXewwstI6n5IO7o9pE0=;
+ b=zPgUUIxgAKvbl+xGvlpKhIL/MSZJ78J0LaJpxAJ2p5DQgy+gaHD56nJ9RZJ/vGn1lQHISm4vZrclVoZA7zI9a4b9hYJqK0hR99XYFPeJQj9OdkVE5GwZHHmGJLBXX0ej9PFgsQ6tpUGIYuQEQ+rkKXU+jMzPHfxa41LQ4gr212oKckMVn2CX8F08jTVIBlQwTyNLX9zZMfrdBV7BtbyfQcoAwD1Ls1g4SO8x54vv9Zec5ji1sWMPxSR3I/w/PY7FcYo6Wo6tboBMMSCXgMPKuVVVmt7Jtv31bvhf1LkOc9ERl2yNDXitNUmdismxuI9XndDobfbrKzvQX6LFMV21MA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sSZYVBFcW/5v7hpq9Q73Mb0dFXewwstI6n5IO7o9pE0=;
+ b=svbtnMW10JpG/NfFRoCNaUUwR1QkGNKbWTVhTbQHmkbEfgdGREzUzevwnq2MwQSMi3c1WCrtL6va9Yia90pfNFvUPKFpEQAwqMFflMw3c0IVrThOXyrMpi+GlaTfogPxLnZa1+XZF2D456hoIH2MvziJ7KyxWdO1vI92ibpQhhE=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by CH3PR10MB6716.namprd10.prod.outlook.com (2603:10b6:610:146::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 07:41:39 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 07:41:39 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Lance Yang <lance.yang@linux.dev>,
+        Kemeng Shi <shikemeng@huaweicloud.com>,
+        Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+        Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+        Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Jann Horn <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>,
+        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+        Ying Huang <ying.huang@linux.alibaba.com>,
+        Alistair Popple <apopple@nvidia.com>, Pedro Falcato <pfalcato@suse.de>,
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [RFC PATCH 00/12] remove is_swap_[pte, pmd]() + non-swap confusion
+Date: Fri, 24 Oct 2025 08:41:16 +0100
+Message-ID: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM0PR04CA0123.eurprd04.prod.outlook.com
+ (2603:10a6:208:55::28) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:348e:b0:425:951f:52fa with SMTP id
- e9e14a558f8ab-431dc169e8fmr81664135ab.14.1761291667577; Fri, 24 Oct 2025
- 00:41:07 -0700 (PDT)
-Date: Fri, 24 Oct 2025 00:41:07 -0700
-In-Reply-To: <20251024071154.8nS9W%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb2d93.a70a0220.3bf6c6.014a.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_log_needs_flush (2)
-From: syzbot <syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH3PR10MB6716:EE_
+X-MS-Office365-Filtering-Correlation-Id: 466332a9-a3f5-4b90-1887-08de12d0c4bc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UJd8n8K0jVbooFhdq54cUvDtgrEXqh8oZqI8bHs7hRu7BMd/o0OMVhIFiC6J?=
+ =?us-ascii?Q?axsy0pjL/zbNZubarHJ4ijd9pfrXFb8eDl0hu8zCEWT4o5oSIwx6OqOW/gbB?=
+ =?us-ascii?Q?1PBlMYEGHZJ6ByHqKkGyFXMQD1nrGfOUgtYM8y3p8wm0F4jHHetyvd4vSuJ7?=
+ =?us-ascii?Q?hFYeR8bhCVVEyaVCEMJMFhHLHbIxIENhcLHBJZ1iKfy3Jd8eBjQqZl+ODilx?=
+ =?us-ascii?Q?A3MLFMFBQMvEJBpvynqKH4VagDjmEignztJDjgwGZ6NQvYEo7pAxd/aPBpPb?=
+ =?us-ascii?Q?YKtN7bi6dVjNQqfaQVEY44GOdAtZJLEAy7casouHR/4MkyiZI/c8WJIe+gs7?=
+ =?us-ascii?Q?OGAztwycbmrwECeMEJlSZcajD+INlfHe+OKxNii33obPrxRfkX20GGDUUHL1?=
+ =?us-ascii?Q?BcYenY6HVlqq/B3ZzKCgO47ATYkxkxcmrUXMycEVIsDt0VLoHAGDXyFlXPed?=
+ =?us-ascii?Q?4a0Nq0a95K/gzrE9pvoz102AKipaCJsR258LiZ7vLvSALPqOCc5lD2Cfhzi9?=
+ =?us-ascii?Q?FBOmkXtakvaqYDO76YBrfakN8WsXrbRWUPA3CV1bfrQY5J2koKmfGjOZicBV?=
+ =?us-ascii?Q?UUdpoIUne+qAGmoKw3lHuK1aL5wOHTdmveWrHUIrES8ZMcXXnTYzYkBWiyHQ?=
+ =?us-ascii?Q?m3RkSMy5aVtuM/gpyV2mQAMMGcIQweh+rp00hk7G0j/3OoLfPPoZ49ZeMZq1?=
+ =?us-ascii?Q?HOVjP1NWQMZHZmGb+jgom0Et8JcmkIp5IcUcMAIEOSDccXyHJUxJ25z7sZX2?=
+ =?us-ascii?Q?GDrebg52YfaJHSbLnlKXyc+GTEXnLhchEu69e38y0Ugv2C0UK5dnjoAj25T3?=
+ =?us-ascii?Q?gtxxiHhoUQIsYVC3aCRaZuqNlodb1KbfVXK6Qfg5RyvTq6ixUBFmtLcBx0PQ?=
+ =?us-ascii?Q?QCG9SREgfJtZJM/6/C23g3HYIN5iyivJ2GB21evpYzZWqHZ9ijoxDhhb/WgU?=
+ =?us-ascii?Q?l95tClBHkP2nOiYHpZ+mkeGQYnngIeflqdFQTyLLoic5rGQ5qB6QxEHT06Fd?=
+ =?us-ascii?Q?viJcWpN7fNf5QnCE7YZ96s66ZKFAEWVjvHTRtWcMSqFvQNQwanCLBD5s/BXf?=
+ =?us-ascii?Q?mFHtvjTMpj7a4Lc4/+4qwH9R9YidibWksulmYbR8R4ZXDyX4gmEKhGw8sX5E?=
+ =?us-ascii?Q?UmiiuVqxNxvp4kcncUKo//Y8aLgVF0vjuppSYwaVocUB7TCcVnh7MJLX0V7I?=
+ =?us-ascii?Q?ue+Lji+BX+Ws36YuLzZeuLnORFLpLW5t3jp/NDyw+0X24GPjU2vRyyvrjxzf?=
+ =?us-ascii?Q?i1S93kmd+J6P8MN1mCmTurNO2+uyIxnIG+cYicVtCBCkp54baaNN5C4Yzh0V?=
+ =?us-ascii?Q?F+z0HCQJQdvKSGl7qVKuz+pW+2t+tRDTKrs9lQEtaZciGofLKeIXCdDi40mm?=
+ =?us-ascii?Q?As2sTfYqSIGVVR5HQJCqllQUcWfA54Krcmh9aQLL/0ChKL9cGpRpjgsmTpkj?=
+ =?us-ascii?Q?VoXmfj9qX4D04VTRv1cFBpQxBW7wsart?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?IU2cAbWd2ym0ZnTZVjS2ydsRJmCceqyVBB1eiK77RiF1JREZO8p3SGSy0S+Z?=
+ =?us-ascii?Q?CgC+UoAt76qVGLuPuUWXmEtHkmYWfCHb9zcMYnos2NsoBfvj1QKwF+W0Jxpk?=
+ =?us-ascii?Q?61Wqw14lut1xCabX9l7GBCPv5sh7FVIef/KihmvLNWHz7sQMixp9BVPzdQIO?=
+ =?us-ascii?Q?KDGWBHU1lRmQA2+/eLy9v9ub99BpEVuT7Lm6H4OxsSv8iMfedfGDSqr+eY8N?=
+ =?us-ascii?Q?mXnj+/tOoZyrZWACnSZyTTCjp3kk6FgWERdcZbA+y9hCmGsrDTwBH7DQ4e50?=
+ =?us-ascii?Q?DTIjjlJG/CgT6S7ACkgJ/OdExqcRXzqgz8ANVU1VubHaDd3WpO9PdHHFQZ+b?=
+ =?us-ascii?Q?csFPu7ga/VZXnYioHzJyy4g/9znE85zceEFgy169aZAohdYsjQXfxMo1tU7Z?=
+ =?us-ascii?Q?Ir/70yxKLw32YSjbaBTjjV0thUAC0eNYHnhkk7k+Vrhi9SYYFfjS9acwYXm9?=
+ =?us-ascii?Q?NM2cY02vBG1RHngB0gh0iN67KvCHqQ5B6073XBIE5SooWXNGa0za4aasVugd?=
+ =?us-ascii?Q?VFsn+D6g7FswdvpIibP3R0O5a41zg3+85xycxOvlN2/TYf5WVYZo1a6ygomg?=
+ =?us-ascii?Q?f4uTBwFEFOnAtfbmXlIJxADKz3+Gdu9jgSPLDj5u215RoE/jHtvyPwpTHC+W?=
+ =?us-ascii?Q?DTKr/BISXk9e5fWm6ubmds9Su1mGOWgssca6zptgSPSoqRLjy4d6NTumgYN0?=
+ =?us-ascii?Q?GokZ2kR+27R1Occo/l8Ni7DzxgGpbrs9Bbqq37sQQUPU3xrW75ZZbzEiUOK3?=
+ =?us-ascii?Q?H7MScNn6J/snMfoSgbIuT9MgMnhQhxFBkS74Ak5yVvxMsNQUY58vm7yVsk8j?=
+ =?us-ascii?Q?2Ygh/hc5JNNcWQl4p3FdFZ4Jq75OKI1bNIfL4hAWCe1g5pquXzgxEYV6WT+u?=
+ =?us-ascii?Q?BJ03EY1YDzl9V/t3YqHRybeI8lYn4coDDikP9sdNUK8fzbUXrQgeFSz+yb4L?=
+ =?us-ascii?Q?IWlX1fZjIRcL+ioT9PGmtiiFpNMdDjLJ4mlcs3TkyGWNsCmMt5soEHZmj1g+?=
+ =?us-ascii?Q?XB/kTkEvfXvfz4nwv20cr6ggFvkGfZkCAQCvNy4KvPNiJBLrIqr08Koz9YbA?=
+ =?us-ascii?Q?OGbIn5c+4CbXKWI0lndoHua6YoAFKUac3T8jxHoJs0/FfdXVyssJKAiw6fuG?=
+ =?us-ascii?Q?dyuZtdVktVU1no30HyhCmBRfbajdmF+ZfxzcxBIlMPDHYK5yakniNNJc4Ic1?=
+ =?us-ascii?Q?1B/ZTU96dKr8IkASb8THgiKgt5kyUyt11czsYpLRWuW+tz2AKSkBTE2fZLHB?=
+ =?us-ascii?Q?wZUHDlo437kiSF7RzAx5tVnjf/U9ARzrMjXixA5eapOAO5GO4Ka2YtWQTylD?=
+ =?us-ascii?Q?JV+zztZTf3c028HPTa6W5JBo0uoESlxnbY+XMUaIn8lKa+TKVmzTEVEDg2lr?=
+ =?us-ascii?Q?9S7CXiuMrMGp6TjhJoDwRvKIKBPWiICliXP8F4ZuVd6X+heKQ8oDsB4R2Tsr?=
+ =?us-ascii?Q?0PLvEHD/kFiMyzZSLga4GBAlfLsH7kihbTM6GCFsNGqgvlBUMkPD/K6gfJgX?=
+ =?us-ascii?Q?4bafp0mJOHnzqniUxGGyG5Q53Jf/11Uvspwfisc0xIJUjkMrR00oD491hemL?=
+ =?us-ascii?Q?3jNPzaxgtWsStEMEcmYEg3utD/o//LQa+JaHsWllda1MaDwfDWRSM+nSs9vJ?=
+ =?us-ascii?Q?iw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	1r/4l7v2A8FLNQgJVLf+7mMD41SeegsCZYRrL0T0M+olEyYcAiGi7tAvP9NF9HCzjXoDmyynRR07ESojvcSQn6d9WRIFhRBD8vkbOzlrxAjyOsaxxOJee1y5nFb+8pSetYzVAIsKSTaxvTNh2sCv8KK8YC6ymNl1kQuZ/NYhO42DEKPB8T6Rp2nkj2LhembpgNh5oEPCGEYv69xZgjP6fAvzxr4E5IoiEGxiza291SV5nxrheRJATujJNbDK6l2YqxjvI/G1fth5rzKt2mHB7QaTQhrgSymomftfzi2OEWe4q5mWXYgWwC+Ry/8zXZFyL8HD2NLPiyLNbklQtHm3lJ94E6TQ1KuNQyBcQVuSxO6yAfjsLhXtAShh0ghzB+SxWIcExl0gClPx+yPtxHtLaETGUybXD55eal7a4ax7sL712ovOMyjJ44415ySXtOk2g0rmbs3GIkXtY2x3QtJxgaiqahdH3MgkexebGyOaWO812j2Q8S9bwwUXZY1ppQ2gHj5pilx74ggMoy5XWPvKSMQtFvXYFx/bQH5Qx/IlUZ0ooP98/wW8SimV+MtbbNU1TQ8422BqVrHx7SDT3umN2H1zX7OAxf3+jZHmW8GtGDk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 466332a9-a3f5-4b90-1887-08de12d0c4bc
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 07:41:39.8190
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AZ8C1AdC3SH2aWwWBTEG5J0U7kWUPu1gbQxFIQdWB18oFYq58uvq2kIqCfHj2L9gYi/DnsqqpZjsHCYeADK40J7QnwR597qtzpyJNnVBUDM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6716
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-23_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 mlxscore=0
+ phishscore=0 suspectscore=0 malwarescore=0 bulkscore=0 mlxlogscore=744
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
+ definitions=main-2510240066
+X-Proofpoint-ORIG-GUID: ZR_Lq4zryPmS_cU3JEuNxosJa__GHAOF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDA3MyBTYWx0ZWRfX+Eya0WfN+PMJ
+ KxJ9eWvsmqWyIA3ObpNqSb32L02IrVF9U2mO2GHsNAKZHVBZZOpDyv+QWfth+gZeHYeydXptZmO
+ KzMnyNRVXYoPJVNjSBxG5kPW+4kZjtTMlI6EjNYvffs3T5kAsmzGTodN8cw1gDgJ3t1WcDtbjsJ
+ pjxRE4y5+gS3ONvVu8rJX9OfXuFP11vI7UBIiSbnTNU3PWY9tRup3JS+3F/cIjmX9wdHufRld09
+ KdFqwf67t2Tr9lcBJL1taUgirHJcOohAmPyXt4Iy/z75J+l6zpwTPTrA5WkKa3vnRdHbyk0sxwS
+ fkEqkvheT4DS7iHwHwqeIZ78i+X8OpT+ALOHHwNSJO8+wMLLcFeQb0+bvTWlzPRLiTftbi/uNH0
+ iSdgKMabQpqhgVJQKmwYblmvuyL2WR7toiXarb7c8uJxR91AaXk=
+X-Proofpoint-GUID: ZR_Lq4zryPmS_cU3JEuNxosJa__GHAOF
+X-Authority-Analysis: v=2.4 cv=D9RK6/Rj c=1 sm=1 tr=0 ts=68fb2db8 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
+ a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=Kg6MBjzDyotcYq-Jm4IA:9 cc=ntf
+ awl=host:12092
 
-Hello,
+There's an established convention in the kernel that we treat leaf page
+tables (so far at the PTE, PMD level) as containing 'swap entries' should
+they be neither empty (i.e. p**_none() evaluating true) nor present
+(i.e. p**_present() evaluating true).
 
-syzbot tried to test the proposed patch but the build/boot failed:
+However, at the same time we also have helper predicates - is_swap_pte(),
+is_swap_pmd() - which are inconsistently used.
 
-im0 netdevsim3: renamed from eth3
-[   65.498461][ T5570] bridge0: port 2(bridge_slave_1) entered blocking sta=
-te
-[   65.504458][ T5570] bridge0: port 2(bridge_slave_1) entered forwarding s=
-tate
-[   65.510598][ T5570] bridge0: port 1(bridge_slave_0) entered blocking sta=
-te
-[   65.516333][ T5570] bridge0: port 1(bridge_slave_0) entered forwarding s=
-tate
-[   65.547747][ T5570] 8021q: adding VLAN 0 to HW filter on device bond0
-[   65.558428][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes r=
-eady
-[   65.566437][ T3031] bridge0: port 1(bridge_slave_0) entered disabled sta=
-te
-[   65.573305][ T3031] bridge0: port 2(bridge_slave_1) entered disabled sta=
-te
-[   65.581116][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes r=
-eady
-[   65.590723][ T5570] 8021q: adding VLAN 0 to HW filter on device team0
-[   65.605138][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): bridge_slave_0: link =
-becomes ready
-[   65.617739][ T3031] bridge0: port 1(bridge_slave_0) entered blocking sta=
-te
-[   65.624264][ T3031] bridge0: port 1(bridge_slave_0) entered forwarding s=
-tate
-[   65.632411][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): bridge_slave_1: link =
-becomes ready
-[   65.641431][ T3031] bridge0: port 2(bridge_slave_1) entered blocking sta=
-te
-[   65.647421][ T3031] bridge0: port 2(bridge_slave_1) entered forwarding s=
-tate
-[   65.665596][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_0: link be=
-comes ready
-[   65.675817][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_1: link be=
-comes ready
-[   65.688046][ T5570] hsr0: Slave A (hsr_slave_0) is not up; please bring =
-it up to get a fully working HSR network
-[   65.699422][ T5570] hsr0: Slave B (hsr_slave_1) is not up; please bring =
-it up to get a fully working HSR network
-[   65.712142][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): team0: link becomes r=
-eady
-[   65.719124][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): hsr_slave_0: link bec=
-omes ready
-[   65.726668][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): hsr_slave_1: link bec=
-omes ready
-[   65.743599][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): hsr0: link becomes re=
-ady
-[   65.795967][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): vxcan0: link becomes =
-ready
-[   65.803090][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): vxcan1: link becomes =
-ready
-[   65.812250][ T5570] 8021q: adding VLAN 0 to HW filter on device batadv0
-[   65.826943][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_virt_wifi: link=
- becomes ready
-[   65.840970][ T5570] device veth0_vlan entered promiscuous mode
-[   65.846214][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_vlan: link beco=
-mes ready
-[   65.853729][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): vlan0: link becomes r=
-eady
-[   65.859777][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): vlan1: link becomes r=
-eady
-[   65.869781][ T5570] device veth1_vlan entered promiscuous mode
-[   65.876428][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): macvlan0: link become=
-s ready
-[   65.893202][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): macvlan1: link become=
-s ready
-[   65.901517][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_macvtap: link b=
-ecomes ready
-[   65.909785][ T5570] device veth0_macvtap entered promiscuous mode
-[   65.919316][ T5570] device veth1_macvtap entered promiscuous mode
-[   65.932694][ T5570] batman_adv: batadv0: Interface activated: batadv_sla=
-ve_0
-[   65.938869][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_batadv: link=
- becomes ready
-[   65.947434][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): macvtap0: link become=
-s ready
-[   65.956647][ T5570] batman_adv: batadv0: Interface activated: batadv_sla=
-ve_1
-[   65.963867][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_batadv: link=
- becomes ready
-[   65.973107][ T5570] netdevsim netdevsim0 netdevsim0: set [1, 0] type 2 f=
-amily 0 port 6081 - 0
-[   65.981275][ T5570] netdevsim netdevsim0 netdevsim1: set [1, 0] type 2 f=
-amily 0 port 6081 - 0
-[   65.988383][ T5570] netdevsim netdevsim0 netdevsim2: set [1, 0] type 2 f=
-amily 0 port 6081 - 0
-[   65.996540][ T5570] netdevsim netdevsim0 netdevsim3: set [1, 0] type 2 f=
-amily 0 port 6081 - 0
-[   66.009412][ T3061] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[   66.017125][ T3061] UBSAN: signed-integer-overflow in ./arch/x86/include=
-/asm/atomic.h:165:11
-[   66.024329][ T3061] -163290563 + -2098288399 cannot be represented in ty=
-pe 'int'
-[   66.031757][ T3061] CPU: 0 PID: 3061 Comm: kworker/u2:8 Not tainted syzk=
-aller #0
-[   66.038134][ T3061] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), =
-BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-[   66.048130][ T3061] Workqueue: wg-kex-wg0 wg_packet_handshake_send_worke=
-r
-[   66.053893][ T3061] Call Trace:
-[   66.057427][ T3061]  dump_stack+0xfd/0x16e
-[   66.060951][ T3061]  ubsan_epilogue+0xa/0x30
-[   66.064639][ T3061]  handle_overflow+0x192/0x1b0
-[   66.068437][ T3061]  ? prandom_u32+0x217/0x260
-[   66.072280][ T3061]  ip_idents_reserve+0x14a/0x170
-[   66.076197][ T3061]  __ip_select_ident+0xe4/0x1c0
-[   66.080020][ T3061]  iptunnel_xmit+0x468/0x850
-[   66.083815][ T3061]  udp_tunnel_xmit_skb+0x1ba/0x290
-[   66.088108][ T3061]  send4+0x5d4/0xaf0
-[   66.091339][ T3061]  wg_socket_send_skb_to_peer+0xcd/0x1c0
-[   66.095883][ T3061]  wg_packet_handshake_send_worker+0x16b/0x280
-[   66.100935][ T3061]  process_one_work+0x85e/0xff0
-[   66.104997][ T3061]  worker_thread+0xa9b/0x1430
-[   66.108751][ T3061]  ? lock_release+0x69/0x640
-[   66.112517][ T3061]  ? rcu_lock_release+0x20/0x20
-[   66.116506][ T3061]  kthread+0x386/0x410
-[   66.119891][ T3061]  ? rcu_lock_release+0x20/0x20
-[   66.124100][ T3061]  ? kthread_blkcg+0xd0/0xd0
-[   66.127889][ T3061]  ret_from_fork+0x1f/0x30
-[   66.131580][ T3061] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[   66.138816][ T3061] Kernel panic - not syncing: UBSAN: panic_on_warn set=
- ...
-[   66.144565][ T3061] CPU: 0 PID: 3061 Comm: kworker/u2:8 Not tainted syzk=
-aller #0
-[   66.150499][ T3061] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), =
-BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-[   66.159482][ T3061] Workqueue: wg-kex-wg0 wg_packet_handshake_send_worke=
-r
-[   66.165195][ T3061] Call Trace:
-[   66.167897][ T3061]  dump_stack+0xfd/0x16e
-[   66.171471][ T3061]  panic+0x2f0/0x9c0
-[   66.174602][ T3061]  check_panic_on_warn+0x95/0xe0
-[   66.178727][ T3061]  handle_overflow+0x192/0x1b0
-[   66.182743][ T3061]  ? prandom_u32+0x217/0x260
-[   66.186508][ T3061]  ip_idents_reserve+0x14a/0x170
-[   66.190664][ T3061]  __ip_select_ident+0xe4/0x1c0
-[   66.194678][ T3061]  iptunnel_xmit+0x468/0x850
-[   66.198320][ T3061]  udp_tunnel_xmit_skb+0x1ba/0x290
-[   66.202576][ T3061]  send4+0x5d4/0xaf0
-[   66.205845][ T3061]  wg_socket_send_skb_to_peer+0xcd/0x1c0
-[   66.210583][ T3061]  wg_packet_handshake_send_worker+0x16b/0x280
-[   66.215775][ T3061]  process_one_work+0x85e/0xff0
-[   66.219866][ T3061]  worker_thread+0xa9b/0x1430
-[   66.223801][ T3061]  ? lock_release+0x69/0x640
-[   66.227824][ T3061]  ? rcu_lock_release+0x20/0x20
-[   66.231900][ T3061]  kthread+0x386/0x410
-[   66.235406][ T3061]  ? rcu_lock_release+0x20/0x20
-[   66.239449][ T3061]  ? kthread_blkcg+0xd0/0xd0
-[   66.243419][ T3061]  ret_from_fork+0x1f/0x30
-[   66.247485][ T3061] Kernel Offset: disabled
-[   66.251127][ T3061] Rebooting in 86400 seconds..
+This is problematic, as it is logical to assume that should somebody wish
+to operate upon a page table swap entry they should first check to see if
+it is in fact one.
 
-VM DIAGNOSIS:
-07:40:09  Registers:
-info registers vcpu 0
+It also implies that perhaps, in future, we might introduce a non-present,
+none page table entry that is not a swap entry.
 
-CPU#0
-RAX=3D0000000000000036 RBX=3D0000000000000036 RCX=3D0000000000000000 RDX=3D=
-00000000000003f8
-RSI=3D0000000000000000 RDI=3D0000000000000020 RBP=3D00000000000003f8 RSP=3D=
-ffffc9000172f4e0
-R8 =3Ddffffc0000000000 R9 =3Dfffff520002e5e9e R10=3Dfffff520002e5e9e R11=3D=
-ffffffff83f79850
-R12=3Ddffffc0000000000 R13=3D1ffffffff2ad2063 R14=3Dffffffff96179de0 R15=3D=
-0000000000000000
-RIP=3Dffffffff83f798c8 RFL=3D00000002 [-------] CPL=3D0 II=3D0 A20=3D1 SMM=
-=3D0 HLT=3D0
-ES =3D0000 0000000000000000 ffffffff 00c00000
-CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
-SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
-DS =3D0000 0000000000000000 ffffffff 00c00000
-FS =3D0000 0000000000000000 ffffffff 00c00000
-GS =3D0000 ffff888020600000 ffffffff 00c00000
-LDT=3D0000 0000000000000000 ffffffff 00c00000
-TR =3D0040 fffffe0000003000 00004087 00008b00 DPL=3D0 TSS64-busy
-GDT=3D     fffffe0000001000 0000007f
-IDT=3D     fffffe0000000000 00000fff
-CR0=3D80050033 CR2=3D00007f9d25c90e9c CR3=3D000000003f184000 CR4=3D00350ef0
-DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
-0000000000000000=20
-DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
-EFER=3D0000000000000d01
-FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
-FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
-FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
-FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
-FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
-Opmask00=3D0000000040410888 Opmask01=3D0000000000000fff Opmask02=3D00000000=
-ffffffef Opmask03=3D0000000000000000
-Opmask04=3D0000000000000000 Opmask05=3D0000000000000000 Opmask06=3D00000000=
-00000000 Opmask07=3D0000000000000000
-ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 b8a5606d93fbf234 4e6d6128c1c61247
-ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 e69291a55adf1a4d bc79a80ad3c0fce0
-ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 be6cebfbb543848d 5148acc6845117c5
-ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 4a118d849a30d684 02106ca1c36d1727
-ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 00000000ffffffff 00000000000000b4
-ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000034
-ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 f280979acd555a03 dd619a0e2b11f92c
-ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 4db1fdda4413481c 0000000000000000
-ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 9675387fceff6377 c2b3d307affe2114
-ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 d99f887700000000 25c03f609d700a96
-ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 15ad1dc2a12d429b 71118e54ff6cdf2d
-ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 fbb4f24384a52b52 900c1a64c85601c3
-ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 a54ff53a3c6ef372 bb67ae856a09e667
-ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 5be0cd191f83d9ab 9b05688c510e527f
-ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 2525252525252525 2525252525252525 2525252525252525 2525252525252525
-ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 00306e6170737265 0030657267367069 00306c6e74367069 00306974765f3670
-ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 6900306974765f70 6900306c6e757400 3074697300326777 0031677700306777
-ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+This series resolves this issue by systematically eliminating all use of
+the is_swap_pte() and is swap_pmd() predicates so we retain only the
+convention that should a leaf page table entry be neither none nor present
+it is a swap entry.
 
+We also have the further issue that 'swap entry' is unfortunately a really
+rather overloaded term and in fact refers to both entries for swap and for
+other information such as migration entries, page table markers, and device
+private entries.
 
-syzkaller build log:
-go env (err=3D<nil>)
-AR=3D'ar'
-CC=3D'gcc'
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_ENABLED=3D'1'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-CXX=3D'g++'
-GCCGO=3D'gccgo'
-GO111MODULE=3D'auto'
-GOAMD64=3D'v1'
-GOARCH=3D'amd64'
-GOAUTH=3D'netrc'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOCACHEPROG=3D''
-GODEBUG=3D''
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFIPS140=3D'off'
-GOFLAGS=3D''
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build317169965=3D/tmp/go-build -gno-record-gcc=
--switches'
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
-d'
-GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/usr/local/go'
-GOSUMDB=3D'sum.golang.org'
-GOTELEMETRY=3D'local'
-GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.24.4'
-GOWORK=3D''
-PKG_CONFIG=3D'pkg-config'
+We therefore have the rather 'unique' concept of a 'non-swap' swap entry.
 
-git status (err=3D<nil>)
-HEAD detached at d7384b6d0bf
-nothing to commit, working tree clean
+This is deeply confusing, so this series goes further and eliminates the
+non_swap_entry() predicate, replacing it with is_non_present_entry() - with
+an eye to a new convention of referring to these non-swap 'swap entries' as
+non-present.
 
+It also introduces the is_swap_entry() predicate to explicitly and
+logically refer to actual 'true' swap entries, improving code readibility,
+avoiding the hideous convention of:
 
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
-s/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-bin/syz-sysgen
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Damd64 go build -ldflags=3D"-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3Dd7384b6d0bff77c60aad349866f126ab16ce5296 -X g=
-ithub.com/google/syzkaller/prog.gitRevisionDate=3D20250710-085248"  -o ./bi=
-n/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
-mkdir -p ./bin/linux_amd64
-g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
-	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
-ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
-t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
-static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
-_amd64=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"d7384b6d0bff77c60aad349866f126ab16=
-ce5296\"
-/usr/bin/ld: /tmp/ccf2gjJF.o: in function `Connection::Connect(char const*,=
- char const*)':
-executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
-KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
-ions requires at runtime the shared libraries from the glibc version used f=
-or linking
+	if (!non_swap_entry(entry)) {
+		...
+	}
 
+As part of these changes we also introduce a few other new predicates:
 
-Error text is too large and was truncated, full error text is at:
-https://syzkaller.appspot.com/x/error.txt?x=3D17bd0be2580000
+* pte_to_swp_entry_or_zero() - allows for convenient conversion from a PTE
+  to a swap entry if present, or an empty swap entry if none. This is
+  useful as many swap entry conversions are simply checking for flags for
+  which this suffices.
 
+* get_pte_swap_entry() - Retrieves a PTE swap entry if it truly is a swap
+  entry (i.e. not a non-present entry), returning true if so, otherwise
+  returns false. This simplifies a lot of logic that previously open-coded
+  this.
 
-Tested on:
+* is_huge_pmd() - Determines if a PMD contains either a present transparent
+  huge page entry or a huge non-present entry. This again simplifies a lot
+  of logic that simply open-coded this.
 
-commit:         d3d0b4e2 Linux 5.10.245
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linu=
-x.git linux-5.10.y
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D768d3f2193745e7=
-5
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Dc24237f0eee59c0c2=
-abb
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-=
-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D167282585800=
-00
+REVIEWERS NOTE:
 
+This series applies against mm-unstable as there are currently conflicts
+with mm-new. Should the series receive community assent I will resolve
+these at the point the RFC tag is removed.
+
+I also intend to use this as a foundation for further work to add higher
+order page table markers.
+
+Lorenzo Stoakes (12):
+  mm: introduce and use pte_to_swp_entry_or_zero()
+  mm: avoid unnecessary uses of is_swap_pte()
+  mm: introduce get_pte_swap_entry() and use it
+  mm: use get_pte_swap_entry() in debug pgtable + remove is_swap_pte()
+  fs/proc/task_mmu: refactor pagemap_pmd_range()
+  mm: avoid unnecessary use of is_swap_pmd()
+  mm: introduce is_huge_pmd() and use where appropriate
+  mm/huge_memory: refactor copy_huge_pmd() non-present logic
+  mm/huge_memory: refactor change_huge_pmd() non-present logic
+  mm: remove remaining is_swap_pmd() users and is_swap_pmd()
+  mm: rename non_swap_entry() to is_non_present_entry()
+  mm: provide is_swap_entry() and use it
+
+ arch/s390/mm/gmap_helpers.c   |   2 +-
+ arch/s390/mm/pgtable.c        |   2 +-
+ fs/proc/task_mmu.c            | 214 ++++++++++++++++++++--------------
+ include/linux/huge_mm.h       |  49 +++++---
+ include/linux/swapops.h       |  99 ++++++++++++++--
+ include/linux/userfaultfd_k.h |  16 +--
+ mm/debug_vm_pgtable.c         |  43 ++++---
+ mm/filemap.c                  |   2 +-
+ mm/hmm.c                      |   2 +-
+ mm/huge_memory.c              | 189 ++++++++++++++++--------------
+ mm/hugetlb.c                  |   6 +-
+ mm/internal.h                 |  12 +-
+ mm/khugepaged.c               |  29 ++---
+ mm/madvise.c                  |  14 +--
+ mm/memory.c                   |  62 +++++-----
+ mm/migrate.c                  |   2 +-
+ mm/mincore.c                  |   2 +-
+ mm/mprotect.c                 |  45 ++++---
+ mm/mremap.c                   |   9 +-
+ mm/page_table_check.c         |  25 ++--
+ mm/page_vma_mapped.c          |  30 +++--
+ mm/swap_state.c               |   5 +-
+ mm/swapfile.c                 |   3 +-
+ mm/userfaultfd.c              |   2 +-
+ 24 files changed, 511 insertions(+), 353 deletions(-)
+
+--
+2.51.0
 
