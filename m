@@ -1,119 +1,148 @@
-Return-Path: <linux-kernel+bounces-868338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1393C04F96
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:08:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7826DC04FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DF8D50236F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:08:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8675C4FA0D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B992FE04E;
-	Fri, 24 Oct 2025 08:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5323019C3;
+	Fri, 24 Oct 2025 08:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFdt+/ZQ"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hGOe4dR/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5622FD7D9
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3040D2FF172;
+	Fri, 24 Oct 2025 08:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761293284; cv=none; b=eqeKAjKsJyo/1ZqXQrty/QtYDlJgbOmYGOG+NW9WL8WkmrD8ofB/BjbA9pUMVOJYquDluhpHm0DwLmaESYf1qj2pf232l2mSAKGrXaiMvAoR/zbyvhxaOduJHwtUArbX4+7mIxCDVVp5/Xbp6x7BviXsbtQw2z6u36A4XsOZyF4=
+	t=1761293296; cv=none; b=hPLXJQpbJbt4gvlhkXtdOclX1mR8sIgZhqdckXZpxxxZV+gtjhWATcYVeTVXl58Dt8t0Yb35Sbzadt5xneDiiD1sBrW3MJAgZeSjWl3cpyaZ1QMbktS765Z3WWj+RIo0vKPS1Q4ZSEFzVBZxBatx+ctLBiOBm5pMCWB0bycWhUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761293284; c=relaxed/simple;
-	bh=J4S94DsRoninMSBudglc4Ce8gLtqbhGQOepjq7TbzOM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rYT4jI4hSZEsuKY5FktWLudrq011jNhCl/hg466XTJ4Zq32v3v51OmwTmTJRyTwZJecaWfjxrWiB8SRrB9phMhYmktu9mxAh7InSvy4jKITZpknJfWJXHVyeq5wdpc/Pdygz/aLez4F4nCHOMZu7HJ4f5/ZuZDJ9Kn2khA5EXyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFdt+/ZQ; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-63c523864caso4030244a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:08:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761293281; x=1761898081; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J4S94DsRoninMSBudglc4Ce8gLtqbhGQOepjq7TbzOM=;
-        b=MFdt+/ZQ/Fpmhw8jfiG86GANLs3sWJ1DU4KNPyW0Uka9dRfA/SDIwcGWT6ru1x97N7
-         vMyM+nBirflmFtF6oE3jTo52KIhIUKIj9c6jZ7zybxa19pyedrXeoI0nJ9NRrFpDEzaQ
-         9UosIjlhC5fMoGMYCKT+R85/FdZLBjInpRAF5G//KQubHAQnojK0W+j7TV/9+GiQ3ZTC
-         RbelJfYNikpSjuBvg87FXqDWgo8pTeqgi4OhWfnUKmA2gx2mtYJv9crEUYokIKcvFyJb
-         2qJ5SR1ZNjW/QSQOAqr0u6B+/FR9RuBjoUuFZbRTLWcMHUCwOEuypwNuhHEPwIS7KQbk
-         eNjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761293281; x=1761898081;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J4S94DsRoninMSBudglc4Ce8gLtqbhGQOepjq7TbzOM=;
-        b=MWFXQHbqCQsrYPntKQIa0X5QwRSlfDl3biR4hYZSo+bhpWnTvchaBhesTOIwXhH9GO
-         kuxaqw6LXfql71tGMDtJYGJloo06o2de4RWYDwLtXwVu1zh4G6Mf2dECiSm9bItfb+xd
-         Cr3bVs5sAm9s5TZmJO6vVWOwcDd5kBZrmU2Bl+o0f6BzogbIHLFFjplLMh2cAguIF9fp
-         TZWY34YugdMHTxSR8q4MoizU/6oebx81m0qLikuVaDfDVr+OLrv+bJJNf27sMSZEnyUG
-         he2Slwj7Ngwvg6jDz4zakw6WCOhBgWX5++215MwoNSagaxYcgWJX84T1vpBhwhZ2Rk+a
-         DaaA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5MYxY4KjQZj384QrrsZ8+L8VvISsAVTCQa+b8EmkD/7PEOtUy/Is7TiQYjkCHpAEU1ltqP9iPS/CtEsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxksyrbg7SEWYtT3VoHWrQsC6X9ErwEWlSdjeM3mbgbKX5LL8UF
-	oMzXrJOkRATijcnb+5cxIcLMUs0CGONUtRXMx3O6HAfRxdizO2zdGvBW1UWUZMRDvOq/laMVsCx
-	V4tz6i94lQFnssaIovs1Cy+lK/DWB7XgMab9b/oh1Bw==
-X-Gm-Gg: ASbGncsaQ+LhEO+1eCBFSYgwTDEpi7+kfTuZ0Bhq1Pnfbpy4+W6MP7EiWHJh17ss6Cs
-	iF5OOsFpIH+XFgCXfvWNmPDwqo3noBH6/4AVCJZidoKVyCCWMR+U87Zklb0owwspDmgqS8jiC9Y
-	h0n8pZZKurzxSvvM3ar/YnCsc+EYNkrJ+9A9GigBv4HNUL/OBqGtJg+nEh+zllfwVmc3q42OBjx
-	OstwlafPD7M+2omDq2RUOajjqmaT8GIyVQdftN8fRbwp8sWFoZwEL4HuQlnpn4JSXxTVyRH
-X-Google-Smtp-Source: AGHT+IGCBRpJ+LtRu0ox9jPypuV4C6ij8WNh28i4Y4jNHo2XazkGYc7aNTT4wZyFuUQXwqrs2AmyVxtO04NXGhYt4bo=
-X-Received: by 2002:a05:6402:1451:b0:639:e712:cd75 with SMTP id
- 4fb4d7f45d1cf-63e60084372mr1411179a12.8.1761293280483; Fri, 24 Oct 2025
- 01:08:00 -0700 (PDT)
+	s=arc-20240116; t=1761293296; c=relaxed/simple;
+	bh=iVIHEI/6GYiyKQtjDs+G9MH3NzfvOwU3yM+TuMzlGF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGJquH9XFfcW0sVxDdPL5xE9EBRIHz3IkOWxHwl/bpHhw7cqPcbmesCyJOyEKXABfe1SCFWJofmCZnKIvagjmCYD3y6j8IjBobva9RzEhJo6s/U24ZjoeJnzncarOMHkssI4WxEVlduwpVtyp+ijy8+ViPwDePACjRdpNc03GJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hGOe4dR/; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761293295; x=1792829295;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=iVIHEI/6GYiyKQtjDs+G9MH3NzfvOwU3yM+TuMzlGF8=;
+  b=hGOe4dR/6u7K6DA+1Aj7AS1Ubv13iH5Mw7b8Su8pWbDJfCW0IMKrvIWJ
+   qkJpyniQe354a9pM5VTYzoRs5/0L++cKYekiDm1UjKP7qdqEflCbAW7MZ
+   SlSjZ8dpLEXqoDhxy6X4XmZtmU7k//ihIvsngvfbLgsYcrtvNxpHhi5f1
+   XOnyee8MpPhfpphRYGWz8Jx2x+ls6UPmaYAfI0b12sI4T6CcVM4sYrcJG
+   woLo2Ebc3moptDcNYyOuVrAhnAnf2j2VzSVSyQyvJeBmqP2p4wr4Rkj7V
+   RZiGEMUeqkdM/kcED9EboAB/+9ijAIgkTdbEjnHWGNvPpwxxcfhAG5jf4
+   w==;
+X-CSE-ConnectionGUID: dIM8z/WURvSwyury3MRpOw==
+X-CSE-MsgGUID: /0e8sSxTQeSokBi4xLNwMw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63378613"
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="63378613"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 01:08:14 -0700
+X-CSE-ConnectionGUID: ShAhcC5rRm+Zk2meUFiqQQ==
+X-CSE-MsgGUID: Y+ylwr1ITe6V3fw6sAb20w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="221572594"
+Received: from mjruhl-desk.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.221.255])
+  by orviesa001.jf.intel.com with SMTP; 24 Oct 2025 01:07:58 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 24 Oct 2025 11:07:56 +0300
+Date: Fri, 24 Oct 2025 11:07:56 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+Cc: Chaoyi Chen <kernel@airkyi.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v7 1/9] usb: typec: Add notifier functions
+Message-ID: <aPsz3PvZPgXdvM4E@kuha.fi.intel.com>
+References: <20251023033009.90-1-kernel@airkyi.com>
+ <20251023033009.90-2-kernel@airkyi.com>
+ <aPni4AeDaem_rfZH@kuha.fi.intel.com>
+ <aPnvoSRJefwDlpNO@kuha.fi.intel.com>
+ <aPn4-S7upPOOtenr@kuha.fi.intel.com>
+ <3a24bd7f-c247-4541-8cf5-c1e66e2af5a0@rock-chips.com>
+ <aPsuLREPS_FEV3DS@kuha.fi.intel.com>
+ <4fddba9a-b073-4bca-bd13-64a415f4bc47@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <206e36398db6075bfb0bb0b98295ee7328c5f64f.camel@pengutronix.de>
- <20251009083703.2038187-1-a.shimko.dev@gmail.com> <c863512af9a13eb92bde7e0d383d4b4c81e5ce3e.camel@pengutronix.de>
-In-Reply-To: <c863512af9a13eb92bde7e0d383d4b4c81e5ce3e.camel@pengutronix.de>
-From: Artem Shimko <a.shimko.dev@gmail.com>
-Date: Fri, 24 Oct 2025 11:07:49 +0300
-X-Gm-Features: AWmQ_blxcEq4dG4iG0CEj1wkIzCyAln6t7Eh-QkpWOlI0opsE8oVHudxGwsyDnA
-Message-ID: <CAOPX747hVv-JZ71jtam111KYNiCJNLBnNrcQfNO8EEEihfFwwg@mail.gmail.com>
-Subject: Re: [PATCH] i2c: designware-platdrv: handle reset control deassert error
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: andi.shyti@kernel.org, andriy.shevchenko@linux.intel.com, 
-	jarkko.nikula@linux.intel.com, jsd@semihalf.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4fddba9a-b073-4bca-bd13-64a415f4bc47@rock-chips.com>
 
-On Thu, Oct 9, 2025 at 12:39=E2=80=AFPM Philipp Zabel <p.zabel@pengutronix.=
-de> wrote:
->
-> On Do, 2025-10-09 at 11:37 +0300, Artem Shimko wrote:
-> > Handle the error returned by reset_control_deassert() in the probe
-> > function to prevent continuing probe when reset deassertion fails.
-> >
-> > Previously, reset_control_deassert() was called without checking its
-> > return value, which could lead to probe continuing even when the
-> > device reset wasn't properly deasserted.
-> >
-> > The fix checks the return value and returns an error with dev_err_probe=
-()
-> > if reset deassertion fails, providing better error handling and
-> > diagnostics.
-> >
-> > Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
->
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+On Fri, Oct 24, 2025 at 03:59:50PM +0800, Chaoyi Chen wrote:
+> Hi Heikki,
+> 
+> On 10/24/2025 3:43 PM, Heikki Krogerus wrote:
+> > > I noticed the following statement in typec_register_altmode():
+> > > 
+> > > ```
+> > > 
+> > >      /* The partners are bind to drivers */
+> > >      if (is_typec_partner(parent))
+> > >          alt->adev.dev.bus = &typec_bus;
+> > > 
+> > > ```
+> > > 
+> > > If the condition is not met, the bus will not be set, which means bus_notify()
+> > > won't be able to take effect. Did I miss something?
+> > Right, that would be the condition that I was talking about. Only
+> > partner altmodes are used in the bus.
+> > 
+> > Hold on! Do you need the port altmode instead of the partner altmode?
+> > If that's the case, then we can't use the bus notifier. So we'll need
+> > the separate notifier chain after all.
+> 
+> Yes, we need port altmode.  The partner altmode device appears too late for
+> DRM device, as it only shows up after the corresponding DP device is inserted.
 
-Hi Philipp,
+Got it. So just move the declaration of the typec_notify_event() to
+drivers/usb/typec/bus.h and this patch is OK by me.
 
-Should I do something to bring the changes to linux-next?
+Sorry again about the misunderstanding.
 
---
-Best regards,
-Artem
+thanks,
+
+-- 
+heikki
 
