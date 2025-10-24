@@ -1,144 +1,87 @@
-Return-Path: <linux-kernel+bounces-868986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72414C06A9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:17:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 041E9C06A8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C1231507EEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:15:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4DB63AC8F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F29D1DED64;
-	Fri, 24 Oct 2025 14:15:28 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545B31DE4CA;
+	Fri, 24 Oct 2025 14:16:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058B11922FD;
-	Fri, 24 Oct 2025 14:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E971917FB
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761315328; cv=none; b=dQGJItQT74sPXh8Hry7hYDynonB3sisIpTwYVVZ/Cc2fA00NeaZLkYMRZ9LOiHaDJ7oxSC18VL+Byd1WnAOqEO7DW7/LEKjC6vJP9BtiTcrDNX9jQrJHaaXYEkgN4tfEjBXxWCvx5+aRhCl42hcDsQMAYfLMWERVktQqxDU9Jms=
+	t=1761315366; cv=none; b=q/YA+pnpfyyH5FWv+gKz5LaIXHXjj8UE8MLNNBEy8fiDEE3WTIxhmG/PqVATww5SqI4bASAfAN3rM/kUnoAMQk0P+8vdhtGLehTSJc9pQwWf/xe0Dx+obDrLb9ZtI9P50vUd6qRjFhLol73YTPlGW8hSOS0YYNjnx5H9T6sGMWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761315328; c=relaxed/simple;
-	bh=hLcPIyyWr6TcBq/BNFlyubdecmp8T71I9Txq97gZs4o=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dk9DaYBRuu6J44kELX3XYyfHxWguHQVjlUyGo16cJeTmwosk/mSLegVrjAEZqyUhGIWNlo4TnTEa0i6NzqYEzbs3aEQ75yVweUfCjIYgtDXPTGbvIDnGg10Q0hZ8MEa0I4DFKePoZqlL/lnCKZYVFTHXK6IGHkawEy2ic2gGFIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ctPyl29wQz6L4vm;
-	Fri, 24 Oct 2025 22:13:51 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 48410140279;
-	Fri, 24 Oct 2025 22:15:22 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 24 Oct
- 2025 15:15:20 +0100
-Date: Fri, 24 Oct 2025 15:15:19 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
-	Gavin Shan <gshan@redhat.com>
-Subject: Re: [PATCH v3 03/29] ACPI / PPTT: Find cache level by cache-id
-Message-ID: <20251024151519.000058a8@huawei.com>
-In-Reply-To: <20251017185645.26604-4-james.morse@arm.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
-	<20251017185645.26604-4-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761315366; c=relaxed/simple;
+	bh=DCUO1K9+4X02Z8jAKpVkKQW34dLBas6aaVKsrjFdIvY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uLUhlifK8fJpzT/rDljhtvTbDxjp9hCxFbcejTOSGCxRWsQHtj/UZk9Iy+jMqz2aahZsLZeLinU39P5/z4mdb3AxonIWmWddj8uvxQhw/qNYetDofVqoMO23/+l0CfG8qt69jSNeCSb84S5XbCrUp7rA44gaaCMKgWndJkL5Jqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430db6d358bso88524115ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:16:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761315363; x=1761920163;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2+uqbsKxxZJN1bnSukq7W0sj5JvM65eiFlpWxw16JCc=;
+        b=IMkOrkPgRpL1AYP1OtdvKIqCXU8vSz8BI2HnXukTLIoS/tJKvWSGGuamdlK6g+GqH+
+         6iAJmqCvKpuFLSrhyZyCXn2KkalccM1ySpHJIQySfdYxNBeUzbkPloyxziapa/5DIz0m
+         Rqyh60K7muIUN9wS7d4zmYyws0nlLKSfNkNBZgY24UMIuVtrjto2fXFEx3kA1R7Zvvh0
+         uTSHL5t8gmR8LL7RxgI6Mjoll8PjNfnKmibROO+q2OnjT0ex/1iKKBw6YyAmdSuQgQ0r
+         aE4jvJfXsD3X+kq3rAMPdFc+9QbkKN8y7wJhCXLV9rVBord8hUk6v8Q9Zkz0UB5fPko2
+         /ysw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfGVj9BSjMlt2piIjkP15GuabEJx/LZ/x8Q6qiaFxWWfCR/tR/WE094hOYKfwn6QykZv2n30iYZmU7opA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV0fSRS9hnZQ9/jhlkQekJiWqYk4Cq3a8F9EJB0cy5cCJz3u2B
+	Lqclu42d3Nyj8tUtuQmhufvNnMqJMRmE0n5Wom/Kr9E/JqPM2VQ0HJ+PwXTXmoA3q4gHoqjKO8w
+	ar7Als6tgutaeIhywECr1CxvNMZ/hyMuQcocIAIp9dC0DOFIHsYK2vxYb/Ok=
+X-Google-Smtp-Source: AGHT+IGkE8A2MOPlsTTmF/EzfHNH1opYma4naTPNLWCyqwthjAxb6xf5yyGwm8ZFdm4FS0488nCWZL3WjesErlL43mrjjrpGhi9W
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+X-Received: by 2002:a05:6e02:216f:b0:431:d763:193b with SMTP id
+ e9e14a558f8ab-431ebf6c84amr33721525ab.24.1761315363623; Fri, 24 Oct 2025
+ 07:16:03 -0700 (PDT)
+Date: Fri, 24 Oct 2025 07:16:03 -0700
+In-Reply-To: <20251024071534.vdlG6%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fb8a23.050a0220.346f24.00f8.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_dir_foreach_blk
+From: syzbot <syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 17 Oct 2025 18:56:19 +0000
-James Morse <james.morse@arm.com> wrote:
+Hello,
 
-> The MPAM table identifies caches by id. The MPAM driver also wants to know
-> the cache level to determine if the platform is of the shape that can be
-> managed via resctrl. Cacheinfo has this information, but only for CPUs that
-> are online.
-> 
-> Waiting for all CPUs to come online is a problem for platforms where
-> CPUs are brought online late by user-space.
-> 
-> Add a helper that walks every possible cache, until it finds the one
-> identified by cache-id, then return the level.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-> ---
-> Changes sinec v2:
->  * Search all caches, not just unified caches. This removes the need to count
->    the caches first, but means a failure to find the table walks the table
->    three times for different cache types.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Fwiw that sentence doesn't make sense to me. Too many tables.
+Reported-by: syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com
+Tested-by: syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com
 
+Tested on:
 
->  * Fixed return value of the no-acpi stub.
->  * Punctuation typo in a comment,
->  * Keep trying to parse the table even if a bogus CPU is encountered.
->  * Specified CPUs share caches with other CPUs.
-Trivial comment only from me.  Ben's question on matching an ID against an
-l1 instruction cache needs addressing (or ruling out as a 'won't fix')
-though before an RB is appropriate.
+commit:         4fc43deb Linux 6.12.55
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=13697734580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=52b41b67187b07bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=b20bbf680bb0f2ecedae
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=177a8c92580000
 
->  /**
->   * update_cache_properties() - Update cacheinfo for the given processor
->   * @this_leaf: Kernel cache info structure being updated
-> @@ -903,3 +924,64 @@ void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
->  				     entry->length);
->  	}
->  }
-> +
-> +/*
-
-Smells like kernel doc.  Why not /** ?
-Then can at least verify formatting etc.
-
-> + * find_acpi_cache_level_from_id() - Get the level of the specified cache
-> + * @cache_id: The id field of the cache
-> + *
-> + * Determine the level relative to any CPU for the cache identified by
-> + * cache_id. This allows the property to be found even if the CPUs are offline.
-> + *
-> + * The returned level can be used to group caches that are peers.
-> + *
-> + * The PPTT table must be rev 3 or later.
-> + *
-> + * If one CPU's L2 is shared with another CPU as L3, this function will return
-> + * an unpredictable value.
-> + *
-> + * Return: -ENOENT if the PPTT doesn't exist, the revision isn't supported or
-> + * the cache cannot be found.
-> + * Otherwise returns a value which represents the level of the specified cache.
-> + */
-
+Note: testing is done by a robot and is best-effort only.
 
