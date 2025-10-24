@@ -1,166 +1,90 @@
-Return-Path: <linux-kernel+bounces-867967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55EAEC0406E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:36:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD7BC0407A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38D3A4F59EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:35:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A5FE4E31EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BF6188CC9;
-	Fri, 24 Oct 2025 01:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9921C3C18;
+	Fri, 24 Oct 2025 01:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7xnt6Se"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gTkHLOm7"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA47145B3F
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51F91A9F90
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761269753; cv=none; b=igKC688Z9YakMIkWsIheOrZHCskzUBBTFK2M8CC+5V/fQlVe/Pbkczx1LXeOL5GHUN908jWavmZMH6MkEazx5JJTRzNCHpX08VaJAagkLCcbqBFX02AKXBzPd8xcb5sGUzvNvF3pfZ3faVpEFJluO5K1cKpF7/uxAitXxdhJF0U=
+	t=1761270071; cv=none; b=FgeBuUXUdOVeYeE2dfIjy8r25yPek3r6Z0GS9Bxh6/CNBYPTQ+4ZXXIgspIaAstuZLm7Gt07otp44+EnC9jBQgcOw0Yd3aTJ7SxH/MTdQYLViWQlAXkNc6a1/KkL+JsM3vkOU/Il5O+LAIxee5eMmXagntRDUhd9n1l2zSAFgv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761269753; c=relaxed/simple;
-	bh=AXzVrNH1TUa6ogzDoknpnZyRp4WPedbef4fmxOb9fUE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MbDpC4GckMS7nmgX8uGClgyu0sh+nMreesxrFJv9X5zI+at1ljGaMCC3qC8AO+O5NG84KgVr1BTVaz5LHSEgZiV2ipZav2CEz/q8sjng4KimBD7yfbdG9W5BDd4ZOiL1hDZo4FwF114YZ4zb3pFYfFuabuBkae+yBpj9yXgba3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g7xnt6Se; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so12275475e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:35:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761269750; x=1761874550; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cq8gqqeYooxgW5KYKmBo5Rs/wh49wN/6rTY6x+8D8QA=;
-        b=g7xnt6Se7/yVB1ZbzVBGgJk4ETl3P0xx46mJNkDb1lSY1oO+91BsK+wrHpNDc76HuR
-         FpQ2EX0sayF2S8XHS/cP6Jyf+cCiZDtnTtbkuP01dHbSqrdRWn2uN1rbUhLgWf2WniAM
-         YNngzVRqp6YHi2DbZsB4sE8izhYFyhGWKoL3cPWYwtkHNclvBJv9/QYwgYNYrQP7oIV4
-         fjMGM+qLLq2V5TBHV/1z46d2CSWpOJRQpvJdtyfcnUyqZQNxevmflcK5+zVRFsB8oE2k
-         MJOJNuWO/xqxKF5tUiWRpzjhe9j+8KBFVBQ/pARS5DCYt4eFCVzD6zq+Q4mIOxxs8Kch
-         5wqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761269750; x=1761874550;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cq8gqqeYooxgW5KYKmBo5Rs/wh49wN/6rTY6x+8D8QA=;
-        b=XXP/vMpHwX45+LKCMWuBDH/TQ1nY5rL93fSPpKcRquiD4AMnW8dh5sTz1wF0WA3QkB
-         malcQSjmeAf1yFCmX7vYGslVbpC43hAUIRbe5eZbeUCuMZo7Rj0nOdVMsgzuuj7pizBa
-         DSXJfR7H9f9TaDqsjry06kUFZ3D2j0ICCmMFbHJOAUD4hoDPi0b2F9iaMKzyY8fzSjm2
-         k1+wT5CsvwywujMxqtofVxXNL4CLF8Iyqd/EUjNxNTPVqQXHkTIJfPciz5bSOp1mHC2K
-         n+dr6ji75uC2lHpfzftwUHjAhtGNU2XHISC4Rm45udYmc2UsSzksdnehWmmETIA+0U0f
-         EYBw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2KBmqPHzCNsHan+yWdhUuKnYCy67evPhd8btQ2k3vi9iGv4BZBi0fWc3AJhW5mldqZbrDJGceGEU6yXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxleITy6V47OzczBD1p/xySMyjRkkIopqJwFvXP2FaH7sFdn52L
-	9Gqh7gMpvxZVs9abN/oaMjse7sLNXBUj7KODIO0L1pyMekjqXraE1iEhqBaH5tipwHP+umizN03
-	pSdymwjedXrhFQrgTGWS5CRGrI+kpxJo=
-X-Gm-Gg: ASbGncuiSvUyAsUZNw1VBp67AM0+lt7CWoyG0mViOGm8nlQ9H5WeyJ/75XFY590RqT/
-	9X7SQctO4W5rQa3f5c0D/pA439xtlM6njdICeneF6yH6D5y7+IlyR8O067/wU5T/Lu2kWZ8qF4O
-	0Yz2dGBxDwu10HeQ3AntUdyAmveBLU1kzeg2c6IaftAqU60ge+20TjqtQztPiaD9mjgHvPZNSbF
-	RTsZERixa387qxRkmxy+yePEAJ3BmDZqbOjCyh4iu9Jh5aCzPs9Yd8AFYK9s4DLol5VDlaXkIbr
-	MOPCT3hqBP1xKGwBQcc=
-X-Google-Smtp-Source: AGHT+IGwrfelWdU2yhalAC0i9vt/hIf2/MMW3kPsGCKlhtSvPHBTMPWNKLBb8oATlrSieozyy7lk2jNHzMN+c5GsljA=
-X-Received: by 2002:a05:600d:4355:b0:46e:45f7:34f3 with SMTP id
- 5b1f17b1804b1-475d39b9552mr1422285e9.8.1761269749552; Thu, 23 Oct 2025
- 18:35:49 -0700 (PDT)
+	s=arc-20240116; t=1761270071; c=relaxed/simple;
+	bh=gwfiB4C0GOFiV06KID7mXC+DZ8SSqRNfWj56vSLnzwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u07pD1beheDc8FQNOk50qybluYF+ALbAX6t4eaFb4ct5PMld2L24C5x4LwIuHnRdjxBFiOZj2YmSVM7CGl7IczV0KqvrJzhNwNjykphIa1tSpppKL0TBVnDwkLVo7JSXRyV7PrOOHV5guYuSBz2oeNFFh4J5/YGp2pa6blENFs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gTkHLOm7; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761270062; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=+V8kOqNOsh8UaPdUFo5M/73e9x7UlGg1quQtezT5Kvg=;
+	b=gTkHLOm7s3LwDJg32MGYDYD5EOjA3saLvU7pVxWvs9wdqYJuJ015QLj2InDIHP5u5vA3S9lox+ZP7yKXOKMpxNUiZLK98nJf6IzY6wcVFAUSSKVSrpNty2qfdoM7mqLNN58Z5zDSO9wyQ/V8CmmgFxIiAP6jrvHtt4yCxplfdTM=
+Received: from 30.74.144.122(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WqsXDkv_1761270060 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 24 Oct 2025 09:41:00 +0800
+Message-ID: <b746b524-af09-4ab5-858a-0a29f72a0ea7@linux.alibaba.com>
+Date: Fri, 24 Oct 2025 09:40:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023131600.1103431-1-harry.yoo@oracle.com>
- <aPrLF0OUK651M4dk@hyeyoo> <CA+fCnZezoWn40BaS3cgmCeLwjT+5AndzcQLc=wH3BjMCu6_YCw@mail.gmail.com>
-In-Reply-To: <CA+fCnZezoWn40BaS3cgmCeLwjT+5AndzcQLc=wH3BjMCu6_YCw@mail.gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Fri, 24 Oct 2025 03:35:38 +0200
-X-Gm-Features: AWmQ_blTT_7WNBqDPFmuMJp8o4vQAMauOpamt3NvIm4L5ZNNRzy9gCKm7HE9f0E
-Message-ID: <CA+fCnZezciDNL4-Yto8d3bPOc3U07hY1Q_DMk926-1H17Ugx3Q@mail.gmail.com>
-Subject: Re: [PATCH] mm/slab: ensure all metadata in slab object are word-aligned
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, David Rientjes <rientjes@google.com>, 
-	Alexander Potapenko <glider@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Andrew Morton <akpm@linux-foundation.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Feng Tang <feng.79.tang@gmail.com>, 
-	Christoph Lameter <cl@gentwo.org>, Dmitry Vyukov <dvyukov@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: shmem/tmpfs hugepage defaults config choice
+To: Dmitry Ilvokhin <d@ilvokhin.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Hugh Dickins <hughd@google.com>
+Cc: Kiryl Shutsemau <kas@kernel.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com
+References: <aPpv8sAa2sYgNu3L@shell.ilvokhin.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <aPpv8sAa2sYgNu3L@shell.ilvokhin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 24, 2025 at 3:19=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail.=
-com> wrote:
->
-> On Fri, Oct 24, 2025 at 2:41=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> =
-wrote:
-> >
-> > Adding more details on how I discovered this and why I care:
-> >
-> > I was developing a feature that uses unused bytes in s->size as the
-> > slabobj_ext metadata. Unlike other metadata where slab disables KASAN
-> > when accessing it, this should be unpoisoned to avoid adding complexity
-> > and overhead when accessing it.
->
-> Generally, unpoisoining parts of slabs that should not be accessed by
-> non-slab code is undesirable - this would prevent KASAN from detecting
-> OOB accesses into that memory.
->
-> An alternative to unpoisoning or disabling KASAN could be to add
-> helper functions annotated with __no_sanitize_address that do the
-> required accesses. And make them inlined when KASAN is disabled to
-> avoid the performance hit.
->
-> On a side note, you might also need to check whether SW_TAGS KASAN and
 
-*HW_TAGS KASAN
 
-SW_TAGS KASAN works with kasan_disable_current().
+On 2025/10/24 02:12, Dmitry Ilvokhin wrote:
+> Allow to override defaults for shemem and tmpfs at config time. This is
+> consistent with how transparent hugepages can be configured.
+> 
+> Same results can be achieved with the existing
+> 'transparent_hugepage_shmem' and 'transparent_hugepage_tmpfs' settings
+> in the kernel command line, but it is more convenient to define basic
+> settings at config time instead of changing kernel command line later.
+> 
+> Defaults for shmem and tmpfs were not changed. They are remained the
+> same as before: 'never' for both cases. Options 'deny' and 'force' are
+> omitted intentionally since these are special values and supposed to be
+> used for emergencies or testing and are not expected to be permanent
+> ones.
 
-HW_TAGS KASAN does not and instead relies on the pointer tag being
-reset for the access to be unchecked.
+Make sense to me.
 
-On another side note, unpoisoning slabobj_ext memory with either of
-the TAGS modes would require it to be aligned to 16 bytes, not just 8.
-(But those modes do not embed metadata after each object in a slab, so
-your patch seems fine to me.)
+> Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
 
-> KMSAN would be unhappy with your changes:
->
-> - When we do kasan_disable_current() or metadata_access_enable(), we
-> also do kasan_reset_tag();
-> - In metadata_access_enable(), we disable KMSAN as well.
->
-> > This warning is from kasan_unpoison():
-> >         if (WARN_ON((unsigned long)addr & KASAN_GRANULE_MASK))
-> >                 return;
-> >
-> > on x86_64, the address passed to kasan_{poison,unpoison}() should be at
-> > least aligned with 8 bytes.
-> >
-> > After manual investigation it turns out when the SLAB_STORE_USER flag i=
-s
-> > specified, any metadata after the original kmalloc request size is
-> > misaligned.
-> >
-> > Questions:
-> > - Could it cause any issues other than the one described above?
-> > - Does KASAN even support architectures that have issues with unaligned
-> >   accesses?
->
-> Unaligned accesses are handled just fine. It's just that the start of
-> any unpoisoned/accessible memory region must be aligned to 8 (or 16
-> for SW_TAGS) bytes due to how KASAN encodes shadow memory values.
->
-> > - How come we haven't seen any issues regarding this so far? :/
->
-> As you pointed out, we don't unpoison the memory that stores KASAN
-> metadata and instead just disable KASAN error reporting. This is done
-> deliberately to allow KASAN catching accesses into that memory that
-> happen outside of the slab/KASAN code.
+With addressing Shakeel's comments:
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
