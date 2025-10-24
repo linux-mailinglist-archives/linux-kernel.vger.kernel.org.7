@@ -1,300 +1,302 @@
-Return-Path: <linux-kernel+bounces-868948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9B9C0690E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:47:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 607D4C06923
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDEBA19A20CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D4D33BD08A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FEC31619E;
-	Fri, 24 Oct 2025 13:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FBE31DDA9;
+	Fri, 24 Oct 2025 13:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5wVbLZC"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="H0FLbrDg"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011068.outbound.protection.outlook.com [52.101.70.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027D72E091C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761313652; cv=none; b=N+y1jvs7WYsVQ/AqG3vIolyEXmXLH2IEckRvaTsukZC/IKe7A5evXiCiSHyc160cO7jevo+lheOTD9s3E0GU8wMBGACVhfoVPImA9CGDN+vigc5BR76mjR5GARk0M0cg6XaNB30/NYacWFwveoTFc5VwkDTzrO/LssmFqGDY3b0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761313652; c=relaxed/simple;
-	bh=P5efqsy6mTgjda9OiI4HwPuKs5Ix6wwE5Ev7dBI/rZw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pNf0JDORqEzNAMqc9VkLKhQJRQH3zJ5EJUhg8WlLAqrYdpvUJ2W8iWDAdUZYWPr4RWl3z0tcAXlNbPPFV3qcyFBEcTooaSIcb7nbx5a4ZFgZ+G+hWLOVHXjyFSgsnMEZKDIxBZUrrALxGY0RDwX1MsusQP+2bOaLhebWI76PINE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h5wVbLZC; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-378d50162e0so25545361fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:47:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761313647; x=1761918447; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pchbnAludoXw0jQM03838mZKYOdbsuH0z3yLPtcr2+g=;
-        b=h5wVbLZCvraOBsWHvyC2qKSrT8UN0WUitReL8JpanR8LNeHkI6zrGXYl1KUzNXow9r
-         1yn4qU0svznpPt2XYVYK5aWobQbqf9UsNBrCQjo5mn7XDQiZM0TO8sbIkOQtLBj7Uxwb
-         JylZsqFByDTHgRYHtD/zcXm0K6+YCPG7DCaa20JWSPtMlhNJUKbR2/3tSs90Jkh4Ye2q
-         pDr2Ex/J7rNrx0AgmPlsMecEGxjwywRGn4z3DvnkLQ+4l+h6s31KlIhkdO5aZtTyMvGx
-         +aEEicXoIgtX+Cz2tiqEYcZp/ENA1gA1aH/uUuR99W932d6y/uRZwKfbKkd28xHOKLSQ
-         TkTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761313647; x=1761918447;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pchbnAludoXw0jQM03838mZKYOdbsuH0z3yLPtcr2+g=;
-        b=CSvm6+fiK5NrTQbQiW3/608qX6+SiP5p9gUJibCHa0rKWITTyYMNx/uZ+hrCHcHkFd
-         z/EeoQe1UcTFmdWA7MZkm9ckzGLEn2/dW2tayfxdUTTVjPRUPYIi43EQRyJCG9bj+LAx
-         zjdvMkKrkTrMRU+/lKUMv7ur0CGVkeXdWKu3A+mqp/eInZU8buDGux9yeJMdNutFtj64
-         HlBrtCZPBmPY6DCjhDO1CcAl+pjctjU1ay4WV5f0Keax3HJW17xscKBMpyBgSOMrexwI
-         pu97TDXB5CfWz6G/K4CjSIoiivlWXEQXCzn399UvY2d93LTGrP7QSHPxccF6E46nEARa
-         25dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNcQ+SZ5XjJhpSVP60bBM4tXQM+1kQwddX/RznRBEMyEPxe1pPof54wcwfmvj1PpAvPlUdKILeyuwl2Mg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR1drgSY6Ea+zA79GTKidu3Jzn5HGnhIjPmig7wbYZgUM81EC6
-	eSSPdJVZSMUEQT6KDM4KwJlyp4rW9zeP55HTyqFPSVU2duKOX/+FOO9CZ5w0mFnmDxGqk6YJ5Tn
-	kYuUiLY1EUwAnUK+QFtoNvJ2fDp+LI1w=
-X-Gm-Gg: ASbGncsUixqTOpTmplDauhFpdZUXVwbmT890uQtzajSIhyU0C96Ql5CEW+F7EARofkf
-	nCl2clppeJ1b+yjaeOJTovZLKVA+HGIG96dQDwmx8aS7K/UDaZ2OhuUuBU4KddUchuiy5rTrqc6
-	ydCJyV1T4sE5o7hvPluOUqaowISmw++NxgUSH/xkzsRt9Ozje4Ye8vvS3TRXHVSgkECuKHqhi8s
-	4I/OZWucU3FevjRruX2+WIovF/i159/SSuoRsc2+yq9o19K706SqnrthUg=
-X-Google-Smtp-Source: AGHT+IHvW0zqfCSMt2eNmxcRwl9UZxpIa6XM/ni51aKzpamgw520Ee4qqfelGrF/tDe1fcnxX+4rCxtHyWjRwH+L6JA=
-X-Received: by 2002:a05:651c:2122:b0:378:df5b:fbb8 with SMTP id
- 38308e7fff4ca-378df5c0217mr15126171fa.19.1761313646678; Fri, 24 Oct 2025
- 06:47:26 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F91322B8BD;
+	Fri, 24 Oct 2025 13:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761313822; cv=fail; b=a3T6KEHb9/oreosV8xToMkhsn1yj10c6m5bymEjdMvPrWv5wJ1poqlNxKMdpJEPLIg/G24M+4aLPXH5rziwba0nSBipKUczI1/zRy/NZyTkRjnywJ42mu08RSABuRJDoxd0fb7FSUOLXOXgN/InJFZ9YhyyrDWthONKG04GJWJM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761313822; c=relaxed/simple;
+	bh=gUuhFoJW6HAj7ZX77ANimlueIMizL8WPSXwvlsLmcSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=gJ2M1rB3MihfM4YlNmEV4yMwf65xsqmt7T8dO5cPDUTFbGzKr8l4OVjPlM9wjdHKhTtMblj4EF6Ufz5zqcquePbyYaDa5A5rnoukMJ3Mo0depfL0LGchlrshnDTLGKVkmTTvhwDTv75WaatQAmLp5EyjhEtmMFw0ekVN1rMqChY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=H0FLbrDg; arc=fail smtp.client-ip=52.101.70.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oqruG0ZerFAMAS/jxyMsdw5YaoC3beCikGK9mPO+rL4TakYSMqDP9T39qqkueoIKN+KvTNfIlT4yd7P3iIQE9okrPvoFpFa7ItOaBtDf+x6C7NP4eeFMFG/tfWHg5ww4b+me22+1+l27VXZ7jb3ZwQmoDtvHf8KdGTMK/Y6GtmxaNJwJiKEFqnd1MWxj6RqCES9nGp9YQrw+RJ6d0EDJQd9WTCckXqcobCMZiq1snRJ5oIUetyJsnaOTALIeCNi2EPR9PfevAxUvun4VkZ5nX9VvJ+z0uk00O1op+k6pmWJRm/1ACaU/aC+uOttdTlZsgrUtXlUdttqyLKYCEnvJ+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oY3YoXk+K+bmQYq37JOK9tlsrt4HXSc/QsJ8DOrxTkU=;
+ b=MViVa0yYp6/0PArS8KudKJVa+KuyAAlReVBNd4DLHUI2wRWxKXkDS2/C/fP5tBrKdQA0IVU7lHqhGINohYP8rm5LiYg1Eo9tuZWsWluiH9lAddhyVxAc1uZa6QYNx4Rlqi90hwbOoMTcvPlrSrUEejRkgEFWrhNB0BlCk6S9s/5Zb27Y2cg0jK63KMrEiiu3ong0SJUZRBTHSLbaZlHNP7t6G+T1szncFWN6qj5F0cmoz00fOnILFMClYc+bt7sG8+g7z4404iUdXfsHGN//PaSc0CZ4y6mYiAcXnyweVWfsSuJ+WIfYy6NhAR4CQBvjHRP0Bw2fECsmZmvn/BGcDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oY3YoXk+K+bmQYq37JOK9tlsrt4HXSc/QsJ8DOrxTkU=;
+ b=H0FLbrDgpym76+PMe6LovzOTC/uMdlwUQ/VSEyF0xfo0bBfSEqUTaFFmeTlekKUDtBnoRUXyrUzYUPBypq0x8LhzFxkUidSBdFplAujeGM/OCUO+DTPIdhuEcO8wmhqSlVMF++VFNhsbf2qe6z6vvnG6Csycavoa9iyPeikcWGZhlqXjhm/4gbs69PMJ0vg1cpASoBZFkicxQf3sQZF0VeFDHFi8nn2QT5w+9fjBeJuEOCQxjZB0aP0GlYlQMb4+uhaZZdT9DyNGbUruLw0Rvs3eMDi3ohYpPI1jMAICffNqWDeE5qEEjDEqF7UEPNAehP1a+z/FQTBgp80njTbE2Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by PR3PR04MB7353.eurprd04.prod.outlook.com (2603:10a6:102:82::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Fri, 24 Oct
+ 2025 13:50:17 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd%4]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 13:50:17 +0000
+Date: Fri, 24 Oct 2025 09:50:08 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Guoniu Zhou <guoniu.zhou@oss.nxp.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Guoniu Zhou <guoniu.zhou@nxp.com>
+Subject: Re: [PATCH 3/3] media: nxp: imx8-isi: Add ISI support for i.MX95
+Message-ID: <aPuEEDzY3FoeM9tQ@lizhi-Precision-Tower-5810>
+References: <20251024-isi_imx95-v1-0-3ad1af7c3d61@nxp.com>
+ <20251024-isi_imx95-v1-3-3ad1af7c3d61@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024-isi_imx95-v1-3-3ad1af7c3d61@nxp.com>
+X-ClientProxiedBy: BY5PR17CA0007.namprd17.prod.outlook.com
+ (2603:10b6:a03:1b8::20) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731-bis_cis_coexist-v3-1-1f9bd60ef712@amlogic.com>
- <CABBYNZJu3izq6ZhNRKjMz-mW1CcP2VAE7Xs5oq=NupnVD7aayg@mail.gmail.com>
- <4e0b2df6-1139-49df-b03b-a2f31925d52f@amlogic.com> <CABBYNZ+buYOXaBST-bCyzDWtWihMOoXGaoNzp6+kowKgo+-6=w@mail.gmail.com>
- <5874e307-fa81-4baf-b270-478128d30412@amlogic.com> <44d4423f-e557-4506-966a-7abebca7680a@amlogic.com>
- <CABBYNZLY6ExM1+55sPjXqUnFqCXHy1Ua3WA8zPx2TZOSNS-1oA@mail.gmail.com>
-In-Reply-To: <CABBYNZLY6ExM1+55sPjXqUnFqCXHy1Ua3WA8zPx2TZOSNS-1oA@mail.gmail.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Fri, 24 Oct 2025 09:47:12 -0400
-X-Gm-Features: AWmQ_bljyv2PlxxNGzStrvRiW6b8KFt3CUmwe8TT0sX_M9MDD8FZZ8XYqUL0AW8
-Message-ID: <CABBYNZ+Bs2D9A_OMJ_JGH9yTiLiK_gUz07jBEEXd302Uh01KQQ@mail.gmail.com>
-Subject: Re: [PATCH v3] Bluetooth: iso: fix socket matching ambiguity between
- BIS and CIS
-To: Yang Li <yang.li@amlogic.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|PR3PR04MB7353:EE_
+X-MS-Office365-Filtering-Correlation-Id: e89f9775-7408-4757-7a07-08de13044392
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|52116014|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?Ysjm8iCvzjaYVfyyk7J77DpIGFxXRDqrsPUvWzNR0EyJlXhbWFgyUnYvFQ9p?=
+ =?us-ascii?Q?CSgqc2NWMc/x/hHwZlkq93jZXgby6Pktl2xvLXT+pCBJWEY+KyHSqJFweZhn?=
+ =?us-ascii?Q?3uvFx0O++YgHcJ9aU2fKyJO/XKkdFe4LJMAwBggTB6ZZFqBlkwRBRwalfe9o?=
+ =?us-ascii?Q?phhUKEtFl97l7OajpCrrGdF7btrEqas/wKtQvmabvA5htaIIfxPU6C1V2N2h?=
+ =?us-ascii?Q?lmqWLfG1qvJqkrSdpeRF663lPC+niUt9zomudF54uIaa121s+MFoiZ1Uq36r?=
+ =?us-ascii?Q?eYPcuvYiLJ6b0tfPRcu9HwM+D2ywJiRSq8EEioZexErMK6h+P2XStoNZzGZj?=
+ =?us-ascii?Q?K94rTcVD0JbmJWN8MK3lQwYQdeYbCiiq3el36h8VGZAkOyrV4Pqtxw3Ef9au?=
+ =?us-ascii?Q?b/+g4MH9jHCS5LlkOzE/RbdUk2AV1lEmofx5ph4s5xA4Mm35Lw8Co31kTgTc?=
+ =?us-ascii?Q?s3bPVmdFm0K25CQ8acY5bR0H3Xb4aD2KljAsxRLSzcVT3G0XdiWguZa+jL8r?=
+ =?us-ascii?Q?E50DnXD9oznKkTPi6UD2qd28+jrHZLpakDlMtlteC6/hik+LjVUXv8riwIMB?=
+ =?us-ascii?Q?0FDGcSsJjN8bbgeyiItpG5/niI3dshRNxcrmdDI615nRecrJ7Ony64uZGrgK?=
+ =?us-ascii?Q?7CtiBPgA7KTmNAsohh4b1NPbKAuKTZDIzV5Fjeb1Yjk4fSL8rOx/NxytOWrW?=
+ =?us-ascii?Q?E0VDCXgoBPB20khKjkSLJ1Ny4wFxIvULS9qzz0gCwbjRDrHZAESOpWSiWfNd?=
+ =?us-ascii?Q?9EJnGu4TYNn8dV01Xd+e454DNrq87e795Zem6ha+OTwSbCg31zkqepWh9dnx?=
+ =?us-ascii?Q?AkOLxzXCiKJ6mcgrnFoxHsjNXJ9FiHB4xMr7XDLu4JZJSNF4aEkeWGg2xUsj?=
+ =?us-ascii?Q?zFwfawLwc5c2ZSGlOemCVd0LBcHExY18bWQaN9QQJ+Gib0be1FAz2I4cTg5y?=
+ =?us-ascii?Q?jX12oxdd/A5s/bYXIiAT9dRJ0xbE1tWg+GaozdIl9aTK/i1mMgzIym8DsA7f?=
+ =?us-ascii?Q?afII1cgtIdpN0GzpnkrQN9U1QNLvbfV0Kw8NByRLlF7RLBWRotNO/GKGMgM2?=
+ =?us-ascii?Q?IiiCI5zTtSYYeivRGi6hKCxXFTtB0KW/bXll1QbQ/3ETJ0WDmu1yl9mt9rsj?=
+ =?us-ascii?Q?P6PLLsnRWAmTaTqe9pj9BsO/+ol4sWSuUSxaPVon3e+UscLuWbbuHLSn/zEO?=
+ =?us-ascii?Q?Ho61dN9Yn6DBRE3L3VElLe7YSYzLznrwQXEpQT9RAvrY3MWi4/5BWUgoXHYV?=
+ =?us-ascii?Q?VEoz+1Fw/woY01D0JPcQJyzQFLVlPeFCzwJPe/zvHRl1/n6PLnAAXxAbWxh7?=
+ =?us-ascii?Q?6NX6EmWKGUW8Kyv2zi0IsxkvRGNrEIrSKDmiagY767KGerSEQnPy81n8yuJz?=
+ =?us-ascii?Q?hZ/rFreEjddiALzV1/iXrdjwl5DSEVUtMoIXaEWF2Hp4tIOgzsuH+DJ+T3jW?=
+ =?us-ascii?Q?tKt6cEKLZNs8SC9jAKAsBRhdRAW1MplpDPyZ2ZpxUlD7d9dqsRGmVg=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(52116014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?WFZ5POqCDbfLSVc/5/s5iTyOpMf+RXSdVkzOPlBH9pdeTXLMZNC9o8CkS35J?=
+ =?us-ascii?Q?QgavUKCKUG4PvLKKBd6UOUYWdPWECc8vNVMCc8KmONLdFor3RhGXIng/y08v?=
+ =?us-ascii?Q?Bt5UBhGfKmTBCrilEjJiiSY5UOo8WoKFU9Mqp+Pr0XzgxjzaaP4edUNRP783?=
+ =?us-ascii?Q?4j1+LL/mIXAlE4ZD0arJQFXh7uux/Ui5XbHTgeD7YRlcRjlFElLLZfl/OdnX?=
+ =?us-ascii?Q?0CafUcHXiggwGcQwaDvMWNxz8ovflxz9Jq4GPHWTmiltfNshmwme0e5psLXH?=
+ =?us-ascii?Q?Ln1DFVRMTsh/erZt5MD0ToVr0UnTn2uXhIq1w7tZYenHm74NMPJKejJLirRd?=
+ =?us-ascii?Q?4D+2Xe+zU99HFFIzaHQ1EimtpI+ZP5jK3IxeLMENxvHOEINzQzJFKCEI/O5L?=
+ =?us-ascii?Q?5oZpNd0x8a4kBZIi94fxWjWm/oPMWoWh+iurJYZxf80Sx6fQGuqSt4eRkVCv?=
+ =?us-ascii?Q?ivmwNecLOwRSTe6DGcuhXqaUwcLymUzFLq0sVPXz+F26mrC4fM8meZTswvCy?=
+ =?us-ascii?Q?xTOXvUgjJDe16pcTcnu0+c8GKAAGfpPsrSzFpSgOgzvRpF8mySbETWDuvALp?=
+ =?us-ascii?Q?2S1fBCyeNYq4Qn7qnRox+Y4bmviN8N2RwUjyfp+UP5zvXxAFLDtDXb6u9NIo?=
+ =?us-ascii?Q?Pbs2kFl6GFYb4kVAHONP1rf7LPY/B9JPM73JUSCAXWyagaU6ttgkNyeZObHR?=
+ =?us-ascii?Q?+8a8jLKHeP3mwxVImDMUpgMU8ro59rRoinUNWPeqdnHgJ7sXwDydEftqqpzn?=
+ =?us-ascii?Q?u+7+DkHn18G+MQZEkEaJw1UT0AZ+jgaEKU4UNHJGKZVTetrW90MpkA6uOxI3?=
+ =?us-ascii?Q?ExVEiUEEWvQAsQmjqORN9sAMM3lhZSkdbMU1AMVlhZQfi5AGAh0j5YJulWou?=
+ =?us-ascii?Q?k5CjVbhkp9S+a5HjYbYjseCSL/5nU14lzntAOOlcOfuT+U7baEP7nibEBmF7?=
+ =?us-ascii?Q?E3OKZv2qfYDg6HgE50ZTh/B5iKr7T0W6YmCWLVmPZmoZNIYXt71nh72KZG7c?=
+ =?us-ascii?Q?Tbdy6odyfoLB13kR8wn98gbropBwitDSm+9INUwqWPQAWNd+0ththzAoyiD/?=
+ =?us-ascii?Q?Yfv12pcj4EckWSm5ZWzFR7jToiCQomgfGfSJAgsNp9LLtQit6UyGu0wvsyQh?=
+ =?us-ascii?Q?XmQQ7fx/G9SnGCVTjnVo5ZEFQVMstQtah74ASMHVIuw8CwgoRbYp47CE4wR+?=
+ =?us-ascii?Q?Cm3ibk8Z27kj7sU9oGP/JXCMZ/9KL++sUjd+bFBguZpLNQqNu8eL7vc78HPD?=
+ =?us-ascii?Q?Da9KimR+HvG/u8TdlnrktnIbBLefC+cwHfvO0A9c9yCiRbCIgjECSnTFUM3x?=
+ =?us-ascii?Q?S7QrlGjVTRwSTi5h+JHmKEu8P3Eu0sAzFUyiuYRSyjymY6zhQF9pEvbNgKtv?=
+ =?us-ascii?Q?itRrFWfvG5VdRVXCHnAd4uoy6XAtSHcimE3RMSBzUuTgtYwbd+pUJaHe6H09?=
+ =?us-ascii?Q?A6WJ0efHP/vjeNhXYVipzhuAj8idJx2kHn18dzN85CyGgZ0w1bgGatajOaOh?=
+ =?us-ascii?Q?a/sAreb65iV03omXQ4lbDgy5VTsf+9AqedW6yt0L/vouiYxbD7akh+pj7z4w?=
+ =?us-ascii?Q?k8pjR3U6JXVmEJGyaLJ+4y6u5qzMRGuPHE+6oJlv?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e89f9775-7408-4757-7a07-08de13044392
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 13:50:16.9685
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XQtdQhxNO/9OA/asDOT4iaaw4Dj2YUGFBrfK49Krlx6xixyutX7o9z/FN5DXt5WMlv8w8YdE9m/hd8H7T1Z1MQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7353
 
-Hi Yang,
+On Fri, Oct 24, 2025 at 05:46:54PM +0800, Guoniu Zhou wrote:
+> From: Guoniu Zhou <guoniu.zhou@nxp.com>
+>
+> The ISI module on i.MX95 supports up to eight channels and four link
+> sources to obtain the image data for processing in its pipelines. It
+> can process up to eight image sources at the same time.
+>
+> In i.MX95, the gasket callbacks set ISI QoS which decide the priority
+> to access system memory when there are multiple masters access memory
+> simultaneously in camera domain.
+>
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> ---
+>  .../media/platform/nxp/imx8-isi/imx8-isi-core.c    | 13 +++++++
+>  .../media/platform/nxp/imx8-isi/imx8-isi-core.h    |  2 +
+>  .../media/platform/nxp/imx8-isi/imx8-isi-gasket.c  | 44 ++++++++++++++++++++++
+>  3 files changed, 59 insertions(+)
+>
+> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> index adc8d9960bf0df87d4e475661a3439beaf5ce9f6..ea9cc6d72bd4605000c6cbac2fa8cb9806e3cd3b 100644
+> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> @@ -337,6 +337,18 @@ static const struct mxc_isi_plat_data mxc_imx93_data = {
+>  	.has_36bit_dma		= false,
+>  };
+>
+> +static const struct mxc_isi_plat_data mxc_imx95_data = {
+> +	.model			= MXC_ISI_IMX95,
+> +	.num_ports		= 4,
+> +	.num_channels		= 8,
+> +	.reg_offset		= 0x10000,
+> +	.ier_reg		= &mxc_imx8_isi_ier_v2,
+> +	.set_thd		= &mxc_imx8_isi_thd_v1,
+> +	.buf_active_reverse	= true,
+> +	.gasket_ops		= &mxc_imx95_gasket_ops,
+> +	.has_36bit_dma		= true,
+> +};
+> +
+>  static const struct mxc_isi_plat_data mxc_imx8qm_data = {
+>  	.model			= MXC_ISI_IMX8QM,
+>  	.num_ports		= 5,
+> @@ -548,6 +560,7 @@ static const struct of_device_id mxc_isi_of_match[] = {
+>  	{ .compatible = "fsl,imx8qxp-isi", .data = &mxc_imx8qxp_data },
+>  	{ .compatible = "fsl,imx8ulp-isi", .data = &mxc_imx8ulp_data },
+>  	{ .compatible = "fsl,imx93-isi", .data = &mxc_imx93_data },
+> +	{ .compatible = "fsl,imx95-isi", .data = &mxc_imx95_data },
+>  	{ /* sentinel */ },
+>  };
+>  MODULE_DEVICE_TABLE(of, mxc_isi_of_match);
+> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> index e84af5127e4e7938e55e31b7063bee5e2cd4cb11..d1297ac26c56bdd97e4dd325b2a7394430a7adb9 100644
+> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> @@ -161,6 +161,7 @@ enum model {
+>  	MXC_ISI_IMX8QXP,
+>  	MXC_ISI_IMX8ULP,
+>  	MXC_ISI_IMX93,
+> +	MXC_ISI_IMX95,
+>  };
+>
+>  struct mxc_isi_plat_data {
+> @@ -297,6 +298,7 @@ struct mxc_isi_dev {
+>
+>  extern const struct mxc_gasket_ops mxc_imx8_gasket_ops;
+>  extern const struct mxc_gasket_ops mxc_imx93_gasket_ops;
+> +extern const struct mxc_gasket_ops mxc_imx95_gasket_ops;
+>
+>  int mxc_isi_crossbar_init(struct mxc_isi_dev *isi);
+>  void mxc_isi_crossbar_cleanup(struct mxc_isi_crossbar *xbar);
+> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
+> index f69c3b5d478209c083738477edf380e3f280c471..6418ee1aabdad3cb92e84f2ef6406c5503987401 100644
+> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
+> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
+> @@ -3,6 +3,7 @@
+>   * Copyright 2019-2023 NXP
+>   */
+>
+> +#include <linux/bits.h>
+>  #include <linux/regmap.h>
+>
+>  #include <media/mipi-csi2.h>
+> @@ -83,3 +84,46 @@ const struct mxc_gasket_ops mxc_imx93_gasket_ops = {
+>  	.enable = mxc_imx93_gasket_enable,
+>  	.disable = mxc_imx93_gasket_disable,
+>  };
+> +
+> +/* -----------------------------------------------------------------------------
+> + * i.MX95 gasket
+> + */
+> +#define ISI_QOS						0x10
+> +#define ISI_QOS_AWQOS(x)				FIELD_PREP(GENMASK(2, 0), (x))
+> +
+> +#define ISI_PANIC_QOS					0x14
+> +#define ISI_PANIC_QOS_HURRY_AWQOS(x)			FIELD_PREP(GENMASK(2, 0), (x))
+> +
+> +static void mxc_imx95_set_qos(struct mxc_isi_dev *isi, unsigned int val)
+> +{
+> +	/* Config QoS */
+> +	regmap_write(isi->gasket, ISI_QOS, ISI_QOS_AWQOS(val));
+> +
+> +	/* Config Panic QoS */
+> +	regmap_write(isi->gasket, ISI_PANIC_QOS, ISI_PANIC_QOS_HURRY_AWQOS(val));
+> +}
+> +
+> +static void mxc_imx95_clear_qos(struct mxc_isi_dev *isi)
+> +{
+> +	regmap_write(isi->gasket, ISI_QOS, 0x0);
+> +	regmap_write(isi->gasket, ISI_PANIC_QOS, 0x0);
+> +}
+> +
+> +static void mxc_imx95_gasket_enable(struct mxc_isi_dev *isi,
+> +				    const struct v4l2_mbus_frame_desc *fd,
+> +				    const struct v4l2_mbus_framefmt *fmt,
+> +				    const unsigned int port)
+> +{
+> +	mxc_imx95_set_qos(isi, 0x3);
+> +}
 
-On Fri, Oct 24, 2025 at 9:45=E2=80=AFAM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> Hi Yang,
->
-> On Thu, Oct 23, 2025 at 11:47=E2=80=AFPM Yang Li <yang.li@amlogic.com> wr=
-ote:
-> >
-> > Hi Luiz,
-> > A gentle ping, thanks.
-> >
-> > > Hi Luiz,
-> > >> [ EXTERNAL EMAIL ]
-> > >>
-> > >> Hi Yang,
-> > >>
-> > >> On Sun, Aug 3, 2025 at 9:07=E2=80=AFPM Yang Li <yang.li@amlogic.com>=
- wrote:
-> > >>> Hi Luiz,
-> > >>>> [ EXTERNAL EMAIL ]
-> > >>>>
-> > >>>> Hi Yang,
-> > >>>>
-> > >>>> On Thu, Jul 31, 2025 at 4:00=E2=80=AFAM Yang Li via B4 Relay
-> > >>>> <devnull+yang.li.amlogic.com@kernel.org> wrote:
-> > >>>>> From: Yang Li <yang.li@amlogic.com>
-> > >>>>>
-> > >>>>> When both BIS and CIS links exist, their sockets are in
-> > >>>>> the BT_LISTEN state.
-> > >>>> We probably need to introduce tests to iso-test that setup both th=
-en
-> > >>>> to avoid reintroducing the problem.
-> > >>>
-> > >>> Since the coexistence of BIS sink and CIS sink is determined by
-> > >>> application-level logic, it may be difficult to reproduce this scen=
-ario
-> > >>> using iso-test.
-> > >> Looks like you haven't look at what iso-tester tools tests do, that =
-is
-> > >> not tight to bluetoothd, it directly operates at the socket layer so
-> > >> we can create any scenario we want.
-> > >
-> > >
-> > > Based on the current structure of iso-tester, it is not possible to
-> > > implement test cases where CIS and BIS listen simultaneously. There
-> > > are several issues:
-> > >
-> > > 1.
-> > >
-> > >    In struct iso_client_data, although both CIS and BIS related
-> > >    elements are defined, they are mutually exclusive. CIS and BIS
-> > >    cannot be used at the same time. For example, .bcast must explicit=
-ly
-> > >    specify whether it is broadcast or unicast.
-> > >
-> > > 2.
-> > >
-> > >    The setup_listen_many function also identifies BIS or CIS through
-> > >    .bcast.
-> > >
-> > > Therefore, if we want to add test cases for the coexistence of BIS an=
-d
-> > > CIS, the current data structure needs to be modified to completely
-> > > separate the elements for BIS and CIS.
-> > >
-> > >
-> >
-> > I'm not sure if my understanding is fully correct, so I would appreciat=
-e
-> > any guidance or suggestions.
-> >
-> > Based on my testing, this patch does fix the issue on my side.
-> > Please let me know if there is anything I may have missed or if further
-> > changes are needed.
->
-> I hope you are paying attention to the mailing list since I did add a
-> lot of new code that introduces support for PAST, including new test
-> cases for iso-tester, so I don't think asking for a test case for
-> having both BIS/CIS together is too much really. Works for me doesn't
-> really cut it since we do want to make sure we don't reintroduce the
-> problem later, but Im fine merging this now if it doesn't introduce
-> any problem existing tests in iso-tester.
+can we use standard interconnects standard interface to config Qos stuff.
+https://elixir.bootlin.com/linux/v6.17.4/source/include/linux/interconnect.h
 
-You will need to resend it since it is no longer available in patchwork.
-
-> >
-> > >>> Do you have any suggestions on how to simulate or test this case mo=
-re
-> > >>> effectively?
-> > >>>
-> > >>>>> dump sock:
-> > >>>>>     sk 000000001977ef51 state 6
-> > >>>>>     src 10:a5:62:31:05:cf dst 00:00:00:00:00:00
-> > >>>>>     sk 0000000031d28700 state 7
-> > >>>>>     src 10:a5:62:31:05:cf dst00:00:00:00:00:00
-> > >>>>>     sk 00000000613af00e state 4   # listen sock of bis
-> > >>>>>     src 10:a5:62:31:05:cf dst 54:00:00:d4:99:30
-> > >>>>>     sk 000000001710468c state 9
-> > >>>>>     src 10:a5:62:31:05:cf dst 54:00:00:d4:99:30
-> > >>>>>     sk 000000005d97dfde state 4   #listen sock of cis
-> > >>>>>     src 10:a5:62:31:05:cf dst 00:00:00:00:00:00
-> > >>>>>
-> > >>>>> To locate the CIS socket correctly, check both the BT_LISTEN
-> > >>>>> state and whether dst addr is BDADDR_ANY.
-> > >>>>>
-> > >>>>> Link: https://github.com/bluez/bluez/issues/1224
-> > >>>>>
-> > >>>>> Signed-off-by: Yang Li <yang.li@amlogic.com>
-> > >>>>> ---
-> > >>>>>    net/bluetooth/iso.c | 9 +++++++--
-> > >>>>>    1 file changed, 7 insertions(+), 2 deletions(-)
-> > >>>>>
-> > >>>>> diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-> > >>>>> index eaffd25570e3..9a4dea03af8c 100644
-> > >>>>> --- a/net/bluetooth/iso.c
-> > >>>>> +++ b/net/bluetooth/iso.c
-> > >>>>> @@ -1919,6 +1919,11 @@ static bool iso_match_pa_sync_flag(struct
-> > >>>>> sock *sk, void *data)
-> > >>>>>           return test_bit(BT_SK_PA_SYNC, &iso_pi(sk)->flags);
-> > >>>>>    }
-> > >>>>>
-> > >>>>> +static bool iso_match_dst(struct sock *sk, void *data)
-> > >>>>> +{
-> > >>>>> +       return !bacmp(&iso_pi(sk)->dst, (bdaddr_t *)data);
-> > >>>>> +}
-> > >>>>> +
-> > >>>>>    static void iso_conn_ready(struct iso_conn *conn)
-> > >>>>>    {
-> > >>>>>           struct sock *parent =3D NULL;
-> > >>>>> @@ -1981,7 +1986,7 @@ static void iso_conn_ready(struct iso_conn
-> > >>>>> *conn)
-> > >>>>>
-> > >>>>>                   if (!parent)
-> > >>>>>                           parent =3D iso_get_sock(&hcon->src,
-> > >>>>> BDADDR_ANY,
-> > >>>>> -                                             BT_LISTEN, NULL, NU=
-LL);
-> > >>>>> +                                             BT_LISTEN,
-> > >>>>> iso_match_dst, BDADDR_ANY);
-> > >>>>>
-> > >>>>>                   if (!parent)
-> > >>>>>                           return;
-> > >>>>> @@ -2220,7 +2225,7 @@ int iso_connect_ind(struct hci_dev *hdev,
-> > >>>>> bdaddr_t *bdaddr, __u8 *flags)
-> > >>>>>                   }
-> > >>>>>           } else {
-> > >>>>>                   sk =3D iso_get_sock(&hdev->bdaddr, BDADDR_ANY,
-> > >>>>> -                                 BT_LISTEN, NULL, NULL);
-> > >>>>> +                                 BT_LISTEN, iso_match_dst,
-> > >>>>> BDADDR_ANY);
-> > >>>> Perhaps we should add helper function that wrap the iso_get_sock (=
-e.g.
-> > >>>> iso_get_sock_cis and iso_get_sock_bis) to make it clearer what is =
-the
-> > >>>> expected socket type, also if the hcon has been set perhaps that
-> > >>>> should be matched as well with CIS_LINK/BIS_LINK, or perhaps we
-> > >>>> introduce a socket type to differentiate since the use of the addr=
-ess
-> > >>>> can make the logic a little confusing when the socket types are mi=
-xed
-> > >>>> together.
-> > >>>>
-> > >>>> Now looking at the source code perhaps we can have a separate list=
- for
-> > >>>> cis and bis sockets instead of global iso_sk_list (e.g. cis_sk_lis=
-t
-> > >>>> and bis_sk_list), that way we don't need a type and there is no ri=
-sk
-> > >>>> of confusing the sockets since they would never be in the same lis=
-t.
-> > >>>
-> > >>> Alright, I will give it a try.
-> > >>>
-> > >>>>>           }
-> > >>>>>
-> > >>>>>    done:
-> > >>>>>
-> > >>>>> ---
-> > >>>>> base-commit: 9c533991fe15be60ad9f9a7629c25dbc5b09788d
-> > >>>>> change-id: 20250731-bis_cis_coexist-717a442d5c42
-> > >>>>>
-> > >>>>> Best regards,
-> > >>>>> --
-> > >>>>> Yang Li <yang.li@amlogic.com>
-> > >>>>>
-> > >>>>>
-> > >>>> --
-> > >>>> Luiz Augusto von Dentz
-> > >>
-> > >>
-> > >> --
-> > >> Luiz Augusto von Dentz
-> >
-> >
->
+Frank Li
+> +
+> +static void mxc_imx95_gasket_disable(struct mxc_isi_dev *isi,
+> +				     unsigned int port)
+> +{
+> +	mxc_imx95_clear_qos(isi);
+> +}
+> +
+> +const struct mxc_gasket_ops mxc_imx95_gasket_ops = {
+> +	.enable = mxc_imx95_gasket_enable,
+> +	.disable = mxc_imx95_gasket_disable,
+> +};
 >
 > --
-> Luiz Augusto von Dentz
-
-
-
---=20
-Luiz Augusto von Dentz
+> 2.34.1
+>
 
