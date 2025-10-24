@@ -1,174 +1,161 @@
-Return-Path: <linux-kernel+bounces-868544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E6D9C056E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:51:44 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640F1C056EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F0EF4F6AA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:51:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 101A135AE4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D99A30C638;
-	Fri, 24 Oct 2025 09:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2939B30CD9B;
+	Fri, 24 Oct 2025 09:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="j9R8JSXv"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bMdF6lfw"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71891B3930
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B45C35B15C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761299496; cv=none; b=smbBfZBDTyFQeO1CJl3L9bRMx6D6LWa8/TxQ+zbu8mcsnNnT286v/n1V/9iyQ3bY+i8GhsBbP71AuaiD22CjXMj9CtkKBeuWcbDAo7WZId5FoGvBu+0IYhpQH2bkQy6TJ8JrC8Kq3v7WGRiqEoUV1+z3LM4l/5Do7+9eN0v9EEo=
+	t=1761299540; cv=none; b=EI1ANgnOpGxKKhaqg9pcAH7bud6O1Zb9hqFqD/3jukwVa9KhMirCFJz80pmuan28jnU+wg1ZqZWfZTbxA3aLaT0CFn4W1XidXnEZZUwsMVGcNVvRcFiON4Vb67862cwg+QXzTyQCYYavltwMsoA5qWBq+xHkhGa3E/bvOb0Exvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761299496; c=relaxed/simple;
-	bh=6wJ5ozxccB/nzgcmHOXuI1xKrq/4DHvB+RURaKbk3O8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sq4+x3wQK5XvQPYQvipZgAqLgYqdzHReDpsaRi5oKVcKLOXex0q4yKDhHiVHaV7VpZguQMzZmnnvHrwkJxl3JIht9jZ8pfL3lp4NDCg5MwJKiWXZyRu+C2MHZBNo8Dy70VcN6S7OEDfkn1SQuxYaJEy12bt47TfkB7nFhatsW98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=j9R8JSXv; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63c1a0d6315so3567112a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:51:33 -0700 (PDT)
+	s=arc-20240116; t=1761299540; c=relaxed/simple;
+	bh=aJN0i4zn5oLMl/Su5l90wr/EwylPc9je2CvQdBlttHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RxqUlxwyKAKDHK/ALGfzI5/Hbk/4fYmm9zGekkkm2pVst+FQJwiBn2AzHeWDkB1uhneiff/xnQl8D0pWUQffpuU4NGj6DYTn3yRfusF5R55Z+xBUkELk/osgMAUJtte2lwGpkwn8MLHytratvi49MbC7yoxPIf5ia0l7hRKko0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bMdF6lfw; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-428564f8d16so989304f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:52:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1761299492; x=1761904292; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ly3AYuLKibQEdYHOL/Htjgp8xjTYNizR6VDMFs2t4hc=;
-        b=j9R8JSXv/26z9gYmd0CPlvrWskwALR+V95RQCyh6JqZVXmU/RtT/i0YJW9Hh/Cp6Ta
-         GtkkU0IpJeVMAU/y5Kt3DkWRzpbLSbay5DdQk6AY+WkZNsJF9MmQ8mmTpcM8gyVaq9CR
-         k95negSWJa2v8h+AQ+nwmty8os8QDp03T60c6gbtF8SzhAbtTY7AtfyKQ7Gx69t6muoz
-         crz+73cdzmq9wwy9Gjr+KjcxxgId6f5201wvzOOliok4c+qqGLzeRwGDCdMPu1x4j4DI
-         0RaOzV2Xd8Dgq4KEFdoZJnZag9GxZnRcDVwvQigtYVXY0H/8UXn+Jr55EMAQ3ZPpX9Kr
-         0ZyQ==
+        d=suse.com; s=google; t=1761299536; x=1761904336; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m5wnGoXKsRaTCFgkIGT0AkusbbG3tenE5x2rrfbGT6o=;
+        b=bMdF6lfwXins57gTt2/Gk4ip3Vu/MP+Hv/6zYxJaic/ovZN8ZjsyWImbkYwF5voume
+         +vAHIY7EYCOn5cVS6FckeUnj+YC3K/z2iCXuD/M2I0PPptuEeIT9OQ0K4Xqm8D0J/mQ/
+         pvtUaaEmjFieA2S0oxKWwyrYkMtAanEbHrGY0qXvMyGhCVBtg/PbYdHIcAi7uxQU7B+K
+         MZjOineLTU3PdvrRlMYaELRZfWtfumwuhtHoCj9RNRu2zTDusQjDKPutWtd40PPANSN0
+         ZqFH0YlqLtVwoxRMyqR6boHEsv1Ecf2JDljKMYUDpIwb+4VjLNhufACBDBW5BmGfeHd4
+         uQWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761299492; x=1761904292;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ly3AYuLKibQEdYHOL/Htjgp8xjTYNizR6VDMFs2t4hc=;
-        b=X8GBXz/jFgVSD/jMQOpTVux5plUeTwkZgqatso17tGnCAptBxYojawwDl1qnIw2njY
-         jcPvh3l11ndNlqrN1r0/us1tRyCA1XicgINnLS6YB+ePB4j6LSI6J/elSxCIrVyDEbni
-         elvq59Ihfkx9H5TDhLITp5JdTHcEjr2vlV4h5Qhd1UNzlq+pw41HDIiIM+MFQ6TJkl4H
-         ivSCvZg/UnTJJ7Za+DlSLCKez5en4Cb6r8nUYGC7DTwBOIuEBUCeonkyeiwlvd0aqwx4
-         nTeFKta2d55/33Xx8ZwtlvvUSm7TWScdx3Kzx+sSa2pdIfgnVth2dKHGgMGVkSkiv6J8
-         3urg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBCPLmPMHZ5pqXecXl851ivuyCIWCGrWGAUwJg82Uo9zh+UJ8osGtgJA4BQIFH4ofJ0YNS63TJ9TYfP3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEBWh1zZRFpN4kJo4q3dKYrSmkZ00z5R7pWhbzq7yacg4fAxiW
-	7W1z4G+wvKUMoN4NAH/btcmufeofjBtdYmJuqxOvFVY+NHscip/UCHxt2axhsCI8xts=
-X-Gm-Gg: ASbGncv+52/HHa0APBtyRCpFfxpGvwN96V7IddKmsrvP8AbRMTa6ule8WPf46oa6yof
-	AZq5AS/ull6ZulQks0+X8dSQKE0Ag/quKSYmDEhK25wiMtm+D/NLmIjepIlA1hvl1YO3g+skVk9
-	GqC/Brd7rFfaaPz+x6IIZWGfsYyhHt81Bz69QPnCECmf7+l4go/f3Ra7J+uK2m/Y9fQIMZ+P5pi
-	+1i0g9Ss2e7ShcJ7q1pekQBqiH3X4NYQXRm4y5lZ+In+vXP8onooZMxwiXz/wZvnqxsSQOSm9nR
-	LSokbLXmNfaSnXG12GZ8YDrz91u/xUR1W57EUNL09RTz+LpYAkws86wmli3aYW5gYttATxFKFay
-	ZktJ6MY4qVCYuPtBl9BX51cTvIhTK+Vl+uqwT/T7fP/6Av+dws4QKUyU176P22yJ7n1OsvJgJZl
-	Kkaxtgdn5D
-X-Google-Smtp-Source: AGHT+IGmo8RIThQOxDu/Zi1gWcAuc6tFi+Y4rpL7zem9sqyDB03ggroT6vzhcOREXWW2G8nw+BwgWw==
-X-Received: by 2002:a05:6402:51cb:b0:63c:66b5:bbbf with SMTP id 4fb4d7f45d1cf-63c66b5c00dmr20265189a12.20.1761299491899;
-        Fri, 24 Oct 2025 02:51:31 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.151])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e3ebcd2fasm3947160a12.14.2025.10.24.02.51.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 02:51:30 -0700 (PDT)
-Message-ID: <e3403b2a-533f-4962-a615-32a4095fd6dc@tuxon.dev>
-Date: Fri, 24 Oct 2025 12:51:28 +0300
+        d=1e100.net; s=20230601; t=1761299536; x=1761904336;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m5wnGoXKsRaTCFgkIGT0AkusbbG3tenE5x2rrfbGT6o=;
+        b=IRFujDcwuvXukYlhGtSwubZOM3jEuqUoSpDJ6u7cXvcLyKb2fy0SSk7AKSyaH4Snaq
+         yPpKhjiawiGaRSVjxEW1k3DtE4ctUNr2bTGeYQp4T1BxR51W+O6s/J4UFenzQdU47a6Q
+         yzRAv4RZnsmsvWkHnDWk9v6YPj264LSzXz8X3q4kkGRfgzzEeybHEsxvulntwyauea1d
+         SSquJaRW0WmcjGC1U29/FFdO78tpUsxVATMXdZTUNsStKfU4u7XHXcFQafwec70+5juM
+         nmUKQDaV1xctWOqKKRtf9/+muc2yrfIz+KC9KddbNUpeOcFsYdeSStbYW5XIfNKYX5bg
+         1raQ==
+X-Gm-Message-State: AOJu0Yw4Icb8f0K7QK/TBELX9r2v+OfSLT7f29DMxDs/qu8++vfSGAiZ
+	ntMa+yTpMSNRo/3GWbiCvWhGKVNHSIcPiJ2aLZ0Ry/qpeDttGrot8eYgfhl2RokHFHLV3BYvMh4
+	nRSzw
+X-Gm-Gg: ASbGncv23loOZI5R0xvDdgUWkEoFkgn6V2zufk31xQxGGrbaXVIp5JkS/AjK5Tsufdp
+	zZiIeBi+ViaZAB0XYk2h4BTti5wYDecxZ/3dAcbU65h/42s+QQN25H7o22Fcd7nbguCMTbji5ft
+	ThxAvawVJuG5Coxl8FCVcdE2oqMAREKp9ZF6GjHcq94n3+qYmfO6oSu7lVBgivN/43+OQNJk7qL
+	Rb+kRC4b1LPJTxeQJnl4/noSo4fllrZLI4xm8Jh4QhSfKWVLea97AuEj+pViB+vHDngWzG8D2jo
+	15S9pkhAu5PQbjiCjfFDnS7ufehoSPD8QnNBxzRDcxH1FQi2poBA97V4wg9XR4a1cam/6Uw15iw
+	e8TFGt93IPjw5lfQPtChGTL0ZM3KwMM27q8RDKE9yDoQrR9eS2UhainSIaQqDnk1Af6CcRLIo30
+	O4mKPGeGFocsEHGcruLa/bsbKE
+X-Google-Smtp-Source: AGHT+IGaWla0S3oP4FeiPYt4qNYawi3uGEvlwY3UsXLw1UfNDuPKA3jrU35DvurAR5mlQUu3V8qnoQ==
+X-Received: by 2002:a05:6000:1ac9:b0:426:f9d3:2feb with SMTP id ffacd0b85a97d-4298f5768b9mr1681277f8f.23.1761299536428;
+        Fri, 24 Oct 2025 02:52:16 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897f57b7sm8402376f8f.16.2025.10.24.02.52.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 02:52:16 -0700 (PDT)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Maciej Falkowski <maciej.falkowski@linux.intel.com>,
+	Karol Wachowski <karol.wachowski@linux.intel.com>,
+	Oded Gabbay <ogabbay@kernel.org>
+Subject: [PATCH 0/2] replace system_unbound_wq and system_wq with the new wqs
+Date: Fri, 24 Oct 2025 11:52:03 +0200
+Message-ID: <20251024095205.123123-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 7/7] arm64: dts: renesas: rzg3s-smarc: Enable USB
- support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com,
- yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20251023135810.1688415-1-claudiu.beznea.uj@bp.renesas.com>
- <20251023135810.1688415-8-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdV7ScKUw7bGFW4v0wS9caXKDeT02MXkLWpk2LZfYw8GfQ@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAMuHMdV7ScKUw7bGFW4v0wS9caXKDeT02MXkLWpk2LZfYw8GfQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Geert,
+Hi,
 
-On 10/24/25 12:15, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Thu, 23 Oct 2025 at 20:41, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Enable USB support (host, device, USB PHYs).
->>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-> 
->>  &pinctrl {
->>         audio_clock_pins: audio-clock {
->>                 pins = "AUDIO_CLK1", "AUDIO_CLK2";
->> @@ -207,6 +230,27 @@ ssi3_pins: ssi3 {
->>                          <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
->>                          <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
->>         };
->> +
->> +       usb0_pins: usb0 {
->> +               peri {
->> +                       pinmux = <RZG2L_PORT_PINMUX(5, 0, 1)>, /* VBUS */
->> +                                <RZG2L_PORT_PINMUX(5, 2, 1)>; /* OVC */
->> +               };
->> +
->> +               otg {
->> +                       pinmux = <RZG2L_PORT_PINMUX(5, 3, 1)>; /* OTG_ID */
->> +                       bias-pull-up;
->> +               };
->> +       };
->> +
->> +       usb1_pins: usb1 {
->> +               pinmux = <RZG2L_PORT_PINMUX(5, 4, 5)>, /* OVC */
->> +                        <RZG2L_PORT_PINMUX(6, 0, 1)>; /* VBUS */
->> +       };
->> +};
->> +
->> +&phyrst {
->> +       status = "okay";
->>  };
-> 
-> This node should be located before pinctrl.
+=== Current situation: problems ===
 
-You're right! I missed it.
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
 
-> No need to resend just for this.
+This leads to different scenarios if a work item is scheduled on an isolated
+CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
 
-Thank you!
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
+
+        schedule_delayed_work(, 1);
+
+Will move the timer on an housekeeping CPU, and schedule the work there.
+
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+
+This lack of consistentcy cannot be addressed without refactoring the API.
+
+=== Recent changes to the WQ API ===
+
+The following, address the recent changes in the Workqueue API:
+
+- commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+- commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+The old workqueues will be removed in a future release cycle.
+
+=== Introduced Changes by this series ===
+
+1) [P 1-2] Replace uses of system_wq and system_unbound_wq
+
+    system_wq is a per-CPU workqueue, but his name is not clear.
+    system_unbound_wq is to be used when locality is not required.
+
+    Because of that, system_wq has been replaced with system_percpu_wq, and
+    system_unbound_wq has been replaced with system_dfl_wq.
 
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Thanks!
+
+
+Marco Crivellari (2):
+  accel/ivpu: replace use of system_unbound_wq with system_dfl_wq
+  accel/ivpu: replace use of system_wq with system_percpu_wq
+
+ drivers/accel/ivpu/ivpu_hw_btrs.c | 2 +-
+ drivers/accel/ivpu/ivpu_ipc.c     | 2 +-
+ drivers/accel/ivpu/ivpu_job.c     | 2 +-
+ drivers/accel/ivpu/ivpu_mmu.c     | 2 +-
+ drivers/accel/ivpu/ivpu_pm.c      | 4 ++--
+ 5 files changed, 6 insertions(+), 6 deletions(-)
+
+-- 
+2.51.0
 
 
