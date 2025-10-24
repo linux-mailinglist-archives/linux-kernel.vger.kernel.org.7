@@ -1,91 +1,81 @@
-Return-Path: <linux-kernel+bounces-869491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4410BC0800D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:12:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53692C08007
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24AE93BB29C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:10:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22F27566835
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE4A2E62A1;
-	Fri, 24 Oct 2025 20:10:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD022E7BB5;
+	Fri, 24 Oct 2025 20:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L0I5GQ4Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0662E2F13
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 20:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0E3280035;
+	Fri, 24 Oct 2025 20:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761336604; cv=none; b=p0Ml16A93VqxepZJUdSP6Omg9Ei2k/ZbgSFolDC1LfwiG0YV4dsxrMHx+kf0S4Z6fv7aJWBqCCaq0V2ePgEk8nGnIWlwRSMHx9fxK+hpNJKpZDwX4WZDF4yysOoEyAgwuwvhTmzbeGJch1Rkue6VeMtGOdFNvQ/1ZJUaJIFo74U=
+	t=1761336611; cv=none; b=qMxD0NZbGQPhFSRrdptrcUUv852+1+3SCjAu6/nSu3WzzPfkyTo9lRHJ3FwTAjH/+HrxQfbZ8LN5NZimRTrR0cPFxkyq7ox3Q14q9G6gLiK2mdoD3iIpBP1g9wXvvVwNuaW6nA4r4QlGpTPHxGgg4+vdcJmMyWhYVCDas9n87UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761336604; c=relaxed/simple;
-	bh=5e1z4X0GXfz+sXjtmG8f7llpCLE6qws2zHAV//pxovg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EBxolDRjK5TKTLRcuHbMFljjVh9O62WoN/Hmhb2ixbq0xdQNbc2ZbRiLtGWaDMgPjG2uYwKYSrDwtXM127EyboBjURae+wXVFcwIRd/XzimjMi/NCZk3INDbUWN2CD+YxfniPuomHg+BS9VCntCsnW/1PrHPke4cZHMLeJ4edd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430c8321bc1so34239085ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:10:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761336602; x=1761941402;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pD5EQC3sKQgvZOVzVKbz3HY4CWX0jjmoHtrgq7Vyt5g=;
-        b=JL/8wOy4uFdqlFaXEmheyTSrBEzXBssFdOzB+8QewusT1lBY+cZn2INge9tsCKY5st
-         gaqfxMspWbEPfv/ddBmHNuhJiJkJWgUieXlPzmHk0OsgQGSyBomIhGakRA3BlkeIqXE8
-         9XJSutiEkWaW6308ubsmai/psJpzgFrQMt+CJi7Cs/xYhb3AeDCSaqoOUg57ms8ICGfy
-         D2HglVe/em+4Qz9xmrcrpd7UHqA1QJe/GS+7A8hl7CguRUllcxjdV6KOUY2SPXUu3xsm
-         UC1OsBYV+IaqovhdI4lVGDNw5wIyqKUx2ujTvHhpuR7ymeTQH7SpDf8F6QIhUVL8SlPb
-         6HqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLSZ+5oFHyI4MLFJcYmc8WKZkdzK2h2ramAP+VKi6kG9pQGcPdSxTb/tDTTPp8HZnpTma30Cy/lPUVt+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVUZgOvFv77CBTeaJPUqTIPMtrTTsjitlGCzJ8/K/lGdQn9vg2
-	yl140B6P1rifOXXnljCLF2gPd3gzTfC/Nv0o1glQU5be9NvUd2OIgRUWufvkmxSDrDDMYP3pXsW
-	U5gb9zS4v3/nAHrzXRfS8WAr9VK31TVKmztwGGxScrdvVjrAq8va9F4Xv/ks=
-X-Google-Smtp-Source: AGHT+IGlUpe7cydcYsCSWlW6XihJFInJ5PrrM/WDK2B5vlav5c+q5ILM6EBm0u8n69E78Yxpsybu0+hW5MT50ZjVBupDnAav8Nfe
+	s=arc-20240116; t=1761336611; c=relaxed/simple;
+	bh=JQSU/ULQM8PBnWSpjIk9v6tBF2mGFNWAoyLqlJyQWXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dEGDNUlTeGuUkfqDXjEjNer1KqCO8TYX65ybqoFCgkVkJSUPFGbYBewqlsz+Y96PVqYpuO47Rl+Njx097pB0NkZc/gg/SlezvYGFCbrhqIONzE7x41uZsyvD3E3se7nHD6mW8QV5/6sK5IFucyol4AeQmaWjzQI7h+stB9A82hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L0I5GQ4Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A598FC113D0;
+	Fri, 24 Oct 2025 20:10:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761336606;
+	bh=JQSU/ULQM8PBnWSpjIk9v6tBF2mGFNWAoyLqlJyQWXU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=L0I5GQ4QNFgF8wXcvID7rKQS1G86cYzoDxpMiYokgHOy/NOttUv1wKdaqiPCq5Rgo
+	 6Uo41aKtiFSz+ukGDYuo2lB0LNZ05O5r+GT0kNNN1Gf0X/7Ng1DNPbVXHShzmCKKwU
+	 koB0CVpEjNQhH13l2COh8Zktlx30FeEWUGYX3ryutqscV5xo4AkozIretykwUblwMI
+	 sGZxYWWBk+eKkDqSJns6VXfVH6KR41Uni3IXha0pFWrJltgJ7VDbJmxYldVCzsJE38
+	 g2mEM3pL6mXGb49lpo3OmPoHUdu+6lzaJ1ZRgbQeZtEZC14LW4UN+mmTeM/h276LJ7
+	 T9flFDDCxr1fw==
+Date: Fri, 24 Oct 2025 13:10:04 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Ankit Garg <nktgrg@google.com>
+Cc: Joshua Washington <joshwash@google.com>, netdev@vger.kernel.org,
+ Harshitha Ramamurthy <hramamurthy@google.com>, Jordan Rhee
+ <jordanrhee@google.com>, Willem de Bruijn <willemb@google.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>, Praveen
+ Kaligineedi <pkaligineedi@google.com>, Ziwei Xiao <ziweixiao@google.com>,
+ open list <linux-kernel@vger.kernel.org>, "open list:XDP (eXpress Data
+ Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
+Subject: Re: [PATCH net-next 2/3] gve: Allow ethtool to configure rx_buf_len
+Message-ID: <20251024131004.01e1bce7@kernel.org>
+In-Reply-To: <CAJcM6BFTb+ASBwO+5sMfLZyyO4+MhWKp3AweXMJrgis9P7ygag@mail.gmail.com>
+References: <20251022182301.1005777-1-joshwash@google.com>
+	<20251022182301.1005777-3-joshwash@google.com>
+	<20251023171445.2d470bb3@kernel.org>
+	<CAJcM6BFTb+ASBwO+5sMfLZyyO4+MhWKp3AweXMJrgis9P7ygag@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda3:0:b0:3f3:4562:ca92 with SMTP id
- e9e14a558f8ab-430c525f520mr220412755ab.10.1761336602321; Fri, 24 Oct 2025
- 13:10:02 -0700 (PDT)
-Date: Fri, 24 Oct 2025 13:10:02 -0700
-In-Reply-To: <aPvQHxLIVpMykkG5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fbdd1a.a00a0220.9662e.000c.GAE@google.com>
-Subject: Re: [syzbot] [kvm?] KASAN: slab-use-after-free Write in kvm_gmem_release
-From: syzbot <syzbot+2479e53d0db9b32ae2aa@syzkaller.appspotmail.com>
-To: david@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	pbonzini@redhat.com, seanjc@google.com, syzkaller-bugs@googlegroups.com, 
-	tabba@google.com, xiaoyao.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Fri, 24 Oct 2025 11:17:04 -0700 Ankit Garg wrote:
+> > Please plumb extack thru to here. It's inside struct netdev_bpf
+> 
+> Using extack just for this log will make it inconsistent with other
+> logs in this method. Would it be okay if I send a fast follow patch to
+> use exstack in this method and others?
 
-syzbot tried to test the proposed patch but the build/boot failed:
-
-failed to apply patch:
-checking file virt/kvm/guest_memfd.c
-Hunk #1 FAILED at 708.
-Hunk #2 succeeded at 648 with fuzz 2 (offset -84 lines).
-1 out of 2 hunks FAILED
-
-
-
-Tested on:
-
-commit:         2e590d67 Merge tag 'devicetree-fixes-for-6.18-2' of gi..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=67b63a24f3c26fca
-dashboard link: https://syzkaller.appspot.com/bug?extid=2479e53d0db9b32ae2aa
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15343b04580000
-
+Could you make it part of this series, tho?
 
