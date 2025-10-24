@@ -1,120 +1,163 @@
-Return-Path: <linux-kernel+bounces-868558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C345C05764
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:59:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CFEC0578C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E85491B87DDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:59:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2B11AA5687
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D9630E0E0;
-	Fri, 24 Oct 2025 09:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D0C30E0E6;
+	Fri, 24 Oct 2025 10:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cRnMyVZm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TtWTR0/g"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3886030DEDC
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD1524729A;
+	Fri, 24 Oct 2025 10:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761299842; cv=none; b=Tx7AlBPLURZPd+xMcbO0aDSq5j75WhNVnGN0tklNBVxsJ30PAR0tfbOUqh0PG2AcerDHdZGs88Hz8NLUlnR4J6NYfxZUcDQuey0RvTZzlokWyU/pJZ04tnQiyMQfvwZHM4J5t8FvU/m5HcZoDoOaBvEsJQX4bSoji5NNJBPGrGc=
+	t=1761300219; cv=none; b=A55Tb5QCoGk6DUCWqchVlLe+Gbozu3KKWR5AGLQSRDuQKjV8iloNNtKbTV2kcJ1Clf0N090c91qdvJUve4ydW8MxLZV8NW0cGhS+Gad5jlOuB8Iq61wLLOGDJulT+tzD/0zfu1GhiUUXGJfQxQ9mVyjxOFn8WG6VCS/Ap1h36r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761299842; c=relaxed/simple;
-	bh=nIEK9cEhnaH1yJ2ZUGlKpHTQhWUHwyWzPZXXs9pPUfc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uZRvso2q6rEiKjzFFXF/jjAz2BECs4F+RGtWSbrn7iRJg13jDhmsj2zv+HAOUtplUw3gli5sb/0oSykoz7Jvsrjw0/xxY7YEvzJBNyggLQqqVXPswNre8plp6s+XBFr2MfadhVm3vqXW6x1KInm06NmsXVV4WnjEoJh8racl88U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cRnMyVZm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761299839;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EECPZ9d8E6GPLO4i/dKA5m4dqP651VCNME9poiUNpOs=;
-	b=cRnMyVZmP7k6ohG18EBQWlyBlWC32SKQRiQGiZKxCypdH5Qj2GqRfu0nnYaCUHq7vB6jsS
-	LyF91l19LT8OBUZZIMfryv+D0SLgqOlVWNliCiYMQ17WaGQ+qz2DLKecvCOY8ktKlrAMmD
-	UpQ8Ldlhho60F/SsZaouRio2A4Hs2ss=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-130-pXNxq4P_NlWrMCRHbAaCeQ-1; Fri, 24 Oct 2025 05:57:17 -0400
-X-MC-Unique: pXNxq4P_NlWrMCRHbAaCeQ-1
-X-Mimecast-MFC-AGG-ID: pXNxq4P_NlWrMCRHbAaCeQ_1761299836
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-471193dacffso9510705e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:57:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761299836; x=1761904636;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EECPZ9d8E6GPLO4i/dKA5m4dqP651VCNME9poiUNpOs=;
-        b=AF4I/4aPOZl0nVI8R1dY9fULCM2u1FxQ0IENgi3uZNFEpvsz5OcQ1saIdv7budyKOh
-         cpVjQotMkdDf9Dmrwzl+Y8v0NxQ+m8KoF9FjVqCMU7ktQAwp4ebvJwg/dCUh9tOJzvyB
-         WvDOdfSo+4G5tNAOolsjyD8VwYLgThrRbwTA/0VV0lP4kFiyh+rpsaMKb2XuKzHrY/vh
-         KPsqHuBoLybVg4c6nHKmjQfiQeCjj0yQfBSCgzGulyBCxQ+VbDIR3dwyZjMvZVc8nnYb
-         bjg2yXYnRe4Ptj9IrpRzvm9gKQ6+XHC7eEqjUX1SJYFBG2GPuYiuSqKUOxvWiminngVq
-         EhCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoztJexJYr7kggvDMeQvMnl8s5auqbOQH+JfCH1Qzbigugshky8UMNQckPbP2m1Ntwl0iBS6fbq7Fnh/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwboMJLdPfjZutLA2JUlo9YCU8AxrcWWpfIPi+9wU4ddtrd+OB
-	mty1F01/AFwOLlvGjkcwdi0fVTYwkC7ciWlbl2Wq4fMQ6MFlAHp+lWDGs0dT4vuqU6VL+14ZAqk
-	6q+Q2dADiQxAPAAG7G7bnQO1ZvdaVRMBAkvEPiX3H07llGlp5UTkcCbrVbd7a3LXEPpq80/DWHQ
-	==
-X-Gm-Gg: ASbGnct5RSuEIa9moT6j/pPNrVYoLU687LL1hcQtqsQrk7sa96NmrS4IfNjr5BLMFWu
-	XTcS+GvjzEzNhPTTtHsUR79c45N6wppnA9na1GMZXOzilqRMvEB/+f+I3ZwWGrynXV95wndGASr
-	a7ImKKt11C+8YDXab4mRA8P6TojJVCp2sDTZ/FvavUgVoLpGasQjkggx2x8LNQsGkHIzzEI/fnF
-	QrTVSP7Wfjrd/HXMoSG3SHQaQgFSgbB2z0upIB5o/+czWUA/rWEDUckC/wluriEwrHvs0IZ+xcM
-	4+jePPZL52lrqECH5PLT58TGNEacTj1WYdvSyc/os/QXk0LHWwGfbZhFnznnCVDzeVlahRDonqu
-	VeKfvv4DEPo7/pZyXnM7msDw/cHCYAWICkQDCM27H4IfhNXsYzX5lWg1NwQ==
-X-Received: by 2002:a05:600c:c16e:b0:46f:b43a:aef2 with SMTP id 5b1f17b1804b1-475d30d20fbmr14523855e9.38.1761299835790;
-        Fri, 24 Oct 2025 02:57:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFi4kHieaFnLco9wucyoKPkPcEj2osPLAl9lyR18xfQ/pKl2+mHzfqAxTuZr5DT8hf24aXQRA==
-X-Received: by 2002:a05:600c:c16e:b0:46f:b43a:aef2 with SMTP id 5b1f17b1804b1-475d30d20fbmr14523665e9.38.1761299835440;
-        Fri, 24 Oct 2025 02:57:15 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496afd459sm84966385e9.1.2025.10.24.02.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 02:57:14 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>, ardb@kernel.org, jonathan@marek.ca
-Cc: linux-efi@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH 5/5] efi/libstub: x86: Store EDID in boot_params
-In-Reply-To: <20251015160816.525825-6-tzimmermann@suse.de>
-References: <20251015160816.525825-1-tzimmermann@suse.de>
- <20251015160816.525825-6-tzimmermann@suse.de>
-Date: Fri, 24 Oct 2025 11:57:13 +0200
-Message-ID: <87o6pw8vwm.fsf@ocarina.mail-host-address-is-not-set>
+	s=arc-20240116; t=1761300219; c=relaxed/simple;
+	bh=bWFy3RfLl5gkL1nl2EiI/96beBie205E3ojhHV5cdkk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nEyLHfj7255IWl5AvZwIAlq1nLLx3y7H/myYWFSV1YLre4Q8/eMhz16+4ra1+Ml4UgSnOEi5rS4zJO43CLx3IzKfTiDQqwZdVqsaOwSKXpDVwc5QWW39evPCqvR0iQq/jnMdBixdLzR644H1hDW0tw2rirYrRp4dj370cVcbUyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TtWTR0/g; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761300206; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=n+A2uFbKQefkDojLPPcK70ocgcvIwvNmJfoecA4EhpE=;
+	b=TtWTR0/gomv86HpWrvXd6AXug+ACswu6NxbFi6pQB+ssw6+lfOd+NrANz7uB5pcA62aGDT8U3/kIG9/tan2S1W9+qoLDlBucbfVq72jvuirGumypVVj9O7LIFCTck7KIg89IlJJ5rIgDIimMSxUbO8WNHLo7z+N/rBbD7RaeWKQ=
+Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wqu2Tm1_1761300202 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 24 Oct 2025 18:03:24 +0800
+Message-ID: <134e43f7-583c-48c1-8ccc-dddc18700d3b@linux.alibaba.com>
+Date: Fri, 24 Oct 2025 18:03:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] mm: Change ghes code to allow poison of non-struct
+ pfn
+To: Ira Weiny <ira.weiny@intel.com>, "Luck, Tony" <tony.luck@intel.com>,
+ "ankita@nvidia.com" <ankita@nvidia.com>,
+ "aniketa@nvidia.com" <aniketa@nvidia.com>, "Sethi, Vikram"
+ <vsethi@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+ "mochs@nvidia.com" <mochs@nvidia.com>,
+ "skolothumtho@nvidia.com" <skolothumtho@nvidia.com>,
+ "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+ "nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "david@redhat.com" <david@redhat.com>,
+ "lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+ "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+ "vbabka@suse.cz" <vbabka@suse.cz>, "rppt@kernel.org" <rppt@kernel.org>,
+ "surenb@google.com" <surenb@google.com>, "mhocko@suse.com"
+ <mhocko@suse.com>, "bp@alien8.de" <bp@alien8.de>,
+ "rafael@kernel.org" <rafael@kernel.org>,
+ "guohanjun@huawei.com" <guohanjun@huawei.com>,
+ "mchehab@kernel.org" <mchehab@kernel.org>, "lenb@kernel.org"
+ <lenb@kernel.org>, "Tian, Kevin" <kevin.tian@intel.com>,
+ "alex@shazbot.org" <alex@shazbot.org>
+Cc: "cjia@nvidia.com" <cjia@nvidia.com>,
+ "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+ "targupta@nvidia.com" <targupta@nvidia.com>,
+ "zhiw@nvidia.com" <zhiw@nvidia.com>, "dnigam@nvidia.com"
+ <dnigam@nvidia.com>, "kjaju@nvidia.com" <kjaju@nvidia.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+ "Smita.KoralahalliChannabasappa@amd.com"
+ <Smita.KoralahalliChannabasappa@amd.com>,
+ "u.kleine-koenig@baylibre.com" <u.kleine-koenig@baylibre.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <20251021102327.199099-1-ankita@nvidia.com>
+ <20251021102327.199099-3-ankita@nvidia.com>
+ <68f7bf2d6d591_1668f310061@iweiny-mobl.notmuch>
+ <SJ1PR11MB6083BF0885BC19E715C1A96EFCF2A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <81b1f1c6-4308-41bb-9f65-f158d30f27bd@linux.alibaba.com>
+ <68f8f254b53dc_17217e10069@iweiny-mobl.notmuch>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <68f8f254b53dc_17217e10069@iweiny-mobl.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Thomas Zimmermann <tzimmermann@suse.de> writes:
 
-> Retrieve the GOP device's EDID information in the kernel's boot
-> parameters. Makes the data avaialble to kernel graphics code and
-> drives, such as efidrm.
->
-> With efidrm, the EDID is now also available to user-space compositors
-> via standard DRM interfaces.
->
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> ---
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+在 2025/10/22 23:03, Ira Weiny 写道:
+> Shuai Xue wrote:
+>>
+>>
+>> 在 2025/10/22 01:19, Luck, Tony 写道:
+>>>>>       pfn = PHYS_PFN(physical_addr);
+>>>>> -   if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) {
+>>>>
+>>>> Tony,
+>>>>
+>>>> I'm not an SGX expert but does this break SGX by removing
+>>>> arch_is_platform_page()?
+>>>>
+>>>> See:
+>>>>
+>>>> 40e0e7843e23 ("x86/sgx: Add infrastructure to identify SGX EPC pages")
+>>>> Cc: Tony Luck <tony.luck@intel.com>
+>>>>
+>>> Ira,
+>>>
+>>> I think this deletion makes the GHES code always call memory_failure()
+>>> instead of bailing out here on "bad" page frame numbers.
+>>>
+>>> That centralizes the checks for different types of memory into
+>>> memory_failure().
+>>>
+>>> -Tony
+>>
+>> Hi, Tony, Ankit and Ira,
+>>
+>> Finally, we're seeing other use cases that need to handle errors for
+>> non-struct page PFNs :)
+>>
+>> IMHO, non-struct page PFNs are common in production environments.
+>> Besides NVIDIA Grace GPU device memory, we also use reserved DRAM memory
+>> managed by a separate VMEM allocator.
+> 
+> Can you elaborate on this more?
 
--- 
-Best regards,
+We reserve a significant portion of DRAM memory at boot time using
+kernel command line parameters. This reserved memory is then managed by
+our internal VMEM allocator, which handles memory allocation and
+deallocation for virtual machines.
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+To minimize memory overhead, we intentionally avoid creating struct
+pages for this reserved memory region. Instead, we've implemented the
+following approach:
 
+- Our VMEM allocator directly manages the physical memory without the
+   overhead of struct page metadata.
+- Error Handling: We register custom RAS operations (ras_ops) with the
+   memory failure infrastructure. When poisoned memory is accessed within
+   this region, our registered handler: Tags the affected memory area as
+   poisoned Isolates the memory to prevent further access Terminates any
+   tasks that were using the poisoned memory
+
+This approach allows us to handle memory errors effectively while
+maintaining minimal memory overhead for large reserved regions. It's
+similar in concept to how device memory (like NVIDIA Grace GPU memory
+mentioned earlier) needs error handling without struct page backing.
+
+Thanks.
+Shuai
 
