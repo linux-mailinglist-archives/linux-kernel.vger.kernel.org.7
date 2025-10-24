@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-869050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5074BC06CFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:55:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74EEBC06D07
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B179556664E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:54:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03EAC1889D93
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD432580E4;
-	Fri, 24 Oct 2025 14:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E4824E4BD;
+	Fri, 24 Oct 2025 14:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLepm41x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BrBGXayH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7pTkKdAy"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBB121323C;
-	Fri, 24 Oct 2025 14:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5680323B604;
+	Fri, 24 Oct 2025 14:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761317666; cv=none; b=Wt4j4VQ/FHpmMLbr6QXnDCqhzQxBBMuYic/9XswoqQZd8D0EfmLy3ACwONiunf3/7Flk5IU7zZlMvZTQ5Lkn7gNg+1pf+mDFfbTqSvKmLxHDIqTnxClAV2va6jOMYYvAU6bz12fm9k2A/yHiz53sCkvcKrBHTgMpyf3Xx0KjIxY=
+	t=1761317682; cv=none; b=BGYBAl6B51qT7a/3/J9tL4TrZLtfOb0rvSU3Uy0hK0EWxNmHBhgPXY4bjwvC+Apzu/kPbP5i3bvkpX3Ari7D4l0RQqusKjjAoRojrecGcmwxW5okI/xqdYKKRS0SMD1cpRIvng/e7CK4Hoa0yHWhLLmOrCfmnVyjz9Yn6SjR44w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761317666; c=relaxed/simple;
-	bh=QCuErcoHkMUtqZQSuo3uLUgI7AVMoP/uLuwfJx/I91o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iep4HiQNdx/CA41pY3gDso38ekhAznU1w8x8cPYNq2/v3SFslTUwBVXsfuGmmyM1r7daRUQDiKlqDSwtOr/CspOQRj7XM1bS8Oo5rwnX3Wtgp9XI0iW6ib06ncqL1wRdMD7sO6kjr4wEUH4lty+PZG/wKwIDIFyZ3xcJGlx/V6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLepm41x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB180C4CEF5;
-	Fri, 24 Oct 2025 14:54:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761317665;
-	bh=QCuErcoHkMUtqZQSuo3uLUgI7AVMoP/uLuwfJx/I91o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iLepm41xerG9DOHd/e4SyjCd92AXhNFocFrtqhZkcZ59mnkMFuEUpbt3yil9Mijku
-	 rmRJQnKB0fMVs/PI2WswGgCaTMbHKBe7G33+CQcGqBAdsgPt8U96683B3UPnrG/XFi
-	 8Uibt36FZV6It3i2eaxl2wWEHgyFJHvlWqa6b3Yhf896G/MupJ5JQRYzgMdZRE5cCZ
-	 2DimPYPqkoSlgi2x9EX4c4iso8VaVz31XTMOm1uHKYDCi7zlaLcG8QpYXpUmN04Y2G
-	 HUOXrE8iTGvR/5/jFjE61DjfMmlwK5ukPT8nLXNMFtLyrVHc2BqnDr5O/OYC8c8Sbv
-	 ODnIA2jLOsWvA==
-Date: Fri, 24 Oct 2025 16:54:18 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH RFC DRAFT 00/50] nstree: listns()
-Message-ID: <20251024-seemeilen-flott-bffe304f560b@brauner>
-References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
- <97bb1f9baba905e0e8bde62cce858b0def091d5c.camel@kernel.org>
+	s=arc-20240116; t=1761317682; c=relaxed/simple;
+	bh=7IhR2vSj/blV12vbTgFp/+60dHurur0StmZegWMD0Kg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tSnM0GOKjEi+H4tgl+Tq5+XXesclJU34fpheKvLdD6lsOBOJSqDJnHj4pHSBGF1KVONKIvCEe42strK7hFU3RWLPDeSqLTvz+PRA1QK/jOrif5O+CG/cyiD8JFkTj57bhZQK1d4hCqLMRR8HTVcaeyh+sY+J9uNo3+fz7ehZ1KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BrBGXayH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7pTkKdAy; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 24 Oct 2025 16:54:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761317678;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=HWVNNi74jWPH4NGKAmlxWJhUNoDFgbuFi3sJhS766a8=;
+	b=BrBGXayH2dTNR7WQgaIFDXC9VmS2mG339Y5ODwtFWsIt5uPn2vltX8PnqbSe9S92VrNfjC
+	D44hrSkMx9S7TVQoLcP2laUFEXsmeryBaagalT3v7Fy+Yy91Ir0GmXhKUZD5dNxqMweEoT
+	yxB5i5nDFtkPirQCBgxZV0wBQeaphYAEGgCMxXPJGqmhGRhFAoR7EOK+OQg2YxCOxcPtZY
+	SbvygQAs94G2OzFnvikthPoYhKtwlL7CgIikHeKQroF8MT0MuTn4u+guMYxcKv5rpGvynB
+	GuHQA1trZ+t4shYGbJ7T7aVZcOqRHe/xIoHvDBX/joToEr625GUZDJDvI8b8Zg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761317678;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=HWVNNi74jWPH4NGKAmlxWJhUNoDFgbuFi3sJhS766a8=;
+	b=7pTkKdAyKJvy6e0v8Xt9jnERt9nm0ZX/YEkecGrPJIz2+dFpplLfHissGOwA2Hm1eBzjlg
+	YEvYIYLdriqIPeBg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>, linux-rt-devel@lists.linux.dev
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v6.17.5-rt7
+Message-ID: <20251024145436.souGwBdZ@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,64 +63,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <97bb1f9baba905e0e8bde62cce858b0def091d5c.camel@kernel.org>
 
-> > So that punches a whole in the active reference count tracking. So this
-> > will have to be handled as right now socket file descriptors that pin a
-> > network namespace that don't have an active reference anymore (no live
-> > processes, not explicit persistence via namespace fds) can't be used to
-> > issue a SIOCGSKNS ioctl() to open the associated network namespace.
-> > 
-> 
-> Is this capability something we need to preserve? It seems like the
-> fact that SIOCGSKNS works when there are no active references left
-> might have been an accident. Is there a legit use-case for allowing
-> that?
+Dear RT folks!
 
-I've solved that use-case now and have added a large testsuite to verify
-that it works.
+I'm pleased to announce the v6.17.5-rt7 patch set. 
 
-> 
-> I don't see a problem with active+passive refcounts. They're more
-> complicated to deal with, but we've used them elsewhere so it's a
-> pattern we all know (even if we don't necessarily love them).
+Changes since v6.17.5-rt6:
 
-+1
+  - The previously introduced gro-cells related suffered from a missing
+    unlock. Patch by Eric Dumazet.
 
-> I'll also point out that net namespaces already have two refcounts for
-> this exact reason. Do you plan to replace the passive refcount in
-> struct net with the new passive refcount you're implementing here?
+Known issues
+    - Yoann Congal reported a bit spinlock in dm_exception_table_lock().
+        https://lore.kernel.org/all/Z8GTjqgDe_5EkE3t@P-ASN-ECS-830T8C3.local
 
-Yeah, that's an option. I think that in the future it should also be
-possible to completely drop the net/ internal network namespace tracking
-and rely on the nstree infrastructure only. But that's work for the
-future.
+The delta patch against v6.17.5-rt6 is appended below and can be found here:
+ 
+     https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/incr/patch-6.17.5-rt6-rt7.patch.xz
 
-> 
-> > So two options I see if the api is based on ids:
-> > 
-> > (1) We use the active reference count and somehow also make it work with
-> >     sockets.
-> > (2) The active reference count is not needed and we say that listns() is
-> >     an introspection system call anyway so we just always list
-> >     namespaces regardless of why they are still pinned: files,
-> >     mm_struct, network devices, everything is fair game.
-> > (3) Throw hands up in the air and just not do it.
-> > 
-> 
-> Is listns() the only reason we'd need a active/passive refcounts? It
-> seems like we might need them for other reasons (e.g. struct net).
+You can get this release via the git tree at:
 
-Yes.
+    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.17.5-rt7
 
-> IMO, even if you keep the active+passive refcounts, it would be good to
-> be able to tell listns() to return all the namespaces, and not just the
-> ones that are still active. Maybe that can be the first flag for this
-> new syscall?
+The RT patch against v6.17.5 can be found here:
 
-Certainly possible but that would be pure introspection. But as I said
-elsewhere, I have implemented the nstree infrastructure in a way that
-it will allow bpf to walk the namespace trees and that would obviously
-also include all namespaces that are not active anymore. 
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/older/patch-6.17.5-rt7.patch.xz
 
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/older/patches-6.17.5-rt7.tar.xz
+
+Sebastian
+
+diff --git a/localversion-rt b/localversion-rt
+index 8fc605d806670..045478966e9f1 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt6
++-rt7
+diff --git a/net/core/gro_cells.c b/net/core/gro_cells.c
+index b43911562f4d1..fd57b845de333 100644
+--- a/net/core/gro_cells.c
++++ b/net/core/gro_cells.c
+@@ -43,12 +43,11 @@ int gro_cells_receive(struct gro_cells *gcells, struct sk_buff *skb)
+ 	if (skb_queue_len(&cell->napi_skbs) == 1)
+ 		napi_schedule(&cell->napi);
+ 
+-	if (have_bh_lock)
+-		local_unlock_nested_bh(&gcells->cells->bh_lock);
+-
+ 	res = NET_RX_SUCCESS;
+ 
+ unlock:
++	if (have_bh_lock)
++		local_unlock_nested_bh(&gcells->cells->bh_lock);
+ 	rcu_read_unlock();
+ 	return res;
+ }
 
