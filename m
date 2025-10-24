@@ -1,90 +1,86 @@
-Return-Path: <linux-kernel+bounces-868751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3D0C06067
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:39:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06736C0607C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 142461C804A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:33:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BACA3B2301
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13FC3191CA;
-	Fri, 24 Oct 2025 11:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D314319877;
+	Fri, 24 Oct 2025 11:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DY6QzpVe"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ezi7LHkl"
 Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B7130FC03
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B404A319859
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761305022; cv=none; b=DK4k6Ha7Kb+cEhPokDTVHZodCml6ZcTzdPlnQMm/3KAroxiuc4eaec9QF23BFXXIUgT/+bFBbrUAMVdkTkhq01lJRLFraGj18+/t+jmWjl293nzdDt1mCLQREg8hxFqdCaF8qPUc0xWp2OPF8Gz5HksdRZlnJN5XXkHBtqBI49k=
+	t=1761305168; cv=none; b=WYlUjdtHKR/jBQUSZZKxfVl8Gc7XpOELkTEpCaSegVYL6XxXX3K4ckuUAHc6b5FypNt4a+O6cngaR1hUtXjXYCGrrky78ZAgqCedb0G67VX/1OavPJlE2vnvsHbUzQ5TUt+yL64PgmBzmQF7OV3yOtyZH4nBW7W0PnDobomKAIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761305022; c=relaxed/simple;
-	bh=0zowZQE/EmMI6GxlKIwg6FGmmiIJo4BbJNTy9TYrt7c=;
+	s=arc-20240116; t=1761305168; c=relaxed/simple;
+	bh=esg5jJJrldcsg4Eme/FaVfbzYkFZVxjJszNLHkfgbVk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=u5x3KUz4UyX04GgWs9179iBQn+ZxNQmKGvN5GrfVc4wFH7DGeb3GErfg+q6gt5sTwhSn1DP31S346uiwQJow7Q/yzfnSgm1V1EmyMIoeINNKIhRuxgXjqH4iz8FaOEn8DQf6E2gIMkSU23hTywjdSkvg856xfal75P+rFazSnX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DY6QzpVe; arc=none smtp.client-ip=209.85.221.46
+	 Content-Disposition; b=iK2oq3i1nFwbU4hlpXpd2TfyEaNaqA6rOJ09RsTxfdZ4IlK9sE62xv0KWFNYi77UY6yw7I7FqJOIFEvXAG7rXGUyYHvfLElh+aKqBEhsnwpdUl78b6S9zvHBduPF00Tj2L5CRJ0ymmab61okg3hXiz+w9th4grXYLY+xQkhTgcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ezi7LHkl; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-426fd62bfeaso970211f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:23:40 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-426fc536b5dso1401253f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:26:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761305019; x=1761909819; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761305164; x=1761909964; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FQOc+jM39ubvRhhSlIjQuPooaB7ldn1LylmA2tOzblM=;
-        b=DY6QzpVe0rxSgKfR1z1haUEhujvUsfah5zRuRK+UNKDNuQwQDhgN9Q2Pv/I6rSunfn
-         myhJ/e2273OQCiglJIDkS1JB7voG3EU0MHqMxLATAb7bdAAEjJTA+W43vpbn1mDCkAOL
-         so0Nynvwyo56spz7PdCkRP35AB1hil/QXwMtKf+3aKT2DBgN078yqy8k287KyXHTEBKG
-         VfAAaEVJGfCPaAXFbU3Hane6Llc8DORtJcAQsubIDVvHZqQip9BjGrhcbhiWL/5j/siA
-         4HZO3RKb+H5LYfSEKByhCnp6fEMQXcFNXrisTI3nts0WKc2RSv82LRwO3DKU1FpKV21W
-         zx3A==
+        bh=6njyGgpXnyix7DPfE/AD+aT34+lBZHSBxI3vVRiYPz8=;
+        b=Ezi7LHkld+Fd+HKJpLzOTKg6zBAv0QMXQ4MXOI1l4E9esahPRkUMItjQxUERJIc0lj
+         3OD+qRvb6/A8DhWoH4jvCVBPUxdBK9WT9SsulZDnUliZ9itQrXYctx7J62TZTdnx9qkj
+         yjmnpweYlZ9M48MNFFPoiY1ZOpu+bwyA1sry0G9R3ViEW21+x4wSnU20gGXfQM7bBnnS
+         6E+P2EYaGmt7JhuaSxiGOLXt+EvPkgf0R8TuJPkcoVX/c7d1Nn/G/ZLMWuRXHwaCgwUU
+         CaC0FELIc8krMLoB6/DPhIka/JysSnHD2/ozw6g6LucvxyAzv7dk3BBbJO3BgdJcC0aA
+         J3Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761305019; x=1761909819;
+        d=1e100.net; s=20230601; t=1761305164; x=1761909964;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FQOc+jM39ubvRhhSlIjQuPooaB7ldn1LylmA2tOzblM=;
-        b=LBGNyY6RSmvbzyVkJMRqIHDJ0bTWUxu6zzfuzQXVX/mh5Btww7IDrQra9/3YbOk98f
-         Jp1Dt4ZnWzpDVNJx/b4Gof9Krg1x4jM4IPL+1mjTEhUtod6sDSwCeQ0DsEax36CmcMQC
-         wMaqEw26AoU4zeClUKlfA2a08OB9M/tyBKhMwJ+/LT/oVgNSz83LbaUmVTCHDSsG+PTH
-         O1UuzHleV77FwVA7WkmeHfxqlss9B4s6tR9C5esr7I5eU2bkWgFvHmzEHS0+NogOa1GY
-         aftNX4MvdCVYqDNauNGUna7UDFc+dl3XiZl44umNcAAXxHdTd2tKZnISzKm0CPQVplN1
-         UuuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxbDuYw2wPm5yvA6dVW6DAuQMnYzPFNWY8BKRgQKL8ej8fInZFgd+aXcNVGK9uXyPoUEv4r6gfhpBssT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0xmmatBfG5/OLvXvOZ1xVeseq1xzGETC+AArAXnrEBmUEZIth
-	+t21eTLbFjxv6i/GfZQUkWRAMYwwipdtcfDd1QOLSOGIVeuZiTXOA9pMBkQd3J7ZGpE=
-X-Gm-Gg: ASbGncufZlUtUoC460uMDkYaZiaHsX/v491BMmEdltCcn10ny7St01yltI+HPV9lD9W
-	el8jc01sPGu7lorbl3riQN5cDun74SwyUaaXt/JntN+unh65q0+s9C+yggm9K5zxXx6zhRD1Cvk
-	7SqW7xzjk6hVOERk2DvBAenfWoT8cJML7E+nLb1+kDZDDM8BMid2XVZU4GnCRxbfMiafIP12uua
-	F4NYYqtxXugrbmPAvSHW4P+XLU7W67cixXE/OM53gs+d5otP20flo1i46i2P0QfWx2ue1WOmtVI
-	iQENOu4z8HK4cfTib4tWRgnoixHefXqAmpic45gUEGJM8lecvS5NSxFOgXOjrNqSK15AGlXa3mG
-	QU5oqQql3XHu+YjVQGUC91a+WxQovu7QW7bwQVLvq798ihDxpwvUpXsbDe06sA47SEWLFeP5QYD
-	/VatjBx5eVvOXkbWTg
-X-Google-Smtp-Source: AGHT+IExQzOyk4omzvi9Zz7XZjs/LOOnvxM4yvkC9gtz1IfMXQ9aSiPVkXwgXIxJvNBEVGrXMNkh3g==
-X-Received: by 2002:a05:6000:4a09:b0:427:62b:7f3 with SMTP id ffacd0b85a97d-427062b07f9mr22219100f8f.33.1761305018812;
-        Fri, 24 Oct 2025 04:23:38 -0700 (PDT)
+        bh=6njyGgpXnyix7DPfE/AD+aT34+lBZHSBxI3vVRiYPz8=;
+        b=nJCFjiEbiYutsQDP23EdKZUZFnMiU5Tab40GFSwHstOiOedESXEcxtKBWf1A2BQ2Aq
+         7AThtr7kHB94DwlcmhW9zHPQbmG8UOdsh/p0nd7dV70UXNQIE6a7Sw6R8erN7fZbKk4R
+         D5OrRhxs76/OE2wQRNfOPB2FSxBL77m1H9f5FOHHmGuupBdR4/Qck/alNmPTACDNIIap
+         v3Jd1Oz5X7W/XGdL8egI3GTku0ObpRzkINvgwWB7TYEqQMVubXJOiU/VSQcBU4pW6CM3
+         SX+tMXWG5NUVk4WxQPbVYPkfrqjPQ+vVB/rsKfNJkbU3EwiegOEU6hXc94uVVioknjcX
+         H11A==
+X-Forwarded-Encrypted: i=1; AJvYcCWBUgnmuwtdWKEvpTabGCcceNS4SL1+1pgbtFUjnbmC0ezlTv24GlC28S9KbboUSQlJS1BMH8qd6AdihG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLXluyXr4bN7LmASiF/G3kSuQ9xrigMppNJ2YOpXWqwHHee1nU
+	Y5iIU9A+UAgBh9F2S2yJHJ+tjzjp2aZElJOkRfZ5z/vgrmt+r2Mpjxs3h4/ZZQLC2us=
+X-Gm-Gg: ASbGnctdhnIslRTkF64ARZ6ffGI29DpRxAsZNP8w2AoRXvDyej9Le7M1KXiZov7TjqW
+	mQjRZVy9nFNCU7rmx69VkJl/IUW8WJSgeB06B55Ym7vlIretHFg32VN5N6YESCzkZDabirNAc4c
+	9QYXTFmshJ8MoMsFm2j5XnShLc1qxg8xK4GwZld2CwB7V1enwiMyZxF7XZv5DY0NULfe6iqGAHh
+	khmGbPSMLmLiQXiozgeQyl47plawLy35qwxTdfE5Gwhg6C09UlU/vWFuqgrnZ91Cnf1yfDMcJcI
+	l4DgCkxNhgyqsO6ucLKpuLzmnVEAe80VctINSmTP9o4i+1blixEC9L+TG+jqNnCP9hFmTNTLN50
+	g/p8OxbOO3evix9m2fOHTQKWSv0sFKnBXneCwKxWoAiguThEx1SuPhW/BXSlR/77x+++PYuXYiJ
+	e5lfSYPw==
+X-Google-Smtp-Source: AGHT+IHTMdM53JxT5mbRrB/df/8148lrYpgmBufghOqk/tj4eesUFtAgikytzGYIeyYeUAUMaIogTA==
+X-Received: by 2002:a5d:5d87:0:b0:3ec:8c8:7b79 with SMTP id ffacd0b85a97d-4299075d0d3mr1809575f8f.61.1761305163789;
+        Fri, 24 Oct 2025 04:26:03 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429898ec1dfsm8923611f8f.43.2025.10.24.04.23.37
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4298d4a49ffsm4962650f8f.13.2025.10.24.04.26.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 04:23:38 -0700 (PDT)
-Date: Fri, 24 Oct 2025 14:23:35 +0300
+        Fri, 24 Oct 2025 04:26:03 -0700 (PDT)
+Date: Fri, 24 Oct 2025 14:26:00 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: airoha: Fix a copy and paste bug in probe()
-Message-ID: <aPtht6y5DRokn9zv@stanley.mountain>
+To: Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>
+Cc: Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] fs/9p: delete unnnecessary condition
+Message-ID: <aPtiSJl8EwSfVvqN@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,37 +91,26 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This code has a copy and paste bug where it accidentally checks "if (err)"
-instead of checking if "xsi_rsts" is NULL.  Also, as a free bonus, I
-changed the allocation from kzalloc() to  kcalloc() which is a kernel
-hardening measure to protect against integer overflows.
+We already know that "retval" is negative, so there is no need to check
+again.  Also the statement is not indented far enough.  Delete it.
 
-Fixes: 5863b4e065e2 ("net: airoha: Add airoha_eth_soc_data struct")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/ethernet/airoha/airoha_eth.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/9p/vfs_dentry.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
-index 8483ea02603e..d0ef64a87396 100644
---- a/drivers/net/ethernet/airoha/airoha_eth.c
-+++ b/drivers/net/ethernet/airoha/airoha_eth.c
-@@ -2985,11 +2985,11 @@ static int airoha_probe(struct platform_device *pdev)
- 		return err;
+diff --git a/fs/9p/vfs_dentry.c b/fs/9p/vfs_dentry.c
+index c1acbc98465d..c5bf74d547e8 100644
+--- a/fs/9p/vfs_dentry.c
++++ b/fs/9p/vfs_dentry.c
+@@ -109,7 +109,6 @@ static int __v9fs_lookup_revalidate(struct dentry *dentry, unsigned int flags)
+ 			p9_debug(P9_DEBUG_VFS,
+ 				"refresh inode: dentry = %pd (%p), got error %pe\n",
+ 				dentry, dentry, ERR_PTR(retval));
+-		if (retval < 0)
+ 			return retval;
+ 		}
  	}
- 
--	xsi_rsts = devm_kzalloc(eth->dev,
--				eth->soc->num_xsi_rsts * sizeof(*xsi_rsts),
-+	xsi_rsts = devm_kcalloc(eth->dev,
-+				eth->soc->num_xsi_rsts, sizeof(*xsi_rsts),
- 				GFP_KERNEL);
--	if (err)
--		return err;
-+	if (!xsi_rsts)
-+		return -ENOMEM;
- 
- 	eth->xsi_rsts = xsi_rsts;
- 	for (i = 0; i < eth->soc->num_xsi_rsts; i++)
 -- 
 2.51.0
 
