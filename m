@@ -1,286 +1,182 @@
-Return-Path: <linux-kernel+bounces-869043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6419C06C96
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:51:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B22C06CA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 46CAD35C5AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:51:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 75BD135C6CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35B724E4BD;
-	Fri, 24 Oct 2025 14:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA0A302CA7;
+	Fri, 24 Oct 2025 14:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJj/RkKq"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8seNLt5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02084225A3D
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898FF23AE87;
+	Fri, 24 Oct 2025 14:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761317424; cv=none; b=Ccpv9Ko6MW4THs+Bf1veanQ+fHngp7cLkNFrOLiIuCpdYl6GSr8Vja16KsItFznR90YhIdQ7ywWqHU2jHJMJ7YqmQQO0VwUEVSclb0xnnT8d2cnzIGIrm6WgTwAy9csmd7B5jkZuZkepLga88/ipWr6jC/DQnzHRWfMigaxehM0=
+	t=1761317452; cv=none; b=UXChoreHiCMRad9LGJ2ZULYFSWM7ztMPP9g0xqWykW9H7PijbeG1kIBYa8gn/N0MH9KIhQL+DGoVY0zxNY4db71bryrrahLqjwbwPc3LiBB2GU6iuJGPW+qVOuzYGn+YImhDXgDP3KBxNHEYd8/Jo45BUGP1cqSiigjhsKCCqcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761317424; c=relaxed/simple;
-	bh=YpmedxoHX103GRZLyFK655XyMWlbKvpw7Z5efNSETFQ=;
+	s=arc-20240116; t=1761317452; c=relaxed/simple;
+	bh=0knJF7uPO6AofNUjLkQQvkI0kJEMlROapYN6LI2qQlU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9XIgyap0Clwm5PgIZjeYJ0/PaVg6q9FUlACRJu0PvFwvlG9xhFEQXA4WK3W+XmxXo8/Ob+vjxb3PnI0HkNKAaGGHTCJyLwvYpPIuca/I9qtUfIFpqekdIp+li4xE236NPbisdydITLjBO1iJUpwXn/7DPxPCaAM1hrWiYwh2yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJj/RkKq; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-475dab5a5acso494085e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:50:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761317420; x=1761922220; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bvkZR2Vh4Krn1ke+GLvqfOD39dvZoqg79ZqoUlC3wn8=;
-        b=VJj/RkKqNecPxwa2IiIGV55ONmphLi1WCgxj2DCBhVPGXXkp3+fbFfCfBlWUfww6Dp
-         r44MFvmfVnl3QHDj2Z6gh/6O1cP8lnvxH8ca5EsRNxB/PDDrQm495UnXEPliE6W496Sh
-         3DIds84tllHlnZF20/QmcXxAOuYkX3kh7Vqo0CZ+AUk56lqVW2qZnGvIbC27mevXdE+k
-         s1zDQXfT2ho7K3LVwiMjC0CeN0gh3PRuzLln4MFoNXWTfB3tuHe8K2BgwGuO7fJxXrvq
-         Si/hi3kUCuQZGIQts4elPd/u+y1WktUATBE/Xn9O1WWupOPQsT2HCPGr8yLsZvF1ofr7
-         nD5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761317420; x=1761922220;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bvkZR2Vh4Krn1ke+GLvqfOD39dvZoqg79ZqoUlC3wn8=;
-        b=ZWE/pLvWLmXIttBm/3WSlI1hPQDAznyd6P7XW8J25Jd2R+0LsDznfLBxAmpq2x02DO
-         JrI/czCAzK+FvIRWiX6/yspCulraVPZTvqXl9bIBdZTfUeK+xdpZT32z73H9NGDKbQ02
-         qhs53V8dara+/XYyeX9Oa/dAorwEyyNzscERS+LmYU7BJF/gkqYJLn5BBfYr+mz1MIVP
-         Xt6WtlXhdXZSX3RdtDYTeRK0Ac+9zndxW+NFwBziTfyIm6/9Cfqs/j99PT6yYtdTOwBf
-         8hAIW0OLf7upElPWTRnvLZoB/J/OCnCzI2lHhaeNxHO6rOIrAy76631JzdnnFw6mKUBo
-         WGSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVp0VRbKqAugVqPP5caV1itl+854HFCNNReZsaSk5RBO3DZBSAQ68JfWA61z+HG9NnZsbhlVfUYrWdERL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH1L2E8gou0ePJof8C9hAkWGpzbAJ/VfDphM0vGELTyXYqJ2Vw
-	KOK57EzYkBlBXhTUscUuPAv5ns5WGkEz/uLKrdDkePuHZHZ+7oj7+lyoCWI4ioDq
-X-Gm-Gg: ASbGncstLt2T7Nz2Z/d4hLV9NjnqhhLD7hLyhqy0z7hsxJwGhg89XDbleyQF+kYB3zi
-	42CAFIUcBmdTvL8XevOUBnmsNhKYbrrlAJG1tI8M/Hnwm0smkrwhbvTHUPamO/mv9tf7tPsOVtW
-	mEoT9SAIOfCrRzeoPKB0JoB9LE/N7rz3vMPYoTd9+bELDhRscPHXJbBhogA73BmAa+fUp+h0ISI
-	NnJzya7sbY5aYwTPuZOhv5bCCe6syAvVAxWvNMmunNz4KoTS7COSkdGsCrDDf/jbnG4UOkRGgkb
-	iJ9bDEweu9gu5ztF9Lmy8eOcfrcVKF+F3TH+cLX3IGTK1BPAiKQsp3xk+llsoI2Onpo9IhbSQcj
-	QVyPVv5q49IfYwTyQ2K8KKjobqt7u9bwJZkvkjoJvXQXNg3c9rXCHB8qd6sNEqyF462sL4rdwdL
-	8=
-X-Google-Smtp-Source: AGHT+IEqlFHh9cUmE6VeJkHTqoWYwUa2BjE3Cj5kkfpXYdD2XEHiKMq5M8rg1Ncamom4v1KrbdbmNw==
-X-Received: by 2002:a05:600c:3b05:b0:471:d13:5762 with SMTP id 5b1f17b1804b1-471178761bemr206849505e9.4.1761317419995;
-        Fri, 24 Oct 2025 07:50:19 -0700 (PDT)
-Received: from fedora ([37.29.213.75])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475caf15416sm95153355e9.10.2025.10.24.07.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 07:50:19 -0700 (PDT)
-Date: Fri, 24 Oct 2025 16:50:16 +0200
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	victoria@system76.com, sebastian.wick@redhat.com,
-	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 04/22] drm/vkms: Introduce configfs for plane rotation
-Message-ID: <aPuSKCNRGRCLDwyp@fedora>
-References: <20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com>
- <20251018-vkms-all-config-v1-4-a7760755d92d@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FLpmye7PkKFl9ZYhym6NHyiplHhZXrOxSHTK5tDhbDXsN0aGGcFYYEhWC71BjUjGZY18PYMulRDm0IWglWk1s9vGFzunzDcJjaJHOA7Ewkk4OUIr9oxs8WN3HZgPfDrIK3UFmdMaQ5JcgUvdB4iuapcUg5Gmnp4W3WdnE9JK0eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8seNLt5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB14C4CEF1;
+	Fri, 24 Oct 2025 14:50:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761317452;
+	bh=0knJF7uPO6AofNUjLkQQvkI0kJEMlROapYN6LI2qQlU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X8seNLt5RF176sZd6t2usJg6+ak1kThL3v1R1UTT43sFOzps+l0LW6+qqN1YXaOx8
+	 7G/ugiiZ9KyWkayAGz2cf+0Dkc9NA8WKB6Y9o3lfP2XbiaH3eqsmDVqNugHrZjWZKf
+	 ighuDrTNgD1XhVcflIq6Z8ImsGEvPJr4tyXK12HZedFj8fLQrLGSjZhpYyTlfVhXkC
+	 Y000Gf13lfSV3wCRZLYNjoCxvQwr1+7WXw06Wwq4Zv/FErQ75Eh6JBMnu3c1HeaJhe
+	 IpVGcslSDxM0wR09pKb1kFEDPBjorrfiRibxjWUq5cwo72/cZfUrKT7iebRWaLpeO9
+	 TLAuPc+M0yXpQ==
+Date: Fri, 24 Oct 2025 16:50:44 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Ferenc Fejes <ferenc@fejes.dev>
+Cc: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH RFC DRAFT 00/50] nstree: listns()
+Message-ID: <20251024-rostig-stier-0bcd991850f5@brauner>
+References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
+ <f708a1119b2ad8cf2514b1df128a4ef7cf21c636.camel@fejes.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251018-vkms-all-config-v1-4-a7760755d92d@bootlin.com>
+In-Reply-To: <f708a1119b2ad8cf2514b1df128a4ef7cf21c636.camel@fejes.dev>
 
-On Sat, Oct 18, 2025 at 04:01:04AM +0200, Louis Chauvet wrote:
-> To allows the userspace to test many hardware configuration, introduce a
-> new interface to configure the available rotation per planes. VKMS
-> supports any rotation and reflection, so the userspace can choose any
-> combination.
+> > Add a new listns() system call that allows userspace to iterate through
+> > namespaces in the system. This provides a programmatic interface to
+> > discover and inspect namespaces, enhancing existing namespace apis.
+> > 
+> > Currently, there is no direct way for userspace to enumerate namespaces
+> > in the system. Applications must resort to scanning /proc/<pid>/ns/
+> > across all processes, which is:
+> > 
+> > 1. Inefficient - requires iterating over all processes
+> > 2. Incomplete - misses inactive namespaces that aren't attached to any
+> >    running process but are kept alive by file descriptors, bind mounts,
+> >    or parent namespace references
+> > 3. Permission-heavy - requires access to /proc for many processes
+> > 4. No ordering or ownership.
+> > 5. No filtering per namespace type: Must always iterate and check all
+> >    namespaces.
+> > 
+> > The list goes on. The listns() system call solves these problems by
+> > providing direct kernel-level enumeration of namespaces. It is similar
+> > to listmount() but obviously tailored to namespaces.
 > 
-> The supported rotations are configured by writing a rotation bitmask to
-> the file `supported_rotations` and the default rotation is chosen by
-> writing a rotation bitmask to `default_rotation`.
+> I've been waiting for such an API for years; thanks for working on it. I mostly
+> deal with network namespaces, where points 2 and 3 are especially painful.
 > 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->  Documentation/gpu/vkms.rst           |  7 ++-
->  drivers/gpu/drm/vkms/vkms_configfs.c | 94 ++++++++++++++++++++++++++++++++++++
->  2 files changed, 100 insertions(+), 1 deletion(-)
+> Recently, I've used this eBPF snippet to discover (at most 1024, because of the
+> verifier's halt checking) network namespaces, even if no process is attached.
+> But I can't do anything with it in userspace since it's not possible to pass the
+> inode number or netns cookie value to setns()...
+
+I've mentioned it in the cover letter and in my earlier reply to Josef:
+
+On v6.18+ kernels it is possible to generate and open file handles to
+namespaces. This is probably an api that people outside of fs/ proper
+aren't all that familiar with.
+
+In essence it allows you to refer to files - or more-general:
+kernel-object that may be referenced via files - via opaque handles
+instead of paths.
+
+For regular filesystem that are multi-instance (IOW, you can have
+multiple btrfs or ext4 filesystems mounted) such file handles cannot be
+used without providing a file descriptor to another object in the
+filesystem that is used to resolve the file handle...
+
+However, for single-instance filesystems like pidfs and nsfs that's not
+required which is why I added:
+
+FD_PIDFS_ROOT
+FD_NSFS_ROOT
+
+which means that you can open both pidfds and namespace via
+open_by_handle_at() purely based on the file handle. I call such file
+handles "exhaustive file handles" because they fully describe the object
+to be resolvable without any further information.
+
+They are also not subject to the capable(CAP_DAC_READ_SEARCH) permission
+check that regular file handles are and so can be used even by
+unprivileged code as long as the caller is sufficiently privileged over
+the relevant object (pid resolvable in caller's pid namespace of pidfds,
+or caller located in namespace or privileged over the owning user
+namespace of the relevant namespace for nsfs).
+
+File handles for namespaces have the following uapi:
+
+struct nsfs_file_handle {
+	__u64 ns_id;
+	__u32 ns_type;
+	__u32 ns_inum;
+};
+
+#define NSFS_FILE_HANDLE_SIZE_VER0 16 /* sizeof first published struct */
+#define NSFS_FILE_HANDLE_SIZE_LATEST sizeof(struct nsfs_file_handle) /* sizeof latest published struct */
+
+and it is explicitly allowed to generate such file handles manually in
+userspace. When the kernel generates a namespace file handle via
+name_to_handle_at() till will return: ns_id, ns_type, and ns_inum but
+userspace is allowed to provide the kernel with a laxer file handle
+where only the ns_id is filled in but ns_type and ns_inum are zero - at
+least after this patch series.
+
+So for your case where you even know inode number, ns type, and ns id
+you can fill in a struct nsfs_file_handle and either look at my reply to
+Josef or in the (ugly) tests.
+
+fd = open_by_handle_at(FD_NSFS_ROOT, file_handle, O_RDONLY);
+
+and can open the namespace (provided it is still active).
+
 > 
-> diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-> index 3574e01b928d..a432968cc711 100644
-> --- a/Documentation/gpu/vkms.rst
-> +++ b/Documentation/gpu/vkms.rst
-> @@ -87,10 +87,15 @@ Start by creating one or more planes::
->  
->    sudo mkdir /config/vkms/my-vkms/planes/plane0
->  
-> -Planes have 1 configurable attribute:
-> +Planes have 3 configurable attribute:
-
-s/attribute/attributes/
-
->  
->  - type: Plane type: 0 overlay, 1 primary, 2 cursor (same values as those
->    exposed by the "type" property of a plane)
-> +- possible_rotations: Available rotation for a plane, as a bitmask: 0x01 no rotation,
-> +  0x02 rotate 90�, 0x04 rotate 180�, 0x08 rotate 270�, 0x10 reflect x, 0x20 reflect y
-> +  (same values as those exposed by the "rotation" property of a plane)
-> +- default_rotation: Default rotation presented to the userspace, same values as
-> +  possible_rotations.
->  
->  Continue by creating one or more CRTCs::
->  
-> diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-> index ea245e2e2fd2..450e45e66a45 100644
-> --- a/drivers/gpu/drm/vkms/vkms_configfs.c
-> +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-> @@ -322,10 +322,104 @@ static ssize_t plane_type_store(struct config_item *item, const char *page,
->  	return (ssize_t)count;
->  }
->  
-> +static ssize_t plane_supported_rotations_show(struct config_item *item, char *page)
-> +{
-> +	struct vkms_configfs_plane *plane;
-> +	unsigned int plane_supported_rotations;
-> +
-> +	plane = plane_item_to_vkms_configfs_plane(item);
-> +
-> +	scoped_guard(mutex, &plane->dev->lock) {
-> +		plane_supported_rotations = vkms_config_plane_get_supported_rotations(plane->config);
-
-Checkpatch is complaining about this line being 1 character longer than
-it should... Feel free to ignore it:
-
-WARNING: line length of 101 exceeds 100 columns
-#58: FILE: drivers/gpu/drm/vkms/vkms_configfs.c:333:
-+               plane_supported_rotations = vkms_config_plane_get_supported_rotations(plane->config);
-
-
-> +	}
-> +
-> +	return sprintf(page, "%u", plane_supported_rotations);
-> +}
-> +
-> +static ssize_t plane_supported_rotations_store(struct config_item *item,
-> +					       const char *page, size_t count)
-> +{
-> +	struct vkms_configfs_plane *plane = plane_item_to_vkms_configfs_plane(item);
-> +	int ret, val = 0;
-> +
-> +	ret = kstrtouint(page, 0, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Should be a supported value */
-> +	if (val & ~(DRM_MODE_ROTATE_MASK | DRM_MODE_REFLECT_MASK))
-> +		return -EINVAL;
-> +	/* Should at least provide one rotation */
-> +	if (!(val & DRM_MODE_ROTATE_MASK))
-> +		return -EINVAL;
-> +
-> +	scoped_guard(mutex, &plane->dev->lock) {
-> +		/* Ensures that the default rotation is included in supported rotation */
-> +		if (plane->dev->enabled ||
-> +		    (val & vkms_config_plane_get_default_rotation(plane->config)) !=
-> +		     vkms_config_plane_get_default_rotation(plane->config))
-> +			return -EINVAL;
-
-This makes a bit difficult to change the default supported rotations.
-
-By default, default rotation is DRM_MODE_ROTATE_0. If the user wants to set the
-supported rotations to DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y | DRM_MODE_ROTATE_90,
-this will fail because the default rotation is not included in the new set of
-supported rotations.
-
-Therefore, the user would need to add DRM_MODE_ROTATE_0 (DRM_MODE_REFLECT_X |
-DRM_MODE_REFLECT_Y | DRM_MODE_ROTATE_90 | DRM_MODE_ROTATE_0), change the default rotation
-to DRM_MODE_ROTATE_90 and drop DRM_MODE_ROTATE_0 from the supported rotations.
-
-To avoid this, I think we should check this before enabling the device instead,
-in vkms_config_is_valid().
-
-Also, having this logic as a helper called by vkms_config_is_valid() allows to
-add a KUnit test to make sure all cases are covered.
-
-What do you think?
-
-
-> +		vkms_config_plane_set_supported_rotations(plane->config, val);
-> +	}
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t plane_default_rotation_show(struct config_item *item, char *page)
-> +{
-> +	struct vkms_configfs_plane *plane;
-> +	unsigned int plane_default_rotation;
-> +
-> +	plane = plane_item_to_vkms_configfs_plane(item);
-> +
-> +	scoped_guard(mutex, &plane->dev->lock) {
-> +		plane_default_rotation = vkms_config_plane_get_default_rotation(plane->config);
-> +	}
-> +
-> +	return sprintf(page, "%u", plane_default_rotation);
-> +}
-> +
-> +static ssize_t plane_default_rotation_store(struct config_item *item,
-> +					    const char *page, size_t count)
-> +{
-> +	struct vkms_configfs_plane *plane = plane_item_to_vkms_configfs_plane(item);
-> +	int ret, val = 0;
-> +
-> +	ret = kstrtouint(page, 10, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Should be a supported value */
-> +	if (val & ~(DRM_MODE_ROTATE_MASK | DRM_MODE_REFLECT_MASK))
-> +		return -EINVAL;
-> +	/* Should at least provide one rotation */
-> +	if ((val & DRM_MODE_ROTATE_MASK) == 0)
-> +		return -EINVAL;
-> +	/* Should contains only one rotation */
-> +	if (!is_power_of_2(val & DRM_MODE_ROTATE_MASK))
-> +		return -EINVAL;
-> +
-> +	scoped_guard(mutex, &plane->dev->lock) {
-> +		/* Ensures that the default rotation is included in supported rotation */
-> +		if (plane->dev->enabled ||
-> +		    (val & vkms_config_plane_get_supported_rotations(plane->config)) != val)
-> +			return -EINVAL;
-> +
-> +		vkms_config_plane_set_default_rotation(plane->config, val);
-> +	}
-> +
-> +	return count;
-> +}
-> +
->  CONFIGFS_ATTR(plane_, type);
-> +CONFIGFS_ATTR(plane_, supported_rotations);
-> +CONFIGFS_ATTR(plane_, default_rotation);
->  
->  static struct configfs_attribute *plane_item_attrs[] = {
->  	&plane_attr_type,
-> +	&plane_attr_supported_rotations,
-> +	&plane_attr_default_rotation,
->  	NULL,
->  };
->  
+> extern const void net_namespace_list __ksym;
+> static void list_all_netns()
+> {
+>     struct list_head *nslist = 
+> 	bpf_core_cast(&net_namespace_list, struct list_head);
 > 
-> -- 
-> 2.51.0
+>     struct list_head *iter = nslist->next;
 > 
+>     bpf_repeat(1024) {
+
+This isn't needed anymore. I've implemented it in a bpf-friendly way so
+it's possible to add kfuncs that would allow you to iterate through the
+various namespace trees (locklessly).
+
+If this is merged then I'll likely design that bpf part myself.
+
+> After this merged, do you see any chance for backports? Does it rely on recent
+> bits which is hard/impossible to backport? I'm not aware of backported syscalls
+> but this would be really nice to see in older kernels.
+
+Uhm, what downstream entities, managing kernels do is not my concern but
+for upstream it's certainly not an option. There's a lot of preparatory
+work that would have to be backported.
 
