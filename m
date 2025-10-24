@@ -1,121 +1,99 @@
-Return-Path: <linux-kernel+bounces-868149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4EAC047AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:19:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 253F1C047C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAC83B9578
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:19:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6AD19A3E9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E46C26ED59;
-	Fri, 24 Oct 2025 06:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="atL7cSc5"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D25626E716;
+	Fri, 24 Oct 2025 06:21:48 +0000 (UTC)
+Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0059E2580F0
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A48226ED49
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761286769; cv=none; b=LPzNRYt/yDY1IMPHriD0jDFoGBZcRdst+9tXZrHBfR3+xmABHXgZXf8yPlZEYx1XmzJeBjxnM5dycTrz4KlZQqoIdTbyoYwSNdsfVwKqlpEhyy2f1YTawrSwZKnQ4C0aCyHIyHjKgpi8uZ5EjbhSnwuU6vSG48PMcxsque+wDLc=
+	t=1761286908; cv=none; b=H6y0XaEPnvQfm9USZatJ0wmqyp6rY+LzpXiqPDc1D/XjQrWOjnJB7nXhgViUxy8Qmg5CJufadypzwmHK4tFWfxh7ye4kZsNcSjmK4yC7BVmxXfPOLq8lSjVQ+LYtni8kQuDlNkGGjZ22924p+O9qwr5YoSHbENxkiicz4RZ+Dp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761286769; c=relaxed/simple;
-	bh=MjiIMaVHnxv85Sm0BB/UlJ62CEBZJOgW3U0C8rO6buI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bU7rOELgrJJBH/kLaCywKBhOzTslkFMD0J9W5nndZyAZjai+xWJ9vnY/pCeyqepCO9T+ZIT50xXg4J39eW5cpg9UZwvDQb32+vWWbSAAyZ78i9M7YzgkR63OmUifP54nk3QRT7LuxwvmxzCeseL9xngH99gpxLJSJPfi56i6wSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=atL7cSc5; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42557c5cedcso1138352f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 23:19:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761286766; x=1761891566; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iuW7JMitWdY//EYRZ6hUg7/sC/5FBOcO0+pu8iYSN+U=;
-        b=atL7cSc5/Ej7zPQ7n2QKen4qg1yhVqDWtKpvlEK43J03d791ymvxss64cDsU2+C9+P
-         FklFpCf/E0YNZmocWnGM/vjbp/eoyp4LwMvnvGiRW9751fI9HMh/GVxTuC+P+sD7dNrZ
-         Xi6nD/kMIS+tK5VbrCrfoupVlqwHVZNTzk2baUBQNGBmOpr3gcUCUFQOXFday8GDNTpU
-         hmvgTkqhcokaic4v2eoUh1AqfzUGUZT5iQVqkfB58EpgMYB6L2H900gf5GyfVcCeC4ne
-         0fe4tuRtrkndVfYQhpMjvgVLCjtfofyEXVaTU2OmCL0UXX+2BL3olqZbtZ5CvIBThutg
-         8UJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761286766; x=1761891566;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iuW7JMitWdY//EYRZ6hUg7/sC/5FBOcO0+pu8iYSN+U=;
-        b=oijnb4jxuJ83RpnYdW+XnAUkJ4XvyeC8BuhCLPTiveJtNURAIuvdIXkLtnXHsgwh3R
-         D61wjBtpHY6PBnd8s00IZfW9xYmQ0YR3zsKfJKpzHgEsZp/nfgv+S7v9uq3VP8xEjINB
-         ayGtpZgilniNqQ6Gvei1ITT7R+t5ee2EpSPy9ewI9YvN2EpX7VLF5Ye4gb/8sW5SCjoW
-         sePzf/mmSppyrbpTsQutRVCqxUbjqvIEF3TXqPlUFg8Ya4Xkccrp3xsZf53Ozbr/6+60
-         Qc98xa+IrsQvtaJCYzmGlk1uczher6tZrYlO4nx/t6l7P64fZc9a5cqIBvQPY5/WMlKQ
-         +4VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9cJqZz+fjXSnzOy+YQmaPvCG1C2Mc9MAFCNfqAsaWQUBtCh8IyYkrWbCXvb2lM1Q7DjcngEkC5zAaguE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpV0S4LpUltHG4HHd4vj+oMTRez6qpLrGCfVMfqFwpiaH1icQd
-	wGbwYWY5iv+Zk4O+PnSDOgbuAiskJPO+/I58jCNJrKF0KwfbA9w73xsk7yZ0lV2nrKI=
-X-Gm-Gg: ASbGncvGIpkTKz6ipV7GqMKA5IYV5c65zLfUs5cCiwHvoHQ6VCnhGnJFrtsUmMkkL7e
-	3gVcPDJvVPXZ52fyonVDjdUz1eiD1lpzCZBk9QpGZ/QZe7vC+WlmtvnpwADVIkqjEAhYwqSBBiM
-	8D9I8la3aj97zTmNaZk9kfygTd5T2yjQ9YrB7ngrYxNhj5FVvglVbPH8+7/paQGtDze2MgTJYI0
-	yxy+HCy9lkPCtJVydckpvm4qshS4aXJHpekdqp1Bem2lC5+nxkXHjo41piT5u0iGm3dB/R4zloq
-	hEjZvGM/Qqmy9HJtSbT0YxRKJYy6uD7vT0QTISg14eNjTUsQ6Aq3gUnDUGoYWFPn5nVxHLJsf0m
-	xuc025NeG7GbfBIjpBuTK0V/VBVcqam1aogM6Pf4zlJyCW37GM5yEwNDRtAR3gcB+KT+EUDomRk
-	7zJdbq5AqDJ4BKHDD0
-X-Google-Smtp-Source: AGHT+IGuaT91f6JlqW4V0ICbs5URxpfktlg0GOQ7b4e28m0jHXiomSrIXCP/t5AqtpgGIxAmYlkf2Q==
-X-Received: by 2002:a05:6000:200c:b0:428:3ef4:9a10 with SMTP id ffacd0b85a97d-4283ef49ddamr15607904f8f.54.1761286766184;
-        Thu, 23 Oct 2025 23:19:26 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429898adf78sm8054566f8f.32.2025.10.23.23.19.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 23:19:25 -0700 (PDT)
-Date: Fri, 24 Oct 2025 09:19:21 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Michael Walle <mwalle@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] gpio: qixis-fpga: Fix a NULL vs IS_ERR() bug in probe()
-Message-ID: <aPsaaf0h343Ba7c1@stanley.mountain>
+	s=arc-20240116; t=1761286908; c=relaxed/simple;
+	bh=d4dIXu3USzcKHec+BoZXd6MFWRlimFU8tLSw5mRQ5ak=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l6MO5VvozmYH2aMcJ7Qti03rgIlyUkGfFonviGuSmRJM+dRkaNNFjOuUx9fmL1HEy2OSlaP8zGSaKDr/Y0w9HYdtitpl1mjo0yTv1Y6UeMZdN2OsCCP+E0ZFAqdvIJn8pQk3SmRYrbEzruQiugPWnjl5LOSGdw/FwL+1Mtg6Or8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201616.home.langchao.com
+        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202510241421321231;
+        Fri, 24 Oct 2025 14:21:32 +0800
+Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
+ Jtjnmail201616.home.langchao.com (10.100.2.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Fri, 24 Oct 2025 14:21:31 +0800
+Received: from inspur.com (10.100.2.108) by jtjnmailAR02.home.langchao.com
+ (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Fri, 24 Oct 2025 14:21:31 +0800
+Received: from localhost.localdomain.com (unknown [10.94.15.147])
+	by app4 (Coremail) with SMTP id bAJkCsDwZrXrGvto2RwPAA--.3118S4;
+	Fri, 24 Oct 2025 14:21:31 +0800 (CST)
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <jdmason@kudzu.us>, <dave.jiang@intel.com>, <allenbh@gmail.com>
+CC: <ntb@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Chu Guangqing
+	<chuguangqing@inspur.com>
+Subject: [PATCH for-next 0/1] net: ntb: migrate to dma_map_phys instead of map_page
+Date: Fri, 24 Oct 2025 14:20:41 +0800
+Message-ID: <20251024062042.29971-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: bAJkCsDwZrXrGvto2RwPAA--.3118S4
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY27AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aV
+	CY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAq
+	x4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6x
+	CaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF
+	04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVWUAVWUtwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUdHUDUUUUU=
+X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?0WU/MZRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
+	D+Ka5/cslaGy953u1/jgndaEe06RDhWpbgMPDzB9Gqx5xhFrFd9ewyYrxBRY3r7zmrRHgb
+	TvL5CGpG0Bhd4zY75u8=
+Content-Type: text/plain
+tUid: 20251024142133a5d5332ae990b13583066171d14bb59e
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-The devm_platform_ioremap_resource() function doesn't return NULL, it
-returns error pointers.  Fix the checking to match.
+There is no functional change.
 
-Fixes: e88500247dc3 ("gpio: add QIXIS FPGA GPIO controller")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpio/gpio-qixis-fpga.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+After introduction of dma_map_phys(), there is no need to convert
+    from physical address to struct page in order to map page. So let's
+    use it directly
 
-diff --git a/drivers/gpio/gpio-qixis-fpga.c b/drivers/gpio/gpio-qixis-fpga.c
-index 54c2c76822d5..6e67f43ac0bd 100644
---- a/drivers/gpio/gpio-qixis-fpga.c
-+++ b/drivers/gpio/gpio-qixis-fpga.c
-@@ -56,8 +56,8 @@ static int qixis_cpld_gpio_probe(struct platform_device *pdev)
- 		 * create our own from the MMIO space.
- 		 */
- 		reg = devm_platform_ioremap_resource(pdev, 0);
--		if (!reg)
--			return -ENODEV;
-+		if (IS_ERR(reg))
-+			return PTR_ERR(reg);
- 
- 		regmap = devm_regmap_init_mmio(&pdev->dev, reg, &regmap_config_8r_8v);
- 		if (!regmap)
+Chu Guangqing (1):
+  net: ntb: migrate to dma_map_phys instead of map_page
+
+ drivers/ntb/ntb_transport.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
 -- 
-2.51.0
+2.43.7
 
 
