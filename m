@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-868506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9809C055A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:33:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0190C055B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561311A084AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:34:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0031A08793
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D9830AD18;
-	Fri, 24 Oct 2025 09:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2C330BB81;
+	Fri, 24 Oct 2025 09:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pOKp6tFC"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PVxUHoqQ"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5931730ACF4
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFAC30AADC
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761298413; cv=none; b=o0GU5fKQ98kfyasel4FgTCycYGPKOVpI6VhKNBhRY+19dTRFMo9PE3oxefDivJTyBrcwFAkl/Sc+Q33Xcku2esntiDgmUDrMrn71f4mqla07H7eDxCqkL1eBA82+xn0rnWLgFUmHVrOhqZSiXpA+yTyxPBHsIEBSKZRgROYX5v8=
+	t=1761298416; cv=none; b=pHc8+xjwTMdCPM1Rv2pfQQsFeAixCb4tqtIZDtuW2ik0UwsttB/Hi1v1eHcuybU0pOT21mV+hPvR2T6s5kZ0Fb7TufpHJoRqAlrLwq8YkeaYotjk3zCLrOrrPNj64MEFMiNP9D0GGYXmoq4TdlKjLyTK7IszC6LhHh5HFrhJP20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761298413; c=relaxed/simple;
-	bh=1F/bOC1u+dd7k85JkzWqGYTh8WfFn5USpjGuw1f3Yo8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YKKwiQaYX4vhtLb3Lg9SxAz/dL/oaymV0w9Atzei59BJ0QwSUwTwcfj1oOQu3eKaIG9rxG97VNqof1jwJuZlSu2J91K+K4sjhJx1OqvGHBUyf0ISWeWIsC1pvLb6Ik9I83zQ3hYtmT49tkYWwQNYXujSjFAFohCH96bwZV9y0ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pOKp6tFC; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1761298416; c=relaxed/simple;
+	bh=sLfc6/pV30D5lq+QPBhYvo6G/wXhYAzok8S7hahT+7E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=CV/sqPgjjZo5IEGF0vzi/Oeeb1gx2DBmIHf6m1nM+lJ8dLcQoddvn0FTsmoecNR4CI4yGjss+pfQXmqMy4gs6fAvGMB2+yimSdC8eCy2MnrcY4DaaDObev3qPMcGaRzsRcpXPHUbfESJqNk1AKQvx3KJqNpua2o7XNbyYMfqIGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PVxUHoqQ; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O3FQTa003445
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:30 GMT
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O3FLaB014872
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:33 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=YO9TAozxQPaIYyc/aO4jrm
-	iGnNWUBU4qf6V4+zkkWYM=; b=pOKp6tFCjDR+SQpvQbEIzNnJnxRHIPUuZq1T36
-	am6vkIHHOcSvjut8QJPe7B0m/1M8h0EAuhzGASQq1NiM56XTnCkiSy1WJ9uhXpJa
-	/5eGonpz1nYWE5HKjcTViHAe5v7a4PUG7CczcItm8XP6uIgeLpayVNx3PsleILOK
-	TwBuWB587z899IevxrfVKDjM6/h1qsKUyZqKbBGW1KmyMQCPTcsqUM1gy/fMp2KL
-	xDSEqtVShAIeN1qXN4NAeUEcSMk+ttnz8kCgQKN3Q2VTxbIKq34Hv/GSxfH74kIL
-	PxPU8vNS9eKRyZ6dKnf+rFb+DUhYZLJkA6Mw8gGKcXIiicGQ==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v27jbf85-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BFsQ8QDek/CRCSn3Sn2QCbGXL9ljG8jJXnynkhQ8/wA=; b=PVxUHoqQpdk3Qd3Z
+	zenZ8FkKkE5N79dpFY5gw3CrMyiuzk3gl8xjqFB3SHr6n8xb3ICBBjST0e3WmYmv
+	xE8yRYNonw93SQXilO6LHegF9k7wwtZTZPJYH2ykRYn1IVFykUg+YHSWJA8VuLbP
+	OsnGGSNyYYUHnjmcchB1kq/JhUp68gKqnphIoQCxHFFgwf8gj9Sd6viP0JNFSgim
+	iTO5WMOaqGBT03b2+PaRm+cZ4xt4TxYcl5zURZYMx4sSypWUYWc0F88v0U47IU+1
+	a6GMErki3GUKHh4c1/qC1KFNISRD3ldSU1SLjYDuPV0qYXOzT5Wfj8oOGH7IgQLM
+	/5MCuw==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v08puse3-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:30 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-77f610f7325so1409990b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:33:29 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:33 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-76e2e60221fso3607246b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:33:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761298409; x=1761903209;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YO9TAozxQPaIYyc/aO4jrmiGnNWUBU4qf6V4+zkkWYM=;
-        b=BcPYTctN5ac0CHsgK8QS9P0Vvu9Dpkrv+Y1DRmLadVOOCURbllCBC9JSf4D6wdO/l6
-         ZKEv2+U/2au0quFufOC+nog+IRbo/b4g7sW8M+tyk3YUxUXg/ywTXe0S6V3ABj/eW1Le
-         FbC01GVmWN2ByD7fZplbklyyXhrKeWg6kQ2tNhNcoH9B+0Vedcbn5cWQeuasut8MNoru
-         MSW/YtI2Bo65aXJgWUgqOdS8FiGKdRBD7WpTQPMXCUn9AEFRyEqcLM82OWBsAmYREc38
-         mlA5+8oFYhXT3dPg0aSCdwZ780lR5yLwambICQj66BIC0aIDZbn8+8UEwd17YYGIuzRt
-         J1KA==
-X-Forwarded-Encrypted: i=1; AJvYcCXT3FrSjLGvenai3N3GZNRkMJvvy60oF5esR46KDc4Nr9ioxBZY97OFLIR9jMCZWrIrH5Wc8v+J+6SXsUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys41r6wlamu0dCKUOw10NZrOvO7EKSFdU09fV83kV3kMluqLjW
-	W8k7KZSWPBKlcT56Ok+/krOSPzoHMcmQtIWn7s3eeRMMi9Yfq4im4KfZWhY6/HarwiHL3OaX5Wi
-	SZ4iJU0+q8yHXQvBV6RZDGiCAL3PixaiFS8KwvAz4d4v39JsQCm87IawfotXIev74Vd5S8/euKx
-	s=
-X-Gm-Gg: ASbGncsrU1HBnUugAYDqF+QXFc494v3V+UG5pbRd0EKz/pdr0ngbz1CLfMzoLzdzbmm
-	ZKaaFlPVOYTLysqapdm9c1djbMmaENoO4t1Irp1Yc2YKuTHiTT0Ali2Lyahi79/bdbspVlqedPx
-	PPle7MCClyaRd1Io0Bsm6tfrgqqhxE/cNs97VilKhilnDWk927xTf8xfhNvpQxMrz+yw+GbOO9G
-	gRZyJ2CpFUidGdciIaRzmr54SpehnRb0nSwmRKtxy8C79alGs3uuFyjKZUNRC4TBRt+bMdaVIXo
-	5hUYhdjDFo4EGC3xLxIBrGNtutxl466pNfDWYZJYiOt88LHI/6hOvlRqGYpXkW+Cca/v35yDnaz
-	h0Ev8W0gcgujsMx+53li6Y/bjRZOFP+OVeg==
-X-Received: by 2002:a05:6a00:399f:b0:781:269a:8fba with SMTP id d2e1a72fcca58-7a220acb317mr25549318b3a.20.1761298408615;
-        Fri, 24 Oct 2025 02:33:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFeLcfx4tP0pbMJFwOSrUV/QAjUpoIDCB+tGuZMc8V2BMluJYGi8w+PUsr4tHo8KNbdG4Exfg==
-X-Received: by 2002:a05:6a00:399f:b0:781:269a:8fba with SMTP id d2e1a72fcca58-7a220acb317mr25549298b3a.20.1761298408124;
-        Fri, 24 Oct 2025 02:33:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761298412; x=1761903212;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BFsQ8QDek/CRCSn3Sn2QCbGXL9ljG8jJXnynkhQ8/wA=;
+        b=UQ4V4P3wU0U5b/7MuzvYqkENLgU2I2K6ECe0CvEpgsqGoa3tfXr1g2M7T/sTqFRnHr
+         66psCbzK9DmaWtUT30EsLhEiRIy2Juz+6pOJt4Om2KIPmFqxoP5XjVdifJsZtMS17NUN
+         3OiTj/0wjGABXTivN4r+1bZKUfg3PSXlrZnBv13Ocf87RSHt0uTDYaLYIar1jgpYnkLr
+         kdjwy3sr1mCjWtGKmSGX8UXheHbu6ZFFw+LFj1uExeR+iXy3kQmDjQxyKPM2gLINZfOF
+         WgmseXpqoABMiwWhkb+JenzHIlW7gCLF134tfmISqk1lfXRUbYD16+K0irJvoWe7VoRT
+         0V7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUmj1mH9QKlukApfEQu5Wh3oWs6R5gfglToX4PGCg6mMOBf4bNJqn5jg4e2XJQe+aWVmJQ9LDuy+9mrgvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycZY7K/JN7KCcjQvx4MvtbiX/+ViShoeF88LAwlNOIAMqssmdl
+	x6dsHKP2r+pmCjsZQ8R8jzqUAXYG0cowQT0d9AmFPkS3tlb4cQ+32S0nhTLQ0ClQtVevMuzEN2A
+	/QEEQW66tSXG0hysSqISbNSZsZelUrAVwF/7WGiz1d1XOB0Ziy+8+r24A4LXcbiVnmUA=
+X-Gm-Gg: ASbGncvvyTizal3GM7PcHisbw/PB9xK/JA4Pv09l7oGBUcV6AN+WwpHOVMp0PuqiI0n
+	yreft2EYvRfDMHiTZn4ZZNIWcSj2aLHf1HyWUagwgDUN8e9yMyA+KXl40XycvqgaixGPAHi1/Qp
+	J/CYLkdODtwlXwUvJa11G2yfHalXSPvrtRrbGIu+uxMDE5Zm+enVpO8fgqj+3zcvNn3iUeqknrP
+	30ikdoVKleYxPLZ9yNlkKKytQDgQQH7/MJI1TKKBw9JmExF0uZVgFM42yEr840g1F/L82ik7Wmq
+	nzjj8k02xWfDda+2+OvbpvmXVPyXQtu7Ir6/HYp614RGiEugqOp6OcrfX0vSqPnb9qqBLIH6OIo
+	8E5b/sMGf8gwn++94Um0MxuzjdrrG5LMdjA==
+X-Received: by 2002:a05:6a00:1916:b0:793:11fc:783f with SMTP id d2e1a72fcca58-7a220d2ebb7mr32870197b3a.29.1761298412277;
+        Fri, 24 Oct 2025 02:33:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGXf9hXKUbGYeXNisbeDICxOQKlKaEkz3DZyx21OlN2Wx/k/LrRUL017iNPl39reqGmwOs8Tg==
+X-Received: by 2002:a05:6a00:1916:b0:793:11fc:783f with SMTP id d2e1a72fcca58-7a220d2ebb7mr32870160b3a.29.1761298411772;
+        Fri, 24 Oct 2025 02:33:31 -0700 (PDT)
 Received: from hu-jprakash-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274dc33easm5270332b3a.68.2025.10.24.02.33.24
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274dc33easm5270332b3a.68.2025.10.24.02.33.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 02:33:27 -0700 (PDT)
+        Fri, 24 Oct 2025 02:33:31 -0700 (PDT)
 From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-Subject: [PATCH v3 0/3] spmi-pmic-arb: Add support for PMIC arbiter v8 for
- Glymur and Kaanapali
-Date: Fri, 24 Oct 2025 15:03:20 +0530
-Message-Id: <20251024-pmic_arb_v8-v3-0-cad8d6a2cbc0@oss.qualcomm.com>
+Date: Fri, 24 Oct 2025 15:03:21 +0530
+Subject: [PATCH v3 1/3] dt-bindings: spmi: split out common QCOM SPMI PMIC
+ arbiter properties
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,10 +92,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOBH+2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
- vPSU3UzU4B8JSMDI1NDAyNj3YLczOT4xKKk+DILXSMzE3OLJBNjI7PURCWgjoKi1LTMCrBp0bG
- 1tQDcVhZVXQAAAA==
-X-Change-ID: 20251023-pmic_arb_v8-26478b4326ea
+Message-Id: <20251024-pmic_arb_v8-v3-1-cad8d6a2cbc0@oss.qualcomm.com>
+References: <20251024-pmic_arb_v8-v3-0-cad8d6a2cbc0@oss.qualcomm.com>
+In-Reply-To: <20251024-pmic_arb_v8-v3-0-cad8d6a2cbc0@oss.qualcomm.com>
 To: Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
@@ -104,94 +103,182 @@ Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
         aiqun.yu@oss.qualcomm.com, kamal.wadhwa@oss.qualcomm.com,
-        jingyi.wang@oss.qualcomm.com,
-        Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+        jingyi.wang@oss.qualcomm.com
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761298404; l=2523;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761298404; l=4364;
  i=jishnu.prakash@oss.qualcomm.com; s=20251014; h=from:subject:message-id;
- bh=1F/bOC1u+dd7k85JkzWqGYTh8WfFn5USpjGuw1f3Yo8=;
- b=G91hu3EShMpUYTRa45Ca8aSQHbKjcEmYrYh91gkR6ipK/bVmfcCj1qoN01SgCIhoyaQqIRUEc
- P+pqdZEwfV/Am3ozdBsRpUeX52OD8Yyd9nU/ziDEZtAHBxWa1miDpNL
+ bh=sLfc6/pV30D5lq+QPBhYvo6G/wXhYAzok8S7hahT+7E=;
+ b=OOLipLvIqkKmby+XtgeiARJi6Q7hKTpNM25DoMrZf+1ImHEB9gLCCWLjrEN/4eub69Fcm3ndG
+ QwZwUkOhoXvB13EsfFcmh3e5beeU3+/8jYkxnNU886bDrXj+HuEE7w5
 X-Developer-Key: i=jishnu.prakash@oss.qualcomm.com; a=ed25519;
  pk=g89pXdLVwRjdTeQ+uX1QzvBO346E3hQAc1N7fcTXgmk=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxOCBTYWx0ZWRfX7QHDulVEv8gz
- bITSUp0L5B4sDeu/wFmhfsrTSs6mIkoa/yWkZYZEBbO/42XXVNCfFZ3AsFr+qQ4I8KJpk1B7Edq
- b11DbLdGKvmOxHVNq2hms+WLJJNDebd2uKOLH8xf3M6igm/ohtb880SWFYi1Tu3+ThPjx/h50NZ
- +HrORJCPoxuzY/SwTjdZ1Eork5oNi0w5V9hUO0enEegpZI5K2WKncCWPrVyxnXiZDX7bJBBxVgB
- JqINsPVqae1W+DkmdWqn8hdaA47ve83zBHtVMzpGRiIqwAIw92YRkSCSj77QbCCMWV7jLRbPmZf
- ImJKonHBmugF2V+2rWCJzeapdknkTD4nlJMcb4TA4A+D+IyI1mVIiv1IQhALYP+Crk+c9F23s75
- Oe22qgEBoHTRgsMzlTWOHW0KxwtSRQ==
-X-Authority-Analysis: v=2.4 cv=G4UR0tk5 c=1 sm=1 tr=0 ts=68fb47ea cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMCBTYWx0ZWRfX8COuLqDU0ySv
+ R28s7ddbQa/VT/H9RchcONt86K+k6sd2P3COsfbu4lDdJFqfonmwSaXIGlcoPUeKYZPkMUHpFGv
+ +PQMOVnx4W66f9lM7zlNrvMTssEdpsm/raafa0SCRT6cCsNc2DNrvGOGjJgUJIQO6/nQwalqp+p
+ O54Tj9+GsrNmSm8m4T84KpwDetab0ekX+t3fJD6ykwfdIMmC3X760MGBT+V+If5dLBCiDR13Je4
+ /Q+XZCWSbhc0W5DzZrCDaNXNoLUwdvadZXXG3VBzVZFdFYmW/iawHlob3f02wXRM2MgQpN3+rXL
+ jm+4EMemtWqjnGcvr9bokgW7JKqoKuVFO3mhz3tW3kaftjZYTmQS5hqYWPmRaKAKfO3i4yIf9z4
+ pcdle8Pd9ICd3TQJfY9rN35zxu7beA==
+X-Proofpoint-GUID: k5bGFETTHQBp5fHDTLdvAjL_4oF_TI6Y
+X-Authority-Analysis: v=2.4 cv=Up1u9uwB c=1 sm=1 tr=0 ts=68fb47ed cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
  a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=I5knT2SEtGqtceWXJqwA:9 a=QEXdDO2ut3YA:10
- a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-GUID: hE2kJxirYfSX8Y9mGBu7_FbhM_F-G3HW
-X-Proofpoint-ORIG-GUID: hE2kJxirYfSX8Y9mGBu7_FbhM_F-G3HW
+ a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=w24Q35eUI-_Cj95TU7gA:9 a=QEXdDO2ut3YA:10
+ a=OpyuDcXvxspvyRM73sMx:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-ORIG-GUID: k5bGFETTHQBp5fHDTLdvAjL_4oF_TI6Y
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-24_01,2025-10-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 clxscore=1015
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510180018
+ lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180000
 
-This patch series updates the SPMI dt-bindings and driver to add
-support for PMIC arbiter v8, targeting Qualcomm SoCs Glymur and
-Kaanapali.
-
-SPMI PMIC Arbiter version 8 builds upon version 7 with support for
-up to four SPMI buses.  To achieve this, the register map was
-slightly rearranged.
-
-Device tree changes are not included in this series and will be
-posted separately.
+Split out the common SPMI PMIC arbiter properties for QCOM devices into a
+separate file so that it can be included as a reference for devices
+using them. This will be needed for the upcoming PMIC v8 arbiter
+support patch, as the v8 arbiter also uses these common properties.
 
 Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
 ---
-Changes in v3:
-- Split out some common DT properties into separate binding file and updated
-  existing files to reference the common file for properties moved out.
-- Also updated Glymur binding file to reference above common properties.
-- Kept David Collins alone as maintainer for new binding files added.
-- Squashed kaanapali compatible change shared as separate patch earlier:
-  (https://lore.kernel.org/all/20250924-knp-spmi-binding-v1-1-b4ace3f7a838@oss.qualcomm.com/)
-  into Glymur binding patch.
-- Corrected comment formatting in drivers/spmi/spmi-pmic-arb.c to fix a
-  kernel bot warning.
-- Updated definitions of spec_to_hwirq() and hwirq_to_*() macros in same file
-  to fix other build errors reported by kernel test bot and removed a comment
-  made irrelevant by this change.
-- Link to v2: https://lore.kernel.org/all/20250924-glymur-spmi-v8-v2-0-202fc7a66a97@oss.qualcomm.com/
+ .../bindings/spmi/qcom,spmi-pmic-arb-common.yaml   | 35 ++++++++++++++++++++++
+ .../bindings/spmi/qcom,spmi-pmic-arb.yaml          | 17 +----------
+ .../bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml | 21 +++----------
+ 3 files changed, 40 insertions(+), 33 deletions(-)
 
-Changes in v2:
-- Split into two series: SPMI (this series) and PINCTRL.
-- Included the DT bindings in this series, previously posted separately.
-- Fixed kernel robot reported issue by including bitfields.h.
-- Link to v1: https://lore.kernel.org/all/20250920-glymur-spmi-v8-gpio-driver-v1-0-23df93b7818a@oss.qualcomm.com/
+diff --git a/Documentation/devicetree/bindings/spmi/qcom,spmi-pmic-arb-common.yaml b/Documentation/devicetree/bindings/spmi/qcom,spmi-pmic-arb-common.yaml
+new file mode 100644
+index 000000000000..8c38ed145e74
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spmi/qcom,spmi-pmic-arb-common.yaml
+@@ -0,0 +1,35 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/spmi/qcom,spmi-pmic-arb-common.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Technologies, Inc. SPMI Controller (common)
++
++maintainers:
++  - David Collins <david.collins@oss.qualcomm.com>
++
++description: |
++  This defines some common properties used to define Qualcomm SPMI controllers
++  for PMIC arbiter.
++
++properties:
++  qcom,ee:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 0
++    maximum: 5
++    description:
++      indicates the active Execution Environment identifier
++
++  qcom,channel:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 0
++    maximum: 5
++    description:
++      which of the PMIC Arb provided channels to use for accesses
++
++required:
++  - qcom,ee
++  - qcom,channel
++
++additionalProperties: true
+diff --git a/Documentation/devicetree/bindings/spmi/qcom,spmi-pmic-arb.yaml b/Documentation/devicetree/bindings/spmi/qcom,spmi-pmic-arb.yaml
+index 51daf1b847a9..d0c683dd5284 100644
+--- a/Documentation/devicetree/bindings/spmi/qcom,spmi-pmic-arb.yaml
++++ b/Documentation/devicetree/bindings/spmi/qcom,spmi-pmic-arb.yaml
+@@ -19,6 +19,7 @@ description: |
+ 
+ allOf:
+   - $ref: spmi.yaml
++  - $ref: qcom,spmi-pmic-arb-common.yaml
+ 
+ properties:
+   compatible:
+@@ -71,20 +72,6 @@ properties:
+ 
+   '#size-cells': true
+ 
+-  qcom,ee:
+-    $ref: /schemas/types.yaml#/definitions/uint32
+-    minimum: 0
+-    maximum: 5
+-    description: >
+-      indicates the active Execution Environment identifier
+-
+-  qcom,channel:
+-    $ref: /schemas/types.yaml#/definitions/uint32
+-    minimum: 0
+-    maximum: 5
+-    description: >
+-      which of the PMIC Arb provided channels to use for accesses
+-
+   qcom,bus-id:
+     $ref: /schemas/types.yaml#/definitions/uint32
+     minimum: 0
+@@ -97,8 +84,6 @@ properties:
+ required:
+   - compatible
+   - reg-names
+-  - qcom,ee
+-  - qcom,channel
+ 
+ unevaluatedProperties: false
+ 
+diff --git a/Documentation/devicetree/bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml b/Documentation/devicetree/bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml
+index 7c3cc20a80d6..08369fdd2161 100644
+--- a/Documentation/devicetree/bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml
++++ b/Documentation/devicetree/bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml
+@@ -17,6 +17,9 @@ description: |
+   The PMIC Arbiter can also act as an interrupt controller, providing interrupts
+   to slave devices.
+ 
++allOf:
++  - $ref: qcom,spmi-pmic-arb-common.yaml
++
+ properties:
+   compatible:
+     oneOf:
+@@ -45,20 +48,6 @@ properties:
+   '#size-cells':
+     const: 2
+ 
+-  qcom,ee:
+-    $ref: /schemas/types.yaml#/definitions/uint32
+-    minimum: 0
+-    maximum: 5
+-    description: >
+-      indicates the active Execution Environment identifier
+-
+-  qcom,channel:
+-    $ref: /schemas/types.yaml#/definitions/uint32
+-    minimum: 0
+-    maximum: 5
+-    description: >
+-      which of the PMIC Arb provided channels to use for accesses
+-
+ patternProperties:
+   "^spmi@[a-f0-9]+$":
+     type: object
+@@ -96,10 +85,8 @@ patternProperties:
+ required:
+   - compatible
+   - reg-names
+-  - qcom,ee
+-  - qcom,channel
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
 
----
-David Collins (1):
-      spmi: spmi-pmic-arb: add support for PMIC arbiter v8
-
-Jishnu Prakash (2):
-      dt-bindings: spmi: split out common QCOM SPMI PMIC arbiter properties
-      dt-bindings: spmi: add support for glymur-spmi-pmic-arb (arbiter v8)
-
- .../bindings/spmi/qcom,glymur-spmi-pmic-arb.yaml   | 150 ++++++++++
- .../bindings/spmi/qcom,spmi-pmic-arb-common.yaml   |  35 +++
- .../bindings/spmi/qcom,spmi-pmic-arb.yaml          |  17 +-
- .../bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml |  21 +-
- drivers/spmi/spmi-pmic-arb.c                       | 324 +++++++++++++++++++--
- 5 files changed, 484 insertions(+), 63 deletions(-)
----
-base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
-change-id: 20251023-pmic_arb_v8-26478b4326ea
-
-Best regards,
 -- 
-Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+2.25.1
 
 
