@@ -1,93 +1,92 @@
-Return-Path: <linux-kernel+bounces-868511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A54C055EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:35:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF31C055F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A44311A087C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:35:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC0394FDCD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C48D30AD09;
-	Fri, 24 Oct 2025 09:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F7930ACFD;
+	Fri, 24 Oct 2025 09:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SnNmkUOu"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VlHyK+em"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE9E303A0A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F2A307AEE
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761298520; cv=none; b=dNKeSvRw0iOK3dwcPOmHMkE7AusPdhb80VWiGIZ8p1GaX1YKnK2WlxzBzNuDlrKumOXNlY6kXdeMUnNfjFjcPAZG0sGgjlondLcOlxsybrdn0cKArw+FCW/OJ39pgc7LGp07rS+oRpqGwM7n6jcD5+F55hodcg0GE3MEzIm3BIo=
+	t=1761298548; cv=none; b=atcLORewjEx8MssMk50foZkXyDaWb3j9Bkq978OpMDib6Tl3ogOSt5xR86ygzMxipqCTO7HQxNOdWvcIfH3kHOPFrDSQ58BbQTzfg5EMQmLZnIi/CBYRgn8NzxcY5HZ+uN2Z/8x3gtKGV6/vpomG8YJf2jN/5g38w3USUsA2ZBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761298520; c=relaxed/simple;
-	bh=GlUefLpUxaf97bsCrf8Uoodrh4iCQAJxJMfBklTXkSM=;
+	s=arc-20240116; t=1761298548; c=relaxed/simple;
+	bh=YF/Tuce1/PBDE/RLif9qoc3I7KnbC+rz2XO3hZz7PWA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eI5l7Asaz+M9vZLnqikHq8MnITiyPEVAwWliQLnebmHf8N+D4kBBmtBj1H1eBeb9iR0AFB8sFLhTFRT5J175Oneyk86/dNlWlfv37KbnJeFNhpirNQ+nLm4wOLmRwhAWvAXCu3IyKK80zKEuTOqPQfif1Zi4rQJI7JAiASJBajA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SnNmkUOu; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-471131d6121so14286685e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:35:17 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IuOstfQ6WzeRncnrEAiiJ4MW2GwGW7SnXoxGK47Oo+9MfSRYrsGSPy61jen+AsaAfSppaGx/WFpNUi39Aksda2o1Bz3Q9NVCDvb6o4G+JwvAoDzg6NnJdBpyn708TrIOy3d2aBWpHOlYF8hIKINgYQQlLsTZ+Vsq4TSEv3/fL/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VlHyK+em; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-471131d6121so14290515e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:35:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761298516; x=1761903316; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761298544; x=1761903344; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JbHQ9Yll+18kGv8Q4G1mY89TauTgNbmP1REuXJUqmFg=;
-        b=SnNmkUOu3Jwr33LD25oYRQBeuU1XLHTJCAD4fRQZNxT2UQ19f9hQAwgPO4x5PVs8qw
-         24ISYGOIi0DIo3md4LhHjp39UeOcPCexf4VPE9Nd2Jaei6DO0GkHNVHJWCTX/wwkKLTc
-         soaxSSwoshEE5d1+iR2JPhtd64CTCe+cbgJm1ogqZibcD5GG8tn0iziL4YzeTnf4YMY7
-         zZr0u7iaqi5ZtJsAyV3ESsWd0fxRduraC6Si6RAIXeALe+fzIFU2M2tN2dggEW4jP8ee
-         oQSjMq7i+73C/tghdik81JeMjLGAkIrVWwzSHDytUBkeZq4dy0PIuQ3erNVbDx16oUqW
-         vQnA==
+        bh=AB/k9qen5oHRYzxzAm46DDJjbnbfjworTJj23CLgdeo=;
+        b=VlHyK+emmwMfvapuuSYMFXJVIs6lLgnzXet7DP0pcMYXKhEY1qILsP9XEQ+BWjy984
+         nCDHPqF/vAaJxuMCAvuyRKKy829PTN71Hwuz5JKjz6zaLMqk5Cdshxb4rrUTbQ/1RGu4
+         bZFCa5gNhHGW5iGvkd88lXsJbwkhnIDii9cE10hBk/DEb3CapDvWYFug4jQdWZbpCa2C
+         t0GZnSc3LFhPFI+sesvjPXpUkjh8cr8inHd0bHt7UphV/IqOjBK6Qa0TGgoZOaI9mpYU
+         Ng4BZ6kxfdTo1c+TDOidZsBol6XWXvF5JN6qaG616NrTK8b+d1cflFmG9NWeFztV28io
+         nxEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761298516; x=1761903316;
+        d=1e100.net; s=20230601; t=1761298544; x=1761903344;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JbHQ9Yll+18kGv8Q4G1mY89TauTgNbmP1REuXJUqmFg=;
-        b=RGTmGB4AzhY/UzklJjwZZ1C1VsU8KJto2DWb0tRVbyqpHY5GRUjX2TOC1MhC6L/fAQ
-         uey92s7plra4QVbNocwY7Nh0U97mGq0hKrNsclqgxZ3nksYwZjhvbP+1ncAOJL9Xrmt4
-         l/AssAQ9hVhCuGlvORiGvE+kCAMjaqhN72LYDv/ipJpkePAJast4HDCoyR9xb79Fu8Up
-         X2YkJPoKqMZxtu1N99Jk64SCuyjQ3eCmuGSnifBYLmNu5+qIRW10yQ4tiyfuXERgw0tl
-         doufXUwf07yoZInLpKPy/ZbZteGoC1llwks+kYhmFa429s3bNSvmIZorQLGD294shKao
-         PTFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOYGoQSUmIrzbEjGIkNLPa9fu3mYGY2gDHnzl1Y0KCi2JISAkKHJAXWXvCM6wGScVRjbSKmNO+MujLyN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHunAGlDc6iycpF6fA8K29ejWtSeJtspIj0yHKbG2gGutHNLn3
-	WTfUkz2vDQG1AKGfhTw10wVrZjMbpgJEE2QiVAYXPNc+Gz3InB2gLRxRkNp5JY3aLrg=
-X-Gm-Gg: ASbGncsmLYz20AeVGqVtuQ28onOZP7Tew38EV9zrjHsV2Z6zJT5sZFdCJJymqcuoazK
-	2v1lDxDyhDBbKvwNpKrJ3seKSpDGaMqBwzQUmnXZ7896RjJdITunbWonK0dIKGGNOffdraBI4yE
-	a9PqNekPEf75ukjSMJjmNhbzS9l7CLaz4XMZdaWHsiyXeCOroSKvSOxlMpfvSoDjTxQmLO+fl/i
-	LWPJEPLLUdj0UpVjNjxlkcN6LQmPpSVcTnPLve50+ARdLWXs6AuAWYAaCeQK92MOmZABtxeNE0I
-	nQAnaE/4Bwa9RnQHOrFwsC6VM+Q8+nyqthYbM8n3oq9q1J9lKNTTOZBj9VPBmxUx6rlFdpS0+Wx
-	7izYTt6CNAHUds/P1SYdXGmwA1OshCo314lmXe8LWJ1WaY+Ys9w/PitmhYYCKoWgWnmsTviLOUr
-	BYA48=
-X-Google-Smtp-Source: AGHT+IEVeOtivGKfs511LEFtRbNEpqMJ8MKLLCrxeJpIhAwP+fpOLm4RUScJ1XdRje4QVNuYGFJqOw==
-X-Received: by 2002:a05:600c:3555:b0:470:fe3c:a3b7 with SMTP id 5b1f17b1804b1-4711786d42dmr203430315e9.5.1761298516428;
-        Fri, 24 Oct 2025 02:35:16 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475cae9253bsm78998185e9.1.2025.10.24.02.35.15
+        bh=AB/k9qen5oHRYzxzAm46DDJjbnbfjworTJj23CLgdeo=;
+        b=MxDzUITDutzA4M05Ema54te4Z6vdCPtv0COdMjr8BJ2HVAXFbXboYF0q6KoUyw7aSD
+         5L7ZnMqMJQzhtFKYbGNrlNr0o8rXfarFsAAEcEM7TNI5kuXMHsmQsNd7o4+YVuqkJUzy
+         0QAClsFIBnaD6JZYZDLyYSE4K5ScRzDLhWEBmyvGaNb3XaR0cu+fJtFWYB59IE0J8kSV
+         YxkDtDmgsa7solvxXCAZ+yUeq1JmwJYJ3aVEiOGQS2YKIa0O7mgbrUyocwnVzL+sFNMk
+         dgwIkLeQXK16UakdWYhrD6cyedInXDL5bkWqyCDa+sjWsSzyjyY4GM94enzVGdmiFz0S
+         6Udw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3cB1rLOIlKLA+uCdVpn2OgbEsocke67XZl7NofDO7THvtwhfg6qp0DDyF3D4dp2eSnqlEuktIoLbdZkY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi6bnnXWyDl00RFvBSoyJlIJLKx2i05pQc3xpFSf7tF199cE/z
+	ksXOHXXe+0Vo+grhtQ10v9ZMMTSmaP1g56OLW14KK/eNb/R/Lnc9NiSaLdnX3FEtYCI=
+X-Gm-Gg: ASbGncuppjh/akxi4LfdutHJhfo497iU5+m5xx0z+16zsxQaAD1S4j6zNlXeI37Nwzd
+	O3CUlVOCpo7+hVYcyYPPP0S0PHy5Li5DkB2i/H01/Nhj1erDb2WzUogLzJxTj2+a0GymG9UtFFD
+	l2JkKwJjJuxOckfAN+7Tlv6Yuxomx4fofhI8WCKXFxgPJIXUAHl4ldIgR8M7PHbAXNZNELBJXcW
+	okI9XvtXwA6vCgQ9e9hS2uPeZemaw6457qasIX7Xk6PSZR8i7HTJiNz5fq3lo6l14YBoAG30D/x
+	I4+lEkFlnSM+pB+6SSZf2RM7IlKCFrg0e8tx8GPcs2WUBospuP8xQUEUZbx8XPXYGuDCmQLHO23
+	H/MPLEBAnshD+TghYGSDIqX3TA++Sy0f6d8dl7ZKaBOcNTEZeLE+0YHjUQB6UxCWsyWqvM+rzSi
+	+1OFwbxJQ=
+X-Google-Smtp-Source: AGHT+IHRT52qQLwpA4jCp3MR4MfEo1yVX3RPrxX/jF6DxckTinvzFxcrMGMBTx8wXfnTIC9O4HZnjA==
+X-Received: by 2002:a05:600c:820f:b0:46f:b42e:e365 with SMTP id 5b1f17b1804b1-4711791dce8mr207186725e9.39.1761298544170;
+        Fri, 24 Oct 2025 02:35:44 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496afd459sm84581855e9.1.2025.10.24.02.35.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 02:35:16 -0700 (PDT)
-Date: Fri, 24 Oct 2025 11:35:14 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Oleg Nesterov <oleg@redhat.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] printk_legacy_map: use LD_WAIT_CONFIG instead of
- LD_WAIT_SLEEP
-Message-ID: <aPtIUq7hf4R5-qfF@pathway.suse.cz>
-References: <20251022154115.GA22400@redhat.com>
- <20251023103234.GA27415@redhat.com>
- <20251023142655.FvZkeSa-@linutronix.de>
- <87wm4lbqt2.fsf@jogness.linutronix.de>
- <20251023151112.goqBFQcM@linutronix.de>
- <20251023154657.GD26461@redhat.com>
- <20251023191442.Uu0mD_Nq@linutronix.de>
+        Fri, 24 Oct 2025 02:35:42 -0700 (PDT)
+Date: Fri, 24 Oct 2025 12:35:40 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Xilin Wu <sophon@radxa.com>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v6 2/3] phy: qcom: qmp-combo: get the USB3 & DisplayPort
+ lanes mapping from DT
+Message-ID: <urc62zk2xlr2rka2nyyjsovql734kuzzphyh3hjnssivgswgbh@sjt4u7wumwlo>
+References: <20251013-topic-x1e80100-hdmi-v6-0-3a9c8f7506d6@linaro.org>
+ <20251013-topic-x1e80100-hdmi-v6-2-3a9c8f7506d6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,73 +95,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251023191442.Uu0mD_Nq@linutronix.de>
+In-Reply-To: <20251013-topic-x1e80100-hdmi-v6-2-3a9c8f7506d6@linaro.org>
 
-On Thu 2025-10-23 21:14:42, Sebastian Andrzej Siewior wrote:
-> On 2025-10-23 17:46:58 [+0200], Oleg Nesterov wrote:
-> > Again, quite possibly I am wrong. please see my reply in another thread,
-> > https://lore.kernel.org/all/20251023152942.GC26461@redhat.com/
-> > 
-> > On 10/23, Sebastian Andrzej Siewior wrote:
-> > >
-> > > This does not matter. My point is that there no need for this ifdefery.
-> > 
-> > I disagree. Rightly or not. To me this ifdefery in printk.c make the intent
-> > more clear.
-> > 
-> > I am still thinking about the possible cleanup of the current usage of
-> > DEFINE_WAIT_OVERRIDE_MAP(), but I think that, whatever we do, this cleanup
-> > should take CONFIG_RT into account.
+On 25-10-13 10:55:45, Neil Armstrong wrote:
+> The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
+> of a combo glue to route either lanes to the 4 shared physical lanes.
 > 
-> Right. Please just do s/SLEEP/CONFIG as discussed. Please leave
-> PROVE_RAW_LOCK_NESTING out of it while arguing why this change is
-> correct.
+> The routing of the lanes can be:
+> - 2 DP + 2 USB3
+> - 4 DP
+> - 2 USB3
+> 
+> Get the lanes mapping from DT and stop registering the USB-C
+> muxes in favor of a static mode and orientation detemined
+> by the lanes mapping.
+> 
+> This allows supporting boards with direct connection of USB3 and
+> DisplayPort lanes to the QMP Combo PHY lanes, not using the
+> USB-C Altmode feature.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Tested-by: Xilin Wu <sophon@radxa.com> # qcs6490-radxa-dragon-q6a
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-It is clear that the commit message and the comment above the mapping
-caused some confusion. I thought about better wording.
-
-I wanted to be as clear as possible, But the problem is that everyone
-has different background and might understand the same term
-differently. Also I am not a native speaker.
-
-
-/*
- * Some legacy console drivers might violate raw_spinlock/spinlock nesting
- * rules when printk() was called under a raw_spinlock and the driver used
- * a spinlock. It is not a real problem because the legacy drivers should
- * never be called directly from printk() in PREEMPT_RT.
- *
- * This map is used to pretend that printk() was called under a normal spinlock
- * to hide the above described locking violation. It still allows to catch
- * other problems, for example, possible ABBA deadlocks or sleeping locks.
- *
- * The mapping is not used in PREEMPT_RT which allows to catch bugs when
- * the legacy console driver would get called from an atomic context by mistake.
- */
-
-
-And the commit message might be:
-
-<commit_message>
-printk_legacy_map: use LD_WAIT_CONFIG instead of LD_WAIT_SLEEP
-
-printk_legacy_map is used to hide possible violations of
-raw_spinlock/spinlock nesting when printk() calls legacy console
-drivers directly. It is not a real problem in !PREEMPT_RT mode and
-the problematic code path should never be called in PREEMPT_RT mode.
-
-However, LD_WAIT_SLEEP is not exactly right. It fools lockdep as if it
-is fine to acquire a sleeping lock.
-
-Change DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map) to use LD_WAIT_CONFIG.
-
-Also, update the comment to better describe the purpose of the mapping.
-</commit_message>
-
-
-Is this better and acceptable, please?
-If not then please provide alternatives ;-)
-
-Best Regards,
-Petr
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
