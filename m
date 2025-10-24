@@ -1,115 +1,127 @@
-Return-Path: <linux-kernel+bounces-869630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8DE3C085B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 01:56:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 252DAC085BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 01:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BAD93B7FBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:56:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A1B884E58E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EEB30E848;
-	Fri, 24 Oct 2025 23:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAD030F533;
+	Fri, 24 Oct 2025 23:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AmC9NdBi"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HoVhBWG+"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CCB2ED14E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 23:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857042FB612
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 23:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761350195; cv=none; b=rqQbb+Cask+SLzWTtevzn3FRr2/nYdVEj0pvANex3HRkYCoTTtocbOyBBE8NwiQQTpX8QJXoaEEVvO4v+uoPknkdI5onmSiT+4iyDlEpTtGmbivKM5iPRL9CHjnHYxM6hIPdJyiVJMqpDg0DfpweEVRSiYSNxHxscFqQWhoBgJY=
+	t=1761350253; cv=none; b=CfBwHQQMV8hd//Wr+1lJLM1D4HXfjlMGcCrFj9uabgaF3y4wWIdVAyehcCM0u7OcwkTmAZ9fIFWjFxDCECMcI0Awt8jzZ5sqcGZ6WfLdKhLE48uyEox9bMXzvOY0Y7DZnt5o/aImK8G7SORbvMGlLRTqFoCrlZT/3rE+Q0wMVP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761350195; c=relaxed/simple;
-	bh=I9+wesjXwdYP5crXHyVvJlapOGnpLDggg324REWnDlU=;
+	s=arc-20240116; t=1761350253; c=relaxed/simple;
+	bh=dNKLlMrwd1/HZexcmyJUATq+vFaKLMO+fNIoDoZR3Os=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l1/X2XJjlIyVM3J7NS9SqXeyQOGFCU/GBTXRAgZ3v6ZmuJh+7BaUUWtdMGezrSRQriFV3+sc5QirLRSIMn+e0MCfB4YNtzIHlAFW8hnzCcZnPWfMmK9FGtX87e8JTxgGw50T6wLEAI50RcGC3uvSZHTUW6Yge3VA6SJ1X75J1t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AmC9NdBi; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-63c21467e5bso4485142a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:56:32 -0700 (PDT)
+	 To:Cc:Content-Type; b=rFx7DfcEGC1c8ga9Y/O4IlZObgNsvAdDFz94exujdVm4msX+VipqP7aKR1/WLIs0QZLv1N4PFwU1bAGeeW92X81FDD4vbh1mWyKlElu98/LHYixTT4bh0wVZr+8qml1G/52qIopRN8xse46d6vgCkJFHApvY5Q70443TG07Iiw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HoVhBWG+; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so1680541f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:57:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1761350191; x=1761954991; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=K7c0ATkCCZkZUA6CJerpy4FrdLqyWgahzYfyRj8pR78=;
-        b=AmC9NdBimoBc7nsJOFa8iBILKo74ictpACQAUSkfBDyrMyKcAyQgsWtiKEY47CXf5/
-         gyUq87ri3xwqBq/iTEmNqHhQqy9yRrZtDpUKj7YW1BblFCI6Oa5KsR2+9m84MwoRTlmQ
-         +cST9b8apL7P54ilBJVMDvD6IasA3KomCs8/s=
+        d=gmail.com; s=20230601; t=1761350250; x=1761955050; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dNKLlMrwd1/HZexcmyJUATq+vFaKLMO+fNIoDoZR3Os=;
+        b=HoVhBWG+RL22HhNsNbkwL1itfboESzkPwb+wNLo5TTZKyF4cMd2WBZGBokGp34aiSI
+         pWbDx325z8KfQ5S44WBp2ZW3ab4dF9cTTSHwwg5Dayb3jbIv0tPoB7YAccMnG+wRJ79e
+         PZiP0vQ//ronUNsxz1jsfpCn7GrWnsGZh7ba0GDuL+f7qgJnH17/vGLbI5sE9jwxgmPW
+         BBCerzau29H0vZAbfdWn9HVyWtl8ExNAC5KJMuLEZD78+cfjeH5xhufMDOSPaA1OVPwG
+         y6QQ9UXkCpP3gThKSPDzmv+M7BKKc2qG1Q2k+ZMdqJeqqm1H64R/GLXD1WUA6vEJadQ3
+         mt2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761350191; x=1761954991;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K7c0ATkCCZkZUA6CJerpy4FrdLqyWgahzYfyRj8pR78=;
-        b=fvak9g75IiWwQh1Wuel3Whz0OGM4QD1L1USRlKNUAqkjy798EFYr3zu129QrKm/EA8
-         tyPJ7PZ8DyCZXFVeKcQOhGfuMzAghN8iLqAdy9dsBEoLyJaY/fzVsYf+eTGeUnTJOXh1
-         OtHEcqGwEwJCbQsp24zKz9lr13q1dzxy/WV5aISgYX6f1s2VItXlU/f9LT7wR6TjWsXM
-         /N1HsUMR+dNmeRw6VnfGebetDMFDIvPXSa84xXs5A8Z+C8CS71FW3DLHCwvo7R4NfR4p
-         S0i1WEhScM39K6b7yH205npZ5HUzGzWNPkRFw5aQGjfObXMEg/TRhwDpUNyQTkxRwgdn
-         5BBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVm8LGhgWRfX57ItUhpuagR2GQMVNKTnwK4GePPPVZXiqpqsT9uTDrGDo5kb8p8Oedemyy7klBD5S/j5X8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1NbTuK9McBfONbvwc2/fvyIX/IUmmW1iFqoBo8K2fbJ9/rC4D
-	HEYsq9KotHJfNV7K7R2/Budqu9iZViWxlvzY6+v4rkvFsixaPW5tETEwdKhu1jBBgsZiShYwujq
-	NrOdv4uw=
-X-Gm-Gg: ASbGnctl3J/kypg/iA5Xw2kZtyZmVJnr09Ea/4uOZY7nnzRGZ2HnRjMlmPH+QnAtPlM
-	bNpmv3ZIfF6pqf81D8klsf+hN9ceZDUodwt/ttgMXScIxPvGSGgWwPYv8C97H/vgtlNRTPLihS8
-	E04KFnv6oQaQkiTCrAjDJar3KUql1WioYE7r07dy3EsyXDakZK2cvPJF4V73TDpDcRsfOaIYJVV
-	YWzOrFfDUgWXiWPhXNCckIOlzYcG+XWqjc5QHF/pPzjIuy/hMyolTWsq8L8+9N8aYdltBZV/i96
-	63wvlSzrNSqoWYlNXMs4irAHC2kMnf+6yYugtmbcYMkbjGGX/RJZ2MZKkA6D9zxds9Abr4AjMSC
-	POJam6z3PXhyfUS4B6BxpqEyZ94JBJehEw2j0Nj1M4iOjAWkLEBJNn9am8TaOg+NfMC39fCDYNW
-	SYFg2PRVCpRH0r/2F7W36hFlHf/He3SSu+xWkuTEDopYbeJB9ligigJH0Jj949
-X-Google-Smtp-Source: AGHT+IFPpR4ieqQffR7uCQrzQGMcuXpbxILTh/j0/Ve35cshakOJeZK4SGm8v6o96XpWxjafawvlzQ==
-X-Received: by 2002:a05:6402:13d4:b0:639:e712:cd6c with SMTP id 4fb4d7f45d1cf-63c1f641d39mr28317127a12.13.1761350191164;
-        Fri, 24 Oct 2025 16:56:31 -0700 (PDT)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e7efd0bc5sm384976a12.32.2025.10.24.16.56.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 16:56:30 -0700 (PDT)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b6d5b756284so501826466b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:56:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUj9sFO4T9sHS1Sc2vAkgb9pTvp/aWwBUbQ+AfMi1gd+bkAFb2vUgAQlNBJ05abLzLiyqFYpkUuouCWA5Y=@vger.kernel.org
-X-Received: by 2002:a17:907:9481:b0:b6d:7231:3276 with SMTP id
- a640c23a62f3a-b6d723137b3mr403583266b.19.1761350188531; Fri, 24 Oct 2025
- 16:56:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761350250; x=1761955050;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dNKLlMrwd1/HZexcmyJUATq+vFaKLMO+fNIoDoZR3Os=;
+        b=Ocnn9I5WTXrYuenDHUpJqPRg5gqKk7MgtSKTlyGMg84rfd207aFH/t5np+osZLhhRF
+         p+K2DCSoOknCChOQ5B49eyp1JtSoUYHs3hnXalOEuhAq1EDcLtIdke+seesZ6Y+NyCWL
+         m0PSHhs7lNnpskdVs4OEb0bzsiEi/+NbIDrJWUqAOT6rLJEVwbTUvRWS9vehozzdrueK
+         gYHqvx/u4QBcxxmspxU8wxQ9nHYuf+/btcOnKco+L9NxysFHQf5sEu3rmEICVREaD1bg
+         JCwE8wQyOk3/st23i0yLnu/FI1G153KEaJbXn9MsuM8e5+a4GmgUyqPgwcL7OuSGG6s1
+         gWrg==
+X-Forwarded-Encrypted: i=1; AJvYcCUE6rLXjVEWNS+vfStZf92sHLWBQ4o6Ik0QRNq/JJohMGsS7CYp0Y2UcMLv7DEwBsya56ZILXXvXoqiKwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqtn5sgfI+Kl9Ag8p9TpTTuXnZNksPap5AIxl97Bcpn9237R1Q
+	KYxILOeVQjUQ04AMdFQ8e3MaqykqgJnA5wh2RWJLkWdQIfgqZpBiLHUtfSyMvhHZKLaiB/m7/6t
+	e92n5LnAtiLQnboK/uMiUDI1w4DKSbS4=
+X-Gm-Gg: ASbGncsRklOalnYO3qpTf3Pr+eKMW926DEJG/S+eRqAYvNtex5bys8Q+4fvpL63Opmz
+	r1SisSa9gdVYabyhx81j/qwNLEe3Sz+d7nr3guhHspfcUBbRIdL5wclprUOgLtmXuwkCVtjH7Dq
+	E/9AT66uFRXsz9tcgUicNSb8FUIGK+N4C2JDA09eZnONv8MVvq99t0brDIPaSw2Y46/3JX4lprH
+	3SPJ4x4PEqp6gBXoeKzWO8Vy9al4+9PJ4+fldrF3UH+QridDcjRbi9iUUxXZIq8VOKdJit9NJeB
+	P0VwmTKhzX5JEjTjetchb6bg96FI
+X-Google-Smtp-Source: AGHT+IF8HoLxCsbxFn0Q05QHNEFaH5LN/KgcQUuwi/NFCX+hm+nzFT1ZjELINl1AgyfVOFTyiPf1ZTpt2LmAPKbOJ38=
+X-Received: by 2002:a5d:5f55:0:b0:427:5ed:296d with SMTP id
+ ffacd0b85a97d-42990712615mr3163617f8f.28.1761350249591; Fri, 24 Oct 2025
+ 16:57:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015091935.2977229-1-andriy.shevchenko@linux.intel.com>
- <aPYKpJ4MdjlGeILa@ashevche-desk.local> <20251020104934.GQ3419281@noisy.programming.kicks-ass.net>
- <20251024211901.GC2068@quark>
-In-Reply-To: <20251024211901.GC2068@quark>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 24 Oct 2025 16:56:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wibTpMh-UZV83Gvn0-+vkFQ6bF735v=8fFSJhxQWqHT6Q@mail.gmail.com>
-X-Gm-Features: AWmQ_blIYWKp4ZzGql30b3lNkRizUrL6QNoIR_6U2_V3YJhFKrJf9JUkjU16zcY
-Message-ID: <CAHk-=wibTpMh-UZV83Gvn0-+vkFQ6bF735v=8fFSJhxQWqHT6Q@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] sched: Remove never used code in mm_cid_get()
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>
+References: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz>
+In-Reply-To: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 24 Oct 2025 16:57:18 -0700
+X-Gm-Features: AWmQ_bltQWl9Zt65mlT3O0wfqqWroGd-22lI3adDJdCXk0hQ4ymeHmC7hV8Eb1Q
+Message-ID: <CAADnVQKYDgwgAQ+geFrY=xDxNoe2YuEYVQU+d3V3nMhkMBg1zw@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/19] slab: replace cpu (partial) slabs with sheaves
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@gentwo.org>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Alexei Starovoitov <ast@kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev, 
+	bpf <bpf@vger.kernel.org>, kasan-dev <kasan-dev@googlegroups.com>, 
+	Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 24 Oct 2025 at 14:19, Eric Biggers <ebiggers@kernel.org> wrote:
+On Thu, Oct 23, 2025 at 6:53=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
 >
-> Linus, could you consider applying this directly?
+> Percpu sheaves caching was introduced as opt-in but the goal was to
+> eventually move all caches to them. This is the next step, enabling
+> sheaves for all caches (except the two bootstrap ones) and then removing
+> the per cpu (partial) slabs and lots of associated code.
+>
+> Besides (hopefully) improved performance, this removes the rather
+> complicated code related to the lockless fastpaths (using
+> this_cpu_try_cmpxchg128/64) and its complications with PREEMPT_RT or
+> kmalloc_nolock().
+>
+> The lockless slab freelist+counters update operation using
+> try_cmpxchg128/64 remains and is crucial for freeing remote NUMA objects
+> without repeating the "alien" array flushing of SLUB, and to allow
+> flushing objects from sheaves to slabs mostly without the node
+> list_lock.
+>
+> This is the first RFC to get feedback. Biggest TODOs are:
+>
+> - cleanup of stat counters to fit the new scheme
+> - integration of rcu sheaves handling with kfree_rcu batching
 
-Done.
+The whole thing looks good, and imo these two are lower priority.
 
-            Linus
+> - performance evaluation
+
+The performance results will be the key.
+What kind of benchmarks do you have in mind?
 
