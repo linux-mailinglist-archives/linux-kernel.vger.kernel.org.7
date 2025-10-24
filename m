@@ -1,218 +1,180 @@
-Return-Path: <linux-kernel+bounces-869277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89144C077BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:10:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D67A9C077C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BE671C4631A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:08:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F17E8562DEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15B23431EC;
-	Fri, 24 Oct 2025 17:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE074342C80;
+	Fri, 24 Oct 2025 17:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JcjjHzZS"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cDycCcnT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gJyRWPD6"
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123CE32142E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9F3341AD7
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761325631; cv=none; b=Be1QyIB0unzI+xrKyfpiGDTpamaD6xpCjLFWlS93XlU9JGbxGWi1MzwPjtHOeLymTbrCsyJSxPdzd5rcFqB++zThuqpyZXXW5ykRSF6bcG5uzaxBeTaQxb9bq3n1nBov5wNQuEuqGJ7Dk7JQRae8l+j8OYs6xJ+AO1fZqQFLMxc=
+	t=1761325712; cv=none; b=bWZc646QjlC7PvPSVFBnRK3bsYCwlWHmyiy8xv7gBBXgqPnjCzPf0SqF/jD0REGi9t5pS/bpyxbB1i7/UvFVgbDB6c+9VyA1S42TETzRR59vUHsAa+1T8Lvg6Kjix0vtvT17y7Cwzaqxz9b7RAjNX8rEC63RQ/Id0qHJ/Hngw/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761325631; c=relaxed/simple;
-	bh=VsKpn86hsIBAqUvnGUuoxEVqUFOxhPODp5ffTeuSetM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YnE1qHdoPcrDGlrYKnUMtBXvAytGITsJVybOYkr4aiIymBOX0grL0EESCv+JU0NRJRT0DUMkAUT2646N8oC1nje97p9lk9kaTV1OdFMlclqvCs1ASomEDhwt9+ICeCth6KBuPXVlwlRY9No9GrwWRA4CwdHyALtyKMrCfL2L/98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JcjjHzZS; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-471810a77c1so1953325e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:07:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761325626; x=1761930426; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ym8aETYBXAJKvWbueelLx1UUH7YGGFArm90KzvTaVUw=;
-        b=JcjjHzZSu7RBaQak8AeMiF9PYvevXxQUAXRa3kWjHfeFkIgR537HbeEzS+DVwjbMXh
-         W8T9MT3HIxQzm4NQDwe2JdD/RExFNYwdkNhgFFQSnbWZQi7uAwdU6hL6jcrN2Jd8Xw8t
-         yiKD17tkHYht47PctqGkQkZNQ9DAZo1hsmyCtZZVuzpGdmHYpkujZ/XMUbjjI+5KmVNi
-         87hW3cijFfZOwBVPYnFWWJ5Oiq204lu4yMXCoKcnlEa8E4vKD0OLgM1pH2py/IElnx/0
-         cvCaS61KiEVOBM3NzaSQbp/8nk+Td+l3AOnLTIIawoyOIy0ZWMMxzYehxt/NCgDxdVmC
-         7VfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761325626; x=1761930426;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ym8aETYBXAJKvWbueelLx1UUH7YGGFArm90KzvTaVUw=;
-        b=RMXSdZkFRBR1NS+L8/maggHuK7EgNLBzKUZgnoveBEg7pE962QhUSUy4aUMGIkbrXw
-         4YqtF2c2Dh+InCLzRitxVVoqKZGafoCIgltfREKsdf49ortpBoyBqQKIHqWF7EHBtUvO
-         cPbdnAjMCGqZ+K/0VXyLcGIx+vZ+zjn8O6HOrn4RV1zWiUDTwj9H0WRy9vTbnmqNARS0
-         cwHHqBeqYEXevfSjD0BYUDDG4KQE+PLJpCWuLsx0XIdWkisqSkz28R76UEJXLvfdKl8d
-         2uY0t6EREnIW8QSgSVg2+Hu39WsJWWAlues1MKUk/sS/h43uCWJBpI8w3NZzAGmf083V
-         ZMnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrSYPfEIAKw24f8OhxbcoR/QVcAPW0lZ3Ho3oQgQPB7ipLsrVkSNaUzoEp0axCM/Z/v10hGjtePXzbx5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4huwbSE3jQoeylsqwlBCGuv1ferEtlHO4Db554Ke3XZVoggmR
-	EhrIlG7CTY9E1pj+QOULslpI7Lm9NI6WvFqCYD2O6jqxSoKGlJxY12ISr6H4w6zxmZA=
-X-Gm-Gg: ASbGncv7ZDEzreaMTA+9ctZE0wDsDzeVS14u5e+ZYUAmvA5ZS5yXJANlzu3OnMfUXlk
-	9IprF57u7TUZd59c4VKZOxvWVD6Tpj7rogsCq4tk32ZX0a2IgzfNwd7EpovU29uxwCgwuZZz1Dm
-	Abe8k1b8BiJi+kzufnEOXsY9kbiEt4/ZChBZgBXYrd9BCQBZY2rmgKoCit9Ob9nlqUMSL9Pwccs
-	mmhE+T4F4KGQAzEwiFMpl6fNUtJxPDG38OUZ257xgm2eJCG9xLO2/zmmax9jXQq8pdMsa8g2Xme
-	PswliI+PTD0avCY/Yyraa+PZ9yqoteC4cuxclBpM2VWvwMvOO4p908BQ8b57/FkllmDpFmzxHIR
-	GiN1hIJnKPohOR4pnh+OSrWCXQgaTOwtYZfjm+LrB+Fp5TCnEkDORKUMMXmKN7fGXrWRZ/jho+T
-	kY3ZMfFY5HBNXmDOe4/mZtdpiCCFWgH+71KtSV5T4/iTZ0oUeQ0MaesunyVvbOSsFsgLs4WQ7Qf
-	cTqug==
-X-Google-Smtp-Source: AGHT+IFJ/xF8oNJztRWfc273+XYd3dJHzM8CNxqHRb8nUro5n4D1a8pHx6sozSot99S9MPoKnjvpNQ==
-X-Received: by 2002:a05:600c:c4a7:b0:475:d7fe:87a5 with SMTP id 5b1f17b1804b1-475d7fe88b4mr11897735e9.6.1761325626248;
-        Fri, 24 Oct 2025 10:07:06 -0700 (PDT)
-Received: from localhost (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47494a91c47sm91921345e9.1.2025.10.24.10.07.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 10:07:05 -0700 (PDT)
-From: Petr Tesarik <ptesarik@suse.com>
-To: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Petr Tesarik <ptesarik@suse.com>
-Subject: [PATCH 3/3] slab: use new API for remaining command line parameters
-Date: Fri, 24 Oct 2025 19:06:54 +0200
-Message-ID: <6ae7e0ddc72b7619203c07dd5103a598e12f713b.1761324765.git.ptesarik@suse.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1761324765.git.ptesarik@suse.com>
-References: <cover.1761324765.git.ptesarik@suse.com>
+	s=arc-20240116; t=1761325712; c=relaxed/simple;
+	bh=hsau8RmM3UijJFz3mwMqBheQZY+/ajDxhfZ/KewC+hY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=mxxZKJ+Iue2KhqozfM6aaQNLx8p9+1zUzmI9kticz74tDdmjkbvHoa+MgY09vaB/ZHcf3s8QoSG2CoPQ4dlkB4d8UGbCzmiQxiyxNQIPn5Ksan7pTnWfhXqpgwzmou35+59hXcrI/q9yGsITww7uuLQMMB8nGacfdj7I5tN/AKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cDycCcnT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gJyRWPD6; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id BB6C11D001A4;
+	Fri, 24 Oct 2025 13:08:29 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 24 Oct 2025 13:08:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1761325709; x=1761412109; bh=WO
+	uNrW310/87AuysnVn8f56bmg1dUBIWWmh8D5BQhSw=; b=cDycCcnTveLKfv1w1x
+	Xkv+qnoZBCS+B1c/CeVxcJ8vIJMhayLgHrOYLrW7/u0MAjfPxcG62fmI4uPs7Y5P
+	cVczG+g8wjcgDQY4c6GJlyLluA8oYMsgrJr9b4WSN1sUD0CH6EDd1V1TviU+9Wzl
+	c3OqKY+hAC5I1GaBQeBHzYbtH0NZt6vC5WSZwz2Cf0ORqaKggRph4gn7kiNGp3yK
+	IiS/ap0bHyTezdGlZ2DTXJQCqfD2n4291a+l6E8ioxox0DHLK+GE5N3kbCbw9F1e
+	j9DqUWJ5b+sFznKK4OM1nXO3YF5nOHUAxvyiq9o615fI2F5XMsCzwN4sxf1p7Z78
+	rLNQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1761325709; x=1761412109; bh=WOuNrW310/87AuysnVn8f56bmg1d
+	UBIWWmh8D5BQhSw=; b=gJyRWPD6+oGVY21VPy8PjdK4Dbg5lgU14jSYxp0YcjUH
+	5PeSLcrv/qB+18HwIbPPga8pWag1uWlpJFfjyvVugTz7jCkuXHzMDh7WY/hzDwWj
+	ZSRi21Nl053CbEMPXTScu8EVrsHEShrwxapl3SxzRgvkaFVDhTveuKexGHOdhCGG
+	kLfOb5QwrtRa864ZdZGm4GSiZCfC4n7KmU7UldDfuPka6lmYoABNUgZ8q5uya4t8
+	vVkiYbVqZ+MYSWbolW4hEvywpSMUWUOk/3tyxbFePhV6MEDF3ugLM+PRtq1Y6obW
+	a77uWJczOY57LAGit1beflm/IO/JMOkn1JdcCtEQ8Q==
+X-ME-Sender: <xms:jLL7aMNxLqujDZs0DRQxDY8glzgBegewYb7Vs3yQ4wryvGCzPHSkpg>
+    <xme:jLL7aNx1TnKODg7qudhJxda0jwkUIp-1RWMdfD-55unCw20HcnP-6ZY3MtZx7O25I
+    IGTNrEIo5qJ8HRR5lxtYLMR75b99dLfcNR0o3AQ6j3Bx5PzzL69Ubo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeelledtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkffutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhguuceu
+    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
+    epudfgfeeuheelheehfeeigeeigeeiveevheelteelleeijeeikeekvddthfejieffnecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecuvehluhhsth
+    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggs
+    rdguvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+    eprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdprhgtphht
+    thhopehfuhhsthhinhhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgr
+    rhhordhorhhgpdhrtghpthhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurg
+    htihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhi
+    shhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsohgtsehlihhsthhsrd
+    hlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:jbL7aA-cUy09bl4q7zOl26a3hICbbw3yEDZOXVG2fqa58xGeYjkRQw>
+    <xmx:jbL7aLTMVn34Eoq1e8cwii0SbZ17f3dDoLrbGpdTPD62XTeWuk3Eyg>
+    <xmx:jbL7aJq17K67lAffy5_jbJ98Ij0P_lvWqgGVJPmhqtlXnw7k1LLmrw>
+    <xmx:jbL7aAlkdikE5Q0TU5KGYBVzfwu3ctKQ5WwQWM0ipUflI5geuzUz8Q>
+    <xmx:jbL7aEFVULMdq-1_XLE-oZWZ5thWPLTKsYIsNLLlc2KO_vmmekcXkv9G>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id DC0C9700063; Fri, 24 Oct 2025 13:08:28 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Fri, 24 Oct 2025 19:08:08 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ soc@lists.linux.dev, "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Drew Fustini" <fustini@kernel.org>
+Message-Id: <a51522e4-61d3-4d8d-8850-678f7fc410db@app.fastmail.com>
+Subject: [GIT PULL] soc: fixes for 6.18, part 2
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Use core_param() and __core_param_cb() instead of __setup() or
-__setup_param() to improve syntax checking and error messages.
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-Replace get_option() with kstrtouint(), because:
-* the latter accepts a pointer to const char,
-* these parameters should not accept ranges,
-* error value can be passed directly to parser.
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-There is one more change apart from the parsing of numeric parameters:
-slub_strict_numa parameter name must match exactly. Before this patch the
-kernel would silently accept any option that starts with the name as an
-undocumented alias.
+are available in the Git repository at:
 
-Signed-off-by: Petr Tesarik <ptesarik@suse.com>
----
- mm/slub.c | 57 +++++++++++++++++++++++++++++++++----------------------
- 1 file changed, 34 insertions(+), 23 deletions(-)
+  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-fixes-6.18-2
 
-diff --git a/mm/slub.c b/mm/slub.c
-index b124087b95f32..482460ff3abca 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -8119,46 +8119,53 @@ void __kmem_obj_info(struct kmem_obj_info *kpp, void *object, struct slab *slab)
-  *		Kmalloc subsystem
-  *******************************************************************/
- 
--static int __init setup_slub_min_order(char *str)
-+static int __init setup_slub_min_order(const char *str, const struct kernel_param *kp)
- {
--	get_option(&str, (int *)&slub_min_order);
-+	int ret;
-+
-+	ret = kstrtouint(str, 0, &slub_min_order);
-+	if (ret)
-+		return ret;
- 
- 	if (slub_min_order > slub_max_order)
- 		slub_max_order = slub_min_order;
- 
--	return 1;
-+	return 0;
- }
- 
--__setup("slab_min_order=", setup_slub_min_order);
--__setup_param("slub_min_order=", slub_min_order, setup_slub_min_order, 0);
--
-+static const struct kernel_param_ops param_ops_slab_min_order __initconst = {
-+	.set = setup_slub_min_order,
-+};
-+__core_param_cb(slab_min_order, &param_ops_slab_min_order, &slub_min_order, 0);
-+__core_param_cb(slub_min_order, &param_ops_slab_min_order, &slub_min_order, 0);
- 
--static int __init setup_slub_max_order(char *str)
-+static int __init setup_slub_max_order(const char *str, const struct kernel_param *kp)
- {
--	get_option(&str, (int *)&slub_max_order);
-+	int ret;
-+
-+	ret = kstrtouint(str, 0, &slub_max_order);
-+	if (ret)
-+		return ret;
-+
- 	slub_max_order = min_t(unsigned int, slub_max_order, MAX_PAGE_ORDER);
- 
- 	if (slub_min_order > slub_max_order)
- 		slub_min_order = slub_max_order;
- 
--	return 1;
-+	return 0;
- }
- 
--__setup("slab_max_order=", setup_slub_max_order);
--__setup_param("slub_max_order=", slub_max_order, setup_slub_max_order, 0);
--
--static int __init setup_slub_min_objects(char *str)
--{
--	get_option(&str, (int *)&slub_min_objects);
--
--	return 1;
--}
-+static const struct kernel_param_ops param_ops_slab_max_order __initconst = {
-+	.set = setup_slub_max_order,
-+};
-+__core_param_cb(slab_max_order, &param_ops_slab_max_order, &slub_max_order, 0);
-+__core_param_cb(slub_max_order, &param_ops_slab_max_order, &slub_max_order, 0);
- 
--__setup("slab_min_objects=", setup_slub_min_objects);
--__setup_param("slub_min_objects=", slub_min_objects, setup_slub_min_objects, 0);
-+core_param(slab_min_objects, slub_min_objects, uint, 0);
-+core_param(slub_min_objects, slub_min_objects, uint, 0);
- 
- #ifdef CONFIG_NUMA
--static int __init setup_slab_strict_numa(char *str)
-+static int __init setup_slab_strict_numa(const char *str, const struct kernel_param *kp)
- {
- 	if (nr_node_ids > 1) {
- 		static_branch_enable(&strict_numa);
-@@ -8167,10 +8174,14 @@ static int __init setup_slab_strict_numa(char *str)
- 		pr_warn("slab_strict_numa parameter set on non NUMA system.\n");
- 	}
- 
--	return 1;
-+	return 0;
- }
- 
--__setup("slab_strict_numa", setup_slab_strict_numa);
-+static const struct kernel_param_ops param_ops_slab_strict_numa __initconst = {
-+	.flags = KERNEL_PARAM_OPS_FL_NOARG,
-+	.set = setup_slab_strict_numa,
-+};
-+__core_param_cb(slab_strict_numa, &param_ops_slab_strict_numa, NULL, 0);
- #endif
- 
- 
--- 
-2.51.0
+for you to fetch changes up to b0cd17fd31a86b55dcec3eb64b9d2a17c1c01e6a:
 
+  soc: officially expand maintainership team (2025-10-23 22:30:48 +0200)
+
+----------------------------------------------------------------
+soc: fixes for 6.18, part 2
+
+The main change this time is an update to the MAINTAINERS file,
+listing Krzysztof Kozlowski, Alexandre Belloni, and Linus Walleij as
+additional maintainers for the SoC tree, in order to go back to a group
+maintainership.  Drew Fustini joins as an additional reviewer for the
+SoC tree.
+
+Thanks to all of you for volunteering to help out.
+
+On the actual bugfixes, we have a few correctness changes for firmware
+drivers (qtee, arm-ffa, scmi) and two devicetree fixes for Raspberry Pi.
+
+----------------------------------------------------------------
+Arnd Bergmann (6):
+      Merge tag 'tee-qcomtee-fixes-for-v6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-tee into arm/fixes
+      Merge tag 'ffa-fix-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux into arm/fixes
+      Merge tag 'scmi-fixes-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux into arm/fixes
+      Merge tag 'arm-soc/for-6.18/devicetree-fixes' of https://github.com/Broadcom/stblinux into arm/fixes
+      Merge tag 'arm-soc/for-6.18/devicetree-arm64-fixes' of https://github.com/Broadcom/stblinux into arm/fixes
+      soc: officially expand maintainership team
+
+Artem Shimko (1):
+      firmware: arm_scmi: Fix premature SCMI_XFER_FLAG_IS_RAW clearing in raw mode
+
+Cristian Marussi (3):
+      firmware: arm_scmi: Account for failed debug initialization
+      include: trace: Fix inflight count helper on failed initialization
+      firmware: arm_scmi: Skip RAW initialization on failure
+
+Dan Carpenter (2):
+      tee: qcom: prevent potential off by one read
+      tee: qcom: return -EFAULT instead of -EINVAL if copy_from_user() fails
+
+Geert Uytterhoeven (1):
+      tee: QCOMTEE should depend on ARCH_QCOM
+
+Peter Robinson (1):
+      arm64: dts: broadcom: bcm2712: Define VGIC interrupt
+
+Stefan Wahren (1):
+      ARM: dts: broadcom: rpi: Switch to V3D firmware clock
+
+Sudeep Holla (1):
+      firmware: arm_ffa: Add support for IMPDEF value in the memory access descriptor
+
+ MAINTAINERS                                        |  4 ++
+ arch/arm/boot/dts/broadcom/bcm2711-rpi.dtsi        |  8 +++
+ arch/arm/boot/dts/broadcom/bcm2835-rpi-common.dtsi |  9 ++++
+ arch/arm64/boot/dts/broadcom/bcm2712.dtsi          |  2 +
+ drivers/firmware/arm_ffa/driver.c                  | 37 ++++++++++----
+ drivers/firmware/arm_scmi/common.h                 | 32 +++++++++---
+ drivers/firmware/arm_scmi/driver.c                 | 59 ++++++++--------------
+ drivers/tee/qcomtee/Kconfig                        |  1 +
+ drivers/tee/qcomtee/call.c                         |  2 +-
+ drivers/tee/qcomtee/core.c                         |  2 +-
+ include/linux/arm_ffa.h                            | 21 +++++++-
+ 11 files changed, 119 insertions(+), 58 deletions(-)
 
