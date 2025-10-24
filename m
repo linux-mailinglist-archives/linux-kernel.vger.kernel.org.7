@@ -1,319 +1,283 @@
-Return-Path: <linux-kernel+bounces-869203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0DDC07487
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:24:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA30C07438
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78C285623FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 767581C22C17
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812E927CB02;
-	Fri, 24 Oct 2025 16:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46634271A9D;
+	Fri, 24 Oct 2025 16:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="ezL+BSo0"
-Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dxOOrx0Q"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010042.outbound.protection.outlook.com [52.101.193.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D51219A79
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761322833; cv=none; b=Smg75IrRKkLIQlnFooB4lj26b6XUoA7sZ0QdILv3e8PWp5kIotBLW1HOWcBqTIGKAbjqPrKhrZ0BND9fbU0qbyCpBs4RDuRRWFsNXKHyKA6M1yTAOTQI8K6V7aDTRyKEOmDJHCR7LdgJ4w9O0cNQi8ATA6gJlmisTCqkgW4NVz0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761322833; c=relaxed/simple;
-	bh=Uz61FD/DKMX/OkatTg2k7SbA1EKWO/0kfbVwwjsgNBo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QDZQ7b9Y7AhGPVOm6E1y2D9PyylYLZOgVMhYOANUfm/RCwgWiThP9P88Na1cRt6pDVXwcip+teXslcKv1Pw45Bf3RL4nDi98dNdgGuf2aNqHixA+SPhSpO8/xfP3QAT+TNV5ySegXFCNU+jV3AYTHqFuIYsEmqjuDs3iBDGvvk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=ezL+BSo0; arc=none smtp.client-ip=78.46.171.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay11 (localhost.localdomain [127.0.0.1])
-	by relay11.grserver.gr (Proxmox) with ESMTP id 194DDC5B64
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:20:28 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay11.grserver.gr (Proxmox) with ESMTPS id 0BB1EC53D6
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:20:27 +0300 (EEST)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 7EA971FF3B7
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:20:26 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1761322826;
-	bh=zXBoRPa7llDLOBOBmhwdAtXRgCm90e/W0j9vQSGI+10=;
-	h=Received:From:Subject:To;
-	b=ezL+BSo0EqTlRwdKz8BXfnIxvMEFPnsoD0JMzYSxfx6IARYAQvbXvn8M/I9nDZzQ0
-	 OGLLROh3uaNRnb9jvBphme5g+2X5Ef44v4tWgplJNmIKlRQyICWfq1NyixA3Y4sISS
-	 WXUM/K/O6Nu5sZj57+xCE7CnSKeSX93xcX2hjPVbMI81XyF03TGypDNXhpkTL+rC4o
-	 AJXi3Atr/T5OjrTj0axlFRjPzyr2nNQpMsSS4arXM9OvqSELSwJIhdW5MRe0MlvZ8V
-	 GQMRXWyjy1tTNabA3a2rBMW8tEyWm1H51T/cpHcjqu7HwiuRXO9aUC5EqNoxAwmAOh
-	 DKxrcrli4D5KA==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.176) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f176.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f176.google.com with SMTP id
- 38308e7fff4ca-378cfd75fb0so23023001fa.1
-        for <linux-kernel@vger.kernel.org>;
- Fri, 24 Oct 2025 09:20:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCUvDirJ83lIUzxm69RGc2cU6A5cYMff7qq+3r5XCBqB2lkF1+DDpNRu2ScMkfF3DZ90co8eG5HJC2o2pzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZp5Z/WCI8/ZvJzpTBG7UKzZzl9p3kG80h824xpG61t/XjGAsN
-	DCAOWDTFbD2etSuMLkgAGtPtDzYE8WcVOex3BjPnq7Ry3Feh3Y5uqsFLQricGI/128/B4g7G2QR
-	PYDgtBdop1F7FCv3dpipjrtJv/ERNKkQ=
-X-Google-Smtp-Source: 
- AGHT+IEQzAWb4Yb3tHKwSmhSGDhJwsNtHZb5B8TJ1yCHCfA7ki1ikULJDDSb8mLZL+TbWRz6Uc+bg57LbSfPnVJhEXg=
-X-Received: by 2002:a2e:a984:0:b0:378:e30b:d1e1 with SMTP id
- 38308e7fff4ca-378e30beee3mr11329641fa.40.1761322825940; Fri, 24 Oct 2025
- 09:20:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F61219A79;
+	Fri, 24 Oct 2025 16:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761322841; cv=fail; b=vDniBm0MwuQbBWI9iM3SnGBgGX0BgBYGnKh8vIeKAhJB3X9RXuBLqjIV8oAO0zECAB/uShelgDABC/Z6l6klF7wJP4DRvZ2Im/TqFWaEIp2Iq7hScmyQ90s7ZKNVx8j0L8Ytz63XIKmni16t1InimA+HqQC4slwu0L1Njri7j/o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761322841; c=relaxed/simple;
+	bh=OWUAmBr8IPMrjAKt7MWC3HKRSVzvjVFMxEOp23D76Rw=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=s3JS3P1y92oCH0Z0P6l5pJUBDvhIASEnKgNcbgU3PPlqdFchUHEiw5/O7RyYTMTVBicTlKCMUgahcdrx+rc0XyZY2clYFRCQ8uTGd+fn9MOtUvobiqje5pIa+f6Sqbp9XscmvFXI64U5EDcSCMbk0kkQiDWUvkMBkTS+hJGUi1M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dxOOrx0Q; arc=fail smtp.client-ip=52.101.193.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GJgJofDI2bbm4MZ4tSScnC0Q43Qd762SM7Qx2e8UKE+Bti7gwBKYKwZBUtSp+YEN1+w3+9BFf41OHBG/O/Vwn1zIIIkQnC7rQhgri9O3839sBt/LBKsqezyHPNbruhjsebt5Y67ELgta5ho8KNYtaZ/H8P5fZcxDBHPDseE35PpePM8keS4RuSQkAbDtCkxCLFjMF42XXhNH5MhoRgBFOMO7/4hV2P7YjGTwyvjobNnP8F1BSFCD+LMhSB8gxHDPFfM6eSxfQlOj76WnxnCF4Y3rtXUypMT/0fEuY8Oizo12mGvzO8edk6TbGJfRVCAtR2dMJM/LS1FB/oYU+3qzzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=D357MAsxIY9szf58j5P4OjN0Lw67Zd9z0yAx4Pc8eN4=;
+ b=nxnqtv8C0mzMSMzXQoN9dRb1tQhcrDGN4jmrBxVUw1XvjZi4y1w72TGt5WFzWd3sz0U13s+ch1Ec10DI+k4KVAOfXdc3ReQGGusxWJ7eCKlMOu/4tdmz8jKTE/faxzW1ekVcoGKJ0eY8YyPmfJcWRt+Xt0foMDov5Tfacy1bCNeiT+y1tTkdh5gXUWHxg1Yu5KKjNuioVwguYUa68W5+ijuZXZGH+1CO2y/X0///wMhk/XEhsDgEviyrNVLDnsO70SwRJJVkscZpnrGRXWN46quV4nyyO1QFRhC1ESS3InFzMtNyWBQITtFZZM3YJi6wWagZFIFqlsQZmWav3Z5zkg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D357MAsxIY9szf58j5P4OjN0Lw67Zd9z0yAx4Pc8eN4=;
+ b=dxOOrx0QaMCT87Ql7M4Hh9xZk6CVGbV2tA7NZT1m7Z8oEaVHX7Jim2KEfAS8pKhcYwYFZod5fswpzdyEI97/+dywehWPihSR3PJt9vnskFaz+SsXaw0qgvrtCs5qDQxTMUwu2v5pALGFLGbynNb7VAcQAFmWOv1on/4lIhrc870=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SJ2PR12MB8846.namprd12.prod.outlook.com (2603:10b6:a03:549::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 16:20:34 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 16:20:34 +0000
+Message-ID: <27439123-98aa-4096-a4e4-3c8eecb3aaca@amd.com>
+Date: Fri, 24 Oct 2025 11:20:32 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] drm/amdgpu: only send the SMU RLC notification on
+ S3
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Perry Yuan <perry.yuan@amd.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20251024152152.3981721-1-lkml@antheas.dev>
+ <20251024152152.3981721-4-lkml@antheas.dev>
+ <61da9864-b7c8-43f1-b437-36756077b545@amd.com>
+Content-Language: en-US
+In-Reply-To: <61da9864-b7c8-43f1-b437-36756077b545@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: DM6PR08CA0018.namprd08.prod.outlook.com
+ (2603:10b6:5:80::31) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251018101759.4089-1-lkml@antheas.dev>
- <20251018101759.4089-2-lkml@antheas.dev>
- <e6328da3-8099-4540-9cb0-4fc28b359ee7@gmail.com>
- <CAGwozwG+gf09PQf9o9YkKFYVgVn-1w5CDVrpOe4uFavVYCNijQ@mail.gmail.com>
- <3947f772-691b-46a2-af68-15825e7f4939@gmail.com>
- <CAGwozwFbQWyuQB6EwLMLon5muff2WudR+oVL62DqP_MXGW+p-Q@mail.gmail.com>
- <b91de7c7-74b8-4cf5-82a4-f3d4eaf418d4@gmail.com>
- <CAGwozwGj-yXHXBan38_NV7G5T66bnjm7om2bz_Bha35AHhtCJQ@mail.gmail.com>
-In-Reply-To: 
- <CAGwozwGj-yXHXBan38_NV7G5T66bnjm7om2bz_Bha35AHhtCJQ@mail.gmail.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Fri, 24 Oct 2025 18:20:13 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwEh32XMcGJPKMRBWd63ybYOxW1Wx4QjU-QErjQgLHwX2g@mail.gmail.com>
-X-Gm-Features: AWmQ_bm7gzn18HWBJWKWicaU2Mf9cOLIcXHnKxvTqgAOu5hFzzHrG57eskCdmpQ
-Message-ID: 
- <CAGwozwEh32XMcGJPKMRBWd63ybYOxW1Wx4QjU-QErjQgLHwX2g@mail.gmail.com>
-Subject: Re: [PATCH v7 1/9] HID: asus: simplify RGB init sequence
-To: Denis Benato <benato.denis96@gmail.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
- Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>, Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <176132282670.2564802.6078046734731565840@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SJ2PR12MB8846:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2462b5d9-4a43-4c75-7a07-08de1319428c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MXg4TGN3OERQVFh6bURINXdqOVJKTGxrQmNCcGFUS2ZheE02RDl4NjltcjZX?=
+ =?utf-8?B?RVByYWcwTmh4RTY4R2Q3ZC9kOGo2WVEzMHlqMEpGdXBhcEcwNkNhblR0Uldo?=
+ =?utf-8?B?OVNYU1ZqZURiL05FTStrbVFyVkg2ZjFsOXAyUldidS9BaHRoQkQ1dlBUYlZI?=
+ =?utf-8?B?NkdHd3ZCRFlMQnZQaFlIVVl6SEtJdWJNSnB3S2gvRWlTZ25vN3pUR2FXUmww?=
+ =?utf-8?B?RzE0YWZtSmlCbHZob0Z1N0FWV0I4Zm12cjdTZXVoOUgwSmU4TjJJQUNDZUlK?=
+ =?utf-8?B?ampYZ2gwWW5pMklYZGtWUitpTXpSYmxhL1RQbllkMGVTVTMwTzl4MFo2eEhV?=
+ =?utf-8?B?dlRHQnVGVEcvUGIyV0VWZmZCenJrdS9oeGlXcE5tbG55Tkd3R3ZNdFVlMjZH?=
+ =?utf-8?B?ZDhITHptNXMzU21TS3FiazcvRExiTVJJZ2pZcXhLRmVvQ01lQ0M3WWppTmlv?=
+ =?utf-8?B?ejMvK2NScUlMWWdkbUUrYWNiNFZMZURCWU5kajZGWFp4eXlJb0dkNGN6VDNF?=
+ =?utf-8?B?RVFzL3lua01PRzAwV1NWbmp5a01ldnF5ZEZORWJ4cEhVTnR5Q3VrM3kyNHVW?=
+ =?utf-8?B?RUNoUUVrZThCNWhkS3F4OGo1NTlQai8xZVR4aUNpb3hyVWhxVndkODVFdnpr?=
+ =?utf-8?B?ZUxMcDFWMHhYNHFnUHJvUktKbWxROStQaVlqVUdvcDRCQmRIcUhudmJOVXdE?=
+ =?utf-8?B?VUluRm5zQzAwMkVCd2I5enB0WFdvMGw5TDh0S2dONHgvaTNzSHIwVmlRWXZz?=
+ =?utf-8?B?ZDBOVjlRcHgycGwwNU16dFZTaTFwYW5oTCtwQTB4Z1d3VHJHdDFPcFNoaito?=
+ =?utf-8?B?Rk13VVdEVUdTU2tDMkR4VFY3T0xwVjl2eHR4U1prWnRjV3ZtbmUyWWhzeVRN?=
+ =?utf-8?B?YXc3SUMxV2xDRnJCS2V1dUdzS2RsdzE5T0NMRlNqdmk5UnB5bDlXRnpSbXR5?=
+ =?utf-8?B?dklqRTJnQTUvVXlFY3dCMnlIMmdDVXIyMHZqRzBTY01QRU1oTktDS0FocEFW?=
+ =?utf-8?B?K3N1YWUvejFtYlZUV3J6K3ZQT2orVFFTZXhPeFlIMkh0Q0tRS2UwUGlsdktp?=
+ =?utf-8?B?WlJLaGJnZ2xFWGdUWUMrWlZ0bGl6V0ZLQjlJUTlRMkZTd1JmNlZpemZmV05D?=
+ =?utf-8?B?aDFBWndMNUZWeGVxeitKTlhRTktkcWorZktXdW00d2hHNjVZWkEwRjNDaXNX?=
+ =?utf-8?B?bDJCNFcxNUptTzd1MW91eEZiclN5WFVWYWxqMmFMN2ZDQ1lSMWdyVmN5cndL?=
+ =?utf-8?B?N2xqaVJ2ZmVlaWNQa2xoWlJieU44VTZLbjg1eHMrbzNCbFRNUkhqVEVsYVpp?=
+ =?utf-8?B?TEFjYzdzbzlFbDF6bldldlo5QUtlcG4yUzhuRFZHWHkycTdpUVcvbmtUL3ZQ?=
+ =?utf-8?B?M292Yjd3VjRjTlpibUxLQTBBTitCdUJvQi8xMi9uWitRV3dHYlVzWmh5aDJt?=
+ =?utf-8?B?WDNuN3Ryc1VydGpxdGxiOFpMbm00YkI4Z1AxYXpMWGJ1TW95RXp6MVdIZDgx?=
+ =?utf-8?B?YS9RWDRHRXVscUNmWkcvTHBETDlYditaNXpXRmhNNTdlSThMUFh1WHhxdkYz?=
+ =?utf-8?B?UytXTHpNM1JvdllZcUpnMFY5THJWOGJSMGJJOXJlb1U3RmVURFZXSXB6ODdG?=
+ =?utf-8?B?T3JpczE1Tk44emVSVmRVVUxmT2ZtY0s1L2IrM2I3SGc1WVZPcVZwZDdlVFdk?=
+ =?utf-8?B?RUYvemVBaTVCamxWaHc4YnlmTURybzBVZlpkMHhMWEwvbnRXQ0NJUlNGRE1l?=
+ =?utf-8?B?QTZkc2Q2dmtnYlhxUmVEZUZNTW14VWRwZUJIdklNOSsycnQ2aVBxcWM4QjBo?=
+ =?utf-8?B?dS9ncFZXZDg5WDZlR0ExMkp2cVYwOUNTQkNhNXYvQUlnM2VmWGNCc2FDcFhs?=
+ =?utf-8?B?d3lYRisyV0FNWHo2bGlzZEc4WUw0WENvcWZVYzd6TGFKcnc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z3FNczZ4N1dUWXErVUJEWnFxVmxxTFBSYVU0bTY3ME12N25qUitnemxqV3Rm?=
+ =?utf-8?B?S20vaEVPc1h4bDVMTVlPNmJaNCs4SlNsM0R4RjJ2dFZ5UmpWeUJWTWJNV1h6?=
+ =?utf-8?B?MlgrY0hwc01ab3R0RlIyMm04OFByUFhpUUZhWVpFYWI4aCtzaFpHSDJvMlor?=
+ =?utf-8?B?Vit1YSttUlJwbisrejVwNHowaS9KWnhsbzZYMExRdHMvekFpN1k4eWNTQ3Y3?=
+ =?utf-8?B?dFExSE81eCttYUJVSVo2TWZlVjAzdmtvWWxIaXJhSm1RWTBVcFJha3F5R3Zy?=
+ =?utf-8?B?NFFUaTAyZEg2TGs3MC85YTNTUGFDemJFdHdOVE80ZndNUXJNenpxWnRmVnph?=
+ =?utf-8?B?ZDFwc3RQVFZVZG1FV0xlNFNOdnhEYVBlYm5GMURNaEpGRkYwbG5hNm16Q3U4?=
+ =?utf-8?B?RWIxbDNLNmRyTU53RWg4RVVucmpsYW0vbHVIc21xYmp6UHNseGEra1BYVy9W?=
+ =?utf-8?B?ZWt4a1IrWUpSdHkwQmtybWhhcUdkc2NYMnRVS3FNcXhtV3ZpTHFsMHJRZ0dG?=
+ =?utf-8?B?MDVyQ2xidG9ndjdMeWdwbWZOR2Z3VzFWalhsWmdsM3lEUkpMWXZVWWUyWmdV?=
+ =?utf-8?B?MFEweGxMaENIY29WRldqeWpkSVRTTTVGclFQc3RYTTdTMTQ0OCtBMndobkUz?=
+ =?utf-8?B?UlQxZ3lhQkVzOTlqZTRrcjBIWGkrVmhnNFVkRXBEclF5dHJVUzFLZ2RtMy9Q?=
+ =?utf-8?B?YXloMU1NSU94OXVPOWhXeUpzRlhxU1dXNzJ4U3RzVWVwS29KSFc0c29LWHg4?=
+ =?utf-8?B?anlWMVE2REg3ZnFvTWtBV2ZLR3hGRWNFTDJyMElsZzdGemhMMm9BYktUMG9K?=
+ =?utf-8?B?bkJyUGt0UC9qaUtXd0swMC9rRzNmOEpMSlZKalRGU0dXTmxGNjdOazFUY2p4?=
+ =?utf-8?B?VGFkSXRLMTB5c1ZBeVZ3Si9vRlVpSFhRQ1hqVTZLK3Q3QnhOTFJtcEtueGZ4?=
+ =?utf-8?B?dDdHaEVQZHRKSGJZTWNoanVRZmpaWFZYMkticEF3QkIwYnpHUGY2RkpZaXJo?=
+ =?utf-8?B?OFNJemVnUmVJamZvaXk5OGE5TEZITXkvVjlFR2lFRGlmMndkYUE2SE5Tam01?=
+ =?utf-8?B?ZlB3aG9oUUEwTmJGUzF4LzA1WlpwdXRlbFhhRlpxVnZmc1p6SEMxMERNejhq?=
+ =?utf-8?B?V0l6azJhL2VVNXhNcUxrd05XUEtZZ3QvN3dJZHdHS1VISnh5UDRBdTllYjNT?=
+ =?utf-8?B?SDhvV3VzZnZqNUV2RlpiaTRWeVIvWXcrWWxLUFVDekVsdnMxRmRMb2pTZUlH?=
+ =?utf-8?B?SWFkWTg2clcyMzZEMzIrdDFlRkJlS0hjNjZSSkdhNHNiditEbEpzVHZQOXpL?=
+ =?utf-8?B?Z285aUJpWGxkck1HRGtrSVB4WXRObDZIZFV1UWQzOGhGc284WEJ4TEJ1YVlZ?=
+ =?utf-8?B?bVFiZGNvWFhUeHhYRFRUVjNQeXdnUnIvZkV2MUZsdGhnbnFlcDJrTjMxTDhD?=
+ =?utf-8?B?SjZsN2Y3NVZkRjBsREdEWEpWbVRBUnpERkY2WEtJN1pEVzdlWTFBTWVBcDJH?=
+ =?utf-8?B?SUJyQUEwUmdhb01VbzBSb3FNaXR3cHBJWEhSblBleXFUeFVyWXJYQ2NZb1Z2?=
+ =?utf-8?B?bDNrOFB6dXlCcjB3bzRiaGVNQmFoaHRTKzBJblp6MHhIaXJwZVdrY1pxcEpF?=
+ =?utf-8?B?YWkxeFdZNlYwWWluSGpuVGxCVFlNMXVtNUpvQm5kVGxXVkFzem84YXcvRmE3?=
+ =?utf-8?B?czBreUlycnE5bGdlMVJaSHgyWWJ2eDV2dGNuWEMzdVBKc3Y5RFp0MDZEQjRO?=
+ =?utf-8?B?Qy84REhEYmpZSFpyL3FYS21JSVc1Z3N5VTFkVGptdHBRYVlIMXFtSVByOXFE?=
+ =?utf-8?B?emE0bFZjai9sa09tcWNWbU9xTHBCaDl6ZmpDQkJVZzN1YUd4ODZxWkRhR3U4?=
+ =?utf-8?B?LzZHZGFpMjNDNWhKdTFmOFcwd0pld0ZRNmJOcGFscHVheTc4VytOanpZNHdF?=
+ =?utf-8?B?d1pRMUxmTFpRTmZvZFI2K01CbnBUaUVVdnVkSDBvRHhZaUpnN2VVU0gzaEIy?=
+ =?utf-8?B?MkE5eXJ0M1pEUVZzRURQQnJySUo0UzVZcElscDdKTm1rdDR5OER3ak5hQS9J?=
+ =?utf-8?B?NHZFV0NrL1FHb1RPWWQxd2VTZmtGVDZUTlRhdU1lSWc4SG1JSXA1YTZFc09V?=
+ =?utf-8?Q?0h2bocfuyqojHs/muyBKi8KoM?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2462b5d9-4a43-4c75-7a07-08de1319428c
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 16:20:34.6890
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Qsw9FUJs55zJR+Z5XUWaO83aV+wlCL8bRkAE/cOHu3GubmRke2U94blUJbb2I/2fRvwX7sCGHTCwJtOdMS6XDw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8846
 
-On Fri, 24 Oct 2025 at 01:25, Antheas Kapenekakis <lkml@antheas.dev> wrote:
->
-> On Fri, 24 Oct 2025 at 00:53, Denis Benato <benato.denis96@gmail.com> wrote:
-> >
-> >
-> > On 10/23/25 23:30, Antheas Kapenekakis wrote:
-> > > On Thu, 23 Oct 2025 at 22:05, Denis Benato <benato.denis96@gmail.com> wrote:
-> > >>
-> > >> On 10/23/25 20:06, Antheas Kapenekakis wrote:
-> > >>> On Thu, 23 Oct 2025 at 19:38, Denis Benato <benato.denis96@gmail.com> wrote:
-> > >>>> On 10/18/25 12:17, Antheas Kapenekakis wrote:
-> > >>>>> Currently, RGB initialization forks depending on whether a device is
-> > >>>>> NKEY. Then, NKEY devices are initialized using 0x5a, 0x5d, 0x5e
-> > >>>>> endpoints, and non-NKEY devices with 0x5a and then a
-> > >>>>> backlight check, which is omitted for NKEY devices.
-> > >>>>>
-> > >>>>> Remove the fork, using a common initialization sequence for both,
-> > >>>>> where they are both only initialized with 0x5a, then checked for
-> > >>>>> backlight support. This patch should not affect existing functionality.
-> > >>>>>
-> > >>>>> 0x5d and 0x5e endpoint initializations are performed by Windows
-> > >>>>> userspace programs associated with different usages that reside under
-> > >>>>> the vendor HID. Specifically, 0x5d is used by Armoury Crate, which
-> > >>>>> controls RGB and 0x5e by an animation program for certain Asus laptops.
-> > >>>>> Neither is used currently in the driver.
-> > >>>> What benefits do we get from removing the unused initialization?
-> > >>>>
-> > >>>> If this has never caused any troubles I don't see the reason for removing
-> > >>>> them. Moreover the lighting protocol is known and I might as well add
-> > >>>> support for it in the near future,
-> > >>> I already have a patch that adds RGB and delay inits that endpoint. It
-> > >>> got removed to make this easier to merge. See [1].
-> > >>>
-> > >>> [1] https://lore.kernel.org/lkml/20250324210151.6042-10-lkml@antheas.dev/
-> > >> I have to main concerns about this:
-> > >>
-> > >> 1. taking away initialization commands in one patchset to make it
-> > >> easier to merge another unrelated patch doesn't seem the right thing
-> > >> to do if the other patch it's not in the same series.
-> > >>
-> > >> I can see [1] has been removed from the set for a later moment in time,
-> > >> it's fine if it needs more work, just send something that function in the
-> > >> same way and do not remove initialization commands when unnecessary,
-> > >> especially since there will be for sure future development.
-> > > The initialization was removed as part of general cleanup. Not to make
-> > > it easier to merge the RGB patch. In addition, the RGB patch only runs
-> > > the init in a lazy fashion, so if nobody uses the RGB sysfs the init
-> > > does not run and the behavior is the same.
-> > There are a few problems here:
-> > 1. sope creep: either do a cleanup or solve bugs. The fact that your flow z13
-> > doesn't load hid-asus correctly has nothing to do with the initialization of anime.
-> > The fact that hid-asus is driving leds instead of asus-wmi has nothing to do with
-> > anime matrix initialization either.
-> > 2. not sending the initialization can get hardware misbehave because it
-> > is left in an uninitialized state.
-> > 3. there are absolutely zero reasons to do that. There are even less reasons
-> > as to do it as part of this patchset.
-> >
-> > >> 2. Your patchset resolves around keyboard backlight control and how
-> > >> the keyboard device is exposed to userspace: it's fine but I do not see
-> > >> the point in removing initialization commands that has nothing to do
-> > >> with the issue we are trying to solve here.
-> > >>
-> > >> Please leave 0x5E and 0x5D initialization commands where they are now.
-> > > I mean the second part of the patchset does that. The first part is a
-> > > cleanup. What would be the reason for keeping 0x5E and 0x5D? They are
-> > > only used when initializing those endpoints to write further commands
-> > > to them and for identification. The current driver does not write
-> > > commands to those endpoints and identifies itself over 0x5A.
-> > There are no bugs opened that ties initialization of devices to bugs.
-> > Quite the opposite: I can guarantee you that removing part of the
-> > init will introduce regressions.
-> >
-> > The onus is on you to provide strong evidence that the removal is
-> > a necessary act.
-> >
-> > Regardless it is not in the scope of this patchset: remove it.
-> > > I do get that it is a bit risky as some laptops might be hardcoded to
-> > > wait for 0x5D to turn on RGB. Which is why we had the last patch until
-> > > V4. But we have yet to find a laptop that has this problem, so I find
-> > > it difficult to justify keeping the init.
-> > Yes it's risky to remove initialization sequences for a device that is
-> > in every modern ASUS laptop and is tied to the EC.
-> > > Do note that you might need to add the 0x5D init to your userspace
-> > > program for certain laptops if you haven't already. But that is ok,
-> > > since in doing so you are also validating you are speaking to an Asus
-> > > device, which is important.
-> > This doesn't make much sense: why would anyone remove
-> > a command from the kernel, that can be very well essential to some models
-> > (sleep can break, for example) just to add it back in a userspace program?
-> >
-> > What does it mean I have to validate I am speaking to an asus device?
-> > Software selects devices by known attribute, one of them is the vid:pid....
-> > Beside what does this have to do with the removal of initialization commands
-> > from the kernel?
-> >
-> > Even late initializing devices can lead to problems. Windows doesn't do that:
-> > as soon as asus drivers are loaded all relevant initialization sequences are
-> > sent; Windows is the only officially supported OS: do not introduce commands
-> > flow divergence without strong reasons backing it up.
->
-> If you think keeping 0x5D init is that important, I can spin patch [1]
-> into this series. But then this quirk will stay in the kernel forever.
-> I can even add 0x5E since that does not affect newer devices, which I
-> care for simplifying the sequence.
->
-> Luke said these two pairs are the important ones to keep.
->
-> I'm not sure what to do.
 
-I was asked by a 2025 Asus Zenbook Duo user to add his IDs in [1]. In
-doing so, I updated the rgb and legacy init patches for the new series
-and added a quirk for early init of the duo keyboards.
 
-The series is 14 patches long, I don't think my email can take it :(
+On 10/24/2025 10:54 AM, Mario Limonciello wrote:
+> 
+> 
+> On 10/24/2025 10:21 AM, Antheas Kapenekakis wrote:
+>> From: Alex Deucher <alexander.deucher@amd.com>
+>>
+>> For S0ix, the RLC is not powered down. Rework the Van Gogh logic to
+>> skip powering it down and skip part of post-init.
+>>
+>> Fixes: 8c4e9105b2a8 ("drm/amdgpu: optimize RLC powerdown notification 
+>> on Vangogh")
+>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4659
+>> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+>> Tested-by: Antheas Kapenekakis <lkml@antheas.dev>
+>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+>> ---
+>>   drivers/gpu/drm/amd/amdgpu/amdgpu_device.c       | 8 +++++---
+>>   drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c        | 6 ++++++
+>>   drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c | 3 +++
+>>   3 files changed, 14 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/ 
+>> drm/amd/amdgpu/amdgpu_device.c
+>> index 3d032c4e2dce..220b12d59795 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+>> @@ -5243,9 +5243,11 @@ int amdgpu_device_suspend(struct drm_device 
+>> *dev, bool notify_clients)
+>>       if (amdgpu_sriov_vf(adev))
+>>           amdgpu_virt_release_full_gpu(adev, false);
+>> -    r = amdgpu_dpm_notify_rlc_state(adev, false);
+>> -    if (r)
+>> -        return r;
+>> +    if (!adev->in_s0ix) {
+>> +        r = amdgpu_dpm_notify_rlc_state(adev, false);
+>> +        if (r)
+>> +            return r;
+>> +    }
+> 
+> Just FYI this is going to clash with my unwind failed suspend series [1].
+> 
+> This is fine, just whichever "lands" first the other will need to rework 
+> a little bit and I wanted to mention it.
+> 
+> Link: https://lore.kernel.org/amd-gfx/20251023165243.317153-2- 
+> mario.limonciello@amd.com/ [1]
+> 
+> This does have me wondering though why amdgpu_dpm_notify_rlc_state() is 
+> even in amdgpu_device_suspend()?  This is only used on Van Gogh.
+> Should we be pushing this deeper into amdgpu_device_ip_suspend_phase2()?
+> 
+> Or should we maybe overhaul this to move the RLC notification into 
+> a .set_mp1_state callback instead so it's more similar to all the other 
+> ASICs?
+> 
 
-Should we merge the first part of this series with the legacy init,
-then do the backlight refactor, and finally the new Duo stuff + rgb?
+My proposal as such is here:
 
-Antheas
+https://lore.kernel.org/amd-gfx/20251024161216.345691-1-mario.limonciello@amd.com/
 
-> Antheas
->
-> [1] https://lore.kernel.org/all/20250325184601.10990-12-lkml@antheas.dev/
->
-> > > Antheas
-> > >
-> > Denis
-> > >>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > >>>>> ---
-> > >>>>>  drivers/hid/hid-asus.c | 56 ++++++++++++++----------------------------
-> > >>>>>  1 file changed, 19 insertions(+), 37 deletions(-)
-> > >>>>>
-> > >>>>> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-> > >>>>> index a444d41e53b6..7ea1037c3979 100644
-> > >>>>> --- a/drivers/hid/hid-asus.c
-> > >>>>> +++ b/drivers/hid/hid-asus.c
-> > >>>>> @@ -638,50 +638,32 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
-> > >>>>>       unsigned char kbd_func;
-> > >>>>>       int ret;
-> > >>>>>
-> > >>>>> -     if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD) {
-> > >>>>> -             /* Initialize keyboard */
-> > >>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> > >>>>> -             if (ret < 0)
-> > >>>>> -                     return ret;
-> > >>>>> -
-> > >>>>> -             /* The LED endpoint is initialised in two HID */
-> > >>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID1);
-> > >>>>> -             if (ret < 0)
-> > >>>>> -                     return ret;
-> > >>>>> -
-> > >>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_LED_REPORT_ID2);
-> > >>>>> -             if (ret < 0)
-> > >>>>> -                     return ret;
-> > >>>>> -
-> > >>>>> -             if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
-> > >>>>> -                     ret = asus_kbd_disable_oobe(hdev);
-> > >>>>> -                     if (ret < 0)
-> > >>>>> -                             return ret;
-> > >>>>> -             }
-> > >>>>> -
-> > >>>>> -             if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
-> > >>>>> -                     intf = to_usb_interface(hdev->dev.parent);
-> > >>>>> -                     udev = interface_to_usbdev(intf);
-> > >>>>> -                     validate_mcu_fw_version(hdev,
-> > >>>>> -                             le16_to_cpu(udev->descriptor.idProduct));
-> > >>>>> -             }
-> > >>>>> +     ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> > >>>>> +     if (ret < 0)
-> > >>>>> +             return ret;
-> > >>>>>
-> > >>>>> -     } else {
-> > >>>>> -             /* Initialize keyboard */
-> > >>>>> -             ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-> > >>>>> -             if (ret < 0)
-> > >>>>> -                     return ret;
-> > >>>>> +     /* Get keyboard functions */
-> > >>>>> +     ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
-> > >>>>> +     if (ret < 0)
-> > >>>>> +             return ret;
-> > >>>>>
-> > >>>>> -             /* Get keyboard functions */
-> > >>>>> -             ret = asus_kbd_get_functions(hdev, &kbd_func, FEATURE_KBD_REPORT_ID);
-> > >>>>> +     if (dmi_match(DMI_PRODUCT_FAMILY, "ProArt P16")) {
-> > >>>>> +             ret = asus_kbd_disable_oobe(hdev);
-> > >>>>>               if (ret < 0)
-> > >>>>>                       return ret;
-> > >>>>> +     }
-> > >>>>>
-> > >>>>> -             /* Check for backlight support */
-> > >>>>> -             if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
-> > >>>>> -                     return -ENODEV;
-> > >>>>> +     if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
-> > >>>>> +             intf = to_usb_interface(hdev->dev.parent);
-> > >>>>> +             udev = interface_to_usbdev(intf);
-> > >>>>> +             validate_mcu_fw_version(
-> > >>>>> +                     hdev, le16_to_cpu(udev->descriptor.idProduct));
-> > >>>>>       }
-> > >>>>>
-> > >>>>> +     /* Check for backlight support */
-> > >>>>> +     if (!(kbd_func & SUPPORT_KBD_BACKLIGHT))
-> > >>>>> +             return -ENODEV;
-> > >>>>> +
-> > >>>>>       drvdata->kbd_backlight = devm_kzalloc(&hdev->dev,
-> > >>>>>                                             sizeof(struct asus_kbd_leds),
-> > >>>>>                                             GFP_KERNEL);
-> >
+It would need some testing though to make sure it didn't break Steam 
+Deck or Steam Deck OLED.
+
+>>       return 0;
+>>   }
+>> diff --git a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c b/drivers/gpu/ 
+>> drm/amd/pm/swsmu/amdgpu_smu.c
+>> index fb8086859857..244b8c364d45 100644
+>> --- a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
+>> +++ b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
+>> @@ -2040,6 +2040,12 @@ static int smu_disable_dpms(struct smu_context 
+>> *smu)
+>>           smu->is_apu && (amdgpu_in_reset(adev) || adev->in_s0ix))
+>>           return 0;
+>> +    /* vangogh s0ix */
+>> +    if ((amdgpu_ip_version(adev, MP1_HWIP, 0) == IP_VERSION(11, 5, 0) ||
+>> +         amdgpu_ip_version(adev, MP1_HWIP, 0) == IP_VERSION(11, 5, 
+>> 2)) &&
+>> +        adev->in_s0ix)
+>> +        return 0;
+>> +
+> 
+> How about for GPU reset, does PMFW handle this too?
+> 
+>>       /*
+>>        * For gpu reset, runpm and hibernation through BACO,
+>>        * BACO feature has to be kept enabled.
+>> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c b/ 
+>> drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
+>> index 2c9869feba61..0708d0f0938b 100644
+>> --- a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
+>> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
+>> @@ -2217,6 +2217,9 @@ static int vangogh_post_smu_init(struct 
+>> smu_context *smu)
+>>       uint32_t total_cu = adev->gfx.config.max_cu_per_sh *
+>>           adev->gfx.config.max_sh_per_se * adev- 
+>> >gfx.config.max_shader_engines;
+>> +    if (adev->in_s0ix)
+>> +        return 0;
+>> +
+>>       /* allow message will be sent after enable message on Vangogh*/
+>>       if (smu_cmn_feature_is_enabled(smu, SMU_FEATURE_DPM_GFXCLK_BIT) &&
+>>               (adev->pg_flags & AMD_PG_SUPPORT_GFX_PG)) {
+> 
 
 
