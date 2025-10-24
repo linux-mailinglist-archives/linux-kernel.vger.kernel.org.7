@@ -1,166 +1,89 @@
-Return-Path: <linux-kernel+bounces-867952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9C4C04001
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:11:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB71C04004
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46B091AA1B3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA0311AA23DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F7519E7D1;
-	Fri, 24 Oct 2025 01:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126C11991C9;
+	Fri, 24 Oct 2025 01:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDOL5Of3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGsO2UBi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130AC8405C;
-	Fri, 24 Oct 2025 01:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0EA145A05;
+	Fri, 24 Oct 2025 01:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761268297; cv=none; b=ScBgC/KdE8s+lvHzZn1EpP84CYbg7Mke8kWMuOpeILQlgxYQ2iB4N8Up2KFJzQbzgzkaFkH31AUQPZHRJrmDwUpmqBk8Xvz3XbmwcHwjh9p5cEHTOmDby5Q3HI4mAKJdhy/XX1wzRurBkCr+bW27qGGq7J/e6kxDfiB20jdICnQ=
+	t=1761268347; cv=none; b=Cl0Eac9dYj68FycjyfyRZFw2xQgKGikDaKSiK42eESQW+6bBRlqwftUcLabaSZyILXWjc7dXX0sYnERF8n5/TRg8LWB23IesWhip8bOL+c8Dut+QO3yBiVHp3PeHo9JGGQvobfXxQBf8tLqaXCTCRDNKKuvuRUUuRhYHaRtfkok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761268297; c=relaxed/simple;
-	bh=sYVXJNowzbBXxfqAUDkJRSvbLsY6hEvJ0xreENX8QjA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GrKVCivLiLx7YM6LYtfMumucNgK++VUutIFv+pPlJgle8Z9tUYn0Ey1F/s5KTKM4HddleSUf2xbPH8pKcQRjN7CZbYG6mpcmy6TTSEt4SbHzP1kwwQzcO7wtRu/exiXfiaHtrfRugcI0vgUYVtKzHz1iXilNIQMlEzQlj8pO/3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDOL5Of3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C692C4CEE7;
-	Fri, 24 Oct 2025 01:11:36 +0000 (UTC)
+	s=arc-20240116; t=1761268347; c=relaxed/simple;
+	bh=nuz9wjsSyzrS89RXOZqaiUwefxbGsE7lwnuoYYdkIYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ePzNXMnjKvN/oodowQmLnf6i20p3nMJ92O9HYmehJ540h/xE/t+DTybAstz3FOdfAAtrgMJC9ykZ4/pdTpelZC3pAoeMKzs0qVlsgR2HfJ0HFYeO9mcByyphomaVZK2yrowFhMNyhM/qtqX4Dog9z94GaqXGgt5YNfRp3NI01f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGsO2UBi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B49B9C4CEE7;
+	Fri, 24 Oct 2025 01:12:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761268296;
-	bh=sYVXJNowzbBXxfqAUDkJRSvbLsY6hEvJ0xreENX8QjA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=aDOL5Of3SFEs05ZeCCWzGdwaQgK1mGDYDzetpmy0klLs8uy6LjtI/xQRTvtNN7/78
-	 H0QKxn5mSWURrg8GWUbWR38DaYZAGco/RdqbSJ06v1fEVaHIOkZi1b6Rou3wVphYcg
-	 YdzV3mebZe1L3yF7x2RCHE5X5AGlbj0gvZK3/d/MU20dN5jnAYvMokKrq516zOaCx0
-	 qQqCZCUeT9fR0l2hElbXxiXjs6EDkkAhcPzEHXYkIPMleyP3KWPH2faorCi/BCRFYF
-	 PzU2dUjfrFI7VjV+rD4xgCTb4RFw5qGIOOfRcyaJKF7CJgLhS8X3EA5Q6T9Z40I6QM
-	 43FMNhnV/A21A==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=k20201202; t=1761268346;
+	bh=nuz9wjsSyzrS89RXOZqaiUwefxbGsE7lwnuoYYdkIYQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rGsO2UBihKP+9bT2D9hy84LxBAgT0o7t6f98Pjpfvsze1XDdSWWW6gT/lvc883ReE
+	 BUQ/+OLw/ZrbS5/P6S/NCEkK7XX+9jsFI8X0A1kHwkfHqm4Wt1z8AOnFt/RLi6ZjjY
+	 zLaqMcSfcIwBGUJfW081fNaBDHCgmX2PRrf8BnqBEa7JtUfIJBat6PfPQ8ypEFOeEC
+	 GuXmIPIBaQA/Z6hv+3GKuMxCk7xSMAywffMKWQQ4L3qUIN+kqvTmqkhej2maJDwF+z
+	 XO0XP+ZVwgbSxmOvISXglJf5sL5vJpTz3VIK1wFb8a4P02Wjr1zFHEgVTkJA/0qenS
+	 fAYpUXpore9uA==
+Date: Thu, 23 Oct 2025 15:12:25 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	Emil Tsalapatis <emil@etsalapatis.com>, sched-ext@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: PCI: amlogic,axg-pcie: Fix select schema
-Date: Thu, 23 Oct 2025 20:11:21 -0500
-Message-ID: <20251024011122.26001-1-robh@kernel.org>
-X-Mailer: git-send-email 2.51.0
+Subject: Re: [PATCH v3 sched_ext/for-6.19] sched_ext/tools: Add compat layer
+ for kfuncs using struct *_args
+Message-ID: <aPrSeQ9560YjwXlB@slm.duckdns.org>
+References: <20251023080130.76761-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023080130.76761-1-arighi@nvidia.com>
 
-The amlogic,axg-pcie binding was never enabled as the 'select' schema
-expects a single compatible value, but the binding has a fallback
-compatible. Fix the 'select' by adding a 'contains'. With this, several
-errors in the clock and reset properties are exposed. Some of the names
-aren't defined in the common DWC schema and the order of clocks entries
-doesn't match .dts files.
+Hello,
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/pci/amlogic,axg-pcie.yaml          | 17 +++++++++--------
- .../bindings/pci/snps,dw-pcie-common.yaml       |  6 +++---
- 2 files changed, 12 insertions(+), 11 deletions(-)
+On Thu, Oct 23, 2025 at 10:01:30AM +0200, Andrea Righi wrote:
+> +#define scx_bpf_select_cpu_and_args __COMPAT_scx_bpf_select_cpu_and_args
+> +struct __COMPAT_scx_bpf_select_cpu_and_args {
+> +	s32 prev_cpu;
+> +	u64 wake_flags;
+> +	u64 flags;
+> +};
+> +
+> +#define scx_bpf_dsq_insert_vtime_args __COMPAT_scx_bpf_dsq_insert_vtime_args
+> +struct __COMPAT_scx_bpf_dsq_insert_vtime_args {
+> +	u64 dsq_id;
+> +	u64 slice;
+> +	u64 vtime;
+> +	u64 enq_flags;
+> +};
 
-diff --git a/Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml b/Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml
-index 79a21ba0f9fd..bee694ff45f3 100644
---- a/Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml
-+++ b/Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml
-@@ -20,9 +20,10 @@ allOf:
- select:
-   properties:
-     compatible:
--      enum:
--        - amlogic,axg-pcie
--        - amlogic,g12a-pcie
-+      contains:
-+        enum:
-+          - amlogic,axg-pcie
-+          - amlogic,g12a-pcie
-   required:
-     - compatible
- 
-@@ -51,15 +52,15 @@ properties:
- 
-   clocks:
-     items:
-+      - description: PCIe PHY clock
-       - description: PCIe GEN 100M PLL clock
-       - description: PCIe RC clock gate
--      - description: PCIe PHY clock
- 
-   clock-names:
-     items:
-+      - const: general
-       - const: pclk
-       - const: port
--      - const: general
- 
-   phys:
-     maxItems: 1
-@@ -88,7 +89,7 @@ required:
-   - reg
-   - reg-names
-   - interrupts
--  - clock
-+  - clocks
-   - clock-names
-   - "#address-cells"
-   - "#size-cells"
-@@ -115,8 +116,8 @@ examples:
-         reg = <0xf9800000 0x400000>, <0xff646000 0x2000>, <0xf9f00000 0x100000>;
-         reg-names = "elbi", "cfg", "config";
-         interrupts = <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>;
--        clocks = <&pclk>, <&clk_port>, <&clk_phy>;
--        clock-names = "pclk", "port", "general";
-+        clocks = <&clk_phy>, <&pclk>, <&clk_port>;
-+        clock-names = "general", "pclk", "port";
-         resets = <&reset_pcie_port>, <&reset_pcie_apb>;
-         reset-names = "port", "apb";
-         phys = <&pcie_phy>;
-diff --git a/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml b/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
-index 34594972d8db..6339a76499b2 100644
---- a/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
-+++ b/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
-@@ -115,11 +115,11 @@ properties:
-             above for new bindings.
-           oneOf:
-             - description: See native 'dbi' clock for details
--              enum: [ pcie, pcie_apb_sys, aclk_dbi, reg ]
-+              enum: [ pcie, pcie_apb_sys, aclk_dbi, reg, port ]
-             - description: See native 'mstr/slv' clock for details
-               enum: [ pcie_bus, pcie_inbound_axi, pcie_aclk, aclk_mst, aclk_slv ]
-             - description: See native 'pipe' clock for details
--              enum: [ pcie_phy, pcie_phy_ref, link ]
-+              enum: [ pcie_phy, pcie_phy_ref, link, general ]
-             - description: See native 'aux' clock for details
-               enum: [ pcie_aux ]
-             - description: See native 'ref' clock for details.
-@@ -176,7 +176,7 @@ properties:
-             - description: See native 'phy' reset for details
-               enum: [ pciephy, link ]
-             - description: See native 'pwr' reset for details
--              enum: [ turnoff ]
-+              enum: [ turnoff, port ]
- 
-   phys:
-     description:
+I think this makes the inline compat wrapper to always pick the compat
+interface as it'd do bpf_core_type_exists() on the __COMPAT prefixed type
+name which doesn't exist in the kernel.
+
+Thanks.
+
 -- 
-2.51.0
-
+tejun
 
