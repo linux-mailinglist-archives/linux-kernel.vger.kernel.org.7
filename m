@@ -1,113 +1,110 @@
-Return-Path: <linux-kernel+bounces-868968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2632C069A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:00:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CDCC06997
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FF5319A8029
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:00:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D6E95505E08
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99914320386;
-	Fri, 24 Oct 2025 13:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA92C31DDA9;
+	Fri, 24 Oct 2025 13:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="IMtV/DMW";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="wkYzs5wg"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="QsSxPSxl"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600A12DE70C;
-	Fri, 24 Oct 2025 13:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E3A31AF3C;
+	Fri, 24 Oct 2025 13:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761314396; cv=none; b=V1HGXpHBpEFfkpylgTKCM86sz6XxqzBARHRSAQXlfj/KLdVqSa1IpKDd9ZK6PoXdI8DEZ0nsBy5pcc+F6F1/ECtlARVkxAoxTpJNTODeQLizE3NO9M5pM1Da5d+uYm+TnZGQD7qPXtgICfSo0QETsSFPYSJKyn2GKRflE0Hv0eg=
+	t=1761314363; cv=none; b=cx4/fptbDkmIsg4oc/yFA1q8Yzhqsh1u1ci51ZqouxC9CXLstgHQvZ1NuN0YW8vG9eebynXIuXsG6bkCvW+iVd59JmchjZ2YGXkFi+fPGZiwUu7QGhwr/lw4PsOWAkg23j0emCzthgVllQVfiGUhY9JUpawDHMvZaeJycdD/zY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761314396; c=relaxed/simple;
-	bh=balVstkGgw4FuJr7gYYdlTm3djRzXOPdaF7mDaQAZ7o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rdRW60MB79pZNFfBub2/yVV677XD8QuiZ4wqs7Qgg6x5Y7bWlnjNpIzZ6SbwCiXap0qs/Bt0Gi9aU7hfEVgWckZTHMIZeeMTm74wQoqzcIOGO0MHyy7lff2TvPoXNzj1dNbYxJYNGMhMgEbifjCVrETZwTKmooAAdxDol32/a04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=IMtV/DMW; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=wkYzs5wg; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1761314338; bh=/Pr6PpVMVyEbWjqU/OrlJDx
-	z/c2pylURHEnGiiqtuhs=; b=IMtV/DMWImM3ytbIBMvKd9IeHWkakGpdd93OgrtrQDgiUX25j4
-	M0vMUcDWCH4gYQJjQmS+a9pbE8sM8Rw4j8MgMgkHtGe9ERTIvZYpi4YH+NA4DvUDtDJbP/JQoob
-	+yC9CvHMOBIa9OydfHP4r9eGa2B4rCG8k73IFfwavPkj7Hd86wBdWMb6efpHbaICmS+5F0RMVXK
-	kzneUFWRUG3aZZ+9XZmUCkJHzjRAZwSchemnVXFsn+jXpMoVBB8JxKlRHqPUZRNGrLpUNJHDEfb
-	Z8pGPyn8g57eFDQ3+pDTDamcof2/Yg1N8IRqf0yzGYGBhm7VEbBPJSbDlbwJZhlL0JA==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1761314338; bh=/Pr6PpVMVyEbWjqU/OrlJDx
-	z/c2pylURHEnGiiqtuhs=; b=wkYzs5wgRe1geWGgouhOuPQI/t0AEKH+EgSF3Xb4rYtUhnqYp7
-	AUSgSaVcLBChKBr7qf7LbZqXzlyw/WEQ2GAw==;
-Message-ID: <47b40a91-8365-4431-9fd9-1e48fad2a4e1@mainlining.org>
-Date: Fri, 24 Oct 2025 16:58:57 +0300
+	s=arc-20240116; t=1761314363; c=relaxed/simple;
+	bh=ofINEK2u/IpLS0SIBjgT0R2qzRiKMaV7PqEs5j3ep10=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rhRtEve5s1DdZ0D06Sm5HOSg3ohRahiJ1SQhz+lqvD35jid7McshsanPdH/zzniDDndAyhj6WOUPUcy4tJgryJJwxB7sb2k9UusmkM32XjE0cSg35sxWL/jMQPnWv2EMdfPSj0nivljq5smatx09a5MvHbV+7tgT3E6xX+/7EoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=QsSxPSxl; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7A72240AED
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1761314360; bh=dRERUy6Vb2iKFJR8a5MnKY1kS2D1WEjXXzuT1Iiq7pg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=QsSxPSxlEXnisRIOFuRDTI412GRLNOCbm0htdMZSVpbTacg/AC9CpMH2q0tQxoMXY
+	 cxrbEupVDK8dzTYoRaxr+3iq6s9q2KvGISAAjL7hMuYm/ijTb4whUZX5qzYKwGEC+V
+	 iD9CnJ9C+x14m0nWhpptYgh9UGVmkowwU97ZOyNB0Rrn0q35829G/c5Fg9pD9AhzAq
+	 254WAupHXK++MBDKX/e1RW5dh2hvYsd83yBeEyJ6payp26lUeTm2g/MkE4zsHe6coe
+	 ZqyfF/rdMNGegT55mH5P3EKbiZQXrvpJPBMl/qJEh6zW/hFe9a/nHHLKJ+kNqOnzHR
+	 JrndRvoMP6knw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 7A72240AED;
+	Fri, 24 Oct 2025 13:59:20 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Akira Yokosawa <akiyks@gmail.com>, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, Jani
+ Nikula <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH v2 00/10] Collect documentation-related tools under
+ /tools/docs
+In-Reply-To: <532dcafa-08a8-4e18-b904-53e061734b69@gmail.com>
+References: <20251023161027.697135-1-corbet@lwn.net>
+ <532dcafa-08a8-4e18-b904-53e061734b69@gmail.com>
+Date: Fri, 24 Oct 2025 07:59:19 -0600
+Message-ID: <87y0p0ieo8.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] arm64: dts: qcom: sdm630/660: Add CDSP-related
- nodes
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- linux@mainlining.org
-References: <20251023-qcom-sdm660-cdsp-adsp-dts-v2-0-895ffe50ab5f@mainlining.org>
- <20251023-qcom-sdm660-cdsp-adsp-dts-v2-1-895ffe50ab5f@mainlining.org>
- <07066c46-4121-48da-846a-3a180d245589@oss.qualcomm.com>
-Content-Language: ru-RU, en-US
-From: Nickolay Goppen <setotau@mainlining.org>
-In-Reply-To: <07066c46-4121-48da-846a-3a180d245589@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Akira Yokosawa <akiyks@gmail.com> writes:
 
-24.10.2025 11:28, Konrad Dybcio пишет:
-> On 10/23/25 9:51 PM, Nickolay Goppen wrote:
->> In order to enable CDSP support for SDM660 SoC:
->>   * add shared memory p2p nodes for CDSP
->>   * add CDSP-specific smmu node
->>   * add CDSP peripheral image loader node
->>
->> Memory region for CDSP in SDM660 occupies the same spot as
->> TZ buffer mem defined in sdm630.dtsi (which does not have CDSP).
->> In sdm660.dtsi replace buffer_mem inherited from SDM630 with
->> cdsp_region, which is also larger in size.
->>
->> SDM636 also doesn't have CDSP, so remove inherited from sdm660.dtsi
->> related nodes and add buffer_mem back.
->>
->> Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
->> ---
-> [...]
+> Hi Jon,
 >
->> +			label = "turing";
-> "cdsp"
-Ok, I'll change this in the next revision.
->> +			mboxes = <&apcs_glb 29>;
->> +			qcom,remote-pid = <5>;
->> +
->> +			fastrpc {
->> +				compatible = "qcom,fastrpc";
->> +				qcom,glink-channels = "fastrpcglink-apps-dsp";
->> +				label = "cdsp";
->> +				qcom,non-secure-domain;
-> This shouldn't matter, both a secure and a non-secure device is
-> created for CDSP
-I've added this property, because it is used in other SoC's, such as 
-SDM845 and SM6115 for both ADSP and CDSP
-> Konrad
+> On Thu, 23 Oct 2025 10:10:08 -0600, Jonathan Corbet wrote:
+>> Our documentation-related tools are spread out over various directories;
+>> several are buried in the scripts/ dumping ground.  That makes them harder
+>> to discover and harder to maintain.
+>> 
+>> Recently, the idea of creating a dedicated directory for documentation tools
+>> came up; I decided to see what it would look like.  This series creates a
+>> new directory, tools/docs, and moves various utilities there, hopefully
+>> fixing up all of the relevant references in the process.
+>> 
+>> At the end, rather than move the old, Perl kernel-doc, I simply removed it.
+>> 
+>> The big elephant lurking in this small room is the home for Python modules;
+>> I left them under scripts/lib, but that is an even less appropriate place
+>> than it was before.  I would propose either tools/python or lib/python;
+>> thoughts on that matter welcome.
+>> 
+>> Changes in v2:
+>>   - Rebase on top of all of Mauro's changes (the most painful rebase I've
+>>     ever done, I think).
+>
+> I tried to apply this series on top of current docs-next, and several earlier
+> merge points, but haven't succeeded so far, even with "git am -3" ...
+>
+> Where am I supposed to apply this?
+>
+>         Thanks, Akira
 
--- 
-Best regards,
-Nickolay
+*Sigh* you're suppose to wait until I get my act together, I guess.
 
+It's amazing how hard it can be to properly rebase what seems like such
+a simple series.  Lemme do it one more time, on *current* docs-next this
+time.
+
+Apologies,
+
+jon
 
