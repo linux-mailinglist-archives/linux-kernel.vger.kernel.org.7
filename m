@@ -1,194 +1,178 @@
-Return-Path: <linux-kernel+bounces-868185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3FC3C049AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:03:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08D1C049B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C5464EB8F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:03:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C4ED1A65537
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B94A266581;
-	Fri, 24 Oct 2025 07:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFEFE2798E5;
+	Fri, 24 Oct 2025 07:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Z5mXZSF3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zAbPRISG"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ghKtyQUw"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4543015E8B;
-	Fri, 24 Oct 2025 07:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1C12580CA
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761289382; cv=none; b=lv5GhU0UTT5/cpN/zMM+HOhS752Sop1PEqHDbkYlbGmULkY5hJU6Wu4l+nYzCDU0JcNn/A0hiCAiZ4UPMdzdXfH+wH7Vs7mjYT5RRJXag8R0CNlmZQNryqaPK7etH3FsCLfwKEdZYTNht69iUHH6TH0yvIkugRiNB2SO8H3df1s=
+	t=1761289411; cv=none; b=uf/UPM8/Xoj9H4uCS9KPXXmEjjyIIp2uIv4mGS5C0CuEAlVAQPC7Kdk9VZDCL3NudRrvdzEzU8gC6grwQxn0M5lehrrK6pgVsaNXFezqxZwlyQ3LQXvEUlZi3Y/yNqqa1fiHyRh69FKt6i66Cx6lrhAXVm8VmVlTyL9ws/iYZXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761289382; c=relaxed/simple;
-	bh=Zc0WUF7othcaVHi7fGyfnH8q+HarWOJjAgEQJVdcEy8=;
-	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=BRwtjV1crLsbsQ2iqrTEGTd0kDKUPk01YgFECWxNOiX/eDvwgC728RyYyFQnG0KszJE89ysjdnAnH5vmIGLE1JZmZuntfR2i/hqYHRCG6RbXnrI/zd5UFM0FGNWyiVUggx2LIR+l6hMxuvqj9FDWk/5xBaDqgruPEzFUNs2T/vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Z5mXZSF3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zAbPRISG; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id D0BBF1D0016C;
-	Fri, 24 Oct 2025 03:02:57 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 24 Oct 2025 03:02:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1761289377;
-	 x=1761375777; bh=mac9tPA7fjXsKMTZ5o0W5XcYjwuuhxgWlzIaSPBWgTk=; b=
-	Z5mXZSF3chz/arWSZEIPGf+rfgYMBabszFcm0EoBuebIAyZgnuldhbmd3wVyJBT4
-	7fjVGgOtJu8xCJXD3Isa+gWn4TFjblgFvbs5HwBrDz0A99uSdzb2k0z7hBuK07ec
-	QIrDGu/I+S/eSsfSF9wAAl6k2mjp+7XgqfaRWISfmdsM20xXY9dMVBsU9dMId+r0
-	ZMD4UU3NRyugd4T7i2bffrUbtXONDtNtGWoyI6OSD1s5I53cfgIBKtTowoaB0ye9
-	RTSUEDkMPZHTI5tPiQdYTCwNVhB8nq+uXzaONeutekDvZ5fVX7mbepaB2lTg7+E9
-	YxH2QoA7fu/kTR7wo0wqXQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-transfer-encoding:content-type
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm2; t=1761289377; x=1761375777; bh=m
-	ac9tPA7fjXsKMTZ5o0W5XcYjwuuhxgWlzIaSPBWgTk=; b=zAbPRISGYs04ZgTVZ
-	els+9gdDIme18GEHUlNsuJztgHJetc999YVCvrq/PNrn7PVL1mvytGyLWFn5uIDB
-	vJzlEjFLBGAzAyrbRUQY2EQbroq9iVU78quJoKch7O38TlJaOymjhpcNr6DWX/7x
-	sME9HpPhb3oILSHGMeA1tEy/MVyh3AdI8SygN4AQmH1e+z3XUF5obXqC8UOKAll+
-	D/T/HOfp4fayovs4vfsAKzvfNW5vsi+H3LTDAMNYhDaBdI9+4gxJIS6HWR44sFMn
-	orrD7O+m3+uwBCuZOr+aptyTSeauXNdo4f+4c+bAfu+SYMZ2efySZLXTDkkM4d/6
-	/whyw==
-X-ME-Sender: <xms:niT7aNORl5OLs4fICcMOsJBHp8xqXwmEEd3y7gWTnmBrfeQCgYsvvQ>
-    <xme:niT7aKx8n0jC-0EeZgnAMNBykaU7uZwvkdPQn9ds6p_3UuA_hW1youPJTHqmmcTfp
-    3f8gXcJylAENNlmnIFQz2YupLFTvpnBSRWpR4ZGvU_XgaSXMWmzgZs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeekieelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvffkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpeehiefgudefheffieetudeikeehueeffedtheelteeuhffggfeihfelheettdevffen
-    ucffohhmrghinhepohiilhgrsghsrdhorhhgpdhgihhthhhusgdrtghomhenucevlhhush
-    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgu
-    sgdruggvpdhnsggprhgtphhtthhopedvfedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopegs
-    mhgtqdhsfiesrghsphgvvgguthgvtghhrdgtohhmpdhrtghpthhtoheprhihrghnpggthh
-    gvnhesrghsphgvvgguthgvtghhrdgtohhmpdhrtghpthhtohepphhrrggshhgrkhgrrhdr
-    mhgrhhgruggvvhdqlhgrugdrrhhjsegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtth
-    hopegrnhgurhgvfiestghouggvtghonhhsthhruhgtthdrtghomhdrrghupdhrtghpthht
-    ohepjhhksegtohguvggtohhnshhtrhhutghtrdgtohhmrdgruhdprhgtphhtthhopehnfh
-    hrrghprhgrughosegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepjhhovghlsehj
-    mhhsrdhiugdrrghupdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:niT7aCHoTkH26y4HM0ap__KxzaoaaM1csgLdSkGRihkbg2o24M8xuA>
-    <xmx:niT7aPeqNKheIO1FTDxgLABGSHquDcvscBghb1Hggsy528lGU-uoYA>
-    <xmx:niT7aH8BBeY3n72QZvz7wQUQpC5otuUkz-xGTbthO0GpJJ9rP4-NnA>
-    <xmx:niT7aFZY6oU1lW4ltrcsZ62bMXuDjj---pt4fvPunstPkitM2p7lAg>
-    <xmx:oST7aFyotp38mE_UVArEvtRzxSdLeT9WZZ-t8kzbfLTzojk62SAN2Wwv>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id B2295700054; Fri, 24 Oct 2025 03:02:54 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761289411; c=relaxed/simple;
+	bh=jwKwKoQ1je32EjVd1IL0UvZ2d8JBijczHCb0ou5rPAg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FmncAB79+ozlooCQ/s+I1dRaNZyRHs62utB/hxuGqy4H4Cb+aKzxXbU3Wei/8/1h62ihJrLjjOnMM3jrDiJ4Q7mr+vrtl5Lt69sHk/YXyuuYb2h+USTOal3BG+2hLJGUjt1iNGH2FkXfukq6zJLJIEXsiJ9Jq855RA21QWvr4nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ghKtyQUw; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-592ee9a16adso2794542e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:03:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761289407; x=1761894207; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jOlB0kPMPcikcykh5NXoFKFdbJH0a3Am29BYJ5NIg8A=;
+        b=ghKtyQUw2YwzgTn4jwV0MMygeaEH07ARTCZQj7LVrdzklXZFeg5e9a2JesQQ482857
+         pZ22jdPOqW5UJHxsyRX+kLLX/8AISxBwxKl/S7d7PD27ufB8YnBMLG46AXPRDLlOVURm
+         6cEK6M2D/ZybW7pbGQVGn4UBQ43gWg8aqZDHkRMQa4BGCUcpyO/7wKWojW4CFLlClbtp
+         ATiBS8tdQRwc6W7uooz9oYcQsoshDGh5HgfcTjrkWYHwsNAbrKiri6p3NlrxhwqDbfw1
+         ux6eK0dkKLOtyjnjuL4HNTsi9nVcq14I3waUo+JadWzCqJEUQ9/GpC8rP4/TFrFM08w+
+         LHqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761289407; x=1761894207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jOlB0kPMPcikcykh5NXoFKFdbJH0a3Am29BYJ5NIg8A=;
+        b=SEAKZmYU8StpdE0lsFmc4xaiq9Wg5DoFl62HN13nNbHmQaKYVlYcBjcSMFPP1Lrp66
+         TMociGlSod+5P6k8/EZsNS3kcDe/KnaAPTEb8dxKyh3x1b/496b+V4IbiFmmgvPe75rR
+         ypPHXaq3Ar+LFmBxgiLK4Kgj9MwnwWqNrwKr4q8l7qOWcj+C9YCpPNWI33X8npKbootR
+         CGuFykHzIa4stzSQ7SmSGEt92v6ZFPDAr1POyQ5KUzLM82gHLfihq3pTypOOIHTIgnVD
+         xOqfDzO2JRnulIOLze1vz8fkQqbhPq2d2v9lbXB+4fixj0bm0IcxCoLx711mYxxagszF
+         YybQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6KA33dt8kvqmbDKvL/fQmYTUNegCNSiOv7sm/78ZN1Eq7JRPJI84v07HiLmrot9V/ftwX5moT+yh5m70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNBikmBszIwjwDqVp8FFMQuqj3AD531+HhaKM20AUdRdLk9o44
+	aCDCsXPjqmk1Bua/pzRiMprK6fLElhs0wk38KAr8Mmd80i47vf02GqHH5WtJpao04SrKkLQ0f3E
+	rM4DB8BVZl/DqR7Q01+HhdFkttzORFVeQRmXJAecDSg==
+X-Gm-Gg: ASbGncv1jf990zTdpGrgb6NhnLhDmzRsOKE6pbd8tr2Ogdmc77kzY+vQNjLwlg56CI2
+	dr1AjQBxbTGCENG++SqESzrjz7QCwXPC8juEUOaNCoBuFIRyYXezh6mCs8d3fSVgZDblDR6TETw
+	C4ZehmFZb0lVnZD/Y5mN9LKks+Wx75uQHpXOnk1UWRfrd+tGHXBPJxAlnVBVgoFTfNnKl6vb2bc
+	DLiy18WfYP40bYAjoZBsIq22yax8aeHlh6Ul8LF/j5KkjRRfO5TFCYEc+JN+fANY5+LN0shJOri
+	8KwvPdRMyvrh3RnB00RetW3QUQ==
+X-Google-Smtp-Source: AGHT+IGot33eiQ+BcQWl6UG0zv+FNQnQnMAkHHpWuHdoQFvVpdE10kN9LM8Ma75zpPJb50O7ebN6pjI2myaknhddpuQ=
+X-Received: by 2002:a05:6512:31c2:b0:591:c6c0:9afb with SMTP id
+ 2adb3069b0e04-591d8546211mr8882195e87.34.1761289407199; Fri, 24 Oct 2025
+ 00:03:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AMptcG-LwCSF
-Date: Fri, 24 Oct 2025 09:02:34 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Ryan Chen" <ryan_chen@aspeedtech.com>, BMC-SW <BMC-SW@aspeedtech.com>,
- "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Joel Stanley" <joel@jms.id.au>,
- "Andrew Jeffery" <andrew@codeconstruct.com.au>,
- "Jeremy Kerr" <jk@codeconstruct.com.au>, "Lee Jones" <lee@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>,
- "Bjorn Andersson" <bjorn.andersson@oss.qualcomm.com>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Nishanth Menon" <nm@ti.com>,
- =?UTF-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>,
- "Taniya Das" <quic_tdas@quicinc.com>, "Lad,
- Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
- "Eric Biggers" <ebiggers@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-Id: <66d0dc8f-553a-41b0-a9af-e058bc39dd94@app.fastmail.com>
-In-Reply-To: 
- <TY2PPF5CB9A1BE6CF8336D211641A18E2DEF2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
-References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
- <20251022070543.1169173-5-ryan_chen@aspeedtech.com>
- <b5441728-06a7-44ea-8876-3a9fc3cf55be@app.fastmail.com>
- <TY2PPF5CB9A1BE626A2F0F6307461D8F64BF2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
- <6a97fbb4-19c2-4ffa-9c73-26aea02c27e4@app.fastmail.com>
- <TY2PPF5CB9A1BE6CF8336D211641A18E2DEF2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
-Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC device tree
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20251022-gpio-shared-v2-0-d34aa1fbdf06@linaro.org>
+ <20251022-gpio-shared-v2-4-d34aa1fbdf06@linaro.org> <aPkcpTWfTb0HOF51@smile.fi.intel.com>
+In-Reply-To: <aPkcpTWfTb0HOF51@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 24 Oct 2025 09:03:15 +0200
+X-Gm-Features: AS18NWBS-Jd3edts4iMIfdLC_kiOaNMJiYsAVBHOjeSjhFk4sOt2_3x0nM3hP4c
+Message-ID: <CAMRc=MduywsSKrN08_4F2xEjZrdnV--_3LZNmxwRHH=_QtceHA@mail.gmail.com>
+Subject: Re: [PATCH v2 04/10] gpio: shared-proxy: implement the shared GPIO
+ proxy driver
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 24, 2025, at 05:54, Ryan Chen wrote:
->> Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC device
->> tree
->> On Thu, Oct 23, 2025, at 09:37, Ryan Chen wrote:
->> >> > +	soc1: soc@14000000 {
->> >> > +		compatible = "simple-bus";
->> >> > +		#address-cells = <2>;
->> >> > +		#size-cells = <2>;
->> >> > +		ranges = <0x0 0x0 0x0 0x14000000 0x0 0x10000000>;
->> >>
->> >> This probably needs some explanation: why are there two 'soc@...'
->> >> devices? Is this literally two chips in the system, or are you
->> >> describing two buses inside of the same SoC?
->> >
->> > The AST2700 is two soc connection with a property bus.
->> > Sharing some decode registers. Each have it own ahb bus.
->> 
->> I don't understand your explanation,
+On Wed, Oct 22, 2025 at 8:04=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
 >
-> Let me clarify more clearly:
-> The AST2700 is a dual-SoC architecture, consisting of two interconnected SoCs,
-> referred to as SoC0 and SoC1. Each SoC has its own clock/reset domains. 
-> They are connected through an internal "property bus", 
-> which is Aspeed's internal interconnect providing shared
-> address decoding and communication between the two SoCs.
-
-Makes sense. Since this is a fairly unusual design, I would suggest
-you add that explanation into the patch description for this
-patch as well, so readers have a chance to find it when they look
-at the file in the git history at a later point.
-
->> Since there is no corresponding driver change, I would keep the binding change
->> as a patch in this series.
+> On Wed, Oct 22, 2025 at 03:10:43PM +0200, Bartosz Golaszewski wrote:
+> >
+> > Add a virtual GPIO proxy driver which arbitrates access to a single
+> > shared GPIO by multiple users. It works together with the core shared
+> > GPIO support from GPIOLIB and functions by acquiring a reference to a
+> > shared GPIO descriptor exposed by gpiolib-shared and making sure that
+> > the state of the GPIO stays consistent.
+> >
+> > In general: if there's only one user at the moment: allow it to do
+> > anything as if this was a normal GPIO (in essence: just propagate calls
+> > to the underlying real hardware driver). If there are more users: don't
+> > allow to change the direction set by the initial user, allow to change
+> > configuration options but warn about possible conflicts and finally:
+> > treat the output-high value as a reference counted, logical "GPIO
+> > enabled" setting, meaning: the GPIO value is set to high when the first
+> > user requests it to be high and back to low once the last user stops
+> > "voting" for high.
 >
-> Sorry, I am wondering, I will follow Andrew advice. 
-> Submit ast2700-mdio to net-next go out another thread.
-> And put submit link in cover-letter in next version.
-> Is it ok?
+> I have two Q:s about the design:
+> 1) why can't the value be counted on the struct gpio_desc level?
 
-Yes
+No, I specifically tried to limit the impact on users not needing this
+to a minimum.
 
->> The version of the driver you are linking does not appear to use syscon, maybe
->> this is an artifact from a previous version?
->> 
->> If so, you can drop it. On the other hand, this does seem to be a classic syscon
->> device and keeping it marked that way is not harmful, just redundant if you
->> actually use the more specific compatible string.
+> 2) can gpio-aggregator facilities be reused (to some extent)?
+
+I don't see how but if you have a precise idea, let me know.
+
 >
-> Sorry, I may not point right link
-> https://patchwork.ozlabs.org/project/linux-aspeed/patch/20250829073030.2749482-4-billy_tsai@aspeedtech.com/
-> aspeed_g7_soc0_pinctrl_probe -> aspeed_pinctrl_probe
-> https://github.com/torvalds/linux/blob/master/drivers/pinctrl/aspeed/pinctrl-aspeed.c#L456
+> ...
 >
-> That will use syscon to regmap.
+> > +#include <linux/auxiliary_bus.h>
+> > +#include <linux/cleanup.h>
+> > +#include <linux/device.h>
+> > +#include <linux/gpio/consumer.h>
+> > +#include <linux/gpio/driver.h>
+> > +#include <linux/module.h>
+>
+> + types.h
+>
+> > +#include "gpiolib-shared.h"
+>
+> ...
+>
+> > +out:
+> > +     if (shared_desc->highcnt)
+> > +             dev_dbg(proxy->dev,
+> > +                     "Voted for value '%s', effective value is 'high',=
+ number of votes for 'high': %u\n",
+> > +                     value ? "high" : "low", shared_desc->highcnt);
+> > +     else
+> > +             dev_dbg(proxy->dev, "Voted for value 'low', effective val=
+ue is 'low'\n");
+>
+> You can unify and maybe save a few bytes here and there by doing somethin=
+g like
+> this:
+>
+>         const char *tmp; // name is a placeholder
+>
+>         tmp =3D str_high_low(shared_desc->highcnt);
+>         dev_dbg(proxy->dev,
+>                 "Voted for value '%s', effective value is '%s', number of=
+ votes for '%s': %u\n",
+>                 str_high_low(value), tmp, tmp, shared_desc->highcnt);
+>
 
-Right, if that is the documented binding, I think keeping syscon in
-the compatible list makes sense.
+This doesn't make sense, we don't "vote for low". We only vote for
+high. It's not: which option gets the most votes, it's: if there's at
+least one vote for high, then we go high.
 
-      Arnd
+Bart
 
