@@ -1,124 +1,141 @@
-Return-Path: <linux-kernel+bounces-868919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08DEC06823
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:30:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8D5C06811
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E7B73BF6B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:26:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 708273B354D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D08831D36F;
-	Fri, 24 Oct 2025 13:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B767277CA4;
+	Fri, 24 Oct 2025 13:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q82RxeHx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7H5HoEZ"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7388320A1A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519CE313539
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761312362; cv=none; b=qdw0TFGyqAYsRxaNCOvRbVPZvTxuMEDxs5U9WNwOo6QYGxKmIme7lmV/RNw9MiquM/id4l/m2Tlp08A+UJRnC25GRfmUMKDV8T7AfJhRo6DOmAMS2Z8QRsHj/a8cBQzr/cbjmAhNTvMzJ2zXj9hoREQnOfgRxksnerA+ZwMUe/w=
+	t=1761312415; cv=none; b=oTF5QH1UnHnUBhaLXA7MHd6EKipSsV4zZZ0z7xGrj43JiGfXoFyQNxs0pbPTWe4C0F/sS2LiTOh8LZYCHUAAoqysX6qfcJLGof2AoZb5RcaEVRc7Ucq/pFIwNzpK1xoOo7KT/HLSIP/ZnEPwaRg4VAk0LmnHHywzcSM+7Kj5hyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761312362; c=relaxed/simple;
-	bh=lNiRZwtesmiFcKiHJWflQehWlUXukBZMLmjaD5n1mCc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FIqqgxA0nQBpCj59UA/RyrlNdxD8MYZf+3Ygixh1AHsbgjjqVKTOGLGZUCtvXBxsBkxHaLZTCM/8r4cOBYzhpU9bV6wUvvd1lCjyCT8DQcZM8riLeW6pxnUxxMfCalqnl6gg0JcKK7h2/phdW13ZPdbXF8ctrTFmbN9sh8l7Vwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q82RxeHx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87D59C4CEF1;
-	Fri, 24 Oct 2025 13:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761312361;
-	bh=lNiRZwtesmiFcKiHJWflQehWlUXukBZMLmjaD5n1mCc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q82RxeHxgjGxZWN16Dqhqw/nHK0LGV9qYpFai9Snpj6Z82SWY8dNfkYrhAr0qYOHe
-	 EGJ/5BfIJeKWfP3o5QXsLmkN2QAZuh2jHplSheGpTZu8uYy/S3dO+DwMiUvsELQzbn
-	 1zwnYi+oNPbiN31KfMi2KwoBLgk/enZ2YgBbFL7xzw+ybt8QCSFh8ZOmpuT+kp8K6g
-	 2iC1Kcc4HgiBeT8jjb+vTf+UebadGw9+EWnxkl5vmPYHHol+LOPhuIvmBMBpiKgDKe
-	 Yo34K00ptfSK3SSyGL3oGQgjLhDvWtV3RgwdCH0ZDSh3FJo3YCLRL4scxbCrNa2aT5
-	 jLvNh8PSFzyPw==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: [PATCH 6/6] timers/migration: Remove dead code handling idle CPU checking for remote timers
-Date: Fri, 24 Oct 2025 15:25:36 +0200
-Message-ID: <20251024132536.39841-7-frederic@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251024132536.39841-1-frederic@kernel.org>
-References: <20251024132536.39841-1-frederic@kernel.org>
+	s=arc-20240116; t=1761312415; c=relaxed/simple;
+	bh=3m+14o8JFv3FlZ8WW5Z3ffx9H795C94Lo0VBZ8GcJhM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XIGEF5OY+R3jOaYSkDRpMuQuUM91Fv6X1cyNllqPigd6YZRq+V9hlrkSa/SkhQZGDuDd/1wMZbBcOjxgDQJAhly2R70D5jyJkT/iLuGA1w/qkXeK006v0PqSK30xKmgB8B4+6K4E7KfPnysjg9ciyVazPnkxMv4EIABt9DleCVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7H5HoEZ; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b6d5e04e0d3so286936166b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:26:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761312411; x=1761917211; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mvz7WfloUlP5Ojd6e1kroOswZjlfxgMGTQOUIPJaae8=;
+        b=Q7H5HoEZtR+eK0Zc+B1nojN33LinQjTgRiQa7lYQ8RexOXINwosBAQUF7yEwufBPzl
+         a7d89WFnY0CrIsFovLk3O1h7rzdXTPFqEBY449A6GahcQpq8MpmlmNOFtw8fgZCaZ1dP
+         qWmckNczxZL25Yg3navl72S6gFvEYIEBflrqBHf70lftEUFdTF2I/o1T0GXIFW0jpRQz
+         e4P2nkWxrlxJoXZbpWNxlZa9qlBw2jOBxy7n0u1QB1mSvmMHvg7Mb2RODaeKgMI9T7qJ
+         YFIMum6rr2cDnUbNXJdV5pVFhtorCThFmOzd6TLqKFimycT92+CUfpGUTbCWQ9MHgc57
+         vuag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761312411; x=1761917211;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mvz7WfloUlP5Ojd6e1kroOswZjlfxgMGTQOUIPJaae8=;
+        b=GuU0BFuojfL29+RCg6pyjsttruYFF8B2vcwb5BoYHOMXdgb2ZX7+SJyIlZyzxJ4Z+G
+         zecbRjHE+v9XG+ylf8fdOKoHHX/GT7V/MXtZzSlVMeU99YF0uZbryyTwvxmgI3Pfkruq
+         yexGgBcXwTWcGhoQyByuXIFsd6ls0JdpZRnho9PeTZktq8YhM5EAd6dyquv2zChS8Tk9
+         JdGgPLdM6dejOfE8kTcS4SvRbGF7dpDP6y3Zg/DXFKxi5XykDa4gL0KRQV1+zkLzOW0Q
+         uCngerfwiv1PX8WthBnMYTiI1z9CLs24QDwD1RpcuNI+GI3H0so6XwaTXKRdISwvil5W
+         cngQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7OoKW3fwUJwzhmksc+XoknyG1C8S1GEbS/gCeBNagHq3kLqieQof6B30j54Ps3A78Dlxfs/PpieP4Lew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR0BU5MC3pCK88+xMI2kinyiFG789ZVuEkk/oIYgJwtU6e6gzW
+	OtCJe89D86VWD9VYJYsPkbohl0wteN4kOtRSC4Sbb3pm2l+RXRjjQXdQ/ZPm2y1rwoNsB+eGSJR
+	Z1GVtKGdBsbPlqbmNNsSE0xE2+dnFjHk=
+X-Gm-Gg: ASbGncvtCwSj74sX2WkftOukmrviY2V3fLygYiMB0+qAk/S5CcMYjOK/mkKIuuXeqPt
+	TLHq+RhTm2zN8elup62WY+yk8Eo2WHTWyPUEGi+6rlmrnpVn9GhivmPMPZNB2nKjGpuZYf+nM2x
+	1cJtTq20L/ALsHy0Eu50tbr9QW7dHTNCZtvIqZs2yjcmSZvNiSBGNcuzTyiU5YVKWZfeVAvvCGp
+	ZjdtstPto9why9t+fG5/KSDlHLBXYNMnLcQQA31VVSpU5/Qhi06rBYNNZ2t
+X-Google-Smtp-Source: AGHT+IFjjTuBXN9RNE17o1HXG/pWOF0aA/eLredLJlFjVbvcwj/jjil+eqIqI4xViBT203RxM5WtOZyiRCx27mJLRPQ=
+X-Received: by 2002:a17:906:7303:b0:b4e:f7cc:72f1 with SMTP id
+ a640c23a62f3a-b6471f3c28emr3320963966b.22.1761312411112; Fri, 24 Oct 2025
+ 06:26:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251024-swap-clean-after-swap-table-p1-v2-0-a709469052e7@tencent.com>
+ <178e2579-0208-4d40-8ab2-31392aa3f920@lucifer.local>
+In-Reply-To: <178e2579-0208-4d40-8ab2-31392aa3f920@lucifer.local>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 24 Oct 2025 21:26:14 +0800
+X-Gm-Features: AWmQ_bluve24JSPZEEhNHyJvd6ofuK_JksD9uA6QkIIpRPsvLrDnJBnZTAjSPIs
+Message-ID: <CAMgjq7DuJp_zyW4NLHPoA8iDYC+2PaVZT4XzETV-okVUPLNzSw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] mm, swap: misc cleanup and bugfix
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	YoungJun Park <youngjun.park@lge.com>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Idle migrators don't walk the whole tree in order to find out if there
-are timers to migrate because they recorded the next deadline to be
-verified within a single check in tmigr_requires_handle_remote().
+On Fri, Oct 24, 2025 at 9:18=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Fri, Oct 24, 2025 at 02:00:38AM +0800, Kairui Song wrote:
+> > A few cleanups and a bugfix that are either suitable after the swap
+> > table phase I or found during code review.
+> >
+> > Patch 1 is a bugfix and needs to be included in the stable branch,
+> > the rest have no behavior change.
+> >
+> > ---
+> > Changes in v2:
+> > - Update commit message for patch 1, it's a sub-optimal fix and a bette=
+r
+> >   fix can be done later. [ Chris Li ]
+> > - Fix a lock balance issue in patch 1. [ YoungJun Park ]
+> > - Add a trivial cleanup patch to remove an unused argument,
+> >   no behavior change.
+> > - Update kernel doc.
+> > - Fix minor issue with commit message [ Nhat Pham ]
+> > - Link to v1: https://lore.kernel.org/r/20251007-swap-clean-after-swap-=
+table-p1-v1-0-74860ef8ba74@tencent.com
+> >
+> > ---
+> > Kairui Song (5):
+> >       mm, swap: do not perform synchronous discard during allocation
+>
+> FYI For some reason this commit is not present on lore, see [0]
+>
+> [0]: https://lore.kernel.org/all/20251024-swap-clean-after-swap-table-p1-=
+v2-0-a709469052e7@tencent.com/
 
-Remove the related dead code and data.
+Thanks for letting me know, strangely, it is here:
+https://lkml.kernel.org/r/20251024-swap-clean-after-swap-table-p1-v2-1-c5b0=
+e1092927@tencent.com
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/time/timer_migration.c | 16 ----------------
- 1 file changed, 16 deletions(-)
+But the In-reply-to id is wrong. I'm using b4 and somehow patch 1 was
+blocked by gmail's SMTP so I had to try to resend patch 1 again,
+something went wrong with that part. I'll try to find out the problem
+and avoid that from happening again.
 
-diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index 73d9b0648116..19ddfa96b9df 100644
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -504,11 +504,6 @@ static bool tmigr_check_lonely(struct tmigr_group *group)
-  * @now:		timer base monotonic
-  * @check:		is set if there is the need to handle remote timers;
-  *			required in tmigr_requires_handle_remote() only
-- * @tmc_active:		this flag indicates, whether the CPU which triggers
-- *			the hierarchy walk is !idle in the timer migration
-- *			hierarchy. When the CPU is idle and the whole hierarchy is
-- *			idle, only the first event of the top level has to be
-- *			considered.
-  */
- struct tmigr_walk {
- 	u64			nextexp;
-@@ -519,7 +514,6 @@ struct tmigr_walk {
- 	unsigned long		basej;
- 	u64			now;
- 	bool			check;
--	bool			tmc_active;
- };
- 
- typedef bool (*up_f)(struct tmigr_group *, struct tmigr_group *, struct tmigr_walk *);
-@@ -1119,15 +1113,6 @@ static bool tmigr_requires_handle_remote_up(struct tmigr_group *group,
- 	 */
- 	if (!tmigr_check_migrator(group, childmask))
- 		return true;
--
--	/*
--	 * When there is a parent group and the CPU which triggered the
--	 * hierarchy walk is not active, proceed the walk to reach the top level
--	 * group before reading the next_expiry value.
--	 */
--	if (group->parent && !data->tmc_active)
--		return false;
--
- 	/*
- 	 * The lock is required on 32bit architectures to read the variable
- 	 * consistently with a concurrent writer. On 64bit the lock is not
-@@ -1172,7 +1157,6 @@ bool tmigr_requires_handle_remote(void)
- 	data.now = get_jiffies_update(&jif);
- 	data.childmask = tmc->groupmask;
- 	data.firstexp = KTIME_MAX;
--	data.tmc_active = !tmc->idle;
- 	data.check = false;
- 
- 	/*
--- 
-2.51.0
+I'm seeing that patch 1 is being merged into mm tree just fine, I
+guess that should be OK.
 
+If anyone is reading the threads, this url above should be helpful.
 
