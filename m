@@ -1,130 +1,234 @@
-Return-Path: <linux-kernel+bounces-869103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCB9C06F48
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:26:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B99CC06F54
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7D7303527EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:26:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02B624F4232
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC7A326D5E;
-	Fri, 24 Oct 2025 15:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354D432548F;
+	Fri, 24 Oct 2025 15:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b="YMad+Ui+"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BfHOF9EM"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F183A3AC1C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848B4317710
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761319559; cv=none; b=tF5oz1Y+f7DWYprIWIzzowdd9GAkYgqJoHCchp8FcaVAfqrCdo8IBF8ziTs/Lc1ybHEZo/GLCUeCNJAXtIgQ+KF/Ia9tiz2uabWVPsPShQlxh7vKfPbNmfpdK49H7Q33jQp9PswbSa8C74eClrwaS9p5h6xZkNyxUoQwNh/PQQc=
+	t=1761319550; cv=none; b=dF85w9biGzm6q+bster/r6CP79KIcNLnWz0cEQEzQFGUJBgCDLup46M+Pchf2Mm1Hbyk5/i3OgKYEpFbu+X+TffHgx7wdwt2Rei+FKD8S3m7y8mTNEwDXkwD6jazQ5ApHBQXsLYyYDYBnM2lDfIx6KjQCuFB0WYc5ax0ArUC4iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761319559; c=relaxed/simple;
-	bh=fja91hhNTAD2uFFp9ltnm5Xmev+0fEePBFFlNHs6kKs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YkTK+Hv+Bauriey9xUCz93c3jjte964Vkj1rt2vBT1kmYxnHf3l8FoTl0o2hDBS51wX7+om4QwdpmlgTpTBJ7IY8UPSveCJu/rdUlXhtxhqMm8EU2d7FC7XAMqCJmfJSvylfbCvQkZPr562JRiDWaWOqXF874IMm5YxDNJjUbhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in; spf=pass smtp.mailfrom=cse.iitm.ac.in; dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b=YMad+Ui+; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.iitm.ac.in
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-290c2b6a6c2so24640225ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:25:56 -0700 (PDT)
+	s=arc-20240116; t=1761319550; c=relaxed/simple;
+	bh=+DwPFwhmkSUiZT3UZKwe/oRJM2RIonPEtdgijLe62ZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XU7pymcYpeG2XtUw00zkUg4WFgYDgpFcjRqyT6uQIkG2k/kxuK9R6D9Ct7zp10Mz69btX4Y/34H3OZfycKclgpK/9xrs/fDrDuiMHKO7wUu22gGBn+beSECy6yBzZnRZcTzLCjVExx6wYuqedhFWTnOei9E56NGIC0vK4k53OLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BfHOF9EM; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-475dae5d473so87065e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:25:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cse-iitm-ac-in.20230601.gappssmtp.com; s=20230601; t=1761319556; x=1761924356; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/T1Z+K8DQK4zGm2l4hT1fnBVPvldXVlObiMpVzg/wBA=;
-        b=YMad+Ui+gCzdOxEHZy8gSopcxU+q55qq5CTnsvUPnj6nRulddk3QK1GjtLohB8kOWu
-         H/rx2L+ADJQtkEIYyHsLmIw/rHfaTQ9lzFxhpk3yXVxcuut2OJ4DLRCEs407+WMZl674
-         eq7nyRwbvwfL6+2I+4LcF7pCzvhxLLlaooBtPdBGtH6VUTYqJTqqB80HzVz2jMPh2LQS
-         eKsnx3gvCza93nLVaBF2iyiSUISejCbeHJYJAt+3WovLLj4IW9UJYKL2HC3jOLJ2pXBa
-         CDLRoUpv8YBTnR0gev1Way3T9guh+9TUOSTBdqAV/3f6TJw/h7kubVSdmWUKubum1Qeo
-         +qfQ==
+        d=gmail.com; s=20230601; t=1761319547; x=1761924347; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ypqIa5w6VQiQoM+Tw67e2xyPwM3Mkp0M4rGw2lAkqjc=;
+        b=BfHOF9EMKgW0O53R9chqL/tBdcyFSVlsbtXhjVAJV95wJ2LWzSdSx1HbQaa3559weV
+         YL7fDBnZ8SCLyA47ZYeCligFMYEOsPFqD0iCSBRNY9+lOTtdOhg5W7cdIahkgsg3yzGw
+         bfIJhZwCtQ9b93KX1vyEb4L1dzQHR7NjbokGFjNiIfZsP+XdRXwJG1O2GKEkKxs5hfmA
+         mlD7qJfk/olxg8bEGKeTPaEDMlZNoJlZ89Zc5fwRoBKbhpjLlGapCMmqwFdOiqW7vamN
+         QvjBhVSd71Cm71fippa8+R6rHuRogGs94UvdodctPCXSuMZMCQ/ED6rqOMSiTzuVPlws
+         4inA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761319556; x=1761924356;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/T1Z+K8DQK4zGm2l4hT1fnBVPvldXVlObiMpVzg/wBA=;
-        b=AE+H4fD2dX0bR1La3T2hWcR2dJpt3FYkByPYFKIB2fIKOvnPHs0tn6rASOeAtdAadI
-         U/CiKFOtrBhQ6061fytoYiCtThpktOqvyeAVIsWoS+hMfIsTY36HQXvNfm4ugbvB96S1
-         XTcAqiWVMLn5Xpn19iPVD55FPu3rrl0PU3urf32JknzQ56v+1MwK+qVkCTiRHIJ+Pc7A
-         NbO+RDu0tpTIiPEE8HP7VO+cpwt2bIbXsdU6yjf2zlbvQciXi7XcFS1ycTL85dfP08rh
-         0D1Ulh6xOeX0JBumCgOzN6ZrnzSjjGl0jXBBWmjOGE1TYVRkaV9MPRQiBRn8/DpflhyF
-         kQJw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2eKU/l5rHR+gVyMwDfFWwECljUZ3jDPiWar7FB3rJ+5m7LYap+Sa+Ir/2buA02B5V4rKrzcjLhhfyZGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy57waIAb3IhC5KyBxjGHRNw+xeOpTZDtnprxsgN4pmOpWU/JU
-	4n9dXDRgTiWkid4Wpofa6l+0rfw9qAvuHESWYNoQip2YQFkLOh/GBuYBEikcHeHX9Gw=
-X-Gm-Gg: ASbGncueZ5HTGOL6s9uVRkH4LAex9kP5Z3f+a1y9n9272AltLpIec+VTj4JNcHF1Bmg
-	8+5muOppgVvioa3e0j4sezOfmWuKXD9RKsxbwafUNmUXFtcecj3GmlztYVW5u6QYtzOBCGTAVFg
-	XXD2eMIHz4/1il1BxfU4tWrFlg+XjSXpv8U/Y5JikQrZGTmIBEAqjVgavHjPZprPMmcN++gY6Uc
-	tw4zkWrrblYg8fHe724xJDpWg3SVYzCaAlIQzsWIydmMuD45RPX3n+mmojyRRWCPz0PxDJLErmC
-	tFWQWR3KTdvvot7KS64ZXk2yfRim8tK9AeQobFlLmqJ9m27bJgHBdjbnk6Eo83AsPjc+Z9POSM9
-	ro6l8Tv+KIjSvEaEj7Huw86Tw0pP2BVe1ppiEpBvtXAGo/0EVpXwrAJ3kbRPS12Jk8eocI1zt6d
-	sXfadv9iqc2NhrwWrn5tAlQQ==
-X-Google-Smtp-Source: AGHT+IHrQTR8H4ei07O1j4Cthyaw9aGZFdCNOut1bzwa+dLtNpq6RmIRrnDxWJ42MNn2CSeAbj9IfQ==
-X-Received: by 2002:a17:903:19cb:b0:28e:a70f:e882 with SMTP id d9443c01a7336-290c9c8c5f5mr17531795ad.11.1761319555989;
-        Fri, 24 Oct 2025 08:25:55 -0700 (PDT)
-Received: from localhost.localdomain ([49.37.223.8])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-294942c412bsm5135135ad.72.2025.10.24.08.25.49
+        d=1e100.net; s=20230601; t=1761319547; x=1761924347;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ypqIa5w6VQiQoM+Tw67e2xyPwM3Mkp0M4rGw2lAkqjc=;
+        b=PnmPWKH6qg+ORktLUzFENnoFiyGNYno4idHZbF8jEfrrfW4KTgnms5DQDAOeALNVeQ
+         Px31iu5bQRTiGSMcFj2UcYzRi3LRJ4t25U+/ff/HAezNrhsOglsPgkiIoNUHAokhek4/
+         pEhutiYJoAbrNn87suYdEx8sw2mMij07I+s2yOsdnDkyd6tNVTtBzhTFv6+NaGemXtby
+         y6ye4Gg06V2rcAlGoDobqPd2J4XoVuUXJJWW7e/MgVqjHv29gZVgl+SFZRjuODnLhnTm
+         GgxAjW18YWnoBP0xiuLgly/HeJU+dLiAR8NkfDIy3A2JMZwz0w1UndXTPKjQySiwY9M0
+         VQOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKqXMMVc6SFquoK+vYAcFR72XSAKsVPyuQqfYKeNnPXDWGVtHuzY1oaRY1IATeCHNF3YQwcRAclh395vk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKg3mX7S209DpO8iN0BMl+mRn1PDZa5thR0avHOL77ckl4hCtV
+	d1X3gfAl/x3gPOrsIHLKMXeYacLVmx9qn2COp82OOHoI1OiJjFsKN/v3
+X-Gm-Gg: ASbGnctIaTJrWuX6picY+ixktCvdk9lQ6ZxkbfM+imYr+Xkor/rRupGSgNMiu0vzaRn
+	0u7rba+t7YMEISxkoZMKUL+Mz8b7TvM45gXMxEaaqmB+DsRiTcIV3swEUOjUf5MbqrezsOashHE
+	JTF1BW5BCmvWVTs3pSZUFwDWZFWypAw/pA3QnOqcMaNgVP+bQLnQP/KT2fQ5god5SNKEMiNukoB
+	h1K/zghyT8/vuKjGKt6+knjGSAA0/a+wPYnpdK95/t2K6evurySiwWIVBC9u+DJFV1heEXLdsbD
+	g0sWlUNMWkqCjRNcJW/4a+1VshsTWHHyPWPMmL78bWHONNjseHLhGbcYQd3l4IjpL4ZUWz/sv09
+	nlKp7JPg1o/xfKebGZvjr2mHZkfqmPiHkwVMgKMfI6Ho/ySDyNNftG8pVnNwur0YSiC/CT41xFk
+	XsHNCeFXWPfjbaUJa14Cn2
+X-Google-Smtp-Source: AGHT+IH+9ceI5wAu8l/3wfsbGJD7MCuJ1USb4K1b4IDrZDz0mW503QMkS82KFPZH8fAPDDytSZwSNg==
+X-Received: by 2002:a05:600c:3b03:b0:468:86e0:de40 with SMTP id 5b1f17b1804b1-4711786c6b9mr223889745e9.4.1761319546714;
+        Fri, 24 Oct 2025 08:25:46 -0700 (PDT)
+Received: from fedora ([37.29.213.75])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496d4b923sm83941545e9.14.2025.10.24.08.25.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 08:25:55 -0700 (PDT)
-From: Abdun Nihaal <nihaal@cse.iitm.ac.in>
-To: kuba@kernel.org
-Cc: Abdun Nihaal <nihaal@cse.iitm.ac.in>,
-	horms@kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	tglx@linutronix.de,
-	louis.peens@corigine.com,
-	mingo@kernel.org,
-	mheib@redhat.com,
-	easwar.hariharan@linux.microsoft.com,
-	sdf@fomichev.me,
-	kees@kernel.org,
-	niklas.soderlund@corigine.com,
-	oss-drivers@corigine.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] nfp: xsk: fix memory leak in nfp_net_alloc()
-Date: Fri, 24 Oct 2025 20:55:22 +0530
-Message-ID: <20251024152528.275533-1-nihaal@cse.iitm.ac.in>
-X-Mailer: git-send-email 2.43.0
+        Fri, 24 Oct 2025 08:25:46 -0700 (PDT)
+Date: Fri, 24 Oct 2025 17:25:43 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	victoria@system76.com, sebastian.wick@redhat.com,
+	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 07/22] drm/vkms: Introduce config for plane color range
+Message-ID: <aPuad03CDwb2PX5_@fedora>
+References: <20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com>
+ <20251018-vkms-all-config-v1-7-a7760755d92d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251018-vkms-all-config-v1-7-a7760755d92d@bootlin.com>
 
-In nfp_net_alloc(), the memory allocated for xsk_pools is not freed in
-the subsequent error paths, leading to a memory leak. Fix that by
-freeing it in the error path.
 
-Fixes: 6402528b7a0b ("nfp: xsk: add AF_XDP zero-copy Rx and Tx support")
-Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
----
- drivers/net/ethernet/netronome/nfp/nfp_net_common.c | 1 +
- 1 file changed, 1 insertion(+)
+On Sat, Oct 18, 2025 at 04:01:07AM +0200, Louis Chauvet wrote:
+> VKMS driver supports all the color range on planes, but for testing it can
+> be useful to only advertise few of them. This new configuration interface
+> will allow configuring the color range per planes.
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_config.c | 14 ++++++++++++++
+>  drivers/gpu/drm/vkms/vkms_config.h | 30 ++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/vkms/vkms_plane.c  |  5 ++---
+>  3 files changed, 46 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
+> index 5353719a476d..8f00ca21ed6e 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.c
+> +++ b/drivers/gpu/drm/vkms/vkms_config.c
+> @@ -163,6 +163,13 @@ static bool valid_plane_properties(const struct vkms_config *config)
+>  			drm_info(dev, "Configured default color encoding is not supported by the plane\n");
+>  			return false;
+>  		}
+> +
+> +		if ((BIT(vkms_config_plane_get_default_color_range(plane_cfg)) &
+> +		     vkms_config_plane_get_supported_color_range(plane_cfg)) !=
+> +		    BIT(vkms_config_plane_get_default_color_range(plane_cfg))) {
+> +			drm_info(dev, "Configured default color range is not supported by the plane\n");
+> +			return false;
+> +		}
+>  	}
+>  	return true;
+>  }
+> @@ -386,6 +393,10 @@ static int vkms_config_show(struct seq_file *m, void *data)
+>  			   vkms_config_plane_get_supported_color_encoding(plane_cfg));
+>  		seq_printf(m, "\tdefault color encoding: %d\n",
+>  			   vkms_config_plane_get_default_color_encoding(plane_cfg));
+> +		seq_printf(m, "\tsupported color range: 0x%x\n",
+> +			   vkms_config_plane_get_supported_color_range(plane_cfg));
+> +		seq_printf(m, "\tdefault color range: %d\n",
+> +			   vkms_config_plane_get_default_color_range(plane_cfg));
+>  	}
+>  
+>  	vkms_config_for_each_crtc(vkmsdev->config, crtc_cfg) {
+> @@ -433,6 +444,9 @@ struct vkms_config_plane *vkms_config_create_plane(struct vkms_config *config)
+>  							BIT(DRM_COLOR_YCBCR_BT709) |
+>  							BIT(DRM_COLOR_YCBCR_BT2020));
+>  	vkms_config_plane_set_default_color_encoding(plane_cfg, DRM_COLOR_YCBCR_BT601);
+> +	vkms_config_plane_set_supported_color_range(plane_cfg, BIT(DRM_COLOR_YCBCR_LIMITED_RANGE) |
+> +							       BIT(DRM_COLOR_YCBCR_FULL_RANGE));
+> +	vkms_config_plane_set_default_color_range(plane_cfg, DRM_COLOR_YCBCR_FULL_RANGE);
+>  
+>  	xa_init_flags(&plane_cfg->possible_crtcs, XA_FLAGS_ALLOC);
+>  
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+> index 11160c3c13bc..8127e12f00dc 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.h
+> +++ b/drivers/gpu/drm/vkms/vkms_config.h
+> @@ -47,6 +47,8 @@ struct vkms_config {
+>   *         must be managed by other means.
+>   * @default_color_encoding: Default color encoding that should be used by this plane
+>   * @supported_color_encoding: Color encoding that this plane will support
+> + * @default_color_range: Default color range that should be used by this plane
+> + * @supported_color_range: Color range that this plane will support
 
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-index 132626a3f9f7..f59466877be2 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-@@ -2566,6 +2566,7 @@ nfp_net_alloc(struct pci_dev *pdev, const struct nfp_dev_info *dev_info,
- 	return nn;
- 
- err_free_nn:
-+	kfree(nn->dp.xsk_pools);
- 	if (nn->dp.netdev)
- 		free_netdev(nn->dp.netdev);
- 	else
--- 
-2.43.0
+Similar comment about using plural or singular in supported_*
+properties.
 
+>   */
+>  struct vkms_config_plane {
+>  	struct list_head link;
+> @@ -58,6 +60,8 @@ struct vkms_config_plane {
+>  	unsigned int supported_rotations;
+>  	enum drm_color_encoding default_color_encoding;
+>  	unsigned int supported_color_encoding;
+> +	enum drm_color_range default_color_range;
+> +	unsigned int supported_color_range;
+>  	struct xarray possible_crtcs;
+>  
+>  	/* Internal usage */
+> @@ -374,6 +378,32 @@ vkms_config_plane_set_supported_color_encoding(struct vkms_config_plane *plane_c
+>  	plane_cfg->supported_color_encoding = supported_color_encoding;
+>  }
+>  
+> +static inline enum drm_color_range
+> +vkms_config_plane_get_default_color_range(struct vkms_config_plane *plane_cfg)
+> +{
+> +	return plane_cfg->default_color_range;
+> +}
+> +
+> +static inline void
+> +vkms_config_plane_set_default_color_range(struct vkms_config_plane *plane_cfg,
+> +					  enum drm_color_range default_color_range)
+> +{
+> +	plane_cfg->default_color_range = default_color_range;
+> +}
+> +
+> +static inline unsigned int
+> +vkms_config_plane_get_supported_color_range(struct vkms_config_plane *plane_cfg)
+> +{
+> +	return plane_cfg->supported_color_range;
+> +}
+> +
+> +static inline void
+> +vkms_config_plane_set_supported_color_range(struct vkms_config_plane *plane_cfg,
+> +					    unsigned int supported_color_range)
+> +{
+> +	plane_cfg->supported_color_range = supported_color_range;
+> +}
+> +
+>  /**
+>   * vkms_config_plane_set_name() - Set the plane name
+>   * @plane_cfg: Plane to set the name to
+> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+> index 5869000415e4..ab719da2ca0b 100644
+> --- a/drivers/gpu/drm/vkms/vkms_plane.c
+> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
+> @@ -240,10 +240,9 @@ struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+>  
+>  	drm_plane_create_color_properties(&plane->base,
+>  					  vkms_config_plane_get_supported_color_encoding(config),
+> -					  BIT(DRM_COLOR_YCBCR_LIMITED_RANGE) |
+> -					  BIT(DRM_COLOR_YCBCR_FULL_RANGE),
+> +					  vkms_config_plane_get_supported_color_range(config),
+>  					  vkms_config_plane_get_default_color_encoding(config),
+> -					  DRM_COLOR_YCBCR_FULL_RANGE);
+> +					  vkms_config_plane_get_default_color_range(config));
+>  
+>  	return plane;
+>  }
+> 
+> -- 
+> 2.51.0
+> 
 
