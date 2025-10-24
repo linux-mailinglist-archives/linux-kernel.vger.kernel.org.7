@@ -1,88 +1,174 @@
-Return-Path: <linux-kernel+bounces-869020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3757C06BA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:37:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9599C06BAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 944734EF4CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:36:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 074394E802A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542BC316187;
-	Fri, 24 Oct 2025 14:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CD931B838;
+	Fri, 24 Oct 2025 14:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQPRiweH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FiD2E9nD"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB294246793;
-	Fri, 24 Oct 2025 14:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D6831352B
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761316600; cv=none; b=B7/PsPZQ8Ojqx/ectXbO30+i8M+QgeR90v6CFpWsbyMJ/UD4PYmuwqPJk1BJWZ8YdFiFSEvQ8hD6NjeCv48C/VlUkC6wYUxqbLSVQS06aoTWlysiL0eAbRw/w273inqcFf5VCraiq6eUJd+30UkZFB/U3ukOLw58PshihVH5inM=
+	t=1761316608; cv=none; b=lpT91DpKYkskit7n0YuAYEkDvPwmY33FjjQFrGkj6uL8svYZsqzrhEEZjktn4DOh2lBD6x9FjnuvLf8en4xG4nUlRBTIMZkqLLMIOQ63NIXltTxB6P9w8gxRvg3CrFJicxm1MiLmc6C2eTTXqqsoHSOSyVm25Nko7ids1IJi+ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761316600; c=relaxed/simple;
-	bh=dAwvJ61kT4ula3oy4h+pw30yXKe3R4m8XcTn2QIYR2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IWjQBtxQOXUGVImmcE/b1SV7O5kZCVmNN4MInHmTDnwwJmBYSSTYG0Sz6J+BvW+lsUppR6LdjBZ2dYq3BUoMUSNaw51Ag/fiySmEQfdXIYHoBnJGgXUgnoJsvGU2PB3Yi2D4iC+KqMRgeawaC2r+PX4macq5dWZHKFngYMp/ay0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQPRiweH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 824E8C4CEF1;
-	Fri, 24 Oct 2025 14:36:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761316600;
-	bh=dAwvJ61kT4ula3oy4h+pw30yXKe3R4m8XcTn2QIYR2c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oQPRiweHpKRyJbHzsmtAwsmNfIaHfkRpKJtEXZz+CXgwOLVOtSqEyPTBV/3VoUNIe
-	 FsiKBDyhc9M3WcN6ee4V3Mpolo0Svns4Uh5n+ExMZesdvcYiFpcK3MrtQYTHMGzJXw
-	 ZbK7LgT96X6duFHadhaDh2UPlhNML0H3xIaOZDuSLAPPVRmfxF6yxeLzoQ95T5fN3n
-	 l4pvZO5qFfMXgiI66yUg/A7vJzIvMvaWy7i3RijjpVBvf4OP/ukanhCHqyzQEe9mxe
-	 HAlDXOEgKB4thbP5M/wSGYBLbqD5z8NEbXhml/8GbRWujB6I3I1MUYsS0vQzElZFcg
-	 mmu3zNuRkYyBQ==
-Message-ID: <02b7cdce-95fe-475f-a346-b41fd5615695@kernel.org>
-Date: Fri, 24 Oct 2025 16:36:36 +0200
+	s=arc-20240116; t=1761316608; c=relaxed/simple;
+	bh=SyHsbHHPTi2vMHuPhkK3EIkxbANttu0bB9QFrV5V42A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=migEB5E1NG9QB9RmxyLX6DURKKqN2Tdl/nQo1pKze6wgtWnzt/OB6Kduc+ObZ9RXzfZtm4MRtD4Y7rZuwku+kTNA029Zi8X2bXpgg9KFGfpUCYBcFluDrMQ8C6dphKkjG1qCII9+U2M3i/Gaqj6q4o3Sy4oQIllVL7xZAhSfdMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FiD2E9nD; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b3b3a6f4dd4so431356466b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:36:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761316604; x=1761921404; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vhvZambXhJUe9NXP8fPYlMTJocXdYHeRZkXktKu8p/w=;
+        b=FiD2E9nDXhV7YvqMbhEHT1+bVYXqpgR+s4+YVS37BwFR/h40EthGAVKyC3JfdauTXj
+         EO01snCikiAVPab8Tuu5vmbgJWrwyZ+9ILhBgnvwRCILE/aZpBnDtWxbe8X4jdr4y98F
+         oB+CgXXhI31tVGdrRTmFY60TW5ZnL66N1iV5QKtm9p3zMgZA3c/Pq/XnSCXF9i4Qvqy2
+         BKJ0gu1afc9gOlvYEa1Pgzu034ZkMPRhPKJTfn4uLLY5+Wp/Iy3Vzz0zp2N6DLVgVPcX
+         qpUS32gdVmSbaEFX5qZWZrc0o4/x9hAFTlba92R++DipVHdhkErubtefeSlWfzMZLt1C
+         4K4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761316604; x=1761921404;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vhvZambXhJUe9NXP8fPYlMTJocXdYHeRZkXktKu8p/w=;
+        b=gEEeWpvvSk49g0qdGXnAB8WhZf/PUwMEyQAgLpvForY+7g/sL48kiwE/NxNMgfWcWU
+         L0b/mg49LmsHYzuB70rMRBi+E7gn+x5g9YYah6uIPPqZ0gGXX3Q909wjUyMA3x4gauAZ
+         ALAVuqA+Xho5sdBTyARmjzBoTOtaIoe/NNE21rV9XzbgpxAPCS6KgosE438/z2p1U6VS
+         Bu1Mwp1hGQfrStlvB/hDCGl5QDwvnP+JjB0xHDkUcpVqO2Yod0NG+EiO7soL5+HaV9zW
+         M9yS3iBBDciLKlDjuldA9yrbYqEOr79tB5YHKEpJI87fuOm0QRWx7qOD7fTDv99BwhYf
+         cdIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXg5fFU4B/vmNxmy5TL+SzaDMdlDlAwX3WgAP3xvemIyqcdZy6d28NIjSanxKHOTGuhaXhwZCOzWg6VUvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl6AGngkoC6gWlLo4M3AU7DB7FYDrC7x9neRN91EiC499/t3Bh
+	s0DMdlctmHsmBUIYK4Fbsgl8rCmEZGy9Y5mMYgZvel+tApJFuBsYp8mw
+X-Gm-Gg: ASbGnctq75V2ySL8w7DqmPtaArDq4shZwgYoXAtatK5yAbpV9wpn0pC4QbWolHDPFGo
+	xAaGaHgH0mAr9Mrp+11wO3vh5JWlu5oNOSDkhAXfaf7DSLBy6mlJzAWgebTYSsU6LJ7M1kJV4op
+	ZOoYT2HAYUgWpzuWd9INHJXjql94X892ANEiG9QAScG90e7j0bqBqWfMwoXM5bCAgpzU+5UGglo
+	vD/psSqB+sxnrG5bVBIrXC6MwxwJXpThryYcCbl7acy29H5nLpIiReo1Yo0j0OdEhHKfNV9bKF0
+	CVpwNv5FzSpsLqVH/9BC8Wevcv4FF/jQ4hknLmwSWvVj8xP43e739z+cP+XynztnkGFIX8hEu7N
+	JSZhZ+t+zHuu+S01Azb9Ndmj/dDlNQHi6usZiC7eW6K4tBvLRLXhPNFUROqd1Phr7afYxBNrzDE
+	4utfy91kbhxuU2abA/mH9CpZeoTfaIvgFHj3YnrJ+bBpg1t5tmNncqOQPMstBxQ9Te+p8XcOe7J
+	A==
+X-Google-Smtp-Source: AGHT+IFWzk1i+CerdLmqkWlqmK1WwF08rParHoWAXsc4qXFYfSSN7IC++HtkBe/tPf9ihHXuOS5S/Q==
+X-Received: by 2002:a17:907:1c8b:b0:b45:27e0:7f35 with SMTP id a640c23a62f3a-b6d6ffe1b10mr309334466b.46.1761316602897;
+        Fri, 24 Oct 2025 07:36:42 -0700 (PDT)
+Received: from alb3rt0-ThinkPad-P15-Gen-1 (host-81-118-90-13.business.telecomitalia.it. [81.118.90.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d514172besm545726366b.46.2025.10.24.07.36.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 07:36:42 -0700 (PDT)
+Date: Fri, 24 Oct 2025 16:36:40 +0200
+From: Alberto Merciai <alb3rt0.m3rciai@gmail.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Primoz Fiser <primoz.fiser@norik.com>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
+Subject: Re: [PATCH 1/2] arm64: dts: freescale: imx93-phyboard-nash: Add jtag
+ overlay
+Message-ID: <aPuO+FCeeIFv3bQm@alb3rt0-ThinkPad-P15-Gen-1>
+References: <20251007084028.1125185-1-primoz.fiser@norik.com>
+ <aPt/d9svTeUIRljW@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma-fence: Correct return of dma_fence_driver_name()
-To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Cc: phasta@kernel.org, Sumit Semwal <sumit.semwal@linaro.org>,
- Gustavo Padovan <gustavo@padovan.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20251024075019.162351-2-phasta@kernel.org>
- <11b7a8a5-170f-4815-a8ac-5dba2d8e67a1@igalia.com>
- <5de88e79575e06c053f2d61f7bb58bf9cf5b556e.camel@mailbox.org>
- <1d0bbdcf-f4d6-49c0-bbdf-364c2af80868@igalia.com>
- <89812f66-25a6-4f9e-aa4f-74adbf116db8@kernel.org>
- <5640fbf1-7b8d-4537-9f1a-b401a7a4934b@igalia.com>
- <8cba66d2-9608-4a5c-a2af-6cc91f46a49f@kernel.org>
- <cefe8f07-68a3-4c93-ae46-ebb01ff6fa2c@igalia.com>
- <b21ba8b4-a31f-44e5-a2da-ba585a93d3a6@kernel.org>
- <66f066b0-a8bb-40b2-bdd8-7cbcf114cde1@igalia.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <66f066b0-a8bb-40b2-bdd8-7cbcf114cde1@igalia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPt/d9svTeUIRljW@lizhi-Precision-Tower-5810>
 
-On 10/24/25 4:28 PM, Tvrtko Ursulin wrote:
-> On 24/10/2025 15:17, Danilo Krummrich wrote:
->> On 10/24/25 3:37 PM, Tvrtko Ursulin wrote:
->>> How about "unknown-driver", would that satisfy you?
->>
->> Honestly, the most accurate thing to say would be "fence-signaled", because
->> that's the actual condition which causes the change.
-> Hm, ->get_driver_name() returning "fence-signaled" is not great, and debugfs
-> output in the form of "kernel fence: fence-signaled timeline-signaled seq 1234
-> signaled" feels a bit redundant. :shrug:
+On Fri, Oct 24, 2025 at 09:30:31AM -0400, Frank Li wrote:
+> On Tue, Oct 07, 2025 at 10:40:27AM +0200, Primoz Fiser wrote:
+> > Add overlay to enable JTAG pins on the board's JTAG (X41) connector.
+> >
+> > Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
+> > ---
+> >  arch/arm64/boot/dts/freescale/Makefile        |  2 ++
+> >  .../freescale/imx93-phyboard-nash-jtag.dtso   | 26 +++++++++++++++++++
+> >  2 files changed, 28 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/freescale/imx93-phyboard-nash-jtag.dtso
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> > index 525ef180481d..c72a6fdc5412 100644
+> > --- a/arch/arm64/boot/dts/freescale/Makefile
+> > +++ b/arch/arm64/boot/dts/freescale/Makefile
+> > @@ -356,10 +356,12 @@ dtb-$(CONFIG_ARCH_MXC) += imx93-kontron-bl-osm-s.dtb
+> >  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-nash.dtb
+> >  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin.dtb
+> >
+> > +imx93-phyboard-nash-jtag-dtbs += imx93-phyboard-nash.dtb imx93-phyboard-nash-jtag.dtbo
+> >  imx93-phyboard-nash-peb-wlbt-07-dtbs += imx93-phyboard-nash.dtb imx93-phyboard-nash-peb-wlbt-07.dtbo
+> >  imx93-phyboard-segin-peb-eval-01-dtbs += imx93-phyboard-segin.dtb imx93-phyboard-segin-peb-eval-01.dtbo
+> >  imx93-phyboard-segin-peb-wlbt-05-dtbs += imx93-phyboard-segin.dtb imx93-phyboard-segin-peb-wlbt-05.dtbo
+> >  imx93-phycore-rpmsg-dtbs += imx93-phyboard-nash.dtb imx93-phyboard-segin.dtb imx93-phycore-rpmsg.dtbo
+> > +dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-nash-jtag.dtb
+> >  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-nash-peb-wlbt-07.dtb
+> >  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin-peb-eval-01.dtb
+> >  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin-peb-wlbt-05.dtb
+> > diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-nash-jtag.dtso b/arch/arm64/boot/dts/freescale/imx93-phyboard-nash-jtag.dtso
+> > new file mode 100644
+> > index 000000000000..4744eabf95f3
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-nash-jtag.dtso
+> > @@ -0,0 +1,26 @@
+> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > +/*
+> > + * Copyright (C) 2025 PHYTEC Messtechnik GmbH
+> > + * Author: Primoz Fiser <primoz.fiser@norik.com>
+> > + */
+> > +
+> > +#include "imx93-pinfunc.h"
+> > +
+> > +/dts-v1/;
+> > +/plugin/;
+> > +
+> > +&gpio2 {
+> > +	pinctrl-names = "default";
+> > +	pinctrl-0 = <&pinctrl_jtag>;
+> > +};
+> 
+> Use gpio to set pinctrl to no-gpio mode is strange. I am not sure if there
+> are better method, but at need comments here to show why have to do that.
+> 
 
-Indeed, what about "retired-driver"? Still implying that it's not just unknown,
-but that some process has finished. But without the ambiguity of "detached-driver".
+In old imx6 platform we use pinctrl_hog for that purpose, is not?
+
+> Frank
+> > +
+> > +&iomuxc {
+> > +	pinctrl_jtag: jtaggrp {
+> > +		fsl,pins = <
+> > +			MX93_PAD_GPIO_IO24__JTAG_MUX_TDO	0x31e
+> > +			MX93_PAD_GPIO_IO25__JTAG_MUX_TCK	0x31e
+> > +			MX93_PAD_GPIO_IO26__JTAG_MUX_TDI	0x31e
+> > +			MX93_PAD_GPIO_IO27__JTAG_MUX_TMS	0x31e
+> > +		>;
+> > +	};
+> > +};
+> > --
+> > 2.34.1
+> >
+> 
 
