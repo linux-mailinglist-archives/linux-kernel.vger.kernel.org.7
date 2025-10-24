@@ -1,119 +1,155 @@
-Return-Path: <linux-kernel+bounces-867916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596B0C03EC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4F6C03ED0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3E081AA13BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 00:04:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96ABA1AA25EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 00:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE971FDD;
-	Fri, 24 Oct 2025 00:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06259A48;
+	Fri, 24 Oct 2025 00:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1Zmsa0J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="wJmPVWx6"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8121328DC4;
-	Fri, 24 Oct 2025 00:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870EB4A32
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761264224; cv=none; b=HE03jhL/ZS0BvuBs8h37vpLwEiW4DDd5cRbOZ7Ng46vyfUWQZ2E/q9+mGBrN90lVMAv7P1glAhHRo3XPahJcqj10ttHKFKnFVXaWAfCrjfLdku050CJ5QezCIXb8rJBETXi1874rne5SkxmwVZzuB2cpCf6xoZteR4Jt1q8hOjo=
+	t=1761264247; cv=none; b=WzdxHIF3Rs6OAsQIMpp+LMtVqAWP6vY1JhUYFiHDtDk/Ed46YIAF1t/bsGDBm8VaSRKexnzrtkOMmvej9ElpdFntvGfdbwyruoqJH1Fa+1PXstgUTsvP3CI9qJmYs/k9NqBlQhMjTrqSM0ZbvyuhX4FAtVFY65/77WjcSmT7z08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761264224; c=relaxed/simple;
-	bh=82yuS+sWTafw2Py0dWaPeg0/oAhrcVBmZqViILrxQCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mz5PhavMo5RZGVfhFtwkUbMQtCSOohGjy6ddlAF0nIAsuV8n6xMtAZmPhbWoow1Rmtnb8jg5AMHa8KYtZUPftCeZsiYb4MHUMokiZ5/a9LA3dTMlYoYXz2YH8S05lHe9zlqK8/sVcu9JpCKsrBgGN3hG0XYxE13fVYlpLgU5wj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1Zmsa0J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 613A3C4CEE7;
-	Fri, 24 Oct 2025 00:03:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761264224;
-	bh=82yuS+sWTafw2Py0dWaPeg0/oAhrcVBmZqViILrxQCw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=j1Zmsa0Jy/Sm4bV1ai2EZm4v+Swx+9f4ZwcZ1+bhWCsXg/CjjLqlQVw2tOSUqVYNz
-	 aA3aTlJF7crlRXvVJXtwIPhpAk1l4AvA/CuvFObqBc3PC/ZiQdcGM7Qnbmuva/4b2o
-	 vdC/yQBxrVgYVtJRwGa4VGiCu+tmLDNYb5P9uqy5HQ4S7fO/7DWwM4uN/gp8KmjYlc
-	 181T2B3qrz5uvSvrJhNYk1riAoSaA8aYV7cLAKq+CaJ27zO5693mvutTgObBnNDas/
-	 UKAA5AFwC+6Slt6unHxLTjFLt2XWgzIFPpcuEfxpioHySt8OaaZyU+WnOn59XF4BG0
-	 TrwMQiOhoauyg==
-Date: Thu, 23 Oct 2025 17:03:42 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: =?UTF-8?B?QXNiasO4cm4=?= Sloth =?UTF-8?B?VMO4bm5lc2Vu?=
- <ast@fiberby.net>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Chia-Yu Chang
- <chia-yu.chang@nokia-bell-labs.com>, Chuck Lever <chuck.lever@oracle.com>,
- Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, Simon Horman
- <horms@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 0/7] ynl: add ignore-index flag for
- indexed-array
-Message-ID: <20251023170342.2bb7ce83@kernel.org>
-In-Reply-To: <f35cb9c8-7a5d-4fb7-b69b-aa14ab7f1dd5@fiberby.net>
-References: <20251022182701.250897-1-ast@fiberby.net>
-	<20251022184517.55b95744@kernel.org>
-	<f35cb9c8-7a5d-4fb7-b69b-aa14ab7f1dd5@fiberby.net>
+	s=arc-20240116; t=1761264247; c=relaxed/simple;
+	bh=C1jkv51ztRxfrNfz0d7YqP/iXJQqsBRzL9QozwFBY9s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZCfjCdCZWM1npVHAAmyq9h+ysee2+9nA151gD20RRGM3K++HCw7OA+6QEoMsFS1DZ/96RU+9Ffr9megEasgYzq4ak/DtL5kxlfwyTg5o6Pn55oq7NQbl/vZGAiD4jmgIYyzhugWyhw5xV9kId0AzRGWKKjyFBR5pwInzS78MPW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=wJmPVWx6; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-33c4252c3c5so1421443a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 17:04:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1761264245; x=1761869045; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JDIR1c+Ak+2fqutJiwvCBnlZ0v5UftOa0ifZP/2OQnc=;
+        b=wJmPVWx62tCC5wRokHJeKJtjKXrd3lBjhygVoiCLYc/GfseIDsdhfzQraXKO2eVj/7
+         HoiBhb0QXjEqycCGZ52aqOMjQ5ZSw1BGb4JTGsWQ5qQvCDS+nwENGa2EBgtI1ibcJDyz
+         fH5wOXhB2cx/Sx2OrNUjRB0Nv1d3bCx0O6+WNyhbzt94K38vu+D7xFTbIKpOHBPDliG7
+         z4ZYDPV/CTCbHN3ACxEDiT8yvQBpvMK1EZkguEr/IipFCv3z+9s0zw7EXkvRsIZyReso
+         4Lukyw9D1ywKzv60umIi2t4Jn40fkqC0dVhKgsP5by5TNKH3a2G5tmfdKRXgwpYnPROv
+         xPhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761264245; x=1761869045;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JDIR1c+Ak+2fqutJiwvCBnlZ0v5UftOa0ifZP/2OQnc=;
+        b=ZGBoKVNXKcdUweHVyuTYGCSPWjBifF7sTet6VlbHFUUPXNC442a12bEsxBmq8QxfHJ
+         arb8lgN8gk5DPy3bfRLgbYDP0BmQxOsjKfB1QXzS5tJ5lue9luh/YDPBFSr992edzZnL
+         iIuRghEXqbehp/EwW5a+Ah1lu6Fcfw3cB4euDZDrArYyrof16HJECM5bLRVuInzBZgCP
+         2BCGP1aW+am7clyr9bBCeSm/lhqPwHF8mFf/oQfB0UNUpNQYNo/vwzap70/SJzIPNcBY
+         BLCW+w7nGFekokLhqjwH8NPy67yM1p344sw0NjAUSTWqxbI5mU4B9XilGVxiIfbkLtoY
+         XTdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsvaOrbiQpspjBJsmJ9vzhPiYNuq6PbAE7w4SeRh/dW/SNixxjfHC0MiC3s/bVPjugvTzyQrd/doHKWnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/f5eq/BddbApHzdy83AnBy5Vgdoo4YgkBSm8gSTrhX3l8zAAS
+	WoQDshWtlYdrSbd6MLNE+JGZj373bhf4qAKs9qK7mztNBkG62JTlLwtjKT4QRB5FZpY=
+X-Gm-Gg: ASbGnctVPnEaVaGmnVptTr4SPoXFDxCYYZAIxSVbaUf60wpr8YNZLLxdjLiX39BD9/m
+	O5qvWy4KsK/XEuj3Jz0CcE1M8L29YjiAr+IWBYKy9xF1SqRaemsLVfQ0WnSnnS0dT1syVwDkGkP
+	fKANl8s1H7TS7Nix93uQbqabYYy3suW32e28q1+TMjqO1dKzsbNkPnZdR2+saC5XUuGveiXY+Lu
+	51/MB5mfHwS1E1+l+qkb1irjwYrZv3DJddmEvS2I3dpgiV/nQ41h0MgfUEzsE+tsdhoakqMtrru
+	wRjhusM/983YmCpwI3tOjO4r/poWEEhr+GgrEP7ypsrtpKoZtlWhqi+zZeMC7eoZUUQgmXbR/P9
+	QDNFTW4Mu/o5fEtJbrdSNUx4StVZwhif8yqQxMBRd+GZEw2ttsc17/7UZ68mXSQNj5LEwEfuU7S
+	eGRM7oHuM7u5A0U6so
+X-Google-Smtp-Source: AGHT+IH/sqOkgJHPoJp0C3PRAnpePjJuvBDUdrVuB7xX2bh8XQc9etMQIVsugloCyKqrfw/GQPbVxw==
+X-Received: by 2002:a17:903:38c8:b0:276:76e1:2e87 with SMTP id d9443c01a7336-2946e22bbcfmr48197185ad.44.1761264244857;
+        Thu, 23 Oct 2025 17:04:04 -0700 (PDT)
+Received: from [10.211.55.5] ([208.115.86.146])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33faff373easm3702460a91.5.2025.10.23.17.04.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 17:04:04 -0700 (PDT)
+Message-ID: <c4da7114-09c2-4c66-bdec-ee80cd7c5f5d@riscstar.com>
+Date: Thu, 23 Oct 2025 19:04:02 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/9] dt-bindings: spi: fsl-qspi: add optional resets
+To: Frank Li <Frank.li@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, han.xu@nxp.com,
+ broonie@kernel.org, dlan@gentoo.org, guodong@riscstar.com,
+ linux-spi@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org,
+ spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251023175922.528868-1-elder@riscstar.com>
+ <20251023175922.528868-3-elder@riscstar.com>
+ <aPq6+4RwGeru9Txw@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <aPq6+4RwGeru9Txw@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 23 Oct 2025 18:37:09 +0000 Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
->  > C code already does this, right? We just collect the attributes
->  > completely ignoring the index. =20
->=20
-> In the userspace C code, for sub-type nest the index is preserved
-> in struct member idx, and elided for other sub-types.
+On 10/23/25 6:32 PM, Frank Li wrote:
+> On Thu, Oct 23, 2025 at 12:59:14PM -0500, Alex Elder wrote:
+>> Allow two resets to be defined to support the SpacemiT K1 SoC QSPI IP.
+>>
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> ---
+>> v2: - The "reset" property now only applies to spacemit,k1-qspi compatible
+>>
+>>   .../devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml | 15 +++++++++++++++
+>>   1 file changed, 15 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml b/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
+>> index 5e6aff1bc2ed3..edd3158a6f2e8 100644
+>> --- a/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
+>> +++ b/Documentation/devicetree/bindings/spi/fsl,spi-fsl-qspi.yaml
+>> @@ -55,6 +55,21 @@ properties:
+>>         - const: qspi_en
+>>         - const: qspi
+>>
+>> +  resets:
+>> +    items:
+>> +      - description: SoC QSPI reset
+>> +      - description: SoC QSPI bus reset
+>> +
+>> +if:
+>> +  properties:
+>> +    compatible:
+>> +      not:
+>> +        contains:
+>> +          const: spacemit,k1-qspi
+>> +then:
+>> +  properties:
+>> +    resets: false
+>> +
+> 
+> strange, if-then should be under allOf, I have not seen you add allOf. And
+> original file have not allOf.
 
-I see it now, I guess I added it for get but forgot to obey it=20
-for put :(
+The file currently has allOf at the top, to reference
+spi-controller.yaml.  I'll include this next time within
+that allOf.
 
->  > So why do we need to extend the spec. =20
->=20
-> For me it's mostly the naming "indexed-array". Earlier it was
-> "array-nest", then we renamed it to "indexed-array" because
-> it doesn't always contain nests.  I think it's counter-intuitive
-> to elide the index by default, for something called "indexed-array".
-> The majority of the families using it don't care about the index.
->=20
-> What if we called it "ordered-array", and then always counted from 1
-> (for families that cares) when packing in user-space code?
->=20
->  > Have you found any case where the index matters and can be
->  > non-contiguous (other than the known TC kerfuffle). =20
->=20
-> IFLA_OFFLOAD_XSTATS_HW_S_INFO could be re-defined as a nest,
-> IFLA_OFFLOAD_XSTATS_L3_STATS is the only index atm.
+					-Alex
 
-Isn't that pretty much always true? If the index is significant
-the whole thing could be redefined as a nest, with names provided
-in the spec?
+> 
+> Frank
+> 
+>>   required:
+>>     - compatible
+>>     - reg
+>> --
+>> 2.43.0
+>>
 
-> IFLA_INET_CONF / IFLA_INET6_CONF is on input, but those are
-> also special by having different types depending on direction.
->=20
-> I found a bunch of other ones, using a static index, but they
-> can also be defined as a multi-attr wrapped in an additional
-> outer nest, like IFLA_VF_VLAN_LIST already is.
-
-Multi-attr with an outer nest should at least solve your wg problem=20
-I guess? If all the attrs have type of 0 we can make it a multi-attr.
-
->  > FWIW another concept is what TypeValue does.
->  > "Inject" the index into the child nest as an extra member.
->  > Most flexible but also prolly a PITA for user space to init those
->  > for requests. =20
->=20
-> Same as is done in the userspace C code for indexed-arrays with
-> sub-type nest. For most families it doesn't matter if the C code
-> inits the index or not.
 
