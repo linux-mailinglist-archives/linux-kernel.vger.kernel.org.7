@@ -1,127 +1,217 @@
-Return-Path: <linux-kernel+bounces-868732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2501C05FDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:34:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4734C05FD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 590731A61C1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:28:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78661B8803F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D189E3148C5;
-	Fri, 24 Oct 2025 11:07:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A374B31D36B;
+	Fri, 24 Oct 2025 11:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fvKY3vqR"
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB59313525
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECA131CA46
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761304025; cv=none; b=OHMXi8w5CUQGkNh/bAJEcHF1ZG+JZYBujOnw6B9rBrjDqYbspm9Q9CqkLP8Ei43am96lDcGWdaowuT8tVjMpc0vt78Oa+AVKF1gSbtm+2WfrMgfZkV7etQj1UAC8HdMajIi8BXm82lMSJIUY9JSnH+K4Xh04Hi+gbsNmfmuqYRE=
+	t=1761304101; cv=none; b=W0pqGuDZESfYWgWWOlJVewmqCTKWy3MMLUaWq5feeUy8SZ8rF0IkwqVfHYT0eoogtEL6xIdMCh7owjJcd+Vh1XUudtwOwimJ08MrijJDyJ1RBYG4bMvcguFokKFnOwpPuIzsW2w1U9Kru6koRdAHYVfBvUqK4Z0SnUbKajRCeAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761304025; c=relaxed/simple;
-	bh=JfoFFSri8czu3A0PYkF5BUpGGKmXgM8QKcIkvGH4xd0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ScS2kBDhhkG5kw91R4CSNOOGHfTjubYOEibz7czn9rCxGwpLjQDswDXFfg2gf4UYAjhzb0frYF6IReYeHmpfYxJsB+IdLZNdOyBnokziX3JH2//3QND0Xdmtc/Go91FM9+tiZdHL+LOaN5SMswk1O3gEXaKEyVWJo1/W9eJ9k3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430afaea1beso25297605ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:07:03 -0700 (PDT)
+	s=arc-20240116; t=1761304101; c=relaxed/simple;
+	bh=Qr8VI2WDLpClCnobZqQ04jtUbm8hJFOmR+11wkVoEH0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jfzeATU5W1snnBfo/WSSTPq8e4Oc4FxAYSfNy/g5oHQczjBVEcTLYdeAg7cGHy5kjX+ydbG+PMnv3GZyN6EntXKZ7tclIJuEsA6xwInycgXeI8JVq6aPQW/YqLjPiaoTcKHdUTil7wtozQFT5J6b1zZNOkvOiCsRZCwqxiGZRPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fvKY3vqR; arc=none smtp.client-ip=74.125.224.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-63e393c49f1so2213730d50.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:08:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761304099; x=1761908899; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qr8VI2WDLpClCnobZqQ04jtUbm8hJFOmR+11wkVoEH0=;
+        b=fvKY3vqRXJ4BlMy5YlT2X3pgnH0X8TCfebpEQmTBrVultn9dvT4bRv15fLjbWl+JDf
+         GBuQLfKNL3x7MQIVZs3DnMGRKNHsDIs/SNuH8TQqJBFYcYuuj5y1zTcGDmR6N1EkSb0a
+         EeaVqnYfYAp79CTp1wW6HPlqQb3lVycwm1XVTdhhbsJLiEwckbz5C2iS2hXVYMBK3aJd
+         JEIZeUF7tRzxeDDZAdri+uvi2Rcf28zHRgepS9FBe1WdvlFlonscl6DBDAqyYCl3X+LW
+         Vsiz4s+4YyebagfM0LC4QTbzQFMecYLWzy1LQkjnrJJ+JM+PbJ+nLf4sHJ1Qe2RH1sZJ
+         F/rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761304023; x=1761908823;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oTgJYuPDdwYzm3TM+QxVGjci0UoRoy/dxD5QJLeH+g8=;
-        b=A5sz3s9iuZ7oMZWHLcEGKO0byRl9aSJQobwFKrNiAhB+3kjciXDwVDTGUPky2y7P5U
-         RfMBMJBQ7UcqyWUihoZFJInhYCFCdtviedbo9OE6izF/XccbyP9n0SkRQETyHhBVVxQT
-         jA1HIysqXqseWm02rpBjq8DkQ0twilFLjuX6RqW5SDiBj/2VvuKpwnPK87jpvHRqXffg
-         scMJdHAh/hwndlmscUV3ym1Z4qlZdDv84Cb8VAgpfJ+sio+7ItGHJ+FemS0qpCsZb4Z4
-         kmewOiKLuXB54qZACe4aS0dk/M/b02eQdmqpDcwCjMJylPDy7XeoUpGgIwzo9VBv6EuO
-         pKlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWX7m+Zy/eryoV2Gy+mIhyWTG56kgjtBLUDDLxAdcBk+4AKC74zfIq1cTwLdfHzwVMMC/iaGsiF8fOVII0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEBGhfRGLON1rDyXU+PyHDMAPmTJ6TRil7y38DzrZqg5fPgBxc
-	iUKYeBLXX0fFNB/cW4wqRy/nZST4abU5Ogel8Kc7Pp3Tty2+MU+xypFXvhcBWNm9+EHL+pxKhqy
-	or1vLfNP0iQIhWhztgMST+VnpB0kT/5dMW2ob8K3jnKI0ZOZLxG7nQFQaDRY=
-X-Google-Smtp-Source: AGHT+IFT1WZQSuuV0sE2ZAXPr99VUHxrd4tXv2lNIUpVEEhagDxQlrO20PfxxcMxXkDa9VkLRQ4RvKm3rpN4wVSGhYS5s9FN32MX
+        d=1e100.net; s=20230601; t=1761304099; x=1761908899;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qr8VI2WDLpClCnobZqQ04jtUbm8hJFOmR+11wkVoEH0=;
+        b=vklB0NJAliVQnlWSxxnqsSsOY0aG9u/hmymU0w6gfT4vhu4kgyxvGak0FAJTPKKNhF
+         ymi72hfxJi4huF+F15NZvNG/PezPOG1zeuuk5dsUOLBmp1R4JIMB188c/HW0jrER3yo+
+         LJCioAm1hFjJ371Tv9Akj/DHa42CBAdbgEDC/leXuglUvhkAgfRcpkpwIdCqDWGC3DQk
+         dXN7RpRutBZ/+0mZoOghVo5/+7jLqXOBy5Xk1VzuhbNhv3hlmknd5i/qcwXpcEKk+vHV
+         +kA/PVnBXqODL0gfMIRPW4eJEbfKQfF0wjAQtFirDjGUD6ZwcbiaZxMGtJ/hdTVuQJc3
+         7PUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWDDfgBLDGnxvdHwF8EDjm9MBvgRZ7YYOPZCXlYlBOnlIb1xuAAB+ziP4FHT9/FWn8ilJWdy+QZ/51EG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWic4pIVV5IIBCbUIIE8UR3Sne23JqHFlB6EYuRpjeyi6GntXk
+	iMcTzUDKI0lcEugYsbjPhhX3TYAtprDfcE07AvpZ79LNaxe5FdsfTimakCjlcIZ7Kpu/YT737Zw
+	mTHE8CmUl5pN4QU1Xk7IbdM/FPA/ty5QIa42q6EM2bg==
+X-Gm-Gg: ASbGncuQoVHqex5QfArlVIR+dt90WC4+tFZ2y06KnCUYhhNEBDKGvcQhWb1AVF2qHD9
+	ELcRaelvSs7w1391XwmCfsKGbHXP9DDkfxAahaCq7FcWG/kolJR10SyPvKcmjn7lYSEMFvAWpva
+	3o/kG0EJgt3Xuokw54nhreJjAPBIDVeYIx4t+CIQhvpCgOQfF0BXkJBjgB0ep4s4IgJ7xJKIO39
+	8udLDwCKdb8Qb4gNs7NT9SzQcRmxEpJYuTgVOWxH/R4Ur7tqCnd5ygSpDe0VZ3GX/MyQfj8rLRF
+	044vbuLB5yS1Y7xRgIqbJhqZK2s5SWMOW59nDWju
+X-Google-Smtp-Source: AGHT+IFOV3V8o2HZhqqETlepYcrBmej0YD+DE4piL9lAUn6eKlq7J5U55V3yx6LRy0lafFZakyuR4ta00/fEgft/O94=
+X-Received: by 2002:a05:690e:4188:b0:63c:f5a6:f2fd with SMTP id
+ 956f58d0204a3-63f435a7561mr1131720d50.63.1761304099000; Fri, 24 Oct 2025
+ 04:08:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2702:b0:42f:9574:7c1e with SMTP id
- e9e14a558f8ab-430c52a253amr381702385ab.27.1761304023077; Fri, 24 Oct 2025
- 04:07:03 -0700 (PDT)
-Date: Fri, 24 Oct 2025 04:07:03 -0700
-In-Reply-To: <20251024071534.2MOzq%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb5dd7.050a0220.346f24.00c1.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in __ocfs2_move_extents_range
-From: syzbot <syzbot+f2107d999290b8166267@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <0f006338-e69b-4b3f-b91f-0cc683544011@kernel.org>
+ <20251022114527.618908-1-adriana@arista.com> <20251022201953.GA206947-robh@kernel.org>
+ <CAERbo5z6BzHqQxXdxPxmxE_eDR7GGGbt3A8kB0gQiWFBE-28Ug@mail.gmail.com>
+ <CAMj1kXGYinTKiyYhNYWJvoJeUJScCGnyq=ozLgjKAm7_wzG8QA@mail.gmail.com>
+ <CAERbo5waY-=6BLZ2SiJSFAXzvU57mJdM9q05vAZw8zR2yExQ5w@mail.gmail.com>
+ <CAMj1kXHin5YacS98ttzHqFqy6HMukXKoLZtr-+bLwVRsWZUugQ@mail.gmail.com>
+ <CAERbo5zgS8XoGcFB3wejqDpx14-SBr5oWn7pu3=PE0djRiKZqg@mail.gmail.com> <CAMj1kXEnSKF4VcMdOvUUuM-pOEWB38qPhWvUm13rnkQiZXp6SA@mail.gmail.com>
+In-Reply-To: <CAMj1kXEnSKF4VcMdOvUUuM-pOEWB38qPhWvUm13rnkQiZXp6SA@mail.gmail.com>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Date: Fri, 24 Oct 2025 14:07:43 +0300
+X-Gm-Features: AS18NWCWgWLVov8ueny0nkngqHk4IxEbg4f6wBusDI4Ru3Cin08S3Jv6tCbD0eM
+Message-ID: <CAC_iWjKQ5Smx5hOM9Lgyq_KD6D7OXyDsfJ4mcEnfw4JuRtxy-g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] DMI: Scan for DMI table from DTS info
+To: Ard Biesheuvel <ardb@kernel.org>, Adriana Nicolae <adriana@arista.com>
+Cc: Rob Herring <robh@kernel.org>, krzk@kernel.org, jdelvare@suse.com, 
+	frowand.list@gmail.com, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, vasilykh@arista.com, arm.ebbr-discuss@arm.com, 
+	boot-architecture@lists.linaro.org, linux-efi@vger.kernel.org, 
+	uefi-discuss@lists.uefi.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Ard, Adriana
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-kernel BUG in __ocfs2_move_extents_range
+Thanks for cc'ing me.
 
-------------[ cut here ]------------
-kernel BUG at fs/ocfs2/suballoc.c:1396!
-Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 1 UID: 0 PID: 7437 Comm: syz.0.17 Not tainted syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : ocfs2_block_group_set_bits+0x780/0x8ec fs/ocfs2/suballoc.c:1396
-lr : ocfs2_block_group_set_bits+0x780/0x8ec fs/ocfs2/suballoc.c:1396
-sp : ffff8000a13571a0
-x29: ffff8000a1357260 x28: ffff0000dcf1cfb8 x27: ffff0000ca040000
-x26: ffff0000db626630 x25: ffff0000c6fcb000 x24: 1ffff0001426ae40
-x23: ffff0000c6fcb00c x22: dfff800000000000 x21: 0000000000000002
-x20: 00000000000000ff x19: 0000000000000000 x18: 1fffe00033970070
-x17: ffff80008ed4d000 x16: ffff80008a937600 x15: 0000000000000001
-x14: 0000000000000000 x13: 00000000fffffffc x12: 0000000000000000
-x11: 0000000000000000 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d6fe8000 x7 : 0000000000000000 x6 : 0000000000000000
-x5 : 00000000000000ff x4 : 0000000000000001 x3 : ffff0000e115c0e8
-x2 : ffff0000c6fcb000 x1 : 0000000000000002 x0 : 00000000000000ff
-Call trace:
- ocfs2_block_group_set_bits+0x780/0x8ec fs/ocfs2/suballoc.c:1396
- ocfs2_move_extent fs/ocfs2/move_extents.c:693 [inline]
- __ocfs2_move_extents_range+0x20ec/0x2abc fs/ocfs2/move_extents.c:866
- ocfs2_move_extents+0x314/0x7ec fs/ocfs2/move_extents.c:933
- ocfs2_ioctl_move_extents+0x448/0x614 fs/ocfs2/move_extents.c:1065
- ocfs2_ioctl+0x1c4/0x738 fs/ocfs2/ioctl.c:946
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:735
- el0t_64_sync_handler+0x90/0xfc arch/arm64/kernel/entry-common.c:754
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-Code: 17ffffa8 979ad94a d4210000 979ad948 (d4210000) 
----[ end trace 0000000000000000 ]---
+On Fri, 24 Oct 2025 at 12:49, Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> On Thu, 23 Oct 2025 at 16:48, Adriana Nicolae <adriana@arista.com> wrote:
+> >
+> > On Thu, Oct 23, 2025 at 4:54=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org=
+> wrote:
+> > >
+> > > (cc Ilias)
+> > >
+> > > On Thu, 23 Oct 2025 at 15:34, Adriana Nicolae <adriana@arista.com> wr=
+ote:
+> > > >
+> > > > On Thu, Oct 23, 2025 at 11:21=E2=80=AFAM Ard Biesheuvel <ardb@kerne=
+l.org> wrote:
+> > > > >
+> > > > > On Thu, 23 Oct 2025 at 04:21, Adriana Nicolae <adriana@arista.com=
+> wrote:
+> > > > > >
+> > > > > > On Wed, Oct 22, 2025 at 11:19=E2=80=AFPM Rob Herring <robh@kern=
+el.org> wrote:
+> > > > > > >
+> > > > > > > On Wed, Oct 22, 2025 at 04:45:25AM -0700, adriana wrote:
+> > > > > > > > Some bootloaders like U-boot, particularly for the ARM arch=
+itecture,
+> > > > > > > > provide SMBIOS/DMI tables at a specific memory address. How=
+ever, these
+> > > > > > > > systems often do not boot using a full UEFI environment, wh=
+ich means the
+> > > > > > > > kernel's standard EFI DMI scanner cannot find these tables.
+> > > > > > >
+> > > > > > > I thought u-boot is a pretty complete UEFI implementation now=
+. If
+> > > > > > > there's standard way for UEFI to provide this, then that's wh=
+at we
+> > > > > > > should be using. I know supporting this has been discussed in=
+ context of
+> > > > > > > EBBR spec, but no one involved in that has been CC'ed here.
+> > > > > >
+> > > > > > Regarding the use of UEFI, the non UEFI boot is used on Broadco=
+m iProc which
+> > > > > > boots initially into a Hardware Security Module which validates=
+ U-boot and then
+> > > > > > loads it. This specific path does not utilize U-Boot's UEFI
+> > > > > > implementation or the
+> > > > > > standard UEFI boot services to pass tables like SMBIOS.
+> > > > > >
+> > > > >
+> > > > > What prevents this HSM validated copy of u-boot from loading the =
+kernel via EFI?
+> > > > The vendor's U-Boot configuration for this specific secure boot pat=
+h
+> > > > (involving the
+> > > > HSM) explicitly disables the CMD_BOOTEFI option due to security
+> > > > mitigations, only
+> > > > a subset of U-boot commands are whitelisted. We could patch the U-b=
+oot
+> > > > to include
+> > > > that but it is preferable to follow the vendor's recommandations an=
+d
+> > > > just patch U-boot
+> > > > to fill that memory location with SMBIOS address or directly with t=
+he
+> > > > entry point.
+> > >
+> > > And what security mitigations are deemed needed for the EFI code? You
+> > > are aware that avoiding EFI boot means that the booting kernel keeps
+> > > all memory protections disabled for longer than it would otherwise. I=
+s
+> > > this allowlisting based on simply minimizing the code footprint?
+> > >
+> > From the information I have, it might be just minimizing the footprint
+> > but the vendor's U-Boot configuration for this specific path
+> > explicitly disables the CMD_BOOTEFI option. While the vendor cites
+> > security mitigations for this configuration, the specific details
+> > could be a set of mitigation removing different boot methods and some
+> > memory access commands.
+> >
+> > The core issue is that this non-EFI boot path is the vendor-validated
+> > configuration. Enabling EFI would deviate from this setup, require
+> > significant revalidation, and could impact vendor support. Modifying
+> > U-Boot to populate the DT is a contained change without modifying the
+> > U-boot vendor configuration.
+> >
+>
+> I'm not sure I follow why changing U-Boot's code would not require
+> revalidation if simply changing its build configuration without
+> modifying the source code would require that.
+>
+> > Beyond our specific vendor constraints, this DT method might be used
+> > by any other non-UEFI arm system needing to expose SMBIOS tables to
+> > the kernel.
+> >
+>
+> Fair point. So let's do this properly: get buy-in from the U-Boot
+> folks and contribute your u-boot changes as well. And ideally, we'd
+> get this into the DMTF spec but if you are not set up for that (I
+> think you might need to be a member to be able to contribute), we can
+> find some ARM folks who are.
 
++1
+U-Boot does offer an EFI implementation indeed, but we can't magically
+force people to use it.
+The problem with SMBIOS is that afaict is still widely used by various
+debugging tools, so we might as well support it.
+I agree with Ard here. I think the best thing we can do is
+- Make the node standard in the DT spec, so everyone gets a reference
+- Gatekeep any alternative implementations for the kernel until
+someone gets this into the DMTF spec as well
+- Send a patch to U-Boot that adds that mode dynamically if booting is
+!EFI and SMIOS support is enabled
 
-Tested on:
-
-commit:         4fc43deb Linux 6.12.55
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=16e193e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4c2423b3cd696bce
-dashboard link: https://syzkaller.appspot.com/bug?extid=f2107d999290b8166267
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17582d2f980000
-
+Cheers
+/Ilias
 
