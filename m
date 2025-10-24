@@ -1,114 +1,186 @@
-Return-Path: <linux-kernel+bounces-868839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0940AC06496
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:40:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D12C064A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8D41AA5D77
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:40:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D0273BCBBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5483A3191D9;
-	Fri, 24 Oct 2025 12:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="d0eerXkS"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38C73191D9;
+	Fri, 24 Oct 2025 12:40:56 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB7B3176E3;
-	Fri, 24 Oct 2025 12:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E732DE718
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761309620; cv=none; b=SGTcI5B626zDL2JgJ9URakjaydyKVnFSLwmsM+ZBcbInKr2CVKzzMqHL16TA85v2lgIPujilsoumqkMdVE05TcxgTchmJoFH5oTfbjaflnC/aUQZaH40ZHsKI01BkxbkH6p5qVbG9kKClPZn+lIJ/1p3YejXCDGE/oRE5I04nbE=
+	t=1761309656; cv=none; b=aH12rpVYHabXUU6mPmR9UadXmrfOHjr3ZjLfWtzZyJF2RfEgr+SFQBG1Y3lJsFo9zSkjGJc6JwefTWtshqjOo3DMJhfgS5n7bCFySENYv/ogAi6/aon3hjYtMrL4uV8kEebJHbIfY62Gy3nHz8q8YsXYHcwc/2w/zTM1QvIbw3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761309620; c=relaxed/simple;
-	bh=Om9HVma6Qjp5czvUKnNREoYKYjR5jgFdjeAAMtVRVtU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZU0I38vvR+cclVhtKrftQJMDFngZjhHuusYBtXRb5WuQw7C6a/8j0LeI7PeJVcTLKamoGuUNpy0qyRJeuqCD3cUnwOW+CfPWUNbxkM2xzor7uShbY2SI9IisrmpfFdGB/jcKiDzZHeKLV31lgarjeB+e+36Drzn16aqYiL5fugE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=d0eerXkS; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CYH5z7YnNdqtt5xRRak5CboKl5y9ju/AiYhGCppJhKw=; b=d0eerXkSz12vh9goTqEWUKfH5E
-	zJp6M2wqWfy5fyCSxfbg8yUBO7wDhb/Znuu0czUS02xbpGDbDksbJ+gTf3kNrWwxQMJ0XtKPeog0A
-	bbk9tSkvijKY/OGnSYXWYm3u8BLwjphK39wlI+4o7+GeCmVzGd3w6rRA8yvJVQioRszIRFqwqwdt+
-	Dw1uUJNfnkBifui0BOAcENJoXAIQXpXnN78NypTT+yKIwHvQoLv9KkmzUvJLD2P61zqgSmqgshUih
-	iJtCY9IsMOlLQ8NFGsaXBrZ2pYXAo0EN1JVI4qMmIqQrDO9UtXBZCPel693JNiYTH/J38GCFug8Bz
-	gMSBM05w==;
-Received: from [90.242.12.242] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1vCH5Q-00El6s-Be; Fri, 24 Oct 2025 14:40:04 +0200
-Message-ID: <5640fbf1-7b8d-4537-9f1a-b401a7a4934b@igalia.com>
-Date: Fri, 24 Oct 2025 13:40:03 +0100
+	s=arc-20240116; t=1761309656; c=relaxed/simple;
+	bh=PLRVLvdl7dWr/qhCmjftgM+DDHOnmWt5ZRoZQkGlpss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6XnI1x2YQ5g/hrYLI2TpdknHXP2DfffLhTjg7Vv3ovLk7ltysSupnCBF2A7QIxT9fNElOMFA8v8t/rvF+wqFVl7W0D2/igm6qDcTqtys/DgUHiXlyArvoXgCibWk2onDORAaAbKT1mCy2YjtCpP2e0ENFSw9UDhr3J3uD5nwbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1vCH67-0004IA-SS; Fri, 24 Oct 2025 14:40:47 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1vCH67-005E8E-1D;
+	Fri, 24 Oct 2025 14:40:47 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1vCH67-00FAGC-0p;
+	Fri, 24 Oct 2025 14:40:47 +0200
+Date: Fri, 24 Oct 2025 14:40:47 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Johan Hovold <johan@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 0/3] USB-Serial serdev support
+Message-ID: <20251024124047.gnhxvjxjv7ie6ryy@pengutronix.de>
+References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
+ <Zt7kCxawoszunWq3@hovoldconsulting.com>
+ <20240917044948.i2eog4ondf7vna7q@pengutronix.de>
+ <Z8_wcASfJ8SeAQ8l@hovoldconsulting.com>
+ <20250313194044.t2t3c7j6ktvshjhs@pengutronix.de>
+ <aPogbAozezmqSMuU@hovoldconsulting.com>
+ <20251023134828.2dzq2rhtjplqyyaj@pengutronix.de>
+ <aPs3BX9-og6wJIWR@hovoldconsulting.com>
+ <20251024092738.zao47ehvzckkrsf3@pengutronix.de>
+ <aPtV1qNu3aVrS4LS@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma-fence: Correct return of dma_fence_driver_name()
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: phasta@kernel.org, Sumit Semwal <sumit.semwal@linaro.org>,
- Gustavo Padovan <gustavo@padovan.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20251024075019.162351-2-phasta@kernel.org>
- <11b7a8a5-170f-4815-a8ac-5dba2d8e67a1@igalia.com>
- <5de88e79575e06c053f2d61f7bb58bf9cf5b556e.camel@mailbox.org>
- <1d0bbdcf-f4d6-49c0-bbdf-364c2af80868@igalia.com>
- <89812f66-25a6-4f9e-aa4f-74adbf116db8@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <89812f66-25a6-4f9e-aa4f-74adbf116db8@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPtV1qNu3aVrS4LS@hovoldconsulting.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-
-On 24/10/2025 13:12, Danilo Krummrich wrote:
-> On 10/24/25 1:31 PM, Tvrtko Ursulin wrote:
->> Also, the short name can be reduced from a verbose starting point similar to yours:
->>
->>   "unknown-driver-is-detached-from-the-signaled-fence"
->>   "driver-detached-from-the-fence"
->>   "driver-detached"
->>
->> Or keep "detached-driver" as good enough. Mea culpa for typing it up transposed. :)
+On 25-10-24, Johan Hovold wrote:
+> On Fri, Oct 24, 2025 at 11:27:38AM +0200, Marco Felsch wrote:
+> > On 25-10-24, Johan Hovold wrote:
+> > > On Thu, Oct 23, 2025 at 03:48:28PM +0200, Marco Felsch wrote:
+> > > > On 25-10-23, Johan Hovold wrote:
+> > > > > On Thu, Mar 13, 2025 at 08:40:44PM +0100, Marco Felsch wrote:
+> > > > > > On 25-03-11, Johan Hovold wrote:
+> > > > > > > On Tue, Sep 17, 2024 at 06:49:48AM +0200, Marco Felsch wrote:
+> > > > > > > > On 24-09-09, Johan Hovold wrote:
 > 
-> "detached-driver" is misleading, just because the fence is signaled it doesn't
-> mean that the driver is detached.
+> > > It's still one of the issues that need to addressed.
+> > 
+> > Yes but this shouldn't be an issue with this patchset. So far the
+> > smallest DT-describale USB entities are the interfaces.
+> 
+> It is an issue with this patchset since any binding for USB serdev will
+> need to take both kind of devices into account. Period.
 
-You trim too much of the quote making it unclear if you read the whole 
-story.
+Sorry but I really don't see the issue. As of now DT abstractions
+supports all my use-cases. If $another_developer has an USB device which
+actually exposes multiple serial ports behind a single usb-interface,
+fine. But in that case $another_developer needs to add the
+support/extend the support for it if he wants to use it in combination
+with serdev.
 
-If the driver isn't detached from the signalled fence then it is 
-vulnerable to use after free.
+I actually have no such USB device and also my customer doesn't use such
+a device. Therefore I'm afraid that I can't add support for something I
+can't actually test.
 
-Current state is that name and timeline helpers _are_ detached from the 
-driver once the fence is signalled.
+What is your suggestion how the DT abstraction should look like in 2025,
+e.g. given the current DT abstraction?
 
-Fence ops and lock are still not and that is work in progress.
+> > > > > > > > > Second, and more importantly, you do not address the main obstacle for
+> > > > > > > > > enabling serdev for USB serial which is that the serdev cannot handle
+> > > > > > > > > hotplugging.
+> > > 
+> > > > > You will also see the following kind of warnings in the logs:
+> > > > > 
+> > > > > ttyUSB ttyUSB0: tty_hangup: tty->count(1) != (#fd's(0) + #kopen's(0))
+> > > > > ttyUSB ttyUSB0: tty_port_close_start: tty->count = 1 port count = 0
+> > > > > 
+> > > > > which are due to the fact that serdev does not support hangups which are
+> > > > > used during teardown of USB serial ports.
+> > > > 
+> > > > IIRC I added the following patch to solve this:
+> > > > 
+> > > >  - [PATCH 1/3] serdev: ttyport: make use of tty_kopen_exclusive
+> > > > 
+> > > > Sorry for not remembering the details since this conversation/patchset
+> > > > is quite old but still one of our top prios.
+> > > 
+> > > That suppresses the first warning but doesn't address the underlying
+> > > issue (that hangups are built around file handles which serdev does not
+> > > use). And you will still see the second one when the serdev driver tries
+> > > to close the already hung up port during deregistration.
+> > 
+> > Can you please elaborate how I can check this? I'm not aware of any
+> > warning yet, but I only tested the hot-(un)plug. If I got your right, I
+> > should see the issue once I unload the serdev driver, right?
+> 
+> You should see it in your test setup as well. Unless the bluetooth
+> driver you use is doing something funky (e.g. not closing the port).
+> 
+> I'm testing with a mock gnss device here.
 
-The names under discussion are printed together in debugfs (intended 
-audience kernel developers). Currently, per fence, it should be along 
-the lines of:
+Okay, let me test this. Just that we're on the same page: The test is to
+remove the serdev (bluetooth, gnss, ...) driver, right?
 
-"kernel fence: detached-driver signaled-timeline seq 1234 signalled"
+> > > Also, that commit message needs to more work since you don't really
+> > > motivate why you think it's needed (e.g. as serdev ports can't be shared
+> > > with user space).
+> > 
+> > Maybe it needs some adaptions but:
+> > 
+> > | The purpose of serdev is to provide kernel drivers for particular serial
+> > | device, serdev-ttyport is no exception here. Make use of the
+> > | tty_kopen_exclusive() funciton to mark this tty device as kernel
+> > | internal device.
+> > 
+> > the last sentence should address your point that serdev ports can't be
+> > shared with user-space.A
+> 
+> No, my point was that serdev devices *are* not shared with user space,
+> you don't need to use that new kopen helper for that.
+> 
+> > > If it's just about suppressing the warning you could possibly just have
+> > > set that new flag.
+> > 
+> > Which new flag? As I have written in my commit message: "Make use of ...
+> > to mark this tty device as kernel internal device". I thought this was
+> > the purpose of tty_kopen_exclusive().
+> 
+> That helper sets the new TTY_PORT_KOPENED flag which suppresses the
+> warning on hangups.
 
-You can propose a better name but make it not too verbose and/or 
-redundant considering the above.
+Okay, so you meant the TTY_PORT_KOPENED flag. According the
+documentation of tty_kopen_exclusive():
+
+| tty_kopen_exclusive - open a tty device for kernel
+
+isn't that exactly what serdev-ttyport should do to "not share it with
+user space"? IMHO it's an implementation detail if the logic behind
+"open a tty device for kernel" is only built around a flag to suppress
+the warning.
 
 Regards,
-
-Tvrtko
-
+  Marco
 
