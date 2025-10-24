@@ -1,416 +1,176 @@
-Return-Path: <linux-kernel+bounces-869461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C203C07F1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4BBC07F22
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6EE274EDB77
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 878D43B2424
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2850D2E424F;
-	Fri, 24 Oct 2025 19:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721E62D593A;
+	Fri, 24 Oct 2025 19:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRXTaFOD"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RDmxnHO/"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F0420CCCA
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA6620CCCA
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761335014; cv=none; b=AOZcv3faNaNQKvn3BlBu6hXm4JfFVN2nsNG51FNdBLdKZ9x590xD5Di/hje2ehBsmLBsCpGDFBrtmu0rLOzqzgz8Lvmc5S6nj5rWqkN/eJhZswcu9VDF039RhRIVvrSoRy5iO3L6Ei+FqhWQGL64x3bU5Btr0/2Jz1Ue2IlOtC4=
+	t=1761335043; cv=none; b=gTN4MBYeYPhSeNJBSWDvNIuhzAXnC40BsFz3mNu8FNQX6j7N9wCroIUynax1xrCwwXlLJFdlobK/MHfALvjWo8uVtOhcHDfD+ZIFxPai56R8rLT8SUAuNE8Mvs8fawgIHpwOA/8rB6GJLOwrerqi7r99bTBgC6nlJdhzk1zPil8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761335014; c=relaxed/simple;
-	bh=GhnYeUgW9HNrnbNuXebyBgs91nhB/UF1Y9z4XhqgECw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ia7jg1B189oIZ/+JOEza6haW9oKaa5gYhkH1EUAtPsQ6LcKAuH87Z8fVqqvYHM8xSHIDMKAjOIykWTS67wAZnjxZKWNK7H4atT32xyo32WideYXeA4ON2hTxB/vjTDisOPtEJejj9eSekp0SI5TeGGaka8kmZajhvrn4hTc7UMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QRXTaFOD; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-471b80b994bso34176255e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761335010; x=1761939810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=90XaxFEyCpkV47QCzVcKxG5N1KKEds9BtveeKPxtNeE=;
-        b=QRXTaFODlGVVO20BunHLNVYW9aB63Ucl9U8p+2nnU68xlX90lpZUtsjxc+lXHmx0hc
-         EShBr4LRNZKTSsyKlhJ3BFSO7bJOq/4/VHbZltBLzwIAwH9O1/KW4gYsHC/kH302XhFR
-         2RVpyGFAqc6W3es49M94+KHF6ic/eE1X5789Q455ZAOHBMtBl9sis0MOP47QD0Bo9R9z
-         K8MdRo022dtfEg6fY/m3knGIpcV7Blr4eYita9UlJpWUItZMFZs1vJXHJrd1gKHlU3Lo
-         Len6KN1bri+7TOPV6MPNQH3aYOe1MTdQ3xqUSLjjkdpJewukDMYYhGS+ueg7IhxEATA1
-         Yz8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761335010; x=1761939810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=90XaxFEyCpkV47QCzVcKxG5N1KKEds9BtveeKPxtNeE=;
-        b=VIjBk0OIH9Q6bG2KGv8Kk22MsOSSKZREX2A1mRPYr1OnwSERgieIo8iSp8Ie9CRapw
-         HUJmEtu2AfVbOLTkUC9SNJPO4fyTyIZUoE+UQs0xM43ZNF83GaJ6sWQrLzlAuE3tYj/9
-         xXwcKx2EPHCJurVOqlWXhRLl0oqPfew4T9V00WHYYtE0O8ny69VD7NF3s4ix65/u6kQF
-         astRoAxji/sPn5bhbuDpW/OMLSe78uh2jaNRU7qg7rZaexiEZHiHvof4bEQu4/snax8A
-         7C1hyzf7zExb6rWkDKXFm14svvHiPah7jNn1vgTXHQzz5/hrTQEVS1Dskf/93EtFt6d2
-         D9qA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaiOlXTsUhi8uRkGc+9UW6TV0hu58hhVPAXEaHkxrRnabAJMT3zz8b8QGIqDke8OQesgliqYxjo6x98wE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLxPWoAlMvCr8tY2V3YND2HSkHDi8keaoQCjHcI4SR7J/SeIRP
-	jVkXA/uArM+V1ICjG7x/amfEzJKkNkM25afMF/iZ8T1zEOIwbwn+Pf2qIR17MrYUbbZFr82RxwZ
-	wgdQY6X1VSKXCtSLBhKapK6jcjyvziYOEj4b1
-X-Gm-Gg: ASbGncslkKG7f3ROEv6VZUI+JdvuCz+QAqCt3Vi7xP440e2mMLnzVyL85tPVtY6L7RJ
-	bxmqlUH9kDKIzu2gjH/VIO6Nz4/zy/k+vC+dD8H1K4s9Z0rKAUy/If5dQYxYrUh9Rjs5OT8StKf
-	t0N/J64YQA8736c62UZEnf37+O1ITWIS8vHuexH5RqIoEK1Z4Mz8wLIqB8hxD97+FTyz+pm69NX
-	HyD6RoJLZEsJTCWblKzscmqvlYr+zUWOM+QBL1bRB2wStZCCXog3fV4+r7wPeSm0ZAM3CqrlxWB
-	gTLlFq15BpHShFp0Ltk5u+xS1vRR
-X-Google-Smtp-Source: AGHT+IGlhgaHR7jFg9+tMxl+vQhbMYL40wY/+fohU6NDJjpXaCt4CPnZUsK/fNBWdwfFYQyXTJ3GI3NvxqyaKNwKNEI=
-X-Received: by 2002:a05:600c:3149:b0:46f:b43a:aef0 with SMTP id
- 5b1f17b1804b1-47117925e63mr211257905e9.41.1761335010286; Fri, 24 Oct 2025
- 12:43:30 -0700 (PDT)
+	s=arc-20240116; t=1761335043; c=relaxed/simple;
+	bh=shl7bJ1M1+flmvet4xUS68bn/20T+KcV74lkt9mqrMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TALrWTJDQAnSOxHHVEOHZzP2TwUIoWjtOSLTiloGvfxfFn0w+sXPhvjT6vkrTLu2uI0WidnN+DHBOwqNxLY4k/unIA04mzkhqg6XWFGoYpYrGbifa/4xZGMtgofroWS0QUntdqiIaIsGc40cheWEVSW1F/TMFCuiRWrMDURIpeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RDmxnHO/; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=OxdWsq282YbNYkIdlx7yU94CDIjeudkCU+GpHh8fTpk=; b=RDmxnHO/R11wCBAXH9TyNM+ASn
+	o1JsfVuH96R/3ocNcMxspn6z5ZYurXXyCtUd3NOoZfAVZaMLw+yNt1FwL1E/Dy95WCCBdwBJASt0c
+	FZ66t9c2uzdnWpkr7qjhyvF/fa4kKpz2FCijXp8ielBN3cp1FA58itWrK1UN64fsYdTFIQSJlqhs2
+	I2MhPWKJpIIQHjuTXZcVijY0qaLPLKTQWrkFmzjlgboch+JFLoSjvnJqLhs9eNtOZG6aoULX/BjKk
+	sLkCsG8YmTWnIdISGX5cRG2SCxFiam5hFFfpIsHRXQAFbMuqOhrAlwxtX2GqEV4jGRfK/cXNyPjxo
+	IH9w+OTg==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vCNhh-0000000AOeL-1wz8;
+	Fri, 24 Oct 2025 19:44:01 +0000
+Message-ID: <8950bbb2-f1a7-4ae8-971f-7331c7eceff0@infradead.org>
+Date: Fri, 24 Oct 2025 12:44:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz> <20251023-sheaves-for-all-v1-7-6ffa2c9941c0@suse.cz>
-In-Reply-To: <20251023-sheaves-for-all-v1-7-6ffa2c9941c0@suse.cz>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 24 Oct 2025 12:43:18 -0700
-X-Gm-Features: AWmQ_bk-kyewHYgpxUqtmCiyFoLA8j75cYs74Mz6Re-SJFA0srIhl0qtPOmknRs
-Message-ID: <CAADnVQLAFkYLLJbMjEyzEu=Q7aJSs19Ddb1qXqEWNnxm6=CDFg@mail.gmail.com>
-Subject: Re: [PATCH RFC 07/19] slab: make percpu sheaves compatible with kmalloc_nolock()/kfree_nolock()
-To: Vlastimil Babka <vbabka@suse.cz>, Chris Mason <clm@meta.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@gentwo.org>, 
-	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Alexei Starovoitov <ast@kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev, 
-	bpf <bpf@vger.kernel.org>, kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] virt: acrn: fix kernel-doc in <uapi/linux/acrn.h>
+To: "Li, Fei1" <fei1.li@intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "acrn-dev@lists.projectacrn.org" <acrn-dev@lists.projectacrn.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20251024044226.480531-1-rdunlap@infradead.org>
+ <SJ1PR11MB615389E066F50BBB68686A26BFF1A@SJ1PR11MB6153.namprd11.prod.outlook.com>
+ <213c918b-b4aa-4174-af89-a4d17e8c30dc@infradead.org>
+ <SJ1PR11MB61536DC1E7A32387FCA400E5BFF1A@SJ1PR11MB6153.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <SJ1PR11MB61536DC1E7A32387FCA400E5BFF1A@SJ1PR11MB6153.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 23, 2025 at 6:53=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> Before we enable percpu sheaves for kmalloc caches, we need to make sure
-> kmalloc_nolock() and kfree_nolock() will continue working properly and
-> not spin when not allowed to.
->
-> Percpu sheaves themselves use local_trylock() so they are already
-> compatible. We just need to be careful with the barn->lock spin_lock.
-> Pass a new allow_spin parameter where necessary to use
-> spin_trylock_irqsave().
->
-> In kmalloc_nolock_noprof() we can now attempt alloc_from_pcs() safely,
-> for now it will always fail until we enable sheaves for kmalloc caches
-> next. Similarly in kfree_nolock() we can attempt free_to_pcs().
->
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  mm/slub.c | 74 ++++++++++++++++++++++++++++++++++++++++++++-------------=
-------
->  1 file changed, 52 insertions(+), 22 deletions(-)
->
-> diff --git a/mm/slub.c b/mm/slub.c
-> index ecb10ed5acfe..5d0b2cf66520 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2876,7 +2876,8 @@ static void pcs_destroy(struct kmem_cache *s)
->         s->cpu_sheaves =3D NULL;
->  }
->
-> -static struct slab_sheaf *barn_get_empty_sheaf(struct node_barn *barn)
-> +static struct slab_sheaf *barn_get_empty_sheaf(struct node_barn *barn,
-> +                                              bool allow_spin)
->  {
->         struct slab_sheaf *empty =3D NULL;
->         unsigned long flags;
-> @@ -2884,7 +2885,10 @@ static struct slab_sheaf *barn_get_empty_sheaf(str=
-uct node_barn *barn)
->         if (!data_race(barn->nr_empty))
->                 return NULL;
->
-> -       spin_lock_irqsave(&barn->lock, flags);
-> +       if (likely(allow_spin))
-> +               spin_lock_irqsave(&barn->lock, flags);
-> +       else if (!spin_trylock_irqsave(&barn->lock, flags))
-> +               return NULL;
->
->         if (likely(barn->nr_empty)) {
->                 empty =3D list_first_entry(&barn->sheaves_empty,
-> @@ -2961,7 +2965,8 @@ static struct slab_sheaf *barn_get_full_or_empty_sh=
-eaf(struct node_barn *barn)
->   * change.
->   */
->  static struct slab_sheaf *
-> -barn_replace_empty_sheaf(struct node_barn *barn, struct slab_sheaf *empt=
-y)
-> +barn_replace_empty_sheaf(struct node_barn *barn, struct slab_sheaf *empt=
-y,
-> +                        bool allow_spin)
->  {
->         struct slab_sheaf *full =3D NULL;
->         unsigned long flags;
-> @@ -2969,7 +2974,10 @@ barn_replace_empty_sheaf(struct node_barn *barn, s=
-truct slab_sheaf *empty)
->         if (!data_race(barn->nr_full))
->                 return NULL;
->
-> -       spin_lock_irqsave(&barn->lock, flags);
-> +       if (likely(allow_spin))
-> +               spin_lock_irqsave(&barn->lock, flags);
-> +       else if (!spin_trylock_irqsave(&barn->lock, flags))
-> +               return NULL;
->
->         if (likely(barn->nr_full)) {
->                 full =3D list_first_entry(&barn->sheaves_full, struct sla=
-b_sheaf,
-> @@ -2990,7 +2998,8 @@ barn_replace_empty_sheaf(struct node_barn *barn, st=
-ruct slab_sheaf *empty)
->   * barn. But if there are too many full sheaves, reject this with -E2BIG=
-.
->   */
->  static struct slab_sheaf *
-> -barn_replace_full_sheaf(struct node_barn *barn, struct slab_sheaf *full)
-> +barn_replace_full_sheaf(struct node_barn *barn, struct slab_sheaf *full,
-> +                       bool allow_spin)
->  {
->         struct slab_sheaf *empty;
->         unsigned long flags;
-> @@ -3001,7 +3010,10 @@ barn_replace_full_sheaf(struct node_barn *barn, st=
-ruct slab_sheaf *full)
->         if (!data_race(barn->nr_empty))
->                 return ERR_PTR(-ENOMEM);
->
-> -       spin_lock_irqsave(&barn->lock, flags);
-> +       if (likely(allow_spin))
-> +               spin_lock_irqsave(&barn->lock, flags);
-> +       else if (!spin_trylock_irqsave(&barn->lock, flags))
-> +               return NULL;
+Hi,
 
-AI did a good job here. I spent an hour staring at the patch
-for other reasons. Noticed this bug too and then went
-"ohh, wait, AI mentioned it already". Time to retire.
+On 10/23/25 11:22 PM, Li, Fei1 wrote:
+>>
+>> Hi,
+>>
+>> On 10/23/25 11:00 PM, Li, Fei1 wrote:
+>>>> From: Randy Dunlap <rdunlap@infradead.org>
+>>>> Sent: Friday, October 24, 2025 12:42 PM
+>>>> To: linux-kernel@vger.kernel.org
+>>>> Cc: Randy Dunlap <rdunlap@infradead.org>; Li, Fei1
+>>>> <fei1.li@intel.com>; acrn-dev@lists.projectacrn.org; Greg
+>>>> Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>> Subject: [PATCH] virt: acrn: fix kernel-doc in <uapi/linux/acrn.h>
+>>>>
+>>>> Fix the kernel-doc comments for struct acrn_mmiodev so that all
+>>>> struct members are rendered correctly.
+>>>> Correct io_base to io_addr in struct acrn_vdev.
+>>>>
+>>>> acrn.h:441: warning: Function parameter or struct member 'res'
+>>>>  not described in 'acrn_mmiodev'
+>>>> acrn.h:479: warning: Function parameter or struct member 'io_addr'
+>>>>  not described in 'acrn_vdev'
+>>>> acrn.h:479: warning: Excess struct member 'io_base' description  in
+>>>> 'acrn_vdev'
+>>>>
+>>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>>>> ---
+>>>> Cc: Fei Li <fei1.li@intel.com>
+>>>> Cc: acrn-dev@lists.projectacrn.org
+>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>> ---
+>>>>  include/uapi/linux/acrn.h |   11 ++++++-----
+>>>>  1 file changed, 6 insertions(+), 5 deletions(-)
+>>>>
+>>>> --- linux-next-20251022.orig/include/uapi/linux/acrn.h
+>>>> +++ linux-next-20251022/include/uapi/linux/acrn.h
+>>>> @@ -420,12 +420,13 @@ struct acrn_pcidev {
+>>>>  /**
+>>>>   * struct acrn_mmiodev - Info for assigning or de-assigning a MMIO device
+>>>>   * @name:			Name of the MMIO device.
+>>>> - * @res[].user_vm_pa:		Physical address of User VM of the
+>> MMIO
+>>>> region
+>>>> + * @res:			MMIO resource descriptor info.
+>>>
+>>> Hi Randy
+>>>
+>>> Thanks for cooking this patch to help fix these warning.
+>>> Could you just add the comment for `res` and keep the other comments for
+>> the fields of ` struct acrn_mmiodev ` ?
+>>>
+>>
+>> Do you mean leave the [] square brackets in the field name?
+> yes
+>> If that's what you mean, that's not valid kernel-doc notation.
+> Would you please post the quote how kernel-doc prefer to add this comments ? I didn't see
+> an example in the kernel-doc.rst
 
->         if (likely(barn->nr_empty)) {
->                 empty =3D list_first_entry(&barn->sheaves_empty, struct s=
-lab_sheaf,
-> @@ -5000,7 +5012,8 @@ __pcs_replace_empty_main(struct kmem_cache *s, stru=
-ct slub_percpu_sheaves *pcs,
->                 return NULL;
->         }
->
-> -       full =3D barn_replace_empty_sheaf(barn, pcs->main);
-> +       full =3D barn_replace_empty_sheaf(barn, pcs->main,
-> +                                       gfpflags_allow_spinning(gfp));
->
->         if (full) {
->                 stat(s, BARN_GET);
-> @@ -5017,7 +5030,7 @@ __pcs_replace_empty_main(struct kmem_cache *s, stru=
-ct slub_percpu_sheaves *pcs,
->                         empty =3D pcs->spare;
->                         pcs->spare =3D NULL;
->                 } else {
-> -                       empty =3D barn_get_empty_sheaf(barn);
-> +                       empty =3D barn_get_empty_sheaf(barn, true);
->                 }
->         }
->
-> @@ -5154,7 +5167,8 @@ void *alloc_from_pcs(struct kmem_cache *s, gfp_t gf=
-p, int node)
->  }
->
->  static __fastpath_inline
-> -unsigned int alloc_from_pcs_bulk(struct kmem_cache *s, size_t size, void=
- **p)
-> +unsigned int alloc_from_pcs_bulk(struct kmem_cache *s, gfp_t gfp, size_t=
- size,
-> +                                void **p)
->  {
->         struct slub_percpu_sheaves *pcs;
->         struct slab_sheaf *main;
-> @@ -5188,7 +5202,8 @@ unsigned int alloc_from_pcs_bulk(struct kmem_cache =
-*s, size_t size, void **p)
->                         return allocated;
->                 }
->
-> -               full =3D barn_replace_empty_sheaf(barn, pcs->main);
-> +               full =3D barn_replace_empty_sheaf(barn, pcs->main,
-> +                                               gfpflags_allow_spinning(g=
-fp));
->
->                 if (full) {
->                         stat(s, BARN_GET);
-> @@ -5693,7 +5708,7 @@ void *kmalloc_nolock_noprof(size_t size, gfp_t gfp_=
-flags, int node)
->         gfp_t alloc_gfp =3D __GFP_NOWARN | __GFP_NOMEMALLOC | gfp_flags;
->         struct kmem_cache *s;
->         bool can_retry =3D true;
-> -       void *ret =3D ERR_PTR(-EBUSY);
-> +       void *ret;
->
->         VM_WARN_ON_ONCE(gfp_flags & ~(__GFP_ACCOUNT | __GFP_ZERO |
->                                       __GFP_NO_OBJ_EXT));
-> @@ -5720,6 +5735,13 @@ void *kmalloc_nolock_noprof(size_t size, gfp_t gfp=
-_flags, int node)
->                  */
->                 return NULL;
->
-> +       ret =3D alloc_from_pcs(s, alloc_gfp, node);
-> +
+There is not anything in kernel-doc that indicates arrays
+so I can't post a quote that shows that.
+The patch shows the preferred kernel-doc here.
 
-I would remove the empty line here.
+>>>> + * @res.user_vm_pa:		Physical address of User VM of the
+>> MMIO
+>>>> region
+>>>>   *				for the MMIO device.
+>>>> - * @res[].service_vm_pa:	Physical address of Service VM of the MMIO
+>>>> + * @res.service_vm_pa:		Physical address of Service VM of the
+>>>> MMIO
+>>>>   *				region for the MMIO device.
+>>>> - * @res[].size:			Size of the MMIO region for the
+>> MMIO
+>>>> device.
+>>>> - * @res[].mem_type:		Memory type of the MMIO region for
+>> the
+>>>> MMIO
+>>>> + * @res.size:			Size of the MMIO region for the
+>> MMIO
+>>>> device.
+>>>> + * @res.mem_type:		Memory type of the MMIO region for
+>> the
+>>>> MMIO
+>>>>   *				device.
+>>>>   *
+>>>>   * This structure will be passed to hypervisor directly.
+>>>> @@ -449,7 +450,7 @@ struct acrn_mmiodev {
+>>>>   * @id.fields.legacy_id:	ID of the virtual device if not a PCI device
+>>>>   * @slot:			Virtual Bus/Device/Function of the virtual
+>>>>   *				device
+>>>> - * @io_base:			IO resource base address of the
+>> virtual device
+>>>> + * @io_addr:			IO resource base address of the
+>> virtual device
+>>>>   * @io_size:			IO resource size of the virtual device
+>>>>   * @args:			Arguments for the virtual device creation
+>>>>   *
+>>
+>> --
+>> ~Randy
+> 
 
-> +       if (ret)
-> +               goto success;
-> +
-> +       ret =3D ERR_PTR(-EBUSY);
-> +
->         /*
->          * Do not call slab_alloc_node(), since trylock mode isn't
->          * compatible with slab_pre_alloc_hook/should_failslab and
-> @@ -5756,6 +5778,7 @@ void *kmalloc_nolock_noprof(size_t size, gfp_t gfp_=
-flags, int node)
->                 ret =3D NULL;
->         }
->
-> +success:
->         maybe_wipe_obj_freeptr(s, ret);
->         slab_post_alloc_hook(s, NULL, alloc_gfp, 1, &ret,
->                              slab_want_init_on_alloc(alloc_gfp, s), size)=
-;
-> @@ -6047,7 +6070,8 @@ static void __pcs_install_empty_sheaf(struct kmem_c=
-ache *s,
->   * unlocked.
->   */
->  static struct slub_percpu_sheaves *
-> -__pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves=
- *pcs)
-> +__pcs_replace_full_main(struct kmem_cache *s, struct slub_percpu_sheaves=
- *pcs,
-> +                       bool allow_spin)
->  {
->         struct slab_sheaf *empty;
->         struct node_barn *barn;
-> @@ -6071,7 +6095,7 @@ __pcs_replace_full_main(struct kmem_cache *s, struc=
-t slub_percpu_sheaves *pcs)
->         put_fail =3D false;
->
->         if (!pcs->spare) {
-> -               empty =3D barn_get_empty_sheaf(barn);
-> +               empty =3D barn_get_empty_sheaf(barn, allow_spin);
->                 if (empty) {
->                         pcs->spare =3D pcs->main;
->                         pcs->main =3D empty;
-> @@ -6085,7 +6109,7 @@ __pcs_replace_full_main(struct kmem_cache *s, struc=
-t slub_percpu_sheaves *pcs)
->                 return pcs;
->         }
->
-> -       empty =3D barn_replace_full_sheaf(barn, pcs->main);
-> +       empty =3D barn_replace_full_sheaf(barn, pcs->main, allow_spin);
->
->         if (!IS_ERR(empty)) {
->                 stat(s, BARN_PUT);
-> @@ -6093,6 +6117,11 @@ __pcs_replace_full_main(struct kmem_cache *s, stru=
-ct slub_percpu_sheaves *pcs)
->                 return pcs;
->         }
->
-> +       if (!allow_spin) {
-> +               local_unlock(&s->cpu_sheaves->lock);
-> +               return NULL;
-> +       }
+-- 
+~Randy
 
-and would add a comment here to elaborate that the next
-steps like sheaf_flush_unused() and alloc_empty_sheaf()
-cannot handle !allow_spin.
-
-
-> +
->         if (PTR_ERR(empty) =3D=3D -E2BIG) {
->                 /* Since we got here, spare exists and is full */
->                 struct slab_sheaf *to_flush =3D pcs->spare;
-> @@ -6160,7 +6189,7 @@ __pcs_replace_full_main(struct kmem_cache *s, struc=
-t slub_percpu_sheaves *pcs)
->   * The object is expected to have passed slab_free_hook() already.
->   */
->  static __fastpath_inline
-> -bool free_to_pcs(struct kmem_cache *s, void *object)
-> +bool free_to_pcs(struct kmem_cache *s, void *object, bool allow_spin)
->  {
->         struct slub_percpu_sheaves *pcs;
->
-> @@ -6171,7 +6200,7 @@ bool free_to_pcs(struct kmem_cache *s, void *object=
-)
->
->         if (unlikely(pcs->main->size =3D=3D s->sheaf_capacity)) {
->
-> -               pcs =3D __pcs_replace_full_main(s, pcs);
-> +               pcs =3D __pcs_replace_full_main(s, pcs, allow_spin);
->                 if (unlikely(!pcs))
->                         return false;
->         }
-> @@ -6278,7 +6307,7 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void *=
-obj)
->                         goto fail;
->                 }
->
-> -               empty =3D barn_get_empty_sheaf(barn);
-> +               empty =3D barn_get_empty_sheaf(barn, true);
->
->                 if (empty) {
->                         pcs->rcu_free =3D empty;
-> @@ -6398,7 +6427,7 @@ static void free_to_pcs_bulk(struct kmem_cache *s, =
-size_t size, void **p)
->                 goto no_empty;
->
->         if (!pcs->spare) {
-> -               empty =3D barn_get_empty_sheaf(barn);
-> +               empty =3D barn_get_empty_sheaf(barn, true);
-
-I'm allergic to booleans in arguments. They make callsites
-hard to read. Especially if there are multiple bools.
-We have horrendous lines in the verifier that we still need
-to clean up due to bools:
-check_load_mem(env, insn, true, false, false, "atomic_load");
-
-barn_get_empty_sheaf(barn, true); looks benign,
-but I would still use enum { DONT_SPIN, ALLOW_SPIN }
-and use that in all functions instead of 'bool allow_spin'.
-
-Aside from that I got worried that sheaves fast path
-may be not optimized well by the compiler:
-if (unlikely(pcs->main->size =3D=3D 0)) ...
-object =3D pcs->main->objects[pcs->main->size - 1];
-// object is accessed here
-pcs->main->size--;
-
-since object may alias into pcs->main and the compiler
-may be tempted to reload 'main'.
-Looks like it's fine, since object point is not actually read or written.
-gcc15 asm looks good:
-        movq    8(%rbx), %rdx   # _68->main, _69
-        movl    24(%rdx), %eax  # _69->size, _70
-# ../mm/slub.c:5129:    if (unlikely(pcs->main->size =3D=3D 0)) {
-        testl   %eax, %eax      # _70
-        je      .L2076  #,
-.L1953:
-# ../mm/slub.c:5135:    object =3D pcs->main->objects[pcs->main->size - 1];
-        leal    -1(%rax), %esi  #,
-# ../mm/slub.c:5135:    object =3D pcs->main->objects[pcs->main->size - 1];
-        movq    32(%rdx,%rsi,8), %rdi   # prephitmp_309->objects[_81], obje=
-ct
-# ../mm/slub.c:5135:    object =3D pcs->main->objects[pcs->main->size - 1];
-        movq    %rsi, %rax      #,
-# ../mm/slub.c:5137:    if (unlikely(node_requested)) {
-        testb   %r15b, %r15b    # node_requested
-        jne     .L2077  #,
-.L1954:
-# ../mm/slub.c:5149:    pcs->main->size--;
-        movl    %eax, 24(%rdx)  # _81, prephitmp_30->size
 
