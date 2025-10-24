@@ -1,149 +1,125 @@
-Return-Path: <linux-kernel+bounces-867977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30043C040C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44366C04065
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68EA33B7AFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:50:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1288D1A67F82
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4815D1E379B;
-	Fri, 24 Oct 2025 01:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2710B19882B;
+	Fri, 24 Oct 2025 01:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="CgmHWYUu"
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SEweK6Qz"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576501B85F8;
-	Fri, 24 Oct 2025 01:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377FB12D1F1
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761270626; cv=none; b=lzmNGCMna/amo1cDaVJNrlBwZx9pwfg/mZw9nMB9hSd/5xaGWJEh9ayhy06/mUNZUKJ69fatNf9lvNf3PV4dP1PM1P8k1ljncx9s3EChsCvkzid8o1Kp8fRC3DM0hFpWZqRn96qHNpUNsozpJYFN5bPAg6oVMwu+Exjd/Ts4pLI=
+	t=1761269743; cv=none; b=UDrb25FOqGOeT2JSWqhEi3YPpRUHpOwuAZcr3BYMyPi2Ee/KeSI4wfKJrwWGISNX1/35wWbjgtJxLDa3ING8HuPmbqxb36PfMi4tX7cNCub1C6LfhJH+lqNC09KlFaV4obDlvkprEmuo5cAYKHx3VYbwlOiA5flioj7S8sG2+Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761270626; c=relaxed/simple;
-	bh=4VIvTpTsm2f0/fvgxXzGFMGsIAUkGA4PmqxriXoLGMk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JTapx4XW75kDA4GVKP9qKuqLLtSKDto4RzbjH2swqfL///N4nKDsbqw2ZWnTWt4bR66Ibsa8iuGuEARIgpAIScpBU3A4GxxnjM/qk66mX/9FNx2mH9v8FKoYGu50/kqk4Of959kmN8lT+QDhDHG/05ZDH6A/OyrCJf2AdPyaL2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=CgmHWYUu; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59O0lCaO3256537;
-	Fri, 24 Oct 2025 01:31:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS06212021; bh=2PeC5l8PW8c4J0NdtKYiZZiefOBt/vjtv77RblS5fTk=; b=
-	CgmHWYUuUhgyO07hehXWFAoCkUmrJgDDDeO9mg62KdNcHNSRxI2QNSCe4ZRZH5HM
-	e0W0Ll64UnbFpym1sX9APPyMVobpJP7LG9uVh2ctH1iKo4CXC4QUradAHPiBUUOY
-	doJSwaA7YJyh/mWPjsOXYdn8hEEGkiDtYJWBfOGPf7RfUzVTSZ+BFw/ZKqOF+jdm
-	gs0eokdfz29sR8jsLyMB8QTG4scZx+fCvAUgZ9aUwnLqNJEGstvVSO2crYXHZwNI
-	kOevRDpzrNIzN22UeyWCPTI2CC0UB4hBuesN6xtJcN3QhrAKtjQdtAX+cieqmnk/
-	V8hD11iA1qANCr/IH54UtQ==
-Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49wrpxcpyj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 24 Oct 2025 01:31:57 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.59; Thu, 23 Oct 2025 18:31:56 -0700
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.59 via Frontend Transport; Thu, 23 Oct 2025 18:31:54 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
-        <jreuter@yaina.de>, <kuba@kernel.org>, <linux-hams@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <pabeni@redhat.com>, <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] net: rose: Prevent the use of freed digipeat
-Date: Fri, 24 Oct 2025 09:31:53 +0800
-Message-ID: <20251024013153.2811796-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1761269743; c=relaxed/simple;
+	bh=OzHfrAInRSZ0eiTjgnP0ORLw+XKP0Fa49X/R0UcrD+A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QWv5IR/D6cgLVu2qzXb9XXPUjttNm5oSmxcvuaPLaMySmktCaVMHcR1JjXZ9xSVdv8Sg55eNlM/Ec7YjZ/8spHm0Z8YxObz805JnheMDcpLoAa9UejKFZpC9j4/DFrCB/9yTmPihBxpLbZKI0ChvJ7OsEj0diMzernWOkw+cpUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SEweK6Qz; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-33bbeec2ed7so1432052a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:35:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761269741; x=1761874541; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EpEV8JmfPBi+9bjulCXf6+3xKX9GZ5AzBtR1kYyEQ9Y=;
+        b=SEweK6QzHWqrOkV7DBTtCHKeYhpdFqRtFDPlQCBqr9FAXFp5BlPea0n0XVtWha+sqZ
+         Qr/HvnOax2QuitL3qbcmVz01NFUfXf0C8phEOGPLCMKsJ8UJb1Lyc/YIjgzMuILsAI2f
+         qsnufjKGPaCxF1JowKFxaK7tQed8UM5Z716+kCZNcPu0W7vhWXfsx4r75p46WozZitSK
+         jM/umY/jmuLWk83SPWMl74LwQp0JHP+Vm8NDZxuoZP+aYo09UdtnbjdeR2JcIEDAP203
+         6/yF9A9xAS8kd3IqvwfB0u7z40WR35KpFWSFkT6+zWiPdQjYZM8iVnAoo81zgvPay4pF
+         2XQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761269741; x=1761874541;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EpEV8JmfPBi+9bjulCXf6+3xKX9GZ5AzBtR1kYyEQ9Y=;
+        b=vFpSF/5F2TUmstb2+XyZkGwrAdZjzQjaC7siaoEjSn4gGAKW1kybHU7lLF6KtwVVje
+         N7vXaIO57RF6/uKmGhCUFNePyp78SJxv+dL0exgnTWxTTZXDc0K2OeuOxBT3k+ILbkgC
+         /PDro84YoZlSEmWDtXhMCs4rN+iANHL2mHJvYLHMBXcik1WPMwrFWb2GQn+LSK8G7ONA
+         YnE7JjCrHpvxev82NyitE9/4o0hHRlC80KkThgxJufoQUTpj3cKMqqOG41y9Zju+D9pN
+         i7W+dPajJdxoavmwfRwlM0oO7z3Git4Fa0EeZnaS4xTQ/D5bra7Ql7jUKen5/OvZ0ihx
+         Dvrg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+aE+rAPnlkBqHWEkF56Lqt0Fck5tZigyRFvs+toIzLBWJAg1SVf019AuzITesH5MgekciHMk8npfH4cI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKEjQ73ixJdi8tzs8BZj6fqt/bysaG9ZaWJCQFFsHc9Vw0UJiN
+	0eerrtSk/K4sNi4HnMPp4VJDP+nyOb24ydE1sNRIX3TVfArHvluXfAPF
+X-Gm-Gg: ASbGnctqoJwu9zK5cFiePddqe466fI9wF/2bShWo3qHi4Nayzq8N/lhoXSCuYt8Tsaz
+	QFHnUS7PV883xRms+2zunL2W2++WtOXI0XvEED/w0H4eLGNEQnY9GVkoSlgEAsVsTQYy1cTsGOE
+	lo13Bip9CKFd0jSPYxMFRCcD9O8n1HYOME8HWzqIvm6ssvfhb9yfTIpMknCd3lQT/gGw5yB7nlO
+	rTpldxyG0mDwLBIr+PxzgvoS61YPR0KL1jF/yOpHOYD5HN2jbt+o5wJdGYy/YIAwu9+AqYBWGhY
+	1DQLpnqFF0YJdHtUnRgSYRwAq5PxBINHJZXO/U7w/PG8gEBlbMqPx9jgOxB9IsUXPHsZE5CE1W/
+	VHqWrhh4iNYeVmF/vFebJdJdUrFSUyTCJBN/X4MLs3dVn/BS/mRfVH/CDe7jBn4hAnAxn8LULFt
+	bXCRC5TIBabfR2vKfl
+X-Google-Smtp-Source: AGHT+IEUI+U7zUQV2UwzLZwu9TlJemEe0RPKx1uez2BTNfquWqRpSOjvCC8tYXJP0daruNmjhYuAZg==
+X-Received: by 2002:a17:90b:164a:b0:30a:4874:5397 with SMTP id 98e67ed59e1d1-33fafbaabb4mr5709115a91.9.1761269741348;
+        Thu, 23 Oct 2025 18:35:41 -0700 (PDT)
+Received: from hilb.. ([170.254.111.1])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-33fb016f865sm3850014a91.11.2025.10.23.18.35.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 18:35:40 -0700 (PDT)
+From: =?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
+To: 
+Cc: =?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Gabriel Somlo <gsomlo@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] soc/tegra: Resolve a spelling error in the tegra194-cbb.c
+Date: Fri, 24 Oct 2025 01:35:14 +0000
+Message-ID: <20251024013528.1542-1-brunofrancadevsec@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <68fa1bec.a70a0220.3bf6c6.004f.GAE@google.com>
-References: <68fa1bec.a70a0220.3bf6c6.004f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=b9O/I9Gx c=1 sm=1 tr=0 ts=68fad70e cx=c_pps
- a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8
- a=4NORwJsksWdqKwua_R8A:9 a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: jO-5Dxt5SJybwZCyvBPvF-Ywgv9ywcq6
-X-Proofpoint-ORIG-GUID: jO-5Dxt5SJybwZCyvBPvF-Ywgv9ywcq6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI0MDAxMSBTYWx0ZWRfXxVc9N7hWAwQm
- 5djauimzOilxsoUWGkDO6wCNOTHIM36UCK42NnBOvosEmJy+ND+LWVo5196VsykbZfOhIjp7uQn
- PnZ0JGoA6weEnYoX4nLTMp7V2M42AKgqbFcPdTXdhXlXi34x7I+zeurz7M9jm2aL6RB/Lhxhv/N
- Djh7Rt57BwajXiRntHI6l6hD2oUiMVOT/UEbXoK3mmyzQHZrcKsnaeOeYfPvt7m4Kqp4zS4uE6E
- PcUQpxAumAnfq+l2HZbsPxKZQKXUuFcJaCIFktj26Tq9Z2VvOXTt8sc9t3/89PPvimUgNdx2S0B
- Z4mkiq5V4ErpgSwoznYUA5XSDcABUh0NVpzJJ+eJoJM0oYnQryxNygaQ/M5vpjJVqu3HNZjA3P+
- RfXtWhk0v6AleHpzutMxH0nA2PnTGA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-23_03,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1011 phishscore=0 priorityscore=1501 malwarescore=0
- spamscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510240011
 
-There is no synchronization between the two timers, rose_t0timer_expiry
-and rose_timer_expiry.
-rose_timer_expiry() puts the neighbor when the rose state is ROSE_STATE_2.
-However, rose_t0timer_expiry() does initiate a restart request on the
-neighbor.
-When rose_t0timer_expiry() accesses the released neighbor member digipeat,
-a UAF is triggered.
+Fix a typo spotted during code reading.
 
-To avoid this uaf, when rose_timer_expiry() puts the neighbor, the base
-member digipeat is set to NULL.
-
-syzbot reported a slab-use-after-free Read in ax25_find_cb.
-BUG: KASAN: slab-use-after-free in ax25_find_cb+0x3b8/0x3f0 net/ax25/af_ax25.c:237
-Read of size 1 at addr ffff888059c704c0 by task syz.6.2733/17200
-
-Call Trace:
- ax25_find_cb+0x3b8/0x3f0 net/ax25/af_ax25.c:237
- ax25_send_frame+0x157/0xb60 net/ax25/ax25_out.c:55
- rose_send_frame+0xcc/0x2c0 net/rose/rose_link.c:106
- rose_transmit_restart_request+0x1b8/0x240 net/rose/rose_link.c:198
- rose_t0timer_expiry+0x1d/0x150 net/rose/rose_link.c:83
-
-Freed by task 17183:
- kfree+0x2b8/0x6d0 mm/slub.c:6826
- rose_neigh_put include/net/rose.h:165 [inline]
- rose_timer_expiry+0x537/0x630 net/rose/rose_timer.c:183
- call_timer_fn+0x19a/0x620 kernel/time/timer.c:1747
-
-Fixes: dcb34659028f ("net: rose: split remove and free operations in rose_remove_neigh()")
-Reported-by: syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+Signed-off-by: Bruno Sobreira França <brunofrancadevsec@gmail.com>
 ---
- include/net/rose.h | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v3:
+  - Improve commit message
+Changes in v2:
+  - Really fix the spelling error
+---
+ drivers/soc/tegra/cbb/tegra194-cbb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/net/rose.h b/include/net/rose.h
-index 2b5491bbf39a..9b0dc81a9589 100644
---- a/include/net/rose.h
-+++ b/include/net/rose.h
-@@ -163,6 +163,7 @@ static inline void rose_neigh_put(struct rose_neigh *rose_neigh)
- 		if (rose_neigh->ax25)
- 			ax25_cb_put(rose_neigh->ax25);
- 		kfree(rose_neigh->digipeat);
-+		rose_neigh->digipeat = NULL;
- 		kfree(rose_neigh);
- 	}
+diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
+index 846b17ffc2f9..e1deda188fdb 100644
+--- a/drivers/soc/tegra/cbb/tegra194-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
+@@ -1836,7 +1836,7 @@ print_errlog1_2(struct seq_file *file, struct tegra194_cbb *cbb,
  }
+ 
+ /*
+- * Print transcation type, error code and description from ErrLog0 for all
++ * Print transaction type, error code and description from ErrLog0 for all
+  * errors. For NOC slave errors, all relevant error info is printed using
+  * ErrLog0 only. But additional information is printed for errors from
+  * APB slaves because for them:
 -- 
 2.43.0
 
