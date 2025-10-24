@@ -1,60 +1,103 @@
-Return-Path: <linux-kernel+bounces-868982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3515C06A5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:14:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8191EC06A54
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BD281C225EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:11:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8690E3A693B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C211931D743;
-	Fri, 24 Oct 2025 14:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82729322A38;
+	Fri, 24 Oct 2025 14:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LyFuUqRk"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBL/0gMF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7EB186E40
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624DD186E40;
+	Fri, 24 Oct 2025 14:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761315063; cv=none; b=Sivo++zF1UjMd++JYvZgsrTKz3Gn+LGnQc5DlESy/lFN1XDMm07p5d3U7fHbtLrHRPSAYzF1bRnLHAV1fWgu2JhURUmmyiWyiRtz+LR2aZI+EAWZZhU0TJ7MkvcAoP9U18Z2TydfYyMsObWTZFVs49AnR3myisXTb86586MTqlU=
+	t=1761315105; cv=none; b=muj2LB5VBnEBemqBU3s3uKwSqYX4a1uoEvGbVZQw8d4bg7eB2/edmz7EYjq5pW5WsQt/8WLkmfaiwaNXnzzclaai7PhouexvLcvu68d1huqpZNwRcKsKnyCs5ByHAUxSa+Xx6an3RfcTArPCdaHtfKd9vm4qZTu4O1Sw0VD1rpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761315063; c=relaxed/simple;
-	bh=1h6CkkGF4+mfHvGDigYb52v/DwUUA2fb8PUDtKWd9s4=;
+	s=arc-20240116; t=1761315105; c=relaxed/simple;
+	bh=A2ibR8D3vX5O91d0A6dlXuJ33auKQkMfaPv3Zg/W9+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYLvMQmJKA1/zO/aT6TSy+f2fZbL7vmV61FZqG5HOAcN0ryZZg2iBizSKKsqTdY1j82SYIqU9arBO+Mc6OfxFRk1xwbpADb9/M7GS5uFoabQrsSpCzWwodctcsPGfToLQjNy41eoz9ur6OEJuwJCvrGStgUfHIOAVbXspzKMpPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LyFuUqRk; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BcNlBw5cX+K1QD79dZZjRY3X4TNSuVVjsErLmNltpBo=; b=LyFuUqRkFgbYw1ajWNC2aGtvhI
-	vJFQzSPx53lr8SyPNVW72ynpEJ5MgBwCX3rVzuhMUmbbJXHcJIYJIf6LjiZ1ATGmWsQJStiAVUepp
-	Pwto5asg3JMi4rWv9S/NkJ7eMA9AJHcTKQp2qx1UAuWO/LYlqLsGp3Nn18rS+kLcHR/OCDkQlgiD3
-	bvmDjlYhayfgj9bakn6X6AMhTZAOMfv8tgRJ6sjV4SOwO5+B0lUFnnGTDJQ6q7gt4E0sf4Q2amUSO
-	1MuI4mhbLpIdWEgxTy8AC5vlftAKw2qfOAZncvypzmQbF5slUw77GNIt4xlzsXtMWamdQzlnoXX2y
-	dWRlDxCQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCIVM-00000002S3x-1O0D;
-	Fri, 24 Oct 2025 14:10:57 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A544030039F; Fri, 24 Oct 2025 16:10:56 +0200 (CEST)
-Date: Fri, 24 Oct 2025 16:10:56 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: jpoimboe@kernel.org, rostedt@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/12] unwind: Implement compat fp unwind
-Message-ID: <20251024141056.GV4067720@noisy.programming.kicks-ass.net>
-References: <20250924075948.579302904@infradead.org>
- <20250924080119.613695709@infradead.org>
- <20251022143140.2ed517e1@gandalf.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZB/p3dOAgnUddBU+Fi0lXwpw7voXFbL6PSTG97f6IbO5/zHZX1RArPl0GqP27YxrjkGxGFj1EI/Vep6MjCLehZZvFUVeSES9AOhj3F8HSMtjhcu93L6wIA7IT4Gn0iud4LBRHrMPt7g+0PZbbGyyZxhd5HO9v0jVq7/zh89xMKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBL/0gMF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1996AC4CEF1;
+	Fri, 24 Oct 2025 14:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761315104;
+	bh=A2ibR8D3vX5O91d0A6dlXuJ33auKQkMfaPv3Zg/W9+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BBL/0gMFAB6iXWn/03INztg9bjGFUFVZB5eEkShmlnZW6695iBe3ceBH7QqlkxLDu
+	 nF6DS3kY/hsSXGtbh3Nxk7Co4cRPzlPx//JB5m+xT2RmdIBEeH4YhCnuBClgHEkxOF
+	 TzjCuo9FD2PPHxhnIOKKdCZU0iw6F2v5AkruSO1vsmyNPpZgNlb1gVWIotAWmdcL7J
+	 nL2MB7mV5ifb7Y7EkH9R/jEE5kV0lq28zC2GmIJIniekDVOQ5pHjfExxhIYDXkYi3C
+	 5YSx+ApTyOqtJhIHDgos29oXb9L0QedvgUuT2eYn42m4MNZNdNZMbKC3GqbYlOaYK4
+	 dqC39Qu5dgZDA==
+Date: Fri, 24 Oct 2025 19:41:40 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Joerg Roedel <joro@8bytes.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Remove extra blank lines
+Message-ID: <aPuJHM6SRbMpAZ8t@vaman>
+References: <20251023143957.2899600-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,37 +106,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251022143140.2ed517e1@gandalf.local.home>
+In-Reply-To: <20251023143957.2899600-1-robh@kernel.org>
 
-On Wed, Oct 22, 2025 at 02:31:40PM -0400, Steven Rostedt wrote:
-> On Wed, 24 Sep 2025 09:59:59 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
+On 23-10-25, 09:37, Rob Herring (Arm) wrote:
+> Generally at most 1 blank line is the standard style for DT schema
+> files. Remove the few cases with more than 1 so that the yamllint check
+> for this can be enabled.
 > 
-> > @@ -100,6 +115,7 @@ static int unwind_user_start(struct unwi
-> >  	state->ip = instruction_pointer(regs);
-> >  	state->sp = user_stack_pointer(regs);
-> >  	state->fp = frame_pointer(regs);
-> > +	state->ws = compat_user_mode(regs) ? sizeof(int) : sizeof(long);
-> 
-> compat_user_mode() is an architecture function (only defined in arm64 and now x86).
-> 
-> s390 doesn't implement it and regs can't be used to tell if it's compat or
-> not (although Jens tells me the task_struct can).
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-I've made this:
+Acked-by: Vinod Koul <vkoul@kernel.org>
 
-	state->ws = unwind_user_word_size(regs);
-
-And then every arch will need to implement this. The x86 implementations
-is:
-
-static inline int unwind_user_word_size(struct pt_regs *regs)
-{
-#ifdef CONFIG_X86_64
-       if (!user_64bit_mode(regs))
-               return sizeof(int);
-#endif
-       return sizeof(long);
-}
-
+-- 
+~Vinod
 
