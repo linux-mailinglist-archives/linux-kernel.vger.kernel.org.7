@@ -1,158 +1,117 @@
-Return-Path: <linux-kernel+bounces-868017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5926CC04298
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:45:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E1CC0429E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56FCA3A7300
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DAFF3B4388
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FA4264602;
-	Fri, 24 Oct 2025 02:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AC42494FF;
+	Fri, 24 Oct 2025 02:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="if//yMXC"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m1t4beNo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AEF35B124;
-	Fri, 24 Oct 2025 02:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F7828DC4
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761273947; cv=none; b=YlZrBQMAAuFz16XYX4n1Jn352R2MYuT1yf69zdjL0S46vCdZeIjyeOGC1oTyUeSqqVxPP+PObjRr7bJ0VaKv68aIdqlqWrxosWeDo6bcUvcIl51fgm1xCS541aEg2skX9Ogt6ghF9BMMYqbHZiDrE59bSFY7cNPXJNrHJzmjWuc=
+	t=1761274167; cv=none; b=tKXuSQVqnO1wlmud0+FfVUBtoh3WJ8u2b5GfBDultdM6JKcsYbqEwxyUoX/UDqhDpjc+XTvC4z1lDLfgSNfucscugG9K4oQSIRbK3+NyE4h4yBDG1DyaZejDwHG4gX5Rwgzl1LbsdjkfiACa5XvMyVMSiEeHj0O8hf0hTL4zkb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761273947; c=relaxed/simple;
-	bh=+bWkbj74UQMuSywzFvC5TyrUsm/MJS5VftNRwta5zmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b2dbq8baK0Pb9dWTRXC6pXTlUhHXa61JNiwpRDrou1pB1RlmIB+YlhWKoXI+zrK0KhfHVR3H2tj1heOumn4k8yLfibBLj1JhEHflhMEeiwLP5V9nfCjnzbaiHxqe7lSUylTsGm0ZJPMenl3KeAqm6kCw9W6MzPECFAhz9ncLb/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=if//yMXC; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761273935; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=kA7KXxhepSGddwzRkRmqoP1od5m6kWQ5gxhF01zwg98=;
-	b=if//yMXC/O64JiHN8UHYQr1Snig61yYAXAKQGg/I/y1nnL4EZ7qRwr8YV9vnfMBUGF7wNh4ZANgJrlfzXot3s/BfcghyCwT6x6EWup+jCHP7E+KA0CBTrahTrt36VetPwtOMG6x225gs3k1XOXAFk82ugNY73qro2Pq32qK6eg8=
-Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WqsjR79_1761273933 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 24 Oct 2025 10:45:35 +0800
-Message-ID: <fc75b170-86c1-49b6-a321-7dca56ad824a@linux.alibaba.com>
-Date: Fri, 24 Oct 2025 10:45:33 +0800
+	s=arc-20240116; t=1761274167; c=relaxed/simple;
+	bh=umPnZ23S2CY2D4YwC3KQkBJGEZGvTH6AJLWcUajq5AY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OkFquaNU2JALthAzZz7/WkET+GL6/gOrEsYJ36s1qlTWVAHzMSHzsdy50c4/s4Vfkr2GcUyOU0a6Q0zSQG7wRKpszemq70/isu20g9wZPaUnaQ0Dtktg6BlNsd+CYfzVXR88uPs6h7ju+FJ0z155wV7T/s8z/alqXouySdyNQxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m1t4beNo; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761274166; x=1792810166;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=umPnZ23S2CY2D4YwC3KQkBJGEZGvTH6AJLWcUajq5AY=;
+  b=m1t4beNotuLWCq/BnqxxN/Xx40VQ0GSYXG3a+cIJKlLKIA/wFLA4ebCf
+   Gkp1Xt6Ldf2/JaavS6rPj9H6VR7RermlfEc8iF83TK3PT3OpsJ9gl2JB7
+   F+/Ca6mVknj6TzFm7z7VrgWO8xlVM2zxcIONogtTwQrhmvAiAfQPOPJOe
+   +/+AcnfrnfGPFLfWouDOqUQGLS8GPBr+z69Or/QGs7iS7MYvkm/frGcG7
+   +QGMGQB4m3BgWFgRmQNQ9JX3950m0hIgeBLd28Sqsr68Rnue73N/4GUxQ
+   PfnIE7wEQGeySBr/2PEum6a5tAcBh7X4GsZKymGURaY3w1gnMhoyNzH1+
+   w==;
+X-CSE-ConnectionGUID: wvvWGm6yQ/aCtbwtYyyJuA==
+X-CSE-MsgGUID: I5Nyw3UvQb6u0uyR0m/zDQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74800097"
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="74800097"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 19:49:25 -0700
+X-CSE-ConnectionGUID: Kb7s3EV9TXa/Sc9YWXQjqw==
+X-CSE-MsgGUID: 32ZPg7teSFaljG0F5J1hMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="188377668"
+Received: from jjgreens-desk21.amr.corp.intel.com (HELO desk) ([10.124.221.191])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 19:49:25 -0700
+Date: Thu, 23 Oct 2025 19:49:18 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 15/56] x86/bugs: Reset BHI mitigations
+Message-ID: <20251024024918.5ytpa7vrcny6tngt@desk>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-16-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf record: skip synthesize event when open evsel failed
-To: Ian Rogers <irogers@google.com>
-Cc: alexander.shishkin@linux.intel.com, peterz@infradead.org,
- james.clark@arm.com, leo.yan@linaro.org, mingo@redhat.com,
- baolin.wang@linux.alibaba.com, acme@kernel.org, mark.rutland@arm.com,
- jolsa@kernel.org, namhyung@kernel.org, adrian.hunter@intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- nathan@kernel.org, bpf@vger.kernel.org
-References: <20251023015043.38868-1-xueshuai@linux.alibaba.com>
- <CAP-5=fWupb62_QKM3bZO9K9yeJqC2H-bdi6dQNM7zAsLTJoDow@mail.gmail.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <CAP-5=fWupb62_QKM3bZO9K9yeJqC2H-bdi6dQNM7zAsLTJoDow@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013143444.3999-16-david.kaplan@amd.com>
 
-
-
-在 2025/10/24 00:08, Ian Rogers 写道:
-> On Wed, Oct 22, 2025 at 6:50 PM Shuai Xue <xueshuai@linux.alibaba.com> wrote:
->>
->> When using perf record with the `--overwrite` option, a segmentation fault
->> occurs if an event fails to open. For example:
->>
->>    perf record -e cycles-ct -F 1000 -a --overwrite
->>    Error:
->>    cycles-ct:H: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'
->>    perf: Segmentation fault
->>        #0 0x6466b6 in dump_stack debug.c:366
->>        #1 0x646729 in sighandler_dump_stack debug.c:378
->>        #2 0x453fd1 in sigsegv_handler builtin-record.c:722
->>        #3 0x7f8454e65090 in __restore_rt libc-2.32.so[54090]
->>        #4 0x6c5671 in __perf_event__synthesize_id_index synthetic-events.c:1862
->>        #5 0x6c5ac0 in perf_event__synthesize_id_index synthetic-events.c:1943
->>        #6 0x458090 in record__synthesize builtin-record.c:2075
->>        #7 0x45a85a in __cmd_record builtin-record.c:2888
->>        #8 0x45deb6 in cmd_record builtin-record.c:4374
->>        #9 0x4e5e33 in run_builtin perf.c:349
->>        #10 0x4e60bf in handle_internal_command perf.c:401
->>        #11 0x4e6215 in run_argv perf.c:448
->>        #12 0x4e653a in main perf.c:555
->>        #13 0x7f8454e4fa72 in __libc_start_main libc-2.32.so[3ea72]
->>        #14 0x43a3ee in _start ??:0
->>
->> The --overwrite option implies --tail-synthesize, which collects non-sample
->> events reflecting the system status when recording finishes. However, when
->> evsel opening fails (e.g., unsupported event 'cycles-ct'), session->evlist
->> is not initialized and remains NULL. The code unconditionally calls
->> record__synthesize() in the error path, which iterates through the NULL
->> evlist pointer and causes a segfault.
->>
->> To fix it, move the record__synthesize() call inside the error check block, so
->> it's only called when there was no error during recording, ensuring that evlist
->> is properly initialized.
->>
->> Fixes: 4ea648aec019 ("perf record: Add --tail-synthesize option")
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+On Mon, Oct 13, 2025 at 09:34:03AM -0500, David Kaplan wrote:
+> Add function to reset BHI mitigations back to their boot-time defaults.
 > 
-> This looks great! I wonder if we can add a test, perhaps here:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/tests/shell/record.sh?h=perf-tools-next#n435
-> something like:
-> ```
-> $ perf record -e foobar -F 1000 -a --overwrite -o /dev/null -- sleep 0.1
-> ```
-> in a new test subsection for test_overwrite? foobar would be an event
-> that we could assume isn't present. Could you help with a test
-> covering the problems you've uncovered and perhaps related flags?
+> Signed-off-by: David Kaplan <david.kaplan@amd.com>
+> ---
+>  arch/x86/kernel/cpu/bugs.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index e765ac0b9240..67561e5c2154 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -2360,6 +2360,17 @@ static void __init bhi_apply_mitigation(void)
+>  	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_VMEXIT);
+>  }
+>  
+> +#ifdef CONFIG_DYNAMIC_MITIGATIONS
+> +static void bhi_reset_mitigation(void)
+> +{
+> +	/* RRSBA already cleared in spectre_v2_reset_mitigation() */
+> +	setup_clear_cpu_cap(X86_FEATURE_CLEAR_BHB_VMEXIT);
+> +	setup_clear_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP);
 
-Hi, Ian,
+Also needs to reset SPEC_CTRL_BHI_DIS_S in x86_spec_ctrl_base.
 
-Good suggestion, I'd like to add a test. But foobar may not a good case.
+An alternative is to add spec_ctrl_reset_mitigation() that resets
+x86_spec_ctrl_base for SPEC_CTRL_MITIGATIONS_MASK. To be consistent with
+reset functions of other mitigations, probably also reset the MSR.
 
-Regarding your example:
-
-   perf record -e foobar -a --overwrite -o /dev/null -- sleep 0.1
-   event syntax error: 'foobar'
-                        \___ Bad event name
-
-   Unable to find event on a PMU of 'foobar'
-   Run 'perf list' for a list of valid events
-
-    Usage: perf record [<options>] [<command>]
-       or: perf record [<options>] -- <command> [<options>]
-
-       -e, --event <event>   event selector. use 'perf list' to list available events
-
-
-The issue with using foobar is that it's an invalid event name, and the
-perf parser will reject it much earlier. This means the test would exit
-before reaching the part of the code path we want to verify (where
-record__synthesize() could be called).
-
-A potential alternative could be testing an error case such as EACCES:
-
-   perf record -e cycles -C 0 --overwrite -o /dev/null -- sleep 0.1
-
-This could reproduce the scenario of a failure when attempting to access
-a valid event, such as due to permission restrictions. However, the
-limitation here is that users may override
-/proc/sys/kernel/perf_event_paranoid, which affects whether or not this
-test would succeed in triggering an EACCES error.
-
-
-If you have any other suggestions or ideas for a better way to simulate
-this situation, I'd love to hear them.
-
-Thanks.
-Shuai
+> +	bhi_mitigation = IS_ENABLED(CONFIG_MITIGATION_SPECTRE_BHI) ?
+> +		BHI_MITIGATION_AUTO : BHI_MITIGATION_OFF;
+> +}
 
