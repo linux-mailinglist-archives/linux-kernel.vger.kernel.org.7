@@ -1,142 +1,89 @@
-Return-Path: <linux-kernel+bounces-868163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7D4C048BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:44:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2EBC048D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 432233BA63A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:44:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7C0F3BA796
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1691427BF80;
-	Fri, 24 Oct 2025 06:44:18 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734E42AEF5;
+	Fri, 24 Oct 2025 06:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivnGSX9D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C581EE7DC;
-	Fri, 24 Oct 2025 06:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF006238C03;
+	Fri, 24 Oct 2025 06:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761288257; cv=none; b=kp7FZIcwrj4W+pMjOrfh0WTon48GYaMT23KrL4xoVacy6cqdjO8Woz7IDlWARAtUi4H5HvnVQaJsJuW+ysL/kz25DLrn18sYFcw/8QaH5gAnv39t4BmW+1M55Pa/r+fx7ubxfS50O8fpHb7/9YY+A6KbVKbpjz9V5e955o76rpk=
+	t=1761288324; cv=none; b=BrWH1cCbMTZfe/j0GK5Nu9soIUMNMRGJdZ1aUglWt7dEYfL7D1C9eARI4ExrMBY8GXfCGRwnVRILBIjE49MNcwyTaOZXY3+w6fbvovnmHyI7odvdMVrfb3Fi33M41eClUlkzzFFiOxUsYiuRYC7wyeGt4drXVqwgk1O441IBiiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761288257; c=relaxed/simple;
-	bh=KJpXpAKN9nyKg+2cpmeiSgbQlrzUvUr7V7KWuCjx5Wc=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Elph4DtkpOPcCC0pCuBVxZv7uDL2G46xbHb8ibGPJHwHEqQk+cn6tXYvcZXrpYNY5kTItuGtPoWUz+vYckUW7juNEaI6WdM1ZzOkLAIUSYT1oHmFifU2jDD0jHZcsnyqrs2sa4IK5aTLEBE799p7x/6k01XF88O4rGHyNnQfXjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ctCtJ3JgJz2Cg9b;
-	Fri, 24 Oct 2025 14:39:20 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 842A21A016C;
-	Fri, 24 Oct 2025 14:44:12 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 24 Oct 2025 14:44:11 +0800
-Message-ID: <b89389e7-7939-4c10-8522-6c8b6ce71b77@huawei.com>
-Date: Fri, 24 Oct 2025 14:44:11 +0800
+	s=arc-20240116; t=1761288324; c=relaxed/simple;
+	bh=UUhpDadZzBT4RrPvzIdECya0GjjCWyOzHQkuKftuzQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KcSuh4TrNBqWOR5ZcmdaroxpVPDyI2szMmaqmqNwZ+0XqQ0dVBd8PUeBpyI02nZ0urXvLo3N6xEObuV92FV89X2uc6q66R8XMW7Okg7Uu7BsN5FANxRzrKJW9liYfJKJHBwRMqYUaxHLVBFKxYlySR19krAsQqqoCJ+J8UpeYXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivnGSX9D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4902C4CEFF;
+	Fri, 24 Oct 2025 06:45:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761288324;
+	bh=UUhpDadZzBT4RrPvzIdECya0GjjCWyOzHQkuKftuzQ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ivnGSX9DduM/MQ3ZCnpNc62OnWb6W1h9IiDDP6dsfVjSgb3jOLPa0VNNzruUqf5pS
+	 qhmliyRhoRe269hJZp5+YDDOXrtig4fQViL/rfmkqETX14BeTLZ+nPnQ6T8lF4dveM
+	 SEOIUhC8wTQ/V6yEtA30ijB80qUwyN0LhUES2BGTO5MWs2i20z7xJ5yE6b3+EwiYav
+	 S2HiYVRBLW1LRSyeZdeRRo8LsL/+kBul/V/7kJ4UPQaP4W58RJ/r8sRG061ecw60sR
+	 4uaJWGTcXUxD2sdbCdO8bSUlWf5gKjkeJstNRnwyN6e24SqUA0FeR2z8DpMtxKmLhM
+	 Gyw7h+Znj9EbA==
+Date: Fri, 24 Oct 2025 08:45:21 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org, 
+	jk@codeconstruct.com.au, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	andrew@codeconstruct.com.au, p.zabel@pengutronix.de, andriy.shevchenko@linux.intel.com, 
+	naresh.solanki@9elements.com, linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v20 1/4] dt-bindings: i2c: Split AST2600 binding into a
+ new YAML
+Message-ID: <20251024-dark-ringtail-of-defiance-1daabd@kuoka>
+References: <20251021013548.2375190-1-ryan_chen@aspeedtech.com>
+ <20251021013548.2375190-2-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <lantao5@huawei.com>,
-	<huangdonghua3@h-partners.com>, <yangshuaisong@h-partners.com>,
-	<jonathan.cameron@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net 2/3] net: hibmcge: remove unnecessary check for
- np_link_fail in scenarios without phy.
-To: Jacob Keller <jacob.e.keller@intel.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<andrew+netdev@lunn.ch>, <horms@kernel.org>
-References: <20251021140016.3020739-1-shaojijie@huawei.com>
- <20251021140016.3020739-3-shaojijie@huawei.com>
- <ebc90ce4-382b-4a0f-891a-5305599f9ae2@intel.com>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <ebc90ce4-382b-4a0f-891a-5305599f9ae2@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251021013548.2375190-2-ryan_chen@aspeedtech.com>
 
+On Tue, Oct 21, 2025 at 09:35:45AM +0800, Ryan Chen wrote:
+> The AST2600 I2C controller is a new hardware design compared to the
+> I2C controllers in previous ASPEED SoCs (e.g., AST2400, AST2500).
+> 
+> It introduces new features such as:
+>  - A redesigned register layout
+>  - Separation between controller and target mode registers
+>  - Transfer mode selection (byte, buffer, DMA)
+>  - Support for a shared global register block for configuration
+> 
+> Due to these fundamental differences, maintaining a separate
+> devicetree binding file for AST2600 helps to clearly distinguish
 
-on 2025/10/24 9:10, Jacob Keller wrote:
->
-> On 10/21/2025 7:00 AM, Jijie Shao wrote:
->> hibmcge driver uses fixed_phy to configure scenarios without PHY,
->> where the driver is always in a linked state. However,
->> there might be no link in hardware, so the np_link error
->> is detected in hbg_hw_adjust_link(), which can cause abnormal logs.
->>
-> Perhaps I am missing something here. You mention the driver is always in
-> a linked state, but that there could be no link in hardware?
->
-> I'm not sure I properly understand whats going wrong here..
+No, that's not a valid reason. You just moved the compatible and are
+still 100% identical, at least according to this commit msg, so there is
+no point in this patch.
 
-No, fixed_phy is a fake PHY that is always in link state and will call adjust_link().
+NAK
 
-If you are interested, you can take a look at the code for initializing the fixed PHY
-in the hibmcge driver: hbg_fixed_phy_init()
+Best regards,
+Krzysztof
 
-Thanks,
-Jijie Shao
-
->
->> Therefore, in scenarios without a PHY, the driver no longer
->> checks the np_link status.
->>
->> Fixes: 1d7cd7a9c69c ("net: hibmcge: support scenario without PHY")
->> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
->> ---
->>   drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h | 1 +
->>   drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c     | 3 +++
->>   drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c   | 1 -
->>   3 files changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h b/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
->> index ea09a09c451b..2097e4c2b3d7 100644
->> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
->> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
->> @@ -17,6 +17,7 @@
->>   #define HBG_PCU_CACHE_LINE_SIZE		32
->>   #define HBG_TX_TIMEOUT_BUF_LEN		1024
->>   #define HBG_RX_DESCR			0x01
->> +#define HBG_NO_PHY			0xFF
->>   
->>   #define HBG_PACKET_HEAD_SIZE	((HBG_RX_SKIP1 + HBG_RX_SKIP2 + \
->>   				  HBG_RX_DESCR) * HBG_PCU_CACHE_LINE_SIZE)
->> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
->> index d0aa0661ecd4..d6e8ce8e351a 100644
->> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
->> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
->> @@ -244,6 +244,9 @@ void hbg_hw_adjust_link(struct hbg_priv *priv, u32 speed, u32 duplex)
->>   
->>   	hbg_hw_mac_enable(priv, HBG_STATUS_ENABLE);
->>   
->> +	if (priv->mac.phy_addr == HBG_NO_PHY)
->> +		return;
->> +
->>   	/* wait MAC link up */
->>   	ret = readl_poll_timeout(priv->io_base + HBG_REG_AN_NEG_STATE_ADDR,
->>   				 link_status,
->> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
->> index 37791de47f6f..b6f0a2780ea8 100644
->> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
->> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
->> @@ -20,7 +20,6 @@
->>   #define HBG_MDIO_OP_INTERVAL_US		(5 * 1000)
->>   
->>   #define HBG_NP_LINK_FAIL_RETRY_TIMES	5
->> -#define HBG_NO_PHY			0xFF
->>   
->>   static void hbg_mdio_set_command(struct hbg_mac *mac, u32 cmd)
->>   {
 
