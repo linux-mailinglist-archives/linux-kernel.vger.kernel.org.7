@@ -1,141 +1,185 @@
-Return-Path: <linux-kernel+bounces-868605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380D1C05988
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:33:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7F9C05A2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF4EF353734
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:33:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A6343BD6A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A86930FC34;
-	Fri, 24 Oct 2025 10:33:41 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD60F30FF25;
+	Fri, 24 Oct 2025 10:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="00cHZpNt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FNG8rIfd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OfhkFiW9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qTWMm2Fu"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D258730CD9D;
-	Fri, 24 Oct 2025 10:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F92279DC8
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761302020; cv=none; b=Wj+Zf1W9Glee+trWWfTVRdjgQQXn50ZWn4kk6Xp6+KqcjPN7fZMUzLPwAwrSDJbJlk5/c/uKx93D1bpQf5n3neY55no2WGA9fMCZxnA7LwG7mClEhDVFlUkeB8ewOeDnUTZ864sx0oGdBFPkPck8kI11CqBcy9+TjmMcAQwhvgs=
+	t=1761302079; cv=none; b=OUUEPacrbBNfBw8Wa0i8c6fl0ohnXv3tOXuEdKAkIV0bGdtG7EMvo9ByzOWNHe/NwlZvRNevC9z5jblnzoficgOEBuCrWIByPKYSuxpCwEnrGzDVBWiA4hUSLRnLIREGI3K0GR/TMBiiaG0Tv7u1znR9vgz25mfZgSQyvZ01FS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761302020; c=relaxed/simple;
-	bh=RKAk5FqmohFPTcleZaKxhNVhdl2kBLBX7lQbpIY+VAY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UyG4gBzQL51xAQPq+uVi//1wtNeQx8PVtHMsHmDH7yaeQY7Rr86LC+NnlUAeJ/sh6gt7ySGUMU2TR8tj/cr4ff0+GfI8i9m3BZxL+TM9wDBf2x7dit4aAeFUWY9oenGTLyF5HQo3YPnl9d7FNN3vGfwtaiJGPhKaU0+OgkzKYSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ctK0m2mF5z6GDDv;
-	Fri, 24 Oct 2025 18:30:16 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 667CD140372;
-	Fri, 24 Oct 2025 18:33:34 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 24 Oct
- 2025 11:33:33 +0100
-Date: Fri, 24 Oct 2025 11:33:29 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Cristian Marussi <cristian.marussi@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<arm-scmi@vger.kernel.org>, <sudeep.holla@arm.com>,
-	<james.quinlan@broadcom.com>, <f.fainelli@gmail.com>,
-	<vincent.guittot@linaro.org>, <etienne.carriere@st.com>,
-	<peng.fan@oss.nxp.com>, <michal.simek@amd.com>, <quic_sibis@quicinc.com>,
-	<dan.carpenter@linaro.org>, <d-gole@ti.com>, <souvik.chakravarty@arm.com>
-Subject: Re: [PATCH 06/10] firmware: arm_scmi: Add System Telemetry driver
-Message-ID: <20251024113329.0000146e@huawei.com>
-In-Reply-To: <aPeu2E-jfhcw7P_q@pluto>
-References: <20250925203554.482371-1-cristian.marussi@arm.com>
-	<20250925203554.482371-7-cristian.marussi@arm.com>
-	<20251020172328.00002fc3@huawei.com>
-	<aPdf9lyY9ysq2mPx@pluto>
-	<20251021161529.00001468@huawei.com>
-	<aPeu2E-jfhcw7P_q@pluto>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761302079; c=relaxed/simple;
+	bh=VPT9xcqbbhyanfSiCwalqE6C4vCOd/El6/RTb+yUgj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KDxQk4pypnhPeAyokJqpF1IcLA1SZdb5pGE4oAzx843RsbUO5Duzb/4cpPIWETouHj31PsgRtbow7VHsvvZyHk7KtMXNNLysrQuWh4GMgGX+IcKIQMcIw6wd+9Z2Zu6PEMyJiYD8Tg6pA1CQ3+3AeNiiYPCXhs0p5kxgxwV/IW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=00cHZpNt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FNG8rIfd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OfhkFiW9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qTWMm2Fu; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E80E01F388;
+	Fri, 24 Oct 2025 10:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761302071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Hla0BTIIhUzpRmhnkrQZDtIDhlD9P51oxgHHRym65RY=;
+	b=00cHZpNt7bFmrlbaRrwf0QYTMchbl/qTVQlklcXFKsUmAB9mbiFKGMpOb+aNo4S6oOrCKf
+	zHzgg9RZDdou8uPTjpIfuLoSSxQjmIfQzUhfaVlg6uHJqK6PQpAi3ZGJF6Aw3d+ZLD83Iy
+	iIWUFKo3VVO2A9Wcbk4vkMIGKfB7v+k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761302071;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Hla0BTIIhUzpRmhnkrQZDtIDhlD9P51oxgHHRym65RY=;
+	b=FNG8rIfdRoSH7c6RI/6BGVfNA3qDv9Qx5cyWxABk7nUY1kZ0VTcCNT5v3hgoFyPLvAXcdp
+	LQnTTRkSl/XQ2UAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761302066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Hla0BTIIhUzpRmhnkrQZDtIDhlD9P51oxgHHRym65RY=;
+	b=OfhkFiW9nNZaBYi4At+ELu41vhHf+2s+O64j8no9o77Y13f+tcGu+n0YY6TeHo48Wt8eRX
+	VDSM277GGmdA77oZ065mZdx5h+0410S4oBtBS3BQniBXxRGyzff0pOYnJCgAeWEeI3LXmZ
+	2gwnfnI4b3PCdGhg7Szz/+rNNV6H8ps=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761302066;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Hla0BTIIhUzpRmhnkrQZDtIDhlD9P51oxgHHRym65RY=;
+	b=qTWMm2Fu+VEQvLG1CL+S3Kt100fU5dL3LPqP3ItESnCAzYvOgK8/ZnRlu+Fc337BL7W1xr
+	SoJ3niECJdpvdvCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D28D713693;
+	Fri, 24 Oct 2025 10:34:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id S4YcMzJW+2gpVgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 24 Oct 2025 10:34:26 +0000
+Message-ID: <804253b4-5519-47e8-a362-bb8af06971ad@suse.cz>
+Date: Fri, 24 Oct 2025 12:34:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] slab: Fix obj_ext is mistakenly considered NULL due to
+ race condition
+Content-Language: en-US
+To: Hao Ge <hao.ge@linux.dev>
+Cc: Harry Yoo <harry.yoo@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter
+ <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Suren Baghdasaryan <surenb@google.com>, Shakeel Butt
+ <shakeel.butt@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Hao Ge <gehao@kylinos.cn>
+References: <8b152d73-ecc4-415c-acdc-3f5105412ac0@suse.cz>
+ <123334B8-89A9-48C2-BBD9-A601E0395AB1@linux.dev>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <123334B8-89A9-48C2-BBD9-A601E0395AB1@linux.dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On Tue, 21 Oct 2025 17:03:36 +0100
-Cristian Marussi <cristian.marussi@arm.com> wrote:
+On 10/24/25 12:06, Hao Ge wrote:
+>>    }
+>> 
+> Thank you very much for your help, 
+> and I sincerely apologize for the actual trouble I have caused you.
 
-> On Tue, Oct 21, 2025 at 04:15:29PM +0100, Jonathan Cameron wrote:
-> > On Tue, 21 Oct 2025 11:27:02 +0100
-> > Cristian Marussi <cristian.marussi@arm.com> wrote:
-> >   
-> > > On Mon, Oct 20, 2025 at 05:23:28PM +0100, Jonathan Cameron wrote:  
-> > > > On Thu, 25 Sep 2025 21:35:50 +0100
-> > > > Cristian Marussi <cristian.marussi@arm.com> wrote:
-> > > >     
-> > > > > Add a new SCMI System Telemetry driver which gathers platform Telemetry
-> > > > > data through the new the SCMI Telemetry protocol and expose all of the
-> > > > > discovered Telemetry data events on a dedicated pseudo-filesystem that
-> > > > > can be used to interactively configure SCMI Telemetry and access its
-> > > > > provided data.    
-> > > >    
-> > > 
-> > > Hi,
-> > >    
-> > > > I'm not a fan of providing yet another filesystem but you didn't  
-> > 
-> > "did" was what this was meant to say.
-> > 
-> > Sorry for the confusing garbage comment from me!
-> >   
-> > > > lay out reasoning in the cover letter.    
-> > > 
-> > > Sorry, I dont understand..you mean here that I did NOT provide enough reasons
-> > > why I am adopting a new FS approach ? ... or I misunderstood the English ?
-> > > 
-> > > .. because I did provide a lot of reasons (for my point-of-view) to go
-> > > for a new FS in the cover-letter...
-> > >   
-> > > > 
-> > > > One non trivial issue is that you'll have to get filesystem review on this.
-> > > > My review is rather superficial but a few things stood out.    
-> > > 
-> > > Well yes I would have expected that, but now the FS implementation
-> > > internals of this series is definetely immature and to be reworked (to
-> > > the extent of using a well-know deprecated FS mount api at first..)
-> > > 
-> > > So I posted this V1 to lay-out the ideas and the effective FS API layout
-> > > but I was planning to extend the review audience once I have reworked fully
-> > > the series FS bits in the next V2...  
-> > 
-> > I'd suggest ABI docs for v2. That will match what you have in the cover letter
-> > but put it in the somewhat formal description format of Documentation/ABI/
-> >   
-> 
-> Oh yes of course... the while docs/ stuff is still TBD...btw I am not even
-> sure if the whole driver will be required to be moved into fs/ as a
-> requirement while doing filesystem review...I suppose I will leave this
-> sort of reworks for the next reviews cycles....
-> 
-> ...and...if I may ask... is it linux-fsdevel the ML for this fs-related
-> stuff I suppose...not sure about maintainers looking at MAINTAINERS ...
-
-Seems resonable but beyond that I have no idea.
-
-Give it a go and see what happens.  Probably also include kernfs related folk
-directly. They are likely to have opinions and might review if they have time.
-
-
-Jonathan
-> 
-> Thanks a lot for having a look Jonathan.
-> Cristian
-> 
-
+No trouble at all, this is all normal review/maintenance process :)
+Thank you for the fixes!
 
