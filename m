@@ -1,169 +1,194 @@
-Return-Path: <linux-kernel+bounces-867994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FBA0C04183
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:11:29 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE0AC041AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC4CA3B7E3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:11:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A195A357437
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8B4225401;
-	Fri, 24 Oct 2025 02:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D039C1DD525;
+	Fri, 24 Oct 2025 02:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHHH1mlM"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SGhzKjfe"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8911472633
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C643518A6A7
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761271880; cv=none; b=nfYmEkE2EOL0vOQTs4tC06g6K2rUNJ0DpES6o4P7Nklp1DfZS9s88sMf1F3MmzxcDFJpJ6PL92ylO9ByxvRk/BumN/snUSNwuD8I2B2MFDa3e41Iz3H17tc4knQCJM4YWbKlJXei5hm9iVediH+PABQSU9tFQPuBqaa3KTvnp/Y=
+	t=1761272164; cv=none; b=jIHahZZ7C1DDxTZ2Owqw0pOM1PfG3SVWTIT06Tjgcys/cwcdokORq3IyaOyT6EbE5hhsU8bwsUvt7EtXWNDSeZ4wzwiglPe51hZCob8qrHj30GXlWiMJiBQqPpU4qoEVVj9dz/UXAAgLBsRDfc3IwIAqdfnJDPiZ4Db9RskmqQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761271880; c=relaxed/simple;
-	bh=2HKWTq9bYPI9IRNhEkPDZsu1MxYbn9ll23LkJz1BkFo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uyK7+b5iq3mThi8llBBIhksGaL52km5q1q3ydX1ZJafYhbgEoV/5iLeQxw3L2mktMX/vYliF1e5yd3UeFiYNu4RpGG7FRL8k92WpQzcPZxN166z/6YPrXke69ZTlOZrEryJ/AC36xv8BHn2A5gH5AJuLv9m1nqz6TAgr/lDmkwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHHH1mlM; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1761272164; c=relaxed/simple;
+	bh=715hOslgu7y016qxUdrtVMFM0PPhVFT1NOgcdmQqdD0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pYWn4ciibVz6erT4BqGgfewx3d2zHIwk6f2AL4OD49HP3SLaibmD6guBx6eCqu7twbmHsPRqygtr7WJhqvOnWIPAvW5uVrR0kdZIk1RIzeEhoC1ozmTTkexoNwThZzg4oLHdH9gxof1r6ccpt84eazaLSuEKiMTi/LK3xardeCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SGhzKjfe; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-33bda2306c5so1543025a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:11:18 -0700 (PDT)
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-33082c95fd0so1616146a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:16:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761271878; x=1761876678; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iIMtRFCdsmjJp3brOQhbUpPZt9mi1Wgypme0Ijm/Bxo=;
-        b=JHHH1mlMK93oKmK/c2QjFixiw/SNyytCpGn1CPrKYnc9R18YwdcXSxN6cbtjN+QcdT
-         SXjQvvn6WX4AFZcKE5g6CRIP7pIWcGwL28KXXYpz5ODyDCb4lB0bkXwRMPGfzMAKrB4U
-         2wfSfHh5hHzBfFkmADn+Xsp9DT6oExnZzXvnwo+JUqeakS5l56rHP9UV8WuYnEwJziZl
-         uxEtV7Z/peumHM3dF/+Qm0jSEmZ2P392CxU+eVRaKpS5N8gss2wCi6F9vp6QpcwTMTYg
-         byhV/4Nod27m+0EMGpsFQ2nAkz22TQDFUh22HM2zqx3n7akN9fpXcxQtqxDmRcXuR8+R
-         jZZQ==
+        d=gmail.com; s=20230601; t=1761272161; x=1761876961; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BI0Vwi2MFtORL9n5J5tJUkBs2QczZqahhbzv7dm+XZ4=;
+        b=SGhzKjfeycASiQAcOTlEgFu6zLhc0xjJuaaYWbaK7tqCA1oA6CyK/Cq6xBkxjPHA+X
+         LPRApMyD4zu7LhqAOtGYDipgnpxgHOW4s3z468OeIBnp3oXIoyi0zMZSq8v+j2gLDAPY
+         pjM2+r8bbjINWvRwxMgfBJM1Z44XkrNk9PEXQSgB9k8gYxiOSWg/UJ8PcfvcNm8ke9Rd
+         Z5Ed1NOlVmWHmGzMf1HRjnJ/26iskOKxGXVeRJs58AgPhEQwhpnUfVTfIbr1udX9MjCR
+         P3YE/vaZ++t8StTQlmMaRnMUlUgaa6TmeFXWSzTcFHEIaiWdwyZ4uEU0xRs2x8JZHaQd
+         u+mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761271878; x=1761876678;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iIMtRFCdsmjJp3brOQhbUpPZt9mi1Wgypme0Ijm/Bxo=;
-        b=YN4vbOhsJiXD70AzxOEGkQwWHtWPpwtc40gWq4HnJPgKSDNUPWk334oA7NCelrQ0AM
-         xLl0P/5AOM3GeYp6H2raUdi0opcgF4ib4KtuU0coXft3/FPiENppkD51FcFRiS2Q6uYb
-         ySBlc7hkc9NDzyGHaJSyYZC2QqzWif4MJc3391aZNGdGtM9djkRsRnmLFf/JbAVOebk9
-         23811r0kFtuXKdTtTHqfYA4jh6MFfrABwi8YM4d5mW0Usy4piWNkFSIWMiI6ifIsLvAe
-         jE7YtcLTOSsyePnB69xkvLt0/MUP/JVE02R4JNWsEO9dmIn3z0q0CoENCXBpV+z1yjkd
-         TJVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzOdsbZhbxC1Bh65fInUYx+XU1T7n4U41gy3YKkln6ZGPUiXS4AUlrOllyPZ6HiCiHHXPIYfmnxF7uN14=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0VmuB2PK+NnhjuvA1e05WVvHoH9L70p3L7f43A9D9HGDpzT8N
-	LkjsEj2OmzWvdl/KqinuLmCEwJbljCGUxXt1wtDMaQGnbhwVRLaf+Ra0
-X-Gm-Gg: ASbGncsNpBkKpamdlv3u+80/Da3T50ujjVnU+srIMMunpw5cflcxeg10OOtQjiMzAfp
-	nBTcxVdpxgmUN/BsfGmEU0SZboElNDlKQhpt64yGb4/ngq3aLtr/G1YKipox/y5TpDFESTMNbPI
-	ZMR4A5AEuPvdiDUUfZogFcOfo1P/rBhVGrAcwjpWUgzRcWDaoNjkIJeMU24eGwpdqR+cQZpfcLb
-	+cFJuzwpZc21cUQy0a/HBo2RPzdR5ImWwMgu74daECx7PXDvg0wCs042OOixImbLZWIUJawSq24
-	fGXXfZzSMZbl0AMGGYHrlL3mLCNz64nnKl0ujfO3CNPiuqueT3sgMMwaEDZedD8oHmECOMOp0Mg
-	pXM9UVBEamDwHTsd44cNGbUTRnW3kO1CmGuyRQjwPMqkET0gZ6pVMOSYwc3A8wv+L5xwFoV/R0H
-	ewPike5UcM1xrhwh/Yiml5IMukgEAvjd1ZiVvR
-X-Google-Smtp-Source: AGHT+IFD75N03XrwMjNRmyxSMWMxZp+UXCEbbO3kw9IuJAvapfBkWSQMRThlDmpY+YsYkZGyYzgU0Q==
-X-Received: by 2002:a17:90b:48c8:b0:33b:ba55:f5dd with SMTP id 98e67ed59e1d1-33bcf93ab88mr29913628a91.37.1761271877829;
-        Thu, 23 Oct 2025 19:11:17 -0700 (PDT)
-Received: from [192.168.0.69] ([159.196.5.243])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fb0196831sm3967266a91.20.2025.10.23.19.11.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 19:11:17 -0700 (PDT)
-Message-ID: <cd557c5b11b04da060f07d3849dc46e7b3625ed1.camel@gmail.com>
-Subject: Re: [PATCH net-next v8 1/2] net/tls: support setting the maximum
- payload size
-From: Wilfred Mallawa <wilfred.opensource@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>, Sabrina Dubroca <sd@queasysnail.net>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, "David S .
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>,  Jonathan Corbet	 <corbet@lwn.net>, Simon Horman
- <horms@kernel.org>, John Fastabend	 <john.fastabend@gmail.com>, Shuah Khan
- <shuah@kernel.org>
-Date: Fri, 24 Oct 2025 12:11:11 +1000
-In-Reply-To: <20251023184404.4dd617f0@kernel.org>
-References: <20251022001937.20155-1-wilfred.opensource@gmail.com>
-	 <20251023184404.4dd617f0@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+        d=1e100.net; s=20230601; t=1761272161; x=1761876961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BI0Vwi2MFtORL9n5J5tJUkBs2QczZqahhbzv7dm+XZ4=;
+        b=uwWgziCWXfWqlNc5GwSnJPrtk32TYmjBvxznIrXmkC90hclD6kvbe+uEoCF+haqQLV
+         Y/z+PkoVhPxmwfWjNO547eIs7KHdUGUX7S5muP7Xdwt80XGGvMVkUCVTdEzwpgS7LUQM
+         vHPSjaRVHEOqXn0ApIacSKQWl6/57ytEW3Xxm1oSaiGXYmaUMzDh2s/dospK390jW1sH
+         PcfEmKHLPBmr2n8h3JLqFviDDpmPHgOEgjKwbdBSLe2X3nwf4x0ULH9NrAkKjuE1UwJ4
+         xq8zor1CXWKYpHL4r2wiLFbt6FHJpL84xsvk55dPZivOd3DtReHlbgzhjJxRX9j3OiYU
+         +cbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNrYUiSFEyfvxYrDDMHYbYCbGQOVfJVqCOJbOEJK4vBHOcw27Y3n5S8jswC6TLsrSZKPSff+knKU9U3PQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFVkBH+B7TCQR16aTdV/F2N99uIM/cmR07HITXi60JeVhnGR7r
+	HBvJ+OVrPqhP9ZnnJPq9rEIgpNqvwZbLIp/unQhal4BFtZuq4103nMT3nOjk4Oz/l5j5dWHcarO
+	Tm21nfzIPmfaDNE5F8XhAgCImGJ0JS05ocnve
+X-Gm-Gg: ASbGnctBxAf2EXEoHFQF5YqqmEIPDTJnLbKLJFKCRR4yf3tYOrdL67DEFpRJHh0rxi4
+	A761jPhfXhNJi53BVW/mRBvkdc4WlE4QaldxLvMHqWw5GlVvmh7q8LDawQyDcAF003Fc67SMtG0
+	CoK/7LEKmkPh0BBNRmufwZLKE+oykyaD80SUMI/TEYQY7urpfeR/nQuAoGL+x3BvZGIewXZdKAD
+	xKQp7zNqS7wRBpPDCEynuSfSTSCAqcHqiXmoLUdxNmk7WWJ6NO1b4TqgqZc/UjJraLLk6o=
+X-Google-Smtp-Source: AGHT+IElNfoS47SY7t+lKBFv7+5KrhLxG98q130ySpWKzXc0GkoN0tmuT6t9nFhyiYXpfSO3SfnNJSOMNthXNwS/NDA=
+X-Received: by 2002:a17:90b:1b50:b0:33b:d371:1131 with SMTP id
+ 98e67ed59e1d1-33fd66f565amr743481a91.34.1761272160901; Thu, 23 Oct 2025
+ 19:16:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251024-auxiliary-v2-1-a353dc9e6b1a@nxp.com>
+In-Reply-To: <20251024-auxiliary-v2-1-a353dc9e6b1a@nxp.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Fri, 24 Oct 2025 10:15:49 +0800
+X-Gm-Features: AS18NWDZ9oaK7UwbUVQe-rbcE0CXdttwjA1LC6T8fVyGVAC_wDzugHZZMraTOl0
+Message-ID: <CAA+D8AOF+3he6nV6yDRnept2Epo1yTZgJnn+P4H8hkktec5wEw@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: imx: imx8mp-audiomix: use devm_auxiliary_device_create()
+ to simple code
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>, 
+	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <frank.li@nxp.com>, linux-clk@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-10-23 at 18:44 -0700, Jakub Kicinski wrote:
-> On Wed, 22 Oct 2025 10:19:36 +1000 Wilfred Mallawa wrote:
-> > +TLS_TX_MAX_PAYLOAD_LEN
-> > +~~~~~~~~~~~~~~~~~~~~~~
-> > +
-> > +Specifies the maximum size of the plaintext payload for
-> > transmitted TLS records.
-> > +
-> > +When this option is set, the kernel enforces the specified limit
-> > on all outgoing
-> > +TLS records. No plaintext fragment will exceed this size. This
-> > option can be used
-> > +to implement the TLS Record Size Limit extension [1].
-> > +
-> > +* For TLS 1.2, the value corresponds directly to the record size
-> > limit.
-> > +* For TLS 1.3, the value should be set to record_size_limit - 1,
-> > since
-> > +=C2=A0 the record size limit includes one additional byte for the
-> > ContentType
-> > +=C2=A0 field.
-> > +
-> > +The valid range for this option is 64 to 16384 bytes for TLS 1.2,
-> > and 63 to
-> > +16384 bytes for TLS 1.3. The lower minimum for TLS 1.3 accounts
-> > for the
-> > +extra byte used by the ContentType field.
-> > +
-> > +[1] https://datatracker.ietf.org/doc/html/rfc8449
->=20
-> Sorry for not paying attention to the last few revisions.
->=20
-> So we decided to go with the non-RFC definition of the sockopt
-> parameter? Is there a reason for that? I like how the "per RFC"
-> behavior shifts any blame away from us :)
->=20
+On Fri, Oct 24, 2025 at 9:46=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
+>
+> Use helper function devm_auxiliary_device_create() to remove some
+> boilerplate code.
+>
+> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Hey Jakub,
+Reviewed-by: Shengjiu Wang <shengjiu.wang@gmail.com>
 
-We've made the change from record_size_limit to max_payload_len mainly
-because:
-
-In the previous record_size_limit approach for TLS 1.3, we need to
-account for the ContentType byte. Which complicates get/setsockopt()
-and tls_get_info(), where in setsockopt() for TLS 1.3 we need to
-subtract 1 to the user provided value and in getsockopt() we need add 1
-to keep the symmetry between the two (similarly in tls_get_info()). The
-underlying assumption was that userspace passes up directly what the
-endpoint specified as the record_size_limit.
-
-With this approach we don't need to worry about it and we can pass the
-responsibility to user-space as documented, which I think makes the
-kernel code simpler.
-
-> > +	err =3D nla_put_u16(skb, TLS_INFO_TX_MAX_PAYLOAD_LEN,
-> > +			=C2=A0 ctx->tx_max_payload_len);
-> > +
->=20
-> nit: unnecessary empty line
-
-Ah! will fixup for V9
-
-Regards,
-Wilfred
-
->=20
-> > +	if (err)
-> > +		goto nla_failure;
+Best regards
+Shengjiu wang
+> ---
+> Changes in v2:
+> - Update commit log per Frank
+> - Add R-b from Frank and Abel
+> - Link to v1: https://lore.kernel.org/r/20251023-auxiliary-v1-1-0a16fa4c3=
+cdd@nxp.com
+> ---
+>  drivers/clk/imx/clk-imx8mp-audiomix.c | 39 ++++-------------------------=
+------
+>  1 file changed, 4 insertions(+), 35 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-=
+imx8mp-audiomix.c
+> index 775f62dddb11d8cfd17a4ebf7a677ef399c5e617..131702f2c9ecfd693af47094f=
+e61b486ae6e8f6d 100644
+> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> @@ -230,50 +230,19 @@ struct clk_imx8mp_audiomix_priv {
+>
+>  #if IS_ENABLED(CONFIG_RESET_CONTROLLER)
+>
+> -static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
+> -{
+> -       struct auxiliary_device *adev =3D _adev;
+> -
+> -       auxiliary_device_delete(adev);
+> -       auxiliary_device_uninit(adev);
+> -}
+> -
+> -static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
+> -{
+> -       struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
+> -
+> -       kfree(adev);
+> -}
+> -
+>  static int clk_imx8mp_audiomix_reset_controller_register(struct device *=
+dev,
+>                                                          struct clk_imx8m=
+p_audiomix_priv *priv)
+>  {
+> -       struct auxiliary_device *adev __free(kfree) =3D NULL;
+> -       int ret;
+> +       struct auxiliary_device *adev;
+>
+>         if (!of_property_present(dev->of_node, "#reset-cells"))
+>                 return 0;
+>
+> -       adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
+> +       adev =3D devm_auxiliary_device_create(dev, "reset", NULL);
+>         if (!adev)
+> -               return -ENOMEM;
+> -
+> -       adev->name =3D "reset";
+> -       adev->dev.parent =3D dev;
+> -       adev->dev.release =3D clk_imx8mp_audiomix_reset_adev_release;
+> -
+> -       ret =3D auxiliary_device_init(adev);
+> -       if (ret)
+> -               return ret;
+> +               return -ENODEV;
+>
+> -       ret =3D auxiliary_device_add(adev);
+> -       if (ret) {
+> -               auxiliary_device_uninit(adev);
+> -               return ret;
+> -       }
+> -
+> -       return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_un=
+register_adev,
+> -                                       no_free_ptr(adev));
+> +       return 0;
+>  }
+>
+>  #else /* !CONFIG_RESET_CONTROLLER */
+>
+> ---
+> base-commit: aaa9c3550b60d6259d6ea8b1175ade8d1242444e
+> change-id: 20251023-auxiliary-3998bced9cb9
+>
+> Best regards,
+> --
+> Peng Fan <peng.fan@nxp.com>
+>
+>
 
