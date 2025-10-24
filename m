@@ -1,206 +1,207 @@
-Return-Path: <linux-kernel+bounces-868072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E74FFC04489
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:50:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB083C0449A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C23D1A63A21
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:50:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8832E4E691D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0004E27AC41;
-	Fri, 24 Oct 2025 03:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD2527587C;
+	Fri, 24 Oct 2025 03:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="IA6iWw6y"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="b3TNWqIh"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B66274B3D
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6AE2749CE
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761277796; cv=none; b=exh2CgioByKpN2UjMP2uMDxk0c3myhKVVVM5ze7tmTfeu5OjE66eHeVerdpBsWPOCdhOS+17mamtiiJyWgtQpji6D2inbqh0JJL9YCJVGc3zFFQLdcXTN4XlTAy94gvMla5Y+0NNNMBwmwtfK0qmKDMx1XGf8HmlxSW4uom5CN4=
+	t=1761277950; cv=none; b=G1ffJhXjcRCjEPwXBloEu3KeJC/Iynw076SonIOF5Q5ysxhpmIfsfy6FWfz9RXSyJOvr27vTh12W7wmohoAg0N8GnnZX0T6ZE0XfWAvdMHOshku41rZS1u1K2lGNg12hCQUtp3UXI0F15qgw4KiMFhu9M7iwIns2Rh4n4rC8c88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761277796; c=relaxed/simple;
-	bh=qmaB1CXtUY1e+C/t58DgmOYZlR8DAdBz6UTk8GaUBVY=;
+	s=arc-20240116; t=1761277950; c=relaxed/simple;
+	bh=PhHGkGEe4X+Wu8hlj2fK1WdZOEnN/POUrnBbn7gxhNY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cDPUlFPDC3WbreygzXtS3ajcNxttpPOV0RIjE1CAgwEWuIArJnWxa9adGpDmoKD42p0NmSWtkdieNqTxhEIEd45S7m6k/bjHoV16NQxi6fHi1fhzCa0VL69wpdPMaeyfcUKY7HLjV3A6W/k8cfc5P/0i7DC/OPH0A5lLlZxn5LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=IA6iWw6y; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-26816246a0aso2210505ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:49:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=GdVED/AKw0RT9K1HeC6lM1FVaXG6Eo+9chdK7lkGX83wwehwIMONtGnZwzBLapVh9Duu3R9oCT2tSMZVC8c9k1EwOw00EeEw/DufLn0/AlZxcL+wseoBgi8Sbj1i7Qe1oQDhFJAoopYOr8SwguPF/ClnreNuxPwXrkkSveqL/U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=b3TNWqIh; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-592f7e50da2so1578165e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:52:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1761277792; x=1761882592; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1761277944; x=1761882744; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IvoYolrDujURIIQNBp29WK1/vhNin2pPqJIBDrWNzE4=;
-        b=IA6iWw6yVIbRiWEyNoiqiwosgLZ/KcAJtTQvoa+GTfyECyAZA2wF9FPTt66NyPMdEw
-         QMqrT9zbQbFt1kKO4MW69O+AwuXp8d3lDCbz1HVqLa5Pp3Dm+jun9AK4g60iUm8hZlik
-         KbIaiPuKp6aCFfLZ1GKBuw8gnGdp5BdpEBhrncin9Pj1AfijMkUnbM/Qmx0xUTeq7qMo
-         Ul5zBINgV/n0pm9YtyCsxjqb9HwHy2NR9e0oA8WqpFSU4dexTIzk949K5GlGboqHEZ50
-         WVZc/UU6VjgdMJfmXb3KfH11N0kzEN1ITmTluW1NJDTOhCfJx3Cdn6ZUrOGp2gy+tqCH
-         Ptag==
+        bh=A8/9xfrwSY9dn/jrCOm3aVeNQtdTtccDMKuiFbDhKLw=;
+        b=b3TNWqIhxhTggdNQRAppc98CHUX/22qT5LF9wpnnZT9NlDfgYDQ8MwjavCM+3xksJO
+         6yCuIPPqF8iCMTp4pO/kr6WVnDnQ2nxFOWGQfnAyLQQB+JnefOouuzMbyJnrl236y/zR
+         aZ7L+n/SXyd67txxuKB1jlzHx53RWZt4qQTFPWBZo0ypAWA2j2A5Wn7UcGYl+/pHekUi
+         MT7Zhj/w2r/ajzdwcrvy1GRVLU3bU7Wn6n89GKiavR/PcF6v7a/8SemoAQB9cQ8jO3ZH
+         0hpemZz85JvWLeUOBlDWAyCy/3bHh4sLCm6sWfhAG0aWd5PifYLB9fhfBPRx5dbDG5D2
+         kBaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761277792; x=1761882592;
+        d=1e100.net; s=20230601; t=1761277944; x=1761882744;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IvoYolrDujURIIQNBp29WK1/vhNin2pPqJIBDrWNzE4=;
-        b=VN9fgvf5HPPb51DerDuTcUJYllm5wzG9LsYiMeIU5k5MsEGi5lheHn1JRKBwtOLVtL
-         9aIjohkcQtPexGx/pOvYcMR5QB0Zy8Xs+92EwO+DE/ANvAVqjMhl6Mg9/neBRtbgfJvk
-         3sxKxZRK1wcJz3pv+JV9V7M4Trc/nrY1KmgIkvCBEssaFeiPM4xjQPaS4k+CKYftG+pZ
-         VWd/zKMCdUnNbeR7WD80p6RBjHU2dQ0VhuXPzEBj8Sn8vJaD0CbEqUMlbVeLcDVXnmPy
-         W/MLjVTKURxbs8gHBhqqOzjBUggp5ySFyRqc3MUEai2eBIWWG+8dnVbpO8ZG6T6389cD
-         y1uw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJLksSlUrPYcwwC+VMTTjBrzRvWsPvMboUyTUqcdbX3PVmw/yk/me0aeYIrMLGUb2NX4l/8O3cQ4D1XZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSms6OP1KZZbtOiqdd5OW/giWSGnB7m+QtqPnOORnkYr4EvIks
-	f3Q3VJIl6DjqfkRLKa8D4ojA71u9g3GHl/O+K/Ak58KySUEaS9HUwa3e/0A+TZGNI7YCh1xfmhe
-	Y9QPw87cbH2zAFYTXttPq/UZmz3dYd8agFqgZejmK+XGzf0nSeJbm9svmXw==
-X-Gm-Gg: ASbGnctkvDO+KJTIyx4xfjLTMqiuTUkJ79jTOpZILcO+g0MbQdaRQnsdmHIQm7b57vC
-	RCrzo3cZSaE+QVP1px3JFa5Ud419MSVm+mlYHadg4MmjWppdHDUxAlY1mxEdrBYC5dTbabmcI50
-	1bqYrlZwN/rUWUvYOVAwQQZ8rWAAZA9DkZ+9QSZ3ajmoUgObn/LHEMEzigMCSUAMRSi3YvAQIPg
-	ayGRW8pMCBvm5bBT3F4t50UDcFtRXX+MSm7gbyv65NyT5b0kSiLW3hPSZ3ol2VBP1CSnC3KSlWi
-	hsAgQDpHV1odCTbEow8BbMovzKHS
-X-Google-Smtp-Source: AGHT+IGVLYN9Qj6K5Oe/DW7c2O9tXpDx7qrMeaGk8fBmXzVZ28GOkgKOMdnoBQ6ElA4mEZO6qJsf1CoAlmZoTYuCH80=
-X-Received: by 2002:a17:903:2a8d:b0:27e:eee6:6df2 with SMTP id
- d9443c01a7336-292d3fb7f47mr85578795ad.7.1761277792499; Thu, 23 Oct 2025
- 20:49:52 -0700 (PDT)
+        bh=A8/9xfrwSY9dn/jrCOm3aVeNQtdTtccDMKuiFbDhKLw=;
+        b=GmpWOyj0CHOtw937TpClycii7UXKxK8YGYWo2o5LU0yG2f6KjVa3KUCUPBZUA39VlZ
+         mJwvcbgdznAdfpcRgVa3I4G9ppueGHNojUEwOa7QqPqCtJPnLPTWTXhBUV7IDfAZ3aHB
+         lig1D1bDuxJAzh6KOD0KwuH/89Ik36Ydbi5byfRJ8XrWjuAtjtTHhJUXTLvhaPPD0cGo
+         FveeYrMLdCGSTc4VRkFzDGmdquWtMYAZXld3PIc8IzWyU7vuzQcTPF0A5hVnpVHLMUqs
+         uv7DbY9XN130CRnC4jZl8e8VoQGrxLtM48W4IEKoZ/cZJL5HEzSI0LybSixTSYEiaPhn
+         Zp/g==
+X-Forwarded-Encrypted: i=1; AJvYcCV5oueViAKVuPs/54KrvPZVqSGfsfZ/OYgbJ02AzoKlivN0HtGLbhq2aSnha/vf1jX7EGoc8HPJJy9ldks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX9/m9bt/0QvIOcdyKFJIRKgzyen8mIFkh9pDMsBoS11JlfZ/G
+	LSvqbtKAPATn0XRSuk6ZGpI3nkOe/IyIBdIRFT5Ma6jIspWXUBAAvTF6BQSKfhOcG7RDxdWAaUI
+	8v7+jxLHdTEmMBYPNj2QNkMvWH77ERx1hiOmizza6Qg==
+X-Gm-Gg: ASbGncuy0qDXY/VJuGsHTjwrj7ouoWgjfqEqgnNtBZjDtRZ683WqisOG3SJp0x0CEN9
+	RFbTZtdbP5nLjDiGgmBYmL3skccWA8tbvVUK2X9jC5djbEHTkrFqwY8ydU6/cCJGFO+3UnRs0qY
+	+iIuFhORJwRJMCugUkGPhi/B2yuHVCzhKVeBZESXd1MjP7PFdhR8nP9dh977WQa+oiEcwpNCVyJ
+	i5qusniwjKU5aliadCEUbP67b6pxeurF9iNUwWr4F1UJe3C7P57se24BX4R7RthlsTFNfgH
+X-Google-Smtp-Source: AGHT+IGb8L9/8BFJcEWEY2fXEF0PpwWiveByTWgaE2reqnXO8Ueo0FIjsxeuMtM0ZpRN/r3UT6XdkbR16N4L1XohwP8=
+X-Received: by 2002:a05:6512:3e06:b0:58b:75:8fc6 with SMTP id
+ 2adb3069b0e04-592fc12a69emr299952e87.19.1761277944103; Thu, 23 Oct 2025
+ 20:52:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023201830.3109805-1-csander@purestorage.com>
- <20251023201830.3109805-4-csander@purestorage.com> <aPr1i-k0byzYjv8G@fedora>
-In-Reply-To: <aPr1i-k0byzYjv8G@fedora>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Thu, 23 Oct 2025 20:49:40 -0700
-X-Gm-Features: AS18NWDTISZzm2iqXdmRxUGBIwGGbwvM87S0nOqV0xhWOuEGVlx6sx6Z4Yq4U7g
-Message-ID: <CADUfDZp21icTKrWHcgRTfmsxtdab85b6R75wAYXW2dA+dzXmoA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] io_uring/uring_cmd: avoid double indirect call in
- task work dispatch
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>, Keith Busch <kbusch@kernel.org>, 
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chris Mason <clm@fb.com>, 
-	David Sterba <dsterba@suse.com>, io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251021083105.4029305-1-minachou@andestech.com>
+In-Reply-To: <20251021083105.4029305-1-minachou@andestech.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Fri, 24 Oct 2025 09:22:12 +0530
+X-Gm-Features: AS18NWBEuD60NgNp1jRJyfwYOeWuqAqMI2kePlnJ_4peqxX3K4YiUIFQFddLt-A
+Message-ID: <CAK9=C2XjygELuUnQErbpVzh6-4wc4HHypf91aKUtUzMYGJwmtw@mail.gmail.com>
+Subject: Re: [PATCH v2] RISC-V: KVM: flush VS-stage TLB after VCPU migration
+ to prevent stale entries
+To: Hui Min Mina Chou <minachou@andestech.com>
+Cc: anup@brainfault.org, atish.patra@linux.dev, pjw@kernel.org, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, tim609@andestech.com, ben717@andestech.com, 
+	az70021@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 8:42=E2=80=AFPM Ming Lei <ming.lei@redhat.com> wrot=
-e:
+On Tue, Oct 21, 2025 at 2:02=E2=80=AFPM Hui Min Mina Chou
+<minachou@andestech.com> wrote:
 >
-> On Thu, Oct 23, 2025 at 02:18:30PM -0600, Caleb Sander Mateos wrote:
-> > io_uring task work dispatch makes an indirect call to struct io_kiocb's
-> > io_task_work.func field to allow running arbitrary task work functions.
-> > In the uring_cmd case, this calls io_uring_cmd_work(), which immediatel=
-y
-> > makes another indirect call to struct io_uring_cmd's task_work_cb field=
-.
-> > Define the uring_cmd task work callbacks as functions whose signatures
-> > match io_req_tw_func_t. Define a IO_URING_CMD_TASK_WORK_ISSUE_FLAGS
-> > constant in io_uring/cmd.h to avoid manufacturing issue_flags in the
-> > uring_cmd task work callbacks. Now uring_cmd task work dispatch makes a
-> > single indirect call to the uring_cmd implementation's callback. This
-> > also allows removing the task_work_cb field from struct io_uring_cmd,
-> > freeing up some additional storage space.
+> From: Hui Min Mina Chou <minachou@andestech.com>
 >
-> The idea looks good.
+> If multiple VCPUs of the same Guest/VM run on the same Host CPU,
+> hfence.vvma only flushes that Host CPU=E2=80=99s VS-stage TLB. Other Host=
+ CPUs
+> may retain stale VS-stage entries. When a VCPU later migrates to a
+> different Host CPU, it can hit these stale GVA to GPA mappings, causing
+> unexpected faults in the Guest.
 >
-> >
-> > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > ---
-> >  block/ioctl.c                |  4 +++-
-> >  drivers/block/ublk_drv.c     | 15 +++++++++------
-> >  drivers/nvme/host/ioctl.c    |  5 +++--
-> >  fs/btrfs/ioctl.c             |  4 +++-
-> >  fs/fuse/dev_uring.c          |  5 +++--
-> >  include/linux/io_uring/cmd.h | 16 +++++++---------
-> >  io_uring/uring_cmd.c         | 13 ++-----------
-> >  7 files changed, 30 insertions(+), 32 deletions(-)
-> >
-> > diff --git a/block/ioctl.c b/block/ioctl.c
-> > index d7489a56b33c..5c10d48fab27 100644
-> > --- a/block/ioctl.c
-> > +++ b/block/ioctl.c
-> > @@ -767,13 +767,15 @@ long compat_blkdev_ioctl(struct file *file, unsig=
-ned cmd, unsigned long arg)
-> >  struct blk_iou_cmd {
-> >       int res;
-> >       bool nowait;
-> >  };
-> >
-> > -static void blk_cmd_complete(struct io_uring_cmd *cmd, unsigned int is=
-sue_flags)
-> > +static void blk_cmd_complete(struct io_kiocb *req, io_tw_token_t tw)
-> >  {
-> > +     struct io_uring_cmd *cmd =3D io_kiocb_to_cmd(req, struct io_uring=
-_cmd);
-> >       struct blk_iou_cmd *bic =3D io_uring_cmd_to_pdu(cmd, struct blk_i=
-ou_cmd);
-> > +     unsigned int issue_flags =3D IO_URING_CMD_TASK_WORK_ISSUE_FLAGS;
+> To fix this, kvm_riscv_gstage_vmid_sanitize() is extended to flush both
+> G-stage and VS-stage TLBs whenever a VCPU migrates to a different Host CP=
+U.
+> This ensures that no stale VS-stage mappings remain after VCPU migration.
 >
-> Now `io_kiocb` is exposed to driver, it could be perfect if 'io_uring_cmd=
-'
-> is kept in kernel API interface, IMO.
+> Fixes: 92e450507d56 ("RISC-V: KVM: Cleanup stale TLB entries when host CP=
+U changes")
+> Signed-off-by: Hui Min Mina Chou <minachou@andestech.com>
+> Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
 
-You mean change the io_req_tw_func_t signature to pass struct
-io_uring_cmd * instead of struct io_kiocb *? I don't think that would
-make sense because task work is a more general concept, not just for
-uring_cmd. I agree it's a bit ugly exposing struct io_kiocb * outside
-of the io_uring core, but I don't see a way to encapsulate it without
-other downsides (the additional indirect call or the gross macro from
-v1). Treating it as an opaque pointer type seems like the least bad
-option...
+Here's what the non-normative text says about HFENCE.GVMA ...
 
->
-> ...
->
-> > diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.=
-h
-> > index b84b97c21b43..3efad93404f9 100644
-> > --- a/include/linux/io_uring/cmd.h
-> > +++ b/include/linux/io_uring/cmd.h
-> > @@ -9,18 +9,13 @@
-> >  /* only top 8 bits of sqe->uring_cmd_flags for kernel internal use */
-> >  #define IORING_URING_CMD_CANCELABLE  (1U << 30)
-> >  /* io_uring_cmd is being issued again */
-> >  #define IORING_URING_CMD_REISSUE     (1U << 31)
-> >
-> > -typedef void (*io_uring_cmd_tw_t)(struct io_uring_cmd *cmd,
-> > -                               unsigned issue_flags);
-> > -
-> >  struct io_uring_cmd {
-> >       struct file     *file;
-> >       const struct io_uring_sqe *sqe;
-> > -     /* callback to defer completions to task context */
-> > -     io_uring_cmd_tw_t task_work_cb;
-> >       u32             cmd_op;
-> >       u32             flags;
-> >       u8              pdu[32]; /* available inline for free use */
->
-> pdu[40]
+"Conceptually, an implementation might contain two address-translation
+caches: one that
+maps guest virtual addresses to guest physical addresses, and another
+that maps guest
+physical addresses to supervisor physical addresses. HFENCE.GVMA need
+not flush the
+former cache, but it must flush entries from the latter cache that
+match the HFENCE.GVMA=E2=80=99s
+address and VMID arguments."
+"More commonly, implementations contain address-translation caches
+that map guest virtual
+addresses directly to supervisor physical addresses, removing a level
+of indirection. For such
+implementations, any entry whose guest virtual address maps to a guest
+physical address that
+matches the HFENCE.GVMA=E2=80=99s address and VMID arguments must be flushe=
+d.
+Selectively
+flushing entries in this fashion requires tagging them with the guest
+physical address, which is
+costly, and so a common technique is to flush all entries that match
+the HFENCE.GVMA=E2=80=99s
+VMID argument, regardless of the address argument."
 
-I considered that, but wondered if we might want to reuse the 8 bytes
-for something internal to uring_cmd rather than providing it to the
-driver's uring_cmd implementation. If we increase pdu and a driver
-starts using more than 32 bytes, it will be difficult to claw back. It
-seems reasonable to reserve half the space for the io_uring/uring_cmd
-layer and half for the driver.
+This means ...
 
-Best,
-Caleb
+For implementations (most common) which have TLBs caching
+guest virtual address to supervisor physical address, the
+kvm_riscv_local_hfence_gvma_vmid_all() is sufficient upon
+VCPU migrating to a different host CPU.
 
+For implementations (relatively uncommon) which have TLBs
+caching guest virtual address to guest physical address, the
+HFENCE.GVMA will not touch guest virtual address to guest
+physical address mapping and KVM must explicitly sanitize
+VS-stage mappings using HFENCE.VVMA (like this patch)
+when migrating VCPU to a different host CPU.
+
+We should not penalize all implementations by explicitly calling
+kvm_riscv_local_hfence_vvma_all()  rather this should be only
+done on implementations where it is required using a static jump.
+One possible way of detecting whether the underlying implementation
+needs explicit HFENCE.VVMA upon VCPU is to use marchid,
+mimpid, and mvendorid. Another way is to use implementation
+specific CPU compatible strings.
+
+Regards,
+Anup
+
+
+
+> ---
+> Changes in v2:
+> - Updated Fixes commit to 92e450507d56
+> - Renamed function to kvm_riscv_local_tlb_sanitize
 >
+>  arch/riscv/kvm/vmid.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 >
+> diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
+> index 3b426c800480..6323f5383d36 100644
+> --- a/arch/riscv/kvm/vmid.c
+> +++ b/arch/riscv/kvm/vmid.c
+> @@ -125,7 +125,7 @@ void kvm_riscv_gstage_vmid_update(struct kvm_vcpu *vc=
+pu)
+>                 kvm_make_request(KVM_REQ_UPDATE_HGATP, v);
+>  }
 >
-> Thanks,
-> Ming
+> -void kvm_riscv_gstage_vmid_sanitize(struct kvm_vcpu *vcpu)
+> +void kvm_riscv_local_tlb_sanitize(struct kvm_vcpu *vcpu)
+>  {
+>         unsigned long vmid;
+>
+> @@ -146,4 +146,10 @@ void kvm_riscv_gstage_vmid_sanitize(struct kvm_vcpu =
+*vcpu)
+>
+>         vmid =3D READ_ONCE(vcpu->kvm->arch.vmid.vmid);
+>         kvm_riscv_local_hfence_gvma_vmid_all(vmid);
+> +
+> +       /*
+> +        * Flush VS-stage TLBs entry after VCPU migration to avoid using
+> +        * stale entries.
+> +        */
+> +       kvm_riscv_local_hfence_vvma_all(vmid);
+>  }
+> --
+> 2.34.1
+>
 >
 
