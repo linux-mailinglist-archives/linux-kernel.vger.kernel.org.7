@@ -1,323 +1,238 @@
-Return-Path: <linux-kernel+bounces-869162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46481C07228
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:05:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AEBEC07396
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75DD5580547
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:04:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B4F3A6BE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5CC333452;
-	Fri, 24 Oct 2025 16:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16473375CD;
+	Fri, 24 Oct 2025 16:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dA26+ChX";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="MdmNhI/Y"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MwYSgQF6"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685D032D7F7;
-	Fri, 24 Oct 2025 16:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761321863; cv=fail; b=W3PbcWCRfJTBOC1xzPRILFZrs39MuNsD5KEe5ujQWgp/LCYrEm2AGnFpHcnT6LkFiTJpfW9eUCwhu5j41Bvza4ODXwQDBSWqfkdSSawZnnEZzeAXCp3PcBA/JVM/uLh3XJuPBlPHeBwA+YA8WR96t2+pND0NnpjCqh9X1LTrr+k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761321863; c=relaxed/simple;
-	bh=yr8tNYcD822MBIRFfmB83nZrJK3VRSdRRrSUcdEZ53g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JgRTPbR/BdbSMf9NgXxa50OX2Wlfkyc9IWzdUs3RmpKBiLI0/hQnjeFSST7gzJdN6sJpy7QUtXS2e79XUorcQkuOoVqoLHBfTdv5PFGGhmMP9RXx/OvkuMGI0omCICk8nx434O6vetaa6s3qS74a6a9Lq1gngAdwc/tzxtbYBSM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dA26+ChX; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=MdmNhI/Y; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OEgMoE030462;
-	Fri, 24 Oct 2025 15:58:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=8IRoH9zlSdWUxDVwWL
-	6L1SAiQ9tQ7QkpdiTy2TDM/vM=; b=dA26+ChXa5hVUCZhYyhIa0aiXTHRR1WXHu
-	VRevK4RxXfEbB2SASHfa0cgDxSQFFdx+Q7SSKIbXNvTFUSOFi2eIxwwY4Y3SN4dR
-	QgHRIqXfc/T4iti+WdePJmFEIKR1i63WJUittpQX2FMTihrCblWgh+lvepL5hx5z
-	VChzKdWkAV7K2KyGRGuBBgsvE8H3KbmNHXlU7riUVKEEMjpkY4zFjljvBNnNflrw
-	EFKhLRSe+b154zzb9i/fW0MZNEuAG48DtkygFZNRNrHyf+4CKQmyfRwjgg36TGWG
-	O64UuqzYEpruB8SAAPpe5DdgfjEI6/N7zPbglRA6vJFNIqEKZJ/A==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49v2vw4ant-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 Oct 2025 15:58:37 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59OFsVaU023295;
-	Fri, 24 Oct 2025 15:58:36 GMT
-Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazon11012041.outbound.protection.outlook.com [52.101.43.41])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49v1bh4qr6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 Oct 2025 15:58:36 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vJlCFSqF5F3qVbFQQ1p7VHsDV21fzmloYDI9OAePbI5793tuDE5PGIVkXRTLAu5RftiwmtbEMLOlprSBPtlgLXpSZK1K6MnjCcJw8uhdnsnj9yTR8LPg7e/ut0lrkXYIQsSaJTmcstJenQPZjOj5/mYcb5Y/QG4kaW5hX04C/W/uVScasqr0b8p0+JG6xaUXwye9jnWRY0Y3f5CXnCNVmsWu+JI0L1LsgwzTanYtNND5aGwwbfvlJLcaLSCdygnGGvvBfBPGTISSeQMYZaj8WlqpfP3LNIDjxJCwvkv9XDtyrMbm7+oYHyayjXw2aRklKCM9SH4K9hgKzERo9vKfaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8IRoH9zlSdWUxDVwWL6L1SAiQ9tQ7QkpdiTy2TDM/vM=;
- b=u1JldPhb/HznS1dfxCEQd+kI2GTh4DorPRmREIlelr39O7hLV0s3ZlkIIW/HHIniiBnni/S1IlnB/ULeN2vDVRFXsrfKfAwkkDZ2lMq+15wHdPVYl85Z/HJB8727FEoBKrxEjjwmsZqURUOlVqWMXdILTvgVESvMNqOVs9nzxFXoqoCpGEhlLGUFHQ3kjgx/cYBVJBo2jIrqKPb4d8h/XnuNWpLWWzPnVxictweWjdp0AlCvGAdL9l6kf+MZKI9HehVHGBFKNd9vTqKi6pQmVvwPE+n/rMAEs2csVaGWcmMLQn6bLtrvbLPElNFzTQs4qadpBSK5Ny4iJlHBcwtelg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F524335BBE
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761322252; cv=none; b=aOsIJ17oY8BK+2D0MWcF68C5TmjxNNrbzQ/S7f98UraxnG1jmrkSJC/DtBMm/9TrvjuYUendDVFNyhKdIQuugr6KQWIV+p8IhtuTqCZQo/LA6xNUxBk7xxCqqlmMGiOktizHDRPE95RblIS264Tpg6GdZBq+YvaTpRJi9Gf3cgA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761322252; c=relaxed/simple;
+	bh=MZveBwN8pITgiKu2IvyyZYnSYExm65gAyhHVYf2v+Zs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BQArh6TUByznpmHTuE9UkJwKTE0TfgtLb7rMPLwFtTWVBesdftBhBa3//6E9fb/ejNweHY1SQmIyNZqKCPJ1Qe36ymvUs3juIEhEuHxz/lPukatQ29XlRana5+FS/U+avJQa2sY2mLc8Jr+nJQ4ln936EaQED95TyGt4zfbYD5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MwYSgQF6; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-88f8f346c2cso237415785a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:10:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8IRoH9zlSdWUxDVwWL6L1SAiQ9tQ7QkpdiTy2TDM/vM=;
- b=MdmNhI/YLOqHCIc3Cm952yzPdH9dFMsmXcubCLCm3b7mO8nZdXoY6NywFuXFzXu9SorAAeIw3ZgMFOlFFbcAlr3XG2HqPLZ0/4UeHTLZhZnRLSS4AejRG7kQ7iW8P5rncmjP6HsFoRd8WM2CFlZQ5lzFZyivw0lWpentVjIDO3k=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by CH3PR10MB7436.namprd10.prod.outlook.com (2603:10b6:610:158::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 15:58:26 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 15:58:26 +0000
-Date: Fri, 24 Oct 2025 16:58:23 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
-        kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
-        nao.horiguchi@gmail.com, Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v3 1/4] mm/huge_memory: preserve PG_has_hwpoisoned if a
- folio is split to >0 order
-Message-ID: <c09e3282-46aa-4b53-aade-f63324b66d3f@lucifer.local>
-References: <20251022033531.389351-1-ziy@nvidia.com>
- <20251022033531.389351-2-ziy@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022033531.389351-2-ziy@nvidia.com>
-X-ClientProxiedBy: LO2P265CA0246.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:8a::18) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=chromium.org; s=google; t=1761322249; x=1761927049; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=opD0p0FG32wb49KtDa/XK4x3J2J0EHXdG+v2/vEH5Fw=;
+        b=MwYSgQF6ZGQCuHJ9/3uqCM3HPBhX6w09ckq/WgT6xQOsUnnGqA7VhaP2ozVQ4zjW8H
+         lTFBE65Tei1OfgLF4kFW+u1pcqBCWbFZezcsO5e3hlIymHAcJAkc4UrMkiYACaUCM7Jc
+         sIruraoNk+rfw8O5Zd6goOs/yDmjUEU0yRZ0U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761322249; x=1761927049;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=opD0p0FG32wb49KtDa/XK4x3J2J0EHXdG+v2/vEH5Fw=;
+        b=IFY1IZ576Ry1VIUn23tTvJ/ZSyPpsxXXZm6z18pegNL7kOef8YOYOKLMB+di7VRkcR
+         ucymduevGaIUHHksS1QrPHRAtaCr3bCzYt2jOVqjs0v7D7HSRRvTSyBiPXzWQp/5LgRU
+         lEzmSbuiJsSY+wG2VsIFlARxvKvGGE0WeeL3AKySVPqJUzy+XIqXPTNVcRnADRuWmTPM
+         hyIcqn9+Dm+X/A7q2kprJRkR3lLBIxSZuh7E43wL+LS/j/e7l7+PvUHkxzJS/2CC18n0
+         2lVbLTdmtMuwR0rS4W4+Vqq5F9GZyG4EvROx2AelFaPd7/IZ5V7NBahHbMHgqEHd9dHV
+         /4Nw==
+X-Gm-Message-State: AOJu0Yy1+YKlZ3IAn7D59hnvvU37qGbv5m9n7uJIyqmXeMxTUYKP63L1
+	yUXrGNobUD0KkFLJUHidI7ZDOr5x2PSXVRzr2qcayjlgspU4UYlbkvIGCQ8F1AX62kZNCc65J3e
+	S8tA=
+X-Gm-Gg: ASbGnctZYiPLq+3aU7YOgzEvt2T2tySn6mDATcAvrWZpjVbEui4rqIPNVS6jOdP2PLa
+	TGqENElYV9CfVrUZ6vmGWwrBbfFbTfS4YDva1yhk5IFiFaNGaQCIvAOFfFWz1dVyzoS6amdpdsi
+	kVjNmoN7WvKvq+Xc9KwRBWfVsjUARh7f36KtyBGsMMszfl2udnfUGpzfdU3OPdha4ojT48aazPi
+	YSt5362V+XMz2XEV5qjsb4h79B0E0zvtF1YcQy7J1OCD4PNqErd69MOfAXFtO9qJVoJT7GfyU7l
+	FAZGlmBtvGgWmjqKfh9Fw02GSe8jNu9yP6V5ZPAY3t2S+5qPUvj7nPx771MN2h35tiIyQZhbVyc
+	mXjzALtc2bQDP2Z7TcBSwR3t9tnqszmiGr0vaamEDSIgHlBeiTt4b43pg4M+gbzXxAq3HPV3Gvv
+	2He1eTbfd99JbbC+No4YS7kj7cqM4Ff9T4sB6hCZiS3qW4eLm2H9ppBQ==
+X-Google-Smtp-Source: AGHT+IH0HCr6anUy0iyCzrPFK+tAN9tG7rQ9EDWtMkljZDh5aKkYGHbaGCt7PMpC+ELG08rvUPyyug==
+X-Received: by 2002:a05:620a:294a:b0:891:ae32:d696 with SMTP id af79cd13be357-891ae32d6b3mr3152351685a.66.1761322249347;
+        Fri, 24 Oct 2025 09:10:49 -0700 (PDT)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com. [209.85.222.175])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89c0dbcafe0sm415158885a.3.2025.10.24.09.10.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 09:10:49 -0700 (PDT)
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-89ead335959so30944085a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:10:48 -0700 (PDT)
+X-Received: by 2002:a17:903:244b:b0:290:9a31:26da with SMTP id
+ d9443c01a7336-290c9d31109mr364082495ad.16.1761321809382; Fri, 24 Oct 2025
+ 09:03:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH3PR10MB7436:EE_
-X-MS-Office365-Filtering-Correlation-Id: ee227f6f-3930-4e2b-7fdf-08de13162ab0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nYFwuGMOgHCBKr/TuekU1JbyTCeejVfXHwbPFS6rFXyZVAWeMAlhE0iwwnmg?=
- =?us-ascii?Q?c/1MWnx/UvI6NUEiKoiucLUzejD+fvLW67gWkKDiEBYtSBD2P/PYwByzEaLL?=
- =?us-ascii?Q?KkHO0+Qo8fy7oSQ5QWdPfUfNhACCmcLBVv83RwpTe2vVgucA222/3yOiLYVB?=
- =?us-ascii?Q?URupNxFhluUp0yOguJCoUq7O15jpprrNEGzuXz84xHO/DFtjHg7MTm0xLnu9?=
- =?us-ascii?Q?He7XBXvQp6YMniPZJ1f55LwY3OHgEdSJhSl9x56l222LJHIU+KjHrrWfKap3?=
- =?us-ascii?Q?mg2exQDicBq0QZflDBt6yt1aBOdUS3PdH1ZK4bZcp5/2LLYo2gYG89evEH+U?=
- =?us-ascii?Q?ZeN6usIv1eKFWl59BGhh4DkRhSm7sgWP3cSmLddHOW3KPoXdVnidxP9Yncae?=
- =?us-ascii?Q?FzXwW9CH27PI2dBcOlOlgH+ney6asnCa+IpWRjBGLSeHH+ZGLp36t/lz4kN5?=
- =?us-ascii?Q?o3CafsdQMF0LrC2+c9Ak4avqVQgVddelUyklYpvd5IoSB4o8vaZKD/JlNs3e?=
- =?us-ascii?Q?H7NK9lwyrdN5nhSynQZRQLgkdVtzXmlTZwqePqBuhDLpe+SIpB4qMx75mpsz?=
- =?us-ascii?Q?r2dSWW0hOHX3y/4wKoncW3JtUP+KVfsZRElMTJ5ozqIX6kLaNgbBD5bWSp2j?=
- =?us-ascii?Q?xHmJOJjk+JFTgRO9+/lQW8C1iSdTX16Xfq6RaoYYQ+wxI2/7En/QkFp93W5j?=
- =?us-ascii?Q?8DKd79AJIz8uDtxprtEVtiZXMWXBl6sIrZq6qT2Yh2Sbc+/b8qPpIYtiyCGo?=
- =?us-ascii?Q?hoLl1CZNIGIr0dEQ9hPD33HI9AjGxYkh7zdEI4RcGur+bKwbD+gt/u2aY+wU?=
- =?us-ascii?Q?kTTUjLkBIj9C+/i02/WBeAmqbdFa+5jlR3VS670FFMLuvtga8x2vwvMdj9OX?=
- =?us-ascii?Q?aE2mjmWPX80gQ5lU5UpZCtumzMoqvfqQYHuxtToq1UaeIU8MEv1SZjLFyjxs?=
- =?us-ascii?Q?iJP8+NNz8qlzYR/kq/F7m5SY3mL4VeEKdbyEzbreBStVaPoqm5VOPAjazX9J?=
- =?us-ascii?Q?UgTzF9I/Pz4uavp7mymN2J36s2qMMSHJ5ivnDcN1W1GIGBRYqzUGV9as1EZy?=
- =?us-ascii?Q?/OrSuWRUo+CXWztefmMaYYSOE+fH8WtIfCf+YE7PENIke17fgTMyxp1scquY?=
- =?us-ascii?Q?ul6Skv5hC5MuMyRFZ5wknrtQAOQcQi/lzA1jG+RX7jk1xRGk2aKzhcIW9v1h?=
- =?us-ascii?Q?oGxM2uw6DpLzFag9XKBc0xsjtm0aME6OQkAQHSeQpWvEX9u0X+AITLL9qYiv?=
- =?us-ascii?Q?oQQLhXs7Y6nT+WEDpINdX8aFuRYQb2pSRTQNG0IO4pBW/15ZjKrdslD/0XHs?=
- =?us-ascii?Q?WHYED0v+5dNGN2FKopNZ59bhtmUoVDX9TGK1erTAhsWqXcxZG3ucnUIl4tJR?=
- =?us-ascii?Q?qIBrJgyfYWM1Hp11+PqitncivUVZNszxpHhx9JsLFsIJC7ukriYrAf9FfB3T?=
- =?us-ascii?Q?PMjNFOzcvGs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ABnmRC9hhWUl/c0Z8Isfcf+wHT1pL0fa/Y5xPW4+bB7kpkUlcf4pbHuClcdQ?=
- =?us-ascii?Q?GnQ2wCah22ZT/I3/0oRunFJoL0gvcuRG+1uBMJ4MIrpCw4b7lbOPseN0aJO5?=
- =?us-ascii?Q?/c7QNah8yhDB9519srotnhWNXnmivFESRtRxzQpYgzN7nR8lG7ZOk2mbAnzj?=
- =?us-ascii?Q?qEhIrR3EvpW04l96Mcv1JjotA99hPNEKynDxr0EeJu8FPONDR/4H6SWgBeYQ?=
- =?us-ascii?Q?8WB6Ox56GuNPAXMlRVXdBHNEz2mhQuEqYaBZa9eG80mi3cMboxJCxCO7bx+B?=
- =?us-ascii?Q?Ube8RZDkWoZeQ+svHpc21l+lOOpRqj9aYt4H7zg/IIwtAvevl7DFXwqxFFsq?=
- =?us-ascii?Q?NL/k45KzCJXyBhKxfWOXWw8BGCG/l98HMMzO0bcjGSqYMvawSMmN2IpO6Sv3?=
- =?us-ascii?Q?QkmxAHC71kGWSmV9neRkGwUwCpVYw/Pif0jBEZ+Mj27l5KHEls8pFRtISLA6?=
- =?us-ascii?Q?DWiBZrCGJ6AUc+vdYwEAGjwWMJsjjy9s0DZCuJjYvT268QAXKFzOUd9ADqid?=
- =?us-ascii?Q?pPKVvUBNbbEh0zQ1qV04lEUERoPDDGwmwuP4+lA+hHSasbbyq7DEXJv+zAH6?=
- =?us-ascii?Q?GBrleYpLXxISnto+i9/thaW6QRAZ8CFTlzGLJ4n/QqnQVdBJTSdlqdeexvjs?=
- =?us-ascii?Q?LOK9nwmNmfkJb73CnDgy+cTkeLIwVrDMzRc/vIxicXuWHkya9DFcWyT5hi10?=
- =?us-ascii?Q?96Bi61LhBz3v4YYXQl9cCafu0gwSnbMzw9IILpbGjDsEdoovuznmClkKSiWM?=
- =?us-ascii?Q?DLDqKm1c8ybZ5JvfUkOo3A2ivuEfBXR1yXnuugUJd7G7ri2V6vsQzxVUeWEY?=
- =?us-ascii?Q?XphReau6+RRZp802QSHCd3Qfq40MkDAM6h5z7UPzyyC3jQfa/m+bvNOfg4tp?=
- =?us-ascii?Q?6ubnP9I7YIBunFPVyxJaIio4It/LSdQFd7KeVKXB58PzOX4QZoZ5vgYLaU0U?=
- =?us-ascii?Q?eITZbFiYdZ/J6MkireIxzSueRdTBRPVh2Ues48kdLnp4y0EOCzBfNcSO0xsq?=
- =?us-ascii?Q?mKBZxk+G2lhsDz9gn9VEC1JaLTj/SKRuZm9nIIZOeJvfap95VaCaaHoXrSKh?=
- =?us-ascii?Q?yGEFS0jUdSqgmjUPQ9eQt2Q9IedFE5RmZ7mRbwXd52MBYFmEaXdRELDYDAD7?=
- =?us-ascii?Q?d94aHE4lKHpak+4eYlo+29bRoC30KDYIIBc4aNet77UADN6BPzGkOwNXiwid?=
- =?us-ascii?Q?R/JJg1GYTUh3Ew/KmRWt7z8SW6l6wiZpj5QVUC44nhoZQfRaS8NH4ald4wOn?=
- =?us-ascii?Q?DqKiOpJJl0xsvE6lia9cZ7wy9trWqChZQ18OgutYy9J7Disoo6MuTxjaHB2M?=
- =?us-ascii?Q?wj63MTMF4+KJwFrjocvhvznxV/RxU3n/4C6NEwfJI2rYnoX66fQZCNTlvxxg?=
- =?us-ascii?Q?ke3fOLDFNvKQp2jM65Vi/it2UvgLJnk7eAfHZrAExRlTTgItk1QqHq4nrP56?=
- =?us-ascii?Q?4bG65EBCVenmId+5bnjBRVeVIg/DsHE645nUrLZIm6W02uSfzJ2UCmbtA7wU?=
- =?us-ascii?Q?5BIYulAZw1192U32wV8mAGLFfQ51ptemOzAvgVlrULX35yM+3AXLJldDgwId?=
- =?us-ascii?Q?osnpQfySlfivcY+T7N8N0apFo5HRE76FFusTKO1T5jvZYJqxgfzt0zmRiLOu?=
- =?us-ascii?Q?Fw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	lXfqxLvMrJZhy0+NPWz2gr9LJjTdaltUpYmB7v0WTcEgC834PTuRcBiQI7e3XgCw2zsgIEETkJ0k43oBfJ/KTlH3ZIDGO/zYIpF3LUzQjRkMYRDRk0aylPXH0jMhd7d8M+IKSNUI+j5msHIyVtDIMHews6FiQ7I4+A0hze7Ykeox4ekNdVXLMrDo9OczKQbZIBKBRV1Br1J/ImP0ePPJfrtjja4m/hYtYG1RlONNqmAcPC4NiQpJheUqMd/zxXmMnxyQ+Q7tfYht0EGxfllotjFrgHvOi1qA/sgC6uoZbRANJlQiLvCiqg8qRE8GNQgd4qOYSSNFuv2qpI92e+4OUXdKmrrFR33NIyNh+HT3a2LcdqDHsf0oQQ4rE/APqy9AJtCypf+kRrjpo32JuE5qzoURvmi4rgmPzhhywPrjBondFbHpPCpheBRgPqhsneRoESkDgoPBf1wnJ/Lo3lcMcX4seuaUcSRrmIFQ4v+0IV9hoPJ7d0pxEmR55Fdh1mBNn6HIMjnS+1qKZkDpw06fVArkF8dLC+Q0MgY/2FLStZVfphKcytrAmGuBKvzDn4CLIItex8osxlQJMOxDHIo0uJbJNrksU+vTVulHd85Pj6E=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee227f6f-3930-4e2b-7fdf-08de13162ab0
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 15:58:26.0328
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 83c6W1+i7pXQ2xhOFeTz77nUDbl1iAczy+dA39tG3FE6tSt8pgeGJ2K5FG5JoJPYo3FgFwpOZrFi66HNxcoYxMAFEnxt5IKwu99Wq84avm8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7436
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-24_03,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
- adultscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510020000 definitions=main-2510240144
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXzX3P+b6815md
- dE6tX0NJzoGQ/VhJVinLm79xIf6YWctQ75EA9Falghk7zKB6WC2BHMWqeY3vvBt+5NEV0Mwe1e+
- y4ophvS2D4ng0BDg4oHkQDY94tOV7rMaUcfrRNtjiaZDsHR0XoLbNbNtLfEr+0dpkTg/PPocHzk
- OShyKcQshP9EthKCrnf3cKMSldyUjuwLzMWgcTT2/GruUtqUMYqP+yk36iXMpzz3Wnqi8xGbqFY
- 6YL7KIQaHIikHHZz7PM6VR+AdzDikzW0YoOWOmj6d1dRibJ59MSJMr7+LdtrriZ4hRrQuy3AsnK
- c6lsO2lrEAoxHyAqo+mO8hW5LT9g0hSZUF7Nvmnwc8WKnLzccbQ2mtBvuXm+7uUxiOwiTK9Srpf
- b8fLA0k79Y75vpU75V7bDzFYQSfGrV5EdS+/8yQ2T4XJLnU8nCw=
-X-Proofpoint-ORIG-GUID: e07Ik1tvqFKu_q4OurL9FCBN337_QiAW
-X-Proofpoint-GUID: e07Ik1tvqFKu_q4OurL9FCBN337_QiAW
-X-Authority-Analysis: v=2.4 cv=FuwIPmrq c=1 sm=1 tr=0 ts=68fba22d b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=Ikd4Dj_1AAAA:8 a=IK7mdeaTXkNQ-_-jprUA:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:12091
+References: <20251023113257.v3.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
+ <CAMuHMdUg5UXRcnH18S8-QtR9y+GbnAcxEQB2EyTOgd=uSUYPTg@mail.gmail.com>
+In-Reply-To: <CAMuHMdUg5UXRcnH18S8-QtR9y+GbnAcxEQB2EyTOgd=uSUYPTg@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 24 Oct 2025 09:03:16 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Uo4YAh8zGeU+tsxHEapsPyjAr9AyBEaAgiL3mUnN41=w@mail.gmail.com>
+X-Gm-Features: AS18NWBMCp5d_6B9UUkRIRbhw0cZobNwXLRN_85Hn_tEol9iOKdQ3SjYiCqWIMo
+Message-ID: <CAD=FV=Uo4YAh8zGeU+tsxHEapsPyjAr9AyBEaAgiL3mUnN41=w@mail.gmail.com>
+Subject: Re: [PATCH v3] init/main.c: Wrap long kernel cmdline when printing to logs
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-s390 <linux-s390@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Andrew Chant <achant@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
+	"Paul E . McKenney" <paulmck@kernel.org>, Sven Schnelle <svens@linux.ibm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Brian Gerst <brgerst@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, Francesco Valla <francesco@valla.it>, 
+	Guo Weikang <guoweikang.kernel@gmail.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Ingo Molnar <mingo@kernel.org>, Jan Hendrik Farr <kernel@jfarr.cc>, Jeff Xu <jeffxu@chromium.org>, 
+	Kees Cook <kees@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Tejun Heo <tj@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 11:35:27PM -0400, Zi Yan wrote:
-> folio split clears PG_has_hwpoisoned, but the flag should be preserved in
-> after-split folios containing pages with PG_hwpoisoned flag if the folio is
-> split to >0 order folios. Scan all pages in a to-be-split folio to
-> determine which after-split folios need the flag.
->
-> An alternatives is to change PG_has_hwpoisoned to PG_maybe_hwpoisoned to
-> avoid the scan and set it on all after-split folios, but resulting false
-> positive has undesirable negative impact. To remove false positive, caller
-> of folio_test_has_hwpoisoned() and folio_contain_hwpoisoned_page() needs to
-> do the scan. That might be causing a hassle for current and future callers
-> and more costly than doing the scan in the split code. More details are
-> discussed in [1].
->
-> It is OK that current implementation does not do this, because memory
-> failure code always tries to split to order-0 folios and if a folio cannot
-> be split to order-0, memory failure code either gives warnings or the split
-> is not performed.
->
-> Link: https://lore.kernel.org/all/CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com/ [1]
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
+Hi,
 
-I guess this was split out to [0]? :)
+On Fri, Oct 24, 2025 at 12:51=E2=80=AFAM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> > +config CMDLINE_LOG_WRAP_IDEAL_LEN
+> > +       int "Length to try to wrap the cmdline when logged at boot"
+> > +       default 1021
+> > +       range -1 1021
+>
+> Apparently COMMAND_LINE_SIZE is still smaller than 1021 on several
+> architectures (even in asm-generic: 512).  Unfortunately only s390
+> still controls it through a config option, so you cannot have a
+> "depends on COMMAND_LINE_SIZE > 1021" here...
+>
+> > +       help
+> > +         At boot time, the kernel command line is logged to the consol=
+e.
+> > +         The log message will start with the prefix "Kernel command li=
+ne: ".
+> > +         The log message will attempt to be wrapped (split into multip=
+le log
+> > +         messages) at spaces based on CMDLINE_LOG_WRAP_IDEAL_LEN chara=
+cters.
+> > +         If wrapping happens, each log message will start with the pre=
+fix and
+> > +         all but the last message will end with " \". Messages may exc=
+eed the
+> > +         ideal length if a place to wrap isn't found before the specif=
+ied
+> > +         number of characters.
+> > +
+> > +         A value of -1 disables wrapping, though be warned that the ma=
+ximum
+>
+> Or zero, right?
+> So perhaps just use range 0 1021.
 
-[0]: https://lore.kernel.org/linux-mm/44310717-347c-4ede-ad31-c6d375a449b9@linux.dev/
+Sure, we can use 0 as the sentinel value. I was thinking -1 would be a
+more obvious "wrapping is totally disabled" value but I don't feel
+strongly about it. I'll change to 0 in the next patch.
 
-> ---
->  mm/huge_memory.c | 28 +++++++++++++++++++++++++---
->  1 file changed, 25 insertions(+), 3 deletions(-)
+
+> > +         length of a log message (1021 characters) may cause the cmdli=
+ne to
+> > +         be truncated.
+> > +
+> >  config INITRAMFS_PRESERVE_MTIME
+> >         bool "Preserve cpio archive mtimes in initramfs"
+> >         depends on BLK_DEV_INITRD
 >
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index fc65ec3393d2..f3896c1f130f 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3455,6 +3455,17 @@ bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
->  					caller_pins;
->  }
+> > --- a/init/main.c
+> > +++ b/init/main.c
 >
-> +static bool page_range_has_hwpoisoned(struct page *first_page, long nr_pages)
-> +{
-> +	long i;
-> +
-> +	for (i = 0; i < nr_pages; i++)
-> +		if (PageHWPoison(first_page + i))
-> +			return true;
-> +
-> +	return false;
-> +}
-> +
->  /*
->   * It splits @folio into @new_order folios and copies the @folio metadata to
->   * all the resulting folios.
-> @@ -3462,22 +3473,32 @@ bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
->  static void __split_folio_to_order(struct folio *folio, int old_order,
->  		int new_order)
->  {
-> +	/* Scan poisoned pages when split a poisoned folio to large folios */
-> +	bool check_poisoned_pages = folio_test_has_hwpoisoned(folio) &&
-> +				    new_order != 0;
->  	long new_nr_pages = 1 << new_order;
->  	long nr_pages = 1 << old_order;
->  	long i;
+> > +static void print_kernel_cmdline(const char *cmdline)
+> > +{
+> > +       size_t len;
+> > +
+> > +       /* Config option of -1 disables wrapping */
+> > +       if (CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN < 0) {
 >
-> +	folio_clear_has_hwpoisoned(folio);
-> +
-> +	/* Check first new_nr_pages since the loop below skips them */
-> +	if (check_poisoned_pages &&
-> +	    page_range_has_hwpoisoned(folio_page(folio, 0), new_nr_pages))
-> +		folio_set_has_hwpoisoned(folio);
->  	/*
->  	 * Skip the first new_nr_pages, since the new folio from them have all
->  	 * the flags from the original folio.
->  	 */
->  	for (i = new_nr_pages; i < nr_pages; i += new_nr_pages) {
->  		struct page *new_head = &folio->page + i;
-> -
->  		/*
->  		 * Careful: new_folio is not a "real" folio before we cleared PageTail.
->  		 * Don't pass it around before clear_compound_head().
->  		 */
->  		struct folio *new_folio = (struct folio *)new_head;
-> +		bool poisoned_new_folio = check_poisoned_pages &&
-> +			page_range_has_hwpoisoned(new_head, new_nr_pages);
->
->  		VM_BUG_ON_PAGE(atomic_read(&new_folio->_mapcount) != -1, new_head);
->
-> @@ -3514,6 +3535,9 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
->  				 (1L << PG_dirty) |
->  				 LRU_GEN_MASK | LRU_REFS_MASK));
->
-> +		if (poisoned_new_folio)
-> +			folio_set_has_hwpoisoned(new_folio);
-> +
->  		new_folio->mapping = folio->mapping;
->  		new_folio->index = folio->index + i;
->
-> @@ -3600,8 +3624,6 @@ static int __split_unmapped_folio(struct folio *folio, int new_order,
->  	int start_order = uniform_split ? new_order : old_order - 1;
->  	int split_order;
->
-> -	folio_clear_has_hwpoisoned(folio);
-> -
->  	/*
->  	 * split to new_order one order at a time. For uniform split,
->  	 * folio is split to new_order directly.
-> --
-> 2.51.0
->
+> As does zero, right?
+
+As the code is written right now, 0 does not disable wrapping. The
+code treats everything less than 23 characters (the length of "Kernel
+command line: " plus " \") to mean "wrap everything at the first
+space". Yes, it's a little weird to do it this way, but it was either
+that or add yet-another KConfig setting to disable wrapping and then
+set the minimum to something higher. In v1/v2 I had the minimum set to
+40 specifically to avoid the confusing case. There was previous
+discussion about this in v2 [1].
+
+...but yes, we can choose to make 0 be the special sentinel to disable
+wrapping. I'll assume that's what you want and I'll change it in the
+next version.
+
+
+> You can add a check for "COMMAND_LINE_SIZE <=3D 1021" here,  so the
+> compiler will eliminate the splitting code when it is not needed.
+
+As the Kconfig is described and as the code is written, someone could
+still choose wrapping even if COMMAND_LINE_SIZE <=3D 1021. Someone
+could, for instance, choose to wrap these lines at 100 or 200
+characters to make the log message look cleaner in their terminal/text
+editor. ...but you're right that I can write this to be more optimal
+for folks with shorter command lines who haven't touched the config.
+I'll change the "if" test to this:
+
+if (CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN =3D=3D 0 ||
+    IDEAL_CMDLINE_LEN >=3D COMMAND_LINE_SIZE - 1) {
+  pr_noitce(...);
+  return;
+}
+
+That changes the sentinel to 0 (as I think you requested) and should
+allow the compiler to optimize things out.
+
+Making sure I got my math correct... Let me know if you see something wrong=
+.
+
+KERNEL_CMDLINE_PREFIX_LEN is 21
+
+Assuming the CONFIG value isn't tiny, IDEAL_CMDLINE_LEN is the CONFIG
+value minus 21.
+
+So let's assume COMMAND_LINE_SIZE is 256. That means we can have at
+most a cmdline length 255 to handle the '\0' termination.
+
+So if the CONFIG value is (255 + 21) =3D 276 or more then we should hit
+the "if" test and early-out because we can't wrap. If the CONFIG value
+is 275 or less then we should proceed to wrapping.
+
+We want ((276 - 21) >=3D (256 - 1)) to be true. It is.
+
+We want ((275 - 21) >=3D (256 - 1)) to be false. It is.
+
+
+I'll wait a few days and send a v4. I'll fold in Andrew's "__init"
+patch as well.
+
+
+[1] http://lore.kernel.org/r/CAD=3DFV=3DWFbH6kBMcoHNwQzsay6ecQQ2sZ3qc-=3DXT=
+boFXK+RSspA@mail.gmail.com
+
+
+-Doug
 
