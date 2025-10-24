@@ -1,238 +1,180 @@
-Return-Path: <linux-kernel+bounces-869177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AEBEC07396
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:13:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D56C0721F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B4F3A6BE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:11:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2263BB6A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16473375CD;
-	Fri, 24 Oct 2025 16:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15C9332EBD;
+	Fri, 24 Oct 2025 16:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MwYSgQF6"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E8LewufV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F524335BBE
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A76C32A3C6;
+	Fri, 24 Oct 2025 16:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761322252; cv=none; b=aOsIJ17oY8BK+2D0MWcF68C5TmjxNNrbzQ/S7f98UraxnG1jmrkSJC/DtBMm/9TrvjuYUendDVFNyhKdIQuugr6KQWIV+p8IhtuTqCZQo/LA6xNUxBk7xxCqqlmMGiOktizHDRPE95RblIS264Tpg6GdZBq+YvaTpRJi9Gf3cgA=
+	t=1761321831; cv=none; b=l6nInrYv9UjUH9fnMxdjV6U/XJmBFdiLj4xI3dzLOjnqwUrgAWgTC/Za1TKenKfybcrw+bgZmAPi7uT4C2/ji76KbDQru5QhnLh84k3AoDiGTlXykwTX616C2+J6wWIjUi6bApLGYbv+JLklOXmjFpUDbiLu4LOtZVMrYlQBdTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761322252; c=relaxed/simple;
-	bh=MZveBwN8pITgiKu2IvyyZYnSYExm65gAyhHVYf2v+Zs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BQArh6TUByznpmHTuE9UkJwKTE0TfgtLb7rMPLwFtTWVBesdftBhBa3//6E9fb/ejNweHY1SQmIyNZqKCPJ1Qe36ymvUs3juIEhEuHxz/lPukatQ29XlRana5+FS/U+avJQa2sY2mLc8Jr+nJQ4ln936EaQED95TyGt4zfbYD5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MwYSgQF6; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-88f8f346c2cso237415785a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:10:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761322249; x=1761927049; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=opD0p0FG32wb49KtDa/XK4x3J2J0EHXdG+v2/vEH5Fw=;
-        b=MwYSgQF6ZGQCuHJ9/3uqCM3HPBhX6w09ckq/WgT6xQOsUnnGqA7VhaP2ozVQ4zjW8H
-         lTFBE65Tei1OfgLF4kFW+u1pcqBCWbFZezcsO5e3hlIymHAcJAkc4UrMkiYACaUCM7Jc
-         sIruraoNk+rfw8O5Zd6goOs/yDmjUEU0yRZ0U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761322249; x=1761927049;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=opD0p0FG32wb49KtDa/XK4x3J2J0EHXdG+v2/vEH5Fw=;
-        b=IFY1IZ576Ry1VIUn23tTvJ/ZSyPpsxXXZm6z18pegNL7kOef8YOYOKLMB+di7VRkcR
-         ucymduevGaIUHHksS1QrPHRAtaCr3bCzYt2jOVqjs0v7D7HSRRvTSyBiPXzWQp/5LgRU
-         lEzmSbuiJsSY+wG2VsIFlARxvKvGGE0WeeL3AKySVPqJUzy+XIqXPTNVcRnADRuWmTPM
-         hyIcqn9+Dm+X/A7q2kprJRkR3lLBIxSZuh7E43wL+LS/j/e7l7+PvUHkxzJS/2CC18n0
-         2lVbLTdmtMuwR0rS4W4+Vqq5F9GZyG4EvROx2AelFaPd7/IZ5V7NBahHbMHgqEHd9dHV
-         /4Nw==
-X-Gm-Message-State: AOJu0Yy1+YKlZ3IAn7D59hnvvU37qGbv5m9n7uJIyqmXeMxTUYKP63L1
-	yUXrGNobUD0KkFLJUHidI7ZDOr5x2PSXVRzr2qcayjlgspU4UYlbkvIGCQ8F1AX62kZNCc65J3e
-	S8tA=
-X-Gm-Gg: ASbGnctZYiPLq+3aU7YOgzEvt2T2tySn6mDATcAvrWZpjVbEui4rqIPNVS6jOdP2PLa
-	TGqENElYV9CfVrUZ6vmGWwrBbfFbTfS4YDva1yhk5IFiFaNGaQCIvAOFfFWz1dVyzoS6amdpdsi
-	kVjNmoN7WvKvq+Xc9KwRBWfVsjUARh7f36KtyBGsMMszfl2udnfUGpzfdU3OPdha4ojT48aazPi
-	YSt5362V+XMz2XEV5qjsb4h79B0E0zvtF1YcQy7J1OCD4PNqErd69MOfAXFtO9qJVoJT7GfyU7l
-	FAZGlmBtvGgWmjqKfh9Fw02GSe8jNu9yP6V5ZPAY3t2S+5qPUvj7nPx771MN2h35tiIyQZhbVyc
-	mXjzALtc2bQDP2Z7TcBSwR3t9tnqszmiGr0vaamEDSIgHlBeiTt4b43pg4M+gbzXxAq3HPV3Gvv
-	2He1eTbfd99JbbC+No4YS7kj7cqM4Ff9T4sB6hCZiS3qW4eLm2H9ppBQ==
-X-Google-Smtp-Source: AGHT+IH0HCr6anUy0iyCzrPFK+tAN9tG7rQ9EDWtMkljZDh5aKkYGHbaGCt7PMpC+ELG08rvUPyyug==
-X-Received: by 2002:a05:620a:294a:b0:891:ae32:d696 with SMTP id af79cd13be357-891ae32d6b3mr3152351685a.66.1761322249347;
-        Fri, 24 Oct 2025 09:10:49 -0700 (PDT)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com. [209.85.222.175])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89c0dbcafe0sm415158885a.3.2025.10.24.09.10.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 09:10:49 -0700 (PDT)
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-89ead335959so30944085a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:10:48 -0700 (PDT)
-X-Received: by 2002:a17:903:244b:b0:290:9a31:26da with SMTP id
- d9443c01a7336-290c9d31109mr364082495ad.16.1761321809382; Fri, 24 Oct 2025
- 09:03:29 -0700 (PDT)
+	s=arc-20240116; t=1761321831; c=relaxed/simple;
+	bh=4rQ06hcRDPh06TcIr4Hhsm2kdiwKuNYxumRXFNrUjJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=joe6FQClezer77/ddQFVWihMr9QQf/SK2UBSonJanoe4W7c54VzfgaZ/r+06DMFgGEjvftc9lHNukK8Oo3VKd8+Xt1ysUQQEYGWu8gltBUtF+pitsouX3Lzo+QWNSDXqSk2dIIkkwPK4LhErwYuPrNb+VCFyM1GakzJhUT59BAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E8LewufV; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761321830; x=1792857830;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=4rQ06hcRDPh06TcIr4Hhsm2kdiwKuNYxumRXFNrUjJA=;
+  b=E8LewufVOxQ5HbMhl4pPzsvceo8qzmYX8Zw0jI61OYSmJYCHZ/kQduSA
+   SnjYLzl0Ahru1o6ZAzTWcobcGe5Qe9d7SDFRVLvmMg9uCTYw8fQK5QSCh
+   nilq95pjqPgfPYHCN2Bjz7ozsi+Xt0PV7qeO/OBIIoTrfq1LT9/sFrVvb
+   ENVWn244n+WWYnIhlUUKarnp8lUtzixF8fhFBhlm0VyKA5YFmDK7rpVD7
+   0OMD20wEnLsF5HW3GdRRk23e8S0lJYLebnWGHc2+77+tMwQ+L80hge7EF
+   RTaTeMAwsJ7xs41devNKfcmj3Dt8NgfWXVYWxpt7sHvNaiti52koYOcTW
+   Q==;
+X-CSE-ConnectionGUID: YJvAx88bRAmZ7ChbH30NLA==
+X-CSE-MsgGUID: lyFltYAaQP2wqda7BA/o3A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="81132279"
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="81132279"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 09:03:49 -0700
+X-CSE-ConnectionGUID: oM1QeLgRR2izo7nsOkSYWQ==
+X-CSE-MsgGUID: nRGZyRpfSYK4S0x3HQThpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="215117928"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.245.147])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 09:03:45 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vCKGT-00000002Cpo-42le;
+	Fri, 24 Oct 2025 19:03:41 +0300
+Date: Fri, 24 Oct 2025 19:03:41 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 1/5] i3c: Add HDR API support
+Message-ID: <aPujXUO2h5zHy2fj@smile.fi.intel.com>
+References: <20251014-i3c_ddr-v6-0-3afe49773107@nxp.com>
+ <20251014-i3c_ddr-v6-1-3afe49773107@nxp.com>
+ <aPnmCwwZVZ5egqkP@smile.fi.intel.com>
+ <aPpHTej/vKfiN68k@lizhi-Precision-Tower-5810>
+ <aPpyf1xPmU_koEXH@smile.fi.intel.com>
+ <aPq/6/+63sHuq/qy@lizhi-Precision-Tower-5810>
+ <aPsZB44qXR77jNHF@smile.fi.intel.com>
+ <aPuHKs3u344zoI2+@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023113257.v3.1.I095f1e2c6c27f9f4de0b4841f725f356c643a13f@changeid>
- <CAMuHMdUg5UXRcnH18S8-QtR9y+GbnAcxEQB2EyTOgd=uSUYPTg@mail.gmail.com>
-In-Reply-To: <CAMuHMdUg5UXRcnH18S8-QtR9y+GbnAcxEQB2EyTOgd=uSUYPTg@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 24 Oct 2025 09:03:16 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Uo4YAh8zGeU+tsxHEapsPyjAr9AyBEaAgiL3mUnN41=w@mail.gmail.com>
-X-Gm-Features: AS18NWBMCp5d_6B9UUkRIRbhw0cZobNwXLRN_85Hn_tEol9iOKdQ3SjYiCqWIMo
-Message-ID: <CAD=FV=Uo4YAh8zGeU+tsxHEapsPyjAr9AyBEaAgiL3mUnN41=w@mail.gmail.com>
-Subject: Re: [PATCH v3] init/main.c: Wrap long kernel cmdline when printing to logs
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-s390 <linux-s390@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Andrew Chant <achant@google.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Sven Schnelle <svens@linux.ibm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Brian Gerst <brgerst@gmail.com>, 
-	Christian Brauner <brauner@kernel.org>, Francesco Valla <francesco@valla.it>, 
-	Guo Weikang <guoweikang.kernel@gmail.com>, Huacai Chen <chenhuacai@kernel.org>, 
-	Ingo Molnar <mingo@kernel.org>, Jan Hendrik Farr <kernel@jfarr.cc>, Jeff Xu <jeffxu@chromium.org>, 
-	Kees Cook <kees@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Tejun Heo <tj@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aPuHKs3u344zoI2+@lizhi-Precision-Tower-5810>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi,
+On Fri, Oct 24, 2025 at 10:03:22AM -0400, Frank Li wrote:
+> On Fri, Oct 24, 2025 at 09:13:27AM +0300, Andy Shevchenko wrote:
+> > On Thu, Oct 23, 2025 at 07:53:15PM -0400, Frank Li wrote:
+> > > On Thu, Oct 23, 2025 at 09:22:55PM +0300, Andy Shevchenko wrote:
+> > > > On Thu, Oct 23, 2025 at 11:18:37AM -0400, Frank Li wrote:
+> > > > > On Thu, Oct 23, 2025 at 11:23:39AM +0300, Andy Shevchenko wrote:
+> > > > > > On Tue, Oct 14, 2025 at 12:40:00PM -0400, Frank Li wrote:
 
-On Fri, Oct 24, 2025 at 12:51=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> > +config CMDLINE_LOG_WRAP_IDEAL_LEN
-> > +       int "Length to try to wrap the cmdline when logged at boot"
-> > +       default 1021
-> > +       range -1 1021
->
-> Apparently COMMAND_LINE_SIZE is still smaller than 1021 on several
-> architectures (even in asm-generic: 512).  Unfortunately only s390
-> still controls it through a config option, so you cannot have a
-> "depends on COMMAND_LINE_SIZE > 1021" here...
->
-> > +       help
-> > +         At boot time, the kernel command line is logged to the consol=
-e.
-> > +         The log message will start with the prefix "Kernel command li=
-ne: ".
-> > +         The log message will attempt to be wrapped (split into multip=
-le log
-> > +         messages) at spaces based on CMDLINE_LOG_WRAP_IDEAL_LEN chara=
-cters.
-> > +         If wrapping happens, each log message will start with the pre=
-fix and
-> > +         all but the last message will end with " \". Messages may exc=
-eed the
-> > +         ideal length if a place to wrap isn't found before the specif=
-ied
-> > +         number of characters.
-> > +
-> > +         A value of -1 disables wrapping, though be warned that the ma=
-ximum
->
-> Or zero, right?
-> So perhaps just use range 0 1021.
+...
 
-Sure, we can use 0 as the sentinel value. I was thinking -1 would be a
-more obvious "wrapping is totally disabled" value but I don't feel
-strongly about it. I'll change to 0 in the next patch.
+> > > > > > > +/* keep back compatible */
+> > > > > > > +#define i3c_priv_xfer i3c_xfer
+> > > > > >
+> > > > > > How many of the current users do this? Can't we just rename treewide?
+> > > > >
+> > > > > git grep -r priv_xfer drivers/
+> > > >
+> > > > `git grep -lw ...` is a better approach :-)
+> > > >
+> > > > > drivers/base/regmap/regmap-i3c.c:       struct i3c_priv_xfer xfers[] = {
+> > > > > drivers/base/regmap/regmap-i3c.c:       return i3c_device_do_priv_xfers(i3c, xfers, 1);
+> > > > > drivers/base/regmap/regmap-i3c.c:       struct i3c_priv_xfer xfers[2];
+> > > > > drivers/base/regmap/regmap-i3c.c:       return i3c_device_do_priv_xfers(i3c, xfers, 2);
+> > > > > drivers/hwmon/lm75.c:   struct i3c_priv_xfer xfers[] = {
+> > > > > drivers/hwmon/lm75.c:   ret = i3c_device_do_priv_xfers(i3cdev, xfers, 2);
+> > > > > drivers/hwmon/lm75.c:   struct i3c_priv_xfer xfers[] = {
+> > > > > drivers/hwmon/lm75.c:   return i3c_device_do_priv_xfers(i3cdev, xfers, 1);
+> > > > > drivers/i3c/device.c:int i3c_device_do_xfers(struct i3c_device *dev, struct i3c_priv_xfer *xfers,
+> > > > > drivers/i3c/master.c:   if (!ops->priv_xfers && !ops->i3c_xfers)
+> > > > > drivers/i3c/master.c:   if (!master->ops->priv_xfers)
+> > > > > drivers/i3c/master.c:   return master->ops->priv_xfers(dev, xfers, nxfers);
+> > > > > drivers/i3c/master/dw-i3c-master.c:static int dw_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
+> > > > > drivers/i3c/master/dw-i3c-master.c:                                 struct i3c_priv_xfer *i3c_xfers,
+> > > > > drivers/i3c/master/dw-i3c-master.c:     .priv_xfers = dw_i3c_master_priv_xfers,
+> > > > > drivers/i3c/master/i3c-master-cdns.c:static int cdns_i3c_master_priv_xfers(struct i3c_dev_desc *dev,
+> > > > > drivers/i3c/master/i3c-master-cdns.c:                                 struct i3c_priv_xfer *xfers,
+> > > > > drivers/i3c/master/i3c-master-cdns.c:   .priv_xfers = cdns_i3c_master_priv_xfers,
+> > > > > drivers/i3c/master/mipi-i3c-hci/core.c:static int i3c_hci_priv_xfers(struct i3c_dev_desc *dev,
+> > > > > drivers/i3c/master/mipi-i3c-hci/core.c:                       struct i3c_priv_xfer *i3c_xfers,
+> > > > > drivers/i3c/master/mipi-i3c-hci/core.c: .priv_xfers             = i3c_hci_priv_xfers,
+> > > > > drivers/i3c/master/renesas-i3c.c:static int renesas_i3c_priv_xfers(struct i3c_dev_desc *dev, struct i3c_priv_xfer *i3c_xfers,
+> > > > > drivers/i3c/master/renesas-i3c.c:       .priv_xfers = renesas_i3c_priv_xfers,
+> > > > > drivers/i3c/master/svc-i3c-master.c:    struct i3c_priv_xfer *xfer;
+> > > > > drivers/i3c/master/svc-i3c-master.c:     * at svc_i3c_master_priv_xfers().
+> > > > > drivers/i3c/master/svc-i3c-master.c:static int svc_i3c_master_i3c_xfers(struct i3c_dev_desc *dev, struct i3c_priv_xfer *xfers,
+> > > > > drivers/net/mctp/mctp-i3c.c:    struct i3c_priv_xfer xfer = { .rnw = 1, .len = mi->mrl };
+> > > > > drivers/net/mctp/mctp-i3c.c:    rc = i3c_device_do_priv_xfers(mi->i3c, &xfer, 1);
+> > > > > drivers/net/mctp/mctp-i3c.c:    struct i3c_priv_xfer xfer = { .rnw = false };
+> > > > > drivers/net/mctp/mctp-i3c.c:    rc = i3c_device_do_priv_xfers(mi->i3c, &xfer, 1);
+> > > > >
+> > > > > After this patch merged, I can clean up it at difference subsytem. After
+> > > > > all cleanup done, we can safely remove this define.
+> > > >
+> > > > I counted 9. I think it's not a big deal to convert all of them at once without
+> > > > leaving an intermediate state. But this is a call for the I³C subsystem maintaiiner.
+> > >
+> > > There also are other cleanup works. The key point is that everyone agree my
+> > > HDR solution. Cleanup these is not big deal. I am not sure how to avoid
+> > > build broken at difference subsystem.
+> > >
+> > > After this patch merge, cleanup will be easier and safer.
+> >
+> > Then leave that renaming to the cleanup series. No need to use a define, just
+> > use the old function name.
+> 
+> Using old function name for HDR will be very strange and conflict with
+> spec's name convention.
+> 
+> The term 'private' transfer in i3c spec is specific for SDR transfer. It
+> is neccessary steps to complete whole naming switches.
 
+Right, but this out of scope OR a prerequisite to this series. My point that
+these two shouldn't be mixed and one left half-baked.
 
-> > +         length of a log message (1021 characters) may cause the cmdli=
-ne to
-> > +         be truncated.
-> > +
-> >  config INITRAMFS_PRESERVE_MTIME
-> >         bool "Preserve cpio archive mtimes in initramfs"
-> >         depends on BLK_DEV_INITRD
->
-> > --- a/init/main.c
-> > +++ b/init/main.c
->
-> > +static void print_kernel_cmdline(const char *cmdline)
-> > +{
-> > +       size_t len;
-> > +
-> > +       /* Config option of -1 disables wrapping */
-> > +       if (CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN < 0) {
->
-> As does zero, right?
-
-As the code is written right now, 0 does not disable wrapping. The
-code treats everything less than 23 characters (the length of "Kernel
-command line: " plus " \") to mean "wrap everything at the first
-space". Yes, it's a little weird to do it this way, but it was either
-that or add yet-another KConfig setting to disable wrapping and then
-set the minimum to something higher. In v1/v2 I had the minimum set to
-40 specifically to avoid the confusing case. There was previous
-discussion about this in v2 [1].
-
-...but yes, we can choose to make 0 be the special sentinel to disable
-wrapping. I'll assume that's what you want and I'll change it in the
-next version.
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-> You can add a check for "COMMAND_LINE_SIZE <=3D 1021" here,  so the
-> compiler will eliminate the splitting code when it is not needed.
-
-As the Kconfig is described and as the code is written, someone could
-still choose wrapping even if COMMAND_LINE_SIZE <=3D 1021. Someone
-could, for instance, choose to wrap these lines at 100 or 200
-characters to make the log message look cleaner in their terminal/text
-editor. ...but you're right that I can write this to be more optimal
-for folks with shorter command lines who haven't touched the config.
-I'll change the "if" test to this:
-
-if (CONFIG_CMDLINE_LOG_WRAP_IDEAL_LEN =3D=3D 0 ||
-    IDEAL_CMDLINE_LEN >=3D COMMAND_LINE_SIZE - 1) {
-  pr_noitce(...);
-  return;
-}
-
-That changes the sentinel to 0 (as I think you requested) and should
-allow the compiler to optimize things out.
-
-Making sure I got my math correct... Let me know if you see something wrong=
-.
-
-KERNEL_CMDLINE_PREFIX_LEN is 21
-
-Assuming the CONFIG value isn't tiny, IDEAL_CMDLINE_LEN is the CONFIG
-value minus 21.
-
-So let's assume COMMAND_LINE_SIZE is 256. That means we can have at
-most a cmdline length 255 to handle the '\0' termination.
-
-So if the CONFIG value is (255 + 21) =3D 276 or more then we should hit
-the "if" test and early-out because we can't wrap. If the CONFIG value
-is 275 or less then we should proceed to wrapping.
-
-We want ((276 - 21) >=3D (256 - 1)) to be true. It is.
-
-We want ((275 - 21) >=3D (256 - 1)) to be false. It is.
-
-
-I'll wait a few days and send a v4. I'll fold in Andrew's "__init"
-patch as well.
-
-
-[1] http://lore.kernel.org/r/CAD=3DFV=3DWFbH6kBMcoHNwQzsay6ecQQ2sZ3qc-=3DXT=
-boFXK+RSspA@mail.gmail.com
-
-
--Doug
 
