@@ -1,229 +1,149 @@
-Return-Path: <linux-kernel+bounces-869022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412A5C06BA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA6AC06BB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 92FC135C8F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:37:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 865D535C9B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1976D320A06;
-	Fri, 24 Oct 2025 14:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6238131352B;
+	Fri, 24 Oct 2025 14:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f4LruAbw"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SGCqHcJT"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412C92101AE
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE1C2264D6
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761316616; cv=none; b=avv/cDQbOVr4duB0cYjnYBBY2uQFlJ+kgMumnbdc5MKh3Z3qZkq3DBZJ0LKcb/fhJRqHFG8EofL+EzspUvrzt19a8OD7QI/G7/33cVL7T8qLUzDIdLiowYR6cR+jWiiEFXd7tVIOE90QsxqZZNzMQap6UXWCccq6SuKYz0yFzRE=
+	t=1761316631; cv=none; b=CJG8ac0dStOHKvPBEzm21zwH2R5dDF25PbwUFLMznQe5V6vOkRRhMseiXLlmi5DhAYifOEdn9lMGrWl9l8QiIe88LZJXwR8jhtMhzF5RXofiuawjvhE+Hm+Ux9EQXFvLXiUOIS0LCPZJPHQeLVMp+zF8NaOqTjTU7lj0T5oBnvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761316616; c=relaxed/simple;
-	bh=7POTLgOQMSvDxIjq1wqPOOdPmObt8KgLrizCHzkYhn0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lFHEdMN9TUmyhQTib3f0GgsLNy8C2TRsspAwy9+krmaUgwD+RBdnLy52MYd2TY/6s2muqC3SfKjIQgEfgKFFlXRhZK7hwfHw3hwk0qj6X1/gxHcfPjymhG3QiGfIz39L+vhSeDkeqY4vlb9JLpkIzyzMp4m4XKiNPqZoAK0u6KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f4LruAbw; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2930e6e2c03so23031545ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:36:54 -0700 (PDT)
+	s=arc-20240116; t=1761316631; c=relaxed/simple;
+	bh=5bzAQm1vpD7lTerhTYq37aTukVXzrzouyw8pD23L98Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SXBNBM4/NsizCcF+eSZdOXdlQNKu8Do/4ChnhVMKsO/RnZIq7CZOfMWHmGD7vthjTt8XpI/OZ7Qz2DrscioTX00SdTradYk90DQx5S8phx33SshA/Uiysfr17vrsO97BVtwZRdiHaZ0uvIFYG/gJKyeyzUDj2p0EbxMegzelHlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SGCqHcJT; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7a2738daea2so1891635b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:37:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761316614; x=1761921414; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8gWpJOPikpazVbpXRSUPMCcvrbTBk5c7sNdJD5ZAL5c=;
-        b=f4LruAbwGC7NvQfpfbN76Yj4wOdfUQMXmRa9yXRCYqVLCvpKM+DOcf8qKT+Cq5HmpF
-         eFGQ3Zs08aupJi37oT0laKXktHx9Hi/4GTGLFUSOFQEoa+8RL3W+oi8rjz2N97b8SulF
-         khZYHZdNmQHASNx7zXNnzE691sq0q9m1MBeN5oeldppylyeWbhR2ZjdULm8lPQBDMYTN
-         LqhZ69mvKkaBI53bmuDMu0e0bdTXp4uy5WsJRMXvmTuRz2+DEcMjUKilqSyCN1ACboLD
-         29ytfDZiogxJB0mhQ01wbrG89uPplqKmXe3BJUX/JxkMhigOzYgppF8cNvl2YODRER7r
-         2+Iw==
+        d=gmail.com; s=20230601; t=1761316627; x=1761921427; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=z3plulC99H/+7ueocjB6qUXe51ScV5oNChMwjLtEQgQ=;
+        b=SGCqHcJTyYG0CXfKAJ546w7XJZcym7C8Na1ke6Qybwi4UeJ9v4McgfcVa3hqidCPYt
+         ZQ8cA5Dx6/W0Na7cFT77nEMNfYpCQdaWx2sDQMsJp6Pn+RUiBkrfW0uwXydmwGEkXhMq
+         yL9a+tFGEA/JikU2njwiscCc0e/i8tzRtkQO0Qw7Hvb/r+r6PQYXiHTtyAzfu0As1alz
+         PTy5D1XuSTAGg6Yih0VEpUx+L1DLMAPNbnkBgUOymQpthsy3McmWr0teH8qrgEiPHleR
+         jBZ3KEpsQ1SzLacaVZOqeTFjd1f7Me12a13ulQoHJxOb/CtvAhoCTDdfK5yn7mlt/xOP
+         XkXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761316614; x=1761921414;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8gWpJOPikpazVbpXRSUPMCcvrbTBk5c7sNdJD5ZAL5c=;
-        b=MuZp1DhqWD+FVUMX4vmnOH3y2glRxexJJUe528je0OoEoj5cXxFa+Y0GWVnHZ/VIhI
-         QbKPCQhmG6eBga6JOdf3wqr2nqrqZFPe2o9u9f8ue3HWzfEHF1mTBjPyeaYPlMpPwp2y
-         el8IMqBtTfFmFUE3ldnNOBw/SAkqWiDwM+9tt4w7+2xbGcPP/8Ds4OmEH1zP4TZktEA9
-         dRyyTwnFcbrsDlD2znzGH1aTiaIb8iOJahRD9tMPyJHJKEfR7Zv93U+aYIhRb5GtbMxQ
-         YP8D587Wn5MvFF8/KPgAWgcYqwGdHUmTd9CWgJ1B/QA6ib2tlRlcYegJ8tgyDs2Eey1K
-         /0Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUtANhiqAGzzclCOPsH7QAgAZIFPHuVLp/SfxEAd/hw4Bkx70WtZH1rSVzHG85ITgCiroLWG5dX+1KNva0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSGuGsvKvMB6OnIx72gY9olA8daBER+srtn0xbury9YeWiKN1B
-	7eYQyJROiqFiFQ4AeM4bhy+qzzqDQ9/X/otNkeF2DHmbux2csFunW9Xd04d2TgbpzIJ1WcdtpDZ
-	qODnlTfXPeX8v52izq3p3HkVWlA==
-X-Google-Smtp-Source: AGHT+IHpZZ9f9FI2oIDKJuatT8tIt0u+E9sskkPVtdG8cewdd4WM+aJNDiUGBZhPHxdPQPN/WAuNAtpnF8qjPR3V7w==
-X-Received: from plcq12.prod.google.com ([2002:a17:902:e30c:b0:290:28e2:ce4e])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:f68c:b0:290:91d2:9304 with SMTP id d9443c01a7336-290c9c8a770mr324316695ad.4.1761316613376;
- Fri, 24 Oct 2025 07:36:53 -0700 (PDT)
-Date: Fri, 24 Oct 2025 07:36:51 -0700
-In-Reply-To: <aPpEPZ4YfrRHIkal@google.com>
+        d=1e100.net; s=20230601; t=1761316627; x=1761921427;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z3plulC99H/+7ueocjB6qUXe51ScV5oNChMwjLtEQgQ=;
+        b=aDLCaC4UKKt/Z040EBB7JYRrNxNyOdxVvFmAXI4WsHAOPLihQd9GLcdUl9M+85Zbr4
+         JdOxfHi2q28oUbh40H21WUPRCC1ftEvyR94DSJyY4F5hswbAiVLo0tXy0vqa6qRBQ4YG
+         mFpICakUR/pOEN3wTVvBnc8AlNubNTwIWtUx4eRzb9lAPVqgoPw8FQGolMV/pPJcs77o
+         cJl4IaKV9AY9NHKHbONKkQR/sA6wabhTt8IyAV/3CCpyQOJKf0odACcLd91TPqqa+xMa
+         IPtbZzsplDak4fl2KX/CRPsVPp6/dwZpO4SnlJFh8P/y4NLrCnFdrulD4MHSI0PKFqnA
+         /NGA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+iuEYEgLCfOCqKpsCbuM3jSf/i/dQ/jG/ZNlntP+FKus6CaovFAgGO5hDalpT7wtUz+qMeX9j9/epU/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6uQryL63KYWtsMX5gtj6F2JX671uFBRGO687lDxCA+JF6M/ol
+	9eMAP8e2SClKkgNyzffzfPgM+Fdenj4pUQCRSOn79B6WL0yMu/EE6g11hCKZ7w==
+X-Gm-Gg: ASbGncsQql0Iea7HOmdT3v98w1A3CASfRa3oBaYCUMyjYydWn9+j/dchgzNmoZYQb7U
+	en3CUIfiieTDTqGCRmCbGOng2YAyZS0MQ7qZEXybGxp842NA3oLOGHjcmndATNnTf7bcFoMncVy
+	xNPwao5lsXpDu2uJGc2NaxejQw91LjKyzFBo6B5EubhfxtK2CaL1VFgv+mAnYq5tEQW9m/wh0hq
+	mf8STPz9blYYJvtfhGn9UfkZHnf0dZcR1p/5jhXl95pjt8dc3smaLldC+ReEAzSwCZKmS4X0QHL
+	lP7mGWwC9A+Cri48gxqmt4FauCO+qfaulWL1R/0JFtw31NCwQdpYHs5dUPGymzIX6YXL1w58BWi
+	FwGTWQHX3CNROX1hPt8ZjzGXbvK+L6O7Nvz2Ny2JNTN48Ajdjf7gW1pNQxK6vhdDImlpEevLNm7
+	5sqx/5m4pYi50t7fAzuclbADFfeF14O5YKqg==
+X-Google-Smtp-Source: AGHT+IEAG9dCd057H6ZgsQJv28clY3E4+KDoFKMP468zgwqODZ4ztBCcpbGHu5MvdqVczkpUggcgHQ==
+X-Received: by 2002:a05:6a00:1ace:b0:781:9a6:116a with SMTP id d2e1a72fcca58-7a2208f0777mr28482023b3a.9.1761316626603;
+        Fri, 24 Oct 2025 07:37:06 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274b8a0edsm6091469b3a.35.2025.10.24.07.37.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 07:37:06 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon fixes for v6.18-rc3
+Date: Fri, 24 Oct 2025 07:37:04 -0700
+Message-ID: <20251024143704.1144808-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1760731772.git.ackerleytng@google.com> <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
- <2457cb3b-5dde-4ca1-b75d-174b5daee28a@arm.com> <diqz4irqg9qy.fsf@google.com>
- <diqzy0p2eet3.fsf@google.com> <aPlpKbHGea90IebS@google.com>
- <diqzv7k5emza.fsf@google.com> <aPpEPZ4YfrRHIkal@google.com>
-Message-ID: <diqzqzuse58c.fsf@google.com>
-Subject: Re: [RFC PATCH v1 07/37] KVM: Introduce KVM_SET_MEMORY_ATTRIBUTES2
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Steven Price <steven.price@arm.com>, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
-	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
-	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
-	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
-	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
-	keirf@google.com, kent.overstreet@linux.dev, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
-	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
-	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
-	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
-	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
-	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
-	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, 
-	shakeel.butt@linux.dev, shuah@kernel.org, suzuki.poulose@arm.com, 
-	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
-	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	vkuznets@redhat.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Sean Christopherson <seanjc@google.com> writes:
+Hi Linus,
 
-> On Thu, Oct 23, 2025, Ackerley Tng wrote:
->> Sean Christopherson <seanjc@google.com> writes:
->> 
->> > On Wed, Oct 22, 2025, Ackerley Tng wrote:
->> >> Ackerley Tng <ackerleytng@google.com> writes:
->> >> 
->> >> Found another issue with KVM_CAP_MEMORY_ATTRIBUTES2.
->> >> 
->> >> KVM_CAP_MEMORY_ATTRIBUTES2 was defined to do the same thing as
->> >> KVM_CAP_MEMORY_ATTRIBUTES, but that's wrong since
->> >> KVM_CAP_MEMORY_ATTRIBUTES2 should indicate the presence of
->> >> KVM_SET_MEMORY_ATTRIBUTES2 and struct kvm_memory_attributes2.
->> >
->> > No?  If no attributes are supported, whether or not KVM_SET_MEMORY_ATTRIBUTES2
->> > exists is largely irrelevant.
->> 
->> That's true.
->> 
->> > We can even provide the same -ENOTTY errno by
->> > checking that _any_ attributes are supported, i.e. so that doing
->> > KVM_SET_MEMORY_ATTRIBUTES2 on KVM without any support whatsoever fails in the
->> > same way that KVM with code support but no attributes fails.
->> 
->> IIUC KVM_SET_MEMORY_ATTRIBUTES doesn't fail with -ENOTTY now when there
->> are no valid attributes.
->> 
->> Even if there's no valid attributes (as in
->> kvm_supported_mem_attributes() returns 0), it's possible to call
->> KVM_SET_MEMORY_ATTRIBUTES with .attributes set to 0, which will be a
->> no-op, but will return 0.
->> 
->> I think this is kind of correct behavior since .attributes = 0 is
->> actually a valid expression for "I want this range to be shared", and
->> for a VM that doesn't support private memory, it's a valid expression.
->> 
->> 
->> The other way that there are "no attributes" would be if there are no
->> /VM/ attributes, in which case KVM_SET_MEMORY_ATTRIBUTES, sent to as a
->> vm ioctl, will return -ENOTTY.
->
-> Ya, this is what I was trying to say with "_any_ attributes are supported".  I.e.
-> by "any" I meant "any attributes in KVM for VMs vs. gmems", not "any attributes
-> for this specific VM/gmem instance".
->
->> 
->> [...snip...]
->> 
+Please pull hwmon fixes for Linux v6.18-rc3 from signed tag:
 
-I've been thinking more about this:
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v6.18-rc3
 
-  #ifdef CONFIG_KVM_VM_MEMORY_ATTRIBUTES
-  	case KVM_CAP_MEMORY_ATTRIBUTES2:
-  	case KVM_CAP_MEMORY_ATTRIBUTES:
-  		if (!vm_memory_attributes)
-  			return 0;
-  
-  		return kvm_supported_mem_attributes(kvm);
-  #endif
+Thanks,
+Guenter
+------
 
-And the purpose of adding KVM_CAP_MEMORY_ATTRIBUTES2 is that
-KVM_CAP_MEMORY_ATTRIBUTES2 tells userspace that
-KVM_SET_MEMORY_ATTRIBUTES2 is available iff there are valid
-attributes.
+The following changes since commit 211ddde0823f1442e4ad052a2f30f050145ccada:
 
-(So there's still a purpose)
+  Linux 6.18-rc2 (2025-10-19 15:19:16 -1000)
 
-Without valid attributes, userspace can't tell if it should use
-KVM_SET_MEMORY_ATTRIBUTES or the 2 version.
+are available in the Git repository at:
 
-I also added KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES, which tells
-userspace the valid attributes when calling KVM_SET_MEMORY_ATTRIBUTES2
-on a guest_memfd:
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v6.18-rc3
 
-  #ifdef CONFIG_KVM_GUEST_MEMFD
-  	case KVM_CAP_GUEST_MEMFD:
-  		return 1;
-  	case KVM_CAP_GUEST_MEMFD_FLAGS:
-  		return kvm_gmem_get_supported_flags(kvm);
-  	case KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES:
-  		if (vm_memory_attributes)
-  			return 0;
-  
-  		return kvm_supported_mem_attributes(kvm);
-  #endif
-  
-So to set memory attributes, userspace should
+for you to fetch changes up to 8dcc66ad379ec0642fb281c45ccfd7d2d366e53f:
 
-  if (kvm_check_cap(KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES) > 0)
-	use KVM_SET_MEMORY_ATTRIBUTES2 with guest_memfd
-  else if (kvm_check_cap(KVM_CAP_MEMORY_ATTRIBUTES2) > 0)
-        use KVM_SET_MEMORY_ATTRIBUTES2 with VM fd
-  else if (kvm_check_cap(KVM_CAP_MEMORY_ATTRIBUTES) > 0)
-	use KVM_SET_MEMORY_ATTRIBUTES with VM fd
-  else
-	can't set memory attributes
+  hwmon: (sht3x) Fix error handling (2025-10-19 18:56:14 -0700)
 
-Something like that?
+----------------------------------------------------------------
+hwmon fixes for v6.18-rc3
 
+* cgbc-hwmon: Add missing NULL check after devm_kzalloc
 
-In selftests there's this, when KVM_SET_USER_MEMORY_REGION2 was
-introduced:
+* gpd-fan: Fix error handling
 
-  #define TEST_REQUIRE_SET_USER_MEMORY_REGION2()			\
-	__TEST_REQUIRE(kvm_has_cap(KVM_CAP_USER_MEMORY2),	\
-		       "KVM selftests now require KVM_SET_USER_MEMORY_REGION2 (introduced in v6.8)")
+* pmbus/isl68137: Fix child node reference leak
 
-But looks like there's no direct equivalent for the introduction of
-KVM_SET_MEMORY_ATTRIBUTES2?
+* pmbus/max34440: Update adpm12160 coefficients to match latest FW
 
-The closest would be to add a TEST_REQUIRE_VALID_ATTRIBUTES() which
-checks KVM_CAP_MEMORY_ATTRIBUTES2 or
-KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES before making the vm or
-guest_memfd ioctl respsectively.
+* sht3x: Fix error handling
+
+----------------------------------------------------------------
+Alexis Czezar Torreno (1):
+      hwmon: (pmbus/max34440) Update adpm12160 coeff due to latest FW
+
+Erick Karanja (1):
+      hwmon: (pmbus/isl68137) Fix child node reference leak on early return
+
+Guenter Roeck (1):
+      hwmon: (sht3x) Fix error handling
+
+Harshit Mogalapalli (2):
+      hwmon: (gpd-fan) Fix return value when platform_get_resource() fails
+      hwmon: (gpd-fan) Fix error handling in gpd_fan_probe()
+
+Li Qiang (1):
+      hwmon: (cgbc-hwmon) Add missing NULL check after devm_kzalloc()
+
+ drivers/hwmon/cgbc-hwmon.c     |  3 +++
+ drivers/hwmon/gpd-fan.c        | 10 +++++-----
+ drivers/hwmon/pmbus/isl68137.c |  3 +--
+ drivers/hwmon/pmbus/max34440.c | 12 ++++++------
+ drivers/hwmon/sht3x.c          | 27 +++++++++++++++++----------
+ 5 files changed, 32 insertions(+), 23 deletions(-)
 
