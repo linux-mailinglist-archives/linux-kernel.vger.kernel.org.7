@@ -1,153 +1,181 @@
-Return-Path: <linux-kernel+bounces-868610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305E9C059C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:37:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2847FC059D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 842984F4E6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:37:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D151188B6D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28ED73101B5;
-	Fri, 24 Oct 2025 10:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5100D3101AB;
+	Fri, 24 Oct 2025 10:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eWLLkP/I"
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="loqZkwQT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ro7Z+EQz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69A130F537
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2257C146585
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761302262; cv=none; b=KYE+Ou7cZGJmeWmcsJ21DOClFklJ+vIzQic75SU6fz0FRS7kIebX/VWWp1nbii50AT4NnFUHeOJKecuEqVaN5Kq0XWXXqVS5Zaj/Lxbwmg+nB7GrKN5XYLHTQ3JHOmPVUUWhWDm9U0gHrAJa2ECFJEjXh1h/NtXqRhqC0QkMGr8=
+	t=1761302292; cv=none; b=YzfYnUGLs086B70rZhNV98vkuq0xBZCNKEhfHEIZlDlQ03vSQH1wsi4HvdD6Oiq5KEUcLWl6Ey/ulZtfbNFjj0qMOKibZOJlP8zLYh/NI/kev9uOoj7z1IwIDSPrwZpk98Keyifrozrw7wXV7L0g3kL350XuFapfuIdh0+H1sz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761302262; c=relaxed/simple;
-	bh=Sr2XyRdzXeMhkuNYfkb6Mn0UTZOqFz33nE8+nQ5o8Ss=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Zjq9jEQ+NxNbYoT36vPktddiqxwu+a5EwfPH9uItPX5bahKdv3niDDlWHjsiX8e9xTHWAbFerdnXOCuCZAD3Jhn5QLiuDwE8YM+KXUhvbIxIcWLSAWbQDvKvfqJdS4ebw3RbOsHNwfGcOCtVDc2/XmGfg09x09WJTKZbOGtLGyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eWLLkP/I; arc=none smtp.client-ip=209.85.218.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b6d35430f56so156837366b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:37:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761302259; x=1761907059; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bxoLsZ8nIFnPas/1M9DEkG+zqI+s5pFPa6Jdb9VgZ5w=;
-        b=eWLLkP/IkR/LgOiTzbQ1JLrYcZlOm4LCKUJnbiejVk0dF0xwFnYQ2qyhRujHSQEDHN
-         uehNoTZE9ZBuuGNfNdeuJpNxZFxy5eLBM+oFxtmr7bWvOvWUwOP53tGpUEL7qreesCR8
-         cbDVtJpjpbL8dXOf3LNuLtq05SW0hjPmErXPzlZgHlAHOivGCd3Lu7fOs2Z/fRzev+eT
-         jr/rr+SpuV9FOBXthw/P9VEgTXs4oqsQa+PYtiIm1jyGHhYbeCs3dwcwBmFAxwPQho0y
-         2YRm/GsoxDOm21nqMeQbtfxItItB4rZ/+3ac2SC7go6qQbGZGHFkxpg4mPb/ClI15GPA
-         RA5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761302259; x=1761907059;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bxoLsZ8nIFnPas/1M9DEkG+zqI+s5pFPa6Jdb9VgZ5w=;
-        b=Ku4AxV0Cd1/A6GvWJ59LNhCSihD2cO7vZNRLh5zmjxYY+6fmzdk8BBQd+9PeKTF6ee
-         f6AD8WPtUI1gX64ZSZkOdl5XI3/x/yuPIRdycU5ECMhnTU9uVQM7t5ItcYlqU4zAoeKQ
-         0Ur8TUtoq2MYgpS/J/tCYN/ZSawD9JfRwL2TJpiou3jRWs8gNmIcYpkU5CSEoK2v4L8H
-         b/HAas6vo/uyZs0chSFttwPRqgF+rENU3uwTR2i5SobkEqMK8B65ADVKet6tFWw8tpZt
-         ATh++2EB3PiwjvsN1idVDfH7iP2J7gSbXRTssCHVDlpdrvPAWOxnJSU4b36gJo4TMMyV
-         R5MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRPU+54PDylIs16OJz+UXEhkBgBgIIQoeNWYXllHSB8J7QGTu3NxWtx8qf3g4CtwqYs/01D8td/S2XCW8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyWTi7iEzvQlaVtZd0I4B344ueOTvtrnFxIt9qeYE8i9eO7BNB
-	Nf5MwSz1oqsL4Ahwooc4VDf7PHzJmP3vQg0dytWUXVRw+WmaZmV9EDbDr1RCd1142Xl7i3f3FtP
-	/MkQW9AjuWgtuMjRm9Q==
-X-Google-Smtp-Source: AGHT+IG53cNmqGsinKn0h9jaCGCn5QFBNWSJ/tDDHGbExfk/RNWZz5TkIUXXZ8YEkSofsYQU+YELva3WjgON5co=
-X-Received: from edf24.prod.google.com ([2002:a05:6402:21d8:b0:63c:2d17:f4a8])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:1941:b0:634:cb54:810e with SMTP id 4fb4d7f45d1cf-63e3e586b6cmr5620231a12.31.1761302259027;
- Fri, 24 Oct 2025 03:37:39 -0700 (PDT)
-Date: Fri, 24 Oct 2025 10:37:37 +0000
-In-Reply-To: <DDPPL8HKEERV.2JXDADIJPM6NY@kernel.org>
+	s=arc-20240116; t=1761302292; c=relaxed/simple;
+	bh=QpDCzf7SyDqaGSbM2EYT67gkb7qD0CFtlSAektCo+mo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IY+iAFXXwU+4nPndwX4x5yzREwxXD1Kij3W/LPTVASAYS6+bEr823Z2P7H8MLRxS86aQU+0aHKjvTTJ9ijY6F9m4ZMWPObLzvGhal0Nf0o3BybBqegVOSKQXYlTwycipQ/HhpK3yhrE53PzS7MZpkWAZ+AYUkphfvrU8aeaY2BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=loqZkwQT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ro7Z+EQz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 24 Oct 2025 12:38:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761302289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eWzzIxgH+/Qo8Z+B1+7YQcri7JqgR0aHrtqQynhOWuc=;
+	b=loqZkwQTBgrHK/KZ2f/f4PQ+ofbDAkkuIu4aEEeGtPVukNBDfYXvm6X+8G6Ex8hCkT9GVy
+	b1Z1L+PkIp+5lOPxsD6v74CHg+r+X6m8D0y+YmOX6opD+sWwUoLCR07tNK2ZTXAaB0jffa
+	j2HYHBeUFIzFM3g5gD4oxp/cFCmGl9bIqEgh92GN9llihIPR7C426EXGanCq45/BSS8Sjv
+	snMyd1hNdef9Fo1Tc2mXtsTiiOYmialU29DmwSzr4yxwyI8gL82o4uQZeFys7+6tStVsZN
+	nrlyYoO8/zigzhSm6Wzn/ImF+Le2N6Y/MBlF/DiZuyJCHYy9TOrU67apXOxQPQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761302289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eWzzIxgH+/Qo8Z+B1+7YQcri7JqgR0aHrtqQynhOWuc=;
+	b=Ro7Z+EQzxW1Yio1Mam5pF7Adi2UIRUB/Mjx4DaT2UW5P8f29EjfJSTsWpD7mmEjPpxrPqu
+	1NCT+uwz7eon1GAg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Oleg Nesterov <oleg@redhat.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] printk_legacy_map: use LD_WAIT_CONFIG instead of
+ LD_WAIT_SLEEP
+Message-ID: <20251024103808.umPAqCda@linutronix.de>
+References: <20251022154115.GA22400@redhat.com>
+ <20251023103234.GA27415@redhat.com>
+ <20251023142655.FvZkeSa-@linutronix.de>
+ <87wm4lbqt2.fsf@jogness.linutronix.de>
+ <20251023151112.goqBFQcM@linutronix.de>
+ <20251023154657.GD26461@redhat.com>
+ <20251023191442.Uu0mD_Nq@linutronix.de>
+ <aPtIUq7hf4R5-qfF@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251022143158.64475-1-dakr@kernel.org> <20251022143158.64475-6-dakr@kernel.org>
- <aPnnkU3IWwgERuT3@google.com> <DDPMUZAEIEBR.ORPLOPEERGNB@kernel.org>
- <CAH5fLgiM4gFFAyOd3nvemHPg-pdYKK6ttx35pnYOAEz8ZmrubQ@mail.gmail.com>
- <DDPNGUVNJR6K.SX999PDIF1N2@kernel.org> <aPoPbFXGXk_ohOpW@google.com> <DDPPL8HKEERV.2JXDADIJPM6NY@kernel.org>
-Message-ID: <aPtW8cT5YoIGVIH9@google.com>
-Subject: Re: [PATCH v3 05/10] rust: uaccess: add UserSliceWriter::write_slice_file()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aPtIUq7hf4R5-qfF@pathway.suse.cz>
 
-On Thu, Oct 23, 2025 at 02:43:20PM +0200, Danilo Krummrich wrote:
-> On Thu Oct 23, 2025 at 1:20 PM CEST, Alice Ryhl wrote:
-> > I would love to have infallible conversions from usize to u64 (and u32
-> > to usize), but we can't really modify the stdlib to add them.
-> 
-> We can (and probably should) implement a kernel specific infallible one.
-> 
-> I think we also want a helper for `slice::len() as isize`.
-> 
-> > But even if we had them, it wouldn't help here since the target type is
-> > i64, not u64. And there are usize values that don't fit in i64 - it's
-> > just that in this case the usize fits in isize.
-> 
-> Sure, it doesn't change the code required for this case. Yet, I think that if we
-> agree on having a kernel specific infallible conversions for usize -> u64 and
-> isize -> i64, it makes this + operation formally more consistent.
-> 
-> Here's the diff I'd apply:
-> 
-> diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
-> index 681b8a9e5d52..63478dd7deb8 100644
-> --- a/rust/kernel/fs/file.rs
-> +++ b/rust/kernel/fs/file.rs
-> @@ -125,6 +125,22 @@ pub fn saturating_sub_usize(self, rhs: usize) -> Offset {
->      }
->  }
-> 
-> +impl core::ops::Add<isize> for Offset {
-> +    type Output = Offset;
-> +
-> +    #[inline]
-> +    fn add(self, rhs: isize) -> Offset {
-> +        Offset(self.0 + rhs as bindings::loff_t)
-> +    }
-> +}
-> +
-> +impl core::ops::AddAssign<isize> for Offset {
-> +    #[inline]
-> +    fn add_assign(&mut self, rhs: isize) {
-> +        self.0 += rhs as bindings::loff_t;
-> +    }
-> +}
-> +
->  impl From<bindings::loff_t> for Offset {
->      #[inline]
->      fn from(v: bindings::loff_t) -> Self {
-> diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-> index 20ea31781efb..44ee334c4507 100644
-> --- a/rust/kernel/uaccess.rs
-> +++ b/rust/kernel/uaccess.rs
-> @@ -514,7 +514,8 @@ pub fn write_slice_file(&mut self, data: &[u8], offset: &mut file::Offset) -> Re
-> 
->          let written = self.write_slice_partial(data, offset_index)?;
-> 
-> -        *offset = offset.saturating_add_usize(written);
-> +        // OVERFLOW: `offset + written <= data.len() <= isize::MAX <= Offset::MAX`
-> +        *offset += written as isize;
-> 
->          Ok(written)
->      }
-> 
+On 2025-10-24 11:35:14 [+0200], Petr Mladek wrote:
+> It is clear that the commit message and the comment above the mapping
+> caused some confusion. I thought about better wording.
+>=20
+> I wanted to be as clear as possible, But the problem is that everyone
+> has different background and might understand the same term
+> differently. Also I am not a native speaker.
+>=20
+>=20
+> /*
+>  * Some legacy console drivers might violate raw_spinlock/spinlock nesting
+>  * rules when printk() was called under a raw_spinlock and the driver used
+>  * a spinlock. It is not a real problem because the legacy drivers should
+>  * never be called directly from printk() in PREEMPT_RT.
+>  *
+>  * This map is used to pretend that printk() was called under a normal sp=
+inlock
+>  * to hide the above described locking violation. It still allows to catch
+>  * other problems, for example, possible ABBA deadlocks or sleeping locks.
 
-This LGTM.
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+It is not "Some legacy console" but all of them. The only exception
+would if they don't use any locking. Serial driver should use
+uart_port::lock, VT has its printing_lock and so on.
+Don't like the "might violate".
+"should never be called" is misleading because we know how things work
+and they must not be called. But this is minor=E2=80=A6
+
+But why bring ABBA deadlocks into this and sleeping locks? Especially
+since different people assume different things when "sleeping locks" is
+used. And clearly the last was not handled well :)
+
+I would suggest simple and focus on the change and why:
+The override addresses the nesting problem on !RT which does not occur
+on RT because the code flow is different.
+
+What about the suggested:
+
+  The legacy console always acquires a spinlock_t from its printing
+  callback. This violates lock nesting if the caller acquired an always
+  spinning lock (raw_spinlock_t) while invoking printk(). This is not a
+  problem on PREEMPT_RT because legacy consoles print always from a
+  dedicated thread and never from within printk(). Therefore we tell
+  lockdep that a sleeping spin lock (spinlock_t) is valid here.
+
+
+>  *
+>  * The mapping is not used in PREEMPT_RT which allows to catch bugs when
+>  * the legacy console driver would get called from an atomic context by m=
+istake.
+>  */
+>=20
+>=20
+> And the commit message might be:
+>=20
+> <commit_message>
+> printk_legacy_map: use LD_WAIT_CONFIG instead of LD_WAIT_SLEEP
+>=20
+> printk_legacy_map is used to hide possible violations of
+> raw_spinlock/spinlock nesting when printk() calls legacy console
+> drivers directly. It is not a real problem in !PREEMPT_RT mode and
+  s/real//
+
+> the problematic code path should never be called in PREEMPT_RT mode.
+
+  because this code path is never called on PREEMPT_RT.
+
+> However, LD_WAIT_SLEEP is not exactly right. It fools lockdep as if it
+
+Why is not exactly right? :) Usually you describe _why_ you do things
+and because it wasn't right is okay if it is obvious to everyone.
+
+> is fine to acquire a sleeping lock.
+>=20
+> Change DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map) to use LD_WAIT_CONFIG.
+>=20
+> Also, update the comment to better describe the purpose of the mapping.
+> </commit_message>
+
+For my taste it is too verbose and you bring too much context. It is
+*just* the lock nest override. No need to bring other aspects of lockdep
+into the game.
+
+  printk_legacy_map is used to hide lock nesting violations caused by
+  legacy drivers and is using the wrong override type. LD_WAIT_SLEEP is
+  for always sleeping lock types such as mutex_t. LD_WAIT_CONFIG is for
+  lock type which are sleeping while spinning on PREEMPT_RT such as
+  spinlock_t.
+
+> Is this better and acceptable, please?
+> If not then please provide alternatives ;-)
+
+I made some suggestions. However you got rid of the points I complained
+about initially so I fine with it. Thank you.
+
+> Best Regards,
+> Petr
+
+Sebastian
 
