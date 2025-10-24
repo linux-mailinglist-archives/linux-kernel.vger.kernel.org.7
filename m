@@ -1,152 +1,166 @@
-Return-Path: <linux-kernel+bounces-868978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BC0C069E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:09:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF44C06A28
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835F33A3828
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:09:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EF6219A6A73
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C32322A0A;
-	Fri, 24 Oct 2025 14:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F784321440;
+	Fri, 24 Oct 2025 14:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hlVWpuEo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Q3qANt1i"
-Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WiuVgYJk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kji0obE1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C8B31814A;
-	Fri, 24 Oct 2025 14:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20431321437
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761314920; cv=none; b=bIZwyYOF/2PbpKOMKnewspX4vNdkrR4gNlEMt4uxz3ixb4VUqifHp6ERPdW2Tu5GljA58BTfGUCfaXntArIQ5zLJ5hjuoLrKVCSMKPl7rx8YSX/BPKXhizUYk3eIJVOx16skUAVEbnqjGRyPAKw2s/SiZPo4LggJxHyV7RkWSEI=
+	t=1761314918; cv=none; b=gICtxEo9xP/PlY/8cNqSRkwofe1i8+JzKpHuG9uqUcwfYSMtFGz+xKKiJli7RUEWtZh60W7/nU8FJumJQwuXUE7pKXZDBdGx3wiaXUdu3WThWnM2vnERXBOBOhbrACTthuHcyZx5YAxCHuVl2E+yzgn+Y1gOHTmGAh/qGVrLG/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761314920; c=relaxed/simple;
-	bh=VB7MUbFzQw0hGAqr2p+CQiUuP9dG3eG52n6sxVb7FEk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Kn2EGa8N1ppsuIUSU6uAfpeEARpbX/XGo5RvU0xrWrMURr/3d58/k0aUW8VpAK6OybhfNsI/CBCKMchy2MuGPRfxlahOqDyh1m2K3gE2IILuvYRGfMOUmz3EphKnBOqwV65MPhFemfhbl/oQ0ze15RP7vF8g4GU9gfpFsGxHo4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hlVWpuEo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Q3qANt1i; arc=none smtp.client-ip=202.12.124.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailflow.stl.internal (Postfix) with ESMTP id AEEFD13006B5;
-	Fri, 24 Oct 2025 10:08:37 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 24 Oct 2025 10:08:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1761314917;
-	 x=1761322117; bh=Cb+ptnx07ebPr7o44PcZpvCH+xBEfVRPWdIj9Bu8PAI=; b=
-	hlVWpuEowvcQ6T6uZqLHfrUU9JlFXqGHcV8BHQkCM0MzrkM4uyGfftYu1MeCSqni
-	QUWKUgEfY83yORtU0utfCF2h4y0inSZNJyvQdZtaxL5NNctp0Xdcf53q8wtR7E9c
-	xvUMbDaI5R/3AGOwHOlOGpQBi0tChugU5qRNoml9LZuXqNSMOYFRH0KMgVHAT0/I
-	gRfJh3uJDQGKxtA/lwkNSoeG9L92ihfF9XSiEwauzOyY80tA/Mge612399gJSGxJ
-	kUpnX157bWwSifx3GLcd8eaEmERuOkWZSJgFDhu6CRNExLfKS6Jh7urUEzMXadoB
-	zoGexToHJXiWQMTgw8ynEA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761314917; x=
-	1761322117; bh=Cb+ptnx07ebPr7o44PcZpvCH+xBEfVRPWdIj9Bu8PAI=; b=Q
-	3qANt1i+zXY6oUOAlXErT5FKFmPLwU+e0ZdhkeYCRbn8e8NVgiOQoa4NhDvRL+0Z
-	J7MIR9cWPfn96kD8nYrOZVFb1vlglmDP24GBi5iYU7+0GVoSgwVdXyL0h68qPMVR
-	BXD02sO1Ls9m7FOWtVaMLms+Wjv6KgV5URYsYaJJKChl87/+WPQE3QmDyrsZxrBH
-	X8564wcaN4vIXrhYz9ggib+c0Nsm/xbM2LwhrMasDqVksXgZwAev+id6/75mFMHP
-	Tsw4pQwkaJl1IZC2JzW+5LizuevV3AdysERGuzFlTqHnujuGdElQWJMaDBX8ZCDB
-	i4vO+HXb1nqngVqDTnkGA==
-X-ME-Sender: <xms:ZIj7aA3Eg3Y0rlzk26ezjCER1IzRbSwN2wjgyobpPn-bU88Qf21ZAQ>
-    <xme:ZIj7aF77yLXSQjINknf_EQXACdywcpQQUYKqCnaMnAKK8PTIjJT8EVsUlpIE2YeBc
-    9Ly1OQd9u0EbOnRqmT7Y1GJn6AczAC_Jx25CRn-xdDC47-qzdNu>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeelheegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehmiiigrhgvrghrhiestdhpohhinhhtvghrrdguvgdprhgtphhtth
-    hopehhrghnnhgvshestghmphigtghhghdrohhrghdprhgtphhtthhopegthihphhgrrhes
-    tgihphhhrghrrdgtohhmpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtoh
-    hmpdhrtghpthhtohepuggrrghnrdhjrdguvghmvgihvghrsehgmhgrihhlrdgtohhmpdhr
-    tghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehjrg
-    hnnhhhsehgohhoghhlvgdrtghomhdprhgtphhtthhopeiisgihshiivghksehinhdrfigr
-    fidrphhlpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:ZYj7aG4UJ2M8mc3pnSzWeFpW2CG5XHRvFuvCPGbR3JoK59nl83qsmQ>
-    <xmx:ZYj7aBPgrinlB_DSWtycLsEcaniQY6W2WbSpix2NBrnlgimoI32iDQ>
-    <xmx:ZYj7aH7BdLb6AqXBIH_FZBmjsIWL8OL5ThWIUAzV5tYwajH9yU0IbA>
-    <xmx:ZYj7aIzWcoJTsQ_UTsWxc6_N0j7AIb1XaVzd0jMwaWXpD3G9F5ukbQ>
-    <xmx:ZYj7aPDZv86yheOLByNFoKdlBVjT8Z9V_vZax3GzdYaa2VPAbx1q-aCp>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id DCF42700054; Fri, 24 Oct 2025 10:08:36 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761314918; c=relaxed/simple;
+	bh=DjZIMYziZJti4cIwCUk2zMo08dJyZ1fKo+YAtBDfE7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2lcxHjEWKHhFVxnMEgApryd5i8CmR8EPsnh7VYpWVzrU3Hd94HvbwB+JZXtRcsQpXDzOtTou9vqH34mII1o72XfGPoOOBQ+OxY1iwq5ga6CrXoJFv2k7zkCQH0fdHajfd8J4pZSh7lJ3SduYfclSIqmqQbsMQCkjjkfNcPtqdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WiuVgYJk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kji0obE1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 24 Oct 2025 16:08:32 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761314913;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sUhz7mvCtVK/4sfT1pxu2dbd/8sjuxWFFtbj6/RjElU=;
+	b=WiuVgYJknrfIsBkliwPM36Re2J+A7d96kIRevAIVbLLVlBo+GDgsvDqg0IHrJboA5bOz4o
+	unnfWzpwDgg5msrhinMtCSUAu4sk1I7IjzwfGdxvLPHbr+1g+yoFntWvqIuEqgPGqtRLhO
+	equnabzU40qAcUYCsx3EX7lB60Zzmmu7Bj4BUG8cpck/gzaMFcCSfAf/lgMwOcMCDqJ0aV
+	SY3OjSoqtxRF9a/WtUM3jzxJTK5Mk+PH08r/jp0La1Q/uUzkYZcKVxcSD/IPA0drsB/NKp
+	MqENSPXlHxFB8YmV233Jh4g4ElJUdx86yw6FCteLeBM1f3C7gdj3o4JCjopBmQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761314913;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sUhz7mvCtVK/4sfT1pxu2dbd/8sjuxWFFtbj6/RjElU=;
+	b=Kji0obE1/YO2pp1Qe4rCQZx5NAxLWg0Ad6gJHoxlN31n0kf+f2D3ZjO9cGZWj4Cy2qlLMW
+	yLXgzcgTvF0L5jBw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] smp: Suppress false DEBUG_PREEMPT warning in
+ smp_call_on_cpu()
+Message-ID: <20251024140832.46JNLRvL@linutronix.de>
+References: <20251024070714.4047816-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AvgbtRMgB1Po
-Date: Fri, 24 Oct 2025 16:08:16 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- "Josef Bacik" <josef@toxicpanda.com>, "Jeff Layton" <jlayton@kernel.org>
-Cc: "Jann Horn" <jannh@google.com>, "Mike Yuan" <me@yhndnzj.com>,
- =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
- "Lennart Poettering" <mzxreary@0pointer.de>,
- "Daan De Meyer" <daan.j.demeyer@gmail.com>,
- "Aleksa Sarai" <cyphar@cyphar.com>, "Amir Goldstein" <amir73il@gmail.com>,
- "Tejun Heo" <tj@kernel.org>, "Johannes Weiner" <hannes@cmpxchg.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, bpf@vger.kernel.org,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- Netdev <netdev@vger.kernel.org>
-Message-Id: <cfefa1c8-4cd2-478e-8c68-627a0a767f7d@app.fastmail.com>
-In-Reply-To: 
- <20251024-work-namespace-nstree-listns-v3-18-b6241981b72b@kernel.org>
-References: 
- <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
- <20251024-work-namespace-nstree-listns-v3-18-b6241981b72b@kernel.org>
-Subject: Re: [PATCH v3 18/70] arch: hookup listns() system call
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251024070714.4047816-1-namcao@linutronix.de>
 
-On Fri, Oct 24, 2025, at 12:52, Christian Brauner wrote:
-> Add the listns() system call to all architectures.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-This looks correct to me,
-
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-
-> diff --git a/include/uapi/asm-generic/unistd.h 
-> b/include/uapi/asm-generic/unistd.h
-> index 04e0077fb4c9..942370b3f5d2 100644
-> --- a/include/uapi/asm-generic/unistd.h
-> +++ b/include/uapi/asm-generic/unistd.h
-> @@ -857,9 +857,11 @@ __SYSCALL(__NR_open_tree_attr, sys_open_tree_attr)
->  __SYSCALL(__NR_file_getattr, sys_file_getattr)
->  #define __NR_file_setattr 469
->  __SYSCALL(__NR_file_setattr, sys_file_setattr)
-> +#define __NR_listns 470
-> +__SYSCALL(__NR_listns, sys_listns)
+On 2025-10-24 09:07:14 [+0200], Nam Cao wrote:
+> While booting UP (uniprocessor) kernel with CONFIG_DEBUG_PREEMPT=y, the
+> following warning is observed:
 > 
->  #undef __NR_syscalls
-> -#define __NR_syscalls 470
-> +#define __NR_syscalls 471
+> BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+> caller is debug_smp_processor_id+0x1c/0x28
+> CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.18.0-rc2-00012-g002733e953a7 #111 PREEMPT_RT
+> Hardware name: MangoPi MQ Pro (DT)
+> Call Trace:
+>     dump_backtrace
+>     show_stack
+>     dump_stack_lvl
+>     dump_stack
+>     check_preemption_disabled.isra.0
+>     debug_smp_processor_id
+>     check_unaligned_access
+>     smp_call_on_cpu
+>     check_unaligned_access_all_cpus
+>     do_one_initcall
+>     kernel_init_freeable
+>     kernel_init
+>     ret_from_fork_kernel
+>     ret_from_fork_kernel_asm
+
+Can be compressed to:
+
+   Using smp_processor_id() in a smp_call_on_cpu() callback triggers a
+   "using ... in preemptible" warning in UP builds.
+
+> This is a false warning. The UP-variant of smp_call_on_cpu() simply calls
+> the callback, and thus debug_smp_processor_id() thinks the context is
+> unsafe for smp_processor_id(), which is obviously false because this is UP
+> kernel.
+
+"Only the UP implementation is affected by this"
+
+> This appears after commit 06ddd17521bf ("sched/smp: Always define
+> is_percpu_thread() and scheduler_ipi()"). Before this commit,
+> is_percpu_thread() always returns true on UP kernel and thus
+> debug_smp_processor_id() always sees a per-cpu thread and never warns. But
+> now is_percpu_thread() returns false for this case.
 > 
+> Suppress this warning with a migrate_disable()+migrate_enable() pair.
 
-I still need to remove this unused file, but that is my problem,
-not yours. No need to add patch 71 to your series ;-)
+Right. This is one of the possibilities. The other one would be to also
+workqueue on UP and preserve the same semantic.
+I don't mind this.
 
-    Arnd
+> Fixes: 06ddd17521bf ("sched/smp: Always define is_percpu_thread() and scheduler_ipi()")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> ---
+> grep shows me that the followings also have the same false warning:
+> 
+>     arch/arm64/kernel/watchdog_hld.c
+>     drivers/hwmon/dell-smm-hwmon.c
+>     drivers/platform/x86/dell/dcdbas.c
+>     kernel/watchdog.c
+> ---
+>  kernel/up.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/kernel/up.c b/kernel/up.c
+> index df50828cc2f0..37c9f0d39b36 100644
+> --- a/kernel/up.c
+> +++ b/kernel/up.c
+> @@ -64,7 +64,14 @@ int smp_call_on_cpu(unsigned int cpu, int (*func)(void *), void *par, bool phys)
+>  
+>  	if (phys)
+>  		hypervisor_pin_vcpu(0);
+> +
+> +	/* suppress warnings from debug_smp_processor_id() */
+
+If you want to add a comment, what about something like
+
+  /* Preserve not being migratable such as SMP variant does */ 
+
+> +	migrate_disable();
+> +
+>  	ret = func(par);
+> +
+> +	migrate_enable();
+> +
+>  	if (phys)
+>  		hypervisor_pin_vcpu(-1);
+>  
+
+Sebastian
 
