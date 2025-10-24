@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-869444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDF4C07E65
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:25:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EFB9C07E6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42C934E4827
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:25:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548F91C236D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE8F298CAF;
-	Fri, 24 Oct 2025 19:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CAE29AB15;
+	Fri, 24 Oct 2025 19:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="kuF80KZG"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="UFGiBeRL"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF037291C33
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7C6293B5F
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761333946; cv=none; b=ntMR1DXYmKXzClmS2u4pcDUiN1gPL0bPLNf+JluizjY7Xs4nrh7dTrRYbVoe9M+KCPWtUIgqgBhhAgQ8wzvZmaQCGcDYy3kpBF+UGhb/geg3zhtqLOy7TdfoeajnRW6l0UDbfKRPLeGfajDEtVu/KqTgwR5DLlUOiijMzHVtZ64=
+	t=1761333948; cv=none; b=ky+Ad69WXCoYqhzU4QUM+oe5mtCK8LNGHZ7bhbJfpeCc126m9eTXVx7i28zjP1wVCzF5XiKTg8UuqJNSro7vuUHnPkT0HxL5+64yEgEVW1CmxYixMKMsVCr3a2xkaIZ2FEhf5x/wJ7xpEuAq5aAiLJ65fe+j25WCO+fV1CoqfCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761333946; c=relaxed/simple;
-	bh=Muc95G7rlUhzAehbq1czj3Swd9R7pZyWx6CCa2Vo4TA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W6HXBjcoNp0pfJoWsUjfu6/M7r4F29ttS31PBhc/EGsqCitMob6MM+yc9mxIjaJK2g3WmZklYJtEFG4ZamoJQpXM7DcvfcSBsF3HXNWOJS4jT4iHXmm3TUv2LNfDotKZwy4v08Do/O8LsscYksE9H32ANRYL36E8J/xHQn6YiVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=kuF80KZG; arc=none smtp.client-ip=209.85.222.176
+	s=arc-20240116; t=1761333948; c=relaxed/simple;
+	bh=RA1HBJr1pvpGPQx/F/QWCM3HnULtIcuIEao9BpBXpjc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RdlefcFLpPvaxEVZrGF3ARTObTnOU4CXGTxM8h5TMkNoAJyrz2rVm7ijAawM+X3v19v36U3Lg4JxOmKTkk7fpbXItWAQ73usBAafWRVVVfS8igg8BHDqFS9ihkV7D7+gZDIYvEWdKzjTh3itaDOgzS91MVC4BljWKy1wH+42D7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=UFGiBeRL; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-89048f76ec2so273530585a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:25:43 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4e88ed3a132so29557941cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:25:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1761333942; x=1761938742; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fgizs1HCq1WLCAQQTUkutHFP75+yUyTVrTdsaQGAtYg=;
-        b=kuF80KZGo/bfsNuslKnW6+cqCdX/nF8yGZb8lS4ZPFbRxL55n9sZpPZrVpRASX/8Zt
-         KwA0xcsUWWtIILC8Mf/fCcjPe0FgYdj2vW5FDQUKulQJbypDWavIzw839WwOVWdDJwZ2
-         PYbQMoGc0UMOA3fhTuwedy8KmrfXk5IDokRz3SD7DQDI883wxHYVjIDd1TZ/5EWbfNTy
-         JDGFeaGfInVACMtQuQCqznv3Fu7l8OupSY7LHlObCvxdSBg6j3pSFy2ELyZYE3UNIlgk
-         mwnCp6jIVPgwjOBsKjtIKEm5nYfVt4bXjYyaMJZb3+3SLeigTLjy4X9bvdTmEOS2xjWp
-         A6fA==
+        d=sartura.hr; s=sartura; t=1761333945; x=1761938745; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qvGYViK2JagPLVRvTto0N8MsPE3ARm8sobByJt0eGdw=;
+        b=UFGiBeRLJsGyrAi2uk/s6x+LI2a/Orux20tB9ZOJZPVvabEAuruelD/PETtGEfRxAx
+         +xYGlCEZkOcrct0bQnguLB25sqnCNNIqoQXejOcErqUhj4q9O1Fe8/7s/bWKCOJ7SMyD
+         Bi4Hhr0gR4cLmxVLyMaMYkkD5IFHhxGkqhCZ6Xi6bRo4/8JoztBT+WWx7SI828mOyYIQ
+         IR6aX5WAVwmymqW7FKMoSf0yqWfx1ct8f5A9bLog4BaausiXoyNqveJjCmLmM2wuZYXq
+         uSWB4K1YfQ2g4iVY2v5FkSnw6pFVFjQJV4fp6n2JA9IZ7W3CQ9vC+25hEWJNQid1z2X/
+         TIZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761333942; x=1761938742;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fgizs1HCq1WLCAQQTUkutHFP75+yUyTVrTdsaQGAtYg=;
-        b=cZSyCJKwFWEr8JuYsZbNwdrwOq82jQSjB64ETO7AEx2X8vERVov9BXXKm1h+3FldVQ
-         sWYg7dkK4Q5f0fOYB1jd0lEzS0IOKM5NQiwon2ogUtnzNqCf/6OPLIi9TW5LhOQuTcEm
-         +tjhyDIAZ+ZnGXxmHWE1IPK/l5/CvX4lSnDcKPAQy95tpDd5fmHoPGbc2JYcigWo7vJp
-         pQgQ8xIONc+MDj1zZ2ojCRNA93JWPt3JSCcgnTPvGETALOppTN3l6j23UxQf2+0PMmgG
-         SAmaCqpWTl5Ft5T6KdKboGoFinnjTIu5Pcox6rPn6j8r7rwynEQ7Lyn9N8By5l18yZyD
-         TTnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXik4A37WpsJkr/RXTkGvHt22E4iDXU33rnAzwAJlDQRe3JCwmBR35O/dJAQ6LSd+oeab3QWo/NXnDAXuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk6uijLP1kDN8Q0Ny6b00vf8xw5KP6TRsvrzjMQy6Sbdejybzm
-	ckQfq59B0+xBES11SlxOJoGX0RnDaLZ87HtDSWNX0uop92kIU/2OwKTqYutAonvLIUo=
-X-Gm-Gg: ASbGncssBbo+KNtlPTvOPGTTL89N+FOHwugvaHrQaS+coJ3g1Iuzy3R32xsvIwIKQuK
-	OoUtqsoxsu2a5sqEnLnjeEWSLC4ceatnIU7BNo3rUWoxQkn8riX6vSLJ/JzITk7+OtVMODiOUvi
-	KO2W+t7y/SaDKJgVqygS5zqQQ9a3NQGlLsEAUUdW/TkVfFTISYDQZkJKs8Lp8ACBc7gS50koxzg
-	EJ4QLix9XFxxVkv9bxG7ej7JpCzSnUdyby931imDeC0qulEuGT1GD0Ps/CQc6cMOTK8m5J58QxZ
-	7UK9q47VsAsoCh+UEysYtygOQis5koHbL2rpaAcy3KRj8vbm1vEWfGEWvUx4EKUeGwUyExr4PCr
-	mvBSffKOgI2yjTwhTDyNv46/pdaYmWUO04NgdJjYJ2sfK/fxfbFduChAYciwTHnXyPoZQ60Xba9
-	OEGAhtQEuepgSBFOJs
-X-Google-Smtp-Source: AGHT+IF+oLH6KhhyIS0OoqXEqbmUvHsRs1xEAC59weOn98ckZYRgBioEPZO/kln7GkQOamvkKza+uQ==
-X-Received: by 2002:a05:620a:700b:b0:892:5c9d:edce with SMTP id af79cd13be357-8925cad32d3mr2952964285a.62.1761333942534;
-        Fri, 24 Oct 2025 12:25:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761333945; x=1761938745;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qvGYViK2JagPLVRvTto0N8MsPE3ARm8sobByJt0eGdw=;
+        b=ZRtlNCZ3g47q0jG9VyF5Cw76zsFFxGjFcsSA2m/8KN0XPY845dxFERrtSIqx5Us1LB
+         Hx4OB16KN+vAhEKQIV5mxCwspBmtd9KR5fYzmzgseApCqK4b+V4MrWPAwuPXddKpUzLV
+         kLf54G79d8nWTemqyQ9AjAV+h+SVA9bEHEl9mHTWdnt0GNs1RhD8R1x11HqtfqK0bHnk
+         nTRPxOfImLjLvhkfIUtJLunWJX8WRfBDQeBI2JYRERv9r7gsikhIiG1iakcaAXpa98yI
+         3MnPq21tMg+KsizyolJ3PQ1JhMUk8etPmU3JfHNpuhW7+PTR5osAkYs9lTBc8eWMOg+B
+         ZivQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5tvB2gm6kkKGfJ5l5ZC4QtjiHLt0f0gufo9aSKUWFh0nfSEuDWpoZaKU8+hjU0jFiZuwt/6pzMWEjn2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzAfIl9pZudasXm1x1gwLkT0XV3fxJv/v/nTVOgW8SKUXoNhZq
+	wffI3nnwZKZjNBojh1fD7ZbBIMNrCi3lRA+XPhWnhmad8U2vrONp522S4sSeWa6+XSI=
+X-Gm-Gg: ASbGncttuGnn29HzP6ZHottSn50G5kaaxiXDCSySE2dCY6qRw06yPR04Bj0pB5mvgy7
+	zcJZMl1c2twCY96VrZiqwjVAHF+dcXAxj9bFoq9Q3odxzxgNh7O5cbsetGLWkVohDB2mPfM6vH4
+	oRRcGImrZg7CnCZslQ/LbEgYKOHelwL74q1EZ0SLcyEgZwkkOaV99ngBpXTJRlO3kVBD7dGFcSq
+	5EjVy89CCJR+W7Z6JnrUS7mol1Y9SnHFLiwcIqyP4H4mAWUJbhBXS+gDB+ET7igl5Yx+67KdMrE
+	vKahMZrRntjzzxJVQj39JBBpRsLuCwpCic6Hbe1i6yX5SNIhWBRuQDAMP5wcyE+/I21IN82hxlm
+	Jo/NSQ/mmKJ4imUL6Vvx08tjuOkSGmJk34GTKF216+KtXSv8688uCpSLG6kZYmubiFfoOhDqvmy
+	9YVGFM/xtyPEt8rYETCK+nS9pWUCk=
+X-Google-Smtp-Source: AGHT+IHWqTqM7qpQwb44DeW10IvVUPdY02tQLEZoYK1mvAdCabWKcBGvVJZ0721R/SqM+DcQ9UDPhg==
+X-Received: by 2002:a05:622a:1:b0:4e8:8274:5efa with SMTP id d75a77b69052e-4eb92abbbc3mr51602341cf.8.1761333945392;
+        Fri, 24 Oct 2025 12:25:45 -0700 (PDT)
 Received: from fedora (dh207-15-125.xnet.hr. [88.207.15.125])
-        by smtp.googlemail.com with ESMTPSA id af79cd13be357-89c0e97efa6sm438239185a.24.2025.10.24.12.25.40
+        by smtp.googlemail.com with ESMTPSA id af79cd13be357-89c0e97efa6sm438239185a.24.2025.10.24.12.25.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 12:25:42 -0700 (PDT)
+        Fri, 24 Oct 2025 12:25:44 -0700 (PDT)
 From: Robert Marko <robert.marko@sartura.hr>
 To: srini@kernel.org,
 	robh@kernel.org,
@@ -82,10 +84,12 @@ To: srini@kernel.org,
 	daniel.machon@microchip.com
 Cc: luka.perkov@sartura.hr,
 	Robert Marko <robert.marko@sartura.hr>
-Subject: [PATCH 1/2] dt-bindings: nvmem: lan9662-otpc: Add LAN969x series
-Date: Fri, 24 Oct 2025 21:24:52 +0200
-Message-ID: <20251024192532.637563-1-robert.marko@sartura.hr>
+Subject: [PATCH 2/2] nvmem: lan9662-otp: add support for LAN969x
+Date: Fri, 24 Oct 2025 21:24:53 +0200
+Message-ID: <20251024192532.637563-2-robert.marko@sartura.hr>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251024192532.637563-1-robert.marko@sartura.hr>
+References: <20251024192532.637563-1-robert.marko@sartura.hr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,36 +98,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-LAN969x series also has the same HW block, its just 16KB instead of 8KB
-like on LAN966x series.
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
 
-So, document compatibles for the LAN969x series.
+Microchip LAN969x provides OTP with the same control logic, only the size
+differs as LAN969x has 16KB of OTP instead of 8KB like on LAN966x.
 
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 Signed-off-by: Robert Marko <robert.marko@sartura.hr>
 ---
- .../devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml  | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/nvmem/Kconfig        |  2 +-
+ drivers/nvmem/lan9662-otpc.c | 12 +++++++++---
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
-index f97c6beb4766..f8c68cf22c1c 100644
---- a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
-@@ -23,8 +23,15 @@ properties:
-       - items:
-           - const: microchip,lan9668-otpc
-           - const: microchip,lan9662-otpc
-+          - const: microchip,lan9691-otpc
-+          - const: microchip,lan9692-otpc
-+          - const: microchip,lan9693-otpc
-+          - const: microchip,lan9694-otpc
-+          - const: microchip,lan9696-otpc
-+          - const: microchip,lan9698-otpc
-       - enum:
-           - microchip,lan9662-otpc
-+          - microchip,lan9691-otpc
+diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
+index e0d88d3199c1..d88b917889bf 100644
+--- a/drivers/nvmem/Kconfig
++++ b/drivers/nvmem/Kconfig
+@@ -138,7 +138,7 @@ config NVMEM_JZ4780_EFUSE
  
-   reg:
-     maxItems: 1
+ config NVMEM_LAN9662_OTPC
+ 	tristate "Microchip LAN9662 OTP controller support"
+-	depends on SOC_LAN966 || COMPILE_TEST
++	depends on SOC_LAN966 || ARCH_LAN969X || COMPILE_TEST
+ 	depends on HAS_IOMEM
+ 	help
+ 	  This driver enables the OTP controller available on Microchip LAN9662
+diff --git a/drivers/nvmem/lan9662-otpc.c b/drivers/nvmem/lan9662-otpc.c
+index 56fc19f092a7..62d1d6381bf8 100644
+--- a/drivers/nvmem/lan9662-otpc.c
++++ b/drivers/nvmem/lan9662-otpc.c
+@@ -27,7 +27,6 @@
+ #define OTP_OTP_STATUS_OTP_CPUMPEN		BIT(1)
+ #define OTP_OTP_STATUS_OTP_BUSY			BIT(0)
+ 
+-#define OTP_MEM_SIZE 8192
+ #define OTP_SLEEP_US 10
+ #define OTP_TIMEOUT_US 500000
+ 
+@@ -176,7 +175,6 @@ static struct nvmem_config otp_config = {
+ 	.word_size = 1,
+ 	.reg_read = lan9662_otp_read,
+ 	.reg_write = lan9662_otp_write,
+-	.size = OTP_MEM_SIZE,
+ };
+ 
+ static int lan9662_otp_probe(struct platform_device *pdev)
+@@ -196,6 +194,7 @@ static int lan9662_otp_probe(struct platform_device *pdev)
+ 
+ 	otp_config.priv = otp;
+ 	otp_config.dev = dev;
++	otp_config.size = (uintptr_t) device_get_match_data(dev);
+ 
+ 	nvmem = devm_nvmem_register(dev, &otp_config);
+ 
+@@ -203,7 +202,14 @@ static int lan9662_otp_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id lan9662_otp_match[] = {
+-	{ .compatible = "microchip,lan9662-otpc", },
++	{
++		.compatible = "microchip,lan9662-otpc",
++		.data = (const void *) SZ_8K,
++	},
++	{
++		.compatible = "microchip,lan9691-otpc",
++		.data = (const void *) SZ_16K,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, lan9662_otp_match);
 -- 
 2.51.0
 
