@@ -1,96 +1,55 @@
-Return-Path: <linux-kernel+bounces-869347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A07AC07A4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:08:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C84A1C07A32
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EBF71C80DC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:05:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 324704E9FC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2D2303C8A;
-	Fri, 24 Oct 2025 18:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA9B32E74C;
+	Fri, 24 Oct 2025 18:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWisu4NV"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="naGWsj3+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7F7245020
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBD5346797
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761329060; cv=none; b=oeWImHkjgat1sEfIL6wFnKrJkyLyRbrv+K6/uhw44/V06dN6LLnr9J6zspe61cL9u5lbxyaDOoyu0iaMw++SjIJRBtOJMO0+edVc1jQvk0vqhobKVwAyqwOiQKMM4zp/tW9KtUwjOwJx/1TP9ZtDXNnAUfaeRYm+eDIWNo/j82E=
+	t=1761329221; cv=none; b=XPooYEVeV5okpOU/93xUH4kR9xiJU16+Yn/xFXQMuYfX28z4h/GAxKmQRwAsUX/yOzQqG3s2VnT9ycCCrx8XDnNLHy1iX1kxpCLlaNW4MfUwwMg/EhVvegmhMB6UtKriJDt/ki+BZsTNZW1diaINT4142SNQUhroD7SIvWImYw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761329060; c=relaxed/simple;
-	bh=FD+uLET5TuaQ/SlLICNIujEOQLyze1Ha9Ev/0UmnsS8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OyIQuPP5NcJqsCh4NbNjONtZlKtmEukaSEvfeSkZz6trL2N1xZCJxL4lYkM9s0J680l4baGZg48ClHXopxcQbgQZ6B0rIkpYIYKl7CnMlzQW3iu0h8q8AYXdMBYlwxf69krd9v4aKlqt5WYbPCh3xm14Aznz6JdZS+blI8yNu1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lWisu4NV; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-78125ed4052so2705034b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:04:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761329057; x=1761933857; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6jSNSoL6MN3rN9DlGA8YJd5PwyM+kEm6TobaAM50YPw=;
-        b=lWisu4NVLvAR4ysCssUyFTMfq1sN3nuqrXDA1yK/jhHZMc3X931ihspjC3gmHWen3y
-         EHH9evFGTvE3RZ1u6dK8BpMJWIhDLavrmHuzc+5t57hFuf37joplfgRsBWHw4QJ+KmWn
-         QpHgikUcNVUCJPj20cBXjvJ1crOiK7zeVX6ZZXWBMV1k9EijW27I69hGP1t7jQr9rqt2
-         v7AfTB9aZ24K2YUmMioFMoeraGwFVdgULMHygEaH+PyCDhV1yePAUxYE+1al49rlrq6k
-         Xe8JvPBPavlBN7g3Fls9EUBlq53PJTr3wdLNjuL/ckAXaOxx+FK3NVJnAz517A7SbF53
-         P0kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761329057; x=1761933857;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6jSNSoL6MN3rN9DlGA8YJd5PwyM+kEm6TobaAM50YPw=;
-        b=qNANrCcmECbKDSVmsbqEd3eUs9FaD/TRqseetOM7gMbghyyLcqGte241x/bjTLhVsZ
-         a0nSse4EQzp8ze0FTJB/zGefxPtPtJXB9dEHPZWZ24BdL96y2CUOMCEbV//NBf/aiM/3
-         8bYsLw0mN/JvlVpJezmG+92FUz89YC9771qZUKcW0ArArTFKrgWNc97cWXNVpZcMdC2n
-         BVpavcosMLVbVVYgciWhxcwZGJf8DNbKVZjOaaFqL1vHvdpZjXr1COFXO31yiwleB86x
-         u/xS1E8Rjkqvlqgn34noiJSsoN32UlR74Uc0bUs3sgBpnbZSds0+VTyKsIWr2UCKXvmw
-         +Pcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXw8vLrkpFZVl4ZtboPIH6ui7bgUrElmIoYhG9vgMRhDdBkTKA/cFyxUefEw+UtfQSBMSOBf5RUgq7goPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz51jx+p1vYjHwfsJ9qusa+OQsKtsU6z4e1/KVXNwfelxeSbBX
-	DtlPoMz0n+//7UoTuwFSk69tHWTX0I3iYl3xnvubnZh/sHRcWXWtjdci
-X-Gm-Gg: ASbGncsyY6X2qtbz9XWwxtoEdzUTARY8pkdMXzZTvyk6tWsHOTaqUrVjIE2by+buoZh
-	mSS0QEnBu1k1w/1fdl8w8Jum/USx+2gJmqqNdTId/zTTP5ranuqY635ZVPd6vAZy+W8JiVl3iuH
-	7CTgbH8ZZ1U3O/sqoYG06gB7GKkDT+40VOvJo1CLutQXU4NKhGYXxEQCb/lyblHXaH6iCb+YY//
-	8BLPkhxQOevZM5HvJtyBdSXQNIuupkcMilgMMGczRcNpyLjZzpKAExvQh8cF4xyEmFvNfMWE+Ff
-	9qKF01aoxgDZ6j3SpmufTg48N68iYcgoXXbfRuPl2TqmAX6HdccAk6dtBd1Zr2OKDfrZw6/YILk
-	+pVdq2oKkiYRtQenSUMPk6zfnQu6qxZ82Yk7Wy5YCuNFRtvMx7C2ROFWBN4+6gS0gfYvJpj0+C4
-	hvPCvqsVLLedat7AXQR4TxztQtoO0=
-X-Google-Smtp-Source: AGHT+IEqqhg958lDuFGeAHS9RaqGf4P0XUAnU1shDFq0E+4EETe2pVFAR+Por5sTueLRIulvDD0XbA==
-X-Received: by 2002:a05:6a00:3cd5:b0:783:cb49:c67b with SMTP id d2e1a72fcca58-7a220d2327emr39144304b3a.32.1761329057439;
-        Fri, 24 Oct 2025 11:04:17 -0700 (PDT)
-Received: from tixy.nay.do ([2405:201:8000:a149:4670:c55c:fe13:754d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274a60464sm6585920b3a.15.2025.10.24.11.04.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 11:04:17 -0700 (PDT)
-From: Ankan Biswas <spyjetfayed@gmail.com>
-To: ajit.khaparde@broadcom.com,
-	sriharsha.basavapatna@broadcom.com,
-	somnath.kotur@broadcom.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	khalid@kernel.org,
-	david.hunter.linux@gmail.com,
-	linux-kernel-mentees@lists.linux.dev,
-	Ankan Biswas <spyjetfayed@gmail.com>
-Subject: [PATCH] net: ethernet: emulex: benet: fix adapter->fw_on_flash truncation warning
-Date: Fri, 24 Oct 2025 23:33:42 +0530
-Message-ID: <20251024180342.1908-1-spyjetfayed@gmail.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1761329221; c=relaxed/simple;
+	bh=4dbeHNED4eGp+XjYHhOa88PwB2OMU1F++ozd+8RTeKM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WGyQhwqr0On4WgfFNiOCTpJfIRnfTXINGvxtSv99Apqb+REI8xTmS0LGhqvrDwcXVp8GUxQxKYLCMJoiIiQ0RoPkhmBon2K7kkHyhGjsTBYh3g+d67E1lJB5d8NzJESunXzRgYQAnecJou5Ug8SgvUWICEmLbQijqWyzuvKmJW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=naGWsj3+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=iQ1SGm86ECP9CqwUjHOLXwQcPijFjY3Wpo2Cxq+1YU8=; b=naGWsj3+JQNNpNhxNzapcJxmRR
+	dSzwKPjc+ZT9tKAK12EgSvNHxtoY6XUVe9mVUDiZGGhVV09mmWaJEX/K4wi0Nl6KpWtQ9itRHWiDy
+	tTH1JmJkNN0Oi+BL9pHmmzuFMV57xVLaFUSXeLxaMxUgRMg941i/Av4CRHC/ls4H7nopptKtJ4l4L
+	FNWyNQQvUP60ZLVMkeS+BU/Wg/bSK71PGUPGeLnkvH2ASqA2Szc+qp+5FN8PHdfj4/dAnKztv0bzy
+	4WL6RnvE3s87Jw/Q9M2u4QAJjL2cWyju8cFC+4Pr5U8jj6UrktoUKCmQix34OQHv638zMLsN3Nv0c
+	F6rdEUdw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vCMBk-0000000761B-0mgX;
+	Fri, 24 Oct 2025 18:06:56 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Remove in_irq()
+Date: Fri, 24 Oct 2025 19:06:51 +0100
+Message-ID: <20251024180654.1691095-1-willy@infradead.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,321 +58,133 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The benet driver copies both fw_ver (32 bytes) and fw_on_flash (32 bytes)
-into ethtool_drvinfo->fw_version (32 bytes), leading to a potential
-string truncation warning when built with W=1.
+This old alias for in_hardirq() has been marked as deprecated since
+2020; remove the stragglers.
 
-Store fw_on_flash in ethtool_drvinfo->erom_version instead, which some
-drivers use to report secondary firmware information.
-
-Signed-off-by: Ankan Biswas <spyjetfayed@gmail.com>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- .../net/ethernet/emulex/benet/be_ethtool.c    | 96 ++++++++++---------
- 1 file changed, 52 insertions(+), 44 deletions(-)
+ drivers/bus/fsl-mc/mc-sys.c | 2 +-
+ drivers/md/dm-vdo/logger.c  | 2 +-
+ include/linux/lockdep.h     | 2 +-
+ include/linux/preempt.h     | 2 --
+ kernel/bpf/syscall.c        | 4 ++--
+ kernel/time/timer.c         | 2 +-
+ lib/locking-selftest.c      | 4 ++--
+ 7 files changed, 8 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/ethernet/emulex/benet/be_ethtool.c b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-index f9216326bdfe..0d154c7e2716 100644
---- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
-+++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-@@ -225,8 +225,16 @@ static void be_get_drvinfo(struct net_device *netdev,
- 		strscpy(drvinfo->fw_version, adapter->fw_ver,
- 			sizeof(drvinfo->fw_version));
- 	else
--		snprintf(drvinfo->fw_version, sizeof(drvinfo->fw_version),
--			 "%s [%s]", adapter->fw_ver, adapter->fw_on_flash);
-+	{
-+		strscpy(drvinfo->fw_version, adapter->fw_ver,
-+			sizeof(drvinfo->fw_version));
-+
-+		/* 
-+		* Report fw_on_flash in ethtool's erom_version field.
-+		*/
-+		strscpy(drvinfo->erom_version, adapter->fw_on_flash,
-+			sizeof(drvinfo->erom_version));
-+	}
+diff --git a/drivers/bus/fsl-mc/mc-sys.c b/drivers/bus/fsl-mc/mc-sys.c
+index b22c59d57c8f..31037f41893e 100644
+--- a/drivers/bus/fsl-mc/mc-sys.c
++++ b/drivers/bus/fsl-mc/mc-sys.c
+@@ -248,7 +248,7 @@ int mc_send_command(struct fsl_mc_io *mc_io, struct fsl_mc_command *cmd)
+ 	enum mc_cmd_status status;
+ 	unsigned long irq_flags = 0;
  
- 	strscpy(drvinfo->bus_info, pci_name(adapter->pdev),
- 		sizeof(drvinfo->bus_info));
-@@ -241,7 +249,7 @@ static u32 lancer_cmd_get_file_len(struct be_adapter *adapter, u8 *file_name)
- 	memset(&data_len_cmd, 0, sizeof(data_len_cmd));
- 	/* data_offset and data_size should be 0 to get reg len */
- 	lancer_cmd_read_object(adapter, &data_len_cmd, 0, 0, file_name,
--			       &data_read, &eof, &addn_status);
-+				   &data_read, &eof, &addn_status);
- 
- 	return data_read;
- }
-@@ -252,7 +260,7 @@ static int be_get_dump_len(struct be_adapter *adapter)
- 
- 	if (lancer_chip(adapter))
- 		dump_size = lancer_cmd_get_file_len(adapter,
--						    LANCER_FW_DUMP_FILE);
-+							LANCER_FW_DUMP_FILE);
- 	else
- 		dump_size = adapter->fat_dump_len;
- 
-@@ -301,13 +309,13 @@ static int lancer_cmd_read_file(struct be_adapter *adapter, u8 *file_name,
- }
- 
- static int be_read_dump_data(struct be_adapter *adapter, u32 dump_len,
--			     void *buf)
-+				 void *buf)
- {
- 	int status = 0;
- 
- 	if (lancer_chip(adapter))
- 		status = lancer_cmd_read_file(adapter, LANCER_FW_DUMP_FILE,
--					      dump_len, buf);
-+						  dump_len, buf);
- 	else
- 		status = be_cmd_get_fat_dump(adapter, dump_len, buf);
- 
-@@ -635,8 +643,8 @@ static int be_get_link_ksettings(struct net_device *netdev,
- 
- 			supported =
- 				convert_to_et_setting(adapter,
--						      auto_speeds |
--						      fixed_speeds);
-+							  auto_speeds |
-+							  fixed_speeds);
- 			advertising =
- 				convert_to_et_setting(adapter, auto_speeds);
- 
-@@ -683,9 +691,9 @@ static int be_get_link_ksettings(struct net_device *netdev,
- }
- 
- static void be_get_ringparam(struct net_device *netdev,
--			     struct ethtool_ringparam *ring,
--			     struct kernel_ethtool_ringparam *kernel_ring,
--			     struct netlink_ext_ack *extack)
-+				 struct ethtool_ringparam *ring,
-+				 struct kernel_ethtool_ringparam *kernel_ring,
-+				 struct netlink_ext_ack *extack)
- {
- 	struct be_adapter *adapter = netdev_priv(netdev);
- 
-@@ -737,7 +745,7 @@ static int be_set_phys_id(struct net_device *netdev,
- 						 &adapter->beacon_state);
- 		if (status)
- 			return be_cmd_status(status);
--		return 1;       /* cycle on/off once per second */
-+		return 1;		/* cycle on/off once per second */
- 
- 	case ETHTOOL_ID_ON:
- 		status = be_cmd_set_beacon_state(adapter, adapter->hba_port_num,
-@@ -764,7 +772,7 @@ static int be_set_dump(struct net_device *netdev, struct ethtool_dump *dump)
- 	int status;
- 
- 	if (!lancer_chip(adapter) ||
--	    !check_privilege(adapter, MAX_PRIVILEGES))
-+		!check_privilege(adapter, MAX_PRIVILEGES))
- 		return -EOPNOTSUPP;
- 
- 	switch (dump->flag) {
-@@ -873,7 +881,7 @@ static int be_test_ddr_dma(struct be_adapter *adapter)
- }
- 
- static u64 be_loopback_test(struct be_adapter *adapter, u8 loopback_type,
--			    u64 *status)
-+				u64 *status)
- {
- 	int ret;
- 
-@@ -883,7 +891,7 @@ static u64 be_loopback_test(struct be_adapter *adapter, u8 loopback_type,
- 		return ret;
- 
- 	*status = be_cmd_loopback_test(adapter, adapter->hba_port_num,
--				       loopback_type, 1500, 2, 0xabc);
-+					   loopback_type, 1500, 2, 0xabc);
- 
- 	ret = be_cmd_set_loopback(adapter, adapter->hba_port_num,
- 				  BE_NO_LOOPBACK, 1);
-@@ -920,7 +928,7 @@ static void be_self_test(struct net_device *netdev, struct ethtool_test *test,
- 
- 		if (test->flags & ETH_TEST_FL_EXTERNAL_LB) {
- 			if (be_loopback_test(adapter, BE_ONE_PORT_EXT_LOOPBACK,
--					     &data[2]) != 0)
-+						 &data[2]) != 0)
- 				test->flags |= ETH_TEST_FL_FAILED;
- 			test->flags |= ETH_TEST_FL_EXTERNAL_LB_DONE;
- 		}
-@@ -999,10 +1007,10 @@ static int be_get_eeprom_len(struct net_device *netdev)
- 	if (lancer_chip(adapter)) {
- 		if (be_physfn(adapter))
- 			return lancer_cmd_get_file_len(adapter,
--						       LANCER_VPD_PF_FILE);
-+							   LANCER_VPD_PF_FILE);
- 		else
- 			return lancer_cmd_get_file_len(adapter,
--						       LANCER_VPD_VF_FILE);
-+							   LANCER_VPD_VF_FILE);
- 	} else {
- 		return BE_READ_SEEPROM_LEN;
- 	}
-@@ -1022,10 +1030,10 @@ static int be_read_eeprom(struct net_device *netdev,
- 	if (lancer_chip(adapter)) {
- 		if (be_physfn(adapter))
- 			return lancer_cmd_read_file(adapter, LANCER_VPD_PF_FILE,
--						    eeprom->len, data);
-+							eeprom->len, data);
- 		else
- 			return lancer_cmd_read_file(adapter, LANCER_VPD_VF_FILE,
--						    eeprom->len, data);
-+							eeprom->len, data);
- 	}
- 
- 	eeprom->magic = BE_VENDOR_ID | (adapter->pdev->device<<16);
-@@ -1074,7 +1082,7 @@ static void be_set_msg_level(struct net_device *netdev, u32 level)
- }
- 
- static int be_get_rxfh_fields(struct net_device *netdev,
--			      struct ethtool_rxfh_fields *cmd)
-+				  struct ethtool_rxfh_fields *cmd)
- {
- 	struct be_adapter *adapter = netdev_priv(netdev);
- 	u64 flow_type = cmd->flow_type;
-@@ -1140,8 +1148,8 @@ static int be_get_rxnfc(struct net_device *netdev, struct ethtool_rxnfc *cmd,
- }
- 
- static int be_set_rxfh_fields(struct net_device *netdev,
--			      const struct ethtool_rxfh_fields *cmd,
--			      struct netlink_ext_ack *extack)
-+				  const struct ethtool_rxfh_fields *cmd,
-+				  struct netlink_ext_ack *extack)
- {
- 	struct be_adapter *adapter = netdev_priv(netdev);
- 	u32 rss_flags = adapter->rss_info.rss_flags;
-@@ -1154,7 +1162,7 @@ static int be_set_rxfh_fields(struct net_device *netdev,
- 	}
- 
- 	if (cmd->data != L3_RSS_FLAGS &&
--	    cmd->data != (L3_RSS_FLAGS | L4_RSS_FLAGS))
-+		cmd->data != (L3_RSS_FLAGS | L4_RSS_FLAGS))
+-	if (in_irq() && !(mc_io->flags & FSL_MC_IO_ATOMIC_CONTEXT_PORTAL))
++	if (in_hardirq() && !(mc_io->flags & FSL_MC_IO_ATOMIC_CONTEXT_PORTAL))
  		return -EINVAL;
  
- 	switch (cmd->flow_type) {
-@@ -1174,7 +1182,7 @@ static int be_set_rxfh_fields(struct net_device *netdev,
- 		break;
- 	case UDP_V4_FLOW:
- 		if ((cmd->data == (L3_RSS_FLAGS | L4_RSS_FLAGS)) &&
--		    BEx_chip(adapter))
-+			BEx_chip(adapter))
- 			return -EINVAL;
+ 	if (mc_io->flags & FSL_MC_IO_ATOMIC_CONTEXT_PORTAL)
+diff --git a/drivers/md/dm-vdo/logger.c b/drivers/md/dm-vdo/logger.c
+index 3f7dc2cb6b98..76a987ccf926 100644
+--- a/drivers/md/dm-vdo/logger.c
++++ b/drivers/md/dm-vdo/logger.c
+@@ -34,7 +34,7 @@ static const char *get_current_interrupt_type(void)
+ 	if (in_nmi())
+ 		return "NMI";
  
- 		if (cmd->data == L3_RSS_FLAGS)
-@@ -1185,7 +1193,7 @@ static int be_set_rxfh_fields(struct net_device *netdev,
- 		break;
- 	case UDP_V6_FLOW:
- 		if ((cmd->data == (L3_RSS_FLAGS | L4_RSS_FLAGS)) &&
--		    BEx_chip(adapter))
-+			BEx_chip(adapter))
- 			return -EINVAL;
+-	if (in_irq())
++	if (in_hardirq())
+ 		return "HI";
  
- 		if (cmd->data == L3_RSS_FLAGS)
-@@ -1211,7 +1219,7 @@ static int be_set_rxfh_fields(struct net_device *netdev,
- }
+ 	if (in_softirq())
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index 67964dc4db95..dd634103b014 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -616,7 +616,7 @@ do {									\
+ #define lockdep_assert_in_softirq()					\
+ do {									\
+ 	WARN_ON_ONCE(__lockdep_enabled			&&		\
+-		     (!in_softirq() || in_irq() || in_nmi()));		\
++		     (!in_softirq() || in_hardirq() || in_nmi()));	\
+ } while (0)
  
- static void be_get_channels(struct net_device *netdev,
--			    struct ethtool_channels *ch)
-+				struct ethtool_channels *ch)
- {
- 	struct be_adapter *adapter = netdev_priv(netdev);
- 	u16 num_rx_irqs = max_t(u16, adapter->num_rss_qs, 1);
-@@ -1237,14 +1245,14 @@ static int be_set_channels(struct net_device  *netdev,
- 	 * combined and either RX-only or TX-only channels.
- 	 */
- 	if (ch->other_count || !ch->combined_count ||
--	    (ch->rx_count && ch->tx_count))
-+		(ch->rx_count && ch->tx_count))
- 		return -EINVAL;
+ extern void lockdep_assert_in_softirq_func(void);
+diff --git a/include/linux/preempt.h b/include/linux/preempt.h
+index 102202185d7a..d964f965c8ff 100644
+--- a/include/linux/preempt.h
++++ b/include/linux/preempt.h
+@@ -134,11 +134,9 @@ static __always_inline unsigned char interrupt_context_level(void)
  
- 	if (ch->combined_count > be_max_qp_irqs(adapter) ||
--	    (ch->rx_count &&
--	     (ch->rx_count + ch->combined_count) > be_max_rx_irqs(adapter)) ||
--	    (ch->tx_count &&
--	     (ch->tx_count + ch->combined_count) > be_max_tx_irqs(adapter)))
-+		(ch->rx_count &&
-+		 (ch->rx_count + ch->combined_count) > be_max_rx_irqs(adapter)) ||
-+		(ch->tx_count &&
-+		 (ch->tx_count + ch->combined_count) > be_max_tx_irqs(adapter)))
- 		return -EINVAL;
+ /*
+  * The following macros are deprecated and should not be used in new code:
+- * in_irq()       - Obsolete version of in_hardirq()
+  * in_softirq()   - We have BH disabled, or are processing softirqs
+  * in_interrupt() - We're in NMI,IRQ,SoftIRQ context or have BH disabled
+  */
+-#define in_irq()		(hardirq_count())
+ #define in_softirq()		(softirq_count())
+ #define in_interrupt()		(irq_count())
  
- 	adapter->cfg_num_rx_irqs = ch->combined_count + ch->rx_count;
-@@ -1265,7 +1273,7 @@ static u32 be_get_rxfh_key_size(struct net_device *netdev)
- }
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 8a129746bd6c..6cde6a46babf 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2330,7 +2330,7 @@ static void bpf_audit_prog(const struct bpf_prog *prog, unsigned int op)
+ 		return;
+ 	if (audit_enabled == AUDIT_OFF)
+ 		return;
+-	if (!in_irq() && !irqs_disabled())
++	if (!in_hardirq() && !irqs_disabled())
+ 		ctx = audit_context();
+ 	ab = audit_log_start(ctx, GFP_ATOMIC, AUDIT_BPF);
+ 	if (unlikely(!ab))
+@@ -2428,7 +2428,7 @@ static void __bpf_prog_put(struct bpf_prog *prog)
+ 	struct bpf_prog_aux *aux = prog->aux;
  
- static int be_get_rxfh(struct net_device *netdev,
--		       struct ethtool_rxfh_param *rxfh)
-+			   struct ethtool_rxfh_param *rxfh)
- {
- 	struct be_adapter *adapter = netdev_priv(netdev);
- 	int i;
-@@ -1285,8 +1293,8 @@ static int be_get_rxfh(struct net_device *netdev,
- }
+ 	if (atomic64_dec_and_test(&aux->refcnt)) {
+-		if (in_irq() || irqs_disabled()) {
++		if (in_hardirq() || irqs_disabled()) {
+ 			INIT_WORK(&aux->work, bpf_prog_put_deferred);
+ 			schedule_work(&aux->work);
+ 		} else {
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index 553fa469d7cc..282a8e5c05f8 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -2472,7 +2472,7 @@ void update_process_times(int user_tick)
+ 	run_local_timers();
+ 	rcu_sched_clock_irq(user_tick);
+ #ifdef CONFIG_IRQ_WORK
+-	if (in_irq())
++	if (in_hardirq())
+ 		irq_work_tick();
+ #endif
+ 	sched_tick();
+diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
+index ed99344317f5..d939403331b5 100644
+--- a/lib/locking-selftest.c
++++ b/lib/locking-selftest.c
+@@ -202,7 +202,7 @@ static void init_shared_classes(void)
+ 	local_irq_disable();			\
+ 	__irq_enter();				\
+ 	lockdep_hardirq_threaded();		\
+-	WARN_ON(!in_irq());
++	WARN_ON(!in_hardirq());
  
- static int be_set_rxfh(struct net_device *netdev,
--		       struct ethtool_rxfh_param *rxfh,
--		       struct netlink_ext_ack *extack)
-+			   struct ethtool_rxfh_param *rxfh,
-+			   struct netlink_ext_ack *extack)
- {
- 	int rc = 0, i, j;
- 	struct be_adapter *adapter = netdev_priv(netdev);
-@@ -1295,7 +1303,7 @@ static int be_set_rxfh(struct net_device *netdev,
+ #define HARDIRQ_EXIT()				\
+ 	__irq_exit();				\
+@@ -2512,7 +2512,7 @@ DEFINE_LOCK_GUARD_0(NOTTHREADED_HARDIRQ,
+ 	do {
+ 		local_irq_disable();
+ 		__irq_enter();
+-		WARN_ON(!in_irq());
++		WARN_ON(!in_hardirq());
+ 	} while(0), HARDIRQ_EXIT())
+ DEFINE_LOCK_GUARD_0(SOFTIRQ, SOFTIRQ_ENTER(), SOFTIRQ_EXIT())
  
- 	/* We do not allow change in unsupported parameters */
- 	if (rxfh->hfunc != ETH_RSS_HASH_NO_CHANGE &&
--	    rxfh->hfunc != ETH_RSS_HASH_TOP)
-+		rxfh->hfunc != ETH_RSS_HASH_TOP)
- 		return -EOPNOTSUPP;
- 
- 	if (rxfh->indir) {
-@@ -1309,27 +1317,27 @@ static int be_set_rxfh(struct net_device *netdev,
- 		}
- 	} else {
- 		memcpy(rsstable, adapter->rss_info.rsstable,
--		       RSS_INDIR_TABLE_LEN);
-+			   RSS_INDIR_TABLE_LEN);
- 	}
- 
- 	if (!hkey)
--		hkey =  adapter->rss_info.rss_hkey;
-+		hkey =	adapter->rss_info.rss_hkey;
- 
- 	rc = be_cmd_rss_config(adapter, rsstable,
--			       adapter->rss_info.rss_flags,
--			       RSS_INDIR_TABLE_LEN, hkey);
-+				   adapter->rss_info.rss_flags,
-+				   RSS_INDIR_TABLE_LEN, hkey);
- 	if (rc) {
- 		adapter->rss_info.rss_flags = RSS_ENABLE_NONE;
- 		return -EIO;
- 	}
- 	memcpy(adapter->rss_info.rss_hkey, hkey, RSS_HASH_KEY_LEN);
- 	memcpy(adapter->rss_info.rsstable, rsstable,
--	       RSS_INDIR_TABLE_LEN);
-+		   RSS_INDIR_TABLE_LEN);
- 	return 0;
- }
- 
- static int be_get_module_info(struct net_device *netdev,
--			      struct ethtool_modinfo *modinfo)
-+				  struct ethtool_modinfo *modinfo)
- {
- 	struct be_adapter *adapter = netdev_priv(netdev);
- 	u8 page_data[PAGE_DATA_LEN];
-@@ -1417,8 +1425,8 @@ static int be_set_priv_flags(struct net_device *netdev, u32 flags)
- 
- const struct ethtool_ops be_ethtool_ops = {
- 	.supported_coalesce_params = ETHTOOL_COALESCE_USECS |
--				     ETHTOOL_COALESCE_USE_ADAPTIVE |
--				     ETHTOOL_COALESCE_USECS_LOW_HIGH,
-+					 ETHTOOL_COALESCE_USE_ADAPTIVE |
-+					 ETHTOOL_COALESCE_USECS_LOW_HIGH,
- 	.get_drvinfo = be_get_drvinfo,
- 	.get_wol = be_get_wol,
- 	.set_wol = be_set_wol,
 -- 
-2.51.1
+2.47.2
 
 
