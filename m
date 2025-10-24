@@ -1,167 +1,105 @@
-Return-Path: <linux-kernel+bounces-869065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79438C06DC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:04:30 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C641C06DD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 121DB1A01ACB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:04:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CC72B354FF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69583148A4;
-	Fri, 24 Oct 2025 15:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bvP0TH9q"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBB21A08CA;
-	Fri, 24 Oct 2025 15:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4961031A06A;
+	Fri, 24 Oct 2025 15:05:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D3F72612;
+	Fri, 24 Oct 2025 15:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761318242; cv=none; b=gPtOxW65OtiFgCI+a28EQtrgoPUpliO/XQmI9olFsHCM1NhVHRXC3hS/WH04kCB+I1OTlYdnO+CwwA8plMOQWM8qKgBkuyN3t2oWKZSGEixHl6+GplgPW9H/yywDYQlKOY+dnKfQA+EKAC3zrO/2ihKDJHJlQA8VQFS82kuO85Q=
+	t=1761318320; cv=none; b=DDMJPKyoHJ/EkI8zZwar8VCrr08y3lGH3sh1nLATAsytIP1j7LEIFP2bdPWLPRzyflEDI7Ji8WaiS7PX7afBCmv5u1VT25ksXUQfImesryaCqA+wvYhQGGaIx5T7LdUFRPo8s4wDIZLYZ3ylj3B+U6yMC6A1R+oskGDHZofTDbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761318242; c=relaxed/simple;
-	bh=UuN5SbJXjd99GdekiS7uxvzlxNMYSESYEHexIDrV578=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F9axegf8ANarXDoumBBA1MSxRQZqpx3oCB1OzRSVM74QdabwmkPWev/xf/ZeqYvebutyDPE3/uFBLHXLqQE0DK5HrO4JmPsI3WLOddhMaBKrqqGV1+NrvZMIq6TKFxUK6WxI9WCdhM5HDVe10eWv1vekUmYP2th7HAbPkak655s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bvP0TH9q; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CB32A40E0200;
-	Fri, 24 Oct 2025 15:03:49 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id f4EPLWfamKoN; Fri, 24 Oct 2025 15:03:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761318226; bh=4xYnJj8Mu9WshoEU5OoanXUEJ9sqgN+CtEZkr8Kk4BM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bvP0TH9qRf6JCK00wir6yrL8EDqfI6NC5eTt8PE642670aRdyME9ZZUaL+ey+BOAE
-	 t/UQTjxAB9ejJ7uo9vGDn6uSz1xuBiJAZPruRFJmqNoe4lwAJxseDX5nBglOjUFT8h
-	 CWEF9ZpQCVo9CqDI/G7SeayIyqBYGow7hbboDUtK8W3mY4+W9UYVd+x2cUbNNkI1nN
-	 QG2oQHdi0Miebihw9lzdhgQl5if4FAwfz3Yk2V9i5OCZZgsgw6s12BK4rN1uo7Yxx6
-	 016bt/tcx+2OecpArX5/wU4KgQg/W7ZneXXJ1IdZfIliKVcw3cK54Bbtcn6bZ2RbzL
-	 rhEWfVZVaMz/77WLYkSCfaPJwXgVed/Fe7FLq4Wf8KbgjxDDjEtFfA2C8UO0TSrTWC
-	 gd6KfXRNoM1T5sUDWv0CsntNpXHx0/iPZhjZH1w26jekJSrO0COp8mwhwmPKMwyHBZ
-	 AvZRbosI5VpInehw5kOxlWH2RKcfEpIwIdpt1BstrZ5C/fMaeU2lEKYUOvTf9xpQwo
-	 D0JqyuJlyjs31SongYQ/+n/ATcnkkohl0IDifxKRr2X1igk8UZ5b0cxyp3Qyo0izFE
-	 IOvRbV8jtL/MJZtd0gxTKdGG9NleBtvrppc0FG0RRRClNpGcMvJPFfsso5q9SKHhFL
-	 Jwi+oDNjSOy5JBixLDpFGiLY=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 3A21A40E019B;
-	Fri, 24 Oct 2025 15:03:34 +0000 (UTC)
-Date: Fri, 24 Oct 2025 17:03:33 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org, Smita.KoralahalliChannabasappa@amd.com,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Bert Karwatzki <spasswolf@web.de>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v7 2/8] x86/mce: Unify AMD DFR handler with MCA Polling
-Message-ID: <20251024150333.GSaPuVRQYxH92zyrmO@fat_crate.local>
-References: <20251016-wip-mca-updates-v7-0-5c139a4062cb@amd.com>
- <20251016-wip-mca-updates-v7-2-5c139a4062cb@amd.com>
+	s=arc-20240116; t=1761318320; c=relaxed/simple;
+	bh=mFsntFKm3sLCSsUTazR6Zz09gRvrPjOBy+0/EZ6kZlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LUokSi4+hsWWbGeiCnn6I3msHAsC2CjnTXFPWIXPc8U67Bbd0fClQRnUIzd/3nOVZPiX7M0cjiHXO/8zsVVhSFuwEb56OXowIsn6iG5jtvn0+WMiId3xBW47audua5W8fh9mE2ameItS1U4qu2dRQXEcClPYM+1MvJrl2YaQ/hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29D6E14BF;
+	Fri, 24 Oct 2025 08:05:10 -0700 (PDT)
+Received: from [10.57.67.38] (unknown [10.57.67.38])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 519063F63F;
+	Fri, 24 Oct 2025 08:05:10 -0700 (PDT)
+Message-ID: <6ed9f404-9939-4e9f-b5aa-4253bef46df1@arm.com>
+Date: Fri, 24 Oct 2025 17:05:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251016-wip-mca-updates-v7-2-5c139a4062cb@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 11/13] x86/xen: use lazy_mmu_state when
+ context-switching
+To: David Woodhouse <dwmw2@infradead.org>,
+ David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
+ <20251015082727.2395128-12-kevin.brodsky@arm.com>
+ <f0067f35-1048-4788-8401-f71d297f56f3@redhat.com>
+ <348e5f1c5a90e4ab0f14b4d997baf7169745bf04.camel@infradead.org>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <348e5f1c5a90e4ab0f14b4d997baf7169745bf04.camel@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 16, 2025 at 04:37:47PM +0000, Yazen Ghannam wrote:
-> @@ -1878,6 +1924,9 @@ static void __mcheck_cpu_init_prepare_banks(void)
->  
->  		bitmap_fill(all_banks, MAX_NR_BANKS);
->  		machine_check_poll(MCP_UC | MCP_QUEUE_LOG, &all_banks);
-> +
-> +		if (mce_flags.smca)
-> +			machine_check_poll(MCP_DFR | MCP_QUEUE_LOG, &all_banks);
+On 24/10/2025 16:47, David Woodhouse wrote:
+> On Thu, 2025-10-23 at 22:06 +0200, David Hildenbrand wrote:
+>> On 15.10.25 10:27, Kevin Brodsky wrote:
+>>> We currently set a TIF flag when scheduling out a task that is in
+>>> lazy MMU mode, in order to restore it when the task is scheduled
+>>> again.
+>>>
+>>> The generic lazy_mmu layer now tracks whether a task is in lazy MMU
+>>> mode in task_struct::lazy_mmu_state. We can therefore check that
+>>> state when switching to the new task, instead of using a separate
+>>> TIF flag.
+>>>
+>>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+>>> ---
+>>
+>> Looks ok to me, but I hope we get some confirmation from x86 / xen
+>> folks.
+>
+> I know tglx has shouted at me in the past for precisely this reminder,
+> but you know you can test Xen guests under QEMU/KVM now and don't need
+> to actually run Xen? Has this been boot tested?
 
-So you're going to run the poll again just for DFR errors?!
+I considered boot-testing a Xen guest (considering the Xen-specific
+changes in this series), but having no idea how to go about it I quickly
+gave up... Happy to follow instructions :)
 
-What for?
-
-I think this is enough:
-
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index 1482648c8508..7d6588195d56 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -299,7 +299,6 @@ enum mcp_flags {
- 	MCP_TIMESTAMP	= BIT(0),	/* log time stamp */
- 	MCP_UC		= BIT(1),	/* log uncorrected errors */
- 	MCP_QUEUE_LOG	= BIT(2),	/* only queue to genpool */
--	MCP_DFR		= BIT(3),	/* log deferred errors */
- };
- 
- void machine_check_poll(enum mcp_flags flags, mce_banks_t *b);
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index 64aa7ecfd332..d9f9ee7db5c8 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -807,7 +807,7 @@ DEFINE_IDTENTRY_SYSVEC(sysvec_deferred_error)
- /* APIC interrupt handler for deferred errors */
- static void amd_deferred_error_interrupt(void)
- {
--	machine_check_poll(MCP_TIMESTAMP | MCP_DFR, &this_cpu_ptr(&mce_amd_data)->dfr_intr_banks);
-+	machine_check_poll(MCP_TIMESTAMP, &this_cpu_ptr(&mce_amd_data)->dfr_intr_banks);
- }
- 
- static void reset_block(struct threshold_block *block)
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 39725df7d35c..7be062429ce3 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -779,17 +779,13 @@ static bool should_log_poll_error(enum mcp_flags flags, struct mce_hw_err *err)
- {
- 	struct mce *m = &err->m;
- 
--	if (flags & MCP_DFR)
-+	if (mce_flags.smca)
- 		return smca_should_log_poll_error(flags, err);
- 
- 	/* If this entry is not valid, ignore it. */
- 	if (!(m->status & MCI_STATUS_VAL))
- 		return false;
- 
--	/* Ignore deferred errors if not looking for them (MCP_DFR not set). */
--	if (m->status & MCI_STATUS_DEFERRED)
--		return false;
--
- 	/*
- 	 * If we are logging everything (at CPU online) or this
- 	 * is a corrected error, then we must log it.
-@@ -1924,9 +1920,6 @@ static void __mcheck_cpu_init_prepare_banks(void)
- 
- 		bitmap_fill(all_banks, MAX_NR_BANKS);
- 		machine_check_poll(MCP_UC | MCP_QUEUE_LOG, &all_banks);
--
--		if (mce_flags.smca)
--			machine_check_poll(MCP_DFR | MCP_QUEUE_LOG, &all_banks);
- 	}
- 
- 	for (i = 0; i < this_cpu_read(mce_num_banks); i++) {
-
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+- Kevin
 
