@@ -1,126 +1,166 @@
-Return-Path: <linux-kernel+bounces-867966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44366C04065
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:35:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55EAEC0406E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1288D1A67F82
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:36:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38D3A4F59EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2710B19882B;
-	Fri, 24 Oct 2025 01:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BF6188CC9;
+	Fri, 24 Oct 2025 01:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SEweK6Qz"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7xnt6Se"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377FB12D1F1
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA47145B3F
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761269743; cv=none; b=UDrb25FOqGOeT2JSWqhEi3YPpRUHpOwuAZcr3BYMyPi2Ee/KeSI4wfKJrwWGISNX1/35wWbjgtJxLDa3ING8HuPmbqxb36PfMi4tX7cNCub1C6LfhJH+lqNC09KlFaV4obDlvkprEmuo5cAYKHx3VYbwlOiA5flioj7S8sG2+Po=
+	t=1761269753; cv=none; b=igKC688Z9YakMIkWsIheOrZHCskzUBBTFK2M8CC+5V/fQlVe/Pbkczx1LXeOL5GHUN908jWavmZMH6MkEazx5JJTRzNCHpX08VaJAagkLCcbqBFX02AKXBzPd8xcb5sGUzvNvF3pfZ3faVpEFJluO5K1cKpF7/uxAitXxdhJF0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761269743; c=relaxed/simple;
-	bh=OzHfrAInRSZ0eiTjgnP0ORLw+XKP0Fa49X/R0UcrD+A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QWv5IR/D6cgLVu2qzXb9XXPUjttNm5oSmxcvuaPLaMySmktCaVMHcR1JjXZ9xSVdv8Sg55eNlM/Ec7YjZ/8spHm0Z8YxObz805JnheMDcpLoAa9UejKFZpC9j4/DFrCB/9yTmPihBxpLbZKI0ChvJ7OsEj0diMzernWOkw+cpUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SEweK6Qz; arc=none smtp.client-ip=209.85.216.44
+	s=arc-20240116; t=1761269753; c=relaxed/simple;
+	bh=AXzVrNH1TUa6ogzDoknpnZyRp4WPedbef4fmxOb9fUE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MbDpC4GckMS7nmgX8uGClgyu0sh+nMreesxrFJv9X5zI+at1ljGaMCC3qC8AO+O5NG84KgVr1BTVaz5LHSEgZiV2ipZav2CEz/q8sjng4KimBD7yfbdG9W5BDd4ZOiL1hDZo4FwF114YZ4zb3pFYfFuabuBkae+yBpj9yXgba3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g7xnt6Se; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-33bbeec2ed7so1432052a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:35:41 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so12275475e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:35:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761269741; x=1761874541; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EpEV8JmfPBi+9bjulCXf6+3xKX9GZ5AzBtR1kYyEQ9Y=;
-        b=SEweK6QzHWqrOkV7DBTtCHKeYhpdFqRtFDPlQCBqr9FAXFp5BlPea0n0XVtWha+sqZ
-         Qr/HvnOax2QuitL3qbcmVz01NFUfXf0C8phEOGPLCMKsJ8UJb1Lyc/YIjgzMuILsAI2f
-         qsnufjKGPaCxF1JowKFxaK7tQed8UM5Z716+kCZNcPu0W7vhWXfsx4r75p46WozZitSK
-         jM/umY/jmuLWk83SPWMl74LwQp0JHP+Vm8NDZxuoZP+aYo09UdtnbjdeR2JcIEDAP203
-         6/yF9A9xAS8kd3IqvwfB0u7z40WR35KpFWSFkT6+zWiPdQjYZM8iVnAoo81zgvPay4pF
-         2XQQ==
+        d=gmail.com; s=20230601; t=1761269750; x=1761874550; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cq8gqqeYooxgW5KYKmBo5Rs/wh49wN/6rTY6x+8D8QA=;
+        b=g7xnt6Se7/yVB1ZbzVBGgJk4ETl3P0xx46mJNkDb1lSY1oO+91BsK+wrHpNDc76HuR
+         FpQ2EX0sayF2S8XHS/cP6Jyf+cCiZDtnTtbkuP01dHbSqrdRWn2uN1rbUhLgWf2WniAM
+         YNngzVRqp6YHi2DbZsB4sE8izhYFyhGWKoL3cPWYwtkHNclvBJv9/QYwgYNYrQP7oIV4
+         fjMGM+qLLq2V5TBHV/1z46d2CSWpOJRQpvJdtyfcnUyqZQNxevmflcK5+zVRFsB8oE2k
+         MJOJNuWO/xqxKF5tUiWRpzjhe9j+8KBFVBQ/pARS5DCYt4eFCVzD6zq+Q4mIOxxs8Kch
+         5wqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761269741; x=1761874541;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EpEV8JmfPBi+9bjulCXf6+3xKX9GZ5AzBtR1kYyEQ9Y=;
-        b=vFpSF/5F2TUmstb2+XyZkGwrAdZjzQjaC7siaoEjSn4gGAKW1kybHU7lLF6KtwVVje
-         N7vXaIO57RF6/uKmGhCUFNePyp78SJxv+dL0exgnTWxTTZXDc0K2OeuOxBT3k+ILbkgC
-         /PDro84YoZlSEmWDtXhMCs4rN+iANHL2mHJvYLHMBXcik1WPMwrFWb2GQn+LSK8G7ONA
-         YnE7JjCrHpvxev82NyitE9/4o0hHRlC80KkThgxJufoQUTpj3cKMqqOG41y9Zju+D9pN
-         i7W+dPajJdxoavmwfRwlM0oO7z3Git4Fa0EeZnaS4xTQ/D5bra7Ql7jUKen5/OvZ0ihx
-         Dvrg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+aE+rAPnlkBqHWEkF56Lqt0Fck5tZigyRFvs+toIzLBWJAg1SVf019AuzITesH5MgekciHMk8npfH4cI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKEjQ73ixJdi8tzs8BZj6fqt/bysaG9ZaWJCQFFsHc9Vw0UJiN
-	0eerrtSk/K4sNi4HnMPp4VJDP+nyOb24ydE1sNRIX3TVfArHvluXfAPF
-X-Gm-Gg: ASbGnctqoJwu9zK5cFiePddqe466fI9wF/2bShWo3qHi4Nayzq8N/lhoXSCuYt8Tsaz
-	QFHnUS7PV883xRms+2zunL2W2++WtOXI0XvEED/w0H4eLGNEQnY9GVkoSlgEAsVsTQYy1cTsGOE
-	lo13Bip9CKFd0jSPYxMFRCcD9O8n1HYOME8HWzqIvm6ssvfhb9yfTIpMknCd3lQT/gGw5yB7nlO
-	rTpldxyG0mDwLBIr+PxzgvoS61YPR0KL1jF/yOpHOYD5HN2jbt+o5wJdGYy/YIAwu9+AqYBWGhY
-	1DQLpnqFF0YJdHtUnRgSYRwAq5PxBINHJZXO/U7w/PG8gEBlbMqPx9jgOxB9IsUXPHsZE5CE1W/
-	VHqWrhh4iNYeVmF/vFebJdJdUrFSUyTCJBN/X4MLs3dVn/BS/mRfVH/CDe7jBn4hAnAxn8LULFt
-	bXCRC5TIBabfR2vKfl
-X-Google-Smtp-Source: AGHT+IEUI+U7zUQV2UwzLZwu9TlJemEe0RPKx1uez2BTNfquWqRpSOjvCC8tYXJP0daruNmjhYuAZg==
-X-Received: by 2002:a17:90b:164a:b0:30a:4874:5397 with SMTP id 98e67ed59e1d1-33fafbaabb4mr5709115a91.9.1761269741348;
-        Thu, 23 Oct 2025 18:35:41 -0700 (PDT)
-Received: from hilb.. ([170.254.111.1])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-33fb016f865sm3850014a91.11.2025.10.23.18.35.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 18:35:40 -0700 (PDT)
-From: =?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
-To: 
-Cc: =?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Gabriel Somlo <gsomlo@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] soc/tegra: Resolve a spelling error in the tegra194-cbb.c
-Date: Fri, 24 Oct 2025 01:35:14 +0000
-Message-ID: <20251024013528.1542-1-brunofrancadevsec@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1761269750; x=1761874550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Cq8gqqeYooxgW5KYKmBo5Rs/wh49wN/6rTY6x+8D8QA=;
+        b=XXP/vMpHwX45+LKCMWuBDH/TQ1nY5rL93fSPpKcRquiD4AMnW8dh5sTz1wF0WA3QkB
+         malcQSjmeAf1yFCmX7vYGslVbpC43hAUIRbe5eZbeUCuMZo7Rj0nOdVMsgzuuj7pizBa
+         DSXJfR7H9f9TaDqsjry06kUFZ3D2j0ICCmMFbHJOAUD4hoDPi0b2F9iaMKzyY8fzSjm2
+         k1+wT5CsvwywujMxqtofVxXNL4CLF8Iyqd/EUjNxNTPVqQXHkTIJfPciz5bSOp1mHC2K
+         n+dr6ji75uC2lHpfzftwUHjAhtGNU2XHISC4Rm45udYmc2UsSzksdnehWmmETIA+0U0f
+         EYBw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2KBmqPHzCNsHan+yWdhUuKnYCy67evPhd8btQ2k3vi9iGv4BZBi0fWc3AJhW5mldqZbrDJGceGEU6yXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxleITy6V47OzczBD1p/xySMyjRkkIopqJwFvXP2FaH7sFdn52L
+	9Gqh7gMpvxZVs9abN/oaMjse7sLNXBUj7KODIO0L1pyMekjqXraE1iEhqBaH5tipwHP+umizN03
+	pSdymwjedXrhFQrgTGWS5CRGrI+kpxJo=
+X-Gm-Gg: ASbGncuiSvUyAsUZNw1VBp67AM0+lt7CWoyG0mViOGm8nlQ9H5WeyJ/75XFY590RqT/
+	9X7SQctO4W5rQa3f5c0D/pA439xtlM6njdICeneF6yH6D5y7+IlyR8O067/wU5T/Lu2kWZ8qF4O
+	0Yz2dGBxDwu10HeQ3AntUdyAmveBLU1kzeg2c6IaftAqU60ge+20TjqtQztPiaD9mjgHvPZNSbF
+	RTsZERixa387qxRkmxy+yePEAJ3BmDZqbOjCyh4iu9Jh5aCzPs9Yd8AFYK9s4DLol5VDlaXkIbr
+	MOPCT3hqBP1xKGwBQcc=
+X-Google-Smtp-Source: AGHT+IGwrfelWdU2yhalAC0i9vt/hIf2/MMW3kPsGCKlhtSvPHBTMPWNKLBb8oATlrSieozyy7lk2jNHzMN+c5GsljA=
+X-Received: by 2002:a05:600d:4355:b0:46e:45f7:34f3 with SMTP id
+ 5b1f17b1804b1-475d39b9552mr1422285e9.8.1761269749552; Thu, 23 Oct 2025
+ 18:35:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251023131600.1103431-1-harry.yoo@oracle.com>
+ <aPrLF0OUK651M4dk@hyeyoo> <CA+fCnZezoWn40BaS3cgmCeLwjT+5AndzcQLc=wH3BjMCu6_YCw@mail.gmail.com>
+In-Reply-To: <CA+fCnZezoWn40BaS3cgmCeLwjT+5AndzcQLc=wH3BjMCu6_YCw@mail.gmail.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Fri, 24 Oct 2025 03:35:38 +0200
+X-Gm-Features: AWmQ_blTT_7WNBqDPFmuMJp8o4vQAMauOpamt3NvIm4L5ZNNRzy9gCKm7HE9f0E
+Message-ID: <CA+fCnZezciDNL4-Yto8d3bPOc3U07hY1Q_DMk926-1H17Ugx3Q@mail.gmail.com>
+Subject: Re: [PATCH] mm/slab: ensure all metadata in slab object are word-aligned
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, David Rientjes <rientjes@google.com>, 
+	Alexander Potapenko <glider@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Feng Tang <feng.79.tang@gmail.com>, 
+	Christoph Lameter <cl@gentwo.org>, Dmitry Vyukov <dvyukov@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix a typo spotted during code reading.
+On Fri, Oct 24, 2025 at 3:19=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail.=
+com> wrote:
+>
+> On Fri, Oct 24, 2025 at 2:41=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> =
+wrote:
+> >
+> > Adding more details on how I discovered this and why I care:
+> >
+> > I was developing a feature that uses unused bytes in s->size as the
+> > slabobj_ext metadata. Unlike other metadata where slab disables KASAN
+> > when accessing it, this should be unpoisoned to avoid adding complexity
+> > and overhead when accessing it.
+>
+> Generally, unpoisoining parts of slabs that should not be accessed by
+> non-slab code is undesirable - this would prevent KASAN from detecting
+> OOB accesses into that memory.
+>
+> An alternative to unpoisoning or disabling KASAN could be to add
+> helper functions annotated with __no_sanitize_address that do the
+> required accesses. And make them inlined when KASAN is disabled to
+> avoid the performance hit.
+>
+> On a side note, you might also need to check whether SW_TAGS KASAN and
 
-Signed-off-by: Bruno Sobreira França <brunofrancadevsec@gmail.com>
----
-Changes in v3:
-  - Improve commit message
-Changes in v2:
-  - Really fix the spelling error
----
- drivers/soc/tegra/cbb/tegra194-cbb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+*HW_TAGS KASAN
 
-diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
-index 846b17ffc2f9..e1deda188fdb 100644
---- a/drivers/soc/tegra/cbb/tegra194-cbb.c
-+++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
-@@ -1836,7 +1836,7 @@ print_errlog1_2(struct seq_file *file, struct tegra194_cbb *cbb,
- }
- 
- /*
-- * Print transcation type, error code and description from ErrLog0 for all
-+ * Print transaction type, error code and description from ErrLog0 for all
-  * errors. For NOC slave errors, all relevant error info is printed using
-  * ErrLog0 only. But additional information is printed for errors from
-  * APB slaves because for them:
--- 
-2.43.0
+SW_TAGS KASAN works with kasan_disable_current().
 
+HW_TAGS KASAN does not and instead relies on the pointer tag being
+reset for the access to be unchecked.
+
+On another side note, unpoisoning slabobj_ext memory with either of
+the TAGS modes would require it to be aligned to 16 bytes, not just 8.
+(But those modes do not embed metadata after each object in a slab, so
+your patch seems fine to me.)
+
+> KMSAN would be unhappy with your changes:
+>
+> - When we do kasan_disable_current() or metadata_access_enable(), we
+> also do kasan_reset_tag();
+> - In metadata_access_enable(), we disable KMSAN as well.
+>
+> > This warning is from kasan_unpoison():
+> >         if (WARN_ON((unsigned long)addr & KASAN_GRANULE_MASK))
+> >                 return;
+> >
+> > on x86_64, the address passed to kasan_{poison,unpoison}() should be at
+> > least aligned with 8 bytes.
+> >
+> > After manual investigation it turns out when the SLAB_STORE_USER flag i=
+s
+> > specified, any metadata after the original kmalloc request size is
+> > misaligned.
+> >
+> > Questions:
+> > - Could it cause any issues other than the one described above?
+> > - Does KASAN even support architectures that have issues with unaligned
+> >   accesses?
+>
+> Unaligned accesses are handled just fine. It's just that the start of
+> any unpoisoned/accessible memory region must be aligned to 8 (or 16
+> for SW_TAGS) bytes due to how KASAN encodes shadow memory values.
+>
+> > - How come we haven't seen any issues regarding this so far? :/
+>
+> As you pointed out, we don't unpoison the memory that stores KASAN
+> metadata and instead just disable KASAN error reporting. This is done
+> deliberately to allow KASAN catching accesses into that memory that
+> happen outside of the slab/KASAN code.
 
