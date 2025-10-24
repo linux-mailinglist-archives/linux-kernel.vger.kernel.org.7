@@ -1,147 +1,155 @@
-Return-Path: <linux-kernel+bounces-868792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 429E4C0620C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:58:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1854DC06252
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91FB74F7DF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:56:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0B23B85E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA4C2D979D;
-	Fri, 24 Oct 2025 11:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2D12DECB0;
+	Fri, 24 Oct 2025 11:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdQG/0zR"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eQcvobLz"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFB12D661A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298EC2DC776
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761306995; cv=none; b=SVHK6thU+PMVlHludT2a+tKB/DtXeiUrU7uSV80LIGnBL+dgWF1KYBsoRKTzfKeJxjIsstrI3kts/JhWG1+3MlL+FqEJkcqr7ccQxnVnTsKgkG3vVpxnR2LbJ2SCPqsN/tP6eYuFlPFt84+vyzMM+0wZxWXVzD9nDXZz+XiBjOs=
+	t=1761307073; cv=none; b=lGUES53j1Kf4onP802yneAxsy5OlCeOAgjBsCVU6XkrbZ3LRt5i1GfBFdRENrnW/wS/dxNg5O0YJdy0MNPx01Xd7Ld25V5YeMB/lys1skdnDyya0XHSe2GdavZpEOqpIE4S4os39xjtWU4wFLIDo7QBG9rfrlSlKbY2XTTcYSeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761306995; c=relaxed/simple;
-	bh=ACoNH0lSBzy2MY8jvcQwZdqk3X6Ccng4+YpsE4ZHyXo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=km1RAx0KIDKN4JVhhMnDoJE+5s88lsMIcDYzNERH3tEOn8SaWwCKxrIyewenpwuWRu2JlycB8ucVgSKwqGfGg233fUEXncLDOUODHqsYdi1NyHUEgq1ycJjtb8jeOMIQdMPuJ3VEJrFaFI8v56CQEIjf+45cRgunbGX5LFDwcbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hdQG/0zR; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c4b5a1b70so3750759a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:56:33 -0700 (PDT)
+	s=arc-20240116; t=1761307073; c=relaxed/simple;
+	bh=otaptiYljJ4L8Ixl4ylVIYP5kpRrDvxCoiv8Pn0Kzhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gDj97LmeuuV+X7VLbWvaqKHYgzEOM0PCSlqzQRVBbdFTTs/lzMrvMKjQDKgptO0k3CG21QaIMOm4+hWAKD3XXZdjz9zkan6GvXaH9zgLvI1fm5uVuuherpcgcDUflHag3fpEzhJi8r1bXCDajk8zDGxCh+Srs2lek3YXncL869g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eQcvobLz; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-474975af41dso13536575e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:57:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761306992; x=1761911792; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uwR+/Jm6EkkRDAJG8MMcyRDD35Th6Z2O6LXMAxsoumw=;
-        b=hdQG/0zRWkM3IyPUX9mmuCNhExgnNmfWwTJ2afUyqQ97fVKN1pSvzZa81JUAjXcFyJ
-         GLSPc/BP98MNYFmvts36Ya8Ueb192oa4ko6R7j0zAgOiiwp9fWv2tiMAZo/aeGnwvbwU
-         WHpQOeaYfBI7reUGhdPowzp1FybKXuURnjF3gu4CCEY+x+6FenXJLXgTwCSw4uRJmO3t
-         lbGH6bYJ5w7rbEJkjSDDEqQ46RuLbUPIsV62ZlsX6YqiUi9y5+86cTYnJAkqXl8BUKZU
-         E2nzqtcj4E3hdaCRewLEBSjf5k33Ot/zq0qYXD0oJQktIAJdkofQYXBaTyU+sYL7YzDM
-         FKkA==
+        d=suse.com; s=google; t=1761307069; x=1761911869; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SAbdJ50faFATYVUU4QEMwOR1mWtVgSTW8fiGw4tcaIU=;
+        b=eQcvobLz5z4ytYMauXIplLeWZ1IPpnLhXqYZ5bZkmubyy3SdGyBJbvUK9mUZS8XidC
+         VbWWncLAN9NFgSCLwN7yhUQrhPb0zuY/8oqfvjq8xqy4AnSM0X06/Y3pcTBNtVBU2+3i
+         s8bYw6vpPYPIRKZzvFdsLdfFV8Nlj66GDt0ooBFcEEf/0hbnRndDNE+FqoogV9x2l43V
+         X+e7E9o6YROstxYuS37ZVrTBYyrRZ33PHc4nncvw4rUaB+1MMDf3bXgXQkXKjKpKhyA0
+         sL3sR9OTrbn8OSXPRIxkwJfObOSCCFDOt1XwNaaeAE1nR3v4PLzeb+yC5rQmnr+cSLHw
+         kliA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761306992; x=1761911792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uwR+/Jm6EkkRDAJG8MMcyRDD35Th6Z2O6LXMAxsoumw=;
-        b=liUKe+Ap+3iHJhh93izdmAqJsx5O3m6NSjUOZur3g3kSpq3ALUFEsfMRefeHzJdgLb
-         2d5d7fKVvWtQUOX1EqU+FLUzebWRmDGW6+Y0Pm+MIWC2V5Rzw1zaIl/9vVhFvZx6ACp6
-         s+MQeC8ISBHds6ZXqvgrNMHcN/mIFoKwFGpqOL3cOuBa0TDT5yDABzLgohHIBR2QS0Gc
-         gf6gmg8ZKU5nyNlmN+IxEhX8P6BQ4IJdeg2ykrCHJ+QzGnZD5RxXqm3z4h/AYojLXMjC
-         afe1RtQGowdcML35i0nJhnDY5Ob44XfnX7czgQ2YBWm2tGYJg2yV09mprDnzAbFpvAnB
-         S+Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvqGZNYsSTTb+cJPgwkfiv++/4TZs9KFdIRdU4lShugc6jyQ7YgaDAkjEOp0TFbBzI/TemyJWPMH7c1IQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqC9txLxF+k8PwurJIagvv7yM1CFsXh0dnffv+gavZUF5NJS8c
-	sSi2qWTDU57oili+TiBvMQpxElZlk8mMHaubwhDo02bP0a5drW9Q/zxquCVHzL6Uomp87loTYBm
-	3Ad4nNkYnKLiX462zGZhNWHfAjToGxSs=
-X-Gm-Gg: ASbGnct0aOx8pT11ByvU2Kq+oMag2hai9PonVd/wV9KOE8VyFiT23wJRmaiBLLwrY62
-	yoYzuk4t/Wdnbxt86gqSKsVbUqdHOdwcgFgXJiNYxeoVCtP4Gh+WGR6UFA7cPV+tKMoKnl5pEnf
-	bUx6A64D+yiemWSkK4ssyZQ16uAAkPutNdJCDCREsjq+08p7vYPiLBlFPjFw997HCsHbZoCig3p
-	hbW2d0zB2lU6DLNnFxuQO2g0fw4BAhzFQxdN/GxqVTSKaDLXmpvpoetBFI=
-X-Google-Smtp-Source: AGHT+IHE3Iz2syFfR43Yq3FpCNrL/nUaYLptXJdz+pAJJLM8FncdsNLhl4uWTcGcFMCzkwd1udQxcEsnrpkBAnTuFMY=
-X-Received: by 2002:a05:6402:2813:b0:633:d65a:af0e with SMTP id
- 4fb4d7f45d1cf-63c1f6cee4amr27724075a12.28.1761306992262; Fri, 24 Oct 2025
- 04:56:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761307069; x=1761911869;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SAbdJ50faFATYVUU4QEMwOR1mWtVgSTW8fiGw4tcaIU=;
+        b=QWiVquQOETQynQnKhrawxiWL0JuUM7PkCgdgcbZtxbVz+TAALbxL4V+sWCGJ2SXd0C
+         +vEJ64OjJpqZTtg1iCbsua192B38uBaywjnuWQK86uGHDtBt5TMMtXX6IfdTf+E3N7wu
+         5zCB+8H28Th0GrlgXXHqHd7AmwNngtQ8F4jeEzZdYCfcaZU8GAESERKGQmxXdOGKkqS1
+         jOq5XHOBwpDzVQxDJkCDtTU8sd6N6+0ctp9zVNtIP2PT8J/Abw7qoJ1XNVRJigWk+5gH
+         LlIyygaKQUPV4oQvO7RkQXZR02ooTiPFCm0K+cmcrPeho1W09qFVMFPwNBL7kCP2IOOJ
+         K+eg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0J0HiAJL6pXxWrHp6zuk4VhTX8wuUzR7COdU0SsuHmbXwNmIX2mXoqKlVVvhiG0IIV3cCpKMKDqCNWtQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHzxOsCT8AVQ3vI8AjvFFmEpq21k3dgeDK2wQsD2D2K83Rxm8f
+	ULPCsCsrAwvVmnmFls/Nryzb8fKZAJwNB2J0Vx1AjJqkRm0RLaGz3XTXHdpvLaYrLls=
+X-Gm-Gg: ASbGncthSq7cKjVgEDdFkIaI688tTejWBi5WNE/3OVTmUCYRyek4BmJYhLQT1/K3F0D
+	X4euoyKP3cinVOJtqdfDe0Jybe7uLXoKxLrub3lreL5k4G2EQBVLtx8cesBQTKMKUj0ejaZH/dU
+	XFV/uJk9lC522dgSfrbEhpn6nnYIX1uWy2Oh+rnJFyeE+Huokkzk75xcjQln3RRBNdw7qrXvUDt
+	2lzm+Wnq7ndD/9I1PCAn0pWPGzzTj0NWHtHxgA4uXLgpMYy5ky4PZJfq2jjxa0rw5gMaZGnalAi
+	elMaT51j2GzMxL9iZGIayg+ru41TtOW41CW/RQML6PNb1Xj66d9OyXs+ZMIc8X5PI4XxCvq3eNB
+	InISZFBBIdgz/bswImnJZrEncrRj+601a7smIn3jg8AfjSRfUHrsUkqJ0ZlfC+b+ljzuetK3YKr
+	aGr3WeRcB3ZZY=
+X-Google-Smtp-Source: AGHT+IHkn/lvpCpu0B0ADmiosRvhDFk6JrpJ0ihTHj80p4hmIReVPZhkYJ83NCv6hwHIUkGZp+NwmA==
+X-Received: by 2002:a05:6000:2503:b0:3eb:dcf:bfad with SMTP id ffacd0b85a97d-42704da9b9bmr17875433f8f.34.1761307069433;
+        Fri, 24 Oct 2025 04:57:49 -0700 (PDT)
+Received: from localhost (109-81-19-73.rct.o2.cz. [109.81.19.73])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897ff3f5sm9132325f8f.22.2025.10.24.04.57.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 04:57:49 -0700 (PDT)
+Date: Fri, 24 Oct 2025 13:57:43 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Dmitry Ilvokhin <d@ilvokhin.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Kiryl Shutsemau <kas@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] mm: shmem/tmpfs hugepage defaults config choice
+Message-ID: <aPtpt4hYMuJnwnOO@tiehlicka>
+References: <aPpv8sAa2sYgNu3L@shell.ilvokhin.com>
+ <aPstDXRerYqi1O2X@tiehlicka>
+ <aPtg1vUnpkaK1Ce5@shell.ilvokhin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1006942.1760950016@warthog.procyon.org.uk> <vmbhu5djhw2fovzwpa6dptuthwocmjc5oh6vsi4aolodstmqix@4jv64tzfe3qp>
- <1158747.1760969306@warthog.procyon.org.uk> <CAH2r5mvOwmdcP_5kjC+ENgtooi06AuPvwBXrMnZrfy7_poAoFQ@mail.gmail.com>
-In-Reply-To: <CAH2r5mvOwmdcP_5kjC+ENgtooi06AuPvwBXrMnZrfy7_poAoFQ@mail.gmail.com>
-From: Shyam Prasad N <nspmangalore@gmail.com>
-Date: Fri, 24 Oct 2025 17:26:20 +0530
-X-Gm-Features: AS18NWCe-VxGu6za4D792Ov4sUu1JBPpCTFZPjWiH-jlNP-e3S38WPUGM2z3jfM
-Message-ID: <CANT5p=oPm1sh_HTWUe0-bF=DVAc5K-Ny7Cib7+Omzhkz5zJ4_w@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Fix TCP_Server_Info::credits to be signed
-To: Steve French <smfrench@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, Enzo Matsumiya <ematsumiya@suse.de>, 
-	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, linux-cifs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Pavel Shilovsky <piastryyy@gmail.com>, ronnie sahlberg <ronniesahlberg@gmail.com>, 
-	Bharath S M <bharathsm@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPtg1vUnpkaK1Ce5@shell.ilvokhin.com>
 
-On Mon, Oct 20, 2025 at 10:28=E2=80=AFPM Steve French <smfrench@gmail.com> =
-wrote:
->
-> On Mon, Oct 20, 2025 at 9:08=E2=80=AFAM David Howells <dhowells@redhat.co=
-m> wrote:
-> >
-> > Enzo Matsumiya <ematsumiya@suse.de> wrote:
-> >
-> > > Both semantically and technically, credits shouldn't go negative.
-> > > Shouldn't those other fields/functions become unsigned instead?
-> >
-> > That's really a question for Steve, but it makes it easier to handle
-> > underflow, and I'm guessing that the maximum credits isn't likely to ex=
-ceed
-> > 2G.
-> >
-> > David
->
-> Interesting question - I do like the idea of keeping signed if it
-> makes it easier to check
-> for underflows but IIRC that hasn't been a problem in a long time (adding=
- Pavel
-> and Ronnie in case they remember) but more important than the signed
-> vs. unsigned
-> in my opinion is at least keeping the field consistent.
->
-> I have seen a few stress related xfstests that often generate
-> reconnects, so we may want
-> to run with the tracepoint enabled
-> (smb3_reconnect_with_invalid_credits) to see if that
-> is actually happening (the underflow of credits)
->
-> I also was thinking that we should doublecheck that lease break acks
-> will never run out credits
-> (since that can deadlock servers for more than 30 seconds as they wait
-> for timeouts), even if
-> "lease break storms" are rare.   Maybe we should allow e.g. lease
-> break acks to borrow echo
-> credits e.g. as minor improvement?
->
-> --
-> Thanks,
->
-> Steve
+On Fri 24-10-25 11:19:50, Dmitry Ilvokhin wrote:
+> On Fri, Oct 24, 2025 at 09:38:53AM +0200, Michal Hocko wrote:
+> > On Thu 23-10-25 18:12:02, Dmitry Ilvokhin wrote:
+> > > Allow to override defaults for shemem and tmpfs at config time. This is
+> > > consistent with how transparent hugepages can be configured.
+> > > 
+> > > Same results can be achieved with the existing
+> > > 'transparent_hugepage_shmem' and 'transparent_hugepage_tmpfs' settings
+> > > in the kernel command line, but it is more convenient to define basic
+> > > settings at config time instead of changing kernel command line later.
+> > 
+> > Being consistent is usually nice but you are not telling us _who_ is
+> > going to benefit from this. Increasing the config space is not really
+> > free. So please focus on Why do we need it rather than it is consistent
+> > argument.
+> 
+> Thanks for the feedback, Michal, totally make sense to me, I should have
+> expand on this point in the initial commit message.
+> 
+> Primary motivation for adding config option is to enable policy
+> enforcement at build time. In large-scale production environments
+> (Meta's for example), the kernel configuration is often maintained
+> centrally close to the kernel code itself and owned by the kernel
+> engineers, while boot parameters are managed independently (e.g. by
+> provisioning systems). In such setups, the kernel build defines the
+> supported and expected behavior in a single place, but there is no
+> reliable or uniform control over the kernel command line options.
+> 
+> A build-time default allows kernel integrators to enforce a predictable
+> hugepage policy for shmem/tmpfs on a base layer, ensuring reproducible
+> behavior and avoiding configuration drift caused by possible boot-time
+> differences.
+> 
+> In short, primary benefit is mostly operational: it provides a way to
+> codify preferred policy in the kernel configuration, which is versioned,
+> reviewed, and tested as part of the kernel build process, rather than
+> depending on potentially variable boot parameters.
 
-I agree with Steve.
-I don't mind credits being a signed int. If credits go negative, it's
-a clear indication of a bug and jumps out at you more than a large
-integer would.
+Please expand the changelog with this explanation. Thanks!
 
---=20
-Regards,
-Shyam
+> I hope possible operational benefits outweigh downsides from increasing
+> the config space. Please, let me know if this argument sounds
+> reasonable to you, I'll rephrase commit message for v2 to include this
+> reasoning.
+
+Yes, this is exactly what I was looking for. Thank you.
+
+With this information added, feel free to add
+Acked-by: Michal Hocko <mhocko@suse.com>
+-- 
+Michal Hocko
+SUSE Labs
 
