@@ -1,327 +1,237 @@
-Return-Path: <linux-kernel+bounces-868098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E1FC045B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:00:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F88C045BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CC8A18C27C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:00:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C5384E2622
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAA124BBEB;
-	Fri, 24 Oct 2025 05:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDC2221578;
+	Fri, 24 Oct 2025 05:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Rb4IEWbR"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vl/ciuJ5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39CAC8FE;
-	Fri, 24 Oct 2025 05:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B44CD515
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761282021; cv=none; b=BmOFi31zL0OAt7OpofwaVBCXDpCv540piTEqatRMH5QdsoNTZKD/x+SyWz9E9MDSBfK6WW7DM5lCgls0S9nmAI7PzhmM061DeKyQ0l8kWfWtpc3NkZ5mqtqBnlxagL2qZwgakrJvep84B3fYfBPGSNgE80ltjQwFuABV4YF/CFs=
+	t=1761282082; cv=none; b=ucPZ0tCjqYxJDU5n08GBCPN+zHU5eYQ1eeH1WCg6tu4euEL3xafXSa/QTpt86rq8J0rlZEhr08/gSgU0DNxom11Ta5cpUV/f1O5KybjlkXW9gpRJdv6+jk+NEEtOM+gxuy8JCIC+H7GKWw1uy6rjgmGmM1O2LQ2jDj7L17qMcyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761282021; c=relaxed/simple;
-	bh=J2AVCqJTAGqKJVL2P67f2NzX7cPdI9hNGd+bFU6Ilnc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dDniYlMYfqO11KEYCIfDFH2/CKnSoLbHMrj/A+1mDyO4yRxcWvmCyKbk6irMtx1Dr7h6gDAXRTooBbV1eGWBX/Nc7AxcTLjT/i4yOnCF2kIzSqTbuklbW5CPCcGbIbKb5Nr8T+s/GtIIY9XmCVTmKQZQ+DXHjcguaiGvfgtR5pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Rb4IEWbR; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O3D1tU023013;
-	Thu, 23 Oct 2025 21:49:27 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=Vm+8XCT0Gg/06ESrA5UFQL6
-	vNcgQ1Buv1tUTm/7yCkA=; b=Rb4IEWbRnk1zUl/NSHMHUmEU3U0tFiFsjcNRhRJ
-	ItEVbF6EmVddxgVnjNtVBcaLjAs0Az1jXTrPOm83pPrWZF2Pz1oXrtWcGIvHObxq
-	ze9UeJPnJgijhoUbj04HwQq+SJec2EVPrk5BJVHjIO4JuqFrT+xjrxNKeHZbc3i1
-	LcRYP2ji3XggZ98UsnbE+HqEBz/BIHSBxNjGyj4N5JjHdyCL+6W4Nl7DyrJLWKG/
-	xw7zWfqvsxVrAso9XNcyUrBhLo47UkNM3YXJgw4YQBxZzfUkP0AqZ88yYqZL0Wsn
-	onik/oZHodZKif20jSjqzLko7V0Ji4V3XMblbCznLSkVtBw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49yx2j0fq4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Oct 2025 21:49:26 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 23 Oct 2025 21:49:36 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 23 Oct 2025 21:49:36 -0700
-Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with ESMTP id C1BF53F7068;
-	Thu, 23 Oct 2025 21:49:20 -0700 (PDT)
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Hariprasad Kelam <hkelam@marvell.com>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sunil Goutham
-	<sgoutham@marvell.com>,
-        Geetha sowjanya <gakula@marvell.com>,
-        "Subbaraya
- Sundeep" <sbhatta@marvell.com>,
-        Bharat Bhushan <bbhushan2@marvell.com>,
-        "Andrew Lunn" <andrew+netdev@lunn.ch>,
-        Kory Maincent
-	<kory.maincent@bootlin.com>,
-        "Gal Pressman" <gal@nvidia.com>, Jianbo Liu
-	<jianbol@nvidia.com>,
-        Edward Cree <ecree.xilinx@gmail.com>,
-        Breno Leitao
-	<leitao@debian.org>
-Subject: [RFC net-next] net: loopback: Extend netdev features with new loopback modes
-Date: Fri, 24 Oct 2025 10:18:48 +0530
-Message-ID: <20251024044849.1098222-1-hkelam@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761282082; c=relaxed/simple;
+	bh=4BOPF/TzT3wD8qEVDfTl/b7wBTgrIXT6aR/pCH3uUVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NkSxnbvVn5c5dFQ4KJYaq5LA6/PRiKem+0RyCW7/iOa14KJOLfHmfqey8ZDg+TpGjDrh4bOZbNoPIHOQCnuYsMtWLpVYRrMwyHVHbmoJUg7VtCuHb2gTpG62jbAyvSYxh39JFlSsaRJNXkcq8Vnhbn7FHSxr0iTnibgKT5t3TB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vl/ciuJ5; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761282080; x=1792818080;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4BOPF/TzT3wD8qEVDfTl/b7wBTgrIXT6aR/pCH3uUVk=;
+  b=Vl/ciuJ53tFTLU3X6ErAXD47bgcIrV5OLIYrizrg9M17JbLf2MEFrn09
+   KiSSEtsB2tYgIH3avOFMjFaHbwLbchXxfWG911ZTfIMRtHWCpOXdZ4PXm
+   tRJrmw2aiQWTmuct1Z42hLPgRn8zfgaTjARQa2vLy1F8qqlQrw7X3RcMA
+   y8Z7SvP9zi6YksyfWrP58ds8/1h+cpg9klIdGidTWL+GDdUeofYMwxzX8
+   WOBntAEGpbp5lXCbxw8aBld+NI6BSjaTmBAh8FeQHEX/eCJjjghe8WA0z
+   pLM9sL1zQlxktEadpKTiBQlNtEyNIGuk1ahNKbX8uNiHTLv+M4kAvXNNw
+   Q==;
+X-CSE-ConnectionGUID: klkSABxLTLePzUMzPtLrbg==
+X-CSE-MsgGUID: 0tR1u/VMRiaduV1J1jsgXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73750416"
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="73750416"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 22:01:19 -0700
+X-CSE-ConnectionGUID: eOchSQIYSSKR//H0yugPUw==
+X-CSE-MsgGUID: SMefkpw/QqaRudqDozDOEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="184054149"
+Received: from jjgreens-desk21.amr.corp.intel.com (HELO desk) ([10.124.221.191])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 22:01:03 -0700
+Date: Thu, 23 Oct 2025 22:00:58 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 00/56] Dynamic mitigations
+Message-ID: <20251024050058.stc2nthc2bklhyqv@desk>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDIxNCBTYWx0ZWRfX6OTRG3Z2hmq/
- UXHgTV5mhQ8hbrangT0m8VWHGzwSJLK1qCT4hS4LdfrfMdS5yy4voqUpDP8RgJzJXLbOb32N4JC
- vbvJ79s9cjm4sC0KsmVpEUMAZ6Ff7f7FGcEFy30BJOLmkgAUU99n7TtuWZJiXaI6DGFZIlnb3uG
- XRx7AHstZLb+VKSgNM6hr9YGoPSV6WAHTsNv5XiYYcO5FeF/74MR8Enp7pgHWUcKE7XDezfH9fX
- arFToolmBo2MW4YpEu0jnOlTGv8Ou3fsX99+aHAZd0IFeqnxCj8/njpJPPU8Xgg3xK2BMZzQABy
- Ln124W+u+YtEog2OHDOr3Dr5zqq+wxIQHhPVHoQWUZFReAfqtoTfoIgZyJh4+myXJv+1zyRJFz1
- 2oNZiuOzrBFPnU3pFzcl1EAZJtBtzg==
-X-Proofpoint-GUID: F01pi-IkULeLM6k17YFshUrWhpX2rKx-
-X-Proofpoint-ORIG-GUID: F01pi-IkULeLM6k17YFshUrWhpX2rKx-
-X-Authority-Analysis: v=2.4 cv=Rs7I7SmK c=1 sm=1 tr=0 ts=68fb0556 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
- a=rHH5SKvytUcD9PMnC3QA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-23_03,2025-10-22_01,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251013143444.3999-1-david.kaplan@amd.com>
 
-This patch enhances loopback support by exposing new loopback modes
-(e.g., MAC, SERDES) to userspace. These new modes are added extension
-to the existing netdev features.
+On Mon, Oct 13, 2025 at 09:33:48AM -0500, David Kaplan wrote:
+> Dynamic mitigations enables changing the kernel CPU security mitigations at
+> runtime without a reboot/kexec.
+> 
+> Previously, mitigation choices had to be made on the kernel cmdline.  With
+> this feature an administrator can select new mitigation choices by writing
+> a sysfs file, after which the kernel will re-patch itself based on the new
+> mitigations.
+> 
+> As the performance cost of CPU mitigations can be significant, selecting
+> the right set of mitigations is important to achieve the correct balance of
+> performance/security.
+> 
+> Use
+> ---
+> As described in the supplied documentation file, new mitigations are
+> selected by writing cmdline options to a new sysfs file.  Only cmdline
+> options related to mitigations are recognized via this interface.  All
+> previous mitigation-related cmdline options are ignored and selections are
+> done based on the new options.
+> 
+> Examples:
+>    echo "mitigations=off" > /sys/devices/system/cpu/mitigations
+>    echo "spectre_v2=retpoline tsa=off" > /sys/devices/system/cpu/mitigations
+> 
+> 
+> There are several use cases that will benefit from dynamic mitigations:
+> 
+> Use Cases
+> ---------
+> 1. Runtime Policy
+> 
+> Some workflows rely on booting a generic kernel before customizing the system.
+> cloud-init is a popular example of this where a VM is started typically with
+> default settings and then is customized based on a customer-provided
+> configuration file.
+> 
+> As flows like this rely on configuring the system after boot, they currently
+> cannot customize the mitigation policy.  With dynamic mitigations, this
+> configuration information can be augmented to include security policy
+> information.
+> 
+> For example, a cloud VM which runs only trusted workloads likely does not
+> need any CPU security mitigations applied.  But as this policy information
+> is not known at boot time, the kernel will be booted with unnecessary
+> mitigations enabled.  With dynamic mitigations, these mitigations can be
+> disabled during boot after policy information is retrieved, improving
+> performance.
+> 
+> 2. Mitigation Changes
+> 
+> Sometimes there are needs to change the mitigation settings in light of new
+> security findings.  For example, AMD-SB-1036 advised of a security issue
+> with a spectre v2 mitigation and advised using a different one instead.
+> 
+> With dynamic mitigations, such changes can be made without a reboot/kexec
+> which minimizes disruption in environments which cannot easily tolerate
+> such an event.
+> 
+> 3. Mitigation Testing
+> 
+> Being able to quickly change between different mitigation settings without
+> having to restart applications is beneficial when conducting mitigation
+> development and testing.
+> 
+> Note that some bugs have multiple mitigation options, which may have
+> varying performance impacts.  Being able to quickly switch between them
+> makes evaluating such options easier.
+> 
+> 
+> Implementation Details
+> ----------------------
+> Re-patching the kernel is expected to be a very rare operation and is done
+> under very big hammers.  All tasks are put into the freezer and the
+> re-patching is then done under the (new) stop_machine_nmi() routine.
+> 
+> To re-patch the kernel, it is first reverted back to its compile-time
+> state.  The original bytes from alternatives, retpolines, etc. are saved
+> during boot so they can later be used to restore the original kernel image.
+> After that, the kernel is patched based on the new feature flags.
+> 
+> This simplifies the re-patch process as restoring the original kernel image
+> is relatively straightforward.  In other words, instead of having to
+> re-patch from mitigation A to mitigation B directly, we first restore the
+> original image and then patch from that to mitigation B, similar to if the
+> system had booted with mitigation B selected originally.
+> 
+> 
+> Performance
+> -----------
+> Testing so far has demonstrated that re-patching takes ~50ms on an AMD EPYC
+> 7713 running a typical Ubuntu kernel with around 100 modules loaded.
+> 
+> Guide to Patch Series
+> ---------------------
+> As this series is rather lengthy, this may help with understanding it:
+> 
+> Patches 3-18 focus on "resetting" mitigations.  Every bug that may set feature
+> flags, MSRs, static branches, etc. now has matching "reset" functions that will
+> undo all these changes.  This is used at the beginning of the re-patch flow.
+> 
+> Patches 20-22 move various functions and values out of the .init section.  Most
+> of the existing mitigation logic was marked as __init and the mitigation
+> settings as __ro_after_init but now these can be changed at runtime.  The
+> __ro_after_init marking functioned as a defense-in-depth measure but is arguably
+> of limited meaningful security value as an attacker who can modify kernel data
+> can do a lot worse than change some speculation settings.  As re-patching
+> requires being able to modify these settings, it was simplest to remove them
+> from that section.
+> 
+> Patches 23-27 involve linker and related modifications to keep alternative
+> information around at runtime instead of free'ing it after boot.  This does
+> result in slightly higher runtime memory consumption which is one reason why
+> this feature is behind a Kconfig option.  On a typical kernel, this was measured
+> at around 2MB of extra kernel memory usage.
+> 
+> Patches 28-30 focus on the new stop_machine_nmi() which behaves like
+> stop_machine() but runs the handler in NMI context, thus ensuring that even NMIs
+> cannot interrupt the handler.  As dynamic mitigations involves re-patching
+> functions used by NMI entry code, this is required for safety.
+> 
+> Patches 31-40 focus on support for restoring the kernel text at runtime.  This
+> involves saving the original kernel bytes when patched the first time and adding
+> support to then restore those later.
+> 
+> Patches 41-44 start building support for updating code, in particular module
+> code at runtime.
+> 
+> Patches 45-47 focus on support for the Indirect Target Selection mitigation
+> which is particularly challenging because it requires runtime memory allocations
+> and permission changes which are not possible in NMI context.  As a result, ITS
+> memory is pre-allocated before entering NMI context.
+> 
+> Patch 50 adds the complete function for resetting and re-patching the kernel.
+> 
+> Patches 51-53 build the sysfs interface for re-patching and support for parsing
+> the new options provided.
+> 
+> Patches 54-56 add debugfs interfaces to values which are important for
+> mitigations.  These are useful for userspace test utilities to be able to force
+> a CPU to appear to be vulnerable or immune to certain bugs as well as being able
+> to help verify if the kernel is correctly mitigating various vulnerabilities.
 
-This allows users to select the loopback at specific layer.
+Although it adds some complexity, this adds a very useful feature. Thanks
+for doing this series.
 
-Below are new modes added:
+Just curious, for patching indirect branches, was replacing alternatives
+with static_calls considered? I haven't looked at the feasibility, but
+static_calls seems to be more suited for post-boot patching.
 
-MAC near end loopback
-
-MAC far end loopback
-
-SERDES loopback
-
-Depending on the feedback will submit ethtool changes.
-
-Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
----
- Documentation/networking/netdev-features.rst  | 15 +++
- .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 93 ++++++++++++++++++-
- include/linux/netdev_features.h               |  9 +-
- net/ethtool/common.c                          |  3 +
- 4 files changed, 116 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/networking/netdev-features.rst b/Documentation/networking/netdev-features.rst
-index 02bd7536fc0c..dcad5e875f32 100644
---- a/Documentation/networking/netdev-features.rst
-+++ b/Documentation/networking/netdev-features.rst
-@@ -193,3 +193,18 @@ frames in hardware.
- 
- This should be set for devices which support netmem TX. See
- Documentation/networking/netmem.rst
-+
-+* mac-nearend-loopback
-+
-+This requests that the NIC enables MAC nearend loopback i.e egress traffic is
-+routed back to ingress traffic.
-+
-+* mac-farend-loopback
-+
-+This requests that the NIC enables MAC farend loopback i.e ingress traffic is
-+routed back to egress traffic.
-+
-+
-+* serdes-loopback
-+
-+This request that the NIC enables SERDES near end digital loopback.
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-index e808995703cf..14be6a9206c8 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-@@ -1316,6 +1316,84 @@ static int otx2_cgx_config_loopback(struct otx2_nic *pf, bool enable)
- 	return err;
- }
- 
-+static int otx2_cgx_mac_nearend_loopback(struct otx2_nic *pf, bool enable)
-+{
-+	struct msg_req *msg;
-+	int err;
-+
-+	if (enable && !bitmap_empty(pf->flow_cfg->dmacflt_bmap,
-+				    pf->flow_cfg->dmacflt_max_flows))
-+		netdev_warn(pf->netdev,
-+			    "CGX/RPM nearend loopback might not work as DMAC filters are active\n");
-+
-+	mutex_lock(&pf->mbox.lock);
-+	if (enable)
-+		msg = otx2_mbox_alloc_msg_cgx_intlbk_enable(&pf->mbox);
-+	else
-+		msg = otx2_mbox_alloc_msg_cgx_intlbk_disable(&pf->mbox);
-+
-+	if (!msg) {
-+		mutex_unlock(&pf->mbox.lock);
-+		return -ENOMEM;
-+	}
-+
-+	err = otx2_sync_mbox_msg(&pf->mbox);
-+	mutex_unlock(&pf->mbox.lock);
-+	return err;
-+}
-+
-+static int otx2_cgx_mac_farend_loopback(struct otx2_nic *pf, bool enable)
-+{
-+	struct msg_req *msg;
-+	int err;
-+
-+	if (enable && !bitmap_empty(pf->flow_cfg->dmacflt_bmap,
-+				    pf->flow_cfg->dmacflt_max_flows))
-+		netdev_warn(pf->netdev,
-+			    "CGX/RPM farend loopback might not work as DMAC filters are active\n");
-+
-+	mutex_lock(&pf->mbox.lock);
-+	if (enable)
-+		msg = otx2_mbox_alloc_msg_cgx_intlbk_enable(&pf->mbox);
-+	else
-+		msg = otx2_mbox_alloc_msg_cgx_intlbk_disable(&pf->mbox);
-+
-+	if (!msg) {
-+		mutex_unlock(&pf->mbox.lock);
-+		return -ENOMEM;
-+	}
-+
-+	err = otx2_sync_mbox_msg(&pf->mbox);
-+	mutex_unlock(&pf->mbox.lock);
-+	return err;
-+}
-+
-+static int otx2_cgx_serdes_loopback(struct otx2_nic *pf, bool enable)
-+{
-+	struct msg_req *msg;
-+	int err;
-+
-+	if (enable && !bitmap_empty(pf->flow_cfg->dmacflt_bmap,
-+				    pf->flow_cfg->dmacflt_max_flows))
-+		netdev_warn(pf->netdev,
-+			    "CGX/RPM serdes loopback might not work as DMAC filters are active\n");
-+
-+	mutex_lock(&pf->mbox.lock);
-+	if (enable)
-+		msg = otx2_mbox_alloc_msg_cgx_intlbk_enable(&pf->mbox);
-+	else
-+		msg = otx2_mbox_alloc_msg_cgx_intlbk_disable(&pf->mbox);
-+
-+	if (!msg) {
-+		mutex_unlock(&pf->mbox.lock);
-+		return -ENOMEM;
-+	}
-+
-+	err = otx2_sync_mbox_msg(&pf->mbox);
-+	mutex_unlock(&pf->mbox.lock);
-+	return err;
-+}
-+
- int otx2_set_real_num_queues(struct net_device *netdev,
- 			     int tx_queues, int rx_queues)
- {
-@@ -2363,6 +2441,18 @@ static int otx2_set_features(struct net_device *netdev,
- 		return cn10k_ipsec_ethtool_init(netdev,
- 						features & NETIF_F_HW_ESP);
- 
-+	if ((changed & NETIF_F_MAC_LBK_NE) && netif_running(netdev))
-+		return otx2_cgx_mac_nearend_loopback(pf,
-+						     features & NETIF_F_MAC_LBK_NE);
-+
-+	if ((changed & NETIF_F_MAC_LBK_FE) && netif_running(netdev))
-+		return otx2_cgx_mac_farend_loopback(pf,
-+						    features & NETIF_F_MAC_LBK_FE);
-+
-+	if ((changed & NETIF_F_SERDES_LBK) && netif_running(netdev))
-+		return otx2_cgx_serdes_loopback(pf,
-+						features & NETIF_F_SERDES_LBK);
-+
- 	return otx2_handle_ntuple_tc_features(netdev, features);
- }
- 
-@@ -3249,7 +3339,8 @@ static int otx2_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	if (pf->flags & OTX2_FLAG_TC_FLOWER_SUPPORT)
- 		netdev->hw_features |= NETIF_F_HW_TC;
- 
--	netdev->hw_features |= NETIF_F_LOOPBACK | NETIF_F_RXALL;
-+	netdev->hw_features |= NETIF_F_LOOPBACK | NETIF_F_RXALL |
-+			       NETIF_F_MAC_LBK_NE | NETIF_F_MAC_LBK_FE | NETIF_F_SERDES_LBK;
- 
- 	netif_set_tso_max_segs(netdev, OTX2_MAX_GSO_SEGS);
- 	netdev->watchdog_timeo = OTX2_TX_TIMEOUT;
-diff --git a/include/linux/netdev_features.h b/include/linux/netdev_features.h
-index 93e4da7046a1..124f83223361 100644
---- a/include/linux/netdev_features.h
-+++ b/include/linux/netdev_features.h
-@@ -14,7 +14,7 @@ typedef u64 netdev_features_t;
- enum {
- 	NETIF_F_SG_BIT,			/* Scatter/gather IO. */
- 	NETIF_F_IP_CSUM_BIT,		/* Can checksum TCP/UDP over IPv4. */
--	__UNUSED_NETIF_F_1,
-+	NETIF_F_MAC_LBK_NE_BIT,		/* MAC near end loopback */
- 	NETIF_F_HW_CSUM_BIT,		/* Can checksum all the packets. */
- 	NETIF_F_IPV6_CSUM_BIT,		/* Can checksum TCP/UDP over IPV6 */
- 	NETIF_F_HIGHDMA_BIT,		/* Can DMA to high memory. */
-@@ -24,8 +24,8 @@ enum {
- 	NETIF_F_HW_VLAN_CTAG_FILTER_BIT,/* Receive filtering on VLAN CTAGs */
- 	NETIF_F_VLAN_CHALLENGED_BIT,	/* Device cannot handle VLAN packets */
- 	NETIF_F_GSO_BIT,		/* Enable software GSO. */
--	__UNUSED_NETIF_F_12,
--	__UNUSED_NETIF_F_13,
-+	NETIF_F_MAC_LBK_FE_BIT,		/* MAC far end loopback */
-+	NETIF_F_SERDES_LBK_BIT,		/* SERDES loopback */
- 	NETIF_F_GRO_BIT,		/* Generic receive offload */
- 	NETIF_F_LRO_BIT,		/* large receive offload */
- 
-@@ -165,6 +165,9 @@ enum {
- #define NETIF_F_HW_HSR_TAG_RM	__NETIF_F(HW_HSR_TAG_RM)
- #define NETIF_F_HW_HSR_FWD	__NETIF_F(HW_HSR_FWD)
- #define NETIF_F_HW_HSR_DUP	__NETIF_F(HW_HSR_DUP)
-+#define NETIF_F_MAC_LBK_NE	__NETIF_F(MAC_LBK_NE)
-+#define NETIF_F_MAC_LBK_FE	__NETIF_F(MAC_LBK_FE)
-+#define NETIF_F_SERDES_LBK	__NETIF_F(SERDES_LBK)
- 
- /* Finds the next feature with the highest number of the range of start-1 till 0.
-  */
-diff --git a/net/ethtool/common.c b/net/ethtool/common.c
-index 55223ebc2a7e..4a6a400a7c69 100644
---- a/net/ethtool/common.c
-+++ b/net/ethtool/common.c
-@@ -77,6 +77,9 @@ const char netdev_features_strings[NETDEV_FEATURE_COUNT][ETH_GSTRING_LEN] = {
- 	[NETIF_F_HW_HSR_TAG_RM_BIT] =	 "hsr-tag-rm-offload",
- 	[NETIF_F_HW_HSR_FWD_BIT] =	 "hsr-fwd-offload",
- 	[NETIF_F_HW_HSR_DUP_BIT] =	 "hsr-dup-offload",
-+	[NETIF_F_MAC_LBK_NE_BIT] =	 "mac-nearend-loopback",
-+	[NETIF_F_MAC_LBK_FE_BIT] =	 "mac-farend-loopback",
-+	[NETIF_F_SERDES_LBK_BIT] =	 "serdes-loopback",
- };
- 
- const char
--- 
-2.34.1
-
+Thinking out loud, patching in something similar to suspend-to-RAM flow may
+reduce some corner cases. Barring the BSP, the APs gets reinitialized in
+that case.
 
