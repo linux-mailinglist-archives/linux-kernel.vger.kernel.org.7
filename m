@@ -1,146 +1,263 @@
-Return-Path: <linux-kernel+bounces-869011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF999C06B51
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:33:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A984C06B5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 92DFD343BF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:33:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B606D348737
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEF5315D33;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB5F31A06A;
 	Fri, 24 Oct 2025 14:33:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7B3269B1C;
-	Fri, 24 Oct 2025 14:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QWmua2NW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E512DAFC0
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761316416; cv=none; b=tPQ8EJkIwR7FzhfJU5PZTbZHpGhQHq6Xvn1M6suERI+16eSsewhaVHa1M0bI7WFrbknVxQvvaqwps54GQxAfirWYQxOCwgfKfkwih27ddKZjv8HS/zhHmOpyf2xxYWkx6ORNX7eLG9GPyrGg3qVFVr6Rr8NP9M7Gv7eyWravVWg=
+	t=1761316417; cv=none; b=j1+HeGOkVZLvZSoSAz3bor0ovbpX3iyfndQgiS3mn01BZpL9VsAZ1e36iKEqZyk8iElD8bI/3KpO+Yyxy5cTykNPdSlGFeZYhVVwZ9S4/m6HviVC0MGWynBlkbzFCcN8mFWHLuuHva+3BE9lvLneI3S7qkluf8xCOHEsaMAXdYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761316416; c=relaxed/simple;
-	bh=a+NzFcJxTQ88UObe6RCiomPcPFxCGLX+axvPSVA7A04=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fjI02Qs0DsmpltGt4PDxjfhMcO4x5MmsTL2sDJTFxeIP9a3uUvJWqanDAqJMLiXfCQBn/94Tu9vbwGJ88Wra5gesIY/WuRL/jRkrY+OoR6d4b2dK1FXbs+N/kQTnbzIPUoSKS13yjZrkEyTsdtK5vdqw4u0gOVlQlkH97quV1GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66B1C1516;
-	Fri, 24 Oct 2025 07:33:26 -0700 (PDT)
-Received: from [10.44.160.74] (e126510-lin.lund.arm.com [10.44.160.74])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D7FEF3F66E;
-	Fri, 24 Oct 2025 07:33:25 -0700 (PDT)
-Message-ID: <f458fbed-266b-48a5-a6e0-745dc2893a34@arm.com>
-Date: Fri, 24 Oct 2025 16:33:21 +0200
+	s=arc-20240116; t=1761316417; c=relaxed/simple;
+	bh=St2tGCQEewbnfrbUK5ouJM4MBPRSJieB8IQU4yLWqf4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RtYh7897G1EYYDcixpS4/NBcjE9z8MArDI1aIZYpKdISBpmhPlRyoQ0bOHhldjrer/7XTH1zGsKWUjcIDTA+OZUpoveXf3qEf1m7NVZlEV7vozeiV88kOjMMlehze0UzLkOcSNMo+Yub/CyhoMgahaAPJIquoQPq+HCcYI1gH3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QWmua2NW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761316414;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qMR4VmIIzn/w/4nNJSUeQgFleHSwnzkaVnDEewrnAfI=;
+	b=QWmua2NWfwpSQJ4qBGBbEepLWsTznEHDfzXVzWccjzDkFVK4kc788pQk5ZyQhtqFuwakTm
+	2NUHI/T3gRw+61g3c/SYWJUSa7wf3esow7k4Wkjm53jSbSzgjGwDBl8JwdGX/ZEtu5dfPj
+	Y4PeiDa/MtFbqd4R7ZRu7RFYrTbDw9c=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-298-orTfLy_tPTi8J-3n4hjz-g-1; Fri, 24 Oct 2025 10:33:32 -0400
+X-MC-Unique: orTfLy_tPTi8J-3n4hjz-g-1
+X-Mimecast-MFC-AGG-ID: orTfLy_tPTi8J-3n4hjz-g_1761316412
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b6d5fd15aebso106778466b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:33:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761316411; x=1761921211;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qMR4VmIIzn/w/4nNJSUeQgFleHSwnzkaVnDEewrnAfI=;
+        b=PBEJKCNGHsJrFImsqzG3JzLdvnYI4URXk8o9GkRRWBCjNLD2Onbi0S/Sf32KS7gcWl
+         /ACrq+BZCh1OAsEr124s96zAeLZfFDgDoQusTXzyR+/5pUY6LA3/n7YgbWDCV8FmUBZA
+         Tf43pi2uZEl67IGThtZlk6RROzQGJGuT59SMw1A8JM1TL7m46q545ybHu4TmznTbyXzD
+         Zh6eNOb5KSSyd9ST1qdkcd8SUG9rrye2QPyFceT4mbm68j6pAY6lTOZPbOxjvm/dgT/q
+         WpCWjIBv8MMFQT2giPbO+OMWVAnkXgX/LUymeTYdiHQzErEunzoq1VYYhf0+zMA/eS5y
+         mJKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXrojTVpCQinTRp2J9PCkdZQTmNRJ0Jrpr5H+BThxGkh+9A5xKBqwk9CuTqG6IPM6VM4X23x96a858wzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzKCEnrFCUKyl0KN/KjnuP/MrR2nzjz+D2Yc5hMGNBD0mJyefl
+	1ZWa5TOQoHM6mrXE6VA2ferjrKrwEjDvYaHDIsS2gWWfR6X5Wjk7J2qX4LgyQqPGOfqnIuu4w8j
+	nj8gJwq74FY3uKPVHgwd3IgA60c1/dNVRLjV6bd2L6zXq3RJDd9Gq360PigMqA3/t1A==
+X-Gm-Gg: ASbGncvHMygGHwHFE3mh0cwe65nz2XUUu1mteOcJ8WAmC0kWTmeTT5P5VmzOloMnPbO
+	dpI475aXyMPqavL4sOsvCPcxCcY+w51BZuM16VVElNjRKoV6IuiTnWvtynKvJ8dRngYc4Y2OYBU
+	M/wQI7UMKzncx+dtOBk2HOjU2VL44sF5IAdAEXSvQMUb0+d0/G45ghjRfLsIRe5Qnu0lPxsgODs
+	QXtpVIBA9FeRK85z5mt9e0j3v4C9HUhdfaODZJdAqLgorh704SfCSW1G0sgo/30xGYSR0+SXnGT
+	xwE5U53yO02E3RrReLJr+9g+0QuGwZ5co122tF3TyyFSw42NhfLIWtwUrCG5RlzwQ5ztT3Nf8bP
+	w7svUrI3KYUfzdlYDLoQa8gQ=
+X-Received: by 2002:a17:907:3daa:b0:b3d:656b:9088 with SMTP id a640c23a62f3a-b64749416admr3903159966b.54.1761316411536;
+        Fri, 24 Oct 2025 07:33:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJLEAmzEsqCaXOpu82Aaw82/w7mLyOC9azKvS1K33FnRFrN1PBJiJg/V40XnFDES8K3O5Haw==
+X-Received: by 2002:a17:907:3daa:b0:b3d:656b:9088 with SMTP id a640c23a62f3a-b64749416admr3903157466b.54.1761316411041;
+        Fri, 24 Oct 2025 07:33:31 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e3f322cf3sm4399668a12.29.2025.10.24.07.33.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 07:33:30 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 8F4982EA579; Fri, 24 Oct 2025 16:33:29 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Jesper Dangaard Brouer <hawk@kernel.org>, netdev@vger.kernel.org,
+ makita.toshiaki@lab.ntt.co.jp
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, Eric Dumazet
+ <eric.dumazet@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ ihor.solodrai@linux.dev, toshiaki.makita1@gmail.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+Subject: Re: [PATCH net V1 3/3] veth: more robust handing of race to avoid
+ txq getting stuck
+In-Reply-To: <176123158453.2281302.11061466460805684097.stgit@firesoul>
+References: <176123150256.2281302.7000617032469740443.stgit@firesoul>
+ <176123158453.2281302.11061466460805684097.stgit@firesoul>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Fri, 24 Oct 2025 16:33:29 +0200
+Message-ID: <871pmsfjye.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/13] mm: enable lazy_mmu sections to nest
-To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
- <20251015082727.2395128-8-kevin.brodsky@arm.com>
- <2073294c-8003-451a-93e0-9aab81de4d22@redhat.com>
- <7a4e136b-66a5-4244-ab07-f0bcc3a26a83@arm.com>
- <af4414b6-617c-4dc8-bddc-3ea00d1f6f3b@redhat.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <af4414b6-617c-4dc8-bddc-3ea00d1f6f3b@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 24/10/2025 15:23, David Hildenbrand wrote:
->>>> + * currently enabled.
->>>>     */
->>>>    #ifdef CONFIG_ARCH_LAZY_MMU
->>>>    static inline void lazy_mmu_mode_enable(void)
->>>>    {
->>>> -    arch_enter_lazy_mmu_mode();
->>>> +    struct lazy_mmu_state *state = &current->lazy_mmu_state;
->>>> +
->>>> +    VM_BUG_ON(state->count == U8_MAX);
->>>
->>> No VM_BUG_ON() please.
->>
->> I did wonder if this would be acceptable!
->
-> Use VM_WARN_ON_ONCE() and let early testing find any such issues.
->
-> VM_* is active in debug kernels only either way! :)
+Jesper Dangaard Brouer <hawk@kernel.org> writes:
 
-That was my intention - I don't think the checking overhead is justified
-in production.
-
+> Commit dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to
+> reduce TX drops") introduced a race condition that can lead to a permanently
+> stalled TXQ. This was observed in production on ARM64 systems (Ampere Altra
+> Max).
 >
-> If you'd want to handle this in production kernels you'd need
+> The race occurs in veth_xmit(). The producer observes a full ptr_ring and
+> stops the queue (netif_tx_stop_queue()). The subsequent conditional logic,
+> intended to re-wake the queue if the consumer had just emptied it (if
+> (__ptr_ring_empty(...)) netif_tx_wake_queue()), can fail. This leads to a
+> "lost wakeup" where the TXQ remains stopped (QUEUE_STATE_DRV_XOFF) and
+> traffic halts.
 >
-> if (WARN_ON_ONCE()) {
->     /* Try to recover */
-> }
+> This failure is caused by an incorrect use of the __ptr_ring_empty() API
+> from the producer side. As noted in kernel comments, this check is not
+> guaranteed to be correct if a consumer is operating on another CPU. The
+> empty test is based on ptr_ring->consumer_head, making it reliable only for
+> the consumer. Using this check from the producer side is fundamentally racy.
 >
-> And that seems unnecessary/overly-complicated for something that
-> should never happen, and if it happens, can be found early during testing.
-
-Got it. Then I guess I'll go for a VM_WARN_ON_ONCE() (because indeed
-once the overflow/underflow occurs it'll go wrong on every
-enable/disable pair).
-
+> This patch fixes the race by adopting the more robust logic from an earlier
+> version V4 of the patchset, which always flushed the peer:
 >
->>
->> What should we do in case of underflow/overflow then? Saturate or just
->> let it wrap around? If an overflow occurs we're probably in some
->> infinite recursion and we'll crash anyway, but an underflow is likely
->> due to a double disable() and saturating would probably allow to
->> recover.
->>
->>>
->>>> +    /* enable() must not be called while paused */
->>>> +    VM_WARN_ON(state->count > 0 && !state->enabled);
->>>> +
->>>> +    if (state->count == 0) {
->>>> +        arch_enter_lazy_mmu_mode();
->>>> +        state->enabled = true;
->>>> +    }
->>>> +    ++state->count;
->>>
->>> Can do
->>>
->>> if (state->count++ == 0) {
->>
->> My idea here was to have exactly the reverse order between enable() and
->> disable(), so that arch_enter() is called before lazy_mmu_state is
->> updated, and arch_leave() afterwards. arch_* probably shouldn't rely on
->> this (or care), but I liked the symmetry.
+> (1) In veth_xmit(), the racy conditional wake-up logic and its memory barrier
+> are removed. Instead, after stopping the queue, we unconditionally call
+> __veth_xdp_flush(rq). This guarantees that the NAPI consumer is scheduled,
+> making it solely responsible for re-waking the TXQ.
+
+This makes sense.
+
+> (2) On the consumer side, the logic for waking the peer TXQ is centralized.
+> It is moved out of veth_xdp_rcv() (which processes a batch) and placed at
+> the end of the veth_poll() function. This ensures netif_tx_wake_queue() is
+> called once per complete NAPI poll cycle.
+
+So is this second point strictly necessary to fix the race, or is it
+more of an optimisation?
+
+> (3) Finally, the NAPI completion check in veth_poll() is updated. If NAPI is
+> about to complete (napi_complete_done), it now also checks if the peer TXQ
+> is stopped. If the ring is empty but the peer TXQ is stopped, NAPI will
+> reschedule itself. This prevents a new race where the producer stops the
+> queue just as the consumer is finishing its poll, ensuring the wakeup is not
+> missed.
+
+Also makes sense...
+
+> Fixes: dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to reduce TX drops")
+> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+> ---
+>  drivers/net/veth.c |   42 +++++++++++++++++++++---------------------
+>  1 file changed, 21 insertions(+), 21 deletions(-)
 >
-> I see, but really the arch callback should never have to care about that
-> value -- unless something is messed up :)
+> diff --git a/drivers/net/veth.c b/drivers/net/veth.c
+> index 3976ddda5fb8..1d70377481eb 100644
+> --- a/drivers/net/veth.c
+> +++ b/drivers/net/veth.c
+> @@ -392,14 +392,12 @@ static netdev_tx_t veth_xmit(struct sk_buff *skb, struct net_device *dev)
+>  		}
+>  		/* Restore Eth hdr pulled by dev_forward_skb/eth_type_trans */
+>  		__skb_push(skb, ETH_HLEN);
+> -		/* Depend on prior success packets started NAPI consumer via
+> -		 * __veth_xdp_flush(). Cancel TXQ stop if consumer stopped,
+> -		 * paired with empty check in veth_poll().
+> -		 */
+>  		netif_tx_stop_queue(txq);
+> -		smp_mb__after_atomic();
+> -		if (unlikely(__ptr_ring_empty(&rq->xdp_ring)))
+> -			netif_tx_wake_queue(txq);
+> +		/* Handle race: Makes sure NAPI peer consumer runs. Consumer is
+> +		 * responsible for starting txq again, until then ndo_start_xmit
+> +		 * (this function) will not be invoked by the netstack again.
+> +		 */
+> +		__veth_xdp_flush(rq);
 
-Fair enough, then I can fold those increments/decrements ;)
+Nit: I'd lose the "Handle race:" prefix from the comment; the rest of
+the comment is clear enough without it, and since there's no explanation
+of *which* race is being handled, it is just confusing, IMO.
 
-- Kevin
+>  		break;
+>  	case NET_RX_DROP: /* same as NET_XMIT_DROP */
+>  drop:
+> @@ -900,17 +898,9 @@ static int veth_xdp_rcv(struct veth_rq *rq, int budget,
+>  			struct veth_xdp_tx_bq *bq,
+>  			struct veth_stats *stats)
+>  {
+> -	struct veth_priv *priv = netdev_priv(rq->dev);
+> -	int queue_idx = rq->xdp_rxq.queue_index;
+> -	struct netdev_queue *peer_txq;
+> -	struct net_device *peer_dev;
+>  	int i, done = 0, n_xdpf = 0;
+>  	void *xdpf[VETH_XDP_BATCH];
+>  
+> -	/* NAPI functions as RCU section */
+> -	peer_dev = rcu_dereference_check(priv->peer, rcu_read_lock_bh_held());
+> -	peer_txq = peer_dev ? netdev_get_tx_queue(peer_dev, queue_idx) : NULL;
+> -
+>  	for (i = 0; i < budget; i++) {
+>  		void *ptr = __ptr_ring_consume(&rq->xdp_ring);
+>  
+> @@ -959,11 +949,6 @@ static int veth_xdp_rcv(struct veth_rq *rq, int budget,
+>  	rq->stats.vs.xdp_packets += done;
+>  	u64_stats_update_end(&rq->stats.syncp);
+>  
+> -	if (peer_txq && unlikely(netif_tx_queue_stopped(peer_txq))) {
+> -		txq_trans_cond_update(peer_txq);
+> -		netif_tx_wake_queue(peer_txq);
+> -	}
+> -
+>  	return done;
+>  }
+>  
+> @@ -971,12 +956,20 @@ static int veth_poll(struct napi_struct *napi, int budget)
+>  {
+>  	struct veth_rq *rq =
+>  		container_of(napi, struct veth_rq, xdp_napi);
+> +	struct veth_priv *priv = netdev_priv(rq->dev);
+> +	int queue_idx = rq->xdp_rxq.queue_index;
+> +	struct netdev_queue *peer_txq;
+>  	struct veth_stats stats = {};
+> +	struct net_device *peer_dev;
+>  	struct veth_xdp_tx_bq bq;
+>  	int done;
+>  
+>  	bq.count = 0;
+>  
+> +	/* NAPI functions as RCU section */
+> +	peer_dev = rcu_dereference_check(priv->peer, rcu_read_lock_bh_held());
+> +	peer_txq = peer_dev ? netdev_get_tx_queue(peer_dev, queue_idx) : NULL;
+> +
+>  	xdp_set_return_frame_no_direct();
+>  	done = veth_xdp_rcv(rq, budget, &bq, &stats);
+>  
+> @@ -986,7 +979,8 @@ static int veth_poll(struct napi_struct *napi, int budget)
+>  	if (done < budget && napi_complete_done(napi, done)) {
+>  		/* Write rx_notify_masked before reading ptr_ring */
+>  		smp_store_mb(rq->rx_notify_masked, false);
+> -		if (unlikely(!__ptr_ring_empty(&rq->xdp_ring))) {
+> +		if (unlikely(!__ptr_ring_empty(&rq->xdp_ring) ||
+> +			     (peer_txq && netif_tx_queue_stopped(peer_txq)))) {
+>  			if (napi_schedule_prep(&rq->xdp_napi)) {
+>  				WRITE_ONCE(rq->rx_notify_masked, true);
+>  				__napi_schedule(&rq->xdp_napi);
+> @@ -998,6 +992,12 @@ static int veth_poll(struct napi_struct *napi, int budget)
+>  		veth_xdp_flush(rq, &bq);
+>  	xdp_clear_return_frame_no_direct();
+>  
+> +	/* Release backpressure per NAPI poll */
+> +	if (peer_txq && netif_tx_queue_stopped(peer_txq)) {
+> +		txq_trans_cond_update(peer_txq);
+> +		netif_tx_wake_queue(peer_txq);
+> +	}
+> +
+>  	return done;
+>  }
+>  
+
 
