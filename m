@@ -1,134 +1,117 @@
-Return-Path: <linux-kernel+bounces-868746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9F3C06058
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:39:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF38C060C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8FE188E93A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:32:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 035F5401948
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F91C3161BD;
-	Fri, 24 Oct 2025 11:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF533164CD;
+	Fri, 24 Oct 2025 11:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rrC+L+V3"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b="tOVtoHmj"
+Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA3A31281B
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8923164B5
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.62.254.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761304752; cv=none; b=lfRbQd5vraEMMaZIG7fdCQYH71O5bNzbGtS2zLFHnAbNeceK3PddVQ73BsEUaQn1pRGQAhXQo5VIi5cIfGycXEem3E7xe20WkE62LikOZm99npgaIgKLwqy6S1AECq8p/bI8L1o6lJMF9ANMiPR7swHb7340OftsC3ZNbKxchG0=
+	t=1761304798; cv=none; b=cH37zg8py0VzE2nI4s1LZkrhcs4DGGVfRgSYMpSXvLzIKhD+96pve0Sm19DThGrHxMpe+4uin6sIsg8cNuWSjC3QDFzlylxd9CgIXMcT45BJrrJyDn3+YOauAB6m2dd+jtAP5RgBKTPnN+j8aB1d2Tq+aTfwKbloqCxPDebu4Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761304752; c=relaxed/simple;
-	bh=ZDcuj4nvsrlLmgmMXrgeXB6W4PToAWWP7D5MNCjklnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=MVbisN6NbajtbIvN9gy9Uvn39jRDab6FycB31xe59jRcI6xs8SaUEj6PITz8KtpfBUkvOSatqYJhsT8uaM7JRKFAvt2iZ5VfYGSpgTqAAD7l/bSnX6jO6rwOViD6tO8iVUY4WjG8Y5ARy2h0VXrXnr5fmNEDDpt5rr2PnB/lVOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rrC+L+V3; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251024111907euoutp028f2bb7844a77c0c6575fdf95a3836d67~xaVX8fysi1909719097euoutp02M
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:19:07 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251024111907euoutp028f2bb7844a77c0c6575fdf95a3836d67~xaVX8fysi1909719097euoutp02M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761304747;
-	bh=kYzbQaZe2By8egkc4y3i3SJq/zpodmWP3KwwN0dNah4=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=rrC+L+V3IoMA0ikgzSPgqXf00OP3ED2t8skXC4763eSm4erOWIVLZu42HIVJYN5Ba
-	 bNk23cHfFowFDn3HxfDigeK/ifWvD0zZsfdYwd1oTxe9UcQhDq8P6zaTtJ6AlaBmPC
-	 rTXla8dU5El0UPOtv3MxKTakKESkHobhfrNX9UMA=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251024111906eucas1p20bb3f61c830ac6e5f776a9f5a2dd6afd~xaVXe-8wp3220332203eucas1p2l;
-	Fri, 24 Oct 2025 11:19:06 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251024111904eusmtip131ad4a4bc1d1ab7f03a42110bd0da68d~xaVVgmqcF0896108961eusmtip1g;
-	Fri, 24 Oct 2025 11:19:04 +0000 (GMT)
-Message-ID: <c09387b9-3fcc-4d0e-8e29-21dee196014a@samsung.com>
-Date: Fri, 24 Oct 2025 13:19:03 +0200
+	s=arc-20240116; t=1761304798; c=relaxed/simple;
+	bh=/g5G+lWPRVaLGDYH2Wi4deNkocfvvZVGxU+KP7e++NE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jcac/9INaJKz+k1/B6jDLkmtBZwPux9f120JThqA5rXL1Ft5daKxka1mwX3uRhjVGHI+EbHuqMDlyaoZKUtxa0BtHC2eidgbUVgtYiN6J5hzTVt33nRqtiQWz0iwDKMXbK5Y9OuPoJuf5TRK1i8CP7+NXClzrtAu4HQkLBsP8VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com; spf=pass smtp.mailfrom=ilvokhin.com; dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b=tOVtoHmj; arc=none smtp.client-ip=178.62.254.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
+Received: from shell.ilvokhin.com (shell.ilvokhin.com [138.68.190.75])
+	(Authenticated sender: d@ilvokhin.com)
+	by mail.ilvokhin.com (Postfix) with ESMTPSA id AACC39AEA4;
+	Fri, 24 Oct 2025 11:19:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
+	s=mail; t=1761304794;
+	bh=4HVxnkzUz6NVdQcmcA5Gy6ABoyfmOd7q1+o6lDDzoT0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=tOVtoHmjYUqKiQGeMmtZVdQo88liG/Y/9xwsGmFX5CXc/WTRyceTjnt0Q7ayTuVG7
+	 M6nISb7ajgHNtLOaEjzN8Tdvc4vZltWvJ7/xI1+RHRBi/iH3MhY5uondOSXGSDPf4g
+	 /Y8FJBtsIq5AqCO/OFnUv6M7OjGjNb79Dpq2GbEk=
+Date: Fri, 24 Oct 2025 11:19:50 +0000
+From: Dmitry Ilvokhin <d@ilvokhin.com>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Kiryl Shutsemau <kas@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] mm: shmem/tmpfs hugepage defaults config choice
+Message-ID: <aPtg1vUnpkaK1Ce5@shell.ilvokhin.com>
+References: <aPpv8sAa2sYgNu3L@shell.ilvokhin.com>
+ <aPstDXRerYqi1O2X@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v5 4/7] clocksource/drivers/exynos_mct: Use percpu
- interrupts only on ARM64
-To: Will McVicker <willmcvicker@google.com>, Russell King
-	<linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will
-	Deacon <will@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas
-	Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk@kernel.org>, Alim
-	Akhtar <alim.akhtar@samsung.com>, Ingo Molnar <mingo@kernel.org>, Peter
-	Griffin <peter.griffin@linaro.org>, Youngmin Nam <youngmin.nam@samsung.com>
-Cc: Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>, John Stultz <jstultz@google.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?=
-	<andre.draszik@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20251023205257.2029526-5-willmcvicker@google.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251024111906eucas1p20bb3f61c830ac6e5f776a9f5a2dd6afd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251023205313eucas1p2164ef0c1db80bccd2bbd6a79e809a1cb
-X-EPHeader: CA
-X-CMS-RootMailID: 20251023205313eucas1p2164ef0c1db80bccd2bbd6a79e809a1cb
-References: <20251023205257.2029526-1-willmcvicker@google.com>
-	<CGME20251023205313eucas1p2164ef0c1db80bccd2bbd6a79e809a1cb@eucas1p2.samsung.com>
-	<20251023205257.2029526-5-willmcvicker@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPstDXRerYqi1O2X@tiehlicka>
 
-On 23.10.2025 22:52, Will McVicker wrote:
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> For some unknown reasons forcing percpu interrupts for local timers
-> breaks CPU hotplug for 'little' cores on legacy ARM 32bit Exynos based
-> machines (for example Exynos5422-based Odroid-XU3/XU4 boards). Use percpu
-> flag only when driver is compiled for newer ARM64 architecture.
->
-> Fixes: f3cec54ee3bf ("clocksource/drivers/exynos_mct: Set local timer interrupts as percpu")
+On Fri, Oct 24, 2025 at 09:38:53AM +0200, Michal Hocko wrote:
+> On Thu 23-10-25 18:12:02, Dmitry Ilvokhin wrote:
+> > Allow to override defaults for shemem and tmpfs at config time. This is
+> > consistent with how transparent hugepages can be configured.
+> > 
+> > Same results can be achieved with the existing
+> > 'transparent_hugepage_shmem' and 'transparent_hugepage_tmpfs' settings
+> > in the kernel command line, but it is more convenient to define basic
+> > settings at config time instead of changing kernel command line later.
+> 
+> Being consistent is usually nice but you are not telling us _who_ is
+> going to benefit from this. Increasing the config space is not really
+> free. So please focus on Why do we need it rather than it is consistent
+> argument.
 
-This tag doesn't make sense in this patchset. Simply squash this change 
-with the previous one, adding the following tags:
+Thanks for the feedback, Michal, totally make sense to me, I should have
+expand on this point in the initial commit message.
 
-Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Link: 
-https://lore.kernel.org/all/20250827102645.1964659-1-m.szyprowski@samsung.com/ 
+Primary motivation for adding config option is to enable policy
+enforcement at build time. In large-scale production environments
+(Meta's for example), the kernel configuration is often maintained
+centrally close to the kernel code itself and owned by the kernel
+engineers, while boot parameters are managed independently (e.g. by
+provisioning systems). In such setups, the kernel build defines the
+supported and expected behavior in a single place, but there is no
+reliable or uniform control over the kernel command line options.
 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   drivers/clocksource/exynos_mct.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index a5ef7d64b1c2..1429b9d03a58 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -597,7 +597,8 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
->   			if (request_irq(mct_irq,
->   					exynos4_mct_tick_isr,
->   					IRQF_TIMER | IRQF_NOBALANCING |
-> -					IRQF_PERCPU,
-> +					(IS_ENABLED(CONFIG_ARM64) ?
-> +					 IRQF_PERCPU : 0),
->   					pcpu_mevt->name, pcpu_mevt)) {
->   				pr_err("exynos-mct: cannot register IRQ (cpu%d)\n",
->   									cpu);
+A build-time default allows kernel integrators to enforce a predictable
+hugepage policy for shmem/tmpfs on a base layer, ensuring reproducible
+behavior and avoiding configuration drift caused by possible boot-time
+differences.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+In short, primary benefit is mostly operational: it provides a way to
+codify preferred policy in the kernel configuration, which is versioned,
+reviewed, and tested as part of the kernel build process, rather than
+depending on potentially variable boot parameters.
 
+I hope possible operational benefits outweigh downsides from increasing
+the config space. Please, let me know if this argument sounds
+reasonable to you, I'll rephrase commit message for v2 to include this
+reasoning.
+
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
 
