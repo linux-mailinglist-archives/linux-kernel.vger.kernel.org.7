@@ -1,260 +1,242 @@
-Return-Path: <linux-kernel+bounces-868785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2BBC061F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:57:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBB6C061E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD2D53B4F4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:52:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3FE774FE867
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C32313E0B;
-	Fri, 24 Oct 2025 11:50:18 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96B72D73B1;
+	Fri, 24 Oct 2025 11:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Kwd+ylIn"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013044.outbound.protection.outlook.com [40.93.201.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690432DFA39
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761306618; cv=none; b=HDFVkdsahx2JxPKOrmYugd4uQv+fZFj9RuVWU3pqhSCPYQfaQmTw/mFgzU+9V6T25Jy7IHL8tcawvZ0bH58THP+0uFUIRF58CcZk9usa0kFcwDWu61TFdPEyK0j29nhPQEBIryV/unhRXelu2TBFF/+tpPPftALOsVprwx3V1CM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761306618; c=relaxed/simple;
-	bh=w/Eyzmm/s8J8jMdMaFkZjDIWu5toDsE1Xuy7oZ59vrc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZjVMZYw2wiQ6PdreGfxMdmQwFPfq1kelNkiR44WZnh2VDlc89d5+4U0N3kJQQxi3sLsAEv7CGDlsqk6W/4IzTn8C3K+gGsli+xMPKWAzXaYV+T+w/c4Xky6HlVxOx4IsQRrRYQcYywXQ/nrVeMvmwEzj2WdvwE/Uys8X/IWd2rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1vCGJB-0002FG-DJ; Fri, 24 Oct 2025 13:50:13 +0200
-From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Fri, 24 Oct 2025 13:50:02 +0200
-Subject: [PATCH v5 10/10] arm64: dts: socfpga: agilex5: initial support for
- Arrow AXE5-Eagle
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD812D12F3;
+	Fri, 24 Oct 2025 11:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761306700; cv=fail; b=EBppsyswENRBHLn/2OHvMihfBBWfQ0V/Y8VJi2CAqiB085bIgnukFFzKz3TktBBKk418QJIPRtSP4gPk6tJUZfMnCAwyrvTxRW5HYpK1BogLEEbDC347vD9C+r6OD2ORrqUqzf2JNZi8qvzTRcsXE7cBRL772rXfn1+JL8dmi8U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761306700; c=relaxed/simple;
+	bh=3kQOFPeODK4DoiVo8z6L/Behd634kLG/FqO/Aw6LfQo=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=HpMRd2gjh1J3LZyHvRuwTAlfNvRvZSWLFLYoY0uKJe24XLQk8ZjJJoIIs/2pDbXMM/jQosb+IoiVDyeg3iMVQJZbU+Q/QYmTXNJf+Fi4mCOK7NnUx0PG7kmDq+ww3makZVizLsD5nfXwDHS5t21j9FmrVDOiLR4JVr8YdhHVm/4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Kwd+ylIn; arc=fail smtp.client-ip=40.93.201.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TixLR9OPGtbdZiHG/sjDngiPAn+7WtSh1vWFptv++o0IB2CD80p5wr1xwCxW6AyxOqZc1luLrne4Husx1Qdsv8pOvMndf4pyvOcCNK/pPN++6rQ/l+wv9E9v95f6Show5XwTTRi8PsLdBQvtAv+2okn6VkT5nGvUB1yZC5wlsrGJwgx0rrF6sLv1xuduIX7oBi1Uc10QD0ILukad5PB8NDuiKVrkV91MgkmIEoeIHS/wjSKkKFJCCP45JgLwuop6sePsSV6T22aJICHLqL2EPAOVie+JqyLIp6NYxP9D1z/Nh8JNrddiw/fEww9qIxODuXm/JFEXwYJR7RnQrboaxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XmnXVMHCkjH+pT5FWfzR2PppcnPVZZEB4+2kaglDY9c=;
+ b=ldUqJr61eByhWeoxsyph+K/jvVsTanVDlrxaEp0sJLRPuTzd3hkpopXFbqcECWWI5ij1JQTJP7rhi2kPPOMzDLu6hlx4s1C72Wu4MS3dDl5YblkrQQqIputXuUi1bZ8MYb+1BLCskUWv1GKpVUKBw/0U81A3blqMKf0MCLCu1ncn0bbZbjQs55lG8GzaDCwmvHgqB+MtZnVPL2i4161fNQsOr8w7pQxYkdtaQH6qNHnnkLYDAOfgpscEh2nKpWFk6HDkkZ5yEs2Nkfpyzy6njlPNk5+Nt9trftMNNh8YKyYx3wHi4a26eu2Zf8nKm+e/Fz3Zf+3NaTkGcih8Ko6qXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XmnXVMHCkjH+pT5FWfzR2PppcnPVZZEB4+2kaglDY9c=;
+ b=Kwd+ylIn9u0vaIjDuHHWLswxAwJsk+y3g8YPI9DqJZ70/JIebDHvgB68NdlWVxI6mRdNpEMIbhD2ObhxqdE/4r2DsRlFxuQeQiklwPCM0bDmCqUOzXNIzulza3ViVcGdgvH0klCBROzOfqyKQK6pxRV4GW0He/UY9rLIEIb0MXkJpN+OByRfBlH94o7PXApR2DDUXUP+K69W5A9wF9RFI0vZdBrIrlsMH5im0tys748GO7h9OWPEs2Ib8Mdd7Dc1F3Au9UMJ4r1QMjAxQRWgiPSxGG8fCt9na8/UwF8qqDamJ5PjxQpNFm6MGNFA6WpSlW8jPJLNF2iQa4VKRZ0upw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SA3PR12MB7860.namprd12.prod.outlook.com (2603:10b6:806:307::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 11:51:32 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 11:51:32 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 24 Oct 2025 20:51:29 +0900
+Message-Id: <DDQJ433KOPW6.3VMVZ86418116@nvidia.com>
+Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
+ "Daniel Almeida" <daniel.almeida@collabora.com>,
+ <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH 0/7] Pre-requisite patches for mm and irq in nova-core
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <dakr@kernel.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251020185539.49986-1-joelagnelf@nvidia.com>
+ <DDONM9Z1XF2T.32OBDFX7FONJY@nvidia.com>
+ <3cc835b1-d9e6-4d91-a398-7ea9c8f4332a@nvidia.com>
+In-Reply-To: <3cc835b1-d9e6-4d91-a398-7ea9c8f4332a@nvidia.com>
+X-ClientProxiedBy: TYCP301CA0053.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:384::20) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-v6-12-topic-socfpga-agilex5-v5-10-4c4a51159eeb@pengutronix.de>
-References: <20251024-v6-12-topic-socfpga-agilex5-v5-0-4c4a51159eeb@pengutronix.de>
-In-Reply-To: <20251024-v6-12-topic-socfpga-agilex5-v5-0-4c4a51159eeb@pengutronix.de>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Matthew Gerlach <matthew.gerlach@altera.com>
-Cc: kernel@pengutronix.de, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, 
- Steffen Trumtrar <s.trumtrar@pengutronix.de>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.3
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SA3PR12MB7860:EE_
+X-MS-Office365-Filtering-Correlation-Id: d647401a-fdce-4d1e-eae8-08de12f3ad44
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|10070799003|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NGV4TWkwOVVjZEMvcFluTDVBRGtMT2J2TzNxMGhxOE9tVFBNb25yQWtTZzY4?=
+ =?utf-8?B?MVNQcFpBMklhb0VGdEs0TXZuUXZxNGZSWGI5MWw3VDQzS3NsS0xOd01MUytF?=
+ =?utf-8?B?RG03dVNTTTVOS25pMzMwZGM4NlZUK2M2N3ZJT0p6U0djL0ZUSy9FOXcxRUVk?=
+ =?utf-8?B?aEJ5SFVxSmd6QWNQcjRoTkhNaU5jYkxSQS9UQnBycVdqYkJ3OTZ0NTh6S2Zm?=
+ =?utf-8?B?R1M5RHRQYktSWCsvVHlhcG9oTlZMVUVnekpKWlBsY0R4aEJoRk9qUXlLb3pE?=
+ =?utf-8?B?MmVQYmxuUUNOdlI4YmRXWjRtVGViRWtmWlBkdTE5Y3dScmlzZEpKUG1FVUtp?=
+ =?utf-8?B?TG1hd290N2l5bjBkaDYxY0FDd2F6ZzJud1pWVEYwYXJpbnl3a0FKRnoybzJt?=
+ =?utf-8?B?ZTNNWmRvV0RqUjlVcWpvUWZsR1RHMmJMTWNiZUlubWxhN2poa1BPWkdvR1lO?=
+ =?utf-8?B?TDh4b25OdCsrYzZLSXljcmxBcHlvbGpnOWlpTyt0ZG9FNWIwd0lka1NoWXpO?=
+ =?utf-8?B?aklKYzBsZ3pzb004K0w2dkZDZ2NuVWRXQ2dPUHorWWVzWit3S0lkY2MxcWtN?=
+ =?utf-8?B?VkE1TzYvNlJmeG96TkQ3QitTM0pRU2oyQ3NZTGlEQy9ZRFZZYVpOWmFjS1RH?=
+ =?utf-8?B?bjgxcWtBUHZuVEJFb2YwcTZMRFZxV0UrR0JIN2dRbkpwemhhdzk4NlFmRGE5?=
+ =?utf-8?B?UzZEWEgrYktSQ29VRzUrb2lxeTU4Y0lmeTl1R1c3eFpEOU5FTmgrUDFUOGN4?=
+ =?utf-8?B?MlhBeFBnSkxoUmh2UU41aFg0dEl5ekprTVFWY2ZRN01rMFo1ekw3eWlsdnNj?=
+ =?utf-8?B?THdoUW1UNG15cGZka3hMNnVDWmFjdmwvUi9QNWZzbzdPSCtOQzhNRFZ4VU4x?=
+ =?utf-8?B?bkduZkNma3JwQXlJdXNrK3g4Z3NFdy8yTHVUVmxwMUgxa0RPZnRST29aWmNT?=
+ =?utf-8?B?cW1kYmhOczdQVFNtckJKSFQ3cFJSMDNNenZSenl6Si9mK0lSdzdkZ2xlM0pF?=
+ =?utf-8?B?QUd0NEZGT2MwaDlmTmk4bWpHRnI4MnZsL09xUUd4cUhmV2xrdjF0S0h2bmRo?=
+ =?utf-8?B?MUkwVFdnSnV4ZjExR0k0REFBQ1FmUWZZcDBoTjBtaWVKdUYzYkhnemxCWUNm?=
+ =?utf-8?B?MGF6L1luQWxRaTYyeHBQQUlBc0J6NmY4RTlDbmI0cFNvZUxjSVlCZGdhVWhv?=
+ =?utf-8?B?ZThXbGZhSjQzaEg5d3lOWVFxc2hmR0g0eTRwN2w3Y2Nxa2lKN1Z3ZkNOSWpG?=
+ =?utf-8?B?YkVHUFF1SXYrem1oclpPVE4vVnJidEQ1eitUbXFOdVFkNUkvQU1MckdnWTkv?=
+ =?utf-8?B?QmZodmdHT3hZNnpMNnk5TFloNFJoZHBTOWxwNEQzTk9ianZNUXQ4VitWMUtY?=
+ =?utf-8?B?d1JBRVp3YkxvVVpidlY5K20vM0IvaElVUTgxc2dpcnhDNDBoWlNQdCsxN2s1?=
+ =?utf-8?B?RWNFMlRoM1BKTVh6RnBiODIrVjI0SVZDNm52Y25XUHRyb1hBMkkxTTRnenl0?=
+ =?utf-8?B?Qzc3dUNrWnZaWExnWUpxOEhSemxFdXFkZFg0cG9jTGdNalBPeExiUS9Xdmtn?=
+ =?utf-8?B?cGdTTlQxdkxscHFVeUhCcWsySFNrT3RMU1pGdzRzWHFoZFMrT2Q1UmxnVEov?=
+ =?utf-8?B?VHh6T29ZL1RxNnJBOTJadFcyYjd0MGFZTlBLVnFvK3BIS2cwNXZueGsvbkpR?=
+ =?utf-8?B?WFk5cUR3WDRnMEtFWGRxenhpQ2oxR1BpVGNGR3hSUzh3Sk1TcWo2SGcxSU55?=
+ =?utf-8?B?c002ZnN6MStkMlRmMzgxRnR0QnRRaWNmdlV0cllob1ZzZGpTN0RzdFM0SU41?=
+ =?utf-8?B?R2hWSndTekNyQ25CNXVQT0p2Ym1YRXo2MlM0cnZqelRsMjBIYUNpZndqbXRL?=
+ =?utf-8?B?K0EzMStMcHNSTW16czJJM2RLQnVDakFwdlRpaUZqVEtydkMvMmFIWVRlR0Rk?=
+ =?utf-8?Q?/8iTgi5aUXZwO0mTfwdN8Ku8vh4LMspO?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZURUanQ5RG1BYWVtbWY1WlVESE56T2FDL1VTY1FUSU5neFZ4bkxBc3lXU2cx?=
+ =?utf-8?B?YjhFTjVKRmhreHBPaUhSNDlncVlsRDMzVHBNWXFvclUyVVlteVd2dW1ValhD?=
+ =?utf-8?B?OGRGWm1zT09HV0xja3A3Nkt6VkZ2eGlMcHd1Wk9GbnZnVXpaeCtBc1Zqc0wx?=
+ =?utf-8?B?dGhiaEZ3RUpDNkgyYmtEQ2hHRWI2OGxwZmNYUTA0TmNzY1dqYVJPb3IxdXR1?=
+ =?utf-8?B?TWN4bThXUFQwcXBpYU9lMDdjVTNZZSs1cVRXNGZ3cHNVa3JWSm00bkpGNExH?=
+ =?utf-8?B?aUQwNGxkeHcrVTVWRTBWd3FBUDZGVS9uZHFQWDkrVHlmQXhSOFR1VURDam9p?=
+ =?utf-8?B?aEFRYllCYXNGUUQ5NkxXL2RxcFc0TTg3bWhvaWpsb1FVM0NrOTUxdXhBWXVO?=
+ =?utf-8?B?SzN4WkVxZ2tZTGhMa2ZLRURNSndySGNFc0VYN2lXY05Va1JWQXJKaW5jdG9R?=
+ =?utf-8?B?RVNxZEYvUHRuTDhEckphRkx6MDhaMnhzbmhvcDBhZE9FRjBvV2pIOXp2bWlz?=
+ =?utf-8?B?VVM5Ujl0YUh1U0NQVzRPdFlVWDlIdXJRaW4yaWpVeG5aeHU5RlllSW1QN0NF?=
+ =?utf-8?B?Ly96VVozVklQWEoxWU5jRHQ3aUUwMmNMTGt1NXpzaXdmaVcydHl4S1ZVYndt?=
+ =?utf-8?B?VElvSWZqcDd1SDZrUE5TZFpLTWx0cHRaN290YTFxblFhb3NTU2QyQ0FIV3Yr?=
+ =?utf-8?B?bm9BT1VQa01jZkNzUCt4S0FTVEVsZFQ1czF5cDVnY2NtWTROeVkwdlJUVGRw?=
+ =?utf-8?B?cTBzazF1R0JiR29rUGpSVngzZ1Z2eXhJVnRqQWxxZENtak5uL3UwYzZlZGhG?=
+ =?utf-8?B?cnpFaUZqazJMZTJEVVJMNGxQZWdLRXhPVjBobVkvWm5CK05oOUN0clcxcnF0?=
+ =?utf-8?B?bWdGRlFYYjdQdWFlTjlDQTRzdHhqTmdrcGliWUdNOHlzcEJPYUFua2xydFZl?=
+ =?utf-8?B?ZmdKTngrRkVOb3MvVzZyaEcvQ1lWb0RyeDJsVWVYRlFJa2UzNy9UdEFqT1Jj?=
+ =?utf-8?B?SmE2ajI0cEdiNGFZakptQ0JTS1UxbDFuSHJLYW0rODMrQmJJWjJJVUZqUE90?=
+ =?utf-8?B?MlZoeDlYRGJjaVVyNFVpK2dIR01rdG5JdjlvVGVldHQvdm5TY2o1TGFkb2s0?=
+ =?utf-8?B?dEdka2wzWWY5N0c1TUJiRDdRUFhzd1ZuWHJEcWFEZDZ5bGZkai9yTGNiWXMr?=
+ =?utf-8?B?a3MvMldaT3VNV3puMW9wZE9vbzhiV2Z6QktMQzBXL0ZCcWVrV0cvMU1sSE9C?=
+ =?utf-8?B?TTVXT2FZdTgrenZGalJiWGVQNkhOZ3ZyZ0VTcHRqa1FaSzZqRnhIU216dGNJ?=
+ =?utf-8?B?dk9XQmJoNm5MSDhXKytRZzY5L05lRFYzL3JjckFBWDdlMHV3UlJRV2N5SEM1?=
+ =?utf-8?B?TExFMlNOanNLaE4yWi9LVUVSVDUwdnU0dy9TUFNyQmVxSzROTzNqcVZ0YUtI?=
+ =?utf-8?B?YnpLUmNINlJhWlgxYnYxUkpIQ2xsdWhwd1lEaitpdzJqWmtsdEJiNFVjeXpK?=
+ =?utf-8?B?YWQ1QUxBaDYzQUdoQWQrMGZZNmdLTnhlcUZQZUs2Ylk1cUNrc1dLcFBBY25h?=
+ =?utf-8?B?ZEgwM0lDY2dyeU1RVEV4cXkyUFVEQ2g0YmJ4Z1ZHcVFBR2VZMHFmaEsvUGJk?=
+ =?utf-8?B?M0ZheUFva2RzOVlwZEFFbGNQMnpLeHY4eHpNMFhsN1ZrNWxrS3JyNGREck5Q?=
+ =?utf-8?B?a0xhUXlraEN5TnUrdTV6SnA4SkREaksvL2ZNMVVjMzd5dUtWVzBjOEx3Q3M4?=
+ =?utf-8?B?L3c1UGhYVzdMVVlDWHVtS0dFV3ZOSDkyaFVUVDZ4eTlOcEZweVlVcFl5T0dU?=
+ =?utf-8?B?NEpwWTYzZnlVM25iMWI5T0RzbUFTSHAvV3RVNC81MkMvUkJsUk1PMlI4ZnFM?=
+ =?utf-8?B?Z0xaV294V3FvMk83M3RhWTc2cmZRbW41V0NvdWF1d05ReEhPSnFpQkxNTHYx?=
+ =?utf-8?B?TGI1bnZNUFgyQ2lQWVYrclhodHZPc1lGWWJPaVpqV2JLZTV5OG1xci9CMm1Y?=
+ =?utf-8?B?WHEzaFNtRERIekY5aTNOUlNtSkRzTk50MEJvaE1uR0NQWkpxOVNKSVc5a2Uw?=
+ =?utf-8?B?ZzhjZENaUnVmZDJ3UEEvUzRCZFF1N0E5c1J1TndxTFVPay9jU1o0V3crYVZD?=
+ =?utf-8?B?Y29TSFkrUy9MSE5GMEJZU2s2aENiRzNua1ZhMHNPVjZrK0tOUXhZZ1oxUWtR?=
+ =?utf-8?Q?4dGL6b4BltOTPuL/epMMq/Fdx2d5CqHjiNXDjm5Ka++f?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d647401a-fdce-4d1e-eae8-08de12f3ad44
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 11:51:32.8126
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rhZZ1g9uQKOG8NTLQSP1h/UiNY0IVibTj0SI0tJI67cIN7Peq4IphKfTIG9KSucXuHgYskoi3mq7WMu8K4+4ow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7860
 
-The Arrow AXE5-Eagle is an Intel Agilex5 SoCFPGA based board with:
+On Thu Oct 23, 2025 at 6:30 AM JST, Joel Fernandes wrote:
+>> - The falcon interrupts patch does not seem to be used by the last two
+>>   patches? I guess it belongs to the series that will add support for
+>>   the interrupt controller.
+> No, it is independent. Yes this leads up to the interrupt handing feature=
+, but
+> just to emphasize a bit, the motivation was to "get small patches" in so =
+that we
+> don't need to do obvious things later (example, the VFN interrupt module =
+is much
+> more complex than this GSP patch yet both are needed for interrupt handli=
+ng, so
+> the GSP patch is a good candidate IMO for upstreaming in the next merge w=
+indow).
+> Having small patches merged reduces future burden on both reviewers and t=
+he
+> developers. This is also not something new, for instance we don't have an=
+y users
+> of the PCI MSI IRQ allocation bindings in rust/, yet we merged those. I t=
+hink
+> that is reasonable. RFC should be used too when it makes sense, but I thi=
+nk we
+> should also look into merging things in chunks to avoid future review/reb=
+ase
+> burden. There isn't one rule that fits all is my point, right? I mean jus=
+t look
+> at the attempted bitfield move too, Nova is the only user yet we will mov=
+e it
+> out. But one may ask why move it out until there are other users? It has =
+to be
+> on a case-by-case basis..
 
-   - 1x PCIe Gen4.0 edge connector
-   - 4-port USB HUB
-   - 2x 1Gb Ethernet
-   - microSD
-   - HDMI output
-   - 2x 10Gb SFP+ cages
+We do have another user for bitfield/register and that's Tyr - the move
+is to allow them to use these macros.
 
-As most devices aren't supported mainline yet, this is only the initial
-support for the board: leds, gpios, gmac2, i2c, uart and qspi. Although
-gmac1 is equipped on the board, it doesn't work yet as it needs
-additional pinctrl settings in the bootloader to work.
+I am also more comfortable merging code when I understand how it is
+called and used in practice. It doesn't necessarily need to be fully
+complete, but something at least in RFC status demonstrating a real use
+of the API helps.
 
-Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm64/boot/dts/intel/Makefile                 |   1 +
- .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 146 +++++++++++++++++++++
- 2 files changed, 147 insertions(+)
+Once a core patch in RFC status is reviewed and agreed on, it can be
+added (with all the Reviewed-by tags) to the series containing its user
+code, even if the user code comes later. It delays the merging of the
+core code a bit, but since it has no user it would be dead merged code
+anyway, and when you look at the whole picture it really comes down to
+the same - there is no delay to when the machinery starts moving to
+produce something useful.
 
-diff --git a/arch/arm64/boot/dts/intel/Makefile b/arch/arm64/boot/dts/intel/Makefile
-index 33f6d01266b1a..0a18ca306054b 100644
---- a/arch/arm64/boot/dts/intel/Makefile
-+++ b/arch/arm64/boot/dts/intel/Makefile
-@@ -2,6 +2,7 @@
- dtb-$(CONFIG_ARCH_INTEL_SOCFPGA) += socfpga_agilex_n6000.dtb \
- 				socfpga_agilex_socdk.dtb \
- 				socfpga_agilex_socdk_nand.dtb \
-+				socfpga_agilex5_axe5_eagle.dtb \
- 				socfpga_agilex5_socdk.dtb \
- 				socfpga_agilex5_socdk_nand.dtb \
- 				socfpga_n5x_socdk.dtb
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dts b/arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dts
-new file mode 100644
-index 0000000000000..a2a262f3d07c6
---- /dev/null
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex5_axe5_eagle.dts
-@@ -0,0 +1,146 @@
-+// SPDX-License-Identifier:     GPL-2.0
-+/*
-+ * Copyright (C) 2024, Arrow Electronics, Inc.
-+ */
-+#include "socfpga_agilex5.dtsi"
-+
-+/ {
-+	model = "SoCFPGA Agilex5 Arrow AXE5-Eagle";
-+	compatible = "arrow,socfpga-agilex5-axe5-eagle", "intel,socfpga-agilex5";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-0 {
-+			label = "hps_led0";
-+			gpios = <&porta 6 GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		led-1 {
-+			label = "hps_led1";
-+			gpios = <&porta 7 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		key-0 {
-+			label = "hps_sw0";
-+			gpios = <&porta 10 0>;
-+			linux,input-type = <5>;	/* EV_SW */
-+			linux,code = <0x0>;
-+		};
-+
-+		key-1 {
-+			label = "hps_sw1";
-+			gpios = <&porta 1 0>;
-+			linux,input-type = <5>;	/* EV_SW */
-+			linux,code = <0x0>;
-+		};
-+
-+		key-2 {
-+			label = "hps_pb0";
-+			gpios = <&porta 8 1>;
-+			linux,code = <187>;		/* KEY_F17 */
-+		};
-+
-+		key-3 {
-+			label = "hps_pb1";
-+			gpios = <&porta 9 1>;
-+			linux,code = <188>;		/* KEY_F18 */
-+		};
-+	};
-+
-+	vdd: regulator-vdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-supply";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	vdd_3_3: regulator-vdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-supply";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+};
-+
-+&gmac2 {
-+	status = "okay";
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&emac2_phy0>;
-+
-+	mdio0 {
-+		compatible = "snps,dwmac-mdio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		emac2_phy0: ethernet-phy@1 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			reg = <0x1>;
-+		};
-+	};
-+};
-+
-+&gpio0 {
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+
-+	i2c-mux@70 {
-+		compatible = "nxp,pca9544";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x70>;
-+		status = "okay";
-+	};
-+};
-+
-+&osc1 {
-+	clock-frequency = <25000000>;
-+};
-+
-+&qspi {
-+	status = "okay";
-+
-+	flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "micron,mt25qu02g", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <100000000>;
-+
-+		m25p,fast-read;
-+		cdns,read-delay = <2>;
-+		cdns,tshsl-ns = <50>;
-+		cdns,tsd2d-ns = <50>;
-+		cdns,tchsh-ns = <4>;
-+		cdns,tslch-ns = <4>;
-+	};
-+};
-+
-+&smmu {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-
--- 
-2.51.0
+Exceptions can be discussed if e.g. there is a big risk that a
+refactoring will wreck everything, but this doesn't appear to be a
+factor here.
 
 
