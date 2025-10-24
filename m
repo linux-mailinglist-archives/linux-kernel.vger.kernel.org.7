@@ -1,92 +1,139 @@
-Return-Path: <linux-kernel+bounces-868082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E25C044DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:03:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F49FC044E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 247AA4F663F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:03:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ACE73B7E0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316B7274FE8;
-	Fri, 24 Oct 2025 04:03:12 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA6827FD44;
+	Fri, 24 Oct 2025 04:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Y7McdDrE"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E9727A93C;
-	Fri, 24 Oct 2025 04:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761278591; cv=none; b=GayaVDYy40ouqRoxp68Dpwnl5IKf4lzT/T81+y87IShMFVUcMYt+ih4W9mq2Bq7FYagR66RzwOVdSg9f6kxcrphGXj0BwftHqmGDOiDy51y/yEmHtOYQh/2QYdTwx1/Amjm8g9bmgIAaZvMmDYaeDWJ4sdcfY7KX5HUKY0KPANo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761278591; c=relaxed/simple;
-	bh=nAHQFTDtDNSSjrWU9yMnE7nB0TC1qFVXUydRSxGKqL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qTmXsZuH/jdxcSrvwGIKz/cRH4BYYUcg0yGnZAMiY2VuGm1JbBFqYc+cg73lcOFpaVCo8/MLpGDEjYSa+uD9eVcZorbdXVtUCEJpORsTqKW/VzqHt6qVY6pc9B3IIRXw/JNfr20FiQqsik0Qs4qJjUEkocasyh7ZmMEw5OcmhBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 258FA2C0163C;
-	Fri, 24 Oct 2025 06:03:01 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 008A54A12; Fri, 24 Oct 2025 06:03:00 +0200 (CEST)
-Date: Fri, 24 Oct 2025 06:03:00 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	kbusch@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
-	mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
-	terry.bowman@amd.com, tianruidong@linux.alibaba.com
-Subject: Re: [PATCH v6 4/5] PCI/ERR: Use pcie_aer_is_native() to check for
- native AER control
-Message-ID: <aPr6dBDUUohRUzYg@wunner.de>
-References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
- <20251015024159.56414-5-xueshuai@linux.alibaba.com>
- <aPYMO2Eu5UyeEvNu@wunner.de>
- <0fe95dbe-a7ba-4882-bfff-0197828ee6ba@linux.alibaba.com>
- <aPZAAPEGBNk_ec36@wunner.de>
- <645adbb6-096f-4af3-9609-ddc5a6f5239a@linux.alibaba.com>
- <aPoDbKebJD30NjKG@wunner.de>
- <1eaf1f94-e26b-4313-b6b7-51ad966fe28e@linux.alibaba.com>
- <aPrvEZ3X4_tiD2Fh@wunner.de>
- <91cf33b4-7f67-4f3a-b095-e8f04d8c18e9@linux.alibaba.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6CD1FBEAC
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761278640; cv=pass; b=PlZMtOJz5vu3l4dRNCJs1o+fpovNcBK48bzdEkwhVwhFj2Jb68Q8YWHhWsFns2gRKqubDLWXLi+s4w1lO7PPgkZGW4h7t3nBFbsh6LO7sRTRFnUi8hdj03APrFUqUw8WE0oL0x1d4V8c3KysHhuMUZTwrbTcrRT6zCUISkcOlKE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761278640; c=relaxed/simple;
+	bh=RVA+WZS855bqOStPebB4Gqkaty8GfAbOh8DWI+20EhM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QkL+qvzetT7WYgAW5iFYb41Xoros0rrBTOwi6eJd5sdT3HRtGiiOUUaamhcgaJGAsJJCkbnYbO/Q+4sRQjFHxSOWjsfcEwJiBjRcQ0QexSS5PMyka8N/cwCWrd8ZLlTPBc4Z4kTHbiORcTgU2//QDDXgnvislBgdw/BXYYAgyqs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Y7McdDrE; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761278607; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fx6tNeu44+jKL039L9enrrNP6z1uJXZ95NSvltJ5BOrUOAkEbddYbmIabG1bPHngtMb8u95iCa1HA7r1W8YMr/726XDjIgPd93oIvwMng/IpOOFcyb5xPL2FHFzqLDJQcsrRd6lG5eJd8zGhWHmbx+82DIwpI1afxYJqWrtG6e0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761278607; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=NDOaKADMyDyMltSNR68GqJBLf3lWbNHHak09GIQIPA8=; 
+	b=La9emBwyAZGWyNqtzNgXhStV0Jkoj8ZiGAFTEBZU7IRjTQ3W4KCjR8sLrpW4Arp3xK+jZxxfc7yK81Lrelqy7iDUVMkzNJr5RbqlpyEF36xgd1+xPN72+R+0JZdpZieOBCgQmk34jh8VWEopWhLkU7DCtpUQzN7fnf3myZdS+uk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761278607;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=NDOaKADMyDyMltSNR68GqJBLf3lWbNHHak09GIQIPA8=;
+	b=Y7McdDrEUghsUa599fyfeXXHhb/2MwRR5OdSddNMLdn/U26oH1Vrx+cQT90YU4Dp
+	VXlhYaKJZQGmwROBKYi7fjH53erPDsz6obQ7zWh72NAY2RDPzpRO3PN6S8QOWXcRbi8
+	hUAeZO6xA/QokmI6O6+U7pL1Wg+ymo2IWlqdhmvY=
+Received: by mx.zohomail.com with SMTPS id 1761278605761341.5097583210113;
+	Thu, 23 Oct 2025 21:03:25 -0700 (PDT)
+Message-ID: <9aa46e0e-5a10-47d5-815f-8e97d42fff94@collabora.com>
+Date: Fri, 24 Oct 2025 07:03:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <91cf33b4-7f67-4f3a-b095-e8f04d8c18e9@linux.alibaba.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] drm/virtio: introduce the HOST_PAGE_SIZE feature
+To: Sergio Lopez <slp@redhat.com>, David Airlie <airlied@redhat.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Simona Vetter <simona@ffwll.ch>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Rob Clark <robdclark@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250402-virtio-gpu-host-page-size-v2-0-0afdc8c16cb9@redhat.com>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250402-virtio-gpu-host-page-size-v2-0-0afdc8c16cb9@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Fri, Oct 24, 2025 at 11:38:10AM +0800, Shuai Xue wrote:
-> The remaining question is whether it would make more sense to rename
-> pcie_clear_device_status() to pci_clear_device_error_status() and refine
-> its behavior by adding a mask specifically for bits 0 to 3. Here's an
-> example of the proposed change:
+On 4/2/25 20:45, Sergio Lopez wrote:
+> There's an incresing number of machines supporting multiple page sizes
+> and on these machines the host and a guest can be running, each one,
+> with a different page size.
+> 
+> For what pertains to virtio-gpu, this is not a problem if the page size
+> of the guest happens to be bigger or equal than the host, but will
+> potentially lead to failures in memory allocations and/or mappings
+> otherwise.
+> 
+> To improve this situation, we introduce here the HOST_PAGE_SIZE feature.
+> This feature indicates that the host has an extended virtio_gpu_config
+> structure that include it's own page size a new field.
+> 
+> On the second commit, we also add a new param that can be read with
+> VIRTGPU_GETPARAM by userspace applications running in the guest to
+> obtain the host's page size and find out the right alignment to be used
+> in shared memory allocations.
+> 
+> There has been a discussion in virtio-comments about whether the
+> information about alignment restrictions must be shared in a generic or
+> in a device-specific way, favoring the latter:
+> 
+> https://lore.kernel.org/virtio-comment/CY8PR12MB7195B5E575099CD9CA1F2F39DCAF2@CY8PR12MB7195.namprd12.prod.outlook.com/T/#t
+> 
+> v2:
+>  - Rebase on top of current upstream.
+>  - Make a reference in the cover to the discussion about how device
+>    page alignment restrictions should be shared with the driver.
+> 
+> Signed-off-by: Sergio Lopez <slp@redhat.com>
+> ---
+> Sergio Lopez (2):
+>       drm/virtio: introduce the HOST_PAGE_SIZE feature
+>       drm/virtio: add VIRTGPU_PARAM_HOST_PAGE_SIZE to params
+> 
+>  drivers/gpu/drm/virtio/virtgpu_drv.c   |  1 +
+>  drivers/gpu/drm/virtio/virtgpu_drv.h   |  2 ++
+>  drivers/gpu/drm/virtio/virtgpu_ioctl.c |  5 +++++
+>  drivers/gpu/drm/virtio/virtgpu_kms.c   | 13 ++++++++++---
+>  include/uapi/drm/virtgpu_drm.h         |  1 +
+>  include/uapi/linux/virtio_gpu.h        |  5 +++++
+>  6 files changed, 24 insertions(+), 3 deletions(-)
+> ---
+> base-commit: acc4d5ff0b61eb1715c498b6536c38c1feb7f3c1
+> change-id: 20250402-virtio-gpu-host-page-size-282c99dfe44c
+> 
+> Best regards,
 
-I don't see much value in renaming the function.
+Hi Sergio,
 
-However clearing only bits 0-3 makes sense.  PCIe r5.0 defined bit 6
-as Emergency Power Reduction Detected with type RW1C in 2019.  The
-last time we touched pcie_clear_device_status() was in 2018 with
-ec752f5d54d7 and we've been clearing all bits since forever,
-not foreseeing that new ones with type RW1C might be added later.
+Curious if this feature still wanted. The protocol was updated many
+months ago with the VIRTIO_GPU_F_BLOB_ALIGNMENT addition.
 
-I suggest defining a new macro in include/uapi/linux/pci_regs.h
-instead of using 0xf, say PCI_EXP_DEVSTA_ERR.  Then you don't
-need the code comment because the code is self-explanatory.
-
-Thanks,
-
-Lukas
+-- 
+Best regards,
+Dmitry
 
