@@ -1,158 +1,243 @@
-Return-Path: <linux-kernel+bounces-868429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844B8C0521D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:45:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 474E0C052DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BEA01AE6132
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:46:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB76558083F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AC8307486;
-	Fri, 24 Oct 2025 08:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FB330275F;
+	Fri, 24 Oct 2025 08:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lankhorst.se header.i=@lankhorst.se header.b="E0g3wZpF"
-Received: from lankhorst.se (lankhorst.se [141.105.120.124])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="BGCyNZWh"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DA1305E14;
-	Fri, 24 Oct 2025 08:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC918305968;
+	Fri, 24 Oct 2025 08:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761295479; cv=none; b=bnB7OEtTiIpr3m1cyk7XnWRz5KOh6qLHIi/tVG1Xq7Uec3N06o1WVPWpgGlsWIRf3mvjBDO+adENZt0doqoGcpZtq73Qdr5FusQU94zBuMmU7Eg9OwU8l63gfbpWn3M3HsI3+YmWpQxSvOM1eg3Q6hpKkgM93nEE8HinP5nQnS4=
+	t=1761295092; cv=none; b=htPaNIFWmUztPBUKRKg1gOY5/SRI9lg8RPzY+Ap8nddteMxF6kreK6DxnYpyCKMZxlvusD1eoEeCCEpS7kMFKumgjavcGlRATHRG7JmKcDb2qoz6HrLWXvIPuwDVDSTRwE84U/VpnofiAYFhz/15/3Jxru1uBPX9KRaXsa30EiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761295479; c=relaxed/simple;
-	bh=TUoJkCQkDuWU8g1Ir6nd4exbmwFF4ybBTtmmLb5+OXk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xjmw5SFyYqqkseChjUBC7h/nrIZsJtKn6qdp5IV1oR900cq3X36HZxwpsB078oo4Y/VMqTpzccDDOhTD+lNQpjitQPhEPgl/Doo/2QMROXiV8GJqKYECEduKA2sIQTEVq0yS15NhAmTB16dvsxVXLTCoWZiBfDU2R+qm7epY0NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lankhorst.se; spf=pass smtp.mailfrom=lankhorst.se; dkim=pass (2048-bit key) header.d=lankhorst.se header.i=@lankhorst.se header.b=E0g3wZpF; arc=none smtp.client-ip=141.105.120.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lankhorst.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lankhorst.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lankhorst.se;
-	s=default; t=1761295055;
-	bh=TUoJkCQkDuWU8g1Ir6nd4exbmwFF4ybBTtmmLb5+OXk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E0g3wZpFujOkzCt9XWuqS/dzfQB6Fja1x8+i2AzXY4LGFuYLe6PQ+BZfCio3HybKt
-	 Qn50n+s4ottnTd1eAQ+iMmkqoPzUfSBml+rZ/8z4G9ZXzVusfjg5cjHj5zykcOuKub
-	 TO1+O9m24UIsz4XOs/soybNOX/NRCXMFoj1IOzVv/topEbo8ZQPH63/cFNvAoeNCgk
-	 vMnC+TkVvxkgM7nV9TJpAZtgCTB97+QPoTU+2uZJXyGrPY3Zvaq2tGm/waZlYF1fKe
-	 LlWVYqXhqK/h7g86F2JxVWWnUbSfo0xvua6P/xqeyVP7EwOiqPajMJKcQTTa+P90jZ
-	 Qhc5XtqfsfCmQ==
-Message-ID: <c4bd0ddb-4104-4074-b04a-27577afeaa46@lankhorst.se>
-Date: Fri, 24 Oct 2025 10:37:34 +0200
+	s=arc-20240116; t=1761295092; c=relaxed/simple;
+	bh=X0AK2AeMhixfqv+IIy3w6nxQk/qRTqidLVVVTOEJCmI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bVGeStqnaMZT6dZxOexUYyVqSfHgSD1yVMOuY0d+ULy35Ts8W7NUjFCb0/33okLr3+7fk2cDnfdwU6XyuQwpXzQptoeD93yf7ALTR4c7iB3QGFNISchXldKvSbkxAYD1fNA07RbyLqEP0R44/fvxp1Ztv3uSka5k7QztAi7xXDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=BGCyNZWh; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=L7lT/wMZ1LMdwxMJTrMezCGdtazbt1qIWepTcDamS+o=;
+	t=1761295090; x=1762504690; b=BGCyNZWhzo8RUUdRzixBT2VzHiS8HQC8yet1u76Zj4WX1Ww
+	JM/OvZsMO7zVdzLfKTcj9KUPdwN2xyVpXuccyHEv1FY8pPcIYeF0vbasrOocMoCunF10LpKeInIUT
+	Lat7JguFy3FtUa/1BaUeod9QZ7Yda7/A9+pGBTzKjjBiUKoTcAXTvS3vZ9dC+jtQGREmFvpQXj2UA
+	hqOVH2WCxhC3ZHfISHFaz1IyKzbBLITAHhFQSqyvxRfHumw10EKtThbt5pqXu/9/YtWF+v3WEE2I6
+	m1QdEElfYLOL2WItoF7zZ6IdZwzViSJIDPQOEPFWxaWfQBKUAsh/vp9FNkPI7lXQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1vCDJ9-00000002PD9-0Qfp;
+	Fri, 24 Oct 2025 10:37:59 +0200
+Message-ID: <438ff89e22a815c81406c3c8761a951b0c7e6916.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 0/10] KFuzzTest: a new kernel fuzzing framework
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Ethan Graham <ethan.w.s.graham@gmail.com>
+Cc: ethangraham@google.com, glider@google.com, andreyknvl@gmail.com, 
+	andy@kernel.org, brauner@kernel.org, brendan.higgins@linux.dev, 
+	davem@davemloft.net, davidgow@google.com, dhowells@redhat.com,
+ dvyukov@google.com, 	elver@google.com, herbert@gondor.apana.org.au,
+ ignat@cloudflare.com, jack@suse.cz, 	jannh@google.com,
+ kasan-dev@googlegroups.com, kees@kernel.org, 	kunit-dev@googlegroups.com,
+ linux-crypto@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, lukas@wunner.de, 	rmoar@google.com, shuah@kernel.org,
+ sj@kernel.org, tarasmadan@google.com
+Date: Fri, 24 Oct 2025 10:37:57 +0200
+In-Reply-To: <CANgxf6xOJgP6254S8EgSdiivrfE-aJDEQbDdXzWi7K4BCTdrXg@mail.gmail.com> (sfid-20250925_103550_253525_F09A62BB)
+References: <20250919145750.3448393-1-ethan.w.s.graham@gmail.com>
+	 <3562eeeb276dc9cc5f3b238a3f597baebfa56bad.camel@sipsolutions.net>
+	 <CANgxf6xOJgP6254S8EgSdiivrfE-aJDEQbDdXzWi7K4BCTdrXg@mail.gmail.com>
+	 (sfid-20250925_103550_253525_F09A62BB)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] devcoredump: Fix circular locking dependency with
- devcd->mutex.
-To: Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org
-Cc: intel-xe@lists.freedesktop.org, Mukesh Ojha <quic_mojha@quicinc.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- stable@vger.kernel.org, Matthew Brost <matthew.brost@intel.com>
-References: <20250723142416.1020423-1-dev@lankhorst.se>
- <e683355a9a9f700d98ae0a057063a975bb11fadc.camel@sipsolutions.net>
-Content-Language: en-US
-From: Maarten Lankhorst <dev@lankhorst.se>
-In-Reply-To: <e683355a9a9f700d98ae0a057063a975bb11fadc.camel@sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 
-Hey,
+Hi Ethan, all,
 
-Den 2025-10-24 kl. 10:12, skrev Johannes Berg:
-> On Wed, 2025-07-23 at 16:24 +0200, Maarten Lankhorst wrote:
->>
->> +static void __devcd_del(struct devcd_entry *devcd)
->> +{
->> +	devcd->deleted = true;
->> +	device_del(&devcd->devcd_dev);
->> +	put_device(&devcd->devcd_dev);
->> +}
->> +
->>  static void devcd_del(struct work_struct *wk)
->>  {
->>  	struct devcd_entry *devcd;
->> +	bool init_completed;
->>  
->>  	devcd = container_of(wk, struct devcd_entry, del_wk.work);
->>  
->> -	device_del(&devcd->devcd_dev);
->> -	put_device(&devcd->devcd_dev);
->> +	/* devcd->mutex serializes against dev_coredumpm_timeout */
->> +	mutex_lock(&devcd->mutex);
->> +	init_completed = devcd->init_completed;
->> +	mutex_unlock(&devcd->mutex);
->> +
->> +	if (init_completed)
->> +		__devcd_del(devcd);
-> 
-> I'm not sure I understand this completely right now. I think you pull
-> this out of the mutex because otherwise the unlock could/would be UAF,
-> right?
-> 
-> But also we have this:
-> 
->> @@ -151,11 +160,21 @@ static int devcd_free(struct device *dev, void *data)
->>  {
->>  	struct devcd_entry *devcd = dev_to_devcd(dev);
->>  
->> +	/*
->> +	 * To prevent a race with devcd_data_write(), disable work and
->> +	 * complete manually instead.
->> +	 *
->> +	 * We cannot rely on the return value of
->> +	 * disable_delayed_work_sync() here, because it might be in the
->> +	 * middle of a cancel_delayed_work + schedule_delayed_work pair.
->> +	 *
->> +	 * devcd->mutex here guards against multiple parallel invocations
->> +	 * of devcd_free().
->> +	 */
->> +	disable_delayed_work_sync(&devcd->del_wk);
->>  	mutex_lock(&devcd->mutex);
->> -	if (!devcd->delete_work)
->> -		devcd->delete_work = true;
->> -
->> -	flush_delayed_work(&devcd->del_wk);
->> +	if (!devcd->deleted)
->> +		__devcd_del(devcd);
->>  	mutex_unlock(&devcd->mutex);
-> 
-> ^^^^
-> 
-> Which I _think_ is probably OK because devcd_free is only called with an
-> extra reference held (for each/find device.)
-> 
-> But ... doesn't that then still have unbalanced calls to __devcd_del()
-> and thus device_del()/put_device()?
-> 
-> CPU 0				CPU 1
-> 
-> dev_coredump_put()		devcd_del()
->  -> devcd_free()
->    -> locked
->      -> !deleted
->      -> __devcd_del()
-> 				-> __devcd_del()
-> 
-> no?
-> 
-> johannes
+Sorry, my=C2=A0current foray into fuzzing got preempted by other things ...
 
+> > So ... I guess I understand the motivation to make this easy for
+> > developers, but I'm not sure I'm happy to have all of this effectively
+> > depend on syzkaller.
+>=20
+> I would argue that it only depends on syzkaller because it is currently
+> the only fuzzer that implements support for KFuzzTest. The communication
+> interface itself is agnostic.
 
-Yeah don't you love the races in the design? All intricate and subtle.
+Yeah I can see how you could argue that. However, syzkaller is also
+effectively the only fuzzer now that supports what you later call "smart
+input generation", and adding it to any other fuzzer is really not
+straight-forward, at least to me. No other fuzzer seems to really have
+felt a need to have this, and there are ... dozens?
 
-In this case it's handled by disable_delayed_work_sync(),
-which waits for devcd_del() to be completed. devcd_del is called from the workqueue,
-and the first step devcd_free does is calling disable_delayed_work_sync, which means
-devcd_del() either fully completed or was not run at all.
+> > the record, and everyone else who might be reading, here's my
+> > understanding:
+> >=20
+> >  - the FUZZ_TEST() macro declares some magic in the Linux binary,
+> >    including the name of the struct that describes the necessary input
+> >=20
+> >  - there's a parser in syzkaller (and not really usable standalone) tha=
+t
+> >    can parse the vmlinux binary (and doesn't handle modules) and
+> >    generates descriptions for the input from it
+> >=20
+> >  - I _think_ that the bridge tool uses these descriptions, though the
+> >    example you have in the documentation just says "use this command fo=
+r
+> >    this test" and makes no representation as to how the first argument
+> >    to the bridge tool is created, it just appears out of thin air
+>=20
+> syzkaller doesn't use the bridge tool at all.=C2=A0
 
-Best regards,
-~Maarten
+Right.
+
+> Since a KFuzzTest target is
+> invoked when you write encoded data into its debugfs input file, any
+> fuzzer that is able to do this is able to fuzz it - this is what syzkalle=
+r
+> does. The bridge tool was added to provide an out-of-the-box tool
+> for fuzzing KFuzzTest targets with arbitrary data that doesn't depend
+> on syzkaller at all.
+
+Yes, I understand, I guess it just feels a bit like a fig-leaf to me to
+paper over "you need syzkaller" because there's no way to really
+(efficiently) use it for fuzzing.
+
+> In the provided examples, the kfuzztest-bridge descriptions were
+> hand-written, but it's also feasible to generate them with the ELF
+> metadata in vmlinux. It would be easy to implement support for
+> this in syzkaller, but then we would depend on an external tool
+> for autogenerating these descriptions which we wanted to avoid.
+
+Oh, I get that you wouldn't necessarily want to have a dependency on
+syzkaller in the kernel example code, but in a sense my argument is that
+there's no such tool at all since syzkaller cannot output anything, and
+then you need to write all the descriptions by hand. Which is fine for
+an _example_ but really doesn't scale to actually running fuzzing.
+
+So then we're mostly back to "you need syzkaller to run fuzzing against
+this", which at least to me isn't a great situation.
+
+> >  - the bridge tool will then parse the description and use some random
+> >    data to create the serialised data that's deserialized in the kernel
+> >    and then passed to the test
+>=20
+> This is exactly right. It's not used by syzkaller, but this is how it's
+> intended to work when it's used as a standalone tool, or for bridging
+> between KFuzzTest targets and an arbitrary fuzzer that doesn't
+> implement the required encoding logic.
+
+Yeah I guess, but that still requires hand-coding the descriptions (or
+writing a separate parser), and notably doesn't work with a sort of in-
+process fuzzing I was envisioning for ARCH=3Dum. Which ought to be much
+faster, and even combinable with fork() as I alluded to in earlier
+emails.
+
+> > I was really hoping to integrate this with ARCH=3Dum and other fuzzers[=
+1],
+> > but ... I don't really think it's entirely feasible. I can basically
+> > only require hard-coding the input description like the bridge tool
+> > does, but that doesn't scale, or attempt to extract a few thousand line=
+s
+> > of code from syzkaller to extract the data...
+>=20
+> I would argue that integrating with other fuzzers is feasible, but it doe=
+s
+> require some if not a lot of work depending on the level of support. syzk=
+aller
+> already did most of the heavy lifting with smart input generation and mut=
+ation
+> for kernel functions, so the changes needed for KFuzzTest were mainly:
+>=20
+> - Dynamically discovering targets, but you could just as easily write a
+>   syzkaller description for them.
+> - Encoding logic for the input format.
+>=20
+> Assuming a fuzzer is able to generate C-struct inputs for a kernel functi=
+on,
+> the only further requirement is being able to encode the input and write
+> it into the debugfs input file. The ELF data extraction is a nice-to-have
+> for sure, but it's not a strict requirement.
+
+I mean, yeah, I guess but ... Is there a fuzzer that is able generate
+such input? I haven't seen one. And running the bridge tool separately
+is going to be rather expensive (vs. in-process like I'm thinking
+about), and some form of data extraction is needed to make this scale at
+all.
+
+Sure, I can do it all manually for a single test, but is it really a
+good idea that syzkaller is the only thing that could possibly run this
+at scale?
+
+> > I guess the biggest question to me is ultimately why all that is
+> > necessary? Right now, there's only the single example kfuzztest that
+> > even uses this infrastructure beyond a single linear buffer [2]. Where
+> > is all that complexity even worth it? It's expressly intended for
+> > simpler pieces of code that parse something ("data parsers, format
+> > converters").
+>=20
+> You're right that the provided examples don't leverage the feature of
+> being able to pass more complex nested data into the kernel. Perhaps
+> for a future iteration, it might be worth adding a target for a function
+> that takes more complex input. What do you think?
+
+Well, I guess my thought is that there isn't actually going to be a good
+example that really _requires_ all this flexibility. We're going to want
+to test (mostly?) functions that consume untrusted data, but untrusted
+data tends to come in the form of a linear blob, via the network, from a
+file, from userspace, etc. Pretty much only the syscall boundary has
+highly structured untrusted data, but syzkaller already fuzzes that and
+we're not likely to write special kfuzztests for syscalls?
+
+> I'm not sure how much of the kernel complexity really could be reduced
+> if we decided to support only simpler inputs (e.g., linear buffers).
+> It would certainly simplify the fuzzer implementation, but the kernel
+> code would likely be similar if not the same.
+
+Well, you wouldn't need the whole custom serialization format and
+deserialization code for a start, nor the linker changes around
+KFUZZTEST_TABLE since run-time discovery would likely be sufficient,
+though of course those are trivial. And the deserialization is almost
+half of the overall infrastructure code?
+
+Anyway, I don't really know what to do. Maybe this has even landed by
+now ;-) I certainly would've preferred something that was easier to use
+with other fuzzers and in-process fuzzing in ARCH=3Dum, but then that'd
+now mean I need to plug it in at a completely different level, or write
+a DWARF parser and serializer if I don't want to have to hand-code each
+target.
+
+I really do want to do fuzz testing on wifi, but with kfuzztest it
+basically means I rely on syzbot to actually run it or have to run
+syzkaller myself, rather than being able to integrate it with other
+fuzzers say in ARCH=3Dum. Personally, I think it'd be worthwhile to have
+that, but I don't see how to integrate it well with this infrastructure.
+
+Also, more generally, it seems unlikely that _anyone_ would ever do
+this, and then it's basically only syzbot that will ever run it.
+
+johannes
 
