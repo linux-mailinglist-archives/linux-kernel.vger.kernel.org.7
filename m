@@ -1,134 +1,86 @@
-Return-Path: <linux-kernel+bounces-869176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA79C073AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:15:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED680C07399
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0404258055B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F76E3ACCCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E7B335BCC;
-	Fri, 24 Oct 2025 16:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8OKaKEx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5139336ED9;
+	Fri, 24 Oct 2025 16:11:08 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4992334394;
-	Fri, 24 Oct 2025 16:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FCD2D131A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761322241; cv=none; b=eEDjgv8NMkyL9j7QZ+xqGav2Y056t94BhAAsdEN1a2fSXGibKHuhSBNAEN4wyrtv/WJZEtso3oeP0FE9VsNLMtyNRpi6iqm5Jp91fJbk+xnLgfC5SfrpKPtITOLdPiMjROS0MG6oKj3mHfAZX6QZE5XIRHdbi+Y9Sc4WrY+ljBA=
+	t=1761322268; cv=none; b=Qc0mHnwFdb/UCFwtk52Mv+mxZYn7lsOJCQiAMopl2u8pR/fOk4NOJcQEm5iMFEzk5wgYx29Dztwu+tzquxUP2pyfJyWv+6/1vn5F1mosj7EHCfYYsjo+0QZFgO5sPkIyRQQcSxd3WnX7osuyq9pb906/EdaagFP6cUoTQL0G5W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761322241; c=relaxed/simple;
-	bh=4SoTri5W3H54+3tKwwPWDSe9QCJbhHeD6Hnf3WTJiIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlmeNKnxQMAvtbqtFyWOCmZuTsYvKqxEXfHCHB5fBFrXx/O0JBGfSJZlpnadlpt1W40KnGFmnrRr2NB5nRMoOWImmAmE3pBUrPtRjZ92tA0J7mkVwJyt3F5CeTaEcrCbUtq6nXUTnf7SVZ7xhCWlXccVT61IO0mEHRqgZIpzDsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D8OKaKEx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29727C4CEF1;
-	Fri, 24 Oct 2025 16:10:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761322239;
-	bh=4SoTri5W3H54+3tKwwPWDSe9QCJbhHeD6Hnf3WTJiIY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D8OKaKExojQJsNa3/9XyDn/+qFCxUG4IW3oOapovBVahDQXpSGGiUn/3TY8C3U8Qj
-	 yjAsT0gYQja4onOmMGtoUHTuJ09qyX8rRJtRdrnF4jAk3j07yIjC7jxegqXF2wkw2r
-	 8Z1Ww/kgAB0hk5FZPZ9MTdqSCxMGf/RZDvS0aUnI0AQ8XnjonowgkyU8tmJPLK3+/b
-	 ESx8BtMI9RTPuj7nSWTCJnxGD1EnHET4MuaSDgmS7YAQQaKlwqbp4arphUtbHi2mQk
-	 AJWSzXWXo/Y8byU3465DdeUlLGrayDqWqJq09G9lusDJfdjAb6mZgJ2CRGb8qM3Fej
-	 jNVRjCyg8tp6g==
-Date: Fri, 24 Oct 2025 17:10:33 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v1 1/2] dt-bindings: arm: fsl: add Toradex SMARC iMX95
-Message-ID: <20251024-stardom-salsa-8e52d241fbf2@spud>
-References: <20251024144921.77714-1-francesco@dolcini.it>
- <20251024144921.77714-2-francesco@dolcini.it>
+	s=arc-20240116; t=1761322268; c=relaxed/simple;
+	bh=BC5aFy3k/K++PbLVWO+MK629SLL81R86SkBFueL9Qtk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=S8GMGFoM0ywQm5NaY2sVPPEnMo8wxJrFAjkwFQyfkzVrjmpZNWCKPqQVvDQDlH+Q6seVSQEdizgIGXgMBjkJENRtXcAQ2wpuOaQvcr80miLNeRjYRPnDgJsPYh7th7FZQ/rspNwbTu9lZ46ZBqxG/s2N5bjIEq422GU5qQo58Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-431f20be851so5065945ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:11:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761322264; x=1761927064;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i1SC8BfNfeTKMm4UVr2O7lCJEknD0FRcakvsh49uVg8=;
+        b=nfmL2c4KuBA1GFz0SqLx9ezdnUb891SB761AP368BQaZjw2sTG2Hjn9EGz2MwV+c9u
+         ln9Ufg2SWlfYxYXf6JgE/5Mxm6vTSxcYbZFzb/rd/qHvZ+lUUZk29Gt2dbhKcqz0MYmm
+         n8QpR2VVUzwwJKcLv2MBW2ogh9xUtqv7bT0PGfOsP8evYV5M8chYtjuCfWUE1nKbYfD7
+         M+FCbmwyH1l4ecSnKZ/p+Z8zbF8Ast9a/Emfe/cXMbx/jycL/UhU4wZsnzI5v0MI/Ddu
+         j5XF7ssAf0n+EdFhW+dnHjpTGuPwKyd6B09kxAwXRTESkO1VJrymkG+h9s36A9UBJK2i
+         7W9g==
+X-Gm-Message-State: AOJu0YzY1SApMhGT64BASMBL/YCSvF6PEws5uxsRUcbGWzeYI9dA5jwf
+	6vA6HxmjRSBrSTf8hJZnqkZTRSyfxuoYrx8trloSC6fv/FRFOnz4iS5VKY5KClKqR2ns6f+zSzh
+	3US1DZFP1G8g88TtJZcp4+vf6mG1mMm9VI0qYo0PqjCc9D0E9a+/WI+lHkiw=
+X-Google-Smtp-Source: AGHT+IHg/oHatCLCzaR81LnKZoJz5U+lB3Ya1R88cno/Y6Ky/md1gEFFvrvvuALkoF33Gqtf3yAypxyGJDnpaYbEItwO8NlcmAmX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UrG/VOuGoe/anPA6"
-Content-Disposition: inline
-In-Reply-To: <20251024144921.77714-2-francesco@dolcini.it>
+X-Received: by 2002:a92:cda3:0:b0:430:b4ca:2696 with SMTP id
+ e9e14a558f8ab-430c514e290mr422258935ab.0.1761322264079; Fri, 24 Oct 2025
+ 09:11:04 -0700 (PDT)
+Date: Fri, 24 Oct 2025 09:11:04 -0700
+In-Reply-To: <aPueHB4AaBdRL9hL@rpthibeault-XPS-13-9305>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fba518.a70a0220.3bf6c6.01a5.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KMSAN: uninit-value in hci_cmd_complete_evt
+From: syzbot <syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, rpthibeault@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---UrG/VOuGoe/anPA6
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Fri, Oct 24, 2025 at 04:49:20PM +0200, Francesco Dolcini wrote:
-> From: Jo=E3o Paulo Gon=E7alves <joao.goncalves@toradex.com>
->=20
-> Add DT compatible strings for Toradex SMARC iMX95 SoM and
-> Toradex SMARC Development carrier board.
->=20
-> Link: https://www.toradex.com/computer-on-modules/smarc-arm-family/nxp-im=
-x95
-> Link: https://www.toradex.com/products/carrier-board/smarc-development-bo=
-ard-kit
-> Signed-off-by: Jo=E3o Paulo Gon=E7alves <joao.goncalves@toradex.com>
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Reported-by: syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com
+Tested-by: syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+Tested on:
 
-> ---
->  Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentati=
-on/devicetree/bindings/arm/fsl.yaml
-> index 00cdf490b062..44dd93f1c674 100644
-> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> @@ -1439,6 +1439,12 @@ properties:
->            - const: phytec,imx95-phycore-fpsc  # phyCORE-i.MX 95 FPSC
->            - const: fsl,imx95
-> =20
-> +      - description: Toradex Boards with SMARC iMX95 Modules
-> +        items:
-> +          - const: toradex,smarc-imx95-dev # Toradex SMARC iMX95 on Tora=
-dex SMARC Development Board
-> +          - const: toradex,smarc-imx95     # Toradex SMARC iMX95 Module
-> +          - const: fsl,imx95
-> +
->        - description: i.MXRT1050 based Boards
->          items:
->            - enum:
-> --=20
-> 2.39.5
->=20
+commit:         6fab32bb MAINTAINERS: add Mark Brown as a linux-next m..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17292d2f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ed2b1ae1fa9a0fdc
+dashboard link: https://syzkaller.appspot.com/bug?extid=a9a4bedfca6aa9d7fa24
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15957734580000
 
---UrG/VOuGoe/anPA6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPuk9gAKCRB4tDGHoIJi
-0oZGAP9MOTTaex3xtSgbAsqJCkx1oR8NC4KeZ1bRCfJdAhnhvQEAknH3HKjjcz1m
-37Ble1U8GN0RBpbqJOzKd/5m34WT0gU=
-=w/oi
------END PGP SIGNATURE-----
-
---UrG/VOuGoe/anPA6--
+Note: testing is done by a robot and is best-effort only.
 
