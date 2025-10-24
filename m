@@ -1,102 +1,166 @@
-Return-Path: <linux-kernel+bounces-867951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE121C03FF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:10:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9C4C04001
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEBCA3B713F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:10:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46B091AA1B3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26251C701F;
-	Fri, 24 Oct 2025 01:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F7519E7D1;
+	Fri, 24 Oct 2025 01:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrKHmuPa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDOL5Of3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA671B85F8;
-	Fri, 24 Oct 2025 01:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130AC8405C;
+	Fri, 24 Oct 2025 01:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761268215; cv=none; b=qUlHc0M4ww3c+tSwez8KaVwMTZXD6GDboAqKhl46W44ytWmAN9FW0/ziQuGUHxAQa1sb2muqiPk1nFpUcgypeZodfNj/hbHNoUtC7R7LO5xyGowV5MjCv2SaWi/Q/V9omRSDA31ZB0cGlVg+3G0zgn3r8Yry22xIT/n9SxizT3I=
+	t=1761268297; cv=none; b=ScBgC/KdE8s+lvHzZn1EpP84CYbg7Mke8kWMuOpeILQlgxYQ2iB4N8Up2KFJzQbzgzkaFkH31AUQPZHRJrmDwUpmqBk8Xvz3XbmwcHwjh9p5cEHTOmDby5Q3HI4mAKJdhy/XX1wzRurBkCr+bW27qGGq7J/e6kxDfiB20jdICnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761268215; c=relaxed/simple;
-	bh=OLXoSnqBAFgBwoQMFtvAMOPLw94jaNvTQASIeLyNyII=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VEox005NoE9Nm3+x4Znm/nBy0mxit5DaXd1O+9m60qbU+Xt4gi6ncWp5Iam51wcpPZYiZ5Bz9AxNfC5dNCIktNui4FC+PXRJdb0FAAeyIrXdofdJ1r2NP2fUBrHurl42BbgXtUTzCgW1GlZeERTyakr8uCKFT1e6HvY952vW0hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrKHmuPa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8DAEC113D0;
-	Fri, 24 Oct 2025 01:10:13 +0000 (UTC)
+	s=arc-20240116; t=1761268297; c=relaxed/simple;
+	bh=sYVXJNowzbBXxfqAUDkJRSvbLsY6hEvJ0xreENX8QjA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GrKVCivLiLx7YM6LYtfMumucNgK++VUutIFv+pPlJgle8Z9tUYn0Ey1F/s5KTKM4HddleSUf2xbPH8pKcQRjN7CZbYG6mpcmy6TTSEt4SbHzP1kwwQzcO7wtRu/exiXfiaHtrfRugcI0vgUYVtKzHz1iXilNIQMlEzQlj8pO/3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDOL5Of3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C692C4CEE7;
+	Fri, 24 Oct 2025 01:11:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761268214;
-	bh=OLXoSnqBAFgBwoQMFtvAMOPLw94jaNvTQASIeLyNyII=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WrKHmuPagZflA2cQbaM+uEDIZWz7+utTLmFSlMSAPNEEw+e+E1yQnm0YZ+3sskOqS
-	 qEtXImiN9VvvlIjlo6qCtvWgut2rDBAnCNhkTPNb93e7uoiU0Vvyyz4aon7zGDm/d9
-	 35g9lMWnqGFAW1mHhfkRQnVIYBEjU7KxUu5F405kPF3ShnXDxdmGqlL57HFnOPLSht
-	 z3Doxp2nBxo9ElMu2bt2yFm4xMyuqsEV+WG8LAk5nDoE3464Ym6qR9jlfKMl7Nexze
-	 bQtKShADtwAyzv5zY1mV3J59MgzusTVAH2ses4qh3Zl8oYa2eGPWDt+G/GeR1zKC1U
-	 PjZ9K9aEWyIvg==
-Date: Thu, 23 Oct 2025 18:10:12 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Kory Maincent
- <kory.maincent@bootlin.com>, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Nishanth Menon <nm@ti.com>,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
- linux-doc@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk
- <roan@protonic.nl>
-Subject: Re: [PATCH net-next v7 3/5] ethtool: netlink: add lightweight MSE
- reporting to LINKSTATE_GET
-Message-ID: <20251023181012.6bf107a6@kernel.org>
-In-Reply-To: <20251020103147.2626645-4-o.rempel@pengutronix.de>
-References: <20251020103147.2626645-1-o.rempel@pengutronix.de>
-	<20251020103147.2626645-4-o.rempel@pengutronix.de>
+	s=k20201202; t=1761268296;
+	bh=sYVXJNowzbBXxfqAUDkJRSvbLsY6hEvJ0xreENX8QjA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=aDOL5Of3SFEs05ZeCCWzGdwaQgK1mGDYDzetpmy0klLs8uy6LjtI/xQRTvtNN7/78
+	 H0QKxn5mSWURrg8GWUbWR38DaYZAGco/RdqbSJ06v1fEVaHIOkZi1b6Rou3wVphYcg
+	 YdzV3mebZe1L3yF7x2RCHE5X5AGlbj0gvZK3/d/MU20dN5jnAYvMokKrq516zOaCx0
+	 qQqCZCUeT9fR0l2hElbXxiXjs6EDkkAhcPzEHXYkIPMleyP3KWPH2faorCi/BCRFYF
+	 PzU2dUjfrFI7VjV+rD4xgCTb4RFw5qGIOOfRcyaJKF7CJgLhS8X3EA5Q6T9Z40I6QM
+	 43FMNhnV/A21A==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: PCI: amlogic,axg-pcie: Fix select schema
+Date: Thu, 23 Oct 2025 20:11:21 -0500
+Message-ID: <20251024011122.26001-1-robh@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 20 Oct 2025 12:31:45 +0200 Oleksij Rempel wrote:
-> Extend ETHTOOL_MSG_LINKSTATE_GET to optionally return a simplified
-> Mean Square Error (MSE) reading alongside existing link status fields.
-> 
-> The new attributes are:
->   - ETHTOOL_A_LINKSTATE_MSE_VALUE: current average MSE value
->   - ETHTOOL_A_LINKSTATE_MSE_MAX: scale limit for the reported value
->   - ETHTOOL_A_LINKSTATE_MSE_CHANNEL: source channel selector
-> 
-> This path reuses the PHY MSE core API (struct phy_mse_capability and
-> struct phy_mse_snapshot), but only retrieves a single value intended for
-> quick link-health checks:
->   * If the PHY supports a WORST channel selector, report its current
->     average MSE.
->   * Otherwise, if LINK-wide measurements are supported, report those.
->   * If neither is available, omit the attributes.
-> 
-> Unlike the full MSE_GET interface, LINKSTATE_GET does not expose
-> per-channel or peak/worst-peak values and incurs minimal overhead.
-> Drivers that implement get_mse_capability() / get_mse_snapshot() will
-> automatically populate this data.
-> 
-> The intent is to provide tooling with a "fast path" health indicator
-> without issuing a separate MSE_GET request, though the long-term overlap
-> with the full interface may need reevaluation.
+The amlogic,axg-pcie binding was never enabled as the 'select' schema
+expects a single compatible value, but the binding has a fallback
+compatible. Fix the 'select' by adding a 'contains'. With this, several
+errors in the clock and reset properties are exposed. Some of the names
+aren't defined in the common DWC schema and the order of clocks entries
+doesn't match .dts files.
 
-I don't think this justification is sufficient, we don't normally
-duplicate information in uAPI to make user space have to issue
-fewer calls. ethtool $link already issues a number of calls to
-the kernel.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/pci/amlogic,axg-pcie.yaml          | 17 +++++++++--------
+ .../bindings/pci/snps,dw-pcie-common.yaml       |  6 +++---
+ 2 files changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml b/Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml
+index 79a21ba0f9fd..bee694ff45f3 100644
+--- a/Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml
+@@ -20,9 +20,10 @@ allOf:
+ select:
+   properties:
+     compatible:
+-      enum:
+-        - amlogic,axg-pcie
+-        - amlogic,g12a-pcie
++      contains:
++        enum:
++          - amlogic,axg-pcie
++          - amlogic,g12a-pcie
+   required:
+     - compatible
+ 
+@@ -51,15 +52,15 @@ properties:
+ 
+   clocks:
+     items:
++      - description: PCIe PHY clock
+       - description: PCIe GEN 100M PLL clock
+       - description: PCIe RC clock gate
+-      - description: PCIe PHY clock
+ 
+   clock-names:
+     items:
++      - const: general
+       - const: pclk
+       - const: port
+-      - const: general
+ 
+   phys:
+     maxItems: 1
+@@ -88,7 +89,7 @@ required:
+   - reg
+   - reg-names
+   - interrupts
+-  - clock
++  - clocks
+   - clock-names
+   - "#address-cells"
+   - "#size-cells"
+@@ -115,8 +116,8 @@ examples:
+         reg = <0xf9800000 0x400000>, <0xff646000 0x2000>, <0xf9f00000 0x100000>;
+         reg-names = "elbi", "cfg", "config";
+         interrupts = <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>;
+-        clocks = <&pclk>, <&clk_port>, <&clk_phy>;
+-        clock-names = "pclk", "port", "general";
++        clocks = <&clk_phy>, <&pclk>, <&clk_port>;
++        clock-names = "general", "pclk", "port";
+         resets = <&reset_pcie_port>, <&reset_pcie_apb>;
+         reset-names = "port", "apb";
+         phys = <&pcie_phy>;
+diff --git a/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml b/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+index 34594972d8db..6339a76499b2 100644
+--- a/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
++++ b/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+@@ -115,11 +115,11 @@ properties:
+             above for new bindings.
+           oneOf:
+             - description: See native 'dbi' clock for details
+-              enum: [ pcie, pcie_apb_sys, aclk_dbi, reg ]
++              enum: [ pcie, pcie_apb_sys, aclk_dbi, reg, port ]
+             - description: See native 'mstr/slv' clock for details
+               enum: [ pcie_bus, pcie_inbound_axi, pcie_aclk, aclk_mst, aclk_slv ]
+             - description: See native 'pipe' clock for details
+-              enum: [ pcie_phy, pcie_phy_ref, link ]
++              enum: [ pcie_phy, pcie_phy_ref, link, general ]
+             - description: See native 'aux' clock for details
+               enum: [ pcie_aux ]
+             - description: See native 'ref' clock for details.
+@@ -176,7 +176,7 @@ properties:
+             - description: See native 'phy' reset for details
+               enum: [ pciephy, link ]
+             - description: See native 'pwr' reset for details
+-              enum: [ turnoff ]
++              enum: [ turnoff, port ]
+ 
+   phys:
+     description:
+-- 
+2.51.0
+
 
