@@ -1,53 +1,81 @@
-Return-Path: <linux-kernel+bounces-869006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 530A9C06B27
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:29:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BE9C06B33
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86D333AFC7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:28:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C0E61C049A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A172DA771;
-	Fri, 24 Oct 2025 14:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D17F319615;
+	Fri, 24 Oct 2025 14:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="iFzPX1lq"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="V04MSyAs"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDB11A262D;
-	Fri, 24 Oct 2025 14:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2C62D8DB9;
+	Fri, 24 Oct 2025 14:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761316114; cv=none; b=WueYd3wpn+Fxn6PIeGKyWF9sbEFcG0I7xJ5/OkFDW17NiwmVSyIH1ukhbyCHtHdNpcX9Qn8q1QFlpqbwMGq+3X+Kow2EvTJwDI09+F1j1i5MPdYWI7v+K5vLO5LNAW9l75YupIMlD94cKorwi2UuwxpCfyaBAIMdPrMluinTD/0=
+	t=1761316208; cv=none; b=U5czRe0lgvEMx8TIVgW/70hJhV6zVHJAG43e2gFt5i8k4u4ZAYst86kF/dO6dYVPvP77IdwXBBmPqHPSN7I2vekZlpwQT6Spne2PINoZ/6U8PUwgbLno3pSuP4TT+ihTOcEk9zkDp+lP+LnSa8RZ5ktxOIBAGoUX77pNwZzl0fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761316114; c=relaxed/simple;
-	bh=u91kRig4NF8pln2GdERHy1cGr6kV6WEWYHTSAf76HPM=;
+	s=arc-20240116; t=1761316208; c=relaxed/simple;
+	bh=co3nQrBHS0v7JO+1VNEdd1IihFfn6mzVni/0vzfUvLs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EvbeV9vzKLsof4thMdA9JqRi9sUn7Z5vc1fTAcGNQdo5wVxJQhvdE+GLUKOFUeYD07kAv5P1JtxKXxGyUk2NlJHLCq3IyR0yeJOOW6CpYsWLJTGLD7a0ASbh/xiQdJmP6fvYJ0g5iilmAJW87f+X9spiam1nJgN1ZRNUgNHSnw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=iFzPX1lq; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=oQ4VK/tpAvrUPGOHlmYrPcl/3ujH6B0GAyEH1p51Y2c=; b=iFzPX1lqGhiTrTZ36r5hqbodzv
-	bwg6xT3vIAcDQeDEbs8io1MYDdQchD1tjPzu+dAHsLjLyfcUwpyaRVDsiLHyYi8sEvUHLq+3wha87
-	ZxZi/EKZMOEv007rLRy/hivfHHDUPkYq0X8YI5UFb3dsV3vZ10RrkUOWM9MYEAH5bcEB70fCH2CeL
-	nTmQMySGYJktRHdCSkL5yuiNnjcwAHCGh3nI2YlPJWpqscr6YYz0RNYztZ1TY1LQ9p51r2y4/n9r/
-	7FTy7h3VOTSLch616xGkti3Xqvpz6PRq1bhSllaF+LuknEveaVKjuhwxs5Jkgb2JSDzJ7yDjrzdXZ
-	dBOCh+iA==;
-Received: from [90.242.12.242] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1vCImB-00EnK4-So; Fri, 24 Oct 2025 16:28:19 +0200
-Message-ID: <66f066b0-a8bb-40b2-bdd8-7cbcf114cde1@igalia.com>
-Date: Fri, 24 Oct 2025 15:28:19 +0100
+	 In-Reply-To:Content-Type; b=j0aMgnuledQmIqBbBexRj/MoENNi9yHWYxZAeXXdJIu3XO0gr4Ds/HZkulunAlc1AWTm9ug3KIQPlEMGh4+uZe5Iai0Xr8kAxrnzH1bIKx8WvNVimwuRpaPyh/Ns98/8FrhKwP+Emi9LIhygWLch4303M01ZEqFkji4MHG4J8/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=V04MSyAs; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O8VK8h010609;
+	Fri, 24 Oct 2025 14:29:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=v4oMNt
+	a2EA5ONs6LrrVjbXVDCb8udFX3XWucqebTej8=; b=V04MSyAstrmDLJINvm2cvh
+	VH4O7MmBLQ3A+6sq6zY+4LDsmeUvK2duNA0isw6qpilo4yeVMbE3+37QAxnkVVpJ
+	XfKdQkwZU3GHDE/jGuYXgNG3VM6Y8+guEtdgTgM4VkDzvUL82AEWk6fSmA+tmeLV
+	mxeoIz0imRO3xrMbRLyjVUGNYV67h4JOlzzG9PLz+5A/+Y95lj/J8MuX7Yuv4bCz
+	ZZA+L324/3yYOY7ZYODoWvAkpmtEHIxPpyvP5QPXKPFi2Omi7Ymcdih9YFKkShP/
+	RT9LDFDayJBr5zurxg+pCuU6j3FzCirFbY5/3XI7l0zM1paxidN/0/58y8GVDhLA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30w65vn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Oct 2025 14:29:16 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59OEPFuZ011350;
+	Fri, 24 Oct 2025 14:29:15 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v30w65vj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Oct 2025 14:29:15 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59OB8wi9002488;
+	Fri, 24 Oct 2025 14:29:14 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49vqeju9tp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Oct 2025 14:29:14 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59OETADX38994314
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 Oct 2025 14:29:10 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 82A4720043;
+	Fri, 24 Oct 2025 14:29:10 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8233F20040;
+	Fri, 24 Oct 2025 14:29:08 +0000 (GMT)
+Received: from [9.111.177.85] (unknown [9.111.177.85])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 24 Oct 2025 14:29:08 +0000 (GMT)
+Message-ID: <6b5c0c64-c4da-416d-a103-8d6ec2f06a9b@linux.ibm.com>
+Date: Fri, 24 Oct 2025 16:29:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,70 +83,173 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma-fence: Correct return of dma_fence_driver_name()
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: phasta@kernel.org, Sumit Semwal <sumit.semwal@linaro.org>,
- Gustavo Padovan <gustavo@padovan.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20251024075019.162351-2-phasta@kernel.org>
- <11b7a8a5-170f-4815-a8ac-5dba2d8e67a1@igalia.com>
- <5de88e79575e06c053f2d61f7bb58bf9cf5b556e.camel@mailbox.org>
- <1d0bbdcf-f4d6-49c0-bbdf-364c2af80868@igalia.com>
- <89812f66-25a6-4f9e-aa4f-74adbf116db8@kernel.org>
- <5640fbf1-7b8d-4537-9f1a-b401a7a4934b@igalia.com>
- <8cba66d2-9608-4a5c-a2af-6cc91f46a49f@kernel.org>
- <cefe8f07-68a3-4c93-ae46-ebb01ff6fa2c@igalia.com>
- <b21ba8b4-a31f-44e5-a2da-ba585a93d3a6@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <b21ba8b4-a31f-44e5-a2da-ba585a93d3a6@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v11 08/15] unwind_user/sframe: Wire up unwind_user to
+ sframe
+To: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Masami Hiramatsu
+ <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Florian Weimer <fweimer@redhat.com>, Kees Cook <kees@kernel.org>,
+        "Carlos O'Donell" <codonell@redhat.com>, Sam James <sam@gentoo.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Michal Hocko
+ <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        "Steven Rostedt (Google)" <rostedt@goodmis.org>
+References: <20251022144326.4082059-1-jremus@linux.ibm.com>
+ <20251022144326.4082059-9-jremus@linux.ibm.com>
+ <20251024134415.GD3245006@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Jens Remus <jremus@linux.ibm.com>
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <20251024134415.GD3245006@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Ykpf61_8y0gZ-cwvoWdHTyYd4VO3jyTg
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfX+6YJFqcIrYau
+ FfAiginkKWCbTRDMMfI4es5x0Gv2LrIgpMT7B1DW1SUwfXR+r8YvBgLHibQikeToBe9tDf9Su8i
+ SNe406UM1ZQHVDOOe7bQLmK3YmgyoFsKs3snpKHi1zjEdyPg/untiqR0sx8USLZ7DslJvwuVXtX
+ 7uov274LjKqmA7OxgZlmpdrURUk0CEr7LGSOd39WYdiUPx6BHVrf74M9u86J8W6h2C5teh/wZnT
+ LzpVbaclqQLW2t3ExBtkH2EeFZY8j3Kcro2vvFU8HWwqbKP+gaXumYanr19g8i8GnuKTvD5En7N
+ CxKPz3S4KFbu+pLcYBRBXfeJa+wunvpVdCfE3NPMCJ4iUwiLX6zytmxsVam68rJax8xxt/LSz2L
+ xwE2cVaqDY9a72MNQPfsV8L3ZSYvmg==
+X-Authority-Analysis: v=2.4 cv=MIJtWcZl c=1 sm=1 tr=0 ts=68fb8d3c cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=Z3Xqy3CnV3LH82Reu_wA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=DXsff8QfwkrTrK3sU8N1:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22
+ a=bWyr8ysk75zN3GCy5bjg:22
+X-Proofpoint-ORIG-GUID: T5WOf74hicSV-YNKqrY5feRRWuekCWRm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-24_02,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 phishscore=0 lowpriorityscore=0 adultscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
 
-
-On 24/10/2025 15:17, Danilo Krummrich wrote:
-> On 10/24/25 3:37 PM, Tvrtko Ursulin wrote:
->> Good to know. I am coming from the angle that netiquette, at least in the olden
->> days, used to be that when you join an established thread you don't trim too
->> much of the context. For the benefit of people joining the thread at that very
->> point, especially when re-raising an argument which has already been discussed.
+On 10/24/2025 3:44 PM, Peter Zijlstra wrote:
+> On Wed, Oct 22, 2025 at 04:43:19PM +0200, Jens Remus wrote:
 > 
-> I see it the opposite way, leaving too much context wastes people's time
-> searching for the actual reply, see also [1].
+>> @@ -26,12 +27,10 @@ get_user_word(unsigned long *word, unsigned long base, int off, unsigned int ws)
+>>  	return get_user(*word, addr);
+>>  }
+>>  
+>> -static int unwind_user_next_fp(struct unwind_user_state *state)
+>> +static int unwind_user_next_common(struct unwind_user_state *state,
+>> +				   const struct unwind_user_frame *frame,
+>> +				   struct pt_regs *regs)
+>>  {
 > 
-> If someone wants the full context, previously sent mails are always available.
+> What is pt_regs for? AFAICT it isn't actually used in any of the
+> following patches.
+
+Good catch!  No idea.  It started to appear in v9 of the series:
+
+[PATCH v8 06/12] unwind_user/sframe: Wire up unwind_user to sframe
+https://lore.kernel.org/all/20250708021159.386608979@kernel.org/
+
+[PATCH v9 06/11] unwind_user/sframe: Wire up unwind_user to sframe
+https://lore.kernel.org/all/20250717012936.619600891@kernel.org/
+
+My s390 support for unwind user sframe will make use of it, but it
+should better be introduced there then.
+
+@Steven: Any idea why you added pt_regs?  Your v9 even had this other
+instance of unused pt_regs:
+
++static struct unwind_user_frame *get_fp_frame(struct pt_regs *regs)
++{
++	return &fp_frame;
++}
+
+>> @@ -67,6 +66,26 @@ static int unwind_user_next_fp(struct unwind_user_state *state)
+>>  	return 0;
+>>  }
+>>  
+>> +static int unwind_user_next_sframe(struct unwind_user_state *state)
+>> +{
+>> +	struct unwind_user_frame _frame, *frame;
+>> +
+>> +	/* sframe expects the frame to be local storage */
+>> +	frame = &_frame;
+>> +	if (sframe_find(state->ip, frame))
+>> +		return -ENOENT;
+>> +	return unwind_user_next_common(state, frame, task_pt_regs(current));
+>> +}
 > 
-> [1] https://subspace.kernel.org/etiquette.html#trim-your-quotes-when-replying
+> Would it not be simpler to write:
 > 
->>> Now, you can argue that you mean "driver has been detached from the fence",
->>> which means something along the lines of "the driver has no business with the
->>> fence anymore", but this is not what people think of when they read
->>> "detached-driver".Okay people. :)
+> static int unwind_user_next_sframe(struct unwind_user_state *state)
+> {
+> 	struct unwind_user_frame frame;
 > 
-> Not a big deal, but for you to note: Quite some of your replies I've received
-> recently add text to the quoted parts, in this case the "Okay people. :)".
-
-Oh dear.. I can see it in the sent folder but it definitely wasn't 
-composed like that. Thank you for pointing it out.
-
-There has been something seriously wrong with Thunderbird's compose 
-window for a few weeks now. First it would be inserting random newlines 
-while editing, and then now after an update it jumps to the end of the 
-whole message and add newlines there when pressing backspace on an empty 
-line. Its infuriating. I see there is another update so I will try that.
-
->> How about "unknown-driver", would that satisfy you?
+> 	/* sframe expects the frame to be local storage */
+> 	if (sframe_find(state->ip, &frame))
+> 		return -ENOENT;
+> 	return unwind_user_next_common(state, &frame, task_pt_regs(current));
+> }
 > 
-> Honestly, the most accurate thing to say would be "fence-signaled", because
-> that's the actual condition which causes the change.
-Hm, ->get_driver_name() returning "fence-signaled" is not great, and 
-debugfs output in the form of "kernel fence: fence-signaled 
-timeline-signaled seq 1234 signaled" feels a bit redundant. :shrug:
+> hmm?
 
-Regards,
+I agree.  Must have been a leftover from changes from v8 to v9.
 
-Tvrtko
+>> @@ -80,6 +99,16 @@ static int unwind_user_next(struct unwind_user_state *state)
+>>  
+>>  		state->current_type = type;
+>>  		switch (type) {
+>> +		case UNWIND_USER_TYPE_SFRAME:
+>> +			switch (unwind_user_next_sframe(state)) {
+>> +			case 0:
+>> +				return 0;
+>> +			case -ENOENT:
+>> +				continue;	/* Try next method. */
+>> +			default:
+>> +				state->done = true;
+>> +			}
+>> +			break;
+> 
+> Should it remove SFRAME from state->available_types at this point?
+
+In the -ENOENT case?  If the reason is that there was either no SFrame
+section or no SFrame information (SFrame FRE) for the IP, then SFRAME
+could potentially be successful with the next IP in the call chain.
+Provided the other unwind methods do correctly unwind both SP and FP.
+
+@Steven: What is your opinion on this?
+
+Thanks and regards,
+Jens
+-- 
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
 
 
