@@ -1,235 +1,149 @@
-Return-Path: <linux-kernel+bounces-868628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018FBC05A8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:49:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEC0C05ABB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843633B4090
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:49:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662E219A89C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DE4310655;
-	Fri, 24 Oct 2025 10:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919BF312836;
+	Fri, 24 Oct 2025 10:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YkaCK9IA"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011026.outbound.protection.outlook.com [52.101.62.26])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="dLwD0pd4"
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C059E266B46;
-	Fri, 24 Oct 2025 10:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761302915; cv=fail; b=aeL1LfaZ8I1OT+GP09G1IZZevUpWHTNLnua+cUFH4WS8FoeUY0TKgCfq8c9NXsFp8gmGv8SjZb1EzSU7R6GvF+SQy9dC0qR8lZqT4QvGK4EoGG58foCLzBZ6Mgb51GnN10mqeZm9OU2DObZ4+8KcaK1gCk+MO0tVZMzVjMwBWAc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761302915; c=relaxed/simple;
-	bh=VfpYaHni/VajkFA2kP/OBILqlyd/eqe+0qzf9kRJlqQ=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Y6VnTfqUkx+ssHW9LJhN6jXyqw1I+GpV0UZZalUEdJgT3PJi3nmn7z184SlTJ8t6SwDB++9WvcSr6xSKBT9cF9matRHgMQe3GWEXpmPT9Kh1L8pBvSlzTqZ5ka0JadTC2FLyAbZEw/8OdsHppR7Wrg3zuRdl86jH0WadHqCabLI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YkaCK9IA; arc=fail smtp.client-ip=52.101.62.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oMf2KqzAOv+YMmKNR1ShkzUx/C92IybGQJsbcE46FDV31ZHWbYJXhD3Qp4TnV1x6EvotIY9q9uRXvqwVNakWWlUgxKBAxkFEDz4nU7hkUlV2uNZlVngGLOxrnrC/E21e9XzFnCMn3r/oAaNzZSVq+w2D2+ajD7iH4vXPTAZvJegZSzAcRgAKrHYcxSZttYqEbksGeziRph2VJPyBzyRz+mypF2dFJ7D24emmRC9mqnPnMfoZ6jnTsrtSsAlD0GrufSgCnwko5ZgfJtWAZE04V7oLkBKQj+jj0sX8fzugPs0hoWJ+Q8Vfgvqm1LGkj5MPUB9PmJuO4dU5VFRHvebEMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sE5zF8Q7RML1tXkywcny2k49KaxJsSrlsvXvNK8Y5OI=;
- b=gkVSKk65peUnMOlj1/jIaJJUJ84yj1CIl63vCtmZTrMPhnugq3deeJBaa7mQQkaoG4bzqX87cQvCPA3hnrh0yEiXIamT7M4YT8kCDDbVgbmYGqEo6d34ssuEaWwbJqB32uS9NtEkZc7mE/yPUkU3hkAnaDkgRytsVN6vJMrfhsf3BHHMEL2JmyxwmsgE3TWG876YnxVuUsg6TFJIan2AGcBED2xkqLK8O8gMbFY69pP4b+6o3YxjTUers7Gnw/RLwisSEIFESyMcXgaNA5M1kgBeX2pIv1skO3zZ7iySZMYG9CV/Ac2hOhMpJhTRKlNtOzQlZytCiCevF3QfnFuHFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sE5zF8Q7RML1tXkywcny2k49KaxJsSrlsvXvNK8Y5OI=;
- b=YkaCK9IAywzksBdR3ZgmngEeW8AdGv5CTHOc1pDJJWUZe8idJts9N0zd08TWKrQQG9wbW8da8AQ4M/MmoxIQRe8vKC++gCtqUQklTjJkb3nmlgdLgRfVFfntkFZLkpnmvhtu0crgXw1jUSpNRd9OSG3mPcziU00BNXp+xAkU2sXPB9Rc5LZhbM+2R7nWu7qKoElwuEh37Sb2EcpgRR8ALfW7WNZYmoOhU1d/UwAbZoDeHm0SOJ3dkzZ0cyYjgGj7Thyv9jkPa0pLBW/+KQNSK0m70LMXFQJwDONMbEk9dExLMCF36r+Z4JXfFWS4peMXfjsul5a9Hg1torDXD8jQyw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by DM6PR12MB4073.namprd12.prod.outlook.com (2603:10b6:5:217::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 10:48:31 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 10:48:31 +0000
-Message-ID: <0610cc18-3918-45f3-a610-584635565258@nvidia.com>
-Date: Fri, 24 Oct 2025 11:48:29 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] rtc: tegra: Replace deprecated SIMPLE_DEV_PM_OPS
-To: Kartik Rajput <kkartik@nvidia.com>, alexandre.belloni@bootlin.com,
- thierry.reding@gmail.com, andriy.shevchenko@linux.intel.com,
- linux-rtc@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251024064952.775883-1-kkartik@nvidia.com>
- <20251024064952.775883-3-kkartik@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20251024064952.775883-3-kkartik@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0631.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:294::17) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4523126C5;
+	Fri, 24 Oct 2025 10:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761303022; cv=none; b=NByEsBhPqLxI+68x15T5mA0oTkVJktsFsjaKwKJwDCO9J9g294/7y8tBxmcPBeFmnadVXVoN7ZEGIx8mhaTHO85k+NTbQWWhM+t4AmPV8wtXWi35Z+s8qw9nC4kw/+pNHRzQ347+opgXI8+eZiCI0Lseaqc8YrkA+aJ9VWS7KzM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761303022; c=relaxed/simple;
+	bh=3fz3rpGAzHLdS+MmuclAdP6VsFQiZ67MGd8RVosRMwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l5ALp3rCqblsUIsXRxQm75K6GOX/jdAv4z57y35/mYkbejKt1/Kkwd2vO7L/OZsoXjqTfnZFi2AF2YDSV5m0HExfHqTFoWCHYqDlW09Wb00b51Sym5ll8zNH0e1g6sb/qjHPeDY2r7gUGFiCtOMCs2C+TFaI6cI5Akl7ewOcuPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=dLwD0pd4; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1761302946;
+	bh=PvlLbAtr3XlzVLm6/DyAYUo7+1BEZwmOFQMdHFYJrCs=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=dLwD0pd4ywjbLoaWL5hNcfJ/kBbNMfHuUPeF4/+2VZ80fjWmgWFmKmBpzPRvfIyUI
+	 2b+iPLTMSzqi+ZF4CmaBuRgWAhm11OutYFvtCXf+wwRR7tV4OteN/zy1cwln5XZ/Dc
+	 4eVwTJO+I029cTLEf/Zd0/vJa5RCjyyeY2jAx8+c=
+X-QQ-mid: zesmtpip4t1761302939t485c17ea
+X-QQ-Originating-IP: lTQezpA5yN4MrVbzvzdIeTYUYXSeOApYxnJ36Znae8A=
+Received: from = ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 24 Oct 2025 18:48:57 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8636402591889847719
+EX-QQ-RecipientCnt: 7
+Date: Fri, 24 Oct 2025 18:48:55 +0800
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+To: Andi Shyti <andi.shyti@kernel.org>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Yixun Lan <dlan@gentoo.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: Re: [PATCH v4] i2c: spacemit: configure ILCR for accurate SCL
+ frequency
+Message-ID: <D8C067EFD2F94D3A+aPtZl2S44JYNUijG@troy-wujie14pro-arch>
+References: <20251017-k1-i2c-ilcr-v4-1-eed4903ecdb9@linux.spacemit.com>
+ <t26pyjnmzj62oczwuje2bbscowj22pdge2ef3tcktwmhzpsq47@7odo2ccvc52a>
+ <sdhkjmi5l2m4ua4zqkwkecbihul5bc2dbmitudwfd57y66mdht@6ipjfyz7dtmx>
+ <748544ABF6A72D31+aPg31PBvHDkBALoa@kernel.org>
+ <lr77avehdf3skwd5o2yur4hvbxhyx2spzve3wpo733l74ppjcx@mn34escjt542>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|DM6PR12MB4073:EE_
-X-MS-Office365-Filtering-Correlation-Id: dcf375fe-1af9-4eda-e057-08de12eadf5f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|10070799003|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bzVGRE1BSDlNc3BCZTM2QW9xenhHVGt3dU9LVzliK2xidkx6dlk1cjBpd1p4?=
- =?utf-8?B?OVlYbm1WZ1lMazVhRkpvSi9zNzVwSTBnUXNuNHNBbElsYyt5TWNMS2Nrb1VU?=
- =?utf-8?B?Y2QrblZMdmVFZy9CSStLVU95WmE3Tzkxekd5RUZSa2JMbDFGTDBmN3JpcnBo?=
- =?utf-8?B?WkRXemVISVdjUjluaUZxVEdISXNjUmVReFd1WDByUlVrbVNpMXlzTm95ZVQ1?=
- =?utf-8?B?NWVIMWo4UVhMZ1lMYk1OK2F2RkJVbEpNdVVwWnFUOEF5Y01qNzRIb0xwcnpZ?=
- =?utf-8?B?MHUrczFIV0w3TFBCM282NjRQQ3JTOEhzREJQSjVLd1Y2RjhLSlVmNTNEc3lo?=
- =?utf-8?B?MWNhZlVPQjBPbmg1ZU01YlZLaDFoT0lzc0l6RjFtbDV6QzdvY3VLcm8rYXlZ?=
- =?utf-8?B?UzhaVFJpWWFNUjY1TUUyWHhCcS9tUmxYbHA1cFJnUWovL1hJNHYyVWwvaTg0?=
- =?utf-8?B?bG9jcXYzQitydlhxemtHTmNBUmRYNWtwYnNCTUZQUnp1Z01sZGlrWXNQV3BS?=
- =?utf-8?B?OVlSUVlsSENkZnNwcnhqUWozSUpzS21pbXZ3dmFOSzNaTHdQaW8zWmRYeUZZ?=
- =?utf-8?B?bEkzMEVVMjk1SC9YdmNscDEveWRwVGl4QmRmTk5iSkJoWG1oaEpBM2xMUU16?=
- =?utf-8?B?Y3ZpYWNXWnhaODh6LzkxNE9wVnU2dE8rckI3a0tNRnJ6VjhMWTJoVHcxT0xX?=
- =?utf-8?B?UEhRZXF4ay9OTWFUNXJTaDhibEtncXNKSFF5cjZBcHdaK0o2OGk0RldlRERY?=
- =?utf-8?B?NmhoMWRBakdLaGI1aklhMUM0ckxKZzhYN0NFYUpGRlFMZ0o4c2ova0JhYWJ4?=
- =?utf-8?B?UDB3L2dnM2pvcGFKM3V3UnA2ZmEweDVjcktoZExCSXM0azBvODAxalJ2bUhD?=
- =?utf-8?B?OUhmamo1NGFBSTRtcDcwdUNCb2hrNWt1VUNrRHB3Y0lybEJDT2tBbjdzcDlX?=
- =?utf-8?B?MWFwdHdvY2tHY1ZqbDFxVG9jeENLQTd0VHV4RXEzS3pBa3pra1pkTmFnQWFI?=
- =?utf-8?B?MTQ4TmVsQUNWYjlhWnZPM1pPNnd4YW9xampFVzFmN3VBNnozcWs4djdubGV0?=
- =?utf-8?B?OElld2tsUC9GN2JqRGhWT3N0Z05wckJvUUhBRENqckx0QlU5ZnpCMmxoc2xl?=
- =?utf-8?B?dnlFVjBpZ3pvbEFEU3JUbXZEVE4zSkZPK0hpS1BteGQzN3piNUVSdm16YnJr?=
- =?utf-8?B?STNtVUpGb21WYWtLTGM1Vjk2RUNKMlhpUTNtNHlCUEloaVV0UnRJY1RXY3RX?=
- =?utf-8?B?YkFHR2R6NlpkT29ZZElrOW9henlnNTBRcjNTRTluSXhDTmNIaEhKMEtZRXNX?=
- =?utf-8?B?UlhEWEowM21sejM4LzM0OTdwYmZvbWNvK3VQd3huNzZPU05SUEJScmpvdUxW?=
- =?utf-8?B?Si9ydG0yTDVhNzlOdW1uc0M5dUhvYjMzbmNybkFTaDV0UWd4REJtbU9ydDJ0?=
- =?utf-8?B?YzMvM3Z6SlU3WnljSzBaMm8ySEs3VlZuZkk2RVk3OWl4WVhiY2NUb2RMMHZx?=
- =?utf-8?B?OWJreUREaFo2NmpHWEpVVmJUallBNkQ4SEkrWUJUbGNrK3h3dCs5aWJUUmtO?=
- =?utf-8?B?aDNGRi9BaGFXTFp4amxLRExCY2ROZ3crYkEyM0hyZXA5bHhlTWc3WXd3ajJF?=
- =?utf-8?B?NlhNMldxNlBFbnROZENObUNqeHh2WGFkOW9PUlNyZFJSUEZkenRYK3hVYzA2?=
- =?utf-8?B?RzNyK3JDaG9DQ05HZERxOFVDWXNtNFI2eXhMNGEvVVJYTzVjVW5RN01MMW90?=
- =?utf-8?B?SkNJUjV2Z2xOV1AzUEhFMG82SU1BRVdoUlphUldBUWlLR0w1WHRpL0VIQkM5?=
- =?utf-8?B?dVI2aWpHcmx3NXM1WUZMS2RDNzQ0MDBXTFFnaEdQY2NmRHd0NGtIRWs3N3pq?=
- =?utf-8?B?NXRCcS8yRkk0TXgveGNURjBmc2ZmM3FqN3pLWXRqRmZZSG1MZjhTZzh3UE81?=
- =?utf-8?Q?IHbccugt/516UwRCZIC1OVRBDhzwZ/ub?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(10070799003)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Yng3OGVCRlkzeGdrbUlKMlZWZEp3aG9FTWZVUi8xYy9BZ0JWcTNHSmZUTUVh?=
- =?utf-8?B?VlMrVHM1VWJwcUkwNngvSHphaTY0OVl0YTZmd05SVlJKMG9jSUszOTNLSDBC?=
- =?utf-8?B?MjJ4c0JiN2loSjVNcDViUlJ2R1RBQWVSZVdubkhDS1UzMHVucnRrR1ZXaitQ?=
- =?utf-8?B?QWxacmozRTQrc1MyUXpiTXR3NTBZM1g0d1JlTXdQbHhNMkRvVDBHUG1iWjA2?=
- =?utf-8?B?bUl6c3dTbmh1VW51T05JWXdBL0FnaWZZaDJpTUlicEtCYUNlYTl1Z0tDSDZi?=
- =?utf-8?B?QlR0c3RxamhGS0orS25kdU40SGZUZmlTQTYvSXdDL0tGLytFMlg1ZVFuaEV4?=
- =?utf-8?B?dzRNQmxJQWhWbngxWW5DY3BhSkpCWDNTZi9XenpFbi9nTFF6ZEh6eHRJRkd0?=
- =?utf-8?B?M0RhL0dUbnJESHVOS2xiVEdXYzUwazYyVmd0clRpWHZqRFNQVmZ0RU5PUTky?=
- =?utf-8?B?aWFPcUo1dXNTWVQzZHdHTE1JSXVlaXJMQWdaekRiUkE5a2hqYVZZZzN6RlN4?=
- =?utf-8?B?WWNGdzFFM2xKS3J5b25tUUdtZ0tPcloycDUxT1VEZko4KzVVZlc2ajFkRUFi?=
- =?utf-8?B?WTZXVzl2RW15QXlaQWJsREZWaXBZclZBQmlsd2N1cElLakdoSnlQMFRwWXov?=
- =?utf-8?B?MTR3Y3prWXByUGRNY0g1aGF3U3IxQitTejZ0cFVYMDlKamJDMmprd0xVaXIx?=
- =?utf-8?B?NEJsS0JyUHpkLzBhb1BLTlcwRWRkY3Ixc09QTzNreFk5T3BpbUtHSFBNKzN4?=
- =?utf-8?B?WER2SlRPYUlUaHlkMGFWV0xyU1dpa1BwVUxVZTR4ZnRydnNQRXluNkJFckpM?=
- =?utf-8?B?Mkt2TmlRWW9qNW1EZGwxOFE3RXVCRlNwREFKRzdsanZnR2NVeWZ3R0d6NW56?=
- =?utf-8?B?R0lpSmJ0dTV2MU9rTi9lRXRVS0VNNWNEaHBwOUZkMElBUEMyckZPRGZad0Ur?=
- =?utf-8?B?eWVHQ0JIZC9KMnhGdU45KzVwREFXL0lvd2l4Z1dvcXQwZzYzVDhlcnlGMEhX?=
- =?utf-8?B?MDRoMGRjN3FXMEtUNDJlRko4YXpSa2FuSGI3R3BWcklVcW1mbmhBN1RSaGo4?=
- =?utf-8?B?ZVRjT1prUzZqZzZTeGJTRkJtTitCWEVPL1hHQ3EzMmwzc01NczFPWFRZQkNz?=
- =?utf-8?B?RWJuNlNUK0Z3RFBDbWo3SUI1eUE0UGY3UHBheG9iMmR0TVNNL2E2bytaQ0ZU?=
- =?utf-8?B?WGZIbVB6eW44Y1dYemJrY1gyY3I3RVhHNzExVWUxempuWmFYdkpZK3d3SEZw?=
- =?utf-8?B?QUlBamcydXQ4aDVtYVpGUEV0M0RXQkdTUEN3cDV2eVVhbkpuTHcrelVNR2JR?=
- =?utf-8?B?alpRT0tFV1FSMWFUbHltNndvQlRaS2ZrTnZnUTMzKy9jdWRhMHk0THZ0bWxF?=
- =?utf-8?B?b29tRkh3SFR0a251eGFjM3hyTVNBeG5nRUtRM0VvUjEwRTFRNkR2S0c0VnRH?=
- =?utf-8?B?OTBEWjI1c25lWnVZd0FXZDZ4RWJZb1c4UytkNlEyajV6VFZqUGtQMXU0RWVr?=
- =?utf-8?B?MUUzL2RZRE96cFI3amNoczE0Q1UzZTVhOTJjSmdDSUhYUHBaNmh6V2JBcWVG?=
- =?utf-8?B?N2Fob0ExUXViWTZ1eU84WlZVeS9FZkNzb003RW05eXZ5bllRSlFlazMzbjBa?=
- =?utf-8?B?QmF2TERzclU5L3JxeUc5V1NyNUR5Mm5kbVlHSkpmY2NaV0tQOWxKQzZBZ2g3?=
- =?utf-8?B?ZmFjY0ZBUkhDcWI4MlM0TFQ0U0tSQXovZTFRVDBtMlVCQW5raE9HcEN1MjYx?=
- =?utf-8?B?R3R1Zk40ZlBDZE5CbmMzd2t0L3RYM0NaRm01ZXdFSXFkRXlQcVBWRjJObmJj?=
- =?utf-8?B?bEZTd0JVekkyWHR6RCtrWkNCVWhFVWdkdlZLelVpck51ajFkbEVrN0w4K05Z?=
- =?utf-8?B?U3psaGNKd2RMdUxtMlZCSjd3N09xcTNLQVRNeHY3SWZtU0I1VVFVM1JhTHk2?=
- =?utf-8?B?UlhUcUdoVlJ1N0kyOFk0NVFLUlh6K0dmaTk5enQ4T1NEQzV1MExseW9PVmI3?=
- =?utf-8?B?dk0wOHM1UnFVdXp0TGJ4VXA5THJGQURQYVZKaFNwVFdJNUN4TnRCbXZ5VGFW?=
- =?utf-8?B?QXU1aFZFWFQwUkhTUytVNGFTQ053MlJYR1dyNzR2WXQvekQvRXpGamF5UVp5?=
- =?utf-8?B?YmNEWVVLSUdTRzRSdG1VdTVZWmtzVjFzaHhZdFgwdWdtdmVYK09uMGNRM25q?=
- =?utf-8?B?aTJmdnBBVWQ4Si9iNk1OS2I5RVRTdm5KdGNvSlNUVWNIUnVWU05LYzRvMmhi?=
- =?utf-8?B?Z2p0MEQ2WGJIdEs3Qk8zRm9uK25RPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dcf375fe-1af9-4eda-e057-08de12eadf5f
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 10:48:31.3492
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Y6mnEgVuvd6yY6o6S61YDu/qmF2GAt9opnOeW49ZA2UNTjMkVI6f7BiQZhhvPS/xxCyBV/wSmvUEtVYXIqKRKw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lr77avehdf3skwd5o2yur4hvbxhyx2spzve3wpo733l74ppjcx@mn34escjt542>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: MsGkKnz+xAbkOk5PEMsmxnIORBwDpcFCsS1Z1yQ4uBh6Ul5aGbhpEx2d
+	/1Mr3kaCWHZbatyP9KN/NDJ4lS1TIuGLSdf+yaaS5+uRUm36KhbEuyNkM45MXIlxdlctJRq
+	cmAr9yNOJcWqCSaQbBRRaYLHcy3s2yYt47/qKza11XxehzttN4THDGeNq1dO5yrPZjlxQzE
+	JjzRWA+1UniS6loMPYV4on7x354EGzaimRiTLU1TbZMK5gtn6ZPShr/aR/GxA+Ob6rxejkT
+	TcxF0tS8pORG5Y28PGhyHz5NsJeT5HSQk96lqtwC3ZUX3j9gTQKrHXfWldNrFIvvBR2usHP
+	XOdft7rJvEalGCJu2FOD2Y5hIPXBA2jxctBN7F0U71j79RISzcyzg2RoH6aRgwTMJ2P///u
+	Icl5vZP/T0BY2fGpnBpNMHi7qz4V6ITP4Kkqi4VyxxxQHXpzMLipSDDqc0kPrexvjSiHT21
+	KHSiIwOPC3Qgf+xiVZ+qyWRFFY4NGXuemsrb8WMr004FYguxqC1ry7h8S85WeqWzpYOy5Ay
+	KUXygCPSJw8a2Kv1lgqyIuD/fjl5ZUdEVbyHU4nmHZM5+6EN1UjQU9WruunqHZPjlfNPIYZ
+	UjYL7JXNTL47U37MZiUpLB2f391oqMFBIF3Gpg4zB1NI1jx00acOpzIaH15qy7icMfIRls1
+	TfqEHUvi6gd3qbOrADCO7dqovTqXYlLjg6UGd0MY40s/LdWOrDten81xUz8jTRxaoV7eE17
+	tXIh7NpkAVTWPWYfrD5Kf+e4lTMvHkuFoPbTpbqqTYStrLJGGnC1UapgPGFlNhfhss67ZP+
+	mGLkK6DQNxBjI/t4ABYV7AioybK4hVGSUmRQYnULF3BgxDSVTiTuKATnyqT7v6NUmJpIiuR
+	xs5fLVaS3mnxmPihjcAm8fk3mUDrtZ9QTtHOSfLQvpVsZ57idGIINQtR/c32rXMy5fXWqkN
+	IOZHmyyipL7OiJxPV14RRHFLJqfqrlkcDQJTAxiMtMAAp6kuDNW5PtH7ySVkle/DRN59sGk
+	EzkAjFOUAJpZCdzMPIw9NtrQlvVx8xgxd2EbsoqXA15ZzVbXce
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-
-
-On 24/10/2025 07:49, Kartik Rajput wrote:
-> Replace deprecated SIMPLE_DEV_PM_OPS with DEFINE_SIMPLE_DEV_PM_OPS macro
-> and use pm_sleep_ptr() to initialize pm_ops. This also allows us to drop
-> the checks for CONFIG_PM_SLEEP.
+On Thu, Oct 23, 2025 at 12:34:23PM +0200, Andi Shyti wrote:
+> Hi Troy,
 > 
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> Changes in v4:
-> 	* Updated commit subject.
-> ---
->   drivers/rtc/rtc-tegra.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
+> On Wed, Oct 22, 2025 at 09:48:04AM +0800, Troy Mitchell wrote:
+> > On Tue, Oct 21, 2025 at 06:03:34PM +0200, Andi Shyti wrote:
+> > > On Mon, Oct 20, 2025 at 11:28:45AM +0200, Andi Shyti wrote:
+> > > > On Fri, Oct 17, 2025 at 03:27:39PM +0800, Troy Mitchell wrote:
+> > > > > The SpacemiT I2C controller's SCL (Serial Clock Line) frequency for
+> > > > > master mode operations is determined by the ILCR (I2C Load Count Register).
+> > > > > Previously, the driver relied on the hardware's reset default
+> > > > > values for this register.
+> > > > > 
+> > > > > The hardware's default ILCR values (SLV=0x156, FLV=0x5d) yield SCL
+> > > > > frequencies lower than intended. For example, with the default
+> > > > > 31.5 MHz input clock, these default settings result in an SCL
+> > > > > frequency of approximately 93 kHz (standard mode) when targeting 100 kHz,
+> > > > > and approximately 338 kHz (fast mode) when targeting 400 kHz.
+> > > > > These frequencies are below the 100 kHz/400 kHz nominal speeds.
+> > > > > 
+> > > > > This patch integrates the SCL frequency management into
+> > > > > the Common Clock Framework (CCF). Specifically, the ILCR register,
+> > > > > which acts as a frequency divider for the SCL clock, is now registered
+> > > > > as a managed clock (scl_clk) within the CCF.
+> > > > > 
+> > > > > This patch also cleans up unnecessary whitespace
+> > > > > in the included header files.
+> > > > > 
+> > > > > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> > > > 
+> > > > merged to i2c/i2c-host.
+> > > 
+> > > I'm sorry, because of the report from LKP(*) I reverted your
+> > > patch. I2C_K1 is selected by MFD_SPACEMIT_P1, so that we get the
+> > > following warning:
+> > > 
+> > >   WARNING: unmet direct dependencies detected for I2C_K1
+> > > 
+> > > and compile I2C_K1 without COMMON_CLK. Please, fix it and
+> > > resubmit the patch.
+> > Yes, I noticed that too. The issue is introduced by PMIC driver(P1)
+> > instead of I2C.
+> > Should I resubmit this patch right after sending the fix,
+> > or wait until the fix gets merged first?
 > 
-> diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
-> index 9e4e9c88178f..528e32b7d101 100644
-> --- a/drivers/rtc/rtc-tegra.c
-> +++ b/drivers/rtc/rtc-tegra.c
-> @@ -340,7 +340,6 @@ static int tegra_rtc_probe(struct platform_device *pdev)
->   	return 0;
->   }
->   
-> -#ifdef CONFIG_PM_SLEEP
->   static int tegra_rtc_suspend(struct device *dev)
->   {
->   	struct tegra_rtc_info *info = dev_get_drvdata(dev);
-> @@ -378,9 +377,8 @@ static int tegra_rtc_resume(struct device *dev)
->   
->   	return 0;
->   }
-> -#endif
->   
-> -static SIMPLE_DEV_PM_OPS(tegra_rtc_pm_ops, tegra_rtc_suspend, tegra_rtc_resume);
-> +static DEFINE_SIMPLE_DEV_PM_OPS(tegra_rtc_pm_ops, tegra_rtc_suspend, tegra_rtc_resume);
->   
->   static void tegra_rtc_shutdown(struct platform_device *pdev)
->   {
-> @@ -395,7 +393,7 @@ static struct platform_driver tegra_rtc_driver = {
->   		.name = "tegra_rtc",
->   		.of_match_table = tegra_rtc_dt_match,
->   		.acpi_match_table = tegra_rtc_acpi_match,
-> -		.pm = &tegra_rtc_pm_ops,
-> +		.pm = pm_sleep_ptr(&tegra_rtc_pm_ops),
->   	},
->   };
->   module_platform_driver(tegra_rtc_driver);
+> I have reverted the patch. Please send them both in the same
+> series, where the first patch is the "fix" (or preparation to
+> this patch) and then this patch.
+Oh, I have sent a sigle patch that fix the error..
+I'll send v2 with this patch.
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks!
-Jon
-
--- 
-nvpublic
-
+                          - Troy
+> 
+> Thanks,
+> Andi
+> 
 
