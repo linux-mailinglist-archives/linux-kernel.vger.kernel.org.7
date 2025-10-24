@@ -1,151 +1,198 @@
-Return-Path: <linux-kernel+bounces-869299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A6BC078FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:41:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6002DC0790B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 43EA83589B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:41:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AF423B5210
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B457345CAC;
-	Fri, 24 Oct 2025 17:41:01 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFFC1C1AAA;
-	Fri, 24 Oct 2025 17:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21A034676D;
+	Fri, 24 Oct 2025 17:42:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DA12D6401;
+	Fri, 24 Oct 2025 17:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761327661; cv=none; b=oChKJSlzSOo+JkZz4jGOnaXE0zw4UsG7PWqhstDuG0glL4ueJvwYDYO3dxcA+jGc5zqqQuZx1mWtIRomVM8FfdlxKAAxi7jvXPe5yrcAKj0w5aoQ4H4Iuy0GWQCRovkCiHGwg3Wnq5e0QxkP3LNa27GOo1p6Ae8+ZKZja+h1Nzk=
+	t=1761327733; cv=none; b=Uv0L9jp5WcUYq8ppSkTN8tqRXOUMu5AEGDlG/8CR6qBQ88DojNnaTpFa7GV86YLFzdy1ZxmD6YioJZG4rjbhNXmCrHyuaTWpfwJoZjmDPdhbWoOl41+GllU9kgsTo4D4fDIdnjZiQkFeKVdgsgyrYdnfd2hyXzfkq+kKYnFxH1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761327661; c=relaxed/simple;
-	bh=pGVdW/63t02VqVFfLGf9nw9CCWHp0E2yLsMDH6WIAVA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EIJCOmIH6x3nGv7uOgLsb4bt1J0GcGA2lKMKIC3DtRSHbvBHqqfrR35rbTsFwCQp7gU9NAXuJyI0QIZb3o+oddRMkyyXaBi2E7BXG2nVvdv2KxK7W8YralDQy9xRRso20hij9C4ZV9qZATE49LWwz6XkTqPq4l3e7aFlqRdtNiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ctVWv55tQz6L57H;
-	Sat, 25 Oct 2025 01:39:23 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 26BBA1402FB;
-	Sat, 25 Oct 2025 01:40:55 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 24 Oct
- 2025 18:40:53 +0100
-Date: Fri, 24 Oct 2025 18:40:52 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
-	Gavin Shan <gshan@redhat.com>, Ben Horgan <ben.horgan@arm.com>
-Subject: Re: [PATCH v3 11/29] arm_mpam: Probe hardware to find the supported
- partid/pmg values
-Message-ID: <20251024184052.00004c24@huawei.com>
-In-Reply-To: <20251017185645.26604-12-james.morse@arm.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
-	<20251017185645.26604-12-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761327733; c=relaxed/simple;
+	bh=tObqE6de3gXg94CWYyQkTpkbhYWwtJDUVxRZXBU+ZM4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mGrV1tVn8clEEf8rC8LgQy4ZPqaha38Fp/doU5iuTTKTtLus4r1DBNibCKKs82xt8NOue8jZvSrnRciVeK0EEoXsQMXwJRnbtqyAAsRlMt2wD0ealpP6JzkFdL2nK9NOg+1iRqhxphPtOM6u4glMDNU2pPLOY1ixi5xU1vfx0ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6ECA9175A;
+	Fri, 24 Oct 2025 10:42:01 -0700 (PDT)
+Received: from beelzebub.ast.arm.com (unknown [10.118.29.240])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1DD0A3F63F;
+	Fri, 24 Oct 2025 10:42:09 -0700 (PDT)
+From: Stuart Yoder <stuart.yoder@arm.com>
+To: linux-integrity@vger.kernel.org,
+	jarkko@kernel.org,
+	peterhuewe@gmx.de,
+	jgg@ziepe.ca,
+	sudeep.holla@arm.com
+Cc: Prachotan.Bathi@arm.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] tpm_crb: Add idle support for the Arm FF-A start method
+Date: Fri, 24 Oct 2025 12:42:00 -0500
+Message-Id: <20251024174200.1974090-1-stuart.yoder@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Transfer-Encoding: 8bit
 
-On Fri, 17 Oct 2025 18:56:27 +0000
-James Morse <james.morse@arm.com> wrote:
+According to the CRB over FF-A specification [1], a TPM that implements
+the ABI must comply with the TCG PTP specification. This requires support
+for the Idle and Ready states.
 
-> CPUs can generate traffic with a range of PARTID and PMG values,
-> but each MSC may also have its own maximum size for these fields.
-> Before MPAM can be used, the driver needs to probe each RIS on
-> each MSC, to find the system-wide smallest value that can be used.
-> The limits from requestors (e.g. CPUs) also need taking into account.
-> 
-> While doing this, RIS entries that firmware didn't describe are created
-> under MPAM_CLASS_UNKNOWN.
-> 
-> While we're here, implement the mpam_register_requestor() call
-> for the arch code to register the CPU limits. Future callers of this
-> will tell us about the SMMU and ITS.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+This patch implements CRB control area requests for goIdle and
+cmdReady on FF-A based TPMs.
 
-Trivial stuff inline. I'd definitely not trust this reviewer who
-is horribly inconsistent ;)
+The FF-A message used to notify the TPM of CRB updates includes a
+locality parameter, which provides a hint to the TPM about which
+locality modified the CRB.  This patch adds a locality parameter
+to __crb_go_idle() and __crb_cmd_ready() to support this.
 
-> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+[1] https://developer.arm.com/documentation/den0138/latest/
 
->  static struct mpam_vmsc *
->  mpam_vmsc_alloc(struct mpam_component *comp, struct mpam_msc *msc)
->  {
-> @@ -427,6 +500,7 @@ static int mpam_ris_create_locked(struct mpam_msc *msc, u8 ris_idx,
->  	cpumask_or(&comp->affinity, &comp->affinity, &ris->affinity);
->  	cpumask_or(&class->affinity, &class->affinity, &ris->affinity);
->  	list_add_rcu(&ris->vmsc_list, &vmsc->ris);
-> +	list_add_rcu(&ris->msc_list, &msc->ris);
+Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
+---
+-v2: add kernel doc inf for new loc parameter in __crb_go_idle
+     and __crb_cmd_ready
 
-This looks like it might the add I was missing earlier?  If so and it can
-only be done now, move the del into this patch as well.
+ drivers/char/tpm/tpm_crb.c | 31 ++++++++++++++++++++++---------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
 
->  
->  	return 0;
->  }
-> @@ -446,9 +520,36 @@ int mpam_ris_create(struct mpam_msc *msc, u8 ris_idx,
->  	return err;
->  }
->  
-> +static struct mpam_msc_ris *mpam_get_or_create_ris(struct mpam_msc *msc,
-> +						   u8 ris_idx)
-> +{
-> +	int err;
-> +	struct mpam_msc_ris *ris;
-> +
-> +	lockdep_assert_held(&mpam_list_lock);
-> +
-> +	if (!test_bit(ris_idx, &msc->ris_idxs)) {
-> +		err = mpam_ris_create_locked(msc, ris_idx, MPAM_CLASS_UNKNOWN,
-> +					     0, 0);
-> +		if (err)
-> +			return ERR_PTR(err);
-> +	}
-> +
-> +	list_for_each_entry(ris, &msc->ris, msc_list) {
-> +		if (ris->ris_idx == ris_idx) {
-> +			return ris;
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 876edf2705ab..6b89bd183a3a 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -133,8 +133,7 @@ static inline bool tpm_crb_has_idle(u32 start_method)
+ {
+ 	return !(start_method == ACPI_TPM2_START_METHOD ||
+ 	       start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD ||
+-	       start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC ||
+-	       start_method == ACPI_TPM2_CRB_WITH_ARM_FFA);
++	       start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC);
+ }
+ 
+ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+@@ -180,6 +179,7 @@ static int crb_try_pluton_doorbell(struct crb_priv *priv, bool wait_for_complete
+  *
+  * @dev:  crb device
+  * @priv: crb private data
++ * @loc:  locality
+  *
+  * Write CRB_CTRL_REQ_GO_IDLE to TPM_CRB_CTRL_REQ
+  * The device should respond within TIMEOUT_C by clearing the bit.
+@@ -191,7 +191,7 @@ static int crb_try_pluton_doorbell(struct crb_priv *priv, bool wait_for_complete
+  *
+  * Return: 0 always
+  */
+-static int __crb_go_idle(struct device *dev, struct crb_priv *priv)
++static int __crb_go_idle(struct device *dev, struct crb_priv *priv, int loc)
+ {
+ 	int rc;
+ 
+@@ -200,6 +200,12 @@ static int __crb_go_idle(struct device *dev, struct crb_priv *priv)
+ 
+ 	iowrite32(CRB_CTRL_REQ_GO_IDLE, &priv->regs_t->ctrl_req);
+ 
++	if (priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
++		rc = tpm_crb_ffa_start(CRB_FFA_START_TYPE_COMMAND, loc);
++		if (rc)
++			return rc;
++	}
++
+ 	rc = crb_try_pluton_doorbell(priv, true);
+ 	if (rc)
+ 		return rc;
+@@ -220,7 +226,7 @@ static int crb_go_idle(struct tpm_chip *chip)
+ 	struct device *dev = &chip->dev;
+ 	struct crb_priv *priv = dev_get_drvdata(dev);
+ 
+-	return __crb_go_idle(dev, priv);
++	return __crb_go_idle(dev, priv, chip->locality);
+ }
+ 
+ /**
+@@ -228,6 +234,7 @@ static int crb_go_idle(struct tpm_chip *chip)
+  *
+  * @dev:  crb device
+  * @priv: crb private data
++ * @loc:  locality
+  *
+  * Write CRB_CTRL_REQ_CMD_READY to TPM_CRB_CTRL_REQ
+  * and poll till the device acknowledge it by clearing the bit.
+@@ -238,7 +245,7 @@ static int crb_go_idle(struct tpm_chip *chip)
+  *
+  * Return: 0 on success -ETIME on timeout;
+  */
+-static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv)
++static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv, int loc)
+ {
+ 	int rc;
+ 
+@@ -247,6 +254,12 @@ static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ 
+ 	iowrite32(CRB_CTRL_REQ_CMD_READY, &priv->regs_t->ctrl_req);
+ 
++	if (priv->sm == ACPI_TPM2_CRB_WITH_ARM_FFA) {
++		rc = tpm_crb_ffa_start(CRB_FFA_START_TYPE_COMMAND, loc);
++		if (rc)
++			return rc;
++	}
++
+ 	rc = crb_try_pluton_doorbell(priv, true);
+ 	if (rc)
+ 		return rc;
+@@ -267,7 +280,7 @@ static int crb_cmd_ready(struct tpm_chip *chip)
+ 	struct device *dev = &chip->dev;
+ 	struct crb_priv *priv = dev_get_drvdata(dev);
+ 
+-	return __crb_cmd_ready(dev, priv);
++	return __crb_cmd_ready(dev, priv, chip->locality);
+ }
+ 
+ static int __crb_request_locality(struct device *dev,
+@@ -444,7 +457,7 @@ static int crb_send(struct tpm_chip *chip, u8 *buf, size_t len)
+ 
+ 	/* Seems to be necessary for every command */
+ 	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_PLUTON)
+-		__crb_cmd_ready(&chip->dev, priv);
++		__crb_cmd_ready(&chip->dev, priv, chip->locality);
+ 
+ 	memcpy_toio(priv->cmd, buf, len);
+ 
+@@ -672,7 +685,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	 * PTT HW bug w/a: wake up the device to access
+ 	 * possibly not retained registers.
+ 	 */
+-	ret = __crb_cmd_ready(dev, priv);
++	ret = __crb_cmd_ready(dev, priv, 0);
+ 	if (ret)
+ 		goto out_relinquish_locality;
+ 
+@@ -744,7 +757,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	if (!ret)
+ 		priv->cmd_size = cmd_size;
+ 
+-	__crb_go_idle(dev, priv);
++	__crb_go_idle(dev, priv, 0);
+ 
+ out_relinquish_locality:
+ 
+-- 
+2.34.1
 
-I'm not seeing this change in later patches in this series, so brackets
-seem unnecessary and against kernel style.
-
-> +		}
-> +	}
-> +
-> +	return ERR_PTR(-ENOENT);
-> +}
->
 
