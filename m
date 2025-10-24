@@ -1,170 +1,141 @@
-Return-Path: <linux-kernel+bounces-868974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F81C069E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:08:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86387C06A07
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A3B4189B6E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:08:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC07A19A0FC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18533320A24;
-	Fri, 24 Oct 2025 14:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA0631D36A;
+	Fri, 24 Oct 2025 14:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jgBWFQvq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k46Or4Da"
-Received: from flow-b8-smtp.messagingengine.com (flow-b8-smtp.messagingengine.com [202.12.124.143])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qHZvf9MG"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57C231D742;
-	Fri, 24 Oct 2025 14:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EDB2DEA6A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761314844; cv=none; b=eAqAGg/WnRj9WVGvLI4MWQvAbURyjD+VZu+56Je3BhNwfTFlZKavZwTlsWuTqJZ3A+vn/k+2tluwqoW+8DVWn+4OmuL7LmWNq1fd3vyaXhDSI0Ez7tUwUncRf86goAOASbqHqHgNX5xUMuDteIlcWwqATWGr1jwcnJn5L0DBozE=
+	t=1761314899; cv=none; b=DmoNZrxfcn3Cn9LOMTjL5/uw98WzPgqhl+sCAc22BPBF8N/TyYJU2ubzLz0nNEuaui2XDmwo2b/WwfI8T3Kqo6zTSX4VbYO54ZFJEU4a/PJsyZ6mMf4eegJM0Ay0pxzze9MlIqCj/MGzNsCKam+70P4Dts06TP0CF48L5Mb4BOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761314844; c=relaxed/simple;
-	bh=seTjJ9cm6Zi9cqnUGd6+2HjOK4qyMZwn9gNNu1eyosw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=g7V6Z01vZfhamlW0btokzqJphHmYC/hOBJ++ZXXRcd0xHMFyJj6Xgejre+D1TomB3+sxaiUd/wn0I0j1FgItcwOv6sBqywqTEG9SD7Tcx5uei3M80kMCpMZuHcfCx95S7xCrMg4yFNXV1OiYd7eUTA1Zt7C+Ms+MUjScLKLCNdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jgBWFQvq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k46Or4Da; arc=none smtp.client-ip=202.12.124.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailflow.stl.internal (Postfix) with ESMTP id 54B501300260;
-	Fri, 24 Oct 2025 10:07:20 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 24 Oct 2025 10:07:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1761314840;
-	 x=1761322040; bh=miSsXPm4+M0zwlfLzYyT4CIr/q9mDcjy6aC2hB/hyk4=; b=
-	jgBWFQvqDqbz/Zq/xSrEgs0hq9MPBcOZ2dNhQ1yMZYMTDANg0IEMjS0xYuS1njKK
-	jI43y9Ow4+ENflZ5QpoeKG+EruCmIBM/OPIqHcRBUvA5YgSoW4SJGuPkSO+YdZw8
-	kojKnVaT8q0cmTKXGEGJHtpuKYP0O780K6pQYGEw5kSMU6ezFwz1bIfQepykAvVr
-	ohXELdiiKsCBZoglf271iR+wQp0SoDuv0DYZiM4KLLo9grpJoGgllmDHvO3OacPk
-	WO0aws6DWT6GsFBL3gm+v3yl63taVN22FUe9lzN0NNMgmCZJLLIn0nFvDLYCyAQg
-	H4fxkgWnFHYv1QwhzeKjWw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761314840; x=
-	1761322040; bh=miSsXPm4+M0zwlfLzYyT4CIr/q9mDcjy6aC2hB/hyk4=; b=k
-	46Or4Daocr+xA9L6d1Xsx5qKTMN0FQGxQqFeTMfZPV0ekpgNTq96i1c5m7K8dHY2
-	XZSatkEfkiD50NN+A4SoOGc/m3JKVlHpSN7EW0FBm3xbaeAzR458klY3gcUzFPGh
-	b49S2e/27nSPuZOx5AsxlJPVkhcLyNHAJTfw9xWJ8DiMxXdR+MPr9vOvsfxH4fwc
-	JT37LSRscqR8GsePIWdOJxo4GrlMRqzTjBPNGboraqPiRA1qLhMgxDOEpAPLkXwv
-	4BxoAuhZuQCIDLWy2E97Wx6iJpMxVVoxKLyZ7JoUjS/6dz0Hh0xpwJ2d4SK8lL1Q
-	al6bnjiSx+RnTeLMjltvQ==
-X-ME-Sender: <xms:Foj7aG4NuYtOpcaRWHfUIksbaBlZerYvV3Q7w7tCjS8W4AVYj4bqwA>
-    <xme:Foj7aKtf0mBz2cBRu6i0sDJ2VsejI9GVBRjz64SoCOswlE9XKD20WfXKnZy5LLCpu
-    PN1psAfiI6zQcaQZ5oDZlrPFJT_d-mL8yLH2lUa5QIdxxcxZ3-5Ww>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeelheegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehmiiigrhgvrghrhiestdhpohhinhhtvghrrdguvgdprhgtphhtth
-    hopehhrghnnhgvshestghmphigtghhghdrohhrghdprhgtphhtthhopegthihphhgrrhes
-    tgihphhhrghrrdgtohhmpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtoh
-    hmpdhrtghpthhtohepuggrrghnrdhjrdguvghmvgihvghrsehgmhgrihhlrdgtohhmpdhr
-    tghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehjrg
-    hnnhhhsehgohhoghhlvgdrtghomhdprhgtphhtthhopeiisgihshiivghksehinhdrfigr
-    fidrphhlpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Foj7aHDM4oeTEXhqauXmthr2GR6ilhZI57zYSak8FJlFgBge84kUOg>
-    <xmx:Foj7aJN7IEPHUfIw4pYnNqv5_h9BJtW4TkoBBCnnlSAJzv0fVOSc0A>
-    <xmx:Foj7aNQIp8WDI5COISvW5X4bvl8bLoIlnrmE5gKB-F8Bh54FDnNoBw>
-    <xmx:Foj7aKuBpwOj5PR8C59xW1chma9wqxV8TWIH3K-1xSO_aL-K7MCCFQ>
-    <xmx:GIj7aH8aRQ5olxoTtA5Lw-Je7GEAi6eHUZb1YU-y6f6Bko96GGTE0ukv>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 4F1B6700063; Fri, 24 Oct 2025 10:07:18 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761314899; c=relaxed/simple;
+	bh=jZNunPED/37W2kx5HuE/DP3MLyrBGR8mEldbdJEdk8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=X+Fi75hPgd21qd2frVY+Eg6AcsOMEoEWfT20DxXPSg6c1tlNiKhRqVsxRWTBrMWGdwmdBYjZlYNuLleWHYrBiqJbIrkuWar8xb4/DkUAthkUBxS9Q00pqv9W5xL7h6qhWEJaSiTvB4U/AUezPp7Zqt9KGDb022gAt8Gn+AKYUYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qHZvf9MG; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59OE8AR51916364;
+	Fri, 24 Oct 2025 09:08:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1761314890;
+	bh=0qrrTj2ISX2ZHGxKtEtsT3qSl3+wcO5LDkl3ZD6jLk8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=qHZvf9MG5XWz4ct1KJP9DRslyEvM2SYitfjVov+6TQGP+4fb8wSz7q9nCZ5SWJFXS
+	 unmolG3p0eFzCWzayTMHi7ZqPbnKUxQgxsCo+KgH2IG2Ht6NgkSyltQ+gGCobMmm45
+	 E83xUZBNgdT3pxI1wDprRo6yCBYKCmzB66BHJxYo=
+Received: from DFLE202.ent.ti.com (dfle202.ent.ti.com [10.64.6.60])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59OE8An63625492
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 24 Oct 2025 09:08:10 -0500
+Received: from DFLE205.ent.ti.com (10.64.6.63) by DFLE202.ent.ti.com
+ (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 24 Oct
+ 2025 09:08:09 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE205.ent.ti.com
+ (10.64.6.63) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 24 Oct 2025 09:08:09 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59OE89Dm439475;
+	Fri, 24 Oct 2025 09:08:09 -0500
+Message-ID: <da788554-1962-4fca-8318-278e9224af59@ti.com>
+Date: Fri, 24 Oct 2025 09:08:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A9aggTBZhXf3
-Date: Fri, 24 Oct 2025 16:06:57 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- "Josef Bacik" <josef@toxicpanda.com>, "Jeff Layton" <jlayton@kernel.org>
-Cc: "Jann Horn" <jannh@google.com>, "Mike Yuan" <me@yhndnzj.com>,
- =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
- "Lennart Poettering" <mzxreary@0pointer.de>,
- "Daan De Meyer" <daan.j.demeyer@gmail.com>,
- "Aleksa Sarai" <cyphar@cyphar.com>, "Amir Goldstein" <amir73il@gmail.com>,
- "Tejun Heo" <tj@kernel.org>, "Johannes Weiner" <hannes@cmpxchg.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, bpf@vger.kernel.org,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- Netdev <netdev@vger.kernel.org>
-Message-Id: <481c973c-3ae5-4184-976e-96ab633dd09a@app.fastmail.com>
-In-Reply-To: 
- <20251024-work-namespace-nstree-listns-v3-17-b6241981b72b@kernel.org>
-References: 
- <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
- <20251024-work-namespace-nstree-listns-v3-17-b6241981b72b@kernel.org>
-Subject: Re: [PATCH v3 17/70] nstree: add listns()
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mailbox: omap-mailbox: Flush out pending msgs before
+ entering suspend
+To: Beleswar Prasad Padhi <b-padhi@ti.com>, Hari Nagalla <hnagalla@ti.com>,
+        <jassisinghbrar@gmail.com>, <linux-kernel@vger.kernel.org>
+CC: <hiagofranco@gmail.com>, <u-kumar1@ti.com>
+References: <20251022102015.1345696-1-b-padhi@ti.com>
+ <40726a57-35a9-450d-ba0f-879313f60732@ti.com>
+ <e71ec0d8-300a-4e43-9e67-15828f11ccb4@ti.com>
+ <d8662d13-40bd-053b-6761-1a0ff7404782@ti.com>
+ <abec6709-b9ef-4f33-afbd-eeb69a07b941@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <abec6709-b9ef-4f33-afbd-eeb69a07b941@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Oct 24, 2025, at 12:52, Christian Brauner wrote:
-> Add a new listns() system call that allows userspace to iterate through
-> namespaces in the system. This provides a programmatic interface to
-> discover and inspect namespaces, enhancing existing namespace apis.
+On 10/23/25 11:48 PM, Beleswar Prasad Padhi wrote:
+> Hi Hari,
+> 
+> On 23/10/25 22:48, Hari Nagalla wrote:
+>> On 10/22/25 23:38, Beleswar Prasad Padhi wrote:
+>>>> I'm still not convinced just throwing out messages is the correct thing
+>>>> to do here, but for now at very least let's print some warning here when
+>>>> messages get zapped.
+>>>
+>>> I am also considering:
+>>> 1. Mailbox queues for RTOS-RTOS communication could be
+>>> firewalled for safety/FFI usecases. In that case, the above flush
+>>> would result in an exception.
+>> Yes, flushing all mailbox messages during suspend is not a good solution, as there can be in flight RTOS-RTOS communications for non participating cores.
+>>> 2. This driver is common to OMAP SoCs which supported proper
+>>> suspend/resume, meaning those rprocs could consume pending
+>>> messages in resume. So clearing out messages from Linux
+>>> might not be the best thing to do here.
+>>>
+>>> What else can we do here? Should we just fallback to letting
+>>> Linux see only it's required queues for IPC? By setting
+>>> "ti,mbox-num-fifos = <4>"?
+>> This makes the assumption that the first 4 FIFOs of the mailbox are used? and why 4? are you assuming first 2 for Linux IPC and next 2 for RTOS-RTOS communications?
+> 
+> 
+> 4 is just an example. The mailbox FIFO assignment is also
+> a firmware configuration. So the idea was to let Linux only
+> care about the FIFOs it uses for Linux<->RTOS
+> communication, ignoring the ones used for
+> RTOS<->RTOS communication.
+> 
 
-I double-checked that the ABI is well-formed and works the same
-way on all supported architectures, though I did not check the functional
-aspects.
+The issue is Linux is still shutting down the whole mailbox, so it
+can't just care about it's own FIFOs as it is still deleting all
+stored messages, whether it checks them or not.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+>>
+>> How about, let the mailbox driver simply save and restore the config registers and ignore the FIFO messages? i.e if they are lost with the main domain going into OFF, so be it.
+> 
+> 
+> Hmm, this was how it was until 2016 when commit
+> 9f0cee984a25 ("mailbox/omap: check for any unread
+> messages during suspend") was added. Do you
+> suggest reverting 9f0cee984a25? Hope it doesn't
+> break any existing usecases for OMAP platforms.
+> 
 
-One small thing I noticed:
+Checking for unread messages during suspend is still correct,
+what we then do when we find them is the open question. We can:
 
-> +SYSCALL_DEFINE4(listns, const struct ns_id_req __user *, req,
-> +		u64 __user *, ns_ids, size_t, nr_ns_ids, unsigned int, flags)
-> +{
-> +	struct klistns klns __free(klistns_free) = {};
-> +	const size_t maxcount = 1000000;
-> +	struct ns_id_req kreq;
-> +	ssize_t ret;
-> +
-> +	if (flags)
-> +		return -EINVAL;
-> +
-> +	if (unlikely(nr_ns_ids > maxcount))
-> +		return -EOVERFLOW;
-> +
-> +	if (!access_ok(ns_ids, nr_ns_ids * sizeof(*ns_ids)))
-> +		return -EFAULT;
+  * Not suspend (current situation)
+  * Suspend anyway, deleting them but with a warning
+  * Save and restore them
 
-I'm a bit worried about hardcoding the maxcount value here, which
-seems to limit both the size of the allocation and prevent overflowing
-the multiplication of the access_ok() argument, though that isn't
-completely clear from the implementation.
+Ignoring the problem by reverting 9f0cee984a25 is not a solution.
 
-Allowing 8MB of vmalloc space to be filled can be bad on 32-bit
-systems that may only have 100MB in total. The access_ok() check
-looks like it tries to provide an early-fail error return but
-should not actually be needed since there is a single copy_to_user()
-in the end, and that is more likely to fail for unmapped memory than
-an access_ok() failure.
-
-Would it make sense to just drop the kvmalloc() completely and
-instead put_user() the output values individually? That way you
-can avoid both a hardwired limit and a potential DoS from vmalloc
-exhaustion.
-
-     Arnd
+Andrew
 
