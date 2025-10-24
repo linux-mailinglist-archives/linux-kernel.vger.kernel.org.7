@@ -1,142 +1,210 @@
-Return-Path: <linux-kernel+bounces-869452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB16AC07EB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:33:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EEFC07EDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 884B04EA779
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:33:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3E11AA4AB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6360D2BE024;
-	Fri, 24 Oct 2025 19:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C7C2C0295;
+	Fri, 24 Oct 2025 19:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="chw4THql";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="D3AM57Hq"
-Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ogxgI7YP"
+Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6432329B204;
-	Fri, 24 Oct 2025 19:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4332BEFF2;
+	Fri, 24 Oct 2025 19:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761334382; cv=none; b=ZnSyT6Wegcb9joZOgCRvJ0ZpRhvIEDG+Qm5PG0iIjih4XPHMsXe5hg37ODeH50V4/kUWhR0aVrrHU6Pz3gHvKPYSBZGJL4aO74IoC7TA/PW1E6JOyTdaWxipaGGTAH/DONm5SG6eubytzPe/OUUz1HbSDidXct4WixRYpGq9mQo=
+	t=1761334762; cv=none; b=BWrWK7ApvLCzuzlE0+KQ0iYS+tT6O8nDJDax0hbKzebWHDUnM3oDUKr3CVKNF8jfe7FpmrKlAXEhl7U8XsqDX1g2te8bLik41pMt0Ml3EGtKpaTwPMaWU8KVcDLsgDLW55iU7FNuAihABhvoRP+l8DqP0nVfIWb7iHweFMdHpt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761334382; c=relaxed/simple;
-	bh=jPIkLLtaRCzb8aJMZTdAneGKRi508NY6HlZqhH47XHo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=kmwLvq6rCb9V0Ptihxk3vrABEjV8tIOZmY22Spph7S0079FVLxHUIZL3dr7w0VtBwyqUb43cXQeaqzdY77RrrMlXQ8bX0ity6lx/xKF/HN0oSTWyD9Cfs3TJ5FGfZImCTrJXOsVEKDtrvcEoRB8Pm0+FXE+yoH9rQWm95d7ivbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=chw4THql; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=D3AM57Hq; arc=none smtp.client-ip=202.12.124.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.stl.internal (Postfix) with ESMTP id C06511300286;
-	Fri, 24 Oct 2025 15:32:58 -0400 (EDT)
-Received: from phl-imap-10 ([10.202.2.85])
-  by phl-compute-04.internal (MEProxy); Fri, 24 Oct 2025 15:32:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1761334378; x=1761341578; bh=2Eie9rhTwSUlY1W7oebxyg5hlbXGes4p
-	kn2Ot5hK/W0=; b=chw4THqlrwqSs38QX7V0HBZScQNidiSKZogcPrpPVGKNFSpY
-	Hr/x/WMn6jcDRCRIZOqeh+04AX2tNshXGRrFGFFPzhCB/R1Yxbn/BRD+CMocWPhx
-	UpBf+N5OpFp4lqNgOHwlKFmSPMJxD8VYzLeHinflFas7Ld3ZoqbcEQqiXJ+Z3xAP
-	fCb8VUSRAqgkBqs7wV2j07myrIUZ6+GGvVEyjZUlcvZ91XU4e/x3XfM5poD9+QHu
-	OJagCG04BPvf0fs7RH1Vqko1n28A/AqdD/RTHNQZVzUfitMiaYH0gHyQoRxFET6p
-	cqGsM92yKgXdESHu8b2MZAD7FbQFbs+Ml/t0YQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761334378; x=
-	1761341578; bh=2Eie9rhTwSUlY1W7oebxyg5hlbXGes4pkn2Ot5hK/W0=; b=D
-	3AM57HqO1i+sRH2fR79zXWnSCId0q9IG98YuR6VSFOQGUhKSutqJMChsDLj/Q7L8
-	yRv4VxnZju07Q9kZijHV78l8O2wKbfusNAjX6uQzY7sPxg2Gs/Rxi94yw2DyGXe1
-	brZLqLfUgrH/eiiEFLDTB3k474jQq/i9D2lnlg+u8wxFgi/pIAx6UB2lZeZUiyKo
-	+jKGYD4ZIVFHHKPB8YCAa7hdkfBWLFVvL2whsdr0dgz3YeV6J9qOeGLWBiMmo5iu
-	rlz9ckZvDXJLCd/aR/cvyC1mVkfwHKTs/yIVTSZb6GfUdyBGBBbNxS5j8wpuygxC
-	fwPJRsyOxvr6PwHvKmG4w==
-X-ME-Sender: <xms:adT7aLrpDPQZGVa84VrLn300BloDRka_Xr4eaWU4ja3qoCoIjmh71Q>
-    <xme:adT7aAd0gyIgXgFgJ6m9vi0bn0ShQv6mIHu_eH2ssB_IpNsPVjpLL9NN6UqSlFbOy
-    zeK2Os0Ng_D0EzLwoOIOmVpDNzRJLXJxrZt0iqRPB-m3wUNHO6V2Wo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduhedtudelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfmfhirhhi
-    lhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrg
-    hmvgeqnecuggftrfgrthhtvghrnhepfeehvedviefgueevgeduhfffjedugfdtvdfhvdek
-    uefgueffteegkedvvdffteffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgt
-    phhtthhopedvfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgrnhhnvghsse
-    gtmhhpgigthhhgrdhorhhgpdhrtghpthhtohepuggrvhhiugesfhhrohhmohhrsghithdr
-    tghomhdprhgtphhtthhopehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhope
-    hsuhhrvghnsgesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhr
-    rgguvggrugdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopegujhifohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgr
-    sheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhpphhtsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:adT7aFyRBRSeVnGi14kIw5Ck1L7OlC7KwIMqpMZgk5v61oO8fcM_Xw>
-    <xmx:adT7aA9calwwSFl8H5vxhd7a94GeP9js63aA16vdy4NfsUhN7tM54g>
-    <xmx:adT7aKAFG2RoCob6uF9S4yaeS54QhsKtAt-fxnxflvo7RqlSsAM5iA>
-    <xmx:adT7aIdsOaSSwRDxprKYwXiknos2gcSFvlRqyzRQm_upT8MpgRROvg>
-    <xmx:atT7aMGYELrvclqCX7O2E_660PuNtn2jwY1SNpAHOUyXq9fD6wrjUE8C>
-Feedback-ID: ie3994620:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 18E372160065; Fri, 24 Oct 2025 15:32:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1761334762; c=relaxed/simple;
+	bh=ag+B16IygtW9FZgyE/zLeMJ4TjYkwMnN7o2cwPigeAs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WAzlAoHTAoFk/psGTaWLcsixSWr8okN/QMqJNPXIST+dr/sRs59FFz0rb8I84M4dxv5SYXtdwPijM/aVaDDYOJTOWEacB1Kqi5z6yU6FdsYl/hV2n6G2ysL374wcSmnZfmgkJnAwzDEt71gQne2KW7yU4R9NZ093fYrEZVlaN+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ogxgI7YP; arc=none smtp.client-ip=80.12.242.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id CNcyvReICRty5CNcyvau3E; Fri, 24 Oct 2025 21:39:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1761334750;
+	bh=VU+BxUzO6Y/jMbH69ytGtPE5+48qwtEjO6D6PpvMXWc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=ogxgI7YPNHw1Mj6VB9BzdsFQbm4ZZby8PvWgMX31KwZMDsoVZk8FbYJynWEH87lr8
+	 8R1NtJANej2zrg8HL4WSW4G/F8HNg8X/8lRnvRSFt3+SezfuieolAwjfIMaMZ+bGKY
+	 kW5oHaOi+ehCjWwcLDaorh92ncx9ESAsEuvJHcIDftB0zEUTUpMKf3y6sTwiO/gXUx
+	 Zo07w0E39fWVQZKz60iC4VchfP16vnGDILC0Zd7dNvYLlXIc/zThoOk/o6amWOVAJm
+	 W/j3BceQ2vIEiywCOf1hKYtnbMNuVkd8G8rFSJLfmCvVglsrd3G5Hsj47kKTP4bBBB
+	 FzbsNB8ihZJgQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 24 Oct 2025 21:39:10 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH v2] misc: rp1: Fix a reference leak
+Date: Fri, 24 Oct 2025 21:36:11 +0200
+Message-ID: <8f55f8866a6680830c9d318201a29293ac50a591.1761334487.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A_7exwu8WuKB
-Date: Fri, 24 Oct 2025 20:32:36 +0100
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: "David Hildenbrand" <david@redhat.com>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Hugh Dickins" <hughd@google.com>, "Matthew Wilcox" <willy@infradead.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>
-Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Vlastimil Babka" <vbabka@suse.cz>, "Mike Rapoport" <rppt@kernel.org>,
- "Suren Baghdasaryan" <surenb@google.com>, "Michal Hocko" <mhocko@suse.com>,
- "Rik van Riel" <riel@surriel.com>, "Harry Yoo" <harry.yoo@oracle.com>,
- "Johannes Weiner" <hannes@cmpxchg.org>,
- "Shakeel Butt" <shakeel.butt@linux.dev>,
- "Baolin Wang" <baolin.wang@linux.alibaba.com>,
- "Darrick J. Wong" <djwong@kernel.org>, "Dave Chinner" <david@fromorbit.com>,
- linux-mm <linux-mm@kvack.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- linux-kernel@vger.kernel.org, "Kiryl Shutsemau" <kas@kernel.org>
-Message-Id: <ca03ba53-388d-4ac4-abf3-062dcdf6ff00@app.fastmail.com>
-In-Reply-To: <18262e42-9686-43c1-8f5f-0595b5a00de1@redhat.com>
-References: <20251023093251.54146-1-kirill@shutemov.name>
- <20251023093251.54146-2-kirill@shutemov.name>
- <18262e42-9686-43c1-8f5f-0595b5a00de1@redhat.com>
-Subject: Re: [PATCHv2 1/2] mm/memory: Do not populate page table entries beyond i_size
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+The reference taken by of_find_node_by_name() in the probe is not released
+in the remove function.
 
+In order to avoid a reference leak, use cleanup.h to automatically
+release the reference at the end of the probe when it is not needed
+anymore.
 
-On Fri, Oct 24, 2025, at 16:42, David Hildenbrand wrote:
-> On 23.10.25 11:32, Kiryl Shutsemau wrote:
->>   	addr0 = addr - start * PAGE_SIZE;
->>   	if (folio_within_vma(folio, vmf->vma) &&
->> -	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK)) {
->> +	    (addr0 & PMD_MASK) == ((addr0 + folio_size(folio) - 1) & PMD_MASK) &&
->
-> Isn't this just testing whether addr0 is aligned to folio_size(folio)? 
-> (given that we don't support folios > PMD_SIZE), like
->
-> 	IS_ALIGNED(addr0, folio_size(folio))
+In order to do so, a reference also needs to be taken when DT is not used.
 
-Actually, no. VMA can be not aligned to folio_size().
+This simplifies the error handling path and makes direct returns possible
+in several places.
 
+While at it, also add a missing \n at the end of an error message.
+
+Fixes: 49d63971f963 ("misc: rp1: RaspberryPi RP1 misc driver")
+Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is compile tested only.
+
+This change is speculative. Review with care.
+
+Changes in v2:
+  - implement Dan's suggestions
+
+v1: https://lore.kernel.org/lkml/4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/misc/rp1/rp1_pci.c | 42 ++++++++++++++++----------------------
+ 1 file changed, 18 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
+index 803832006ec8..0abfeb4a28e3 100644
+--- a/drivers/misc/rp1/rp1_pci.c
++++ b/drivers/misc/rp1/rp1_pci.c
+@@ -5,6 +5,7 @@
+  * All rights reserved.
+  */
+ 
++#include <linux/cleanup.h>
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+@@ -185,9 +186,9 @@ static void rp1_unregister_interrupts(struct pci_dev *pdev)
+ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ {
+ 	u32 dtbo_size = __dtbo_rp1_pci_end - __dtbo_rp1_pci_begin;
++	struct device_node *rp1_node __free(device_node) = NULL;
+ 	void *dtbo_start = __dtbo_rp1_pci_begin;
+ 	struct device *dev = &pdev->dev;
+-	struct device_node *rp1_node;
+ 	bool skip_ovl = true;
+ 	struct rp1_dev *rp1;
+ 	int err = 0;
+@@ -200,42 +201,40 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	rp1_node = of_find_node_by_name(NULL, "rp1_nexus");
+ 	if (!rp1_node) {
+ 		rp1_node = dev_of_node(dev);
++		/*
++		 * Take a reference to match of_find_node_by_name()
++		 * behavior. This makes cleanup.h usable in both cases.
++		 */
++		of_node_get(rp1_node);
+ 		skip_ovl = false;
+ 	}
+ 
+ 	if (!rp1_node) {
+ 		dev_err(dev, "Missing of_node for device\n");
+-		err = -EINVAL;
+-		goto err_put_node;
++		return -EINVAL;
+ 	}
+ 
+ 	rp1 = devm_kzalloc(&pdev->dev, sizeof(*rp1), GFP_KERNEL);
+-	if (!rp1) {
+-		err = -ENOMEM;
+-		goto err_put_node;
+-	}
++	if (!rp1)
++		return -ENOMEM;
+ 
+ 	rp1->pdev = pdev;
+ 
+ 	if (pci_resource_len(pdev, 1) <= 0x10000) {
+ 		dev_err(&pdev->dev,
+ 			"Not initialized - is the firmware running?\n");
+-		err = -EINVAL;
+-		goto err_put_node;
++		return -EINVAL;
+ 	}
+ 
+ 	err = pcim_enable_device(pdev);
+-	if (err < 0) {
+-		err = dev_err_probe(&pdev->dev, err,
+-				    "Enabling PCI device has failed");
+-		goto err_put_node;
+-	}
++	if (err < 0)
++		return dev_err_probe(&pdev->dev, err,
++				     "Enabling PCI device has failed\n");
+ 
+ 	rp1->bar1 = pcim_iomap(pdev, 1, 0);
+ 	if (!rp1->bar1) {
+ 		dev_err(&pdev->dev, "Cannot map PCI BAR\n");
+-		err = -EIO;
+-		goto err_put_node;
++		return -EIO;
+ 	}
+ 
+ 	pci_set_master(pdev);
+@@ -243,13 +242,11 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	err = pci_alloc_irq_vectors(pdev, RP1_INT_END, RP1_INT_END,
+ 				    PCI_IRQ_MSIX);
+ 	if (err < 0) {
+-		err = dev_err_probe(&pdev->dev, err,
+-				    "Failed to allocate MSI-X vectors\n");
+-		goto err_put_node;
++		return dev_err_probe(&pdev->dev, err,
++				     "Failed to allocate MSI-X vectors\n");
+ 	} else if (err != RP1_INT_END) {
+ 		dev_err(&pdev->dev, "Cannot allocate enough interrupts\n");
+-		err = -EINVAL;
+-		goto err_put_node;
++		return -EINVAL;
+ 	}
+ 
+ 	pci_set_drvdata(pdev, rp1);
+@@ -295,9 +292,6 @@ static int rp1_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	of_overlay_remove(&rp1->ovcs_id);
+ err_unregister_interrupts:
+ 	rp1_unregister_interrupts(pdev);
+-err_put_node:
+-	if (skip_ovl)
+-		of_node_put(rp1_node);
+ 
+ 	return err;
+ }
 -- 
-Kiryl Shutsemau / Kirill A. Shutemov
+2.51.0
+
 
