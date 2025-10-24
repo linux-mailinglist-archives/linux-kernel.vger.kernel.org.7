@@ -1,146 +1,164 @@
-Return-Path: <linux-kernel+bounces-868275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ACD9C04C2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9852C04C35
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914F63ABBDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:38:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0BB3A2AB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922CD2E8B76;
-	Fri, 24 Oct 2025 07:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EB82E8DEB;
+	Fri, 24 Oct 2025 07:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NIdQ+BPc"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YWKvLEZT"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C712E764E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5F92E7F1E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761291495; cv=none; b=obhCA70s+Z/ESaL8kOMf/bwPtVngMSI99/J9jEC0U2HgSAMeBVE86h4H1d8Dxo5vInXCMxkU5x+PWpxXLjOVb8UvvpTg6+jO5GDpL797lLRmPaxK7crn1sI9a4+Qi3R++NYN/gvl6zgReOhcuMq6A4Qr0hQI2sIOu+7wWp9a3cI=
+	t=1761291496; cv=none; b=XfkUdE+XzjVLOHzD/m9G6osRo4BEXMAaj0ophNWi0L3sFBCfNGU83yW/9aOfExRPbrRMVUE0QFE4dh9Iia6cG1MlSSp5B/1AMQSGHK0qZnZEfjSSRqiJeFBPlJpvtbOBFGOBo18HyGMhy9Xlnf++CqrxSKQvYEtCozypf/m4zeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761291495; c=relaxed/simple;
-	bh=FZmghaQw1LNdqilBOlckL5iL5N3eVvjOSrNsiCUFDkU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BCrfW5gkUdVdJRM6p9Oy829IZLtdHJVV0G//gob22eIAAEGKFw29IIzJqf4TCmEO/LlOOW3flO11E6y11ur3gBaqz5gRAkKHdOU7u5Wm7ESmHaC+RkvMu0nS2Ji9kmpAXhhh/HrIN9CdpF4Rm6I8GaljFRA184IdfpPDDVfG9dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NIdQ+BPc; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id D3E9BC0C41E;
-	Fri, 24 Oct 2025 07:37:50 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 99DD260703;
-	Fri, 24 Oct 2025 07:38:10 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A3F96102F2479;
-	Fri, 24 Oct 2025 09:38:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761291490; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=bSxkL8tqpmau1y40dLrlfJlYOSTGg2m4G4hoDQyfFxM=;
-	b=NIdQ+BPcDwivkk6mu/Uj8PloSozMcblTIs22nAAXkgjjy/C0nngIwm+V6vDbCYdDY8sKFN
-	4ra6t1bwXgb7PxcU+5xsTUpbTmIwDplzLcJl/27S2KeZI51XqdBMjrY8/2rIFLYKKhFlFD
-	Udo4LQzYyeWxt868RXtkCDTkYl0JYLu296yZVM9G6hLNLo3Ii6l7TuHzuALcdK8c/qHWg0
-	aQuf6hgFTbV7OlOS+atUeNOIsREUm0DGhd3iPSkZ2lu2SXrxirT8c9lDSy6fhsHLLb+Sql
-	aLvGYbVtMT8JA2zuThiWVEFxU0wEH0V0S8QxqxPYgbmhRgJC3vOYXPjuB6warg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: niravkumarlaxmidas.rabara@altera.com
-Cc: richard@nod.at,  vigneshr@ti.com,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: cadence: Add support for NV-DDR interface
- mode
-In-Reply-To: <20251024071306.242227-1-niravkumarlaxmidas.rabara@altera.com>
-	(niravkumarlaxmidas rabara's message of "Fri, 24 Oct 2025 15:13:06
-	+0800")
-References: <20251024071306.242227-1-niravkumarlaxmidas.rabara@altera.com>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Fri, 24 Oct 2025 09:38:02 +0200
-Message-ID: <87bjlwrbqd.fsf@bootlin.com>
+	s=arc-20240116; t=1761291496; c=relaxed/simple;
+	bh=4Q/i2AfvzaHtxQMuaNR55KE24+V/RETj+PZmgX0d3dE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=szBQ5UcW3VBZ6ZKEWGTVCNJ3sq/fYxJ5gwY3lzTo+jjmIGqwZUE9XSn8lFuH1gbmIhIQuqH2RxvFrwBbdEswR3Qq201/UXnKAzV2F6XN5KbkTdQTX3vJZJB1uFqlN7rrGS+BBVDdU6lZ+xwZv847TXjd1ef2x1Yh0kF6fbAbzGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YWKvLEZT; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761291492;
+	bh=4Q/i2AfvzaHtxQMuaNR55KE24+V/RETj+PZmgX0d3dE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YWKvLEZT6CiFPTHQkO1X2YLgdN/fTq1eAbHAhmwIb+c/iRejgob+HFVQx1mRW4AN8
+	 cDUVqfiIK/RdX/Qe81kVBwFlouVoTFHcoT95e3tilRkG6wytUFhNDo6FoIShQQKKtQ
+	 +p1K/ibluWb5qz4pysDWtJ5HLrP04pbO+UGN7nRPBLpP6yFayf9PRmTVg7vEPXCZUz
+	 Y5CfZGQltutBrf5MhmDnoZ5PeMMkTqncscpUNGj0emKHgwOeEg1ltu4lC6IRf3dhDt
+	 3VWEg0BRp+oUhMwRaj5hTfrqU1hpvrWG+N3HIkkLLWlSjL9oDIc4FcF5sJuU9pvTB1
+	 rDu3zssv/uLWw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9B6A017E00AC;
+	Fri, 24 Oct 2025 09:38:11 +0200 (CEST)
+Message-ID: <8dbe85de-fc03-4b17-90ac-7b939a701a53@collabora.com>
+Date: Fri, 24 Oct 2025 09:38:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 09/11] drm/mediatek: Introduce HDMI/DDC v2 for
+ MT8195/MT8188
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
+ CK Hu <ck.hu@mediatek.com>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20251023-mediatek-drm-hdmi-v2-v11-0-7873ec4a1edf@collabora.com>
+ <20251023-mediatek-drm-hdmi-v2-v11-9-7873ec4a1edf@collabora.com>
+ <CAAOTY_9o-hHv5Lrd+EKX_mN2PXDC+ifoxSsR6bf6oJdD=N=46A@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAAOTY_9o-hHv5Lrd+EKX_mN2PXDC+ifoxSsR6bf6oJdD=N=46A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Niravkumar,
+Il 24/10/25 03:05, Chun-Kuang Hu ha scritto:
+> Hi, Louis:
+> 
+> Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com> 於 2025年10月23日
+> 週四 上午10:32寫道：
+>>
+>> From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>
+>> Add support for the newer HDMI-TX (Encoder) v2 and DDC v2 IPs
+>> found in MediaTek's MT8195, MT8188 SoC and their variants, and
+>> including support for display modes up to 4k60 and for HDMI
+>> Audio, as per the HDMI 2.0 spec.
+>>
+>> HDCP and CEC functionalities are also supported by this hardware,
+>> but are not included in this commit and that also poses a slight
+>> difference between the V2 and V1 controllers in how they handle
+>> Hotplug Detection (HPD).
+>>
+>> While the v1 controller was using the CEC controller to check
+>> HDMI cable connection and disconnection, in this driver the v2
+>> one does not.
+>>
+>> This is due to the fact that on parts with v2 designs, like the
+>> MT8195 SoC, there is one CEC controller shared between the HDMI
+>> Transmitter (HDMI-TX) and Receiver (HDMI-RX): before eventually
+>> adding support to use the CEC HW to wake up the HDMI controllers
+>> it is necessary to have support for one TX, one RX *and* for both
+>> at the same time.
+>>
+>> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+>> ---
+>>   drivers/gpu/drm/mediatek/Kconfig            |    7 +
+>>   drivers/gpu/drm/mediatek/Makefile           |    2 +
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_common.c  |    4 +
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_common.h  |    9 +
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_ddc_v2.c  |  395 ++++++++
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_regs_v2.h |  263 +++++
+>>   drivers/gpu/drm/mediatek/mtk_hdmi_v2.c      | 1398 +++++++++++++++++++++++++++
+>>   7 files changed, 2078 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/mediatek/Kconfig b/drivers/gpu/drm/mediatek/Kconfig
+>> index 994b48b82d447c47391122e6ff2d139edb223536..c89ae4ed2c96123684ecd357314fa2d2ba5a4433 100644
+>> --- a/drivers/gpu/drm/mediatek/Kconfig
+>> +++ b/drivers/gpu/drm/mediatek/Kconfig
+>> @@ -45,3 +45,10 @@ config DRM_MEDIATEK_HDMI
+>>          select DRM_MEDIATEK_HDMI_COMMON
+>>          help
+>>            DRM/KMS HDMI driver for Mediatek SoCs
+>> +
+>> +config DRM_MEDIATEK_HDMI_V2
+>> +       tristate "DRM HDMI v2 IP support for MediaTek SoCs"
+>> +       depends on DRM_MEDIATEK
+>> +       select DRM_MEDIATEK_HDMI_COMMON
+>> +       help
+>> +         DRM/KMS HDMI driver for MediaTek SoCs with HDMIv2 IP
+>>
+> 
+> The checkpatch show this warning. Maybe other old description just has
+> one line, I think it's better to have more information.
+> Please provide more information and I would modify this patch when I apply it.
+> 
+> WARNING: please write a help paragraph that fully describes the config
+> symbol with at least 4 lines
+> #54: FILE: drivers/gpu/drm/mediatek/Kconfig:49:
+> +config DRM_MEDIATEK_HDMI_V2
+> +    tristate "DRM HDMI v2 IP support for MediaTek SoCs"
+> +    depends on DRM_MEDIATEK
+> +    select DRM_MEDIATEK_HDMI_COMMON
+> +    help
+> +      DRM/KMS HDMI driver for MediaTek SoCs with HDMIv2 IP
+> 
+> Regards,
+> Chun-Kuang.
 
-On 24/10/2025 at 15:13:06 +08, niravkumarlaxmidas.rabara@altera.com wrote:
+	help
+	  Say yes here to enable support for the HDMIv2 IP and related
+	  DDCv2 as found in the MediaTek MT8195, MT8188 SoCs and other
+	  variants.
 
-> From: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
->
-> Add support for NV-DDR mode in the Cadence NAND controller driver.
->
-> Signed-off-by: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
-> ---
+	  This driver can also be built as a module. If so, the HDMIv2
+	  module will be called "mtk_hdmi_v2", and the DDCv2 module
+	  will be called "mtk_hdmi_ddc_v2".
 
-Thanks for the patch, very happy to see people implementing this
-interface!
-
-[...]
-
-> +	if (dll_phy_gate_open_delay > NVDDR_GATE_CFG_MIN)
-> +		ie_start =3D NVDDR_GATE_CFG_MIN;
-
-Can you double check here? I would expect < instead of > given that you
-compare with something you named "minimum". Maybe it is legitimate, just
-warning.
-
-> +	else
-> +		ie_start =3D dll_phy_gate_open_delay;
-> +
-> +	dll_phy_rd_delay =3D ((nvddr->tDQSCK_max + board_delay) +
-> +				(clk_period / 2)) / clk_period;
-> +	if (dll_phy_rd_delay <=3D NVDDR_PHY_RD_DELAY)
-> +		rd_del_sel =3D dll_phy_rd_delay + 2;
-> +	else
-> +		rd_del_sel =3D NVDDR_PHY_RD_DELAY_MAX;
-> +
-
-[...]
-
-> +static int
-> +cadence_nand_setup_interface(struct nand_chip *chip, int chipnr,
-> +			     const struct nand_interface_config *conf)
-> +{
-> +	int ret =3D 0;
-> +
-> +	if (nand_interface_is_sdr(conf)) {
-> +		const struct nand_sdr_timings *sdr =3D nand_get_sdr_timings(conf);
-> +
-> +		if (IS_ERR(sdr))
-> +			return PTR_ERR(sdr);
-> +
-> +		ret =3D cadence_nand_setup_sdr_interface(chip, sdr);
-> +	} else if (chipnr >=3D 0) {
-
-This isn't very clear. Please make it a separate condition if you think
-you must handle this case. Otherwise you're mixing it with the SDR
-vs. NVDDR choice, and that's misleading.
-
-> +		const struct nand_nvddr_timings *nvddr =3D nand_get_nvddr_timings(conf=
-);
-> +
-> +		if (IS_ERR(nvddr))
-> +			return PTR_ERR(nvddr);
-> +
-> +		ret =3D cadence_nand_setup_nvddr_interface(chip, nvddr);
-> +	}
-> +	return ret;
-> +}
-> +
->  static int cadence_nand_attach_chip(struct nand_chip *chip)
->  {
->  	struct cdns_nand_ctrl *cdns_ctrl =3D to_cdns_nand_ctrl(chip->controller=
-);
-
-Otherwise looks good to me!
-Miqu=C3=A8l
+Cheers,
+Angelo
 
