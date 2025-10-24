@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-868294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69DA3C04D30
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:47:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 267CEC04D03
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 981653A8C7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:44:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2DD51AA1BF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B792EA75D;
-	Fri, 24 Oct 2025 07:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F302F5304;
+	Fri, 24 Oct 2025 07:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c9wwdjZM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MYVxx0a2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DD72F1FE6;
-	Fri, 24 Oct 2025 07:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A4E2EBBAD;
+	Fri, 24 Oct 2025 07:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761291815; cv=none; b=kraM/SrEwkTidm42WsF+lr78AWe3M+rCk/o4UK4PElU3VRlqmVbJxmqNx7jOxE2qX/eCpNdpbtKtC0FxyCGds1TVnhQw4O9eZDoM/Gpmnb6vk0bBTtARquGA4DQBVJXuOXY1HxZPHu//Vb3BlJYfQcGjCb+61/Y3DhTpxNtmYIk=
+	t=1761291834; cv=none; b=C8cJrCzn10tpfT7VX3BjQ42uXzFIKWTuLd608kdtZMZ2aqFtFekIkDzpkM29T9jkbnB1mO9Kr+sm7/O0vChs25p/K5yjf732kevclQ0fN2pJHGwh/bV66XP+l55Fm+OedlwMm58sM5ItDre0nZp8hpy8NRHmNWYE6RA9SO0GqLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761291815; c=relaxed/simple;
-	bh=TDKLk7ury7RzxFqK59JRhpHgNK8TI1jgXu2IzIXiwuE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XaVsxh84wA3ZIvlI46L6fs0r84DJCi7BFZMZMHLJkNe9eDZQArroAWNqH71bKfex7OP32POUmOu5gun1eptKi/T1NWfIaMqw7kaRHxkK9MixnQImD1LqiKEasvyG6Vvjl7tSWBMtH8mF/o6Nz7dKUZLFLLNMzWR9O7NFmm3Y0R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c9wwdjZM; arc=none smtp.client-ip=198.175.65.13
+	s=arc-20240116; t=1761291834; c=relaxed/simple;
+	bh=7zI+yHusBy8iTPtjWgljU0yIp25yZuoATyi6HBS0Rz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tS5DtIj0Ij7Uh3SZ0wUNW5fy37E5QrmLj37seC8nXs+sEuJr4v1ZBUwnuJXX0JHV/afjAilRs0FuxgmjKMn1VyI93sipEv0+wQNOSJdPAx7x+apxaszyfBmP52clLAh+MboBMlD3PeIFOqYr1A0OKpTnil0N0zZVI6B9r8J98A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MYVxx0a2; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761291814; x=1792827814;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=TDKLk7ury7RzxFqK59JRhpHgNK8TI1jgXu2IzIXiwuE=;
-  b=c9wwdjZMvdBxOUooltqKGLZaP5Ssm+A/FKcr3YH1vcQXXEKOZyQanXMd
-   0iuL6xsJvpq0+mH+N+TRBGFfAPY2xikRdmWP2VuBaQP2QqrY5XpYQFf8A
-   WFtjZdfbBtk6WsVwRTx56cq1Ev7JO1wjb+oQmeeu8re2LRN+yydrjtphK
-   q485t5zMxBIQevAMBw/1Hdv+kozp8UQ//+qvpxKD5xv7MTAX3ZLsBHtEu
-   VrYhfidFJ6lSiGVzkL52/UtgrHrsYeFhTBTce9T6dVXg/yrjLARX1X7hU
-   Ae0St+JH8Gv4zXR6UZONFGxan9WhXLH70dHgRhfzFLeiAUfUYuSa3QoN4
-   w==;
-X-CSE-ConnectionGUID: H3yd0Wq8RfujMgek8ZhKBQ==
-X-CSE-MsgGUID: +duEPUVkSceXKNyPTe6Xtw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74590566"
+  t=1761291834; x=1792827834;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=7zI+yHusBy8iTPtjWgljU0yIp25yZuoATyi6HBS0Rz0=;
+  b=MYVxx0a2OQpZWdBgpo9e4Cef7zbGfhKHW/ahkUajssE8TrJaNZxvLMsz
+   iYFLWZBwiMCS5IQK24S9kX0fuxK4grlriS5k4oh/YvGlMfvSZeVniHfCm
+   WGBrkeGyTRFKz/iXpJCKJWbzapyEMy9Q72lb/+AvlHVJwOAeTBlpsy+E2
+   uzGo0XJNeyokcxfa3c0PEEPbSyqdGckAh3KHorzIr+zfhumOYqG474YEe
+   Qhg75s9elFXKSVjFg/jws3bCtfrtDm7yTGTNGojhuxHOT1wcDIpgqnu0e
+   8UfkqJ8W0uicwU6cj9c6F6cumcAiTvUnbOXcWpwW4r6PWOaRpw3pnuPFa
+   Q==;
+X-CSE-ConnectionGUID: 0b45EmyKSsGExL3d20I2mA==
+X-CSE-MsgGUID: x48DdNPRSxqXNJTYsegM6A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63618993"
 X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
-   d="scan'208";a="74590566"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 00:43:33 -0700
-X-CSE-ConnectionGUID: icw+zRzxSLuAIknhFlHHvw==
-X-CSE-MsgGUID: C/3Yh2FfQMCbPH1zlRVCFg==
+   d="scan'208";a="63618993"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 00:43:53 -0700
+X-CSE-ConnectionGUID: u3ao3ZWfTCKvdTwCgNOZbQ==
+X-CSE-MsgGUID: i6w9uVJtSDy1AqasQ83mFQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
-   d="scan'208";a="188425512"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.233.250]) ([10.124.233.250])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 00:43:30 -0700
-Message-ID: <8f9a1e0f-10eb-47b1-b543-48045c8747d3@linux.intel.com>
-Date: Fri, 24 Oct 2025 15:43:27 +0800
+   d="scan'208";a="188756837"
+Received: from mjruhl-desk.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.221.255])
+  by fmviesa005.fm.intel.com with SMTP; 24 Oct 2025 00:43:42 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 24 Oct 2025 10:43:41 +0300
+Date: Fri, 24 Oct 2025 10:43:41 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+Cc: Chaoyi Chen <kernel@airkyi.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v7 1/9] usb: typec: Add notifier functions
+Message-ID: <aPsuLREPS_FEV3DS@kuha.fi.intel.com>
+References: <20251023033009.90-1-kernel@airkyi.com>
+ <20251023033009.90-2-kernel@airkyi.com>
+ <aPni4AeDaem_rfZH@kuha.fi.intel.com>
+ <aPnvoSRJefwDlpNO@kuha.fi.intel.com>
+ <aPn4-S7upPOOtenr@kuha.fi.intel.com>
+ <3a24bd7f-c247-4541-8cf5-c1e66e2af5a0@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 0/3] cstate support for CWF, LNL and PTL
-To: Zide Chen <zide.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Andi Kleen <ak@linux.intel.com>, Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Xudong Hao <xudong.hao@intel.com>, Falcon Thomas <thomas.falcon@intel.com>
-References: <20251023223754.1743928-1-zide.chen@intel.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20251023223754.1743928-1-zide.chen@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <3a24bd7f-c247-4541-8cf5-c1e66e2af5a0@rock-chips.com>
 
+> I noticed the following statement in typec_register_altmode():
+> 
+> ```
+> 
+>     /* The partners are bind to drivers */
+>     if (is_typec_partner(parent))
+>         alt->adev.dev.bus = &typec_bus;
+> 
+> ```
+> 
+> If the condition is not met, the bus will not be set, which means bus_notify()
+> won't be able to take effect. Did I miss something?
 
-On 10/24/2025 6:37 AM, Zide Chen wrote:
-> This series resends three c-state patches that have been posted for a
-> few months but have not yet received feedback.
->
-> On behalf of Rui, Iâ€™ve included his two patches here, so that all
-> outstanding Intel c-state related patches can be reviewed together.
->
-> There are no code changes in this resend. Only the changelog in
-> [PATCH 1/3] has been updated to note that the C1E counter can only
-> be read via PMT.
->
-> Zhang Rui (2):
->   perf/x86/intel/cstate: Remove PC3 support from LunarLake
->   perf/x86/intel/cstate: Add Pantherlake support
->
-> Zide Chen (1):
->   perf/x86/intel/cstate: Add Clearwater Forest support
->
->  arch/x86/events/intel/cstate.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
+Right, that would be the condition that I was talking about. Only
+partner altmodes are used in the bus.
 
-The whole patch series looks good to me.
+Hold on! Do you need the port altmode instead of the partner altmode?
+If that's the case, then we can't use the bus notifier. So we'll need
+the separate notifier chain after all.
 
-Reviewed-by:Â  Dapeng Mi <dapeng1.mi@linux.intel.com>
+Let me take a closer look at patch 2/9. Sorry about the hassle.
 
-
+-- 
+heikki
 
