@@ -1,152 +1,165 @@
-Return-Path: <linux-kernel+bounces-868833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DD7C0643F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:32:07 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77AA1C06466
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DBB71C0588C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:32:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 71AB335AFE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0506B31691E;
-	Fri, 24 Oct 2025 12:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280673164B4;
+	Fri, 24 Oct 2025 12:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O7uGKTtK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VgosSDAf"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD29130E0D0
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD79304994
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761309097; cv=none; b=Bm/7RagugDVSXzapekTAi8UpSeC9TgjYsHGMqIwAu1Yt1o6izMBPyUPW4+7Pks8pc11+SRvJA1HxuRzYExqNjjcfncbwwXpEWx62gfpcZnjko4LQ3zXPrYR102u3Bbyjtb8grJLKyGDYBa4F/OCxHb/dLwLUYKxuRP/Cyb7MNy4=
+	t=1761309286; cv=none; b=lrFnhJbulurwNkth4/Fn+fBGWjGK1hH/NUhDXYps2nn1vJUYROdniSrw8WTy5SBkaqKQMl0KUmaZ1Vs5Ra9dxRhTkgMS0LWpavAxw22eS3rVocYous/x9N0cYzIc2gw0rMspNM5l113BceU+RZ+uqRTYt6ruu9NG6e+6ZsVbezc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761309097; c=relaxed/simple;
-	bh=XiTDVkg1kAETpNdGmqCEBuwWFR6IVEd0PECMW0nJHq4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kNI1MtbrRAhkhsGiQDQ6BlZj0yTEsw3CLYGeMY2O2b0gfmtaK74oI51VX80I3rA+2M4ECsPgMFFG+MQ0pCi0UuxdZkaJ6JY+2JB2zFeO3aNVufoqdBE6ad3V41nJVJh7biW3NKciYg5q7FMQysdAOYVSEhXB/i82NeY8tHHaTEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O7uGKTtK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OC3i9c000398
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:31:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=2bAsfJsMqfmVZMLORayPyE/1jk3wBrKlzyf
-	VzHYGp8s=; b=O7uGKTtKODlV1izXE+xekeaagbTBEkBALzCFByC/LBULekqcUMs
-	tM4kZCOaiirBv+YkyHFrAHAz5cCbAgVP8jqaRfIg7iS7DAgiODvEGIRsRWNvcnDy
-	zbQ2nGnhrfHVsXZGA23LXz6GhJ4FSAV5B8BnLmd+LYZuErzHzrUo4xN3AVKusmMO
-	C4QTGyXf/wviu+OfxSrxBnB4XW6CKRwpeJDpl2gBTUGT9tpkOabEoNpImrOogzDs
-	mW5bl8NOEyiNSGoulUCf/nu1BC3ci0SEo1cARRPa28o2GO02/PWsNMp62/uFnXcm
-	ji0D4Scp9mgfYW2GjMoRnPgUs9Ri+EjSsjA==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49ym9j3msd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:31:35 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2698b5fbe5bso27506055ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:31:35 -0700 (PDT)
+	s=arc-20240116; t=1761309286; c=relaxed/simple;
+	bh=DfsLw55qVEyWsq1GH2z7Ret4vbW8AQypWgF53KmOf9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=laeQvFdiYVRMr3RIWMRcE9qO1ngWe72a2TMYjj9bzKdGLBhazkNLpay3QXx1EmdQOsezkCtBtjt3FANrJrQ9SlwNK2KwgrQwgbhNomlsX1pSVKOZniii/HvjyW4wcX7m7LGjh13Fi3C7w6sOW+xHrBGR3ChP8QHHFsgUDaCjn0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VgosSDAf; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b6d70df0851so131070766b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:34:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761309283; x=1761914083; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vkZxhv/GZ+0mzfo95Y14AIl8zEVZ7txWfcdhXxNhCg8=;
+        b=VgosSDAfYyjz8vTC7x1I/C+69R7/Jl+HXckwDz1+Jz247EHv6F9rvOuWjqlSnFXN5i
+         vaN6iedfpk185JTXp3usquTEAJvrdMjvA+QV7v+QpnFIMzlUediM7sS5S4igqpQS8nZN
+         LhQwi7Lus+wxRALE8FFEm64+27D0/OgN3QeQu8Jju7exafiFFU+uXmXITOxHPN6XkUaJ
+         JF0tDz6kUszK/yeSYu6eb7ZwgC2YLv2m95K+7NUA/L0ndWYZF4zbhL2Qq18TxLMh+/ba
+         7bus177pagSWBkVJovnD8c5pmjeUsnuG+HOTQVpeqDzZw9YeznS+8xyumrbmi2snMwKM
+         YUWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761309094; x=1761913894;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2bAsfJsMqfmVZMLORayPyE/1jk3wBrKlzyfVzHYGp8s=;
-        b=W6lPZqlligUi62HWjQEqxBVneWMndJA2yUxNT/BJmseWpUgCmrJsnYOE73WXu3DmpO
-         vyBaRrrUqY/tX8tVhx8DOboV0y3Pj6XPlTCcrg2bjvEJybcEoYf5QCz7qH91Ozcq89TZ
-         J+usl0UkHMQlr/OAJffqUD0Lo2Sq6NRjq2gDZi8oyHit2D+cvwuxyP5ncNXODBkxufq0
-         hURAMKvuO98X0YbprZXzHC3yQVeF168YmGnT/Z04jEMCgzStAkRwlaTfKVub+uAynFFp
-         C6fy6pRx8ZqIj+BD3itW6VohzF/yRf/VhHxyPHKyHcfcZ1pWcwpqhzPnAI3cZvnlGc3X
-         mH7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUx0z2zJstp1+yzq+xeoD1PS6epndFi5UM5ZEAzHrPOJVZ8CxAU+wjt86yhDdEGlTO436j8gKn9FXHUUKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxREI+RvRKUreF0PkXwq23rqdV2aDEaEq/1rpPaa9N8OvZI7EYu
-	3Doqcxh3jnVP5tm05MEHWgRkYmZ0B3pbqTa4YLrY1nVhQ0BbpORlYHMEKmxj+Q+0+1sVRYApehH
-	ltkM+oTUHeQVJffGlFqhG8BKGjz4typJd4hBf2SvkMHQ3moEaHrB7zyPR8u0IFD3pTjG4b1tYgQ
-	mdPA==
-X-Gm-Gg: ASbGncsSwlzWA99WvFmgl7OsMYVrBD/FSzvC8W+JfmQYMXHVS3G19+3qU11b4Iak3Dt
-	xbFGw/bZiEe63ftC9djSOseIbJkvqk+yqfVp5dS2lQucMdj9CUQpE2hncqgFFKuYxVpwXti2saP
-	KZqJGxzOnpyAqWHMhkdNFhiIIyu0atgOoIobNdxzWX+irPWqC4x8bpd/TdJMazsx7WDJKkk62Le
-	2o+Iw9GpyG+MEodHdKmrTc6RYqUAxlzFCglzZQMP7U4TpldBh0IFxhPnIelak8EcIEQyAP4Inyx
-	ptznodXnGsxlzwkutiEGi4di0S+YZIx8RHAW4NXGA7jkRU5v+UNYtNKAX92xEr1Dt3y+p/Lh81f
-	6Q8p2W9UVIimf/62jGcApMjiAkqV/qEWHA/R14WKuCO43znqSnkXn
-X-Received: by 2002:a17:902:d50a:b0:290:bfb7:376f with SMTP id d9443c01a7336-290cb46bf6emr323434215ad.51.1761309093993;
-        Fri, 24 Oct 2025 05:31:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEucBc3iLZLhsl0wh3jp8jpvtimkKB//Sc+M+8IumHk8rQsjhXsplOGeikn1LVFuY+rB3c6XA==
-X-Received: by 2002:a17:902:d50a:b0:290:bfb7:376f with SMTP id d9443c01a7336-290cb46bf6emr323433855ad.51.1761309093557;
-        Fri, 24 Oct 2025 05:31:33 -0700 (PDT)
-Received: from hu-punita-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dda72d0sm54981275ad.16.2025.10.24.05.31.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 05:31:32 -0700 (PDT)
-From: Punit Agrawal <punit.agrawal@oss.qualcomm.com>
-To: rafael@kernel.org
-Cc: lenb@kernel.org, cp0613@linux.alibaba.com, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Punit Agrawal <punit.agrawal@oss.qualcomm.com>
-Subject: [PATCH] ACPI: SPCR: Check for table version when using precise baudrate
-Date: Fri, 24 Oct 2025 13:31:25 +0100
-Message-Id: <20251024123125.1081612-1-punit.agrawal@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1761309283; x=1761914083;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vkZxhv/GZ+0mzfo95Y14AIl8zEVZ7txWfcdhXxNhCg8=;
+        b=a9M0RwqQCz08unoYU6L1MeeJ0MInIEurP+aQh1UzqzFFmV54VLu001C0n2gaBxtj+C
+         33Fu0mulN8643acAkOE4xg+uWT17gnHAkjJ0KwmnUz99a378GDNGTzX6yWiX1f87iwyx
+         0fbSgv13H86Akq4eyx9GbpZdlINEMwcOjU96uA9rJ+Pp5IIh6VI5vUj/M8RolUiv7kCs
+         ajqOWGW4cvQBVfQ9XAvKju3ecBnvwPnvdYwpySazJ7ekERd8PmGUVbjAKwvD44Sr/0XF
+         PVk+OsVVvBcMGS8z0xVlrBi/ObRWMsxOQy8cLWBuh/mtTMgLYYgGJ8ppWqWcquRymsDl
+         uBpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQMm5wjidNoEKMTn6GnVMYxDuF7ZsWTKefbGUjI3RsO1CCvDvf2zbbgw+Ch9RPLmQWdrmRi29+8OIG0UU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0/xc+jInL4vSokYAGQcl8WSgGnKaNPtXQj2DQ/OO9kO9KSI1h
+	wQksnmNmitMB3Y+9pVb3wob0KwBg/2XL8fFXaMkt+Akm2rmMlxSZaxug
+X-Gm-Gg: ASbGncvw4Tdp618hYOVnvsFoaJ4q8JFLntErVCNsA30VgQNsdE6oBETZEYrQGY3n1xk
+	8V44KusH7KajOX85fckxBuNXRGvGikQWUEqs87kbqIh0JbBYsUX5URoFOUJUmIOc2yIyz3usIYo
+	R7r1iNOw4f92BQTCLMnUlD2Z7TxuHw94+DKaDwQTApYnjApEtOkqCD7cBEwMT/xhSAkbMp3+Xu4
+	p1ReVEEDLpU9j+k+kHG2QukQxIESTGYY5NrjqIgvQWynC/eyXNnAxGnpAfcAOm0qcL2riC88WH9
+	JVsFIXBT7VLIM4PCzqHQzcLpkKJkb91IkR/l5BoK0v5Ks1ek7xHRoz7wYPHTntkvD0Wcmxx+29j
+	C0RGkW2NVkQeAzwMu4juOiguef1M0LigMfMyOCkmlQERzEQ+gOMEpeWzH6fNBvtBo928CuxexjT
+	gBW0H001lzY8oqfl2IArmv+ev3i59YC21tpo45pu3AHs/9M2CKxrTOXQ==
+X-Google-Smtp-Source: AGHT+IFSr/XYwfRfLIFaIqsUt5jHZeJv+L9cUEB6LNpHnU0h5lq97IHAgFvmzs6a4QTfDaRVom0Xrg==
+X-Received: by 2002:a17:907:25c6:b0:b2d:a873:38d with SMTP id a640c23a62f3a-b64749408dbmr3638894466b.43.1761309283008;
+        Fri, 24 Oct 2025 05:34:43 -0700 (PDT)
+Received: from [192.168.1.103] (79-100-18-255.ip.btc-net.bg. [79.100.18.255])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d511f8634sm518519566b.29.2025.10.24.05.34.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 05:34:42 -0700 (PDT)
+Message-ID: <9594fa0e-22f6-4412-a967-6d5c1374da48@gmail.com>
+Date: Fri, 24 Oct 2025 15:34:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=CLknnBrD c=1 sm=1 tr=0 ts=68fb71a7 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=3rrkCrMOeJKuegrRhzgA:9 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDExMiBTYWx0ZWRfX+TEeLRpCy6DB
- uQG0zwBNrsfJ0HGeKsSriTIcr45IsDgn6Eylv0i27/+pQAX0f0v92MRCuZezfhJiMKJ8LwNLhlb
- /oNaiJZWz9+H4wB9Xt0+FUDywa9DUoq0WBPQgnOO770EYACglWZCEpuSlS3807gbbuxg+W/WsVq
- nIkrWiEOfkKIBGiEDWCHsouLhWp4R6tmYvnpKwS2/8fpdIPqhb2coAwIt9Soui7Ahb3TpyvaJH+
- 9NO+Lh0KXr0z6ylmEIS/Hm9/NUSlqlbY4nA4BWFzx3oMgySaD8XPBMvDrEuk6/6W37kFgGcja7P
- kGpn2+lTpP7yzjD1F31/kTEAJ3OMucfxA0TrknIEq2PfEHeduNtyN8FzNetAeCaWPSjoUbCR8s0
- +Zh58PdPgtBRUph/7R9VHGPzkQgtXQ==
-X-Proofpoint-GUID: zpBApybNvM8R5Y2BZiC2MZuPUpoY7kEB
-X-Proofpoint-ORIG-GUID: zpBApybNvM8R5Y2BZiC2MZuPUpoY7kEB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-24_01,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 malwarescore=0
- suspectscore=0 clxscore=1011 impostorscore=0 priorityscore=1501 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510230112
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] clk: samsung: introduce exynos8890 clock driver
+Content-Language: en-US
+To: Peter Griffin <peter.griffin@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251017161334.1295955-1-ivo.ivanov.ivanov1@gmail.com>
+ <20251017161334.1295955-6-ivo.ivanov.ivanov1@gmail.com>
+ <20251022-savvy-sly-auk-a60073@kuoka>
+ <CADrjBPpXStuuvbaPZ+knb8fiGQja_hdX42PKfj=bTNCdXPCN9w@mail.gmail.com>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <CADrjBPpXStuuvbaPZ+knb8fiGQja_hdX42PKfj=bTNCdXPCN9w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Commit 4d330fe54145 ("ACPI: SPCR: Support Precise Baud Rate field")
-added support to use the precise baud rate available since SPCR
-1.09 (revision 4) but failed to check the version of the table
-provided by the firmware. Accessing an older version of SPCR table
-causes accesses beyond the end of the table and can lead to garbage
-data to be used for the baud rate.
+On 10/24/25 15:07, Peter Griffin wrote:
+> Hi Ivaylo & Krzysztof,
+>
+> On Wed, 22 Oct 2025 at 08:56, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On Fri, Oct 17, 2025 at 07:13:33PM +0300, Ivaylo Ivanov wrote:
+>>> Introduce a clocks management driver for exynos8890, providing clocks
+>>> for the peripherals of that SoC.
+>>>
+>>> As exynos8890 is the first exynos SoC to feature Hardware Auto Clock
+>>> Gating (HWACG), it differs from newer SoCs. Q-channel and Q-state bits
+>>> are separate registers, unlike the CLK_CON_GAT_* ones that feature HWACG
+>>> bits in the same register that controls manual gating. Hence, don't use
+>>> the clk-exynos-arm64 helper, but implement logic that enforces manual
+>>> gating.
+> For sure it isn't the only upstream SoC with HWACG, gs101 and e850 and
+> probably lots of Exynos SoCs have it. Whether it is the "first" in
+> terms of release date of the SoC I don't know 
 
-Check the version of the firmware provided SPCR to ensure that the
-precise baudrate is vaild before using it.
+Huh? Samsung hasn't released a lot of exynos chips and you're free to check
+kernel sources if curious. Exynos 7420 didn't have HWACG, 8890 and 8895
+have it. Exynos 7870 (roughly same gen as 8890, but budget lineup) doesn't
+have it.
 
-Fixes: 4d330fe54145 ("ACPI: SPCR: Support Precise Baud Rate field")
-Signed-off-by: Punit Agrawal <punit.agrawal@oss.qualcomm.com>
----
- drivers/acpi/spcr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> , unless there is some comment in
+> downstream code to that effect). Your CMU registers do look like a
+> different layout though.
 
-diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
-index d4d52d5e9016..73cb933fdc89 100644
---- a/drivers/acpi/spcr.c
-+++ b/drivers/acpi/spcr.c
-@@ -155,7 +155,7 @@ int __init acpi_parse_spcr(bool enable_earlycon, bool enable_console)
- 	 * Baud Rate field. If this field is zero or not present, Configured
- 	 * Baud Rate is used.
- 	 */
--	if (table->precise_baudrate)
-+	if (table->header.revision >= 4 && table->precise_baudrate)
- 		baud_rate = table->precise_baudrate;
- 	else switch (table->baud_rate) {
- 	case 0:
--- 
-2.34.1
+Exactly. First implementation/gen of HWACG == lots of room to improve.
+Which they did, and this is what I implied here. I can word it differently
+though, to be more clear.
 
+> Just fyi gs101 also has Q-Channel registers that contain HWACG Enable
+> bits. The reset state of all these bits on gs101 (both for QCH_CON_XXX
+> registers, QCH_EN bit and HWACG bit in CLK_CON_GAT_* regs is off). In
+> my case I suspect the bootloader doesn't initialize any of them
+> because of the CMUs "global enable override" bits in the CMU_OPTION
+> register (which is initialized by the bootloader).
+
+Well, to be fair, without any documentations or bootloader sources there's
+so much so I can do. The vendor kernel also force disables the qchannel
+registers, hence the assumption.
+
+>> Please CC @Peter Griffin in future versions.
+>>
+>> How much of this can be shared between this and GS101?
+>> https://lore.kernel.org/all/20251013-automatic-clocks-v1-0-72851ee00300@linaro.org/
+>>
+> It seems from the commit description Ivaylo is still wanting to put
+> all the gates into manual mode, so is only initializing these
+> registers to ensure HWACG is disabled.
+
+Yeah. Not all CMU blocks seem to implement HWACG, so in my opinion it's
+best to just keep all in manual gating mode.
+
+>  Happy to help review it though.
+
+Would love you to! Thanks!
+
+Best regards,
+Ivaylo
 
