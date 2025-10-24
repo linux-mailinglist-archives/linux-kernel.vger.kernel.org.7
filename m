@@ -1,309 +1,166 @@
-Return-Path: <linux-kernel+bounces-868408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 436DDC05226
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:45:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA50C0516D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B8C5541E47
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:39:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3E41889771
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414A230AAD0;
-	Fri, 24 Oct 2025 08:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58527309EF0;
+	Fri, 24 Oct 2025 08:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L3lSGeZY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mb772Lkp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B253093C1
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19263093B5;
+	Fri, 24 Oct 2025 08:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761295032; cv=none; b=G20UvrdlAv4tsJ8vnaxvi4c+CZK9GtEcjv++QAsOYmRJeIIHLuEQyRXOSRggLhOQB2obQROZpbCyPngzRSuU8DVaOonAtALpfeRS4gU/8N4kRy88jA1LJvyo08a4PbImowTzVwVkTZkTVV4lxGRQLWu1uIMvCxpDol4zIFXsCsY=
+	t=1761295030; cv=none; b=eYFGavXSt3AIqqG9O96uOtX21jFXOKvMuQIiRZL+ACEIKDKcKR831mzbbAp0DhNqZhkotMIPapje2Ey9vWNTekYPzg9GSXp2Xea7/575UP6RP5HTjaZCV6oQsOm4ubeQC3L451p2WyPG51PUa3Ch/0hSmoovoP+JUfLVBwshKHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761295032; c=relaxed/simple;
-	bh=K2HhgskP3H/4M/wjnZbsRyaDQCuBFj5Hdoc9ZE42YzU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QF/hYjA7+v4aLonjc+tHUn8CwnFJoy8FiXnTCWpZe9ZTebFNUL2rGUCIVmuvi83a+xY/c7ix5xZLSOpQgSNs4mzEEOB6HQu87YUojlYDWaw6em4TI002sGeJ7tnj2hBM74WUBvybB1a4rsyOyf6WQE1JzGGdHhWtK7gnqHfe6F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L3lSGeZY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761295029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5IT49IQx4naO1r1BdT6bWbCUaLMDI3v7xXAjUka+ohY=;
-	b=L3lSGeZYf/HpwxE6Ftu2+GtsHIr/lQ6keu1ELgWzs9b/M3PTMTyed0eSIWmej2VWoMOAix
-	KTMVDO9OzcSwSBRheSv5/ZlPkyGEpbuLXPdrTyZ8Z3omZdDly4jRXxK8+FC4X7NUg0h1NT
-	RNuqrqxG/nkKz39MF/E1vpr0FwGh1L8=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-437-8SK6btC0Ppa1MhaYKKztPw-1; Fri, 24 Oct 2025 04:37:08 -0400
-X-MC-Unique: 8SK6btC0Ppa1MhaYKKztPw-1
-X-Mimecast-MFC-AGG-ID: 8SK6btC0Ppa1MhaYKKztPw_1761295027
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-47108163eeaso9189745e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:37:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761295027; x=1761899827;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5IT49IQx4naO1r1BdT6bWbCUaLMDI3v7xXAjUka+ohY=;
-        b=YynKOgWGgGoueJCBzC/MJuKRZd8PvP8AncKvYUVxqMumkDNojqHpFaSUkPZcxYDJz5
-         icVFBOFfdeaFEBdv5wcRu453KrXdpp2ks2SvQmnCoeYB+j6/crhsRg4E7ZWJGK7wcr7C
-         Fyu7LmyglW86COjxoAXsv2TGTFhfXOxHQwVlGsh6adM0E/KPUVYbdqSKwUMze/aVf7PM
-         +0ZZ0MlhPzZ0UJEnUJsKp50mP18rmFW13LqIstRPS6Qd572E5+ng9jLWQGjnaQ3NbFoA
-         OM5hjgHtQC2ZeWVSzckFrZsS1W1DZpSFv9SX2xDySFMLtHEXABe3e/+isQH4c8xm8ANl
-         rEPA==
-X-Gm-Message-State: AOJu0YzzfFH3e3IGd0pd8h7fQwuWQyLwjYvBpYDzpuW+Ggo/WwJEXCTl
-	9ZK+M+loHw3rL+TzkNLy2WCgXZpJjQK8usqymTm/wj4+gtxdvexRV9nSjpUJf0xM+Ef7g1odnvY
-	pFA1fAiHEXyc7AR+QEyrgAFQn2wQ8NPxjzpBupCnAMb0cfCV5+MQKLKmUZOiDH6psIhfEjiO6A1
-	W8DxSgFIjdgF6TkqWoSmflOsj39Xing5Uc8Z7QiFEyLu2YX4Qnt0pG
-X-Gm-Gg: ASbGncurzwOptiN/+YviXEt3XXSNBa/SV5LhECW+K0ky6YjiUzLejDhCTqIse0hh/Xd
-	QWHCkrUB1TUB3RuRQbRWwtCs36wVX7WFFqsE/NPi2qB9LhCdTaVaRmmWlRV8Oq9QR4WQhtxKrCx
-	rxBQoJOmNfxoqjumuUO9DuUj2xpS5ro8Zr8CY5nAnN7W+8bu6j1HiVJXSYQm/mavw9L1P8UZelz
-	nse5O5aPcbgJWflFuMOW9hrTm2fy6lUZjR399WPTF15S01mw+zgUd/VDj769UolHYbe4D8jybLN
-	qnklsfsNkOsgJVR7mtGt1Ju7Eha08CiCUk22qkIyM2lr5OUb+L8euVlT6r11IoM+3hG8vgYUKeZ
-	g413Ub5Tv
-X-Received: by 2002:a05:600c:154b:b0:46f:b42e:edcd with SMTP id 5b1f17b1804b1-47117925d59mr167080065e9.38.1761295026870;
-        Fri, 24 Oct 2025 01:37:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHABp1V97kl04EvJJ7E4Ix+e6A0Tpy/3SLGTAbnd7bu3MUfhtp6cG5IYxmZlmc9oJMTlIO6zw==
-X-Received: by 2002:a05:600c:154b:b0:46f:b42e:edcd with SMTP id 5b1f17b1804b1-47117925d59mr167079575e9.38.1761295026379;
-        Fri, 24 Oct 2025 01:37:06 -0700 (PDT)
-Received: from holism.lzampier.com ([148.252.9.235])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897e77dasm8111636f8f.2.2025.10.24.01.37.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 01:37:05 -0700 (PDT)
-From: Lucas Zampieri <lzampier@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Charles Mirabile <cmirabil@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Vivian Wang <dramforever@live.com>,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Zhang Xincheng <zhangxincheng@ultrarisc.com>,
-	Lucas Zampieri <lzampier@redhat.com>
-Subject: [PATCH v6 4/4] irqchip/plic: add support for UltraRISC DP1000 PLIC
-Date: Fri, 24 Oct 2025 09:36:43 +0100
-Message-ID: <20251024083647.475239-5-lzampier@redhat.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251024083647.475239-1-lzampier@redhat.com>
-References: <20251024083647.475239-1-lzampier@redhat.com>
+	s=arc-20240116; t=1761295030; c=relaxed/simple;
+	bh=JtArdcsAGcyEA/bMgXb5uTz2YbzLj81+yDW1/qVTVzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BJwnXMklFWxRv7EgXwGlFBOiLo4fdIfnvFWsvz5E3/HCoET8NqNA0iooP70fIXYHw8RUn2keTQAbuPp/snCydOtpeOqNNLCzztfqF8wZgLBdsFLtKu+B4RFnqFocWLEsdRQr9LTYyBrmQmmDq3xXuaf67jQ71dMRdmd4fih1+2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mb772Lkp; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761295029; x=1792831029;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=JtArdcsAGcyEA/bMgXb5uTz2YbzLj81+yDW1/qVTVzc=;
+  b=mb772LkpFggH+atQsOTbVx6mK62R45P1Yphl1IzzqQ/zUS9kYEsbCzWX
+   2BWKo4HR4zQlCtrAX7LVKvJFRQrbm+pRSeUwoNkzPtdbe1pKHearseOVs
+   P3Lo2lJWKJDS5U2EStTaJhwbDS6A1sU/1zrxOsrQ3DCGjNGOLZUHcvZJY
+   pufrUL63ucjVMatEe47rC3Lkf/C6ckI/CvnM9ld221cQ9niXBmSeQ5mmA
+   MjMRBjYhqKWKblPn/GzP0+3J5upTut5X0yxasDZGCzYVN2nw+cUIj/bns
+   fpAD2zsvNf87lhBN6o1nM7/OjL/BwKcIC3o+6K5dJzw6Y4CYs7bcv+bCb
+   w==;
+X-CSE-ConnectionGUID: nKQ0bN8PSu61ycb0YhHbVw==
+X-CSE-MsgGUID: gX91Dji9Rt+ix5PxGMEKQw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62504398"
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="62504398"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 01:37:08 -0700
+X-CSE-ConnectionGUID: F0C+QL8QTFCiKBQ47eivwA==
+X-CSE-MsgGUID: vB8owlCxR7CzMMWA9mVYhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="185152775"
+Received: from opintica-mobl1 (HELO ashevche-desk.local) ([10.245.245.60])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 01:37:04 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vCDID-000000026T5-3koM;
+	Fri, 24 Oct 2025 11:37:01 +0300
+Date: Fri, 24 Oct 2025 11:37:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Akhilesh Patil <akhilesh@ee.iitb.ac.in>, jic23@kernel.org,
+	dlechner@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, andy@kernel.org,
+	marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
+	salah.triki@gmail.com, skhan@linuxfoundation.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, akhileshpatilvnit@gmail.com
+Subject: Re: [PATCH 2/2] iio: pressure: adp810: Add driver for adp810 sensor
+Message-ID: <aPs6raLIcM3QbQXJ@smile.fi.intel.com>
+References: <cover.1760184859.git.akhilesh@ee.iitb.ac.in>
+ <8c202e7ccd332b26217d529a7a73b7a3ef0726ea.1760184859.git.akhilesh@ee.iitb.ac.in>
+ <CAHp75VdGJfMALGOFvkOW=JZ0yHE2QbRSzNs2Xd42-Weec1GmQw@mail.gmail.com>
+ <95c1ba99-510b-4efb-9b6d-4c1103fc43a5@kernel.org>
+ <aPp5OYcPxNNIOgB6@smile.fi.intel.com>
+ <c45309cf-bd2c-41fe-b893-7e0a91de84a8@kernel.org>
+ <aPs6HAJabFMRzX9Y@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aPs6HAJabFMRzX9Y@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Charles Mirabile <cmirabil@redhat.com>
+On Fri, Oct 24, 2025 at 11:34:37AM +0300, Andy Shevchenko wrote:
+> On Fri, Oct 24, 2025 at 08:18:21AM +0200, Krzysztof Kozlowski wrote:
+> > On 23/10/2025 20:51, Andy Shevchenko wrote:
+> > > On Sun, Oct 12, 2025 at 05:12:26AM +0200, Krzysztof Kozlowski wrote:
+> > >> On 11/10/2025 16:10, Andy Shevchenko wrote:
+> > >>> On Sat, Oct 11, 2025 at 3:25 PM Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
 
-Add a new compatible for the plic found in UltraRISC DP1000 with a quirk to
-work around a known hardware bug with IRQ claiming in the UR-CP100 cores.
+...
 
-When claiming an interrupt on UR-CP100 cores, all other interrupts must be
-disabled before the claim register is accessed to prevent incorrect
-handling of the interrupt. This is a hardware bug in the CP100 core
-implementation, not specific to the DP1000 SoC.
+> > >>>> +F:     Documentation/devicetree/bindings/iio/pressure/aosong,adp810.yaml
+> > >>>> +F:     drivers/iio/pressure/adp810.c
+> > >>>
+> > >>> Some tools will report an orphaned yaml file if you apply patch 1
+> > >>> without patch 2.
+> > >>
+> > >> You mean checkpatch? That warning is not really relevant. Adding
+> > >> maintainers entry here for both files is perfectly fine and correct.
+> > > 
+> > > It's relevant as long as I see (false positive) warnings from it. Can somebody
+> > 
+> > No, it is not relevant. Just because tool is inefficient does not allow
+> > you to point such nitpicks. You as reviewer are supposed to find
+> > difference which checkpatch warnings are important and which are not and
+> > DO NOT bother contributors with useless points that there is some
+> > orphaned file according to checkpatch.
+> > 
+> > > shut the checkpatch up about missing DT files in the MAINTAINERS?
+> > 
+> > That would be great but, if no one does it your comments on "orphaned
+> > file" are counter productive.
+> 
+> Something like this?
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 6729f18e5654..818b49d314ce 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -3441,11 +3441,17 @@ sub process {
+>  		     ($line =~ /\{\s*([\w\/\.\-]*)\s*\=\>\s*([\w\/\.\-]*)\s*\}/ &&
+>  		      (defined($1) || defined($2))))) {
+>  			$is_patch = 1;
+> -			$reported_maintainer_file = 1;
+> -			WARN("FILE_PATH_CHANGES",
+> -			     "added, moved or deleted file(s), does MAINTAINERS need updating?\n" . $herecurr);
+> +			# DT bindings are incorporate maintainer information, no need to report
+> +			if ($realfile !~ m@^Documentation/devicetree/bindings/@)) {
+> +				$reported_maintainer_file = 1;
+> +				WARN("FILE_PATH_CHANGES",
+> +				     "added, moved or deleted file(s), does MAINTAINERS need updating?\n" . $herecurr);
+> +			}
+>  		}
 
-When the PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM flag is present, a
-specialized handler (plic_handle_irq_cp100) saves the enable state of all
-interrupts, disables all interrupts except for the first pending one before
-reading the claim register, and then restores the interrupts before further
-processing of the claimed interrupt continues.
+> +		    ($realfile =~ m@^Documentation/devicetree/bindings/.*\.txt$@)) {
+> +			if ($realfile =~ m@^include/asm/@) {
 
-This implementation leverages the enable_save optimization from the
-previous patch, which maintains the current interrupt enable state in
-memory, avoiding additional register reads during the workaround.
+These two lines are leftovers that needs to be removed, of course.
 
-The driver matches on "ultrarisc,cp100-plic" to apply the quirk to all
-SoCs using UR-CP100 cores, regardless of the specific SoC implementation.
-This has no impact on other platforms.
+Akhilesh, can you give a try of this change and see if the original DT schema
+binding patch is not reported anymore?
 
-Co-developed-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
-Signed-off-by: Zhang Xincheng <zhangxincheng@ultrarisc.com>
-Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
-Acked-by: Samuel Holland <samuel.holland@sifive.com>
-Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
----
- drivers/irqchip/irq-sifive-plic.c | 116 +++++++++++++++++++++++++++++-
- 1 file changed, 115 insertions(+), 1 deletion(-)
+>  # Check for adding new DT bindings not in schema format
+>  		if (!$in_commit_log &&
+>  		    ($line =~ /^new file mode\s*\d+\s*$/) &&
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index d518a8b468742..786be200248f9 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -49,6 +49,8 @@
- #define CONTEXT_ENABLE_BASE		0x2000
- #define     CONTEXT_ENABLE_SIZE		0x80
-
-+#define PENDING_BASE                    0x1000
-+
- /*
-  * Each hart context has a set of control registers associated with it.  Right
-  * now there's only two: a source priority threshold over which the hart will
-@@ -63,6 +65,7 @@
- #define	PLIC_ENABLE_THRESHOLD		0
-
- #define PLIC_QUIRK_EDGE_INTERRUPT	0
-+#define PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM	1
-
- struct plic_priv {
- 	struct fwnode_handle *fwnode;
-@@ -388,6 +391,110 @@ static void plic_handle_irq(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
-+static u32 cp100_isolate_pending_irq(int nr_irq_groups, u32 ie[],
-+				      u32 __iomem *pending,
-+				      u32 __iomem *enable)
-+{
-+	u32 pending_irqs = 0;
-+	int i, j;
-+
-+	/* Look for first pending interrupt */
-+	for (i = 0; i < nr_irq_groups; i++) {
-+		/* Any pending interrupts would be annihilated, so skip checking them */
-+		if (!ie[i])
-+			continue;
-+
-+		pending_irqs = ie[i] & readl_relaxed(pending + i);
-+
-+		if (pending_irqs)
-+			break;
-+	}
-+
-+	if (!pending_irqs)
-+		return 0;
-+
-+	/* Isolate lowest set bit*/
-+	pending_irqs &= -pending_irqs;
-+
-+	/* Disable all interrupts but the first pending one */
-+	for (j = 0; j < nr_irq_groups; j++) {
-+		u32 new_mask = j == i ? pending_irqs : 0;
-+
-+		/* If the new mask does not differ, skip writing it */
-+		if (new_mask == ie[j])
-+			continue;
-+
-+		writel_relaxed(new_mask, enable + j);
-+	}
-+
-+	return pending_irqs;
-+}
-+
-+static irq_hw_number_t cp100_get_hwirq(struct plic_handler *handler,
-+					void __iomem *claim)
-+{
-+	int nr_irq_groups = DIV_ROUND_UP(handler->priv->nr_irqs, 32);
-+	u32 __iomem *pending = handler->priv->regs + PENDING_BASE;
-+	u32 __iomem *enable = handler->enable_base;
-+	irq_hw_number_t hwirq = 0;
-+	u32 iso_mask;
-+	int i;
-+
-+	guard(raw_spinlock)(&handler->enable_lock);
-+
-+	/* Existing enable state is already cached in enable_save */
-+	iso_mask = cp100_isolate_pending_irq(nr_irq_groups, handler->enable_save, pending, enable);
-+
-+	if (!iso_mask)
-+		return 0;
-+
-+	/*
-+	 * Interrupts delievered to hardware still become pending, but only
-+	 * interrupts that are both pending and enabled can be claimed.
-+	 * Clearing enable bit for all interrupts but the first pending one
-+	 * avoids hardware bug that occurs during read from claim register
-+	 * with more than one eligible interrupt.
-+	 */
-+	hwirq = readl(claim);
-+
-+	/* Restore previous state */
-+	for (i = 0; i < nr_irq_groups; i++) {
-+		u32 stored = handler->enable_save[i];
-+		u32 written = i == hwirq / 32 ? iso_mask : 0;
-+
-+		/* If we did not need to change the mask, no need to change it back */
-+		if (stored == written)
-+			continue;
-+
-+		writel_relaxed(stored, enable + i);
-+	}
-+
-+	return hwirq;
-+}
-+
-+static void plic_handle_irq_cp100(struct irq_desc *desc)
-+{
-+	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	void __iomem *claim = handler->hart_base + CONTEXT_CLAIM;
-+	irq_hw_number_t hwirq;
-+
-+	WARN_ON_ONCE(!handler->present);
-+
-+	chained_irq_enter(chip, desc);
-+
-+	while ((hwirq = cp100_get_hwirq(handler, claim))) {
-+		int err = generic_handle_domain_irq(handler->priv->irqdomain, hwirq);
-+
-+		if (unlikely(err)) {
-+			pr_warn_ratelimited("%pfwP: can't find mapping for hwirq %lu\n",
-+					    handler->priv->fwnode, hwirq);
-+		}
-+	}
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
- static void plic_set_threshold(struct plic_handler *handler, u32 threshold)
- {
- 	/* priority must be > threshold to trigger an interrupt */
-@@ -424,6 +531,8 @@ static const struct of_device_id plic_match[] = {
- 	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
- 	{ .compatible = "thead,c900-plic",
- 	  .data = (const void *)BIT(PLIC_QUIRK_EDGE_INTERRUPT) },
-+	{ .compatible = "ultrarisc,cp100-plic",
-+	  .data = (const void *)BIT(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM) },
- 	{}
- };
- 
-@@ -658,12 +767,17 @@ static int plic_probe(struct fwnode_handle *fwnode)
- 		}
-
- 		if (global_setup) {
-+			void (*handler_fn)(struct irq_desc *) = plic_handle_irq;
-+
-+			if (test_bit(PLIC_QUIRK_CP100_CLAIM_REGISTER_ERRATUM, &handler->priv->plic_quirks))
-+				handler_fn = plic_handle_irq_cp100;
-+
- 			/* Find parent domain and register chained handler */
- 			domain = irq_find_matching_fwnode(riscv_get_intc_hwnode(), DOMAIN_BUS_ANY);
- 			if (domain)
- 				plic_parent_irq = irq_create_mapping(domain, RV_IRQ_EXT);
- 			if (plic_parent_irq)
--				irq_set_chained_handler(plic_parent_irq, plic_handle_irq);
-+				irq_set_chained_handler(plic_parent_irq, handler_fn);
-
- 			cpuhp_setup_state(CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
- 					  "irqchip/sifive/plic:starting",
 -- 
-2.51.0
+With Best Regards,
+Andy Shevchenko
+
 
 
