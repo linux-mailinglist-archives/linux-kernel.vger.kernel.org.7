@@ -1,136 +1,153 @@
-Return-Path: <linux-kernel+bounces-868261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1885AC04BA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:32:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F05ADC04BB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5EFF3A2FB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:32:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AE9E4FAF0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625212E2DDC;
-	Fri, 24 Oct 2025 07:32:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42582E2EF8;
+	Fri, 24 Oct 2025 07:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eY4dbEO7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D612E284A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBE12E2DDE;
+	Fri, 24 Oct 2025 07:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761291125; cv=none; b=SsKu54dNWxv20zZGaboFV91UYW2w3v9vVRyuCD+o9Hs5cookq4rNNNJ4+IIENyvowLesyjvqFAiJcxO9aOWdX0LRvRNRTB1RmXtiBTfJa8swCrGqvnHgE5uO1MyprLTMQujCx7tTAkvJl1mBZ38WFrIsqtZj0eRO2MHcFvgqTWc=
+	t=1761291148; cv=none; b=TwF0rCJ/cSo5ixo+7BQOizVB8tvKKyAN1EZ+HELZtGVVNKUBXH987v3mnTNiGV9CjMGMA07P00QVfOaYxG4SuhvtrziIev1wM7ZTu4gSlo6fGYQ2jJls9jszi8SanQLRDkGnYG3nGlB7txuczo3gRS6mJNRo6+GDY5P1Mg8znQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761291125; c=relaxed/simple;
-	bh=CfDkgAurg4mQtlzTOlpZKnE8KYq3O46AsHvh0Jx1pv8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TIs9Jj4UqCC0sxveGNAyHfHcJqVjK/pwlKDPumfRQ4jqW8YMdrsjleV59kQix7y3l+GgEYBJ1UWsdrwl1dSa7mwI4sqv7OtIhEdRIND8LGnWF9BXMEhFlVht9xA1hfLGri4gdAGYy6dp6XRe5in3kTnV2Y8GeRE+QelGsjXlJBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430ca53080bso18356695ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:32:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761291122; x=1761895922;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s9Uo9uwyKWgolTsOO44obO3+I2BEDzAvVobdYdbj2DY=;
-        b=pqr+niOIJ9wYUorms7SSCyp95y+GRYFai66mb5T/JMWYUiY2SZFiQzoh1RhWSLiSgj
-         UwKn9//jlDHco0RA48rTWCIkTmmQsK9WcUQv9HC9cd7nXx1T+8BiucDQBzHocrh3qaQR
-         X6LKN+FJwE9FnpAX8q01o3oFfHNZjNBGJBimfmN06KDyF/LCHRNLM5z8thltqRdpl9rL
-         z060qMFIaDPAe5CtRYCW4628a1D209vGGw2jmP7uFXBSRpHCMNe+b98l3VQSsgLQEozv
-         n+BYXTOTIshrY1eNYZfaEBtQ16mL2JagDnNpLi2fl5U2qz8FTHSHuO5EY/tr7BZ4yvpO
-         PyRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCdAYi+iy1lV6IefDFcb1WDmtsLGmh2HxYQAbYC9AA54ArFzFGIHGR1G3r8ewXcm+8Uo3dSTzcpMR/vcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPV3NkoM6hK6Pd0Nq6ZYm+LkOh+fcCFht57e346c72HG0T9E7r
-	uX4Bozo+3orjv0Q0Nf8Ch8o4/UycIz3qB1MUAKhi2w+TN9Q/i6nb4WJ7TOWK8R3sjaVgXky8WiQ
-	P0Lt5R/BGmRa/NqjKtIKhyZw87NxGMobjQqLMCwLomdb/AvxWoVF+5AjyEiA=
-X-Google-Smtp-Source: AGHT+IHPbKPQjh/YUdg3y+2vUz4Vk6qZOJC5spvmeV8PgK9xspEZ0QdRZTdWmV+DrJ2D/8MezQF8eD83qCw/g3SBj0zB4SlHzTr7
+	s=arc-20240116; t=1761291148; c=relaxed/simple;
+	bh=eaxooXoJIwmcd0CEY30Yd6if/sFPAp16VRbJcMq8Keg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pmhkkh27ift2dbi5J98WTO5PoYFrpDyWsBCcKVSfXWupx12doMsIPIukpOYSYt9VjMTtHgfukxsLV1g+VJor/XIWM7RgPvaqxJO1I4oCQtHoeTUh+MO4mnq+2hMzUAFVX5ASk+NZ6ViZgmiCWc7EfjExVT5V3gqTKvvtTEx3pFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eY4dbEO7; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761291146; x=1792827146;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=eaxooXoJIwmcd0CEY30Yd6if/sFPAp16VRbJcMq8Keg=;
+  b=eY4dbEO74W450/Ez2dA4g9bEDUe+w+AJZLABZTlG5tIWYxLF6AmvXsab
+   SI/JDMUadw08V+ZoBKipLbJs9hbnGA40WMjOitfScxKshJALYG67td73M
+   iLY7fqWCs3VCki/CGWBbvlX7Pnf1kRnpe+dmAHBoSl1OpGnzGgjg881D0
+   Dleg78ba0xJTkv2zcMFnayly6+WTsa8iUgLobjm+IXLTzD5Re0RQ8fr1D
+   IhlYPj0xQmDoyXHbHszsUUS+6ZnXaCFI/eI7HcrJIPSp6L6Nslgpmrw6p
+   RyiK64yz+OxDbHBJFw+iys5eNYkc7mhESzrCG8lB8rPeNo2sb/jx/fD60
+   g==;
+X-CSE-ConnectionGUID: sBWESiJxRcyP4VYZMJHFnw==
+X-CSE-MsgGUID: 3N+xhSP7QY2j009NtO+H7Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63394483"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63394483"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 00:32:25 -0700
+X-CSE-ConnectionGUID: yNWj9OsXSROF0TUUq8ct3g==
+X-CSE-MsgGUID: zkApki+9SzmjUPgtZniraQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="189491561"
+Received: from carterle-desk.ger.corp.intel.com (HELO [10.245.246.211]) ([10.245.246.211])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 00:32:18 -0700
+Message-ID: <3907f4ea-31c2-42fb-b4ff-a6952874a9bb@linux.intel.com>
+Date: Fri, 24 Oct 2025 10:32:25 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1605:b0:430:a7d5:235f with SMTP id
- e9e14a558f8ab-430c52b5a72mr382891285ab.15.1761291122497; Fri, 24 Oct 2025
- 00:32:02 -0700 (PDT)
-Date: Fri, 24 Oct 2025 00:32:02 -0700
-In-Reply-To: <20251024071152.RMTIq%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb2b72.050a0220.346f24.00ac.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in __ocfs2_move_extent
-From: syzbot <syzbot+727d161855d11d81e411@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-UBSAN: signed-integer-overflow in ip_idents_reserve
-
-================================================================================
-UBSAN: signed-integer-overflow in ./arch/x86/include/asm/atomic.h:165:11
--481196967 + -1672998446 cannot be represented in type 'int'
-CPU: 0 PID: 3019 Comm: kworker/u2:4 Not tainted syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: wg-kex-wg0 wg_packet_handshake_send_worker
-Call Trace:
- dump_stack+0xfd/0x16e lib/dump_stack.c:118
- ubsan_epilogue+0xa/0x30 lib/ubsan.c:148
- handle_overflow+0x192/0x1b0 lib/ubsan.c:180
- arch_atomic_add_return arch/x86/include/asm/atomic.h:165 [inline]
- atomic_add_return include/asm-generic/atomic-instrumented.h:73 [inline]
- ip_idents_reserve+0x14a/0x170 net/ipv4/route.c:521
- __ip_select_ident+0xe4/0x1c0 net/ipv4/route.c:538
- iptunnel_xmit+0x468/0x850 net/ipv4/ip_tunnel_core.c:80
- udp_tunnel_xmit_skb+0x1ba/0x290 net/ipv4/udp_tunnel_core.c:190
- send4+0x5d4/0xaf0 drivers/net/wireguard/socket.c:85
- wg_socket_send_skb_to_peer+0xcd/0x1c0 drivers/net/wireguard/socket.c:175
- wg_packet_send_handshake_initiation drivers/net/wireguard/send.c:40 [inline]
- wg_packet_handshake_send_worker+0x16b/0x280 drivers/net/wireguard/send.c:51
- process_one_work+0x85e/0xff0 kernel/workqueue.c:2282
- worker_thread+0xa9b/0x1430 kernel/workqueue.c:2428
- kthread+0x386/0x410 kernel/kthread.c:328
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
-================================================================================
-Kernel panic - not syncing: UBSAN: panic_on_warn set ...
-CPU: 0 PID: 3019 Comm: kworker/u2:4 Not tainted syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: wg-kex-wg0 wg_packet_handshake_send_worker
-Call Trace:
- dump_stack+0xfd/0x16e lib/dump_stack.c:118
- panic+0x2f0/0x9c0 kernel/panic.c:308
- check_panic_on_warn+0x95/0xe0 kernel/panic.c:228
- handle_overflow+0x192/0x1b0 lib/ubsan.c:180
- arch_atomic_add_return arch/x86/include/asm/atomic.h:165 [inline]
- atomic_add_return include/asm-generic/atomic-instrumented.h:73 [inline]
- ip_idents_reserve+0x14a/0x170 net/ipv4/route.c:521
- __ip_select_ident+0xe4/0x1c0 net/ipv4/route.c:538
- iptunnel_xmit+0x468/0x850 net/ipv4/ip_tunnel_core.c:80
- udp_tunnel_xmit_skb+0x1ba/0x290 net/ipv4/udp_tunnel_core.c:190
- send4+0x5d4/0xaf0 drivers/net/wireguard/socket.c:85
- wg_socket_send_skb_to_peer+0xcd/0x1c0 drivers/net/wireguard/socket.c:175
- wg_packet_send_handshake_initiation drivers/net/wireguard/send.c:40 [inline]
- wg_packet_handshake_send_worker+0x16b/0x280 drivers/net/wireguard/send.c:51
- process_one_work+0x85e/0xff0 kernel/workqueue.c:2282
- worker_thread+0xa9b/0x1430 kernel/workqueue.c:2428
- kthread+0x386/0x410 kernel/kthread.c:328
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/10] gpio: improve support for shared GPIOs
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Andy Shevchenko <andy@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20251022-gpio-shared-v2-0-d34aa1fbdf06@linaro.org>
+ <db05003c-8ac5-49da-b0ce-e0b668f49caf@linux.intel.com>
+ <CAMRc=MdWjyTyJh5zfE5qncO8ABn7QSuV1CUZXa+cSMjWoXUrNA@mail.gmail.com>
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <CAMRc=MdWjyTyJh5zfE5qncO8ABn7QSuV1CUZXa+cSMjWoXUrNA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-Tested on:
 
-commit:         d3d0b4e2 Linux 5.10.245
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=17aeae7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=26c538ce4091baa9
-dashboard link: https://syzkaller.appspot.com/bug?extid=727d161855d11d81e411
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16369be2580000
+On 24/10/2025 10:20, Bartosz Golaszewski wrote:
+> On Fri, Oct 24, 2025 at 9:17 AM Péter Ujfalusi
+> <peter.ujfalusi@linux.intel.com> wrote:
+>>
+>>
+>>
+>> On 22/10/2025 16:10, Bartosz Golaszewski wrote:
+>>> Problem statement: GPIOs are implemented as a strictly exclusive
+>>> resource in the kernel but there are lots of platforms on which single
+>>> pin is shared by multiple devices which don't communicate so need some
+>>> way of properly sharing access to a GPIO. What we have now is the
+>>> GPIOD_FLAGS_BIT_NONEXCLUSIVE flag which was introduced as a hack and
+>>> doesn't do any locking or arbitration of access - it literally just hand
+>>> the same GPIO descriptor to all interested users.
+>>
+>> I had few stabs on this in the past, all got somehow derailed, one
+>> example was:
+>> https://lkml.org/lkml/2019/10/30/311
+>>
+> 
+> The main issue I see with this approach is adding an actual device
+> node for the shared GPIO which is now not accepted in DT bindings. We
+> only create nodes for actual HW components.
+
+Right, that policy came later, true.
+
+All the information is
+> already in the device-tree, we just need to scan it which is what I'm
+> trying to do here.
+
+I had a prototype later without the sofware-node which worked for the
+use case I had, but over the years I dropped it, it was a bit of hassle
+to roll it for nothing.
+
+One can argue that the shared-gpio node is describing the solder blob
+where the GPIO line is split and routed to two different component.
+With the approach one can handle cases where the level is inverted by a
+passive component for one of the device for example - unfortunately I
+have seen such a board marvel as well.
+
+The device's binding will tell _how_ it expects the GPIO's active level,
+which might or might not match with the real level of the GPIO line and
+if one of the device's branch have an inverter, that is going to be
+interesting to work out in conjunction with the other devices non
+inverted 'direct' line to the same GPIO.
+
+Never the less, it is great that someone is trying to get this supported!
+
+> 
+> Bartosz
+
+-- 
+Péter
 
 
