@@ -1,174 +1,148 @@
-Return-Path: <linux-kernel+bounces-868540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611EEC05746
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:58:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A77C05761
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 436CD3B1780
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:49:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D782403786
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A545930B51B;
-	Fri, 24 Oct 2025 09:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5DC30CD80;
+	Fri, 24 Oct 2025 09:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmfdGp0v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k9VkgDud"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E952F23D7D1
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AD630BB97;
+	Fri, 24 Oct 2025 09:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761299368; cv=none; b=nTeKWDH9rCVmkU9A/FxeoY7q1ta/R+c+d6mll/mrDaaGk8Z5JUn+Y9T4v5cc3ifp7uAdmZRKJRfu3Zr+/Uql3N0u6q/WtYfwpjPVnuI3Fd1TsN7cldSbJuqE9+J41X07cuOwnJAyvMZ5vRKNtBC6CTh3qLjDq8fCDnwWqWc+1PA=
+	t=1761299387; cv=none; b=PYkrDK36pziUs95bjC8gXAtkW1BDSDqqwYdABnbP/L9qlWMw9/24uj81ZRpSTS+8vpHrTmmn69N2xG+CJ9XhteRAfbHMiB54jfyrAobaIXpXHR5vMKYc75MdwOHDNtl8b2dwmNhRYWcbrgT1aqQ6M2yOYLrN8pkTjFfNUMih0Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761299368; c=relaxed/simple;
-	bh=+rEgbmUg/T/QmQbXAyRzjpFQS6FK3emL01RgLGpF4yk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QXVM6nmEbbvQG4WJFTBQxzREiJ9LW1ARCA+1lFEcZiQCMa3K7DhCrw1g5i67uzXj5B618kYzEk48GD2j8BFNTrmCJDEdAqmb4DZUlTLjinoST9QJuEx+gQ21c7Kxk2xZoOnN/WX9gb/rPauvBzAB/qu+L6xvwAANz4JkvKfxemI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmfdGp0v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CA15C4AF0B
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761299367;
-	bh=+rEgbmUg/T/QmQbXAyRzjpFQS6FK3emL01RgLGpF4yk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OmfdGp0vNDyyWrNqh8CtsTUNPmZLqV6R707YIIfKgGhPnZpWEKpextUGVrTueOP9o
-	 0dsQoAHP1u0qmDvoxSr6GYJxhvZY77E6bkpKcX5Aa0mN2a48N6E1fTvulvkjBJj6GD
-	 LpMmFl5r462BaXgcHmIa6/r0affuIuU0zfmdNsrWOFt+Z+82revkTYRbleGx5+cIGR
-	 yx1tkMgmBLQVb9BHky+yWmWhXRk6B1d2v+hbPDGqb9x+vYTMbBHDOBkl3vXAIyslXB
-	 E1QgcqkFkiFqAziJco7CxLJQ/MoL8jrCoI8creFMlo4yoBIkbXO3mOn/Re78+x6VlC
-	 445zPB50o3MCw==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-592fd97c03eso449868e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:49:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW3zIExRa4LI3L4JM5Q83pHbfOpkGp+oPqxowpuLO/U69gfTERpQeYvQeEE0AV7vXMk6YyLjPWu1qc8Ugw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiNjPpuaQk/Xst8G1hSADqEDzSL17c0AX95TXL+xJ8cQkpzUZ0
-	X2F3ZLRqY9FbTMo2idXdVUmlmZrjyhq5yTCJFNaaMdlxisWpsZ6SX9aarGcbE1qokkbwFxSKa23
-	sVYdu6VCfjM9/IamJU2WojWZv6G0LSYQ=
-X-Google-Smtp-Source: AGHT+IEM8ITtLMS8DxeBvT6/RmBya3PWaa0XUPnlbL99EeYraeRDcyolno2BS9TfqpcJNo0wZQGPxHyvlXA2cEsbcOw=
-X-Received: by 2002:a05:6512:318b:b0:57d:6fca:f208 with SMTP id
- 2adb3069b0e04-591d856642dmr9077716e87.45.1761299365868; Fri, 24 Oct 2025
- 02:49:25 -0700 (PDT)
+	s=arc-20240116; t=1761299387; c=relaxed/simple;
+	bh=QMYBK66FoFOnoF9+evPxFyW8O913BfjGPY1tujhpGE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pkzvxqKULNy84yTKgtZV3YLY+TWuQf0YoPqA3cy4nTT2xCNCdlln2GExlPmUfbmwpQWFGmI2BeZM+b10EnGeis/2OCgRpoDi4lTd9jd2A9l0+gI7ZNwGZ/QivgtQvBtnjUZ+wTXHJ1GL5byoWJSo6ZMGKyKyD+YSjO4SDhpeiMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k9VkgDud; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761299387; x=1792835387;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QMYBK66FoFOnoF9+evPxFyW8O913BfjGPY1tujhpGE0=;
+  b=k9VkgDudADtEZQZG2LxGLENOg1zmyhliPOuSMKBblxjzCzApa3qaJpyr
+   AtbW0vKH3XZHkXHwgogb/XQYHHxZgaT5hL5Bx9/UnRAf5ZRktB+/294NY
+   Bsy9fys0YaAsrh3s/CWpfv/uhBHVr4qmAMuQyMdTtG2Kq9M16rtgKRCLv
+   FHo0xxZNgeyyag/A4aPdBx99jh9iHMK/iBq7KrBo4M+DvE0n25hr1jsIN
+   8VSsLQJldMUHAHQqIVf9bsRQuxBOvRqJDEefvNgon4wfvfEgrjsG0HOfj
+   IzWJgro5ZaC9eEUlo0w8Ymj1xg/33wB6QlTTo7kloDKn6tvEV7swrmgC/
+   g==;
+X-CSE-ConnectionGUID: tgDQDm/pRIqDu7xNUzJU7w==
+X-CSE-MsgGUID: gJaP6KlOQzy6Y5ALeT5Zsw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67124004"
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="67124004"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 02:49:46 -0700
+X-CSE-ConnectionGUID: jkvGJtw6QCKVquoZaeU8UQ==
+X-CSE-MsgGUID: +BcNt2dTSbeyTIHzGgmyHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="184105994"
+Received: from opintica-mobl1 (HELO ashevche-desk.local) ([10.245.245.60])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 02:49:43 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vCEQW-000000028JV-1gDY;
+	Fri, 24 Oct 2025 12:49:40 +0300
+Date: Fri, 24 Oct 2025 12:49:40 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jack Xu <jack.xu@intel.com>,
+	Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>,
+	Qianfeng Rong <rongqianfeng@vivo.com>, qat-linux@intel.com,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: qat - use strscpy_pad to simplify buffer
+ initialization
+Message-ID: <aPtLtEJJ3jV12FNJ@smile.fi.intel.com>
+References: <20251022123622.349544-1-thorsten.blum@linux.dev>
+ <aPkfsuliKYy5UAbB@smile.fi.intel.com>
+ <6DB96B06-108C-465B-9A54-88B8008DDD60@linux.dev>
+ <aPp3cXRxvdJzBkw9@smile.fi.intel.com>
+ <aPs9w2su33uXfD09@gcabiddu-mobl.ger.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0f006338-e69b-4b3f-b91f-0cc683544011@kernel.org>
- <20251022114527.618908-1-adriana@arista.com> <20251022201953.GA206947-robh@kernel.org>
- <CAERbo5z6BzHqQxXdxPxmxE_eDR7GGGbt3A8kB0gQiWFBE-28Ug@mail.gmail.com>
- <CAMj1kXGYinTKiyYhNYWJvoJeUJScCGnyq=ozLgjKAm7_wzG8QA@mail.gmail.com>
- <CAERbo5waY-=6BLZ2SiJSFAXzvU57mJdM9q05vAZw8zR2yExQ5w@mail.gmail.com>
- <CAMj1kXHin5YacS98ttzHqFqy6HMukXKoLZtr-+bLwVRsWZUugQ@mail.gmail.com> <CAERbo5zgS8XoGcFB3wejqDpx14-SBr5oWn7pu3=PE0djRiKZqg@mail.gmail.com>
-In-Reply-To: <CAERbo5zgS8XoGcFB3wejqDpx14-SBr5oWn7pu3=PE0djRiKZqg@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 24 Oct 2025 11:49:13 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEnSKF4VcMdOvUUuM-pOEWB38qPhWvUm13rnkQiZXp6SA@mail.gmail.com>
-X-Gm-Features: AS18NWCrHHLzkvtAZPunKzdDM8HCcW0w6gfwr-1cHOznNZj5IAF1RRNbsGn2J3A
-Message-ID: <CAMj1kXEnSKF4VcMdOvUUuM-pOEWB38qPhWvUm13rnkQiZXp6SA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] DMI: Scan for DMI table from DTS info
-To: Adriana Nicolae <adriana@arista.com>
-Cc: Rob Herring <robh@kernel.org>, krzk@kernel.org, jdelvare@suse.com, 
-	frowand.list@gmail.com, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, vasilykh@arista.com, arm.ebbr-discuss@arm.com, 
-	boot-architecture@lists.linaro.org, linux-efi@vger.kernel.org, 
-	uefi-discuss@lists.uefi.org, linux-arm-kernel@lists.infradead.org, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPs9w2su33uXfD09@gcabiddu-mobl.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, 23 Oct 2025 at 16:48, Adriana Nicolae <adriana@arista.com> wrote:
->
-> On Thu, Oct 23, 2025 at 4:54=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> =
-wrote:
-> >
-> > (cc Ilias)
-> >
-> > On Thu, 23 Oct 2025 at 15:34, Adriana Nicolae <adriana@arista.com> wrot=
-e:
-> > >
-> > > On Thu, Oct 23, 2025 at 11:21=E2=80=AFAM Ard Biesheuvel <ardb@kernel.=
-org> wrote:
-> > > >
-> > > > On Thu, 23 Oct 2025 at 04:21, Adriana Nicolae <adriana@arista.com> =
-wrote:
-> > > > >
-> > > > > On Wed, Oct 22, 2025 at 11:19=E2=80=AFPM Rob Herring <robh@kernel=
-.org> wrote:
-> > > > > >
-> > > > > > On Wed, Oct 22, 2025 at 04:45:25AM -0700, adriana wrote:
-> > > > > > > Some bootloaders like U-boot, particularly for the ARM archit=
-ecture,
-> > > > > > > provide SMBIOS/DMI tables at a specific memory address. Howev=
-er, these
-> > > > > > > systems often do not boot using a full UEFI environment, whic=
-h means the
-> > > > > > > kernel's standard EFI DMI scanner cannot find these tables.
-> > > > > >
-> > > > > > I thought u-boot is a pretty complete UEFI implementation now. =
-If
-> > > > > > there's standard way for UEFI to provide this, then that's what=
- we
-> > > > > > should be using. I know supporting this has been discussed in c=
-ontext of
-> > > > > > EBBR spec, but no one involved in that has been CC'ed here.
-> > > > >
-> > > > > Regarding the use of UEFI, the non UEFI boot is used on Broadcom =
-iProc which
-> > > > > boots initially into a Hardware Security Module which validates U=
--boot and then
-> > > > > loads it. This specific path does not utilize U-Boot's UEFI
-> > > > > implementation or the
-> > > > > standard UEFI boot services to pass tables like SMBIOS.
-> > > > >
-> > > >
-> > > > What prevents this HSM validated copy of u-boot from loading the ke=
-rnel via EFI?
-> > > The vendor's U-Boot configuration for this specific secure boot path
-> > > (involving the
-> > > HSM) explicitly disables the CMD_BOOTEFI option due to security
-> > > mitigations, only
-> > > a subset of U-boot commands are whitelisted. We could patch the U-boo=
-t
-> > > to include
-> > > that but it is preferable to follow the vendor's recommandations and
-> > > just patch U-boot
-> > > to fill that memory location with SMBIOS address or directly with the
-> > > entry point.
-> >
-> > And what security mitigations are deemed needed for the EFI code? You
-> > are aware that avoiding EFI boot means that the booting kernel keeps
-> > all memory protections disabled for longer than it would otherwise. Is
-> > this allowlisting based on simply minimizing the code footprint?
-> >
-> From the information I have, it might be just minimizing the footprint
-> but the vendor's U-Boot configuration for this specific path
-> explicitly disables the CMD_BOOTEFI option. While the vendor cites
-> security mitigations for this configuration, the specific details
-> could be a set of mitigation removing different boot methods and some
-> memory access commands.
->
-> The core issue is that this non-EFI boot path is the vendor-validated
-> configuration. Enabling EFI would deviate from this setup, require
-> significant revalidation, and could impact vendor support. Modifying
-> U-Boot to populate the DT is a contained change without modifying the
-> U-boot vendor configuration.
->
+On Fri, Oct 24, 2025 at 09:50:11AM +0100, Giovanni Cabiddu wrote:
+> On Thu, Oct 23, 2025 at 09:44:01PM +0300, Andy Shevchenko wrote:
+> > On Thu, Oct 23, 2025 at 05:35:00PM +0200, Thorsten Blum wrote:
+> > > On 22. Oct 2025, at 20:17, Andy Shevchenko wrote:
+> > > > On Wed, Oct 22, 2025 at 02:36:19PM +0200, Thorsten Blum wrote:
 
-I'm not sure I follow why changing U-Boot's code would not require
-revalidation if simply changing its build configuration without
-modifying the source code would require that.
+...
 
-> Beyond our specific vendor constraints, this DT method might be used
-> by any other non-UEFI arm system needing to expose SMBIOS tables to
-> the kernel.
->
+> > > How about this?
+> > 
+> > LGTM, and that's what I had in mind, but please double check the behaviour of
+> > kstrtox() on an empty strings.
+> 
+> LGTM as well.
+> 
+> I checked the behaviour of kstrtoul() when given an empty string. It
+> returns -EINVAL (-22). The result variable (the third parameter) is only
+> modified if the conversion is succesful.
 
-Fair point. So let's do this properly: get buy-in from the U-Boot
-folks and contribute your u-boot changes as well. And ideally, we'd
-get this into the DMTF spec but if you are not set up for that (I
-think you might need to be a member to be able to contribute), we can
-find some ARM folks who are.
+Thanks for confirming!
+
+> Anyway, the caller will not provide a NULL string to this function [1].
+> 
+> > > +	unsigned long long ae;
+> > > +	char *end;
+> > >  
+> > > +	ae = simple_strtoull(str, &end, 10);
+> > > +	if (ae > UINT_MAX || str == end || (end - str) > 20)
+> > 
+> > I would go with >= 20, the 64-bit value is approx. 1 * 10^19.
+> 
+> Just an insight into the type of strings being parsed here. If they are
+> well-formed, the format looks like:
+> 
+>     <AE_NUMBER>!<...>
+> 
+> Example:
+> 
+>     11!l0000!lm_thread_ctrl_struct_base
+> 
+> This function just extract the first number. Currently, that is 2 digits [2],
+> and I believe it is unlikely to exceed 3 in future gens.
+
+Yep, but it is better to make code more robust (and esp. in case somebody
+copies'n'pastes to somewhere else).
+
+> [1] https://elixir.bootlin.com/linux/v6.17.4/source/drivers/crypto/intel/qat/qat_common/qat_uclo.c#L237
+> [2] https://elixir.bootlin.com/linux/v6.17.4/source/drivers/crypto/intel/qat/qat_common/icp_qat_uclo.h#L11
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
