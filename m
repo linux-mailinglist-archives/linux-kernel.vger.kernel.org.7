@@ -1,417 +1,171 @@
-Return-Path: <linux-kernel+bounces-868006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A60CC04217
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DEEC041ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC043A75C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:34:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6F223A6EDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14958258CE8;
-	Fri, 24 Oct 2025 02:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A4E25487B;
+	Fri, 24 Oct 2025 02:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PV8TnfUG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J469gO5Y"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406F314B06C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AA51A3172
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761273260; cv=none; b=oiBgMAR8JbUN4jqCKgUecua9z5anNbUwnklimZjYgIGb9vnQM57vocgRCg2C/v6vCzKcLr+z4/etmtvznIck/RWZIbKuFMXSAu/d6jJb2wY2gRAaagv7QORU7v763+vrByKuePoNG84ht0YcZzG6R+07aX+XXTntItR9moCR19I=
+	t=1761273113; cv=none; b=prS+IphUmpi3VUfYaki95eFq+/hqmBaUAzSapW1PrSU8ba+fH2xh0n/XkMtiVpeXvVBguiFnBGLz6DH14pbSDc+fcZJt7XSCVhS7XAMl4eUvnlLYyCR6xjFOlYLQMiqNONJZKL0nf5wl2LimwZ/u5YAa1dsXuDzWgiMzgK+mXpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761273260; c=relaxed/simple;
-	bh=1RrVKYLExvh2qmlc0BJ6Or1i2dHqMzPUAJahlaS46Cw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C13NiVuRwpfG3ISsJsNnK3HFGYaGqUNSEAlfqhkpLRrRInoeggDA3lGaYI3ag6KjfTwGYUdrlrPhBUX+39zURAEYsTRh54KOW031JGJbmuy9JtyvVXMCOTPmvOczbgfTN85dGyQM7/eySVptqgz51XZb8C4B1FuJPDiFpWavxCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PV8TnfUG; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761273258; x=1792809258;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=1RrVKYLExvh2qmlc0BJ6Or1i2dHqMzPUAJahlaS46Cw=;
-  b=PV8TnfUGlQKWyQxO96mQGI2hDafqeYrnlRYfI3VdrVc3dnE8thOFcO/d
-   2g5MIioE386GJ8s99tqlgN9/FIFqEfcg+t+VNpFYhIT9Ac4wJyxq4REE/
-   Jm2hizvaY0NP6nTKMBzkPAQs1iKfY4nbgONhVpzGJdDiAciIZEDIrZy4L
-   SpYbO9OVp+r1GwP7a6S/zFkRQ+sbaRgUl0eq1xMHqZGBPvVGv5L+rpb39
-   KskzQFPZ4ES8BV9eM8l6koIFhr8uZp569l5tOdccwbIz/ZuC8jwHcuIlH
-   6aYJmihU38WbEN4WrNT7c8OlUszLu1n2ENptz1Fr8rlbq9ZrXZ2M2SSlq
-   A==;
-X-CSE-ConnectionGUID: A6xYNrmPT3y8cslVYY82zg==
-X-CSE-MsgGUID: N9FqGMd/TsOzYpZB1NMG0Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67289505"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="67289505"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 19:34:17 -0700
-X-CSE-ConnectionGUID: 6OykCOhxSjKwVXV6U+PnRQ==
-X-CSE-MsgGUID: NyuBCTLZRWSbMfCMxYkrGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
-   d="scan'208";a="207965386"
-Received: from linux-pnp-server-11.sh.intel.com ([10.239.176.178])
-  by fmviesa002.fm.intel.com with ESMTP; 23 Oct 2025 19:34:15 -0700
-From: Wangyang Guo <wangyang.guo@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Cc: Wangyang Guo <wangyang.guo@intel.com>,
-	Tianyou Li <tianyou.li@intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Dan Liang <dan.liang@intel.com>
-Subject: [PATCH] lib/group_cpus: make group CPU cluster aware
-Date: Fri, 24 Oct 2025 10:30:38 +0800
-Message-ID: <20251024023038.872616-1-wangyang.guo@intel.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1761273113; c=relaxed/simple;
+	bh=mB+Sz698UKnQG2Of9PMiBc4sskjxEz1TZXLMejF+Bgo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Bf6mJDT7XhzSmDQb/5P98koJi2tzTi23ASa5Bi+2omMbAaAN4ebuTFsvrsLQdAyYTsjD/FvXTqWdNnZliFyNXHJTvnKcWI0m0lgwkjN53L9TxdL9EPYuA+M5Y6rx9a8SnyBUGdUsYFjM9zMH+0rQA8THb6K5cZ2NQjcv4yR+6HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J469gO5Y; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b6d402422c2so358867566b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:31:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761273110; x=1761877910; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vucv2+AArBiVxHEjmAULkpSApHonysQt9coOVU0c3uU=;
+        b=J469gO5YNnYmxKk1EKKKRmejrgzAR64lq13epqZCGAG90VGLlRRC7iQZJ3e+HbFfzQ
+         Wohatz3qxgAZ3dombSS2caJgYCw2DMct7lvU/jCZc7iSzjkQNN6ge/xPYIPY2oZoLou8
+         JgiP0rxxmNeiVbXX4AiTb+DSSJ7Zc8D2UjhI2+umBtAM9l8JEosKYhnVcc8KMnFwsF+K
+         6uUmsp7xYkzpvC482SjW0YrY32F1ZJg2ta2Zh4iWoC/2H4gfZhyijTmu//Ze2+IwfC1T
+         0aYIzJqRaFAnalIjn1eFVkQlSYjvkaour9szMtpq++inncOfbKr7Jy3vIRWYcNPr8HPM
+         G/Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761273110; x=1761877910;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vucv2+AArBiVxHEjmAULkpSApHonysQt9coOVU0c3uU=;
+        b=u5dgOg/m7AlW5nfk537xGTGM9txv7fP8r1/lFtzdElMb+PenejdPZ0eRxEqxLkczxL
+         5otWeXKN1M8FvdMgrYvOocrq7XPFV3hxvmW3kOfahYSm7y7FUc9Ty4v3t12OWX1/P656
+         6LWHlAl9+vXPBaaWmVuuLWxRhvnOhKFI6QnitEjwgAiq2jHxu6sJUckXKWclAfo+p9PQ
+         kmfaVyPdI2JrEIN6VEGdkRdKXAcQqecdzQx+F8u66PRV5bieVsCXDxQSdqzkbWR49256
+         CSlvMRvft7HMdeEOQxzLh50c6glvQce7b42EE3DWqox3WtLW/0j8T0bta3fJAQBIrR4C
+         6YVw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7u/bzGJ4A6YBTtlIc8J/8oPYzGMhyvV6aELyuzFpLDZ1o4Jkg2P1qZApTMBB6YYz6ihIhk8ns0dDEp28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXU8vPY+jdEIUEX9Pa/twDHQdk9nt9HrrihqCo/kP+Ug5imjVw
+	OxOYe+CMDo3tba7VCDA7eQlZF0HW0XVihYbNKRcAiELOWU4ZREUR5mtv
+X-Gm-Gg: ASbGnctmbBSt6/oqk0jf36DrFAf2upFubf2mBLvw/rP6ZBYN+EDUvW0qLXv99p5IE+U
+	4bMu1QvcZT2uzLgmRyR4350douTe7gHSu+7kh+aFBokaElHWeoZpRlFuMgO1i+1xInwIDeITipP
+	Li4olDZ3pHHx8LTa8f/630aC5EY40wqLGBSotewj6VPjiqW4cP8ep9Ia+FWslbFfHF43ilRgJuV
+	bARoPp09GCJDknykOjNfbzjKIBNIkkIqeOIbIloj8upTrHEM9OuA/DNv8WBQtgkC26M4NoU1oFC
+	om8gCXHRy4V37+LtR0hzdLNgRduEGS3YoExHy1GV6GmlEQkQo7K8kjT8RMcNrfiAX3kE/UsliHc
+	/W1qV0/jFONKCvHYd0ejIQbWBydsnIzLZZTLOte175ov7mqtEdju5wFsu6xDSp2hFVAyo4twP2G
+	AaaBMcmdsfPvDa
+X-Google-Smtp-Source: AGHT+IFqr0OGMyRPm4LvrFPZEOmm/DXOx7zylQHcHqhS9CvytEP058sbN2a+w/3eikBWJAEa++c9yQ==
+X-Received: by 2002:a17:907:3f1f:b0:b6d:5003:8746 with SMTP id a640c23a62f3a-b6d50038937mr592991666b.21.1761273109902;
+        Thu, 23 Oct 2025 19:31:49 -0700 (PDT)
+Received: from eray-kasa.. ([2a02:4e0:2daa:1585:2b9a:69d4:d466:5f63])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d511f8634sm385725066b.29.2025.10.23.19.31.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 19:31:49 -0700 (PDT)
+From: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+To: mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com
+Cc: ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	david.hunter.linux@gmail.com,
+	skhan@linuxfoundation.org,
+	Ahmet Eray Karadag <eraykrdg1@gmail.com>,
+	syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com,
+	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Subject: [PATCH v2] ocfs2: Invalidate inode if i_mode is zero after block read
+Date: Fri, 24 Oct 2025 05:30:57 +0300
+Message-ID: <20251024023056.29275-2-eraykrdg1@gmail.com>
+In-Reply-To: <20251022222752.46758-2-eraykrdg1@gmail.com>
+References: <20251022222752.46758-2-eraykrdg1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-As CPU core counts increase, the number of NVMe IRQs may be smaller than
-the total number of CPUs. This forces multiple CPUs to share the same
-IRQ. If the IRQ affinity and the CPU’s cluster do not align, a
-performance penalty can be observed on some platforms.
+A panic occurs in ocfs2_unlink due to WARN_ON(inode->i_nlink == 0) when
+handling a corrupted inode with i_mode=0 and i_nlink=0 in memory.
 
-This patch improves IRQ affinity by grouping CPUs by cluster within each
-NUMA domain, ensuring better locality between CPUs and their assigned
-NVMe IRQs.
+This "zombie" inode is created because ocfs2_read_locked_inode proceeds
+even after ocfs2_validate_inode_block successfully validates a block
+that structurally looks okay (passes checksum, signature etc.) but
+contains semantically invalid data (specifically i_mode=0). The current
+validation function doesn't check for i_mode being zero.
 
-Reviewed-by: Tianyou Li <tianyou.li@intel.com>
-Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-Tested-by: Dan Liang <dan.liang@intel.com>
-Signed-off-by: Wangyang Guo <wangyang.guo@intel.com>
+This results in an in-memory inode with i_mode=0 being added to the VFS
+cache, which later triggers the panic during unlink.
+
+Prevent this by adding an explicit check for i_mode == 0 within
+ocfs2_validate_inode_block. If i_mode is zero, return -EFSCORRUPTED to signal
+corruption. This causes the caller (ocfs2_read_locked_inode) to invoke
+make_bad_inode(), correctly preventing the zombie inode from entering
+the cache.
+
 ---
- lib/group_cpus.c | 269 +++++++++++++++++++++++++++++++++++------------
- 1 file changed, 204 insertions(+), 65 deletions(-)
+[RFC]:
+The current fix handles i_mode=0 corruption detected during inode read
+by returning -EFSCORRUPTED from ocfs2_validate_inode_block, which leads to
+make_bad_inode() being called, preventing the corrupted inode from
+entering the cache. This approach avoids immediately forcing the entire
+filesystem read-only, assuming the corruption might be localized to
+this inode.
 
-diff --git a/lib/group_cpus.c b/lib/group_cpus.c
-index 6d08ac05f371..56ca6193736d 100644
---- a/lib/group_cpus.c
-+++ b/lib/group_cpus.c
-@@ -114,48 +114,15 @@ static int ncpus_cmp_func(const void *l, const void *r)
- 	return ln->ncpus - rn->ncpus;
- }
- 
--/*
-- * Allocate group number for each node, so that for each node:
-- *
-- * 1) the allocated number is >= 1
-- *
-- * 2) the allocated number is <= active CPU number of this node
-- *
-- * The actual allocated total groups may be less than @numgrps when
-- * active total CPU number is less than @numgrps.
-- *
-- * Active CPUs means the CPUs in '@cpu_mask AND @node_to_cpumask[]'
-- * for each node.
-- */
--static void alloc_nodes_groups(unsigned int numgrps,
--			       cpumask_var_t *node_to_cpumask,
--			       const struct cpumask *cpu_mask,
--			       const nodemask_t nodemsk,
--			       struct cpumask *nmsk,
--			       struct node_groups *node_groups)
-+static void alloc_groups_to_nodes(unsigned int numgrps,
-+				  unsigned int numcpus,
-+				  struct node_groups *node_groups,
-+				  unsigned int num_nodes)
- {
--	unsigned n, remaining_ncpus = 0;
--
--	for (n = 0; n < nr_node_ids; n++) {
--		node_groups[n].id = n;
--		node_groups[n].ncpus = UINT_MAX;
--	}
--
--	for_each_node_mask(n, nodemsk) {
--		unsigned ncpus;
--
--		cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
--		ncpus = cpumask_weight(nmsk);
-+	unsigned int n, remaining_ncpus = numcpus;
-+	unsigned int  ngroups, ncpus;
- 
--		if (!ncpus)
--			continue;
--		remaining_ncpus += ncpus;
--		node_groups[n].ncpus = ncpus;
--	}
--
--	numgrps = min_t(unsigned, remaining_ncpus, numgrps);
--
--	sort(node_groups, nr_node_ids, sizeof(node_groups[0]),
-+	sort(node_groups, num_nodes, sizeof(node_groups[0]),
- 	     ncpus_cmp_func, NULL);
- 
- 	/*
-@@ -226,9 +193,8 @@ static void alloc_nodes_groups(unsigned int numgrps,
- 	 * finally for each node X: grps(X) <= ncpu(X).
- 	 *
- 	 */
--	for (n = 0; n < nr_node_ids; n++) {
--		unsigned ngroups, ncpus;
- 
-+	for (n = 0; n < num_nodes; n++) {
- 		if (node_groups[n].ncpus == UINT_MAX)
- 			continue;
- 
-@@ -246,12 +212,199 @@ static void alloc_nodes_groups(unsigned int numgrps,
+Is this less aggressive error handling strategy appropriate for i_mode=0
+corruption? Or is this condition considered severe enough that we *should*
+explicitly call ocfs2_error() within the validation function to guarantee
+the filesystem is marked read-only immediately upon detection?
+Feedback and testing on the correct severity assessment and error
+handling for this type of corruption would be appreciated.
+---
+v2:
+ - Reviewed how ext4 handling same situation and we come up with this
+   solution
+---
+Reported-by: syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com
+Fixes: https://syzkaller.appspot.com/bug?extid=55c40ae8a0e5f3659f2b
+Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+---
+ fs/ocfs2/inode.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index 14bf440ea4df..6c936f62b169 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -1455,7 +1455,15 @@ int ocfs2_validate_inode_block(struct super_block *sb,
+ 		     (unsigned long long)bh->b_blocknr);
+ 		goto bail;
  	}
- }
- 
-+/*
-+ * Allocate group number for each node, so that for each node:
-+ *
-+ * 1) the allocated number is >= 1
-+ *
-+ * 2) the allocated number is <= active CPU number of this node
-+ *
-+ * The actual allocated total groups may be less than @numgrps when
-+ * active total CPU number is less than @numgrps.
-+ *
-+ * Active CPUs means the CPUs in '@cpu_mask AND @node_to_cpumask[]'
-+ * for each node.
-+ */
-+static void alloc_nodes_groups(unsigned int numgrps,
-+			       cpumask_var_t *node_to_cpumask,
-+			       const struct cpumask *cpu_mask,
-+			       const nodemask_t nodemsk,
-+			       struct cpumask *nmsk,
-+			       struct node_groups *node_groups)
-+{
-+	unsigned int n, numcpus = 0;
-+
-+	for (n = 0; n < nr_node_ids; n++) {
-+		node_groups[n].id = n;
-+		node_groups[n].ncpus = UINT_MAX;
-+	}
-+
-+	for_each_node_mask(n, nodemsk) {
-+		unsigned int ncpus;
-+
-+		cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
-+		ncpus = cpumask_weight(nmsk);
-+
-+		if (!ncpus)
-+			continue;
-+		numcpus += ncpus;
-+		node_groups[n].ncpus = ncpus;
-+	}
-+
-+	numgrps = min_t(unsigned int, numcpus, numgrps);
-+	alloc_groups_to_nodes(numgrps, numcpus, node_groups, nr_node_ids);
-+}
-+
-+static void assign_cpus_to_groups(unsigned int ncpus,
-+				  struct cpumask *nmsk,
-+				  struct node_groups *nv,
-+				  struct cpumask *masks,
-+				  unsigned int *curgrp,
-+				  unsigned int last_grp)
-+{
-+	unsigned int v, cpus_per_grp, extra_grps;
-+	/* Account for rounding errors */
-+	extra_grps = ncpus - nv->ngroups * (ncpus / nv->ngroups);
-+
-+	/* Spread allocated groups on CPUs of the current node */
-+	for (v = 0; v < nv->ngroups; v++, *curgrp += 1) {
-+		cpus_per_grp = ncpus / nv->ngroups;
-+
-+		/* Account for extra groups to compensate rounding errors */
-+		if (extra_grps) {
-+			cpus_per_grp++;
-+			--extra_grps;
+-
++	if (di->i_links_count == 0) {
++		if (le16_to_cpu(di->i_mode) == 0 ||
++			!(le32_to_cpu(di->i_flags) & OCFS2_ORPHANED_FL)) {
++			mlog(ML_ERROR, "Invalid dinode #%llu: i_mode is zero!\n",
++			           (unsigned long long)bh->b_blocknr);
++			rc = -EFSCORRUPTED;
++			goto bail;
 +		}
-+
-+		/*
-+		 * wrapping has to be considered given 'startgrp'
-+		 * may start anywhere
-+		 */
-+		if (*curgrp >= last_grp)
-+			*curgrp = 0;
-+		grp_spread_init_one(&masks[*curgrp], nmsk, cpus_per_grp);
 +	}
-+}
-+
-+static int alloc_cluster_groups(unsigned int ncpus,
-+				unsigned int ngroups,
-+				struct cpumask *node_cpumask,
-+				cpumask_var_t msk,
-+				const struct cpumask ***clusters_ptr,
-+				struct node_groups **cluster_groups_ptr)
-+{
-+	unsigned int ncluster = 0;
-+	unsigned int cpu, nc, n;
-+	const struct cpumask *cluster_mask;
-+	const struct cpumask **clusters;
-+	struct node_groups *cluster_groups;
-+
-+	cpumask_copy(msk, node_cpumask);
-+
-+	/* Probe how many clusters in this node. */
-+	while (1) {
-+		cpu = cpumask_first(msk);
-+		if (cpu >= nr_cpu_ids)
-+			break;
-+
-+		cluster_mask = topology_cluster_cpumask(cpu);
-+		/* Clean out CPUs on the same cluster. */
-+		cpumask_andnot(msk, msk, cluster_mask);
-+		ncluster++;
-+	}
-+
-+	/* If ngroups < ncluster, cross cluster is inevitable, skip. */
-+	if (ncluster == 0 || ncluster > ngroups)
-+		goto no_cluster;
-+
-+	/* Allocate memory based on cluster number. */
-+	clusters = kcalloc(ncluster, sizeof(struct cpumask *), GFP_KERNEL);
-+	if (!clusters)
-+		goto no_cluster;
-+	cluster_groups = kcalloc(ncluster, sizeof(struct node_groups), GFP_KERNEL);
-+	if (!cluster_groups)
-+		goto fail_cluster_groups;
-+
-+	/* Filling cluster info for later process. */
-+	cpumask_copy(msk, node_cpumask);
-+	for (n = 0; n < ncluster; n++) {
-+		cpu = cpumask_first(msk);
-+		cluster_mask = topology_cluster_cpumask(cpu);
-+		nc = cpumask_weight_and(cluster_mask, node_cpumask);
-+		clusters[n] = cluster_mask;
-+		cluster_groups[n].id = n;
-+		cluster_groups[n].ncpus = nc;
-+		cpumask_andnot(msk, msk, cluster_mask);
-+	}
-+
-+	alloc_groups_to_nodes(ngroups, ncpus, cluster_groups, ncluster);
-+
-+	*clusters_ptr = clusters;
-+	*cluster_groups_ptr = cluster_groups;
-+	return ncluster;
-+
-+ fail_cluster_groups:
-+	kfree(clusters);
-+ no_cluster:
-+	return 0;
-+}
-+
-+/*
-+ * Try group CPUs evenly for cluster locality within a NUMA node.
-+ *
-+ * Return: true if success, false otherwise.
-+ */
-+static bool __try_group_cluster_cpus(unsigned int ncpus,
-+				     unsigned int ngroups,
-+				     struct cpumask *node_cpumask,
-+				     struct cpumask *masks,
-+				     unsigned int *curgrp,
-+				     unsigned int last_grp)
-+{
-+	struct node_groups *cluster_groups;
-+	const struct cpumask **clusters;
-+	unsigned int ncluster;
-+	bool ret = false;
-+	cpumask_var_t nmsk;
-+	unsigned int i, nc;
-+
-+	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
-+		goto fail_nmsk_alloc;
-+
-+	ncluster = alloc_cluster_groups(ncpus, ngroups, node_cpumask, nmsk,
-+					&clusters, &cluster_groups);
-+
-+	if (ncluster == 0)
-+		goto fail_no_clusters;
-+
-+	for (i = 0; i < ncluster; i++) {
-+		struct node_groups *nv = &cluster_groups[i];
-+
-+		/* Get the cpus on this cluster. */
-+		cpumask_and(nmsk, node_cpumask, clusters[nv->id]);
-+		nc = cpumask_weight(nmsk);
-+		if (!nc)
-+			continue;
-+		WARN_ON_ONCE(nv->ngroups > nc);
-+
-+		assign_cpus_to_groups(nc, nmsk, nv, masks, curgrp, last_grp);
-+	}
-+
-+	ret = true;
-+	kfree(cluster_groups);
-+	kfree(clusters);
-+ fail_no_clusters:
-+	free_cpumask_var(nmsk);
-+ fail_nmsk_alloc:
-+	return ret;
-+}
-+
- static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
- 			       cpumask_var_t *node_to_cpumask,
- 			       const struct cpumask *cpu_mask,
- 			       struct cpumask *nmsk, struct cpumask *masks)
- {
--	unsigned int i, n, nodes, cpus_per_grp, extra_grps, done = 0;
-+	unsigned int i, n, nodes, done = 0;
- 	unsigned int last_grp = numgrps;
- 	unsigned int curgrp = startgrp;
- 	nodemask_t nodemsk = NODE_MASK_NONE;
-@@ -287,7 +440,7 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
- 	alloc_nodes_groups(numgrps, node_to_cpumask, cpu_mask,
- 			   nodemsk, nmsk, node_groups);
- 	for (i = 0; i < nr_node_ids; i++) {
--		unsigned int ncpus, v;
-+		unsigned int ncpus;
- 		struct node_groups *nv = &node_groups[i];
- 
- 		if (nv->ngroups == UINT_MAX)
-@@ -301,28 +454,14 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
- 
- 		WARN_ON_ONCE(nv->ngroups > ncpus);
- 
--		/* Account for rounding errors */
--		extra_grps = ncpus - nv->ngroups * (ncpus / nv->ngroups);
--
--		/* Spread allocated groups on CPUs of the current node */
--		for (v = 0; v < nv->ngroups; v++, curgrp++) {
--			cpus_per_grp = ncpus / nv->ngroups;
--
--			/* Account for extra groups to compensate rounding errors */
--			if (extra_grps) {
--				cpus_per_grp++;
--				--extra_grps;
--			}
--
--			/*
--			 * wrapping has to be considered given 'startgrp'
--			 * may start anywhere
--			 */
--			if (curgrp >= last_grp)
--				curgrp = 0;
--			grp_spread_init_one(&masks[curgrp], nmsk,
--						cpus_per_grp);
-+		if (__try_group_cluster_cpus(ncpus, nv->ngroups, nmsk,
-+					     masks, &curgrp, last_grp)) {
-+			done += nv->ngroups;
-+			continue;
- 		}
-+
-+		assign_cpus_to_groups(ncpus, nmsk, nv, masks, &curgrp,
-+				      last_grp);
- 		done += nv->ngroups;
- 	}
- 	kfree(node_groups);
+ 	/*
+ 	 * Errors after here are fatal.
+ 	 */
 -- 
-2.47.3
+2.43.0
 
 
