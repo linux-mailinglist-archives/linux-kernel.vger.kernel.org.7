@@ -1,316 +1,157 @@
-Return-Path: <linux-kernel+bounces-869246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8C7C07673
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:52:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB560C07676
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFD551C4393A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:53:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE4304E2E98
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D0A3385A0;
-	Fri, 24 Oct 2025 16:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4320D337B87;
+	Fri, 24 Oct 2025 16:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sotC2BHy"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012004.outbound.protection.outlook.com [52.101.43.4])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IiQWoUba"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADB4330D36;
-	Fri, 24 Oct 2025 16:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761324749; cv=fail; b=GR252i/TYm09VJh0HxR+MdJH//ZtXES+lDkUdBidMj33hDRaaKAeGq/Lebg+zskmnkejLqUqhgBCqPEl/AFQk7vi8+vlhn201phZfiPRG0Jj7t0kkqgIs6ak42wcYeOO/o05XKpUBcRb2h3aM7+zcLaQeNlwpWhR7pOOZD96Jnc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761324749; c=relaxed/simple;
-	bh=fUjiC8KBXXpkuvD2yvPiWRRqiTa22klJKc1XT2jjTPE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DkugQze5saB8iOKOd6g3uv9Dz+Qm0u/JFqw5dd8Rsk6J6OsgytYqUsMaQIr6tXjXrwArJQ5M/qfTsjhSTm9YJalMviqiYQix+/w0DxyolpwKCafaZnfga8jpaN8FLaxk9GcMQ0vvyac1SBK+7DMCmuZBx43ODlFaAsPYM8nqpto=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sotC2BHy; arc=fail smtp.client-ip=52.101.43.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QvDdOBJjvjgb2kNtMOm7OYMeBwpHKmumnT3e2cdDXVXV38T/eTO6cvMRCbL3Y3GPMmrI1toW2PDVKbTWmUNYEJAOK4bFRQ5uhcmKSA7xwYnsch9pnEQFX3oPq1rgwYMaMlr0LgUWFYx9mtttsVK4jw3gbDk73ufmfdHf/YVzs4xGg3dH9Bz2qilwuUdde4oAt2RQK1Ne6q0Arv/b8KG2LYiODrogrQt7OonQnqe50IPBJiExkssJte69UC1R4WsEWvsGS7z65l3MKdt5u3SB9yFy9CYDg+42Hnyu99A/mtDbpUPlaES5IyRA2m1SSIuUxibh+9Z+ax2Z3mptiEfTfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DLQ/kMrke0dfcMjUT/cIi5T0vTHoWuncqBhkRKVLyXA=;
- b=L9wSsyzWyJ3driX3XWVi5DAg72r7v0IwQmwUG7v601Y+4/n56SQZhDWslThSnxEVXkDqoWMB3f7lBN5ZdnRzE/TQZRdL0h0Zdnu8nLs3vU2Dri3BRqLr6FTcbdO9ddvOq2iFEFMKWsEPmAS+tzL5pF3nBjprJcluyp3USFFyRClh0CxmSMrYHAbmMu6YezrEaAs7De+5UjDGNfl+MAscbWfNB2guZkgT3cWxBJFjWQseihvQIbRm3P0p2LBfen0/1mp9+nJHL4VbH3Tke3AWTVNVkTI2n/bQbmLP73VDRQMDAFmeILjPlt82K10VAE0M+k3yITDF9c2pbawRb7bPSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DLQ/kMrke0dfcMjUT/cIi5T0vTHoWuncqBhkRKVLyXA=;
- b=sotC2BHySXNQvI9TFhOrKum/PTMYZqS0ys0dvBpytjEcMFkg1pO6lWSU3U63dlWLL/JnMivdAYrLY8DwlOzqYpuLGo0mhRlfTyV45tXqya17XkQeNozO3yEV0zokNiWL9UpG+Ql8bzwPXOlS/Pg/9bmXzIM+Hllu4KsU5JA2dOo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by CY1PR12MB9699.namprd12.prod.outlook.com (2603:10b6:930:108::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 16:52:23 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 16:52:22 +0000
-Message-ID: <d6f72b8f-1961-406a-aed8-5f4570ce98d1@amd.com>
-Date: Fri, 24 Oct 2025 11:52:19 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] drm/amdgpu: only send the SMU RLC notification on
- S3
-To: Antheas Kapenekakis <lkml@antheas.dev>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Perry Yuan
- <perry.yuan@amd.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org
-References: <20251024152152.3981721-1-lkml@antheas.dev>
- <20251024152152.3981721-4-lkml@antheas.dev>
- <61da9864-b7c8-43f1-b437-36756077b545@amd.com>
- <27439123-98aa-4096-a4e4-3c8eecb3aaca@amd.com>
- <CAGwozwHAJAvgZEgn1M0ioRP4dT2urMUtQQzNXKXydu0ueoOzsA@mail.gmail.com>
- <CAGwozwH+UneR7uB0h_yrEWTBM=-uHapmzL3JnmrJ8S2v5WQ2SQ@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <CAGwozwH+UneR7uB0h_yrEWTBM=-uHapmzL3JnmrJ8S2v5WQ2SQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DM6PR03CA0086.namprd03.prod.outlook.com
- (2603:10b6:5:333::19) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3084D86342
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761324814; cv=none; b=FO7VVQjZV5UNpLVeijRP3GWoWSUoE4u3CpaPUtuoMatlwOAdLlvK/QRpLoYBPM5W9AlSo/6OWZTLX2op2Z9uSJhcLyTgOHX7C3JQGwZRJkhPMHlPh6f0LQVyNCMjHvpmICnvP5l9f1g8NcfUmP1OpfLvzOpe2EMpSu93hi9FuaU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761324814; c=relaxed/simple;
+	bh=DKUBl7W3huP6cGlFMGyhKUp/w1FwXrlf10EUmzCMMJM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DqWnv4KI3ZFshfg8y52et7d9J9VKqNdYxkYSf/K0WBwJfaUgWXKM1sESSqB3ssftPFqE7cGnl01bF9+SO5i98yvKkXg5sub8k/Gd52spCm5dAaS4/3rXi3WL6kQiKPxBMD5e4oz6WZIWBCPSLAwtv5dRMLVsD+e/+vs3e4Z+uTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IiQWoUba; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <790be7b7d3752f26f2c4e62476acb0bfe448df84.camel@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761324803;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DKUBl7W3huP6cGlFMGyhKUp/w1FwXrlf10EUmzCMMJM=;
+	b=IiQWoUbaLCLRE1Fxcnvuj23EB6VGiXYVfLI7g8+U9IuTiXRLuifR0gljXTy+CKeLCo20vT
+	ueXg5n8DPnwu6dVv5q9MfzaTLbr7OMmxK+5yrizvl+p+FCyPhQ7YrqNbvbRoFzeM8bnhYh
+	M9CnJoBoSICitxeXjd/t2J7QCIbhPcs=
+Subject: Re: [PATCH bpf-next 1/2] bpf: Skip bounds adjustment for
+ conditional jumps on same register
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: KaFai Wan <kafai.wan@linux.dev>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song
+ <yonghong.song@linux.dev>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Song Liu <song@kernel.org>,  KP Singh
+ <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
+ <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>, Shuah Khan
+ <shuah@kernel.org>, Paul Chaignon <paul.chaignon@gmail.com>,  Matan
+ Shachnai <m.shachnai@gmail.com>, Luis Gerhorst <luis.gerhorst@fau.de>,
+ colin.i.king@gmail.com,  Harishankar Vishwanathan
+ <harishankar.vishwanathan@gmail.com>, bpf <bpf@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>,  "open list:KERNEL SELFTEST FRAMEWORK"
+ <linux-kselftest@vger.kernel.org>, Kaiyan Mei <M202472210@hust.edu.cn>, 
+ Yinhao Hu <dddddd@hust.edu.cn>
+Date: Sat, 25 Oct 2025 00:53:00 +0800
+In-Reply-To: <CAADnVQ+Tt4GkhV74P_bekvCWbZOBgR5PEYt7sQHEzMTDeE4j9w@mail.gmail.com>
+References: <20251022164457.1203756-1-kafai.wan@linux.dev>
+	 <20251022164457.1203756-2-kafai.wan@linux.dev>
+	 <39af9321-fb9b-4cee-84f1-77248a375e85@linux.dev>
+	 <1d03174dfe2a7eab1166596c85a6b586a660dffc.camel@gmail.com>
+	 <CAADnVQKdMcOkkqNa3LbGWqsz9iHAODFSinokj6htbGi0N66h_Q@mail.gmail.com>
+	 <abe1bd5def7494653d52425818815baa54a3628a.camel@gmail.com>
+	 <0d267da41178f3ac4669621516888a06d6aa5665.camel@linux.dev>
+	 <f0a52150bc99aa4da1a25d6181975cd3c80a717f.camel@gmail.com>
+	 <b190c9b2837b28cf579aa38126de50e29e0add32.camel@linux.dev>
+	 <0d98a2c754884e94c3367209680c071a8df4279d.camel@gmail.com>
+	 <90ec497a230584b0e627d12eaf172236b7a5165b.camel@linux.dev>
+	 <CAADnVQ+Tt4GkhV74P_bekvCWbZOBgR5PEYt7sQHEzMTDeE4j9w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CY1PR12MB9699:EE_
-X-MS-Office365-Filtering-Correlation-Id: f53bf574-eeec-4fa4-00e7-08de131db393
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NUhxZ1BKVWF1RGRFcTNhdkk0ZDNOT1kwUm5tNCs1cTZoQ0FQYXdXeURCWTZY?=
- =?utf-8?B?azh5SGZ2enplWXF0Q1FTMklnR0pWZjlFc2ZVTEp0T0lFb3IyKy9NUzNqL1Nq?=
- =?utf-8?B?Q1g0MHgvTzJ2eFJ3S0VtdWM0OTcxdWFCSDJ1Q2VoZXFIRHFiZEJOMlpxMU55?=
- =?utf-8?B?MU5KckR3eW5wZDJwT0wzL0dFVTlna2txL3htTEtBOFlhUmU3SjdCNFVxdDZw?=
- =?utf-8?B?aEhkYU56REJjVTdOMk1uRnhzMWJjWVJDdFFNbnFrLy9LY01rcXZKbUJaODNF?=
- =?utf-8?B?SHpUOWNJd3FHN3Z0YnJDS1c5M05HbDU4anRvMk41TnQvV0dXYkRqWUsxbEtS?=
- =?utf-8?B?UnVHUVc4VUFXVnJKdmJ5NmMxL1Z6OVI3WVUzL242TitDdlhpNFFHT245RWs0?=
- =?utf-8?B?RnlPa1BwazUxZ1BKenltaTdtblh4dzRhdnJUZVFiMnVaWVBQZ0YvYnpNSkQr?=
- =?utf-8?B?QXl4a1BTd1hwVzhqeklOaFlYK1p3TS92U1M1emM0ZTNEOTd1eVZseHlGbHRz?=
- =?utf-8?B?VndFeXY4QzltQzhKMUZ2bTNXdVQ4WHB3RnJwT2Y0R1ZLK0t6MWNDc2tnMDZz?=
- =?utf-8?B?Y0lJUEZVZ2U0TnlScE1qTGx5RWVzVld2Q3RETm80a3dPeVM3ZlFsZ1BVUkhx?=
- =?utf-8?B?YUxSclBzU1hpLzZrZUlyQW85SURLVHI2MFR5YlRNaHVkSnBWVE5FT2QrVkJv?=
- =?utf-8?B?MURXZHQ4RjFreDJhcUdyTnZ2SDJldDZBeHZlWWtIQnlPY3dsRGEwRm5uN0N1?=
- =?utf-8?B?ZnR1TGNpdWsycjJ5YUdQTCticytCMEJZVTZRTTE1bE1FcHhPWUlKNmYzd2t3?=
- =?utf-8?B?ejFFMzRXajBsaUxIRjI3Kzh5YXZOMzMvaFkzMElmVjE0UG1KOGcxbzg2SDcz?=
- =?utf-8?B?a05HVVBnaXFLZnp0QTlVVlNsdnZCR2tTb1FrOGloSTBqNWlMZ1krQ2Nrd0hX?=
- =?utf-8?B?d2tlMFpVdjc4NmRqNlpXTUEvVEhVWWJ6ZFI1R3V4MGVIOFV2OXhXcjRjVHMv?=
- =?utf-8?B?Vm5GVU5uRmE5ZGppZXlQREx4NzdBdjJ2RnU3cmNrTGVlNm9rZVROUkFFcHVW?=
- =?utf-8?B?b3JpYUkvbElIT0sxcnc5aks5dDJhY3JBYUF6di9EWVZLOElFTlNIdXZveDNB?=
- =?utf-8?B?SnV2Ym14ZGpmaGJiM1JEZUxuck45ejhBNmZIQ09TSGlEa2krSUprVDZDTW1k?=
- =?utf-8?B?YWgyUThrNTVtaFlPREFwUk1nSVdVT243b0RvTU0xU2VGWnY3RHJjMXVCMDdq?=
- =?utf-8?B?dlRRWi9OVEJydnJMaStkVjd6Yko1N3FISXpjbk0zZTcwcVFnaGYvdTRaTmtU?=
- =?utf-8?B?STgxUk5BR3VEZ3JRS2MyU3YxaURkYU1OV1pEcDEvVXA2Sk1wYWVmSDF3TjlD?=
- =?utf-8?B?c21objgvZUp6OHZpaERacGNzTEJwdTkwMnNXa29xSHMwTFZBeC9mQTRwYjFV?=
- =?utf-8?B?RDZZR3VhcjExektVZERWWTFLU0ErVEgyUy9yQzJaT21IelJnaWdZSHE3eUly?=
- =?utf-8?B?d0NtTTBhaWI4akZOcjQwU1dDZWd6cVN6b1MwT1ZXeWtKaEdhSjVvb2V2NXJO?=
- =?utf-8?B?UG9xN1hMWkV1Qk5WcndLM0o5aFkvQ214V1Erb2NxYmNOL3AvbVJOQk5xZXNK?=
- =?utf-8?B?eUdXRjNDWTdwb3JwOVp3YTlqazJPM0JvWmZPV1I5RGwwQ21jZnhuM1p2TURJ?=
- =?utf-8?B?SlZoTTk2bkFRdyt2ekt5aXJ1Vk9tMzZOeFE1SnRZTVlzTFo1Tlh4b1FlaHh2?=
- =?utf-8?B?WHVPVFdzWThJUTZRNjJuV0xrbGRrOCtsZS9vaERvelllMjZCWXBnbTYrTjdj?=
- =?utf-8?B?MUxoWFRJbDdWY2E5R3BjcDR2WnRYUllQb2RxemQ2RStnUFg1eW11bmlrdFNa?=
- =?utf-8?B?ZW9qaWZ6REI2UzlTZTNwWmJtWXlvRFNuN0hDRFBBK3JyZlE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eHhTcEJrZTVrOU1LSkM3YktyRUZvZ1lXK1JOMTU4Z29kTS9ONUNjVjZXc0NB?=
- =?utf-8?B?dWFqZWs2Z0ZJU2JqTzFzL0p5dTRnSlBkVGJkWTJtVmV5Ny92eTJhL2o3Q3Rj?=
- =?utf-8?B?c0t2OHdGbEtLNnhKQUFqZzc0V2MyMDJZWnJ0bHFxVDZQSUk3ZVMzeFlaR08r?=
- =?utf-8?B?Rjk1UzlBamRqK0NGYUZ3L0dnTTN0UE5kcmZNelFCOUpPU0IzakI4ekFxZVlM?=
- =?utf-8?B?VTI4WGp6d2wwTmtUWlN0WnR3VnI1QzRhSHQ3UXRDS0h2Tk5KMnNyblFDRjJM?=
- =?utf-8?B?aDFzVzR0c2dqUjUvTXFkVmIwWjJUUFNGc05kMjRDcWh4K2RRb3RrUHo1c2h1?=
- =?utf-8?B?UGFBcWJuQmNaQW1nUjQ3cEN5Q0JnL1JHOS9ncmd5dlhwZkdBMzhwRFpGQUpF?=
- =?utf-8?B?MXIwR1JHWkRyY3hvT1VoTWVOKzJkSmYzcTR2WEp2SnZvRzBJdmxEVmJZS3NX?=
- =?utf-8?B?RklrR3BtNWNwcFlUV3ZyenEwY21HRkdwcElqZ2d1R1RYdEZDbUNtdGd4VmRr?=
- =?utf-8?B?S0hFT2hZMmNuT1Zld1ozNzloKzNLbUFsWFFDemVBbkV2cENCa2NtZGV2NXNv?=
- =?utf-8?B?aHJWWXVEbVZKR0ZIb0FPVlFKa1JyblQrbnVGZGFFcHU4dTRBTFhsNVlvYmZN?=
- =?utf-8?B?VjdMWEdjTzlJS1NIdjl6Y0tiWEJ0ZkZsK1B6OUNTVm05MFZEVnBKajhPcDRN?=
- =?utf-8?B?ZkNIQXFucDlrN0NUY044eW16REU2MXRXcngwTDkzcnZkNlVheXRuMld0UWho?=
- =?utf-8?B?cFdCTWxsNnE5cUMramh2M3NndWwwd3paVWxIYW9wZktpeHJXTWRQT05hWkNx?=
- =?utf-8?B?bmlnRWh5ZVdGZDBIVkVrVWVWUEtkejd6aGFNYkxiUmpEMklDMU9JeUw3dkNZ?=
- =?utf-8?B?WXUxQWlVZWJnVHI0TVJLSHQyckVBVkkveThqRFdJaVNZcXJuajhxc0U4M1NF?=
- =?utf-8?B?VVpZZGh6cDUwZ1MyT1VYSzlramc2bDYzRXNSRW9yTUhSTlBrd3lZUXJ2LzA4?=
- =?utf-8?B?RVczNXdlZlVTMFBsQ1NMbWgzSUdTMjZnNGxwdnhYd3Q4bEpIcWo5L1g4anlo?=
- =?utf-8?B?OUZnamdsN2libjdBL0Y5dVFmRFJKdzNNNSt5bzFYMVhCdkRaSG5GMnY5dlZr?=
- =?utf-8?B?RXZaNlY2c3JzdnRka2JWSjUxS3FCS3FydjBWUnlwNTd0UnZaUUVqcTh5RHlG?=
- =?utf-8?B?SVpZcjZQRm5IUDRiejZKL0RkbHUyYXJIQXVNSkVtZDhtdHJVQXU3d0xIRisw?=
- =?utf-8?B?QUpadUVrYTB4UVlCR0VKNm1IMTR6NG44bVdjZ3YwdmlqdjAxaHNGbWY1VVk2?=
- =?utf-8?B?VnZPV1ZxbkozeVNBNHFFSmJvWlNLaGZxN3ZJSHd4dzk4YkttenpvaEFNWGF6?=
- =?utf-8?B?ZUZlU2JPMkhDeHFpa0hURXdOdDJOUW9yeGkyUUk0N2lqTTRYMG5Fdzc1YXJY?=
- =?utf-8?B?bEtpeEF4VndDWkJieVZodm80c2pNVnZlSnRqU3RzT2VoVkFZRW5haW1OWmJ0?=
- =?utf-8?B?aXZmVFR2WXpWenlNcVM5b1I3Vll2Y1NNNmM1NjI3aVV1K1FYRStyR2w2NDl1?=
- =?utf-8?B?VGc0S3ovL0tFMUdhRDRHcVYxdEdtY3lWdHJKVkdIMDRaVkpJdmoxMmdMQ0ZG?=
- =?utf-8?B?ZDFJNXYzejdjU003NjAyRmZYNS91cHhMVkJRaGY0YndUcU1hMXJwSkpJZjFQ?=
- =?utf-8?B?cGFuQnN4VHRYVEh4dXB2WnRBZHA3c3dDRERVeUxTZG94N3gvWG1tdC9DcDVr?=
- =?utf-8?B?RkdnWWRLeGFCOUlSaFRuOHBzRWdURk9TK3ZXY2VzSGd4N1pSOWFLU1ZtRnZC?=
- =?utf-8?B?U01RZEdqVDJOYlhvbHpMdzN1MU5UUklGSnJLTTF2bm42NkI1dXJnbjIyRVdK?=
- =?utf-8?B?MXhWN0RtOVY2WTVjcy8wNU5mdDR4WEN1YzI2bzZZY2NJanRPZ1NSZmxaMTM0?=
- =?utf-8?B?d3Z5c0ZFVi9uLzRGL3hIS3hxbCtUTXNGWjE2S2FqNVpSOWtacmtxV2NGV25h?=
- =?utf-8?B?TmdoMFFKMldnYTBwM1k5c3A5cnVhWE5PWGN3VXk0VjlST0VCbFI0ejRIZFFp?=
- =?utf-8?B?Wm8zODlOemlSZzJoY2ZMOXRvVlg5bnlZa2cza3dxSTE2TlhFdFNlNzF0Ryt6?=
- =?utf-8?Q?H5wkRYOY7vQ+duJC3QY9ALxIw?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f53bf574-eeec-4fa4-00e7-08de131db393
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 16:52:22.3354
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fRkWGu0of7N5ao9RUD64Zuqjl8otMI1PgExHGwHWn8SJ4FC1aWGiaBPRprjmQyTCCdoR/UCD85dVhR8I1RW4DQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9699
+X-Migadu-Flow: FLOW_OUT
 
+On Fri, 2025-10-24 at 09:40 -0700, Alexei Starovoitov wrote:
+> On Fri, Oct 24, 2025 at 9:38=E2=80=AFAM KaFai Wan <kafai.wan@linux.dev> w=
+rote:
+> >=20
+> > On Fri, 2025-10-24 at 09:21 -0700, Eduard Zingerman wrote:
+> > > On Sat, 2025-10-25 at 00:13 +0800, KaFai Wan wrote:
+> > >=20
+> > > [...]
+> > >=20
+> > > > For non-scalar cases we only allow pointer comparison on pkt_ptr, t=
+his check is before
+> > > > is_branch_taken()
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0 src_reg =3D &regs[insn->src_reg];
+> > > > =C2=A0=C2=A0=C2=A0 if (!(reg_is_pkt_pointer_any(dst_reg) && reg_is_=
+pkt_pointer_any(src_reg)) &&
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 is_pointer_value(env, in=
+sn->src_reg)) {
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+verbose(env, "R%d pointer comparison prohibited\n",
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 insn->src_reg);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+return -EACCES;
+> > > > =C2=A0=C2=A0=C2=A0 }
+> > > >=20
+> > > > and in the end of check_cond_jmp_op() (after is_branch_taken()), we=
+ checked again
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0 } else if (!try_match_pkt_pointers(insn, dst_reg=
+, &regs[insn->src_reg],
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 this_branch, other_branch) &&
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 is_pointer_value(env, insn->dst_reg)) {
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+verbose(env, "R%d pointer comparison prohibited\n",
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 insn->dst_reg);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+return -EACCES;
+> > > > =C2=A0=C2=A0=C2=A0 }
+> > > >=20
+> > > > this time we check if it is valid comparison on pkt_ptr in try_matc=
+h_pkt_pointers().
+> > > >=20
+> > > > Currently we just allow 4 opcode (BPF_JGT, BPF_JLT, BPF_JGE, BPF_JL=
+E) on pkt_ptr, and with
+> > > > conditions. But we bypass these prohibits in privileged mode (is_po=
+inter_value() always
+> > > > return false in privileged mode).
+> > > >=20
+> > > > So the logic skip these prohibits for pkt_ptr in unprivileged mode.
+> > >=20
+> > > Well, yes, but do you really need to do forbid `if r0 > r0 goto ...` =
+in unpriv?
+> >=20
+> > Currently `if r0 > r0 goto ...` is forbid in unpriv, but we can allow i=
+t.
+>=20
+> Let's not relax unpriv. We don't need new threads with researchers
+> whether such things can be exploited.
+>=20
+Ok, I'll keep the logic for both scalar and non-scalar cases.
 
-
-On 10/24/2025 11:45 AM, Antheas Kapenekakis wrote:
-> On Fri, 24 Oct 2025 at 18:24, Antheas Kapenekakis <lkml@antheas.dev> wrote:
->>
->> On Fri, 24 Oct 2025 at 18:20, Mario Limonciello
->> <mario.limonciello@amd.com> wrote:
->>>
->>>
->>>
->>> On 10/24/2025 10:54 AM, Mario Limonciello wrote:
->>>>
->>>>
->>>> On 10/24/2025 10:21 AM, Antheas Kapenekakis wrote:
->>>>> From: Alex Deucher <alexander.deucher@amd.com>
->>>>>
->>>>> For S0ix, the RLC is not powered down. Rework the Van Gogh logic to
->>>>> skip powering it down and skip part of post-init.
->>>>>
->>>>> Fixes: 8c4e9105b2a8 ("drm/amdgpu: optimize RLC powerdown notification
->>>>> on Vangogh")
->>>>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4659
->>>>> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
->>>>> Tested-by: Antheas Kapenekakis <lkml@antheas.dev>
->>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
->>>>> ---
->>>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_device.c       | 8 +++++---
->>>>>    drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c        | 6 ++++++
->>>>>    drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c | 3 +++
->>>>>    3 files changed, 14 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/
->>>>> drm/amd/amdgpu/amdgpu_device.c
->>>>> index 3d032c4e2dce..220b12d59795 100644
->>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
->>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
->>>>> @@ -5243,9 +5243,11 @@ int amdgpu_device_suspend(struct drm_device
->>>>> *dev, bool notify_clients)
->>>>>        if (amdgpu_sriov_vf(adev))
->>>>>            amdgpu_virt_release_full_gpu(adev, false);
->>>>> -    r = amdgpu_dpm_notify_rlc_state(adev, false);
->>>>> -    if (r)
->>>>> -        return r;
->>>>> +    if (!adev->in_s0ix) {
->>>>> +        r = amdgpu_dpm_notify_rlc_state(adev, false);
->>>>> +        if (r)
->>>>> +            return r;
->>>>> +    }
->>>>
->>>> Just FYI this is going to clash with my unwind failed suspend series [1].
->>>>
->>>> This is fine, just whichever "lands" first the other will need to rework
->>>> a little bit and I wanted to mention it.
->>>>
->>>> Link: https://lore.kernel.org/amd-gfx/20251023165243.317153-2-
->>>> mario.limonciello@amd.com/ [1]
->>>>
->>>> This does have me wondering though why amdgpu_dpm_notify_rlc_state() is
->>>> even in amdgpu_device_suspend()?  This is only used on Van Gogh.
->>>> Should we be pushing this deeper into amdgpu_device_ip_suspend_phase2()?
->>>>
->>>> Or should we maybe overhaul this to move the RLC notification into
->>>> a .set_mp1_state callback instead so it's more similar to all the other
->>>> ASICs?
->>>>
->>>
->>> My proposal as such is here:
->>>
->>> https://lore.kernel.org/amd-gfx/20251024161216.345691-1-mario.limonciello@amd.com/
->>>
->>> It would need some testing though to make sure it didn't break Steam
->>> Deck or Steam Deck OLED.
->>
->> I will give it a quick go on my OLED.
-> 
-> Horribly broken. Did not enter S3 and when waking up fan maxed out and
-> it bootlooped. Journalctl stops on suspend entry. It works on the Xbox
-> ally though
-> 
-> My series works on both
-
-OK.
-
-Can you try Alex's idea instead?  Just comment out the RLC notification 
-code in amdgpu_device_suspend().
-
-It's supposed to already be called in smu_disable_dpms() anyway.
-
-> 
-> 
->>
->>>>>        return 0;
->>>>>    }
->>>>> diff --git a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c b/drivers/gpu/
->>>>> drm/amd/pm/swsmu/amdgpu_smu.c
->>>>> index fb8086859857..244b8c364d45 100644
->>>>> --- a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
->>>>> +++ b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
->>>>> @@ -2040,6 +2040,12 @@ static int smu_disable_dpms(struct smu_context
->>>>> *smu)
->>>>>            smu->is_apu && (amdgpu_in_reset(adev) || adev->in_s0ix))
->>>>>            return 0;
->>>>> +    /* vangogh s0ix */
->>>>> +    if ((amdgpu_ip_version(adev, MP1_HWIP, 0) == IP_VERSION(11, 5, 0) ||
->>>>> +         amdgpu_ip_version(adev, MP1_HWIP, 0) == IP_VERSION(11, 5,
->>>>> 2)) &&
->>>>> +        adev->in_s0ix)
->>>>> +        return 0;
->>>>> +
->>>>
->>>> How about for GPU reset, does PMFW handle this too?
->>>>
->>>>>        /*
->>>>>         * For gpu reset, runpm and hibernation through BACO,
->>>>>         * BACO feature has to be kept enabled.
->>>>> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c b/
->>>>> drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
->>>>> index 2c9869feba61..0708d0f0938b 100644
->>>>> --- a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
->>>>> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
->>>>> @@ -2217,6 +2217,9 @@ static int vangogh_post_smu_init(struct
->>>>> smu_context *smu)
->>>>>        uint32_t total_cu = adev->gfx.config.max_cu_per_sh *
->>>>>            adev->gfx.config.max_sh_per_se * adev-
->>>>>> gfx.config.max_shader_engines;
->>>>> +    if (adev->in_s0ix)
->>>>> +        return 0;
->>>>> +
->>>>>        /* allow message will be sent after enable message on Vangogh*/
->>>>>        if (smu_cmn_feature_is_enabled(smu, SMU_FEATURE_DPM_GFXCLK_BIT) &&
->>>>>                (adev->pg_flags & AMD_PG_SUPPORT_GFX_PG)) {
->>>>
->>>
->>>
-> 
-
+--=20
+Thanks,
+KaFai
 
