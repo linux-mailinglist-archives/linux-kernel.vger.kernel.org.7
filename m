@@ -1,87 +1,144 @@
-Return-Path: <linux-kernel+bounces-868815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D1CC0635E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:20:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAEB6C06364
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31DA3B95A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:20:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86D111C04198
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC9E315D4E;
-	Fri, 24 Oct 2025 12:20:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907E1315D21;
+	Fri, 24 Oct 2025 12:20:24 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA90315D3B
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7AE3112D3
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761308405; cv=none; b=KSOwA7LsSpBfiKHH/rKbJPepUhEVL8qfhWjP0btLCmzfDG6HywgwZAf05jZwatz7gWfadAVkNgwnaEYJM2p/EMGjbdgXpu6X5gwViLXePc6zIRlt9iro8dAxoJ1p9tbYXjwF4ZtqeJ0zkgvSXZ/xiEGxzeFKhT6mgWZE5/esCSI=
+	t=1761308424; cv=none; b=HmIdzAbFRcODJmCD+dCNe/bcp675HR/ugg4+zELHL2kZDtFao2bofRBh/9cImy1q8V2dj/weBEzY7ww4DOd5vzVPGiZN5cMKlQmlbL13A+9WvcWTFNoUq99hP4EjnlmhmFDUR3iEg4Ajp+AsalBLB6rQYVje65YEPAwTsskjWNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761308405; c=relaxed/simple;
-	bh=pV9VD6OVCnpKcyOBXDrBgi6lSJgh55ChGYhUPu7mDZo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pas/uJunigytY4Doc/d+U/7Q3/dGc+dZ1HhSwf60I9iuzGN9uOFlZnGklg6+yKanyjz/wkkQLM/ik8xJ1xItVBxf103trOZeyuuzINXMm7ieBrjwvftjC7D/v67l93jMoTLKC+8bY63o/Ilomm4v7LJablaULoKD4b00jKaAXWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-93e8839f138so189482639f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:20:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761308403; x=1761913203;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UsbFTpNbDRo7PrhQXMGRNd9f0AuQgaBz09lPeV09Ers=;
-        b=vn5cz0weSriuAkNHvOMqJlyJSrrB5KzEv1zG/ymrnEmWEG9o9Xy3Vz6NxMvYiXjd9g
-         6y+fesi+aHDUIlDpA8OH8+pL3gK+ZEJzUCrzScCcOoD98PGvY5+BMKrAt11tMa2jebie
-         ucRV0yvqy3n2Az3uGMjK96HutfcOhsioQbNzUQBLIXDRybBpLW7/rbVsOa82xp27a6t1
-         9+LN2yXnLuXhleB7D3cf2W9oj/LUeNNrwiDmHIuuDQgPICXMH4c05gu3EORJa4jt4z7w
-         zMKwuvr9AcOBwpWlNLXahTvGBaCVM3ntMEZCWdOKqAqrDzudvdZE5zMDVWEX8VJAO/YI
-         JfBw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3FnOu2aSMJQi6BvAt3fHgen+5w1Y/gmXXF75XRHtedQXurx/wvv6g8FJ/Rf5b4gXfqFvU27MrE9ML0iY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCGBshas2zmUqY5V6egbt6hAdo86pPj/OhnwbM0y80NVjrOmTQ
-	16Qsk5MgmPS4SZ9ijv8andn3g2Y87FpvVQUfVYxanuTTbTIHenZ3/4KZfSfRkG0LJyGi7ttw55d
-	zg25lvUjLKTcg4q5wsXUwXVFXBTMqKrXUjhe70v6fU3cgreAxzQCLHP0+m2g=
-X-Google-Smtp-Source: AGHT+IEx6Te6+TIIbOSyQrq9xowJB1QFJUHtuq4gb0EXEUkDBfOn3EazC7LK1DpWKRFgKcfdDQW25orrDDsiteJf0Rk4x+5NXEzi
+	s=arc-20240116; t=1761308424; c=relaxed/simple;
+	bh=f4nLSZUbHXPOAJMornZBUvE6cqRt+o4rLfXHVdki47Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=H1jRAkOrmJam9Ud1xy8mLC64oGmYMIav3wXbeFndklEufHjun7ljKl7r3R1SE5gQ07CgVPCCOx36WkOrwmHd7Xd7Wc6iIRbn9+bY5GQdYYv3E/8TCbTSofm85xmrD4rrM0cAUTJ1YrKK9Vd1QFqS5cdWxVuA/wTOGqzHamkarTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.pengutronix.de)
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.trumtrar@pengutronix.de>)
+	id 1vCGmD-0000ek-3D; Fri, 24 Oct 2025 14:20:13 +0200
+From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+To: Dinh Nguyen <dinguyen@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,  "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
+ Dooley <conor+dt@kernel.org>,  Maxime Chevallier
+ <maxime.chevallier@bootlin.com>,  Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>,  Alexandre Torgue
+ <alexandre.torgue@foss.st.com>,  Matthew Gerlach
+ <matthew.gerlach@altera.com>,  kernel@pengutronix.de,
+  netdev@vger.kernel.org,  devicetree@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  linux-stm32@st-md-mailman.stormreply.com,
+  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 06/10] arm64: dts: socfpga: agilex5: add dwxgmac
+ compatible
+In-Reply-To: <b486bb52-7e95-44d3-ac65-1c28d4d0e40e@kernel.org> (Dinh Nguyen's
+	message of "Fri, 24 Oct 2025 07:00:36 -0500")
+References: <20251024-v6-12-topic-socfpga-agilex5-v5-0-4c4a51159eeb@pengutronix.de>
+	<20251024-v6-12-topic-socfpga-agilex5-v5-6-4c4a51159eeb@pengutronix.de>
+	<b486bb52-7e95-44d3-ac65-1c28d4d0e40e@kernel.org>
+User-Agent: mu4e 1.12.13; emacs 30.2
+Date: Fri, 24 Oct 2025 14:20:09 +0200
+Message-ID: <87zf9g7apy.fsf@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3983:b0:431:d73b:ea91 with SMTP id
- e9e14a558f8ab-431ebd3d7abmr26204025ab.0.1761308402885; Fri, 24 Oct 2025
- 05:20:02 -0700 (PDT)
-Date: Fri, 24 Oct 2025 05:20:02 -0700
-In-Reply-To: <20251024071518.x1MIZ%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb6ef2.050a0220.346f24.00cf.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in __ocfs2_flush_truncate_log
-From: syzbot <syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; format=flowed
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hi Dinh,
 
-Reported-by: syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com
-Tested-by: syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com
+On 2025-10-24 at 07:00 -05, Dinh Nguyen <dinguyen@kernel.org> wrote:
 
-Tested on:
+> Hi Steffen,
+> 
+> On 10/24/25 06:49, Steffen Trumtrar wrote:
+> > The gmac0/1/2 are also compatible to the more generic "snps,dwxgmac"
+> > compatible. The platform code checks this to decide if it is a GMAC or
+> > GMAC4 compatible IP core.
+> > Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> > ---
+> >   arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 9 ++++++---
+> >   1 file changed, 6 insertions(+), 3 deletions(-)
+> > diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> > b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> > index 4ccfebfd9d322..d0c139f03541e 100644
+> > --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> > +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> > @@ -536,7 +536,8 @@ qspi: spi@108d2000 {
+> >     		gmac0: ethernet@10810000 {
+> >   			compatible = "altr,socfpga-stmmac-agilex5",
+> > -				     "snps,dwxgmac-2.10";
+> > +				     "snps,dwxgmac-2.10",
+> > +				     "snps,dwxgmac";
+> >   			reg = <0x10810000 0x3500>;
+> >   			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
+> >   			interrupt-names = "macirq";
+> > @@ -649,7 +650,8 @@ queue7 {
+> >     		gmac1: ethernet@10820000 {
+> >   			compatible = "altr,socfpga-stmmac-agilex5",
+> > -				     "snps,dwxgmac-2.10";
+> > +				     "snps,dwxgmac-2.10",
+> > +				     "snps,dwxgmac";
+> >   			reg = <0x10820000 0x3500>;
+> >   			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
+> >   			interrupt-names = "macirq";
+> > @@ -762,7 +764,8 @@ queue7 {
+> >     		gmac2: ethernet@10830000 {
+> >   			compatible = "altr,socfpga-stmmac-agilex5",
+> > -				     "snps,dwxgmac-2.10";
+> > +				     "snps,dwxgmac-2.10",
+> > +				     "snps,dwxgmac";
+> >   			reg = <0x10830000 0x3500>;
+> >   			interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
+> >   			interrupt-names = "macirq";
+> > 
+> 
+> I just sent a patch for this yesterday:
+> 
+> https://lore.kernel.org/all/20251023214012.283600-1-dinguyen@kernel.org/
+>
 
-commit:         8e6e2188 Linux 6.1.157
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=12259be2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6e2d28458335b118
-dashboard link: https://syzkaller.appspot.com/bug?extid=4d55dad3a9e8e9f7d2b5
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=104eae7c580000
+ah, I missed that, than this patch is unneccessary.
 
-Note: testing is done by a robot and is best-effort only.
+> I'll make sure to include you on future submissions.
+> 
+> I didn't add it to the bindings document though.
+>
+
+As I always get complains from dt-check bot, I remembered to add it ;)
+
+
+Best regards,
+Steffen
+
+-- 
+Pengutronix e.K.                | Dipl.-Inform. Steffen Trumtrar |
+Steuerwalder Str. 21            | https://www.pengutronix.de/    |
+31137 Hildesheim, Germany       | Phone: +49-5121-206917-0       |
+Amtsgericht Hildesheim, HRA 2686| Fax:   +49-5121-206917-5555    |
 
