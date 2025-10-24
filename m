@@ -1,196 +1,208 @@
-Return-Path: <linux-kernel+bounces-869015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56BBCC06B7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:35:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D79C06B75
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE9464E237C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:35:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B38331AA89DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E955031578B;
-	Fri, 24 Oct 2025 14:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A88233D9E;
+	Fri, 24 Oct 2025 14:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHYW7dRh"
-Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="slkj6lTO"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013027.outbound.protection.outlook.com [40.93.201.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07BF1F1527
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761316492; cv=none; b=Kivw5ucxvb5J/29MNoGPKutJ03HqdbloZVMg9lI79xU2tdipPLOe8aLXPZ6OC7IFehr5vM/B6ed5B2naNl+g+Z1f6OUbhKHCRwjO7wZLKRLL2HA2bvTV8FauQgO21KySoOp1q3yQAMOd4stq/w+eGeJZe6zjx/75Ss5fH7gdfTk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761316492; c=relaxed/simple;
-	bh=a27ALe2yhOhsvti6rryDm6Ym6QY92NcDKqoAWfwQi2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cvuQjTchECF4gzIwRHSFgMWd/4FExBsrEmWJUo0ybKppWHqIFlhoxAH+dNo9y+D9AIitRlMPjB0BdZrXe1+gMVbU7mIJUjGaK8vyHf4eiy8JbHgSDbKPMFWkTwKDonnNICPtPW12zwAgcj3voHmIK1rvLx5srDTVczuzJWx7mso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHYW7dRh; arc=none smtp.client-ip=209.85.215.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-b6cf1a95273so1567273a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761316490; x=1761921290; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iQj29ABrwrijpvys50cDvqcS4VYVuuORqVZjjQai77I=;
-        b=LHYW7dRhkJQVqCczSJ1nFqp6lBAog5W2mMpQ5vAe34oOHiehZxG+2pq9JWETM7/FLE
-         0fweWG8QQRXH6K1cf2taGMxlYQRpOP7/mLOFqWx11SIw0ZV9VnuOL4NLSLdXpapLbLMu
-         0lvmBjal6QzKE5wS4z9hZUoupCyk8+VZ+fQARFv51AfkOU7CpQWBmFFbBLZb161TAIom
-         MxPTtnWh1CUqDN5WFVsw2/rZ/U8euub9lNm/Wr6L99etrSzjve8sGrul3qgxMK9rCpEB
-         K8Lvar5vw1ZJy2LBxB/lUGzrfCMfwbKVKfuojrUSDbczE1kD0/q6VFUEPX2hB0A4qhJ3
-         wCSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761316490; x=1761921290;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iQj29ABrwrijpvys50cDvqcS4VYVuuORqVZjjQai77I=;
-        b=nfZ7go+e1AEXy2EWWXdah5qDIMf2LRgvrvdvuGlXo1FKhm8UJX+HND1huv/M+9/OUM
-         J2RJPusstr3wdO3fOs3YLPK74AyVNEZJPk7WMZL9mgSfbJDj/D64Q4Ef+8h7Fs48N0td
-         QwRYp3ETZqwWcbUxzaZIfFn0t00FirXjtSrZ2NliYpbD6Er8DnwMFYdnrd8JbZi0KrCI
-         4glwsPf0Ed4ljvpIvibD8GinowjVODwhmz7f9ToobgttNc8Sczss+hnfiXd6cvOF2vpk
-         j+AJSfjmLLVNmDt5hkbASIJTwLEzgCIcBDu970UZxoBINyGxcs0i6ojEAcQBz0/c8gZ+
-         4IdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUMpOzjZqx7QrLgmYBgLxVT0se5xyarNsFo0SH0q5E/M0WbLZbWv+zU4QxQomWVxPVAWsd5CPrdF5+N4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLxo9yxhycUUtsZOLoyKCSJF9MMm/7Y7oZTSCIbQjIRUvzUd43
-	6ffP5EDSki8x6njYDpFihcWDeWfhidBWWCytvjN1qKWgDPfzpsw64cqJ
-X-Gm-Gg: ASbGncsK0Vu0jJzxh6gIYksl6DcUX5xniY/J7tWVQT40seET1AjDZvwToI+4nphXxuL
-	spVmHRt4QKHH2Y+xm32fXrJ6zZmhUhujU5ELOBC+cxIWEXNO6wXDk6y1z4mmFJ8/gRCZkJ0oZ/r
-	2kTw2lDs2jHLkfp9z81mRBen1UPrPxUun4BXdWbm8t9EHFphOR0XjE5+5UlqYnDvzCTbGjF6Rge
-	8loRec8kI8gDmsu9GOQU6LJmsQpDJRFPQT5+uH7ieHrZeB2SjfJTboX8TS3QeDaU5xOSaadLrkw
-	AmO5A8+OpOMoqAG+I/AA1NCRwfV/3hInnC9j6bdv9aK5hDzhocyfwxfowaoDclpm8W5VGVGvWki
-	QGaN5WBZbrpr3x1gkvjnKlmdHCUf0q0IsMl6T7hiUruU7NCcjU5m7j3IQI1ObkRsZ4RPyyVAO4Y
-	Ttvw0=
-X-Google-Smtp-Source: AGHT+IErBmFAi51GQfjC8jK8NrYQnDRXpNCqWG1VH5g/DWOWsQEd2w+wLD8u7UXeR1pIgqcyE2avew==
-X-Received: by 2002:a17:903:384c:b0:27e:d9a0:ba08 with SMTP id d9443c01a7336-290cb27dae5mr359060835ad.43.1761316489794;
-        Fri, 24 Oct 2025 07:34:49 -0700 (PDT)
-Received: from sf2-6.. ([110.93.227.81])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946de00dc7sm57822215ad.39.2025.10.24.07.34.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 07:34:49 -0700 (PDT)
-From: Ali Tariq <alitariq45892@gmail.com>
-To: kernel@esmil.dk
-Cc: alitariq45892@gmail.com,
-	brgl@bgdev.pl,
-	hal.feng@starfivetech.com,
-	linus.walleij@linaro.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] pinctrl: starfive: use dynamic GPIO base allocation
-Date: Fri, 24 Oct 2025 14:33:53 +0000
-Message-ID: <20251024143353.71753-1-alitariq45892@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CANBLGcygpsp=R5gM7NeuVO-JG1yfQJ_0dhnFfL1ud=291cJZAQ@mail.gmail.com>
-References: <CANBLGcygpsp=R5gM7NeuVO-JG1yfQJ_0dhnFfL1ud=291cJZAQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14BD2FB092
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.27
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761316470; cv=fail; b=AZvQP8rw3GFt9kLlD3lXIAiTajrfSfaP0WFUooxl9HACy/zJ0H/iuvFEs4morXvMUDYlYVJU/3WrRF3IBiDGxzK/R8yZp6rtGKEXnvB7kYsNJws+988cKzwhem4ZA4j0e/gF3E+5FOap0j4pjlgu9d68ttiKIR+wxiXx5rW8u84=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761316470; c=relaxed/simple;
+	bh=CDoiOyDUGN1oqOJeBBvVV+ecf+wJL8vcEgv/lKsU27E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Yppn8D25yO8u/hadZpHMAVQ+af3j3eX19Gdw7CbdbVuyq0Qsmls1+A25Lt9WTnq9UmL4IvT/ftmP3z0mqoOmHhCCKlaX6/qJdFLknHt7sNophYFSkNiHWF3cJOKpD0B1z3NpLUM6slTfiuflFJpiqM3OKc2UBSGDexkm6x/7+A4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=slkj6lTO; arc=fail smtp.client-ip=40.93.201.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ItEydO7eVeWh5+ijoO9PmHsfjE6Lfua5A0qryJPTJR9BV0CFyeWUuYsdHzExaOjvnQyuFkl/DBWJCEz/dSX26YlnRy8cjQ8N/tTlo4DQE7oHlmCDn7DizoxxTgQzgXJtI4BWaT6gwR+aOI2WDuEX/6h4QL/q5JSMC784ztIMlVoPjMIbAQ7IMQkE5oNNGT4Yf2ybaKKvTiMyD6ap4OC5cg/JDmWSi4fcbFryYx2TH+r84BTCfTZ9hZmXqFlVVRywGPHpcvXfz/Ia6oIYo4DFCXllP5p7SJSuJZwgL8mGzBmdQBDcMryX7S4vLc+kXbObstLUAbbHehi86Q/xXNGnxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sIpvNpu9DzZ9C/Xah/9C0KY7WHBHglkSVMQzLIZWDz0=;
+ b=xDytZkb2KmsoUO9iRRs5m8uvvWwnEP1rh/anlAn6ikJ4LdfhYXNXLz2AW5c96SzexkVeNC2sQd5BqW3ZFlT+Q6mlwQBJnAk5O9CJPnDphFOtATH7suUe3twkItmsn2LqLq0WsMRnMVZZfnOOgUsuaD0M8MYX8sL47Pni0epYrScultNomRMCzj0bAaS8aE40ecdCzDafsWw+twh1l+TNO2hu8rL5D6Xphc4+iPOTBnRqM9Gf7E5WSOEArY3pypb553nocbHnaCWpyl3+CO5y8O9okfci5lBNHRWKn3WHXh2ehiiuPY4GHM+WJUpQZ4x56NkXevmR/BuorBEfmhJNWA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sIpvNpu9DzZ9C/Xah/9C0KY7WHBHglkSVMQzLIZWDz0=;
+ b=slkj6lTO0BY/QIV2lqnzgArI0AWHFtaIj0uAbQOpWE5/QME1kqauCQB9ZMLWjDjwClBYuSA15TvCCcEwNmi+lsHyUuZ5FLIg5jWJS9iNConhjJIy/FJ0MTJWuEF7IhSdlu7vWrS89AVrAA1K8yoIBhRSceE82TWJhlZTHD4EgCVvROXWdyEhleCpPmF0Iw4V/grJjiJG2d0dIfh+oDfmIHWR26LH2wAji/FaaQRGNH/frheqiZxj641+aB+g1mBIWzdGpqKcUyQhsqX6izrH2rLm/vvxEfGMAGkq/Xw1VrjwvCpb1nts5S7GGPDNpY2RubN0enwCpLLCoDnGCn3FUA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com (2603:10b6:208:c1::17)
+ by SJ1PR12MB6124.namprd12.prod.outlook.com (2603:10b6:a03:459::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 14:34:25 +0000
+Received: from MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b]) by MN2PR12MB3613.namprd12.prod.outlook.com
+ ([fe80::1b3b:64f5:9211:608b%4]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 14:34:24 +0000
+Date: Fri, 24 Oct 2025 11:34:23 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Wei Wang <wei.w.wang@hotmail.com>
+Cc: "suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v1] iommu/amd: Set C-bit only for RAM-backed PTEs in
+ IOMMU page tables
+Message-ID: <20251024143423.GF847003@nvidia.com>
+References: <SI2PR01MB439358422CCAABADBEB21D7CDCF0A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+ <20251023160154.GM262900@nvidia.com>
+ <SI2PR01MB4393D52AD53469388BED8E6CDCF1A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+ <20251024114039.GA847003@nvidia.com>
+ <SI2PR01MB43936BE606220BBABCFA30DCDCF1A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SI2PR01MB43936BE606220BBABCFA30DCDCF1A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+X-ClientProxiedBy: BL0PR05CA0001.namprd05.prod.outlook.com
+ (2603:10b6:208:91::11) To MN2PR12MB3613.namprd12.prod.outlook.com
+ (2603:10b6:208:c1::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3613:EE_|SJ1PR12MB6124:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5426c40a-94e2-4394-e6db-08de130a6dcc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?REh6T2VybE1wT1F5aU55MjV6Sk15TUFTbWVFcGZXOC9SdG5OTEp5TDhXZzVl?=
+ =?utf-8?B?SUxsN3RZdHZ3VFpsUXRJWHAzYlFjcWRJTFJDMEVraE9SWU80ZHFBakNFVlFT?=
+ =?utf-8?B?c1orRTgvOGRPVWpYNXg1Sndka01KQTNmczZ6dGRUYVpJWG1Fc0d6WnQxSlA1?=
+ =?utf-8?B?Um1xS1UvQVNyL0ljWlBxdk96WmpKaStKbEpvV1RtUGRGRWlFczhGK09HaG5q?=
+ =?utf-8?B?czNmdUlyUC8yVXhSN2R3eERLU2hkcVk5cDlWMTN3VUllelZSWm9nRVZLNWE3?=
+ =?utf-8?B?UEZHL3hoWmsyUXM3ODhzZU9vci8zclVYdFU3YVczQk5WZWc0OGcvOVZuRkt1?=
+ =?utf-8?B?Z3gvQ0tsVXVEb2p1ZWhYMzZLT3FFdGpvWDhZNTRlK3JMZHVyRGZVRThXaSsx?=
+ =?utf-8?B?dmVtVVE4R2RRMG8xSTBOalhKRlZURHBXV0k2azFwakNtdFlNNm9rcHV1dTZz?=
+ =?utf-8?B?UDFvZk5jQWR3cHV4NS9WV2VZVitZUEJzUzQwVWxiYjRRcDlrbC8vWXJNYlVX?=
+ =?utf-8?B?ZDhoMW9mei9mNUtUemtVNFoyUFcrZStLS2F2Vk1mYjY0VTBMSG1WZmxMekxP?=
+ =?utf-8?B?aEVCZFcvOElhc2RuNVkybkVyT2U4ZUxXM2ZUaU1kR0ZRK21DcFgyVEFZcnZj?=
+ =?utf-8?B?dlIzdDNxZlZaWU5jaVRiWXRONWVFNXUwM0hTSDhkWE9UWDFGOExNcndObmdE?=
+ =?utf-8?B?TjlkeSt0Mk1yT2YzWHRsQUZOTEZPQjJ1Y052NDZNdVlRRHdrWWs2M1NReGNV?=
+ =?utf-8?B?L05ZUEpKN2RTd3RFenJ1bk5tb3JPTXh5Vjc1V2pOZDZPR1p3dk1SRkw2dFl3?=
+ =?utf-8?B?eWhwbnlGMlVBYTdUZlREdkQxbGNoMFltMHV3YWhyb0tkbDNrZ0dZYlJQOVRI?=
+ =?utf-8?B?Rm12WHd4dDFzVktxaDdoQW4wZkh4Q2lpai9zMVFrbzNDQW05bmwyL2VaWUt2?=
+ =?utf-8?B?R1FvU3B4U2dMQmRCZDdwN3JHYlpudksvL2NMODBrQ2IvbWR4cE9ZWm5PQmpP?=
+ =?utf-8?B?SmNJNlhBL3dZV216cWZYUnh6aXMrdytJUTM4YVlqUXhNNW5EVEpXYVpYZklj?=
+ =?utf-8?B?S2E0SElJYkNpWStWK1k5K0VZUG0vWjRJbVZNbTJtamtQZnhoL1MzbXZ2KzNm?=
+ =?utf-8?B?aHptVC9kM2VOeTN6aXl3NXBoZkdOcmJwa3MrS3NBVldHODhLMUY3NTlmK0Qv?=
+ =?utf-8?B?eTlDQkZTR3JnWDRkTGlZQWM3N3JEWlZZY05DUzkwWHpKRVhmSU5LSUFUNEtP?=
+ =?utf-8?B?L2J2VlZlYnZJWWVYQUZDNk5UT3RDZjFvcitxNDNuUXVqRXFnTE51RzdPQXpL?=
+ =?utf-8?B?eDVQRDBXcitTR2k4S0dTaEJ4S3FTTnFiK0pldm1veFFjdUQzYTl0azM0b1dw?=
+ =?utf-8?B?T0gxRHBybDRpUFhLdklpcjdEYWZabk5wSWZmU3FOMzdpRWNFeWdaMkFHT1pk?=
+ =?utf-8?B?WDkvUTZOMDRNaURGTWxjU1lpK1lVeFhXVS9WTUF6NTRQU1MyajBJV2ZUTjdS?=
+ =?utf-8?B?SzdsMS9uN21RdWdaT0NZY0tnbXV1aUJtODZTcFhEeHg2UWE1OVpHeHo0NVdG?=
+ =?utf-8?B?VGRoV2xLTWNNdURORkJPcmlHdDRieDBJMzRUekRKU3FqMnZuWW5XUFNRa3dt?=
+ =?utf-8?B?RlFHWDlsMDhvNGJ5Y2Y3d211cmJWdTlMaG9IeVZ1MVVIS2JVSEtRMGE0cDlF?=
+ =?utf-8?B?S1NMcmlqektXSnpFdFJ2T21LTno0KzJta0EwZ0o1eXRoeE9pZmo2Zk50ZCtV?=
+ =?utf-8?B?Y0kzWEN5WFI4QU03bGJIaEkxUFp1YytxZnk0bFY4ejg0c1phRWl0WG5YMFEw?=
+ =?utf-8?B?c3Eva1hUblBIaldPNWlVRTdqRExDTnZ3WjFjYjJ4bG9QMXJOTzdOWUJrb0FL?=
+ =?utf-8?B?d0tKUW4reWpMVmtkTGRodVdHaVRCRlFMVHNSQmFiWEV6cmxXdTQ5TTNCQkxS?=
+ =?utf-8?Q?l+K+/NnyVlM0WBsR9V3eiDGlEGGxWawh?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3613.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WU9SYjNqejBzZzk1RzBCYkQzVXhoalNtTlE4TENRc2NFVndWOFhwNVZwc0xk?=
+ =?utf-8?B?RWtidHZSSFlWUjhSNG1UNTh0dVorU3Z0RFpMTWV4NGpqZmpKZzBteVJSZnMx?=
+ =?utf-8?B?RVZtc2l0eFBHaHBQdXJCSlNNODBBeFNYQkpvR3ZzLytOSUVrSERtMzBPOWdL?=
+ =?utf-8?B?U0ZMMndKSUhqTXNwME5FdXJFdG5QTzMwUmovd1gyaHVENTBsQ0xNUG5EY00w?=
+ =?utf-8?B?WFJRNXFudFlMMVhIRWxyZ0VaNE1taE1ETWRnaWdpUGZMMDErSnB5dWl0ODEr?=
+ =?utf-8?B?Ty9ISzR1Wi9rRDBkNXA5UnJFSWJ3cHFGMEVFdU9pL0Jaemg4Y1Z2UzJwbGVX?=
+ =?utf-8?B?dWh3TVdETUpkVU1SVUk2OXRFMWQ0YUhjYUkvVmtoVmFyTzNQY1VORCtZb0cv?=
+ =?utf-8?B?azhvVkFuMUJzdGNLVFA3QlNlb21yd1ZUclhoc0ZXank2Q2FSajE3QlNoVE9P?=
+ =?utf-8?B?V2xTcmRYYWZMbUg4eTdzRUFBVmlDOE8rUU5CRTliRmVrL0lQTXFUMzArbEV2?=
+ =?utf-8?B?SjJqYXdSOXJTTnpUeWN2d3BweUhUNUE5QVBmbWx0VndkVDFuTTlaYjc2cFYw?=
+ =?utf-8?B?TUxiR0d0TWQ3aUVFMU1HYmJMdkxxS2k3S0ZadkFPN3NDaHhYdDQ3UzZzUGJF?=
+ =?utf-8?B?cDVKNndwSEZ6dVFTWTFIMytranBzN2NUUVcxclJ6d0h1eTE1Q0dKWW1RNFpS?=
+ =?utf-8?B?K3YrRXNTeGw3ZGoreDhjV0tTa29aQ1QzK2ZCVjJNMktlZzc4V2ptaDVtbVlT?=
+ =?utf-8?B?ZWNZWW1ZSGtjblhMaExKMWhZWm1XZHBtbUdWOHA5SlVnZGROc2xaTHJHSDhR?=
+ =?utf-8?B?MjdKdWpsZEhLSGRlcHExZVN0aDh2T3V2TFYwRGxrNUNxUHBDVVJ6R0R0WUFE?=
+ =?utf-8?B?RGlmSUJRV2NYN2swUnFCQkR0WWZnV3dtTWN1MDZHenJoN25Zek1MVlRKSGRW?=
+ =?utf-8?B?eUF2TTBOeUdUWW9uWnRFQXhDZWJkNnBlVnVBZHdoS0crMHU3bXhrdEFJcXRZ?=
+ =?utf-8?B?TXlRZVU4QXRKWGFCUU5IMGk1ZThSOGh1ald5VTBlaCt6UCtCb3NwY1U2MG5J?=
+ =?utf-8?B?U1M0WUFVRGQ2R0t0L1dPbEJ2VklTdkM1M3FMRFpPWUgvSm5GU2grK3NuVFh2?=
+ =?utf-8?B?VXlRWnBYVjc2elE5cURtU2hNeWM5dEt5ZjlRZ1BBUUtyQ2M2RDdHWWFLZWpW?=
+ =?utf-8?B?MldYQVQvWUowRHVMbGEydGtyRlFIcjlTWUd3ZHNwTm44RXBIa0lZZENIVWR6?=
+ =?utf-8?B?a29MSzBFQXo1b0FhU2d6ZVJYczNzbG1ITjlZYUJWLzd6WWpFYXdlaVhHQTc5?=
+ =?utf-8?B?UXdCaVdCdWdTK1NrYm04eTRERHI3RnBQNnRMalIrWWRRa0ZyOXFyVjhtRG12?=
+ =?utf-8?B?ZWl0bFJvUExOc0dzZzZ5a1M4b3NvcHJvTFlMWGJWY3ZENWRMYUp1M2hIdTdI?=
+ =?utf-8?B?eXpBcmR5c3BxVCtpcitWMnNHWmppbjNubW9pWStZcTZjbzJ6SlpNMU1tL0xa?=
+ =?utf-8?B?M2g3UWJFMzhIWFEwRVpFbDJjd2RvN2RZWWY1cWVmekxUOUwvMENSRUdTN0NX?=
+ =?utf-8?B?c3FXWXJub0RzZUFGWkRubG5HUjJ5NVdDQzdUdCtwNm1XM0dLWWlJcWlIUkQw?=
+ =?utf-8?B?cExSSjViM2FHaHdyTDJJbkJtVnNXSG9jeStBVGdlTDhidkgwWURxTFpvc09R?=
+ =?utf-8?B?R2pFWmdjTnB1UGRaTmlrWkV4WTdKc2ZLYjNHSS9OSW51OFNIMHp5ZXI0c1ZP?=
+ =?utf-8?B?WXJud0RNMm5XQ2tiM0pRNUhnMDZtaDVCQTRNL3NzdmVmRGEzdXhNRFhMUkw0?=
+ =?utf-8?B?T2tFZHBLbmJUZzU1Wm5uZ0pBcFJQMHUwVHc2cXZ4S0pjL1MzVHM5bU1BOFVm?=
+ =?utf-8?B?bnhCY3ZkY1RKdXJyaHFFR1ZXZHo4a1RlM29FSjdQMC9sZnB6ZitwbVVrRzBq?=
+ =?utf-8?B?aWY1c0J1amJpV3pHRUViNDBZWndQTkczeU1MSFJsR2RINXBXajQ4bDUya0o4?=
+ =?utf-8?B?YldhMGNvekR0TnovSmZvMmpJMXhOdDJjdEJDV3RVWjg4L2VBaDFaM1hyUU9Z?=
+ =?utf-8?B?VmhtaVRFMU96UDQ3WlZXdW5zWWI1TmZ4MEQyVjI1WWxMU1ZnVDMzY1pUNEJq?=
+ =?utf-8?Q?smss=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5426c40a-94e2-4394-e6db-08de130a6dcc
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3613.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 14:34:24.8017
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +OAEOQn4PmHv2RQTX9pbF1lWgznuY61vkZoq7xKOAwQlMUAZwmzTu1VhZTq7/ql1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6124
 
-The JH7110 pinctrl driver currently sets a static GPIO base number from
-platform data:
+On Fri, Oct 24, 2025 at 02:23:54PM +0000, Wei Wang wrote:
+> > Again we should not be trying to guess if something is "ram" or not
+> > deep inside the iommu code. We have IOMMU_MMIO specifically to tell
+> > the iommu if it is ram or not.
+> 
+> Sorry I think my main confusion here is why this is considered a ‘guess’ of RAM.
+> The function page_is_ram() clearly returns whether it is RAM, right? 
 
-  sfp->gc.base = info->gc_base;
+IIRC it is not reliable. We have a lot of things in modern systems
+that are cachable ram-like objects that page_is_ram() may or may not
+return true on.
 
-Static base assignment is deprecated and results in the following warning:
+Further, page_is_ram is very expensive:
 
-  gpio gpiochip0: Static allocation of GPIO base is deprecated,
-  use dynamic allocation.
+int __weak page_is_ram(unsigned long pfn)
+{
+        return walk_system_ram_range(pfn, 1, NULL, __is_ram) == 1;
 
-Set `sfp->gc.base = -1` to let the GPIO core dynamically allocate
-the base number. This removes the warning and aligns the driver
-with current GPIO guidelines.
+We really don't want to be doing something like that for every IOMMU
+PTE.
 
-Tested on VisionFive 2 (JH7110 SoC).
+For your immediate problem IOMMU_MMIO is better, but broadly I think
+this will need some attention later. I'm not sure how something like
+CXL cachable ram is supposed to work through these APIs, or if it
+should have the C bit set.
 
-Signed-off-by: Ali Tariq <alitariq45892@gmail.com>
----
-Changes in v2
- - Remove unused gc_base field from struct jh7110_pinctrl_soc_info
- - Drop unused JH7110_SYS_GC_BASE and JH7110_AON_GC_BASE defines
- - Remove .gc_base assignments from jh7110_sys_pinctrl_info and jh7110_aon_pinctrl_info
- - No functional change otherwise
----
- drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c | 2 --
- drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c | 2 --
- drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c     | 2 +-
- drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h     | 1 -
- 4 files changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c
-index cf42e204cbf0..3433b3c91692 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c
-@@ -29,7 +29,6 @@
- #include "pinctrl-starfive-jh7110.h"
- 
- #define JH7110_AON_NGPIO		4
--#define JH7110_AON_GC_BASE		64
- 
- #define JH7110_AON_REGS_NUM		37
- 
-@@ -138,7 +137,6 @@ static const struct jh7110_pinctrl_soc_info jh7110_aon_pinctrl_info = {
- 	.pins		= jh7110_aon_pins,
- 	.npins		= ARRAY_SIZE(jh7110_aon_pins),
- 	.ngpios		= JH7110_AON_NGPIO,
--	.gc_base	= JH7110_AON_GC_BASE,
- 	.dout_reg_base	= JH7110_AON_DOUT,
- 	.dout_mask	= GENMASK(3, 0),
- 	.doen_reg_base	= JH7110_AON_DOEN,
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c
-index 03c2ad808d61..9b67063a0b0b 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c
-@@ -29,7 +29,6 @@
- #include "pinctrl-starfive-jh7110.h"
- 
- #define JH7110_SYS_NGPIO		64
--#define JH7110_SYS_GC_BASE		0
- 
- #define JH7110_SYS_REGS_NUM		174
- 
-@@ -410,7 +409,6 @@ static const struct jh7110_pinctrl_soc_info jh7110_sys_pinctrl_info = {
- 	.pins		= jh7110_sys_pins,
- 	.npins		= ARRAY_SIZE(jh7110_sys_pins),
- 	.ngpios		= JH7110_SYS_NGPIO,
--	.gc_base	= JH7110_SYS_GC_BASE,
- 	.dout_reg_base	= JH7110_SYS_DOUT,
- 	.dout_mask	= GENMASK(6, 0),
- 	.doen_reg_base	= JH7110_SYS_DOEN,
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-index 05e3af75b09f..eb5cf8c067d1 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
-@@ -938,7 +938,7 @@ int jh7110_pinctrl_probe(struct platform_device *pdev)
- 	sfp->gc.set = jh7110_gpio_set;
- 	sfp->gc.set_config = jh7110_gpio_set_config;
- 	sfp->gc.add_pin_ranges = jh7110_gpio_add_pin_ranges;
--	sfp->gc.base = info->gc_base;
-+	sfp->gc.base = -1;
- 	sfp->gc.ngpio = info->ngpios;
- 
- 	jh7110_irq_chip.name = sfp->gc.label;
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h
-index a33d0d4e1382..2da2d6858008 100644
---- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h
-@@ -38,7 +38,6 @@ struct jh7110_pinctrl_soc_info {
- 	const struct pinctrl_pin_desc *pins;
- 	unsigned int npins;
- 	unsigned int ngpios;
--	unsigned int gc_base;
- 
- 	/* gpio dout/doen/din/gpioinput register */
- 	unsigned int dout_reg_base;
--- 
-2.43.0
-
+Jason
 
