@@ -1,179 +1,168 @@
-Return-Path: <linux-kernel+bounces-868510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C5C2C055DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:34:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A54C055EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58DCA1A0890C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:35:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A44311A087C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5497E30AD1B;
-	Fri, 24 Oct 2025 09:34:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD12303A0A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C48D30AD09;
+	Fri, 24 Oct 2025 09:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SnNmkUOu"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE9E303A0A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761298465; cv=none; b=NR8R/jentxDSYSHPNRqn2HlAFzjq8zS6G7HEtgBKRdCEqB4Nhirr6tUf4MN4tHSP4v9MFeC9FMmGxS9i/35gGziL/WtYhncFvD1JdRAE5Ws7Du4lhBN1EaNoSBlWCofvxVtiCJl/9+STO0lqbE/ff6Nr/kuyN4R51gpH5uVvA7g=
+	t=1761298520; cv=none; b=dNKeSvRw0iOK3dwcPOmHMkE7AusPdhb80VWiGIZ8p1GaX1YKnK2WlxzBzNuDlrKumOXNlY6kXdeMUnNfjFjcPAZG0sGgjlondLcOlxsybrdn0cKArw+FCW/OJ39pgc7LGp07rS+oRpqGwM7n6jcD5+F55hodcg0GE3MEzIm3BIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761298465; c=relaxed/simple;
-	bh=iszP5DUr4erTaKXPJ1aSvsS5dhVHhF6i/9jR7YeCvTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qn+vj84FIuBRqnUZ8SRwZyQoWMJQVSyDi3002DRv2FdVByfHm6bn7iIianyZOHpaYAiflqGh412akU8g+AobvXEbX7L6WVatMBcIodjffTqM8x+EE3J3m80nMEMkteZaWWvS4kQJhurs3VIrkT9b2Rgi5w9Gos3FLji+4+Mnw1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 794051516;
-	Fri, 24 Oct 2025 02:34:15 -0700 (PDT)
-Received: from [10.1.37.17] (e122027.cambridge.arm.com [10.1.37.17])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48B963F63F;
-	Fri, 24 Oct 2025 02:34:21 -0700 (PDT)
-Message-ID: <79f23e43-c345-4277-8b05-97d7dacbc1d4@arm.com>
-Date: Fri, 24 Oct 2025 10:34:19 +0100
+	s=arc-20240116; t=1761298520; c=relaxed/simple;
+	bh=GlUefLpUxaf97bsCrf8Uoodrh4iCQAJxJMfBklTXkSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eI5l7Asaz+M9vZLnqikHq8MnITiyPEVAwWliQLnebmHf8N+D4kBBmtBj1H1eBeb9iR0AFB8sFLhTFRT5J175Oneyk86/dNlWlfv37KbnJeFNhpirNQ+nLm4wOLmRwhAWvAXCu3IyKK80zKEuTOqPQfif1Zi4rQJI7JAiASJBajA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SnNmkUOu; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-471131d6121so14286685e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:35:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1761298516; x=1761903316; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JbHQ9Yll+18kGv8Q4G1mY89TauTgNbmP1REuXJUqmFg=;
+        b=SnNmkUOu3Jwr33LD25oYRQBeuU1XLHTJCAD4fRQZNxT2UQ19f9hQAwgPO4x5PVs8qw
+         24ISYGOIi0DIo3md4LhHjp39UeOcPCexf4VPE9Nd2Jaei6DO0GkHNVHJWCTX/wwkKLTc
+         soaxSSwoshEE5d1+iR2JPhtd64CTCe+cbgJm1ogqZibcD5GG8tn0iziL4YzeTnf4YMY7
+         zZr0u7iaqi5ZtJsAyV3ESsWd0fxRduraC6Si6RAIXeALe+fzIFU2M2tN2dggEW4jP8ee
+         oQSjMq7i+73C/tghdik81JeMjLGAkIrVWwzSHDytUBkeZq4dy0PIuQ3erNVbDx16oUqW
+         vQnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761298516; x=1761903316;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JbHQ9Yll+18kGv8Q4G1mY89TauTgNbmP1REuXJUqmFg=;
+        b=RGTmGB4AzhY/UzklJjwZZ1C1VsU8KJto2DWb0tRVbyqpHY5GRUjX2TOC1MhC6L/fAQ
+         uey92s7plra4QVbNocwY7Nh0U97mGq0hKrNsclqgxZ3nksYwZjhvbP+1ncAOJL9Xrmt4
+         l/AssAQ9hVhCuGlvORiGvE+kCAMjaqhN72LYDv/ipJpkePAJast4HDCoyR9xb79Fu8Up
+         X2YkJPoKqMZxtu1N99Jk64SCuyjQ3eCmuGSnifBYLmNu5+qIRW10yQ4tiyfuXERgw0tl
+         doufXUwf07yoZInLpKPy/ZbZteGoC1llwks+kYhmFa429s3bNSvmIZorQLGD294shKao
+         PTFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOYGoQSUmIrzbEjGIkNLPa9fu3mYGY2gDHnzl1Y0KCi2JISAkKHJAXWXvCM6wGScVRjbSKmNO+MujLyN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHunAGlDc6iycpF6fA8K29ejWtSeJtspIj0yHKbG2gGutHNLn3
+	WTfUkz2vDQG1AKGfhTw10wVrZjMbpgJEE2QiVAYXPNc+Gz3InB2gLRxRkNp5JY3aLrg=
+X-Gm-Gg: ASbGncsmLYz20AeVGqVtuQ28onOZP7Tew38EV9zrjHsV2Z6zJT5sZFdCJJymqcuoazK
+	2v1lDxDyhDBbKvwNpKrJ3seKSpDGaMqBwzQUmnXZ7896RjJdITunbWonK0dIKGGNOffdraBI4yE
+	a9PqNekPEf75ukjSMJjmNhbzS9l7CLaz4XMZdaWHsiyXeCOroSKvSOxlMpfvSoDjTxQmLO+fl/i
+	LWPJEPLLUdj0UpVjNjxlkcN6LQmPpSVcTnPLve50+ARdLWXs6AuAWYAaCeQK92MOmZABtxeNE0I
+	nQAnaE/4Bwa9RnQHOrFwsC6VM+Q8+nyqthYbM8n3oq9q1J9lKNTTOZBj9VPBmxUx6rlFdpS0+Wx
+	7izYTt6CNAHUds/P1SYdXGmwA1OshCo314lmXe8LWJ1WaY+Ys9w/PitmhYYCKoWgWnmsTviLOUr
+	BYA48=
+X-Google-Smtp-Source: AGHT+IEVeOtivGKfs511LEFtRbNEpqMJ8MKLLCrxeJpIhAwP+fpOLm4RUScJ1XdRje4QVNuYGFJqOw==
+X-Received: by 2002:a05:600c:3555:b0:470:fe3c:a3b7 with SMTP id 5b1f17b1804b1-4711786d42dmr203430315e9.5.1761298516428;
+        Fri, 24 Oct 2025 02:35:16 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475cae9253bsm78998185e9.1.2025.10.24.02.35.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 02:35:16 -0700 (PDT)
+Date: Fri, 24 Oct 2025 11:35:14 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Oleg Nesterov <oleg@redhat.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] printk_legacy_map: use LD_WAIT_CONFIG instead of
+ LD_WAIT_SLEEP
+Message-ID: <aPtIUq7hf4R5-qfF@pathway.suse.cz>
+References: <20251022154115.GA22400@redhat.com>
+ <20251023103234.GA27415@redhat.com>
+ <20251023142655.FvZkeSa-@linutronix.de>
+ <87wm4lbqt2.fsf@jogness.linutronix.de>
+ <20251023151112.goqBFQcM@linutronix.de>
+ <20251023154657.GD26461@redhat.com>
+ <20251023191442.Uu0mD_Nq@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 04/10] drm/panthor: Add architecture-specific function
- operations
-To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
-Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-References: <20251014094337.1009601-1-karunika.choo@arm.com>
- <20251014094337.1009601-5-karunika.choo@arm.com>
- <91b406f2-7221-49f9-89fd-6f3b6bd1f4f5@arm.com>
- <6a469d39-0136-4f8c-a171-7b98db9eed10@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <6a469d39-0136-4f8c-a171-7b98db9eed10@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023191442.Uu0mD_Nq@linutronix.de>
 
-On 23/10/2025 21:59, Karunika Choo wrote:
-> On 20/10/2025 10:10, Steven Price wrote:
->> On 14/10/2025 10:43, Karunika Choo wrote:
->>> Introduce architecture-specific function pointers to support
->>> architecture-dependent behaviours. This patch adds the following
->>> function pointers and updates their usage accordingly:
->>>
->>> - soft_reset
->>> - l2_power_on
->>> - l2_power_off
->>>
->>> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
->>> ---
->>>  drivers/gpu/drm/panthor/panthor_device.c |  4 ++--
->>>  drivers/gpu/drm/panthor/panthor_fw.c     |  5 +++--
->>>  drivers/gpu/drm/panthor/panthor_gpu.c    | 13 ++++++++++---
->>>  drivers/gpu/drm/panthor/panthor_gpu.h    |  1 +
->>>  drivers/gpu/drm/panthor/panthor_hw.c     |  9 ++++++++-
->>>  drivers/gpu/drm/panthor/panthor_hw.h     | 23 +++++++++++++++++++++++
->>>  6 files changed, 47 insertions(+), 8 deletions(-)
->>>
->> <snip>
->>> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
->>> index 7a191e76aeec..5a4e4aad9099 100644
->>> --- a/drivers/gpu/drm/panthor/panthor_hw.h
->>> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
->>> @@ -20,12 +20,35 @@ enum panthor_hw_feature {
->>>  };
->>>  
->>>  
->>> +/**
->>> + * struct panthor_hw_ops - HW operations that are specific to a GPU
->>> + */
->>> +struct panthor_hw_ops {
->>> +	/** @soft_reset: Soft reset function pointer */
->>> +	int (*soft_reset)(struct panthor_device *ptdev);
->>> +#define panthor_hw_soft_reset(__ptdev) \
->>> +	((__ptdev)->hw->ops.soft_reset ? (__ptdev)->hw->ops.soft_reset(__ptdev) : 0)
->>> +
->>> +	/** @l2_power_off: L2 power off function pointer */
->>> +	int (*l2_power_off)(struct panthor_device *ptdev);
->>> +#define panthor_hw_l2_power_off(__ptdev) \
->>> +	((__ptdev)->hw->ops.l2_power_off ? (__ptdev)->hw->ops.l2_power_off(__ptdev) : 0)
->>> +
->>> +	/** @l2_power_on: L2 power on function pointer */
->>> +	int (*l2_power_on)(struct panthor_device *ptdev);
->>> +#define panthor_hw_l2_power_on(__ptdev) \
->>> +	((__ptdev)->hw->ops.l2_power_on ? (__ptdev)->hw->ops.l2_power_on(__ptdev) : 0)
->>> +};
->>
->> Minor comments:
->>
->>  * You are defining these to have a return value, but you haven't
->> updated any of the call-sites to deal with a failure (the return value
->> is ignored). This is actually an existing problem, but AFAICT the new
->> _pwr_ versions have more error codes which are simply getting thrown away.
->>
+On Thu 2025-10-23 21:14:42, Sebastian Andrzej Siewior wrote:
+> On 2025-10-23 17:46:58 [+0200], Oleg Nesterov wrote:
+> > Again, quite possibly I am wrong. please see my reply in another thread,
+> > https://lore.kernel.org/all/20251023152942.GC26461@redhat.com/
+> > 
+> > On 10/23, Sebastian Andrzej Siewior wrote:
+> > >
+> > > This does not matter. My point is that there no need for this ifdefery.
+> > 
+> > I disagree. Rightly or not. To me this ifdefery in printk.c make the intent
+> > more clear.
+> > 
+> > I am still thinking about the possible cleanup of the current usage of
+> > DEFINE_WAIT_OVERRIDE_MAP(), but I think that, whatever we do, this cleanup
+> > should take CONFIG_RT into account.
 > 
-> Hi Steve,
-> 
-> While I agree that there is an existing problem, I'd argue that most of
-> these are called from void functions where there really isn't much
-> benefit in handling the return value apart from printing a "whoops"
-> (which the called functions themselves mostly already do) and
-> continuing. In fact, in the one place it isn't called from a void
-> function, we do handle the return value.
-> 
-> Still, I do think that it is an issue, biggest of which probably is the
-> soft reset work. Perhaps we can revisit this topic when we want to have
-> another go at the soft reset handling in the future?
+> Right. Please just do s/SLEEP/CONFIG as discussed. Please leave
+> PROVE_RAW_LOCK_NESTING out of it while arguing why this change is
+> correct.
 
-I agree it's not making things worse. But if we're adding another
-backend it's worth stopping to think about the API. Does it make sense
-to return an error code if the call sites cannot handle the error?
-Should any of these function be void return? Specifically the power off
-call as I'm not sure what the caller can usefully do if that fails.
+It is clear that the commit message and the comment above the mapping
+caused some confusion. I thought about better wording.
 
-I'm happy for the soft reset to be left for now, it would be good to
-handle errors properly in that path but it's an orthogonal problem to
-this series.
+I wanted to be as clear as possible, But the problem is that everyone
+has different background and might understand the same term
+differently. Also I am not a native speaker.
 
-Thanks,
-Steve
 
->>  * Is there a good reason why we need to support these functions being
->> NULL? It seems unlikely to be useful, and TBH I'd prefer to just assign
->> a dummy (empty) function in those cases.
->>
->>  * A static inline function would be neater and would avoid any
->> potential issues from the multiple evaluation of __ptdev.
->>
->> Thanks,
->> Steve
->>
-> 
-> Thanks for pointing this out + the suggestion, I will change this in v2.
-> 
-> Kind regards,
-> Karunika
-> 
->>> +
->>>  /**
->>>   * struct panthor_hw - GPU specific register mapping and functions
->>>   */
->>>  struct panthor_hw {
->>>  	/** @features: Bitmap containing panthor_hw_feature */
->>>  	DECLARE_BITMAP(features, PANTHOR_HW_FEATURES_END);
->>> +
->>> +	/** @ops: Panthor HW specific operations */
->>> +	struct panthor_hw_ops ops;
->>>  };
->>>  
->>>  int panthor_hw_init(struct panthor_device *ptdev);
->>
-> 
+/*
+ * Some legacy console drivers might violate raw_spinlock/spinlock nesting
+ * rules when printk() was called under a raw_spinlock and the driver used
+ * a spinlock. It is not a real problem because the legacy drivers should
+ * never be called directly from printk() in PREEMPT_RT.
+ *
+ * This map is used to pretend that printk() was called under a normal spinlock
+ * to hide the above described locking violation. It still allows to catch
+ * other problems, for example, possible ABBA deadlocks or sleeping locks.
+ *
+ * The mapping is not used in PREEMPT_RT which allows to catch bugs when
+ * the legacy console driver would get called from an atomic context by mistake.
+ */
 
+
+And the commit message might be:
+
+<commit_message>
+printk_legacy_map: use LD_WAIT_CONFIG instead of LD_WAIT_SLEEP
+
+printk_legacy_map is used to hide possible violations of
+raw_spinlock/spinlock nesting when printk() calls legacy console
+drivers directly. It is not a real problem in !PREEMPT_RT mode and
+the problematic code path should never be called in PREEMPT_RT mode.
+
+However, LD_WAIT_SLEEP is not exactly right. It fools lockdep as if it
+is fine to acquire a sleeping lock.
+
+Change DEFINE_WAIT_OVERRIDE_MAP(printk_legacy_map) to use LD_WAIT_CONFIG.
+
+Also, update the comment to better describe the purpose of the mapping.
+</commit_message>
+
+
+Is this better and acceptable, please?
+If not then please provide alternatives ;-)
+
+Best Regards,
+Petr
 
