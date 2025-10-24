@@ -1,122 +1,120 @@
-Return-Path: <linux-kernel+bounces-868934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5562C06873
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:36:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC88C068A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F2B75068D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:34:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E95303AA291
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CFE31D747;
-	Fri, 24 Oct 2025 13:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E21631D744;
+	Fri, 24 Oct 2025 13:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="jToRp2QV"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150E62D47F3;
-	Fri, 24 Oct 2025 13:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="UYP0YRo3"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F6F305E1F;
+	Fri, 24 Oct 2025 13:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761312891; cv=none; b=bshXE3jITKgXohpvKcwb+Mui0AyVKvvYrmlMQQQ/0ODm4cJIdunHvaXnJKTq83WOQC6HL1v2xksJmAGpQtU/YXHUpzO9cD9weMt3ySbD0tS3tQHGShfkcgZqeKuOzn7bzpYuwD8c30enFmj/ENFaqyiALEi9pcriEPqQq2vqffU=
+	t=1761313086; cv=none; b=tkvDRLc+RP0KAu7WFaYRAYFVr+ZGXNaqd+6/suayzxL7Nnyt0Z4YdAsl3Og1fS3qMnzkujIMvuDnlmTsnZAJEbaohmjV8NgdKjcZmJRCgKr/O9fdoud08pByhcNrP8ouBZ2Bu7kkZOyLCrtNxQNFGI0Fyq+hj/ufPQwtUyGo1Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761312891; c=relaxed/simple;
-	bh=j50UC3gpZzM+sZcUvUP6Ut3HC1+zm/hUKXuj616DXSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OrX8pqzddob0PUCTDdIl9TFgoJL+1WGSQeiGt5wYojOztJ6l7CdtjCHwJKL/3uCf3WKrzlKzVIlyJC+45Gzj9A01oMfkxcxc38Ni1NrF9d1eCzYWV7h1IsJBZuawG8n5Op4QOvVzcsdMngj7dJz35WCdaXyNDHSxgYECJsCq/I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=jToRp2QV; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 9D7B314C2D3;
-	Fri, 24 Oct 2025 15:34:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1761312880;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r1/r7129Thb1q07EWwLnDb7V2mKBqHDrr+sIHFTvGfo=;
-	b=jToRp2QVbPYnRqiNsobWoAssQ3moE8bSJytyjP8pQA6Ho7wRDhiXWICqVyQGI2TO5j4sQU
-	2AedX+o0qlGY5wiWfGb74FmCWVZ5irz30LuXgQG7oAHRjVA2i/0IjqOQULOX72aIeGF8Ie
-	iJBqW/gF9zZzaq5sKaBqv0a4sIxu83Fo1QHY4bMZx1Nt5xV5smWAgNxFjTTTF8wk+zEN7U
-	FQfmZ33ymbBvoSkoCwZkQ7OfO1nMJcvs4W/qhSoKPysqoTk/I5NoXOKqYJiBOH/TSCeB8m
-	OZx+4+PAqKA7ejcL7m/PppdE/T82r0mkJa839BZfAIJdvaFSV1hVOghY6RgJ5g==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 02b4df75;
-	Fri, 24 Oct 2025 13:34:36 +0000 (UTC)
-Date: Fri, 24 Oct 2025 22:34:21 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/9p: delete unnnecessary condition
-Message-ID: <aPuAXaHNWMhZOeuv@codewreck.org>
-References: <aPtiSJl8EwSfVvqN@stanley.mountain>
- <13655400.bYd4YqkHfl@silver>
+	s=arc-20240116; t=1761313086; c=relaxed/simple;
+	bh=dSsQ7ln9dom7tvC+7zYZts53Uj7ycsE8znu+2l5q+Ow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kdfnpdQIzTPGCpADHsyLHJMHMzyF2NJEkEyS5cKMhuIy/xj4mZlHOZAiI7sP1PujvcXQpH3U7alLb7qBp3CQHBI5Or31j27TZEuEio6YFTixhp5LjT2SxkixeKIjUHpllGUWkSPCTk18SXWVrKmuSoIlkKSIYKjf1W0kl50bL9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=UYP0YRo3; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=STvdtGwrlbRDAy5cjPU3q5DnAKLJycqH59lsV64gJ40=; b=UYP0YRo3qGyIl1x85VdifTZnfi
+	xH3/nNPo9Xn9nSwlU1d9Vrs2FTfTQD7Hy+U1ZmaLC4LFLxeEDUHTEwowC3CKzpVeC9jtowU8wlqHt
+	9oX0QL7VHNKgZefAJbIKOClgRvUF5+c1jq4aljw/Sgn2UkcoQSVHG7kAQGFPfL22kY75jRHf9xijI
+	L2OMg2R391QegKQxzQdtP3QevbiamtW48cfGlwfiftDjR3tlHXpr6t4KTvg7M5etU2ZrWkuaGW/EW
+	fn7L94pqm8s1tRvKt1YWdvZ1nXeC5Bnwd9hAHSXQ+CeJv1jQI6xxC+ptd4h2FiLcOy5HSAHai2Xx7
+	GszFH9bw==;
+Received: from [90.242.12.242] (helo=[192.168.0.101])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1vCHzL-00EmDz-G4; Fri, 24 Oct 2025 15:37:51 +0200
+Message-ID: <cefe8f07-68a3-4c93-ae46-ebb01ff6fa2c@igalia.com>
+Date: Fri, 24 Oct 2025 14:37:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <13655400.bYd4YqkHfl@silver>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dma-fence: Correct return of dma_fence_driver_name()
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: phasta@kernel.org, Sumit Semwal <sumit.semwal@linaro.org>,
+ Gustavo Padovan <gustavo@padovan.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20251024075019.162351-2-phasta@kernel.org>
+ <11b7a8a5-170f-4815-a8ac-5dba2d8e67a1@igalia.com>
+ <5de88e79575e06c053f2d61f7bb58bf9cf5b556e.camel@mailbox.org>
+ <1d0bbdcf-f4d6-49c0-bbdf-364c2af80868@igalia.com>
+ <89812f66-25a6-4f9e-aa4f-74adbf116db8@kernel.org>
+ <5640fbf1-7b8d-4537-9f1a-b401a7a4934b@igalia.com>
+ <8cba66d2-9608-4a5c-a2af-6cc91f46a49f@kernel.org>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+In-Reply-To: <8cba66d2-9608-4a5c-a2af-6cc91f46a49f@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Christian Schoenebeck wrote on Fri, Oct 24, 2025 at 01:59:46PM +0200:
-> On Friday, October 24, 2025 1:26:00 PM CEST Dan Carpenter wrote:
-> > We already know that "retval" is negative, so there is no need to check
-> > again.  Also the statement is not indented far enough.  Delete it.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
+
+On 24/10/2025 14:13, Danilo Krummrich wrote:
+> On 10/24/25 2:40 PM, Tvrtko Ursulin wrote:
+>> You trim too much of the quote making it unclear if you read the whole story.
 > 
-> Fixes: 43c36a5
-> Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
+> I'm well aware of the context.
+
+Good to know. I am coming from the angle that netiquette, at least in 
+the olden days, used to be that when you join an established thread you 
+don't trim too much of the context. For the benefit of people joining 
+the thread at that very point, especially when re-raising an argument 
+which has already been discussed.
+
+>> If the driver isn't detached from the signalled fence then it is vulnerable to
+>> use after free.
+> When someone just reads "detached-driver" is creates the impression that the
+> driver is unbound from its device, since this is what this term is usually used for.
 > 
-> Apparently a manual revert copy paste error. The rest of the revert commit
-> LGTM.
+> (And this is even the case you want to protect against, i.e. the string behind
+> the pointer returned by get_driver_name() has been freed.)
 
-Ah, I left that part of the reverted hunk while keeping the HEAD part:
-```
-<<<<<<< HEAD
-                }
-                if (v9inode->cache_validity & V9FS_INO_INVALID_ATTR) {
-                        p9_debug(P9_DEBUG_VFS, "dentry: %pd (%p) invalidated due to type change\n",
-                                 dentry, dentry);
-                        return 0;
-                }
-                if (retval < 0) {
-                        p9_debug(P9_DEBUG_VFS,
-                                "refresh inode: dentry = %pd (%p), got error %pe\n",
-                                dentry, dentry, ERR_PTR(retval));
-||||||| 290434474c33 (fs/9p: Refresh metadata in d_revalidate for uncached mode too)
-                if (!cached && v9inode->cache_validity & V9FS_INO_INVALID_ATTR)
-                        return 0;
-                if (retval < 0)
-=======
-                if (retval < 0)
->>>>>>> parent of 290434474c33 (fs/9p: Refresh metadata in d_revalidate for uncached mode too)
-                        return retval;
-```
+One of the cases just to be clear. The driver getting unbound from the 
+device is not *the* case.
 
-For a proper revert I should have removed the first `if
-(v9inode->cache_validity & V9FS_INO_INVALID_ATTR)` too :/
+In fact with xe the bug was exploitable by just closing the render node 
+fd and then querying the fence. Hence detached in this context is more 
+than unbound or unloaded.
+> However, the condition that has changed when you print "driver-detached" is that
+> the fence has been signaled, independent of whether the driver has been detached
+> from the device.
+> 
+> Now, you can argue that you mean "driver has been detached from the fence",
+> which means something along the lines of "the driver has no business with the
+> fence anymore", but this is not what people think of when they read
+> "detached-driver".Okay people. :)
 
-OTOH it still makes sense even without the rest of the patch (the only
-reason V9FS_INO_INVALID_ATTR would still be set is on type change, and
-in that case we do want to return 0 even on refresh inode error)
+How about "unknown-driver", would that satisfy you?
 
+Regards,
 
-Anyway, thanksfully this particular double retval < 0 check is harmless
--- I'll pick this up for -next for now but hopefully we'll be able to
-"revert the revert" and fix the other problems Tingmao pointed out by
-the time we reach the 6.19 merge window...
+Tvrtko
 
-Thank you both!
--- 
-Dominique Martinet | Asmadeus
 
