@@ -1,149 +1,141 @@
-Return-Path: <linux-kernel+bounces-868181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF51C0496F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:57:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A3AC04981
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 696544E3166
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:57:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C3744E87F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B92278E7B;
-	Fri, 24 Oct 2025 06:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FF8277CA4;
+	Fri, 24 Oct 2025 06:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WxXrZGDW"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ag+RvXpu"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADF526560B
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AD326F46E;
+	Fri, 24 Oct 2025 06:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761289038; cv=none; b=ih5MdStRTQ9KAC+5bV26uY7/4mB5c8Q5baYwrvz8xcNZdHeLibUvdS/gY59/UPmbVQv9Dk7k8EwOV2tth5DesDHEtplf5fmOmHNMugmOILFhdnyJny/seFtk2Fnt3PQ3e2bwR1v1Bn0onPnNQtQgI5R0ebY3SYihTWaancUKbfA=
+	t=1761289110; cv=none; b=Chp7lgVXC2J288RC+8OM2PmQSVJEKpH7XIou4kquvcr6Itt1hG2bEw4FPX2B7XvAtF7Or+G2J/PwKWsVT8NFh5BNR/0mdK1/GVV07rUP1+ypHjf68vR94P77Z5yp4w4Cz7INauYwIUJeCHR8Oh48DvLl7f51OJLX7hMQs16OYNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761289038; c=relaxed/simple;
-	bh=l27XdHQbBM+7OkmY+JBO6NcVOae8OD6osrJX9LZz7Ig=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZJShTcPpPqqKYSg0FjEAta7y5Aap2HqA5IFllzOweOTp2e04TlP804wTx2Wbpwrur98xVppFs1Ntel/+CnQF8hxViCTToJ4w1D3Sl+J0LFTYuqJiksHBCx8Kumpz8MRYH7+7YGXawrLaIWw054SBEAm5/yO3TZeBbdS9Uv4NnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WxXrZGDW; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-426f1574a14so963486f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 23:57:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761289035; x=1761893835; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ORMJ7BlrHXqNeSTsxJ4qy2dmyq6fW2e6Eo8f/etUvO4=;
-        b=WxXrZGDW5ptcP3JI4+bdKvuYLMOOm0sKsV1617oZDPOq4otBUlkyOTMC1SMetgZK98
-         4AIZsDC47DLX3IVnsqNRQtZtPICgv9RRfkw71kqUlVq2QHfgjtGyDBLoioX9Rdh9GLSg
-         xe67v2HFx9WPb8qYtqFCw9B24Av6fEql2o3K87mrRAPCij7t7+MmFLa2uO4PcOOrUiFy
-         5dKpEjL3qVbDFB30skXXrXww6lN7VmvNd3ceagRQh11WJUlHdbGn5+kvq0VlkpGl0Iat
-         1+tDvQyZTKnpJVCSNm6L2hMEdUUuDpTWN56mV35mPNWTI9uFsGtwIJpggWglaeg3U7fW
-         uEBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761289035; x=1761893835;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ORMJ7BlrHXqNeSTsxJ4qy2dmyq6fW2e6Eo8f/etUvO4=;
-        b=uptTb6Fri+Ywyb6jQk748edlU0P3af0qRjgp65QX46Sxdqk48ckMHGza4riXS1uMMJ
-         tc46f+pa9vIXXr4Nl58o/dz/iCVof7xRV7G65dprfoqmD1ckQ4ScWaUWMc3jTmyicMlP
-         QgPmyEGxxpiWqvSz56UhskqrM9sDyYMG70aR/PiL/EV0uqk+qgRn6jlds07HubhTXSQ8
-         8zCH6vXtdZQG5I0jFryIJMXqLk85q7iSOT54OcEyFd0g+Z7J0xCcrtJN0kmNKf/255d1
-         kdRPm1MfHwKo+ZEpabCJ4gtWVGBMFZg+QEsYYACkCFuru5R5nt5KQQjOmP35ivK54v1S
-         +R7A==
-X-Gm-Message-State: AOJu0Yy//IWhVgTtZaYZGWfZTzgaR0eKpxuPUfBHsaSNx32dyP9Sa+rl
-	bDsuQ0NzfYUlibUcgmbdCxJvR7/31pUNors1vRmZ7tOgEE/74dMqDIRS
-X-Gm-Gg: ASbGnctsY1zLWjBjczUIoDjsKbiI8Y5nm25SyIsZnwIqqt352oHYgcNhYR6ui9ALJMe
-	H6ciuXpfqrfhhUSHAHUAiIGYgK3RW6K0wPg2aYobyh9F81+ltne39JxgZEyVAqP03JN/etl9EOb
-	F8SDWQsPP3oZXG7mrsVhsc2ZoTdwl4zmCe5wl0M6isUHb5VOkto+Tv3Olfy7srytVKKabbais3W
-	9BLzFdl5F4EFb4iTUU3NyswRAPqz6pk7l/krqCcwL6cUJjNaa7LTuy6SWQQPoBw+Vf30muk6IQS
-	wUxFStLY8TbjkAO8XE2WwfV+bNqk0zVbtC/Mwz16+c9RGuqItczbmypEa7+Nqvz6hE+/G8zjVOc
-	ld6/ttdj84QhEB8go5bX8BH0osdgSMFaVrWEre2nQrRrkKlyvLg==
-X-Google-Smtp-Source: AGHT+IHpUTilMgnX8ETVEknhaI2lHNfs+gF9oo5RMnpwrwZ3GZ6FYDuD6jwow1gnOGUua1J45MTuTA==
-X-Received: by 2002:a05:6000:40db:b0:427:2e8:fe48 with SMTP id ffacd0b85a97d-4298a040682mr3178731f8f.4.1761289035317;
-        Thu, 23 Oct 2025 23:57:15 -0700 (PDT)
-Received: from krava ([2a02:8308:a00c:e200::b44f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898eac60sm7545816f8f.39.2025.10.23.23.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 23:57:15 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 24 Oct 2025 08:57:13 +0200
-To: Jianyun Gao <jianyungao89@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	"open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>
-Subject: Re: [PATCH] libbpf: optimize the redundant code in the
- bpf_object__init_user_btf_maps() function.
-Message-ID: <aPsjSZtNxeQK239J@krava>
-References: <20251024060720.634826-1-jianyungao89@gmail.com>
+	s=arc-20240116; t=1761289110; c=relaxed/simple;
+	bh=Sdsc+HimNNRly3zNHIIhGItCDW5d9nIGsh5mSBxyp2Q=;
+	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:Mime-Version:
+	 References:In-Reply-To; b=g0j26hR8ZmCbsjGA7hST+cf8jKAwn+ZWphF49QS+SDYy0e/HcpkyHcsp1Taxtjwo5cnverjRAAJiFyHMzLMZIpjPID2Wp9YCgIhPhZ1D0tcUT7upHhPppCOJ7BQAhYND93OeHUE5HmvALUTl9hNujsP+3Q3hkhdiVQ4B2+0Y6wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ag+RvXpu; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id E05CDC0C41B;
+	Fri, 24 Oct 2025 06:58:06 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B621C60703;
+	Fri, 24 Oct 2025 06:58:26 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8958D102F244A;
+	Fri, 24 Oct 2025 08:58:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761289105; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=gaTJdVKcJhZjltv8SaaLzQ6hgLmAvbb14RM/LjN1BKs=;
+	b=ag+RvXpuWocu7lddJwZwJ7ufa/ybY3bWA2D7vFXMElgKAB1iZfN4nxQVO4TIu3Acqz6sG2
+	LrE/KPN8ZZ7zKsLUDZ434F9kCQAEG87HfqovSGwy0joW1uvL6czVHI+Zdzm1GlMm4wCOvI
+	F2oF+0wuQL2IuD+LrDshbMB3bxwAfwinT5hyvbyZM9/opy6BOsG7/R9ir3kXYEHb5+uQ0J
+	eZ6crrfZ6q/zW+RHAIo3gOPw1dURhm/2++rmPI3gsNyneo1g8fpFekIxz0xpgrVJgXxQHE
+	+w5yFfl4yMQ9fBdN/vgpJFqUoIZUnQ0r5kOJ7lajf5YPN2LB/zyDU5VJbgO+eQ==
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 24 Oct 2025 08:58:06 +0200
+Message-Id: <DDQCVG55KXN7.3P6MCQTNID8K9@bootlin.com>
+To: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>,
+ =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Subject: Re: [PATCH bpf-next v2 3/4] selftests/bpf: integrate
+ test_tc_tunnel.sh tests into test_progs
+Cc: "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
+ <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>, "Martin
+ KaFai Lau" <martin.lau@linux.dev>, "Eduard Zingerman" <eddyz87@gmail.com>,
+ "Song Liu" <song@kernel.org>, "Yonghong Song" <yonghong.song@linux.dev>,
+ "John Fastabend" <john.fastabend@gmail.com>, "KP Singh"
+ <kpsingh@kernel.org>, "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo"
+ <haoluo@google.com>, "Jiri Olsa" <jolsa@kernel.org>, "Shuah Khan"
+ <shuah@kernel.org>, <ebpf@linuxfoundation.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Bastien Curutchet"
+ <bastien.curutchet@bootlin.com>, "bpf" <bpf@vger.kernel.org>, "open
+ list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, "LKML"
+ <linux-kernel@vger.kernel.org>
+From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251024060720.634826-1-jianyungao89@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251022-tc_tunnel-v2-0-a44a0bd52902@bootlin.com>
+ <20251022-tc_tunnel-v2-3-a44a0bd52902@bootlin.com>
+ <DDOOS5LR0GZH.ITEM5495FPOX@bootlin.com>
+ <CAADnVQJ6zKbThz8B5bqBpwz=gyqeindZb1kwCmM90PsR4-7iQQ@mail.gmail.com>
+In-Reply-To: <CAADnVQJ6zKbThz8B5bqBpwz=gyqeindZb1kwCmM90PsR4-7iQQ@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Oct 24, 2025 at 02:07:20PM +0800, Jianyun Gao wrote:
-> In the elf_sec_data() function, the input parameter 'scn' will be
-> evaluated. If it is NULL, then it will directly return NULL. Therefore,
-> the return value of the elf_sec_data() function already takes into
-> account the case where the input parameter scn is NULL. Therefore,
-> subsequently, the code only needs to check whether the return value of
-> the elf_sec_data() function is NULL.
-> 
-> Signed-off-by: Jianyun Gao <jianyungao89@gmail.com>
-> ---
->  tools/lib/bpf/libbpf.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index b90574f39d1c..9e66104a61eb 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -2988,15 +2988,15 @@ static int bpf_object__init_user_btf_maps(struct bpf_object *obj, bool strict,
->  	int nr_types, i, vlen, err;
->  	const struct btf_type *t;
->  	const char *name;
-> -	Elf_Data *data;
-> +	Elf_Data *scn_data;
+Hi Alexei,
 
-makes sense to me, but this rename breaks compilation later on
+On Wed Oct 22, 2025 at 6:44 PM CEST, Alexei Starovoitov wrote:
+> On Wed, Oct 22, 2025 at 12:52=E2=80=AFAM Alexis Lothor=C3=A9
+> <alexis.lothore@bootlin.com> wrote:
 
-libbpf.c:3027:53: error: ‘data’ undeclared (first use in this function)
+[...]
 
-jirka
+>> A note about test duration:
+>> the overall test duration, in my setup (x86 qemu-based setup, running on
+>> x86), is around 13s. Reviews on similar series ([1]) shows that such a
+>> duration is not really desirable for CI integration. I checked how to
+>> reduce it, and it appears that most of it is due to the fact that for ea=
+ch
+>> subtest, we verify that if we insert bpf encapsulation (egress) program,
+>> and nothing on server side, we properly fail to connect client to server=
+.
+>> This test then relies on timeout connection,  and I already reduced it a=
+s
+>> much as possible, but I guess going below the current value (500ms) will
+>> just start to make the whole test flaky.
+>>
+>> I took this "check connection failure" from the original script, and kin=
+d
+>> of like it for its capacity to detect false negatives, but should I
+>> eventually get rid of it ?
+>
+> I vote to get rid of it.
+> I'd rather have test_progs that are quick enough to execute for CI and
+> for all developers then more in depth coverage for the corner case.
 
->  	Elf_Scn *scn;
->  
->  	if (obj->efile.btf_maps_shndx < 0)
->  		return 0;
->  
->  	scn = elf_sec_by_idx(obj, obj->efile.btf_maps_shndx);
-> -	data = elf_sec_data(obj, scn);
-> -	if (!scn || !data) {
-> +	scn_data = elf_sec_data(obj, scn);
-> +	if (!scn_data) {
->  		pr_warn("elf: failed to get %s map definitions for %s\n",
->  			MAPS_ELF_SEC, obj->path);
->  		return -EINVAL;
-> -- 
-> 2.34.1
-> 
+ACK. I' ll get rid of it. For the record, I drop down to ~3s in my testing
+setup instead of ~13s when removing this "ensure connection failure test".
+
+> Note that for the verifier range test we randomize the test coverage,
+> since the whole permutation takes hours to run. Instead we randomly
+> pick a couple tests and run only those. Since CI runs for every patch
+> the overall coverage is good enough.
+> Would something like that possible here ? and in the other xsk test?
+
+I see that test_verifier takes some "to" and "from" indexes, selecting the
+range of tests that we are able to run. Is this the mechanism you are
+referring to ? (and if so, I guess the rand part is handled by the CI
+runner ?)
+
+If we want it for some specific test_progs tests like test_tc_tunnel and
+test_xsk, I guess it is doable, but we need to think about who controls the
+randomization, and how to still force execution of specific (or whole range
+of) subtests, when needing to reproduce an issue.
+
+Alexis
+--=20
+Alexis Lothor=C3=A9, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
