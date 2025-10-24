@@ -1,47 +1,94 @@
-Return-Path: <linux-kernel+bounces-868961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873ACC0696E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:58:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C39C06979
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F11A50049A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:58:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FF45504388
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C786231BCB6;
-	Fri, 24 Oct 2025 13:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9115831E0F7;
+	Fri, 24 Oct 2025 13:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FuJLdnrB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dcaxa+ai";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tQIzv12I";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yY85Nwcz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zAxepCGa"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0455135B123;
-	Fri, 24 Oct 2025 13:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934CA31B118
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761314278; cv=none; b=dqxQYUn4OrdSNV1vId0FXuUQQSAOLQwLzXWrxihxkvq32DjZkNF8OegqGG/F77h80Cp4k2QkGrTUr3oOk8PXKSTlz3PqcO4d9HewZ+pXsocAjlZ5SO7ruJ/SUod59d8l4pZbZHYedKjAcMmzUc0jqtXZVqXiSFnYNHZQIapIro8=
+	t=1761314288; cv=none; b=ZB6/EWTWeSueJ/vvrqYN2vwinrANiAYzXOJEph6cqb170mO0Wy9fSCkwSfdKjkA8qtHw6Thnofq+C7DVuH47JzEBTZY99EliFcvXvw6+6OWDCop976Mh3AH30zH9/1izXuDB6yXqmf+uus+esppDA0elDGBVaSebeKiy0yMbNkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761314278; c=relaxed/simple;
-	bh=u7RlP8qi5/6L/Meu9oIPYmr0P0hafGbzuL8Sj43SR/4=;
+	s=arc-20240116; t=1761314288; c=relaxed/simple;
+	bh=TssjA+0jJD++3TSxKkoA51LLP8BMjHm9HrqPaBVgdAE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TiYfKFsqx/y47jUuOFIUBIM11xKBzdzp+vd8sEKkMhErVfW9OhgJH5mu20futhSZpeLo5bS+UZx4fWkmkkgUGKXbfQn3OcPOrmYW+bJ0SxoHM6vjniBP/n0vffRBtLcIlzf95Aysw5Ip100HU+e+5ay1p2O39iv/bLg0CctBUWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FuJLdnrB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A35D5C4CEF1;
-	Fri, 24 Oct 2025 13:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761314277;
-	bh=u7RlP8qi5/6L/Meu9oIPYmr0P0hafGbzuL8Sj43SR/4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FuJLdnrB5hYnaSfu+O3z2/HtvYcogdWCIJCQHnYyjPx393esIQogFhvXSoeA+CBjW
-	 e6Gq4ZRM0dPwZvP/hovc2SkOh50z+8tkYX20tZWxUfUszea2sP099DyT5Bete3UU8p
-	 Q6yik6VPM5g0qk4ihKygaOPkEdVtx5gAknnqVi5TJRuNS4Rpe/byGO/mC/xg1zZIzB
-	 3XmCatQ5ANrfDkLDula9oqBQaDUDFQJQ6v134B+qr7b1MPi2SEKiN8TVzdBNd9BXoR
-	 mB74J/SAMXQidpL1JcxzCJ+zLVf1thYPZN1XLjzXYtqdKbw46IE6YFOQIfmor1c4hp
-	 S3kASZpJFZD8w==
-Message-ID: <93233d51-5ff3-4f10-96f6-a2957325f1bd@kernel.org>
-Date: Fri, 24 Oct 2025 15:57:50 +0200
+	 In-Reply-To:Content-Type; b=W+De6p8ssXdEdzW/iWEDGkh85iI/Ld4QM59Uk2nYP4QmXoRfvhMt3wUMc3NZ0BepSKDgA25zmTU+V3dqXiRxcMlVYJZkI85VMBXcdmjHQ453+5nJnFuvsqK0ZnJoAUYgSxo2NfkqFYpz45ZRkMOSKqwccuFaLHRJO+gZUFEB0bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dcaxa+ai; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tQIzv12I; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yY85Nwcz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zAxepCGa; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C789F211CC;
+	Fri, 24 Oct 2025 13:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761314284; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DND/HkPjoyLR6NVIGSbwVwX+aQKACZXYrtYlY/tlfUs=;
+	b=dcaxa+aiXrOur44GrcIPPdH2vm7aeOyS3jqey6neWtVJhDmoc0WhObGs4NQcVCEPLTIVEQ
+	szBixbb5xvX8ojKHj4c92cgcMIkSzDCNoazcJwGH24t8EDec0m/qNnJldGmVsSjb5/3zsO
+	3yaqBxF1gbIV2Z0j8aK23KrlFfSnSds=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761314284;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DND/HkPjoyLR6NVIGSbwVwX+aQKACZXYrtYlY/tlfUs=;
+	b=tQIzv12IGm7cP/mH0jlNGDfGi7lIhon9Fg4O939bOcsXEBTR1k5ShKqUd11mS1jVG7S4P4
+	cD3YeySfD2F29sBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761314283; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DND/HkPjoyLR6NVIGSbwVwX+aQKACZXYrtYlY/tlfUs=;
+	b=yY85Nwczvj5Q9gkbfsXcKjhHrK1bDUHIcUPJOiaSWW6RrBYEVgYGKkLfU9aMpLUMz5K/oJ
+	FlHonTDFuvJy2aQcnkQMSAFYXmPYJQe8Jv+UMWhIFYW5jaS+46i/jO62RRMxSYOGvPC9OX
+	CvPR0IEkgyDQPPhfNbCKn8UA6/BxFfk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761314283;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DND/HkPjoyLR6NVIGSbwVwX+aQKACZXYrtYlY/tlfUs=;
+	b=zAxepCGaOG2A4DNyZjEbIyGis4wNvzIUJQB8Z1KW59O9lOBglaMENfQ45WtSNHAVsILv7M
+	gkeEoKuxEZhoR1Cw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E162132C2;
+	Fri, 24 Oct 2025 13:58:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id c6Z4IeuF+2hQIwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 24 Oct 2025 13:58:03 +0000
+Message-ID: <65f8a544-175a-4021-aa2a-9a9faf2f4254@suse.de>
+Date: Fri, 24 Oct 2025 15:58:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,218 +96,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/7] media: platform: amd: Introduce amd isp4 capture
- driver
-To: Bin Du <Bin.Du@amd.com>, mchehab@kernel.org, hverkuil@xs4all.nl,
- laurent.pinchart+renesas@ideasonboard.com, bryan.odonoghue@linaro.org,
- sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- sultan@kerneltoast.com
-Cc: pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
- gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com, Dominic.Antony@amd.com,
- mario.limonciello@amd.com, richard.gong@amd.com, anson.tsao@amd.com,
- Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>,
- Mario Limonciello <superm1@kernel.org>,
- Alexey Zagorodnikov <xglooom@gmail.com>
-References: <20251024090643.271883-1-Bin.Du@amd.com>
- <20251024090643.271883-2-Bin.Du@amd.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3] drm/vblank: downgrade vblank wait timeout from WARN to
+ error
+To: Chintan Patel <chintanlike@gmail.com>, maarten.lankhorst@linux.intel.com,
+ maxime.ripard@kernel.org, airlied@gmail.com, simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+References: <20251003032303.16518-1-chintanlike@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251024090643.271883-2-Bin.Du@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20251003032303.16518-1-chintanlike@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[147ba789658184f0ce04];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,suse.de:mid,syzkaller.appspot.com:url,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-On 24/10/2025 11:06, Bin Du wrote:
-> diff --git a/drivers/media/platform/amd/isp4/isp4.c b/drivers/media/platform/amd/isp4/isp4.c
-> new file mode 100644
-> index 000000000000..a3fc2462d70f
-> --- /dev/null
-> +++ b/drivers/media/platform/amd/isp4/isp4.c
-> @@ -0,0 +1,121 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <linux/pm_runtime.h>
-> +#include <linux/vmalloc.h>
-> +#include <media/v4l2-ioctl.h>
-> +
-> +#include "isp4.h"
-> +
-> +#define VIDEO_BUF_NUM 5
-> +
-> +#define ISP4_DRV_NAME "amd_isp_capture"
-> +
-> +const char *isp4_irq_name[] = {
+Hi
 
-Why isn't this static?
+Am 03.10.25 um 05:23 schrieb Chintan Patel:
+> When wait_event_timeout() in drm_wait_one_vblank() times out, the
+> current WARN can cause unnecessary kernel panics in environments
+> with panic_on_warn set (e.g. CI, fuzzing). These timeouts can happen
+> under heavy scheduling pressure or in rare cases of delayed vblank
+> handling, and are not always a kernel bug.
+>
+> Replace the WARN with drm_err() messages that report the timeout
+> without crashing the system. Developers can still enable drm.debug
+> to diagnose genuine problems.
+>
+> Reported-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
+> Tested-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+> Signed-off-by: Chintan Patel <chintanlike@gmail.com>
+>
+> v2:
+>   - Drop unnecessary in-code comment (suggested by Thomas Zimmermann)
+>   - Remove else branch, only log timeout case
+>
+> v3:
+>   - Use drm_err() instead of drm_dbg_kms() (suggested by Ville Syrjälä)
+>   - Remove unnecessary curr = drm_vblank_count() (suggested by Thomas Zimmermann)
+>   - Fix commit message wording (“invalid userspace calls” → “delayed vblank handling”)
+> ---
+>   drivers/gpu/drm/drm_vblank.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> index 46f59883183d..0664aea1b924 100644
+> --- a/drivers/gpu/drm/drm_vblank.c
+> +++ b/drivers/gpu/drm/drm_vblank.c
+> @@ -1305,7 +1305,8 @@ void drm_wait_one_vblank(struct drm_device *dev, unsigned int pipe)
+>   				 last != drm_vblank_count(dev, pipe),
+>   				 msecs_to_jiffies(100));
 
-> +	"isp_irq_stream1",
-> +	"isp_irq_global"
-> +};
-> +
-> +/* interrupt num */
-> +static const u32 isp4_ringbuf_interrupt_num[] = {
-> +	0, /* ISP_4_1__SRCID__ISP_RINGBUFFER_WPT9 */
-> +	4, /* ISP_4_1__SRCID__ISP_RINGBUFFER_WPT12 */
-> +};
-> +
-> +static irqreturn_t isp4_irq_handler(int irq, void *arg)
-> +{
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int isp4_capture_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct isp4_device *isp_dev;
-> +	int i, irq, ret;
-> +
-> +	isp_dev = devm_kzalloc(dev, sizeof(*isp_dev), GFP_KERNEL);
-> +	if (!isp_dev)
-> +		return -ENOMEM;
-> +
-> +	isp_dev->pdev = pdev;
-> +	dev->init_name = ISP4_DRV_NAME;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(isp4_ringbuf_interrupt_num); i++) {
-> +		irq = platform_get_irq(pdev, isp4_ringbuf_interrupt_num[i]);
-> +		if (irq < 0)
-> +			return dev_err_probe(dev, irq,
-> +					     "fail to get irq %d\n",
-> +					     isp4_ringbuf_interrupt_num[i]);
-> +		ret = devm_request_irq(dev, irq, isp4_irq_handler, 0,
-> +				       isp4_irq_name[i], dev);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "fail to req irq %d\n",
-> +					     irq);
-> +	}
-> +
-> +	/* Link the media device within the v4l2_device */
-> +	isp_dev->v4l2_dev.mdev = &isp_dev->mdev;
-> +
-> +	/* Initialize media device */
-> +	strscpy(isp_dev->mdev.model, "amd_isp41_mdev",
-> +		sizeof(isp_dev->mdev.model));
-> +	snprintf(isp_dev->mdev.bus_info, sizeof(isp_dev->mdev.bus_info),
-> +		 "platform:%s", ISP4_DRV_NAME);
-> +	isp_dev->mdev.dev = dev;
-> +	media_device_init(&isp_dev->mdev);
-> +
-> +	/* register v4l2 device */
-> +	snprintf(isp_dev->v4l2_dev.name, sizeof(isp_dev->v4l2_dev.name),
-> +		 "AMD-V4L2-ROOT");
-> +	ret = v4l2_device_register(dev, &isp_dev->v4l2_dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "fail register v4l2 device\n");
-> +
-> +	ret = media_device_register(&isp_dev->mdev);
-> +	if (ret) {
-> +		dev_err(dev, "fail to register media device %d\n", ret);
-> +		goto err_unreg_v4l2;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, isp_dev);
-> +
-> +	pm_runtime_set_suspended(dev);
-> +	pm_runtime_enable(dev);
-> +
-> +	return 0;
-> +
-> +err_unreg_v4l2:
-> +	v4l2_device_unregister(&isp_dev->v4l2_dev);
-> +
-> +	return dev_err_probe(dev, ret, "isp probe fail\n");
+Instead of replacing the drm_WARN(), could you please try to increase 
+the timeout? Let's say 1000 msec to be on the safe side.
 
-No, don't print generic error thus multiple errors. Drop this and keep
-informative dev_err_probe() in applicable places.
+Best regards
+Thomas
+
+>   
+> -	drm_WARN(dev, ret == 0, "vblank wait timed out on crtc %i\n", pipe);
+> +	if (!ret)
+> +		drm_err(dev, "vblank wait timed out on crtc %i\n", pipe);
+>   
+>   	drm_vblank_put(dev, pipe);
+>   }
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
-> +}
-> +
-> +static void isp4_capture_remove(struct platform_device *pdev)
-> +{
-> +	struct isp4_device *isp_dev = platform_get_drvdata(pdev);
-> +
-> +	media_device_unregister(&isp_dev->mdev);
-> +	v4l2_device_unregister(&isp_dev->v4l2_dev);
-> +}
-> +
-> +static struct platform_driver isp4_capture_drv = {
-> +	.probe = isp4_capture_probe,
-> +	.remove = isp4_capture_remove,
-> +	.driver = {
-> +		.name = ISP4_DRV_NAME,
-> +		.owner = THIS_MODULE,
-
-It is v5 but you still did not run standard tools. You try to upstream
-12 year old code without cleaning it up.
-
-Please run standard kernel tools for static analysis, like coccinelle,
-smatch and sparse, and fix reported warnings. Also please check for
-warnings when building with W=1 for gcc and clang. Most of these
-commands (checks or W=1 build) can build specific targets, like some
-directory, to narrow the scope to only your code. The code here looks
-like it needs a fix. Feel free to get in touch if the warning is not clear.
-
-> +	}
-> +};
-> +
-> +module_platform_driver(isp4_capture_drv);
-> +
-> +MODULE_ALIAS("platform:" ISP4_DRV_NAME);
-
-You should not need MODULE_ALIAS() in normal cases. If you need it,
-usually it means your device ID table is wrong (e.g. misses either
-entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
-for incomplete ID table.
-
-
-Best regards,
-Krzysztof
 
