@@ -1,128 +1,117 @@
-Return-Path: <linux-kernel+bounces-868468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00C8C05409
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:10:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7DB5C0540F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499831B82A18
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:09:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A5E650007A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DAD30B51E;
-	Fri, 24 Oct 2025 09:07:50 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874EB3093AB;
+	Fri, 24 Oct 2025 09:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ggefOGsg"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CB7309DC0
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8533F2F99A5
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761296870; cv=none; b=ZWtz7SLwaDpgq5MTjvpTwg0ZFONxle3DQlHGikxtibKqQ7AyBRUfxfoLwau3Afd5XZME5K0reTQbvN1/bouceTCY0MKyx2+dFJ6KtoNLFwPBe0uq3YyYdRzva1kQCzCU+GG9XeD2dIZ3DDUn56UgoumprIwx+LxtdDiHQEvnf00=
+	t=1761296952; cv=none; b=CFGAF7QPQidOLyb13eTC1yjp9FyzubWZPb5W2Cy0qfoVsTZubA7qJ71T+yOQeH6A1qbjlDZZetnyFkeCnC0Yu6NQTCzsBebXAiQa2XBnxKUvUtte+Kz5odVM3aB5Z4EaP2KI2wKQOnyL4dZz5aHvLyEy9wBivCtCOWFJbym8v0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761296870; c=relaxed/simple;
-	bh=i/GbQoKiUuo3kfW6Ou/0kByBEqeWEPMHVepZrshzyoA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GuyqSvH1hicslE4kcXSe/hnIhtrB2blff9fB6JedyLkShlj4UpvYyQhBmIlMy6M02Dh+7b+RMShZqcS4H4EWhbiRjXcNctnJZ1AZLAY834Xtl5Ntzszb9E518s84Zg+UWp+M0RmSD0+T3OKY9NYYQE+OGQgFqo/wWkXvLP1tRXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vCDl3-0007sx-6E; Fri, 24 Oct 2025 11:06:49 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vCDl0-005CLv-1Y;
-	Fri, 24 Oct 2025 11:06:46 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1vCDl0-000000004N3-1aFM;
-	Fri, 24 Oct 2025 11:06:46 +0200
-Message-ID: <6915fde3171d0e063b931abbe04e3216375af8fd.camel@pengutronix.de>
-Subject: Re: [PATCH v3 05/24] phy: mediatek: ufs: Add support for resets
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Alim Akhtar	
- <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, Bart Van
- Assche	 <bvanassche@acm.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger	 <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno	
- <angelogioacchino.delregno@collabora.com>, Chunfeng Yun	
- <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
- Abraham I <kishon@kernel.org>, Peter Wang <peter.wang@mediatek.com>,
- Stanley Jhu <chu.stanley@gmail.com>,  "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown <broonie@kernel.org>
-Cc: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
-	kernel@collabora.com, linux-scsi@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, 	linux-mediatek@lists.infradead.org,
- linux-phy@lists.infradead.org
-Date: Fri, 24 Oct 2025 11:06:46 +0200
-In-Reply-To: <20251023-mt8196-ufs-v3-5-0f04b4a795ff@collabora.com>
-References: <20251023-mt8196-ufs-v3-0-0f04b4a795ff@collabora.com>
-	 <20251023-mt8196-ufs-v3-5-0f04b4a795ff@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1761296952; c=relaxed/simple;
+	bh=TtNqNtj/oweL66wLEnAjqn0K8TKkNs3/8zy5s/IZrRE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W0dxQ0OogaGks6+l6sTbQ1Dhsnu43KB98XXdrSE+e6WvhFON2+OHHucehinDtcuoIhEXp7Y8nuyfJyEHAaooMRHInK8S7zEIIutWArzdS3twu7Ug1ibTVhOtGnN0Drfim1YqZse9l1tJc8sztv7ACnUd0SqMFAxZ8MIusSF4CWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ggefOGsg; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id D951AC0C41D;
+	Fri, 24 Oct 2025 09:08:46 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 96E7B60703;
+	Fri, 24 Oct 2025 09:09:06 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 876B8102F2465;
+	Fri, 24 Oct 2025 11:08:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761296945; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=tAbjKjhcDfGtn2/zGatVn9Yy3ReIVrMyjwO7fZd2L1s=;
+	b=ggefOGsgpiVYyF0A3GE6TACY+UYwP2pgRZuAOmS8vR4gYC0oJOS70Lt46N5pEU86oQOzsw
+	zxshp2tqPIobCsAoLCPJfm7PDjpY19gXfPrtq0zS33GwSX/LM/6uoAKMTH0tYrZfkFVyZQ
+	nY2RQw3SxggVF9teOpRRtGVLP5evJ4UkjhqR6E/1E1sqVYw5A2xojF1Tu7ZW5kLXQsuVzF
+	exs2+bOMNrk3HAEwDEazo40qEFbyaXQicieeCuWJzzO4NeN0VeCiSGJCWgF0iU+aAnu93K
+	YJsetl3/TxCCaUdeycGVB/cCbWMzCowcUwhc574+swKaMU/mav9s09Qk0Pvd1A==
+Message-ID: <a231f2a4-1cc4-4e40-8560-f0cb72b21f1a@bootlin.com>
+Date: Fri, 24 Oct 2025 11:08:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 14/15] dt-bindings: mtd: sunxi: Add H616 compatible
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Wentao Liang <vulab@iscas.ac.cn>, Johan Hovold <johan@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20251020101311.256819-1-richard.genoud@bootlin.com>
+ <20251020101311.256819-15-richard.genoud@bootlin.com>
+ <878qh3thqo.fsf@bootlin.com>
+Content-Language: en-US, fr
+From: Richard GENOUD <richard.genoud@bootlin.com>
+Organization: Bootlin
+In-Reply-To: <878qh3thqo.fsf@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Nicolas,
+Le 22/10/2025 à 11:20, Miquel Raynal a écrit :
+> Hi Richard,
+> 
+> On 20/10/2025 at 12:13:10 +02, Richard Genoud <richard.genoud@bootlin.com> wrote:
+> 
+>> The H616 NAND controller is quite different from the A10 and A23 ones,
+>> some registers offset changed, and some new one are introduced.
+>> Also, the DMA handling is different (it uses chained descriptors)
+>>
+>> So, introduce a new compatible to represent this version of the IP.
+>>
+>> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+>> ---
+>>   .../mtd/allwinner,sun4i-a10-nand.yaml         | 41 +++++++++++++++++--
+>>   1 file changed, 38 insertions(+), 3 deletions(-)
+> 
+> Please move the binding patch first in your series (binding then driver
+> changes aligned with the introduced binding and then DT changes using
+> it).
+Yes, sorry, it took time but now I got it :)
 
-On Do, 2025-10-23 at 21:49 +0200, Nicolas Frattaroli wrote:
-> The MediaTek UFS PHY supports PHY resets. Until now, they've been
-> implemented in the UFS host driver. Since they were never documented in
-> the UFS HCI node's DT bindings, and no mainline DT uses it, it's fine if
-> it's moved to the correct location, which is the PHY driver.
->=20
-> Implement the MPHY reset logic in this driver and expose it through the
-> phy subsystem's reset op. The reset itself is optional, as judging by
-> other mainline devices that use this hardware, it's not required for the
-> device to function.
->=20
-> If no reset is present, the reset op returns -EOPNOTSUPP, which means
-> that the ufshci driver can detect it's present and not double sleep in
-> its own reset function, where it will call the phy reset.
->=20
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> Reviewed-by: Peter Wang <peter.wang@mediatek.com>
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->  drivers/phy/mediatek/phy-mtk-ufs.c | 71 ++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 71 insertions(+)
->=20
-> diff --git a/drivers/phy/mediatek/phy-mtk-ufs.c b/drivers/phy/mediatek/ph=
-y-mtk-ufs.c
-> index 0cb5a25b1b7a..d77ba689ebc8 100644
-> --- a/drivers/phy/mediatek/phy-mtk-ufs.c
-> +++ b/drivers/phy/mediatek/phy-mtk-ufs.c
-[...]
-> @@ -163,8 +224,18 @@ static int ufs_mtk_phy_probe(struct platform_device =
-*pdev)
->  	if (IS_ERR(phy->mmio))
->  		return PTR_ERR(phy->mmio);
-> =20
-> +	phy->reset =3D devm_reset_control_get_optional(dev, NULL);
+> 
+> Thanks,
+> Miquèl
+> 
 
-Please use devm_reset_control_get_optional_exclusive() directly.
+Thanks!
 
-regards
-Philipp
+-- 
+Richard Genoud, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
