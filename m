@@ -1,145 +1,126 @@
-Return-Path: <linux-kernel+bounces-868808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5DEC0630F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:13:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9637EC06321
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 568CC347DF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:13:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 236914E4AEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1D830BB89;
-	Fri, 24 Oct 2025 12:13:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E161FC3;
-	Fri, 24 Oct 2025 12:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A1D314B87;
+	Fri, 24 Oct 2025 12:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cJ77kMA1"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BA8298CA2
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761308029; cv=none; b=tLouTISTxspmwPd6ut101FNEp2FSviy/W2mujysL7GHYmF6y+B7aoIxO9YzJO5jPRisBh4tHBFMa5tAXPnelihji8IrbC0qDFojVO7r7ol4rUbpoJgXgGkLdytxv/cbJzp3akan4dce4QbcdX/3ooHellNV1u//2qVTgqAtNrhM=
+	t=1761308137; cv=none; b=ar23uhJTZZRdOU44njEZYlZknw2iusOOiyI6jzHlj2n4VDrhwBQUifue5c/pCY5vSdAOIVXr+l8Gz2j/tEurhK0QU5WnGAKhEwUa78SMyRtJcQB7fJu1E25LZ3oLrwbQz47ad3tsCQ7jUTV5OPKqrJIxyiPFYtFyHVrl6DrouMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761308029; c=relaxed/simple;
-	bh=X3sXu4j8MfMq52gqBAavsMTcndSosYtjB52S1c8LUjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EN+RDv7kBWDzrEj9xItGj4uae7MN6v81d0BtxwG5xZU5UcId1jtNY5Ge2o2UkOtDc2h+h/9ydgnpOgRl9D2iB+bTNsRQG/jdKYKjE3lHsyBLP3ksjZxGpPetDT2g1exU4a+JONK0cD1gO2DzoH4eP/avGZlxcXVgBFDJLRRdVis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5EA231515;
-	Fri, 24 Oct 2025 05:13:38 -0700 (PDT)
-Received: from [10.44.160.74] (e126510-lin.lund.arm.com [10.44.160.74])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6C2833F66E;
-	Fri, 24 Oct 2025 05:13:38 -0700 (PDT)
-Message-ID: <390e41ae-4b66-40c1-935f-7a1794ba0b71@arm.com>
-Date: Fri, 24 Oct 2025 14:13:35 +0200
+	s=arc-20240116; t=1761308137; c=relaxed/simple;
+	bh=1QYFOnhEDNlrBEyVN+IEYzwowhQlYIEJHN3U3pBB4Ck=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hqR8A/zAuCqH220XlubDycW/97p2bLh5bgXgc7fODcs+jSKWYSF2Jx3VjqHSvxH5MuraWt0dN9NSLTB5r3SbGmg7HCUP8fVURkKA/3CQKCb11z+WOwkIuE2V8P/dZI+VtDvKAL6gcsNF9TLTShLTgKYhQMmjg5c1ZqmkxY+UBew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cJ77kMA1; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-63e0b49cd15so2141417a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:15:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761308134; x=1761912934; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VYIbCMuRi13fdYnbnhpcKoD3rM3DmFSEXS9pBiRUSxc=;
+        b=cJ77kMA1wwRM4RrnEvo6LlLMWEer+iJh2jplK4o2wNvSxaji2HKmbcLaVBP4If82Xn
+         6VFSFU0Guoq+YCma+FsFNQdou38TKB+TUzYObcPSra/bloERvGs23t+a39Gq4lOlFEJN
+         05N8CdGMed6ZTcgfQ/kFQMASsMlFAFUzkGozn9kgwBkc01y7D4bTy44G0VTgv005FCU2
+         Hagfzsmfzn1pZR2PdvUGAP0wAR0YJV0f28CD8Qq5v+rWotIc1B9iGUdGHabQj6d/bbBH
+         0UVQo8KC31E+avuIfouoEsRJ8m6EJnAOddJ2fHd4TTOPvA1P1TpdyvuON+ovgSAXqIxN
+         uAnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761308134; x=1761912934;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VYIbCMuRi13fdYnbnhpcKoD3rM3DmFSEXS9pBiRUSxc=;
+        b=om1RarDsowQp4RT/2VBDZ/t0KVAkOfjA8AXlz8GZ3q0HskcG5xyfeKjw4VPqXCVoby
+         mqg6NkrY12zzP4cAHp0txA0pdcgP9GjwMptS5bPFabJUGPFdq3f/3KNWQKRtNNoQNmdm
+         16oqcsGGUKAaiFHHtySoZQCtp+R77o4AiUeF7O8AVMS14s9XGcwJ1xinzRmpiDOKulxn
+         wh0oDk60PD0lcmA6sh+DcTwzg8IfguBS5OY1Lc8nww3NW52SmTY0FGUrzK1xGA17lEEI
+         U4fmT9JszgzXwFODaRg8z6h3ODfTLyt8IYRbdjxOGl0qpSlX2IWFkQ9CeAuDqWcTSWFA
+         Wu/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU7gL6w/ln1K7oYO+5hyGbHR1jp1kG+VHYuvMS4etuj7YZyKdR+3H/z19Jzu9pdGGKRs4j+BM/9vd0TftQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZeKOUrRvB0OMS8QaKwGYTUU7TkQypBBt8vhFXXAgWVQLN94t3
+	2UtM/HPlLT2moxSlp6EE2iNt7G8LJIm4d06gGbrdMZIk7sqcnEcLiBotchYKSKSMGYRMLPQravq
+	Jbb00V+b7WogIohcXnA==
+X-Google-Smtp-Source: AGHT+IFKGYbprr7tWKIreIWGEx72f2mseKaij75eArsKsTtRHf0EN2H2ZyWU9vKva3onEuRE1wLgAY5783wz1i4=
+X-Received: from edt20.prod.google.com ([2002:a05:6402:4554:b0:637:4e1f:94b])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:847:b0:63c:18e:1dee with SMTP id 4fb4d7f45d1cf-63e3e4791a6mr5530880a12.24.1761308134211;
+ Fri, 24 Oct 2025 05:15:34 -0700 (PDT)
+Date: Fri, 24 Oct 2025 12:15:33 +0000
+In-Reply-To: <20251022143158.64475-2-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/13] mm: introduce generic lazy_mmu helpers
-To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
- <20251015082727.2395128-7-kevin.brodsky@arm.com>
- <73b274b7-f419-4e2e-8620-d557bac30dc2@redhat.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <73b274b7-f419-4e2e-8620-d557bac30dc2@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251022143158.64475-1-dakr@kernel.org> <20251022143158.64475-2-dakr@kernel.org>
+Message-ID: <aPtt5XyE_pBoiarD@google.com>
+Subject: Re: [PATCH v3 01/10] rust: fs: add new type file::Offset
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
+	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="utf-8"
 
-On 23/10/2025 21:52, David Hildenbrand wrote:
-> On 15.10.25 10:27, Kevin Brodsky wrote:
->> [...]
->>
->> * madvise_*_pte_range() call arch_leave() in multiple paths, some
->>    followed by an immediate exit/rescheduling and some followed by a
->>    conditional exit. These functions assume that they are called
->>    with lazy MMU disabled and we cannot simply use pause()/resume()
->>    to address that. This patch leaves the situation unchanged by
->>    calling enable()/disable() in all cases.
->
-> I'm confused, the function simply does
->
-> (a) enables lazy mmu
-> (b) does something on the page table
-> (c) disables lazy mmu
-> (d) does something expensive (split folio -> take sleepable locks,
->     flushes tlb)
-> (e) go to (a)
+On Wed, Oct 22, 2025 at 04:30:35PM +0200, Danilo Krummrich wrote:
+> Add a new type for file offsets, i.e. bindings::loff_t. Trying to avoid
+> using raw bindings types, this seems to be the better alternative
+> compared to just using i64.
+> 
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>  rust/kernel/fs/file.rs | 142 ++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 141 insertions(+), 1 deletion(-)
+> 
+> diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+> index cf06e73a6da0..681b8a9e5d52 100644
+> --- a/rust/kernel/fs/file.rs
+> +++ b/rust/kernel/fs/file.rs
+> @@ -15,7 +15,147 @@
+>      sync::aref::{ARef, AlwaysRefCounted},
+>      types::{NotThreadSafe, Opaque},
+>  };
+> -use core::ptr;
+> +use core::{num::TryFromIntError, ptr};
+> +
+> +/// Representation of an offset within a [`File`].
+> +///
+> +/// Transparent wrapper around `bindings::loff_t`.
+> +#[repr(transparent)]
+> +#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Default)]
+> +pub struct Offset(bindings::loff_t);
 
-That step is conditional: we exit right away if pte_offset_map_lock()
-fails. The fundamental issue is that pause() must always be matched with
-resume(), but as those functions look today there is no situation where
-a pause() would always be matched with a resume().
+There is no invariant on this type, so the field can be public.
 
-Alternatively it should be possible to pause(), unconditionally resume()
-after the expensive operations are done and then leave() right away in
-case of failure. It requires restructuring and might look a bit strange,
-but can be done if you think it's justified.
+	pub struct Offset(pub bindings::loff_t);
 
->
-> Why would we use enable/disable instead?
->
->>
->> * x86/Xen is currently the only case where explicit handling is
->>    required for lazy MMU when context-switching. This is purely an
->>    implementation detail and using the generic lazy_mmu_mode_*
->>    functions would cause trouble when nesting support is introduced,
->>    because the generic functions must be called from the current task.
->>    For that reason we still use arch_leave() and arch_enter() there.
->
-> How does this interact with patch #11? 
+Otherwise LGTM:
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-It is a requirement for patch 11, in fact. If we called disable() when
-switching out a task, then lazy_mmu_state.enabled would (most likely) be
-false when scheduling it again.
-
-By calling the arch_* helpers when context-switching, we ensure
-lazy_mmu_state remains unchanged. This is consistent with what happens
-on all other architectures (which don't do anything about lazy_mmu when
-context-switching). lazy_mmu_state is the lazy MMU status *when the task
-is scheduled*, and should be preserved on a context-switch.
-
->
->>
->> Note: x86 calls arch_flush_lazy_mmu_mode() unconditionally in a few
->> places, but only defines it if PARAVIRT_XXL is selected, and we are
->> removing the fallback in <linux/pgtable.h>. Add a new fallback
->> definition to <asm/pgtable.h> to keep things building.
->
-> I can see a call in __kernel_map_pages() and
-> arch_kmap_local_post_map()/arch_kmap_local_post_unmap().
->
-> I guess that is ... harmless/irrelevant in the context of this series?
-
-It should be. arch_flush_lazy_mmu_mode() was only used by x86 before
-this series; we're adding new calls to it from the generic layer, but
-existing x86 calls shouldn't be affected.
-
-- Kevin
+Alice
 
