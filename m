@@ -1,62 +1,70 @@
-Return-Path: <linux-kernel+bounces-869252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 206D5C076BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:59:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04A1C076CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 785F41C42D8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:00:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10F0A4E8DFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C612633B976;
-	Fri, 24 Oct 2025 16:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0342A33EAFC;
+	Fri, 24 Oct 2025 17:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlHaGBXH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NuOyzL52"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2748E1A83F9;
-	Fri, 24 Oct 2025 16:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C4B12B94;
+	Fri, 24 Oct 2025 17:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761325173; cv=none; b=RIC3G7kp72Tr4rtzqzI0D3Px+d4KoD2eRncGvGfGx3Z+QZ/XgKzuIS00aRCnLQ0+qcR20C988RRv7ts7NQO+d7lJbNae88NmCaW0rNUGximk1ZqB5YHwnDT1zxYjRmHNtW18cJFN54348rEhcfpDhCNKf5ynv6xHCbR7iRo94ok=
+	t=1761325236; cv=none; b=h0/tVv4EM6fN4zbmsBHKJ0SGL1rrCDlIySx2xNoWWJpzTYFEJLTdQHLHtClmMDtPYI9tsHqU0REWuoWx/AuFkL9fmZEbix2RhlnEwvzM82XasrQ6e6Qq5Yr8T+tNmst+bw/C6wSHArNGS89/2WLTIb4U+4fXHnR+8aMrQ4aK400=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761325173; c=relaxed/simple;
-	bh=NI/rc7eye74iVvlRLxjIh57O/Fz+QQfLbOm4CGCtKu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=DLqfKc3B+qSOvucorzTnPoAhesKAnxqVkEAtLHT8+aeCdoocdFV6uhu5SE3o5//LZ4eYgqxbrFGGWdNETcfUsODIUjtN4gIIK8pPE28f9+VZc+b6UEzl3qxDCDCuZMvSyqLDyB5uVQFodhZulsprNvmJ2ttE1w4bhlBmx/7cX44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlHaGBXH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BCC1C4CEF1;
-	Fri, 24 Oct 2025 16:59:32 +0000 (UTC)
+	s=arc-20240116; t=1761325236; c=relaxed/simple;
+	bh=P30Amz6t4gClv82kJnXzJCEXNT49i1otAZuXWkHsM8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FHLb4bKvlyfU60DS26R6Cwb/opYIxwKrNtCAYYbag7hmKImRm7u+wJ9EXmzDeL3HH3tAQSqk1yN+xRRU4rSMSeBUs1GERacABP2mCyjFAbJRqZxn/RMugiP1uQF0IA+kRiDSP/qtYWGprv8QVu2w+0zSHEpSWjtciaoCbtMgUFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NuOyzL52; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F798C4CEF1;
+	Fri, 24 Oct 2025 17:00:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761325172;
-	bh=NI/rc7eye74iVvlRLxjIh57O/Fz+QQfLbOm4CGCtKu0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=dlHaGBXHbSEjOtiqusEUlrKtOZ6KQUUkEohK4jVyq06y51ril3e2UyTzQlNqHa4fv
-	 xGWcwEbddkZw+j7nvdxYmFP01zdfzXbEvyw5k3ZF1rmu5BCBZKYTRja8qzwpYWx8GV
-	 IpA8xovmQI6jzsg1KOIbekIQsSZ7Ayx0jQiwxo5HHL6+KsvC+4Px5Uw2RCg0iGUiRl
-	 c5PstjMQIBCcQ5uL/sm7a093geQ4H17bWT94f2cAgcgzhGewsxGxKPtbGSyUXEop7U
-	 716uOwYJ5X4t+HFlZZdW9Pmlo7y1o9jYobv605l7b98M4ir6PDALPlLAS/RlR9Sdv+
-	 +6V9XLWXdib+Q==
-Date: Fri, 24 Oct 2025 11:59:31 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Waiman Long <longman@redhat.com>, linux-rt-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2] pci/aer_inject: switching inject_lock to
- raw_spinlock_t
-Message-ID: <20251024165931.GA1354268@bhelgaas>
+	s=k20201202; t=1761325235;
+	bh=P30Amz6t4gClv82kJnXzJCEXNT49i1otAZuXWkHsM8w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NuOyzL52sbbNkLTISaUiZcxVPMMcvE6/aTHVBAKCncbKyPyCpaTJbaelkUrzmIvHW
+	 /IQIIQH7hbBF2AjPQD68Pt4oJ7flSwE7WTcAmsTRXwZtluGJBM1hUtep1EscNVEtGw
+	 DYRvG672/gLhggR5E6rPmBLHOgHJ0I7vmRWesKniWEjE7PYFofpc114Sqd9bHnYefw
+	 YRVO6uihtxFDs4fa/4bV22aIP/BWlz6ieB2svEgOX2KesQ1bU3NzQaHK9ECvbm/oa4
+	 SFvLUUzabBni7gjMcjnMStoX+T31dDTY4yTdYVozPoXLDTCriC69BpwkCCFOXhlatN
+	 soVUdWoN86OOQ==
+Date: Fri, 24 Oct 2025 18:00:30 +0100
+From: Simon Horman <horms@kernel.org>
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Matthew Gerlach <matthew.gerlach@altera.com>, kernel@pengutronix.de,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Teoh Ji Sheng <ji.sheng.teoh@intel.com>
+Subject: Re: [PATCH v5 02/10] net: stmmac: Use interrupt mode INTM=1 for per
+ channel irq
+Message-ID: <aPuwrvGOgfBifrmC@horms.kernel.org>
+References: <20251024-v6-12-topic-socfpga-agilex5-v5-0-4c4a51159eeb@pengutronix.de>
+ <20251024-v6-12-topic-socfpga-agilex5-v5-2-4c4a51159eeb@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,40 +73,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251009150651.93618-1-jckeep.cuiguangbo@gmail.com>
+In-Reply-To: <20251024-v6-12-topic-socfpga-agilex5-v5-2-4c4a51159eeb@pengutronix.de>
 
-On Thu, Oct 09, 2025 at 03:06:50PM +0000, Guangbo Cui wrote:
-> When injecting AER errors under PREEMPT_RT, the kernel may trigger a
-> lockdep warning about an invalid wait context:
-> 
-> ```
-> [ 1850.950780] [ BUG: Invalid wait context ]
-> [ 1850.951152] 6.17.0-11316-g7a405dbb0f03-dirty #7 Not tainted
-> [ 1850.951457] -----------------------------
-> [ 1850.951680] irq/16-PCIe PME/56 is trying to lock:
-> [ 1850.952004] ffff800082865238 (inject_lock){+.+.}-{3:3}, at: aer_inj_read_config+0x38/0x1dc
-> [ 1850.952731] other info that might help us debug this:
-> [ 1850.952997] context-{5:5}
-> [ 1850.953192] 5 locks held by irq/16-PCIe PME/56:
-> [ 1850.953415]  #0: ffff800082647390 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0x30/0x268
-> [ 1850.953931]  #1: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
-> [ 1850.954453]  #2: ffff000004bb6c58 (&data->lock){+...}-{3:3}, at: pcie_pme_irq+0x34/0xc4
-> [ 1850.954949]  #3: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
-> [ 1850.955420]  #4: ffff800082863d10 (pci_lock){....}-{2:2}, at: pci_bus_read_config_dword+0x5c/0xd8
-> ```
-> ...
+On Fri, Oct 24, 2025 at 01:49:54PM +0200, Steffen Trumtrar wrote:
 
-If/when you update the commit log, please:
+...
 
-  - Update subject line to match history (use "git log --oneline")
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
 
-  - Drop the timestamps because they don't help understand the issue
+...
 
-  - Drop the ```; just indent quoted material a couple spaces
+> @@ -746,6 +750,22 @@ int stmmac_get_platform_resources(struct platform_device *pdev,
+>  	if (stmmac_res->irq < 0)
+>  		return stmmac_res->irq;
+>  
+> +	/* For RX Channel */
+> +	for (i = 0; i < MTL_MAX_RX_QUEUES; i++) {
+> +		sprintf(irq_name, "%s%d", "macirq_rx", i);
+> +		stmmac_res->rx_irq[i] = platform_get_irq_byname(pdev, irq_name);
+> +		if (stmmac_res->rx_irq[i] < 0)
+> +			break;
+> +	}
+> +
+> +	/* For TX Channel */
+> +	for (i = 0; i < MTL_MAX_TX_QUEUES; i++) {
+> +		sprintf(irq_name, "%s%d", "macirq_tx", i);
+> +		stmmac_res->tx_irq[i] = platform_get_irq_byname(pdev, irq_name);
+> +			if (stmmac_res->tx_irq[i] < 0)
+> +				break;
 
-  - Drop the `` around code names; the () after functions is enough
+nit: The two lines above abbove to be indented a bit too much.
 
-  - Trim it as others suggested; I appreciate the details about how
-    to reproduce it, but they could go after the ---, where we'll be
-    able to find them via the Link: tag
+> +	}
+> +
+>  	/* On some platforms e.g. SPEAr the wake up irq differs from the mac irq
+>  	 * The external wake up irq can be passed through the platform code
+>  	 * named as "eth_wake_irq"
+
+...
 
