@@ -1,113 +1,109 @@
-Return-Path: <linux-kernel+bounces-868893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E7B0C066D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:14:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB148C066D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8D3E188BC77
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:14:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66F214E3580
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE4B266B46;
-	Fri, 24 Oct 2025 13:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C0C31AF3F;
+	Fri, 24 Oct 2025 13:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="AqgzCm1d"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iLUIc9EV"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2904E207A22;
-	Fri, 24 Oct 2025 13:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE96B309EF0
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761311644; cv=none; b=McNCPohp8dk24gocfz04K2cDmgMdGFQyCIukZbphnEpQuc7zKVlZOt+N2XF3wae56KkR5knKqf1GiOQdTiIi1Kc1D6c8WasKAmv13XW13JlCpeiaRRdrSEofmDFOzY8RQb+BUmFGInvB2g+sG5x0lJEq1WYoyvEr7YiFs+IWmX8=
+	t=1761311690; cv=none; b=o8o2SHiXprC1mzOB07gaPJMkg9Sbb/QHzNYkgApAt/EN31nmEE33XAUPLCdBzvgmV184wEZxgnnEhEt24tbD8idzpSInMAnXeB+8VPhCi9skeopAeq6H10r/u56COJLc3v/umVEKYYrURnE0AQ/CifBSpXrS62saXTjLk8j5RB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761311644; c=relaxed/simple;
-	bh=DA/0xI9XuzSTt1Z04u/yEWZyQXZYqt/97+Wy6DIq3e8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BNRGJZvOFSBg4T5LnZkM7kBVR1Y0iMVDJrIBkxN4Q+fbZvtJ5wDsFvbBeoQVARaj3ryqFGp3EQCuYd4prj3/NB08JgTPVe2MBXWznnWdvbL+4uyh6n+uUnWnK7DDNMVtmQ6kJrCx9EZ8nzSFhxs2spbvobhGwGjzls+t6Yaqs74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=AqgzCm1d; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1761311690; c=relaxed/simple;
+	bh=B/J4fSXBxYjahTVHd6bJx8SmdiExewV6JSag7qLfJVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IMPJcMElrS/YJCBD2sAqOnnk1F//+DMKvtPZ2xb3zWdGWYUca2j+SjfE9uuznWrYw6eOfmJeKpJZn2ONh3/GmD3GhmwFpK+KPPrSXty19Mhq4wb5NHVIlSmFDBw6GbIQ8Ok9QosxclBQ9GZoSe2+iKB06G8JsR0R+YhhVq3OBlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iLUIc9EV; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so20323215e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:14:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1761311639;
-	bh=DA/0xI9XuzSTt1Z04u/yEWZyQXZYqt/97+Wy6DIq3e8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=AqgzCm1dd0k/aUIcEdl0Hm9L6+HrivMtdltLfAdJ2V/UI101YRpopWMxclWZUsxIi
-	 fdEz5ofPGQuugnuX06FonSsV3olkpSXMfKhfM7uc7Eu9G1KCURvO2lTOhSotyM/lbK
-	 RQHU40m2L2xgkYBRaQ04HyxImQISWA1MEdNEuqEXdI5u3e65SGrQNdHYA4HvJn7cE3
-	 rz6caVpUMvGwUJYT9M7C9vj6+LJc1grMs42vuG+HwMqgDt9VenQSzV69+AtinBJ55+
-	 s3lhGGE2m3GZmBY2PByLJgrrEwe6bMTwzd4gtr0rqlYG/S6ftJgD9xuIyYDOJqzgSQ
-	 Gpdu1qonxkVbg==
-Received: from sparky.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id B9FB37561D;
-	Fri, 24 Oct 2025 21:13:56 +0800 (AWST)
-Message-ID: <9c0252401fca51549cef2586e9171fa167cc0c53.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v20 1/4] dt-bindings: i2c: Split AST2600 binding into a
- new YAML
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Krzysztof Kozlowski
- <krzk@kernel.org>
-Cc: "benh@kernel.crashing.org" <benh@kernel.crashing.org>, "joel@jms.id.au"
- <joel@jms.id.au>, "andi.shyti@kernel.org" <andi.shyti@kernel.org>, 
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>,  "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
- "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- "naresh.solanki@9elements.com" <naresh.solanki@9elements.com>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
- <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Date: Fri, 24 Oct 2025 21:13:56 +0800
-In-Reply-To: <TY2PPF5CB9A1BE6E6E8FA67CDC03A55A439F2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
-References: <20251021013548.2375190-1-ryan_chen@aspeedtech.com>
-	 <20251021013548.2375190-2-ryan_chen@aspeedtech.com>
-	 <20251024-dark-ringtail-of-defiance-1daabd@kuoka>
-	 <2939cae6-2e8a-4528-8e27-8c932e2f82de@kernel.org>
-	 <bf3d6690b9124ecf74df6c0f9f1c0f72ae1db9f7.camel@codeconstruct.com.au>
-	 <8341a903-639b-471a-8425-a98c473f5ab0@kernel.org>
-	 <7a650d60cabcbd33b65c954b0c9c5918dfcabb09.camel@codeconstruct.com.au>
-	 <563d6efb-966e-41e7-aade-ddec2abc7568@kernel.org>
-	 <TY2PPF5CB9A1BE6E6E8FA67CDC03A55A439F2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=linaro.org; s=google; t=1761311687; x=1761916487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aw3s/Ngv5fWq93/LfGGZRypt+nWW9NzGjLCsQdxHVyo=;
+        b=iLUIc9EVHB8CPOYr/8Aosec0lmNS9mPRCPjto2946ZJMD9XWMeJW4r0Q7fu367bnlt
+         wi+Y/ZM2XORF1mmNd+77e1RrmYO3gAkyGooMaT8PSUQ1M+ih0phuEaCBGjUvSLgX9VwU
+         pWQrdjwYepfXQ+MBuzvKo6zw8+aAKFyKLgZ3w0xGkt2/Z64CT2J+9Cst5RMewwFCgQt1
+         79ibxE/AGJQbg/9HWrODN+bM0djG6udhapUO4bUK0INXeDH1J1KA18dSEV8uEDNew7vu
+         tcsqbUT7N3cbXaMBgOagia2fysdhyqiGTkX65G/T6Zv0BytNPU/J9T1TC+7c0qZa0xG6
+         WNIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761311687; x=1761916487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aw3s/Ngv5fWq93/LfGGZRypt+nWW9NzGjLCsQdxHVyo=;
+        b=cmU1E/2vXiSJVlc4IH6phhQ41N+trJq1WcgLDtlFUPb7Y8JSomXylNO2P7oKQk6zG+
+         vKHmW6rAFVNOeymzllhUN3cGIAuyumYTIBRQ7YXcmTfSC2X0Pxyv7w513aCwle47/kr7
+         q+OMHYwzPPvz9t8lcYNbWLulAJTn/eWb5/vCygaU1eYmKAEL633Jj9ocMDsNqmrj1Fq4
+         WjevEZ0ZRSG089q6FAznTQVAJg32H93Aalh0DwjZPz75lYOHSV8h0IEBuwbcJSMb5dCy
+         r5yNG9/JEuYha6LU/jGA+0gw8NmItj7Om2UrU3BMa3F61PVSllzLTft+WZsB6INJEYdI
+         xoUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmW3BM7F6HfwA/AfBxJ4oU5gLHSEc01KQMjLyXIWhoLAxmv5wYW+coHizfjeSn0qDnBqKxSGlfRf1WC7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+DSC0cBzBhN2n0qXPepJ0ILeqVjjVtuSnxrk0prNA8Gzy9XKf
+	tM05K5fWAZetgcuIz1MDdesA5+ooR+fT++W6OpKA+AlvU+T7Wscf44lB3tYH+rF+ur0qQwtKAsp
+	Q9rM3
+X-Gm-Gg: ASbGncs1pi21PaJJA1zZtLEs3jopxwmrbmDKEtJTLu5/bnA8bDY3RFk9exmqFiarnKc
+	JrVHqVtbhf4Qh1UeUZEiqF7zHzTRiESIsT3MGv/LnhQqOVf4JTjEqLyui5mQpT1A6CGtWvLgARD
+	53fEeguquLk4J/MrBWfGd4lzSMDvD+b/baSkRCC9P3GfVEBnC1tyb4SM7V1vvKnoTVFvw42r4D7
+	1QAKqWAYpLGfkw4P7OTjEpbXmM/NlGM3JTlw2f4ucANhA7lxgly8XHdt8xRCg5N4vEqPxpLftz6
+	U4fRr/B1TsAQGcT0zBoB7RnuT7aO/iq1PptNwRn3iefMnz8l92Ky1tWc/PAB3R6q9G6OD1ga7/Z
+	kqVtt59p2wcFL0djc5ImeKUGpI9O1H07a1Q8KLNcJm6FS2vcDobA/ZZoGDqY1upWf+bVIo4+R4i
+	xpLzWzuWI=
+X-Google-Smtp-Source: AGHT+IG173mHKY9AS/3Xa7nR0RgEEWZWPFN6mBkCz/tfbOlzz/oOa+s0Yjnu+DHdEWhOrllzlsrkKA==
+X-Received: by 2002:a05:600c:6291:b0:471:a43:123f with SMTP id 5b1f17b1804b1-471178a6882mr222738315e9.9.1761311687001;
+        Fri, 24 Oct 2025 06:14:47 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c427ed3fsm175699395e9.1.2025.10.24.06.14.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 06:14:45 -0700 (PDT)
+Date: Fri, 24 Oct 2025 16:14:44 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Rajendra Nayak <quic_rjendra@quicinc.com>, Sibi Sankar <sibi.sankar@oss.qualcomm.com>, 
+	Shazad Hussain <quic_shazhuss@quicinc.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100: Add missing quirk for HS
+ only USB controller
+Message-ID: <a2cjvvt36jcnmbmsgf22a6b6p52aoejpvwbo4phsd5gc6xclba@havatemgahmd>
+References: <20251024105019.2220832-1-krishna.kurapati@oss.qualcomm.com>
+ <20251024105019.2220832-2-krishna.kurapati@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024105019.2220832-2-krishna.kurapati@oss.qualcomm.com>
 
-Hi Ryan,
+On 25-10-24 16:20:18, Krishna Kurapati wrote:
+> The PIPE clock is provided by the USB3 PHY, which is predictably not
+> connected to the HS-only controller. Add "qcom,select-utmi-as-pipe-clk"
+> quirk to  HS only USB controller to disable pipe clock requirement.
+> 
+> Fixes: 4af46b7bd66f ("arm64: dts: qcom: x1e80100: Add USB nodes")
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
 
-> I will modify with following.
-> if:
-> =C2=A0 properties:
-> =C2=A0=C2=A0=C2=A0 compatible:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - aspeed,ast2600-i=
-2c-bus
-> then:
-> =C2=A0 required:
-> =C2=A0=C2=A0=C2=A0 - aspeed,global-regs
-> else:
-> =C2=A0 properties:
-> =C2=A0=C2=A0=C2=A0 aspeed,transfer-mode: false
-> =C2=A0=C2=A0=C2=A0 aspeed,global-regs: false
-
-I think Krzysztof was fine with your approach of the new binding file,
-just with the improved commit message.
-
-Cheers,
-
-
-Jeremy
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
