@@ -1,55 +1,108 @@
-Return-Path: <linux-kernel+bounces-867983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D83C0410A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:57:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE65C040DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 296E83A5D5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:57:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DC721A0791E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5529D1E991B;
-	Fri, 24 Oct 2025 01:56:58 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F82F1E7660;
+	Fri, 24 Oct 2025 01:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i7R45KQ+"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B531E491B;
-	Fri, 24 Oct 2025 01:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471A31C3C18
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761271017; cv=none; b=ksW9C/MbWIz9Rky6Llilr8ACWfYiPu9cwv7RNX+dJofjJuLwSeP5mImuwC/IcPeTphmjoM/BMzb0HpI5NT92JUi0AbxwOjAxKQceqSFExHgc1JliVNMdbmk/S9k2/EI8+ELnxIQZcj1iWb0kIaMWTanASwCld3LP5UmCxrB2WkI=
+	t=1761270938; cv=none; b=HnF6wNCrPZoncEYBBIv0aIklyxH/gxvi6AFb+5kfA00oKFmADYeedLFtpag0qzFtHsFe2JWzVfg+F8uYRDmFR7HkiK9KFUMXECOH0njLVFFV3ntuh5WmWJc0z7QtStHqegsUPhfGIR6At7Gmz4n03rcLM+dyAwMH3GzMdYBoMQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761271017; c=relaxed/simple;
-	bh=5+GhXpuV+HJFKbBvpav/TMm2j/QINaAEaSuYNWAAZO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HvdkfD7FnWe3XFKGDurLhQqoW4K3eEHTM/geMwCVKIT9CXaolBjCDwvR4907deEuMR89WA3ypWTw4qp4+tsIPdBmvhSg+z5snuuVdW/TuAv8a16PJIJcOWbzNHhFXs7hEkBggjg8ZL45WUuRqhsMQ+/R5I3dZ5QOFtT1nR0dcJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ct5bN3jVszKHLyD;
-	Fri, 24 Oct 2025 09:56:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id A31BE1A0ADA;
-	Fri, 24 Oct 2025 09:56:50 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.50.85.155])
-	by APP2 (Coremail) with SMTP id Syh0CgCn_UXX3PposwChBQ--.8162S4;
-	Fri, 24 Oct 2025 09:56:48 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-mm@kvack.org
-Cc: linux-ext4@vger.kernel.org,
+	s=arc-20240116; t=1761270938; c=relaxed/simple;
+	bh=DFXDK1dq0hZtDmvIA9ZvRGa1Eqyq6GKOH8gUqjVv1bY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HB9078xaG1ccdGFtQcHMyPBisNHXybvHbTz94Z1ad/51vek4cbqvbvjB0kDTnFmHsNU0oeni+uFlyWBmbN6I8+JKZUrmQr8bTJYNC06ieU78YtvW/vXmpa2IrCPyCNdjAxFTOxoD5SDGmPLyC8XaeXLRJ2tLHOPV87pU4QpFGPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i7R45KQ+; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3327f8ed081so1980381a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761270936; x=1761875736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qM2K5UWuNXprZvBDJ5c1mMhJQmIFaH7Nb7GuoKXsnbg=;
+        b=i7R45KQ+HKIZnwZA7TEAxwgektKV+Ifjnb9xExKvyPZxNf3gzwCkB/PTQblkRmW1Hp
+         ze4seehUn71GJHErvfPjOLMsBvuVw6prEv7+JdF2BfROfS3YC5brF8UCknQc52rVdzwt
+         IJiqPiyVVyPfaVJAquL3Wkj9mOcowhJNfaIDi9S9hGVw2b8fEA6IdF9uj//BXSyKpZIP
+         qP1Vfx2t5QZwieQU8JX7u+9ailFq0S5UVIiRu/2ce5zvxxnU4l2VCYZ7eB4neBsxE/CR
+         d6emKMlJYD589frzlVMteR+v5ydbMq+nmInAPA5W7ac4x7VDnj6CH5XchEGxmkQTOpAw
+         XEaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761270936; x=1761875736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qM2K5UWuNXprZvBDJ5c1mMhJQmIFaH7Nb7GuoKXsnbg=;
+        b=V+NKs4J90LSs98vnMOjDfc1pWdW3m3wHbEKHUC5HbKPlxhoC41eZkIKLQrBn7SfiYG
+         KV8bji68QGaPF9adpQYQZ2RVXKqI8viNsejuTNaRatQso4qHqIMhFO1XnZAI4SXPvFjk
+         r9h8MHzzArMya7m3jeQ1c8wTrDF6JMlFsvtm+hVBJ1mGhVqwgzjHX1aoT2awMDO1cI1M
+         TUTEvVmN+MRlFJJ9Howed+X9vh/DjDNM4viXYZsWxwXA53qGlcULx7+0e3D4/Q/Ah2t+
+         fMqDU+B2GbispYpqXfqWFxup0iGKAKMuv5uckkZ+ofKcMgpJjKnL0chYwEPj9DWJxcSO
+         m2bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIEd4/wtTCcx+0gg6T2AFan06tKhfs1rsNUVlL28wD6L43qpZf0b0qOyAnMbaLC92mNjE7/7LNzYpnk0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9zbMff3/DImqs1q9gSjd8nKTPxZCZL4Iys7SoPZ2mJ5F6HJs6
+	EQfMpLAe4q/n2wwPI24d1O4ou/ekaTnh7TI1Z03QOoCmw0K5GPk8ch6J
+X-Gm-Gg: ASbGncsUlLJmXlMiEhyNmYXmn7qrVVuX8gmkofyIcQzIysERtjB2JUrpDwKqtMhm5iM
+	cmoP7poa78ItjL0LsU/2P4MYg68iIOx2hdFdsxudHm0kH/3eCZ0C2aHXyfy/5tL9VTEyBFDO+8c
+	p2cdCsb5NwM7P8pH6EB142yHEPYKMds9j/6SoTVshYQR0NLe5P1NJA06z7DWuS/0q9AOdn9hroc
+	D7m7t8uJs8Eho4siqg6ziCZMstJO0vy9RlSHjktqKkIQv+L/+ftC9f/UJYIZZ5lsCfOTKPTEvVp
+	un7n57e4VL9VmsSa2l3RwJ+CpCW30NKN9w+yIhuZi1aqmTqvzX359f3xhI3TTojzSrQVwtlG2d1
+	1EAJisfqbbtT8jdOh7P3FvhnskTjwsuMu7EzrrTUw3B/3v7j6HWwvtWPpdwMdI8pcYdKThS2ol+
+	5m+kO57mYahw==
+X-Google-Smtp-Source: AGHT+IFGuiuD5qMaB237ASMVYM5OY1+My1nEaULow6/U2LgSioG18/RvbKuul7ZQNTuvhLccqeac+g==
+X-Received: by 2002:a17:90b:5386:b0:32e:749d:fcb6 with SMTP id 98e67ed59e1d1-33bcf86b5c6mr38689912a91.12.1761270936488;
+        Thu, 23 Oct 2025 18:55:36 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33dff3c3a6csm4951393a91.5.2025.10.23.18.55.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 18:55:36 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Han Gao <rabenda.cn@gmail.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Vivian Wang <wangruikang@iscas.ac.cn>,
+	Yao Zi <ziyao@disroot.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	david@redhat.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	karol.wachowski@linux.intel.com,
-	wangkefeng.wang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH] mm: do not install PMD mappings when handling a COW fault
-Date: Fri, 24 Oct 2025 09:54:59 +0800
-Message-ID: <20251024015459.2824162-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH v3 0/3] net: stmmac: dwmac-sophgo: Add phy interface filter
+Date: Fri, 24 Oct 2025 09:55:21 +0800
+Message-ID: <20251024015524.291013-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,102 +110,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCn_UXX3PposwChBQ--.8162S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGw4xury3AFyDZw4DJF4rGrg_yoW5WF4xpa
-	yxGa1ayFWfWrn2y3Wxuw4vkr45ZwsxGayUWFyxGryjyF15Gr1Y939Yga13A34UGr4UJFWr
-	Xr45Kr909FWq937anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUL0edUUU
-	UU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Zhang Yi <yi.zhang@huawei.com>
+As the SG2042 has an internal rx delay, the delay should be remove
+when init the mac, otherwise the phy will be misconfigurated.
 
-During the ping of user pages in FOLL_LONGTERM on a COW VMA and a
-PMD-aligned (2MB on x86) large folio, follow_page_mask() failed to
-obtain a valid anonymous page, resulting in an infinite loop issue.
-The specific triggering process is as follows:
+Since this delay fix is common for other MACs, add a common helper
+for it. And use it to fix SG2042.
 
-1. User call mmap with a 2MB size in MAP_PRIVATE mode for a file that
-   has a 2MB large folio installed in the page cache.
+Change from v2:
+- https://lore.kernel.org/all/20251020095500.1330057-1-inochiama@gmail.com
+1. patch 3: fix comment typo
+2. patch 3: add check for PHY_INTERFACE_MODE_NA.
 
-   addr = mmap(NULL, 2*1024*1024, PROT_READ, MAP_PRIVATE, file_fd, 0);
+Change from v1:
+- https://lore.kernel.org/all/20251017011802.523140-1-inochiama@gmail.com
+1. Add phy-mode property to dt-bindings of sophgo,sg2044-dwmac
+2. Add common helper for fixing RGMII phy mode
+3. Use struct to hold the compatiable data.
 
-2. The kernel driver pass this mapped address to pin_user_pages_fast()
-   in FOLL_LONGTERM mode.
+Inochi Amaoto (3):
+  dt-bindings: net: sophgo,sg2044-dwmac: add phy mode restriction
+  net: phy: Add helper for fixing RGMII PHY mode based on internal mac
+    delay
+  net: stmmac: dwmac-sophgo: Add phy interface filter
 
-   pin_user_pages_fast(addr, 512, FOLL_LONGTERM, pages);
+ .../bindings/net/sophgo,sg2044-dwmac.yaml     | 17 ++++++++
+ .../ethernet/stmicro/stmmac/dwmac-sophgo.c    | 20 ++++++++-
+ drivers/net/phy/phy-core.c                    | 43 +++++++++++++++++++
+ include/linux/phy.h                           |  3 ++
+ 4 files changed, 82 insertions(+), 1 deletion(-)
 
-  ->  pin_user_pages_fast()
-  |   gup_fast_fallback()
-  |    __gup_longterm_locked()
-  |     __get_user_pages_locked()
-  |      __get_user_pages()
-  |       follow_page_mask()
-  |        follow_p4d_mask()
-  |         follow_pud_mask()
-  |          follow_pmd_mask() //pmd_leaf(pmdval) is true because the
-  |                            //huge PMD is installed. This is normal
-  |                            //in the first round, but it shouldn't
-  |                            //happen in the second round.
-  |           follow_huge_pmd() //require an anonymous page
-  |            return -EMLINK;
-  |   faultin_page()
-  |    handle_mm_fault()
-  |     wp_huge_pmd() //remove PMD and fall back to PTE
-  |     handle_pte_fault()
-  |      do_pte_missing()
-  |       do_fault()
-  |        do_read_fault() //FAULT_FLAG_WRITE is not set
-  |         finish_fault()
-  |          do_set_pmd() //install a huge PMD again, this is wrong!!!
-  |      do_wp_page() //create private anonymous pages
-  <-    goto retry;
-
-Due to an incorrectly large PMD set in do_read_fault(),
-follow_pmd_mask() always returns -EMLINK, causing an infinite loop.
-
-David pointed out that we can preallocate a page table and remap the PMD
-to be mapped by a PTE table in wp_huge_pmd() in the future. But now we
-can avoid this issue by not installing PMD mappings when handling a COW
-and unshare fault in do_set_pmd().
-
-Fixes: a7f226604170 ("mm/gup: trigger FAULT_FLAG_UNSHARE when R/O-pinning a possibly shared anonymous page")
-Reported-by: Karol Wachowski <karol.wachowski@linux.intel.com>
-Closes: https://lore.kernel.org/linux-ext4/844e5cd4-462e-4b88-b3b5-816465a3b7e3@linux.intel.com/
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- mm/memory.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/mm/memory.c b/mm/memory.c
-index 0ba4f6b71847..0748a31367df 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5212,6 +5212,11 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio, struct page *pa
- 	if (!thp_vma_suitable_order(vma, haddr, PMD_ORDER))
- 		return ret;
- 
-+	/* We're about to trigger CoW, so never map it through a PMD. */
-+	if (is_cow_mapping(vma->vm_flags) &&
-+	    (vmf->flags & (FAULT_FLAG_WRITE|FAULT_FLAG_UNSHARE)))
-+		return ret;
-+
- 	if (folio_order(folio) != HPAGE_PMD_ORDER)
- 		return ret;
- 	page = &folio->page;
--- 
-2.46.1
+--
+2.51.1
 
 
