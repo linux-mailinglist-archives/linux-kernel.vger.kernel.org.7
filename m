@@ -1,123 +1,248 @@
-Return-Path: <linux-kernel+bounces-868931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74206C0687B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:36:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56548C0686F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD90F3B5FFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:33:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59F4A507EB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2451C31D397;
-	Fri, 24 Oct 2025 13:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E2E31DD99;
+	Fri, 24 Oct 2025 13:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nqCm20sK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nv00PF8K"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RvZ9iAxx"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011021.outbound.protection.outlook.com [52.101.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F26131961D;
-	Fri, 24 Oct 2025 13:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761312817; cv=none; b=YyOJn78UwCDBcxNfpJNGaR0+uLNECnc1imSe+/bTrQlAdEAvTnPeQs9A7UR0znXdVSdxzZm83F9H+1VEuh4WqCh6dYBYtYOGui5uckAiB8e5/ryTLt0ItZVzOLww45A15h0uyG8UwVDlvspVwshv4E8pFpNZZarhOVa1p1DD4Ec=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761312817; c=relaxed/simple;
-	bh=qrnHo1FnXHCcCfqiCLQpWfnkISn2nzcUj2DtsUtO3wI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qt6XhNpsZY+ocZZ9nIrliD+DZncU3NtcxwBztb6qvmwiy38OovbbpsAUwGQzhyElrqv8ysAI1DA+4ZOLuwpp2WC473bMogsMKmE6LyMT7HdV1wnJZGFni8fegIt6/uu93mcNk3syrExUO/+U2JTfGB2c8r7ofoIeUY53uzbxsh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nqCm20sK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nv00PF8K; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 24 Oct 2025 15:33:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761312814;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qrnHo1FnXHCcCfqiCLQpWfnkISn2nzcUj2DtsUtO3wI=;
-	b=nqCm20sKvMO5TsGNC/Hkxvr+cpaNJHYtQlbQBrsqJMaukcIxFqnVZe65hYnfP4qXpYOPX7
-	kP2V0VRNteeWjS/MNpupKetHTdH09uAEdueDat4JDVxDZnt+OgnwbR/5TugDBiGSG6XeM0
-	9wVp9J7zL2GlLGPLfem9odLo0FkU6NL0WX/XtgSkFjlUr1ufd/f45834ON3w2nHf7ujukY
-	LIhPPY5V3XuS88c6hRUEcI5GmGgXDFiI/aJ9YrzJfruXMYGbqAz873J0IHLmmF0zO9/TvE
-	jGel1GomJsnK7UCBnx/JwxPilullXe72SIzDeHc7i21wHquyZj9334xQ/wWy5g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761312814;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qrnHo1FnXHCcCfqiCLQpWfnkISn2nzcUj2DtsUtO3wI=;
-	b=nv00PF8KedcQZ1f0QT9sCAzjWfduQbJSOH0ZYHKqn8zFH7m95ecM7PUJa1kzLOil9N3Pku
-	utUl3tnuGOTHDtCg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Crystal Wood <crwood@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Lukas Wunner <lukas@wunner.de>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org, Attila Fazekas <afazekas@redhat.com>,
-	linux-pci@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver OHalloran <oohall@gmail.com>
-Subject: Re: [PATCH] genirq/manage: Reduce priority of forced secondary IRQ
- handler
-Message-ID: <20251024133332.wSQOgUZb@linutronix.de>
-References: <83f58870043e2ae64f19b3a2169b5c3cf3f95130.1757346718.git.lukas@wunner.de>
- <87348g95yd.ffs@tglx>
- <aM_5uXlknW286cfg@wunner.de>
- <1b3684b424af051b5cb1fbce9ab65fc5cdf2b1a1.camel@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1220303C88;
+	Fri, 24 Oct 2025 13:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761312869; cv=fail; b=te/wHK1x0cahjl4q+zlPWHIGotBZUG3dcpcVliPVncRECmRNyzIPP139jmxGnD1bZXot2hy5Vvbq4uCufWEBsL0m5qypkrKbCmlwIXcluzX9ZpUHuCjo2w8z/Pv6z4jeojIrBtQGyW8Wo/WDKLtrKFaOu3N54DeNyOY8hBUZXJI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761312869; c=relaxed/simple;
+	bh=2MHP/XdvC0qBvBlOXhxtEkUPqkWXkyQBYEPQBCaqevA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=r4fyYDCHi9IJSSQkpJpzWLpNYbU4CobPjp+Oo0A7huroN3/0DLnomJ+GEUcthZKtO0VfJQKEtLIiHQJWAHpXLtrRdX9grnK6WjvQPIToV2dMwpMmI1k3PlvS97aTe649D8qp4cS1OAV08ro5IPOzJsM/xDQ8lCPZ+cpItG/SqKQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RvZ9iAxx; arc=fail smtp.client-ip=52.101.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bb+giRC+PegmMdTqo4rkg6lN3eySoI906lNJoLmYOdX2+nzDxvk3P3kLVIhno0LA/8sd4ZaGRxY/Xmgc0m96OXsXVbAd2b3UnrJKdA1FLdfeA8cPyvn6Ow0zV1R5BpIqwVo7PqtDdhBq9epkXOHQBGRy38Q5ia1mj2Xy6WKkuuGnO4zb/ecdV/tQ/VYlZ7XPXHSVOp9N9YwJwHtEPDdgNrrK4qpiAZ15GamosvDl5cqDapPYi0d52eOA5yn6W8rrVkLKfSwIkx/Er/eq/pzZdpRRD4FmL5WBO1DkuE25EiqpQpyZhLk98MBsPy86P/pLWupeyTi4JksPmFms3G36Cg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RQIPN8wp4yofNlPncUoWtaO5B6WuzvOcNITYR8csPjE=;
+ b=mfvMlCLufYOPF9d9ilP+WzJMGV4bhow97x/C4Lh+MYTUmTe6lLDft9DcwFbxvY6OOWxYk/La41JOl/Z/ZXVYQUBLXu2mIKS5nx7y7P322cxWtfjGLF6kahETfxnTqlO/SwZxfKC3vxZD4YdzHsApya2TJQwsiQ5Twz1tzD2hBRj4+i0b7y+7y9yNAXoV1BXE4HP9ZBP+1nlRRzdGJ39jqJ8mpa35IbdFv8GmRz5iCE/wifKm8Lb5YADYb/6s1JldglZx0VlvgzQPS+p7eo6uEN1Wt70iA0wEDmrjDPIageOb4CYGILdOY+tKczpK0u1zYZWwl/zrggcrUdjxDoKLVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RQIPN8wp4yofNlPncUoWtaO5B6WuzvOcNITYR8csPjE=;
+ b=RvZ9iAxxX93+IEoGknmxz9NIfaoprtagmBuMV+46tzSkeCD1XJLpPaoe61GhZlHRDb9lRA4y+s/EcgCkWxyuyupyfMartKoiE6dMf0W6N5n3z4VqNABpmkDm/KKIhRyTdb9e/m3ZPteVJ2JWp5d0BU2NhiBqh6MbpeKTBamfYn25+TjoFZWDJtCTUlGodIKn1Pt4Rgtj/vJ+ib60z/KH6KEowISRGbY6mySzWpsQKL3vlUUg9A575tetl6Xy7wPoAzn5KBOlJCu2g0/gK3jajEmZ0xNrI81kEwGXqca6/iYwcEnROb1HNKJQ6l8H9huiTakh6cVAPrNI8pkx918Gqw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by DB9PR04MB8331.eurprd04.prod.outlook.com (2603:10a6:10:244::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 13:34:24 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd%4]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 13:34:21 +0000
+Date: Fri, 24 Oct 2025 09:34:14 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Guoniu Zhou <guoniu.zhou@oss.nxp.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Guoniu Zhou <guoniu.zhou@nxp.com>
+Subject: Re: [PATCH 1/3] media: dt-bindings: nxp,imx8-isi: Add i.MX95 ISI
+ compatible string
+Message-ID: <aPuAVqVUHjrPCbIH@lizhi-Precision-Tower-5810>
+References: <20251024-isi_imx95-v1-0-3ad1af7c3d61@nxp.com>
+ <20251024-isi_imx95-v1-1-3ad1af7c3d61@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024-isi_imx95-v1-1-3ad1af7c3d61@nxp.com>
+X-ClientProxiedBy: PH8P221CA0034.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:510:346::27) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1b3684b424af051b5cb1fbce9ab65fc5cdf2b1a1.camel@redhat.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|DB9PR04MB8331:EE_
+X-MS-Office365-Filtering-Correlation-Id: d33aacf2-8cff-45a6-00f6-08de13020a4a
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?wDW9tlWSzbvhdw9KfWv5dsIpfi0SHkMurTiIy6sCZlHHkOUWLch8civxhCnv?=
+ =?us-ascii?Q?Sbf8ISLtjZ/Tt7Ote0BqkmNea7/VBzfoWFXHTlkNxAPRMSaIFh2DzH9JBmsN?=
+ =?us-ascii?Q?J/h95R2PtTX2TCA+ryoP/r7RhDNVJn2O1KYyGm+22uVgXZVqvUJCevsyCxVF?=
+ =?us-ascii?Q?pmjZ3z9CuO4ZNjPgRHbeNnXd55b+Y7c800LpuZ/re3g/Gv+s5qg/ZRFNUgLN?=
+ =?us-ascii?Q?dAYt82Lz0p9gKRFFCXD9N94w4rbnYnf6k6PPF8VuZFt+D3JP+TeeOIdiIgMI?=
+ =?us-ascii?Q?pvfwmziHmr3MFacjkbMoCJnhUYkTjygpIpNOkpP9DPSahFDWo8IiK50+dIb8?=
+ =?us-ascii?Q?y1QUgBzIhi+qgCygAp1bXZ6c2ZmDymE5zJt6KNNjiAHieIoMImJdE4H5o7OM?=
+ =?us-ascii?Q?SGYlqn1RRAOCkklau5RdjhKQBpoJ1KYyqoOo8x0a7bB2XMmiJOkvEEr/cRMD?=
+ =?us-ascii?Q?rSaW0oFX8mPzvpvxa8MRMDgZo02+HCD5tFrlIipBH5z0ijYZSNyfYVf0JAk7?=
+ =?us-ascii?Q?nzjMBQauGzVv9Vv3F/4mxV7fk8n0Co6rT+xPYmqizYbEPM6XjHg6pYgN5cO7?=
+ =?us-ascii?Q?IT1c2kmrqc1f0741Wlen8fiaaRPhLgeQGwKWFJzqQE9tpG0j94M/vTklle9i?=
+ =?us-ascii?Q?pYKMpMlPIReN/T7un/1mC584QRWvEBqsCrPSqHOYdJjl1QOn4yNxP7tvWaAu?=
+ =?us-ascii?Q?ywPjksDFEYLMQP+MsCMgGBVY2G+t1QTjH4UtW+FXNIFkjBYVZ/25n/zkuptn?=
+ =?us-ascii?Q?oEQTzRJvjWpPj2Q7V/0j8bkXzez7+DS5zPaYiBl5ClxfR5TAdZoQc9RkhsZp?=
+ =?us-ascii?Q?Y//qLwFYJBxh7b7HshN0ZPkNBFRjaDuY7Y6AbN9rlAKfovO/853iIdud3e6+?=
+ =?us-ascii?Q?Vdv1ChqNZEDS9+be4T2Fglpp7E0Ri4tUom/MjmBmiFeclkYz3AnJIHaQ+eMT?=
+ =?us-ascii?Q?uGviaCfQVkmaZs4mJ9gId1JtM/+BaiqjEdYkRMwDdXz2/8bfn3wTxNTEkCpf?=
+ =?us-ascii?Q?kBXClX+ngOfMTWqZ10QL1/BfRK683M2ORUxHb3cWjauURMD76QaGVDKgYmR4?=
+ =?us-ascii?Q?0BK6nbQXuWmIiEzdASKe5nxbJJA1CmKC6TJ9i1QzJ3F86JsnXZMUKImYCqDZ?=
+ =?us-ascii?Q?F94D7RDA4DzVubRJPTGV7PKFCHdtABn5yRbqkY91nKn9A4+NuIT+oYh9VlOr?=
+ =?us-ascii?Q?l/OYhHtQkuGpwghMkSOz+qyorIke1oXEjv2pbt7yPfbK1tXOsRkfaUhPt3ze?=
+ =?us-ascii?Q?wsS/Y/4COXWJZabl+RvH3XXCjrI2QMEnhH/2Rjd0dBjaJYQhL7ENoFj6VGDw?=
+ =?us-ascii?Q?CEivRIgx9/JF8zpOxBpxzgmj8v59X+1bRCGogbmu9rqh8KSOKSG2nqrhvWzk?=
+ =?us-ascii?Q?10Of0IrdziaUkv0YDAEVqN88OyY0VcEzUWGfHOs5rTy2n9CdcnrMD5Tq0Agx?=
+ =?us-ascii?Q?HZVSWOknjyjj0KeCoEmZCLPugOYbYBee0LyqWfx7x7Icmdy4uozn20BT7jFq?=
+ =?us-ascii?Q?5Esj3lJVn+rkJLwBIY42uNNC2CYrL7/v6ejd?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?+RMvyYbvu5FHheioQkmuB43SIDtEs6YiAzYdCOZ5RX3dwaTPAUekVTHAvbKv?=
+ =?us-ascii?Q?95onj/uQexX46mxqvqVPv2xT7pg7a/et+uj8+MFTCVlwdr21PG42ePtTVlKk?=
+ =?us-ascii?Q?liPc6O2BTOB+w+a5mjN7Gc8SJj7hmwG1lPqodInt2b71nk5W703f5fO7qro/?=
+ =?us-ascii?Q?ZPPpZoswxio5B1KwCWCiAc7wBCkrG1JG7KQPJfiFQjEzVDXMSRsj6gyP4BM5?=
+ =?us-ascii?Q?ePfDNUEl/BjQsC304wOYbdb9Y5cvzDpy4MvKlSTbDryOoA3JE891k+S+o7g0?=
+ =?us-ascii?Q?zXxNHJDF1oteSiY2ddBzwQRlBZSHPJU+IjzH4OoPDpWLc1Ym9+l1csel743W?=
+ =?us-ascii?Q?jYnQhNP9CU8Z0SeiA0hqA5cltWG73jkc/3ZH+D+hmXz+3eZgGZpPzY5Lu2Ni?=
+ =?us-ascii?Q?t04Ilxt5RFhPgrsTdFDvU/sbFMx8WPdJU0wWuNnOEnRA6NEeC+JDf6D+9Cvx?=
+ =?us-ascii?Q?j+Iab4kOJ8qawLCExMrp3h1X8ULjD3c2PN8XU/odqZ5pGijssf/hBTw1wIpv?=
+ =?us-ascii?Q?sH6+W8NKNDn/3UQ8ODPvyrE4uuGm1+1BaNAEYkHdEPxSncCz4kAPrLobzTbS?=
+ =?us-ascii?Q?pH0Wf0UFGopCRCmHU9gKph7ukj/8xQGfi67AXzeTx95//FTJ2EaxsAWNtjO0?=
+ =?us-ascii?Q?TzZs/s9Ya8Orz3SZ93K7tEg7vk/PfJ7Y15csT13s9g3qobCP7181Obm5kM/Q?=
+ =?us-ascii?Q?vJsnFNaYrejWVmpmOuspvGwiTi21ZVrY2d2fWRzO+ZfSDTN5ohagdjYtr8ak?=
+ =?us-ascii?Q?W6OzpBy+FvAMnb3EIZ6jzn13PDkRE7NQXpSx8zkhQnmJ7SssBm3ulsHok6oo?=
+ =?us-ascii?Q?8W8PnHumGtF1Aff8n+nnyXmBEhRgnUZChfGLt1TjVl0emwUB1zmuQWShwNZv?=
+ =?us-ascii?Q?KL9ohRa1uO3zEWAqbQYNjGsELEatMnFIwBbjfDDiX+iK07KEYxrY2zPRjGEV?=
+ =?us-ascii?Q?giU/FS7I4nRoUcKpEHsUo1xtTSCOjLWxfqO/xnFxZ/pNNIx5ngTyHwZyUCKE?=
+ =?us-ascii?Q?sRsBJ5wc7yN+ta5dC1sB6d6S8z5vA8MwvuDyOAh2SwBfN7GCmvG/l3CVItEY?=
+ =?us-ascii?Q?J8eLunFG4vcaahojgaDJRnjyWELNjN4vhAhBMAVnBn/ES6WvGXM5/im0QvcI?=
+ =?us-ascii?Q?ovUZasXLL9MRAr3mb+tE1CUFXRfPINJqziZMYOh3v9tEyZ0fKN5LhQlOQpfI?=
+ =?us-ascii?Q?6baa0eqc1Qv55LY2xKGsQiMuCHKgx0PLsQf+z789178+D+ptC6PoSFB8hk24?=
+ =?us-ascii?Q?xhfY19BMmEonyg2L5t9h9C+KKKgwdi/vQ43PxlXZ5pKQr3jOweXUrgjeR979?=
+ =?us-ascii?Q?X9vL0Qm7kcsj/XTkJHZvqRNx4UFNZIVKhld/QHAhV6a3r8NMmnGAICN2jh28?=
+ =?us-ascii?Q?a86QTtoSO94G6hlTlxNDe2zNRmIZe9l2YdDya8pddnxeJjr9uIetSg+KOlL5?=
+ =?us-ascii?Q?wKLzl0psrB4t/BnyuLo/bv0IVeo+CBfcLZbIhC/NY+MrI/Z1Opx6SxSwqtY0?=
+ =?us-ascii?Q?n2vIDX4QdRWwv8BDi398wmR0UgInwBluJPHSzvV/vU+nkrpP2WrrunMNZedl?=
+ =?us-ascii?Q?IdPQleSzAe4anraB/8V0bPC6YfZ2qCXHXDGm2Mdi?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d33aacf2-8cff-45a6-00f6-08de13020a4a
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 13:34:21.8226
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mLz174NaY+tS6CzzEr/Tpqbsgd0xNWmQcQCLsAmHkf9am3nGeEZsIqPax1FGX/jrkYfx6xh6/xIcBwc81DS4NA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8331
 
-On 2025-10-03 13:25:53 [-0500], Crystal Wood wrote:
-> On Sun, 2025-09-21 at 15:12 +0200, Lukas Wunner wrote:
-> > On Sat, Sep 20, 2025 at 11:20:26PM +0200, Thomas Gleixner wrote:
-> > > I obviously understand that the proposed change squashs the whole cla=
-ss
-> > > of similar (not yet detected) issues, but that made me look at that
-> > > particular instance nevertheless.
-> > >=20
-> > > All aer_irq() does is reading two PCI config words, writing one and t=
-hen
-> > > sticking 64bytes into a KFIFO. All of that is hard interrupt safe. So
-> > > arguably this AER problem can be nicely solved by the below one-liner,
-> > > no?
-> >=20
-> > The one-liner (which sets IRQF_NO_THREAD) was what Crystal originally
-> > proposed:
-> >=20
-> > https://lore.kernel.org/r/20250902224441.368483-1-crwood@redhat.com/
->=20
-> So, is the plan to apply the original patch then?
+On Fri, Oct 24, 2025 at 05:46:52PM +0800, Guoniu Zhou wrote:
+> From: Guoniu Zhou <guoniu.zhou@nxp.com>
+>
+> The ISI module on i.MX95 supports up to eight channels and four link
+> sources to obtain the image data for processing in its pipelines. It
+> can process up to eight image sources at the same time.
+>
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> ---
+>  .../devicetree/bindings/media/nxp,imx8-isi.yaml    | 26 +++++++++++++++++++++-
+>  1 file changed, 25 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> index f43b91984f0152fbbcf80db3b3bbad7e8ad6c11e..eaab98ecf343a2cd3620f7469c016c3955d37406 100644
+> --- a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> +++ b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> @@ -23,6 +23,7 @@ properties:
+>        - fsl,imx8mp-isi
+>        - fsl,imx8ulp-isi
+>        - fsl,imx93-isi
+> +      - fsl,imx95-isi
+>
+>    reg:
+>      maxItems: 1
+> @@ -49,7 +50,7 @@ properties:
+>    interrupts:
+>      description: Processing pipeline interrupts, one per pipeline
+>      minItems: 1
+> -    maxItems: 2
+> +    maxItems: 8
+>
+>    power-domains:
+>      maxItems: 1
+> @@ -109,6 +110,29 @@ allOf:
+>              - port@0
+>              - port@1
+>
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: fsl,imx95-isi
+> +    then:
+> +      properties:
+> +        interrupts:
+> +          maxItems: 8
 
-Did we settle on something?
-I wasn't sure if you can mix IRQF_NO_THREAD with IRQF_ONESHOT for shared
-handlers. If that is a thing, we Crystal's original would do it. Then
-there is the question if we want to go the "class" problem to ensure
-that one handler can preempt the other.
-And maybe I should clean up few ones tglx pointed out that provide a
-primary handler for no reason=E2=80=A6
+should minItems: 8 because you already limit maxItems at top;
 
-> Thanks,
-> Crystal
+> +        ports:
+> +          properties:
+> +            port@0:
+> +              description: Pixel Link Slave 0
+> +            port@1:
+> +              description: Pixel Link Slave 1
+> +            port@2:
+> +              description: MIPI CSI-2 RX 0
+> +            port@3:
+> +              description: MIPI CSI-2 RX 1
+> +          required:
+> +            - port@2
+> +            - port@3
+> +
 
-Sebastian
+     else
+       properties:
+         interrupts:
+           maxItem: 2
+
+to keep the same restriction for existed compatible string.
+
+Frank
+
+
+>  additionalProperties: false
+>
+>  examples:
+>
+> --
+> 2.34.1
+>
 
