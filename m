@@ -1,87 +1,114 @@
-Return-Path: <linux-kernel+bounces-868342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE048C04FC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:10:17 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C34C04FC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 72DDD4FF065
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:09:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5CEBA3502A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50987301463;
-	Fri, 24 Oct 2025 08:09:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEE72FF175
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4149C30170B;
+	Fri, 24 Oct 2025 08:10:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66DAD3016EB;
+	Fri, 24 Oct 2025 08:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761293345; cv=none; b=s74GkEV+DsFj2fT+JGsQuqBCaXLCu0kGUZ5CY6Ht07Gg1eNV+2PzGhoKeYJIrW9LuQVBG3uoumAjtEl3SLXqicJB1iNpvkZ+i97ZjRCKUL7QvDcDXipGN6Iksr71EoJRMqwGCZzKpt2c5Ntf8U6dstprFCPQRwV+aX8Gz3DcGqY=
+	t=1761293435; cv=none; b=IUathZ6Oq1BHi2w1TXPj3fmAwExX1BiukQK6l1QuMOTpdtfdXiOKSE9I5Dd8HtvA3qYFtgYg5avspLybpm5gTAFE2zn4KgMpOYro8dLHfCg/UDvoVUyKc7epnd0j0w+8xNT5VQIZpVfl0Pcd0uXwfAAqh97ASS90PVBH2jAFhXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761293345; c=relaxed/simple;
-	bh=rorKJKCPfDBSTRCdvgITbZ2ychhIA3Rdei6bR0TGFRQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PDm5HPolsZwt7LPs1WCfjs3rykBD21H1gvYyZ36wRh6f0t2BwmTh4gIzZXsLynMKd70cS5fgRVAu+jD0/MstOENjoaxwpn6o7eoWGzLiSickO+DaeGWPHzXy4KDTR3uSLjYr+JiFWrMoXIC8buThwycYjJZcXwzIuyYam7G7Wns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430c6b6ce73so49570065ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:09:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761293343; x=1761898143;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LpW/02V9RyPlymQ4fgjeVyFanbojHMUkzJcfqiYRnoc=;
-        b=eSIeVEKEP5v4Q+lt6lESunH6MX5nebFiIN3gM07PfRidfUsZc0RgEzKVW0yZpUIrq2
-         dsrJwB7UbYshbFsFjlaKCpaApJCfph/jC1UZfQLg26IYWh/wG4eUghjNGCcZUGriYS4e
-         WjbIK6/qEzQon+0HOAX596hK1F18Hee7xud8OiZiaTjABNPAlSdC1583zH6BEFsId+/S
-         txh5v8gNDAIcB2tFEpZYYt9/Onmws36QC7cgrFlO8rZH/r6EVikzwFX7XTVAXG2YaFk7
-         CKguiQuUBNGH3g6vtMC604XJbj8ydfLVbal0zRT8f/LhluO6fwI0tuy2AN19LWyUfjm4
-         Qjkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXS9q1qNcVGP/hMCIGzs5zvtYDzHtnXXp+IciTNpthBdnbcriBVGU57ONaj03/6M0qPiYbt6BKh+sxZpNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoLplv8hZy8pCp6oixmW4OdFRJ1h5UqrlNS4AqOBsz7hdImNgo
-	+Ny760mHvySar5NiMPH9tDsOge2q96HgXkXjZVh2GEJ2rqpForOmADgnlqouhhuPh6c2urP48qk
-	20+6MTdwqdRrGtSAZJ/LEyYdi4/mKGC/pH8qBtR/shhPOpyFfL09hhFy3XGQ=
-X-Google-Smtp-Source: AGHT+IG2TL+5ckrgJ/4a4dCGyZwAIM5TTpq3E3YwBP6UcWUDKG0g73Dd+YcCCIi1UHwV6EKgKfuY8mJIDTdOOwlwU5K5WMAg10ca
+	s=arc-20240116; t=1761293435; c=relaxed/simple;
+	bh=AwJSNrrD5lYEFe9sVj0ryarWF08vscc3DImzfrYWBrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AcyCKdTkLsrv2qNGS3UU/03YQ2/siApDsI8PTel5TUZAM19U5jaO4bjiBmojv/G9QbvzR71Qe8JwvKhaZokRsx/CfZ/yB5ZfojmS9Vg/Cc2uiS4JLILM7U8qOZEsWKVa7y/x0bOANNOz9EB9yFYuptK0incWv7BRaN+0Wy8lgvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DCC1175A;
+	Fri, 24 Oct 2025 01:10:24 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E93043F66E;
+	Fri, 24 Oct 2025 01:10:31 -0700 (PDT)
+Date: Fri, 24 Oct 2025 09:10:29 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: tanze <tanze@kylinos.cn>, james.clark@linaro.org, leo.yan@linux.dev,
+	irogers@google.com, john.g.garry@oracle.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	graham.woodward@arm.com, mike.leach@linaro.org
+Subject: Re: [PATCH v2] perf arm_spe: Add a macro definition to handle offset
+ value
+Message-ID: <20251024081029.GT281971@e132581.arm.com>
+References: <20251016083019.27935-1-tanze@kylinos.cn>
+ <20251017021540.45930-1-tanze@kylinos.cn>
+ <22b7b11e-b1fe-4d9d-8749-afe57ea1c35c@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4506:20b0:430:c8ad:81d3 with SMTP id
- e9e14a558f8ab-430c8ad8410mr319273685ab.30.1761293343617; Fri, 24 Oct 2025
- 01:09:03 -0700 (PDT)
-Date: Fri, 24 Oct 2025 01:09:03 -0700
-In-Reply-To: <20251024071518.JlvGX%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb341f.050a0220.346f24.00b0.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_dx_dir_lookup_rec
-From: syzbot <syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22b7b11e-b1fe-4d9d-8749-afe57ea1c35c@intel.com>
 
-Hello,
+On Fri, Oct 24, 2025 at 09:27:25AM +0300, Adrian Hunter wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+[...]
 
-Reported-by: syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com
-Tested-by: syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com
+> > --- a/tools/perf/util/arm-spe.c
+> > +++ b/tools/perf/util/arm-spe.c
+> > @@ -1732,7 +1732,7 @@ arm_spe_synth_events(struct arm_spe *spe, struct perf_session *session)
+> >  	attr.sample_period = spe->synth_opts.period;
+> >  
+> >  	/* create new id val to be a fixed offset from evsel id */
+> > -	id = evsel->core.id[0] + 1000000000;
+> > +	id = evsel->core.id[0] + PERF_SYNTH_EVENT_ID_OFFSET;
+> >  
+> >  	if (!id)
+> >  		id = 1;
+> 
+> Functionally this is to find a free range of IDs for synthesized events,
+> but also the range can only have one user e.g. in this case auxtrace
+> 
+> So add to auxtrace.c
+> 
+> #define AUXTRACE_SYNTH_EVENT_ID_OFFSET	1000000000ULL
+> 
+> /*
+>  * Event IDs are allocated sequentially, so a big offset from any
+>  * existing ID will reach a unused range.
+>  */
+> u64 auxtrace_synth_id_range_start(struct evsel *evsel)
+> {
+> 	u64 id = evsel->core.id[0] + AUXTRACE_SYNTH_EVENT_ID_OFFSET;
+> 
+>   	if (!id)
+>   		id = 1;
+> 
+> 	return id;
+> }
+> 
+> And then use that:
+> 
+> - 	/* create new id val to be a fixed offset from evsel id */
+> -	id = evsel->core.id[0] + 1000000000;
+> +	id = auxtrace_synth_id_range_start(evsel);
+> -
+> -	if (!id)
+> -		id = 1;
 
-Tested on:
+Agreed, much better than I suggested!
 
-commit:         8e6e2188 Linux 6.1.157
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=16a3c614580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9d92b13f7aaac42c
-dashboard link: https://syzkaller.appspot.com/bug?extid=30b53487d00b4f7f0922
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16f28258580000
+Just remind updating subject as well, like:
 
-Note: testing is done by a robot and is best-effort only.
+  perf auxtrace: Refactor AUX event ID calculation
+  perf auxtrace: Add auxtrace_synth_id_range_start() helper
+
+Thanks,
+Leo
 
