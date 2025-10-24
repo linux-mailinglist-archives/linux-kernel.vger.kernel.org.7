@@ -1,134 +1,101 @@
-Return-Path: <linux-kernel+bounces-869116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1DDC06FF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:37:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 124ECC06FF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 062394E2154
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:37:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 942FB4E769A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5806B324B1A;
-	Fri, 24 Oct 2025 15:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F97324B1A;
+	Fri, 24 Oct 2025 15:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="s5KqXpOe"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bhai4z7x"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9328302157;
-	Fri, 24 Oct 2025 15:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8C12D94A8
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761320225; cv=none; b=Q00s8xv+9CMk8oDwVowYMSOZ4FgWkmsEwU7nasOcKPHl7KnkKBO+UCqS47QWXJTqpg4KVKyr3EO5tOVvPegLw1P8+sFaiW3/S0BVPJnGJ7gS/BuwoCGgMyrSLxRPo9DWcL7PAlzpGJkdeTzR8Z4Jlg6iDybwl+1/xvwG1U8aSlc=
+	t=1761320125; cv=none; b=MG9W9rrAt5/nwryExFjDz2v3phchN0JIj44VG+cSYQaVWaSDsMnkqeIMswwEUIrEIclGS6zL8TGEH7Ev2LkyJFvfVss2fELI6h4vBBw00b8EioYu7+qoDl7IlmAnSlll2m4Nzl9gxQd8dwk0TcpICcLAJxyZ7MwDzeJti5a1V48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761320225; c=relaxed/simple;
-	bh=AgYdT7YB2xxwLbJHg3/succLrKYoP/PPcqdqImF3crU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P26TWJEpNGWFavr/SH2ZgVpz1/IkeSlV12EsDL+Qw7XOL36XyXrhmyBwQxkaC/scdy82Y8wfanMp6R9rFOFyBW3SfHkp7mWANd2538XDXjfdIHPEYffi58Ei4Qvazkpha3e/jdMaM+roz90fZu7MD663Y45ezzD8JPyqu9fr+sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=s5KqXpOe; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
-	by cmsmtp with ESMTPS
-	id CIP5vStgcKXDJCJqav7P4d; Fri, 24 Oct 2025 15:36:56 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id CJqYvtRhZMoIXCJqZvGY41; Fri, 24 Oct 2025 15:36:55 +0000
-X-Authority-Analysis: v=2.4 cv=R7wDGcRX c=1 sm=1 tr=0 ts=68fb9d17
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4oHATN8Nx7vVUZJYxp75bA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7T7KSl7uo7wA:10
- a=ejCFXqOAJi88KBG5-skA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=PYq2fPB27ReF2cDwOstKi/I5IpH5649wXvX+ugiEd8M=; b=s5KqXpOeJHb5Dr0aEkqViGiPzg
-	FQ+rJy88GCviZlxTWIyxFn0xaTPsHJ6pauvVftWGuc1a6ygfq8aOAguhbOD6Ltw2FM+fEtrvpQiR4
-	CHBPCrWD7LQK45LyEVpSCEKbgTzlrqBsIKYCxOWI6POPRqb9jicribi6irlSoe9ns8mEdQnxYaLlR
-	3g91QUKBEdmlXiFiXImqFFyTwFUw6AvkzO8Vbg9sEfBuG6Y//zKUxbZtub8XqH+auukrkX2kc4Yuu
-	fvQdw51LqtwcL20gogfx/ehMRFZ7yttL7mF097A1DI3J9Gn9ayRhKz7b3hrW2Y0lGhyDUK7B6Blip
-	jvia2CzQ==;
-Received: from [185.134.146.81] (port=60908 helo=[10.35.193.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1vCFu8-00000000imq-29tU;
-	Fri, 24 Oct 2025 06:24:20 -0500
-Message-ID: <949f472c-baca-4c2f-af23-7ba76fff1ddc@embeddedor.com>
-Date: Fri, 24 Oct 2025 12:24:09 +0100
+	s=arc-20240116; t=1761320125; c=relaxed/simple;
+	bh=8B1H8HUJr2gbikHIQ5XA9nd1UgR/qt3Iez/QrRNnWyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fsz5k+f7ZfYetwro9KK8gtA+xDDLeIVDjtB1DXEUoL5x9C/kpUa1VLfzRw/0eqlbBgFYkBYen+ZadV/wFNq1IkRqhamz3rhsKee9fPx/VKc16/LHkJuqCfren0uLI9eznYSCiG1e9sgwpYEIO2zrXCoKToTkoMRiC30dmwhSzAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bhai4z7x; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761320123; x=1792856123;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=8B1H8HUJr2gbikHIQ5XA9nd1UgR/qt3Iez/QrRNnWyw=;
+  b=Bhai4z7xePhd33EEZVR4nQmff1tNtF0v1TImkP9qBMI5IUDKm8eeIx5A
+   kXxPTXdX28FUZ0wn3nGfyOBOUy6geGIOB/+WJX8IjY4qXYfuvq76uN08B
+   7tE5yJ3IHJ3QAb1+PhrCWZGIFBboOXpvc9bY5YVmsoAeDkSz1ZdPxx3R3
+   EsL/3vQukhZuQ9DUWYgE8m6Ol+9C1BdFXcubT9weDqkipK6BdWRwaJ2MG
+   iSfnGJajbuJ8zxqfr4Y/R7hlbddsb+BPpf9VkbmNh1Yo6nX4d4Hff30ZL
+   7S+dkNQxAFb+MF/frfGxV79RVE0CPa+GsoK6x40uc03Qf5bZimeWW3J5O
+   Q==;
+X-CSE-ConnectionGUID: jnnnBjSfSFSFH889v8+6Ww==
+X-CSE-MsgGUID: 7mvruHPRTGGT4ncFvtNayw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67337090"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="67337090"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 08:35:23 -0700
+X-CSE-ConnectionGUID: uvXKRIvaS/urk5yPBbJz1g==
+X-CSE-MsgGUID: EUQBRBQzRkilXkux7jOfGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="184936629"
+Received: from igk-lkp-server01.igk.intel.com (HELO c2fcd27ee2f4) ([10.211.93.152])
+  by fmviesa009.fm.intel.com with ESMTP; 24 Oct 2025 08:35:22 -0700
+Received: from kbuild by c2fcd27ee2f4 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vCJp2-00000000015-0ERE;
+	Fri, 24 Oct 2025 15:35:20 +0000
+Date: Fri, 24 Oct 2025 15:17:01 +0200
+From: kernel test robot <lkp@intel.com>
+To: Stuart Yoder <stuart.yoder@arm.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Subject: Warning: drivers/char/tpm/tpm_crb.c:193 function parameter 'loc' not
+ described in '__crb_go_idle'
+Message-ID: <202510241542.hFrped3X-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] net: inet_sock.h: Avoid thousands of
- -Wflex-array-member-not-at-end warnings
-To: Jakub Kicinski <kuba@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <aPdx4iPK4-KIhjFq@kspp> <20251023172518.3f370477@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20251023172518.3f370477@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 185.134.146.81
-X-Source-L: No
-X-Exim-ID: 1vCFu8-00000000imq-29tU
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([10.35.193.44]) [185.134.146.81]:60908
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 0
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfI592vB+X0lc0nkvl0to5DfCgGqLVUpbXbxw/w0lQZJwAEJ+8BVhi1Wk7bdqa7xWAfFRAHdJcwUy37JTp0NaeUx7oPGSu5cdZd9ivwHr31p3/Kk1tyoY
- VOpMYD6/ixqxhINHJmCrP6JxERopt2Qo4/1xz3zOgKFnOVAreG9nG8UCMIaFvcXyd2ryXqk/a5Ku1RWmFJ2AI3ePn2kA8PgZsBDzLax+81Q7aPmRyaU5tjRF
- 8ySFyTzUADBuKZwDygg7km6DGmOWrvitNgEoyzfKHog=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   6fab32bb6508abbb8b7b1c5498e44f0c32320ed5
+commit: dbfdaeb381a49a7bc753d18e2876bc56a15e01cc tpm_crb: Add idle support for the Arm FF-A start method
+date:   6 days ago
+config: x86_64-randconfig-2005-20250721 (https://download.01.org/0day-ci/archive/20251024/202510241542.hFrped3X-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510241542.hFrped3X-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510241542.hFrped3X-lkp@intel.com/
 
-On 10/24/25 01:25, Jakub Kicinski wrote:
-> On Tue, 21 Oct 2025 12:43:30 +0100 Gustavo A. R. Silva wrote:
->>   struct ip_options_data {
->> -	struct ip_options_rcu	opt;
->> -	char			data[40];
->> +	TRAILING_OVERLAP(struct ip_options_rcu, opt, opt.__data,
->> +			 char			data[40];
->> +	);
->>   };
-> 
-> Is there a way to reserve space for flexible length array on the stack
-> without resorting to any magic macros? This struct has total of 5 users.
+All warnings (new ones prefixed by >>):
 
-Not that I know of. That's the reason why we had to implement macros like
-TRAILING_OVERLAP(), DEFINE_FLEX(), DEFINE_RAW_FLEX().
+>> Warning: drivers/char/tpm/tpm_crb.c:193 function parameter 'loc' not described in '__crb_go_idle'
+>> Warning: drivers/char/tpm/tpm_crb.c:246 function parameter 'loc' not described in '__crb_cmd_ready'
 
-Regarding these three macros, the simplest and least intrusive one to use is
-actually TRAILING_OVERLAP(), when the flex-array member is not annotated with
-the counted_by attribute (otherwise, DEFINE_FLEX() would be preferred).
-
-Of course, the most straightforward alternative is to use fixed-size arrays
-if flex arrays are not actually needed.
-
-Thanks
--Gustavo
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
