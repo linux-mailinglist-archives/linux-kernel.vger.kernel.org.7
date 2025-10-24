@@ -1,164 +1,107 @@
-Return-Path: <linux-kernel+bounces-868276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9852C04C35
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:39:27 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F0B9C04C56
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B0BB3A2AB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:38:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6512A35A228
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EB82E8DEB;
-	Fri, 24 Oct 2025 07:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YWKvLEZT"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AEF2E764E;
+	Fri, 24 Oct 2025 07:40:29 +0000 (UTC)
+Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5F92E7F1E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEFF2E7F1E;
+	Fri, 24 Oct 2025 07:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761291496; cv=none; b=XfkUdE+XzjVLOHzD/m9G6osRo4BEXMAaj0ophNWi0L3sFBCfNGU83yW/9aOfExRPbrRMVUE0QFE4dh9Iia6cG1MlSSp5B/1AMQSGHK0qZnZEfjSSRqiJeFBPlJpvtbOBFGOBo18HyGMhy9Xlnf++CqrxSKQvYEtCozypf/m4zeo=
+	t=1761291629; cv=none; b=d3KSV8/QLxuDNj6rfjFsEVZuxwrYTaM270dBzcI0E+T2SWcFgeCp/fVwSzWw4p5fZXXuyZ6hoom4pVJJRD7K8oq8dirmBgFyiGi2hkhBO4QWuYKWtROVtlYIEhJIoy91S21HALK2oS4XJQeVltU3vudrLA70hRQMoKOcqVQxasw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761291496; c=relaxed/simple;
-	bh=4Q/i2AfvzaHtxQMuaNR55KE24+V/RETj+PZmgX0d3dE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=szBQ5UcW3VBZ6ZKEWGTVCNJ3sq/fYxJ5gwY3lzTo+jjmIGqwZUE9XSn8lFuH1gbmIhIQuqH2RxvFrwBbdEswR3Qq201/UXnKAzV2F6XN5KbkTdQTX3vJZJB1uFqlN7rrGS+BBVDdU6lZ+xwZv847TXjd1ef2x1Yh0kF6fbAbzGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YWKvLEZT; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761291492;
-	bh=4Q/i2AfvzaHtxQMuaNR55KE24+V/RETj+PZmgX0d3dE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YWKvLEZT6CiFPTHQkO1X2YLgdN/fTq1eAbHAhmwIb+c/iRejgob+HFVQx1mRW4AN8
-	 cDUVqfiIK/RdX/Qe81kVBwFlouVoTFHcoT95e3tilRkG6wytUFhNDo6FoIShQQKKtQ
-	 +p1K/ibluWb5qz4pysDWtJ5HLrP04pbO+UGN7nRPBLpP6yFayf9PRmTVg7vEPXCZUz
-	 Y5CfZGQltutBrf5MhmDnoZ5PeMMkTqncscpUNGj0emKHgwOeEg1ltu4lC6IRf3dhDt
-	 3VWEg0BRp+oUhMwRaj5hTfrqU1hpvrWG+N3HIkkLLWlSjL9oDIc4FcF5sJuU9pvTB1
-	 rDu3zssv/uLWw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9B6A017E00AC;
-	Fri, 24 Oct 2025 09:38:11 +0200 (CEST)
-Message-ID: <8dbe85de-fc03-4b17-90ac-7b939a701a53@collabora.com>
-Date: Fri, 24 Oct 2025 09:38:11 +0200
+	s=arc-20240116; t=1761291629; c=relaxed/simple;
+	bh=B9t+WbFDPExHpKqXcAryhKApAVFNU65xTWDlW86VmwQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mXtBBwiJAZAtrzntYKRNd1vc80Tg3DiDlJsGLII1B9aUlNPUPAYFi7psHS3QIG24KZv+48OUB4tfPKhgybf1rEiom94cCfXOBQLpP9xQxCj2jvKNMzK0bCzr3ujEvk/OQvmlqehiAWSgcE2ugvNolkz9GBVLEEj+HPhXfRncdSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201616.home.langchao.com
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202510241539114872;
+        Fri, 24 Oct 2025 15:39:11 +0800
+Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
+ Jtjnmail201616.home.langchao.com (10.100.2.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Fri, 24 Oct 2025 15:39:11 +0800
+Received: from inspur.com (10.100.2.108) by jtjnmailAR01.home.langchao.com
+ (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Fri, 24 Oct 2025 15:39:11 +0800
+Received: from localhost.localdomain.com (unknown [10.94.15.147])
+	by app4 (Coremail) with SMTP id bAJkCsDwVbUeLftodiUPAA--.3167S4;
+	Fri, 24 Oct 2025 15:39:10 +0800 (CST)
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <lars@metafoo.de>, <Michael.Hennerich@analog.com>, <jic23@kernel.org>,
+	<dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
+	<subhajit.ghosh@tweaklogic.com>, <javier.carrasco.cruz@gmail.com>
+CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chu Guangqing
+	<chuguangqing@inspur.com>
+Subject: [PATCH 0/4] iio: convert to use maple tree register cache
+Date: Fri, 24 Oct 2025 15:38:19 +0800
+Message-ID: <20251024073823.35122-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 09/11] drm/mediatek: Introduce HDMI/DDC v2 for
- MT8195/MT8188
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
- CK Hu <ck.hu@mediatek.com>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20251023-mediatek-drm-hdmi-v2-v11-0-7873ec4a1edf@collabora.com>
- <20251023-mediatek-drm-hdmi-v2-v11-9-7873ec4a1edf@collabora.com>
- <CAAOTY_9o-hHv5Lrd+EKX_mN2PXDC+ifoxSsR6bf6oJdD=N=46A@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAAOTY_9o-hHv5Lrd+EKX_mN2PXDC+ifoxSsR6bf6oJdD=N=46A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: bAJkCsDwVbUeLftodiUPAA--.3167S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrKw1fGw1xuw1kur4fKFyfWFg_yoWxtFbE9a
+	1Igay7Jws8Crs7Gr9rAF4UZ398uay8ur97tw15t3WDAry7ZFZxAF13ZrsFv3WjyF4rGF1U
+	Jw429r18ur1SgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb38FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
+	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
+	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?RDLXJJRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
+	D+KW9TpcXVrVhr4PSn2h1PUQpaG6idhgP4zi5jnB0usMjc1al7oa9VVacecULWQWASRKCU
+	Tw2v/+aJSyUemtOHV68=
+Content-Type: text/plain
+tUid: 20251024153911eccda1dd526aa682cf3d1657bb63dbe8
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Il 24/10/25 03:05, Chun-Kuang Hu ha scritto:
-> Hi, Louis:
-> 
-> Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com> 於 2025年10月23日
-> 週四 上午10:32寫道：
->>
->> From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>
->> Add support for the newer HDMI-TX (Encoder) v2 and DDC v2 IPs
->> found in MediaTek's MT8195, MT8188 SoC and their variants, and
->> including support for display modes up to 4k60 and for HDMI
->> Audio, as per the HDMI 2.0 spec.
->>
->> HDCP and CEC functionalities are also supported by this hardware,
->> but are not included in this commit and that also poses a slight
->> difference between the V2 and V1 controllers in how they handle
->> Hotplug Detection (HPD).
->>
->> While the v1 controller was using the CEC controller to check
->> HDMI cable connection and disconnection, in this driver the v2
->> one does not.
->>
->> This is due to the fact that on parts with v2 designs, like the
->> MT8195 SoC, there is one CEC controller shared between the HDMI
->> Transmitter (HDMI-TX) and Receiver (HDMI-RX): before eventually
->> adding support to use the CEC HW to wake up the HDMI controllers
->> it is necessary to have support for one TX, one RX *and* for both
->> at the same time.
->>
->> Reviewed-by: CK Hu <ck.hu@mediatek.com>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
->> ---
->>   drivers/gpu/drm/mediatek/Kconfig            |    7 +
->>   drivers/gpu/drm/mediatek/Makefile           |    2 +
->>   drivers/gpu/drm/mediatek/mtk_hdmi_common.c  |    4 +
->>   drivers/gpu/drm/mediatek/mtk_hdmi_common.h  |    9 +
->>   drivers/gpu/drm/mediatek/mtk_hdmi_ddc_v2.c  |  395 ++++++++
->>   drivers/gpu/drm/mediatek/mtk_hdmi_regs_v2.h |  263 +++++
->>   drivers/gpu/drm/mediatek/mtk_hdmi_v2.c      | 1398 +++++++++++++++++++++++++++
->>   7 files changed, 2078 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/mediatek/Kconfig b/drivers/gpu/drm/mediatek/Kconfig
->> index 994b48b82d447c47391122e6ff2d139edb223536..c89ae4ed2c96123684ecd357314fa2d2ba5a4433 100644
->> --- a/drivers/gpu/drm/mediatek/Kconfig
->> +++ b/drivers/gpu/drm/mediatek/Kconfig
->> @@ -45,3 +45,10 @@ config DRM_MEDIATEK_HDMI
->>          select DRM_MEDIATEK_HDMI_COMMON
->>          help
->>            DRM/KMS HDMI driver for Mediatek SoCs
->> +
->> +config DRM_MEDIATEK_HDMI_V2
->> +       tristate "DRM HDMI v2 IP support for MediaTek SoCs"
->> +       depends on DRM_MEDIATEK
->> +       select DRM_MEDIATEK_HDMI_COMMON
->> +       help
->> +         DRM/KMS HDMI driver for MediaTek SoCs with HDMIv2 IP
->>
-> 
-> The checkpatch show this warning. Maybe other old description just has
-> one line, I think it's better to have more information.
-> Please provide more information and I would modify this patch when I apply it.
-> 
-> WARNING: please write a help paragraph that fully describes the config
-> symbol with at least 4 lines
-> #54: FILE: drivers/gpu/drm/mediatek/Kconfig:49:
-> +config DRM_MEDIATEK_HDMI_V2
-> +    tristate "DRM HDMI v2 IP support for MediaTek SoCs"
-> +    depends on DRM_MEDIATEK
-> +    select DRM_MEDIATEK_HDMI_COMMON
-> +    help
-> +      DRM/KMS HDMI driver for MediaTek SoCs with HDMIv2 IP
-> 
-> Regards,
-> Chun-Kuang.
+The maple tree register cache is based on a much more modern data structure
+than the rbtree cache and makes optimisation choices which are probably
+more appropriate for modern systems than those made by the rbtree cache.
 
-	help
-	  Say yes here to enable support for the HDMIv2 IP and related
-	  DDCv2 as found in the MediaTek MT8195, MT8188 SoCs and other
-	  variants.
+Chu Guangqing (4):
+  iio: adc: ade9000: convert to use maple tree register cache
+  iio: light: veml3235: convert to use maple tree register cache
+  iio: light: apds9306: convert to use maple tree register cache
+  iio: light: apds9960: convert to use maple tree register cache
 
-	  This driver can also be built as a module. If so, the HDMIv2
-	  module will be called "mtk_hdmi_v2", and the DDCv2 module
-	  will be called "mtk_hdmi_ddc_v2".
+ drivers/iio/adc/ade9000.c    | 2 +-
+ drivers/iio/light/apds9306.c | 2 +-
+ drivers/iio/light/apds9960.c | 2 +-
+ drivers/iio/light/veml3235.c | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-Cheers,
-Angelo
+-- 
+2.43.7
+
 
