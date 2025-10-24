@@ -1,103 +1,114 @@
-Return-Path: <linux-kernel+bounces-869152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFB1C071BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:55:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C61C071D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D1ADD35B95B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C663A4498
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C909B3328F5;
-	Fri, 24 Oct 2025 15:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0C72F85B;
+	Fri, 24 Oct 2025 15:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j+0yL9Vy";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Aw/vJYnY"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hovQLquU"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804C932E754;
-	Fri, 24 Oct 2025 15:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FF11A262D;
+	Fri, 24 Oct 2025 15:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761321317; cv=none; b=CxkYGhLifp16hpgvavqZi+0OApFqMygpRJP8EANrARSI+63ilvG8+hkQ+Em2vm2K5cDP3ykdhj6hQZ+ZqyZ7sen4pWtarLaKUUxQcbhNSaPL1aEigZ/dlT+y50G3ueZaZVR8mmxbceetwx83ZfgMn+sdCALHVKmoF6OtgBCYuWw=
+	t=1761321376; cv=none; b=cyRdtp+sDiMN1JT+CQU+F2gbpJHkEgZfxTFYPhRsqT5vlSoibK01WKl9QO08YDYEzsdHOtnmlJq0SEM4Kl5ZZ+3HuiXyu+OOE0Y/Do8dApatDPTTR3EqhetqywOQBbw5ZlZ2aWpRGJUehZ2Ex+5dsJlXb84tyRn7iwCTlfc/zEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761321317; c=relaxed/simple;
-	bh=uLkgxYLyMUzhQXeffmdYlniLYIB/KYmdOPjZoRoTHYo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=V+bIjaZUkee7H5sdP1qp49Dwdw3vRf0YGS4Yoyw8KOjySe373rKOiGIZaAG6DxQ0cbvijNWva9f6kxjbdjiiS2ANvFleqB2JxY7Zcv1y6LEG3IMKdM7QrPlT3jF0igdl92JnBcOlEF6sdQiH45HPqPClHmfzgFvuekjygPo88q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j+0yL9Vy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Aw/vJYnY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761321313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WOe5phv4TtG2VbUNjJcJ2euqfGkUkvoO3y2L/DnVFD4=;
-	b=j+0yL9Vya5MvjeCiKkrp5aHA3FrPWG1ymrAS2OUElS9/ZPxiRKgv9nWBpRvoJk02/qriFz
-	JJBOZpVxyF0a3pO64whKW2H9a/wLfwoFu0g2qZMA6RNLvDPCmakGlbBwfR1IpVToMBVAMd
-	kPa34EsDIkZim5UGwLtCQZGqf/wGnDn0IX0DJHX46AbD1WmjrUy0U5O41F3AUCRnCgdaXq
-	ox3/MD0bzdpUQz9ge0XSjmkFOIIfLal3QteHV3Pj5qFNf1IomHD7dUGbzkwgD8Gkm192ud
-	OrIDwfQmwpMkcWbk7DeTW+rEvpmGmCz7Pg+F/Q8cfrHgQ4w8LEIkWZGN8WPOuw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761321313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WOe5phv4TtG2VbUNjJcJ2euqfGkUkvoO3y2L/DnVFD4=;
-	b=Aw/vJYnYahTo2hh0gMiFd9SCwQyMTaciHm/qxtq4yc+wjlxtj9ZsXPrM9pzho3xk8jiBUE
-	h16UxEPBK7T/u9Dg==
-To: Rob Herring <robh@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-pci@vger.kernel.org, Sascha Bischoff <sascha.bischoff@arm.com>,
- Scott Branden <sbranden@broadcom.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Ray Jui <rjui@broadcom.com>, Frank Li
- <Frank.Li@nxp.com>, Manivannan Sadhasivam <mani@kernel.org>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Marc Zyngier
- <maz@kernel.org>
-Subject: Re: [PATCH v4 0/5] of/irq: Misc msi-parent handling fixes/clean-ups
-In-Reply-To: <CAL_JsqL5f4_qQ=YmQcYpaxsUx8vZDkuquK=G3YTw9qC1QibVrg@mail.gmail.com>
-References: <20251021124103.198419-1-lpieralisi@kernel.org>
- <20251022140545.GB3390144-robh@kernel.org> <87v7k4ws58.ffs@tglx>
- <CAL_JsqL5f4_qQ=YmQcYpaxsUx8vZDkuquK=G3YTw9qC1QibVrg@mail.gmail.com>
-Date: Fri, 24 Oct 2025 17:55:12 +0200
-Message-ID: <87sef8wazj.ffs@tglx>
+	s=arc-20240116; t=1761321376; c=relaxed/simple;
+	bh=1tUb6YsHFDkIkXFGpZ1mEVIpkKi8wP4p6aA0CbWkzkY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CiK0MWVThmzUl+k+MnrmGmMxHogvmXVViw5U6wJkVgUnZ1tu22vV73VAdA+0fw1G4Sql1ScRhbMN5ApQRlDaXxh+BLcFd9XNifPh1oa53c4Dhpb1BmhQ3a261mUzt3NekqfD0shYB3Emeon1Ov4nM5hfHpyCXE+k9SGlXEw1TeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hovQLquU; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=FdL3D5T6GzcuV+Ynz/8e1PaP6UiOMw6TEgBEwi5fXdc=;
+	b=hovQLquU3qbhWyho9Zed9m38Fx33dZXbVGhgaWj1l/xwvzbUVoBqfQS0jlkEW6
+	JDBRz8n8qvlJyVFQw07RTFXV2SaK/+jMxe9wroiXJ4ub8d3K6dEi433EUH/uMV+9
+	7P2qe7RggzYe8GzmDBl/CgEiWAqQCR933g7pEqCEaVONQ=
+Received: from zhaoxin-MS-7E12.. (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgD3H+p2oftoJpqhBQ--.17665S2;
+	Fri, 24 Oct 2025 23:55:34 +0800 (CST)
+From: Xin Zhao <jackzxcui1989@163.com>
+To: gregkh@linuxfoundation.org
+Cc: hch@infradead.org,
+	jackzxcui1989@163.com,
+	jirislaby@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	tj@kernel.org
+Subject: Re: [PATCH] serial: 8250_dma: add workqueue to flip tty buffer
+Date: Fri, 24 Oct 2025 23:55:34 +0800
+Message-Id: <20251024155534.2302590-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2025102434-stoppage-stagnate-5f0e@gregkh>
+References: <2025102434-stoppage-stagnate-5f0e@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgD3H+p2oftoJpqhBQ--.17665S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZFy5WryUCFW3Zw1fZFyfXrb_yoW8uw48pa
+	yftry7tF97Jr47Kw1fCa18Aw4a9Fs3ur45Grn2gry0yr98ZFnava10grWYkFyxCr97Gw4Y
+	vFWqqa4kC3ZFvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRkR6rUUUUU=
+X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiRxPwCmj7nyoqLAAAsO
 
-On Fri, Oct 24 2025 at 07:43, Rob Herring wrote:
-> On Fri, Oct 24, 2025 at 4:44=E2=80=AFAM Thomas Gleixner <tglx@linutronix.=
-de> wrote:
->> On Wed, Oct 22 2025 at 09:05, Rob Herring wrote:
->> > On Tue, Oct 21, 2025 at 02:40:58PM +0200, Lorenzo Pieralisi wrote:
->> >> Lorenzo Pieralisi (5):
->> >>   of/irq: Add msi-parent check to of_msi_xlate()
->> >>   of/irq: Fix OF node refcount in of_msi_get_domain()
->> >
->> > I've applied these 2 for 6.18.
->>
->> The rest of this depends on those two.
->>
->> >>   of/irq: Export of_msi_xlate() for module usage
->>
->> Can you pick the three of/irq ones up and put them into a seperate
->> branch based on rc1 so that I can pull that and apply the rest:
->
-> Yes. This series is the only thing I have queued for 6.18 fixes so
-> far, so I'll add the 3rd patch and Cc you on my PR to Linus.
+On Fri, 24 Oct 2025 13:21:45 +0200 Greg KH <gregkh@linuxfoundation.org> wrote:
 
-Thanks!
+> >  	tty_flip_buffer_commit(buf->tail);
+> > -	queue_work(system_unbound_wq, &buf->work);
+> > +	queue_work(port->wq_tty_flip ?: system_unbound_wq, &buf->work);
+> 
+> Why not just do this for all tty ports?  What is the benifit of keeping
+> this on the system_unbound_wq for all other tty devices?
+
+Thank you for your reminder. I think we should create a workqueue for all
+tty_ports to avoid similar issues that other tty_ports might encounter later.
+Creating a workqueue for each tty_port only slightly increases memory usage,
+but it allows users to configure it, which should result in benefits far
+outweighing the drawbacks.
+I plan to allocate the workqueue in tty_port_init and delete it in
+tty_port_destroy. I briefly scanned the code and found that currently,
+tty_port_init seems to match one-to-one with tty_port_destroy. I’m not sure
+if I have checked everything, so I would appreciate your suggestions about
+it.
+Additionally, I will use the name in tty_struct to differentiate the names
+of the nodes created due to WQ_SYSFS flag. If the WQ_SYSFS flag is set and
+a duplicate name is detected, a warning will be printed in dmesg, and the
+creation will fail. I plan to directly assign system_unbound_wq to the
+variable for wq_tty_flip when creation fails. This way, during each flip,
+we won’t have to perform '?:' operation; I will only need to check in
+tty_port_destroy whether it is system_unbound_wq. If it’s not, I will
+destroy the workqueue. I’m wondering if my approach is appropriate, as is
+there any case tty_port_destory is called without calling tty_port_init
+before?
+
+
+> You forgot to document this new member, and so the documentation build
+> will throw a warning.
+
+I thought about it later, and since this workqueue is related to the logic
+of tty_bufhead, which is also used for flipping, I plan to place the
+wq_tty_flip workqueue inside tty_buffer. Since it will be placed together
+with work in tty_buffer, it is self-explanatory. If I organize it this way,
+there shouldn't be a need for additional comments. What do you think?
+
+--
+Xin Zhao
+
 
