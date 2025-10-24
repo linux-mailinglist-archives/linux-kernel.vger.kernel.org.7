@@ -1,209 +1,145 @@
-Return-Path: <linux-kernel+bounces-868333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C944FC04F7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3F5BC05001
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A76793A7CAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:02:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 219BF4060FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EED02FD7D9;
-	Fri, 24 Oct 2025 08:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC7C302166;
+	Fri, 24 Oct 2025 08:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=santannapisa.it header.i=@santannapisa.it header.b="JVSpUZm/"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11023098.outbound.protection.outlook.com [52.101.72.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSZpJEHl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649372FB092
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761292962; cv=fail; b=ndl4V4T45KvGsKmQuEFQnp9a1raNTfRATuQeoj9kUGpZ+aFcn1/OlOR2XqnZ2HzJhFUvEEXtrZqoY8OR4akD96gqFdVQKMjfecOF4WbuFfxXR9uOglvsRIsfzVhe5q3mtDEfZpIZ1WSQAA+1CuXewHHfAkLmw7C0kFggYBI5F2U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761292962; c=relaxed/simple;
-	bh=TgtvTE3LQIvdoLMiblvzyNG9gaDynvYSswf58bhaYq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sL5uO5JBt6zUXDx9jlSwLZdKf15UmFZewMvbMrG3MP3vmpo8voeiBTroMmyILmocmuvu1KGVg0GHiinMYp4b/knAZlJ/Hho44oVHzTuzqVDIDznLPo1DrOHKg2F7ktDI/g8OhaUQYideV56kz+f6USTQyBh8ZMKv7g7b7vqTYuA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=santannapisa.it; spf=pass smtp.mailfrom=santannapisa.it; dkim=pass (1024-bit key) header.d=santannapisa.it header.i=@santannapisa.it header.b=JVSpUZm/; arc=fail smtp.client-ip=52.101.72.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=santannapisa.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=santannapisa.it
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nPtJLyYJYyC1SsXmuT3Vswv8l1WieeaQx2sfG647VaFGfcSSz4BzCwm2tPvsC811cxajQ1nCvW3dpTQWuRQLlNMgLR8hhHmBXK0wUj2OcLuKdpPdhGJP9EDpsvq1lAJNvmvXocQqNAoZmpnar9VFYyEgGcKOlTh0srOHOw/Y85HCgS9AqZGBCLP6uYECO6H79Jmo7IOVADiVhpy8kI4TjD+noHVZt2R2yMhASBcfvTTtk/MFIvI9SjnFYNMQTSVPp05PSAkPd4nICv4lGJW9xqrZ+i/BlHidbHBje2e2DVgg+i4AX3BohTqcb80qGGsbcyZjD1Ypzl9Xa8/zu8iWWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hGX23FcA0GHMRJWk4C13az1kY2o6af8sR4vEYxjofvY=;
- b=IPfgxk3xyBN+PoqqsInWYhYHZ6ZgYuXZuq6nYBUEt87YVODcAk4WNNB3xh/hl2qWMvrQ7df8RYUG9A77ZRcWgwFbBwffiNm4qGe+ZxA8RmqX6XL6xtri/dl/dbb6filYsUmxh4yy8JaXGgeOkbdZI8qpQ3SKnXRHniFMjdzn8cOT+NqOCkeBRJdpzu5ejMznT+gaBlyK07pg1cGH4ADP3L2ynyPtXBhiy4yCMDGMDcbz7MzrLIYp418gNKeYgYOgAG+sq5r1HinX9BB+VvtvRu50sMgmSbLUcSsfEl6lA23MfP4C5VwkDGFZn6vYrsgTmOPfCUoCrS5MxHYvZEzlYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=santannapisa.it; dmarc=pass action=none
- header.from=santannapisa.it; dkim=pass header.d=santannapisa.it; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=santannapisa.it;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hGX23FcA0GHMRJWk4C13az1kY2o6af8sR4vEYxjofvY=;
- b=JVSpUZm/OkMqjcvB860UMk/TyUBZuZTvt/wBE6+XBwbooBT8eEaQdwqkoz1rqNXmKalg7BA6oIJ9MzFmMVD9qKt+e+RGUpwyfxUJWWss+1unHGzmQO9HGP2YnpaWQ4hHH5WcvNxfeZN1AFKsjJa4L3ouovuhCnA51IbKNQd4Y1I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=santannapisa.it;
-Received: from PAVPR03MB8969.eurprd03.prod.outlook.com (2603:10a6:102:32e::7)
- by AS8PR03MB10149.eurprd03.prod.outlook.com (2603:10a6:20b:630::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Fri, 24 Oct
- 2025 08:02:31 +0000
-Received: from PAVPR03MB8969.eurprd03.prod.outlook.com
- ([fe80::6bbe:2e22:5b77:7235]) by PAVPR03MB8969.eurprd03.prod.outlook.com
- ([fe80::6bbe:2e22:5b77:7235%4]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 08:02:31 +0000
-Date: Fri, 24 Oct 2025 10:02:27 +0200
-From: luca abeni <luca.abeni@santannapisa.it>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Yuri Andriaccio <yurand2000@gmail.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- linux-kernel@vger.kernel.org, Yuri Andriaccio
- <yuri.andriaccio@santannapisa.it>
-Subject: Re: [RFC PATCH v3 00/24] Hierarchical Constant Bandwidth Server
-Message-ID: <20251024100227.6ab1bfde@luca64>
-In-Reply-To: <aPYDhjqe99F91FTW@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250929092221.10947-1-yurand2000@gmail.com>
-	<aN4_KE-5kOCbpQux@jlelli-thinkpadt14gen4.remote.csb>
-	<aPYDhjqe99F91FTW@jlelli-thinkpadt14gen4.remote.csb>
-Organization: Scuola Superiore S. Anna
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR2P278CA0080.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:65::10) To PAVPR03MB8969.eurprd03.prod.outlook.com
- (2603:10a6:102:32e::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144C42FDC37;
+	Fri, 24 Oct 2025 08:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761293171; cv=none; b=Fkvm32RxxpNntklQmpCotiuvhNgGcgaxPU3vgTGyYEKLQWYQ0tTqTHfGfOZBy2b9PfzQqU7frNiA1GWonjjiBzEW9jNMSoVBYWIvkJQumIdPZXFH23VY8So7ZEMFJgX3QYmxKRLtHjrItqb2LDGTron34Y3+O3Jxxr7f8y1DPAA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761293171; c=relaxed/simple;
+	bh=LXA8EKHQrQTivIKrM29ysPVd8yGf5vfMeH3fOvz9+Lk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZvGuC3h5VAjZuHNj9uDBk7XNbVOQkmGQKpju+zlYQi2Xt6imZb5N/YMBRklKHtp4YuHtMrOMYa7umEPQ6p8RBkuu4v4bZsN04D4wXu52iQ+fukiEobFQr4CBWeNy6dZig7RTb2KKXeTRVeAQ6ylsIMEelBmC0UhR7wIdLedlCUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSZpJEHl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84318C4CEF1;
+	Fri, 24 Oct 2025 08:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761293170;
+	bh=LXA8EKHQrQTivIKrM29ysPVd8yGf5vfMeH3fOvz9+Lk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gSZpJEHl7kYbY78lE4zMvC3YuoIKL/mE0hbP6cX+EkMD9RyBAjrMIh/R8b1XNy/EZ
+	 jrFak4fSaUsZeL6zsJOdy1iG9TC5qtzSXBdqqE3CU6L/kO4FLvepysKHCGFztYKM1f
+	 SHVqA3FyRTcmIcpd9a6b0t8AZt4AIsgDPvEbpNswNB2iEduJ9fsSOiwsJ29tZWNdRf
+	 gLpZi6pNXwWo/eqa6IdPk3A9DRHebLc+iozWSu2dK9UXaKToIT6h+2KZlHGS3R1yTy
+	 u4ugsqgavYV0qUP1VEY9ISdARqsrBFObTgD/nYA9CC1h257CMVzewrQRoK7Jdw/uXw
+	 d1aFzmIBA9N2w==
+Message-ID: <8341a903-639b-471a-8425-a98c473f5ab0@kernel.org>
+Date: Fri, 24 Oct 2025 10:06:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAVPR03MB8969:EE_|AS8PR03MB10149:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac0b1f89-7d3a-4d20-0c2f-08de12d3ae76
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TeCyPkT+QSeAMPqDxA3d99RRPsNvX47c43Bj5rMMxi5j2u++CleTn41Vza1E?=
- =?us-ascii?Q?AHWLyUtVEjTFCpePIrUQBlvCAjfLgnrckoOx4kfmlP2hlvR2TwAHSjrGgJWG?=
- =?us-ascii?Q?b+NOuvjdgRwm20/Z6j1+8lcemeC8nb3I9eQu7hmb6oZTk+yvVMRGtoG4lhlA?=
- =?us-ascii?Q?GVPv1b6bI+MaOdJ6cMc3blqEm+wfa0GN5yp42Yg4wA7ZAKXUi1aSPCb6mUzI?=
- =?us-ascii?Q?mOqG9XC7aXNjGcEVR87I6QGBZ2HrgTrgp9VInrMo/ppI0ZxwkbP34ZMkVor7?=
- =?us-ascii?Q?Znamxp5nXIVsPdAiXEk8s1yfJYzV2/pLaMuJzOIgOUi3rU92v+MkZ1ofGqab?=
- =?us-ascii?Q?Vb/Mxm9xJL+8iinF1ICYOqGt2yiMmLQ0p0A4AlMHneA+iz5zI5CTpluOC/g3?=
- =?us-ascii?Q?TPZRgdWjoX2xYRI+/PYYwYi0spVFHXxzjICjltzOGQNr8G59h9kGv8VfM6GP?=
- =?us-ascii?Q?a80QqNiRNk8tMIhViDKRYaqsayuIXCxdhK9ufBwzdgJ0dfFE88wXqOlkgKKY?=
- =?us-ascii?Q?PYdLEBj2rDw0ADvEHeR2rsOS6Z+yj5j3W/Et5XIPlLCpHaC6OfqAJrvWZ+vu?=
- =?us-ascii?Q?ps7s0AeZpsLTyPkMh/fQ59FACITIjDRCCHyHhqv3dT7frDWlSuDedtFvTOrs?=
- =?us-ascii?Q?C54ALpk5I8HbM/6aKOnwutVz4Bj+jr3whByLNJAJIq3JKb4+Io0Q8gOkUrfh?=
- =?us-ascii?Q?8hjE/iFo4Q9mrAFBJt4kSQrhr8+Qw6dX2ik9IU0n7ktMouTKbRzfNLTazHEs?=
- =?us-ascii?Q?s1u+L6OkfCBiumR9exQZQ7+i5kOAcPPqJ4gqriRSGW49tZD3p0SFg2rdp0OS?=
- =?us-ascii?Q?ZN1m1ohsoVCKAj6DklB7vA0PcXrqJrVuYq1Z2DtnIvV1T+yWParNAOxzBhhl?=
- =?us-ascii?Q?KhWG/xpkYK7l4TuknAz4NoaLGML6MS/tPWNDJtaoxL/1VRC2ZsxUdXHRf7FH?=
- =?us-ascii?Q?ZfF6fAw31KVW1+NdkAOJEdaXnra+ldaW2kwm7XyL//p0V7noP18WKcojg7jb?=
- =?us-ascii?Q?YL/QKpj1xeWkAjyP2m9knMsbmiEmH70AW9uW5vgDDMlBOJKzfugnwjVt5LAI?=
- =?us-ascii?Q?fjtzJ7PsmoKWrB2aP1E7gWrGpdYcXGWoGABCDg0niJxm+klQWuI7B5dHymLh?=
- =?us-ascii?Q?RkBDyfw2r1mujhB62KxTcwE93uk95RE8Be8X4FIbTL/ihXjNETnpOoC3dnSs?=
- =?us-ascii?Q?BH9nYuQvqsUuomqTXLTlK4Jlgv+0E2g2NAHD5k8uztbynNto+wceu5X4ZwUG?=
- =?us-ascii?Q?FOXU1Ikkv3//eD/GdIHf7x+LTD9V8i0h20eJbi4xbr3kHbeaxm/CL+11AZ6W?=
- =?us-ascii?Q?uOII0UQWa8W3ByE0PBrdtq7gEI537rsow1eY6OnVLb1emg+QjKs9WvOt6TH2?=
- =?us-ascii?Q?w9783fj9z7xjbJFyn+zzcWuNXV32GKRlJBpD20PGPQOzxYVo+g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAVPR03MB8969.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8Abf3ORcMIyGaPd9j65/rhkXa9Vrv6skM5LRoJxuY+z+16U9Th+PTAH47WHe?=
- =?us-ascii?Q?f+ZcQPli/+YOL9yJQu4nvFgmxMRYzM8R7d6D5mGeGiZNFpTTfplK+dojGO22?=
- =?us-ascii?Q?GDgkPkxMGO0veSS5a8oRAtl3vMs3uV3dL1BBAjj9eyQ00ZeX7eS2Mzoh4E9c?=
- =?us-ascii?Q?eS+FNkNaHtsGwR9l0S58jstLlHuIVJKLdAvfZ027BvxEHOsLajOZh/6Zod0D?=
- =?us-ascii?Q?JAAjHqQZaqx6P7dwM2FWgx83ZHMCDkr9L/RvAMCH/m1OYpOfC6lxmDIDFlwT?=
- =?us-ascii?Q?0L9QM71ifK0tFBok+4OjntU0a+E6YQ5mfjFzKNFfHjcNKWCalH9SrBGD4km/?=
- =?us-ascii?Q?/xlTMAzcbS4aevVmkBglNaMu5cxamikvqvLccGijM/TWSNTVkdDkdkK6tQ+E?=
- =?us-ascii?Q?ADYZYhFWywzoxxV9Tlcqi/SebVDXEcyGH31bDH/Z8CaHcSupL1nvMrA393RP?=
- =?us-ascii?Q?w2eavnj0wEdv0/qe3gJymi1OufXOvtqvaliwmP5OT+KUhY96WWJmf0221gKr?=
- =?us-ascii?Q?IweYjOEiFkn3aJivohY7Ym1C8UYHoEk7AM7AODMmKHRtW5TsYCrAzyM22Q1Y?=
- =?us-ascii?Q?aHeeZ5dgX5ihA5QTpMp7dQfS9iiEbb00nHLSAkRjRMsMqj4SsGozUUSWaPi3?=
- =?us-ascii?Q?14cKSF22WNNqPKcAp+qDrfFoIpvFhaVHfxKoStgsoT3k47OmnHBTZnRDkyg8?=
- =?us-ascii?Q?aWJtXEoumKxltE6eUNuOLgxIamGtWAbam/DPypTqOIf2mzUSg0xYaAwYTEp6?=
- =?us-ascii?Q?zGXKjtglnQSRVnTs1mpeIWqKjtN6rgXtBhybbHZez7KuBWfoDgeFK8Ax+8Sp?=
- =?us-ascii?Q?rRcvx+pJ5M9nrvt2/GpsJ1fdQjYauIJBHIys6WNacel+rX1rLX5XM7hUfp8/?=
- =?us-ascii?Q?sSyk7xtF/PVJQrLOzAK9fLOUnbBWFd5fP//Gg+FVJ6YwA36j+wjPLY1ONYac?=
- =?us-ascii?Q?lfso4jL8fQLyoRmzKhyoex+21q9CZkg6bRp8eX9tqk/gW5aoIPVhckoZ+G+W?=
- =?us-ascii?Q?QSaII6wgwm9K0G2XpHSWuqHB8zrHvJgUjB8VFTJT3DR5CFD1oUbr+69qYxEp?=
- =?us-ascii?Q?IYiawrpat9klnVOcGDnEQzCXmGM+TClCi1Uz6X/h8yU59WOs3ERuRl1Ez0G9?=
- =?us-ascii?Q?kGWXrHPdB1H313fDIKuOFcK1jBtrm7BcPi/JX2cPxfOaiAtoikSE6Go27zUq?=
- =?us-ascii?Q?1pTB5iqWIFYVokY8pA1ZYW4/MO29ikeUJTz6kA1wjVzNpi4oFbc/pT+NGY4w?=
- =?us-ascii?Q?f7V1dkHwLEadlsuVcYaffrqM/tDth+d7aAhXdhFtilleL0d6niXX0dgpcYUC?=
- =?us-ascii?Q?nsPvKNs7BbA6deCYEJY3qkdWfd3bw+24HkBDC/CSAyHSaL7g5yMxKYvH0soH?=
- =?us-ascii?Q?eIFB74/PryIVbK+/D4NCqUbRu1L2VI6XWese19s8JHaWwTpOdMJwb1/5UoWr?=
- =?us-ascii?Q?XLEBxsZlQVUnfvB3LXNHERJs/pMzlBZKqByKYVCzSHIA34t+TH+zUgSwk6XB?=
- =?us-ascii?Q?drku9XR8LYH4mxKhYTCneuH3Uftu1OUzU99aRwvWM0TD3eZsWuNVCUDHn9O6?=
- =?us-ascii?Q?BN3IjlL9j36gxOkzBmDsrpv0Crt8CDS9CcSZu+JLZhZUR6jZWWSwryf8Emh7?=
- =?us-ascii?Q?vQ=3D=3D?=
-X-OriginatorOrg: santannapisa.it
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac0b1f89-7d3a-4d20-0c2f-08de12d3ae76
-X-MS-Exchange-CrossTenant-AuthSource: PAVPR03MB8969.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 08:02:30.9527
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: d97360e3-138d-4b5f-956f-a646c364a01e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rtL6/ul/aTb2zEXY6vsGcGkFlQ9fzJkw9k0ld7jY7XmudusNmjK8k1j4EhJnG4GLvlEU3oP8sTcfw7lzCgbKkIctyBuim54fEzw3jocwygY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB10149
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 1/4] dt-bindings: i2c: Split AST2600 binding into a
+ new YAML
+To: Jeremy Kerr <jk@codeconstruct.com.au>,
+ Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
+ andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com,
+ linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20251021013548.2375190-1-ryan_chen@aspeedtech.com>
+ <20251021013548.2375190-2-ryan_chen@aspeedtech.com>
+ <20251024-dark-ringtail-of-defiance-1daabd@kuoka>
+ <2939cae6-2e8a-4528-8e27-8c932e2f82de@kernel.org>
+ <bf3d6690b9124ecf74df6c0f9f1c0f72ae1db9f7.camel@codeconstruct.com.au>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <bf3d6690b9124ecf74df6c0f9f1c0f72ae1db9f7.camel@codeconstruct.com.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Juri,
-
-On Mon, 20 Oct 2025 11:40:22 +0200
-Juri Lelli <juri.lelli@redhat.com> wrote:
-[...]
-> > > - The first patch which removed fair-servers' bandwidth
-> > > accounting has been removed, as it was deemed wrong. You can find
-> > > the last version of this removed patch, just for history reasons,
-> > > here:
-> > > https://lore.kernel.org/all/20250903114448.664452-1-yurand2000@gmail.com/
-> > >  
-> > 
-> > Peter wasn't indeed happy with that patch, but I am not sure we
-> > finished that discussion. Both myself and Luca had further
-> > objections to what Peter said, but not further replies after (which
-> > can very well be a sign that he is still adamnt in saying no go
-> > away :). Peter?
-> > 
-> > https://lore.kernel.org/lkml/aLk9BNnFYZ3bhVAE@jlelli-thinkpadt14gen4.remote.csb/
-> > https://lore.kernel.org/lkml/20250904091217.78de3dde@luca64/  
+On 24/10/2025 09:56, Jeremy Kerr wrote:
+> Hi Krzysztof,
 > 
-> I had a quick chat with Peter on IRC about this. We now seem to agree
-> that a third option would be to move to explicitly account
-> dl-server(s), correspondingly moving from a 95% to 100% limit. That
-> would also make our life easier in the future with additional
-> dl-servers (e.g. scx-server).
+>> Although now I saw next patch, so clearly this commit is incomplete.
 > 
-> What do you think?
+> The split that Ryan has done here - by shifting to an identical separate
+> binding, then making the changes explicit - allows us to review the
+> actual changes without losing them in the move. Sounds like a benefit to
+> me?
 
-This looks like another good solution, thanks!
+Not related. I commented that rationale is incomplete. We do not move
+parts of bindings because new device is someway different. There are
+hundreds of bindings which cover different devices. We move them because
+the binding is different.
 
-So, if I understand well with this approach
-/proc/sys/kernel/sched_rt_{runtime, period}_us would be set to 100% as
-a default, right?
+> 
+>> You just need allOf:if:then: section to narrow the
+>> constraints/presence of properties.
+> 
+> That seems like a more complex approach. This is separate IP from the
+> 2500 controllers, wouldn't that warrant a new binding spec?
+>
 
-It is often useful to know what is the maximum CPU utilization that can
-be guaranteed to real-time tasks... With this approach, it would be
-100% - <dl_server utilization>, but this can change when scx servers are
-added... What about making this information available to userspace
-programs? (maybe /proc/sys/kernel/sched_rt_{runtime, period}_us could
-provide such information? Or is it better to add a new interface?)
+Not much different than every other soc. All of them are separate IPs.
+Look at any Samsung, NXP or Qualcomm binding. Separate IPs.
 
-
-			Thanks,
-				Luca
+Best regards,
+Krzysztof
 
