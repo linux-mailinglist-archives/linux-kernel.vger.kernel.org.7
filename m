@@ -1,132 +1,99 @@
-Return-Path: <linux-kernel+bounces-868047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F735C0439D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:11:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36C3BC043A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47F754F5B5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:11:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD5853B8499
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C628262FEC;
-	Fri, 24 Oct 2025 03:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hQ4JDNLa"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C47267714;
+	Fri, 24 Oct 2025 03:14:37 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0F82459CF
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604B824BBEC;
+	Fri, 24 Oct 2025 03:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761275458; cv=none; b=ah9v8dALGd9z72k6RxFuYFWZ6wOCqUGdWqUaTxxPP5MQseashfvPh7u66999azo3O6MlFBK9F4PKfjXIXO+S8XwSVY8khuWDkAEy8W6wzMLagYB0bTOMOG5qhwpefqFOnqyX/l1yBI/QrRCjre6F83MGB6bOPAFLZ+nKOEWwZTE=
+	t=1761275677; cv=none; b=P026jGVeR0zF2eB/DW/LGcDPBCX4ohs8dax3mHkxHqkey/Yfi9nl0Ffw/NdK+eby9KiyKd+E/pK1qYL5myD/vwPQWNmwzWWerj5mz23tF/QvHnOeoVQOo/oj0pfFyIVFulvxmQ8ecfZMML8qGbbVtvvFbGvoMk9lHw+yUelxEn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761275458; c=relaxed/simple;
-	bh=+hpHl9CTaTJrHkGNRc+qFqFnnTcwFNIFfglXCTIQstA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GJU84FO3SEwe0ouJHW8f2XDAyw3/ih2khiapzamHunbyppZAwDLuQhkM3mXq3DETPejhofX+A8IaVbyjDn0Gq+g1RbmJ3p8JMexLBMoaollfBH2LJSyuz/JYLa3ypS1obrGSIPBAx5GDTECVW7FfvU1KbD9AhSjKaCq0NR5M/mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hQ4JDNLa; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-29470bc80ceso16556975ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761275457; x=1761880257; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LfACKoGL5d6f67A57riboWf6T6eBe4z1rHL4CeVYlqs=;
-        b=hQ4JDNLam2IypJV84PgmNUk0eEMd9hhnl6XEloY76E6Rf5iH5BEvpN9Gq1ym4SA7NW
-         2IzyPl05b0rGjKUiq8X21Ex1zBaQB0dILXMPnLwMb2DaL4vEJkO88MIaFo/exdI3ZnXd
-         22lo15upBP/Kf1I54cQvmvKk9zQ3jaPSRMUdgyTxKoCWtQh2ypZ9anktlOfJl9UBUMjo
-         yg9daFnTBmUcCN/w8e5mP+3aC6Zhk0gpya1uA3bIgjuMFmq/xOXdUAmFC7FcE5HkqzY9
-         9kufl9PqvuCfXHmOK5nDpuj4d/oOLEKVRve66a8WRw0ixNJVFx5Y24ZzvTeNaz/1mpuA
-         Pv8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761275457; x=1761880257;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LfACKoGL5d6f67A57riboWf6T6eBe4z1rHL4CeVYlqs=;
-        b=gOzmcDWjho7ljFPcYoU6s8A8Yg9NCM9aZwBZNvQUXrPn7Z1SbbYhpxJWUE+MfwTrN4
-         0FJW5iKXDZZyaukZsZvRclX10AZK2DgwS6nN/P//R+vjfJLWQjjOeCUsG3qVnoezS13W
-         26JKf8SX23kfmVevkYy1B7S+NItZ0bRA/KwguPR34neSoPTaaot1oMwYnvOczoRNRqz3
-         lURR7CGLe4Bc8jirXLbyRXhebXvEM8ujpZG71Fk0BjHWwOVvCjQummGQB1dnoICao+2F
-         OZovYDNbBpz91l245FMkD9RtJaSss6RsQs6Rx8vkDa12HTfq06vzLz3keKA7gBqfdGjD
-         c/3g==
-X-Gm-Message-State: AOJu0YyG1uft8s5siRSmJqftgp1GrUvQ3bpl+14UZFj6EzZglebH5F7U
-	iMnOgPjLmPMLECDEfF1RInDHc47gAx3U/KPm58y4qs7NMym1Nc+Q6S1INuU0ig==
-X-Gm-Gg: ASbGncvW9TOeBJ2q4VwpgU+m8hEBs/ngaqDZRcSY+Jn20FmDxr2Hcu/gveqyotf2sph
-	JlLQs7I604AjhJT8WMOoKHXQnqKOHPvdVh2pHMNDFZlG+Co49s3S3fukATHuTlm+0NY8z92UMk1
-	bsfRAK+9gK+mLyNwT4aKvDAh/fPOM1IJ+14E5mYhond2mubHnC/aTelsWx3o1zStGbWTVDk4SnH
-	B+4Y0sqi2NewW/LruCn78M9jvoq5+ZsNAe1A+8yNm2XZQ7dLCG/ICIyMv5EdfKvhT0jMnEiI+3m
-	UYeG2tDaZZmH6a/18YeQ3dqKA6AojdwL8NxFEQkNtgVsw/ulsgoilAjVmViutOmWktNA2v0n8rn
-	u1A+W0HSo8aOuEDONXN1wxFCSFCC3pWYylUzJAuel9JEHdYjXwgu6sYAhXi+CPfbrr1eGdzqWYC
-	ezuzkP1+NWgO6It3Jj4SM2068BrX/Dj/d+6sjRL5nWUfBtRw==
-X-Google-Smtp-Source: AGHT+IFAFr6BWw+28G+Y/+rpNnKUm3jMh5eyliYqb4zVlqFPYgU/mQrru+nYz5MYTkfiQ8N/Q1uKSA==
-X-Received: by 2002:a17:902:ea04:b0:27e:d66e:8729 with SMTP id d9443c01a7336-29489ce21f0mr17665165ad.0.1761275456687;
-        Thu, 23 Oct 2025 20:10:56 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946e0f419csm39405915ad.89.2025.10.23.20.10.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Oct 2025 20:10:56 -0700 (PDT)
-Message-ID: <532dcafa-08a8-4e18-b904-53e061734b69@gmail.com>
-Date: Fri, 24 Oct 2025 12:10:54 +0900
+	s=arc-20240116; t=1761275677; c=relaxed/simple;
+	bh=vXkI+iWiw+ha+Okk4SRY7GShtgAm9kpMzjgcFMBV340=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dwMfAvjMAuHPklgD7ww4t71LJdOTqubK4j4Yerf4JyDH2Btq325LMRorqJgxoHNyE6c2Y/s+PnVhedyzjqvyDgjdKJOfVs+yN7T2fcXcAuHJHQQE8B6NYrHB9L7YC84LSSbHfBqMvnHmWPNmUgdhVnTwVYID+rIL0wCpOIBBg4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id D04B92C07AA5;
+	Fri, 24 Oct 2025 05:14:25 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id BFD344A12; Fri, 24 Oct 2025 05:14:25 +0200 (CEST)
+Date: Fri, 24 Oct 2025 05:14:25 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	kbusch@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
+	mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
+	terry.bowman@amd.com, tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v6 4/5] PCI/ERR: Use pcie_aer_is_native() to check for
+ native AER control
+Message-ID: <aPrvEZ3X4_tiD2Fh@wunner.de>
+References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
+ <20251015024159.56414-5-xueshuai@linux.alibaba.com>
+ <aPYMO2Eu5UyeEvNu@wunner.de>
+ <0fe95dbe-a7ba-4882-bfff-0197828ee6ba@linux.alibaba.com>
+ <aPZAAPEGBNk_ec36@wunner.de>
+ <645adbb6-096f-4af3-9609-ddc5a6f5239a@linux.alibaba.com>
+ <aPoDbKebJD30NjKG@wunner.de>
+ <1eaf1f94-e26b-4313-b6b7-51ad966fe28e@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH v2 00/10] Collect documentation-related tools under
- /tools/docs
-To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>,
- Jani Nikula <jani.nikula@linux.intel.com>
-References: <20251023161027.697135-1-corbet@lwn.net>
-Content-Language: en-US
-In-Reply-To: <20251023161027.697135-1-corbet@lwn.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1eaf1f94-e26b-4313-b6b7-51ad966fe28e@linux.alibaba.com>
 
-Hi Jon,
-
-On Thu, 23 Oct 2025 10:10:08 -0600, Jonathan Corbet wrote:
-> Our documentation-related tools are spread out over various directories;
-> several are buried in the scripts/ dumping ground.  That makes them harder
-> to discover and harder to maintain.
+On Fri, Oct 24, 2025 at 11:09:25AM +0800, Shuai Xue wrote:
+> 2025/10/23 18:29, Lukas Wunner:
+> > On Mon, Oct 20, 2025 at 10:45:31PM +0800, Shuai Xue wrote:
+> > > From PCIe spec, BIT 0-2 are logged for functions supporting Advanced
+> > > Error Handling.
+> > > 
+> > > I am not sure if we should clear BIT 3, and also BIT 6 (Emergency Power
+> > > Reduction Detected) and in case a AER error.
+> > 
+> > AFAIUI, bits 0 to 3 are what the PCIe r7.0 sec 6.2.1 calls
+> > "baseline capability" error reporting.  They're supported
+> > even if AER is not supported.
+> > 
+> > Bit 6 has nothing to do with this AFAICS.
 > 
-> Recently, the idea of creating a dedicated directory for documentation tools
-> came up; I decided to see what it would look like.  This series creates a
-> new directory, tools/docs, and moves various utilities there, hopefully
-> fixing up all of the relevant references in the process.
+> Per PCIe r7.0 section 7.5.3.5:
 > 
-> At the end, rather than move the old, Perl kernel-doc, I simply removed it.
+>   **For Functions supporting Advanced Error Handling**, errors are logged
+>   in this register regardless of the settings of the Uncorrectable Error
+>   Mask register. Default value of this bit is 0b.
 > 
-> The big elephant lurking in this small room is the home for Python modules;
-> I left them under scripts/lib, but that is an even less appropriate place
-> than it was before.  I would propose either tools/python or lib/python;
-> thoughts on that matter welcome.
-> 
-> Changes in v2:
->   - Rebase on top of all of Mauro's changes (the most painful rebase I've
->     ever done, I think).
+> From this, it's clear that bits 0 to 2 are not logged unless AER is supported.
 
-I tried to apply this series on top of current docs-next, and several earlier
-merge points, but haven't succeeded so far, even with "git am -3" ...
+No.  It just means that if AER is supported, the Uncorrectable Error Mask
+register has no bearing on whether the bits in the Device Status register
+are set.  It does not mean that the bits are only set if AER is supported.
 
-Where am I supposed to apply this?
+Thanks,
 
-        Thanks, Akira
-
->   - Land everything in /tools/docs/ rather than /tools/doc/
-> 
-> v1: https://lore.kernel.org/lkml/20250813213218.198582-1-corbet@lwn.net/
-[...]
+Lukas
 
