@@ -1,108 +1,171 @@
-Return-Path: <linux-kernel+bounces-869294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F46C078CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3B7C078E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 715A05621A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:30:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 670BF4F9BAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26220344038;
-	Fri, 24 Oct 2025 17:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNFsOql5"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E761534676B;
+	Fri, 24 Oct 2025 17:32:37 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248DA1F63D9
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767C732E722;
+	Fri, 24 Oct 2025 17:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761327053; cv=none; b=D70rVaXyaF9JPDXvg0iXD5/RYyk+mKV69IXGgpZieYtbD7113WU7QcByKKouTDY/nrW+v34wOJg1CRSDPZuW98FSTazeRM3LYCYtldvagghmBsvmOHv8OrejK2sxAy3trMsZgFL0zrt/TDVjhs5rwXDdxdH29at4mjlYFrktzrQ=
+	t=1761327157; cv=none; b=IHrubt0f9iqlOqRfalTGlcdSPaHvlLOTqRPwQZvIIIELlnC4fJrKbQZgAWg+FLWcR2GZ03ci7DRZ7fRkLvtnVVmFMEiVv/wGfsCpIDRUCAUir5E/2ugsqAIizPXUeLtCKl2kvRw5l/rknxdwWS0BlEUbjvuVJIEGBCb9zybOEs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761327053; c=relaxed/simple;
-	bh=nsZ3xho59rfJltmBY1VoMiVkLm14bUFIBqE2RDJ0hoA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dw+IrVu8h+oxi6xashd15mt2tpWaxXjx3B1Ub40o15U7vf2lQF/GRVKvmkigE7S0uVZMw8k9c8r5eYfeGNWwsMuk5B/8gCvinG3lwZbJ5qp8gAVp/Sc2dq7QpWdqa6vErbhhHhTE95MPGMe7e+pnze03j96Ldb7tUDWW7cccgGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNFsOql5; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b6cf1a95274so1699917a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:30:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761327051; x=1761931851; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nsZ3xho59rfJltmBY1VoMiVkLm14bUFIBqE2RDJ0hoA=;
-        b=jNFsOql5dL5bPHzWr9xYrb/OR70S8FB5UrgA7l31cx5A1Qpyt0QTKZyUKvlqSCWgNO
-         xf91G20rK4ZfCVLzGCHpsgx+8CLOp+dG9oNUIccpwcH1/Pngva+EqMqkWUqA2qg6jqNF
-         4NNCOWEMKKLCec6WJi/qV9yqcJs8Y3CqM3axBavT6rfPDn4U/zbr9qqTYb624eA1+aQs
-         Doo4bLAINiAT2SRUTUXF7YHnodx3tv9nMcR5H8aUhEoXxCt3dHOqpNLQSWhdAmllqJFo
-         fFGf1RTqg3PY04+iwnxD1Owp8k7hlgJJ2/b+alFDMIKWb6T2Gth07En8k79bXrk5Z3XL
-         /Zgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761327051; x=1761931851;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nsZ3xho59rfJltmBY1VoMiVkLm14bUFIBqE2RDJ0hoA=;
-        b=TloWevRDT48Qxh6JZPvx495W/GxuoBIsfYdTQfuFli2u4vjwZKltF1i1K1D5CN7k2y
-         EtFcT1T5MNFcKlRQp5KoX3MdCE19SAYP3BYRcmM4MVR+oCLwBfre6S0FzlCKwiPCXENi
-         OflcqbVqVueDct2Jcm+3HaPcmyhB6jdW4h0lLyPlX5WZ3empHF/zSf9uxw6qPVaLxu/Q
-         4+Iu6EBjlJyEhzg2lNFtTYNpBEDgRVwwPh0N/yyfxWiJr/NegHgCKDSJSgVH7ZqWtyPW
-         Ui2s/7BTdhxI0pE6m2zuYdIJtolPytaJzUcauDQT4h54GtDf4tLcWHhp8s6/T+xEhWKE
-         lOew==
-X-Forwarded-Encrypted: i=1; AJvYcCW7TmMpFJjYRWaCqOHUrRgZhcCMmYNL2mq4RnJsQAPUd+KAqrlcyclUbu2V5yDEpeBwySrdqOEVQ1bh4PI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv2ZXOtaJpqioq1iAunzxY5aF013TiBvds3thnjH+AuxVSuJO9
-	Ox7TRnXVY8juJRebqHV4HBgOR7HVkj8jALM5I2ZccjLtCJMJsjribgeaQay/2iM7qvfOMybhVRD
-	6uZdOsKeoMthm4ez7WSn7Ps0fSix9nDk=
-X-Gm-Gg: ASbGncu1I2QRY3mkNGs3/DdCUnwCdL8wliy96VTksXdqwB7x4CTHLv9XGcSttpabbHS
-	OsxcFJNr6gItLe6N30gh0w9SsVhUtV5r85sBEbVdtowU7M2nUhYrYxa1N3zw5HTSmHq1+j319V3
-	Rp3JffumavFDWPj9WEYYnD3fYJBlVe3jWvJXuWUOV6WGB4toJflK7iLe/AZsjrWbdko0+r7FgAq
-	ZzCBrRPDbjFM+TDnUmJ9Cf946qiwYaUPOVtk++MR1QJ+2GCbf8Fbew4aM5q3A==
-X-Google-Smtp-Source: AGHT+IHQhnjzmGIGhBDoQ4ngdvtx/yYjY0WDUYmMTlcSQSZ0eDN1W/dXc1+Jq8Cx2TnQgYBz6MVBdKFjMRDBtJx3n+Q=
-X-Received: by 2002:a17:902:cec7:b0:290:afe9:76ef with SMTP id
- d9443c01a7336-290caf8505bmr377100585ad.40.1761327051116; Fri, 24 Oct 2025
- 10:30:51 -0700 (PDT)
+	s=arc-20240116; t=1761327157; c=relaxed/simple;
+	bh=uZhm2leRVs+ChR1cEyMdtRUl3cZTvucBu6IlUN6kQlo=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FVK4gdN1WQ17bSk6GzoWI5/H33+Mj/hhet+91cm9AIu6vWlPjvtRhDFWAqq4BWx9yiqnPHkREiBP8zzgs9XWDhjcrPHBrtIIr1dI8V1ASrTuqKYZu8K20c/nTT8HKaR82JIhJ4TnFxwdN3uPgCD1A6KAI5XJP06ZUDKEW4BY8mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ctVJ84zcpz6GDFt;
+	Sat, 25 Oct 2025 01:29:12 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 855BD1400CB;
+	Sat, 25 Oct 2025 01:32:31 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 24 Oct
+ 2025 18:32:30 +0100
+Date: Fri, 24 Oct 2025 18:32:28 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
+ Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
+	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+	Gavin Shan <gshan@redhat.com>, Ben Horgan <ben.horgan@arm.com>
+Subject: Re: [PATCH v3 09/29] arm_mpam: Add MPAM MSC register layout
+ definitions
+Message-ID: <20251024183228.00005a64@huawei.com>
+In-Reply-To: <20251017185645.26604-10-james.morse@arm.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+	<20251017185645.26604-10-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009150651.93618-1-jckeep.cuiguangbo@gmail.com>
- <20251010071555.u4ubYPid@linutronix.de> <CAH6oFv+SUo7B6nPPw=OgQ1AhqVfQYC1HvX=kjcHJX8W13kTwZQ@mail.gmail.com>
- <20251024131719.tJRyYGcD@linutronix.de>
-In-Reply-To: <20251024131719.tJRyYGcD@linutronix.de>
-From: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
-Date: Sat, 25 Oct 2025 01:30:40 +0800
-X-Gm-Features: AS18NWDuFjVwPVmnhn7ThOaKPPOq5x-YUVnqIn4rpEZv7zoFKB8wtJ_ayD8162s
-Message-ID: <CAH6oFvJ-24v2X_NrxXjYvODp_9+ZRXQQFGzWq0NcNn3Yb4-Gqw@mail.gmail.com>
-Subject: Re: [PATCH v2] pci/aer_inject: switching inject_lock to raw_spinlock_t
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Waiman Long <longman@redhat.com>, linux-rt-devel@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Fri, Oct 24, 2025 at 03:17:19PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2025-10-11 01:18:05 [+0800], Guangbo Cui wrote:
-> > I will drop the lock in aer_inject_exit, and update commit msg.
->
-> Was here a follow-up?
+On Fri, 17 Oct 2025 18:56:25 +0000
+James Morse <james.morse@arm.com> wrote:
 
-My apologies - I=E2=80=99ve been quite busy recently and it slipped my mind=
-.
-I will post a new version of the patch this weekend.
+> Memory Partitioning and Monitoring (MPAM) has memory mapped devices
+> (MSCs) with an identity/configuration page.
+> 
+> Add the definitions for these registers as offset within the page(s).
+> 
+> Link: https://developer.arm.com/documentation/ihi0099/latest/
 
-Best regards,
-Guangbo
+I can't figure out how to get a stable link when there is only
+one version.  If possible would be good to use one.
+
+I guess it probably doesn't matter unless someone renames things as
+you only have as subset of the fields currently there for some registers.
+
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+A few tiny things inline.
+
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
+
+> ---
+>  drivers/resctrl/mpam_internal.h | 268 ++++++++++++++++++++++++++++++++
+>  1 file changed, 268 insertions(+)
+> 
+> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+> index 1a5d96660382..1ef3e8e1d056 100644
+> --- a/drivers/resctrl/mpam_internal.h
+> +++ b/drivers/resctrl/mpam_internal.h
+> @@ -142,4 +142,272 @@ extern struct list_head mpam_classes;
+>  int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
+>  				   cpumask_t *affinity);
+>  
+> +/*
+> + * MPAM MSCs have the following register layout. See:
+> + * Arm Memory System Resource Partitioning and Monitoring (MPAM) System
+> + * Component Specification.
+> + * https://developer.arm.com/documentation/ihi0099/latest/
+> + */
+> +#define MPAM_ARCHITECTURE_V1    0x10
+
+> +#define MSMON_MBWU_L		0x0880  /* current long mem-bw usage value */
+> +#define MSMON_MBWU_CAPTURE_L	0x0890  /* last long mem-bw value captured */
+Spec name I'm seeing is
+MSMON_MBWU_L_CAPTURE.  Maybe a good idea to match?
+
+> + */
+> +#define MSMON_CFG_x_CTL_TYPE			GENMASK(7, 0)
+> +#define MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L	BIT(15)
+> +#define MSMON_CFG_x_CTL_MATCH_PARTID		BIT(16)
+> +#define MSMON_CFG_x_CTL_MATCH_PMG		BIT(17)
+> +#define MSMON_CFG_x_CTL_SUBTYPE			GENMASK(22, 20)
+> +#define MSMON_CFG_x_CTL_OFLOW_FRZ		BIT(24)
+> +#define MSMON_CFG_x_CTL_OFLOW_INTR		BIT(25)
+> +#define MSMON_CFG_x_CTL_OFLOW_STATUS		BIT(26)
+> +#define MSMON_CFG_x_CTL_CAPT_RESET		BIT(27)
+> +#define MSMON_CFG_x_CTL_CAPT_EVNT		GENMASK(30, 28)
+> +#define MSMON_CFG_x_CTL_EN			BIT(31)
+> +
+> +#define MSMON_CFG_MBWU_CTL_TYPE_MBWU		0x42
+> +#define MSMON_CFG_CSU_CTL_TYPE_CSU		0x43
+> +
+> +#define MSMON_CFG_MBWU_CTL_SCLEN		BIT(19)
+
+Why is this one down here, but OFLOW_STATUS_L is in middle of the shared
+block of definitions? I don't mind which approach you use, but not a mix.
+
+> +
+> +/*
+> + * MSMON_CSU - Memory system performance monitor cache storage usage monitor
+> + *            register
+> + * MSMON_CSU_CAPTURE -  Memory system performance monitor cache storage usage
+> + *                     capture register
+> + * MSMON_MBWU  - Memory system performance monitor memory bandwidth usage
+> + *               monitor register
+> + * MSMON_MBWU_CAPTURE - Memory system performance monitor memory bandwidth usage
+> + *                     capture register
+> + */
+> +#define MSMON___VALUE		GENMASK(30, 0)
+> +#define MSMON___NRDY		BIT(31)
+> +#define MSMON___NRDY_L		BIT(63)
+> +#define MSMON___L_VALUE		GENMASK(43, 0)
+Positioning of L in these seems a little inconsistent?
+
+> +#define MSMON___LWD_VALUE	GENMASK(62, 0)
+
+>  #endif /* MPAM_INTERNAL_H */
+
 
