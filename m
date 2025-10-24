@@ -1,256 +1,331 @@
-Return-Path: <linux-kernel+bounces-867989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D5ECC0414D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:07:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E56F8C04153
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CC293AF5C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:07:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 533844F5147
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64FC221DB6;
-	Fri, 24 Oct 2025 02:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="W2ER65QH"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013045.outbound.protection.outlook.com [52.101.83.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864F0226CF6;
+	Fri, 24 Oct 2025 02:07:30 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C651C860C;
-	Fri, 24 Oct 2025 02:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761271640; cv=fail; b=lNU57rH2W2gRabG79oGNXe1uhRj1kfDh+USxeWwwxCxRROaiCoOE24xFEp9N1IzxGH3yCvEk/nt9ToOk0qWW2/2KQT62r/ZC1x+g4Bhtlvju20lpx/6t8Oia1jyxEmu/EMa1s2OFyeLUfniusRhkFrJm9TW+7jLxQZ+MaLv+4og=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761271640; c=relaxed/simple;
-	bh=qeibflC0uyG8pI/mAMs2QjH6Oxs1tXwK5RTXy+RQVyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TK7piq4eQ9fCYe2q2nxWhhwKMpH+de+9xpGya1I57On6Eqn36+6B+wTB+oBp6IBcQ26hzvB+MFhFSxVzGSC2IBmvy1F97e5jp7jwayeLEIYXNtYcTsGqhoFryHM7xtv3iXKbbjCRA2UcQv44z+gbhriX+Q+WITeOUGp+IuIrhBA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=W2ER65QH; arc=fail smtp.client-ip=52.101.83.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AOSuLl+FIS9Lwi7/S1eFO1fJGMzauPjZCIXRZnhKEIpCbQIgZh4tVzk13K63zxdnw7GAUPL70bL4z10g2yxErLKwDDupzVwDyUZQHXM8bO/t113Q24Z+Bbs0K0d55y4gx38OQ/FxtgSMZRpSkIhhuHAUElqozJUw/ooVYrC1c3g8i0ce2huPEQoDIfAf3UVDOahep0WmM1i3WEoUlZcfC43tTMP9szDQe8xktdjX0N2Vog4mvVvi3iAS8KDBp3dO00vKkf7Bu2cwLWVK0/uxziMmH+3szsg5Dxh70a1SjLLRUPfduHxZku4MmCzmCQANLn3cro5R+BibHxoNsTDsAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PGeuFEHi5yeEnx9T6yX1q0UtwOzKqhxi5pns5PpYYEs=;
- b=tdWo8Nd7m6vdv+nR4pJjnXbOAsmsueZGR+M5Wpk+o1YHvSIOk4yVYcNAY5nxTiSwaEWx9eRoo6/VoMWW/S5ww/X8MUgj53as0JcIZYFPwzU+YMuD3Oh24gpJ6L0UydwmueSy1+cVdBFk1J7AVu5JmhoLlU+dV+DfcqTjLwQegJsuCk+iVmAyLQKu3FLLCJAjS+oP0JRAYL1HYG0oFEwVJWdow850sezNeeg79wXCaY/GFEMkKK69thzVU26lwQdzy0uOzmgWCeZlhthdbHZaWovk7T6jqOZiDjveaal+Dr4ZgjWLV5CellDJ8hk1AJU0SG9gIdYjyesbUVjHui+B8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PGeuFEHi5yeEnx9T6yX1q0UtwOzKqhxi5pns5PpYYEs=;
- b=W2ER65QHPBeOqx+nOhmtBt8NoAfU4uSep1vV4lKoaRwqyHUzNSviYUald421G41ZOWYFQTUcm7p0Fx8skTjizb/IIUUNCQxcjcKUPac75BQxquEQs7vpb8i8JMvAKKEUYjpyT0rx3tttnftCa4DnxBarbQZgpZL+7/0eoiK2R+YKp9ef2f9iKQkqSHbxON2NdwYWEInWO/hhtNuFhhE8mgWtfb/dgJFIDdEBEUKShqH1gy3D/X3hqn91ddu65w947F0bJefKcmFHAOv/5tQpH0u/eBFt+Nl5rNERS8g4yd8LwnZX6R1d742+YTQaGoSkJb4baHkD3GASxleOOmtT3A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by GVXPR04MB10996.eurprd04.prod.outlook.com (2603:10a6:150:220::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 02:07:12 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 02:07:12 +0000
-Date: Thu, 23 Oct 2025 22:07:05 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Alex Elder <elder@riscstar.com>
-Cc: han.xu@nxp.com, broonie@kernel.org, dlan@gentoo.org,
-	guodong@riscstar.com, linux-spi@vger.kernel.org,
-	imx@lists.linux.dev, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/9] spi: fsl-qspi: add a clock disable quirk
-Message-ID: <aPrfSVEP5xasMEBr@lizhi-Precision-Tower-5810>
-References: <20251023175922.528868-1-elder@riscstar.com>
- <20251023175922.528868-6-elder@riscstar.com>
- <aPq75FBuYvFQrbQE@lizhi-Precision-Tower-5810>
- <a43b6ddf-c552-4db8-89cc-49951015161d@riscstar.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a43b6ddf-c552-4db8-89cc-49951015161d@riscstar.com>
-X-ClientProxiedBy: PH7P220CA0161.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:33b::20) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFDA1C860C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761271649; cv=none; b=DgjohYacI9825uQjD/e9jF4En8/OMSSS4Tk4lQL8zBPSe733KUYfUCtELzKq42FkEAPTihKEmTQuTNdntlzeXSSMhRVxcVz2RPgvZ7eQjyHCXUZRbop7ZGi+VuuWFANI3ZEhTTyFYyfyRUgS0doXpHB2zRDkCaVA00pPj1VE3hw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761271649; c=relaxed/simple;
+	bh=IFHOJ4qMI+jpFAB93/ymXlM7o4uTZ8bb8YF/yElDack=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Sy+gQwuPr5fSCexQbCRkXWZN6CePpKHPUA95AXh4nNLi3L141tKJF99JtbOeR8rkjikr5AD5vBP3StcpYX25pSIuP+bzlUpHIaR6VJLuxG5XUd0Iir8a5ujgx+4A3vfEZoU28clfUIyw1T0jauATTI7bjrOJxdjiisCSYi1+h+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-430afceae09so17428975ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:07:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761271647; x=1761876447;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CT4EZw6MJA5Bgom7dmmbeHsErxQC55ruUwa3HmUa320=;
+        b=o//LMwP5up++MmTNCdZn2K0xJbYfoLji0juKsorYzf9PhJ0MlrkC8kW8OaLILNPw5y
+         nJZeJ1nOs+mWr4lfGDQD49DDB9sPgGDSPFOhypcBD5il9WkI52FE/Dl7LX46AZ1GDqgJ
+         KOJcij58srxlB21gwZCD/2aD+1+viHqKUO1dp7bh3LVIx2tjQZBjY3dsQoPr4j5N61+k
+         kCqOVz3+ytAf63w1phu16FfhULYA8mml1CTRiAG3nGS7Sd533Uc4DTzNStTUfXt3e5gQ
+         SMXTrAagSnDCm7BqxmVl9Df06ARqarAAZ3moExlPkvidtKVWDpa27IJEIJCHXRqkpm0O
+         je5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXkdKo3bSrSxtp7sjiNmGW5XdQe+TOIkBdFmlcj5tSTo1ncXQt0OY1vxCu5RwZJEgdsc6Qa3hyu7fNfXDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD8x663mVSl30SnkYvjtR6uld2+6K9T5qym7bAcu5gfozej9vO
+	0Cj0KdibWus+XEQ88xGRvhB2JpCAaWrPaz45z6zP3LbSpAJbmepy75VkSxsJ8F92tcTaKl2Gucu
+	BrTvqhYZ2MfTrw8XuvDFwE+tj510KN6bq4oeeirlpP6cAS+SU6Nftt4qg7pM=
+X-Google-Smtp-Source: AGHT+IGdjBNibW3nBb7m91Y5ggiqKO2nAio5DTJW2jbNaNJ5bYLcQUAcT0RkbYmtAZVg69x5zaHRQl1ZZtp9b31mmemkHL+EwyvE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|GVXPR04MB10996:EE_
-X-MS-Office365-Filtering-Correlation-Id: f707b49d-3122-47a1-1c52-08de12a20b60
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|19092799006|376014|1800799024|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zu/EjPuENNbULCPnlVI/wlchRb3SOX9dtm2QE6FdFBXHRn17jddXGRIEKsql?=
- =?us-ascii?Q?pGxKdQEgzcZYj/1MptyMiuBUp4Psc+TQr1H3/Ubb4sabkamuvjSZ0eSx6+5z?=
- =?us-ascii?Q?zzPKUW7tBhrJxwoogjm57gJFBxXq9kGvdQYszdBko9MX+bssrR11Bq1paDd5?=
- =?us-ascii?Q?NaRTxsb8nAL9qljYcoV6D/7BiAd4FiyuUJ3e+Xn8rY2ZRjMQZrof+eP6l2Um?=
- =?us-ascii?Q?1aCqPZbLsyEN1G4uwqbNLXKhmS2d6oi+EtDrZrwlsmm9f9WwQ3jdWqtucFlg?=
- =?us-ascii?Q?/UNu3KTiBugnr8MFQ1FFAFxVtNzY3PJV1KX4ugCxq2nEBbvxm/FJdkf4D8UJ?=
- =?us-ascii?Q?tDWAycFx+NhXNjt4sSvOLboihVfpczdWBukwQWfJ1dvwrkofkCA45HOvbeXP?=
- =?us-ascii?Q?0Wxy2Jood9YW0rnSjtbWpiJUYpvK/RrWneCdAioDQW0+bXNfEndt3w3wpMS4?=
- =?us-ascii?Q?u2gE5KXB91SgmSv3nByx9c7irep0hLQr91hj4adHm2+RAedQJepsz/4CbaYQ?=
- =?us-ascii?Q?XfdqLgXx02I9d4j2EXAwW7WTLT3hFdlm5VtBVYkS3xNEin13WdVfR7P0qR5a?=
- =?us-ascii?Q?hzqaGwxhUx0umSISGq+ujQ303QJySAmFjrgeEf+xp+3+g8AAuojWSLx6SFlo?=
- =?us-ascii?Q?U+CVV9mzEuAwCwYzy+NMSmO3VCd/v7t/ATNoeSus9G3rm6kahOkHZzWNDPgI?=
- =?us-ascii?Q?+uCFPiNTiHkuj68onR4Kz5XDLvFiSrJR9wixvcpAHiuCoauW/AQnbR6htxFT?=
- =?us-ascii?Q?+lKIBM5Knt++7gHlv+WvKBWJ5j+hfvzIW4ErnN8juEVmkOvjcb1Aleujn0h6?=
- =?us-ascii?Q?USDkhhbY48NhvWglsBvtE61Hv4FDgB908zW4H0fiBsBQvRZUTGAZCa1S5JA6?=
- =?us-ascii?Q?xZmwBwurxDDjw5vCb4VwvCsLqMmki3KkD7SeSkJsCuLOWEHwo6LeeeMPOeQo?=
- =?us-ascii?Q?9cdbWa+4XEo+01REkXBNfuDR24tViJIRd0/j0oZlGFDglEZfBW2O2/P1KjYu?=
- =?us-ascii?Q?toCL1ROxwNW5lqDzj4eniN9CbTu7A/F8HPC+mHV3q8R7ZcY3/o91X8+rOyTg?=
- =?us-ascii?Q?g+nSQ0OnJbf8AdOtCd5bqIuocR/LzocEuG+1V8keyVL3VGFphvYDCi2CvCux?=
- =?us-ascii?Q?qE5mwNeIqZRTMn45jXzWyZ7XAWP6wnhsKnpqIz81dTZ+npIdq2b1uAls16qr?=
- =?us-ascii?Q?3nR/8E68DumZNu222Uj6SuXPCAT4Mocb6NITefQ7vQUdiZv5cAUfGSiwinCE?=
- =?us-ascii?Q?M2EZueBjT5WkLQ18Wtx6AU761wzS8OnTS427dOuCvl5ryHX3u1xBgM2ngQmP?=
- =?us-ascii?Q?dEUFytHVQWAtB9Ra9dQVi4phw6Jr7kts180zewaSRBu8TZshYfsYxLNIJtMB?=
- =?us-ascii?Q?CV5TJD/ZL5IK+jTAzz0c2xddiN2t8mKMd7tG/dNcqK4MmQDIQ8TU9dSrZCn1?=
- =?us-ascii?Q?eM00t+6T88Sdj9GE/cpQeiL91h0c7AxIP0WBGKpnkls33cIeV7SMVkkEvNBQ?=
- =?us-ascii?Q?hdH3jVyVibfXWl6U2epKm/vwXg6DrN0UKACr?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(19092799006)(376014)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7OIaY2DOLX4EiRpERKKJcdsRhlgrO/Rm15CZEYpr+qDPFvkgLs1CqnaFKYCo?=
- =?us-ascii?Q?26LgUaoB4A/mKGTcwu2+WsGZwpA7qUSE2GikSV5pIHE3xs6lu4NuG2YopLFP?=
- =?us-ascii?Q?RYrjYNaikRx3xIzyXt0clmSv3uwFg9+lbf0M6gWIQtd4A9sH6Q3IOd6nC745?=
- =?us-ascii?Q?ar8lnJDKetvpO+vX/KQSSaSdihc3g+4lh0hRYw1Jf1FT4IW4qPlxUkbrnxqf?=
- =?us-ascii?Q?EOtznes4gfzaIskm3TsKmo+gSFQHPpcr3iHrzyJBclYUWJI4EWlfuAD6+92N?=
- =?us-ascii?Q?y5pKcInRcIYlPYxpQ8DGTPUYmnXSHUJRqz1SuwwQ6Usd5E4z9vUa2OAR8uB7?=
- =?us-ascii?Q?SJE0nMGGWfCSeGJd0byfey1hlAFmAZaGhk5YI9QnKA1VhYrJMp13OHenKcTt?=
- =?us-ascii?Q?tbuBlDrhrR3D7pKiCnausZTnsmooJbU8IUwCjPHnDfXeCg6KCahcYH/loM3t?=
- =?us-ascii?Q?oVzujAAYmXbeNhLlWJXbU1b332CUsfNtreHfigGKaHK7yMx4Z09vd8FkXAvo?=
- =?us-ascii?Q?t/jtxeBrOWj/gH6Lvaj7akFzGb2tPB+TAHVx73Pd1P+0eiVSz11Iw89jMrxT?=
- =?us-ascii?Q?U+QsU40KNkNw2B0fhkruM3M9QF2/z9mvXyVN7JB1LDHBBU7gwq4gtCxRPWlu?=
- =?us-ascii?Q?F5gCnPl7o4ayJxLbLtqY9x9V3rwdEL8dOp2yAknics4Do3kpTY8Df6z/nXVB?=
- =?us-ascii?Q?NmMQLv64TEy5bYzCMJ8AvrfGbJza6L361dpbc9Q47aZWykOZ7yCGo4psTUbN?=
- =?us-ascii?Q?LgGqMWpAgcjhvlJGJme8jwKZesg1yvl4IX9KtJ6YpQPKu83r2SJmUvLeicHm?=
- =?us-ascii?Q?awGFXBOUv6lCpfMd8VRxfYQuggL0K5AMMWDaoXW2H0oqfpUx1ceXlptTjnb6?=
- =?us-ascii?Q?h9SfZaKgJKXCmYe/NqkFUeQdbwq0hFrRJEZOmS5iOnXTXeqWv1/2dNuxDnfI?=
- =?us-ascii?Q?w1PgDmX1X1yc+hhOteQjowzzZd0vQbDceYSVVUJ2kx/dmXB1b8NQqkoeSByz?=
- =?us-ascii?Q?k5kWCoTuc+xddwpe1yxJLgDAUGVkzsxGdm7WWZxvVmMQlb1ld+dV3Za8qCeT?=
- =?us-ascii?Q?s6OMAoaTfzD8R2KBQ28NUmy7gdqDrrJw/V6YLutYUZPjuv1mwenGRcGiOVRs?=
- =?us-ascii?Q?DUGVeQ3qsV2aOMOgMoAuuDpWRarZ0TmrFuJ5G74ctAILbx4LXe/r6eZgXB71?=
- =?us-ascii?Q?AyKS6TiMbyWl3qlXoacJDJdCC6XcAZ8OQSJdK5GkMmCZ5HsXN0Lxv66tYdYY?=
- =?us-ascii?Q?jUm3IU3OujswBkwCsKg27wyyE1v61V0MWfxZA277mxd1N5Cqx7m8/b4uw8ip?=
- =?us-ascii?Q?61UAs4sO85Y9NtU/qk0ol0f1oi9vIcaFv+xbUPjJnfwxkX9k9dOcujsNlT8x?=
- =?us-ascii?Q?49SHU6YIokK0XHasC9cagPPMK43myKxAXCvO2ZdwHXLbfeaz+BChf8G9oKtc?=
- =?us-ascii?Q?WzNGfvSYY53P4p4nraHM/MGrny9JBmii3pmIfZUj3Yxjj+QKpWaSmRxhA23W?=
- =?us-ascii?Q?yNw8VX6OIpYtbUEo5odvrqGonxX5br3JiOO0M9DpKpmlXnVQLsQaRaBVqeNw?=
- =?us-ascii?Q?sFBrB1eJe4dz7eXlkXmCwCR9ltGksBYb8T1PHj2C?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f707b49d-3122-47a1-1c52-08de12a20b60
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 02:07:11.9546
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: m4TuDWxzGPxZ/7scocTUpBqFXR5dWGX2b2+CDfdxjMUmZpQA8xbdkN4d68Y5qgHB1/n9tVgrDgkZhoqR4GIKRA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10996
+X-Received: by 2002:a92:c249:0:b0:42d:84ec:b5da with SMTP id
+ e9e14a558f8ab-431ebe051b2mr12316495ab.10.1761271646996; Thu, 23 Oct 2025
+ 19:07:26 -0700 (PDT)
+Date: Thu, 23 Oct 2025 19:07:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fadf5e.050a0220.346f24.008d.GAE@google.com>
+Subject: [syzbot] [btrfs?] possible deadlock in write_all_supers
+From: syzbot <syzbot+f568e0df818a4f9d0dbb@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 23, 2025 at 07:04:10PM -0500, Alex Elder wrote:
-> On 10/23/25 6:36 PM, Frank Li wrote:
-> > On Thu, Oct 23, 2025 at 12:59:17PM -0500, Alex Elder wrote:
-> > > The SpacemiT K1 SoC QSPI implementation needs to avoid shutting off the
-> > > clock when changing its rate.  Add a new quirk to indicate that disabling
-> > > and enabling the clock should be skipped when changing its rate for
-> > > operations.
-> >
-> > remove "for operations."
->
-> OK.
->
-> > >
-> > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > ---
-> > > v2: - The quirk flag is now named QUADSPI_QUIRK_SKIP_CLK_DISABLE
-> > >      - The predicate now returns bool and is not inline
-> > >
-> > >   drivers/spi/spi-fsl-qspi.c | 21 +++++++++++++++++----
-> > >   1 file changed, 17 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
-> > > index 1944e63169d36..c21e3804cb032 100644
-> > > --- a/drivers/spi/spi-fsl-qspi.c
-> > > +++ b/drivers/spi/spi-fsl-qspi.c
-> > > @@ -197,6 +197,11 @@
-> > >    */
-> > >   #define QUADSPI_QUIRK_USE_TDH_SETTING	BIT(5)
-> > >
-> > > +/*
-> > > + * Do not disable the "qspi" clock when changing its rate.
-> > > + */
-> > > +#define QUADSPI_QUIRK_SKIP_CLK_DISABLE	BIT(6)
-> > > +
-> > >   struct fsl_qspi_devtype_data {
-> > >   	unsigned int rxfifo;
-> > >   	unsigned int txfifo;
-> > > @@ -306,6 +311,11 @@ static bool needs_tdh_setting(struct fsl_qspi *q)
-> > >   	return !!(q->devtype_data->quirks & QUADSPI_QUIRK_USE_TDH_SETTING);
-> > >   }
-> > >
-> > > +static inline bool needs_clk_disable(struct fsl_qspi *q)
-> >
-> > needs_skip_clk_disable()
->
-> OK.  I was trying to avoid the double-negative:
->
->     if (!needs_skip_clk_disasble())
-> 	clk_disable...()
+Hello,
 
-Oh, Make senso, needs_clk_disable() is fine
+syzbot found the following issue on:
 
-Frank
+HEAD commit:    93f3bab4310d Add linux-next specific files for 20251017
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f96b04580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=408308c229eef498
+dashboard link: https://syzkaller.appspot.com/bug?extid=f568e0df818a4f9d0dbb
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
->
-> But I'll do as you suggest.
->
-> Thanks.
->
-> 					-Alex
-> >
-> > Frank
-> > > +{
-> > > +	return !(q->devtype_data->quirks & QUADSPI_QUIRK_SKIP_CLK_DISABLE);
-> > > +}
-> > > +
-> > >   /*
-> > >    * An IC bug makes it necessary to rearrange the 32-bit data.
-> > >    * Later chips, such as IMX6SLX, have fixed this bug.
-> > > @@ -536,15 +546,18 @@ static void fsl_qspi_select_mem(struct fsl_qspi *q, struct spi_device *spi,
-> > >   	if (needs_4x_clock(q))
-> > >   		rate *= 4;
-> > >
-> > > -	fsl_qspi_clk_disable_unprep(q);
-> > > +	if (needs_clk_disable(q))
-> > > +		fsl_qspi_clk_disable_unprep(q);
-> > >
-> > >   	ret = clk_set_rate(q->clk, rate);
-> > >   	if (ret)
-> > >   		return;
-> > >
-> > > -	ret = fsl_qspi_clk_prep_enable(q);
-> > > -	if (ret)
-> > > -		return;
-> > > +	if (needs_clk_disable(q)) {
-> > > +		ret = fsl_qspi_clk_prep_enable(q);
-> > > +		if (ret)
-> > > +			return;
-> > > +	}
-> > >
-> > >   	q->selected = spi_get_chipselect(spi, 0);
-> > >
-> > > --
-> > > 2.43.0
-> > >
->
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c955a9337646/disk-93f3bab4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/843962ea5283/vmlinux-93f3bab4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/42360a7c5734/bzImage-93f3bab4.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f568e0df818a4f9d0dbb@syzkaller.appspotmail.com
+
+BTRFS info (device loop3): enabling ssd optimizations
+BTRFS info (device loop3): turning on async discard
+BTRFS info (device loop3): enabling free space tree
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+syz.3.3420/21516 is trying to acquire lock:
+ffff88805a8954d8 (&fs_devs->device_list_mutex){+.+.}-{4:4}, at: write_all_supers+0x13fa/0x47d0 fs/btrfs/disk-io.c:4027
+
+but task is already holding lock:
+ffff8880585647c0 (&fs_info->tree_log_mutex){+.+.}-{4:4}, at: btrfs_sync_log+0x1dc7/0x29a0 fs/btrfs/tree-log.c:3552
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #5 (&fs_info->tree_log_mutex){+.+.}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
+       __mutex_lock+0x187/0x1350 kernel/locking/mutex.c:760
+       btrfs_sync_log+0x1dc7/0x29a0 fs/btrfs/tree-log.c:3552
+       btrfs_sync_file+0xcf9/0x1160 fs/btrfs/file.c:1771
+       generic_write_sync include/linux/fs.h:3046 [inline]
+       btrfs_do_write_iter+0x689/0x820 fs/btrfs/file.c:1470
+       do_iter_readv_writev+0x623/0x8c0 fs/read_write.c:-1
+       vfs_writev+0x31a/0x960 fs/read_write.c:1057
+       do_pwritev fs/read_write.c:1153 [inline]
+       __do_sys_pwritev2 fs/read_write.c:1211 [inline]
+       __se_sys_pwritev2+0x179/0x290 fs/read_write.c:1202
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #4 (btrfs_trans_num_extwriters){++++}-{0:0}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       join_transaction+0x1a4/0xd70 fs/btrfs/transaction.c:321
+       start_transaction+0x6b6/0x1620 fs/btrfs/transaction.c:705
+       btrfs_dirty_inode+0x9f/0x190 fs/btrfs/inode.c:6282
+       inode_update_time fs/inode.c:2117 [inline]
+       touch_atime+0x2f9/0x6d0 fs/inode.c:2190
+       file_accessed include/linux/fs.h:2673 [inline]
+       filemap_read+0x1002/0x11a0 mm/filemap.c:2826
+       __kernel_read+0x4cf/0x960 fs/read_write.c:530
+       integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
+       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
+       ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+       ima_calc_file_hash+0x85e/0x16f0 security/integrity/ima/ima_crypto.c:568
+       ima_collect_measurement+0x428/0x8f0 security/integrity/ima/ima_api.c:293
+       process_measurement+0x1121/0x1a40 security/integrity/ima/ima_main.c:405
+       ima_file_check+0xd7/0x120 security/integrity/ima/ima_main.c:656
+       security_file_post_open+0xbb/0x290 security/security.c:3199
+       do_open fs/namei.c:3977 [inline]
+       path_openat+0x2f26/0x3830 fs/namei.c:4134
+       do_filp_open+0x1fa/0x410 fs/namei.c:4161
+       do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+       do_sys_open fs/open.c:1452 [inline]
+       __do_sys_openat fs/open.c:1468 [inline]
+       __se_sys_openat fs/open.c:1463 [inline]
+       __x64_sys_openat+0x138/0x170 fs/open.c:1463
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #3 (btrfs_trans_num_writers){++++}-{0:0}:
+       reacquire_held_locks+0x127/0x1d0 kernel/locking/lockdep.c:5385
+       __lock_release kernel/locking/lockdep.c:5574 [inline]
+       lock_release+0x1b4/0x3e0 kernel/locking/lockdep.c:5889
+       percpu_up_read include/linux/percpu-rwsem.h:112 [inline]
+       __sb_end_write include/linux/fs.h:1911 [inline]
+       sb_end_intwrite+0x26/0x1c0 include/linux/fs.h:2028
+       __btrfs_end_transaction+0x248/0x640 fs/btrfs/transaction.c:1076
+       btrfs_dirty_inode+0x14c/0x190 fs/btrfs/inode.c:6296
+       inode_update_time fs/inode.c:2117 [inline]
+       touch_atime+0x2f9/0x6d0 fs/inode.c:2190
+       file_accessed include/linux/fs.h:2673 [inline]
+       btrfs_file_mmap_prepare+0x176/0x1f0 fs/btrfs/file.c:2052
+       vfs_mmap_prepare include/linux/fs.h:2410 [inline]
+       call_mmap_prepare mm/vma.c:2593 [inline]
+       __mmap_region mm/vma.c:2671 [inline]
+       mmap_region+0xb38/0x1c70 mm/vma.c:2764
+       do_mmap+0xc45/0x10d0 mm/mmap.c:558
+       vm_mmap_pgoff+0x2a6/0x4d0 mm/util.c:581
+       ksys_mmap_pgoff+0x51f/0x760 mm/mmap.c:604
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&mm->mmap_lock){++++}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_read_killable+0x50/0x350 kernel/locking/rwsem.c:1560
+       mmap_read_lock_killable+0x1d/0x70 include/linux/mmap_lock.h:377
+       get_mmap_lock_carefully mm/mmap_lock.c:377 [inline]
+       lock_mm_and_find_vma+0x2a8/0x300 mm/mmap_lock.c:428
+       do_user_addr_fault+0x331/0x1380 arch/x86/mm/fault.c:1359
+       handle_page_fault arch/x86/mm/fault.c:1476 [inline]
+       exc_page_fault+0x82/0x100 arch/x86/mm/fault.c:1532
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
+       user_access_begin arch/x86/include/asm/uaccess.h:-1 [inline]
+       filldir+0x29c/0x6c0 fs/readdir.c:290
+       dir_emit_dot include/linux/fs.h:3991 [inline]
+       dir_emit_dots include/linux/fs.h:4002 [inline]
+       offset_readdir+0x1e6/0x560 fs/libfs.c:569
+       iterate_dir+0x399/0x570 fs/readdir.c:108
+       __do_sys_getdents fs/readdir.c:326 [inline]
+       __se_sys_getdents+0xe4/0x250 fs/readdir.c:312
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&type->i_mutex_dir_key#5){++++}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_read+0x46/0x2e0 kernel/locking/rwsem.c:1537
+       inode_lock_shared include/linux/fs.h:995 [inline]
+       lookup_slow+0x46/0x70 fs/namei.c:1832
+       walk_component+0x2d2/0x400 fs/namei.c:2151
+       lookup_last fs/namei.c:2652 [inline]
+       path_lookupat+0x163/0x430 fs/namei.c:2676
+       filename_lookup+0x212/0x570 fs/namei.c:2705
+       kern_path+0x35/0x50 fs/namei.c:2863
+       is_same_device fs/btrfs/volumes.c:759 [inline]
+       device_list_add+0xe2a/0x22a0 fs/btrfs/volumes.c:894
+       btrfs_scan_one_device+0x3ee/0x650 fs/btrfs/volumes.c:1493
+       btrfs_get_tree_super fs/btrfs/super.c:1865 [inline]
+       btrfs_get_tree_subvol fs/btrfs/super.c:2088 [inline]
+       btrfs_get_tree+0x436/0x1810 fs/btrfs/super.c:2122
+       vfs_get_tree+0x92/0x2b0 fs/super.c:1751
+       fc_mount fs/namespace.c:1208 [inline]
+       do_new_mount_fc fs/namespace.c:3651 [inline]
+       do_new_mount+0x302/0xa10 fs/namespace.c:3727
+       do_mount fs/namespace.c:4050 [inline]
+       __do_sys_mount fs/namespace.c:4238 [inline]
+       __se_sys_mount+0x313/0x410 fs/namespace.c:4215
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&fs_devs->device_list_mutex){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __mutex_lock_common kernel/locking/mutex.c:598 [inline]
+       __mutex_lock+0x187/0x1350 kernel/locking/mutex.c:760
+       write_all_supers+0x13fa/0x47d0 fs/btrfs/disk-io.c:4027
+       btrfs_sync_log+0x1e95/0x29a0 fs/btrfs/tree-log.c:3571
+       btrfs_sync_file+0xcf9/0x1160 fs/btrfs/file.c:1771
+       generic_write_sync include/linux/fs.h:3046 [inline]
+       btrfs_do_write_iter+0x689/0x820 fs/btrfs/file.c:1470
+       aio_write+0x535/0x7a0 fs/aio.c:1634
+       __io_submit_one fs/aio.c:-1 [inline]
+       io_submit_one+0x78b/0x1310 fs/aio.c:2053
+       __do_sys_io_submit fs/aio.c:2112 [inline]
+       __se_sys_io_submit+0x185/0x2f0 fs/aio.c:2082
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &fs_devs->device_list_mutex --> btrfs_trans_num_extwriters --> &fs_info->tree_log_mutex
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&fs_info->tree_log_mutex);
+                               lock(btrfs_trans_num_extwriters);
+                               lock(&fs_info->tree_log_mutex);
+  lock(&fs_devs->device_list_mutex);
+
+ *** DEADLOCK ***
+
+4 locks held by syz.3.3420/21516:
+ #0: ffff8880491ea610 (sb_internal#5){.+.+}-{0:0}, at: btrfs_sync_file+0xbf5/0x1160 fs/btrfs/file.c:1726
+ #1: ffff888058566538 (btrfs_trans_num_writers){++++}-{0:0}, at: join_transaction+0x41b/0xd70 fs/btrfs/transaction.c:296
+ #2: ffff888058566560 (btrfs_trans_num_extwriters){++++}-{0:0}, at: join_transaction+0x41b/0xd70 fs/btrfs/transaction.c:296
+ #3: ffff8880585647c0 (&fs_info->tree_log_mutex){+.+.}-{4:4}, at: btrfs_sync_log+0x1dc7/0x29a0 fs/btrfs/tree-log.c:3552
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 21516 Comm: syz.3.3420 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ __mutex_lock_common kernel/locking/mutex.c:598 [inline]
+ __mutex_lock+0x187/0x1350 kernel/locking/mutex.c:760
+ write_all_supers+0x13fa/0x47d0 fs/btrfs/disk-io.c:4027
+ btrfs_sync_log+0x1e95/0x29a0 fs/btrfs/tree-log.c:3571
+ btrfs_sync_file+0xcf9/0x1160 fs/btrfs/file.c:1771
+ generic_write_sync include/linux/fs.h:3046 [inline]
+ btrfs_do_write_iter+0x689/0x820 fs/btrfs/file.c:1470
+ aio_write+0x535/0x7a0 fs/aio.c:1634
+ __io_submit_one fs/aio.c:-1 [inline]
+ io_submit_one+0x78b/0x1310 fs/aio.c:2053
+ __do_sys_io_submit fs/aio.c:2112 [inline]
+ __se_sys_io_submit+0x185/0x2f0 fs/aio.c:2082
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe47278efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe4736ad038 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+RAX: ffffffffffffffda RBX: 00007fe4729e5fa0 RCX: 00007fe47278efc9
+RDX: 0000200000000540 RSI: 000000000000003b RDI: 00007fe473684000
+RBP: 00007fe472811f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fe4729e6038 R14: 00007fe4729e5fa0 R15: 00007fff3a4e1998
+ </TASK>
+BTRFS info (device loop3): last unmount of filesystem ed167579-eb65-4e76-9a50-61ac97e9b59d
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
