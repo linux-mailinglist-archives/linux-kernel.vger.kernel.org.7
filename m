@@ -1,159 +1,87 @@
-Return-Path: <linux-kernel+bounces-868565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7531CC057C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:06:41 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03DA0C057C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2165335BCAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:06:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A29F635BCFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814E730CD87;
-	Fri, 24 Oct 2025 10:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="S2/4vdZp"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8B930E0CD;
+	Fri, 24 Oct 2025 10:07:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C352FE047
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9012305065
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761300393; cv=none; b=OFiO0ZUBnKXpgZ2eUtejLeb0E3hFbwd/f1Yc4hPNx3xgpxZr7BPPlTKacjcaBjTNOYdsiX7iVAy+f2eGXMQ/gvraVd9H+YT3TzhKYuv0+UOvwmnO8h8EUL5b3Uc9JHKei13I9VXel5/u8qERm+dqsN7buAtkKEP/KaFQS8Z6PP0=
+	t=1761300425; cv=none; b=E50Aj1Qhco50rZEgEb0Mkt3n2gV27zthdqjD6AaxS79yeepnOIrEg5NKyVTpGqOhU7WwLZpniWGHEaGVM9z5jT1FnykANvtO6u7gkCiKxGdWIf6T8V5EMY7WihefprxVAz9rcxUx/O0hCkZIhLMS86PxS/koDGeBgWsDigZtnCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761300393; c=relaxed/simple;
-	bh=D1WLatxTBKa2YZcxHKBfolrAEDHX/YTChst2yMIVTYc=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=iQyFQItjiC94p5PBaFrcVEvcdAbne1ZnOYr7a/lTldwz8+SlDh5EHcB9xv3nL63lZsSEO8lKCau0ezd7dWsUJGfMUQqJiPaV5iN16xrWD0/K0eWnnfrzrXxWESy6iPOCWoy7Xu+C+E4JlkwRexDxJh33QeH2EBPbVtcmUZoyQkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=S2/4vdZp; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain; charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761300388;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=axIA7P+AQSjY62b1eHGJy8vlVdvRAxUy0/HBHXY5V7s=;
-	b=S2/4vdZphxmPM284+KB8fDDlsiiG+nUBCHOC/X5U39uz8PLG2qH48UTVpCHdwBIV16uz+H
-	Gx6hhje9oqy/kr6xr3GQU3s0HXEaJVRDB9NB408/0O1tXz77W4UO2NdenGTGr7cGkssByZ
-	p6oxiXYYLZQm/kFZfYnkn/N2s2g+HMk=
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
+	s=arc-20240116; t=1761300425; c=relaxed/simple;
+	bh=A0u1gdBVEqlexyaGLsNkxkc2ESY/wvnWkypSVwAwJH8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sc2Ed6V0YdSAmz9+JVn+dQQCYknMJsANQ9Db3BWQW/MDVrToXihZ2OzvqjD5v8DgCmg50G4w7Lz1WCHghbN9BMjX7WtHntprnu234D82Cj/hIeWERQEwu3+WM1YoeuIrl9UxUmB30nDzbjWxLdTxwgIma1RQLqYqvusBcl/2bVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430e1a4a129so25838015ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:07:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761300423; x=1761905223;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OlQSyaENlrmR7LLSxbKe8y5pt5vkHo3J3pHWdTyCYJw=;
+        b=L5ssM0ThUtbnZtG3r8ua+tboJftH3ip5b6q6sluGMXMpGSl32yU+5tJ8REGoprryVe
+         p/NOeVnbINtYL6gke4hzl0zR3trck7X4hz3ITaPpfomcJIMOE0F9xDlZv4sP//WUoUVv
+         HhAUCWLwb/fzT+0cFOH8LAOLNCqNJxMqJXtaYmolWEES8i3RiYl9+NFhMRSy8o8eeoeg
+         uWpbo/iGWaKmuJRszLmzZJdA5qY/hI4fY8XEydqb10KdzOmRtTc7a51EP9eliKbRpZpU
+         kchBP+qFLY5ao8iKSNI+z2IRrX/eQSMbCU1zJpJxLMf0wTKhQHrC7r/EbPSyKfedTPCl
+         vidA==
+X-Forwarded-Encrypted: i=1; AJvYcCVf/TJltOVV4+VamfGpj87FdsdrSHp3i/1bLQdqIrJ18i/fHjCjgsfEqWThCgqsp2YnY5zPezLlzdicc9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt7QXeaRcXXJgiOTZpa9UzxZeYkWxVRMJP30Uvt0WyqausAqDM
+	bhlK8sgiqWoJGIswOb9EcxPRgSbLPeh2cUXpl9WmasGOy0+Ga18PZQXUx04Oo8Q81bjpl65iXAi
+	RuMm0y6bvVS6VYAxn+o3D09ogtosYQT+kyh14mXdD5i3cVAONJfW8goCaB4E=
+X-Google-Smtp-Source: AGHT+IF/KEo+wAquhsjNRv+8AqvrG32ct/q6guSDi7rv4+t941ezr+lPUaL6oDyv7WCCnhmEi2lSwXzHOAl2tMkMoh2mN2d/xO2A
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2] slab: Fix obj_ext is mistakenly considered NULL due to race condition
-Date: Fri, 24 Oct 2025 18:06:09 +0800
-Message-Id: <123334B8-89A9-48C2-BBD9-A601E0395AB1@linux.dev>
-References: <8b152d73-ecc4-415c-acdc-3f5105412ac0@suse.cz>
-Cc: Harry Yoo <harry.yoo@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Suren Baghdasaryan <surenb@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
-In-Reply-To: <8b152d73-ecc4-415c-acdc-3f5105412ac0@suse.cz>
-To: Vlastimil Babka <vbabka@suse.cz>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:2610:b0:42f:880a:cff7 with SMTP id
+ e9e14a558f8ab-431ebe0582bmr24941095ab.13.1761300422814; Fri, 24 Oct 2025
+ 03:07:02 -0700 (PDT)
+Date: Fri, 24 Oct 2025 03:07:02 -0700
+In-Reply-To: <20251024071520.ZEdh5%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fb4fc6.a70a0220.3bf6c6.018c.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
+From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Vlastimil
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> On Oct 24, 2025, at 17:40, Vlastimil Babka <vbabka@suse.cz> wrote:
->=20
-> =EF=BB=BFOn 10/24/25 11:27, Hao Ge wrote:
->> Hi Harry
->> Hi Vlastimil
->>=20
->>=20
->> Thank you for adding V2 to your tree. Now, should I resubmit V3,
->>=20
->> or can you assist with making these modifications in your tree?
->=20
-> Massaged it a bit more and now have this:
->=20
-> commit b4bdf6770cadb8bffcf3dce7ad7a346979f79ede
-> Author: Hao Ge <gehao@kylinos.cn>
-> Date:   Thu Oct 23 22:33:13 2025 +0800
->=20
->    slab: Fix obj_ext mistakenly considered NULL due to race condition
->=20
->    If two competing threads enter alloc_slab_obj_exts(), and the one that
->    allocates the vector wins the cmpxchg(), the other thread that failed
->    allocation mistakenly assumes that slab->obj_exts is still empty due to=
+Reported-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
+Tested-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
 
->    its own allocation failure. This will then trigger warnings with
->    CONFIG_MEM_ALLOC_PROFILING_DEBUG checks in the subsequent free path.
->=20
->    Therefore, let's check the result of cmpxchg() to see if marking the
->    allocation as failed was successful. If it wasn't, check whether the
->    winning side has succeeded its allocation (it might have been also
->    marking it as failed) and if yes, return success.
->=20
->    Suggested-by: Harry Yoo <harry.yoo@oracle.com>
->    Signed-off-by: Hao Ge <gehao@kylinos.cn>
->    Link: https://patch.msgid.link/20251023143313.1327968-1-hao.ge@linux.de=
-v
->    Reviewed-by: Suren Baghdasaryan <surenb@google.com>
->    Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
->    Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
->=20
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 87a1d2f9de0d..d4367f25b20d 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2052,9 +2052,9 @@ static inline void mark_objexts_empty(struct slabobj=
-_ext *obj_exts)
->    }
-> }
->=20
-> -static inline void mark_failed_objexts_alloc(struct slab *slab)
-> +static inline bool mark_failed_objexts_alloc(struct slab *slab)
-> {
-> -    cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL);
-> +    return cmpxchg(&slab->obj_exts, 0, OBJEXTS_ALLOC_FAIL) =3D=3D 0;
-> }
->=20
-> static inline void handle_failed_objexts_alloc(unsigned long obj_exts,
-> @@ -2076,7 +2076,7 @@ static inline void handle_failed_objexts_alloc(unsig=
-ned long obj_exts,
-> #else /* CONFIG_MEM_ALLOC_PROFILING_DEBUG */
->=20
-> static inline void mark_objexts_empty(struct slabobj_ext *obj_exts) {}
-> -static inline void mark_failed_objexts_alloc(struct slab *slab) {}
-> +static inline bool mark_failed_objexts_alloc(struct slab *slab) { return f=
-alse; }
-> static inline void handle_failed_objexts_alloc(unsigned long obj_exts,
->            struct slabobj_ext *vec, unsigned int objects) {}
->=20
-> @@ -2124,8 +2124,14 @@ int alloc_slab_obj_exts(struct slab *slab, struct k=
-mem_cache *s,
->                   slab_nid(slab));
->    }
->    if (!vec) {
-> -        /* Mark vectors which failed to allocate */
-> -        mark_failed_objexts_alloc(slab);
-> +        /*
-> +         * Try to mark vectors which failed to allocate.
-> +         * If this operation fails, there may be a racing process
-> +         * that has already completed the allocation.
-> +         */
-> +        if (!mark_failed_objexts_alloc(slab) &&
-> +            slab_obj_exts(slab))
-> +            return 0;
->=20
->        return -ENOMEM;
->    }
->=20
-Thank you very much for your help,=20
-and I sincerely apologize for the actual trouble I have caused you.=
+Tested on:
+
+commit:         8e6e2188 Linux 6.1.157
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=17bb6d42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ef8bef4a2b3407ea
+dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=117a8c92580000
+
+Note: testing is done by a robot and is best-effort only.
 
