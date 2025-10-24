@@ -1,238 +1,116 @@
-Return-Path: <linux-kernel+bounces-868617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840C9C05A16
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B74C05A28
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 064771C2130C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:40:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CA6A1C21506
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33FA3101C4;
-	Fri, 24 Oct 2025 10:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B643126CC;
+	Fri, 24 Oct 2025 10:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UYqJNxrP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7yi6jXF"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8ADA2FE041;
-	Fri, 24 Oct 2025 10:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEA5311C2F
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761302368; cv=none; b=fxgPtLN1bWVeV9atU4oibiNiwIY8n8xF6pdjZMQuHEwQd2cs5zLO52DeWX/xtloAeKLVlrgMzIdkIH6YhVjzsnRFlnDIUyjK62qIgCFbOGIoO2RXuAk3enYjA/SEn+fKQkZAxVnL9y+5IotI7Bm8N65wGURXq6fFcGQDPuHssyU=
+	t=1761302387; cv=none; b=BWGLcm7p/B/sOH7yiEsr5hpEn5wi5UNwc3boovMcKS0CSt2yauCnEdek60KIhf0HNi5MrzqasazmO0PtS9NxCFO0CxtflHoCLzyp/dZAPuMLI2C3AG9EMlQ+u6oxpLVBokHb9ImDe5bsu07YApFtbPcvf7t11MopWpq76J9avz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761302368; c=relaxed/simple;
-	bh=SRKpqs7p8PGtv14YGwum4fAb1Zzbp8J6idns3ccYONg=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=tvSJIbuKLb1s8WN8Y75kSZcsSP1ywGFIWcWaeu9W+RcbcDKVF7rLeiMy6KcIv5K769C3TnI4vj5I4jJtbOWHO/tseQODYTpvUSpTt0hZk8htidVt8m7p1nSGKc/iAClarwe0hMhoJ6GG6g55yBQDKR7XB3W9aSys9b1mJgdgv0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UYqJNxrP; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761302367; x=1792838367;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=SRKpqs7p8PGtv14YGwum4fAb1Zzbp8J6idns3ccYONg=;
-  b=UYqJNxrP93jaoiQH0CtHA/MTI51sLDbGCGJII2E0vkcxnGI06K5+6Del
-   kTcGEY7w22KnudQjKFpHq/zQxHeJi4b920sUwrHVr9vh5GQBn52GGuzGx
-   QY+PbEQrep/v+20RmfVcnp1d+7/iszV+bjq+nPWeJnwvLNL3FQxstwF00
-   mwOTy/zYndeitlI4B6NptITEaLA3TdOwDheMteCdzelG39o1yEOSvnU6w
-   xQilY1JBOS0OKGRckMi6slyPr+DLkd+34Xu7hO8/1xZGKtHz7ameu0AXr
-   a0iDX16/k0ewW/mDA9h0atw09j6TFksRQYwyOJBqnfADI9RzgbUbcljyq
-   w==;
-X-CSE-ConnectionGUID: HAx6MX6tSjmqco2qf3OLoQ==
-X-CSE-MsgGUID: e4neC0CyR+igP6RhP7vQ9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="88950187"
-X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
-   d="scan'208";a="88950187"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 03:39:26 -0700
-X-CSE-ConnectionGUID: hmXiIFeFQhStZZIY+yihLg==
-X-CSE-MsgGUID: 9rKxUU0iQBu3gyCS+BTRhg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
-   d="scan'208";a="184882780"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.112])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 03:39:18 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 24 Oct 2025 13:39:15 +0300 (EEST)
-To: Bjorn Helgaas <helgaas@kernel.org>
-cc: Lucas De Marchi <lucas.demarchi@intel.com>, linux-pci@vger.kernel.org, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
-    =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>, 
-    Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, 
-    David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, 
-    intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-    Jani Nikula <jani.nikula@linux.intel.com>, 
-    Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
-    Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>, 
-    Tvrtko Ursulin <tursulin@ursulin.net>, 
-    "Michael J . Ruhl" <mjruhl@habana.ai>, 
-    Andi Shyti <andi.shyti@linux.intel.com>, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 00/11] PCI: Resizable BAR improvements
-In-Reply-To: <20251023221323.GA1325049@bhelgaas>
-Message-ID: <468ebc86-25aa-a22f-a45c-6ec15faa5b09@linux.intel.com>
-References: <20251023221323.GA1325049@bhelgaas>
+	s=arc-20240116; t=1761302387; c=relaxed/simple;
+	bh=uyiLO+LNkEVTknh5PCD2nlZig9mEvwEHQFhgoM6Efq8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L3pBetb9fih5QV1Ykyk67tICvbd3SzAg+RrFNfOW3/LNMTlGcYXZbQA9UNkuSzREQc9NBdlHZ/E0hfSeP/ThWwuXMhA4uxExKWU5i0qCKm0WOtxJTUOnIbRrn+JvvJLe7aBjfyIGcI5hhVeKd4TfkEdek7VVDcyLgQBNbP4Xyuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7yi6jXF; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-27c369f898fso29753365ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:39:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761302384; x=1761907184; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qLzt3nHwXvYmUXaWuT5xx9MwPLoAGs/1Oa1T6U/Qgwk=;
+        b=Q7yi6jXFphbw4ew7tGhMrHo76Zi5fbGktMvFTMQQEo0qO8HmPZhd+N39g3T60LuXwb
+         2oCS4WyJYsG6Sy4oNQfhSiSVRyxyfgiRbsoZ9blRRcYzuqzu+WhzPP6jlzVaNYU07hWa
+         n3G0veYa4vschtn220bjCkzfkAxAgAU/j7UeffUBltIm/TjYipDCQNkkFw73fQkCJugD
+         I1t0GqlzbXctB+uCvo/6scKrHtVSBvuc1LwjxWsMmO1/8mOzulg5SbJtIiNSRp5nvfen
+         pwy20839BsmgTow1VmUP75UpnWB/AVdYBq0r1+eG56FEgZifGW3UV8EiOg0cAO5akYbg
+         hYfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761302384; x=1761907184;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qLzt3nHwXvYmUXaWuT5xx9MwPLoAGs/1Oa1T6U/Qgwk=;
+        b=KEZ09CtywNEdZPSGVfWA6YAcYGnZZZ/9Nq4h+1AR5L/yRH8KwUHMSxR9C2bH3CEMnz
+         gLiemKzw9sBs7F5z4aT84V9mhxTIO6D1MUYT9biBj6/m2Y2PBJVm+2CCoTym3Wdrmq4H
+         QOY2Iyw62CjJ89ydz/5kkD6nDcVxPpEURECZc7LcwTrG18PsBD+xiMCwi8GeeLq6uRTI
+         pi4R2PfJ2C/Vixi9m+f0DvDsPVfijok8oruoux8P3GyaBA9/vqE90l8sM7eV889doKE2
+         sXXmlYaiuLaP1qTsS6Z+tozXnPYlJaIl5PmlRkrqMK59TIllWlI1tBxKKBkhAyzVi2U9
+         D74w==
+X-Gm-Message-State: AOJu0YyFbfWc0Av3vNTCZCbdw0eqnYzWeDLIUG6rHhnCM/t5kfnxnxcf
+	ZsoVh0OtIKHmhYQjTbwTeLGHdjUL0TFy27y2GDrm3DJ+KBzK29rP2qai
+X-Gm-Gg: ASbGncvGdMBrct2F1ppn3l6C1A+RVfmm/h8joyxgDy+qSaUHceWKaymkURDPAZosq6z
+	pCVaeKxPiy9fx3KwlQ8EOZcjZKjxQmXmCQFbg7xjA7U53v6cPeYpQUaiRem3TfiCasUhuYDeWWK
+	49/xuDc0yCeNjcUXfgFDJBSUp5/r0bwrFgag4oixrsXlMBk+r24xEEv3+/UOoeRiu94LFmd4Eol
+	KGTDSeZofvVdklXkzJA/8y6jjvhXi9iSrKoyKiMWlSLrzXX+xGmNyJz0x4s7fGS31SW1AHiR8kP
+	m8XBE+2vbQmDbBaC/oJdaphU8WI3VbKDZb/weUukL/EvbHSs3b9TrBzZ7VgDxYF7JEH5x5lKIPv
+	ZssYDz8717AemtH47bo/o9rBnR5+pbtJNG222CunaRcKL7iKY+sKBKE90xUrkx41zvRv0YVXYoD
+	26qnS+B6ybWVY=
+X-Google-Smtp-Source: AGHT+IE7bXnfWQJON3TLaojyE2i4thoKnt7jmM3h/3l0Kl0M5gviToItxxqZWN4WOizVmxSBsRm+Gw==
+X-Received: by 2002:a17:903:2b06:b0:25c:b543:2da7 with SMTP id d9443c01a7336-290c9c93a96mr323148085ad.9.1761302384388;
+        Fri, 24 Oct 2025 03:39:44 -0700 (PDT)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946de0fdc1sm51738365ad.48.2025.10.24.03.39.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 03:39:43 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 737A64206924; Fri, 24 Oct 2025 17:39:36 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Input Devices <linux-input@vger.kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Masaki Ota <masaki.ota@jp.alps.com>,
+	George Anthony Vernon <contact@gvernon.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH 0/2] hid-alps docs heading cleanup
+Date: Fri, 24 Oct 2025 17:39:32 +0700
+Message-ID: <20251024103934.20019-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-1816897247-1761300158=:1178"
-Content-ID: <50255ee2-82ed-c181-c05c-72f2a8f7243a@linux.intel.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=457; i=bagasdotme@gmail.com; h=from:subject; bh=uyiLO+LNkEVTknh5PCD2nlZig9mEvwEHQFhgoM6Efq8=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBm/ww7t3HvO+itrZPcHkfXXX7POv5J7Ivt/t3dNXtw95 cbLikZCHaUsDGJcDLJiiiyTEvmaTu8yErnQvtYRZg4rE8gQBi5OAZjIh2xGhgmngiZOvbv778Mf qt+c6xktz/Pc7ijtvij5rZxfJeSmLAcjw3xj+Vsf/t/RK96vft34pM2JBH3ug1OZyy742Blr3mf TZAAA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi,
 
---8323328-1816897247-1761300158=:1178
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <0a125242-ab0c-aae7-2380-e599003f1850@linux.intel.com>
+Here are two section headings cleanup patches for Alps HID documentation.
+Enjoy!
 
-On Thu, 23 Oct 2025, Bjorn Helgaas wrote:
+Bagas Sanjaya (2):
+  Documentation: hid-alps: Fix packet format section headings
+  Documentation: hid-alps: Format DataByte* subsection headings
 
-> On Thu, Oct 23, 2025 at 05:02:42PM -0500, Lucas De Marchi wrote:
-> > On Thu, Oct 23, 2025 at 04:29:43PM -0500, Bjorn Helgaas wrote:
-> > > On Wed, Oct 22, 2025 at 04:33:20PM +0300, Ilpo J=E4rvinen wrote:
-> > > > pci.c has been used as catch everything that doesn't fits elsewhere
-> > > > within PCI core and thus resizable BAR code has been placed there a=
-s
-> > > > well. Move Resizable BAR related code to a newly introduced rebar.c=
- to
-> > > > reduce size of pci.c. After move, there are no pci_rebar_*() calls =
-from
-> > > > pci.c indicating this is indeed well-defined subset of PCI core.
-> > > >=20
-> > > > Endpoint drivers perform Resizable BAR related operations which cou=
-ld
-> > > > well be performed by PCI core to simplify driver-side code. This
-> > > > series adds a few new API functions to that effect and converts the
-> > > > drivers to use the new APIs (in separate patches).
-> > > >=20
-> > > > While at it, also convert BAR sizes bitmask to u64 as PCIe spec alr=
-eady
-> > > > specifies more sizes than what will fit u32 to make the API typing =
-more
-> > > > future-proof. The extra sizes beyond 128TB are not added at this po=
-int.
-> > > >=20
-> > > > Some parts of this are to be used by the resizable BAR changes into=
- the
-> > > > resource fitting/assingment logic but these seem to stand on their =
-own
-> > > > so sending these out now to reduce the size of the other patch seri=
-es.
-> > > >=20
-> > > > v3:
-> > > > - Rebased to solve minor conflicts
-> > > >=20
-> > > > v2: https://lore.kernel.org/linux-pci/20250915091358.9203-1-ilpo.ja=
-rvinen@linux.intel.com/
-> > > > - Kerneldoc:
-> > > >   - Improve formatting of errno returns
-> > > >   - Open "ctrl" -> "control"
-> > > >   - Removed mislead "bit" words (when referring to BAR size)
-> > > >   - Rewrote pci_rebar_get_possible_sizes() kernel doc to not claim =
-the
-> > > >     returned bitmask is defined in PCIe spec as the capability bits=
- now
-> > > >     span across two registers in the spec and are not continuous (w=
-e
-> > > >     don't support the second block of bits yet, but this API is exp=
-ected
-> > > >     to return the bits without the hole so it will not be matching =
-with
-> > > >     the spec layout).
-> > > > - Dropped superfluous zero check from pci_rebar_size_supported()
-> > > > - Small improvement to changelog of patch 7
-> > > >=20
-> > > > Ilpo J=E4rvinen (11):
-> > > >   PCI: Move Resizable BAR code into rebar.c
-> > > >   PCI: Cleanup pci_rebar_bytes_to_size() and move into rebar.c
-> > > >   PCI: Move pci_rebar_size_to_bytes() and export it
-> > > >   PCI: Improve Resizable BAR functions kernel doc
-> > > >   PCI: Add pci_rebar_size_supported() helper
-> > > >   drm/i915/gt: Use pci_rebar_size_supported()
-> > > >   drm/xe/vram: Use PCI rebar helpers in resize_vram_bar()
-> > > >   PCI: Add pci_rebar_get_max_size()
-> > > >   drm/xe/vram: Use pci_rebar_get_max_size()
-> > > >   drm/amdgpu: Use pci_rebar_get_max_size()
-> > > >   PCI: Convert BAR sizes bitmasks to u64
-> > > >=20
-> > > >  Documentation/driver-api/pci/pci.rst        |   3 +
-> > > >  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c  |   8 +-
-> > > >  drivers/gpu/drm/i915/gt/intel_region_lmem.c |  10 +-
-> > > >  drivers/gpu/drm/xe/xe_vram.c                |  32 +-
-> > > >  drivers/pci/Makefile                        |   2 +-
-> > > >  drivers/pci/iov.c                           |   9 +-
-> > > >  drivers/pci/pci-sysfs.c                     |   2 +-
-> > > >  drivers/pci/pci.c                           | 145 ---------
-> > > >  drivers/pci/pci.h                           |   5 +-
-> > > >  drivers/pci/rebar.c                         | 314 ++++++++++++++++=
-++++
-> > > >  drivers/pci/setup-res.c                     |  78 -----
-> > > >  include/linux/pci.h                         |  15 +-
-> > > >  12 files changed, 350 insertions(+), 273 deletions(-)
-> > > >  create mode 100644 drivers/pci/rebar.c
-> > >=20
-> > > Applied to pci/rebar for v6.18, thanks, Ilpo!
-> >=20
-> > is this for v6.18 or it's a typo and it's going to v6.19?
->=20
-> Oops, sorry, I meant v6.19!  I still have v6.18 regressions top of
-> mind :)
->=20
-> > > If we have follow-on resource assignment changes that depend on these=
-,
-> > > maybe I'll rename the branch to be more generic before applying them.
+ Documentation/hid/hid-alps.rst | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Okay.
 
-The bigger challenge, though, will be that it now seems I need to bite the=
-=20
-bullet and rework the BAR resizing functions to fix v6.18-rc & v6.15=20
-regressions which will touch pci_resize_resource() or more to be more=20
-precise, add pci_release_and_resize_resource() interface. I've been=20
-postponing this as it seems quite intrusive and the upcoming resource=20
-fitting improvements should make driver initiated BAR resize pretty=20
-unnecessary anyway. It seems the shortcut didn't work. :-(
+base-commit: 828aeac92901c1f31b51ae0b9d792b9af5bd3e27
+-- 
+An old man doll... just what I always wanted! - Clara
 
-It will certainly conflict with the rebar.c move in this series. (I=20
-hopefully have the rework ready next week).
-
-And sure, I've resource assignment changes piling up as well here, just=20
-have been busy with handling all the regression so I've not gotten to=20
-submit some of those. Most of them shouldn't conflict with rebar.c code=20
-anyway (probably only adding a few new helpers for the max rebar changes=20
-will but with the current state of affairs with all these regressions on=20
-my plate, the max rebar changes themselves seems already tracking=20
-next-next instead of 6.19).
-
-> > > Also applied the drivers/gpu changes based on the acks.  I see the CI
-> > > merge failures since this series is based on v6.18-rc1; I assume the
-> > > CI applies to current linux-next or similar.  I'll check the conflict=
-s
-> >=20
-> > it tries on drm-tip that contains drm-xe-next going to v6.19. We have
-> > some changes there that conflict, but shouldn't be hard.
->
-> > We also need https://lore.kernel.org/linux-pci/20250918-xe-pci-rebar-2-=
-v1-1-6c094702a074@intel.com/
-> > to actually fix the rebar in some cases. Could you take a look?
->=20
-> Will do.  Remind me again if I forget!
->=20
-> Bjorn
->=20
-
---=20
- i.
---8323328-1816897247-1761300158=:1178--
 
