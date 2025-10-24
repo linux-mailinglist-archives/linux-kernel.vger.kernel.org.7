@@ -1,158 +1,150 @@
-Return-Path: <linux-kernel+bounces-868111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 869D5C04645
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:24:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7221DC04663
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 12EC24E3E36
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:24:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C8EB3A9AAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF96E269B1C;
-	Fri, 24 Oct 2025 05:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C7F2144C9;
+	Fri, 24 Oct 2025 05:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="nQtR3tla";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z53lB5uA"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OCNwGQRu"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF0518FDAF;
-	Fri, 24 Oct 2025 05:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA9835B14E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761283452; cv=none; b=obpl2wSDjyPl19jOZN3VRhIk3f7DYe/Ld13/NF+3qgKHyb50f+ukfVojHpf0/sYwbG+RAeKqJZj2BIiJJYM7yChqAj4nIsOEG2lo/pEsaJIoYqzcVbIn5m74FB6P0UueQ6sFaebTav+ZEJIqS7XloDF9WjjmH+bruIxSPZwuAL4=
+	t=1761283915; cv=none; b=lq2Qo8FMsaN9dA+KvWjg8OEYsX8HUl0BEvTga61Pdtm3263FFTQ69rtREmJ+4BmlFIDCmK+7DwNQrk6oOsBFxl4qqr1DhJMRKVkJFCZhH1d4JYV5qyXu15AuvAYPzpZjuM9wjP+qS0Qcx9b/KxnNlqE5CivgYmCP0e8s0SxneW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761283452; c=relaxed/simple;
-	bh=NkXYq5Y1DtBiY/fJleyZOFYqLgHNMhz2vKYk/rGQ5nY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sgj2QBGHYNaQsqqr6ggEYJT9deIWhOGA+o/yLufOHH4ULcFQH/kGIBPcr5+vLP5wxGO8LBKFcwUh4lcEn30nKRYsqFAypMet9uJH3g6yt7KYjsEzJp8wzMsEkHeKPKEpxGfeM4OctdSuhruRWueQfy4s2jAu6hEUDeozoK1afmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=nQtR3tla; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z53lB5uA; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id D4E30EC0288;
-	Fri, 24 Oct 2025 01:24:08 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Fri, 24 Oct 2025 01:24:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1761283448; x=1761369848; bh=OXPzRTNSgR
-	WkmQae3N485kKFjn4ctYst9EikgzCRO6A=; b=nQtR3tla6rd1TfWQnCejH/lM8y
-	GOxNPH0u2H2jOEvoBtrHH93ZPbQ5nTuYgoXGBKLXmMubcjP1stHyT5ua4hFecVAa
-	ckZk2u7GYybfuidlIsDZ9OWloPcv8xYblhNko9EfsHWQujrQnSmt6239bMtnNq2S
-	3s9s0G7dGN8F8rcVEFVtGts4FlNAeQ/3z0BjKVURtLybDgGSs7cQbHQOTb0hrAIm
-	QEYfDgRhxvAs64k2+Ynwz9J2W944g2YRirbBf6Z32W273S3bInIagpXCDstb71cE
-	5X08/FcKYAQs841uwHwGRAI73sCkSFU4XyefHcBPDTpvsJYRQFBDVS6iwb8g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1761283448; x=1761369848; bh=OXPzRTNSgRWkmQae3N485kKFjn4ctYst9Ei
-	kgzCRO6A=; b=Z53lB5uAZP6nAAZI8aCAWbNADWirsYP4MiiZJK0qph+9BkmNByI
-	vNHiJkSZDHKEd2zqh1SVNMDEITTKzODi1rxI6fw1hFq+7Ez41t3sM1K+GN1COFsj
-	/0lYxZr8wY4EWk5cgOkZDGIiocONn++NvkLDqWtTq0UYaxP3wIjBRcoZB9/laiZD
-	A/W1MRCBirv0duAfdkmvhCwMQ/PPnAjHkOgTyhYveg6aTbT03zRxL/+nRWbACR4z
-	+RF4+3Es8dTsxD2QsLyAYVW3k85rkmp5WkhJoB4qb73Ggoq7VBeG827qFcH7n6VB
-	+KlO3zHl/Ou6JZkcZLqy9xTwfCGrxlq9zHQ==
-X-ME-Sender: <xms:dw37aMVMniGqbVKkn3eUp9eOg78YWjkjM2Y5jVA9T5-7oIU5u9UirQ>
-    <xme:dw37aFz1e1W8s1IncHDJbDvEN4po41iPPy_1g98zvYceqK1pplBcXj7nZ8tbg4U-C
-    FzcX1rF2aObIjxAuaPhNay6ywB4dS-iMphUL1U7SsZGgqlt>
-X-ME-Received: <xmr:dw37aDyoctyHOy1wdcSbyZTUVDzS2YjLhyTOtaQllrrAsa2LYBePYR-Xf6HfhlrjzVNjiVJqg1ScDXwZg8YBrvWi5z1jkQ07eGwgYA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeekgeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
-    jfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvdevvd
-    eljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhsthgv
-    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrd
-    gtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupdhrtghpthhtoheprghrnhguse
-    grrhhnuggsrdguvgdprhgtphhtthhopegrkhhshhgrhidrghhuphhtrgesrghmugdrtgho
-    mhdprhgtphhtthhopehjuggvlhhvrghrvgesshhushgvrdguvgdprhgtphhtthhopehlih
-    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:dw37aK3IZZ3P7NuevJyKCymQmvtCnL3frZQVf9qecDMlsGrpgoIF1Q>
-    <xmx:dw37aBpzmV75Poj5hVbZKRwLRRU3tgb6qKi8KW9Sfjk8WRvJj4yxTg>
-    <xmx:dw37aADelw0xC_YxA4qmNulzo29QT0wQRUPdyU4140JteeqzyetKtQ>
-    <xmx:dw37aCoX2SXL83gxqXW3dWjrZtTS4E7ABUxkaAHjXKoqVcT0dEunag>
-    <xmx:eA37aBy0MpT9woTYlgKXCQycLVSE4FkE0D87arG8ZshlZFKn7XTigkyv>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 24 Oct 2025 01:24:07 -0400 (EDT)
-Date: Fri, 24 Oct 2025 07:24:04 +0200
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Akshay Gupta <akshay.gupta@amd.com>,
-	Jean Delvare <jdelvare@suse.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the char-misc tree with the
- char-misc.current tree
-Message-ID: <2025102457-sleek-unrented-a6f9@gregkh>
-References: <20251024124906.70323e51@canb.auug.org.au>
+	s=arc-20240116; t=1761283915; c=relaxed/simple;
+	bh=5QVlq1E1welM33ugXxDMeg6/WrmnoC8hajuTmVVFYYs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZM+KQGaApvxEcmoj7OukJL8nkiduBwRL3nF5+PEc+JMNpr32P6vZChjUmfXcCQj4G5HjpR4l1iuCAH70p7BM5UR6/K2xNbPSHfV2fImOBbDNnlpZr9u7BSGBRgXzqRQN7vbw+5YwRAKYWZvV6n6i9Fh0DfyW5vqGlmCujfTbPQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OCNwGQRu; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b62e7221351so1431669a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 22:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761283913; x=1761888713; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rHfVHx15Bq2/aoRhICm73cKae4vxx15Gf2KsSuTNfOg=;
+        b=OCNwGQRuGgpz+1UZjoxX9x/sRd28OW82fNFPTWWSyUUwXxeDEcPHmeRsL2lZerLPEB
+         d4JykDDSYjV6l/V2zrBDVS90Txp4loP9DABmxoe60xSBnPzCa1zffFYwGQDoJeg6Ue+s
+         nHfjYMqOXdyt8eAlFYLW5VNAoZVhiWOrBnT2zUA01OnuNz3v6nUSO+FDd9oWlxGGR3kL
+         d9DSX8jo4ON911L9jFDjAdQmpxb1d5NqU9LPx+K3tQybMOrk8fk5veJXe/uD13WfDNzJ
+         9FQD3zyzTAR8Bvu4TlT1MUhBbKnZQWZ+BskCbhFNi7wNgeJ3tReHwblPP+5Y3S/wpxdT
+         /EAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761283913; x=1761888713;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rHfVHx15Bq2/aoRhICm73cKae4vxx15Gf2KsSuTNfOg=;
+        b=Dhc/hUbO/piz9Wonx3IlOYfEDKkzFjYUYy/0cjRuFpYJCOfz2j6MZLNIQHel0CCT5w
+         RcMKbW/HUeckFoXnxGu9G4SMgEzNx0NdeNfG/4Omm9zPC/CC4wMwwDqltsze1W/itRWk
+         hiYq1fHW7HzoR+ePft5eB5dS3BFBuWXw71HHN+QY76hrQ6YkAfvTm3iUllXmT9QJppq6
+         +dpNP/QDoFm/G7M2EuVrPckHiE/PAisstdmLUVYkcXerdR0LjdVQf2y3capv9eRcCtEq
+         za8jzJt0k1D8w0A2P6bbMu2HBI3yNm20sssuHFATOLF8swg/BXp/8uBLjiXtuFcqYx15
+         ZSSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnjVOtiIdEdDb2krvZm8pu7HtadPpmkDFqlUnm19sClHKPa1Cla1PRAzaYUqYyHwQTOmHirskTgFdthJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG40NozocaFqUrO+SMi1zNqCVFbdVRklb5AJ5EFepD/UWQgtY/
+	tqFpNK24R1fxSbdNAU/dF2svSgTgfD0LS40kDXIy5fvF2RU04zsDfPO36Rl9SExD6SCRrrcF5vr
+	mZdcGVfPRW8yWseSG5eUSo9OQ4IxV8/sbzfWZ1zF4
+X-Gm-Gg: ASbGncsqnFbXGEUqrx41dWZmIGYYbXzu0jRcbHIDPVK79d4mwRu6ge08X3dfZ5Ksjr2
+	HMb3Apov6txXdvf1cSKP6Lbq4/3KlBM5n18B1Cj01lmrZVd0MwGdbPlaE3Pay0UJt7GXdYM+2xF
+	4qnF51cM5ApoyuSldUe8U62aw91BKT9kUfAyMnZXTt4nthjqtV2mpnAxu+izdOn5EEyNVD+vPgP
+	1v2CTVlRjCL8AFVw6p4j4HDsmCDEFHQovEXh2DecZclW01ruCnRUNzL7lZtaNWcaNo11dmnksgc
+	ulZern64oRepGoGVm74zDNA8uA==
+X-Google-Smtp-Source: AGHT+IF/VvU9VCEldtU8TlKdOOJKqinHd6plYVfP7jz1N/U0hWCfgU1KoVW9GCuTIIpcsB4YHkE/z7uj+DsUXzYb81k=
+X-Received: by 2002:a17:902:f542:b0:24f:dbe7:73a2 with SMTP id
+ d9443c01a7336-290ca121a7bmr368072235ad.31.1761283912454; Thu, 23 Oct 2025
+ 22:31:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024124906.70323e51@canb.auug.org.au>
+References: <20251023000535.2897002-1-kuniyu@google.com> <20251023000535.2897002-2-kuniyu@google.com>
+ <CAHk-=wjXGvUnmN5ZL3nhj_J0cbiVfeHsM9Z54A55rgHRUaVOfA@mail.gmail.com> <20251023092910.2ed9cf15@pumpkin>
+In-Reply-To: <20251023092910.2ed9cf15@pumpkin>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Thu, 23 Oct 2025 22:31:41 -0700
+X-Gm-Features: AS18NWAlIGQJ_wV8neCVFWBA2cf-w_Bdy_0uat0cNCw22R5tVWCPnuP-0EplywA
+Message-ID: <CAAVpQUC=KH8iFOdMZfnuXdEMuCYuEgFxNvU93zgFNiGSU_tMLQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] uaccess: Add __user_write_access_begin().
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Jens Axboe <axboe@kernel.dk>, 
+	Christian Brauner <brauner@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Eric Dumazet <edumazet@google.com>, 
+	Kuniyuki Iwashima <kuni1840@gmail.com>, x86@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 24, 2025 at 12:49:06PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the char-misc tree got a conflict in:
-> 
->   drivers/misc/amd-sbi/Kconfig
-> 
-> between commit:
-> 
->   70ad06df73a9 ("misc: amd-sbi: Clarify that this is a BMC driver")
-> 
-> from the char-misc.current tree and commit:
-> 
->   5c7dddd7360b ("misc: amd-sbi: Add support for SB-RMI over I3C")
-> 
-> from the char-misc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/misc/amd-sbi/Kconfig
-> index ab594908cb4a,acf0450ba220..000000000000
-> --- a/drivers/misc/amd-sbi/Kconfig
-> +++ b/drivers/misc/amd-sbi/Kconfig
-> @@@ -2,11 -2,11 +2,13 @@@
->   config AMD_SBRMI_I2C
->   	tristate "AMD side band RMI support"
->   	depends on I2C
->  +	depends on ARM || ARM64 || COMPILE_TEST
->   	select REGMAP_I2C
-> + 	depends on I3C || !I3C
-> + 	select REGMAP_I3C if I3C
->   	help
-> - 	  Side band RMI over I2C support for AMD out of band management.
-> + 	  Side band RMI over I2C/I3C support for AMD out of band management.
->  +	  This driver is intended to run on the BMC, not the managed node.
->   
->   	  This driver can also be built as a module. If so, the module will
->   	  be called sbrmi-i2c.
+On Thu, Oct 23, 2025 at 1:29=E2=80=AFAM David Laight
+<david.laight.linux@gmail.com> wrote:
+>
+> On Wed, 22 Oct 2025 19:37:27 -1000
+> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>
+> > On Wed, 22 Oct 2025 at 14:05, Kuniyuki Iwashima <kuniyu@google.com> wro=
+te:
+> > >
+> > > unsafe_put_user() can be used to save a stac/clac pair, but
+> > > masked_user_access_begin() or user_access_begin() introduces
+> > > an unnecessary address masking or access_ok().
+> > >
+> > > Add a low-level helper for such a use case.
+> >
+> > I really suspect that you cannot actually measure the cost of the
+> > extra masking, and would be much happier if you just used a regular
+> > "user_access_begin()" (perhaps the "user_write_access_begin()"
+> > variant).
+>
+> Or wait for scoped_user_write_access() to get committed and then use that=
+.
 
-Looks good to me, thanks!
+IIUC, scoped_user_write_access() is simply inlined to
+masked_user_access_begin() or user_access_begin(), and this
+is the case where I saw no improvement or even worse performance.
 
-greg k-h
+>
+>         David
+>
+> >
+> > The masking is very cheap - literally just a couple of ALU
+> > instructions. And unless you can actually measure some real advantage
+> > of avoiding it, let's not add another helper to this area.
+
+Yes, it's only 3 instructions on x86_64, but by saving them
+I saw better performance constantly.  Please see the numbers here.
+https://lore.kernel.org/lkml/20251024051653.66329-1-kuniyu@google.com/
+
+
+> >
+> > We spent a fair amount of time undoing years of "__get_user()" and
+> > "__put_user()" cases that didn't actually help, and sometimes only
+> > made it hard to see where the actual user pointer validation was done.
+> >
+> >                Linus
+> >
+>
 
