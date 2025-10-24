@@ -1,181 +1,189 @@
-Return-Path: <linux-kernel+bounces-869345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2096C07A68
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:09:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A657FC07A38
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AC013B88C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:04:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044D91C83938
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347F027280E;
-	Fri, 24 Oct 2025 18:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A07347FC9;
+	Fri, 24 Oct 2025 18:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dbGEMx/w"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XUcqSN5j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB44F348890
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BB31990A7;
+	Fri, 24 Oct 2025 18:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761329011; cv=none; b=dg9UFN6Q7cIxa7u3vprgAYvEhH3UEkwyBF54iGsqWyQTGRWwbFtgeysw+WWs4cX/Q1UIiqAZbi05BUQJqNA8ygglJgXBvt7MP65iRv36zMnknsi1Qy8j+74gWVjstZjkAzofhvgCTBCQxyiIT66blo3nrRFyNLgT86RCkFvFiQE=
+	t=1761329001; cv=none; b=a0XE1N3ZrWABv1dBV8dMoymLmKlOZkeeHzyOzlvHqyilaDO1aoHDP+Q/tWNI7g+ZYlVcFPGAJ4/73jUCC3djjMDsnyvIzQt2OahWpTzLP5nV7xfZ/7lcjfLbCvAZ65A7ms/LAKpVtKUzqvad0Tf9YmFv5Dh5Xl137ONTyhsL5Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761329011; c=relaxed/simple;
-	bh=M5RVCn9BwgC5fLVWadVrasO8jK1wZc4e0dTMYnPxAxw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F7IU1uhoGJUUdKMeC57Di8rGwMz0Dj6TPIEeuiZg2aWr46J5lnQV9GAJM8rX7p7fU8eDt177E2aD36bnANCQJLYArCo0UDdplb+PrzsQ0v93pC1ptuzVOwPfdwaiJZK4aRW7wA1KqznjffQcCYXsv0ngKVcjtGN7EY9dIFx/Fwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dbGEMx/w; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-781014f4e12so28479907b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:03:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761329008; x=1761933808; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0g533bbt6NpsbcwNT6NMvXPO9X/fhaRkOul4lh2e8Wc=;
-        b=dbGEMx/wyoroUdexYBOyVxVeRfQYoCQ8WGO56L6jcLMlVCMQth7OzVJKYMiwfM5wfm
-         Eid3yvTtelyz3MxEJfTmABsJb+S5Q6NUWkk4ieQMHkyuR9M6trG1s/pS1MaMwPaW7uhg
-         7pwOUXbG3nc+kTOIQcXVqCBFv/aAzmPa4oyr9HtEFodzzduDVI0JWkn6ctVHvJ6EJVoO
-         9YexLAmrUa139HPZCu55er5HGry1/nzA/gF/uTsxdSrlKXzpfU5A+Zaj+2TrNZawAOvf
-         Vb8pELZxCgtvk5eJKf6ybJD8kHwj5gdci9QQngXpv7frp8UGtknsxZqwmIUfxmbSQ11O
-         tvtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761329008; x=1761933808;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0g533bbt6NpsbcwNT6NMvXPO9X/fhaRkOul4lh2e8Wc=;
-        b=IpmlIqLjxdGo6vah0GT2ciN5Z4qZEJ8HZEKKsZvLmedxuBKvX2qOTRYZi3hZJzArhY
-         Mtp6jZKnFSvuTvNsYHKONRv2uOeMBVdeoZcsWUqydY+jFTYGzPWJ4dKoXrBSD4VtRe6E
-         URJXeWJrFZ+3cUWzZWxD1J1fAeFZ36pjfPLlHzLKPeStnURzv8uj3dx1lOTBx4AuTsg5
-         xRrJCzEF6Wk2bgzXofDT5CZwvTn+APo+Aw+90Ayj2AQLfW+qeSzA6fltXy9SLe5D5zEE
-         KXs2Q5vo7J+ISSnduaNmODUSjqe0sbvn6hjwWaO8CnHSPKKPyhwnEWNcnAFE93dcPGHf
-         n9Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3zALgQu7CSWaBZ0NXkhnhwsWKQ/UHxruXSUZK8Cy9MLs0NEYiBIUjcr2cmTMML+VIJkFJPY1JgzBCDcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX0m/AnETx5i8GRZJLRX0mlwTfqCmk+S3ktYnXTBzjHnOwA4j0
-	AeoqSbYLZzlEo5wkCYhAzhIGGUta3ILddphI1ctC3ixgUdB1tyk+5MCYD3FKqlxM
-X-Gm-Gg: ASbGncs1mrRCsYq5mN+7TUmohO2lWJoe6yFKq9QIcayHGoLtZbmMAo8yIYHUE9H3M2G
-	NFmPy63+wa2HxmnSH0NNjujFOJANJYm76VgDtmC3m/dHtAkYOSYye2M4K4MEXsrf0970lDXQNA0
-	pHH0zQUagLaWpOueZUM/WLHf58nAoFQasKS9SXT6Egarupv0X1r23jar1gWGW7naPMXN7WoHMNa
-	rgxdol4/Wy6DuwNKlY4nmeGXP0bFF0UZMEilCx2gMBf70lCFPVWI6kHbape0PN39ZCdwOXZpu8a
-	PLVz2XAq1VZhDzhYojqdRUbKNh0VfGvuZPKNEVKz42tIeOCO0Moeopznpp/8xjp+dFRzIoTAord
-	e0KbP4SN6hNsq4wU8sCfuxUUYVs85D65fuQFaJQmo1KuxP2XSIDb91wtPo0vx7Coed2P759VtYl
-	NWsCRLacLBdXs=
-X-Google-Smtp-Source: AGHT+IGW9slpRY/IWqE2w4+xMpgKNg5YuX82XmdT/rmNQejG8ZsGNtQ3sz3PyIPbGqB/NuXoRgNXYw==
-X-Received: by 2002:a05:690c:338a:b0:784:8239:95a1 with SMTP id 00721157ae682-7848239a4dfmr199157787b3.41.1761329008294;
-        Fri, 24 Oct 2025 11:03:28 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:70::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-785cd6c6219sm14744247b3.40.2025.10.24.11.03.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 11:03:27 -0700 (PDT)
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-Date: Fri, 24 Oct 2025 11:02:56 -0700
-Subject: [PATCH net-next] net: netmem: remove NET_IOV_MAX from net_iov_type
- enum
+	s=arc-20240116; t=1761329001; c=relaxed/simple;
+	bh=zDmHT6EI+5KM36Gi2vKqy6ReftN+8VK2vT+rpSoN2RI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LepGu+OjCfZ6FEgbESw4RCUXyDB3VrJ0/omhvNGmMhtBimezOKW2UYxanqPPrJ2CGlJUQbup3AoyPHo2Tk/6gMXb1XARrw/SFKDWogt0IvjgNln+lEPZGiMhb+fTRlwuinvigXZ2ToT2qCzpU4DmaxhFEI0EgsUEOe6gRROrKJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XUcqSN5j; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761328999; x=1792864999;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zDmHT6EI+5KM36Gi2vKqy6ReftN+8VK2vT+rpSoN2RI=;
+  b=XUcqSN5jbr310iDgdxmw0/rUNWnksQE0pSgoLoS6LGvfmJrD9FsB2XXK
+   X9APqwXbaTiZxfWziFazocx6PLYFcKNRPp8oIqhCZBZLLq18yjOROLiYb
+   qXAacxxRaCRMJJ2YA2bM9dzoUqhf5ai7Sf3EeA0JDsX77a+gf/69O2UQM
+   eba/2XVYnpY+lm+5xFTdBdQ2v+iaPqrGkvWqb0As8HBU/C3NHC+jPiO/W
+   u8/LCMEAzMW34rCHjj/uAODxhpE07BHXmKZWk/08mQNvcyoa4nsSgGg0S
+   sr9Qsh/V1rZy6gLiOgbQFqeEM/s7LAjpv7SiIewfUQ8vtuIcTTKk9TbOw
+   Q==;
+X-CSE-ConnectionGUID: 0Vs/D58/QFik6nNU7364QQ==
+X-CSE-MsgGUID: Ugs2M8MITX+wVkXknVODFQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63406583"
+X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
+   d="scan'208";a="63406583"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 11:03:18 -0700
+X-CSE-ConnectionGUID: eWSF1972SSCSbwwEROgUEg==
+X-CSE-MsgGUID: a9zmkhTUROmCyfJhhXLbZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
+   d="scan'208";a="188876624"
+Received: from soc-cp83kr3.clients.intel.com (HELO [10.241.241.181]) ([10.241.241.181])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 11:03:18 -0700
+Message-ID: <576a7d2b-0a82-4738-8b86-507e4d841524@intel.com>
+Date: Fri, 24 Oct 2025 11:03:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-b4-devmem-remove-niov-max-v1-1-ba72c68bc869@meta.com>
-X-B4-Tracking: v=1; b=H4sIAE+/+2gC/x3MQQ7CIBBG4as0s3YSwBrUqxgXLfzqLBgMNISk6
- d0lLr/FeztVFEGl+7RTQZMqWQfsaaLwWfQNljhMzriLNW7mdeaIlpC4IOUGVsmN09LZxLP39ur
- DLaw0+m/BS/r//SDFxoq+0fM4fpMs+nh1AAAA
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mina Almasry <almasrymina@google.com>, Byungchul Park <byungchul@sk.com>, 
- Stanislav Fomichev <sdf@fomichev.me>, 
- Bobby Eshleman <bobbyeshleman@meta.com>
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf tools: Refactor precise_ip fallback logic
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>,
+ Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@redhat.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ thomas.falcon@intel.com, dapeng1.mi@linux.intel.com, xudong.hao@intel.com
+References: <20251022220802.1335131-1-zide.chen@intel.com>
+ <aPrktlANBHFtV52B@google.com>
+Content-Language: en-US
+From: "Chen, Zide" <zide.chen@intel.com>
+In-Reply-To: <aPrktlANBHFtV52B@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Bobby Eshleman <bobbyeshleman@meta.com>
 
-Remove the NET_IOV_MAX workaround from the net_iov_type enum. This entry
-was previously added to force the enum size to unsigned long to satisfy
-the NET_IOV_ASSERT_OFFSET static assertions.
 
-After commit f3d85c9ee510 ("netmem: introduce struct netmem_desc
-mirroring struct page") this approach became unnecessary by placing the
-net_iov_type after the netmem_desc. Placing the net_iov_type after
-netmem_desc results in the net_iov_type size having no effect on the
-position or layout of the fields that mirror the struct page.
+On 10/23/2025 7:30 PM, Namhyung Kim wrote:
+> Hello,
+> 
+> On Wed, Oct 22, 2025 at 03:08:02PM -0700, Zide Chen wrote:
+>> Commit c33aea446bf555ab ("perf tools: Fix precise_ip fallback logic")
+>> unconditionally called the precise_ip fallback and moved it after the
+>> missing-feature checks so that it could handle EINVAL as well.
+>>
+>> However, this introduced an issue: after disabling missing features,
+>> the event could fail to open, which makes the subsequent precise_ip
+>> fallback useless since it will always fail.
+>>
+>> For example, run the following command on Intel SPR:
+>>
+>> $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads,ldlat=3/PS}' -- ls
+>>
+>> Opening the event "cpu/mem-loads,ldlat=3/PS" returns EINVAL when
+>> precise_ip == 3. It then sets attr.inherit = false, which triggers a
+> 
+> I'm curious about this part.  Why the kernel set 'inherit = false'?  IOW
+> how did the leader event (mem-loads-aux) succeed with inherit = true
+> then?
 
-The layout before this patch:
+Initially, the inherit = true for both the group leader
+(cpu/mem-loads-aux/S) and the event in question (cpu/mem-loads,ldlat=3/PS).
 
-struct net_iov {
-	union {
-		struct netmem_desc desc;                 /*     0    48 */
-		struct {
-			long unsigned int _flags;        /*     0     8 */
-			long unsigned int pp_magic;      /*     8     8 */
-			struct page_pool * pp;           /*    16     8 */
-			long unsigned int _pp_mapping_pad; /*    24     8 */
-			long unsigned int dma_addr;      /*    32     8 */
-			atomic_long_t pp_ref_count;      /*    40     8 */
-		};                                       /*     0    48 */
-	};                                               /*     0    48 */
-	struct net_iov_area *      owner;                /*    48     8 */
-	enum net_iov_type          type;                 /*    56     8 */
+When the second event fails with EINVAL, the current logic calls
+evsel__detect_missing_features() first. Since this is a PERF_SAMPLE_READ
+event, the inherit attribute falls back to false, according to the
+fallback order implemented in evsel__detect_missing_features().
 
-	/* size: 64, cachelines: 1, members: 3 */
-};
+> 
+>> kernel check failure since it doesn't match the group leader's inherit
+>> attribute. As a result, it continues to fail even after precise_ip is
+>> reduced.
+>>
+>> By moving the precise_ip fallback earlier, this issue is resolved, as
+>> well as the kernel test robot report mentioned in commit
+>> c33aea446bf555ab.
+>>
+>> No negative side effects are expected, because the precise_ip level is
+>> restored by evsel__precise_ip_fallback() if the fallback does not help.
+> 
+> I'm not sure.. some events may need a different (i.e. lower) precise
+> level than the max.  I think checking the missing feature later will
+> use the max precise level always.
 
-The layout after this patch:
+Yes, but seems the basic idea of the event open fallback logic is to
+check whether it's lucky enough to open the event by falling back one
+single attribute, not multiple attributes.
 
-struct net_iov {
-	union {
-		struct netmem_desc desc;                 /*     0    48 */
-		struct {
-			long unsigned int _flags;        /*     0     8 */
-			long unsigned int pp_magic;      /*     8     8 */
-			struct page_pool * pp;           /*    16     8 */
-			long unsigned int _pp_mapping_pad; /*    24     8 */
-			long unsigned int dma_addr;      /*    32     8 */
-			atomic_long_t pp_ref_count;      /*    40     8 */
-		};                                       /*     0    48 */
-	};                                               /*     0    48 */
-	struct net_iov_area *      owner;                /*    48     8 */
-	enum net_iov_type          type;                 /*    56     4 */
+evsel__precise_ip_fallback() can restore the precise_ip level after a
+failed attempt, while evsel__detect_missing_features() cannot recover
+the event attributes from its failed try.
 
-	/* size: 64, cachelines: 1, members: 3 */
-	/* padding: 4 */
-};
+Therefore, falling back precise_ip first maintains the intended
+“one-by-one” fallback logic. If it’s placed later, it may combine two
+fallbacks, which can cause failures like the example above.  Of course,
+in theory, there might be cases where an event can be opened if both
+precise_ip and another feature are relaxed together, but I haven’t
+exhaustively checked whether such cases actually exist.
 
-Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
----
- include/net/netmem.h | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/include/net/netmem.h b/include/net/netmem.h
-index 651e2c62d1dd..9e10f4ac50c3 100644
---- a/include/net/netmem.h
-+++ b/include/net/netmem.h
-@@ -68,10 +68,6 @@ DECLARE_STATIC_KEY_FALSE(page_pool_mem_providers);
- enum net_iov_type {
- 	NET_IOV_DMABUF,
- 	NET_IOV_IOURING,
--
--	/* Force size to unsigned long to make the NET_IOV_ASSERTS below pass.
--	 */
--	NET_IOV_MAX = ULONG_MAX
- };
- 
- /* A memory descriptor representing abstract networking I/O vectors,
-
----
-base-commit: f0a24b2547cfdd5ec85a131e386a2ce4ff9179cb
-change-id: 20251024-b4-devmem-remove-niov-max-0d377187c9cb
-
-Best regards,
--- 
-Bobby Eshleman <bobbyeshleman@meta.com>
+> Thanks,
+> Namhyung
+> 
+>>
+>> This also aligns with commit 2b70702917337a8d ("perf tools: Remove
+>> evsel__handle_error_quirks()").
+>>
+>> Fixes: af954f76eea56453 ("perf tools: Check fallback error and order")
+>> Fixes: c33aea446bf555ab ("perf tools: Fix precise_ip fallback logic")
+>> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> Signed-off-by: Zide Chen <zide.chen@intel.com>
+>> ---
+>>  tools/perf/util/evsel.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+>> index ca74514c8707..6ce32533a213 100644
+>> --- a/tools/perf/util/evsel.c
+>> +++ b/tools/perf/util/evsel.c
+>> @@ -2714,12 +2714,12 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
+>>  	if (err == -EMFILE && rlimit__increase_nofile(&set_rlimit))
+>>  		goto retry_open;
+>>  
+>> +	if (evsel__precise_ip_fallback(evsel))
+>> +		goto retry_open;
+>> +
+>>  	if (err == -EINVAL && evsel__detect_missing_features(evsel, cpu))
+>>  		goto fallback_missing_features;
+>>  
+>> -	if (evsel__precise_ip_fallback(evsel))
+>> -		goto retry_open;
+>> -
+>>  out_close:
+>>  	if (err)
+>>  		threads->err_thread = thread;
+>> -- 
+>> 2.51.0
+>>
 
 
