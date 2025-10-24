@@ -1,92 +1,169 @@
-Return-Path: <linux-kernel+bounces-868501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FA6C0556C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:29:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2309EC05572
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C0194F09BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:29:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF55B4F3757
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703F6309F18;
-	Fri, 24 Oct 2025 09:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZY59KGDu"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C33430AD0A;
+	Fri, 24 Oct 2025 09:30:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C3C2ECD3A;
-	Fri, 24 Oct 2025 09:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFF83081D0
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761298185; cv=none; b=QqLxLpxuYLggNuuBhWSEZmaK7uStgReq46O/n9XHTR9HuqaOAF1eZ/IRgC1U/zdEB10Q1EdSCKv1AAEgRMf65bRLGKsloxUMEI1RFPNkED0BPrkw9PCrVKy3Qdm2dnRN7cr8niZVlww4qGZADAjY8a9Ebk5KHmVXcFntj4iQTBc=
+	t=1761298218; cv=none; b=Apucql5BQNqo+z6bOuunnB5EFJUEOGsc1IJmMw6hMnp9iB0bemR/bZVFdZXisvXPSSWI5npp3DGhBGMeZpRheIXPf225SFypZkcCXTrku5+14CpwEEx79xXeEGiX0qXDgVLU8OhgJE90+7NJSRhsmymaZ6lQhVUbGUZi2OMsIeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761298185; c=relaxed/simple;
-	bh=JF76XAoKNVO9L4nQszY7FwGTkQ7OLRInClINm+CWxbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QnpgHNbNM0SO8H/IVSD/YmX9ZjzT+RZ5Ng9Xnsn58m8T2dTARKTlG3UzwxJNjc3KqjtNwSWhPZCzDON8vbHExTcNkQyeK1cEv2eEKSQJJ0r+YWQhKwiS90HTdGDhqT6NYswkoRJiRmBgwO0NKMKtnQJbEUeNv7XxZXqnK5zgjoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZY59KGDu; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JF76XAoKNVO9L4nQszY7FwGTkQ7OLRInClINm+CWxbM=; b=ZY59KGDuwstrgRFBJR+P2Ayry/
-	DaCwQeivOdMAlLCDL2WwKV0f3CeU7V3UG0jXw0BOhkQiU/6bVBcfeOrcMvjm2l1zlDr/cTqpSNEUB
-	UGhIRTW+ISKP7PY15HTRRQYwGwNo2eV8VSzZmUOtFi9qBzY18+djW1+K8uLnbiA+pRgxNRVFmU31d
-	sguSvcz2oau1XATy93UIkqoZcC0UkbHrPuQUBVhaIUD6t23LMCdYQZFkIezTjVnxUk87jYB52azrd
-	MXkOQPaYqifMtZF956NVEJ9r/wLuLVkit1YHUVQJeH9XBucchNmA4G0ngwyzBfa4CMWixQO/yQKih
-	R64Ow8eA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCDFJ-00000002AZn-2LKC;
-	Fri, 24 Oct 2025 08:34:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1257730023C; Fri, 24 Oct 2025 11:29:26 +0200 (CEST)
-Date: Fri, 24 Oct 2025 11:29:26 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
-	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
-Subject: Re: [PATCH v16 0/4] perf: Support the deferred unwinding
- infrastructure
-Message-ID: <20251024092926.GI4068168@noisy.programming.kicks-ass.net>
-References: <20251007214008.080852573@kernel.org>
- <20251023150002.GR4067720@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1761298218; c=relaxed/simple;
+	bh=yOBvVv5Rv22dnRru+lUh4w3HbXnnSwjZp5nksIyknMs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aq6PU94XBc8jnNxNSNjw51FpPsRHnFs8kGZ4MR+L5u2tHDCwefNXOEpuqWu6zT7bbEfFO1q8Cbv4bQDHh6tA7jvQrHYSog1zCh0JbDQsNYFRITjpMVx8DlJaRollHiRkPsOHCeq7RZArrRU3XJ/JV4WE2e3MVBXMf1MZw6vNNdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vCE7X-0004KG-Vw; Fri, 24 Oct 2025 11:30:04 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vCE7W-005CdB-2l;
+	Fri, 24 Oct 2025 11:30:02 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1vCE7W-000000004wL-3Ejt;
+	Fri, 24 Oct 2025 11:30:02 +0200
+Message-ID: <55ddd10fca3d40a3b628eff419e0a8dc33613c9b.camel@pengutronix.de>
+Subject: Re: [PATCH v8 4/7] reset: rzg2l-usbphy-ctrl: Add support for USB
+ PWRRDY
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Claudiu <claudiu.beznea@tuxon.dev>, vkoul@kernel.org, kishon@kernel.org,
+ 	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, 	magnus.damm@gmail.com,
+ yoshihiro.shimoda.uh@renesas.com, 	biju.das.jz@bp.renesas.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Claudiu
+ Beznea	 <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang	
+ <wsa+renesas@sang-engineering.com>
+Date: Fri, 24 Oct 2025 11:30:02 +0200
+In-Reply-To: <20251023135810.1688415-5-claudiu.beznea.uj@bp.renesas.com>
+References: <20251023135810.1688415-1-claudiu.beznea.uj@bp.renesas.com>
+	 <20251023135810.1688415-5-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023150002.GR4067720@noisy.programming.kicks-ass.net>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Oct 23, 2025 at 05:00:02PM +0200, Peter Zijlstra wrote:
+T24gRG8sIDIwMjUtMTAtMjMgYXQgMTY6NTggKzAzMDAsIENsYXVkaXUgd3JvdGU6Cj4gRnJvbTog
+Q2xhdWRpdSBCZXpuZWEgPGNsYXVkaXUuYmV6bmVhLnVqQGJwLnJlbmVzYXMuY29tPgo+IAo+IE9u
+IHRoZSBSZW5lc2FzIFJaL0czUyBTb0MsIHRoZSBVU0IgUEhZIGJsb2NrIGhhcyBhbiBpbnB1dCBz
+aWduYWwgY2FsbGVkCj4gUFdSUkRZLiBUaGlzIHNpZ25hbCBpcyBtYW5hZ2VkIGJ5IHRoZSBzeXN0
+ZW0gY29udHJvbGxlciBhbmQgbXVzdCBiZQo+IGRlLWFzc2VydGVkIGFmdGVyIHBvd2VyaW5nIG9u
+IHRoZSBhcmVhIHdoZXJlIFVTQiBQSFkgcmVzaWRlcyBhbmQgYXNzZXJ0ZWQKPiBiZWZvcmUgcG93
+ZXJpbmcgaXQgb2ZmLgo+IAo+IE9uIHBvd2VyLW9uL3Jlc3VtZSB0aGUgVVNCIFBXUlJEWSBzaWdu
+YWwgbmVlZCB0byBiZSBkZS1hc3NlcnRlZCBiZWZvcmUKPiBlbmFibGluZyBjbG9jayBhbmQgc3dp
+dGNoaW5nIHRoZSBtb2R1bGUgdG8gbm9ybWFsIHN0YXRlICh0aHJvdWdoIE1TVE9QCj4gc3VwcG9y
+dCkuIFRoZSBwb3dlci1vbi9yZXN1bWUgY29uZmlndXJhdGlvbiBzZXF1ZW5jZSBtdXN0IGJlOgo+
+IAo+IDEvIFBXUlJEWT0wCj4gMi8gQ0xLX09OPTEKPiAzLyBNU1RPUD0wCj4gCj4gT24gcG93ZXIt
+b2ZmL3N1c3BlbmQgdGhlIGNvbmZpZ3VyYXRpb24gc2VxdWVuY2Ugc2hvdWxkIGJlOgo+IAo+IDEv
+IE1TVE9QPTEKPiAyLyBDTEtfT049MAo+IDMvIFBXUlJEWT0xCj4gCj4gVGhlIENMS19PTiBhbmQg
+TVNUT1AgZnVuY3Rpb25hbGl0aWVzIGFyZSBjb250cm9sbGVkIGJ5IGNsb2NrIGRyaXZlcnMuCj4g
+VGhlIHN1c3BlbmQvcmVzdW1lIHN1cHBvcnQgd2lsbCBiZSBoYW5kbGVkIGJ5IGRpZmZlcmVudCBw
+YXRjaGVzLgo+IAo+IEFmdGVyIGxvbmcgZGlzY3Vzc2lvbnMgd2l0aCB0aGUgaW50ZXJuYWwgSFcg
+dGVhbSwgaXQgaGFzIGJlZW4gY29uZmlybWVkCj4gdGhhdCB0aGUgSFcgY29ubmVjdGlvbiBiL3cg
+VVNCIFBIWSBibG9jaywgdGhlIFVTQiBjaGFubmVscywgdGhlIHN5c3RlbQo+IGNvbnRyb2xsZXIs
+IGNsb2NrLCBNU1RPUCwgUFdSUkRZIHNpZ25hbCBpcyBhcyBmb2xsb3dzOgo+IAo+ICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICDilIzilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
+lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
+lIDilJAKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg4pSCICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAg4pSC4peE4pSA4pSAIENQR19DTEtPTl9VU0IuQ0xLMF9PTgo+ICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICDilIIgICAgIFVTQiBDSDAgICAgICAgICAgICAgICAg
+ICDilIIKPiDilIzilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
+lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilJAgICDilILilIzilIDilIDilIDilIDi
+lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
+lIDilIDilIDilIDilJAg4pSC4peE4pSA4pSAIENQR19DTEtPTl9VU0IuQ0xLMl9PTgo+IOKUgiAg
+ICAgICAgICAgICAgICAg4pSM4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSQICAg4pSC4pSCaG9z
+dCBjb250cm9sbGVyIHJlZ2lzdGVycyAg4pSCIOKUggo+IOKUgiAgICAgICAgICAgICAgICAg4pSC
+ICAgICAgICDilIIgICDilILilIJmdW5jdGlvbiBjb250cm9sbGVyIHJlZ2lzdGVyc+KUggo+IOKU
+giAgICAgICAgICAgICAgICAg4pSCIFBIWTAgICDilILil4TilIDilIDilKTilJTilIDilIDilIDi
+lIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDi
+lIDilIDilIDilIDilIDilJgg4pSCCj4g4pSCICAgICBVU0IgUEhZICAgICDilIIgICAgICAgIOKU
+giAgIOKUlOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKWsuKUgOKUgOKUgOKU
+gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUmAo+IOKUgiAgICAgICAg
+ICAgICAgICAg4pSU4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSYICAgICAgICAgICAgICAgIOKU
+ggo+IOKUgiAgICAgICAgICAgICAgICAgICAgICAgICAg4pSCICAgIENQR19CVVNfUEVSSV9DT01f
+TVNUT1AuTVNUT1B7NiwgNX1fT04KPiDilILilIzilIDilIDilIDilIDilIDilIDilIDilIDilIDi
+lIDilIDilIDilIDilIDilJAg4pSM4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSQCj4g4pSC4pSC
+VVNIUEhZIGNvbnRyb2zilIIg4pSCICAgICAgICDilIIKPiDilILilIIgIHJlZ2lzdGVycyAgIOKU
+giDilIIgUEhZMSAgIOKUgiAgIOKUjOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
+gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
+kAo+IOKUguKUlOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUmCDi
+lIIgICAgICAgIOKUguKXhOKUgOKUgOKUpCAgICAgVVNCIENIMSAgICAgICAgICAgICAgICAgIOKU
+ggo+IOKUgiAgICAgICAgICAgICAgICAg4pSU4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSYICAg
+4pSC4pSM4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
+4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSQIOKUguKXhOKUgOKUgCBDUEdfQ0xLT05f
+VVNCLkNMSzFfT04KPiDilJTilIDilrLilIDilIDilIDilIDilIDilIDilIDilrLilIDilIDilIDi
+lIDilIDilIDilIDilIDilIDilrLilIDilIDilIDilIDilIDilIDilJggICDilILilIIgaG9zdCBj
+b250cm9sbGVyIHJlZ2lzdGVycyDilIIg4pSCCj4gICDilIIgICAgICAg4pSCICAgICAgICAg4pSC
+ICAgICAgICAgIOKUguKUlOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKU
+gOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUmCDilIIKPiAgIOKUgiAg
+ICAgICDilIIgICAgICAgICDilIIgICAgICAgICAg4pSU4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
+4pSA4pSA4pSA4pSA4pay4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA
+4pSA4pSA4pSA4pSYCj4gICDilIIgICAgICAg4pSCICAgICAgICAg4pSCICAgICAgICAgICAgICAg
+ICAgICAgICDilIIKPiAgIOKUgiAgICAgICDilIIgICAgICAgICDilIIgICAgICAgICAgIENQR19C
+VVNfUEVSSV9DT01fTVNUT1AuTVNUT1A3X09OCj4gICDilIJQV1JSRFkg4pSCICAgICAgICAg4pSC
+Cj4gICDilIIgICAgICAg4pSCICAgQ1BHX0NMS19PTl9VU0IuQ0xLM19PTgo+ICAg4pSCICAgICAg
+IOKUggo+ICAg4pSCICBDUEdfQlVTX1BFUklfQ09NX01TVE9QLk1TVE9QNF9PTgo+ICAg4pSCCj4g
+4pSM4pSA4pSA4pSA4pSA4pSQCj4g4pSCU1lTQ+KUggo+IOKUlOKUgOKUgOKUgOKUgOKUmAo+IAo+
+IHdoZXJlOgo+IC0gQ1BHX0NMS09OX1VTQi5DTEsuQ0xLWF9PTiBpcyB0aGUgcmVnaXN0ZXIgYml0
+IGNvbnRyb2xsaW5nIHRoZSBjbG9jayBYCj4gICBvZiBkaWZmZXJlbnQgVVNCIGJsb2NrcywgWCBp
+biB7MCwgMSwgMiwgM30KPiAtIENQR19CVVNfUEVSSV9DT01fTVNUT1AuTVNUT1BYX09OIGlzIHRo
+ZSByZWdpc3RlciBiaXQgY29udHJvbGxpbmcgdGhlCj4gICBNU1RPUCBvZiBkaWZmZXJlbnQgVVNC
+IGJsb2NrcywgWCBpbiB7NCwgNSwgNiwgN30KPiAtIFVTQiBQSFkgaXMgdGhlIFVTQiBQSFkgYmxv
+Y2sgZXhwb3NpbmcgMiBwb3J0cywgcG9ydDAgYW5kIHBvcnQxLCB1c2VkCj4gICBieSB0aGUgVVNC
+IENIMCwgVVNCIENIMQo+IC0gU1lTQyBpcyB0aGUgc3lzdGVtIGNvbnRyb2xsZXIgYmxvY2sgY29u
+dHJvbGxpbmcgdGhlIFBXUlJEWSBzaWduYWwKPiAtIFVTQiBDSHggYXJlIGluZGl2aWR1YWwgVVNC
+IGJsb2NrIHdpdGggaG9zdCBhbmQgZnVuY3Rpb24gY2FwYWJpbGl0aWVzCj4gICAoVVNCIENIMCBo
+YXZlIGJvdGggaG9zdCBhbmQgZnVuY3Rpb24gY2FwYWJpbGl0aWVzLCBVU0IgQ0gxIGhhcyBvbmx5
+Cj4gICBob3N0IGNhcGFiaWxpdGllcykKPiAKPiBUaGUgVVNCUEhZIGNvbnRyb2wgcmVnaXN0ZXJz
+IGFyZSBjb250cm9sbGVkIHRob3VnaCB0aGUKPiByZXNldC1yemcybC11c2JwaHktY3RybCBkcml2
+ZXIuIFRoZSBVU0IgUEhZIHBvcnRzIGFyZSBjb250cm9sbGVkIGJ5Cj4gcGh5X3JjYXJfZ2VuM191
+c2IyIChkcml2ZXJzL3BoeS9yZW5lc2FzL3BoeS1yY2FyLWdlbjMtdXNiMi5jIGZpbGUpLiBUaGUK
+PiBVU0IgUEhZIHBvcnRzIHJlcXVlc3QgcmVzZXRzIGZyb20gdGhlIHJlc2V0LXJ6ZzJsLXVzYnBo
+eS1jdHJsIGRyaXZlci4KPiAKPiBUaGUgY29ubmVjdGlvbiBiL3cgdGhlIHN5c3RlbSBjb250cm9s
+bGVyIGFuZCB0aGUgVVNCIFBIWSBDVFJMIGRyaXZlciBpcwo+IGltcGxlbWVudGVkIHRocm91Z2gg
+dGhlIHJlbmVzYXMsc3lzYy1wd3JyZHkgZGV2aWNlIHRyZWUgcHJvcGVydHkKPiBwcm9wb3NlZCBp
+biB0aGlzIHBhdGNoLiBUaGlzIHByb3BlcnR5IHNwZWNpZmllcyB0aGUgcmVnaXN0ZXIgb2Zmc2V0
+IGFuZCB0aGUKPiBiaXRtYXNrIHJlcXVpcmVkIHRvIGNvbnRyb2wgdGhlIFBXUlJEWSBzaWduYWwu
+Cj4gCj4gU2luY2UgdGhlIFVTQiBQSFkgQ1RSTCBkcml2ZXIgbmVlZHMgdG8gYmUgcHJvYmVkIGJl
+Zm9yZSBhbnkgb3RoZXIKPiBVU0Itc3BlY2lmaWMgZHJpdmVyIG9uIFJaL0czUywgY29udHJvbCBv
+ZiBQV1JSRFkgaXMgcGFzc2VkIGV4Y2x1c2l2ZWx5Cj4gdG8gaXQuIFRoaXMgZ3VhcmFudGVlcyB0
+aGUgY29ycmVjdCBjb25maWd1cmF0aW9uIHNlcXVlbmNlIGJldHdlZW4gY2xvY2tzLAo+IE1TVE9Q
+IGJpdHMsIGFuZCB0aGUgUFdSUkRZIGJpdCBvbiBwcm9iZS9yZXN1bWUgYW5kIHJlbW92ZS9zdXNw
+ZW5kLiBBdCB0aGUKPiBzYW1lIHRpbWUsIGNoYW5nZXMgYXJlIGtlcHQgbWluaW1hbCBieSBhdm9p
+ZGluZyBtb2RpZmljYXRpb25zIHRvIHRoZSBVU0IKPiBQSFkgZHJpdmVyIHRvIGFsc28gaGFuZGxl
+IHRoZSBQV1JSRFkgaXRzZWxmLgo+IAo+IFRlc3RlZC1ieTogV29sZnJhbSBTYW5nIDx3c2ErcmVu
+ZXNhc0BzYW5nLWVuZ2luZWVyaW5nLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBDbGF1ZGl1IEJlem5l
+YSA8Y2xhdWRpdS5iZXpuZWEudWpAYnAucmVuZXNhcy5jb20+CgpSZXZpZXdlZC1ieTogUGhpbGlw
+cCBaYWJlbCA8cC56YWJlbEBwZW5ndXRyb25peC5kZT4KCnJlZ2FyZHMKUGhpbGlwcAo=
 
-> Trouble is, pretty much every unwind is 510 entries long -- this cannot
-> be right. I'm sure there's a silly mistake in unwind/user.c but I'm too
-> tired to find it just now. I'll try again tomorrow.
-
-PEBKAC
 
