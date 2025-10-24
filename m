@@ -1,175 +1,211 @@
-Return-Path: <linux-kernel+bounces-868979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3148C06A3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:13:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A53C06A43
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 846AC1C218B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739641C21C02
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9585231DDBA;
-	Fri, 24 Oct 2025 14:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F9D321437;
+	Fri, 24 Oct 2025 14:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=valentine.burley@collabora.com header.b="G4QLpWXC"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdB13bXm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388BC28489B;
-	Fri, 24 Oct 2025 14:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761314992; cv=pass; b=afRSSQ8CJXhub32aVfh4wsV18jVctvEakuDz4OcHyUg0ND21Bfz52zApiFw0VuldVCXE07gYPAbOZZvwamekVgEGX3CgRJdeqZaYIRNGDRgf7vw3mRWg/cpqB3tfC1zGahAlq5kSUm7AQrTxnJkbdPrKKwfn0HAgwsKgIF96QTc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761314992; c=relaxed/simple;
-	bh=bEuktrexp5zkKPiFQiuuQTBbrzpCDKYDKNs/EpBRXlg=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=NpYzZ3SWLC+EoTVLa0etCdXEqiOFdt0/jWu3SNNAE9NNAAHw4BNO8/scX0G3SF0yjuy3ep+sUrFpMmW3I9r9DntSdGhWuhpVo1IeMYtkntK2stz3T5oaJZEPTAOXQ8mXx0Ro/oQDuIPsaaOy9Mc695+OU2CgM+HzFBslqkpuiQI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=valentine.burley@collabora.com header.b=G4QLpWXC; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1761314970; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GSl5/dtjmw74PanlT8ifzXTlvcbVz/l4llLwJH2v4eSkpgMIzwFcXuH2UFiYQTKdTFWnxZ88v+tV1WaEXg76+gozlsLCNKKc7SXy2UvJv4xoByfRn5CJNG5W5luzFHShHTRC8fNoPJifpq16P3MANWEzNxH6YzSbrUQ5pH5g6KM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1761314970; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=VQHIgDhZhrUUNwFFz2m4paNGoP7NOa3EjygSQo1CRMs=; 
-	b=ONyBj7gvYKh3SSCoKYO8XLIoPpSOePXvILcpCUteORCScvcxvqktAC3Yl6Z7CcfskdXTjJYpd15ApXrd8HMc8nxdlmBtn65VQTBdTdCOuffAFpjF41K4iLuyrLDoUnJ+oYWQWz/33jOZRwtk6ts/13gJMxpz+6aWjmt2iVRqOz8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=valentine.burley@collabora.com;
-	dmarc=pass header.from=<valentine.burley@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761314970;
-	s=zohomail; d=collabora.com; i=valentine.burley@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=VQHIgDhZhrUUNwFFz2m4paNGoP7NOa3EjygSQo1CRMs=;
-	b=G4QLpWXCga0i+oVqp8hInaNs3P45NFTDTg8tZEQA8QIUuBxtZp/2yxWaZPPwV/Ua
-	FI42JKa1TddFB1ZJd+qbqz208hd43QQnkyEAwEX5QcSB0hWuLROv4R0X6ckbsAOMTCg
-	jzVd81ArMorT/RD+v3uwg8NqlzhHWoJEnZRUbzPs=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1761314969231532.1756914526859; Fri, 24 Oct 2025 07:09:29 -0700 (PDT)
-Date: Fri, 24 Oct 2025 16:09:29 +0200
-From: Valentine Burley <valentine.burley@collabora.com>
-To: "Rob Clark" <robin.clark@oss.qualcomm.com>
-Cc: "dri-devel" <dri-devel@lists.freedesktop.org>,
-	"freedreno" <freedreno@lists.freedesktop.org>,
-	"linux-arm-msm" <linux-arm-msm@vger.kernel.org>,
-	"Sean Paul" <sean@poorly.run>,
-	"Konrad Dybcio" <konradybcio@kernel.org>,
-	"Dmitry Baryshkov" <lumag@kernel.org>,
-	"Abhinav Kumar" <abhinav.kumar@linux.dev>,
-	"Jessica Zhang" <jessica.zhang@oss.qualcomm.com>,
-	"Marijn Suijten" <marijn.suijten@somainline.org>,
-	"David Airlie" <airlied@gmail.com>,
-	"Simona Vetter" <simona@ffwll.ch>,
-	"open list" <linux-kernel@vger.kernel.org>
-Message-ID: <19a168d95e8.7a90f7d35482131.1689650792018355758@collabora.com>
-In-Reply-To: <20251022222051.10030-1-robin.clark@oss.qualcomm.com>
-References: <20251022222051.10030-1-robin.clark@oss.qualcomm.com>
-Subject: Re: [PATCH] drm/msm: Reject MAP_NULL op if no PRR
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9519631DDA9;
+	Fri, 24 Oct 2025 14:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761314993; cv=none; b=ebCa17a2qSPmAzeejPtY0Ex2rUI14NZQwJudhapxIglmAwdQIYAp4ZXC6dQ7+NVjAYt9FIHQSn9rc3u5yZARQwHXsRcsd0pGHjKThtQJFwq9+DIQQ9/xIQelpRCZ9SScALebJ8J5PSK19FsuwuK73kBKIdxgLuA/G4W7riTKkvg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761314993; c=relaxed/simple;
+	bh=qEnNl4yAb28piqxRvBDsROmZ5MOV09FzzL0cqQOOLgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=etJDPElxSAN6Nik7PLov29vNmAsUEpVf5faOsmlvmIjIkinotG0ezExAWL/VU+9S4uWALXWtLanJE6LV3mF4hWTBCkJbD6z5s/q69ID+gSGZtbythD1u3EyfJmlaqBOFrWwEuihvelV0tHaEVc4Tr8MPwB7vJMkru0GnMsyEtEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdB13bXm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9255EC4CEF1;
+	Fri, 24 Oct 2025 14:09:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761314993;
+	bh=qEnNl4yAb28piqxRvBDsROmZ5MOV09FzzL0cqQOOLgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OdB13bXm15bW8P4kG+yyeBVSDJMp30yf5dz0qvSutbcf+82PO6jgm69hKRwpcOweG
+	 XDllLkMdF44QQH9QAoIh6/ZB7wGDBP/TFZ73itifaGkr+T/Rpvqg3fL98RnHv4xgmX
+	 kFoPJWBcr3QfBq1eY1ZJO53o+OYWdWEuNTIkP4N9vms89VxF1vaQZWaSVLX2yAUBH8
+	 MtdWWlC9gXNSHeF5vEs8KRGyce2aB/qvk/INGHwKeNE4TC8Diec89ExuLIbVYxOvSm
+	 ATapuCnGUWVpXB18xcpeeIIKXjVlUQ9YLINfJoHltzohyjhBTRTpg1h3HFZ1sD70S4
+	 wLc1/qYBgVQBg==
+Date: Fri, 24 Oct 2025 16:09:50 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Benno Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Drew Fustini <fustini@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	Elle Rhumsaa <elle@weathered-steel.dev>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v16 0/7] Rust Abstractions for PWM subsystem with TH1520
+ PWM driver
+Message-ID: <p5addblaeofj6xdbgmvrknoozrxh75lsle6uqh4g2qku745ayw@uls3uoftpmuw>
+References: <CGME20251016133814eucas1p199cb62658c016e84e34d525e7c87f16e@eucas1p1.samsung.com>
+ <20251016-rust-next-pwm-working-fan-for-sending-v16-0-a5df2405d2bd@samsung.com>
+ <3f9ab01c-470e-48b5-a309-71325ecc4906@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="s5lrbho5664iqhra"
+Content-Disposition: inline
+In-Reply-To: <3f9ab01c-470e-48b5-a309-71325ecc4906@samsung.com>
 
-Hi,
 
-This fixes the GPU faults and hangs I was seeing on sc7180.
+--s5lrbho5664iqhra
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v16 0/7] Rust Abstractions for PWM subsystem with TH1520
+ PWM driver
+MIME-Version: 1.0
 
-Tested-by: Valentine Burley <valentine.burley@collabora.com>
+Hello Michael,
 
-Thanks!
-Valentine
+On Wed, Oct 22, 2025 at 10:34:42AM +0200, Michal Wilczynski wrote:
+> Since you mentioned last time that you were happy with the code, would
+> you please consider picking up this series for linux-next? It would be
+> great to get it in for wider testing to ensure everything is solid.
 
- ---- On Thu, 23 Oct 2025 00:20:51 +0200  Rob Clark <robin.clark@oss.qualcomm.com> wrote --- 
- > We need PRR support in order to implement MAP_NULL.  Userspace shouldn't
- > be trying to use this if it is unsupported.
- > 
- > Reported-by: Valentine Burley <valentine.burley@collabora.com>
- > Link: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/37935#note_3153730
- > Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
- > ---
- >  drivers/gpu/drm/msm/adreno/adreno_gpu.c |  7 -------
- >  drivers/gpu/drm/msm/msm_gem_vma.c       |  6 ++++++
- >  drivers/gpu/drm/msm/msm_gpu.h           | 11 +++++++++++
- >  3 files changed, 17 insertions(+), 7 deletions(-)
- > 
- > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
- > index 19181b6fddfd..f93eee67240d 100644
- > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
- > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
- > @@ -365,13 +365,6 @@ int adreno_fault_handler(struct msm_gpu *gpu, unsigned long iova, int flags,
- >      return 0;
- >  }
- >  
- > -static bool
- > -adreno_smmu_has_prr(struct msm_gpu *gpu)
- > -{
- > -    struct adreno_smmu_priv *adreno_smmu = dev_get_drvdata(&gpu->pdev->dev);
- > -    return adreno_smmu && adreno_smmu->set_prr_addr;
- > -}
- > -
- >  int adreno_get_param(struct msm_gpu *gpu, struct msm_context *ctx,
- >               uint32_t param, uint64_t *value, uint32_t *len)
- >  {
- > diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
- > index 90712586faac..96925a0f3965 100644
- > --- a/drivers/gpu/drm/msm/msm_gem_vma.c
- > +++ b/drivers/gpu/drm/msm/msm_gem_vma.c
- > @@ -964,6 +964,7 @@ static int
- >  lookup_op(struct msm_vm_bind_job *job, const struct drm_msm_vm_bind_op *op)
- >  {
- >      struct drm_device *dev = job->vm->drm;
- > +    struct msm_drm_private *priv = dev->dev_private;
- >      int i = job->nr_ops++;
- >      int ret = 0;
- >  
- > @@ -1010,6 +1011,11 @@ lookup_op(struct msm_vm_bind_job *job, const struct drm_msm_vm_bind_op *op)
- >          break;
- >      }
- >  
- > +    if ((op->op == MSM_VM_BIND_OP_MAP_NULL) &&
- > +        !adreno_smmu_has_prr(priv->gpu)) {
- > +        ret = UERR(EINVAL, dev, "PRR not supported\n");
- > +    }
- > +
- >      return ret;
- >  }
- >  
- > diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
- > index a597f2bee30b..2894fc118485 100644
- > --- a/drivers/gpu/drm/msm/msm_gpu.h
- > +++ b/drivers/gpu/drm/msm/msm_gpu.h
- > @@ -299,6 +299,17 @@ static inline struct msm_gpu *dev_to_gpu(struct device *dev)
- >      return container_of(adreno_smmu, struct msm_gpu, adreno_smmu);
- >  }
- >  
- > +static inline bool
- > +adreno_smmu_has_prr(struct msm_gpu *gpu)
- > +{
- > +    struct adreno_smmu_priv *adreno_smmu = dev_get_drvdata(&gpu->pdev->dev);
- > +
- > +    if (!adreno_smmu)
- > +        return false;
- > +
- > +    return adreno_smmu && adreno_smmu->set_prr_addr;
- > +}
- > +
- >  /* It turns out that all targets use the same ringbuffer size */
- >  #define MSM_GPU_RINGBUFFER_SZ SZ_32K
- >  #define MSM_GPU_RINGBUFFER_BLKSIZE 32
- > -- 
- > 2.51.0
- > 
- > 
+I took another look, and just being able to compile and understanding
+very little Rust, I came up with:
 
+diff --git a/rust/kernel/pwm.rs b/rust/kernel/pwm.rs
+index 79fbb13cd47f..c8f9f5b61bfa 100644
+--- a/rust/kernel/pwm.rs
++++ b/rust/kernel/pwm.rs
+@@ -15,38 +15,7 @@
+     prelude::*,
+     types::{ARef, AlwaysRefCounted, Opaque},
+ };
+-use core::{convert::TryFrom, marker::PhantomData, ptr::NonNull};
++use core::{marker::PhantomData, ptr::NonNull};
+-
+-/// PWM polarity. Mirrors [`enum pwm_polarity`](srctree/include/linux/pwm.=
+h).
+-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+-pub enum Polarity {
+-    /// Normal polarity (duty cycle defines the high period of the signal).
+-    Normal,
+-
+-    /// Inversed polarity (duty cycle defines the low period of the signal=
+).
+-    Inversed,
+-}
+-
+-impl TryFrom<bindings::pwm_polarity> for Polarity {
+-    type Error =3D Error;
+-
+-    fn try_from(polarity: bindings::pwm_polarity) -> Result<Self, Error> {
+-        match polarity {
+-            bindings::pwm_polarity_PWM_POLARITY_NORMAL =3D> Ok(Polarity::N=
+ormal),
+-            bindings::pwm_polarity_PWM_POLARITY_INVERSED =3D> Ok(Polarity:=
+:Inversed),
+-            _ =3D> Err(EINVAL),
+-        }
+-    }
+-}
+-
+-impl From<Polarity> for bindings::pwm_polarity {
+-    fn from(polarity: Polarity) -> Self {
+-        match polarity {
+-            Polarity::Normal =3D> bindings::pwm_polarity_PWM_POLARITY_NORM=
+AL,
+-            Polarity::Inversed =3D> bindings::pwm_polarity_PWM_POLARITY_IN=
+VERSED,
+-        }
+-    }
+-}
+=20
+ /// Represents a PWM waveform configuration.
+ /// Mirrors struct [`struct pwm_waveform`](srctree/include/linux/pwm.h).
+@@ -89,22 +58,6 @@ fn from(wf: Waveform) -> Self {
+     }
+ }
+=20
+-/// Wrapper for PWM state [`struct pwm_state`](srctree/include/linux/pwm.h=
+).
+-#[repr(transparent)]
+-pub struct State(bindings::pwm_state);
+-
+-impl State {
+-    /// Creates a `State` wrapper by taking ownership of a C `pwm_state` v=
+alue.
+-    pub(crate) fn from_c(c_state: bindings::pwm_state) -> Self {
+-        State(c_state)
+-    }
+-
+-    /// Returns `true` if the PWM signal is enabled.
+-    pub fn enabled(&self) -> bool {
+-        self.0.enabled
+-    }
+-}
+-
+ /// Describes the outcome of a `round_waveform` operation.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub enum RoundingOutcome {
+@@ -164,13 +117,6 @@ pub fn label(&self) -> Option<&CStr> {
+         Some(unsafe { CStr::from_char_ptr(label_ptr) })
+     }
+=20
+-    /// Gets a copy of the current state of this PWM device.
+-    pub fn state(&self) -> State {
+-        // SAFETY: `self.as_raw()` gives a valid pointer. `(*self.as_raw()=
+).state`
+-        // is a valid `pwm_state` struct. `State::from_c` copies this data.
+-        State::from_c(unsafe { (*self.as_raw()).state })
+-    }
+-
+     /// Sets the PWM waveform configuration and enables the PWM signal.
+     pub fn set_waveform(&self, wf: &Waveform, exact: bool) -> Result {
+         let c_wf =3D bindings::pwm_waveform::from(*wf);
+
+Does that make sense?
+
+I consider applying your series and put the above space on top, to
+create my first Rust patch :-)
+
+Best regards
+Uwe
+
+--s5lrbho5664iqhra
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmj7iJ8ACgkQj4D7WH0S
+/k6hYQgAhlp1k8GnQOshRf5MFOCWXtHvmPFyzN7GPGmVJw3NHwuKc4Gzrp7Y+B7Q
+ZMh/RD1laNttxYcKljd1THglHWTj49XvkzVVLw1sZ6V+iMYJefsYGQuWl60Y/pJV
+AW3tZtwOl0ea7cS1kyif7QvpobCTQVlIfs/mE2z5BxGvNPJIHFR/bW3a1m0hzjyM
+Nz3s4s5LKStwW1EZVpFVaW9YBTvlsbuPdOK+KbeoITs3FQW4+wpRGk5Cm8qNFbAe
+LaK06/87BrDvVpkHCuBNRwOGDucMxjf1CaQ4Ap/QZ/Pc0yh6ha46yv4YLxPDJwuu
+q+rdvj7mq0Y3w4nlQi9Ui0FUKQadkg==
+=trqv
+-----END PGP SIGNATURE-----
+
+--s5lrbho5664iqhra--
 
