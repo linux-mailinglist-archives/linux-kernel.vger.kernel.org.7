@@ -1,123 +1,136 @@
-Return-Path: <linux-kernel+bounces-868959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5DAC06962
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C63EC06961
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4641A503909
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 517E23B9110
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C0631B136;
-	Fri, 24 Oct 2025 13:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEB631E0FD;
+	Fri, 24 Oct 2025 13:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2AXO4Gr"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hot0rH70"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24CA2F8BF1
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456153195FE
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761314143; cv=none; b=EO4PrxsJegYyL6kP2Jy9FOm4dx2sg9hIUG6kquzOzuan31DanrydY7IA7ezXkyitYRz8ocKSGULyzCl4lZ1+kOFRNknzzphyvFLdP7naJkpqWgTPZWcQPnKN16bM2zbpvdrnP+9axAAWJhWbasrzDuDN7P2gJtL48px4O8tfvPY=
+	t=1761314143; cv=none; b=J6LbZunUocQIAhmPZb3Ak9vAW5Z2Uv8lNGsM0D9/0x53GYZovLtGu2rJTVN7VnKba/ZItpKW6b05ViIrNwJY7oAnBaWnuRvmRsdm6W+4TkHZIPbiR6tT8SfDJX+bd0cWeaLqT+SR9tiPTprdM7BgNJR1qBRSZP0gk9bin3MRMik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761314143; c=relaxed/simple;
-	bh=6EDKzmWA6vlmVD1ip5IeawW7yR9cxhaXiCEY82LwkFc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IqUDRkO7fzrv5NNP9IftnPRiOhBxR5QWqkIfNOxchX2aqGUOLND1qWX7AE/gxIWF9TnoLSzaAGeFOpY4VQrkSj6+1mtKMEPmBX+J3dEEUYrGp4jjIWnorKVqJBfVRqX11CcdTHU5rJ1hgYNnsXMp4/v8Y7l0ZlrQ7oRoY/Q0NJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2AXO4Gr; arc=none smtp.client-ip=209.85.128.170
+	bh=cs7+9pN+rGw/+2yYuwe+XPsHIbqSVHW2OegdM5KybeY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TfjlqJHV1ZCG4ZHJHSX1UeSsGtNyOyuBduO0JTm/jzpdUfhh9Z5Ea5QyxFgrI47fo283Tw5iqvmEqW4vZu9tdbcN+ZYlSjEIpgQ70/suOgrNyvXxsTFQoC5m0slF5josYl8pw+WF5I9bn+xqdFQ4i+q5vqiGzE5iW6nmU+FLklI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hot0rH70; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-784807fa38dso24798977b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:55:41 -0700 (PDT)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b6cf1a95273so1533066a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:55:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1761314141; x=1761918941; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6EDKzmWA6vlmVD1ip5IeawW7yR9cxhaXiCEY82LwkFc=;
-        b=m2AXO4GraD+3/tTI7p3vm8xmrmWaW0J5KoRgQjV+l4m599SVSJ/G5UW1l5/J6iZU6F
-         lGuBZEZmiVr8lOQhSQewXC+9T2W2yvgUkOE6QEHjCk10eIm5Iudv1WpeS9tidKTIHEDR
-         xvMVXMxidzbkXz96jyh3TIKSXyAuwaNM7eWFrxUJf3biQGn9TAAzD6QecCfpg509JGv+
-         c16zW3cpCF9Z6JaQqhgxq86jwJHRnPZ34+1UAf9+XyAI1iahJaQumiZfM5mTanL2od3W
-         yJRKVn1O8cWQRR3I2+yaXOZ2YEAWeiGddkUK7dC9hPuzmiTHoCde2k62Lmc7BS1Tubwj
-         S/KQ==
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1mmYFOWJrmrd7zF8oo99zQ9GonVE6sUpTh9fiKeIIH4=;
+        b=hot0rH70MZNE5ewIOsgaLPH0ulUB2PgWD0NyzsMGk9Td0hL+Wnl7lYZiz8yisCqBQu
+         FmJ0eUpaFlHxJkkhoIPFjY2ebhNRnz3A3AR9Xz444HboDuDcGaKBokC/eUxO7g+w0cWP
+         01TeHHl1loIab8M3wz+vxgN10Peq3OSh+lUXQew6zVFbXIPI5JC650mO5OWcbjrY7Fow
+         /W1+frKVcYKpOmdbH1wuoWjjAmFf6nZGJjwHK1b8ndhIqWT6O+m3FbDHL9lXORcld73x
+         gRpDppG6Mrp5xaZBNJDdZHKaFD+00yQ1fIzAUXLovNjdA4XIkMPeEw3FA2BwDypht0ge
+         Eo8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1761314141; x=1761918941;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6EDKzmWA6vlmVD1ip5IeawW7yR9cxhaXiCEY82LwkFc=;
-        b=LZMlMfqG60Wn9Vz+LXpa1izkue22w/bx6nYRMNNP5JvlKLuoypisoQV5sUtipNqaTl
-         c+A9W8lEG3MZQOfV6iJld0h/qAtUbPeP7MXoQVl2WNdpodMJT98YbZCp1AhQ4q+59Cyn
-         bbmjStAC/yRELoikVGsMKijv9Xbdp8ICwSpP0TtAQ71VHSx6h2O2p8rc7SqnKeCpa5fS
-         67aqi8mIwTXOQ0hvSEornPKFFVdh16MFPlaXNNPRzRIHXefPLFU3Lv3bd+R1uhoKlB4y
-         u1kcAwiRhz9IeAMIM8mlMC50jSen8sD0KUku6KaEN2YCX04+eECVzCR6ooCZ9X/D6sSH
-         IxSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJVWscN7i5hEFUKTaqg6V6+Vx8W+1buAq4QykdTqjjG8dnUkwjWcHsjzL9KBPT1CYbQe4PwayTU1WXrRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN8accpPe6JTWAp37tYIuXMGPNlay+vZaC0dUn0Ofcw+oS8Whw
-	6r6MhCCnIwj+9/VtcRA0k2YXQjswJ8BgZEV6Ikb0EtmnvtvzDsPqD0UUT9OVd36nU5xNgvMsSA3
-	FMzgY4ad7HtDVvxgMHO3JPKYLcDKX4PY=
-X-Gm-Gg: ASbGncvQO/Ieck+Jds6kmP8CBqrp6UvRgLrYY3J253MU32ZhlsoBMKy6ihH/5wHDYSw
-	pCXmkou9i5JaRHXYadvtMvpLDz7aMBBr2QfEGMEnFFEi6tGvoyLeLHd0X4AmroMMQOXvLVZLNQN
-	EVEG0g3aatRxbmxWthyPV0fHPMAoe4JVGaQeHBDpGGCxc41JT6BUXqwEbm/YOIgeejgaoxXEiso
-	id43nicgbJuWF/yxePp4aCAmEQeiY4gdKqYMQjXIUDuwps072kURjSstBAjwPAd
-X-Google-Smtp-Source: AGHT+IF/XZ65Pa5ogx5jpJPpOQOF+uykXf1zGnLo5yZ8TjK2GtNnECR7Tf/p1bu6J4Q696ZSiZuDwQwkYbc7ilxvBfU=
-X-Received: by 2002:a05:690c:4b81:b0:781:64f:3154 with SMTP id
- 00721157ae682-785e0267968mr21092467b3.64.1761314140636; Fri, 24 Oct 2025
- 06:55:40 -0700 (PDT)
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1mmYFOWJrmrd7zF8oo99zQ9GonVE6sUpTh9fiKeIIH4=;
+        b=RSSBe/xRq+ChtBtriPWiMTt5rn+656u2hQxvtzvEGA+/Wyaxtjg3QkYiih6eJ39JDL
+         9Zhix3iVIVPxk5j74V6F8rMayMzz8mLNLRUqRS4M4/dfMu2s0+7MJoIkB52b74+AX5Q1
+         UWJ1NI04DEPDV4aTHUSH2Mo6QPCNBmgPlToaU0JF42c5GuNod89F1CPDSlEliqnE/UR2
+         M/WUV/ZiGy9SjyFYtK6/LuP4U1DWJUCogQ1kjMqJHIWGBqXVkcnfbF1bmdDOT7jkaqL9
+         TYCHGoJbq7+2vLULXYighdjgYOsekaRfagAlxL+iJo8VPPoB3gtdbFNQXgzCr79INhua
+         ntSg==
+X-Gm-Message-State: AOJu0YzzLmgTAi3O8S3wYo/jIcwodx56RhipR0mSusxDUY2sC2SIWM14
+	CHBnnIetZF+jGiMwdetY2lWE72J7FI5iIX+RHFuWfgmu/5MeQ/g0Buhv
+X-Gm-Gg: ASbGncsydRbZg3Q1TQnqwRW96YwA6BS1HRtNPeunpqXYMz+s7jVvymmp1gv04oI2Iud
+	D8iYKALwWyLPcdfEciaZMdlaMp1xXiq1TIjwlvRtcwrbfxsbAPS1+2G2KlOh63t6AMPN1FxwTF2
+	omtxDKOK0sSLzADxWiVU17do7VlCbRxrg4l5hbTAcrvT9iNc7wpDDEtX5YH6ZQk+tJruHdR2p8N
+	Yp3spRnOdpAZ6WuIB3kU9eP71b8xsKnjPUDEdDNMac4e223TsKquZiSiWMrDq9Jy8tDmo2ILLwI
+	rwSo1Cb96UXNU4aqVXsO7WmC6+iGEyN+rqB7OnkChkU7Z9N1dHbUMR2AXN0v/mEJXwMwj3H0tJG
+	47rcWpQmRMIwOwmjaryClAya3FL74Awrtj0lg71ePAQnSdZrQtYMlsDHsTWbYzXlV5izMi+nBR0
+	B1XInQkDbBCcs7ZLLb788w0zyLZcLD9CkCcWN/gZWL+fbBNw==
+X-Google-Smtp-Source: AGHT+IH6ZQ7XsgdLNzrpkVSTNHlrQvhfuOh+1KL2rQ3hQUg/UjKwCTfpXsYF5GGeZ2uELik7ETl8ww==
+X-Received: by 2002:a17:902:e944:b0:290:a3b9:d4c6 with SMTP id d9443c01a7336-290caf831b6mr365592165ad.36.1761314141359;
+        Fri, 24 Oct 2025 06:55:41 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dda72d0sm57293905ad.16.2025.10.24.06.55.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 06:55:40 -0700 (PDT)
+Message-ID: <123ab038-39b8-4632-9090-2c95cbc0130a@gmail.com>
+Date: Fri, 24 Oct 2025 22:55:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023120043.8661-1-chiru.cezar.89@gmail.com>
- <20251023120043.8661-2-chiru.cezar.89@gmail.com> <dnjved3kd3awdseclr56mbwxkbuysxcezzbebrk7fjpuq2kf2p@rhat4xhdao52>
-In-Reply-To: <dnjved3kd3awdseclr56mbwxkbuysxcezzbebrk7fjpuq2kf2p@rhat4xhdao52>
-From: Cezar Chiru <chiru.cezar.89@gmail.com>
-Date: Fri, 24 Oct 2025 16:55:28 +0300
-X-Gm-Features: AS18NWACFyo8Vn7Z2PSDhb0T1yGH6jRvkczpxV8a7BTlO5Ni_PM3zGeBqde_w1M
-Message-ID: <CANvS2vX2+ZRA_sT8gzmLmw9r7Z1aPEn9d+c=0QigPpeUYb3=sQ@mail.gmail.com>
-Subject: Re: [PATCH v9 1/3] i2c: pcf8584: Move 'ret' variable inside for loop,
- goto out if ret < 0.
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: wsa+renesas@sang-engineering.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/10] Collect documentation-related tools under
+ /tools/docs
+From: Akira Yokosawa <akiyks@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Jani Nikula <jani.nikula@linux.intel.com>
+References: <20251023161027.697135-1-corbet@lwn.net>
+ <532dcafa-08a8-4e18-b904-53e061734b69@gmail.com>
+Content-Language: en-US
+In-Reply-To: <532dcafa-08a8-4e18-b904-53e061734b69@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Andi,
+On Fri, 24 Oct 2025 12:10:54 +0900, Akira Yokosawa wrote:
+> Hi Jon,
+> 
+> On Thu, 23 Oct 2025 10:10:08 -0600, Jonathan Corbet wrote:
+>> Our documentation-related tools are spread out over various directories;
+>> several are buried in the scripts/ dumping ground.  That makes them harder
+>> to discover and harder to maintain.
+>>
+>> Recently, the idea of creating a dedicated directory for documentation tools
+>> came up; I decided to see what it would look like.  This series creates a
+>> new directory, tools/docs, and moves various utilities there, hopefully
+>> fixing up all of the relevant references in the process.
+>>
+>> At the end, rather than move the old, Perl kernel-doc, I simply removed it.
+>>
+>> The big elephant lurking in this small room is the home for Python modules;
+>> I left them under scripts/lib, but that is an even less appropriate place
+>> than it was before.  I would propose either tools/python or lib/python;
+>> thoughts on that matter welcome.
+>>
+>> Changes in v2:
+>>   - Rebase on top of all of Mauro's changes (the most painful rebase I've
+>>     ever done, I think).
+> 
+> I tried to apply this series on top of current docs-next, and several earlier
+> merge points, but haven't succeeded so far, even with "git am -3" ...
+> 
+> Where am I supposed to apply this?
 
-> > Require spaces around '=' and '<'. Add spaces around binary operators.
-> > Enforce error fixing based on checkpatch.pl output on file.
-> > Move 'ret' variable inside for loop. Then check if (ret < 0) goto out. This
-> > improves usage of ret variable.
-> >
-> > Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
-> > Suggested-by: Andi Shyti <andi.shyti@kernel.org>
-> > Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
->
-> you don't really need to resend patches for updating the tag
-> list. Anyway, that's OK, better to send than not to send, when in
-> doubt, ask.
+OK, I have finally figured that out.
+This can be applied on top of merge commit ee9a66919354 ("Merge branch
+'mauro-pdf' into docs-mw"), dated back more than two months !
 
-Anyways I had to resend as I grouped 3 patches into 1 patch series
+I suspect v2 is not what you had planned to submit ... ?
 
-> For this patch I think neither me or Andy have been suggesting
-> the change. The change came from you, we made observation which
-> you applied, this is the normal review process.
+        Thanks, Akira
 
-Can you please let me know the process of tagging with Suggested-by
-without resending the patch. I don't know how people add reviewed-by
-or ACK-ed-by or Suggested-by other than resend the patch?
-I've seen it but have yet to figure how to do it.
-
-> If you don't mind, I'm going to remove them when applying (let me
-> know if you don't agree). No need to resend.
-
-OK. Do as you want and think it's right.
-
-Regards,
-Cezar Chiru
 
