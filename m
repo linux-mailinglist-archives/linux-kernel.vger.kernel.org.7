@@ -1,47 +1,56 @@
-Return-Path: <linux-kernel+bounces-869196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E80C0740C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:19:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75E2C07437
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A9541C2820D
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3C63B8580
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70160270578;
-	Fri, 24 Oct 2025 16:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AD71DC997;
+	Fri, 24 Oct 2025 16:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rM6yYU1E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="k/jSHwlo"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A751DC997;
-	Fri, 24 Oct 2025 16:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C012025D546
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761322663; cv=none; b=iv+XYYvKQeBoLoI5qbFXDz6Y5V5zqP9BdzgSyIukgCCcm2mvk9qgj85DTyBlnGgN1Y4rn2E1sBH95qO8pUR9XLmxKsTHt0aX1bV1FbR7Z27fWBE//cRCg2DFpexcW3EcWoQZg2Dyz8lC1AHwaXs+GoJFALQwWE5GT6IT++Cf/nU=
+	t=1761322673; cv=none; b=W8snAWGB8Bh1XGj94ElnZjxefqJ14/SagjCi9+yIbIaJnIe1W9RIcZdkHyRNu0p4v7FeMjqFEVf+71WhMWOsWp0WWoTzZrJoH3b9jg62GDahg0o24PUQNddYp1YQkgaHWJB7kkIE5vGq1AzkPQWhHzOZhdd58tBMaM6YsxzUmVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761322663; c=relaxed/simple;
-	bh=H7diD6T2VvAt22VMSasAL/ILfy7efjFZ2iYWqCWT09o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zp55nEXuEDqUzzI4ihYJmd4GB7IKmlQmWRtvKwlA/jj32uNyoFRwbQI9i39OSQBx+YNlO0Bb6VbwnPIs8t1NIHyunr9/kDuPzoEoim3JEGguoA97/PedyjrAbY0I/eamSmHdUCZ6THD2achjlkEfzla8j0fBzmivhn36tJcOp+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rM6yYU1E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EBF3C4CEF1;
-	Fri, 24 Oct 2025 16:17:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761322663;
-	bh=H7diD6T2VvAt22VMSasAL/ILfy7efjFZ2iYWqCWT09o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rM6yYU1E8iOOQFjtTl8Jo/klRzEi/E7UdXUyUShksymBBkz62ajzVmiwH2hDRoWe/
-	 TWYb86RW7fuVBGrfSEdBmHD6wTOYzHIBK4PEd9ME/Oe7JDepUAm8DaT2GhsquVKQED
-	 l2tRabtgzE2sUyr0EhTX0ibxhaurpxolrDN0TajBYVBloJpD1aRCCFC2a1I7dwwDha
-	 zapx9uwQ0XTmi+JLu+M5J+Kc68ytFK4LQ/f69kv8BkqNMfjI3qV4z8TCI12Em7W0PV
-	 N4ZiTfGsTeK8/EnwNOxxEqSuNDUPl7dC6xQReyPz4RctRziT9rTR2c4BNmzJKl6VmR
-	 jvNAunAwOiuTg==
-Message-ID: <25c97722-e05d-467c-908e-baa31e636a44@kernel.org>
-Date: Fri, 24 Oct 2025 18:17:40 +0200
+	s=arc-20240116; t=1761322673; c=relaxed/simple;
+	bh=tOkgTJRdKnwh7l0mFsUVoENRh2qDXisSIfppjwcwMGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=tyqrmWllUgF/c+nTn4BLLcespHgoUjRTGv2RAolDc9DaaXEWjiqUl92yjXOQbZtL21xnaV5E9R0LkBtBrj4VDNyGjoKJJb5w3xSgyPOGB+ZVWyxWP0zn5fb8kDwZVNKyYq0+ORVF+YB1WIQFUsR1GEgeNNCOJ5ye0810B/2a4Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=k/jSHwlo; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251024161749euoutp01d4ad25fafb0e8947403cf148e04249aa~xeaLBVIfS1536615366euoutp01B
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:17:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251024161749euoutp01d4ad25fafb0e8947403cf148e04249aa~xeaLBVIfS1536615366euoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1761322669;
+	bh=4PztA7zevOPqcZ45Mj+9kAi61mRD2l7rMSjHCR1zJjo=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=k/jSHwloFZU2MSW6MgfbmET5vpqUP7ha0eqP9bHTJN2HQ7qMS1yqo9m16uMb4jdEv
+	 BIohBBFP6C/+ovZhd8v6YlUWY5+Ctx9MWcaOESEnFG4zhqb8VorGNly3KoG5Lz9kmF
+	 /7hqPxwMdGvhX/+6mQObh4cUxQp4s/xW7zH4zfQo=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251024161747eucas1p232c73d8cbf4cda89571193714279df1e~xeaJ2q_gt2872228722eucas1p2a;
+	Fri, 24 Oct 2025 16:17:47 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251024161746eusmtip181c8b0d66d145b6fc0382af657d5c8de~xeaItjh0p0255002550eusmtip1G;
+	Fri, 24 Oct 2025 16:17:46 +0000 (GMT)
+Message-ID: <9f38bb32-9160-4acd-83d7-902d3e1cad72@samsung.com>
+Date: Fri, 24 Oct 2025 18:17:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,28 +58,179 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/nouveau: Fix race in nouveau_sched_fini()
-To: Philipp Stanner <phasta@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20251024161221.196155-2-phasta@kernel.org>
-From: Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v16 0/7] Rust Abstractions for PWM subsystem with TH1520
+ PWM driver
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Guo Ren
+	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+	Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
+	Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, Benno
+	Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Drew Fustini <fustini@kernel.org>, Daniel Almeida
+	<daniel.almeida@collabora.com>, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, Elle Rhumsaa
+	<elle@weathered-steel.dev>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-In-Reply-To: <20251024161221.196155-2-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <p5addblaeofj6xdbgmvrknoozrxh75lsle6uqh4g2qku745ayw@uls3uoftpmuw>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251024161747eucas1p232c73d8cbf4cda89571193714279df1e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251016133814eucas1p199cb62658c016e84e34d525e7c87f16e
+X-EPHeader: CA
+X-CMS-RootMailID: 20251016133814eucas1p199cb62658c016e84e34d525e7c87f16e
+References: <CGME20251016133814eucas1p199cb62658c016e84e34d525e7c87f16e@eucas1p1.samsung.com>
+	<20251016-rust-next-pwm-working-fan-for-sending-v16-0-a5df2405d2bd@samsung.com>
+	<3f9ab01c-470e-48b5-a309-71325ecc4906@samsung.com>
+	<p5addblaeofj6xdbgmvrknoozrxh75lsle6uqh4g2qku745ayw@uls3uoftpmuw>
 
-On 10/24/25 6:12 PM, Philipp Stanner wrote:
-> nouveau_sched_fini() uses a memory barrier before wait_event().
-> wait_event(), however, is a macro which expands to a loop which might
-> check the passed condition several times. The barrier would only take
-> effect for the first check.
-> 
-> Replace the barrier with a function which takes the spinlock.
-> 
-> Cc: stable@vger.kernel.org # v6.8+
-> Fixes: 5f03a507b29e ("drm/nouveau: implement 1:1 scheduler - entity relationship")
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-Acked-by: Danilo Krummrich <dakr@kernel.org>
+
+On 10/24/25 16:09, Uwe Kleine-König wrote:
+> Hello Michael,
+> 
+> On Wed, Oct 22, 2025 at 10:34:42AM +0200, Michal Wilczynski wrote:
+>> Since you mentioned last time that you were happy with the code, would
+>> you please consider picking up this series for linux-next? It would be
+>> great to get it in for wider testing to ensure everything is solid.
+> 
+> I took another look, and just being able to compile and understanding
+> very little Rust, I came up with:
+> 
+> diff --git a/rust/kernel/pwm.rs b/rust/kernel/pwm.rs
+> index 79fbb13cd47f..c8f9f5b61bfa 100644
+> --- a/rust/kernel/pwm.rs
+> +++ b/rust/kernel/pwm.rs
+> @@ -15,38 +15,7 @@
+>      prelude::*,
+>      types::{ARef, AlwaysRefCounted, Opaque},
+>  };
+> -use core::{convert::TryFrom, marker::PhantomData, ptr::NonNull};
+> +use core::{marker::PhantomData, ptr::NonNull};
+> -
+> -/// PWM polarity. Mirrors [`enum pwm_polarity`](srctree/include/linux/pwm.h).
+> -#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+> -pub enum Polarity {
+> -    /// Normal polarity (duty cycle defines the high period of the signal).
+> -    Normal,
+> -
+> -    /// Inversed polarity (duty cycle defines the low period of the signal).
+> -    Inversed,
+> -}
+> -
+> -impl TryFrom<bindings::pwm_polarity> for Polarity {
+> -    type Error = Error;
+> -
+> -    fn try_from(polarity: bindings::pwm_polarity) -> Result<Self, Error> {
+> -        match polarity {
+> -            bindings::pwm_polarity_PWM_POLARITY_NORMAL => Ok(Polarity::Normal),
+> -            bindings::pwm_polarity_PWM_POLARITY_INVERSED => Ok(Polarity::Inversed),
+> -            _ => Err(EINVAL),
+> -        }
+> -    }
+> -}
+> -
+> -impl From<Polarity> for bindings::pwm_polarity {
+> -    fn from(polarity: Polarity) -> Self {
+> -        match polarity {
+> -            Polarity::Normal => bindings::pwm_polarity_PWM_POLARITY_NORMAL,
+> -            Polarity::Inversed => bindings::pwm_polarity_PWM_POLARITY_INVERSED,
+> -        }
+> -    }
+> -}
+>  
+>  /// Represents a PWM waveform configuration.
+>  /// Mirrors struct [`struct pwm_waveform`](srctree/include/linux/pwm.h).
+> @@ -89,22 +58,6 @@ fn from(wf: Waveform) -> Self {
+>      }
+>  }
+>  
+> -/// Wrapper for PWM state [`struct pwm_state`](srctree/include/linux/pwm.h).
+> -#[repr(transparent)]
+> -pub struct State(bindings::pwm_state);
+> -
+> -impl State {
+> -    /// Creates a `State` wrapper by taking ownership of a C `pwm_state` value.
+> -    pub(crate) fn from_c(c_state: bindings::pwm_state) -> Self {
+> -        State(c_state)
+> -    }
+> -
+> -    /// Returns `true` if the PWM signal is enabled.
+> -    pub fn enabled(&self) -> bool {
+> -        self.0.enabled
+> -    }
+> -}
+> -
+>  /// Describes the outcome of a `round_waveform` operation.
+>  #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+>  pub enum RoundingOutcome {
+> @@ -164,13 +117,6 @@ pub fn label(&self) -> Option<&CStr> {
+>          Some(unsafe { CStr::from_char_ptr(label_ptr) })
+>      }
+>  
+> -    /// Gets a copy of the current state of this PWM device.
+> -    pub fn state(&self) -> State {
+> -        // SAFETY: `self.as_raw()` gives a valid pointer. `(*self.as_raw()).state`
+> -        // is a valid `pwm_state` struct. `State::from_c` copies this data.
+> -        State::from_c(unsafe { (*self.as_raw()).state })
+> -    }
+> -
+>      /// Sets the PWM waveform configuration and enables the PWM signal.
+>      pub fn set_waveform(&self, wf: &Waveform, exact: bool) -> Result {
+>          let c_wf = bindings::pwm_waveform::from(*wf);
+> 
+> Does that make sense?
+
+Hi Uwe,
+
+Yes, that makes perfect sense.
+
+I agree with your patch. I initially thought the State wrapper might be
+necessary for the TH1520 driver, but I was able to refactor it to work
+without it.
+
+On reflection, both Polarity and State are really remnants of the older,
+legacy API. Removing them is a good cleanup; it ensures future Rust
+drivers will use the modern waveform API and avoids potential confusion.
+
+> 
+> I consider applying your series and put the above space on top, to
+> create my first Rust patch :-)
+
+Great ! Congratulations on your first Rust patch :-)
+
+On a related note there is this diff necessary to make CLIPPY happy:
+diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
+index 0ad38b78be85..a6c3b6025152 100644
+--- a/drivers/pwm/pwm_th1520.rs
++++ b/drivers/pwm/pwm_th1520.rs
+@@ -185,7 +185,7 @@ fn round_waveform_tohw(
+         );
+ 
+         Ok(pwm::RoundedWaveform {
+-            status: status,
++            status,
+             hardware_waveform: wfhw,
+         })
+     }
+
+I could re-send the patchset, but since you're making a patch anyway
+maybe you would also like to pick this ?
+
+> 
+> Best regards
+> Uwe
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
