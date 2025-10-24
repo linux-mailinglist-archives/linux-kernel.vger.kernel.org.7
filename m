@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-869251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD92C076AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:58:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 206D5C076BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835C21C43E55
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 785F41C42D8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7A933C519;
-	Fri, 24 Oct 2025 16:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C612633B976;
+	Fri, 24 Oct 2025 16:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bDeNgxpx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlHaGBXH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F66309F1E;
-	Fri, 24 Oct 2025 16:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2748E1A83F9;
+	Fri, 24 Oct 2025 16:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761325060; cv=none; b=qmtfah8g2Z2Kykb1WbQlZw6VfN6W1PS7p7+PzH+NywbRIjHyVg0+hv5vLg4ZXqH17cd8YglssHlZ7Sy3a/SKgYvPtAN5HFM4fUskIz9bmRHoGbV+nyB+dOWrGJJRpVuP1RQYtXnC0u/iGLm2vxNsC7wrD7EopWd2PWMRghrU6Jc=
+	t=1761325173; cv=none; b=RIC3G7kp72Tr4rtzqzI0D3Px+d4KoD2eRncGvGfGx3Z+QZ/XgKzuIS00aRCnLQ0+qcR20C988RRv7ts7NQO+d7lJbNae88NmCaW0rNUGximk1ZqB5YHwnDT1zxYjRmHNtW18cJFN54348rEhcfpDhCNKf5ynv6xHCbR7iRo94ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761325060; c=relaxed/simple;
-	bh=DJwgWQV6LS0y1HCZdTukbp7eZ5b2oG/b60BU6bAySRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iUBGVZ0DW4xmLLTuOpuTwN4xkPGH298BvxawQYpuxuzu2WGUxA/sCuYqy3Jd3I/kZX3aRQjCQMt6tvVIZ8kSWitBEaAtrFDbLhmhDWy+6np0acDrMgUJ+OVhW9njrJGz2Gsw+Tpnrl0lyIc0TyG3UwRiTtW8igY/NG0gmho/iBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bDeNgxpx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356DAC4CEF7;
-	Fri, 24 Oct 2025 16:57:36 +0000 (UTC)
+	s=arc-20240116; t=1761325173; c=relaxed/simple;
+	bh=NI/rc7eye74iVvlRLxjIh57O/Fz+QQfLbOm4CGCtKu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=DLqfKc3B+qSOvucorzTnPoAhesKAnxqVkEAtLHT8+aeCdoocdFV6uhu5SE3o5//LZ4eYgqxbrFGGWdNETcfUsODIUjtN4gIIK8pPE28f9+VZc+b6UEzl3qxDCDCuZMvSyqLDyB5uVQFodhZulsprNvmJ2ttE1w4bhlBmx/7cX44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlHaGBXH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BCC1C4CEF1;
+	Fri, 24 Oct 2025 16:59:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761325060;
-	bh=DJwgWQV6LS0y1HCZdTukbp7eZ5b2oG/b60BU6bAySRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bDeNgxpxlfWKCDa5lCi+7eDV6CLbBTSTQ0BI8fCL4g3akCIqJee7S0pfUG+TKpkb1
-	 EO1iPBo5W+rlWfRyhW4bdyKJUH6YS3FvDWnPCzgrQy9UjzouQzSTyp4RgzV4+IKpeu
-	 oXj119hem00USE8NLX6A+mqmmg8RhiW5+J/VzwiU7TtI6O4IiYctQBbvj4WLqJjvHI
-	 fhfbIO8fESHwCfSxtXXu6p3rJrNKhhlQBgLSAVx9BzhTJHJj2x//XVoMOzy37z3V7O
-	 mzk3OzVCJT7mkghK3wt4fjeMC8Y9SeOkvcDZt1UKOEBcav6XVkq6AngqfHHKz0VKRx
-	 +LHUfZaSgpkYw==
-Date: Fri, 24 Oct 2025 17:57:34 +0100
-From: Simon Horman <horms@kernel.org>
-To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Matthew Gerlach <matthew.gerlach@altera.com>, kernel@pengutronix.de,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	Austin Zhang <austin.zhang@intel.com>,
-	Adrian Ng Ho Yin <adrian.ho.yin.ng@intel.com>
-Subject: Re: [PATCH v5 04/10] arm64: dts: socfpga: agilex5: smmu enablement
-Message-ID: <aPuv_q3beG7kEj9N@horms.kernel.org>
-References: <20251024-v6-12-topic-socfpga-agilex5-v5-0-4c4a51159eeb@pengutronix.de>
- <20251024-v6-12-topic-socfpga-agilex5-v5-4-4c4a51159eeb@pengutronix.de>
+	s=k20201202; t=1761325172;
+	bh=NI/rc7eye74iVvlRLxjIh57O/Fz+QQfLbOm4CGCtKu0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=dlHaGBXHbSEjOtiqusEUlrKtOZ6KQUUkEohK4jVyq06y51ril3e2UyTzQlNqHa4fv
+	 xGWcwEbddkZw+j7nvdxYmFP01zdfzXbEvyw5k3ZF1rmu5BCBZKYTRja8qzwpYWx8GV
+	 IpA8xovmQI6jzsg1KOIbekIQsSZ7Ayx0jQiwxo5HHL6+KsvC+4Px5Uw2RCg0iGUiRl
+	 c5PstjMQIBCcQ5uL/sm7a093geQ4H17bWT94f2cAgcgzhGewsxGxKPtbGSyUXEop7U
+	 716uOwYJ5X4t+HFlZZdW9Pmlo7y1o9jYobv605l7b98M4ir6PDALPlLAS/RlR9Sdv+
+	 +6V9XLWXdib+Q==
+Date: Fri, 24 Oct 2025 11:59:31 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Waiman Long <longman@redhat.com>, linux-rt-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2] pci/aer_inject: switching inject_lock to
+ raw_spinlock_t
+Message-ID: <20251024165931.GA1354268@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,18 +65,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251024-v6-12-topic-socfpga-agilex5-v5-4-4c4a51159eeb@pengutronix.de>
+In-Reply-To: <20251009150651.93618-1-jckeep.cuiguangbo@gmail.com>
 
-On Fri, Oct 24, 2025 at 01:49:56PM +0200, Steffen Trumtrar wrote:
-> From: Austin Zhang <austin.zhang@intel.com>
+On Thu, Oct 09, 2025 at 03:06:50PM +0000, Guangbo Cui wrote:
+> When injecting AER errors under PREEMPT_RT, the kernel may trigger a
+> lockdep warning about an invalid wait context:
 > 
-> Add iommu property for peripherals connected to TBU.
-> 
-> Signed-off-by: Adrian Ng Ho Yin <adrian.ho.yin.ng@intel.com>
-> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> ```
+> [ 1850.950780] [ BUG: Invalid wait context ]
+> [ 1850.951152] 6.17.0-11316-g7a405dbb0f03-dirty #7 Not tainted
+> [ 1850.951457] -----------------------------
+> [ 1850.951680] irq/16-PCIe PME/56 is trying to lock:
+> [ 1850.952004] ffff800082865238 (inject_lock){+.+.}-{3:3}, at: aer_inj_read_config+0x38/0x1dc
+> [ 1850.952731] other info that might help us debug this:
+> [ 1850.952997] context-{5:5}
+> [ 1850.953192] 5 locks held by irq/16-PCIe PME/56:
+> [ 1850.953415]  #0: ffff800082647390 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0x30/0x268
+> [ 1850.953931]  #1: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
+> [ 1850.954453]  #2: ffff000004bb6c58 (&data->lock){+...}-{3:3}, at: pcie_pme_irq+0x34/0xc4
+> [ 1850.954949]  #3: ffff8000826c6b38 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48
+> [ 1850.955420]  #4: ffff800082863d10 (pci_lock){....}-{2:2}, at: pci_bus_read_config_dword+0x5c/0xd8
+> ```
+> ...
 
-As Austin Zhang is the author (as listed in the from line),
-their Signed-off-by is needed.
+If/when you update the commit log, please:
 
-...
+  - Update subject line to match history (use "git log --oneline")
+
+  - Drop the timestamps because they don't help understand the issue
+
+  - Drop the ```; just indent quoted material a couple spaces
+
+  - Drop the `` around code names; the () after functions is enough
+
+  - Trim it as others suggested; I appreciate the details about how
+    to reproduce it, but they could go after the ---, where we'll be
+    able to find them via the Link: tag
 
