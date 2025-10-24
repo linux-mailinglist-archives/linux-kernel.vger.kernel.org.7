@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-869632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD1C9C085CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 01:59:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD81FC085C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 01:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ECAC3BC5FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:57:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CDCED4E46B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4128530E84E;
-	Fri, 24 Oct 2025 23:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211CA30F53F;
+	Fri, 24 Oct 2025 23:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8/vLx1A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/Q6W06W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD4F1F1932
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 23:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7349B1F1932;
+	Fri, 24 Oct 2025 23:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761350266; cv=none; b=BQZNiC+wkkNsB9/P6JhSohwnblcKTNM1lwVuDIFA+qwQe0N93IiqiIWelbUt83Jq0YUYFkfd4kPrZU9NIdP9je356tvbS3DS2ngghTBFsA+MmnqJVnd39jFC9wWNi0aLgWHLlME6YsmEniC9MC2TuWAyxKZeNszZSkO4zQSAt8c=
+	t=1761350320; cv=none; b=FgsCqWy6I/lMnzLEIbSuj7vZzGDLlFty9/HMAIl3sCMGQFU0UkQ/kYWhDHQCvV2+Z0F0Gqb+2P2cZ1tk9U9DZgsG5jgQsCGLHXYAibuGpMDoxGNy0F0HANDnpdoMTwU1j17nAXJn+1prhejc+yQWsQat2NjTMa0In4wJ941sTZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761350266; c=relaxed/simple;
-	bh=+Abpmx80dHyLdRXIXAEx6hgQNdKU00coHtI7fLEuwRc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=q+/nd9+HE/hBwjkEb59i33FCVrdMWSA/Ch343SwZ3pStTfGWp98k8kXvbjre8SwbxDt9Ki1qkjAUMh9fRkN6YFBTFngFg71M3B07MWlQTJvn7YaUR0dmECqhyGbsYLHUM1uezRBrC+H4kCEKvU7tA2K6uyPA1LeiAJ5IYGHNkAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8/vLx1A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA10C4CEF5;
-	Fri, 24 Oct 2025 23:57:46 +0000 (UTC)
+	s=arc-20240116; t=1761350320; c=relaxed/simple;
+	bh=RBJ1kFdTqUt6A9DhvYBiKt7ySabI6UHTBG76GHsRHk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qHQCvSF2Sb7UxTbFLsRHuirmm1xNRz8bxcCbGcgUA+jLNsL1zSlRD1kiDfUxLy8f/6cB+E3SSkExZrnPDLspqee7irUUKcTWcnaxcj9UiweVTYo4tEjR00IJmrw3FQIew2ur4NUtJoXEOwDuPW40ALkOPnaTATXkpYMuGDu7k5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/Q6W06W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFB22C4CEF1;
+	Fri, 24 Oct 2025 23:58:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761350266;
-	bh=+Abpmx80dHyLdRXIXAEx6hgQNdKU00coHtI7fLEuwRc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Y8/vLx1ApQeihaTL0vL/8zWOEihCTuEGoaZgFduT4RNhnc0gkcmEktKHWb1v7k4gP
-	 Z7q4hyFiNHqFqRxqCSp55q68nIF4B7a/NjFkCsTyR2KX8+qgx1VmMhQZt3oUzrLOPu
-	 RCXGuL90yZFlUAeTOJs+Jid0eZsaHKmVF2JNYLtkweODLtrGnViQVxbjypZ8JzUoFe
-	 HYCX5kyg2vWRYY16NA6ZjOUEhEQqMmGuswExSERftzPKLd6HmqJHOcqrECX8Gdv2/b
-	 F5i00q9a+apdl1re7NxmwAwg3jIQe5GGm2zl7eKaPZU9jnZpK10Z1Z6ZuNNqarWPSn
-	 nsaB3i2BEA1YQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E91380AA54;
-	Fri, 24 Oct 2025 23:57:27 +0000 (UTC)
-Subject: Re: [PULL] drm-fixes for -rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aPvojo5uhoAatX2Y@phenom.ffwll.local>
-References: <aPvojo5uhoAatX2Y@phenom.ffwll.local>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aPvojo5uhoAatX2Y@phenom.ffwll.local>
-X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-10-24
-X-PR-Tracked-Commit-Id: 18b1ce0b29c41833363b58ad030b76dabf984899
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3d08a425d2f667edf9ab7f9c3d999c218a96ba6f
-Message-Id: <176135024595.4099580.14354874840145229936.pr-tracker-bot@kernel.org>
-Date: Fri, 24 Oct 2025 23:57:25 +0000
-To: Simona Vetter <simona.vetter@ffwll.ch>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, DRI Development <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@gmail.com>
+	s=k20201202; t=1761350320;
+	bh=RBJ1kFdTqUt6A9DhvYBiKt7ySabI6UHTBG76GHsRHk8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=S/Q6W06WRSgiy+fxdMyjENVTWa+USVO0DV8plsld1hondsKuVyUsYqflehUP+V9wV
+	 09QatamCxQhRwUwetzriw2OD365AcDHsCSPurnfA+U+l9/n+xRAgWt6MQbOQ0Q9aPs
+	 Lzby+iA3wFQKzsGTMGVhshJnjsqTt42Cy4ADcxNKTZeEzwjq5htZU5CqpKAlw66tT4
+	 n/WmmKzWQ4YCCjnJAyoCvyQWMAH+/mptC9cZZX1clM/BMrtLsD+Fjr5ibtKoj2SBRs
+	 jad6/UPGn6sKXhxktAqibpJxyR1xCh2gQ6LLB8HFH7dUM+JKygKVtk9oQP4OkrlxX6
+	 oebn6ClHr3m3g==
+Date: Fri, 24 Oct 2025 16:58:38 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: <kuniyu@google.com>, <davem@davemloft.net>, <edumazet@google.com>,
+ <horms@kernel.org>, <jreuter@yaina.de>, <linux-hams@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+ <pabeni@redhat.com>,
+ <syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com>,
+ <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH] net: rose: Prevent the use of freed digipeat
+Message-ID: <20251024165838.6efa0dc3@kernel.org>
+In-Reply-To: <20251024090521.1049558-1-lizhi.xu@windriver.com>
+References: <20251024031801.35583-1-kuniyu@google.com>
+	<20251024090521.1049558-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Fri, 24 Oct 2025 22:58:54 +0200:
+On Fri, 24 Oct 2025 17:05:21 +0800 Lizhi Xu wrote:
+> There is no synchronization between the two timers, rose_t0timer_expiry
+> and rose_timer_expiry.
+> rose_timer_expiry() puts the neighbor when the rose state is ROSE_STATE_2.
+> However, rose_t0timer_expiry() does initiate a restart request on the
+> neighbor.
 
-> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-10-24
+Read what reviewers tell you please.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3d08a425d2f667edf9ab7f9c3d999c218a96ba6f
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Kuniyuki already told you not to send patches in reply to existing
+threads.
 
