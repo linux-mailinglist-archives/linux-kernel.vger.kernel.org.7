@@ -1,220 +1,99 @@
-Return-Path: <linux-kernel+bounces-868981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E4DCC06A0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:10:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3515C06A5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:14:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7252A3A4331
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:10:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BD281C225EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD66A31D752;
-	Fri, 24 Oct 2025 14:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C211931D743;
+	Fri, 24 Oct 2025 14:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hf4JTpxp"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LyFuUqRk"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6679931A570
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7EB186E40
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761315047; cv=none; b=eDzRIiIJSzitkX/b424/uEG1xqmwkloGqla6Ozv6sJHv0jJE7UIOkDdDE9yJirG4WuO7O+YBXPz+Sy1j4ak5LrYrEE90WZFizL9WOdwZp30Vt/wEThtRQjIUffrBZf25hHlkO3zCMM/hmqzA4UclRgfM8XeAB8oe7l9C9VeDkM4=
+	t=1761315063; cv=none; b=Sivo++zF1UjMd++JYvZgsrTKz3Gn+LGnQc5DlESy/lFN1XDMm07p5d3U7fHbtLrHRPSAYzF1bRnLHAV1fWgu2JhURUmmyiWyiRtz+LR2aZI+EAWZZhU0TJ7MkvcAoP9U18Z2TydfYyMsObWTZFVs49AnR3myisXTb86586MTqlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761315047; c=relaxed/simple;
-	bh=6EhyPMORGQ8dQ66Pg/Ba395+tsOWWreONj562IkAF44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LnBpQGeAsYS9ppnxnUtaNUEP49Hn0otOiBmgoKtsIfx2sbM37k0nqcrAnFEZGMkvMK+1uGh+7zqNRIxsLcAZD8vb4DtAxVONITXQEhO47Daz5hSHQ6vu1L5vpLaHCH3c316PGygDRop229ucCdgTrqzCtRcbBXfP87nJgcvEj4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hf4JTpxp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OBsZ2H014872
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:10:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2EwzhNU0hLrCYQoy/rgZGyJrIlbbka4ufJYL4tWLm4g=; b=hf4JTpxp6ZTNoAXi
-	KJP8KxE23HU7Aw7/yQWj6QU0lRdhrQ+QV1hgrZ5bIuHt//DhIHGJkztLNevie8sQ
-	Alugi6oMfJhQCJCN38YNrEKZYdf7zvbsAP33Tz9Z7MqocwpWncq2c/8qkf0XBbYP
-	kx01T4wZhfV1pYsywBtyfbuQOChFuEyIery3QgrAfWXXNchXCSmqSHOz++gQDWIP
-	hwEkiZSFM8oJbk7Z8XAkJip2LZs2H69effn9DdKtgytwf73cK7X0OAAD/VpLDV/y
-	SJcVpFbJXmKn1Z8x0nt6xhcRTHLXffW8kkol+Mnas4QjB6T2aV7dXqAr1ibn7iLM
-	tI1Vag==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v08pvfrj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:10:45 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-277f0ea6ee6so19369975ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:10:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761315044; x=1761919844;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2EwzhNU0hLrCYQoy/rgZGyJrIlbbka4ufJYL4tWLm4g=;
-        b=MsO0ClfYF8iD3K/S+A6EP5OIjrL+neO7mEaCnH9jPiB1cEA0SmCMNp1hDLxzvFTXwG
-         JwTH9OyqHFN7xAl2Gri5KxmHdJehVvjiS7BmXFJyf3P2DS8zCrysws0c3YJ7PE+5Y1kK
-         67Fhq2eeXRSuqJ6v+DplEgZC9knGcLuSeU2drJI3w/hJWFnd0FY1P3YiUjzT+v+gf4I9
-         hAkl9xRf/KR80xck+aISgDNKE5np+ijEgj5YM2HZCqpeXfa1GF1VuGfiLH0AYFJ5pSk/
-         OaMV2syyad24LLP9542dGiQQJFih1ScdMW97HY+wk/ByeWIMkWo53gki8S0c+qnVsSqW
-         iQNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/paVMshBVQI1KxMLV2OZnUtqM1hK1aL9c3tMYTQa9DI8vjsMhy5OhWCe/cDkQ8zuk7Jw3fXbCvrjE3wA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ7EsDN1v38edT9p51EeAetzcTjwsijsABe79Wx+yIYj9Qx9/k
-	GofIIjch9WC9M8cMg+m1X0MDJf1CrESFxruTp0YMa5rkr4L0wiZ+iu6+8O2QJHHQl9kldgMeUS3
-	3yxorShJTuaE6uL9jEAjL8Fy/zB3FPLU4z1DFqQxy2bplb8LdZS7Pbz5y1k0fTQBDK6c=
-X-Gm-Gg: ASbGnctBVumu0GxwPRs/0Ci4ArFaVPcsd6LS7CK7L+TPBUfjUcMJUSr4RlZVPcOrbNJ
-	4r0PkJlfdVZlttzZ95rnglKqK2gf/Z5aNv8yJ5KYSLPhxCsZ9TPkI8gvePJtoJfxw4pIN1G5Zr4
-	duYH0cVX3QrtOXny4TNgocqC+rhP7GwBbLxCuHIqlsMfZM4roaszrx7L0WrzH4c/7T2EG1YJlAL
-	2e67zUsvP5Fd2ZgXn9PbTXCRi8BVy3zdabcY0fcI5bd/E8zAwHnjxqqNc58eNZOwpn/2BmGx3K5
-	RT2qmjFuqsXqzpb8NtGYSZayvjSQTtapGKDR39nNgBSlLXMMh3eU2GzGOnvAnXYBDIreJTFq4gi
-	U2wPexODfjMDGQ6xsbQgbKw==
-X-Received: by 2002:a17:902:dac3:b0:273:7d52:e510 with SMTP id d9443c01a7336-290cba42370mr374643155ad.58.1761315043560;
-        Fri, 24 Oct 2025 07:10:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGCxbxbl89eRys7AEmR9vsf2AEBuj924PXVSollg/7tpRp2GR8BpHCrwzGDrKdCguLCpt+ZYA==
-X-Received: by 2002:a17:902:dac3:b0:273:7d52:e510 with SMTP id d9443c01a7336-290cba42370mr374642585ad.58.1761315042915;
-        Fri, 24 Oct 2025 07:10:42 -0700 (PDT)
-Received: from [10.204.104.20] ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4e0a43asm5250189a12.27.2025.10.24.07.10.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 07:10:42 -0700 (PDT)
-Message-ID: <c7334b38-3d6e-4fbf-a385-40551fbb7c93@oss.qualcomm.com>
-Date: Fri, 24 Oct 2025 19:40:35 +0530
+	s=arc-20240116; t=1761315063; c=relaxed/simple;
+	bh=1h6CkkGF4+mfHvGDigYb52v/DwUUA2fb8PUDtKWd9s4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QYLvMQmJKA1/zO/aT6TSy+f2fZbL7vmV61FZqG5HOAcN0ryZZg2iBizSKKsqTdY1j82SYIqU9arBO+Mc6OfxFRk1xwbpADb9/M7GS5uFoabQrsSpCzWwodctcsPGfToLQjNy41eoz9ur6OEJuwJCvrGStgUfHIOAVbXspzKMpPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LyFuUqRk; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BcNlBw5cX+K1QD79dZZjRY3X4TNSuVVjsErLmNltpBo=; b=LyFuUqRkFgbYw1ajWNC2aGtvhI
+	vJFQzSPx53lr8SyPNVW72ynpEJ5MgBwCX3rVzuhMUmbbJXHcJIYJIf6LjiZ1ATGmWsQJStiAVUepp
+	Pwto5asg3JMi4rWv9S/NkJ7eMA9AJHcTKQp2qx1UAuWO/LYlqLsGp3Nn18rS+kLcHR/OCDkQlgiD3
+	bvmDjlYhayfgj9bakn6X6AMhTZAOMfv8tgRJ6sjV4SOwO5+B0lUFnnGTDJQ6q7gt4E0sf4Q2amUSO
+	1MuI4mhbLpIdWEgxTy8AC5vlftAKw2qfOAZncvypzmQbF5slUw77GNIt4xlzsXtMWamdQzlnoXX2y
+	dWRlDxCQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vCIVM-00000002S3x-1O0D;
+	Fri, 24 Oct 2025 14:10:57 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A544030039F; Fri, 24 Oct 2025 16:10:56 +0200 (CEST)
+Date: Fri, 24 Oct 2025 16:10:56 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: jpoimboe@kernel.org, rostedt@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/12] unwind: Implement compat fp unwind
+Message-ID: <20251024141056.GV4067720@noisy.programming.kicks-ass.net>
+References: <20250924075948.579302904@infradead.org>
+ <20250924080119.613695709@infradead.org>
+ <20251022143140.2ed517e1@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] dt-bindings: display/msm/gmu: Document A612 RGMU
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Clark <robin.clark@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-References: <20251017-qcs615-spin-2-v1-0-0baa44f80905@oss.qualcomm.com>
- <20251017-qcs615-spin-2-v1-3-0baa44f80905@oss.qualcomm.com>
- <8f3f4874-2e82-473e-87bd-e3bd58089b90@kernel.org>
- <181af756-09a1-4694-98c4-53cea556e172@oss.qualcomm.com>
- <ff37b635-b3dc-4180-8eae-e798ef6ce55a@kernel.org>
- <f677f8ee-d635-4131-8ee2-8ca6ead43095@oss.qualcomm.com>
- <qcs6y22hozfmb2ipmahfw25m2xti2gr5kjn43c2woiueqe4xmd@ovnrhwibhhe2>
-Content-Language: en-US
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-In-Reply-To: <qcs6y22hozfmb2ipmahfw25m2xti2gr5kjn43c2woiueqe4xmd@ovnrhwibhhe2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMCBTYWx0ZWRfX0Be2h5I8T0C5
- S8ATGGbQWckRZzNFqRluyWmGb4IyAoR5JzjI8qXTt/njEqS0JiQNwPFs96Hucw/4DJP3ptVE4yp
- yrwneD5rs20b9MEg+7E7hixQWKTF32+ZuRrQq81pCKDZKVUmxn9MQicK07on1E/zFTOVd67wi3Z
- hXJqmLvt3o4cEV3Qd8EVcnKNr+4ac5/x5ag3Mft36oLdA0kqZW7JVImJ3an23OwHRBq+cfqJYnj
- 1gOo5vM3PI0YfN4hb47vt7itXmjBEzPU9lVIHpm1dIVfGibPmuEPFmqbFnDNAcdPEub9P4ml/S8
- pOP8RLdMdv4RErao9HIbRbW58q9R1e0iKujZcYmETz/OBHJLecdqFwdjMiVluw/FpCTNtfEt6fX
- VDrAbwjC6cR+dAJyCRxpBH7NTfiLWw==
-X-Proofpoint-GUID: trCABwM1ylXKPUYP7dg-7z56N-Iiv5la
-X-Authority-Analysis: v=2.4 cv=Up1u9uwB c=1 sm=1 tr=0 ts=68fb88e5 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=V0jSdCJ6aHfz9AKaKsYA:9 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-ORIG-GUID: trCABwM1ylXKPUYP7dg-7z56N-Iiv5la
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-24_02,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015
- impostorscore=0 bulkscore=0 priorityscore=1501 spamscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022143140.2ed517e1@gandalf.local.home>
 
-On 10/24/2025 2:58 PM, Dmitry Baryshkov wrote:
-> On Fri, Oct 24, 2025 at 04:33:28AM +0530, Akhil P Oommen wrote:
->> On 10/22/2025 12:49 AM, Krzysztof Kozlowski wrote:
->>> On 21/10/2025 17:51, Akhil P Oommen wrote:
->>>> On 10/19/2025 2:43 PM, Krzysztof Kozlowski wrote:
->>>>> On 17/10/2025 19:08, Akhil P Oommen wrote:
->>>>>> RGMU a.k.a Reduced Graphics Management Unit is a small state machine
->>>>>> with the sole purpose of providing IFPC (Inter Frame Power Collapse)
->>>>>> support. Compared to GMU, it doesn't manage GPU clock, voltage
->>>>>> scaling, bw voting or any other functionalities. All it does is detect
->>>>>> an idle GPU and toggle the GDSC switch. As it doesn't access DDR space,
->>>>>> it doesn't require iommu.
->>>>>>
->>>>>> So far, only Adreno 612 GPU has an RGMU core. Document RGMU in the GMU's
->>>>>> schema.
->>>>>>
->>>>>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
->>>>>> ---
->>>>>>  .../devicetree/bindings/display/msm/gmu.yaml       | 98 +++++++++++++++++-----
->>>>>>  1 file changed, 79 insertions(+), 19 deletions(-)
->>>>>>
->>>>>> @@ -313,13 +360,26 @@ allOf:
->>>>>>            items:
->>>>>>              - const: gmu
->>>>>>      else:
->>>>>> -      required:
->>>>>> -        - clocks
->>>>>> -        - clock-names
->>>>>> -        - interrupts
->>>>>> -        - interrupt-names
->>>>>> -        - iommus
->>>>>> -        - operating-points-v2
->>>>>> +      if:
->>>>>> +        properties:
->>>>>> +          compatible:
->>>>>> +            contains:
->>>>>> +              const: qcom,adreno-rgmu
->>>>>> +      then:
->>>>>> +        required:
->>>>>> +          - clocks
->>>>>> +          - clock-names
->>>>>> +          - interrupts
->>>>>> +          - interrupt-names
->>>>>> +          - operating-points-v2
->>>>>> +      else:
->>>>>
->>>>> No. Don't nest multiple ifs.
->>>>
->>>> I guess we should split this. I will add a 'required' constraint to the
->>>> rgmu constraints above. And apply the below 'required' constraint
->>>> specifically to 'qcom,adreno-gmu' instead of the 'else' fallback case.
->>>>
->>>> Please let me know if you have any suggestion.
->>>
->>> Maybe the binding is getting to complicated and RGMU should have its own.
->>
->> There is just a single chipset with RGMU and we haven't seen another one
->> in the last 8 yrs. So it is very unlikely we will see another one again.
->> So I feel it is not worth splitting this file just for RGMU.
+On Wed, Oct 22, 2025 at 02:31:40PM -0400, Steven Rostedt wrote:
+> On Wed, 24 Sep 2025 09:59:59 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> I'd second the suggestion to split the RGMU schema. It's not about the
-> number of platforms supported by the file. It's about the clarity. I
-> think it would make the file easier to read.
-
-Alright. If there is a general consensus, we can split out RGMU schema
-to a new file.
-
--Akhil
-
+> > @@ -100,6 +115,7 @@ static int unwind_user_start(struct unwi
+> >  	state->ip = instruction_pointer(regs);
+> >  	state->sp = user_stack_pointer(regs);
+> >  	state->fp = frame_pointer(regs);
+> > +	state->ws = compat_user_mode(regs) ? sizeof(int) : sizeof(long);
 > 
->>
->> Let me send another revision and let's take a call after that.
+> compat_user_mode() is an architecture function (only defined in arm64 and now x86).
 > 
+> s390 doesn't implement it and regs can't be used to tell if it's compat or
+> not (although Jens tells me the task_struct can).
+
+I've made this:
+
+	state->ws = unwind_user_word_size(regs);
+
+And then every arch will need to implement this. The x86 implementations
+is:
+
+static inline int unwind_user_word_size(struct pt_regs *regs)
+{
+#ifdef CONFIG_X86_64
+       if (!user_64bit_mode(regs))
+               return sizeof(int);
+#endif
+       return sizeof(long);
+}
 
 
