@@ -1,141 +1,181 @@
-Return-Path: <linux-kernel+bounces-869581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB1EC08395
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:01:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135B4C0848A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 01:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B33CB401715
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:01:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 37CCC4E5304
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B907A2FA0CC;
-	Fri, 24 Oct 2025 22:01:32 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949C12727EB;
+	Fri, 24 Oct 2025 23:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBB4Ed4e"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD3324729A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 22:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200AB1990A7
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 23:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761343292; cv=none; b=LIbNUMPrbFoRgGegtjcZlxBzooS1I6RpfWtE5iKdqZtWLvGjxei8323xKDoKIDCbU+NVayzAqv18/CtBTVXcM6GDquekQaGBtHFhv/1eNtWOMF6Aa/YgeaCeRMRoYHjMTqlY01NWCGNsPU8wDxsTybTi4upkHhN2r2VR9NbMJKY=
+	t=1761347848; cv=none; b=c3tDw44K5MPJr2kef0hz6laEiy/tiFPGsWEFKF3iJi2wUBHmUAQrGh22ThVGTwqWLCb4GB/lLG2sIrQDKdWqN49bpiRSXAaGtzcWeXBQzGpwZJiiR+4ep21Bw29tk72wA+2cbIFI+PCzeyQc4WuoPsQQJjV4dpftbXUn3jllBVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761343292; c=relaxed/simple;
-	bh=1+RxdBhXqCRYxIEiRu8Nj+l7pDdIZ9+V2r2q8ywYKdw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fOXZjEw3LqIAhz65XeQssKCddb1euDffqoNr3kkOdvgNWpW42PiUcHfC1CHO/o7nOH16qxr7c9xjxUswZnbof1X3ST2uhHpZXQnaVKSzC7IR8WVVz8ThzdHRV7y8HX1lkd3w03eqo0a8bZw/CFzLP0bJTUSuSswrb0rIyNVquEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-431d3a4db56so97079495ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:01:30 -0700 (PDT)
+	s=arc-20240116; t=1761347848; c=relaxed/simple;
+	bh=+NEftr7VWmliQcXUqkaO9sJG2DgzF/Yaw8WY6cHdu/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hBTd7O6HrSAxjdZEBHZRlzeDLES3dlCmh+ej5PTCcHRNRpCRlt6GIXQxD+i901uebWJfEQggMDj8nkkyNCl37DUMA89o5E3reaO4o4WUMuTjLJRKXwlTPXLyVPqxbhHNiUwOiYUIQnVqFw0vkzD17Q0MusManGAKsrmuV6jt0nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aBB4Ed4e; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b4539dddd99so526867566b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:17:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761347845; x=1761952645; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4qshgmZlkIM4+vcn2er+R5ZwtdRF9Gko5Hx8ZyCDhMI=;
+        b=aBB4Ed4e9nyMko0RU91OcIOb9HCioQMGbmrLsvVBL+VUnrV++i1s0dh/Tk+LnjDLHC
+         JBWz9173oT25WaWpxTdBRGooFUEUVMXOeYSy35BCaemNOf/YbA6D7HDvToFQMQxHwZ2z
+         W61tvQeVRNBID0jLN6p9MdSnMQR1kztXtedb3fMVlrrt1bA9yk8agFe9TrI4q0gacepr
+         WzhZOlCSEBwKSdaT6GLWQ3Uv+XvekUFJfoi1m/mYHpZaFAbw7v82cOFmwJ7+48DavOeA
+         fX7FHVH4zDzKr/kNRV+jsW/cPzXLI5uu/FUJa1S/zNq8YGLa6p3rfl5N+24ME2lBW6vy
+         Nabg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761343290; x=1761948090;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KUCgFKQ1deCUxSkq6GncvFXwTaWjl9UIO9Kgvm6UiOc=;
-        b=L4Iqt+Wjq8usgy1nPCh6JeIfZC++LhVvQuefFZ/IvWTp1UPZVmSCgT6AguqCMWVcgv
-         axrxMtTE+ujtOyJLDErE0RXifvcEbZAJreQHzkhRdzzyi5OnZBccn48M9U0d8sO1xuMD
-         v/r7DLTF7gfUF+F0bYpEIpzwfQx0F0d3jlCYwPSpFlR923dNuDo/zys28ywPc64InsP0
-         3Gy7lX7XDwdiJ/G5ZIcnUua67XqBbl9ambmfu/U2pV4iJykOGcyJUMHBB/lvObYqLdH7
-         qYG61AK1CKDoIiErkp+b/siRS6JSVTGO9utYjzlBtH4gZNl0P5dxzenciT3E4RBQ3/g5
-         tLow==
-X-Forwarded-Encrypted: i=1; AJvYcCW5z+MPWo6Zk7j1+ChalTB8UwLp4/7u89s8EHWiD2Zg4f6kpBh7d3o8fE/tvRbkpYWeopOAry1i10XQP5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIf4firBvtrk/T9ThhBf6YDGNTFgqbTXuNBDir6AIyvuPMkr+0
-	13iq/s1c2HRBn6YrUihAn50BGaFukVpk1cpBkovQxZpd8FV/R6TNeL53Li5OAm+sVA8Qg1DHXRy
-	70TYqdOlwvw5ra7FlFrekVVOr4DlvcYU3H7tzw0VUS8zpO0MKwPnXN5S3v6Q=
-X-Google-Smtp-Source: AGHT+IEfCFHWwryFgS+JMTQ6+X4H+mgo+SItZPEyAkRlE+PlHkPotFDZEaLijKcgbHrFyNNEIm43V7bQmqByTeLF0ChU8hm9n2Sw
+        d=1e100.net; s=20230601; t=1761347845; x=1761952645;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4qshgmZlkIM4+vcn2er+R5ZwtdRF9Gko5Hx8ZyCDhMI=;
+        b=VTCWu48lZYBdL5PZxyNEvguhVjiZ3Voe1/U/T1xNzCU+phPW2PKVIi75Cz8DFIgrv5
+         e5q7xH9wzM+boKbrx5nWn5dl80iMF0ZR/CXYa9fpN4h/m+WTAyCkWU8voCvfE0wtmZ9f
+         Eqasq6djdajnv/ohQaraqNtQ1gfYRv46xttsxGRds2hxud0296sn3zKKUcEj9xQ1RAvR
+         jakSGnVtVkjrP6dgLFHcUdznPMdFSrRDl1JAsFCj0oxwbVUiFyigb1mDgiy0Zmr6Hm9w
+         HN1W+TrfWCoxzcIpWqQmtGROYnhtk13S9viuXRYRxxNvhmeyTTWBgkiS+vPmFFR3mXbr
+         1S4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVxjLYg4OsrheoI4VlYV1hU+rkZWotAsOUCvftu5ZJ5LAEc2r1OE1aQ/hMnjzXBWVN1AxH+ke4PO86GBtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg8rQVg6KVlpDFkhQj+xs+VOFVNOQce2x+JGSA/w8u74TOqtjo
+	N9yF4HIaBeOAocVe0Njvxln9JnJb4/P5fkT2zuA49ED49g1VrLErwTqUjq6wgA==
+X-Gm-Gg: ASbGncti3CZ4xSdaan7yqQyA7nPG1ZpvjX2IQDbvpTczdyDPjeJQfW84QsrnCDbALEE
+	yItAAM6E6QX+TeAJO4yNNu5dmBJkqQYiOdiliPh/DbCAQ9Fb1QbQAGjqisTHCK4eKqz/qxqNZnf
+	LiPjm1EIV1uyxRqlMhXxLmw4YmxmI71Myx87cTK+mU7qRW5SuV2+SXMq83pXoNs9Zn1Q85rHp8N
+	xdnwZOZUI3SO6zrF8I68tS9yDcI/ClK8v6PN9bSkhNjc9837PsbmnXroxox/rXOiCnwSwcKjYqu
+	aKpR32I8nJNUooo7SZxk2D/UmHKKxGqU7/5pGXzsN6VxmbI5VqvPU6swIJVkXKClDGSnOhme7Z6
+	A6U6w7LfRAikqnSofH16EyC3DVCi8AFmVetiLkAoB4cxA1kLRFhbgqasXzBz2bmlQpGa8rrI=
+X-Google-Smtp-Source: AGHT+IEQw0TA1CC7no4fMAMA9oQRoUt9Lgbn+Uft1azRKrTnyGz7lCiyNuO6p2GHKFOC05VVJ/iKvw==
+X-Received: by 2002:a05:600c:4f89:b0:471:a98:99a6 with SMTP id 5b1f17b1804b1-475cafae164mr64272055e9.11.1761342429974;
+        Fri, 24 Oct 2025 14:47:09 -0700 (PDT)
+Received: from andrea ([31.189.53.175])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496d4b923sm89676705e9.14.2025.10.24.14.47.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 14:47:09 -0700 (PDT)
+Date: Fri, 24 Oct 2025 23:47:04 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Xu Lu <luxu.kernel@bytedance.com>
+Cc: corbet@lwn.net, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, will@kernel.org,
+	peterz@infradead.org, boqun.feng@gmail.com, mark.rutland@arm.com,
+	anup@brainfault.org, atish.patra@linux.dev, pbonzini@redhat.com,
+	shuah@kernel.org, ajones@ventanamicro.com, brs@rivosinc.com,
+	guoren@kernel.org, linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org,
+	apw@canonical.com, joe@perches.com, lukas.bulwahn@gmail.com
+Subject: Re: [PATCH v4 00/10] riscv: Add Zalasr ISA extension support
+Message-ID: <aPvz2Pb6RuWnw9Ht@andrea>
+References: <20251020042056.30283-1-luxu.kernel@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d93:b0:430:bf60:6b01 with SMTP id
- e9e14a558f8ab-430c5268fccmr399575195ab.19.1761343289569; Fri, 24 Oct 2025
- 15:01:29 -0700 (PDT)
-Date: Fri, 24 Oct 2025 15:01:29 -0700
-In-Reply-To: <68ec1f21.050a0220.ac43.000f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fbf739.a70a0220.3bf6c6.01a9.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in xfrm_state_fini (4)
-From: syzbot <syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	herbert@gondor.apana.org.au, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	sd@queasysnail.net, steffen.klassert@secunet.com, 
-	syzkaller-bugs@googlegroups.com, wangliang74@huawei.com, 
-	yuehaibing@huawei.com, zhangchangzhong@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251020042056.30283-1-luxu.kernel@bytedance.com>
 
-syzbot has found a reproducer for the following issue on:
+On Mon, Oct 20, 2025 at 12:20:46PM +0800, Xu Lu wrote:
+> This patch adds support for the Zalasr ISA extension, which supplies the
+> real load acquire/store release instructions.
+> 
+> The specification can be found here:
+> https://github.com/riscv/riscv-zalasr/blob/main/chapter2.adoc
+> 
+> This patch seires has been tested with ltp on Qemu with Brensan's zalasr
+> support patch[1].
+> 
+> Some false positive spacing error happens during patch checking. Thus I
+> CCed maintainers of checkpatch.pl as well.
+> 
+> [1] https://lore.kernel.org/all/CAGPSXwJEdtqW=nx71oufZp64nK6tK=0rytVEcz4F-gfvCOXk2w@mail.gmail.com/
+> 
+> v4:
+>  - Apply acquire/release semantics to arch_atomic operations. Thanks
+>  to Andrea.
 
-HEAD commit:    8ce93aabbf75 bpf: Conditionally include dynptr copy kfuncs
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=126853e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=67b63a24f3c26fca
-dashboard link: https://syzkaller.appspot.com/bug?extid=999eb23467f83f9bf9bf
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14218be2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17104258580000
+Perhaps I wasn't clear enough, sorry, but I did mean my suggestion
+(specifically, the use of .aq/.rl annotations) to be conditional on
+zalasr.  Same observation for xchg/cmpxchg below.  IOW, I really
+expected this series to introduce _no changes_ to our lowerings when
+!zalasr.  If any !zalasr-changes are needed, I'd suggest isolating
+/submitting them in dedicated patches.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4a42c2608bb7/disk-8ce93aab.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/84ea41a9a1bb/vmlinux-8ce93aab.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/94fb843154da/bzImage-8ce93aab.xz
+But other than that, this looks pretty good to me.  Perhaps something
+else to consider for zalasr is our lowering of smp_cond_load_acquire()
+(can't spot an actual bug now, but recall the principle "zalasr -> use
+.aq/.rl annotations ..."): riscv currently uses the "generic", fence-
+based implementation from include/asm-generic/barrier.h; compare that
+with e.g. the implementation from arch/arm64/include/asm/barrier.h .
 
-The issue was bisected to:
-
-commit b441cf3f8c4b8576639d20c8eb4aa32917602ecd
-Author: Sabrina Dubroca <sd@queasysnail.net>
-Date:   Fri Jul 4 14:54:33 2025 +0000
-
-    xfrm: delete x->tunnel as we delete x
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14b49734580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16b49734580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b49734580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+999eb23467f83f9bf9bf@syzkaller.appspotmail.com
-Fixes: b441cf3f8c4b ("xfrm: delete x->tunnel as we delete x")
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 36 at net/xfrm/xfrm_state.c:3306 xfrm_state_fini+0x26d/0x2f0 net/xfrm/xfrm_state.c:3306
-Modules linked in:
-CPU: 0 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: netns cleanup_net
-RIP: 0010:xfrm_state_fini+0x26d/0x2f0 net/xfrm/xfrm_state.c:3306
-Code: c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 bb ca 3a f8 48 8b 3b 5b 41 5c 41 5d 41 5e 41 5f 5d e9 09 b8 1a f8 e8 84 15 d5 f7 90 <0f> 0b 90 e9 fd fd ff ff e8 76 15 d5 f7 90 0f 0b 90 e9 60 fe ff ff
-RSP: 0018:ffffc90000ac7878 EFLAGS: 00010293
-RAX: ffffffff89eaee7c RBX: ffff888027f82480 RCX: ffff888143ab9e40
-RDX: 0000000000000000 RSI: ffffffff8d70bc9a RDI: ffffffff8bbf0460
-RBP: ffffc90000ac7990 R08: ffffffff8f7cd477 R09: 1ffffffff1ef9a8e
-R10: dffffc0000000000 R11: fffffbfff1ef9a8f R12: ffffffff8f3c6100
-R13: 1ffff92000158f3c R14: ffff888027f83940 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff88812613e000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa946164f98 CR3: 0000000030606000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- xfrm_net_exit+0x2d/0x70 net/xfrm/xfrm_policy.c:4354
- ops_exit_list net/core/net_namespace.c:199 [inline]
- ops_undo_list+0x49a/0x990 net/core/net_namespace.c:252
- cleanup_net+0x4d8/0x820 net/core/net_namespace.c:695
- process_one_work kernel/workqueue.c:3263 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+  Andrea
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> v3:
+>  - Apply acquire/release semantics to arch_xchg/arch_cmpxchg operations
+>  so as to ensure FENCE.TSO ordering between operations which precede the
+>  UNLOCK+LOCK sequence and operations which follow the sequence. Thanks
+>  to Andrea.
+>  - Support hwprobe of Zalasr.
+>  - Allow Zalasr extensions for Guest/VM.
+> 
+> v2:
+>  - Adjust the order of Zalasr and Zalrsc in dt-bindings. Thanks to
+>  Conor.
+> 
+> Xu Lu (10):
+>   riscv: Add ISA extension parsing for Zalasr
+>   dt-bindings: riscv: Add Zalasr ISA extension description
+>   riscv: hwprobe: Export Zalasr extension
+>   riscv: Introduce Zalasr instructions
+>   riscv: Apply Zalasr to smp_load_acquire/smp_store_release
+>   riscv: Apply acquire/release semantics to arch_xchg/arch_cmpxchg
+>     operations
+>   riscv: Apply acquire/release semantics to arch_atomic operations
+>   riscv: Remove arch specific __atomic_acquire/release_fence
+>   RISC-V: KVM: Allow Zalasr extensions for Guest/VM
+>   RISC-V: KVM: selftests: Add Zalasr extensions to get-reg-list test
+> 
+>  Documentation/arch/riscv/hwprobe.rst          |   5 +-
+>  .../devicetree/bindings/riscv/extensions.yaml |   5 +
+>  arch/riscv/include/asm/atomic.h               |  70 ++++++++-
+>  arch/riscv/include/asm/barrier.h              |  91 +++++++++--
+>  arch/riscv/include/asm/cmpxchg.h              | 144 +++++++++---------
+>  arch/riscv/include/asm/fence.h                |   4 -
+>  arch/riscv/include/asm/hwcap.h                |   1 +
+>  arch/riscv/include/asm/insn-def.h             |  79 ++++++++++
+>  arch/riscv/include/uapi/asm/hwprobe.h         |   1 +
+>  arch/riscv/include/uapi/asm/kvm.h             |   1 +
+>  arch/riscv/kernel/cpufeature.c                |   1 +
+>  arch/riscv/kernel/sys_hwprobe.c               |   1 +
+>  arch/riscv/kvm/vcpu_onereg.c                  |   2 +
+>  .../selftests/kvm/riscv/get-reg-list.c        |   4 +
+>  14 files changed, 314 insertions(+), 95 deletions(-)
+> 
+> -- 
+> 2.20.1
+> 
 
