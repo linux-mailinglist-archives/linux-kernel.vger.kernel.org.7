@@ -1,139 +1,177 @@
-Return-Path: <linux-kernel+bounces-868494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30F6C0552B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 292C5C05539
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E6A14E788C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:27:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB5914EC759
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F51309F0F;
-	Fri, 24 Oct 2025 09:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KOx5z8x8"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9258C309F14;
+	Fri, 24 Oct 2025 09:27:48 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC0426CE37
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809813081D5
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761298053; cv=none; b=se+UXupAsEQm6xtk9oTUqUHs/cjiwTqquTLMlORc9sOea8EbCHrfBrREJYMXlCRnmp3d0QVMmBzfBENztpjYfPqW2iLBN82VBTEZ2OVdSsG4i36490seNgdEohHSngH4VBFZ/8J39GWHuXhUAvUmD/jpvFqkJBqAn2GHkOIrSTk=
+	t=1761298068; cv=none; b=h4Zf6w6nUpl3fqO+I6YCPycO/KxZggPVX7yYhrjnfHvTUaRjmE7WNZa7TX1jlqhInUby0VakoRry0u5N13NUkeaVEkxQQwFIEAGgsGoIE9MIb0t036lv67L4xxzrI5tCLsjXtlESETnvqNLnhJQEQ7Uxm+8Q9y3sgpGl1ISEF3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761298053; c=relaxed/simple;
-	bh=jz3r6IG//8UpNyt5YK3+fvQAu9iJEiCU7Jg/ynlHlE4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FP/+0WlXXJ/k+dj20aq4e6BTczvFZNWyfv+kSDtibtHUnMde4hAMFxf4YdnO9i/B43KZXn0U7vVl45efQyuTn3UUyToX5PNR09bpnvcFSHzILw8NR4QvVlQin92VhMl+LzH7zDxYLcK2XyHeQVzRYDR/GGYNgpUZUN4d8HTZCFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KOx5z8x8; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b5a8827e692so139798566b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:27:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761298050; x=1761902850; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JkKniSG37xTx1eVGmGkTV5Ir1JTVe3QhsEKcXT38Iss=;
-        b=KOx5z8x8cAkXV44T0yNxAZlxB7iTtqw1eiNZ612Fl9igMi9zjKEdyclYw05F4AGM9Q
-         iIMszdAX4Fq2G9G0cCYz628rzrpUcUAMNvUNjFQrfyPM6nwtAT+c2y1RbJVb1owDAEeQ
-         vkUfCjuf4qY00sR6CIVv447mbUXK/paYc3qgG2a5zIhi7zEEbW/0SFD0yXIkan7D7Hgq
-         N2wVTIP3rU9M5ttW15U5+h2nGRWs+HT3QctGHV+q0U1p5zahEeNaQI0icSbaOUEzAX1y
-         j6paiUXU2kjGw6K8yysmbaI2L9pVV68fXogsxGUWqdCKzJZlm7XZVw+LOLYMcVc5/UuY
-         czBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761298050; x=1761902850;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JkKniSG37xTx1eVGmGkTV5Ir1JTVe3QhsEKcXT38Iss=;
-        b=IKFT9n6OuyrOz8XrCZNX8dLuLxUxtWhFCPXmLPRVMcpImWh1y+UZUylmtNw6YzdFKN
-         QDiRuKHKsFOeDS//hlOGnCwskq7vcOpOufQJEX9oLkBaAiGg/mJoWGIYgNcnl/4m7R08
-         S0Y/Q3sWIOlM4fhyQwlYbzF+pdbu8fQ2C3PxSmaVgkIfEJsWwxDxaWlnx5B3PYY7eTba
-         G4pirEanSD4KEZsoZ0aFNeQ8PQXqwEYjUA955bPs576Z9TZQO9l3qH1oVKuIarQaWXjO
-         tKY1WHX7rChPljPDeqOLC/vtJ2ZbGD6Qb7rWT4KRbbh3xQTdm/5HpnDYtQ7S+Lg1x8kM
-         hXgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVQbjEvrCqblb9LG1I1lApTk8CNa5MLaWvn3/Ij7AZSls77zO/t42rizTzElF1TAkouPULeD5v+hUFi+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/4Ne3Nkrd+pxQHWi1GHPlPZaVIoh5uoX4tinXbSaxWFRP9a3e
-	YCHgLAQclHTnrW8nxxGhPn5TdztsuvkodI7p6KppOBRSOpPAhWEJvuNJMvODdmgZVe7/lhXj77Z
-	7s9lToq83bhQlv6pAZQ==
-X-Google-Smtp-Source: AGHT+IGfllOsRSovrXNjZ4P8vLQLDZn7m27advgrGNGOThiOpA4iYZmKtTm5wFMwSkiRyWwhbQxA8qGpfZt0JVE=
-X-Received: from edp28.prod.google.com ([2002:a05:6402:439c:b0:63b:54ec:172e])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:5c9:b0:b04:25ae:6c76 with SMTP id a640c23a62f3a-b6473f3feeamr3050584666b.47.1761298049771;
- Fri, 24 Oct 2025 02:27:29 -0700 (PDT)
-Date: Fri, 24 Oct 2025 09:27:28 +0000
-In-Reply-To: <877bwkhfrr.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1761298068; c=relaxed/simple;
+	bh=RzPBYsE9Z+QwcYi1D0hNt0IClKgJXydxPV4v/o8X4Vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fS07KiKydb3r0qnlbCl9WBVo32EqigJbvwRHzcEFt8SCXMEvZ8HgITkel30L7KGwEVgz59CEn56NkZS5ujiMi3D8NzQKl4nV+4hsJZ+7nYoj6ZxSgeGn4G3bdbnvrXUbZqVturF5D0Kq2T6gJYB4XaLtpFnm47T8bRVdjd2W1YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1vCE5D-0003tv-Am; Fri, 24 Oct 2025 11:27:39 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1vCE5C-005CcK-3A;
+	Fri, 24 Oct 2025 11:27:38 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1vCE5C-00F7Ne-2o;
+	Fri, 24 Oct 2025 11:27:38 +0200
+Date: Fri, 24 Oct 2025 11:27:38 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Johan Hovold <johan@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 0/3] USB-Serial serdev support
+Message-ID: <20251024092738.zao47ehvzckkrsf3@pengutronix.de>
+References: <20240807-v6-10-topic-usb-serial-serdev-v1-0-ed2cc5da591f@pengutronix.de>
+ <Zt7kCxawoszunWq3@hovoldconsulting.com>
+ <20240917044948.i2eog4ondf7vna7q@pengutronix.de>
+ <Z8_wcASfJ8SeAQ8l@hovoldconsulting.com>
+ <20250313194044.t2t3c7j6ktvshjhs@pengutronix.de>
+ <aPogbAozezmqSMuU@hovoldconsulting.com>
+ <20251023134828.2dzq2rhtjplqyyaj@pengutronix.de>
+ <aPs3BX9-og6wJIWR@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <DDO3G26SIZTK.1KV7Q0PQXHWTA@kernel.org> <CANiq72nUiizxo3YFgxUZ1jiczRNbY2ATao2YUBiCEC7k5hbv6Q@mail.gmail.com>
- <DDO3OMBHS8TB.2LDODR1AFRCU3@kernel.org> <20251022.193230.585171330619599845.fujita.tomonori@gmail.com>
- <vTqqW7yepc41IJ7rUH2GAcWAJ1HHAUQ2_NeQ_os6L5MKNZ-acMHFwH9u3m0oRDumL2YQPnZ6Qu58-iLlAv0Tew==@protonmail.internalid>
- <aPjmKSrETqrchW_e@google.com> <877bwkhfrr.fsf@t14s.mail-host-address-is-not-set>
-Message-ID: <aPtGgNajcXKWpji0@google.com>
-Subject: Re: [PATCH v2 1/2] rust: add udelay() function
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, dakr@kernel.org, 
-	miguel.ojeda.sandonis@gmail.com, daniel.almeida@collabora.com, 
-	alex.gaynor@gmail.com, ojeda@kernel.org, anna-maria@linutronix.de, 
-	bjorn3_gh@protonmail.com, boqun.feng@gmail.com, frederic@kernel.org, 
-	gary@garyguo.net, jstultz@google.com, linux-kernel@vger.kernel.org, 
-	lossin@kernel.org, lyude@redhat.com, rust-for-linux@vger.kernel.org, 
-	sboyd@kernel.org, tglx@linutronix.de, tmgross@umich.edu, 
-	gregkh@linuxfoundation.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPs3BX9-og6wJIWR@hovoldconsulting.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Oct 24, 2025 at 10:20:56AM +0200, Andreas Hindborg wrote:
-> "Alice Ryhl" <aliceryhl@google.com> writes:
+On 25-10-24, Johan Hovold wrote:
+> On Thu, Oct 23, 2025 at 03:48:28PM +0200, Marco Felsch wrote:
+> > On 25-10-23, Johan Hovold wrote:
+> > > On Thu, Mar 13, 2025 at 08:40:44PM +0100, Marco Felsch wrote:
+> > > > On 25-03-11, Johan Hovold wrote:
+> > > > > On Tue, Sep 17, 2024 at 06:49:48AM +0200, Marco Felsch wrote:
+> > > > > > On 24-09-09, Johan Hovold wrote:
 > 
-> > On Wed, Oct 22, 2025 at 07:32:30PM +0900, FUJITA Tomonori wrote:
-> >> On Tue, 21 Oct 2025 17:20:41 +0200
-> >> "Danilo Krummrich" <dakr@kernel.org> wrote:
-> >>
-> >> > On Tue Oct 21, 2025 at 5:13 PM CEST, Miguel Ojeda wrote:
-> >> >> i.e. if they aren't sure what the value is, then I would prefer they
-> >> >> clamp it explicitly on the callee side (or we provide an explicitly
-> >> >> clamped version if it is a common case, but it seems to me runtime
-> >> >> values are already the minority).
-> >> >
-> >> > Absolutely! Especially given the context udelay() is introduced
-> >> > (read_poll_timeout_atomic()), the compile time checked version is what we really
-> >> > want.
-> >> >
-> >> > Maybe we should even defer a runtime checked / clamped version until it is
-> >> > actually needed.
-> >>
-> >> Then perhaps something like this?
-> >>
-> >> #[inline(always)]
-> >> pub fn udelay(delta: Delta) {
-> >>     build_assert!(
-> >>         delta.as_nanos() >= 0 && delta.as_nanos() <= i64::from(bindings::MAX_UDELAY_MS) * 1_000_000
-> >>     );
-> >
-> > This is a bad idea. Using build_assert! assert for range checks works
-> > poorly, as we found for register index bounds checks.
+> > > > > > > First, as the commit message you refer to below explain, we need some
+> > > > > > > way to describe multiport controllers. Just dropping the 'serial' node
+> > > > > > > does not make that issue go away.
 > 
-> What was the issue you encountered here?
+> > > There are other USB serial devices that support multiple ports over a
+> > > single USB interface. The DT bindings need to account for that case as
+> > > well, and that probably means we should not be describing the interfaces
+> > > at all but rather the physical ports.
+> > 
+> > Ah okay, I wasn't even aware that this possible too. However this is DT
+> > description and another topic.
+> 
+> It's still one of the issues that need to addressed.
 
-Basically, the problem is that it's too unreliable. The code does not
-build unless the compiler can optimize out the build_error() call.
-For range checks, seemingly unrelated code changes turn out to affect
-these optimizations and break the code.
+Yes but this shouldn't be an issue with this patchset. So far the
+smallest DT-describale USB entities are the interfaces.
 
-To make matters worse, the error message when a build_assert!() fails is
-terrible. But even if it wasn't, the optimization issue is enough for me
-to say we should not use it for range checks.
+Additional support needs to be added if there are devices which need a
+more fine-grained description. I can't implement this since I don't have
+access to such devices. That beeing said, my patchset doesn't break such
+devices because in that case these devices simply can't be described as
+serdev device within the DT and the ttyUSBx devices are exposed to
+userspace.
 
-There have already been at least two instances where someone wasted a
-lot of time and had to ask for help trying to debug a failing
-build_assert!() used for bounds checks.
+If one wants to add the support for it, the support can surely be added
+afterwards too in a backward compatible manner.
 
-Alice
+> > > > > > > Second, and more importantly, you do not address the main obstacle for
+> > > > > > > enabling serdev for USB serial which is that the serdev cannot handle
+> > > > > > > hotplugging.
+> 
+> > > You will also see the following kind of warnings in the logs:
+> > > 
+> > > ttyUSB ttyUSB0: tty_hangup: tty->count(1) != (#fd's(0) + #kopen's(0))
+> > > ttyUSB ttyUSB0: tty_port_close_start: tty->count = 1 port count = 0
+> > > 
+> > > which are due to the fact that serdev does not support hangups which are
+> > > used during teardown of USB serial ports.
+> > 
+> > IIRC I added the following patch to solve this:
+> > 
+> >  - [PATCH 1/3] serdev: ttyport: make use of tty_kopen_exclusive
+> > 
+> > Sorry for not remembering the details since this conversation/patchset
+> > is quite old but still one of our top prios.
+> 
+> That suppresses the first warning but doesn't address the underlying
+> issue (that hangups are built around file handles which serdev does not
+> use). And you will still see the second one when the serdev driver tries
+> to close the already hung up port during deregistration.
+
+Can you please elaborate how I can check this? I'm not aware of any
+warning yet, but I only tested the hot-(un)plug. If I got your right, I
+should see the issue once I unload the serdev driver, right?
+
+> Also, that commit message needs to more work since you don't really
+> motivate why you think it's needed (e.g. as serdev ports can't be shared
+> with user space).
+
+Maybe it needs some adaptions but:
+
+| The purpose of serdev is to provide kernel drivers for particular serial
+| device, serdev-ttyport is no exception here. Make use of the
+| tty_kopen_exclusive() funciton to mark this tty device as kernel
+| internal device.
+
+the last sentence should address your point that serdev ports can't be
+shared with user-space.
+
+> If it's just about suppressing the warning you could possibly just have
+> set that new flag.
+
+Which new flag? As I have written in my commit message: "Make use of ...
+to mark this tty device as kernel internal device". I thought this was
+the purpose of tty_kopen_exclusive().
+
+Regards,
+  Marco
+
+
+> 
+> Johan
+> 
+
+-- 
+#gernperDu 
+#CallMeByMyFirstName
+
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | https://www.pengutronix.de/ |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
 
