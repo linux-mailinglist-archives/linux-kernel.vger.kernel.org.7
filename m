@@ -1,87 +1,61 @@
-Return-Path: <linux-kernel+bounces-869590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40CDAC08405
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:38:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1BCEC08414
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12D1A1AA7C96
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:39:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B7244010FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6475B309F14;
-	Fri, 24 Oct 2025 22:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA82830C368;
+	Fri, 24 Oct 2025 22:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Lo5bTlqP"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NR+ba8cC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6233305065
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 22:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3355937160;
+	Fri, 24 Oct 2025 22:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761345521; cv=none; b=dMol2e+MATCVcceyebQ73kXtEJwzTtEB+M5JM0A/p7y2doTc9qBWTJOgXcKiTdEVIgjg2EFU0fDK8PAPTNgwwCUQuuimz0JGbbq06Jd2CNS8DMOr2K+tYsYFzVdGZ+UqKYA6oUanKUSH0HX23qQ+NiyuP8rZvaRp+Fh1CYo1DC8=
+	t=1761345843; cv=none; b=rc63mRoHCD76O10V7oNWC7U6NmsHCv6PvKLQL8MMMV5GBuzVi36cqUs2hgCkLXK4Z5dxV1fJ0w5xmEICglmMuQD5BqRUQ64FdkLd66Rf5Dpg0PTMQjX9QFZ7TeqrqjLy3vSadA1bm9ivb0GXkrbtub06Ts9P+uRqxQXl1P+sKLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761345521; c=relaxed/simple;
-	bh=8h1ba1zLR5sliD/Vajgncrb4GIEaj17sBigkG3fmnNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H8sfOJn2SAJcS1+WvUaTS9B6BEUTdBIklwhd+9a/6EmYIOkafd3BZoMCHBZF97I/e6AnHCzXjjv+9rmsf8H9+OZ+DKc45HcQxjbqPODZBfaPsU601HPzIa+w3X1Qwick7msKCkOJJPXr4cAT97m/33z6ZmdNYIqSbewr6fAqq9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Lo5bTlqP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 088FB40E0200;
-	Fri, 24 Oct 2025 22:38:36 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id cOwGoV0MZ8VE; Fri, 24 Oct 2025 22:38:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761345508; bh=cjiWvHOz96eVWBeUiSoBAexp8LAy46Vszw62SUjwR/U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lo5bTlqPQSXK3Lal9wLXwg3wRc8QxEUY7IUksdU6pYq6zD5sD+hZNAiktj9sFFuTw
-	 rjF/o5+O04RUvyx7EpuGIxz7HoWFjNkaijoc+A1i1+/0aO4tBaggAjxWHXRnInfAeq
-	 Zhg0r7133XfBadt49MbzCHHXBVXFyXeTIs8ffusMvHCLcg7hX7RpplLJwQVY2loYqZ
-	 SRF6kJZRl0nmZ1xF6JmuDKPz/aD7NmTnmP54tg/gZfzriHkTiNRwgtfiRucMGk3T6s
-	 p7Ahf27EptzvoMsOvg9HKPDV1YcDcpHLBnfsDzzJ2F+R7T30gl2YJvadeTAGINkhNO
-	 mBuAn4s45rpC+GcgBQz++v6nL6PUSJCxGwAfWkZQ4Yu7R5mXQvnUlMAOLTDPAfIFz3
-	 2aFHdIXRxS4UuRaR3HumwpXXVwHw0AZsOPwbRN8hfTln9BC/JkgL4NQQ7Bw2PJ5E9i
-	 TVx5zO5ejfU/xY6WF2pHKe6rQ7xmS/bQalBGwCJ1XxJWRvMAxdNkuqQgFOIDp33naN
-	 0eVfB0nBNHmwHwFfo4poFGkS8wVW3B6IlyK1wHaMBUGhcD0xpopnG3un0elZKbSyLX
-	 /Mp/MHLoxyhx9a4mX8b7tF1oVS1ti+Zk1ISMS+3zwulMWv0SOS/o3/47YtGB9aSjmU
-	 Q8ZQYzozoLOTwILXQ5M7cS1k=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 4EEF440E019B;
-	Fri, 24 Oct 2025 22:38:01 +0000 (UTC)
-Date: Sat, 25 Oct 2025 00:37:46 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Andy Lutomirski <luto@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Yuanchu Xie <yuanchu@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>, peterz@infradead.org,
-	dave.hansen@linux.intel.com, mingo@redhat.com, tglx@linutronix.de,
-	akpm@linux-foundation.org, david@redhat.com, derkling@google.com,
-	junaids@google.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, reijiw@google.com, rientjes@google.com,
-	rppt@kernel.org, vbabka@suse.cz, x86@kernel.org,
-	yosry.ahmed@linux.dev
-Subject: Re: [PATCH 01/21] x86/mm/asi: Add
- CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION
-Message-ID: <20251024223746.GTaPv_uiyc0wd1fPjV@fat_crate.local>
-References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
- <20250924-b4-asi-page-alloc-v1-1-2d861768041f@google.com>
+	s=arc-20240116; t=1761345843; c=relaxed/simple;
+	bh=tuvy+AqXN0ZLcAf47nDc5FvtJB/fct1wN56RWkZh0R4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=uwkfF5UqG1ZQ16kxERWASrALw9cminBuspZv0BzNKIEujGXwqb0zbN5Riz0tQDDhOwa3l8caygbFbXTI0LSn32VnpvxgYQN0QxUw4S3APjBGDG/0vE65DJ5MfHQ1kEAeOSQwrMjLKoxRWeSod4FVYMwouHsuy6mTI7PO7rpoqf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NR+ba8cC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95334C4CEF1;
+	Fri, 24 Oct 2025 22:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761345842;
+	bh=tuvy+AqXN0ZLcAf47nDc5FvtJB/fct1wN56RWkZh0R4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=NR+ba8cC460oHiAtsdqg9ooDKlAjej23TdViOJivk9QUD0l2xkzVGuL2KFYYESyCG
+	 4phUWuErNaIFRfLE2/SZGhkGfvCBmvS8d8GCrsxiOAR4yOJJUL+6S0xMwpJUEV3b06
+	 C0MMmvU0w33dll58fsAMKaV2Jux2frnCSUFEbfEjjkIZnjzNYivojP9ECqLnyCijsf
+	 wkZPELw/UOLsaQ2a1PcLVE5uYpJX1GOhe5W+wg1CHE9hFWdj+qp8qZ6sH6+D2+7nuI
+	 fM8Z418uB3xMKtrFjs8ge3ms3lhOtj4VJnQlMLwr3sHcxH9GQdReJ5CWphMF7fMWZj
+	 EPi8SZXznJcDw==
+Date: Fri, 24 Oct 2025 17:44:01 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: intel-xe@lists.freedesktop.org, linux-pci@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Vivian Wang <wangruikang@iscas.ac.cn>,
+	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Simon Richter <Simon.Richter@hogyros.de>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: Release BAR0 of an integrated bridge to allow
+ GPU BAR resize
+Message-ID: <20251024224401.GA1371085@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,31 +64,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250924-b4-asi-page-alloc-v1-1-2d861768041f@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250918-xe-pci-rebar-2-v1-1-6c094702a074@intel.com>
 
-On Wed, Sep 24, 2025 at 02:59:36PM +0000, Brendan Jackman wrote:
-> This long awkward name is for consistency with
-> CONFIG_MITIGATION_PAGE_TABLE_ISOLATION.
+On Thu, Sep 18, 2025 at 01:58:56PM -0700, Lucas De Marchi wrote:
+> From: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> 
+> Resizing BAR to a larger size has to release upstream bridge windows in
+> order make the bridge windows larger as well (and to potential relocate
+> them into a larger free block within iomem space). Some GPUs have an
+> integrated PCI switch that has BAR0. The resource allocation assigns
+> space for that BAR0 as it does for any resource.
+> 
+> An extra resource on a bridge will pin its upstream bridge window in
+> place which prevents BAR resize for anything beneath that bridge.
+> 
+> Nothing in the pcieport driver provided by PCI core, which typically is
+> the driver bound to these bridges, requires that BAR0. Because of that,
+> releasing the extra BAR does not seem to have notable downsides but
+> comes with a clear upside.
+> 
+> Therefore, release BAR0 of such switches using a quirk and clear its
+> flags to prevent any new invocation of the resource assignment
+> algorithm from assigning the resource again.
+> 
+> Due to other siblings within the PCI hierarchy of all the devices
+> integrated into the GPU, some other devices may still have to be
+> manually removed before the resize is free of any bridge window pins.
+> Such siblings can be released through sysfs to unpin windows while
+> leaving access to GPU's sysfs entries required for initiating the
+> resize operation, whereas removing the topmost bridge this quirk
+> targets would result in removing the GPU device as well so no manual
+> workaround for this problem exists.
+> 
+> Reported-by: Lucas De Marchi <lucas.demarchi@intel.com>
+> Link: https://lore.kernel.org/linux-pci/fl6tx5ztvttg7txmz2ps7oyd745wg3lwcp3h7esmvnyg26n44y@owo2ojiu2mov/
+> Link: https://lore.kernel.org/intel-xe/20250721173057.867829-1-uwu@icenowy.me/
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Cc: <stable@vger.kernel.org> # v6.12+
+> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+> ---
+> 
+> Remarks from Ilpo: this feels quite hacky to me and I'm working towards a
+> better solution which is to consider Resizable BAR maximum size the
+> resource fitting algorithm. But then, I don't expect the better solution
+> to be something we want to push into stable due to extremely invasive
+> dependencies. So maybe consider this an interim/legacy solution to the
+> resizing problem and remove it once the algorithmic approach works (or
+> more precisely retain it only in the old kernel versions).
+> ---
+>  drivers/pci/quirks.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index d97335a401930..9b1c08de3aa89 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -6338,3 +6338,26 @@ static void pci_mask_replay_timer_timeout(struct pci_dev *pdev)
+>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_GLI, 0x9750, pci_mask_replay_timer_timeout);
+>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_GLI, 0x9755, pci_mask_replay_timer_timeout);
+>  #endif
+> +
+> +/*
+> + * PCI switches integrated into Intel Arc GPUs have BAR0 that prevents
+> + * resizing the BARs of the GPU device due to that bridge BAR0 pinning the
+> + * bridge window it's under in place. Nothing in pcieport requires that
+> + * BAR0.
+> + *
+> + * Release and disable BAR0 permanently by clearing its flags to prevent
+> + * anything from assigning it again.
 
-But why?
+Does "disabling BAR0" actually work?  This quirk keeps the PCI core
+from assigning resources to the BAR, but I don't think we have a way
+to actually disable an individual BAR, do we?
 
-I bet you someone will get confused and mean
-CONFIG_MITIGATION_PAGE_TABLE_ISOLATION when she means
-CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION or vice versa due to the
-conglomerate of similar words.
+I think the only control is PCI_COMMAND_MEMORY, and the bridge must
+have PCI_COMMAND_MEMORY enabled so memory accesses to downstream
+devices work.
 
-Now compare that to CONFIG_ASI! Wonderfully short and clear.
+No matter what we do to the struct resource, the hardware BAR still
+contains some address, and the bridge will decode any accesses that
+match the address in the BAR.
 
-Especially when the namespace already is "asi_" ...
+Maybe we could effectively disable the BAR by setting it to some
+impossible address, i.e., something outside both the upstream and
+downstream bridge windows so memory accesses could never be routed to
+it?
 
-The only problem with ASI is it doesn't tell you what it is but you can look
-it up with simple grepping...
-
-I'd say.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> + */
+> +static void pci_release_bar0(struct pci_dev *pdev)
+> +{
+> +	struct resource *res = pci_resource_n(pdev, 0);
+> +
+> +	if (!res->parent)
+> +		return;
+> +
+> +	pci_release_resource(pdev, 0);
+> +	res->flags = 0;
+> +}
+> +DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_INTEL, 0x4fa0, pci_release_bar0);
+> +DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_INTEL, 0x4fa1, pci_release_bar0);
+> +DECLARE_PCI_FIXUP_ENABLE(PCI_VENDOR_ID_INTEL, 0xe2ff, pci_release_bar0);
+> 
+> -- 
+> 2.50.1
+> 
 
