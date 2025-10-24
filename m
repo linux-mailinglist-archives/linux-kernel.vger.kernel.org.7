@@ -1,170 +1,137 @@
-Return-Path: <linux-kernel+bounces-868007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC01C0421D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:34:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C47C04242
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4B7519A841C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:35:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62FC3AFF29
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757F1258CD9;
-	Fri, 24 Oct 2025 02:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BB6261B83;
+	Fri, 24 Oct 2025 02:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="WOvQ8rrV"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="elW3qesz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D44624E4C6
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1CD1A3160;
+	Fri, 24 Oct 2025 02:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761273274; cv=none; b=BQm7oahD/PxgGRWBJzFXytuzvoO/YyCOygd14YzNaHAkd7eMZioR8R7ichRo5xbjkACL88Lm9KbnE02mrZgJzCY5O7ybe5qelHtpRpQfX7/U5W6zcbfTzySMHjdvYuk1NZduneRIIf0RMA8kCSgPEMLv2uKQpjbcBNB9XWiPJn0=
+	t=1761273454; cv=none; b=QXZNcG/cY5D0Cl0VxZ0XT1eusHFYYloevX8tNXI6AxHehGP19v6qZNwukbAvD0A6S1PGLGAATNMgcslkW0Ptv+LCWbMaD6hqsnM+rkBjLICb5jiorQab+jr2HbDnqKWdNNB0M5Y3UZ+dEzsRHWd7s6sArnowtvDd9GzWA5CfXZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761273274; c=relaxed/simple;
-	bh=hlV/GDlDWjiP3V4F2H+ecKa4T1eMNbn54Re1g84V35w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GykldVjPR8KA/vCXj+baJL4kRVafQiLmGE/RGt+n66/xTvshpgZgQ981PKGs+Fpxxw+doJPqMq5i2P0557GfgEN+BK49/e/V71E8aq9J61udlO8Sle+uf5Endes9NAGz4CnkyZexChS/SoSRYqU0zV3uTsePldwplIGfGLuY2IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=WOvQ8rrV; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b6cea7c527bso1482505a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:34:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1761273272; x=1761878072; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kpZu/ZwablGzrbD3ML3k0Us4lqrXufJxs7CcsteoPbo=;
-        b=WOvQ8rrVnQSE7thus9M81d09zaGZ28KIvHgMVpjhtPplG3o+weGgaOT7uaJCJcv33Y
-         6v4J1eka6VvfJCkrpY1R6Xt391V/JoQxUCYPkZJt3m4Us3tfrDnazkrnl2X8Y/0ghWPM
-         XsJMDZMv+FLUiiIDbS9eECnZfeYGbjb5h5yjuocURPEk5L9+sRCOYNONhqks2Pu5euu5
-         br2b7S0ijiaTIQDLPg3PpO/5MKDrfPiPTcvs7hjEqCc6saijuI69EjdgRZqtOk/Jtrle
-         37T2+eG3jgdXPFocLWrQrIW9FF3zUH23NcikKqyc9f3Aq7PwiqtpatHTXcJB7W4BODAJ
-         7k1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761273272; x=1761878072;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kpZu/ZwablGzrbD3ML3k0Us4lqrXufJxs7CcsteoPbo=;
-        b=BBVL8eQPVczABjGGwIWopKGPRn5WToO+IMnpQY/+9Ni8IEE2Ql8Dbc/tsp2mCpF7iQ
-         itrhWngYg0XjXrLCgplYFxeS+FBAELhZ9F8haTH72O2V/2u7Pk5oWhqSG6wLEYu93Cs2
-         Kaw8NNqvVPZQwnXrfJ2p8StTlbx6dvL5qMONahYNJNDe6jHnmpQE0OtOMTY4znZ9i1qJ
-         uh7OVxQjHgg7iM21bnkRIFFOLb1nJj/z+YLRXaf3VG5HajXm1mvzL2QrXZG6PT7Hd8Ew
-         sJgE6vw8OTxcSsO1C0j1MNUQEvj9Dje5RKCEkWrKBD5ke6PEQo6rJS3Yla9jSHIMzCmf
-         W3WA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWftQMw2qXaRP81/Xv+dCI9klGzk6p5oJzxzQZ0/UmunHVWOmxOQ7OWz877UAYBtGPZlJvVx4auFA+bqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznqB4eA6nidN2gIBDvy1S1tiLHyQuMWZIPe25WYrvHkLMasP3P
-	L+OTxEelt4YFsGi3lRiQmNgkfz5KYXvqOnXVaH0H8QLjqg3muPH83Uywjys3G/S7Ar6pd6gCnGY
-	76Z2gYuGZWa+xAR+hlAbhanDqcGha5g7SrFfRUOl6ZQ==
-X-Gm-Gg: ASbGnctlMqesvXFyzMAFwRQwHrVDi6VSL101aPQh832h8L0XKZIe71IN30bhpAihDww
-	pq6YvtnyDhRpVDUuvR0vsebMjb0bQ0ex2hrPR5/5sodAMKPdrFhm1HCQ67FNDQEPK6QDtWGbnIg
-	/mm2VXhHSvi7r689VZSOxsPQUgozD7r09cOvzwkWZKRiyBjfNhOHDcbNAB/NuS1w6tEpADydx1s
-	Fh9r26kMPpx4JviPCtXUr/kt0P+xucips6dpIOr1l2axJtEHABhDFNO3+w4SqshjTh2xtz9l12r
-	iw==
-X-Google-Smtp-Source: AGHT+IHZ5vUnizhMkg75VXJ3JuoqBbS3n24HhfaogKMFosNS883pW7Zhkx6oxrEShXreiWn1sZrhHbYa+V1+K7DUCs0=
-X-Received: by 2002:a05:6a21:8884:b0:334:b0d9:a543 with SMTP id
- adf61e73a8af0-334b0d9ab1fmr28932927637.14.1761273272374; Thu, 23 Oct 2025
- 19:34:32 -0700 (PDT)
+	s=arc-20240116; t=1761273454; c=relaxed/simple;
+	bh=uZjpX7eEylnBxXLeJcvzkIc0XRRr53UVrAvXYMD25Z0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MzO1BwoetpyjTdEqVMLM7lhoOtCRZJqVgl8pyns7kZbuYHjoeEEeXCgBX02QZqdp9XE0Ed+lyxWBUE9vVKqX6wsi6sLMuIlgUunNns0g99/XategDIQBqKN4FN6KsXcrkt7fsvpyhLL/eeK6xDbE57PRqXOXhYF37vd3gXah91s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=elW3qesz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59NEYcL5014615;
+	Fri, 24 Oct 2025 02:37:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=qMay1OP7RyA09QWk+caCw4PfbMbNqe4CX00
+	oZCI6SPo=; b=elW3qeszOPrGmbgH/wlf8Js0J7c89cRJq5p8Gvcli94mf0c6baW
+	kBm+yAVfThVZTMktvlroUEH4p1i5CZ0Ek+3IEKPXEZQt9+Gnsi3hXdwp7qFtrmCR
+	61bzMXZuY4FzEo1z7+mErVW71ZtSD2CGK1Roq5LQGjDyMi0iglnlxCGBZ7uX9b8b
+	dktp9Hf0D0+0C7yPa1TPN6ZQVG7nt1e3I1n5F6eZFAKynzbBAgvXpuLOSJXUkdm5
+	U+X5iXKItxwUThVhM/ql+2MEDvqzEEWOyKGf527At8+b68WZoe/tcbSy9mM25xL5
+	ecXj0clPk7vR3t90SiVDU3EFOmxkSTgOKuQ==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xhe0rgst-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Oct 2025 02:37:29 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59O2bQbX010704;
+	Fri, 24 Oct 2025 02:37:26 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 49v3ymn6ku-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Oct 2025 02:37:26 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59O2bQ4H010699;
+	Fri, 24 Oct 2025 02:37:26 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (cse-cd01-lnx.qualcomm.com [10.64.75.209])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 59O2bP6V010692
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Oct 2025 02:37:26 +0000
+Received: by cse-cd01-lnx.ap.qualcomm.com (Postfix, from userid 4531182)
+	id 8582A2222C; Fri, 24 Oct 2025 10:37:24 +0800 (CST)
+From: Le Qi <le.qi@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com,
+        Le Qi <le.qi@oss.qualcomm.com>
+Subject: [PATCH v1 0/2] arm64: dts: qcom: Add audio support for QCS615 Talos EVK
+Date: Fri, 24 Oct 2025 10:37:18 +0800
+Message-Id: <20251024023720.3928547-1-le.qi@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAP4dvsfZEo+1+O8tpLFFh=s-fEFaMRu2+mQ3F=LJmjoEHyZXMw@mail.gmail.com>
- <20251022073015-mutt-send-email-mst@kernel.org> <CAP4dvsfXs7Do=9d_05tzU5FUuqfLnsFSpodSMDhv=FR2KYWh=w@mail.gmail.com>
- <CACGkMEugHNb1QfG17sPzDfV8-W1mJQGX_cJQvDCoCVQ7axGRkQ@mail.gmail.com>
-In-Reply-To: <CACGkMEugHNb1QfG17sPzDfV8-W1mJQGX_cJQvDCoCVQ7axGRkQ@mail.gmail.com>
-From: Zhang Tianci <zhangtianci.1997@bytedance.com>
-Date: Fri, 24 Oct 2025 10:34:21 +0800
-X-Gm-Features: AS18NWCmvA0lV0-81RaQTg1nvP9KHzeGAnDDK3qObTlMYkvRSUR9rCR3bKD7ofc
-Message-ID: <CAP4dvsc=LnwRvTFJ4mxCUAW6SApJ0eyvBVu+B58MDOWNCnRbow@mail.gmail.com>
-Subject: Re: [External] Re: virtio_pci: Question about virtio_pci kernel
- module refcnt
-To: Jason Wang <jasowang@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	virtualization@lists.linux.dev, xieyongji@bytedance.com, 
-	gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE2NyBTYWx0ZWRfX2FVg33AR5dQ+
+ G0/rHdXZL3KptqOHl4aAfTLivxP33rfAoFWYtNkFWzJjah5bfw21aci+tWrWJ8NGr8UT4x+52gP
+ 5c//IS0bD2mwc6NQ5gX9/Sd+IBeQP7N1u+C2b1QjGP276PhmpxZ3AJAejTYvdLnOQgJllXBLtk/
+ Xu1BwRsLk+aZYrYrYCfjKBiPqFXtTYsXmWhCAz/Cr8PFpRh1oywRLQG+2D0Yz0XRKBpex3t/ee5
+ ovxFefAjvtLUpcMDtBjc8UvuxLigVpXzzvE2LczPfvsl5pFGv/HRM/m9EXXfzEJ14GcFVYMUYaj
+ DX0rz1Oe5SQHZO0ryh+RgDQfgxb+9ikhH2r/XPSxQRHNnOHx0edP9hOGURVkTrWRaVJ4FzD/Oqb
+ GBhHb+SlDCi8osZDWpSlWFeSQR4phw==
+X-Proofpoint-ORIG-GUID: T68KNjdg5ZrlEvSstljVO3nvbBi868dc
+X-Authority-Analysis: v=2.4 cv=WYUBqkhX c=1 sm=1 tr=0 ts=68fae669 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=pGLkceISAAAA:8 a=M0uNroV0W_B0iyDjotoA:9 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: T68KNjdg5ZrlEvSstljVO3nvbBi868dc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-23_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 bulkscore=0 impostorscore=0 spamscore=0
+ priorityscore=1501 clxscore=1015 malwarescore=0 lowpriorityscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510210167
 
-Hi, thanks for your reply
+This series adds initial audio support for the QCS615-based Talos EVK
+platform. It introduces the GPR (Generic Pack Router) node in the SoC
+device tree and enables a sound card node with the DA7212 codec on the
+Talos EVK board.
 
-On Fri, Oct 24, 2025 at 9:53=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> On Thu, Oct 23, 2025 at 10:34=E2=80=AFAM Zhang Tianci
-> <zhangtianci.1997@bytedance.com> wrote:
-> >
-> > Hi, thank you for your reply, but I still have a few questions:
-> >
-> > On Wed, Oct 22, 2025 at 7:31=E2=80=AFPM Michael S. Tsirkin <mst@redhat.=
-com> wrote:
-> > >
-> > > On Wed, Oct 22, 2025 at 07:21:45PM +0800, Zhang Tianci wrote:
-> > > > Hi,
-> > > > I noticed that the reference count of the virtio_pci kernel module
-> > > > in the VM is always 0, even though there are at least two
-> > > > virtio block devices and one virtiofs device in the VM.
-> > > >
-> > > > Using rmmod virtio_pci can unload the virtio_pci module,
-> > > > but this renders the virtio block devices unusable.
-> > >
-> > > it removes them. you can put it back in and you will
-> > > get devices again.
-> >
-> > But I can't do it anymore because the rootfs is no longer available,
-> > or rather, the OS is no longer available.
-> >
-> > >
-> > > > I wonder if this result is expected? Why don't the virtio block dev=
-ices
-> > > > and virtiofs device hold a reference count to the virtio_pci kernel=
- module?
-> > >
-> > > because they don't have to.
-> >
-> > Is it due to design reasons or implementation reasons?
-> > Is it because the semantics of kernel module refcnt does not include su=
-ch
-> > logical dependency?
->
-> Note that virito has a bus so it follows the device/driver model so if
-> I was not wrong the refcnt was handled by the driver core.
+With these changes, playback through headphones and capture from the
+headset microphone have been tested and verified to work.
 
-Let's look at an example:
+Le Qi (2):
+  arm64: dts: qcom: sm6150: Add gpr node
+  arm64: dts: qcom: talos-evk: Add sound card support with DA7212 codec
 
-$ lsmod | grep virtio
-virtio_balloon                 20480  0
-virtio_console                40960  1
-virtiofs                            32768  1  <-  one virtiofs
-fuse                                172032  2 virtiofs
-virtio_net                         73728  0
-net_failover                     20480  1 virtio_net
-virtio_blk                         32768  2  <- two block devices
-virtio_pci                         24576  0
-virtio_pci_legacy_dev     16384  1 virtio_pci
-virtio_pci_modern_dev   16384  1 virtio_pci
-virtio                                16384  6
-virtio_console,virtio_balloon,virtiofs,virtio_pci,virtio_blk,virtio_net
-virtio_ring                         49152  6
-virtio_console,virtio_balloon,virtiofs,virtio_pci,virtio_blk,virtio_net
+ arch/arm64/boot/dts/qcom/sm6150.dtsi        | 36 ++++++++++
+ arch/arm64/boot/dts/qcom/talos-evk-som.dtsi | 78 +++++++++++++++++++++
+ 2 files changed, 114 insertions(+)
 
-There are two virtio_blk devices which are vda and vdb, and one virtiofs de=
-vice.
-We can find the block device and fs instance are holding virtio_blk
-and virtiofs' refcnts.
-But they don't hold virtio_pci(pci bus) or virtio(virtio bus) refcnts
-even though they logically depend on
-them.
-So I might need to consult the driver core maintainers?(I have cc'd
-them in this email.)
 
-Thanks,
-Tianci
+Base-commit: 1fdbb3ff1233e204e26f9f6821ae9c125a055229
+Depends-on: <20251009090619.1097388-2-le.qi@oss.qualcomm.com>
+Link: https://lore.kernel.org/r/20251009090619.1097388-2-le.qi@oss.qualcomm.com
+Depends-on: <20251014120223.1914790-1-tessolveupstream@gmail.com>
+Link: https://lore.kernel.org/r/20251014120223.1914790-1-tessolveupstream@gmail.com
+Depends-on: <53ef53b423uespn7xspqfxnnvqvhzb5b22a4oaimf6g2qy7ruo@273oegazxbaz>
+Link: https://lore.kernel.org/r/53ef53b423uespn7xspqfxnnvqvhzb5b22a4oaimf6g2qy7ruo@273oegazxbaz
+-- 
+2.34.1
+
 
