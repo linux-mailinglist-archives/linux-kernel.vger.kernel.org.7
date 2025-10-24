@@ -1,289 +1,323 @@
-Return-Path: <linux-kernel+bounces-869157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E421C071F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:02:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46481C07228
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 819BF3A4B63
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:02:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75DD5580547
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC14E32BF4F;
-	Fri, 24 Oct 2025 16:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5CC333452;
+	Fri, 24 Oct 2025 16:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="V/mLSGd+"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dA26+ChX";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="MdmNhI/Y"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA831D61BC
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761321720; cv=none; b=fklbp6YwldGIDbmY7gW4TpDCCrWr6yQlfQc5pb+ARvRUGTqIWXgI34DIiXqGbr0z2SQAtBB13LX3mYajDonX/zvev09eZ22aipW4YEjhEegnQWzt/Zckv6fkF6bUdwfiM4TAjHbIvNTiZRzb4Q43+6Nfd4vydPs/HwYTwd+RUOY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761321720; c=relaxed/simple;
-	bh=1ug7A3mOZrGeWd/Rzt+yJHRcpIvwTYP5BB9SnW7CpnQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=j2GTv8F7gY3aSCXVWln++oOVL1ismRzxAlVyNlJFQFEBGj1ydb/lyxpyMjkAywSo0NWgSyLF3bldvsbA9ujF21TdsB2DJBeeHqcv8wHoAZ3eK67O4MNkPxvgcqEdTHkKvh9o/7n5WMYg1YIjAQBhwsqOZV3a1BCCA+RpJxWnAH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=V/mLSGd+; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251024160155euoutp027ff7b06998b23d01eaf7c75b9025146e~xeMTH0cKO1355013550euoutp02A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:01:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251024160155euoutp027ff7b06998b23d01eaf7c75b9025146e~xeMTH0cKO1355013550euoutp02A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761321715;
-	bh=Z2YCwLGa2MhaukmLh5mLstroKMu1Oe9RmJGj54Raf4U=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=V/mLSGd+PNgYjzt8A8U4GzwRVcjLqZGhmZ3I7otCWaIKsf/ympw+J2E9+CZUg+Z2H
-	 n302pwdFA1NYz0fqMnzH7p2JW1HvlpeEvg/7Ut6E04D8buEGqmne87BSClR+urERtu
-	 l7qkn1xTBVkPG6xaRRMgccIzKCwjqAgoGBLWeP2I=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251024160155eucas1p22cf28a5bc04ac9ea6bd32260abf32112~xeMSctpLS0527105271eucas1p24;
-	Fri, 24 Oct 2025 16:01:55 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251024160153eusmtip2ce7463592396f996413bf3cd359e5ae4~xeMRY8Nyc1017610176eusmtip2B;
-	Fri, 24 Oct 2025 16:01:53 +0000 (GMT)
-Message-ID: <6fc8731e-6e8c-4c45-9b3b-509a1fb71a1a@samsung.com>
-Date: Fri, 24 Oct 2025 18:01:53 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685D032D7F7;
+	Fri, 24 Oct 2025 16:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761321863; cv=fail; b=W3PbcWCRfJTBOC1xzPRILFZrs39MuNsD5KEe5ujQWgp/LCYrEm2AGnFpHcnT6LkFiTJpfW9eUCwhu5j41Bvza4ODXwQDBSWqfkdSSawZnnEZzeAXCp3PcBA/JVM/uLh3XJuPBlPHeBwA+YA8WR96t2+pND0NnpjCqh9X1LTrr+k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761321863; c=relaxed/simple;
+	bh=yr8tNYcD822MBIRFfmB83nZrJK3VRSdRRrSUcdEZ53g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JgRTPbR/BdbSMf9NgXxa50OX2Wlfkyc9IWzdUs3RmpKBiLI0/hQnjeFSST7gzJdN6sJpy7QUtXS2e79XUorcQkuOoVqoLHBfTdv5PFGGhmMP9RXx/OvkuMGI0omCICk8nx434O6vetaa6s3qS74a6a9Lq1gngAdwc/tzxtbYBSM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dA26+ChX; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=MdmNhI/Y; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OEgMoE030462;
+	Fri, 24 Oct 2025 15:58:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=8IRoH9zlSdWUxDVwWL
+	6L1SAiQ9tQ7QkpdiTy2TDM/vM=; b=dA26+ChXa5hVUCZhYyhIa0aiXTHRR1WXHu
+	VRevK4RxXfEbB2SASHfa0cgDxSQFFdx+Q7SSKIbXNvTFUSOFi2eIxwwY4Y3SN4dR
+	QgHRIqXfc/T4iti+WdePJmFEIKR1i63WJUittpQX2FMTihrCblWgh+lvepL5hx5z
+	VChzKdWkAV7K2KyGRGuBBgsvE8H3KbmNHXlU7riUVKEEMjpkY4zFjljvBNnNflrw
+	EFKhLRSe+b154zzb9i/fW0MZNEuAG48DtkygFZNRNrHyf+4CKQmyfRwjgg36TGWG
+	O64UuqzYEpruB8SAAPpe5DdgfjEI6/N7zPbglRA6vJFNIqEKZJ/A==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49v2vw4ant-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 Oct 2025 15:58:37 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59OFsVaU023295;
+	Fri, 24 Oct 2025 15:58:36 GMT
+Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazon11012041.outbound.protection.outlook.com [52.101.43.41])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49v1bh4qr6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 Oct 2025 15:58:36 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vJlCFSqF5F3qVbFQQ1p7VHsDV21fzmloYDI9OAePbI5793tuDE5PGIVkXRTLAu5RftiwmtbEMLOlprSBPtlgLXpSZK1K6MnjCcJw8uhdnsnj9yTR8LPg7e/ut0lrkXYIQsSaJTmcstJenQPZjOj5/mYcb5Y/QG4kaW5hX04C/W/uVScasqr0b8p0+JG6xaUXwye9jnWRY0Y3f5CXnCNVmsWu+JI0L1LsgwzTanYtNND5aGwwbfvlJLcaLSCdygnGGvvBfBPGTISSeQMYZaj8WlqpfP3LNIDjxJCwvkv9XDtyrMbm7+oYHyayjXw2aRklKCM9SH4K9hgKzERo9vKfaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8IRoH9zlSdWUxDVwWL6L1SAiQ9tQ7QkpdiTy2TDM/vM=;
+ b=u1JldPhb/HznS1dfxCEQd+kI2GTh4DorPRmREIlelr39O7hLV0s3ZlkIIW/HHIniiBnni/S1IlnB/ULeN2vDVRFXsrfKfAwkkDZ2lMq+15wHdPVYl85Z/HJB8727FEoBKrxEjjwmsZqURUOlVqWMXdILTvgVESvMNqOVs9nzxFXoqoCpGEhlLGUFHQ3kjgx/cYBVJBo2jIrqKPb4d8h/XnuNWpLWWzPnVxictweWjdp0AlCvGAdL9l6kf+MZKI9HehVHGBFKNd9vTqKi6pQmVvwPE+n/rMAEs2csVaGWcmMLQn6bLtrvbLPElNFzTQs4qadpBSK5Ny4iJlHBcwtelg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8IRoH9zlSdWUxDVwWL6L1SAiQ9tQ7QkpdiTy2TDM/vM=;
+ b=MdmNhI/YLOqHCIc3Cm952yzPdH9dFMsmXcubCLCm3b7mO8nZdXoY6NywFuXFzXu9SorAAeIw3ZgMFOlFFbcAlr3XG2HqPLZ0/4UeHTLZhZnRLSS4AejRG7kQ7iW8P5rncmjP6HsFoRd8WM2CFlZQ5lzFZyivw0lWpentVjIDO3k=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by CH3PR10MB7436.namprd10.prod.outlook.com (2603:10b6:610:158::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 15:58:26 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 15:58:26 +0000
+Date: Fri, 24 Oct 2025 16:58:23 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
+        kernel@pankajraghav.com, akpm@linux-foundation.org, mcgrof@kernel.org,
+        nao.horiguchi@gmail.com, Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Lance Yang <lance.yang@linux.dev>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v3 1/4] mm/huge_memory: preserve PG_has_hwpoisoned if a
+ folio is split to >0 order
+Message-ID: <c09e3282-46aa-4b53-aade-f63324b66d3f@lucifer.local>
+References: <20251022033531.389351-1-ziy@nvidia.com>
+ <20251022033531.389351-2-ziy@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022033531.389351-2-ziy@nvidia.com>
+X-ClientProxiedBy: LO2P265CA0246.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:8a::18) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v5 6/7] clocksource/drivers/exynos_mct: Add module
- support
-To: William McVicker <willmcvicker@google.com>
-Cc: Russell King <linux@armlinux.org.uk>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Krzysztof
-	Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Ingo
-	Molnar <mingo@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
-	Youngmin Nam <youngmin.nam@samsung.com>, Donghoon Yu <hoony.yu@samsung.com>,
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, John
-	Stultz <jstultz@google.com>, Tudor Ambarus <tudor.ambarus@linaro.org>,
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Conor Dooley
-	<conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
-	kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <aPuhDFKINM9iXOKb@google.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251024160155eucas1p22cf28a5bc04ac9ea6bd32260abf32112
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251023205319eucas1p24eb9821bbcb2d59e2cb1e01c4366faab
-X-EPHeader: CA
-X-CMS-RootMailID: 20251023205319eucas1p24eb9821bbcb2d59e2cb1e01c4366faab
-References: <20251023205257.2029526-1-willmcvicker@google.com>
-	<CGME20251023205319eucas1p24eb9821bbcb2d59e2cb1e01c4366faab@eucas1p2.samsung.com>
-	<20251023205257.2029526-7-willmcvicker@google.com>
-	<40d3f3c9-7526-440b-9dbd-7ead22c8562a@samsung.com>
-	<aPuhDFKINM9iXOKb@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH3PR10MB7436:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee227f6f-3930-4e2b-7fdf-08de13162ab0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nYFwuGMOgHCBKr/TuekU1JbyTCeejVfXHwbPFS6rFXyZVAWeMAlhE0iwwnmg?=
+ =?us-ascii?Q?c/1MWnx/UvI6NUEiKoiucLUzejD+fvLW67gWkKDiEBYtSBD2P/PYwByzEaLL?=
+ =?us-ascii?Q?KkHO0+Qo8fy7oSQ5QWdPfUfNhACCmcLBVv83RwpTe2vVgucA222/3yOiLYVB?=
+ =?us-ascii?Q?URupNxFhluUp0yOguJCoUq7O15jpprrNEGzuXz84xHO/DFtjHg7MTm0xLnu9?=
+ =?us-ascii?Q?He7XBXvQp6YMniPZJ1f55LwY3OHgEdSJhSl9x56l222LJHIU+KjHrrWfKap3?=
+ =?us-ascii?Q?mg2exQDicBq0QZflDBt6yt1aBOdUS3PdH1ZK4bZcp5/2LLYo2gYG89evEH+U?=
+ =?us-ascii?Q?ZeN6usIv1eKFWl59BGhh4DkRhSm7sgWP3cSmLddHOW3KPoXdVnidxP9Yncae?=
+ =?us-ascii?Q?FzXwW9CH27PI2dBcOlOlgH+ney6asnCa+IpWRjBGLSeHH+ZGLp36t/lz4kN5?=
+ =?us-ascii?Q?o3CafsdQMF0LrC2+c9Ak4avqVQgVddelUyklYpvd5IoSB4o8vaZKD/JlNs3e?=
+ =?us-ascii?Q?H7NK9lwyrdN5nhSynQZRQLgkdVtzXmlTZwqePqBuhDLpe+SIpB4qMx75mpsz?=
+ =?us-ascii?Q?r2dSWW0hOHX3y/4wKoncW3JtUP+KVfsZRElMTJ5ozqIX6kLaNgbBD5bWSp2j?=
+ =?us-ascii?Q?xHmJOJjk+JFTgRO9+/lQW8C1iSdTX16Xfq6RaoYYQ+wxI2/7En/QkFp93W5j?=
+ =?us-ascii?Q?8DKd79AJIz8uDtxprtEVtiZXMWXBl6sIrZq6qT2Yh2Sbc+/b8qPpIYtiyCGo?=
+ =?us-ascii?Q?hoLl1CZNIGIr0dEQ9hPD33HI9AjGxYkh7zdEI4RcGur+bKwbD+gt/u2aY+wU?=
+ =?us-ascii?Q?kTTUjLkBIj9C+/i02/WBeAmqbdFa+5jlR3VS670FFMLuvtga8x2vwvMdj9OX?=
+ =?us-ascii?Q?aE2mjmWPX80gQ5lU5UpZCtumzMoqvfqQYHuxtToq1UaeIU8MEv1SZjLFyjxs?=
+ =?us-ascii?Q?iJP8+NNz8qlzYR/kq/F7m5SY3mL4VeEKdbyEzbreBStVaPoqm5VOPAjazX9J?=
+ =?us-ascii?Q?UgTzF9I/Pz4uavp7mymN2J36s2qMMSHJ5ivnDcN1W1GIGBRYqzUGV9as1EZy?=
+ =?us-ascii?Q?/OrSuWRUo+CXWztefmMaYYSOE+fH8WtIfCf+YE7PENIke17fgTMyxp1scquY?=
+ =?us-ascii?Q?ul6Skv5hC5MuMyRFZ5wknrtQAOQcQi/lzA1jG+RX7jk1xRGk2aKzhcIW9v1h?=
+ =?us-ascii?Q?oGxM2uw6DpLzFag9XKBc0xsjtm0aME6OQkAQHSeQpWvEX9u0X+AITLL9qYiv?=
+ =?us-ascii?Q?oQQLhXs7Y6nT+WEDpINdX8aFuRYQb2pSRTQNG0IO4pBW/15ZjKrdslD/0XHs?=
+ =?us-ascii?Q?WHYED0v+5dNGN2FKopNZ59bhtmUoVDX9TGK1erTAhsWqXcxZG3ucnUIl4tJR?=
+ =?us-ascii?Q?qIBrJgyfYWM1Hp11+PqitncivUVZNszxpHhx9JsLFsIJC7ukriYrAf9FfB3T?=
+ =?us-ascii?Q?PMjNFOzcvGs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ABnmRC9hhWUl/c0Z8Isfcf+wHT1pL0fa/Y5xPW4+bB7kpkUlcf4pbHuClcdQ?=
+ =?us-ascii?Q?GnQ2wCah22ZT/I3/0oRunFJoL0gvcuRG+1uBMJ4MIrpCw4b7lbOPseN0aJO5?=
+ =?us-ascii?Q?/c7QNah8yhDB9519srotnhWNXnmivFESRtRxzQpYgzN7nR8lG7ZOk2mbAnzj?=
+ =?us-ascii?Q?qEhIrR3EvpW04l96Mcv1JjotA99hPNEKynDxr0EeJu8FPONDR/4H6SWgBeYQ?=
+ =?us-ascii?Q?8WB6Ox56GuNPAXMlRVXdBHNEz2mhQuEqYaBZa9eG80mi3cMboxJCxCO7bx+B?=
+ =?us-ascii?Q?Ube8RZDkWoZeQ+svHpc21l+lOOpRqj9aYt4H7zg/IIwtAvevl7DFXwqxFFsq?=
+ =?us-ascii?Q?NL/k45KzCJXyBhKxfWOXWw8BGCG/l98HMMzO0bcjGSqYMvawSMmN2IpO6Sv3?=
+ =?us-ascii?Q?QkmxAHC71kGWSmV9neRkGwUwCpVYw/Pif0jBEZ+Mj27l5KHEls8pFRtISLA6?=
+ =?us-ascii?Q?DWiBZrCGJ6AUc+vdYwEAGjwWMJsjjy9s0DZCuJjYvT268QAXKFzOUd9ADqid?=
+ =?us-ascii?Q?pPKVvUBNbbEh0zQ1qV04lEUERoPDDGwmwuP4+lA+hHSasbbyq7DEXJv+zAH6?=
+ =?us-ascii?Q?GBrleYpLXxISnto+i9/thaW6QRAZ8CFTlzGLJ4n/QqnQVdBJTSdlqdeexvjs?=
+ =?us-ascii?Q?LOK9nwmNmfkJb73CnDgy+cTkeLIwVrDMzRc/vIxicXuWHkya9DFcWyT5hi10?=
+ =?us-ascii?Q?96Bi61LhBz3v4YYXQl9cCafu0gwSnbMzw9IILpbGjDsEdoovuznmClkKSiWM?=
+ =?us-ascii?Q?DLDqKm1c8ybZ5JvfUkOo3A2ivuEfBXR1yXnuugUJd7G7ri2V6vsQzxVUeWEY?=
+ =?us-ascii?Q?XphReau6+RRZp802QSHCd3Qfq40MkDAM6h5z7UPzyyC3jQfa/m+bvNOfg4tp?=
+ =?us-ascii?Q?6ubnP9I7YIBunFPVyxJaIio4It/LSdQFd7KeVKXB58PzOX4QZoZ5vgYLaU0U?=
+ =?us-ascii?Q?eITZbFiYdZ/J6MkireIxzSueRdTBRPVh2Ues48kdLnp4y0EOCzBfNcSO0xsq?=
+ =?us-ascii?Q?mKBZxk+G2lhsDz9gn9VEC1JaLTj/SKRuZm9nIIZOeJvfap95VaCaaHoXrSKh?=
+ =?us-ascii?Q?yGEFS0jUdSqgmjUPQ9eQt2Q9IedFE5RmZ7mRbwXd52MBYFmEaXdRELDYDAD7?=
+ =?us-ascii?Q?d94aHE4lKHpak+4eYlo+29bRoC30KDYIIBc4aNet77UADN6BPzGkOwNXiwid?=
+ =?us-ascii?Q?R/JJg1GYTUh3Ew/KmRWt7z8SW6l6wiZpj5QVUC44nhoZQfRaS8NH4ald4wOn?=
+ =?us-ascii?Q?DqKiOpJJl0xsvE6lia9cZ7wy9trWqChZQ18OgutYy9J7Disoo6MuTxjaHB2M?=
+ =?us-ascii?Q?wj63MTMF4+KJwFrjocvhvznxV/RxU3n/4C6NEwfJI2rYnoX66fQZCNTlvxxg?=
+ =?us-ascii?Q?ke3fOLDFNvKQp2jM65Vi/it2UvgLJnk7eAfHZrAExRlTTgItk1QqHq4nrP56?=
+ =?us-ascii?Q?4bG65EBCVenmId+5bnjBRVeVIg/DsHE645nUrLZIm6W02uSfzJ2UCmbtA7wU?=
+ =?us-ascii?Q?5BIYulAZw1192U32wV8mAGLFfQ51ptemOzAvgVlrULX35yM+3AXLJldDgwId?=
+ =?us-ascii?Q?osnpQfySlfivcY+T7N8N0apFo5HRE76FFusTKO1T5jvZYJqxgfzt0zmRiLOu?=
+ =?us-ascii?Q?Fw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	lXfqxLvMrJZhy0+NPWz2gr9LJjTdaltUpYmB7v0WTcEgC834PTuRcBiQI7e3XgCw2zsgIEETkJ0k43oBfJ/KTlH3ZIDGO/zYIpF3LUzQjRkMYRDRk0aylPXH0jMhd7d8M+IKSNUI+j5msHIyVtDIMHews6FiQ7I4+A0hze7Ykeox4ekNdVXLMrDo9OczKQbZIBKBRV1Br1J/ImP0ePPJfrtjja4m/hYtYG1RlONNqmAcPC4NiQpJheUqMd/zxXmMnxyQ+Q7tfYht0EGxfllotjFrgHvOi1qA/sgC6uoZbRANJlQiLvCiqg8qRE8GNQgd4qOYSSNFuv2qpI92e+4OUXdKmrrFR33NIyNh+HT3a2LcdqDHsf0oQQ4rE/APqy9AJtCypf+kRrjpo32JuE5qzoURvmi4rgmPzhhywPrjBondFbHpPCpheBRgPqhsneRoESkDgoPBf1wnJ/Lo3lcMcX4seuaUcSRrmIFQ4v+0IV9hoPJ7d0pxEmR55Fdh1mBNn6HIMjnS+1qKZkDpw06fVArkF8dLC+Q0MgY/2FLStZVfphKcytrAmGuBKvzDn4CLIItex8osxlQJMOxDHIo0uJbJNrksU+vTVulHd85Pj6E=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee227f6f-3930-4e2b-7fdf-08de13162ab0
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 15:58:26.0328
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 83c6W1+i7pXQ2xhOFeTz77nUDbl1iAczy+dA39tG3FE6tSt8pgeGJ2K5FG5JoJPYo3FgFwpOZrFi66HNxcoYxMAFEnxt5IKwu99Wq84avm8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7436
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-24_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510020000 definitions=main-2510240144
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXzX3P+b6815md
+ dE6tX0NJzoGQ/VhJVinLm79xIf6YWctQ75EA9Falghk7zKB6WC2BHMWqeY3vvBt+5NEV0Mwe1e+
+ y4ophvS2D4ng0BDg4oHkQDY94tOV7rMaUcfrRNtjiaZDsHR0XoLbNbNtLfEr+0dpkTg/PPocHzk
+ OShyKcQshP9EthKCrnf3cKMSldyUjuwLzMWgcTT2/GruUtqUMYqP+yk36iXMpzz3Wnqi8xGbqFY
+ 6YL7KIQaHIikHHZz7PM6VR+AdzDikzW0YoOWOmj6d1dRibJ59MSJMr7+LdtrriZ4hRrQuy3AsnK
+ c6lsO2lrEAoxHyAqo+mO8hW5LT9g0hSZUF7Nvmnwc8WKnLzccbQ2mtBvuXm+7uUxiOwiTK9Srpf
+ b8fLA0k79Y75vpU75V7bDzFYQSfGrV5EdS+/8yQ2T4XJLnU8nCw=
+X-Proofpoint-ORIG-GUID: e07Ik1tvqFKu_q4OurL9FCBN337_QiAW
+X-Proofpoint-GUID: e07Ik1tvqFKu_q4OurL9FCBN337_QiAW
+X-Authority-Analysis: v=2.4 cv=FuwIPmrq c=1 sm=1 tr=0 ts=68fba22d b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=Ikd4Dj_1AAAA:8 a=IK7mdeaTXkNQ-_-jprUA:9
+ a=CjuIK1q_8ugA:10 cc=ntf awl=host:12091
 
-On 24.10.2025 17:53, William McVicker wrote:
-> On 10/24/2025, Marek Szyprowski wrote:
->> On 23.10.2025 22:52, Will McVicker wrote:
->>> From: Donghoon Yu <hoony.yu@samsung.com>
->>>
->>> On Arm64 platforms the Exynos MCT driver can be built as a module. On
->>> boot (and even after boot) the arch_timer is used as the clocksource and
->>> tick timer. Once the MCT driver is loaded, it can be used as the wakeup
->>> source for the arch_timer.
->>>
->>> Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
->>> Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
->>> Signed-off-by: Will McVicker <willmcvicker@google.com>
->>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->>> [original commit from https://android.googlesource.com/kernel/gs/+/8a52a8288ec7d88ff78f0b37480dbb0e9c65bbfd]
->>> Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
->>> Tested-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
->>> ---
->>>    drivers/clocksource/Kconfig      |  3 +-
->>>    drivers/clocksource/exynos_mct.c | 56 +++++++++++++++++++++++++++-----
->>>    2 files changed, 49 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->>> index ffcd23668763..9450cfaf982f 100644
->>> --- a/drivers/clocksource/Kconfig
->>> +++ b/drivers/clocksource/Kconfig
->>> @@ -451,7 +451,8 @@ config ATMEL_TCB_CLKSRC
->>>    	  Support for Timer Counter Blocks on Atmel SoCs.
->>>    
->>>    config CLKSRC_EXYNOS_MCT
->>> -	bool "Exynos multi core timer driver" if COMPILE_TEST
->>> +	tristate "Exynos multi core timer driver" if ARM64
->>> +	default y if ARCH_EXYNOS || COMPILE_TEST
->>>    	depends on ARM || ARM64
->>>    	depends on ARCH_ARTPEC || ARCH_EXYNOS || COMPILE_TEST
->>>    	help
->>> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
->>> index fece6bbc190e..a87caf3928ef 100644
->>> --- a/drivers/clocksource/exynos_mct.c
->>> +++ b/drivers/clocksource/exynos_mct.c
->>> @@ -15,9 +15,11 @@
->>>    #include <linux/cpu.h>
->>>    #include <linux/delay.h>
->>>    #include <linux/percpu.h>
->>> +#include <linux/module.h>
->>>    #include <linux/of.h>
->>>    #include <linux/of_irq.h>
->>>    #include <linux/of_address.h>
->>> +#include <linux/platform_device.h>
->>>    #include <linux/clocksource.h>
->>>    #include <linux/sched_clock.h>
->>>    
->>> @@ -217,6 +219,7 @@ static struct clocksource mct_frc = {
->>>    	.mask		= CLOCKSOURCE_MASK(32),
->>>    	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
->>>    	.resume		= exynos4_frc_resume,
->>> +	.owner		= THIS_MODULE,
->>>    };
->>>    
->>>    /*
->>> @@ -241,7 +244,7 @@ static cycles_t exynos4_read_current_timer(void)
->>>    }
->>>    #endif
->>>    
->>> -static int __init exynos4_clocksource_init(bool frc_shared)
->>> +static int exynos4_clocksource_init(bool frc_shared)
->>>    {
->>>    	/*
->>>    	 * When the frc is shared, the main processor should have already
->>> @@ -336,6 +339,7 @@ static struct clock_event_device mct_comp_device = {
->>>    	.set_state_oneshot	= mct_set_state_shutdown,
->>>    	.set_state_oneshot_stopped = mct_set_state_shutdown,
->>>    	.tick_resume		= mct_set_state_shutdown,
->>> +	.owner			= THIS_MODULE,
->>>    };
->>>    
->>>    static irqreturn_t exynos4_mct_comp_isr(int irq, void *dev_id)
->>> @@ -476,6 +480,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
->>>    	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT |
->>>    			CLOCK_EVT_FEAT_PERCPU;
->>>    	evt->rating = MCT_CLKEVENTS_RATING;
->>> +	evt->owner = THIS_MODULE;
->>>    
->>>    	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
->>>    
->>> @@ -511,7 +516,7 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
->>>    	return 0;
->>>    }
->>>    
->>> -static int __init exynos4_timer_resources(struct device_node *np)
->>> +static int exynos4_timer_resources(struct device_node *np)
->>>    {
->>>    	struct clk *mct_clk, *tick_clk;
->>>    
->>> @@ -539,7 +544,7 @@ static int __init exynos4_timer_resources(struct device_node *np)
->>>     * @local_idx: array mapping CPU numbers to local timer indices
->>>     * @nr_local: size of @local_idx array
->>>     */
->>> -static int __init exynos4_timer_interrupts(struct device_node *np,
->>> +static int exynos4_timer_interrupts(struct device_node *np,
->>>    					   unsigned int int_type,
->>>    					   const u32 *local_idx,
->>>    					   size_t nr_local)
->>> @@ -653,7 +658,7 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
->>>    	return err;
->>>    }
->>>    
->>> -static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
->>> +static int mct_init_dt(struct device_node *np, unsigned int int_type)
->>>    {
->>>    	bool frc_shared = of_property_read_bool(np, "samsung,frc-shared");
->>>    	u32 local_idx[MCT_NR_LOCAL] = {0};
->>> @@ -701,15 +706,48 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
->>>    	return exynos4_clockevent_init();
->>>    }
->>>    
->>> -
->>> -static int __init mct_init_spi(struct device_node *np)
->>> +static int mct_init_spi(struct device_node *np)
->>>    {
->>>    	return mct_init_dt(np, MCT_INT_SPI);
->>>    }
->>>    
->>> -static int __init mct_init_ppi(struct device_node *np)
->>> +static int mct_init_ppi(struct device_node *np)
->>>    {
->>>    	return mct_init_dt(np, MCT_INT_PPI);
->>>    }
->>> -TIMER_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
->>> -TIMER_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
->>> +
->>> +static int exynos4_mct_probe(struct platform_device *pdev)
->>> +{
->>> +	struct device *dev = &pdev->dev;
->>> +	int (*mct_init)(struct device_node *np);
->>> +
->>> +	mct_init = of_device_get_match_data(dev);
->>> +	if (!mct_init)
->>> +		return -EINVAL;
->>> +
->>> +	return mct_init(dev->of_node);
->>> +}
->>> +
->>> +static const struct of_device_id exynos4_mct_match_table[] = {
->>> +	{ .compatible = "samsung,exynos4210-mct", .data = &mct_init_spi, },
->>> +	{ .compatible = "samsung,exynos4412-mct", .data = &mct_init_ppi, },
->>> +	{}
->>> +};
->>> +MODULE_DEVICE_TABLE(of, exynos4_mct_match_table);
->>> +
->>> +static struct platform_driver exynos4_mct_driver = {
->>> +	.probe		= exynos4_mct_probe,
->>> +	.driver		= {
->>> +		.name	= "exynos-mct",
->>> +		.of_match_table = exynos4_mct_match_table,
->>> +	},
->>> +};
->>> +
->>> +static __init int exynos_mct_init(void)
->>> +{
->>> +  return platform_driver_register(&exynos4_mct_driver);
->>> +}
->>> +module_init(exynos_mct_init);
->>> +
->>> +MODULE_DESCRIPTION("Exynos Multi Core Timer Driver");
->>> +MODULE_LICENSE("GPL");
->> Sorry, but this still won't work on legacy ARM 32bit systems with MCT as
->> the only clocksource, which needs a driver available very early (that's
->> why it used TIMER_OF_DECLAREmacro). You need to make it conditional
->> under CONFIG_ARM:
-> Can we rely on the bootloader to setup the MCT timer and then hand-off at boot
-> once the driver is initialized?
+On Tue, Oct 21, 2025 at 11:35:27PM -0400, Zi Yan wrote:
+> folio split clears PG_has_hwpoisoned, but the flag should be preserved in
+> after-split folios containing pages with PG_hwpoisoned flag if the folio is
+> split to >0 order folios. Scan all pages in a to-be-split folio to
+> determine which after-split folios need the flag.
+>
+> An alternatives is to change PG_has_hwpoisoned to PG_maybe_hwpoisoned to
+> avoid the scan and set it on all after-split folios, but resulting false
+> positive has undesirable negative impact. To remove false positive, caller
+> of folio_test_has_hwpoisoned() and folio_contain_hwpoisoned_page() needs to
+> do the scan. That might be causing a hassle for current and future callers
+> and more costly than doing the scan in the split code. More details are
+> discussed in [1].
+>
+> It is OK that current implementation does not do this, because memory
+> failure code always tries to split to order-0 folios and if a folio cannot
+> be split to order-0, memory failure code either gives warnings or the split
+> is not performed.
+>
+> Link: https://lore.kernel.org/all/CAHbLzkoOZm0PXxE9qwtF4gKR=cpRXrSrJ9V9Pm2DJexs985q4g@mail.gmail.com/ [1]
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
 
-I'm not sure if we can expect anything from the legacy bootloaders and 
-kernel requires timer quite early during boot, much earlier than kernel 
-modules get initialized.
+I guess this was split out to [0]? :)
 
+[0]: https://lore.kernel.org/linux-mm/44310717-347c-4ede-ad31-c6d375a449b9@linux.dev/
 
-> Daniel was working on a solution to transparently handle calling
-> TIMER_OF_DECLARE() when a timer driver can be configured as both a module or
-> built-in here:
+> ---
+>  mm/huge_memory.c | 28 +++++++++++++++++++++++++---
+>  1 file changed, 25 insertions(+), 3 deletions(-)
 >
->    https://lore.kernel.org/all/20250625085715.889837-1-daniel.lezcano@linaro.org/
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index fc65ec3393d2..f3896c1f130f 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3455,6 +3455,17 @@ bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
+>  					caller_pins;
+>  }
 >
-> Daniel, do you have plans to finish that? In the meantime, can we go with the
-> `#if CONFIG_ARM` solution?
+> +static bool page_range_has_hwpoisoned(struct page *first_page, long nr_pages)
+> +{
+> +	long i;
+> +
+> +	for (i = 0; i < nr_pages; i++)
+> +		if (PageHWPoison(first_page + i))
+> +			return true;
+> +
+> +	return false;
+> +}
+> +
+>  /*
+>   * It splits @folio into @new_order folios and copies the @folio metadata to
+>   * all the resulting folios.
+> @@ -3462,22 +3473,32 @@ bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins)
+>  static void __split_folio_to_order(struct folio *folio, int old_order,
+>  		int new_order)
+>  {
+> +	/* Scan poisoned pages when split a poisoned folio to large folios */
+> +	bool check_poisoned_pages = folio_test_has_hwpoisoned(folio) &&
+> +				    new_order != 0;
+>  	long new_nr_pages = 1 << new_order;
+>  	long nr_pages = 1 << old_order;
+>  	long i;
 >
-> Thanks,
-> Will
+> +	folio_clear_has_hwpoisoned(folio);
+> +
+> +	/* Check first new_nr_pages since the loop below skips them */
+> +	if (check_poisoned_pages &&
+> +	    page_range_has_hwpoisoned(folio_page(folio, 0), new_nr_pages))
+> +		folio_set_has_hwpoisoned(folio);
+>  	/*
+>  	 * Skip the first new_nr_pages, since the new folio from them have all
+>  	 * the flags from the original folio.
+>  	 */
+>  	for (i = new_nr_pages; i < nr_pages; i += new_nr_pages) {
+>  		struct page *new_head = &folio->page + i;
+> -
+>  		/*
+>  		 * Careful: new_folio is not a "real" folio before we cleared PageTail.
+>  		 * Don't pass it around before clear_compound_head().
+>  		 */
+>  		struct folio *new_folio = (struct folio *)new_head;
+> +		bool poisoned_new_folio = check_poisoned_pages &&
+> +			page_range_has_hwpoisoned(new_head, new_nr_pages);
 >
-> <snip>
+>  		VM_BUG_ON_PAGE(atomic_read(&new_folio->_mapcount) != -1, new_head);
 >
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+> @@ -3514,6 +3535,9 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
+>  				 (1L << PG_dirty) |
+>  				 LRU_GEN_MASK | LRU_REFS_MASK));
+>
+> +		if (poisoned_new_folio)
+> +			folio_set_has_hwpoisoned(new_folio);
+> +
+>  		new_folio->mapping = folio->mapping;
+>  		new_folio->index = folio->index + i;
+>
+> @@ -3600,8 +3624,6 @@ static int __split_unmapped_folio(struct folio *folio, int new_order,
+>  	int start_order = uniform_split ? new_order : old_order - 1;
+>  	int split_order;
+>
+> -	folio_clear_has_hwpoisoned(folio);
+> -
+>  	/*
+>  	 * split to new_order one order at a time. For uniform split,
+>  	 * folio is split to new_order directly.
+> --
+> 2.51.0
+>
 
