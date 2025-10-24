@@ -1,121 +1,115 @@
-Return-Path: <linux-kernel+bounces-869145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71607C07188
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:53:54 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82333C07179
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F435562C26
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:52:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A7FC935C47D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B77132E749;
-	Fri, 24 Oct 2025 15:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3BA32E695;
+	Fri, 24 Oct 2025 15:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hmS/OtrF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C25tWL8s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9DE2DA765;
-	Fri, 24 Oct 2025 15:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A75289340;
+	Fri, 24 Oct 2025 15:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761321149; cv=none; b=o1H7yR3g3PA3vcIJpV8fsTlfBsqWK7YORF/bdDEQvucpnNEFnwe3JD+o0c4A+Pr/S5EryaYYGA4/KH5BSH/KnwWOTEiN4fAq598n/V7r5NurkHqgYehamnLDlV0nsm0EZ1UaBRlvOo0ADIAp8y0MxVz+Ve+we60/B5BH8y9N7vY=
+	t=1761321159; cv=none; b=NkACyqA7VvJ7C/6Rmwg+NUMO5Mzdn8K2yWSeQLdOqQHZXDR2zUaOq//UGIc9ByM6yPl2W04KxxDi3tv29ZZZzEi5S15xZG9NwvP6gu0+JOhbLKDrEOg3cFEIbzK9AUTC2hcK1PaJy9hO8B3WF2pQK7a3DwZrfvW6wxPLDhdusOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761321149; c=relaxed/simple;
-	bh=hN57D+m8bfZOyaql25Ql2BNoX4IBCg8l7ydroV/tKz0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qqi7K+WiuVaYeraPaHaW6gnW3hFcp7a0OM2wx19ruB7EZuBOeMBvnXWsljGKFv5D/JBjH+l7hpNiO5ltXW/yfUPZfkNqJWFUVVYWQ+I+Z8opwPPXkAv57MoVY1SfFJvfmK7K7J9mkzEg2lTFSsLzhn2V846gYODKy8Eg7GsoN4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hmS/OtrF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34EF6C4CEF1;
-	Fri, 24 Oct 2025 15:52:27 +0000 (UTC)
+	s=arc-20240116; t=1761321159; c=relaxed/simple;
+	bh=EasIsdul3hK96kw5dNYavpFbf3KHAIl4PmdqMLK95ZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g9OBGHjqVY4t2iZi9sSd5CMtp+eM7DLs2GM/MA1/F3g95uzCBiDd3QbjVFSyQE/KGV/cuzbnTtJO5POyT2swus2mJ0IAn0joCpfTAqF2eA0A2I+E6bY9y6DSTBcDM6Z8RmBco25tSQL6uC84Gl+laKGlvOOQ7wWZQxX17tYorwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C25tWL8s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F452C4CEF1;
+	Fri, 24 Oct 2025 15:52:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761321149;
-	bh=hN57D+m8bfZOyaql25Ql2BNoX4IBCg8l7ydroV/tKz0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=hmS/OtrFuMY/e8rrKApoVlK6kToisDX80rTEqsylwmg+YmFSMbqGuRSosQ2ziAcBi
-	 jbPOVLF8KOBXTJXRxl1OSHbIQo2H29kyfcKZkMUKBpJrIwaH5wpIe4N/H+9zRlasMH
-	 kYcaEH/CycQEoRHV6B5Lrel8kpBTARMqYaaf5OT0PrvTJtOh+0usoO1I7FFlgwdk+7
-	 wu34rIi0QCLtGoEHvw//qh8xp7MjinNmo7GtZmfTxGX5Ppo3ULQ6lzQuSkPw13/BMx
-	 dY8wu/l8fW+yG9wQ9I+frPOeQJmEwLhCw0JkqWqgkZ7EshbZFuuPGRTCV/DqK1E4BG
-	 EMwY35Ot7E8wA==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  akpm@linux-foundation.org,
-  brauner@kernel.org,  corbet@lwn.net,  graf@amazon.com,  jgg@ziepe.ca,
-  linux-kernel@vger.kernel.org,  linux-kselftest@vger.kernel.org,
-  linux-mm@kvack.org,  masahiroy@kernel.org,  ojeda@kernel.org,
-  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org
-Subject: Re: [PATCHv7 3/7] kho: drop notifiers
-In-Reply-To: <mafs0o6pwe1sy.fsf@kernel.org> (Pratyush Yadav's message of "Fri,
-	24 Oct 2025 17:50:53 +0200")
-References: <20251022005719.3670224-1-pasha.tatashin@soleen.com>
-	<20251022005719.3670224-4-pasha.tatashin@soleen.com>
-	<mafs0ikg7fbez.fsf@kernel.org>
-	<CA+CK2bDrrg0UoJXpeN+Au2-sreYrZ+DHVcEUidzPw2Qk60orgg@mail.gmail.com>
-	<mafs0o6pwe1sy.fsf@kernel.org>
-Date: Fri, 24 Oct 2025 17:52:26 +0200
-Message-ID: <mafs0jz0ke1qd.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=k20201202; t=1761321159;
+	bh=EasIsdul3hK96kw5dNYavpFbf3KHAIl4PmdqMLK95ZM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C25tWL8sCyev2m35cwgb29ICIPC0wAOzANasXYJ+hjODalwKx7j41LrjNt+C0Cv2l
+	 PNRffrFVJwBF28ZC13nyjCZZ71a7AnbPb1Jj61E3l6EoBvjcnQHDdJkXqSNzb5lrg5
+	 iCvV5Md/gEw1tyccJv4ntR8xBeWQemm5v+vszbVCQNJ7Lqn1ob/wQ1h6H8VXrlJGBM
+	 6Fg2ZCyPmpNUjj0MTKzbh+Q07mQsGLoQyJe3brwvhUB8rSokUU860yzW/OLvYT8RVX
+	 H5IAIglX3pPTTX1WglzfZWZt815tsdlcI2A+d6LxZYZh5x6y0wpkF8p7vYZglJd+1S
+	 2jd7jUcmFYv/Q==
+Date: Fri, 24 Oct 2025 16:52:34 +0100
+From: Simon Horman <horms@kernel.org>
+To: David Yang <mmyangfl@gmail.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] net: dsa: yt921x: Add STP/MST support
+Message-ID: <aPugwiMrKqlDW4c1@horms.kernel.org>
+References: <20251024033237.1336249-1-mmyangfl@gmail.com>
+ <20251024033237.1336249-2-mmyangfl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024033237.1336249-2-mmyangfl@gmail.com>
 
-On Fri, Oct 24 2025, Pratyush Yadav wrote:
+On Fri, Oct 24, 2025 at 11:32:27AM +0800, David Yang wrote:
 
-> On Fri, Oct 24 2025, Pasha Tatashin wrote:
->
->>> > -int kho_add_subtree(struct kho_serialization *ser, const char *name, void *fdt)
->>> > +int kho_add_subtree(const char *name, void *fdt)
->>> >  {
->>> > -     int err = 0;
->>> > -     u64 phys = (u64)virt_to_phys(fdt);
->>> > -     void *root = page_to_virt(ser->fdt);
->>> > +     struct kho_sub_fdt *sub_fdt;
->>> > +     int err;
->>> >
->>> > -     err |= fdt_begin_node(root, name);
->>> > -     err |= fdt_property(root, PROP_SUB_FDT, &phys, sizeof(phys));
->>> > -     err |= fdt_end_node(root);
->>> > +     sub_fdt = kmalloc(sizeof(*sub_fdt), GFP_KERNEL);
->>> > +     if (!sub_fdt)
->>> > +             return -ENOMEM;
->>> >
->>> > -     if (err)
->>> > -             return err;
->>> > +     INIT_LIST_HEAD(&sub_fdt->l);
->>> > +     sub_fdt->name = name;
->>> > +     sub_fdt->fdt = fdt;
->>> >
->>> > -     return kho_debugfs_fdt_add(&kho_out.dbg, name, fdt, false);
->>> > +     mutex_lock(&kho_out.fdts_lock);
->>> > +     list_add_tail(&sub_fdt->l, &kho_out.sub_fdts);
->>> > +     err = kho_debugfs_fdt_add(&kho_out.dbg, name, fdt, false);
->>>
->>> I think you should remove sub_fdt from the list and kfree() it on error
->>> here. Otherwise we signal an error to the caller and they might free
->>> sub_fdt->fdt, which will later result in a use-after-free at
->>> __kho_finalize().
->>
->> I think, it is better to simply do:
->> WARN_ON_ONCE(kho_debugfs_fdt_add(...));
->> Now debugfs is optional, and there is no reason to return an error to
->> a caller if kho_debugfs_fdt_add() fails
->
-> Yeah, that works too.
+...
 
-On a second thought, maybe pr_warn() instead of WARN_ON()? This isn't an
-assertion since the debugfs creation can fail for many reasons. It isn't
-expected to always succeed. So a full WARN_ON() splat seems overkill.
+> +static int
+> +yt921x_dsa_vlan_msti_set(struct dsa_switch *ds, struct dsa_bridge bridge,
+> +			 const struct switchdev_vlan_msti *msti)
+> +{
+> +	struct yt921x_priv *priv = to_yt921x_priv(ds);
+> +	u64 mask64;
+> +	u64 ctrl64;
+> +	int res;
+> +
+> +	if (!msti->vid)
+> +		return -EINVAL;
+> +	if (msti->msti <= 0 || msti->msti >= YT921X_MSTI_NUM)
+> +		return -EINVAL;
+> +
+> +	mask64 = YT921X_VLAN_CTRL_STP_ID_M;
 
-[...]
+Hi David,
+
+YT921X_VLAN_CTRL_STP_ID_M is defined as follows in yt931x.h
+
+#define  YT921X_VLAN_CTRL_STP_ID_M              GENMASK(39, 36)
+
+This creates an unsigned long mask. However, on 32bit systems,
+unsigned long is only 32 bits wide. So this will result in
+a build error on such systems.
+
+In order to avoid this I think the declaration of YT921X_VLAN_CTRL_STP_ID_M
+should be updated to use GENMASK_ULL. This is also likely true
+for other, as yet unused, #defines in yt931x.h.
+
+
+> +	ctrl64 = YT921X_VLAN_CTRL_STP_ID(msti->msti);
+> +
+> +	mutex_lock(&priv->reg_lock);
+> +	res = yt921x_reg64_update_bits(priv, YT921X_VLANn_CTRL(msti->vid),
+> +				       mask64, ctrl64);
+> +	mutex_unlock(&priv->reg_lock);
+> +
+> +	return res;
+> +}
+
+...
 
 -- 
-Regards,
-Pratyush Yadav
+pw-bot: changes-requested
 
