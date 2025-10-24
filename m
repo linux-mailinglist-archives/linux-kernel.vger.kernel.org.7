@@ -1,87 +1,152 @@
-Return-Path: <linux-kernel+bounces-868832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38EEC06430
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:31:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DD7C0643F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BBB4D4EFD6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:31:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DBB71C0588C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8BF3191CA;
-	Fri, 24 Oct 2025 12:31:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0506B31691E;
+	Fri, 24 Oct 2025 12:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O7uGKTtK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341F230E0D0
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD29130E0D0
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761309066; cv=none; b=T019hvA1pUTY5dOPvvMUJrTpt9s2DMLqyGXZTqrEcU9VH6zsNXh4VXE8V8rAdlp7Fp7vxHphGIm+0AIYd5uvDjr/ubbVSYDydIoFyoLMs4TizzArEMSyDb/mwXXdhK/PrToMxt/RIMKRW+F8A9u7jyfk/2j1d5o1WMwCkawJudo=
+	t=1761309097; cv=none; b=Bm/7RagugDVSXzapekTAi8UpSeC9TgjYsHGMqIwAu1Yt1o6izMBPyUPW4+7Pks8pc11+SRvJA1HxuRzYExqNjjcfncbwwXpEWx62gfpcZnjko4LQ3zXPrYR102u3Bbyjtb8grJLKyGDYBa4F/OCxHb/dLwLUYKxuRP/Cyb7MNy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761309066; c=relaxed/simple;
-	bh=QyTFPsJkDI5GpoB+DJmqdR4TCywTQpDTTI/wtnCPc8g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=p76L6gMTllk7GDXIjxtNBzeUEPYgKmUgjSCeZ8nOehnsUY6NngM8bUEnXEz67wf+N6r5ypVlvJ9iIYruCEgr8AUVG8wkUpHYDwJ4WK2MPwJM9g1/AuiW348eC31OMjJ/ZgbDq5IMkcqbKQWnmYn5xkZqkM0LOwUn+wjPMlkm+zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-93eaaa7435bso177631039f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:31:02 -0700 (PDT)
+	s=arc-20240116; t=1761309097; c=relaxed/simple;
+	bh=XiTDVkg1kAETpNdGmqCEBuwWFR6IVEd0PECMW0nJHq4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kNI1MtbrRAhkhsGiQDQ6BlZj0yTEsw3CLYGeMY2O2b0gfmtaK74oI51VX80I3rA+2M4ECsPgMFFG+MQ0pCi0UuxdZkaJ6JY+2JB2zFeO3aNVufoqdBE6ad3V41nJVJh7biW3NKciYg5q7FMQysdAOYVSEhXB/i82NeY8tHHaTEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O7uGKTtK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OC3i9c000398
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:31:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=2bAsfJsMqfmVZMLORayPyE/1jk3wBrKlzyf
+	VzHYGp8s=; b=O7uGKTtKODlV1izXE+xekeaagbTBEkBALzCFByC/LBULekqcUMs
+	tM4kZCOaiirBv+YkyHFrAHAz5cCbAgVP8jqaRfIg7iS7DAgiODvEGIRsRWNvcnDy
+	zbQ2nGnhrfHVsXZGA23LXz6GhJ4FSAV5B8BnLmd+LYZuErzHzrUo4xN3AVKusmMO
+	C4QTGyXf/wviu+OfxSrxBnB4XW6CKRwpeJDpl2gBTUGT9tpkOabEoNpImrOogzDs
+	mW5bl8NOEyiNSGoulUCf/nu1BC3ci0SEo1cARRPa28o2GO02/PWsNMp62/uFnXcm
+	ji0D4Scp9mgfYW2GjMoRnPgUs9Ri+EjSsjA==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49ym9j3msd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:31:35 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2698b5fbe5bso27506055ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:31:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761309062; x=1761913862;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fb9Wfq6QoHJKFSw9JBezoKHPd6ZFPkg51aOEjN6bte4=;
-        b=pt+wwIQaU3hlCwLBBHI9dCBEULyzhVtZNcMzWEtmudTaemT5U6jabiuP+XIR9bBCcH
-         AHQuoS89+iqdumjGSm4Ob7whqGYojU2scAIwidcMHIoyLgbUE1YThu82qO3QyYJEe9BM
-         AiqNBWWdKsogJ1fvy62hmbt3f/xApF0FpaQAD6kv/zxb2FcdrQs2JMakRIjBTxUFuok9
-         IPbkyMKg7XRksVPAqlqH110jNu26FNGKblTChcJyGyJI/j7qbrVQrDb+m4bTqYdDiSQw
-         Io0hlVRPvGN4cuvw8rlYfQ5j1L4OoYhFnSLAqt6McQ7fAQukyEc/vJriBaOaAv7Rcu1r
-         Qqlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNdnV7EtQvr8PfDtUaLCiG5CK0Sw5z9kyToGPu8EkDWHzZmzn30ZsYX/Q+LdL37LtE8gF+GK+9pgbk6rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiJw+WjqWPTSxW0Dq05bliYajeEgh5VmqWTdkGvozXIW1FG+MG
-	Zokb3WCMLStiyVmqMlAKaCKwoDbvUZqI2HincecawrThMlMJNbex9WWOOV9931t/M+e3qDadnmj
-	f/rv22IgVmNtR0qOqy/T5kowthUwfcJEuTIt8OKdvrZptOJAjAGyow/KmM4k=
-X-Google-Smtp-Source: AGHT+IHLlm5v4l+lh22gZ/4F4BTwWgt1Y6JS7tTLewkbfln0+HkC4n8iHdyFkV8CLuVR/h/vAkYpry/EEjcOYMynWLmWZ1vleCLD
+        d=1e100.net; s=20230601; t=1761309094; x=1761913894;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2bAsfJsMqfmVZMLORayPyE/1jk3wBrKlzyfVzHYGp8s=;
+        b=W6lPZqlligUi62HWjQEqxBVneWMndJA2yUxNT/BJmseWpUgCmrJsnYOE73WXu3DmpO
+         vyBaRrrUqY/tX8tVhx8DOboV0y3Pj6XPlTCcrg2bjvEJybcEoYf5QCz7qH91Ozcq89TZ
+         J+usl0UkHMQlr/OAJffqUD0Lo2Sq6NRjq2gDZi8oyHit2D+cvwuxyP5ncNXODBkxufq0
+         hURAMKvuO98X0YbprZXzHC3yQVeF168YmGnT/Z04jEMCgzStAkRwlaTfKVub+uAynFFp
+         C6fy6pRx8ZqIj+BD3itW6VohzF/yRf/VhHxyPHKyHcfcZ1pWcwpqhzPnAI3cZvnlGc3X
+         mH7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUx0z2zJstp1+yzq+xeoD1PS6epndFi5UM5ZEAzHrPOJVZ8CxAU+wjt86yhDdEGlTO436j8gKn9FXHUUKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxREI+RvRKUreF0PkXwq23rqdV2aDEaEq/1rpPaa9N8OvZI7EYu
+	3Doqcxh3jnVP5tm05MEHWgRkYmZ0B3pbqTa4YLrY1nVhQ0BbpORlYHMEKmxj+Q+0+1sVRYApehH
+	ltkM+oTUHeQVJffGlFqhG8BKGjz4typJd4hBf2SvkMHQ3moEaHrB7zyPR8u0IFD3pTjG4b1tYgQ
+	mdPA==
+X-Gm-Gg: ASbGncsSwlzWA99WvFmgl7OsMYVrBD/FSzvC8W+JfmQYMXHVS3G19+3qU11b4Iak3Dt
+	xbFGw/bZiEe63ftC9djSOseIbJkvqk+yqfVp5dS2lQucMdj9CUQpE2hncqgFFKuYxVpwXti2saP
+	KZqJGxzOnpyAqWHMhkdNFhiIIyu0atgOoIobNdxzWX+irPWqC4x8bpd/TdJMazsx7WDJKkk62Le
+	2o+Iw9GpyG+MEodHdKmrTc6RYqUAxlzFCglzZQMP7U4TpldBh0IFxhPnIelak8EcIEQyAP4Inyx
+	ptznodXnGsxlzwkutiEGi4di0S+YZIx8RHAW4NXGA7jkRU5v+UNYtNKAX92xEr1Dt3y+p/Lh81f
+	6Q8p2W9UVIimf/62jGcApMjiAkqV/qEWHA/R14WKuCO43znqSnkXn
+X-Received: by 2002:a17:902:d50a:b0:290:bfb7:376f with SMTP id d9443c01a7336-290cb46bf6emr323434215ad.51.1761309093993;
+        Fri, 24 Oct 2025 05:31:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEucBc3iLZLhsl0wh3jp8jpvtimkKB//Sc+M+8IumHk8rQsjhXsplOGeikn1LVFuY+rB3c6XA==
+X-Received: by 2002:a17:902:d50a:b0:290:bfb7:376f with SMTP id d9443c01a7336-290cb46bf6emr323433855ad.51.1761309093557;
+        Fri, 24 Oct 2025 05:31:33 -0700 (PDT)
+Received: from hu-punita-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dda72d0sm54981275ad.16.2025.10.24.05.31.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 05:31:32 -0700 (PDT)
+From: Punit Agrawal <punit.agrawal@oss.qualcomm.com>
+To: rafael@kernel.org
+Cc: lenb@kernel.org, cp0613@linux.alibaba.com, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Punit Agrawal <punit.agrawal@oss.qualcomm.com>
+Subject: [PATCH] ACPI: SPCR: Check for table version when using precise baudrate
+Date: Fri, 24 Oct 2025 13:31:25 +0100
+Message-Id: <20251024123125.1081612-1-punit.agrawal@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda3:0:b0:3f3:4562:ca92 with SMTP id
- e9e14a558f8ab-430c525f520mr199237815ab.10.1761309062222; Fri, 24 Oct 2025
- 05:31:02 -0700 (PDT)
-Date: Fri, 24 Oct 2025 05:31:02 -0700
-In-Reply-To: <20251024071519.Hoge8%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb7186.050a0220.346f24.00d6.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_claim_suballoc_bits
-From: syzbot <syzbot+5054473a31f78f735416@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=CLknnBrD c=1 sm=1 tr=0 ts=68fb71a7 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
+ a=3rrkCrMOeJKuegrRhzgA:9 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDExMiBTYWx0ZWRfX+TEeLRpCy6DB
+ uQG0zwBNrsfJ0HGeKsSriTIcr45IsDgn6Eylv0i27/+pQAX0f0v92MRCuZezfhJiMKJ8LwNLhlb
+ /oNaiJZWz9+H4wB9Xt0+FUDywa9DUoq0WBPQgnOO770EYACglWZCEpuSlS3807gbbuxg+W/WsVq
+ nIkrWiEOfkKIBGiEDWCHsouLhWp4R6tmYvnpKwS2/8fpdIPqhb2coAwIt9Soui7Ahb3TpyvaJH+
+ 9NO+Lh0KXr0z6ylmEIS/Hm9/NUSlqlbY4nA4BWFzx3oMgySaD8XPBMvDrEuk6/6W37kFgGcja7P
+ kGpn2+lTpP7yzjD1F31/kTEAJ3OMucfxA0TrknIEq2PfEHeduNtyN8FzNetAeCaWPSjoUbCR8s0
+ +Zh58PdPgtBRUph/7R9VHGPzkQgtXQ==
+X-Proofpoint-GUID: zpBApybNvM8R5Y2BZiC2MZuPUpoY7kEB
+X-Proofpoint-ORIG-GUID: zpBApybNvM8R5Y2BZiC2MZuPUpoY7kEB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-24_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 clxscore=1011 impostorscore=0 priorityscore=1501 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510230112
 
-Hello,
+Commit 4d330fe54145 ("ACPI: SPCR: Support Precise Baud Rate field")
+added support to use the precise baud rate available since SPCR
+1.09 (revision 4) but failed to check the version of the table
+provided by the firmware. Accessing an older version of SPCR table
+causes accesses beyond the end of the table and can lead to garbage
+data to be used for the baud rate.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Check the version of the firmware provided SPCR to ensure that the
+precise baudrate is vaild before using it.
 
-Reported-by: syzbot+5054473a31f78f735416@syzkaller.appspotmail.com
-Tested-by: syzbot+5054473a31f78f735416@syzkaller.appspotmail.com
+Fixes: 4d330fe54145 ("ACPI: SPCR: Support Precise Baud Rate field")
+Signed-off-by: Punit Agrawal <punit.agrawal@oss.qualcomm.com>
+---
+ drivers/acpi/spcr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tested on:
+diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
+index d4d52d5e9016..73cb933fdc89 100644
+--- a/drivers/acpi/spcr.c
++++ b/drivers/acpi/spcr.c
+@@ -155,7 +155,7 @@ int __init acpi_parse_spcr(bool enable_earlycon, bool enable_console)
+ 	 * Baud Rate field. If this field is zero or not present, Configured
+ 	 * Baud Rate is used.
+ 	 */
+-	if (table->precise_baudrate)
++	if (table->header.revision >= 4 && table->precise_baudrate)
+ 		baud_rate = table->precise_baudrate;
+ 	else switch (table->baud_rate) {
+ 	case 0:
+-- 
+2.34.1
 
-commit:         8e6e2188 Linux 6.1.157
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e993e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3fff88b67220f824
-dashboard link: https://syzkaller.appspot.com/bug?extid=5054473a31f78f735416
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=174e63cd980000
-
-Note: testing is done by a robot and is best-effort only.
 
