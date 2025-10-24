@@ -1,255 +1,142 @@
-Return-Path: <linux-kernel+bounces-869271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE9EBC0778D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:08:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0303DC07781
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB3819A7672
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:07:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D887562EF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7502D3226;
-	Fri, 24 Oct 2025 17:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BAD2FDC4B;
+	Fri, 24 Oct 2025 17:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QEfJ11fc"
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EqUp0YKl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8428032E74C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A996930B52E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761325553; cv=none; b=sBwCxMPLZLIpuBIR39e1YBmBFofkgl5IYWXHltpW8iV9CC8MfiKEZqQED2npO8Zxzot7MUo735HizS9ZY/JKD7+cHfgju3vVKu7jzz+sPGeNgh/fRXnaEYu+Rmgbe/y1XlRiGLJaEdl2vOmIj1K9JBg/gnMyxaDfCBzm1Fmmz3k=
+	t=1761325572; cv=none; b=TM9fXRCT7XHmF+iLsfi1CwTlJhhbo61Ptw6hhRlR795CftLOvvDndGMDk09BAL8WVqyjDQ33GiC43tDOZhLJL2/FPDwzvAtBYRiiQDXB9GvAlCvCuzojQWvWugfxw6u8hWnpFobJhWIix4BVfy2XPZ9OaIDg5oTm6F5mZq6TJcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761325553; c=relaxed/simple;
-	bh=ywL2XffooPaoJtOW52uoNolWTfO4L1cPqhwxEZrSkdI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mh6Pl86kKDAsInZsiPBuMaCiys2ZZMGOm1Yt6TXs7OAPO9d+Fi7ZmNcP4NhwWrZJIn83B/DygCYYD0PVsFmQ6Sqjz7rhCbrGxngcNdHvVWfvqemnUGa5k18tSN+7C9EkTgT0gjcP5Ji4pkDxNpgeELI8EB9Tdh1ZthUrORtOrV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QEfJ11fc; arc=none smtp.client-ip=209.85.210.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-7930132f59aso3021354b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:05:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761325551; x=1761930351; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FlJMjioQT5hFyjTQfgGib/nn3aRlpyKPcJRzd9y5r+E=;
-        b=QEfJ11fcA01RRFgcatosxDl+0Ay1YD1NiIUGslkFEcUesOPHG2gKNfyA1z8t87BhrF
-         LnXmtGQhOTOPbugy6iv3QweOLAerAYFkT+fJYGUM6nDV0O7Zq9QaQZkt3CJw6QwP+pzJ
-         3LZ15Txa6gzxgI12YCS/bDKxfol5a9rSBnX0osK/h99gAfDmGsW0S4BbQ9IobeTY7oyO
-         OBCfmmpEhgcIE6XYE9sg+EHPaPX41fsPAkQzqdr/1oYeyhw2MNLlG06VQ9grZAncgHlc
-         5I8qXn7PmPU8N0oFQBMVY6ApdGQzPgGrdnrtDxk/tG1dPTqqYBXtFnnSQNhZxQHMA/xu
-         mAag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761325551; x=1761930351;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FlJMjioQT5hFyjTQfgGib/nn3aRlpyKPcJRzd9y5r+E=;
-        b=hXSqw1E5z2SeSwNj3XaTg5k9mJE7XXeGn4y5VFu2J2ZXv3BtjtqalAUyEkN0mQGxgz
-         MGnJfqBqQgrf6PEMjIhqBmrI2ED49E5gjbhVkbRpgTJF8xFxmnH+Y5JrqL4Xvb6426zn
-         3bk0q8mSCG6SGSqgcP3xJ0wUSyvC1/msy2FIRfW7MYajgEyAGmXC9sGShAS5UvBSFHu9
-         nwl5R9xYEXnzpnMCjG3AwstRSziw5XUcajRpmA0p5WNMajoX0paHXIL3fFZAl8qaSJAm
-         GxnNMTsMBWBypSG4xZkKjhrNh0gvwLsjLsqQYjsG8isnxGHXb59U2BpTlnL85z2ugw5n
-         NWWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNIvnpNB/8AaAumavuq7dwBi2Z7HF0rU3ipEqBsRJCnOw/0GMYsepMNhNQH1+3bdczzwfZVrdUoOjgxCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySkIseo9Ijw23Gbe15AVImqU9jO2iXj36CB8/O6G+AEdzBReBj
-	VWA9ccwpYpp4j5EJpKatjjqg6nEJcG/nKnV3XIF2NKDQBzF/hzbPhZoO
-X-Gm-Gg: ASbGncsKs0ENupRPlShioDmbY8K2Q7xmLYnEGjctkKKRzpJ5BSn23BbXNwopRbdiOVq
-	pC0iGslL7mHhhFVeT7ExU63+qdNMeFdFfGcsfIrWBKUR2iFmzIMKis+Klrz2mDCnOf2XHWlHaMQ
-	ROEFDqWb/XMXYdgw4tZbDjse6ZcVfnlUObEPUXB3QMoYcfBdRDQfPLdSNtPgdbSz069Iv545OLy
-	0awG6OzC+oRlJQtsDnoLhvbxofA4E4Tzq92LHR3SdVr7ZipIughdr2oviiVhujgtrb7w4uYwOA0
-	4qyCkDXybeXyDpzRxXdiTS/hpMDZExVdS7SgginVnHgCbK1ZAz50sMvg7JGLS/u70SnOaqqXHkL
-	+9je2JFOrpgu2jU6zr1uqoTSI+c5OgIp/BFMAx+9ALKh1rgn0PbFU8nXbRFolzumfnxokvKeAHD
-	FiAsCKLA==
-X-Google-Smtp-Source: AGHT+IG4XfOYYNzUXM+7Yx0Buo4o5e56GVlMcvjrf3CpNTQnLFTr/XojsAx61GxG2MZlMHY8rXL4JQ==
-X-Received: by 2002:a05:6a20:12ce:b0:2e3:a914:aa93 with SMTP id adf61e73a8af0-33dec02dd8cmr3977713637.30.1761325550625;
-        Fri, 24 Oct 2025 10:05:50 -0700 (PDT)
-Received: from nixos ([115.192.189.58])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4e158fdsm5568972a12.19.2025.10.24.10.05.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 10:05:50 -0700 (PDT)
-From: Thaumy Cheng <thaumy.love@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thaumy Cheng <thaumy.love@gmail.com>
-Subject: [PATCH v3] perf/core: Fix missing read event generation on task exit
-Date: Sat, 25 Oct 2025 01:05:43 +0800
-Message-ID: <20251024170543.11201-1-thaumy.love@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761325572; c=relaxed/simple;
+	bh=6H3ammZyhl1Ytjbn8r/vmB4mY11REtRmJRjzvTr4jXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BXdcjTIOphk1OhIuQxc+kIHn/v5QGxOrDAm+BgJ2qvodqT1duWqt6iCQD1jxGThTdD7NSVo/TYgU+mrnvnshBpHFFgcIsLZITe+a2tnmHs40etVwewo4xkhJRulkQdowSLo9EgXTzk+DBTp5f9GZgsL4zCj4DFTjtLUNlxEmtzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EqUp0YKl; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761325570; x=1792861570;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6H3ammZyhl1Ytjbn8r/vmB4mY11REtRmJRjzvTr4jXM=;
+  b=EqUp0YKlPwrBAjhyW0XP452x2TITCMjtlqkaPaHVwNkiyIOoM8V+3Byc
+   cwhQG1BCfrXw1jk1n90PpHxU3OD9MMpcxjEtYaZQ8yHz8sYxg0S2yR32v
+   JDFxNmi2mHU+qFYSTBzLMoffvBg5gpeoXFAyx33q/NrlZFIYsTseXxbJF
+   HIfIQRqXVA2ri8hDVY0aoiIvHjRL+0Z/wx1KDXPCnXqiN5bV33J1bOY6a
+   9B51OjunG4vY9BiK0jmqKGe4DholltsZx9l3v+t8grfZRpdrXGveeEull
+   /26RsOV4zzwUZRqIMqCEW4o+90TPrXYcBA0GkGJc1LhSmAQevzCQZrlgv
+   g==;
+X-CSE-ConnectionGUID: xRt88YkaRmakCwrZqUaCug==
+X-CSE-MsgGUID: 3vlVArOvQPSKKgsIHK1iVw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73799641"
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="73799641"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 10:06:09 -0700
+X-CSE-ConnectionGUID: ghSrIccmQR+nGOfcSfm/Nw==
+X-CSE-MsgGUID: fi5UoP/jTi6d66RinM7CVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="188772104"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.44]) ([10.125.109.44])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 10:06:08 -0700
+Message-ID: <b650dc79-1dbb-48d8-bc92-cc468e807ad5@intel.com>
+Date: Fri, 24 Oct 2025 10:06:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/mm: Unify __phys_addr_symbol()
+To: Brendan Jackman <jackmanb@google.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org
+References: <20250813-phys-addr-cleanup-v1-1-19e334b1c466@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250813-phys-addr-cleanup-v1-1-19e334b1c466@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For events with inherit_stat enabled, a "read" event will be generated
-to collect per task event counts on task exit.
+On 8/13/25 08:08, Brendan Jackman wrote:
+> There are two implementations on 64-bit, depending on
+> CONFIG_DEBUG_VIRTUAL, but they differ only regarding the presence of
+> VIRTUAL_BUG_ON, which is already ifdef'd on CONFIG_DEBUG_VIRTUAL.
+> 
+> To avoid adding a function call on non-LTO non-DEBUG_VIRTUAL builds,
+> move the function into the header. (Note the function is already only
+> used on 64-bit).
 
-The call chain is as follows:
+... and just for the record CONFIG_DEBUG_VIRTUAL really is a
+debug-build-only thing. I don't see it set in any normal distro kernels.
+This shouldn't bloat any normal builds, although it will probably make
+CONFIG_DEBUG_VIRTUAL=y build bigger. But I don't think we care about that.
 
-do_exit
-  -> perf_event_exit_task
-    -> perf_event_exit_task_context
-      -> perf_event_exit_event
-        -> perf_remove_from_context
-          -> perf_child_detach
-            -> sync_child_event
-              -> perf_event_read_event
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 
-However, the child event context detaches the task too early in
-perf_event_exit_task_context, which causes sync_child_event to never
-generate the read event in this case, since child_event->ctx->task is
-always set to TASK_TOMBSTONE. Fix that by moving context lock section
-backward to ensure ctx->task is not set to TASK_TOMBSTONE before
-generating the read event.
-
-Because perf_event_free_task calls perf_event_exit_task_context with
-exit = false to tear down all child events from the context, and the
-task never lived, accessing the task PID can lead to a use-after-free.
-
-To fix that, let sync_child_event read task from argument and move the
-call to the only place it should be triggered to avoid the effect of
-setting ctx->task to TASK_TOMESTONE, and add a task parameter to
-perf_event_exit_event to trigger the sync_child_event properly when
-needed.
-
-This bug can be reproduced by running "perf record -s" and attaching to
-any program that generates perf events in its child tasks. If we check
-the result with "perf report -T", the last line of the report will leave
-an empty table like "# PID  TID", which is expected to contain the
-per-task event counts by design.
-
-Fixes: ef54c1a476ae ("perf: Rework perf_event_exit_event()")
-Signed-off-by: Thaumy Cheng <thaumy.love@gmail.com>
----
-Changes in v3:
-- Fix the bug in a more direct way by moving the call to
-  sync_child_event and bring back the task param to
-  perf_event_exit_event.
-  This approach avoids the event unscheduling issue in v2.
-
-Changes in v2:
-- Only trigger read event on task exit.
-- Rename perf_event_exit_event to perf_event_detach_event.
-- Link to v2: https://lore.kernel.org/all/20250817132742.85154-1-thaumy.love@gmail.com/
-
-Changes in v1:
-- Set TASK_TOMBSTONE after the read event is tirggered.
-- Link to v1: https://lore.kernel.org/all/20250720000424.12572-1-thaumy.love@gmail.com/
-
- kernel/events/core.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 177e57c1a362..618e7947c358 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2316,7 +2316,8 @@ static void perf_group_detach(struct perf_event *event)
- 	perf_event__header_size(leader);
- }
-
--static void sync_child_event(struct perf_event *child_event);
-+static void sync_child_event(struct perf_event *child_event,
-+			     struct task_struct *task);
-
- static void perf_child_detach(struct perf_event *event)
- {
-@@ -2336,7 +2337,6 @@ static void perf_child_detach(struct perf_event *event)
- 	lockdep_assert_held(&parent_event->child_mutex);
- 	 */
-
--	sync_child_event(event);
- 	list_del_init(&event->child_list);
- }
-
-@@ -4587,6 +4587,7 @@ static void perf_event_enable_on_exec(struct perf_event_context *ctx)
- static void perf_remove_from_owner(struct perf_event *event);
- static void perf_event_exit_event(struct perf_event *event,
- 				  struct perf_event_context *ctx,
-+				  struct task_struct *task,
- 				  bool revoke);
-
- /*
-@@ -4614,7 +4615,7 @@ static void perf_event_remove_on_exec(struct perf_event_context *ctx)
-
- 		modified = true;
-
--		perf_event_exit_event(event, ctx, false);
-+		perf_event_exit_event(event, ctx, ctx->task, false);
- 	}
-
- 	raw_spin_lock_irqsave(&ctx->lock, flags);
-@@ -12437,7 +12438,7 @@ static void __pmu_detach_event(struct pmu *pmu, struct perf_event *event,
- 	/*
- 	 * De-schedule the event and mark it REVOKED.
- 	 */
--	perf_event_exit_event(event, ctx, true);
-+	perf_event_exit_event(event, ctx, ctx->task, true);
-
- 	/*
- 	 * All _free_event() bits that rely on event->pmu:
-@@ -13994,14 +13995,13 @@ void perf_pmu_migrate_context(struct pmu *pmu, int src_cpu, int dst_cpu)
- }
- EXPORT_SYMBOL_GPL(perf_pmu_migrate_context);
-
--static void sync_child_event(struct perf_event *child_event)
-+static void sync_child_event(struct perf_event *child_event,
-+			     struct task_struct *task)
- {
- 	struct perf_event *parent_event = child_event->parent;
- 	u64 child_val;
-
- 	if (child_event->attr.inherit_stat) {
--		struct task_struct *task = child_event->ctx->task;
--
- 		if (task && task != TASK_TOMBSTONE)
- 			perf_event_read_event(child_event, task);
- 	}
-@@ -14020,7 +14020,9 @@ static void sync_child_event(struct perf_event *child_event)
-
- static void
- perf_event_exit_event(struct perf_event *event,
--		      struct perf_event_context *ctx, bool revoke)
-+		      struct perf_event_context *ctx,
-+		      struct task_struct *task,
-+		      bool revoke)
- {
- 	struct perf_event *parent_event = event->parent;
- 	unsigned long detach_flags = DETACH_EXIT;
-@@ -14043,6 +14045,9 @@ perf_event_exit_event(struct perf_event *event,
- 		mutex_lock(&parent_event->child_mutex);
- 		/* PERF_ATTACH_ITRACE might be set concurrently */
- 		attach_state = READ_ONCE(event->attach_state);
-+
-+		if (attach_state & PERF_ATTACH_CHILD)
-+			sync_child_event(event, task);
- 	}
-
- 	if (revoke)
-@@ -14134,7 +14139,7 @@ static void perf_event_exit_task_context(struct task_struct *task, bool exit)
- 		perf_event_task(task, ctx, 0);
-
- 	list_for_each_entry_safe(child_event, next, &ctx->event_list, event_entry)
--		perf_event_exit_event(child_event, ctx, false);
-+		perf_event_exit_event(child_event, ctx, exit ? task : NULL, false);
-
- 	mutex_unlock(&ctx->mutex);
-
---
-2.51.0
 
