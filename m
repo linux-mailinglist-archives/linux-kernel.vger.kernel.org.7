@@ -1,87 +1,181 @@
-Return-Path: <linux-kernel+bounces-868708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB31DC05E7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:24:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5F5C05F6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0A5188333D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:20:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AF091AA59D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEF735A14F;
-	Fri, 24 Oct 2025 10:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC9C374ABD;
+	Fri, 24 Oct 2025 10:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iukExgpZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="MjbWpVxs"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E0635A13A;
-	Fri, 24 Oct 2025 10:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AFC319616;
+	Fri, 24 Oct 2025 10:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303466; cv=none; b=jasvN5HEz7kIKG85MjC4pxPtr/3bvkGtS7hVGpZg9HTw4yQqIS1E1O62wZQWQj3FFyqAUxvUUP0ZiOcULsi1thhorfnZ6qe+2LbEmaCpl4km5nSSGukSGp+KEAKcKo6olBc/zn5cDopMy4oCWFhwwxKc7BkK4JllA2mQZh5isSQ=
+	t=1761303552; cv=none; b=u/Fn1b75871zFjJOZEKn7UT0g0r2Xvinj/0p+lvsS02Ap4gEKrmmLefo5a9UHpuNtg7D6rwXg62+OG0kCsylJ0FOVVTO9W/FcayO0LsXow+SYzmwybypU1RiwxVwj7wYd0vcP7ovuQ1ntZ71DDCeJi4ecPf2LVW+g+ojymyR7A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303466; c=relaxed/simple;
-	bh=fuHTtIQYRQ7K3fYdtT88g69/8fE3b6YVWeIBoo5ehTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lkbi/x88dmBULH8BFSVxji+snumudca5Eb3I5r8u5fAGhtDkEtgdKlFWewRjx3NUdZhFxeFZBkvfJRQKtHpHI+10FhX8OuTiEOcLwKPtntkoX0HLGTUVpjdb+YKGZfeyo13COnHa9cP8BB5WRU5P9P/sf6ZIOYE603A8niRNchw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iukExgpZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F059C4CEF1;
-	Fri, 24 Oct 2025 10:57:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761303466;
-	bh=fuHTtIQYRQ7K3fYdtT88g69/8fE3b6YVWeIBoo5ehTE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iukExgpZV15InvoMWGR067TrdB7zr+ooZ2SlLtX0BgrT/DRQt6FDWJ+JR9jsOjAF4
-	 WsWAgv23LDZHROzI6iR/OWoI1BF1TE8/m46p37I6qqIpa1F9WKDcF6i1YcOn1WILia
-	 9LarQqpEa7FTdSL3TBhx9Ph6uCTxCbcFC7J/dVkdgsQbJ72TnYuVlxEh7klpadNF1Z
-	 oj40PTFogp7ywPhJP0Ik7n5fetBMTZvqz7/z7axkogWJNCn6nkUlNtO9WMdP2mECuD
-	 ixU51vOAzA+dbjzrSQ6OWMOzQONctdC17WxsO59c8p+FJkvIBbq1Y52kPDTf2X02Kl
-	 V8XMhMupy0XoQ==
-Date: Fri, 24 Oct 2025 12:57:41 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Cezar Chiru <chiru.cezar.89@gmail.com>
-Cc: wsa+renesas@sang-engineering.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: Re: [PATCH v9 1/3] i2c: pcf8584: Move 'ret' variable inside for
- loop, goto out if ret < 0.
-Message-ID: <dnjved3kd3awdseclr56mbwxkbuysxcezzbebrk7fjpuq2kf2p@rhat4xhdao52>
-References: <20251023120043.8661-1-chiru.cezar.89@gmail.com>
- <20251023120043.8661-2-chiru.cezar.89@gmail.com>
+	s=arc-20240116; t=1761303552; c=relaxed/simple;
+	bh=O9ROC09iye2nO7+rvJRTS+B3PKWZzMYsyRdck60G2vg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QbljSJ400FTYJrUoQZCbxM+kPDOqm/vRVJkLtCo0MEoQe++uq4FXyeQG8gdiSdHNUWa5Us4doQAndzGiWI07afbZczrFUKa94EDRTW1MQst5aPJ9sALDtomgGdCi03k+yjsrTmHNQx+EXG0G5f4TEvdBfqNnOhtalNSvODLfato=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=MjbWpVxs; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ctKf13kBdz9v4c;
+	Fri, 24 Oct 2025 12:59:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761303545; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HJxxsUJGuCcgcdrm2dasSwOhBxRtwebMXYYxFSWgXo8=;
+	b=MjbWpVxs789w96QavL+l2YEQIau5qBTpXOlJ46Y53ihauIlQm2cAgzG8Ia7q+72SG5XWc5
+	SbKBJu6nDcaIgeRLMX1vE4qY0r9+Zs5nhQau8+ttM5CAbOBC5FZuTHp//1jGKFy4sCTLMY
+	y57q7RHMpmT/Tv5095iW5WBI+F/Tt2JEAVByE2u07G34fiO2hjV1YAlcPhP0rz7my+RZJL
+	7GPnI1yMxgqOMmDe3FnOLZnipjO9H3ecnLzMRJLOzipKLmdbqnY3c90uwLUNWWOjxRx48J
+	Uvc+6+QkKPuMBYgaxs+CccNookE1d8m3+UXjHk6XaSSvWLJMjOE00xihjhm3FA==
+Message-ID: <5de88e79575e06c053f2d61f7bb58bf9cf5b556e.camel@mailbox.org>
+Subject: Re: [PATCH] dma-fence: Correct return of dma_fence_driver_name()
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Philipp Stanner
+ <phasta@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, Gustavo
+ Padovan <gustavo@padovan.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <christian.koenig@amd.com>
+Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>
+Date: Fri, 24 Oct 2025 12:59:01 +0200
+In-Reply-To: <11b7a8a5-170f-4815-a8ac-5dba2d8e67a1@igalia.com>
+References: <20251024075019.162351-2-phasta@kernel.org>
+	 <11b7a8a5-170f-4815-a8ac-5dba2d8e67a1@igalia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023120043.8661-2-chiru.cezar.89@gmail.com>
+X-MBO-RS-ID: 38af43315007ac39358
+X-MBO-RS-META: 4u1ufhoobt3yb771wkq7iq5z6jdtbn3d
 
-Hi Cezar,
+On Fri, 2025-10-24 at 09:31 +0100, Tvrtko Ursulin wrote:
+>=20
+> On 24/10/2025 08:50, Philipp Stanner wrote:
+> > To decouple the dma_fence_ops lifetime from dma_fences lifetime RCU
+> > support was added to said function, coupled with using the signaled bit
+> > to detect whether the fence_ops might be gone already.
+> >=20
+> > When implementing that a wrong string was set as a default return
+> > parameter, indicating that every driver whose fence is already signalle=
+d
+> > must be detached, which is frankly wrong.
+>=20
+> Depends on how you look at it. After being signaled fence has to be=20
+> detached from the driver. Ie. nothing belonging to this driver must be=
+=20
+> accessed via the fence.
 
-On Thu, Oct 23, 2025 at 03:00:41PM +0300, Cezar Chiru wrote:
-> Require spaces around '=' and '<'. Add spaces around binary operators.
-> Enforce error fixing based on checkpatch.pl output on file.
-> Move 'ret' variable inside for loop. Then check if (ret < 0) goto out. This
-> improves usage of ret variable.
-> 
-> Signed-off-by: Cezar Chiru <chiru.cezar.89@gmail.com>
-> Suggested-by: Andi Shyti <andi.shyti@kernel.org>
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+Is that even documented btw? Many of the mysterious "dma fence rules"
+are often only obtainable by asking Christian & Co
 
-you don't really need to resend patches for updating the tag
-list. Anyway, that's OK, better to send than not to send, when in
-doubt, ask.
+>=20
+> I started with names and Christian has recently continued with ops.
+>=20
+> > Reported-by: Danilo Krummrich <dakr@kernel.org>
+> > Fixes: 506aa8b02a8d ("dma-fence: Add safe access helpers and document t=
+he rules")
+> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> > ---
+> > When this was merged, it sadly slipped by me. I think this entire RCU
+> > mechanism was / is an overengineered idea.
+> >=20
+> > If we look at who actually uses dma_fence_driver_name() and
+> > dma_fence_timeline_name() =E2=80=93 functions from which the largest sh=
+are of
+> > the fence_ops vs. fence lifetime issue stems from =E2=80=93 we discover=
+ that
+> > there is a single user:
+> >=20
+> > i915.
+>=20
 
-For this patch I think neither me or Andy have been suggesting
-the change. The change came from you, we made observation which
-you applied, this is the normal review process.
+[=E2=80=A6]
 
-If you don't mind, I'm going to remove them when applying (let me
-know if you don't agree). No need to resend.
+>=20
+>=20
+> That would be nice, I also do not see much value in exporting names to=
+=20
+> userspace. But first more conversation around breaking the sync file ABI=
+=20
+> needs to happen. I think we had a little bit of it when changing the=20
+> names of signalled fences and thinking was existing tools which look at=
+=20
+> the names will mostly survive it. Not sure if they would if unsignalled=
+=20
+> names would change.
 
-Andi
+I mean, what you and Christian are addressing in recent weeks are real
+problems, and I was / am about to write similar solutions for our Rust
+dma_fence.
+
+In the case of those names, however, I'll likely just not support that
+in Rust, saving me from adding those RCU guards and delivering output
+of questionable use to users.
+(could ofc be added later by someone who really needs it=E2=80=A6)
+
+>=20
+> >=20
+> > P.
+> > ---
+> > =C2=A0 drivers/dma-buf/dma-fence.c | 2 +-
+> > =C2=A0 1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/dma-buf/dma-fence.c b/drivers/dma-buf/dma-fence.c
+> > index 3f78c56b58dc..1875a0abebd3 100644
+> > --- a/drivers/dma-buf/dma-fence.c
+> > +++ b/drivers/dma-buf/dma-fence.c
+> > @@ -1111,7 +1111,7 @@ const char __rcu *dma_fence_driver_name(struct dm=
+a_fence *fence)
+> > =C2=A0=C2=A0	if (!test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+> > =C2=A0=C2=A0		return fence->ops->get_driver_name(fence);
+> > =C2=A0=C2=A0	else
+> > -		return "detached-driver";
+> > +		return "driver-whose-fence-is-already-signalled";
+>=20
+> IMHO unnecessarily verbose and whether or not changing it to anything
+> different warrants a Fixes: tag is debatable.
+
+IMO the output is just wrong and confusing. It's easy to imagine that
+some user starts wondering and searching why his driver has been
+unloaded, opening support tickets and so on.
+
+Could be less verbose, though. Dunno. I let the maintainer decide.
+
+P.
+
+>=20
+> Regards,
+>=20
+> Tvrtko
+>=20
+> > =C2=A0 }
+> > =C2=A0 EXPORT_SYMBOL(dma_fence_driver_name);
+> > =C2=A0=20
+>=20
+
 
