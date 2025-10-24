@@ -1,218 +1,176 @@
-Return-Path: <linux-kernel+bounces-867996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C94FC041BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:22:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F66CC041C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B5EB1AA1BEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:23:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 085B41AA232D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D94225A3D;
-	Fri, 24 Oct 2025 02:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A8122A4DA;
+	Fri, 24 Oct 2025 02:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iUhtkhwZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OgwS8e1W"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057724C85;
-	Fri, 24 Oct 2025 02:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEE74C85
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761272568; cv=none; b=IUWoh3KeABcRtT+a51/6jUwSlZNnvw71JD/DWgnS7026w5xwLbPPJ0wZzw0suTEMi/vfRuHhzBfkYTfaztuZvM+qbXwiUABjwOzq0fu8Nj9fqdTVdTNZCzWqCZdsOQRrp6EkEfrdzh/4uZoP6xGneJVJ9XerDCdR5lLaz1iwKEs=
+	t=1761272635; cv=none; b=iwRPrh3EjBaY3oghSkUKYmv7kPnRfbe0a/xkobLV85tssrNhQQ1YzIgIDq97gvRTshv0Z92N2gqxdiA/WxTRg8t5C1u1xSr+cdeCgWBhM4p8zo+86AI3dHy2iyQneZVnRjpf1FPXe4telGvvrBd7J6x0Qkl5B7kCvEmcGu5udVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761272568; c=relaxed/simple;
-	bh=UBq6wLEILW3Sn87s9h1Xkl1RidnJdWAVJ7kWvH15Cd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KJH1/VfuTADiFlJmoGrftbarEL1lX7ntwlAaMtt5XVvjdWzRFh73RLmXuUG/5R8uGNf5HFwURuLB6KVhmCZ/J0aOldfEZiRbfsDOaKqp/bzKydHFPWeTzO4K9oNQzRUd468wdlqkXDo7qJIvAfgX+o5Io3Yw4UGPK9FqozV1Qn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iUhtkhwZ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761272565; x=1792808565;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UBq6wLEILW3Sn87s9h1Xkl1RidnJdWAVJ7kWvH15Cd4=;
-  b=iUhtkhwZAI2XE9klzl1g/DFsBZWu8I0oKVsq+DiOy1q0/RP0gHZDsJMj
-   PDc3+IZmzCmIoLMx7a646TF6rsiAbvP9jqgqsdFtPX//FqvUzXNPpJZNP
-   cih/rOvcdLWAxI0/3DBKT+/RcS32QIeG9jpOMPSDex06Ma1XRk3gNq73j
-   4HNs6NT/Xgk1ZXMxdshgRq3QWpmkYX/Z6dzdEw6gwIOd/WCw7a+oyoKYy
-   sXTx4Y0zilSNjDVKRVyRIISKNODc4xNZMCXmcDT1ewJWNoDS5Q/+yjrmV
-   AXnDOhsvcCGm32CcbE9iBPnn0yz2LOls0g9ABcG7HtLsLX6XJhh2NNA/b
-   w==;
-X-CSE-ConnectionGUID: 1MmBX1ftR3Gah3i6wbmLjw==
-X-CSE-MsgGUID: +4D8sQFxQKmv1pAnvYK5Cw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74892618"
-X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
-   d="scan'208";a="74892618"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 19:22:44 -0700
-X-CSE-ConnectionGUID: 8YLCj+iIRMGviZoMR1gySw==
-X-CSE-MsgGUID: LljsV714RzOKNxTQmsFHeg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
-   d="scan'208";a="188703703"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 23 Oct 2025 19:22:42 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vC7Rw-000E6L-0Q;
-	Fri, 24 Oct 2025 02:22:40 +0000
-Date: Fri, 24 Oct 2025 10:21:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dmitry Skorodumov <skorodumov.dmitry@huawei.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, andrey.bokhanko@huawei.com,
-	Dmitry Skorodumov <skorodumov.dmitry@huawei.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH net-next 7/8] ipvlan: Support IPv6 for learnable l2-bridge
-Message-ID: <202510241011.2cTY5v7o-lkp@intel.com>
-References: <20251021144410.257905-8-skorodumov.dmitry@huawei.com>
+	s=arc-20240116; t=1761272635; c=relaxed/simple;
+	bh=MvBRELTpZJB9EN/yRUyxPpKkvejcpGN9o4m6U2z3ehM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a1fN85Vy7RtUPHJWTV48zwywC5/ytGRHgUiTJMkuAqR+mmGURvoTue8fl45MCdU2/SjtkDiHSmQ9IzD3cuohXRLHWA4cxY0sdkKFrVrXXIC9nN8e4Oitss3uQfxKH+NGReRn+hedEkcd+rS6f7MQvSGVVNGTCXJyv5Q6XcJ2kWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OgwS8e1W; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63c3d913b3bso2638921a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:23:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761272632; x=1761877432; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JZh+zi6hTv4cYK1c608em3piLhhdyqVRCT70vhOdcnE=;
+        b=OgwS8e1WRRLh7fVDL8MH4gMn7wIohovmF2qCo39uRxIzr+mtoClvh53GbzgEThSxrD
+         7FoQit1wH4WVcEB7VIKvO2ErHJY3vM7AIGwgJUSkMiMsUaQIEqjg3qXYN3f3AqTBC5Sr
+         jV6cvkVi+/DsJdQTSCKAMsiSE5yxqhX8DDh+YmaqSvmfjWpowwteJtCuribdLYyG9/wy
+         Q6FLn+g0MrqMzptedFCn7fsLU4OPtMcX6wLFjyRNI8I9wW1loBXtoJckk1vPS0LbomFO
+         enqf2pm9+OgbfKL6SP/SBdhVyOQXClKe5qYBs+z+uqAh0pr1K47TJfaGOGX0fuHVwKTu
+         Mhig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761272632; x=1761877432;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JZh+zi6hTv4cYK1c608em3piLhhdyqVRCT70vhOdcnE=;
+        b=do6QyU9K6JkQeNJQPwYuIhillJbKv1uG3diDxD2bDPrMbd+nIFR2xuOvUfDcOZETNN
+         3rcjwkEpQFzsXdjBr+DbfIwiYa0rhIL26TAPVPoOAKFvNApj6MOSjfxDuW1KuI01puW+
+         TeTPRb3Hu4VslfE3u2Igvf5XO0Tu6ztRMr3PRf75euU9CeZFTSE1AegTkXcptn2bhVqr
+         cdbFocQdOMazuRPVvSwUiSIaIWYv76DQ0+sQzx8qmxY0AswCjz1Y6u5x2V00+IchA0xH
+         a6bleHiR7MAMy685fe66EY5sNr3vbw4xooiYCIC2XLw92L5E6uKd3LV6xLQMOADCroUr
+         UEzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXajmIhkY+oT7qBLrXCdnPd/d4iOyiiuQR70zZzFgyUV9yNeiqbTq3MV3HT2pw6l2+x1mfOTDjFV+qUlb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsC0O9pKi5LdVTw95ilUP0IJwiom+0EGD9HVEB1s6Xk9LhpUui
+	5KU1BsRkkM0mWCjiS7w0I1C74a9yifZNWTQYI4c7SgyDD60FmJ8d+7ADb4T1aVsJ4yijHClGl/b
+	EVd3HeCbj2C5ucDLztgk3OBYqt9e5EG8=
+X-Gm-Gg: ASbGncvf28F/FrWeEmDJkn4KXGYOc+DFe4bVUNtx7rxDBSs3imfpoGDbdZDMzsySRaB
+	fbB1APF1m9yZk7aZ0zTz+ia15+60Aj0O3RmqCpLea6w9hKkHGJBzEWjyzmI5doxtMRtADgj5bDl
+	m+/a9r7kYBBaFj+jayiRMX4/680+iwY26swIkPlegh5+qnBWjrX80+P0noXQCzwuIwXfCbxDaqz
+	k0n1GguYK/oIU4K8ClWeJOdVERC4OikGp5F6UPUVPWNppdNsmKPeMiYIAIqJSpFU3B3wf/j
+X-Google-Smtp-Source: AGHT+IEdg6XV0zpN5Veb7eFadURiN/MtmxSvYmJqvEmAdfmSFomoXWicHPRhzY9ko70FAmX9zwFmvz1tkSn06Pr5g7k=
+X-Received: by 2002:a05:6402:847:b0:63c:18e:1dee with SMTP id
+ 4fb4d7f45d1cf-63e3e4791a6mr4296529a12.24.1761272631640; Thu, 23 Oct 2025
+ 19:23:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021144410.257905-8-skorodumov.dmitry@huawei.com>
+References: <20251020093941.548058-1-dolinux.peng@gmail.com>
+ <20251020093941.548058-3-dolinux.peng@gmail.com> <174642a334760af39a5e7bacdd8b977b392a82c7.camel@gmail.com>
+ <CAErzpmusSgOaROhEO25fKenvxQJU1oSPKKzUA4h67ptdQxWM7A@mail.gmail.com>
+ <7651ac9cc74e135f04ecfee8660bea0a0d3883ab.camel@gmail.com>
+ <CAErzpmtWLLYuFk3npTiOgGOKcEcH1QUGGEHLvPncVT+z261C1A@mail.gmail.com>
+ <CAADnVQKU0MnQHxxvnp9WCu_UO4fEtd_D6ckNmOd7pLg90ecF4A@mail.gmail.com>
+ <CAEf4Bzajdv3Rd1xAxm_UZWBxPc8M0=VuUkfjJvOFSObOs19GbQ@mail.gmail.com>
+ <CAADnVQJG_tK18oxmjW37cbrxF2zPKPk_dvqXUTnOjUue7J0tLQ@mail.gmail.com>
+ <CAEf4BzYLyi6=Fyz9ziOAwkFOjUPyJmTj4c6g247XBwgwJ8m-qw@mail.gmail.com> <CAErzpmtMPuGBhisLOaZMyzM5u3=0QrmZcuWqNgbMrceEEPN3TA@mail.gmail.com>
+In-Reply-To: <CAErzpmtMPuGBhisLOaZMyzM5u3=0QrmZcuWqNgbMrceEEPN3TA@mail.gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Fri, 24 Oct 2025 10:23:39 +0800
+X-Gm-Features: AWmQ_bkC4xdw2yGYslKqH7ZVLYpLTye2qQswRzzeoZn5CysMf6rFPXCEvTpy8SY
+Message-ID: <CAErzpmsCJAWVjWnV2LWAnYCouynYZbUupS08LUuhixiT2do3sg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/5] btf: sort BTF types by kind and name to enable
+ binary search
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Alan Maguire <alan.maguire@oracle.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Song Liu <song@kernel.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+On Fri, Oct 24, 2025 at 9:59=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.co=
+m> wrote:
+>
+> On Fri, Oct 24, 2025 at 3:40=E2=80=AFAM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Thu, Oct 23, 2025 at 11:37=E2=80=AFAM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Thu, Oct 23, 2025 at 9:28=E2=80=AFAM Andrii Nakryiko
+> > > <andrii.nakryiko@gmail.com> wrote:
+> > > >
+> > > >
+> > > > Speaking of flags, though. I think adding BTF_F_SORTED flag to
+> > > > btf_header->flags seems useful, as that would allow libbpf (and use=
+r
+> > > > space apps working with BTF in general) to use more optimal
+> > > > find_by_name implementation. The only gotcha is that old kernels
+> > > > enforce this btf_header->flags to be zero, so pahole would need to
+> > > > know not to emit this when building BTF for old kernels (or, rather=
+,
+> > > > we'll just teach pahole_flags in kernel build scripts to add this
+> > > > going forward). This is not very important for kernel, because kern=
+el
+> > > > has to validate all this anyways, but would allow saving time for u=
+ser
+> > > > space.
+> > >
+> > > Thinking more about it... I don't think it's worth it.
+> > > It's an operational headache. I'd rather have newer pahole sort it
+> > > without on/off flags and detection, so that people can upgrade
+> > > pahole and build older kernels.
+> > > Also BTF_F_SORTED doesn't spell out the way it's sorted.
+> > > Things may change and we will need a new flag and so on.
+> > > I think it's easier to check in the kernel and libbpf whether
+> > > BTF is sorted the way they want it.
+> > > The check is simple, fast and done once. Then both (kernel and libbpf=
+) can
+> > > set an internal flag and use different functions to search
+> > > within a given BTF.
+> >
+> > I guess that's fine. libbpf can do this check lazily on the first
+> > btf__find_by_name() to avoid unnecessary overhead. Agreed.
+>
+> Thank you for all the feedback. Based on the suggestions above, the sorti=
+ng
+> implementation will be redesigned in the next version as follows:
+>
+> 1. The sorting operation will be fully handled by pahole, with no depende=
+ncy on
+> libbpf. This means users can benefit from sorting simply by upgrading the=
+ir
+> pahole version.
 
-kernel test robot noticed the following build warnings:
+I suggest that libbpf provides a sorting function, such as the
+btf__permute suggested
+by Andrii, for pahole to call. This approach allows pahole to leverage
+libbpf's existing
+helper functions and avoids code duplication.
 
-[auto build test WARNING on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Skorodumov/ipvlan-Implement-learnable-L2-bridge/20251021-224923
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20251021144410.257905-8-skorodumov.dmitry%40huawei.com
-patch subject: [PATCH net-next 7/8] ipvlan: Support IPv6 for learnable l2-bridge
-config: sparc-randconfig-r132-20251023 (https://download.01.org/0day-ci/archive/20251024/202510241011.2cTY5v7o-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 12.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510241011.2cTY5v7o-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510241011.2cTY5v7o-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   drivers/net/ipvlan/ipvlan_core.c:55:36: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int [usertype] a @@     got restricted __be32 const [usertype] s_addr @@
-   drivers/net/ipvlan/ipvlan_core.c:55:36: sparse:     expected unsigned int [usertype] a
-   drivers/net/ipvlan/ipvlan_core.c:55:36: sparse:     got restricted __be32 const [usertype] s_addr
->> drivers/net/ipvlan/ipvlan_core.c:760:22: sparse: sparse: cast from restricted __be16
->> drivers/net/ipvlan/ipvlan_core.c:760:22: sparse: sparse: incorrect type in initializer (different base types) @@     expected int ndsize @@     got restricted __be16 [usertype] @@
-   drivers/net/ipvlan/ipvlan_core.c:760:22: sparse:     expected int ndsize
-   drivers/net/ipvlan/ipvlan_core.c:760:22: sparse:     got restricted __be16 [usertype]
-   drivers/net/ipvlan/ipvlan_core.c:819:18: sparse: sparse: cast from restricted __be16
->> drivers/net/ipvlan/ipvlan_core.c:819:16: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned short [usertype] ndsize @@     got restricted __be16 [usertype] @@
-   drivers/net/ipvlan/ipvlan_core.c:819:16: sparse:     expected unsigned short [usertype] ndsize
-   drivers/net/ipvlan/ipvlan_core.c:819:16: sparse:     got restricted __be16 [usertype]
-
-vim +760 drivers/net/ipvlan/ipvlan_core.c
-
-   753	
-   754	static u8 *ipvlan_search_icmp6_ll_addr(struct sk_buff *skb, u8 icmp_option)
-   755	{
-   756		/* skb is ensured to pullable for all ipv6 payload_len by caller */
-   757		struct ipv6hdr *ip6h = ipv6_hdr(skb);
-   758		struct icmp6hdr *icmph = (struct icmp6hdr *)(ip6h + 1);
-   759		int curr_off = sizeof(*icmph);
- > 760		int ndsize = htons(ip6h->payload_len);
-   761	
-   762		if (icmph->icmp6_type != NDISC_ROUTER_SOLICITATION)
-   763			curr_off += sizeof(struct in6_addr);
-   764	
-   765		while ((curr_off + 2) < ndsize) {
-   766			u8  *data = (u8 *)icmph + curr_off;
-   767			u32 opt_len = data[1] << 3;
-   768	
-   769			if (unlikely(opt_len == 0))
-   770				return NULL;
-   771	
-   772			if (data[0] != icmp_option) {
-   773				curr_off += opt_len;
-   774				continue;
-   775			}
-   776	
-   777			if (unlikely(opt_len < ETH_ALEN + 2))
-   778				return NULL;
-   779	
-   780			if (unlikely(curr_off + opt_len > ndsize))
-   781				return NULL;
-   782	
-   783			return data + 2;
-   784		}
-   785	
-   786		return NULL;
-   787	}
-   788	
-   789	static void ipvlan_snat_patch_tx_ipv6(struct ipvl_dev *ipvlan,
-   790					      struct sk_buff *skb)
-   791	{
-   792		struct ipv6hdr *ip6h;
-   793		struct icmp6hdr *icmph;
-   794		u8 icmp_option;
-   795		u8 *lladdr;
-   796		u16 ndsize;
-   797	
-   798		if (unlikely(!pskb_may_pull(skb, sizeof(*ip6h))))
-   799			return;
-   800	
-   801		if (ipv6_hdr(skb)->nexthdr != NEXTHDR_ICMP)
-   802			return;
-   803	
-   804		if (unlikely(!pskb_may_pull(skb, sizeof(*ip6h) + sizeof(*icmph))))
-   805			return;
-   806	
-   807		ip6h = ipv6_hdr(skb);
-   808		icmph = (struct icmp6hdr *)(ip6h + 1);
-   809	
-   810		/* Patch Source-LL for solicitation, Target-LL for advertisement */
-   811		if (icmph->icmp6_type == NDISC_NEIGHBOUR_SOLICITATION ||
-   812		    icmph->icmp6_type == NDISC_ROUTER_SOLICITATION)
-   813			icmp_option = ND_OPT_SOURCE_LL_ADDR;
-   814		else if (icmph->icmp6_type == NDISC_NEIGHBOUR_ADVERTISEMENT)
-   815			icmp_option = ND_OPT_TARGET_LL_ADDR;
-   816		else
-   817			return;
-   818	
- > 819		ndsize = htons(ip6h->payload_len);
-   820		if (unlikely(!pskb_may_pull(skb, sizeof(*ip6h) + ndsize)))
-   821			return;
-   822	
-   823		lladdr = ipvlan_search_icmp6_ll_addr(skb, icmp_option);
-   824		if (!lladdr)
-   825			return;
-   826	
-   827		ether_addr_copy(lladdr, ipvlan->phy_dev->dev_addr);
-   828	
-   829		ip6h = ipv6_hdr(skb);
-   830		icmph = (struct icmp6hdr *)(ip6h + 1);
-   831		icmph->icmp6_cksum = 0;
-   832		icmph->icmp6_cksum = csum_ipv6_magic(&ip6h->saddr, &ip6h->daddr,
-   833						     ndsize,
-   834						     IPPROTO_ICMPV6,
-   835						     csum_partial(icmph,
-   836								  ndsize,
-   837								  0));
-   838		skb->ip_summed = CHECKSUM_COMPLETE;
-   839	}
-   840	#else
-   841	static void ipvlan_snat_patch_tx_ipv6(struct ipvl_dev *ipvlan,
-   842					      struct sk_buff *skb)
-   843	{
-   844	}
-   845	#endif
-   846	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> 2. The kernel and libbpf will only be responsible for:
+>     2.1. Checking whether the BTF data is sorted
+>     2.2. Implementing binary search for sorted BTF
+>
+> Regarding the sorting check overhead: if the runtime cost is sufficiently=
+ small,
+> it can be performed during BTF parsing. Based on my local testing with vm=
+linux
+>  BTF (containing 143,484 btf_types), this check takes at most 1.5 millise=
+conds
+> during boot. Is this 1.5ms overhead acceptable?
+>
+> Are there any other suggestions?
 
