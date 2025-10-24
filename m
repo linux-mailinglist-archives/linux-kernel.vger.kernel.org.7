@@ -1,182 +1,139 @@
-Return-Path: <linux-kernel+bounces-869044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B22C06CA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:51:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BB6C06CC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 75BD135C6CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:51:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AC93565CEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA0A302CA7;
-	Fri, 24 Oct 2025 14:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AA8253355;
+	Fri, 24 Oct 2025 14:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8seNLt5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KlIhkUBl"
+Received: from mail-yx1-f48.google.com (mail-yx1-f48.google.com [74.125.224.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898FF23AE87;
-	Fri, 24 Oct 2025 14:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3524721323C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761317452; cv=none; b=UXChoreHiCMRad9LGJ2ZULYFSWM7ztMPP9g0xqWykW9H7PijbeG1kIBYa8gn/N0MH9KIhQL+DGoVY0zxNY4db71bryrrahLqjwbwPc3LiBB2GU6iuJGPW+qVOuzYGn+YImhDXgDP3KBxNHEYd8/Jo45BUGP1cqSiigjhsKCCqcc=
+	t=1761317484; cv=none; b=kI6esnZdjeGYyiTiMlzZk0ljW1zVYEJ+CUxQxCJ8MbaQ9xdItYx0oV/iQJ6pOxRVzcCXU7reQ2rAwGUyZuha64EshM1xBv3J6gVs2Y2yL1ZgF7c2XtK/BUx7OD2em+ZDpGgqsIDHFM081QCRvQNDxpSzh8/T48dMrPVcz6IiR3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761317452; c=relaxed/simple;
-	bh=0knJF7uPO6AofNUjLkQQvkI0kJEMlROapYN6LI2qQlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FLpmye7PkKFl9ZYhym6NHyiplHhZXrOxSHTK5tDhbDXsN0aGGcFYYEhWC71BjUjGZY18PYMulRDm0IWglWk1s9vGFzunzDcJjaJHOA7Ewkk4OUIr9oxs8WN3HZgPfDrIK3UFmdMaQ5JcgUvdB4iuapcUg5Gmnp4W3WdnE9JK0eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8seNLt5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB14C4CEF1;
-	Fri, 24 Oct 2025 14:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761317452;
-	bh=0knJF7uPO6AofNUjLkQQvkI0kJEMlROapYN6LI2qQlU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X8seNLt5RF176sZd6t2usJg6+ak1kThL3v1R1UTT43sFOzps+l0LW6+qqN1YXaOx8
-	 7G/ugiiZ9KyWkayAGz2cf+0Dkc9NA8WKB6Y9o3lfP2XbiaH3eqsmDVqNugHrZjWZKf
-	 ighuDrTNgD1XhVcflIq6Z8ImsGEvPJr4tyXK12HZedFj8fLQrLGSjZhpYyTlfVhXkC
-	 Y000Gf13lfSV3wCRZLYNjoCxvQwr1+7WXw06Wwq4Zv/FErQ75Eh6JBMnu3c1HeaJhe
-	 IpVGcslSDxM0wR09pKb1kFEDPBjorrfiRibxjWUq5cwo72/cZfUrKT7iebRWaLpeO9
-	 TLAuPc+M0yXpQ==
-Date: Fri, 24 Oct 2025 16:50:44 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Ferenc Fejes <ferenc@fejes.dev>
-Cc: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH RFC DRAFT 00/50] nstree: listns()
-Message-ID: <20251024-rostig-stier-0bcd991850f5@brauner>
-References: <20251021-work-namespace-nstree-listns-v1-0-ad44261a8a5b@kernel.org>
- <f708a1119b2ad8cf2514b1df128a4ef7cf21c636.camel@fejes.dev>
+	s=arc-20240116; t=1761317484; c=relaxed/simple;
+	bh=AyCi8ceycLInuxeTzsbd0fUqVkD41EQlOLgYdP5AywA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nihySdZz2jZwkrWuD0XqoSV+C4VI1UyVlSv1S09M+olZcY37e42lCIi9ZKQcfekq2kH2j9Ee1smxhduw/tA87zdBCNuFQBHa/S6nym0DbJaxsdzdFMeS22vloMIkN7WHpaxu4lhEokSC/LTv48Tm1kW9caVzPF3n424uVkAbN8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KlIhkUBl; arc=none smtp.client-ip=74.125.224.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f48.google.com with SMTP id 956f58d0204a3-63e393c49f1so2485384d50.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:51:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761317482; x=1761922282; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L7cVYUStCkt8XojXZTnoP+mO2e7B0TZmjY3DmPJXY74=;
+        b=KlIhkUBl43Vs5inIhb2AkP1C9vSbjTgepJHvvwvnnvV9oE938J3D2gS6c98Pv/I3BK
+         jTf8XOKLOzbZYEAeePoz/pmBgcOhTWFyJ9q0OMZDae7oA9sWdUZkgVijE//gWwTdwbMd
+         HpRbzl522YPLAHCwEs5D41mh9KPlJIg9VAp8VgCBQLAgqrMjrLQafwZNKsoy2oRt3Xit
+         PwLZsM1L+6Mn1N6VNnsQ6VXIheFqvYz+anRw0KRpdR9fatxsTyquJ3ABK5C+5SeRZNvW
+         7+S0pj0p9yAlex+z2t7Dca1fGWec7lP8UVDHv5BZ8p9Hf8M1WRnLViC4Mqm6Pw7DLsdK
+         mDpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761317482; x=1761922282;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L7cVYUStCkt8XojXZTnoP+mO2e7B0TZmjY3DmPJXY74=;
+        b=pxTRwAwwCDBHe5u0vJNdEdT9cLOb5HKACU7aWd8RWpMtuOYDbTidHcaCPNd4l699rB
+         sxvmMLxtiT8PaUIR1gjYrCb7LZoldVyma4jv+Zrf441yZVWh38dT/nftPEX8oNLasuK2
+         cPbRdC+Uiyq/T7xY2wnoSt4JDZ9vPq8tz6XKsMxpvx6FRHXQFfuiwlkxO9R6jzO9ymya
+         FZHwp2WXDBJtSK6BEW3U9M8OGKnsmDjhcJ5HxJsSqCM8wsZybQxWoGnHZ+36YVsVsGPx
+         Q626Jvz2CfCT26aslcnhNLTyQ/19gubUViANvqkfO6lJn2AhLBbHjLodls0uq95jxhgx
+         PIrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGPYEZs79DE+Q84wQ8HK3Nm9rOflUn5am2j1sAh8FSfVK0dzIn+ixA8Ye3MKMutMHdPJduc+p08JJMbZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKcuMBh09IdUEl9+xMcyWZnf6IMH6HoOO8VgUYuJsDMtWeu0K8
+	yMpbFDZrOA0/Ccq2xceL5V73VdKHP04mZg0yiY+D/EAQj9TfqN+ngd51
+X-Gm-Gg: ASbGnctWw5/Vb1H/fA0Jg63ipn972qQr13/pawHZFVuscmo7nUG4i4xCZxxUBtnHMoC
+	F8Jr2rJElEdef9nOuYeAF+rRnQdWECjtCe3xIkOFjXi2zyvabpRR277zL2J6guoSvzTRW5UUmqx
+	TKc3E24vsV+4KDx1b4NmaoPZzUINJ4XU6ln05Do5TqAlLWTUgAzLqjnRokGpfdWAeanOKZhQEoJ
+	DB2a+Ykr2rFUDcbl3I2up5r1OZ0DDgI83IKVjd1BibLiOS1OHcp6cTVV1KFUpSpsKmHVHF9oITJ
+	nGsYguQWqAg4IXaJ/uhL2KbmJteHS5D0VgjkqaTeuOXb1O4b/I2cQs8zlj5vsCTEvJbosu8j2+e
+	h+B/mXpKbmfxL65Wl5ATGW5B5qYPI8oViHF5HOifzDdzxbAhODBlp9kZYRzcCWmZ8csKT33bnAU
+	PKvlf8F5u7NuPOTL2zvFlV58GBhOPITmtG7FBCHB2YmT9C6Zy3ZoN6Cg==
+X-Google-Smtp-Source: AGHT+IHS99RQ+Ik6Il2kKRu5h3zUT8L58Aq7Sm1DcaM2mJ2uG0hFYk6S8DWLpXd612k7ltj6MQYkNA==
+X-Received: by 2002:a05:690e:4108:b0:63e:3099:df3e with SMTP id 956f58d0204a3-63f435602c2mr1919452d50.34.1761317482101;
+        Fri, 24 Oct 2025 07:51:22 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:56::])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-63f37a37d7dsm1684312d50.21.2025.10.24.07.51.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 07:51:21 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Shameer Kolothum <skolothumtho@nvidia.com>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	muchun.song@linux.dev,
+	osalvador@suse.de,
+	vivek.kasireddy@intel.com,
+	joshua.hahnjy@gmail.com,
+	jgg@nvidia.com,
+	nicolinc@nvidia.com,
+	nathanc@nvidia.com,
+	mochs@nvidia.com
+Subject: Re: [PATCH v2] mm/hugetlb: Fix incorrect error return from hugetlb_reserve_pages()
+Date: Fri, 24 Oct 2025 07:51:19 -0700
+Message-ID: <20251024145119.2315897-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251024094240.337630-1-skolothumtho@nvidia.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f708a1119b2ad8cf2514b1df128a4ef7cf21c636.camel@fejes.dev>
 
-> > Add a new listns() system call that allows userspace to iterate through
-> > namespaces in the system. This provides a programmatic interface to
-> > discover and inspect namespaces, enhancing existing namespace apis.
-> > 
-> > Currently, there is no direct way for userspace to enumerate namespaces
-> > in the system. Applications must resort to scanning /proc/<pid>/ns/
-> > across all processes, which is:
-> > 
-> > 1. Inefficient - requires iterating over all processes
-> > 2. Incomplete - misses inactive namespaces that aren't attached to any
-> >    running process but are kept alive by file descriptors, bind mounts,
-> >    or parent namespace references
-> > 3. Permission-heavy - requires access to /proc for many processes
-> > 4. No ordering or ownership.
-> > 5. No filtering per namespace type: Must always iterate and check all
-> >    namespaces.
-> > 
-> > The list goes on. The listns() system call solves these problems by
-> > providing direct kernel-level enumeration of namespaces. It is similar
-> > to listmount() but obviously tailored to namespaces.
+On Fri, 24 Oct 2025 10:42:40 +0100 Shameer Kolothum <skolothumtho@nvidia.com> wrote:
+
+> The function hugetlb_reserve_pages() returns the number of pages added
+> to the reservation map on success and a negative error code on failure
+> (e.g. -EINVAL, -ENOMEM). However, in some error paths, it may return -1
+> directly.
 > 
-> I've been waiting for such an API for years; thanks for working on it. I mostly
-> deal with network namespaces, where points 2 and 3 are especially painful.
+> For example, a failure at:
 > 
-> Recently, I've used this eBPF snippet to discover (at most 1024, because of the
-> verifier's halt checking) network namespaces, even if no process is attached.
-> But I can't do anything with it in userspace since it's not possible to pass the
-> inode number or netns cookie value to setns()...
-
-I've mentioned it in the cover letter and in my earlier reply to Josef:
-
-On v6.18+ kernels it is possible to generate and open file handles to
-namespaces. This is probably an api that people outside of fs/ proper
-aren't all that familiar with.
-
-In essence it allows you to refer to files - or more-general:
-kernel-object that may be referenced via files - via opaque handles
-instead of paths.
-
-For regular filesystem that are multi-instance (IOW, you can have
-multiple btrfs or ext4 filesystems mounted) such file handles cannot be
-used without providing a file descriptor to another object in the
-filesystem that is used to resolve the file handle...
-
-However, for single-instance filesystems like pidfs and nsfs that's not
-required which is why I added:
-
-FD_PIDFS_ROOT
-FD_NSFS_ROOT
-
-which means that you can open both pidfds and namespace via
-open_by_handle_at() purely based on the file handle. I call such file
-handles "exhaustive file handles" because they fully describe the object
-to be resolvable without any further information.
-
-They are also not subject to the capable(CAP_DAC_READ_SEARCH) permission
-check that regular file handles are and so can be used even by
-unprivileged code as long as the caller is sufficiently privileged over
-the relevant object (pid resolvable in caller's pid namespace of pidfds,
-or caller located in namespace or privileged over the owning user
-namespace of the relevant namespace for nsfs).
-
-File handles for namespaces have the following uapi:
-
-struct nsfs_file_handle {
-	__u64 ns_id;
-	__u32 ns_type;
-	__u32 ns_inum;
-};
-
-#define NSFS_FILE_HANDLE_SIZE_VER0 16 /* sizeof first published struct */
-#define NSFS_FILE_HANDLE_SIZE_LATEST sizeof(struct nsfs_file_handle) /* sizeof latest published struct */
-
-and it is explicitly allowed to generate such file handles manually in
-userspace. When the kernel generates a namespace file handle via
-name_to_handle_at() till will return: ns_id, ns_type, and ns_inum but
-userspace is allowed to provide the kernel with a laxer file handle
-where only the ns_id is filled in but ns_type and ns_inum are zero - at
-least after this patch series.
-
-So for your case where you even know inode number, ns type, and ns id
-you can fill in a struct nsfs_file_handle and either look at my reply to
-Josef or in the (ugly) tests.
-
-fd = open_by_handle_at(FD_NSFS_ROOT, file_handle, O_RDONLY);
-
-and can open the namespace (provided it is still active).
-
+>     if (hugetlb_acct_memory(h, gbl_reserve) < 0)
+>         goto out_put_pages;
 > 
-> extern const void net_namespace_list __ksym;
-> static void list_all_netns()
-> {
->     struct list_head *nslist = 
-> 	bpf_core_cast(&net_namespace_list, struct list_head);
+> results in returning -1 (since add = -1), which may be misinterpreted
+> in userspace as -EPERM.
 > 
->     struct list_head *iter = nslist->next;
+> Fix this by explicitly capturing and propagating the return values from
+> helper functions, and using -EINVAL for all other failure cases.
 > 
->     bpf_repeat(1024) {
+> Fixes: 986f5f2b4be3 ("mm/hugetlb: make hugetlb_reserve_pages() return nr of entries updated")
+> Signed-off-by: Shameer Kolothum <skolothumtho@nvidia.com>
+> ---
+>  Addressed commenst from v1. Thanks!
+>  https://lore.kernel.org/linux-mm/20251022102956.245736-1-skolothumtho@nvidia.com/
+> ---
+>  mm/hugetlb.c | 25 ++++++++++++++++++-------
+>  1 file changed, 18 insertions(+), 7 deletions(-)
 
-This isn't needed anymore. I've implemented it in a bpf-friendly way so
-it's possible to add kfuncs that would allow you to iterate through the
-various namespace trees (locklessly).
+Hello Shameer, LGTM, thank you for addressing the comments! Feel free to add:
 
-If this is merged then I'll likely design that bpf part myself.
+Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
 
-> After this merged, do you see any chance for backports? Does it rely on recent
-> bits which is hard/impossible to backport? I'm not aware of backported syscalls
-> but this would be really nice to see in older kernels.
+[...snip...]
 
-Uhm, what downstream entities, managing kernels do is not my concern but
-for upstream it's certainly not an option. There's a lot of preparatory
-work that would have to be backported.
+> +		/* region_chg() above can return -ENOMEM */
+> +		err = (chg == -ENOMEM) ? -ENOMEM : -EINVAL;
+
+And this looks much more elegant than the version I wrote : -)
 
