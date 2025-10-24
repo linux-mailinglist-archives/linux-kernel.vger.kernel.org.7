@@ -1,184 +1,141 @@
-Return-Path: <linux-kernel+bounces-869303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28F3C07917
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:44:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD7CDC07929
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22905401FC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:44:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8682E1C48AB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E447346777;
-	Fri, 24 Oct 2025 17:43:53 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084F834573C;
+	Fri, 24 Oct 2025 17:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eMnn1vD1"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C510E31B807;
-	Fri, 24 Oct 2025 17:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D69534677E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761327833; cv=none; b=n0JXfeA3BgLOG3M7wFRopGpSAlMHy9U5ktKsmZdOPvoSuvD06miNA55O+3Jv/yDJSDdJ4Y41fZNS2m0l63mPv08hetKWHRt60F/rfMZKUmoFfbP+Zf2VikrJ/YxMGj1sPDsSj7b0ODS83xZ9YMq31sHRi7mlxOuM7yg+bfTmcGE=
+	t=1761327911; cv=none; b=RjjDyM5I4sv+r6ytYfmLyKt/gDCRMZEum7cG2lgTi+m0dtVuGAxUvDFySdTvhAcRp2zmKpF/4EPsjz1k+Fkf6NtJOdsC9lkO4ss8CK5YK2U43sbfsFRmiuSIYH1zPi6ZfmjPAJ3OU5mTkCKxcN4wngwMqdJxRCHizuJGFVmDQAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761327833; c=relaxed/simple;
-	bh=PsWBr7YsFWtWhF7FlL5K1rDQ9l6gbNdQ9htJrJgJxZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=brN0VYipnwUeIhixuuEefd7QZ11vKiR9d+I6n5hcbUGI3oA+kVZf6TFHWVldOj/6Oozq1FFINS7+lCHAB94JdDHsXumestCL2caQMdyoFEOhys8YiAPTR2CFv087Sa1+IEDRWXxnxGsD36SjwwLDfPJpjPVKIKN6HjFBvtcHD1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id C157ABE5AA;
-	Fri, 24 Oct 2025 17:43:45 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id E11351B;
-	Fri, 24 Oct 2025 17:43:40 +0000 (UTC)
-Date: Fri, 24 Oct 2025 13:44:09 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Liam.Howlett@oracle.com, akpm@linux-foundation.org,
- bsegall@google.com, david@redhat.com, dietmar.eggemann@arm.com,
- idryomov@gmail.com, mingo@redhat.com, juri.lelli@redhat.com,
- kees@kernel.org, lorenzo.stoakes@oracle.com, mgorman@suse.de,
- mhocko@suse.com, rppt@kernel.org, peterz@infradead.org, surenb@google.com,
- vschneid@redhat.com, vincent.guittot@linaro.org, vbabka@suse.cz,
- xiubli@redhat.com, Slava.Dubeyko@ibm.com
-Subject: Re: [RFC PATCH 1/5] sched, fork: Wire BLOG contexts into task
- lifecycle
-Message-ID: <20251024134409.72275dd4@gandalf.local.home>
-In-Reply-To: <20251024084259.2359693-2-amarkuze@redhat.com>
-References: <20251024084259.2359693-1-amarkuze@redhat.com>
-	<20251024084259.2359693-2-amarkuze@redhat.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761327911; c=relaxed/simple;
+	bh=tQchZRo3dfbeEwC4XDdsg27WfVhtytszSYNfMKLDCRk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=AF+KGXeQp4SrX7ctrvbHZUCzratIYoKBvrYSsNH4I1R800YAovXfVr1vnjzQ+jZAhdjyT6PIaIjWjP0RvdCZ1NtVXbNTjdbPx2YorZCvPtcHfnk3fzVcu0ih4yTSSiwqrL8R3670zjDMRPyA4LFjUZH5baRmFsjE+ThDgKpnotE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eMnn1vD1; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33bb4d11f5eso2258474a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:45:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761327909; x=1761932709; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9y+RsixQBpMVe8jJ0C0RXhB2GIgsnXkIXIfG2sQ8Z6s=;
+        b=eMnn1vD19Z/AtaGDFSF76Wb8pRldCfdAtrfp1z69jekrJASMUIUv9+MIv6TvFAfRu6
+         meQ0LfQQ/jR3vKxASa8LfEkRwsNQd7cj+hmP0frmqxGXeetPdpXMxuT/Ru/Ahw3k9aQM
+         Zxm5CDHnuhXKwVpLeYm0irNSMLKxvD5bObbmgxRvzQoC1djM24HFU3UAj5LDYGrE1TVL
+         YQVJEer+k6g9sIAGfgKz6uX0vCZYvpHKq84L5IMW+Z3daaahF3rW3wNdwRrgfN4WWUvk
+         VNZ7dQ8vPBa8XDSIllX2KL2P1khde5viPudpfO/vjBiQsP4nJS35nq9fXrpVfHEI/RC+
+         BC3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761327909; x=1761932709;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9y+RsixQBpMVe8jJ0C0RXhB2GIgsnXkIXIfG2sQ8Z6s=;
+        b=P7cE8y7Xk5DGu51/CgntO3s1tBE5uPpibvTJAFYmNq+H+juzSAKg+v2PnWbLyas7da
+         Y2CCu67LGRFp9tfAkBq+tg0OcKyw2scaWMAWYQy/NkhnwgTkgMHghRA4tyF9YlYmhKJE
+         T7z1biBs8apMUAnkgs1OK8e9bbspVsbg0pDkRDLXDe2h8J5ZOXAFw6ryNeDgzWFhFqJJ
+         zjJDx2vAoPZ8p2xwU8VyulwsCDQSmWEBGizRJqpJn3bNd9FrUtx7i3yZ531/MR17/6Ww
+         HGHeYLOlvCGRlNfuZ+CR19JlXLeunOaAR71toXp6Ni8ZBVZ1JYasA+mn4KQzpoNsSvH5
+         op6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVO/B1IoVz2lP+2uQ5oCjtCHnl0eVPHhiijdpzSoFYOGNWM+TS1lFv/8lGFqjFPWi/E77oOYbCm5hZKqhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd9sD4HhPUxdvZqfKkKLcqkNva4bwL7gnBVQmJKA0hRlFs+tqa
+	F8k8TmQSzbaVje0cQrxZ1by75fO+TiNEHxMEfWp8C7cJhFBGdbl5g3neQ0Jae47xfbXrrSn/VH/
+	eRpazOA==
+X-Google-Smtp-Source: AGHT+IGvJAcWikn/2GkAunTJp4wJjRX2y0XegrvA0YCLDSoXMGm33ouWPic5F/FBkAnJdnxZYF98SiNPybw=
+X-Received: from pjte14.prod.google.com ([2002:a17:90a:c20e:b0:33b:ca21:e3e7])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3891:b0:32e:9da9:3e60
+ with SMTP id 98e67ed59e1d1-33bcf9375e8mr34102450a91.36.1761327908483; Fri, 24
+ Oct 2025 10:45:08 -0700 (PDT)
+Date: Fri, 24 Oct 2025 10:45:06 -0700
+In-Reply-To: <diqzo6pwdzfy.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 66riooj1xrzu98ghf9wd6u9fqad75sf7
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: E11351B
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19CRueCw1nm5uT9RZSPlGEKzC/t+oG4hig=
-X-HE-Tag: 1761327820-638118
-X-HE-Meta: U2FsdGVkX18hDnsr4TkruwiFojbQTdlVwxH+CtBQ+69mybQlxSP/NF57Bx/vKlv0n4Fh6saZcnBJAwvpzxaBEholvuYmbRZbFXHJuRuvVxt5K2/gBoYSDPi4S4hcpP3sVHxcMJYYWBxgUDYmOzgc2VUR/LCvcFlI8wHIMqM5LY4frd8vuPH+u+hYpku7Cxe+BWkUUCnfEjDdpXOYdB+Y/rVQjgiYxCbE4g8kGBpP9r9ASG1M0PVCWH8xefZLyQhz6L5nS/XjRorGJJKUIEIQjbhjnendjVQJBjh/E0NfJif17t0CtiMF/iDeok9mAbaGHOnFgNBhQ6h+Mnjpp73ixlJRBz7e1vDU4P++/gqlVS8lxCqmgP6fuw+4G2tJuLSN
+Mime-Version: 1.0
+References: <8ee16fbf254115b0fd72cc2b5c06d2ccef66eca9.1760731772.git.ackerleytng@google.com>
+ <2457cb3b-5dde-4ca1-b75d-174b5daee28a@arm.com> <diqz4irqg9qy.fsf@google.com>
+ <diqzy0p2eet3.fsf@google.com> <aPlpKbHGea90IebS@google.com>
+ <diqzv7k5emza.fsf@google.com> <aPpEPZ4YfrRHIkal@google.com>
+ <diqzqzuse58c.fsf@google.com> <aPuXCV0Aof0zihW9@google.com> <diqzo6pwdzfy.fsf@google.com>
+Message-ID: <aPu7IosMI61NjZY5@google.com>
+Subject: Re: [RFC PATCH v1 07/37] KVM: Introduce KVM_SET_MEMORY_ATTRIBUTES2
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: Steven Price <steven.price@arm.com>, cgroups@vger.kernel.org, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, x86@kernel.org, 
+	akpm@linux-foundation.org, binbin.wu@linux.intel.com, bp@alien8.de, 
+	brauner@kernel.org, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	corbet@lwn.net, dave.hansen@intel.com, dave.hansen@linux.intel.com, 
+	david@redhat.com, dmatlack@google.com, erdemaktas@google.com, 
+	fan.du@intel.com, fvdl@google.com, haibo1.xu@intel.com, hannes@cmpxchg.org, 
+	hch@infradead.org, hpa@zytor.com, hughd@google.com, ira.weiny@intel.com, 
+	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
+	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
+	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com, 
+	keirf@google.com, kent.overstreet@linux.dev, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, 
+	maobibo@loongson.cn, mathieu.desnoyers@efficios.com, maz@kernel.org, 
+	mhiramat@kernel.org, mhocko@kernel.org, mic@digikod.net, michael.roth@amd.com, 
+	mingo@redhat.com, mlevitsk@redhat.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, peterx@redhat.com, 
+	pgonda@google.com, prsampat@amd.com, pvorel@suse.cz, qperret@google.com, 
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com, 
+	rostedt@goodmis.org, roypat@amazon.co.uk, rppt@kernel.org, 
+	shakeel.butt@linux.dev, shuah@kernel.org, suzuki.poulose@arm.com, 
+	tabba@google.com, tglx@linutronix.de, thomas.lendacky@amd.com, 
+	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
+	vkuznets@redhat.com, will@kernel.org, willy@infradead.org, wyihan@google.com, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com
+Content-Type: text/plain; charset="us-ascii"
 
+On Fri, Oct 24, 2025, Ackerley Tng wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+> > @@ -486,6 +488,7 @@ struct kvm_vm *__vm_create(struct vm_shape shape, uint32_t nr_runnable_vcpus,
+> >         }
+> >         guest_rng = new_guest_random_state(guest_random_seed);
+> >         sync_global_to_guest(vm, guest_rng);
+> > +       sync_global_to_guest(vm, kvm_has_gmem_attributes);
+> 
+> I ported this [1] except for syncing this value to the guest, because I
+> think the guest shouldn't need to know this information,
 
+KVM selftests are about practically and testing, what information should or
+shouldn't be available to a test from e.g. a safety perspective is completely
+irrelevant.  In fact, one of the biggest advantages of selftests over KUT is
+that the guest side can know _exactly_ what's going on in the host.
 
-On Fri, 24 Oct 2025 08:42:55 +0000
-Alex Markuze <amarkuze@redhat.com> wrote:
+See the usage in 1850e3da4b03 ("KVM: selftests: Update private_mem_conversions_test
+to mmap() guest_memfd") from:
 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 07576479c0ed..e381f8421a11 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1278,6 +1278,13 @@ struct task_struct {
->  	/* Journalling filesystem info: */
->  	void				*journal_info;
->  
-> +/* BLOG support - max modules defined here for use by other headers */
-> +#define BLOG_MAX_MODULES 8
-> +
-> +#ifdef CONFIG_BLOG
-> +	struct blog_tls_ctx		*blog_contexts[BLOG_MAX_MODULES];
-> +#endif
-> +
->  	/* Stacked block device info: */
->  	struct bio_list			*bio_list;
->  
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 3da0f08615a9..b06843af05a9 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -24,6 +24,9 @@
->  #include <linux/sched/cputime.h>
->  #include <linux/sched/ext.h>
->  #include <linux/seq_file.h>
-> +#ifdef CONFIG_BLOG
-> +#include <linux/blog/blog.h>
-> +#endif
+  https://github.com/sean-jc/linux.git x86/gmem_inplace
 
-The proper way to do this is to have the #ifdef in the header file and not
-in the C file.
+> the host should decide what to do. I think, if the guests really need to know
+> this, the test itself can do the syncing.
 
->  #include <linux/rtmutex.h>
->  #include <linux/init.h>
->  #include <linux/unistd.h>
-> @@ -186,6 +189,29 @@ static inline struct task_struct *alloc_task_struct_node(int node)
->  
->  static inline void free_task_struct(struct task_struct *tsk)
->  {
-> +#ifdef CONFIG_BLOG
-> +	/* Clean up any BLOG contexts */
-> +	{
-
-There should be a function that gets called here that frees up the context.
-This does not belong in the fork.c file.
-
-	blog_free(task);
-
-In the header file have:
-
-#ifdef CONFIG_BLOG
-[..]
-void blog_free(struct task_struct *task);
-#else
-static inline blog_free(struct task_struct *task)
-{
-}
-#endif /* CONFIG_BLOG */
-
-
-
-> +		struct blog_tls_ctx *contexts[BLOG_MAX_MODULES];
-> +		int i;
-> +
-> +		/* Step 1: Atomically detach all contexts while holding lock */
-> +		task_lock(tsk);
-> +		for (i = 0; i < BLOG_MAX_MODULES; i++) {
-> +			contexts[i] = tsk->blog_contexts[i];
-> +			tsk->blog_contexts[i] = NULL;
-> +		}
-> +		task_unlock(tsk);
-> +
-> +		/* Step 2: Release contexts outside the lock */
-> +		for (i = 0; i < BLOG_MAX_MODULES; i++) {
-> +			struct blog_tls_ctx *ctx = contexts[i];
-> +
-> +			if (ctx && ctx->release)
-> +				ctx->release(ctx);
-> +		}
-> +	}
-> +#endif
->  	kmem_cache_free(task_struct_cachep, tsk);
->  }
->  
-> @@ -2012,6 +2038,17 @@ __latent_entropy struct task_struct *copy_process(
->  	p = dup_task_struct(current, node);
->  	if (!p)
->  		goto fork_out;
-> +
-> +#ifdef CONFIG_BLOG
-> +	/* Initialize BLOG contexts */
-> +	{
-> +		int i;
-> +
-> +		for (i = 0; i < BLOG_MAX_MODULES; i++)
-> +			p->blog_contexts[i] = NULL;
-> +	}
-> +#endif
-
-Same here.
-
-> +
->  	p->flags &= ~PF_KTHREAD;
->  	if (args->kthread)
->  		p->flags |= PF_KTHREAD;
-
--- Steve
-
+Why force tests to do extra work, and potentially introduce subtle bugs due to
+state being stale?
 
