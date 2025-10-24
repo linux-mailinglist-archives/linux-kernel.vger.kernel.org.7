@@ -1,78 +1,55 @@
-Return-Path: <linux-kernel+bounces-868431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0599C05244
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:46:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E85AC050A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9BBA1AE657A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:46:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A794150483D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815FF3081DF;
-	Fri, 24 Oct 2025 08:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A49304BA0;
+	Fri, 24 Oct 2025 08:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e0hazy2m"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fus1PpdN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C23B30649F;
-	Fri, 24 Oct 2025 08:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A003A3043DE;
+	Fri, 24 Oct 2025 08:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761295507; cv=none; b=OF0PlYU3b8DRq0fD9LcegTGWn1HhM72kioSuhnI2r3wna83i1Sw8GRVvzTz17P21JL+zZrYcUbq9ckdDrzNBBy2XM7NoPeh3y4jZP/NhN9qUP6oyWrVSsDEanp4xbwJr4uefv2Z8CAYDfD9uW2Psh+YcK0fTxvSPqHRGIPPYYlQ=
+	t=1761294417; cv=none; b=OeAPBTd0S34s5iHaiVJPuClHF8hKrsD8RU7T9MiqBTr9hl8qSmT/GuMrYJiMvdgc6/QHiPw7JVAHRS0aO9TuDvI0D4eH2GQwQAUFBfFS36hb7Cg/3XaMnU8LZQgbAAD26zluCeOQE79QNxuKvx/e6/g14UK4nH4PaYHGeib446Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761295507; c=relaxed/simple;
-	bh=5WRKXr/s4dS5ied+yVXMNfNJW6eRvSH+xOfGJEEcBN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cP3lf12lmUgPPi7KHC2kEchHwbSXcbCri1bzYPiADkE6264y5MvgtQrKK7wcaQPWhfMrmxuR3vB6K+ZYOSMR9FVsBjiUj8Tr6wS0IckNh9jH91epSlI561PxRKpM79RC4BmCuN7rSF+PG8Vsh9EE4UNC/AKmbR0MhXTMZlbnNZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e0hazy2m; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=K+lXc2trFeRORJCdrbLRdnsn5WXxpv1QGwVNva4aeSU=; b=e0hazy2mF00Finsa5zVtK3ono5
-	9hzGF22bXfr877SBfHF59FO0XD26xLrJ21W58PDvjn4wTyPINHPD45IM3YVOec4i45m2C9TaxKyif
-	SQiLqeX13XAZWATfafUrb1a85+gCqPeZh5kQuiBBFxy1jJeEQHIyblcmi6zXLFc08z88RRUI0FLcU
-	1SK33skLzDAZOOqEIpM6f3p6WTEMGlRczxNcUfgi0dTFspRbvHgtxsKtL2QC98xla1PGgzO8uUWOh
-	DGRSf4DF1F2H1FCDMJd8puleei2lHYsBWLU2/x8fLYscUne8mrOYXGMIdsmd5+k9RecQ0XdrkKsVw
-	qxJriPzw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCD8S-0000000CEiB-3QsI;
-	Fri, 24 Oct 2025 08:26:58 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C578730029E; Fri, 24 Oct 2025 10:26:56 +0200 (CEST)
-Date: Fri, 24 Oct 2025 10:26:56 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
-	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
-Subject: Re: [PATCH v16 0/4] perf: Support the deferred unwinding
- infrastructure
-Message-ID: <20251024082656.GS4067720@noisy.programming.kicks-ass.net>
-References: <20251007214008.080852573@kernel.org>
- <20251023150002.GR4067720@noisy.programming.kicks-ass.net>
- <20251023124057.2a6e793a@gandalf.local.home>
+	s=arc-20240116; t=1761294417; c=relaxed/simple;
+	bh=qEbBaSMUHf9ryHfO5wzH4XT4Jj7yN+vQaFLeTaGDy7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bmHZXRshY+M7OfdCuhhYplh3FlW9UY5VS0o5TrAzQSkApPZ5lkB4sAKm7bP4EytCLWVqCpkGtEsQvQ8hptiUBQtqHf1O+KUmvz36jSnyDXT8foWGuu4x7r+qt+Vg2zvmvsCIFUxmTmyds5NABxy4ij1uFTJs74aSgjGvJGVqRwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fus1PpdN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F9CEC4CEF1;
+	Fri, 24 Oct 2025 08:26:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761294417;
+	bh=qEbBaSMUHf9ryHfO5wzH4XT4Jj7yN+vQaFLeTaGDy7A=;
+	h=Date:From:To:Cc:Subject:From;
+	b=fus1PpdNAScVNUsY+X+4spwrsbuEdHwOzgy7WjJuuvVwmP6LQJdimWBwPhEBzueCa
+	 ODmDj9yghG/FFzw01T+m0g0XV4TRVaHBObZCNl2j8vwTS6bqfSZV2YZ1NkbByIF2R0
+	 RZ6o/Ebs8NinKCKN/SXyUPyGEXoCsmmbS+1w0Zud8w9HHB4SpB9vtQ30SUAwfEi1S9
+	 s8n/DgnKH6YXB7oxqji1wbY1Rqa8LqmPcVYjT+ctzzu6DNYWleEe58Eqqd9bpwOXG3
+	 TacBz1OfoNNy0sHotfcv/cK3a3MSNbtdlvSHahN5EZhSrssBBXJ3pBoJ8OEBMy9nYs
+	 NXs60pNFMqkjw==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vCD8a-000000001FD-0lcY;
+	Fri, 24 Oct 2025 10:27:04 +0200
+Date: Fri, 24 Oct 2025 10:27:04 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] USB serial device ids for 6.18-rc3
+Message-ID: <aPs4WBYBNtIKi2dz@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,57 +58,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251023124057.2a6e793a@gandalf.local.home>
 
-On Thu, Oct 23, 2025 at 12:40:57PM -0400, Steven Rostedt wrote:
-> On Thu, 23 Oct 2025 17:00:02 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > +/* Deferred unwinding callback for task specific events */
-> > +static void perf_unwind_deferred_callback(struct unwind_work *work,
-> > +					 struct unwind_stacktrace *trace, u64 cookie)
-> > +{
-> > +	struct perf_callchain_deferred_event deferred_event = {
-> > +		.trace = trace,
-> > +		.event = {
-> > +			.header = {
-> > +				.type = PERF_RECORD_CALLCHAIN_DEFERRED,
-> > +				.misc = PERF_RECORD_MISC_USER,
-> > +				.size = sizeof(deferred_event.event) +
-> > +					(trace->nr * sizeof(u64)),
-> > +			},
-> > +			.cookie = cookie,
-> > +			.nr = trace->nr,
-> > +		},
-> > +	};
-> > +
-> > +	perf_iterate_sb(perf_callchain_deferred_output, &deferred_event, NULL);
-> > +}
-> > +
-> 
-> So "perf_iterate_sb()" was the key point I was missing. I'm guessing it's
-> basically a demultiplexer that distributes events to all the requestors?
+The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
 
-A superset. Basically every event in the relevant context that 'wants'
-it.
+  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
 
-It is what we use for all traditional side-band events (hence the _sb
-naming) like mmap, task creation/exit, etc.
+are available in the Git repository at:
 
-I was under the impression the perf tool would create one software dummy
-event to listen specifically for these events per buffer, but alas, when
-I looked at the tool this does not appear to be the case.
+  https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.18-rc3
 
-As a result it is possible to receive these events multiple times. And
-since that is a problem that needs to be solved anyway, I didn't think
-it 'relevant' in this case.
+for you to fetch changes up to 622865c73ae30f254abdf182f4b66cccbe3e0f10:
 
-> If I had know this, I would have done it completely different.
+  USB: serial: option: add Telit FN920C04 ECM compositions (2025-10-23 14:11:41 +0200)
 
-I did do mention it here:
+----------------------------------------------------------------
+USB serial device ids for 6.18-rc3
 
-  https://lkml.kernel.org/r/20250923103213.GD3419281@noisy.programming.kicks-ass.net
+Here are some new modem device ids.
 
-Anyway, no worries. Onwards to figuring out WTF the unwinder doesn't
-seem to terminate properly.
+All have been in linux-next with no reported issues.
+
+----------------------------------------------------------------
+LI Qingwu (1):
+      USB: serial: option: add Telit FN920C04 ECM compositions
+
+Reinhard Speyerer (1):
+      USB: serial: option: add Quectel RG255C
+
+Renjun Wang (1):
+      USB: serial: option: add UNISOC UIS7720
+
+ drivers/usb/serial/option.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
