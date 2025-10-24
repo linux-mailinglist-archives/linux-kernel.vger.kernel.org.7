@@ -1,167 +1,144 @@
-Return-Path: <linux-kernel+bounces-869440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B3B0C07E29
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:20:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26BD0C07E20
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFF58404666
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:18:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6CFE84EA2B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7E729B204;
-	Fri, 24 Oct 2025 19:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7722798F3;
+	Fri, 24 Oct 2025 19:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="isgLzgOP"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="qEkNa02U"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46759288522
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E8E26ED43;
+	Fri, 24 Oct 2025 19:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761333457; cv=none; b=klpUIngjcpwXBHBJs3BjXwpykv/h0jFRkvTgPD6185L+FgzbFDdxfX1Jec5n2oFhU3LfHlCMng9AQ7NC4y/GGpRr8TAW6rEULkVhFLK/5wva9JhCnmR1MfEhLlIvqtfgE9Fyprq/Vxw4Ax376Ru5/Hi47QXnfzqR8tORNgQgy54=
+	t=1761333571; cv=none; b=refjrii1j5g57z2u7FD59fLbBKoXwNcZWOH6ow49nnDegsSPRIYff37xPHvTKyzG3Kb+7KSUtjOjVt4/HiMvDaTIStWIO4xB4oKkFAk53gya/ARcnwygSaK6qSMWx4y2jLqaeZbNJfJotixwdD0VWoc93Utm2Z2q0FFZx9H/9WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761333457; c=relaxed/simple;
-	bh=s3GcZLerCv7XmLACfJCbvyxhLWMgIuHdFpXhnSC0Gss=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M3ygICrlieTMPWYuCr/PVOVEXJ6KyuUPJJvdaZgt8HzmE6eR0qkwA4o3Tzg6d5Byo0gVXaW1LfXmWSJOatNRhQeswXPZ2Cdqtgnc+xwN6ZSwKSH7CgT28ZU15a82mSXD8tf89iAgSlLA02V1MKKtT5VDRziFRLXiKi3j2TEki7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=isgLzgOP; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761333453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L0z3O6ev8VvLV+n/JL2vBaug2Aj5dwpRTQ3NzZgJTeg=;
-	b=isgLzgOPZw23bh+e7CsK4Y8IdxoSe8JftRfIsPhd0qXRUqChwmNYo0Ch42pl3KDRJqZNUt
-	UAe1suW8wK58TGwh6cwGdPWlvEpkLL2k9bZNTq3SpSLwaEkbB20mFZ4YTrpZb05VjYrt30
-	m/yXFUwy+WLf+ABKLELglMkYxuaWEH4=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org,
-	David Airlie <airlied@gmail.com>,
-	Hyun Kwon <hyun.kwon@xilinx.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Michal Simek <michal.simek@amd.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH 3/3] drm: zynqmp_dp: Retrain link after HPD if necessary
-Date: Fri, 24 Oct 2025 15:17:07 -0400
-Message-Id: <20251024191707.2310589-4-sean.anderson@linux.dev>
-In-Reply-To: <20251024191707.2310589-1-sean.anderson@linux.dev>
-References: <20251024191707.2310589-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1761333571; c=relaxed/simple;
+	bh=yvAVzrE+ZlCE1/5Y8HUlvffD12Ez+joCObeQu+lX2T8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jzg3n7d3Qdp7ebqe5nXP2WnXai6Zz1YU6wiv1bDPIe27fIRCSCVqQGLS9wnY6aclqW3j+RQ9ZBOfUYLGTW0dlvEuTomrF/1Lj4WaNrJXyq82BJ5q3MFLZmOrYMHHYezoLta4uIuuptiPBsvQfa8HbYexgRJ2tysOwFxCsQcbfWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=qEkNa02U; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1761333559;
+	bh=yvAVzrE+ZlCE1/5Y8HUlvffD12Ez+joCObeQu+lX2T8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qEkNa02Ut8U3tQigEL5Tuqlt1zPxq2NmonEZ6lIdGX9PwOV/QUabMUnhOvt54gYlV
+	 ciISDENcpKXrMuZle/OnsjMKKxF+PBDuhuvkRMzLzQCzZiisbghvTQpAsqhGILT/ra
+	 iKe8QVGvB6GDXVfCvzvwX8iVD7ZxNbkI4ZoXGXUzFYaidU3H9BDjWc21dxINsIwZK/
+	 /l5OIOdiLLCxK8z+GfDVO6HeLaG3pXcXj44euS3VALoXswDc13qVG6PVVhuPfnyRNw
+	 14tsQnQkUT322EtYL50NG+XhQfsOU6iC0YPg6dq+ystBQVXPemRTSOIbuj9p+QMnhv
+	 bfuayfiKbQJzA==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 9E83B600BF;
+	Fri, 24 Oct 2025 19:19:18 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by x201s (Postfix) with ESMTP id EB7D5201241;
+	Fri, 24 Oct 2025 19:19:10 +0000 (UTC)
+Message-ID: <ee3b6ed7-a00d-4679-9aa6-482b8064d18f@fiberby.net>
+Date: Fri, 24 Oct 2025 19:19:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 0/7] ynl: add ignore-index flag for indexed-array
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Chia-Yu Chang <chia-yu.chang@nokia-bell-labs.com>,
+ Chuck Lever <chuck.lever@oracle.com>, Donald Hunter
+ <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
+ Simon Horman <horms@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Zahari Doychev <zahari.doychev@linux.com>
+References: <20251022182701.250897-1-ast@fiberby.net>
+ <20251022184517.55b95744@kernel.org>
+ <f35cb9c8-7a5d-4fb7-b69b-aa14ab7f1dd5@fiberby.net>
+ <20251023170342.2bb7ce83@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+In-Reply-To: <20251023170342.2bb7ce83@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-The section 5.1.4 of the v1.2 DisplayPort standard says
+On 10/24/25 12:03 AM, Jakub Kicinski wrote:
+> On Thu, 23 Oct 2025 18:37:09 +0000 Asbjørn Sloth Tønnesen wrote:
+>>   > C code already does this, right? We just collect the attributes
+>>   > completely ignoring the index.
+>>
+>> In the userspace C code, for sub-type nest the index is preserved
+>> in struct member idx, and elided for other sub-types.
+> 
+> I see it now, I guess I added it for get but forgot to obey it
+> for put :(
 
-> The Source device shall respond to Hot Plug event/Hot Re-plug event by
-> first reading DPCD Link/Sink Device Status registers at DPCD 00200h
-> through 00205h.... If the link is unstable or lost, the Source device
-> then reads the DPCD Receiver Capabilities registers at DPCD 00000h
-> through 0000Fh to determine the appropriate information needed to
-> train the link. The Source device shall then initiate link training.
+I can fix that up in v2.
 
-However, zynqmp_dp_hpd_work_func does not check the link status. This
-may prevent the sink from detecting the source if, for example, the user
-disconnects the cable and then reconnects it. I encountered this problem
-when testing a mini DP connector (although I had no problem when using a
-full-size connector with the existing driver).
+Do we wanna do the same for sub-type nest in the python client?
+>>   > So why do we need to extend the spec.
+>>
+>> For me it's mostly the naming "indexed-array". Earlier it was
+>> "array-nest", then we renamed it to "indexed-array" because
+>> it doesn't always contain nests.  I think it's counter-intuitive
+>> to elide the index by default, for something called "indexed-array".
+>> The majority of the families using it don't care about the index.
+>>
+>> What if we called it "ordered-array", and then always counted from 1
+>> (for families that cares) when packing in user-space code?
+>>
+>>   > Have you found any case where the index matters and can be
+>>   > non-contiguous (other than the known TC kerfuffle).
+>>
+>> IFLA_OFFLOAD_XSTATS_HW_S_INFO could be re-defined as a nest,
+>> IFLA_OFFLOAD_XSTATS_L3_STATS is the only index atm.
+> 
+> Isn't that pretty much always true? If the index is significant
+> the whole thing could be redefined as a nest, with names provided
+> in the spec?
+I guess it depends on the range of indexes, the aboveIFLA_OFFLOAD_XSTATS_L3_STATS is aka. 3, so the new nest policy would be
+(0..2 = unused, 3 = .._L3_STATS}, which is fine, but for higher indexes
+it might get a bit silly, but I haven't found any too high indexes.
 
-Follow the spec by checking the link status after a HPD event and
-retraining if necessary.
+NLBL_CIPSOV4_A_MLSCATLST has NLBL_CIPSOV4_A_MLSCAT which is 11, but that
+corner seams very dusty, so I don't expect that to get YNL support.
 
-Fixes: d76271d22694 ("drm: xlnx: DRM/KMS driver for Xilinx ZynqMP DisplayPort Subsystem")
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
----
+Nest + multi-attr is great for the cases where we want per-attr typing,
+like IFLA_PROP_LIST / IFLA_ALT_IFNAME, but a bit awkward if they all
+are nests with the same policy.
 
- drivers/gpu/drm/xlnx/zynqmp_dp.c | 37 ++++++++++++++++++++------------
- 1 file changed, 23 insertions(+), 14 deletions(-)
+>> IFLA_INET_CONF / IFLA_INET6_CONF is on input, but those are
+>> also special by having different types depending on direction.
+>>
+>> I found a bunch of other ones, using a static index, but they
+>> can also be defined as a multi-attr wrapped in an additional
+>> outer nest, like IFLA_VF_VLAN_LIST already is.
+> 
+> Multi-attr with an outer nest should at least solve your wg problem
+> I guess? If all the attrs have type of 0 we can make it a multi-attr.
+WG don't use the index, so it's fine with incrementing from 1.
 
-diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-index caf2e0ce3644..a90bc0e406f6 100644
---- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
-+++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-@@ -1677,6 +1677,24 @@ static int zynqmp_dp_bridge_atomic_check(struct drm_bridge *bridge,
- 	return 0;
- }
- 
-+static bool zynqmp_hpd_needs_retain(struct zynqmp_dp *dp)
-+{
-+	u8 status[DP_LINK_STATUS_SIZE + 2];
-+	int err;
-+
-+	err = drm_dp_dpcd_read(&dp->aux, DP_SINK_COUNT, status,
-+			       DP_LINK_STATUS_SIZE + 2);
-+	if (err < 0) {
-+		dev_dbg_ratelimited(dp->dev,
-+				    "could not read sink status: %d\n", err);
-+		return false;
-+	}
-+
-+	return status[4] & DP_LINK_STATUS_UPDATED ||
-+	       !drm_dp_clock_recovery_ok(&status[2], dp->mode.lane_cnt) ||
-+	       !drm_dp_channel_eq_ok(&status[2], dp->mode.lane_cnt);
-+}
-+
- static enum drm_connector_status __zynqmp_dp_bridge_detect(struct zynqmp_dp *dp)
- {
- 	struct zynqmp_dp_link_config *link_config = &dp->link_config;
-@@ -1698,6 +1716,9 @@ static enum drm_connector_status __zynqmp_dp_bridge_detect(struct zynqmp_dp *dp)
- 
- 	if (state & ZYNQMP_DP_INTERRUPT_SIGNAL_STATE_HPD) {
- 		WRITE_ONCE(dp->status, connector_status_connected);
-+		if (!zynqmp_hpd_needs_retain(dp))
-+			return connector_status_connected;
-+
- 		ret = drm_dp_dpcd_read(&dp->aux, 0x0, dp->dpcd,
- 				       sizeof(dp->dpcd));
- 		if (ret < 0) {
-@@ -2335,25 +2356,13 @@ static void zynqmp_dp_hpd_irq_work_func(struct work_struct *work)
- {
- 	struct zynqmp_dp *dp = container_of(work, struct zynqmp_dp,
- 					    hpd_irq_work);
--	u8 status[DP_LINK_STATUS_SIZE + 2];
--	int err;
- 
- 	guard(mutex)(&dp->lock);
- 	if (dp->ignore_hpd)
- 		return;
- 
--	err = drm_dp_dpcd_read(&dp->aux, DP_SINK_COUNT, status,
--			       DP_LINK_STATUS_SIZE + 2);
--	if (err < 0) {
--		dev_dbg_ratelimited(dp->dev,
--				    "could not read sink status: %d\n", err);
--	} else {
--		if (status[4] & DP_LINK_STATUS_UPDATED ||
--		    !drm_dp_clock_recovery_ok(&status[2], dp->mode.lane_cnt) ||
--		    !drm_dp_channel_eq_ok(&status[2], dp->mode.lane_cnt)) {
--			zynqmp_dp_train_loop(dp);
--		}
--	}
-+	if (zynqmp_hpd_needs_retain(dp))
-+		zynqmp_dp_train_loop(dp);
- }
- 
- static irqreturn_t zynqmp_dp_irq_handler(int irq, void *data)
--- 
-2.35.1.1320.gc452695387.dirty
+Converting it to nest + multi-attr would require extra pollution in
+the UAPI, so I don't think I can get that past Jason. It would also be
+hard to shove in between the elements in the existing naming.
 
+I am just trying to get the nits that came up in the previous discussions
+handled, so they are fixed when I submit the WG spec again, so that I
+don't have to go back and update it shortly after, as the WG/Jason
+bandwidth seams pretty limited atm.
 
