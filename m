@@ -1,282 +1,174 @@
-Return-Path: <linux-kernel+bounces-868543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5C3C056DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:51:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E6D9C056E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0DD14F3D82
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:51:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6F0EF4F6AA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F3A30C36E;
-	Fri, 24 Oct 2025 09:51:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D99A30C638;
+	Fri, 24 Oct 2025 09:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="j9R8JSXv"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B2F23D7D1
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71891B3930
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761299465; cv=none; b=VHB8tx2BMoKUQpuhD+uYkMMLek0yIHrv/NlUDqk3XmP2uuM+vqII9oKj7XBwStw4y42+6k9gyd4DYfJ4ZtA1aJ8yWtvGrpyJTcqkuIAGHO3XQsPADu84216kqqRK2gR4wDkmwSTSeDHQTkSfX45WoVb+ycFAeUypkkHdEJPtipM=
+	t=1761299496; cv=none; b=smbBfZBDTyFQeO1CJl3L9bRMx6D6LWa8/TxQ+zbu8mcsnNnT286v/n1V/9iyQ3bY+i8GhsBbP71AuaiD22CjXMj9CtkKBeuWcbDAo7WZId5FoGvBu+0IYhpQH2bkQy6TJ8JrC8Kq3v7WGRiqEoUV1+z3LM4l/5Do7+9eN0v9EEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761299465; c=relaxed/simple;
-	bh=mj3tJ0KoIYmbSbflgAmOwnO+ELBWng642y2BwWnt6h4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=p8ld9JHldVn2A6jusOfSdXrLIDA4OSHECFuNRDrRoqtl50jdvVtWn2vP8UjCrN67PgIyV76+v26kwWcWsYmmfH6fK7nVQnT+MFfsRKAD3Q5pGH5EnssJSOE9BDjq45Z6EbMECFGQjNWZmSjW+8OnXqzwR7+3klMjnHI7u7cSzXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-94099028725so175746839f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:51:03 -0700 (PDT)
+	s=arc-20240116; t=1761299496; c=relaxed/simple;
+	bh=6wJ5ozxccB/nzgcmHOXuI1xKrq/4DHvB+RURaKbk3O8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sq4+x3wQK5XvQPYQvipZgAqLgYqdzHReDpsaRi5oKVcKLOXex0q4yKDhHiVHaV7VpZguQMzZmnnvHrwkJxl3JIht9jZ8pfL3lp4NDCg5MwJKiWXZyRu+C2MHZBNo8Dy70VcN6S7OEDfkn1SQuxYaJEy12bt47TfkB7nFhatsW98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=j9R8JSXv; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63c1a0d6315so3567112a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:51:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1761299492; x=1761904292; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ly3AYuLKibQEdYHOL/Htjgp8xjTYNizR6VDMFs2t4hc=;
+        b=j9R8JSXv/26z9gYmd0CPlvrWskwALR+V95RQCyh6JqZVXmU/RtT/i0YJW9Hh/Cp6Ta
+         GtkkU0IpJeVMAU/y5Kt3DkWRzpbLSbay5DdQk6AY+WkZNsJF9MmQ8mmTpcM8gyVaq9CR
+         k95negSWJa2v8h+AQ+nwmty8os8QDp03T60c6gbtF8SzhAbtTY7AtfyKQ7Gx69t6muoz
+         crz+73cdzmq9wwy9Gjr+KjcxxgId6f5201wvzOOliok4c+qqGLzeRwGDCdMPu1x4j4DI
+         0RaOzV2Xd8Dgq4KEFdoZJnZag9GxZnRcDVwvQigtYVXY0H/8UXn+Jr55EMAQ3ZPpX9Kr
+         0ZyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761299463; x=1761904263;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1761299492; x=1761904292;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JFvSYfF8MOF9dgae8E/MwTXlvBooTbAuoltSQEnurnQ=;
-        b=of7NKPSTu86KyHtyUhYo7ZreMIF01vYBCUddKuwsTbKp8v4FKpWw2mslI80e2AYd6w
-         0H7XoGxpczHgO416JA1DJOX8ULQjmcJjlWQdjMWaz40tB94vsCaFxoHA8LKRTmk20MdM
-         1m0PBqnOG/Xeb3RGo4lqJX0slKZQidxfYMXvOqh+5FJaHUp00no5zk0za/YyPugfaKvC
-         UGwIs47JKtequ7h/fK27FbNTb/0jmcfQq8BA/1qWzX+LkprL/3cakdGok/yjZ3u3hwa2
-         SXpUIhoIM30PZZNalPv0NDd7Tzx+rD4WB7JfjAsC2ijpOvC5B1OmwJTsyzjBeTIK8FEB
-         r80Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVnCrnJhYV0UnwyeiKRMLR/EHRYjFcLQuRp9LInNFuJiPuP4ih9zXglKp18bomSYslj0LxWOj5PngwhQc4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD5TAOvE9Xt62A1KUZKPCnrnHypSdnWGCAn0MOTeaDSL0cjeog
-	fJ9A8Urg/9/Jk85HSligYsvofqIdI8X190iyQMMBHR9zDdGI8B+mErtxFfQPQUui1EAzOFKhQo6
-	8O5Z2YOZ4e7yDK/xc2eHsLGqUr7+Ev3gobJ46DfabZzcHevFpsIJZVMVKc2s=
-X-Google-Smtp-Source: AGHT+IG+QQL3Wm7QPWmhbItPYnU1uLPufedY5XQPFrkkFKH9JF1L/mn0rDRbifcHrVx4RJ2kYjmTaGfXROFy9Pa0Xy7i8EGjymxw
+        bh=Ly3AYuLKibQEdYHOL/Htjgp8xjTYNizR6VDMFs2t4hc=;
+        b=X8GBXz/jFgVSD/jMQOpTVux5plUeTwkZgqatso17tGnCAptBxYojawwDl1qnIw2njY
+         jcPvh3l11ndNlqrN1r0/us1tRyCA1XicgINnLS6YB+ePB4j6LSI6J/elSxCIrVyDEbni
+         elvq59Ihfkx9H5TDhLITp5JdTHcEjr2vlV4h5Qhd1UNzlq+pw41HDIiIM+MFQ6TJkl4H
+         ivSCvZg/UnTJJ7Za+DlSLCKez5en4Cb6r8nUYGC7DTwBOIuEBUCeonkyeiwlvd0aqwx4
+         nTeFKta2d55/33Xx8ZwtlvvUSm7TWScdx3Kzx+sSa2pdIfgnVth2dKHGgMGVkSkiv6J8
+         3urg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBCPLmPMHZ5pqXecXl851ivuyCIWCGrWGAUwJg82Uo9zh+UJ8osGtgJA4BQIFH4ofJ0YNS63TJ9TYfP3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEBWh1zZRFpN4kJo4q3dKYrSmkZ00z5R7pWhbzq7yacg4fAxiW
+	7W1z4G+wvKUMoN4NAH/btcmufeofjBtdYmJuqxOvFVY+NHscip/UCHxt2axhsCI8xts=
+X-Gm-Gg: ASbGncv+52/HHa0APBtyRCpFfxpGvwN96V7IddKmsrvP8AbRMTa6ule8WPf46oa6yof
+	AZq5AS/ull6ZulQks0+X8dSQKE0Ag/quKSYmDEhK25wiMtm+D/NLmIjepIlA1hvl1YO3g+skVk9
+	GqC/Brd7rFfaaPz+x6IIZWGfsYyhHt81Bz69QPnCECmf7+l4go/f3Ra7J+uK2m/Y9fQIMZ+P5pi
+	+1i0g9Ss2e7ShcJ7q1pekQBqiH3X4NYQXRm4y5lZ+In+vXP8onooZMxwiXz/wZvnqxsSQOSm9nR
+	LSokbLXmNfaSnXG12GZ8YDrz91u/xUR1W57EUNL09RTz+LpYAkws86wmli3aYW5gYttATxFKFay
+	ZktJ6MY4qVCYuPtBl9BX51cTvIhTK+Vl+uqwT/T7fP/6Av+dws4QKUyU176P22yJ7n1OsvJgJZl
+	Kkaxtgdn5D
+X-Google-Smtp-Source: AGHT+IGmo8RIThQOxDu/Zi1gWcAuc6tFi+Y4rpL7zem9sqyDB03ggroT6vzhcOREXWW2G8nw+BwgWw==
+X-Received: by 2002:a05:6402:51cb:b0:63c:66b5:bbbf with SMTP id 4fb4d7f45d1cf-63c66b5c00dmr20265189a12.20.1761299491899;
+        Fri, 24 Oct 2025 02:51:31 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.151])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e3ebcd2fasm3947160a12.14.2025.10.24.02.51.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 02:51:30 -0700 (PDT)
+Message-ID: <e3403b2a-533f-4962-a615-32a4095fd6dc@tuxon.dev>
+Date: Fri, 24 Oct 2025 12:51:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:144d:b0:42f:8eeb:49a1 with SMTP id
- e9e14a558f8ab-430c523d6fdmr426346795ab.13.1761299462803; Fri, 24 Oct 2025
- 02:51:02 -0700 (PDT)
-Date: Fri, 24 Oct 2025 02:51:02 -0700
-In-Reply-To: <20251024071531.Cp40p%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb4c06.050a0220.346f24.00ba.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in __ocfs2_move_extent
-From: syzbot <syzbot+727d161855d11d81e411@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 7/7] arm64: dts: renesas: rzg3s-smarc: Enable USB
+ support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com,
+ yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20251023135810.1688415-1-claudiu.beznea.uj@bp.renesas.com>
+ <20251023135810.1688415-8-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdV7ScKUw7bGFW4v0wS9caXKDeT02MXkLWpk2LZfYw8GfQ@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <CAMuHMdV7ScKUw7bGFW4v0wS9caXKDeT02MXkLWpk2LZfYw8GfQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi, Geert,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in __ocfs2_flush_truncate_log
+On 10/24/25 12:15, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Thu, 23 Oct 2025 at 20:41, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Enable USB support (host, device, USB PHYs).
+>>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+> 
+>>  &pinctrl {
+>>         audio_clock_pins: audio-clock {
+>>                 pins = "AUDIO_CLK1", "AUDIO_CLK2";
+>> @@ -207,6 +230,27 @@ ssi3_pins: ssi3 {
+>>                          <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
+>>                          <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
+>>         };
+>> +
+>> +       usb0_pins: usb0 {
+>> +               peri {
+>> +                       pinmux = <RZG2L_PORT_PINMUX(5, 0, 1)>, /* VBUS */
+>> +                                <RZG2L_PORT_PINMUX(5, 2, 1)>; /* OVC */
+>> +               };
+>> +
+>> +               otg {
+>> +                       pinmux = <RZG2L_PORT_PINMUX(5, 3, 1)>; /* OTG_ID */
+>> +                       bias-pull-up;
+>> +               };
+>> +       };
+>> +
+>> +       usb1_pins: usb1 {
+>> +               pinmux = <RZG2L_PORT_PINMUX(5, 4, 5)>, /* OVC */
+>> +                        <RZG2L_PORT_PINMUX(6, 0, 1)>; /* VBUS */
+>> +       };
+>> +};
+>> +
+>> +&phyrst {
+>> +       status = "okay";
+>>  };
+> 
+> This node should be located before pinctrl.
 
-======================================================
-WARNING: possible circular locking dependency detected
-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor/5793 is trying to acquire lock:
-ffff88804461d100 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#5){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:815 [inline]
-ffff88804461d100 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#5){+.+.}-{4:4}, at: __ocfs2_flush_truncate_log+0x33d/0x10f0 fs/ocfs2/alloc.c:6054
+You're right! I missed it.
 
-but task is already holding lock:
-ffff888040ccb480 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#6){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:815 [inline]
-ffff888040ccb480 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#6){+.+.}-{4:4}, at: ocfs2_flush_truncate_log+0x47/0x70 fs/ocfs2/alloc.c:6083
+> No need to resend just for this.
 
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#6){+.+.}-{4:4}:
-       lock_acquire+0x1a1/0x430 kernel/locking/lockdep.c:5825
-       down_write+0x97/0x1f0 kernel/locking/rwsem.c:1577
-       inode_lock include/linux/fs.h:815 [inline]
-       ocfs2_move_extent fs/ocfs2/move_extents.c:646 [inline]
-       __ocfs2_move_extents_range+0x1a6a/0x3380 fs/ocfs2/move_extents.c:866
-       ocfs2_move_extents+0x379/0x960 fs/ocfs2/move_extents.c:933
-       ocfs2_ioctl_move_extents+0x569/0x740 fs/ocfs2/move_extents.c:1065
-       ocfs2_ioctl+0x192/0x750 fs/ocfs2/ioctl.c:946
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:907 [inline]
-       __se_sys_ioctl+0x100/0x170 fs/ioctl.c:893
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf6/0x210 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#5){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x188e/0x5720 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x138a/0x20c0 kernel/locking/lockdep.c:5202
-       lock_acquire+0x1a1/0x430 kernel/locking/lockdep.c:5825
-       down_write+0x97/0x1f0 kernel/locking/rwsem.c:1577
-       inode_lock include/linux/fs.h:815 [inline]
-       __ocfs2_flush_truncate_log+0x33d/0x10f0 fs/ocfs2/alloc.c:6054
-       ocfs2_flush_truncate_log+0x4f/0x70 fs/ocfs2/alloc.c:6084
-       ocfs2_sync_fs+0x117/0x320 fs/ocfs2/super.c:402
-       sync_filesystem+0x1cf/0x230 fs/sync.c:66
-       generic_shutdown_super+0x6f/0x2c0 fs/super.c:621
-       kill_block_super+0x44/0x90 fs/super.c:1710
-       deactivate_locked_super+0xb9/0x130 fs/super.c:473
-       cleanup_mnt+0x425/0x4c0 fs/namespace.c:1378
-       task_work_run+0x1d5/0x260 kernel/task_work.c:239
-       resume_user_mode_work+0x5e/0x80 include/linux/resume_user_mode.h:50
-       exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
-       exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
-       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
-       syscall_exit_to_user_mode+0x87/0x130 kernel/entry/common.c:218
-       do_syscall_64+0x103/0x210 arch/x86/entry/common.c:89
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#6);
-                               lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#5);
-                               lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#6);
-  lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#5);
-
- *** DEADLOCK ***
-
-2 locks held by syz-executor/5793:
- #0: ffff88803ef880e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock fs/super.c:56 [inline]
- #0: ffff88803ef880e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: __super_lock_excl fs/super.c:71 [inline]
- #0: ffff88803ef880e0 (&type->s_umount_key#54){+.+.}-{4:4}, at: deactivate_super+0xa9/0xe0 fs/super.c:505
- #1: ffff888040ccb480 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#6){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:815 [inline]
- #1: ffff888040ccb480 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#6){+.+.}-{4:4}, at: ocfs2_flush_truncate_log+0x47/0x70 fs/ocfs2/alloc.c:6083
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5793 Comm: syz-executor Not tainted syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x18a/0x250 lib/dump_stack.c:120
- print_circular_bug+0x13b/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x2b5/0x3b0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x188e/0x5720 kernel/locking/lockdep.c:3904
- __lock_acquire+0x138a/0x20c0 kernel/locking/lockdep.c:5202
- lock_acquire+0x1a1/0x430 kernel/locking/lockdep.c:5825
- down_write+0x97/0x1f0 kernel/locking/rwsem.c:1577
- inode_lock include/linux/fs.h:815 [inline]
- __ocfs2_flush_truncate_log+0x33d/0x10f0 fs/ocfs2/alloc.c:6054
- ocfs2_flush_truncate_log+0x4f/0x70 fs/ocfs2/alloc.c:6084
- ocfs2_sync_fs+0x117/0x320 fs/ocfs2/super.c:402
- sync_filesystem+0x1cf/0x230 fs/sync.c:66
- generic_shutdown_super+0x6f/0x2c0 fs/super.c:621
- kill_block_super+0x44/0x90 fs/super.c:1710
- deactivate_locked_super+0xb9/0x130 fs/super.c:473
- cleanup_mnt+0x425/0x4c0 fs/namespace.c:1378
- task_work_run+0x1d5/0x260 kernel/task_work.c:239
- resume_user_mode_work+0x5e/0x80 include/linux/resume_user_mode.h:50
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x87/0x130 kernel/entry/common.c:218
- do_syscall_64+0x103/0x210 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd40db901f7
-Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffd33164b08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 00007fd40dc11d7d RCX: 00007fd40db901f7
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffd33164bc0
-RBP: 00007ffd33164bc0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffd33165c50
-R13: 00007fd40dc11d7d R14: 000000000002060d R15: 00007ffd33165c90
- </TASK>
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
-(syz-executor,5793,0):ocfs2_inode_is_valid_to_delete:872 ERROR: Skipping delete of system file 72
-ocfs2: Unmounting device (7,0) on (node local)
+Thank you!
 
 
-Tested on:
-
-commit:         4fc43deb Linux 6.12.55
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=126ddb04580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fe7b438dcda9b036
-dashboard link: https://syzkaller.appspot.com/bug?extid=727d161855d11d81e411
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=177c7734580000
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
 
