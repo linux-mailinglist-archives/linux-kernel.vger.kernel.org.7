@@ -1,154 +1,175 @@
-Return-Path: <linux-kernel+bounces-868188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8947C049C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:05:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3A8C049DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EDB04F003E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:05:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E908A3A6484
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D38291C19;
-	Fri, 24 Oct 2025 07:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1111296BB0;
+	Fri, 24 Oct 2025 07:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QVwZjAHF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RC0q6565"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194CD289376
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DD5223DF9
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761289545; cv=none; b=SuzOZdCRy82WV7F8hB4ortmstAOO+pynTwaQMyrXsyMUR5vKPp8EeVb1nFUW5Ga6D3KVtGeUEtCV7PyLMtryCeYlP01CMZMYushK9RQuuem5rcporikfOsfwWWAW4Gz9bm0d76N9qxI2GCP8MNuLFwHqPz6PiSeLDLdcwfxup7U=
+	t=1761289609; cv=none; b=ap5UUYgC6elmWfTxYVcdzSeghycOU/fGvx3Fa8YPYvT/gIi7s27c//9yleiOSRAeVuDX8yG50xfwvwWYftFRVNjzKDAOs/j8CLSb/CKsBEslzpKreqSw524/FsuBgdBt/6QROwwiKpBopkzLfM4c+4wSRY2u+bl9OPP+zVKsJh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761289545; c=relaxed/simple;
-	bh=JYRh6d35m688v18Niywoi4gb4bSrnVYUZ1a60rTqaQc=;
-	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sug1DZGtde8w830DBcZbAzfWgVHBu/c2go9w0SmwEGLePOEoIQrr5kJEze1dB5dH+JaY0PbtaBM3aUgBjHQh80efXvvvCPfnzKPe20koXZ0dq8LqhrmNUHCqLEfs34XaHWmITpB9TgvnNETr/bmmcNlLyBOZ8SH/PtBrzvklVYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QVwZjAHF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761289543;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0FZBgj/9w9plr3ZN5/JPijL+YiLK2lWHoHpXfJ+sPrw=;
-	b=QVwZjAHFH41h7+iYJxib1MfqRXs9oh6x+T81/yKSbg4pubCWlzzl56C87RIWpf9r2+szPE
-	x89sFAOExADf5nEQASc1KCXGhw3zsVcUsdYv3vRQEKBoNgh4zTX3xw5Gri0sTsVXeGvHYo
-	uyiYw4E+G+0MHOy0HQDwvIvb3m8ies8=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-258-Ya00WYmvPLSnX1l5dv0rBQ-1; Fri, 24 Oct 2025 03:05:41 -0400
-X-MC-Unique: Ya00WYmvPLSnX1l5dv0rBQ-1
-X-Mimecast-MFC-AGG-ID: Ya00WYmvPLSnX1l5dv0rBQ_1761289540
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b3cd833e7b5so200448366b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:05:41 -0700 (PDT)
+	s=arc-20240116; t=1761289609; c=relaxed/simple;
+	bh=IcM7jxGgkgnkr2GajXFnM4xxv5QN0NsAPNfS2UyXxB4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JvNR9jTLHRCuRbxIkty2gvtCsHJ/dI7XJvw3jjy8MvLo5cjPkIErd7HEfNGjisWFFhS0x/VQAc2U9m/ntt0/dxQTTCAVQmFLhBUMssSZio7OH3OrYvZd3bOHq4R4kn1YQJ7mQTe6mGIXQnbFj907mU/ltgmPZ5tRXmccM6xUg08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RC0q6565; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b6ce6d1d3dcso1177105a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:06:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761289607; x=1761894407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qvt1U6Vf4SpxKpA/uYnaJ6zzA9HkhxpVO6OnBIuFdss=;
+        b=RC0q6565CkKeyiYF/ID84m6gUgA68J44/y1LTnhimbwyXBxiEmce7CbDysSe6BYBfu
+         740oOqNY25nolXYqNxHcvh0+njdHGvwyjZ5rulE5XRLThmou7nWXjJ+Tgrvo0JuHfYSG
+         vaoXHcENK0RxCK1oYAxQ7MWikWAR/qtYjo2ZD0/yCacSW1/EUfuPtzvrtD1TH7HNHXTB
+         kSg/BVx/Xbdpup88nb/zANog76fCfHoVnD5muh5qzbL4gM9Cmp/SwM9OFqJL3rXG+Xsg
+         NKr+7VFXdg/56N4Alyc47nzRfdva15mJS6iLi9MYSIIECEjoTGRrTaGKZoOmcRebbKDa
+         oogA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761289540; x=1761894340;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
-         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0FZBgj/9w9plr3ZN5/JPijL+YiLK2lWHoHpXfJ+sPrw=;
-        b=bH+ANpagQoeT3LS4GR/v+WIc/v7BH6tqDTGUce9KiXTn8nK4ZFgmTf1QAbRxB7n2gZ
-         ZyeCj9E+cNxZtIxMKhmDrYpItqK1rD+ObWmk0qETB8aC8LPoWQ7/JVlZuWd2HXWg9T/u
-         QhR0xOzGLSxUm5KDKDW5bniNJ6zbrbY5glfP0EGGeWuBS+m7Jqpbxi5uSH4EqrUKeFqy
-         BKfXh1FvQX34dX8l1+1V8uU0IUypyl0nRh54JM6Gto+zxyOdXoR/R1mBpQMJVsb86o4b
-         nBz1bb5ye43nZbMbwNeVwgljPhBTV9BFB+/5CD4ZDWBiBh0kHAjq/0K76MXrCBboqu+U
-         3zdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWU3TqjnWwwTZObjKj5cP1ueyKqSnxf3znYF0OtYSnB2nzMHptN/nfhAGKrDtxNQLzSLN76gwBBMZoRUDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjy9JCiD2njmtWmEaGa3akvSnmJwqnMeDAL3lzAQ0NJINVDS4s
-	+SVO8QEMyTQWzt6yPJI8w32jVr39kDBoas29qDeF4WSz/vbhnbg1VDIqZPYzrC3Cz9w8qE2vrbd
-	zAEBOsOwqNtI8gXmrO4n3WQUg4cpfCPj0oArTRv0xRJUHsg3Z+dNvy5ZFg+wEltymkBaq0Lw4vM
-	O/ySbjthAQ6ahHykJO8sTXNCD7U9PRLCXsh+8sCE1W
-X-Gm-Gg: ASbGncuXqpawJ4Wjba/8AIDF+u6SaevUH5H9IT3qnqrw7laoV7XvOpyzyGqX9FV7uTl
-	C2frWcYFoBT30ni5YVDlf75FbfQr1im/V7b5rjw2iNv+xAst4SD+ZGgl3tY/wXX4uBW3hCEwkpG
-	/Y9u4hBPEPVBLuavs8BP6fJ1rBr1VZMFDYPUB9hVYhw0ugBAcA8ceryQ112A==
-X-Received: by 2002:a17:907:86a2:b0:b40:6d68:34a4 with SMTP id a640c23a62f3a-b6472b5f80fmr3238324566b.2.1761289540143;
-        Fri, 24 Oct 2025 00:05:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGuB4wvFcvRtGcIlauvG3S3/KsjSx2Fi6dYn1JgimHrydTNVwTkvmnni4iqjLYwg/MuRLZePszZyatZXoZqyxQ=
-X-Received: by 2002:a17:907:86a2:b0:b40:6d68:34a4 with SMTP id
- a640c23a62f3a-b6472b5f80fmr3238322866b.2.1761289539770; Fri, 24 Oct 2025
- 00:05:39 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 24 Oct 2025 02:05:38 -0500
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 24 Oct 2025 02:05:38 -0500
-From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
-References: <20251023083450.1215111-1-amorenoz@redhat.com> <6a2072e1-43be-49a3-b612-d6e2714ec63e@6wind.com>
+        d=1e100.net; s=20230601; t=1761289607; x=1761894407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qvt1U6Vf4SpxKpA/uYnaJ6zzA9HkhxpVO6OnBIuFdss=;
+        b=xA4wnl2V7SJXftgvfiK/dpdIaXHdoELLbr0MpXKmTLLcZs3/15dYpn0ktTtLDvOwFc
+         rS3CJqpszaql+Q4LD4u7XPwySuL/4bgjLtSbOgyuO6uk/QWbg2YGF3B0URp5VgzO+8LW
+         OyOAMWXsTgUhl5WCjLWPzKyMoSMz2ox9RXEAEwSPErjCDSefmvIjgGdvT77qT7g7jZ2y
+         /BQOfhoEUQCWXYpXQ4lS57Z7kO7oer18rIJrlfyKV9I7Wh9dFaoteUPAFDM0ZuDiJugC
+         yfsR9WXl8+agjED6eMmLjnwU2w8+8ER5DudPwW3//+VzskTQLYa2PWnj+sTqpx0A1LF9
+         N7dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCTsi8KvxZG0XHYzIWuoqTH5HImZFMT/UEi8zOQGhYpFaENoakCzFTvcO+kVQTgDmW9yjP09VW1mYGnI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz+EW3vQBFhM7sXFpD1bEPPVLjrGQrxLbTST+k9+yoMgdxKAyR
+	xmYWTRZnK1CuQ1ZThkAGxSSsuVTI8W1yFdSjzOsSyjw7oHEUVamf73R5xe5Fa68q391fN/Bp53F
+	NGKOuQcVdlBb6Xlr/KwGUiZwKjWH6R/DFqQ8vxj5mWA==
+X-Gm-Gg: ASbGnctplefEEXfNh1JoT15ChqIfS+Wj0xIKW9pKFOiE3ky7tqqEZV3A46VQ/WsavTf
+	m+pKH1sGEbSspSaD5bVoqnCufhXgzLFU+HslTLX0gR5E/cTS2z5z5iblefB1wjcExCWdJXyecOp
+	iJNO1NYDTFAor+ku7kSLsFLov8aPcW/RFQ84T+hB+zN1ow+pAHdG004m8J2jkWBOhn6Q1C3KWQF
+	A1qeSfnhmJlU7+SjDpFVK/3M4eoELaV2OOIvDUt632kLuXngH24LgoOmF8DDt2NSjEiP80XVRT7
+	8pawG5ayDjDT2ZUGp4If9EPOqDvTQp2pRSmq
+X-Google-Smtp-Source: AGHT+IHhbnW16J86TRnMQTLpcKVq3NDU4KkB/OVNswAwHypDeIy9G9wiXcHUgNtwTpQ7IO5jgRxcjdTopF5jQwIYcUk=
+X-Received: by 2002:a17:903:11c3:b0:273:3f62:6eca with SMTP id
+ d9443c01a7336-2948b976597mr16484025ad.18.1761289607173; Fri, 24 Oct 2025
+ 00:06:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <6a2072e1-43be-49a3-b612-d6e2714ec63e@6wind.com>
-Date: Fri, 24 Oct 2025 02:05:38 -0500
-X-Gm-Features: AS18NWBithWB09Icf3xAiWn1GXXbmzEgZpGPuUfsraurx7GlZ0ka3mXgdSaqBxU
-Message-ID: <CAG=2xmNBZ1V7kh7Y0425NPTLJCVyhLB82zNC6GpUN6cXJoyBMw@mail.gmail.com>
-Subject: Re: [PATCH net-next] rtnetlink: honor RTEXT_FILTER_SKIP_STATS in IFLA_STATS
-To: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Cc: netdev@vger.kernel.org, toke@redhat.com, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Stanislav Fomichev <sdf@fomichev.me>, Xiao Liang <shaw.leon@gmail.com>, 
-	Cong Wang <cong.wang@bytedance.com>, linux-kernel@vger.kernel.org
+References: <20251022-reset-gpios-swnodes-v2-0-69088530291b@linaro.org>
+ <20251022-reset-gpios-swnodes-v2-3-69088530291b@linaro.org> <aPkppRTFKFxqAxKp@smile.fi.intel.com>
+In-Reply-To: <aPkppRTFKFxqAxKp@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 24 Oct 2025 09:06:31 +0200
+X-Gm-Features: AS18NWAgU2ta-z_SUgKnYRR3SPu4JU1qFzcnLihBLKAoa5GuNunRx0TYFhb0X7M
+Message-ID: <CAMRc=MfBefm_kjTjB5PA43h-3Sk39TEeP0JpzWGr3Jnf9hd7wQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/9] software node: allow referencing firmware nodes
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 05:39:09PM +0200, Nicolas Dichtel wrote:
-> Le 23/10/2025 =C3=A0 10:34, Adrian Moreno a =C3=A9crit=C2=A0:
-> > Gathering interface statistics can be a relatively expensive operation
-> > on certain systems as it requires iterating over all the cpus.
-> >
-> > RTEXT_FILTER_SKIP_STATS was first introduced [1] to skip AF_INET6
-> > statistics from interface dumps and it was then extended [2] to
-> > also exclude IFLA_VF_INFO.
-> >
-> > The semantics of the flag does not seem to be limited to AF_INET
-> > or VF statistics and having a way to query the interface status
-> > (e.g: carrier, address) without retrieving its statistics seems
-> > reasonable. So this patch extends the use RTEXT_FILTER_SKIP_STATS
-> > to also affect IFLA_STATS.
-> >
-> > [1] https://lore.kernel.org/all/20150911204848.GC9687@oracle.com/
-> > [2] https://lore.kernel.org/all/20230611105108.122586-1-gal@nvidia.com/
-> >
-> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> > ---
-> >  net/core/rtnetlink.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-> > index 8040ff7c356e..88d52157ef1c 100644
-> > --- a/net/core/rtnetlink.c
-> > +++ b/net/core/rtnetlink.c
-> > @@ -2123,7 +2123,8 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb,
-> >  	if (rtnl_phys_switch_id_fill(skb, dev))
-> >  		goto nla_put_failure;
-> >
-> > -	if (rtnl_fill_stats(skb, dev))
-> > +	if (~ext_filter_mask & RTEXT_FILTER_SKIP_STATS &&
-> Maybe parentheses around this first condition?
+On Wed, Oct 22, 2025 at 8:59=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> The size could be adjusted accordingly in if_nlmsg_size().
-
-Good point! I'll adjust the size. Regarding the parentheses, I can wait
-a bit to see if someone else weights in. I don't have a very strong
-opinion about it.
-
-Thanks.
-Adri=C3=A1n
-
->
-> > +	    rtnl_fill_stats(skb, dev))
-> >  		goto nla_put_failure;
+> On Wed, Oct 22, 2025 at 03:41:02PM +0200, Bartosz Golaszewski wrote:
 > >
-> >  	if (rtnl_fill_vf(skb, dev, ext_filter_mask))
+> > At the moment software nodes can only reference other software nodes.
+> > This is a limitation for devices created, for instance, on the auxiliar=
+y
+> > bus with a dynamic software node attached which cannot reference device=
+s
+> > the firmware node of which is "real" (as an OF node or otherwise).
+> >
+> > Make it possible for a software node to reference all firmware nodes in
+> > addition to static software nodes. To that end: use a union of differen=
+t
+>
+> Still union?
 >
 
+Right.
+
+> > pointers in struct software_node_ref_args and add an enum indicating
+> > what kind of reference given instance of it is. Rework the helper macro=
+s
+> > and deprecate the existing ones whose names don't indicate the referenc=
+e
+> > type.
+>
+> > Software node graphs remain the same, as in: the remote endpoints still
+> > have to be software nodes.
+>
+> ...
+>
+> > -     refnode =3D software_node_fwnode(ref->node);
+>
+> > -     if (!refnode)
+> > -             return -ENOENT;
+>
+> Why is this being dropped?
+>
+
+I'll fix it.
+
+> > +     if (ref->swnode)
+> > +             refnode =3D software_node_fwnode(ref->swnode);
+> > +     else if (ref->fwnode)
+> > +             refnode =3D ref->fwnode;
+> > +     else
+> > +             return -EINVAL;
+> >
+>
+> ...
+>
+> > -#define SOFTWARE_NODE_REFERENCE(_ref_, ...)                  \
+> > +#define __SOFTWARE_NODE_REF(_ref, _type, _node, ...)         \
+> >  (const struct software_node_ref_args) {                              \
+> > -     .node =3D _ref_,                                          \
+> > +     ._node =3D _ref,                                          \
+> >       .nargs =3D COUNT_ARGS(__VA_ARGS__),                       \
+> >       .args =3D { __VA_ARGS__ },                                \
+> >  }
+> >
+> > +#define SOFTWARE_NODE_REF_SWNODE(_ref, ...)                  \
+> > +     __SOFTWARE_NODE_REF(_ref, SOFTWARE_NODE_REF_SWNODE,     \
+> > +                         swnode, __VA_ARGS__)
+> > +
+> > +#define SOFTWARE_NODE_REF_FWNODE(_ref, ...)                  \
+> > +     __SOFTWARE_NODE_REF(_ref, SOFTWARE_NODE_REF_FWNODE,     \
+> > +                         fwnode, __VA_ARGS__)
+>
+> I do not see a point of making these three instead of two direct ones.
+> But I have no strong objection either.
+>
+
+Then I'll keep it for now.
+
+Bart
 
