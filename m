@@ -1,127 +1,154 @@
-Return-Path: <linux-kernel+bounces-868045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB879C04391
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:09:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29C8C04394
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA9F94F503C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:09:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66BF73A66AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E5126E17F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A420C26E70B;
 	Fri, 24 Oct 2025 03:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nppakm/r"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="p/f4y8xv"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E8B1AA1F4;
-	Fri, 24 Oct 2025 03:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E192F1A3160;
+	Fri, 24 Oct 2025 03:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761275380; cv=none; b=hx5+1eURAVDWkqvhFOd/2nEVd/UUO2bZDSKFWxrZMoguhibyFgo9voI9/fdjiAiAewQXkaxkvYO85nIt0i/Oca0ED4sD2SyghhF07XHXZGKZKN8d3yZm8hPrcasTHaktPdLQeezKGuV/kBZ8A62ZvvN9BCU7fDz1wfwtKJkZy48=
+	t=1761275380; cv=none; b=OFGSAfJG0v/wDh6os38Md6o4Px5eNuyi5tXMLk4d71ATDBcYScL9iakqeh56kOv46fBCsbHV3SwHXV6+mxi8G2pklYyWsxF8flUVbgI7EooVoBwAHNrHLok7TL5oHZG3IcEBLIlBZqMyEoCuCBIRK5lMVSRwFh9vgoqkAfNbdRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761275380; c=relaxed/simple;
-	bh=rFbdG33yTA6ABPwVswT7hZryKQz8WBOCVj9FmL7xrOo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HDUrWSossJfo72ALV6y+5yhQ48JYuJuEswSVeAYiV68qqkty5mPrb0FJztWVCBPf75YPU9TOzGfXtXp/ujQrZrXX3xzvk7Ng6Q1LIkXldme/6xFhpc3qwyiQ2hO1l+DOkrJbSw5eyEWWfdvfGGPM6tVp2GGImaJunPGlgk0XFfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nppakm/r; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59NLO0DD001598;
-	Fri, 24 Oct 2025 03:09:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=RDRxwxS5mGdh5dm9XrIkIp+2Qj2GQl/8xYffaVjIYhI=; b=
-	nppakm/rmY7UiQxAaypZth+bO6Xcw9su7o580C3UWkJQfeYYugVPFfD2nO9IpzHe
-	1qVofsXSPfk3d+a1vY5UP1c26X+vlFLMzvsVuUvSTjBzocRM9xgy0IxgBq8BkILZ
-	GCaoD+ryqZ+mWSTd+yPTtUqM2XG0UxaZEJOA3gbc/rINsWsLevbYUVmmTAHUPK+n
-	9C9hXWfmXGQ4YRtOKkdgMUVOkAm6RidBxKsSqALMYXSoV9qltW5tgnDQQ9HUt1eS
-	eQzdsligIgky1eCeFwUHqh34g4LmomkAv31P/P7KhS660IMTnsGPbVS/Hwnq4m3h
-	YRW1HPkCLaNIyvarR2TyHQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49xv3kut4j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 Oct 2025 03:09:29 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59O2gu20012175;
-	Fri, 24 Oct 2025 03:09:28 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49v1bfkdye-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 Oct 2025 03:09:28 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59O39RNk014958;
-	Fri, 24 Oct 2025 03:09:27 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 49v1bfkdxr-1;
-	Fri, 24 Oct 2025 03:09:27 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: mani@kernel.org, James.Bottomley@HansenPartnership.com, bvanassche@acm.org,
-        konrad.dybcio@oss.qualcomm.com,
-        Nitin Rawat <nitin.rawat@oss.qualcomm.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH V1] ufs: ufs-qcom: Fix UFS OCP issue during UFS power down(PC=3)
-Date: Thu, 23 Oct 2025 23:09:19 -0400
-Message-ID: <176127514327.1781649.7123820195194287738.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251012173828.9880-1-nitin.rawat@oss.qualcomm.com>
-References: <20251012173828.9880-1-nitin.rawat@oss.qualcomm.com>
+	bh=1qbpGAwOvZh5MHLgLvw2hkTTuBqG905rvavB2/9adlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KPqBdJktYElVaPJ+8XMhzipNzWYvQe0vzkmW0mdcKPyoCsaQXppufXdtkOUh5ImSr8lzUsfMrX9JJWgJZhP75Ah9AeKsmoMBbE3YomAye5pCwUP1gCPsfdZyxg1iCcJxmi/LXmMSDouSYT5zjT8vkxcmm2GoPXVRMaNo6n7q06U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=p/f4y8xv; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761275367; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=pdaoYJ6/jp41uVjOn5ADQtwMyGMN5yCeVaz4/XBge20=;
+	b=p/f4y8xvbZ5mYnBovZVlyAeQ+9rapGQxcKTQq5Duq4z6UC/NUNvyNHXb6jEmXFcfRupMax1zyGvjAie5kaOeSu4fgYoKlPRoceTnrGhVyUErrgCrjwGTw1wG7c5755jBe1E7jMD45Bqz8fttfXR0jJBeo5Lf7TYFp7CAXzCUhsA=
+Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wqskgl9_1761275365 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 24 Oct 2025 11:09:26 +0800
+Message-ID: <1eaf1f94-e26b-4313-b6b7-51ad966fe28e@linux.alibaba.com>
+Date: Fri, 24 Oct 2025 11:09:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/5] PCI/ERR: Use pcie_aer_is_native() to check for
+ native AER control
+To: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kbusch@kernel.org,
+ sathyanarayanan.kuppuswamy@linux.intel.com, mahesh@linux.ibm.com,
+ oohall@gmail.com, Jonathan.Cameron@huawei.com, terry.bowman@amd.com,
+ tianruidong@linux.alibaba.com
+References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
+ <20251015024159.56414-5-xueshuai@linux.alibaba.com>
+ <aPYMO2Eu5UyeEvNu@wunner.de>
+ <0fe95dbe-a7ba-4882-bfff-0197828ee6ba@linux.alibaba.com>
+ <aPZAAPEGBNk_ec36@wunner.de>
+ <645adbb6-096f-4af3-9609-ddc5a6f5239a@linux.alibaba.com>
+ <aPoDbKebJD30NjKG@wunner.de>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <aPoDbKebJD30NjKG@wunner.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-23_03,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 suspectscore=0
- malwarescore=0 bulkscore=0 phishscore=0 spamscore=0 mlxlogscore=545
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
- definitions=main-2510240026
-X-Authority-Analysis: v=2.4 cv=acVsXBot c=1 sm=1 tr=0 ts=68faede9 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=7QR6E6h3abEZ3QZYDiMA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: GQen-p-FkaImzuUhi76TQZFlZBXBOsrF
-X-Proofpoint-GUID: GQen-p-FkaImzuUhi76TQZFlZBXBOsrF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDA3MSBTYWx0ZWRfX/rW24lCU6sAV
- qQF8IYwa3dozoAqxhEnow1u4AVwqUKBbx8NBoZ8clc19pgcVkoe76kUoMe24DsvavsC+oeFidE/
- M2he41E9Ngb9JPGxc2Py4voSoUnPFqeSvjcjqeNixD9vCbrhMTMpJlXZdZ415YEm9Oxp3ojuJYL
- qo+/NUkfiDCsQFsnRwhdxPDTVJ1+al/0goJ5h1z5oRVd0gfBombloD4sGLsJa0GUjqiqQuOTk3K
- SMCXR5SVSQ4fOIwplRbSlUQ+EaBeNOUsk8v6YSwlOpSXCUZt48o6bKpZra+VMRxYod2ptHmICIM
- CZ1rTeoqelyIy0dP5Q5PWiD46ktYPca2r31SLEmLsmd44iNAHHADeltE/rZu3Xzr+irMtTo5g3V
- Vco2YhD0YhPWj3OGy0NxIQnICImUkQ==
 
-On Sun, 12 Oct 2025 23:08:28 +0530, Nitin Rawat wrote:
 
-> According to UFS specifications, the power-off sequence for a UFS
-> device includes:
+
+在 2025/10/23 18:29, Lukas Wunner 写道:
+> On Mon, Oct 20, 2025 at 10:45:31PM +0800, Shuai Xue wrote:
+>> 	if (host->native_aer || pcie_ports_native) {
+>> 		pcie_clear_device_status(bridge);
+>> 		pci_aer_clear_nonfatal_status(bridge);
+>> 	}
+>>
+>> This code clears both the PCIe Device Status register and AER status
+>> registers when in native AER mode.
+>>
+>> pcie_clear_device_status() is renamed from
+>> pci_aer_clear_device_status(). Does it intends to clear only AER error
+>> status?
+>>
+>> - BIT 0: Correctable Error Detected
+>> - BIT 1: Non-Fatal Error Detected
+>> - BIT 2: Fatal Error Detected
+>> - BIT 3: Unsupported Request Detected
+>>
+>>  From PCIe spec, BIT 0-2 are logged for functions supporting Advanced
+>> Error Handling.
+>>
+>> I am not sure if we should clear BIT 3, and also BIT 6 (Emergency Power
+>> Reduction Detected) and in case a AER error.
 > 
-> - Sending an SSU command with Power_Condition=3 and await a
->   response.
-> - Asserting RST_N low.
-> - Turning off REF_CLK.
-> - Turning off VCC.
-> - Turning off VCCQ/VCCQ2.
+> AFAIUI, bits 0 to 3 are what the PCIe r7.0 sec 6.2.1 calls
+> "baseline capability" error reporting.  They're supported
+> even if AER is not supported.
 > 
-> [...]
+> Bit 6 has nothing to do with this AFAICS.
 
-Applied to 6.18/scsi-fixes, thanks!
+Hi, Lukas,
 
-[1/1] ufs: ufs-qcom: Fix UFS OCP issue during UFS power down(PC=3)
-      https://git.kernel.org/mkp/scsi/c/5127be409c6c
+Per PCIe r7.0 section 7.5.3.5:
 
--- 
-Martin K. Petersen
+   **For Functions supporting Advanced Error Handling**, errors are logged
+   in this register regardless of the settings of the Uncorrectable Error
+   Mask register. Default value of this bit is 0b.
+
+ From this, it's clear that bits 0 to 2 are not logged unless AER is supported.
+
+So, if dev->aer_cap is not true, there’s no need to clear bits 0 to 2.
+This validates the dev->aer_cap sanity check in pcie_aer_is_native():
+
+   int pcie_aer_is_native(struct pci_dev *dev)
+   {
+       struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
+
+       if (!dev->aer_cap)
+           return 0;
+
+       return pcie_ports_native || host->native_aer;
+   }
+   EXPORT_SYMBOL_NS_GPL(pcie_aer_is_native, "CXL");
+
+Based on this, the introduction of pcie_aer_is_native() in the patch
+seems reasonable and consistent with the PCIe specification.
+
+Further, should we rename pcie_clear_device_status() back to
+pci_aer_clear_device_status():
+
+-void pcie_clear_device_status(struct pci_dev *dev)
++void pci_aer_clear_device_status(struct pci_dev *dev)
+  {
+         u16 sta;
+
+         pcie_capability_read_word(dev, PCI_EXP_DEVSTA, &sta);
+-       pcie_capability_write_word(dev, PCI_EXP_DEVSTA, sta);
++       /* Bits 0-2 are logged if AER is supported */
++       pcie_capability_write_word(dev, PCI_EXP_DEVSTA, sta & 0x7);
+  }
+
+I am still uncertain whether bit 3 ("Unsupported Request Detected")
+should be cleared in this function. It’s not directly tied to AER
+capability.
+
+
+I’d love to hear your thoughts, as well as @Bjorn’s, on both the renaming
+suggestion and whether bit 3 should be cleared alongside bits 0 to 2.
+
+Thanks.
+Shuai
 
