@@ -1,254 +1,87 @@
-Return-Path: <linux-kernel+bounces-868866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538B6C065EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:56:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F87DC065FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7AE23BF1B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:54:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77BCC3BD9EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CAF32BF25;
-	Fri, 24 Oct 2025 12:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzVtNQfd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124E3316915;
+	Fri, 24 Oct 2025 12:54:08 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B87131B823;
-	Fri, 24 Oct 2025 12:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160CA2580F0
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761310297; cv=none; b=RaKnAQdor/korkfUPrj3vCXA3OGnRbqJCF6DDfvckxHzQ8f6UfTFOCFzJHuBYWXdADu/V18Xt2d5nvO038z53JH2zLW0BgC4QHPsC8/IYJ/9K3SiFiO8WZBfi8v1hup+zVHbDHCyzowK9G4tW0lrMcaU3/+sfWReoEFMHFwcA+Y=
+	t=1761310447; cv=none; b=USaFr+ZkxY8FfESA4Z+AHB5eyieusY9DtphMO7y8Q8y0kyjd4rvn/qOGgyx8qeY4AD69TvLhL2uHAEmGUdNRWUYwI8/CesC5bREsb8cvVuWeiga6HfvOnJLfCfb0BjqZF4uSLZk2vHZGDS6NTIhLPK/AaYDd7URgS7MTowy1mfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761310297; c=relaxed/simple;
-	bh=D9NOQFttLM44MLx09Zex9E0ZU1bSnzyvmGIvjIHg3PU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y1TFVKx/AEjDFGX7hwT5FxI+0Fd11UhkonJo0zK8VKtOnZN9mX6fQEB9qPx9xSEc9NuNaYYST2hwU6OBrKna0BAE1HqApAVZ2n3D1gtZ4KY/Qm7X3ktZ9EVUbMElmWMBnRj2TxzBOkjhsCtTEAFcVA0+UfsWIKaC2sZYTK6Q6ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzVtNQfd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3C46DC116D0;
-	Fri, 24 Oct 2025 12:51:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761310297;
-	bh=D9NOQFttLM44MLx09Zex9E0ZU1bSnzyvmGIvjIHg3PU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=NzVtNQfdU4U5WsCNPN5cRDnQX5SqAvT6oe3v9i2qF0cTmJaW18BphDvxD3nKBYlHW
-	 61qNxslkIIMyKV8YveixWl4zP4fAe+t93KZFBlgQJQm7clBdtWnWP2OurrmZJru36y
-	 yBiKKCG5PXZ6hwK8/Ho6Ph++wdkaLuvEFVzFozfrOsz/B9PGFlMh2kyIa9w5WQiWi3
-	 1+M4+7C6E+5p+hb3DKoD4zl7TyuIKED4d1hz85ZKruBEgN7yhK/lonDPQ97DsLIoUc
-	 AckVBMk6zhI0adAD40I+aNAvvD9WClXrRLBfI9+pB+cPmUV5YDdo4rLugZpnbSwiMj
-	 FXn7UU/oZHK9w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 302DFCCF9E0;
-	Fri, 24 Oct 2025 12:51:37 +0000 (UTC)
-From: Michael Riesch via B4 Relay <devnull+michael.riesch.collabora.com@kernel.org>
-Date: Fri, 24 Oct 2025 14:51:47 +0200
-Subject: [PATCH v14 18/18] arm64: dts: rockchip: add radxa camera 8m on
- rock 3a csi port
+	s=arc-20240116; t=1761310447; c=relaxed/simple;
+	bh=sqco1SkbpPeN/fkoFbx8UUPzur0HT/v60YYHcfVUFVU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gw6gJ1vCsOJl+/ffk7KySqyOJsGkdpyfshGwiRduSSy7Zzgb5SbZbmSWEAbm+IZfmKdcp45CgrYeissdhlCzWPM9Ws9GEXP3AjrUzv0TxBj8M6OfpidQnYCKtwnh4F8oi25dD4IUTgSeoTC7q8Q/KBMVsJJDUxwNhYbau+A6w9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-940d88b8c15so181735939f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:54:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761310443; x=1761915243;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jXfjPyujap8wSrwcOSxEab06xkdmM7r2zrJ/GRA6FPM=;
+        b=qHXGOjFjesJn/7lQOQKGeotc7yu+0Y5z/HT56nty3Oe6uWjhdpd7n28gzp5zdx2att
+         kHa99sY44n1BK40cOLp29Vk5Q+sOTGNo5rc0PV91n8DOzWW37FPt4qknNPdQj/W9qVZH
+         JHYQyuif9tZSTdMPwt/pJTbW9Hs2c4CGeotno/bSUFwGNMefb2yn62bWQCW/HcavXlaR
+         3/m5GFl2ddxfOi8vo2tHlXw7fGSSx3NIfvPdqj1NIQN2cguKk82Xb3x98Ruq/b63Fkus
+         f5ALMQi8FAq8cAJDi3qMegGYQMfJAFLBKKJYaA6kZtu3R85A3u58Kz4c0twp/I/RT5Gi
+         56RA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwBO5FzcNGFkYkv4pl9JNGByUc3gvo4YZTbb8IKELXxIkQhrlg1rgXTFEQNpmvZluPpTPeWmScGaNtPjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOHS/oKuf8IHk+zVsLht2iJGAtOA174hq7sfjf47qMrHasdPLB
+	bsUnpyPWWc4lCB088EeE1MkOrwvw7nlQuSaduVMJDH++BANN7yG5b517NEc41NMjb/nHndgwrR+
+	9+mAyra4kqXuLkFGTF8ZxX729dCTTd/iMqJUKdDGwoF9/6I+LncHotFds6k4=
+X-Google-Smtp-Source: AGHT+IGDaNPZGTE88sO51qJBO0et5Z9tEvKa1D/wS67N7q0Z0fayJif6Sj+fttpvPe3U2Dd/Lo5NDowYdscw25LgWLEplWwv0lX/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240220-rk3568-vicap-v14-18-b38b6da0fc80@collabora.com>
-References: <20240220-rk3568-vicap-v14-0-b38b6da0fc80@collabora.com>
-In-Reply-To: <20240220-rk3568-vicap-v14-0-b38b6da0fc80@collabora.com>
-To: Mehdi Djait <mehdi.djait@linux.intel.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Gerald Loacker <gerald.loacker@wolfvision.net>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Markus Elfring <Markus.Elfring@web.de>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Kever Yang <kever.yang@rock-chips.com>, 
- Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Collabora Kernel Team <kernel@collabora.com>, 
- Paul Kocialkowski <paulk@sys-base.io>, 
- Alexander Shiyan <eagle.alexander923@gmail.com>, 
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, 
- Michael Riesch <michael.riesch@collabora.com>, 
- Michael Riesch <michael.riesch@collabora.com>, Chen-Yu Tsai <wens@csie.org>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761310293; l=4423;
- i=michael.riesch@collabora.com; s=20250410; h=from:subject:message-id;
- bh=8+gsoG6dBtp0EaQEhGBr2hG0N8BoIt7Rya8dykcaVJk=;
- b=QkRDoMhQXlaFfrn9H71B3EP+aJ/ZFPGMPArrb0cZaFufBhfhco4GYIEBu49GXqLJFY4wL0S/t
- PDmNnpkWsOTAw30EHsw4FTe/oYnr3pBtVS8aiMB9hBhAcr/1fSkeQwf
-X-Developer-Key: i=michael.riesch@collabora.com; a=ed25519;
- pk=+MWX1fffLFZtTPG/I6XdYm/+OSvpRE8D9evQaWbiN04=
-X-Endpoint-Received: by B4 Relay for michael.riesch@collabora.com/20250410
- with auth_id=371
-X-Original-From: Michael Riesch <michael.riesch@collabora.com>
-Reply-To: michael.riesch@collabora.com
+X-Received: by 2002:a05:6e02:1522:b0:42f:e334:5ec3 with SMTP id
+ e9e14a558f8ab-430c527fc65mr351501825ab.26.1761310443287; Fri, 24 Oct 2025
+ 05:54:03 -0700 (PDT)
+Date: Fri, 24 Oct 2025 05:54:03 -0700
+In-Reply-To: <20251024071523.5h4jc%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fb76eb.050a0220.346f24.00de.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_dir_foreach_blk
+From: syzbot <syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Michael Riesch <michael.riesch@collabora.com>
+Hello,
 
-Add a device tree overlay for the Radxa Camera 8M (featuring the
-Sony IMX219 image sensor) to be connected to the Radxa ROCK 3A CSI
-port.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-The image sensor is connected to the RK3568 VICAP MIPI CSI-2
-port, since as at the time of writing this there is no mainline
-support for the RK3568 ISP.
+Reported-by: syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com
+Tested-by: syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
----
- arch/arm64/boot/dts/rockchip/Makefile              |   5 +
- .../dts/rockchip/rk3568-rock-3a-radxa-cam8m.dtso   | 103 +++++++++++++++++++++
- 2 files changed, 108 insertions(+)
+Tested on:
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index ad684e3831bc..d6b969a0dab9 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -146,6 +146,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-qnap-ts433.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-radxa-e25.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-roc-pc.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3a.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3a-radxa-cam8m.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3b.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-display-vz.dtbo
-@@ -243,6 +244,10 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64-v2-screen.dtb
- rk3399-rockpro64-v2-screen-dtbs := rk3399-rockpro64-v2.dtb \
- 	rk3399-rockpro64-screen.dtbo
- 
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3a-radxa-8m-cam.dtb
-+rk3568-rock-3a-radxa-8m-cam-dtbs := rk3568-rock-3a.dtb \
-+	rk3568-rock-3a-radxa-cam8m.dtbo
-+
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-vz-2-uhd.dtb
- rk3568-wolfvision-pf5-vz-2-uhd-dtbs := rk3568-wolfvision-pf5.dtb \
- 	rk3568-wolfvision-pf5-display-vz.dtbo \
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3a-radxa-cam8m.dtso b/arch/arm64/boot/dts/rockchip/rk3568-rock-3a-radxa-cam8m.dtso
-new file mode 100644
-index 000000000000..3aa1ffdc22d8
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3a-radxa-cam8m.dtso
-@@ -0,0 +1,103 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Device tree overlay for the Radxa Camera 8M attached to the CSI port of
-+ * the Radxa ROCK 3A.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pinctrl/rockchip.h>
-+
-+&{/} {
-+	clk_camera: clock-camera {
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "clk_camera";
-+		#clock-cells = <0>;
-+	};
-+
-+	vana_camera: regulator-vana-camera {
-+		compatible = "regulator-fixed";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		regulator-name = "vana_camera";
-+		vin-supply = <&vcc_cam>;
-+	};
-+
-+	vddl_camera: regulator-vddl-camera {
-+		compatible = "regulator-fixed";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		regulator-name = "vddl_camera";
-+		vin-supply = <&vcc_cam>;
-+	};
-+
-+	vdig_camera: regulator-vdig-camera {
-+		compatible = "regulator-fixed";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-name = "vdig_camera";
-+		vin-supply = <&vcc_cam>;
-+	};
-+};
-+
-+&i2c5 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	imx219: camera-sensor@10 {
-+		compatible = "sony,imx219";
-+		reg = <0x10>;
-+		clocks = <&clk_camera>;
-+		clock-names = "xclk";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&camera_reset>;
-+		reset-gpios = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
-+		VANA-supply = <&vana_camera>;
-+		VDDL-supply = <&vddl_camera>;
-+		VDIG-supply = <&vdig_camera>;
-+
-+		port {
-+			imx219_output: endpoint {
-+				data-lanes = <1 2>;
-+				link-frequencies = /bits/ 64 <456000000>;
-+				remote-endpoint = <&csi_input>;
-+			};
-+		};
-+	};
-+};
-+
-+&pinctrl {
-+	cam {
-+		camera_reset: camera-reset-pinctrl {
-+			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&csi {
-+	status = "okay";
-+};
-+
-+&csi_dphy {
-+	status = "okay";
-+};
-+
-+&csi_in {
-+	csi_input: endpoint {
-+		data-lanes = <1 2>;
-+		link-frequencies = /bits/ 64 <456000000>;
-+		remote-endpoint = <&imx219_output>;
-+	};
-+};
-+
-+&vicap {
-+	status = "okay";
-+};
-+
-+&vicap_mmu {
-+	status = "okay";
-+};
+commit:         8e6e2188 Linux 6.1.157
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=17c17734580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3fff88b67220f824
+dashboard link: https://syzkaller.appspot.com/bug?extid=b20bbf680bb0f2ecedae
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=164eae7c580000
 
--- 
-2.39.5
-
-
+Note: testing is done by a robot and is best-effort only.
 
