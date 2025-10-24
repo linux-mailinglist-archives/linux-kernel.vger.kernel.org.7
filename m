@@ -1,274 +1,174 @@
-Return-Path: <linux-kernel+bounces-867972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6653BC040A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:46:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3D8C040AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2235F3B4B92
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:46:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9CCA1891CF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6773A1B85F8;
-	Fri, 24 Oct 2025 01:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BC014386D;
+	Fri, 24 Oct 2025 01:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="QRj1jkVH"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012045.outbound.protection.outlook.com [52.101.66.45])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c1eb24y6"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275A0D531;
-	Fri, 24 Oct 2025 01:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761270381; cv=fail; b=DWfDlVkub9lEbt1pkd6Sqd0wXpyCaDVMxWXTtBIbAqRminbmQSGXwzGqFKqEJ6k2qV7wNcxseudcVhFirElEZvuH188nIJlitirFUUUcnBV6A1U3FwUhEIMj9wmwnEAElyHHgkU0oBtKDsNIO03TSf7iLRJcsRuJPfY5ilO/7lg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761270381; c=relaxed/simple;
-	bh=QW/Y2XtHBrEB4kfJixw/V6m56an9GzNH9oy17+zFtDg=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=oU6v0zhTAFzkf0o40IxNS2zFaGTR5r/Xmi9Knr508h+XV13SVgqoU12AIStucdlS6CUz21zbjLbKJgaZc2hHlO/FCaxDzxfH/4BVlsDi475yJXBA3Tnoc7Te5Wz60JLIKnGOl/9s5l9n/R1X1pj5iulUShWBkDS6mAtH1k5ZvTo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=QRj1jkVH; arc=fail smtp.client-ip=52.101.66.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gSkbRaoaaKdAPDfeRRKHy76mDRO6SsKVJ2IfsAjVpJl3teuKbdttE68Y0x0YKEdtXuu5w7BrAWUolu5L2LbWKfwJQpdvicTrHSAoDItVq8NPU7NhyZJkGNc0sLAP8mQWoElzKNYjkR8G8sTyqO0MclujFXmm0V1WJzRp5aqr9i17snCIJYOrq0mP9iYEc9mEcmYokAPS9tVwCWM8RIeaIMQOP1VViBcHp4WLK+Agw8YJsBGonPP8IZpQX3s59sjvkCp31dbgaQ68kGPLCFys8r0DhWqrV7KLDkEpZGOOsVowADWG3ZY3WdobiNFCGeNccqV5ims2We7aAFBW7ZDU2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gooj0TaeEHK/sqkhbbrwjTWvbvT+eybNYoT9jlpByV0=;
- b=fgFV5rg40OYBQWmDqUdFoK1NifqtA2NZ6lm+evbMrCZHkTuPFQCS2I2R6+NCnH+EZQYYfd5punITGHGO6JM4uGo3L4lC+Va7FSUdgoNNtitNhDXrUIknEYDxjqWJEgRoTMdWkoQMEg4VfkYUioiH09qdx4brkyqb7+c+J18601QmN08S8xcR8eqSYD5KGW051dvtZeOrtJqSRYVirUd1x+hbWFFWev+ugPrfu2bu0CI8s4aodH3dJnpxuCaIfKzeW+2svj7oNK2qcJmJGKsuHLFKbojIwph5lDaJmitnYRb50eUyBX9zz3YZiVXA0f0MoL6izIOFKwt2QD0etAZ9WQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gooj0TaeEHK/sqkhbbrwjTWvbvT+eybNYoT9jlpByV0=;
- b=QRj1jkVH4AA3qEsF+l1G5GG7auCpa+W1K0/FQuK13Djdd1N34old+trEF2OZW2dcdvSNZKxozW19gfFlQgVThxh556YchnW05uUNThfCg+T+BcDKQnRBHKEnmN9FV1+eW0m4EVVXT9X0Ql87dMOeCmgOdubJM9MRKRbNjj6aYa9p8DVEvkllKWjpoAT0QxMtfw9bXArUjRqSunkS+DATrapirOiXzDH5l0zvXU/K8SytXo5yph6z+Dvy26gzFey2ZL1zYsAenUk7sWKTM+TciVwdfcLnwCcyFWrqQn7DIWN1MIJlcZI9m8TVnUG8ikRglEX9bacZBcfiIOzt5Jw2Tg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DBAPR04MB7303.eurprd04.prod.outlook.com (2603:10a6:10:1af::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Fri, 24 Oct
- 2025 01:46:16 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 01:46:16 +0000
-From: Peng Fan <peng.fan@nxp.com>
-Date: Fri, 24 Oct 2025 09:45:51 +0800
-Subject: [PATCH v2] clk: imx: imx8mp-audiomix: use
- devm_auxiliary_device_create() to simple code
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-auxiliary-v2-1-a353dc9e6b1a@nxp.com>
-X-B4-Tracking: v=1; b=H4sIAE7a+mgC/23MSw7CIBSF4a00dyyGhxpx1H2YDuiF2psoNKCEp
- mHvYscO/5OTb4PkIrkEt26D6DIlCr6FPHSAs/EPx8i2BsnlWXCpmPkUepKJK1NaX0d0VuOoof2
- X6CYqu3UfWs+U3iGuO53Fb/2nZMEE40ZcJnNChdb2vixHDC8Yaq1f9CqJ56AAAAA=
-X-Change-ID: 20251023-auxiliary-3998bced9cb9
-To: Abel Vesa <abelvesa@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>, 
- Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <frank.li@nxp.com>, 
- linux-clk@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>, Frank Li <Frank.Li@nxp.com>, 
- Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761270366; l=2365;
- i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=QW/Y2XtHBrEB4kfJixw/V6m56an9GzNH9oy17+zFtDg=;
- b=KJgqkz0HOw/hNvVt9dCLFFtbedsec0tw1OlqJ1DygKkzXLsIXXNf/5zC6el86sm2HFRbwigDd
- hBmFGCC8tCSDIZn+4Kkx2bSWiUjtfyiHCiD+hJSWDoFoxs7fmQlGzMP
-X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
- pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
-X-ClientProxiedBy: SGXP274CA0012.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::24)
- To PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530AB24B28
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761270449; cv=none; b=b2aRG3a0qf7mFFMGDlzUIrVZlan5bItlCRZpykhQyHslfCtb5uVVtsS26ccwSzaBTpCCuWyTreMHgXuQCMhYwpdsTaLCdHu/8tswFmMHmfpb9ei6+YZHig6VHzfyoLC/y/WV+tWsF0cTwNv3G2CCC7nSs0Ds/5kTkwiiQ8/xtCo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761270449; c=relaxed/simple;
+	bh=QELNA6nhX4nNTYx0aRq6taWLbP4BTxLUPBN9KDBIgtE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cE5JTt5+lg2WPw4Ph0Ljwb1+L6MM23hslsOWnn5SYkvfLxBUjrVprMfuFZi7wMQrkT65hvb96lOmzh+jcwcEbhwxV1didL2p5/IAIX3mUNUgAc/JYjokB5qCDt0dUogIlFBpHYzv+TuD6UTouzKGNAQ78Fbr2xGyVG0Y0sR1WnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c1eb24y6; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a5bafe85-5749-412a-b152-1480ecac353a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761270435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=STflXpCWJ0a/kLZXXC4hXtGrl5H77gGbSnIMfRZiCBo=;
+	b=c1eb24y6ch3LD8JM6vrSlyHnFy5bC8IqtuP87eoylAOZTtFTcfJXDMNp393MXln4ynkXtb
+	BPgJ4PeTpY5tBMoZ3AkSOBW8rXaH7kAOWrGilEnbIRRPOyPyvfyS75DFcveofInlx52NtM
+	RKTVbNFlPpzZNc5d6hSGCW5pQnrJPBU=
+Date: Fri, 24 Oct 2025 09:47:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DBAPR04MB7303:EE_
-X-MS-Office365-Filtering-Correlation-Id: ba8e0d92-8fd4-4456-50c4-08de129f1eba
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|19092799006|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aDMvRjd4elJySFhkQU8yNlhoNXo3SENBVll0Q3ViS1JkYmcvSVcyMWs0Wm1E?=
- =?utf-8?B?aXh2bzlqbjRVTlJZazRQOEpZVjhiOUNBaSt2em8ydFRkTHZqSXJDTys0VHN2?=
- =?utf-8?B?dmt5dWZsUzAxaDVMMlk2UHN4b2ttQ0dBZFJjM09IM0VBcHN3Mk90QVozSTh2?=
- =?utf-8?B?eThyaHdkaGNlWWRYbmpua2pWS0NNT00wT1ZEczNhSTQzN3FYN3NmdHhDdlFR?=
- =?utf-8?B?aGVtWStEY3FHb1ljUXAvNlcrMDlhT3BNVmJGSUQydU5WNmUxWlhzejhUMzg2?=
- =?utf-8?B?dWRObUNKVk5vZ2svYjFiWFA2VzRPd1V4V2lvalhGalArUC9KOC9COUlHK2p6?=
- =?utf-8?B?OHdnRi8yY0ZoZXNNb0thV1hHblAvSUNGZERLZno2RC81Y3BRV3RQTmJZWTFO?=
- =?utf-8?B?bG5kRGpmMERhVUtwWHB4NEkzc1VGZ0RrVmh0dXp6QnJBY3NJR2xONkZSa01P?=
- =?utf-8?B?NmtCRFNyNVNsZjVPcHBPUW4vWUIwVjA3SGxZKzlCUDBJOXJsRDA3ZTF0UkpZ?=
- =?utf-8?B?cElMcFlHMEF3bDZjYmFOT1crZjAvZEkzcEd5VkE0bFdZNGdWZEhCWmRyeFV6?=
- =?utf-8?B?R3BMd0Y1OW4vNmlKUVNZYUV1ZnE3NDBqd1FkcG05cytPMGdkbmVYcmFRSDha?=
- =?utf-8?B?YjBSUlM0ejVPdm1kRE9Hdlg0azlmTTd5UHV1ZmtMQ3hseU8yWERQblh0NWV4?=
- =?utf-8?B?eG1wTjhLLzk2YjJjb2NIb1krS1AxOWtrOFFRSnMvU2RDRlBYM3MwZklkRTNp?=
- =?utf-8?B?Nk5lK1JSVlNCeE9tSFc4b3diUE03YXhuVFhoWVk4dy9Gay90NzRwNkZvNE14?=
- =?utf-8?B?ZWdnZUp6MkJsNHVpc3pJUEhUa3FHNVNzZG4rMHpGVyswT0oxeG1xMDM3Kzd4?=
- =?utf-8?B?dzcwZ3BEenJpQ0Z3OXd3WnNFanprN1RCalUwVDdJdEUzQ0Q0T2h1OE9pR3JV?=
- =?utf-8?B?QVk4emJLUWdNKzNzVldFZXkydzYzZ2tJVUdYa0Ruc0xubjBmcklBY24rejQr?=
- =?utf-8?B?UXEwWlhjelVkaVhaZGRUNFc1bkYyMS9NYlpuOVB1SXNwWU1Qb2wvNExreWJF?=
- =?utf-8?B?dnVRNlJLOWZNcXNVOGEraVRNWDNaRWVpWk1KY1paUm5CTU1HeDZJR2J0Vy9x?=
- =?utf-8?B?WE83K1ZVZGJwVG0wZHR2dXJ1aWtBdmtpcGRMSUdnN0pNTEJlTXdLVWhaMC9U?=
- =?utf-8?B?NE8xNHNJWHZuNjRERHl0S0ZHSW9hTjdXM2dXaXRQcUM5c0prOUMwMWNRUnZh?=
- =?utf-8?B?Z284U0VKbVh1Q1RSREhRM211WEFBZUJiTFNYdW41dFZWY25iRTQrc245eGU5?=
- =?utf-8?B?TlhHU21hM1VKK2tvU25ZVFpOdForZlMyVHBrUm1rWWFXQlhlcDdic3k5bzRj?=
- =?utf-8?B?UzJ3dlcvR2Q2akl0c3BCZ0k1RFZxeWJBbE9FRmUzL1NKL2hVQTljMG41QThY?=
- =?utf-8?B?cG16TzZqVnNOeTh1dkFIMkZUaUkvODRKZ005aWJYVUhmcUtoS0phd2ROUWNh?=
- =?utf-8?B?OGxUOWpmcS9yaXZWUmNYV1Y2VEE2WlZoWndlWU8rRXhabnFLQ0plL3A5dzRi?=
- =?utf-8?B?OHhWbnp6Mi82aTlucjJQb3BFL2VhN0UyWDlWa0wyd1VpUlEzYnc4azF0QXND?=
- =?utf-8?B?bTc3M0h5UjFPNVlRUXJ1YVJaN01nbFZzaFNJa25uSlFxcVdMUVpzb3pMeTJp?=
- =?utf-8?B?QW1wTDk2aVlRT0Y5Uk5XcThnR0YxTW5HUXRwR0pTZ2tXUXZBeC9Rd0R0cktP?=
- =?utf-8?B?K3dTUEJZODdBdm9jOFduN05DNTl6b0ZSOWlyT1N4Q2NqMFFTTm1XbFd1QWpF?=
- =?utf-8?B?UHBqWHM0S1VHNndvc2JqT08zL24zek45SEozYWZ5VENVQURxTy8zbGJHUFV0?=
- =?utf-8?B?amJMYnhXdXlGTW9TK2hBd2JQMGdrMVZuWEpuUUc5YXNoZkVrblBtOFlEY3F1?=
- =?utf-8?B?cm5JeU1UczlqeHZRKzBWR2NzaGltYVVZUmdxU0pHU0hqWVQzcHZVUXV0TU4v?=
- =?utf-8?B?OHcrNmR0RCtsQS9Dend5K3pKTGs0dEc2Q1NpMll5cjBIWXhTU0dLbldzTGVT?=
- =?utf-8?Q?/uTbq+?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(19092799006)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R25iM1MweHkzR0JZQnlKbGVmVHlTWlUrNnJ6RmNQQ1VUYUJsMVBIMTUrNnN2?=
- =?utf-8?B?VVhqZVJhYTFQV2E5T3E0OW5FOXJDS0o3eEtBM3p5ZVE5aGFGVENycFNGQklY?=
- =?utf-8?B?TUZ4NW5YWFdMS2V6N3MyK0k0S0swSzFnV0tqckVncWZJeTBSbGUxdDdkdWlv?=
- =?utf-8?B?TEJCTkc3eXpnVmFkaDhzNitnWXp6MFlLN1BVOEQ1ZWFGSldSSmVVZVVMN3I1?=
- =?utf-8?B?RmNUQmh3TEFoYTNLZ2xyck5oajF2RGtrVjNtUXRiWHRpNWEvRWNCQmhkK3pl?=
- =?utf-8?B?YmN2WHBpeXlEZzFmeGFQakh3ZkpvM1FUdFNsSDhuT01lNkVLTzhOUEJNOFdK?=
- =?utf-8?B?UkE1K2d3NlZVVHhUemZrT2JZV0RBWTdXdUJlMEZWMlVtMFQ4THRENGIvdkl5?=
- =?utf-8?B?dVBOcU1DTnpKTVUxaldIZ3RlSU5FL1ZkL2RPVjVoOFFoWCtzejFuS3Rxd0pQ?=
- =?utf-8?B?MEYrSTBBc0VqSGlFNGJ3TFhJWlQyYzVIZFI2eVBscDJ0dHNlNzVROTVhc3Zj?=
- =?utf-8?B?dUYzcGFzL2QrUUNiNkhvTFFYVVA0MHIya21nVVZaSTVHbERZMk0yTzZmY2M0?=
- =?utf-8?B?SDQ0YzlhRzdvMTgwMUhaUlV2enROWW5uKzBrUW9KREk2a0szSDlSOXZ1Qzhp?=
- =?utf-8?B?NDhjVEIvNm5sbHVUd21QVEVvUk5wU0J0L2tqTHQ2Y2RCQmNuN0ptemhySW9o?=
- =?utf-8?B?ZU5VczRLQjB5bXIxK3ZFY3lORHNHNUlRZENlS3lPOURkdDljRjM5L0xRSExH?=
- =?utf-8?B?VnRFN1VRRGtURHVDeVRGd0VvQ2JaclJhdXV5WFgvM1IrUyszRzZxMG5qVkpZ?=
- =?utf-8?B?b1dFREYxZ3pjVWxiSTNSTFVaM0R2eW5MZlBVMFRvTzNoN0N1ZVM3Wkh2bk50?=
- =?utf-8?B?Wno1TEJQUlh1SUh0cS83YzFpc0txQmZkWkFzRjJZQmRTQm44NWtQenNhUTJR?=
- =?utf-8?B?eFREOU4wb0taQWNIb1AzcjFWWW14YUZxaDJzUmRtaDNBUXJJdkdhOVJCTXBG?=
- =?utf-8?B?eHVjWWJmQlFUZjk4RUNMeXRTVzdrS1Ava1FSak5udFErV3loSy9xamRoTnVh?=
- =?utf-8?B?Wiswd3NLSWI5bVBsaURJd2dHcWlTbGtsNnYxeU4wOHo3Z01PT1JxcFJnREtL?=
- =?utf-8?B?Y2s1QlQzYm5jNjF2dVdyRUExcHpYaUdvRDNZbWE4UlNYNHBRZlU4RytvdnJG?=
- =?utf-8?B?enVuLzYxN2ZzUG9paXVBN2ZTNm9iNzlCYlQ5c1poMnY4OHA3R3FwKzNqVzdu?=
- =?utf-8?B?cXVmeGdiTDYxZ3NMVFZqRkpWdS9wU1MrU1dFODh3aldVWTBoSVZ5Syt5dXJU?=
- =?utf-8?B?ZFUwMCtvZE93MlREYUJwcUhkSHdNMllrTlVPbnVNeWdEVzIzanBSM2kybC9U?=
- =?utf-8?B?MThTWUVRUTlrbEdSdmRTazViVk0rMTBhZlRtYThDVjhWbWpNdTd2a0ZGdkhW?=
- =?utf-8?B?OElvOXlFbWpuTUh3OENtbXkwSXBTME9TRXYzM3EzMXJPbTc3cGoxSU50Uk94?=
- =?utf-8?B?Z2oyNDFwNTM4ZjJlL1Bwa1lGdDFPdUQ0YWhyR3orNXhEL0NSVjhBb1JFbnlS?=
- =?utf-8?B?YWNXSGlQaHJ2UnpwdG5LT2VxUWdmdGR0UEdQVG1PT1VQL0YyWmNhVEd3bWl1?=
- =?utf-8?B?NnlpekljcldWOTUzcEcvL2lpQTVMcHFBZ3h4c2Z4VGVCbytHbDJoNEVPS1pu?=
- =?utf-8?B?bjRydERYNXFKdGJzRlV6ODhuOUVVNG85QTJqSExVckNRS0Y2SGZjQUJsUEs1?=
- =?utf-8?B?WVRWWVIzSmNCSzNveUhIemVhSklYVTkwQzhzdG1KVHliemlOTGlubGdLTWxt?=
- =?utf-8?B?YjBJZW9oRjVvaGFXUTVqd1pRdEZMM1o4R3RnaWhweFh6UHU1dThibHNJVVJ1?=
- =?utf-8?B?STJUMjZ0clFrbWp5Zy80cGluSFpmbXg5V1RGemxXbWZMRnVkeE9LWnF6T3pl?=
- =?utf-8?B?ODlscWRvZEw2ekk2WUdnYzRCd1FERkVvekFUVlhQNWFaUUlPMWp2WWhlRUxS?=
- =?utf-8?B?N2J4Y2ExYW1mS0VmNlRJb2lvdzZRZ1kxYm1jQjFmNHBkalFOcGVpeWFFazNX?=
- =?utf-8?B?WmNJcHFpY2x1MmU2TFNkNWdiZVhqcVhuSjFFY202aUxMbUpsb3piTkd2a3Ew?=
- =?utf-8?Q?8GZzD9cOgC83EwXp96HD5WJkd?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba8e0d92-8fd4-4456-50c4-08de129f1eba
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 01:46:16.2329
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NInoN7LuB7+5tg7JMtWNZv3BDwuNmXkc/SRG9i7NTnyjhbJu2p5rljs9imLJEcY+V4638BSkUOBUDGtMWG2mDg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7303
+Subject: Re: [PATCH] docs/zh_CN: Add keys ecryptfs Chinese translation
+To: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>, alexs@kernel.org, corbet@lwn.net
+Cc: dzm91@hust.edu.cn, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251021024219.752487-1-zhaoshuo@cqsoftware.com.cn>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20251021024219.752487-1-zhaoshuo@cqsoftware.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Use helper function devm_auxiliary_device_create() to remove some
-boilerplate code.
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
-Changes in v2:
-- Update commit log per Frank
-- Add R-b from Frank and Abel
-- Link to v1: https://lore.kernel.org/r/20251023-auxiliary-v1-1-0a16fa4c3cdd@nxp.com
----
- drivers/clk/imx/clk-imx8mp-audiomix.c | 39 ++++-------------------------------
- 1 file changed, 4 insertions(+), 35 deletions(-)
+在 2025/10/21 上午10:42, Shuo Zhao 写道:
+> Translate .../security/keys/ecryptfs.rst into Chinese.
+>
+> Update the translation through commit ff348763775e
+> ("doc: Fix acronym "FEKEK" in ecryptfs").
+>
+> Signed-off-by: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
 
-diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-index 775f62dddb11d8cfd17a4ebf7a677ef399c5e617..131702f2c9ecfd693af47094fe61b486ae6e8f6d 100644
---- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-+++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-@@ -230,50 +230,19 @@ struct clk_imx8mp_audiomix_priv {
- 
- #if IS_ENABLED(CONFIG_RESET_CONTROLLER)
- 
--static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
--{
--	struct auxiliary_device *adev = _adev;
--
--	auxiliary_device_delete(adev);
--	auxiliary_device_uninit(adev);
--}
--
--static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
--{
--	struct auxiliary_device *adev = to_auxiliary_dev(dev);
--
--	kfree(adev);
--}
--
- static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
- 							 struct clk_imx8mp_audiomix_priv *priv)
- {
--	struct auxiliary_device *adev __free(kfree) = NULL;
--	int ret;
-+	struct auxiliary_device *adev;
- 
- 	if (!of_property_present(dev->of_node, "#reset-cells"))
- 		return 0;
- 
--	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-+	adev = devm_auxiliary_device_create(dev, "reset", NULL);
- 	if (!adev)
--		return -ENOMEM;
--
--	adev->name = "reset";
--	adev->dev.parent = dev;
--	adev->dev.release = clk_imx8mp_audiomix_reset_adev_release;
--
--	ret = auxiliary_device_init(adev);
--	if (ret)
--		return ret;
-+		return -ENODEV;
- 
--	ret = auxiliary_device_add(adev);
--	if (ret) {
--		auxiliary_device_uninit(adev);
--		return ret;
--	}
--
--	return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_unregister_adev,
--					no_free_ptr(adev));
-+	return 0;
- }
- 
- #else /* !CONFIG_RESET_CONTROLLER */
+Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cn>
 
----
-base-commit: aaa9c3550b60d6259d6ea8b1175ade8d1242444e
-change-id: 20251023-auxiliary-3998bced9cb9
 
-Best regards,
--- 
-Peng Fan <peng.fan@nxp.com>
+Thanks,
+Yanteng
 
+> ---
+>   .../zh_CN/security/keys/ecryptfs.rst          | 69 +++++++++++++++++++
+>   .../zh_CN/security/keys/index.rst             |  2 +-
+>   2 files changed, 70 insertions(+), 1 deletion(-)
+>   create mode 100644 Documentation/translations/zh_CN/security/keys/ecryptfs.rst
+>
+> diff --git a/Documentation/translations/zh_CN/security/keys/ecryptfs.rst b/Documentation/translations/zh_CN/security/keys/ecryptfs.rst
+> new file mode 100644
+> index 000000000000..6c2792ad31ff
+> --- /dev/null
+> +++ b/Documentation/translations/zh_CN/security/keys/ecryptfs.rst
+> @@ -0,0 +1,69 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +.. include:: ../../disclaimer-zh_CN.rst
+> +
+> +:Original: Documentation/security/keys/ecryptfs.rst
+> +
+> +:翻译:
+> +
+> + 赵硕 Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
+> +
+> +==========================
+> +eCryptfs文件系统的加密密钥
+> +==========================
+> +
+> +eCryptfs是一种堆叠式文件系统，它可以在文件级别上实现透明的加密与解密。每个文件都会
+> +使用一个随机生成的文件加密密钥（FEK，File Encryption Key）来进行加密。
+> +
+> +每个FEK又会通过一个文件加密密钥加密密钥（FEKEK, File Encryption Key Encryption Key）
+> +进行加密，这个过程可能发生在内核空间或用户空间的守护进程“ecryptfsd”中。在内核空间中
+> +FEK的加密和解密操作由内核的CryptoAPI直接执行，使用一个由用户输入的口令派生出的 FEKEK。
+> +在用户空间中，该操作由守护进程“ecryptfsd”完成，并借助外部库以支持更多机制，例如公钥
+> +加密、PKCS#11，以及基于TPM（可信平台模块）的操作。
+> +
+> +为了存储解密 FEK 所需的信息，eCryptfs 定义了一种称为认证令牌（authentication token）的
+> +数据结构。目前，这种令牌可以存储在内核的“user”类型密钥中，由用户空间的实用工具mount.ecryptfs
+> +（属于 ecryptfs-utils 软件包）插入到用户的会话密钥环中。
+> +
+> +为了与eCryptfs文件系统配合使用，“encrypted” 密钥类型被扩展，引入了新的格式 “ecryptfs”。
+> +该新格式的加密密钥在其载荷（payload）中保存了一个认证令牌，其中包含一个由内核随机生成的
+> +FEKEK，并且该FEKEK又受父主密钥（parent master key）保护。
+> +
+> +为了防止已知明文攻击（known-plaintext attack），通过命令‘keyctl print’或‘keyctl pipe’
+> +获得的数据块并不包含完整的认证令牌（其内容是众所周知的），而只包含经过加密的 FEKEK。
+> +
+> +eCryptfs文件系统能够切实受益于加密密钥的使用，因为管理员可以在系统启动时，在受控环境
+> +中通过“trusted”密钥解封后安全地生成所需密钥并挂载文件系统。此外，由于密钥只在内核层
+> +以明文形式存在，因此可以避免被恶意软件窃取或攻击的风险。
+> +
+> +Usage::
+> +
+> +   keyctl add encrypted name "new ecryptfs key-type:master-key-name keylen" ring
+> +   keyctl add encrypted name "load hex_blob" ring
+> +   keyctl update keyid "update key-type:master-key-name"
+> +
+> +Where::
+> +
+> +        name:= '<16 hexadecimal characters>'
+> +        key-type:= 'trusted' | 'user'
+> +        keylen:= 64
+> +
+> +使用eCryptfs文件系统时加密密钥示例：
+> +
+> +创建一个长度为64字节的加密密钥“1000100010001000”，格式为‘ecryptfs’，并使用之前加载的用户
+> +密钥“test”保存它::
+> +
+> +    $ keyctl add encrypted 1000100010001000 "new ecryptfs user:test 64" @u
+> +    19184530
+> +
+> +    $ keyctl print 19184530
+> +    ecryptfs user:test 64 490045d4bfe48c99f0d465fbbbb79e7500da954178e2de0697
+> +    dd85091f5450a0511219e9f7cd70dcd498038181466f78ac8d4c19504fcc72402bfc41c2
+> +    f253a41b7507ccaa4b2b03fff19a69d1cc0b16e71746473f023a95488b6edfd86f7fdd40
+> +    9d292e4bacded1258880122dd553a661
+> +
+> +    $ keyctl pipe 19184530 > ecryptfs.blob
+> +
+> +使用创建的加密密钥“1000100010001000”将eCryptfs文件系统挂载到‘/secret’目录::
+> +
+> +    $ mount -i -t ecryptfs -oecryptfs_sig=1000100010001000,\
+> +      ecryptfs_cipher=aes,ecryptfs_key_bytes=32 /secret /secret
+> diff --git a/Documentation/translations/zh_CN/security/keys/index.rst b/Documentation/translations/zh_CN/security/keys/index.rst
+> index 7c28d003fb0a..6c6bd3517b34 100644
+> --- a/Documentation/translations/zh_CN/security/keys/index.rst
+> +++ b/Documentation/translations/zh_CN/security/keys/index.rst
+> @@ -14,9 +14,9 @@
+>   .. toctree::
+>      :maxdepth: 1
+>   
+> +   ecryptfs
+>   
+>   TODOLIST:
+>   * core
+> -* ecryptfs
+>   * request-key
+>   * trusted-encrypted
 
