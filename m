@@ -1,111 +1,193 @@
-Return-Path: <linux-kernel+bounces-868145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BEAC04780
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:17:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2030CC0478F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 809771AA39DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:17:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444FD3B3A64
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220692494D8;
-	Fri, 24 Oct 2025 06:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFE525784F;
+	Fri, 24 Oct 2025 06:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kB1tTKiu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M33umFR/"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6742F271476;
-	Fri, 24 Oct 2025 06:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F5B25A640
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761286616; cv=none; b=GfP27mKpG0aigC0K/np5eX1ZaqRa7zjZSp+Hxxpe2g1lVxXPqj44Daa8yhdW4y3aNIk+15gMc+e0eGBIvtjt5ZdibozHxFGUW+3f1CF/fYUR58DA6FZTFMQtbwNV2yt4rIDvFQYRbK4CTzxS3H1B6d2PrwwqCgXOLZF6pBbJqAg=
+	t=1761286640; cv=none; b=D2GUKR3RyxmfOuEwu2vTZIyi/7srvPp/hNjAg9XUqNb+pJSHGreRRGjWIUoNQw9UHq0mHJT2l+ZQFj+kYvxOULoqNHLCIqFXu/5Hku10mG0/m9A32n5K67QfzARLctb+sSJfW6JXN6Hj7gHrdAGFAt4HZ9tpMFs4Ujqps3Iu2YQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761286616; c=relaxed/simple;
-	bh=J6WIkfXnPdWT+D0UqznjgN5ZqG6M9x/P4cC88zuW9ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a90SfZ29DMH1iMQ0dPJm33JxL/yHWf/yuhWnLmrkOXkTWfrqBybuP2BG/xHmSjtz1xUGnWSmgrVTRIb+QErvrqZMm0PXEF3/Oky+l/AzBWUAkHZuLC4er7Lf1mPlaPGceuSlJPfG8W2Oe/1p2xe6WmBaGZyKjkC0/+97cwMHGQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kB1tTKiu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40D15C4CEFF;
-	Fri, 24 Oct 2025 06:16:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761286615;
-	bh=J6WIkfXnPdWT+D0UqznjgN5ZqG6M9x/P4cC88zuW9ms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kB1tTKiuaZ4sHGOEBDene7o2a9UDxqLw/HjLZkhLhd9Dy3QAwHrIDBNiFftVHcdJo
-	 gyuh9gdj92162HPyYBXCk8QciuYLejTYCOBQQlaVuMoiC8YPJ5RI9RKQPeUGwaaIgC
-	 dydI51f47MEcnCighnQ+DsimDY2nqtrL2Z05UphmwfViM4gCdzYZuz/grMedBMzhLt
-	 ErwD+OnIslmYeKISIEIWpjlV3VND5nxE7macxEFFju7EVaTllwmcYWt3VPlJkM6+ml
-	 gUgQRR02ohL5AmMghYoAEe4dPh1O8pIzyDGn5TLhR0LGUlUOTxqnZeWZhcNkdzXgnn
-	 J0TRiOAxRgm+A==
-Date: Fri, 24 Oct 2025 09:16:47 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, akpm@linux-foundation.org,
-	brauner@kernel.org, corbet@lwn.net, graf@amazon.com, jgg@ziepe.ca,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, masahiroy@kernel.org, ojeda@kernel.org,
-	rdunlap@infradead.org, tj@kernel.org
-Subject: Re: [PATCHv7 3/7] kho: drop notifiers
-Message-ID: <aPsZzxmGjrJSzB4q@kernel.org>
-References: <20251022005719.3670224-1-pasha.tatashin@soleen.com>
- <20251022005719.3670224-4-pasha.tatashin@soleen.com>
- <mafs0ikg7fbez.fsf@kernel.org>
+	s=arc-20240116; t=1761286640; c=relaxed/simple;
+	bh=56hNuT/xUKtLWXLBHxCtWU4pY9tz9h+vffMnxjNaQR0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NU94PKzzIhvEYD86G85Tc8ZK3l8kJKqpF7pVObLCzjEBTw4StX/g23dlgY7tX6/tiShi2tmEC0LRJDy5dZF8X7Fu9o8cec0kGF5zbfpokJY9P3w1egU4bb7qCfM6t4st6dpzsKS/HZLRApeEtkEnFXJVgmAQBxczeKUX8B8MNhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M33umFR/; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b6d2f5c0e8eso355718566b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 23:17:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761286637; x=1761891437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CvQDWtdQ2sodUGWH+64s7RFvD8lI9WBRcaVgkVNkp50=;
+        b=M33umFR/y6xIzhgcuH8h+3PJFMMjy8ZqC6BFCKznEezK/A4UXcd3ylhbTEc/fszt4O
+         BNq2kYrUWMqWDFmnuYW4ZlbgtrH0Vv1q+IU28pAo2Be3VeTxziZYDLEqocG+IDeY4xsJ
+         BQDk0QIEeb5yuw4NmvHK7rCr8Dw6Qc5BNBkNuzazeztERqXJ5C5IS7XhBxxB5H8bq+HI
+         ya5yWfESOYqUI/oBQs0mzIkrJTsDv+A7XW3b+eZ62qPfhTnIUi5ZIXXT0sOJu7WfbfI2
+         FCRTuCgdfvEu6wGIzTq2zcb5e9rpp9VYAS5TIelib8Ie3HJ7ESspKHe1b9qvsVybqUIL
+         3H2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761286637; x=1761891437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CvQDWtdQ2sodUGWH+64s7RFvD8lI9WBRcaVgkVNkp50=;
+        b=ljCmN6EL6w1Z7WZRb6SfI1AEh0c8vZAQtMjRpBaq5SIkDgb71sqdwCbIXOoVi0OrtB
+         FpmVkISk+aQTg/izfSDcwGy8TM+gqJcwsv9Cf0CWmCTjNB8LUKiy77W1uw03ppX6Xs6D
+         ZpE0qGAl6X4pTfUafUbcZA2JZ0TSluhRD9j7+k100+RDR5L8kk237BiP9gi2q3k5h3tp
+         y80mentfpQhI1mBA8Wt9/TnSbDw+wbn6D/XvNaoj1TgeTfxgVCwJ/Fgf0IaUtR9DmBFo
+         QpTBeZcIOrFMM57iA2nZ4J1rNbfpLYPpoaBc0oaxzD4zzYRSfjihuEkWYf3KG4dczp6a
+         SgYA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6U6PXH4dGA1g1bEZL60PymEGQSFhmj60+KjJzBVdly6fo9nqZHiU/mYcUNpk6wFK2ojMZuMP1mfU1l4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6yGLx4PudPg7AxDH80/0Nf0VZh8RFRCasofxETWML6xOe3mZ8
+	vZ2O9kTFInJ6cqFnrbYlbzKfGUJ6yx3zcz85QmZt9I1vLoHyU5gjGDDJgaWBMxHVOLyAjG+wK/7
+	0Ant0zeTTzgSw0zrPPRqQ/IJmn/tid4Y=
+X-Gm-Gg: ASbGnct+jImyo+/ngwIvNZIoaRnoST2gYXHuDWqUMngjJ39siZ2H54uPqaJUFUdil9m
+	G79RGl+WoIOc4oscL3HMAAbZn2lVssMhw+lnfs87EvaYwkhnmT748a7/C8+ETC2Ll1Q0bHGO88Y
+	uZ9GM3sJ09dYzKRNfh5i7zOSBocQzdZsx7aX4leLILRY5EjTLfPC/KWzj/LOkkyEMiyMDDCkAQZ
+	l+xJyOrvw1cBTC19Mya3iRBa8NY4rJpi1oSnDmMetf+iAJs9GnvMHrEkQ0hQPkXsMO72A==
+X-Google-Smtp-Source: AGHT+IEYzJae7VoT/c7FHoFZ2w1f+vGPYbQGnE984l0qzu5gM1i4HI97k5jQZaiikEMv2TwzZxE5MWhZESWWNIE+YQ8=
+X-Received: by 2002:a17:907:1c1e:b0:b2b:59b5:ae38 with SMTP id
+ a640c23a62f3a-b6d51bfb0e1mr629125966b.40.1761286636888; Thu, 23 Oct 2025
+ 23:17:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mafs0ikg7fbez.fsf@kernel.org>
+References: <20250926072905.126737-1-linux.amoon@gmail.com>
+ <20250926072905.126737-4-linux.amoon@gmail.com> <ose3ww7me26byqwsyk33tipylkx3kolnc3mjwrlmjwsmza2zf3@os7lkt4svaqi>
+ <CANAwSgT0VRFFpKv3saJTAA99oGoAHhP+bx6Xe-QGf5b4Dgik=A@mail.gmail.com> <6eqqafz2dojo533fw2j7say3p37simug5bol2s5dvcpac77jzb@2x22ekyl4qdq>
+In-Reply-To: <6eqqafz2dojo533fw2j7say3p37simug5bol2s5dvcpac77jzb@2x22ekyl4qdq>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Fri, 24 Oct 2025 11:47:02 +0530
+X-Gm-Features: AS18NWB79LzUXZfNM_Vk4QnYlquHYcZbCYFtcNRut2QcVzty8nJpzlwr2rljOfc
+Message-ID: <CANAwSgSeOrVjkuFbPKAPXDnCrsApcgePEs3D6MWwtsu9nYNesw@mail.gmail.com>
+Subject: Re: [PATCH v1 3/5] PCI: tegra: Use readl_poll_timeout() for link
+ status polling
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 01:01:08PM +0200, Pratyush Yadav wrote:
-> Hi Pasha,
-> 
-> On Tue, Oct 21 2025, Pasha Tatashin wrote:
-> 
-> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Hi Manivannan,
+
+On Tue, 21 Oct 2025 at 07:13, Manivannan Sadhasivam <mani@kernel.org> wrote=
+:
+>
+> On Mon, Oct 20, 2025 at 05:47:15PM +0530, Anand Moon wrote:
+> > Hi Manivannan,
 > >
-> > The KHO framework uses a notifier chain as the mechanism for clients to
-> > participate in the finalization process. While this works for a single,
-> > central state machine, it is too restrictive for kernel-internal
-> > components like pstore/reserve_mem or IMA. These components need a
-> > simpler, direct way to register their state for preservation (e.g.,
-> > during their initcall) without being part of a complex,
-> > shutdown-time notifier sequence. The notifier model forces all
-> > participants into a single finalization flow and makes direct
-> > preservation from an arbitrary context difficult.
-> > This patch refactors the client participation model by removing the
-> > notifier chain and introducing a direct API for managing FDT subtrees.
+> > Thanks for your review comment.
 > >
-> > The core kho_finalize() and kho_abort() state machine remains, but
-> > clients now register their data with KHO beforehand.
+> > On Sun, 19 Oct 2025 at 13:20, Manivannan Sadhasivam <mani@kernel.org> w=
+rote:
+> > >
+> > > On Fri, Sep 26, 2025 at 12:57:44PM +0530, Anand Moon wrote:
+> > > > Replace the manual `do-while` polling loops with the readl_poll_tim=
+eout()
+> > > > helper when checking the link DL_UP and DL_LINK_ACTIVE status bits
+> > > > during link bring-up. This simplifies the code by removing the open=
+-coded
+> > > > timeout logic in favor of the standard, more robust iopoll framewor=
+k.
+> > > > The change improves readability and reduces code duplication.
+> > > >
+> > > > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > > > Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> > > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > > > ---
+> > > > v1: dropped the include  <linux/iopoll.h> header file.
+> > > > ---
+> > > >  drivers/pci/controller/pci-tegra.c | 37 +++++++++++---------------=
+----
+> > > >  1 file changed, 14 insertions(+), 23 deletions(-)
+> > > >
+> > > > diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/contr=
+oller/pci-tegra.c
+> > > > index 07a61d902eae..b0056818a203 100644
+> > > > --- a/drivers/pci/controller/pci-tegra.c
+> > > > +++ b/drivers/pci/controller/pci-tegra.c
+> > > > @@ -2169,37 +2169,28 @@ static bool tegra_pcie_port_check_link(stru=
+ct tegra_pcie_port *port)
+> > > >       value |=3D RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT;
+> > > >       writel(value, port->base + RP_PRIV_MISC);
+> > > >
+> > > > -     do {
+> > > > -             unsigned int timeout =3D TEGRA_PCIE_LINKUP_TIMEOUT;
+> > > > +     while (retries--) {
+> > > > +             int err;
+> > > >
+> > > > -             do {
+> > > > -                     value =3D readl(port->base + RP_VEND_XP);
+> > > > -
+> > > > -                     if (value & RP_VEND_XP_DL_UP)
+> > > > -                             break;
+> > > > -
+> > > > -                     usleep_range(1000, 2000);
+> > > > -             } while (--timeout);
+> > > > -
+> > > > -             if (!timeout) {
+> > > > +             err =3D readl_poll_timeout(port->base + RP_VEND_XP, v=
+alue,
+> > > > +                                      value & RP_VEND_XP_DL_UP,
+> > > > +                                      1000,
+> > >
+> > > The delay between the iterations had range of (1000, 2000), now it wi=
+ll become
+> > > (250, 1000). How can you ensure that this delay is sufficient?
+> > >
+> > I asked if the timeout should be increased for the loops, but Mikko
+> > Perttunen said that 200ms delay is fine.
 > >
+>
+> readl_poll_timeout() internally uses usleep_range(), which transforms the=
+ 1000us
+> delay into, usleep_range(251, 1000). So the delay *could* theoretically b=
+e 251us
+> * 200 =3D ~50ms.
+>
+> So I doubt it will be sifficient, as from the old code, it looks like the
+> hardware could take around 200ms to complete link up.
+>
+Instead of implementing a busy-waiting while loop with udelay, a more
+efficient and responsive approach is to use the readl_poll_timeout()
+function. This function periodically polls a memory-mapped address, waiting
+for a condition to be met or for a specified timeout to occur.
 
-...
-
-> > @@ -1280,7 +1298,7 @@ static __init int kho_init(void)
-> >  	kho_enable = false;
-> >  	return err;
-> >  }
-> > -late_initcall(kho_init);
-> > +fs_initcall(kho_init);
-> 
-> Is this change related to this patch? Also, why fs_initcall?
-
-memblock registers sub-fdt in late_initcall(), so we should have the root
-fdt ready by then. 
-  
-> -- 
-> Regards,
-> Pratyush Yadav
-> 
-
--- 
-Sincerely yours,
-Mike.
+If there are any issues with HW, we could extend the timeout to compensate.
+> - Mani
+Thanks
+-Anand
+>
+> --
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
 
