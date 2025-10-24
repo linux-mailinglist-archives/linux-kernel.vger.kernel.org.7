@@ -1,192 +1,210 @@
-Return-Path: <linux-kernel+bounces-868337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9D9C04FAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C098AC04FBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEF321889BA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:08:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51AD51B826D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0939E30101B;
-	Fri, 24 Oct 2025 08:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F88229E11E;
+	Fri, 24 Oct 2025 08:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ghsdQXOr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dWPRyjwd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7822ED853
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156122ED165;
+	Fri, 24 Oct 2025 08:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761293252; cv=none; b=TRcxtpdD/iVEjAc1mwt7YDsjiDX3/mgvp+bhYwMGrME8n01D75dpQ648OfM0gkYd5aJFTN6JkL/8shvE+cpvf0qCw+WR4W/NUTGYKLRasyIvVvAbLqnQ5u3+WsB/Lnob9BVNcirWslLJimd2x4Vot8W/03NGPVCeHsJfk8VKwwE=
+	t=1761293285; cv=none; b=d3ekY9EKO2YX3zKkW2k5A1thO+J3Ugi4Ez64LaP3+MP3z6ann6ILjcwUxIpItLzUYRNlmgCmwOLzeyiNGx75zInVOQGRjMv2JxPnVT3LwvbA/9aPyU3rrSZlvHnFPGW/8dZnVn07/ctoXmLFLohcoB/7afDKnZu9qtOLpGkowZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761293252; c=relaxed/simple;
-	bh=v6Uu9OfpU3miqfYHQVDWdTDLr/YQ0zcUPbLXEWhEqOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TvoJhJSNhvJxrUgZ6ZsJO08kBqe2HSbtWWWSMV9ebLs/KznkNo7YCE9v91zWFGgmpWydjRD6mtmkXFyfZrlTiL6l2j/YUZuUeVzhueIijcmnD+6y+5bjTfQuwq1uFzgj1nuRPyW1x53XE3ftd7yqAOeOCBF/nNWf2nPYCn6bx4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ghsdQXOr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761293249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LRmVGBR3L7ECLXJInz7h60bnXxh8bIDyGiHP96dEYqU=;
-	b=ghsdQXOr8xxlMQ1O0nmaQ+mvFhzEpaMcqJufrbDlSCN+6yp1R0UtTf68XVPf32U8/KIaQF
-	wFRm01Y66SXNH5ck5ZAIWiaYw5siMqYtVC3Z7i1eiC+puTWAp38c+S9U+tZ/sHxtRS6laQ
-	qnBMK2eVJJEpizwvmRFGYydAuzF+N/M=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-681-jL5wO9quN-Wt-7ZplmBCOg-1; Fri, 24 Oct 2025 04:07:27 -0400
-X-MC-Unique: jL5wO9quN-Wt-7ZplmBCOg-1
-X-Mimecast-MFC-AGG-ID: jL5wO9quN-Wt-7ZplmBCOg_1761293247
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-471201dc0e9so10942775e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:07:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761293247; x=1761898047;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LRmVGBR3L7ECLXJInz7h60bnXxh8bIDyGiHP96dEYqU=;
-        b=uXzjnNEqhn5/bfFCs8133TfILwMB8umL1nYbygyGOXI8ocfSGApfZJL5DZh+5Iep78
-         0bG3EtZ7ha2UJ7NN16Jmy4S1iQHN0Zo7318xa/0YXX8hkixHFRy3BpLim0JvPmklWTEE
-         9YTcyPRyrjc5YM5pbHqL884c/n1OiWPRlja48yJ4xTer1QfNUFuVyVp6+MYo7BLSNJ9y
-         YzLw4ZCNO28PuXHoQji5oIqf4aeG7OnbkfQKIkXoIAfKk65ULYPbbMSpmd7JCo1qPOPh
-         oNMiLybUdvcWreELIhu+mqsOdhuwsHTaa7R+TxLCeav3F3RbLjCGgb+1HgadhTaVIRHw
-         27HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNC7s4uqg/S6YWezzpltTgkWGyfsOPqJs2MGDgdjyTPXfwDHENYaFeXzaPIaKjZjFjd/FJzx2cVCpZ4zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx38XBNMpH34mLdW4vSntwhrp80BDpVFl/AmYVgro8/2tBu9Vu0
-	pAhS17RwlXLdeMvLcMRwahIvqEJRPFxi7fTq418vkSja4WIaQ/ttfDk0zwXYBQ0x/KDxy1W+ect
-	TTd/rtJEqbJ3wfLMissoMbAyw1YoAKw1wJSe0cTUmp20b4DQzYsC/goDNxDB+mmayEw==
-X-Gm-Gg: ASbGncufnmNua02ql7bLx1yR1RV8RZQFVYpqvyvHEhpVJoXyE7MvDOAnCi2h4vq2x15
-	N9+38GDRMNSrQ9Yyed8r62lt9jsAxhuBth2RYQhWQ1KIieEsE6LKKjhvDmohWdDWk9mI3Zc+lkt
-	wOloujNThtxFQt/u7RSvzdIjFFh4irkpHnd49ncGaMCpintJ155CwegpKELSRCDDFtnSZvIt9g7
-	X27ZwXICLe5wuVhk4U97igTeMiPl77T9sR1IK7qkazUCRLmWx03w4rGZ2HHs/xva/LnfENQTu2V
-	6W3woxua642EDojJWcx+mQDsfPkVy5KVqnI1BLYniJ6/CgUit3/kfcWWcarH7pwSZpmUMp5pUW0
-	clYm03kBt86VTciyZyYUGbg+8uRohAdIzM4iA
-X-Received: by 2002:a05:600c:821a:b0:46f:b42e:e3a0 with SMTP id 5b1f17b1804b1-4711791dc89mr198073005e9.41.1761293246654;
-        Fri, 24 Oct 2025 01:07:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6r1TGgJ/wvxED8Gb1vHbNBF65U7KF83b48rl7o39gZzsWhbiRmyUjExyLr9qynJjlSEUsgQ==
-X-Received: by 2002:a05:600c:821a:b0:46f:b42e:e3a0 with SMTP id 5b1f17b1804b1-4711791dc89mr198072685e9.41.1761293246204;
-        Fri, 24 Oct 2025 01:07:26 -0700 (PDT)
-Received: from [192.168.68.125] (bzq-79-177-149-47.red.bezeqint.net. [79.177.149.47])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475caf15498sm91555855e9.12.2025.10.24.01.07.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 01:07:25 -0700 (PDT)
-Message-ID: <fd9bfe41-bff8-472a-a50b-e2089f3c6351@redhat.com>
-Date: Fri, 24 Oct 2025 11:07:22 +0300
+	s=arc-20240116; t=1761293285; c=relaxed/simple;
+	bh=oEStOdqPKkYmMdtBrnXaFxilbVoDVz48fbZzqOt555s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jXQyOp/lmNgDJ1uQsGcebP6+2IrKRSUqDAF7lfdNq1rUW3NZUCPSrLCie9DroChLy3Fr5HwN/tidVBHufn10qzxuuVXjtH/bWe+MJAePUwNVdM7c+zllGe3QNZEkm+TuA+fjibdqhnNEab8CB3jSlkC2kk9jSG2HbBNYjgERbHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dWPRyjwd; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761293284; x=1792829284;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oEStOdqPKkYmMdtBrnXaFxilbVoDVz48fbZzqOt555s=;
+  b=dWPRyjwdMz52Ed2JFL5umSrFz0ZphmdiR022ZhIkcmbrWS0Gne8wmZ7V
+   2iqa3lhD/D9fvvMirXtnSf98wypWZVs6xYM+UjOfODzjnJ5ZX0Hb3No6k
+   CGmNx6G83ZHWgl1AvbZdMFUzYHTTGjadY5gzwZwBRwbfTiXYHyQDIlmF2
+   wbuouCZh59BqQFoLqkQAqe2+lkrE/Wy0cfHkU7pLHdkNVjIfb5mNIA3ln
+   rL58qTYV8vF9Vrkhr6EbdzwFEtnkkCdF04j/D/VEwP2OT1/VWRivpdi01
+   Lvtj5YG2w8r9CyAvUS2hvEo5o3M9pg12cuCLI8BUOyg1snQ+3Pvsihhvr
+   w==;
+X-CSE-ConnectionGUID: nKCIXGf6QY6CvuRHAqw0Vw==
+X-CSE-MsgGUID: q7GLBxLgQNm1Ox861YOO+Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62681921"
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="62681921"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 01:08:03 -0700
+X-CSE-ConnectionGUID: 4juy8i/pQa6vC/c6R6Heng==
+X-CSE-MsgGUID: kpUR26MhQeOxRV6p20pF0g==
+X-ExtLoop1: 1
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 24 Oct 2025 01:07:59 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vCCq5-000EJt-12;
+	Fri, 24 Oct 2025 08:07:57 +0000
+Date: Fri, 24 Oct 2025 16:07:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Usama Arif <usamaarif642@gmail.com>, dwmw@amazon.co.uk,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, ardb@kernel.org, hpa@zytor.com
+Cc: oe-kbuild-all@lists.linux.dev, x86@kernel.org, apopple@nvidia.com,
+	thuth@redhat.com, nik.borisov@suse.com, kas@kernel.org,
+	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+	kernel-team@meta.com, Usama Arif <usamaarif642@gmail.com>,
+	Michael van der Westhuizen <rmikey@meta.com>,
+	Tobias Fleig <tfleig@meta.com>
+Subject: Re: [PATCH 1/3] x86/boot: Fix page table access in 5-level to
+ 4-level paging transition
+Message-ID: <202510241522.uU9W0Xbv-lkp@intel.com>
+References: <20251022220755.1026144-2-usamaarif642@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 02/14] i40e: support generic devlink param
- "max_mac_per_vf"
-To: Jacob Keller <jacob.e.keller@intel.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- Alexander Lobakin <aleksander.lobakin@intel.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
- Rafal Romanowski <rafal.romanowski@intel.com>
-References: <20251016-jk-iwl-next-2025-10-15-v2-0-ff3a390d9fc6@intel.com>
- <20251016-jk-iwl-next-2025-10-15-v2-2-ff3a390d9fc6@intel.com>
- <20251020182515.457ad11c@kernel.org>
- <d39fc2bd-56bf-4c5b-99a2-398433238220@intel.com>
- <20251021160745.7ff31970@kernel.org>
- <9604cc84-4268-4964-a4d9-2d37ea095138@intel.com>
-Content-Language: en-US
-From: mohammad heib <mheib@redhat.com>
-In-Reply-To: <9604cc84-4268-4964-a4d9-2d37ea095138@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022220755.1026144-2-usamaarif642@gmail.com>
+
+Hi Usama,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on tip/x86/core]
+[also build test ERROR on tip/master efi/next linus/master v6.18-rc2 next-20251024]
+[cannot apply to tip/auto-latest]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Usama-Arif/x86-boot-Fix-page-table-access-in-5-level-to-4-level-paging-transition/20251023-061048
+base:   tip/x86/core
+patch link:    https://lore.kernel.org/r/20251022220755.1026144-2-usamaarif642%40gmail.com
+patch subject: [PATCH 1/3] x86/boot: Fix page table access in 5-level to 4-level paging transition
+config: x86_64-buildonly-randconfig-004-20251024 (https://download.01.org/0day-ci/archive/20251024/202510241522.uU9W0Xbv-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510241522.uU9W0Xbv-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510241522.uU9W0Xbv-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   arch/x86/boot/compressed/pgtable_64.c: In function 'configure_5level_paging':
+>> arch/x86/boot/compressed/pgtable_64.c:185:35: error: implicit declaration of function 'pgd_val' [-Wimplicit-function-declaration]
+     185 |                 new_cr3 = (u64 *)(pgd_val(pgdp[0]) & PTE_PFN_MASK);
+         |                                   ^~~~~~~
 
 
-Thanks Jakub and Jacob for the feedback.
+vim +/pgd_val +185 arch/x86/boot/compressed/pgtable_64.c
 
-On 10/23/25 1:11 AM, Jacob Keller wrote:
-> 
-> 
-> On 10/21/2025 4:07 PM, Jakub Kicinski wrote:
->> On Tue, 21 Oct 2025 13:39:27 -0700 Jacob Keller wrote:
->>> On 10/20/2025 6:25 PM, Jakub Kicinski wrote:
->>>> On Thu, 16 Oct 2025 23:08:31 -0700 Jacob Keller wrote:
->>>>> - The configured value is a theoretical maximum. Hardware limits may
->>>>>    still prevent additional MAC addresses from being added, even if the
->>>>>    parameter allows it.
->>>>
->>>> Is "administrative policy" better than "theoretical max" ?
->>>
->>> That could be a bit more accurate.
->>>
->>>> Also -- should we be scanning the existing state to check if some VM
->>>> hasn't violated the new setting and error or at least return a extack
->>>> to the user to warn that the policy is not currently adhered to?
->>>
->>> My understanding here is that this enforces the VF to never go *above*
->>> this value, but its possible some other hardware restriction (i.e. out
->>> of filters) could prevent a VF from adding more filters even if the
->>> value is set higher.
->>>
->>> Basically, this sets the maximum allowed number of filters, but doesn't
->>> guarantee that many filters are actually available, at least on X710
->>> where filters are a shared resource and we do not have a good mechanism
->>> to coordinate across PFs to confirm how many have been made available or
->>> reserved already. (Until firmware rejects adding a filter because
->>> resources are capped)
->>>
->>> Thus, I don't think we need to scan to check anything here. VFs should
->>> be unable to exceed this limit, and thats checked on filter add.
->>
->> Sorry, just to be clear -- this comment is independent on the comment
->> about "policy" vs "theoretical".
->>
->> What if:
->>   - max is set to 4
->>   - VF 1 adds 4 filters
->>   - (some time later) user asks to decrease max to 2
->>
->> The devlink param is CMODE_RUNTIME so I'm assuming it can be tweaked
->> at any point in time.
->>
->> We probably don't want to prevent lowering the max as admin has no way
->> to flush the filters. Either we don't let the knob be turned when SRIOV
->> is enabled or we should warn if some VF has more filters than the new
->> max?
-> 
-> Ah, yes that makes sense to me. I think the best approach is just return
-> -EBUSY if there are active VFs. We could implement warning logic
-> instead, but I think most of the time the administrator should be
-> expected to configure this once during setup (i.e. a boot up script or
-> something), and not during runtime.
+   101	
+   102	asmlinkage void configure_5level_paging(struct boot_params *bp, void *pgtable)
+   103	{
+   104		void (*toggle_la57)(void *cr3);
+   105		bool l5_required = false;
+   106	
+   107		/* Initialize boot_params. Required for cmdline_find_option_bool(). */
+   108		sanitize_boot_params(bp);
+   109		boot_params_ptr = bp;
+   110	
+   111		/*
+   112		 * Check if LA57 is desired and supported.
+   113		 *
+   114		 * There are several parts to the check:
+   115		 *   - if user asked to disable 5-level paging: no5lvl in cmdline
+   116		 *   - if the machine supports 5-level paging:
+   117		 *     + CPUID leaf 7 is supported
+   118		 *     + the leaf has the feature bit set
+   119		 */
+   120		if (!cmdline_find_option_bool("no5lvl") &&
+   121		    native_cpuid_eax(0) >= 7 && (native_cpuid_ecx(7) & BIT(16))) {
+   122			l5_required = true;
+   123	
+   124			/* Initialize variables for 5-level paging */
+   125			__pgtable_l5_enabled = 1;
+   126			pgdir_shift = 48;
+   127			ptrs_per_p4d = 512;
+   128		}
+   129	
+   130		/*
+   131		 * The trampoline will not be used if the paging mode is already set to
+   132		 * the desired one.
+   133		 */
+   134		if (l5_required == !!(native_read_cr4() & X86_CR4_LA57))
+   135			return;
+   136	
+   137		trampoline_32bit = (unsigned long *)find_trampoline_placement();
+   138	
+   139		/* Preserve trampoline memory */
+   140		memcpy(trampoline_save, trampoline_32bit, TRAMPOLINE_32BIT_SIZE);
+   141	
+   142		/* Clear trampoline memory first */
+   143		memset(trampoline_32bit, 0, TRAMPOLINE_32BIT_SIZE);
+   144	
+   145		/* Copy trampoline code in place */
+   146		toggle_la57 = memcpy(trampoline_32bit +
+   147				TRAMPOLINE_32BIT_CODE_OFFSET / sizeof(unsigned long),
+   148				&trampoline_32bit_src, TRAMPOLINE_32BIT_CODE_SIZE);
+   149	
+   150		/*
+   151		 * Avoid the need for a stack in the 32-bit trampoline code, by using
+   152		 * LJMP rather than LRET to return back to long mode. LJMP takes an
+   153		 * immediate absolute address, which needs to be adjusted based on the
+   154		 * placement of the trampoline.
+   155		 */
+   156		*(u32 *)((u8 *)toggle_la57 + trampoline_ljmp_imm_offset) +=
+   157							(unsigned long)toggle_la57;
+   158	
+   159		/*
+   160		 * The code below prepares page table in trampoline memory.
+   161		 *
+   162		 * The new page table will be used by trampoline code for switching
+   163		 * from 4- to 5-level paging or vice versa.
+   164		 */
+   165	
+   166		if (l5_required) {
+   167			/*
+   168			 * For 4- to 5-level paging transition, set up current CR3 as
+   169			 * the first and the only entry in a new top-level page table.
+   170			 */
+   171			*trampoline_32bit = __native_read_cr3() | _PAGE_TABLE_NOENC;
+   172		} else {
+   173			u64 *new_cr3;
+   174			pgd_t *pgdp;
+   175	
+   176			/*
+   177			 * For 5- to 4-level paging transition, copy page table pointed
+   178			 * by first entry in the current top-level page table as our
+   179			 * new top-level page table.
+   180			 *
+   181			 * We cannot just point to the page table from trampoline as it
+   182			 * may be above 4G.
+   183			 */
+   184			pgdp = (pgd_t *)read_cr3_pa();
+ > 185			new_cr3 = (u64 *)(pgd_val(pgdp[0]) & PTE_PFN_MASK);
 
-To make sure I understood correctly before sending the next version:
-  - I need to update the parameter documentation to describe it as an 
-   administrative policy limit instead of a “theoretical maximum.
-
-  - I need to modify the set callback to return -EBUSY if VFs are 
-already allocated, so the parameter can only be changed before enabling 
-SR-IOV.
-
-  - I need to mention this behavior explicitly in the i40e devlink 
-parameter description.
-
-Also, just to confirm — should I resend the updated patch directly to 
-the upstream netdev mailing list, or should it go through the IWL list 
-first?
-
-Thanks,
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
