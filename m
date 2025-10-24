@@ -1,151 +1,214 @@
-Return-Path: <linux-kernel+bounces-868876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F006C0662D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E126C06636
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E37D74EF3E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:02:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C9D304E8E39
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B67131A800;
-	Fri, 24 Oct 2025 13:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ueTMeeYE"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378032AE8E;
-	Fri, 24 Oct 2025 13:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031762C0F81;
+	Fri, 24 Oct 2025 13:03:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7E431577D
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761310933; cv=none; b=olj7lTAqW1JPe8I6cnZ4e2Pnb16hxBW/3s7IlYnubRuspuIFL0zMEwi6XRREHDGLY+Ab/YfMjIeAe0ts8tHM9p0aY2/0M4z9ICzA3WW5UzZMgkSSdgPmlBRIt7pswcgIUmDjpSXI0M1OMt1vBdn3jDT/IKFNQgu/oZ/WU1d7bkE=
+	t=1761310980; cv=none; b=GjY5Xtx1ipRiHNX6VIIcGOlNMjPYPALFiZ/uFd1enVBKpdaylr4BGKE9okjXliWHBHrZLNq//xBhxSryw2Kpwd0ruRYyxWQaSecBKPTumj9MaKefnKjB61JkgYwXYG7/mApZXF2GE3i+fJrAadz3ud7i9j3BV5E1P1aojwNDXa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761310933; c=relaxed/simple;
-	bh=sWNapAQdiDgKyOmK1F9SQowPxHMep3JI7SQBHBeWmUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LnLSpXiYFYrAoib9ZU2ZvGfbg1AQ4QwFLOGWAmcdgReMV1mzFbdnmP4Pdq0d3CpqYDF0SGvuYGAMZ0cG5NTLeOJ0yUTdpxqM/6h1J/PjEfrT9wBj4OKPOGXAJgYnY0Cg+g6TsXlQzzX/gmdhGhEoCfR6qF/M0dZM/7UKCkg5TEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ueTMeeYE; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KIzxo1I8zroSVihAvyvbWPNv07jZePh2BUEf0mtEhks=; b=ueTMeeYEqebx8NRI0fTJD7ctYh
-	N6dJVOJoczHU3Z6e9VjrXI3DEYHcV4zcaAefAyyP6gSUzQlGP+oWEj3fF5wjFPqo47yrw3+P8SV2p
-	Ti9cS+SF1Iz+a2DW5GcukXJz7DQpyLVLKF8aEdcZdMozYStgnLh0jZ/2LozhRyTFaR4I/F7UiHCoj
-	A3NH8qjpKbOhIShkU8EilPT4wThJmBhVXlHuvRUTAuTOZ/bDcMHNr2pXkEUZ45MtOd5Sx8lrQV3uf
-	0c4M4COHxaYNRCsBoGtWuyGyONk1udDbE4D2Ey39PhpdPTetzHHu1mgX8Mf6+oTsDfwQcyDzIbrEr
-	TIm3oygA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCHQg-00000000sUc-1NtR;
-	Fri, 24 Oct 2025 13:02:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2745C300323; Fri, 24 Oct 2025 15:02:03 +0200 (CEST)
-Date: Fri, 24 Oct 2025 15:02:03 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
-	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
-Subject: Re: [PATCH v16 4/4] perf tools: Merge deferred user callchains
-Message-ID: <20251024130203.GC3245006@noisy.programming.kicks-ass.net>
-References: <20250908175319.841517121@kernel.org>
- <20250908175430.639412649@kernel.org>
- <20251002134938.756db4ef@gandalf.local.home>
+	s=arc-20240116; t=1761310980; c=relaxed/simple;
+	bh=wJeoTYUCLQTEvGyo6njZfxILY6WE+zT3NImS/5Sd5Fo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eJTBM7Qor4gpGfxj7qbyqkH7gV8pS0DTIa5TbBAA4kypHmc52RdKFszPZu8u9LxH7WNwAWgY/aZRMDUYfFgJ15hJdSNjOUPypZlwGATdZSYyRkG1A0byDReK2hyc67RE/nBUDW0lE2o6TqrryBWLpa+iZkD9cwzcaAojbJJIDlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7AA1A1515;
+	Fri, 24 Oct 2025 06:02:49 -0700 (PDT)
+Received: from [10.1.37.17] (e122027.cambridge.arm.com [10.1.37.17])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 091713F63F;
+	Fri, 24 Oct 2025 06:02:54 -0700 (PDT)
+Message-ID: <360b8654-01be-4f47-90eb-4fdb2055c653@arm.com>
+Date: Fri, 24 Oct 2025 14:02:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002134938.756db4ef@gandalf.local.home>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 06/10] drm/panthor: Implement L2 power on/off via
+ PWR_CONTROL
+To: Karunika Choo <karunika.choo@arm.com>, dri-devel@lists.freedesktop.org
+Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+References: <20251014094337.1009601-1-karunika.choo@arm.com>
+ <20251014094337.1009601-7-karunika.choo@arm.com>
+ <022e2ea5-74e3-4d53-9afe-8ead71853ee4@arm.com>
+ <a9cd1999-12d9-41cf-aef6-a6c3f1f23e4c@arm.com>
+ <e74ec0b1-4975-4fd5-bb1a-4839c45987f7@arm.com>
+ <65785979-5bb4-494c-ba25-d97fb0152075@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <65785979-5bb4-494c-ba25-d97fb0152075@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 02, 2025 at 01:49:38PM -0400, Steven Rostedt wrote:
-> On Mon, 08 Sep 2025 13:53:23 -0400
-> Steven Rostedt <rostedt@kernel.org> wrote:
+On 24/10/2025 12:51, Karunika Choo wrote:
+> On 24/10/2025 10:43, Steven Price wrote:
+>> On 23/10/2025 23:16, Karunika Choo wrote:
+>>> On 20/10/2025 11:50, Steven Price wrote:
+>>>> On 14/10/2025 10:43, Karunika Choo wrote:
+>>>>> This patch adds common helpers to issue power commands, poll
+>>>>> transitions, and validate domain state, then wires them into the L2
+>>>>> on/off paths.
+>>>>>
+>>>>> The L2 power-on sequence now delegates control of the SHADER and TILER
+>>>>> domains to the MCU when allowed, while the L2 itself is never delegated.
+>>>>> On power-off, dependent domains beneath the L2 are checked, and if
+>>>>> necessary, retracted and powered down to maintain proper domain
+>>>>> ordering.
+>>>>>
+>>>>> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+>>>>> ---
+>> [...]
+>>>>> +		u64 domain_ready = gpu_read64(ptdev, get_domain_ready_reg(child_domain));
+>>>>> +
+>>>>> +		if (domain_ready && (pwr_status & PWR_STATUS_DOMAIN_DELEGATED(child_domain))) {
+>>>>> +			drm_warn(&ptdev->base,
+>>>>> +				 "L2 power off: Delegated %s domain not powered down by MCU",
+>>>>> +				 get_domain_name(child_domain));
+>>>>> +			ret = retract_domain(ptdev, child_domain);
+>>>>> +			if (ret) {
+>>>>> +				drm_err(&ptdev->base, "Failed to retract %s domain",
+>>>>> +					get_domain_name(child_domain));
+>>>>> +				panthor_pwr_info_show(ptdev);
+>>>>> +				return ret;
+>>>>> +			}
+>>>>> +		}
+>>>>> +
+>>>>> +		ret = panthor_pwr_domain_power_off(ptdev, child_domain, domain_ready,
+>>>>> +						   PWR_TRANSITION_TIMEOUT_US);
+>>>>> +		if (ret)
+>>>>> +			return ret;
+>>>>> +	}
+>>>>> +
+>>>>> +	return panthor_pwr_domain_power_off(ptdev, PWR_COMMAND_DOMAIN_L2,
+>>>>> +					    ptdev->gpu_info.l2_present,
+>>>>> +					    PWR_TRANSITION_TIMEOUT_US);
+>>>>
+>>>> Does this implicitly 'retract' the shader/tiler power domains? If so I
+>>>> think it's worth a comment. Otherwise it looks like we don't actually
+>>>> know the status of whether the shader/tiler power domains are retracted
+>>>> or not.
+>>>>
+>>>
+>>> panthor_pwr_l2_power_off() will only retract the shader/tiler domains if
+>>> they have not been powered down by the MCU. In cases where the MCU did
+>>> power down these child domains, delegate_domain() will exit early as
+>>> they would already be delegated. I understand the ambiguity here,
+>>> hopefully it is somewhat acceptable.
+>>
+>> So my question was really how does the driver know whether the domains
+>> are delegated or not when this function returns?
+>>
+>> I couldn't quite get my head around whether turning the L2 power domain
+>> off would implicitly 'retract' the shader/tiler power domains -
+>> obviously it forces them off which means the MCU doesn't have control.
+>> So retracting would make sense, but I couldn't see anything in the spec.
+>>
+>> It would be good to have a comment explaining what the expected state is
+>> after this function (panthor_pwr_l2_power_off) returns. Is it unknown
+>> whether the shader/tiler are retracted, or is there something in the
+>> hardware which does this automatically so we know but don't have to
+>> manually retract? Presumably if we end up fully powering down the GPU
+>> that must effectively retract all domains (the GPU hardware is reset so
+>> it goes back to reset conditions).
+>>
+>> Sorry, it's a bit of a basic question but the spec is somewhat unhelpful
+>> on this point! (Or at least I haven't found a relevant statement).
+>>
 > 
-> > +static int evlist__deliver_deferred_samples(struct evlist *evlist,
-> > +					    const struct perf_tool *tool,
-> > +					    union  perf_event *event,
-> > +					    struct perf_sample *sample,
-> > +					    struct machine *machine)
-> > +{
-> > +	struct deferred_event *de, *tmp;
-> > +	struct evsel *evsel;
-> > +	int ret = 0;
-> > +
-> > +	if (!tool->merge_deferred_callchains) {
-> > +		evsel = evlist__id2evsel(evlist, sample->id);
-> > +		return tool->callchain_deferred(tool, event, sample,
-> > +						evsel, machine);
-> > +	}
-> > +
-> > +	list_for_each_entry_safe(de, tmp, &evlist->deferred_samples, list) {
-> > +		struct perf_sample orig_sample;
+> Powering off the L2 does not automatically retract its child domains.
+> The above case is for handling the edge case where the MCU is hung and
+> is not able to power off the delegated domains, therefore the host needs
+> to take over and power them down before turning off the L2. Additionally,
+> like you have alluded to, powering off the GPU will inevitably reset all
+> of these states (retracting the child domains), necessitating a
+> re-delegation on L2 power on.
 > 
-> orig_sample is not initialized and can then contain junk.
+> Therefore, the typical operation loop will be as follows:
+>  1. L2 power on
+>  2. Delegate Tiler/Shader
+>  <suspend>
+>  3. Halt MCU (should power down Tiler/Shader)
+>  4. L2 power off (no retract of Tiler/Shader)
+>  <resume>
+>  5. L2 power on (next resume)
+>  6. Delegate Tiler/Shader (skipped as already delegated)
 > 
-> > +
-> > +		ret = evlist__parse_sample(evlist, de->event, &orig_sample);
-> > +		if (ret < 0) {
-> > +			pr_err("failed to parse original sample\n");
-> > +			break;
-> > +		}
-> > +
-> > +		if (sample->tid != orig_sample.tid)
-> > +			continue;
-> > +
-> > +		if (event->callchain_deferred.cookie == orig_sample.deferred_cookie)
-> > +			sample__merge_deferred_callchain(&orig_sample, sample);
+> If the MCU is hung:
+>  1. L2 power on
+>  2. Delegate Tiler/Shader
+>  <suspend>
+>  3. Halt MCU fails
+>  4. L2 power off (Retract and power off Shader/Tiler)
+>  <resume>
+>  5. L2 power on
+>  6. Delegate Tiler/Shader
 > 
-> The sample__merge_deferred_callchain() initializes both
-> orig_sample.deferred_callchain and the callchain. But now that it's not
-> being called, it can cause the below free to happen with junk as the
-> callchain. This needs:
-> 
-> 		else
-> 			orig_sample.deferred_callchain = false;
+> If the GPU is turned off between suspend and resume:
+>  1. L2 power on
+>  2. Delegate Tiler/Shader
+>  <suspend>
+>  3. Halt MCU (should power down Tiler/Shader)
+>  4. L2 power off (no retract of Tiler/Shader)
+>  <GPU turned off>
+>  <resume>
+>  6. L2 power on
+>  7. Delegate Tiler/Shader
 
-Ah, so I saw crashes from here and just deleted both free()s and got on
-with things ;-)
+Thanks for the explanation!
 
-> > +
-> > +		evsel = evlist__id2evsel(evlist, orig_sample.id);
-> > +		ret = evlist__deliver_sample(evlist, tool, de->event,
-> > +					     &orig_sample, evsel,> machine); +
-> > +		if (orig_sample.deferred_callchain)
-> > +			free(orig_sample.callchain);
-> > +
-> > +		list_del(&de->list);
-> > +		free(de);
-> > +
-> > +		if (ret)
-> > +			break;
-> > +	}
-> > +	return ret;
-> > +}
 > 
-> -- Steve
+> With the current implementation, we cannot expect it to be always
+> retracted on return of the function, but it does provide the
+> additional benefit that on resume we don't need to go through the
+> whole delegate cycle after powering up the L2, allowing us to
+> save some time there.
+> 
+> On the other hand, if we want to explicitly enforce that we retract on 
+> suspend, then we have to accept the additional cost to delegate the
+> domains on resume.
+
+No, there's no need to change it. But I think it's worth a comment that
+in the usual case (the MCU isn't hung) the shader/tiler are left
+delegated and the attempt to delegate them again will detect this and
+skip it.
+
+I think what mostly confused me is that delegate_domain() has the following:
+
+> +	if (pwr_status_reg & delegated_mask) {
+> +		drm_dbg(&ptdev->base, "%s domain already delegated",
+> +			get_domain_name(domain));
+> +		return 0;
+> +	}
+
+Although it's "drm_dbg" that message makes it seem like this is an
+unexpected situation. Whereas actually we would normally expect that to
+happen during a resume (as long as the GPU remains powered). With that
+in my head I then started to think that there might be something in the
+hardware causing an automatic "retract".
+
+Thanks,
+Steve
+
 
