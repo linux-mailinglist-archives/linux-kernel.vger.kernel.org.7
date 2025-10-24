@@ -1,222 +1,271 @@
-Return-Path: <linux-kernel+bounces-869218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27898C07511
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:30:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEB7C07532
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D35E1C40D3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:30:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 594EA1C40F8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFC733769A;
-	Fri, 24 Oct 2025 16:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C27247281;
+	Fri, 24 Oct 2025 16:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1jDcVgD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gBpYYLt+"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013049.outbound.protection.outlook.com [40.107.201.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C15258ED5;
-	Fri, 24 Oct 2025 16:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761323376; cv=none; b=Jyj+QyIOEWnkbdykFgqXDqAsokkrx0Zx3Blsxx41X4y8Er1f/hVFDgeruUE/0g9inrD/T8UEvRqIRzIrYiQu5JetkPu308CuIaQnSG1Ya8Yg2xB4IuqZdwiHwnqKSgWFXHWJ6rPGbdwV51bl46fjEeugXYJZuTyqfVuouzWm93U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761323376; c=relaxed/simple;
-	bh=J7OMjg4+GfzNY1ARYj6hyRpVfLZJNzOfQdY9BTlvpsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JBMneGAaQlsxTgmoQmx5FqHyf6HKEkDvKFFUpyHz7M5dcTvyZq4eLY6YfKR2MCEsjV+FeTgA48dw/nu/nh1kHjI1G2VW/+5v+CCrrK6C3f2bM2Rz2zCfWqoOaK7Eb5FOX9hpdrRngITp9x14ZKaTdyZeeElUy0wvKUKEirfB//M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1jDcVgD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84656C4CEF1;
-	Fri, 24 Oct 2025 16:29:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761323376;
-	bh=J7OMjg4+GfzNY1ARYj6hyRpVfLZJNzOfQdY9BTlvpsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N1jDcVgDap9U54WInJ8YbqD6QpOMUXvRpL4//FMU+fvnu5dZvjaDevwUNEHbvkrkC
-	 kVoCzRaL9Xz1c1Sxams385EMs/ud14kQNl51l7j8A8ok6KQpmeZv4l48SlhIwSvtdu
-	 rqHMATQeut3nWjloZC82kayoS/DPzX8GWHKSLkN2KYK3ZCA38UD1IoAkdzxEFra/nk
-	 0mIyFuPFHly+dcbqHMYhYXDBUqBYZubxKyEyeHIcBkY0N63Fngt9vDZ3LmMOMXeq06
-	 T5eWeG4s0jtN27Kuegh89IyiwUio38ugIt100xXao4R/Ed/BqgV6ATZTaE/u7Br06V
-	 2kRBbsnsKr22g==
-Date: Fri, 24 Oct 2025 17:29:31 +0100
-From: Conor Dooley <conor@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, lee@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
-	lgirdwood@gmail.com, broonie@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com, wenst@chromium.org,
-	igor.belwon@mentallysanemainliners.org
-Subject: Re: [PATCH v10 1/9] dt-bindings: regulator: Document MediaTek MT6316
- PMIC Regulators
-Message-ID: <20251024-think-handwoven-504634ca620d@spud>
-References: <20251024083221.25758-1-angelogioacchino.delregno@collabora.com>
- <20251024083221.25758-2-angelogioacchino.delregno@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30778610B;
+	Fri, 24 Oct 2025 16:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761323531; cv=fail; b=sikkAY64hl8DyArZ1oSZZ2PR+4YqtUBwqZPKkl/kOzI5oLvnzckDlv5HFcjSqbkTPVEht0tBi/iUiOMy9KRLE0qINbr+6uEYTriRk84Tx6CycGMKUTdcpBxZ8fxVkn5ROp47YANMn/O65HU/oAKkvrAnkIdeqn5SUEJsub36mdc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761323531; c=relaxed/simple;
+	bh=4uVK9RYjFjlowmT6qaRSI+uEYBg8dcUBUe7yCw+9UnE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hOFx2ZV9lt9Mce62+zjy/n6/Ro9smAqgn8wY7ID05RxKi7zXUzw4Q9Lz1dyQpQVTCcJP34kWFxkRH6U2V+hMGM5SS0acqA9MbZ7wPOtvVUd2RwniPhZywaKudQBTyu64pFXuCcSBRvIbc8hsqwUxc2Q1mNx5hNSg/u44UCIhOi8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gBpYYLt+; arc=fail smtp.client-ip=40.107.201.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=e5T85Hka5WyNiIO4vLef5u97Yy1Pb1g1PGyGJpgDC6mms1Du+YgI0y2qVftz85OZrGOR3D9y6jbnD1tfgQs4ZhFD+ZeNRpW7ZsE4GUM9T/Epjs6Zm/9j7/q0jnV2DSbdbLkcpAOV637830S7a2SIQrlvzpUvCscDSFz8ZVMdkVVrqLgO2eYPDQgX2mb8pUDPktbdXBrNVonM72LoRR4hXJuxyulyypfffykS27A1aWrX4HZ0nh5Nr+r7bVc0kz3Sknrwi3I6UofoPnORB9CsJ6o3oS7ZfPZWBKWyiYFekS4M7ebbDZk3O9MH861fFOA8x3OY/g+dDu20gpJYs7NiGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lLkOT4z/eOghfZIZEBE5jptPfwoAac+OuX4VrvwkZtc=;
+ b=q2UF9x5v5v6C2wq/lutSh19tu/mqlkJvrJ6ey1kSmBXPSj+rqW9yD9RcoEnWMxcwUqHLV1xbrSCkAk96vytFgng7SgB2xG0PMc8vy/tP0coBzlkTVh82kVveJzJuPocYrPgXV/+BGvl8eRftHpt7rsxaSSKjTLOrl+Lg+kD6EsBvjL1erpeoFthKirvoRJaAcBsyrah2P6fCGnXgZrBJFP9E/UJJvT1fsi3aY2NisFmph14yUIWG7Vb44tuvWIdNDZxfdu9y7z8SwX0BOQR1xkiVZdUKe0i6wUDQPmFRg7HN1Ukxyc2sHPp6LB+KxzE+QVlu0qWRUzeX3Ampz0qrnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lLkOT4z/eOghfZIZEBE5jptPfwoAac+OuX4VrvwkZtc=;
+ b=gBpYYLt+fpGhoJAWDtolBAedqCZOO3vB5/Fc+2p5XBf/MPZo/p1MHB4Y7wsiRjZGXMPw/8supRiglHXeB3GRFr6ZlsRRqawQQmJPor6hEcXLbOGLZOV6sjoaKwYG/qi1MeZYc2W71u8jyL4eLyaZYNdK5Ud5nxvIxlpxUhSi4BE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by SJ0PR12MB7475.namprd12.prod.outlook.com (2603:10b6:a03:48d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 16:32:04 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 16:32:04 +0000
+Message-ID: <2684d3ab-d7cf-4eab-acd4-91bdd5debb6b@amd.com>
+Date: Fri, 24 Oct 2025 11:32:02 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] platform/x86/amd/pmc: Add support for Van Gogh SoC
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Perry Yuan
+ <perry.yuan@amd.com>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org
+References: <20251024152152.3981721-1-lkml@antheas.dev>
+ <20251024152152.3981721-2-lkml@antheas.dev>
+ <3792db59-7dc1-4e34-9436-84df4b6c3e10@amd.com>
+ <CAGwozwFTDD2QrHy37axhanwQYv6ty9K_hfhxS05djKpv8HfY6g@mail.gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <CAGwozwFTDD2QrHy37axhanwQYv6ty9K_hfhxS05djKpv8HfY6g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1PR02CA0020.namprd02.prod.outlook.com
+ (2603:10b6:806:2cf::27) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="adpN37SuSkUm8sD7"
-Content-Disposition: inline
-In-Reply-To: <20251024083221.25758-2-angelogioacchino.delregno@collabora.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SJ0PR12MB7475:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97568012-3e5b-4797-74e0-08de131addd5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OGF6WXQ1OUJTTldXVGIzTURjNyt0cERXbFVwc1hNZUxpRG1CT1FWdmxIMHhn?=
+ =?utf-8?B?bWFQOU1HMHhQQkdKaHV1bkFKZzlWZFlVcHVwY0k5TW41djRneWVGZkd1UHpt?=
+ =?utf-8?B?dy80WnhIODl4R2RMKzlmYnkya0pjVE56N1R5dkgyR2ZEUlpaSEpkSmNYTUxL?=
+ =?utf-8?B?M0syNTRXd2dRL0ljaVluUjZIZ0MyOVlBQnhqK25ZeU1oSEFiSjhPN3dsWXJP?=
+ =?utf-8?B?STJVWGcwaUkrb2xna0lXczVydnYzYmdDUkdwcmh0dE9XY0lHYVlrUjBMR2tl?=
+ =?utf-8?B?VjBKYmJIUGh3V3JKekhoZzlvUlUrNzNaOXhtWVgrTlQ3WC9PVjdGVUdQZldY?=
+ =?utf-8?B?RHozS2pmdmlBQm84b0pmMit4bzBDUWVRZWRNbGc1aFRSVEQzQ0Z0WEVIU3ps?=
+ =?utf-8?B?OWFYZ2VROEsvT1VFUnE4SDZ6OUxhK2JHVW5EanpHRnh1K2c2Ull1b01NeDRs?=
+ =?utf-8?B?Q3ZseUh4Yk9od0lOYXNySVBhUzVDbVl6RWJ6V3NJZCtUSnYzRFdLZTBCTnNO?=
+ =?utf-8?B?NTd6bGRHMVBka01LK1JXUW16bDJXOHUzcXYxM3pWQytRMHFHaVBwczF4eHNk?=
+ =?utf-8?B?QVBTeis5dEE5STBVNHMxRy9DcHo0VXoyR0JWMC90SHFvbTExLy9pRVVQNENw?=
+ =?utf-8?B?ZDBVaXQ3VWZGdGFEekNQZXBiVWczTHNRSnpNbTEyMks1anVaZDlGMXNwSGRk?=
+ =?utf-8?B?RW50azZ4MHZOSC9OMGZZelAzUlZBT3BjTi9ER2VKYVBlSTlhUGtOYmNYcGtQ?=
+ =?utf-8?B?WXgwd0RXUEpaUGdROGp1cTdlNkRienZ4amlvRTFuZExJRHByUmlEb1huaGtC?=
+ =?utf-8?B?UmhYanphS2prL204QU5oLzZTUXlZT3VYOUdFaFVDT2N4RnVqc3NYOUo5cXN2?=
+ =?utf-8?B?c0M5TU1Qb1FNWmJJNkhtL2R6Mm0wWGFXdzlEYkxlYzN2YjJ2cDdocG0xVWdi?=
+ =?utf-8?B?SFAwbm8rM1RDdFhqS3c3N0lYU05PZ2tkcEUzT1lHb3BiQ3N2UGEyZVVjeWUw?=
+ =?utf-8?B?QzNBek4wQTVDUUhkZkJXU1E3YTZhWS9HT2dCOVBOeDQ1amZLcmovVmFDS2Vs?=
+ =?utf-8?B?elJRNWJNKy9vL2JCTTBpb2ljc1pxYlNDQ0hYalYybnh0WisvTndPZTc1QjFt?=
+ =?utf-8?B?cFpaejVxcUdyc1NMRFNpdmNNeXVtUmxzZmpTS296aTZ0K015RGVWcTM4K25E?=
+ =?utf-8?B?T3B0ZXlaa3ArU3ZRKzB3S0Vua0NaZUpWSjhyd3RSNHFjR2s0ODAxblNWb2g2?=
+ =?utf-8?B?a1VldWxqa2JidUFvYTlFRHVRMlFWVFFzZ0YwZklvRnJzVklXdjgxYmxSSk9m?=
+ =?utf-8?B?S25JYU9lcFl6K2JIZktXbVFxMjZWVS9QeEF3bFJjQTBHejZqRG5jeWdTVnJ6?=
+ =?utf-8?B?UFMwR1dCTUVuandrcjBJc3d2Y2YvdWVLRk5vTGZoWis2OGlFNjEyUjN6ZERQ?=
+ =?utf-8?B?OHNySTBpOGVaOU8zZXhTYWcrMkxCcEJVeEpJQnhpMGEzUXhsZWkwdGhnbSs0?=
+ =?utf-8?B?NTNINDR0aTlwazl6VkxMOHZEUmRFV1hldVd2cTVKQnNmS0hTUUt0MnhNVUtC?=
+ =?utf-8?B?dStacThBWWRBNGRtRFZsZ25HWFBZMmNmdGZpYlhFQzZESXl1WTAxWGpKRzJG?=
+ =?utf-8?B?dFM3bDRJcHpsZTM3OVUxU1dqdjZYQTB2N2tLY3JDVkV6QnFQcmsrSWo1ZjV6?=
+ =?utf-8?B?aDBHcWRROHA3aU9YdGdvc1ZkM2ZlVXFjZnp5dTE4dlBFMW43c1hyZnhkNjZw?=
+ =?utf-8?B?cmJDOVpNZC91S2J0cm9sNGJjWUVXU2d0emVDOExBemlTVWw4eUthUk9PNnE5?=
+ =?utf-8?B?THdnNkVpNGM2eUFzMWhXYjZsNEp5NHgxRGZVeXQ3cDZOdmxvRjFHOEpLWDdL?=
+ =?utf-8?B?MFpXQnNqMHpCZTVjaDlRZTA2WGtsYmpLR3Y1bVB3aUt2c1E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R002c2c0T2FRc3BRWkpUcUdpb1lnbysrbmF3N1lEZzJJcXFFVysxWG84RkNF?=
+ =?utf-8?B?RVRuVHZmYTJFSWxUWXNFUnhuZnYvZUd2d3U3NHYrQUt6VlI2VmNDZDBuK3R5?=
+ =?utf-8?B?U0tiT2ROSnVhVkJHUXNQWlFLUkMwVHhmU25ST2NCeHRMaTNRbG1JMVNONmNt?=
+ =?utf-8?B?RnFZVVR0MmJ6L0ZpMXVreDU1TkhQZzMyb3RvRXF3b1NSSHhqd3c3Wk1KV3BF?=
+ =?utf-8?B?NjNwSVZ4bnV4V21kMS9FNnZERVc5eUwrTms5L212Zit4aUFjbkpxTDNhNGFw?=
+ =?utf-8?B?Qk9QbU5EaFZqb1h3MmVjc3NzRDA0dlYrTGVHdjUyaEw3UUtPeUNWY0RudWJ6?=
+ =?utf-8?B?aU1QakJHbUtNTkNkTjdoY0NLVStSU2xoZ0orUjNLVXZYb2kvcGVrb1VrTkNP?=
+ =?utf-8?B?UDZuZnNjNUFnVHFYcUFpcW5BbGpJNUlHUklSL3VCdHdZRGhWYTRpeXQvY2VJ?=
+ =?utf-8?B?ZnF6emVneHkrUCtSNGxuSnUzdFVtVHVYT2k2ejFmTUdMQnBSVXlEdGg4VWgz?=
+ =?utf-8?B?NmV0ZE5FWVM2b1VZZDNtKy8vS0FFR1UwTXJ4bkpFU1dKN2FvY2FBbE52dmxQ?=
+ =?utf-8?B?YStYTFE5R05TZzEzUUxGSWh6Y0w5cklKQWt4Q3ZOUW9QbjZKN3dubHdudWUy?=
+ =?utf-8?B?QzBKbTVYaFBHb0lUWVJCb2RBRWJqQmxPMlA0ZjFHYUNlUjdVSUowS01oQUFZ?=
+ =?utf-8?B?amZucWlHT1F5WlJJcUttaUFCZ291ZlFvOTFmY0N3UjlYK203TVdUSUZHcVQx?=
+ =?utf-8?B?eGp1NkJnUlF5REpQUFhnVk5hS1NBNFY4eWhjQnIwV3o1UFpuN2pjcEpyc1pQ?=
+ =?utf-8?B?MStVTUh2ZGJSZHQzSStGVXQrZlc4V3lLbk1JU2xBaWZsVUIwNURwQzltN296?=
+ =?utf-8?B?UGcwcno3VGVwZDcvbDMwYTBLUmpmejZTSlZUUHNESjB4ZHlBVUV1aml1c1FR?=
+ =?utf-8?B?NTU3SUREQWpvT1pLRXNrT1BYN2RkZEtKR25mZzMzdEEvcU1kRGJmbm5ydFFi?=
+ =?utf-8?B?Y041WlcrS3ZRSUlvMzkzSXBQS0ZBa3RLVk5PSE1GOFAvYkZjSkl5R1NBK2w2?=
+ =?utf-8?B?RnhmQkRhaXl2QXo0WjVvQkEwZkQ3RzNjU0RHKzk2QWVOT1ptT1BkcDk4MFk3?=
+ =?utf-8?B?dDRPdWxBenBmcFVYVU12YmpORmI4bWVYOGxvb3owaGQ5ZndHaVpGOFdQRTNE?=
+ =?utf-8?B?ZThsRGV0TWFyd2Y5OHF2WmtIRXhEdXU0ellBcGV1YkF6MWJVZExFZmhKanR4?=
+ =?utf-8?B?U0hpMFpvR0t2WnBmUXU3TG9zSW1QUGN1aXNRYW5adTZLUWFqVWZ1ZkhVbWxQ?=
+ =?utf-8?B?a082MnpIcVRCNEdhYnVlZGo4MXdaeTVxR0tCemhIcmFTNy9xbjlJbWowaDFk?=
+ =?utf-8?B?cEtkbWlQMTh0RkFSRGo4MzFuRlhDSjJDb1BkaWRXbWhnMCt4RDFGdkVyOVUz?=
+ =?utf-8?B?dTg5dHhoRVFIVS9zQjNmbWNReXJ6VUJOOXd0bnk5UkRaYzNYSmRNVjQrOUZ2?=
+ =?utf-8?B?OHlNQTYwYXlKclNYWEhXdW1aVjBieCtyL2JweTYrOVNKR1VyYzNDVjVYVE1T?=
+ =?utf-8?B?M3RDTzgyWGI4MzJNZ3Q2OGQ5RTVubGwzYjJCMW42bjI1akVDeHZVUk1LOUFj?=
+ =?utf-8?B?bGRlUkcrV09ta2cxV2lFUDl0MEFvcHlVWkpDVGg1WlQ3VkU3UnNnVVpTeGN2?=
+ =?utf-8?B?amwzSng4OSszRlB4a0VIVktpRjdNTVJyMmxLOTNzblY2NzU4LzgwcXBKYWg3?=
+ =?utf-8?B?M2JObElTRnY2dStmeXNxTkJWV1J1Q3VDbktoYkVjM0tyVzhaWWJxK21VUnZC?=
+ =?utf-8?B?cEtLVEhDdHVqYllUcTZzaGhtVkEzdWZraW84YjV1KzRuN1JoWEk0S3BPbitH?=
+ =?utf-8?B?NERmTWV4VEkyN3BUY2VuRnlJZlRkTk1SbFVKQzNQckJ4d2tWS2xBUFpPNnJK?=
+ =?utf-8?B?cXhXZFN4VzVkb1FmVWZWNmtPRzZOZXJ6R0gzTS9ydlN3ZWFIbWp4UmdDUFZw?=
+ =?utf-8?B?REJKNHh1aGlIeFkxaUxSS1hBVlRzWGNwNGlzRkV6Z3A5bGo0MVpHQURZdnpm?=
+ =?utf-8?B?TnJvelZCdno1aXRnM2RRcEtKOTZWZjFxWGgzWEwzbGMyL1Y3ckNUNk94em5C?=
+ =?utf-8?Q?J0y1omgzt3GsWPJAPiBFweC2T?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97568012-3e5b-4797-74e0-08de131addd5
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 16:32:04.6708
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QaTXxT/OSB2RuhGWWPfKGO7gAHnhWe0Rudzf1JC5gGW0yMbg724K8wroFdZUe5Qcp4lCsPPvk+f9P89BBbHfzA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7475
 
 
---adpN37SuSkUm8sD7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 24, 2025 at 10:32:13AM +0200, AngeloGioacchino Del Regno wrote:
-> Add bindings for the regulators found in the MediaTek MT6316 PMIC,
-> usually found in board designs using the MT6991 Dimensity 9400 and
-> on MT8196 Kompanio SoC for Chromebooks.
->=20
-> This chip is fully controlled by SPMI and has multiple variants
-> providing different phase configurations.
->=20
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> ---
->  .../regulator/mediatek,mt6316b-regulator.yaml | 78 +++++++++++++++++++
->  .../regulator/mediatek,mt6316c-regulator.yaml | 78 +++++++++++++++++++
->  .../regulator/mediatek,mt6316d-regulator.yaml | 77 ++++++++++++++++++
->  3 files changed, 233 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,=
-mt6316b-regulator.yaml
->  create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,=
-mt6316c-regulator.yaml
->  create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,=
-mt6316d-regulator.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/regulator/mediatek,mt6316b=
--regulator.yaml b/Documentation/devicetree/bindings/regulator/mediatek,mt63=
-16b-regulator.yaml
-> new file mode 100644
-> index 000000000000..65b70dd90728
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/mediatek,mt6316b-regula=
-tor.yaml
-> @@ -0,0 +1,78 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/regulator/mediatek,mt6316b-regulator.=
-yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek MT6316 BP/VP SPMI PMIC Regulators
-> +
-> +maintainers:
-> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> +
-> +description:
-> +  The MediaTek MT6316BP/VP PMICs are fully controlled by SPMI interface,=
- both
-> +  feature four step-down DC/DC (buck) converters, and provides 2+2 Phase=
-s,
-> +  joining Buck 1+2 for the first phase, and Buck 3+4 for the second phas=
-e.
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt6316b-regulator
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +patternProperties:
-> +  "^vbuck(12|34)$":
-> +    type: object
-> +    $ref: regulator.yaml#
-> +    unevaluatedProperties: false
-> +    properties:
-> +      regulator-allowed-modes:
-> +        description: |
-> +          Allowed Buck regulator operating modes allowed. Valid values b=
-elow.
-> +            0 - Normal mode with automatic power saving, reducing the sw=
-itching
-> +                frequency when light load conditions are detected
-> +            1 - Forced Continuous Conduction mode (FCCM) for improved vo=
-ltage
-> +                regulation accuracy with constant switching frequency bu=
-t lower
-> +                regulator efficiency
-> +            2 - Forced Low Power mode for improved regulator efficiency,=
- used
-> +                when no heavy load is expected, will shut down unnecessa=
-ry IP
-> +                blocks and secondary phases to reduce quiescent current.
-> +                This mode does not limit the maximum output current but =
-unless
-> +                only a light load is applied, there will be regulation a=
-ccuracy
-> +                and efficiency losses.
-> +        minItems: 1
-> +        maxItems: 3
-> +        items:
-> +          enum: [ 0, 1, 2 ]
+On 10/24/2025 11:08 AM, Antheas Kapenekakis wrote:
+> On Fri, 24 Oct 2025 at 17:43, Mario Limonciello
+> <mario.limonciello@amd.com> wrote:
+>>
+>>
+>>
+>> On 10/24/2025 10:21 AM, Antheas Kapenekakis wrote:
+>>> The ROG Xbox Ally (non-X) SoC features a similar architecture to the
+>>> Steam Deck. While the Steam Deck supports S3 (s2idle causes a crash),
+>>> this support was dropped by the Xbox Ally which only S0ix suspend.
+>>>
+>>> Since the handler is missing here, this causes the device to not suspend
+>>> and the AMD GPU driver to crash while trying to resume afterwards due to
+>>> a power hang.
+>>>
+>>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4659
+>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+>>> ---
+>>>    drivers/platform/x86/amd/pmc/pmc.c | 3 +++
+>>>    drivers/platform/x86/amd/pmc/pmc.h | 1 +
+>>>    2 files changed, 4 insertions(+)
+>>>
+>>> diff --git a/drivers/platform/x86/amd/pmc/pmc.c b/drivers/platform/x86/amd/pmc/pmc.c
+>>> index bd318fd02ccf..cae3fcafd4d7 100644
+>>> --- a/drivers/platform/x86/amd/pmc/pmc.c
+>>> +++ b/drivers/platform/x86/amd/pmc/pmc.c
+>>> @@ -106,6 +106,7 @@ static void amd_pmc_get_ip_info(struct amd_pmc_dev *dev)
+>>>        switch (dev->cpu_id) {
+>>>        case AMD_CPU_ID_PCO:
+>>>        case AMD_CPU_ID_RN:
+>>> +     case AMD_CPU_ID_VG:
+>>>        case AMD_CPU_ID_YC:
+>>>        case AMD_CPU_ID_CB:
+>>>                dev->num_ips = 12;
+>>> @@ -517,6 +518,7 @@ static int amd_pmc_get_os_hint(struct amd_pmc_dev *dev)
+>>>        case AMD_CPU_ID_PCO:
+>>>                return MSG_OS_HINT_PCO;
+>>>        case AMD_CPU_ID_RN:
+>>> +     case AMD_CPU_ID_VG:
+>>>        case AMD_CPU_ID_YC:
+>>>        case AMD_CPU_ID_CB:
+>>>        case AMD_CPU_ID_PS:
+>>> @@ -717,6 +719,7 @@ static const struct pci_device_id pmc_pci_ids[] = {
+>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_RV) },
+>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_SP) },
+>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_SHP) },
+>>> +     { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_VG) },
+>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M20H_ROOT) },
+>>>        { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M60H_ROOT) },
+>>>        { }
+>>> diff --git a/drivers/platform/x86/amd/pmc/pmc.h b/drivers/platform/x86/amd/pmc/pmc.h
+>>> index 62f3e51020fd..fe3f53eb5955 100644
+>>> --- a/drivers/platform/x86/amd/pmc/pmc.h
+>>> +++ b/drivers/platform/x86/amd/pmc/pmc.h
+>>> @@ -156,6 +156,7 @@ void amd_mp2_stb_deinit(struct amd_pmc_dev *dev);
+>>>    #define AMD_CPU_ID_RN                       0x1630
+>>>    #define AMD_CPU_ID_PCO                      AMD_CPU_ID_RV
+>>>    #define AMD_CPU_ID_CZN                      AMD_CPU_ID_RN
+>>> +#define AMD_CPU_ID_VG                        0x1645
+>>
+>> Can you see if 0xF14 gives you a reasonable value for the idle mask if
+>> you add it to amd_pmc_idlemask_read()?  Make a new define for it though,
+>> it shouldn't use the same define as 0x1a platforms.
+> 
+> It does not work. Reports 0. I also tested the other ones, but the
+> 0x1a was the same as you said. All report 0x0.
 
-This property has no default, and the property is not required. Is one
-of these modes the default, or is there another mode beyond what's here
-that is used if the property is absent? Or are all modes allowed with no
-property?
+It's possible the platform doesn't report an idle mask.
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#address-cells'
+0xF14 is where I would have expected it to report.
 
-Why is address-cells required here? Your bucks don't have addresses.
-If it is actually required, Rob's bot has pointed out that the property
-isn't defined for the device anyway.
+Shyam - can you look into this to see if it's in a different place than 
+0xF14 for Van Gogh?
 
-pw-bot: changes-requested
+> 
+> Any idea why the OS hint only works 90% of the time?
 
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/spmi/spmi.h>
-> +
-> +    spmi {
-> +      #address-cells =3D <2>;
-> +      #size-cells =3D <0>;
-> +
-> +      pmic@8 {
-> +        compatible =3D "mediatek,mt6316b-regulator";
-> +        reg =3D <0x8 SPMI_USID>;
-> +        #address-cells =3D <0>;
-> +
-> +        vbuck12 {
-> +          regulator-name =3D "dvdd_core";
-> +          regulator-min-microvolt =3D <450000>;
-> +          regulator-max-microvolt =3D <965000>;
-> +          regulator-allowed-modes =3D <0 1 2>;
-> +          regulator-enable-ramp-delay =3D <256>;
-> +        };
-> +      };
-> +    };
-> +...
+If we get the idle mask reporting working we would have a better idea if 
+that is what is reported wrong.
 
---adpN37SuSkUm8sD7
-Content-Type: application/pgp-signature; name="signature.asc"
+If I was to guess though; maybe GFX is still active.
 
------BEGIN PGP SIGNATURE-----
+Depending upon what's going wrong smu_fw_info might have some more 
+information too.
+> 
+>>>    #define AMD_CPU_ID_YC                       0x14B5
+>>>    #define AMD_CPU_ID_CB                       0x14D8
+>>>    #define AMD_CPU_ID_PS                       0x14E8
+>>
+>>
+> 
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPupawAKCRB4tDGHoIJi
-0tP5AQDTEDGCok9YeXiwjucuPp5QDUW1WDyirZEYNOB8nLm3NQD/XZWXvV8E/94V
-LqudmxMVSSFy3pt6GNMlPr0im8tgWgU=
-=xSW1
------END PGP SIGNATURE-----
-
---adpN37SuSkUm8sD7--
 
