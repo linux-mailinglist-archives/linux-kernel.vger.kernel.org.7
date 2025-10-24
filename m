@@ -1,153 +1,197 @@
-Return-Path: <linux-kernel+bounces-868505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0160AC05602
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:36:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9809C055A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DCEC3AF4C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:33:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561311A084AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3709130ACF0;
-	Fri, 24 Oct 2025 09:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D9830AD18;
+	Fri, 24 Oct 2025 09:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="deqjCh8k"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pOKp6tFC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7F3273D9A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5931730ACF4
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761298399; cv=none; b=RDuhkR5yKgbvdk3pK14iff4IqBYuZdP3Cm93GqCxezU5t7fS9SsZYlShBdTnoEUnPIT5PwM1TuOxfHdkbNvXg8K4sVlwboeZ1+JAe/wh4k5SoRRHXwih7tmHJ15cvgoccLr7nYP+h8dkWQpDkP/6n1ka/nAzFbQLz3pdiCYtqcQ=
+	t=1761298413; cv=none; b=o0GU5fKQ98kfyasel4FgTCycYGPKOVpI6VhKNBhRY+19dTRFMo9PE3oxefDivJTyBrcwFAkl/Sc+Q33Xcku2esntiDgmUDrMrn71f4mqla07H7eDxCqkL1eBA82+xn0rnWLgFUmHVrOhqZSiXpA+yTyxPBHsIEBSKZRgROYX5v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761298399; c=relaxed/simple;
-	bh=kRQvfDsqLu6Vxr4d7/zgz/3bpNMHBsbQAcyO5Wqn7aA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z1eneGLqUbRtHQH6r5qPh9ULsJzcN9SteJTwa0t7VUfOzEzzqgZHLoCWBa96ivQMAyta4GrB6gaZcCnlQlHfkXwZvKJsIIhOE23HiHxFi8RDNgDQPQjag29fmm5YZmHREvdMAhT2bdBLn4rOCnDIXgpuaUiGAoBKkhg3Q2bCzC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=deqjCh8k; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33ba37b3ff7so1879985a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:33:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1761298397; x=1761903197; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+MbwbNlILNFLRsimC2ZCXthc+stdxrprxO1I5dfp1aE=;
-        b=deqjCh8kWlkQUxMO9oK4f80lX1NIQTjimnu/Gv4zietxNNW5a154e7xmOVqMgctTY+
-         3wurp0NgKlktu4exr6wPwA563CxLIzx/09CmK1dvUhtQPkINoryyAvIHwpOIzr6Gnfws
-         UiJo4LlDYcxYxuRFQ95PS2Mwa335EsXquN2zd5GctFJQpOdToxr2U0dK+VMtP1vFziIP
-         tatab2JqgaZxi4HRpuO5giS6BSpFyg1tojufeLw/8gC0ojnNsTe06yigDMKOfjNMrLUg
-         KeG2ZGKoZN26FeKrLy+d+rJYeCb5TCLqnZEqyQncouZsADl9zCh1cL3TjTRBxGEO6/UI
-         dFbQ==
+	s=arc-20240116; t=1761298413; c=relaxed/simple;
+	bh=1F/bOC1u+dd7k85JkzWqGYTh8WfFn5USpjGuw1f3Yo8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YKKwiQaYX4vhtLb3Lg9SxAz/dL/oaymV0w9Atzei59BJ0QwSUwTwcfj1oOQu3eKaIG9rxG97VNqof1jwJuZlSu2J91K+K4sjhJx1OqvGHBUyf0ISWeWIsC1pvLb6Ik9I83zQ3hYtmT49tkYWwQNYXujSjFAFohCH96bwZV9y0ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pOKp6tFC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O3FQTa003445
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=YO9TAozxQPaIYyc/aO4jrm
+	iGnNWUBU4qf6V4+zkkWYM=; b=pOKp6tFCjDR+SQpvQbEIzNnJnxRHIPUuZq1T36
+	am6vkIHHOcSvjut8QJPe7B0m/1M8h0EAuhzGASQq1NiM56XTnCkiSy1WJ9uhXpJa
+	/5eGonpz1nYWE5HKjcTViHAe5v7a4PUG7CczcItm8XP6uIgeLpayVNx3PsleILOK
+	TwBuWB587z899IevxrfVKDjM6/h1qsKUyZqKbBGW1KmyMQCPTcsqUM1gy/fMp2KL
+	xDSEqtVShAIeN1qXN4NAeUEcSMk+ttnz8kCgQKN3Q2VTxbIKq34Hv/GSxfH74kIL
+	PxPU8vNS9eKRyZ6dKnf+rFb+DUhYZLJkA6Mw8gGKcXIiicGQ==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v27jbf85-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:33:30 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-77f610f7325so1409990b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:33:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761298397; x=1761903197;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+MbwbNlILNFLRsimC2ZCXthc+stdxrprxO1I5dfp1aE=;
-        b=BKoAFX2g4hF3w0j7v6da4I25W4X7eRFbxUGpZ6SPVJ8IkYAQb7k4fqFbqr9RNGsyJq
-         coZdJJEixnWDzD0wnL0ir08cTCy6PEcvBIKS1+ziiQnuQi3N4i32IL11tyAOt7jirciw
-         w9gwixPOxiScKjGZCOKE9c842W4orQcUPsfCVHadsdTH86kTuUoRnaHeAkMheK8zEIQa
-         GzEyc6sb3jxOt383C35Typ2IlZaP4nR0Kg+oHQlUh+cR8Et16c5duW7czkgZfKrap+ko
-         E1obndkFhi2fqLsU9p58R4ZHg/l5NNQOk5QLrnGSVRV4+smyLRGlRoInzZL3hqox+qtd
-         NepQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGG4L6AkYHcVUadQ2b1Sgf17byFD9Do636E7f8CaJN3bzT+NJhQIC+yuh3F14XjadubpwsoITRcrF1y3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy1LwsY+IH4B7e2g4Djr04D7GqSYSj+o/oEt3SCcFyZBKvvD7Z
-	1XoWiXKHKAXb3+xtJwzujAm9EiwR65LfrbhfBb9EaoJm+t4Av/8JJvUYhc9iefRpAA==
-X-Gm-Gg: ASbGncsxweA5urV6pIMHkfJZTUc7B11LWAzGFivG8jdsGN3Ul/CsXD3GemVjZ6bIbJU
-	fpiwg6Q5Pe7Bj1pI4mXbvSE/M7NtDBMjQ//N/zYIPninfb6AlKJFmYdhuvQIzGkOnabf0V3yDiZ
-	sMPzAurTCAOPTVSGw2yF3n50GTsgl13/Nm7h0RsYzdDCbDMEdF4wn3QNnV2WbRzARxyqlTB3dqE
-	fO5Naov0xJgMA4mikpdykkXCqz1H8PAwxydzrtboVXWp+h87LGynO4ApLvClQZ+ETIrmmgLEmhY
-	TOfBx01+Uawa4rDlYA+4DRuKsxd/Qf+/wNFbnoWfOP9DFuiW9bpcYxMBQ1WF6PnCYyExv8ws1eJ
-	vjRpQSMP7qkgmMvbiQkicWNf9E3kwia39vMN5ISoHBRXxBUmeey+ACyxf6gW1M+x4Tzvc1shsy1
-	9NGXQFG1VjFIJ7yJqx4LJh
-X-Google-Smtp-Source: AGHT+IEPQDp8R9BZm3sW5WPIJNA5P37x71plD+9JMC57EGkPUvo//tXZ5V07Mo0oYDtVrl4dmkDO0w==
-X-Received: by 2002:a17:90b:1c0d:b0:31c:39c2:b027 with SMTP id 98e67ed59e1d1-33fd3a96310mr2622684a91.7.1761298396606;
-        Fri, 24 Oct 2025 02:33:16 -0700 (PDT)
-Received: from bytedance ([115.190.40.12])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e222d8652sm8383143a91.0.2025.10.24.02.33.10
+        d=1e100.net; s=20230601; t=1761298409; x=1761903209;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YO9TAozxQPaIYyc/aO4jrmiGnNWUBU4qf6V4+zkkWYM=;
+        b=BcPYTctN5ac0CHsgK8QS9P0Vvu9Dpkrv+Y1DRmLadVOOCURbllCBC9JSf4D6wdO/l6
+         ZKEv2+U/2au0quFufOC+nog+IRbo/b4g7sW8M+tyk3YUxUXg/ywTXe0S6V3ABj/eW1Le
+         FbC01GVmWN2ByD7fZplbklyyXhrKeWg6kQ2tNhNcoH9B+0Vedcbn5cWQeuasut8MNoru
+         MSW/YtI2Bo65aXJgWUgqOdS8FiGKdRBD7WpTQPMXCUn9AEFRyEqcLM82OWBsAmYREc38
+         mlA5+8oFYhXT3dPg0aSCdwZ780lR5yLwambICQj66BIC0aIDZbn8+8UEwd17YYGIuzRt
+         J1KA==
+X-Forwarded-Encrypted: i=1; AJvYcCXT3FrSjLGvenai3N3GZNRkMJvvy60oF5esR46KDc4Nr9ioxBZY97OFLIR9jMCZWrIrH5Wc8v+J+6SXsUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys41r6wlamu0dCKUOw10NZrOvO7EKSFdU09fV83kV3kMluqLjW
+	W8k7KZSWPBKlcT56Ok+/krOSPzoHMcmQtIWn7s3eeRMMi9Yfq4im4KfZWhY6/HarwiHL3OaX5Wi
+	SZ4iJU0+q8yHXQvBV6RZDGiCAL3PixaiFS8KwvAz4d4v39JsQCm87IawfotXIev74Vd5S8/euKx
+	s=
+X-Gm-Gg: ASbGncsrU1HBnUugAYDqF+QXFc494v3V+UG5pbRd0EKz/pdr0ngbz1CLfMzoLzdzbmm
+	ZKaaFlPVOYTLysqapdm9c1djbMmaENoO4t1Irp1Yc2YKuTHiTT0Ali2Lyahi79/bdbspVlqedPx
+	PPle7MCClyaRd1Io0Bsm6tfrgqqhxE/cNs97VilKhilnDWk927xTf8xfhNvpQxMrz+yw+GbOO9G
+	gRZyJ2CpFUidGdciIaRzmr54SpehnRb0nSwmRKtxy8C79alGs3uuFyjKZUNRC4TBRt+bMdaVIXo
+	5hUYhdjDFo4EGC3xLxIBrGNtutxl466pNfDWYZJYiOt88LHI/6hOvlRqGYpXkW+Cca/v35yDnaz
+	h0Ev8W0gcgujsMx+53li6Y/bjRZOFP+OVeg==
+X-Received: by 2002:a05:6a00:399f:b0:781:269a:8fba with SMTP id d2e1a72fcca58-7a220acb317mr25549318b3a.20.1761298408615;
+        Fri, 24 Oct 2025 02:33:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFeLcfx4tP0pbMJFwOSrUV/QAjUpoIDCB+tGuZMc8V2BMluJYGi8w+PUsr4tHo8KNbdG4Exfg==
+X-Received: by 2002:a05:6a00:399f:b0:781:269a:8fba with SMTP id d2e1a72fcca58-7a220acb317mr25549298b3a.20.1761298408124;
+        Fri, 24 Oct 2025 02:33:28 -0700 (PDT)
+Received: from hu-jprakash-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274dc33easm5270332b3a.68.2025.10.24.02.33.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 02:33:16 -0700 (PDT)
-Date: Fri, 24 Oct 2025 17:32:58 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Hillf Danton <hdanton@sina.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Jianyong Wu <jianyong.wu@outlook.com>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Tingyin Duan <tingyin.duan@gmail.com>,
-	Vern Hao <vernhao@tencent.com>, Len Brown <len.brown@intel.com>,
-	Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
-	Chen Yu <yu.chen.surf@gmail.com>, Chen Yu <yu.c.chen@intel.com>,
-	Libo Chen <libo.chen@oracle.com>,
-	Adam Li <adamli@os.amperecomputing.com>,
-	Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/19] sched/fair: Prioritize tasks preferring
- destination LLC during balancing
-Message-ID: <20251024093258.GA1630077@bytedance>
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
- <ca1946de63ad9f0ae99e079a74d70c55879cc0b6.1760206683.git.tim.c.chen@linux.intel.com>
+        Fri, 24 Oct 2025 02:33:27 -0700 (PDT)
+From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+Subject: [PATCH v3 0/3] spmi-pmic-arb: Add support for PMIC arbiter v8 for
+ Glymur and Kaanapali
+Date: Fri, 24 Oct 2025 15:03:20 +0530
+Message-Id: <20251024-pmic_arb_v8-v3-0-cad8d6a2cbc0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ca1946de63ad9f0ae99e079a74d70c55879cc0b6.1760206683.git.tim.c.chen@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOBH+2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAyNj3YLczOT4xKKk+DILXSMzE3OLJBNjI7PURCWgjoKi1LTMCrBp0bG
+ 1tQDcVhZVXQAAAA==
+X-Change-ID: 20251023-pmic_arb_v8-26478b4326ea
+To: Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        David Collins <david.collins@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
+        aiqun.yu@oss.qualcomm.com, kamal.wadhwa@oss.qualcomm.com,
+        jingyi.wang@oss.qualcomm.com,
+        Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761298404; l=2523;
+ i=jishnu.prakash@oss.qualcomm.com; s=20251014; h=from:subject:message-id;
+ bh=1F/bOC1u+dd7k85JkzWqGYTh8WfFn5USpjGuw1f3Yo8=;
+ b=G91hu3EShMpUYTRa45Ca8aSQHbKjcEmYrYh91gkR6ipK/bVmfcCj1qoN01SgCIhoyaQqIRUEc
+ P+pqdZEwfV/Am3ozdBsRpUeX52OD8Yyd9nU/ziDEZtAHBxWa1miDpNL
+X-Developer-Key: i=jishnu.prakash@oss.qualcomm.com; a=ed25519;
+ pk=g89pXdLVwRjdTeQ+uX1QzvBO346E3hQAc1N7fcTXgmk=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxOCBTYWx0ZWRfX7QHDulVEv8gz
+ bITSUp0L5B4sDeu/wFmhfsrTSs6mIkoa/yWkZYZEBbO/42XXVNCfFZ3AsFr+qQ4I8KJpk1B7Edq
+ b11DbLdGKvmOxHVNq2hms+WLJJNDebd2uKOLH8xf3M6igm/ohtb880SWFYi1Tu3+ThPjx/h50NZ
+ +HrORJCPoxuzY/SwTjdZ1Eork5oNi0w5V9hUO0enEegpZI5K2WKncCWPrVyxnXiZDX7bJBBxVgB
+ JqINsPVqae1W+DkmdWqn8hdaA47ve83zBHtVMzpGRiIqwAIw92YRkSCSj77QbCCMWV7jLRbPmZf
+ ImJKonHBmugF2V+2rWCJzeapdknkTD4nlJMcb4TA4A+D+IyI1mVIiv1IQhALYP+Crk+c9F23s75
+ Oe22qgEBoHTRgsMzlTWOHW0KxwtSRQ==
+X-Authority-Analysis: v=2.4 cv=G4UR0tk5 c=1 sm=1 tr=0 ts=68fb47ea cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=I5knT2SEtGqtceWXJqwA:9 a=QEXdDO2ut3YA:10
+ a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-GUID: hE2kJxirYfSX8Y9mGBu7_FbhM_F-G3HW
+X-Proofpoint-ORIG-GUID: hE2kJxirYfSX8Y9mGBu7_FbhM_F-G3HW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-24_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 clxscore=1015
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510180018
 
-Hi Tim,
+This patch series updates the SPMI dt-bindings and driver to add
+support for PMIC arbiter v8, targeting Qualcomm SoCs Glymur and
+Kaanapali.
 
-On Sat, Oct 11, 2025 at 11:24:47AM -0700, Tim Chen wrote:
-> @@ -10849,11 +10849,45 @@ static void record_sg_llc_stats(struct lb_env *env,
->  	if (unlikely(READ_ONCE(sd_share->capacity) != sgs->group_capacity))
->  		WRITE_ONCE(sd_share->capacity, sgs->group_capacity);
->  }
-> +
-> +/*
-> + * Do LLC balance on sched group that contains LLC, and have tasks preferring
-> + * to run on LLC in idle dst_cpu.
-> + */
-> +static inline bool llc_balance(struct lb_env *env, struct sg_lb_stats *sgs,
-> +			       struct sched_group *group)
-> +{
-> +	struct sched_domain *child = env->sd->child;
-> +	int llc;
-> +
-> +	if (!sched_cache_enabled())
-> +		return false;
-> +
-> +	if (env->sd->flags & SD_SHARE_LLC)
-> +		return false;
-> +
-> +	/* only care about task migration among LLCs */
-> +	if (child && !(child->flags & SD_SHARE_LLC))
-> +		return false;
-> +
-> +	llc = llc_idx(env->dst_cpu);
-> +	if (sgs->nr_pref_llc[llc] > 0 &&
-> +	    can_migrate_llc(env->src_cpu, env->dst_cpu, 0, true) == mig_llc)
+SPMI PMIC Arbiter version 8 builds upon version 7 with support for
+up to four SPMI buses.  To achieve this, the register map was
+slightly rearranged.
 
-llc_balance() is called from update_sg_lb_stats() and at that time,
-env->src_cpu is not determined yet so should not be used here?
+Device tree changes are not included in this series and will be
+posted separately.
 
-> +		return true;
-> +
-> +	return false;
-> +}
+Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+---
+Changes in v3:
+- Split out some common DT properties into separate binding file and updated
+  existing files to reference the common file for properties moved out.
+- Also updated Glymur binding file to reference above common properties.
+- Kept David Collins alone as maintainer for new binding files added.
+- Squashed kaanapali compatible change shared as separate patch earlier:
+  (https://lore.kernel.org/all/20250924-knp-spmi-binding-v1-1-b4ace3f7a838@oss.qualcomm.com/)
+  into Glymur binding patch.
+- Corrected comment formatting in drivers/spmi/spmi-pmic-arb.c to fix a
+  kernel bot warning.
+- Updated definitions of spec_to_hwirq() and hwirq_to_*() macros in same file
+  to fix other build errors reported by kernel test bot and removed a comment
+  made irrelevant by this change.
+- Link to v2: https://lore.kernel.org/all/20250924-glymur-spmi-v8-v2-0-202fc7a66a97@oss.qualcomm.com/
+
+Changes in v2:
+- Split into two series: SPMI (this series) and PINCTRL.
+- Included the DT bindings in this series, previously posted separately.
+- Fixed kernel robot reported issue by including bitfields.h.
+- Link to v1: https://lore.kernel.org/all/20250920-glymur-spmi-v8-gpio-driver-v1-0-23df93b7818a@oss.qualcomm.com/
+
+---
+David Collins (1):
+      spmi: spmi-pmic-arb: add support for PMIC arbiter v8
+
+Jishnu Prakash (2):
+      dt-bindings: spmi: split out common QCOM SPMI PMIC arbiter properties
+      dt-bindings: spmi: add support for glymur-spmi-pmic-arb (arbiter v8)
+
+ .../bindings/spmi/qcom,glymur-spmi-pmic-arb.yaml   | 150 ++++++++++
+ .../bindings/spmi/qcom,spmi-pmic-arb-common.yaml   |  35 +++
+ .../bindings/spmi/qcom,spmi-pmic-arb.yaml          |  17 +-
+ .../bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml |  21 +-
+ drivers/spmi/spmi-pmic-arb.c                       | 324 +++++++++++++++++++--
+ 5 files changed, 484 insertions(+), 63 deletions(-)
+---
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+change-id: 20251023-pmic_arb_v8-26478b4326ea
+
+Best regards,
+-- 
+Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+
 
