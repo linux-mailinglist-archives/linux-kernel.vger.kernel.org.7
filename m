@@ -1,162 +1,219 @@
-Return-Path: <linux-kernel+bounces-868254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B53C04B5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:26:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB93C04B45
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:25:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C3B40002D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:24:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7363D4FC765
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFAB2C3268;
-	Fri, 24 Oct 2025 07:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pCXlOqHV"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711032D0C83;
+	Fri, 24 Oct 2025 07:24:42 +0000 (UTC)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD62529B8D3;
-	Fri, 24 Oct 2025 07:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE042C11EB
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761290652; cv=none; b=hC0x76ZQPpgPkYY+J1FsAmejNm9f5cMBkdezuk/WUsnBzHB+cu2ZlkQemqfW2uUVU6FZlGVHFXayi+6bQFnn5hQ6TRJeUQUdUpVA9T87tA1N/xW30KvT8UsKPwJTR2xKf5yGKWoRIXwBIXMjW6v1AwM5QbMUBdPRRQ4AbpKmYJc=
+	t=1761290681; cv=none; b=jU1RmseNfcSkTi91vwcKY2hyX5B2fzi378ur1zC2b+9Ds1a0wO6Gz8B+a5OirPjjcf2YGlFZkUla6nTnZsWFtE2Ol3KSrbGSZ7rbWhksEpHEt9Q1KOjUMf/jtJ+EpPb9xF3M1OkEiUa2B5Icc2NPugmi/3BQ7Z4nT3VRxcpzcDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761290652; c=relaxed/simple;
-	bh=RF60zJA+q99NBU2RjXHcSHJBVQQ4lulUt1rgrFM0DF8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K/hXkgIffKsOfAqi9kvzk2AHUgemN5l/dSMKXOPpaBnsTqbhYs3uTwY1U8hWVbOmr7w0Ms2stzWgZbcbIHcB+xjMxBdNmCwObOjCN5FFXVVp8FHPmBt788tlK1g8Y8wKR8SETtgZywQoKGXLnVPaO5gxY5HqoRaAEo1L+2i/2KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pCXlOqHV; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761290642; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-	bh=hnt6wAXkZYRhv1YQz8nUi4cucmZ82JTucEdIuNR4Y9U=;
-	b=pCXlOqHVBxlJrbnHgIzDDBNRMvc8x5yZEaibpGkR0sVaOgkSOB5Yq9wqfPDhVpIvacEd2d/oilCdMhqgMO+vHuGjHoOnWPFq09jRfM64LgknprrF7oNN3ts1f35+qJMLujGE7Nhm0R/L0V6bc8w5bBbGL5Jd3K8KksomNEoSnSA=
-Received: from localhost(mailfrom:peng_wang@linux.alibaba.com fp:SMTPD_---0WqtO0DA_1761290598 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 24 Oct 2025 15:24:02 +0800
-From: Peng Wang <peng_wang@linux.alibaba.com>
-To: vincent.guittot@linaro.org
-Cc: bsegall@google.com,
-	dietmar.eggemann@arm.com,
-	juri.lelli@redhat.com,
-	linux-kernel@vger.kernel.org,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	peng_wang@linux.alibaba.com,
-	peterz@infradead.org,
-	rostedt@goodmis.org,
-	stable@vger.kernel.org,
-	vdavydov.dev@gmail.com,
-	vschneid@redhat.com
-Subject: [PATCH v3] sched/fair: Clear ->h_load_next when unregistering cgroup
-Date: Fri, 24 Oct 2025 15:23:16 +0800
-Message-Id: <bf93d41ff9f2da19ef2c1cfb505362e0b48c39de.1761290330.git.peng_wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <CAKfTPtC-L3R6iYA=boxQGKVafC_UhBihYq6n6qTJ6hk4Q76OZg@mail.gmail.com>
-References: <CAKfTPtC-L3R6iYA=boxQGKVafC_UhBihYq6n6qTJ6hk4Q76OZg@mail.gmail.com>
+	s=arc-20240116; t=1761290681; c=relaxed/simple;
+	bh=TYYDo+7DxkUKjmm+P+3sxJh+gjqzjUwg71o/dX7xBWQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oRE1YsfewHJywjdD/seF4zpXgbG+xVXU8QNBciLKT6f73PV1GFCkIE2UjcIQlF5CD39wAi93JeEoNnhY2gnenG9ehOins/diiHVMhIzrXW2muAWbkgCArFy+43GzKgCG+aDxA2/sYbiSyObfipQpy43Orb6zUoXlr+PS5oE+kJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-932b7831827so517508241.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:24:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761290679; x=1761895479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O3WV+VoszRFKObS+2w1jR5z8x4F6hvRxXouyKsJGXVw=;
+        b=dmwM058nbR6Pih2NvvUgxjn+BamwxtaoRaZQTmvC0HRfH5uRzmRedWdAyKgn8K50m9
+         PM+POfBp400M5hwKWPEjGRS0t0J3buhMgI8eHyvZW0w8kjCMppteFtjZq2JzIyetoI0E
+         6tL5bSXyKI99aJWx8HFQOxy4nPL6Xd3teSTPoAftE4zgRBqjBa3BVKn6pJ1VCoka2I0E
+         QPwvMdo0PUZyP9g5K1tsy0S0MeZxee30Gfrz9GacHGXYDE8edNOfYnE1wdqKbnzNasD5
+         n5NVsNJuNy/mFjiPs420PELm7TcGym7ru3yIMv1T3W+2oisLabz1vqVfDJDYuXXzk0r3
+         LeHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkLIvk0KY7656o5pyFDu9J5jINnmnXCYPIdszDJkU07DmZjoPxsRLgZvhfemJIlYwOMLaDTS3I43VNRvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg2bpN43s09sPs4t0xdJWevbVC4s0H5Acl4QmcP/tUcrJNXFwV
+	FeZaTYoizRZfax2SAeVwLbot9qy8Ot46KICLen5tVbH9CPE66DT/aFhWF1bf7Xgg
+X-Gm-Gg: ASbGncv67J3dBVfij83nmRRLsMo6gsDuOr3HDB0cXSwcZYCaq7HXyhmf7YU2d8VCB/e
+	Ke++ofLuyin+PLOAXlGdenhC3ubnNWhoEOX52ScK+LIi68FUCsJZ5YqosuY2VFSyy5Z9BTEvxdI
+	4JHKcBCfEr5esgTddTkyaLM7lDpYi3QgXUGLEDVcSR/NoiS7MFJtTEriYRYp8+NzEkoFX85dRLc
+	NPzVh7ex9jBLQ5/dq5Zz4tokp8eUMH0LXknh0doItPxgZOKFzxv602Z6Ren6cLRathRkzdnxhmL
+	Gn2S1vQJg9J8BhKD/xzcJY421OARjMO9FnxUJUitG4P2Qeywf6OSPYSAviZTRg4lggTHFPvi+bs
+	qPcOVNfYc8zVsf8+JLfXn8mPuL4qi6Jhj9LxvT/2RAFSSU+q0PbypFTQDNAHkOkZ+NqW5ihDepJ
+	lBVUpRoIFVeAAhIYhfsx/nBNx/dQMKur3p/WnXRA==
+X-Google-Smtp-Source: AGHT+IEm/K0GffpbJkqRzqa/0isQm1G9O16iltRK+hSEo47Z5BWN3RL35vaTAXofOyn+4XnmUXoE/Q==
+X-Received: by 2002:a05:6102:c07:b0:5db:374f:8b99 with SMTP id ada2fe7eead31-5db3f9f0d08mr243487137.21.1761290678930;
+        Fri, 24 Oct 2025 00:24:38 -0700 (PDT)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-934aba93a1csm1788773241.2.2025.10.24.00.24.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 00:24:37 -0700 (PDT)
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-932b7831827so517495241.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:24:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWnjGkLJzoF+rzece7F5ahlU9IyRdD3+TPmuRb1NArxXo39JlbH19LVDCwNsmWrv9WOcScAo840GmNrWWc=@vger.kernel.org
+X-Received: by 2002:a05:6102:3581:b0:5d7:dec5:a464 with SMTP id
+ ada2fe7eead31-5db3f8bbd6dmr232329137.10.1761290676888; Fri, 24 Oct 2025
+ 00:24:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251020080648.13452-1-herve.codina@bootlin.com>
+ <20251020080648.13452-8-herve.codina@bootlin.com> <CAMuHMdV03D_3b_JA2vzW4tE_QbkkT1bN1dm+zLLLX24oDHMj0Q@mail.gmail.com>
+ <20251022150339.4c48649e@bootlin.com> <CAMuHMdWY=FbO6YG1jrd0OWfrpPpBzrqmBVcWnw7TnnsKPGgr8A@mail.gmail.com>
+ <20251023152048.0e70a362@bootlin.com>
+In-Reply-To: <20251023152048.0e70a362@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 24 Oct 2025 09:24:25 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX=_6MGgti2NEL6FaChBhefFLBdjeam5Zts3+Yf-Ps3Gg@mail.gmail.com>
+X-Gm-Features: AWmQ_bkc6C0U89yGzgj449WFrjiYqIBguZky57fXbpHAfhiWelGeFgRG-a9YogQ
+Message-ID: <CAMuHMdX=_6MGgti2NEL6FaChBhefFLBdjeam5Zts3+Yf-Ps3Gg@mail.gmail.com>
+Subject: Re: [PATCH v5 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
+ Interrupt Multiplexer
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Hoan Tran <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, 
+	Serge Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Pascal Eberhard <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-An invalid pointer dereference bug was reported on arm64 cpu, and has
-not yet been seen on x86. A partial oops looks like:
+Hi Herv=C3=A9,
 
- Call trace:
-  update_cfs_rq_h_load+0x80/0xb0
-  wake_affine+0x158/0x168
-  select_task_rq_fair+0x364/0x3a8
-  try_to_wake_up+0x154/0x648
-  wake_up_q+0x68/0xd0
-  futex_wake_op+0x280/0x4c8
-  do_futex+0x198/0x1c0
-  __arm64_sys_futex+0x11c/0x198
+On Thu, 23 Oct 2025 at 15:21, Herve Codina <herve.codina@bootlin.com> wrote=
+:
+> On Thu, 23 Oct 2025 13:30:53 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > I have in mind a use case that can lead to a non-contiguous mapping.
+> > >
+> > > The RZ/N1 SoC embeds a Cortex-M3 CPU. This CPU can use GPIOs and
+> > > some of them for interrupt purpose. In that case, those GPIOs have
+> > > to be routed to the interrupt line expected by the Cortex-M3.
+> > >
+> > > And so, we have some interrupts reserved for CPUs running Linux and
+> > > some others for the Cortex-M3.
+> > >
+> > > Among those reserved interrupts may some are not used.
+> > >
+> > > for instance:
+> > >   Interrupt 103, 102: Reserved and used by Linux
+> > >   Interrupt 103: Reserved for Linux but not used -> Hole in the mappi=
+ng
+> > >   Interrupt 104: Reserved and used my Cortex-M3 (need to be routed by=
+ Linux)
+> >
+> > 102 does not seem to  be correct?
+>
+> My bad, my example was wrong.
+>    Interrupt 103, 104: Reserved and used by Linux
+>    Interrupt 105: Reserved for Linux but not used -> Hole in the mapping
+>    Interrupt 106: Reserved and used my Cortex-M3 (need to be routed by Li=
+nux)
 
-Link: https://lore.kernel.org/all/20251013071820.1531295-1-CruzZhao@linux.alibaba.com/
+OK, much better!
 
-We found that the task_group corresponding to the problematic se
-is not in the parent task_group’s children list, indicating that
-h_load_next points to an invalid address. Consider the following
-cgroup and task hierarchy:
+> > > I don't know if this use case is relevant but I think we should be to=
+o restrictive
+> > > on the mapping and so accept holes.
+> > >
+> > > With that in mind, I let you confirm that you still prefer to have a =
+mapping
+> > > without any holes. A future patch to support that is always possible.
+> >
+> > While that would indeed be a non-discontiguous mapping, I do not see ho=
+w
+> > it is related to rzn1_irqmux_output_lines[] in the driver.  That array
+> > would still contain the same contiguous values 103..110, right?
+>
+> The array rzn1_irqmux_output_lines is still contiguous yes but the mappin=
+g
+> defined in irq-map property no.
+>
+> Looking back again at your proposal, indeed I can remove the following lo=
+op:
+>         for (i =3D 0; i < output_lines_count; i++) {
+>                if (parent_args->args[1] =3D=3D output_lines[i])
+>                        return i;
+>         }
+>
+> With just
+>         if (parent_args->args[1] >=3D RZN1_IRQMUX_SPI_BASE &&
+>             parent_args->args[1] < RZN1_IRQMUX_SPI_BASE + RZN1_IRQMUX_NUM=
+_IRQS) {
+>                 return parent_args->args[1] - RZN1_IRQMUX_SPI_BASE;
+>
+>         dev_err(dev, "Invalid GIC interrupt %u\n", parent_args->args[1]);
+>         return -EINVAL;
 
-         A
-        / \
-       /   \
-      B     E
-     / \    |
-    /   \   t2
-   C     D
-   |     |
-   t0    t1
+Good. I like simpler code ;-)
 
-Here follows a timing sequence that may be responsible for triggering
-the problem:
+BTW, please invert the logic, i.e. bail out early in case of error.
 
-CPU X                   CPU Y                   CPU Z
-wakeup t0
-set list A->B->C
-traverse A->B->C
-t0 exits
-destroy C
-                        wakeup t2
-                        set list A->E           wakeup t1
-                                                set list A->B->D
-                        traverse A->B->C
-                        panic
+> > Sorry, I haven't been following the development of this driver that
+> > closely (RZ/N1 is completely different from e.g. R-Car, and I never
+> > had access to an RZ/N1 platform), so perhaps I am missing something.
+> > Why does the user have to specify an interrupt-map in DT? Can't the
+> > driver create the mapping dynamically, based actual usage of the
+> > GPIOs? I.e. the first 8 GPIOs that ask for interrupt functionality
+> > receive it, and are mapped to an available GIC interrupt?
+> > I believe this is how rzg2l-irqc works, mapping up to 32 GPIO interrupt=
+s
+> > to 32 GIC (TINT) interrupts.
+>
+> I think the main difference with rzg2l-irqc is that the RZ/N1 irq mux is
+> clearly not an interrupt controller.
+>
+> It is just a mux with 96 inputs (GPIO lines coming from several GPIO
+> controller) and 8 outputs (connected to the GIC).
+>
+> It is represented as an interrupt nexus node and has an interrupt-map pro=
+perty.
+> to describe the routing.
+>
+> The interrupt-map property cannot be dynamically created.
+>
+> Also, the routing is necessary even if the related GPIO is not used by Li=
+nux.
+> This GPIO can be used as a GPIO input interrupt line by the Cortex M3.
+>
+> If the irq mux driver performs the routing only on Linux GPIO usage, it w=
+ill
+> not route GPIOs depending on Cortex M3 internal usage.
 
-CPU Z sets ->h_load_next list to A->B->D, but due to arm64 weaker memory
-ordering, Y may observe A->B before it sees B->D, then in this time window,
-it can traverse A->B->C and reach an invalid se.
+Thanks, makes sense!
 
-We can avoid stale pointer accesses by clearing ->h_load_next when
-unregistering cgroup.
+Gr{oetje,eeting}s,
 
-Suggested-by: Vincent Guittot <vincent.guittot@linaro.org>
-Fixes: 685207963be9 ("sched: Move h_load calculation to task_h_load()")
-Cc: <stable@vger.kernel.org>
-Co-developed-by: Cruz Zhao <CruzZhao@linux.alibaba.com>
-Signed-off-by: Cruz Zhao <CruzZhao@linux.alibaba.com>
-Signed-off-by: Peng Wang <peng_wang@linux.alibaba.com>
----
- kernel/sched/fair.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+                        Geert
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index cee1793e8277..32b466605925 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -13418,6 +13418,8 @@ void unregister_fair_sched_group(struct task_group *tg)
- 		struct rq *rq = cpu_rq(cpu);
- 
- 		if (se) {
-+			struct cfs_rq *parent_cfs_rq = cfs_rq_of(se);
-+
- 			if (se->sched_delayed) {
- 				guard(rq_lock_irqsave)(rq);
- 				if (se->sched_delayed) {
-@@ -13427,6 +13429,13 @@ void unregister_fair_sched_group(struct task_group *tg)
- 				list_del_leaf_cfs_rq(cfs_rq);
- 			}
- 			remove_entity_load_avg(se);
-+
-+			/*
-+			 * Clear parent's h_load_next if it points to the
-+			 * sched_entity being freed to avoid stale pointer.
-+			 */
-+			if (READ_ONCE(parent_cfs_rq->h_load_next) == se)
-+				WRITE_ONCE(parent_cfs_rq->h_load_next, NULL);
- 		}
- 
- 		/*
--- 
-2.27.0
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
