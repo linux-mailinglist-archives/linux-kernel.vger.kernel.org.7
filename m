@@ -1,54 +1,45 @@
-Return-Path: <linux-kernel+bounces-868252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34ADAC04B57
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:25:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45BCEC04B2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 808BD3BF49C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C1051B8304B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044DB2E6CDE;
-	Fri, 24 Oct 2025 07:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="puPpxBP2"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC262D12EA;
+	Fri, 24 Oct 2025 07:21:14 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26642E5B0D
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2283B2C3242;
+	Fri, 24 Oct 2025 07:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761290486; cv=none; b=r0/MPwWVXvld1wW/r56gy5P2t2mwgX4XttRoJ2wIlsxtiK7zvka2knE+DqMOJN5PDAO796ZHm2MsG0omJNgJndhQWGIo2h/fP3vPTpNiSDXCBzap0v1y2mMDkBfSq+O1qLNjuY8Da/vERm8Rwugaxh5D5QjujyEMh+8VUi/BqNc=
+	t=1761290474; cv=none; b=ZCcFcjhxnrRHQ8VOj03s3Qs+rdLLsubjs+1LRdZRjvBgWs2ifLPmpWd8pgMbf6nuKHx1IoNS+At0+qMkNtolK1I4b7O5+HDCOuCY/lwsTlC7aAXWHD9tAv0yHQaRqWG2xewfOgJ3z/YfITpRiGLPcPMlqSBgv5LVFB14PJHjcNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761290486; c=relaxed/simple;
-	bh=lcb3dVn0iym9zJMs4diWzppG9w2vAuX9XMaRZbiaA4I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hx39zibeIWqYPU4awBLDHanIRMSX/AqkX7DctnagUcjTz0JSPIX82x0EhFPlH/vh1TEE7vhYvNW3Ad55kQDMql7wuBr9PxsCJMQwlr+ZqowYebxXt/LI8yuSF9+ig9jpDkmmguOoKFREJV7+neadf5UqKDyRLgGHSoO1atM33as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=puPpxBP2; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 0167CC0C41B;
-	Fri, 24 Oct 2025 07:21:00 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C4F6760703;
-	Fri, 24 Oct 2025 07:21:19 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2EB30102F244A;
-	Fri, 24 Oct 2025 09:21:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761290478; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=n2SfjqX6lNSkj1H/YLHGctb/htiBAD/kfjrbeKtoNe8=;
-	b=puPpxBP2v/7GBLcTgiHZwflmwE+c7IIPgQnODmI+9FPa5WOXR1bQd1A8CnbxM3Q5gmoVsN
-	W11z0YLDO+Hyl0+f1X0L3BRgUfkWUSA0Nk5meqcbJoQjvbpBVFLrkmhPMY5WtbbqkVsEBb
-	g3D1EP4iu7g1a4P90Fi3n8fG/OTWe3/qunL0k9zXx3auk86Ki2ksYKvUxD6D1OCs3N/B+G
-	kOfBP/AWnWTknh6ErkZfBhvn30fLexAoFDqVkvGnVnzcW1Ope7DSeuv1ahBltn9ngXH36U
-	agAthTSviB78yes0nszNAjig8JoB75pyIOsYrn9m+byEn2fvIXgiWILHHQCr2A==
-Message-ID: <f076f6a6-372a-41ff-a78a-48d1af4ec33d@bootlin.com>
-Date: Fri, 24 Oct 2025 09:20:58 +0200
+	s=arc-20240116; t=1761290474; c=relaxed/simple;
+	bh=C+PMhCJXT7hCS+fUqPYZIs2gkifJxBoAnNYkuvRZhKM=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=otNKK6NojU3n8VnY42ZjxUinPoysIlFGk0PhOSL9BSpuzJFMYCrRLrgtS9W+bKiqpKLHbpD6qU9uYkdTGOHsuznP0dByLIw3R/M75w/mTCQLx9f/Sno6+mp2jdO4n3oTMfRFyJwkSRH50znGEDDOFwlV85io7ZYhIYbpN2anp0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ctDhz3np2zTgyh;
+	Fri, 24 Oct 2025 15:16:19 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8A73B140203;
+	Fri, 24 Oct 2025 15:21:02 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 24 Oct 2025 15:21:01 +0800
+Message-ID: <1a685858-833a-4ccf-93b2-d878eee25722@huawei.com>
+Date: Fri, 24 Oct 2025 15:21:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,109 +47,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/15] mtd: rawnand: sunxi: introduce reg_user_data in
- sunxi_nfc_caps
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Wentao Liang <vulab@iscas.ac.cn>, Johan Hovold <johan@kernel.org>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20251020101311.256819-1-richard.genoud@bootlin.com>
- <20251020101311.256819-5-richard.genoud@bootlin.com>
- <87y0p3tiz9.fsf@bootlin.com>
-From: Richard GENOUD <richard.genoud@bootlin.com>
-Content-Language: en-US, fr
-Organization: Bootlin
-In-Reply-To: <87y0p3tiz9.fsf@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+CC: <shaojijie@huawei.com>, <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <lantao5@huawei.com>,
+	<huangdonghua3@h-partners.com>, <yangshuaisong@h-partners.com>,
+	<jonathan.cameron@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net 3/3] net: hibmcge: fix the inappropriate
+ netif_device_detach()
+To: Jacob Keller <jacob.e.keller@intel.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<andrew+netdev@lunn.ch>, <horms@kernel.org>
+References: <20251021140016.3020739-1-shaojijie@huawei.com>
+ <20251021140016.3020739-4-shaojijie@huawei.com>
+ <02692f16-b238-49d7-a618-150a03cb1674@intel.com>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <02692f16-b238-49d7-a618-150a03cb1674@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-Hi,
-Le 22/10/2025 à 10:54, Miquel Raynal a écrit :
-> Hi Richard,
-> 
-> On 20/10/2025 at 12:13:00 +02, Richard Genoud <richard.genoud@bootlin.com> wrote:
-> 
->> The H6/H616 USER_DATA register is not at the same offset as the
->> A10/A23 one, so move its offset into sunxi_nfc_caps
+
+on 2025/10/24 9:05, Jacob Keller wrote:
+>
+> On 10/21/2025 7:00 AM, Jijie Shao wrote:
+>> current, driver will call netif_device_detach() in
+>> pci_error_handlers.error_detected() and do reset in
+>> pci_error_handlers.slot_reset().
+>> However, if pci_error_handlers.slot_reset() is not called
+>> after pci_error_handlers.error_detected(),
+>> driver will be detached and unable to recover.
 >>
->> No functional change.
+>> drivers/pci/pcie/err.c/report_error_detected() says:
+>>    If any device in the subtree does not have an error_detected
+>>    callback, PCI_ERS_RESULT_NO_AER_DRIVER prevents subsequent
+>>    error callbacks of any device in the subtree, and will
+>>    exit in the disconnected error state.
 >>
->> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+>> Therefore, when the hibmcge device and other devices that do not
+>> support the error_detected callback are under the same subtree,
+>> hibmcge will be unable to do slot_reset.
+>>
+> Hmm.
+>
+> In the example case, the slot_reset never happens, but the PCI device is
+> still in an error state, which means that the device is not functional..
+>
+> In that case detaching the netdev and remaining detached seems like an
+> expected outcome?
+>
+> I guess I don't fully understand the setup in this scenario.
+
+We have encountered some non-fatal errors, such as the SMMU event 0x10,
+which triggered the PCIe RAS and caused the network port to become unusable.
+
+the event does not significantly affect the normal use of the network port,
+so it is unreasonable to say that the network port cannot be used.
+
+We do our best to ensure the normal use of the network ports;
+otherwise, unless there is a serial port,
+it will no longer be possible to connect to the board.
+
+To prevent such issues, I move netif_device_detach() from error_detected() to slot_reset().
+Either do netif_device_detach() and error_detected(), otherwise do nothing.
+
+
+>
+>> This path move netif_device_detach from error_detected to slot_reset,
+>> ensuring that detach and reset are always executed together.
+>>
+>> Fixes: fd394a334b1c ("net: hibmcge: Add support for abnormal irq handling feature")
+>> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 >> ---
->>   drivers/mtd/nand/raw/sunxi_nand.c | 13 +++++++++----
->>   1 file changed, 9 insertions(+), 4 deletions(-)
+>>   drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c | 10 ++++++----
+>>   1 file changed, 6 insertions(+), 4 deletions(-)
 >>
->> diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sunxi_nand.c
->> index 0285e4d0ca7f..8f5d8df19e33 100644
->> --- a/drivers/mtd/nand/raw/sunxi_nand.c
->> +++ b/drivers/mtd/nand/raw/sunxi_nand.c
->> @@ -48,7 +48,8 @@
->>   #define NFC_REG_DEBUG		0x003C
->>   #define NFC_REG_A10_ECC_ERR_CNT	0x0040
->>   #define NFC_REG_ECC_ERR_CNT(nfc, x)	((nfc->caps->reg_ecc_err_cnt + (x)) & ~0x3)
->> -#define NFC_REG_USER_DATA(x)	(0x0050 + ((x) * 4))
->> +#define NFC_REG_A10_USER_DATA	0x0050
->> +#define NFC_REG_USER_DATA(nfc, x)	(nfc->caps->reg_user_data + ((x) * 4))
->>   #define NFC_REG_SPARE_AREA	0x00A0
->>   #define NFC_REG_PAT_ID		0x00A4
->>   #define NFC_REG_MDMA_ADDR	0x00C0
->> @@ -214,6 +215,7 @@ static inline struct sunxi_nand_chip *to_sunxi_nand(struct nand_chip *nand)
->>    *			through MBUS on A23/A33 needs extra configuration.
->>    * @reg_io_data:	I/O data register
->>    * @reg_ecc_err_cnt:	ECC error counter register
->> + * @reg_user_data:	User data register
->>    * @dma_maxburst:	DMA maxburst
->>    * @ecc_strengths:	Available ECC strengths array
->>    * @nstrengths:		Size of @ecc_strengths
->> @@ -222,6 +224,7 @@ struct sunxi_nfc_caps {
->>   	bool has_mdma;
->>   	unsigned int reg_io_data;
->>   	unsigned int reg_ecc_err_cnt;
->> +	unsigned int reg_user_data;
->>   	unsigned int dma_maxburst;
->>   	const u8 *ecc_strengths;
->>   	unsigned int nstrengths;
->> @@ -723,8 +726,8 @@ static void sunxi_nfc_hw_ecc_get_prot_oob_bytes(struct nand_chip *nand, u8 *oob,
+>> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+>> index 83cf75bf7a17..e11495b7ee98 100644
+>> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+>> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+>> @@ -136,12 +136,11 @@ static pci_ers_result_t hbg_pci_err_detected(struct pci_dev *pdev,
 >>   {
->>   	struct sunxi_nfc *nfc = to_sunxi_nfc(nand->controller);
+>>   	struct net_device *netdev = pci_get_drvdata(pdev);
 >>   
->> -	sunxi_nfc_user_data_to_buf(readl(nfc->regs + NFC_REG_USER_DATA(step)),
->> -				   oob);
->> +	sunxi_nfc_user_data_to_buf(readl(nfc->regs +
->> +					 NFC_REG_USER_DATA(nfc, step)),
->> oob);
-> 
-> Minor nit, column limit is 100 now, so typically for this kind of
-> situation everything would fit on a single line.
-Indeed, the 80 column limit has been loosened (but braille displays are 
-still 80 cells max AFAIK).
-Anyway, you're right, the 80-rule could be bent here for readability.
+>> -	netif_device_detach(netdev);
+>> -
+>> -	if (state == pci_channel_io_perm_failure)
+>> +	if (state == pci_channel_io_perm_failure) {
+>> +		netif_device_detach(netdev);
+>>   		return PCI_ERS_RESULT_DISCONNECT;
+>> +	}
+>>   
+>> -	pci_disable_device(pdev);
+>>   	return PCI_ERS_RESULT_NEED_RESET;
+>>   }
+>>   
+>> @@ -150,6 +149,9 @@ static pci_ers_result_t hbg_pci_err_slot_reset(struct pci_dev *pdev)
+>>   	struct net_device *netdev = pci_get_drvdata(pdev);
+>>   	struct hbg_priv *priv = netdev_priv(netdev);
+>>   
+>> +	netif_device_detach(netdev);
+>> +	pci_disable_device(pdev);
+>> +
+>>   	if (pci_enable_device(pdev)) {
+>>   		dev_err(&pdev->dev,
+>>   			"failed to re-enable PCI device after reset\n");
+> Here, we disable the device only to immediately attempt to re-enable it?
 
-> 
-> Don't respin just for that if there is nothing else later, but if a v4
-> is needed you can change it.
-> 
-> Looks neat otherwise so far.
-> 
-> Thanks,
-> Miquèl
+Yes, the driver attempts to re-enable the PCIe device.
 
-Thanks!
+Thanks,
+Jijie Shao
 
-
--- 
-Richard Genoud, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
