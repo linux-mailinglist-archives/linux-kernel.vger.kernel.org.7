@@ -1,47 +1,48 @@
-Return-Path: <linux-kernel+bounces-869480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3921C07FD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:09:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B26C07FC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 505143BBCF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:08:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C49F44EC3F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FD22E2F13;
-	Fri, 24 Oct 2025 20:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B222E62AF;
+	Fri, 24 Oct 2025 20:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="O2aGKPL5"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="HAXCuvIA"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D1D2E1F0E;
-	Fri, 24 Oct 2025 20:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B42A2E1C63;
+	Fri, 24 Oct 2025 20:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761336532; cv=none; b=ckj0JLEsHijJRrLTW9zr42NAxkC2v6yskNTAViGoc56lGkw4Q8yLS+lopXMqBj7mQbPIsRS+w1nMy81VInl7sPhHG7jRx5/WplKE94w+j1+Y4OE1MOm7Pzc4bE1sXVQ9cw6iTREbzDc8Ri6T5knbDiiQOMJptzNdGgyMCXobSAw=
+	t=1761336533; cv=none; b=HNCjbr6S5tKJLbaz9niJqYl7Qqcd6VCJi+VU2ov+i3dzLxBz1tTez2+qyhpv6t3LG6FE/qTIRqO6HlQkL5oO7SpWJ56Aixn7+IWlt2YS3Xp3BqMPaI/GXeLCaXMcOy2qmFNALkLs3UkAmCy35uH6GqlZW1rmcp7N9ogGCvV/GDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761336532; c=relaxed/simple;
-	bh=Uq1E/YDIotsd7E/m6onK0Ac9WboBT/qXCo/XhRTpoEc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rXKapLZsmZzt9e1LVH0c0xCcE4LwjxzeRO0xeGR4CTZs19A7QwRq0S44qyta11QqJ5blX/QDQKOeHW+4wJNolCs13WpRelhEJKBwbnQzW++uS3CHVPn2IM0vTyEEq2O+/hcyRRq9MtPjggDVBNxfrLoziebS8ljlwLpcv1SGA9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=O2aGKPL5; arc=none smtp.client-ip=45.79.88.28
+	s=arc-20240116; t=1761336533; c=relaxed/simple;
+	bh=TdHXcDiNWao5l+MSzK2kBWUaJug8oDVRsNcOEnrV9QA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZjWDsCXgJVyZ20HSFMMluglUV/IPWBeDsi5W1MELgv6OluFXrDkZ5KC2KrJEJIXfHiFTopiurqfk9pma4nDO8ZxWsXps1tEiCGvinDbBxsmvA+NjSEFplMAmeDx+8/NOETI9Ef3o2qTe/jn4S354/weUMB7GhRb0sdpFTGyGXEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=HAXCuvIA; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5BA2540AED
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1F3EB40B38
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1761336523; bh=dI8S0kC4HGNOoAJoqqvVEx6xf1jpureXIelcQ/0mudw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=O2aGKPL5X81oGkmYbkyfFbskUnBXlmrtElCAFtpcJ0KisOaZB/NXWdALhY6yM0UF3
-	 18w9LqwYkfVS9sOxpCoTAwO1D4MJmlxNQFMZGwKTRLMTvW0e4HnynQ8P/SYZYBPpaO
-	 sMQGCXmVxF3aVbR9qp5TYi7IzT0E2yYFbPhSUDHXbze5j0bTzspt6jrI2ASzWDHo6n
-	 Z0hQsQLaPgKT3Q502XQMpeC1OLLzyBm6SW1BAgDw0l2DSgWR8IPcearQEVOvDetgd/
-	 v8MSCf81K0CSa8qrZWjUOZPXt+hzTzjKv+upxg0ZA9MXoJw812AtHoIez4iKGna0/c
-	 AkiK7MafDHmGA==
+	t=1761336524; bh=a07wvbJJF2Sphbu4YX87L2J5mPBdv/tkJJyhVfoX/G8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HAXCuvIA4jJ3+oXl7FHzqrcMyyz2kOCedKHnh4Ur8+uyqNN9fvfDl7f22m+Jpzmgn
+	 sp16Xu6/hWumMuoM3MRAgYfft3C4AEY9e9QUjxMwQtfVNsd9Icjda8wY6LKoV59zAt
+	 l7Aoh2P2ab2YDfWLvp7dhTFcsl9ZaUkOQhodQmn1xTllZ9CPJPOsnx/1foSGtHBKw4
+	 zRv/eGQiqAssoLr+tGuTVPRtzu+YKnIHThruX8tjqHMG10UHXcZNC4Vf2RhcR/EMld
+	 uWvqVKiR2+pQu/QEvwf3dilfUJ6aD3oXitaoRTvpni18kpL2ZGpJ/Gf0OUw1iK3GlY
+	 w9oA1TpfZiS+A==
 Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id 5BA2540AED;
-	Fri, 24 Oct 2025 20:08:43 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPA id 1F3EB40B38;
+	Fri, 24 Oct 2025 20:08:44 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -49,11 +50,14 @@ Cc: linux-kernel@vger.kernel.org,
 	Akira Yokosawa <akiyks@gmail.com>,
 	Randy Dunlap <rdunlap@infradead.org>,
 	Jani Nikula <jani.nikula@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v3 0/8] Collect documentation-related tools under /tools/docs
-Date: Fri, 24 Oct 2025 14:08:21 -0600
-Message-ID: <20251024200834.20644-1-corbet@lwn.net>
+	Jonathan Corbet <corbet@lwn.net>,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH v3 1/8] docs: Move the "features" tools to tools/docs
+Date: Fri, 24 Oct 2025 14:08:22 -0600
+Message-ID: <20251024200834.20644-2-corbet@lwn.net>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251024200834.20644-1-corbet@lwn.net>
+References: <20251024200834.20644-1-corbet@lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,92 +66,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Our documentation-related tools are spread out over various directories;
-several are buried in the scripts/ dumping ground.  That makes them harder
-to discover and harder to maintain.
+The scripts for managing the features docs are found in three different
+directories; unite them all under tools/docs and update references as
+needed.
 
-Recent work has started accumulating our documentation-related tools in
-/tools/docs.  This series completes that task, moving the rest of our
-various utilities there, hopefully fixing up all of the relevant references
-in the process.
-
-At the end, rather than move the old, Perl kernel-doc, I simply removed it.
-
-The big elephant lurking in this small room is the home for Python modules;
-I left them under scripts/lib, but that is an even less appropriate place
-than it was before.  I would propose either tools/python or lib/python;
-thoughts on that matter welcome.
-
-Changes in v3:
-  - Now with more caffeine! Properly based on docs-next.
-
-Changes in v2:
-  - Rebase on top of all of Mauro's changes (the most painful rebase I've
-    ever done, I think).
-  - Land everything in /tools/docs/ rather than /tools/doc/
-
-v2: https://lore.kernel.org/lkml/20251023161027.697135-1-corbet@lwn.net/
-v1: https://lore.kernel.org/lkml/20250813213218.198582-1-corbet@lwn.net/
-
-
-Jonathan Corbet (8):
-  docs: Move the "features" tools to tools/docs
-  docs: move checktransupdate.py to tools/docs
-  docs: move scripts/documentation-file-ref-check to tools/docs
-  docs: move get_abi.py to tools/docs
-  docs: move test_doc_build.py to tools/docs
-  docs: move kernel-doc to tools/docs
-  docs: move find-unused-docs.sh to tools/docs
-  docs: remove kernel-doc.pl
-
- Documentation/Kconfig                         |    2 +-
- Documentation/Makefile                        |    6 +-
- Documentation/conf.py                         |    2 +-
- Documentation/doc-guide/checktransupdate.rst  |    6 +-
- Documentation/doc-guide/contributing.rst      |    2 +-
- Documentation/doc-guide/kernel-doc.rst        |    6 +-
- Documentation/doc-guide/sphinx.rst            |    2 +-
- Documentation/kbuild/kbuild.rst               |    2 +-
- Documentation/process/coding-style.rst        |    2 +-
- Documentation/sphinx/kernel_abi.py            |    2 +-
- Documentation/sphinx/kernel_feat.py           |    4 +-
- .../it_IT/doc-guide/kernel-doc.rst            |    8 +-
- .../sp_SP/process/coding-style.rst            |    2 +-
- .../zh_CN/doc-guide/checktransupdate.rst      |    6 +-
- .../zh_CN/doc-guide/contributing.rst          |    2 +-
- .../zh_CN/doc-guide/kernel-doc.rst            |   10 +-
- Documentation/translations/zh_CN/how-to.rst   |    2 +-
- .../translations/zh_CN/kbuild/kbuild.rst      |    2 +-
- .../zh_CN/process/coding-style.rst            |    2 +-
- .../zh_TW/process/coding-style.rst            |    2 +-
- MAINTAINERS                                   |    5 -
- Makefile                                      |    2 +-
- drivers/gpu/drm/i915/Makefile                 |    2 +-
- scripts/kernel-doc                            |    1 -
- scripts/kernel-doc.pl                         | 2439 -----------------
- {scripts => tools/docs}/checktransupdate.py   |    8 +-
- .../docs}/documentation-file-ref-check        |    2 +-
- .../docs}/features-refresh.sh                 |    0
- {scripts => tools/docs}/find-unused-docs.sh   |    8 +-
- {scripts => tools/docs}/get_abi.py            |    0
- {scripts => tools/docs}/get_feat.pl           |    2 +-
- .../kernel-doc.py => tools/docs/kernel-doc    |    0
- .../features => tools/docs}/list-arch.sh      |    2 +-
- tools/docs/sphinx-pre-install                 |    2 +-
- {scripts => tools/docs}/test_doc_build.py     |    0
- 35 files changed, 50 insertions(+), 2495 deletions(-)
- delete mode 120000 scripts/kernel-doc
- delete mode 100755 scripts/kernel-doc.pl
- rename {scripts => tools/docs}/checktransupdate.py (97%)
- rename {scripts => tools/docs}/documentation-file-ref-check (99%)
+Acked-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+---
+ Documentation/sphinx/kernel_feat.py                           | 4 ++--
+ .../features/scripts => tools/docs}/features-refresh.sh       | 0
+ {scripts => tools/docs}/get_feat.pl                           | 2 +-
+ {Documentation/features => tools/docs}/list-arch.sh           | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
  rename {Documentation/features/scripts => tools/docs}/features-refresh.sh (100%)
- rename {scripts => tools/docs}/find-unused-docs.sh (79%)
- rename {scripts => tools/docs}/get_abi.py (100%)
  rename {scripts => tools/docs}/get_feat.pl (99%)
- rename scripts/kernel-doc.py => tools/docs/kernel-doc (100%)
  rename {Documentation/features => tools/docs}/list-arch.sh (83%)
- rename {scripts => tools/docs}/test_doc_build.py (100%)
 
+diff --git a/Documentation/sphinx/kernel_feat.py b/Documentation/sphinx/kernel_feat.py
+index aaac76892ceb..81c67ef23d8d 100644
+--- a/Documentation/sphinx/kernel_feat.py
++++ b/Documentation/sphinx/kernel_feat.py
+@@ -13,7 +13,7 @@
+     :license:    GPL Version 2, June 1991 see Linux/COPYING for details.
+ 
+     The ``kernel-feat`` (:py:class:`KernelFeat`) directive calls the
+-    scripts/get_feat.pl script to parse the Kernel ABI files.
++    tools/docs/get_feat.pl script to parse the Kernel ABI files.
+ 
+     Overview of directive's argument and options.
+ 
+@@ -85,7 +85,7 @@ class KernelFeat(Directive):
+         srctree = os.path.abspath(os.environ["srctree"])
+ 
+         args = [
+-            os.path.join(srctree, 'scripts/get_feat.pl'),
++            os.path.join(srctree, 'tools/docs/get_feat.pl'),
+             'rest',
+             '--enable-fname',
+             '--dir',
+diff --git a/Documentation/features/scripts/features-refresh.sh b/tools/docs/features-refresh.sh
+similarity index 100%
+rename from Documentation/features/scripts/features-refresh.sh
+rename to tools/docs/features-refresh.sh
+diff --git a/scripts/get_feat.pl b/tools/docs/get_feat.pl
+similarity index 99%
+rename from scripts/get_feat.pl
+rename to tools/docs/get_feat.pl
+index 40fb28c8424e..d75e7c85dc85 100755
+--- a/scripts/get_feat.pl
++++ b/tools/docs/get_feat.pl
+@@ -18,7 +18,7 @@ my $enable_fname;
+ my $basename = abs_path($0);
+ $basename =~ s,/[^/]+$,/,;
+ 
+-my $prefix=$basename . "../Documentation/features";
++my $prefix=$basename . "../../Documentation/features";
+ 
+ # Used only at for full features output. The script will auto-adjust
+ # such values for the minimal possible values
+diff --git a/Documentation/features/list-arch.sh b/tools/docs/list-arch.sh
+similarity index 83%
+rename from Documentation/features/list-arch.sh
+rename to tools/docs/list-arch.sh
+index ac8ff7f6f859..96fe83b7058b 100755
+--- a/Documentation/features/list-arch.sh
++++ b/tools/docs/list-arch.sh
+@@ -8,4 +8,4 @@
+ 
+ ARCH=${1:-$(uname -m | sed 's/x86_64/x86/' | sed 's/i386/x86/' | sed 's/s390x/s390/')}
+ 
+-$(dirname $0)/../../scripts/get_feat.pl list --arch $ARCH
++$(dirname $0)/get_feat.pl list --arch $ARCH
 -- 
 2.51.0
 
