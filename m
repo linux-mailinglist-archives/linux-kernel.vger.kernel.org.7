@@ -1,114 +1,148 @@
-Return-Path: <linux-kernel+bounces-869153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C61C071D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:56:23 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8B4C071D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C663A4498
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:56:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7C3D435CC9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0C72F85B;
-	Fri, 24 Oct 2025 15:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9337D31E11F;
+	Fri, 24 Oct 2025 15:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hovQLquU"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="cKhl6nPx"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FF11A262D;
-	Fri, 24 Oct 2025 15:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923351A262D
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761321376; cv=none; b=cyRdtp+sDiMN1JT+CQU+F2gbpJHkEgZfxTFYPhRsqT5vlSoibK01WKl9QO08YDYEzsdHOtnmlJq0SEM4Kl5ZZ+3HuiXyu+OOE0Y/Do8dApatDPTTR3EqhetqywOQBbw5ZlZ2aWpRGJUehZ2Ex+5dsJlXb84tyRn7iwCTlfc/zEs=
+	t=1761321440; cv=none; b=b+4aW7pq8nKSAK8if8EG5WRrZIIqEwBmGXygzJismI11Y44Kw69FbcENcVwkrAjaJHNAMrFeiikJAGZAQWW5cLOZIK19pRpewLQ4QGXdQ/d0GBTMJnpEiZXZppngVHOj7//RO4eyNfyIFvp5bHXqg2CxVBNCxGetYENdSVVESxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761321376; c=relaxed/simple;
-	bh=1tUb6YsHFDkIkXFGpZ1mEVIpkKi8wP4p6aA0CbWkzkY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CiK0MWVThmzUl+k+MnrmGmMxHogvmXVViw5U6wJkVgUnZ1tu22vV73VAdA+0fw1G4Sql1ScRhbMN5ApQRlDaXxh+BLcFd9XNifPh1oa53c4Dhpb1BmhQ3a261mUzt3NekqfD0shYB3Emeon1Ov4nM5hfHpyCXE+k9SGlXEw1TeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hovQLquU; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=FdL3D5T6GzcuV+Ynz/8e1PaP6UiOMw6TEgBEwi5fXdc=;
-	b=hovQLquU3qbhWyho9Zed9m38Fx33dZXbVGhgaWj1l/xwvzbUVoBqfQS0jlkEW6
-	JDBRz8n8qvlJyVFQw07RTFXV2SaK/+jMxe9wroiXJ4ub8d3K6dEi433EUH/uMV+9
-	7P2qe7RggzYe8GzmDBl/CgEiWAqQCR933g7pEqCEaVONQ=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgD3H+p2oftoJpqhBQ--.17665S2;
-	Fri, 24 Oct 2025 23:55:34 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: gregkh@linuxfoundation.org
-Cc: hch@infradead.org,
-	jackzxcui1989@163.com,
-	jirislaby@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	tj@kernel.org
-Subject: Re: [PATCH] serial: 8250_dma: add workqueue to flip tty buffer
-Date: Fri, 24 Oct 2025 23:55:34 +0800
-Message-Id: <20251024155534.2302590-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2025102434-stoppage-stagnate-5f0e@gregkh>
-References: <2025102434-stoppage-stagnate-5f0e@gregkh>
+	s=arc-20240116; t=1761321440; c=relaxed/simple;
+	bh=DWiGG85ath2jzAlAPFhCB5oiKw5XwqI4VvMQg5Ys3AE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xd657PMftKSZgZi6ntGm+877HwzDgwPbGgD/zfJ7oErKWi+P1wxkm1LUE7Wl22Py1BqYXxr6id108QLKmJjXZil/d/9cYGwqqjYvDmLBWx70UQqT15QM3eIoJTh0+S52IwhZavv+0fP0g/n2tI8c1sqsePLjQ8/BOWaBnauPKFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=cKhl6nPx; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-430c6eef4b9so9785785ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:57:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1761321438; x=1761926238; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DWiGG85ath2jzAlAPFhCB5oiKw5XwqI4VvMQg5Ys3AE=;
+        b=cKhl6nPxIbxNpBchdLjhJBjAXQhHgqsFhwdHgVjBRPOKfAVZEexL7+I8mWSiLWNLH6
+         KyABMzivBfsFPfryh5+Q9HlDx3J0RsgrIK6A0RySNUjzh6Zfrqcdl1vv2GmVJ88i9lB8
+         V1/jxBo4ZZ60NF7IeMuO7jyf8zNgwlz3A5z9c1z3pFWu9i42GcWORZdC+Rz31kKpq6pO
+         5TQtBY54kDCs2cmqZakOtsARt8t0tOCAFMFPifXaFLQJj4iZGguX2tv5aaAsRSAI4XDA
+         +SoHeLnpP0KFlgLaKugyK0T2jxByhZiSUPatFP/AFlFfAZ8SEl8roGvZPQz+NhU1DEth
+         vkgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761321438; x=1761926238;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DWiGG85ath2jzAlAPFhCB5oiKw5XwqI4VvMQg5Ys3AE=;
+        b=iudK5Or2adkAvy0e9/LJvOXRkZj+TKz4ELHHWSo8AYWbI8IllOCp4fSx2GZDZI5pEB
+         nZGl3SPWe0VaOgloqcdwA/+49Trq6861ul0SsYxuyPsZzahqieJMsS/rOEMQqerxpb+z
+         H6FdAEPCMo5/KxvfPUcHIJ8+rY7wOEbu7LJv5J8KLaeFnmB6eUI3PQY/KR0N/ashhKeg
+         fWTfayfX8xdHzRkSbTl/a5p56O3fMEwG9NaZqxUX24cY6AW2Bj1dDypZSTSnyreHmJhC
+         Z5PKpCiPlBJssx3zSNWTonE+8ZB0BpzC3J8xUu933AOi7yGG8eaMKm/81KChrZbv9baf
+         /cFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhPrUME72fZYp9A7hIKslFLxxREg4LkJ48se3fT0dT6flR6/j5pzLHcWS4GNbuQFYl8o6Bw/HFD11fdTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBh36oElJkbadaE6HIYumFMph7FfO4r5A4r9sQ7Yzu8vAFFCiW
+	00MRaXKzRN4tOv8DlCWOMelXAOrJ+yhuiNu7s1zWQdX1I5JpR4d7boYJ8jl94mGGUfpiVjFckLt
+	eOLX7jRJ8IwIteKi9A3r6QEJ2BHDeOVdyCW5QWMDvjA==
+X-Gm-Gg: ASbGncsPi+3S+oJUcTZaYAsHPVANJ1Q2PHA4UJlXzUF4qJn+dRZTsaLhqhCOnjWXRyd
+	FHvVFd8Surq4gZPk7iZNJuFSk3ALTpJBR+/XJ5saSb+6H/j2JGIdwFmPHGa6is6bWh1VGyOCE6X
+	EzGTzHUlS4wwp9NC2+jiP4hHiZdU2NLtG3lYC8uF6VtmitEv2PfxzVEqmdOjeXEfhir604iImwb
+	REn/tjJOPIATWiao3/IiRn31A9JaKvN82LcwRbQdWqby6UvHfw3p1fVCYv729JDJMdvQ6ZUbboT
+	1TuxxfLJ1V7H3Iden9qg5YopdUkT
+X-Google-Smtp-Source: AGHT+IHEWvX0kFGAJ7kHIWxzKY5dF/OETQwGko7y9vL4NrCbfZQtWvnUvuQjJv0i7nzg2wW4twAN7C9YdUXGq4v36l4=
+X-Received: by 2002:a05:6e02:4711:b0:431:d63a:9203 with SMTP id
+ e9e14a558f8ab-431d63a93fbmr101492025ab.19.1761321437606; Fri, 24 Oct 2025
+ 08:57:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgD3H+p2oftoJpqhBQ--.17665S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZFy5WryUCFW3Zw1fZFyfXrb_yoW8uw48pa
-	yftry7tF97Jr47Kw1fCa18Aw4a9Fs3ur45Grn2gry0yr98ZFnava10grWYkFyxCr97Gw4Y
-	vFWqqa4kC3ZFvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRkR6rUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/1tbiRxPwCmj7nyoqLAAAsO
+References: <CAAhSdy1fCCdciZLqmoeWDG_QoOHDi9j0_ZZKYkpGJmWrf14Q-g@mail.gmail.com>
+ <20251024133116.73803-1-fangyu.yu@linux.alibaba.com> <CAAhSdy3E7-uC=pwU3c93bj3_xykPnLUcDXgKJtJ0KYeL91tijw@mail.gmail.com>
+In-Reply-To: <CAAhSdy3E7-uC=pwU3c93bj3_xykPnLUcDXgKJtJ0KYeL91tijw@mail.gmail.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 24 Oct 2025 21:27:06 +0530
+X-Gm-Features: AWmQ_blSmL4OTf6qXTR2BfjEwNydZe5Z-dw51LCKSd1XhTinIaUMHniok6lfuns
+Message-ID: <CAAhSdy1+TLUgi54uiHg7xomUo7tA_rs7Kt6b4OdUCvDQXjZYiQ@mail.gmail.com>
+Subject: Re: Re: [PATCH] RISC-V: KVM: Remove automatic I/O mapping for VM_PFNMAP
+To: fangyu.yu@linux.alibaba.com
+Cc: alex@ghiti.fr, aou@eecs.berkeley.edu, atish.patra@linux.dev, 
+	guoren@kernel.org, jiangyifei@huawei.com, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, palmer@dabbelt.com, pbonzini@redhat.com, 
+	pjw@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 24 Oct 2025 13:21:45 +0200 Greg KH <gregkh@linuxfoundation.org> wrote:
+On Fri, Oct 24, 2025 at 8:55=E2=80=AFPM Anup Patel <anup@brainfault.org> wr=
+ote:
+>
+> On Fri, Oct 24, 2025 at 7:01=E2=80=AFPM <fangyu.yu@linux.alibaba.com> wro=
+te:
+> >
+> > >> From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> > >>
+> > >> As of commit aac6db75a9fc ("vfio/pci: Use unmap_mapping_range()"),
+> > >> vm_pgoff may no longer guaranteed to hold the PFN for VM_PFNMAP
+> > >> regions. Using vma->vm_pgoff to derive the HPA here may therefore
+> > >> produce incorrect mappings.
+> > >>
+> > >> Instead, I/O mappings for such regions can be established on-demand
+> > >> during g-stage page faults, making the upfront ioremap in this path
+> > >> is unnecessary.
+> > >>
+> > >> Fixes: 9d05c1fee837 ("RISC-V: KVM: Implement stage2 page table progr=
+amming")
+> > >> Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+> > >
+> > >LGTM.
+> > >
+> > >Queued it as fix for Linux-6.18
+> > >
+> > >Reviewed-by: Anup Patel <anup@brainfault.org>
+> > >
+> > >Thanks,
+> > >Anup
+> > >
+> >
+> > Hi Anup:
+> >
+> > Thanks for the review.
+> >
+> > Please note that this patch has two build warnings, and I have fixed
+> > on patch V2:
+> > https://lore.kernel.org/linux-riscv/20251021142131.78796-1-fangyu.yu@li=
+nux.alibaba.com/
+> >
+>
+> Can you send a separate patch with Fixes tag to this patch?
+>
+> You can base the patch on riscv_kvm_next branch at:
+> https://github.com/kvm-riscv/linux.git
+>
 
-> >  	tty_flip_buffer_commit(buf->tail);
-> > -	queue_work(system_unbound_wq, &buf->work);
-> > +	queue_work(port->wq_tty_flip ?: system_unbound_wq, &buf->work);
-> 
-> Why not just do this for all tty ports?  What is the benifit of keeping
-> this on the system_unbound_wq for all other tty devices?
+For some reason, your v2 patch never showed up in my inbox :(
 
-Thank you for your reminder. I think we should create a workqueue for all
-tty_ports to avoid similar issues that other tty_ports might encounter later.
-Creating a workqueue for each tty_port only slightly increases memory usage,
-but it allows users to configure it, which should result in benefits far
-outweighing the drawbacks.
-I plan to allocate the workqueue in tty_port_init and delete it in
-tty_port_destroy. I briefly scanned the code and found that currently,
-tty_port_init seems to match one-to-one with tty_port_destroy. I’m not sure
-if I have checked everything, so I would appreciate your suggestions about
-it.
-Additionally, I will use the name in tty_struct to differentiate the names
-of the nodes created due to WQ_SYSFS flag. If the WQ_SYSFS flag is set and
-a duplicate name is detected, a warning will be printed in dmesg, and the
-creation will fail. I plan to directly assign system_unbound_wq to the
-variable for wq_tty_flip when creation fails. This way, during each flip,
-we won’t have to perform '?:' operation; I will only need to check in
-tty_port_destroy whether it is system_unbound_wq. If it’s not, I will
-destroy the workqueue. I’m wondering if my approach is appropriate, as is
-there any case tty_port_destory is called without calling tty_port_init
-before?
+No need for a separate patch. I have picked your v2.
 
-
-> You forgot to document this new member, and so the documentation build
-> will throw a warning.
-
-I thought about it later, and since this workqueue is related to the logic
-of tty_bufhead, which is also used for flipping, I plan to place the
-wq_tty_flip workqueue inside tty_buffer. Since it will be placed together
-with work in tty_buffer, it is self-explanatory. If I organize it this way,
-there shouldn't be a need for additional comments. What do you think?
-
---
-Xin Zhao
-
+Regards,
+Anup
 
