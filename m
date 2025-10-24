@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-868229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77037C04AAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:17:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CDEBC04AB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C5734FA92F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:17:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9572C3BD571
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F215A2D9EE2;
-	Fri, 24 Oct 2025 07:15:29 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F792C0F91;
+	Fri, 24 Oct 2025 07:15:34 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972332D24B5
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2D62C11EB
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761290129; cv=none; b=EcT86oL7rfDa14MYKncefuVoKlD1UfQPpGz6NtQgTw1OGsDDB14vaF0dcP1ngy+5PTr5jvQXgHcFtOg34uyZaQEAicNr1ASKADx0jgD9/zFzmdagAIdaZ7dRSvbX4bHe/uInhN2Xg6eCoFn32/akDCvLUblj4lANm+spnyR5FXs=
+	t=1761290134; cv=none; b=EtONVwLyQ//ar0uBNaN0NVyb+8zcTnRT6YxmItR7WVKY0tMOY+Vcc7+oRVvZz9sX2X82FWJ/4z/bQXh7Ddu1KwllR+cb4dYHykWVeBU3swUoLKn/hriaLKdKIHRDie5GUMpkPePUmzaKe16n7pHacqHSEF49EsimzlZg/0QlfBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761290129; c=relaxed/simple;
-	bh=vpjK0hE8YXRo0KuVf6oDc7peRJobCW/rH+1ac96XXxc=;
+	s=arc-20240116; t=1761290134; c=relaxed/simple;
+	bh=7Sdc4uebgehtj4hi7UcMKz/mN6yMMjbMXMDZOAUi5Eo=;
 	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=i8ZXr0cw9x2Sbd2mvTNSx+UGf029vTrdaoUWOV8WU6qAqGI4UUCO7HnpEjxG9goCpk1Mhmj0a3HlD8de/7KgDYqyKlwTFN+/rS+wNlQd9IiE78Hz0xEzr7/bcnd5a14mzvbes/61Z2vNDBYnlIWEtew2T3A6TIZjSY6x03HZUCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+	 Content-Type; b=BDFRWB+RxyTK3Hm6oxPsdgzH6ZVl7VcsVZvG0iNPGsf9JnQkMxAQEyMzLeNAYuR7eDYNPDB6qyFnIcoOkEnvC5BO++FI+TN/+0/GA0WJpYk2Pna8t0WgtZ6rtdEtLIYcahkhNlPmNMIXTuoeE7p5weOHwvgyMYrlKBRzCCquGZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-886e347d2afso179743139f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:15:26 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-431d999ebe8so50302425ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:15:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761290125; x=1761894925;
+        d=1e100.net; s=20230601; t=1761290131; x=1761894931;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3W0XWln4jrXi/FR5HXl0w/n/mi429O4MQ0jEz2lDFVw=;
-        b=GPK/ayHTSlP3zSmhbyTlX0gDwkfR4jpvmeHPo4DK8QPvsHUI0z4yGD6dlG1R2gBqsi
-         c+u8tC5LvJu8x0Kq7QAi1JWhWlU1HUWDvwTbIZSjY+kLb87hTvBeRbkdXGMTLbmLa/B9
-         n1Uv7H/C+nGSk1IC8FqRpGKmQZvVuwcktLr4VwPgJWBoEgi37M3NVxfaurutEBC4/zEK
-         PF6DJG4080Rl96mpb1SRVSadj8I/nI/dAU4AJbn0NNvfTcmwZRaB1OJRKaiTf8AXIQZV
-         XU1berI1l/39R7HfDnTZ0zbymwA7G7VuoY0L5SeoOO3ugTaMZf3rtXVjI+W2TS61lmVP
-         gc9g==
-X-Gm-Message-State: AOJu0YzNnUjOSIR8/23jIrsTqBGMYwcD5beZhPPhCBd+Qch//dQK9NHy
-	9apderIhtE/hK8BwyIyH7yMxuAO0f6ok3X4IibxNinnKX2/GsHdyf/PcB4x0gDiqbw7IUHu3gQM
-	n/jQR/mu2sR/NjO7JOEh431RynA7qj1Eu4S5Sj8ino2kUrfoxO8KB3j7TtT4=
-X-Google-Smtp-Source: AGHT+IEJ6BoKTbPNCOj8+OazyjO/9zA47VtKAoJDiVjOwDxsJTfT45H3hJjs2SGQ2r3dgaatT4p7FffKCGXz3OKwKgWj2VwRmOO9
+        bh=O3cg6x2q5zImhN00OrsLOUsagO0FWbKewBvQIPvJjzY=;
+        b=OoFZRTqfWnuhdX8ee3chQedSffIRcqUuBJ4Y/us0QOoAiJd/WHNVSRdHfiJ5ZZ/aKe
+         xEhZvAy05SM0uCtyteSo1bXpK5ZEl3NNyhKckWyLivvc6jSUt8IhmXc6AUG8A8Zxehab
+         hM9kERXTbW0puWknHy6nan8HCQpGvyJ2TM6BP7QxCRIJrU6VnAf0pm6oyECxMrsuHs1R
+         gUrIEPVBKDAQAuZ5fHIIDmdRLMUNsccIahIE4Lwo2t80dq/Qx4bfHB8yuBs6nUjaKgdD
+         yCUcBDharD30tj05LyXN/4TUwT01j94pQL/Y1uZM53sgfW1KvfToImCJafKZOH59g0Gw
+         32kA==
+X-Gm-Message-State: AOJu0YyDxVeAfm1Vu14vMPCH22I8f1U0DjoQo1JHa214ZC/oAenqfRq0
+	0Ppf8ug3IA8FvovLfxHa/fiPFpZvQ4jVC5POz7P46H8t1x3keMv+D6elPYrm7VrvsM9sh82SMB8
+	TozOABNfERx9RZzJx4MyeMac/XGYS41ePu2gcT6jXktp+DslNmVh3NJp6lIo=
+X-Google-Smtp-Source: AGHT+IHPUQeCfIajMC6F9BITl6Yg4JamXkxSewk5bCpnSuqijzkhcyv76opg3DjomBzOuSEgfGszyEjGwgvCTI+Q9ObnsIlbV0Qs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18c5:b0:430:9fde:33d3 with SMTP id
- e9e14a558f8ab-430c52fc017mr353878775ab.27.1761290125574; Fri, 24 Oct 2025
- 00:15:25 -0700 (PDT)
-Date: Fri, 24 Oct 2025 00:15:25 -0700
-In-Reply-To: <000000000000c7e54f0621e8a14f@google.com>
+X-Received: by 2002:a05:6e02:3e06:b0:430:ad98:981b with SMTP id
+ e9e14a558f8ab-430c520929emr326477205ab.5.1761290131034; Fri, 24 Oct 2025
+ 00:15:31 -0700 (PDT)
+Date: Fri, 24 Oct 2025 00:15:31 -0700
+In-Reply-To: <68d913e1.050a0220.1696c6.0003.GAE@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb278d.050a0220.346f24.00a5.GAE@google.com>
+Message-ID: <68fb2793.a70a0220.3bf6c6.0140.GAE@google.com>
 Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
- linux-6.1.y
-From: syzbot <syzbot+a49010a0e8fcdeea075f@syzkaller.appspotmail.com>
+ linux-6.12.y
+From: syzbot <syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com>
 To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
@@ -70,14 +70,14 @@ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
 ***
 
-Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
 Author: dmantipov@yandex.ru
 
 diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index 7f11ffacc915..e606826045b5 100644
+index 5d9388b44e5b..b84e164c6314 100644
 --- a/fs/ocfs2/alloc.c
 +++ b/fs/ocfs2/alloc.c
-@@ -6155,6 +6155,9 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+@@ -6162,6 +6162,9 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
  	int status;
  	struct inode *inode = NULL;
  	struct buffer_head *bh = NULL;
@@ -87,7 +87,7 @@ index 7f11ffacc915..e606826045b5 100644
  
  	inode = ocfs2_get_system_file_inode(osb,
  					   TRUNCATE_LOG_SYSTEM_INODE,
-@@ -6172,6 +6175,19 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+@@ -6179,6 +6182,19 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
  		goto bail;
  	}
  
@@ -108,7 +108,7 @@ index 7f11ffacc915..e606826045b5 100644
  	*tl_bh    = bh;
  bail:
 diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
-index de6fd4a09ffd..10d0618a0ddf 100644
+index 7799f4d16ce9..46f392374388 100644
 --- a/fs/ocfs2/dir.c
 +++ b/fs/ocfs2/dir.c
 @@ -302,8 +302,21 @@ static int ocfs2_check_dir_entry(struct inode *dir,
@@ -150,7 +150,7 @@ index de6fd4a09ffd..10d0618a0ddf 100644
  	if (el->l_tree_depth) {
  		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
  				      &eb_bh);
-@@ -3416,6 +3437,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
+@@ -3415,6 +3436,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
  		offset += le16_to_cpu(de->rec_len);
  	}
  
@@ -166,7 +166,7 @@ index de6fd4a09ffd..10d0618a0ddf 100644
  	 * We're going to require expansion of the directory - figure
  	 * out how many blocks we'll need so that a place for the
 diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index a1f3b25ce612..7115d2091cb9 100644
+index 4a7509389cf3..41310d2b937c 100644
 --- a/fs/ocfs2/inode.c
 +++ b/fs/ocfs2/inode.c
 @@ -1419,6 +1419,14 @@ int ocfs2_validate_inode_block(struct super_block *sb,
@@ -185,7 +185,7 @@ index a1f3b25ce612..7115d2091cb9 100644
  
  bail:
 diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index b1e32ec4a9d4..6acf13adfb55 100644
+index f9d6a4f9ca92..b10c8acd469b 100644
 --- a/fs/ocfs2/move_extents.c
 +++ b/fs/ocfs2/move_extents.c
 @@ -98,7 +98,13 @@ static int __ocfs2_move_extent(handle_t *handle,
@@ -217,10 +217,10 @@ index b1e32ec4a9d4..6acf13adfb55 100644
  		context->auto_defrag = 1;
  
 diff --git a/fs/ocfs2/suballoc.c b/fs/ocfs2/suballoc.c
-index 166c8918c825..d11a0b83baba 100644
+index 6ac4dcd54588..9969a041ab18 100644
 --- a/fs/ocfs2/suballoc.c
 +++ b/fs/ocfs2/suballoc.c
-@@ -645,6 +645,16 @@ ocfs2_block_group_alloc_discontig(handle_t *handle,
+@@ -649,6 +649,16 @@ ocfs2_block_group_alloc_discontig(handle_t *handle,
  	return status ? ERR_PTR(status) : bg_bh;
  }
  
@@ -237,7 +237,7 @@ index 166c8918c825..d11a0b83baba 100644
  /*
   * We expect the block group allocator to already be locked.
   */
-@@ -667,6 +677,10 @@ static int ocfs2_block_group_alloc(struct ocfs2_super *osb,
+@@ -671,6 +681,10 @@ static int ocfs2_block_group_alloc(struct ocfs2_super *osb,
  	BUG_ON(ocfs2_is_cluster_bitmap(alloc_inode));
  
  	cl = &fe->id2.i_chain;
@@ -248,7 +248,7 @@ index 166c8918c825..d11a0b83baba 100644
  	status = ocfs2_reserve_clusters_with_limit(osb,
  						   le16_to_cpu(cl->cl_cpg),
  						   max_block, flags, &ac);
-@@ -1923,6 +1937,9 @@ static int ocfs2_claim_suballoc_bits(struct ocfs2_alloc_context *ac,
+@@ -1992,6 +2006,9 @@ static int ocfs2_claim_suballoc_bits(struct ocfs2_alloc_context *ac,
  	}
  
  	cl = (struct ocfs2_chain_list *) &fe->id2.i_chain;
