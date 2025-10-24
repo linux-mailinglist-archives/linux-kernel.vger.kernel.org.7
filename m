@@ -1,144 +1,325 @@
-Return-Path: <linux-kernel+bounces-869378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B02C07BA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:23:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F237C07BA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9C91C81C5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:22:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0E631C82802
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A43F263C9F;
-	Fri, 24 Oct 2025 18:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0FF257841;
+	Fri, 24 Oct 2025 18:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vu/MvGoe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IiIxXjrI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFDE1A3160
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C52219A8A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761330088; cv=none; b=KQrXdS+pm1LuTkkcFwKuvG0iRLPEqdEZSGxnsUY9YrliPI46SPpgz8UUlZ6poH6LQEpIRaNJE9JhcEfsaPMcGq1vTJFXDfqKKDHhRRrrhXyBkW3MGL3dBm44HHFaxiT58wEj4Fefk8sV9uq6F4OOYQp8h6K8vGerlyTFgFYTLgI=
+	t=1761330111; cv=none; b=elivCCN/TYEw7eOOPy9O4haHv2816jK5uTshNl3fGF9iaYlkdWYaas+fjOjUpZjePj2SrVr4R0O0jU75FgEG18qKdm2vUi0taWGFIX/kLh6E+wZbdpC0IjzR43OUONmZdkESRbZHx+27tbCSG7a2yVUr40j+bEjQ2MDsrvqQR3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761330088; c=relaxed/simple;
-	bh=PatMLVEBamIoHgAtggexPs7LX1mD80NJHiiD02ILzsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YxDuo0CxdIRpRwwBborpsTZEp0/Xf8PTj2bibHHMClbWso8TVQiZvHAiKR71xrNKJxVPLTEANIcXyT1A3yLbdtwmQypgqFHwa0bJTmfsZCKq4wn1vyN8iGvFCSmngWhSDkVPsXl0VzACiH6SUdu+GBsvaS9Uu9Avt34C+aMorjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vu/MvGoe; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761330087; x=1792866087;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PatMLVEBamIoHgAtggexPs7LX1mD80NJHiiD02ILzsM=;
-  b=Vu/MvGoeDwm2QpkvKUqDhfuQVsBMT/G/HtmZXFIrajpXRtjvv6tNLlhL
-   P4NoSbL7vKC8pzNb7utICo7QiIH6VAWk7rdcQ2LFUmJqlBzQyGH1kNZhU
-   VBPylSBukzC59IiY3HyD7g7KCW6lQ1vUGDMohJNk1fVoW0Bv5MaD1Aog8
-   CBh3Bq+Sr3Runhu992LrcfqBgVKKVcovEuH7XGukoMiZ8rXykN/JA0ejO
-   xY5jq2uxXvCnGuFqKBNvDZXKvacMoBU+vZpfv17t081xni7mx/xWKYxfY
-   eWwY2rETu4q2bGZKhTQI9pWyI+aNvwll2B4XRA6qFI+axZ28JppMOc2lj
-   Q==;
-X-CSE-ConnectionGUID: Bq2Jg6cMQO+2m1prQ2j0ZA==
-X-CSE-MsgGUID: e7x+V4JvRB6nwyDY39XPZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63610841"
-X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
-   d="scan'208";a="63610841"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 11:21:26 -0700
-X-CSE-ConnectionGUID: GakJ2XofQsOmkefaEeRZfQ==
-X-CSE-MsgGUID: hWgmUUmuRguuDuPCBFWX2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
-   d="scan'208";a="188789118"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.44]) ([10.125.109.44])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 11:21:26 -0700
-Message-ID: <5c80882c-7d3f-4b8f-9a64-42b9cb2c5ee7@intel.com>
-Date: Fri, 24 Oct 2025 11:21:25 -0700
+	s=arc-20240116; t=1761330111; c=relaxed/simple;
+	bh=7yw31bKvWUXdvacjCgGUN3ci8Wb+0zbHalVNF1rBPcA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FHbJG4b4oq0cr/bx2Z2P9+Y83wsfZAjz+mYZh9C3aeUS2aMi8n371nTRzTUdR8sI18BTNx+aqtXNRTSgBluWQ6mShpCBv3meII50Bfvi0e2IXNwKbS4MLdbOJR3wyE6KUlu32keQZaEU8G5JuLcHN1lT9y1xjgoYkmkh8pjRlJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IiIxXjrI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OI9TFl009789
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:21:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=NYTo5MWdhu8itDq1/g3Rc83Xox23JPr1moP
+	RAN/6mts=; b=IiIxXjrIgUrUI8rZ3VlKwK8BsUnMoIPJx8Xp+sF/GNeCTWbmk09
+	Y45EzylHKaoZ7cIqGM2RsdTlnCDSxmcpPopZNa6wGgaHVclUP0Rid07x7aPbs7Xx
+	v+F65OFqSYBLxonE+Xgqu+8X+WmGHM310Pt3er0V4gJIDl6wdbjQUvP7Ix91O2CT
+	Fo/i/LgiNBwRwjqJiGdTVMxuouDUAJfiGK/a8cEY2YHCV2Br1/m1Y8kmh4pL4DOV
+	GFpKMB4+ujkJvp7B2/F0TT1XKOoECnXu/N+/fs8P10U5S/Vzx/sVEKa/SoR8pXXX
+	a50PQmoAT3DrS54/6SGgP3xPnMxKI098KhA==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49ym9j4hrk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:21:47 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b60992e3b27so1728511a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:21:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761330107; x=1761934907;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NYTo5MWdhu8itDq1/g3Rc83Xox23JPr1moPRAN/6mts=;
+        b=IEGwb/A7EqloHLBT83xyen0QpiQ8YIDaiUSwdbJOJr9kPhbpafAHxuXtZ8MuZ3Ii/6
+         7QhbUE7NDLJ2dKJ/mmNiVbtVuHdo0Sv8bgdSAz757Jfq0lUaKYd6I2bE01mjkdZJ1vSa
+         C2x9e9BiNiz6Y2OXY72UfWKNjGJC/xdGTRC7bZoJ7gyOiBEg5lTaEbb1LiME/Rp/TK1a
+         Y9he56pkfmebGLCNswoTr4fjgFzqWocP+TRW0cftR+y9iNwGQcDyLeDBdn/a4KaljMJg
+         5QNi1qpd0mqfY5Au/g8oYCbvC8idXbKRKZuJZ910FO82GJF6EVv2H8BqCWtl1KMB3U4j
+         a/nA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5vsbALtQkDMo9GVERUbUmElOMd8Ag2xAkv9YxGpZZQjWiG7duRkCr7C6MbymCPM7yOS9EPuRL+24avgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysAalml+Ayn+ets4+W602DqiK1mHORB+LVgfKqUz17cFyJWyr9
+	5tOFZXC0DdxL5UNNGmQragmQPOHfUvCHgBNctY7fjawGtD4aI93xan9KHAvt09bZip8IirbxG8m
+	WI6ulOl80qKtt/B7vvkXtEq/9AUkIXz4E5gAEjPMV1+ECAK6kdhORqr4LqJtMt2/NZ/o=
+X-Gm-Gg: ASbGncu+16xKmu/GutQd/JOYxhb73thN2sjBgOwDyyMneU4OY6fiYVifqt7MjvtOY1e
+	bfdLzfbsFaE6Ar73rQL8xvsC8whUjrQFNKM0l7VHD9Zn/I+C4HfAHRsxCwa4bUTL+IzxsLsmatK
+	sg+BeBAyMmE/7UXoDC1hVHT02TUukq/REbld2GtXptdIIP4TEDPPtp2vTlf/6wKou7YwseapSNo
+	15z44rJ/1l8l5embLnn/yeO4YtTNn2zlk3DypIilLr4xUmw5H2obbMQun+wf7h9r7YFA3kc7+ft
+	azAysopkEQ2rh00mYppECWKY3jJ1AOkgivh6G3m6W3+I0psu7+fXkfU7tBobiu+zoe0HOJJND1I
+	2KpcFY5sysj+qqpXpK6uSFCCGMXbORjoKYlCF
+X-Received: by 2002:a05:6a20:258a:b0:340:cc06:94ef with SMTP id adf61e73a8af0-340cc069898mr876516637.56.1761330107031;
+        Fri, 24 Oct 2025 11:21:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEByz0nyj2zcoNef7NunU6xkWZY16Ha1VVUMQcY0WT/uHuWevE8eC1lu5R2c6w/pwEuqUNT+A==
+X-Received: by 2002:a05:6a20:258a:b0:340:cc06:94ef with SMTP id adf61e73a8af0-340cc069898mr876490637.56.1761330106550;
+        Fri, 24 Oct 2025 11:21:46 -0700 (PDT)
+Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fb01724a5sm6501423a91.15.2025.10.24.11.21.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 11:21:46 -0700 (PDT)
+From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Subject: [PATCH v3] arm64: dts: qcom: lemans-evk: Add OTG support for primary USB controller
+Date: Fri, 24 Oct 2025 23:51:38 +0530
+Message-Id: <20251024182138.2744861-1-krishna.kurapati@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] x86/boot/compressed: Fix avoiding memmap in
- physical KASLR
-To: =?UTF-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Chris Li <chrisl@kernel.org>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org
-References: <20251022233743.1134103-1-mclapinski@google.com>
- <6bd76106-339f-4204-a418-738b7ee545ab@intel.com>
- <CAAi7L5fxqiMMGJi2xB42L+A-xVQwx=10TBG_kU15=q=i=6kcbw@mail.gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <CAAi7L5fxqiMMGJi2xB42L+A-xVQwx=10TBG_kU15=q=i=6kcbw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=CLknnBrD c=1 sm=1 tr=0 ts=68fbc3bc cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=ZnWjciNKi5aIwXxU4VsA:9 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDExMiBTYWx0ZWRfXxO1RSqFqjogs
+ bhPTRufwEgTvHWLC1EVY2rY/9Yp1sfHDTksQ3D921NJjjTGmZWy4QKIywyjRBrsgyIdMOSFM1l5
+ 76RSVbWq9eSEBKDDFCV3LGA5mYd/VlbmO5NnSkmAFMlk14jGwBxD6atbaH9h1L5YYjFPaW9BTbe
+ 3fK0Eqe//2hCIWMS7hDTZ04biZkcZBtpbMOsmZFGb0gokGOCcc1RiEJj4py/QhaL7vOPZ3DGT5/
+ NhBUxBdtLT6LRRBkNijt6f+SD5H/mR5kaf8QsQlIUARvKFwewrTUlQDEn7/y6JMjeHHWVHYkuAp
+ 4Xswcmd2F5qjQWfByzRXu5bTrskj9uKKs4nTRkuVlBmV+9s1Yd+1MFOJOZ3dw2gLUnGvQlUA8Lu
+ bL23dG9ByNL6Z0sl9MyVJBEeAeaSkQ==
+X-Proofpoint-GUID: 2KWqHmv4UlD4z-IADCM1evhHnAIVTCfN
+X-Proofpoint-ORIG-GUID: 2KWqHmv4UlD4z-IADCM1evhHnAIVTCfN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-24_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510230112
 
-On 10/23/25 16:23, Michał Cłapiński wrote:
-...
-> If called 5 times, on the 4th time `i` will indeed be also equal to 4
-> but the last `if` never executes since `str` is null. On the 5th time,
-> we exit the function via the first `if` and memmap_too_large never
-> gets set.
+Enable OTG support for primary USB controller on EVK Platform. Add
+HD3SS3220 Type-C port controller present between Type-C port and SoC
+that provides role switch notifications to controller.
 
-Ahh, thanks for the explanation. The implication of the first `if` is
-what I was missing.
+Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+---
+Changes in v3:
+- Moved "usb-role-switch" to lemans dtsi file
+- Moved vbus supply to connector node
 
-How about we just move the `if` you suggested. Let's put it right next
-to the i++ so that they're *obviously* connected and the moment `i` gets
-too big, the very next thing that happens is setting `memmap_too_large`
-and jumping out of the function.
+Link to v3 bindings and driver support:
+https://lore.kernel.org/all/20251024181832.2744502-1-krishna.kurapati@oss.qualcomm.com/
+
+Link to v2:
+https://lore.kernel.org/all/20251008180036.1770735-1-krishna.kurapati@oss.qualcomm.com/
+
+ arch/arm64/boot/dts/qcom/lemans-evk.dts | 122 +++++++++++++++++++++++-
+ arch/arm64/boot/dts/qcom/lemans.dtsi    |   1 +
+ 2 files changed, 121 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/lemans-evk.dts b/arch/arm64/boot/dts/qcom/lemans-evk.dts
+index c7dc9b8f4457..2baad2612b16 100644
+--- a/arch/arm64/boot/dts/qcom/lemans-evk.dts
++++ b/arch/arm64/boot/dts/qcom/lemans-evk.dts
+@@ -37,6 +37,35 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector0 {
++		compatible = "usb-c-connector";
++		label = "USB0-Type-C";
++		data-role = "dual";
++		power-role = "dual";
++
++		vbus-supply = <&vbus_supply_regulator_0>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++
++				usb0_con_hs_ep: endpoint {
++					remote-endpoint = <&usb3_hs_ep>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++
++				usb0_con_ss_ep: endpoint {
++					remote-endpoint = <&hd3ss3220_in_ep>;
++				};
++			};
++		};
++	};
++
+ 	edp0-connector {
+ 		compatible = "dp-connector";
+ 		label = "EDP0";
+@@ -101,6 +130,15 @@ platform {
+ 		};
+ 	};
+ 
++	vbus_supply_regulator_0: vbus-supply-regulator-0 {
++		compatible = "regulator-fixed";
++		regulator-name = "vbus_supply_0";
++		gpio = <&expander1 2 GPIO_ACTIVE_HIGH>;
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		enable-active-high;
++	};
++
+ 	vmmc_sdc: regulator-vmmc-sdc {
+ 		compatible = "regulator-fixed";
+ 
+@@ -453,6 +491,53 @@ &gpi_dma2 {
+ 	status = "okay";
+ };
+ 
++&pmm8654au_2_gpios {
++	usb0_intr_state: usb0-intr-state {
++		pins = "gpio5";
++		function = "normal";
++		input-enable;
++		bias-pull-up;
++		power-source = <0>;
++	};
++};
++
++&i2c11 {
++	status = "okay";
++
++	hd3ss3220@67 {
++		compatible = "ti,hd3ss3220";
++		reg = <0x67>;
++
++		interrupts-extended = <&pmm8654au_2_gpios 5 IRQ_TYPE_EDGE_FALLING>;
++
++		id-gpios = <&tlmm 50 GPIO_ACTIVE_HIGH>;
++
++		pinctrl-0 = <&usb_id>, <&usb0_intr_state>;
++		pinctrl-names = "default";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++
++				hd3ss3220_in_ep: endpoint {
++					remote-endpoint = <&usb0_con_ss_ep>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++
++				hd3ss3220_out_ep: endpoint {
++					remote-endpoint = <&usb3_ss_ep>;
++				};
++			};
++		};
++	};
++};
++
+ &i2c18 {
+ 	status = "okay";
+ 
+@@ -718,11 +803,24 @@ wake-pins {
+ 		};
+ 	};
+ 
++	qup_i2c11_default: qup-i2c11-state {
++		pins = "gpio48", "gpio49";
++		function = "qup1_se4";
++		drive-strength = <2>;
++		bias-pull-up;
++	};
++
+ 	sd_cd: sd-cd-state {
+ 		pins = "gpio36";
+ 		function = "gpio";
+ 		bias-pull-up;
+ 	};
++
++	usb_id: usb-id-state {
++		pins = "gpio50";
++		function = "gpio";
++		bias-pull-up;
++	};
+ };
+ 
+ &uart10 {
+@@ -751,9 +849,29 @@ &ufs_mem_phy {
+ };
+ 
+ &usb_0 {
+-	dr_mode = "peripheral";
+-
+ 	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++
++			usb3_hs_ep: endpoint {
++				remote-endpoint = <&usb0_con_hs_ep>;
++			};
++		};
++
++		port@1 {
++			reg = <1>;
++
++			usb3_ss_ep: endpoint {
++				remote-endpoint = <&hd3ss3220_out_ep>;
++			};
++		};
++
++	};
+ };
+ 
+ &usb_0_hsphy {
+diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
+index cf685cb186ed..f624d8d4aa9d 100644
+--- a/arch/arm64/boot/dts/qcom/lemans.dtsi
++++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
+@@ -3970,6 +3970,7 @@ usb_0: usb@a600000 {
+ 			snps,dis-u1-entry-quirk;
+ 			snps,dis-u2-entry-quirk;
+ 
++			usb-role-switch;
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.34.1
+
 
