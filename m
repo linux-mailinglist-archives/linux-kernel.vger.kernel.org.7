@@ -1,152 +1,88 @@
-Return-Path: <linux-kernel+bounces-868481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49F1C05481
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:15:41 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF49C0548D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE2554E38B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:15:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E76E8350920
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981632FC877;
-	Fri, 24 Oct 2025 09:15:34 +0000 (UTC)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21350306B08;
+	Fri, 24 Oct 2025 09:16:11 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B7A26B0BE
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45028305066
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761297334; cv=none; b=UL7C96pfyeNOprtdqlJCoKNqP3b+RZmYx1AAijVM/saFrZrEHJI/gmJHYIClGLxSDmMGm0cnjLCV5a3DMVJOir7bEFdYVN8WGLJyzrHmDOT9eLmY/x3soYoUvoGLjSzTIVXv+Oz2SCIuZAB2THV8UJQid5m6yroTwuf+4+9GUc4=
+	t=1761297370; cv=none; b=TM1EuuVtR2u60Sq6UjOuictqb4mFzbXXKpXAWltcUUl+2PvZmDYi0NaA/tOBFcTjLELGcnE2zBAr9uUtWxPgJs4MgErdhNiGxS72andd1weVL9cmnFb9MOuTetfDKQcDrjIGIFuYD+dtfzJJWU0fSuXluoHp5NE0GAZTeDSB+Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761297334; c=relaxed/simple;
-	bh=J8mSVI/f12nth1gkWB8k+uvzYuiJaePL/O3be6q4RNY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FClxn2CDQzgmwNk0kq6WIw7a4Ef1hlu9kMAXQbwT3GPCwdBZz0VN1wcJeW5JpUOJ6fNjQKGzVjSAJlxWb5LYbJUpgIeYbLwfhCSnXvf9nyIluxMGR+7fF32XiPGYDdxtl5OkvEMWmWh5E6TrWWqYFEGvO9yXdrd2Z0fz4on/6e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5c7fda918feso2186869137.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:15:32 -0700 (PDT)
+	s=arc-20240116; t=1761297370; c=relaxed/simple;
+	bh=1FwV0VB0D1/X61mliPXahL9z1Z+bZd0dBinOalzW47o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EIxZVO25u8Fwq8wF5T7M5D1FPl+vTcnOfPt4QOKMfWwwZbeXjQbCUN+Jpi8k363VVYI/GUMfcOOXn6GQMEf0zaP0Zq7eRl1c7aODRtVam77Tx+ZgWiYxb6zuXOC594qeeFcUId3u8EiacaUm8qA8iNESjic/yPJ+bMutZSO0ycg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93e8092427aso181864539f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:16:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761297331; x=1761902131;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BrBpEYe9bLey+4S4JjtKCcOIac4hS6dnR1uT91EPVAM=;
-        b=Xw6lvVJu596DND5lP/gP6EVxt3NkDJvc1zmQ5LTtMbWQx+SgdPacJj40i75C8tErp5
-         iEIL2QT7k8kI8Q+X/gaNuXRb1grppWuwiIAqM7hzq7FUiXtFDMGeXtvQ5aMO0Wiap8Km
-         FIE/VQadK1Q+JW4on4s+HRMG55EsRcVimk0Y0fSAnIoXLSWaPJemhzswb56Sd7BRuo8g
-         2UaBl5DwjmxfDfQeXErwXwvojY2vgA1iGeYlfY7bXVtoRvJgJUwY46p6cRHI59TeReYx
-         4auq0msVkc/A+y2P+THM9Cygu0EMXdNJQL7cTT8AmTCUAAMY/5ha5aAioW/3gpuTg7ON
-         vUTw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3zm08+SJ3yeGzdLGaBrjXD8WmAf3XmOHC6NMXdUtdxa+PUUYIzgkV68nj5PeP3jU+v8Ox5Y/U3rpgXcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/0lu+ghR47V6wzM2d2aIlTleilh7Nhxiq2ySgQqdhVys4gn/0
-	KPdnzLTJG4PJLbrWB2W+xMet1IBZqpSZOqmZTa4dgi811pmsRd0M9erHd3RANZ9r
-X-Gm-Gg: ASbGncsupwHnRx5UGWLlW92/xKCOfoHf7VjH3KLPgWldjelGT5vqHLhjqXrj6LKV30O
-	oed8i0istrLpbavIbI7bAZrcwIgluwbPo3GVeWjoONs30yaQzZDIZGrV1BuZFoMeRoQRT7KGOf0
-	2hGTlHOTHm5oJf94oUzVmdax28Iv5QzG9clTdZTmoJxn5vB3Noi2g8eRE4YcXL22hKtd//5S3Jm
-	5SfU/Aalbjf4XtCy1FzzdLc33NtdQIarLqzjFB4dT7+fafMK/k3dKSBr5NEO2EZbBd7qJ/6V2Qf
-	zzO6bK7pg3gN8UoDbTgsrc+StAjj2pvaSj8QRjW0OV2zloWLqD0kJXRdeQOR529ewn7PRxGDpHX
-	rwvzjK1qwOOM3TD6+CXNlA+xX6dXSdwwHOFGbPn9C4vn1oeeuc02s/mObrDpm9VTPkLBfFozTAl
-	aOmAt9WWaAghvI3JFqh+LLCahpRVKJIjwmhXDVQRu5EcYOt43B
-X-Google-Smtp-Source: AGHT+IGA1HTKcGYnrBrMkpyp/m/V+lwTQxu+kQXWiAFDZV64MVMzAn6maUe2cqr/ZB6gYuqhi1Okog==
-X-Received: by 2002:a05:6102:d87:b0:59c:93df:4fe with SMTP id ada2fe7eead31-5db3f88a253mr344074137.9.1761297331395;
-        Fri, 24 Oct 2025 02:15:31 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-934abaad7adsm1835385241.6.2025.10.24.02.15.31
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 02:15:31 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-5db221488bfso2122207137.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:15:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWEXc1bJgpT6xCD9kRupJWU53Al9GMAs17G7/ZuqJfY9cmT75Y4XOLsyA+BghotzFDfQ6tM/YyT18VsZks=@vger.kernel.org
-X-Received: by 2002:a05:6102:12d4:b0:59e:a2d5:2945 with SMTP id
- ada2fe7eead31-5db3f88a5f3mr252149137.8.1761297331043; Fri, 24 Oct 2025
- 02:15:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761297368; x=1761902168;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FOmFiT8ffKC/0ckFyn2+fSFuSQUboBN+TtHKle3nwRs=;
+        b=FXm1zG2LbP3POhIdicspehWjuNJ0vJqFXgQuzJ5+wZwuCH/E/RyJoZXtdJDJIzeJvk
+         9Q4eFN6nlEevIRGO4SQnzu8hP36MzdJiKbM1DImpET3L5e+rgu3s1TvTsYGI7fpBSrSO
+         5mx2vq1r2enobwH+QLh4g5HWj7RicRG9c/vSNCqMxPzEgf61ZC8mq/444xm0gVI3OHJP
+         sTeqGix6Lgji5UrN3vT+248n2nRr6u39X0uMzGg7gcjCnO3crFmsv0iENLFr/qVGEZvZ
+         LmmjIRZ35Qhl3dF+ElZYnihIKSxCzUfDNyY6vGzMG//59Pu3tMDcGBhR+arae9oAwHC/
+         1ntQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUffbV0PmxXiubIcJIiWXLdtGOe6tcCDMr0nBbsnwtlDDSKoIrNmsORfSiTN0i/cqxzspMJT+6f7ZgcjSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf582w2zHyhH3dH/7kvlG1/GlHQjn6rG6B/s4rRZydrErayEwa
+	cIg+mdz+MtYHr2thxEXtOeUqYvFR/brVrdHNPtxmgzpcKQjC8X/Lg5V1amthKwZT9MWJEsDc9q8
+	vfO1mDXlnAOH7bQiJ/fJUPzUW4lc0ooY1vfL1nVqmGHqes2YH+LLmeO1Sd5Q=
+X-Google-Smtp-Source: AGHT+IG7/YjP5WkYSwVs5zYJjXLFmfQHXfPf9C1imSWeJna7e+Q+9OhoeBkdiz3rGjKcCwx91MJ6gdepVxJX+MIdopmrrcZMKbqx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023135810.1688415-1-claudiu.beznea.uj@bp.renesas.com> <20251023135810.1688415-8-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20251023135810.1688415-8-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 24 Oct 2025 11:15:20 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV7ScKUw7bGFW4v0wS9caXKDeT02MXkLWpk2LZfYw8GfQ@mail.gmail.com>
-X-Gm-Features: AS18NWAoeA07bJLB0nX88rm2l0IWTdjwxg2U5L-RZOoaf-8oTt8PVHt9R1PDCKg
-Message-ID: <CAMuHMdV7ScKUw7bGFW4v0wS9caXKDeT02MXkLWpk2LZfYw8GfQ@mail.gmail.com>
-Subject: Re: [PATCH v8 7/7] arm64: dts: renesas: rzg3s-smarc: Enable USB support
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, magnus.damm@gmail.com, 
-	yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
+X-Received: by 2002:a05:6602:14d1:b0:940:d7cb:139a with SMTP id
+ ca18e2360f4ac-942623a75bemr206868139f.7.1761297368370; Fri, 24 Oct 2025
+ 02:16:08 -0700 (PDT)
+Date: Fri, 24 Oct 2025 02:16:08 -0700
+In-Reply-To: <20251024071522.dRYaz%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fb43d8.050a0220.346f24.00b5.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] general protection fault in ocfs2_prepare_dir_for_insert
+ (2)
+From: syzbot <syzbot+ded9116588a7b73c34bc@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Claudiu,
+Hello,
 
-On Thu, 23 Oct 2025 at 20:41, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Enable USB support (host, device, USB PHYs).
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Thanks for your patch!
+Reported-by: syzbot+ded9116588a7b73c34bc@syzkaller.appspotmail.com
+Tested-by: syzbot+ded9116588a7b73c34bc@syzkaller.appspotmail.com
 
-> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+Tested on:
 
->  &pinctrl {
->         audio_clock_pins: audio-clock {
->                 pins = "AUDIO_CLK1", "AUDIO_CLK2";
-> @@ -207,6 +230,27 @@ ssi3_pins: ssi3 {
->                          <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
->                          <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
->         };
-> +
-> +       usb0_pins: usb0 {
-> +               peri {
-> +                       pinmux = <RZG2L_PORT_PINMUX(5, 0, 1)>, /* VBUS */
-> +                                <RZG2L_PORT_PINMUX(5, 2, 1)>; /* OVC */
-> +               };
-> +
-> +               otg {
-> +                       pinmux = <RZG2L_PORT_PINMUX(5, 3, 1)>; /* OTG_ID */
-> +                       bias-pull-up;
-> +               };
-> +       };
-> +
-> +       usb1_pins: usb1 {
-> +               pinmux = <RZG2L_PORT_PINMUX(5, 4, 5)>, /* OVC */
-> +                        <RZG2L_PORT_PINMUX(6, 0, 1)>; /* VBUS */
-> +       };
-> +};
-> +
-> +&phyrst {
-> +       status = "okay";
->  };
+commit:         8e6e2188 Linux 6.1.157
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=115163cd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c404ae8bce817b30
+dashboard link: https://syzkaller.appspot.com/bug?extid=ded9116588a7b73c34bc
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10ad6d42580000
 
-This node should be located before pinctrl.
-No need to resend just for this.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Note: testing is done by a robot and is best-effort only.
 
