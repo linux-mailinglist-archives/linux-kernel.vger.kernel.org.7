@@ -1,220 +1,260 @@
-Return-Path: <linux-kernel+bounces-869210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6651BC0748D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:24:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 249E2C07496
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E8343343D6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5AE21C21CC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AAC322DA3;
-	Fri, 24 Oct 2025 16:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E731331282A;
+	Fri, 24 Oct 2025 16:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="AgZKI2QL"
-Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
+	dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b="gL1835xD"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010019.outbound.protection.outlook.com [52.101.229.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8382D2DCF70
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761323068; cv=none; b=OPmFxgpTEuu3jb9WieXZP8m8dzOcmruG7LppUWr2SIUj30gEKKuoM50FG2rbiTUpinnS2FEOKJowQMYjRRVf7+MMAMiBmsEWDj2/eJk7P/1IybCPW4NiQNJH5cj9gQYX25qPuXvbpGPyd4TJSpW3WN90cD3JJTCEc3pxxvXmgws=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761323068; c=relaxed/simple;
-	bh=XRGYbUL7AY9YEYlMneezEtpleJmprypsZPWsgq4Og8k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nhrj/NCMdmoHJpRnaUhnwYBzf3AxjAFYEnCnYPP8AtdqxZVSGN4T2VTjs2T43eyXz1DbtwllkziuB1mjwL8xYRt3gAH0UbSdqxZ7ViYXgLFuWa8Z3MH5PpGR4PI7oTUT8YMWddBYSrMSQBTnVk40RZoyloSZyabns8uuHZmeQkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=AgZKI2QL; arc=none smtp.client-ip=88.99.38.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay12 (localhost [127.0.0.1])
-	by relay12.grserver.gr (Proxmox) with ESMTP id BCC13BD9D8
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:24:24 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay12.grserver.gr (Proxmox) with ESMTPS id 02258BDA64
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:24:24 +0300 (EEST)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 552C1200A35
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:24:23 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1761323063;
-	bh=oQdGwlfEvbtCsB8/gEbcoDWrOnl5p/sble/6szBPxSw=;
-	h=Received:From:Subject:To;
-	b=AgZKI2QLjxL/khwf8akIqzDnqIiL3ohiBxyM6ILwTQ+QcBvSQe8qFNaAgd5AldTzg
-	 vn0PEAj3W3NIJVkHjyUPA3EeCwIPjEVLPScI5PWncCosHwwkPmsh4AAL3pCeLczv1q
-	 cH9JECK3xMcp0CcwjdvZ5lc7pArqDRPzCw/GhWWl9dv8L4ZWTXdiQs+2k+svMsEO2K
-	 Gg69NyloRMewsp8ue4l7VffbmH+MDPT4uKs/nd4Y+gAPcbuJzS9iHJcuyDhNThMthi
-	 fUdkVW6vnXmlZwhP8LpgmcBx4aYh06I+5VQVPc+RkaJbouF+kGpoO25xNqckOHUUN0
-	 jJfkArhDJ6xGA==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.182) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f182.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f182.google.com with SMTP id
- 38308e7fff4ca-378e8d10494so6542491fa.2
-        for <linux-kernel@vger.kernel.org>;
- Fri, 24 Oct 2025 09:24:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCUtj+lLIAswP1oCOy591LZMov/Ju6JnY2r9Dz3XboNahZzoku/5FV4vvC4RaiG6D7V4FEMyUlanJgsKkJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcHn+VAEYyB8k1AhUcNM/onrTI/lmDtmjKYInqcJzHt/RVEmZW
-	RCgNp1r+jgVNDSCjWDZVOHm9KVWsSeRod0xVNKo60QgXn7+np9AJzJfx7He0lM5iWCqp1KTsINJ
-	kkD1QwKzT7XywmBQ1bIOxjT2XYGNBPc0=
-X-Google-Smtp-Source: 
- AGHT+IH5FOSurMzNSYAPrkNE9P+crWNlqQYYEhIXZVibnYOAmJfgnkVPquyinjMDDrWg5WSrf+OeT57Af1RwtKlUvyw=
-X-Received: by 2002:a2e:a906:0:b0:337:e190:6814 with SMTP id
- 38308e7fff4ca-378e43595b5mr9138621fa.20.1761323062708; Fri, 24 Oct 2025
- 09:24:22 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0145A2DCF70;
+	Fri, 24 Oct 2025 16:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761323075; cv=fail; b=KpxCXct0bGFF1VUaFKshkzMTgF1Jd0EUnPK/vtUrsZe4iF22lpJihFpI7ztNgCLKM4culC5NW6IAK/kB0+wly8mpNhsR/iT31630WZA6oB6fnc4qUVVP48ykQK1nOlreU4MH7vF5D4JDscyXk1TE8UCT61N0yYbNdGyv5eJfnY4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761323075; c=relaxed/simple;
+	bh=ScpFeb52LQzwRk06rcbSfo95gWqiWoLZWwi9ZkQ8huA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=l+RLdymyYZhJf9pXxFix5p7V8+c347bHdR/v38A90mi0PVSVJEzRdN/KG2g4IdZd4tfZ3UZqffWBKfeG9N1DRx2mBNfRLLmX3DVNhwmKKyXsidPLxzTvootmWDWv9pf/RnwZU28xr87VOaazETqxpgfJfFU2f+1Fu2RRRMDhtC8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; dkim=pass (1024-bit key) header.d=valinux.co.jp header.i=@valinux.co.jp header.b=gL1835xD; arc=fail smtp.client-ip=52.101.229.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=szP58OwrRFmUk24JaWgFU8WU0e+uyaZsH5vVjVRs40eO8/ZLGKE+e0S9P2lHMOm2i5Z9Yu4nor5ngG0dk5AutaTCgg0Br7krL2cC0rVRJla0whJBLEhW1TkVTYKvhtEsj65LPLcFHoxWYxnSBRBLOSOzjdoCAOUA01rGjDDeAEFYCtEmVnVYnFtewSp0CiKJvYDXrN765fqXqCavtm64H1xtzdvsiQYrV9X04Ch9EXcbcvOITaXFU+e/x1t+ErEi5Zo952JewVG7v2JnEMMslZ5trGEMxs+wFolTtOA3ZOEI2ceWqENJePrrHQTQrh7y10tkmatSZsK8Bmt8op/LrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Kd7K3Ytzyp8X4jm0cSdsTHbfiI85c0EQf1K5dwlkGO0=;
+ b=ckWyj1gnuMZj04CP/GNUqOUCrW8dmJ/gsEQeawB1SdMfizklU2pn8JvfcXfeaUy8b1ZrIBv4geQ9AQ0klfdi8j8kA/2WyV7sDS2BfD3pfWNfOczbY7H296iBQU7eWdIvKoj2k/cbm0VywSloc92PgcaVM4lg0xscweRiGMgQjtowPWUr4qvnnGWGrfXiZnRw+tGTCtJdgPsyALuq3rc2cXe5283nI/prRdI+NdOc7GMY3b/ojuBXhJjBqzb5TbNdPJMe0T0BFP7QnIQZQfvAn2xl7r17ZjMH53P3qolMCaRLV7kLSV5wEdhNntkkhH7C6ma5foc3QdmxcIOC8vIwbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=valinux.co.jp; dmarc=pass action=none
+ header.from=valinux.co.jp; dkim=pass header.d=valinux.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valinux.co.jp;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kd7K3Ytzyp8X4jm0cSdsTHbfiI85c0EQf1K5dwlkGO0=;
+ b=gL1835xD4rfCoZTwBAVJPRPDZwDSFKDrFkYKjM0EbRAkKOTCVJ8e/9cYzF5/fdRL2QQDx8X6jBbfBk0Nzao0Oqm1cjhqVREJM9D3bpAp2Ju1LUvEtElG7anT6d2kvRvcOriHWTizfv8DI57V291Fh905o1DL9z9vTnJKhuGt7pA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=valinux.co.jp;
+Received: from OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:10d::7)
+ by OS9P286MB6433.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:410::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 16:24:30 +0000
+Received: from OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::80f1:db56:4a11:3f7a]) by OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::80f1:db56:4a11:3f7a%5]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 16:24:30 +0000
+Date: Sat, 25 Oct 2025 01:24:29 +0900
+From: Koichiro Den <den@valinux.co.jp>
+To: Frank Li <Frank.li@nxp.com>
+Cc: ntb@lists.linux.dev, linux-pci@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, mani@kernel.org, 
+	kwilczynski@kernel.org, kishon@kernel.org, bhelgaas@google.com, corbet@lwn.net, 
+	vkoul@kernel.org, jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com, 
+	Basavaraj.Natikar@amd.com, Shyam-sundar.S-k@amd.com, kurt.schwemmer@microsemi.com, 
+	logang@deltatee.com, jingoohan1@gmail.com, lpieralisi@kernel.org, robh@kernel.org, 
+	jbrunet@baylibre.com, fancer.lancer@gmail.com, arnd@arndb.de, pstanner@redhat.com, 
+	elfring@users.sourceforge.net
+Subject: Re: [RFC PATCH 01/25] PCI: endpoint: pci-epf-vntb: Use
+ array_index_nospec() on mws_size[] access
+Message-ID: <iskqrcn6z2bnfnzrfc7kyy3x3ng7djn4ygral5cjtz3xiet4or@ktapppsfpzo7>
+References: <20251023071916.901355-1-den@valinux.co.jp>
+ <20251023071916.901355-2-den@valinux.co.jp>
+ <aPrDEE80hSLbL57a@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aPrDEE80hSLbL57a@lizhi-Precision-Tower-5810>
+X-ClientProxiedBy: TY4P301CA0076.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:36f::18) To OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:10d::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251024152152.3981721-1-lkml@antheas.dev>
- <20251024152152.3981721-4-lkml@antheas.dev>
- <61da9864-b7c8-43f1-b437-36756077b545@amd.com>
- <27439123-98aa-4096-a4e4-3c8eecb3aaca@amd.com>
-In-Reply-To: <27439123-98aa-4096-a4e4-3c8eecb3aaca@amd.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Fri, 24 Oct 2025 18:24:11 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwHAJAvgZEgn1M0ioRP4dT2urMUtQQzNXKXydu0ueoOzsA@mail.gmail.com>
-X-Gm-Features: AWmQ_blfIZoPfA-q7agy553x9fEuFss57l-a8Lv0j387NBYXYo5gCy0b2IiG7tc
-Message-ID: 
- <CAGwozwHAJAvgZEgn1M0ioRP4dT2urMUtQQzNXKXydu0ueoOzsA@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] drm/amdgpu: only send the SMU RLC notification on
- S3
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <176132306362.2578095.11406087032134608742@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS3P286MB0979:EE_|OS9P286MB6433:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6d2fba5-7689-407a-68af-08de1319ceec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|7416014|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vIhMEiqKAQ7qrwjwgqEM/A7vi1fF/ISLTE5PZJ8r4NMaK45BfzoTlJBApaNM?=
+ =?us-ascii?Q?FG7Xi+ORGWMWImi7Zj5ixouADxWAEPhrifD7Xx4FT7pOZj9Xv2dhwhp524Jp?=
+ =?us-ascii?Q?DosPy/WYRxNm8Di/Yq4lhm+rQyf8j3mF7/jiDsBEWl8Zo5fhmlchT5Rq5zoo?=
+ =?us-ascii?Q?dYVovlyiwsZZaYxq8pa6XcxB1VECqhyKBIfYWgt5AFGfCVjY06Qmzn64vRDc?=
+ =?us-ascii?Q?a9ettF/C5nnA5NjIP3/wjfI2Exvyi1YAY8V2NyYJrHZGa/WLEqZF9oXsBYBA?=
+ =?us-ascii?Q?TgbX31NSSY5GOdnLDcIavHf2uEhPL2k1F5ciI3ASajdFW/tMm/Y+oYHfCPTg?=
+ =?us-ascii?Q?r2tBiMtDxDNZTufFlbxB0ImEh3TPdjme9n3nDOWNcGT/ai86Ggzm3Macm6eS?=
+ =?us-ascii?Q?AoyzBI0w8d/vlzinOcACoIchBbuCzT7css6530is7jfsJ4pjuKj2GkEDS8i+?=
+ =?us-ascii?Q?d6VWhMDBdsobvpKyQc/Ivrwl2s6XTjYqgZnaD1dKCGbiH3mU4F3cLP1Jve1j?=
+ =?us-ascii?Q?oU1/C9FJBIGxxrdPvWi4ufVByrItQH9cvZhThtgdnYZ3UoyRoD181mhdIR6A?=
+ =?us-ascii?Q?p5zKgdrUPWVxq3fjN+Eb3/gYKL/E0JcePpg83dxyZWmp1rOKhqs2rzcWtVUn?=
+ =?us-ascii?Q?YbN43PxxB03PDGWWsDaOsIct/OtYGAtiMj+LccZ0xMFFM33Xm0mJs31YyMOw?=
+ =?us-ascii?Q?TFsmoUradi/8PB7pp7lW0aVtz25pa3ZOv5qtGtsP93ND5+UDX+ck1yfUIvJd?=
+ =?us-ascii?Q?kWtq9nqDxPN3mFAzr+eU22PvJcwU04v3ogB3IOchdCEDPAMWxI0rZpGzFYws?=
+ =?us-ascii?Q?X5FJBDa0xCr16xGLfN5zsr8jayTdyjXPoDAwjK4kU1vYKZGGt5uDE+c0kQj8?=
+ =?us-ascii?Q?gchXoh5mzAE8d1CkcNv6U3eljZS61TY/H75h2epAUMA75DstZ0m73Z6gwCnt?=
+ =?us-ascii?Q?3FKgWXBiggMZMcKeYBIUcfJE1tXZEjaC+NQb3mmcyPeZpKLQDDhlQrh263WJ?=
+ =?us-ascii?Q?HtyIo1KbHBGakfIdU/5kp5MYg7m9r92GnZ04Vpy7LoN7KyrXNcDbH62ddOwQ?=
+ =?us-ascii?Q?w8vHsrQaw9XKKzaFxbzEU1KjSvoJpHxdTYSRkbGrhQB1HjO8jfDl4r8qENfI?=
+ =?us-ascii?Q?mCElvXpI9nYhFwO0V4GOXI8wfo3g77Sp9Xy7j6M73Y9a6oPh045n2U3hKKos?=
+ =?us-ascii?Q?LEd+CK/VREGIZl/QfHdWWd8Ca9YSJnSwWjJ5WJ+CxDunI8vwrP95GqBS2CTr?=
+ =?us-ascii?Q?J1UY/gOsIc7vgO+BxROS2vV2ntLvAL+CEG/tDoOF8BwH4GnohIXleRcoC9FW?=
+ =?us-ascii?Q?GcWpjh0m11jnsngpvxItYlglt/w18qxhPiiRqKU3ST1fWu0cYbRmAINIDXFh?=
+ =?us-ascii?Q?jwmPz5nQzrwM8JhnbuspbCr7xqoq3iBM5gzEE29X/yM78b+V7RRhdcI4Ny7j?=
+ =?us-ascii?Q?8dR35WRbkZM1JJop/soGHR2MGFzmCT2Z?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HufFpWbL5OtSHmU1lYZyd50LLg3Z5aksgazqbNmvf+nGfNTCklGT/ybTUu+p?=
+ =?us-ascii?Q?ra7DcwMVPko98hdCtnGpQ2MG3jHKYMROJbZ7smrFhrbDkmQjsKCW+5EW32r5?=
+ =?us-ascii?Q?FR9o86/XYu2UKzgDWfHwfxDe9Fwy2IzR22ZlfNjS1nnYPSyxMFoYnXU0gzXo?=
+ =?us-ascii?Q?kDlUEXrP+DrHzRyJPDXPhekNUiR8BpKo2jTRi0I+hrz/xahEayVylZPx3qlQ?=
+ =?us-ascii?Q?UFiN1JdpsfVpr9jyFvzNMCrXHQJxMy7Tya1wOZ25cDlD4Bt1tjtc/tva1wkw?=
+ =?us-ascii?Q?OR9WvjLp+9Q04ZnzZU8GgIxjG52HfnxIrr0mxNHSBpBnSdmGSTjP50RJTmrV?=
+ =?us-ascii?Q?kaA4RTM/RYQ9SBdGmMaleCAlf1KjNTpd7Xt0W93ltZS/zch9Bl/P0pw8ZqTM?=
+ =?us-ascii?Q?6CjouVyp7bVYniRhg0Wy9dn/G9WAQ/joSRHOjrhznRHaEGhHh5EuFuuHK9Jc?=
+ =?us-ascii?Q?xXreA522ChQk08mW0Wvph9fNVSjJDyvyGztagc4yBO5V5EJo86bB3Xtcxm+/?=
+ =?us-ascii?Q?04XbKYmdudt7DqIdR/6zf+x8ZWjLHzzgNBHQ8SkILnO4FJPQv/z2Zl6hhH2a?=
+ =?us-ascii?Q?O/pl+m/jes8TMB51wsF3RU3UtXy6GJ3bxPCV93G06OT/VI6dWuZOsYy1fsR1?=
+ =?us-ascii?Q?FRHktQEVJ46t1KtCh6dp9zwXMFG546Pa+ZjYvWm/RxXNL9Vn2VJjgt4v0GMU?=
+ =?us-ascii?Q?65ncka+bUZKFBEEhiJ6H/6AuxXy+Sqr1Z1ber3OimbRSMePqZL7MygChg2N5?=
+ =?us-ascii?Q?yjFPnxBSIcpntsFfTdXJ6eIiiug6AodRhf0T75otT4bwOAYH5omjEq7fJt4z?=
+ =?us-ascii?Q?FxhkMh+FudHpXelfYqw1sJ2tMke5kYnDEVoBQpVoHW9MM2XKNfCzaUE+6lH9?=
+ =?us-ascii?Q?y5DDU3P8NHfxcAtT94He6g138Kudihlcyx5gtUnSZD+VVKsisGltP2ktrGtV?=
+ =?us-ascii?Q?IdZxLfc9Uf2ZnOsRPSXoFLpbzmgIMjP/gDUeolXcfo4p7F3ksZvdc7Z69rr9?=
+ =?us-ascii?Q?emd+1tHvncUVOiEwm+Q+trkIUS9k5l2MIDJoIGL8RR4O9yxuxsYMnygrZYnx?=
+ =?us-ascii?Q?aS5387F2eimQZeQi3NtUhMV8QK6i+/NclKSW/c0zmwE4MM3BTVLu1ZVUwt7v?=
+ =?us-ascii?Q?veXsv9MwxTU2F8XGRoLTmhrTlL6IGfN+AjNKiB1HUtl1d8/0JoMjL2RD6bZQ?=
+ =?us-ascii?Q?08mC1rdAUd03PxW9Pi4YSYAoBCMDP8RTZEO3q5T8kjO6lqLAzwrwsptc+rSi?=
+ =?us-ascii?Q?sLqU1l9cvD1ptm+5xXARqoug7HqreE6quw/ljMG1HsZussM4GygH2vhkQYot?=
+ =?us-ascii?Q?//VehQ8n6HWHimhNGMU/f4WkoST8aDqeq6Fr21Q+KyugT7FWKtHwO3omL5yQ?=
+ =?us-ascii?Q?zWpThZ/HX+Z1qcI1hUZVS0w+KadIBtaDJN4NdDlRF9D5+v0mlliwuHx5f9jf?=
+ =?us-ascii?Q?t3j22mx5Z2UbyuvU2k+9lzmtHGXXxZ//B8w1R94UCLQsS+ZZQzM5Vx/KcIWS?=
+ =?us-ascii?Q?WTNfrAkelUZWzlBsQJ7BMboAY1PzXkj0JhwflRdtwkSCIuUiBIePQoucrlz1?=
+ =?us-ascii?Q?siT1U49IYZVNj2wmKHO5OEv0Ym7EE/MLCcWVQRDjrHt34PiDitKVV2ApLqAU?=
+ =?us-ascii?Q?jiWYmFJ3a4GIxgZM4T7/pFY=3D?=
+X-OriginatorOrg: valinux.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6d2fba5-7689-407a-68af-08de1319ceec
+X-MS-Exchange-CrossTenant-AuthSource: OS3P286MB0979.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 16:24:30.1407
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7a57bee8-f73d-4c5f-a4f7-d72c91c8c111
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7Q8xMrsoUK7joWpkMpBl+30OVXemVwugsbXmIyIrSjOd9/+Bl7mXEiKqKISHpV7wagwblVI2PpLUiNViQLRqXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9P286MB6433
 
-On Fri, 24 Oct 2025 at 18:20, Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
->
->
-> On 10/24/2025 10:54 AM, Mario Limonciello wrote:
+On Thu, Oct 23, 2025 at 08:06:40PM -0400, Frank Li wrote:
+> On Thu, Oct 23, 2025 at 04:18:52PM +0900, Koichiro Den wrote:
+> > Follow common kernel idioms for indices derived from configfs attributes
+> > and suppress Smatch warnings:
 > >
+> >   epf_ntb_mw1_show() warn: potential spectre issue 'ntb->mws_size' [r]
+> >   epf_ntb_mw1_store() warn: potential spectre issue 'ntb->mws_size' [w]
 > >
-> > On 10/24/2025 10:21 AM, Antheas Kapenekakis wrote:
-> >> From: Alex Deucher <alexander.deucher@amd.com>
-> >>
-> >> For S0ix, the RLC is not powered down. Rework the Van Gogh logic to
-> >> skip powering it down and skip part of post-init.
-> >>
-> >> Fixes: 8c4e9105b2a8 ("drm/amdgpu: optimize RLC powerdown notification
-> >> on Vangogh")
-> >> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4659
-> >> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-> >> Tested-by: Antheas Kapenekakis <lkml@antheas.dev>
-> >> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> >> ---
-> >>   drivers/gpu/drm/amd/amdgpu/amdgpu_device.c       | 8 +++++---
-> >>   drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c        | 6 ++++++
-> >>   drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c | 3 +++
-> >>   3 files changed, 14 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/
-> >> drm/amd/amdgpu/amdgpu_device.c
-> >> index 3d032c4e2dce..220b12d59795 100644
-> >> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> >> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-> >> @@ -5243,9 +5243,11 @@ int amdgpu_device_suspend(struct drm_device
-> >> *dev, bool notify_clients)
-> >>       if (amdgpu_sriov_vf(adev))
-> >>           amdgpu_virt_release_full_gpu(adev, false);
-> >> -    r = amdgpu_dpm_notify_rlc_state(adev, false);
-> >> -    if (r)
-> >> -        return r;
-> >> +    if (!adev->in_s0ix) {
-> >> +        r = amdgpu_dpm_notify_rlc_state(adev, false);
-> >> +        if (r)
-> >> +            return r;
-> >> +    }
+> > No functional changes.
 > >
-> > Just FYI this is going to clash with my unwind failed suspend series [1].
+> > Signed-off-by: Koichiro Den <den@valinux.co.jp>
+> > ---
+> >  drivers/pci/endpoint/functions/pci-epf-vntb.c | 23 +++++++++++--------
+> >  1 file changed, 14 insertions(+), 9 deletions(-)
 > >
-> > This is fine, just whichever "lands" first the other will need to rework
-> > a little bit and I wanted to mention it.
-> >
-> > Link: https://lore.kernel.org/amd-gfx/20251023165243.317153-2-
-> > mario.limonciello@amd.com/ [1]
-> >
-> > This does have me wondering though why amdgpu_dpm_notify_rlc_state() is
-> > even in amdgpu_device_suspend()?  This is only used on Van Gogh.
-> > Should we be pushing this deeper into amdgpu_device_ip_suspend_phase2()?
-> >
-> > Or should we maybe overhaul this to move the RLC notification into
-> > a .set_mp1_state callback instead so it's more similar to all the other
-> > ASICs?
-> >
->
-> My proposal as such is here:
->
-> https://lore.kernel.org/amd-gfx/20251024161216.345691-1-mario.limonciello@amd.com/
->
-> It would need some testing though to make sure it didn't break Steam
-> Deck or Steam Deck OLED.
+> > diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> > index 83e9ab10f9c4..55307cd613c9 100644
+> > --- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> > +++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
+> > @@ -876,17 +876,19 @@ static ssize_t epf_ntb_##_name##_show(struct config_item *item,		\
+> >  	struct config_group *group = to_config_group(item);		\
+> >  	struct epf_ntb *ntb = to_epf_ntb(group);			\
+> >  	struct device *dev = &ntb->epf->dev;				\
+> > -	int win_no;							\
+> > +	int win_no, idx;						\
+> >  									\
+> >  	if (sscanf(#_name, "mw%d", &win_no) != 1)			\
+> >  		return -EINVAL;						\
+> >  									\
+> > -	if (win_no <= 0 || win_no > ntb->num_mws) {			\
+> > -		dev_err(dev, "Invalid num_nws: %d value\n", ntb->num_mws); \
+> > +	idx = win_no - 1;						\
+> > +	if (idx < 0 || idx >= ntb->num_mws) {				\
+> > +		dev_err(dev, "MW%d out of range (num_mws=%d)\n",	\
+> > +			win_no, ntb->num_mws);				\
+> >  		return -EINVAL;						\
+> >  	}								\
+> > -									\
+> > -	return sprintf(page, "%lld\n", ntb->mws_size[win_no - 1]);	\
+> > +	idx = array_index_nospec(idx, ntb->num_mws);			\
+> > +	return sprintf(page, "%lld\n", ntb->mws_size[idx]);		\
+> 
+> keep original check if (win_no <= 0 || win_no > ntb->num_mws)
+> 
+> just
+> 	idx = array_index_nospec(win_no - 1, ntb->num_mws);
+> 	return sprintf(page, "%lld\n", ntb->mws_size[idx]);
+> 
+> It should be more simple.
 
-I will give it a quick go on my OLED.
+Thanks for the review.
 
+For minimal changes, that makes sense. I'd also like to update the dev_err
+message (the "num_nws" typo, and I think what's invalid is win_no, not
+num_mws). So how about combining your suggestion with the log message
+update?
 
-> >>       return 0;
-> >>   }
-> >> diff --git a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c b/drivers/gpu/
-> >> drm/amd/pm/swsmu/amdgpu_smu.c
-> >> index fb8086859857..244b8c364d45 100644
-> >> --- a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
-> >> +++ b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
-> >> @@ -2040,6 +2040,12 @@ static int smu_disable_dpms(struct smu_context
-> >> *smu)
-> >>           smu->is_apu && (amdgpu_in_reset(adev) || adev->in_s0ix))
-> >>           return 0;
-> >> +    /* vangogh s0ix */
-> >> +    if ((amdgpu_ip_version(adev, MP1_HWIP, 0) == IP_VERSION(11, 5, 0) ||
-> >> +         amdgpu_ip_version(adev, MP1_HWIP, 0) == IP_VERSION(11, 5,
-> >> 2)) &&
-> >> +        adev->in_s0ix)
-> >> +        return 0;
-> >> +
-> >
-> > How about for GPU reset, does PMFW handle this too?
-> >
-> >>       /*
-> >>        * For gpu reset, runpm and hibernation through BACO,
-> >>        * BACO feature has to be kept enabled.
-> >> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c b/
-> >> drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
-> >> index 2c9869feba61..0708d0f0938b 100644
-> >> --- a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
-> >> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
-> >> @@ -2217,6 +2217,9 @@ static int vangogh_post_smu_init(struct
-> >> smu_context *smu)
-> >>       uint32_t total_cu = adev->gfx.config.max_cu_per_sh *
-> >>           adev->gfx.config.max_sh_per_se * adev-
-> >> >gfx.config.max_shader_engines;
-> >> +    if (adev->in_s0ix)
-> >> +        return 0;
-> >> +
-> >>       /* allow message will be sent after enable message on Vangogh*/
-> >>       if (smu_cmn_feature_is_enabled(smu, SMU_FEATURE_DPM_GFXCLK_BIT) &&
-> >>               (adev->pg_flags & AMD_PG_SUPPORT_GFX_PG)) {
-> >
->
->
+-Koichiro
 
+> 
+> Frank
+> >  }
+> >
+> >  #define EPF_NTB_MW_W(_name)						\
+> > @@ -896,7 +898,7 @@ static ssize_t epf_ntb_##_name##_store(struct config_item *item,	\
+> >  	struct config_group *group = to_config_group(item);		\
+> >  	struct epf_ntb *ntb = to_epf_ntb(group);			\
+> >  	struct device *dev = &ntb->epf->dev;				\
+> > -	int win_no;							\
+> > +	int win_no, idx;						\
+> >  	u64 val;							\
+> >  	int ret;							\
+> >  									\
+> > @@ -907,12 +909,15 @@ static ssize_t epf_ntb_##_name##_store(struct config_item *item,	\
+> >  	if (sscanf(#_name, "mw%d", &win_no) != 1)			\
+> >  		return -EINVAL;						\
+> >  									\
+> > -	if (win_no <= 0 || win_no > ntb->num_mws) {			\
+> > -		dev_err(dev, "Invalid num_nws: %d value\n", ntb->num_mws); \
+> > +	idx = win_no - 1;						\
+> > +	if (idx < 0 || idx >= ntb->num_mws) {				\
+> > +		dev_err(dev, "MW%d out of range (num_mws=%d)\n",	\
+> > +			win_no, ntb->num_mws);				\
+> >  		return -EINVAL;						\
+> >  	}								\
+> >  									\
+> > -	ntb->mws_size[win_no - 1] = val;				\
+> > +	idx = array_index_nospec(idx, ntb->num_mws);			\
+> > +	ntb->mws_size[idx] = val;					\
+> >  									\
+> >  	return len;							\
+> >  }
+> > --
+> > 2.48.1
+> >
 
