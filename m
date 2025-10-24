@@ -1,131 +1,137 @@
-Return-Path: <linux-kernel+bounces-869340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16812C07A27
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:06:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7FDC07A0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D0BF3B57ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:03:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E35B580A33
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF9034FF4A;
-	Fri, 24 Oct 2025 17:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YRMTlaKD"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501FE346E57;
+	Fri, 24 Oct 2025 18:01:46 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A5C34EEF6
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF63B303C8A;
+	Fri, 24 Oct 2025 18:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761328790; cv=none; b=gmCA2GRfUu9hSj86U4ZmQpq17sQJEL5X+qupuOyCA6LPt3HKwBX21WUm7sA/wHsSOiiqTDd87VfHBlWaslJemKObrOGso2NmGXvI1WbUhXlSrKIjNQg8AZV/89L8Xf55UwNdWHEuBe0WilecCOIZ4ha+C2kSDzrMNxiatZDRIQ8=
+	t=1761328905; cv=none; b=C29kkAD5v/iu8kMQrmy+OFGwlMY3zjBLnJWvmitqoh0Zr4BzSFWoEnVy8u0isdsurLMTvGEWWLRhB8wec8gKugDt3oZ+UfKSnSer9LOqS+7/NsNIUoS+Eu3vBKkUS11t0rkGMGVJZaB6pJEbWP1FRz+F+lUb0dWKONZyK4EtjZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761328790; c=relaxed/simple;
-	bh=yAXsZhxvHyHEQLXos94jIHAJ3UZbjk6e3qIEtM58ctc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=P9npUTefogzmAADbTj4/BMAJCMBo2w0AwqXz6KzplaHe1unvfipfve9rGpTvRQm4vohOTcn5TpNYohYTB+WQVoG3vyq3xyBLieky7C7jq5davqAU9sC2lbYD+6OOIm35d+yMEaqk1VPUrStvYDU8RZimv7DeDy3tFHJH9soVA1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YRMTlaKD; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33428befc08so5017383a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:59:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761328788; x=1761933588; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+GqPNh/zh5jE+hbuHQPcYDyfHhHCRzurjNcqVZkY2gg=;
-        b=YRMTlaKDCXaJjZWE/GVULI7UW6UzTbOREPsR+ErTuoVR8Ch1gLLVGD6yqM2stBcI7E
-         sYAXjcxPLL58ZhhP+YjsLmQJS4GKHvpk1XQTg/qGU/8qI4EnwV+1lPaUGUbuZMQKJ8KU
-         tSluW4dIsIiQs5pdT7SVpPczyfLMM9ovFL/051Rl4kthfiXKRn740b6myXGaTNdFkB+F
-         0Zd1YBv5WWV2SVBYI0DqKYtydMWJeFWKeQsavTD3+chmo06FDlwmnZZG70a/Qj/5mfej
-         QVcy3fiFDZbRZ9k336PclyqSNnKof1rG+lXM/t8SAkr3SsMx2YH/gT3HWb/zUFqNDNdC
-         vJlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761328788; x=1761933588;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+GqPNh/zh5jE+hbuHQPcYDyfHhHCRzurjNcqVZkY2gg=;
-        b=XzX2w5+8gIy8plzbW66NkmTgRatnc/Lb2f+gFNj0uG/5x1wyvnUtusR6/CE7KwJHgY
-         HuGTRLUiEnBRR5I+7En55+QURsvK4iAsg1olqkJSV+LaxAqMvtki9CpjMkvDVYIW47vz
-         pfhGnlDh03YF0XScz4ofU33oth/TYQOkXpvZPBFyus7YTVSAGBzhhs1SltoZXkp/FuP9
-         0OIyHgaeyE6b+rRdL3RycoTcyPCEH3kmPWzYc/RjDVrVO6jtLxUhNthfZHK98CF2yRrD
-         FZTCYm0KeghT4ws1FNzqQUSG2NlQ3WG1gu4OGn8+XVURPNioT3ViacZf8C/s+v2afQxG
-         9mXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZTjD0q/jAGlebkaOflwp0I+t+VxIw5zokpOAMiMSXP1ZnjBFceoN+04dwlyrJyWLCoQpAZ237qAInTv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvL7WzEOfpVHinvf9k7Jc0POMhd9VBMan7YXaDgFEXlPj3xb7l
-	ySKnHYf+OejbvtK1cyPvpo2ETzsvIp5jLIpAGujlFgUO6l4nChjTN5kDFF68dF6FYRWJKbZKcja
-	89BqLQE8aqA==
-X-Google-Smtp-Source: AGHT+IGI97mAtuqdO6OgV7iYK43SUTMj0/LhdECvBdjMp+FRWjR96CthVK9UYiaa2g7HS9K9cguw9qEme2CU
-X-Received: from pjbmd3.prod.google.com ([2002:a17:90b:23c3:b0:32b:35fb:187f])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d60f:b0:329:ed5b:ecd5
- with SMTP id 98e67ed59e1d1-33bcf8eb21fmr38489811a91.19.1761328788381; Fri, 24
- Oct 2025 10:59:48 -0700 (PDT)
-Date: Fri, 24 Oct 2025 10:58:57 -0700
-In-Reply-To: <20251024175857.808401-1-irogers@google.com>
+	s=arc-20240116; t=1761328905; c=relaxed/simple;
+	bh=Xt+ETKSJFI97IrcpNY81LB6CRSBaom6ByUnewAJpqdU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jZldBD3K1UuR43aw1qmIasOlBR7rRhccAVj9tUhVRI9UI6apvW4WlC/VBVEaCUAT/SMOkJqWJxQ6JyQmNh/M46+eVspeQKxF/03IpUC0XLjGkBuQzdrAh7iFAQqFeGVpx0EZvOmLchLWGtSnlkDnpEBDyzEpAG6o9fqGwz1IqQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 4A00DBE731;
+	Fri, 24 Oct 2025 18:01:41 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf07.hostedemail.com (Postfix) with ESMTPA id CC96920037;
+	Fri, 24 Oct 2025 18:01:36 +0000 (UTC)
+Message-ID: <769268a5035b5a711a375591c25d48d077b46faa.camel@perches.com>
+Subject: Re: [PATCH v2 2/2] add check for pointers with __free attribute
+ initialized to NULL
+From: Joe Perches <joe@perches.com>
+To: Ally Heev <allyheev@gmail.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
+  Lukas Bulwahn <lukas.bulwahn@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Andy Whitcroft <apw@canonical.com>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>,
+ David Hunter <david.hunter.linux@gmail.com>, Shuah Khan
+ <skhan@linuxfoundation.org>, Viresh Kumar	 <vireshk@kernel.org>, Nishanth
+ Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,  linux-pm
+ <linux-pm@vger.kernel.org>, dan.j.williams@intel.com
+Date: Fri, 24 Oct 2025 11:01:35 -0700
+In-Reply-To: <20251024-aheev-checkpatch-uninitialized-free-v2-2-16c0900e8130@gmail.com>
+References: 
+	<20251024-aheev-checkpatch-uninitialized-free-v2-0-16c0900e8130@gmail.com>
+	 <20251024-aheev-checkpatch-uninitialized-free-v2-2-16c0900e8130@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251024175857.808401-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.1.821.gb6fe4d2222-goog
-Message-ID: <20251024175857.808401-23-irogers@google.com>
-Subject: [PATCH v1 22/22] perf test stat csv: Update test expectations and events
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Sumanth Korikkar <sumanthk@linux.ibm.com>, Collin Funk <collin.funk1@gmail.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-Stat-Signature: eb5s9q3uch3ku4my1dtojkfi97u8a4hi
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: CC96920037
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX18IUFoqClvI0Rd89Cboqhy+chZzc4TgnUI=
+X-HE-Tag: 1761328896-239519
+X-HE-Meta: U2FsdGVkX1+4JucxezI4zqxHXyRDfDWSSyYrfAGxTKk8mizadDJ+RGINF8cu03EPljticeWNrB6iDzT2+0C4YgeNoi8DAnflRqiC4s8fx8N7zdEMEVO+99A5Z6Hg+Zy18erM2IxdJLx6BnVsNUGxN/VuOELJ2IvTLet7s+843+yU9h+CyWVLJMGhpcXOFP+DOEXme9vZ+r+b471C2gTKYzdGKGDuR0Nc2RUUGlPD6PCeUzHlJWWGZUwxrxefrgO6OGAu+UwGauY+iz36k02HO8XpbjJZiz7glJQx3qUheMVz9eE7BQ+KtjPPBHmyvwZV8DUDtP9D7n2DXvtZTBPvxwY5i/VIwEDATGKmyDjZCiPwZh0rnKr2b9rRuvxMjLOVNI+RbnOP3DoenSgUV6MElnyXWx1JG+Vx
 
-Explicitly use a metric rather than implicitly expecting '-e
-instructions,cycles' to produce a metric. Use a metric with software
-events to make it more compatible.
+On Fri, 2025-10-24 at 22:59 +0530, Ally Heev wrote:
+> pointers with __free attribute initialized to NULL
+> pose potential cleanup issues [1] when a function uses
+> interdependent variables with cleanup attributes
+>=20
+> Link: https://docs.kernel.org/core-api/cleanup.html [1]
+> Link: https://lore.kernel.org/all/68f7b830ec21a_10e910070@dwillia2-mobl4.=
+notmuch/
+> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Ally Heev <allyheev@gmail.com>
+[]
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> @@ -7728,6 +7728,12 @@ sub process {
+>  			ERROR("UNINITIALIZED_PTR_WITH_FREE",
+>  			      "pointer '$1' with __free attribute should be initialized\n" . =
+$herecurr);
+>  		}
+> +
+> +# check for pointers with __free attribute initialized to NULL
+> +		while ($line =3D~ /\*\s*($Ident)\s+$FreeAttribute\s*=3D\s*NULL\b/g) {
+> +			WARN("NULL_INITIALIZED_PTR_WITH_FREE",
+> +			      "pointer '$1' with __free attribute should be initialized to a =
+non-NULL address\n" . $herecurr);
+> +		}
+>  	}
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/shell/lib/stat_output.sh | 2 +-
- tools/perf/tests/shell/stat+csv_output.sh | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+I think this a poor idea as almost all the instances where this
+initialization is done are fine.
 
-diff --git a/tools/perf/tests/shell/lib/stat_output.sh b/tools/perf/tests/shell/lib/stat_output.sh
-index c2ec7881ec1d..3c36e80fe422 100644
---- a/tools/perf/tests/shell/lib/stat_output.sh
-+++ b/tools/perf/tests/shell/lib/stat_output.sh
-@@ -156,7 +156,7 @@ check_metric_only()
- 		echo "[Skip] CPU-measurement counter facility not installed"
- 		return
- 	fi
--	perf stat --metric-only $2 -e instructions,cycles true
-+	perf stat --metric-only $2 -M page_faults_per_second true
- 	commachecker --metric-only
- 	echo "[Success]"
- }
-diff --git a/tools/perf/tests/shell/stat+csv_output.sh b/tools/perf/tests/shell/stat+csv_output.sh
-index 7a6f6e177402..cd6fff597091 100755
---- a/tools/perf/tests/shell/stat+csv_output.sh
-+++ b/tools/perf/tests/shell/stat+csv_output.sh
-@@ -44,7 +44,7 @@ function commachecker()
- 	;; "--per-die")		exp=8
- 	;; "--per-cluster")	exp=8
- 	;; "--per-cache")	exp=8
--	;; "--metric-only")	exp=2
-+	;; "--metric-only")	exp=1
- 	esac
- 
- 	while read line
--- 
-2.51.1.821.gb6fe4d2222-goog
+And there are a lot of them.
 
+$ git grep -P '\b__free\b.*=3D\s*NULL\s*;' | wc -l
+490
+
+And what about these uses that depend on struct path members
+.mnt and .dentry being NULL.=20
+
+$ git grep -P '\b__free\b.*=3D\s*\{.*\}\s*;'
+fs/configfs/symlink.c:  struct path path __free(path_put) =3D {};
+fs/fhandle.c:   struct path path __free(path_put) =3D {};
+fs/file_attr.c: struct path filepath __free(path_put) =3D {};
+fs/file_attr.c: struct path filepath __free(path_put) =3D {};
+fs/namei.c:     struct path parent_path __free(path_put) =3D {};
+fs/namei.c:     struct path parent_path __free(path_put) =3D {};
+fs/namespace.c: struct path old_path __free(path_put) =3D {};
+fs/namespace.c: struct path path __free(path_put) =3D {};
+fs/namespace.c: struct path old_path __free(path_put) =3D {};
+fs/namespace.c: struct path path __free(path_put) =3D {};
+fs/namespace.c: struct path to_path __free(path_put) =3D {};
+fs/namespace.c: struct path from_path __free(path_put) =3D {};
+fs/namespace.c: struct path new __free(path_put) =3D {};
+fs/namespace.c: struct path old __free(path_put) =3D {};
+fs/namespace.c: struct path root __free(path_put) =3D {};
+fs/namespace.c: struct klistmount kls __free(klistmount_free) =3D {};
+fs/namespace.c: struct path fs_root __free(path_put) =3D {};
+fs/nsfs.c:      struct path path __free(path_put) =3D {};
+fs/nsfs.c:              struct path path __free(path_put) =3D {};
+fs/nsfs.c:      struct path path __free(path_put) =3D {};
+fs/overlayfs/params.c:  struct path layer_path __free(path_put) =3D {};
+fs/overlayfs/params.c:          struct path path __free(path_put) =3D {};
+fs/pidfs.c:     struct path path __free(path_put) =3D {};
+include/linux/path.h: * struct path path __free(path_put) =3D {};
+kernel/acct.c:  struct path internal __free(path_put) =3D {};     // in tha=
+t order
+kernel/trace/trace_uprobe.c:    struct path path __free(path_put) =3D {};
 
