@@ -1,315 +1,261 @@
-Return-Path: <linux-kernel+bounces-869267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2B5C07751
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:05:35 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE11C07742
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8651735D315
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:05:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3407635D284
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EBB344054;
-	Fri, 24 Oct 2025 17:04:44 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F271342C80;
+	Fri, 24 Oct 2025 17:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zdv3LYvx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13184329C6A;
-	Fri, 24 Oct 2025 17:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761325483; cv=none; b=fwcfyX7F2x0rQ/+2+IwKK5STt9+ABnpdF2n/Yhr5395oTQaC7V6YfZRppd+eoH3YbG/56YXRu0KR8pDutDtkd7RR8TOMGjV19kl3OjW52Fo4N9A2kXUtmp63HoYF2vTX2G2uxVxY3ZijQFQ3p5XRDW+y9w17N9p6HnMY0fC/pAQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761325483; c=relaxed/simple;
-	bh=CDtuSKFMk+D06z0L9yK8/mNWtAwyfJx5m5XZXsDEuVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NuSFrbEUDG93Qt/4hEdS5wybg4PzXQoAfhVM8CGwvYagv73WAuIOo3KZ6HbGyolgcxTelp8uOh7C00UurJ3a7efM/Gz9mNCfGrIog7hR7eM4uWEtBQhAWHOBMWOojKQ+dyKdUjsnvtTXUKB/VO039nGWcGEydWumxlV5EeTwsPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1vCLDR-000000006AG-1aBq;
-	Fri, 24 Oct 2025 17:04:37 +0000
-Date: Fri, 24 Oct 2025 18:04:26 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: [PATCH net-next 11/13] net: dsa: add tagging driver for MaxLinear
- GSW1xx switch family
-Message-ID: <1211920a29d5633fb9d3a259f2147383f396688f.1761324950.git.daniel@makrotopia.org>
-References: <cover.1761324950.git.daniel@makrotopia.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E0331B823;
+	Fri, 24 Oct 2025 17:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761325478; cv=fail; b=g3hn1KlefVpmyv0QzmQGJj/0yGt2IwmBqABm7lCCoVMdj7YTCt/wfRD27ZxgP1bPifj/o2uEgGYw5L7fhtimZmpBw2UVfikP8iUaXLUBAsTVpQFdHeMO1oMLm6kwRTcL2YcA8B2yRp8YpBCoReN0Rp5QipEwm4zHgyFgqQt8yKY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761325478; c=relaxed/simple;
+	bh=ELvITkGV7sk8l+bliWIBQJfAD33ZrO+VSM8XwGV9tM8=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oW6BzaCsZ3aq3P/V2ujTwEVJEHy8dxlemoJNi36SIpCiCnSVHFm3LDL7i1GGQ4UG+/Y/94exrjC4fJILZ7ldr/BwgFwdMuXIyS/IKjZexhd50G7kYaCaPSG3N+9P1hyAax7xHkzwO/K4hPziVY117RqnqxZfbCXQDI7mZSVRVTM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zdv3LYvx; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761325476; x=1792861476;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=ELvITkGV7sk8l+bliWIBQJfAD33ZrO+VSM8XwGV9tM8=;
+  b=Zdv3LYvxcQwKKSS6VRLa6fOxJMO/fm1Rd5/IHbOUpaavv65OOXeUunJI
+   frt+fyVJLXPifiz79hjz041yjHgSWywPEm5RmFi+N8IIFjMat77Mxzg2t
+   I+rDyGzZ5sixsP8aZYM9YnR18mKCxYMzYD3bOGqZc7fCKqb4j6GqqljLl
+   XHMRlHivsN1YjQG0lsCG7PNWluuAp39URLfQgvAQASgSYPjBpFe4HkEqm
+   S7LVOpaEosy5s1IeLJb5sK20tHYc434It452qmRcMhvoqLooDYYJaSn1u
+   f8rXwt+b5OJSRWPWjT2ccNcKuE3uziHYbm8pkx1+QaIejCwmeTHkTlrXK
+   A==;
+X-CSE-ConnectionGUID: pDtZDANUQ4e7KLdNdheBgw==
+X-CSE-MsgGUID: 71DC2Mn/SX+bC3YvLo6DCg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="66126296"
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="66126296"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 10:04:36 -0700
+X-CSE-ConnectionGUID: RrZJRd6ASheeTOXQ7bUvkQ==
+X-CSE-MsgGUID: JqtlbbO+SLWUT0n74zIOTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="184085502"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 10:04:36 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 24 Oct 2025 10:04:34 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 24 Oct 2025 10:04:34 -0700
+Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.33) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 24 Oct 2025 10:04:34 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VvH5DG6jDOmon3Ryj7Ck6ZIVoXKJEVQTjNpMo9tXyb5KHIXVBIPUO/4dOV+nO3kQhefxlzq02XNEr0ADBLDbWllVb2NRj5VOGXJUNUyOpKdvBs1FiTv77671VNpYqtwCBrI2wVUKPtp4xrL+IvhC1oFTkBNvY0kphD5PNzEKRbSzTtdyzGIv0BwZ77JS3FUyW++s6ZuApGFttQfxn9b3I3lPu11xiHbN4IQ+AOrK6O2tj/Wo73v1yPDtj9jRTEyUAxY/n6ZmxfU6Q7m9yzZkIkW1gXEFozXVj4VpUA/MNRIlTaMPYGfYeHUCHL7juHg5v/DdZDency4GluZ3V7w0uw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VPQKzfDcXE4QX33JGV/XkTXjuIv0Ko+EMqZnYEaqZCI=;
+ b=BZxvGJMpCTH55hVeG42hX9uUKD1bVgEoIXeXTSXkdPVcVS1LOI8QLW7rDYqwWIZVwDudNzNH0NHxOVdt4VuBtlVDCtkfQ6LwA6/ScfCp+9pYTqAp1I5C9LoCADwa6DPoErJ3RzBzwKZjLXl948EuL3PWLj+IY9w/ybrQT0dH7CsoNaTyU3CEF7FlB2dEfUMHt7YKCqy7I2gmJqmo2oBj6cL++TR4MLzLwv7h6MPyxAiRFgNzu/INAnB74zPf2S+UUS4cKLVwTzvxZqDecgv6MpX9BVDNJc768pJVtL0lS/FRyYkOTDErTv0rp+zdqaSVKyDzDw87uh3usgzW2fDwDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL3PR11MB6435.namprd11.prod.outlook.com (2603:10b6:208:3bb::9)
+ by PH7PR11MB7607.namprd11.prod.outlook.com (2603:10b6:510:279::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 17:04:32 +0000
+Received: from BL3PR11MB6435.namprd11.prod.outlook.com
+ ([fe80::24ab:bc69:995b:e21]) by BL3PR11MB6435.namprd11.prod.outlook.com
+ ([fe80::24ab:bc69:995b:e21%6]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 17:04:32 +0000
+Message-ID: <423fab56-ec08-43aa-9742-4fd4df2849de@intel.com>
+Date: Fri, 24 Oct 2025 10:04:28 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: CVE-2025-39898: e1000e: fix heap overflow in e1000_set_eeprom
+To: Greg Kroah-Hartman <gregkh@kernel.org>, Steffen Jaeckel <sjaeckel@suse.de>
+CC: <cve@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cve-announce@vger.kernel.org>, Vitaly Lifshits
+	<vitaly.lifshits@intel.com>, <dima.ruinskiy@intel.com>, Mikael Wessel
+	<post@mikaelkw.online>, Mor Bar-Gabay <morx.bar.gabay@intel.com>,
+	<davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<edumazet@google.com>, <andrew+netdev@lunn.ch>
+References: <2025100116-CVE-2025-39898-d844@gregkh>
+ <db92fcc8-114d-4e85-9d15-7860545bc65e@suse.de>
+ <2025102432-motive-passage-eacf@gregkh>
+Content-Language: en-US
+From: Tony Nguyen <anthony.l.nguyen@intel.com>
+In-Reply-To: <2025102432-motive-passage-eacf@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR08CA0048.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::25) To BL3PR11MB6435.namprd11.prod.outlook.com
+ (2603:10b6:208:3bb::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1761324950.git.daniel@makrotopia.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR11MB6435:EE_|PH7PR11MB7607:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4ef87e6c-be1c-490f-25a6-08de131f6697
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?c2JkMURyY21qMFpoaTAzczZyZFBobkpMSmMrbUM0ZGt5ZVpwVTNTZCtuY2k1?=
+ =?utf-8?B?UXhIWXI2ZDZqeVRUMzNaZGxoTmVGdTg1dDN5WmU1d3hkeVBXd21oT2NGRS9C?=
+ =?utf-8?B?ZUJkb2hqaHZ4bVZRYllaTis1UU5VbUdydG9FRzN3NisxeHZwN2traElpTTFC?=
+ =?utf-8?B?eUVnNWpDZVZNaU5MYWp2SWNMdm5rQjJ2LzNMUkdjK2RlN0huejh4YUxUcVNX?=
+ =?utf-8?B?TDA1UG8wenhiSFhMSEFldUtwVjRXZTZTd3JUdGlXTitRM0xwRUJWc3F0cTdS?=
+ =?utf-8?B?b0NRazNxTlZMY3BMMGFkcGtWTE13OXM1TitKUlJ3K3gyM0FxZWl3NEsrUEsv?=
+ =?utf-8?B?aUo4UzFDZ0V0VllhelJLRG5zNTB4U1JRbnJkWEdNZ053d1J3WXM2T0hCZU4r?=
+ =?utf-8?B?R25rbFJHV1V1YVAxaE85My9uWk4rU0IwU0ZEUDhFaldFdGRrUHJsSmZqMkQy?=
+ =?utf-8?B?OTlsTFNLWml1R1dpQ2xNV2hLb0UySmdqNklxQzQvamdpUDBDelhkc1NTbkI1?=
+ =?utf-8?B?clVRNVRMZTRYNmpIek1VS3FmaDJTVXRmUlJiVC92UDhLV1A2ZjlBWWRjN09W?=
+ =?utf-8?B?a2dZQ0MwWkVoVTExOTQ2NG91MXBKZ3ozOVE4Z0FOTmFsVVBqcFVOUUFlMXZu?=
+ =?utf-8?B?S25pbDI4VGQyYzhHNEtVRjgyeVEreEwxSTZMaVVEbmVFQXpOQzd1L1Ird1Uv?=
+ =?utf-8?B?aWFEcGtFVFhaSkJHOEoraXZrLzNRTjZRaEJmMlAyZ3RnSC83WDJrZFYrZFkr?=
+ =?utf-8?B?THVxTTJLcEpmR0k5ZHVOeDdFSmpuYmpBMUZHZmIybXRtMEJ5YkhUNTVzUUtI?=
+ =?utf-8?B?WU1BQ0JSSWxIaURNUVlmMnNUaGlnWGwrUGc3Mld2eW1GYktnZy9vTnlhd2Jt?=
+ =?utf-8?B?ZDM2Rkw2TnV0TzNBYkNCb1B2TnNicGVWWXdUL2JFYmZPWGRQYzh1Y2FkUGFy?=
+ =?utf-8?B?am5CSTZROHdPNmQ5WHV6T1V3UTBYM0diOXhhclZCUnNFaTNBcTFpbGtyV3A4?=
+ =?utf-8?B?NHpCUC9qNHBTbFd5WW9LZWRkaEpNTzZaa0NXdFcwSlA2ejJ1SVhNUDJwUFlP?=
+ =?utf-8?B?Umc5MU1PbkJtU2lzSUgxejFDVlE1ZWpMT21VRkVFRGtmRFJDd3kyNHdNTlZL?=
+ =?utf-8?B?SGxXL3AwQ1hnSWVZd2xNWE5jYlNiYUFDSlpHa3JaT2JqVzZod0ZyWnFDWnpP?=
+ =?utf-8?B?ZS9tMlZ3cHNtNjcwWkZOTlBhUGhYNzliRHVJcWVCcjRFVVB2K2g4T3hNc3Va?=
+ =?utf-8?B?cjJlelE5eThZazNwczJJcjl4REZnWlpDQ2p1SnlBTmRwMVptVW4rQUZyb0tt?=
+ =?utf-8?B?MXVNUUtuTXVkaGVQNlQ1QWJtRFFiUkNpc0VmZXl2NjFVdlc1VmZ1Z0FoYmt4?=
+ =?utf-8?B?K2xVVlNBTnE1VEx3NjBuWEVNWGNOdVFFbVdQcmhSYjZkcGRFZ0Fibkp2elY0?=
+ =?utf-8?B?ZVFLdGZ3U1hHa0I5T0JuQnJqUW9PVW9USm9ZVE0xaDIweXRaY3N2YnZCQStI?=
+ =?utf-8?B?eUtFcTk3ZnZ6QTFqOHliU0h1a3lYRG1YaUttdVdlU2w0Wno4bzJZVXNHUHla?=
+ =?utf-8?B?bnV6aFdYZ0Z6OFpPWXFBejdwRkNNOUhvb3FMVlpiUE9xekZsU1R6Q0IxUHU1?=
+ =?utf-8?B?TEZKV0xBM1Ira2U1aWlBK0pCY3dGR0hscWdUYzcvY3NENERMSmtxYU8rOWVM?=
+ =?utf-8?B?OS9QNkx4bnNkZHVxQithYmpIUjVIK1JINHFCV3ArTlB2aXR1dzVJMlhVRTNu?=
+ =?utf-8?B?eFF0TDBUUDA0UUwwUXZ2ZW9iYjZQQzFMYzdXKy9GQk4yTFp0eXh3S3QwdEdu?=
+ =?utf-8?B?eVZ5aTRjVXNCclhrdjAzOFFGOTU1eFN0bWpEQkZtMUlHY29UWnEyVVJYMnhR?=
+ =?utf-8?B?QWt1UXVnb3VyUlIwZlMrb1Q1YWNJSXlJSkgwT3crclRiWmhIbEovVU1RdEN2?=
+ =?utf-8?Q?chBjWU5E3qgHzasxXInvzmp63N2+/mC6?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6435.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QTczWjRYTk9xUGR3WDl1elRzdjUyN2pzajR3UUlVbUc0dE9tWWZUVk5lSTJ2?=
+ =?utf-8?B?UTIxNktyejZaZ1cwNnB6Nk1WNUk0ckxvMVB0K2M4UUM2Rm1RdWhkSytEUURP?=
+ =?utf-8?B?RFhuRGxjZld6dWdPVTR0NTRtMG5EN3VoN2IwL0lBenM4dCtmalVlMStuNW1a?=
+ =?utf-8?B?QU14K0VjNE5rRGRpNHNCNFVSN3lTdW9nck1xMnpRWmVETHJ4bERWeWlwZUxO?=
+ =?utf-8?B?cGp1RXNXM3h1RkVhSFhWUnlsOEs5WllsRWZjUC9jMHU0L2ZZazVVaGUzTlpH?=
+ =?utf-8?B?Sk5MTUtXVTlkeURYVWZBa0N6aktKam02enYyclZFQkhCcnFLWjRXeDdjUUJZ?=
+ =?utf-8?B?Ky9qVnBEZ0FRV21RTTQ0anJMaE1jS1BtK0lnUmpYbTZtdnlPVFFSQmlHZExm?=
+ =?utf-8?B?QmNrMi9CWm5hVXZKWG1jbFdmWDRtMGNwTGNmNzZONHAydm9abkh0b1lQM0Rq?=
+ =?utf-8?B?UXl6Z05WRnZKYVI0VzgxcnVXTHNFbzlSWldabU5WVWIxNnVCbUNHQmZReTZI?=
+ =?utf-8?B?MUlLWGhibzIwM3RqUlVRRWpUZWtDQkY1YTVjYWpxMWhOZTBzM0pnMGMrVTV3?=
+ =?utf-8?B?enFucTlocUNEblpFYXdrY3NyQkhNQXVScHNpMHBOaUVlSlFNMWlnc1dkenEr?=
+ =?utf-8?B?RDU4ZGwrUlMyd0M3SzIzL3lJaFQwOWs2NUdvR25vdlNpaERLTmJuUm5udGU3?=
+ =?utf-8?B?RGdacndxSGVQR2Y3aGowYk1pcm00TnYxUnBPR3U1WWUrUWFJRVdLL2lVUkww?=
+ =?utf-8?B?UVlMVTlKNTlXSGpGN3JzdzFyL2VJcnZvTEw2RmdMeGN3N1hDSWlXbCtCVUIz?=
+ =?utf-8?B?ZklzSElsdFVEOFR1dVZ4Z0hrMVNieUU5Z25pa1BqNG9yYUxmTWVTMmZ4R29l?=
+ =?utf-8?B?b1lKQSs1ZDZId3RrT1BhTVFaSlZ1cU9kWkJibkpkTEcrRU1xTG5NVTVkamJk?=
+ =?utf-8?B?aGFiNUhOVlZJYXAwOGp1SlZST2pjYmZtM0RzdVFmOXQ2Qld6d2tmWXFmSzE1?=
+ =?utf-8?B?S1c5UllKRlYybW5wTXU4cWh1RnZPakVXU0djanlrMW9saUNWclNVNkhzR1Vq?=
+ =?utf-8?B?NUFkV0VoeTNqNVpLV0lCbGhURHdLTnBBM1V4YjNJbXI4M1JmRU9TNTZDQlpB?=
+ =?utf-8?B?NGZSWGRPaS9yQ3VTS1EzdXpXdTBIdjUyb2ZYRkVWMEdMeUtwZDNqbTRGRVJR?=
+ =?utf-8?B?WHNGaS9qaWs3SkVkUFZ1S2x3eUZCZWVQTm4wSmtDSFR4UlNZaHVYaWthZlgy?=
+ =?utf-8?B?aU1vNk10STlnbHg5NmIvZ2hYRDNtRkxJcDFGOGNjeC9CN0lDa1lKRitkQ254?=
+ =?utf-8?B?MG1YWmoxK0t5cjQxL3dkS1c0amoyREdrSW1xSzdFdkpCVGM4WlVsbUs4Y0ZW?=
+ =?utf-8?B?S1BtZmMxeWs4cnRHaHhOSW04all6VE9tYWNxeU43TTBlRFplWE5UZ29vMlZN?=
+ =?utf-8?B?YzZRUHFQVE9ZbzRwbTV6anV3WG9BN2oyOFMreW0rMStNbU5VWC9SRGkwcExx?=
+ =?utf-8?B?Wmx4cUtXY0VpN2RDNld2aWw3RnJvaWVjaXhIelo5akNtdzljNTNPNmJ1aGsy?=
+ =?utf-8?B?OU9PZ3FiTnRwWHJidVNQbytEM0JvUXIxZFluZWFSeVE2MWgzdG9McjB3MWcw?=
+ =?utf-8?B?bXQwYWRnNW1qOWx5VEh5RWUrUm9hNzQzL0NGcUpIRWZ3RVlSKzY3T3NNVG0w?=
+ =?utf-8?B?NTBCbmtxcVlzeGx4ZFlUeTZZRmExNUF5NmlIekVmUHFtcVU5QVNmOTJUdy9u?=
+ =?utf-8?B?blJoamVncEZMRGVqNVdVdUxkU0V5bitTbGl3VUdkVG5KQUJmdVlhdzFYU243?=
+ =?utf-8?B?SHN0U0hDeFdQcHY4R3lyVExUMjZ3VUFwTjByckJ1Slh2RkIwMTRvYVByZlp5?=
+ =?utf-8?B?NTJ3VU4rclQxb3lJMGN0SWo3ZmxtOWRiUVZuTHFROVQzNC9tc1MvaUN6bmZv?=
+ =?utf-8?B?bFFmSWFsZ0ZzQW1DUDZVbW5uTVE0Vy9IZW9xaGRmeUZjTFNBYW5KY3JhQzgy?=
+ =?utf-8?B?N0FxQUhjQWtMWld5S3JDbkY1YTZBRWg4Z2tyUVY4K3plVVJHd25mYnlPVmk2?=
+ =?utf-8?B?bGdzM2dNQ29YbnlycVplQnE5M3hWeTZHYUdqUzNpYkNSRzNZS3VUUUJDbjBC?=
+ =?utf-8?B?Q01Nd3o2bGtGMXY4U3pMN3M1UEZNMHlGSVFBR0tHcDFQM3lqOElqRWVJRXY3?=
+ =?utf-8?B?Q2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ef87e6c-be1c-490f-25a6-08de131f6697
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6435.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 17:04:32.2577
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: X6xIBA/9yqFO0U+/+NC4N+f7ouUGAmSKHb2YPPYrCU9Z0IvPRB80osIt0LTIuSIiXQNPJnuC2x32Fny9VT22NBl5q2q/KKzplKPrx1fzWpQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7607
+X-OriginatorOrg: intel.com
 
-Add support for a new DSA tagging protocol driver for the MaxLinear
-GSW1xx switch family. The GSW1xx switches use a proprietary 8-byte
-special tag inserted between the source MAC address and the EtherType
-field to indicate the source and destination ports for frames
-traversing the CPU port.
 
-Implement the tag handling logic to insert the special tag on transmit
-and parse it on receive.
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
-Changes since RFC:
- - use dsa etype header macros instead of open coding them
- - maintain alphabetic order in Kconfig and Makefile
+On 10/24/2025 4:26 AM, Greg Kroah-Hartman wrote:
+> On Fri, Oct 24, 2025 at 12:53:44PM +0200, Steffen Jaeckel wrote:
+>> Hi Greg,
+>>
+>> On 2025-10-01 09:43, Greg Kroah-Hartman wrote:
+>>> From: Greg Kroah-Hartman <gregkh@kernel.org>
+>>>
+>>> Description
+>>> ===========
+>>>
+>>> In the Linux kernel, the following vulnerability has been resolved:
+>>>
+>>> e1000e: fix heap overflow in e1000_set_eeprom
+>>>
+>>> Fix a possible heap overflow in e1000_set_eeprom function by adding
+>>> input validation for the requested length of the change in the EEPROM.
+>>> In addition, change the variable type from int to size_t for better
+>>> code practices and rearrange declarations to RCT.
+>>>
+>>> The Linux kernel CVE team has assigned CVE-2025-39898 to this issue.
+>>>
+>>>
+>>> Affected and fixed versions
+>>> ===========================
+>>>
+>>> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 5.4.299 with commit ea832ec0583e2398ea0c5ed8d902c923e16f53c4
+>>> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 5.10.243 with commit ce8829d3d44b8622741bccca9f4408bc3da30b2b
+>>> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 5.15.192 with commit 99a8772611e2d7ec318be7f0f072037914a1f509
+>>> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.1.151 with commit b48adcacc34fbbc49046a7ee8a97839bef369c85
+>>> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.6.105 with commit 50a84d5c814039ad2abe2748aec3e89324a548a7
+>>> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.12.46 with commit b370f7b1f470a8d5485cc1e40e8ff663bb55d712
+>>> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.16.6 with commit 0aec3211283482cfcdd606d1345e1f9acbcabd31
+>>> 	Issue introduced in 2.6.24 with commit bc7f75fa97884d41efbfde1397b621fefb2550b4 and fixed in 6.17 with commit 90fb7db49c6dbac961c6b8ebfd741141ffbc8545
+>>>
+>>> [...]
+>>
+>> we believe that this CVE is invalid since the sole caller is
+>> `net/ethtool/ioctl.c:ethtool_set_eeprom()`, which already does all the
+>> necessary checks before invoking a driver specific implementation.
+> 
+> Great, will this commit then be reverted?  I'll go revoke this cve now,
+> thanks for the review.
 
- MAINTAINERS              |   3 +-
- include/net/dsa.h        |   2 +
- net/dsa/Kconfig          |   8 +++
- net/dsa/Makefile         |   1 +
- net/dsa/tag_mxl-gsw1xx.c | 138 +++++++++++++++++++++++++++++++++++++++
- 5 files changed, 151 insertions(+), 1 deletion(-)
- create mode 100644 net/dsa/tag_mxl-gsw1xx.c
+We'll prepare a revert for this.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3ed59823f7a4..1db770b7274d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14037,7 +14037,7 @@ F:	tools/testing/selftests/landlock/
- K:	landlock
- K:	LANDLOCK
- 
--LANTIQ / INTEL Ethernet drivers
-+LANTIQ / MAXLINEAR / INTEL Ethernet DSA drivers
- M:	Hauke Mehrtens <hauke@hauke-m.de>
- L:	netdev@vger.kernel.org
- S:	Maintained
-@@ -14045,6 +14045,7 @@ F:	Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
- F:	drivers/net/dsa/lantiq/*
- F:	drivers/net/ethernet/lantiq_xrx200.c
- F:	net/dsa/tag_gswip.c
-+F:	net/dsa/tag_mxl-gsw1xx.c
- 
- LANTIQ MIPS ARCHITECTURE
- M:	John Crispin <john@phrozen.org>
-diff --git a/include/net/dsa.h b/include/net/dsa.h
-index 67762fdaf3c7..2df2e2ead9a8 100644
---- a/include/net/dsa.h
-+++ b/include/net/dsa.h
-@@ -56,6 +56,7 @@ struct tc_action;
- #define DSA_TAG_PROTO_VSC73XX_8021Q_VALUE	28
- #define DSA_TAG_PROTO_BRCM_LEGACY_FCS_VALUE	29
- #define DSA_TAG_PROTO_YT921X_VALUE		30
-+#define DSA_TAG_PROTO_MXL_GSW1XX_VALUE		31
- 
- enum dsa_tag_protocol {
- 	DSA_TAG_PROTO_NONE		= DSA_TAG_PROTO_NONE_VALUE,
-@@ -89,6 +90,7 @@ enum dsa_tag_protocol {
- 	DSA_TAG_PROTO_LAN937X		= DSA_TAG_PROTO_LAN937X_VALUE,
- 	DSA_TAG_PROTO_VSC73XX_8021Q	= DSA_TAG_PROTO_VSC73XX_8021Q_VALUE,
- 	DSA_TAG_PROTO_YT921X		= DSA_TAG_PROTO_YT921X_VALUE,
-+	DSA_TAG_PROTO_MXL_GSW1XX	= DSA_TAG_PROTO_MXL_GSW1XX_VALUE,
- };
- 
- struct dsa_switch;
-diff --git a/net/dsa/Kconfig b/net/dsa/Kconfig
-index 6b94028b1fcc..f86b30742122 100644
---- a/net/dsa/Kconfig
-+++ b/net/dsa/Kconfig
-@@ -104,6 +104,14 @@ config NET_DSA_TAG_MTK
- 	  Say Y or M if you want to enable support for tagging frames for
- 	  Mediatek switches.
- 
-+config NET_DSA_TAG_MXL_GSW1XX
-+	tristate "Tag driver for MaxLinear GSW1xx switches"
-+	help
-+	  The GSW1xx family of switches supports an 8-byte special tag which
-+	  can be used on the CPU port of the switch.
-+	  Say Y or M if you want to enable support for tagging frames for
-+	  MaxLinear GSW1xx switches.
-+
- config NET_DSA_TAG_KSZ
- 	tristate "Tag driver for Microchip 8795/937x/9477/9893 families of switches"
- 	help
-diff --git a/net/dsa/Makefile b/net/dsa/Makefile
-index 4b011a1d5c87..42d173f5a701 100644
---- a/net/dsa/Makefile
-+++ b/net/dsa/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_NET_DSA_TAG_HELLCREEK) += tag_hellcreek.o
- obj-$(CONFIG_NET_DSA_TAG_KSZ) += tag_ksz.o
- obj-$(CONFIG_NET_DSA_TAG_LAN9303) += tag_lan9303.o
- obj-$(CONFIG_NET_DSA_TAG_MTK) += tag_mtk.o
-+obj-$(CONFIG_NET_DSA_TAG_MXL_GSW1XX) += tag_mxl-gsw1xx.o
- obj-$(CONFIG_NET_DSA_TAG_NONE) += tag_none.o
- obj-$(CONFIG_NET_DSA_TAG_OCELOT) += tag_ocelot.o
- obj-$(CONFIG_NET_DSA_TAG_OCELOT_8021Q) += tag_ocelot_8021q.o
-diff --git a/net/dsa/tag_mxl-gsw1xx.c b/net/dsa/tag_mxl-gsw1xx.c
-new file mode 100644
-index 000000000000..0aa4cc00ed33
---- /dev/null
-+++ b/net/dsa/tag_mxl-gsw1xx.c
-@@ -0,0 +1,138 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * DSA driver Special Tag support for MaxLinear GSW1xx switch chips
-+ *
-+ * Copyright (C) 2025 Daniel Golle <daniel@makrotopia.org>
-+ * Copyright (C) 2023 - 2024 MaxLinear Inc.
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/etherdevice.h>
-+#include <linux/skbuff.h>
-+#include <net/dsa.h>
-+
-+#include "tag.h"
-+
-+/* To define the outgoing port and to discover the incoming port a special
-+ * tag is used by the GSW1xx.
-+ *
-+ *       Dest MAC       Src MAC    special TAG        EtherType
-+ * ...| 1 2 3 4 5 6 | 1 2 3 4 5 6 | 1 2 3 4 5 6 7 8 | 1 2 |...
-+ *                                |<--------------->|
-+ */
-+
-+#define GSW1XX_TAG_NAME		"gsw1xx"
-+
-+/* special tag in TX path header */
-+#define GSW1XX_TX_HEADER_LEN	8
-+
-+/* Byte 0 = Ethertype byte 1 -> 0x88 */
-+/* Byte 1 = Ethertype byte 2 -> 0xC3*/
-+
-+/* Byte 2 */
-+#define GSW1XX_TX_PORT_MAP_EN		BIT(7)
-+#define GSW1XX_TX_CLASS_EN		BIT(6)
-+#define GSW1XX_TX_TIME_STAMP_EN		BIT(5)
-+#define GSW1XX_TX_LRN_DIS		BIT(4)
-+#define GSW1XX_TX_CLASS_SHIFT		0
-+#define GSW1XX_TX_CLASS_MASK		GENMASK(3, 0)
-+
-+/* Byte 3 */
-+#define GSW1XX_TX_PORT_MAP_LOW_SHIFT	0
-+#define GSW1XX_TX_PORT_MAP_LOW_MASK	GENMASK(7, 0)
-+
-+/* Byte 4 */
-+#define GSW1XX_TX_PORT_MAP_HIGH_SHIFT	0
-+#define GSW1XX_TX_PORT_MAP_HIGH_MASK	GENMASK(7, 0)
-+
-+#define GSW1XX_RX_HEADER_LEN		8
-+
-+/* special tag in RX path header */
-+/* Byte 4 */
-+#define GSW1XX_RX_PORT_MAP_LOW_SHIFT	0
-+#define GSW1XX_RX_PORT_MAP_LOW_MASK	GENMASK(7, 0)
-+
-+/* Byte 5 */
-+#define GSW1XX_RX_PORT_MAP_HIGH_SHIFT	0
-+#define GSW1XX_RX_PORT_MAP_HIGH_MASK	GENMASK(7, 0)
-+
-+static struct sk_buff *gsw1xx_tag_xmit(struct sk_buff *skb,
-+				       struct net_device *dev)
-+{
-+	struct dsa_port *dp = dsa_user_to_port(dev);
-+	u8 *gsw1xx_tag;
-+
-+	/* provide additional space 'GSW1XX_TX_HEADER_LEN' bytes */
-+	skb_push(skb, GSW1XX_TX_HEADER_LEN);
-+
-+	/* add space between MAC address and Ethertype */
-+	dsa_alloc_etype_header(skb, GSW1XX_TX_HEADER_LEN);
-+
-+	/* special tag ingress */
-+	gsw1xx_tag = dsa_etype_header_pos_tx(skb);
-+	gsw1xx_tag[0] = 0x88;
-+	gsw1xx_tag[1] = 0xc3;
-+	gsw1xx_tag[2] = GSW1XX_TX_PORT_MAP_EN | GSW1XX_TX_LRN_DIS;
-+	gsw1xx_tag[3] = BIT(dp->index + GSW1XX_TX_PORT_MAP_LOW_SHIFT) & GSW1XX_TX_PORT_MAP_LOW_MASK;
-+	gsw1xx_tag[4] = 0;
-+	gsw1xx_tag[5] = 0;
-+	gsw1xx_tag[6] = 0;
-+	gsw1xx_tag[7] = 0;
-+
-+	return skb;
-+}
-+
-+static struct sk_buff *gsw1xx_tag_rcv(struct sk_buff *skb,
-+				      struct net_device *dev)
-+{
-+	int port;
-+	u8 *gsw1xx_tag;
-+
-+	if (unlikely(!pskb_may_pull(skb, GSW1XX_RX_HEADER_LEN))) {
-+		dev_warn_ratelimited(&dev->dev, "Dropping packet, cannot pull SKB\n");
-+		return NULL;
-+	}
-+
-+	gsw1xx_tag = dsa_etype_header_pos_rx(skb);
-+
-+	if (gsw1xx_tag[0] != 0x88 && gsw1xx_tag[1] != 0xc3) {
-+		dev_warn_ratelimited(&dev->dev, "Dropping packet due to invalid special tag\n");
-+		dev_warn_ratelimited(&dev->dev,
-+				     "Tag: 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n",
-+				     gsw1xx_tag[0], gsw1xx_tag[1], gsw1xx_tag[2], gsw1xx_tag[3],
-+				     gsw1xx_tag[4], gsw1xx_tag[5], gsw1xx_tag[6], gsw1xx_tag[7]);
-+		return NULL;
-+	}
-+
-+	/* Get source port information */
-+	port = (gsw1xx_tag[2] & GSW1XX_RX_PORT_MAP_LOW_MASK) >> GSW1XX_RX_PORT_MAP_LOW_SHIFT;
-+	skb->dev = dsa_conduit_find_user(dev, 0, port);
-+	if (!skb->dev) {
-+		dev_warn_ratelimited(&dev->dev, "Dropping packet due to invalid source port\n");
-+		dev_warn_ratelimited(&dev->dev,
-+				     "Tag: 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x\n",
-+				     gsw1xx_tag[0], gsw1xx_tag[1], gsw1xx_tag[2], gsw1xx_tag[3],
-+				     gsw1xx_tag[4], gsw1xx_tag[5], gsw1xx_tag[6], gsw1xx_tag[7]);
-+		return NULL;
-+	}
-+
-+	/* remove the GSW1xx special tag between MAC addresses and the current ethertype field. */
-+	skb_pull_rcsum(skb, GSW1XX_RX_HEADER_LEN);
-+	dsa_strip_etype_header(skb, GSW1XX_RX_HEADER_LEN);
-+
-+	return skb;
-+}
-+
-+static const struct dsa_device_ops gsw1xx_netdev_ops = {
-+	.name = GSW1XX_TAG_NAME,
-+	.proto	= DSA_TAG_PROTO_MXL_GSW1XX,
-+	.xmit = gsw1xx_tag_xmit,
-+	.rcv = gsw1xx_tag_rcv,
-+	.needed_headroom = GSW1XX_RX_HEADER_LEN,
-+};
-+
-+MODULE_DESCRIPTION("DSA tag driver for MaxLinear GSW1xx 8 byte protocol");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS_DSA_TAG_DRIVER(DSA_TAG_PROTO_MXL_GSW1XX, GSW1XX_TAG_NAME);
-+
-+module_dsa_tag_driver(gsw1xx_netdev_ops);
--- 
-2.51.0
+Thanks,
+Tony
+
 
