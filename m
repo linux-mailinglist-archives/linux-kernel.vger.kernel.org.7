@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-868242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4602EC04AE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:21:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93990C04B00
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BFC4935BFD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:21:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 024031894AE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22D02D0620;
-	Fri, 24 Oct 2025 07:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801DC2D3EC0;
+	Fri, 24 Oct 2025 07:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JrEMO138"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=6wind.com header.i=@6wind.com header.b="ieagnIED"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CD32C0285;
-	Fri, 24 Oct 2025 07:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA3C2D322E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761290252; cv=none; b=Mf98F0QrIFfm7G6Ll+kBvN8e8BUvaKgHQUlISXjo0ybsLKMC1sOuy4CT/nuupPKTATETvgZL/3ib2Gv5k5LAGbDpJzALkDEoi7EFnH8TujMAYrnb5XXSMXkXqaKVQbvc6/njWx7ODUSejlRJm7x2daFr9HocSyV7DFvyLQRTYjg=
+	t=1761290264; cv=none; b=bQ0ibEP5IvEIPlN9+g5YhbASTOcLdEiD2uLzXx3MDFx2ZAWbAERSiPhKjETx6H6hrfxzJshpL9gWVA9ALAHS+DQ8LS+4xiawwsk7cYmjIE7HxraQi5CM7RvfQX5zkvdZI+h0Bu7Y2VyiFQZVIHuDwQ1kZLIaixKp5T4eV56t/UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761290252; c=relaxed/simple;
-	bh=rMGxKZ0Ruy3iCUh4rd6b4PVfetuW2zT8H06yJpAOPnw=;
+	s=arc-20240116; t=1761290264; c=relaxed/simple;
+	bh=/vAznBeLVSf1fIQdGF3gIoPc+bCQ6I0UEraNQ5bHgic=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TfJwG8Y4G6eJwjIDn2GEIX/fViXOFdIrCg6o1HgVxEhQwx4D+L7jul349HooCM1jfGR1Tr15p0AkWglxTAJfWkMYAeTR4CDNuDzg9AVdQwFkem2tLrUssffCG8iIDR0GtZ0sTcAYyTimpQYZdJy4WmxotQDaw8kTbyCa9Fxp92M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JrEMO138; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761290251; x=1792826251;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=rMGxKZ0Ruy3iCUh4rd6b4PVfetuW2zT8H06yJpAOPnw=;
-  b=JrEMO138lMJ00P6AZRdNEhIWTHqtWe2O4Of1/J/A1oUaUrQBwItdCNjK
-   x7OO0KAi9jQViQBYtBKEaqj/Ekfb/B0nzdlMhXQYldlu2A6ObOiioguDJ
-   tj32ZiEwt4uyCIlEF1RCGegqeKrvPQJEHOQC5iSZIJ7rhw/R4z8p9jf2k
-   hHnY9H9Mx/L31yx+1AES1fk/6ilj0/OXF6iMncszOzZgn1P1XND5WRPsF
-   azPgyzSboP7S9FosM7Bp60b5fx8IvXe59i2HxgDrT+dgwmTPapFqibVW1
-   O8SrcSkK0bOe3BSz3qqbiIRfPf6rYVbm1r3bpI61OrEQO2b2P4ExE1FPe
-   g==;
-X-CSE-ConnectionGUID: B78pzK3rTZ2K9h6E15lBTw==
-X-CSE-MsgGUID: w7bxsZh/QlKV5FYTiVZ5cg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62499268"
-X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
-   d="scan'208";a="62499268"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 00:17:30 -0700
-X-CSE-ConnectionGUID: 6dbO8RbwThiKWhQmjgGvLg==
-X-CSE-MsgGUID: Ro2zwlh4RQa3GJViwyA9Wg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
-   d="scan'208";a="189488248"
-Received: from carterle-desk.ger.corp.intel.com (HELO [10.245.246.211]) ([10.245.246.211])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 00:17:21 -0700
-Message-ID: <db05003c-8ac5-49da-b0ce-e0b668f49caf@linux.intel.com>
-Date: Fri, 24 Oct 2025 10:17:28 +0300
+	 In-Reply-To:Content-Type; b=rFtGhwoGyk9gCDziymhxfwEyf/+Z3RXZDMJSiQGSNFwYD5F3qaVqdnhnJohZBnYCH19xPn1Z6fAj4J5e/DeANATlfxHrtirqTy/Nv+leL5/jq4qNeCCATLZ+eAGBPYRMOfjfyxbBLncoKyoQb1+GVfzy5NNxtClxPHv7aXgq2qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=6wind.com; spf=pass smtp.mailfrom=6wind.com; dkim=pass (2048-bit key) header.d=6wind.com header.i=@6wind.com header.b=ieagnIED; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=6wind.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=6wind.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47116aaf345so1651025e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:17:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=6wind.com; s=google; t=1761290261; x=1761895061; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=nzRoDe7JxiIaZSieAhU8KUFNLm8qyp4RTfSomhZxiUQ=;
+        b=ieagnIEDhoNVNoPi71Kr4uX1tiEKcF2mY1lw2ZXrULKA4ED8bNTGkJPf3ECkdD8h0K
+         0ngiVm1ZQ/Y1ql6T+T69ziyUi71bAdmOy5x5yPY/lQYplpNuO1kip0Un4fBGfsJNnrVl
+         dy5F3kcqoOSxn5UehChoZkrCFX9uedSuEcoZ+URp19aPldWFxLOz4F4Zy2008tpQd+bH
+         Noq7abQTnV7yufviMGWlt1xWpQ4AtmbdtMx0uL6zd8TPj5HZORLWc16SkXjAXzZ0FvMN
+         oF8cHi4uaNb+Kqjonbe97JNpxjinfaaHnh7Ip8YlwUOkNb6ALqdeD+yoxDEkSghPSRcN
+         iXlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761290261; x=1761895061;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nzRoDe7JxiIaZSieAhU8KUFNLm8qyp4RTfSomhZxiUQ=;
+        b=PLclCwdxgn3H4Ome5NCHJd8ywTNZG4SZUxus1NrU/x1mSQOl/V2Gb2LYaUfJZHP2Gf
+         v+YbxZ+TwMZ087YBNB34FNCJUXFdXDsSlKCuNGpODuTHqO9GMAdyTgvUpSJcpj6KC6N0
+         wRGQIMm5khOL+hmvV4ztg86YgWWcGhBa3kzLIctEAr/ZULw+dBVsEhfFmMM9Vuko52BB
+         4X1xF1dswDTNml1M1fBSrCctw1jbQwi1/7oKBww9LtWHVp3zi9M1WwaJHe/EaqnRSd8N
+         mclHgYZxr+aOrTkzxEdz3/Vl/GWFHmXE2EmbBsCUWd5C/lDkfJZT7mzefR5Bo74603SX
+         oBPg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3gllE3yni+VfAjCi8n1LpqdRusm4OGSSlU0h69J1Jw9je85abxHuUGRDazbKUc8s8Sp5paEKU9lxNAus=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ7Iu6W/T9gEpDq4KvK10BgeeGQSfIVr1B+nnQrLtXuLVz3V5H
+	fbnGYyJQ4e1KIiHU9vj1iEjY+jdmI+YJBaSz0f4gAZDkkvTflrPfwdZlmpfmia7G7D4=
+X-Gm-Gg: ASbGncuAosP1eE+kqu8cCODkFz9ts1O0a9+zOndjakGU+KmBFiJ3PdQC2K7MnP8KPiv
+	wdV5tbbYCMCvB9TSoGjijZoNexzWN+20CV9LxmrwXJ29FJ6m5dz65nEq7vZuPQVaFRt9meKViBG
+	SW6773aAo9nwhFoeWS2usIZaSWgMQ0XXaGwLs+11epPPTKcSvR2ssSsnlpu0I+nkVazatJyP2By
+	T36RdnaHNJTJdg4C5tOIwKzu6qPjTTt6x7EP3s15gesYlRg5nVcvuJ33I+A1OKlJcCrZbXlW0+d
+	YxS/7+vzov+6jDLinrW6b6GVTly7edwjIXqw0h2lynK7L9K3CpiiprIXbijmhSFW7xalXrbRBtD
+	yKqzlJBdij+P5Zu3fE9PUpABCkG9oYcZy0Lka5Elm1/a3reP396jMP5URhrNbrY5Zti/cqweSIR
+	ZqeA+Bk36xuhX0IB6WuE5TD0MfUA50gecnEWVwwZ2axS6pS5sHbVkH
+X-Google-Smtp-Source: AGHT+IENA6LMv6mF9AoXOJpa+z0U1R9vSizvsixtxKMhld0NdJIx6+Q1jNumDA/zT+rJ0NAyOaOcCw==
+X-Received: by 2002:a05:600c:548c:b0:471:5c0:8d71 with SMTP id 5b1f17b1804b1-471177bd51dmr106750625e9.0.1761290260090;
+        Fri, 24 Oct 2025 00:17:40 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:b41:c160:6a1d:efff:fe52:1959? ([2a01:e0a:b41:c160:6a1d:efff:fe52:1959])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4298d4a49ffsm3838281f8f.13.2025.10.24.00.17.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 00:17:39 -0700 (PDT)
+Message-ID: <475d1b3a-53d2-4778-ab56-0df25847c50a@6wind.com>
+Date: Fri, 24 Oct 2025 09:17:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,130 +83,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/10] gpio: improve support for shared GPIOs
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Kees Cook <kees@kernel.org>,
- Mika Westerberg <westeri@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andy Shevchenko <andy@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20251022-gpio-shared-v2-0-d34aa1fbdf06@linaro.org>
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+Reply-To: nicolas.dichtel@6wind.com
+Subject: Re: [PATCH net-next] rtnetlink: honor RTEXT_FILTER_SKIP_STATS in
+ IFLA_STATS
+To: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+Cc: netdev@vger.kernel.org, toke@redhat.com,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Xiao Liang <shaw.leon@gmail.com>,
+ Cong Wang <cong.wang@bytedance.com>, linux-kernel@vger.kernel.org
+References: <20251023083450.1215111-1-amorenoz@redhat.com>
+ <6a2072e1-43be-49a3-b612-d6e2714ec63e@6wind.com>
+ <CAG=2xmNBZ1V7kh7Y0425NPTLJCVyhLB82zNC6GpUN6cXJoyBMw@mail.gmail.com>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 Content-Language: en-US
-In-Reply-To: <20251022-gpio-shared-v2-0-d34aa1fbdf06@linaro.org>
+Organization: 6WIND
+In-Reply-To: <CAG=2xmNBZ1V7kh7Y0425NPTLJCVyhLB82zNC6GpUN6cXJoyBMw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Le 24/10/2025 à 09:05, Adrián Moreno a écrit :
+> On Thu, Oct 23, 2025 at 05:39:09PM +0200, Nicolas Dichtel wrote:
+>> Le 23/10/2025 à 10:34, Adrian Moreno a écrit :
+>>> Gathering interface statistics can be a relatively expensive operation
+>>> on certain systems as it requires iterating over all the cpus.
+>>>
+>>> RTEXT_FILTER_SKIP_STATS was first introduced [1] to skip AF_INET6
+>>> statistics from interface dumps and it was then extended [2] to
+>>> also exclude IFLA_VF_INFO.
+>>>
+>>> The semantics of the flag does not seem to be limited to AF_INET
+>>> or VF statistics and having a way to query the interface status
+>>> (e.g: carrier, address) without retrieving its statistics seems
+>>> reasonable. So this patch extends the use RTEXT_FILTER_SKIP_STATS
+>>> to also affect IFLA_STATS.
+>>>
+>>> [1] https://lore.kernel.org/all/20150911204848.GC9687@oracle.com/
+>>> [2] https://lore.kernel.org/all/20230611105108.122586-1-gal@nvidia.com/
+>>>
+>>> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+>>> ---
+>>>  net/core/rtnetlink.c | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+>>> index 8040ff7c356e..88d52157ef1c 100644
+>>> --- a/net/core/rtnetlink.c
+>>> +++ b/net/core/rtnetlink.c
+>>> @@ -2123,7 +2123,8 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb,
+>>>  	if (rtnl_phys_switch_id_fill(skb, dev))
+>>>  		goto nla_put_failure;
+>>>
+>>> -	if (rtnl_fill_stats(skb, dev))
+>>> +	if (~ext_filter_mask & RTEXT_FILTER_SKIP_STATS &&
+>> Maybe parentheses around this first condition?
+>>
+>> The size could be adjusted accordingly in if_nlmsg_size().
+> 
+> Good point! I'll adjust the size. Regarding the parentheses, I can wait
+> a bit to see if someone else weights in. I don't have a very strong
+> opinion about it.
+No pb on my side. I was asking myself what the preference is on netdev :)
 
-
-On 22/10/2025 16:10, Bartosz Golaszewski wrote:
-> Problem statement: GPIOs are implemented as a strictly exclusive
-> resource in the kernel but there are lots of platforms on which single
-> pin is shared by multiple devices which don't communicate so need some
-> way of properly sharing access to a GPIO. What we have now is the
-> GPIOD_FLAGS_BIT_NONEXCLUSIVE flag which was introduced as a hack and
-> doesn't do any locking or arbitration of access - it literally just hand
-> the same GPIO descriptor to all interested users.
-
-I had few stabs on this in the past, all got somehow derailed, one
-example was:
-https://lkml.org/lkml/2019/10/30/311
-
-> The proposed solution is composed of three major parts: the high-level,
-> shared GPIO proxy driver that arbitrates access to the shared pin and
-> exposes a regular GPIO chip interface to consumers, a low-level shared
-> GPIOLIB module that scans firmware nodes and creates auxiliary devices
-> that attach to the proxy driver and finally a set of core GPIOLIB
-> changes that plug the former into the GPIO lookup path.
-> 
-> The changes are implemented in a way that allows to seamlessly compile
-> out any code related to sharing GPIOs for systems that don't need it.
-> 
-> The practical use-case for this are the powerdown GPIOs shared by
-> speakers on Qualcomm db845c platform, however I have also extensively
-> tested it using gpio-virtuser on arm64 qemu with various DT
-> configurations.
-> 
-> I'm Cc'ing some people that may help with reviewing/be interested in
-> this: OF maintainers (because the main target are OF systems initially),
-> Mark Brown because most users of GPIOD_FLAGS_BIT_NONEXCLUSIVE live
-> in audio or regulator drivers and one of the goals of this series is
-> dropping the hand-crafted GPIO enable counting via struct
-> regulator_enable_gpio in regulator core), Andy and Mika because I'd like
-> to also cover ACPI (even though I don't know about any ACPI platform that
-> would need this at the moment, I think it makes sense to make the
-> solution complete), Dmitry (same thing but for software nodes), Mani
-> (because you have a somewhat related use-case for the PERST# signal and
-> I'd like to hear your input on whether this is something you can use or
-> maybe it needs a separate, implicit gpio-perst driver similar to what
-> Krzysztof did for reset-gpios) and Greg (because I mentioned this to you
-> last week in person and I also use the auxiliary bus for the proxy
-> devices).
-> 
-> Merging strategy: patches 1-6 should go through the GPIO tree and then
-> ARM-SoC, ASoC and regulator trees can pull these changes from an
-> immutable branch and apply the remaining patches.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-> Changes in v2:
-> - Fix a memory leak in error path in gpiolib-shared
-> - Drop the gpio-wcd934x fix that already went upstream
-> - Free resources used during scanning by GPIOs that turned out to be
->   unique
-> - Rework the OF property scanning
-> - Add patches making the regulator subsystem aware of shared GPIOs
->   managed by GPIOLIB
-> - Link to v1: https://lore.kernel.org/r/20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org
-> 
-> ---
-> Bartosz Golaszewski (10):
->       string: provide strends()
->       gpiolib: define GPIOD_FLAG_SHARED
->       gpiolib: implement low-level, shared GPIO support
->       gpio: shared-proxy: implement the shared GPIO proxy driver
->       gpiolib: support shared GPIOs in core subsystem code
->       gpio: provide gpiod_is_shared()
->       arm64: select HAVE_SHARED_GPIOS for ARCH_QCOM
->       ASoC: wsa881x: drop GPIOD_FLAGS_BIT_NONEXCLUSIVE flag from GPIO lookup
->       ASoC: wsa883x: drop GPIOD_FLAGS_BIT_NONEXCLUSIVE flag from GPIO lookup
->       regulator: make the subsystem aware of shared GPIOs
-> 
->  arch/arm64/Kconfig.platforms     |   1 +
->  drivers/gpio/Kconfig             |  17 ++
->  drivers/gpio/Makefile            |   2 +
->  drivers/gpio/gpio-shared-proxy.c | 329 ++++++++++++++++++++++++
->  drivers/gpio/gpiolib-shared.c    | 530 +++++++++++++++++++++++++++++++++++++++
->  drivers/gpio/gpiolib-shared.h    |  71 ++++++
->  drivers/gpio/gpiolib.c           |  70 +++++-
->  drivers/gpio/gpiolib.h           |   2 +
->  drivers/regulator/core.c         |   8 +
->  include/linux/gpio/consumer.h    |   9 +
->  include/linux/string.h           |   2 +
->  lib/string.c                     |  19 ++
->  lib/tests/string_kunit.c         |  13 +
->  sound/soc/codecs/wsa881x.c       |   3 +-
->  sound/soc/codecs/wsa883x.c       |   7 +-
->  15 files changed, 1067 insertions(+), 16 deletions(-)
-> ---
-> base-commit: 304d18863e6e62a8f2d0350ce0a59596e2e42768
-> change-id: 20250908-gpio-shared-67ec352884b6
-> 
-> Best regards,
-
--- 
-Péter
-
+Thansk,
+Nicolas
 
