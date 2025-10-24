@@ -1,981 +1,385 @@
-Return-Path: <linux-kernel+bounces-869270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DDFAC077B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:09:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBD64C07775
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2344200FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:06:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED7BD4ECDC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A618345758;
-	Fri, 24 Oct 2025 17:05:21 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B615E1C5D57;
+	Fri, 24 Oct 2025 17:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dv9f4tgM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D35A343D8D;
-	Fri, 24 Oct 2025 17:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D8D3451D9
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761325519; cv=none; b=MAYGHJSYKae0piwY1+zOjpgBaAw8JFOXTqmVJAgSyCkiU8yJSRh57yleSwdffmDavcEsT4df130fq2C0YVmeOuD9fBsWWFLai0CW6WMFpdTzOROF+TfcdQa4wkElfheL0KB7jLpd4V0yFKJNQ7dfTf1hHz1sgjyPdU3urSKIGvM=
+	t=1761325505; cv=none; b=WTef9BQLcbPuV1vjnj6+YUhpNL45M376qHrbwnWihlLiRqVo6oUMFttO5HfZ9bq9XzoFnI3RR0xtRsuoy3j+W7aO3G3l0v2UEy0zJVx4sBVaO8sFG2i/YVAbuepT4iqC4HQd+UJCmQdK//MRj2/uAn4Hm8Y5xJYJLedZfu+L1p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761325519; c=relaxed/simple;
-	bh=A9utIzls1Z3u/OtLKgGInmby6fW5fpQJRajgFeHexGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iz9ojsYXgd6Tp/RWBUsSChuJW5PCiHvnXJSr3SNbGi7ULopTKFnsRtxxmUZdlZafVFdgLiaugeieZ/o9eAz6V33Os+67gmAUT7USHTJD5jqUXsgDM//JFt6dAnlkn+JSANCT/T8cNrrlNcwVivvf/pMLGkFJS7NDAktUwpOjiSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1vCLDy-000000006BI-35CM;
-	Fri, 24 Oct 2025 17:05:11 +0000
-Date: Fri, 24 Oct 2025 18:05:00 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: [PATCH net-next 13/13] net: dsa: add driver for MaxLinear GSW1xx
- switch family
-Message-ID: <4216aee3e5cbb20b31fe22c711efc38ea73df880.1761324950.git.daniel@makrotopia.org>
-References: <cover.1761324950.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1761325505; c=relaxed/simple;
+	bh=xpW6PIYJVvn9pZoV6trrJoqn2+ZTwWJ94TP995ks4Wk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jrXsM04k9eFjCjRMyiCN49KBcryX7I60XlvdfSP9saXXu5dsqWRwk1wxQWYV2zm/jrXZQcAxkGQl3Xp+nodSGxXPik20eSStQxoxPdqJEKpZ3B6ASUhMiYlEciM005CJU4RPwWbxtYWYP6RpZyDml8Deq5SmQe+FIuv9mctPgi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dv9f4tgM; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761325503; x=1792861503;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=xpW6PIYJVvn9pZoV6trrJoqn2+ZTwWJ94TP995ks4Wk=;
+  b=Dv9f4tgMPeUG4xyKke0PBoJCk+YiCQp0+hSpb8VBJOYReynZwx6DBpSE
+   fpE3pOo9GYfCzfrxHHZthgYt5OrFkMB8bRqInmH4zepQbyi1dMEiCmlhh
+   AEfoncP6cNRZh8JGZ3FcY8yjty/ahhrWnsFG4hKLgZI6sxrpmko8nPIKC
+   z4X+f0B1EkcaWlwEZaj6/SKWd7Fhs+d9QEhnc1ce+bTrWcNv6M4dVmK6m
+   IZNF9Ea4e+4QOT4LMaPegqV7ZhuXa4A3Zs+Yphgx+GO0FdIF1lBFM0+6D
+   LVBg60SfP1yskSt9/IjC5z/oY9Am2eyuVnVjOn2Ak2sav2tYassmOSMlD
+   w==;
+X-CSE-ConnectionGUID: RCirEJOhTVCVs9II8jPwnA==
+X-CSE-MsgGUID: FJ188d/pQmWy7E1rsisMBQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74182546"
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="74182546"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 10:05:02 -0700
+X-CSE-ConnectionGUID: qfcG/ceGQlCirEOEZPYchw==
+X-CSE-MsgGUID: kcRmOIKBRwCf0i2Mg3ZWsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="185243038"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO [10.125.109.43]) ([10.125.109.43])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 10:05:01 -0700
+Message-ID: <0ba47a4d-3fc8-4812-b80b-b3ccb7e7a251@intel.com>
+Date: Fri, 24 Oct 2025 10:05:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1761324950.git.daniel@makrotopia.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] NTB: ntb_transport: Add 'tx_memcpy_offload' module
+ option
+To: Koichiro Den <den@valinux.co.jp>
+Cc: ntb@lists.linux.dev, linux-kernel@vger.kernel.org, jdmason@kudzu.us,
+ allenbh@gmail.com
+References: <20251023072105.901707-1-den@valinux.co.jp>
+ <20251023072105.901707-3-den@valinux.co.jp>
+ <b7a5ed5e-f4ca-4045-a956-73594a286fee@intel.com>
+ <t4u73ozmucboxkml5p3xss44aafvr23hisewq3qvpgp7lbpx5y@f2haptgd2wzu>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <t4u73ozmucboxkml5p3xss44aafvr23hisewq3qvpgp7lbpx5y@f2haptgd2wzu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add driver for the MaxLinear GSW1xx family of Ethernet switch ICs which
-are based on the same IP as the Lantiq/Intel GSWIP found in the Lantiq VR9
-and Intel GRX MIPS router SoCs. The main difference is that instead of
-using memory-mapped I/O to communicate with the host CPU these ICs are
-connected via MDIO (or SPI, which isn't supported by this driver).
-Implement the regmap API to access the switch registers over MDIO to allow
-reusing lantiq_gswip_common for all core functionality.
 
-The GSW1xx also comes with a SerDes port capable of 1000Base-X, SGMII and
-2500Base-X, which can either be used to connect an external PHY or SFP
-cage, or as the CPU port. Support for the SerDes interface is implemented
-in this driver using the phylink_pcs interface.
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
-Changes since RFC:
- - use stack allocated const regmap_config
+On 10/24/25 9:41 AM, Koichiro Den wrote:
+> On Thu, Oct 23, 2025 at 08:18:07AM -0700, Dave Jiang wrote:
+>>
+>>
+>> On 10/23/25 12:21 AM, Koichiro Den wrote:
+>>> Some platforms (e.g. R-Car S4) do not gain from using a DMAC on TX path
+>>> in ntb_transport and end up CPU-bound on memcpy_toio(). Add a module
+>>> parameter 'tx_memcpy_offload' that moves the TX memcpy_toio() and
+>>> descriptor writes to a per-QP kernel thread. It is disabled by default.
+>>
+>> please add comments by the module parameter that if this is set, tx DMA is disabled (right?).> 
+>>> This change also fixes a rare ordering hazard in ntb_tx_copy_callback(),
+>>> that was observed on R-Car S4 once throughput improved with the new
+>>> module parameter: the DONE flag write to the peer MW, which is WC
+>>> mapped, could be observed after the DB/MSI trigger. Both operations are
+>>> posted PCIe MWr (often via different OB iATUs), so WC buffering and
+>>> bridges may reorder visibility. Insert dma_mb() to enforce store->load
+>>> ordering and then read back hdr->flags to flush the posted write before
+>>> ringing the doorbell / issuing MSI.
+>>
+>> Can you please split out the fix to this issue so it can be backported to stable?
+> 
+> Thanks for the review, and I got it.
+> 
+>>
+>>>
+>>> While at it, update tx_index with WRITE_ONCE() at the earlier possible
+>>> location to make ntb_transport_tx_free_entry() robust.
+>>
+>> Please also split out this change if the intention is to address an existing issue and accompany with appropriate justification.
+> 
+> This can be omitted (as far as I remember the part did not lead to any
+> severe issues) so maybe I'll drop the change at the moment, thanks.
+> 
+>>
+>>>
+>>> Signed-off-by: Koichiro Den <den@valinux.co.jp>
+>>> ---
+>>>  drivers/ntb/ntb_transport.c | 104 ++++++++++++++++++++++++++++++++++--
+>>>  1 file changed, 100 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/ntb/ntb_transport.c b/drivers/ntb/ntb_transport.c
+>>> index 39b2398b95a6..f4ed616c6ab8 100644
+>>> --- a/drivers/ntb/ntb_transport.c
+>>> +++ b/drivers/ntb/ntb_transport.c
+>>> @@ -54,12 +54,14 @@
+>>>  #include <linux/errno.h>
+>>>  #include <linux/export.h>
+>>>  #include <linux/interrupt.h>
+>>> +#include <linux/kthread.h>
+>>>  #include <linux/module.h>
+>>>  #include <linux/pci.h>
+>>>  #include <linux/slab.h>
+>>>  #include <linux/types.h>
+>>>  #include <linux/uaccess.h>
+>>>  #include <linux/mutex.h>
+>>> +#include <linux/wait.h>
+>>>  #include "linux/ntb.h"
+>>>  #include "linux/ntb_transport.h"
+>>>  
+>>> @@ -100,6 +102,10 @@ module_param(use_msi, bool, 0644);
+>>>  MODULE_PARM_DESC(use_msi, "Use MSI interrupts instead of doorbells");
+>>>  #endif
+>>>  
+>>> +static bool tx_memcpy_offload;
+>>> +module_param(tx_memcpy_offload, bool, 0644);
+>>> +MODULE_PARM_DESC(tx_memcpy_offload, "Offload TX memcpy_toio() to a kernel thread");
+>>
+>> Offload typically points to moving an operation to an independent piece of hardware like DMA engine. The naming can cause confusion. May I suggest something like 'tx_threaded_copy' instead to make it more clearer?
+> 
+> This really makes sense, 'tx_threaded_copy' sounds really fit. Thank you!
+> 
+>>
+>> Also to make it easier for people to understand what this parameter is used for, please include a comment block explaining why this parameter is needed.
+> 
+> Got it, I'll do so.
+> 
+>>
+>>> +
+>>>  static struct dentry *nt_debugfs_dir;
+>>>  
+>>>  /* Only two-ports NTB devices are supported */
+>>> @@ -148,7 +154,9 @@ struct ntb_transport_qp {
+>>>  	void (*tx_handler)(struct ntb_transport_qp *qp, void *qp_data,
+>>>  			   void *data, int len);
+>>>  	struct list_head tx_free_q;
+>>> +	struct list_head tx_offl_q;
+>>>  	spinlock_t ntb_tx_free_q_lock;
+>>> +	spinlock_t ntb_tx_offl_q_lock;
+>>>  	void __iomem *tx_mw;
+>>>  	phys_addr_t tx_mw_phys;
+>>>  	size_t tx_mw_size;
+>>> @@ -199,6 +207,9 @@ struct ntb_transport_qp {
+>>>  	int msi_irq;
+>>>  	struct ntb_msi_desc msi_desc;
+>>>  	struct ntb_msi_desc peer_msi_desc;
+>>> +
+>>> +	struct task_struct *tx_offload_thread;
+>>> +	wait_queue_head_t tx_offload_wq;
+>>>  };
+>>>  
+>>>  struct ntb_transport_mw {
+>>> @@ -284,7 +295,13 @@ static int ntb_async_tx_submit(struct ntb_transport_qp *qp,
+>>>  static void ntb_memcpy_tx(struct ntb_queue_entry *entry, void __iomem *offset);
+>>>  static int ntb_async_rx_submit(struct ntb_queue_entry *entry, void *offset);
+>>>  static void ntb_memcpy_rx(struct ntb_queue_entry *entry, void *offset);
+>>> +static int ntb_tx_memcpy_kthread(void *data);
+>>> +
+>>>  
+>>> +static inline bool ntb_tx_offload_enabled(struct ntb_transport_qp *qp)
+>>> +{
+>>> +	return tx_memcpy_offload && qp && qp->tx_offload_thread;
+>>> +}
+>>>  
+>>>  static int ntb_transport_bus_match(struct device *dev,
+>>>  				   const struct device_driver *drv)
+>>> @@ -1254,11 +1271,13 @@ static int ntb_transport_init_queue(struct ntb_transport_ctx *nt,
+>>>  
+>>>  	spin_lock_init(&qp->ntb_rx_q_lock);
+>>>  	spin_lock_init(&qp->ntb_tx_free_q_lock);
+>>> +	spin_lock_init(&qp->ntb_tx_offl_q_lock);
+>>>  
+>>>  	INIT_LIST_HEAD(&qp->rx_post_q);
+>>>  	INIT_LIST_HEAD(&qp->rx_pend_q);
+>>>  	INIT_LIST_HEAD(&qp->rx_free_q);
+>>>  	INIT_LIST_HEAD(&qp->tx_free_q);
+>>> +	INIT_LIST_HEAD(&qp->tx_offl_q);
+>>>  
+>>>  	tasklet_init(&qp->rxc_db_work, ntb_transport_rxc_db,
+>>>  		     (unsigned long)qp);
+>>> @@ -1784,6 +1803,13 @@ static void ntb_tx_copy_callback(void *data,
+>>>  
+>>>  	iowrite32(entry->flags | DESC_DONE_FLAG, &hdr->flags);
+>>>  
+>>> +	/*
+>>> +	 * Make DONE flag visible before DB/MSI. WC + posted MWr may reorder
+>>> +	 * across iATU/bridge (platform-dependent). Order and flush here.
+>>> +	 */
+>>> +	dma_mb();
+>>> +	ioread32(&hdr->flags);
+>>
+>> Is dma_mb() needed if you are also doing an mmio read? Read can't pass write with PCI ordering rule and the ioread32() alone should be sufficient that the data has reached the destination host.
+> 
+> I experimented with (1). ioread32() only, (2). wmb()+ioread32() and (3).
+> dma_wmb()+ioread32() on R-Car S4 Spider boards, and none eliminated the
+> issue. Only dma_mb()+ioread32() did.
+> 
+> So this suggests the problem is in the pre-PCIe domain. The DONE write
+> goes to a WC-mapped MMIO, so the CPU/interconnect may still hold or merge
+> it while the subsequent MMIO read gets issued first. In that case the
+> MRd/CplD does not imply the earlier store has even reached the PCIe core
+> yet. dma_mb() orders and drains the CPU/WC side (store->load), ensuring the
+> write is at least at the PCIe core. ioread32() then performs the PCIe-level
+> flush. Please correct me if my understanding here is off.
 
- drivers/net/dsa/lantiq/Kconfig          |  12 +
- drivers/net/dsa/lantiq/Makefile         |   1 +
- drivers/net/dsa/lantiq/mxl-gsw1xx.c     | 685 ++++++++++++++++++++++++
- drivers/net/dsa/lantiq/mxl-gsw1xx_pce.h | 154 ++++++
- 4 files changed, 852 insertions(+)
- create mode 100644 drivers/net/dsa/lantiq/mxl-gsw1xx.c
- create mode 100644 drivers/net/dsa/lantiq/mxl-gsw1xx_pce.h
+I see. Then please leave a sufficient comment explaining what's going on here so in the future there is a reference for future code readers (and maintainers). Thanks! I do wonder what is the general performance hit of having an MMIO read in the I/O flow. But having the doorbell write go before the data write is definitely not something we want.
 
-diff --git a/drivers/net/dsa/lantiq/Kconfig b/drivers/net/dsa/lantiq/Kconfig
-index 78db82a47d09..4a9771be5d58 100644
---- a/drivers/net/dsa/lantiq/Kconfig
-+++ b/drivers/net/dsa/lantiq/Kconfig
-@@ -10,3 +10,15 @@ config NET_DSA_LANTIQ_GSWIP
- 	help
- 	  This enables support for the Lantiq / Intel GSWIP 2.1 found in
- 	  the xrx200 / VR9 SoC.
-+
-+config NET_DSA_MXL_GSW1XX
-+	tristate "MaxLinear GSW1xx Ethernet switch support"
-+	select NET_DSA_TAG_MXL_GSW1XX
-+	select NET_DSA_LANTIQ_COMMON
-+	help
-+	  This enables support for the MaxLinear GSW1xx family of 1GE switches
-+	    GSW120 4 port, 2 PHYs, RGMII & SGMII/2500Base-X
-+	    GSW125 4 port, 2 PHYs, RGMII & SGMII/2500Base-X, industrial temperature
-+	    GSW140 6 port, 4 PHYs, RGMII & SGMII/2500Base-X
-+	    GSW141 6 port, 4 PHYs, RGMII & SGMII
-+	    GSW145 6 port, 4 PHYs, RGMII & SGMII/2500Base-X, industrial temperature
-diff --git a/drivers/net/dsa/lantiq/Makefile b/drivers/net/dsa/lantiq/Makefile
-index 65ffa7bb71aa..85fce605310b 100644
---- a/drivers/net/dsa/lantiq/Makefile
-+++ b/drivers/net/dsa/lantiq/Makefile
-@@ -1,2 +1,3 @@
- obj-$(CONFIG_NET_DSA_LANTIQ_GSWIP) += lantiq_gswip.o
- obj-$(CONFIG_NET_DSA_LANTIQ_COMMON) += lantiq_gswip_common.o
-+obj-$(CONFIG_NET_DSA_MXL_GSW1XX) += mxl-gsw1xx.o
-diff --git a/drivers/net/dsa/lantiq/mxl-gsw1xx.c b/drivers/net/dsa/lantiq/mxl-gsw1xx.c
-new file mode 100644
-index 000000000000..b0a56f3d3518
---- /dev/null
-+++ b/drivers/net/dsa/lantiq/mxl-gsw1xx.c
-@@ -0,0 +1,685 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * DSA Driver for MaxLinear GSW1xx switch devices
-+ *
-+ * Copyright (C) 2025 Daniel Golle <daniel@makrotopia.org>
-+ * Copyright (C) 2023 - 2024 MaxLinear Inc.
-+ * Copyright (C) 2022 Snap One, LLC.  All rights reserved.
-+ * Copyright (C) 2017 - 2019 Hauke Mehrtens <hauke@hauke-m.de>
-+ * Copyright (C) 2012 John Crispin <john@phrozen.org>
-+ * Copyright (C) 2010 Lantiq Deutschland
-+ */
-+
-+#include <linux/bits.h>
-+#include <linux/delay.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/of_mdio.h>
-+#include <linux/regmap.h>
-+#include <net/dsa.h>
-+
-+#include "lantiq_gswip.h"
-+#include "mxl-gsw1xx_pce.h"
-+
-+struct gsw1xx_priv {
-+	struct mdio_device	*mdio_dev;
-+	int			smdio_badr;
-+	struct			regmap *sgmii;
-+	struct			regmap *gpio;
-+	struct			regmap *clk;
-+	struct			regmap *shell;
-+	struct			phylink_pcs sgmii_pcs;
-+	struct gswip_priv	gswip; /* has to be the last element */
-+};
-+
-+static int gsw1xx_config_smdio_badr(struct gsw1xx_priv *priv,
-+				    unsigned int reg)
-+{
-+	struct mii_bus *bus = priv->mdio_dev->bus;
-+	int sw_addr = priv->mdio_dev->addr;
-+	int smdio_badr = priv->smdio_badr;
-+	int res;
-+
-+	if (smdio_badr == GSW1XX_SMDIO_BADR_UNKNOWN ||
-+	    reg - smdio_badr >= GSW1XX_SMDIO_BADR ||
-+	    smdio_badr > reg) {
-+		/* Configure the Switch Base Address */
-+		smdio_badr = reg & ~GENMASK(3, 0);
-+		res = __mdiobus_write(bus, sw_addr, GSW1XX_SMDIO_BADR, smdio_badr);
-+		if (res < 0) {
-+			dev_err(&priv->mdio_dev->dev,
-+				"%s: Error %d, configuring switch base\n",
-+				__func__, res);
-+			return res;
-+		}
-+		priv->smdio_badr = smdio_badr;
-+	}
-+
-+	return smdio_badr;
-+}
-+
-+static int gsw1xx_regmap_read(void *context, unsigned int reg,
-+			      unsigned int *val)
-+{
-+	struct gsw1xx_priv *priv = context;
-+	struct mii_bus *bus = priv->mdio_dev->bus;
-+	int sw_addr = priv->mdio_dev->addr;
-+	int smdio_badr;
-+	int res;
-+
-+	smdio_badr = gsw1xx_config_smdio_badr(priv, reg);
-+	if (smdio_badr < 0)
-+		return smdio_badr;
-+
-+	res = __mdiobus_read(bus, sw_addr, reg - smdio_badr);
-+	if (res < 0) {
-+		dev_err(&priv->mdio_dev->dev, "%s: Error %d reading 0x%x\n",
-+			__func__, res, reg);
-+		return res;
-+	}
-+
-+	*val = res;
-+
-+	return 0;
-+}
-+
-+static int gsw1xx_regmap_write(void *context, unsigned int reg,
-+			       unsigned int val)
-+{
-+	struct gsw1xx_priv *priv = context;
-+	struct mii_bus *bus = priv->mdio_dev->bus;
-+	int sw_addr = priv->mdio_dev->addr;
-+	int smdio_badr;
-+	int res;
-+
-+	smdio_badr = gsw1xx_config_smdio_badr(priv, reg);
-+	if (smdio_badr < 0)
-+		return smdio_badr;
-+
-+	res = __mdiobus_write(bus, sw_addr, reg - smdio_badr, val);
-+	if (res < 0)
-+		dev_err(&priv->mdio_dev->dev,
-+			"%s: Error %d, writing 0x%x:0x%x\n", __func__, res, reg,
-+			val);
-+
-+	return res;
-+}
-+
-+static const struct regmap_bus gsw1xx_regmap_bus = {
-+	.reg_write = gsw1xx_regmap_write,
-+	.reg_read = gsw1xx_regmap_read,
-+};
-+
-+static void gsw1xx_mdio_regmap_lock(void *mdio_lock)
-+{
-+	mutex_lock_nested(mdio_lock, MDIO_MUTEX_NESTED);
-+}
-+
-+static void gsw1xx_mdio_regmap_unlock(void *mdio_lock)
-+{
-+	mutex_unlock(mdio_lock);
-+}
-+
-+static int gsw1xx_sgmii_phy_xaui_write(struct gsw1xx_priv *priv, u16 addr,
-+				       u16 data)
-+{
-+	int ret, val;
-+
-+	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_PHY_D, data);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_PHY_A, addr);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_PHY_C,
-+			   GSW1XX_SGMII_PHY_WRITE |
-+			   GSW1XX_SGMII_PHY_RESET_N);
-+	if (ret < 0)
-+		return ret;
-+
-+	return regmap_read_poll_timeout(priv->sgmii, GSW1XX_SGMII_PHY_C,
-+					val, val & GSW1XX_SGMII_PHY_STATUS,
-+					1000, 100000);
-+}
-+
-+static struct gsw1xx_priv *sgmii_pcs_to_gsw1xx(struct phylink_pcs *pcs)
-+{
-+	return container_of(pcs, struct gsw1xx_priv, sgmii_pcs);
-+}
-+
-+static int gsw1xx_sgmii_pcs_config(struct phylink_pcs *pcs,
-+				   unsigned int neg_mode,
-+				   phy_interface_t interface,
-+				   const unsigned long *advertising,
-+				   bool permit_pause_to_mac)
-+{
-+	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
-+	bool sgmii_mac_mode = dsa_is_user_port(priv->gswip.ds, GSW1XX_SGMII_PORT);
-+	u16 txaneg, anegctl, val, nco_ctrl;
-+	int ret;
-+
-+	/* Assert and deassert SGMII shell reset */
-+	ret = regmap_set_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
-+			      GSW1XX_RST_REQ_SGMII_SHELL);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = regmap_clear_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
-+				GSW1XX_RST_REQ_SGMII_SHELL);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Hardware Bringup FSM Enable  */
-+	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_PHY_HWBU_CTRL,
-+			   GSW1XX_SGMII_PHY_HWBU_CTRL_EN_HWBU_FSM |
-+			   GSW1XX_SGMII_PHY_HWBU_CTRL_HW_FSM_EN);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Configure SGMII PHY Receiver */
-+	val = FIELD_PREP(GSW1XX_SGMII_PHY_RX0_CFG2_EQ,
-+			 GSW1XX_SGMII_PHY_RX0_CFG2_EQ_DEF) |
-+	      GSW1XX_SGMII_PHY_RX0_CFG2_LOS_EN |
-+	      GSW1XX_SGMII_PHY_RX0_CFG2_TERM_EN |
-+	      FIELD_PREP(GSW1XX_SGMII_PHY_RX0_CFG2_FILT_CNT,
-+			 GSW1XX_SGMII_PHY_RX0_CFG2_FILT_CNT_DEF);
-+
-+	// if (!priv->dts.sgmii_rx_invert)
-+		val |= GSW1XX_SGMII_PHY_RX0_CFG2_INVERT;
-+
-+	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_PHY_RX0_CFG2, val);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Reset and Release TBI */
-+	val = GSW1XX_SGMII_TBI_TBICTL_INITTBI | GSW1XX_SGMII_TBI_TBICTL_ENTBI |
-+	      GSW1XX_SGMII_TBI_TBICTL_CRSTRR | GSW1XX_SGMII_TBI_TBICTL_CRSOFF;
-+	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_TBI_TBICTL, val);
-+	if (ret < 0)
-+		return ret;
-+	val &= ~GSW1XX_SGMII_TBI_TBICTL_INITTBI;
-+	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_TBI_TBICTL, val);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Release Tx Data Buffers */
-+	ret = regmap_set_bits(priv->sgmii, GSW1XX_SGMII_PCS_TXB_CTL,
-+			      GSW1XX_SGMII_PCS_TXB_CTL_INIT_TX_TXB);
-+	if (ret < 0)
-+		return ret;
-+	ret = regmap_clear_bits(priv->sgmii, GSW1XX_SGMII_PCS_TXB_CTL,
-+				GSW1XX_SGMII_PCS_TXB_CTL_INIT_TX_TXB);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Release Rx Data Buffers */
-+	ret = regmap_set_bits(priv->sgmii, GSW1XX_SGMII_PCS_RXB_CTL,
-+			      GSW1XX_SGMII_PCS_RXB_CTL_INIT_RX_RXB);
-+	if (ret < 0)
-+		return ret;
-+	ret = regmap_clear_bits(priv->sgmii, GSW1XX_SGMII_PCS_RXB_CTL,
-+				GSW1XX_SGMII_PCS_RXB_CTL_INIT_RX_RXB);
-+	if (ret < 0)
-+		return ret;
-+
-+	anegctl = GSW1XX_SGMII_TBI_ANEGCTL_OVRANEG;
-+	if (neg_mode != PHYLINK_PCS_NEG_INBAND_ENABLED)
-+		anegctl |= GSW1XX_SGMII_TBI_ANEGCTL_OVRABL;
-+
-+	switch (phylink_get_link_timer_ns(interface)) {
-+	case 10000:
-+		anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_LT,
-+				      GSW1XX_SGMII_TBI_ANEGCTL_LT_10US);
-+		break;
-+	case 1600000:
-+		anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_LT,
-+				      GSW1XX_SGMII_TBI_ANEGCTL_LT_1_6MS);
-+		break;
-+	case 5000000:
-+		anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_LT,
-+				      GSW1XX_SGMII_TBI_ANEGCTL_LT_5MS);
-+		break;
-+	case 10000000:
-+		anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_LT,
-+				      GSW1XX_SGMII_TBI_ANEGCTL_LT_10MS);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (interface == PHY_INTERFACE_MODE_SGMII) {
-+		txaneg = ADVERTISE_SGMII;
-+		if (sgmii_mac_mode) {
-+			txaneg |= BIT(14); /* MAC should always send BIT 14 */
-+			anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_ANMODE,
-+					      GSW1XX_SGMII_TBI_ANEGCTL_ANMODE_SGMII_MAC);
-+		} else {
-+			txaneg |= LPA_SGMII_1000FULL;
-+			anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_ANMODE,
-+					      GSW1XX_SGMII_TBI_ANEGCTL_ANMODE_SGMII_PHY);
-+		}
-+
-+		if (neg_mode & PHYLINK_PCS_NEG_INBAND)
-+			anegctl |= GSW1XX_SGMII_TBI_ANEGCTL_ANEGEN;
-+	} else if (interface == PHY_INTERFACE_MODE_1000BASEX ||
-+		   interface == PHY_INTERFACE_MODE_2500BASEX) {
-+		txaneg = BIT(5) | BIT(7);
-+		anegctl |= FIELD_PREP(GSW1XX_SGMII_TBI_ANEGCTL_ANMODE,
-+				      GSW1XX_SGMII_TBI_ANEGCTL_ANMODE_1000BASEX);
-+	} else {
-+		dev_err(priv->gswip.dev, "%s: SGMII wrong interface mode %s\n",
-+			__func__, phy_modes(interface));
-+		return -EINVAL;
-+	}
-+
-+	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_TBI_TXANEGH,
-+			   FIELD_GET(GENMASK(15, 8), txaneg));
-+	if (ret < 0)
-+		return ret;
-+	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_TBI_TXANEGL,
-+			   FIELD_GET(GENMASK(7, 0), txaneg));
-+	if (ret < 0)
-+		return ret;
-+	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_TBI_ANEGCTL, anegctl);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* setup SerDes clock speed */
-+	if (interface == PHY_INTERFACE_MODE_2500BASEX)
-+		nco_ctrl = GSW1XX_SGMII_2G5 | GSW1XX_SGMII_2G5_NCO2;
-+	else
-+		nco_ctrl = GSW1XX_SGMII_1G | GSW1XX_SGMII_1G_NCO1;
-+
-+	ret = regmap_update_bits(priv->clk, GSW1XX_CLK_NCO_CTRL,
-+				 GSW1XX_SGMII_HSP_MASK | GSW1XX_SGMII_SEL,
-+				 nco_ctrl);
-+	if (ret)
-+		return ret;
-+
-+	ret = gsw1xx_sgmii_phy_xaui_write(priv, 0x30, 0x80);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void gsw1xx_sgmii_pcs_link_up(struct phylink_pcs *pcs,
-+				     unsigned int neg_mode,
-+				     phy_interface_t interface, int speed,
-+				     int duplex)
-+{
-+	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
-+	u16 lpstat;
-+
-+	/* When in-band AN is enabled hardware will set lpstat */
-+	if (neg_mode == PHYLINK_PCS_NEG_INBAND_ENABLED)
-+		return;
-+
-+	/* Force speed and duplex settings */
-+	if (interface == PHY_INTERFACE_MODE_SGMII) {
-+		if (speed == SPEED_10)
-+			lpstat = FIELD_PREP(GSW1XX_SGMII_TBI_LPSTAT_SPEED,
-+					    GSW1XX_SGMII_TBI_LPSTAT_SPEED_10);
-+		else if (speed == SPEED_100)
-+			lpstat = FIELD_PREP(GSW1XX_SGMII_TBI_LPSTAT_SPEED,
-+					    GSW1XX_SGMII_TBI_LPSTAT_SPEED_100);
-+		else
-+			lpstat = FIELD_PREP(GSW1XX_SGMII_TBI_LPSTAT_SPEED,
-+					    GSW1XX_SGMII_TBI_LPSTAT_SPEED_1000);
-+	} else {
-+		lpstat = FIELD_PREP(GSW1XX_SGMII_TBI_LPSTAT_SPEED,
-+				    GSW1XX_SGMII_TBI_LPSTAT_SPEED_NOSGMII);
-+	}
-+
-+	if (duplex == DUPLEX_FULL)
-+		lpstat |= GSW1XX_SGMII_TBI_LPSTAT_DUPLEX;
-+
-+	regmap_write(priv->sgmii, GSW1XX_SGMII_TBI_LPSTAT, lpstat);
-+}
-+
-+static void gsw1xx_sgmii_pcs_get_state(struct phylink_pcs *pcs,
-+				       unsigned int neg_mode,
-+				       struct phylink_link_state *state)
-+{
-+	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
-+	int ret;
-+	u32 val;
-+
-+	ret = regmap_read(priv->sgmii, GSW1XX_SGMII_TBI_TBISTAT, &val);
-+	if (ret < 0)
-+		return;
-+
-+	state->link = !!(val & GSW1XX_SGMII_TBI_TBISTAT_LINK);
-+	state->an_complete = !!(val & GSW1XX_SGMII_TBI_TBISTAT_AN_COMPLETE);
-+
-+	ret = regmap_read(priv->sgmii, GSW1XX_SGMII_TBI_LPSTAT, &val);
-+	if (ret < 0)
-+		return;
-+
-+	state->duplex = (val & GSW1XX_SGMII_TBI_LPSTAT_DUPLEX) ?
-+			 DUPLEX_FULL : DUPLEX_HALF;
-+	if (val & GSW1XX_SGMII_TBI_LPSTAT_PAUSE_RX)
-+		state->pause |= MLO_PAUSE_RX;
-+
-+	if (val & GSW1XX_SGMII_TBI_LPSTAT_PAUSE_TX)
-+		state->pause |= MLO_PAUSE_TX;
-+
-+	switch (FIELD_GET(GSW1XX_SGMII_TBI_LPSTAT_SPEED, val)) {
-+	case GSW1XX_SGMII_TBI_LPSTAT_SPEED_10:
-+		state->speed = SPEED_10;
-+		break;
-+	case GSW1XX_SGMII_TBI_LPSTAT_SPEED_100:
-+		state->speed = SPEED_100;
-+		break;
-+	case GSW1XX_SGMII_TBI_LPSTAT_SPEED_1000:
-+		state->speed = SPEED_1000;
-+		break;
-+	case GSW1XX_SGMII_TBI_LPSTAT_SPEED_NOSGMII:
-+		if (state->interface == PHY_INTERFACE_MODE_1000BASEX)
-+			state->speed = SPEED_1000;
-+		else if (state->interface == PHY_INTERFACE_MODE_2500BASEX)
-+			state->speed = SPEED_2500;
-+		else
-+			state->speed = SPEED_UNKNOWN;
-+		break;
-+	}
-+}
-+
-+static void gsw1xx_sgmii_pcs_an_restart(struct phylink_pcs *pcs)
-+{
-+	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
-+
-+	regmap_set_bits(priv->sgmii, GSW1XX_SGMII_TBI_ANEGCTL,
-+			GSW1XX_SGMII_TBI_ANEGCTL_RANEG);
-+}
-+
-+static int gsw1xx_sgmii_pcs_enable(struct phylink_pcs *pcs)
-+{
-+	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
-+
-+	/* Deassert SGMII shell reset */
-+	return regmap_clear_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
-+				 GSW1XX_RST_REQ_SGMII_SHELL);
-+}
-+
-+static void gsw1xx_sgmii_pcs_disable(struct phylink_pcs *pcs)
-+{
-+	struct gsw1xx_priv *priv = sgmii_pcs_to_gsw1xx(pcs);
-+
-+	/* Assert SGMII shell reset */
-+	regmap_set_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
-+			GSW1XX_RST_REQ_SGMII_SHELL);
-+}
-+
-+static const struct phylink_pcs_ops gsw1xx_sgmii_pcs_ops = {
-+	.pcs_an_restart = gsw1xx_sgmii_pcs_an_restart,
-+	.pcs_config = gsw1xx_sgmii_pcs_config,
-+	.pcs_disable = gsw1xx_sgmii_pcs_disable,
-+	.pcs_enable = gsw1xx_sgmii_pcs_enable,
-+	.pcs_get_state = gsw1xx_sgmii_pcs_get_state,
-+	.pcs_link_up = gsw1xx_sgmii_pcs_link_up,
-+};
-+
-+static void gsw1xx_phylink_get_caps(struct dsa_switch *ds, int port,
-+				    struct phylink_config *config)
-+{
-+	struct gswip_priv *priv = ds->priv;
-+
-+	config->mac_capabilities = MAC_ASYM_PAUSE | MAC_SYM_PAUSE |
-+				   MAC_10 | MAC_100 | MAC_1000;
-+
-+	switch (port) {
-+	case 0:
-+	case 1:
-+	case 2:
-+	case 3:
-+		__set_bit(PHY_INTERFACE_MODE_INTERNAL,
-+			  config->supported_interfaces);
-+		break;
-+	case 4: /* port 4: SGMII */
-+		__set_bit(PHY_INTERFACE_MODE_SGMII,
-+			  config->supported_interfaces);
-+		__set_bit(PHY_INTERFACE_MODE_1000BASEX,
-+			  config->supported_interfaces);
-+		if (priv->hw_info->supports_2500m) {
-+			__set_bit(PHY_INTERFACE_MODE_2500BASEX,
-+				  config->supported_interfaces);
-+			config->mac_capabilities |= MAC_2500FD;
-+		}
-+		return; /* no support for EEE on SGMII port */
-+	case 5: /* port 5: RGMII or RMII */
-+		__set_bit(PHY_INTERFACE_MODE_RMII,
-+			  config->supported_interfaces);
-+		phy_interface_set_rgmii(config->supported_interfaces);
-+		break;
-+	}
-+
-+	config->lpi_capabilities = MAC_100FD | MAC_1000FD;
-+	config->lpi_timer_default = 20;
-+	memcpy(config->lpi_interfaces, config->supported_interfaces,
-+	       sizeof(config->lpi_interfaces));
-+}
-+
-+static struct phylink_pcs *gsw1xx_phylink_mac_select_pcs(struct phylink_config *config,
-+							 phy_interface_t interface)
-+{
-+	struct dsa_port *dp = dsa_phylink_to_port(config);
-+	struct gswip_priv *gswip_priv = dp->ds->priv;
-+	struct gsw1xx_priv *gsw1xx_priv = container_of(gswip_priv,
-+						       struct gsw1xx_priv,
-+						       gswip);
-+
-+	switch (dp->index) {
-+	case GSW1XX_SGMII_PORT:
-+		return &gsw1xx_priv->sgmii_pcs;
-+	default:
-+		return NULL;
-+	}
-+}
-+
-+static struct regmap *gsw1xx_regmap_init(struct gsw1xx_priv *priv,
-+					 const char *name,
-+					 unsigned int reg_base,
-+					 unsigned int max_register)
-+{
-+	const struct regmap_config config = {
-+		.name = name,
-+		.reg_bits = 16,
-+		.val_bits = 16,
-+		.reg_base = reg_base,
-+		.max_register = max_register,
-+		.lock = gsw1xx_mdio_regmap_lock,
-+		.unlock = gsw1xx_mdio_regmap_unlock,
-+		.lock_arg = &priv->mdio_dev->bus->mdio_lock,
-+	};
-+
-+	return devm_regmap_init(&priv->mdio_dev->dev, &gsw1xx_regmap_bus,
-+				priv, &config);
-+}
-+
-+static int gsw1xx_probe(struct mdio_device *mdiodev)
-+{
-+	struct device *dev = &mdiodev->dev;
-+	struct gsw1xx_priv *priv;
-+	u32 version;
-+	int ret;
-+
-+	/* allocate priv struct for 4096 VLANs as all MDIO-connected
-+	 * switch ICs are GSWIP version 2.3 and support up to 4096 VLANs
-+	 */
-+	priv = devm_kzalloc(dev, sizeof(*priv) +
-+				 (4096 * sizeof(struct gswip_vlan)),
-+			    GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->mdio_dev = mdiodev;
-+	priv->smdio_badr = GSW1XX_SMDIO_BADR_UNKNOWN;
-+
-+	priv->gswip.dev = dev;
-+	priv->gswip.hw_info = of_device_get_match_data(dev);
-+	if (!priv->gswip.hw_info)
-+		return -EINVAL;
-+
-+	priv->gswip.gswip = gsw1xx_regmap_init(priv, "switch",
-+					       GSW1XX_SWITCH_BASE, 0xfff);
-+	if (IS_ERR(priv->gswip.gswip))
-+		return PTR_ERR(priv->gswip.gswip);
-+
-+	priv->gswip.mdio = gsw1xx_regmap_init(priv, "mdio", GSW1XX_MMDIO_BASE,
-+					      0xff);
-+	if (IS_ERR(priv->gswip.mdio))
-+		return PTR_ERR(priv->gswip.mdio);
-+
-+	priv->gswip.mii = gsw1xx_regmap_init(priv, "mii", GSW1XX_RGMII_BASE,
-+					     0xff);
-+	if (IS_ERR(priv->gswip.mii))
-+		return PTR_ERR(priv->gswip.mii);
-+
-+	priv->sgmii = gsw1xx_regmap_init(priv, "sgmii", GSW1XX_SGMII_BASE,
-+					 0xfff);
-+	if (IS_ERR(priv->sgmii))
-+		return PTR_ERR(priv->sgmii);
-+
-+	priv->gpio = gsw1xx_regmap_init(priv, "gpio", GSW1XX_GPIO_BASE, 0xff);
-+	if (IS_ERR(priv->gpio))
-+		return PTR_ERR(priv->gpio);
-+
-+	priv->clk = gsw1xx_regmap_init(priv, "clk", GSW1XX_CLK_BASE, 0xff);
-+	if (IS_ERR(priv->clk))
-+		return PTR_ERR(priv->clk);
-+
-+	priv->shell = gsw1xx_regmap_init(priv, "shell", GSW1XX_SHELL_BASE,
-+					 0xff);
-+	if (IS_ERR(priv->shell))
-+		return PTR_ERR(priv->shell);
-+
-+	priv->sgmii_pcs.ops = &gsw1xx_sgmii_pcs_ops;
-+	priv->sgmii_pcs.poll = 1;
-+	__set_bit(PHY_INTERFACE_MODE_SGMII,
-+		  priv->sgmii_pcs.supported_interfaces);
-+	__set_bit(PHY_INTERFACE_MODE_1000BASEX,
-+		  priv->sgmii_pcs.supported_interfaces);
-+	if (priv->gswip.hw_info->supports_2500m)
-+		__set_bit(PHY_INTERFACE_MODE_2500BASEX,
-+			  priv->sgmii_pcs.supported_interfaces);
-+
-+	/* assert SGMII reset to power down SGMII unit */
-+	ret = regmap_set_bits(priv->shell, GSW1XX_SHELL_RST_REQ,
-+			      GSW1XX_RST_REQ_SGMII_SHELL);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* configure GPIO pin-mux for MMDIO in case of external PHY connected to
-+	 * SGMII or RGMII as slave interface
-+	 */
-+	regmap_set_bits(priv->gpio, GPIO_ALTSEL0, 3);
-+	regmap_set_bits(priv->gpio, GPIO_ALTSEL1, 3);
-+
-+	ret = regmap_read(priv->gswip.gswip, GSWIP_VERSION, &version);
-+	if (ret)
-+		return ret;
-+
-+	ret = gswip_probe_common(&priv->gswip, version);
-+	if (ret)
-+		return ret;
-+
-+	dev_set_drvdata(dev, &priv->gswip);
-+
-+	return 0;
-+}
-+
-+static void gsw1xx_remove(struct mdio_device *mdiodev)
-+{
-+	struct gswip_priv *priv = dev_get_drvdata(&mdiodev->dev);
-+
-+	if (!priv)
-+		return;
-+
-+	gswip_disable_switch(priv);
-+
-+	dsa_unregister_switch(priv->ds);
-+}
-+
-+static void gsw1xx_shutdown(struct mdio_device *mdiodev)
-+{
-+	struct gswip_priv *priv = dev_get_drvdata(&mdiodev->dev);
-+
-+	if (!priv)
-+		return;
-+
-+	dev_set_drvdata(&mdiodev->dev, NULL);
-+
-+	gswip_disable_switch(priv);
-+}
-+
-+static const struct gswip_hw_info gsw12x_data = {
-+	.max_ports		= GSW1XX_PORTS,
-+	.allowed_cpu_ports	= BIT(GSW1XX_MII_PORT) | BIT(GSW1XX_SGMII_PORT),
-+	.mii_ports		= BIT(GSW1XX_MII_PORT),
-+	.mii_port_reg_offset	= -GSW1XX_MII_PORT,
-+	.mac_select_pcs		= gsw1xx_phylink_mac_select_pcs,
-+	.phylink_get_caps	= &gsw1xx_phylink_get_caps,
-+	.supports_2500m		= true,
-+	.pce_microcode		= &gsw1xx_pce_microcode,
-+	.pce_microcode_size	= ARRAY_SIZE(gsw1xx_pce_microcode),
-+	.tag_protocol		= DSA_TAG_PROTO_MXL_GSW1XX,
-+};
-+
-+static const struct gswip_hw_info gsw140_data = {
-+	.max_ports		= GSW1XX_PORTS,
-+	.allowed_cpu_ports	= BIT(GSW1XX_MII_PORT) | BIT(GSW1XX_SGMII_PORT),
-+	.mii_ports		= BIT(GSW1XX_MII_PORT),
-+	.mii_port_reg_offset	= -GSW1XX_MII_PORT,
-+	.mac_select_pcs		= gsw1xx_phylink_mac_select_pcs,
-+	.phylink_get_caps	= &gsw1xx_phylink_get_caps,
-+	.supports_2500m		= true,
-+	.pce_microcode		= &gsw1xx_pce_microcode,
-+	.pce_microcode_size	= ARRAY_SIZE(gsw1xx_pce_microcode),
-+	.tag_protocol		= DSA_TAG_PROTO_MXL_GSW1XX,
-+};
-+
-+static const struct gswip_hw_info gsw141_data = {
-+	.max_ports		= GSW1XX_PORTS,
-+	.allowed_cpu_ports	= BIT(GSW1XX_MII_PORT) | BIT(GSW1XX_SGMII_PORT),
-+	.mii_ports		= BIT(GSW1XX_MII_PORT),
-+	.mii_port_reg_offset	= -GSW1XX_MII_PORT,
-+	.mac_select_pcs		= gsw1xx_phylink_mac_select_pcs,
-+	.phylink_get_caps	= gsw1xx_phylink_get_caps,
-+	.pce_microcode		= &gsw1xx_pce_microcode,
-+	.pce_microcode_size	= ARRAY_SIZE(gsw1xx_pce_microcode),
-+	.tag_protocol		= DSA_TAG_PROTO_MXL_GSW1XX,
-+};
-+
-+/*
-+ * GSW125 is the industrial temperature version of GSW120.
-+ * GSW145 is the industrial temperature version of GSW140.
-+ */
-+static const struct of_device_id gsw1xx_of_match[] = {
-+	{ .compatible = "maxlinear,gsw120", .data = &gsw12x_data },
-+	{ .compatible = "maxlinear,gsw125", .data = &gsw12x_data },
-+	{ .compatible = "maxlinear,gsw140", .data = &gsw140_data },
-+	{ .compatible = "maxlinear,gsw141", .data = &gsw141_data },
-+	{ .compatible = "maxlinear,gsw145", .data = &gsw140_data },
-+	{ /* sentinel */ },
-+};
-+
-+MODULE_DEVICE_TABLE(of, gsw1xx_of_match);
-+
-+static struct mdio_driver gsw1xx_driver = {
-+	.probe		= gsw1xx_probe,
-+	.remove		= gsw1xx_remove,
-+	.shutdown	= gsw1xx_shutdown,
-+	.mdiodrv.driver	= {
-+		.name = "mxl-gsw1xx",
-+		.of_match_table = gsw1xx_of_match,
-+	},
-+};
-+
-+mdio_module_driver(gsw1xx_driver);
-+
-+MODULE_DESCRIPTION("Driver for MaxLinear GSW1xx ethernet switch");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:mxl-gsw1xx");
-diff --git a/drivers/net/dsa/lantiq/mxl-gsw1xx_pce.h b/drivers/net/dsa/lantiq/mxl-gsw1xx_pce.h
-new file mode 100644
-index 000000000000..eefcd411a340
---- /dev/null
-+++ b/drivers/net/dsa/lantiq/mxl-gsw1xx_pce.h
-@@ -0,0 +1,154 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * PCE microcode code update for driver for MaxLinear GSW1xx switch chips
-+ *
-+ * Copyright (C) 2023 - 2024 MaxLinear Inc.
-+ * Copyright (C) 2022 Snap One, LLC.  All rights reserved.
-+ * Copyright (C) 2017 - 2019 Hauke Mehrtens <hauke@hauke-m.de>
-+ * Copyright (C) 2012 John Crispin <john@phrozen.org>
-+ * Copyright (C) 2010 Lantiq Deutschland
-+ */
-+
-+#include "lantiq_gswip.h"
-+
-+#define INSTR 0
-+#define IPV6 1
-+#define LENACCU 2
-+
-+/* GSWIP_2.X */
-+enum {
-+	OUT_MAC0 = 0,
-+	OUT_MAC1,
-+	OUT_MAC2,
-+	OUT_MAC3,
-+	OUT_MAC4,
-+	OUT_MAC5,
-+	OUT_ETHTYP,
-+	OUT_VTAG0,
-+	OUT_VTAG1,
-+	OUT_ITAG0,
-+	OUT_ITAG1,	/* 10 */
-+	OUT_ITAG2,
-+	OUT_ITAG3,
-+	OUT_IP0,
-+	OUT_IP1,
-+	OUT_IP2,
-+	OUT_IP3,
-+	OUT_SIP0,
-+	OUT_SIP1,
-+	OUT_SIP2,
-+	OUT_SIP3,	/* 20 */
-+	OUT_SIP4,
-+	OUT_SIP5,
-+	OUT_SIP6,
-+	OUT_SIP7,
-+	OUT_DIP0,
-+	OUT_DIP1,
-+	OUT_DIP2,
-+	OUT_DIP3,
-+	OUT_DIP4,
-+	OUT_DIP5,	/* 30 */
-+	OUT_DIP6,
-+	OUT_DIP7,
-+	OUT_SESID,
-+	OUT_PROT,
-+	OUT_APP0,
-+	OUT_APP1,
-+	OUT_IGMP0,
-+	OUT_IGMP1,
-+	OUT_STAG0 = 61,
-+	OUT_STAG1 = 62,
-+	OUT_NONE = 63,
-+};
-+
-+/* parser's microcode flag type */
-+enum {
-+	FLAG_ITAG = 0,
-+	FLAG_VLAN,
-+	FLAG_SNAP,
-+	FLAG_PPPOE,
-+	FLAG_IPV6,
-+	FLAG_IPV6FL,
-+	FLAG_IPV4,
-+	FLAG_IGMP,
-+	FLAG_TU,
-+	FLAG_HOP,
-+	FLAG_NN1,	/* 10 */
-+	FLAG_NN2,
-+	FLAG_END,
-+	FLAG_NO,	/* 13 */
-+	FLAG_SVLAN,	/* 14 */
-+};
-+
-+#define PCE_MC_M(val, msk, ns, out, len, type, flags, ipv4_len) \
-+	{ (val), (msk), ((ns) << 10 | (out) << 4 | (len) >> 1),\
-+	 ((len) & 1) << 15 | (type) << 13 | (flags) << 9 | (ipv4_len) << 8 }
-+
-+/* V22_2X (IPv6 issue fixed) */
-+static const struct gswip_pce_microcode gsw1xx_pce_microcode[] = {
-+	/*       value   mask    ns  fields      L  type     flags       ipv4_len */
-+	PCE_MC_M(0x88c3, 0xFFFF, 1,  OUT_ITAG0,  4, INSTR,   FLAG_ITAG,  0),
-+	PCE_MC_M(0x8100, 0xFFFF, 4,  OUT_STAG0,  2, INSTR,   FLAG_SVLAN, 0),
-+	PCE_MC_M(0x88A8, 0xFFFF, 4,  OUT_STAG0,  2, INSTR,   FLAG_SVLAN, 0),
-+	PCE_MC_M(0x9100, 0xFFFF, 4,  OUT_STAG0,  2, INSTR,   FLAG_SVLAN, 0),
-+	PCE_MC_M(0x8100, 0xFFFF, 5,  OUT_VTAG0,  2, INSTR,   FLAG_VLAN,  0),
-+	PCE_MC_M(0x88A8, 0xFFFF, 6,  OUT_VTAG0,  2, INSTR,   FLAG_VLAN,  0),
-+	PCE_MC_M(0x9100, 0xFFFF, 4,  OUT_VTAG0,  2, INSTR,   FLAG_VLAN,  0),
-+	PCE_MC_M(0x8864, 0xFFFF, 20, OUT_ETHTYP, 1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0800, 0xFFFF, 24, OUT_ETHTYP, 1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x86DD, 0xFFFF, 25, OUT_ETHTYP, 1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x8863, 0xFFFF, 19, OUT_ETHTYP, 1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0xF800, 13, OUT_NONE,   0, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 44, OUT_ETHTYP, 1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0600, 0x0600, 44, OUT_ETHTYP, 1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 15, OUT_NONE,   1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0xAAAA, 0xFFFF, 17, OUT_NONE,   1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0300, 0xFF00, 45, OUT_NONE,   0, INSTR,   FLAG_SNAP,  0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_DIP7,   3, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 21, OUT_DIP7,   3, INSTR,   FLAG_PPPOE, 0),
-+	PCE_MC_M(0x0021, 0xFFFF, 24, OUT_NONE,   1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0057, 0xFFFF, 25, OUT_NONE,   1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 44, OUT_NONE,   0, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x4000, 0xF000, 27, OUT_IP0,    4, INSTR,   FLAG_IPV4,  1),
-+	PCE_MC_M(0x6000, 0xF000, 30, OUT_IP0,    3, INSTR,   FLAG_IPV6,  0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 28, OUT_IP3,    2, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 29, OUT_SIP0,   4, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 44, OUT_NONE,   0, LENACCU, FLAG_NO,    0),
-+	PCE_MC_M(0x1100, 0xFF00, 43, OUT_PROT,   1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0600, 0xFF00, 43, OUT_PROT,   1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0xFF00, 36, OUT_IP3,   17, INSTR,   FLAG_HOP,   0),
-+	PCE_MC_M(0x2B00, 0xFF00, 36, OUT_IP3,   17, INSTR,   FLAG_NN1,   0),
-+	PCE_MC_M(0x3C00, 0xFF00, 36, OUT_IP3,   17, INSTR,   FLAG_NN2,   0),
-+	PCE_MC_M(0x0000, 0x0000, 43, OUT_PROT,   1, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x00F0, 38, OUT_NONE,   0, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 44, OUT_NONE,   0, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0xFF00, 36, OUT_NONE,   0, IPV6,    FLAG_HOP,   0),
-+	PCE_MC_M(0x2B00, 0xFF00, 36, OUT_NONE,   0, IPV6,    FLAG_NN1,   0),
-+	PCE_MC_M(0x3C00, 0xFF00, 36, OUT_NONE,   0, IPV6,    FLAG_NN2,   0),
-+	PCE_MC_M(0x0000, 0x00FC, 44, OUT_PROT,   0, IPV6,    FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 44, OUT_NONE,   0, IPV6,    FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 44, OUT_SIP0,  16, INSTR,   FLAG_NO,    0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_APP0,   4, INSTR,   FLAG_IGMP,  0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+	PCE_MC_M(0x0000, 0x0000, 45, OUT_NONE,   0, INSTR,   FLAG_END,   0),
-+};
--- 
-2.51.0
+DJ
+
+> 
+> -Koichiro
+> 
+>>
+>> DJ
+>>
+>>> +
+>>>  	if (qp->use_msi)
+>>>  		ntb_msi_peer_trigger(qp->ndev, PIDX, &qp->peer_msi_desc);
+>>>  	else
+>>> @@ -1804,7 +1830,7 @@ static void ntb_tx_copy_callback(void *data,
+>>>  	ntb_list_add(&qp->ntb_tx_free_q_lock, &entry->entry, &qp->tx_free_q);
+>>>  }
+>>>  
+>>> -static void ntb_memcpy_tx(struct ntb_queue_entry *entry, void __iomem *offset)
+>>> +static void ntb_memcpy_tx_on_stack(struct ntb_queue_entry *entry, void __iomem *offset)
+>>>  {
+>>>  #ifdef ARCH_HAS_NOCACHE_UACCESS
+>>>  	/*
+>>> @@ -1822,6 +1848,54 @@ static void ntb_memcpy_tx(struct ntb_queue_entry *entry, void __iomem *offset)
+>>>  	ntb_tx_copy_callback(entry, NULL);
+>>>  }
+>>>  
+>>> +static int ntb_tx_memcpy_kthread(void *data)
+>>> +{
+>>> +	struct ntb_transport_qp *qp = data;
+>>> +	struct ntb_queue_entry *entry, *tmp;
+>>> +	const int resched_nr = 64;
+>>> +	LIST_HEAD(local_list);
+>>> +	void __iomem *offset;
+>>> +	int processed = 0;
+>>> +
+>>> +	while (!kthread_should_stop()) {
+>>> +		spin_lock_irq(&qp->ntb_tx_offl_q_lock);
+>>> +		wait_event_interruptible_lock_irq_timeout(qp->tx_offload_wq,
+>>> +				kthread_should_stop() ||
+>>> +				!list_empty(&qp->tx_offl_q),
+>>> +				qp->ntb_tx_offl_q_lock, 5*HZ);
+>>> +		list_splice_tail_init(&qp->tx_offl_q, &local_list);
+>>> +		spin_unlock_irq(&qp->ntb_tx_offl_q_lock);
+>>> +
+>>> +		list_for_each_entry_safe(entry, tmp, &local_list, entry) {
+>>> +			list_del(&entry->entry);
+>>> +			offset = qp->tx_mw + qp->tx_max_frame * entry->tx_index;
+>>> +			ntb_memcpy_tx_on_stack(entry, offset);
+>>> +			if (++processed >= resched_nr) {
+>>> +				cond_resched();
+>>> +				processed = 0;
+>>> +			}
+>>> +		}
+>>> +		cond_resched();
+>>> +	}
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static void ntb_memcpy_tx(struct ntb_queue_entry *entry, void __iomem *offset)
+>>> +{
+>>> +	struct ntb_transport_qp *qp = entry->qp;
+>>> +
+>>> +	if (WARN_ON_ONCE(!qp))
+>>> +		return;
+>>> +
+>>> +	if (ntb_tx_offload_enabled(qp)) {
+>>> +		ntb_list_add(&qp->ntb_tx_offl_q_lock, &entry->entry,
+>>> +			     &qp->tx_offl_q);
+>>> +		wake_up(&qp->tx_offload_wq);
+>>> +	} else
+>>> +		ntb_memcpy_tx_on_stack(entry, offset);
+>>> +}
+>>> +
+>>>  static int ntb_async_tx_submit(struct ntb_transport_qp *qp,
+>>>  			       struct ntb_queue_entry *entry)
+>>>  {
+>>> @@ -1894,6 +1968,9 @@ static void ntb_async_tx(struct ntb_transport_qp *qp,
+>>>  	hdr = offset + qp->tx_max_frame - sizeof(struct ntb_payload_header);
+>>>  	entry->tx_hdr = hdr;
+>>>  
+>>> +	WARN_ON_ONCE(!ntb_transport_tx_free_entry(qp));
+>>> +	WRITE_ONCE(qp->tx_index, (qp->tx_index + 1) % qp->tx_max_entry);
+>>> +
+>>>  	iowrite32(entry->len, &hdr->len);
+>>>  	iowrite32((u32)qp->tx_pkts, &hdr->ver);
+>>>  
+>>> @@ -1934,9 +2011,6 @@ static int ntb_process_tx(struct ntb_transport_qp *qp,
+>>>  
+>>>  	ntb_async_tx(qp, entry);
+>>>  
+>>> -	qp->tx_index++;
+>>> -	qp->tx_index %= qp->tx_max_entry;
+>>> -
+>>>  	qp->tx_pkts++;
+>>>  
+>>>  	return 0;
+>>> @@ -2033,6 +2107,20 @@ ntb_transport_create_queue(void *data, struct device *client_dev,
+>>>  	qp->tx_handler = handlers->tx_handler;
+>>>  	qp->event_handler = handlers->event_handler;
+>>>  
+>>> +	init_waitqueue_head(&qp->tx_offload_wq);
+>>> +	if (tx_memcpy_offload) {
+>>> +		qp->tx_offload_thread = kthread_run(ntb_tx_memcpy_kthread, qp,
+>>> +						    "ntb-txcpy/%s/%u",
+>>> +						    pci_name(ndev->pdev), qp->qp_num);
+>>> +		if (IS_ERR(qp->tx_offload_thread)) {
+>>> +			dev_warn(&nt->ndev->dev,
+>>> +				 "tx memcpy offload thread creation failed: %ld; falling back to inline copy\n",
+>>> +				 PTR_ERR(qp->tx_offload_thread));
+>>> +			qp->tx_offload_thread = NULL;
+>>> +		}
+>>> +	} else
+>>> +		qp->tx_offload_thread = NULL;
+>>> +
+>>>  	dma_cap_zero(dma_mask);
+>>>  	dma_cap_set(DMA_MEMCPY, dma_mask);
+>>>  
+>>> @@ -2140,6 +2228,11 @@ void ntb_transport_free_queue(struct ntb_transport_qp *qp)
+>>>  
+>>>  	qp->active = false;
+>>>  
+>>> +	if (qp->tx_offload_thread) {
+>>> +		kthread_stop(qp->tx_offload_thread);
+>>> +		qp->tx_offload_thread = NULL;
+>>> +	}
+>>> +
+>>>  	if (qp->tx_dma_chan) {
+>>>  		struct dma_chan *chan = qp->tx_dma_chan;
+>>>  		/* Putting the dma_chan to NULL will force any new traffic to be
+>>> @@ -2203,6 +2296,9 @@ void ntb_transport_free_queue(struct ntb_transport_qp *qp)
+>>>  	while ((entry = ntb_list_rm(&qp->ntb_tx_free_q_lock, &qp->tx_free_q)))
+>>>  		kfree(entry);
+>>>  
+>>> +	while ((entry = ntb_list_rm(&qp->ntb_tx_offl_q_lock, &qp->tx_offl_q)))
+>>> +		kfree(entry);
+>>> +
+>>>  	qp->transport->qp_bitmap_free |= qp_bit;
+>>>  
+>>>  	dev_info(&pdev->dev, "NTB Transport QP %d freed\n", qp->qp_num);
+>>
+
+
 
