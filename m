@@ -1,45 +1,52 @@
-Return-Path: <linux-kernel+bounces-868117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE49C04687
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:37:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47EFC046C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63AC01A62E29
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:38:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3CD31A65D1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B073242D62;
-	Fri, 24 Oct 2025 05:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1AB726CE37;
+	Fri, 24 Oct 2025 05:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EGuaOB0i"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Y8PACNRJ"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AF12144C9;
-	Fri, 24 Oct 2025 05:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F30266B6C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761284265; cv=none; b=byORtMD/aecMTCgt35dmbFiz1QzzZ95W3/5Bl7G8YYXbXQQgb2f+irIxl1YOnSWlrrpvgP0AlbvrAJoOS5W+49+iC9ESWqIJ3GK3JdTfDL1zm8p+xO6uYeInJj9wOy2CI2I8Z3pqIS2MY4zKYopvo4FXPb0LCTGFIhCHEXKlC7g=
+	t=1761285032; cv=none; b=eJ+eXI+DRBn7KTU2FAUCOvOFocd7EFVS5KEwY6JkXd5oGZWBMj1IhYX1uS+ZerINswpb4u9pi2KVAj/QuST1iZvefJ8ZRts6Dv+ouKcWw+DALwguVFxIY1ceVtSXlyE4wFI/iBOmq4fmNL/pEL/ikIIHCuNs9/E5R8NZoYpesbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761284265; c=relaxed/simple;
-	bh=89Xh5dqUkfTeBBpojD+0rLJhmiP52jECIfc1pDkyhYo=;
+	s=arc-20240116; t=1761285032; c=relaxed/simple;
+	bh=pvO6cAzDobyHHYElEJvRgb2+nkGqLSVOCoVvMs5K/ng=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sSfOnS2pp+8fhfDzHd5OXfaVpOWdAEK2dT0GuiSYma5fbaBnk9vDv+2YW/QyCPZyNFBbEZ7p0yj46NvKkM5WFQLbP40rMBumm/VPyAeoXN87Yget4LxOwQ+qLjRhMl1V2zsbLaBTZUHCYfva0hgm9zFTgIiEsejGOlg/fDs9jIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EGuaOB0i; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761284259; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Sp+hJRz+WWV/IDIJ1UXPhHVGxPXYYI9AFpPwtJzLdQA=;
-	b=EGuaOB0iw2NTv8IOZ6vVxkCUSU438+blxF98ILkNaM+WvP8K2Xp+eht/2YmbWONbiisKAbIeNqi93AEGSC+3wxYEio1JhgdjbshWBnU0maKsbgUpL86RkwU3g3jpPKJb6NSKK+37l7iBz/sbBlY4n5ZnpTU3y/Gc9PIW6H3G9Gc=
-Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wqt6g34_1761284257 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 24 Oct 2025 13:37:38 +0800
-Message-ID: <2cc91a94-a444-4d15-b714-fe8502da1586@linux.alibaba.com>
-Date: Fri, 24 Oct 2025 13:37:37 +0800
+	 In-Reply-To:Content-Type; b=te3G4Sel8rFfpxwZ/Wpon09AkEfaFPMD9zR0qWPTmXP30zf7M+a95kaoflNM0asOQNxEUmTzzSqe0ML3WliVNpqwBI42Rte72JMKxYEQidyHb8iWbsbbsFESxSrty/q5+CcwrxxfQArZGA2NxYUk3N3NEzyypXn4E6q2CNRVJdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Y8PACNRJ; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1761284956;
+	bh=CKr69NwSch7EejM4+TKS99Z/6JCUgbQXeXZdjI/YeeI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Y8PACNRJQOCGAwuoF1Hu/zRaWpYuETNqJMnE9sL+mFQ9NclB35k5Ki7GxmBwzBFWq
+	 WKYmKTJYP+aGFLmESdstMgy7r6cdMx5GNr6J9yBJk940tkD6/oN2vW2cyWBfajoHDQ
+	 B2fqQZ0D5bZB/dI1t30LVGr1dNS2NjNvhqYrwNvo=
+X-QQ-mid: esmtpsz21t1761284950t0b48dc42
+X-QQ-Originating-IP: +Z7A6gAdtvFocZptcF+nQb/m/NHxsP2Va8AEQIO4Qaw=
+Received: from [192.168.15.210] ( [223.76.134.64])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 24 Oct 2025 13:49:08 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 5066917882460850049
+Message-ID: <265B8FE9306198E5+0131c750-3995-4158-84e7-ad73792e6934@uniontech.com>
+Date: Fri, 24 Oct 2025 13:49:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,63 +54,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/5] PCI/ERR: Use pcie_aer_is_native() to check for
- native AER control
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kbusch@kernel.org, sathyanarayanan.kuppuswamy@linux.intel.com,
- mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
- terry.bowman@amd.com, tianruidong@linux.alibaba.com
-References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
- <20251015024159.56414-5-xueshuai@linux.alibaba.com>
- <aPYMO2Eu5UyeEvNu@wunner.de>
- <0fe95dbe-a7ba-4882-bfff-0197828ee6ba@linux.alibaba.com>
- <aPZAAPEGBNk_ec36@wunner.de>
- <645adbb6-096f-4af3-9609-ddc5a6f5239a@linux.alibaba.com>
- <aPoDbKebJD30NjKG@wunner.de>
- <1eaf1f94-e26b-4313-b6b7-51ad966fe28e@linux.alibaba.com>
- <aPrvEZ3X4_tiD2Fh@wunner.de>
- <91cf33b4-7f67-4f3a-b095-e8f04d8c18e9@linux.alibaba.com>
- <aPr6dBDUUohRUzYg@wunner.de>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <aPr6dBDUUohRUzYg@wunner.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: drivers/hwmon/gpd-fan.c:231:9: error: implicit declaration of
+ function 'outb'
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Guenter Roeck <linux@roeck-us.net>
+References: <202510240817.vt3eQ3qL-lkp@intel.com>
+Content-Language: en-US
+From: Cryolitia PukNgae <cryolitia@uniontech.com>
+In-Reply-To: <202510240817.vt3eQ3qL-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz3a-1
+X-QQ-XMAILINFO: OKhYnE1LzMsBKXC/ZkCGuN+ag2RhsefVQamYUzmV1S9qmB90MCg9DMWL
+	mDwwS5YjesH24XFm0utaPlbczTLgBjLf2hzykABgkBzz944Ct1TUM/a03XxsdznXOcP9ee4
+	PlD26jtWx5Lm2SIujqodEuDbY36+MVWG8tSBM4U9PKrhhnxN7NJvxXFMg2+kOekw5mmSu0J
+	A5EVBmWbXhi2cpxtLiT2K4MYlmyjsEzgtxIhvyTsWlzbWQdUQvzUecJaZKdJeiqi8UUyWlY
+	KscAcCJ5HX5Z5EUgOOhilZVm7uLLd1YF8GtTgxDTBy1jFQtKqi4v3YE4d9yx8HpOUrCGBp4
+	KWzk1R+uRuyniXb5WN3EfpTvkoNt82TWUFYqfDtkKkIB62YysG1tiENLJZwA61qeZn2fXsI
+	EkRvHlPXhW+dtoMw2wmYhBy1hOmWokiJcJS6kyIUL62cTWyHinqxhnUzmbn0N7vlERuRsRN
+	+Qg8V+GbsIgAKbjoRw6zFQ+DNfklurcc8bkZaKtvqbjPMhdvGfEdSHryLfNDv7LrIJbhx+j
+	+OhDT2utwFVcuFHVGaFrGu6pHWiuYNlc5/jxvpRtgsDPghqkAWQcUEDwrX4MTa1UY+qbfwi
+	QPyhii20uWyW8VCLxQ2U/cdtMmBGMSHS2RSFkdPJcyVHoAgh7do8FJPdD9vE0p1F6eYWJ43
+	PBcDTULTMsYz3+Zh9qqy+yyiq7yz9Rny7PThxZhtBSebFMYaEke2tlO7a11ILtTxq528ut7
+	7eqRakT2YbHuiKgPEi1nA6uxAKa2DWX1pdoC25uWOz+uKI4oXQPNsnGvzpzQr4St5+KO8IJ
+	A7g+y4zeu2nkB6bC4xgprUxYtNpNUgwe+jYjX8I0kvY+m1N81YK23bRccJHV2EkJP7nWiVV
+	3LHtMAYCEDEvhNw1pUSGwZZu7mnHc5jWytdnKsppCiozawRW7s0T79risOiCGKQYSYp2qE6
+	CKmaT8LXV0wtWt+WRxGGbe8IIPzX8MSz6fqPsV4OvX+MrHKNNqam9PhW4pGTpqN/lCHMo+H
+	ReKomqQ9/ssbdbNFjc
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
 
-
-在 2025/10/24 12:03, Lukas Wunner 写道:
-> On Fri, Oct 24, 2025 at 11:38:10AM +0800, Shuai Xue wrote:
->> The remaining question is whether it would make more sense to rename
->> pcie_clear_device_status() to pci_clear_device_error_status() and refine
->> its behavior by adding a mask specifically for bits 0 to 3. Here's an
->> example of the proposed change:
+> Hi Cryolitia,
 > 
-> I don't see much value in renaming the function.
+> FYI, the error/warning still remains.
 > 
-> However clearing only bits 0-3 makes sense.  PCIe r5.0 defined bit 6
-> as Emergency Power Reduction Detected with type RW1C in 2019.  The
-> last time we touched pcie_clear_device_status() was in 2018 with
-> ec752f5d54d7 and we've been clearing all bits since forever,
-> not foreseeing that new ones with type RW1C might be added later.
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   266ee584e55eed108583ab4f45b5de734522502d
+> commit: 0ab88e2394392f475b8857ac82c0c987841217f8 hwmon: add GPD devices sensor driver
+> date:   6 weeks ago
+> config: i386-buildonly-randconfig-002-20251024 (https://download.01.org/0day-ci/archive/20251024/202510240817.vt3eQ3qL-lkp@intel.com/config)
+> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510240817.vt3eQ3qL-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202510240817.vt3eQ3qL-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    drivers/hwmon/gpd-fan.c: In function 'gpd_ecram_read':
+>>> drivers/hwmon/gpd-fan.c:231:9: error: implicit declaration of function 'outb' [-Wimplicit-function-declaration]
+>      231 |         outb(0x2E, addr_port);
+>          |         ^~~~
+>>> drivers/hwmon/gpd-fan.c:244:16: error: implicit declaration of function 'inb' [-Wimplicit-function-declaration]
+>      244 |         *val = inb(data_port);
+>          |                ^~~
+> 
 
-Thank you for the detailed explanation and pointing out the history
-behind bit 6 and the evolution since PCIe r5.0.
+I don't understand...... I have already added CONFIG_HAS_IOPORT to depends. If this is not enough, what else should I do?
 
 > 
-> I suggest defining a new macro in include/uapi/linux/pci_regs.h
-> instead of using 0xf, say PCI_EXP_DEVSTA_ERR.  Then you don't
-> need the code comment because the code is self-explanatory.
+> vim +/outb +231 drivers/hwmon/gpd-fan.c
 > 
-
-I’ll prepare a patch to implement this fix and submit it shortly.
-Thanks again for the guidance!
-
-Thanks.
-Shuai
-
-
+>    224	
+>    225	// Helper functions to handle EC read/write
+>    226	static void gpd_ecram_read(u16 offset, u8 *val)
+>    227	{
+>    228		u16 addr_port = gpd_driver_priv.drvdata->addr_port;
+>    229		u16 data_port = gpd_driver_priv.drvdata->data_port;
+>    230	
+>  > 231		outb(0x2E, addr_port);
+>    232		outb(0x11, data_port);
+>    233		outb(0x2F, addr_port);
+>    234		outb((u8)((offset >> 8) & 0xFF), data_port);
+>    235	
+>    236		outb(0x2E, addr_port);
+>    237		outb(0x10, data_port);
+>    238		outb(0x2F, addr_port);
+>    239		outb((u8)(offset & 0xFF), data_port);
+>    240	
+>    241		outb(0x2E, addr_port);
+>    242		outb(0x12, data_port);
+>    243		outb(0x2F, addr_port);
+>  > 244		*val = inb(data_port);
+>    245	}
+>    246	
+> 
 
 
 
