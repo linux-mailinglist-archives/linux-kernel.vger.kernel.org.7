@@ -1,316 +1,181 @@
-Return-Path: <linux-kernel+bounces-867969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35043C04086
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:42:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130A5C0408C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED673B1609
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C11291A01E32
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB391D516F;
-	Fri, 24 Oct 2025 01:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D70E1C9DE5;
+	Fri, 24 Oct 2025 01:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MFOJezJY"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C271A23A5;
-	Fri, 24 Oct 2025 01:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYLmSNKB"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA49738FA6
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761270119; cv=none; b=Pkcw4ac5abbfi1zSS54NExWkSAo1yB/NlYr3ruTATgbWYCCruJL1OgIT0qJ8EaWDhgBSEuhqjij2WKV/F8K184NEbg0Rb2q1fUIVq3z5pNvBKy3CgCnmn+mWFDcWdUUW5gqIeYQCNQzXdqWRDFQxHo+ztKcuIC3Z3A1hluExizg=
+	t=1761270180; cv=none; b=Kr8BHfV0p5iiSC8AHafg9HsCMdej6fcmvjLnE6D+qpp5iGifabZlBZJoGVA8dgLka+kllsgrLzaiyOUZUKQ25J2SVxOkv1vQ6VnxrQFoB9yegwfh8pGtfFReT9KfqKzTVzzHO5oWOYaZtT+vtZFa76M3DiVBKXp109xQGzLmCAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761270119; c=relaxed/simple;
-	bh=j+tLOqZxOfVSyc+ba/m0n9E6upA7m+p/jycHLMQi85k=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=vBP69smENG5WAA+0+kkV3X6nDPujNFDNcVm4EOvI2DlqVATJwhMs5dQSoltqGzk7Lr99FklEHdy1c4IN9+N9T6eJyPKl+p5elSnbgQD2WDr+8My1LTLuUl4y9mdPqzMURHeN2kOn0ZxviA0qUs79a3hmTLBixVwkKaMltxrWlG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MFOJezJY; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1006)
-	id 2A40A211AF3E; Thu, 23 Oct 2025 18:41:57 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2A40A211AF3E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761270117;
-	bh=6TzER48JPcpGKeFwhlFaQlS9mIdtWw6DFXG+mWlhVh4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MFOJezJYmEeDxiI12MeWLUf7FZJnG527r27+NJYV97aNxeXrJjDNA6L2wR6HIGHGS
-	 YvjO8twfPYXA0am0NWx4mbMhNyVYePjbh9K1Ul2BYoMaH8IrMPpiQ+0BiextM4c+gC
-	 52CGHrOqAn/BKZGxPM2LztE3vdNmW/xtdO2SvLQk=
-From: Haiyang Zhang <haiyangz@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: haiyangz@microsoft.com,
-	paulros@microsoft.com,
-	decui@microsoft.com,
-	kys@microsoft.com,
-	wei.liu@kernel.org,
-	edumazet@google.com,
-	davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	longli@microsoft.com,
-	ssengar@linux.microsoft.com,
-	ernis@linux.microsoft.com,
-	dipayanroy@linux.microsoft.com,
-	kotaranov@microsoft.com,
-	horms@kernel.org,
-	shradhagupta@linux.microsoft.com,
-	leon@kernel.org,
-	mlevitsk@redhat.com,
-	yury.norov@gmail.com,
-	shirazsaleem@microsoft.com,
-	andrew+netdev@lunn.ch,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [net-next, v3] net: mana: Support HW link state events
-Date: Thu, 23 Oct 2025 18:41:45 -0700
-Message-Id: <1761270105-27215-1-git-send-email-haiyangz@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1761270180; c=relaxed/simple;
+	bh=Gp2UP6WPoEHKVVhOqyaK/3ITaNQsf40VL330L1MeraI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l61xmaLbf5MG1XoacnW9p+0/A71wKVk4OtHIC3eQ0z1dO+6Ej+ZUbpfN/f0oixxE5PqcSXjwSNCSSk0MBrO/enXtcSfGgrmTCPSJ5n3Rcr0JKJYfJbC6qr8CScgxM/K54KerIwdnMr7Kro1bG9Ld2XxkS30Xt2a5lvCmDw7Ol5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UYLmSNKB; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-3c9b5ce8297so1399322fac.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:42:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761270178; x=1761874978; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UAbS/I/ENAzCitCydMxMmGwL+5iHoTPGPWV8yBVNDn0=;
+        b=UYLmSNKBj2NbLQsPcFUuGXfinEhYfQAitTaR8e7Vzt20/C9J2PE0TpSkGo0OkmndYV
+         yJ89cJSdfSmBAdWP2JPtR48FtrYt8UfI73QtGMkLGy7DsSnN16GwGAgVEWc2KdeoSSBI
+         lhH4l/a9ljJ3QES/rzZMfBpoGZrpekV0DzDzH61pybyqQvc6NjhrILOX8ZVQk1ZlF513
+         l5r1SoM7vCQQrfOe9E8+wo+CLgiqLI0KM7ApZsA0z2EAW//lKR8S3wFtgYKfVbFifCG+
+         a3xokd57Hl8Ej90yOecXGAzrSLQmgA6ZmfskzpUFTTTo8hg3zio5/brr4QgvJ6zDHA6D
+         mtkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761270178; x=1761874978;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UAbS/I/ENAzCitCydMxMmGwL+5iHoTPGPWV8yBVNDn0=;
+        b=NpL8NGSb7x6Get00FlKN+UNsdjE9ew4PUkWTHHrzHQjvLoZPkbFrX8cbySzgGvLmU7
+         Epz9144qFGQEdcG3gqSIuPtw3UWjAnDKQP7ILtHoNeeap3Q3HYLLdycqNuJVNdy2qqMd
+         R9taH39MF2KlM4XD1fufsQZZb6+9YkeaX+LM3fmqs3D1kUHSMWooT1IZafaw700MBeJR
+         Z2a4Hv7dnGYyemiSHgY46pNh7gJE28j1TFS6Y3+EDmwIh6vD+fnZKMF/QPnheo1ljhDV
+         iVfBNo46InprTiIfBZvRUargZ2i6H8+IxitMNqjfZrodko6JZGYwOJVH/klqvYYn3jWS
+         aQSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJAlZLoBUIm3V0+b7OkofU2ng/ANXKhmgsIfi5GSPPLPPyRu73Py3absS4h52C9GjF4idNWoCHm8EH3sw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo/EwUmLZSxpSOb8lK7cMXjfojOP6UNZiHYgGT1O+z70YXZjgW
+	NAjhGJdesj/p8KhUJa5OZak1Fuju86ZUi2dBcynta5UUmoaXXGqPulK8sbBBA+ui6f4iOtUW1dM
+	r937BFVeDMI8V2r4OgWXPTpmUYZ4Zwe8=
+X-Gm-Gg: ASbGncvGhJTfyoU1Ir6xjsnN5h84wWdV4n2gloQTBb8/SFNmIu/dTtkpezl5VKlqY0D
+	iL/YsqfdQsHShj9obToz1jeephrFIk/d8iqW/2a/xYdcLRI+8WrapNYtd9o+ALXoY7DJ8puFml0
+	lf2A2m2axG5KKF5acHwriLnccYbh2d9ZwibsC8UczUb3Iw1w1IDaxg/mCGPi6DRIHUPga4KpTTr
+	8VFhuSIBy0UbjI0SUnQAl+of7tbGj/RPePfiAdBsZTPPHtrZ4cnGxB71yyr1rDTpenWDA==
+X-Google-Smtp-Source: AGHT+IFOrs3kAu333i9kjtC7Z4VNGNTt0EV9dP15noDMl6HW4uB2m9tABAka0QntVdtaXJk8/BQlYI7Rv8qX6VpdwoU=
+X-Received: by 2002:a05:6870:194f:b0:3c9:77fb:dc3b with SMTP id
+ 586e51a60fabf-3d173332ebbmr410914fac.18.1761270177796; Thu, 23 Oct 2025
+ 18:42:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20251022030840.956589-1-Wenhua.Lin@unisoc.com>
+ <CAAfSe-uq6GszSLgtM+UBuwJ6V1Bt0_1Ard8cb6e9MMCsdpJPqw@mail.gmail.com> <CAB9BWhdKd93kJxPJv10X5uZ00O8d5NugoehX3_QtjmXQOMhDig@mail.gmail.com>
+In-Reply-To: <CAB9BWhdKd93kJxPJv10X5uZ00O8d5NugoehX3_QtjmXQOMhDig@mail.gmail.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Fri, 24 Oct 2025 09:42:20 +0800
+X-Gm-Features: AS18NWC32uQ6w5HtSVr1L-03d5RGkfSam7lucV4ocAv1EGY-5LX2aClPYLicTtY
+Message-ID: <CAAfSe-sTUC=mW-iO+NK+mq2i8GEv1RaNPvCGgQwb23dOFBigXQ@mail.gmail.com>
+Subject: Re: [PATCH] serial: sprd: Return -EPROBE_DEFER when uart clock is not ready
+To: wenhua lin <wenhua.lin1994@gmail.com>
+Cc: Wenhua Lin <Wenhua.Lin@unisoc.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Cixi Geng <cixi.geng@linux.dev>, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	Xiongpeng Wu <xiongpeng.wu@unisoc.com>, Zhaochen Su <Zhaochen.Su@unisoc.com>, 
+	Zhirong Qiu <Zhirong.Qiu@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+Hi Wenhua,
 
-Handle the HW link state events received from HW channel, and
-set the proper link state accordingly.
+On Thu, 23 Oct 2025 at 10:10, wenhua lin <wenhua.lin1994@gmail.com> wrote:
+>
+> On Wed, Oct 22, 2025 at 2:55=E2=80=AFPM Chunyan Zhang <zhang.lyra@gmail.c=
+om> wrote:
+> >
+> > On Wed, 22 Oct 2025 at 11:09, Wenhua Lin <Wenhua.Lin@unisoc.com> wrote:
+> > >
+> > > In sprd_clk_init(), when devm_clk_get() returns -EPROBE_DEFER
+> > > for either uart or source clock, we should propagate the
+> > > error instead of just warning and continuing with NULL clocks.
+> > >
+> > > Currently the driver only emits a warning when clock acquisition
+> > > fails and proceeds with NULL clock pointers. This can lead to
+> > > issues later when the clocks are actually needed. More importantly,
+> > > when the clock provider is not ready yet and returns -EPROBE_DEFER,
+> > > we should return this error to allow deferred probing.
+> > >
+> > > This change adds explicit checks for -EPROBE_DEFER after both:
+> > > 1. devm_clk_get(uport->dev, uart)
+> > > 2. devm_clk_get(uport->dev, source)
+> > >
+> > > When -EPROBE_DEFER is encountered, the function now returns
+> > > -EPROBE_DEFER to let the driver framework retry probing
+> > > later when the clock dependencies are resolved.
+> > >
+> > > Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
+> > > ---
+> > >  drivers/tty/serial/sprd_serial.c | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > >
+> > > diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sp=
+rd_serial.c
+> > > index 8c9366321f8e..092755f35683 100644
+> > > --- a/drivers/tty/serial/sprd_serial.c
+> > > +++ b/drivers/tty/serial/sprd_serial.c
+> > > @@ -1133,6 +1133,9 @@ static int sprd_clk_init(struct uart_port *upor=
+t)
+> > >
+> > >         clk_uart =3D devm_clk_get(uport->dev, "uart");
+> > >         if (IS_ERR(clk_uart)) {
+> > > +               if (PTR_ERR(clk_uart) =3D=3D -EPROBE_DEFER)
+> > > +                       return -EPROBE_DEFER;
+> > > +
+> >
+> > You are making this clock mandatory, sprd_serial driver could work as
+> > serial ports for logs output without this "uart" clock.
+>
+> Hi chunyan:
+>    Thank you very much for your review.
+>    This clock is actually mandatory now=EF=BC=8Csome SPRD project use def=
+ault 26M clock,
+>    some new SPRD project use default 24M clock.  If driver can't parse
 
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Oh I see, then you can set a different default clock according to the
+compatible string, that's saying make SPRD_DEFAULT_SOURCE_CLK to be an
+element of "of_device_id.data".
 
----
-v3:
-  Don't stop / start the queues, and use disable_work_sync() as
-  suggested by Jakub Kicinski.
+Thanks,
+Chunyan
 
-v2:
-  Updated link up/down to be symmetric, and other minor changes based
-  on comments from Andrew Lunn.
-
----
- .../net/ethernet/microsoft/mana/gdma_main.c   |  1 +
- .../net/ethernet/microsoft/mana/hw_channel.c  | 12 +++++
- drivers/net/ethernet/microsoft/mana/mana_en.c | 53 +++++++++++++++++--
- include/net/mana/gdma.h                       |  4 +-
- include/net/mana/hw_channel.h                 |  2 +
- include/net/mana/mana.h                       |  4 ++
- 6 files changed, 70 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-index 43f034e180c4..effe0a2f207a 100644
---- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-+++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-@@ -528,6 +528,7 @@ static void mana_gd_process_eqe(struct gdma_queue *eq)
- 	case GDMA_EQE_HWC_INIT_DONE:
- 	case GDMA_EQE_HWC_SOC_SERVICE:
- 	case GDMA_EQE_RNIC_QP_FATAL:
-+	case GDMA_EQE_HWC_SOC_RECONFIG_DATA:
- 		if (!eq->eq.callback)
- 			break;
- 
-diff --git a/drivers/net/ethernet/microsoft/mana/hw_channel.c b/drivers/net/ethernet/microsoft/mana/hw_channel.c
-index ada6c78a2bef..367e18d71413 100644
---- a/drivers/net/ethernet/microsoft/mana/hw_channel.c
-+++ b/drivers/net/ethernet/microsoft/mana/hw_channel.c
-@@ -118,6 +118,7 @@ static void mana_hwc_init_event_handler(void *ctx, struct gdma_queue *q_self,
- 	struct gdma_dev *gd = hwc->gdma_dev;
- 	union hwc_init_type_data type_data;
- 	union hwc_init_eq_id_db eq_db;
-+	struct mana_context *ac;
- 	u32 type, val;
- 	int ret;
- 
-@@ -196,6 +197,17 @@ static void mana_hwc_init_event_handler(void *ctx, struct gdma_queue *q_self,
- 			hwc->hwc_timeout = val;
- 			break;
- 
-+		case HWC_DATA_HW_LINK_CONNECT:
-+		case HWC_DATA_HW_LINK_DISCONNECT:
-+			ac = gd->gdma_context->mana.driver_data;
-+			if (!ac)
-+				break;
-+
-+			ac->link_event = type;
-+			schedule_work(&ac->link_change_work);
-+
-+			break;
-+
- 		default:
- 			dev_warn(hwc->dev, "Received unknown reconfig type %u\n", type);
- 			break;
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index 0142fd98392c..949aedebc8c3 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -20,6 +20,7 @@
- 
- #include <net/mana/mana.h>
- #include <net/mana/mana_auxiliary.h>
-+#include <net/mana/hw_channel.h>
- 
- static DEFINE_IDA(mana_adev_ida);
- 
-@@ -84,7 +85,6 @@ static int mana_open(struct net_device *ndev)
- 	/* Ensure port state updated before txq state */
- 	smp_wmb();
- 
--	netif_carrier_on(ndev);
- 	netif_tx_wake_all_queues(ndev);
- 	netdev_dbg(ndev, "%s successful\n", __func__);
- 	return 0;
-@@ -100,6 +100,45 @@ static int mana_close(struct net_device *ndev)
- 	return mana_detach(ndev, true);
- }
- 
-+static void mana_link_state_handle(struct work_struct *w)
-+{
-+	struct mana_context *ac;
-+	struct net_device *ndev;
-+	bool link_up;
-+	int i;
-+
-+	ac = container_of(w, struct mana_context, link_change_work);
-+
-+	rtnl_lock();
-+
-+	if (ac->link_event == HWC_DATA_HW_LINK_CONNECT)
-+		link_up = true;
-+	else if (ac->link_event == HWC_DATA_HW_LINK_DISCONNECT)
-+		link_up = false;
-+	else
-+		goto out;
-+
-+	/* Process all ports */
-+	for (i = 0; i < ac->num_ports; i++) {
-+		ndev = ac->ports[i];
-+		if (!ndev)
-+			continue;
-+
-+		if (link_up) {
-+			if (!netif_carrier_ok(ndev))
-+				netif_carrier_on(ndev);
-+
-+			__netdev_notify_peers(ndev);
-+		} else {
-+			if (netif_carrier_ok(ndev))
-+				netif_carrier_off(ndev);
-+		}
-+	}
-+
-+out:
-+	rtnl_unlock();
-+}
-+
- static bool mana_can_tx(struct gdma_queue *wq)
- {
- 	return mana_gd_wq_avail_space(wq) >= MAX_TX_WQE_SIZE;
-@@ -3059,9 +3098,6 @@ int mana_attach(struct net_device *ndev)
- 	/* Ensure port state updated before txq state */
- 	smp_wmb();
- 
--	if (apc->port_is_up)
--		netif_carrier_on(ndev);
--
- 	netif_device_attach(ndev);
- 
- 	return 0;
-@@ -3154,7 +3190,6 @@ int mana_detach(struct net_device *ndev, bool from_close)
- 	smp_wmb();
- 
- 	netif_tx_disable(ndev);
--	netif_carrier_off(ndev);
- 
- 	if (apc->port_st_save) {
- 		err = mana_dealloc_queues(ndev);
-@@ -3243,6 +3278,8 @@ static int mana_probe_port(struct mana_context *ac, int port_idx,
- 		goto free_indir;
- 	}
- 
-+	netif_carrier_on(ndev);
-+
- 	debugfs_create_u32("current_speed", 0400, apc->mana_port_debugfs, &apc->speed);
- 
- 	return 0;
-@@ -3431,6 +3468,8 @@ int mana_probe(struct gdma_dev *gd, bool resuming)
- 
- 	if (!resuming) {
- 		ac->num_ports = num_ports;
-+
-+		INIT_WORK(&ac->link_change_work, mana_link_state_handle);
- 	} else {
- 		if (ac->num_ports != num_ports) {
- 			dev_err(dev, "The number of vPorts changed: %d->%d\n",
-@@ -3438,6 +3477,8 @@ int mana_probe(struct gdma_dev *gd, bool resuming)
- 			err = -EPROTO;
- 			goto out;
- 		}
-+
-+		enable_work(&ac->link_change_work);
- 	}
- 
- 	if (ac->num_ports == 0)
-@@ -3500,6 +3541,8 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
- 	int err;
- 	int i;
- 
-+	disable_work_sync(&ac->link_change_work);
-+
- 	/* adev currently doesn't support suspending, always remove it */
- 	if (gd->adev)
- 		remove_adev(gd);
-diff --git a/include/net/mana/gdma.h b/include/net/mana/gdma.h
-index 57df78cfbf82..637f42485dba 100644
---- a/include/net/mana/gdma.h
-+++ b/include/net/mana/gdma.h
-@@ -590,6 +590,7 @@ enum {
- 
- /* Driver can self reset on FPGA Reconfig EQE notification */
- #define GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE BIT(17)
-+#define GDMA_DRV_CAP_FLAG_1_HW_VPORT_LINK_AWARE BIT(6)
- 
- #define GDMA_DRV_CAP_FLAGS1 \
- 	(GDMA_DRV_CAP_FLAG_1_EQ_SHARING_MULTI_VPORT | \
-@@ -599,7 +600,8 @@ enum {
- 	 GDMA_DRV_CAP_FLAG_1_DEV_LIST_HOLES_SUP | \
- 	 GDMA_DRV_CAP_FLAG_1_DYNAMIC_IRQ_ALLOC_SUPPORT | \
- 	 GDMA_DRV_CAP_FLAG_1_SELF_RESET_ON_EQE | \
--	 GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE)
-+	 GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE | \
-+	 GDMA_DRV_CAP_FLAG_1_HW_VPORT_LINK_AWARE)
- 
- #define GDMA_DRV_CAP_FLAGS2 0
- 
-diff --git a/include/net/mana/hw_channel.h b/include/net/mana/hw_channel.h
-index 83cf93338eb3..16feb39616c1 100644
---- a/include/net/mana/hw_channel.h
-+++ b/include/net/mana/hw_channel.h
-@@ -24,6 +24,8 @@
- #define HWC_INIT_DATA_PF_DEST_CQ_ID	11
- 
- #define HWC_DATA_CFG_HWC_TIMEOUT 1
-+#define HWC_DATA_HW_LINK_CONNECT 2
-+#define HWC_DATA_HW_LINK_DISCONNECT 3
- 
- #define HW_CHANNEL_WAIT_RESOURCE_TIMEOUT_MS 30000
- 
-diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-index 0921485565c0..8906901535f5 100644
---- a/include/net/mana/mana.h
-+++ b/include/net/mana/mana.h
-@@ -477,6 +477,10 @@ struct mana_context {
- 	struct dentry *mana_eqs_debugfs;
- 
- 	struct net_device *ports[MAX_PORTS_IN_MANA_DEV];
-+
-+	/* Link state change work */
-+	struct work_struct link_change_work;
-+	u32 link_event;
- };
- 
- struct mana_port_context {
--- 
-2.34.1
-
+> this clock correctly,
+>    driver will configure wrong baudrate and make the log garbled.
+>
+> Thanks
+>
+> >
+> > >                 dev_warn(uport->dev, "uart%d can't get uart clock\n",
+> > >                          uport->line);
+> > >                 clk_uart =3D NULL;
+> > > @@ -1140,6 +1143,9 @@ static int sprd_clk_init(struct uart_port *upor=
+t)
+> > >
+> > >         clk_parent =3D devm_clk_get(uport->dev, "source");
+> > >         if (IS_ERR(clk_parent)) {
+> > > +               if (PTR_ERR(clk_parent) =3D=3D -EPROBE_DEFER)
+> > > +                       return -EPROBE_DEFER;
+> > > +
+> > >                 dev_warn(uport->dev, "uart%d can't get source clock\n=
+",
+> > >                          uport->line);
+> > >                 clk_parent =3D NULL;
+> > > --
+> > > 2.34.1
+> > >
 
