@@ -1,114 +1,192 @@
-Return-Path: <linux-kernel+bounces-868026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB34C042DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:54:38 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E282C042E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 275384EC39A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:54:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DA01E354ED7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B41226561D;
-	Fri, 24 Oct 2025 02:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDF326B2D2;
+	Fri, 24 Oct 2025 02:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pus6z7Hn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="gmcha7yu"
+Received: from mail-m19731118.qiye.163.com (mail-m19731118.qiye.163.com [220.197.31.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B148F14386D;
-	Fri, 24 Oct 2025 02:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF9D14386D;
+	Fri, 24 Oct 2025 02:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761274470; cv=none; b=H4zBeBObB6DkdJDE6y/Leua2Pk2Y5scMQK/2WbBOLaxXO6rdOivdxSpdgs+nkgdUtOIyyBNmU1CsCDntQanw6IznOwOUsdXL6qXtn0COhtBAL0KyRP8R36X8RiQRrq3LLvmpmzNfGzRcBXbDAIss6kEE1C9FgaoTPcStLUWdgZ8=
+	t=1761274513; cv=none; b=dOzO2xVgDhiJ4D/cnEDaH9ae4xhXwf/NJrwFSKCD1/WIKqmGQxK6RZovkGbqV4G1V3LKDv4FcTyERa2ARP+tmqfN8KlNkwcuiR17sayoJCC6jQMSJMFoyQ3U3frDGHls5MJqfAWzoaFlKcLwmfz0v3MlB3r/sh4tVUbqfAO4dfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761274470; c=relaxed/simple;
-	bh=l7Kt54esXuy6cW4NMDoL5L7OAAPO8XqbVG+dMVCBp+E=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=cnYYm6XrhhKF2UvF0zOJypH8JDjYkA3cP6aWQ70W2+2l8/omY8hb1oGskGL/IMDdjILsS5JjTE6Tr6WsGdyFg9OJ8Z1adMNIvvUZPcPB+NPQzU3vmNUHHToYQzYzEYf/MmWOeQ4rHuUNOe+y+d0d42VyqC3g4OicqhT+7+aeao8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pus6z7Hn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A8D8C4CEE7;
-	Fri, 24 Oct 2025 02:54:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761274470;
-	bh=l7Kt54esXuy6cW4NMDoL5L7OAAPO8XqbVG+dMVCBp+E=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=Pus6z7Hnt6+Il3SwthVqHOZDDC3GtvdSOcNTbT6k3s6naQxBmZJOubRVwEsVI7CyK
-	 WwHiawimzzXy3DVXjWEmkdcXxxXFqrn999N7ZI7H7HyjKq02A/GMxhgXOCnCZJmk6z
-	 n0KQA75orlACk89OVqeKuc9lAqR/aV5z7KDU7VlujFKQrYvsCQ0yNNsW0ubE+/dkF3
-	 Q95Z1EikX6S25ZDXSZcCR+A3vCCid8FV15jt8fgkkJkDGG2/esvjgOVP2IRhT85kQT
-	 xLf8nCNxFa7R1KdtwJeYAsF/Ch82aRUhnb3IW53Sv3a/CSExnMp6NddZCW55ctlM7h
-	 AW4w3QXaTcjfQ==
-Date: Thu, 23 Oct 2025 20:54:13 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: Rob Herring <robh@kernel.org>
-cc: Paul Walmsley <pjw@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
-    Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-    Han Gao <rabenda.cn@gmail.com>
-Subject: Re: [PATCH] of: Skip devicetree kunit tests when RISCV+ACPI doesn't
- populate root node
-In-Reply-To: <CAL_JsqJjiB3h+hzstXSbnyFy+U39GgtT=rcb4r+QDv=uL54H8g@mail.gmail.com>
-Message-ID: <1260cd8c-2904-1a21-d7ad-ba9b82f67797@kernel.org>
-References: <20251023160415.705294-1-linux@roeck-us.net> <2bef32d0-2c35-c93d-08a8-71966c1212f2@kernel.org> <CAL_JsqJjiB3h+hzstXSbnyFy+U39GgtT=rcb4r+QDv=uL54H8g@mail.gmail.com>
+	s=arc-20240116; t=1761274513; c=relaxed/simple;
+	bh=7Qj/NAfS3cLyaDSJR4xvC/LqFNp7atNcNr1bPRQSWUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K2JvVhlfhl4ehlLu+Gkm0Lm+QexwtJwy75YYYVjGI0mLnC0iNbWOLVYzbnp/+6OQwD3QL3MDBIOXmY3h27hmSXg3iiveIAkVPlht6360Wy087Jfeso1kU3fPciUhnO3GfNgH9fxenYa2RpMmNJC0DHzk7iHPek/SYc1LX6pXU3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=gmcha7yu; arc=none smtp.client-ip=220.197.31.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.149] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 270392de1;
+	Fri, 24 Oct 2025 10:54:54 +0800 (GMT+08:00)
+Message-ID: <3a24bd7f-c247-4541-8cf5-c1e66e2af5a0@rock-chips.com>
+Date: Fri, 24 Oct 2025 10:54:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-935726058-1761274469=:3901516"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/9] usb: typec: Add notifier functions
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Chaoyi Chen <kernel@airkyi.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Yubing Zhang <yubing.zhang@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Amit Sunil Dhamne <amitsd@google.com>, Dragan Simic <dsimic@manjaro.org>,
+ Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>,
+ Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20251023033009.90-1-kernel@airkyi.com>
+ <20251023033009.90-2-kernel@airkyi.com> <aPni4AeDaem_rfZH@kuha.fi.intel.com>
+ <aPnvoSRJefwDlpNO@kuha.fi.intel.com> <aPn4-S7upPOOtenr@kuha.fi.intel.com>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <aPn4-S7upPOOtenr@kuha.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a1423fc4303abkunm4d0d6ba0277ced
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkMaHVYZGU1PQ0lLSksaSk5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
+	xVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=gmcha7yuuy2CrfoJTdnhI28g8WBtmL6HRH9Mdyp3PkXa22Ic+yNinMzirWLDo1sTbwJVUhRbRenlG1jXmIyMJdhn2Is0wH2sqNKx0KDDv2BfwRPbBJ0P629GC7/OLFQ5/1dtLeizfRYMEGojJWZS/eHoEMLejymKWKBGpFP+TiQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=N/ZJiet+D4kgJuaGh5t2VPX+e1fCgDJpBS23oXLL2Nk=;
+	h=date:mime-version:subject:message-id:from;
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Heikki,
 
---8323329-935726058-1761274469=:3901516
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+On 10/23/2025 5:44 PM, Heikki Krogerus wrote:
+> On Thu, Oct 23, 2025 at 12:04:44PM +0300, Heikki Krogerus wrote:
+>> On Thu, Oct 23, 2025 at 11:10:20AM +0300, Heikki Krogerus wrote:
+>>> Hi,
+>>>
+>>>> diff --git a/include/linux/usb/typec_notify.h b/include/linux/usb/typec_notify.h
+>>>> new file mode 100644
+>>>> index 000000000000..a3f1f3b3ae47
+>>>> --- /dev/null
+>>>> +++ b/include/linux/usb/typec_notify.h
+>>>> @@ -0,0 +1,17 @@
+>>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>>> +
+>>>> +#ifndef __USB_TYPEC_NOTIFY
+>>>> +#define __USB_TYPEC_NOTIFY
+>>>> +
+>>>> +#include <linux/notifier.h>
+>>>> +
+>>>> +enum usb_typec_event {
+>>>> +	TYPEC_ALTMODE_REGISTERED
+>>>> +};
+>>> Don't you need to know when the altmode is removed?
+>> I noticed that you don't because drm_dp_hpd_bridge_register() is
+>> always resource managed. But I think you could still send an event
+>> also when the altmode is removed already now. That way it does not
+>> need to be separately added if and when it is needed.
+> Hold on! Every bus has already a notifier chain. That's the one that
+> we should also use. Sorry for not noticing that earlier.
+>
+> So let's just export the bus type in this patch - you can then use
+> bus_register_notifier() in your driver:
+>
+> diff --git a/drivers/usb/typec/bus.c b/drivers/usb/typec/bus.c
+> index a884cec9ab7e..65ded9e3cdaa 100644
+> --- a/drivers/usb/typec/bus.c
+> +++ b/drivers/usb/typec/bus.c
+> @@ -547,3 +547,4 @@ const struct bus_type typec_bus = {
+>          .probe = typec_probe,
+>          .remove = typec_remove,
+>   };
+> +EXPORT_SYMBOL_GPL(typec_bus);
+> diff --git a/drivers/usb/typec/bus.h b/drivers/usb/typec/bus.h
+> index 643b8c81786d..af9edb3db9d0 100644
+> --- a/drivers/usb/typec/bus.h
+> +++ b/drivers/usb/typec/bus.h
+> @@ -5,7 +5,6 @@
+>   
+>   #include <linux/usb/typec_altmode.h>
+>   
+> -struct bus_type;
+>   struct typec_mux;
+>   struct typec_retimer;
+>   
+> @@ -28,7 +27,6 @@ struct altmode {
+>   
+>   #define to_altmode(d) container_of(d, struct altmode, adev)
+>   
+> -extern const struct bus_type typec_bus;
+>   extern const struct device_type typec_altmode_dev_type;
+>   
+>   #define is_typec_altmode(_dev_) (_dev_->type == &typec_altmode_dev_type)
+> diff --git a/include/linux/usb/typec.h b/include/linux/usb/typec.h
+> index 309251572e2e..c6fd46902fce 100644
+> --- a/include/linux/usb/typec.h
+> +++ b/include/linux/usb/typec.h
+> @@ -20,12 +20,15 @@ struct typec_port;
+>   struct typec_altmode_ops;
+>   struct typec_cable_ops;
+>   
+> +struct bus_type;
+>   struct fwnode_handle;
+>   struct device;
+>   
+>   struct usb_power_delivery;
+>   struct usb_power_delivery_desc;
+>   
+> +extern const struct bus_type typec_bus;
+> +
+>   enum typec_port_type {
+>          TYPEC_PORT_SRC,
+>          TYPEC_PORT_SNK,
+>
+> thanks,
 
-On Thu, 23 Oct 2025, Rob Herring wrote:
+I noticed the following statement in typec_register_altmode():
 
-> On Thu, Oct 23, 2025 at 11:48 AM Paul Walmsley <pjw@kernel.org> wrote:
-> >
-> > On Thu, 23 Oct 2025, Guenter Roeck wrote:
-> >
-> > > Starting with commit 69a8b62a7aa1 ("riscv: acpi: avoid errors caused by
-> > > probing DT devices when ACPI is used"), riscv images no longer populate
-> > > devicetree if ACPI is enabled. This causes unit tests to fail which require
-> > > the root node to be set.
-> > >
-> > >   # Subtest: of_dtb
-> > >   # module: of_test
-> > >   1..2
-> > >   # of_dtb_root_node_found_by_path: EXPECTATION FAILED at drivers/of/of_test.c:21
-> > >   Expected np is not null, but is
-> > >   # of_dtb_root_node_found_by_path: pass:0 fail:1 skip:0 total:1
-> > >   not ok 1 of_dtb_root_node_found_by_path
-> > >   # of_dtb_root_node_populates_of_root: EXPECTATION FAILED at drivers/of/of_test.c:31
-> > >   Expected of_root is not null, but is
-> > >   # of_dtb_root_node_populates_of_root: pass:0 fail:1 skip:0 total:1
-> > >   not ok 2 of_dtb_root_node_populates_of_root
-> > >
-> > > Skip those tests for RISCV if the root node is not populated.
-> > >
-> > > Fixes: 69a8b62a7aa1 ("riscv: acpi: avoid errors caused by probing DT devices when ACPI is used")
-> > > Cc: Han Gao <rabenda.cn@gmail.com>
-> > > Cc: Paul Walmsley <pjw@kernel.org>
-> > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> >
-> > Reviewed-by: Paul Walmsley <pjw@kernel.org>  # arch/riscv
-> 
-> FWIW, the fixed commit will also prevent enabling features like this
-> series[1] enables. Arm64 is still disabled ATM because of disagreement
-> with the arm64 maintainers, so that can was kicked down the road. It
-> would be better to not disable this and address the issues as they
-> happen rather than breaking people down the road.
+```
 
-Thanks for the context, Rob.  Can you share a pointer to the ARM64 
-disagreement thread(s) (either publicly or privately)?  
+     /* The partners are bind to drivers */
+     if (is_typec_partner(parent))
+         alt->adev.dev.bus = &typec_bus;
+
+```
+
+If the condition is not met, the bus will not be set, which means bus_notify() won't be able to take effect. Did I miss something?
 
 
-- Paul
---8323329-935726058-1761274469=:3901516--
+-- 
+Best,
+Chaoyi
+
 
