@@ -1,92 +1,78 @@
-Return-Path: <linux-kernel+bounces-869054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC94C06D1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:58:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C279EC06D25
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14A8189D47F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:57:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3611C01475
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAF12C0F6E;
-	Fri, 24 Oct 2025 14:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7AD253B58;
+	Fri, 24 Oct 2025 14:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KB2aflRz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="84clBrsb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K//ufyrb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2547023A99E;
-	Fri, 24 Oct 2025 14:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B7030EF62;
+	Fri, 24 Oct 2025 14:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761317829; cv=none; b=XW/JEhbdhJB58ygVTv7z4VG5XUH+KJGxa8UnXng8PW/Dp8IB+HCgCSk5cgyIDJVdeJYOcndq0q5lYbeSkxlPIRupEI/wNO+KEX5D6UCXrX41Q04uOOgNdrtmRrIaGWs/MsIPk6H9GgB1Q6JgcGJYXrB5qxFWFM0Wmd6tfZJ05Mw=
+	t=1761317848; cv=none; b=Xaavi6aLIHMCmbQjCqUv1/2a8sYdWE1IcPc+g3fs8f6NAHTcR05Aix+5CcbEkiHIOZkNS1NFh1SOc7LAJTzcB1ccjVDYnbgglij7ZtyOIodFpFT/wnWgBqlSdy3CDrhi6w/hvss21CQhxnNtsKdzE0FX2NVh+cqbD+Cnj6kdsqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761317829; c=relaxed/simple;
-	bh=lHnav4cPHx6JkeWDDcOGkx10TKSwFlxv1j2pzTeY4cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FzmPRAHOJIDTyYGsC6NE7aDGrIZ+b54IAxjAV7T3VuKYVSjbxZLCBT4dGUSEVN3kV9x+gYRDnB3HZNfxCDDTjwgqkPKkueGrL5xTNBy6ik32QFsCXPOO2TrEFsrT7RI7ue2kBSTW97M+L0FEW/0YMp+eHcCrixeDBtcsToKVTPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KB2aflRz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=84clBrsb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 24 Oct 2025 16:57:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761317826;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=JtWVRobZuiuWi4HNeldvVaIkj3QLo97sXbbx84d065w=;
-	b=KB2aflRzZPekLdjDBxtWmBXyT5bVjccJ8XNdlbxNaCoMTTrn0Jx2POgcqMbA+IvAwRzHlZ
-	H1EwLZ2ROL26/4uH65JqYYtzReBoKAEVcTuiXSbflkUjqFdwRDFJIklGcfCtysFeGDVF2K
-	HHWK20VXJ08vGEF7XNuau6gDkcxcoYNBkDbLTud/CF4erVTwhE97C1cIA8rbr0Wlpn2txb
-	UPQJI0Lv7+ZTuMirTqdxkP/n6UiZ1K2DY1rZhLW3Y2JoBKQgpVNVp+XRQ6hjSf4vNqU/u5
-	4/MjMoaTPiXovlcIJ47Gsz2ZRT5XTERfKPUOnjr6iaNLUPsqxXhHcHMQ2n6kQg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761317826;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=JtWVRobZuiuWi4HNeldvVaIkj3QLo97sXbbx84d065w=;
-	b=84clBrsbMDYSGZdJ1Hu5aJrZ11+GZXRY/dUWn+onF3LEC6aXR79KnkRWx22sRvLhsg2zR3
-	SS4uTJKGKvSHXKCQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>, linux-rt-devel@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v6.18-rc2-rt1
-Message-ID: <20251024145705.mGSpfWqu@linutronix.de>
+	s=arc-20240116; t=1761317848; c=relaxed/simple;
+	bh=ckGShd3HSTRH6YBTlCk+dpeQP+1/q+Dixe18TS1J2YE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jFhSC/KNuHsrf5wpqvkt6OViOZPIfU2F70dkCNMzE0j6q2wHaX799Jnj801brXefP3PO4MYLPjma7xjzhRh5e7KKzn1MRCpVN6GZNhc8ehko/vHWty55/gqbiCSRKd1ZoC2PAhHisZ12/zGFuWVunsm7l6u7PdGduz7PZQod3uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K//ufyrb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92911C4CEF1;
+	Fri, 24 Oct 2025 14:57:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761317847;
+	bh=ckGShd3HSTRH6YBTlCk+dpeQP+1/q+Dixe18TS1J2YE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K//ufyrbHR+YI7mo1zmUMQyv7Q1B7V4AXedFU0PK2l7GtfwIal6gWCYcsOK5Ibef2
+	 qFF3vZZ38sCQ69GP44WX/fLkFhI6YfVtUhwi3TGAPg1J9R5ZoBfr4g2YhDr2IncIai
+	 2zWIUjD09tZkh2N3fDkKQGG04+I1Vg/YIPPUrmmEjn1YuMpiZvjoz2icOqlgvYGtEV
+	 FBQQiD5cqJqJw4kvVeQ+yeseZK9wtl044UBDhuxr9W/v1QPU/aY4axq4IEqrpk3sNd
+	 4OEL5jttbmqo5NvjZ7I8WbeBRcTY44Xa2PSibqBc87KbosuJXiWBuM2wYTePLWN9dl
+	 tEFr0v7ao6dMw==
+Message-ID: <ad655011-d695-4dca-bc60-902aeffe73a9@kernel.org>
+Date: Fri, 24 Oct 2025 16:57:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Remove the usage of Rust native atomics in debugfs
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthew Maurer <mmaurer@google.com>
+References: <20251022035324.70785-1-boqun.feng@gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251022035324.70785-1-boqun.feng@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Dear RT folks!
+On 10/22/25 5:53 AM, Boqun Feng wrote:
+> Boqun Feng (3):
+>   rust: sync: atomic: Make Atomic*Ops pub(crate)
+>   rust: sync: atomic: Implement Debug for Atomic<Debug>
+>   rust: debugfs: Replace the usage of Rust native atomics
 
-I'm pleased to announce the v6.18-rc2-rt1 patch set. 
-
-Changes since v6.17.5-rt7:
-
-  - Update to v6.18-rc2
-
-Known issues
-    - Yoann Congal reported a bit spinlock in dm_exception_table_lock().
-        https://lore.kernel.org/all/Z8GTjqgDe_5EkE3t@P-ASN-ECS-830T8C3.local
-
-You can get this release via the git tree at:
-
-    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.18-rc2-rt1
-
-The RT patch against v6.18-rc2 can be found here:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.18/older/patch-6.18-rc2-rt1.patch.xz
-
-The split quilt queue is available at:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.18/older/patches-6.18-rc2-rt1.tar.xz
-
-Sebastian
+I ack'd patch three for you to pick it up, but I now wonder if you want me to
+pick it up through the driver-core tree?
 
