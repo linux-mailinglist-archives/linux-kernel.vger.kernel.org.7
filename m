@@ -1,155 +1,143 @@
-Return-Path: <linux-kernel+bounces-869119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C603C0701A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:38:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3BDEC07020
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B32B3B3D6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3961D3BA1CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E069332A3C2;
-	Fri, 24 Oct 2025 15:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0041E326D5F;
+	Fri, 24 Oct 2025 15:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="oQaaa7ce"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="VaBgOsOB"
+Received: from pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.155.198.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8410306B12;
-	Fri, 24 Oct 2025 15:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E169F31B132
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.155.198.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761320327; cv=none; b=DQX8LLHmsz3Gl59hKuFCFiFTNY4PdSgl+tpVTWRkpBkX8OFnyq3a25xyn8aHFEyxNXNkE+N7rFb9ef2Cvq+gZ1DFg0gEREnUm+1F4mvSUiSU6HLVclg3obnd0gjHDdincv7hQVunxvZv6/oX4T7VQ7e9igKHTwni7+sQuBubY6o=
+	t=1761320388; cv=none; b=oKywXbFTKPIP+SIeScY182AlmHQwElNZ0TjGXTVlfLsm31KBU7OUvmtgs2xq5b0KnSybcFycPg4vlgMGbu5S+mjJusRi7oRV0y5VxSk9wi4/4e+e/zVDjmzUQGulai5jxib8r9d1wmueR9ErkUCuDpdC53DJ/Sgu+xEYbPcer7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761320327; c=relaxed/simple;
-	bh=hrmLWBGeZqGWBqhXGkRmBVXABbzsbUQ/o/K+nxSGpPM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iPyDPHjp9qGlylMfDMpeX8T5ZHCXp84V0MnGj5jEkZsaBeX4NlB0Zknqk1pWcnz8vgnJM0DMfmRVvMZTWL1YudwLMxz6a64zYMUilVXKtSJMdqGlmi3smuNUw0JpX2MQwWhB9sPV5pukbxwA/2cgn1sJnxg9AYkdVi8tX4VKYO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=oQaaa7ce; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=73Zwdq32M3wvIOvcsImSKjLgygutGdvwi4JFjWo6zTA=; t=1761320324;
-	x=1761925124; b=oQaaa7ceAodPDU2w8Lj9e2jsuJ0d76IpS51MHIlaBeLHzLW425hiNEZyrk3j7
-	CezylAUF8Mbdqp0b9mOayQ2w9BKAuCfMElPuXkg5MxDdKbgmQRMu1nKodQAoyWspB5uaxysVfynUL
-	TS149hoQ6cpdZy3r7ynQkzoZNYOVMAHhJ+SBfo9pCiYd3sX3va76eadftlnl0nJa+4vy8UfPA0GTj
-	cClqKCtP9Uj/DRbqXlKfIex8EmdxXeBN3KAYV7+zCXPGNf+JrsifbD2K3mZaXhwy65PPve5UBCuQ+
-	yYVl2YbGJAWCW996sswc773BfJb2vQc/PD/Ke6BVggWnSiiCbQ==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1vCJs4-00000000MJF-0C1i; Fri, 24 Oct 2025 17:38:28 +0200
-Received: from p5b13aa34.dip0.t-ipconnect.de ([91.19.170.52] helo=suse-laptop.fritz.box)
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1vCJs3-00000000KCV-30QZ; Fri, 24 Oct 2025 17:38:27 +0200
-Message-ID: <fcd7b731d38b256e59edd532e792a00efa4e144e.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v3 11/13] x86/xen: use lazy_mmu_state when
- context-switching
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: David Woodhouse <dwmw2@infradead.org>, David Hildenbrand
- <david@redhat.com>,  Kevin Brodsky <kevin.brodsky@arm.com>,
- linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev
- <agordeev@linux.ibm.com>,  Andreas Larsson <andreas@gaisler.com>, Andrew
- Morton <akpm@linux-foundation.org>, Boris Ostrovsky	
- <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@alien8.de>, Catalin
- Marinas	 <catalin.marinas@arm.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>,  Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin"	 <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,  Juergen
- Gross <jgross@suse.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes	 <lorenzo.stoakes@oracle.com>, Madhavan Srinivasan
- <maddy@linux.ibm.com>,  Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko
- <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, Nicholas Piggin
- <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Ryan Roberts	
- <ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>, Thomas
- Gleixner	 <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, Will
- Deacon	 <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-Date: Fri, 24 Oct 2025 17:38:26 +0200
-In-Reply-To: <cbe0d305cce6d76e00b64e7209f15b4645c15033.camel@infradead.org>
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
-		 <20251015082727.2395128-12-kevin.brodsky@arm.com>
-		 <f0067f35-1048-4788-8401-f71d297f56f3@redhat.com>
-		 <348e5f1c5a90e4ab0f14b4d997baf7169745bf04.camel@infradead.org>
-		 <70723f4a-f42b-4d94-9344-5824e48bfad1@redhat.com>
-	 <cbe0d305cce6d76e00b64e7209f15b4645c15033.camel@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+	s=arc-20240116; t=1761320388; c=relaxed/simple;
+	bh=lnzH1WOCcfL3GaHbrM04HeVxGWQ84BQMEaCQSovwPVw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E1HfqbyXoQ0ryvH6330C3RIbMn6qAS+foLc0YOrRgTlY16PiNYw8lo4dOAsQIDo7M1JBuPAv6PuTTkO2vamiQahZINo/lhTHxAPxGakU+MleTnuAip59lAdOYRKazgFkluKl3Td8lRjSyMJcdQ39CQuNUWutW2TFd078HdFVb+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=VaBgOsOB; arc=none smtp.client-ip=35.155.198.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1761320386; x=1792856386;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zDN+ThyNVQ8b/2Ptq1WNLoggDamDN4huotNCUsgtnek=;
+  b=VaBgOsOBjBWx1mD8kfgMd+AWEC2Bs3biDBGwMGK4Y3tPA04WaOnV8dTk
+   8yCpJBgqMWTgThVq5bt5roo2ZWwZOJlY8Kg4ehB6Or9f/1TIkzbB9xPG+
+   CWQVDBVMhWF5EHHC1mAVKfQAj7Dee00fC59ddDCl9cqmP4haHgG0ld/rY
+   V82tgWysWf5NT1PcPEXEfoxYP7qfqqxJfRRyDeicbwEJr8ZuCUr9xzizn
+   CD54RFwMKRslh1iAK1EFBV8pHlu7p2uAVyawuy+f3wkepWuLtdJvh9XeM
+   bdX5vVt6mBqmjanpJ8Hkvevd9BmPhasxvvVYcMNkXeHmX1Qm1gA62qwS+
+   w==;
+X-CSE-ConnectionGUID: qqWwwP/4SwSMIBSg1EtjKw==
+X-CSE-MsgGUID: X0SsnNokSRSfbA1joNAaOA==
+X-IronPort-AV: E=Sophos;i="6.19,252,1754956800"; 
+   d="scan'208";a="5538092"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 15:39:46 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [205.251.233.105:17502]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.58.51:2525] with esmtp (Farcaster)
+ id 180f7de7-0d90-40fe-924f-05c3a8e95183; Fri, 24 Oct 2025 15:39:46 +0000 (UTC)
+X-Farcaster-Flow-ID: 180f7de7-0d90-40fe-924f-05c3a8e95183
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Fri, 24 Oct 2025 15:39:44 +0000
+Received: from 80a9970eed1e (10.106.100.47) by EX19D001UWA001.ant.amazon.com
+ (10.13.138.214) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Fri, 24 Oct 2025
+ 15:39:42 +0000
+Date: Fri, 24 Oct 2025 08:39:40 -0700
+From: Justinien Bouron <jbouron@amazon.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: <kexec@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<llvm@lists.linux.dev>, Andrew Morton <akpm@linux-foundation.org>, Baoquan He
+	<bhe@redhat.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+	<nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, "Justin
+ Stitt" <justinstitt@google.com>
+Subject: Re: [resend, PATCH v2 1/1] kexec: Remove unused code in
+ kimage_load_cma_segment()
+Message-ID: <aPudvI4dQnvgOKBd@80a9970eed1e>
+References: <20250916125124.3094021-2-andriy.shevchenko@linux.intel.com>
+ <aNLd_6CO6YMvm2MN@80a9970eed1e>
+ <aO1lmNyLCVUhL_kO@smile.fi.intel.com>
+ <aPt5CYz5Cc-7St6L@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aPt5CYz5Cc-7St6L@black.igk.intel.com>
+X-Editor: VIM - Vi IMproved 9.1
+X-ClientProxiedBy: EX19D045UWA003.ant.amazon.com (10.13.139.46) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Fri, 2025-10-24 at 16:13 +0100, David Woodhouse wrote:
-> On Fri, 2025-10-24 at 16:51 +0200, David Hildenbrand wrote:
-> > On 24.10.25 16:47, David Woodhouse wrote:
-> > > On Thu, 2025-10-23 at 22:06 +0200, David Hildenbrand wrote:
-> > > > On 15.10.25 10:27, Kevin Brodsky wrote:
-> > > > > We currently set a TIF flag when scheduling out a task that is in
-> > > > > lazy MMU mode, in order to restore it when the task is scheduled
-> > > > > again.
-> > > > >=20
-> > > > > The generic lazy_mmu layer now tracks whether a task is in lazy M=
-MU
-> > > > > mode in task_struct::lazy_mmu_state. We can therefore check that
-> > > > > state when switching to the new task, instead of using a separate
-> > > > > TIF flag.
-> > > > >=20
-> > > > > Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> > > > > ---
-> > > >=20
-> > > >=20
-> > > > Looks ok to me, but I hope we get some confirmation from x86 / xen
-> > > > folks.
-> > >=20
-> > >=20
-> > > I know tglx has shouted at me in the past for precisely this reminder=
-,
-> > > but you know you can test Xen guests under QEMU/KVM now and don't nee=
-d
-> > > to actually run Xen? Has this been boot tested?
-> >=20
-> > And after that, boot-testing sparc as well? :D
->=20
-> Also not that hard in QEMU, I believe. Although I do have some SPARC
-> boxes in the shed...
+On Fri, Oct 24, 2025 at 03:03:05PM +0200, Andy Shevchenko wrote:
+> On Mon, Oct 13, 2025 at 11:48:24PM +0300, Andy Shevchenko wrote:
+> > On Tue, Sep 23, 2025 at 10:50:55AM -0700, Justinien Bouron wrote:
+> > > On Tue, Sep 16, 2025 at 02:51:09PM +0200, Andy Shevchenko wrote:
+> > > > clang is not happy about set but unused variable:
+> > > > 
+> > > > kernel/kexec_core.c:745:16: error: variable 'maddr' set but not used [-Werror,-Wunused-but-set-variable]
+> > > >   745 |         unsigned long maddr;
+> > > >       |                       ^
+> > > > 1 error generated.
+> > > > 
+> > > > Fix the compilation breakage (`make W=1` build) by removing unused variable.
+> > > > 
+> > > > As Nathan noted, GCC 16 produces the similar warning;
+> > > > 
+> > > > Fixes: f4fecb50d6e1 ("kexec_core: remove superfluous page offset handling in segment loading")
+> > > FYI the commit this patch is fixing (i.e. f4fecb50d6e1) is going to need a
+> > > second revision as well (I haven't submitted it yet, still working on it), this
+> > > means that your "Fixes:" tag will need to be changed again, requiring a 3rd
+> > > revision.
+> > > 
+> > > I am not sure what is the proper way forward here. Should I:
+> > >     - Send my v2, without fixing the unused variable and then you send your v3
+> > >       with the updated "Fixes:" tag pointing to my v2.
+> > >     - OR fixing the unused variable in my v2 (i.e. "absorb" this patch in my
+> > >       v2).
+> > 
+> > Second is the best (integrate this fix into yours v2).
+> > 
+> > > In the latter case, I am not sure how I am supposed to credit the work in this
+> > > case? Do I need to add another "Signed-off-by: Andy Shevchenko" besides mine?
+> > 
+> > Just in the comment block (after the cutter '---' line and before the diff) in
+> > a free words. No need for any special tags for this in such a case.
+> > 
+> > > I'm still learning the ropes on how to contribute through the mailing list so I
+> > > would be grateful if you could share your input on what's the proper way forward
+> > > here.
+> 
+> Any news, folks, please? The bug is still in Linux Next and prevents me from
+> building my stuff cleanly.
+I am working on sending the V3 as we speak, sorry for the delay.
 
-Please have people test kernel changes on SPARC on real hardware. QEMU does=
- not
-emulate sun4v, for example, and therefore testing in QEMU does not cover al=
-l
-of SPARC hardware.
-
-There are plenty of people on the debian-sparc, gentoo-sparc and sparclinux
-LKML mailing lists that can test kernel patches for SPARC. If SPARC-relevan=
-t
-changes need to be tested, please ask there and don't bury such things in a
-deeply nested thread in a discussion which doesn't even have SPARC in the
-mail subject.
-
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Best,
+Justinien Bouron
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
