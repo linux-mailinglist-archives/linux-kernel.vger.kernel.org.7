@@ -1,124 +1,112 @@
-Return-Path: <linux-kernel+bounces-869051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EEBC06D07
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:56:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E19C06D04
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03EAC1889D93
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:55:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35DFF567438
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E4824E4BD;
-	Fri, 24 Oct 2025 14:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BrBGXayH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7pTkKdAy"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5680323B604;
-	Fri, 24 Oct 2025 14:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBF624A079;
+	Fri, 24 Oct 2025 14:54:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF762472B5;
+	Fri, 24 Oct 2025 14:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761317682; cv=none; b=BGYBAl6B51qT7a/3/J9tL4TrZLtfOb0rvSU3Uy0hK0EWxNmHBhgPXY4bjwvC+Apzu/kPbP5i3bvkpX3Ari7D4l0RQqusKjjAoRojrecGcmwxW5okI/xqdYKKRS0SMD1cpRIvng/e7CK4Hoa0yHWhLLmOrCfmnVyjz9Yn6SjR44w=
+	t=1761317698; cv=none; b=hxtJdFsAkQDQtcc05xGDJuFIwE3BI8ZTdyU+HnyQLX6s5rtgdXF9JVNDAXhO7unjAVgWJwo23Pkp4PYRm4sj++ww/WKE9g2vygWSmX5p1x4RS/6w1bisngbaedz6HnbPsK7Kx5YBIyPvLCkCCAtkiIROLrBkNPyBsangKo7HMNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761317682; c=relaxed/simple;
-	bh=7IhR2vSj/blV12vbTgFp/+60dHurur0StmZegWMD0Kg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tSnM0GOKjEi+H4tgl+Tq5+XXesclJU34fpheKvLdD6lsOBOJSqDJnHj4pHSBGF1KVONKIvCEe42strK7hFU3RWLPDeSqLTvz+PRA1QK/jOrif5O+CG/cyiD8JFkTj57bhZQK1d4hCqLMRR8HTVcaeyh+sY+J9uNo3+fz7ehZ1KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BrBGXayH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7pTkKdAy; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 24 Oct 2025 16:54:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761317678;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=HWVNNi74jWPH4NGKAmlxWJhUNoDFgbuFi3sJhS766a8=;
-	b=BrBGXayH2dTNR7WQgaIFDXC9VmS2mG339Y5ODwtFWsIt5uPn2vltX8PnqbSe9S92VrNfjC
-	D44hrSkMx9S7TVQoLcP2laUFEXsmeryBaagalT3v7Fy+Yy91Ir0GmXhKUZD5dNxqMweEoT
-	yxB5i5nDFtkPirQCBgxZV0wBQeaphYAEGgCMxXPJGqmhGRhFAoR7EOK+OQg2YxCOxcPtZY
-	SbvygQAs94G2OzFnvikthPoYhKtwlL7CgIikHeKQroF8MT0MuTn4u+guMYxcKv5rpGvynB
-	GuHQA1trZ+t4shYGbJ7T7aVZcOqRHe/xIoHvDBX/joToEr625GUZDJDvI8b8Zg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761317678;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=HWVNNi74jWPH4NGKAmlxWJhUNoDFgbuFi3sJhS766a8=;
-	b=7pTkKdAyKJvy6e0v8Xt9jnERt9nm0ZX/YEkecGrPJIz2+dFpplLfHissGOwA2Hm1eBzjlg
-	YEvYIYLdriqIPeBg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>, linux-rt-devel@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v6.17.5-rt7
-Message-ID: <20251024145436.souGwBdZ@linutronix.de>
+	s=arc-20240116; t=1761317698; c=relaxed/simple;
+	bh=TLTn/UbQmcHWmadVul4cDw8XkcAbkv+aTx0AlM7M7aQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uOXVUqCJnBNcXHULLrvjyCBddmmr3rWQTQxxTdLcIOJvD2UF5i54mP1If7MXqbh7RF7PyvIrs4K6tjMfGO8cmlsaY4s7vjVbJN6klWGBnuzE0s1sPuNTgDOm1cC3DZQNiFPiLLGdeHNBbYJI39u9qaiFTaxXnWO0z+ILT2gPyoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8AF2F1424;
+	Fri, 24 Oct 2025 07:54:47 -0700 (PDT)
+Received: from [10.57.67.38] (unknown [10.57.67.38])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 10A0E3F63F;
+	Fri, 24 Oct 2025 07:54:47 -0700 (PDT)
+Message-ID: <1b658758-73dc-4e53-aa7f-696f59067067@arm.com>
+Date: Fri, 24 Oct 2025 16:54:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/13] powerpc/mm: implement arch_flush_lazy_mmu_mode()
+To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
+ <20251015082727.2395128-4-kevin.brodsky@arm.com>
+ <60c55686-87dd-46d0-884e-80f7d423663b@redhat.com>
+ <604f26cb-46c6-4533-8110-0b174eed821d@arm.com>
+ <5d5a85ec-0213-4af3-92a9-c02bb13da073@redhat.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <5d5a85ec-0213-4af3-92a9-c02bb13da073@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Dear RT folks!
+On 24/10/2025 16:42, David Hildenbrand wrote:
+> On 24.10.25 14:09, Kevin Brodsky wrote:
+>> On 23/10/2025 21:36, David Hildenbrand wrote:
+>>> On 15.10.25 10:27, Kevin Brodsky wrote:
+>>>> [...]
+>>>>
+>>>> diff --git a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+>>>> b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+>>>> index 146287d9580f..7704dbe8e88d 100644
+>>>> --- a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+>>>> +++ b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
+>>>> @@ -41,6 +41,16 @@ static inline void arch_enter_lazy_mmu_mode(void)
+>>>>        batch->active = 1;
+>>>>    }
+>>>>    +static inline void arch_flush_lazy_mmu_mode(void)
+>>>> +{
+>>>> +    struct ppc64_tlb_batch *batch;
+>>>> +
+>>>> +    batch = this_cpu_ptr(&ppc64_tlb_batch);
+>>>
+>>> The downside is the double this_cpu_ptr() now on the
+>>> arch_leave_lazy_mmu_mode() path.
+>>
+>> This is only temporary, patch 9 removes it from arch_enter(). I don't
+>> think having a redundant this_cpu_ptr() for a few commits is really a
+>> concern?
+>
+> Oh, right. Consider mentioning in the patch description
+>
+> "Note that follow-up patches will remove the double this_cpu_ptr() on
+> the arch_leave_lazy_mmu_mode() path again." 
 
-I'm pleased to announce the v6.17.5-rt7 patch set. 
+Sounds good, will do.
 
-Changes since v6.17.5-rt6:
-
-  - The previously introduced gro-cells related suffered from a missing
-    unlock. Patch by Eric Dumazet.
-
-Known issues
-    - Yoann Congal reported a bit spinlock in dm_exception_table_lock().
-        https://lore.kernel.org/all/Z8GTjqgDe_5EkE3t@P-ASN-ECS-830T8C3.local
-
-The delta patch against v6.17.5-rt6 is appended below and can be found here:
- 
-     https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/incr/patch-6.17.5-rt6-rt7.patch.xz
-
-You can get this release via the git tree at:
-
-    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.17.5-rt7
-
-The RT patch against v6.17.5 can be found here:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/older/patch-6.17.5-rt7.patch.xz
-
-The split quilt queue is available at:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/older/patches-6.17.5-rt7.tar.xz
-
-Sebastian
-
-diff --git a/localversion-rt b/localversion-rt
-index 8fc605d806670..045478966e9f1 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt6
-+-rt7
-diff --git a/net/core/gro_cells.c b/net/core/gro_cells.c
-index b43911562f4d1..fd57b845de333 100644
---- a/net/core/gro_cells.c
-+++ b/net/core/gro_cells.c
-@@ -43,12 +43,11 @@ int gro_cells_receive(struct gro_cells *gcells, struct sk_buff *skb)
- 	if (skb_queue_len(&cell->napi_skbs) == 1)
- 		napi_schedule(&cell->napi);
- 
--	if (have_bh_lock)
--		local_unlock_nested_bh(&gcells->cells->bh_lock);
--
- 	res = NET_RX_SUCCESS;
- 
- unlock:
-+	if (have_bh_lock)
-+		local_unlock_nested_bh(&gcells->cells->bh_lock);
- 	rcu_read_unlock();
- 	return res;
- }
+- Kevin
 
