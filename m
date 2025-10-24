@@ -1,298 +1,210 @@
-Return-Path: <linux-kernel+bounces-868742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80702C06004
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:36:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A09C06037
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:38:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A392C188B2B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:31:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CB7D3BEC07
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94B7315D5E;
-	Fri, 24 Oct 2025 11:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EF5322A0A;
+	Fri, 24 Oct 2025 11:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wlvje81j"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Izc3GIWL"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010042.outbound.protection.outlook.com [52.101.61.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A5931280D
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761304593; cv=none; b=bFnHfgnAZLrw6i5iQPElvbOTPBHT9sKLJLKYeiFxaKBNykUMI44hmM+S6Ao23DWKPUSvCsdh39KSqbrpmV0tY9ZUElW8Zdrgxv5+L8ov7Ojt1KJFVoZ39Scm3fzDZlsblrolblU3WJq2aeT+dwf8Swrcs5kAhN4TFZL+UsUJS4Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761304593; c=relaxed/simple;
-	bh=WyNsDsfa3gayi4AFzTVz+zbL6eQyv+P7SQ+kovtRd9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwL9RNydmzllZzxeSkMDdE5m/ZTUJfFQ18ucLYCyIViQyr0aalQk686aTsk2dY+FwxfE2jZYo54QV+2qxU/h2cC6EL9swEmB0eEOVx3wV/9Nsyi6uJMu06LuNyek6lSo5G5OxQXaKEwc0GjyiQfbzv1gChZ05t2Oe6pMZbh1dvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wlvje81j; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47114a40161so19926755e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:16:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761304589; x=1761909389; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bOYFJP18GQ2OUczGrlV4tj7QX2qw5H6RUygunpUvm1A=;
-        b=Wlvje81jkjuggCGRnpsNq6VUeuzDwYjK9pb5yWOwJ1fX6OoKi9Ui8ku9Gd7pam9C0S
-         sbdWC02f6egpk27V2yJdz+cr6hygkTAHBYQp2ZLRJbJAPlWGFexoTuDRzx+9Nb50WyX9
-         yp25pxvIcE2o6UrzGIRofbHrP+6laOdpNo5oUn9rBFGGgp/LwCkT3/WveCXSlM7S+ElI
-         AT0keeS2KjVyNjvHeOVQHydp6qATQDLpnsJn3KlXS6EU+nrQNC4Ug4CkWo8wLeFOWTU5
-         fVFgODCMnNddZUtqA+b/N93I0Wk2L62vO4zZtab5+Jh6vjjSU/4pyjKwhDsVtjEWTm0P
-         lUsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761304589; x=1761909389;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bOYFJP18GQ2OUczGrlV4tj7QX2qw5H6RUygunpUvm1A=;
-        b=IX3QtNj5nojDaO9OZEYzbcTrK8BA08QLnPlXd0A6KECCfqaTP+WxD2y7DMoz16S0O7
-         j8TfszZ7hv44kIEFnGH6pin7O1LkTXj3M19+7PMWiBUY/UeAgICfN/+gh/0pA3gfZehn
-         hWW5nyHWwrztzvc4ilAfW1/oB7B7m6HaZTUfIDT3JFn9eJTeucn8vtaoVonbj+FO0rq+
-         ZxMvhkK7UP95tQ5qeonAnbmPeewX74FfLqgQJLXffvG1mU/SdUY/EfUKT22pocW+bECd
-         pxGKBKLCYzg9PFgXD70TwFGINa6kEVR+xFIeixUfGnkjgS6T2wjnhWkDb2qyD7o2jbUM
-         B3tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqp1tFPqB4aCTY7P/88dDrGFNpwLlFYT/Lq6x2fag7QAPrJgd/rJs291NQNSyAxP+xRpf0YETYs6HF4zk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEZ51b2gt0vn5IhyeUettIQ5Sw5aR/JLWEwP3nrNC96hVbpo/5
-	nt7kyxD5MZklWQHor60BCHL/0RrAj+fiyvsKwDDn4/swAxMEPnpJWnMH
-X-Gm-Gg: ASbGncuHuZOH56BCKEh+t/uQRaGT3c5xMe0pG23asIrFxoJ2gVB17LD9Qn3kd11e5rX
-	wMxxNJyjex6TUCNGJeGPAIFXhxq3Fg3kDYOD5m8O8OLfwqBC9wfhAc05Vyrut/EHiVPA1c8wv9K
-	o43VjM49ebec0Hmh3d3rIVxpUJBInitlLwYljPG0mGe/tfhgmRDVqp8gq0QiymDonuVAxfLF4ZK
-	Y0lyuPto5CaOSYaHeIzp3h7RHW9kZDPTd4bCgPZr0qyahr7JrIAW/mowCbkumC1t4lcaqJPJmwl
-	SGLlvhOrDs6S5wZKWRPoBGSTFT1oZpWCqeN1cJknuAAbWiWb8eIQ1c+6WEjWmQEpBHwLOY6JNMI
-	WsN4uuXLJvnySBSTo9BxdhwXzURNwwxlxDGFJnbemw69H+QrBVbjrA+UySD1IUyqBWqCTdRGRA3
-	V01RVW0J0mXw==
-X-Google-Smtp-Source: AGHT+IGnrzoxmGVkMjEWD2Ko8GINo3qyo00kse2cliLugsWK1IDfwV6V83Vq+H2BZ5vKxr7YcZeTIQ==
-X-Received: by 2002:a05:600c:6085:b0:471:133c:4b9a with SMTP id 5b1f17b1804b1-4711786c79emr236436915e9.6.1761304589326;
-        Fri, 24 Oct 2025 04:16:29 -0700 (PDT)
-Received: from fedora ([37.29.213.75])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429898ccd88sm10596977f8f.36.2025.10.24.04.16.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 04:16:28 -0700 (PDT)
-Date: Fri, 24 Oct 2025 13:16:25 +0200
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	victoria@system76.com, sebastian.wick@redhat.com,
-	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 01/22] drm/vkms: Introduce config for plane name
-Message-ID: <aPtgCUX5kixTh2ua@fedora>
-References: <20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com>
- <20251018-vkms-all-config-v1-1-a7760755d92d@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA2731280D;
+	Fri, 24 Oct 2025 11:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761304599; cv=fail; b=u6akGlC7DLubN+TPSf9OFi8o5/4yJP2JQO29Td6tJEsvHDM8kvooB500uxn6ruPmZNE+Bnee3jBjZqrN7tzC8+e3MM0kPtD9OEID42LVCzE7Q75kbwlFguVz6OA3334EKFJkyAbGWz9vU7xfb0QNhzz+ZEe+La6rZc5gVfeKV+U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761304599; c=relaxed/simple;
+	bh=GznPFtXLiMpo7F5jttGKLZoynaiCcrE3DpAuG+sXtP8=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hNiwKZwgHTCoI9B9GRctRJ10RYYtVoX0U1/V46v+mjGgrEd0K+pyHBM+1DsYGx56+An1RDuSmJmR/FPMzCA1fVt4VRG12ap5o5+DhYLZJt49crfXEU+oZ8/0/x26cE5orQ8aMj+AQxhMmbHK50s8fkQbCDiCI2tsUVtmdBy3Olw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Izc3GIWL; arc=fail smtp.client-ip=52.101.61.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PilYq75VVgOS2F3MfLxLichkpog8uvKtKXcT6H06XuU9/2Tgbclu90+Ciwz/NA93HXa6K30bmVAlXyzRLZmb8pU1N0Y1EL1F1946ZgY5AY0F5Jf1pw43qlfV8/iSABxUnk5BBOYbGz3psYIW89XYgpJOuOzBddZiVNT83zZNhjLCIdHFCre3KawPO+UsyqS3x4ImLwPhoZ/lHTJpaSpSQH/aaepILjhV+9DH6xsR59Gq6MR8GGyGGm0V4QduYmDUyCt3aFVHzX3tsoEAtsT/oh1VDrqd6eYaICvkB0+W2qcM1w1G5ON0aYxCVymEyaq4gJM/6FNrZl3WpgK5rjhdOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GznPFtXLiMpo7F5jttGKLZoynaiCcrE3DpAuG+sXtP8=;
+ b=pPXei/nuwWpBjaBF+IwBHLMGNgSc3JgJsaGNGzg2xklrkkHYQQvb+Sch8QIUKOEUEq3wsdp0Np6wLl+COb7pzpoGx8F1fCQD1H90C1CAAm5ZDCNCONKIfYuz5DrdU3EeiPyK3nd2vvS5x1dLSJdbYIi+RrRVNjTBLbysaRDkoYVW415S0ybCrsUTBd1Odk+nCeNDeM5aeoMw01JJ8kpaFpcUqI0O/SS2SOIQuVjRfEgQwYm4Zn3CHb19Y2RnBeoGWTxPKw5Ni/bVqM2TucK364DTc8bVJHacweJrzJXapBMv9QE4aSr0tP5t7yDDLtEz0E0YELyN/LDvlN6mHOH+Ew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GznPFtXLiMpo7F5jttGKLZoynaiCcrE3DpAuG+sXtP8=;
+ b=Izc3GIWLCjCCQwlNmZavKoqW9fxoCF7/HH1kSnwrEX9wA3qKWHWZs7gqRiUx/EPMiusuM7zVODhE2Gud4yXpMmj/d2FfrTOPokbH1VvFgc62D99WWE3VSBphHRZ2gAuZMYMO/BxI8CEQFejHIZ3sHdVKsnSVBhYFQtHdQoCBvVlhsxWftoP5eaMKPj2fV/oSy8vRnk5MsuIN6OVb8flSxhmGvY0w/wLjZxDrtnFfFFkSFCxoO7+Fpug6XlVS96/AKMZ27uiWDLzK92Dsu2no9koO9FID4AXsVcGbyzKFpkC940A5S7ZvW/wujr5NRcLSGkl7/ubFtWmJxgryhmAGNg==
+Received: from SA1PR12MB7199.namprd12.prod.outlook.com (2603:10b6:806:2bc::21)
+ by DM6PR12MB4138.namprd12.prod.outlook.com (2603:10b6:5:220::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 11:16:35 +0000
+Received: from SA1PR12MB7199.namprd12.prod.outlook.com
+ ([fe80::ae1b:d89a:dfb6:37c2]) by SA1PR12MB7199.namprd12.prod.outlook.com
+ ([fe80::ae1b:d89a:dfb6:37c2%7]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 11:16:35 +0000
+From: Ankit Agrawal <ankita@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>, "Liam R. Howlett"
+	<Liam.Howlett@oracle.com>, Aniket Agashe <aniketa@nvidia.com>, Vikram Sethi
+	<vsethi@nvidia.com>, Matt Ochs <mochs@nvidia.com>, Shameer Kolothum
+	<skolothumtho@nvidia.com>, "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+	"nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "david@redhat.com"
+	<david@redhat.com>, "lorenzo.stoakes@oracle.com"
+	<lorenzo.stoakes@oracle.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
+	"rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com" <surenb@google.com>,
+	"mhocko@suse.com" <mhocko@suse.com>, "tony.luck@intel.com"
+	<tony.luck@intel.com>, "bp@alien8.de" <bp@alien8.de>, "rafael@kernel.org"
+	<rafael@kernel.org>, "guohanjun@huawei.com" <guohanjun@huawei.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "lenb@kernel.org"
+	<lenb@kernel.org>, "kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"alex@shazbot.org" <alex@shazbot.org>, Neo Jia <cjia@nvidia.com>, Kirti
+ Wankhede <kwankhede@nvidia.com>, "Tarun Gupta (SW-GPU)"
+	<targupta@nvidia.com>, Zhi Wang <zhiw@nvidia.com>, Dheeraj Nigam
+	<dnigam@nvidia.com>, Krishnakant Jaju <kjaju@nvidia.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, "Jonathan.Cameron@huawei.com"
+	<Jonathan.Cameron@huawei.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"Smita.KoralahalliChannabasappa@amd.com"
+	<Smita.KoralahalliChannabasappa@amd.com>, "u.kleine-koenig@baylibre.com"
+	<u.kleine-koenig@baylibre.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH v3 0/3] mm: Implement ECC handling for pfn with no struct
+ page
+Thread-Topic: [PATCH v3 0/3] mm: Implement ECC handling for pfn with no struct
+ page
+Thread-Index: AQHcQnTHTYvFr6s4LEeMxWxMZV3yCrTMyzMAgAAD5QCAACQpAIAAPsYAgAP34AM=
+Date: Fri, 24 Oct 2025 11:16:34 +0000
+Message-ID:
+ <SA1PR12MB7199E3D79881475B4B320F34B0F1A@SA1PR12MB7199.namprd12.prod.outlook.com>
+References: <20251021102327.199099-1-ankita@nvidia.com>
+ <hbk4hqrdaz7qipkpb5g2znhva63sghwsiqwlyf6pb6xccjtp47@vci5e4vbkjqo>
+ <20251021164444.GB699957@nvidia.com>
+ <3ss3epklrmwallhd3nih5qqzjk53dcgns5igudtsg4vnnyjyri@ektyavsup6wk>
+ <20251021223850.GA21107@nvidia.com>
+In-Reply-To: <20251021223850.GA21107@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR12MB7199:EE_|DM6PR12MB4138:EE_
+x-ms-office365-filtering-correlation-id: 16bb60a7-6381-438a-1f47-08de12eecafa
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700021|921020;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?897t3vkGQyLaFclrfSgOi67KEPmTy0loA7KYZyPaake6xl9kpDUzHrgN2i?=
+ =?iso-8859-1?Q?SK216kDZ7yrlDde6qgmhZ1siY58EvlnObOAEBaWJZZE8+BEX6aSqA/ol26?=
+ =?iso-8859-1?Q?hZNfHlNoKhgGlsjEDV9tsQpF/xcZGBnx5tJiwuepJ1uAHqvy8Io8gF9Ky0?=
+ =?iso-8859-1?Q?b02qRvXMDxuwhdLwNgr6mQRqk13qR8OOZ7VnpCbNtfFjdCAIqoiBkpZFY4?=
+ =?iso-8859-1?Q?rlT7GLDrAAHSJsCBPVjNJuSXnuVZHT6jNWd1gi18ksrUAjUF0TkVfo67um?=
+ =?iso-8859-1?Q?HDzJm/yU2DSyv2Bx+sPPXXDmnNSXQpNz+ZXDRdXRUx1nfA4s3DlZ8rNwa+?=
+ =?iso-8859-1?Q?/wSiHQKFS6/yLfuIt6t6Ahm+mgP+mw8n0AgDBh7BajsMNsgItyclLdpsru?=
+ =?iso-8859-1?Q?0WbCVyA6j0nBclUl2HcV39ECi5LGUxVbGDNN6H1wYiY2oKn2J/O9moNjia?=
+ =?iso-8859-1?Q?phcNk49UK8qRh/qBcG2rkmdzoEAhKmlBkabvn8ZTDvd3pYlGTEUdl5IRHi?=
+ =?iso-8859-1?Q?VdWEY9TIRckj+LNP2brcQfZI1aIHLczgyXrhnK5CorPEOne5rvSXhB6sU8?=
+ =?iso-8859-1?Q?Ce2yf97Gi/Aq6k1KO/8sWG9lt7cXR3gyQmTSvtsoCHL2n0l1Uo6KOC8FAV?=
+ =?iso-8859-1?Q?HJS+vhsOnGn4tg3BmhFl+VxhHawtiXzQDU+iENIeLPPGim3dW4Hhv771xM?=
+ =?iso-8859-1?Q?nDmmi1L74qvylfvAx3zMf+aoQHfXxavU9EqIfVfkEIEZZdm23u8w5PB/ld?=
+ =?iso-8859-1?Q?t62Fzu1xJkp47gG6jlniFn48qoT4SGQUho9fy2ZpCm80ZfTOOK9xlGsCyX?=
+ =?iso-8859-1?Q?9exb3bLnS9T5+9rCSnELOHcEkqwObkb799FNlNDrR05CUMkU9fkM76eedq?=
+ =?iso-8859-1?Q?mqnyGKxU7aAvI/Fo9MX9ET5re1QHLk4IUADKgTZLldV0Yxxwn8YPs9gq5x?=
+ =?iso-8859-1?Q?RuFQ7TkKfwCr+KPv/gMwvGLV4mDVBTgdXGZS7Ver5avYwyoQjrjELHPyte?=
+ =?iso-8859-1?Q?2wwI9iSn21PyR58qhf9s6qTck6WliuZ5r58WE+FtSS67yhPoG60wBDeaYa?=
+ =?iso-8859-1?Q?hEeDsz1sTic0MstweyNfNHDj6JfRGavuF462oTskS4E+C+reMBrjepDLjT?=
+ =?iso-8859-1?Q?odNSDg+lfrXmOhtHcaTJfB+6ymjt0RZRqtzy+Qq5UP+9Gok15ee+EJ+Ta3?=
+ =?iso-8859-1?Q?LYAwCT/24qrdmzR47hAZaA6MWPCxxe056VDXngrTCUx17oKrvUioe/FgWJ?=
+ =?iso-8859-1?Q?BAg2VB+3uj2NeX/vNaLQohdtsyIYgDxP/ifv4h4QF4Ybg9SuSRb2NiMCmG?=
+ =?iso-8859-1?Q?zt9PJuAf+hdGFoILyc4a8CtTARSLMkbxe2biJRT1l/1gUh+sjDsou+rTW8?=
+ =?iso-8859-1?Q?GeTmRUQrzTmwQWKAqKxXPtuQG77TxUb0DODNzQ5ONrJ+f066lm78KkQ+iY?=
+ =?iso-8859-1?Q?uHUo9ygB+04VrgM3gYCfgB+2vq6a/u5e/uiaDyh8AQu12bWXH1eDJPjQT1?=
+ =?iso-8859-1?Q?7wu/iDWYQ0lmGNyVzYZnWaA2ogJoZEomRAr1ltB3LGCC/Qu1TqQlT5WzQ8?=
+ =?iso-8859-1?Q?xT8n2ZVZhlbRkBkJIwHCady6JR/j?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB7199.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700021)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?frNSozMRIGMIU0qCjyL2wL87A0l/VWoJefcKOXFowgApyChdLlz1ut8ev4?=
+ =?iso-8859-1?Q?fbu7b0dZpAOR5v16/mIpo2rDvlcCfXMopHzPbCwLzTRPYo4BczqH0QvaQb?=
+ =?iso-8859-1?Q?B4rfn8e5p0v4l5t6a0F+3rFFPyz4fMfxty0IfHAzTkpU8Zxt392FJfzH+S?=
+ =?iso-8859-1?Q?1f6oVMGGsw+K1tzaqJ0XAZA1TgoefCzeVtXZl9wjc0W58fHmMdrBjqVzbN?=
+ =?iso-8859-1?Q?ujkr7cBIK+gkIDTLDv554Xkag97LchS+xvPxAXL/6f2uSXiuYvwzyzHC8m?=
+ =?iso-8859-1?Q?FKF0lKu7MT9PEKjhn8aHfsx3soaHKNlb7JrsMWRrvVZ7vDCgGRJymsFxuc?=
+ =?iso-8859-1?Q?WHKS3igzFFh1ZQNfV9gfJtrmvmTncE+iXv+WKGu2sEp2Ej/B2U5vn+YpTA?=
+ =?iso-8859-1?Q?VDUlFR6d4/KNAqTqdemwV3F0fPNmi5PtvlGKG9z8MikHPEPfd5X2RvFL/p?=
+ =?iso-8859-1?Q?ytELrER86ihxad+RNkl/B0lnkeDxo4sx4FRP0IVbx/md6dTjZXRtF/hiw3?=
+ =?iso-8859-1?Q?ow/XCG0pfq7X1jGAm9b6xyhvO4uYqwh7cyZc/+bCsOg+0YrkHN3r68RS7S?=
+ =?iso-8859-1?Q?hZORrBzka2gT95UqkPSMnNap67e/uPxSi7FJRRu2Xe009rmklw/FDqQLr6?=
+ =?iso-8859-1?Q?CF7L/VknxxBBGdRvPJoihHIRfZdoomnMNyZrVYmtBkWATGgsPNhLNnUh4m?=
+ =?iso-8859-1?Q?ZxVxauxdW5+7Ov97XCFuSt+fJyuCUynSYRO2Rrpmb/6IZxPIbrHeQjBZQo?=
+ =?iso-8859-1?Q?NF+579hg2G5IQqqrpFcrI9lx1EalfR9+qe7BR/OI22YIYHE2aODYv8sC77?=
+ =?iso-8859-1?Q?7Ktjjvqfl+d27H77DpUyNhma0OLtfaKk7k54vogDlMm7ZN5ns9lWHGoXlr?=
+ =?iso-8859-1?Q?zsXxRC0cWJ1lJ/FC+7Yt8co/DlLuFvQvmb5CtyqD6YwQjPxigaj075KjPt?=
+ =?iso-8859-1?Q?m3jHAE51OrevvuhnncNoEV7avYomUYqru1cuS7KOrWjM0T+58aq+a4Ukyw?=
+ =?iso-8859-1?Q?ZIBdZWBMCSn9N4dhMVbUQhMTqWyxW0e9loT66TkanqnJQ3+DyAW0VOEW44?=
+ =?iso-8859-1?Q?CwwJ5uoE3j7bPFK954mROItn6JqRzulF4mfLf+tp4DTMsKwL347FJXBBSH?=
+ =?iso-8859-1?Q?cyuBpYM80gJ/xExjZ/tTJDZBglKqrruFv+CyC8e3IeSyL0pTmExfCM0oil?=
+ =?iso-8859-1?Q?aaLM6J0yGnFUNiRsEif8NEqvf7GrRc8H1Tsf0wAXS/U2vZyG415qukCjlu?=
+ =?iso-8859-1?Q?UOpCmpXBpVwYD2bWe8Elw+sCE7T9pbdOuuKl7BO9G52f6TcSvV0ZSTJHT3?=
+ =?iso-8859-1?Q?93tCCwDWZrALfJWGv+h3soQaujvzdKRPVBQXw3QW/Jk2P+pipabc7NKmOR?=
+ =?iso-8859-1?Q?T4s4Nu7Cnk1paPbGrTi2qBIB0jcxeyXauj8+K3oai+8Rg/f9JjkHMvLKoI?=
+ =?iso-8859-1?Q?HkbE4g8csk0GCutAVtphuynEdyBvVqYE2o7DRdMxJy4fYZ+T+tnR79UAnH?=
+ =?iso-8859-1?Q?hyuIfcD4GzwCoQuCt7UcHXavH0DW0NA+YSl3eMSyMJfWes/rkpiT1jOhiQ?=
+ =?iso-8859-1?Q?un3bVGyDYKEY9qvsGHgX+IHjXxEg6uFk4aPF4vb78m7P5k/t9sFbJllGTp?=
+ =?iso-8859-1?Q?n472+31J1kso0=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251018-vkms-all-config-v1-1-a7760755d92d@bootlin.com>
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB7199.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16bb60a7-6381-438a-1f47-08de12eecafa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2025 11:16:34.9630
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aCJiuVjfYaTEOX9wPBssbhA/uoh0EUcCxsbRdtZycWpd6QxtDoN7fv4VMentpy/d+ASkbSJdF3GKj2ltv+HeJg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4138
 
-Hey Louis,
-
-Thanks a lot for this series.
-
-I'm reviewing it on my side and adding some KUnit tests to help
-me with the review/testing process. I'll send the new tests once
-they are ready :)
-
-On Sat, Oct 18, 2025 at 04:01:01AM +0200, Louis Chauvet wrote:
-> As planes can have a name in DRM, prepare VKMS to configure it using
-> ConfigFS.
-> 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->  drivers/gpu/drm/vkms/vkms_config.c |  4 ++++
->  drivers/gpu/drm/vkms/vkms_config.h | 26 ++++++++++++++++++++++++++
->  drivers/gpu/drm/vkms/vkms_drv.h    |  5 +++--
->  drivers/gpu/drm/vkms/vkms_output.c |  6 +-----
->  drivers/gpu/drm/vkms/vkms_plane.c  |  6 ++++--
->  5 files changed, 38 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
-> index f8394a063ecf..ed172f800685 100644
-> --- a/drivers/gpu/drm/vkms/vkms_config.c
-> +++ b/drivers/gpu/drm/vkms/vkms_config.c
-> @@ -350,6 +350,8 @@ static int vkms_config_show(struct seq_file *m, void *data)
->  		seq_puts(m, "plane:\n");
->  		seq_printf(m, "\ttype=%d\n",
->  			   vkms_config_plane_get_type(plane_cfg));
-> +		seq_printf(m, "\tname=%s\n",
-> +			   vkms_config_plane_get_name(plane_cfg));
->  	}
->  
->  	vkms_config_for_each_crtc(vkmsdev->config, crtc_cfg) {
-> @@ -390,6 +392,7 @@ struct vkms_config_plane *vkms_config_create_plane(struct vkms_config *config)
->  
->  	plane_cfg->config = config;
->  	vkms_config_plane_set_type(plane_cfg, DRM_PLANE_TYPE_OVERLAY);
-> +	vkms_config_plane_set_name(plane_cfg, NULL);
->  	xa_init_flags(&plane_cfg->possible_crtcs, XA_FLAGS_ALLOC);
->  
->  	list_add_tail(&plane_cfg->link, &config->planes);
-> @@ -402,6 +405,7 @@ void vkms_config_destroy_plane(struct vkms_config_plane *plane_cfg)
->  {
->  	xa_destroy(&plane_cfg->possible_crtcs);
->  	list_del(&plane_cfg->link);
-> +	kfree_const(plane_cfg->name);
->  	kfree(plane_cfg);
->  }
->  EXPORT_SYMBOL_IF_KUNIT(vkms_config_destroy_plane);
-> diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
-> index 4c8d668e7ef8..b69c35097ba0 100644
-> --- a/drivers/gpu/drm/vkms/vkms_config.h
-> +++ b/drivers/gpu/drm/vkms/vkms_config.h
-> @@ -35,6 +35,7 @@ struct vkms_config {
->   *
->   * @link: Link to the others planes in vkms_config
->   * @config: The vkms_config this plane belongs to
-> + * @name: Name of the plane
->   * @type: Type of the plane. The creator of configuration needs to ensures that
->   *        at least one primary plane is present.
->   * @possible_crtcs: Array of CRTCs that can be used with this plane
-> @@ -47,6 +48,7 @@ struct vkms_config_plane {
->  	struct list_head link;
->  	struct vkms_config *config;
->  
-> +	const char *name;
->  	enum drm_plane_type type;
->  	struct xarray possible_crtcs;
->  
-> @@ -288,6 +290,30 @@ vkms_config_plane_set_type(struct vkms_config_plane *plane_cfg,
->  	plane_cfg->type = type;
->  }
->  
-> +/**
-> + * vkms_config_plane_set_name() - Set the plane name
-> + * @plane_cfg: Plane to set the name to
-> + * @name: New plane name. The name is copied.
-> + */
-> +static inline void
-> +vkms_config_plane_set_name(struct vkms_config_plane *plane_cfg,
-> +			   const char *name)
-> +{
-> +	if (plane_cfg->name)
-> +		kfree_const(plane_cfg->name);
-> +	plane_cfg->name = kstrdup_const(name, GFP_KERNEL);
-> +}
-
-I think we should limit the name to a set of well-known charaters.
-
-The reason is that, in libinput, we had a format string vulnerability
-due to the kernel exposing devices with names containing strings like
-"%s" in the name (CVE-2022-1215):
-https://gitlab.freedesktop.org/libinput/libinput/-/issues/752
-
-In my opinion, we could avoid surprising user-space too much and allow
-only a set of "safe" characters.
-
-> +/**
-> + * vkms_config_plane_get_name - Get the plane name
-
-Missing "()":
-vkms_config_plane_get_name() - Get the plane name
-
-> + * @plane_cfg: Plane to get the name from
-> + */
-> +static inline const char *
-> +vkms_config_plane_get_name(struct vkms_config_plane *plane_cfg)
-> +{
-> +	return plane_cfg->name;
-> +}
-> +
->  /**
->   * vkms_config_plane_attach_crtc - Attach a plane to a CRTC
->   * @plane_cfg: Plane to attach
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> index db260df1d4f6..9ad286f043b5 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> @@ -225,6 +225,7 @@ struct vkms_output {
->  };
->  
->  struct vkms_config;
-> +struct vkms_config_plane;
->  
->  /**
->   * struct vkms_device - Description of a VKMS device
-> @@ -298,10 +299,10 @@ int vkms_output_init(struct vkms_device *vkmsdev);
->   * vkms_plane_init() - Initialize a plane
->   *
->   * @vkmsdev: VKMS device containing the plane
-> - * @type: type of plane to initialize
-> + * @config: plane configuration
->   */
->  struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
-> -				   enum drm_plane_type type);
-> +				   struct vkms_config_plane *config);
->  
->  /* CRC Support */
->  const char *const *vkms_get_crc_sources(struct drm_crtc *crtc,
-> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-> index 2ee3749e2b28..22208d02afa4 100644
-> --- a/drivers/gpu/drm/vkms/vkms_output.c
-> +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> @@ -19,11 +19,7 @@ int vkms_output_init(struct vkms_device *vkmsdev)
->  		return -EINVAL;
->  
->  	vkms_config_for_each_plane(vkmsdev->config, plane_cfg) {
-> -		enum drm_plane_type type;
-> -
-> -		type = vkms_config_plane_get_type(plane_cfg);
-> -
-> -		plane_cfg->plane = vkms_plane_init(vkmsdev, type);
-> +		plane_cfg->plane = vkms_plane_init(vkmsdev, plane_cfg);
->  		if (IS_ERR(plane_cfg->plane)) {
->  			DRM_DEV_ERROR(dev->dev, "Failed to init vkms plane\n");
->  			return PTR_ERR(plane_cfg->plane);
-> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> index e592e47a5736..263376686794 100644
-> --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> @@ -11,6 +11,7 @@
->  
->  #include "vkms_drv.h"
->  #include "vkms_formats.h"
-> +#include "vkms_config.h"
-
-Nit: Includes are sorted alphabetically.
-
-Jose
-  
->  static const u32 vkms_formats[] = {
->  	DRM_FORMAT_ARGB8888,
-> @@ -217,7 +218,7 @@ static const struct drm_plane_helper_funcs vkms_plane_helper_funcs = {
->  };
->  
->  struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
-> -				   enum drm_plane_type type)
-> +				   struct vkms_config_plane *config)
->  {
->  	struct drm_device *dev = &vkmsdev->drm;
->  	struct vkms_plane *plane;
-> @@ -225,7 +226,8 @@ struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
->  	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 0,
->  					   &vkms_plane_funcs,
->  					   vkms_formats, ARRAY_SIZE(vkms_formats),
-> -					   NULL, type, NULL);
-> +					   NULL, vkms_config_plane_get_type(config),
-> +					   vkms_config_plane_get_name(config));
->  	if (IS_ERR(plane))
->  		return plane;
->  
-> 
-> -- 
-> 2.51.0
-> 
+>>=0A=
+>> Ah, I see.=A0 Seems like a worthy addition to the commit message?=A0 I m=
+ean,=0A=
+>> this is really a choice of throwing away memory for the benefit of tlb=
+=0A=
+>> performance.=A0 Seems like a valid choice in your usecase but less so fo=
+r=0A=
+>> the average laptop.=0A=
+>=0A=
+> No memory is being thrown away, the choice is if the kernel will=0A=
+> protect itself from loading via userspace issuing repeated reads to=0A=
+> bad memory.=0A=
+>=0A=
+> Ankit please include some of these details in the commit message=0A=
+=0A=
+Thanks Jason, Liam for the suggestion. I'll update the commit message=0A=
+in the next version.=0A=
 
