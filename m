@@ -1,134 +1,106 @@
-Return-Path: <linux-kernel+bounces-868621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074FAC05A5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:45:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D24DC05A1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446553B8447
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62C71C21264
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229ED312805;
-	Fri, 24 Oct 2025 10:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24D3311596;
+	Fri, 24 Oct 2025 10:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dMXydhC+"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DPNgntTI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/ozyMPmB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21DC311C1D
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B703112DC
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761302387; cv=none; b=Rn7EIR/egCaS4taI+R4KEX815Cusm4gHOl23HKSYfYg40RZ2Uz+1Ced69gRiLvEvwAihp3EtFgYqIaTGM5nbkB8HJigJvuRt9jqFK1xR06lftyh+TKZ2Yv2M8oYkVrQPKXSReDFJkCqE2D1O9/7PzJR+mnulhbv0Zvtc84v/qh4=
+	t=1761302379; cv=none; b=jsF5ABRhwsYy3Zfbfz1JF9joIVj513wUrJ69BffDK2YSKpjQz3JjDSlA52U8qRMERs/yWyI1L1CONGSvA0k+/LyFNPHKQyiLwDel/ss7GrLA5MZnVgzXNHFi0MpzMTl+nL0gff8FwZmnQN6EY3RoVSieEYCsJkX0z9j7D3EqggM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761302387; c=relaxed/simple;
-	bh=ihqHHh8OwZRzTv3PuAINRB9Afj/GqQ8V0nU3GCwr6d8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PbLNYS1753aqssotwDR/sq3C71NY9AlkMGq2L7vT2zIGerrTqQtmZiHwTFh6twxjNJ6rjDGmpqQ1Paq1WoFNQc6WjtxoZ5vIXBWrAT5pUMFiYmidHQsvoOuLfO04w42+JgLME77m+SawncWg4hw3MwC7+Q939FzvLfjZHtQ9R4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dMXydhC+; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b6ceb3b68eeso1445950a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:39:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761302385; x=1761907185; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TOQO5XhSta2OZ/LTSNvp9XgOSuMjTdgxONSnBp+ZzJ0=;
-        b=dMXydhC+bv7DFf5dETUmhQvD/myNbj47qgrI80BgNU+vFwKathWKIZQkk/FPi768sB
-         BTLEbaTeaCKzvrkgAZ9e02nV0HO5eCtf9mqfnSmEMe1UdUW9VkyorEkhdVhLeFbt9FV5
-         Vq/Hro3iLW2+0gUU5x+Xgv/k8u03W62jetQY4Ux1fL/ELeWcXQOxS0LGYiH6vvHLGSWS
-         V1e0mKnfqyi/4KCOlkgsBZ6nOK/MtVnP+2cR7KCJTsWUy6iaR0b1sX/XAKCmlXqU19+N
-         JM0FapwrumV5Df3YFwKr4igylvDc5lpjf0PVlXc7i+ZyQwBj3D7sSx/IVACNLafIDMGz
-         WFoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761302385; x=1761907185;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TOQO5XhSta2OZ/LTSNvp9XgOSuMjTdgxONSnBp+ZzJ0=;
-        b=dcOUXcXr464bvfiFRL8ZEj1Z5hZQHhEhj3+vswkFF9JUppMkZzzg83dugdlA1JDs+u
-         PA+qJKychmS6FPSlUQJj5OS1TlYdvHzpsh7Ubk/5UnOq2wwPZhLq0DqBHoXHK13GAdm7
-         kbT+JksBm/QvItQjW8lbu4WI02tEfGerfklLbHBLVsUXDcYv+2lnG4U237F9VBAPoo7t
-         7Xv7rlBNGHcVBpU2nY0JWVi2nE65rr9lR+27t6abO36IlSdwbWg2YaxVR6zNBO39qg9o
-         pPoZ3Z68V7HB7xkoFuPadPEzRn2QUUm8j+CQYDFcWzlDDFLVcdBG0jtZ0gQloRda5OvU
-         VCoQ==
-X-Gm-Message-State: AOJu0YyXtJDDzY/N1Z81xNYIRRV1viKcUxrlwNgN5RQ7PyxFiHS+tCbs
-	lzXbk4ddzKV6bnJWwovj6XYepm6fPFeD8HVoGBMaQRAb7NepPchbG0FvH/TSuaKT
-X-Gm-Gg: ASbGncst25vI3lAHwB3Up/es26Snw8AXNzeVZAV3CPncjom60GwdfwrPFy1/WcTMl6z
-	KCUiWynGBA/iGXQfCZcdUgxIutNj75asN3H92nu+S9PSRIa7Nk2PEmW9Fs/qqmto06lIbXcA7nG
-	VAiDKSZyytQTzIfuNQ9FStG1TX4wa7wGOHzcaZAuZ3bE5V2fjNOd8oILVNDGauryLnnwkZpMivp
-	P3Ooctfy3Z1uYJnyL346zS9C1j0pTAksz99HqSatNPkRu7Ipqo2clcvQ60Hb2jI0cUKkvj0tt7+
-	lJQMuSyhN5zr5ccux3AF86LBHHSMP6ZMNf2WAz/GCyDg7tKu5tVAVv9Vx2UiIM3MjBwCDFr8RXR
-	INyzEsdLY760Kjl0vcBNdufuy4DhZeR460aCx3g3b+gL00JSALrjRM4RjJD/ZoglR+On66NYFgj
-	0p8vGRe2YJ8IM=
-X-Google-Smtp-Source: AGHT+IEVkwqrjTWCnBpVreVh6mTv++RFn66C5H23Cshuzgm7R8r/2peZvlKSHirNuI9LIOVlcF6vLQ==
-X-Received: by 2002:a17:902:d544:b0:261:6d61:f28d with SMTP id d9443c01a7336-290cc9bf243mr346647515ad.50.1761302384865;
-        Fri, 24 Oct 2025 03:39:44 -0700 (PDT)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dddbfd8sm52919845ad.2.2025.10.24.03.39.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 03:39:43 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id C38CD4209E90; Fri, 24 Oct 2025 17:39:36 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Input Devices <linux-input@vger.kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Masaki Ota <masaki.ota@jp.alps.com>,
-	George Anthony Vernon <contact@gvernon.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH 2/2] Documentation: hid-alps: Format DataByte* subsection headings
-Date: Fri, 24 Oct 2025 17:39:34 +0700
-Message-ID: <20251024103934.20019-3-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.1.dirty
-In-Reply-To: <20251024103934.20019-1-bagasdotme@gmail.com>
-References: <20251024103934.20019-1-bagasdotme@gmail.com>
+	s=arc-20240116; t=1761302379; c=relaxed/simple;
+	bh=UdnRgrYTxTwl0NXXAxGaXi07cSp6W24Rw+s0+3JFWxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e1QBfvNO5v2ge8rm0r6vEI9O3X1mKaRkYTfMRKaN4o0Nn5reXLotQOUzM+Kv+q6NHq4AmHd9E204fHHgO/pAkqHNPD9rwPHP1BtsUeiW8lfP8XEmNTuuL4azJmPRZACq8a5He6E1PVgeoz320VdaKLSjG2BPQcxVPABxLw6oqdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DPNgntTI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/ozyMPmB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 24 Oct 2025 12:39:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761302376;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZbvWP/ULZdr1H0B0DeN80d2jKGeA+DNTXiKQK2cKlBU=;
+	b=DPNgntTI6+fzLAJ/QDXD/aTKfn7UQyuK5TC0c9/8hWxaDteyt67uRT8ueVGJRp5/tc/zu6
+	AAqhKtGnH8O/B839lXDeUnUfPEx6I5JDIcaB7jcibH90nLK6/hD23lTmzz45mP6ix3uvW/
+	TVao8IVpTkVmB8o+ODgOYZqC9BWVzsPVacc8XgklUj4Pl8ns5W/hrK8YQRNri02JbO4gyh
+	iFItEtDzTI2fSI4bsJAQkeWejX5/y+uYYYjoWrAEe7dLtDXi6WfGKM0wBv+gxuREvgaRY5
+	jgSrWm5c8WSWS4W37+GK7JOyUDyqHDsQX0NO8G3O9crcMLCnBdzn/dlNMZrvBg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761302376;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZbvWP/ULZdr1H0B0DeN80d2jKGeA+DNTXiKQK2cKlBU=;
+	b=/ozyMPmBFI912hHmPcAHZVCOFdFeMXBh5VFQeYrIgstEV0RdKlrzUCpBu2QSSli+zbNHrQ
+	x/XSI024cm2Kq+CA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
+	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
+	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wander Lairson Costa <wander@redhat.com>
+Subject: Re: usage of DEFINE_WAIT_OVERRIDE_MAP(LD_WAIT_SLEEP)
+Message-ID: <20251024103934.n4Lx1b9O@linutronix.de>
+References: <20250729130936.GB18541@redhat.com>
+ <20250801102428.GB27835@redhat.com>
+ <20250811105948.OafBprND@linutronix.de>
+ <20251020145310.GA9608@redhat.com>
+ <20251023135316.1ZRx0UU5@linutronix.de>
+ <20251023152942.GC26461@redhat.com>
+ <20251023153750.C6EU9NL6@linutronix.de>
+ <20251023155339.GE26461@redhat.com>
+ <20251023192353.Wkng87fi@linutronix.de>
+ <20251024102616.GD771@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=979; i=bagasdotme@gmail.com; h=from:subject; bh=ihqHHh8OwZRzTv3PuAINRB9Afj/GqQ8V0nU3GCwr6d8=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBm/w04emqpwcP39tt3WXpUym62CzyVwXJ9Q2lZuwN+sU dZ78K9NRykLgxgXg6yYIsukRL6m07uMRC60r3WEmcPKBDKEgYtTACainc/IMNFqr62r5c8U9oQz 7910RFb83Hhz/ldDFjPeh3sWm6uw3WNkmNLhdTWuwENx5/Qrpy8ceLj1jeeV7KSbe997TJDR1J0 pyQYA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251024102616.GD771@redhat.com>
 
-"Command Read/Write" section has two DataByte* subsections describing
-command bytes format. Add markup to these subsection heading texts.
+On 2025-10-24 12:26:16 [+0200], Oleg Nesterov wrote:
+> > | /* PREEMPT_RT kernels map spinlock to rt_mutex */
+> 
+> Ah, indeed, I was confused and didn't even bother to read the definitions
+> below, spinlock->dep_map is initialized by the same SPIN_DEP_MAP_INIT()...
+> 
+> Sebastian, thanks for correcting me! Sorry, I could not carefully read
+> your emails yesterday.
 
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/hid/hid-alps.rst | 2 ++
- 1 file changed, 2 insertions(+)
+No worries. Just let me know if the cited comment requires an update.
 
-diff --git a/Documentation/hid/hid-alps.rst b/Documentation/hid/hid-alps.rst
-index 3a22254e43464f..4a22a357f00c02 100644
---- a/Documentation/hid/hid-alps.rst
-+++ b/Documentation/hid/hid-alps.rst
-@@ -69,6 +69,7 @@ To read/write to RAM, need to send a command to the device.
- The command format is as below.
- 
- DataByte(SET_REPORT)
-+~~~~~~~~~~~~~~~~~~~~
- 
- =====	======================
- Byte1	Command Byte
-@@ -89,6 +90,7 @@ Value Byte is writing data when you send the write commands.
- When you read RAM, there is no meaning.
- 
- DataByte(GET_REPORT)
-+~~~~~~~~~~~~~~~~~~~~
- 
- =====	======================
- Byte1	Response Byte
--- 
-An old man doll... just what I always wanted! - Clara
+> Oleg.
 
+Sebastian
 
