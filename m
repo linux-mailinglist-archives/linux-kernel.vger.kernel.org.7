@@ -1,264 +1,213 @@
-Return-Path: <linux-kernel+bounces-868998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08788C06ADC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:23:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98346C06AFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 54B3835A59F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:23:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A24E545522
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464CC1E260A;
-	Fri, 24 Oct 2025 14:23:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5999721885A;
+	Fri, 24 Oct 2025 14:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nY5OaQve"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB48202963;
-	Fri, 24 Oct 2025 14:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCFD20DD52
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761315785; cv=none; b=M7U6aI9a+RfFLEMiPDwjlV8AFYrNICdDy8SJuhY7hOMZ8MYXxbO79mndRK28QW1UhwfhYIwlnFMErvilxidWVERLtlgIYIYAt//SSneXZNpPSeWWnRbsO4sI5tDuSbtaGgBaU2OUvhfYkcP5FjM5+O8kmrW6FISqPKJwLUUAZnQ=
+	t=1761315794; cv=none; b=LQPO1xB7h+HWEhelyOnhTTa6hYhjIKhrOssXtPvL+fqJk4L1DLgnzbAtqGjZjawdQxcq9OqSQlELiqT3S4vLTQ7obTuSgex6C9TzHrWi25VpfdaCsfgltix5xI6xKhrsgVqU7qBgmxhqg5+nD4rf+od023n2Z6e8RkxxPhi72LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761315785; c=relaxed/simple;
-	bh=tVU57feXsMsXAJB7gd4NTH1wrXDb+/qt4z7S0gDbQ8w=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U9t5IIUSbFIPsB086qcHXhGdZnY/nh5Nyb00XWGkE9COuS16Wp7PArIOXSrLrELdHEC3Lr3HkcTsy5lqRmQtSfY5pL9uLD46yP63GCNoQi9qqTObo+ReviR1E1CzRtrE/Pq1sLHlOhHYsMlAs6VhxlinZfDAAZoljMLUbpHjCdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ctQ5T0ylQz6GDFX;
-	Fri, 24 Oct 2025 22:19:41 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 95D0314014C;
-	Fri, 24 Oct 2025 22:22:59 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 24 Oct
- 2025 15:22:58 +0100
-Date: Fri, 24 Oct 2025 15:22:56 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Jeremy Linton <jeremy.linton@arm.com>
-CC: James Morse <james.morse@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-acpi@vger.kernel.org>, "D
- Scott Phillips OS" <scott@os.amperecomputing.com>,
-	<carl@os.amperecomputing.com>, <lcherian@marvell.com>,
-	<bobo.shaobowang@huawei.com>, <tan.shaopeng@fujitsu.com>,
-	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, "Xin
- Hao" <xhao@linux.alibaba.com>, <peternewman@google.com>,
-	<dfustini@baylibre.com>, <amitsinght@marvell.com>, David Hildenbrand
-	<david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba Ko
-	<kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, Gavin Shan <gshan@redhat.com>
-Subject: Re: [PATCH v3 04/29] ACPI / PPTT: Add a helper to fill a cpumask
- from a cache_id
-Message-ID: <20251024152256.00003f8e@huawei.com>
-In-Reply-To: <50a8cc38-810b-4bea-9a73-2463a6160b9f@arm.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
-	<20251017185645.26604-5-james.morse@arm.com>
-	<50a8cc38-810b-4bea-9a73-2463a6160b9f@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761315794; c=relaxed/simple;
+	bh=uGP8+TkU/twhasSfvPO4zLh4G5FjfHNqrowAz9ksh3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tj+iXzyX7OQU3NYDWK9DLsyEFgLXHX/4gAkTi8Fp3Zx2krZT6aL2N3n4ZAzIYmOVsymcZWydYAIllTHjyIjya4AwO4TrAjWi6IKlyPlKSdjFiq0t3SilxL2eoNCWyitTrfqu6ad8GPjIdxMncxLqY6zjuaesT8WVi9FbM5NIqCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nY5OaQve; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OCDqjv016081
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:23:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/EgZaEEAtQpIr/mZaxCGpC9Z/zSaRdUrKgdMD6X3vlY=; b=nY5OaQve8G5EIpFm
+	rYPkwyaycSFwxx9VkYXWvNsPm0D7qWqt5lxOmbkwJxRqm5BIs5wf9GSTl6yW6xPv
+	NgpidjM2fE4dnlVVnL0N5f/Pu12FQFJheeMVvhB8H5OlFfA4nQSjAwc9R3aXRRR6
+	xY/hZqCgsskE2TLmOtII7ASb1aM1mdVlNM/p4KlBYXyXzkaDOCZvcU0McgMRHali
+	BBhlCsHAsXXO+5cLj0J2XtSbAkhcbb7KW/hpmGdl7mDwBvg+YNxOekORtu3Q7sYc
+	GtMEaPm5/PBFNFMzkpeJBZp5skCOFZwaQcTy7v39PSsIM75esnudy+wLI+dtVBPV
+	MrhtgQ==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xkpshvcs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:23:11 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-290c07feb72so18468525ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:23:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761315791; x=1761920591;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/EgZaEEAtQpIr/mZaxCGpC9Z/zSaRdUrKgdMD6X3vlY=;
+        b=kH0fEz8KB5oE6HBoAmcJavwo80bFXyBlYN2a1kRvmRnQlyhh50IFNTniJLygn07Gsp
+         XiXdsgGETGuXrV2Q6ZcJ+WacPhfdfwnFYyUI6b6SZWac4iCbN6NdN0QKLeqvQGQaPXwU
+         0rXeRvCrxoBhpvjb4q5UJIDtfBjkeS7/hxw1YpzzZUk8WwxF7gJPcojhvxz5UEyfz+jR
+         P1P8Prn04/mUTUJJiGZyE3UgfvUnOxRReR2cuY0OUxgexUXdf/rL8QuqnEo3dLqvfajq
+         FIN4icWo1PDJCcUWSvgFb/6IsLsPD046dvLK1Jwu+41mtnxVfyJNNqGLJF2gT+po1PvC
+         eFUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXiL5QID47JUhLnCR8uoW0lbL+Ag9x/blCIumwLyZN0cw4rt7UXSuCxkmYokw/uIwHcKWTnBq17Xrty1e4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk451baq74XMxdn96HL4jMswQcJPhxhgrMD1JFYZ24H9HcoELP
+	+q0fzkqmDtP6M9if6L7YYK1ZfZ45G4JWDwqpjhE6WEUnSp9aFmAPXtph8kF1fUjH4f5MUQOA1j7
+	f8pdgIEXS4xHFrJIjIpP5WKPo/TzvvyvrfuyCU0+4FKdG9pR/4la27kTpssZqO5C1ooI=
+X-Gm-Gg: ASbGncsOrLatQrwtIKb9CiBVtqATMmxLRrx6o4XfuEaqEPypvG9GA7umq1wKI/kqRIn
+	JRGWkqXewM6dxxFGwYQn7ahMP+EWL4PVwowwAqjcNQbwq7x4K0iQ7LpbaImYfRlubTffRb87O4a
+	WmML3xpz43WpJDniMmOxHREj/lKP229bnluq5vNn3LAuXLl7LR4t/jHQXCCs1imeLrrK/QVgSvs
+	0Wwkv4tLQvrnncPGVec+O6mp750Exscw2xfoCYc91yAzAqGmovwXlZj+eFSK0mckARvcwQC5NwI
+	eU9beuPQvqZwBcLCm28RMFzAFK//cKg/mUgM8D+VFOWhKfN4EvIwZ0HLTfLvJ0MaEt/ITLnMmbN
+	Fzl42J8MDLh68wi59PjddBQ==
+X-Received: by 2002:a17:902:f64a:b0:294:7048:643 with SMTP id d9443c01a7336-29470480f8fmr67499765ad.15.1761315790772;
+        Fri, 24 Oct 2025 07:23:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF4MPeSwFhzPTKvaKRf1XESN9sP6R6a1VjFKBw7Sdaagyby5CvwLmehW1f6noOGu/6x8AKqOA==
+X-Received: by 2002:a17:902:f64a:b0:294:7048:643 with SMTP id d9443c01a7336-29470480f8fmr67499295ad.15.1761315790217;
+        Fri, 24 Oct 2025 07:23:10 -0700 (PDT)
+Received: from [10.204.104.20] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e1ed68869sm5129253a91.0.2025.10.24.07.23.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 07:23:09 -0700 (PDT)
+Message-ID: <7c563e83-031c-445c-bcfa-c04f4729622d@oss.qualcomm.com>
+Date: Fri, 24 Oct 2025 19:53:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] drm/msm/a6xx: Add support for Adreno 612
+To: rob.clark@oss.qualcomm.com, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar
+ <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jie Zhang <quic_jiezh@quicinc.com>
+References: <20251017-qcs615-spin-2-v1-0-0baa44f80905@oss.qualcomm.com>
+ <20251017-qcs615-spin-2-v1-1-0baa44f80905@oss.qualcomm.com>
+ <44ff81bf-8970-475c-a4f5-c03220bc8c3f@oss.qualcomm.com>
+ <97aeb6a1-fda2-440f-b14b-2f3dbc2d7e8e@oss.qualcomm.com>
+ <5e64c246-a424-42c9-b102-e1a2af579936@oss.qualcomm.com>
+ <CACSVV00vwbNtH47S_BVet7uP7u9t4RY=xTBn_r3u4sS91Y7Muw@mail.gmail.com>
+Content-Language: en-US
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+In-Reply-To: <CACSVV00vwbNtH47S_BVet7uP7u9t4RY=xTBn_r3u4sS91Y7Muw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE5MCBTYWx0ZWRfX35YioKJ7oVmv
+ Sy8CtqPVhm4ogf/Z9x46lQY/1w8vrTa8JLOIS75rSpu/h0y3HlWOrKNGLDR6DUUzV+2blHXIgx5
+ SwjF0Pw8H4vbtySRTWuaNTyTW0Wi0utipC9HLWwdFI++HpzJc2vfRBDmObmZlBkDEey3lud34n2
+ OaxqUncJSNEE0DNrMv+N33rzaTJDHzYatrR+sPn0e2VIdQfqDRUAZBlPrQh5jQjvmC/5mnLeMjJ
+ ITLhisnmmumeWt7r2SVXJhnijkmP5YUtLmqYXYbnIGC1x8iKXD7wilGbx3x1AR0LskpqppILbR0
+ /Rg4+mC+puuv7/Je0PGLa4DJ0abLMqMBlcW8GVo+oWqL+mRBsovJ7X0/GpCr/kMOtHkLwIBqXOt
+ 1M6PXTGFKjX5RH29Bn3O00om/zykkA==
+X-Authority-Analysis: v=2.4 cv=FbM6BZ+6 c=1 sm=1 tr=0 ts=68fb8bcf cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=Kgau_Mukr_2Uqyo6pRUA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: Wfh4m7N1KS5W2T-PfGfhRfI3BhZeZeOZ
+X-Proofpoint-ORIG-GUID: Wfh4m7N1KS5W2T-PfGfhRfI3BhZeZeOZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-24_02,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510210190
 
-On Wed, 22 Oct 2025 07:58:36 -0500
-Jeremy Linton <jeremy.linton@arm.com> wrote:
+On 10/24/2025 6:46 PM, Rob Clark wrote:
+> On Fri, Oct 24, 2025 at 12:55 AM Konrad Dybcio
+> <konrad.dybcio@oss.qualcomm.com> wrote:
+>>
+>> On 10/24/25 12:57 AM, Akhil P Oommen wrote:
+>>> On 10/22/2025 8:43 PM, Konrad Dybcio wrote:
+>>>> On 10/17/25 7:08 PM, Akhil P Oommen wrote:
+>>>>> From: Jie Zhang <quic_jiezh@quicinc.com>
+>>>>>
+>>>>> Add support for Adreno 612 GPU found in SM6150/QCS615 chipsets.
+>>>>> A612 falls under ADRENO_6XX_GEN1 family and is a cut down version
+>>>>> of A615 GPU.
+>>>>>
+>>>>> A612 has a new IP called Reduced Graphics Management Unit or RGMU
+>>>>> which is a small state machine which helps to toggle GX GDSC
+>>>>> (connected to CX rail) to implement IFPC feature. It doesn't support
+>>>>> any other features of a full fledged GMU like clock control, resource
+>>>>> voting to rpmh etc. So we need linux clock driver support like other
+>>>>> gmu-wrapper implementations to control gpu core clock and gpu GX gdsc.
+>>>>> This patch skips RGMU core initialization and act more like a
+>>>>> gmu-wrapper case.
+>>>>>
+>>>>> Co-developed-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>>>>> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
+>>>>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>>>>> ---
+>>>>
+>>>> [...]
+>>>>
+>>>>> @@ -350,12 +350,18 @@ static const struct a6xx_gmu_oob_bits a6xx_gmu_oob_bits[] = {
+>>>>>  /* Trigger a OOB (out of band) request to the GMU */
+>>>>>  int a6xx_gmu_set_oob(struct a6xx_gmu *gmu, enum a6xx_gmu_oob_state state)
+>>>>>  {
+>>>>> +   struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+>>>>> +   struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+>>>>>     int ret;
+>>>>>     u32 val;
+>>>>>     int request, ack;
+>>>>>
+>>>>>     WARN_ON_ONCE(!mutex_is_locked(&gmu->lock));
+>>>>>
+>>>>> +   /* Skip OOB calls since RGMU is not enabled */
+>>>>
+>>>> "RGMU doesn't handle OOB calls"
+>>>
+>>> Technically RGMU can handle OOB calls. But we are not initializing rgmu.
+>>
+>> Oh, I glossed over that..
+>>
+>> IIRC the reason we delayed 612 support in the past was to make sure
+>> that the RGMU FW is consumed, so that runtime requirements don't
+>> suddenly change one day.
+>>
+>> If you have no interest/way in getting it wholly supported right now,
+>> can you at least make sure that the driver requests the firmware and
+>> exits if it's absent?
+> 
+> adreno_load_gpu() calls adreno_load_fw() first thing, and will bail if
+> gmu fw is missing.  (zap fw is a bit more awkward since that could
+> come from dt or device table.)
 
-> Hi,
-> 
-> This is largely looking pretty solid, but..
-> 
-> 
-> On 10/17/25 1:56 PM, James Morse wrote:
-> > MPAM identifies CPUs by the cache_id in the PPTT cache structure.
-> > 
-> > The driver needs to know which CPUs are associated with the cache.
-> > The CPUs may not all be online, so cacheinfo does not have the
-> > information.
-> > 
-> > Add a helper to pull this information out of the PPTT.
-> > 
-> > CC: Rohit Mathew <Rohit.Mathew@arm.com>
-> > Signed-off-by: James Morse <james.morse@arm.com>
-> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-> > ---
-> > Changes since v2:
-> >   * Removed stray cleanup useage in preference for acpi_get_pptt().
-> >   * Removed WARN_ON_ONCE() for symmetry with other helpers.
-> >   * Dropped restriction on unified caches.
-> > 
-> > Changes since v1:
-> >   * Added punctuation to the commit message.
-> >   * Removed a comment about an alternative implementaion.
-> >   * Made the loop continue with a warning if a CPU is missing from the PPTT.
-> > 
-> > Changes since RFC:
-> >   * acpi_count_levels() now returns a value.
-> >   * Converted the table-get stuff to use Jonathan's cleanup helper.
-> >   * Dropped Sudeep's Review tag due to the cleanup change.
-> > ---
-> >   drivers/acpi/pptt.c  | 64 ++++++++++++++++++++++++++++++++++++++++++++
-> >   include/linux/acpi.h |  6 +++++
-> >   2 files changed, 70 insertions(+)
-> > 
-> > diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> > index 50c8f2a3c927..2f86f58699a6 100644
-> > --- a/drivers/acpi/pptt.c
-> > +++ b/drivers/acpi/pptt.c
-> > @@ -985,3 +985,67 @@ int find_acpi_cache_level_from_id(u32 cache_id)
-> >   
-> >   	return -ENOENT;
-> >   }
-> > +
-> > +/**
-> > + * acpi_pptt_get_cpumask_from_cache_id() - Get the cpus associated with the
-> > + *					   specified cache
-> > + * @cache_id: The id field of the cache
-> > + * @cpus: Where to build the cpumask
-> > + *
-> > + * Determine which CPUs are below this cache in the PPTT. This allows the property
-> > + * to be found even if the CPUs are offline.
-> > + *
-> > + * The PPTT table must be rev 3 or later,
-> > + *
-> > + * Return: -ENOENT if the PPTT doesn't exist, or the cache cannot be found.
-> > + * Otherwise returns 0 and sets the cpus in the provided cpumask.
-> > + */
-> > +int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id, cpumask_t *cpus)
-> > +{
-> > +	int level, cpu;
-> > +	u32 acpi_cpu_id;
-> > +	struct acpi_pptt_cache *cache;
-> > +	struct acpi_table_header *table;
-> > +	struct acpi_pptt_cache_v1 *cache_v1;
-> > +	struct acpi_pptt_processor *cpu_node;
-> > +
-> > +	cpumask_clear(cpus);
-> > +
-> > +	table = acpi_get_pptt();
-> > +	if (!table)
-> > +		return -ENOENT;
-> > +
-> > +	if (table->revision < 3)
-> > +		return -ENOENT;
-> > +
-> > +	for_each_possible_cpu(cpu) {
-> > +		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
-> > +		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
-> > +		if (!cpu_node)
-> > +			continue;
-> > +
-> > +		/* Start at 1 for L1 */
-> > +		level = 1;
-> > +		cache = acpi_find_any_type_cache_node(table, acpi_cpu_id, level,
-> > +						      &cpu_node);
-> > +		while (cache) {
-> > +			cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
-> > +						cache, sizeof(*cache));  
-> 
-> Is the core acpi definition in actbl2.h correct? Shouldn't it be 
-> something along the lines of:
-> 
-> struct acpi_pptt_cache_v1 {
->   struct acpi_subtable_header header;
->   u16 reservedd;
->   u32 flags;
->   u32 next_level_of_cache;
->   u32 size;
->   u32 number_of_sets;
->   u8 associativity;
->   u8 attributes;
->   u16 lines_size;
->   u32 cache_id;
-> }
-> 
-> 
-> Then that solves the detection of the additional field problem correctly 
-> because the length (24 vs 28) of the subtable then tells you which 
-> version your dealing with. (and goes back to why much of this is coded 
-> to use ACPI_ADD_PTR rather than structure+ logic.)
-> 
+Correct. And RGMU firmware is available in linux-firmware repo.
 
-Do we want to deal with arguing the change in ACPICA? 
-I fully agree that it would be much nicer if that didn't use this weird
-bits of structures approach :(  
-
-https://github.com/acpica/acpica/blob/master/source/include/actbl2.h#L3497
-is where this is coming from.
-
-Maybe can do it in parallel. Rafael, what do you think is best way forwards
-with this?
-
-Jonathan
+-Akhil.
 
 > 
-> Thanks,
-> 
-> 
-> 
-> 
-> 
-> 
-> > +			if (!cache)
-> > +				continue;
-> > +
-> > +			cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
-> > +						cache, sizeof(*cache));
-> > +
-> > +			if (cache->flags & ACPI_PPTT_CACHE_ID_VALID &&
-> > +			    cache_v1->cache_id == cache_id)
-> > +				cpumask_set_cpu(cpu, cpus);
-> > +
-> > +			level++;
-> > +			cache = acpi_find_any_type_cache_node(table, acpi_cpu_id,
-> > +							      level, &cpu_node);
-> > +		}
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> > index be074bdfd4d1..a9dbacabdf89 100644
-> > --- a/include/linux/acpi.h
-> > +++ b/include/linux/acpi.h
-> > @@ -1543,6 +1543,7 @@ int find_acpi_cpu_topology_package(unsigned int cpu);
-> >   int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
-> >   void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus);
-> >   int find_acpi_cache_level_from_id(u32 cache_id);
-> > +int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id, cpumask_t *cpus);
-> >   #else
-> >   static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
-> >   {
-> > @@ -1570,6 +1571,11 @@ static inline int find_acpi_cache_level_from_id(u32 cache_id)
-> >   {
-> >   	return -ENOENT;
-> >   }
-> > +static inline int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id,
-> > +						      cpumask_t *cpus)
-> > +{
-> > +	return -ENOENT;
-> > +}
-> >   #endif
-> >   
-> >   void acpi_arch_init(void);  
-> 
-> 
+> BR,
+> -R
 
 
