@@ -1,55 +1,92 @@
-Return-Path: <linux-kernel+bounces-869183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9AE1C073C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:17:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13488C073D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE197509536
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:13:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C5F7569534
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861D5334394;
-	Fri, 24 Oct 2025 16:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4E8335BA1;
+	Fri, 24 Oct 2025 16:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATwP4xz9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="SxFIz63W";
+	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="RvYaiQ02"
+Received: from mailhub11-fb.kaspersky-labs.com (mailhub11-fb.kaspersky-labs.com [81.19.104.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6103309F12;
-	Fri, 24 Oct 2025 16:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CBA1D61BC;
+	Fri, 24 Oct 2025 16:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.104.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761322391; cv=none; b=pHnf8DJkHm21tUzmWabIo+VGIbfUSOYK0rm1uBHFHTz2wuaj0wzpFN0fdOTN6qlpg9FapobFfTk5q00rA9PFXZ5k7eMdgq0XgDmeI1SMA5Ow7An5UyAM4FS0oLhZ5R8uCU2fpTYPW5CkuGJhaa7A7uPgtvxpYPK/OTV6KP8Dk74=
+	t=1761322415; cv=none; b=dkFaq9SaFDkHV9WUxmSPad4rwTPNAb/KYClmhPiNHwk11B6mp5+hi3mBjYVIG125eA5W7iFncFui6r6rfeLryRc/3z/1kHO1PgkfmBu9ILGpRiggOjLmrrJjL/iPauDW47LW6g6UFzcgppum2nhWdwe+BAtqPC15Lm30OkiGS74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761322391; c=relaxed/simple;
-	bh=JMZUnKEbpoPUX+U/rG/NykTr6Ws1kr0EDZQvo0uV/rw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OsnabABKvbmdKiYcd3BDxcWJNXKB+01mR4eI6TuV+tuxvbTqXGzfM0L0ZRlPec91CzhpGbt/WF/zdNwzonINUECbsa6K1fUmFsbV6qcDnEDkxmV9hRYfSdhp+T1bllJq9BE/c/xNsl9x9z0IDCHUpS2CINK4LycuDe5pTg5tF9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATwP4xz9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAF2CC4CEF1;
-	Fri, 24 Oct 2025 16:13:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761322390;
-	bh=JMZUnKEbpoPUX+U/rG/NykTr6Ws1kr0EDZQvo0uV/rw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ATwP4xz9SabBVxqeUCMoNU79ZHQ7FBdKYroJ/cFnsPC70pbsKVC5/rYu9pyHT8yzC
-	 6csGcRsAc7z4npfT8e+jn3ectNP4m1bxq7GdQGQBOlEgkxCiS5MPLEB6SelY8UFZL2
-	 al5Vz7YDB3qoCOeq19YHj1re9+EWQImE5l3unp9gh8WwzGiEmwYWInUNkj/Xrtz0MU
-	 Pmk4VtlSiCIQpaQQlzN3mRP5wcXnfCtI/k3l+rODxnFPeBuzuMXKpoSAmC8MBpyXDe
-	 CPjHf2J2OPPHm5/NNQvWrnLLWHdd+2WkoRH2/MthAkjDcKCDui1IybS8gNjnOcsd3B
-	 LJAeapP++aZMw==
-From: Philipp Stanner <phasta@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <phasta@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/nouveau: Fix race in nouveau_sched_fini()
-Date: Fri, 24 Oct 2025 18:12:22 +0200
-Message-ID: <20251024161221.196155-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1761322415; c=relaxed/simple;
+	bh=8ERzwQyhedL+q7VdDwzFN6oxf1r6ylHaPJoOZKcRg1I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OGW+Tv4BOtlCf/QdQa+i+f3+zrXNB1rxylzUyu4Sk59ZkFQqLq+79xwMdZ4SNlBKiXwvmfH8/Q5FjH8Gim/sJwZeGCr8QuuHDkF5RxW7sZ8P2mZaFpmTPBJaEsPAx0J7N/P6MVZf7SMYBeAdDvkxYcq86x7qHJLg/Ax0xDwWfhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=SxFIz63W; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=RvYaiQ02; arc=none smtp.client-ip=81.19.104.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1761322404;
+	bh=py74iKW7Qy3dzd3gMjjD4ryhlSUGjzcDQYksVPouOZM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=SxFIz63WL+YZ1vZEt1eLjhQVdfjPZsTeulIGCee//IfFU5t/B2HFauBq/o7qaOJG6
+	 VUXXWTAjzKfJVn7XKgfMHYUeG7WLm6KmfUVKebaXlnQh+tRBT5WHimSwEiUEMJNmNj
+	 iPcYYmfd1IgXxRdnk1Auun7BRuZ+6VOe/4Ie3UpAj1tFhAjemIm9ReW9MNjW3gZJ/D
+	 M64utWJohz75yDrkyfIbwhDoK1MOQCPsU9a0pf02hY/ezXX4gKUg78bMiYIS1SqSny
+	 Ct9s5hrAT/TtzUW4JFGphtjuaj823wNT8Xc6BkgeN/5JTgf49nGPEhD4npisQP292F
+	 o16+Omu1DaJNg==
+Received: from mailhub11-fb.kaspersky-labs.com (localhost [127.0.0.1])
+	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTP id 4622DE80D50;
+	Fri, 24 Oct 2025 19:13:24 +0300 (MSK)
+Received: from mx12.kaspersky-labs.com (mx12.kaspersky-labs.com [91.103.66.155])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "mx12.kaspersky-labs.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub11-fb.kaspersky-labs.com (Postfix) with ESMTPS id E0F8AE8035C;
+	Fri, 24 Oct 2025 19:13:23 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
+	s=mail202505; t=1761322394;
+	bh=py74iKW7Qy3dzd3gMjjD4ryhlSUGjzcDQYksVPouOZM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=RvYaiQ02gSU+w9FVm2RXwF9Ml1EAutGhGXp19MRLKSA5E8LCJ6h1jvrhqzovk63fJ
+	 wqfCbyGNb0PhTK8mwz1mOgBlNzZDqG1/18V1RAiK+Z4zdsOzbJmwo7JTWegEzLShii
+	 VR47rRnoSUImTdf/4SWk+sA3d8L4nbokIL/nfVpbRSAmRBtZNQhsIy4HHNcG2NiTtN
+	 +3hfhs9V8oUQlo0dDThrKRTatu3oS63fNFHk9zEbtlI0wpw5JN7Zzqk2KR1XPtvjjD
+	 /22se4DNJT5ESP5i3rARua6Pm9mRhy/tRvPcPQv1orwlWItzU7XC6trozFTMakNDLI
+	 nnKlib0/QFczg==
+Received: from relay12.kaspersky-labs.com (localhost [127.0.0.1])
+	by relay12.kaspersky-labs.com (Postfix) with ESMTP id B0C475A4AE7;
+	Fri, 24 Oct 2025 19:13:14 +0300 (MSK)
+Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
+	by mailhub12.kaspersky-labs.com (Postfix) with ESMTPS id D57CD5A4AEC;
+	Fri, 24 Oct 2025 19:13:10 +0300 (MSK)
+Received: from zhigulin-p.avp.ru (10.16.104.190) by HQMAILSRV2.avp.ru
+ (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 24 Oct
+ 2025 19:13:10 +0300
+From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>, Paolo Abeni
+	<pabeni@redhat.com>, Zhu Yanjun <yanjun.zhu@linux.dev>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Leon Romanovsky <leon@kernel.org>, Steffen
+ Klassert <steffen.klassert@secunet.com>, Cosmin Ratiu <cratiu@nvidia.com>,
+	Ayush Sawal <ayush.sawal@chelsio.com>, Harsh Jain <harsh@chelsio.com>, Atul
+ Gupta <atul.gupta@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+	Ganesh Goudar <ganeshgr@chelsio.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH net v4] net: cxgb4/ch_ipsec: fix potential use-after-free in ch_ipsec_xfrm_add_state() callback
+Date: Fri, 24 Oct 2025 19:13:02 +0300
+Message-ID: <20251024161304.724436-1-Pavel.Zhigulin@kaspersky.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,54 +94,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: HQMAILSRV5.avp.ru (10.64.57.55) To HQMAILSRV2.avp.ru
+ (10.64.57.52)
+X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 10/24/2025 16:03:08
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 197432 [Oct 24 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: Pavel.Zhigulin@kaspersky.com
+X-KSE-AntiSpam-Info: LuaCore: 72 0.3.72
+ 80ff96170b649fb7ebd1aa4cb544c36c109810bd
+X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
+X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;kaspersky.com:5.0.1,7.1.1;lore.kernel.org:7.1.1;zhigulin-p.avp.ru:5.0.1,7.1.1
+X-KSE-AntiSpam-Info: {Tracking_white_helo}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Deterministic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 10/24/2025 16:05:00
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 10/24/2025 3:14:00 PM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
+ rules found
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-KSMG-AntiPhishing: NotDetected, bases: 2025/10/24 15:00:00
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/24 12:21:00 #27794049
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected, bases: 2025/10/24 15:50:00
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 52
 
-nouveau_sched_fini() uses a memory barrier before wait_event().
-wait_event(), however, is a macro which expands to a loop which might
-check the passed condition several times. The barrier would only take
-effect for the first check.
+In ch_ipsec_xfrm_add_state() there is not check of try_module_get
+return value. It is very unlikely, but try_module_get() could return
+false value, which could cause use-after-free error.
+Conditions: The module count must be zero, and a module unload in
+progress. The thread doing the unload is blocked somewhere.
+Another thread makes a callback into the module for some request
+that (for instance) would need to create a kernel thread.
+It tries to get a reference for the thread.
+So try_module_get(THIS_MODULE) is the right call - and will fail here.
 
-Replace the barrier with a function which takes the spinlock.
+This fix adds checking the result of try_module_get call
 
-Cc: stable@vger.kernel.org # v6.8+
-Fixes: 5f03a507b29e ("drm/nouveau: implement 1:1 scheduler - entity relationship")
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: 6dad4e8ab3ec ("chcr: Add support for Inline IPSec")
+Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_sched.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+v4: Add module_put() on allocation fail after try_module_get() as 
+    Jakub Kicinski <kuba@kernel.org> noticed during review. Thanks!
+v3: Move the try_module_get() check above the code that initializes
+    the sa_entry struct, as suggested by Paolo Abeni <pabeni@redhat.com>
+    during code review.
+v2: Remove redundant headers. Provide better description.
+v1: https://lore.kernel.org/all/20251001111646.806130-1-Pavel.Zhigulin@kaspersky.com/
+ .../ethernet/chelsio/inline_crypto/ch_ipsec/chcr_ipsec.c   | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
-index e60f7892f5ce..a7bf539e5d86 100644
---- a/drivers/gpu/drm/nouveau/nouveau_sched.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
-@@ -482,6 +482,17 @@ nouveau_sched_create(struct nouveau_sched **psched, struct nouveau_drm *drm,
- 	return 0;
+diff --git a/drivers/net/ethernet/chelsio/inline_crypto/ch_ipsec/chcr_ipsec.c b/drivers/net/ethernet/chelsio/inline_crypto/ch_ipsec/chcr_ipsec.c
+index ecd9a0bd5e18..49b57bb5fac1 100644
+--- a/drivers/net/ethernet/chelsio/inline_crypto/ch_ipsec/chcr_ipsec.c
++++ b/drivers/net/ethernet/chelsio/inline_crypto/ch_ipsec/chcr_ipsec.c
+@@ -290,9 +290,15 @@ static int ch_ipsec_xfrm_add_state(struct net_device *dev,
+ 		return -EINVAL;
+ 	}
+
++	if (unlikely(!try_module_get(THIS_MODULE))) {
++		NL_SET_ERR_MSG_MOD(extack, "Failed to acquire module reference");
++		return -ENODEV;
++	}
++
+ 	sa_entry = kzalloc(sizeof(*sa_entry), GFP_KERNEL);
+ 	if (!sa_entry) {
+ 		res = -ENOMEM;
++		module_put(THIS_MODULE);
+ 		goto out;
+ 	}
+
+@@ -301,7 +307,6 @@ static int ch_ipsec_xfrm_add_state(struct net_device *dev,
+ 		sa_entry->esn = 1;
+ 	ch_ipsec_setkey(x, sa_entry);
+ 	x->xso.offload_handle = (unsigned long)sa_entry;
+-	try_module_get(THIS_MODULE);
+ out:
+ 	return res;
  }
- 
-+static bool
-+nouveau_sched_job_list_empty(struct nouveau_sched *sched)
-+{
-+	bool empty;
-+
-+	spin_lock(&sched->job.list.lock);
-+	empty = list_empty(&sched->job.list.head);
-+	spin_unlock(&sched->job.list.lock);
-+
-+	return empty;
-+}
- 
- static void
- nouveau_sched_fini(struct nouveau_sched *sched)
-@@ -489,8 +500,7 @@ nouveau_sched_fini(struct nouveau_sched *sched)
- 	struct drm_gpu_scheduler *drm_sched = &sched->base;
- 	struct drm_sched_entity *entity = &sched->entity;
- 
--	rmb(); /* for list_empty to work without lock */
--	wait_event(sched->job.wq, list_empty(&sched->job.list.head));
-+	wait_event(sched->job.wq, nouveau_sched_job_list_empty(sched));
- 
- 	drm_sched_entity_fini(entity);
- 	drm_sched_fini(drm_sched);
--- 
-2.49.0
+--
+2.43.0
+
 
 
