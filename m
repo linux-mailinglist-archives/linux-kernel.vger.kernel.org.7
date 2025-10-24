@@ -1,130 +1,238 @@
-Return-Path: <linux-kernel+bounces-868616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE22FC05A19
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:40:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840C9C05A16
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D70254FFE69
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:39:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 064771C2130C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EF23115BC;
-	Fri, 24 Oct 2025 10:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33FA3101C4;
+	Fri, 24 Oct 2025 10:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vLESs5Xv"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UYqJNxrP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232112FE041
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8ADA2FE041;
+	Fri, 24 Oct 2025 10:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761302354; cv=none; b=FgiNlc8YVp4/UIjaPkfndO8S+9W5FihIt9HtTQylI/SqdGCFFITJyZNBJRK4O3xuIuklQzrmTy1Vy8DpNODV2psGv2tapee4HsaI5N/hfRttuw2iRX48mzlZUcmf/+IT/tDfqjGfn2RBj0E3jjXTn22aZneA548d7bbxUsQedvw=
+	t=1761302368; cv=none; b=fxgPtLN1bWVeV9atU4oibiNiwIY8n8xF6pdjZMQuHEwQd2cs5zLO52DeWX/xtloAeKLVlrgMzIdkIH6YhVjzsnRFlnDIUyjK62qIgCFbOGIoO2RXuAk3enYjA/SEn+fKQkZAxVnL9y+5IotI7Bm8N65wGURXq6fFcGQDPuHssyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761302354; c=relaxed/simple;
-	bh=hLqLEQW//H7SR70Dq2KNBUCQqAo7BcQp3/CyUvMooiI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Kqrj5oaHp2adCkpI0NPeebexuShKNsKdz/ROoxFtKYspsUvtIAJyhVlJlQZV+Ej9hmAa8AmXIb8qI0+37mkZBcfZKTL91Dv0EEctw3Ts9PmXP4+gn/KKjZN6BrCTvr/6/m07sZHHAe6A8mdoMqDfh3Ue2rAL71br7Az0mOuxAdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vLESs5Xv; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-471168953bdso19646555e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:39:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761302351; x=1761907151; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OPF1f85/FJM+wJtbt8GtXxyRXGLXZOfe4gspjYrW5Wc=;
-        b=vLESs5Xvgn7efmeOlvp6xX9blc8ilJaQ9lJdvkq5HWqacHjOosORm+SSGVgmGH8RZa
-         TRADfzW4mWJPKxmCJ+VwVQwNYyBSKnN/vhjNiyziagbkfPNiU9bH+jwOAVxyKP9Zs/Kj
-         RaREpeNgLHzMyILrC3BxndzX03slLFdvNi9eXCGvR3QzZy9qwXZzRHxSwnD0BG2AQoo4
-         LuzCmnnH1YhvwMBg7HtusMgYwb/eRRJf/TJTLrzLnaN1dA0J9JNZ4tajR7e33ssHQhmG
-         WBfr5dflYR0o0ArgLufYrd6L+fFQuP/wh/0WMeYvg30B877F/x/Zg+00xFbA9eVmFfqj
-         P+Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761302351; x=1761907151;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OPF1f85/FJM+wJtbt8GtXxyRXGLXZOfe4gspjYrW5Wc=;
-        b=GVVQcte6o6J4NkCCMNvINWd22iU4+Yd9mK4PZzz1OPAzeq3hj3I4SgrzL0Jm0zjjLd
-         jxnGXkap3AaSmt+ddXecU8TziOUtrkJvEW+6H04MVJwQ9JOabsW5tdi5/gRNHThAaNqe
-         wfPkBMRHxBwlqBT+PweB+PiMtt0dt7w6+O9kOOw+xJMOaOysAwY0amvj1g2COHvbOL4/
-         VfFiM+TDFcu2LMrsejbb5tqpH3JVdojjDfzTp2P1NbY/lc6//PxqlqrQufts5nOHc5I1
-         s4N9jwDRM7BDOTLJ6l/weY7ZtgjP560csHy94GShyHkM4mjaqfUEh1lT646VIa8g3cZb
-         rT+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWULAMkaFy2ykpLqj6NBfyUmSrhcS/ngb17vJDFkDSZKWwEbne4+HYFWEqdF1tt82FT6hEjPkqVplcrwd0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynCVoJfnHC1yGFeuc7emYHcWjv+5D07C75LjrHCA8AG2oeROSd
-	sBkLpRC7HZBPaDFw4wP2IPgVJfI8iQlDlAcHAObpRpN/iKv6Gf/NQOWsoXAl6kesv2oDIRPs5v/
-	pT8Hipf+z0z78D2GmPA==
-X-Google-Smtp-Source: AGHT+IEjUBMQGoVxUfyDuWsIaZh++ce8Z93gQtTGPdxEJaJNt3LFU5j/zdaAt8Gsv0XYS4ZhQjjGAb/v4s3GhzQ=
-X-Received: from wmgg22.prod.google.com ([2002:a05:600d:16:b0:46f:c7ab:c8ce])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:295:b0:46f:b42e:e362 with SMTP id 5b1f17b1804b1-475d244d6f1mr13867525e9.19.1761302351572;
- Fri, 24 Oct 2025 03:39:11 -0700 (PDT)
-Date: Fri, 24 Oct 2025 10:39:10 +0000
-In-Reply-To: <20251022143158.64475-3-dakr@kernel.org>
+	s=arc-20240116; t=1761302368; c=relaxed/simple;
+	bh=SRKpqs7p8PGtv14YGwum4fAb1Zzbp8J6idns3ccYONg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=tvSJIbuKLb1s8WN8Y75kSZcsSP1ywGFIWcWaeu9W+RcbcDKVF7rLeiMy6KcIv5K769C3TnI4vj5I4jJtbOWHO/tseQODYTpvUSpTt0hZk8htidVt8m7p1nSGKc/iAClarwe0hMhoJ6GG6g55yBQDKR7XB3W9aSys9b1mJgdgv0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UYqJNxrP; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761302367; x=1792838367;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=SRKpqs7p8PGtv14YGwum4fAb1Zzbp8J6idns3ccYONg=;
+  b=UYqJNxrP93jaoiQH0CtHA/MTI51sLDbGCGJII2E0vkcxnGI06K5+6Del
+   kTcGEY7w22KnudQjKFpHq/zQxHeJi4b920sUwrHVr9vh5GQBn52GGuzGx
+   QY+PbEQrep/v+20RmfVcnp1d+7/iszV+bjq+nPWeJnwvLNL3FQxstwF00
+   mwOTy/zYndeitlI4B6NptITEaLA3TdOwDheMteCdzelG39o1yEOSvnU6w
+   xQilY1JBOS0OKGRckMi6slyPr+DLkd+34Xu7hO8/1xZGKtHz7ameu0AXr
+   a0iDX16/k0ewW/mDA9h0atw09j6TFksRQYwyOJBqnfADI9RzgbUbcljyq
+   w==;
+X-CSE-ConnectionGUID: HAx6MX6tSjmqco2qf3OLoQ==
+X-CSE-MsgGUID: e4neC0CyR+igP6RhP7vQ9g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="88950187"
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="88950187"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 03:39:26 -0700
+X-CSE-ConnectionGUID: hmXiIFeFQhStZZIY+yihLg==
+X-CSE-MsgGUID: 9rKxUU0iQBu3gyCS+BTRhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="184882780"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.112])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 03:39:18 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 24 Oct 2025 13:39:15 +0300 (EEST)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: Lucas De Marchi <lucas.demarchi@intel.com>, linux-pci@vger.kernel.org, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, 
+    =?ISO-8859-2?Q?Micha=B3_Winiarski?= <michal.winiarski@intel.com>, 
+    Alex Deucher <alexander.deucher@amd.com>, amd-gfx@lists.freedesktop.org, 
+    David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, 
+    intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+    Jani Nikula <jani.nikula@linux.intel.com>, 
+    Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+    Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>, 
+    Tvrtko Ursulin <tursulin@ursulin.net>, 
+    "Michael J . Ruhl" <mjruhl@habana.ai>, 
+    Andi Shyti <andi.shyti@linux.intel.com>, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 00/11] PCI: Resizable BAR improvements
+In-Reply-To: <20251023221323.GA1325049@bhelgaas>
+Message-ID: <468ebc86-25aa-a22f-a45c-6ec15faa5b09@linux.intel.com>
+References: <20251023221323.GA1325049@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251022143158.64475-1-dakr@kernel.org> <20251022143158.64475-3-dakr@kernel.org>
-Message-ID: <aPtXTsbU07VSGDDT@google.com>
-Subject: Re: [PATCH v3 02/10] rust: uaccess: add UserSliceReader::read_slice_partial()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, lossin@kernel.org, a.hindborg@kernel.org, 
-	tmgross@umich.edu, mmaurer@google.com, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/mixed; BOUNDARY="8323328-1816897247-1761300158=:1178"
+Content-ID: <50255ee2-82ed-c181-c05c-72f2a8f7243a@linux.intel.com>
 
-On Wed, Oct 22, 2025 at 04:30:36PM +0200, Danilo Krummrich wrote:
-> The existing read_slice() method is a wrapper around copy_from_user()
-> and expects the user buffer to be larger than the destination buffer.
-> 
-> However, userspace may split up writes in multiple partial operations
-> providing an offset into the destination buffer and a smaller user
-> buffer.
-> 
-> In order to support this common case, provide a helper for partial
-> reads.
-> 
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Matthew Maurer <mmaurer@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/uaccess.rs | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-> index a8fb4764185a..c1cd3a76cff8 100644
-> --- a/rust/kernel/uaccess.rs
-> +++ b/rust/kernel/uaccess.rs
-> @@ -287,6 +287,22 @@ pub fn read_slice(&mut self, out: &mut [u8]) -> Result {
->          self.read_raw(out)
->      }
->  
-> +    /// Reads raw data from the user slice into a kernel buffer partially.
-> +    ///
-> +    /// This is the same as [`Self::read_slice`] but considers the given `offset` into `out` and
-> +    /// truncates the read to the boundaries of `self` and `out`.
-> +    ///
-> +    /// On success, returns the number of bytes read.
-> +    pub fn read_slice_partial(&mut self, out: &mut [u8], offset: usize) -> Result<usize> {
-> +        let end = offset
-> +            .checked_add(self.len())
-> +            .unwrap_or(out.len())
-> +            .min(out.len());
-> +
-> +        out.get_mut(offset..end)
-> +            .map_or(Ok(0), |dst| self.read_slice(dst).map(|()| dst.len()))
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Same comment applies as write_slice_partial().
+--8323328-1816897247-1761300158=:1178
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <0a125242-ab0c-aae7-2380-e599003f1850@linux.intel.com>
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+On Thu, 23 Oct 2025, Bjorn Helgaas wrote:
+
+> On Thu, Oct 23, 2025 at 05:02:42PM -0500, Lucas De Marchi wrote:
+> > On Thu, Oct 23, 2025 at 04:29:43PM -0500, Bjorn Helgaas wrote:
+> > > On Wed, Oct 22, 2025 at 04:33:20PM +0300, Ilpo J=E4rvinen wrote:
+> > > > pci.c has been used as catch everything that doesn't fits elsewhere
+> > > > within PCI core and thus resizable BAR code has been placed there a=
+s
+> > > > well. Move Resizable BAR related code to a newly introduced rebar.c=
+ to
+> > > > reduce size of pci.c. After move, there are no pci_rebar_*() calls =
+from
+> > > > pci.c indicating this is indeed well-defined subset of PCI core.
+> > > >=20
+> > > > Endpoint drivers perform Resizable BAR related operations which cou=
+ld
+> > > > well be performed by PCI core to simplify driver-side code. This
+> > > > series adds a few new API functions to that effect and converts the
+> > > > drivers to use the new APIs (in separate patches).
+> > > >=20
+> > > > While at it, also convert BAR sizes bitmask to u64 as PCIe spec alr=
+eady
+> > > > specifies more sizes than what will fit u32 to make the API typing =
+more
+> > > > future-proof. The extra sizes beyond 128TB are not added at this po=
+int.
+> > > >=20
+> > > > Some parts of this are to be used by the resizable BAR changes into=
+ the
+> > > > resource fitting/assingment logic but these seem to stand on their =
+own
+> > > > so sending these out now to reduce the size of the other patch seri=
+es.
+> > > >=20
+> > > > v3:
+> > > > - Rebased to solve minor conflicts
+> > > >=20
+> > > > v2: https://lore.kernel.org/linux-pci/20250915091358.9203-1-ilpo.ja=
+rvinen@linux.intel.com/
+> > > > - Kerneldoc:
+> > > >   - Improve formatting of errno returns
+> > > >   - Open "ctrl" -> "control"
+> > > >   - Removed mislead "bit" words (when referring to BAR size)
+> > > >   - Rewrote pci_rebar_get_possible_sizes() kernel doc to not claim =
+the
+> > > >     returned bitmask is defined in PCIe spec as the capability bits=
+ now
+> > > >     span across two registers in the spec and are not continuous (w=
+e
+> > > >     don't support the second block of bits yet, but this API is exp=
+ected
+> > > >     to return the bits without the hole so it will not be matching =
+with
+> > > >     the spec layout).
+> > > > - Dropped superfluous zero check from pci_rebar_size_supported()
+> > > > - Small improvement to changelog of patch 7
+> > > >=20
+> > > > Ilpo J=E4rvinen (11):
+> > > >   PCI: Move Resizable BAR code into rebar.c
+> > > >   PCI: Cleanup pci_rebar_bytes_to_size() and move into rebar.c
+> > > >   PCI: Move pci_rebar_size_to_bytes() and export it
+> > > >   PCI: Improve Resizable BAR functions kernel doc
+> > > >   PCI: Add pci_rebar_size_supported() helper
+> > > >   drm/i915/gt: Use pci_rebar_size_supported()
+> > > >   drm/xe/vram: Use PCI rebar helpers in resize_vram_bar()
+> > > >   PCI: Add pci_rebar_get_max_size()
+> > > >   drm/xe/vram: Use pci_rebar_get_max_size()
+> > > >   drm/amdgpu: Use pci_rebar_get_max_size()
+> > > >   PCI: Convert BAR sizes bitmasks to u64
+> > > >=20
+> > > >  Documentation/driver-api/pci/pci.rst        |   3 +
+> > > >  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c  |   8 +-
+> > > >  drivers/gpu/drm/i915/gt/intel_region_lmem.c |  10 +-
+> > > >  drivers/gpu/drm/xe/xe_vram.c                |  32 +-
+> > > >  drivers/pci/Makefile                        |   2 +-
+> > > >  drivers/pci/iov.c                           |   9 +-
+> > > >  drivers/pci/pci-sysfs.c                     |   2 +-
+> > > >  drivers/pci/pci.c                           | 145 ---------
+> > > >  drivers/pci/pci.h                           |   5 +-
+> > > >  drivers/pci/rebar.c                         | 314 ++++++++++++++++=
+++++
+> > > >  drivers/pci/setup-res.c                     |  78 -----
+> > > >  include/linux/pci.h                         |  15 +-
+> > > >  12 files changed, 350 insertions(+), 273 deletions(-)
+> > > >  create mode 100644 drivers/pci/rebar.c
+> > >=20
+> > > Applied to pci/rebar for v6.18, thanks, Ilpo!
+> >=20
+> > is this for v6.18 or it's a typo and it's going to v6.19?
+>=20
+> Oops, sorry, I meant v6.19!  I still have v6.18 regressions top of
+> mind :)
+>=20
+> > > If we have follow-on resource assignment changes that depend on these=
+,
+> > > maybe I'll rename the branch to be more generic before applying them.
+
+Okay.
+
+The bigger challenge, though, will be that it now seems I need to bite the=
+=20
+bullet and rework the BAR resizing functions to fix v6.18-rc & v6.15=20
+regressions which will touch pci_resize_resource() or more to be more=20
+precise, add pci_release_and_resize_resource() interface. I've been=20
+postponing this as it seems quite intrusive and the upcoming resource=20
+fitting improvements should make driver initiated BAR resize pretty=20
+unnecessary anyway. It seems the shortcut didn't work. :-(
+
+It will certainly conflict with the rebar.c move in this series. (I=20
+hopefully have the rework ready next week).
+
+And sure, I've resource assignment changes piling up as well here, just=20
+have been busy with handling all the regression so I've not gotten to=20
+submit some of those. Most of them shouldn't conflict with rebar.c code=20
+anyway (probably only adding a few new helpers for the max rebar changes=20
+will but with the current state of affairs with all these regressions on=20
+my plate, the max rebar changes themselves seems already tracking=20
+next-next instead of 6.19).
+
+> > > Also applied the drivers/gpu changes based on the acks.  I see the CI
+> > > merge failures since this series is based on v6.18-rc1; I assume the
+> > > CI applies to current linux-next or similar.  I'll check the conflict=
+s
+> >=20
+> > it tries on drm-tip that contains drm-xe-next going to v6.19. We have
+> > some changes there that conflict, but shouldn't be hard.
+>
+> > We also need https://lore.kernel.org/linux-pci/20250918-xe-pci-rebar-2-=
+v1-1-6c094702a074@intel.com/
+> > to actually fix the rebar in some cases. Could you take a look?
+>=20
+> Will do.  Remind me again if I forget!
+>=20
+> Bjorn
+>=20
+
+--=20
+ i.
+--8323328-1816897247-1761300158=:1178--
 
