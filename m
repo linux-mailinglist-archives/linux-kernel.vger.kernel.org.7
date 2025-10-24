@@ -1,351 +1,123 @@
-Return-Path: <linux-kernel+bounces-868328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6989C04ED3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:05:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6032DC04F0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04C703AA8B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:58:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23723B64E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABCD2FAC05;
-	Fri, 24 Oct 2025 07:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704F72FC037;
+	Fri, 24 Oct 2025 08:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWkj5yLS"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="QaYS+xGW"
+Received: from mail-m15573.qiye.163.com (mail-m15573.qiye.163.com [101.71.155.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002812F9C37
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED992FB091;
+	Fri, 24 Oct 2025 08:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761292654; cv=none; b=GXn1p/p9Gylk6HOVze4nuPqSSPVBO38rH3z1mkaAs08sj/7bJDjUVvPyPl6PAxbEipUrkHniLtjhF9mKwxOv0TreOi06h28jkjkg/IYfjQGWEQV+npAUVt0rmqNWPgSpfoyrvWzMxLlKuPKO/gjertx/9c37as+oo+LS3ZTCAxc=
+	t=1761292805; cv=none; b=N6B1SpAiLDc07RHk/uICQPi/m1hX0RQsWcpy8ZjaTDt2eqCCHMUgeAYv3q3Imd9oQSYRcv1aaK5u9p0FhB+TTc5CJAtfPwz+zeoh+Vai2wo8XOgp5M1HvXUX8XJofs7vNWmw6UhZFiOOCFsofIzisE06XqCrYbwB9ORzpXsAFWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761292654; c=relaxed/simple;
-	bh=tW2cZj4A2kild+iwNlrsp24JcLX1QbExyS5VOwDy9+o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m2VFtBv5e4u6X4wDj7Qqa89FsHajlq4IyRYtYThJjAXsy+mvZNjtWK/kl//E2tvhBkmDj1xQxqcNjxSlTri7aQTvDe0lR3EjUQp9Cy5sNQ9gzxjD4Rxq0coHiXFID1ynmhS9OQYMG8onhbs1APb08PVqQZ6+kTQ8kXhfA0qLaoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWkj5yLS; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-29490944023so577495ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:57:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761292652; x=1761897452; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5TBvY2oyqcr2gNkpD6og3lmY61su8Z4ovOoReTCIYGo=;
-        b=VWkj5yLSIGc7Ipfh0w7NOws190udmoReo6YlmUf5utnEefAFaPj7PbjLdN6kql58Ez
-         JrlAedP60RnM1/blt3kVAmr51g7KaEqlO4K4X4NlK5DxKMXHyYGFSXagamQYdos83voG
-         tjKL7CrlPgEXykeqhbE8BPoY85d6jvBsQpTImIsrhpxeBrlj4iP/tjKj7Yl9lUEALxqL
-         jxRKrqVk5ylU02vyEk3aLs6XlVKrkxGOhpNsHwagYl3EMEXGzgjz5OZLOZbHOhFK1+Sm
-         yplehQFhzRxcNFM9LPUNSl9knsev1a05hoK2CnSxECHSXA51Zj5CcuRBwE3BTc60iur5
-         GRWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761292652; x=1761897452;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5TBvY2oyqcr2gNkpD6og3lmY61su8Z4ovOoReTCIYGo=;
-        b=HhIEaYal6vTfFPhnwXn5Uj774GNo4gX73DlpKpL9cM/JVHBkhlv9ntF95XSzf4cS/x
-         ShW7By6/QOgZWbaXvpusRClYU1krYNBOcnCiGbz6JQ6A0GqOLJwuP2Be+cQZddi92YbJ
-         E4kU/SCr/5QvdP9k7/emgVVAXkYpDHNC5RdbBqHuY2Lh0ma2GCH1HfRGAMG3JyxnibLV
-         /iDtAluXmQfd0qryQfLSojHA5RT9QQd1XJUJiU4VOrxUjbbrQ5nWwz1RcI9Jy4ctSjtb
-         JEkn5yVj3mC6Gg8mr+/+8LIwrTheKJc6bec4TE5MYpb34Jhg5bMoe3FkRyQH82Qojf36
-         C/pg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfQB3sRX25dTUsSEeO9T1MVfdTkEyPlt6j0MLI6dEWFfTKy7MDuejG7E6dwo9x2n6rTR6CI1hCGh7E2yw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3me+E5A3nsVD/bkzPp4W0uKFs6NwuoXaMGNMNUw9S4ucnbd0p
-	/GWfbe3N6G7PfXDk09aa/L7P+mwOcSiti470yZXKihFeF65hiy7KA6Ta
-X-Gm-Gg: ASbGncuVPJfSPUEc7F+9z8lpBhGg7OPPRV+MWEFPdlLgrTDQkUbEQb5QLPZqP59HR3c
-	/RRyAlVegAB9StM5lyhSW0rDfA8sH32Tk+DLz/d2eQN755ctFlvdsS+PncClZs/0l1PFUD1glSh
-	M1IJjPDNzct6oH+3Eq1LovSAYSRl5xUYNwAdJGt6HVS2Mg4LTKy1oQ8WALp+QsUFmqEwNvzt1M9
-	23CeLWJ0C2uFoMKjnK+thzGsn1ayYeWWYiaiB5EZywvTwMz5e4DZkXObsWmFM7xL+jLTabfwmMg
-	0ovPO2C1Z2YI0bwJn1vuDi546iAs3bqo37lvzxUbwoegnFojhO9bXTZxzX50mMbizXNojPW7CX5
-	GPqzuaLVo495k+AVszxsvMxVW1V4czE8+brCMG9bqjx+BBVZunJvNnKadGC8eX0cAc8Y+lwJ3Zr
-	nhzv9qTw9B8aX4LbjTAp+H
-X-Google-Smtp-Source: AGHT+IHZEWd+WfHYJKNtSpssWxDvxeK3oK6rSiNGaRDKTZSQMyFDu/hsiCkgZP90gC/bvz+hzi0gsw==
-X-Received: by 2002:a17:902:d4c8:b0:27e:e96a:4c3 with SMTP id d9443c01a7336-290d14e83b6mr355043595ad.14.1761292652244;
-        Fri, 24 Oct 2025 00:57:32 -0700 (PDT)
-Received: from Black-Pearl.localdomain ([27.7.191.116])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2946dfd045esm46608205ad.64.2025.10.24.00.57.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 00:57:31 -0700 (PDT)
-From: Charan Pedumuru <charan.pedumuru@gmail.com>
-Date: Fri, 24 Oct 2025 07:57:10 +0000
-Subject: [PATCH v5 3/3] dt-bindings: mmc: ti,omap2430-sdhci: convert to DT
- schema
+	s=arc-20240116; t=1761292805; c=relaxed/simple;
+	bh=8/c2zO3wjjVEVKC7w7sGL42qX58Qw4g6k9YQBSWM3h8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pyLzj+SQ5IXZGxEokVoNhMgu7xpXQ4d1iJZwgmCeLJ+EEJTEXi5T8aK1u0RgmAOk09lUgfbgorQysM6iKsSZsO5rt3OcuU3jI8EkbOYfYelVaCTN+dvgccxPjBch+MhaRoDKMOpmD5LyzR3tXq6ZnwvslrbXe07LQJevk9ykLi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=QaYS+xGW; arc=none smtp.client-ip=101.71.155.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.149] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 270e97439;
+	Fri, 24 Oct 2025 15:59:51 +0800 (GMT+08:00)
+Message-ID: <4fddba9a-b073-4bca-bd13-64a415f4bc47@rock-chips.com>
+Date: Fri, 24 Oct 2025 15:59:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-ti-sdhci-omap-v5-3-df5f6f033a38@gmail.com>
-References: <20251024-ti-sdhci-omap-v5-0-df5f6f033a38@gmail.com>
-In-Reply-To: <20251024-ti-sdhci-omap-v5-0-df5f6f033a38@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Paul Barker <paul.barker@sancloud.com>, 
- Marc Murphy <marc.murphy@sancloud.com>, Tony Lindgren <tony@atomide.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
- Charan Pedumuru <charan.pedumuru@gmail.com>
-X-Mailer: b4 0.14.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/9] usb: typec: Add notifier functions
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Chaoyi Chen <kernel@airkyi.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Yubing Zhang <yubing.zhang@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Amit Sunil Dhamne <amitsd@google.com>, Dragan Simic <dsimic@manjaro.org>,
+ Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>,
+ Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20251023033009.90-1-kernel@airkyi.com>
+ <20251023033009.90-2-kernel@airkyi.com> <aPni4AeDaem_rfZH@kuha.fi.intel.com>
+ <aPnvoSRJefwDlpNO@kuha.fi.intel.com> <aPn4-S7upPOOtenr@kuha.fi.intel.com>
+ <3a24bd7f-c247-4541-8cf5-c1e66e2af5a0@rock-chips.com>
+ <aPsuLREPS_FEV3DS@kuha.fi.intel.com>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <aPsuLREPS_FEV3DS@kuha.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a153b2e3e03abkunm42a5cff32ee4f7
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQksYGlZCGUJPHU1DSEpNThhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
+	xVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=QaYS+xGWbmlxS3kZEJm0a+NYYxT+z5Us5JjdoYYrwKfwWRwLPdNdoBqojU08LMSVNkW2NIt3ivjahLd1DVJdesdRGPkSC4FCyheMfrC+mvLZrgdXQB4BixWM4KY9vnwKKHrM7/OMtoXWLyQqUwV1fQRklY7nO+ZKaFuWNKD3re8=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=A1oUD+BICHOTQ/+ohzJOid/WRrQzOP6u0erXNB3l774=;
+	h=date:mime-version:subject:message-id:from;
 
-Convert TI OMAP SDHCI Controller binding to YAML format.
-Changes during Conversion:
-- Define new properties like "clocks", "clock-names",
-  "pbias-supply" and "power-domains" to resolve dtb_check errors.
-- Remove "pinctrl-names" and "pinctrl-<n>"
-  from required as they are not necessary for all DTS files.
-- Remove "ti,hwmods" property entirely from the YAML as the
-  DTS doesn't contain this property for the given compatibles and the
-  text binding is misleading.
-- Add "clocks", "clock-names" and "max-frequency" to the required
-  properties based on the compatible and the text binding doesn't mention
-  these properties as required.
-- Add missing strings like "default-rev11", "sdr12-rev11", "sdr25-rev11",
-  "hs-rev11", "sdr25-rev11" and "sleep" to pinctrl-names string array
-  to resolve errors detected by dtb_check.
+Hi Heikki,
 
-Signed-off-by: Charan Pedumuru <charan.pedumuru@gmail.com>
----
- .../devicetree/bindings/mmc/sdhci-omap.txt         |  43 ------
- .../devicetree/bindings/mmc/ti,omap2430-sdhci.yaml | 169 +++++++++++++++++++++
- 2 files changed, 169 insertions(+), 43 deletions(-)
+On 10/24/2025 3:43 PM, Heikki Krogerus wrote:
+>> I noticed the following statement in typec_register_altmode():
+>>
+>> ```
+>>
+>>      /* The partners are bind to drivers */
+>>      if (is_typec_partner(parent))
+>>          alt->adev.dev.bus = &typec_bus;
+>>
+>> ```
+>>
+>> If the condition is not met, the bus will not be set, which means bus_notify()
+>> won't be able to take effect. Did I miss something?
+> Right, that would be the condition that I was talking about. Only
+> partner altmodes are used in the bus.
+>
+> Hold on! Do you need the port altmode instead of the partner altmode?
+> If that's the case, then we can't use the bus notifier. So we'll need
+> the separate notifier chain after all.
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-deleted file mode 100644
-index f91e341e6b36..000000000000
---- a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-+++ /dev/null
-@@ -1,43 +0,0 @@
--* TI OMAP SDHCI Controller
--
--Refer to mmc.txt for standard MMC bindings.
--
--For UHS devices which require tuning, the device tree should have a "cpu_thermal" node which maps to the appropriate thermal zone. This is used to get the temperature of the zone during tuning.
--
--Required properties:
--- compatible: Should be "ti,omap2430-sdhci" for omap2430 controllers
--	      Should be "ti,omap3-sdhci" for omap3 controllers
--	      Should be "ti,omap4-sdhci" for omap4 and ti81 controllers
--	      Should be "ti,omap5-sdhci" for omap5 controllers
--	      Should be "ti,dra7-sdhci" for DRA7 and DRA72 controllers
--	      Should be "ti,k2g-sdhci" for K2G
--	      Should be "ti,am335-sdhci" for am335x controllers
--	      Should be "ti,am437-sdhci" for am437x controllers
--- ti,hwmods: Must be "mmc<n>", <n> is controller instance starting 1
--	     (Not required for K2G).
--- pinctrl-names: Should be subset of "default", "hs", "sdr12", "sdr25", "sdr50",
--		 "ddr50-rev11", "sdr104-rev11", "ddr50", "sdr104",
--		 "ddr_1_8v-rev11", "ddr_1_8v" or "ddr_3_3v", "hs200_1_8v-rev11",
--		 "hs200_1_8v",
--- pinctrl-<n> : Pinctrl states as described in bindings/pinctrl/pinctrl-bindings.txt
--
--Optional properties:
--- dmas:		List of DMA specifiers with the controller specific format as described
--		in the generic DMA client binding. A tx and rx specifier is required.
--- dma-names:	List of DMA request names. These strings correspond 1:1 with the
--		DMA specifiers listed in dmas. The string naming is to be "tx"
--		and "rx" for TX and RX DMA requests, respectively.
--
--Deprecated properties:
--- ti,non-removable: Compatible with the generic non-removable property
--
--Example:
--	mmc1: mmc@4809c000 {
--		compatible = "ti,dra7-sdhci";
--		reg = <0x4809c000 0x400>;
--		ti,hwmods = "mmc1";
--		bus-width = <4>;
--		vmmc-supply = <&vmmc>; /* phandle to regulator node */
--		dmas = <&sdma 61 &sdma 62>;
--		dma-names = "tx", "rx";
--	};
-diff --git a/Documentation/devicetree/bindings/mmc/ti,omap2430-sdhci.yaml b/Documentation/devicetree/bindings/mmc/ti,omap2430-sdhci.yaml
-new file mode 100644
-index 000000000000..34e288f3ef13
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/ti,omap2430-sdhci.yaml
-@@ -0,0 +1,169 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/ti,omap2430-sdhci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI OMAP SDHCI Controller
-+
-+maintainers:
-+  - Kishon Vijay Abraham I <kishon@ti.com>
-+
-+description:
-+  For UHS devices which require tuning, the device tree should have a
-+  cpu_thermal node which maps to the appropriate thermal zone. This
-+  is used to get the temperature of the zone during tuning.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,omap2430-sdhci
-+      - ti,omap3-sdhci
-+      - ti,omap4-sdhci
-+      - ti,omap5-sdhci
-+      - ti,dra7-sdhci
-+      - ti,k2g-sdhci
-+      - ti,am335-sdhci
-+      - ti,am437-sdhci
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: fck
-+      - const: mmchsdb_fck
-+
-+  dmas:
-+    maxItems: 2
-+
-+  dma-names:
-+    items:
-+      - const: tx
-+      - const: rx
-+
-+  pinctrl-names:
-+    minItems: 1
-+    maxItems: 14
-+    items:
-+      enum:
-+        - default
-+        - default-rev11
-+        - hs
-+        - sdr12
-+        - sdr12-rev11
-+        - sdr25
-+        - sdr25-rev11
-+        - sdr50
-+        - ddr50-rev11
-+        - sdr104-rev11
-+        - ddr50
-+        - sdr104
-+        - ddr_1_8v-rev11
-+        - ddr_1_8v
-+        - ddr_3_3v
-+        - hs-rev11
-+        - hs200_1_8v-rev11
-+        - hs200_1_8v
-+        - sleep
-+
-+  pinctrl-0:
-+    maxItems: 1
-+
-+  pinctrl-1:
-+    maxItems: 1
-+
-+  pinctrl-2:
-+    maxItems: 1
-+
-+  pinctrl-3:
-+    maxItems: 1
-+
-+  pinctrl-4:
-+    maxItems: 1
-+
-+  pinctrl-5:
-+    maxItems: 1
-+
-+  pinctrl-6:
-+    maxItems: 1
-+
-+  pinctrl-7:
-+    maxItems: 1
-+
-+  pinctrl-8:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  pbias-supply:
-+    description:
-+      It is used to specify the voltage regulator that provides the bias
-+      voltage for certain analog or I/O pads.
-+
-+  ti,non-removable:
-+    description:
-+      It indicates that a component is not meant to be easily removed or
-+      replaced by the user, such as an embedded battery or a non-removable
-+      storage slot like eMMC.
-+    type: boolean
-+    deprecated: true
-+
-+  clock-frequency:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      It represents the speed at which a clock signal associated with a device
-+      or bus operates, measured in Hertz (Hz). This value is crucial for configuring
-+      hardware components that require a specific clock speed.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+allOf:
-+  - $ref: sdhci-common.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - ti,dra7-sdhci
-+              - ti,k2g-sdhci
-+    then:
-+      required:
-+        - max-frequency
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: ti,k2g-sdhci
-+    then:
-+      required:
-+        - clocks
-+        - clock-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    mmc@4809c000 {
-+        compatible = "ti,dra7-sdhci";
-+        reg = <0x4809c000 0x400>;
-+        interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-+        max-frequency = <192000000>;
-+        sdhci-caps-mask = <0x0 0x400000>;
-+        bus-width = <4>;
-+        vmmc-supply = <&vmmc>; /* phandle to regulator node */
-+        dmas = <&sdma 61>, <&sdma 62>;
-+        dma-names = "tx", "rx";
-+    };
-+...
+Yes, we need port altmode.  The partner altmode device appears too late for DRM device, as it only shows up after the corresponding DP device is inserted.
 
+
+>
+> Let me take a closer look at patch 2/9. Sorry about the hassle.
+>
 -- 
-2.51.1
+Best,
+Chaoyi
 
 
