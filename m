@@ -1,181 +1,165 @@
-Return-Path: <linux-kernel+bounces-869248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50321C07688
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:55:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F876C0769A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22D2B1C43959
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:55:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E33B04E57A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E243385A3;
-	Fri, 24 Oct 2025 16:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2934433B976;
+	Fri, 24 Oct 2025 16:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xwH/okcf"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010009.outbound.protection.outlook.com [52.101.61.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hKhw31zy"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C151D63EF
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761324912; cv=fail; b=KKWKNsgqfcNg7ygv/9EGPOcyHAHU2mxdJ0PwGPDJzMu9ye4dw/FRFDgL4yny0VN9mHiTemlgn5lfWUQ3EEAxCcn1D+lpHbvh8ieYHFgQ0428XJb4Mdpmnx9HtM2hPWitzdHlF1rk7ggizRutlQvL8ftdYzft5zxRxeUgYo9QEjs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761324912; c=relaxed/simple;
-	bh=xyuYMj4sJb/8aY5r/XVj2eulklidnuvxPEANyOAnQ10=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NOA37H1oL2oNYBhMZW5drAuXrxRHgZluVAACHV7j/WoKv+o47movThq6PzjBT8UB62wQxo/cVkIuCoGpq95xhGJvciBoLJHC5hR5w52J+wTq/03P4FOOjNqVJul5DBv8a+mF1a3eXGYYcLwgTBY4UZMV09Z1PU2aQH8XSZdoic0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xwH/okcf; arc=fail smtp.client-ip=52.101.61.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bW+WovvTg/rGhmVnixdaD/CaEKFdwNYt8OjJdpbqGA8m8aDYUTgrL+waY+eqzGHHbrwjkRocfniP6bqb9xfO056RAd+bdVd4WuKxfGS/Vzn45DGd/rTf4n6ZVvmE02a/6GWXQF5Xki9zr/mB0FbVpFy6ODyxcayfynwHcQME0ZZ6LarXxk8GHwOxXNh0PKYqhnYhLClTwPc/e33FeReP/6BSwZ3V/F2AaT6RDWd2PGIwzKRNUXGF18GDdDin1BWqLTJ5/d2sFr64zwv/ORIYx4I3++IpWN4X2Ea26HAvPEiZrY+gMHy1/uZmwkgiFnLmkKQuy96kJtDRcEJD4WR+5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OnXaOJO3BLR8eVeFTPuHDjSeik4IxqG0cUqPEqc+Mtw=;
- b=AUO76nIOESbDW09QwBX7v0lNPactiuSUha7JflZKJKVVDIu3vFboHVfCG9AM1zQlpGZpnx/IaSoWP7Ox2YTuIB0v2L3kNY2QxvoSrPlKEEA/C1gpBusAdzmMXF9k1P2z7W2LMCt8HrNfUUujQV6DxbxbEihFXYK2AcEqCV/9KS87RwIxUMLd737ntyAeU2jZNLGayte/ikv5SOn2SZ45Z7uzLiwkdcZ5KQVc4RjW/c5sVr8hmyJGK7GKj4fHp18PmyVc/XD8RS/1YAzRh8LFuV3WiXrodNUrvE/Vy8j4fy4Xqcjs8kTdgbXrZQb+Tb5w7LhcWpMpe/MqX88jhyQk0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OnXaOJO3BLR8eVeFTPuHDjSeik4IxqG0cUqPEqc+Mtw=;
- b=xwH/okcfMpbTlDYaA4aefeJeejKq3ThjoTLWMSH8qcw//9Xp885/qX+4oYFEgiw2tSBIgYaZ266cNod/IVyEqtoyH4zS/U0db46GccLPUSTwkwPfav3Euy+/QOsPrU/QOfny2eQ4qP2Sbz8PoD72t1rvCiDXs3VcpNjQ587bLQ4=
-Received: from CH2PR14CA0050.namprd14.prod.outlook.com (2603:10b6:610:56::30)
- by CH3PR12MB7548.namprd12.prod.outlook.com (2603:10b6:610:144::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 16:55:07 +0000
-Received: from CH3PEPF0000000B.namprd04.prod.outlook.com
- (2603:10b6:610:56:cafe::dd) by CH2PR14CA0050.outlook.office365.com
- (2603:10b6:610:56::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.13 via Frontend Transport; Fri,
- 24 Oct 2025 16:55:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CH3PEPF0000000B.mail.protection.outlook.com (10.167.244.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Fri, 24 Oct 2025 16:55:06 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 24 Oct
- 2025 09:55:06 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 24 Oct
- 2025 09:55:05 -0700
-Received: from xsjlizhih51.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Fri, 24 Oct 2025 09:55:05 -0700
-From: Lizhi Hou <lizhi.hou@amd.com>
-To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<maciej.falkowski@linux.intel.com>, <dri-devel@lists.freedesktop.org>
-CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
-	<max.zhen@amd.com>, <sonal.santan@amd.com>, <mario.limonciello@amd.com>
-Subject: [PATCH] accel/amdxdna: Fix uninitialized return value
-Date: Fri, 24 Oct 2025 09:55:03 -0700
-Message-ID: <20251024165503.1548131-1-lizhi.hou@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E79033B94B
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761325044; cv=none; b=FvHXp/UCykXKS1Su8Gdyjzk0e9HReA4mmgFMbN8bj/gH/c152Z3ALJUQRoWxX4300OIYIuvce5OIEu/R1JupPukSqUSeYixWGNxNfoTyLn6x2uDwlM49Ozg/mzdsBCRKiVK7TpjOEy8P7EsgbZXr+4NoLncJJXLmLl6gtiqycpI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761325044; c=relaxed/simple;
+	bh=znxPntvSK0iLuvDlLrIc6oUoFoqXWddOvlpeLWfjD/8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=APrPzk8PtUlf8j//O869PiNC5oeygFTvED1eoH5oYcYGNiPIg9OoF5l7wdbo/4wuifZblvZBXs476jvnkUPMLHW9X6gDy3r4FTsCIO+2tfbSCAR8dRK3fGB0jYufKz8D+Lx9BrNaJWf+TMgg4Zp38isROWq4CNWysdw6pk+DnIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hKhw31zy; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33bba464b08so2210953a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:57:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761325041; x=1761929841; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kCSFoTED+bN9czctrBnViFjaUxjZI+PzjY/BcjiPyhU=;
+        b=hKhw31zyrAbgqsXNoWbtQ3K4Q5NQkmPMhTqiLcUwwNDWTKJgc/p527KT7Prdtijhlk
+         TymHKg62C+q0vryN6ELJrmV1MP2MdGyLe3ofkLmyEVzmA3GXDV2/1FexHUwi9FWnxPRM
+         jUXc+5FeS6BYh8J0t5QUU6QXpOoQRDFUkQNZpAsqr6oRoc4SF29INiz95pkFsS4lMVc+
+         pL0fPLBRbihVQcw1voYIETiCGbacIIyy/xrAD8/U/kX4SER5Mm9+1CNC0Mkf4xYwTPtE
+         GqsNbkanHvwbztdQ/5wIU86NIoZJzBlicVxqq3RF0mFJ5kHvx1oQJzkDXnUOm+aI37qi
+         DeOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761325041; x=1761929841;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kCSFoTED+bN9czctrBnViFjaUxjZI+PzjY/BcjiPyhU=;
+        b=ienx1RyegbUraQe9wqYLFNmFDVlca9m63ZNg7Dl9Na8Ma52xyuVXfYAW8CeOkUZyVA
+         IOLufwOj0LiIGM8+cXyA4ZsBMb1D+aZe0xizzvNylMJP6bjt2RvkQ1ACvT/fJKeeOSsg
+         UUxEvfrwnKGFPRntIn9wEXkB87aTw0+NkBDtHQ21EDEZjBxGpYmBaTZDi5TNz6yytBNd
+         VNoaikmGoYmZmXTsBqN1KZ3FcOa7mP/7HNBy/n6B0ptlfWl0GP4BIWxZdZw/leF3mklW
+         qLAp4VRl8vLQrvF8DCHPB1KoMk6BLpxy3XFStqq6Jr7WhZvu/ZYhtWAqvoXltvB9uPEQ
+         5vmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiZlKSfkNrGsRL1EixL078l3m+Bqm9zjm46t9uYSr0jM0W+71gpiAcW1SY9fVzvTMwCFXzy+btlOF2m48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZCi1FvTHVCsDt1J3OIusd9uCceCQKDZTHDh9yrS3M/BnE3THf
+	2EbylFOd+muhbS5CiFuFTAOWJGfGWjKYCuJPubERVTrsz3AcD+i+HNi99XwOT0HBjxSIpQMW5Hl
+	PbKyONA==
+X-Google-Smtp-Source: AGHT+IHXmSeD3kNK6POSE1hGR7Jvio0RnirzUH7WSrLaKZ09lPaFZJIUb09S/aBT/hnx0ZxmJITFzdMKVRo=
+X-Received: from pjnu4.prod.google.com ([2002:a17:90a:8904:b0:339:dc19:ae5d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:48c8:b0:33b:ba55:f5dd
+ with SMTP id 98e67ed59e1d1-33bcf93ab88mr32766320a91.37.1761325041555; Fri, 24
+ Oct 2025 09:57:21 -0700 (PDT)
+Date: Fri, 24 Oct 2025 09:57:20 -0700
+In-Reply-To: <aPtOtzGLigbY0Vqw@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF0000000B:EE_|CH3PR12MB7548:EE_
-X-MS-Office365-Filtering-Correlation-Id: 39ccb59b-6be4-4af1-4c51-08de131e15e1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7Oe2Asxu3ZQVCfNNPhBa7rEyDcTC+tF+iv2kFV4t9PI/SAsNrAJU3wP4K7/q?=
- =?us-ascii?Q?/0wcqZLobfaZTLSJZEfVygMy04Mfg47JP+mLB1HVBtImWSvAn2UdCWHvtsin?=
- =?us-ascii?Q?B1sA2YbT2h8KpMkTmnY6P40OKRuhV9Enh9iz1i3yEr6XGaALZfc3m/jHF9jQ?=
- =?us-ascii?Q?kvphndnef/xS3zjj0Z3K8SixJsi1HqFb8pU5rVqSGAQFj7vV1sVGaxd13JCP?=
- =?us-ascii?Q?Zb7eYUAtFS0UEZ8cHyOk5fVI1t8Xlr5aFoo+snrKBuOKx2NptnfDvf1Rb9P1?=
- =?us-ascii?Q?ORdhjjffgKGn7BxgjKbPcYyeTEfn6pmCMlLkgUXkjjOBbz1BJXLg0+qzpq8s?=
- =?us-ascii?Q?9i4lscRcf0BJniZ5WodOVb/s8ksQQmZytZeXQv+Vm8n51DcgS9dhUMpDwJA/?=
- =?us-ascii?Q?QYfK4G7/tyQjh9Dt7l2RLaZ/GkW6Il066Z/n6u5u/do6/2ov5qZ7VX2c96LD?=
- =?us-ascii?Q?S2Mf4qYOQFOSoPoLswxO2xS+w69FfIrc6053LJNuCf2E/5o8vG8mEzaS5jV/?=
- =?us-ascii?Q?1tYexlLTl1kiBFp/fb7t4SZT0UuNRPh0QKPXaRMMsaJpozLgE1xjbeU10Ani?=
- =?us-ascii?Q?joG7OM/7euGElluOCQAxc7QOBNGEFcTdg5q3yz0Yvji2H8uFSfIZJxYSFpiv?=
- =?us-ascii?Q?Q+VLwxCct4rVaUdCzmy+a4FxTsnIVBDBBvmIO651+hH9b/qUx3XswlaG+Ab0?=
- =?us-ascii?Q?qO1gPQlTTd8WbdN3ga2E1OTvfWyevu4InfYPO9tFEDhutfzqyjzePCGgMeCM?=
- =?us-ascii?Q?n+k91Px6RMlbsaLBfKgBly+cQThsod1EIXQsNg1oEg1EM8v2nG7Dc4e3iR9I?=
- =?us-ascii?Q?rBECo6zOl3w4U48fT2PmrDPquxuJKs2aeGb2FmwzRNVKcEQF5YKTSS2uTreT?=
- =?us-ascii?Q?UhDgSLOEbLibFSS4NlxDd93cQUeV0zsjEhR7xD8ZaiROjOJaZAe899vIFvYC?=
- =?us-ascii?Q?Xnp7pQXCpFS2qUJ+mP2QsR65MKzFDgxkBMkF1UmRREQi797WiLtnYJQx6Qjy?=
- =?us-ascii?Q?ggylL+MNFdJPJeNouKYSo0Bpo0Vp1mkxjv2+6Zf8LXWnFsbriM1jeIilPksH?=
- =?us-ascii?Q?4gj4028OSy1HUelrH++Z3sysRwvVf2gD0D1hdFvjnNZp/E/14zmRgVxSzNNb?=
- =?us-ascii?Q?7/X2tg8vtT88LNlo/A4/wh830VmvJaMp+nCGjtf+1qLtK34S5f1Xxf3MkCCb?=
- =?us-ascii?Q?OAjKktXJfVsqU7X2yQNemDvd33e5hsVN25CXaZYDnloFrliHXcGcNrKXqXL1?=
- =?us-ascii?Q?zaHx7O3BZpW0c+HC8Wjd9lCM2ZytKG9o8eMJp0VoCjoklskmtEiEcxA4eWE3?=
- =?us-ascii?Q?K2XlCS4+LYIn7nsKKtWIqZV8wAAPageWEp8f6k8YCDpqBlpQoRBIYgQf6VNW?=
- =?us-ascii?Q?iXPemNizi2v3KXgmPAj+pU7s1uCysxA2INVs6kpZkW55rUMnK/yV8hhQrEsf?=
- =?us-ascii?Q?J5q8rP6UFm4GVPLepvVU1r9FTBkwc1O6A/CqF5Xe/seWtR4CnIvCKV4hoyxC?=
- =?us-ascii?Q?yNWlr5ozyOGMtTo6q+9Rbc2IBaJJKBoCMGH2dclcRPuKsgSQ1vMC8oVd/YGK?=
- =?us-ascii?Q?JRb+Lt2xHd4NiP5L7Ns=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 16:55:06.9689
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39ccb59b-6be4-4af1-4c51-08de131e15e1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF0000000B.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7548
+Mime-Version: 1.0
+References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-25-seanjc@google.com>
+ <aPtOtzGLigbY0Vqw@yzhao56-desk.sh.intel.com>
+Message-ID: <aPuv8F8iDp3SLb9q@google.com>
+Subject: Re: [PATCH v3 24/25] KVM: TDX: Guard VM state transitions with "all"
+ the locks
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	"Kirill A. Shutemov" <kas@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Ira Weiny <ira.weiny@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Michael Roth <michael.roth@amd.com>, Vishal Annapurve <vannapurve@google.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Ackerley Tng <ackerleytng@google.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-In aie2_get_hwctx_status() and aie2_query_ctx_status_array(), the
-functions could return an uninitialized value in some cases. Update them
-to always return 0. The amount of valid results is indicated by the
-returned buffer_size, element_size, and num_element fields.
+On Fri, Oct 24, 2025, Yan Zhao wrote:
+> On Thu, Oct 16, 2025 at 05:32:42PM -0700, Sean Christopherson wrote:
+> > Acquire kvm->lock, kvm->slots_lock, and all vcpu->mutex locks when
+> > servicing ioctls that (a) transition the TD to a new state, i.e. when
+> > doing INIT or FINALIZE or (b) are only valid if the TD is in a specific
+> > state, i.e. when initializing a vCPU or memory region.  Acquiring "all"
+> > the locks fixes several KVM_BUG_ON() situations where a SEAMCALL can fail
+> > due to racing actions, e.g. if tdh_vp_create() contends with either
+> > tdh_mr_extend() or tdh_mr_finalize().
+> > 
+> > For all intents and purposes, the paths in question are fully serialized,
+> > i.e. there's no reason to try and allow anything remotely interesting to
+> > happen.  Smack 'em with a big hammer instead of trying to be "nice".
+> > 
+> > Acquire kvm->lock to prevent VM-wide things from happening, slots_lock to
+> > prevent kvm_mmu_zap_all_fast(), and _all_ vCPU mutexes to prevent vCPUs
+> slots_lock to prevent kvm_mmu_zap_memslot()?
+> kvm_mmu_zap_all_fast() does not operate on the mirror root.
 
-Fixes: 2f509fe6a42c ("accel/amdxdna: Add ioctl DRM_IOCTL_AMDXDNA_GET_ARRAY")
-Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
----
- drivers/accel/amdxdna/aie2_pci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Oh, right.
 
-diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-index f48045318dc0..f1a8112b080f 100644
---- a/drivers/accel/amdxdna/aie2_pci.c
-+++ b/drivers/accel/amdxdna/aie2_pci.c
-@@ -822,7 +822,7 @@ static int aie2_get_hwctx_status(struct amdxdna_client *client,
- 	}
- 
- 	args->buffer_size -= (u32)(array_args.buffer - args->buffer);
--	return ret;
-+	return 0;
- }
- 
- static int aie2_get_info(struct amdxdna_client *client, struct amdxdna_drm_get_info *args)
-@@ -904,7 +904,7 @@ static int aie2_query_ctx_status_array(struct amdxdna_client *client,
- 	args->num_element = (u32)((array_args.buffer - args->buffer) /
- 				  args->element_size);
- 
--	return ret;
-+	return 0;
- }
- 
- static int aie2_get_array(struct amdxdna_client *client,
--- 
-2.34.1
+> We may have missed a zap in the guest_memfd punch hole path:
+> 
+> The SEAMCALLs tdh_mem_range_block(), tdh_mem_track() tdh_mem_page_remove()
+> in the guest_memfd punch hole path are only protected by the filemap invaliate
+> lock and mmu_lock, so they could contend with v1 version of tdh_vp_init().
+>
+> (I'm writing a selftest to verify this, haven't been able to reproduce
+> tdh_vp_init(v1) returning BUSY yet. However, this race condition should be
+> theoretically possible.)
+> 
+> Resources              SHARED  users              EXCLUSIVE users
+> ------------------------------------------------------------------------
+> (1) TDR                tdh_mng_rdwr               tdh_mng_create
+>                        tdh_vp_create              tdh_mng_add_cx
+>                        tdh_vp_addcx               tdh_mng_init
+>                        tdh_vp_init(v0)            tdh_mng_vpflushdone
+>                        tdh_vp_enter               tdh_mng_key_config
+>                        tdh_vp_flush               tdh_mng_key_freeid
+>                        tdh_vp_rd_wr               tdh_mr_extend
+>                        tdh_mem_sept_add           tdh_mr_finalize
+>                        tdh_mem_sept_remove        tdh_vp_init(v1)
+>                        tdh_mem_page_aug           tdh_mem_page_add
+>                        tdh_mem_page_remove
+>                        tdh_mem_range_block
+>                        tdh_mem_track
+>                        tdh_mem_range_unblock
+>                        tdh_phymem_page_reclaim
+> 
+> Do you think we can acquire the mmu_lock for cmd KVM_TDX_INIT_VCPU?
 
+Ugh, I'd rather not?  Refresh me, what's the story with "v1"?  Are we now on v2?
+If this is effectively limited to deprecated TDX modules, my vote would be to
+ignore the flaw and avoid even more complexity in KVM.
+
+> > @@ -3155,12 +3198,13 @@ int tdx_vcpu_unlocked_ioctl(struct kvm_vcpu *vcpu, void __user *argp)
+> >  	if (r)
+> >  		return r;
+> >  
+> > +	CLASS(tdx_vm_state_guard, guard)(kvm);
+> Should we move the guard to inside each cmd? Then there's no need to acquire the
+> locks in the default cases. 
+
+No, I don't think it's a good tradeoff.  We'd also need to move vcpu_{load,put}()
+into the cmd helpers, and theoretically slowing down a bad ioctl invocation due
+to taking extra locks is a complete non-issue.
 
