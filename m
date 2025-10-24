@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-868804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75E9C062C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:09:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF2CC062EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13D2F1C0185A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:10:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C95451B87AE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EB1313E2E;
-	Fri, 24 Oct 2025 12:09:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747B81DB127;
-	Fri, 24 Oct 2025 12:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3120430EF7C;
+	Fri, 24 Oct 2025 12:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JllN/EZ/"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A9E1DB127;
+	Fri, 24 Oct 2025 12:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761307775; cv=none; b=XtC+fxThucPTehky7dP0zh62UKaZsHR79g4SuPropnZIEjZyHDvftwGVW6n4h9CvzdC+PPz5A4a6HeaSNH74IShRR+jeeREodUCMuvc2Innpv4/VOH1rkw8k4P7VfaEFGeUJJGOBIk94kHzOWSYnmCi5r6cZIZMqM4qXP7t5Co4=
+	t=1761307931; cv=none; b=e8YQ5LJKdFr0C1AsrTRbRXaexhnS2bTFXSy1evlwlcAjQG5LDDXmvnw2zgoWCSmgxNxuTdHf6ADy2qiqb3yh1O6ym24neJrNNa0gJs6LFikqGU18/UEs2cb3fey7JRYX/UWk44J0HDvH9sjtmn9LSvKFi7At6asbB4JdV591JBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761307775; c=relaxed/simple;
-	bh=vx0WzEGRG5T7hv6IU1TBe8wwTw3a6x50Kf2p0I05e9s=;
+	s=arc-20240116; t=1761307931; c=relaxed/simple;
+	bh=/zFFutCPy+n8j87wgq9tHUe0ADsqAV6k9QBgeuL8/0o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H75fFk83pZ2mFjXgbmQUPwUFznt4F6c1II32wFSLvrb2QFwv3fli4RH0EsgSKngM/sGbph8rEIl4yATyxF42wq4/Ec/9mBk4js18FDWoxcvdPCFCs9OiCunnk2xvy/lgisJ9JeWUpEPFFIVos77tF3ziz6SAc1q8DNl89xMGw1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C614106F;
-	Fri, 24 Oct 2025 05:09:24 -0700 (PDT)
-Received: from [10.44.160.74] (e126510-lin.lund.arm.com [10.44.160.74])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BA303F66E;
-	Fri, 24 Oct 2025 05:09:24 -0700 (PDT)
-Message-ID: <604f26cb-46c6-4533-8110-0b174eed821d@arm.com>
-Date: Fri, 24 Oct 2025 14:09:21 +0200
+	 In-Reply-To:Content-Type; b=V3xGvqGjAG+8CAqccQHJ8vM+4JW+7AY19K7TjGRR3VAHFrWh0xfP4a8jyqBRjmi906ZN53Y/4yw9NmjyqmxKblKoBVxbo7/ZlokwNUupVxzVFF/ROdCD58038trBYuPX+PT2QXwUYtdb3m52bxm5EOrfCYtpf5ek69SBtJRmEn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JllN/EZ/; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id CBA701A1648;
+	Fri, 24 Oct 2025 12:12:01 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 9BBC060703;
+	Fri, 24 Oct 2025 12:12:01 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 337CE102F248D;
+	Fri, 24 Oct 2025 14:11:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761307920; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=JEt/kqGoBRuvo1mSCkAMwChIUVantu5YXampMxAZaZY=;
+	b=JllN/EZ/YRLRi+nQ0w7t9ZcaWf1s409bOeKeWf7oYmIbrP/q6TGYFlW4m8WAQ6Nn/EhOt6
+	EeJFLluQLB/IQYHO1BxyBTNjXyOXt1abGjxziSrwMJBihy4k9eclU5c8qCDN/9/4VDvHsV
+	tyGnQnSP8t8s09/YzWXdsFJMbcivhgXrt1qsPvgF/1fk7bn9VcT+kQgywQ72DOXzErUFKT
+	E1cGoTWkUDSx8yYo/xysPbJ+5ISMb76ttfwNCgexU+f5iPXHEd64/I1Z7GttAb5JOm9foI
+	nKQWZZbJ0sGGsF0QfVjISMt/t8JnFpedYJRFSrTwUJXYAG6mfCcn3ypxj7reew==
+Message-ID: <92e953b8-4581-4647-8173-6c7fa05a7895@bootlin.com>
+Date: Fri, 24 Oct 2025 14:11:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,63 +56,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/13] powerpc/mm: implement arch_flush_lazy_mmu_mode()
-To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
- <20251015082727.2395128-4-kevin.brodsky@arm.com>
- <60c55686-87dd-46d0-884e-80f7d423663b@redhat.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <60c55686-87dd-46d0-884e-80f7d423663b@redhat.com>
+Subject: Re: [PATCH v5 01/10] net: stmmac: dwmac-socfpga: don't set has_gmac
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Matthew Gerlach <matthew.gerlach@altera.com>
+Cc: kernel@pengutronix.de, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20251024-v6-12-topic-socfpga-agilex5-v5-0-4c4a51159eeb@pengutronix.de>
+ <20251024-v6-12-topic-socfpga-agilex5-v5-1-4c4a51159eeb@pengutronix.de>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <20251024-v6-12-topic-socfpga-agilex5-v5-1-4c4a51159eeb@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 23/10/2025 21:36, David Hildenbrand wrote:
-> On 15.10.25 10:27, Kevin Brodsky wrote:
->> [...]
->>
->> diff --git a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
->> b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
->> index 146287d9580f..7704dbe8e88d 100644
->> --- a/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
->> +++ b/arch/powerpc/include/asm/book3s/64/tlbflush-hash.h
->> @@ -41,6 +41,16 @@ static inline void arch_enter_lazy_mmu_mode(void)
->>       batch->active = 1;
->>   }
->>   +static inline void arch_flush_lazy_mmu_mode(void)
->> +{
->> +    struct ppc64_tlb_batch *batch;
->> +
->> +    batch = this_cpu_ptr(&ppc64_tlb_batch);
->
-> The downside is the double this_cpu_ptr() now on the
-> arch_leave_lazy_mmu_mode() path.
+Hi Steffen
 
-This is only temporary, patch 9 removes it from arch_enter(). I don't
-think having a redundant this_cpu_ptr() for a few commits is really a
-concern?
+On 24/10/2025 13:49, Steffen Trumtrar wrote:
+> Instead of setting the has_gmac or has_xgmac fields, let
+> stmmac_probe_config_dt()) fill these fields according to the more
+> generic compatibles.
+> 
+> Without setting the has_xgmac/has_gmac field correctly, even basic
+> functions will fail, because the register offsets are different.
+> 
+> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+> index 354f01184e6cc..7ed125dcc73ea 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+> @@ -497,7 +497,6 @@ static int socfpga_dwmac_probe(struct platform_device *pdev)
+>  	plat_dat->pcs_init = socfpga_dwmac_pcs_init;
+>  	plat_dat->pcs_exit = socfpga_dwmac_pcs_exit;
+>  	plat_dat->select_pcs = socfpga_dwmac_select_pcs;
+> -	plat_dat->has_gmac = true;
 
-Same idea for patch 4/10.
+Note that this field is now gone as per :
 
-- Kevin
+  26ab9830beab ("net: stmmac: replace has_xxxx with core_type")
+
+You'll need to rebase the series :)
+
+Maxime
+
+
+>  
+>  	plat_dat->riwt_off = 1;
+>  
+> 
+
 
