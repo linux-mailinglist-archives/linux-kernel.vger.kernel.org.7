@@ -1,189 +1,166 @@
-Return-Path: <linux-kernel+bounces-869344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A657FC07A38
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:07:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B46CC07A44
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044D91C83938
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0EF81C80687
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A07347FC9;
-	Fri, 24 Oct 2025 18:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XUcqSN5j"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283323491D0;
+	Fri, 24 Oct 2025 18:03:32 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BB31990A7;
-	Fri, 24 Oct 2025 18:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80AE348881;
+	Fri, 24 Oct 2025 18:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761329001; cv=none; b=a0XE1N3ZrWABv1dBV8dMoymLmKlOZkeeHzyOzlvHqyilaDO1aoHDP+Q/tWNI7g+ZYlVcFPGAJ4/73jUCC3djjMDsnyvIzQt2OahWpTzLP5nV7xfZ/7lcjfLbCvAZ65A7ms/LAKpVtKUzqvad0Tf9YmFv5Dh5Xl137ONTyhsL5Gk=
+	t=1761329011; cv=none; b=o4ldHyoiFILNgNkUf0Wt3VskasJaM8SZB0UKEGWdSr8TNsxn4DyzT7xpAPWf5Y3xUq1HTJwxtZ2/y/+wmFpkL94kNE+nMKllwZbskCv1rIHxA71+1KOnx0ljPF5DHGwg7eQhMQpxTZfHFVWStS4PfkkEr7X3BQQgvOVqU3gyd1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761329001; c=relaxed/simple;
-	bh=zDmHT6EI+5KM36Gi2vKqy6ReftN+8VK2vT+rpSoN2RI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LepGu+OjCfZ6FEgbESw4RCUXyDB3VrJ0/omhvNGmMhtBimezOKW2UYxanqPPrJ2CGlJUQbup3AoyPHo2Tk/6gMXb1XARrw/SFKDWogt0IvjgNln+lEPZGiMhb+fTRlwuinvigXZ2ToT2qCzpU4DmaxhFEI0EgsUEOe6gRROrKJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XUcqSN5j; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761328999; x=1792864999;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zDmHT6EI+5KM36Gi2vKqy6ReftN+8VK2vT+rpSoN2RI=;
-  b=XUcqSN5jbr310iDgdxmw0/rUNWnksQE0pSgoLoS6LGvfmJrD9FsB2XXK
-   X9APqwXbaTiZxfWziFazocx6PLYFcKNRPp8oIqhCZBZLLq18yjOROLiYb
-   qXAacxxRaCRMJJ2YA2bM9dzoUqhf5ai7Sf3EeA0JDsX77a+gf/69O2UQM
-   eba/2XVYnpY+lm+5xFTdBdQ2v+iaPqrGkvWqb0As8HBU/C3NHC+jPiO/W
-   u8/LCMEAzMW34rCHjj/uAODxhpE07BHXmKZWk/08mQNvcyoa4nsSgGg0S
-   sr9Qsh/V1rZy6gLiOgbQFqeEM/s7LAjpv7SiIewfUQ8vtuIcTTKk9TbOw
-   Q==;
-X-CSE-ConnectionGUID: 0Vs/D58/QFik6nNU7364QQ==
-X-CSE-MsgGUID: Ugs2M8MITX+wVkXknVODFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63406583"
-X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
-   d="scan'208";a="63406583"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 11:03:18 -0700
-X-CSE-ConnectionGUID: eWSF1972SSCSbwwEROgUEg==
-X-CSE-MsgGUID: a9zmkhTUROmCyfJhhXLbZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,253,1754982000"; 
-   d="scan'208";a="188876624"
-Received: from soc-cp83kr3.clients.intel.com (HELO [10.241.241.181]) ([10.241.241.181])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 11:03:18 -0700
-Message-ID: <576a7d2b-0a82-4738-8b86-507e4d841524@intel.com>
-Date: Fri, 24 Oct 2025 11:03:17 -0700
+	s=arc-20240116; t=1761329011; c=relaxed/simple;
+	bh=cDm7wfr/4bJW6Jm2Vn5dxt6Ad7Oj0cMcUzYP7ciZUR0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J/DshKCdML9YbDKSL+iv8HD87MwpVxGods4TIoaTzCejqsLQyzt7YMNGrbRDru6sb0fzmZTfqhJaWSqjuO901rlWFBH9HWqd8r5Y/H78DBajmYeaWaavtRVHu5g5ScozhPIozq4NYBAAqtIIkBPOaOupOUSlTRc2Uiu5dIHcAkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ctVzL6WlJz6M4gJ;
+	Sat, 25 Oct 2025 01:59:42 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4DB8B140417;
+	Sat, 25 Oct 2025 02:03:26 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 24 Oct
+ 2025 19:03:24 +0100
+Date: Fri, 24 Oct 2025 19:03:23 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
+ Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
+	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
+	Gavin Shan <gshan@redhat.com>
+Subject: Re: [PATCH v3 18/29] arm_mpam: Register and enable IRQs
+Message-ID: <20251024190323.0000328d@huawei.com>
+In-Reply-To: <20251017185645.26604-19-james.morse@arm.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+	<20251017185645.26604-19-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf tools: Refactor precise_ip fallback logic
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>,
- Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@redhat.com>,
- Jiri Olsa <jolsa@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- thomas.falcon@intel.com, dapeng1.mi@linux.intel.com, xudong.hao@intel.com
-References: <20251022220802.1335131-1-zide.chen@intel.com>
- <aPrktlANBHFtV52B@google.com>
-Content-Language: en-US
-From: "Chen, Zide" <zide.chen@intel.com>
-In-Reply-To: <aPrktlANBHFtV52B@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
+On Fri, 17 Oct 2025 18:56:34 +0000
+James Morse <james.morse@arm.com> wrote:
 
-
-On 10/23/2025 7:30 PM, Namhyung Kim wrote:
-> Hello,
+> Register and enable error IRQs. All the MPAM error interrupts indicate a
+> software bug, e.g. out of range partid. If the error interrupt is ever
+> signalled, attempt to disable MPAM.
 > 
-> On Wed, Oct 22, 2025 at 03:08:02PM -0700, Zide Chen wrote:
->> Commit c33aea446bf555ab ("perf tools: Fix precise_ip fallback logic")
->> unconditionally called the precise_ip fallback and moved it after the
->> missing-feature checks so that it could handle EINVAL as well.
->>
->> However, this introduced an issue: after disabling missing features,
->> the event could fail to open, which makes the subsequent precise_ip
->> fallback useless since it will always fail.
->>
->> For example, run the following command on Intel SPR:
->>
->> $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads,ldlat=3/PS}' -- ls
->>
->> Opening the event "cpu/mem-loads,ldlat=3/PS" returns EINVAL when
->> precise_ip == 3. It then sets attr.inherit = false, which triggers a
+> Only the irq handler accesses the MPAMF_ESR register, so no locking is
+> needed. The work to disable MPAM after an error needs to happen at process
+> context as it takes mutex. It also unregisters the interrupts, meaning
+> it can't be done from the threaded part of a threaded interrupt.
+> Instead, mpam_disable() gets scheduled.
 > 
-> I'm curious about this part.  Why the kernel set 'inherit = false'?  IOW
-> how did the leader event (mem-loads-aux) succeed with inherit = true
-> then?
-
-Initially, the inherit = true for both the group leader
-(cpu/mem-loads-aux/S) and the event in question (cpu/mem-loads,ldlat=3/PS).
-
-When the second event fails with EINVAL, the current logic calls
-evsel__detect_missing_features() first. Since this is a PERF_SAMPLE_READ
-event, the inherit attribute falls back to false, according to the
-fallback order implemented in evsel__detect_missing_features().
-
+> Enabling the IRQs in the MSC may involve cross calling to a CPU that
+> can access the MSC.
 > 
->> kernel check failure since it doesn't match the group leader's inherit
->> attribute. As a result, it continues to fail even after precise_ip is
->> reduced.
->>
->> By moving the precise_ip fallback earlier, this issue is resolved, as
->> well as the kernel test robot report mentioned in commit
->> c33aea446bf555ab.
->>
->> No negative side effects are expected, because the precise_ip level is
->> restored by evsel__precise_ip_fallback() if the fallback does not help.
+> Once the IRQ is requested, the mpam_disable() path can be called
+> asynchronously, which will walk structures sized by max_partid. Ensure
+> this size is fixed before the interrupt is requested.
 > 
-> I'm not sure.. some events may need a different (i.e. lower) precise
-> level than the max.  I think checking the missing feature later will
-> use the max precise level always.
+> CC: Rohit Mathew <rohit.mathew@arm.com>
+> Tested-by: Rohit Mathew <rohit.mathew@arm.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+One trivial thing inline to reduce the patch churn a tiny bit.
+May not be worth the hassle.
 
-Yes, but seems the basic idea of the event open fallback logic is to
-check whether it's lucky enough to open the event by falling back one
-single attribute, not multiple attributes.
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-evsel__precise_ip_fallback() can restore the precise_ip level after a
-failed attempt, while evsel__detect_missing_features() cannot recover
-the event attributes from its failed try.
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index 545482e112b7..f18a22f825a0 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -14,6 +14,9 @@
 
-Therefore, falling back precise_ip first maintains the intended
-“one-by-one” fallback logic. If it’s placed later, it may combine two
-fallbacks, which can cause failures like the example above.  Of course,
-in theory, there might be cases where an event can be opened if both
-precise_ip and another feature are relaxed together, but I haven’t
-exhaustively checked whether such cases actually exist.
 
-> Thanks,
-> Namhyung
-> 
->>
->> This also aligns with commit 2b70702917337a8d ("perf tools: Remove
->> evsel__handle_error_quirks()").
->>
->> Fixes: af954f76eea56453 ("perf tools: Check fallback error and order")
->> Fixes: c33aea446bf555ab ("perf tools: Fix precise_ip fallback logic")
->> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> Signed-off-by: Zide Chen <zide.chen@intel.com>
->> ---
->>  tools/perf/util/evsel.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
->> index ca74514c8707..6ce32533a213 100644
->> --- a/tools/perf/util/evsel.c
->> +++ b/tools/perf/util/evsel.c
->> @@ -2714,12 +2714,12 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
->>  	if (err == -EMFILE && rlimit__increase_nofile(&set_rlimit))
->>  		goto retry_open;
->>  
->> +	if (evsel__precise_ip_fallback(evsel))
->> +		goto retry_open;
->> +
->>  	if (err == -EINVAL && evsel__detect_missing_features(evsel, cpu))
->>  		goto fallback_missing_features;
->>  
->> -	if (evsel__precise_ip_fallback(evsel))
->> -		goto retry_open;
->> -
->>  out_close:
->>  	if (err)
->>  		threads->err_thread = thread;
->> -- 
->> 2.51.0
->>
+
+>  static void mpam_enable_once(void)
+>  {
+> -	mutex_lock(&mpam_list_lock);
+> -	mpam_enable_merge_features(&mpam_classes);
+> -	mutex_unlock(&mpam_list_lock);
+
+Can you shift this later in the earlier patch (ordering clearly doesn't matter)
+so as to reduce churn here?
+
+> +	int err;
+>  
+>  	/*
+>  	 * Once the cpuhp callbacks have been changed, mpam_partid_max can no
+> @@ -1318,6 +1572,27 @@ static void mpam_enable_once(void)
+>  	partid_max_published = true;
+>  	spin_unlock(&partid_max_lock);
+>  
+> +	/*
+> +	 * If all the MSC have been probed, enabling the IRQs happens next.
+> +	 * That involves cross-calling to a CPU that can reach the MSC, and
+> +	 * the locks must be taken in this order:
+> +	 */
+> +	cpus_read_lock();
+> +	mutex_lock(&mpam_list_lock);
+> +	mpam_enable_merge_features(&mpam_classes);
+> +
+> +	err = mpam_register_irqs();
+> +
+> +	mutex_unlock(&mpam_list_lock);
+> +	cpus_read_unlock();
+> +
+> +	if (err) {
+> +		pr_warn("Failed to register irqs: %d\n", err);
+> +		mpam_disable_reason = "Failed to enable.";
+> +		schedule_work(&mpam_broken_work);
+> +		return;
+> +	}
+> +
+>  	mpam_register_cpuhp_callbacks(mpam_cpu_online, mpam_cpu_offline,
+>  				      "mpam:online");
+>  
+> @@ -1385,6 +1660,8 @@ void mpam_disable(struct work_struct *ignored)
+>  	}
+>  	mutex_unlock(&mpam_cpuhp_state_lock);
+>  
+> +	mpam_unregister_irqs();
+> +
+>  	idx = srcu_read_lock(&mpam_srcu);
+>  	list_for_each_entry_srcu(class, &mpam_classes, classes_list,
+>  				 srcu_read_lock_held(&mpam_srcu))
 
 
