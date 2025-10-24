@@ -1,185 +1,449 @@
-Return-Path: <linux-kernel+bounces-868286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE13EC04C74
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:41:37 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89121C04C6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0607750004B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:40:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C711C35A69D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE012E8894;
-	Fri, 24 Oct 2025 07:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OQDEc/i7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41F62E8DFA;
+	Fri, 24 Oct 2025 07:41:11 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAB32E7F29
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3032E764E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761291650; cv=none; b=C21/qB1LIEYK45KvsssFvaj7F8doSqHFCkTxIwouBDT1kLCXSyQ9LGHYgASXd1bstssyA0FdGXh//fFNpeAACzrDJ/2m9fIHzq2tyogxWdrOcGXnEGHFSpuIc1+hpV5Vn7zqLQ/wk70V1jQZEJTLT52wGnkEJKixtM8cai6SSUY=
+	t=1761291670; cv=none; b=nOSpvZIGJcbYhS4QXZ9m/jMpFquRpiWtjdX7LTVmWyNqAYN/ahTcvaEzkD7eO/Tu4yFqWnIG72s4fmEuX+0aXlN30jpRAzVEA+YwNt2PRGbc1zs2Tpu/iHSBEXeBUdYH7t/5uoA8U2yo6jieBA1F7CA3pMRSjzqmuEVyIVrX4UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761291650; c=relaxed/simple;
-	bh=ODNMMA/CeetLO44Jfr4kg2t4fIza/eWGK/T+iCha1NQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qF8x7KE9kT5suMDaqnwHONsTa+mRWq7KC6AvMAvdGRMgeYFEp0wfTbHnK/nff5su38eBwVLsmbfkKKdoxx8A3EqcpFKDhAQRhSgvql7IsTvzNNVJaPm9UhspLuLyip1fTWel5CEfk26H64V3oDS76Xgu1Tb0aHPeUx2T0+6Jt54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OQDEc/i7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O3MHSY021671
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:40:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vPzIitDiH9otQXvVOFZwedMLZY4zXReFnc2YeCNbvik=; b=OQDEc/i7LR3QGwD+
-	WXKCp8pGkLRwp/pN8ZnTAjtJxNw2KX2FMeLkaW8yH4nMTD7Z7i383DaLJIWI1ov5
-	g8bO4ojQHm3WQc5ts7ZioegpPkUaesYEMrlmlc3ni+Zu2HsidjiH5BqjoxdoXkjT
-	had6/f+oMvaOKOE94eHzGHEJEx6ss8Xg/VXWXLa931Pm4uqlp6jj+K7ywoNvFCMf
-	E6jlY5bM5+gBpVEqhsklzpBfb8NN1bVKdV+PX8Abus+HLQ7798ZsEQ8o4nuPLf7y
-	+a9Nl3Z3OrWnDtETKIf8mTVIcVt1+tCw5ejZUSp0bI8JP+WVm3Anh8W3nbgC1JkK
-	zsMwdA==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49y5x8nd3m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:40:48 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-87bd2dececeso5973536d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:40:48 -0700 (PDT)
+	s=arc-20240116; t=1761291670; c=relaxed/simple;
+	bh=lzpaUplrCHF9olKACFhJg6dFyfdBL5Fslceg8xxCgmA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QO+y76ggA8Hv+30wRHyaYTGFIUT+e0PNQKsomVUaIIq/YkNi/+Q1TSS+fXfhw0l7FOdIOA81IVtBa/RJSzjmEKnXKHT3QqeeyA/T6mcFzJtmy00c5D8C8JRqlFQjTdSdYuY7jab4N6wp2clmXs5FJtrr/ByvVXbXJ5eQcD2t+1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-431d84fdb91so51078695ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:41:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761291647; x=1761896447;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vPzIitDiH9otQXvVOFZwedMLZY4zXReFnc2YeCNbvik=;
-        b=k+k+K5nTjeUWGbC2PWq55kEUwCJCcdKQj0jNmMFT9DPMZXljflqxi4zJKt3bEm+iMk
-         JF/5V5rHLT3GpwOLj+7v92T59L6rcyak2rDZ5h04LqHMgjdb6jwWDfADRbyGOm1erWTl
-         0gYDUPRPqKUdPJW0mN4KGOCBjnhQK33jeFTm/b4HqugWbsoy8X0pniAj9Q7GjP0rMfAP
-         QKYXWzWLIG8Nm8jW2WhLOGZzZJUzhd6UAgZlPdxGtFk+0SQpo/zXUFn+JFRdv38n0y1N
-         0ncTMoEMk9x4K9ndi7gnA+hPpdh0ppYnwIuxooIZqWkPht7BIDAWvgyjACmE5kH4Fcdx
-         TVSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ5NQgvPrLGqpg346SSirp8DV2WfU8gSKbiWbPXsEhXJDoYf/Rg2wqCvIe8hE7+UyVN68Er/IW1D5iPd0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTHdpJCFpBcnk3Q91JRcSJ+Q4PyOu1S9p975vX91l2/Inn4rwG
-	yY2bOa3DbC+WSRV3I+LJ9PZEuapDlOPIpfrUEjL59Z5EdaJY6vVF7cmk6mLvfT0Cj3K/d8aDN/m
-	A2H4JfyvApcJQlw/RPpxuCdBypt5nb6u2WsFZXJtJl0wWql4IF70FTYmW1f8PqX7dKTo=
-X-Gm-Gg: ASbGncvh/E6iCVigFIqmViaiRkYKtUWLWJjAZYI89qq3SqEz8lLj5yU+15hHI5QLNb/
-	XPsaVgm8ygakpYsp3vAqt7PbchtiV/U0Ba9zgHOX/Vv/VRMEXgudXO9lYfRUjy5dyRhNE8qV4qb
-	aa51BaZXNnkJPJfC2XZVrf4sdrdNgAZXgRPtzLM9XXCd29od5zQ5g9zurVbOVWY6y1NI8D/bWgQ
-	aRBrlUnoSh8afsQ2KnVz32f9uCci8Yp1E10RTuDnacaEgCzNwxjSY9jlPszPuQRacY466ofx/TU
-	J814DSwfGxpcWSfkJ/O6/G9wrLveJNB2lRxMWOqVFg3q1EYGh6IEexHP7WCGNglNruORf4Pltrj
-	vwXvmHZtn+Nf3xCgfrCBsVL7YKIM9REt5SmKmm7Tb/0yaUsOstme9ZRs+
-X-Received: by 2002:a05:622a:450:b0:4db:1bd:c21c with SMTP id d75a77b69052e-4ea117b0e6dmr115459871cf.12.1761291647200;
-        Fri, 24 Oct 2025 00:40:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGGDhrS58k/AxKuFVBR7BBI8Y+VWeS0MiqdM4N/c4mARISKSYsDHdoSUEHIWyNAZ4CQaEeDpw==
-X-Received: by 2002:a05:622a:450:b0:4db:1bd:c21c with SMTP id d75a77b69052e-4ea117b0e6dmr115459641cf.12.1761291646690;
-        Fri, 24 Oct 2025 00:40:46 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d5144d565sm459794566b.58.2025.10.24.00.40.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 00:40:46 -0700 (PDT)
-Message-ID: <853e7cb9-2a7d-445d-aacc-49e3a2f07a66@oss.qualcomm.com>
-Date: Fri, 24 Oct 2025 09:40:44 +0200
+        d=1e100.net; s=20230601; t=1761291667; x=1761896467;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MLcjvQzS/DKCv60hZAIV5yiYMhGV7OOllvxKnrvZi1E=;
+        b=PQIK5C+rkXxUX886FaDX6qPuL6idV1eqI6EsD6PgVOjeR8mkkJSpCIA1Ao/7ZNvdD6
+         qTqyLQjR+Dtem7emm2rd8i2+BzSZoSfs6Qa5M+6qmMqxmuzz5piGvc9krsGqISOR90iR
+         bQ5c/2o/PejPl8crNvK+zd0P6pjf44jnKVcSEEjfIRLpFJ5JKPF4F9kfMpMdbMqnx1JZ
+         Uixp9H2qiBnuoTNy5z2UGH6vr4gTxbDJn55jbqSXGMlLWzT88Prl2xJbrdkmx7XHCsvs
+         oG/dp7Liq+J+cRcOWkuBABmDIixpVi9IGHjx1oPWTYJQnD4vGy4XFk4XnO+LL/26VbX9
+         Wn5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX2jbxA3GP6toHuoZWjyd9sLw7VzmSS36IEqUM27nMb1NqRp757j+Pdsc/EZ5VzD1XsK6yaF/7NQlQ3BBU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxPcsERngxhEIpYrcd345VT/vokDDW+j+N0LgcFwR6b3KOSK6U
+	R3u8VDzP1EXFTf7qspOz2q66WPSradYdxq5IptTgJV+qCXMxEL5S6FcrdHBcxJfIMg2HTMMoZ6w
+	0ZuKYBxrzAE0aTyC74kwg5+4GQPqudUCpSNUNm/Ck73xOfuZy1TUPF4Kk/2I=
+X-Google-Smtp-Source: AGHT+IGuxP+fTijy8r5756Oj57hYHsoFLcHiukETuSPqCYIU81UMrlVOXpuwpQ4c6c3pKVVco4lCxywlk7VkojmpxUQM9SxgrnB3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] arm64: dts: qcom: qcs615: Add gpu and rgmu nodes
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Jie Zhang <quic_jiezh@quicinc.com>
-References: <20251017-qcs615-spin-2-v1-0-0baa44f80905@oss.qualcomm.com>
- <20251017-qcs615-spin-2-v1-5-0baa44f80905@oss.qualcomm.com>
- <fdec4bf0-6d88-4a9b-a81a-061476dd9e1b@oss.qualcomm.com>
- <25ad160b-b618-4ade-a978-e4ae56c79e32@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <25ad160b-b618-4ade-a978-e4ae56c79e32@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: U_ml2UA5FgAU5o40O6EGejfTFvt0yt9x
-X-Proofpoint-GUID: U_ml2UA5FgAU5o40O6EGejfTFvt0yt9x
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIyMDE2NCBTYWx0ZWRfX1JsjlredOqKW
- xEuOm2pK3onJ3fMjN5RbeNaw6HXV1fdSXBN2tkgMbfXdq7PdRHFe1RziiZgwF/Gjrz1losY/aF4
- HInLQ9pk8zN5XCPRfjhfRV1fPbSEGsHWc5A/7sMWEyfW8a086sVnphcBCFmz5/uOwfiCoQJEoiT
- eZgEBAWeiuk2vnxUA5iR1xuda05qIFp5vifWHIuW0nBIFwR6YzfCX8fGlTsSPeB9GfAPHP3woQL
- WCYbjeH+rQ9JKpU72LpPiWjs/l5s4RZHFRJPTl23+vSfUChKd2tMVZ9sVRWdKABEqgKeu6WCxrQ
- 0kIAvwVURrrmR4OV83ZZ/JfzCSeYoJTeG/t/1dIu8Yg1zVJDrBUL88Hg98KIY8Z53VcnfUy+p7w
- EhcWES42rBrT8x5i+Bp9XpFzR/t+ZQ==
-X-Authority-Analysis: v=2.4 cv=UOTQ3Sfy c=1 sm=1 tr=0 ts=68fb2d80 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=GWL_uKs5TFOXZ07RABcA:9 a=QEXdDO2ut3YA:10
- a=1HOtulTD9v-eNWfpl4qZ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-23_03,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 suspectscore=0 adultscore=0 clxscore=1015 phishscore=0
- bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510220164
+X-Received: by 2002:a05:6e02:348e:b0:425:951f:52fa with SMTP id
+ e9e14a558f8ab-431dc169e8fmr81664135ab.14.1761291667577; Fri, 24 Oct 2025
+ 00:41:07 -0700 (PDT)
+Date: Fri, 24 Oct 2025 00:41:07 -0700
+In-Reply-To: <20251024071154.8nS9W%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fb2d93.a70a0220.3bf6c6.014a.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_log_needs_flush (2)
+From: syzbot <syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/24/25 12:17 AM, Akhil P Oommen wrote:
-> On 10/22/2025 8:57 PM, Konrad Dybcio wrote:
->> On 10/17/25 7:08 PM, Akhil P Oommen wrote:
->>> From: Jie Zhang <quic_jiezh@quicinc.com>
->>>
->>> Add gpu and rgmu nodes for qcs615 chipset.
->>>
->>> Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
->>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
->>> ---
+Hello,
 
-[...]
+syzbot tried to test the proposed patch but the build/boot failed:
 
->>> +		rgmu: rgmu@506a000 {
->>> +			compatible = "qcom,adreno-rgmu-612.0", "qcom,adreno-rgmu";
->>> +			reg = <0x0 0x0506a000 0x0 0x34000>;
->>> +			reg-names = "gmu";
->>> +
->>> +			clocks = <&gpucc GPU_CC_CX_GMU_CLK>,
->>> +				 <&gpucc GPU_CC_CXO_CLK>,
->>> +				 <&gcc GCC_DDRSS_GPU_AXI_CLK>,
->>> +				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
->>> +				 <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>;
->>> +			clock-names = "gmu",
->>> +				      "cxo",
->>> +				      "axi",
->>> +				      "memnoc",
->>> +				      "smmu_vote";
->>> +
->>> +			power-domains = <&gpucc CX_GDSC>,
->>> +					<&gpucc GX_GDSC>,
->>> +					<&rpmhpd RPMHPD_CX>;
->>> +			power-domain-names = "cx", "gx", "vdd_cx";
->>
->> I think the gpucc node should reference _CX directly instead,
->> then genpd/opp should trickle the requirements up the chain
-> 
-> Do you mean the CX rail scaling here should be handled by gpucc clk driver?
+im0 netdevsim3: renamed from eth3
+[   65.498461][ T5570] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   65.504458][ T5570] bridge0: port 2(bridge_slave_1) entered forwarding s=
+tate
+[   65.510598][ T5570] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   65.516333][ T5570] bridge0: port 1(bridge_slave_0) entered forwarding s=
+tate
+[   65.547747][ T5570] 8021q: adding VLAN 0 to HW filter on device bond0
+[   65.558428][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes r=
+eady
+[   65.566437][ T3031] bridge0: port 1(bridge_slave_0) entered disabled sta=
+te
+[   65.573305][ T3031] bridge0: port 2(bridge_slave_1) entered disabled sta=
+te
+[   65.581116][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes r=
+eady
+[   65.590723][ T5570] 8021q: adding VLAN 0 to HW filter on device team0
+[   65.605138][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): bridge_slave_0: link =
+becomes ready
+[   65.617739][ T3031] bridge0: port 1(bridge_slave_0) entered blocking sta=
+te
+[   65.624264][ T3031] bridge0: port 1(bridge_slave_0) entered forwarding s=
+tate
+[   65.632411][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): bridge_slave_1: link =
+becomes ready
+[   65.641431][ T3031] bridge0: port 2(bridge_slave_1) entered blocking sta=
+te
+[   65.647421][ T3031] bridge0: port 2(bridge_slave_1) entered forwarding s=
+tate
+[   65.665596][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_0: link be=
+comes ready
+[   65.675817][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_1: link be=
+comes ready
+[   65.688046][ T5570] hsr0: Slave A (hsr_slave_0) is not up; please bring =
+it up to get a fully working HSR network
+[   65.699422][ T5570] hsr0: Slave B (hsr_slave_1) is not up; please bring =
+it up to get a fully working HSR network
+[   65.712142][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): team0: link becomes r=
+eady
+[   65.719124][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): hsr_slave_0: link bec=
+omes ready
+[   65.726668][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): hsr_slave_1: link bec=
+omes ready
+[   65.743599][ T3031] IPv6: ADDRCONF(NETDEV_CHANGE): hsr0: link becomes re=
+ady
+[   65.795967][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): vxcan0: link becomes =
+ready
+[   65.803090][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): vxcan1: link becomes =
+ready
+[   65.812250][ T5570] 8021q: adding VLAN 0 to HW filter on device batadv0
+[   65.826943][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_virt_wifi: link=
+ becomes ready
+[   65.840970][ T5570] device veth0_vlan entered promiscuous mode
+[   65.846214][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_vlan: link beco=
+mes ready
+[   65.853729][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): vlan0: link becomes r=
+eady
+[   65.859777][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): vlan1: link becomes r=
+eady
+[   65.869781][ T5570] device veth1_vlan entered promiscuous mode
+[   65.876428][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): macvlan0: link become=
+s ready
+[   65.893202][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): macvlan1: link become=
+s ready
+[   65.901517][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_macvtap: link b=
+ecomes ready
+[   65.909785][ T5570] device veth0_macvtap entered promiscuous mode
+[   65.919316][ T5570] device veth1_macvtap entered promiscuous mode
+[   65.932694][ T5570] batman_adv: batadv0: Interface activated: batadv_sla=
+ve_0
+[   65.938869][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_batadv: link=
+ becomes ready
+[   65.947434][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): macvtap0: link become=
+s ready
+[   65.956647][ T5570] batman_adv: batadv0: Interface activated: batadv_sla=
+ve_1
+[   65.963867][ T3061] IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_batadv: link=
+ becomes ready
+[   65.973107][ T5570] netdevsim netdevsim0 netdevsim0: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   65.981275][ T5570] netdevsim netdevsim0 netdevsim1: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   65.988383][ T5570] netdevsim netdevsim0 netdevsim2: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   65.996540][ T5570] netdevsim netdevsim0 netdevsim3: set [1, 0] type 2 f=
+amily 0 port 6081 - 0
+[   66.009412][ T3061] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[   66.017125][ T3061] UBSAN: signed-integer-overflow in ./arch/x86/include=
+/asm/atomic.h:165:11
+[   66.024329][ T3061] -163290563 + -2098288399 cannot be represented in ty=
+pe 'int'
+[   66.031757][ T3061] CPU: 0 PID: 3061 Comm: kworker/u2:8 Not tainted syzk=
+aller #0
+[   66.038134][ T3061] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), =
+BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+[   66.048130][ T3061] Workqueue: wg-kex-wg0 wg_packet_handshake_send_worke=
+r
+[   66.053893][ T3061] Call Trace:
+[   66.057427][ T3061]  dump_stack+0xfd/0x16e
+[   66.060951][ T3061]  ubsan_epilogue+0xa/0x30
+[   66.064639][ T3061]  handle_overflow+0x192/0x1b0
+[   66.068437][ T3061]  ? prandom_u32+0x217/0x260
+[   66.072280][ T3061]  ip_idents_reserve+0x14a/0x170
+[   66.076197][ T3061]  __ip_select_ident+0xe4/0x1c0
+[   66.080020][ T3061]  iptunnel_xmit+0x468/0x850
+[   66.083815][ T3061]  udp_tunnel_xmit_skb+0x1ba/0x290
+[   66.088108][ T3061]  send4+0x5d4/0xaf0
+[   66.091339][ T3061]  wg_socket_send_skb_to_peer+0xcd/0x1c0
+[   66.095883][ T3061]  wg_packet_handshake_send_worker+0x16b/0x280
+[   66.100935][ T3061]  process_one_work+0x85e/0xff0
+[   66.104997][ T3061]  worker_thread+0xa9b/0x1430
+[   66.108751][ T3061]  ? lock_release+0x69/0x640
+[   66.112517][ T3061]  ? rcu_lock_release+0x20/0x20
+[   66.116506][ T3061]  kthread+0x386/0x410
+[   66.119891][ T3061]  ? rcu_lock_release+0x20/0x20
+[   66.124100][ T3061]  ? kthread_blkcg+0xd0/0xd0
+[   66.127889][ T3061]  ret_from_fork+0x1f/0x30
+[   66.131580][ T3061] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[   66.138816][ T3061] Kernel panic - not syncing: UBSAN: panic_on_warn set=
+ ...
+[   66.144565][ T3061] CPU: 0 PID: 3061 Comm: kworker/u2:8 Not tainted syzk=
+aller #0
+[   66.150499][ T3061] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), =
+BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+[   66.159482][ T3061] Workqueue: wg-kex-wg0 wg_packet_handshake_send_worke=
+r
+[   66.165195][ T3061] Call Trace:
+[   66.167897][ T3061]  dump_stack+0xfd/0x16e
+[   66.171471][ T3061]  panic+0x2f0/0x9c0
+[   66.174602][ T3061]  check_panic_on_warn+0x95/0xe0
+[   66.178727][ T3061]  handle_overflow+0x192/0x1b0
+[   66.182743][ T3061]  ? prandom_u32+0x217/0x260
+[   66.186508][ T3061]  ip_idents_reserve+0x14a/0x170
+[   66.190664][ T3061]  __ip_select_ident+0xe4/0x1c0
+[   66.194678][ T3061]  iptunnel_xmit+0x468/0x850
+[   66.198320][ T3061]  udp_tunnel_xmit_skb+0x1ba/0x290
+[   66.202576][ T3061]  send4+0x5d4/0xaf0
+[   66.205845][ T3061]  wg_socket_send_skb_to_peer+0xcd/0x1c0
+[   66.210583][ T3061]  wg_packet_handshake_send_worker+0x16b/0x280
+[   66.215775][ T3061]  process_one_work+0x85e/0xff0
+[   66.219866][ T3061]  worker_thread+0xa9b/0x1430
+[   66.223801][ T3061]  ? lock_release+0x69/0x640
+[   66.227824][ T3061]  ? rcu_lock_release+0x20/0x20
+[   66.231900][ T3061]  kthread+0x386/0x410
+[   66.235406][ T3061]  ? rcu_lock_release+0x20/0x20
+[   66.239449][ T3061]  ? kthread_blkcg+0xd0/0xd0
+[   66.243419][ T3061]  ret_from_fork+0x1f/0x30
+[   66.247485][ T3061] Kernel Offset: disabled
+[   66.251127][ T3061] Rebooting in 86400 seconds..
 
-Yes, you can simply add .use_rpm = true to qcom_cc_desc in there and
-add power-domains = <&rpmhpd RPMHPD_CX> to the node
+VM DIAGNOSIS:
+07:40:09  Registers:
+info registers vcpu 0
 
-Konrad
+CPU#0
+RAX=3D0000000000000036 RBX=3D0000000000000036 RCX=3D0000000000000000 RDX=3D=
+00000000000003f8
+RSI=3D0000000000000000 RDI=3D0000000000000020 RBP=3D00000000000003f8 RSP=3D=
+ffffc9000172f4e0
+R8 =3Ddffffc0000000000 R9 =3Dfffff520002e5e9e R10=3Dfffff520002e5e9e R11=3D=
+ffffffff83f79850
+R12=3Ddffffc0000000000 R13=3D1ffffffff2ad2063 R14=3Dffffffff96179de0 R15=3D=
+0000000000000000
+RIP=3Dffffffff83f798c8 RFL=3D00000002 [-------] CPL=3D0 II=3D0 A20=3D1 SMM=
+=3D0 HLT=3D0
+ES =3D0000 0000000000000000 ffffffff 00c00000
+CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
+SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
+DS =3D0000 0000000000000000 ffffffff 00c00000
+FS =3D0000 0000000000000000 ffffffff 00c00000
+GS =3D0000 ffff888020600000 ffffffff 00c00000
+LDT=3D0000 0000000000000000 ffffffff 00c00000
+TR =3D0040 fffffe0000003000 00004087 00008b00 DPL=3D0 TSS64-busy
+GDT=3D     fffffe0000001000 0000007f
+IDT=3D     fffffe0000000000 00000fff
+CR0=3D80050033 CR2=3D00007f9d25c90e9c CR3=3D000000003f184000 CR4=3D00350ef0
+DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
+0000000000000000=20
+DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
+EFER=3D0000000000000d01
+FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
+FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
+FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
+FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
+FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
+Opmask00=3D0000000040410888 Opmask01=3D0000000000000fff Opmask02=3D00000000=
+ffffffef Opmask03=3D0000000000000000
+Opmask04=3D0000000000000000 Opmask05=3D0000000000000000 Opmask06=3D00000000=
+00000000 Opmask07=3D0000000000000000
+ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 b8a5606d93fbf234 4e6d6128c1c61247
+ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 e69291a55adf1a4d bc79a80ad3c0fce0
+ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 be6cebfbb543848d 5148acc6845117c5
+ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 4a118d849a30d684 02106ca1c36d1727
+ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 00000000ffffffff 00000000000000b4
+ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000034
+ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 f280979acd555a03 dd619a0e2b11f92c
+ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 4db1fdda4413481c 0000000000000000
+ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 9675387fceff6377 c2b3d307affe2114
+ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 d99f887700000000 25c03f609d700a96
+ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 15ad1dc2a12d429b 71118e54ff6cdf2d
+ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 fbb4f24384a52b52 900c1a64c85601c3
+ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 a54ff53a3c6ef372 bb67ae856a09e667
+ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 5be0cd191f83d9ab 9b05688c510e527f
+ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 2525252525252525 2525252525252525 2525252525252525 2525252525252525
+ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 00306e6170737265 0030657267367069 00306c6e74367069 00306974765f3670
+ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 6900306974765f70 6900306c6e757400 3074697300326777 0031677700306777
+ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
+ 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+
+
+syzkaller build log:
+go env (err=3D<nil>)
+AR=3D'ar'
+CC=3D'gcc'
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_ENABLED=3D'1'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+CXX=3D'g++'
+GCCGO=3D'gccgo'
+GO111MODULE=3D'auto'
+GOAMD64=3D'v1'
+GOARCH=3D'amd64'
+GOAUTH=3D'netrc'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOCACHEPROG=3D''
+GODEBUG=3D''
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFIPS140=3D'off'
+GOFLAGS=3D''
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build317169965=3D/tmp/go-build -gno-record-gcc=
+-switches'
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
+d'
+GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.24.4'
+GOWORK=3D''
+PKG_CONFIG=3D'pkg-config'
+
+git status (err=3D<nil>)
+HEAD detached at d7384b6d0bf
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build -ldflags=3D"-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3Dd7384b6d0bff77c60aad349866f126ab16ce5296 -X g=
+ithub.com/google/syzkaller/prog.gitRevisionDate=3D20250710-085248"  -o ./bi=
+n/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
+_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"d7384b6d0bff77c60aad349866f126ab16=
+ce5296\"
+/usr/bin/ld: /tmp/ccf2gjJF.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
+
+
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=3D17bd0be2580000
+
+
+Tested on:
+
+commit:         d3d0b4e2 Linux 5.10.245
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linu=
+x.git linux-5.10.y
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D768d3f2193745e7=
+5
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Dc24237f0eee59c0c2=
+abb
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-=
+1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D167282585800=
+00
+
 
