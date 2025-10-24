@@ -1,114 +1,130 @@
-Return-Path: <linux-kernel+bounces-869443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF53C07E3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:22:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FDF4C07E65
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59D1C4E499D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:22:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42C934E4827
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A2E28850B;
-	Fri, 24 Oct 2025 19:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE8F298CAF;
+	Fri, 24 Oct 2025 19:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYE4+xI7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="kuF80KZG"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08778286430;
-	Fri, 24 Oct 2025 19:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF037291C33
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761333715; cv=none; b=NlkMUvzcr63jVmo6ZPfoNPB+rBz3ecdT8DXCTmEOoCg/o4E2Yl8cCgGdGna57VZkKyi49cRsQEyyibSd03dGgtNJPu7bIux9L9mMzVm4HVltJTnYO2ABEMRLVScH8hnZKmDtBwDmovM616N0Ic1RqyE/Z8FzJPS94r1F9Q7t3ic=
+	t=1761333946; cv=none; b=ntMR1DXYmKXzClmS2u4pcDUiN1gPL0bPLNf+JluizjY7Xs4nrh7dTrRYbVoe9M+KCPWtUIgqgBhhAgQ8wzvZmaQCGcDYy3kpBF+UGhb/geg3zhtqLOy7TdfoeajnRW6l0UDbfKRPLeGfajDEtVu/KqTgwR5DLlUOiijMzHVtZ64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761333715; c=relaxed/simple;
-	bh=zajPlJnvLIMbpj18tt9XU5F6klgXeRifknETT3f00Yw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQlASLxDsQSBkdiCOX6KtuX/nYE5KDDYS714umhJVflO3hul7rwO8YP1u7cPA8jJ7tD1oFOlAg5V+P+qQVnyi4WYlrzSpi43es5aYczO/JSFp4PcSfK2M4djt/j/lE6JK/tSbzLlT7ThyNDzLA7vGfD5XzNNg72sbruJ6jnlVxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYE4+xI7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40D9DC4CEF1;
-	Fri, 24 Oct 2025 19:21:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761333714;
-	bh=zajPlJnvLIMbpj18tt9XU5F6klgXeRifknETT3f00Yw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gYE4+xI7/IgZhpd7y0gND/WB2m9og01WSNl8xqVgmsKloP8wozlAsva8mAXNLOLhj
-	 +n06GmuvHtqMxpASGF78jb6nC8nF7fzU0gO7d1tWMFPBsjv7LPSa9L2vbzLPfDbACz
-	 zNjm/0XNRz0G7Pk2+YW8tMZRevxOYMhFXzG4txrul0hxn4ITKe0+hvMY2u0zDiCKme
-	 I6lc9edBxfmWJuX9hOL1lUnMOsAmIUdgdGJfRACwha5AjkgcrUFjCfDUFZR8wlRi29
-	 MPbqftOf51ATChWK2hvnE7Zed+gIcFXlVGCjwiKcDgZc3AQu1gb8g86XbRfs/Am7uf
-	 TAdNdCZD9JRMQ==
-Date: Fri, 24 Oct 2025 12:21:52 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [PATCH 00/10] BLAKE2b library API
-Message-ID: <20251024192152.GB2068@quark>
-References: <20251018043106.375964-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1761333946; c=relaxed/simple;
+	bh=Muc95G7rlUhzAehbq1czj3Swd9R7pZyWx6CCa2Vo4TA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W6HXBjcoNp0pfJoWsUjfu6/M7r4F29ttS31PBhc/EGsqCitMob6MM+yc9mxIjaJK2g3WmZklYJtEFG4ZamoJQpXM7DcvfcSBsF3HXNWOJS4jT4iHXmm3TUv2LNfDotKZwy4v08Do/O8LsscYksE9H32ANRYL36E8J/xHQn6YiVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=kuF80KZG; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-89048f76ec2so273530585a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:25:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura.hr; s=sartura; t=1761333942; x=1761938742; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fgizs1HCq1WLCAQQTUkutHFP75+yUyTVrTdsaQGAtYg=;
+        b=kuF80KZGo/bfsNuslKnW6+cqCdX/nF8yGZb8lS4ZPFbRxL55n9sZpPZrVpRASX/8Zt
+         KwA0xcsUWWtIILC8Mf/fCcjPe0FgYdj2vW5FDQUKulQJbypDWavIzw839WwOVWdDJwZ2
+         PYbQMoGc0UMOA3fhTuwedy8KmrfXk5IDokRz3SD7DQDI883wxHYVjIDd1TZ/5EWbfNTy
+         JDGFeaGfInVACMtQuQCqznv3Fu7l8OupSY7LHlObCvxdSBg6j3pSFy2ELyZYE3UNIlgk
+         mwnCp6jIVPgwjOBsKjtIKEm5nYfVt4bXjYyaMJZb3+3SLeigTLjy4X9bvdTmEOS2xjWp
+         A6fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761333942; x=1761938742;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fgizs1HCq1WLCAQQTUkutHFP75+yUyTVrTdsaQGAtYg=;
+        b=cZSyCJKwFWEr8JuYsZbNwdrwOq82jQSjB64ETO7AEx2X8vERVov9BXXKm1h+3FldVQ
+         sWYg7dkK4Q5f0fOYB1jd0lEzS0IOKM5NQiwon2ogUtnzNqCf/6OPLIi9TW5LhOQuTcEm
+         +tjhyDIAZ+ZnGXxmHWE1IPK/l5/CvX4lSnDcKPAQy95tpDd5fmHoPGbc2JYcigWo7vJp
+         pQgQ8xIONc+MDj1zZ2ojCRNA93JWPt3JSCcgnTPvGETALOppTN3l6j23UxQf2+0PMmgG
+         SAmaCqpWTl5Ft5T6KdKboGoFinnjTIu5Pcox6rPn6j8r7rwynEQ7Lyn9N8By5l18yZyD
+         TTnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXik4A37WpsJkr/RXTkGvHt22E4iDXU33rnAzwAJlDQRe3JCwmBR35O/dJAQ6LSd+oeab3QWo/NXnDAXuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk6uijLP1kDN8Q0Ny6b00vf8xw5KP6TRsvrzjMQy6Sbdejybzm
+	ckQfq59B0+xBES11SlxOJoGX0RnDaLZ87HtDSWNX0uop92kIU/2OwKTqYutAonvLIUo=
+X-Gm-Gg: ASbGncssBbo+KNtlPTvOPGTTL89N+FOHwugvaHrQaS+coJ3g1Iuzy3R32xsvIwIKQuK
+	OoUtqsoxsu2a5sqEnLnjeEWSLC4ceatnIU7BNo3rUWoxQkn8riX6vSLJ/JzITk7+OtVMODiOUvi
+	KO2W+t7y/SaDKJgVqygS5zqQQ9a3NQGlLsEAUUdW/TkVfFTISYDQZkJKs8Lp8ACBc7gS50koxzg
+	EJ4QLix9XFxxVkv9bxG7ej7JpCzSnUdyby931imDeC0qulEuGT1GD0Ps/CQc6cMOTK8m5J58QxZ
+	7UK9q47VsAsoCh+UEysYtygOQis5koHbL2rpaAcy3KRj8vbm1vEWfGEWvUx4EKUeGwUyExr4PCr
+	mvBSffKOgI2yjTwhTDyNv46/pdaYmWUO04NgdJjYJ2sfK/fxfbFduChAYciwTHnXyPoZQ60Xba9
+	OEGAhtQEuepgSBFOJs
+X-Google-Smtp-Source: AGHT+IF+oLH6KhhyIS0OoqXEqbmUvHsRs1xEAC59weOn98ckZYRgBioEPZO/kln7GkQOamvkKza+uQ==
+X-Received: by 2002:a05:620a:700b:b0:892:5c9d:edce with SMTP id af79cd13be357-8925cad32d3mr2952964285a.62.1761333942534;
+        Fri, 24 Oct 2025 12:25:42 -0700 (PDT)
+Received: from fedora (dh207-15-125.xnet.hr. [88.207.15.125])
+        by smtp.googlemail.com with ESMTPSA id af79cd13be357-89c0e97efa6sm438239185a.24.2025.10.24.12.25.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 12:25:42 -0700 (PDT)
+From: Robert Marko <robert.marko@sartura.hr>
+To: srini@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	horatiu.vultur@microchip.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	daniel.machon@microchip.com
+Cc: luka.perkov@sartura.hr,
+	Robert Marko <robert.marko@sartura.hr>
+Subject: [PATCH 1/2] dt-bindings: nvmem: lan9662-otpc: Add LAN969x series
+Date: Fri, 24 Oct 2025 21:24:52 +0200
+Message-ID: <20251024192532.637563-1-robert.marko@sartura.hr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251018043106.375964-1-ebiggers@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 17, 2025 at 09:30:56PM -0700, Eric Biggers wrote:
-> This series can also be retrieved from:
-> 
->     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git blake2b-lib-v1
-> 
-> This series adds BLAKE2b support to lib/crypto/ and reimplements the
-> blake2b-* crypto_shash algorithms on top of it.
-> 
-> To prepare for that, patches 1-4 clean up the BLAKE2s library code a
-> bit, and patch 5 adds some missing 64-bit byteorder helper functions.
-> Patches 6-8 add the BLAKE2b library API (closely mirroring the BLAKE2s
-> one), and patch 9 makes crypto_shash use it.  As usual, the library APIs
-> are documented (with kerneldoc) and tested (with KUnit).
-> 
-> With that done, all of btrfs's checksum algorithms have library APIs.
-> So patch 10 converts btrfs to use the library APIs instead of shash.
-> This has quite a few benefits, as detailed in that patch.
-> 
-> Patches 1-9 are targeting libcrypto-next for 6.19.  Patch 10 can go
-> through the btrfs tree later.
-> 
-> Eric Biggers (10):
->   lib/crypto: blake2s: Adjust parameter order of blake2s()
->   lib/crypto: blake2s: Rename blake2s_state to blake2s_ctx
->   lib/crypto: blake2s: Drop excessive const & rename block => data
->   lib/crypto: blake2s: Document the BLAKE2s library API
->   byteorder: Add le64_to_cpu_array() and cpu_to_le64_array()
->   lib/crypto: blake2b: Add BLAKE2b library functions
->   lib/crypto: arm/blake2b: Migrate optimized code into library
->   lib/crypto: tests: Add KUnit tests for BLAKE2b
->   crypto: blake2b - Reimplement using library API
->   btrfs: switch to library APIs for checksums
+LAN969x series also has the same HW block, its just 16KB instead of 8KB
+like on LAN966x series.
 
-Applied patches 1-9 (i.e., all except the btrfs patch) to
-https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=libcrypto-next
+So, document compatibles for the LAN969x series.
 
-I folded the following fixup into patch 7 to address
-https://lore.kernel.org/r/20251019163249.GD1604@sol/ and
-https://lore.kernel.org/r/202510221007.WnlC6PmP-lkp@intel.com/
+Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+---
+ .../devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml  | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
-index 5c9a933928188..bc26777d08e97 100644
---- a/lib/crypto/Makefile
-+++ b/lib/crypto/Makefile
-@@ -37,5 +37,5 @@ CFLAGS_blake2b.o := -Wframe-larger-than=4096 #  https://gcc.gnu.org/bugzilla/sho
- ifeq ($(CONFIG_CRYPTO_LIB_BLAKE2B_ARCH),y)
- CFLAGS_blake2b.o += -I$(src)/$(SRCARCH)
--obj-$(CONFIG_ARM) += arm/blake2b-neon-core.o
-+libblake2b-$(CONFIG_ARM) += arm/blake2b-neon-core.o
- endif # CONFIG_CRYPTO_LIB_BLAKE2B_ARCH
+diff --git a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
+index f97c6beb4766..f8c68cf22c1c 100644
+--- a/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
++++ b/Documentation/devicetree/bindings/nvmem/microchip,lan9662-otpc.yaml
+@@ -23,8 +23,15 @@ properties:
+       - items:
+           - const: microchip,lan9668-otpc
+           - const: microchip,lan9662-otpc
++          - const: microchip,lan9691-otpc
++          - const: microchip,lan9692-otpc
++          - const: microchip,lan9693-otpc
++          - const: microchip,lan9694-otpc
++          - const: microchip,lan9696-otpc
++          - const: microchip,lan9698-otpc
+       - enum:
+           - microchip,lan9662-otpc
++          - microchip,lan9691-otpc
  
+   reg:
+     maxItems: 1
+-- 
+2.51.0
+
 
