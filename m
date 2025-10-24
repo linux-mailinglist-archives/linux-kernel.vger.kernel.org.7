@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-869197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A7CC0744B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:22:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4A3C073B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBD63583B1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:18:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A171C2794A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B2B270ED2;
-	Fri, 24 Oct 2025 16:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F49270578;
+	Fri, 24 Oct 2025 16:15:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S9e/39w/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="rIK2bPpt"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B651DC997;
-	Fri, 24 Oct 2025 16:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A640C1D514E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 16:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761322671; cv=none; b=tRIihwugBAxzB4La0XuLI0CD+NKWzOetd5FZOJLtuFVd/Vr02FzQPKxexf+bN8U7M4dXrF8ENFthMrcLyauVMbrg8PbCR8/Y+16YPVOl4MX/pLugMsfcr3saIkc81BJLiRhlyfYBIsam71kAyu9ICuUEtg0ju3ujKqlawGCO1Xw=
+	t=1761322526; cv=none; b=IEO95x9efFNbncwa/7Fkq+91XvmNA0GfwnP8o3SBBHdiebP4eicAtkuj4CNcC5gcnTblRB6UuIQuocMhbuc1crdg1Id7ibBU3coaqQWC8tTSsP4MhqlCDzENsrPkeqYX22IvMuvqykSPv6JETootVDKnnAnlUEyYnC58e7xLMyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761322671; c=relaxed/simple;
-	bh=wk66qIygkkbUUS4Vseh1sg6teJA5/ZT5GoMUU6R4qwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nNEi7vl7pHPbato9mJlZPWzY+G6M7Ep4qT0BEamPD/cwjSrjH7zg/HDV7kHsZmZ0XNw+b3OMwoZTn5UG+OoJV1y4NNWRnBOQuD630+DopEmlmmmmxHy4j4VSxzcp1vk4OFJI0s+CI4lULWvfKYbPLQKgev9X1SywSSqv9ZBIFo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S9e/39w/; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1761322526; c=relaxed/simple;
+	bh=e9gZeMGN3pLQbfkAI6g+chfPTIRCv+JSr9r7OpEpjuk=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=L9HalRvgFl1QCdhrNoysk6/zLqG4pyejp+TfS8rpkXnYApdjA97ewp1EMiRHMUcslYWrdOyZcLPguUc4rgaMHlsLPAN5Qair6+PXxObMiXanYdoAMbQH27/w19CtLRWJkxufM+aeUoJGDRimRfKR+inIxiGOBgpj5aTJvOJ+fRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=rIK2bPpt; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761322670; x=1792858670;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wk66qIygkkbUUS4Vseh1sg6teJA5/ZT5GoMUU6R4qwg=;
-  b=S9e/39w/1ASlPnXtSKu/WcGkTQZcG5b21wnI9KDxAr/3R2iXvU1aVd2L
-   Q8t1TtWA5AV2UhRhbXIsrxBMng/Uz4R32JZ6iqoVZckv2ekH6aqDGsPpq
-   /iYJpolBT7sMxTTj6Srm8CtiD0bggx81NYropnM6ZcyHDQh9hdjWwFb0B
-   o6zI1Xnvo4/Kj8MOBOmQN5+r4fF8WKf7KEst3uUUysXkZuFAHfyWR284e
-   N5lOfbKaDllFeoq1vbpDPrkbzRAWN9t8cxdj0U/D+OjDhb84AQ831VPU0
-   viZENhOAxuSKgKpMoDC304uI/YaVN+b7hWnzU4bamqB3tTfs0BXkqwVHC
-   w==;
-X-CSE-ConnectionGUID: RLw1A/tISsSQHsHa9f9qSw==
-X-CSE-MsgGUID: kCdlq5ZrQjGMYyg4+eAh9A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63412299"
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1761322524; x=1792858524;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=e9gZeMGN3pLQbfkAI6g+chfPTIRCv+JSr9r7OpEpjuk=;
+  b=rIK2bPptIlecVng0ALvH+Fs4E+ZbJTS0YKnamMpsKP4tHBoHdNbSFmlV
+   xQfPK9/UxVLTBOJdyy6fk0M33Z7ptF+1DS1eOvOFrBC9d5LC97CTiJE1K
+   46qLhWbqLq5OwHz9uKkoDLnFIef/W/lIMxNPYpNJn9pwnckTB5d0CAA1Z
+   8MFS0LwatAbX9ZEShvdpkmj8koAKkyMz9PwX3nyAEbLMSmDH0cWPowvC1
+   G9CT1qZmqw0ihTNgrtdF5cBP66M3vWs6dhzoM+vO13kZ4t5JpQ52/8saZ
+   mgPMeWG3ON07mwOFWkIVGaLP4hPcIqQ7vePUHDL63lYMmjHyB+KG3Rue+
+   A==;
+X-CSE-ConnectionGUID: OZLbVyjtRe6JiCTkoaquJg==
+X-CSE-MsgGUID: tWkYl6LlQYecV7NCWXBUjA==
 X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
-   d="scan'208";a="63412299"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 09:17:47 -0700
-X-CSE-ConnectionGUID: rox9pthtT9qkicVmkF+xRw==
-X-CSE-MsgGUID: OqN+FRlvSO2q/H4Vl8klIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
-   d="scan'208";a="183643221"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 24 Oct 2025 09:17:38 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vCKS1-000Een-0H;
-	Fri, 24 Oct 2025 16:17:01 +0000
-Date: Sat, 25 Oct 2025 00:14:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jiayuan Chen <jiayuan.chen@linux.dev>, bpf@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Jiayuan Chen <jiayuan.chen@linux.dev>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH bpf-next v1 1/2] bpf: Add kfuncs for detecting execution
- context
-Message-ID: <202510242353.hCaLzqVt-lkp@intel.com>
-References: <20251022113412.352307-2-jiayuan.chen@linux.dev>
+   d="scan'208";a="48227183"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Oct 2025 09:15:24 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Fri, 24 Oct 2025 09:15:04 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Fri, 24 Oct 2025 09:15:01 -0700
+From: Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: [PATCH 0/2] drm/atmel-hlcdc: fix memory bugs
+Date: Fri, 24 Oct 2025 18:14:51 +0200
+Message-ID: <20251024-lcd_fixes_mainlining-v1-0-79b615130dc3@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022113412.352307-2-jiayuan.chen@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPul+2gC/x3LWwqAIBBA0a3EfCeo2YO2EiGSkw3UFAoRhHtP+
+ jxw7wsJI2GCsXoh4k2JTi5QdQXL5jigIF8MWupWSW3Evni70oPJHo54JyYOwindGD8o13cDlPW
+ K+DflnOacP62Vzw1mAAAA
+X-Change-ID: 20251024-lcd_fixes_mainlining-a1234d81a768
+To: Manikandan Muralidharan <manikandan.m@microchip.com>, "Dharma
+ Balasubiramani" <dharma.b@microchip.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>
+CC: <dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Ludovic Desroches
+	<ludovic.desroches@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=783;
+ i=ludovic.desroches@microchip.com; h=from:subject:message-id;
+ bh=e9gZeMGN3pLQbfkAI6g+chfPTIRCv+JSr9r7OpEpjuk=;
+ b=owEBbQKS/ZANAwAKAT455hP3e2QtAcsmYgBo+6YFICrXySxOd9teoHGeB2+HmsYggPPyWFg9a
+ 3Nkv1Nq3VaJAjMEAAEKAB0WIQQAMEvJiWmsW41tNU0+OeYT93tkLQUCaPumBQAKCRA+OeYT93tk
+ LaL3D/kBHNZN3S0vO14Kj0FTERJ2sgFYLuy2xE2tfj6kKNq54iFnwGmqovofI4usMq7ZVoVuoaU
+ /HAwVhYZiV6xUAfoLkhK7dKcNMFsLNk26H8I2h++xCthy2sXyfKKadipCX/00HjfUuuoseDO7Gi
+ facNrCrQjES3HjO2c9dtEO+nAjGr1/eMQk+YD4PV4DYvrxKJnsoup6bqQWl1l6iPqZeetdLeutu
+ 8wG+bi5J7ZaFnLyC228aoLTQcID0oYDaRX2wcWXGN5baSHamPJY/pmr5A9QiB3ZwBRC+CJO4+3D
+ vpP8SmIytiFIaMtyHp2+1a/JG3toz4zLIrqNwfH8QRkj8/Bep6UcrqxpH/Bcot+snlJnUOCJZVN
+ Dd4GfOrkFXWODaQISEO5lC1VocEQ+gztwcAm5pjrVHPb2dOVGUakhcy/U90G04P12FWqwZFVPmR
+ CgOuvEmzSulQxAqveUC6StIcGk4eNJah38C5L7suk4Mde+6KyeTveUVNR5I7hby0mEdbXyWx8ij
+ 4DuuktM/LUuDIRvYQfM5MOy7JVj0H97GUIEqF2eHGa3sQHtynOEQDXgv1+7tmefa6iDa8oPwEzO
+ CFTBoMbTMbfcNFcFTYl/PMC7wXWrh5sfkRmHuBLnL0cxq0BH2JwTTDylY/8MbztCrcPvu8UqGCb
+ qZsNnyKmfrt/4Xg==
+X-Developer-Key: i=ludovic.desroches@microchip.com; a=openpgp;
+ fpr=665BAA7297BE089A28B77696E332995F09DCC11A
 
-Hi Jiayuan,
+These two patches fix a memory leak and a use after free bugs.
 
-kernel test robot noticed the following build warnings:
+The memory leak bug had been reported by several users. There were some
+attempts to fix it in the past, but the resolutions proposed caused
+other breakages.
 
-[auto build test WARNING on bpf-next/master]
+Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+---
+Ludovic Desroches (2):
+      drm/atmel-hlcdc: fix memory leak from the atomic_destroy_state callback
+      drm/atmel-hlcdc: fix use-after-free of drm_crtc_commit after release
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jiayuan-Chen/bpf-Add-kfuncs-for-detecting-execution-context/20251022-193551
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-patch link:    https://lore.kernel.org/r/20251022113412.352307-2-jiayuan.chen%40linux.dev
-patch subject: [PATCH bpf-next v1 1/2] bpf: Add kfuncs for detecting execution context
-config: alpha-randconfig-r123-20251023 (https://download.01.org/0day-ci/archive/20251024/202510242353.hCaLzqVt-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510242353.hCaLzqVt-lkp@intel.com/reproduce)
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+---
+base-commit: 72fb0170ef1f45addf726319c52a0562b6913707
+change-id: 20251024-lcd_fixes_mainlining-a1234d81a768
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510242353.hCaLzqVt-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   kernel/bpf/helpers.c:1199:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned long long ( *[usertype] callback_fn )( ... ) @@     got void [noderef] __rcu * @@
-   kernel/bpf/helpers.c:1199:21: sparse:     expected unsigned long long ( *[usertype] callback_fn )( ... )
-   kernel/bpf/helpers.c:1199:21: sparse:     got void [noderef] __rcu *
-   kernel/bpf/helpers.c:2480:18: sparse: sparse: symbol 'bpf_task_release_dtor' was not declared. Should it be static?
-   kernel/bpf/helpers.c:2510:18: sparse: sparse: symbol 'bpf_cgroup_release_dtor' was not declared. Should it be static?
->> kernel/bpf/helpers.c:4260:18: sparse: sparse: symbol 'bpf_in_nmi_context' was not declared. Should it be static?
-   kernel/bpf/helpers.c:2976:18: sparse: sparse: context imbalance in 'bpf_rcu_read_lock' - wrong count at exit
-   kernel/bpf/helpers.c:2981:18: sparse: sparse: context imbalance in 'bpf_rcu_read_unlock' - unexpected unlock
-
-vim +/bpf_in_nmi_context +4260 kernel/bpf/helpers.c
-
-  4254	
-  4255	/**
-  4256	 * bpf_in_nmi_context - Check whether we are serving NMI
-  4257	 *
-  4258	 * Return: true if we are serving NMI
-  4259	 */
-> 4260	__bpf_kfunc bool bpf_in_nmi_context(void)
-  4261	{
-  4262		return in_nmi();
-  4263	}
-  4264	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Ludovic Desroches <ludovic.desroches@microchip.com>
+
 
