@@ -1,144 +1,149 @@
-Return-Path: <linux-kernel+bounces-868816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAEB6C06364
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:20:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A271C0637C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86D111C04198
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:20:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FA901C022EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907E1315D21;
-	Fri, 24 Oct 2025 12:20:24 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB78315D4E;
+	Fri, 24 Oct 2025 12:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TzJfhn+A"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7AE3112D3
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13396313285
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761308424; cv=none; b=HmIdzAbFRcODJmCD+dCNe/bcp675HR/ugg4+zELHL2kZDtFao2bofRBh/9cImy1q8V2dj/weBEzY7ww4DOd5vzVPGiZN5cMKlQmlbL13A+9WvcWTFNoUq99hP4EjnlmhmFDUR3iEg4Ajp+AsalBLB6rQYVje65YEPAwTsskjWNg=
+	t=1761308483; cv=none; b=WXnQE5N23uGWa8km6vP+0c0XVsSOd29u3mvR6qpGSe5Cx/FsviSZ5VG4iE+Tmd+lJP5j3KHLLg3kAKvkF0d5aCB2fHlAGdfhCEAD59uc9JmrjRKgC2g+gpng8c1iU3GudLKewSlnFsjuMoxFH8z1E7FDkxbLkQxLkRdfChp89mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761308424; c=relaxed/simple;
-	bh=f4nLSZUbHXPOAJMornZBUvE6cqRt+o4rLfXHVdki47Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=H1jRAkOrmJam9Ud1xy8mLC64oGmYMIav3wXbeFndklEufHjun7ljKl7r3R1SE5gQ07CgVPCCOx36WkOrwmHd7Xd7Wc6iIRbn9+bY5GQdYYv3E/8TCbTSofm85xmrD4rrM0cAUTJ1YrKK9Vd1QFqS5cdWxVuA/wTOGqzHamkarTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.pengutronix.de)
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1vCGmD-0000ek-3D; Fri, 24 Oct 2025 14:20:13 +0200
-From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-To: Dinh Nguyen <dinguyen@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
- Dooley <conor+dt@kernel.org>,  Maxime Chevallier
- <maxime.chevallier@bootlin.com>,  Maxime Coquelin
- <mcoquelin.stm32@gmail.com>,  Alexandre Torgue
- <alexandre.torgue@foss.st.com>,  Matthew Gerlach
- <matthew.gerlach@altera.com>,  kernel@pengutronix.de,
-  netdev@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-stm32@st-md-mailman.stormreply.com,
-  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 06/10] arm64: dts: socfpga: agilex5: add dwxgmac
- compatible
-In-Reply-To: <b486bb52-7e95-44d3-ac65-1c28d4d0e40e@kernel.org> (Dinh Nguyen's
-	message of "Fri, 24 Oct 2025 07:00:36 -0500")
-References: <20251024-v6-12-topic-socfpga-agilex5-v5-0-4c4a51159eeb@pengutronix.de>
-	<20251024-v6-12-topic-socfpga-agilex5-v5-6-4c4a51159eeb@pengutronix.de>
-	<b486bb52-7e95-44d3-ac65-1c28d4d0e40e@kernel.org>
-User-Agent: mu4e 1.12.13; emacs 30.2
-Date: Fri, 24 Oct 2025 14:20:09 +0200
-Message-ID: <87zf9g7apy.fsf@pengutronix.de>
+	s=arc-20240116; t=1761308483; c=relaxed/simple;
+	bh=pRY+BeQgTC3sgFy7x6scZvVx6olKk1HglYkeda9tiVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mSjOShvtcskjlsiBY2jnxzFVMVqEl1egwAfS9CVxV/TI+OnmrN+8m/ok+3kEB48VbEaKlOwq+oguwm78TwrQxa1O0UQG4NsY6Ixr7rcgHTBAoKUGp0Ujc8XnKFkRUY1ow3ixpT8fno0EF0P3NkrWos0SabFFew0ggve12ks2zLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TzJfhn+A; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so11005295e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:21:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761308480; x=1761913280; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ASZh8fudbVWKppfwk7tVsYkXKkMV1873aR5CHOC9ccA=;
+        b=TzJfhn+A5+SZQ7k0fRJ1ALwGHZdAYeIku4Mh5MRt+ywtgRa6Rjeq9Nt79bVe1aRlmp
+         0/gR9BajZePC7TLwQBOLVDJNWj6TmCgHfXw2n6JtzdnR5g5vd/bQcf3WkrRQrvl52QOO
+         TfS/YycznqNX5uZKnkfp6nprzF6tlbG4QVtQ9irbiJIUHDEicL7sKbDEheShNjz9XAdq
+         Ub74eRq7zTGe6lR2ee6Wa0t/UlgcFgBtb4DfTurRMGigQJMHIPttkj1hs5x82B7OQS9v
+         lVBWUlvgTYJGPD5y+ztsQqroPzY3h+oxmxNGDF062RbTneDhE0d0ENC2YByx05f7d52e
+         aWDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761308480; x=1761913280;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ASZh8fudbVWKppfwk7tVsYkXKkMV1873aR5CHOC9ccA=;
+        b=mrxsHRWI0fquaqJylXFWmzTl03Y1L4FSwdZB54Z43a+K2+aFkSFNXPYupLnezBaBbW
+         isgAnLGDaYam4HEBqs0LgteJXt6XELZkseFiFsniGx04m5K3cwgrnCh2XSz0Jc45YozC
+         rFy2TmLfuIL7RF2Vc1TVKHHSea9KWnYHaabLwr6q7EmWTUvUUD1K6VsEhw9Wj39vUNqH
+         wkEjwgAYzuT7Gkw32BOboeV/KJSvCtP5MOlJjKXeNfrHsRGl9R3jL8NdFFENGktD4rN6
+         YvwDEWt5ttN3RUSJXPNG6ScF1AtIGMJkUj+kDV2/YGAY1k5SaTfLzR9zx/4QEfJA02O9
+         zE5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU6PLnFTCaPSTkZJx5c3C98zLoSol6N41b76tOCxLC4R5qHY9azD9MCoaIyE9Y/KKT8azM68Zr3QWP0NH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVv6UuMJgwdaLViLnmKO0bjcNLlmIut2jXMwje0czZPuZxNC6a
+	6+yviF8dKxcuHbRiqDML73qmnmjNf4OlqyuZhZPWxjGBTtDkDFfe2OIl
+X-Gm-Gg: ASbGnctLSZaYkSwNofqok8q3XnTVYQeslO3B3qmcLKXYHF/F05FRCNiGDX6LUy9dVFR
+	CZaRCx4/KK2qFVl+CDMHVXLCEmS75hkHBMk7UJLvxXto88g3UveZZvZsposCHiv6x6ote0Mjwkv
+	2ZBCl6w7MIotz+3HbpNzDRcrIaHqdTW6ZLt4p5f3ysKn6qh2SO2KZnA5yKbliHua2EpJvybhrEH
+	NzD0XojpTeNFNCjx9qxDXoEHfVua5+Ljx/SLEjn+A32eb0Fgs/bf74ffM2FjIImLXighB+dKBx6
+	pDWL/Fi42WQT93NN/IwhjMKsJEpOJS83Rz5rXY+K2LStfJ85wfhcJ1JQtdIy5wMphwJH27vZSZA
+	JTgLSkiHeFwS6RCmVDTbHrXhNlV962l3LjQVj8zMU1ZaUfOU/hmbHWxq8wvnEf2vVln8FIlUFbB
+	3Mq3+a7hyCYH//ICLkRlmb0kzXq0wIIsb1Wvm0V+mHMrDtj5gLeEyE
+X-Google-Smtp-Source: AGHT+IEbd+4q1oEaYkyVSizSec1ZLMt841VYzmkYm30kaim6aqt9zqjJycOchwQVXvxwo+rJdS246Q==
+X-Received: by 2002:a05:600c:470c:b0:46f:b42e:e361 with SMTP id 5b1f17b1804b1-475d30d21c8mr17720145e9.41.1761308479761;
+        Fri, 24 Oct 2025 05:21:19 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47496afd459sm87470645e9.1.2025.10.24.05.21.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 05:21:19 -0700 (PDT)
+Date: Fri, 24 Oct 2025 13:21:17 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: David Yang <mmyangfl@gmail.com>
+Cc: netdev@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, Andrew
+ Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: dsa: yt921x: Fix missing type casting to
+ u64
+Message-ID: <20251024132117.43f39504@pumpkin>
+In-Reply-To: <20251024084918.1353031-1-mmyangfl@gmail.com>
+References: <20251024084918.1353031-1-mmyangfl@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 24 Oct 2025 16:49:13 +0800
+David Yang <mmyangfl@gmail.com> wrote:
 
-Hi Dinh,
-
-On 2025-10-24 at 07:00 -05, Dinh Nguyen <dinguyen@kernel.org> wrote:
-
-> Hi Steffen,
+> Reported by the following Smatch static checker warning:
 > 
-> On 10/24/25 06:49, Steffen Trumtrar wrote:
-> > The gmac0/1/2 are also compatible to the more generic "snps,dwxgmac"
-> > compatible. The platform code checks this to decide if it is a GMAC or
-> > GMAC4 compatible IP core.
-> > Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-> > ---
-> >   arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 9 ++++++---
-> >   1 file changed, 6 insertions(+), 3 deletions(-)
-> > diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> > b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> > index 4ccfebfd9d322..d0c139f03541e 100644
-> > --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> > +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> > @@ -536,7 +536,8 @@ qspi: spi@108d2000 {
-> >     		gmac0: ethernet@10810000 {
-> >   			compatible = "altr,socfpga-stmmac-agilex5",
-> > -				     "snps,dwxgmac-2.10";
-> > +				     "snps,dwxgmac-2.10",
-> > +				     "snps,dwxgmac";
-> >   			reg = <0x10810000 0x3500>;
-> >   			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
-> >   			interrupt-names = "macirq";
-> > @@ -649,7 +650,8 @@ queue7 {
-> >     		gmac1: ethernet@10820000 {
-> >   			compatible = "altr,socfpga-stmmac-agilex5",
-> > -				     "snps,dwxgmac-2.10";
-> > +				     "snps,dwxgmac-2.10",
-> > +				     "snps,dwxgmac";
-> >   			reg = <0x10820000 0x3500>;
-> >   			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
-> >   			interrupt-names = "macirq";
-> > @@ -762,7 +764,8 @@ queue7 {
-> >     		gmac2: ethernet@10830000 {
-> >   			compatible = "altr,socfpga-stmmac-agilex5",
-> > -				     "snps,dwxgmac-2.10";
-> > +				     "snps,dwxgmac-2.10",
-> > +				     "snps,dwxgmac";
-> >   			reg = <0x10830000 0x3500>;
-> >   			interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
-> >   			interrupt-names = "macirq";
-> > 
+>   drivers/net/dsa/yt921x.c:702 yt921x_read_mib()
+>   warn: was expecting a 64 bit value instead of '(~0)'
 > 
-> I just sent a patch for this yesterday:
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/netdev/aPsjYKQMzpY0nSXm@stanley.mountain/
+> Signed-off-by: David Yang <mmyangfl@gmail.com>
+> ---
+>  drivers/net/dsa/yt921x.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> https://lore.kernel.org/all/20251023214012.283600-1-dinguyen@kernel.org/
->
+> diff --git a/drivers/net/dsa/yt921x.c b/drivers/net/dsa/yt921x.c
+> index ab762ffc4661..8baed8107512 100644
+> --- a/drivers/net/dsa/yt921x.c
+> +++ b/drivers/net/dsa/yt921x.c
+> @@ -699,7 +699,7 @@ static int yt921x_read_mib(struct yt921x_priv *priv, int port)
+>  			if (val < (u32)val)
 
-ah, I missed that, than this patch is unneccessary.
+That check is wrong as well, probably (val0 < (u32)val) is right.
+But the code is confusing.
 
-> I'll make sure to include you on future submissions.
-> 
-> I didn't add it to the bindings document though.
->
+>  				/* overflow */
+>  				val += (u64)U32_MAX + 1;
+> -			val &= ~U32_MAX;
+> +			val &= ~(u64)U32_MAX;
+>  			val |= val0;
 
-As I always get complains from dt-check bot, I remembered to add it ;)
+How about:
+		if (desc->size <= 1) {
+			u64 old_val = *valp;
+			val = upper32_bits(old_val) | val0;
+			if (val < old_val)
+				val += 1ull << 32;
+		}
 
+There is also an inconsistency with the read of *valp and the
+WRITE_ONCE() lower down.
+If there is a READ_ONCE() elsewhere then it not going to work on
+32bit architectures - since both the read and write are still
+likely to be two memory cycles.
 
-Best regards,
-Steffen
+	David
 
--- 
-Pengutronix e.K.                | Dipl.-Inform. Steffen Trumtrar |
-Steuerwalder Str. 21            | https://www.pengutronix.de/    |
-31137 Hildesheim, Germany       | Phone: +49-5121-206917-0       |
-Amtsgericht Hildesheim, HRA 2686| Fax:   +49-5121-206917-5555    |
+>  		} else {
+>  			res = yt921x_reg_read(priv, reg + 4, &val1);
+
 
