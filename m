@@ -1,87 +1,134 @@
-Return-Path: <linux-kernel+bounces-868879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD05CC06646
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:04:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD52EC0667E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7BAD1A61A07
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:03:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671183BC25F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99F931B805;
-	Fri, 24 Oct 2025 13:03:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C644E31BC80;
+	Fri, 24 Oct 2025 13:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YYkam/QU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DC131B803
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9764931B82A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761310987; cv=none; b=hokjBNQgVRqEqvyK4ZHgqft19PFNvvZ3L6mz3+hk6jpHqrOxa+B31xxj/HIabEqqvsvzEpt6M3iMmoEm4qhFa3hW/qRZGWdnOpd4jpOjO6LH1ABbYxL5V+y4i2uC7rAjQdb1RCv71KW7eeTNRM2q9CsZ5ZadcpBi0cf5+SuiZ0I=
+	t=1761310990; cv=none; b=keXnYYAoVLmrcqJgzhrtTFkW3cUeOUZZS+WVuL5XfIPJvlG8v/HuCK/VvBcHfKe5e3DX2POx5cJK/PueMF7zmTyD3+ovYAcl6HXGGwe1xOkdiuJAZdKX3OYSaxJ45H6P/Wmwl9ZMHp30jyNPWUHwggCvWtEo/DkRcZV7F3nMZyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761310987; c=relaxed/simple;
-	bh=aXXWuB1Zo6bXrrt9smUSGlXKihox3sLz6mfAGMt3jE0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lI4KkqBrSIsADyS5nNKwK9B52Z/jmaC8cHJzaOaQrZ9HXVGXFHeHtqpDdtrfzlJ0atk/4LVtNpmy/twAj3WqU8PGADXcmiukUSw7ET2gV3CfsmBo72h4fkUaQTAmNUBRzQ+meF0EGiODc0MkaVX4DmsunkF8FblzAc3yXYIpcus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430d4a4dec5so74176735ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:03:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761310984; x=1761915784;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b7ujiDTKomcZXN3r5iLHV0MeyM75t9DZVuydBESHG3Y=;
-        b=KNv3fYgIFIVyz83J60Kp7XW1+mkg9xPurdqgJDcBtVSMy5+mmt50wOIWNSuTLspeen
-         boL+DAw86T8otWCmWVOf2CMkzdVhRKAH/T7phIxdLeiUzoY9SPzPN0frYLw+Q3jVXDwo
-         dt/iTfqzAjjTKD4Trc+OZrJiZAXG36Qfy+Mi6AoOoI/zB5TrwkPCsnw300bhg/0IT3lB
-         wPW/+bQc357T0u449gTsePMQyP/gUfIQxVLUXf2TtAf1WuwfDy5xuv5qp5TIVRjEERc6
-         FNrBlxjNKjGiy+XFBuEsGTv/UVeGUo/umJZQmYe5/VwZEfEzgwWP5iJt/eBHbc26fN3j
-         MN4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUNIbo9JCxMaAijBxD32OWal5b6FIVHQzZCDRgzbuGejiSZYKcIGDdpFYXPWDCAErWQiQcEYBbAXjNv7cg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ107E3kxxjtOof3acCQi4EeRLgKNzf9C3LWF3KM8yNk76nU6x
-	vst+SH2DZcGVhw6vdOxYTy+2zqSyUgTUBX207TA0Shf/o+5mmUm58cFw5q1N6E5HSLCDofDrluA
-	E1FBHPH0EPT9Yo8RPmT8RmTTiLa288sBG8vS+ILe+tJU5i4MCNH0Op+RtsD4=
-X-Google-Smtp-Source: AGHT+IFGNoqjoa/qNqkEm20I9H0G4dMLJLLQHDQWnnBI63fyiMPFvYmVkBWJI+fvRZWHNO9ACsf4X9lALfJVSP88Ajq9ZRYIUhIS
+	s=arc-20240116; t=1761310990; c=relaxed/simple;
+	bh=lpokBpTve9nKXGXDGJUc9rhB1uIH9BOEiKuUQcu2aKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OI1AixI0FiimfIPlCNMBj+P/hifDgLcGkEIHUuYUlbaZOYdG+WB0cKeGxn4rS1eVDtj7cYVRhOakb6zlqrhpBQkkSKaP4BOZBA2PstalIpDFDBke51bfLckzhXzw8+BR6J2hM+Xz+IeRno2Q9mX88RzqMsPIf6NsUyGODEfr9kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YYkam/QU; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761310989; x=1792846989;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lpokBpTve9nKXGXDGJUc9rhB1uIH9BOEiKuUQcu2aKg=;
+  b=YYkam/QUmA8pJPMSGzWJe6ZMM83Gqbjezqml3qeeLRLWHLuOCERwNxHu
+   tva8nJgn+/OJ1X2HCoAd97g0mAfy6FniSxhC4Eb2UR0fZMQOrNOvMPnlD
+   5fwhPYF92dQJ2A3LxQMXcfhqot+G55nEUC9xrRMuAh4rfNxavdNI1ameB
+   o+VP1Jnf5nV/w4LqeKexb48pdG3neGwpTD2ncCZeW18U2xi0eLkvV0exs
+   rJ8sm9ZEPXR/wvxvpucsCGpBvgrHk5WAclk2YtR0zq6QjGUVJqckvIodh
+   rIE55YvHxA4p72g0wwJf8LfAvEDZzR1qpYHVAvww4yGqu0hlkbdNPYdGb
+   A==;
+X-CSE-ConnectionGUID: pnIQ1UtXRfaM0yAM6up7og==
+X-CSE-MsgGUID: ge7IagGcSdGv30vrBK3Rzg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="80925271"
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="80925271"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 06:03:09 -0700
+X-CSE-ConnectionGUID: QUAK2y9xSO+DNF5Ut+WrKA==
+X-CSE-MsgGUID: 7SxJscIBTjyYzwQSSwUSJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="184137908"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa007.fm.intel.com with ESMTP; 24 Oct 2025 06:03:06 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 73BE796; Fri, 24 Oct 2025 15:03:05 +0200 (CEST)
+Date: Fri, 24 Oct 2025 15:03:05 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Justinien Bouron <jbouron@amazon.com>
+Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [resend, PATCH v2 1/1] kexec: Remove unused code in
+ kimage_load_cma_segment()
+Message-ID: <aPt5CYz5Cc-7St6L@black.igk.intel.com>
+References: <20250916125124.3094021-2-andriy.shevchenko@linux.intel.com>
+ <aNLd_6CO6YMvm2MN@80a9970eed1e>
+ <aO1lmNyLCVUhL_kO@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:318e:b0:430:ab29:e75b with SMTP id
- e9e14a558f8ab-431dc1e275emr79227365ab.17.1761310983792; Fri, 24 Oct 2025
- 06:03:03 -0700 (PDT)
-Date: Fri, 24 Oct 2025 06:03:03 -0700
-In-Reply-To: <20251024071523.DLZkR%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fb7907.050a0220.346f24.00e3.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_commit_truncate
-From: syzbot <syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aO1lmNyLCVUhL_kO@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello,
+On Mon, Oct 13, 2025 at 11:48:24PM +0300, Andy Shevchenko wrote:
+> On Tue, Sep 23, 2025 at 10:50:55AM -0700, Justinien Bouron wrote:
+> > On Tue, Sep 16, 2025 at 02:51:09PM +0200, Andy Shevchenko wrote:
+> > > clang is not happy about set but unused variable:
+> > > 
+> > > kernel/kexec_core.c:745:16: error: variable 'maddr' set but not used [-Werror,-Wunused-but-set-variable]
+> > >   745 |         unsigned long maddr;
+> > >       |                       ^
+> > > 1 error generated.
+> > > 
+> > > Fix the compilation breakage (`make W=1` build) by removing unused variable.
+> > > 
+> > > As Nathan noted, GCC 16 produces the similar warning;
+> > > 
+> > > Fixes: f4fecb50d6e1 ("kexec_core: remove superfluous page offset handling in segment loading")
+> > FYI the commit this patch is fixing (i.e. f4fecb50d6e1) is going to need a
+> > second revision as well (I haven't submitted it yet, still working on it), this
+> > means that your "Fixes:" tag will need to be changed again, requiring a 3rd
+> > revision.
+> > 
+> > I am not sure what is the proper way forward here. Should I:
+> >     - Send my v2, without fixing the unused variable and then you send your v3
+> >       with the updated "Fixes:" tag pointing to my v2.
+> >     - OR fixing the unused variable in my v2 (i.e. "absorb" this patch in my
+> >       v2).
+> 
+> Second is the best (integrate this fix into yours v2).
+> 
+> > In the latter case, I am not sure how I am supposed to credit the work in this
+> > case? Do I need to add another "Signed-off-by: Andy Shevchenko" besides mine?
+> 
+> Just in the comment block (after the cutter '---' line and before the diff) in
+> a free words. No need for any special tags for this in such a case.
+> 
+> > I'm still learning the ropes on how to contribute through the mailing list so I
+> > would be grateful if you could share your input on what's the proper way forward
+> > here.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Any news, folks, please? The bug is still in Linux Next and prevents me from
+building my stuff cleanly.
 
-Reported-by: syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com
-Tested-by: syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Tested on:
 
-commit:         8e6e2188 Linux 6.1.157
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=16fdae7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7417700edc6ec0a0
-dashboard link: https://syzkaller.appspot.com/bug?extid=c16daba279a1161acfb0
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11b69be2580000
-
-Note: testing is done by a robot and is best-effort only.
 
