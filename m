@@ -1,50 +1,90 @@
-Return-Path: <linux-kernel+bounces-868750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788E4C0609D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:41:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3D0C06067
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB6DF583730
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:32:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 142461C804A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AEA32860A;
-	Fri, 24 Oct 2025 11:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13FC3191CA;
+	Fri, 24 Oct 2025 11:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iBqwV0Co"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DY6QzpVe"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD9E2566F5;
-	Fri, 24 Oct 2025 11:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B7130FC03
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761304909; cv=none; b=PDNo31iYfRL6hyYgizoIzr7RMvV8xXlWOQSidssMAj/kFRZMU8BO4I9oTjNTP46rbiv6ViKxE64JYJ2vHR1/y7hgc87sM+cHFFXNQ05JqkAalSVplAyK9FOYZ+iadIGZkonCHjjiiKUTNlmlglQNWDnPOazI3CKLUSwwPENrKaQ=
+	t=1761305022; cv=none; b=DK4k6Ha7Kb+cEhPokDTVHZodCml6ZcTzdPlnQMm/3KAroxiuc4eaec9QF23BFXXIUgT/+bFBbrUAMVdkTkhq01lJRLFraGj18+/t+jmWjl293nzdDt1mCLQREg8hxFqdCaF8qPUc0xWp2OPF8Gz5HksdRZlnJN5XXkHBtqBI49k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761304909; c=relaxed/simple;
-	bh=WVlWBgMcAuxyFhK1LJ4LllnwyQPDiIhUoSnMvvmVLoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Syyg2+tLWjVq/YXoORnR7QKTLfIJLnJzGYz4xAhj9NtFMgEjJ6ZmobIHSZ5nDon4QHdlhKv/3/FM6l+CurYX0lwLL3Aj2f9A7LdX6n9kxy+KqEChJt6WWirGsUKxvlyY+5fIecLCi+IYj5CYiGMr3JA9n140q8VD2UwRrYcV4/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iBqwV0Co; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA3E6C4CEF1;
-	Fri, 24 Oct 2025 11:21:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761304909;
-	bh=WVlWBgMcAuxyFhK1LJ4LllnwyQPDiIhUoSnMvvmVLoE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iBqwV0CoOIwOaTVQ7S++bqnqxORg7Bkm4+I5uPKo9tLfuWEsV9i2lKHFq4BNmcxH8
-	 i4jMPzALf48oxLKYOSwBqHdtQNXWgFMhf+kd0dezZB3i1euBm7SKpDdbQNAns96PBP
-	 3SGRYWsMKKU7zwzH+gsDCiV7z+7C5BFzf40x2iSw=
-Date: Fri, 24 Oct 2025 13:21:45 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Xin Zhao <jackzxcui1989@163.com>
-Cc: jirislaby@kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, tj@kernel.org, hch@infradead.org
-Subject: Re: [PATCH] serial: 8250_dma: add workqueue to flip tty buffer
-Message-ID: <2025102434-stoppage-stagnate-5f0e@gregkh>
-References: <20251024065120.1951924-1-jackzxcui1989@163.com>
+	s=arc-20240116; t=1761305022; c=relaxed/simple;
+	bh=0zowZQE/EmMI6GxlKIwg6FGmmiIJo4BbJNTy9TYrt7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=u5x3KUz4UyX04GgWs9179iBQn+ZxNQmKGvN5GrfVc4wFH7DGeb3GErfg+q6gt5sTwhSn1DP31S346uiwQJow7Q/yzfnSgm1V1EmyMIoeINNKIhRuxgXjqH4iz8FaOEn8DQf6E2gIMkSU23hTywjdSkvg856xfal75P+rFazSnX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DY6QzpVe; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-426fd62bfeaso970211f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:23:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761305019; x=1761909819; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FQOc+jM39ubvRhhSlIjQuPooaB7ldn1LylmA2tOzblM=;
+        b=DY6QzpVe0rxSgKfR1z1haUEhujvUsfah5zRuRK+UNKDNuQwQDhgN9Q2Pv/I6rSunfn
+         myhJ/e2273OQCiglJIDkS1JB7voG3EU0MHqMxLATAb7bdAAEjJTA+W43vpbn1mDCkAOL
+         so0Nynvwyo56spz7PdCkRP35AB1hil/QXwMtKf+3aKT2DBgN078yqy8k287KyXHTEBKG
+         VfAAaEVJGfCPaAXFbU3Hane6Llc8DORtJcAQsubIDVvHZqQip9BjGrhcbhiWL/5j/siA
+         4HZO3RKb+H5LYfSEKByhCnp6fEMQXcFNXrisTI3nts0WKc2RSv82LRwO3DKU1FpKV21W
+         zx3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761305019; x=1761909819;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FQOc+jM39ubvRhhSlIjQuPooaB7ldn1LylmA2tOzblM=;
+        b=LBGNyY6RSmvbzyVkJMRqIHDJ0bTWUxu6zzfuzQXVX/mh5Btww7IDrQra9/3YbOk98f
+         Jp1Dt4ZnWzpDVNJx/b4Gof9Krg1x4jM4IPL+1mjTEhUtod6sDSwCeQ0DsEax36CmcMQC
+         wMaqEw26AoU4zeClUKlfA2a08OB9M/tyBKhMwJ+/LT/oVgNSz83LbaUmVTCHDSsG+PTH
+         O1UuzHleV77FwVA7WkmeHfxqlss9B4s6tR9C5esr7I5eU2bkWgFvHmzEHS0+NogOa1GY
+         aftNX4MvdCVYqDNauNGUna7UDFc+dl3XiZl44umNcAAXxHdTd2tKZnISzKm0CPQVplN1
+         UuuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxbDuYw2wPm5yvA6dVW6DAuQMnYzPFNWY8BKRgQKL8ej8fInZFgd+aXcNVGK9uXyPoUEv4r6gfhpBssT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0xmmatBfG5/OLvXvOZ1xVeseq1xzGETC+AArAXnrEBmUEZIth
+	+t21eTLbFjxv6i/GfZQUkWRAMYwwipdtcfDd1QOLSOGIVeuZiTXOA9pMBkQd3J7ZGpE=
+X-Gm-Gg: ASbGncufZlUtUoC460uMDkYaZiaHsX/v491BMmEdltCcn10ny7St01yltI+HPV9lD9W
+	el8jc01sPGu7lorbl3riQN5cDun74SwyUaaXt/JntN+unh65q0+s9C+yggm9K5zxXx6zhRD1Cvk
+	7SqW7xzjk6hVOERk2DvBAenfWoT8cJML7E+nLb1+kDZDDM8BMid2XVZU4GnCRxbfMiafIP12uua
+	F4NYYqtxXugrbmPAvSHW4P+XLU7W67cixXE/OM53gs+d5otP20flo1i46i2P0QfWx2ue1WOmtVI
+	iQENOu4z8HK4cfTib4tWRgnoixHefXqAmpic45gUEGJM8lecvS5NSxFOgXOjrNqSK15AGlXa3mG
+	QU5oqQql3XHu+YjVQGUC91a+WxQovu7QW7bwQVLvq798ihDxpwvUpXsbDe06sA47SEWLFeP5QYD
+	/VatjBx5eVvOXkbWTg
+X-Google-Smtp-Source: AGHT+IExQzOyk4omzvi9Zz7XZjs/LOOnvxM4yvkC9gtz1IfMXQ9aSiPVkXwgXIxJvNBEVGrXMNkh3g==
+X-Received: by 2002:a05:6000:4a09:b0:427:62b:7f3 with SMTP id ffacd0b85a97d-427062b07f9mr22219100f8f.33.1761305018812;
+        Fri, 24 Oct 2025 04:23:38 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429898ec1dfsm8923611f8f.43.2025.10.24.04.23.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 04:23:38 -0700 (PDT)
+Date: Fri, 24 Oct 2025 14:23:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: airoha: Fix a copy and paste bug in probe()
+Message-ID: <aPtht6y5DRokn9zv@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,141 +93,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251024065120.1951924-1-jackzxcui1989@163.com>
+X-Mailer: git-send-email haha only kidding
 
-On Fri, Oct 24, 2025 at 02:51:20PM +0800, Xin Zhao wrote:
-> On the embedded platform, certain critical data, such as IMU data, is
-> transmitted through UART. The tty_flip_buffer_push interface in the TTY
-> layer uses system_unbound_wq to handle the flipping of the TTY buffer.
-> Although the unbound workqueue can create new threads on demand and wake
-> up the kworker thread on an idle CPU, it may be preeempted by real-time
-> tasks or other high-prio tasks. dma_rx_complete calls spin_lock_irqsave
-> which do not disable preempt but disable migrate in rt-linux, leading to
-> the kworker thread running the dma_rx_complete work cannot be pulled by
-> other cpu when idle_balance, causing long delays.
-> In our system, the processing interval for each frame of IMU data
-> transmitted via UART can experience significant jitter due to this issue.
-> Instead of the expected 10 to 15 ms frame processing interval, we see
-> spikes up to 30 to 35 ms. Moreover, in just one or two hours, there can
-> be 2 to 3 occurrences of such high jitter, which is quite frequent. This
-> jitter exceeds the software's tolerable limit of 20 ms.
-> Introduce wq_tty_flip in tty_port, allocating a workqueue using WQ_SYSFS,
-> so that we can set cpumask and nice dynamically.
-> We set the cpumask to the same cpu where the IMU data is handled and has
-> less long-time high-prio jobs, and then set nice to -20, the frame
-> processing interval remains between 10 and 15ms, no jitter occurs.
-> 
-> ---
-> Change in v2:
-> - Do not add new module parameters
->   as suggested by Greg KH
-> - Set WQ_SYSFS to allow properties changes from userspace
->   as suggested by Tejun Heo
-> 
-> Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
-> ---
->  drivers/tty/serial/8250/8250_dma.c | 19 ++++++++++++++++++-
->  drivers/tty/tty_buffer.c           |  2 +-
->  include/linux/tty_port.h           |  1 +
->  3 files changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_dma.c b/drivers/tty/serial/8250/8250_dma.c
-> index bdd26c9f3..7ff705a78 100644
-> --- a/drivers/tty/serial/8250/8250_dma.c
-> +++ b/drivers/tty/serial/8250/8250_dma.c
-> @@ -207,6 +207,7 @@ EXPORT_SYMBOL_GPL(serial8250_rx_dma_flush);
->  int serial8250_request_dma(struct uart_8250_port *p)
->  {
->  	struct uart_8250_dma	*dma = p->dma;
-> +	struct tty_port		*tport = &p->port.state->port;
->  	phys_addr_t rx_dma_addr = dma->rx_dma_addr ?
->  				  dma->rx_dma_addr : p->port.mapbase;
->  	phys_addr_t tx_dma_addr = dma->tx_dma_addr ?
-> @@ -244,6 +245,11 @@ int serial8250_request_dma(struct uart_8250_port *p)
->  		goto release_rx;
->  	}
->  
-> +	/* Use the default workqueue then if alloc_workqueue failed */
-> +	tport->wq_tty_flip = alloc_workqueue("ttyS%d-flip-wq",
-> +					     WQ_UNBOUND | WQ_SYSFS,
-> +					     0, p->port.line);
-> +
->  	dmaengine_slave_config(dma->rxchan, &dma->rxconf);
->  
->  	/* Get a channel for TX */
-> @@ -252,7 +258,7 @@ int serial8250_request_dma(struct uart_8250_port *p)
->  						       p->port.dev, "tx");
->  	if (!dma->txchan) {
->  		ret = -ENODEV;
-> -		goto release_rx;
-> +		goto release_rx_wq;
->  	}
->  
->  	/* 8250 tx dma requires dmaengine driver to support terminate */
-> @@ -294,6 +300,11 @@ int serial8250_request_dma(struct uart_8250_port *p)
->  	return 0;
->  err:
->  	dma_release_channel(dma->txchan);
-> +release_rx_wq:
-> +	if (tport->wq_tty_flip) {
-> +		destroy_workqueue(tport->wq_tty_flip);
-> +		tport->wq_tty_flip = NULL;
-> +	}
->  release_rx:
->  	dma_release_channel(dma->rxchan);
->  	return ret;
-> @@ -303,6 +314,7 @@ EXPORT_SYMBOL_GPL(serial8250_request_dma);
->  void serial8250_release_dma(struct uart_8250_port *p)
->  {
->  	struct uart_8250_dma *dma = p->dma;
-> +	struct tty_port *tport = &p->port.state->port;
->  
->  	if (!dma)
->  		return;
-> @@ -322,6 +334,11 @@ void serial8250_release_dma(struct uart_8250_port *p)
->  	dma->txchan = NULL;
->  	dma->tx_running = 0;
->  
-> +	if (tport->wq_tty_flip) {
-> +		destroy_workqueue(tport->wq_tty_flip);
-> +		tport->wq_tty_flip = NULL;
-> +	}
-> +
->  	dev_dbg_ratelimited(p->port.dev, "dma channels released\n");
->  }
->  EXPORT_SYMBOL_GPL(serial8250_release_dma);
-> diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
-> index 67271fc0b..7f83f377f 100644
-> --- a/drivers/tty/tty_buffer.c
-> +++ b/drivers/tty/tty_buffer.c
-> @@ -530,7 +530,7 @@ void tty_flip_buffer_push(struct tty_port *port)
->  	struct tty_bufhead *buf = &port->buf;
->  
->  	tty_flip_buffer_commit(buf->tail);
-> -	queue_work(system_unbound_wq, &buf->work);
-> +	queue_work(port->wq_tty_flip ?: system_unbound_wq, &buf->work);
+This code has a copy and paste bug where it accidentally checks "if (err)"
+instead of checking if "xsi_rsts" is NULL.  Also, as a free bonus, I
+changed the allocation from kzalloc() to  kcalloc() which is a kernel
+hardening measure to protect against integer overflows.
 
-Why not just do this for all tty ports?  What is the benifit of keeping
-this on the system_unbound_wq for all other tty devices?
+Fixes: 5863b4e065e2 ("net: airoha: Add airoha_eth_soc_data struct")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/ethernet/airoha/airoha_eth.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
->  }
->  EXPORT_SYMBOL(tty_flip_buffer_push);
->  
-> diff --git a/include/linux/tty_port.h b/include/linux/tty_port.h
-> index 332ddb936..f5a5e50ff 100644
-> --- a/include/linux/tty_port.h
-> +++ b/include/linux/tty_port.h
-> @@ -121,6 +121,7 @@ struct tty_port {
->  	int			drain_delay;
->  	struct kref		kref;
->  	void			*client_data;
-> +	struct workqueue_struct *wq_tty_flip;
->  };
+diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
+index 8483ea02603e..d0ef64a87396 100644
+--- a/drivers/net/ethernet/airoha/airoha_eth.c
++++ b/drivers/net/ethernet/airoha/airoha_eth.c
+@@ -2985,11 +2985,11 @@ static int airoha_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	xsi_rsts = devm_kzalloc(eth->dev,
+-				eth->soc->num_xsi_rsts * sizeof(*xsi_rsts),
++	xsi_rsts = devm_kcalloc(eth->dev,
++				eth->soc->num_xsi_rsts, sizeof(*xsi_rsts),
+ 				GFP_KERNEL);
+-	if (err)
+-		return err;
++	if (!xsi_rsts)
++		return -ENOMEM;
+ 
+ 	eth->xsi_rsts = xsi_rsts;
+ 	for (i = 0; i < eth->soc->num_xsi_rsts; i++)
+-- 
+2.51.0
 
-You forgot to document this new member, and so the documentation build
-will throw a warning.
-
-thanks,
-
-greg k-h
 
