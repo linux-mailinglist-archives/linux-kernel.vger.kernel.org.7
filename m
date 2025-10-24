@@ -1,149 +1,193 @@
-Return-Path: <linux-kernel+bounces-868634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BEC0C05ABB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:51:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB436C05A94
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662E219A89C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:51:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E4DD19A8018
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919BF312836;
-	Fri, 24 Oct 2025 10:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186CA31196F;
+	Fri, 24 Oct 2025 10:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="dLwD0pd4"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nLgPo94p"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4523126C5;
-	Fri, 24 Oct 2025 10:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5F2306B0D
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303022; cv=none; b=NByEsBhPqLxI+68x15T5mA0oTkVJktsFsjaKwKJwDCO9J9g294/7y8tBxmcPBeFmnadVXVoN7ZEGIx8mhaTHO85k+NTbQWWhM+t4AmPV8wtXWi35Z+s8qw9nC4kw/+pNHRzQ347+opgXI8+eZiCI0Lseaqc8YrkA+aJ9VWS7KzM=
+	t=1761302946; cv=none; b=nkIvtHULpNm470CIkBogEFbGR35uXgrOfMYPEA40hckB6QbglgAqR0Rh08MQiyCfLaD3RCw+5kQenyDBjOAte5dfBHdOpIFmGIQVU3pFl6IV3cvUaZRAyuEGmUpylyWdTZ5DFwtfm1R+Zf1NlJDPQ6+mYhfCqWmhiNSAE9gCXqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303022; c=relaxed/simple;
-	bh=3fz3rpGAzHLdS+MmuclAdP6VsFQiZ67MGd8RVosRMwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5ALp3rCqblsUIsXRxQm75K6GOX/jdAv4z57y35/mYkbejKt1/Kkwd2vO7L/OZsoXjqTfnZFi2AF2YDSV5m0HExfHqTFoWCHYqDlW09Wb00b51Sym5ll8zNH0e1g6sb/qjHPeDY2r7gUGFiCtOMCs2C+TFaI6cI5Akl7ewOcuPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=dLwD0pd4; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1761302946;
-	bh=PvlLbAtr3XlzVLm6/DyAYUo7+1BEZwmOFQMdHFYJrCs=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=dLwD0pd4ywjbLoaWL5hNcfJ/kBbNMfHuUPeF4/+2VZ80fjWmgWFmKmBpzPRvfIyUI
-	 2b+iPLTMSzqi+ZF4CmaBuRgWAhm11OutYFvtCXf+wwRR7tV4OteN/zy1cwln5XZ/Dc
-	 4eVwTJO+I029cTLEf/Zd0/vJa5RCjyyeY2jAx8+c=
-X-QQ-mid: zesmtpip4t1761302939t485c17ea
-X-QQ-Originating-IP: lTQezpA5yN4MrVbzvzdIeTYUYXSeOApYxnJ36Znae8A=
-Received: from = ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 24 Oct 2025 18:48:57 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8636402591889847719
-EX-QQ-RecipientCnt: 7
-Date: Fri, 24 Oct 2025 18:48:55 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Andi Shyti <andi.shyti@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Yixun Lan <dlan@gentoo.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH v4] i2c: spacemit: configure ILCR for accurate SCL
- frequency
-Message-ID: <D8C067EFD2F94D3A+aPtZl2S44JYNUijG@troy-wujie14pro-arch>
-References: <20251017-k1-i2c-ilcr-v4-1-eed4903ecdb9@linux.spacemit.com>
- <t26pyjnmzj62oczwuje2bbscowj22pdge2ef3tcktwmhzpsq47@7odo2ccvc52a>
- <sdhkjmi5l2m4ua4zqkwkecbihul5bc2dbmitudwfd57y66mdht@6ipjfyz7dtmx>
- <748544ABF6A72D31+aPg31PBvHDkBALoa@kernel.org>
- <lr77avehdf3skwd5o2yur4hvbxhyx2spzve3wpo733l74ppjcx@mn34escjt542>
+	s=arc-20240116; t=1761302946; c=relaxed/simple;
+	bh=X4Lx1AN9vYSZaPB0jdVLFEPdmXgK7gQn/GI7ZLbgs/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lKh0TLiDWZ0DUpJlDhV5VxEKeHsW6hSwiJcqgUamHfLoY3Lvlcta1qD3jcEa6txXHDo4nYO0jAyx2cC721RZuU1MKuZNgB1wXy0DYidVVWd83oek54bjpAZXJsJVuMC31hDIHqSKXj1cwXMIJEKtNvHuWB9k3ah78TmPFdE6+gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nLgPo94p; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761302944; x=1792838944;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=X4Lx1AN9vYSZaPB0jdVLFEPdmXgK7gQn/GI7ZLbgs/E=;
+  b=nLgPo94pgkuU19K/8fHfZFYsfIswXhUPKJxUfARbC9bymE+z0LQ7FHps
+   3LaPRZe6WmC4nsOyJbEAdnmHGNZa28x6Pnc1KhfXGe1Z2Lm79tfApIvLO
+   AP0PvZnYB4OBXjbnZaskCjsVzLrRcheby1TkdfUlNOr7W/hnJNSY/Lpgs
+   4IIWaDRtB6AgUTomNZ8STpsbMNdE6xAyT/Z8NBPyg/4b3W3A+1w167pqj
+   kRbna51QJpwplqTp5cjZCYv5iDXfT34VOtBZdCFDcmjoBQHoOWAlYgsZ9
+   RCMLClivFZu7RGRL4Lx+orgpUxocuQhD1jjzF7xlEF8F1VaUMo+is241H
+   w==;
+X-CSE-ConnectionGUID: qqy33tPfTBugHT9/BOiD+A==
+X-CSE-MsgGUID: /KqO8laWQsSniASZjpkcZg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63374439"
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="63374439"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 03:49:04 -0700
+X-CSE-ConnectionGUID: OcX6su+xR2uYN5Mf8fl0EQ==
+X-CSE-MsgGUID: nWp/NyGvTCC6Oowq+T7s4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="184323445"
+Received: from kwachows-mobl.ger.corp.intel.com (HELO [10.246.16.157]) ([10.246.16.157])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 03:49:00 -0700
+Message-ID: <dc2662f4-98b5-4fc8-9ed7-5e4a88168f9a@linux.intel.com>
+Date: Fri, 24 Oct 2025 12:48:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lr77avehdf3skwd5o2yur4hvbxhyx2spzve3wpo733l74ppjcx@mn34escjt542>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: MsGkKnz+xAbkOk5PEMsmxnIORBwDpcFCsS1Z1yQ4uBh6Ul5aGbhpEx2d
-	/1Mr3kaCWHZbatyP9KN/NDJ4lS1TIuGLSdf+yaaS5+uRUm36KhbEuyNkM45MXIlxdlctJRq
-	cmAr9yNOJcWqCSaQbBRRaYLHcy3s2yYt47/qKza11XxehzttN4THDGeNq1dO5yrPZjlxQzE
-	JjzRWA+1UniS6loMPYV4on7x354EGzaimRiTLU1TbZMK5gtn6ZPShr/aR/GxA+Ob6rxejkT
-	TcxF0tS8pORG5Y28PGhyHz5NsJeT5HSQk96lqtwC3ZUX3j9gTQKrHXfWldNrFIvvBR2usHP
-	XOdft7rJvEalGCJu2FOD2Y5hIPXBA2jxctBN7F0U71j79RISzcyzg2RoH6aRgwTMJ2P///u
-	Icl5vZP/T0BY2fGpnBpNMHi7qz4V6ITP4Kkqi4VyxxxQHXpzMLipSDDqc0kPrexvjSiHT21
-	KHSiIwOPC3Qgf+xiVZ+qyWRFFY4NGXuemsrb8WMr004FYguxqC1ry7h8S85WeqWzpYOy5Ay
-	KUXygCPSJw8a2Kv1lgqyIuD/fjl5ZUdEVbyHU4nmHZM5+6EN1UjQU9WruunqHZPjlfNPIYZ
-	UjYL7JXNTL47U37MZiUpLB2f391oqMFBIF3Gpg4zB1NI1jx00acOpzIaH15qy7icMfIRls1
-	TfqEHUvi6gd3qbOrADCO7dqovTqXYlLjg6UGd0MY40s/LdWOrDten81xUz8jTRxaoV7eE17
-	tXIh7NpkAVTWPWYfrD5Kf+e4lTMvHkuFoPbTpbqqTYStrLJGGnC1UapgPGFlNhfhss67ZP+
-	mGLkK6DQNxBjI/t4ABYV7AioybK4hVGSUmRQYnULF3BgxDSVTiTuKATnyqT7v6NUmJpIiuR
-	xs5fLVaS3mnxmPihjcAm8fk3mUDrtZ9QTtHOSfLQvpVsZ57idGIINQtR/c32rXMy5fXWqkN
-	IOZHmyyipL7OiJxPV14RRHFLJqfqrlkcDQJTAxiMtMAAp6kuDNW5PtH7ySVkle/DRN59sGk
-	EzkAjFOUAJpZCdzMPIw9NtrQlvVx8xgxd2EbsoqXA15ZzVbXce
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] accel/ivpu: replace use of system_wq with
+ system_percpu_wq
+To: Marco Crivellari <marco.crivellari@suse.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Michal Hocko <mhocko@suse.com>,
+ Maciej Falkowski <maciej.falkowski@linux.intel.com>,
+ Oded Gabbay <ogabbay@kernel.org>
+References: <20251024095205.123123-1-marco.crivellari@suse.com>
+ <20251024095205.123123-3-marco.crivellari@suse.com>
+Content-Language: en-US
+From: Karol Wachowski <karol.wachowski@linux.intel.com>
+Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
+ Gdansk - KRS 101882 - NIP 957-07-52-316
+In-Reply-To: <20251024095205.123123-3-marco.crivellari@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 23, 2025 at 12:34:23PM +0200, Andi Shyti wrote:
-> Hi Troy,
-> 
-> On Wed, Oct 22, 2025 at 09:48:04AM +0800, Troy Mitchell wrote:
-> > On Tue, Oct 21, 2025 at 06:03:34PM +0200, Andi Shyti wrote:
-> > > On Mon, Oct 20, 2025 at 11:28:45AM +0200, Andi Shyti wrote:
-> > > > On Fri, Oct 17, 2025 at 03:27:39PM +0800, Troy Mitchell wrote:
-> > > > > The SpacemiT I2C controller's SCL (Serial Clock Line) frequency for
-> > > > > master mode operations is determined by the ILCR (I2C Load Count Register).
-> > > > > Previously, the driver relied on the hardware's reset default
-> > > > > values for this register.
-> > > > > 
-> > > > > The hardware's default ILCR values (SLV=0x156, FLV=0x5d) yield SCL
-> > > > > frequencies lower than intended. For example, with the default
-> > > > > 31.5 MHz input clock, these default settings result in an SCL
-> > > > > frequency of approximately 93 kHz (standard mode) when targeting 100 kHz,
-> > > > > and approximately 338 kHz (fast mode) when targeting 400 kHz.
-> > > > > These frequencies are below the 100 kHz/400 kHz nominal speeds.
-> > > > > 
-> > > > > This patch integrates the SCL frequency management into
-> > > > > the Common Clock Framework (CCF). Specifically, the ILCR register,
-> > > > > which acts as a frequency divider for the SCL clock, is now registered
-> > > > > as a managed clock (scl_clk) within the CCF.
-> > > > > 
-> > > > > This patch also cleans up unnecessary whitespace
-> > > > > in the included header files.
-> > > > > 
-> > > > > Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> > > > 
-> > > > merged to i2c/i2c-host.
-> > > 
-> > > I'm sorry, because of the report from LKP(*) I reverted your
-> > > patch. I2C_K1 is selected by MFD_SPACEMIT_P1, so that we get the
-> > > following warning:
-> > > 
-> > >   WARNING: unmet direct dependencies detected for I2C_K1
-> > > 
-> > > and compile I2C_K1 without COMMON_CLK. Please, fix it and
-> > > resubmit the patch.
-> > Yes, I noticed that too. The issue is introduced by PMIC driver(P1)
-> > instead of I2C.
-> > Should I resubmit this patch right after sending the fix,
-> > or wait until the fix gets merged first?
-> 
-> I have reverted the patch. Please send them both in the same
-> series, where the first patch is the "fix" (or preparation to
-> this patch) and then this patch.
-Oh, I have sent a sigle patch that fix the error..
-I'll send v2 with this patch.
+On 10/24/2025 11:52 AM, Marco Crivellari wrote:
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+>
+> This lack of consistentcy cannot be addressed without refactoring the API.
+>
+> system_wq should be the per-cpu workqueue, yet in this name nothing makes
+> that clear, so replace system_wq with system_percpu_wq.
+>
+> The old wq (system_wq) will be kept for a few release cycles.
+>
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> ---
+>  drivers/accel/ivpu/ivpu_hw_btrs.c | 2 +-
+>  drivers/accel/ivpu/ivpu_ipc.c     | 2 +-
+>  drivers/accel/ivpu/ivpu_job.c     | 2 +-
+>  drivers/accel/ivpu/ivpu_mmu.c     | 2 +-
+>  drivers/accel/ivpu/ivpu_pm.c      | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/accel/ivpu/ivpu_hw_btrs.c b/drivers/accel/ivpu/ivpu_hw_btrs.c
+> index afdb3b2aa72a..27a345f3befe 100644
+> --- a/drivers/accel/ivpu/ivpu_hw_btrs.c
+> +++ b/drivers/accel/ivpu/ivpu_hw_btrs.c
+> @@ -673,7 +673,7 @@ bool ivpu_hw_btrs_irq_handler_lnl(struct ivpu_device *vdev, int irq)
+>  
+>  	if (REG_TEST_FLD(VPU_HW_BTRS_LNL_INTERRUPT_STAT, SURV_ERR, status)) {
+>  		ivpu_dbg(vdev, IRQ, "Survivability IRQ\n");
+> -		queue_work(system_wq, &vdev->irq_dct_work);
+> +		queue_work(system_percpu_wq, &vdev->irq_dct_work);
+>  	}
+>  
+>  	if (REG_TEST_FLD(VPU_HW_BTRS_LNL_INTERRUPT_STAT, FREQ_CHANGE, status)) {
+> diff --git a/drivers/accel/ivpu/ivpu_ipc.c b/drivers/accel/ivpu/ivpu_ipc.c
+> index 5f00809d448a..1f13bf95b2b3 100644
+> --- a/drivers/accel/ivpu/ivpu_ipc.c
+> +++ b/drivers/accel/ivpu/ivpu_ipc.c
+> @@ -459,7 +459,7 @@ void ivpu_ipc_irq_handler(struct ivpu_device *vdev)
+>  		}
+>  	}
+>  
+> -	queue_work(system_wq, &vdev->irq_ipc_work);
+> +	queue_work(system_percpu_wq, &vdev->irq_ipc_work);
+>  }
+>  
+>  void ivpu_ipc_irq_work_fn(struct work_struct *work)
+> diff --git a/drivers/accel/ivpu/ivpu_job.c b/drivers/accel/ivpu/ivpu_job.c
+> index 060f1fc031d3..7a1f78b84b09 100644
+> --- a/drivers/accel/ivpu/ivpu_job.c
+> +++ b/drivers/accel/ivpu/ivpu_job.c
+> @@ -574,7 +574,7 @@ static int ivpu_job_signal_and_destroy(struct ivpu_device *vdev, u32 job_id, u32
+>  		 * status and ensure both are handled in the same way
+>  		 */
+>  		job->file_priv->has_mmu_faults = true;
+> -		queue_work(system_wq, &vdev->context_abort_work);
+> +		queue_work(system_percpu_wq, &vdev->context_abort_work);
+>  		return 0;
+>  	}
+>  
+> diff --git a/drivers/accel/ivpu/ivpu_mmu.c b/drivers/accel/ivpu/ivpu_mmu.c
+> index 5ea010568faa..e1baf6b64935 100644
+> --- a/drivers/accel/ivpu/ivpu_mmu.c
+> +++ b/drivers/accel/ivpu/ivpu_mmu.c
+> @@ -970,7 +970,7 @@ void ivpu_mmu_irq_evtq_handler(struct ivpu_device *vdev)
+>  		}
+>  	}
+>  
+> -	queue_work(system_wq, &vdev->context_abort_work);
+> +	queue_work(system_percpu_wq, &vdev->context_abort_work);
+>  }
+>  
+>  void ivpu_mmu_evtq_dump(struct ivpu_device *vdev)
+> diff --git a/drivers/accel/ivpu/ivpu_pm.c b/drivers/accel/ivpu/ivpu_pm.c
+> index ffa2ba7cafe2..0cff8f808429 100644
+> --- a/drivers/accel/ivpu/ivpu_pm.c
+> +++ b/drivers/accel/ivpu/ivpu_pm.c
+> @@ -226,7 +226,7 @@ void ivpu_start_job_timeout_detection(struct ivpu_device *vdev)
+>  	unsigned long timeout_ms = ivpu_tdr_timeout_ms ? ivpu_tdr_timeout_ms : vdev->timeout.tdr;
+>  
+>  	/* No-op if already queued */
+> -	queue_delayed_work(system_wq, &vdev->pm->job_timeout_work, msecs_to_jiffies(timeout_ms));
+> +	queue_delayed_work(system_percpu_wq, &vdev->pm->job_timeout_work, msecs_to_jiffies(timeout_ms));
+Thanks for the patch. Please fix the checkpatch warning: 
 
-                          - Troy
-> 
-> Thanks,
-> Andi
-> 
+WARNING: line length of 104 exceeds 100
+columns                                                                           
+#90: FILE:
+drivers/accel/ivpu/ivpu_pm.c:229:                                                                              
++       queue_delayed_work(system_percpu_wq,
+&vdev->pm->job_timeout_work, msecs_to_jiffies(timeout_ms));  
+>  }
+>  
+>  void ivpu_stop_job_timeout_detection(struct ivpu_device *vdev)
+
+Also there's a typo "consistentcy" -> "consistency" that can get fixed
+with together with that warning.
+
+Tested-by: Karol Wachowski <karol.wachowski@linux.intel.com>         
+
+
 
