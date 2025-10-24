@@ -1,171 +1,156 @@
-Return-Path: <linux-kernel+bounces-869280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74DABC0781D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:14:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BDD6C07826
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 674374200CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:09:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D45942293E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D0F31B823;
-	Fri, 24 Oct 2025 17:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67F532B997;
+	Fri, 24 Oct 2025 17:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QamugzSL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqmQFWpa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023DA22F76F;
-	Fri, 24 Oct 2025 17:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8A5253954
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761325748; cv=none; b=uLMzyyzpC1oRRlhcNBWLpyUQRWhW1kXNg1OfMTwTLtFQn+AKa2gWzvAJnhyrxC9de1dzBKKerQcgGBe6VQysE8tirWTN9YAMufxfuB1hLjSO8928LxpV6u8KxnfmRdnJweO52mtlRXPv7Vgy3A4aWbFfrfcFd7F5hv+HBX6Qga0=
+	t=1761325852; cv=none; b=XFtijl2vGpABOfUkZU83AqTsPB5zhacDzHPzmVdrIeqzeCvA/mG5RX9B5XFw3SXWxtZsV0SvgQLFcdRf2/h2Fk37naRZxAelbTZFTQkn7DKjMqsfF4uLuAxn3dMyE8oFLZ6eAelqNQGyWLq9d2yWkeZu2jwnVuLxNww6hLvnwUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761325748; c=relaxed/simple;
-	bh=nEsdPzi/tI01PeUgGVuo2zqDEcBVeBbnMqQ68PWLzVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X9TFB/9X/8qyYoCYaUMUbUL47zfWB6swV5pj2v1YJ901ucskpc9Srk93tqmCBagHB9huz0KIAYRrQ9+86n6bqzWZv0nwnUA+9ChoOgAAiqIi42W0JGUgqqSNo4yMEL2HCGnbNefgvpEeaP0hal24KW6eY0fzj/FpXLG9H7mmzaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QamugzSL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69DAC4CEF1;
-	Fri, 24 Oct 2025 17:09:02 +0000 (UTC)
+	s=arc-20240116; t=1761325852; c=relaxed/simple;
+	bh=GdOKVcVxWIYVdHeYTzUFacYZkQbUVpcSXn4/u82IQ4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CF3RpP0rI+uYdvaly0SyArmfzpctEHiHr6zKFVZdeluKArQ7AicqlsbLhPHDqVcrrETli/mN1VJvZ/IQeQ1YHuKrcq1r4i3R6Ei3QKMFuroPpi4Lef9yIY7FwaBn8Dj6d+1JjQTVTvXcFM+RoNB3RLqkwqObU+qwiqwDC15KTJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqmQFWpa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17815C116D0
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:10:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761325747;
-	bh=nEsdPzi/tI01PeUgGVuo2zqDEcBVeBbnMqQ68PWLzVQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QamugzSLBu5WaDeDpKXu4OBuo2iT0CBGV4gsQNQieHyIBXMKIEoRrJoeARLexzznd
-	 s0Jv5aVIYnZUz+9cX6dEIlPuyltqWfS85b0qGIAMbS/29Jvpd3zhro6HTjRyjC0ALl
-	 /FEhzqwZ9g/P4xNmU0baHCs8viygjcFDwnYx81rEinu0bfEs3ZeXJq5gi6dTGRv8js
-	 xHWAS8qqJwYsxi6B3Pv8dRR4bAyW6UGBIPAHA8AQgwnwIma+suj9Upc9ZTrXkI/Wlx
-	 nfx9mW+0t5M+h/NdkjyPFxEoodFuQABjnPlbXrRXO+gt86g63Pr2r/QIFib8KfWOGw
-	 vWzsgrucEU6HA==
-Date: Fri, 24 Oct 2025 18:09:00 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Peter Wang <peter.wang@mediatek.com>,
-	Stanley Jhu <chu.stanley@gmail.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
-	kernel@collabora.com, linux-scsi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH v3 01/24] dt-bindings: phy: Add mediatek,mt8196-ufsphy
- variant
-Message-ID: <20251024-spilt-deviate-e3f6bfd3642c@spud>
-References: <20251023-mt8196-ufs-v3-0-0f04b4a795ff@collabora.com>
- <20251023-mt8196-ufs-v3-1-0f04b4a795ff@collabora.com>
+	s=k20201202; t=1761325852;
+	bh=GdOKVcVxWIYVdHeYTzUFacYZkQbUVpcSXn4/u82IQ4A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uqmQFWpafC7vBIbkQIOZ2UwhnLq82ZYjbas7eMd6vat3O17f0Q8Cbutg9NBvgjL+p
+	 gIJQ/1ZbT1KBpsoXlpy1eZ+dE9rCsz7fhFo9r4yLYyXqNpKH0uc936Mb75Sg9oWdaC
+	 3yfMn/aqTrwR4YbDaOUeeCNFoFIhhVejRJdkjXdK75FF079QQkMyxxvSwo4J+TgUFu
+	 I34prkQzqCsYZYnSF7EJHhEquf182fvz472yHX2qWU7kU8kKBwoVlp+JEB8l4ItdSx
+	 Trq8mZtBxqByEBM6Ht3TCG51LuvMJFDV24K2C5+bI2cQ8Fz1MKZlDXg3EDYh/8Xu5j
+	 kPk3AS2hP1pkQ==
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b6d2f5c0e8eso467925566b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:10:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU2+ZffkRq1jfCLPuUyjN2NSTr67KIqmkwSiSwA4QROgWj7PqIuzYqUn9bP6symC48xtgqHXUIo8Xzy1mI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8Bv6sStNXoY05VPE+WOOoZfLXrndfM6AOXdg7rxDj+PUydAFn
+	AMQQo/vH6FtRCgVZ816TwT1ECWagSuGGYIBRvYafq/c9MKxF54FW/LIN5lEsrk2TJ8iD/yOitLb
+	W2nmA1EYlcl4LhvGaVl4RX2c1u1gMzw==
+X-Google-Smtp-Source: AGHT+IG/3WEThz7PazPn+Pa/kjHjCobatN9xX8Xpu3xgx4wz+CQWm8nO+WeSfGQCmjID3LuEq7En1oyBdhiGX59jKTE=
+X-Received: by 2002:a17:906:3c9:b0:b6d:7f68:7874 with SMTP id
+ a640c23a62f3a-b6d7f6878famr57952766b.44.1761325850450; Fri, 24 Oct 2025
+ 10:10:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="w3wlVB5ViarihM4q"
-Content-Disposition: inline
-In-Reply-To: <20251023-mt8196-ufs-v3-1-0f04b4a795ff@collabora.com>
-
-
---w3wlVB5ViarihM4q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20251001183320.83221-1-ariel.dalessandro@collabora.com>
+ <175943240204.235529.17735630695826458855.robh@kernel.org>
+ <CABBYNZKSFCes1ag0oiEptKpifb=gqLt1LQ+mdvF8tYRj8uDDuQ@mail.gmail.com>
+ <CAL_Jsq+Y6uuyiRo+UV-nz+TyjQzxx4H12auHHy6RdsLtThefhA@mail.gmail.com>
+ <CABBYNZKxGNXS2m7_VAf1d_Ci3uW4xG2NamXZ0UVaHvKvHi07Jg@mail.gmail.com> <CAL_Jsq+aO8Fdq_7PHvh0aTb00qvGdKe2RDRotYcWjqGHppyL4g@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+aO8Fdq_7PHvh0aTb00qvGdKe2RDRotYcWjqGHppyL4g@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 24 Oct 2025 12:10:38 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+vOKpR+YZWdsT5o=CrB=MT1ZeK0=_HuLG33p_wnj-MNA@mail.gmail.com>
+X-Gm-Features: AWmQ_blrtMIqgkYEu8hw0I_RorB-tKtgwstXs8EHR-BCdkzmS79EpyfM_OAhwFY
+Message-ID: <CAL_Jsq+vOKpR+YZWdsT5o=CrB=MT1ZeK0=_HuLG33p_wnj-MNA@mail.gmail.com>
+Subject: Re: [PATCH v3] dt-bindings: net: Convert Marvell 8897/8997 bindings
+ to DT schema
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: "Ariel D'Alessandro" <ariel.dalessandro@collabora.com>, andrew+netdev@lunn.ch, 
+	conor+dt@kernel.org, kernel@collabora.com, krzk+dt@kernel.org, 
+	angelogioacchino.delregno@collabora.com, kuba@kernel.org, 
+	devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	davem@davemloft.net, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, edumazet@google.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 09:49:19PM +0200, Nicolas Frattaroli wrote:
-> The MediaTek MT8196 SoC includes an M-PHY compatible with the already
-> existing mt8183 binding.
->=20
-> However, one omission from the original binding was that all of these
-> variants may have an optional reset.
->=20
-> Add the new compatible, and also the resets property, with an example.
->=20
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> Reviewed-by: Peter Wang <peter.wang@mediatek.com>
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+On Wed, Oct 8, 2025 at 2:22=E2=80=AFPM Rob Herring <robh@kernel.org> wrote:
+>
+> On Fri, Oct 3, 2025 at 9:33=E2=80=AFAM Luiz Augusto von Dentz
+> <luiz.dentz@gmail.com> wrote:
+> >
+> > Hi Rob,
+> >
+> > On Fri, Oct 3, 2025 at 9:38=E2=80=AFAM Rob Herring <robh@kernel.org> wr=
+ote:
+> > >
+> > > On Thu, Oct 2, 2025 at 2:18=E2=80=AFPM Luiz Augusto von Dentz
+> > > <luiz.dentz@gmail.com> wrote:
+> > > >
+> > > > Hi,
+> > > >
+> > > > On Thu, Oct 2, 2025 at 3:14=E2=80=AFPM Rob Herring (Arm) <robh@kern=
+el.org> wrote:
+> > > > >
+> > > > >
+> > > > > On Wed, 01 Oct 2025 15:33:20 -0300, Ariel D'Alessandro wrote:
+> > > > > > Convert the existing text-based DT bindings for Marvell 8897/89=
+97
+> > > > > > (sd8897/sd8997) bluetooth devices controller to a DT schema.
+> > > > > >
+> > > > > > While here, bindings for "usb1286,204e" (USB interface) are dro=
+pped from
+> > > > > > the DT   schema definition as these are currently documented in=
+ file [0].
+> > > > > >
+> > > > > > [0] Documentation/devicetree/bindings/net/btusb.txt
+> > > > > >
+> > > > > > Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.=
+com>
+> > > > > > ---
+> > > > > >  .../net/bluetooth/marvell,sd8897-bt.yaml      | 79 +++++++++++=
++++++++
+> > > > > >  .../devicetree/bindings/net/btusb.txt         |  2 +-
+> > > > > >  .../bindings/net/marvell-bt-8xxx.txt          | 83 -----------=
+--------
+> > > > > >  3 files changed, 80 insertions(+), 84 deletions(-)
+> > > > > >  create mode 100644 Documentation/devicetree/bindings/net/bluet=
+ooth/marvell,sd8897-bt.yaml
+> > > > > >  delete mode 100644 Documentation/devicetree/bindings/net/marve=
+ll-bt-8xxx.txt
+> > > > > >
+> > > > >
+> > > > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > > > >
+> > > > > You'll probably have to resend this after rc1.
+> > > >
+> > > > In that case I'd like to have a Fixes tag so I can remember to send=
+ it
+> > > > as rc1 is tagged.
+> > >
+> > > A Fixes tag is not appropriate for a conversion to DT schema.
+> >
+> > Ok, but then how do you justify merging it for an RC?
+>
+> I don't.
+>
+> > Or I'm
+> > misunderstanding and that should just be merged to bluetooth-next and
+> > wait for the next merge window?
+>
+> Yes, this is 6.19 material.
+>
+> > In that case I can just merge it right
+> > away.
+>
+> That's up to you.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+Luiz, Are you going to pick this up or do you want it resent?
 
-> ---
->  .../devicetree/bindings/phy/mediatek,ufs-phy.yaml        | 16 ++++++++++=
-++++++
->  1 file changed, 16 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/phy/mediatek,ufs-phy.yaml =
-b/Documentation/devicetree/bindings/phy/mediatek,ufs-phy.yaml
-> index 3e62b5d4da61..f414aaa18997 100644
-> --- a/Documentation/devicetree/bindings/phy/mediatek,ufs-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/mediatek,ufs-phy.yaml
-> @@ -26,6 +26,7 @@ properties:
->        - items:
->            - enum:
->                - mediatek,mt8195-ufsphy
-> +              - mediatek,mt8196-ufsphy
->            - const: mediatek,mt8183-ufsphy
->        - const: mediatek,mt8183-ufsphy
-> =20
-> @@ -42,6 +43,10 @@ properties:
->        - const: unipro
->        - const: mp
-> =20
-> +  resets:
-> +    items:
-> +      - description: Optional UFS M-PHY reset.
-> +
->    "#phy-cells":
->      const: 0
-> =20
-> @@ -65,5 +70,16 @@ examples:
->          clock-names =3D "unipro", "mp";
->          #phy-cells =3D <0>;
->      };
-> +  - |
-> +    #include <dt-bindings/reset/mediatek,mt8196-resets.h>
-> +    ufs-phy@16800000 {
-> +        compatible =3D "mediatek,mt8196-ufsphy", "mediatek,mt8183-ufsphy=
-";
-> +        reg =3D <0x16800000 0x10000>;
-> +        clocks =3D <&ufs_ao_clk 3>,
-> +                 <&ufs_ao_clk 5>;
-> +        clock-names =3D "unipro", "mp";
-> +        resets =3D <&ufs_ao_clk MT8196_UFSAO_RST0_UFS_MPHY>;
-> +        #phy-cells =3D <0>;
-> +    };
-> =20
->  ...
->=20
-> --=20
-> 2.51.1.dirty
->=20
-
---w3wlVB5ViarihM4q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaPuyrAAKCRB4tDGHoIJi
-0n3qAQDuISPZivWMxQqyWT7hptpBU8VJakYcV1f/3Uook67DEgD9Fuw/t0xI+buQ
-vy1+kgKQvO/lTUze9oKFvo5TZQgdYAI=
-=ts27
------END PGP SIGNATURE-----
-
---w3wlVB5ViarihM4q--
+Rob
 
