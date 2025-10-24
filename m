@@ -1,153 +1,236 @@
-Return-Path: <linux-kernel+bounces-868456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE19C053BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E86BC053C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B38BB4E91D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:05:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FC1C4FA51B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D673081DA;
-	Fri, 24 Oct 2025 09:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEE73081DE;
+	Fri, 24 Oct 2025 09:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="SoDYFXHL"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="ANiS5Erw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Tlbb2HLV"
+Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B383C302162
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 09:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D12308F39;
+	Fri, 24 Oct 2025 09:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761296715; cv=none; b=a2TTNlbEBOk+/PmplCvHtnKnjjABALIQd6qqiYwjF6p3lUHjwDZKOb/0GGU6rsNTmZE4wojqhnUBB8VvPvbNHuWbngOjgIuhwt3qc0fxCNFv76r8Ga16fF5aIftqVHnH+qL99yXboJd3RQ8jNr9r+Kv08DpyJQkSKd7SWkE08p0=
+	t=1761296721; cv=none; b=ojKc0bAIcE71g3V6HUxEqyZm9ETYb83bsgiUet1/au0sgUxhSOjGw7bPsQEfqrL9JNa8hv/9IQARth1vehxKPqUmV0PXTx0Mu5X7tbBex+IMKg8Oq+ig0zDpV6X6g+n/jXAxanlviocRzg+CnI8Ip2tQjU+BWGX4jl8wNlMLC9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761296715; c=relaxed/simple;
-	bh=ymO0o4Ev+efZ6uTLHPMrvkJMyI81gAD46z5c6c4pKOw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V4MJZOAuOGt0yR7pdLK8U/E3uk6PUYK2oY1JPqonOoNACqup/oYZryMH4T3dJnOSfHr0w7Rd/3nrBweIwBPcfCvwLX2B6kJnkg2TBv/A9X23s6SNx8nk+ji8HYzjRCZxGZcTV1z50y/dEAHFYr8sC0lUWwHn3+mTYVACbthiARY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=SoDYFXHL; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761296709; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=vBS/sy8hIvdg6pdyqaf8XlsWh8LXpRJ1Obj39CR0eqg=;
-	b=SoDYFXHLHvI6rDMVidBirls4NzkVbABTW0ECObmm4H7IrNswCE/1yl3roCRNNI6tJ5NFMY+AG0rfMeh7ipD7QHnd04I+f+cjIXwXDDN8A/sJqR7o7265ITlXxjnkD75b1y8b4YOO8lRZHJdEx1QjlTSZ135TS6UpGNl2igzu7jE=
-Received: from 30.221.128.124(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0Wqtt5Kc_1761296708 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 24 Oct 2025 17:05:09 +0800
-Message-ID: <de0c14c4-5565-4366-a75a-f99d4380777c@linux.alibaba.com>
-Date: Fri, 24 Oct 2025 17:05:08 +0800
+	s=arc-20240116; t=1761296721; c=relaxed/simple;
+	bh=dP5980YsRaLUhiroNTQesPNMylhYRYAU7PYAYKzy1E8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tlGHRxrGRKs/Cp6l6THyw7ESVPXuxqdSfemr2OVJPfZxTlBvrRVAzwwHWvt1tnJRtQWCnGQVHdWx+hJDbCn8aa6qARGZgOv5jvb2F5h8OEa44gqXCBrcqpGHpZ43kOcNAkmth9lOrrRc+Xltl7QDE80dSSupKaDsAar/2WvQoaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=ANiS5Erw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Tlbb2HLV; arc=none smtp.client-ip=103.168.172.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailflow.phl.internal (Postfix) with ESMTP id 65E981380333;
+	Fri, 24 Oct 2025 05:05:17 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Fri, 24 Oct 2025 05:05:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1761296717; x=
+	1761303917; bh=LzxoOpuRHVLLxFPTQuj5Q9D1orPS20zYzzKfEt8tzg8=; b=A
+	NiS5ErwWj07SDbOX7wjxBWb9q9Gy18k1wlFyespmT6y7i78YixIe67iX6xAus+42
+	dKwoTJm3rEHg+N2tSW4/dnLGihhQvGqXzQsiIr0B/i8EhsGafADk7s+EOnOiZGz/
+	g25mTFNIEL85njmLOB6br8GiEza4+JI5Kl1mWkelPrRdoiui4hUwwTR8ondqozkH
+	yBxU1o40xDvJMKzkLL+68Dk+UpBEBETjseTQYDwD69lu3rKNJ8KrSCzjrtQ93OPK
+	l5lGqjx2llYIVym4iDsHfkEUVqPrFt3Lpi998s2SYHm5OLT/gzU7ZYNeUIeA81/e
+	bMkDzAYvzEsUuARwH0cig==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1761296717; x=1761303917; bh=LzxoOpuRHVLLxFPTQuj5Q9D1orPS20zYzzK
+	fEt8tzg8=; b=Tlbb2HLVyYS7KstUdegxMU7zEdNEa7N52WD4YLnYURYlpdyQQTc
+	c0J83zvzy3JzpIwg+h1I3TBTst6gR9U7qn14a4PfUEV4aflq9k+Y2xvYt5cnwcCW
+	nDQuawtKQSqjS4sYwbzbGYOaYOdfQxcU90SK0Fj/uozES4FU5J158KBoOMnUVIkt
+	IvFG0pYjek/QvtwMjCljmAoDcmN62kTompAmvIgxKz704SqW8/8ctZA6VDhPCvxa
+	KYI/0OxiER9nrnd4MSKS0bOGwvAj9xdMqYF+iBdk9WlI/rQaOXlPBhzOVrsDacB6
+	rOJS88/Dn+177BnxCUTRb+dLNRtDLLkRZcw==
+X-ME-Sender: <xms:S0H7aHL04JtqiuSargFb7zQJAxCpLHhAczxS72CAoPagNc7gcmbR2A>
+    <xme:S0H7aEOW8NTp8RxBicT8q61ykl6-kyA9HsqMozR6Su22VJiynieIW_V5hk-b9rkqs
+    Mf2esSAT6WU7UsRfm0v3EDuiR_rksm1CJ2_8LZVKWONGCfF2p3Zsg>
+X-ME-Received: <xmr:S0H7aCpD1WNKN8XVf1yqtLQ78p6E2Z7A67xQoTfj_lmd1ri0D7ljIjUq-uET1Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeekleefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
+    ftrfgrthhtvghrnhepgeefheelvedvteffleeuffdtffelvdfgteehgeeiveetgfefhfei
+    jeehveekieegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghm
+    ohhvrdhnrghmvgdpnhgspghrtghpthhtohepgeegpdhmohguvgepshhmthhpohhuthdprh
+    gtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghp
+    thhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhughhhugesgh
+    hoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhr
+    ghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
+    hpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhorhgv
+    nhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhirghmrd
+    hhohiflhgvthhtsehorhgrtghlvgdrtghomhdprhgtphhtthhopehvsggrsghkrgesshhu
+    shgvrdgtii
+X-ME-Proxy: <xmx:S0H7aNdki9UJUz0NQesx9xxTyDsPWu4kz3OouIZBFGvZJCcu1qQ2LQ>
+    <xmx:S0H7aLae0FnbklGqvr3ErBnn_WMZkGG8niRmkyzB02Rg153NsKVAVQ>
+    <xmx:S0H7aACB0vysQ-M5-RkvyLNY2LXH1dkxsQEusVw75cPr9s9yLP-Tng>
+    <xmx:S0H7aGCiXudRcMIYBzADUv7SEN63WFVKILIuG87dZnH5nNRU0pIf8w>
+    <xmx:TUH7aNFSqtzaDOz-qPI1dGtn0qLQi1xryUp4aAbrWfAvhOkN2V1U5nWA>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 24 Oct 2025 05:05:14 -0400 (EDT)
+Date: Fri, 24 Oct 2025 10:05:11 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 2/2] mm/truncate: Unmap large folio on split failure
+Message-ID: <efm75n5srtb4xp5akp4x6sq6522p4hivzge7ufwnkodsw2yixt@ahntf6d2qe4h>
+References: <20251023093251.54146-1-kirill@shutemov.name>
+ <20251023093251.54146-3-kirill@shutemov.name>
+ <20251023135644.f955b3aa4b4df23f621087c4@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ocfs2: Invalidate inode if i_mode is zero after block
- read
-To: Ahmet Eray Karadag <eraykrdg1@gmail.com>, mark@fasheh.com,
- jlbec@evilplan.org
-Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- david.hunter.linux@gmail.com, skhan@linuxfoundation.org,
- syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com,
- Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-References: <20251022222752.46758-2-eraykrdg1@gmail.com>
- <20251024023056.29275-2-eraykrdg1@gmail.com>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20251024023056.29275-2-eraykrdg1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023135644.f955b3aa4b4df23f621087c4@linux-foundation.org>
 
-
-
-On 2025/10/24 10:30, Ahmet Eray Karadag wrote:
-> A panic occurs in ocfs2_unlink due to WARN_ON(inode->i_nlink == 0) when
-> handling a corrupted inode with i_mode=0 and i_nlink=0 in memory.
+On Thu, Oct 23, 2025 at 01:56:44PM -0700, Andrew Morton wrote:
+> On Thu, 23 Oct 2025 10:32:51 +0100 Kiryl Shutsemau <kirill@shutemov.name> wrote:
 > 
-> This "zombie" inode is created because ocfs2_read_locked_inode proceeds
-> even after ocfs2_validate_inode_block successfully validates a block
-> that structurally looks okay (passes checksum, signature etc.) but
-> contains semantically invalid data (specifically i_mode=0). The current
-> validation function doesn't check for i_mode being zero.
+> > Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
+> > supposed to generate SIGBUS.
+> > 
+> > This behavior might not be respected on truncation.
+> > 
+> > During truncation, the kernel splits a large folio in order to reclaim
+> > memory. As a side effect, it unmaps the folio and destroys PMD mappings
+> > of the folio. The folio will be refaulted as PTEs and SIGBUS semantics
+> > are preserved.
+> > 
+> > However, if the split fails, PMD mappings are preserved and the user
+> > will not receive SIGBUS on any accesses within the PMD.
+> > 
+> > Unmap the folio on split failure. It will lead to refault as PTEs and
+> > preserve SIGBUS semantics.
 > 
-> This results in an in-memory inode with i_mode=0 being added to the VFS
-> cache, which later triggers the panic during unlink.
+> This conflicts significantly with mm-hotfixes's
+> https://lore.kernel.org/all/20251017013630.139907-1-ziy@nvidia.com/T/#u,
+> whcih is cc:stable.
 > 
-> Prevent this by adding an explicit check for i_mode == 0 within
-> ocfs2_validate_inode_block. If i_mode is zero, return -EFSCORRUPTED to signal
-> corruption. This causes the caller (ocfs2_read_locked_inode) to invoke
-> make_bad_inode(), correctly preventing the zombie inode from entering
-> the cache.
-> 
-> ---
-> [RFC]:
-> The current fix handles i_mode=0 corruption detected during inode read
-> by returning -EFSCORRUPTED from ocfs2_validate_inode_block, which leads to
-> make_bad_inode() being called, preventing the corrupted inode from
-> entering the cache. This approach avoids immediately forcing the entire
-> filesystem read-only, assuming the corruption might be localized to
-> this inode.
-> 
-> Is this less aggressive error handling strategy appropriate for i_mode=0
-> corruption? Or is this condition considered severe enough that we *should*
-> explicitly call ocfs2_error() within the validation function to guarantee
-> the filesystem is marked read-only immediately upon detection?
-> Feedback and testing on the correct severity assessment and error
-> handling for this type of corruption would be appreciated.
-> ---
-> v2:
->  - Reviewed how ext4 handling same situation and we come up with this
->    solution
-> ---
+> What do do here?
 
-The version change log should be after your SOB.
+The patch below applies cleanly onto mm-everything.
 
-> Reported-by: syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com
-> Fixes: https://syzkaller.appspot.com/bug?extid=55c40ae8a0e5f3659f2b
-> Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-> Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-> Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-> ---
->  fs/ocfs2/inode.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-> index 14bf440ea4df..6c936f62b169 100644
-> --- a/fs/ocfs2/inode.c
-> +++ b/fs/ocfs2/inode.c
-> @@ -1455,7 +1455,15 @@ int ocfs2_validate_inode_block(struct super_block *sb,
->  		     (unsigned long long)bh->b_blocknr);
->  		goto bail;
->  	}
-> -
-> +	if (di->i_links_count == 0) {
-> +		if (le16_to_cpu(di->i_mode) == 0 ||
-> +			!(le32_to_cpu(di->i_flags) & OCFS2_ORPHANED_FL)) {
+Let me now if you want solve the conflict other way around. I can rebase
+Zi's patch on top my patchset.
 
-Why not put those in a single check?
-BTW, i_links_count is little endian and should convert to host endian first.
-And we'd prefer the following alignment:
+From 3ebc2c6690928def2b123e5f44014c02011cfc65 Mon Sep 17 00:00:00 2001
+From: Kiryl Shutsemau <kas@kernel.org>
+Date: Mon, 20 Oct 2025 14:08:21 +0100
+Subject: [PATCH] mm/truncate: Unmap large folio on split failure
 
-if (!le16_to_cpu(di->i_links_count) && !le16_to_cpu(di->i_mode) &&
-    !(le32_to_cpu(di->i_flags) & OCFS2_ORPHANED_FL))
-	......
+Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
+supposed to generate SIGBUS.
 
-Thanks,
-Joseph
+This behavior might not be respected on truncation.
 
+During truncation, the kernel splits a large folio in order to reclaim
+memory. As a side effect, it unmaps the folio and destroys PMD mappings
+of the folio. The folio will be refaulted as PTEs and SIGBUS semantics
+are preserved.
 
-> +			mlog(ML_ERROR, "Invalid dinode #%llu: i_mode is zero!\n",
-> +			           (unsigned long long)bh->b_blocknr);
-> +			rc = -EFSCORRUPTED;
-> +			goto bail;
-> +		}
-> +	}
->  	/*
->  	 * Errors after here are fatal.
->  	 */
+However, if the split fails, PMD mappings are preserved and the user
+will not receive SIGBUS on any accesses within the PMD.
 
+Unmap the folio on split failure. It will lead to refault as PTEs and
+preserve SIGBUS semantics.
+
+Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+---
+ mm/truncate.c | 32 ++++++++++++++++++++++++++------
+ 1 file changed, 26 insertions(+), 6 deletions(-)
+
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 9210cf808f5c..6936b8e88e72 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -177,6 +177,29 @@ int truncate_inode_folio(struct address_space *mapping, struct folio *folio)
+ 	return 0;
+ }
+ 
++static int try_folio_split_or_unmap(struct folio *folio, struct page *split_at,
++				    unsigned long min_order)
++{
++	enum ttu_flags ttu_flags =
++		TTU_SYNC |
++		TTU_SPLIT_HUGE_PMD |
++		TTU_IGNORE_MLOCK;
++	int ret;
++
++	ret = try_folio_split_to_order(folio, split_at, min_order);
++
++	/*
++	 * If the split fails, unmap the folio, so it will be refaulted
++	 * with PTEs to respect SIGBUS semantics.
++	 */
++	if (ret) {
++		try_to_unmap(folio, ttu_flags);
++		WARN_ON(folio_mapped(folio));
++	}
++
++	return ret;
++}
++
+ /*
+  * Handle partial folios.  The folio may be entirely within the
+  * range if a split has raced with us.  If not, we zero the part of the
+@@ -226,7 +249,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+ 
+ 	min_order = mapping_min_folio_order(folio->mapping);
+ 	split_at = folio_page(folio, PAGE_ALIGN_DOWN(offset) / PAGE_SIZE);
+-	if (!try_folio_split_to_order(folio, split_at, min_order)) {
++	if (!try_folio_split_or_unmap(folio, split_at, min_order)) {
+ 		/*
+ 		 * try to split at offset + length to make sure folios within
+ 		 * the range can be dropped, especially to avoid memory waste
+@@ -250,13 +273,10 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+ 		if (!folio_trylock(folio2))
+ 			goto out;
+ 
+-		/*
+-		 * make sure folio2 is large and does not change its mapping.
+-		 * Its split result does not matter here.
+-		 */
++		/* make sure folio2 is large and does not change its mapping */
+ 		if (folio_test_large(folio2) &&
+ 		    folio2->mapping == folio->mapping)
+-			try_folio_split_to_order(folio2, split_at2, min_order);
++			try_folio_split_or_unmap(folio2, split_at2, min_order);
+ 
+ 		folio_unlock(folio2);
+ out:
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
