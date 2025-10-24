@@ -1,208 +1,277 @@
-Return-Path: <linux-kernel+bounces-869084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF04C06E9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:17:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E38C06EB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67D61894504
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:17:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A77153A04DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4C8325498;
-	Fri, 24 Oct 2025 15:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5155B32548F;
+	Fri, 24 Oct 2025 15:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eef6F1Re"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RM3X7CTq"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AC91A3160;
-	Fri, 24 Oct 2025 15:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9792D979D
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761319024; cv=none; b=MNnwUYWn+26GbWBazItQ70BZkTMB17wEadzR+4spXWlkbklujFWrZ0JV4Jfd8CWBVp6NmwDrBsJzqeXaRy1P8HmpuALy7Jev5eS5Xd1RDBq296+hf+kU5U5AhZ88PSEIPfp0vHTYhRaZ23NGdFY7oilOg6chLxGKrfJgaffglLQ=
+	t=1761319007; cv=none; b=OAS1EJPwjCIboC+oLgTLIqjYS4hoqUxWJol1JO3lbqUpUsYmDqVSe+AQufqUJiaCCGMJUNZHswNK/U8HVV7LQmAqkCZDlN9EPFtc2YMhe6kFaDVexxkEDuw8o8Ma7WCXsxQh0skD6EM9aNO+5vEhYGboGVZYKh7ZTafWzlEeWRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761319024; c=relaxed/simple;
-	bh=a6yvcST1bBb/gCzpwjJnJ0X2b8fRgFLFhOcgsKJKqJ4=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=j8wZuCxUzKHsREACULI8H+sr6OkadT9dCA0qu6ndgZNIDPBfsN5trSaV7/KVCZnZDfTf97VoZXdjo2M36A7+DObPcpQNGasovm734P/z5OI7LwW2Kqh/aVXaMwckCBIiFkzOOFyzEIi+qQNBz4dnbzQ62AosJXp1BwfLkqsMITc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eef6F1Re; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OA2nHd023244;
-	Fri, 24 Oct 2025 15:16:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=+qbRb2
-	zP2iNkMx37uViMBN1opWKnCEWdDRQ+ENovi7Q=; b=eef6F1ReviaqS6x+P2rDV2
-	7cxHsIGoi8bZbRIC4LQ4Y+qYtzP0UVPhY13mhd83YgnYLFOInE1FSYxkFmS6trKc
-	zozXNRvyf4h22+PqYKTYC8LQk3Pi8SuIGRuX475nWCTzIRJWJidyg9tSN+TkvR3q
-	/Yh3HdPAgTIquUES2NW0liutvvvL4+GQyFiU+EkBh6rTBD2EZCkt8ca0ciDmKm3P
-	zzOW5zVJrYhbFB3QD5em33md+uvBOHjrUHcqN9ipYZi51mJQxTxccq/IPgAyc2y+
-	fajIXIpdsxhf1gEgwmAVpTBJAxbc4vDtXWTxdSr6D9AOYqyZ2VVi1ii8Vydjr2CQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v3277yxh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Oct 2025 15:16:41 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59OFCbBl001704;
-	Fri, 24 Oct 2025 15:16:41 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49v3277yxd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Oct 2025 15:16:41 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59OEAE0r024677;
-	Fri, 24 Oct 2025 15:16:39 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49vpqkbkn2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 Oct 2025 15:16:39 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59OFGdXJ24445550
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 Oct 2025 15:16:39 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 141B95805A;
-	Fri, 24 Oct 2025 15:16:39 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 36F5E58056;
-	Fri, 24 Oct 2025 15:16:38 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.52.106])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 24 Oct 2025 15:16:38 +0000 (GMT)
-Message-ID: <02d18fe0a0ca1223eec9af5c8e01739aa164bf32.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Fall back to default kernel module signature
- verification
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>
-Cc: linux-integrity@vger.kernel.org,
-        Dmitry Torokhov
- <dmitry.torokhov@gmail.com>,
-        Karel Srot <ksrot@redhat.com>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	 <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM"	 <linux-security-module@vger.kernel.org>,
-        open list	 <linux-kernel@vger.kernel.org>
-In-Reply-To: <559f6ebf4a19da321fffc2a3ca180dc3d6216a22.camel@linux.ibm.com>
-References: <20250928030358.3873311-1-coxu@redhat.com>
-		 <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
-		 <bcd1f7b48311aff55711cdff4a6cdbb72aae1d04.camel@linux.ibm.com>
-		 <xq7bgyg63xlbogcik2we26yr5uf62f6kj3qn7ooljmqaoccrix@kkmuhza5cfdr>
-		 <9d279fd3d7b3cbb2778183ec777d6b9da8a64b82.camel@linux.ibm.com>
-		 <5bzredottmp2tdm3uebzjfqjr6c7bwssqkrbdqvudruvzr764e@37j6ycjci2sk>
-		 <27bb0c218084f51eba07f041d0fffea8971865b9.camel@linux.ibm.com>
-		 <z6f4getlayaxaxvlxfxn2yvn5dvhrct64wke4uu2s3dfll3bqq@754bklrku55n>
-	 <559f6ebf4a19da321fffc2a3ca180dc3d6216a22.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 24 Oct 2025 11:16:37 -0400
+	s=arc-20240116; t=1761319007; c=relaxed/simple;
+	bh=jVc9hLI9fcXAku+oALxNHVDhhx0CP4iDyHCwED8hpRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hkQzwI/V02z/hsABrAlaYXikLbQ1z56oe9YwUtzhy7UMr6bj/f97C6U7XZgwvz7CvkIIuxAEZ6cyuc8jVPBIyGK2Zdl3ggfK6op0lvKA/KXCzpesZBmwIWN8ZbBn0NauiOuM5Bt8G6nlXaLylIBxbF40HHGls8HuWnka3tU7QJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RM3X7CTq; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-475dae5d473so25595e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761319003; x=1761923803; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mevfSuNrxwVFTOkyY7Tm8OrvABJ1d1Eojo95+k8sZtc=;
+        b=RM3X7CTqZSiGWKm11Ard7Ya2JK3OzcgT7WCRE92oCpLSwmT9i2Rt8hmOrJLjH3NrvP
+         oONGswdZjhgGPUb2HNz+0Bq6j6djxl2HxJGbwu1l1FDqlwwvYERZFdDPFkAbYXP/PQpt
+         VG93DSawk1mmJH1qBveFyddHMPzBS83fDRTdB2KVeiPdyzD4+6PM/26Fk8eTP1f3bA71
+         AiAa5BDoP+WGqeJ/ChAuDeO+l9m6Iw9c+bj5rF/piJlbQGiurzU9U1D9/Zg0zEHXhujW
+         y5UV3nvH4w+MzYHLnHO0tnxRqxR+aKtSUZ4B1M0SLJAccesDbGMi+wo7m6GkkjSk78tj
+         cNCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761319003; x=1761923803;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mevfSuNrxwVFTOkyY7Tm8OrvABJ1d1Eojo95+k8sZtc=;
+        b=LzxLIsX686LULpCNoTIuhMzVO5WjCB0RGlMrycui7lL27pQUIV36HmzJaqD3WwyA+1
+         cBo5YM/aATjunItkm0fHpvZQNea8F9vsSOSXvTWbBnw6GCBFBoUF6wvNelmyk1fozdAg
+         IHIgWzw2gRi3N8ApJ/xVP9MpSsaTIa75Fl0CLNMWWLYq+qfHkzHmEAJghgxF3ebZtANT
+         JCVUBrwOVcDg1OU6qoVDPnWNWYUe0tJkznzjOpp96NNFG44i0BZ0eCj0jdy9l/v0lvOo
+         /ny88u7kjJijq7Y6DgiRT3LvApnOiaZddy+TGW0dstDwWHe1ZFPDVXryCzZ1og70W9PW
+         vswA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdjoJ95sPt+uTnMt4qp7XB+IqxXNmTgYgcxg4CZrpZB/QBgcVXZXlsRvApppgkoYxKe2WcGXBIPhpVkCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy71+zOG6dL0dTB5ChtNnG8ypDd2bru4b1H1GwoxU84XSFnFvCu
+	0e+2xVNYzDo1Z9dRPoDgr9iytVN+AC+GHc53r7QR50rRT9tG/llDIwwN
+X-Gm-Gg: ASbGnct9lXFY79Y8mp/iBhaTfr8+g41HL85PZdP5/ZJaU8q3EkDcy7LVBqN6WiAtuG/
+	kgjaM2tmfjauNhoF2nd5MwfhhGZNshtr9GquIC5hRECGGVrVSUcBfP5Gt9j9Nc/nF8wOs5p5nv5
+	72IB1ayS6jcJcwZLYyLbrAWMJc0aoP08lGTnTpVXog7k/C3Ze32fJSV6t5FTp4/3T1JZIzB4HVn
+	X3TGSCcKWFo4IixT2u7LLCuCt3Abfr+6dJUyBYeykLS2P7ZbxM5TTVAcnVJi59v6+zIESnRa6XZ
+	vGuDdchXlvEpkirKf1BgKrriFXwM2euA160erXhu7/+6CC2dGYCtk+yTbtestGmO178sze7wiTp
+	SJ3CpWo3hP7OcCVbMuuweRuO6O/gPlY7GXoiLeAAzt6yL66+UDfulyfzWbNSp8Z/0stH2qoG0++
+	qGg0Auw2YMMA==
+X-Google-Smtp-Source: AGHT+IEA18WK4Q9IiYqGhwYZgRRsCaQtZ15viH6p/QSrbM4l3uPsWojVndH+d8P9+fufilJ2qEw4Ew==
+X-Received: by 2002:a05:600c:3512:b0:46e:5b74:4858 with SMTP id 5b1f17b1804b1-47117877122mr173891065e9.13.1761319002904;
+        Fri, 24 Oct 2025 08:16:42 -0700 (PDT)
+Received: from fedora ([37.29.213.75])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4378cbesm150983915e9.16.2025.10.24.08.16.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 08:16:42 -0700 (PDT)
+Date: Fri, 24 Oct 2025 17:16:39 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	victoria@system76.com, sebastian.wick@redhat.com,
+	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 06/22] drm/vkms: Introduce configfs for plane color
+ encoding
+Message-ID: <aPuYV5D_QktyNSmM@fedora>
+References: <20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com>
+ <20251018-vkms-all-config-v1-6-a7760755d92d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=EJELElZC c=1 sm=1 tr=0 ts=68fb9859 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=MBubdp0LbrEvKVWzv-8A:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAyMiBTYWx0ZWRfXxy/SHljbe7p/
- /eIINUXje6u/3kxpqxLTUswIr7D4AvMOrpNPTn5Zo3gkVmHxvBhJsl4Qyom8pEZUCg0/4Vm20Wf
- yGkvad8Shx5J++NTNbdYO3Gs2SGfQV0KeopNhTvLh2l/KpF0Fm0T8DzgFoSei8r7NbB7AEYaCiB
- NLLQMDHIWV0gMgU5Dj0D0KM5ES8Bt6yDayKM3CFQ4ijroculpaDfxI+aQHwBIHPvGdLvd8sKD0q
- AA3bgofERJ8X7PtH4sHyCVVTAipUriyrqp3aOXP8x6kL+f8ml/OO3QBcBe+xhTgEVobvuOSkBAT
- qrfCtv4mTswu8OSRIg3vwh5lklfmpxMKJoEx5/NULyav3u4FsS/kLLqTRNfB//xwcYmbhQ6s9ad
- 3hC3LM9iXC0yney+yl2bVLNrWb+55w==
-X-Proofpoint-GUID: R2a3dFHlfxOJSA6AqXfrCWxjUQg7m828
-X-Proofpoint-ORIG-GUID: B-sxDXigq233DC-oBi2fpADgAA1faPpS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-24_02,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 spamscore=0
- malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251018-vkms-all-config-v1-6-a7760755d92d@bootlin.com>
 
-On Mon, 2025-10-20 at 08:21 -0400, Mimi Zohar wrote:
-> On Sat, 2025-10-18 at 07:19 +0800, Coiby Xu wrote:
-> > > > > 2. Instead of defining an additional process_measurement() argume=
-nt to identify
-> > > > > compressed kernel modules, to simplify the code it might be possi=
-ble to define a
-> > > > > new "func" named COMPRESSED_MODULE_CHECK.
-> > > > >=20
-> > > > > +       [READING_COMPRESSED_MODULE] =3D MODULE_CHECK,  -> COMPRES=
-SED_MODULE_CHECK
-> > > >=20
-> > > > I also thought about this approach. But IMA rule maps kernel module
-> > > > loading to MODULE_CHECK. If we define a new rule and ask users to u=
-se
-> > > > this new rule, ima_policy=3Dsecure_boot still won't work.
-> > >=20
-> > > I don't have a problem with extending the "secure-boot" policy to sup=
-port
-> > > uncompressed kernel modules appended signatures, based on whether
-> > > CONFIG_MODULE_SIG is enabled.  The new rule would be in addition to t=
-he existing
-> > > MODULE_CHECK rule.
-> >=20
-> > I assume once the new rule get added, we can't remove it for userspace
-> > backward compatibility, right? And with CPIO xattr supported, it seems
-> > there is no need to keep this rule. So if this concern is valid, do you
-> > think we shall switch to another approach i.e. to make IMA support
-> > verifying decompressed module and then make "secure-boot" to allow
-> > appended module signature?
->=20
-> Yes, once the rule is added, it wouldn't be removed.  As for "to make IMA
-> support verifying decompressed module", yes that might be a better soluti=
-on,
-> than relying on "sig_enforce" being enabled. IMA already supports verifyi=
-ng the
-> appended signatures.  A new IMA specific or LSM hook would need to be def=
-ined
-> after module_decompress().
+On Sat, Oct 18, 2025 at 04:01:06AM +0200, Louis Chauvet wrote:
+> To allows the userspace to test many hardware configuration, introduce a
+> new interface to configure the available color encoding per planes. VKMS
+> supports multiple color encoding, so the userspace can choose any
+> combination.
+> 
+> The supported color encoding are configured by writing a color encoding
+> bitmask to the file `supported_color_encoding` and the default color
+> encoding is chosen by writing a color encoding bitmask to
+> `default_color_encoding`.
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  Documentation/gpu/vkms.rst           |   7 ++-
+>  drivers/gpu/drm/vkms/vkms_configfs.c | 102 +++++++++++++++++++++++++++++++++++
+>  2 files changed, 108 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
+> index a432968cc711..4ff75b53a386 100644
+> --- a/Documentation/gpu/vkms.rst
+> +++ b/Documentation/gpu/vkms.rst
+> @@ -87,7 +87,7 @@ Start by creating one or more planes::
+>  
+>    sudo mkdir /config/vkms/my-vkms/planes/plane0
+>  
+> -Planes have 3 configurable attribute:
+> +Planes have 5 configurable attribute:
+>  
+>  - type: Plane type: 0 overlay, 1 primary, 2 cursor (same values as those
+>    exposed by the "type" property of a plane)
+> @@ -96,6 +96,11 @@ Planes have 3 configurable attribute:
+>    (same values as those exposed by the "rotation" property of a plane)
+>  - default_rotation: Default rotation presented to the userspace, same values as
+>    possible_rotations.
+> +- supported_color_encoding: Available encoding for a plane, as a bitmask:
+> +  0x01 YCBCR_BT601, 0x02: YCBCR_BT709, 0x04 YCBCR_BT2020 (same values as those exposed
+> +  by the COLOR_ENCODING property of a plane)
+> +- default_color_encoding: Default color encoding presented to the userspace, same
+> +  values as supported_color_encoding
+>  
+>  Continue by creating one or more CRTCs::
+>  
+> diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
+> index 450e45e66a45..a4e0e054cf2d 100644
+> --- a/drivers/gpu/drm/vkms/vkms_configfs.c
+> +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
+> @@ -412,14 +412,116 @@ static ssize_t plane_default_rotation_store(struct config_item *item,
+>  	return count;
+>  }
+>  
+> +static ssize_t plane_supported_color_encoding_show(struct config_item *item, char *page)
+> +{
+> +	struct vkms_configfs_plane *plane;
+> +	unsigned int supported_color_encoding;
+> +
+> +	plane = plane_item_to_vkms_configfs_plane(item);
+> +
+> +	scoped_guard(mutex, &plane->dev->lock) {
+> +		supported_color_encoding = vkms_config_plane_get_supported_color_encoding(plane->config);
+> +	}
+> +
+> +	return sprintf(page, "%u", supported_color_encoding);
+> +}
+> +
+> +static ssize_t plane_supported_color_encoding_store(struct config_item *item,
+> +						    const char *page, size_t count)
+> +{
+> +	struct vkms_configfs_plane *plane = plane_item_to_vkms_configfs_plane(item);
+> +	int ret, val = 0;
+> +
+> +	ret = kstrtouint(page, 10, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Should be a supported value */
+> +	if (val & ~(BIT(DRM_COLOR_YCBCR_BT601) |
+> +		    BIT(DRM_COLOR_YCBCR_BT709) |
+> +		    BIT(DRM_COLOR_YCBCR_BT2020)))
+> +		return -EINVAL;
+> +	/* Should at least provide one color range */
+> +	if ((val & (BIT(DRM_COLOR_YCBCR_BT601) |
+> +		    BIT(DRM_COLOR_YCBCR_BT709) |
+> +		    BIT(DRM_COLOR_YCBCR_BT2020))) == 0)
+> +		return -EINVAL;
+> +
+> +	scoped_guard(mutex, &plane->dev->lock) {
+> +		/* Ensures that the default rotation is included in supported rotation */
+> +		if (plane->dev->enabled ||
+> +		    (val & vkms_config_plane_get_default_color_encoding(plane->config)) !=
+> +		     vkms_config_plane_get_default_color_encoding(plane->config))
+> +			return -EINVAL;
 
-Looking at the code further,=C2=A0decompressing the kernel module in IMA is
-redundant.  Instead I think the best approach would be to:
-- define DECOMPRESSED_MODULE, in addition to COMPRESSED_MODULE.
+I think that the same problem that I mention having to configure
+plane rotation in 2 steps applies for color encoding.
 
-id(COMPRESSED_MODULE, compressed-kernel-module) \
-id(DECOMPRESSED_MODULE, decompressed-kernel-module)    \
+> +		vkms_config_plane_set_supported_color_encoding(plane->config, val);
+> +	}
+> +
+> +	return count;
+> +}
+> +
+> +/* Plane default_color_encoding : vkms/<device>/planes/<plane>/default_color_encoding */
+> +
+> +static ssize_t plane_default_color_encoding_show(struct config_item *item, char *page)
+> +{
+> +	struct vkms_configfs_plane *plane;
+> +	unsigned int default_color_encoding;
+> +
+> +	plane = plane_item_to_vkms_configfs_plane(item);
+> +
+> +	scoped_guard(mutex, &plane->dev->lock) {
+> +		default_color_encoding = vkms_config_plane_get_default_color_encoding(plane->config);
+> +	}
+> +
+> +	return sprintf(page, "%u", default_color_encoding);
+> +}
+> +
+> +static ssize_t plane_default_color_encoding_store(struct config_item *item,
+> +						  const char *page, size_t count)
+> +{
+> +	struct vkms_configfs_plane *plane = plane_item_to_vkms_configfs_plane(item);
+> +	int ret, val = 0;
+> +
+> +	ret = kstrtouint(page, 10, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Should be a supported value */
+> +	if (val & ~(BIT(DRM_COLOR_YCBCR_BT601) |
+> +		    BIT(DRM_COLOR_YCBCR_BT709) |
+> +		    BIT(DRM_COLOR_YCBCR_BT2020)))
+> +		return -EINVAL;
+> +	/* Should at least provide one color range */
+> +	if ((val & (BIT(DRM_COLOR_YCBCR_BT601) |
+> +		    BIT(DRM_COLOR_YCBCR_BT709) |
+> +		    BIT(DRM_COLOR_YCBCR_BT2020))) == 0)
+> +		return -EINVAL;
+> +
+> +	scoped_guard(mutex, &plane->dev->lock) {
+> +		/* Ensures that the default rotation is included in supported rotation */
+> +		if (plane->dev->enabled ||
+> +		    (val & vkms_config_plane_get_supported_color_encoding(plane->config)) !=
+> +		     val)
+> +			return -EINVAL;
+> +
+> +		vkms_config_plane_set_default_color_encoding(plane->config, val);
 
-- instead of passing a boolean indicating whether the module is compressed,=
- pass
-the kernel_read_file_id enumeration to differentiate between the compressed=
- and
-decompressed module.
+As I mentioned in the previous patch, I think that default color encoding
+is sometimes a bitmask and sometimes the actual color?
 
-- define a new IMA hook, probably LSM hook as well, named
-ima_decompressed_module().
-
-- call the new ima_decompressed_module() from init_module_from_file()
-immediately after decompressing the kernel module.  Something along the lin=
-es
-of:
-
-err =3D ima_decompressed_module(f, (char *)info.hdr, info.len,
-                              READING_DECOMPRESSED_MODULE);
-
-For testing purposes to see the decompressed appended signature in the
-measurement list, modify the MODULE_CHECK measure rule to include "template=
-=3Dima-
-modsig" in ima_efi.c.
-
---=20
-Mimi
-
+> +	}
+> +
+> +	return count;
+> +}
+> +
+>  CONFIGFS_ATTR(plane_, type);
+>  CONFIGFS_ATTR(plane_, supported_rotations);
+>  CONFIGFS_ATTR(plane_, default_rotation);
+> +CONFIGFS_ATTR(plane_, supported_color_encoding);
+> +CONFIGFS_ATTR(plane_, default_color_encoding);
+>  
+>  static struct configfs_attribute *plane_item_attrs[] = {
+>  	&plane_attr_type,
+>  	&plane_attr_supported_rotations,
+>  	&plane_attr_default_rotation,
+> +	&plane_attr_supported_color_encoding,
+> +	&plane_attr_default_color_encoding,
+>  	NULL,
+>  };
+>  
+> 
+> -- 
+> 2.51.0
+> 
 
