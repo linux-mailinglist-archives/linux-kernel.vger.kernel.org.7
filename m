@@ -1,76 +1,182 @@
-Return-Path: <linux-kernel+bounces-869582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F6DC083A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:12:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C2CC083C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 887964E6A67
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:12:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4EB7D4EAD66
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D1330C628;
-	Fri, 24 Oct 2025 22:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F9230C600;
+	Fri, 24 Oct 2025 22:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-tao.eu header.i=@bit-tao.eu header.b="pQFDfYIN"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbHTXBsI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F30F1C7009
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 22:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631552248A5;
+	Fri, 24 Oct 2025 22:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761343936; cv=none; b=EDLxCHHq4gjnUfvGpJRztCaP7U/wFGI1UMXJjB0AU6u8MRcj1bWbVo+nuK+cHSRSIWlOCKBRorvLHNn12HB3fFA/D17XJEmkHTbfRI3W1Is/OL96p7CcnExokd2cEBAoweoVpmRg7UDzDVvlmFBldP5EzlLhPkTkOH0awX39TYU=
+	t=1761344562; cv=none; b=EBqrlbeRKqIr67QHQ8roxjl+akztY2Yx2hxqF6iKu0HjVS1xjLdOgRJksa5nW7Xoutj+t0nJ3osnSZbOdRt90g/1/DHrd5SeNKqpZrURE8GkaErSE1miVcW7CfNaE5v5lYtohztNdEqwanCyJRHKhixRRMDj5k/FlGLQEiCl6AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761343936; c=relaxed/simple;
-	bh=C/eh8HQVrN0UF44fqwCffuaQpZeJ9ocqV2AfUO9bRuI=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=GGplMFKAlspgrwpft1min9OVBGss4kTKxgmk5yg9ANQxF+Z8eI++DXEOra2KT00813qiefwuUQ8pH2FqGBWZovHxnq2KjocY1kAKGsd21d9CetOmC6oMzZ/WgHkv0QwoIkNTH5kZwsyJ5fsyE2JwakWsL5XvpyNi30RclQIaRSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-tao.eu; spf=pass smtp.mailfrom=bit-tao.eu; dkim=pass (2048-bit key) header.d=bit-tao.eu header.i=@bit-tao.eu header.b=pQFDfYIN; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-tao.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-tao.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-tao.eu;
-	s=ds202510; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
-	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
-	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=m4j6B6yie6lHCKtZ4tw4ydBKP+XJNE0V9HHWdGoJaco=; b=pQFDfYINkFZd2QJkKPNA3Mu7Js
-	axIfFnkhAp1pB4aIlvWHrPjURKQWie8ASxIz6++58cZK1lYN1XhfsXKclf4xmBPrAxV+R2vvT8/Sm
-	Yt923khaJ2E5YvqXVhGu5QmVXwXCcIDAxDrxsBtK/pTXUgI1i4kBXI8Evxoz4SipDxI2vopHuum8d
-	R7DQQBpfgvjw4gvukyZ2A5524Vx2uI9yNcDnU7Vi2fJ418t+IIDUCqmi/tYPG/BzFJqEHtpr9SWo1
-	QwhG2AwB7rGKZ/yw0Wxes23TdBehdH3QpL0xNkoDUnZr/Sy3/t26anmU22oYhKzCk4hjWlxPZjVA/
-	0Mm2aHug==;
-Received: from smtp
-	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	id 1vCQ0z-00DQo1-UX
-	for linux-kernel@vger.kernel.org;
-	Sat, 25 Oct 2025 00:12:06 +0200
-Message-ID: <9f14e6af-16e7-453f-ae71-6bcf6425d1b4@bit-tao.eu>
-Date: Sat, 25 Oct 2025 00:12:02 +0200
+	s=arc-20240116; t=1761344562; c=relaxed/simple;
+	bh=x0eiuXrdmTl6hh6U1I+z1v6iUg7ks7RxigDFkDZWKbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLDPU1XmqnbgoQ58iainDa0HQLKhzHMvucM/us1YmQhT2apHQt0uWdrXeHlYtWs6k6oCcBRpOheLB/h+khcdJjYl1WEbiSradq2uBVeSacpaAwJ32Pz8pg4cw91qEKuZlW6+iTTA1u9oEmXYtuodGGzrym5/OOyBkIq+dFLTKfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JbHTXBsI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F373C4CEF1;
+	Fri, 24 Oct 2025 22:22:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761344561;
+	bh=x0eiuXrdmTl6hh6U1I+z1v6iUg7ks7RxigDFkDZWKbo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JbHTXBsIXMb6emK76hDcATn+fSmBmiiQuVccYbvGBtu7/wJZuAsixrnMSPui1bXuB
+	 hvuLm1UHbXY68wuMBX94ZrI7r03On5Bj9kUyr0lXHU8azoIns2kQw+UsI1XnbbNECj
+	 1TIv3cCpoFGUF0yAJPV+LGfi0UJUBPtuMiXNZIf/aTEeFPSHr+B326vjKDpQZCAVTt
+	 s82D4TcOJ4DEVnBT/fT9IvB2svXVymb1WEFTSJLimZRJeFDqGrBqS8SwkoZX/IB2rN
+	 LH0r65oLfsfTBw+e76G4BdjGL6qUxjBC4VTsyODZ+cPA353GUBdv7d1Yc6wZu59dQ+
+	 Yr3LjJfQVu/bQ==
+Date: Fri, 24 Oct 2025 17:22:39 -0500
+From: Rob Herring <robh@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, hehuan1@eswincomputing.com,
+	krzk+dt@kernel.org, conor+dt@kernel.org, jszhang@kernel.org,
+	adrian.hunter@intel.com, p.zabel@pengutronix.de,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ningyu@eswincomputing.com,
+	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com,
+	xuxiang@eswincomputing.com, luyulin@eswincomputing.com,
+	dongxuyang@eswincomputing.com, zhangsenchuan@eswincomputing.com,
+	weishangjuan@eswincomputing.com, lizhi2@eswincomputing.com,
+	caohang@eswincomputing.com,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: mmc: sdhci-of-dwcmshc: Add Eswin
+ EIC7700
+Message-ID: <20251024222239.GA2902515-robh@kernel.org>
+References: <20251019115133.300-1-hehuan1@eswincomputing.com>
+ <20251019115238.320-1-hehuan1@eswincomputing.com>
+ <CAPDyKFqGwTF2w2JfqOuxMt6m_YJOYhqoUaQXyZALRu94W3fGkQ@mail.gmail.com>
+ <20251024-aghast-poster-82ee7aa7fdca@spud>
+ <20251024-polyester-gatherer-e7f5e4300262@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <budi@bit-tao.eu>
-Subject: Re: x86/csum: Remove unnecessary odd handling
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024-polyester-gatherer-e7f5e4300262@spud>
 
-Xcuse me, but isn´t it time people show skill in highlevel languages 
-running like low-level, instead of the LDA/STA MOV joystick thing.
+On Fri, Oct 24, 2025 at 10:47:34PM +0100, Conor Dooley wrote:
+> On Fri, Oct 24, 2025 at 05:37:59PM +0100, Conor Dooley wrote:
+> > On Fri, Oct 24, 2025 at 03:57:33PM +0200, Ulf Hansson wrote:
+> > > On Sun, 19 Oct 2025 at 13:52, <hehuan1@eswincomputing.com> wrote:
+> > > >
+> > > > From: Huan He <hehuan1@eswincomputing.com>
+> > > >
+> > > > EIC7700 use Synopsys dwcmshc IP for SD/eMMC controllers.
+> > > > Add Eswin EIC7700 support in sdhci-of-dwcmshc.yaml.
+> > > >
+> > > > Signed-off-by: Huan He <hehuan1@eswincomputing.com>
+> > > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > > > ---
+> > > >  .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 57 +++++++++++++++++--
+> > > >  1 file changed, 51 insertions(+), 6 deletions(-)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> > > > index f882219a0a26..7e7c55dc2440 100644
+> > > > --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> > > > +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> > > > @@ -30,6 +30,7 @@ properties:
+> > > >            - sophgo,sg2002-dwcmshc
+> > > >            - sophgo,sg2042-dwcmshc
+> > > >            - thead,th1520-dwcmshc
+> > > > +          - eswin,eic7700-dwcmshc
+> > > >
+> > > >    reg:
+> > > >      maxItems: 1
+> > > > @@ -52,17 +53,30 @@ properties:
+> > > >      maxItems: 5
+> > > >
+> > > >    reset-names:
+> > > > -    items:
+> > > > -      - const: core
+> > > > -      - const: bus
+> > > > -      - const: axi
+> > > > -      - const: block
+> > > > -      - const: timer
+> > > > +    maxItems: 5
+> > > >
+> > > >    rockchip,txclk-tapnum:
+> > > >      description: Specify the number of delay for tx sampling.
+> > > >      $ref: /schemas/types.yaml#/definitions/uint8
+> > > >
+> > > > +  eswin,hsp-sp-csr:
+> > > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > > > +    items:
+> > > > +      - items:
+> > > > +          - description: Phandle to HSP(High-Speed Peripheral) device
+> > > > +          - description: Offset of the stability status register for internal
+> > > > +                         clock.
+> > > > +          - description: Offset of the stability register for host regulator
+> > > > +                         voltage.
+> > > > +    description:
+> > > > +      HSP CSR is to control and get status of different high-speed peripherals
+> > > > +      (such as Ethernet, USB, SATA, etc.) via register, which can tune
+> > > > +      board-level's parameters of PHY, etc.
+> > > 
+> > > I would like second confirmation from DT maintainers, to make sure
+> > > it's reasonable to model the HW like this.
+> > 
+> > If by second confirmation, you mean by someone other than me, obviously
+> > ignore this, but I think this is "fine". It discussed on a previous
+> > revision that all is being done with it is setting a handful bits that
+> > signify that the peripheral has been configured correctly.
+> > 
+> > That said, I don't have a clue what's going on with the warning about
+> > the dwmac device. That's definitely one for Rob.
+> 
+> Apparently it's just as simple as there being more than one definition
+> of the same property. I had it in my head that that was okay when only
+> one binding was applied to the node, but clearly not.
+> 
+> I'll have to un-review it until that error is sorted out.
 
-3 letter abbrev "God" thing. Some people complain much about "God" but 
-do nothing about it!?
+This binding is fine. The error is in the eswin,eic770-eth.yaml binding:
 
-My annoyed input.
+  eswin,hsp-sp-csr:
+    $ref: /schemas/types.yaml#/definitions/phandle-array
+    items:
+      - description: Phandle to HSP(High-Speed Peripheral) device
+      - description: Offset of phy control register for internal
+                     or external clock selection
+      - description: Offset of AXI clock controller Low-Power request
+                     register
+      - description: Offset of register controlling TX/RX clock delay
+    description: |
+      High-Speed Peripheral device needed to configure clock selection,
+      clock low-power mode and clock delay.
 
 
+The issue here is phandle-array is really a matrix and an outer 'items' 
+is needed to say there is 1 entry with 4 cells. Like this:
 
+items:
+  - items:
+      - description: ...
+      - description: ...
+      - description: ...
+      - description: ...
+
+Please send a fix for that.
+
+The tools could handle this case better, so I'll look into a fix for 
+them.
+
+Rob
 
