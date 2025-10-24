@@ -1,361 +1,151 @@
-Return-Path: <linux-kernel+bounces-868063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A32C04440
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:34:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC1CC04425
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D9D019A596C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:34:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30E0519A5359
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3E127F017;
-	Fri, 24 Oct 2025 03:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EAvBUlXI"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA84226FA67;
+	Fri, 24 Oct 2025 03:32:55 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9E227E7EC
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F87D4F5E0;
+	Fri, 24 Oct 2025 03:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761276797; cv=none; b=iQFppv0Bc05xKwK6nR54U7jPXNCNp/TN7PU2ZzJ4U0ejP8n3L4IY8ufl0fSi+NwhqZmU7BoZV8jXN1ijCwApCZe767/GvccZp15YnNGgIxehst661vssxTgUg8749TETRVHXsR/kbNcEPgdA3rVKNoa3dmSRLSXukQDeBYAYtm0=
+	t=1761276775; cv=none; b=me+3YbNrP90yMUgISb+jTTnMtALNPHwox9Bbf4pxTKtoorSyJZl8Szr9HwYh05+8lyZ9G2TQQvbbbTA29pXy/9+sSPAFcflEQD0Zu6dwC7mozBAwa/eeNUA1kgbSdmr+DYrBxdO38dvHGKeXJ34Mi3B6fuzDuclbfPcuzzqzkEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761276797; c=relaxed/simple;
-	bh=8mNRaktnDZjddf/hiIoTFG8PZJH/DelAI5SfSfgclQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l6RSY/MeVIRJmeRHEDR1RBvoX44fOvFDSb+LeqvYTPH7iCtGCeMBXC4iKiV6IL4uq51Y1LXJcNEvzCHZLX4VPg4y4p8rRoA7azzBfOuWGOY/ZRQeFPpOxR7iQXal0d2O9yo7jlseBzO3fZSV6Z51Og24Jp25fVZMB35CSRdONxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EAvBUlXI; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-27c369f898fso24426655ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:33:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761276795; x=1761881595; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mrFID4/+UrIHKrArhdAdtN2WsYEUYH8YfC3PSEJWy08=;
-        b=EAvBUlXIbo7Y2qgb0X4aF3PWC56LaBW5Mff89Cb0g4PVseDhwNPSeLeGXU4wReIVhc
-         rISojbBT1QZnIvKOtYSuC9a8myv1BSbZFEvAfqNcvmR3qIyynP89op3lyJ07gTelreBx
-         Ys0B0yBGSQqgnAXA2v2y18JXONNRBsRx16K/CcUloiy+aVFVBZxT1yMgZlywb1wIBTq+
-         psrfE+TAiQZztcgrJq1K+ogb+crDFB/UMqV9OVLPXgG8eGJ8aHAGD23uLmftEZ3WLLmM
-         YotrM2VKOF7M7/Q83EkyL1Y2ybuHN7H5NHrWb2CVoJ9WdCNaIo1m+6gQHRRsRkpSxuW6
-         ulbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761276795; x=1761881595;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mrFID4/+UrIHKrArhdAdtN2WsYEUYH8YfC3PSEJWy08=;
-        b=fhckYlk4VY5CxcVpBMhCjX0EbyLtLjy1LuXpn7QqgLOr0otOdAf78mGSCOHXS/mRGY
-         FH6Ch3tYTixaDMXOnF1m+vHEWD5ugldK+5QMxyDX8CJIXeciPdmJKzhZxyefzQamQ5En
-         TAN0YnCFihhkWx+iPpgC2b8STIavNhuKjQ7U/OGhfn4yMUy5SZQTkSB6LXP09gGtmMyM
-         nxNiEFW5ifmwzDdEJ3JY2fvvKs0o8KZBObkj1duYQNz4z5ICtTXJ9iOg9HpohcERh6tI
-         9W00frTpsx21BzbuPg/+u/kcB4gNJtXTdYZfhlH2zlJ/I1PwUHoWxg07fLv26PKU6ncc
-         9aaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNRXjlUMaP7sZaeZGOrQKEXQvkT/9+q6L+wUOWTAE5JK0s6m4gqQfB4ZQt7D8x8w0bcy4KjK3n1KtM4As=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOdVmXvAyrquPPk0VsAEJZyPPL7MG9BvSQ/egOg5fsw/zqjP7f
-	o1akDQtEds1vnL26v/i5qJvR44KiBvrQatJtoMYnKaEjY95ls2N+DAjl
-X-Gm-Gg: ASbGncu5193sB9VlRKm2TwPEF/x2ZU5lMFX0VGep6vHJua0TVLg3z6Ub/duHUEXTgJE
-	Rk31OKiFDG6DYT+C19RZwy3XKeEUzZo+PSxOpkxsduMLejcIsMIBc/LyIL93JWnQpLP/A3c/ul8
-	eVvMdukmfNP49/AqLjUQ2ZIzmQ+rFDm6ZLjr6jxQg27WuegxrYXO6+NZEO+IyYawHxUU3XKY2o1
-	1cPaos40ni5NipdlaLIq7bNmqq3pkjZNkWmISB/QhSieHRIxlAXtA8j4V4j+OBkhgfrOO+rukQi
-	FB0Nj/wa8lSG4hV7H17fJUfeIHXDSq5xIU+Uju6CElcDddm7Ai0wEaRGa5urbrTYWtp+tGEo5o+
-	yf9VjcGPIvo8A6rGxzNbhtU+gbGvZFvMcYQ3i5dI/PdcBGA8liT6QFRazRd6B0OU3T1TPXa7vg7
-	R20uzxThw=
-X-Google-Smtp-Source: AGHT+IHI7r04yzhwK69K8rpawCPYb5WS526gHAvbUvZIVfklkumt4Vvr9D4Cs5WO1JuhFqNs0o/mig==
-X-Received: by 2002:a17:902:cece:b0:292:fc65:3579 with SMTP id d9443c01a7336-292fc65380cmr132461465ad.17.1761276795074;
-        Thu, 23 Oct 2025 20:33:15 -0700 (PDT)
-Received: from d.home.yangfl.dn42 ([45.32.227.231])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dda7949sm40394265ad.3.2025.10.23.20.33.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 20:33:14 -0700 (PDT)
-From: David Yang <mmyangfl@gmail.com>
-To: netdev@vger.kernel.org
-Cc: David Yang <mmyangfl@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 3/3] net: dsa: yt921x: Add LAG offloading support
-Date: Fri, 24 Oct 2025 11:32:29 +0800
-Message-ID: <20251024033237.1336249-4-mmyangfl@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251024033237.1336249-1-mmyangfl@gmail.com>
-References: <20251024033237.1336249-1-mmyangfl@gmail.com>
+	s=arc-20240116; t=1761276775; c=relaxed/simple;
+	bh=QD4Cgeapsnrnp2n93Z54w8V979xx1t4+BbK7P0Lqqak=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=SfIHUcJdnLDV1npbN1xscgdUA3kzEIaPmp3UpOrLhmgMrgJPv8YUo+GBKHDvjTvV4dEickrK3jyIA4m8mG66Ys0OHbMc8goi2KKNNcNsaTzsjMQbrUza7/Uoqj+UYP45ajGg/GuLIIhaI/qeKoV6sX1VfDtgLu6L+IG8yCed/0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 16587800b08a11f0a38c85956e01ac42-20251024
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:cf144003-2c36-4a68-822c-cabf74fbedcd,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:5,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:5
+X-CID-META: VersionHash:a9d874c,CLOUDID:e306fcf1116a5780e8993190dbfcd787,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|83|102,TC:nil,Content:0|50,EDM:-3,
+	IP:nil,URL:0,File:2|127,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,A
+	V:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 16587800b08a11f0a38c85956e01ac42-20251024
+X-User: zhangheng@kylinos.cn
+Received: from [172.25.120.76] [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <zhangheng@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
+	with ESMTP id 760713475; Fri, 24 Oct 2025 11:32:37 +0800
+Content-Type: multipart/mixed; boundary="------------xuCn7F4P8OnNd8rjwF0VvNRA"
+Message-ID: <8f0155d4-72a7-45ec-a272-7892e783bbed@kylinos.cn>
+Date: Fri, 24 Oct 2025 11:32:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] HID: quirks: Add device descriptor for 4c4a:4155
+To: Terry Junge <linuxhid@cosmicgizmosystems.com>, jikos@kernel.org,
+ bentiss@kernel.org, staffan.melin@oscillator.se
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ 1114557@bugs.debian.org, stable@vger.kernel.org
+References: <20250923022445.3276026-1-zhangheng@kylinos.cn>
+ <e0dde746-3761-414e-8df1-eb8557cadbf8@cosmicgizmosystems.com>
+ <e605f642-c967-4d41-8145-a10e8f48fb1b@kylinos.cn>
+ <365f9f8e-549e-42e1-ac8c-7ff1f42c6977@cosmicgizmosystems.com>
+From: zhangheng <zhangheng@kylinos.cn>
+In-Reply-To: <365f9f8e-549e-42e1-ac8c-7ff1f42c6977@cosmicgizmosystems.com>
+
+This is a multi-part message in MIME format.
+--------------xuCn7F4P8OnNd8rjwF0VvNRA
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add offloading for a link aggregation group supported by the YT921x
-switches.
+Hi Terry Junge，
 
-Signed-off-by: David Yang <mmyangfl@gmail.com>
----
- drivers/net/dsa/yt921x.c | 184 +++++++++++++++++++++++++++++++++++++++
- drivers/net/dsa/yt921x.h |  20 +++++
- 2 files changed, 204 insertions(+)
+I have made the changes as per your suggestion.
+mic.txt is the microphone report descriptor and is working properly.
 
-diff --git a/drivers/net/dsa/yt921x.c b/drivers/net/dsa/yt921x.c
-index 885a63f2b978..406e972c4cfb 100644
---- a/drivers/net/dsa/yt921x.c
-+++ b/drivers/net/dsa/yt921x.c
-@@ -1143,6 +1143,187 @@ yt921x_dsa_port_mirror_add(struct dsa_switch *ds, int port,
- 	return res;
- }
- 
-+static int
-+yt921x_dsa_port_lag_check(struct dsa_switch *ds, struct dsa_lag lag,
-+			  struct netdev_lag_upper_info *info,
-+			  struct netlink_ext_ack *extack)
-+{
-+	struct dsa_port *dp;
-+	unsigned int members;
-+
-+	if (lag.id <= 0)
-+		return -EINVAL;
-+
-+	members = 0;
-+	dsa_lag_foreach_port(dp, ds->dst, &lag)
-+		/* Includes the port joining the LAG */
-+		members++;
-+
-+	if (members > YT921X_LAG_PORT_NUM) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "Cannot offload more than 4 LAG ports");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (info->tx_type != NETDEV_LAG_TX_TYPE_HASH) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "Can only offload LAG using hash TX type");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (info->hash_type != NETDEV_LAG_HASH_L2 &&
-+	    info->hash_type != NETDEV_LAG_HASH_L23 &&
-+	    info->hash_type != NETDEV_LAG_HASH_L34) {
-+		NL_SET_ERR_MSG_MOD(extack,
-+				   "Can only offload L2 or L2+L3 or L3+L4 TX hash");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	return 0;
-+}
-+
-+static int yt921x_lag_hash(struct yt921x_priv *priv, u32 ctrl, bool unique_lag)
-+{
-+	struct device *dev = to_device(priv);
-+	u32 val;
-+	int res;
-+
-+	/* Hash Mode is global. Make sure the same Hash Mode is set to all the
-+	 * 2 possible lags.
-+	 * If we are the unique LAG we can set whatever hash mode we want.
-+	 * To change hash mode it's needed to remove all LAG and change the mode
-+	 * with the latest.
-+	 */
-+	if (unique_lag) {
-+		res = yt921x_reg_write(priv, YT921X_LAG_HASH, ctrl);
-+		if (res)
-+			return res;
-+	} else {
-+		res = yt921x_reg_read(priv, YT921X_LAG_HASH, &val);
-+		if (res)
-+			return res;
-+
-+		if (val != ctrl) {
-+			dev_err(dev,
-+				"Mismatched Hash Mode across different lag is not supported\n");
-+			return -EOPNOTSUPP;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int yt921x_lag_leave(struct yt921x_priv *priv, u8 index)
-+{
-+	return yt921x_reg_write(priv, YT921X_LAG_GROUPn(index), 0);
-+}
-+
-+static int yt921x_lag_join(struct yt921x_priv *priv, u8 index, u16 ports_mask)
-+{
-+	unsigned long targets_mask = ports_mask;
-+	unsigned int cnt;
-+	u32 ctrl;
-+	int port;
-+	int res;
-+
-+	cnt = 0;
-+	for_each_set_bit(port, &targets_mask, YT921X_PORT_NUM) {
-+		ctrl = YT921X_LAG_MEMBER_PORT(port);
-+		res = yt921x_reg_write(priv, YT921X_LAG_MEMBERnm(index, cnt),
-+				       ctrl);
-+		if (res)
-+			return res;
-+
-+		cnt++;
-+	}
-+
-+	ctrl = YT921X_LAG_GROUP_PORTS(ports_mask) |
-+	       YT921X_LAG_GROUP_MEMBER_NUM(cnt);
-+	return yt921x_reg_write(priv, YT921X_LAG_GROUPn(index), ctrl);
-+}
-+
-+static int
-+yt921x_dsa_port_lag_leave(struct dsa_switch *ds, int port, struct dsa_lag lag)
-+{
-+	struct yt921x_priv *priv = to_yt921x_priv(ds);
-+	int res;
-+
-+	if (lag.id <= 0)
-+		return -EINVAL;
-+
-+	mutex_lock(&priv->reg_lock);
-+	res = yt921x_lag_leave(priv, lag.id - 1);
-+	mutex_unlock(&priv->reg_lock);
-+
-+	return res;
-+}
-+
-+static int
-+yt921x_dsa_port_lag_join(struct dsa_switch *ds, int port, struct dsa_lag lag,
-+			 struct netdev_lag_upper_info *info,
-+			 struct netlink_ext_ack *extack)
-+{
-+	struct yt921x_priv *priv = to_yt921x_priv(ds);
-+	struct dsa_port *dp;
-+	bool unique_lag;
-+	unsigned int i;
-+	u32 ctrl;
-+	int res;
-+
-+	res = yt921x_dsa_port_lag_check(ds, lag, info, extack);
-+	if (res)
-+		return res;
-+
-+	ctrl = 0;
-+	switch (info->hash_type) {
-+	case NETDEV_LAG_HASH_L34:
-+		ctrl |= YT921X_LAG_HASH_IP_DST;
-+		ctrl |= YT921X_LAG_HASH_IP_SRC;
-+		ctrl |= YT921X_LAG_HASH_IP_PROTO;
-+
-+		ctrl |= YT921X_LAG_HASH_L4_DPORT;
-+		ctrl |= YT921X_LAG_HASH_L4_SPORT;
-+		break;
-+	case NETDEV_LAG_HASH_L23:
-+		ctrl |= YT921X_LAG_HASH_MAC_DA;
-+		ctrl |= YT921X_LAG_HASH_MAC_SA;
-+
-+		ctrl |= YT921X_LAG_HASH_IP_DST;
-+		ctrl |= YT921X_LAG_HASH_IP_SRC;
-+		ctrl |= YT921X_LAG_HASH_IP_PROTO;
-+		break;
-+	case NETDEV_LAG_HASH_L2:
-+		ctrl |= YT921X_LAG_HASH_MAC_DA;
-+		ctrl |= YT921X_LAG_HASH_MAC_SA;
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	/* Check if we are the unique configured LAG */
-+	unique_lag = true;
-+	dsa_lags_foreach_id(i, ds->dst)
-+		if (i != lag.id && dsa_lag_by_id(ds->dst, i)) {
-+			unique_lag = false;
-+			break;
-+		}
-+
-+	mutex_lock(&priv->reg_lock);
-+	do {
-+		res = yt921x_lag_hash(priv, ctrl, unique_lag);
-+		if (res)
-+			break;
-+
-+		ctrl = 0;
-+		dsa_lag_foreach_port(dp, ds->dst, &lag)
-+			ctrl |= BIT(dp->index);
-+		res = yt921x_lag_join(priv, lag.id - 1, ctrl);
-+	} while (0);
-+	mutex_unlock(&priv->reg_lock);
-+
-+	return res;
-+}
-+
- static int yt921x_fdb_wait(struct yt921x_priv *priv, u32 *valp)
- {
- 	struct device *dev = to_device(priv);
-@@ -2906,6 +3087,9 @@ static const struct dsa_switch_ops yt921x_dsa_switch_ops = {
- 	/* mirror */
- 	.port_mirror_del	= yt921x_dsa_port_mirror_del,
- 	.port_mirror_add	= yt921x_dsa_port_mirror_add,
-+	/* lag */
-+	.port_lag_leave		= yt921x_dsa_port_lag_leave,
-+	.port_lag_join		= yt921x_dsa_port_lag_join,
- 	/* fdb */
- 	.port_fdb_dump		= yt921x_dsa_port_fdb_dump,
- 	.port_fast_age		= yt921x_dsa_port_fast_age,
-diff --git a/drivers/net/dsa/yt921x.h b/drivers/net/dsa/yt921x.h
-index 3546a94f380e..5e6dcf741e31 100644
---- a/drivers/net/dsa/yt921x.h
-+++ b/drivers/net/dsa/yt921x.h
-@@ -316,6 +316,14 @@
- #define  YT921X_FILTER_PORTn(port)		BIT(port)
- #define YT921X_VLAN_EGR_FILTER		0x180598
- #define  YT921X_VLAN_EGR_FILTER_PORTn(port)	BIT(port)
-+#define YT921X_LAG_GROUPn(n)		(0x1805a8 + 4 * (n))
-+#define  YT921X_LAG_GROUP_PORTS_M		GENMASK(13, 3)
-+#define   YT921X_LAG_GROUP_PORTS(x)			FIELD_PREP(YT921X_LAG_GROUP_PORTS_M, (x))
-+#define  YT921X_LAG_GROUP_MEMBER_NUM_M		GENMASK(2, 0)
-+#define   YT921X_LAG_GROUP_MEMBER_NUM(x)		FIELD_PREP(YT921X_LAG_GROUP_MEMBER_NUM_M, (x))
-+#define YT921X_LAG_MEMBERnm(n, m)	(0x1805b0 + 4 * (4 * (n) + (m)))
-+#define  YT921X_LAG_MEMBER_PORT_M		GENMASK(3, 0)
-+#define   YT921X_LAG_MEMBER_PORT(x)			FIELD_PREP(YT921X_LAG_MEMBER_PORT_M, (x))
- #define YT921X_CPU_COPY			0x180690
- #define  YT921X_CPU_COPY_FORCE_INT_PORT		BIT(2)
- #define  YT921X_CPU_COPY_TO_INT_CPU		BIT(1)
-@@ -360,6 +368,15 @@
- #define  YT921X_PORT_IGR_TPIDn_STAG(x)		BIT((x) + 4)
- #define  YT921X_PORT_IGR_TPIDn_CTAG_M		GENMASK(3, 0)
- #define  YT921X_PORT_IGR_TPIDn_CTAG(x)		BIT(x)
-+#define YT921X_LAG_HASH			0x210090
-+#define  YT921X_LAG_HASH_L4_SPORT		BIT(7)
-+#define  YT921X_LAG_HASH_L4_DPORT		BIT(6)
-+#define  YT921X_LAG_HASH_IP_PROTO		BIT(5)
-+#define  YT921X_LAG_HASH_IP_SRC			BIT(4)
-+#define  YT921X_LAG_HASH_IP_DST			BIT(3)
-+#define  YT921X_LAG_HASH_MAC_SA			BIT(2)
-+#define  YT921X_LAG_HASH_MAC_DA			BIT(1)
-+#define  YT921X_LAG_HASH_SRC_PORT		BIT(0)
- 
- #define YT921X_PORTn_VLAN_CTRL(port)	(0x230010 + 4 * (port))
- #define  YT921X_PORT_VLAN_CTRL_SVLAN_PRI_EN	BIT(31)
-@@ -404,6 +421,9 @@ enum yt921x_fdb_entry_status {
- 
- #define YT921X_MSTI_NUM		16
- 
-+#define YT921X_LAG_NUM		2
-+#define YT921X_LAG_PORT_NUM	4
-+
- #define YT9215_MAJOR	0x9002
- #define YT9218_MAJOR	0x9001
- 
--- 
-2.51.0
 
+
+
+--------------xuCn7F4P8OnNd8rjwF0VvNRA
+Content-Type: text/plain; charset=UTF-8; name="mic.txt"
+Content-Disposition: attachment; filename="mic.txt"
+Content-Transfer-Encoding: base64
+
+a2xpbkB6aGFuZ2hlbmc6fi/moYzpnaIkIHN1ZG8gdXNiaGlkLWR1bXAgCjAwMTowMDg6MDAy
+OkRFU0NSSVBUT1IgICAgICAgICAxNzYxMjc1ODE3LjI1MzEyMQogMDUgMDEgMDkgMDYgQTEg
+MDEgMDUgMDcgMTkgRTAgMjkgRTcgMTUgMDAgMjUgMDEKIDc1IDAxIDk1IDA4IDgxIDAyIDk1
+IDAxIDc1IDA4IDgxIDAxIDk1IDAzIDc1IDAxCiAwNSAwOCAxOSAwMSAyOSAwMyA5MSAwMiA5
+NSAwMSA3NSAwNSA5MSAwMSA5NSAwNgogNzUgMDggMTUgMDAgMjYgRkYgMDAgMDUgMDcgMTkg
+MDAgMkEgRkYgMDAgODEgMDAKIEMwCgo=
+--------------xuCn7F4P8OnNd8rjwF0VvNRA
+Content-Type: text/plain; charset=UTF-8;
+ name="v3-0001-HID-quirks-Change-manufacturer-for-4c4a-4155.patch"
+Content-Disposition: attachment;
+ filename*0="v3-0001-HID-quirks-Change-manufacturer-for-4c4a-4155.patch"
+Content-Transfer-Encoding: base64
+
+RnJvbSA0ZDY3MGE3ODUyNzZhOGZkMTU2OGM5ZTdlNDAxNzk4MDliM2RkNWVjIE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBaaGFuZyBIZW5nIDx6aGFuZ2hlbmdAa3lsaW5vcy5j
+bj4KRGF0ZTogRnJpLCAxMiBTZXAgMjAyNSAyMDozODoxOCArMDgwMApTdWJqZWN0OiBbUEFU
+Q0ggdjNdIEhJRDogcXVpcmtzOiBDaGFuZ2UgbWFudWZhY3R1cmVyIGZvciA0YzRhOjQxNTUK
+CkJhc2VkIG9uIGF2YWlsYWJsZSBldmlkZW5jZSwgdGhlIFVTQiBJRCA0YzRhOjQxNTUgdXNl
+ZCBieSBtdWx0aXBsZQpkZXZpY2VzIGhhcyBiZWVuIGF0dHJpYnV0ZWQgdG8gSmllbGkuIFRo
+ZSBjb21taXQgMWE4OTUzZjRmNzc0CigiSElEOiBBZGQgSUdOT1JFIHF1aXJrIGZvciBTTUFS
+VExJTktURUNITk9MT0dZIikgYWZmZWN0ZWQgdG91Y2hzY3JlZW4KZnVuY3Rpb25hbGl0eS4g
+QSBtYW51ZmFjdHVyZXIgY2hlY2sgd2FzIGFkZGVkIHRvIG1haW50YWluIG1pY3JvcGhvbmUK
+Y29tcGF0aWJpbGl0eSwgZW5hYmxpbmcgYm90aCBkZXZpY2VzIHRvIGZ1bmN0aW9uIHByb3Bl
+cmx5LgoKRml4ZXM6IDFhODk1M2Y0Zjc3NCAoIkhJRDogQWRkIElHTk9SRSBxdWlyayBmb3Ig
+U01BUlRMSU5LVEVDSE5PTE9HWSIpCkNjOiBzdGFibGVAa2VybmVsLm9yZwpUZXN0ZWQtYnk6
+IHN0YWZmYW4ubWVsaW5Ab3NjaWxsYXRvci5zZQpTaWduZWQtb2ZmLWJ5OiBaaGFuZyBIZW5n
+IDx6aGFuZ2hlbmdAa3lsaW5vcy5jbj4KLS0tCiBkcml2ZXJzL2hpZC9oaWQtaWRzLmggICAg
+fCAgNCArKy0tCiBkcml2ZXJzL2hpZC9oaWQtcXVpcmtzLmMgfCAxMSArKysrKysrKysrLQog
+MiBmaWxlcyBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQoKZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvaGlkL2hpZC1pZHMuaCBiL2RyaXZlcnMvaGlkL2hpZC1pZHMu
+aAppbmRleCA1NzIxYjg0MTRiYmQuLjBiMWZmMWVjMjc1ZSAxMDA2NDQKLS0tIGEvZHJpdmVy
+cy9oaWQvaGlkLWlkcy5oCisrKyBiL2RyaXZlcnMvaGlkL2hpZC1pZHMuaApAQCAtMTUzOSw3
+ICsxNTM5LDcgQEAKICNkZWZpbmUgVVNCX1ZFTkRPUl9JRF9TSUdOT1RFQwkJCTB4MjEzMwog
+I2RlZmluZSBVU0JfREVWSUNFX0lEX1NJR05PVEVDX1ZJRVdTT05JQ19QRDEwMTEJMHgwMDE4
+CiAKLSNkZWZpbmUgVVNCX1ZFTkRPUl9JRF9TTUFSVExJTktURUNITk9MT0dZICAgICAgICAg
+ICAgICAweDRjNGEKLSNkZWZpbmUgVVNCX0RFVklDRV9JRF9TTUFSVExJTktURUNITk9MT0dZ
+XzQxNTUgICAgICAgICAweDQxNTUKKyNkZWZpbmUgVVNCX1ZFTkRPUl9JRF9KSUVMSV9TREtf
+REVGQVVMVAkJMHg0YzRhCisjZGVmaW5lIFVTQl9ERVZJQ0VfSURfSklFTElfU0RLXzQxNTUJ
+CTB4NDE1NQogCiAjZW5kaWYKZGlmZiAtLWdpdCBhL2RyaXZlcnMvaGlkL2hpZC1xdWlya3Mu
+YyBiL2RyaXZlcnMvaGlkL2hpZC1xdWlya3MuYwppbmRleCBmZmQwMzQ1NjZlMmUuLjAwNThj
+MDFhYThiMyAxMDA2NDQKLS0tIGEvZHJpdmVycy9oaWQvaGlkLXF1aXJrcy5jCisrKyBiL2Ry
+aXZlcnMvaGlkL2hpZC1xdWlya3MuYwpAQCAtOTEzLDcgKzkxMyw2IEBAIHN0YXRpYyBjb25z
+dCBzdHJ1Y3QgaGlkX2RldmljZV9pZCBoaWRfaWdub3JlX2xpc3RbXSA9IHsKICNlbmRpZgog
+CXsgSElEX1VTQl9ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9ZRUFMSU5LLCBVU0JfREVWSUNFX0lE
+X1lFQUxJTktfUDFLX1A0S19CMkspIH0sCiAJeyBISURfVVNCX0RFVklDRShVU0JfVkVORE9S
+X0lEX1FVQU5UQSwgVVNCX0RFVklDRV9JRF9RVUFOVEFfSFBfNU1QX0NBTUVSQV81NDczKSB9
+LAotCXsgSElEX1VTQl9ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9TTUFSVExJTktURUNITk9MT0dZ
+LCBVU0JfREVWSUNFX0lEX1NNQVJUTElOS1RFQ0hOT0xPR1lfNDE1NSkgfSwKIAl7IH0KIH07
+CiAKQEAgLTEwNjIsNiArMTA2MSwxNiBAQCBib29sIGhpZF9pZ25vcmUoc3RydWN0IGhpZF9k
+ZXZpY2UgKmhkZXYpCiAJCQkJCSAgICAgc3RybGVuKGVsYW5fYWNwaV9pZFtpXS5pZCkpKQog
+CQkJCQlyZXR1cm4gdHJ1ZTsKIAkJYnJlYWs7CisJY2FzZSBVU0JfVkVORE9SX0lEX0pJRUxJ
+X1NES19ERUZBVUxUOgorCQkvKgorCQkgKiBNdWx0aXBsZSBVU0IgZGV2aWNlcyB3aXRoIGlk
+ZW50aWNhbCBJRHMgKG1pYyAmIHRvdWNoc2NyZWVuKS4KKwkJICogVGhlIHRvdWNoIHNjcmVl
+biByZXF1aXJlcyBoaWQgY29yZSBwcm9jZXNzaW5nLCBidXQgdGhlCisJCSAqIG1pY3JvcGhv
+bmUgZG9lcyBub3QuIFRoZXkgY2FuIGJlIGRpc3Rpbmd1aXNoZWQgYnkgbWFudWZhY3R1cmVy
+LgorCQkgKi8KKwkJaWYgKGhkZXYtPnByb2R1Y3QgPT0gVVNCX0RFVklDRV9JRF9KSUVMSV9T
+REtfNDE1NSAmJgorCQkgICAgc3RybmNtcChoZGV2LT5uYW1lLCAiU21hcnRsaW5rVGVjaG5v
+bG9neSIsIDE5KSA9PSAwKQorCQkJcmV0dXJuIHRydWU7CisJCWJyZWFrOwogCX0KIAogCWlm
+IChoZGV2LT50eXBlID09IEhJRF9UWVBFX1VTQk1PVVNFICYmCi0tIAoyLjQ3LjEKCg==
+
+--------------xuCn7F4P8OnNd8rjwF0VvNRA--
 
