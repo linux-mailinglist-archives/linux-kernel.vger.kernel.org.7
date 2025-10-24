@@ -1,232 +1,137 @@
-Return-Path: <linux-kernel+bounces-868624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680BFC05A55
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:44:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DCBC05A64
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9EDF63550F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E1491897DBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FBC30C363;
-	Fri, 24 Oct 2025 10:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CF127AC5C;
+	Fri, 24 Oct 2025 10:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J3aw87uT"
-Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HtNoeQp9"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A96E18FDDE
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011D9233128
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761302679; cv=none; b=iiziBe8nUO8Na02N9VKvQ1zaK9abTYVFUS7b7vJTYJK1hEJ0kqPeLcrydg5UgxGKqy6H5/UApuJ49CZuJcMvQdF1FgOV1YAoxohs0qj30QJmj4ryiN72eBcpQbCidYncJItU3IkYQu3Crre7uCPo1yEVdgRqfIicMd2S88c3sMw=
+	t=1761302724; cv=none; b=VMr7+Hbv9QiMCgP4I2C52N4W9nOJx0UhZKENzmmazVJen9f/xaeSs+iPOtckoBYHdrHnlKJw0qaqFXK9KYkYj/THMNkvoauBk5WyzCNL4fYpUnPj40fGK+jqqXspFowqJprPReZRpSVPnHFtFJPn3nEWd+dBKJTDve5d8ATUNHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761302679; c=relaxed/simple;
-	bh=jNa/J7SUUBl35Onjepv+If+zX8838Xw+hVVHMSn9p7o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lmae6wE1IqDchpuFs3u6kPnjG7EEQl4Bw7JoxrmeMvBeO3KQKHRnxrVWeieKivahn8SBXL4h8immT9M/WcnRauvJQ42kN85J3gOfX9lvr2mJfBc0BhGWYHOAFksyIUn/+kB3qNiuEY5UjRGiySaIHoCHeJo10Cxwk+Vs7aPL0BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J3aw87uT; arc=none smtp.client-ip=74.125.224.43
+	s=arc-20240116; t=1761302724; c=relaxed/simple;
+	bh=zitpUfd02mHfmWmKbxxXVMFAcuXxYP9GCRpf0oeD/9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZHl76Gfyt4vnCbGOGNZ0sP3UdMjwlYlD+L3iFaOj6piSf3YFSYtgPV9nM56AlFEedbZsp72HuDhSAdYTodjNOuqpfk7FMUEixUTJ64nD1o2GnpbXri8t5y+O9i+N7nxoExJ6samqLJh0XIpzjG3NcJ7o8cp5LqR711954Jv105U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HtNoeQp9; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-63e0dd765a0so1902655d50.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:44:37 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ecdf2b1751so1383201f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:45:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761302676; x=1761907476; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yDrc6GQPhYnDILV4Yve5gdN5tbHzw4YDRq3NBsINCC4=;
-        b=J3aw87uTECp5NSvsZCBWtjurBiKlmfvx5T21KVLpzsteszqyiTY4oqLKYezHo85YY7
-         FkaFPIrYsVSY3V2nD3wSccTNqGzUcc/KXz1qtOkfK84tZA4bTAyhwuwHaxxdsjgHtf94
-         GuC3yXpqGnFVdjJ0a4KLy2s/EquDS1zkfbTsm2VLVp7RC1NuAXlaAqM0SJAiPfoq6Pxt
-         iYGcrPaHti+AZcUM9GXXD6CF3kDaiRytKCkc/sFRAMjM7WltYNEsM68QetGEP+nMggj7
-         +41wzhL1gwLNGasspvWiWRmyffqbLCzsNGQzyRlwrOhnoEzhdEot84baZ6mwnoaPkKpf
-         emDg==
+        d=linaro.org; s=google; t=1761302721; x=1761907521; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0LzYC4CXNtIhbU33+vNcLU3UwFYwR0NDqLzt3aZXlS8=;
+        b=HtNoeQp9JLCTH6rHZfTLnO3p7RnUjvCDk6KwZQYZ4/QbVbWV6WlMXpvXCiEAOsRVbm
+         LlXw8hekf3XHIYP2b//FxrTwO5g1Xu8g7v49t10Uzut4M2WCL3Q8TZgdH3X8n39wisQd
+         3Au6JfXCk2+cbtBaSYAo54+ujmQn3bCjyWEGNFXbRQcbZ0Afunq9mhN0FZBSc65DmtCV
+         IQbbk4ptLbpZroXzLhxN/vDCWGnClKNef1kj5GXR2X58DbbwzWfeAH8QWIa+re86tdfS
+         q8a1CknnjTyvy4pJGqRkZFdxx5yK1Vyiam7K5k27AzbBaIusDRHwmPUKQf/N/HHjPpZa
+         bybA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761302676; x=1761907476;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yDrc6GQPhYnDILV4Yve5gdN5tbHzw4YDRq3NBsINCC4=;
-        b=ifSJKWP+DbsYu3o6QKOcQAjXV6OoXsCdxSCwJQXD1h5uWHlaNnVq+pIEXnpyX9H8DI
-         engKtf0dDC0JWzcjy3NmPz3OjvHrUQIdy2uyhFgAltNuWN0R6KK6aNwOcyG1EYcKX7Y5
-         BOjv9V2YF9m/42Riw2jsiRcyDWokmiTIXY3xzH4jDxHmbc2ggXevFHuma56J5E57fGt2
-         1EjODgA8qEFSjR2c5df4CxGh2vKpoQ7hqnuOpLJTCJwooznSikvCaTCVSp8wGktksyFL
-         HzqBqIazpkbpQIjUVzE7Ha34TKYJVE+jrc5dPlegeldAxkVOw2xN7ZJhVVdKe0NRxAvf
-         MGQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIu0VIi2X3sGBSfxBYMmwbmrf0zDWnqxuPpvfmjz9gZiGVSM42iN3lNwXZpbUdAe4+PltoKLMSwiG3DVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+wU2S4peEcMVLlE5IJMp6DWNP11IF/uXmSSpPxNEWDUeSd8Kb
-	iTPT66id8tTSLEFAkdLJS39OqW+EUMYh/ujn7ZYybCOp0W7SOBF2pYh/Ar3qGkIInXTlX0Q6jJE
-	6+xli75gDxqzgY/BhydcdvBz1EupNg7qI35cnjAm4GA==
-X-Gm-Gg: ASbGncvZOfXSUJiAudHfACHstCqDn3TNAwjBzulrkiElUCihCXstv1J6zxhk2p9BqKP
-	doqFd8J53WarEotpsd5NYUq8LzIxaZqlOmxV7zWHWZZdeWm/HEvmi4yzYaRv4J9XQjlddnrS5vE
-	bAEpfKhDwuyon5IMvxQShgB1WuxF7eRDnSU8XZ6w0A9/hQzizPhT6ztk6Bhf5XigSRsrM4wGmtK
-	OhbTedpnvSUQbu05w97KmVUYnElj3QtSh0gslSK6v1JtGsBPU9grQBzKf/EGmnP6l8e3XKh
-X-Google-Smtp-Source: AGHT+IEk162CNV/HTeTP+EbQADVSjJepjQR6mTG44kaaL46hSa5PPLNcwyV02Tna+/k0FyPQLkha7E/815z4TlLX2p4=
-X-Received: by 2002:a05:690c:3203:b0:784:180e:fd49 with SMTP id
- 00721157ae682-784180f0a97mr412861637b3.5.1761302676319; Fri, 24 Oct 2025
- 03:44:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761302721; x=1761907521;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0LzYC4CXNtIhbU33+vNcLU3UwFYwR0NDqLzt3aZXlS8=;
+        b=HGI50IlfZSwttI6bsZgRrgGSc7tHe8CvEgLNCWSeb6gdsgu8SPoQWh0sLgf0F+0lHG
+         u05rLp8Z+HdEnoCcUYJkano3ku2gzWvDD+zlAGNtXtkOVie+Lw48kQwOGWbHh9UXKyW0
+         llHUJpWtqELFVWtWIfdFJAbPiI+2m5+bqEZiTYoeq9IffJ4erKHdwsOf5qu4l7+8Bu0e
+         pY6weVC+K5qy2NIhImpieRBoD7Qn7N87aEHyMap015nb8JCfET3DMc/zrhWOtFys8dxA
+         lHClQS4USNeSVDgYxjVQGObpGXqQ0mOtz5GkL7AnRxflClQHodnpyphNiol7gHUII+n8
+         bovA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4uj7hD3AMeU6W1GEtdzOsN1RqqtoqMP+k5BBYxhHXPOIhH0P7lJaCyuItNnOYvv+UZgg+Uaoq6L00Ll0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvdFgam4JsJ9Rgg/RJxaM4Wed4uopnjLlH4hB1W8h+xazlHR2s
+	N+giUrjlWDCDMWsiUxJ+yK/06YQPMxbzieuMbuK3BfI5MJzsloVR06yEMz+O5VeUZBQ=
+X-Gm-Gg: ASbGncukL3VkGHMTuBIbAoMgA+48E/+1y3IaVLbvPbRh2KQtjd+uS3FJO0yWkRR6PQa
+	uOK+ZScuxQkPtPXWBi8mm8iDNaid+vDI49s8HCJC49q3Y0VYWEQ90p6DVKlIZhlNYgcv/wcSixB
+	EHRp34wqOw6FS+PQEVDHaxHIxLB2OY1ECuWdY/yDAKsLwSDWbqwTvYR5EH9hv7+uwKxs0Y/rPwn
+	zdxOwBkyAjV+ldpJyCBpyBju3+BAcPnNYrpmWWyTQTuWdyecnU7V8qEzbpe/Yc7wedZ6Pc1aZRB
+	B63IBGELrhHXByGBAtT6IUuss+VzogwFQ2k3x7xgRf6RNpdl7JS1Md8aBrnQTvp+UpfwxglCCw1
+	a7lI0jfEtT/nOhjycaRLVi+XeANrzSiyKcJWIiazlr4eA/Ny0GsdqXY8iLXDJ9xlnmNkUsKPwZA
+	IYt1eaFqCle9Z8PCpv
+X-Google-Smtp-Source: AGHT+IFndIZtTS7LJDDfqCt6ZeNmFhEZyimvvM4KVVCj0BAZcLMsAD53m+FlpSvkb1XScbIdB5nUsw==
+X-Received: by 2002:a05:6000:2888:b0:3ec:dd12:54d3 with SMTP id ffacd0b85a97d-42704d9396fmr20083040f8f.35.1761302721251;
+        Fri, 24 Oct 2025 03:45:21 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429897e75a0sm8916219f8f.5.2025.10.24.03.45.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 03:45:20 -0700 (PDT)
+Date: Fri, 24 Oct 2025 13:45:16 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Lizhi Xu <lizhi.xu@windriver.com>, davem@davemloft.net,
+	edumazet@google.com, horms@kernel.org, kuba@kernel.org,
+	linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	syzbot+2860e75836a08b172755@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V3] netrom: Prevent race conditions between neighbor
+ operations
+Message-ID: <aPtYvPq12Txu9JCG@stanley.mountain>
+References: <aPcp_xemzpDuw-MW@stanley.mountain>
+ <20251021083505.3049794-1-lizhi.xu@windriver.com>
+ <7232849d-cf15-47e1-9ffb-ed0216358be8@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
- <CAPDyKFprP1d-9Ojwz7QaVBbdFumPmRoVnifrP8v+eL6FHR3Unw@mail.gmail.com> <7acba50b-8c1e-4509-8100-3a65467d2d87@oss.qualcomm.com>
-In-Reply-To: <7acba50b-8c1e-4509-8100-3a65467d2d87@oss.qualcomm.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 24 Oct 2025 12:44:00 +0200
-X-Gm-Features: AS18NWAv-FONlFrX1gjqXCW9VKk88FoqVyIeaznNcXjkVlZGoJBK2Lh8mAGu73k
-Message-ID: <CAPDyKFqVKWCApVFjYpgXa2x3N9F7O1bGBBPz0JfNrWBYtg=M0A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] PM QoS: Add CPU affinity latency QoS support and
- resctrl integration
-To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-Cc: Zhongqiu Han <quic_zhonhan@quicinc.com>, rafael@kernel.org, lenb@kernel.org, 
-	pavel@kernel.org, tony.luck@intel.com, reinette.chatre@intel.com, 
-	Dave.Martin@arm.com, james.morse@arm.com, amit.kucheria@linaro.org, 
-	christian.loehle@arm.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lukasz.luba@arm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7232849d-cf15-47e1-9ffb-ed0216358be8@redhat.com>
 
-On Fri, 24 Oct 2025 at 10:40, Zhongqiu Han
-<zhongqiu.han@oss.qualcomm.com> wrote:
->
-> On 10/23/2025 7:03 PM, Ulf Hansson wrote:
-> > On Mon, 21 Jul 2025 at 14:41, Zhongqiu Han <quic_zhonhan@quicinc.com> w=
-rote:
-> >>
-> >> Hi all,
-> >>
-> >> This patch series introduces support for CPU affinity-based latency
-> >> constraints in the PM QoS framework. The motivation is to allow
-> >> finer-grained power management by enabling latency QoS requests to tar=
-get
-> >> specific CPUs, rather than applying system-wide constraints.
-> >>
-> >> The current PM QoS framework supports global and per-device CPU latenc=
-y
-> >> constraints. However, in many real-world scenarios, such as IRQ affini=
-ty
-> >> or CPU-bound kernel threads, only a subset of CPUs are
-> >> performance-critical. Applying global constraints in such cases
-> >> unnecessarily prevents other CPUs from entering deeper C-states, leadi=
-ng
-> >> to increased power consumption.
-> >>
-> >> This series addresses that limitation by introducing a new interface t=
-hat
-> >> allows latency constraints to be applied to a CPU mask. This is
-> >> particularly useful on heterogeneous platforms (e.g., big.LITTLE) and
-> >> embedded systems where power efficiency is critical for example:
-> >>
-> >>                          driver A       rt kthread B      module C
-> >>    CPU IDs (mask):         0-3              2-5              6-7
-> >>    target latency(us):     20               30               100
-> >>                            |                |                |
-> >>                            v                v                v
-> >>                            +---------------------------------+
-> >>                            |        PM  QoS  Framework       |
-> >>                            +---------------------------------+
-> >>                            |                |                |
-> >>                            v                v                v
-> >>    CPU IDs (mask):        0-3            2-3,4-5            6-7
-> >>    runtime latency(us):   20             20, 30             100
-> >>
-> >> The current implementation includes only cpu_affinity_latency_qos_add(=
-)
-> >> and cpu_affinity_latency_qos_remove() interfaces. An update interface =
-is
-> >> planned for future submission, along with PM QoS optimizations in the =
-UFS
-> >> subsystem.
-> >
-> > My apologies for the very late reply.
-> >
->
-> Hi Uffe,
-> I truly appreciate your review and discussion~
->
->
-> > To fully understand how this new QoS interface is going to be used, I
-> > really think we need to include a user of it, as part of the $subject
-> > series.
->
-> Yes, Patch 5/5 using the cpu_affinity_latency_qos_* helper functions to
-> replace the logic in pseudo-locking that uses dev_pm_qos_request to
-> restrict CPU latency for known CPUs (via a mask). Actually, I'm also
-> looking for more users =E2=80=94 for example, we plan to use these interf=
-aces
-> in our UFS module in the future to implement optimizations. And I also
-> plan to support it in userspace on patch V3.
+On Thu, Oct 23, 2025 at 01:44:18PM +0200, Paolo Abeni wrote:
+> Why reordering the statements as:
+> 
+> 	if (nr_node->routes[2].neighbour->count == 0 &&
+> !nr_node->routes[2].neighbour->locked)
+> 		nr_remove_neigh(nr_node->routes[2].neighbour);
+> 	nr_neigh_put(nr_node->routes[2].neighbour);
+> 
+> is not enough?
 
-Right, in regards to the resctrl/pseudo-locking user of this new QoS
-interface, this whole series looks more like a refactoring to me.
+There are so many unfortunate things like this:
 
-My point is, for this reason alone, I don't think it makes sense to
-introduce this new QoS interface. We need another user too, like UFS,
-to understand how this would work in real practice and to allow it to
-be merged.
+net/netrom/nr_route.c
+   243                          /* It must be better than the worst */
+   244                          if (quality > nr_node->routes[2].quality) {
+   245                                  nr_node->routes[2].neighbour->count--;
 
->
-> >
-> > Besides the comments from Rafael and Christian, I also wonder how the
-> > user of the interface should know what CPU-mask it should use? For
-> > example, how does it know the CPU-mask for the big-cores and for the
-> > little-cores? In particular as I assume the user isn't a platform
-> > specific driver, but rather a generic driver that should work across
-> > various platforms.
->
-> This patch introduces cpu_affinity_latency_qos_* helper functions as an
-> extension to the kernel existing cpu_latency_qos_* interfaces. These new
-> helpers enable users to apply latency constraints to specific CPUs via a
-> mask, allowing for more precise power management when the target CPUs
-> are known in advance.
-> If the user is a generic driver, there are two options:
->
-> 1.One is to use the existing cpu_latency_qos_* interfaces to directly
-> restrict all CPUs from entering idle, since the driver may not know
-> which specific CPUs need to be constrained.
+++/-- are not atomic.
 
-Right, which is how UFS does it currently.
+   246                                  nr_neigh_put(nr_node->routes[2].neighbour);
+   247  
+   248                                  if (nr_node->routes[2].neighbour->count == 0 && !nr_node->routes[2].neighbour->locked)
+   249                                          nr_remove_neigh(nr_node->routes[2].neighbour);
+   250  
+   251                                  nr_node->routes[2].quality   = quality;
+   252                                  nr_node->routes[2].obs_count = obs_count;
+   253                                  nr_node->routes[2].neighbour = nr_neigh;
 
->
->
-> 2.However, for generic drivers with specific workload characteristics
-> such as the ufshcd driver in this patch:
->
-> https://lore.kernel.org/all/20231213124353.16407-1
-> -quic_mnaresh@quicinc.com/
-> =E2=80=94 if a user knows exactly which CPUs should be restricted, they c=
-an
-> provide a custom mask via a hook function and use the extended API
-> accordingly. The default return value of the hook is the system-wide
-> possible CPUs, so it won't affect other users.
+This line should come after the next two lines.
 
-Sorry, but I couldn't find in the above series how exactly UFS knows
-about which CPUs it should constrain.
+   254  
+   255                                  nr_neigh_hold(nr_neigh);
+   256                                  nr_neigh->count++;
+   257                          }
 
-Again, please provide a user (UFS for example) of the new QoS
-interface as a part of the series.
-
->
-> In summary, this patch is mainly intended for users who know which CPUs
-> they want to restrict. For users who don't, the extended API can still
-> be used by passing a system-wide CPU mask, or they can simply use the
-> existing cpu_latency_qos_* interfaces.
-
-I understand, thanks for clarifying.
-
-This all said, I have to admit that it kind of starts to worry me when
-I see the number of different users of cpu_latency_qos interface
-increasing in the kernel. To me, it feels like these are just papering
-of another real problem that ideally should be solved in a more
-central place, for everyone. But hey, that's another separate problem
-that we can discuss at some other point.
-
-Kind regards
-Uffe
+regards,
+dan carpenter
 
