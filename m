@@ -1,116 +1,425 @@
-Return-Path: <linux-kernel+bounces-869354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F391C07A62
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:09:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A0DC07A6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC22A4E7A37
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:09:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD9E04EB2BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2C53396E5;
-	Fri, 24 Oct 2025 18:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C565346794;
+	Fri, 24 Oct 2025 18:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Np5Kd4wh"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AaDIQ10n"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705B527280E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65188264F9C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761329348; cv=none; b=f4fI3oOON9LCNx3mwgj8yplKnm69g/cVeR1kZEUs6KKpbqM8ruKFyLylSIgWcPvC5y9xj6QV0706ZcqdJDtmbsXgP1h0eWgPZec6TCr3TWQWb5npBHFMzRqu71Pd1Ga/UXbLdC3bzS9zfijdwxx6vnYDgEAV7iWJ8uKVPnWwVc0=
+	t=1761329384; cv=none; b=bxVzs6cvgyA5jZVb47Uf+wd5mHzLgHqqcikMgwgii35AOILU7cxj+BgyOWjsA4zECIo6yRp20dn9HEFyWsc5LOHzdtgE74ygAuWLIZHtJJSH5K8oBOmM5j6krJFefxYyDFMxUb/CUoO3h5cVIZ8fg5JGqnbOhgcYZlmYT+o/tds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761329348; c=relaxed/simple;
-	bh=0r3GG6uH17KZoPbGFRVq5aXoneRvur4IlIF76waTAhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t59aGKN4sztrjMq0kQ3RCNpxBn92wJj2XU3T/n22CFJKTx3h3pdWevOSouGKPkLrbhsVcQFhWrbLAbeNECp7SYjIkBJ+CfJgtAl9jCXQFcMOvurrGMfC0VFE4PwJEbMrptBYsHHuRe12mkVG/mzxeBRbuioGqC7opE6TSUqiEDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Np5Kd4wh; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1761329384; c=relaxed/simple;
+	bh=QU8xJ4i/Aw+Vyd7H8WdoblY3NJYZVZWy7OUfVpnGwS4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O0S1fJ+5ZvMNxHyTvOMBw6bTNEZAVMCScHB79YdJpuZE0CFYJqv6BjrheRCpUWe/sBIXGRUYKa3vith4ofV2hw5ko5nWFKM3tPRUoD4stT+pM6llDhmW6agW8wlh/Eaw6zi/sSZ5/tWp0qz3vsAQ1OENS+CW6TsxmX6QDUtfaUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AaDIQ10n; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47106fc51faso28600475e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:09:04 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-781ea2cee3fso2371747b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:09:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761329343; x=1761934143; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0r3GG6uH17KZoPbGFRVq5aXoneRvur4IlIF76waTAhc=;
-        b=Np5Kd4wh2pU+sgez+Iby2qWGkALP5bH7mW91Aft4TpuW6NRJUfUIp6xkmVL4uBorbJ
-         MHMnpwSJdaZoLVr+iG2PuHlIm+6SGOC04erTs87Td+8njiqh3XDLwj8lBcJSl9GRSJ0q
-         w8CdtrUOcLfAQqjExBd+KxR/AO94wvM/h1KRJ+U6FMxjhjGn0gUewO8LmhHyac29qhbd
-         vsFevaQa9aToISr7d8t1bu9GYd2z9Xhy+0BtW7/EIfqBw1Z5eqYwWix31X1VvqHyelwI
-         8ZRYa62QSP7C0A1fMwm52MvDdss39kI//QkBqzGuP5yGS1ZEv9v10cWhpUgVdt311PCX
-         KXsw==
+        d=gmail.com; s=20230601; t=1761329382; x=1761934182; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7uYPj0SfejBh3YiQ4X3su8BApVdqBraujAWalEDiN6k=;
+        b=AaDIQ10nHVSPD7uFXcSBTcJUUhX/+piy6ma/Goy0ErP7E1dvK7d92erzXvyGyweIhV
+         eqv3lE38m6s4oqT87AWOVjFHg1FxkmgngpOyVtQM/Tmxizc5KoN+EShQ7BgurxcpUACF
+         CCfUy3wbsInEsHhv2t9J/2k7Aq9CDYtGVo7hgdFsUW+SWZs1DXAg7/FU2GDqfpOCBxXV
+         3rQZSoOBFTJnwmC7n7PmiARwm25GgS/b/8YHm7HbkX4AwHFHv84DVGZNgENZc/Z2DUcR
+         kURBgO8LshvP3xK/nOi2E31s9+2vaM5SZkxz2QK4lwzuNkDQev4bY9T+5ZNm8jrKKO6F
+         i52w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761329343; x=1761934143;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0r3GG6uH17KZoPbGFRVq5aXoneRvur4IlIF76waTAhc=;
-        b=D+tlTJKK+WhWSMmdAQwEOCb/dfZMIAhgA06a4QyP1Ppr4884/cB/fLgna6DOw+qQFa
-         I6UoYzxdQ/aY0qbdx8mSnN8AvW4L5ANVcoEqVNMIA/URpsVOy95UUeVBhC2AQEdzVG/T
-         SKx4w9MAjyvwkPyPvQp3SeUxu+T+e3bDqHpZTIt1Wq8I2gZ5O/tIK9sZst415U6v+COJ
-         x0psuHoq6BF+Pac3y84hCVTYqWUBZMK1vHjhJSvIL9BJigfPR0gjlJbu7iWgklLvf3xn
-         F7fW2XWr5L2FiJbcuIsZoB5pVgfTy9KlQnQjKQey5wfv6MeIGiCDpIiLkJEf8ebT7KEw
-         0Cbw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfkOfGeT6ix+LWgK54veShj9+bW2HYgYLP7WI+qstAuq4vGa6EuS3j8w343+6JRfcJsXTBpmpHe0ww6W8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG8ZDQVZWhEtLNeqozT58Pd+6le5TiCUL2H7xYZMT8YMuwCSKU
-	dPDM8lGm7TPIz8zvA4sfo0ys7xhspWjQQLo93ywVvxRg45gAsrtgwiMJ8PY7r4i5H1KLhs5wMUQ
-	uK4SSG3T0g1MMYmn2IMqTuWZagMU0tKE=
-X-Gm-Gg: ASbGncsK5cgV2HjfCi31UKc89R4BFZvTLDrZkbM3Ng3j46x2sOx+yE9sDzvuqRq/J20
-	dsh6wjSioFeMkf1tQzQZ62iO92n+/Q/W9JuoY6sPGyzZFE4IurpiuLJMvHSDd1HlgXGQGVhwbMj
-	VdRWLmIcXqiCE67jki/Wpvjelk9t09O3iOIFrNtadpb6QYE7phkTTf8xZXmsm1ItyCVu83/brk8
-	F8dUozCk4BURsbVtubE8tajyeUb7WvxsjisXTy65fIyqxjpvS5Sh3qyS2pZ6W2/+QPwW0wCFXNH
-	xA8txmBFZS7ge/mzPw==
-X-Google-Smtp-Source: AGHT+IEd2S0CoOnsCEqdQWr53aL//daPs2zGPzlplFARXHXFtEQSkqVuew1/vErGx9hY2N+n/Yhj4MUm3fZG4jwvHts=
-X-Received: by 2002:a05:600c:3b8d:b0:46d:27b7:e7e5 with SMTP id
- 5b1f17b1804b1-47117917572mr276080945e9.32.1761329342449; Fri, 24 Oct 2025
- 11:09:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761329382; x=1761934182;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7uYPj0SfejBh3YiQ4X3su8BApVdqBraujAWalEDiN6k=;
+        b=tOgZCaxRp17HXWwUFIzY1F5/o+BevLIavXwOACHNfSNDEuwbNA2ow50QbBQAZY7d0P
+         2TKAU79UJTpqhVEsPQ/pNMKf0TcBQh1ApJ7Pk0sM5J2zPEVB0F1gdaW/j6Nj1MwwpqLM
+         yThpfViIuPakI5l/2FFDXV8LjLMOQF3YjMSTnb9T2Q0HNJRMh/rI4IYapaNYTnqwvKb3
+         46w06zxFh6sx/WQ+F8Aip72lRsDpzNShQrqzVlTw/Wm+V9UfOaSzAgF0In167DhAnlu5
+         jI89+Gjee8bTWiZNUdDGjjl3wCt/kwbaMxiQcTr3/dfjbmlse/xlcnuN9E+c72U9dn/9
+         gmmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPJbh69b1WM905iNeAReSbGisFy5DPvRz/i7pGn6wwc0V3x4xiIvPtDIH+hx5wpPqBI2Q5q/NLUiMI9iM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjwRWnhD6RvA8Y1H+4WppSjfQFpNcoPww+uyeFSlTewm87RoZl
+	hEjPRI9hfwPaBYhLuUatS/dAj9QL36LQr4vobtGUimL+8q420AWzYQMQ
+X-Gm-Gg: ASbGncut9eYGV65k2v7sg0EVACffxjsJwACeT4NZVTyn0IbgLQHcCJfcwmaq4UiXxxp
+	WfIVB5ZAm8BE3AoOyFqtzvaX0qgF0Zsd2jESRDetXToz0KDTdKaaRLVn4wfDmogSqbRomcjXPSR
+	18DTi4ggl81mYHeKcfClvD+ZM5L7u/u9UYbemSBQ+3kCzhXEvBF8My1WT1/P10TVwgvOHGkt4x/
+	pCN6mSiZrNLrDEbqWNjPQ31Hkzp1a+gz7o5/WKJsA2HArdhDm4JCrIriWCjc7YZt395CVrODl56
+	qcPwnU5hBRbMqfQskpHKyT0HmUkGc0n25MJzvAs5rryieQW6FOvsaYXd5PS5AIFI3ACN2Y3Pjx3
+	a7rAMx5VJXS6bN4k5u1vAC5oFqCrjwdWftX2+FlIGnCVQ64oXcHSMF4UCCiyYsea7bwdV8+5DR6
+	rLL8pM4DNJRScibWgo
+X-Google-Smtp-Source: AGHT+IEs14yzKo807oappAF1m6JTB8e3oPccYkCYJQsAbVjRETvcZutpUdb8D5Sas5c982XlhF6cwA==
+X-Received: by 2002:a05:6a00:99c:b0:7a2:7fd2:4132 with SMTP id d2e1a72fcca58-7a28685ed77mr3453308b3a.22.1761329381658;
+        Fri, 24 Oct 2025 11:09:41 -0700 (PDT)
+Received: from tixy.nay.do ([2405:201:8000:a149:4670:c55c:fe13:754d])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274dbffacsm6679137b3a.66.2025.10.24.11.09.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 11:09:41 -0700 (PDT)
+From: Ankan Biswas <spyjetfayed@gmail.com>
+To: ajit.khaparde@broadcom.com,
+	sriharsha.basavapatna@broadcom.com,
+	somnath.kotur@broadcom.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	khalid@kernel.org,
+	david.hunter.linux@gmail.com,
+	linux-kernel-mentees@lists.linux.dev,
+	Ankan Biswas <spyjetfayed@gmail.com>
+Subject: [PATCH v2] net: ethernet: emulex: benet: fix adapter->fw_on_flash truncation warning
+Date: Fri, 24 Oct 2025 23:39:26 +0530
+Message-ID: <20251024180926.3842-1-spyjetfayed@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023-fix-slab-accounting-v2-1-0e62d50986ea@suse.cz>
- <CAADnVQJS_RUTnpCX5etS_qGD=jgHjtY_Mtc5GQqPwvyyTfghdg@mail.gmail.com>
- <aPrBp_vG_D-8qG_E@hyeyoo> <CAADnVQK+3GLbq4GjOYO0Q6vhURPyNyy70bZKUUwRpLuK-R8NAA@mail.gmail.com>
- <aPrecUasNUbEkLlS@hyeyoo> <cee707e7-b7f7-4c21-8887-2cb69d73df93@suse.cz> <aPtIqm3LaRfCVQ8L@hyeyoo>
-In-Reply-To: <aPtIqm3LaRfCVQ8L@hyeyoo>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 24 Oct 2025 11:08:51 -0700
-X-Gm-Features: AWmQ_blsModMP22bdNbVqa2N139hiiPx7zCrnoVxTggAjMOSrvwRYYINiPlR6I0
-Message-ID: <CAADnVQ+H+VLFROjJJYkbaT6ED_ecFzu4eLci1oP9C0kDp7Aa9Q@mail.gmail.com>
-Subject: Re: [PATCH v2] slab: fix slab accounting imbalance due to defer_deactivate_slab()
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Alexei Starovoitov <ast@kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 24, 2025 at 2:36=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> wr=
-ote:
->
-> >
-> > Note that deactivate_slab() contains VM_BUG_ON(!old.frozen);
-> > we would have seen this triggered if we were passing unfrozen slabs to
-> > (defer_)deactivate_slab(). I assume it's also why the "unlucky, discard=
-"
-> > code marks it frozen before calling defer_deactivate_slab() (and this p=
-atch
-> > removes that).
+The benet driver copies both fw_ver (32 bytes) and fw_on_flash (32 bytes)
+into ethtool_drvinfo->fw_version (32 bytes), leading to a potential
+string truncation warning when built with W=1.
 
-Yes, exactly, since that's what deactivate_slab() wants to see.
+Store fw_on_flash in ethtool_drvinfo->erom_version instead, which some
+drivers use to report secondary firmware information.
 
-> > So I think we're fine?
->
-> Yes.
+Signed-off-by: Ankan Biswas <spyjetfayed@gmail.com>
+---
+ .../net/ethernet/emulex/benet/be_ethtool.c    | 100 ++++++++++--------
+ 1 file changed, 54 insertions(+), 46 deletions(-)
 
-All my concerns were answered. I guess I understand it enough now to:
-Acked-by: Alexei Starovoitov <ast@kernel.org>
+diff --git a/drivers/net/ethernet/emulex/benet/be_ethtool.c b/drivers/net/ethernet/emulex/benet/be_ethtool.c
+index f9216326bdfe..42803999ea1d 100644
+--- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
++++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
+@@ -221,12 +221,20 @@ static void be_get_drvinfo(struct net_device *netdev,
+ 	struct be_adapter *adapter = netdev_priv(netdev);
+ 
+ 	strscpy(drvinfo->driver, DRV_NAME, sizeof(drvinfo->driver));
+-	if (!memcmp(adapter->fw_ver, adapter->fw_on_flash, FW_VER_LEN))
++	if (!memcmp(adapter->fw_ver, adapter->fw_on_flash, FW_VER_LEN)) {
+ 		strscpy(drvinfo->fw_version, adapter->fw_ver,
+ 			sizeof(drvinfo->fw_version));
+-	else
+-		snprintf(drvinfo->fw_version, sizeof(drvinfo->fw_version),
+-			 "%s [%s]", adapter->fw_ver, adapter->fw_on_flash);
++
++	} else {
++		strscpy(drvinfo->fw_version, adapter->fw_ver,
++			sizeof(drvinfo->fw_version));
++
++		/*
++		 * Report fw_on_flash in ethtool's erom_version field.
++		 */
++		strscpy(drvinfo->erom_version, adapter->fw_on_flash,
++			sizeof(drvinfo->erom_version));
++	}
+ 
+ 	strscpy(drvinfo->bus_info, pci_name(adapter->pdev),
+ 		sizeof(drvinfo->bus_info));
+@@ -241,7 +249,7 @@ static u32 lancer_cmd_get_file_len(struct be_adapter *adapter, u8 *file_name)
+ 	memset(&data_len_cmd, 0, sizeof(data_len_cmd));
+ 	/* data_offset and data_size should be 0 to get reg len */
+ 	lancer_cmd_read_object(adapter, &data_len_cmd, 0, 0, file_name,
+-			       &data_read, &eof, &addn_status);
++				   &data_read, &eof, &addn_status);
+ 
+ 	return data_read;
+ }
+@@ -252,7 +260,7 @@ static int be_get_dump_len(struct be_adapter *adapter)
+ 
+ 	if (lancer_chip(adapter))
+ 		dump_size = lancer_cmd_get_file_len(adapter,
+-						    LANCER_FW_DUMP_FILE);
++							LANCER_FW_DUMP_FILE);
+ 	else
+ 		dump_size = adapter->fat_dump_len;
+ 
+@@ -301,13 +309,13 @@ static int lancer_cmd_read_file(struct be_adapter *adapter, u8 *file_name,
+ }
+ 
+ static int be_read_dump_data(struct be_adapter *adapter, u32 dump_len,
+-			     void *buf)
++				 void *buf)
+ {
+ 	int status = 0;
+ 
+ 	if (lancer_chip(adapter))
+ 		status = lancer_cmd_read_file(adapter, LANCER_FW_DUMP_FILE,
+-					      dump_len, buf);
++						  dump_len, buf);
+ 	else
+ 		status = be_cmd_get_fat_dump(adapter, dump_len, buf);
+ 
+@@ -635,8 +643,8 @@ static int be_get_link_ksettings(struct net_device *netdev,
+ 
+ 			supported =
+ 				convert_to_et_setting(adapter,
+-						      auto_speeds |
+-						      fixed_speeds);
++							  auto_speeds |
++							  fixed_speeds);
+ 			advertising =
+ 				convert_to_et_setting(adapter, auto_speeds);
+ 
+@@ -683,9 +691,9 @@ static int be_get_link_ksettings(struct net_device *netdev,
+ }
+ 
+ static void be_get_ringparam(struct net_device *netdev,
+-			     struct ethtool_ringparam *ring,
+-			     struct kernel_ethtool_ringparam *kernel_ring,
+-			     struct netlink_ext_ack *extack)
++				 struct ethtool_ringparam *ring,
++				 struct kernel_ethtool_ringparam *kernel_ring,
++				 struct netlink_ext_ack *extack)
+ {
+ 	struct be_adapter *adapter = netdev_priv(netdev);
+ 
+@@ -737,7 +745,7 @@ static int be_set_phys_id(struct net_device *netdev,
+ 						 &adapter->beacon_state);
+ 		if (status)
+ 			return be_cmd_status(status);
+-		return 1;       /* cycle on/off once per second */
++		return 1;		/* cycle on/off once per second */
+ 
+ 	case ETHTOOL_ID_ON:
+ 		status = be_cmd_set_beacon_state(adapter, adapter->hba_port_num,
+@@ -764,7 +772,7 @@ static int be_set_dump(struct net_device *netdev, struct ethtool_dump *dump)
+ 	int status;
+ 
+ 	if (!lancer_chip(adapter) ||
+-	    !check_privilege(adapter, MAX_PRIVILEGES))
++		!check_privilege(adapter, MAX_PRIVILEGES))
+ 		return -EOPNOTSUPP;
+ 
+ 	switch (dump->flag) {
+@@ -873,7 +881,7 @@ static int be_test_ddr_dma(struct be_adapter *adapter)
+ }
+ 
+ static u64 be_loopback_test(struct be_adapter *adapter, u8 loopback_type,
+-			    u64 *status)
++				u64 *status)
+ {
+ 	int ret;
+ 
+@@ -883,7 +891,7 @@ static u64 be_loopback_test(struct be_adapter *adapter, u8 loopback_type,
+ 		return ret;
+ 
+ 	*status = be_cmd_loopback_test(adapter, adapter->hba_port_num,
+-				       loopback_type, 1500, 2, 0xabc);
++					   loopback_type, 1500, 2, 0xabc);
+ 
+ 	ret = be_cmd_set_loopback(adapter, adapter->hba_port_num,
+ 				  BE_NO_LOOPBACK, 1);
+@@ -920,7 +928,7 @@ static void be_self_test(struct net_device *netdev, struct ethtool_test *test,
+ 
+ 		if (test->flags & ETH_TEST_FL_EXTERNAL_LB) {
+ 			if (be_loopback_test(adapter, BE_ONE_PORT_EXT_LOOPBACK,
+-					     &data[2]) != 0)
++						 &data[2]) != 0)
+ 				test->flags |= ETH_TEST_FL_FAILED;
+ 			test->flags |= ETH_TEST_FL_EXTERNAL_LB_DONE;
+ 		}
+@@ -999,10 +1007,10 @@ static int be_get_eeprom_len(struct net_device *netdev)
+ 	if (lancer_chip(adapter)) {
+ 		if (be_physfn(adapter))
+ 			return lancer_cmd_get_file_len(adapter,
+-						       LANCER_VPD_PF_FILE);
++							   LANCER_VPD_PF_FILE);
+ 		else
+ 			return lancer_cmd_get_file_len(adapter,
+-						       LANCER_VPD_VF_FILE);
++							   LANCER_VPD_VF_FILE);
+ 	} else {
+ 		return BE_READ_SEEPROM_LEN;
+ 	}
+@@ -1022,10 +1030,10 @@ static int be_read_eeprom(struct net_device *netdev,
+ 	if (lancer_chip(adapter)) {
+ 		if (be_physfn(adapter))
+ 			return lancer_cmd_read_file(adapter, LANCER_VPD_PF_FILE,
+-						    eeprom->len, data);
++							eeprom->len, data);
+ 		else
+ 			return lancer_cmd_read_file(adapter, LANCER_VPD_VF_FILE,
+-						    eeprom->len, data);
++							eeprom->len, data);
+ 	}
+ 
+ 	eeprom->magic = BE_VENDOR_ID | (adapter->pdev->device<<16);
+@@ -1074,7 +1082,7 @@ static void be_set_msg_level(struct net_device *netdev, u32 level)
+ }
+ 
+ static int be_get_rxfh_fields(struct net_device *netdev,
+-			      struct ethtool_rxfh_fields *cmd)
++				  struct ethtool_rxfh_fields *cmd)
+ {
+ 	struct be_adapter *adapter = netdev_priv(netdev);
+ 	u64 flow_type = cmd->flow_type;
+@@ -1140,8 +1148,8 @@ static int be_get_rxnfc(struct net_device *netdev, struct ethtool_rxnfc *cmd,
+ }
+ 
+ static int be_set_rxfh_fields(struct net_device *netdev,
+-			      const struct ethtool_rxfh_fields *cmd,
+-			      struct netlink_ext_ack *extack)
++				  const struct ethtool_rxfh_fields *cmd,
++				  struct netlink_ext_ack *extack)
+ {
+ 	struct be_adapter *adapter = netdev_priv(netdev);
+ 	u32 rss_flags = adapter->rss_info.rss_flags;
+@@ -1154,7 +1162,7 @@ static int be_set_rxfh_fields(struct net_device *netdev,
+ 	}
+ 
+ 	if (cmd->data != L3_RSS_FLAGS &&
+-	    cmd->data != (L3_RSS_FLAGS | L4_RSS_FLAGS))
++		cmd->data != (L3_RSS_FLAGS | L4_RSS_FLAGS))
+ 		return -EINVAL;
+ 
+ 	switch (cmd->flow_type) {
+@@ -1174,7 +1182,7 @@ static int be_set_rxfh_fields(struct net_device *netdev,
+ 		break;
+ 	case UDP_V4_FLOW:
+ 		if ((cmd->data == (L3_RSS_FLAGS | L4_RSS_FLAGS)) &&
+-		    BEx_chip(adapter))
++			BEx_chip(adapter))
+ 			return -EINVAL;
+ 
+ 		if (cmd->data == L3_RSS_FLAGS)
+@@ -1185,7 +1193,7 @@ static int be_set_rxfh_fields(struct net_device *netdev,
+ 		break;
+ 	case UDP_V6_FLOW:
+ 		if ((cmd->data == (L3_RSS_FLAGS | L4_RSS_FLAGS)) &&
+-		    BEx_chip(adapter))
++			BEx_chip(adapter))
+ 			return -EINVAL;
+ 
+ 		if (cmd->data == L3_RSS_FLAGS)
+@@ -1211,7 +1219,7 @@ static int be_set_rxfh_fields(struct net_device *netdev,
+ }
+ 
+ static void be_get_channels(struct net_device *netdev,
+-			    struct ethtool_channels *ch)
++				struct ethtool_channels *ch)
+ {
+ 	struct be_adapter *adapter = netdev_priv(netdev);
+ 	u16 num_rx_irqs = max_t(u16, adapter->num_rss_qs, 1);
+@@ -1237,14 +1245,14 @@ static int be_set_channels(struct net_device  *netdev,
+ 	 * combined and either RX-only or TX-only channels.
+ 	 */
+ 	if (ch->other_count || !ch->combined_count ||
+-	    (ch->rx_count && ch->tx_count))
++		(ch->rx_count && ch->tx_count))
+ 		return -EINVAL;
+ 
+ 	if (ch->combined_count > be_max_qp_irqs(adapter) ||
+-	    (ch->rx_count &&
+-	     (ch->rx_count + ch->combined_count) > be_max_rx_irqs(adapter)) ||
+-	    (ch->tx_count &&
+-	     (ch->tx_count + ch->combined_count) > be_max_tx_irqs(adapter)))
++		(ch->rx_count &&
++		 (ch->rx_count + ch->combined_count) > be_max_rx_irqs(adapter)) ||
++		(ch->tx_count &&
++		 (ch->tx_count + ch->combined_count) > be_max_tx_irqs(adapter)))
+ 		return -EINVAL;
+ 
+ 	adapter->cfg_num_rx_irqs = ch->combined_count + ch->rx_count;
+@@ -1265,7 +1273,7 @@ static u32 be_get_rxfh_key_size(struct net_device *netdev)
+ }
+ 
+ static int be_get_rxfh(struct net_device *netdev,
+-		       struct ethtool_rxfh_param *rxfh)
++			   struct ethtool_rxfh_param *rxfh)
+ {
+ 	struct be_adapter *adapter = netdev_priv(netdev);
+ 	int i;
+@@ -1285,8 +1293,8 @@ static int be_get_rxfh(struct net_device *netdev,
+ }
+ 
+ static int be_set_rxfh(struct net_device *netdev,
+-		       struct ethtool_rxfh_param *rxfh,
+-		       struct netlink_ext_ack *extack)
++			   struct ethtool_rxfh_param *rxfh,
++			   struct netlink_ext_ack *extack)
+ {
+ 	int rc = 0, i, j;
+ 	struct be_adapter *adapter = netdev_priv(netdev);
+@@ -1295,7 +1303,7 @@ static int be_set_rxfh(struct net_device *netdev,
+ 
+ 	/* We do not allow change in unsupported parameters */
+ 	if (rxfh->hfunc != ETH_RSS_HASH_NO_CHANGE &&
+-	    rxfh->hfunc != ETH_RSS_HASH_TOP)
++		rxfh->hfunc != ETH_RSS_HASH_TOP)
+ 		return -EOPNOTSUPP;
+ 
+ 	if (rxfh->indir) {
+@@ -1309,27 +1317,27 @@ static int be_set_rxfh(struct net_device *netdev,
+ 		}
+ 	} else {
+ 		memcpy(rsstable, adapter->rss_info.rsstable,
+-		       RSS_INDIR_TABLE_LEN);
++			   RSS_INDIR_TABLE_LEN);
+ 	}
+ 
+ 	if (!hkey)
+-		hkey =  adapter->rss_info.rss_hkey;
++		hkey =	adapter->rss_info.rss_hkey;
+ 
+ 	rc = be_cmd_rss_config(adapter, rsstable,
+-			       adapter->rss_info.rss_flags,
+-			       RSS_INDIR_TABLE_LEN, hkey);
++				   adapter->rss_info.rss_flags,
++				   RSS_INDIR_TABLE_LEN, hkey);
+ 	if (rc) {
+ 		adapter->rss_info.rss_flags = RSS_ENABLE_NONE;
+ 		return -EIO;
+ 	}
+ 	memcpy(adapter->rss_info.rss_hkey, hkey, RSS_HASH_KEY_LEN);
+ 	memcpy(adapter->rss_info.rsstable, rsstable,
+-	       RSS_INDIR_TABLE_LEN);
++		   RSS_INDIR_TABLE_LEN);
+ 	return 0;
+ }
+ 
+ static int be_get_module_info(struct net_device *netdev,
+-			      struct ethtool_modinfo *modinfo)
++				  struct ethtool_modinfo *modinfo)
+ {
+ 	struct be_adapter *adapter = netdev_priv(netdev);
+ 	u8 page_data[PAGE_DATA_LEN];
+@@ -1417,8 +1425,8 @@ static int be_set_priv_flags(struct net_device *netdev, u32 flags)
+ 
+ const struct ethtool_ops be_ethtool_ops = {
+ 	.supported_coalesce_params = ETHTOOL_COALESCE_USECS |
+-				     ETHTOOL_COALESCE_USE_ADAPTIVE |
+-				     ETHTOOL_COALESCE_USECS_LOW_HIGH,
++					 ETHTOOL_COALESCE_USE_ADAPTIVE |
++					 ETHTOOL_COALESCE_USECS_LOW_HIGH,
+ 	.get_drvinfo = be_get_drvinfo,
+ 	.get_wol = be_get_wol,
+ 	.set_wol = be_set_wol,
+-- 
+2.51.1
+
 
