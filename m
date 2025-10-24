@@ -1,195 +1,79 @@
-Return-Path: <linux-kernel+bounces-868176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB4AC04936
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:53:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E90BC04915
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A68F83A1B90
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:52:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3870B18933EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C5F22CBD7;
-	Fri, 24 Oct 2025 06:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B2F275AE2;
+	Fri, 24 Oct 2025 06:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gy65XFbe"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cA14dYLz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974561E4AE;
-	Fri, 24 Oct 2025 06:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2801924BD04;
+	Fri, 24 Oct 2025 06:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761288726; cv=none; b=L0VK0m5319Pq5zHMy3/IZsHsZTnmhi1L0J9ODDSN6mzDUQX9gCv6CgBAjrhnb1qoKhMgjSMVyaGMD0P8qyIqTtomczsQBEKPyMrLSuNUWVJ/0Gea1op3qNVkMG74Z6mdfeP5EixbZiXk7jzy390Q7OA7XiFqcKLNHs3ZOkrgdFA=
+	t=1761288686; cv=none; b=toqVwIAdcQkSizlWOW6ARfw63eME398bZT1cX0HNjYL7F5MUCDxE6VfeRb5E5Ifi33qnPKh5mMkUp4WbwGyJLwRgn7vEqpz+0/WaIp6Jvut7vEUkA1PWMsa/qqajXZjNEIN1plOxa7L3C8CrlXNwv1I9jo2TC/cYsb9ecn3ZAho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761288726; c=relaxed/simple;
-	bh=lYIgpBfxvQ4WzZ5IqAIE/hqG83YejURQMyOiNm0N3uI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M9FQeviH5ZbsTzdYSz16Vq738ObJqIZPEr3cjhNb1ptyhvRB7GPTiAUdbnxeSOvC1S6DCoAiN8eeF/REzODwchQ1ZPX/Yu7iFeNt3VwIYkpDk9aRhfivNeHeLjaI7O2wSdsSZFHgkbnbO+glqgRoMFFxU2Aev3HoCgtntm2H2vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gy65XFbe; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=9m
-	kIPgSKt9newQ2psHkDbYkEBK8hyNFyicM9TJzk87A=; b=gy65XFbenl1WKHYcti
-	LOg9BDmF3UcOx7VBvzoR41RLLqOPUKRTQz/xRDf6NcCmXH87H9I7TtAU41jXUZNs
-	I3Z43RVpV9xTl4NSEF5EWgQKXIxDo3iuKqkAq9AhzRNXM1pW3F37V7vQIKwhz/k+
-	uODEizwq3jfjqkRZvxOz9+cJo=
-Received: from zhaoxin-MS-7E12.. (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3P2DqIftoFHjCCQ--.7622S2;
-	Fri, 24 Oct 2025 14:51:23 +0800 (CST)
-From: Xin Zhao <jackzxcui1989@163.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	tj@kernel.org,
-	hch@infradead.org,
-	Xin Zhao <jackzxcui1989@163.com>
-Subject: [PATCH] serial: 8250_dma: add workqueue to flip tty buffer
-Date: Fri, 24 Oct 2025 14:51:20 +0800
-Message-Id: <20251024065120.1951924-1-jackzxcui1989@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761288686; c=relaxed/simple;
+	bh=BGXJbcgR47vbLX0csbAK9SHcXP8iwZy1HP69ARA31RY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cjhgrw6Gjm4g8O1TRskn2jIEM0Ve85rafZbw5He5FNiyPx+nk0+xq1bVBf7vjJie5L0rrLoF+BBWHhG3Zbpns6Ojc8xngEcXygBzt0A4bbx1u6GbiqSg7cnbCb2Di8BldWnVacmC4EXKUnR7oDxi9h1jSzQKV/wTVYk3z8VO41Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cA14dYLz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4381AC4CEF1;
+	Fri, 24 Oct 2025 06:51:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761288685;
+	bh=BGXJbcgR47vbLX0csbAK9SHcXP8iwZy1HP69ARA31RY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cA14dYLzv1WJaCBlakQu2FQXWHIL/B+3yKCN/io/0GZSHqd3q/w6tmxUKrnhHzbJa
+	 qQVNVgjjlQAhm8HgX1tMp6UNKDct2e8Yo5u4zC3BE17UzxUv7MCb3xlDGp0FJAMZj6
+	 i5xGRU7VHjSk9XKGzCK0ti4nqt/qAvH8MC2cLAlcUZiJppMpKigdc3JFMisF+gYalK
+	 p9l9L7Z+4t9uSVV3fAxDeJvBac/VnfC9EYJD2sf1IQxEumWLHQt1ME5YkNJStLOPWm
+	 LtKl1tZzrelGjMK6hEbaF0jh1KG6XBp+pvoRZyJw+7isNlvm+imRGj2Q8S88vv85Ph
+	 KcKZPMuR6nidA==
+Date: Fri, 24 Oct 2025 08:51:23 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Wesley Cheng <wesley.cheng@oss.qualcomm.com>, 
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v8] dt-bindings: usb: qcom,snps-dwc3: Add the SM8750
+ compatible
+Message-ID: <20251024-nice-nonchalant-seahorse-8add5c@kuoka>
+References: <20251021050954.3462613-1-krishna.kurapati@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3P2DqIftoFHjCCQ--.7622S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGF48KF4xZFWDWw4DKw1Dtrb_yoWrKF4Upa
-	n3CrWDt348K3Wjyw4DGF48XF4S9F1Syr17GrZrK34ayFn0yr95uFn7tF9YvFWkCrZ7tr1Y
-	vF1jga43CF12qFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zikpnPUUUUU=
-X-CM-SenderInfo: pmdfy650fxxiqzyzqiywtou0bp/xtbCvwubpWj7Ietf-wAA3z
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251021050954.3462613-1-krishna.kurapati@oss.qualcomm.com>
 
-On the embedded platform, certain critical data, such as IMU data, is
-transmitted through UART. The tty_flip_buffer_push interface in the TTY
-layer uses system_unbound_wq to handle the flipping of the TTY buffer.
-Although the unbound workqueue can create new threads on demand and wake
-up the kworker thread on an idle CPU, it may be preeempted by real-time
-tasks or other high-prio tasks. dma_rx_complete calls spin_lock_irqsave
-which do not disable preempt but disable migrate in rt-linux, leading to
-the kworker thread running the dma_rx_complete work cannot be pulled by
-other cpu when idle_balance, causing long delays.
-In our system, the processing interval for each frame of IMU data
-transmitted via UART can experience significant jitter due to this issue.
-Instead of the expected 10 to 15 ms frame processing interval, we see
-spikes up to 30 to 35 ms. Moreover, in just one or two hours, there can
-be 2 to 3 occurrences of such high jitter, which is quite frequent. This
-jitter exceeds the software's tolerable limit of 20 ms.
-Introduce wq_tty_flip in tty_port, allocating a workqueue using WQ_SYSFS,
-so that we can set cpumask and nice dynamically.
-We set the cpumask to the same cpu where the IMU data is handled and has
-less long-time high-prio jobs, and then set nice to -20, the frame
-processing interval remains between 10 and 15ms, no jitter occurs.
+On Tue, Oct 21, 2025 at 10:39:54AM +0530, Krishna Kurapati wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Add qcom,sm8750-dwc3 compatible to flattened implementation binding.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
 
----
-Change in v2:
-- Do not add new module parameters
-  as suggested by Greg KH
-- Set WQ_SYSFS to allow properties changes from userspace
-  as suggested by Tejun Heo
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Xin Zhao <jackzxcui1989@163.com>
----
- drivers/tty/serial/8250/8250_dma.c | 19 ++++++++++++++++++-
- drivers/tty/tty_buffer.c           |  2 +-
- include/linux/tty_port.h           |  1 +
- 3 files changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250_dma.c b/drivers/tty/serial/8250/8250_dma.c
-index bdd26c9f3..7ff705a78 100644
---- a/drivers/tty/serial/8250/8250_dma.c
-+++ b/drivers/tty/serial/8250/8250_dma.c
-@@ -207,6 +207,7 @@ EXPORT_SYMBOL_GPL(serial8250_rx_dma_flush);
- int serial8250_request_dma(struct uart_8250_port *p)
- {
- 	struct uart_8250_dma	*dma = p->dma;
-+	struct tty_port		*tport = &p->port.state->port;
- 	phys_addr_t rx_dma_addr = dma->rx_dma_addr ?
- 				  dma->rx_dma_addr : p->port.mapbase;
- 	phys_addr_t tx_dma_addr = dma->tx_dma_addr ?
-@@ -244,6 +245,11 @@ int serial8250_request_dma(struct uart_8250_port *p)
- 		goto release_rx;
- 	}
- 
-+	/* Use the default workqueue then if alloc_workqueue failed */
-+	tport->wq_tty_flip = alloc_workqueue("ttyS%d-flip-wq",
-+					     WQ_UNBOUND | WQ_SYSFS,
-+					     0, p->port.line);
-+
- 	dmaengine_slave_config(dma->rxchan, &dma->rxconf);
- 
- 	/* Get a channel for TX */
-@@ -252,7 +258,7 @@ int serial8250_request_dma(struct uart_8250_port *p)
- 						       p->port.dev, "tx");
- 	if (!dma->txchan) {
- 		ret = -ENODEV;
--		goto release_rx;
-+		goto release_rx_wq;
- 	}
- 
- 	/* 8250 tx dma requires dmaengine driver to support terminate */
-@@ -294,6 +300,11 @@ int serial8250_request_dma(struct uart_8250_port *p)
- 	return 0;
- err:
- 	dma_release_channel(dma->txchan);
-+release_rx_wq:
-+	if (tport->wq_tty_flip) {
-+		destroy_workqueue(tport->wq_tty_flip);
-+		tport->wq_tty_flip = NULL;
-+	}
- release_rx:
- 	dma_release_channel(dma->rxchan);
- 	return ret;
-@@ -303,6 +314,7 @@ EXPORT_SYMBOL_GPL(serial8250_request_dma);
- void serial8250_release_dma(struct uart_8250_port *p)
- {
- 	struct uart_8250_dma *dma = p->dma;
-+	struct tty_port *tport = &p->port.state->port;
- 
- 	if (!dma)
- 		return;
-@@ -322,6 +334,11 @@ void serial8250_release_dma(struct uart_8250_port *p)
- 	dma->txchan = NULL;
- 	dma->tx_running = 0;
- 
-+	if (tport->wq_tty_flip) {
-+		destroy_workqueue(tport->wq_tty_flip);
-+		tport->wq_tty_flip = NULL;
-+	}
-+
- 	dev_dbg_ratelimited(p->port.dev, "dma channels released\n");
- }
- EXPORT_SYMBOL_GPL(serial8250_release_dma);
-diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
-index 67271fc0b..7f83f377f 100644
---- a/drivers/tty/tty_buffer.c
-+++ b/drivers/tty/tty_buffer.c
-@@ -530,7 +530,7 @@ void tty_flip_buffer_push(struct tty_port *port)
- 	struct tty_bufhead *buf = &port->buf;
- 
- 	tty_flip_buffer_commit(buf->tail);
--	queue_work(system_unbound_wq, &buf->work);
-+	queue_work(port->wq_tty_flip ?: system_unbound_wq, &buf->work);
- }
- EXPORT_SYMBOL(tty_flip_buffer_push);
- 
-diff --git a/include/linux/tty_port.h b/include/linux/tty_port.h
-index 332ddb936..f5a5e50ff 100644
---- a/include/linux/tty_port.h
-+++ b/include/linux/tty_port.h
-@@ -121,6 +121,7 @@ struct tty_port {
- 	int			drain_delay;
- 	struct kref		kref;
- 	void			*client_data;
-+	struct workqueue_struct *wq_tty_flip;
- };
- 
- /* tty_port::iflags bits -- use atomic bit ops */
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
