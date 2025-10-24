@@ -1,358 +1,179 @@
-Return-Path: <linux-kernel+bounces-868034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335ECC0433A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:00:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1838AC04343
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE4124F5041
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:00:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC4F01A078A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B3724BD04;
-	Fri, 24 Oct 2025 03:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zMcELTIj"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22B018E20;
+	Fri, 24 Oct 2025 03:01:35 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A4B1DFDE
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92964146D53
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761274842; cv=none; b=h7TWj7K+noUcC2TCpozxwHDjregFV57HDWP8nV6eTVtzRsjHbal1Qb8F8l0t35MGknH860y5byIrse8RHf7DpDiBEobVDaeLuc6tZokFnWSRDmrsaCBHHNWE18ziILuZ8ZLuNbgszOnvAWg3Hvj+x1yuIuqgHgVffoXSwrhY7m8=
+	t=1761274895; cv=none; b=dSJLeu7A9kteHqxXqirl9OXblwXWxTTtgx0DmucnctwlqWZ6gVHuJcp52AlCY6PwOYn3NSzqPy6QIv54aBuLYNuMOE7raEYKZ08RY149bEaa+7rT+oIJeWG16/gHKCo3LqpVlaVGLMFox84xSAeTdwjdNNpYYN/O8qp9C7gCnCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761274842; c=relaxed/simple;
-	bh=rx0ws1SUpyQLxCqOpX2cHJCF3GCu07xIjjdT8hkeh/I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VHoh2l5mU/ltV19XM9xkhb3nXtKyno8PGPh5ZbFUE4XyNwKsceOb3lsAxKhqpIo/ogNvscfgfmbGFoZz4qFPFyuIOBK64Zao4505qg1IoyV3500vJoZEVDeqTIzX2tGC7KgBQyLNx5Zl5FFl5dnIERwPWS/4ApgPV7e7E0gH+cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zMcELTIj; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-27c369f898fso24061585ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:00:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761274840; x=1761879640; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ytg8t1NA2HbwNdbywfdqRIZcojg/s4LnaoZSEoWgpTU=;
-        b=zMcELTIjOm4SuA/gy1VIRQQWvyXnGuNfjb37P2st2NZeW5WiV9uWkp01Jri+OFkBxz
-         MpA8/TtqKdMcVSTt/NxjxLgPiLHqxQl+Z+WaBtWa808ds2TZ6LbNUZIdHrv9cKZ299ZJ
-         Jb5/QKa8UiiFt6nIg5WRSQqrHI3xtmUGOkNF20FVvhMRfCiN8n01brnCcSacLdqrxHk7
-         Z9xEsL26I+/6mGuhPrAIsSrRKp6Evs57AbJJK2PX+denSkPHIGSt8plKDAKPgKNfvwOi
-         1sG4n1/MAWJZSCWtLBjQ8oi1+FfDfgip8AisH1gPeO7KDGLAx6/ufMCXp3s7BQ4KciKS
-         kn2g==
+	s=arc-20240116; t=1761274895; c=relaxed/simple;
+	bh=0GtS0kYFdaRd/BYgGUKH+CbvdlCdoAy7wqF4xeq60y0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XhjISNVsUl+zVCEYwvDyANzXMcLQMuUwSHsHhzIIVALq07bgYlHs1oOHMKpTsRK+pECI0eochJ6KiAJ6fo82vfyNiqgN2Fw5InQCv1jZ0CK1hXsy6SxGW43Lug19d7NiupW3pQkS4Ptby+MuVq64XMjTNKqkyaZlQ2wHFwPs63w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-430b0adb3e2so21141045ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:01:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761274840; x=1761879640;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ytg8t1NA2HbwNdbywfdqRIZcojg/s4LnaoZSEoWgpTU=;
-        b=AlsktIahOlUYXjgX82KH7j5UiAkCBQwGg0+bhJR4xLbypQNBhtV1y9pMmuWYcphDQz
-         stJDFVCxE+5Nr1G7wkdCr7PF6VB1cqzUscJ8dHmNTOHfEdkhhWRztcuzZIidAJmA/xGF
-         0Y5H+x54Klt+x8JF9/vSs6hgVxcwdkOkZURVSr/4TLCTnr1OZ30/FTi/lCtiXFHSasat
-         +RwiiyTV/Fc1wwQTt9EpC4m+Z6KByHKDrbD3sD5jhMqm4xdKU3VOpEXSb1Oq45RhSqy8
-         NrFw1j+6Pz+FVLAAKAcrvnydvTioijeHyLeJCkxj6lrh5okNgb1UNseCqHldfHHOCZ1J
-         TpNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpuQn9hUFAr95/IKNs8VU2e7j5D9SgAmyst6Qe7u91DfaBTK+A5DMmdlZKH2OMnxhSJdUQSRjtpUEBgcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDnLASSFkFZYh7AzGpI98Ecl2QqrH8OP8wwBOdm1nhBRJLD9RI
-	7/xj3DWeIR8CSqScViV4Pttzk5FlosKsYiVzk9HLUpOJvLNd6D8goIwZ0qM6EbYG5cN9gM5JjiE
-	a7LiTEdcYADWkZks9zqhlq+SpPo6SDyPy1h2Tr293
-X-Gm-Gg: ASbGnctMg6SoYUMLdgmnwcmbPuIF0U6tkspuQ+K0G2MRf9/vFo8Cc/YgBiRDyhVPTnp
-	hzTc5IPbGyzTf6g5sF7Xf/1gMCpL1z9oCv2WCTkvjGtZ1o3/CPgEiIjtOTkgbvo8Yu1xnSgg3UM
-	Tg9wqFX06z/6sPkmnNH57nFhFIlGYzAqCV6quQoaK8hdXWyUZUmdOTofNPMiPlGLIjHSIc/XZHh
-	LszM109bHEaH2y43IuG5OGVW8WFUYFjqBQ3dhQ9Q3KBTnPxWZxYWsdEN4uh6PV/+6tLYzcKNygQ
-	weRLe4eCzKj5vAY=
-X-Google-Smtp-Source: AGHT+IEjKz+o4zRszWREaWKQfE3zfa5mKZgELYaGHhFCsdxyYCPygqg7wIJLqcd7MDKvie8LROLAJlYMoFie0y4LpOw=
-X-Received: by 2002:a17:903:440c:b0:264:8a8d:92dd with SMTP id
- d9443c01a7336-290c9cb8b95mr348230235ad.20.1761274839948; Thu, 23 Oct 2025
- 20:00:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761274892; x=1761879692;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I5iw4aQ39omYzXDLTOmbhxQhu49vi1eIRV0XiI0UZLU=;
+        b=q198w1QdgdYARRa4e7TF9VpGwidVY87X/OKMq2oZkiLfzks0CAsaOizMi+12Kd8efW
+         /Pp0Y8DJTEKdZPm/zyanXaplqz2rN//5qQLvYt9PSWCg5eKl6YxBo+MR5fT0w4xwpBh5
+         jfUxo1e+ahYj/hqkyDY1rO/o/T5s4e2SOYHGYTcPcxL+tiPwCjDeI9vmcMjZ1i8AgDp6
+         hyHRNJaDWUNNakgxAV4hRqmc1VC6LzasHDQnJ8Wes3RtH3BHoQZ52yAXm7PDLHRS3hMz
+         jcdaS951qnJPacQMSoaSHHLW/C/ZK5CiNfZCrIv3hbJVa1mGUsPaOC0VVSiccsjMs3Tg
+         mVmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOANEL/9M8Ou5+pciK4epMAq1cXELOl5Dynaeys9DHMWrxxxMVasUy1a3FKCNZtPf8/VuBzH57O2BlB7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxsGtb2K30QOqqEQb3t3PfpfolM7969uo6b8XID8SYJFvu7JED
+	4DdHchc4xZDwNhNSZVXXN4Q+tFi7UvHqI1/OyOFQdQelS5AZs4LQRTKAj5Jx5TEeYlwNLxESJ08
+	U8ShjeSOStQG7sqKJD/7TJwCbe1PJ/627njN1Ns6+9dsUqoABy7E9XS/eo+4=
+X-Google-Smtp-Source: AGHT+IH8pdKvw0Rcy3OhgQKAGZqf25evIEa5CEX825+VM0lIeIVsp0ykYtjuMv49QdSmtdytmdrwiqCLKw/EE3TDyCZjLK1rvMkX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023165841.8164-1-adelodunolaoluwa.ref@yahoo.com> <20251023165841.8164-1-adelodunolaoluwa@yahoo.com>
-In-Reply-To: <20251023165841.8164-1-adelodunolaoluwa@yahoo.com>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Thu, 23 Oct 2025 20:00:28 -0700
-X-Gm-Features: AS18NWCPooRWM5F3yFVrYkOizgWMJPcRipp4qj9tu8QpgOd96rIWKXrebnLJf4o
-Message-ID: <CAAVpQUAX-+5cOCaZrA1DbMTLrUEhCsK=6JSHAQgSNhbOyQ06MA@mail.gmail.com>
-Subject: Re: [PATCH] selftests/unix: Add test for ECONNRESET and EOF behaviour
-To: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, shuah@kernel.org, horms@kernel.org, 
-	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	david.hunter.linux@gmail.com
+X-Received: by 2002:a05:6e02:220f:b0:431:d685:a32a with SMTP id
+ e9e14a558f8ab-431eb624025mr15343615ab.6.1761274892550; Thu, 23 Oct 2025
+ 20:01:32 -0700 (PDT)
+Date: Thu, 23 Oct 2025 20:01:32 -0700
+In-Reply-To: <68f6a4c8.050a0220.1be48.0013.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68faec0c.a70a0220.3bf6c6.00ea.GAE@google.com>
+Subject: Re: [syzbot] [btrfs?] general protection fault in btrfs_evict_inode
+From: syzbot <syzbot+d991fea1b4b23b1f6bf8@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
+	mhiramat@kernel.org, mssola@mssola.com, rostedt@goodmis.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Thanks for adding tests.
+syzbot has found a reproducer for the following issue on:
 
-> [PATCH] selftests/unix: Add test for ECONNRESET and EOF behaviour
+HEAD commit:    ab431bc39741 Merge tag 'net-6.18-rc3' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16acae7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df98b4d1d5944c56
+dashboard link: https://syzkaller.appspot.com/bug?extid=d991fea1b4b23b1f6bf8
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11acae7c580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=121e0be2580000
 
-nit: The common prefix is "selftest: af_unix:".
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-ab431bc3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1d39c25550bc/vmlinux-ab431bc3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5dafbb4c36ac/bzImage-ab431bc3.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/9c180a1c4631/mount_2.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=14407734580000)
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/54ad7c21e681/mount_6.gz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d991fea1b4b23b1f6bf8@syzkaller.appspotmail.com
 
-On Thu, Oct 23, 2025 at 9:59=E2=80=AFAM Sunday Adelodun
-<adelodunolaoluwa@yahoo.com> wrote:
->
-> Add selftests verifying the EOF and ECONNRESET behaviour of
-> UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM). The tests document
-> Linux's semantics and clarify the long-standing differences with BSD.
->
-> Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
-> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
-> ---
->  tools/testing/selftests/net/unix/Makefile     |   5 +
->  .../selftests/net/unix/test_unix_connreset.c  | 147 ++++++++++++++++++
->  2 files changed, 152 insertions(+)
->  create mode 100644 tools/testing/selftests/net/unix/Makefile
->  create mode 100644 tools/testing/selftests/net/unix/test_unix_connreset.=
-c
-
-The test for af_unix is placed under tools/testing/selftests/net/af_unix.
-
-
->
-> diff --git a/tools/testing/selftests/net/unix/Makefile b/tools/testing/se=
-lftests/net/unix/Makefile
-> new file mode 100644
-> index 000000000000..a52992ba23d9
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/unix/Makefile
-> @@ -0,0 +1,5 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +TEST_GEN_PROGS :=3D test_unix_connreset
-> +
-> +include ../../lib.mk
-> +
-> diff --git a/tools/testing/selftests/net/unix/test_unix_connreset.c b/too=
-ls/testing/selftests/net/unix/test_unix_connreset.c
-> new file mode 100644
-> index 000000000000..a8720c7565cb
-> --- /dev/null
-> +++ b/tools/testing/selftests/net/unix/test_unix_connreset.c
-> @@ -0,0 +1,147 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Selftest for UNIX socket close and ECONNRESET behaviour.
-
-nit: s/UNIX/AF_UNIX/
-
-> + *
-> + * This test verifies that:
-> + *  1. SOCK_STREAM sockets return EOF when peer closes normally.
-> + *  2. SOCK_STREAM sockets return ECONNRESET if peer closes with unread =
-data.
-> + *  3. SOCK_DGRAM sockets do not return ECONNRESET when peer closes,
-> + *     unlike BSD where this error is observed.
-> + *
-> + * These tests document the intended Linux behaviour, distinguishing it =
-from BSD.
-
-I'd not mention BSD as it could be outdated again.
-
-
-> + *
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <fcntl.h>
-> +#include <unistd.h>
-> +#include <errno.h>
-> +#include <sys/socket.h>
-> +#include <sys/un.h>
-> +#include "../../kselftest_harness.h"
-> +
-> +#define SOCK_PATH "/tmp/test_unix_connreset.sock"
-> +
-> +static void remove_socket_file(void)
-> +{
-> +       unlink(SOCK_PATH);
-> +}
-> +
-> +/* Test 1: peer closes normally */
-> +TEST(stream_eof)
-
-I think most of the code can be shared by defining
-FIXTURE_VARIANT().
-
-e.g. variant->unread_data can consolidate Test 1&2.
-
-
-> +{
-> +       int server, client, child;
-> +       struct sockaddr_un addr =3D {0};
-> +       char buf[16] =3D {0};
-
-IIRC, {0} only initialises the first entry and we had a problem
-in kernel code, so simply use "=3D {};" everywhere.
+BTRFS info (device loop0): enabling auto defrag
+BTRFS info (device loop0): force zlib compression, level 3
+BTRFS info (device loop0): max_inline set to 0
+Oops: general protection fault, probably for non-canonical address 0xdffffc000000003e: 0000 [#1] SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x00000000000001f0-0x00000000000001f7]
+CPU: 0 UID: 0 PID: 5490 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:btrfs_root_id fs/btrfs/ctree.h:333 [inline]
+RIP: 0010:do_perf_trace_btrfs__inode include/trace/events/btrfs.h:204 [inline]
+RIP: 0010:perf_trace_btrfs__inode+0x44d/0x580 include/trace/events/btrfs.h:204
+Code: c1 e8 03 42 80 3c 30 00 74 08 4c 89 ff e8 db 43 66 fe 4d 8b 2f 4d 8d bd f7 01 00 00 49 81 c5 fe 01 00 00 4c 89 f8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 0f 85 e4 00 00 00 4c 89 e8 48 c1 e8 03 42 0f
+RSP: 0018:ffffc90002b7f800 EFLAGS: 00010203
+RAX: 000000000000003e RBX: ffffe8ffffc4ec68 RCX: ffffffff83c10ce7
+RDX: 0000000000000010 RSI: ffff888058f38000 RDI: ffffe8ffffc4ec30
+RBP: ffffc90002b7f8d0 R08: 7c477e297af65e39 R09: 5d3eb9a580cd6d81
+R10: 7c477e297af65e39 R11: 5d3eb9a580cd6d81 R12: ffffe8ffffc4ec28
+R13: 00000000000001fe R14: dffffc0000000000 R15: 00000000000001f7
+FS:  000055557f4fd500(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000564f8ff39890 CR3: 0000000012254000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ __do_trace_btrfs_inode_evict include/trace/events/btrfs.h:255 [inline]
+ trace_btrfs_inode_evict include/trace/events/btrfs.h:255 [inline]
+ btrfs_evict_inode+0x107a/0x1110 fs/btrfs/inode.c:5480
+ evict+0x504/0x9c0 fs/inode.c:810
+ btrfs_create_common+0x1c9/0x230 fs/btrfs/inode.c:6800
+ btrfs_mkdir+0xc7/0xf0 fs/btrfs/inode.c:6927
+ vfs_mkdir+0x306/0x510 fs/namei.c:4453
+ do_mkdirat+0x247/0x590 fs/namei.c:4486
+ __do_sys_mkdirat fs/namei.c:4503 [inline]
+ __se_sys_mkdirat fs/namei.c:4501 [inline]
+ __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4501
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2decb8d717
+Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 02 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd6e980498 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
+RAX: ffffffffffffffda RBX: 00007ffd6e980520 RCX: 00007f2decb8d717
+RDX: 00000000000001ff RSI: 0000200000000140 RDI: 00000000ffffff9c
+RBP: 0000200000000180 R08: 00002000000000c0 R09: 0000000000000000
+R10: 0000200000000180 R11: 0000000000000246 R12: 0000200000000140
+R13: 00007ffd6e9804e0 R14: 0000000000000000 R15: 0000200000000080
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:btrfs_root_id fs/btrfs/ctree.h:333 [inline]
+RIP: 0010:do_perf_trace_btrfs__inode include/trace/events/btrfs.h:204 [inline]
+RIP: 0010:perf_trace_btrfs__inode+0x44d/0x580 include/trace/events/btrfs.h:204
+Code: c1 e8 03 42 80 3c 30 00 74 08 4c 89 ff e8 db 43 66 fe 4d 8b 2f 4d 8d bd f7 01 00 00 49 81 c5 fe 01 00 00 4c 89 f8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 0f 85 e4 00 00 00 4c 89 e8 48 c1 e8 03 42 0f
+RSP: 0018:ffffc90002b7f800 EFLAGS: 00010203
+RAX: 000000000000003e RBX: ffffe8ffffc4ec68 RCX: ffffffff83c10ce7
+RDX: 0000000000000010 RSI: ffff888058f38000 RDI: ffffe8ffffc4ec30
+RBP: ffffc90002b7f8d0 R08: 7c477e297af65e39 R09: 5d3eb9a580cd6d81
+R10: 7c477e297af65e39 R11: 5d3eb9a580cd6d81 R12: ffffe8ffffc4ec28
+R13: 00000000000001fe R14: dffffc0000000000 R15: 00000000000001f7
+FS:  000055557f4fd500(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000564f8ff39890 CR3: 0000000012254000 CR4: 0000000000352ef0
+----------------
+Code disassembly (best guess):
+   0:	c1 e8 03             	shr    $0x3,%eax
+   3:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1)
+   8:	74 08                	je     0x12
+   a:	4c 89 ff             	mov    %r15,%rdi
+   d:	e8 db 43 66 fe       	call   0xfe6643ed
+  12:	4d 8b 2f             	mov    (%r15),%r13
+  15:	4d 8d bd f7 01 00 00 	lea    0x1f7(%r13),%r15
+  1c:	49 81 c5 fe 01 00 00 	add    $0x1fe,%r13
+  23:	4c 89 f8             	mov    %r15,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 0f b6 04 30       	movzbl (%rax,%r14,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 e4 00 00 00    	jne    0x11b
+  37:	4c 89 e8             	mov    %r13,%rax
+  3a:	48 c1 e8 03          	shr    $0x3,%rax
+  3e:	42                   	rex.X
+  3f:	0f                   	.byte 0xf
 
 
-> +       ssize_t n;
-> +
-> +       server =3D socket(AF_UNIX, SOCK_STREAM, 0);
-
-Try using variant->type for SOCK_STREAM,
-SOCK_DGRAM, and SOCK_SEQPACKET.
-
-See unix_connect.c, or you could reuse the fixtures
-of err =3D=3D 0 there.
-
-> +       ASSERT_GE(server, 0);
-
-nit: The 1st arg is "expected", and the 2nd is "seen",
-so ASSERT_NE(-1, server) (or ASSERT_LT(-1, server)).
-
-Same for other places.
-
-
-> +
-> +       addr.sun_family =3D AF_UNIX;
-> +       strcpy(addr.sun_path, SOCK_PATH);
-> +       remove_socket_file();
-> +
-> +       ASSERT_EQ(bind(server, (struct sockaddr *)&addr, sizeof(addr)), 0=
-);
-
-I personally feel easy to read this style:
-
-err =3D bind();
-ASSERT_EQ(0, err);
-
-> +       ASSERT_EQ(listen(server, 1), 0);
-> +
-> +       client =3D socket(AF_UNIX, SOCK_STREAM, 0);
-> +       ASSERT_GE(client, 0);
-> +       ASSERT_EQ(connect(client, (struct sockaddr *)&addr, sizeof(addr))=
-, 0);
-> +
-> +       child =3D accept(server, NULL, NULL);
-> +       ASSERT_GE(child, 0);
-> +
-> +       /* Peer closes normally */
-> +       close(child);
-> +
-> +       n =3D recv(client, buf, sizeof(buf), 0);
-> +       EXPECT_EQ(n, 0);
-> +       TH_LOG("recv=3D%zd errno=3D%d (%s)", n, errno, strerror(errno));
-
-I printed errno just for visibility, and you can simply use
-ASSERT here too like
-
-if (n =3D=3D -1)
-    ASSERT_EQ(ECONNRESET, errno)
-
-(I'm assuming Test 1 & 2 will share most code)
-
-> +
-> +       close(client);
-> +       close(server);
-> +       remove_socket_file();
-
-This will not be executed if the program fails at ASSERT_XX(),
-so move it to FIXTURE_TEARDOWN().
-
-
-
-> +}
-> +
-> +/* Test 2: peer closes with unread data */
-> +TEST(stream_reset_unread)
-> +{
-> +       int server, client, child;
-> +       struct sockaddr_un addr =3D {0};
-> +       char buf[16] =3D {0};
-> +       ssize_t n;
-> +
-> +       server =3D socket(AF_UNIX, SOCK_STREAM, 0);
-> +       ASSERT_GE(server, 0);
-> +
-> +       addr.sun_family =3D AF_UNIX;
-> +       strcpy(addr.sun_path, SOCK_PATH);
-> +       remove_socket_file();
-> +
-> +       ASSERT_EQ(bind(server, (struct sockaddr *)&addr, sizeof(addr)), 0=
-);
-> +       ASSERT_EQ(listen(server, 1), 0);
-> +
-> +       client =3D socket(AF_UNIX, SOCK_STREAM, 0);
-> +       ASSERT_GE(client, 0);
-> +       ASSERT_EQ(connect(client, (struct sockaddr *)&addr, sizeof(addr))=
-, 0);
-> +
-> +       child =3D accept(server, NULL, NULL);
-> +       ASSERT_GE(child, 0);
-> +
-> +       /* Send data that will remain unread by client */
-> +       send(client, "hello", 5, 0);
-> +       close(child);
-> +
-> +       n =3D recv(client, buf, sizeof(buf), 0);
-> +       EXPECT_LT(n, 0);
-> +       EXPECT_EQ(errno, ECONNRESET);
-> +       TH_LOG("recv=3D%zd errno=3D%d (%s)", n, errno, strerror(errno));
-> +
-> +       close(client);
-> +       close(server);
-> +       remove_socket_file();
-> +}
-> +
-> +/* Test 3: SOCK_DGRAM peer close */
-> +TEST(dgram_reset)
-> +{
-> +       int server, client;
-> +       int flags;
-> +       struct sockaddr_un addr =3D {0};
-> +       char buf[16] =3D {0};
-> +       ssize_t n;
-> +
-> +       server =3D socket(AF_UNIX, SOCK_DGRAM, 0);
-> +       ASSERT_GE(server, 0);
-> +
-> +       addr.sun_family =3D AF_UNIX;
-> +       strcpy(addr.sun_path, SOCK_PATH);
-> +       remove_socket_file();
-> +
-> +       ASSERT_EQ(bind(server, (struct sockaddr *)&addr, sizeof(addr)), 0=
-);
-> +
-> +       client =3D socket(AF_UNIX, SOCK_DGRAM, 0);
-> +       ASSERT_GE(client, 0);
-> +       ASSERT_EQ(connect(client, (struct sockaddr *)&addr, sizeof(addr))=
-, 0);
-> +
-> +       send(client, "hello", 5, 0);
-> +       close(server);
-> +
-> +       flags =3D fcntl(client, F_GETFL, 0);
-> +       fcntl(client, F_SETFL, flags | O_NONBLOCK);
-
-You can save fcntl() with socket(..., ... | SOCK_NONBLOCK, ...).
-
-
-> +
-> +       n =3D recv(client, buf, sizeof(buf), 0);
-> +       TH_LOG("recv=3D%zd errno=3D%d (%s)", n, errno, strerror(errno));
-> +       /* Expect EAGAIN or EWOULDBLOCK because there is no datagram and =
-peer is closed. */
-> +       EXPECT_LT(n, 0);
-> +       EXPECT_TRUE(errno =3D=3D EAGAIN);
-> +
-> +       close(client);
-> +       remove_socket_file();
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> +
-> --
-> 2.43.0
->
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
