@@ -1,131 +1,123 @@
-Return-Path: <linux-kernel+bounces-868932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA84C06866
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:34:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74206C0687B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ECCC7503B02
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:34:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD90F3B5FFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602BE319859;
-	Fri, 24 Oct 2025 13:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2451C31D397;
+	Fri, 24 Oct 2025 13:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="F0w4pRMk"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nqCm20sK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nv00PF8K"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D39303C88
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F26131961D;
+	Fri, 24 Oct 2025 13:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761312852; cv=none; b=maPVb6l3wipfT/YxohU4PuiWtF2M9kv9SBP6sK/DacAcR3VlNgnb3/Oa3Vzzn7siUgzfyBMp9BVxe32xEg5VAUWHZhM21ecPpabkhtZHYGV4HGmNpSYJDha1//POlda2jfNTOKwRGVlfsU9KExaUFl81HPRqHoBLVqlfQHV9N8M=
+	t=1761312817; cv=none; b=YyOJn78UwCDBcxNfpJNGaR0+uLNECnc1imSe+/bTrQlAdEAvTnPeQs9A7UR0znXdVSdxzZm83F9H+1VEuh4WqCh6dYBYtYOGui5uckAiB8e5/ryTLt0ItZVzOLww45A15h0uyG8UwVDlvspVwshv4E8pFpNZZarhOVa1p1DD4Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761312852; c=relaxed/simple;
-	bh=haLaA7lxMDvRDLFEREFCcYqogj0xnH+XSFGC/4Oul/E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ApUbux+0m0p4KNH7KKoiZpGFD72xCXvP06RPbKgBOBiHhvKfxwc+VTiDU8iViMqhArg10TdcFzD7nkNY5mcy/uJdg9JdHS9roYY+vGzA54C87wtC9qPCZqzFlu0n84nr2Be5/c7b2gR7DVt9a93mr11rFmxv1CVzedFScgm2MEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=F0w4pRMk; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-63c4b41b38cso4382022a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:34:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1761312849; x=1761917649; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=haLaA7lxMDvRDLFEREFCcYqogj0xnH+XSFGC/4Oul/E=;
-        b=F0w4pRMkKeRNLAHzOSEZ9I0J5rfLBXQbR3ktGeMgOXOnly7wFGOBkQH04V70IEHk0i
-         lJpyjY+gcU2J3q/EhE15knmJkv9KHftHLORTpENavzGt2J87MC99FkqU9YNyg1Loqo2W
-         FX++8LQULPRoYW0M68BPoZn6Og+XRg+mITm4sccbxgQyRRGASXRSg48vMyzN2MpkA315
-         uv81yTtt6uaTbzcSb+RXfNcAhPC08phLcIRxokALYBe8l8ILwb1vwFqDG717k4PNsxrI
-         DIOxCKWDF+JInBssepgO7tzrM1lLnx4Nq9r4f45MGXqkMcRrqrfp1N9IPwe3Zi+Ug7Rs
-         oLPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761312849; x=1761917649;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=haLaA7lxMDvRDLFEREFCcYqogj0xnH+XSFGC/4Oul/E=;
-        b=kDZUN7jGq2PyfzH6B+T57NlGG4eIJciOzXwkMnasSnrkuPSgfJTGOV6FeFQXOWXJaH
-         21Kr57RIb1Hv8YMm7N70uQiuLR9OrgKddR0jHWsOd65nWXhUbKLK9fcGkbvwaLL2Gxvv
-         1eN1S5pBDeTc49XhRQoN6S7FPmPsJGsmEYT01LD7r6CH7/i21FUNCLYx7o5uKrE5hzOW
-         cuSg2s/Y65crTl7TG+Afe6zwa82X9f9eYVumhRlciRJ7WGZ+xHhXSPXIT5MxRmOwJGR2
-         uOtnkEsHg24p2iyaarh1rcugSUJbwl/CB7ZK/NjxabCKguxwhdJDVFzZq4j3VDjliiTk
-         IwaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXstoF9Dp8/z01V+khx8MQKPhZes+m832zNnB4UMxIA8LfIo9ZZSLn/Nr9G9E97Fp9G3TCdKW525FGUwyk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4DDG7VJSbs7WLPayHUxYyr+CQneAdzxppQH1BBc+L3OLEgEPv
-	5cZM4PxHKMDiB5Wx3EgpC8/cNp5ywsgAaOaWVF8H03aB82MJ0UQ+LdjfaffponY9W8Nh0YDtEzG
-	vOWwLTq7pSlb5BhRf2FfqtgI4uyKFRPFA2svcVlwTzA==
-X-Gm-Gg: ASbGncs5dIRAOT4SBMiqm+i7+yoDrkcWcaAHB5xF3KRZ6tyC9WTNb0VgP4HX3zdfU3l
-	CHCU3cSN/qYlTThIfhsuQscAZUFIIqDbZWMTOD/S1uuAqG9qgvTkYLpNUAe6SD55gLKb3sN32gu
-	KlXuMVp6aIAimLWgoJIDXTe17K0TPYXGY0cks+112oApbFJoA5Pr1/q3niefXuU1fEqgqy4Br7x
-	RrZZZgDfYN4H37RsL1P7jRspWhPjB1l09I0ZoZnin9VS4gzgEr2f5PZIA==
-X-Google-Smtp-Source: AGHT+IEzIAcc3Ex0g+fxYGjBqIzlBf1vJcJLTWbeACMQemDEhzKA6K/edpqUysNPgOqtGsZaZRYXJAcNxrPf4tFjkag=
-X-Received: by 2002:a05:6402:51c6:b0:63c:1745:a5cf with SMTP id
- 4fb4d7f45d1cf-63e3e10b6f1mr5434005a12.12.1761312848891; Fri, 24 Oct 2025
- 06:34:08 -0700 (PDT)
+	s=arc-20240116; t=1761312817; c=relaxed/simple;
+	bh=qrnHo1FnXHCcCfqiCLQpWfnkISn2nzcUj2DtsUtO3wI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qt6XhNpsZY+ocZZ9nIrliD+DZncU3NtcxwBztb6qvmwiy38OovbbpsAUwGQzhyElrqv8ysAI1DA+4ZOLuwpp2WC473bMogsMKmE6LyMT7HdV1wnJZGFni8fegIt6/uu93mcNk3syrExUO/+U2JTfGB2c8r7ofoIeUY53uzbxsh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nqCm20sK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nv00PF8K; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 24 Oct 2025 15:33:32 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761312814;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qrnHo1FnXHCcCfqiCLQpWfnkISn2nzcUj2DtsUtO3wI=;
+	b=nqCm20sKvMO5TsGNC/Hkxvr+cpaNJHYtQlbQBrsqJMaukcIxFqnVZe65hYnfP4qXpYOPX7
+	kP2V0VRNteeWjS/MNpupKetHTdH09uAEdueDat4JDVxDZnt+OgnwbR/5TugDBiGSG6XeM0
+	9wVp9J7zL2GlLGPLfem9odLo0FkU6NL0WX/XtgSkFjlUr1ufd/f45834ON3w2nHf7ujukY
+	LIhPPY5V3XuS88c6hRUEcI5GmGgXDFiI/aJ9YrzJfruXMYGbqAz873J0IHLmmF0zO9/TvE
+	jGel1GomJsnK7UCBnx/JwxPilullXe72SIzDeHc7i21wHquyZj9334xQ/wWy5g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761312814;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qrnHo1FnXHCcCfqiCLQpWfnkISn2nzcUj2DtsUtO3wI=;
+	b=nv00PF8KedcQZ1f0QT9sCAzjWfduQbJSOH0ZYHKqn8zFH7m95ecM7PUJa1kzLOil9N3Pku
+	utUl3tnuGOTHDtCg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Crystal Wood <crwood@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Lukas Wunner <lukas@wunner.de>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org, Attila Fazekas <afazekas@redhat.com>,
+	linux-pci@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver OHalloran <oohall@gmail.com>
+Subject: Re: [PATCH] genirq/manage: Reduce priority of forced secondary IRQ
+ handler
+Message-ID: <20251024133332.wSQOgUZb@linutronix.de>
+References: <83f58870043e2ae64f19b3a2169b5c3cf3f95130.1757346718.git.lukas@wunner.de>
+ <87348g95yd.ffs@tglx>
+ <aM_5uXlknW286cfg@wunner.de>
+ <1b3684b424af051b5cb1fbce9ab65fc5cdf2b1a1.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022005719.3670224-1-pasha.tatashin@soleen.com>
- <20251022005719.3670224-8-pasha.tatashin@soleen.com> <aPnaDxwkvEKAFlRO@kernel.org>
-In-Reply-To: <aPnaDxwkvEKAFlRO@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 24 Oct 2025 09:33:32 -0400
-X-Gm-Features: AWmQ_bl_g5ZmeO-lTP-LhDGMe93IbEIGbMAHW9grfT3etU4xtd3jfQfdW6oYRhY
-Message-ID: <CA+CK2bDUNfHBX=VpCww8ERa__+CUM5-a7pEi=hSu-W+S_-JXng@mail.gmail.com>
-Subject: Re: [PATCHv7 7/7] liveupdate: kho: move kho debugfs directory to liveupdate
-To: Mike Rapoport <rppt@kernel.org>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net, 
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org, 
-	ojeda@kernel.org, pratyush@kernel.org, rdunlap@infradead.org, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1b3684b424af051b5cb1fbce9ab65fc5cdf2b1a1.camel@redhat.com>
 
-On Thu, Oct 23, 2025 at 3:32=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> On Tue, Oct 21, 2025 at 08:57:19PM -0400, Pasha Tatashin wrote:
-> > Now, that LUO and KHO both live under kernel/liveupdate, it makes
-> > sense to also move the kho debugfs files to liveupdate/
->
-> But we don't have LUO yet :/
+On 2025-10-03 13:25:53 [-0500], Crystal Wood wrote:
+> On Sun, 2025-09-21 at 15:12 +0200, Lukas Wunner wrote:
+> > On Sat, Sep 20, 2025 at 11:20:26PM +0200, Thomas Gleixner wrote:
+> > > I obviously understand that the proposed change squashs the whole cla=
+ss
+> > > of similar (not yet detected) issues, but that made me look at that
+> > > particular instance nevertheless.
+> > >=20
+> > > All aer_irq() does is reading two PCI config words, writing one and t=
+hen
+> > > sticking 64bytes into a KFIFO. All of that is hard interrupt safe. So
+> > > arguably this AER problem can be nicely solved by the below one-liner,
+> > > no?
+> >=20
+> > The one-liner (which sets IRQF_NO_THREAD) was what Crystal originally
+> > proposed:
+> >=20
+> > https://lore.kernel.org/r/20250902224441.368483-1-crwood@redhat.com/
+>=20
+> So, is the plan to apply the original patch then?
 
-Yes, I need to update the comment :-)
+Did we settle on something?
+I wasn't sure if you can mix IRQF_NO_THREAD with IRQF_ONESHOT for shared
+handlers. If that is a thing, we Crystal's original would do it. Then
+there is the question if we want to go the "class" problem to ensure
+that one handler can preempt the other.
+And maybe I should clean up few ones tglx pointed out that provide a
+primary handler for no reason=E2=80=A6
 
->
-> > The old names:
-> > /sys/kernel/debug/kho/out/
-> > /sys/kernel/debug/kho/in/
-> >
-> > The new names:
-> > /sys/kernel/debug/liveupdate/kho_out/
-> > /sys/kernel/debug/liveupdate/kho_in/
-> >
-> > Also, export the liveupdate_debufs_root, so future LUO selftests could
-> > use it as well.
->
-> Let's postpone this change until then.
-> TBH, I don't see anything wrong with KHO and LUO selftest debugfs files l=
-iving at the top
-> level, i.e
+> Thanks,
+> Crystal
 
-It is not only about selftests, we are planning to add kexec telemetry
-that is going to be using KHO, and that should also be placed in the
-same directory. Let's keep them neatly in the same root directory, so
-we can use them for LUO/KHO/Telemetry and perhaps for other reasons.
-
-I also think, this patch is small, so it would be beneficial to land
-it now, and make it easier for LUO, and soon to be sent out the
-Telemetry series.
-
-Pasha
+Sebastian
 
