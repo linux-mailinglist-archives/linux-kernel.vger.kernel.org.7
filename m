@@ -1,181 +1,189 @@
-Return-Path: <linux-kernel+bounces-868004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E11BAC04202
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:32:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24768C04208
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A676319A7EDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:33:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBCA93B7E97
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAA525B1FC;
-	Fri, 24 Oct 2025 02:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3B625C80D;
+	Fri, 24 Oct 2025 02:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ei+CveU6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VFKZqeGi"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCC814B06C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A03C25A626
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761273169; cv=none; b=UjDduWpT3SPWVjBNDcBwmidR+dVXzsVOqDEsL7lz7yytH8dEUnvAcBoPxI1fB9zsbm2BfzJ7d0iZeDHSFac0Pnh7MxGq6ygYWp3rKOLsYimBVdf3C+YIHdo/BZ5ZbkawA5GOnwhwSIB4PBQhnO20A0bpt5KJdvFtpTIgR4tLc3I=
+	t=1761273171; cv=none; b=D1cB3XftcdLHZLxDSoLNz06aJl6nqWJH06dPKMofmCNcON72nrjZQmckEypmuIopzZYJ7Bu4kibr37ooEUnmH/3Lg5boHKtgPrBzXA8WWsZrp3zYA+RUt/jG3BLnskn8pTNNmGhABaW1iGgw9T6Ps1bduvXypOnI2sJa1RAkLNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761273169; c=relaxed/simple;
-	bh=Fmyb8/uY0fVcZFJrkmU4Ph3E9829amQmCC9ZWilJrIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W3M0aLzekuNagcwwovHDHwBPuawESy41g5C9f4WUHtPKUsKAloCmVlHYcv1ytgfRgjlROdF2oxwPPOg+0uUYCjnwl8BZhyz0jV/uLqhMmhvIdrUTZ0A1ZvfN216tw6DpnhKgT4KxQcHBotasnMXZEBcWCt8jNaG0HPum3MO8Fc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ei+CveU6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59NDtrGZ015966
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:32:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=K8n4jQJ0OSelSp8GbDvqIHis
-	YCrNm03CqsfjSom7lUs=; b=ei+CveU6DUojLyPgBThAtXMSMw1ukexnV7Y1Kbuv
-	/oKwWUCmC2Ig4HRts6V3s6+L7yzD1KSuChwZqPGWrnVttXdd2+s2xkMp23AM+N2b
-	hyBOULPPFdvIL+PJRqoyrOL8nuolzMNJzyEELU0S2c1oXgYJuRQjE+J5fTM0PXo3
-	GTQg6zmgbzpqBJW8aYZoS+84+8TdFn63ne/xLAqu9SyAXHoUlw7y7vRWdO2aKd6y
-	bVYOir0kZirfceU0onX6Uwy72XFyQma2jPraEj3lL5q8+WNoh+Vfogc9luDInfg9
-	2+OCWBpbYTnHIi6I4wvOTFnXP1uZNByHgUKm44dArZ95JQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49xkpsg4uk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:32:45 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4e8916e8d4aso76831291cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:32:45 -0700 (PDT)
+	s=arc-20240116; t=1761273171; c=relaxed/simple;
+	bh=vPG3a4hyOHJvHMWu+yLrW5rtrL6w0p7z3FURndaIuB4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZZDAyf8siymrqiChwdOvNwgKdEvcBTUkFZ+DjLtdDrQ96GbdvuN/HAuFisA7tUlP4vvn8wB7aeTvkUFc8ZLt+ZzAUoXXHzxX5QQjUQeUNbwPEEdkyw2rOxBnrmtMmg6hyBc03G97X/Xl9w2GKsjVHaO1TiBHJF/aAok0uKaJWoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VFKZqeGi; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7a213c3c3f5so2019783b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:32:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761273169; x=1761877969; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1BCjyoqVBOEFqTALONU11nUkdwL79cqW25g9s7nVg6Y=;
+        b=VFKZqeGi2WDBcVA/aOn2OQnwvTvCOw64cZDa12/Nq+81DPP3Jn6+J4UoRz7uUa9nu3
+         0r1p3sUknYnBEEbOaH5epp8DYEADOhnnf/vzzG8iKNiXzCez9BUgR27h5hBvJAT2UYhR
+         Y4g4pFcJXmAbccZw+0T2HHPcBF2xlIX02vohzeObpBK1q+B9e4JtT0A9c9P+T+1gvxyU
+         BNiL+5SIxDKsDlLfeYYvKDF/bCpI1UJVkrSc5Vvhe9/lqeHVbhWb1jx7l1rZjhxE+Cpj
+         orb1klBl5kAbQOOzNpIerJl/gT+YWqs9U5ROXJjzNKvLbcsrSOJf9Y+iXKAwODu11oWp
+         crsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761273164; x=1761877964;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K8n4jQJ0OSelSp8GbDvqIHisYCrNm03CqsfjSom7lUs=;
-        b=K4SHFUhuImSZ078r2QYiqDkxbeGJDFfnEvOYPJm1bUqn6I4yfRBcvLZ1RXV4YGu0C1
-         2rCVyLUMTeWfzVvcGMFt4tutOEFmwb0osn1ApY4i4JbB70gxX5HZmX+OLx5RCKwdji6f
-         XyxhLhuaj0QrpJYaerVOTXmDP2xHZW97bniq/JdCVT/WtRpazNQR0DMAM5RS2dJ+5R+x
-         jAQwAWaIXRDgNb8qa+RH2hg04esYMkSoeDHynXP+M/lWzx9DtrfCsEK8lma4PxVWKVsw
-         W5XHpNRGosXTO5Hc0rmiYs5CjZrSwVWdv1DPNv2tHX/I33VUFqWHGUPqGRCZZQNMNP7n
-         wP+g==
-X-Forwarded-Encrypted: i=1; AJvYcCX6Q/gWdaHyYCQ2P3Gr0ARIAIvhXiV71RNRaNrPkl0N/DblvlUP2YRZFmkhpXqUX+jbgYopz/aWm7IsuLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYLgVqc0xiAYsGMt+TdsZVRunFz5q0tWtiCThtSQE4uMIOMnN0
-	YtyahwEC060LzOoWgAs7AWOO4zzhQktN7CebNUbUQiyjAC0cBg3qDj2riyNrKEC6hS342pRChrp
-	dNh3OxqIQZARzhrVO8u5VC4tellXN+6EXHaFbjadCreSddGIBWHQve0TL7i4Le1t4b3M=
-X-Gm-Gg: ASbGncuCIPvchMuurWA2BgAowXHekeq7kK/b9q2HrIuIUFecCyXokdHZ+RBoiaFqQcy
-	hnQjFbBUCcdgOXG515k0r9gJ8bWwK30YGG2GzJkOgxbVeiY1T+Cquhos4c5XIWCM2yYhldUx/wY
-	FmU7oBLtXCKLe0sfAfEPdHAFVJdVGxmrsQw1W3N+sRChfniyybs8utPOqL3uPTWqq9j5hfyEDti
-	2QIki+RtQT8bIuSlKW+qIN0ZknAnFPLl/fie9mkxZeZcAWSI3i5z3fx1nD9tWLjKh0AUhu8kLHE
-	8QR5heZ19IeXnsCZtP6fYlOf0o+Fl0T9qJX/6AHb2KCkCiRx+JuXUOD6mnS2IC849a/A1TH63Mx
-	xqJ0bvWIiufeS5qOFQlUkd/jihSSPBHztobPMMwRPlrWKE8iZOo3NZyDtRVeY
-X-Received: by 2002:ac8:5a46:0:b0:4b3:3b2:2b4b with SMTP id d75a77b69052e-4e89d0507eemr299680021cf.0.1761273164492;
-        Thu, 23 Oct 2025 19:32:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH8RJLrpZlLDIekUoulVf3HkGeQaD97twoWzv+nd9iE5tF9H+Ujsga2U2zLGTAjXkx/iNwf2w==
-X-Received: by 2002:ac8:5a46:0:b0:4b3:3b2:2b4b with SMTP id d75a77b69052e-4e89d0507eemr299679691cf.0.1761273163987;
-        Thu, 23 Oct 2025 19:32:43 -0700 (PDT)
-Received: from yuanjiey.ap.qualcomm.com (Global_NAT1_IAD_FW.qualcomm.com. [129.46.232.65])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89c12056aefsm284098785a.48.2025.10.23.19.32.34
+        d=1e100.net; s=20230601; t=1761273169; x=1761877969;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1BCjyoqVBOEFqTALONU11nUkdwL79cqW25g9s7nVg6Y=;
+        b=RnR6FhWFfz/mXlzW2Bd2wBO/R/pk7PJHg/DQw3ecZ6diZtAIy3AxUUic2qYS9YnvrE
+         znPI620iVV3MgYxqiUu6/i5KnsfizfkVDjB3vrS85OuMpVc6BhqvSUgdrZprILYFjySz
+         OFLYEtbCezxA2alYUcV29U6AB9vTvNx142yUv0rHIir8XIhLydH2CZuBggvAdIBiFaev
+         JBU7S8xsA764gShOjylxPp25EBQeIi7MOz2RSYKZ4JfcifDmgQZq/SqLyDYmvAJkGnZ7
+         1MsHdYj1kosadq+m89+nYxIN2AQv6jDUzwSZcgmGdd89rvCv28vUVgedTHFvp6KKB2kl
+         Iyzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzquoP67WPmAsd533f6i4BUW5ny4rjfpwROsB8uGrLL8yC1J2a0LeyWrpuvRIrmOqGd+wt6Ux4MCxU1V4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCe9i4USx0qll0zI2nQQLmPNyCFTXRDisxL/0vO56LXg9aDJK4
+	jZjPolT2P78Lzecu7beW/cQBw0PF0jGCgl19ccPBH+8WcKrwGQXMkYPA
+X-Gm-Gg: ASbGnct1DLPGn0UG6NvdK3cQ17fyC37zoW+xhd3UaD4GjzF1/VFWUyflms/M2Zdy0N8
+	PFIkad8RkAJhk288hhEmhxerj92aVuFMZxKYHKnsNU9cwl6NglUsfNlZbl8zTkeYCl4cim4G9Db
+	F6v9d4/yJ53xCDaqJUd3uQ1CW23bWZjrQhc3w2v3a8qDj8PNXrCjmHY34i5j/RWZAnNgsH8+jZq
+	yWYA2DCOcgwXgcJoBJFnEw7gw4Bijo5xNAwB+0ev9udGYaalXHcAFRa4Jgh5yRU4ea1Ofxy0qjr
+	4ZveGCSAdTCKaA4Xh/KCDesIfQ3YGqZqdmI30iOL1CBeW49q37/QKmHC68LzNu2YGdfYYrBc2SK
+	+jVfqkJNflUxjVlsCyBwq0HZX0iGteAYsE9eYEt47o891F9y5ngEGd7boCw/Dkp52FluY+izvTB
+	AdsAxwhMI+IuX7/lr/C1A=
+X-Google-Smtp-Source: AGHT+IEWzefBMWHhbT3A3+27++kBjN34XpUbub5vApRotaEGAlnzC0h0kH5iwJYKPszI79kOOb+cOQ==
+X-Received: by 2002:a05:6a00:2e85:b0:77f:50df:df36 with SMTP id d2e1a72fcca58-7a286803147mr817035b3a.18.1761273169435;
+        Thu, 23 Oct 2025 19:32:49 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c085:21e8::149f? ([2620:10d:c090:400::5:c9ef])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274a602c8sm4174451b3a.7.2025.10.23.19.32.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 19:32:43 -0700 (PDT)
-Date: Fri, 24 Oct 2025 10:32:31 +0800
-From: yuanjiey <yuanjie.yang@oss.qualcomm.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
-        simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
-        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
-        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
-Subject: Re: [PATCH 00/12] drm/msm: Add support for Kaanapali
-Message-ID: <aPrlP+vtLTt/j23E@yuanjiey.ap.qualcomm.com>
-References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
- <r6kjuxajnimaqazeimzc5gscv2qxudjzkyooxumzakjzojibbl@2jiw6duxfbtz>
+        Thu, 23 Oct 2025 19:32:49 -0700 (PDT)
+Message-ID: <7d9e373c7f0f3b7a50ee6a719375410da452b7ba.camel@gmail.com>
+Subject: Re: [RFC PATCH v2 2/5] btf: sort BTF types by kind and name to
+ enable binary search
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Donglin Peng <dolinux.peng@gmail.com>, Andrii Nakryiko	
+ <andrii.nakryiko@gmail.com>, Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>,  Alan Maguire <alan.maguire@oracle.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>,  bpf <bpf@vger.kernel.org>, Song Liu
+ <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
+Date: Thu, 23 Oct 2025 19:32:47 -0700
+In-Reply-To: <CAErzpmsCJAWVjWnV2LWAnYCouynYZbUupS08LUuhixiT2do3sg@mail.gmail.com>
+References: <20251020093941.548058-1-dolinux.peng@gmail.com>
+	 <20251020093941.548058-3-dolinux.peng@gmail.com>
+	 <174642a334760af39a5e7bacdd8b977b392a82c7.camel@gmail.com>
+	 <CAErzpmusSgOaROhEO25fKenvxQJU1oSPKKzUA4h67ptdQxWM7A@mail.gmail.com>
+	 <7651ac9cc74e135f04ecfee8660bea0a0d3883ab.camel@gmail.com>
+	 <CAErzpmtWLLYuFk3npTiOgGOKcEcH1QUGGEHLvPncVT+z261C1A@mail.gmail.com>
+	 <CAADnVQKU0MnQHxxvnp9WCu_UO4fEtd_D6ckNmOd7pLg90ecF4A@mail.gmail.com>
+	 <CAEf4Bzajdv3Rd1xAxm_UZWBxPc8M0=VuUkfjJvOFSObOs19GbQ@mail.gmail.com>
+	 <CAADnVQJG_tK18oxmjW37cbrxF2zPKPk_dvqXUTnOjUue7J0tLQ@mail.gmail.com>
+	 <CAEf4BzYLyi6=Fyz9ziOAwkFOjUPyJmTj4c6g247XBwgwJ8m-qw@mail.gmail.com>
+	 <CAErzpmtMPuGBhisLOaZMyzM5u3=0QrmZcuWqNgbMrceEEPN3TA@mail.gmail.com>
+	 <CAErzpmsCJAWVjWnV2LWAnYCouynYZbUupS08LUuhixiT2do3sg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <r6kjuxajnimaqazeimzc5gscv2qxudjzkyooxumzakjzojibbl@2jiw6duxfbtz>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIxMDE5MCBTYWx0ZWRfX/FuWB0NRd7l5
- 8ReeaxlrOR3FFrRUHoH1JYOLeM7zDUyISRR2nGzueyDEGk1VMSor4CDTvkQBGa2IST7JKsQPH4T
- UTV6/H9ETSHtnojQJxRvI2ypBXU6Jk7GdcqYvcitfXsbzsGss+NTLN3EzV93dRJ8m29zQQOF9p6
- 8irlcconptcFs93fFLaJoibHu/rJhs79K1BBU0jqGUwQIrNWwEzpCHZfu4zbmOuJM+Ux48Gnd0i
- kQVGl+cjPCkvtmj2iVUQbIuF8Tt7h3JxIHPfReyCzsxGoPpsqA/lOAG1TNdgj+I7X7TbsqYAezt
- p8bvGiWw+XyGWm9waRHMgFP8viX+obK8s3l2c2u+BnW0z0vKxe6yCMLtlsw4a7iO9EMY/2Ez8S4
- uWklsR2G+BN6hoNdxbK6tlHdcxlGXQ==
-X-Authority-Analysis: v=2.4 cv=FbM6BZ+6 c=1 sm=1 tr=0 ts=68fae54d cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=C3Dk8TwHQYyIj7nOf9RCJw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=qC_FGOx9AAAA:8 a=EUspDBNiAAAA:8 a=sB9pjYolMnSuqpLAuykA:9 a=CjuIK1q_8ugA:10
- a=a_PwQJl-kcHnX1M80qC6:22 a=fsdK_YakeE02zTmptMdW:22
-X-Proofpoint-GUID: XgVz3tof2RoLSRpCSihy-U2CN06m4tJ5
-X-Proofpoint-ORIG-GUID: XgVz3tof2RoLSRpCSihy-U2CN06m4tJ5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-23_03,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 spamscore=0 impostorscore=0 clxscore=1015 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510210190
 
-On Thu, Oct 23, 2025 at 02:46:10PM +0300, Dmitry Baryshkov wrote:
-> On Thu, Oct 23, 2025 at 03:53:49PM +0800, yuanjie yang wrote:
-> > From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> > 
-> > The Kaanapali MDSS has some differences compared to the SM8750 MDSS:
-> > - DSI PHY/DSI base address have some changes.
-> > - DPU 13.0:
-> >   - SSPP layout has a great change.
-> >   - interrupt INTF layout has some changes.
-> > 
-> > This patchset contains DSI PHY, DSI Controller, DPU & MDSS bindings
-> > in addition to the driver changes.
-> > 
-> > We have already tested the display functionality using the Kaanapali-mtp
-> > device on the Kaanapali branch of kernel-qcom repository.
-> > Test command: "modetest -r -v"
-> > kernel-qcom repository: https://git.codelinaro.org/clo/linux-kernel/kernel-qcom/-/tree/kaanapali
-> > 
-> > Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> > Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> > ---
-> > Yuanjie Yang (12):
-> >   drm/msm/dsi/phy: Add support for Kaanapali
-> >   drm/msm/dpu: Add support for Kaanapali DPU
-> >   drm/msm/dpu: Compatible with Kaanapali interrupt register
-> >   drm/msm/mdss: Add support for Kaanapali
-> >   drm/msm/dsi: Add support for Kaanapali
-> >   drm/msm/dpu: Add Kaanapali SSPP sub-block support
-> >   drm/panel: Set sufficient voltage for panel nt37801
-> >   arm64: defconfig: Enable NT37801 DSI panel driver
-> >   dt-bindings: display/msm: qcom,kaanapali-dpu: Add Kaanapali
-> >   dt-bindings: display/msm: dsi-phy-7nm: Add Kaanapali DSi PHY
-> >   dt-bindings: display/msm: dsi-controller-main: Add Kaanapali
-> >   dt-bindings: display/msm: qcom,kaanapali-mdss: Add Kaanapali
+On Fri, 2025-10-24 at 10:23 +0800, Donglin Peng wrote:
+> On Fri, Oct 24, 2025 at 9:59=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.=
+com> wrote:
+> >=20
+> > On Fri, Oct 24, 2025 at 3:40=E2=80=AFAM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> > >=20
+> > > On Thu, Oct 23, 2025 at 11:37=E2=80=AFAM Alexei Starovoitov
+> > > <alexei.starovoitov@gmail.com> wrote:
+> > > >=20
+> > > > On Thu, Oct 23, 2025 at 9:28=E2=80=AFAM Andrii Nakryiko
+> > > > <andrii.nakryiko@gmail.com> wrote:
+> > > > >=20
+> > > > >=20
+> > > > > Speaking of flags, though. I think adding BTF_F_SORTED flag to
+> > > > > btf_header->flags seems useful, as that would allow libbpf (and u=
+ser
+> > > > > space apps working with BTF in general) to use more optimal
+> > > > > find_by_name implementation. The only gotcha is that old kernels
+> > > > > enforce this btf_header->flags to be zero, so pahole would need t=
+o
+> > > > > know not to emit this when building BTF for old kernels (or, rath=
+er,
+> > > > > we'll just teach pahole_flags in kernel build scripts to add this
+> > > > > going forward). This is not very important for kernel, because ke=
+rnel
+> > > > > has to validate all this anyways, but would allow saving time for=
+ user
+> > > > > space.
+> > > >=20
+> > > > Thinking more about it... I don't think it's worth it.
+> > > > It's an operational headache. I'd rather have newer pahole sort it
+> > > > without on/off flags and detection, so that people can upgrade
+> > > > pahole and build older kernels.
+> > > > Also BTF_F_SORTED doesn't spell out the way it's sorted.
+> > > > Things may change and we will need a new flag and so on.
+> > > > I think it's easier to check in the kernel and libbpf whether
+> > > > BTF is sorted the way they want it.
+> > > > The check is simple, fast and done once. Then both (kernel and libb=
+pf) can
+> > > > set an internal flag and use different functions to search
+> > > > within a given BTF.
+> > >=20
+> > > I guess that's fine. libbpf can do this check lazily on the first
+> > > btf__find_by_name() to avoid unnecessary overhead. Agreed.
+> >=20
+> > Thank you for all the feedback. Based on the suggestions above, the sor=
+ting
+> > implementation will be redesigned in the next version as follows:
+> >=20
+> > 1. The sorting operation will be fully handled by pahole, with no depen=
+dency on
+> > libbpf. This means users can benefit from sorting simply by upgrading t=
+heir
+> > pahole version.
+>=20
+> I suggest that libbpf provides a sorting function, such as the
+> btf__permute suggested
+> by Andrii, for pahole to call. This approach allows pahole to leverage
+> libbpf's existing
+> helper functions and avoids code duplication.
 
-OK, get it, will fix.
+Could you please enumerate the functions you'd have to reimplement in
+pahole?
 
-Thanks,
-Yuanjie
- 
-> The order is wrong:
-> 
-> - bindings
-> - driver changes
-> - DT changes
-> 
-> 
-> -- 
-> With best wishes
-> Dmitry
+> >=20
+> > 2. The kernel and libbpf will only be responsible for:
+> >     2.1. Checking whether the BTF data is sorted
+> >     2.2. Implementing binary search for sorted BTF
+> >=20
+> > Regarding the sorting check overhead: if the runtime cost is sufficient=
+ly small,
+> > it can be performed during BTF parsing. Based on my local testing with =
+vmlinux
+> >  BTF (containing 143,484 btf_types), this check takes at most 1.5 milli=
+seconds
+> > during boot. Is this 1.5ms overhead acceptable?
+> >=20
+> > Are there any other suggestions?
 
