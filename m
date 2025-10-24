@@ -1,181 +1,124 @@
-Return-Path: <linux-kernel+bounces-868720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5F5C05F6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:31:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70F4C05FC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AF091AA59D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:25:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCABE3B9D37
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC9C374ABD;
-	Fri, 24 Oct 2025 10:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC4631A555;
+	Fri, 24 Oct 2025 11:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="MjbWpVxs"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ap67KMXa"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AFC319616;
-	Fri, 24 Oct 2025 10:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA561313291
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761303552; cv=none; b=u/Fn1b75871zFjJOZEKn7UT0g0r2Xvinj/0p+lvsS02Ap4gEKrmmLefo5a9UHpuNtg7D6rwXg62+OG0kCsylJ0FOVVTO9W/FcayO0LsXow+SYzmwybypU1RiwxVwj7wYd0vcP7ovuQ1ntZ71DDCeJi4ecPf2LVW+g+ojymyR7A8=
+	t=1761303628; cv=none; b=SKNp70I+pAskg+FLlZNd/d/VjnGrvUHEc9v+XhGBVpYs8RKaxFJxQCgH06dTb0G82N+YI77g9B6+kK7iPc2c0jgDXRVz06jXNsbJ58nTUhN55a305waEh98ZIEnZVPXkoqPNnodHPxvxS6PIMjz0irdF46ItWM/WDXzbvNaknfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761303552; c=relaxed/simple;
-	bh=O9ROC09iye2nO7+rvJRTS+B3PKWZzMYsyRdck60G2vg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QbljSJ400FTYJrUoQZCbxM+kPDOqm/vRVJkLtCo0MEoQe++uq4FXyeQG8gdiSdHNUWa5Us4doQAndzGiWI07afbZczrFUKa94EDRTW1MQst5aPJ9sALDtomgGdCi03k+yjsrTmHNQx+EXG0G5f4TEvdBfqNnOhtalNSvODLfato=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=MjbWpVxs; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ctKf13kBdz9v4c;
-	Fri, 24 Oct 2025 12:59:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1761303545; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HJxxsUJGuCcgcdrm2dasSwOhBxRtwebMXYYxFSWgXo8=;
-	b=MjbWpVxs789w96QavL+l2YEQIau5qBTpXOlJ46Y53ihauIlQm2cAgzG8Ia7q+72SG5XWc5
-	SbKBJu6nDcaIgeRLMX1vE4qY0r9+Zs5nhQau8+ttM5CAbOBC5FZuTHp//1jGKFy4sCTLMY
-	y57q7RHMpmT/Tv5095iW5WBI+F/Tt2JEAVByE2u07G34fiO2hjV1YAlcPhP0rz7my+RZJL
-	7GPnI1yMxgqOMmDe3FnOLZnipjO9H3ecnLzMRJLOzipKLmdbqnY3c90uwLUNWWOjxRx48J
-	Uvc+6+QkKPuMBYgaxs+CccNookE1d8m3+UXjHk6XaSSvWLJMjOE00xihjhm3FA==
-Message-ID: <5de88e79575e06c053f2d61f7bb58bf9cf5b556e.camel@mailbox.org>
-Subject: Re: [PATCH] dma-fence: Correct return of dma_fence_driver_name()
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, Philipp Stanner
- <phasta@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, Gustavo
- Padovan <gustavo@padovan.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
- <christian.koenig@amd.com>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>
-Date: Fri, 24 Oct 2025 12:59:01 +0200
-In-Reply-To: <11b7a8a5-170f-4815-a8ac-5dba2d8e67a1@igalia.com>
-References: <20251024075019.162351-2-phasta@kernel.org>
-	 <11b7a8a5-170f-4815-a8ac-5dba2d8e67a1@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1761303628; c=relaxed/simple;
+	bh=UUJma3mfHxdsACo5jvuRAN7LQ2A/mwBLWD+dCqbrfSM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N8tRGI5Xv+BI/dwn8ytkMxLDihlM0irYRGObvG5fDIiSW0pkZl42vcrQHgyj/IW7uoUWuAxJoXhphAZU9aX4cNdNpnaff0RB3fus0Cp4ZZE84I98IaC1NtOTXDw4Yh36ob66HBHPkPmS5R6SvW1AGj3ie1lr1j5t+mxd5S9ICIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ap67KMXa; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so19022235e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:00:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761303625; x=1761908425; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lNwQqBemATmxjXx+rJAEDdWPHTVfdvUDQPF043XY79I=;
+        b=Ap67KMXayItpma341b9u0JMZE2ltybepOBM0JUzocHH+JuTxnzxnOH6Vy/Q7ksyBy5
+         7AfvUUT81x20FG7C2z92gE7K3/JOfa4K4wCR/XhtzHyCW6qjeT2IWJR0fsgByWQZ5I0h
+         h11oFyDXSEg6lOrajGSyknpOSuR92cHPNBQvQQ/j2EZDu1YBnTyrgSKXrykCXkKBtRiA
+         dj43w1QKY2kYZ5jI2TUob44WZmkdQlYy+CKCBgDuc4frhi/qWTsSfMbOAfvHZG3sAdqF
+         QWAIGF6AcwUMYcxWseaECz6/zigYsHNFoMdIurQpatEFWE5Ir/IQUuZv3u2e/ZeBkiic
+         FiZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761303625; x=1761908425;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lNwQqBemATmxjXx+rJAEDdWPHTVfdvUDQPF043XY79I=;
+        b=N/xP9/pjAZ2yUKakCxx7WIH6I3nocxu4VPM7chyEw7k0m35YOWm0+N8L0YGNMoP4aJ
+         LVCPGQbeciqTgUcYfAXpMyaANWHAQEVtF2MNxM2fANkE+CwccSvuE2b21V3IYr72xAaA
+         qD3QjOdGMnoNRBz7mN88ykSh/FE71OXMREl5uPI/Uhu7NQAbcfly9HD3feMdzlXmFBge
+         E/FrsnsoQAgaUX+E6ZFXsdHerPFwlqJ+NUOUGLBJBTuQZiBv0G8fp72qntiD5o2J3EhO
+         8tsQ7KGu7kFSYEjx1KKjuy4FvNb+2t0Ss2jimCN6yKEsnTnlZwbs0k3ZJUvUoegp9Elq
+         /esQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Q0MtJGPDplySOH5hQHH4csnX0Az0ILbgfDpvuRZpoF3uhku+QhK+IHRuvqw/wtO9nIOo0RiqXm2HYyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOoRhFayVrh1LJfdJ6cau9Rdn/24wAI/k57jz0PzLj2czBAT/M
+	mWHvqEuaGVpuIwD4Abxjw+4gGgNQTNuV5tC5tx5ZNkc/PahH+h8mDAx5
+X-Gm-Gg: ASbGnctjnGOa0WMzdMqeFms2meO1j2LA54TT2IEZ7jHu99VGjCqoIyxFMg1qnDYbZJT
+	YZWrsTk1gyLGNzdQBpGn66KsDUaUNbUykv5qvCT3o/xCaye49F4yAr0BAWJqIpaMXi0wV/7J8B3
+	HGg4cgy0jOCTTcAZ1/C5ckKA3/RN4jLMvTamAix58CUJwn+vY6/tGebXBnfLK4i4gYl9uefAYZi
+	SFQgLY/IPIueMw02O6l4hBQFhos2Ne9RbscBpFOIy/iB9ePcld56pl28vuLFGOJCt28tS7YvHVl
+	DNCZS1S4EqNmbM4VN962P9+W33DSFd7OTQsBfm5tkllWuyJpBiwv5YhAFvjCG58PZVZm2n4hV1a
+	gw+2ON11jhSZK0SrTseItKld38qY1jCSiKWjS5VE6mazUEEQa0OJxuAHlIfN9LDAvpcx4VHZlb5
+	hkKJtKmSVqMQ==
+X-Google-Smtp-Source: AGHT+IEbRG42e1LgV+3nLNHGYb8yQMIxPTGoVR+OKvME7EdNaQHnxt1RF9GQGXBtioq1FU6OLJLiTw==
+X-Received: by 2002:a05:600c:468d:b0:45f:28d2:bd38 with SMTP id 5b1f17b1804b1-471178b14acmr208423095e9.18.1761303624680;
+        Fri, 24 Oct 2025 04:00:24 -0700 (PDT)
+Received: from fedora ([37.29.213.75])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475cae9253bsm82484615e9.1.2025.10.24.04.00.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 04:00:24 -0700 (PDT)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: louis.chauvet@bootlin.com
+Cc: hamohammed.sa@gmail.com,
+	simona@ffwll.ch,
+	melissa.srw@gmail.com,
+	airlied@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	corbet@lwn.net,
+	dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH 1/2] drm/vkms: Fix run-tests.sh script name
+Date: Fri, 24 Oct 2025 13:00:04 +0200
+Message-ID: <20251024110014.4614-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: 38af43315007ac39358
-X-MBO-RS-META: 4u1ufhoobt3yb771wkq7iq5z6jdtbn3d
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-10-24 at 09:31 +0100, Tvrtko Ursulin wrote:
->=20
-> On 24/10/2025 08:50, Philipp Stanner wrote:
-> > To decouple the dma_fence_ops lifetime from dma_fences lifetime RCU
-> > support was added to said function, coupled with using the signaled bit
-> > to detect whether the fence_ops might be gone already.
-> >=20
-> > When implementing that a wrong string was set as a default return
-> > parameter, indicating that every driver whose fence is already signalle=
-d
-> > must be detached, which is frankly wrong.
->=20
-> Depends on how you look at it. After being signaled fence has to be=20
-> detached from the driver. Ie. nothing belonging to this driver must be=
-=20
-> accessed via the fence.
+The script is "run-tests.sh", no "run-test.sh".
 
-Is that even documented btw? Many of the mysterious "dma fence rules"
-are often only obtainable by asking Christian & Co
+Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+---
+ Documentation/gpu/vkms.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->=20
-> I started with names and Christian has recently continued with ops.
->=20
-> > Reported-by: Danilo Krummrich <dakr@kernel.org>
-> > Fixes: 506aa8b02a8d ("dma-fence: Add safe access helpers and document t=
-he rules")
-> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> > ---
-> > When this was merged, it sadly slipped by me. I think this entire RCU
-> > mechanism was / is an overengineered idea.
-> >=20
-> > If we look at who actually uses dma_fence_driver_name() and
-> > dma_fence_timeline_name() =E2=80=93 functions from which the largest sh=
-are of
-> > the fence_ops vs. fence lifetime issue stems from =E2=80=93 we discover=
- that
-> > there is a single user:
-> >=20
-> > i915.
->=20
-
-[=E2=80=A6]
-
->=20
->=20
-> That would be nice, I also do not see much value in exporting names to=
-=20
-> userspace. But first more conversation around breaking the sync file ABI=
-=20
-> needs to happen. I think we had a little bit of it when changing the=20
-> names of signalled fences and thinking was existing tools which look at=
-=20
-> the names will mostly survive it. Not sure if they would if unsignalled=
-=20
-> names would change.
-
-I mean, what you and Christian are addressing in recent weeks are real
-problems, and I was / am about to write similar solutions for our Rust
-dma_fence.
-
-In the case of those names, however, I'll likely just not support that
-in Rust, saving me from adding those RCU guards and delivering output
-of questionable use to users.
-(could ofc be added later by someone who really needs it=E2=80=A6)
-
->=20
-> >=20
-> > P.
-> > ---
-> > =C2=A0 drivers/dma-buf/dma-fence.c | 2 +-
-> > =C2=A0 1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/dma-buf/dma-fence.c b/drivers/dma-buf/dma-fence.c
-> > index 3f78c56b58dc..1875a0abebd3 100644
-> > --- a/drivers/dma-buf/dma-fence.c
-> > +++ b/drivers/dma-buf/dma-fence.c
-> > @@ -1111,7 +1111,7 @@ const char __rcu *dma_fence_driver_name(struct dm=
-a_fence *fence)
-> > =C2=A0=C2=A0	if (!test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
-> > =C2=A0=C2=A0		return fence->ops->get_driver_name(fence);
-> > =C2=A0=C2=A0	else
-> > -		return "detached-driver";
-> > +		return "driver-whose-fence-is-already-signalled";
->=20
-> IMHO unnecessarily verbose and whether or not changing it to anything
-> different warrants a Fixes: tag is debatable.
-
-IMO the output is just wrong and confusing. It's easy to imagine that
-some user starts wondering and searching why his driver has been
-unloaded, opening support tickets and so on.
-
-Could be less verbose, though. Dunno. I let the maintainer decide.
-
-P.
-
->=20
-> Regards,
->=20
-> Tvrtko
->=20
-> > =C2=A0 }
-> > =C2=A0 EXPORT_SYMBOL(dma_fence_driver_name);
-> > =C2=A0=20
->=20
+diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
+index 3574e01b928d..d8c445c417b7 100644
+--- a/Documentation/gpu/vkms.rst
++++ b/Documentation/gpu/vkms.rst
+@@ -161,7 +161,7 @@ To return to graphical mode, do::
+ 
+ Once you are in text only mode, you can run tests using the --device switch
+ or IGT_DEVICE variable to specify the device filter for the driver we want
+-to test. IGT_DEVICE can also be used with the run-test.sh script to run the
++to test. IGT_DEVICE can also be used with the run-tests.sh script to run the
+ tests for a specific driver::
+ 
+   sudo ./build/tests/<name of test> --device "sys:/sys/devices/platform/vkms"
+-- 
+2.51.0
 
 
