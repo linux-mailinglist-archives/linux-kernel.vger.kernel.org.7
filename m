@@ -1,89 +1,94 @@
-Return-Path: <linux-kernel+bounces-868944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1FFC068E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:44:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 003C2C068F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AF451C05290
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:45:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BF5C34ED2BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA4231DDA0;
-	Fri, 24 Oct 2025 13:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E857B31C57B;
+	Fri, 24 Oct 2025 13:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KHRd6md2"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAIJsQw9"
+Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BAD2F83D2;
-	Fri, 24 Oct 2025 13:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE4219D8AC
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761313478; cv=none; b=QFf0Vnef0mF4iBSNaJJix+QMmWbY26wt2e0UZeh5eESRzJUCmPkDF/JuQnSUowtHwYZ4FsHSVX8lb0xjLW6DPpPX33No+1Kgk/9bQHCS360ossr+/KKzpVe9kBObi/ETHC/qRk9gAmy3hJ1wmBVCVIzRkk87p+Gm9PAUjZpIaZI=
+	t=1761313541; cv=none; b=b2D0d+Za6NKufjJOtEGq1jtk025ct83FkI1Db9oC+7Wh43ys+odNAuc8TIvYbmv8AMZNvDmAZxfy3HMFSjCQpB16rWCjqYCmfx9xjj6qnGNTqNPf2M3C4tKWu5eQHu1NXPIWQVhW5tf7rQQTEpMyAiS7Gs8EyxLuiZkDf3UJj/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761313478; c=relaxed/simple;
-	bh=F/p6ZO4UJcB+L6rsMxVdDJvv5GUBx34XWCIi8m4T6H0=;
+	s=arc-20240116; t=1761313541; c=relaxed/simple;
+	bh=R9mC9AqAfbLHak1gVQ+cGB4Ty+4JswFwQ13vc3fhUsQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rZoLKIjfnBO5kwEpnjmzCqvR3GpLPsHXC2wgRwIKYwf1twIzFjRM+9pLT2qKBm9+zsc+81CMj454RpZ4CVzhZVnow8m06l2XxnsR9ZDmthCzdP9tilZOIiTbIs4zXb1L9LhauI3UWUHZLlwjUWQbY/BrMg7s7WpS6/xA70nRoPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KHRd6md2; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Ffcj2jilQV0mH7721aCemvuNywIj+ADnf9rulKDQShk=; b=KHRd6md2YVWeoXFeMmOWjQOBva
-	hh98PWr8MR1nG8zt+X/s6pNq8xiLExucjDp3JcN4aiatOzqJUNgvQ/KXmFQ7o8aCO6EU/gzmFHN4J
-	Be0zoP4ogk+i21sdK+niWsL0z7p50enlf4qEG8yQCXJHbDN6kAk7dVQfgziqyu7kPRpTlSqQt9E9Q
-	wGRNbOnpdhRIV1kmPH+hE+l9at4KY/wj1129/zMzH6nu0h3oFQ4glOQsKZgjAfDc4E3WoD9po659j
-	UNyIyGukE3AA/jCEbu384/JafPxkcxYI90Efy8nuNuLJoyK5IFbaVDRSf0vI4xv8IYuGNSSqNPKgb
-	J0+2JBww==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCI5W-00000001uJu-3O11;
-	Fri, 24 Oct 2025 13:44:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0A030300323; Fri, 24 Oct 2025 15:44:15 +0200 (CEST)
-Date: Fri, 24 Oct 2025 15:44:15 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Jens Remus <jremus@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
-	Steven Rostedt <rostedt@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=GymSuy+WNQ6vSZ/GQKQdDNA3UdhFkQimaqD3INDzaZ/dNYdv1ZCz9m8fcc3Jn6r4kKIBG31uLiU4MSUXSXOd4fsgKNGjC5Qs6VtH1bg0+4RzCyHrD40Zva964zlUByDDI2iIQ4u1Fb82rwABSCEH9ln//2Y8yW48k9BET71s2Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAIJsQw9; arc=none smtp.client-ip=74.125.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-63e0c6f0adfso2086020d50.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:45:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761313538; x=1761918338; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jJ9flg7M+cKCZuZxpG7+6bazSm6e3HeyscPxk98oumo=;
+        b=AAIJsQw9901jmex2B4RD/Kht/hdM0bApsNGd8sU7xdlrBYCTKaGKrpd9j+Q+936jH0
+         +LngL6D/z8REyzR3rsuVSkDbCIfPYeb7gDleiWZicU7BR9o38S/745SJ2Zk/RWSNMFPD
+         JmUtxQSevnmJlX+1peC/Imlbjggf4lCzuMAH0LNUxTJR1hxHRVQaNHwiaimnLHi/ZY9t
+         wERQGG4EQ2rlSZOBiMHkOeT2YCejmO6rEa7yE0kGIR012Cs0yPUJsps2f3XERjWZsQ7O
+         lRQSCzmQ+PPFJ6jjtMzDZ4CTyw2D0ae/FyIOR6ipTvqxA2NOzJb3tYlx+a1X2UudIvmz
+         wvKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761313538; x=1761918338;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jJ9flg7M+cKCZuZxpG7+6bazSm6e3HeyscPxk98oumo=;
+        b=sDZ9f34FcNYlxiupkrLHBp3JbdnyCipMi7Pchz6KbiNfER4Y7g52ywm+DsGcYRfedc
+         WcWyaO8grZh07z7/tkA9VNWprjDDbtyCP4Q7OGKqNTfGPhRRwD2EQNb1YIV3UOhNejy9
+         syck9dYO/VTdwQA4D8rlK4BSqkGTzh3z4bDajZIKJ5bqlU2Mepqy/tkjZMEfYdxzxqg+
+         NMu6kTAuuWzCZQwKX47/VYudM4lfRA7iFw0fJmrd3sFPCeonmyadJ5kEnqUOno4ZPgxW
+         TT2VTYNB7GEA+FOo9NhJIEj3cVSsNZHPRQsAp74kwz0XYQnqnDh/TmNr7R132VM53vZj
+         2/Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCWktgsUvk+WiS2mFIc7L35ISsRklecgWLZ6ZdShdHgoqjEk905uY1Lx7KSi+Uh8y0XEHOv4k87eI1Mcy0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJylvnKJ6mTBoWim7AOGMUfTC6JiFAYs7JrkHtSCm1k2jV350i
+	XDVnY0EZkAhRj5LfuLaPii9fJtnQjFjs6b2UKWF76uRZOWnsbnErP/+V
+X-Gm-Gg: ASbGnctRahiCVahAEIm620mZeZzDSoNeJI4ovdUZm0sViom7vA6nKOzSFOw8Onq33Jn
+	uBNEuJVEb2cFWkF1tm4EB49rITDhJSk5dKbgM20OvLSkeJ0pEvloOgzturNzTesJN28QrOd2S/F
+	5QfttV+gWbuIlL9mOT7v+HYfWXXesT64BlJeolCL1OY59fi3qN/VZVBxmXQx2n7/3dS+ZFeZTsh
+	zqT7/9NGU3HT4Ik0dnjdr3TIF/9Gx+QCMBs3E4YJ7O3ehjWZdUC4rcqIfOb0nFk7QpOW3chNnDh
+	6lJ/+bJU/52a15D4zTiLKoFDml6Ap00SubpPH2LkaL0uEslQPI9Aceo5U2C+hhKLg8zP/gPdM0t
+	p9XYjcgvqTb6jdPgesvywQwnnVkrcVPpYLwIdwp0+pni/p9nyLxQC9nS5hJBqiGypXu0AV0AZJO
+	J6kBd4jBQvVz3Kz1RMA5vj3xye5J1I3StR8MBrutr+HjJEFBmLTQcOtg==
+X-Google-Smtp-Source: AGHT+IFE68Htsnc4siZxVCxI/NKRrCYbxxjzUI941ERUrQu0KUkdETGfNwFaCjQcge9iZ90zrqGuxg==
+X-Received: by 2002:a05:690e:dc1:b0:63b:822c:4494 with SMTP id 956f58d0204a3-63f43500492mr1757658d50.30.1761313538444;
+        Fri, 24 Oct 2025 06:45:38 -0700 (PDT)
+Received: from localhost (c-73-105-0-253.hsd1.fl.comcast.net. [73.105.0.253])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-63f378f087asm1612450d50.12.2025.10.24.06.45.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 06:45:37 -0700 (PDT)
+Date: Fri, 24 Oct 2025 09:45:36 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Florian Weimer <fweimer@redhat.com>, Kees Cook <kees@kernel.org>,
-	Carlos O'Donell <codonell@redhat.com>, Sam James <sam@gentoo.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Hocko <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>
-Subject: Re: [PATCH v11 08/15] unwind_user/sframe: Wire up unwind_user to
- sframe
-Message-ID: <20251024134415.GD3245006@noisy.programming.kicks-ass.net>
-References: <20251022144326.4082059-1-jremus@linux.ibm.com>
- <20251022144326.4082059-9-jremus@linux.ibm.com>
+	Arnd Bergmann <arnd@arndb.de>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Gary Guo <gary@garyguo.net>, John Hubbard <jhubbard@nvidia.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] uaccess: decouple INLINE_COPY_FROM_USER and CONFIG_RUST
+Message-ID: <aPuDAHzirb3Arl6h@yury>
+References: <20251023171607.1171534-1-yury.norov@gmail.com>
+ <aPtDGA0JjmfDvxXd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,85 +97,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251022144326.4082059-9-jremus@linux.ibm.com>
+In-Reply-To: <aPtDGA0JjmfDvxXd@google.com>
 
-On Wed, Oct 22, 2025 at 04:43:19PM +0200, Jens Remus wrote:
+On Fri, Oct 24, 2025 at 09:12:56AM +0000, Alice Ryhl wrote:
+> On Thu, Oct 23, 2025 at 01:16:06PM -0400, Yury Norov (NVIDIA) wrote:
+> > Commit 1f9a8286bc0c ("uaccess: always export _copy_[from|to]_user with
+> > CONFIG_RUST") exports _copy_{from,to}_user() unconditionally, if RUST
+> > is enabled. This pollutes exported symbols namespace, and spreads RUST
+> > ifdefery in core files.
+> > 
+> > It's better to declare a corresponding helper under the rust/helpers,
+> > similarly to how non-underscored copy_{from,to}_user() is handled.
+> > 
+> > Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> 
+> Overall LGTM:
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Tested-by: Alice Ryhl <aliceryhl@google.com>
+> 
+> 
+> In include/linux/uaccess.h there is the comment:
+> 
+> 	Rust code always uses the extern definition.
+> 
+> I think we should reword this comment as part of this change. You can
+> say that Rust accesses _inline_copy_from_user() through a helper, or
+> similar.
+> 
+> After all, when using LTO or other mechanism to inline helpers, it is no
+> longer the case that Rust always uses the a function call.
 
-> @@ -26,12 +27,10 @@ get_user_word(unsigned long *word, unsigned long base, int off, unsigned int ws)
->  	return get_user(*word, addr);
->  }
->  
-> -static int unwind_user_next_fp(struct unwind_user_state *state)
-> +static int unwind_user_next_common(struct unwind_user_state *state,
-> +				   const struct unwind_user_frame *frame,
-> +				   struct pt_regs *regs)
->  {
+It is actually worth to just drop the rust part of the comment - with
+this patch there's nothing special in managing the _copy_from_user().
 
-What is pt_regs for? AFAICT it isn't actually used in any of the
-following patches.
+I'll send v2. Thanks for review!
 
-> -	const struct unwind_user_frame fp_frame = {
-> -		ARCH_INIT_USER_FP_FRAME(state->ws)
-> -	};
-> -	const struct unwind_user_frame *frame = &fp_frame;
->  	unsigned long cfa, fp, ra;
->  
->  	if (frame->use_fp) {
-> @@ -67,6 +66,26 @@ static int unwind_user_next_fp(struct unwind_user_state *state)
->  	return 0;
->  }
->  
-> +static int unwind_user_next_sframe(struct unwind_user_state *state)
-> +{
-> +	struct unwind_user_frame _frame, *frame;
-> +
-> +	/* sframe expects the frame to be local storage */
-> +	frame = &_frame;
-> +	if (sframe_find(state->ip, frame))
-> +		return -ENOENT;
-> +	return unwind_user_next_common(state, frame, task_pt_regs(current));
-> +}
-
-Would it not be simpler to write:
-
-static int unwind_user_next_sframe(struct unwind_user_state *state)
-{
-	struct unwind_user_frame frame;
-
-	/* sframe expects the frame to be local storage */
-	if (sframe_find(state->ip, &frame))
-		return -ENOENT;
-	return unwind_user_next_common(state, &frame, task_pt_regs(current));
-}
-
-hmm?
-
-> +static int unwind_user_next_fp(struct unwind_user_state *state)
-> +{
-> +	const struct unwind_user_frame fp_frame = {
-> +		ARCH_INIT_USER_FP_FRAME(state->ws)
-> +	};
-> +
-> +	return unwind_user_next_common(state, &fp_frame, task_pt_regs(current));
-> +}
-> +
->  static int unwind_user_next(struct unwind_user_state *state)
->  {
->  	unsigned long iter_mask = state->available_types;
-> @@ -80,6 +99,16 @@ static int unwind_user_next(struct unwind_user_state *state)
->  
->  		state->current_type = type;
->  		switch (type) {
-> +		case UNWIND_USER_TYPE_SFRAME:
-> +			switch (unwind_user_next_sframe(state)) {
-> +			case 0:
-> +				return 0;
-> +			case -ENOENT:
-> +				continue;	/* Try next method. */
-> +			default:
-> +				state->done = true;
-> +			}
-> +			break;
-
-Should it remove SFRAME from state->available_types at this point?
+Thanks,
+Yury
 
