@@ -1,120 +1,478 @@
-Return-Path: <linux-kernel+bounces-867944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3F75C03FC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:00:25 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5595C03FCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B370D1AA4A9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:00:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0A78E35481B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BCE15539A;
-	Fri, 24 Oct 2025 01:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A2A17F4F6;
+	Fri, 24 Oct 2025 01:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0PZT/z+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOknb9pg"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC811547E7
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4390B8405C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761267618; cv=none; b=aazAOZasD5tn/r99+ZEej1LGaIxJUFbHcW8/cSe4Jtf06IfMyXoDBiWIkS7zsJXAG3zLLetdvAu+e0XlWIVMrOKwiPoAwLolq4OozlOfOTqnRRCkQ8oSHJIsNvjGCFxBXoKHkOI5hXwFwCCmpBfzTOcq3FL7YBfwpKz46sGeFoU=
+	t=1761267756; cv=none; b=M/Io2SXY88aMxf7ZxXlqrsE8vdS6RSPMfqpQLihZKCcSkXQ9hSGaN4Psudn83SdcpEImVbL5UPhHzdi1L242jyVghwTsY5LPWNyfIV8Flto4oTxdsHjZySFNTLVQfyj9GSjFyaeqn0PK//W2cmQwXWj69gjX+SczaOCzxTaQLNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761267618; c=relaxed/simple;
-	bh=ehk5gqYro75ea+kxBOikbp2b/GK50O48GMIz57SlOmE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rsmuRo7Ly3bt45NG56ezN3c4ymfpMEH9fpIDSB41zpC/HSX9vLpsAhGtEgkWYA5G3CuULmi9Y76CYMLn40jAWbRysKpBIwZpST5d7GTlWWF5DIUirCAuzSDiycDXvthhfD7v0+HA6YDTzUqDqvt8Qzh/kjZbH1kkXURig89VByI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M0PZT/z+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BA1C4CEFF
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761267618;
-	bh=ehk5gqYro75ea+kxBOikbp2b/GK50O48GMIz57SlOmE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=M0PZT/z+0uPfmF3EYkTG0YEenwe3enJsw5n0gPlHeJutghzQs8qu1GtLjm8A4Houc
-	 IpiuSSBwwz20WqjSVHFd12KQz2blUFJXtRcMoSXBvNSNutEl2KiHMXEPpflVKck525
-	 6a0URvMkwseirX/twN3DGWIiHaMXxWe+Gsdqv8NMhF+11LvSgp61ck1o0e1ojs5r7+
-	 wmn7KAVmE6wUNRxV7fMNuC2hLwMqEcJrtGIMJ/TVa/ivQomNzKUu+EfNDpbPHNKZ7f
-	 QnY3rO/uqMIPnKqXrgkTUbrfQNulGYPB7epHL04iiJgD2oPA8/ZF4krvyE7YpixXdW
-	 +p8KXLzPRWIVg==
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b6d2f5c0e8eso310733566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:00:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWQMkGOJ+ikE9+sxwd4vCMd2x9LnNpr6zG7beX51sXPhFtFhWMW6AtLaMsngY7AtXaEyjLjoaG8Y9fHK9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjLFgrNu9po123Q38OFK+lCMy+X6xAnOZh6KAT24YMAz2jK153
-	PiNuZDiH4R+t65iqG6vWMWKZF689w7qG9GZHt+8LLax2alQbdpN5wAzEBUlF9Wwv6vXIggyXQf9
-	lsMkKtNB5MfI/q4MqlT/5gWUdPwmOEw==
-X-Google-Smtp-Source: AGHT+IEjEgQeRaKS1MRniIDNB0DeeoIYpOrEvhgQgtjv9aD4ZD7zdo/az8WJFJUar6TfO+DVKuofLO/h/4vazXCE9ws=
-X-Received: by 2002:a05:6402:26c4:b0:634:b7a2:3eaf with SMTP id
- 4fb4d7f45d1cf-63e3e477b5bmr4280000a12.18.1761267616822; Thu, 23 Oct 2025
- 18:00:16 -0700 (PDT)
+	s=arc-20240116; t=1761267756; c=relaxed/simple;
+	bh=G9pH1+RL2ty7Yo0cA6AVQ5NWeI40xyrDzY3ZAXbiB4M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jltUjr+rMgvHs8QSfWSCpwpwbJtYfl7ZnpUpSJa/m6MevBGY4dAlY4wFb0R4Tz/rnJmcWyt+UFNkoXkMMoGdXiV+iXCfYIs/h0+BW9bFAKObqrt1HdPBmqZnloi0OIop8K/46M0I2b4RHfk5PlEVbU9av6SSI2PFORPC4dUsHlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eOknb9pg; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-940e06b4184so155892539f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:02:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761267753; x=1761872553; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IKDbt1wT9yJqALXoBzDuHO4g9TQZ25V02GA6xGAEZGQ=;
+        b=eOknb9pgLvhHkapj+W8G5hNWhkKYdTWnk4Fvxm1/7a8mvTskoCueO+7AlC8FJm05sM
+         rtUacEMagDG0kTbYKb5Zcq8quOm/6W1sD0sEXFZZqzrkAlyWPZKfx6nNLRCIAb3OU72t
+         IKjTurtN5CYHJcYCRo51rmLCjTiAgohLjZXjDg+uMwSgul5WeakSlBqhBuG4k314M0lz
+         /wLNVFCamy35K7pC+pniUG1Fq7wWUm08f4YSyqv7Pnq+M4BMKkmzqiJRusVCo1AvIRui
+         6P4SiXsEkMVYBsAisg6CndYdVTtHYSNDqqCejFczwlofDymhe3KGmVFDmWXaXz5+KJEf
+         FLsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761267753; x=1761872553;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IKDbt1wT9yJqALXoBzDuHO4g9TQZ25V02GA6xGAEZGQ=;
+        b=tg1u1JPcdAyq0cJ30tShSdsx02QnGxokRcA9hAGJsGL5+ZRo55I11JJhVh0fE1tT2C
+         /2avi4g+kXGT6IU85Hl1v+20Rvr8PZkUJf8/7jOCigivZoIoazmR+mZmqhFOgwGYNhUJ
+         79DAwpi1A6dp2FAHzxNkVTj3HmV0CG6nX+st5wQtNNROJXkkPVI8qcI4xnEqITfixbbV
+         s7sZWw8xPkiuR0DEvv6uSZqv+jEE0ufVtej6aOn2BnRdVi1UfSfK+HFnhAO/9DyXKWHX
+         CcEpufrHMeniyxGbz+6/m/y12ELcEAvQSv8g50XbprwxGQa+CO137Nf9lVWRjwqVcPI5
+         7ZEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXklHebo7CfhTzgtZ9TOk31SyLa3W1jPUgOQ5b8728R7Qz1jlCMCPk9vYMciCg9knap5Jo/iEVG3Fa07ag=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrc/mGNvKZEaw8RKFvPfArSnocvWdoXPZUAJS4FFcCh8w7F7mK
+	ZN1Xi58XElmtW+ib6Xa+2XR2Tulq32hOIGhtzBpVG4Fam+mNPXQSN150
+X-Gm-Gg: ASbGncs504/gIzi2o7QM47AsaZVJJBly0Kd+8Hz80iUNAZBMft/OgZ4HZX7DRtpC+qd
+	BegMYLCNtqbuI7xepMa+vhKPz3wAk/jJYX/+kONODvce7r6Y0CHsuQomsb2fC6VgNGC/m9ZyhLH
+	7G4AaP/zsEZ/zt/GyYYBJUuaoJjFNffgB198hby0DlC/UaPN54qESZEgYMZUL6SplmnhhdL1mpn
+	aTMRy65jFLK3FUDi0xP+w5JTJfGCyiKbehHUbo4ki5cJa4v6qr5yyUpHnXBKSvMyZWPkMOfgfpe
+	pKC/QCmZpsc4ci/GBjQNIc2V/3RPmIVoQRw/BDNk8VXeXZjh/AEqQwYmNh+pI84MNi1MVCPlo82
+	4CuQ7B37mbwXnjQ4hJU08bmYQacs1CEC1MlJqWiumVKFsnbGGUq/0LL8YB+5VJu4yNmDVNegalu
+	/GpL4vgZ8sH3T/obrPjhx9AAnGAdA0WNacjM6Ym+0MmnB5feZG042eDJSIoUzNX6GuShUAYn8sG
+	gS6QzOx+0aF9d1vGUQuVmxA8Q==
+X-Google-Smtp-Source: AGHT+IEK9z1XCO0/7ofKXVfCQ/mfQxCmtCOsaVIb6O6vKesfo5b3vwjLT3GVU6VPQlsM67rO3oQbtg==
+X-Received: by 2002:a05:6e02:2508:b0:430:a65c:a833 with SMTP id e9e14a558f8ab-431ebf86680mr9062255ab.31.1761267753103;
+        Thu, 23 Oct 2025 18:02:33 -0700 (PDT)
+Received: from abc-virtual-machine.localdomain (c-76-150-86-52.hsd1.il.comcast.net. [76.150.86.52])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5abb7fda03fsm1538669173.35.2025.10.23.18.02.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 18:02:32 -0700 (PDT)
+From: Yuhao Jiang <danisjiang@gmail.com>
+To: Frederic Barrat <fbarrat@linux.ibm.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alastair D'Silva <alastair@d-silva.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Yuhao Jiang <danisjiang@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] ocxl: Fix race leading to use-after-free in file operations
+Date: Thu, 23 Oct 2025 20:02:28 -0500
+Message-Id: <20251024010228.1667904-1-danisjiang@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023160415.705294-1-linux@roeck-us.net> <2bef32d0-2c35-c93d-08a8-71966c1212f2@kernel.org>
-In-Reply-To: <2bef32d0-2c35-c93d-08a8-71966c1212f2@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 23 Oct 2025 20:00:05 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJjiB3h+hzstXSbnyFy+U39GgtT=rcb4r+QDv=uL54H8g@mail.gmail.com>
-X-Gm-Features: AWmQ_bkV_0VhcZcZAaOK1XDUuJnahwO7hnusuR-jKXe-TZpuwe9eoSVZYP6h4CU
-Message-ID: <CAL_JsqJjiB3h+hzstXSbnyFy+U39GgtT=rcb4r+QDv=uL54H8g@mail.gmail.com>
-Subject: Re: [PATCH] of: Skip devicetree kunit tests when RISCV+ACPI doesn't
- populate root node
-To: Paul Walmsley <pjw@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Han Gao <rabenda.cn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 23, 2025 at 11:48=E2=80=AFAM Paul Walmsley <pjw@kernel.org> wro=
-te:
->
-> On Thu, 23 Oct 2025, Guenter Roeck wrote:
->
-> > Starting with commit 69a8b62a7aa1 ("riscv: acpi: avoid errors caused by
-> > probing DT devices when ACPI is used"), riscv images no longer populate
-> > devicetree if ACPI is enabled. This causes unit tests to fail which req=
-uire
-> > the root node to be set.
-> >
-> >   # Subtest: of_dtb
-> >   # module: of_test
-> >   1..2
-> >   # of_dtb_root_node_found_by_path: EXPECTATION FAILED at drivers/of/of=
-_test.c:21
-> >   Expected np is not null, but is
-> >   # of_dtb_root_node_found_by_path: pass:0 fail:1 skip:0 total:1
-> >   not ok 1 of_dtb_root_node_found_by_path
-> >   # of_dtb_root_node_populates_of_root: EXPECTATION FAILED at drivers/o=
-f/of_test.c:31
-> >   Expected of_root is not null, but is
-> >   # of_dtb_root_node_populates_of_root: pass:0 fail:1 skip:0 total:1
-> >   not ok 2 of_dtb_root_node_populates_of_root
-> >
-> > Skip those tests for RISCV if the root node is not populated.
-> >
-> > Fixes: 69a8b62a7aa1 ("riscv: acpi: avoid errors caused by probing DT de=
-vices when ACPI is used")
-> > Cc: Han Gao <rabenda.cn@gmail.com>
-> > Cc: Paul Walmsley <pjw@kernel.org>
-> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->
-> Reviewed-by: Paul Walmsley <pjw@kernel.org>  # arch/riscv
+The file operations dereference the context pointer after checking
+status under ctx->status_mutex, then drop the lock before using the
+context. This allows afu_release() running on another CPU to free
+the context, leading to a use-after-free vulnerability.
 
-FWIW, the fixed commit will also prevent enabling features like this
-series[1] enables. Arm64 is still disabled ATM because of disagreement
-with the arm64 maintainers, so that can was kicked down the road. It
-would be better to not disable this and address the issues as they
-happen rather than breaking people down the road.
+The race window exists in afu_ioctl(), afu_mmap(), afu_poll() and
+afu_read() between the status check and context usage. During device
+hot-unplug or rapid open/close cycles, this causes kernel crashes.
 
-Rob
+Introduce reference counting via kref to prevent premature free.
+ocxl_context_get() atomically checks status and acquires a reference
+under status_mutex. File operations hold this reference for their
+duration, ensuring the context remains valid even if another thread
+calls afu_release().
 
-[1] https://lore.kernel.org/all/20251015071420.1173068-1-herve.codina@bootl=
-in.com/
+ocxl_context_alloc() initializes refcount to 1 for the file's
+lifetime. afu_release() drops this reference, with the context freed
+when the last reference goes away. Preserve existing -EBUSY behavior
+where the context intentionally leaks on detach timeout.
+
+Reported-by: Yuhao Jiang <danisjiang@gmail.com>
+Fixes: 5ef3166e8a32 ("ocxl: Driver code for 'generic' opencapi devices")
+Cc: stable@vger.kernel.org
+Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
+---
+ drivers/misc/ocxl/context.c       |  69 ++++++++++++++----
+ drivers/misc/ocxl/file.c          | 113 +++++++++++++++++++++++-------
+ drivers/misc/ocxl/ocxl_internal.h |   4 ++
+ 3 files changed, 144 insertions(+), 42 deletions(-)
+
+diff --git a/drivers/misc/ocxl/context.c b/drivers/misc/ocxl/context.c
+index cded7d1caf32..e154adc972a5 100644
+--- a/drivers/misc/ocxl/context.c
++++ b/drivers/misc/ocxl/context.c
+@@ -28,6 +28,7 @@ int ocxl_context_alloc(struct ocxl_context **context, struct ocxl_afu *afu,
+ 
+ 	ctx->pasid = pasid;
+ 	ctx->status = OPENED;
++	kref_init(&ctx->kref);
+ 	mutex_init(&ctx->status_mutex);
+ 	ctx->mapping = mapping;
+ 	mutex_init(&ctx->mapping_lock);
+@@ -47,6 +48,59 @@ int ocxl_context_alloc(struct ocxl_context **context, struct ocxl_afu *afu,
+ }
+ EXPORT_SYMBOL_GPL(ocxl_context_alloc);
+ 
++/**
++ * ocxl_context_get() - Get a reference to the context if not closed
++ * @ctx: The context
++ *
++ * Atomically checks if context status is not CLOSED and acquires a reference.
++ * Must be called with ctx->status_mutex held.
++ *
++ * Return: true if reference acquired, false if context is CLOSED
++ */
++bool ocxl_context_get(struct ocxl_context *ctx)
++{
++	lockdep_assert_held(&ctx->status_mutex);
++
++	if (ctx->status == CLOSED)
++		return false;
++
++	kref_get(&ctx->kref);
++	return true;
++}
++EXPORT_SYMBOL_GPL(ocxl_context_get);
++
++/*
++ * kref release callback - called when last reference is dropped
++ */
++static void ocxl_context_release(struct kref *kref)
++{
++	struct ocxl_context *ctx = container_of(kref, struct ocxl_context,
++						 kref);
++
++	mutex_lock(&ctx->afu->contexts_lock);
++	ctx->afu->pasid_count--;
++	idr_remove(&ctx->afu->contexts_idr, ctx->pasid);
++	mutex_unlock(&ctx->afu->contexts_lock);
++
++	ocxl_afu_irq_free_all(ctx);
++	idr_destroy(&ctx->irq_idr);
++	/* reference to the AFU taken in ocxl_context_alloc() */
++	ocxl_afu_put(ctx->afu);
++	kfree(ctx);
++}
++
++/**
++ * ocxl_context_put() - Release a reference to the context
++ * @ctx: The context
++ *
++ * Decrements the reference count. When it reaches zero, the context is freed.
++ */
++void ocxl_context_put(struct ocxl_context *ctx)
++{
++	kref_put(&ctx->kref, ocxl_context_release);
++}
++EXPORT_SYMBOL_GPL(ocxl_context_put);
++
+ /*
+  * Callback for when a translation fault triggers an error
+  * data:	a pointer to the context which triggered the fault
+@@ -279,18 +333,3 @@ void ocxl_context_detach_all(struct ocxl_afu *afu)
+ 	}
+ 	mutex_unlock(&afu->contexts_lock);
+ }
+-
+-void ocxl_context_free(struct ocxl_context *ctx)
+-{
+-	mutex_lock(&ctx->afu->contexts_lock);
+-	ctx->afu->pasid_count--;
+-	idr_remove(&ctx->afu->contexts_idr, ctx->pasid);
+-	mutex_unlock(&ctx->afu->contexts_lock);
+-
+-	ocxl_afu_irq_free_all(ctx);
+-	idr_destroy(&ctx->irq_idr);
+-	/* reference to the AFU taken in ocxl_context_alloc() */
+-	ocxl_afu_put(ctx->afu);
+-	kfree(ctx);
+-}
+-EXPORT_SYMBOL_GPL(ocxl_context_free);
+diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
+index 7eb74711ac96..c08724e7ff1e 100644
+--- a/drivers/misc/ocxl/file.c
++++ b/drivers/misc/ocxl/file.c
+@@ -204,17 +204,21 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
+ 	int irq_id;
+ 	u64 irq_offset;
+ 	long rc;
+-	bool closed;
+-
+-	pr_debug("%s for context %d, command %s\n", __func__, ctx->pasid,
+-		CMD_STR(cmd));
+ 
++	/*
++	 * Hold a reference to the context for the duration of this operation.
++	 * We check the status and acquire the reference atomically under the
++	 * status_mutex to ensure the context remains valid.
++	 */
+ 	mutex_lock(&ctx->status_mutex);
+-	closed = (ctx->status == CLOSED);
++	if (!ocxl_context_get(ctx)) {
++		mutex_unlock(&ctx->status_mutex);
++		return -EIO;
++	}
+ 	mutex_unlock(&ctx->status_mutex);
+ 
+-	if (closed)
+-		return -EIO;
++	pr_debug("%s for context %d, command %s\n", __func__, ctx->pasid,
++		CMD_STR(cmd));
+ 
+ 	switch (cmd) {
+ 	case OCXL_IOCTL_ATTACH:
+@@ -230,7 +234,7 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
+ 					sizeof(irq_offset));
+ 			if (rc) {
+ 				ocxl_afu_irq_free(ctx, irq_id);
+-				return -EFAULT;
++				rc = -EFAULT;
+ 			}
+ 		}
+ 		break;
+@@ -238,8 +242,10 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
+ 	case OCXL_IOCTL_IRQ_FREE:
+ 		rc = copy_from_user(&irq_offset, (u64 __user *) args,
+ 				sizeof(irq_offset));
+-		if (rc)
+-			return -EFAULT;
++		if (rc) {
++			rc = -EFAULT;
++			break;
++		}
+ 		irq_id = ocxl_irq_offset_to_id(ctx, irq_offset);
+ 		rc = ocxl_afu_irq_free(ctx, irq_id);
+ 		break;
+@@ -247,14 +253,20 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
+ 	case OCXL_IOCTL_IRQ_SET_FD:
+ 		rc = copy_from_user(&irq_fd, (u64 __user *) args,
+ 				sizeof(irq_fd));
+-		if (rc)
+-			return -EFAULT;
+-		if (irq_fd.reserved)
+-			return -EINVAL;
++		if (rc) {
++			rc = -EFAULT;
++			break;
++		}
++		if (irq_fd.reserved) {
++			rc = -EINVAL;
++			break;
++		}
+ 		irq_id = ocxl_irq_offset_to_id(ctx, irq_fd.irq_offset);
+ 		ev_ctx = eventfd_ctx_fdget(irq_fd.eventfd);
+-		if (IS_ERR(ev_ctx))
+-			return PTR_ERR(ev_ctx);
++		if (IS_ERR(ev_ctx)) {
++			rc = PTR_ERR(ev_ctx);
++			break;
++		}
+ 		rc = ocxl_irq_set_handler(ctx, irq_id, irq_handler, irq_free, ev_ctx);
+ 		if (rc)
+ 			eventfd_ctx_put(ev_ctx);
+@@ -280,6 +292,8 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
+ 	default:
+ 		rc = -EINVAL;
+ 	}
++
++	ocxl_context_put(ctx);
+ 	return rc;
+ }
+ 
+@@ -292,9 +306,23 @@ static long afu_compat_ioctl(struct file *file, unsigned int cmd,
+ static int afu_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+ 	struct ocxl_context *ctx = file->private_data;
++	int rc;
++
++	/*
++	 * Hold a reference during mmap setup to ensure the context
++	 * remains valid.
++	 */
++	mutex_lock(&ctx->status_mutex);
++	if (!ocxl_context_get(ctx)) {
++		mutex_unlock(&ctx->status_mutex);
++		return -EIO;
++	}
++	mutex_unlock(&ctx->status_mutex);
+ 
+ 	pr_debug("%s for context %d\n", __func__, ctx->pasid);
+-	return ocxl_context_mmap(ctx, vma);
++	rc = ocxl_context_mmap(ctx, vma);
++	ocxl_context_put(ctx);
++	return rc;
+ }
+ 
+ static bool has_xsl_error(struct ocxl_context *ctx)
+@@ -324,21 +352,31 @@ static unsigned int afu_poll(struct file *file, struct poll_table_struct *wait)
+ {
+ 	struct ocxl_context *ctx = file->private_data;
+ 	unsigned int mask = 0;
+-	bool closed;
++
++	/*
++	 * Hold a reference to the context while checking for events.
++	 */
++	mutex_lock(&ctx->status_mutex);
++	if (!ocxl_context_get(ctx)) {
++		mutex_unlock(&ctx->status_mutex);
++		return EPOLLERR;
++	}
++	mutex_unlock(&ctx->status_mutex);
+ 
+ 	pr_debug("%s for context %d\n", __func__, ctx->pasid);
+ 
+ 	poll_wait(file, &ctx->events_wq, wait);
+ 
+-	mutex_lock(&ctx->status_mutex);
+-	closed = (ctx->status == CLOSED);
+-	mutex_unlock(&ctx->status_mutex);
+-
+ 	if (afu_events_pending(ctx))
+ 		mask = EPOLLIN | EPOLLRDNORM;
+-	else if (closed)
+-		mask = EPOLLERR;
++	else {
++		mutex_lock(&ctx->status_mutex);
++		if (ctx->status == CLOSED)
++			mask = EPOLLERR;
++		mutex_unlock(&ctx->status_mutex);
++	}
+ 
++	ocxl_context_put(ctx);
+ 	return mask;
+ }
+ 
+@@ -410,6 +448,16 @@ static ssize_t afu_read(struct file *file, char __user *buf, size_t count,
+ 			AFU_EVENT_BODY_MAX_SIZE))
+ 		return -EINVAL;
+ 
++	/*
++	 * Hold a reference to the context for the duration of the read operation.
++	 */
++	mutex_lock(&ctx->status_mutex);
++	if (!ocxl_context_get(ctx)) {
++		mutex_unlock(&ctx->status_mutex);
++		return -EIO;
++	}
++	mutex_unlock(&ctx->status_mutex);
++
+ 	for (;;) {
+ 		prepare_to_wait(&ctx->events_wq, &event_wait,
+ 				TASK_INTERRUPTIBLE);
+@@ -422,11 +470,13 @@ static ssize_t afu_read(struct file *file, char __user *buf, size_t count,
+ 
+ 		if (file->f_flags & O_NONBLOCK) {
+ 			finish_wait(&ctx->events_wq, &event_wait);
++			ocxl_context_put(ctx);
+ 			return -EAGAIN;
+ 		}
+ 
+ 		if (signal_pending(current)) {
+ 			finish_wait(&ctx->events_wq, &event_wait);
++			ocxl_context_put(ctx);
+ 			return -ERESTARTSYS;
+ 		}
+ 
+@@ -437,19 +487,24 @@ static ssize_t afu_read(struct file *file, char __user *buf, size_t count,
+ 
+ 	if (has_xsl_error(ctx)) {
+ 		used = append_xsl_error(ctx, &header, buf + sizeof(header));
+-		if (used < 0)
++		if (used < 0) {
++			ocxl_context_put(ctx);
+ 			return used;
++		}
+ 	}
+ 
+ 	if (!afu_events_pending(ctx))
+ 		header.flags |= OCXL_KERNEL_EVENT_FLAG_LAST;
+ 
+-	if (copy_to_user(buf, &header, sizeof(header)))
++	if (copy_to_user(buf, &header, sizeof(header))) {
++		ocxl_context_put(ctx);
+ 		return -EFAULT;
++	}
+ 
+ 	used += sizeof(header);
+ 
+ 	rc = used;
++	ocxl_context_put(ctx);
+ 	return rc;
+ }
+ 
+@@ -464,8 +519,12 @@ static int afu_release(struct inode *inode, struct file *file)
+ 	ctx->mapping = NULL;
+ 	mutex_unlock(&ctx->mapping_lock);
+ 	wake_up_all(&ctx->events_wq);
++	/*
++	 * Drop the initial reference from afu_open(). The context will be
++	 * freed when all references are released.
++	 */
+ 	if (rc != -EBUSY)
+-		ocxl_context_free(ctx);
++		ocxl_context_put(ctx);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/misc/ocxl/ocxl_internal.h b/drivers/misc/ocxl/ocxl_internal.h
+index d2028d6c6f08..6eab7806b43d 100644
+--- a/drivers/misc/ocxl/ocxl_internal.h
++++ b/drivers/misc/ocxl/ocxl_internal.h
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/pci.h>
+ #include <linux/cdev.h>
++#include <linux/kref.h>
+ #include <linux/list.h>
+ #include <misc/ocxl.h>
+ 
+@@ -68,6 +69,7 @@ struct ocxl_xsl_error {
+ };
+ 
+ struct ocxl_context {
++	struct kref kref;
+ 	struct ocxl_afu *afu;
+ 	int pasid;
+ 	struct mutex status_mutex;
+@@ -140,6 +142,8 @@ int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid);
+ 
+ int ocxl_context_mmap(struct ocxl_context *ctx,
+ 			struct vm_area_struct *vma);
++bool ocxl_context_get(struct ocxl_context *ctx);
++void ocxl_context_put(struct ocxl_context *ctx);
+ void ocxl_context_detach_all(struct ocxl_afu *afu);
+ 
+ int ocxl_sysfs_register_afu(struct ocxl_file_info *info);
+-- 
+2.34.1
+
 
