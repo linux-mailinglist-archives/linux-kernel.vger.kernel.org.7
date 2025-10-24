@@ -1,478 +1,351 @@
-Return-Path: <linux-kernel+bounces-867945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5595C03FCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:02:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 747A6C03FD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0A78E35481B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:02:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BED6C3B739A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A2A17F4F6;
-	Fri, 24 Oct 2025 01:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4883A19E7D1;
+	Fri, 24 Oct 2025 01:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOknb9pg"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QxvpABKE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4390B8405C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761267756; cv=none; b=M/Io2SXY88aMxf7ZxXlqrsE8vdS6RSPMfqpQLihZKCcSkXQ9hSGaN4Psudn83SdcpEImVbL5UPhHzdi1L242jyVghwTsY5LPWNyfIV8Flto4oTxdsHjZySFNTLVQfyj9GSjFyaeqn0PK//W2cmQwXWj69gjX+SczaOCzxTaQLNs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761267756; c=relaxed/simple;
-	bh=G9pH1+RL2ty7Yo0cA6AVQ5NWeI40xyrDzY3ZAXbiB4M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jltUjr+rMgvHs8QSfWSCpwpwbJtYfl7ZnpUpSJa/m6MevBGY4dAlY4wFb0R4Tz/rnJmcWyt+UFNkoXkMMoGdXiV+iXCfYIs/h0+BW9bFAKObqrt1HdPBmqZnloi0OIop8K/46M0I2b4RHfk5PlEVbU9av6SSI2PFORPC4dUsHlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eOknb9pg; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-940e06b4184so155892539f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 18:02:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761267753; x=1761872553; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IKDbt1wT9yJqALXoBzDuHO4g9TQZ25V02GA6xGAEZGQ=;
-        b=eOknb9pgLvhHkapj+W8G5hNWhkKYdTWnk4Fvxm1/7a8mvTskoCueO+7AlC8FJm05sM
-         rtUacEMagDG0kTbYKb5Zcq8quOm/6W1sD0sEXFZZqzrkAlyWPZKfx6nNLRCIAb3OU72t
-         IKjTurtN5CYHJcYCRo51rmLCjTiAgohLjZXjDg+uMwSgul5WeakSlBqhBuG4k314M0lz
-         /wLNVFCamy35K7pC+pniUG1Fq7wWUm08f4YSyqv7Pnq+M4BMKkmzqiJRusVCo1AvIRui
-         6P4SiXsEkMVYBsAisg6CndYdVTtHYSNDqqCejFczwlofDymhe3KGmVFDmWXaXz5+KJEf
-         FLsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761267753; x=1761872553;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IKDbt1wT9yJqALXoBzDuHO4g9TQZ25V02GA6xGAEZGQ=;
-        b=tg1u1JPcdAyq0cJ30tShSdsx02QnGxokRcA9hAGJsGL5+ZRo55I11JJhVh0fE1tT2C
-         /2avi4g+kXGT6IU85Hl1v+20Rvr8PZkUJf8/7jOCigivZoIoazmR+mZmqhFOgwGYNhUJ
-         79DAwpi1A6dp2FAHzxNkVTj3HmV0CG6nX+st5wQtNNROJXkkPVI8qcI4xnEqITfixbbV
-         s7sZWw8xPkiuR0DEvv6uSZqv+jEE0ufVtej6aOn2BnRdVi1UfSfK+HFnhAO/9DyXKWHX
-         CcEpufrHMeniyxGbz+6/m/y12ELcEAvQSv8g50XbprwxGQa+CO137Nf9lVWRjwqVcPI5
-         7ZEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXklHebo7CfhTzgtZ9TOk31SyLa3W1jPUgOQ5b8728R7Qz1jlCMCPk9vYMciCg9knap5Jo/iEVG3Fa07ag=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrc/mGNvKZEaw8RKFvPfArSnocvWdoXPZUAJS4FFcCh8w7F7mK
-	ZN1Xi58XElmtW+ib6Xa+2XR2Tulq32hOIGhtzBpVG4Fam+mNPXQSN150
-X-Gm-Gg: ASbGncs504/gIzi2o7QM47AsaZVJJBly0Kd+8Hz80iUNAZBMft/OgZ4HZX7DRtpC+qd
-	BegMYLCNtqbuI7xepMa+vhKPz3wAk/jJYX/+kONODvce7r6Y0CHsuQomsb2fC6VgNGC/m9ZyhLH
-	7G4AaP/zsEZ/zt/GyYYBJUuaoJjFNffgB198hby0DlC/UaPN54qESZEgYMZUL6SplmnhhdL1mpn
-	aTMRy65jFLK3FUDi0xP+w5JTJfGCyiKbehHUbo4ki5cJa4v6qr5yyUpHnXBKSvMyZWPkMOfgfpe
-	pKC/QCmZpsc4ci/GBjQNIc2V/3RPmIVoQRw/BDNk8VXeXZjh/AEqQwYmNh+pI84MNi1MVCPlo82
-	4CuQ7B37mbwXnjQ4hJU08bmYQacs1CEC1MlJqWiumVKFsnbGGUq/0LL8YB+5VJu4yNmDVNegalu
-	/GpL4vgZ8sH3T/obrPjhx9AAnGAdA0WNacjM6Ym+0MmnB5feZG042eDJSIoUzNX6GuShUAYn8sG
-	gS6QzOx+0aF9d1vGUQuVmxA8Q==
-X-Google-Smtp-Source: AGHT+IEK9z1XCO0/7ofKXVfCQ/mfQxCmtCOsaVIb6O6vKesfo5b3vwjLT3GVU6VPQlsM67rO3oQbtg==
-X-Received: by 2002:a05:6e02:2508:b0:430:a65c:a833 with SMTP id e9e14a558f8ab-431ebf86680mr9062255ab.31.1761267753103;
-        Thu, 23 Oct 2025 18:02:33 -0700 (PDT)
-Received: from abc-virtual-machine.localdomain (c-76-150-86-52.hsd1.il.comcast.net. [76.150.86.52])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5abb7fda03fsm1538669173.35.2025.10.23.18.02.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Oct 2025 18:02:32 -0700 (PDT)
-From: Yuhao Jiang <danisjiang@gmail.com>
-To: Frederic Barrat <fbarrat@linux.ibm.com>,
-	Andrew Donnellan <ajd@linux.ibm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alastair D'Silva <alastair@d-silva.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Yuhao Jiang <danisjiang@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] ocxl: Fix race leading to use-after-free in file operations
-Date: Thu, 23 Oct 2025 20:02:28 -0500
-Message-Id: <20251024010228.1667904-1-danisjiang@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87C78405C;
+	Fri, 24 Oct 2025 01:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761267944; cv=fail; b=sMA4F0LskWkbZI4JYNbx3U/a8ShVFfB49SrgxuaU5Mj7je9bqCl489ToLOuMj9MK04R9vj2NJ/zTP8i2SSke2155nd6DN1/oAQy3Z/uERqom8bT9AqrvvB89d8mIGyV0M44+tIRrw5t1aeDuvTA9ceQtXXyzN8bvpk4HdpA8yaM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761267944; c=relaxed/simple;
+	bh=/MC6RGneJ/vewZaOOwgKwxD3meBU+4Zcn7B8hCetj+s=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Xjs6cDuon76pgr2EVVy3hUmmgS+vwD7nkmx8C0vVH4L9eZ9NHwAUW3hjRTc1RRbWjU4RJ2mFfzVXW5D17XZef1K6Ds8qrGgYPKVycl8z3NvHR6iMLOCFxf99sxw2U6L97Zs4D5Y9Y75e6LvfQqhvrTZ2Ez1UjIwdGlktc7LN8no=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QxvpABKE; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761267943; x=1792803943;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:mime-version;
+  bh=/MC6RGneJ/vewZaOOwgKwxD3meBU+4Zcn7B8hCetj+s=;
+  b=QxvpABKExteg6AGue2zMnjf0Kj1xYtL7LPNO2PA5nFE0uvg8YnzmTGeK
+   XIoOdQyq1IrySdYwsGVXqdbUYvZ7wmBWOB+HlKvbE/DhVQfI1cTZE5NJa
+   7xCl8mSFQ7ZFm+zo4y81vBSMqCdK2+fX4Ws6funvT9zL1KpHaTlq96XjP
+   pvOCLnTY/52LFLqj21Zfg0ZX8E/3oYWcVMeBeLoGavCu/eh1H5pEVX2In
+   MS0Cy/0vT5DYUMoY0VcX+MEkMi4OcrFyA7lt1Xjo0z1BWwoCiuW6kAAYS
+   8a+5aQZJm6uWoVmT3qHYbIPgFXfhIDX5AUlqzsPVwZjpUTh6FAH2Ucdw1
+   Q==;
+X-CSE-ConnectionGUID: 8UGV7KxFQlaR7/DF9x92eA==
+X-CSE-MsgGUID: L7WT7NZqQf22c3wLoc8O7A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67285551"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="asc'?scan'208";a="67285551"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 18:05:42 -0700
+X-CSE-ConnectionGUID: umQc+ZEoS5uX48PFjmc1ug==
+X-CSE-MsgGUID: ses2IDErT+ul9THg09kGsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="asc'?scan'208";a="188361759"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 18:05:42 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 23 Oct 2025 18:05:41 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Thu, 23 Oct 2025 18:05:41 -0700
+Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.35) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 23 Oct 2025 18:05:41 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b6IuG++4eh6YDUzdTDSXcIZARXefnsvz7gs3TBwPcKgnVvWybmC4oMFrPiYrdKBY7O+PhVHq94sh3MNbwQl91NyszfgycA35ZlMnW5nvul523LW2aOHhUb3CQsW0/6AqRpKfL+rrIKk+tSDzhdnNalX12JDZuM4dn2fEY/LdyqYuERox9CgSFWzXUncAml99EmeeIJerpLPbAQ876Q47XLZg/Yuax/pPz/ikRESW/GzuNxpqxtyBRBqMf3tlgoymE/rjMhSGR6JH8jUu/kEwxQr+yAxnVEB3sw4LOCUXkVO7S1NixUjfSyxoZtEuGEyjOW8pXNY60u0yIqXhdwDtvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JyBCO740qjfxLy+Khu2RUXWyEWHqF4GfmELovJie9Tg=;
+ b=CGSU+iV/kq8iQtNe1XIsrFyaZm8GCc5Jz0L19EWXyWxnMCD9+1fqbxtltDy4BpkkhjWHE9WJVfPvILWDGjUap1OzoxLQrUfD/AS7HhxYgBjxNghoNKlvDLn9nJZ0YAyc9vpnxQNkUm1A/iuDjD2vDztzSH7PrGeUYL5MdFkZo1q9chtnf4uHcT6IHewitf8Y2hlcF1Ri7Yw70Dux2YDKiGGuwRJbZnN7++6pYCA77g9Z/BsRGNEEr6lDAK0NSIFIunfK31D+6+I2M65r9X1m9/kqdx3BIdq84Mrc4sofjoVTw48d2Zns2uMRiXD+jBAHbaxul03fkrw8daMLneG9iA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by CY8PR11MB6819.namprd11.prod.outlook.com (2603:10b6:930:61::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Fri, 24 Oct
+ 2025 01:05:16 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::81f7:c6c0:ca43:11c3]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::81f7:c6c0:ca43:11c3%3]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 01:05:16 +0000
+Message-ID: <02692f16-b238-49d7-a618-150a03cb1674@intel.com>
+Date: Thu, 23 Oct 2025 18:05:14 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 3/3] net: hibmcge: fix the inappropriate
+ netif_device_detach()
+To: Jijie Shao <shaojijie@huawei.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<andrew+netdev@lunn.ch>, <horms@kernel.org>
+CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <lantao5@huawei.com>,
+	<huangdonghua3@h-partners.com>, <yangshuaisong@h-partners.com>,
+	<jonathan.cameron@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20251021140016.3020739-1-shaojijie@huawei.com>
+ <20251021140016.3020739-4-shaojijie@huawei.com>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+Autocrypt: addr=jacob.e.keller@intel.com; keydata=
+ xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
+ J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
+ qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
+ CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
+ UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
+ MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
+ apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
+ cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
+In-Reply-To: <20251021140016.3020739-4-shaojijie@huawei.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="------------9Ls4bzJpeIT9NLY85mByJTVK"
+X-ClientProxiedBy: MW4PR04CA0247.namprd04.prod.outlook.com
+ (2603:10b6:303:88::12) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|CY8PR11MB6819:EE_
+X-MS-Office365-Filtering-Correlation-Id: acff3808-7d26-4894-5f28-08de129964c9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?T0FLd1c1WUQ5N3NHOHVncnU2c2xWdk5VbTNQMkY2dnB1ZDhpNWY5ZFZiRmpH?=
+ =?utf-8?B?Y2l0eDRrU20vOEFaellmRUZSQ3hWeUdvNGFXNndiUE1RUUlQSmJQUTZIMnRi?=
+ =?utf-8?B?SDZ2TGdWL3hBdEtua0IwOTJaTU5YeDBqWVMxYVJzbTNkdmIzS1VyN1lJRmVZ?=
+ =?utf-8?B?NGZtemczY2x4YU5yRklQZ0RtV1M1bjk2VkZERFN3ZkU3clpFNUN0aDJBb25H?=
+ =?utf-8?B?bitpKytIelh0OSswTzR3bEZmRFNwMmNQbi9EbjBoUmR3ZGhPUUh0ZHpoZisw?=
+ =?utf-8?B?cUdRZCtQQ1hna2NSREg2Q0lqSFhzQjN2UDdtVkxWZ2RQK0RHWEo5aUR0RWd4?=
+ =?utf-8?B?RVg2OGVhYTJTV00wTFJFUHNRbXZocWluVUtVZG5SWVpLYVFDNWt4MUMwTkxv?=
+ =?utf-8?B?MlZMYlNoMnVOeFk2QzVmOEdaM2JaZFZSOVV3emNqSlhVazdMdGw5SGRUTUVR?=
+ =?utf-8?B?bTlIU05jZ3FLRE5yekp5TkRnbWhReDVDTlowbzY3dUFsWDJSSlRpbEFRQmxH?=
+ =?utf-8?B?eDlKMUNWTXEwVTdjK1UzZmJyNVlFZyt4djJQMVNkQUpkbmxNWTVkVG1oLzBZ?=
+ =?utf-8?B?RVI2UUdSQUhYTWdDQ29mUWNBZ2NXYTZvWnYwWWJpV2N4anVwcXB5VmlDS1BF?=
+ =?utf-8?B?UEMwRUJRZzFpQXhCUjBnMjVLbTArZU04djVqOVN4TE9SYzBBM0dPTjNNaGhC?=
+ =?utf-8?B?bG9jMTNwNExYeUE5WGR1UEkvb3IxSmRBQ2NSb2o3UEdPZWpMTElKQ0pzMWhM?=
+ =?utf-8?B?cG1zUVYxa3JJL1psRlVQbDBDd0loWlhnbVhwTmQrejlzUGcrcXBjRWF4S0tN?=
+ =?utf-8?B?TnZ5OXpISk0zaGdVMkEzdkNvM1lJZTEzSGpqVlBQa0tuQ1pkSE8yWUpmVGt1?=
+ =?utf-8?B?TGhYQWZFcU1uaDJKenZCemRDOCsyUU9HdUszZ0VXQ3VSeENUTWxBdXVOUThl?=
+ =?utf-8?B?bXNScHJ3cDhvV0FQZys4NkFkVDBEUjZYd3pmRTVCTWMwM3hYUXBtRVkvSFpS?=
+ =?utf-8?B?UGw1MGkzWGhqcGxVWk04VDFVNXd2RzFqVi82K2l0SVlOWW50b0FUZVRRY0ZQ?=
+ =?utf-8?B?QXhOeDVaZFdDSy9uSzBjZ3JnaDVsdUxpQ1ZjOHJ5Y083Vm9kZGJLS0tyUk5y?=
+ =?utf-8?B?Um0xak1sNlZlellwTUdWQmlYQ2Q0UVBMQUlNYmtmTUpYeW9ES0g3Vkd3M1N1?=
+ =?utf-8?B?R1RRbUxIcmZHQWxIRlMvZ2s2MytsczBCbGg2aitFSUZIa1B1RW9Cd0tUdk9R?=
+ =?utf-8?B?aEVSVlRYWFhwa2g2Zk5jS1dGSXh0Z3FwWEZObzVKVnJsTlZpcVpNUTU4Zk1B?=
+ =?utf-8?B?VWQvSUpmNEh1VWNhck5nVVQyTytVQnEzR1dNSXZ3S0g5VTVZRURncTdFeXZ6?=
+ =?utf-8?B?SWdpRmVtMVdyd2RJaWJYeVdIYlJVSDlpWVdsWWxQRC9LcFdsaVRlRm9KcWYz?=
+ =?utf-8?B?S3VWV1VGT0drQ2J6a3p4N3grMVhlTVU3UzFWblZqMWg5WnZEbHErcUJCTnBK?=
+ =?utf-8?B?N0g5eC9pRWdSRXZKaWpIUVVHTVp1eTV0ZEVuS3Fpak10a0h3bFNBNUR2cmhI?=
+ =?utf-8?B?K24wWDd3SGRJR3VXSDdJdkZNUUNETlRPT1dpQnpmWCtXQzdzS1RZOUhLYUxn?=
+ =?utf-8?B?YjdvbTF6dlJPTkI4WkRrS3dIYjRQR201UTNkQUhDNzJLcm9qZFYwSXRMdWtU?=
+ =?utf-8?B?aXBwWDF3WE9uWTBzV09hR1dMNVpjOWdkYU1DZjJUYnB0UlBsaHhFQ2NXbXk5?=
+ =?utf-8?B?STRwQjhoYUNIT2NTSzAyM2VtM1l5aUtmY2hycVhyYWx1dzlNNHc1clQzU2ZL?=
+ =?utf-8?B?c2VLVk9tQVBGK3lxbkNrbHo4Z0VPN0JZa1ZYSFVpdnBOb0R1WjhPWXN3QUpW?=
+ =?utf-8?B?endaaytoTU5rdWR4cEFkSURlQ0s0WWRFd1c0dXEvMGpONW8zYXoyaEdIcDJI?=
+ =?utf-8?Q?s5i4oMX1CAUHm0PYmDa3hy5MiaRAbbdi?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ellHdzFjRGJmVCswOUdwZGVNN3ZjSndWL1NkU0hianY2RnNYS1VoSW5VS2Fi?=
+ =?utf-8?B?dnUvN2FINFVhSGxuRCtMbWdtNXZEK1JDUnYzbWE2MVZpcHRwYmxHNm5wcE5W?=
+ =?utf-8?B?QWtMYm1oWUpmZlZGQ3RyK2pLamQ0UEF6TUdzSExyTUpsU0RXNlJpWnNZZzBY?=
+ =?utf-8?B?dmxpbktTa1c2UnlZbElBekFmWmNUTTlkMVZoa0FhdXlyYXhpTzRtc2RrWG5w?=
+ =?utf-8?B?K1hyaDVnUzRtc0dyd1pjK3hveUpaZi8vK0ZCYW9oaW5GMmF2VDFZUkE2NGVX?=
+ =?utf-8?B?NVF0RmFNUERETStoR0g1ZmlTemdiSkwxelVqcVRiK1ZObDJseENNS1VEUTVs?=
+ =?utf-8?B?VENiMlliUm1pdE9pa2h1cDM2RVdPZk5rb3hBdXJtOXcwbjV2OUtQL1VrL29C?=
+ =?utf-8?B?OGxlWTUzbVVtS05uenlBT1JLMzdqWkQ2dWU5dU5SOTUxK1NvWEtOQUEzaDB0?=
+ =?utf-8?B?Z0Y4M1c1elBwMmVHcHVOWGNBaTVUenJWNVVBUVVYMFBpVWVyclBXVmFoRDRW?=
+ =?utf-8?B?UnVUOVd0M2RNS0hiVTcybElXRG1zdXNYZlo4RlgrVE11cjZDd0hLV1lZMUJj?=
+ =?utf-8?B?UUVlK3FyazYwU3hDRmoxZU04SS9vWnZxK1doZnpGbVNOSnFNNVV5M0pwOW5l?=
+ =?utf-8?B?eDd6ZndEWFV5N05xVFVrV1pYQ3RCem9QeDdCeTBrOGhUOC9FMnYrYVc5T1pH?=
+ =?utf-8?B?MCs4aG5Vb1RGM0lvT0d6aUFLOGNuSjlTWnEwOENSMTYzZzg5WW5pazNTWjhZ?=
+ =?utf-8?B?U1lCeXloZlhndHR1WkVLM0MrZ241U0lLL1NBQWszMjNseXpoNUpxcEhSNkpQ?=
+ =?utf-8?B?N0phMlhnS3NwUWdTZjV1ODNQNHVVMjd6aDVONnNVNnc0b0JaL3FPQnozcHEv?=
+ =?utf-8?B?YnJZdjhkZ0tVMDlKeks2bDRzb3R1WVdoRGlGd0hPUEZlamRpSDRCbHJRME5r?=
+ =?utf-8?B?SW1nZUN5MW9FTE1id2ozSi9QYUp4ZFkrL0ZsRTMrZ09qRVc0N1JPMjVtWmZJ?=
+ =?utf-8?B?VFJlWVEzNjdSdWRvOUwrZG5PZSs3Mm9vRndnb2FxcHorZ0VYc2M3eVQ1UDJa?=
+ =?utf-8?B?QUVXV1hyLzRVU09jVTZObkt5U042VngyczlIaUJwY1E2czREWS9IZVhnc1Jr?=
+ =?utf-8?B?R29mU3pnOUx0QngrWEN5MFZzRVVWOU5WY2crc1BZTVRNeGwrNG83YUprUkJD?=
+ =?utf-8?B?UloxWjhhT3RqYVd2ekgzOVRlMzMvalpLYlIwWXZhWXkwczR4dzBHTThvSEk1?=
+ =?utf-8?B?NDBWSVRSYmlkN0phTGVaOHV4VXd0b3d4bUJoREhjbHhyZ25VTmhKSVA1aDNK?=
+ =?utf-8?B?SVJVOWZmYjN5cit0NkdUUHkzK2xhaGdMZG9QRys1TTd0TVJtSm15L2ljOWNR?=
+ =?utf-8?B?YkFzYkVFSnZFeE55RnI4enRjTE1aWVlYWmxPNGZ5K3lrSU9PcW50aXNOZ1lV?=
+ =?utf-8?B?aS80QlFlZG1ucURyK2dHRm1XNzJyT3YyMWhBRU1pZFBpWGlBQkZOMWN5dWgz?=
+ =?utf-8?B?RHZJZ0tPV0xOYWVvdWNzbURxbHhBNStCbFQ1WC9vNFhyMjUzWDMrdFFXMDNZ?=
+ =?utf-8?B?V0NXOVZGaUdZY0lxaG8zLzN4NUxNLzVYNEJaUUkxUElGZGtuSDlrd0hqaE9I?=
+ =?utf-8?B?TVpXQ3NKVkluYytkcTBkRTNsRHZ5eGwwbGRMODdHSy85OVpLRmpES0V0RWtG?=
+ =?utf-8?B?NkRhcmhsa3pScEZEdHg0dEZPTy91R1N0VTIvRSs3NWlLRFlvZG9qcDR1bDhU?=
+ =?utf-8?B?NEdXYk9UbUVWRjIzK1lUR3dXb0tHcHd5dlFVUGViZ1JuUU1HM1hSZ2FWSmNQ?=
+ =?utf-8?B?NjZVVzVoYjlRQ3B3dnUwcnVuWTY2WWppRWR0SXNST2syeCtWS0NnNzJrcUhp?=
+ =?utf-8?B?a1VDUUVpcEM3UFdwMUh0WlhhUHVsemlweGEwUVRzT3RvaStySTRMOUhtR3ln?=
+ =?utf-8?B?c2lRRFY1T3lEOTJkOTg3RlRQclVBNDF3M2l3SVRmSXZUc0ZzcEVZR3Z1K0lw?=
+ =?utf-8?B?TEZiYXZMOE9LWUZ1V1gvS3cwSTEvWnNmOHY4ekZYbVljQjJ2R3Y1ckFhRXZ2?=
+ =?utf-8?B?SEFRZ2VFUE5GY0xEaE96aUtpQnYrOVBLY0tmdzFxS3ByUU9iblhzNjByZTNZ?=
+ =?utf-8?B?cit0cG8yOVBobjV3cU1OVjBnSmhzOVdTY2hURVFjTzdsOE9aSW1sOXMrd3h6?=
+ =?utf-8?B?R2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: acff3808-7d26-4894-5f28-08de129964c9
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 01:05:16.5262
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jbBe0bQPq9Xva0erhzITeDzlFQzseehnFIm1yileVS8lNH9sy4y/XRdfn8eiN2mG3PimbvPcIiyHbxWfoLjFdW1BYCATItjUKgWA906yjww=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB6819
+X-OriginatorOrg: intel.com
 
-The file operations dereference the context pointer after checking
-status under ctx->status_mutex, then drop the lock before using the
-context. This allows afu_release() running on another CPU to free
-the context, leading to a use-after-free vulnerability.
+--------------9Ls4bzJpeIT9NLY85mByJTVK
+Content-Type: multipart/mixed; boundary="------------ZYawA1c5wiYQJZKx76KgJ6FP";
+ protected-headers="v1"
+Message-ID: <02692f16-b238-49d7-a618-150a03cb1674@intel.com>
+Date: Thu, 23 Oct 2025 18:05:14 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 3/3] net: hibmcge: fix the inappropriate
+ netif_device_detach()
+To: Jijie Shao <shaojijie@huawei.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, horms@kernel.org
+Cc: shenjian15@huawei.com, liuyonglong@huawei.com, chenhao418@huawei.com,
+ lantao5@huawei.com, huangdonghua3@h-partners.com,
+ yangshuaisong@h-partners.com, jonathan.cameron@huawei.com,
+ salil.mehta@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251021140016.3020739-1-shaojijie@huawei.com>
+ <20251021140016.3020739-4-shaojijie@huawei.com>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+Autocrypt: addr=jacob.e.keller@intel.com; keydata=
+ xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
+ J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
+ qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
+ CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
+ UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
+ MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
+ apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
+ cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
+In-Reply-To: <20251021140016.3020739-4-shaojijie@huawei.com>
 
-The race window exists in afu_ioctl(), afu_mmap(), afu_poll() and
-afu_read() between the status check and context usage. During device
-hot-unplug or rapid open/close cycles, this causes kernel crashes.
+--------------ZYawA1c5wiYQJZKx76KgJ6FP
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Introduce reference counting via kref to prevent premature free.
-ocxl_context_get() atomically checks status and acquires a reference
-under status_mutex. File operations hold this reference for their
-duration, ensuring the context remains valid even if another thread
-calls afu_release().
 
-ocxl_context_alloc() initializes refcount to 1 for the file's
-lifetime. afu_release() drops this reference, with the context freed
-when the last reference goes away. Preserve existing -EBUSY behavior
-where the context intentionally leaks on detach timeout.
 
-Reported-by: Yuhao Jiang <danisjiang@gmail.com>
-Fixes: 5ef3166e8a32 ("ocxl: Driver code for 'generic' opencapi devices")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yuhao Jiang <danisjiang@gmail.com>
----
- drivers/misc/ocxl/context.c       |  69 ++++++++++++++----
- drivers/misc/ocxl/file.c          | 113 +++++++++++++++++++++++-------
- drivers/misc/ocxl/ocxl_internal.h |   4 ++
- 3 files changed, 144 insertions(+), 42 deletions(-)
+On 10/21/2025 7:00 AM, Jijie Shao wrote:
+> current, driver will call netif_device_detach() in
+> pci_error_handlers.error_detected() and do reset in
+> pci_error_handlers.slot_reset().
+> However, if pci_error_handlers.slot_reset() is not called
+> after pci_error_handlers.error_detected(),
+> driver will be detached and unable to recover.
+>=20
+> drivers/pci/pcie/err.c/report_error_detected() says:
+>   If any device in the subtree does not have an error_detected
+>   callback, PCI_ERS_RESULT_NO_AER_DRIVER prevents subsequent
+>   error callbacks of any device in the subtree, and will
+>   exit in the disconnected error state.
+>=20
+> Therefore, when the hibmcge device and other devices that do not
+> support the error_detected callback are under the same subtree,
+> hibmcge will be unable to do slot_reset.
+>=20
 
-diff --git a/drivers/misc/ocxl/context.c b/drivers/misc/ocxl/context.c
-index cded7d1caf32..e154adc972a5 100644
---- a/drivers/misc/ocxl/context.c
-+++ b/drivers/misc/ocxl/context.c
-@@ -28,6 +28,7 @@ int ocxl_context_alloc(struct ocxl_context **context, struct ocxl_afu *afu,
- 
- 	ctx->pasid = pasid;
- 	ctx->status = OPENED;
-+	kref_init(&ctx->kref);
- 	mutex_init(&ctx->status_mutex);
- 	ctx->mapping = mapping;
- 	mutex_init(&ctx->mapping_lock);
-@@ -47,6 +48,59 @@ int ocxl_context_alloc(struct ocxl_context **context, struct ocxl_afu *afu,
- }
- EXPORT_SYMBOL_GPL(ocxl_context_alloc);
- 
-+/**
-+ * ocxl_context_get() - Get a reference to the context if not closed
-+ * @ctx: The context
-+ *
-+ * Atomically checks if context status is not CLOSED and acquires a reference.
-+ * Must be called with ctx->status_mutex held.
-+ *
-+ * Return: true if reference acquired, false if context is CLOSED
-+ */
-+bool ocxl_context_get(struct ocxl_context *ctx)
-+{
-+	lockdep_assert_held(&ctx->status_mutex);
-+
-+	if (ctx->status == CLOSED)
-+		return false;
-+
-+	kref_get(&ctx->kref);
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(ocxl_context_get);
-+
-+/*
-+ * kref release callback - called when last reference is dropped
-+ */
-+static void ocxl_context_release(struct kref *kref)
-+{
-+	struct ocxl_context *ctx = container_of(kref, struct ocxl_context,
-+						 kref);
-+
-+	mutex_lock(&ctx->afu->contexts_lock);
-+	ctx->afu->pasid_count--;
-+	idr_remove(&ctx->afu->contexts_idr, ctx->pasid);
-+	mutex_unlock(&ctx->afu->contexts_lock);
-+
-+	ocxl_afu_irq_free_all(ctx);
-+	idr_destroy(&ctx->irq_idr);
-+	/* reference to the AFU taken in ocxl_context_alloc() */
-+	ocxl_afu_put(ctx->afu);
-+	kfree(ctx);
-+}
-+
-+/**
-+ * ocxl_context_put() - Release a reference to the context
-+ * @ctx: The context
-+ *
-+ * Decrements the reference count. When it reaches zero, the context is freed.
-+ */
-+void ocxl_context_put(struct ocxl_context *ctx)
-+{
-+	kref_put(&ctx->kref, ocxl_context_release);
-+}
-+EXPORT_SYMBOL_GPL(ocxl_context_put);
-+
- /*
-  * Callback for when a translation fault triggers an error
-  * data:	a pointer to the context which triggered the fault
-@@ -279,18 +333,3 @@ void ocxl_context_detach_all(struct ocxl_afu *afu)
- 	}
- 	mutex_unlock(&afu->contexts_lock);
- }
--
--void ocxl_context_free(struct ocxl_context *ctx)
--{
--	mutex_lock(&ctx->afu->contexts_lock);
--	ctx->afu->pasid_count--;
--	idr_remove(&ctx->afu->contexts_idr, ctx->pasid);
--	mutex_unlock(&ctx->afu->contexts_lock);
--
--	ocxl_afu_irq_free_all(ctx);
--	idr_destroy(&ctx->irq_idr);
--	/* reference to the AFU taken in ocxl_context_alloc() */
--	ocxl_afu_put(ctx->afu);
--	kfree(ctx);
--}
--EXPORT_SYMBOL_GPL(ocxl_context_free);
-diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
-index 7eb74711ac96..c08724e7ff1e 100644
---- a/drivers/misc/ocxl/file.c
-+++ b/drivers/misc/ocxl/file.c
-@@ -204,17 +204,21 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
- 	int irq_id;
- 	u64 irq_offset;
- 	long rc;
--	bool closed;
--
--	pr_debug("%s for context %d, command %s\n", __func__, ctx->pasid,
--		CMD_STR(cmd));
- 
-+	/*
-+	 * Hold a reference to the context for the duration of this operation.
-+	 * We check the status and acquire the reference atomically under the
-+	 * status_mutex to ensure the context remains valid.
-+	 */
- 	mutex_lock(&ctx->status_mutex);
--	closed = (ctx->status == CLOSED);
-+	if (!ocxl_context_get(ctx)) {
-+		mutex_unlock(&ctx->status_mutex);
-+		return -EIO;
-+	}
- 	mutex_unlock(&ctx->status_mutex);
- 
--	if (closed)
--		return -EIO;
-+	pr_debug("%s for context %d, command %s\n", __func__, ctx->pasid,
-+		CMD_STR(cmd));
- 
- 	switch (cmd) {
- 	case OCXL_IOCTL_ATTACH:
-@@ -230,7 +234,7 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
- 					sizeof(irq_offset));
- 			if (rc) {
- 				ocxl_afu_irq_free(ctx, irq_id);
--				return -EFAULT;
-+				rc = -EFAULT;
- 			}
- 		}
- 		break;
-@@ -238,8 +242,10 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
- 	case OCXL_IOCTL_IRQ_FREE:
- 		rc = copy_from_user(&irq_offset, (u64 __user *) args,
- 				sizeof(irq_offset));
--		if (rc)
--			return -EFAULT;
-+		if (rc) {
-+			rc = -EFAULT;
-+			break;
-+		}
- 		irq_id = ocxl_irq_offset_to_id(ctx, irq_offset);
- 		rc = ocxl_afu_irq_free(ctx, irq_id);
- 		break;
-@@ -247,14 +253,20 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
- 	case OCXL_IOCTL_IRQ_SET_FD:
- 		rc = copy_from_user(&irq_fd, (u64 __user *) args,
- 				sizeof(irq_fd));
--		if (rc)
--			return -EFAULT;
--		if (irq_fd.reserved)
--			return -EINVAL;
-+		if (rc) {
-+			rc = -EFAULT;
-+			break;
-+		}
-+		if (irq_fd.reserved) {
-+			rc = -EINVAL;
-+			break;
-+		}
- 		irq_id = ocxl_irq_offset_to_id(ctx, irq_fd.irq_offset);
- 		ev_ctx = eventfd_ctx_fdget(irq_fd.eventfd);
--		if (IS_ERR(ev_ctx))
--			return PTR_ERR(ev_ctx);
-+		if (IS_ERR(ev_ctx)) {
-+			rc = PTR_ERR(ev_ctx);
-+			break;
-+		}
- 		rc = ocxl_irq_set_handler(ctx, irq_id, irq_handler, irq_free, ev_ctx);
- 		if (rc)
- 			eventfd_ctx_put(ev_ctx);
-@@ -280,6 +292,8 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
- 	default:
- 		rc = -EINVAL;
- 	}
-+
-+	ocxl_context_put(ctx);
- 	return rc;
- }
- 
-@@ -292,9 +306,23 @@ static long afu_compat_ioctl(struct file *file, unsigned int cmd,
- static int afu_mmap(struct file *file, struct vm_area_struct *vma)
- {
- 	struct ocxl_context *ctx = file->private_data;
-+	int rc;
-+
-+	/*
-+	 * Hold a reference during mmap setup to ensure the context
-+	 * remains valid.
-+	 */
-+	mutex_lock(&ctx->status_mutex);
-+	if (!ocxl_context_get(ctx)) {
-+		mutex_unlock(&ctx->status_mutex);
-+		return -EIO;
-+	}
-+	mutex_unlock(&ctx->status_mutex);
- 
- 	pr_debug("%s for context %d\n", __func__, ctx->pasid);
--	return ocxl_context_mmap(ctx, vma);
-+	rc = ocxl_context_mmap(ctx, vma);
-+	ocxl_context_put(ctx);
-+	return rc;
- }
- 
- static bool has_xsl_error(struct ocxl_context *ctx)
-@@ -324,21 +352,31 @@ static unsigned int afu_poll(struct file *file, struct poll_table_struct *wait)
- {
- 	struct ocxl_context *ctx = file->private_data;
- 	unsigned int mask = 0;
--	bool closed;
-+
-+	/*
-+	 * Hold a reference to the context while checking for events.
-+	 */
-+	mutex_lock(&ctx->status_mutex);
-+	if (!ocxl_context_get(ctx)) {
-+		mutex_unlock(&ctx->status_mutex);
-+		return EPOLLERR;
-+	}
-+	mutex_unlock(&ctx->status_mutex);
- 
- 	pr_debug("%s for context %d\n", __func__, ctx->pasid);
- 
- 	poll_wait(file, &ctx->events_wq, wait);
- 
--	mutex_lock(&ctx->status_mutex);
--	closed = (ctx->status == CLOSED);
--	mutex_unlock(&ctx->status_mutex);
--
- 	if (afu_events_pending(ctx))
- 		mask = EPOLLIN | EPOLLRDNORM;
--	else if (closed)
--		mask = EPOLLERR;
-+	else {
-+		mutex_lock(&ctx->status_mutex);
-+		if (ctx->status == CLOSED)
-+			mask = EPOLLERR;
-+		mutex_unlock(&ctx->status_mutex);
-+	}
- 
-+	ocxl_context_put(ctx);
- 	return mask;
- }
- 
-@@ -410,6 +448,16 @@ static ssize_t afu_read(struct file *file, char __user *buf, size_t count,
- 			AFU_EVENT_BODY_MAX_SIZE))
- 		return -EINVAL;
- 
-+	/*
-+	 * Hold a reference to the context for the duration of the read operation.
-+	 */
-+	mutex_lock(&ctx->status_mutex);
-+	if (!ocxl_context_get(ctx)) {
-+		mutex_unlock(&ctx->status_mutex);
-+		return -EIO;
-+	}
-+	mutex_unlock(&ctx->status_mutex);
-+
- 	for (;;) {
- 		prepare_to_wait(&ctx->events_wq, &event_wait,
- 				TASK_INTERRUPTIBLE);
-@@ -422,11 +470,13 @@ static ssize_t afu_read(struct file *file, char __user *buf, size_t count,
- 
- 		if (file->f_flags & O_NONBLOCK) {
- 			finish_wait(&ctx->events_wq, &event_wait);
-+			ocxl_context_put(ctx);
- 			return -EAGAIN;
- 		}
- 
- 		if (signal_pending(current)) {
- 			finish_wait(&ctx->events_wq, &event_wait);
-+			ocxl_context_put(ctx);
- 			return -ERESTARTSYS;
- 		}
- 
-@@ -437,19 +487,24 @@ static ssize_t afu_read(struct file *file, char __user *buf, size_t count,
- 
- 	if (has_xsl_error(ctx)) {
- 		used = append_xsl_error(ctx, &header, buf + sizeof(header));
--		if (used < 0)
-+		if (used < 0) {
-+			ocxl_context_put(ctx);
- 			return used;
-+		}
- 	}
- 
- 	if (!afu_events_pending(ctx))
- 		header.flags |= OCXL_KERNEL_EVENT_FLAG_LAST;
- 
--	if (copy_to_user(buf, &header, sizeof(header)))
-+	if (copy_to_user(buf, &header, sizeof(header))) {
-+		ocxl_context_put(ctx);
- 		return -EFAULT;
-+	}
- 
- 	used += sizeof(header);
- 
- 	rc = used;
-+	ocxl_context_put(ctx);
- 	return rc;
- }
- 
-@@ -464,8 +519,12 @@ static int afu_release(struct inode *inode, struct file *file)
- 	ctx->mapping = NULL;
- 	mutex_unlock(&ctx->mapping_lock);
- 	wake_up_all(&ctx->events_wq);
-+	/*
-+	 * Drop the initial reference from afu_open(). The context will be
-+	 * freed when all references are released.
-+	 */
- 	if (rc != -EBUSY)
--		ocxl_context_free(ctx);
-+		ocxl_context_put(ctx);
- 	return 0;
- }
- 
-diff --git a/drivers/misc/ocxl/ocxl_internal.h b/drivers/misc/ocxl/ocxl_internal.h
-index d2028d6c6f08..6eab7806b43d 100644
---- a/drivers/misc/ocxl/ocxl_internal.h
-+++ b/drivers/misc/ocxl/ocxl_internal.h
-@@ -5,6 +5,7 @@
- 
- #include <linux/pci.h>
- #include <linux/cdev.h>
-+#include <linux/kref.h>
- #include <linux/list.h>
- #include <misc/ocxl.h>
- 
-@@ -68,6 +69,7 @@ struct ocxl_xsl_error {
- };
- 
- struct ocxl_context {
-+	struct kref kref;
- 	struct ocxl_afu *afu;
- 	int pasid;
- 	struct mutex status_mutex;
-@@ -140,6 +142,8 @@ int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid);
- 
- int ocxl_context_mmap(struct ocxl_context *ctx,
- 			struct vm_area_struct *vma);
-+bool ocxl_context_get(struct ocxl_context *ctx);
-+void ocxl_context_put(struct ocxl_context *ctx);
- void ocxl_context_detach_all(struct ocxl_afu *afu);
- 
- int ocxl_sysfs_register_afu(struct ocxl_file_info *info);
--- 
-2.34.1
+Hmm.
 
+In the example case, the slot_reset never happens, but the PCI device is
+still in an error state, which means that the device is not functional..
+
+In that case detaching the netdev and remaining detached seems like an
+expected outcome?
+
+I guess I don't fully understand the setup in this scenario.
+
+> This path move netif_device_detach from error_detected to slot_reset,
+> ensuring that detach and reset are always executed together.
+>=20
+> Fixes: fd394a334b1c ("net: hibmcge: Add support for abnormal irq handli=
+ng feature")
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> ---
+>  drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c b/drivers=
+/net/ethernet/hisilicon/hibmcge/hbg_err.c
+> index 83cf75bf7a17..e11495b7ee98 100644
+> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+> @@ -136,12 +136,11 @@ static pci_ers_result_t hbg_pci_err_detected(stru=
+ct pci_dev *pdev,
+>  {
+>  	struct net_device *netdev =3D pci_get_drvdata(pdev);
+> =20
+> -	netif_device_detach(netdev);
+> -
+> -	if (state =3D=3D pci_channel_io_perm_failure)
+> +	if (state =3D=3D pci_channel_io_perm_failure) {
+> +		netif_device_detach(netdev);
+>  		return PCI_ERS_RESULT_DISCONNECT;
+> +	}
+> =20
+> -	pci_disable_device(pdev);
+>  	return PCI_ERS_RESULT_NEED_RESET;
+>  }
+> =20
+> @@ -150,6 +149,9 @@ static pci_ers_result_t hbg_pci_err_slot_reset(stru=
+ct pci_dev *pdev)
+>  	struct net_device *netdev =3D pci_get_drvdata(pdev);
+>  	struct hbg_priv *priv =3D netdev_priv(netdev);
+> =20
+> +	netif_device_detach(netdev);
+> +	pci_disable_device(pdev);
+> +
+>  	if (pci_enable_device(pdev)) {
+>  		dev_err(&pdev->dev,
+>  			"failed to re-enable PCI device after reset\n");
+
+Here, we disable the device only to immediately attempt to re-enable it?
+
+
+--------------ZYawA1c5wiYQJZKx76KgJ6FP--
+
+--------------9Ls4bzJpeIT9NLY85mByJTVK
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQQgQFSp1zOQVirsQx5qll0+bw8o6AUCaPrQywUDAAAAAAAKCRBqll0+bw8o6DYw
+AQDmI7+zcBmWNL9sXFevgrQ0JqWST29VXWJ3+b92yGuM+gD9F+8ip4e3FFPAJuQxhiRP3HLpF0wR
+8chZ+PLyHEqUTgw=
+=QNv5
+-----END PGP SIGNATURE-----
+
+--------------9Ls4bzJpeIT9NLY85mByJTVK--
 
