@@ -1,382 +1,286 @@
-Return-Path: <linux-kernel+bounces-869045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5C1C06CBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:53:26 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6419C06C96
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 29999566880
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:52:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 46CAD35C5AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F163203B0;
-	Fri, 24 Oct 2025 14:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35B724E4BD;
+	Fri, 24 Oct 2025 14:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GBaCH1M+"
-Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJj/RkKq"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C959A30B539
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02084225A3D
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761317456; cv=none; b=lgioue+1NHeHkYzH2URYtXDzinMYkkOi6nj9TMd2co1ie64/VspIuba/xv86Sxc1Ci4QUdtsUYtQRS+YT60+ps2zvmrso0BCn8HvvuTTTgqo7UPzY5FGH+2H/bnRxxKOjr5O25GbvXnIkvgvn8PkcHqAlCnK0guxOe/Xd7ZEsZE=
+	t=1761317424; cv=none; b=Ccpv9Ko6MW4THs+Bf1veanQ+fHngp7cLkNFrOLiIuCpdYl6GSr8Vja16KsItFznR90YhIdQ7ywWqHU2jHJMJ7YqmQQO0VwUEVSclb0xnnT8d2cnzIGIrm6WgTwAy9csmd7B5jkZuZkepLga88/ipWr6jC/DQnzHRWfMigaxehM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761317456; c=relaxed/simple;
-	bh=ok+empPvfggiJJNrLD8vlCVS1DsP9wi2/cAjY5qk/vk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KRoxRe1e+LJ8oz9PXvECG0DpqIvzbT/FhWwssy1hVxpCLm3M63Z4x26jcPAs/81DnLadAPFEqop5tPEhjEVF+IizYjketvAlA5TJefNwb9Ak2Yd7LmOWFI1qUUKulk0ktJPlu34d/fSgKW4MyN3tGec4ALYu5+KsxXWHiirn2Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GBaCH1M+; arc=none smtp.client-ip=74.125.224.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-63e10cd6efeso2308286d50.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:50:53 -0700 (PDT)
+	s=arc-20240116; t=1761317424; c=relaxed/simple;
+	bh=YpmedxoHX103GRZLyFK655XyMWlbKvpw7Z5efNSETFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D9XIgyap0Clwm5PgIZjeYJ0/PaVg6q9FUlACRJu0PvFwvlG9xhFEQXA4WK3W+XmxXo8/Ob+vjxb3PnI0HkNKAaGGHTCJyLwvYpPIuca/I9qtUfIFpqekdIp+li4xE236NPbisdydITLjBO1iJUpwXn/7DPxPCaAM1hrWiYwh2yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJj/RkKq; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-475dab5a5acso494085e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:50:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761317452; x=1761922252; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vlc1RWG4oS332LgnO2Nr16isvBMLz89JUCyBivsWBUk=;
-        b=GBaCH1M+2Frj7e/RnwSEl/kZcqzzPYt5mrjRg87vSXNm8YCLTGWd+Hp2X3Gxb3GXuM
-         LeLjEyynBxpAS6qQZ4sDtTFAH6giqfAwhVRyaEP1+hoUOLwWm6f3XCk2dEhvESldsY9x
-         L+Bxw8FV+oVX1URm1zEIq6PwHKq05k/5264ISjJo7OWnlYPMBZ7cbrG+9uUyqvzxNCsD
-         PchDEvWFnAbY0UYi79nQtNYWKPn/qxylXeVAs/T9VBfQOGiESKVb/aoMkHAXbUaYd/7t
-         uQAkZv1TexDWzMnSusR6jIvMzcOKs6Af1A/cYUpfjY9FhK/j7wGFGQNVRwdvtG1s5Eiy
-         ednA==
+        d=gmail.com; s=20230601; t=1761317420; x=1761922220; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bvkZR2Vh4Krn1ke+GLvqfOD39dvZoqg79ZqoUlC3wn8=;
+        b=VJj/RkKqNecPxwa2IiIGV55ONmphLi1WCgxj2DCBhVPGXXkp3+fbFfCfBlWUfww6Dp
+         r44MFvmfVnl3QHDj2Z6gh/6O1cP8lnvxH8ca5EsRNxB/PDDrQm495UnXEPliE6W496Sh
+         3DIds84tllHlnZF20/QmcXxAOuYkX3kh7Vqo0CZ+AUk56lqVW2qZnGvIbC27mevXdE+k
+         s1zDQXfT2ho7K3LVwiMjC0CeN0gh3PRuzLln4MFoNXWTfB3tuHe8K2BgwGuO7fJxXrvq
+         Si/hi3kUCuQZGIQts4elPd/u+y1WktUATBE/Xn9O1WWupOPQsT2HCPGr8yLsZvF1ofr7
+         nD5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761317452; x=1761922252;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Vlc1RWG4oS332LgnO2Nr16isvBMLz89JUCyBivsWBUk=;
-        b=wAM1QZwjo+95bioUKzOlyXIdV1jPd9jX+TvEGTBwD2zzc7TIa+sJ+PPG8pcsgNYZC5
-         cP/2dyghUj1+NqNc4f3r0pwlGLjXS8bWfeEJ76e/qn2ox4JkIrfb6iD2VYaBtzTQN/6x
-         IMQ2T8TWkCK9w+ULr7mTa1YDNwNSEhO94j4LWqsP1/1HWFTPtM9zFIBLYxHo1kWOxC6P
-         wBTPoX9LQGe8aI5H05BULDEcmBFBBOcz1HLdlTAshSvbMArgG1SyKNnWzB158c+tdDkJ
-         w2HJg5walw2Y0ImB4SYC6K2blaqufd7bZSIdk4boCsd+er3ME5r7TrjBtVzIt451/4DC
-         jJrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDetcJdQcq7MxOeAY75RpvKmZGSMPrRanhrVX3clE+o4wNkg+aF1r13QcCWvrxXvPDauv3AvYWUOoPvXM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhO9Q7KI6J2C7omYnvtcCPTMpyUujXwwwyVkBl//MTBGIEuX62
-	kofN4bCUEj7EyLVrQM0JlsbDp73VdtQ8ALDeC9OovOZiZDurUMQwsQU9zfigTi386C3UZkex2XF
-	eVUEUVRDBLMfpnP78SSb18AsagdP44AdWi3NKXm7vAQ==
-X-Gm-Gg: ASbGncsu2PQJkn8HedAcq2ZHLlCg2NyjQ4SJ8ahI6XCbFuZCKGzod280zNUXg7ncVdg
-	E/Su6Oz8afC+UG9qJhoCAi5+IB47ldm8BGYW5DmjFtuo/l6HCiix2sdQ0+gprtGL9eLPoni7toO
-	TCYQghT1oMW8pwwhqr6oDeMchuj0wtoIreC/0mYhhuzOgWdgSVDLGO/tc4QGXXQnGZTyy5pZ4rv
-	m9vwLcgy8hJgrkorAJwTAfUlDN6kGK5dnIiT6DfWMfGgAAMDeNVXURVDtAdcEJs/A03wH6T
-X-Google-Smtp-Source: AGHT+IHFv05LD9ky3ncqZ/uyFhBdaCG4aTVcjsQd1NuGsD6MZ7rOvSdiVTBEM3enKMrxVRZcNFJLLBzh7EZrpPgiQXI=
-X-Received: by 2002:a05:690c:a0ad:10b0:785:bb26:1644 with SMTP id
- 00721157ae682-785bb2619aamr162440697b3.21.1761317452252; Fri, 24 Oct 2025
- 07:50:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761317420; x=1761922220;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bvkZR2Vh4Krn1ke+GLvqfOD39dvZoqg79ZqoUlC3wn8=;
+        b=ZWE/pLvWLmXIttBm/3WSlI1hPQDAznyd6P7XW8J25Jd2R+0LsDznfLBxAmpq2x02DO
+         JrI/czCAzK+FvIRWiX6/yspCulraVPZTvqXl9bIBdZTfUeK+xdpZT32z73H9NGDKbQ02
+         qhs53V8dara+/XYyeX9Oa/dAorwEyyNzscERS+LmYU7BJF/gkqYJLn5BBfYr+mz1MIVP
+         Xt6WtlXhdXZSX3RdtDYTeRK0Ac+9zndxW+NFwBziTfyIm6/9Cfqs/j99PT6yYtdTOwBf
+         8hAIW0OLf7upElPWTRnvLZoB/J/OCnCzI2lHhaeNxHO6rOIrAy76631JzdnnFw6mKUBo
+         WGSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVp0VRbKqAugVqPP5caV1itl+854HFCNNReZsaSk5RBO3DZBSAQ68JfWA61z+HG9NnZsbhlVfUYrWdERL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH1L2E8gou0ePJof8C9hAkWGpzbAJ/VfDphM0vGELTyXYqJ2Vw
+	KOK57EzYkBlBXhTUscUuPAv5ns5WGkEz/uLKrdDkePuHZHZ+7oj7+lyoCWI4ioDq
+X-Gm-Gg: ASbGncstLt2T7Nz2Z/d4hLV9NjnqhhLD7hLyhqy0z7hsxJwGhg89XDbleyQF+kYB3zi
+	42CAFIUcBmdTvL8XevOUBnmsNhKYbrrlAJG1tI8M/Hnwm0smkrwhbvTHUPamO/mv9tf7tPsOVtW
+	mEoT9SAIOfCrRzeoPKB0JoB9LE/N7rz3vMPYoTd9+bELDhRscPHXJbBhogA73BmAa+fUp+h0ISI
+	NnJzya7sbY5aYwTPuZOhv5bCCe6syAvVAxWvNMmunNz4KoTS7COSkdGsCrDDf/jbnG4UOkRGgkb
+	iJ9bDEweu9gu5ztF9Lmy8eOcfrcVKF+F3TH+cLX3IGTK1BPAiKQsp3xk+llsoI2Onpo9IhbSQcj
+	QVyPVv5q49IfYwTyQ2K8KKjobqt7u9bwJZkvkjoJvXQXNg3c9rXCHB8qd6sNEqyF462sL4rdwdL
+	8=
+X-Google-Smtp-Source: AGHT+IEqlFHh9cUmE6VeJkHTqoWYwUa2BjE3Cj5kkfpXYdD2XEHiKMq5M8rg1Ncamom4v1KrbdbmNw==
+X-Received: by 2002:a05:600c:3b05:b0:471:d13:5762 with SMTP id 5b1f17b1804b1-471178761bemr206849505e9.4.1761317419995;
+        Fri, 24 Oct 2025 07:50:19 -0700 (PDT)
+Received: from fedora ([37.29.213.75])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475caf15416sm95153355e9.10.2025.10.24.07.50.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 07:50:19 -0700 (PDT)
+Date: Fri, 24 Oct 2025 16:50:16 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	victoria@system76.com, sebastian.wick@redhat.com,
+	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 04/22] drm/vkms: Introduce configfs for plane rotation
+Message-ID: <aPuSKCNRGRCLDwyp@fedora>
+References: <20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com>
+ <20251018-vkms-all-config-v1-4-a7760755d92d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017-mt8196-gpufreq-v8-0-98fc1cc566a1@collabora.com>
- <CAPDyKFodsAR5bOAST3mPLvSVbe653QS6SdSwHr6kyraQ1cwbhQ@mail.gmail.com> <76b35848-8f5e-49a2-ac4a-318945448b9a@arm.com>
-In-Reply-To: <76b35848-8f5e-49a2-ac4a-318945448b9a@arm.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 24 Oct 2025 16:50:15 +0200
-X-Gm-Features: AS18NWBNsLgu8W-2ocvk9kd1OZoR8WNmp4mWHWOY4wHYr_BHae8YuVzfiG3Jrzo
-Message-ID: <CAPDyKFpkCivtsV1kuTOp_QG2Ci6HajBAAxQ=0GGoN6VAnaAJrg@mail.gmail.com>
-Subject: Re: [PATCH v8 0/5] MT8196 GPU Frequency/Power Control Support
-To: Steven Price <steven.price@arm.com>, 
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, kernel@collabora.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251018-vkms-all-config-v1-4-a7760755d92d@bootlin.com>
 
-On Fri, 24 Oct 2025 at 15:09, Steven Price <steven.price@arm.com> wrote:
->
-> On 22/10/2025 14:52, Ulf Hansson wrote:
-> > On Fri, 17 Oct 2025 at 17:32, Nicolas Frattaroli
-> > <nicolas.frattaroli@collabora.com> wrote:
-> >>
-> >> This series introduces two new drivers to accomplish controlling the
-> >> frequency and power of the Mali GPU on MediaTek MT8196 SoCs.
-> >>
-> >> The reason why it's not as straightforward as with other SoCs is that
-> >> the MT8196 has quite complex glue logic in order to squeeze the maximum
-> >> amount of performance possible out of the silicon. There's an additional
-> >> MCU running a specialised firmware, which communicates with the
-> >> application processor through a mailbox and some reserved memory, and is
-> >> in charge of controlling the regulators, the PLL clocks, and the power
-> >> gating of the GPU, all while also being in charge of any DVFS control.
-> >>
-> >> This set of drivers is enough to communicate desired OPP index limits to
-> >> the aforementioned MCU, referred to as "GPUEB" from here on out. The
-> >> GPUEB is still free to lower the effective frequency if the GPU has no
-> >> jobs going on at all, even when a higher OPP is set.
-> >>
-> >> The power- and frequency control driver, mtk-mfg-pmdomain, is now
-> >> implemented as a power domain driver, with a set_performance_state
-> >> operation. It also exposes itself as a clock provider, so that panthor
-> >> can read the actual achieved DVFS clock rate as per the GPUEB firmware.
-> >>
-> >> This power domain approach means that panthor does not need to know
-> >> about how the frequency control works on this SoC, as the OPP core
-> >> framework already takes care of it. The only exception is that panthor
-> >> needs to not register OPPs from DT itself if there already is an OPP
-> >> table present.
-> >>
-> >> The mailbox driver is a fairly bog-standard common mailbox framework
-> >> driver, just specific to the firmware that runs on the GPUEB. It was
-> >> merged in v6.18 already.
-> >>
-> >> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> >
-> > This looks good to me!
-> >
-> > I can certainly pick up patch2 and patch5, but before I go ahead I
-> > just wanted to check what is the preferred merging strategy?
-> >
-> > The drm/gpu patches can go independently from the pmdomain patches
-> > others, right? In either case, I can pick this complete series too via
-> > my pmdomain tree, if that makes sense for everyone. Please let me
-> > know.
->
-> I'm about to go on holiday, so I'm not about to merge and run ;)
-> But I'm happy if you want to take the complete series through your tree.
+On Sat, Oct 18, 2025 at 04:01:04AM +0200, Louis Chauvet wrote:
+> To allows the userspace to test many hardware configuration, introduce a
+> new interface to configure the available rotation per planes. VKMS
+> supports any rotation and reflection, so the userspace can choose any
+> combination.
+> 
+> The supported rotations are configured by writing a rotation bitmask to
+> the file `supported_rotations` and the default rotation is chosen by
+> writing a rotation bitmask to `default_rotation`.
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  Documentation/gpu/vkms.rst           |  7 ++-
+>  drivers/gpu/drm/vkms/vkms_configfs.c | 94 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 100 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
+> index 3574e01b928d..a432968cc711 100644
+> --- a/Documentation/gpu/vkms.rst
+> +++ b/Documentation/gpu/vkms.rst
+> @@ -87,10 +87,15 @@ Start by creating one or more planes::
+>  
+>    sudo mkdir /config/vkms/my-vkms/planes/plane0
+>  
+> -Planes have 1 configurable attribute:
+> +Planes have 3 configurable attribute:
 
-Unfortunately the panthor specific changes didn't apply cleanly on my
-side. Looks like you have some patches queued already for the panther
-driver and I guess Nicolas may have based the changes on top of them.
+s/attribute/attributes/
 
-That said, I decided to pick the pmdomain patches, patch 2 and patch 5, thanks!
+>  
+>  - type: Plane type: 0 overlay, 1 primary, 2 cursor (same values as those
+>    exposed by the "type" property of a plane)
+> +- possible_rotations: Available rotation for a plane, as a bitmask: 0x01 no rotation,
+> +  0x02 rotate 90°, 0x04 rotate 180°, 0x08 rotate 270°, 0x10 reflect x, 0x20 reflect y
+> +  (same values as those exposed by the "rotation" property of a plane)
+> +- default_rotation: Default rotation presented to the userspace, same values as
+> +  possible_rotations.
+>  
+>  Continue by creating one or more CRTCs::
+>  
+> diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
+> index ea245e2e2fd2..450e45e66a45 100644
+> --- a/drivers/gpu/drm/vkms/vkms_configfs.c
+> +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
+> @@ -322,10 +322,104 @@ static ssize_t plane_type_store(struct config_item *item, const char *page,
+>  	return (ssize_t)count;
+>  }
+>  
+> +static ssize_t plane_supported_rotations_show(struct config_item *item, char *page)
+> +{
+> +	struct vkms_configfs_plane *plane;
+> +	unsigned int plane_supported_rotations;
+> +
+> +	plane = plane_item_to_vkms_configfs_plane(item);
+> +
+> +	scoped_guard(mutex, &plane->dev->lock) {
+> +		plane_supported_rotations = vkms_config_plane_get_supported_rotations(plane->config);
 
-Kind regards
-Uffe
+Checkpatch is complaining about this line being 1 character longer than
+it should... Feel free to ignore it:
+
+WARNING: line length of 101 exceeds 100 columns
+#58: FILE: drivers/gpu/drm/vkms/vkms_configfs.c:333:
++               plane_supported_rotations = vkms_config_plane_get_supported_rotations(plane->config);
 
 
->
-> Thanks,
-> Steve
->
-> > Kind regards
-> > Uffe
-> >
-> >> ---
-> >> Changes in v8:
-> >> - mtk-mfg-pmdomain: remove unused shmem variable that caused a warning
-> >>   on GCC, but not clang
-> >> - Link to v7: https://lore.kernel.org/r/20251015-mt8196-gpufreq-v7-0-0a6435da2080@collabora.com
-> >>
-> >> Changes in v7:
-> >> - panthor: rename "t" to "table"
-> >> - panthor: add code comment explaining why an existing OPP table is
-> >>   being checked for
-> >> - mtk-mfg-pmdomain: use GF_REG_MAGIC offset for sake of consistency
-> >> - mtk-mfg-pmdomain: remove redundant semicolon after mtk_mfg_mt8196_init
-> >> - mtk-mfg-pmdomain: fix resource leaks on probe failure
-> >> - mtk-mfg-pmdomain: enable/disable EB clock during MT8196 init, which is
-> >>   needed for the register read
-> >> - Rebase onto next-20251014, which drops already merged patches, namely
-> >>   mailbox driver+bindings, and drops the ASN_HASH patch series
-> >>   dependency, which was also merged
-> >> - Link to v6: https://lore.kernel.org/r/20251003-mt8196-gpufreq-v6-0-76498ad61d9e@collabora.com
-> >>
-> >> Changes in v6:
-> >> - mailbox: move buf definition into if condition, as per Chia-I Wu
-> >> - panthor: remove the redundant NULL checks in panthor_devfreq_get_freq
-> >> - mtk-mfg-pmdomain: adjust return style consistency
-> >> - mtk-mfg-pmdomain: add docstring for mtk_mfg_send_ipi to explain it's
-> >>   blocking
-> >> - mtk-mfg-pmdomain: use CMD_FIX_DUAL_TARGET_OPPIDX instead of
-> >>   CMD_FIX_TARGET_OPPIDX.
-> >> - mtk-mfg-pmdomain: reword code comments to not be in the "we" style
-> >> - mtk-mfg-pmdomain: shuffle around mbox allocations as per Angelo
-> >> - mtk-mfg-pmdomain: don't pointlessly turn on EB clock in probe,
-> >>   reducing the need for a comment explaining the bookkeeping
-> >> - mtk-mfg-pmdomain: consistently use dev_err_probe and Capitalise first
-> >>   letter of error string
-> >> - mtk-mfg-pmdomain: get rid of redundant ret = dev_err_probe assignment
-> >> - mtk-mfg-pmdomain: reintroduce stack OPP table, choose min(gpu, stack)
-> >>   when adding frequencies. Fixes gaps in OPP levels where only stack
-> >>   changed, but gpu had duplicates, which resulted in choosing a too slow
-> >>   OPP
-> >> - mtk-mfg-pmdomain: stub round_rate clk op to opt out of CCF always
-> >>   "rounding" a devfreq rate request to the current rate
-> >> - Link to v5: https://lore.kernel.org/r/20250929-mt8196-gpufreq-v5-0-3056e5ecf765@collabora.com
-> >>
-> >> Changes in v5:
-> >> - mtk-mfg-pmdomain binding: add memory-regions property, remove shmem
-> >>   property, as we now correctly describe the shared memory as a regular
-> >>   memory region
-> >> - mtk-mfg-pmdomain binding: get rid of redundant |
-> >> - drop "dt-bindings: sram: Add compatible for
-> >>   mediatek,mt8196-gpufreq-sram" as part of the move to reserved memory
-> >> - mtk-mfg-pmdomain: move to using reserved-memory for GPUEB shared
-> >>   memory
-> >> - mtk-mfg-pmdomain: demote some types to smaller sizes in struct
-> >>   mtk_mfg, as per Angelo's suggestions
-> >> - mtk-mfg-pmdomain: use units.h for Hz-to-KHz
-> >> - mtk-mfg-pmdomain: change for loop in attach_dev to reduce indentation
-> >> - mtk-mfg-pmdomain: simplify return in mtk_mfg_power_off
-> >> - mtk-mfg-pmdomain: move of_device_id after probe
-> >> - mtk_mfg_pmdomain: map mmio by index
-> >> - mtk_mfg_pmdomain: add error checking to pm_genpd_init()
-> >> - mtk_mfg_pmdomain: add remove function
-> >> - mtk_mfg_pmdomain: remove last_opp member and logic, since OPP core
-> >>   already does that for us
-> >> - mtk_mfg_pmdomain: adjust comment in mtk_mfg_set_performance to explain
-> >>   why we're doing what we're doing
-> >> - mtk_mfg_pmdomain: call mtk_mfg_set_oppidx in mtk_mfg_power_on with
-> >>   the performance_state we deferred setting while it was powered off
-> >> - mtk_mfg_pmdomain: add inline function for PWR_ACK checking, as it's
-> >>   now used twice with the added remove function
-> >> - mtk-mfg-pmdomain: add suppress_bind_attrs so people don't play with
-> >>   that
-> >> - mtk-mfg-pmdomain: change KConfig from tristate to bool, as module
-> >>   unloading results in strange likely firmware-induced hardware state
-> >>   woes in the mali GPU
-> >> - mtk-mfg-pmdomain: read IPI magic in power_on, don't zero it after
-> >>   confirming that seemingly had no purpose
-> >> - mtk-mfg-pmdomain: misc style changes
-> >> - Link to v4: https://lore.kernel.org/r/20250923-mt8196-gpufreq-v4-0-6cd63ade73d6@collabora.com
-> >>
-> >> Changes in v4:
-> >> - rebase onto next-20250922, which includes Laura Nao's clock patches
-> >> - refactor mediatek_mfg into a pmdomain driver called "mtk-mfg-pmdomain"
-> >> - move mt8196-gpufreq binding to the power subdirectory
-> >> - mali-valhall-csf binding: adjust for power-domains usage
-> >> - mali-valhall-csf binding: use clocks on mt8196
-> >> - mailbox: prefix defines with "GPUEB_"
-> >> - mailbox: get rid of custom of_xlate
-> >> - mailbox: rename "CLOGGED" to "BLOCKED"
-> >> - mailbox: adjust send_data comment to include more technical info
-> >> - mailbox: misc style improvements
-> >> - panthor: drop "drm/panthor: devfreq: make get_dev_status use
-> >>   get_cur_freq", as it is now not necessary and makes the code worse
-> >> - panthor: drop "drm/panthor: devfreq: add pluggable devfreq providers"
-> >> - panthor: drop "drm/panthor: add no_clocks soc_data member for MT8196",
-> >>   as we now have clocks courtesy of gpufreq
-> >> - panthor: check for existing opp table before registering a new one
-> >> - mtk-mfg-pmdomain: add turbo_below variant data, which marks OPPs below
-> >>   a certain index as turbo for the OPP subsystem
-> >> - mtk-mfg-pmdomain: no longer read stack OPPs, as they weren't used
-> >> - mtk-mfg-pmdomain: get rid of num gpu opp != num stack opp check.
-> >>   That's the firmware's problem should it ever happen, not ours
-> >> - mtk-mfg-pmdomain: some small name and whitespace changes on the defines
-> >> - Link to v3: https://lore.kernel.org/r/20250917-mt8196-gpufreq-v3-0-c4ede4b4399e@collabora.com
-> >>
-> >> Changes in v3:
-> >> - mali-valhall-csf binding: get rid of clocks for MT8196, rebase onto
-> >>   Chia-I Wu's patch
-> >> - mt8196-gpufreq binding: rename hw_revision to hw-revision
-> >> - mt8196-gpufreq binding: rename clocks
-> >> - mt8196-gpufreq binding: drop pointless label in example
-> >> - mailbox binding: drop pointless label in example
-> >> - mailbox: whitespace changes on defines
-> >> - mailbox: remove rx_buf member from channel struct, use stack buffer
-> >> - mailbox: check in probe that no rx_len exceeds MBOX_MAX_RX_SIZE
-> >> - panthor: add no_clocks SoC data patch, also rebase onto Chia-I Wu's
-> >>   series
-> >> - panthor: refactor devfreq provider functionality to do allocation and
-> >>   initialisation of panthor_devfreq struct in panthor in all cases
-> >> - panthor: drop the patch that moves struct panthor_devfreq to a header
-> >>   file, as it no longer needs to be exposed to devfreq providers
-> >> - mediatek_mfg: refactor devfreq provider functionality to decouple it
-> >>   more from panthor itself
-> >> - mediatek_mfg: move SRAM magic to a #define
-> >> - mediatek_mfg: begrudgingly rename member "padding_lol" to "reserved"
-> >> - mediatek_mfg: use local struct device pointer var in more places
-> >> - mediatek_mfg: change wording of sleep command failure error message,
-> >>   but keep the format specifier because I don't want to throw bare
-> >>   errnos at users
-> >> - mediatek_mfg: remove unnecessary braces around dev_err EB power off
-> >>   timeout message
-> >> - mediatek_mfg: allocate rx_data for channels that expect a response
-> >> - mediatek_mfg: memcpy the rx buffer from the common mailbox framework
-> >>   in the rx callback to rx_data, as mssg now points to stack memory
-> >> - mediatek_mfg: make SRAM clearing message dev_dbg
-> >> - mediatek_mfg: no longer print physical address of SRAM
-> >> - mediatek_mfg: expand on the GF_REG_OPP_TABLE_STK comment, toning down
-> >>   its defeatist attitude in the process
-> >> - mediatek_mfg: style fixes in mtk_mfg_get_closest_opp_idx
-> >> - mediatek_mfg: rename clocks and hw-revision reg as per binding
-> >> - Link to v2: https://lore.kernel.org/r/20250912-mt8196-gpufreq-v2-0-779a8a3729d9@collabora.com
-> >>
-> >> Changes in v2:
-> >> - mali-valhall-csf binding: move from performance-controller to
-> >>   performance-domains property
-> >> - mali-valhall-csf binding: fix vendor name oopsie in compatible of if
-> >>   condition
-> >> - mt8196-gpufreq binding: move from performance-controller to
-> >>   performance-domains by adding the cells property
-> >> - mt8196-gpufreq binding: rename e2_id to hw_revision
-> >> - mt8196-gpufreq binding: add description that mentions "MediaTek
-> >>   Flexible Graphics"
-> >> - mt8196-gpufreq binding: get rid of mailbox channels we're unlikely to
-> >>   use any time soon, if ever
-> >> - mt8196-gpufreq binding: change name of mailbox channels to use -
-> >>   instead of _
-> >> - mailbox binding: change reg-names to "data" and "ctl"
-> >> - drm/panthor: mediatek_mfg: rename e2_id to hw_revision
-> >> - drm/panthor: devfreq: switch from performance-controller to
-> >>   performance-domains
-> >> - drm/panthor: devfreq: get rid of the accidental get_cur_freq function
-> >>   move
-> >> - mailbox: rename mtk_gpueb_mbox_ch to mtk_gpueb_mbox_chan_desc
-> >> - mailbox: use smaller types in mtk_gpueb_mbox_chan_desc where possible
-> >> - mailbox: add per-channel runtime data struct
-> >> - mailbox: request one threaded IRQ per channel, pass channel struct as
-> >>   data
-> >> - mailbox: make num_channels in variant struct u8
-> >> - mailbox: get rid of no_response, as it was redundant
-> >> - mailbox: enable and disable clock in mailbox startup/shutdown
-> >> - mailbox: point con_priv of mailbox framework channel struct to this
-> >>   driver's channel struct
-> >> - mailbox: request and free the threaded IRQ in startup/shutdown
-> >> - mailbox: only clear IRQ bit flag once RX data has been read from MMIO
-> >> - mailbox: reduce needlessly large receive buffer size
-> >> - mailbox: handle allocation errors wherever they could pop up
-> >> - mailbox: style cleanups in mtk_gpueb_mbox_read_rx
-> >> - mailbox: call platform_get_irq earlier on in probe
-> >> - mailbox: set drvdata later on in probe
-> >> - mailbox: ioremap resources by index, not name
-> >> - mailbox: handle devm_mbox_controller_register errors
-> >> - mailbox: rename channels to correspond to bindings
-> >> - mailbox: document a few of the private driver structs to be kind to
-> >>   the next person who will look at this code
-> >> - Link to v1: https://lore.kernel.org/r/20250905-mt8196-gpufreq-v1-0-7b6c2d6be221@collabora.com
-> >>
-> >> ---
-> >> Nicolas Frattaroli (5):
-> >>       dt-bindings: gpu: mali-valhall-csf: add mediatek,mt8196-mali variant
-> >>       dt-bindings: power: Add MT8196 GPU frequency control binding
-> >>       drm/panthor: call into devfreq for current frequency
-> >>       drm/panthor: Use existing OPP table if present
-> >>       pmdomain: mediatek: Add support for MFlexGraphics
-> >>
-> >>  .../bindings/gpu/arm,mali-valhall-csf.yaml         |   37 +-
-> >>  .../bindings/power/mediatek,mt8196-gpufreq.yaml    |  117 +++
-> >>  drivers/gpu/drm/panthor/panthor_devfreq.c          |   62 +-
-> >>  drivers/gpu/drm/panthor/panthor_devfreq.h          |    2 +
-> >>  drivers/gpu/drm/panthor/panthor_device.h           |    3 -
-> >>  drivers/gpu/drm/panthor/panthor_drv.c              |    4 +-
-> >>  drivers/pmdomain/mediatek/Kconfig                  |   16 +
-> >>  drivers/pmdomain/mediatek/Makefile                 |    1 +
-> >>  drivers/pmdomain/mediatek/mtk-mfg-pmdomain.c       | 1044 ++++++++++++++++++++
-> >>  9 files changed, 1268 insertions(+), 18 deletions(-)
-> >> ---
-> >> base-commit: 3477f49ff0433a241da12ec9cecf6c9b2bd1c6f8
-> >> change-id: 20250829-mt8196-gpufreq-a7645670d182
-> >>
-> >> Best regards,
-> >> --
-> >> Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> >>
->
+> +	}
+> +
+> +	return sprintf(page, "%u", plane_supported_rotations);
+> +}
+> +
+> +static ssize_t plane_supported_rotations_store(struct config_item *item,
+> +					       const char *page, size_t count)
+> +{
+> +	struct vkms_configfs_plane *plane = plane_item_to_vkms_configfs_plane(item);
+> +	int ret, val = 0;
+> +
+> +	ret = kstrtouint(page, 0, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Should be a supported value */
+> +	if (val & ~(DRM_MODE_ROTATE_MASK | DRM_MODE_REFLECT_MASK))
+> +		return -EINVAL;
+> +	/* Should at least provide one rotation */
+> +	if (!(val & DRM_MODE_ROTATE_MASK))
+> +		return -EINVAL;
+> +
+> +	scoped_guard(mutex, &plane->dev->lock) {
+> +		/* Ensures that the default rotation is included in supported rotation */
+> +		if (plane->dev->enabled ||
+> +		    (val & vkms_config_plane_get_default_rotation(plane->config)) !=
+> +		     vkms_config_plane_get_default_rotation(plane->config))
+> +			return -EINVAL;
+
+This makes a bit difficult to change the default supported rotations.
+
+By default, default rotation is DRM_MODE_ROTATE_0. If the user wants to set the
+supported rotations to DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y | DRM_MODE_ROTATE_90,
+this will fail because the default rotation is not included in the new set of
+supported rotations.
+
+Therefore, the user would need to add DRM_MODE_ROTATE_0 (DRM_MODE_REFLECT_X |
+DRM_MODE_REFLECT_Y | DRM_MODE_ROTATE_90 | DRM_MODE_ROTATE_0), change the default rotation
+to DRM_MODE_ROTATE_90 and drop DRM_MODE_ROTATE_0 from the supported rotations.
+
+To avoid this, I think we should check this before enabling the device instead,
+in vkms_config_is_valid().
+
+Also, having this logic as a helper called by vkms_config_is_valid() allows to
+add a KUnit test to make sure all cases are covered.
+
+What do you think?
+
+
+> +		vkms_config_plane_set_supported_rotations(plane->config, val);
+> +	}
+> +
+> +	return count;
+> +}
+> +
+> +static ssize_t plane_default_rotation_show(struct config_item *item, char *page)
+> +{
+> +	struct vkms_configfs_plane *plane;
+> +	unsigned int plane_default_rotation;
+> +
+> +	plane = plane_item_to_vkms_configfs_plane(item);
+> +
+> +	scoped_guard(mutex, &plane->dev->lock) {
+> +		plane_default_rotation = vkms_config_plane_get_default_rotation(plane->config);
+> +	}
+> +
+> +	return sprintf(page, "%u", plane_default_rotation);
+> +}
+> +
+> +static ssize_t plane_default_rotation_store(struct config_item *item,
+> +					    const char *page, size_t count)
+> +{
+> +	struct vkms_configfs_plane *plane = plane_item_to_vkms_configfs_plane(item);
+> +	int ret, val = 0;
+> +
+> +	ret = kstrtouint(page, 10, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Should be a supported value */
+> +	if (val & ~(DRM_MODE_ROTATE_MASK | DRM_MODE_REFLECT_MASK))
+> +		return -EINVAL;
+> +	/* Should at least provide one rotation */
+> +	if ((val & DRM_MODE_ROTATE_MASK) == 0)
+> +		return -EINVAL;
+> +	/* Should contains only one rotation */
+> +	if (!is_power_of_2(val & DRM_MODE_ROTATE_MASK))
+> +		return -EINVAL;
+> +
+> +	scoped_guard(mutex, &plane->dev->lock) {
+> +		/* Ensures that the default rotation is included in supported rotation */
+> +		if (plane->dev->enabled ||
+> +		    (val & vkms_config_plane_get_supported_rotations(plane->config)) != val)
+> +			return -EINVAL;
+> +
+> +		vkms_config_plane_set_default_rotation(plane->config, val);
+> +	}
+> +
+> +	return count;
+> +}
+> +
+>  CONFIGFS_ATTR(plane_, type);
+> +CONFIGFS_ATTR(plane_, supported_rotations);
+> +CONFIGFS_ATTR(plane_, default_rotation);
+>  
+>  static struct configfs_attribute *plane_item_attrs[] = {
+>  	&plane_attr_type,
+> +	&plane_attr_supported_rotations,
+> +	&plane_attr_default_rotation,
+>  	NULL,
+>  };
+>  
+> 
+> -- 
+> 2.51.0
+> 
 
