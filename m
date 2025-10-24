@@ -1,151 +1,139 @@
-Return-Path: <linux-kernel+bounces-868134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F2BC04710
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:06:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AD7C04713
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 259E51A04831
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:06:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B1F44EB825
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25097231832;
-	Fri, 24 Oct 2025 06:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC116246BD8;
+	Fri, 24 Oct 2025 06:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NJUKzOUf"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DNaH2Myk"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C067726AEC
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E187C239E8B
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761285965; cv=none; b=BCCY6CVwJjfX4pqp0E2yol493W1sJaBzw3upjWjPxia9C0xnNIocw0dUDz/jdBEMyCKQEtF7iL0BmoxZk0drwNiU7oiKpZ9n//VePbLIGyKJBzaRKeFvpxYfGWmUPLPFcTELKCHZrDrOZ5rqxFucigx+P/l/LAqt8ixXrV4jLiY=
+	t=1761286083; cv=none; b=CABTCFwQ8e2Y9Hv6XZphETTX7spsYEgyfSMepnZzHFFS/0h75TggkngdnTrAkGvwe/ZP1IObcbS1yR22SCEb/tCrjb1QFSKFLYLuY+m/sXtqCj+is5CvL3WEZFC4fSDth6wUwODQODuAVUFEnrlmsr5osKYyQG1ztjUeXLdP/vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761285965; c=relaxed/simple;
-	bh=rXF4umgSu9oOr5/8TRrw6ExyTTxD5m+8vb93+vkExg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oO5uaXhI9QPHmeFXXUxgAfeIuG2iE04iRj8FEfuVQXIftzmQQdCm9B9ULjftyNhRELzDjFSKr73twHxe5DHifjrWKUnIfs7YcUdgNoECUqqhRe4UyXIiD+trAdVsLBoyriRz16akYowSgFVUAS5KCbngKadV0XtOFuEHXL4P0Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NJUKzOUf; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=VmfSVBHCqDy/D97x5HXHHleMilR/qAd2VWq9WxztGek=; b=NJUKzOUfmODFhKbdHHfgxyplfk
-	sZ39sRaVPxoZN6v1Z5Vb1epn7T46OZbzcS9xJ7++KfEUB/gfW6jkPTwfiiLG9fFXxFVvJMwjx46Ej
-	0q2nVs0HHdzbV4c8Lab9xdR0L773Y+nUI5m+p7vcalbk3a3er6Rky93TPjb7ltjXeLttGncnF/D54
-	v3sb6+vyubbAeDB9TTkU94O9TLQJB1Rv7ezOz/HoGxELZGl6j14woMQTAWFqq3et8HtASEjAsaS6Y
-	UPSn3A1D1aUSwuihF5W9VDbGmf2p1qjnfub44VecIqxOcafraVMKPj7nWrpZsLBgkaje31BMWAz67
-	CHugddvQ==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCAw5-00000008Jz7-038p;
-	Fri, 24 Oct 2025 06:06:01 +0000
-Message-ID: <213c918b-b4aa-4174-af89-a4d17e8c30dc@infradead.org>
-Date: Thu, 23 Oct 2025 23:06:00 -0700
+	s=arc-20240116; t=1761286083; c=relaxed/simple;
+	bh=etiiWQcSY+zWyfyvDJEnJIqalx73o0ier60DTEh3nzg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CQ6rEDjqL58phy3cToteltXevNNbJOXysXuosfnCOtPVo+75f07/Qt2dHt40cDkiBrfsl4nO7r4ouZYQKdSV6FCBlY441zTUsrgkeZix3M7XNdzYAEQDCuxgvtenF7ZOHUlxlBwAtiSPMf8cp3IvclQi+aP/vDbhX+RGAeUZazk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DNaH2Myk; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-290d14e5c9aso21774445ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 23:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761286081; x=1761890881; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vk5tKMojX80fyzbsDK9Px3vsmzEypSeIpUP4WMWG8aQ=;
+        b=DNaH2MykdOVfApIxzwdFsAUpRIROy2UgxCTX8giw6QFFJHMWF+DsJl2ZbpfT+mAAKN
+         rnrAV4KCg25B2U9LdqSAvMlz+JF9TU/mnyK2QsTn8AiMF9p8VoOZDy2SNqNGaDvvKgYp
+         i7xU4kAUT2nTWLE0fbk3za6t/tX133dj/rajOK4Vs1L0OYlCmntcgCqjxBBFBoiF3LI1
+         dHgNwR6JgXxHSTBCtpP5iu3dEy8bzhKUw7cWgnu3srFTkx0kaQoMh+KwpqYXHw+B997h
+         MF9yobOI49xQWrJ62a0GevjF1kgK+iu2+pjp5S+upwQA7nUbEJ483WTmYUpqHgjSq5A8
+         y0JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761286081; x=1761890881;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vk5tKMojX80fyzbsDK9Px3vsmzEypSeIpUP4WMWG8aQ=;
+        b=QX/ZeDVysyZpl+tbvuM8sd1J/w7fT0hgr9EqChyc4KB/itHAwEblUORFs1dFdWGnFY
+         mBZju9ZDxnos+EZjYWVznoQmfN3bisIPI6SwndKgF2PCQquvWHJXJk5fcMKHMUZptiGe
+         +pz1GMXyVQOgjQdvoZ7TZ92jD5Z2LwBVA8KedGXenquYyKsKiImGiwApNPRqvuBKF7tA
+         DdJqGHs/Aqo7SEU05GZVlIzqK3u3XvyRNAoNBBWiOotwLFb7xBzwney/vOSrg+lXYw9G
+         OgUsxokx2k4nsiWA9pEI6JaiD87FbRNwepcZuThCIXfa2wrV3FBD//6IaCfofUudN26A
+         GAyQ==
+X-Gm-Message-State: AOJu0YwKNW/XA/LLNyzamoESpDBjvK2p8ow96frNU7kVpyvQGHlLLOxV
+	yHp6w4Aghn8XQztwa03pbZOeuOHQt9rDIXTcrCmWHagwF1LqABCn+AvRDLrlSMIw
+X-Gm-Gg: ASbGncvQbUX+IVhm2pQ1JnmPDOEvJGyWacpSchhcd9yYSjmCHEm+J2MKgm2CY3xgH9w
+	emiA1whRtpJk+VgusqtZ49jDG48W9kaA5zrJE4WWP1eXAeQb2i03P3aFa3w8cjaexA9EFKlAAZi
+	ZuIXnAl9GOzWc9EHsB2UI814ICh1JcFnwHW+ycwdwTGsYcMLr+RmP6Aru96EAwOSdv3mxnrEkKE
+	StZKYe6+GdC7mQpHLGK17Y/4buzT6C4ZNmX2Yt3rYt9tJPhTu7/2xOW+aOr36mJz0ttx6lImLze
+	vq69rdqd8VA3MGAi45vEfl3s63IbbM5QVJilOCjSVeJUrDuY+4kIQHjwbx/QL7HReKFtl++lOHH
+	rkMmnIo7/zIXyjvh8oX3Yu8gWO0nquS3TSA44aC5qG7/DI50LMW/S19UQPJrd7CnAdPNBZ7ptMr
+	0JN1qioPYO/1h9QslS2g==
+X-Google-Smtp-Source: AGHT+IElmlafeEeVB2WMsQSk+MOjUdVM74P9RdyjOAxP+L5479WaOzgegwsZ3NGbdtJsAl1i/ejKrw==
+X-Received: by 2002:a17:902:f610:b0:272:2bf1:6a21 with SMTP id d9443c01a7336-290c9ca72aamr370603485ad.14.1761286080969;
+        Thu, 23 Oct 2025 23:08:00 -0700 (PDT)
+Received: from E07P150077.ecarx.com.cn ([103.52.189.23])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946e25bad1sm43308915ad.105.2025.10.23.23.07.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 23:08:00 -0700 (PDT)
+From: Jianyun Gao <jianyungao89@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Jianyun Gao <jianyungao89@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools))
+Subject: [PATCH] libbpf: optimize the redundant code in the bpf_object__init_user_btf_maps() function.
+Date: Fri, 24 Oct 2025 14:07:20 +0800
+Message-Id: <20251024060720.634826-1-jianyungao89@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] virt: acrn: fix kernel-doc in <uapi/linux/acrn.h>
-To: "Li, Fei1" <fei1.li@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "acrn-dev@lists.projectacrn.org" <acrn-dev@lists.projectacrn.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20251024044226.480531-1-rdunlap@infradead.org>
- <SJ1PR11MB615389E066F50BBB68686A26BFF1A@SJ1PR11MB6153.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <SJ1PR11MB615389E066F50BBB68686A26BFF1A@SJ1PR11MB6153.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+In the elf_sec_data() function, the input parameter 'scn' will be
+evaluated. If it is NULL, then it will directly return NULL. Therefore,
+the return value of the elf_sec_data() function already takes into
+account the case where the input parameter scn is NULL. Therefore,
+subsequently, the code only needs to check whether the return value of
+the elf_sec_data() function is NULL.
 
-On 10/23/25 11:00 PM, Li, Fei1 wrote:
->> From: Randy Dunlap <rdunlap@infradead.org>
->> Sent: Friday, October 24, 2025 12:42 PM
->> To: linux-kernel@vger.kernel.org
->> Cc: Randy Dunlap <rdunlap@infradead.org>; Li, Fei1 <fei1.li@intel.com>;
->> acrn-dev@lists.projectacrn.org; Greg Kroah-Hartman
->> <gregkh@linuxfoundation.org>
->> Subject: [PATCH] virt: acrn: fix kernel-doc in <uapi/linux/acrn.h>
->>
->> Fix the kernel-doc comments for struct acrn_mmiodev so that all struct
->> members are rendered correctly.
->> Correct io_base to io_addr in struct acrn_vdev.
->>
->> acrn.h:441: warning: Function parameter or struct member 'res'
->>  not described in 'acrn_mmiodev'
->> acrn.h:479: warning: Function parameter or struct member 'io_addr'
->>  not described in 'acrn_vdev'
->> acrn.h:479: warning: Excess struct member 'io_base' description  in
->> 'acrn_vdev'
->>
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> ---
->> Cc: Fei Li <fei1.li@intel.com>
->> Cc: acrn-dev@lists.projectacrn.org
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> ---
->>  include/uapi/linux/acrn.h |   11 ++++++-----
->>  1 file changed, 6 insertions(+), 5 deletions(-)
->>
->> --- linux-next-20251022.orig/include/uapi/linux/acrn.h
->> +++ linux-next-20251022/include/uapi/linux/acrn.h
->> @@ -420,12 +420,13 @@ struct acrn_pcidev {
->>  /**
->>   * struct acrn_mmiodev - Info for assigning or de-assigning a MMIO device
->>   * @name:			Name of the MMIO device.
->> - * @res[].user_vm_pa:		Physical address of User VM of the MMIO
->> region
->> + * @res:			MMIO resource descriptor info.
-> 
-> Hi Randy
-> 
-> Thanks for cooking this patch to help fix these warning.
-> Could you just add the comment for `res` and keep the other comments for the fields of ` struct acrn_mmiodev ` ?
-> 
+Signed-off-by: Jianyun Gao <jianyungao89@gmail.com>
+---
+ tools/lib/bpf/libbpf.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Do you mean leave the [] square brackets in the field name?
-If that's what you mean, that's not valid kernel-doc notation.
-
-> 
->> + * @res.user_vm_pa:		Physical address of User VM of the MMIO
->> region
->>   *				for the MMIO device.
->> - * @res[].service_vm_pa:	Physical address of Service VM of the MMIO
->> + * @res.service_vm_pa:		Physical address of Service VM of the
->> MMIO
->>   *				region for the MMIO device.
->> - * @res[].size:			Size of the MMIO region for the MMIO
->> device.
->> - * @res[].mem_type:		Memory type of the MMIO region for the
->> MMIO
->> + * @res.size:			Size of the MMIO region for the MMIO
->> device.
->> + * @res.mem_type:		Memory type of the MMIO region for the
->> MMIO
->>   *				device.
->>   *
->>   * This structure will be passed to hypervisor directly.
->> @@ -449,7 +450,7 @@ struct acrn_mmiodev {
->>   * @id.fields.legacy_id:	ID of the virtual device if not a PCI device
->>   * @slot:			Virtual Bus/Device/Function of the virtual
->>   *				device
->> - * @io_base:			IO resource base address of the virtual device
->> + * @io_addr:			IO resource base address of the virtual device
->>   * @io_size:			IO resource size of the virtual device
->>   * @args:			Arguments for the virtual device creation
->>   *
-
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index b90574f39d1c..9e66104a61eb 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -2988,15 +2988,15 @@ static int bpf_object__init_user_btf_maps(struct bpf_object *obj, bool strict,
+ 	int nr_types, i, vlen, err;
+ 	const struct btf_type *t;
+ 	const char *name;
+-	Elf_Data *data;
++	Elf_Data *scn_data;
+ 	Elf_Scn *scn;
+ 
+ 	if (obj->efile.btf_maps_shndx < 0)
+ 		return 0;
+ 
+ 	scn = elf_sec_by_idx(obj, obj->efile.btf_maps_shndx);
+-	data = elf_sec_data(obj, scn);
+-	if (!scn || !data) {
++	scn_data = elf_sec_data(obj, scn);
++	if (!scn_data) {
+ 		pr_warn("elf: failed to get %s map definitions for %s\n",
+ 			MAPS_ELF_SEC, obj->path);
+ 		return -EINVAL;
 -- 
-~Randy
+2.34.1
 
 
