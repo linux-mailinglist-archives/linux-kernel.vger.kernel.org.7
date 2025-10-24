@@ -1,87 +1,118 @@
-Return-Path: <linux-kernel+bounces-867998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7367BC041C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:26:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6722C041CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2307A4E673B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:26:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E4603A8525
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E272B21257A;
-	Fri, 24 Oct 2025 02:26:08 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9ACB23F41A;
+	Fri, 24 Oct 2025 02:27:17 +0000 (UTC)
+Received: from localhost.localdomain (unknown [147.136.157.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197594C85
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A022288CB
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.136.157.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761272768; cv=none; b=ICLYITP+m32+pvlkvJclaEHH8EC5dA5O1KYq9afzjAkzY+OrgGFI+shQjYJMIKGGoXwf2AQI9Ai2ev6tTeJOcx3FwPOMw9WpTG/EqhewypaVpfiaYILEp9J9ThuAoxV034N5S3B3hZ88Gl3ujT/2bdVWfRPU5V+C4zw97E8/M5U=
+	t=1761272837; cv=none; b=K3Qp5DxzOPTmAdurVpQ4OjFm/CUu5sACzTtblucdIb8Pza3c0w6b/5pSRDOQ/Mdc/zyFL6fzET9evInoQx6oh/hKd68nkqsOi6tNm/ctqwY/e+OuiNGshdA+qcPKhYLYpvNjqwvh6vd0l39NFBYm7DmovXmneYiWxVMGpQyu2XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761272768; c=relaxed/simple;
-	bh=5s8VNWVz9uVdNe5Jkjg/g6tRI4HeHhPiP3/rv/ckn0Q=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JzuBr7oQSzxPLGCeikvSsFeztySrX4TbEjMuzBOJSusP0LqZdGYUCnF6z4PXEKVuueiSb2RZqNNJ4QO+4Ns4bfVP09xfuDp2nYR5AFynrV7Y1f/xzlW4JR4Tf7cze3fbzjQcBWsY0EXjvYRKg4ljPmXoGOjb5mF09kWTGq10Azc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430db6d358bso68985335ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 19:26:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761272764; x=1761877564;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nuvYHZXFcq1HN/ZvbZei9bEYMbptX1KclhCU10Q2TzY=;
-        b=nQt4U/Ptt66JF6bHXdwgfyDy0RO9YCxDXjSYIWe2W58XtU0xVxKIfxls83lFEJCNYK
-         srfY4Eiqv6xvptlo+DpTqbNoqB/wCUiiqBblCeQSM442NttR62+iAnvyRKQzasN7NsG/
-         PdirZtcrX2rG/ZgmLmsCok/Q3qL+yBWwBjxpUpuTWL6lSyiWnohdcs7z1LTAzeondxWG
-         /qN9C0Heac3xxxvN+ufQgWizBR+7KtLyy7EeWrrVMDpHAY25NVpqRIStVWNJ4BmzQIxW
-         93oSsihpt9HiMOTVoM5wxZTE7ncIud3wjhjJ8kpq3/f42OlezcPK3osTPswGdeY1qpvB
-         cuPg==
-X-Forwarded-Encrypted: i=1; AJvYcCXn6WRye5mWoIvs1wcaH9DrLDYsAF8dCwCU5FHloQB8qsbYplb2Rs357xBv6WNoUQVtQTujiwsEmJRPgL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpJFwO45I1YD30DhCNfXxqENLqQYtCfQhUf/hEsPCxrS3rjV/W
-	qHVsjTTtPL3FBgTRG9bqfz4+sGxtGYQCq3Xdia73ZjE3w1wUPj8qkKFftP2NMsU8afUDGs5Ujes
-	pXuNtD1p70LUoDP999L3g4KuqbSBdjyJS8q1WUkYX2kX0O6YLP+CnnMRcKbQ=
-X-Google-Smtp-Source: AGHT+IFpmLe9/pehpSvw62yma21VozoojdjtP5xCLJcpSUT9PKOcRLGXMW79hQfDvB+ASukNC+R/Lg2j6lN0dFHstlnlvKWk3+kY
+	s=arc-20240116; t=1761272837; c=relaxed/simple;
+	bh=dWne0O+Vb+/VikyMXFKm7XNukhA/Xu0GWOetr/xFln0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A5FIDgejFGa7Elaonc9V1QLFSEb6K9afcNRxvuoy0l0W831Q59Yr+ci5u2Y2mDG1t5LFBbUoMQEScBnijXTwDKvehdGSUXdfw0zC3y84tBlFJvFwtJor/Hqj6ur4DQCZbDUdReVX2/to80ZQf1DJa9G0S0EBKAQK0Kvve36qn84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=none smtp.mailfrom=localhost.localdomain; arc=none smtp.client-ip=147.136.157.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=localhost.localdomain
+Received: by localhost.localdomain (Postfix, from userid 1007)
+	id 0C7C28B2A13; Fri, 24 Oct 2025 10:27:14 +0800 (+08)
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: linux-mm@kvack.org
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	David Hildenbrand <david@redhat.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>,
+	Wei Xu <weixugc@google.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mm/vmscan: skip increasing kswapd_failures when reclaim was boosted
+Date: Fri, 24 Oct 2025 10:27:11 +0800
+Message-ID: <20251024022711.382238-1-jiayuan.chen@linux.dev>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2789:b0:430:9fde:33bd with SMTP id
- e9e14a558f8ab-431ebeb3efcmr10462165ab.1.1761272764267; Thu, 23 Oct 2025
- 19:26:04 -0700 (PDT)
-Date: Thu, 23 Oct 2025 19:26:04 -0700
-In-Reply-To: <CAHxJ8O_3H5QQ+x4=kdaXr4ELfqO3PCxGO49Ds1yA7mAcBGBh2g@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fae3bc.050a0220.346f24.008f.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] WARNING in ocfs2_unlink
-From: syzbot <syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com>
-To: eraykrdg1@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+We encountered a scenario where direct memory reclaim was triggered,
+leading to increased system latency:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+1. The memory.low values set on host pods are actually quite large, some
+   pods are set to 10GB, others to 20GB, etc.
+2. Since most pods have memory protection configured, each time kswapd is
+   woken up, if a pod's memory usage hasn't exceeded its own memory.low,
+   its memory won't be reclaimed.
+3. When applications start up, rapidly consume memory, or experience
+   network traffic bursts, the kernel reaches steal_suitable_fallback(),
+   which sets watermark_boost and subsequently wakes kswapd.
+4. In the core logic of kswapd thread (balance_pgdat()), when reclaim is
+   triggered by watermark_boost, the maximum priority is 10. Higher
+   priority values mean less aggressive LRU scanning, which can result in
+   no pages being reclaimed during a single scan cycle:
 
-Reported-by: syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com
-Tested-by: syzbot+55c40ae8a0e5f3659f2b@syzkaller.appspotmail.com
+if (nr_boost_reclaim && sc.priority == DEF_PRIORITY - 2)
+    raise_priority = false;
 
-Tested on:
+5. This eventually causes pgdat->kswapd_failures to continuously
+   accumulate, exceeding MAX_RECLAIM_RETRIES, and consequently kswapd stops
+   working. At this point, the system's available memory is still
+   significantly above the high watermark — it's inappropriate for kswapd
+   to stop under these conditions.
 
-commit:         6fab32bb MAINTAINERS: add Mark Brown as a linux-next m..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b4ae7c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a1215729170d20fc
-dashboard link: https://syzkaller.appspot.com/bug?extid=55c40ae8a0e5f3659f2b
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16d1c614580000
+The final observable issue is that a brief period of rapid memory
+allocation causes kswapd to stop running, ultimately triggering direct
+reclaim and making the applications unresponsive.
 
-Note: testing is done by a robot and is best-effort only.
+Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+
+---
+v1 -> v2: Do not modify memory.low handling
+https://lore.kernel.org/linux-mm/20251014081850.65379-1-jiayuan.chen@linux.dev/
+---
+ mm/vmscan.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 92f4ca99b73c..fa8663781086 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -7128,7 +7128,12 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int highest_zoneidx)
+ 		goto restart;
+ 	}
+ 
+-	if (!sc.nr_reclaimed)
++	/*
++	 * If the reclaim was boosted, we might still be far from the
++	 * watermark_high at this point. We need to avoid increasing the
++	 * failure count to prevent the kswapd thread from stopping.
++	 */
++	if (!sc.nr_reclaimed && !boosted)
+ 		atomic_inc(&pgdat->kswapd_failures);
+ 
+ out:
+-- 
+2.43.0
+
 
