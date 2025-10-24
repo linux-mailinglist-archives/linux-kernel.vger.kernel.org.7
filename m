@@ -1,90 +1,316 @@
-Return-Path: <linux-kernel+bounces-867968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-867969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD7BC0407A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:41:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35043C04086
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A5FE4E31EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:41:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED673B1609
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 01:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9921C3C18;
-	Fri, 24 Oct 2025 01:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB391D516F;
+	Fri, 24 Oct 2025 01:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gTkHLOm7"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51F91A9F90
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MFOJezJY"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C271A23A5;
+	Fri, 24 Oct 2025 01:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761270071; cv=none; b=FgeBuUXUdOVeYeE2dfIjy8r25yPek3r6Z0GS9Bxh6/CNBYPTQ+4ZXXIgspIaAstuZLm7Gt07otp44+EnC9jBQgcOw0Yd3aTJ7SxH/MTdQYLViWQlAXkNc6a1/KkL+JsM3vkOU/Il5O+LAIxee5eMmXagntRDUhd9n1l2zSAFgv0=
+	t=1761270119; cv=none; b=Pkcw4ac5abbfi1zSS54NExWkSAo1yB/NlYr3ruTATgbWYCCruJL1OgIT0qJ8EaWDhgBSEuhqjij2WKV/F8K184NEbg0Rb2q1fUIVq3z5pNvBKy3CgCnmn+mWFDcWdUUW5gqIeYQCNQzXdqWRDFQxHo+ztKcuIC3Z3A1hluExizg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761270071; c=relaxed/simple;
-	bh=gwfiB4C0GOFiV06KID7mXC+DZ8SSqRNfWj56vSLnzwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u07pD1beheDc8FQNOk50qybluYF+ALbAX6t4eaFb4ct5PMld2L24C5x4LwIuHnRdjxBFiOZj2YmSVM7CGl7IczV0KqvrJzhNwNjykphIa1tSpppKL0TBVnDwkLVo7JSXRyV7PrOOHV5guYuSBz2oeNFFh4J5/YGp2pa6blENFs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gTkHLOm7; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761270062; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=+V8kOqNOsh8UaPdUFo5M/73e9x7UlGg1quQtezT5Kvg=;
-	b=gTkHLOm7s3LwDJg32MGYDYD5EOjA3saLvU7pVxWvs9wdqYJuJ015QLj2InDIHP5u5vA3S9lox+ZP7yKXOKMpxNUiZLK98nJf6IzY6wcVFAUSSKVSrpNty2qfdoM7mqLNN58Z5zDSO9wyQ/V8CmmgFxIiAP6jrvHtt4yCxplfdTM=
-Received: from 30.74.144.122(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WqsXDkv_1761270060 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 24 Oct 2025 09:41:00 +0800
-Message-ID: <b746b524-af09-4ab5-858a-0a29f72a0ea7@linux.alibaba.com>
-Date: Fri, 24 Oct 2025 09:40:59 +0800
+	s=arc-20240116; t=1761270119; c=relaxed/simple;
+	bh=j+tLOqZxOfVSyc+ba/m0n9E6upA7m+p/jycHLMQi85k=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=vBP69smENG5WAA+0+kkV3X6nDPujNFDNcVm4EOvI2DlqVATJwhMs5dQSoltqGzk7Lr99FklEHdy1c4IN9+N9T6eJyPKl+p5elSnbgQD2WDr+8My1LTLuUl4y9mdPqzMURHeN2kOn0ZxviA0qUs79a3hmTLBixVwkKaMltxrWlG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MFOJezJY; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1006)
+	id 2A40A211AF3E; Thu, 23 Oct 2025 18:41:57 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2A40A211AF3E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1761270117;
+	bh=6TzER48JPcpGKeFwhlFaQlS9mIdtWw6DFXG+mWlhVh4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MFOJezJYmEeDxiI12MeWLUf7FZJnG527r27+NJYV97aNxeXrJjDNA6L2wR6HIGHGS
+	 YvjO8twfPYXA0am0NWx4mbMhNyVYePjbh9K1Ul2BYoMaH8IrMPpiQ+0BiextM4c+gC
+	 52CGHrOqAn/BKZGxPM2LztE3vdNmW/xtdO2SvLQk=
+From: Haiyang Zhang <haiyangz@linux.microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: haiyangz@microsoft.com,
+	paulros@microsoft.com,
+	decui@microsoft.com,
+	kys@microsoft.com,
+	wei.liu@kernel.org,
+	edumazet@google.com,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	longli@microsoft.com,
+	ssengar@linux.microsoft.com,
+	ernis@linux.microsoft.com,
+	dipayanroy@linux.microsoft.com,
+	kotaranov@microsoft.com,
+	horms@kernel.org,
+	shradhagupta@linux.microsoft.com,
+	leon@kernel.org,
+	mlevitsk@redhat.com,
+	yury.norov@gmail.com,
+	shirazsaleem@microsoft.com,
+	andrew+netdev@lunn.ch,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [net-next, v3] net: mana: Support HW link state events
+Date: Thu, 23 Oct 2025 18:41:45 -0700
+Message-Id: <1761270105-27215-1-git-send-email-haiyangz@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: shmem/tmpfs hugepage defaults config choice
-To: Dmitry Ilvokhin <d@ilvokhin.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Hugh Dickins <hughd@google.com>
-Cc: Kiryl Shutsemau <kas@kernel.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kernel-team@meta.com
-References: <aPpv8sAa2sYgNu3L@shell.ilvokhin.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <aPpv8sAa2sYgNu3L@shell.ilvokhin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
+Handle the HW link state events received from HW channel, and
+set the proper link state accordingly.
 
-On 2025/10/24 02:12, Dmitry Ilvokhin wrote:
-> Allow to override defaults for shemem and tmpfs at config time. This is
-> consistent with how transparent hugepages can be configured.
-> 
-> Same results can be achieved with the existing
-> 'transparent_hugepage_shmem' and 'transparent_hugepage_tmpfs' settings
-> in the kernel command line, but it is more convenient to define basic
-> settings at config time instead of changing kernel command line later.
-> 
-> Defaults for shmem and tmpfs were not changed. They are remained the
-> same as before: 'never' for both cases. Options 'deny' and 'force' are
-> omitted intentionally since these are special values and supposed to be
-> used for emergencies or testing and are not expected to be permanent
-> ones.
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
 
-Make sense to me.
+---
+v3:
+  Don't stop / start the queues, and use disable_work_sync() as
+  suggested by Jakub Kicinski.
 
-> Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
+v2:
+  Updated link up/down to be symmetric, and other minor changes based
+  on comments from Andrew Lunn.
 
-With addressing Shakeel's comments:
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+---
+ .../net/ethernet/microsoft/mana/gdma_main.c   |  1 +
+ .../net/ethernet/microsoft/mana/hw_channel.c  | 12 +++++
+ drivers/net/ethernet/microsoft/mana/mana_en.c | 53 +++++++++++++++++--
+ include/net/mana/gdma.h                       |  4 +-
+ include/net/mana/hw_channel.h                 |  2 +
+ include/net/mana/mana.h                       |  4 ++
+ 6 files changed, 70 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+index 43f034e180c4..effe0a2f207a 100644
+--- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
++++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
+@@ -528,6 +528,7 @@ static void mana_gd_process_eqe(struct gdma_queue *eq)
+ 	case GDMA_EQE_HWC_INIT_DONE:
+ 	case GDMA_EQE_HWC_SOC_SERVICE:
+ 	case GDMA_EQE_RNIC_QP_FATAL:
++	case GDMA_EQE_HWC_SOC_RECONFIG_DATA:
+ 		if (!eq->eq.callback)
+ 			break;
+ 
+diff --git a/drivers/net/ethernet/microsoft/mana/hw_channel.c b/drivers/net/ethernet/microsoft/mana/hw_channel.c
+index ada6c78a2bef..367e18d71413 100644
+--- a/drivers/net/ethernet/microsoft/mana/hw_channel.c
++++ b/drivers/net/ethernet/microsoft/mana/hw_channel.c
+@@ -118,6 +118,7 @@ static void mana_hwc_init_event_handler(void *ctx, struct gdma_queue *q_self,
+ 	struct gdma_dev *gd = hwc->gdma_dev;
+ 	union hwc_init_type_data type_data;
+ 	union hwc_init_eq_id_db eq_db;
++	struct mana_context *ac;
+ 	u32 type, val;
+ 	int ret;
+ 
+@@ -196,6 +197,17 @@ static void mana_hwc_init_event_handler(void *ctx, struct gdma_queue *q_self,
+ 			hwc->hwc_timeout = val;
+ 			break;
+ 
++		case HWC_DATA_HW_LINK_CONNECT:
++		case HWC_DATA_HW_LINK_DISCONNECT:
++			ac = gd->gdma_context->mana.driver_data;
++			if (!ac)
++				break;
++
++			ac->link_event = type;
++			schedule_work(&ac->link_change_work);
++
++			break;
++
+ 		default:
+ 			dev_warn(hwc->dev, "Received unknown reconfig type %u\n", type);
+ 			break;
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+index 0142fd98392c..949aedebc8c3 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_en.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+@@ -20,6 +20,7 @@
+ 
+ #include <net/mana/mana.h>
+ #include <net/mana/mana_auxiliary.h>
++#include <net/mana/hw_channel.h>
+ 
+ static DEFINE_IDA(mana_adev_ida);
+ 
+@@ -84,7 +85,6 @@ static int mana_open(struct net_device *ndev)
+ 	/* Ensure port state updated before txq state */
+ 	smp_wmb();
+ 
+-	netif_carrier_on(ndev);
+ 	netif_tx_wake_all_queues(ndev);
+ 	netdev_dbg(ndev, "%s successful\n", __func__);
+ 	return 0;
+@@ -100,6 +100,45 @@ static int mana_close(struct net_device *ndev)
+ 	return mana_detach(ndev, true);
+ }
+ 
++static void mana_link_state_handle(struct work_struct *w)
++{
++	struct mana_context *ac;
++	struct net_device *ndev;
++	bool link_up;
++	int i;
++
++	ac = container_of(w, struct mana_context, link_change_work);
++
++	rtnl_lock();
++
++	if (ac->link_event == HWC_DATA_HW_LINK_CONNECT)
++		link_up = true;
++	else if (ac->link_event == HWC_DATA_HW_LINK_DISCONNECT)
++		link_up = false;
++	else
++		goto out;
++
++	/* Process all ports */
++	for (i = 0; i < ac->num_ports; i++) {
++		ndev = ac->ports[i];
++		if (!ndev)
++			continue;
++
++		if (link_up) {
++			if (!netif_carrier_ok(ndev))
++				netif_carrier_on(ndev);
++
++			__netdev_notify_peers(ndev);
++		} else {
++			if (netif_carrier_ok(ndev))
++				netif_carrier_off(ndev);
++		}
++	}
++
++out:
++	rtnl_unlock();
++}
++
+ static bool mana_can_tx(struct gdma_queue *wq)
+ {
+ 	return mana_gd_wq_avail_space(wq) >= MAX_TX_WQE_SIZE;
+@@ -3059,9 +3098,6 @@ int mana_attach(struct net_device *ndev)
+ 	/* Ensure port state updated before txq state */
+ 	smp_wmb();
+ 
+-	if (apc->port_is_up)
+-		netif_carrier_on(ndev);
+-
+ 	netif_device_attach(ndev);
+ 
+ 	return 0;
+@@ -3154,7 +3190,6 @@ int mana_detach(struct net_device *ndev, bool from_close)
+ 	smp_wmb();
+ 
+ 	netif_tx_disable(ndev);
+-	netif_carrier_off(ndev);
+ 
+ 	if (apc->port_st_save) {
+ 		err = mana_dealloc_queues(ndev);
+@@ -3243,6 +3278,8 @@ static int mana_probe_port(struct mana_context *ac, int port_idx,
+ 		goto free_indir;
+ 	}
+ 
++	netif_carrier_on(ndev);
++
+ 	debugfs_create_u32("current_speed", 0400, apc->mana_port_debugfs, &apc->speed);
+ 
+ 	return 0;
+@@ -3431,6 +3468,8 @@ int mana_probe(struct gdma_dev *gd, bool resuming)
+ 
+ 	if (!resuming) {
+ 		ac->num_ports = num_ports;
++
++		INIT_WORK(&ac->link_change_work, mana_link_state_handle);
+ 	} else {
+ 		if (ac->num_ports != num_ports) {
+ 			dev_err(dev, "The number of vPorts changed: %d->%d\n",
+@@ -3438,6 +3477,8 @@ int mana_probe(struct gdma_dev *gd, bool resuming)
+ 			err = -EPROTO;
+ 			goto out;
+ 		}
++
++		enable_work(&ac->link_change_work);
+ 	}
+ 
+ 	if (ac->num_ports == 0)
+@@ -3500,6 +3541,8 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
+ 	int err;
+ 	int i;
+ 
++	disable_work_sync(&ac->link_change_work);
++
+ 	/* adev currently doesn't support suspending, always remove it */
+ 	if (gd->adev)
+ 		remove_adev(gd);
+diff --git a/include/net/mana/gdma.h b/include/net/mana/gdma.h
+index 57df78cfbf82..637f42485dba 100644
+--- a/include/net/mana/gdma.h
++++ b/include/net/mana/gdma.h
+@@ -590,6 +590,7 @@ enum {
+ 
+ /* Driver can self reset on FPGA Reconfig EQE notification */
+ #define GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE BIT(17)
++#define GDMA_DRV_CAP_FLAG_1_HW_VPORT_LINK_AWARE BIT(6)
+ 
+ #define GDMA_DRV_CAP_FLAGS1 \
+ 	(GDMA_DRV_CAP_FLAG_1_EQ_SHARING_MULTI_VPORT | \
+@@ -599,7 +600,8 @@ enum {
+ 	 GDMA_DRV_CAP_FLAG_1_DEV_LIST_HOLES_SUP | \
+ 	 GDMA_DRV_CAP_FLAG_1_DYNAMIC_IRQ_ALLOC_SUPPORT | \
+ 	 GDMA_DRV_CAP_FLAG_1_SELF_RESET_ON_EQE | \
+-	 GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE)
++	 GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE | \
++	 GDMA_DRV_CAP_FLAG_1_HW_VPORT_LINK_AWARE)
+ 
+ #define GDMA_DRV_CAP_FLAGS2 0
+ 
+diff --git a/include/net/mana/hw_channel.h b/include/net/mana/hw_channel.h
+index 83cf93338eb3..16feb39616c1 100644
+--- a/include/net/mana/hw_channel.h
++++ b/include/net/mana/hw_channel.h
+@@ -24,6 +24,8 @@
+ #define HWC_INIT_DATA_PF_DEST_CQ_ID	11
+ 
+ #define HWC_DATA_CFG_HWC_TIMEOUT 1
++#define HWC_DATA_HW_LINK_CONNECT 2
++#define HWC_DATA_HW_LINK_DISCONNECT 3
+ 
+ #define HW_CHANNEL_WAIT_RESOURCE_TIMEOUT_MS 30000
+ 
+diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+index 0921485565c0..8906901535f5 100644
+--- a/include/net/mana/mana.h
++++ b/include/net/mana/mana.h
+@@ -477,6 +477,10 @@ struct mana_context {
+ 	struct dentry *mana_eqs_debugfs;
+ 
+ 	struct net_device *ports[MAX_PORTS_IN_MANA_DEV];
++
++	/* Link state change work */
++	struct work_struct link_change_work;
++	u32 link_event;
+ };
+ 
+ struct mana_port_context {
+-- 
+2.34.1
+
 
