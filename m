@@ -1,150 +1,160 @@
-Return-Path: <linux-kernel+bounces-868161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1A6C048A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:43:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2C5C048B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B41D71A60CF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:44:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 886384F5908
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847F3270552;
-	Fri, 24 Oct 2025 06:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58726275B03;
+	Fri, 24 Oct 2025 06:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="etfvjaQv"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="M7Eck+Sn"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BCB1E990E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1251EE7DC;
+	Fri, 24 Oct 2025 06:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761288217; cv=none; b=kAZ7vhu2jXb7vxH9iOynks6EgzueacYECrUd5wrGAWiizMdxLfSJlbiM8jOJJKhHdXt8jogrHo7qs1wnRQr8hb1spQz02iLdpY8AjFeyZb30lLh0trwzlZYL80t8q7rfTgEzcecoCgAgF2YUvPlaUEqU0g4HqkwdUcubfZz5Z/I=
+	t=1761288251; cv=none; b=TOZ7SRk7Z4s8blIio5EhBQX29uG7drYWsf8ZbQJ3tage2CHwWEelyHH+Cs4/m651EVyEpZVTxrLkzpuIRNczgzcYIe01JD1dtuEuB2HJ0jDK3KLS9q+6LqTRqfFNsOaypxH1dDCHbXg6appzpz6/9cQb/bFfzdgwlRKckVXKHaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761288217; c=relaxed/simple;
-	bh=IbkdvNYR2kCJyPzBt28BRC+IBfhLd6Bj/NrNmn8Y4EQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CTJxQPY6naTb46ZoUobOrkvascrQyR3zIxq9EB+YNUGovodfDG9gUBI7xVyS3FMf73VVF0KeAfBcyDX7pVg22/16/f6aubXJkEmkD3Hui4S2Tm5gzNnpkPuayBwsh1UuR+veIZUlUA7sUA00pz0MPtemvSTZ0eK7jC2M8PRR94Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=etfvjaQv; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761288214;
-	bh=IbkdvNYR2kCJyPzBt28BRC+IBfhLd6Bj/NrNmn8Y4EQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=etfvjaQvpQUkHyjN+yZXLyL7RO5hXRg2yLZ0BmgNuRC2wQ1IZ306phpplQh9Ttii/
-	 7ERQGs7zUZX0QoVHIc0dA8QKiK2cQfhqqb6lzDHLmvidl3R2PsGhh2dnFe1+OE5VAE
-	 f3D6RTM9pCP2D0DgAApiET832nATRRByTCwLtTF0jzVpV0+ay2enxhpvMtgm+4GLr/
-	 gsFIS6SXMTbYDM4XplpF+z9wW09MFcIcetz5nI9EO4eQYUTf7L+G+crVEuN0jrK41w
-	 tiJGA7MCWNoLaOtSkKZSjtCrS6cx8cRH4T7z21+yUHLLBLuLdMAtU0GbTBwRoAJPkY
-	 dwNxsaZ6QLYdg==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8F1BD17E12DF;
-	Fri, 24 Oct 2025 08:43:33 +0200 (CEST)
-Date: Fri, 24 Oct 2025 08:43:27 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
- <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 03/10] drm/panthor: Introduce framework for
- architecture-specific features
-Message-ID: <20251024084327.3332d548@fedora>
-In-Reply-To: <20251014094337.1009601-4-karunika.choo@arm.com>
-References: <20251014094337.1009601-1-karunika.choo@arm.com>
-	<20251014094337.1009601-4-karunika.choo@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1761288251; c=relaxed/simple;
+	bh=fE0WFTUanwNAWzYo/9yEs8wOyV0QjQDak4p5lvWUgPE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=byw4e6uYD2H54ZxtqXSqTcdvx8PTwD8w8rZMcQZlmMRy9gogNqLZVr0BphkQ3QbbCXvsnXon22bvoCWG2P73sXaUc1b3mWKJ8kbrIZ7zrqSIVElSaMKqSegiAcBxrsbtESyQ5gG6HfZJPgrNpRvm0sKJC6cCbXk+5weQDQp8ff0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=M7Eck+Sn; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761288238; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=+PtR/2mY5lY5Xflgf0MxYoKPmgArqRLPqH9rrelUPf8=;
+	b=M7Eck+Sn4bm3uPpaUPkvvUbBrXy7WwpmiaSBuobz83G9ksGqiLRcGJb9dfLbbfFWeHEtuMdlscPUr22UuIUX3wmz0HnpMBagztmBU90enklRggaHYdLCCwlTp+LjxVBcbbOipD10cbWJGkW496rM9anSat62ThEtI//OFhnmSs4=
+Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WqtPi1u_1761288236 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 24 Oct 2025 14:43:57 +0800
+Message-ID: <239a003e-24dc-4e75-b677-a2c596b31c32@linux.alibaba.com>
+Date: Fri, 24 Oct 2025 14:43:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/5] PCI/AER: Report fatal errors of RCiEP and EP if
+ link recoverd
+To: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kbusch@kernel.org,
+ sathyanarayanan.kuppuswamy@linux.intel.com, mahesh@linux.ibm.com,
+ oohall@gmail.com, Jonathan.Cameron@huawei.com, terry.bowman@amd.com,
+ tianruidong@linux.alibaba.com
+References: <20251015024159.56414-1-xueshuai@linux.alibaba.com>
+ <20251015024159.56414-4-xueshuai@linux.alibaba.com>
+ <aPYKe1UKKkR7qrt1@wunner.de>
+ <6d7143a3-196f-49f8-8e71-a5abc81ae84b@linux.alibaba.com>
+ <aPY--DJnNam9ejpT@wunner.de>
+ <43390d36-147f-482c-b31a-d02c2624061f@linux.alibaba.com>
+ <aPZGNP79kJO74W4J@wunner.de>
+ <30fe11dd-3f21-4a61-adb0-74e39087c84c@linux.alibaba.com>
+ <aPoIDW_Yt90VgHL8@wunner.de>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <aPoIDW_Yt90VgHL8@wunner.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 14 Oct 2025 10:43:30 +0100
-Karunika Choo <karunika.choo@arm.com> wrote:
 
-> Add a framework to support architecture-specific features. This allows
-> other parts of the driver to adjust their behaviour based on the feature
-> bits enabled for a given architecture.
 
-I'm not convinced we need this just yet. AFAICT, the only feature flag
-being added in this patchset is PANTHOR_HW_FEATURE_PWR_CONTROL, and
-most of this is abstracted away with function pointers already. The
-only part that tests this FEATURE_PWR_CONTROL flag is the
-initialization, which could very much be abstracted away with a
-function pointer (NULL meaning no PWR block present). There might be
-other use cases you're planning to use this for, so I'd like to hear
-about them to make my final opinion on that.
-
+在 2025/10/23 18:48, Lukas Wunner 写道:
+> On Mon, Oct 20, 2025 at 11:20:58PM +0800, Shuai Xue wrote:
+>> 2025/10/20 22:24, Lukas Wunner:
+>>> On Mon, Oct 20, 2025 at 10:17:10PM +0800, Shuai Xue wrote:
+>>>>>>      .slot_reset()
+>>>>>>        => pci_restore_state()
+>>>>>>          => pci_aer_clear_status()
+>>>>>
+>>>>> This was added in 2015 by b07461a8e45b.  The commit claims that
+>>>>> the errors are stale and can be ignored.  It turns out they cannot.
+>>>>>
+>>>>> So maybe pci_restore_state() should print information about the
+>>>>> errors before clearing them?
+>>>>
+>>>> While that could work, we would lose the error severity information at
+>>>
+>>> Wait, we've got that saved in pci_cap_saved_state, so we could restore
+>>> the severity register, report leftover errors, then clear those errors?
+>>
+>> You're right that the severity register is also sticky, so we could
+>> retrieve error severity directly from AER registers.
+>>
+>> However, I have concerns about implementing this approach:
+> [...]
+>> 3. Architectural consistency: As you noted earlier, "pci_restore_state()
+>> is only supposed to restore state, as the name implies, and not clear
+>> errors." Adding error reporting to this function would further violate
+>> this principle - we'd be making it do even more than just restore state.
+>>
+>> Would you prefer I implement this broader change, or shall we proceed
+>> with the targeted helper function approach for now? The helper function
+>> solves the immediate problem while keeping the changes focused on the
+>> AER recovery path.
 > 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_hw.c |  5 +++++
->  drivers/gpu/drm/panthor/panthor_hw.h | 18 ++++++++++++++++++
->  2 files changed, 23 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-> index b6e7401327c3..34536526384d 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -186,3 +186,8 @@ int panthor_hw_init(struct panthor_device *ptdev)
->  
->  	return 0;
->  }
-> +
-> +bool panthor_hw_has_feature(struct panthor_device *ptdev, enum panthor_hw_feature feature)
-> +{
-> +	return test_bit(feature, ptdev->hw->features);
-> +}
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
-> index 39752de3e7ad..7a191e76aeec 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.h
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
-> @@ -4,14 +4,32 @@
->  #ifndef __PANTHOR_HW_H__
->  #define __PANTHOR_HW_H__
->  
-> +#include <linux/types.h>
-> +
->  struct panthor_device;
->  
-> +/**
-> + * enum panthor_hw_feature - Bit position of each HW feature
-> + *
-> + * Used to define GPU specific features based on the GPU architecture ID.
-> + * New feature flags will be added with support for newer GPU architectures.
-> + */
-> +enum panthor_hw_feature {
-> +	/** @PANTHOR_HW_FEATURES_END: Must be last. */
-> +	PANTHOR_HW_FEATURES_END
-> +};
-> +
-> +
->  /**
->   * struct panthor_hw - GPU specific register mapping and functions
->   */
->  struct panthor_hw {
-> +	/** @features: Bitmap containing panthor_hw_feature */
-> +	DECLARE_BITMAP(features, PANTHOR_HW_FEATURES_END);
->  };
->  
->  int panthor_hw_init(struct panthor_device *ptdev);
->  
-> +bool panthor_hw_has_feature(struct panthor_device *ptdev, enum panthor_hw_feature feature);
-> +
->  #endif /* __PANTHOR_HW_H__ */
+> My opinion is that b07461a8e45b was wrong and that reported errors
+> should not be silently ignored. 
 
+Thanks for your input and for discussing the history of commit
+b07461a8e45b. I understand its intention to ignore errors specifically
+during enumeration. As far as I know, AdvNonFatalErr events can occur in
+this phase and typically should be ignored to simplify handling.
+
+> What I'd prefer is that if
+> pci_restore_state() discovers unreported errors, it asks the AER driver
+> to report them.
+> 
+> We've already got a helper to do that:  aer_recover_queue()
+> It queues up an entry in AER's kfifo and asks AER to report it.
+> 
+> So far the function is only used by GHES.  GHES allocates the
+> aer_regs argument from ghes_estatus_pool using gen_pool_alloc().
+> Consequently aer_recover_work_func() uses ghes_estatus_pool_region_free()
+> to free the allocation.  That prevents using aer_recover_queue()
+> for anything else than GHES.  It would first be necessary to
+> refactor aer_recover_queue() + aer_recover_work_func() such that
+> it can cope with arbitrary allocations (e.g. kmalloc()).
+
+I agree that aer_recover_queue() and aer_recover_work_func() offer a
+generalized way to report errors.
+
+However, I’d like to highlight some concerns regarding error discovery
+during pci_restore_state():
+
+- Errors During Enumeration via Hotplug: Errors such as AdvNonFatalErr
+   seen during enumeration or hotplug are generally intended to be
+   ignored, as handling them adds unnecessary complexity without
+   practical benefits.
+
+- Errors During Downstream Port Containment (DPC): When an error is
+   detected and not masked, it is expected to propagate through the usual
+   AER path, either reported directly to the OS or to the firmware.
+   Finally, these errors should be cleared and reported in a single
+   cohesive step.
+
+For missed fatal errors during DPC, queuing additional work to report
+these errors using aer_recover_queue() could introduce significant
+overhead. Specifically: It may result in the bus being reset and the
+device reset again, which could unnecessarily disrupt system operation.
+
+Do we really need the heavy way?
+
+I would appreciate more feedback from the community on whether queuing
+another recovery task for errors detected during pci_restore_state()
+
+Thanks
+Shuai
 
