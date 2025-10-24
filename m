@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-869439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F93AC07E1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:19:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3B0C07E29
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6921C443EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:18:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFF58404666
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C9E288C3D;
-	Fri, 24 Oct 2025 19:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7E729B204;
+	Fri, 24 Oct 2025 19:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mbJ0Rthd"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="isgLzgOP"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0529C285074
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46759288522
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761333454; cv=none; b=aYf6fpz2hBkTRezep1/7qZb6fOYIU2lU6UOM8ewvQWNI+aIO4m32qkgsaEGJYzeR7xruVDVT8EAZ3VrlyFBo23u+ssYQF5boTDhgjjqj9rNddkm2cfM2eN4Kg0jcj8FPQRoiS4kubdtk2ifBAnQxuZ5bu9qyR03WvqrhcBKWeuQ=
+	t=1761333457; cv=none; b=klpUIngjcpwXBHBJs3BjXwpykv/h0jFRkvTgPD6185L+FgzbFDdxfX1Jec5n2oFhU3LfHlCMng9AQ7NC4y/GGpRr8TAW6rEULkVhFLK/5wva9JhCnmR1MfEhLlIvqtfgE9Fyprq/Vxw4Ax376Ru5/Hi47QXnfzqR8tORNgQgy54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761333454; c=relaxed/simple;
-	bh=NngWJU4duABCrydaCPPWXNizqoNmLXMX6D4Rl4d8kp8=;
+	s=arc-20240116; t=1761333457; c=relaxed/simple;
+	bh=s3GcZLerCv7XmLACfJCbvyxhLWMgIuHdFpXhnSC0Gss=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=quTuijmusWlr/I84CszKZvIARNHgoz0SDg9efIImcYP+oa7cSAuORpJFuy+1Lpxa7kHCdfpmTMlJ9k2LMxzwtW3I5xqFNFvnoLDNe2prD5yxozbUVlEqWLRqbgmZdEE8wUMd9qxAHkr0bQiVBK7wDDHVdy43r92G1qxPVxNBmLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mbJ0Rthd; arc=none smtp.client-ip=91.218.175.170
+	 MIME-Version; b=M3ygICrlieTMPWYuCr/PVOVEXJ6KyuUPJJvdaZgt8HzmE6eR0qkwA4o3Tzg6d5Byo0gVXaW1LfXmWSJOatNRhQeswXPZ2Cdqtgnc+xwN6ZSwKSH7CgT28ZU15a82mSXD8tf89iAgSlLA02V1MKKtT5VDRziFRLXiKi3j2TEki7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=isgLzgOP; arc=none smtp.client-ip=91.218.175.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761333450;
+	t=1761333453;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=F/WrJTDCbjNqXN4i/GaEE8YS8TrIdiKbp038ohCvnOc=;
-	b=mbJ0Rthd8AZmKwRv4lef9+aiFolHMxkakI/npPVUBOcdu5mv3ZdxWpri4dgUt8bypW4ZmE
-	/3Mf/6SQexFCGTYD14HR6yvlhqn346ZxnpBUN2yvc0B69L2ZLiJietvjeVu8kd+VHSyHNO
-	xT/I56yWliOPzOhsz48RpLTziZGHHJQ=
+	bh=L0z3O6ev8VvLV+n/JL2vBaug2Aj5dwpRTQ3NzZgJTeg=;
+	b=isgLzgOPZw23bh+e7CsK4Y8IdxoSe8JftRfIsPhd0qXRUqChwmNYo0Ch42pl3KDRJqZNUt
+	UAe1suW8wK58TGwh6cwGdPWlvEpkLL2k9bZNTq3SpSLwaEkbB20mFZ4YTrpZb05VjYrt30
+	m/yXFUwy+WLf+ABKLELglMkYxuaWEH4=
 From: Sean Anderson <sean.anderson@linux.dev>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
@@ -55,9 +55,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Michal Simek <michal.simek@amd.com>,
 	linux-arm-kernel@lists.infradead.org,
 	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH 2/3] drm: zynqmp_dp: Use smp_load/store for status
-Date: Fri, 24 Oct 2025 15:17:06 -0400
-Message-Id: <20251024191707.2310589-3-sean.anderson@linux.dev>
+Subject: [PATCH 3/3] drm: zynqmp_dp: Retrain link after HPD if necessary
+Date: Fri, 24 Oct 2025 15:17:07 -0400
+Message-Id: <20251024191707.2310589-4-sean.anderson@linux.dev>
 In-Reply-To: <20251024191707.2310589-1-sean.anderson@linux.dev>
 References: <20251024191707.2310589-1-sean.anderson@linux.dev>
 Precedence: bulk
@@ -69,48 +69,98 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-dp->status is read asynchronously by the AUX bus. Therefore, all reads
-outside of dp->lock must be atomic. Similarly, writes must be atomic as
-well. Reads with dp->lock held do not need to be atomic.
+The section 5.1.4 of the v1.2 DisplayPort standard says
 
-Fixes: a7d5eeaa57d7 ("drm: zynqmp_dp: Add locking")
+> The Source device shall respond to Hot Plug event/Hot Re-plug event by
+> first reading DPCD Link/Sink Device Status registers at DPCD 00200h
+> through 00205h.... If the link is unstable or lost, the Source device
+> then reads the DPCD Receiver Capabilities registers at DPCD 00000h
+> through 0000Fh to determine the appropriate information needed to
+> train the link. The Source device shall then initiate link training.
+
+However, zynqmp_dp_hpd_work_func does not check the link status. This
+may prevent the sink from detecting the source if, for example, the user
+disconnects the cable and then reconnects it. I encountered this problem
+when testing a mini DP connector (although I had no problem when using a
+full-size connector with the existing driver).
+
+Follow the spec by checking the link status after a HPD event and
+retraining if necessary.
+
+Fixes: d76271d22694 ("drm: xlnx: DRM/KMS driver for Xilinx ZynqMP DisplayPort Subsystem")
 Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 ---
 
- drivers/gpu/drm/xlnx/zynqmp_dp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/xlnx/zynqmp_dp.c | 37 ++++++++++++++++++++------------
+ 1 file changed, 23 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-index f39c78b08e6a..caf2e0ce3644 100644
+index caf2e0ce3644..a90bc0e406f6 100644
 --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
 +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-@@ -1111,7 +1111,7 @@ zynqmp_dp_aux_transfer(struct drm_dp_aux *aux, struct drm_dp_aux_msg *msg)
- 			return msg->size;
- 		}
+@@ -1677,6 +1677,24 @@ static int zynqmp_dp_bridge_atomic_check(struct drm_bridge *bridge,
+ 	return 0;
+ }
  
--		if (dp->status == connector_status_disconnected) {
-+		if (READ_ONCE(dp->status) == connector_status_disconnected) {
- 			dev_dbg(dp->dev, "no connected aux device\n");
- 			if (dp->ignore_aux_errors)
- 				goto fake_response;
-@@ -1697,7 +1697,7 @@ static enum drm_connector_status __zynqmp_dp_bridge_detect(struct zynqmp_dp *dp)
- 	}
++static bool zynqmp_hpd_needs_retain(struct zynqmp_dp *dp)
++{
++	u8 status[DP_LINK_STATUS_SIZE + 2];
++	int err;
++
++	err = drm_dp_dpcd_read(&dp->aux, DP_SINK_COUNT, status,
++			       DP_LINK_STATUS_SIZE + 2);
++	if (err < 0) {
++		dev_dbg_ratelimited(dp->dev,
++				    "could not read sink status: %d\n", err);
++		return false;
++	}
++
++	return status[4] & DP_LINK_STATUS_UPDATED ||
++	       !drm_dp_clock_recovery_ok(&status[2], dp->mode.lane_cnt) ||
++	       !drm_dp_channel_eq_ok(&status[2], dp->mode.lane_cnt);
++}
++
+ static enum drm_connector_status __zynqmp_dp_bridge_detect(struct zynqmp_dp *dp)
+ {
+ 	struct zynqmp_dp_link_config *link_config = &dp->link_config;
+@@ -1698,6 +1716,9 @@ static enum drm_connector_status __zynqmp_dp_bridge_detect(struct zynqmp_dp *dp)
  
  	if (state & ZYNQMP_DP_INTERRUPT_SIGNAL_STATE_HPD) {
--		dp->status = connector_status_connected;
-+		WRITE_ONCE(dp->status, connector_status_connected);
+ 		WRITE_ONCE(dp->status, connector_status_connected);
++		if (!zynqmp_hpd_needs_retain(dp))
++			return connector_status_connected;
++
  		ret = drm_dp_dpcd_read(&dp->aux, 0x0, dp->dpcd,
  				       sizeof(dp->dpcd));
  		if (ret < 0) {
-@@ -1716,7 +1716,7 @@ static enum drm_connector_status __zynqmp_dp_bridge_detect(struct zynqmp_dp *dp)
- 	}
+@@ -2335,25 +2356,13 @@ static void zynqmp_dp_hpd_irq_work_func(struct work_struct *work)
+ {
+ 	struct zynqmp_dp *dp = container_of(work, struct zynqmp_dp,
+ 					    hpd_irq_work);
+-	u8 status[DP_LINK_STATUS_SIZE + 2];
+-	int err;
  
- disconnected:
--	dp->status = connector_status_disconnected;
-+	WRITE_ONCE(dp->status, connector_status_disconnected);
- 	return connector_status_disconnected;
+ 	guard(mutex)(&dp->lock);
+ 	if (dp->ignore_hpd)
+ 		return;
+ 
+-	err = drm_dp_dpcd_read(&dp->aux, DP_SINK_COUNT, status,
+-			       DP_LINK_STATUS_SIZE + 2);
+-	if (err < 0) {
+-		dev_dbg_ratelimited(dp->dev,
+-				    "could not read sink status: %d\n", err);
+-	} else {
+-		if (status[4] & DP_LINK_STATUS_UPDATED ||
+-		    !drm_dp_clock_recovery_ok(&status[2], dp->mode.lane_cnt) ||
+-		    !drm_dp_channel_eq_ok(&status[2], dp->mode.lane_cnt)) {
+-			zynqmp_dp_train_loop(dp);
+-		}
+-	}
++	if (zynqmp_hpd_needs_retain(dp))
++		zynqmp_dp_train_loop(dp);
  }
  
+ static irqreturn_t zynqmp_dp_irq_handler(int irq, void *data)
 -- 
 2.35.1.1320.gc452695387.dirty
 
