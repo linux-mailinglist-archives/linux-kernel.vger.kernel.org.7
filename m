@@ -1,100 +1,128 @@
-Return-Path: <linux-kernel+bounces-868523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968BEC05644
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:44:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3DFFC05668
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 872491B867CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:45:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C333C1B86894
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE39130BF75;
-	Fri, 24 Oct 2025 09:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC16530C36E;
+	Fri, 24 Oct 2025 09:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aZDqJm3d";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tNyuMNzr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fVbycJOr"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21A42D322E;
-	Fri, 24 Oct 2025 09:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD1E30C361;
+	Fri, 24 Oct 2025 09:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761299080; cv=none; b=HzH5VLxAbWA0bDAvxdTX23T2yW6uSe8sbTrJWRS3fCysLNgWmDa8Y+Lm19slYvktAD0DU/29QqtE5mX72t8kMYDeVwh78ArmfkW3XQlcmlIsL8A3LM4oeKW3JtR8B0+hf0tU5Sz+MvM4/UODDoDmLCae3ztyqMDizoUeDVck97E=
+	t=1761299119; cv=none; b=UkZJrxUKWN2heA4gYCyNNtUa0Q3lildljoKG+RjrvaWc9Cv3mXbflFE/3vbkn66AsDasB8rrWu4sgjZ/1FGp5EE2rE6BKhC6tKP6gcHgIxszrsXe1hGLlpHIQ/tU/rIGZezewh/EYN+jWZ+Yyc0In6MSghpn9p4X5FjYLSn22hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761299080; c=relaxed/simple;
-	bh=NZAVSPwU4IZGJBRGWBN1MHI+1BtA5xwO6KheQoUtZUg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SGXD3IpidmFIaG+IowGFeUMmP7akduXUdsfo9z197AXnnOfK4C0MEwdDlVZOAhFFk1JfOXTmlVG4gFvhlNluYkTZJRkjWIpQGyHPmg59TtitrdEDE+9ZKIz7Po8rGjwOzAheJbSAWI9VreBzlcIZiGkHD61veMcpy+c1QQp0tQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aZDqJm3d; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tNyuMNzr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761299076;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qXavAEt2AdeKA50kbQrTDAxk8ooenTF+Pk8EvuBhte8=;
-	b=aZDqJm3defnmzAAYbej0YfrhJcyo1IHIK3yfLYpDulBXRr+I//iKnbcW7RPrMio0WW33wc
-	pq31aoDVsMIB5kzf4j31hfJGEu4Gl89tvpy7NPygc7H+mdeBpZ+mudvk7mVaKU1h0Wq24q
-	SzwCOGX0oGCYnoL7jqBtjNS0PpgTPd1v7/i+tEJpTs5RjpyDaE8aeQ2k29KQAA5FKDsjHg
-	wpMFxj7l9Xt16t8ffsT5KIGUHI2GkmISiRELARU72SznhYT75xpPash+YuOiaqsMiIhKyA
-	VJduM/jQlI5QyGVdd5YAVObGrO9mObBJ5uxfklJg1oAUiuYAFWvOz0ZztNkySw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761299076;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qXavAEt2AdeKA50kbQrTDAxk8ooenTF+Pk8EvuBhte8=;
-	b=tNyuMNzrbE99rMYg5ySoCVmAPUBdyZ1Ry8ejR9FvszFxAg8QhaYLAdZdkBqYFQfZtwc3mK
-	4dfYFirrzA/2bsAw==
-To: Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-pci@vger.kernel.org, Sascha Bischoff
- <sascha.bischoff@arm.com>, Scott Branden <sbranden@broadcom.com>, Bjorn
- Helgaas <bhelgaas@google.com>, Ray Jui <rjui@broadcom.com>, Frank Li
- <Frank.Li@nxp.com>, Manivannan Sadhasivam <mani@kernel.org>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Marc Zyngier
- <maz@kernel.org>
-Subject: Re: [PATCH v4 0/5] of/irq: Misc msi-parent handling fixes/clean-ups
-In-Reply-To: <20251022140545.GB3390144-robh@kernel.org>
-References: <20251021124103.198419-1-lpieralisi@kernel.org>
- <20251022140545.GB3390144-robh@kernel.org>
-Date: Fri, 24 Oct 2025 11:44:35 +0200
-Message-ID: <87v7k4ws58.ffs@tglx>
+	s=arc-20240116; t=1761299119; c=relaxed/simple;
+	bh=SaBF8viV0dIiqKCz8Q5Dk0LVBZejZ1Km/cnoN3ewqhU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rQ24Y+xDnWNjwkafRfLyDDRMOGWq6/GXsYeUWPyRlIW2U+x5tY3P27HaTcC3vQlQvm5ItE5bzxLZNWTVJMqx9HffNVl4wvBeRZBftDHEb3xxKniFN5D1ATPvUw+6pVNOzgGRWpVwC8OyF0R+OZikdktfjwll4AjJbtV1LnFP8A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fVbycJOr; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59O9ixPd1866672;
+	Fri, 24 Oct 2025 04:44:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1761299099;
+	bh=V/FawtRoWikjI/+UOtDM3BRdTJcd7AAkk5EmqHmxR/4=;
+	h=From:To:CC:Subject:Date;
+	b=fVbycJOreqSI6vPhrGusdh8dmISlKaged+PTl0W842qmgxOJMHPneY/V5+AtYgvSO
+	 BKSmJoiCbd2R02EEGWqkwdZkgmFuWqLgQkEJr++TyIpQYUt8dnubuYcPtOmd7HBX7x
+	 tFZ4NMImZNwoBzV++eL/8ayOtMSJZd8yAXzk5eWo=
+Received: from DLEE207.ent.ti.com (dlee207.ent.ti.com [157.170.170.95])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59O9iwwx3797255
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 24 Oct 2025 04:44:58 -0500
+Received: from DLEE204.ent.ti.com (157.170.170.84) by DLEE207.ent.ti.com
+ (157.170.170.95) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 24 Oct
+ 2025 04:44:58 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE204.ent.ti.com
+ (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 24 Oct 2025 04:44:58 -0500
+Received: from abhilash-HP.dhcp.ti.com (abhilash-hp.dhcp.ti.com [10.24.68.198])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59O9isvj148409;
+	Fri, 24 Oct 2025 04:44:55 -0500
+From: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+To: <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <hverkuil+cisco@kernel.org>
+CC: <sakari.ailus@linux.intel.com>, <bparrot@ti.com>,
+        <jai.luthra@ideasonboard.com>, <dale@farnsworth.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>,
+        <y-abhilashchandra@ti.com>
+Subject: [PATCH V5 0/4] Add support for TI VIP
+Date: Fri, 24 Oct 2025 15:14:48 +0530
+Message-ID: <20251024094452.549186-1-y-abhilashchandra@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Rob!
+This patch series adds support for the TI VIP. VIP stands for Video
+Input Port, it can be found on devices such as DRA7xx and provides
+a parallel interface to a video source such as a sensor or TV decoder.
 
-On Wed, Oct 22 2025 at 09:05, Rob Herring wrote:
-> On Tue, Oct 21, 2025 at 02:40:58PM +0200, Lorenzo Pieralisi wrote:
->> Lorenzo Pieralisi (5):
->>   of/irq: Add msi-parent check to of_msi_xlate()
->>   of/irq: Fix OF node refcount in of_msi_get_domain()
->
-> I've applied these 2 for 6.18.
+Each VIP can support two inputs (slices) and a SoC can be configured
+with a variable number of VIP's. Each slice can support two ports
+each connected to its own sub-device.
 
-The rest of this depends on those two.
+Changelog:
+Changes in v5:
+Krzysztof:
+- Drop VIP node's label from the example in DT bindings
+- Fix indentation of the example in DT bindings
+- Get the phandle args directly through syscon call using syscon_regmap_lookup_by_phandle_args()
+- Use devm_platform_ioremap_resource() instead of platform_get_resource() and devm_ioremap_resource()
+- Drop struct resource *res from vip shared structure since it is now unused
 
->>   of/irq: Export of_msi_xlate() for module usage
+v4l2-compliance output: https://gist.github.com/Yemike-Abhilash-Chandra/8d68342247da38d6ac59625f8eaf41c2
+v4l2-compliance output with -s: https://gist.github.com/Yemike-Abhilash-Chandra/1dfa740a34e0e3d77a315b245e61b9ec
+Test logs: https://gist.github.com/Yemike-Abhilash-Chandra/e44c4504d596f24e7c93a4c0b59f5316
+DT binding check results: https://gist.github.com/Yemike-Abhilash-Chandra/a7eb1308df2d4a167baeec62bc744335
+(No errors related to ti,vip.yaml)
 
-Can you pick the three of/irq ones up and put them into a seperate
-branch based on rc1 so that I can pull that and apply the rest:
+Link for v4: https://lore.kernel.org/linux-media/20251015054010.3594423-1-y-abhilashchandra@ti.com/#t
 
->>   PCI: iproc: Implement MSI controller node detection with
->>     of_msi_xlate()
->>   irqchip/gic-its: Rework platform MSI deviceID detection
+Dale Farnsworth (2):
+  dt-bindings: media: ti: vpe: Add support for Video Input Port
+  media: ti: vpe: Add the VIP driver
 
-Thanks,
+Yemike Abhilash Chandra (2):
+  media: ti: vpe: Re-introduce multi-instance and multi-client support
+  media: ti: vpe: Export vpdma_load_firmware() function
 
-        tglx
+ .../devicetree/bindings/media/ti,vip.yaml     |  152 +
+ MAINTAINERS                                   |    1 +
+ drivers/media/platform/ti/Kconfig             |   13 +
+ drivers/media/platform/ti/vpe/Makefile        |    2 +
+ drivers/media/platform/ti/vpe/vip.c           | 3731 +++++++++++++++++
+ drivers/media/platform/ti/vpe/vip.h           |  717 ++++
+ drivers/media/platform/ti/vpe/vpdma.c         |   51 +-
+ drivers/media/platform/ti/vpe/vpdma.h         |    6 +
+ 8 files changed, 4672 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/media/ti,vip.yaml
+ create mode 100644 drivers/media/platform/ti/vpe/vip.c
+ create mode 100644 drivers/media/platform/ti/vpe/vip.h
+
+-- 
+2.34.1
+
 
