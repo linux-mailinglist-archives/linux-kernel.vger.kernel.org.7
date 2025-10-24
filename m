@@ -1,230 +1,360 @@
-Return-Path: <linux-kernel+bounces-868084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04C18C044E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:06:35 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90045C044FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 542AD3B7F6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:06:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3C9735637F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3429277CA5;
-	Fri, 24 Oct 2025 04:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1749D2874ED;
+	Fri, 24 Oct 2025 04:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gmE7KVuC"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012060.outbound.protection.outlook.com [52.101.43.60])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LoDe8ebH"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162821FBEAC
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761278786; cv=fail; b=gYpYeCGB1KAiS85R+YZUEhnWthL0V6KMbn4YQBS9cZhT4d9bDcaILmtBtKKgH+zfDgH/qyZYMcTH3gj5sLaBKQ7xeeXL+WQ9eLGxVS7t6bLb0hS0cIuGkOURyKkvWJHLTMsfSP1hM9Gu68dlkpfxyegY/I/DXeCqonY0NzIOhpo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761278786; c=relaxed/simple;
-	bh=JTPaEuYXPtaSlQN+fWQ61ENNN8jGGWhKCNwUSAxGJFg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SICH97dDrO57jjHL9Vz+jST1JsgzI3lYK7qE+3Bb95gp9QOzRFmY9rEbMGDFaYPLY7DDTx2zWjjtyYJGoTbeyB4V+5Ke771X0OP1+FEjLH9VmA0V7K+XUrV3O6+/Yin8nj07opw530f+SyiHq5493tiGF131e9nJ/zOD/yMF8To=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gmE7KVuC; arc=fail smtp.client-ip=52.101.43.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gwi8/7DUj1cpgRi58Qr53z+G63pPkQEDt0hlLafAlr/9DBd1UeG8O2+I5lEyv2BCrUeEnR7BMZN3GuaOpvc8bFYvcA5bSfRfhclKC04HCHaN7Bji+t5n+lEWtzGMnLqiBTAhASGiqMyFNFrPKKoh7a8peG0YR6K21PyJkAXKqSSKc6SGSOotYs6Jme1tJlKOQXRBE+ZeZ9lfjdBhz3f2iCMeBd1xDEWVQcnq/ux1+AVRKvbf7jgvZ+2WLWCiuVNMh8lVtGGWSIJU3NN3LTx7PvvnvBE38Qd5euRQSy/aG8gRosS47LYn5fk7JGlJ/wPif+ibXQhI3m/NloMHlIYPCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=igk99e5q+WjHX4XTlg/Ng8KvRoXcTPbI4U404/ERv10=;
- b=v9nWvK31bUSGj1n8lW4zophHdFNYBXYfj2aWHXhb9aTKooM5UWPd6CTC4at9qqa2owm0Mi6ZDYYAoccgZzJ3jqjiNq/W/PrP1JlWr878vu/G2oEvV6VDE+NEmIpykQj6MepVmpt0hOcEDGwfBLfSn/QVK6LetsSQb19j8mdCOi0W6iVhqdlU1GPaasFuQbIpvTdAK3vEpa94s9uTpmZdbxBLoqTfKe3QgLwMozLaNV/QrFGP40GdMbAxF5h2SLLlfGaMRU6ioVlHFnZdPcOXCOMr9SRXEevoGfNKy1F0BpCddw1ftGCxBTgJ59UPmaV4KTKQjb9Nsw2FYOFCuwIYiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=igk99e5q+WjHX4XTlg/Ng8KvRoXcTPbI4U404/ERv10=;
- b=gmE7KVuC1pgGz2DnZxJ8Rg7g6zLQQmEFL7BW+QpTeO66b0YhzeL3Mln1B2JKrDc0S8sTOeQNbTyWx3NFtzGvKsG0w/9nhvMAfh792PwzkPC0sGkEK0WT4wLb2Rr55dCv9o+af3TnXjbq9Etd7s2w6rg8lhgRPVy0L5Aeiym/WgXDe7c7w0+1cLkb8FTrmKniYMy0Xttm75Aux/czvfoHFi1zsjlxtWXZ9osiAVawdhTrRr0qKRgIe2GmTRbCv71Ol303vlWUqXB3tcr0mbP1UytH8dWysl//33vWtt0MRDYaWDtgB/ZiHC95UqUU3LYW78LWhDrZzG2f8YmltBMe7w==
-Received: from BL6PEPF00016418.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:22e:400:0:1004:0:7) by PH0PR12MB8100.namprd12.prod.outlook.com
- (2603:10b6:510:29b::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 04:06:20 +0000
-Received: from BN3PEPF0000B077.namprd04.prod.outlook.com
- (2a01:111:f403:f908::1) by BL6PEPF00016418.outlook.office365.com
- (2603:1036:903:4::a) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.13 via Frontend Transport; Fri,
- 24 Oct 2025 04:06:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- BN3PEPF0000B077.mail.protection.outlook.com (10.167.243.122) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Fri, 24 Oct 2025 04:06:19 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 23 Oct
- 2025 21:05:55 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Thu, 23 Oct 2025 21:05:54 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Thu, 23 Oct 2025 21:05:54 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <jgg@nvidia.com>, <will@kernel.org>
-CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <kevin.tian@intel.com>,
-	<praan@google.com>, <linux-arm-kernel@lists.infradead.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<skolothumtho@nvidia.com>
-Subject: [PATCH] iommu/arm-smmu-v3-iommufd: Allow attaching nested domain for GBPA cases
-Date: Thu, 23 Oct 2025 21:05:51 -0700
-Message-ID: <20251024040551.1711281-1-nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF527280CD5
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761279211; cv=none; b=ENX74bx8EUgREhcWum7dnmZFSf9o++rY5J8+yXE3xBvZlEEdhq0sCJP3+cSOu3XeWW8dGbzIFSPDlcw/7OpC2gIF5f4UxDMQV3jj4sM6+J4LQpfrs9l1dMAb1Qvq5Nk6QHSfXQzHsaGCx0nlM1qscwMM/2DshCTTMA7gPG2c/aI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761279211; c=relaxed/simple;
+	bh=FMNaLFDjx69v6ZzbO/4atk50VxceYVKBeF/2QQssp6E=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=ok/trMTAPH3KhcJVIt9t4yHlDO84NAjjHaVPDUkXlk2reVdSJw8yNjabcsUU0hRIjnKO/2nO1g9XqCDJ1gelgC0KINvL7vQVcilR5Kxz3+exME0wEU0+PBob2GbDeAcjM9uu5+GPq2739fF9KHRP3MbPGNTDJ5G+1weUNahh4ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LoDe8ebH; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B077:EE_|PH0PR12MB8100:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8407674e-7c2e-402a-aa8b-08de12b2afe7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WzG+LN2RqHGaeCUH+pGxGCtUQNRDG62ma4iFSedf78SUvYwE/T597OWFOsCQ?=
- =?us-ascii?Q?ASbo6XnVTIV+HXMDKAELewzaf/iZ3qQpcCkY5zYpCQCBPLXMOUqt04yLxlTm?=
- =?us-ascii?Q?IDUYjjBd6MlrG4EAlLCRDXkqRPaNKuM00EXcDBgB4QXhz89LD5UyLgoGLbdQ?=
- =?us-ascii?Q?YLR3hLJYjztBYyciuyU1l2lwyy+QlxUltfb7AdQYFTRjP6lQrnXsJpINkscS?=
- =?us-ascii?Q?7zP55clG3qsOVwpFnm9i4x4j+Yf8j3P3HjI1ddVNOcF8I4SZD9Zg4AOhDhom?=
- =?us-ascii?Q?rS4GnwJjC0F1kERoBieIixxEF1hq2giuhGMekrskRm2KHdMD/Mog74QGJwXC?=
- =?us-ascii?Q?mNhoJhcPUpvcyZjfFR1sXxLyyy8GNZAkFivVXLR5IoRg+5ajRc9UDY310b/b?=
- =?us-ascii?Q?oDAcl4Pxgp3JS/e7f4oEVOtVdSAd+s34NsJF30HFqnbDhBiaiUs62fdzPckb?=
- =?us-ascii?Q?qpUHRiYdBlbeLqhXmjllO4U2CsIB+Ct9CnMYdhv1UNrh1Xrp+D5+ErO5HGCv?=
- =?us-ascii?Q?cqaqXxS0lLMOOxxVdNEgDD6xQMvLREsSTD0494Nz6zANQWXIFZuHHWBoPx6F?=
- =?us-ascii?Q?7LuBpMk2d7bSpt4taxTm05g8ogeEmZrGYytjhdbx0Przx3Dyq/8x2KXSd9bl?=
- =?us-ascii?Q?gN74BYhCw8oDW898dKu+8/+9g9UqFt9gM+BVzIelqp450c8pOXtjuuA3WN/P?=
- =?us-ascii?Q?W7lkcxxIPcevBLTAb7hnEbjLGzZB0r2dtFaIFwTLvJNWkoOBjFYz/dmKtdhL?=
- =?us-ascii?Q?35ckOMerjre/vwVIFifjYpN+9EaNQU6F3JB1EuFElGQwSQRBAnPOGj6WE6Vn?=
- =?us-ascii?Q?tspE+sHSFz75Qh+rdKCz+Es9ShG8yOEi2lYM/hJ04x74rbz6pOefeX1lh+AQ?=
- =?us-ascii?Q?c2QiVyte0tyeVmTAG5puDVG5qMR3WgxxdAybZDgYoOElmLYPYkrX/3SpOXDX?=
- =?us-ascii?Q?LmuX6AzC6lKXjI3qV86CmBYmSfnC51Dg8XfBhNDXKpDGT98/m0NvzlZ7qPT5?=
- =?us-ascii?Q?llhj2ldT+OstvF85To6j/quvdJ/W+WW1bHDj8Hm2YCQUupaNU2OFMLRe5xLx?=
- =?us-ascii?Q?qfHqeblcraiH60SzhI/HptcLqu9mFaanqNXUYn8t/HIGA4sLhkxnn6/9Hift?=
- =?us-ascii?Q?KjlaHgVMVE3f4B3w9Ph9PMDTt7RH4OrIBOd7tXPy7LbaAlJb8K7hdVdLXU+H?=
- =?us-ascii?Q?jXjnkD6Pklp1FECWXuVX5D6q+hipCoiFMNw4gD1Vstnj42CQN7SNCrgdHsiX?=
- =?us-ascii?Q?xUG5EU6/x+NQ0evCWtM9sb07tIUD18bCvuu6rksgAPG4ypUAIFF65VBanGSB?=
- =?us-ascii?Q?xhgzDk7ORLQloqToywR8mDu5g6P9X23lHyn5aKv9DHdP2QboicQqFC9Cg90M?=
- =?us-ascii?Q?xEGMmtEKfG9TUcs7ssJfGU3K57utGBHdmp2TVW/cq81jnNsWuS4FQGsGxqTH?=
- =?us-ascii?Q?ceObLgI2RZQ9hgwVNBfma7DiIg93lG6AJm4dux/DK8Kk1yBL1KAv1HsXdbP3?=
- =?us-ascii?Q?EEoy2tMOintQSRjuDzPl+lA963khjOksQI2AgUBz9zRCBgWRJt0ErE0sbyWI?=
- =?us-ascii?Q?wL2Dr4GsdN+KPg/7lOc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 04:06:19.6045
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8407674e-7c2e-402a-aa8b-08de12b2afe7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B077.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761279196;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NRsGgrjIKsQrMKsBDmX9pjVYYabxhQ/HoNpJSeaQfa8=;
+	b=LoDe8ebHaOq7xdpyZZcnnEt0x3wAfZWdFVPu4aL/qZJU2e0m7fBYfeUmFicNASdr7MKVDW
+	6ugPwjNAyWGzS3CxAM3KbRUVGsusQ0UkV/ujzP062yM1WXzqui9LscJwkPnebsj5d+NxNP
+	ibgSidUC/rTBWqp/xmhIQ8PErNUPM5s=
+Date: Fri, 24 Oct 2025 04:13:13 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Message-ID: <319c419455b73deb312b53d99c30217f6b606208@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH net v3 0/3] mptcp: Fix conflicts between MPTCP and
+ sockmap
+To: "Matthieu Baerts" <matttbe@kernel.org>, mptcp@lists.linux.dev
+Cc: "John Fastabend" <john.fastabend@gmail.com>, "Jakub Sitnicki"
+ <jakub@cloudflare.com>, "Eric Dumazet" <edumazet@google.com>, "Kuniyuki
+ Iwashima" <kuniyu@google.com>, "Paolo Abeni" <pabeni@redhat.com>, "Willem
+ de Bruijn" <willemb@google.com>, "David S. Miller" <davem@davemloft.net>,
+ "Jakub Kicinski" <kuba@kernel.org>, "Simon Horman" <horms@kernel.org>,
+ "Mat Martineau" <martineau@kernel.org>, "Geliang Tang"
+ <geliang@kernel.org>, "Alexei Starovoitov" <ast@kernel.org>, "Daniel
+ Borkmann" <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>,
+ "Martin KaFai Lau" <martin.lau@linux.dev>, "Eduard Zingerman"
+ <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>, "Yonghong Song"
+ <yonghong.song@linux.dev>, "KP Singh" <kpsingh@kernel.org>, "Stanislav
+ Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>, "Jiri Olsa"
+ <jolsa@kernel.org>, "Shuah Khan" <shuah@kernel.org>, "Florian Westphal"
+ <fw@strlen.de>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
+In-Reply-To: <14b565a1-0c2a-420d-ab2a-dc8a46dbf33c@kernel.org>
+References: <20251023125450.105859-1-jiayuan.chen@linux.dev>
+ <14b565a1-0c2a-420d-ab2a-dc8a46dbf33c@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-A vDEVICE has been a hard requirement for attaching a nested domain to the
-device. This makes sense when installing a guest STE, since a vSID must be
-present and given to the kernel during the vDEVICE allocation.
+2025/10/23 22:10, "Matthieu Baerts" <matttbe@kernel.org mailto:matttbe@ke=
+rnel.org?to=3D%22Matthieu%20Baerts%22%20%3Cmatttbe%40kernel.org%3E > =E5=
+=86=99=E5=88=B0:
 
-But, when CR0.SMMUEN is disabled, VM doesn't really need a vSID to program
-the vSMMU behavior as GBPA will take effect, in which case the vSTE in the
-nested domain could have carried the bypass or abort configuration in GBPA
-register. Thus, having such a hard requirement doesn't work well for GBPA.
 
-Add an additional condition in arm_smmu_attach_prepare_vmaster(), to allow
-a bypass or abort vSTE working for a GBPA setup. And do not forget to skip
-vsid=0 when reporting vevents, since the guest SMMU in this setup will not
-report event anyway.
+> >  MPTCP creates subflows for data transmission between two endpoints.
+> >  However, BPF can use sockops to perform additional operations when T=
+CP
+> >  completes the three-way handshake. The issue arose because we used s=
+ockmap
+> >  in sockops, which replaces sk->sk_prot and some handlers.
+> >=20
+>=20Do you know at what stage the sk->sk_prot is modified with sockmap? W=
+hen
+> switching to TCP_ESTABLISHED?
+> Is it before or after having set "tcp_sk(sk)->is_mptcp =3D 0" (in
+> subflow_ulp_fallback(), coming from subflow_syn_recv_sock() I suppose)?
 
-Update the uAPI doc accordingly.
 
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- .../iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c    | 14 ++++++++++++--
- include/uapi/linux/iommufd.h                       |  7 +++++++
- 2 files changed, 19 insertions(+), 2 deletions(-)
+Yes, there are two call points. One is after executing subflow_syn_recv_s=
+ock():
+tcp_init_transfer(sk, BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB, skb);
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-index 8cd8929bbfdf8..7d13b9f55512e 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-@@ -99,15 +99,22 @@ static void arm_smmu_make_nested_domain_ste(
- int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
- 				    struct arm_smmu_nested_domain *nested_domain)
- {
-+	unsigned int cfg =
-+		FIELD_GET(STRTAB_STE_0_CFG, le64_to_cpu(nested_domain->ste[0]));
- 	struct arm_smmu_vmaster *vmaster;
--	unsigned long vsid;
-+	unsigned long vsid = 0;
- 	int ret;
- 
- 	iommu_group_mutex_assert(state->master->dev);
- 
- 	ret = iommufd_viommu_get_vdev_id(&nested_domain->vsmmu->core,
- 					 state->master->dev, &vsid);
--	if (ret)
-+	/*
-+	 * Attaching to a translate nested domain must allocate a vDEVICE prior,
-+	 * as CD/ATS invalidations and vevents require a vSID to work properly.
-+	 * A bypass/abort domain is allowed to attach with vsid=0 for GBPA case.
-+	 */
-+	if (ret && cfg == STRTAB_STE_0_CFG_S1_TRANS)
- 		return ret;
- 
- 	vmaster = kzalloc(sizeof(*vmaster), GFP_KERNEL);
-@@ -460,6 +467,9 @@ int arm_vmaster_report_event(struct arm_smmu_vmaster *vmaster, u64 *evt)
- 
- 	lockdep_assert_held(&vmaster->vsmmu->smmu->streams_mutex);
- 
-+	if (!vmaster->vsid)
-+		return -ENOENT;
-+
- 	vevt.evt[0] = cpu_to_le64((evt[0] & ~EVTQ_0_SID) |
- 				  FIELD_PREP(EVTQ_0_SID, vmaster->vsid));
- 	for (i = 1; i < EVTQ_ENT_DWORDS; i++)
-diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-index c218c89e0e2eb..a2527425f398b 100644
---- a/include/uapi/linux/iommufd.h
-+++ b/include/uapi/linux/iommufd.h
-@@ -450,6 +450,13 @@ struct iommu_hwpt_vtd_s1 {
-  * nested domain will translate the same as the nesting parent. The S1 will
-  * install a Context Descriptor Table pointing at userspace memory translated
-  * by the nesting parent.
-+ *
-+ * Notes
-+ * - when Cfg=translate, a vdevice must be allocated prior to attaching to the
-+ *   allocated nested domain, as CD/ATS invalidations and vevents need a vSID.
-+ * - when Cfg=bypass/abort, vdevice is not required to attach to the allocated
-+ *   nested domain. This particularly works for a GBPA case, when CR0.SMMUEN=0
-+ *   in the guest VM.
-  */
- struct iommu_hwpt_arm_smmuv3 {
- 	__aligned_le64 ste[2];
--- 
-2.43.0
+So at this point, is_mptcp =3D 0. The other call point is when userspace =
+calls
+the BPF interface, passing in an fd while it's not a subflow but a parent=
+ sk
+with its own mptcp_prot we will also reject it.
 
+You can refer to my provided selftest, which covers these scenarios.
+
+> If MPTCP is still being used (sk_is_tcp(sk) && sk_is_mptcp(sk)), I gues=
+s
+> sockmap should never touch the in-kernel TCP subflows: they will likely
+> only carry a part of the data. Instead, sockmap should act on the MPTCP
+> sockets, not the in-kernel TCP subflows.
+
+Yes, I agree.
+
+For full functionality, we need to retrieve the parent socket from MPTCP
+and integrate it with sockmap, rather than simply rejecting.
+
+The current implementation rejects MPTCP because I previously attempted t=
+o
+add sockmap support for MPTCP, but it required implementing many interfac=
+es
+and would take considerable time.
+
+So for now, I'm proposing this as a fix to resolve the immediate issue.
+Subsequently, we can continue working on fully integrating MPTCP with soc=
+kmap.
+
+> There is one particular case to take into consideration: an MPTCP
+> connection can fallback to "plain" TCP before being used by the
+> userspace. Typically, that's when an MPTCP listening socket receives a
+> "plain" TCP request (without MPTCP): a "plain" TCP socket will then be
+> created, and exposed to the userspace. In this case, sk_is_mptcp(sk)
+> will return false. I guess that's the case you are trying to handle,
+> right? (It might help BPF reviewers to mention that in the commit
+> message(s).)
+
+Yes, this is primarily the case we're addressing. I will add this descrip=
+tion
+to the commit message.
+
+
+> I would then say that sk->sk_prot->psock_update_sk_prot should not poin=
+t
+> to tcp_bpf_update_proto() when MPTCP is being used (or this callback
+> should take the MPTCP case into account, but I guess no). In case of
+> fallback before the accept() stage, the socket can then be used as a
+> "plain" TCP one. I guess when tcp_bpf_update_proto() will be called,
+> sk_prot is pointing to tcp(v6)_prot, not the MPTCP subflow override one=
+,
+> right?
+
+Yes, when tcp_bpf_update_proto is called the sk_prot is pointing to tcp(v=
+6)_prot.
+subflow_syn_recv_sock
+ mptcp_subflow_drop_ctx
+  subflow_ulp_fallback
+   mptcp_subflow_ops_undo_override -> reset sk_prot to original one
+
+So [patch 2/3] aims to prevent psock_update_sk_prot from being executed o=
+n subflows.
+
+Actually, replacing the subflow's callbacks is also incorrect, as you men=
+tioned earlier,
+because subflows only carry part of the data. By checking for subflows ea=
+rly and skipping
+subsequent steps, we avoid incorrect logic.
+
+Furthermore, there's another risk: if an IPv6 request comes in and we per=
+form the replacement,
+MPTCP will roll it back to inet_stream_ops. I haven't delved too deeply i=
+nto the potential
+impact, but I noticed that inet6_release has many V6-specific cleanup pro=
+cedures not present
+in inet_release.
+
+> >=20
+>=20> Since subflows
+> >  also have their own specialized handlers, this creates a conflict an=
+d leads
+> >  to traffic failure. Therefore, we need to reject operations targetin=
+g
+> >  subflows.
+> >=20
+>=20Would it not work to set sk_prot->psock_update_sk_prot to NULL for th=
+e
+> v4 and v6 subflows (in mptcp_subflow_init()) for the moment while
+> sockmap is not supported with MPTCP? This might save you some checks in
+> sock_map.c, no?
+
+This seems like a reliable alternative I hadn't considered initially.
+
+However, adding the check on the BPF side serves another purpose: to expl=
+icitly
+warn users that sockmap and MPTCP are incompatible.
+
+Since the latest Golang version enables MPTCP server by default, and if t=
+he client
+doesn't support MPTCP, it falls back to TCP logic. We want to print a cle=
+ar message
+informing users who have upgraded to the latest Golang and are using sock=
+map.
+
+Perhaps we could add a function like sk_is_mptcp_subflow() in the MPTCP s=
+ide?
+The implementation would simply be sk_is_tcp(sk) && sk_is_mptcp(sk).
+
+Implementing this check logic on the BPF side might become invalid if MPT=
+CP internals
+change later; placing it in the MPTCP side might be a better choice.
+
+
+> >=20
+>=20> This patchset simply prevents the combination of subflows and sockm=
+ap
+> >  without changing any functionality.
+> >=20
+>=20In your case, you have an MPTCP listening socket, but you receive a T=
+CP
+> request, right? The "sockmap update" is done when switching to
+> TCP_ESTABLISHED, when !sk_is_mptcp(sk), but that's before
+> mptcp_stream_accept(). That's why sk->sk_prot has been modified, but it
+> is fine to look at sk_family, and return inet(6)_stream_ops, right?
+
+I believe so. Since MPTCP is fundamentally based on TCP, using sk_family =
+to
+determine which ops to fall back to should be sufficient.
+
+However, strictly speaking, this [patch 1/3] might not even be necessary =
+if we
+prevent the sk_prot replacement for subflows at the sockmap layer.
+
+> A more important question: what will typically happen in your case if
+> you receive an MPTCP request and sockmap is then not supported? Will th=
+e
+> connection be rejected or stay in a strange state because the userspace
+> will not expect that? In these cases, would it not be better to disallo=
+w
+> sockmap usage while the MPTCP support is not available? The userspace
+> would then get an error from the beginning that the protocol is not
+> supported, and should then not create an MPTCP socket in this case for
+> the moment, no?
+>
+> I can understand that the switch from TCP to MPTCP was probably done
+> globally, and this transition should be as seamless as possible, but it
+> should not cause a regression with MPTCP requests. An alternative could
+> be to force a fallback to TCP when sockmap is used, even when an MPTCP
+> request is received, but not sure if it is practical to do, and might b=
+e
+> strange from the user point of view.
+
+Actually, I understand this not as an MPTCP regression, but as a sockmap
+regression.
+
+Let me explain how users typically use sockmap:
+
+Users typically create multiple sockets on a host and program using BPF+s=
+ockmap
+to enable fast data redirection. This involves intercepting data sent or =
+received
+by one socket and redirecting it to the send or receive queue of another =
+socket.
+
+This requires explicit user programming. The goal is that when multiple m=
+icroservices
+on one host need to communicate, they can bypass most of the network stac=
+k and avoid
+data copies between user and kernel space.
+
+However, when an MPTCP request occurs, this redirection flow fails.
+
+Since the sockmap workflow typically occurs after the three-way handshake=
+, rolling
+back at that point might be too late, and undoing the logic for MPTCP wou=
+ld be very
+complex.
+
+Regardless, the reality is that MPTCP and sockmap are already conflicting=
+, and this
+has been the case for some time. So I think our first step is to catch sp=
+ecific
+behavior on the BPF side and print a message
+"sockmap/sockhash: MPTCP sockets are not supported\n", informing users to=
+ either
+stop using sockmap or not use MPTCP.
+
+As for the logic to check for subflows, I think implementing it in subflo=
+w.c would be
+beneficial, as this logic would likely be useful later if we want to
+support MPTCP + sockmap.
+
+Furthermore, this commit also addresses the issue of incorrectly selectin=
+g
+inet_stream_ops due to the subflow prot replacement, as mentioned above.
+
+> >=20
+>=20> A complete integration of MPTCP and sockmap would require more effo=
+rt, for
+> >  example, we would need to retrieve the parent socket from subflows i=
+n
+> >  sockmap and implement handlers like read_skb.
+> >=20=20
+>=20>  If maintainers don't object, we can further improve this in subseq=
+uent
+> >  work.
+> >=20
+>=20That would be great to add MPTCP support in sockmap! As mentioned abo=
+ve,
+> this should be done on the MPTCP socket. I guess the TCP "in-kernel"
+> subflows should not be modified.
+
+
+I think we should first fix the issue by having sockmap reject operations=
+ on subflows.
+Subsequently, we can work on fully integrating sockmap with MPTCP as a fe=
+ature
+(which would require implementing some handlers).
+
+> >=20
+>=20> [1] truncated warning:
+> >  [ 18.234652] ------------[ cut here ]------------
+> >  [ 18.234664] WARNING: CPU: 1 PID: 388 at net/mptcp/protocol.c:68 mpt=
+cp_stream_accept+0x34c/0x380
+> >  [ 18.234726] Modules linked in:
+> >  [ 18.234755] RIP: 0010:mptcp_stream_accept+0x34c/0x380
+> >  [ 18.234762] RSP: 0018:ffffc90000cf3cf8 EFLAGS: 00010202
+[...]
+> >=20
+>=20Please next time use the ./scripts/decode_stacktrace.sh if possible.
+> (and strip the timestamps if it is not giving useful info)
+> Just to be sure: is it the warning you get on top of net or net-next? O=
+r
+> an older version? (Always useful to mention the base)
+
+Thank you, Matthieu. I will pay attention to this.
+
+
+> >=20
+>=20> ---
+> >  v2: https://lore.kernel.org/bpf/20251020060503.325369-1-jiayuan.chen=
+@linux.dev/T/#t
+> >  Some advice suggested by Jakub Sitnicki
+> >=20=20
+>=20>  v1: https://lore.kernel.org/mptcp/a0a2b87119a06c5ffaa51427a0964a05=
+534fe6f1@linux.dev/T/#t
+> >  Some advice from Matthieu Baerts.
+> >=20
+>=20(It usually helps reviewers to add more details in the notes/changelo=
+g
+> for the individual patch)
+
+Thank you, Matthieu. I will provide more detailed descriptions in the fut=
+ure.
+
+
+Best regards,
+Jiayuan
 
