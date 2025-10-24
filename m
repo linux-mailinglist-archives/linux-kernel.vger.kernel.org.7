@@ -1,116 +1,137 @@
-Return-Path: <linux-kernel+bounces-868872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 143EBC06621
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:01:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31553C06615
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62FAA3A5DFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:58:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B560189D2B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B338315D33;
-	Fri, 24 Oct 2025 12:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C5231A067;
+	Fri, 24 Oct 2025 12:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OdXjOKxX"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LTPNrRJT"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F19307ACA
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5ACC2E091C;
+	Fri, 24 Oct 2025 12:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761310725; cv=none; b=Py5dz7nyaQOuaGx5jyfEJ0MdriLo0zrhvzxZfgwAWXQrphy1xb3p8vJgyIT226sMtcPoSb8q7o22f9aEmQdgjxXX2YrAvzwFLfx9FZXnxLmzTaPAKmfmEN7dC+Z/p4CzZt+N/ibRi6nIt6wXrCZpdffeXbmDUdk5ZCCoRxTS0D4=
+	t=1761310740; cv=none; b=BrtR5hMsO6jOzFjjYAZdQBrio7XC3KlM9VXt5XCrjNp/A14+COV5hKl+QuRhvtzP4wjX1TL+vm4KmfSBh4FNRQ8smsI/HxlCzUPzqX/48bmiTEZQCRbKeoo3RnavRh5w1jIVboKGI63iO2YySB6Hbn4T4Z4w4XxSHkrHzdq/2RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761310725; c=relaxed/simple;
-	bh=zv16Kke8yqgjiJWpmjUKPrYOhlKmP4/uuWFc5yGXvxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lro0JeZhKEJpQZmSoLyMKfjjp7IzRSAzZhf1APoPWUvT7TV0srhKSXBUDjHD6pMmTuPT2Nga/njCmfxYvkXoF4N+Z0rBESG1msOwxsSpPW0bXULMXzRtvz8b1NSzL30epk9ay/4oIZ0XsmvUc03Jxqb9sjY1Zi5s7chp9eG/xjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OdXjOKxX; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-378e0f355b9so9521401fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 05:58:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761310722; x=1761915522; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zv16Kke8yqgjiJWpmjUKPrYOhlKmP4/uuWFc5yGXvxM=;
-        b=OdXjOKxXZvIBV9de8ZOXeQr67sAqD8PalVJQN/9V6CrcGlWfk/xqSvIQ5LzueECMSb
-         OMjp1YaE1E9yF6afh2JZicjg8xuZLD2REAGEv010+3eisi6HowEihS8pKmUsJW5OE54S
-         j14FiwNbip7EujObBIXuASlEJEDiI3dRL20CUYoY02/ksnjHRyss5IXL6akkLdtZSzkf
-         ybkY4RCiuIpQ2xirOhqOAeWl6ikCMRXtUNboV1YXqVE/5hmKsIHmoL02TY3ZXr3Y3sIg
-         q3WGiJz4YCObSeHrzisDb+hmkjxxEE1ghJ35qeff/tXZSIJFtAlLoiGZik4GeMNT6rag
-         EDWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761310722; x=1761915522;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zv16Kke8yqgjiJWpmjUKPrYOhlKmP4/uuWFc5yGXvxM=;
-        b=h+tAg/jFyKjSYkeu1v2rlLAhMsvgv9VTd1AIw2xVvzIpNRuakTOnGjt0+v1y6VtiAu
-         NRaV2c9RCfXXeaE/xFD3goqwNncySaS62mtQR39x91lsiTVdPy0AyEaEGjYS+9pesO2+
-         1ZskfP+ABrD8awip4wHkztlYV1s/BAxhkU2JUVdldo8qosVDsvOLqvfkrl6NcrD/s/lT
-         6jIO5Lz20T2cW0Qysj/2oIsgu1vTMYAKbpMwa5Sj/0m6blXizgsPVhDLh57dKHAXybNo
-         ke0gENtGonNbeXFKK/2UkppZvidZFO0ppEK6XA8sPjPbeofPqFIOGOUA7Tt1qsD8ivhq
-         6jOA==
-X-Gm-Message-State: AOJu0YyAR0SqJA5evXYmh0pKa6u0DDPMrNzJKhXRg2KXkIRIX+Gypc8m
-	9S7AeAfJhuAacsbQ5Etkda3bcDhwWkA9mghcLBl0n4b/KElY4VXZsvAwxh0DnXpcfkaMZ8kTGz8
-	NbnR7B9kISGpMFCur/L1sGgdry1RD3908q8C5mGxPoQ==
-X-Gm-Gg: ASbGncsI7weOCU3pedWw2XsFRhAR2zlM7mbJjbhPBYHLenP5A8n6bW7XJ+s5dexEkRO
-	N9Y3cz4oGuM5nR6Dz7HBty1Btatd455K+s/yvwfRMSIhD5csIZhcc8sFHPLx7jq9krD5MASeGLO
-	wIG8m8SPZUp35/cpM7DvjIo9SXiZ4c4q+pt8FhdVI42CRnL/qIUrwB+PpuLsVumNzkm2uURFd1O
-	QV3fE7hZ4WDVlUd+NkbJqGJxXXX5idtkSJsHWBo7u17iu4vnyogAYoZYfahIiZWDbixZdaQnvRH
-	kSZCrrAADetT14Stww==
-X-Google-Smtp-Source: AGHT+IHF9LkpNIRrlRpVu99l7ev0LdpwqQhfXRuIQZZ0ncl5gX4GTf5lVW8kJ+14MFqbskyOhZZ7aJPuqPi9SZUWgRk=
-X-Received: by 2002:a05:651c:556:b0:376:5027:7f37 with SMTP id
- 38308e7fff4ca-378e4518459mr6475001fa.41.1761310721630; Fri, 24 Oct 2025
- 05:58:41 -0700 (PDT)
+	s=arc-20240116; t=1761310740; c=relaxed/simple;
+	bh=QvQXlYjL/5HGuJ8prsjglpCUOG11dtLJYaWUIw75hs4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gsco7F1hziqaw/GDpUlZVBZdrLbKHja+nOunfuZVh38DQ1ixwlbrERUkfHaop/GSnxptuHpGNXnTlcrTp28AuMxBORqNetcp+wipz6xY7j2SS45t6rkrJjAlI7jjmPjJ35pv8otE4pB9D/8W8TP3LvS5d2wN/CzDXA0BfYjXrxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LTPNrRJT; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KbeVfcyQZUP3kW1e2M7Vm/hShqmgI8Ihl8fZeTRvIi0=; b=LTPNrRJTbObElN6F0r7EtD/tzc
+	lrBzpm/IvXEVFsdCxCWIOMUBzTrltC9IzoSx+DnegjTgFIdbquDhaSPczA5Qv5A29S3ul9DbQYI9D
+	N0ZGu437Tf6K5eMhe3UHXpFykQzR60kAhnrOfVlT1ds8TpQuLGTacDdToIdmAQevrjGQBAOxQUqzH
+	ZSCpBR9gH3Sl/Qij0j98G/x5GZYZVBr7By2F5B9Gi3c3OLW66MK8cg7492HvLjsJhT396Fy6CbXnd
+	SYrWV5yxhCXWg1GQGxILt4XIgi6CNX2cfijp6Lbwt3Bed/nTNVNeJXI/QMzYjFSR3X+uzIjKVAYuW
+	R+9o/VAQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vCHNR-00000000ooe-18YF;
+	Fri, 24 Oct 2025 12:58:42 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7E435300323; Fri, 24 Oct 2025 14:58:41 +0200 (CEST)
+Date: Fri, 24 Oct 2025 14:58:41 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: Re: [PATCH v16 0/4] perf: Support the deferred unwinding
+ infrastructure
+Message-ID: <20251024125841.GK4068168@noisy.programming.kicks-ass.net>
+References: <20251007214008.080852573@kernel.org>
+ <20251023150002.GR4067720@noisy.programming.kicks-ass.net>
+ <20251023124057.2a6e793a@gandalf.local.home>
+ <20251024082656.GS4067720@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251024095205.123123-1-marco.crivellari@suse.com>
- <20251024095205.123123-3-marco.crivellari@suse.com> <dc2662f4-98b5-4fc8-9ed7-5e4a88168f9a@linux.intel.com>
-In-Reply-To: <dc2662f4-98b5-4fc8-9ed7-5e4a88168f9a@linux.intel.com>
-From: Marco Crivellari <marco.crivellari@suse.com>
-Date: Fri, 24 Oct 2025 14:58:29 +0200
-X-Gm-Features: AWmQ_bkaAAD-el4jxtvs6F6wp2vtCaDr3ajdRFuMESUH0b5iIQ4HTA0RNeg3HAo
-Message-ID: <CAAofZF7FXixByyXm9fKo8aMjdD95wzaCanWbBV-cRzy5UYWTdg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] accel/ivpu: replace use of system_wq with system_percpu_wq
-To: Karol Wachowski <karol.wachowski@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Michal Hocko <mhocko@suse.com>, Maciej Falkowski <maciej.falkowski@linux.intel.com>, 
-	Oded Gabbay <ogabbay@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024082656.GS4067720@noisy.programming.kicks-ass.net>
 
-On Fri, Oct 24, 2025 at 12:49=E2=80=AFPM Karol Wachowski
-<karol.wachowski@linux.intel.com> wrote:
-> [...]
-> Thanks for the patch. Please fix the checkpatch warning:
->
-> WARNING: line length of 104 exceeds 100
-> columns
-> Also there's a typo "consistentcy" -> "consistency" that can get fixed
-> with together with that warning.
->
-> [...]
-> Tested-by: Karol Wachowski <karol.wachowski@linux.intel.com>
->
->
 
-Hello Karol, thank you, I will fix both.
+Arnaldo, Namhyung,
 
---=20
+On Fri, Oct 24, 2025 at 10:26:56AM +0200, Peter Zijlstra wrote:
 
-Marco Crivellari
+> > So "perf_iterate_sb()" was the key point I was missing. I'm guessing it's
+> > basically a demultiplexer that distributes events to all the requestors?
+> 
+> A superset. Basically every event in the relevant context that 'wants'
+> it.
+> 
+> It is what we use for all traditional side-band events (hence the _sb
+> naming) like mmap, task creation/exit, etc.
+> 
+> I was under the impression the perf tool would create one software dummy
+> event to listen specifically for these events per buffer, but alas, when
+> I looked at the tool this does not appear to be the case.
+> 
+> As a result it is possible to receive these events multiple times. And
+> since that is a problem that needs to be solved anyway, I didn't think
+> it 'relevant' in this case.
 
-L3 Support Engineer, Technology & Product
+When I use:
+
+  perf record -ag -e cycles -e instructions
+
+I get:
+
+# event : name = cycles, , id = { }, type = 0 (PERF_TYPE_HARDWARE), size = 136, config = 0 (PERF_COUNT_HW_CPU_CYCLES), { sample_period, sample_freq } = 2000, sample_type = IP|TID|TIME|CALLCHAIN|CPU|PERIOD|IDENTIFIER, read_format = ID|LOST, disabled = 1, freq = 1, sample_id_all = 1, defer_callchain = 1
+# event : name = instructions, , id = { }, type = 0 (PERF_TYPE_HARDWARE), size = 136, config = 0x1 (PERF_COUNT_HW_INSTRUCTIONS), { sample_period, sample_freq } = 2000, sample_type = IP|TID|TIME|CALLCHAIN|CPU|PERIOD|IDENTIFIER, read_format = ID|LOST, disabled = 1, freq = 1, sample_id_all = 1, defer_callchain = 1
+# event : name = dummy:u, , id = { }, type = 1 (PERF_TYPE_SOFTWARE), size = 136, config = 0x9 (PERF_COUNT_SW_DUMMY), { sample_period, sample_freq } = 1, sample_type = IP|TID|TIME|CPU|IDENTIFIER, read_format = ID|LOST, exclude_kernel = 1, exclude_hv = 1, mmap = 1, comm = 1, task = 1, sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1, ksymbol = 1, bpf_event = 1, build_id = 1, defer_output = 1
+
+And we have this dummy event I spoke of above; and it has defer_output
+set, none of the others do. This is what I expected.
+
+*However*, when I use:
+
+  perf record -g -e cycles -e instruction
+
+I get:
+
+# event : name = cycles, , id = { }, type = 0 (PERF_TYPE_HARDWARE), size = 136, config = 0 (PERF_COUNT_HW_CPU_CYCLES), { sample_period, sample_freq } = 2000, sample_type = IP|TID|TIME|CALLCHAIN|ID|PERIOD, read_format = ID|LOST, disabled = 1, inherit = 1, mmap = 1, comm = 1, freq = 1, enable_on_exec = 1, task = 1, sample_id_all = 1, mmap2 = 1, comm_exec = 1, ksymbol = 1, bpf_event = 1, build_id = 1, defer_callchain = 1, defer_output = 1
+# event : name = instructions, , id = { }, type = 0 (PERF_TYPE_HARDWARE), size = 136, config = 0x1 (PERF_COUNT_HW_INSTRUCTIONS), { sample_period, sample_freq } = 2000, sample_type = IP|TID|TIME|CALLCHAIN|ID|PERIOD, read_format = ID|LOST, disabled = 1, inherit = 1, freq = 1, enable_on_exec = 1, sample_id_all = 1, defer_callchain = 1
+
+Which doesn't have a dummy event. Notably the first real event has
+defer_output set (and all the other sideband stuff like mmap, comm,
+etc.).
+
+Is there a reason the !cpu mode doesn't have the dummy event? Anyway, it
+should all work, just unexpected inconsistency that confused me. 
 
