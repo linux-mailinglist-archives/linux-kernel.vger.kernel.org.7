@@ -1,66 +1,51 @@
-Return-Path: <linux-kernel+bounces-868736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA76CC06047
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:39:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD5FC05FFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 25AC55855CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:29:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 232CF582F49
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B500314D2E;
-	Fri, 24 Oct 2025 11:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="C+M7i9nH"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ABE1D6AA
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B82315767;
+	Fri, 24 Oct 2025 11:13:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77C423C50F
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761304334; cv=none; b=Ep9ApF1LIejRylTMftl2j5mxRpnLsHdJ9HuE4q1Uc+8BbkuEDhxCOlyaksPunmMcmkc4c5cSHav/o600rcHrmwQ3GNw+A8rFjMgHTrH4LRJTVGKp5HxWPHi0F3DR1J9uoqOzGu9+D16DtefbE2u40SNrh+xNlfZ4vwSldmMDS8I=
+	t=1761304381; cv=none; b=pzHOs6n9gt6CchkzmoKmXPRX9YgHODYoD+Z1+qkWTrUQZL2txxkBbW24t1ed5Rm/eYRmhaktt9y8otpkxc0ELr+Wubz88GM0ONI8aoG6q2iezKGowHrZAP1nISDDoIwr5vj5iPJqjvramzwnrbcKyM8cAba5NGHCZ6+QFONt15o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761304334; c=relaxed/simple;
-	bh=pxTQyyVeuV42VG1uYkKU65NnRD7jJRYEUtD/DYthKF4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=p2vcL/zXPVPjgcCKZOp15JKBqby8D81UWYJHyhmZi0Q5SdLpeJkPfArHM4JOI5k4wwd2+RlbdZ4XH8/6t+wSe7AgPpY8Y+xjGY32YGmSELjxjydWthUuWPEOMbRJpOf1uh4LBOPgUeODpcOWMskDJKb5ZsDFWBr/rzAdhKgK2Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=C+M7i9nH; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id C7BF3C0C40F
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:11:49 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A7ADE60703;
-	Fri, 24 Oct 2025 11:12:09 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8A3CC102F247D;
-	Fri, 24 Oct 2025 13:11:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761304314; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=vse7BFpQSZKGEFHYELT9rSihMyyNPAxVb6yV+MS8nJA=;
-	b=C+M7i9nHsiZCr0kOsA3TLOzcvEti3GGZzsuqJDbCMh3qjQJFig4VIW2PWE1PQQv1VRwBl5
-	O/PRfqRmIxRTTfL15P2H7B+2p7lWQj3H6fzyKHBnGtUvMHQPa4N5GbUShBE+etxqA/EWeF
-	WfsXwjI88mDwQcdjKF+jDBeESmz2rM7fdrYXsuCsgObzRQ6Yk7I9J7JdMYHNpdAT2kSJD+
-	A9eXbXnyrOmWAgjbWT4BjT14dU+36J1a9RC1M3j4wdhiVrVlkD7D23FBOpo9jz6W/FM03o
-	E121D1bOEKskDclLAEhh33Y8eDxz2NzukqU5zIyDb9ZexUtGbOpBg6ZQQIh8kQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Niravkumar L Rabara <niravkumarlaxmidas.rabara@altera.com>
-Cc: richard@nod.at,  vigneshr@ti.com,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: cadence: Add support for NV-DDR interface
- mode
-In-Reply-To: <4a6577ff-7417-4d34-a683-2402736fd9d7@altera.com> (Niravkumar
-	L. Rabara's message of "Fri, 24 Oct 2025 17:47:11 +0800")
-References: <20251024071306.242227-1-niravkumarlaxmidas.rabara@altera.com>
-	<87bjlwrbqd.fsf@bootlin.com>
-	<4a6577ff-7417-4d34-a683-2402736fd9d7@altera.com>
-User-Agent: mu4e 1.12.7; emacs 30.2
-Date: Fri, 24 Oct 2025 13:11:37 +0200
-Message-ID: <875xc4r1ue.fsf@bootlin.com>
+	s=arc-20240116; t=1761304381; c=relaxed/simple;
+	bh=GjvBpPsvP+rK04lkZ41DdAM4ugTMYrCKREoNNlI9Dto=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Esy8yUEZ8QqOkf0IeXmi3w7RaBhWnT6DhZknHHmFCv2j/mIbqBsNLH8Qtq9b6vJt9NGSMYEFkfnIUxd2B5/p4KVASUigTaQYhuPX9CTEcSScfJG0CNY3LFPEiOG2CKzDGNANo6wOaFJj4xNrDXg1B2jFSmAWtSxJfJBfgs7MMGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2200D175A;
+	Fri, 24 Oct 2025 04:12:50 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E45543F63F;
+	Fri, 24 Oct 2025 04:12:55 -0700 (PDT)
+Date: Fri, 24 Oct 2025 12:12:48 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Tony Luck <tony.luck@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	James Morse <james.morse@arm.com>,
+	"Chen, Yu C" <yu.c.chen@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+	x86@kernel.org
+Subject: [RFC] fs/resctrl: Generic schema description
+Message-ID: <aPtfMFfLV1l/RB0L@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,48 +53,258 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+Hi all,
+
+Going forward, a single resctrl resource (such as memory bandwidth) is
+likely to require multiple schemata, either because we want to add new
+schemata that provide finer control, or because the hardware has
+multiple controls, covering different aspects of resource allocation.
+
+The fit between MPAM's memory bandwidth controls and the resctrl MB
+schema is already awkward, and later Intel RDT features such as Region
+Aware Memory Bandwidth Allocation are already pushing past what the MB
+schema can describe.  Both of these can involve multiple control
+values and finer resolution than the 100 steps offered by the current
+"MB" schema.
+
+The previous discussion went off in a few different directions [1], so
+I want to focus back onto defining an extended schema description that
+aims to cover the use cases that we know about or anticipate today, and
+allows for future extension as needed.
+
+(A separate discussion is needed on how new schemata interact with
+previously-defined schemata (such as the MB percentage schema). 
+suggest we pause that discussion for now, in the interests of getting
+the schema description nailed down.)
 
 
->>> +	if (dll_phy_gate_open_delay > NVDDR_GATE_CFG_MIN)
->>> +		ie_start =3D NVDDR_GATE_CFG_MIN;
->> Can you double check here? I would expect < instead of > given that
->> you
->> compare with something you named "minimum". Maybe it is legitimate, just
->> warning.
->
-> I have double checked, the logic is correct. May be I shouldn't use _MIN
-> to avoid confusion.
-> In v2 I will change NVDDR_GATE_CFG_MIN to NVDDR_GATE_CFG_STD.
+Following on from the previous mail thread, I've tried to refine and
+flesh out the proposal for schema descriptions a bit, as follows.
 
-Ok.
+Proposal:
 
->>> +	if (nand_interface_is_sdr(conf)) {
->>> +		const struct nand_sdr_timings *sdr =3D nand_get_sdr_timings(conf);
->>> +
->>> +		if (IS_ERR(sdr))
->>> +			return PTR_ERR(sdr);
->>> +
->>> +		ret =3D cadence_nand_setup_sdr_interface(chip, sdr);
->>> +	} else if (chipnr >=3D 0) {
->> This isn't very clear. Please make it a separate condition if you
->> think
->> you must handle this case. Otherwise you're mixing it with the SDR
->> vs. NVDDR choice, and that's misleading.
-> Noted.
-> I will make a separate condition check as below in v2.
->
-> -       } else if (chipnr >=3D 0) {
-> -               const struct nand_nvddr_timings *nvddr =3D
->                 nand_get_nvddr_timings(conf);
-> +       } else {
-> +               if (chipnr < 0)
-> +                       return ret;
+  * Split resource names and schema names in resctrlfs.
 
-Why do you check chipnr only for the NVDDR interface? I don't think it
-makes sense. chipnr should probably be checked before the whole if()
-block.
+    Resources will be named for the unique, existing schema for each
+    resource.
 
-Miqu=C3=A8l
+    The existing schema will keep its name (the same as the resource
+    name), and new schemata defined for a resource will include that
+    name as a prefix (at least, by default).
+
+    So, for example, we will have an MB resource with a schema called
+    MB (the schema that we have already).  But we may go on to define
+    additional schemata for the MB resource, with names such MB_MAX,
+    etc.
+
+  * Stop adding new schema description information in the top-level
+    info/<resource>/ directory in resctrlfs.
+
+    For backwards compatibilty, we can keep the existing property
+    files under the resource info directory to describe the previously
+    defined resource, but we seem to need something richer going
+    forward.
+
+  * Add a hierarchy to list all the schemata for each resource, along
+    with their properties.  So far, the proposal looks like this,
+    taking the MB resource as an example:
+
+	info/
+	 └─ MB/
+	     └─ resource_schemata/
+	         ├─ MB/
+	         ├─ MB_MIN/
+	         ├─ MB_MAX/
+	         ┆
+
+    Here, MB, MB_MIN and MB_MAX are all schemata for the "MB" resource.
+    In this proposal, what these just dummy schema names for
+    illustration purposes.  The important thing is that they all
+    control aspects of the "MB" resource, and that there can be more
+    than one of them.
+
+    It may be appropriate to have a nested hierarchy, where some
+    schemata are presented as children of other schemata if they
+    affect the same hardware controls.  For now, let's put this issue
+    on one side, and consider what properties should be advertsed for
+    each schema.
+
+  * Current properties that I think we might want are:
+
+	info/
+	 └─ SOME_RESOURCE/
+	     └─ resource_schemata/
+	         ├─ SOME_SCHEMA/
+	         ┆   ├─ type
+	             ├─ min
+	             ├─ max
+	             ├─ tolerance
+	             ├─ resolution
+	             ├─ scale
+	             └─ unit
+
+    (I've tweaked the properties a bit since previous postings.
+    "type" replaces "map"; "scale" is now the unit multiplier;
+    "resolution" is now a scaling divisor -- details below.)
+
+    I assume that we expose the properties in individual files, but we
+    could also combine them into a single description file per schema,
+    per resource or (possibly) a single global file.
+    (I don't have a strong view on the best option.)
+
+
+    Either way, the following set of properties may be a reasonable
+    place to start:
+
+
+    type: the schema type, followed by optional flag specifiers:
+
+      - "scalar": a single-valued numeric control
+
+        A mandatory flag indicates how the control value written to
+        the schemata file is converted to an amount of resource for
+        hardware regulation.
+
+	The flag "linear" indicates a linear mapping.
+
+	In this case, the amount of resource E that is actually
+	allocated is derived from the control value C written to the
+	schemata file as follows:
+
+    	E = C * scale * unit / resolution
+
+	Other flags values could be defined later, if we encounter
+	hardware with non-linear controls.
+
+      - "bitmap": a bitmap control
+
+        The optional flag "sparse" is present if the control accepts
+        sparse bitmaps.
+
+	In this case, E = bitmap_weight(C) * scale * unit / resolution.
+
+	As before, each bit controls access to a specific chunk of
+	resource in the hardware, such as a group of cache lines.  All
+	chunks are equally sized.
+
+	(Different CTRL_MON groups may still contend within the
+	allocation E, when they have bits in common between their
+	bitmaps.)
+
+    min:
+
+      - For a scalar schema, the minimum value that can be written to
+        the control when writing the schemata file.
+
+      - For a bitmap schema, a bitmap of the minimum weight that the
+        schema accepts: if an empty bitmap is accepted, this can be 0.
+        Otherwise, if bitmaps with a single bit set are acceptable,
+        this can just have the lowest-order bit set.
+
+	Most commonly, the value will probably be "1".
+
+	For bitmap schemata, we might report this in hex.  In the
+	interest of generic parsing, we could include a "0x" prefix if
+	so.
+
+    max:
+
+      - For a scalar schema, the maximum value that can be written to
+        the control when writing the schemata file.
+
+      - For a bitmap schema, the mask with all bits set.
+
+        Possibly reported in hex for bitmap schemata (as for "min").
+
+    tolerance:
+
+        (See below for discussion on this.)
+
+      - "0": the control is exact
+      
+      - "1": the effective control value is within ±1 of the control
+        value written to the schemata file.  (Similary, positive "n" ->
+        ±n.)
+
+        A negative value could be used to indicate that the tolerance
+        is unknown.  (Possibly we could also just omit the property,
+        though it seems better to warn userspace explicitly if we
+        don't know.)
+
+	Tests might make use of this parameter in order to determine
+	how picky to be about exact measurement results.
+
+    resolution:
+
+      - For a proportional scalar schema: the number of divisions that
+        the whole resource is divided into.  (See below for
+        "proportional scalar schema.)
+
+	Typically, this will be the same as the "max" value.
+
+      - For an absolute scalar schema: the divisor applied to the
+        control value.
+
+      - For a bitmap schema: the size of the bitmap in bits.
+
+    scale:
+
+      - For a scalar schema: the scale-up multiplier applied to
+        "unit".
+
+      - For a bitmap schema: probably "1".
+
+    unit:
+
+      - The base unit of the quantity measured by the control value.
+
+        The special unit "all" denotes a proportional schema.  In this
+        case, the resource is a finite, physical thing such as a cache
+        or maxed-out data throughput of a memory controller.  The
+        entire physical resource is available for allocation, and the
+        control value indicates what proportion of it is allocated.
+
+	Bitmap schemata will probably all be proportional and use the
+	unit "all".  (This applies to cache bitmaps, at least.)
+
+	Absolute schemata will require specification of the base unit
+	here, say, "MBps".  The "scale" parameter can be used to avoid
+	proliferation of unit strings:
+
+	For example, {scale=1000, unit="MBps"} would be equivalent to
+	{scale=1, unit="GBps"}.
+
+
+Note on the "tolerance" parameter:
+
+This is a new addition.  On the MPAM side, the hardware has a choice
+about how to interpret the control value in some edge-case situations.
+We may not reasonably be able to probe for this, so it may be useful
+to warn software that there is an uncertainty margin.
+
+We might also be able to use the "tolerance" parameter to accommodate
+the rounding behaviour of the existing "MB" schema (otherwise, we
+might want a special "type" for this schema, if it doesn't comply
+closely enough).
+
+
+If we want to deploy resctrl under virtualisation, resctrl on the host
+could dynamically affect the actual amount of resource that is
+available for allocation inside a VM.
+
+Whether or not we ever want to do that, it might be useful to have a
+way to warn software that the effective control values hitting the
+hardware may not be entirely predictable.
+
+Thoughts?
+
+Cheers
+---Dave
+
+
+[1] Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be per-arch
+https://lore.kernel.org/lkml/aNFliMZTTUiXyZzd@e133380.arm.com/
 
