@@ -1,130 +1,98 @@
-Return-Path: <linux-kernel+bounces-869567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6B1C082E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:29:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7CFC082EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 23:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 735523AA42D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:27:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC70B3B5B25
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148EE303C96;
-	Fri, 24 Oct 2025 21:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6213303C96;
+	Fri, 24 Oct 2025 21:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="loj6ikfp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LtIHaQpY"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637443009FE;
-	Fri, 24 Oct 2025 21:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D762C21F6;
+	Fri, 24 Oct 2025 21:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761341245; cv=none; b=i5MzZOslbilsiG+vyWrcnctGS6B4TCbXo5EYhVF+TMADUSI7nAWmvPMzVylUK+s9Z5WJx4PVs926/rfVwBEPtt8QWiXIDW6m/icc4v2lZPZznxXyawAYxxjTTMkyAS2GR/Ldi0LPXhDfT0/jU6tkbv7BzBCnVV2CW1avIou8k90=
+	t=1761341273; cv=none; b=IidmoeapJDvVFOmp1sVRJJfPLr8N/j8zHeRElqf+TRhFGBaxU5KLVmTpyp5Fr8JFI/QoRKLTMk5mQ1WLIY9qmU45nS45wpmzc+rQgHIzl+xWgjUUxge6f5TTfR2IESu0wFmLJOWBSH9v550eGt6X/hp434vTUyh18O3/qQJ5fkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761341245; c=relaxed/simple;
-	bh=SOsXi9j2Xro3BDVetx3/mLyXF373AEJb7bAdZlo5x6Q=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=UeutxztBBZEMZVUKA1es6wJtJaTgvK8Jx0NN4HMDKYTRphr9nE+u4tWiUh61yc773NTklRK4zHOIBbzjfPs4zP6xPRyf1R2Po37LGz8djtyaNoOSwzsMpjvV2euDsUNN+Fl1WxjAmmFEJFtAgLs/ec8KeWchhL9/F4SH97fpZYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=loj6ikfp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DBDAC4CEF1;
-	Fri, 24 Oct 2025 21:27:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761341244;
-	bh=SOsXi9j2Xro3BDVetx3/mLyXF373AEJb7bAdZlo5x6Q=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=loj6ikfpQSrjlgOlv8QPAvS8lAF20CqwEFjOAv19NvZVvBTwLCtnTbn7XZXXt0GBx
-	 TUANAs5Tv3Gf/jYLAIfbQ2jQ4KajWg5WHi1zPD+7v/ZHQihAcX8DVc3RI/BSzGL3yI
-	 mw3Ze9rqDBAlosxRvdlEWkJeWqUIGP3h+5u1PU0hud9FwcRMx4sY3p4W1n7cr2mqrP
-	 bIZtmJDrRlL8PO3J7etRE/1GoNswVgmlANTcQs2RACLRv4AzWzATdf4qWhZJvbxqmo
-	 0LbWS+vjDkjdu5aJ5O7bm4ETJg7NsepE4bSFrpTf357s1J4t02gZLZuLxgdClBvvyd
-	 AMyj9PspmuTlA==
-Date: Fri, 24 Oct 2025 16:27:22 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1761341273; c=relaxed/simple;
+	bh=qvO5IlFA+YKOgE+yjroMrw8twCPmHsBDR5Yvn16L8iY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o5Uukg3tQlYmyP4nyM2Srhn1GgiO/OlEakyhGrFO13REKewB3FhpZb5IYmc5ypX+l151xuR0aktJaGxA4ZHFy3D8jbujCGp+1eJsvipo5Z8nQWw6Ktx3jKOOcmPEBKdINzUwvP9hyjxLKDJfDj2Kwbpod6nfkpt41i9zdxOydWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LtIHaQpY; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B4CEC40E01FA;
+	Fri, 24 Oct 2025 21:27:45 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id yA3X27WzlXtz; Fri, 24 Oct 2025 21:27:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761341262; bh=jsp6zdTFa+nn9vnL9aFdvsNiE2mZKAq+9nq0RxkWjIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LtIHaQpYVgoKadF8e8WFNj+/6fFvpvO6y/FBdFYrDjIsJVkwcEunh56Cn0IHZT89h
+	 PfT6gNgyfc+2MmSX7lDLwkaNocMFv0YL7MDW02PF8y4fcHlax3VwVWs4IS1qjT1hCy
+	 rMxrqaMZKldWE2mQ4SOMkVfhXKUx7PZSrzEGMXOaM35tvmTkO8Ery0tIEpYiJyh1QV
+	 6O0z+xUGiaIpOt15SS4jReW6YtTe5qt/mqUf24T1JySdpoLN3eZaNkfraV2RV1k/DC
+	 dQ+0ZnMaFLl0zsZr6uRCfqbkUGhB0Zl+O4ln74P3jkCq8QHfMHhbLMQhlqxXg9GZki
+	 NkgJ4P9UWh/+psLsoJk1wj1N/lSVhyf9PZ2vPPAY0EdjcFk68+pJi7uWL4Yw+ExqnG
+	 u5sEAFQrf1vDdUScgtPN2fWMP0/AhfSrds4ymXV/EdUfTXefFpq6LrnzYIGDH5s/O6
+	 mOP1x5UBzm9Zxzy0IcNFFfA/w6A6u/hYpjzLFBAgB8wsj1+trAzgs/ZPawuev6XooE
+	 UR6AFV2fMqqeNm2tMBAWgog78gKsOKccfKvqNYRzOn2YkTGJN1eEJ4EPjWaYUVv2ds
+	 ZEkxe4lKnH5LSOg0eu6u53oOP135jmYN0LY0Lh3I880yM0QdhbuNeJSBwGZhYEHrBp
+	 7ZebCXWlZ0q5fOhQUAfuroWw=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 1DFC440E019B;
+	Fri, 24 Oct 2025 21:27:30 +0000 (UTC)
+Date: Fri, 24 Oct 2025 23:27:23 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org, Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Bert Karwatzki <spasswolf@web.de>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v7 2/8] x86/mce: Unify AMD DFR handler with MCA Polling
+Message-ID: <20251024212723.GGaPvvO3l2OlUEG7Xn@fat_crate.local>
+References: <20251016-wip-mca-updates-v7-0-5c139a4062cb@amd.com>
+ <20251016-wip-mca-updates-v7-2-5c139a4062cb@amd.com>
+ <20251024150333.GSaPuVRQYxH92zyrmO@fat_crate.local>
+ <20251024203012.GA251815@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
- "David S. Miller" <davem@davemloft.net>, Conor Dooley <conor+dt@kernel.org>, 
- devicetree@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
- linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-In-Reply-To: <20251024201836.317324-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20251024201836.317324-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Message-Id: <176134124286.2841725.8990137232361008022.robh@kernel.org>
-Subject: Re: [PATCH net-next] dt-bindings: net: phy: vsc8531: Convert to DT
- schema
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251024203012.GA251815@yaz-khff2.amd.com>
 
+On Fri, Oct 24, 2025 at 04:30:12PM -0400, Yazen Ghannam wrote:
+> Should I send another revision?
 
-On Fri, 24 Oct 2025 21:18:36 +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Convert VSC8531 Gigabit ethernet phy binding to DT schema format. While
-> at it add compatible string for VSC8541 PHY which is very much similar
-> to the VSC8531 PHY and is already supported in the kernel. VSC8541 PHY
-> is present on the Renesas RZ/T2H EVK.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> Inspired from the DT warnings seen while running dtbs check [0],
-> took an opportunity to convert this binding to DT schema format.
-> As there was no entry in the maintainers file Ive added myself
-> as the maintainer for this binding.
-> [0] https://lore.kernel.org/all/176073765433.419659.2490051913988670515.robh@kernel.org/
-> 
-> Note,
-> 1] dt_binding_check reports below warnings. But this looks like
-> the same for other DT bindings too which have dependencies defined.
-> ./Documentation/devicetree/bindings/net/mscc-phy-vsc8531.yaml:99:36: [warning] too few spaces after comma (commas)
-> <path>/mscc-phy-vsc8531.example.dtb: ethernet-phy@0 (ethernet-phy-id0007.0772): 'vsc8531' is a dependency of 'vsc8531,edge-slowdown'
-> 	from schema $id: http://devicetree.org/schemas/net/mscc-phy-vsc8531.yaml
-> <path>/mscc-phy-vsc8531.example.dtb: ethernet-phy@0 (ethernet-phy-id0007.0772): 'vddmac' is a dependency of 'vsc8531,edge-slowdown'
-> 2] As there is no entry in maintainers file for this binding, Ive added myself
-> as the maintainer for this binding.
-> ---
->  .../bindings/net/mscc-phy-vsc8531.txt         |  73 ----------
->  .../bindings/net/mscc-phy-vsc8531.yaml        | 125 ++++++++++++++++++
->  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +-
->  3 files changed, 126 insertions(+), 74 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/net/mscc-phy-vsc8531.txt
->  create mode 100644 Documentation/devicetree/bindings/net/mscc-phy-vsc8531.yaml
-> 
+Nah, I'm not done simplifying this yet. :-P
 
-My bot found errors running 'make dt_binding_check' on your patch:
+-- 
+Regards/Gruss,
+    Boris.
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/net/mscc-phy-vsc8531.yaml:99:36: [warning] too few spaces after comma (commas)
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.example.dtb: ethernet-phy@0 (ethernet-phy-id0007.0772): 'vsc8531' is a dependency of 'vsc8531,edge-slowdown'
-	from schema $id: http://devicetree.org/schemas/net/mscc-phy-vsc8531.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mscc-phy-vsc8531.example.dtb: ethernet-phy@0 (ethernet-phy-id0007.0772): 'vddmac' is a dependency of 'vsc8531,edge-slowdown'
-	from schema $id: http://devicetree.org/schemas/net/mscc-phy-vsc8531.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251024201836.317324-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
