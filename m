@@ -1,250 +1,192 @@
-Return-Path: <linux-kernel+bounces-869125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56CBAC0709E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:44:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A66C070A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F5C656202D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:43:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2E821C261DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4212DCBF4;
-	Fri, 24 Oct 2025 15:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4028032B997;
+	Fri, 24 Oct 2025 15:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="co6l7HiC"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011042.outbound.protection.outlook.com [52.101.62.42])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hUNdupFn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA522DC787;
-	Fri, 24 Oct 2025 15:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761320605; cv=fail; b=SU58+YGN+1QcNEsnJuFJWvaWjMEDF64sV26/SkoF/ErQnU22ryw5jr3YOmc5hGBNvjPEmim0Oyy0XGjHMR1xP9dF4TlQkv964+edNJ8LBC9YcHxI3IwAg/BdX7tiS5pxpYL0KQS+0EpgtlQrTnrn19O7yR8EIclCpSthzdMKneQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761320605; c=relaxed/simple;
-	bh=vt07SDQILiNi+YA5eS96YozrjhKA6o88ekgKEKNbuLI=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aV6O122HvXxdB+jI8ewUZWoc4OubTiPS57Mj8hzaBFeJ2K7XiXbpoJB6E7B2BXlFk5EJFc98nCkfy1gd0DP2dnG6BsCBL+LHQ+aSY15/NrB2vbmHzSBasi1sLBX6a9ate9sBUaGBOJfhfWWLtVuvBHGZklh4JKmIdv/UCTEqJWs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=co6l7HiC; arc=fail smtp.client-ip=52.101.62.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KxuE3BedC2Ytp/JrW+8/CgKhC4GCE/Ie7wWUM3wqNb727ejpOlr6sx1MkUMDwSOgeP2rF0Njk32/AttKI83+43YC/ALUk4q3ZN7datIiEtMBD+AItou/r2JAQt/f9gXc5Yf7uRJezU9Qr/OZtzfEr/U2mCP17TZbZ4dZFtN6bd2BfFxKyJfkkXJs7MAhk25wMUT6gcs3lD2LOidYROOmGVUCgkFKJLuJQPsrm7VdrmJupiRLjZk+5bobLR1rcmnZ5LA3uWSkcI4mda223yJg4v9GJbUHQaPe2RieRbGiUPVewrY5vsGSQ/wenna9SZ7F06OHlIB/AsP4D2GGf9cwmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=14cZKzG7h1zFOCRmU4L83J6Cyuz5a9yUOXPFzhl4O4Y=;
- b=yL2f2rUkjdoUEbhdkbM+DJsaI9WogGoSukn9Dk4Zg9jQvNeI9bk89SY4k8sb8oDWUilLwcYx1GW6fj0l209Up0M2pooPDksVKkOLnnhhysq9X19LjG6DhcRa3OF9EJUTG4XliaOwmD5aIcABoWtMoaAFps2bXp1fH3AcZKn3gkrnZTCdkj8g30AAnYvC9s4OrgdzL7bRqFmKVVsfMlURTvERMm4YxpFrekxj/cLJns0yjbl+4tJZqkpVRxG7bbHrVEuL2lcODLKLuq9RSH+3Gco4aaZzwYXCl59W49jtPNsZZUf5yK++uRfcjdIWozpyLKTht2r1OIwJPKNt21lhhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=14cZKzG7h1zFOCRmU4L83J6Cyuz5a9yUOXPFzhl4O4Y=;
- b=co6l7HiCXEzVegtmGlOpcGdbOamLquxJJilwDYQ5I4ssghOLYE/+GW/boRuAotvby61e8FZX3/3RK/rzBtBTIeD5OAYB5ZYxQR4Vl6581sGpH0kUOdBkYDB6nJo49RK8DL4eP9XyT65TvwiXQMf8faxTlwx4j4FIRNpHxEbaJfrqUZ2AabHahbp1d83u43gjziNLSHDWmC5VSK94XGsmJ5revRA5unkslne0dGKTqTwg3Sh8c++yH67MBg50t8iC1fFoeZUZgMhoa1X36Vb9l+2vqY9bA1mwvmYVmxKijEUK42Qv5eQiQyy/of14VI2daROT/zsMAlam20fXPjO8ug==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by SA5PPFB9BA66B77.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8df) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 15:43:19 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 15:43:19 +0000
-Message-ID: <cf862356-1ed4-48ca-9d43-7e008a86eef0@nvidia.com>
-Date: Fri, 24 Oct 2025 16:43:13 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 4/4] i2c: tegra: Add Tegra264 support
-To: Kartik Rajput <kkartik@nvidia.com>, akhilrajeev@nvidia.com,
- andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, thierry.reding@gmail.com, ldewangan@nvidia.com,
- digetx@gmail.com, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251001064759.664630-1-kkartik@nvidia.com>
- <20251001064759.664630-5-kkartik@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20251001064759.664630-5-kkartik@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P302CA0023.GBRP302.PROD.OUTLOOK.COM
- (2603:10a6:600:2c1::15) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8182DCBF4
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761320624; cv=none; b=nnS2e1XR3p2fSTc+eq3BAIBtYBInvohrMcvbSg2+dQV+F4eWoUDc3Mys5NfeAw/WevNW12hzkfszb2cUl/MQRcypfi/axmj2lqR8CVsJNVtN6WJqdNFKUJFFZNryCCBcPVOvsFqqi6g7g0dydiGrVMXIX90hIUdtJ/w3nVtAgW8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761320624; c=relaxed/simple;
+	bh=DieyGbtLhyeH3gU3/2qoZqXvo8pdAbE9Yv5SiQ1wypI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TQc/3Kw3x7x1HcdWi1sXodWLv6mtrnsAVXm/1dzV6p4+DPABuTjhu78MOE2Z7sB7muEQ7JHNQfV77diM56Kwl4aSE4SfJhgZnl+iv3Y+lx4Glbn+TAFMlQY6Geflr0Pg5x4e1Rv3I3tybqtGUDB5rQ+hpJG1rXMKxx9za/ah9Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hUNdupFn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761320622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ub0PNoE2B12NaRoLC+6G8KS0ixUn+UmUgZF/iuUYOng=;
+	b=hUNdupFn4evMbgc0i1fPzKWBBwWYctN5dsubo6OfAUubBellwW6RWuBZukCEyWfgOHDM2f
+	P5532itbmxIXSrAnAuhlY90zTv/mzBYM4oSnzXIDQHT04WH2skOqi8pgIZ0TpeoATS9bON
+	Z37fAS6rihZJxvkTVUDLW2ODYp/x1a8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-62-BJlM5mj1NP--egPrAYW1tQ-1; Fri, 24 Oct 2025 11:43:40 -0400
+X-MC-Unique: BJlM5mj1NP--egPrAYW1tQ-1
+X-Mimecast-MFC-AGG-ID: BJlM5mj1NP--egPrAYW1tQ_1761320619
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-47105bfcf15so14067745e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:43:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761320619; x=1761925419;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ub0PNoE2B12NaRoLC+6G8KS0ixUn+UmUgZF/iuUYOng=;
+        b=jrNFLblDmwza3ZyhYr3m/BiJ3al5IESF8zVI3YOTJ1rjEMzFIfSmInrL7LqqE6pLHb
+         W2sTsXmPse3cNNmEbWSTFjAngSzLO8OIBwMyObuegm4iCXU7uwvy1YTdlspWHPSNXcZ+
+         Gvau/mmCzneeb85yxw8ziorL3Rjjd+pRks5odpO3mbsON7UMDq4IpyJICiZtKu+9T1yl
+         kITMlzhiw2xzkapOuqZJySRMnQ9Qi19GiDZUDkYrIZUbuUAaCnJZJ/+ivF10AQ76WJiE
+         Y9W/vzydOmIWuJivFfmjILclrujofhGTSEeaJaKpCD2+A4q8o5O1C3zSCFXCQSnhqNSq
+         K49g==
+X-Forwarded-Encrypted: i=1; AJvYcCXFFKWoNsjpkeXkEme3sgr6zqSY2bIztwIdIsfzbc/RBYZLCSN7OkPtnNAsRGgon+1xJLQ30vrEDKjeHUc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiZfIsEO6KKlNXhGiqTjp8bPBWpSfNImDKNrs2eRpyk5VHJ3zM
+	bX1NQrJc9BBSG8RBNxD+InLs1D3D5qGPKxYnlANOdzJJkTKdQiMxmRV+0+Wrr5oUo4t4dny5wiF
+	iE636u8zGOt9kK3pEY20md3IHDQ5m8r6dXd/9Pqkbcp4BDO3zmF74kZUM+Uje8vJk7g==
+X-Gm-Gg: ASbGncufaWkV+M1iN3OQKK05TL53HpyHtTaMnSTtHFfCInmlnOQOvN7D7JAkI1vMW3F
+	zJai6uF+qiBE8s9RQ/15vKsWnsY/9kREmm9Gk/PYIxdrIkhbVjZ3YW5HRE0O9TbXJrCqlziUTyP
+	mIX8F1+ooP3aMIuXqFy0f0y7eb5CGHc9O/uG/NKX+rGL1yXREH3lzM8cdL0gF5ozvLn3LAaytz2
+	R1fNhJID70zQg+HWawltav2+xlVjL+cRFoOg0kkDsh+Yza1AVti5wTw3zH4QwaENtQBi/p+YRb2
+	tm9++xYzglYY0DBqnwTDi/C+GHf4UALGDInSCWqzVnSxZsCaPvJubVvxnG5cN/EpAzw3gojle9Z
+	y0z+VzwM0fxpHs9AB//KLSl+cyM2WYuj4T9Qe1azL8U27dNGtu3bVvicvH46LJhd04zcZwrBKGM
+	GwN2aRWIrprnTmJFUMStZIHjizVUA=
+X-Received: by 2002:a05:600d:828d:b0:475:c5e7:e580 with SMTP id 5b1f17b1804b1-475c5e7e633mr67896355e9.32.1761320619249;
+        Fri, 24 Oct 2025 08:43:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGcsWO+ZM/PYY8bptlnJAedXpz/Rg2rCmnppXlQBSMH+PbqY3P4FSmsB//MeHZgPtSXFS2jCA==
+X-Received: by 2002:a05:600d:828d:b0:475:c5e7:e580 with SMTP id 5b1f17b1804b1-475c5e7e633mr67896185e9.32.1761320618878;
+        Fri, 24 Oct 2025 08:43:38 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475c4342946sm156957715e9.10.2025.10.24.08.43.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 08:43:38 -0700 (PDT)
+Message-ID: <d186391f-90f9-4fae-a986-6a12ef393c38@redhat.com>
+Date: Fri, 24 Oct 2025 17:43:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SA5PPFB9BA66B77:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b13a8b5-4b33-4a47-c011-08de13140e24
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|7416014|376014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WkRuemFTNlRtS05idjhWQ1hBZkhqTnNYRzNSSUlaU3pWT3pSQVpFV1g5cEdL?=
- =?utf-8?B?bDFaVjRlaDNSWFlNdVVzM0xvL05lQ3NpdlBDTzVMYnRKVVZuZXd1Q05wSG5k?=
- =?utf-8?B?cWFLQlBWY3pTaSsyRGF0cEU0VlB1Tkk3N2FXeDRUK281K3Zxd2pqU0VQcnZp?=
- =?utf-8?B?bEU2QlNJRlVFOTErVWRueGpLOEthSzcxMk9ZTk9NNDY3OElMMnI3RGZad0tq?=
- =?utf-8?B?SktIeEljY3FaZTRuSVN2bG1HWEp6emN3czgvcVlRZ1BiaXUxR09MQWlOSVYw?=
- =?utf-8?B?RExoOEl0UXpFU0xLM24weCsxTnAvY21Qam91VnRSbjA4TjlrQ3FWYXN0WmVR?=
- =?utf-8?B?TStaYnkrQktPTDd1NnNweFNWVzArM2hvWEgzMFg5UUFXWTZwb0gvQ1kyZUYv?=
- =?utf-8?B?ZTgvRjlUeERLblVvbk5JYjVqT1FXLzd1ejRqZWJlekJTZVp1VTVlRThXQkhH?=
- =?utf-8?B?bHR1eXB1czRBR1ZtSGNyTVNtU1VJTnUzaGdBeThkSU1nTE0ycytDSkxDWXRB?=
- =?utf-8?B?ZG5SSndjenZQclMwMERGbXdjUWNnbjU4V1oyYlBpWlF3SFJUcUdsSWd3Yk4w?=
- =?utf-8?B?clp6YkxKN05ZemZKZDJ2NGpBeDEyREY5RUEwZlV3d2g2ekR6OTFKdXRZYTAv?=
- =?utf-8?B?RFNVZk5rRGo3bDZrYU4ySzArN3NhcldqN1lxYmh6RlZucldyVkxGMlRvcUc3?=
- =?utf-8?B?TWU5YlQ3cHBJUUxYMUVGV3dHVHNRUWdZT3B6UnhjN0I5Nkl2czd2UHdyQi9z?=
- =?utf-8?B?czVHK2FQTUo4Um56UzZlSEhPM0o5S3o4Z2x6aUxzY3ArdVd4UkNpOFFRSTk4?=
- =?utf-8?B?SjMzTW5mL1k2eWUzd0t1Vkt4bFVOVENNbFBmcFF0VW9kS2NBU1gwQmtVamNp?=
- =?utf-8?B?dmFVOSt6RGJEZlRKaU82cWxCT2o4eGhtU0x4UTVleWhQY2E2SmRiam9YTTFB?=
- =?utf-8?B?SGRoZ3U3OTErVStvZlRhSDRKSUFJTzRsWUFOR0ttcHJKM0tpQlN6b2gyd1k4?=
- =?utf-8?B?TExyMG15T0JYcDM2VTNYa2UrUUM0TlJNRU43Z21zU1czOWc1K2l2bFVQbnNU?=
- =?utf-8?B?NlRiYVROL2M1Z2JQeXRhUWczTmgxT2F4ZHpQa2NpbzRtbk0rVmpsOE5RbjhT?=
- =?utf-8?B?UXk3UTJCMHdQK2J1cks5RWVSVlZNUk9jaFp6WjF5eGxOUDM5RXkwOCtCKzVi?=
- =?utf-8?B?YXZjT0Iwd1ZNclRhTGNOWnNXSlRHaC94RHJ3RmZzZzRldnFXMHRLYTl0OVA2?=
- =?utf-8?B?d1E2Q1pyM3h3Z1RSb3d1cFZhSk9KWGNNTlAwTmFFdXZqQ3lXNm9wWGtkdFlR?=
- =?utf-8?B?WUZQdFB4b1FkdklqSUR0djkvVzZyRUZOQmQ4S0lDWHNJVkFoeVVydTQxZXVG?=
- =?utf-8?B?cWVFSXFIaE9hbVZHY2cyODBMYUh0UVNwb3ZRRmFydEhDRmdnSEN6RWd6RkxV?=
- =?utf-8?B?aE1Da3k1ZXRHVERQdklBL0VqOGNBcXhlZFhuUVVLUE01MjZrbVRlVmdCNWI5?=
- =?utf-8?B?cldja2dnOHFkRVVFQnE1ais5TnJiVStWalV6Y0dDS0NDTnBEMUorVTdCSVhD?=
- =?utf-8?B?V0JJenJzMC9xY0JIVXZBOU9zRnZOellGb1dZVmZRcDlMcVNjY3VIMERnWTBY?=
- =?utf-8?B?Ky93Q2kwZnlpNWF6V044K2Mrd1kxWVI4ZDEyMTVmNkpvQkZiWnFLUTAvOGpi?=
- =?utf-8?B?NzRkdy9iZnFZeVp2NVFuRGwvSHNnWnEyYTlRc0h6eHhNcEpSOXZiL2J3dVVv?=
- =?utf-8?B?dy84TjRaOVd6QkpwRnBLUURLM29IUWM1dGljdDY4bDBRbngrUWZrQ1cvZ3ZU?=
- =?utf-8?B?eXl3cHd5eFc5cktDNm9mNHZPa0sydXN5VEFUY0g4eUV6enY0aEVKTmVHU2l3?=
- =?utf-8?B?aVQ2Y2IzM3lHRWErdHlod21ldk1WbFdCUHB6SVpvNkNjem9OQnd5a0t6WlhT?=
- =?utf-8?B?MW01UmhTTmZVK25tdWoySGw2amowVW9xNDM5cndkd0lyVnU1OVcxNGwyVnlB?=
- =?utf-8?Q?il2cU9p54T0qC/QnQXGlttr93tFznM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?LzdrVEhQaXIvSno1d1BqcnZDUWc3WGJiYlluRENEOWx0SVF4TFNHVm1jRk9o?=
- =?utf-8?B?bEJ6T3Q4Y3ZERDh2d2dIUVhoMXFDN3ZwY3VsNUErLzZhci9pOE5mUE11ZjNU?=
- =?utf-8?B?U3hva3VDT0RreXpEbU9mZFhqT2hNck1ZcWZReW9HYk93dnMrbU1EVG9qOTdR?=
- =?utf-8?B?ZzFKOVdadEJaWU9MZmNDVE95Q1FORER1UHFoeE94WERzbmpLTS81NGV0d0pu?=
- =?utf-8?B?Q2lzUGZOUDFSNDIzSXVkOWd5Ti9HZUJ0OW9oQXloZkZRaFY0eFpHWUU0V0Nw?=
- =?utf-8?B?Z1J2OWJuNjRkb0ZSU1NvTGFvazBMUjdvWE5rZ0ppMHJrcmFacGdHcmx6TGt3?=
- =?utf-8?B?QWptUW5aZ0QzUUNlZjVIcnA2amMrT1R4VHdockt1c3lUZGdUOFMrcjgwRHBV?=
- =?utf-8?B?bktTWUMrbmVyd2ZoQkdlNC9CYWMrSHNuTzIvSS9zWm5YNVVWWm1pVDJBT3lW?=
- =?utf-8?B?SE9CREgzRHdMaGY0RENJRTc3MkNob1V1ZlVxOTJxbmt0aFZqTWhJa1BDaE9I?=
- =?utf-8?B?YlhocFpvSi9aaHBtSzlHRHdhU213RWh0ejFaRXRpZWhSMUxFakJ4WktkbVls?=
- =?utf-8?B?N0pDZXBYL1Nsclo4OXpGOUVOckMxbmtObjBFTkh6ZHFvL0p1SU5EVmtoTlZG?=
- =?utf-8?B?Nk5COXhjM0FsMnpzNko4eFM2clJzS2YrNGhuRk9WRjVVOUhka1UvSHF2Z3pP?=
- =?utf-8?B?eEs0TWlsOWE1YUVUTUptYzBuQ1pPVzdTZE9weUw0aHUxSUFkWGNITHFHd1lP?=
- =?utf-8?B?YkxydGo5NWRLc3FIRzVaRDBNRFVFOTJaSVZvdVp2QzlCS084VjMzUXNNMXFH?=
- =?utf-8?B?b2NLbjBiTEJlb3o1ZmxTNGJuOEk5Z2RNODZiS3cyUVMxUlZyL2U1Nm9RWDhH?=
- =?utf-8?B?VS9IcC9adFR2YTBoWG1YRHptajV3Q0RmTERYT0J2S2Y5T1Bqc0tkeElLUWg1?=
- =?utf-8?B?MHdDMjVXeWU2emhkN0RUMmwwLzFlR252dkRFMElkVEQwNE45U3g5akpERmhI?=
- =?utf-8?B?ZFJZMGxodlVIODV3N0c2WUptNldZNXMrUS9keS9yVGhFUlVZOTRKU2lvc3FM?=
- =?utf-8?B?S1lCazNIRG5JSnJ4QVVkcUEra3VHY1RtTDBYTkl3Q0NYUHpRblNFQUpwL0FL?=
- =?utf-8?B?dCs0TWhqRktZNkVmTndIZXRqNWNFK3JZYWtnNjNOUTd5K0ViNmhHcnJmRmZP?=
- =?utf-8?B?ZStyeUNDTVBuOXpFL0NjUG4rdU5PMlZ4cmpMWHljd1N3WHFYdUZhbzFuaE9Y?=
- =?utf-8?B?bDFXOUdQdk85Ni93UjRKUWJ4UncxQklpc2hYU1NoK0FMVmp6ZkJHeDhPbndX?=
- =?utf-8?B?WUhBUCs1MWpNc1hkVHhIOFJKemJQb3RnLzk5dUxWcXFDQUNEZ05RUlZQTU5v?=
- =?utf-8?B?bGNLTHF3aUZWTHlKT1ZIVVo5UXFnL3h4ZWdmdGdLU1psN3dpOEYvbHA5UzM4?=
- =?utf-8?B?Nmx6RUsrUXZLWUlHWmViZldYZFEvb3VQSmtMUnpsMWpmQUVSM0k2bFREQ3ln?=
- =?utf-8?B?eTQ4Z2Z2eEtQWms1Ull4QkJpazdBUFI5VWtzSlVFb0xnU3dZWThtbjNUZFFW?=
- =?utf-8?B?cTZEOExTaFdmMHZuMzRkaktHZG12ZXFHWHY0YlpxT01RcnpNcHhBeEE2eml3?=
- =?utf-8?B?MWZJTjZ3WWVia1NXYXp0N2IwREQra3RTdng2bW9YTUZVM0c2T0FoM1RPbnd3?=
- =?utf-8?B?YXRBV01BRmhxRTFzQ1k2L0hOTUlwdmVLQXczK1JNZXpxajl2YTlRWE9NYkVI?=
- =?utf-8?B?UWc1djAzUFlERmNiK0hmTFhTZy9BUmovZWhkSE9OSFYwTDk4dk9iTDl3VXI4?=
- =?utf-8?B?VzhRd0FhTlY1Q1JFSWw0RWMzOUVTTWF4YXpjUnB4Y2t6U0pYRmM0Mmh6RDY5?=
- =?utf-8?B?dDN3K2tyTlR0aUFPQU8xdUxtbFJMeUd1QlNIcDVtQ3doMVBUeFFJaW1BWGoz?=
- =?utf-8?B?NlFZaWF6SElycEEyQVFPb25FK0pqUjdTN0VmV2tCNzJCNUNsMWZHbm95eVYy?=
- =?utf-8?B?azRjbVF5azBBWTdlQ1d6ZDdOWVcyN0tFRjhFNmNZVGRhaS9nQWIxWmhndkt2?=
- =?utf-8?B?S3kzT3c1U3pQdit4c09hR3Y5bzJxZmVNUXdvN3JsMnZLeERYa3ZHODJYQVZs?=
- =?utf-8?B?NHMxTHdsQzBBVGZNTmlBUTF4UkJucWdsWmJMV3NPa0JtbVpkNXoyNEloOGlS?=
- =?utf-8?B?VndlRVk1V3FsdTZOOHYyV0dTVTlGR1Yzb2wrdCsyR2xtUlVieVVyOUoraFF0?=
- =?utf-8?B?cWcwbjByRVhEQ1lFOVBFSUprSUNRPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b13a8b5-4b33-4a47-c011-08de13140e24
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 15:43:19.3529
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FYrFvNk4e9USSYtfLOqqCxRWupLGZ78hkKe4oB0gBmlpexY4DnWC9JPutPAnXMoWEP4Y1w5HyBexeWSo4YqWeQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFB9BA66B77
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 2/2] mm/truncate: Unmap large folio on split failure
+To: Kiryl Shutsemau <kirill@shutemov.name>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kiryl Shutsemau <kas@kernel.org>
+References: <20251023093251.54146-1-kirill@shutemov.name>
+ <20251023093251.54146-3-kirill@shutemov.name>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <20251023093251.54146-3-kirill@shutemov.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On 01/10/2025 07:47, Kartik Rajput wrote:
-> From: Akhil R <akhilrajeev@nvidia.com>
+On 23.10.25 11:32, Kiryl Shutsemau wrote:
+> From: Kiryl Shutsemau <kas@kernel.org>
 > 
-> Add support for Tegra264 SoC which supports 17 generic I2C controllers,
-> two of which are in the AON (always-on) partition of the SoC. In
-> addition to the features supported by Tegra194 it also supports a
-> SW mutex register to allow sharing the same I2C instance across
-> multiple firmware.
+> Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
+> supposed to generate SIGBUS.
 > 
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+> This behavior might not be respected on truncation.
+> 
+> During truncation, the kernel splits a large folio in order to reclaim
+> memory. As a side effect, it unmaps the folio and destroys PMD mappings
+> of the folio. The folio will be refaulted as PTEs and SIGBUS semantics
+> are preserved.
+> 
+> However, if the split fails, PMD mappings are preserved and the user
+> will not receive SIGBUS on any accesses within the PMD.
+> 
+> Unmap the folio on split failure. It will lead to refault as PTEs and
+> preserve SIGBUS semantics.
+> 
+> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
 > ---
-> v1 -> v4:
->          * Update commit message to mention the SW mutex feature
->            available on Tegra264.
-> ---
->   drivers/i2c/busses/i2c-tegra.c | 29 +++++++++++++++++++++++++++++
->   1 file changed, 29 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 1c8c24ae54ed..f324cf3b1f28 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1814,7 +1814,36 @@ static const struct tegra_i2c_hw_feature tegra256_i2c_hw = {
->   	.has_interface_timing_reg = true,
->   };
->   
-> +static const struct tegra_i2c_hw_feature tegra264_i2c_hw = {
-> +	.has_continue_xfer_support = true,
-> +	.has_per_pkt_xfer_complete_irq = true,
-> +	.clk_divisor_hs_mode = 1,
-> +	.clk_divisor_std_mode = 0x1d,
-> +	.clk_divisor_fast_mode = 0x15,
-> +	.clk_divisor_fast_plus_mode = 0x8,
-> +	.has_config_load_reg = true,
-> +	.has_multi_master_mode = true,
-> +	.has_slcg_override_reg = true,
-> +	.has_mst_fifo = true,
-> +	.quirks = &tegra194_i2c_quirks,
-> +	.supports_bus_clear = true,
-> +	.has_apb_dma = false,
-> +	.tlow_std_mode = 0x8,
-> +	.thigh_std_mode = 0x7,
-> +	.tlow_fast_fastplus_mode = 0x2,
-> +	.thigh_fast_fastplus_mode = 0x2,
-> +	.tlow_hs_mode = 0x4,
-> +	.thigh_hs_mode = 0x2,
-> +	.setup_hold_time_std_mode = 0x08080808,
-> +	.setup_hold_time_fast_fast_plus_mode = 0x02020202,
-> +	.setup_hold_time_hs_mode = 0x090909,
-> +	.has_interface_timing_reg = true,
-> +	.has_hs_mode_support = true,
-> +	.has_mutex = true,
-> +};
-> +
->   static const struct of_device_id tegra_i2c_of_match[] = {
-> +	{ .compatible = "nvidia,tegra264-i2c", .data = &tegra264_i2c_hw, },
->   	{ .compatible = "nvidia,tegra256-i2c", .data = &tegra256_i2c_hw, },
->   	{ .compatible = "nvidia,tegra194-i2c", .data = &tegra194_i2c_hw, },
->   	{ .compatible = "nvidia,tegra186-i2c", .data = &tegra186_i2c_hw, },
 
+Thanks!
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-nvpublic
+Cheers
+
+David / dhildenb
 
 
