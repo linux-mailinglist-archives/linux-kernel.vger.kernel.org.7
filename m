@@ -1,153 +1,161 @@
-Return-Path: <linux-kernel+bounces-869371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8FAC07B3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:19:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834D8C07BBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5041B814A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B8442528B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A116347BD1;
-	Fri, 24 Oct 2025 18:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C37348445;
+	Fri, 24 Oct 2025 18:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Am/T2Gqu"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LtpT4FvL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E457F263889
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA79533B964
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761329912; cv=none; b=IVV5hd0W81E5GyD720x58OIncbOT8jl2VRIytzFDR2XWiEt6pb52IA1f4diiZ+kl12AnNd3GrhiIC0wMGgzZm3/zRuilMWk3IAdG3uyFaFigQFB9nSbMFSsoAu+srECH5xMPVgRi4iGN/iR1SsbXEAiipM2eSRTBMzEh7B/dE6I=
+	t=1761329933; cv=none; b=lAW2iesHPDJxMLFlfBsQNWn3wjJMz3hPVmB3TD221C02bSoizk6pkL676PQQtIgmSFqoTG24kECtW/cJpJK1zW0lD+ZLxNvNctTzu5HxqUM3hhjLx4Qg8RcF3aquH82t5cJda2WIYmyr68bcpW6RKdCUzrHc3oQaw2UphxqkViw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761329912; c=relaxed/simple;
-	bh=f9EWuUddQuX6YNL9LEZegSrVPjIgkYAeTAs+Ik6L294=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qI0xilxrnGLNifkHuD2wCReez7qsv1jLa2q+TLn8oJe6392nk+5LCLfJbYDICF7pfJzZQioRqPni9+IoQ0LknjXgtNqUuL/wPcpxcyk5e9l5XDnAtRRNil1mzz6YC5ZwS14MvlgZv6YmVIKfbkTmWJ2W8ZKGq82jX/VXmczRpAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Am/T2Gqu; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-290ab379d48so23208675ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:18:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761329910; x=1761934710; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=f9EWuUddQuX6YNL9LEZegSrVPjIgkYAeTAs+Ik6L294=;
-        b=Am/T2GquuL34foceuwpJ4lT8PduHc80d8EXu4e2c43/6b8TAMnB0/P2EGnjoaiTILc
-         ivEp5pxUjR6f9WIVxvP4nK4Bytlfr+2vY3sAVO5xjBmC9J8moEh2BfTz/bD+97zpRDYq
-         YxzZOYPDRpYGb2lxNHECKvOezigtdJWMBte2is+JTKsPBVsT3OciloxKzHKy86LUOmMI
-         a7vDq+V3Z58edhmA/a0X2TdkHQdSu57Y833IbNEdOGH1qu62JkK5UBwnEjAFkZZVeHnz
-         4tdOVoUe9aE/hkGA1+E7d++aMkGZd6SalM1e7kS9l9i1z5/x7XMb7R/ZYjOuxG7/U9Ie
-         7qgg==
+	s=arc-20240116; t=1761329933; c=relaxed/simple;
+	bh=ZKqHGBqht9+vOXZWnMdIb2qlDFvjo4TXm7DhSQz12Bk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RE65BiMHJH/T/gjn85tmWyvVexSGWZaBtR3jlCxLinwjmz5xc+b3Me7jFt/yD/FUA73Nlbzw4IzGFvOpQftj9dYHXSlRtFYVOTN7jd2KQM3mlNEsJDpaoY+8spRtSF3opTKgW4XP9poZulQy6G9CB/a1cvvivl4JiexsSF2o6zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LtpT4FvL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OI9ElV009576
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:18:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=IRFK4cOMW+kcSMn9HpIyzq2Gx8pGlfR7x7M
+	K7vaKSWQ=; b=LtpT4FvLFAmf31hW2+YqjrTD5FJJz3KJew1yFqu5jECLxgut0eJ
+	IXUUAtjwGSlNZe1YMFVOBBajGrEVHZpUCFC8SzNB0xb3gatRi7pFoLhz9G28tWlU
+	Yy0Cmm+6NW/RszrNcZu0sAYmhNN5IBFEZI96hgXo7LrVMn+wDqx77pnibatvxeLu
+	EO5s0zd+F8EqBJTRlATxL6r7y2Y//OM1QDB85N2cJjnAryppbozbCzUm5fQlv/Zk
+	zb1rIeV0fE6GtqM3dKGJDL9hzps1QV1OjLCtZ77faAvNCqJnp4r9I4D3uillcaok
+	1gJInBKu5H7OwfJzpd79lC1iGBbhJf4SHPw==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v27jct7j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:18:50 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-290ab8f5af6so15772765ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:18:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761329910; x=1761934710;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f9EWuUddQuX6YNL9LEZegSrVPjIgkYAeTAs+Ik6L294=;
-        b=wZQIxgdK87FBokefIyhd5HdzyXGRiqGCGSlEv2Czhm/rVUuE1vIkKFqMLsRJFVTnvC
-         ca4Lf8/xHR3Y7qgM8Cf75uGflWrj7rxHkmeATf1ylNWwAn3s3w+sDWc2777sKgdGgF1o
-         d5RWMUjqwAwHhtG0jkPwmafbpU5RtmqKxZNwcG9gdg0HYIWOeOHqv+UMFk0A0ZskXMcg
-         zv6mS01lSG8CRK1VPQqJF6iJG8vD+1S15Asmt83OG+fHiYikBAQty/uiebxCjUU4PvLC
-         /LWWECQfPz3MLSC11T/EmfqFYbx5prcZdEeyFLXQzxAcPJ/a9/JMAJxlztFLP/oB/EEC
-         XbVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxlRwOFpjqiiveXYnhuI7bKJOsbiA+lhE8Q09yxcDn9nm46WBGPardHKca1C2NFjKSz++I28ojcWckB7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKCbq9Lp+NpIvOcMhlkmspvAvXcvsZu3IsBd/SFfh7LY7yIdUS
-	STRCvUZr0vDKcSvGdIAwUadwgo0RdcZd9d/pALfReEL7IyU6R1p4VfWQ
-X-Gm-Gg: ASbGnctQN73M6GbWzZbOfFok6eWO0L+ihSpTUh7eZo4C0OPKM+QsJCQWGd86r7lAVkI
-	0Hk4iiO4jGaBvK+pGTP6PuSMiLNQKHusH0FlXoteuwtDJUSRcWcl/P8QHE4BXfl/ynQ0YN3bTbJ
-	Sp+ikLiS3EHWJvdMzzM/RRZZoOSIKTQnnm+4QIG8Nvm5ddq2CAYBECtCyy+FKaTJs1m6xKRWY8g
-	aM4BrRn8/Xxp2R7F7o8Jyf2QXO+HPxyNYpdQ0niEfsbO7Lb0aWIgMW/Djs+doDTEu0vy2Q1uCyE
-	ovjlRu13SfCuK18uR+n5lLSW8QfmZjuZm+BzBY+vSDW9e2CQYmOFvpYs1JCJbnXcDLbfzP+ilRZ
-	rcRhH6IpY57nDfJ7IcWYyndewDfd0XjjzkH50RrjZUWe5NhsO9BxcmvJrHgn9CnEZKZNStaOJAG
-	G7G85MR59eBg3qMLxGCLZAJxwFNmT3cfMNgNNTPv1faLgIRt0R+eKFbooIw7Ia9w==
-X-Google-Smtp-Source: AGHT+IF/37Md94bLY6qR/ziv9TViQwjGMpKwmUGK0lvbcCIcjZbOGWnp2GdAMRDeHQgsprf/tPWO5g==
-X-Received: by 2002:a17:903:3d0d:b0:24f:8286:9e5d with SMTP id d9443c01a7336-290d14e83ddmr370668455ad.26.1761329910062;
-        Fri, 24 Oct 2025 11:18:30 -0700 (PDT)
-Received: from ?IPV6:2405:201:8000:a149:4670:c55c:fe13:754d? ([2405:201:8000:a149:4670:c55c:fe13:754d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946ded7c8bsm62731145ad.22.2025.10.24.11.18.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 11:18:29 -0700 (PDT)
-Message-ID: <c4278250-4506-45d4-b0df-71247256eecd@gmail.com>
-Date: Fri, 24 Oct 2025 23:48:24 +0530
+        d=1e100.net; s=20230601; t=1761329929; x=1761934729;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IRFK4cOMW+kcSMn9HpIyzq2Gx8pGlfR7x7MK7vaKSWQ=;
+        b=AXj8Ab+mDuigiJREIbARA3Cx0w1NHy9EvaHMZhWZw9pr1/eZwIDG555XUFuUffYO/x
+         V98Sph8WlS58hZMXtD1y7qtN5sjH4I/vwu/sEMU41WV9P6onn7OGnDZxtl2FvQSfmVAE
+         k6kAZAb6eUisbEVKBJI2P1w9DJ3yA0rZ/22czMyQ4+bLon7XwVk1EEHydDHUhFCKtmp3
+         +B/D5LwrPBbjkpWNyf7/KlqS6ZWpybB7QD0triHk5EdJKLSvw9H3sZ7hc/zos+GVN7SM
+         jSFzTGWJvgF7iRhVSm+uPZ79HsGGtOYjXgUgdGYt6MmcmXAIWU28+AoKMPahDgbtg1/l
+         oYiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZhsmitr2fOdn3J9+b8bWjKLOD4eLvDToyBLr1qvg+RzNjY0gf5rmFlpX9d94MUizylsATyE/oqFazjC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdos05Al9BT6zAH0JFeJFUhl5WONqrKp1cj/wla64Rdn+Kv9PG
+	TGgmHcvCIQRAXPu45yW97eqoM567h0PkTx8e9MnacsrO9XpcbeEuglgIQo/u4VivoEO2NvP5i49
+	9EKqekXWiQ2k1ho8ZQybzVg2E3nMvK9Tqkgo8OTppsKHBoFRKMY1JMShqPAEYatyle+s=
+X-Gm-Gg: ASbGncu3pu3Qcg6teqeQYqdxLOpI5upTsGD/d9JSe+60/NTtffTm3fiuq0yWufjZc4M
+	dYtmyjzKyz5Xv7wc69rsVPgC55F91ELnkYs5UpHtRGFBTTpBXVaxA0HKu/txetgo6DxllFVHDzW
+	B4HW6p/rS8/S16g31l02fNrofTwJKoDIiw88PiiDU9yCaw9BnlhQLQKHBbltny5bylDGt2MyYrP
+	rCuo1XfyGn9HWr7RhtZm77Xu2zccd1GTitbhkrTaDJFLB5iTUiiBGXW3yTIzOXE0sOLgv6qLDFL
+	V7K8fU/goO/BdKkuwwPZ1DRV5GzAsgkHpbqbj4hiwF7sqyPepU+rU8FUUHCPA76EeWwtbcUcevt
+	tOpFo/qkeiioEfrD2HEIJHwWzGrmra+yM82Xn
+X-Received: by 2002:a17:902:ccce:b0:291:2b6f:cf64 with SMTP id d9443c01a7336-2948ba5b7a7mr38569395ad.55.1761329929517;
+        Fri, 24 Oct 2025 11:18:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxmSFrHaASCsFr+5s4+V4woE9zhvtI9rXOx7daC/mzgx4vqNPPBLgn3gf82z4cvVigpg+Twg==
+X-Received: by 2002:a17:902:ccce:b0:291:2b6f:cf64 with SMTP id d9443c01a7336-2948ba5b7a7mr38569005ad.55.1761329929031;
+        Fri, 24 Oct 2025 11:18:49 -0700 (PDT)
+Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dfd0405sm62398045ad.66.2025.10.24.11.18.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 11:18:48 -0700 (PDT)
+From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Subject: [PATCH v3 0/2] Implement vbus support for HD3SS3220 port controller
+Date: Fri, 24 Oct 2025 23:48:30 +0530
+Message-Id: <20251024181832.2744502-1-krishna.kurapati@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] net: ethernet: emulex: benet: fix adapter->fw_on_flash
- truncation warning
-To: ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
- somnath.kotur@broadcom.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, khalid@kernel.org, david.hunter.linux@gmail.com,
- linux-kernel-mentees@lists.linux.dev
-References: <20251024180926.3842-1-spyjetfayed@gmail.com>
-Content-Language: en-US
-From: Ankan Biswas <spyjetfayed@gmail.com>
-Autocrypt: addr=spyjetfayed@gmail.com; keydata=
- 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
- TRpGew2ozniUMliyaLH9UH6/e9Us
-In-Reply-To: <20251024180926.3842-1-spyjetfayed@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAxOCBTYWx0ZWRfX76vpcpYfiMm/
+ 17PYq0E66ZNC/N9kwq89E1IEH5VkGgUn3eVrd+VGrCgq+HaDx+B4245zi3tJTgTm5k1PgTPNOqA
+ wMq2RZj3WatJxPy4CJytzjyrHaxvwIiKLXtzmtH84xJbmYcG1zYGOxGF/l3rZxno4yMZY5xSIFe
+ /dtxzCzr8wZwJO5D59k6MPEetCK1RIbPNkD2AOt0Snvbbze5WzpENh0ujcOOJ6NbR7Z9qvNf0Im
+ Hi/pAizF5UuCvs6YAE854aViI6aFhi6gmeFFnDW6q1A/pvSnaIZk1Sy1H1MqfJzGl9M0JGexAW3
+ M9DYhHB/wRSC3/iWr9JY5GKlVinJBR0FjCka2wD0l/iGlAGj2vpT5dhleJPuK/6v5LtAmAvc9BQ
+ p+kLoK5gRyJL1fKcBHJh7fiZK2IhnA==
+X-Authority-Analysis: v=2.4 cv=G4UR0tk5 c=1 sm=1 tr=0 ts=68fbc30a cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=gs8g10pPhjI8XjwtQ3cA:9 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: Yu65Dc-Kd_qotNx3LpkookMSr0TByi8_
+X-Proofpoint-ORIG-GUID: Yu65Dc-Kd_qotNx3LpkookMSr0TByi8_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-24_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 suspectscore=0 adultscore=0 clxscore=1015
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510180018
 
-Hi all,
+As per the data sheet of HD3SS3220:
 
-Please ignore [PATCH] and [PATCH v2].
+"Upon detecting a UFP device, HD3SS3220 will keep ID pin high if VBUS is
+not at VSafe0V. Once VBUS is at VSafe0V, the HD3SS3220 will assert ID pin
+low. This is done to enforce Type-C requirement that VBUS must be at
+VSafe0V before re-enabling VBUS"
 
-I have send [PATCH v3].
+This series implements support to read ID pin state and accordingly enable
+VBUS.
 
-Best Regards,
-Ankan Biswas
+Changes in v3:
+Removed vbus supply from hd3ss3220 bindings.
+Implemented getting vbus from connector node.
+
+Link to v2:
+https://lore.kernel.org/all/20251008175750.1770454-1-krishna.kurapati@oss.qualcomm.com/
+
+Changes in v2:
+Fixed inclusion of header files appropriately.
+Modified commit text for driver patch.
+
+Link to v1:
+https://lore.kernel.org/all/20251002172539.586538-1-krishna.kurapati@oss.qualcomm.com/
+
+Krishna Kurapati (2):
+  dt-bindings: usb: ti,hd3ss3220: Add support for VBUS based on ID state
+  usb: typec: hd3ss3220: Enable VBUS based on ID pin state
+
+ .../devicetree/bindings/usb/ti,hd3ss3220.yaml |   8 ++
+ drivers/usb/typec/hd3ss3220.c                 | 101 ++++++++++++++++++
+ 2 files changed, 109 insertions(+)
+
+-- 
+2.34.1
+
 
