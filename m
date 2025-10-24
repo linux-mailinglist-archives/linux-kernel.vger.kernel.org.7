@@ -1,182 +1,64 @@
-Return-Path: <linux-kernel+bounces-869583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C2CC083C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:22:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF69C083C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 Oct 2025 00:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4EB7D4EAD66
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:22:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 931EA188B92E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F9230C600;
-	Fri, 24 Oct 2025 22:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8212D30C600;
+	Fri, 24 Oct 2025 22:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbHTXBsI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8DBnfyU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631552248A5;
-	Fri, 24 Oct 2025 22:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93E42D4B4B;
+	Fri, 24 Oct 2025 22:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761344562; cv=none; b=EBqrlbeRKqIr67QHQ8roxjl+akztY2Yx2hxqF6iKu0HjVS1xjLdOgRJksa5nW7Xoutj+t0nJ3osnSZbOdRt90g/1/DHrd5SeNKqpZrURE8GkaErSE1miVcW7CfNaE5v5lYtohztNdEqwanCyJRHKhixRRMDj5k/FlGLQEiCl6AU=
+	t=1761344830; cv=none; b=QsxPMh1LuYQISrTdn1zXFD1nU7Gk/sNjc7U4TICncUdPbMBaG0W+ZfRTHjwqQRjt02EYwrSVpfmMf4rPxH2p5Fy2L+paH32k6we3aLokuUESaStGG92K+INJYLq7qCXZqvcdifqviZI+o/fT9IdCwUtIUV0mKrfLaRqMsY7HEPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761344562; c=relaxed/simple;
-	bh=x0eiuXrdmTl6hh6U1I+z1v6iUg7ks7RxigDFkDZWKbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iLDPU1XmqnbgoQ58iainDa0HQLKhzHMvucM/us1YmQhT2apHQt0uWdrXeHlYtWs6k6oCcBRpOheLB/h+khcdJjYl1WEbiSradq2uBVeSacpaAwJ32Pz8pg4cw91qEKuZlW6+iTTA1u9oEmXYtuodGGzrym5/OOyBkIq+dFLTKfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JbHTXBsI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F373C4CEF1;
-	Fri, 24 Oct 2025 22:22:41 +0000 (UTC)
+	s=arc-20240116; t=1761344830; c=relaxed/simple;
+	bh=P0JOGPiW4WGWHT0Vm0W96zgmiSISxAEZfrnCs4PAoCk=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References; b=Q1vRdjH1IUlPofPlOyMQHYKW4LgIUawwyG/MSWjcRRqbjauqEz1ERL8ZF1NSMb1ga8CskrDSUI4YZ+mr3ovAA6uhWobjqSa42By2rJLtuLvA2x9nnN8BvO5HR85JkTecQpyThGJo+J7Ih1lksMJFuHZtz2dU3X3b+zYA9N+Utjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8DBnfyU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28926C4CEF1;
+	Fri, 24 Oct 2025 22:27:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761344561;
-	bh=x0eiuXrdmTl6hh6U1I+z1v6iUg7ks7RxigDFkDZWKbo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JbHTXBsIXMb6emK76hDcATn+fSmBmiiQuVccYbvGBtu7/wJZuAsixrnMSPui1bXuB
-	 hvuLm1UHbXY68wuMBX94ZrI7r03On5Bj9kUyr0lXHU8azoIns2kQw+UsI1XnbbNECj
-	 1TIv3cCpoFGUF0yAJPV+LGfi0UJUBPtuMiXNZIf/aTEeFPSHr+B326vjKDpQZCAVTt
-	 s82D4TcOJ4DEVnBT/fT9IvB2svXVymb1WEFTSJLimZRJeFDqGrBqS8SwkoZX/IB2rN
-	 LH0r65oLfsfTBw+e76G4BdjGL6qUxjBC4VTsyODZ+cPA353GUBdv7d1Yc6wZu59dQ+
-	 Yr3LjJfQVu/bQ==
-Date: Fri, 24 Oct 2025 17:22:39 -0500
-From: Rob Herring <robh@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, hehuan1@eswincomputing.com,
-	krzk+dt@kernel.org, conor+dt@kernel.org, jszhang@kernel.org,
-	adrian.hunter@intel.com, p.zabel@pengutronix.de,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com,
-	xuxiang@eswincomputing.com, luyulin@eswincomputing.com,
-	dongxuyang@eswincomputing.com, zhangsenchuan@eswincomputing.com,
-	weishangjuan@eswincomputing.com, lizhi2@eswincomputing.com,
-	caohang@eswincomputing.com,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: mmc: sdhci-of-dwcmshc: Add Eswin
- EIC7700
-Message-ID: <20251024222239.GA2902515-robh@kernel.org>
-References: <20251019115133.300-1-hehuan1@eswincomputing.com>
- <20251019115238.320-1-hehuan1@eswincomputing.com>
- <CAPDyKFqGwTF2w2JfqOuxMt6m_YJOYhqoUaQXyZALRu94W3fGkQ@mail.gmail.com>
- <20251024-aghast-poster-82ee7aa7fdca@spud>
- <20251024-polyester-gatherer-e7f5e4300262@spud>
+	s=k20201202; t=1761344828;
+	bh=P0JOGPiW4WGWHT0Vm0W96zgmiSISxAEZfrnCs4PAoCk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=N8DBnfyUYuy1bF2lYOX5lhKtAli2Zq5IrUl0ut0yyRNeGlJT+2ReId9cGk7ylNs9f
+	 B4nYC+G8FDkgpdYDfemKELwhJOawzG6nt4upWnZwWRf9o5IOf4U3u2U+mJt5JuCCJi
+	 qiwT8lYsYdANC6kJs73DqDHEGK/WrHFyz7mfce6ljfDEgyq8z6Bwze94X9rmKsDpRe
+	 aqvyC9dJ3gxnRIhUzihST8DjoOXwjTGiBvRYJ9wXxkn3GnVScTyTGz/u74OKy553gO
+	 /IAR1wBcdfWS9xjby54u8b9FsULXytzN8EhjH+BVZB+UEmLCYXj7G2ZtAv1v0YW6cJ
+	 cVUX5+xQdevKg==
+Date: Fri, 24 Oct 2025 12:27:07 -1000
+Message-ID: <5046d156f3991d7d8cbc0bc18401df85@kernel.org>
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>, Ryan Newton <newton@meta.com>, sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.19] sched_ext: Fix scx_bpf_dsq_peek() with FIFO DSQs
+In-Reply-To: <20251024220102.1556384-1-arighi@nvidia.com>
+References: <20251024220102.1556384-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024-polyester-gatherer-e7f5e4300262@spud>
 
-On Fri, Oct 24, 2025 at 10:47:34PM +0100, Conor Dooley wrote:
-> On Fri, Oct 24, 2025 at 05:37:59PM +0100, Conor Dooley wrote:
-> > On Fri, Oct 24, 2025 at 03:57:33PM +0200, Ulf Hansson wrote:
-> > > On Sun, 19 Oct 2025 at 13:52, <hehuan1@eswincomputing.com> wrote:
-> > > >
-> > > > From: Huan He <hehuan1@eswincomputing.com>
-> > > >
-> > > > EIC7700 use Synopsys dwcmshc IP for SD/eMMC controllers.
-> > > > Add Eswin EIC7700 support in sdhci-of-dwcmshc.yaml.
-> > > >
-> > > > Signed-off-by: Huan He <hehuan1@eswincomputing.com>
-> > > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> > > > ---
-> > > >  .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 57 +++++++++++++++++--
-> > > >  1 file changed, 51 insertions(+), 6 deletions(-)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> > > > index f882219a0a26..7e7c55dc2440 100644
-> > > > --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> > > > +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
-> > > > @@ -30,6 +30,7 @@ properties:
-> > > >            - sophgo,sg2002-dwcmshc
-> > > >            - sophgo,sg2042-dwcmshc
-> > > >            - thead,th1520-dwcmshc
-> > > > +          - eswin,eic7700-dwcmshc
-> > > >
-> > > >    reg:
-> > > >      maxItems: 1
-> > > > @@ -52,17 +53,30 @@ properties:
-> > > >      maxItems: 5
-> > > >
-> > > >    reset-names:
-> > > > -    items:
-> > > > -      - const: core
-> > > > -      - const: bus
-> > > > -      - const: axi
-> > > > -      - const: block
-> > > > -      - const: timer
-> > > > +    maxItems: 5
-> > > >
-> > > >    rockchip,txclk-tapnum:
-> > > >      description: Specify the number of delay for tx sampling.
-> > > >      $ref: /schemas/types.yaml#/definitions/uint8
-> > > >
-> > > > +  eswin,hsp-sp-csr:
-> > > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > > > +    items:
-> > > > +      - items:
-> > > > +          - description: Phandle to HSP(High-Speed Peripheral) device
-> > > > +          - description: Offset of the stability status register for internal
-> > > > +                         clock.
-> > > > +          - description: Offset of the stability register for host regulator
-> > > > +                         voltage.
-> > > > +    description:
-> > > > +      HSP CSR is to control and get status of different high-speed peripherals
-> > > > +      (such as Ethernet, USB, SATA, etc.) via register, which can tune
-> > > > +      board-level's parameters of PHY, etc.
-> > > 
-> > > I would like second confirmation from DT maintainers, to make sure
-> > > it's reasonable to model the HW like this.
-> > 
-> > If by second confirmation, you mean by someone other than me, obviously
-> > ignore this, but I think this is "fine". It discussed on a previous
-> > revision that all is being done with it is setting a handful bits that
-> > signify that the peripheral has been configured correctly.
-> > 
-> > That said, I don't have a clue what's going on with the warning about
-> > the dwmac device. That's definitely one for Rob.
-> 
-> Apparently it's just as simple as there being more than one definition
-> of the same property. I had it in my head that that was okay when only
-> one binding was applied to the node, but clearly not.
-> 
-> I'll have to un-review it until that error is sorted out.
+> Andrea Righi (1):
+>   sched_ext: Fix scx_bpf_dsq_peek() with FIFO DSQs
 
-This binding is fine. The error is in the eswin,eic770-eth.yaml binding:
+Applied to sched_ext/for-6.19.
 
-  eswin,hsp-sp-csr:
-    $ref: /schemas/types.yaml#/definitions/phandle-array
-    items:
-      - description: Phandle to HSP(High-Speed Peripheral) device
-      - description: Offset of phy control register for internal
-                     or external clock selection
-      - description: Offset of AXI clock controller Low-Power request
-                     register
-      - description: Offset of register controlling TX/RX clock delay
-    description: |
-      High-Speed Peripheral device needed to configure clock selection,
-      clock low-power mode and clock delay.
-
-
-The issue here is phandle-array is really a matrix and an outer 'items' 
-is needed to say there is 1 entry with 4 cells. Like this:
-
-items:
-  - items:
-      - description: ...
-      - description: ...
-      - description: ...
-      - description: ...
-
-Please send a fix for that.
-
-The tools could handle this case better, so I'll look into a fix for 
-them.
-
-Rob
+Thanks.
+--
+tejun
 
