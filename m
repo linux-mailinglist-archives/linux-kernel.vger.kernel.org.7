@@ -1,263 +1,196 @@
-Return-Path: <linux-kernel+bounces-869012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A984C06B5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:33:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56BBCC06B7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B606D348737
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:33:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE9464E237C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB5F31A06A;
-	Fri, 24 Oct 2025 14:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E955031578B;
+	Fri, 24 Oct 2025 14:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QWmua2NW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHYW7dRh"
+Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E512DAFC0
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07BF1F1527
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761316417; cv=none; b=j1+HeGOkVZLvZSoSAz3bor0ovbpX3iyfndQgiS3mn01BZpL9VsAZ1e36iKEqZyk8iElD8bI/3KpO+Yyxy5cTykNPdSlGFeZYhVVwZ9S4/m6HviVC0MGWynBlkbzFCcN8mFWHLuuHva+3BE9lvLneI3S7qkluf8xCOHEsaMAXdYI=
+	t=1761316492; cv=none; b=Kivw5ucxvb5J/29MNoGPKutJ03HqdbloZVMg9lI79xU2tdipPLOe8aLXPZ6OC7IFehr5vM/B6ed5B2naNl+g+Z1f6OUbhKHCRwjO7wZLKRLL2HA2bvTV8FauQgO21KySoOp1q3yQAMOd4stq/w+eGeJZe6zjx/75Ss5fH7gdfTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761316417; c=relaxed/simple;
-	bh=St2tGCQEewbnfrbUK5ouJM4MBPRSJieB8IQU4yLWqf4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RtYh7897G1EYYDcixpS4/NBcjE9z8MArDI1aIZYpKdISBpmhPlRyoQ0bOHhldjrer/7XTH1zGsKWUjcIDTA+OZUpoveXf3qEf1m7NVZlEV7vozeiV88kOjMMlehze0UzLkOcSNMo+Yub/CyhoMgahaAPJIquoQPq+HCcYI1gH3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QWmua2NW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761316414;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qMR4VmIIzn/w/4nNJSUeQgFleHSwnzkaVnDEewrnAfI=;
-	b=QWmua2NWfwpSQJ4qBGBbEepLWsTznEHDfzXVzWccjzDkFVK4kc788pQk5ZyQhtqFuwakTm
-	2NUHI/T3gRw+61g3c/SYWJUSa7wf3esow7k4Wkjm53jSbSzgjGwDBl8JwdGX/ZEtu5dfPj
-	Y4PeiDa/MtFbqd4R7ZRu7RFYrTbDw9c=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-298-orTfLy_tPTi8J-3n4hjz-g-1; Fri, 24 Oct 2025 10:33:32 -0400
-X-MC-Unique: orTfLy_tPTi8J-3n4hjz-g-1
-X-Mimecast-MFC-AGG-ID: orTfLy_tPTi8J-3n4hjz-g_1761316412
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b6d5fd15aebso106778466b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:33:32 -0700 (PDT)
+	s=arc-20240116; t=1761316492; c=relaxed/simple;
+	bh=a27ALe2yhOhsvti6rryDm6Ym6QY92NcDKqoAWfwQi2Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cvuQjTchECF4gzIwRHSFgMWd/4FExBsrEmWJUo0ybKppWHqIFlhoxAH+dNo9y+D9AIitRlMPjB0BdZrXe1+gMVbU7mIJUjGaK8vyHf4eiy8JbHgSDbKPMFWkTwKDonnNICPtPW12zwAgcj3voHmIK1rvLx5srDTVczuzJWx7mso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHYW7dRh; arc=none smtp.client-ip=209.85.215.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-b6cf1a95273so1567273a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:34:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761316490; x=1761921290; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iQj29ABrwrijpvys50cDvqcS4VYVuuORqVZjjQai77I=;
+        b=LHYW7dRhkJQVqCczSJ1nFqp6lBAog5W2mMpQ5vAe34oOHiehZxG+2pq9JWETM7/FLE
+         0fweWG8QQRXH6K1cf2taGMxlYQRpOP7/mLOFqWx11SIw0ZV9VnuOL4NLSLdXpapLbLMu
+         0lvmBjal6QzKE5wS4z9hZUoupCyk8+VZ+fQARFv51AfkOU7CpQWBmFFbBLZb161TAIom
+         MxPTtnWh1CUqDN5WFVsw2/rZ/U8euub9lNm/Wr6L99etrSzjve8sGrul3qgxMK9rCpEB
+         K8Lvar5vw1ZJy2LBxB/lUGzrfCMfwbKVKfuojrUSDbczE1kD0/q6VFUEPX2hB0A4qhJ3
+         wCSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761316411; x=1761921211;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qMR4VmIIzn/w/4nNJSUeQgFleHSwnzkaVnDEewrnAfI=;
-        b=PBEJKCNGHsJrFImsqzG3JzLdvnYI4URXk8o9GkRRWBCjNLD2Onbi0S/Sf32KS7gcWl
-         /ACrq+BZCh1OAsEr124s96zAeLZfFDgDoQusTXzyR+/5pUY6LA3/n7YgbWDCV8FmUBZA
-         Tf43pi2uZEl67IGThtZlk6RROzQGJGuT59SMw1A8JM1TL7m46q545ybHu4TmznTbyXzD
-         Zh6eNOb5KSSyd9ST1qdkcd8SUG9rrye2QPyFceT4mbm68j6pAY6lTOZPbOxjvm/dgT/q
-         WpCWjIBv8MMFQT2giPbO+OMWVAnkXgX/LUymeTYdiHQzErEunzoq1VYYhf0+zMA/eS5y
-         mJKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXrojTVpCQinTRp2J9PCkdZQTmNRJ0Jrpr5H+BThxGkh+9A5xKBqwk9CuTqG6IPM6VM4X23x96a858wzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzKCEnrFCUKyl0KN/KjnuP/MrR2nzjz+D2Yc5hMGNBD0mJyefl
-	1ZWa5TOQoHM6mrXE6VA2ferjrKrwEjDvYaHDIsS2gWWfR6X5Wjk7J2qX4LgyQqPGOfqnIuu4w8j
-	nj8gJwq74FY3uKPVHgwd3IgA60c1/dNVRLjV6bd2L6zXq3RJDd9Gq360PigMqA3/t1A==
-X-Gm-Gg: ASbGncvHMygGHwHFE3mh0cwe65nz2XUUu1mteOcJ8WAmC0kWTmeTT5P5VmzOloMnPbO
-	dpI475aXyMPqavL4sOsvCPcxCcY+w51BZuM16VVElNjRKoV6IuiTnWvtynKvJ8dRngYc4Y2OYBU
-	M/wQI7UMKzncx+dtOBk2HOjU2VL44sF5IAdAEXSvQMUb0+d0/G45ghjRfLsIRe5Qnu0lPxsgODs
-	QXtpVIBA9FeRK85z5mt9e0j3v4C9HUhdfaODZJdAqLgorh704SfCSW1G0sgo/30xGYSR0+SXnGT
-	xwE5U53yO02E3RrReLJr+9g+0QuGwZ5co122tF3TyyFSw42NhfLIWtwUrCG5RlzwQ5ztT3Nf8bP
-	w7svUrI3KYUfzdlYDLoQa8gQ=
-X-Received: by 2002:a17:907:3daa:b0:b3d:656b:9088 with SMTP id a640c23a62f3a-b64749416admr3903159966b.54.1761316411536;
-        Fri, 24 Oct 2025 07:33:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJLEAmzEsqCaXOpu82Aaw82/w7mLyOC9azKvS1K33FnRFrN1PBJiJg/V40XnFDES8K3O5Haw==
-X-Received: by 2002:a17:907:3daa:b0:b3d:656b:9088 with SMTP id a640c23a62f3a-b64749416admr3903157466b.54.1761316411041;
-        Fri, 24 Oct 2025 07:33:31 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e3f322cf3sm4399668a12.29.2025.10.24.07.33.30
+        d=1e100.net; s=20230601; t=1761316490; x=1761921290;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iQj29ABrwrijpvys50cDvqcS4VYVuuORqVZjjQai77I=;
+        b=nfZ7go+e1AEXy2EWWXdah5qDIMf2LRgvrvdvuGlXo1FKhm8UJX+HND1huv/M+9/OUM
+         J2RJPusstr3wdO3fOs3YLPK74AyVNEZJPk7WMZL9mgSfbJDj/D64Q4Ef+8h7Fs48N0td
+         QwRYp3ETZqwWcbUxzaZIfFn0t00FirXjtSrZ2NliYpbD6Er8DnwMFYdnrd8JbZi0KrCI
+         4glwsPf0Ed4ljvpIvibD8GinowjVODwhmz7f9ToobgttNc8Sczss+hnfiXd6cvOF2vpk
+         j+AJSfjmLLVNmDt5hkbASIJTwLEzgCIcBDu970UZxoBINyGxcs0i6ojEAcQBz0/c8gZ+
+         4IdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUMpOzjZqx7QrLgmYBgLxVT0se5xyarNsFo0SH0q5E/M0WbLZbWv+zU4QxQomWVxPVAWsd5CPrdF5+N4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLxo9yxhycUUtsZOLoyKCSJF9MMm/7Y7oZTSCIbQjIRUvzUd43
+	6ffP5EDSki8x6njYDpFihcWDeWfhidBWWCytvjN1qKWgDPfzpsw64cqJ
+X-Gm-Gg: ASbGncsK0Vu0jJzxh6gIYksl6DcUX5xniY/J7tWVQT40seET1AjDZvwToI+4nphXxuL
+	spVmHRt4QKHH2Y+xm32fXrJ6zZmhUhujU5ELOBC+cxIWEXNO6wXDk6y1z4mmFJ8/gRCZkJ0oZ/r
+	2kTw2lDs2jHLkfp9z81mRBen1UPrPxUun4BXdWbm8t9EHFphOR0XjE5+5UlqYnDvzCTbGjF6Rge
+	8loRec8kI8gDmsu9GOQU6LJmsQpDJRFPQT5+uH7ieHrZeB2SjfJTboX8TS3QeDaU5xOSaadLrkw
+	AmO5A8+OpOMoqAG+I/AA1NCRwfV/3hInnC9j6bdv9aK5hDzhocyfwxfowaoDclpm8W5VGVGvWki
+	QGaN5WBZbrpr3x1gkvjnKlmdHCUf0q0IsMl6T7hiUruU7NCcjU5m7j3IQI1ObkRsZ4RPyyVAO4Y
+	Ttvw0=
+X-Google-Smtp-Source: AGHT+IErBmFAi51GQfjC8jK8NrYQnDRXpNCqWG1VH5g/DWOWsQEd2w+wLD8u7UXeR1pIgqcyE2avew==
+X-Received: by 2002:a17:903:384c:b0:27e:d9a0:ba08 with SMTP id d9443c01a7336-290cb27dae5mr359060835ad.43.1761316489794;
+        Fri, 24 Oct 2025 07:34:49 -0700 (PDT)
+Received: from sf2-6.. ([110.93.227.81])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946de00dc7sm57822215ad.39.2025.10.24.07.34.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 07:33:30 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 8F4982EA579; Fri, 24 Oct 2025 16:33:29 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Jesper Dangaard Brouer <hawk@kernel.org>, netdev@vger.kernel.org,
- makita.toshiaki@lab.ntt.co.jp
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, Eric Dumazet
- <eric.dumazet@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- ihor.solodrai@linux.dev, toshiaki.makita1@gmail.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
-Subject: Re: [PATCH net V1 3/3] veth: more robust handing of race to avoid
- txq getting stuck
-In-Reply-To: <176123158453.2281302.11061466460805684097.stgit@firesoul>
-References: <176123150256.2281302.7000617032469740443.stgit@firesoul>
- <176123158453.2281302.11061466460805684097.stgit@firesoul>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Fri, 24 Oct 2025 16:33:29 +0200
-Message-ID: <871pmsfjye.fsf@toke.dk>
+        Fri, 24 Oct 2025 07:34:49 -0700 (PDT)
+From: Ali Tariq <alitariq45892@gmail.com>
+To: kernel@esmil.dk
+Cc: alitariq45892@gmail.com,
+	brgl@bgdev.pl,
+	hal.feng@starfivetech.com,
+	linus.walleij@linaro.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] pinctrl: starfive: use dynamic GPIO base allocation
+Date: Fri, 24 Oct 2025 14:33:53 +0000
+Message-ID: <20251024143353.71753-1-alitariq45892@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CANBLGcygpsp=R5gM7NeuVO-JG1yfQJ_0dhnFfL1ud=291cJZAQ@mail.gmail.com>
+References: <CANBLGcygpsp=R5gM7NeuVO-JG1yfQJ_0dhnFfL1ud=291cJZAQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Jesper Dangaard Brouer <hawk@kernel.org> writes:
+The JH7110 pinctrl driver currently sets a static GPIO base number from
+platform data:
 
-> Commit dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to
-> reduce TX drops") introduced a race condition that can lead to a permanently
-> stalled TXQ. This was observed in production on ARM64 systems (Ampere Altra
-> Max).
->
-> The race occurs in veth_xmit(). The producer observes a full ptr_ring and
-> stops the queue (netif_tx_stop_queue()). The subsequent conditional logic,
-> intended to re-wake the queue if the consumer had just emptied it (if
-> (__ptr_ring_empty(...)) netif_tx_wake_queue()), can fail. This leads to a
-> "lost wakeup" where the TXQ remains stopped (QUEUE_STATE_DRV_XOFF) and
-> traffic halts.
->
-> This failure is caused by an incorrect use of the __ptr_ring_empty() API
-> from the producer side. As noted in kernel comments, this check is not
-> guaranteed to be correct if a consumer is operating on another CPU. The
-> empty test is based on ptr_ring->consumer_head, making it reliable only for
-> the consumer. Using this check from the producer side is fundamentally racy.
->
-> This patch fixes the race by adopting the more robust logic from an earlier
-> version V4 of the patchset, which always flushed the peer:
->
-> (1) In veth_xmit(), the racy conditional wake-up logic and its memory barrier
-> are removed. Instead, after stopping the queue, we unconditionally call
-> __veth_xdp_flush(rq). This guarantees that the NAPI consumer is scheduled,
-> making it solely responsible for re-waking the TXQ.
+  sfp->gc.base = info->gc_base;
 
-This makes sense.
+Static base assignment is deprecated and results in the following warning:
 
-> (2) On the consumer side, the logic for waking the peer TXQ is centralized.
-> It is moved out of veth_xdp_rcv() (which processes a batch) and placed at
-> the end of the veth_poll() function. This ensures netif_tx_wake_queue() is
-> called once per complete NAPI poll cycle.
+  gpio gpiochip0: Static allocation of GPIO base is deprecated,
+  use dynamic allocation.
 
-So is this second point strictly necessary to fix the race, or is it
-more of an optimisation?
+Set `sfp->gc.base = -1` to let the GPIO core dynamically allocate
+the base number. This removes the warning and aligns the driver
+with current GPIO guidelines.
 
-> (3) Finally, the NAPI completion check in veth_poll() is updated. If NAPI is
-> about to complete (napi_complete_done), it now also checks if the peer TXQ
-> is stopped. If the ring is empty but the peer TXQ is stopped, NAPI will
-> reschedule itself. This prevents a new race where the producer stops the
-> queue just as the consumer is finishing its poll, ensuring the wakeup is not
-> missed.
+Tested on VisionFive 2 (JH7110 SoC).
 
-Also makes sense...
+Signed-off-by: Ali Tariq <alitariq45892@gmail.com>
+---
+Changes in v2
+ - Remove unused gc_base field from struct jh7110_pinctrl_soc_info
+ - Drop unused JH7110_SYS_GC_BASE and JH7110_AON_GC_BASE defines
+ - Remove .gc_base assignments from jh7110_sys_pinctrl_info and jh7110_aon_pinctrl_info
+ - No functional change otherwise
+---
+ drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c | 2 --
+ drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c | 2 --
+ drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c     | 2 +-
+ drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h     | 1 -
+ 4 files changed, 1 insertion(+), 6 deletions(-)
 
-> Fixes: dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to reduce TX drops")
-> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
-> ---
->  drivers/net/veth.c |   42 +++++++++++++++++++++---------------------
->  1 file changed, 21 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-> index 3976ddda5fb8..1d70377481eb 100644
-> --- a/drivers/net/veth.c
-> +++ b/drivers/net/veth.c
-> @@ -392,14 +392,12 @@ static netdev_tx_t veth_xmit(struct sk_buff *skb, struct net_device *dev)
->  		}
->  		/* Restore Eth hdr pulled by dev_forward_skb/eth_type_trans */
->  		__skb_push(skb, ETH_HLEN);
-> -		/* Depend on prior success packets started NAPI consumer via
-> -		 * __veth_xdp_flush(). Cancel TXQ stop if consumer stopped,
-> -		 * paired with empty check in veth_poll().
-> -		 */
->  		netif_tx_stop_queue(txq);
-> -		smp_mb__after_atomic();
-> -		if (unlikely(__ptr_ring_empty(&rq->xdp_ring)))
-> -			netif_tx_wake_queue(txq);
-> +		/* Handle race: Makes sure NAPI peer consumer runs. Consumer is
-> +		 * responsible for starting txq again, until then ndo_start_xmit
-> +		 * (this function) will not be invoked by the netstack again.
-> +		 */
-> +		__veth_xdp_flush(rq);
-
-Nit: I'd lose the "Handle race:" prefix from the comment; the rest of
-the comment is clear enough without it, and since there's no explanation
-of *which* race is being handled, it is just confusing, IMO.
-
->  		break;
->  	case NET_RX_DROP: /* same as NET_XMIT_DROP */
->  drop:
-> @@ -900,17 +898,9 @@ static int veth_xdp_rcv(struct veth_rq *rq, int budget,
->  			struct veth_xdp_tx_bq *bq,
->  			struct veth_stats *stats)
->  {
-> -	struct veth_priv *priv = netdev_priv(rq->dev);
-> -	int queue_idx = rq->xdp_rxq.queue_index;
-> -	struct netdev_queue *peer_txq;
-> -	struct net_device *peer_dev;
->  	int i, done = 0, n_xdpf = 0;
->  	void *xdpf[VETH_XDP_BATCH];
->  
-> -	/* NAPI functions as RCU section */
-> -	peer_dev = rcu_dereference_check(priv->peer, rcu_read_lock_bh_held());
-> -	peer_txq = peer_dev ? netdev_get_tx_queue(peer_dev, queue_idx) : NULL;
-> -
->  	for (i = 0; i < budget; i++) {
->  		void *ptr = __ptr_ring_consume(&rq->xdp_ring);
->  
-> @@ -959,11 +949,6 @@ static int veth_xdp_rcv(struct veth_rq *rq, int budget,
->  	rq->stats.vs.xdp_packets += done;
->  	u64_stats_update_end(&rq->stats.syncp);
->  
-> -	if (peer_txq && unlikely(netif_tx_queue_stopped(peer_txq))) {
-> -		txq_trans_cond_update(peer_txq);
-> -		netif_tx_wake_queue(peer_txq);
-> -	}
-> -
->  	return done;
->  }
->  
-> @@ -971,12 +956,20 @@ static int veth_poll(struct napi_struct *napi, int budget)
->  {
->  	struct veth_rq *rq =
->  		container_of(napi, struct veth_rq, xdp_napi);
-> +	struct veth_priv *priv = netdev_priv(rq->dev);
-> +	int queue_idx = rq->xdp_rxq.queue_index;
-> +	struct netdev_queue *peer_txq;
->  	struct veth_stats stats = {};
-> +	struct net_device *peer_dev;
->  	struct veth_xdp_tx_bq bq;
->  	int done;
->  
->  	bq.count = 0;
->  
-> +	/* NAPI functions as RCU section */
-> +	peer_dev = rcu_dereference_check(priv->peer, rcu_read_lock_bh_held());
-> +	peer_txq = peer_dev ? netdev_get_tx_queue(peer_dev, queue_idx) : NULL;
-> +
->  	xdp_set_return_frame_no_direct();
->  	done = veth_xdp_rcv(rq, budget, &bq, &stats);
->  
-> @@ -986,7 +979,8 @@ static int veth_poll(struct napi_struct *napi, int budget)
->  	if (done < budget && napi_complete_done(napi, done)) {
->  		/* Write rx_notify_masked before reading ptr_ring */
->  		smp_store_mb(rq->rx_notify_masked, false);
-> -		if (unlikely(!__ptr_ring_empty(&rq->xdp_ring))) {
-> +		if (unlikely(!__ptr_ring_empty(&rq->xdp_ring) ||
-> +			     (peer_txq && netif_tx_queue_stopped(peer_txq)))) {
->  			if (napi_schedule_prep(&rq->xdp_napi)) {
->  				WRITE_ONCE(rq->rx_notify_masked, true);
->  				__napi_schedule(&rq->xdp_napi);
-> @@ -998,6 +992,12 @@ static int veth_poll(struct napi_struct *napi, int budget)
->  		veth_xdp_flush(rq, &bq);
->  	xdp_clear_return_frame_no_direct();
->  
-> +	/* Release backpressure per NAPI poll */
-> +	if (peer_txq && netif_tx_queue_stopped(peer_txq)) {
-> +		txq_trans_cond_update(peer_txq);
-> +		netif_tx_wake_queue(peer_txq);
-> +	}
-> +
->  	return done;
->  }
->  
+diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c
+index cf42e204cbf0..3433b3c91692 100644
+--- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c
++++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-aon.c
+@@ -29,7 +29,6 @@
+ #include "pinctrl-starfive-jh7110.h"
+ 
+ #define JH7110_AON_NGPIO		4
+-#define JH7110_AON_GC_BASE		64
+ 
+ #define JH7110_AON_REGS_NUM		37
+ 
+@@ -138,7 +137,6 @@ static const struct jh7110_pinctrl_soc_info jh7110_aon_pinctrl_info = {
+ 	.pins		= jh7110_aon_pins,
+ 	.npins		= ARRAY_SIZE(jh7110_aon_pins),
+ 	.ngpios		= JH7110_AON_NGPIO,
+-	.gc_base	= JH7110_AON_GC_BASE,
+ 	.dout_reg_base	= JH7110_AON_DOUT,
+ 	.dout_mask	= GENMASK(3, 0),
+ 	.doen_reg_base	= JH7110_AON_DOEN,
+diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c
+index 03c2ad808d61..9b67063a0b0b 100644
+--- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c
++++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110-sys.c
+@@ -29,7 +29,6 @@
+ #include "pinctrl-starfive-jh7110.h"
+ 
+ #define JH7110_SYS_NGPIO		64
+-#define JH7110_SYS_GC_BASE		0
+ 
+ #define JH7110_SYS_REGS_NUM		174
+ 
+@@ -410,7 +409,6 @@ static const struct jh7110_pinctrl_soc_info jh7110_sys_pinctrl_info = {
+ 	.pins		= jh7110_sys_pins,
+ 	.npins		= ARRAY_SIZE(jh7110_sys_pins),
+ 	.ngpios		= JH7110_SYS_NGPIO,
+-	.gc_base	= JH7110_SYS_GC_BASE,
+ 	.dout_reg_base	= JH7110_SYS_DOUT,
+ 	.dout_mask	= GENMASK(6, 0),
+ 	.doen_reg_base	= JH7110_SYS_DOEN,
+diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+index 05e3af75b09f..eb5cf8c067d1 100644
+--- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
++++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+@@ -938,7 +938,7 @@ int jh7110_pinctrl_probe(struct platform_device *pdev)
+ 	sfp->gc.set = jh7110_gpio_set;
+ 	sfp->gc.set_config = jh7110_gpio_set_config;
+ 	sfp->gc.add_pin_ranges = jh7110_gpio_add_pin_ranges;
+-	sfp->gc.base = info->gc_base;
++	sfp->gc.base = -1;
+ 	sfp->gc.ngpio = info->ngpios;
+ 
+ 	jh7110_irq_chip.name = sfp->gc.label;
+diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h
+index a33d0d4e1382..2da2d6858008 100644
+--- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h
++++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.h
+@@ -38,7 +38,6 @@ struct jh7110_pinctrl_soc_info {
+ 	const struct pinctrl_pin_desc *pins;
+ 	unsigned int npins;
+ 	unsigned int ngpios;
+-	unsigned int gc_base;
+ 
+ 	/* gpio dout/doen/din/gpioinput register */
+ 	unsigned int dout_reg_base;
+-- 
+2.43.0
 
 
