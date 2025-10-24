@@ -1,225 +1,138 @@
-Return-Path: <linux-kernel+bounces-868038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BD37C04358
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:05:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E646C0435F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E5E31A071D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:05:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB8F64F466E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973D2146D53;
-	Fri, 24 Oct 2025 03:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31A92459CF;
+	Fri, 24 Oct 2025 03:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="i1pNgha/"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazolkn19012053.outbound.protection.outlook.com [52.103.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HjEyUQiy"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82181F8724
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761275113; cv=fail; b=BEBOMM2WsmcR91PfAcHfvsg/wUv9pEtjon2uIFFgvPNisyVd5fPKSf7EWB/PE1tNLhs7dd+l1+qETUH92miZFvv4k4rNO5xu5FuhVeK3aaZc7TYHRZ90THrfD6eQnuT9MK0tTdzr1Yz1sTLp4B37bZoqo8qgbRu6iKn0ZrZ7WUY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761275113; c=relaxed/simple;
-	bh=B8ts6Z88gEwtJ5SUv5QJxjns8S/jMat2IIkV1cK4GPs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HrzsRb/bcQIYJmBvI6S4+gAxgNlEL7GL8kYTWWHqxz8yeX9iA1J3lK9s3u6Xc+lN1a13ejE/sVFBDDhItN6LpkLbei4T2WMmOBziiSRhEE+hWk5w6Hl4xlVIab87mlOglOvQcXGujwnpk4YpMEorUqUAk6o9UsX0VOFrKLoLbxo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=i1pNgha/; arc=fail smtp.client-ip=52.103.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tDzbhdUo8DzMY/LkmCR6lTusmS7TdaoJLMTBDN6FvNmHH6b9nD8qY82gPk2p3Th1Rz7aBIY9BiHzncYjFBNtIMgv9KBpz3NoZxOHQCsrwel55a1giT//HM8Hq/U0fQZQ+MYgf5FAFgw5ZRg56H0+9sbm4Qk4MHNg6mrSrNVn/VMw4nAlDC42lpi+VnXBkYOuiahUlCL1OTtntFmIEukyjRiEfYD7hZWBfTc18+oOfF1LgSNN6CxpOHhHtm7o/A6virJFDybXglQMJF3qGNKuqFh0Lu7Ay9P34c6Nkx9pLgwkodyFXLlr6v01NnRtWRX+D7m2xh66xiuK27pxIczqCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ESK4Xz1JSrog1XGLNQ3YuYWaWD6y02YMpSy1BKQTTnM=;
- b=JgEW7JAmFug14uNQ3cB+2En9IaIZDDrS5wLH7WPh+8YXLLvX7fF35p4+C/MAOrc3+T9FT5zn/d55+NGJu2pVQHFNTnDbiu9BlPWmuKGi7+N3EhgvddWqg3FV2aduhpOvMIxC3PiYL8N6tk0Fe4AJQy3dqUhJNiU181bSqzdb+apt1Kh8iITRlRVmM03yOuL90DHD5niNORlT9wRh+3nR2LJi8IUJwXVI7G5xldDNQw0UtJLRHZa/c43xKr5Q4adHi1Jn1efp9rUBEZMVQBw67zN1QrYWLW7boXKelNP4PxnLLb2MOFtN385PMpeyuL0xG1amjXLvzEUXad0MgJHsAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ESK4Xz1JSrog1XGLNQ3YuYWaWD6y02YMpSy1BKQTTnM=;
- b=i1pNgha/qrZmUyZOEWVcpvisbVnEentAqBQaDC79G5U/eZ4TN9xm/GxYkkppy3ZJDZ311rIyncq33oJ06wwJzsUoptZ7fps9bwLFfcmF3ysWWEpLlRXtQFKRuAuamIpvWaqcN/x+cfocatgOqOCy70EilWGBKf6WpEitYYfLcEamil9Cr+vXGWea5nGrPqgAm7eFsyW08U5dEXajENpLbt+oQtgOb6QX7wrF1XRzfhhCpAW8GruLvpat56TiXMYe3YFuaBrd5L7FFIpilXyIpOcMdtHTvMC6vbgMxZl5OWiRnew0EYE6YWKMXfJ14OGSrXioqqjRUByRoaYAdJRRew==
-Received: from SI2PR01MB4393.apcprd01.prod.exchangelabs.com
- (2603:1096:4:1b0::7) by JH0PR01MB5947.apcprd01.prod.exchangelabs.com
- (2603:1096:990:6e::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 03:05:05 +0000
-Received: from SI2PR01MB4393.apcprd01.prod.exchangelabs.com
- ([fe80::5e86:f04a:37e5:64f1]) by SI2PR01MB4393.apcprd01.prod.exchangelabs.com
- ([fe80::5e86:f04a:37e5:64f1%5]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 03:05:05 +0000
-From: Wei Wang <wei.w.wang@hotmail.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: "suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "joro@8bytes.org"
-	<joro@8bytes.org>, "kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
-Subject: RE: [PATCH v1] iommu/amd: Set C-bit only for RAM-backed PTEs in IOMMU
- page tables
-Thread-Topic: [PATCH v1] iommu/amd: Set C-bit only for RAM-backed PTEs in
- IOMMU page tables
-Thread-Index: AQHcRC/z/2IcAo5ooUGdDRtk1NmW6bTP5FMAgACWJjA=
-Date: Fri, 24 Oct 2025 03:05:05 +0000
-Message-ID:
- <SI2PR01MB4393D52AD53469388BED8E6CDCF1A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
-References:
- <SI2PR01MB439358422CCAABADBEB21D7CDCF0A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
- <20251023160154.GM262900@nvidia.com>
-In-Reply-To: <20251023160154.GM262900@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SI2PR01MB4393:EE_|JH0PR01MB5947:EE_
-x-ms-office365-filtering-correlation-id: d7cb488f-73b1-4fd5-317d-08de12aa21f3
-x-microsoft-antispam:
- BCL:0;ARA:14566002|9112599006|31061999003|12121999013|15080799012|461199028|41001999006|19110799012|13091999003|8062599012|8060799015|102099032|51005399003|40105399003|3412199025|440099028|3420499032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?nOYHthZBKgElI8gPo4MiLXjwlBI5hpzisTl0KueoxryA/gXhNkUX7/xvcAy8?=
- =?us-ascii?Q?ty0wiO7YtlTLneqYwADdcMG9Ab2z4stt2pNGJsMplrhn0c+dA3PgOW1hG9E8?=
- =?us-ascii?Q?zJnpM+ZASiwOXEimiBKiYzFHLgFhGpcw6zkSa+IE33GVtjFbqWVD1Rww3dnK?=
- =?us-ascii?Q?eNsBnh73kESxQq2w104U7YmWrNZPZnqgiCBf1q2LdrZ8fsJ2lg1+yt2QrDQZ?=
- =?us-ascii?Q?AbI+xN/ZCB0Ly+MHS1MhBrTYJiGjhYZ8TWphf11aeLQqIsz3MsmRPCosvrbE?=
- =?us-ascii?Q?CNq4YJmQbETGER7HFklWnxjbu6JMUsL0KlQGrchWI/mbgDu6j+jV9YBwQrO4?=
- =?us-ascii?Q?x7HLRhvoOksJBr8IudrL0wS7CQ37SInhHy/Q50y8W1zG0ls1ooQtrMUrPYQX?=
- =?us-ascii?Q?y/c1w7i9Ly2L7B6BwTTnrwvwBLjU0GGwnWifIt8QZcnGMXNFE/Axf8+c+NM6?=
- =?us-ascii?Q?RB098VDxWaH5r6BUJrRsJxXZLLNiSUownYl1NVm8DgxiLu7hLgnFbOrs+ckK?=
- =?us-ascii?Q?vMSSrVc1JiTYmEnO1+kfduAW1A9CJgxAb36mznXvzdMXq84RgQmZKc04v9wr?=
- =?us-ascii?Q?P2yrZa41TQFDfxJ1V+bMAzOJ3v+WZicqnhS6fD3+XW1GhDanr0+uWcvc1ee5?=
- =?us-ascii?Q?Ak3cY4RRkTWE1rl3acKrYPo9BODWNgEznSI28++1cveSoKvCxq+6pQCvcpSs?=
- =?us-ascii?Q?TrmIypGiCLZl6IOU4m9czoBptCqVoqqZCovawkZrtz5KYg35t54PO2aNqP9l?=
- =?us-ascii?Q?l2r/dHY9WTUPDStF4cwVQIYqlx9iDnrShZ5U4CfmlLe10CrJOxpnej3LgY89?=
- =?us-ascii?Q?Ir1x+DxZdjw9Q7Y8R2h3Z31lAnAP8VXvikOdlUu3dlvcFsDL1aX81IoQv/X5?=
- =?us-ascii?Q?kV4KnRHXYX6hdcPl1RxTrocxa3VQdVsnb1FSWRs/JVq8xo0+YhK9BTxYOt81?=
- =?us-ascii?Q?8mUM7DMcDMt0aWLksyW0azXJVkjnAHyd+sHF7hhgdJCYB/b+5TfHCnS5+hUs?=
- =?us-ascii?Q?dPGNe1KLubLv0IpdvXe1PMESbzcHUSgXAKbuMq0pF08tBCpMc31seBnqgUCh?=
- =?us-ascii?Q?PGDDM+W231DBXlFDyitGnnG6ajWqIGY/VlhMYLb1YA5cRzTtXlTtKVER8rWJ?=
- =?us-ascii?Q?0TKfJDx9pC8y09P4qrhC0pG1bPaUJ0ZF9yehaP92LtaU+vYSIQ5gpOuZVLOZ?=
- =?us-ascii?Q?X5kIOuTYr1EKPG/DMadRHb2lGk3XqlxdUrNJL5e7Qm2tAwbJHh/kP9d7vZ+5?=
- =?us-ascii?Q?tSw9KUbtnqAIrrZCQjGQPAVLPOnfhezsy+6VxXllCY1Lkif6IjoH0K99H8kB?=
- =?us-ascii?Q?etI=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?qH2DtkHKMPAcGmStG5wYbK/2qsGe1kj0BR3KGeTXhmvzYX3zZsKCVlcQ4cX1?=
- =?us-ascii?Q?f6tkJ6UJXS0UxUmo2aJ8lnk05qu5PYSuAHnGcMKx98opxa7WBIiraGQxZr+4?=
- =?us-ascii?Q?BqDrDVeEZc0oTiWocqSTTm37EWSWhJyacL4X37UiCxTBEMPULLkU/bZGB5rd?=
- =?us-ascii?Q?x3tmMd/+WGz2yq+FNOPVKgdn99xl1jBJnrb2KTU8x3wGT5EN0ssbJfPZvTmZ?=
- =?us-ascii?Q?NtS5QVNqKdyTzoXmfd8KDongVOsm/wm3f/bYBfQZNEwHDUz1sNcTABD2Uc4t?=
- =?us-ascii?Q?/u7XOhvhCBhpjze4h/KOMCEU0cxdCIWNj7mrAULudJHAZk6FbHNybFaYkvCi?=
- =?us-ascii?Q?lBd4CQ9MC2onCMlmxMrdOJvUA+NbzIznER1bM+HyacVNvuD6rM+fFhhcPLE9?=
- =?us-ascii?Q?abheDc/EFbQOhWDSK+h26QI829NCnmMRuuH4boZa6TkXFnT0QYmJ6GILkyc4?=
- =?us-ascii?Q?lCN+kJSCZo4dh8aQ4OLeLzAkuhoZoOXUnXunLq/BcXz/VFxkqDCFrY4VksFw?=
- =?us-ascii?Q?kqjVta8qiZ6SSkbxa5TB5fX1MWJtB3BkWt7zntNJPAa+jqABN1HFrA+99TSW?=
- =?us-ascii?Q?0T+rwyxfyfhT6N7pvfVTJ2i2G0gQf8yCvnWKbJRux2X+a/0w/U8cdpl7GEk9?=
- =?us-ascii?Q?+qHsVEuNFlYbjl+4G43hFa5GY9MeEqCi4Cx0WmaGV0QFxsiqq6dpw3+YmP7q?=
- =?us-ascii?Q?IdS26D8QCUnioaexS3k1UGl7gTLjJkuaclXb7gm8XOGJti+4F49XGjwWNz40?=
- =?us-ascii?Q?MZkhittUrmvWDaZm1+JbZmUCuOpgsN74zrN4xr2GpsNyz9SUTUmCt84zVgyf?=
- =?us-ascii?Q?CnQlY0u0SGrSLR7tC6Ui3CkRKSJyn53+NG+9mfbikmgB3dvYdfJPll3Y5/FK?=
- =?us-ascii?Q?KShYeGiYoEN9i73guM5Bw4DkNdG+h7ZbdOY7r027XIybdSkQqsywo9ZAJbKP?=
- =?us-ascii?Q?e7EfTb6pC+iuJF1fASz9ZrDGI1IKVcIQp+tB9YtMTGHy+QqaQG8cW8fUN+nF?=
- =?us-ascii?Q?w6YF/CNv1mvKshJcoEEI6E/+FrLyj4TMb13jDpWFuIhseeYmA4yqWg1KiDnf?=
- =?us-ascii?Q?HKV4NBMKVffYwYzjaMgx99/CEMoAzn67cnURJukRLILn2hWztbTBW45fAtje?=
- =?us-ascii?Q?YCICP3bEetf8++UH7U+pqeS++AflG5Lj0q7pme5SDCNrsyb3kEZ1eMrnMdmx?=
- =?us-ascii?Q?R0C/KMACwVY5uVVRCAKXHS1uvW5OwpgXMvRaOxdToM+7pdgjjbpM/E1ZJ9g?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F5C1F8724
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761275159; cv=none; b=E0HyVCX6PfbxFiIruFOFqEnTVQuqTUqRuPqV85SxC/L6kmtqk/rgP4xsWlEmRJp19CNHye20vsP9Dyv4KErmUPlyCgbNK2ljjIt7028PUoJt5Dk1dpHGG648gSOyQrPQ2bb7Vi61KsDv/Q/y8Tj1gwh2IhC56gHF02X57Ktb8VE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761275159; c=relaxed/simple;
+	bh=4FHl7ZtxkDyyaY2ICzAcXGfZZ9UdpflrdhShRLPsLfE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p5ubi5puLkk4tblsEsBUWHJA6fGNbIPehdQ+CazRnQge6HgpOO6frTPAVHd8dGInf2wxaXuzgItS4NZBm2bA+Oly77uLAix90et1aqFn/EFMMrYJ3ooEJDtC53Qg2JTchQemk8dYMY9t4BT/SXPcrOh+YP2Nih2RwfZJlP6ycFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HjEyUQiy; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-290c2b6a6c2so17337495ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761275157; x=1761879957; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4EzmryWBAlOE+6PvafZLTL8RGcukfyVnYUGcNucBOXE=;
+        b=HjEyUQiyP2vNSdSa3Nkz6/bqoheLhkmmXLGH4evdtBQfL5+3+jt9gIQ5aM/rDNRrRx
+         doSW8RpxaJIIYyzM5QhqQfUAh2P2J+5azvkNA5PqicfNX8TR5JCT9KfrfA5Gk6q+USYD
+         hBMXet25LXt1QLVVwXMPstDkNnGC8bNy8sZWGcP4YWebe7//SjnU9zfxIQDKdrd4abRu
+         7jdCrZQJZn1Znj+/N9UpZTWIc3P0v4Z8pFrMwYDsdMUB0d3i7yhkewaOZS/EzcP1ohTS
+         L+vaB+QWyE4zjfp5V6qyBMg8ydcKrP2FBCRRRyvDyjsFgWAz1BxpAtJxdqfh/LZogfy7
+         VfVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761275157; x=1761879957;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4EzmryWBAlOE+6PvafZLTL8RGcukfyVnYUGcNucBOXE=;
+        b=Xs572kBExoZJ/9N4UAqJ2hH/OBDWoHJOfrKbimhsDB8wm5MrToCsjqB11S4RNga/OU
+         qWnU82bVQxHtTZYyp7qS0i3BaXJnuJBi6uxW9MxJHsoqBDW9Bm3hlR3f013UDcoMhbBg
+         SFwHji4jC+cB4nESWZ/wGKqmPDw8eAFBkwcubN3ziYjrNfNXZFChfBi14aRfvPNjfxLi
+         IEmgN5ugESooo8tIzzjgLWdvpWpvdHpQ6nhA9jL5vXd5U63U6b7dNHIudVHl8lin2yJQ
+         /zxJqp44iZU2s2UiuTx2pdvGnqLw/M2uSgwtHIMOvQezO5R82BYP9HWIN2cL1BDgtPZS
+         Myqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVq0KLhUpdh78MNX4ZM2PqCBR5SNMXdDiIQObt66RGbfLxGhJNfmi+STwowbd5QRUtqvVlUIJitxC83Ils=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm96GQ3+ks101ojwsdFb/xWzEFNAtCbypVh9VI2cXBHrC1oBTH
+	rrSoj1AQR9kkZpJcoau6QBFwX45waCo+lRA3iVfp15gkTTgk88Q+JGYe
+X-Gm-Gg: ASbGncuEHO28FPZtbjiHfz5VobJKHJm+DKiTm6P9jCihur0LnqHDepG/G1bw7NY+fzO
+	U19B8Jlg0KSoknse7mnZly7x2IvxfOgGhJr6vTGUnCBqha01UQUvS2lSwqxhVSJWGh4arOxMZh+
+	rtsDbfR4fKs7fZ/N5Q9RUCKFY1R9pZLd4d36/UcDmjdwIB5pHJZ+Tr2/SD0riFqXfNdcQ0HUzv/
+	o4W17RJemdyBlzCLom+/ZVUlZ9ecMeG7+pCLtEOzylkOxo9fhKbKDxUCq8BxJhyh5GqDqAkPv29
+	3MO0tc7yJ3UjNY+MfgPs80b2NlMX0EzFKjHfgnO2PUY4tS37+qvJXIQ3YZjodDoL33Mm766i+7N
+	1CqVksBroRMxEnpJ+6ACZiES7NFz2HIyU95iHYGL2ctWalnyYL40ou9s86n3vQdTHYV9FcSHyAY
+	DKVzRuS3gJaFcjjh+R2khoLLOGPLw=
+X-Google-Smtp-Source: AGHT+IF8b4avL0/1iLczBKXPJIE+YBOYlfAMVKvJQQ45ng5xpwwuuzbCszJkZUGkuxOMXW5DM24w0Q==
+X-Received: by 2002:a17:903:298c:b0:27e:eabd:4b41 with SMTP id d9443c01a7336-290c9c89eabmr329227425ad.7.1761275157084;
+        Thu, 23 Oct 2025 20:05:57 -0700 (PDT)
+Received: from localhost.localdomain ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6cf4bb86cbsm3574172a12.7.2025.10.23.20.05.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Oct 2025 20:05:56 -0700 (PDT)
+From: Longbin Li <looong.bin@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Yu Yuan <yu.yuan@sjtu.edu.cn>,
+	Ze Huang <huangze@whut.edu.cn>
+Cc: Longbin Li <looong.bin@gmail.com>,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v4 0/3] riscv: sophgo: add top syscon device for cv18xx
+Date: Fri, 24 Oct 2025 11:05:13 +0800
+Message-ID: <20251024030528.25511-1-looong.bin@gmail.com>
+X-Mailer: git-send-email 2.51.1.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-9052-0-msonline-outlook-827b9.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR01MB4393.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7cb488f-73b1-4fd5-317d-08de12aa21f3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2025 03:05:05.6497
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR01MB5947
+Content-Transfer-Encoding: 8bit
 
-On Friday, October 24, 2025 12:02 AM, Jason Gunthorpe wrote:
-> On Thu, Oct 23, 2025 at 11:15:43PM +0800, Wei Wang wrote:
-> > When SME is enabled, iommu_v1_map_pages() currently sets the C-bit for
-> > all physical addresses. This is correct for RAM, since the C-bit is
-> > required by SME to indicate encrypted memory and ensure proper
-> > encryption/decryption.
-> >
-> > However, applying the C-bit to MMIO addresses is incorrect. Devices
-> > and PCIe switches do not interpret the C-bit currently, and doing so
-> > can break PCIe peer-to-peer communication. To avoid this, only set the
-> > C-bit when the physical address is backed by RAM, and leave MMIO
-> mappings unchanged.
-> >
-> > Fixes: 2543a786aa25 ("iommu/amd: Allow the AMD IOMMU to work with
-> > memory encryption")
-> > Signed-off-by: Wei Wang <wei.w.wang@hotmail.com>
-> > ---
-> >  drivers/iommu/amd/io_pgtable.c | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/iommu/amd/io_pgtable.c
-> > b/drivers/iommu/amd/io_pgtable.c index 70c2f5b1631b..6f395940d0a4
-> > 100644
-> > --- a/drivers/iommu/amd/io_pgtable.c
-> > +++ b/drivers/iommu/amd/io_pgtable.c
-> > @@ -353,6 +353,9 @@ static int iommu_v1_map_pages(struct
-> io_pgtable_ops *ops, unsigned long iova,
-> >  	if (!(prot & IOMMU_PROT_MASK))
-> >  		goto out;
-> >
-> > +	if (sme_me_mask && page_is_ram(PHYS_PFN(paddr)))
-> > +		paddr =3D __sme_set(paddr);
->=20
-> It needs to use the IOMMU_MMIO flag not page_is_ram, which I think got
-> mangled by the time it reached here..
+Add top syscon device bindings related DTS change for CV1800.
 
-Could you please elaborate how page_is_ram() would be mangled when
-reaching here?
-(I might not have fully understood your point. My understanding was that
-the result from page_is_ram(), regarding whether a physical address
-corresponds to system RAM, is stable after the system boots. One exception
-would be RAM hotplug, but this is the same for the case using IOMMU_MMIO
-from callers. If the stability of this result is indeed problematic, then
-other users of page_is_ram() and /proc/iomem would also be at risk)
+---
+Changes from v3:
+  - https://lore.kernel.org/all/20251020083838.67522-1-looong.bin@gmail.com/
+  - Corrected Co-developed-by information in commit message.
+  - Fixed patch version number.
 
->=20
-> Though broadly this points to a larger problem, the iommu domain code
-> should not be trying to guess if a mapping is private or not, this needs =
-to be
-> passed in from higher level code which knows what state the PFN is..
+Changes from v2:
+  - https://lore.kernel.org/all/20251012022555.6240-1-looong.bin@gmail.com/
+  - Add ranges property.
+  - Use proper regex in patternProperties.
+  - Add complete example including child nodes.
 
-Please note that this patch is not intended to add an interface allowing us=
-ers
-to specify whether a requested physical address is expected to be mapped as
-Private or not. Instead, it implements a sanity or correctness check within=
- the
-IOMMU driver to validate whether a user-supplied address _can_ be mapped
-with the Private bit (RAM is the case that "can" currently, and since the d=
-river
-can already determine whether a PFN is RAM or not, I'm not sure why it need=
-s
-an interface for users to tell the driver).
+Changed by RFC:
+  - https://lore.kernel.org/all/20250611082452.1218817-1-inochiama@gmail.com/
 
-Even if a need arises in the future to add a new interface for users to ind=
-icate
-that the IOVA->PA mapping expects a Private bit to PA, a new flag (e.g.,
-IOMMU_ENCRYPT) would be more semantically appropriate than IOMMU_MMIO.
-The validation introduced by this patch would still be necessary. I think t=
-his check
-Is essentially similar to other guardrails or gatekeeping functions at lowe=
-r driver
-layers.
+---
+
+Longbin Li (3):
+  dt-bindings: soc: sophgo: add TOP syscon for CV18XX/SG200X series SoC
+  riscv: dts: sophgo: Add syscon node for cv18xx
+  riscv: dts: sophgo: Add USB support for cv18xx
+
+ .../soc/sophgo/sophgo,cv1800b-top-syscon.yaml | 81 +++++++++++++++++++
+ .../boot/dts/sophgo/cv1800b-milkv-duo.dts     |  5 ++
+ arch/riscv/boot/dts/sophgo/cv180x.dtsi        | 42 ++++++++++
+ .../boot/dts/sophgo/cv1812h-huashan-pi.dts    |  5 ++
+ .../dts/sophgo/sg2002-licheerv-nano-b.dts     |  5 ++
+ 5 files changed, 138 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/sophgo/sophgo,cv1800b-top-syscon.yaml
+
+--
+2.51.0
 
