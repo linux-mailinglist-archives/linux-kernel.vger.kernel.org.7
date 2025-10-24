@@ -1,444 +1,139 @@
-Return-Path: <linux-kernel+bounces-869186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B9FC0739C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:14:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A7CC0744B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0C51C27CF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:14:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBD63583B1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F19332EC4;
-	Fri, 24 Oct 2025 16:14:02 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B2B270ED2;
+	Fri, 24 Oct 2025 16:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S9e/39w/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875C8335BC0;
-	Fri, 24 Oct 2025 16:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B651DC997;
+	Fri, 24 Oct 2025 16:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761322441; cv=none; b=MGmMhPXV/t2JOaSMSjUw/L5udMUD6k5TVdtLxaM+HrJC63xWNLzF2pqAB3m4Op41lxo8CJKrYG+GLRpWDX3gMLF7cul0alsagcl/qjExcFIpoT0kdvwzMCLV6d8fNKjU6yKQG0M3bLMVQcJ6grJbe1FVNf6mIxVkq+foW3hiTfo=
+	t=1761322671; cv=none; b=tRIihwugBAxzB4La0XuLI0CD+NKWzOetd5FZOJLtuFVd/Vr02FzQPKxexf+bN8U7M4dXrF8ENFthMrcLyauVMbrg8PbCR8/Y+16YPVOl4MX/pLugMsfcr3saIkc81BJLiRhlyfYBIsam71kAyu9ICuUEtg0ju3ujKqlawGCO1Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761322441; c=relaxed/simple;
-	bh=5YbsI1AR7IbFi4Ak3fePeoSgYmigwazJk1/z6u8buBo=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aF2W7F6nQ90QIyQ3avRcAAARN3KRlu807AJT4qHhX08iEEX8aC+cuWU/XkcnW6ijR3jG15h+gN9SUQRuAGfrWvpnwba6hJkqFJ11a0GrHTDHn/kouzzAmtY1ujFgkh38b6yGC3h7WqhHV9VcZu6LSI1vUjDhPyGb6F2CxiwJE3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ctSbV4C4mz67SWX;
-	Sat, 25 Oct 2025 00:12:22 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id CD05314014B;
-	Sat, 25 Oct 2025 00:13:53 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 24 Oct
- 2025 17:13:52 +0100
-Date: Fri, 24 Oct 2025 17:13:50 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
-	Gavin Shan <gshan@redhat.com>
-Subject: Re: [PATCH v3 06/29] ACPI / MPAM: Parse the MPAM table
-Message-ID: <20251024171350.00005451@huawei.com>
-In-Reply-To: <20251017185645.26604-7-james.morse@arm.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
-	<20251017185645.26604-7-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761322671; c=relaxed/simple;
+	bh=wk66qIygkkbUUS4Vseh1sg6teJA5/ZT5GoMUU6R4qwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nNEi7vl7pHPbato9mJlZPWzY+G6M7Ep4qT0BEamPD/cwjSrjH7zg/HDV7kHsZmZ0XNw+b3OMwoZTn5UG+OoJV1y4NNWRnBOQuD630+DopEmlmmmmxHy4j4VSxzcp1vk4OFJI0s+CI4lULWvfKYbPLQKgev9X1SywSSqv9ZBIFo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S9e/39w/; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761322670; x=1792858670;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wk66qIygkkbUUS4Vseh1sg6teJA5/ZT5GoMUU6R4qwg=;
+  b=S9e/39w/1ASlPnXtSKu/WcGkTQZcG5b21wnI9KDxAr/3R2iXvU1aVd2L
+   Q8t1TtWA5AV2UhRhbXIsrxBMng/Uz4R32JZ6iqoVZckv2ekH6aqDGsPpq
+   /iYJpolBT7sMxTTj6Srm8CtiD0bggx81NYropnM6ZcyHDQh9hdjWwFb0B
+   o6zI1Xnvo4/Kj8MOBOmQN5+r4fF8WKf7KEst3uUUysXkZuFAHfyWR284e
+   N5lOfbKaDllFeoq1vbpDPrkbzRAWN9t8cxdj0U/D+OjDhb84AQ831VPU0
+   viZENhOAxuSKgKpMoDC304uI/YaVN+b7hWnzU4bamqB3tTfs0BXkqwVHC
+   w==;
+X-CSE-ConnectionGUID: RLw1A/tISsSQHsHa9f9qSw==
+X-CSE-MsgGUID: kCdlq5ZrQjGMYyg4+eAh9A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63412299"
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="63412299"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 09:17:47 -0700
+X-CSE-ConnectionGUID: rox9pthtT9qkicVmkF+xRw==
+X-CSE-MsgGUID: OqN+FRlvSO2q/H4Vl8klIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
+   d="scan'208";a="183643221"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 24 Oct 2025 09:17:38 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vCKS1-000Een-0H;
+	Fri, 24 Oct 2025 16:17:01 +0000
+Date: Sat, 25 Oct 2025 00:14:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>, bpf@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jiayuan Chen <jiayuan.chen@linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH bpf-next v1 1/2] bpf: Add kfuncs for detecting execution
+ context
+Message-ID: <202510242353.hCaLzqVt-lkp@intel.com>
+References: <20251022113412.352307-2-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022113412.352307-2-jiayuan.chen@linux.dev>
 
-On Fri, 17 Oct 2025 18:56:22 +0000
-James Morse <james.morse@arm.com> wrote:
+Hi Jiayuan,
 
-> Add code to parse the arm64 specific MPAM table, looking up the cache
-> level from the PPTT and feeding the end result into the MPAM driver.
-> 
-> This happens in two stages. Platform devices are created first for the
-> MSC devices. Once the driver probes it calls acpi_mpam_parse_resources()
-> to discover the RIS entries the MSC contains.
-> 
-> For now the MPAM hook mpam_ris_create() is stubbed out, but will update
-> the MPAM driver with optional discovered data about the RIS entries.
-> 
-> CC: Carl Worth <carl@os.amperecomputing.com>
-> Link: https://developer.arm.com/documentation/den0065/3-0bet/?lang=en
-> Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> 
-Hi James,
+kernel test robot noticed the following build warnings:
 
-Various comments inline.  One challenge with this is that a few
-very generic things (the acpi table DEFINE_FREE() stuff and the
-platform device put equivalent) aren't obvious enough that I'd expect
-those concerned to necessarily notice them.  I'd break those out
-as precursor patches, or narrow what they do to not be generic.
+[auto build test WARNING on bpf-next/master]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Jiayuan-Chen/bpf-Add-kfuncs-for-detecting-execution-context/20251022-193551
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20251022113412.352307-2-jiayuan.chen%40linux.dev
+patch subject: [PATCH bpf-next v1 1/2] bpf: Add kfuncs for detecting execution context
+config: alpha-randconfig-r123-20251023 (https://download.01.org/0day-ci/archive/20251024/202510242353.hCaLzqVt-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510242353.hCaLzqVt-lkp@intel.com/reproduce)
 
-> diff --git a/drivers/acpi/arm64/mpam.c b/drivers/acpi/arm64/mpam.c
-> new file mode 100644
-> index 000000000000..59712397025d
-> --- /dev/null
-> +++ b/drivers/acpi/arm64/mpam.c
-> @@ -0,0 +1,377 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2025 Arm Ltd.
-> +
-> +/* Parse the MPAM ACPI table feeding the discovered nodes into the driver */
-> +
-> +#define pr_fmt(fmt) "ACPI MPAM: " fmt
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/arm_mpam.h>
-> +#include <linux/bits.h>
-> +#include <linux/cpu.h>
-> +#include <linux/cpumask.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include <acpi/processor.h>
-> +
-> +/*
-> + * Flags for acpi_table_mpam_msc.*_interrupt_flags.
-> + * See 2.1.1 Interrupt Flags, Table 5, of DEN0065B_MPAM_ACPI_3.0-bet.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510242353.hCaLzqVt-lkp@intel.com/
 
-This needs to ultimately end up in ACPICA.  Perhaps fine to have it here
-for now. Maybe can't happen until this isn't a beta? I'm not sure on
-policy around that.
+sparse warnings: (new ones prefixed by >>)
+   kernel/bpf/helpers.c:1199:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned long long ( *[usertype] callback_fn )( ... ) @@     got void [noderef] __rcu * @@
+   kernel/bpf/helpers.c:1199:21: sparse:     expected unsigned long long ( *[usertype] callback_fn )( ... )
+   kernel/bpf/helpers.c:1199:21: sparse:     got void [noderef] __rcu *
+   kernel/bpf/helpers.c:2480:18: sparse: sparse: symbol 'bpf_task_release_dtor' was not declared. Should it be static?
+   kernel/bpf/helpers.c:2510:18: sparse: sparse: symbol 'bpf_cgroup_release_dtor' was not declared. Should it be static?
+>> kernel/bpf/helpers.c:4260:18: sparse: sparse: symbol 'bpf_in_nmi_context' was not declared. Should it be static?
+   kernel/bpf/helpers.c:2976:18: sparse: sparse: context imbalance in 'bpf_rcu_read_lock' - wrong count at exit
+   kernel/bpf/helpers.c:2981:18: sparse: sparse: context imbalance in 'bpf_rcu_read_unlock' - unexpected unlock
 
-> + */
-> +#define ACPI_MPAM_MSC_IRQ_MODE                              BIT(0)
-> +#define ACPI_MPAM_MSC_IRQ_TYPE_MASK                         GENMASK(2, 1)
-> +#define ACPI_MPAM_MSC_IRQ_TYPE_WIRED                        0
-> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_MASK                BIT(3)
-> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_PROCESSOR           0
-> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_TYPE_PROCESSOR_CONTAINER 1
-> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_VALID                    BIT(4)
-> +
-> +/*
-> + * Encodings for the MSC node body interface type field.
-> + * See 2.1 MPAM MSC node, Table 4 of DEN0065B_MPAM_ACPI_3.0-bet.
-> + */
-> +#define ACPI_MPAM_MSC_IFACE_MMIO   0x00
-> +#define ACPI_MPAM_MSC_IFACE_PCC    0x0a
-> +
+vim +/bpf_in_nmi_context +4260 kernel/bpf/helpers.c
 
-> +static bool acpi_mpam_register_irq(struct platform_device *pdev, int intid,
-> +				   u32 flags, int *irq)
-Given irq value of 0 is invalid, could just return the irq from this.
-Or even return error codes for what went wrong given negative irqs are invalid
-as well.
+  4254	
+  4255	/**
+  4256	 * bpf_in_nmi_context - Check whether we are serving NMI
+  4257	 *
+  4258	 * Return: true if we are serving NMI
+  4259	 */
+> 4260	__bpf_kfunc bool bpf_in_nmi_context(void)
+  4261	{
+  4262		return in_nmi();
+  4263	}
+  4264	
 
-> +{
-> +	u32 int_type;
-> +	int sense;
-> +
-> +	if (!intid)
-> +		return false;
-> +
-> +	if (_is_ppi_partition(flags))
-> +		return false;
-> +
-> +	sense = FIELD_GET(ACPI_MPAM_MSC_IRQ_MODE, flags);
-
-Given it's one bit that indicates 1 if edge, I'd call this edge (which
-inherently doesn't mean level).  Sense as a term I think can incorporate
-this and rising/falling high/low.  It's parse to acpi_register_gsi()
-which calls it trigger so that would work as well.
-
-> +	int_type = FIELD_GET(ACPI_MPAM_MSC_IRQ_TYPE_MASK, flags);
-> +	if (int_type != ACPI_MPAM_MSC_IRQ_TYPE_WIRED)
-> +		return false;
-> +
-> +	*irq = acpi_register_gsi(&pdev->dev, intid, sense, ACPI_ACTIVE_HIGH);
-> +	if (*irq <= 0) {
-> +		pr_err_once("Failed to register interrupt 0x%x with ACPI\n",
-> +			    intid);
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +static void acpi_mpam_parse_irqs(struct platform_device *pdev,
-> +				 struct acpi_mpam_msc_node *tbl_msc,
-> +				 struct resource *res, int *res_idx)
-> +{
-> +	u32 flags, intid;
-> +	int irq;
-> +
-> +	intid = tbl_msc->overflow_interrupt;
-> +	flags = tbl_msc->overflow_interrupt_flags;
-> +	if (acpi_mpam_register_irq(pdev, intid, flags, &irq))
-> +		res[(*res_idx)++] = DEFINE_RES_IRQ_NAMED(irq, "overflow");
-> +
-> +	intid = tbl_msc->error_interrupt;
-> +	flags = tbl_msc->error_interrupt_flags;
-> +	if (acpi_mpam_register_irq(pdev, intid, flags, &irq))
-> +		res[(*res_idx)++] = DEFINE_RES_IRQ_NAMED(irq, "error");
-> +}
-> +
-
-
-This function has a bit of a dual use to it. I think it needs some documentation
-to explain under what conditions acpi_id is set.
-
-> +static bool __init parse_msc_pm_link(struct acpi_mpam_msc_node *tbl_msc,
-> +				     struct platform_device *pdev,
-> +				     u32 *acpi_id)
-> +{
-> +	char hid[sizeof(tbl_msc->hardware_id_linked_device) + 1] = { 0 };
-> +	bool acpi_id_valid = false;
-> +	struct acpi_device *buddy;
-> +	char uid[11];
-> +	int err;
-> +
-> +	memcpy(hid, &tbl_msc->hardware_id_linked_device,
-> +	       sizeof(tbl_msc->hardware_id_linked_device));
-> +
-> +	if (!strcmp(hid, ACPI_PROCESSOR_CONTAINER_HID)) {
-> +		*acpi_id = tbl_msc->instance_id_linked_device;
-> +		acpi_id_valid = true;
-> +	}
-> +
-> +	err = snprintf(uid, sizeof(uid), "%u",
-> +		       tbl_msc->instance_id_linked_device);
-> +	if (err >= sizeof(uid)) {
-
-The err naming is a bit confusing as it's not an error code. Could call it
-something like len or just avoid having a local variable at all.
-
-	if (snprintf(uid, sizeof(uid), "%u",
-		     tbl_msc->instance_id_linked_device) >= sizeof(uid))
-> +		pr_debug("Failed to convert uid of device for power management.");
-> +		return acpi_id_valid;
-> +	}
-> +
-> +	buddy = acpi_dev_get_first_match_dev(hid, uid, -1);
-> +	if (buddy)
-> +		device_link_add(&pdev->dev, &buddy->dev, DL_FLAG_STATELESS);
-> +
-> +	return acpi_id_valid;
-> +}
-
-> +
-> +static struct platform_device * __init acpi_mpam_parse_msc(struct acpi_mpam_msc_node *tbl_msc)
-> +{
-> +	struct platform_device *pdev __free(platform_device_put) = platform_device_alloc("mpam_msc", tbl_msc->identifier);
-That's too long. Format as
-	struct platform_device *pdev __free(platform_device_put) =
-		platform_device_alloc("mpam_msc", tbl_msc->identifier);
-
-> +	int next_res = 0, next_prop = 0, err;
-
-...
-
-> +
-> +static int __init acpi_mpam_parse(void)
-> +{
-> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
-> +	char *table_end, *table_offset = (char *)(table + 1);
-> +	struct acpi_mpam_msc_node *tbl_msc;
-> +	struct platform_device *pdev;
-> +
-> +	if (acpi_disabled || !system_supports_mpam() || IS_ERR(table))
-Check acpi_disabled || !system_supports_mpam() before
-
-	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
-	
-	if (IS_ERR(table))
-		return 0;
-
-That way we aren't relying on acpi_get_table_ret() doing the right thing if acpi_disabled == true
-which seems gragile even though it is fine today
-
-Declaring stuff using __free() inline is fine (commonly done).
-
-> +		return 0;
-> +
-
-...
-
-> +int acpi_mpam_count_msc(void)
-> +{
-> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
-> +	char *table_end, *table_offset = (char *)(table + 1);
-> +	struct acpi_mpam_msc_node *tbl_msc;
-> +	int count = 0;
-> +
-> +	if (IS_ERR(table))
-Why fewer things to guard on in here than in the parse function?
-I guess this may only be called in circumstances where we know those
-other reasons not to carry on aren't true, but still seem odd.
-
-> +		return 0;
-> +
-> +	if (table->revision < 1)
-> +		return 0;
-> +
-> +	table_end = (char *)table + table->length;
-> +
-> +	while (table_offset < table_end) {
-> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
-> +		if (!tbl_msc->mmio_size)
-
-Bit marginal on how much we protect against garbage, but perhaps
-check the length is long enough to get here. Or can you just
-do the length checks first?
-
-> +			continue;
-
-Infinite loop?  table_offset isn't updated so this
-keeps checking the same value. Similar to funciton above, I'd
-do the table_offset update before check this (and modify
-the appropriate checks below).
-
-> +
-> +		if (tbl_msc->length < sizeof(*tbl_msc))
-> +			return -EINVAL;
-> +		if (tbl_msc->length > table_end - table_offset)
-> +			return -EINVAL;
-> +		table_offset += tbl_msc->length;
-> +
-> +		count++;
-> +	}
-> +
-> +	return count;
-> +}
- 
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index a9dbacabdf89..9d66421f68ff 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -8,6 +8,7 @@
->  #ifndef _LINUX_ACPI_H
->  #define _LINUX_ACPI_H
->  
-> +#include <linux/cleanup.h>
->  #include <linux/errno.h>
->  #include <linux/ioport.h>	/* for struct resource */
->  #include <linux/resource_ext.h>
-> @@ -221,6 +222,17 @@ void acpi_reserve_initial_tables (void);
->  void acpi_table_init_complete (void);
->  int acpi_table_init (void);
->  
-> +static inline struct acpi_table_header *acpi_get_table_ret(char *signature, u32 instance)
-I wonder if it's worth instance being a variable.  11 instances of 1, 52 instances of 0
-(almost nothing else).  Maybe just about worth it...
-
-Whilst I like the general nature of this I wonder if smoother
-to merge acpi_get_table_mpam() that does this first and then
-look at generalizing when it's not on the critical path for this
-patch set?  If ACPI folk are fine with this I don't mind it being
-in here though as generally useful to have.
-(I may well be arguing with earlier me on this :)
-
-> +{
-> +	struct acpi_table_header *table;
-> +	int status = acpi_get_table(signature, instance, &table);
-> +
-> +	if (ACPI_FAILURE(status))
-> +		return ERR_PTR(-ENOENT);
-> +	return table;
-> +}
-> +DEFINE_FREE(acpi_table, struct acpi_table_header *, if (!IS_ERR(_T)) acpi_put_table(_T))
-
-Ben raised earlier comment on checking for NULL as well to let the compiler optimize
-things better.
-
-> +
->  int acpi_table_parse(char *id, acpi_tbl_table_handler handler);
->  int __init_or_acpilib acpi_table_parse_entries(char *id,
->  		unsigned long table_size, int entry_id,
-> diff --git a/include/linux/arm_mpam.h b/include/linux/arm_mpam.h
-> new file mode 100644
-> index 000000000000..3d6c39c667c3
-> --- /dev/null
-> +++ b/include/linux/arm_mpam.h
-> @@ -0,0 +1,48 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* Copyright (C) 2025 Arm Ltd. */
-> +
-> +#ifndef __LINUX_ARM_MPAM_H
-> +#define __LINUX_ARM_MPAM_H
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/types.h>
-
-...
-
-> +enum mpam_class_types {
-> +	MPAM_CLASS_CACHE,       /* Well known caches, e.g. L2 */
-
-Curious comment.  As opposed to the lesser known l5?   I get
-what you mean about not including the weird like memory-side caches
-but TLBs are also well known caches so I'd just go with
-/* Caches, e.g. l2, l3 */
-or something like that.
-
-> +	MPAM_CLASS_MEMORY,      /* Main memory */
-> +	MPAM_CLASS_UNKNOWN,     /* Everything else, e.g. SMMU */
-> +};
-> +
-> +#ifdef CONFIG_ACPI_MPAM
-> +/* Parse the ACPI description of resources entries for this MSC. */
-
-I'd push more detailed documentation down along side the implementation
-rather than having it here.  The function name and parameters make this fairly
-obvious anyway.
-
-> +int acpi_mpam_parse_resources(struct mpam_msc *msc,
-> +			      struct acpi_mpam_msc_node *tbl_msc);
-> +
-> +int acpi_mpam_count_msc(void);
-> +#else
-
-> diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-> index 074754c23d33..23a30ada2d4c 100644
-> --- a/include/linux/platform_device.h
-> +++ b/include/linux/platform_device.h
-> @@ -232,6 +232,7 @@ extern int platform_device_add_data(struct platform_device *pdev,
->  extern int platform_device_add(struct platform_device *pdev);
->  extern void platform_device_del(struct platform_device *pdev);
->  extern void platform_device_put(struct platform_device *pdev);
-> +DEFINE_FREE(platform_device_put, struct platform_device *, if (_T) platform_device_put(_T))
-
-I'd break this out as a separate precursor patch mostly so people notice it.
-Likely will get some review from folk who aren't going to spot it down here.
-They may well tell you to not have it as a separate patch but at least you'll
-be sure it was noticed!
-
-Jonathan
-
->  
->  struct platform_driver {
->  	int (*probe)(struct platform_device *);
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
