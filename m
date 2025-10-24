@@ -1,136 +1,113 @@
-Return-Path: <linux-kernel+bounces-868599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E9B8C05916
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:28:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E9DC05976
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED9384F0AB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:27:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E2A13BCC32
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F2E30F946;
-	Fri, 24 Oct 2025 10:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B9730F94C;
+	Fri, 24 Oct 2025 10:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BX9ix6Dw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=lankhorst.se header.i=@lankhorst.se header.b="CFyH7t4R"
+Received: from lankhorst.se (lankhorst.se [141.105.120.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DC430F93E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899A23043AF;
+	Fri, 24 Oct 2025 10:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761301674; cv=none; b=hbwCcMgPTj+4b3M2pL3oP+DZGMrwVIS07qQd57iHOqR9HiaaG2w0Pg3ImD6zB7u3kRQmlwE9fmDDRl5ptfj9/J30LlajHsP+HC+JwvESl95u36NWMd8ClZM30URxB6DvCw+9703pBEruLGVh9SWmuNtHj6XjmpKxcZyQsQE0XUg=
+	t=1761301658; cv=none; b=PlZ3AHCGeUlhtNc/MPFDdkVeE+4yArTUl5jpENysji/iyXNg+LM93UnWF5X4CUOXwEXA7k7NyrNWaMVO7etWqKVdayVSYu96BU7ZtIl6F/fMk5dO5cVqPAVCrxiy1ddvLItTFHcejW0JfJS4zJL53vS+vSw/GexorTA7asScCnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761301674; c=relaxed/simple;
-	bh=N2ajP2q9W7M7yvoN4wqZtQqLNgaUm/57gWLE4t8N9Y8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cfw52ZJk++//QsEwH1tjXbdW4KBWGdxJiR7jntiRRInou0sH2fH0mn0J7W2LSYZAkLrfuLiv/cl22YC+cyj91ThKXxrxgATl96bY4putqQujdVyi/IHgb0LB7IOBL//GH+xbVj9mgPEuTPIO/KeK2hLX01KMyXCnurWWte5dd64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BX9ix6Dw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761301672;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=op9gJxTu3V1l3M3YQdCe2LbH3bbhAoGT+rz90MVA+nU=;
-	b=BX9ix6DweY43mgmSLbMuje71+9ptlbWx8JAfIectU39x35Avbg1Hzh4UrYmeeXkzVoFq+k
-	5XA4evVbaSwWphYW/xQHyM9w30sFafeCKcjZQMcuJglAfvxsrSyGDSaZ4RS6u02VQydwMJ
-	k81i6oHti8uPkSMAZWi1fpKJT4endhU=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-VYONG_KNMamzq3OWIdM9vg-1; Fri,
- 24 Oct 2025 06:27:46 -0400
-X-MC-Unique: VYONG_KNMamzq3OWIdM9vg-1
-X-Mimecast-MFC-AGG-ID: VYONG_KNMamzq3OWIdM9vg_1761301664
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 650861954190;
-	Fri, 24 Oct 2025 10:27:44 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.19])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 41084180057D;
-	Fri, 24 Oct 2025 10:27:35 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 24 Oct 2025 12:26:26 +0200 (CEST)
-Date: Fri, 24 Oct 2025 12:26:16 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: usage of DEFINE_WAIT_OVERRIDE_MAP(LD_WAIT_SLEEP)
-Message-ID: <20251024102616.GD771@redhat.com>
-References: <aIjCYEkgNvVpMYCS@uudg.org>
- <20250729130936.GB18541@redhat.com>
- <20250801102428.GB27835@redhat.com>
- <20250811105948.OafBprND@linutronix.de>
- <20251020145310.GA9608@redhat.com>
- <20251023135316.1ZRx0UU5@linutronix.de>
- <20251023152942.GC26461@redhat.com>
- <20251023153750.C6EU9NL6@linutronix.de>
- <20251023155339.GE26461@redhat.com>
- <20251023192353.Wkng87fi@linutronix.de>
+	s=arc-20240116; t=1761301658; c=relaxed/simple;
+	bh=qYI6HDh9a/ugUn/uKgtP6q9Z/KM2Dh1Vcc3ewzPmDwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q+fRb4xJrWOtzvq4dXCxOgrf6gmRYTXGh7lSLEz0YCEc3GC/6okJ5H4L2ynCIHyKgrlSwOcKKPlm4AeyhGKEj5MhDb1JCP2WjPPxjJCOK0eh60zcA81M0avGa/NJKUntfS51sOcgs3Acel3rwBFQwuLkhyGV+nZZD9nW6JZLZQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lankhorst.se; spf=pass smtp.mailfrom=lankhorst.se; dkim=pass (2048-bit key) header.d=lankhorst.se header.i=@lankhorst.se header.b=CFyH7t4R; arc=none smtp.client-ip=141.105.120.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lankhorst.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lankhorst.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lankhorst.se;
+	s=default; t=1761301654;
+	bh=qYI6HDh9a/ugUn/uKgtP6q9Z/KM2Dh1Vcc3ewzPmDwY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CFyH7t4REHmQ+bj3mjN5XCQGi82PIbBbGwpJw1gyGLMRiYuuPpxBE0uCte0wdRjkD
+	 IBhDCqyfZiYt0TSNFynmmbIl+wZSFTQmB+SjmJSyNHad81BeiFtztIdm5QHlYgkHpc
+	 dFp4sNCHhlfe5EKFk7YeLzJeUVDd+helbnrouh40vxloxHS9vg5rMKQGZVGZM6s2yk
+	 iahFeVjlN75UN9LpghgqPb9v2ZloO1Tus9r606xwRwMh3xivWnDZzMtzYuSXM/W9SM
+	 B3NNEL8KuUNL3mKiSYKbcpoCFGflhKz0JYjou+4PBpWnwmUsIet54ScleOY5mjFgr4
+	 qa4pdzgYZjNuA==
+Message-ID: <f3398dd1-0d69-4db6-9bfc-ed3c6fe92ab5@lankhorst.se>
+Date: Fri, 24 Oct 2025 12:27:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023192353.Wkng87fi@linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] devcoredump: Fix circular locking dependency with
+ devcd->mutex.
+To: Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org
+Cc: intel-xe@lists.freedesktop.org, Mukesh Ojha <quic_mojha@quicinc.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ stable@vger.kernel.org, Matthew Brost <matthew.brost@intel.com>
+References: <20250723142416.1020423-1-dev@lankhorst.se>
+ <e683355a9a9f700d98ae0a057063a975bb11fadc.camel@sipsolutions.net>
+ <c4bd0ddb-4104-4074-b04a-27577afeaa46@lankhorst.se>
+ <247568f47e1955be454e951e80a9063123f97c66.camel@sipsolutions.net>
+Content-Language: en-US
+From: Maarten Lankhorst <dev@lankhorst.se>
+In-Reply-To: <247568f47e1955be454e951e80a9063123f97c66.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/23, Sebastian Andrzej Siewior wrote:
->
-> On 2025-10-23 17:53:40 [+0200], Oleg Nesterov wrote:
-> > Sebastian,
-> Hi Oleg,
->
-> > sorry. I guess this is my fault, but I can't understand your reply...
-> > Could you spell please?
->
-> So you refer to this:
-> | /* PREEMPT_RT kernels map spinlock to rt_mutex */
-> | #include <linux/rtmutex.h>
-> |
-> | typedef struct spinlock {
-> | 	struct rt_mutex_base	lock;
-> | #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> | 	struct lockdep_map	dep_map;
-> | #endif
-> | } spinlock_t;
->
-> spinlock_t on PREEMPT_RT does not use (struct) rt_mutex as the comment
-> claims. It uses just the basic building block which is "struct
-> rt_mutex_base". This requires linux/rtmutex.h.
->
-> spinlock_t on PREEMPT_RT uses LD_WAIT_CONFIG via SPIN_DEP_MAP_INIT as
-> !PREEMPT_RT. Nothing changes here.
+Hey,
 
-Ah, indeed, I was confused and didn't even bother to read the definitions
-below, spinlock->dep_map is initialized by the same SPIN_DEP_MAP_INIT()...
+Den 2025-10-24 kl. 10:39, skrev Johannes Berg:
+> On Fri, 2025-10-24 at 10:37 +0200, Maarten Lankhorst wrote:
+>>>
+>>> CPU 0				CPU 1
+>>>
+>>> dev_coredump_put()		devcd_del()
+>>>  -> devcd_free()
+>>>    -> locked
+>>>      -> !deleted
+>>>      -> __devcd_del()
+>>> 				-> __devcd_del()
+>>>
+>>> no?
+>>>
+>>> johannes
+>>
+>>
+>> Yeah don't you love the races in the design? All intricate and subtle.
+> 
+> :)
+> 
+>> In this case it's handled by disable_delayed_work_sync(),
+>> which waits for devcd_del() to be completed. devcd_del is called from the workqueue,
+>> and the first step devcd_free does is calling disable_delayed_work_sync, which means
+>> devcd_del() either fully completed or was not run at all.
+> 
+> Oh... right, I totally missed the _sync. My bad, sorry.
+> 
+> I guess I really should say
+> 
+> Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
+> 
+> since I finally _did_ review it carefully. Sorry it took forever.
+> 
+> johannes
+No worries. It's an extremely tricky and prone to races part of code especially with the various ways a coredump can be destroyed.
 
-Sebastian, thanks for correcting me! Sorry, I could not carefully read
-your emails yesterday.
+I almost replied with another potential bug, calling read() after calling write(), but that's worked around by the reference
+kept on the devcd device.
 
-Oleg.
-
+Kind regards,
+~Maarten Lankhorst
 
