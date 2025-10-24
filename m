@@ -1,144 +1,417 @@
-Return-Path: <linux-kernel+bounces-868001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C03C041DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:30:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A60CC04217
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E6953B72B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:30:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC043A75C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 02:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B7225F995;
-	Fri, 24 Oct 2025 02:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14958258CE8;
+	Fri, 24 Oct 2025 02:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LzQ7sgGG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PV8TnfUG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091C1258CF2;
-	Fri, 24 Oct 2025 02:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406F314B06C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 02:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761273017; cv=none; b=Fk/SvT4sQ/mJ4ewiTp29s7gN6HROqGAQte7S0+TdAo3VG7SW360TfXnXMv38/5Duw2jagNrMp7bKcPw0GnNQvhvm/OzAQOfcMJ8XtTVpDTG6wpK8lbxbYQoC5Jr6uVFNI0t7tWzoxufoNq4byhD3ErQlJbXWRc2DFXbGv4EsYuk=
+	t=1761273260; cv=none; b=oiBgMAR8JbUN4jqCKgUecua9z5anNbUwnklimZjYgIGb9vnQM57vocgRCg2C/v6vCzKcLr+z4/etmtvznIck/RWZIbKuFMXSAu/d6jJb2wY2gRAaagv7QORU7v763+vrByKuePoNG84ht0YcZzG6R+07aX+XXTntItR9moCR19I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761273017; c=relaxed/simple;
-	bh=cRVH/Z2/F2hsw3RJ0lfDBMR70DwmivZ3OKy32kKwgiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYq1bCKo1tyrIZD3XmjQbbvVhwVTncFcAYe1O1mwGWiz53ZEHc9hw1TjRXsk9rj3OMXbaHM4RPA/tId0+KVhF9zefJAq45B06cnVTCkd3RzhhJoU5T0ShKtmDdaAu5p36+7xCLneFZWFGCaHAuuCOAiIGRvzu5ZZWuVHqUPDemY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LzQ7sgGG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48023C4CEE7;
-	Fri, 24 Oct 2025 02:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761273016;
-	bh=cRVH/Z2/F2hsw3RJ0lfDBMR70DwmivZ3OKy32kKwgiw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LzQ7sgGGKiM45lmLpEXO1CxhcDhiIry68VQ27cCukk8J3a1Hv8R1skKeIlNaJQ7OM
-	 JVpfzuNTigfpn7QKiGSqyf8R1aoewY6Qn3dc3UBdSwK5PFpFu2RYxbqh58kMeyOUmJ
-	 +MQkGJJdJD2FIGI0J+gm21uAH74XA3Q7eH1RkIEJVM525mivO8n8D4hCu8aLazStpa
-	 WXDefLj8fmlEgwH79LdynEF7sWtBMqrJ7gLTyMQHgyV9sVcj+VUpc2w++AKGZwStBX
-	 7IJSOtXKr0prvkMWqI1A9+dqPx/pon2+UIQKNwOMXJ7KMMxziffid4PnIdBf4FHdRU
-	 oUuBotrNXQRfQ==
-Date: Thu, 23 Oct 2025 19:30:14 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Zide Chen <zide.chen@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	thomas.falcon@intel.com, dapeng1.mi@linux.intel.com,
-	xudong.hao@intel.com
-Subject: Re: [PATCH] perf tools: Refactor precise_ip fallback logic
-Message-ID: <aPrktlANBHFtV52B@google.com>
-References: <20251022220802.1335131-1-zide.chen@intel.com>
+	s=arc-20240116; t=1761273260; c=relaxed/simple;
+	bh=1RrVKYLExvh2qmlc0BJ6Or1i2dHqMzPUAJahlaS46Cw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C13NiVuRwpfG3ISsJsNnK3HFGYaGqUNSEAlfqhkpLRrRInoeggDA3lGaYI3ag6KjfTwGYUdrlrPhBUX+39zURAEYsTRh54KOW031JGJbmuy9JtyvVXMCOTPmvOczbgfTN85dGyQM7/eySVptqgz51XZb8C4B1FuJPDiFpWavxCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PV8TnfUG; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761273258; x=1792809258;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=1RrVKYLExvh2qmlc0BJ6Or1i2dHqMzPUAJahlaS46Cw=;
+  b=PV8TnfUGlQKWyQxO96mQGI2hDafqeYrnlRYfI3VdrVc3dnE8thOFcO/d
+   2g5MIioE386GJ8s99tqlgN9/FIFqEfcg+t+VNpFYhIT9Ac4wJyxq4REE/
+   Jm2hizvaY0NP6nTKMBzkPAQs1iKfY4nbgONhVpzGJdDiAciIZEDIrZy4L
+   SpYbO9OVp+r1GwP7a6S/zFkRQ+sbaRgUl0eq1xMHqZGBPvVGv5L+rpb39
+   KskzQFPZ4ES8BV9eM8l6koIFhr8uZp569l5tOdccwbIz/ZuC8jwHcuIlH
+   6aYJmihU38WbEN4WrNT7c8OlUszLu1n2ENptz1Fr8rlbq9ZrXZ2M2SSlq
+   A==;
+X-CSE-ConnectionGUID: A6xYNrmPT3y8cslVYY82zg==
+X-CSE-MsgGUID: N9FqGMd/TsOzYpZB1NMG0Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67289505"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="67289505"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2025 19:34:17 -0700
+X-CSE-ConnectionGUID: 6OykCOhxSjKwVXV6U+PnRQ==
+X-CSE-MsgGUID: NyuBCTLZRWSbMfCMxYkrGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
+   d="scan'208";a="207965386"
+Received: from linux-pnp-server-11.sh.intel.com ([10.239.176.178])
+  by fmviesa002.fm.intel.com with ESMTP; 23 Oct 2025 19:34:15 -0700
+From: Wangyang Guo <wangyang.guo@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org
+Cc: Wangyang Guo <wangyang.guo@intel.com>,
+	Tianyou Li <tianyou.li@intel.com>,
+	Tim Chen <tim.c.chen@linux.intel.com>,
+	Dan Liang <dan.liang@intel.com>
+Subject: [PATCH] lib/group_cpus: make group CPU cluster aware
+Date: Fri, 24 Oct 2025 10:30:38 +0800
+Message-ID: <20251024023038.872616-1-wangyang.guo@intel.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251022220802.1335131-1-zide.chen@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+As CPU core counts increase, the number of NVMe IRQs may be smaller than
+the total number of CPUs. This forces multiple CPUs to share the same
+IRQ. If the IRQ affinity and the CPU’s cluster do not align, a
+performance penalty can be observed on some platforms.
 
-On Wed, Oct 22, 2025 at 03:08:02PM -0700, Zide Chen wrote:
-> Commit c33aea446bf555ab ("perf tools: Fix precise_ip fallback logic")
-> unconditionally called the precise_ip fallback and moved it after the
-> missing-feature checks so that it could handle EINVAL as well.
-> 
-> However, this introduced an issue: after disabling missing features,
-> the event could fail to open, which makes the subsequent precise_ip
-> fallback useless since it will always fail.
-> 
-> For example, run the following command on Intel SPR:
-> 
-> $ perf record -e '{cpu/mem-loads-aux/S,cpu/mem-loads,ldlat=3/PS}' -- ls
-> 
-> Opening the event "cpu/mem-loads,ldlat=3/PS" returns EINVAL when
-> precise_ip == 3. It then sets attr.inherit = false, which triggers a
+This patch improves IRQ affinity by grouping CPUs by cluster within each
+NUMA domain, ensuring better locality between CPUs and their assigned
+NVMe IRQs.
 
-I'm curious about this part.  Why the kernel set 'inherit = false'?  IOW
-how did the leader event (mem-loads-aux) succeed with inherit = true
-then?
+Reviewed-by: Tianyou Li <tianyou.li@intel.com>
+Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+Tested-by: Dan Liang <dan.liang@intel.com>
+Signed-off-by: Wangyang Guo <wangyang.guo@intel.com>
+---
+ lib/group_cpus.c | 269 +++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 204 insertions(+), 65 deletions(-)
 
-> kernel check failure since it doesn't match the group leader's inherit
-> attribute. As a result, it continues to fail even after precise_ip is
-> reduced.
-> 
-> By moving the precise_ip fallback earlier, this issue is resolved, as
-> well as the kernel test robot report mentioned in commit
-> c33aea446bf555ab.
-> 
-> No negative side effects are expected, because the precise_ip level is
-> restored by evsel__precise_ip_fallback() if the fallback does not help.
+diff --git a/lib/group_cpus.c b/lib/group_cpus.c
+index 6d08ac05f371..56ca6193736d 100644
+--- a/lib/group_cpus.c
++++ b/lib/group_cpus.c
+@@ -114,48 +114,15 @@ static int ncpus_cmp_func(const void *l, const void *r)
+ 	return ln->ncpus - rn->ncpus;
+ }
+ 
+-/*
+- * Allocate group number for each node, so that for each node:
+- *
+- * 1) the allocated number is >= 1
+- *
+- * 2) the allocated number is <= active CPU number of this node
+- *
+- * The actual allocated total groups may be less than @numgrps when
+- * active total CPU number is less than @numgrps.
+- *
+- * Active CPUs means the CPUs in '@cpu_mask AND @node_to_cpumask[]'
+- * for each node.
+- */
+-static void alloc_nodes_groups(unsigned int numgrps,
+-			       cpumask_var_t *node_to_cpumask,
+-			       const struct cpumask *cpu_mask,
+-			       const nodemask_t nodemsk,
+-			       struct cpumask *nmsk,
+-			       struct node_groups *node_groups)
++static void alloc_groups_to_nodes(unsigned int numgrps,
++				  unsigned int numcpus,
++				  struct node_groups *node_groups,
++				  unsigned int num_nodes)
+ {
+-	unsigned n, remaining_ncpus = 0;
+-
+-	for (n = 0; n < nr_node_ids; n++) {
+-		node_groups[n].id = n;
+-		node_groups[n].ncpus = UINT_MAX;
+-	}
+-
+-	for_each_node_mask(n, nodemsk) {
+-		unsigned ncpus;
+-
+-		cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
+-		ncpus = cpumask_weight(nmsk);
++	unsigned int n, remaining_ncpus = numcpus;
++	unsigned int  ngroups, ncpus;
+ 
+-		if (!ncpus)
+-			continue;
+-		remaining_ncpus += ncpus;
+-		node_groups[n].ncpus = ncpus;
+-	}
+-
+-	numgrps = min_t(unsigned, remaining_ncpus, numgrps);
+-
+-	sort(node_groups, nr_node_ids, sizeof(node_groups[0]),
++	sort(node_groups, num_nodes, sizeof(node_groups[0]),
+ 	     ncpus_cmp_func, NULL);
+ 
+ 	/*
+@@ -226,9 +193,8 @@ static void alloc_nodes_groups(unsigned int numgrps,
+ 	 * finally for each node X: grps(X) <= ncpu(X).
+ 	 *
+ 	 */
+-	for (n = 0; n < nr_node_ids; n++) {
+-		unsigned ngroups, ncpus;
+ 
++	for (n = 0; n < num_nodes; n++) {
+ 		if (node_groups[n].ncpus == UINT_MAX)
+ 			continue;
+ 
+@@ -246,12 +212,199 @@ static void alloc_nodes_groups(unsigned int numgrps,
+ 	}
+ }
+ 
++/*
++ * Allocate group number for each node, so that for each node:
++ *
++ * 1) the allocated number is >= 1
++ *
++ * 2) the allocated number is <= active CPU number of this node
++ *
++ * The actual allocated total groups may be less than @numgrps when
++ * active total CPU number is less than @numgrps.
++ *
++ * Active CPUs means the CPUs in '@cpu_mask AND @node_to_cpumask[]'
++ * for each node.
++ */
++static void alloc_nodes_groups(unsigned int numgrps,
++			       cpumask_var_t *node_to_cpumask,
++			       const struct cpumask *cpu_mask,
++			       const nodemask_t nodemsk,
++			       struct cpumask *nmsk,
++			       struct node_groups *node_groups)
++{
++	unsigned int n, numcpus = 0;
++
++	for (n = 0; n < nr_node_ids; n++) {
++		node_groups[n].id = n;
++		node_groups[n].ncpus = UINT_MAX;
++	}
++
++	for_each_node_mask(n, nodemsk) {
++		unsigned int ncpus;
++
++		cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
++		ncpus = cpumask_weight(nmsk);
++
++		if (!ncpus)
++			continue;
++		numcpus += ncpus;
++		node_groups[n].ncpus = ncpus;
++	}
++
++	numgrps = min_t(unsigned int, numcpus, numgrps);
++	alloc_groups_to_nodes(numgrps, numcpus, node_groups, nr_node_ids);
++}
++
++static void assign_cpus_to_groups(unsigned int ncpus,
++				  struct cpumask *nmsk,
++				  struct node_groups *nv,
++				  struct cpumask *masks,
++				  unsigned int *curgrp,
++				  unsigned int last_grp)
++{
++	unsigned int v, cpus_per_grp, extra_grps;
++	/* Account for rounding errors */
++	extra_grps = ncpus - nv->ngroups * (ncpus / nv->ngroups);
++
++	/* Spread allocated groups on CPUs of the current node */
++	for (v = 0; v < nv->ngroups; v++, *curgrp += 1) {
++		cpus_per_grp = ncpus / nv->ngroups;
++
++		/* Account for extra groups to compensate rounding errors */
++		if (extra_grps) {
++			cpus_per_grp++;
++			--extra_grps;
++		}
++
++		/*
++		 * wrapping has to be considered given 'startgrp'
++		 * may start anywhere
++		 */
++		if (*curgrp >= last_grp)
++			*curgrp = 0;
++		grp_spread_init_one(&masks[*curgrp], nmsk, cpus_per_grp);
++	}
++}
++
++static int alloc_cluster_groups(unsigned int ncpus,
++				unsigned int ngroups,
++				struct cpumask *node_cpumask,
++				cpumask_var_t msk,
++				const struct cpumask ***clusters_ptr,
++				struct node_groups **cluster_groups_ptr)
++{
++	unsigned int ncluster = 0;
++	unsigned int cpu, nc, n;
++	const struct cpumask *cluster_mask;
++	const struct cpumask **clusters;
++	struct node_groups *cluster_groups;
++
++	cpumask_copy(msk, node_cpumask);
++
++	/* Probe how many clusters in this node. */
++	while (1) {
++		cpu = cpumask_first(msk);
++		if (cpu >= nr_cpu_ids)
++			break;
++
++		cluster_mask = topology_cluster_cpumask(cpu);
++		/* Clean out CPUs on the same cluster. */
++		cpumask_andnot(msk, msk, cluster_mask);
++		ncluster++;
++	}
++
++	/* If ngroups < ncluster, cross cluster is inevitable, skip. */
++	if (ncluster == 0 || ncluster > ngroups)
++		goto no_cluster;
++
++	/* Allocate memory based on cluster number. */
++	clusters = kcalloc(ncluster, sizeof(struct cpumask *), GFP_KERNEL);
++	if (!clusters)
++		goto no_cluster;
++	cluster_groups = kcalloc(ncluster, sizeof(struct node_groups), GFP_KERNEL);
++	if (!cluster_groups)
++		goto fail_cluster_groups;
++
++	/* Filling cluster info for later process. */
++	cpumask_copy(msk, node_cpumask);
++	for (n = 0; n < ncluster; n++) {
++		cpu = cpumask_first(msk);
++		cluster_mask = topology_cluster_cpumask(cpu);
++		nc = cpumask_weight_and(cluster_mask, node_cpumask);
++		clusters[n] = cluster_mask;
++		cluster_groups[n].id = n;
++		cluster_groups[n].ncpus = nc;
++		cpumask_andnot(msk, msk, cluster_mask);
++	}
++
++	alloc_groups_to_nodes(ngroups, ncpus, cluster_groups, ncluster);
++
++	*clusters_ptr = clusters;
++	*cluster_groups_ptr = cluster_groups;
++	return ncluster;
++
++ fail_cluster_groups:
++	kfree(clusters);
++ no_cluster:
++	return 0;
++}
++
++/*
++ * Try group CPUs evenly for cluster locality within a NUMA node.
++ *
++ * Return: true if success, false otherwise.
++ */
++static bool __try_group_cluster_cpus(unsigned int ncpus,
++				     unsigned int ngroups,
++				     struct cpumask *node_cpumask,
++				     struct cpumask *masks,
++				     unsigned int *curgrp,
++				     unsigned int last_grp)
++{
++	struct node_groups *cluster_groups;
++	const struct cpumask **clusters;
++	unsigned int ncluster;
++	bool ret = false;
++	cpumask_var_t nmsk;
++	unsigned int i, nc;
++
++	if (!zalloc_cpumask_var(&nmsk, GFP_KERNEL))
++		goto fail_nmsk_alloc;
++
++	ncluster = alloc_cluster_groups(ncpus, ngroups, node_cpumask, nmsk,
++					&clusters, &cluster_groups);
++
++	if (ncluster == 0)
++		goto fail_no_clusters;
++
++	for (i = 0; i < ncluster; i++) {
++		struct node_groups *nv = &cluster_groups[i];
++
++		/* Get the cpus on this cluster. */
++		cpumask_and(nmsk, node_cpumask, clusters[nv->id]);
++		nc = cpumask_weight(nmsk);
++		if (!nc)
++			continue;
++		WARN_ON_ONCE(nv->ngroups > nc);
++
++		assign_cpus_to_groups(nc, nmsk, nv, masks, curgrp, last_grp);
++	}
++
++	ret = true;
++	kfree(cluster_groups);
++	kfree(clusters);
++ fail_no_clusters:
++	free_cpumask_var(nmsk);
++ fail_nmsk_alloc:
++	return ret;
++}
++
+ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
+ 			       cpumask_var_t *node_to_cpumask,
+ 			       const struct cpumask *cpu_mask,
+ 			       struct cpumask *nmsk, struct cpumask *masks)
+ {
+-	unsigned int i, n, nodes, cpus_per_grp, extra_grps, done = 0;
++	unsigned int i, n, nodes, done = 0;
+ 	unsigned int last_grp = numgrps;
+ 	unsigned int curgrp = startgrp;
+ 	nodemask_t nodemsk = NODE_MASK_NONE;
+@@ -287,7 +440,7 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
+ 	alloc_nodes_groups(numgrps, node_to_cpumask, cpu_mask,
+ 			   nodemsk, nmsk, node_groups);
+ 	for (i = 0; i < nr_node_ids; i++) {
+-		unsigned int ncpus, v;
++		unsigned int ncpus;
+ 		struct node_groups *nv = &node_groups[i];
+ 
+ 		if (nv->ngroups == UINT_MAX)
+@@ -301,28 +454,14 @@ static int __group_cpus_evenly(unsigned int startgrp, unsigned int numgrps,
+ 
+ 		WARN_ON_ONCE(nv->ngroups > ncpus);
+ 
+-		/* Account for rounding errors */
+-		extra_grps = ncpus - nv->ngroups * (ncpus / nv->ngroups);
+-
+-		/* Spread allocated groups on CPUs of the current node */
+-		for (v = 0; v < nv->ngroups; v++, curgrp++) {
+-			cpus_per_grp = ncpus / nv->ngroups;
+-
+-			/* Account for extra groups to compensate rounding errors */
+-			if (extra_grps) {
+-				cpus_per_grp++;
+-				--extra_grps;
+-			}
+-
+-			/*
+-			 * wrapping has to be considered given 'startgrp'
+-			 * may start anywhere
+-			 */
+-			if (curgrp >= last_grp)
+-				curgrp = 0;
+-			grp_spread_init_one(&masks[curgrp], nmsk,
+-						cpus_per_grp);
++		if (__try_group_cluster_cpus(ncpus, nv->ngroups, nmsk,
++					     masks, &curgrp, last_grp)) {
++			done += nv->ngroups;
++			continue;
+ 		}
++
++		assign_cpus_to_groups(ncpus, nmsk, nv, masks, &curgrp,
++				      last_grp);
+ 		done += nv->ngroups;
+ 	}
+ 	kfree(node_groups);
+-- 
+2.47.3
 
-I'm not sure.. some events may need a different (i.e. lower) precise
-level than the max.  I think checking the missing feature later will
-use the max precise level always.
-
-Thanks,
-Namhyung
-
-> 
-> This also aligns with commit 2b70702917337a8d ("perf tools: Remove
-> evsel__handle_error_quirks()").
-> 
-> Fixes: af954f76eea56453 ("perf tools: Check fallback error and order")
-> Fixes: c33aea446bf555ab ("perf tools: Fix precise_ip fallback logic")
-> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Signed-off-by: Zide Chen <zide.chen@intel.com>
-> ---
->  tools/perf/util/evsel.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index ca74514c8707..6ce32533a213 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -2714,12 +2714,12 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
->  	if (err == -EMFILE && rlimit__increase_nofile(&set_rlimit))
->  		goto retry_open;
->  
-> +	if (evsel__precise_ip_fallback(evsel))
-> +		goto retry_open;
-> +
->  	if (err == -EINVAL && evsel__detect_missing_features(evsel, cpu))
->  		goto fallback_missing_features;
->  
-> -	if (evsel__precise_ip_fallback(evsel))
-> -		goto retry_open;
-> -
->  out_close:
->  	if (err)
->  		threads->err_thread = thread;
-> -- 
-> 2.51.0
-> 
 
