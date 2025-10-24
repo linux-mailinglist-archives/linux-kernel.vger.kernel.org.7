@@ -1,141 +1,141 @@
-Return-Path: <linux-kernel+bounces-868182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A3AC04981
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:58:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87020C04987
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C3744E87F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:58:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80CD91A653F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FF8277CA4;
-	Fri, 24 Oct 2025 06:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE503277C98;
+	Fri, 24 Oct 2025 06:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ag+RvXpu"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SHh21Toz"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AD326F46E;
-	Fri, 24 Oct 2025 06:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B61274652
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761289110; cv=none; b=Chp7lgVXC2J288RC+8OM2PmQSVJEKpH7XIou4kquvcr6Itt1hG2bEw4FPX2B7XvAtF7Or+G2J/PwKWsVT8NFh5BNR/0mdK1/GVV07rUP1+ypHjf68vR94P77Z5yp4w4Cz7INauYwIUJeCHR8Oh48DvLl7f51OJLX7hMQs16OYNo=
+	t=1761289133; cv=none; b=py42Hjl2/+3OOsS/SwqAIsK/ccdHK16HDiPiJuKV5VDokUHk9gOTp04oMSonr+NoJ8wSni8nZoCpxfLMYRIkctSlrw84umX/08HCt9fRb2N3lMWgZjEpiIvsuYYgTJvy4eRcT0G0gI1/AH8BfetfQuSFn1GXzdcP9xCn7qFBLPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761289110; c=relaxed/simple;
-	bh=Sdsc+HimNNRly3zNHIIhGItCDW5d9nIGsh5mSBxyp2Q=;
-	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:Mime-Version:
-	 References:In-Reply-To; b=g0j26hR8ZmCbsjGA7hST+cf8jKAwn+ZWphF49QS+SDYy0e/HcpkyHcsp1Taxtjwo5cnverjRAAJiFyHMzLMZIpjPID2Wp9YCgIhPhZ1D0tcUT7upHhPppCOJ7BQAhYND93OeHUE5HmvALUTl9hNujsP+3Q3hkhdiVQ4B2+0Y6wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ag+RvXpu; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id E05CDC0C41B;
-	Fri, 24 Oct 2025 06:58:06 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B621C60703;
-	Fri, 24 Oct 2025 06:58:26 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8958D102F244A;
-	Fri, 24 Oct 2025 08:58:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761289105; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=gaTJdVKcJhZjltv8SaaLzQ6hgLmAvbb14RM/LjN1BKs=;
-	b=ag+RvXpuWocu7lddJwZwJ7ufa/ybY3bWA2D7vFXMElgKAB1iZfN4nxQVO4TIu3Acqz6sG2
-	LrE/KPN8ZZ7zKsLUDZ434F9kCQAEG87HfqovSGwy0joW1uvL6czVHI+Zdzm1GlMm4wCOvI
-	F2oF+0wuQL2IuD+LrDshbMB3bxwAfwinT5hyvbyZM9/opy6BOsG7/R9ir3kXYEHb5+uQ0J
-	eZ6crrfZ6q/zW+RHAIo3gOPw1dURhm/2++rmPI3gsNyneo1g8fpFekIxz0xpgrVJgXxQHE
-	+w5yFfl4yMQ9fBdN/vgpJFqUoIZUnQ0r5kOJ7lajf5YPN2LB/zyDU5VJbgO+eQ==
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 24 Oct 2025 08:58:06 +0200
-Message-Id: <DDQCVG55KXN7.3P6MCQTNID8K9@bootlin.com>
-To: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>,
- =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Subject: Re: [PATCH bpf-next v2 3/4] selftests/bpf: integrate
- test_tc_tunnel.sh tests into test_progs
-Cc: "Alexei Starovoitov" <ast@kernel.org>, "Daniel Borkmann"
- <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>, "Martin
- KaFai Lau" <martin.lau@linux.dev>, "Eduard Zingerman" <eddyz87@gmail.com>,
- "Song Liu" <song@kernel.org>, "Yonghong Song" <yonghong.song@linux.dev>,
- "John Fastabend" <john.fastabend@gmail.com>, "KP Singh"
- <kpsingh@kernel.org>, "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo"
- <haoluo@google.com>, "Jiri Olsa" <jolsa@kernel.org>, "Shuah Khan"
- <shuah@kernel.org>, <ebpf@linuxfoundation.org>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Bastien Curutchet"
- <bastien.curutchet@bootlin.com>, "bpf" <bpf@vger.kernel.org>, "open
- list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, "LKML"
- <linux-kernel@vger.kernel.org>
-From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+	s=arc-20240116; t=1761289133; c=relaxed/simple;
+	bh=ouuvPGm0sNumIUj8yL/i23jRDtD4FUp08+5H5fz4Wbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oe2Z83U/H3lUFTpgLwrYv7ObbpgAXXGdfJTluWQsxXs6T94Q9g+rBnCtk5i/eRBHoAPnnO43YJAXeYPOXfqRRnF9bS7A2onMVVDMA7ony6QQUP3lWEihKGa/Z/moT/2//at1lgDJdjomyAg0pGMtl71Si9HkJ6+idJO39mhxogM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SHh21Toz; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-290dc630a07so12235465ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 23:58:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761289131; x=1761893931; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k87hOdMqC5Cdt3rAJ8+LiDSDQZa5GhKDKbVYp0AjmqY=;
+        b=SHh21Toz5tVvp8ANRqRAs+DiwvdEDuPaupwuQWmeChPiRm2884qVsbJk8QLjJdOsEJ
+         2NDsvWovnEQubCm04feJuef+jT4QGe+M7KdTAARePGrd3BThQVQxKYHPFUBLRlMzRBhA
+         BtncmgLcqvjUyYJ1VjX26qDk8/2RrM786zxp3ptm+dwk6KL1+UANW9vH1vHgfc1XZ2km
+         0XkTH5ZQL634WWSHWB+kGXu1fsx9JFBedJVWPYU/fcaUts1TmMz5zz+OctnWnYgBoMb7
+         zq5Zm/EB1zuk5xJRdBHrGri2Co0YKAv0JLSc63ENe/ffiOzvuysuocv4+xjwlwBGVIbk
+         YpeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761289131; x=1761893931;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=k87hOdMqC5Cdt3rAJ8+LiDSDQZa5GhKDKbVYp0AjmqY=;
+        b=X4YffJkXcBTufy6DUzI/oLYlwX/cKacojKtFzAMpl5QhviKlT/bpafHbT9BuNiz8qP
+         LI2aUm1LZZ+LISew1MOLl4KWce1LAIvWtq8DN+mHl17wqwLq9FfCaY2UWuCa0WOoq4Lm
+         4AsEEtve2o+G6nhSs8gfe8GY/A75B8JdpD7lks+XkmJFvBIYmvynH787uJfkOzNqpLa+
+         egtviqCihHEcn7/fz6PIGDSQOYpTsMPbE+Lg0m1kq/C0xiDIa3Olm7MLA5QD6IILbBQ5
+         aY7P+ivr8x/ckSNRCrniz6dZEKAqgpGAfLfQSRnD0KTII/Fp7A3VIDHhqfmzt1dhxLa1
+         ctgQ==
+X-Gm-Message-State: AOJu0YwvQ5z54Gp57gwq7DA4MyKFHi4q91n/Q3JdDhhrgn0pP65jullB
+	j9Wf0CdQTmEyOU+vr9sAV8iVr13dkUXTpWkLmRpoCBVrV9aPEYCMdCPl
+X-Gm-Gg: ASbGncs1OrzBnB8LpIHJ6sMZsjAtLb1E7N/VAI/ZahzpiWzGA58gf80/sZFW527i6xu
+	NfQ6FjU980Pv5gvh7d1i+Bdbkya1bZn5zTJ19Hzg9ZpPBP/L3FHGUMR9nF0YeERd/r9fB5VkMnk
+	OhE4vgQp/yuaX/Hd4IruQjPxswtb6i/lXvaiPp+SYlfZkxiD+j+vAi15iGlrfsCCaFGmAsiAK0h
+	qDYP6LrNAVRIi80hjrY06rxORRWlvSFB3KTvhGS/NNsS5QZ11UVfTiM/Tk5GiDqjfP3VBIv3owa
+	XaTiiB5HAWff08gBK7+2oEALmQRzxAmTJd+YmorXMHbHesSUd59Gj2smzXkq2XoF8sSrRSWGBv3
+	V51bDjcGCRUzL/xDAHjBhu0TuecHkAhRdC+c8FElwhRbgmoODaG4FT87pOYP3Mu35ODKPrvYMr8
+	RPYBYBJ7nR9PXtSJOCVLQ2rYnQxR7RrB8=
+X-Google-Smtp-Source: AGHT+IEgJgSJT4c559o77/ns1JxQ3O0Fpw3oD26TngmT8w9TA3KEe2VfcEYAUCHIIs/Ae1dHnnUPag==
+X-Received: by 2002:a17:902:db11:b0:240:48f4:40f7 with SMTP id d9443c01a7336-290cba4efc9mr416493535ad.39.1761289130959;
+        Thu, 23 Oct 2025 23:58:50 -0700 (PDT)
+Received: from [10.125.192.78] ([210.184.73.204])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33e2247a342sm8113140a91.13.2025.10.23.23.58.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Oct 2025 23:58:50 -0700 (PDT)
+Message-ID: <561a15f5-3391-2796-6454-b980e0a228bd@gmail.com>
+Date: Fri, 24 Oct 2025 14:58:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251022-tc_tunnel-v2-0-a44a0bd52902@bootlin.com>
- <20251022-tc_tunnel-v2-3-a44a0bd52902@bootlin.com>
- <DDOOS5LR0GZH.ITEM5495FPOX@bootlin.com>
- <CAADnVQJ6zKbThz8B5bqBpwz=gyqeindZb1kwCmM90PsR4-7iQQ@mail.gmail.com>
-In-Reply-To: <CAADnVQJ6zKbThz8B5bqBpwz=gyqeindZb1kwCmM90PsR4-7iQQ@mail.gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.0
+Subject: Re: [PATCH] sched/fair: Fix non-empty throttled_limbo_list warning in
+ tg_throttle_down()
+To: K Prateek Nayak <kprateek.nayak@amd.com>, mingo@redhat.com,
+ peterz@infradead.org, mingo@kernel.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org, Hao Jia <jiahao1@lixiang.com>,
+ Aaron Lu <ziqianlu@bytedance.com>
+References: <20251023121213.38282-1-jiahao.kernel@gmail.com>
+ <98c1968e-8629-43d1-a4b8-600d263bd5a1@amd.com>
+From: Hao Jia <jiahao.kernel@gmail.com>
+In-Reply-To: <98c1968e-8629-43d1-a4b8-600d263bd5a1@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Alexei,
 
-On Wed Oct 22, 2025 at 6:44 PM CEST, Alexei Starovoitov wrote:
-> On Wed, Oct 22, 2025 at 12:52=E2=80=AFAM Alexis Lothor=C3=A9
-> <alexis.lothore@bootlin.com> wrote:
+Hi Prateek,
 
-[...]
+On 2025/10/24 12:36, K Prateek Nayak wrote:
+> Hello Hao,
+> 
+> On 10/23/2025 5:42 PM, Hao Jia wrote:
+>> @@ -5287,7 +5287,9 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>>   	se->on_rq = 1;
+>>   
+>>   	if (cfs_rq->nr_queued == 1) {
+>> -		check_enqueue_throttle(cfs_rq);
+>> +		if (!(flags & ENQUEUE_THROTTLE))
+>> +			check_enqueue_throttle(cfs_rq);
+>> +
+> 
+> So my only concern here is:
+> 
+> check_enqueue_throttle()
+>    account_cfs_rq_runtime()
+>      __account_cfs_rq_runtime()
+>        assign_cfs_rq_runtime()
+>          __assign_cfs_rq_runtime()
+>            start_cfs_bandwidth() /* Starts the BW timer. */
+> 
+> If we skip it, we wouldn't know we've run out of bandwidth until the
+> hierarchy is picked which would cause additional delay until the
+> bandwidth is replenished.
+> 
+> At the very least, we should pass the enqueue flags to
+> check_enqueue_throttle() and only skip the throttle_cfs_rq() part if
+> we spot ENQUEUE_THROTTLE.
+> 
+> Thoughts?
+> 
 
->> A note about test duration:
->> the overall test duration, in my setup (x86 qemu-based setup, running on
->> x86), is around 13s. Reviews on similar series ([1]) shows that such a
->> duration is not really desirable for CI integration. I checked how to
->> reduce it, and it appears that most of it is due to the fact that for ea=
-ch
->> subtest, we verify that if we insert bpf encapsulation (egress) program,
->> and nothing on server side, we properly fail to connect client to server=
-.
->> This test then relies on timeout connection,  and I already reduced it a=
-s
->> much as possible, but I guess going below the current value (500ms) will
->> just start to make the whole test flaky.
->>
->> I took this "check connection failure" from the original script, and kin=
-d
->> of like it for its capacity to detect false negatives, but should I
->> eventually get rid of it ?
->
-> I vote to get rid of it.
-> I'd rather have test_progs that are quick enough to execute for CI and
-> for all developers then more in depth coverage for the corner case.
+Thanks for your suggestion. This is indeed a potential risk, and it will 
+do it in the next version.
 
-ACK. I' ll get rid of it. For the record, I drop down to ~3s in my testing
-setup instead of ~13s when removing this "ensure connection failure test".
-
-> Note that for the verifier range test we randomize the test coverage,
-> since the whole permutation takes hours to run. Instead we randomly
-> pick a couple tests and run only those. Since CI runs for every patch
-> the overall coverage is good enough.
-> Would something like that possible here ? and in the other xsk test?
-
-I see that test_verifier takes some "to" and "from" indexes, selecting the
-range of tests that we are able to run. Is this the mechanism you are
-referring to ? (and if so, I guess the rand part is handled by the CI
-runner ?)
-
-If we want it for some specific test_progs tests like test_tc_tunnel and
-test_xsk, I guess it is doable, but we need to think about who controls the
-randomization, and how to still force execution of specific (or whole range
-of) subtests, when needing to reproduce an issue.
-
-Alexis
---=20
-Alexis Lothor=C3=A9, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Thanks,
+Hao
 
