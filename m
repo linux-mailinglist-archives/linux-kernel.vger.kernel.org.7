@@ -1,104 +1,264 @@
-Return-Path: <linux-kernel+bounces-868997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60774C06AEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:24:05 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08788C06ADC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D9393AED83
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:23:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 54B3835A59F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B5220CCCA;
-	Fri, 24 Oct 2025 14:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oscillator.se header.i=@oscillator.se header.b="mTSKbx+l"
-Received: from sv9.manufrog.com (sv9.manufrog.com [46.246.119.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464CC1E260A;
+	Fri, 24 Oct 2025 14:23:06 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3001F542E;
-	Fri, 24 Oct 2025 14:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.246.119.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB48202963;
+	Fri, 24 Oct 2025 14:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761315775; cv=none; b=sSUr94ZqlUrcJlLUzn/U8PammvyO2ynOUAVilapTBMVM/0Hg7uZIcba/B1kMkFEP7DTW2pp014hblwBRr73S8c7IeKqYKvryxgcOKICvXESCokh9FGvngrFRQQEFuooRQ+HbvqX5yvRyiHR4kzpKYKqwKcEEkz4TpboSh5rL+uQ=
+	t=1761315785; cv=none; b=M7U6aI9a+RfFLEMiPDwjlV8AFYrNICdDy8SJuhY7hOMZ8MYXxbO79mndRK28QW1UhwfhYIwlnFMErvilxidWVERLtlgIYIYAt//SSneXZNpPSeWWnRbsO4sI5tDuSbtaGgBaU2OUvhfYkcP5FjM5+O8kmrW6FISqPKJwLUUAZnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761315775; c=relaxed/simple;
-	bh=D8rwdLfRMn4havyDY8OTgR1d65A4aha3vFMkV1JJCg0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=N0gC73+/BH5LnIlLgfCRPKmy29jxWRgGcQo9Wt7TTMd2z68Xw4EM1bGTq2FZDvvA1PWa9RMv+BVdwUPfAdeF6P0ebvU8lJRmMLVl6JDsKUbMERdXaqsMcuuLsRniPnDEPSlHfWGcFNbs1rNWIQpCMcpnhCwQRfKDICEcLw1GY54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oscillator.se; spf=pass smtp.mailfrom=oscillator.se; dkim=pass (2048-bit key) header.d=oscillator.se header.i=@oscillator.se header.b=mTSKbx+l; arc=none smtp.client-ip=46.246.119.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oscillator.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oscillator.se
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oscillator.se; s=default; h=Content-Transfer-Encoding:Content-Type:
-	Message-ID:References:In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=HuBoivuDNXV7Ej1/tQOGfJDgROX6oaEWQgF6U5IGuB0=; b=mTSKbx+ls5nJ2eqwWjtIdXH1zS
-	wrRFUsG51Chiol9k/tARSG4fWdqGiqUXDL1NFnVuFBej3HKHA3QXfCminwia7MttpmvU7AvDEfbo4
-	n2j9khE9t8JE7CG4UqsuL98krOKLU/irTDTVpogazf+eBEXOes5hPVs8tsfpx0s1w5YmC6yGNUxBO
-	uQtcyhonCrojhWw6ljeysLmzZjAF+qBdgusck2V4wx3xnKo4VSsXn7L5AM7rxzVkscLzyB1XgS63v
-	o7TvZPHKZx2rn+xqtjnleIb82AWCz/n7R6KlGR7Q2ObWc/z1tDc370cwSH4DN9KDghq7u8VY36Wsl
-	WNJQb04Q==;
-Received: from [::1] (port=58822 helo=sv9.manufrog.com)
-	by sv9.manufrog.com with esmtpa (Exim 4.98.2)
-	(envelope-from <staffan.melin@oscillator.se>)
-	id 1vCIgk-0000000B6WQ-2Ehc;
-	Fri, 24 Oct 2025 16:22:41 +0200
+	s=arc-20240116; t=1761315785; c=relaxed/simple;
+	bh=tVU57feXsMsXAJB7gd4NTH1wrXDb+/qt4z7S0gDbQ8w=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U9t5IIUSbFIPsB086qcHXhGdZnY/nh5Nyb00XWGkE9COuS16Wp7PArIOXSrLrELdHEC3Lr3HkcTsy5lqRmQtSfY5pL9uLD46yP63GCNoQi9qqTObo+ReviR1E1CzRtrE/Pq1sLHlOhHYsMlAs6VhxlinZfDAAZoljMLUbpHjCdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ctQ5T0ylQz6GDFX;
+	Fri, 24 Oct 2025 22:19:41 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 95D0314014C;
+	Fri, 24 Oct 2025 22:22:59 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 24 Oct
+ 2025 15:22:58 +0100
+Date: Fri, 24 Oct 2025 15:22:56 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Jeremy Linton <jeremy.linton@arm.com>
+CC: James Morse <james.morse@arm.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-acpi@vger.kernel.org>, "D
+ Scott Phillips OS" <scott@os.amperecomputing.com>,
+	<carl@os.amperecomputing.com>, <lcherian@marvell.com>,
+	<bobo.shaobowang@huawei.com>, <tan.shaopeng@fujitsu.com>,
+	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, "Xin
+ Hao" <xhao@linux.alibaba.com>, <peternewman@google.com>,
+	<dfustini@baylibre.com>, <amitsinght@marvell.com>, David Hildenbrand
+	<david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba Ko
+	<kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
+	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Gavin Shan <gshan@redhat.com>
+Subject: Re: [PATCH v3 04/29] ACPI / PPTT: Add a helper to fill a cpumask
+ from a cache_id
+Message-ID: <20251024152256.00003f8e@huawei.com>
+In-Reply-To: <50a8cc38-810b-4bea-9a73-2463a6160b9f@arm.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+	<20251017185645.26604-5-james.morse@arm.com>
+	<50a8cc38-810b-4bea-9a73-2463a6160b9f@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 24 Oct 2025 16:22:38 +0200
-From: Staffan Melin <staffan.melin@oscillator.se>
-To: zhangheng <zhangheng@kylinos.cn>
-Cc: Terry Junge <linuxhid@cosmicgizmosystems.com>, jikos@kernel.org,
- bentiss@kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, 1114557@bugs.debian.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH v2] HID: quirks: Add device descriptor for 4c4a:4155
-In-Reply-To: <8f0155d4-72a7-45ec-a272-7892e783bbed@kylinos.cn>
-References: <20250923022445.3276026-1-zhangheng@kylinos.cn>
- <e0dde746-3761-414e-8df1-eb8557cadbf8@cosmicgizmosystems.com>
- <e605f642-c967-4d41-8145-a10e8f48fb1b@kylinos.cn>
- <365f9f8e-549e-42e1-ac8c-7ff1f42c6977@cosmicgizmosystems.com>
- <8f0155d4-72a7-45ec-a272-7892e783bbed@kylinos.cn>
-User-Agent: Roundcube Webmail/1.6.11
-Message-ID: <b29aadf6399a79b113f5dd7749fff437@oscillator.se>
-X-Sender: staffan.melin@oscillator.se
-Organization: Oscillator
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - sv9.manufrog.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oscillator.se
-X-Get-Message-Sender-Via: sv9.manufrog.com: authenticated_id: staffan.melin@oscillator.se
-X-Authenticated-Sender: sv9.manufrog.com: staffan.melin@oscillator.se
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Thank you,
+On Wed, 22 Oct 2025 07:58:36 -0500
+Jeremy Linton <jeremy.linton@arm.com> wrote:
 
-I can confirm that this latest patch fixes the issue on my GPD Duo.
-
-Tested-by: staffan.melin@oscillator.se
-
-Many thanks,
-
-Staffan
-
-
-On 2025-10-24 05:32, zhangheng wrote:
-> Hi Terry Junge，
+> Hi,
 > 
-> I have made the changes as per your suggestion.
-> mic.txt is the microphone report descriptor and is working properly.
+> This is largely looking pretty solid, but..
+> 
+> 
+> On 10/17/25 1:56 PM, James Morse wrote:
+> > MPAM identifies CPUs by the cache_id in the PPTT cache structure.
+> > 
+> > The driver needs to know which CPUs are associated with the cache.
+> > The CPUs may not all be online, so cacheinfo does not have the
+> > information.
+> > 
+> > Add a helper to pull this information out of the PPTT.
+> > 
+> > CC: Rohit Mathew <Rohit.Mathew@arm.com>
+> > Signed-off-by: James Morse <james.morse@arm.com>
+> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> > Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+> > ---
+> > Changes since v2:
+> >   * Removed stray cleanup useage in preference for acpi_get_pptt().
+> >   * Removed WARN_ON_ONCE() for symmetry with other helpers.
+> >   * Dropped restriction on unified caches.
+> > 
+> > Changes since v1:
+> >   * Added punctuation to the commit message.
+> >   * Removed a comment about an alternative implementaion.
+> >   * Made the loop continue with a warning if a CPU is missing from the PPTT.
+> > 
+> > Changes since RFC:
+> >   * acpi_count_levels() now returns a value.
+> >   * Converted the table-get stuff to use Jonathan's cleanup helper.
+> >   * Dropped Sudeep's Review tag due to the cleanup change.
+> > ---
+> >   drivers/acpi/pptt.c  | 64 ++++++++++++++++++++++++++++++++++++++++++++
+> >   include/linux/acpi.h |  6 +++++
+> >   2 files changed, 70 insertions(+)
+> > 
+> > diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> > index 50c8f2a3c927..2f86f58699a6 100644
+> > --- a/drivers/acpi/pptt.c
+> > +++ b/drivers/acpi/pptt.c
+> > @@ -985,3 +985,67 @@ int find_acpi_cache_level_from_id(u32 cache_id)
+> >   
+> >   	return -ENOENT;
+> >   }
+> > +
+> > +/**
+> > + * acpi_pptt_get_cpumask_from_cache_id() - Get the cpus associated with the
+> > + *					   specified cache
+> > + * @cache_id: The id field of the cache
+> > + * @cpus: Where to build the cpumask
+> > + *
+> > + * Determine which CPUs are below this cache in the PPTT. This allows the property
+> > + * to be found even if the CPUs are offline.
+> > + *
+> > + * The PPTT table must be rev 3 or later,
+> > + *
+> > + * Return: -ENOENT if the PPTT doesn't exist, or the cache cannot be found.
+> > + * Otherwise returns 0 and sets the cpus in the provided cpumask.
+> > + */
+> > +int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id, cpumask_t *cpus)
+> > +{
+> > +	int level, cpu;
+> > +	u32 acpi_cpu_id;
+> > +	struct acpi_pptt_cache *cache;
+> > +	struct acpi_table_header *table;
+> > +	struct acpi_pptt_cache_v1 *cache_v1;
+> > +	struct acpi_pptt_processor *cpu_node;
+> > +
+> > +	cpumask_clear(cpus);
+> > +
+> > +	table = acpi_get_pptt();
+> > +	if (!table)
+> > +		return -ENOENT;
+> > +
+> > +	if (table->revision < 3)
+> > +		return -ENOENT;
+> > +
+> > +	for_each_possible_cpu(cpu) {
+> > +		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
+> > +		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
+> > +		if (!cpu_node)
+> > +			continue;
+> > +
+> > +		/* Start at 1 for L1 */
+> > +		level = 1;
+> > +		cache = acpi_find_any_type_cache_node(table, acpi_cpu_id, level,
+> > +						      &cpu_node);
+> > +		while (cache) {
+> > +			cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
+> > +						cache, sizeof(*cache));  
+> 
+> Is the core acpi definition in actbl2.h correct? Shouldn't it be 
+> something along the lines of:
+> 
+> struct acpi_pptt_cache_v1 {
+>   struct acpi_subtable_header header;
+>   u16 reservedd;
+>   u32 flags;
+>   u32 next_level_of_cache;
+>   u32 size;
+>   u32 number_of_sets;
+>   u8 associativity;
+>   u8 attributes;
+>   u16 lines_size;
+>   u32 cache_id;
+> }
+> 
+> 
+> Then that solves the detection of the additional field problem correctly 
+> because the length (24 vs 28) of the subtable then tells you which 
+> version your dealing with. (and goes back to why much of this is coded 
+> to use ACPI_ADD_PTR rather than structure+ logic.)
+> 
+
+Do we want to deal with arguing the change in ACPICA? 
+I fully agree that it would be much nicer if that didn't use this weird
+bits of structures approach :(  
+
+https://github.com/acpica/acpica/blob/master/source/include/actbl2.h#L3497
+is where this is coming from.
+
+Maybe can do it in parallel. Rafael, what do you think is best way forwards
+with this?
+
+Jonathan
+
+> 
+> Thanks,
+> 
+> 
+> 
+> 
+> 
+> 
+> > +			if (!cache)
+> > +				continue;
+> > +
+> > +			cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
+> > +						cache, sizeof(*cache));
+> > +
+> > +			if (cache->flags & ACPI_PPTT_CACHE_ID_VALID &&
+> > +			    cache_v1->cache_id == cache_id)
+> > +				cpumask_set_cpu(cpu, cpus);
+> > +
+> > +			level++;
+> > +			cache = acpi_find_any_type_cache_node(table, acpi_cpu_id,
+> > +							      level, &cpu_node);
+> > +		}
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> > index be074bdfd4d1..a9dbacabdf89 100644
+> > --- a/include/linux/acpi.h
+> > +++ b/include/linux/acpi.h
+> > @@ -1543,6 +1543,7 @@ int find_acpi_cpu_topology_package(unsigned int cpu);
+> >   int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
+> >   void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus);
+> >   int find_acpi_cache_level_from_id(u32 cache_id);
+> > +int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id, cpumask_t *cpus);
+> >   #else
+> >   static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
+> >   {
+> > @@ -1570,6 +1571,11 @@ static inline int find_acpi_cache_level_from_id(u32 cache_id)
+> >   {
+> >   	return -ENOENT;
+> >   }
+> > +static inline int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id,
+> > +						      cpumask_t *cpus)
+> > +{
+> > +	return -ENOENT;
+> > +}
+> >   #endif
+> >   
+> >   void acpi_arch_init(void);  
+> 
+> 
+
 
