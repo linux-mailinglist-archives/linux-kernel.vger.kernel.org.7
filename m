@@ -1,172 +1,189 @@
-Return-Path: <linux-kernel+bounces-869308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E4E3C07950
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:50:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E8DC07971
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E875D406E85
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:50:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7D2819A3E8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB901340A51;
-	Fri, 24 Oct 2025 17:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC97D346775;
+	Fri, 24 Oct 2025 17:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="kspQttvv"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZSONfhXY"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CA233C53A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1547D338585
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761328233; cv=none; b=KWlYdYIZFnbQ7BQp6900Y5bNvgehS0Fd+FJo/nzO/dfpztGQovkE9waoeSwZp23TwMe0rthCCzijAUszG0EkWT4P4leQW8zI6lbX3gr2EsKusMkXq7IGQIzXDBjjh4nsWl+47rHPzJjrbQaw/jFSc00+pN3xsvPblaz2wmeVZwo=
+	t=1761328269; cv=none; b=jxnUazRHG7rBAfFFx68Y1hPSInXCJcIOTMDsKZAgUhq/AxnRw4jeoudYDk9OevQKs1f1pLNLnOIMQuXq8dpP4DgrVjcW4Pfkt6q4IH6jY5N2Zcy9Xi3RsfKYv6bsN6Y1pT5YLJbK4SW1wCFheyGeTgKtxM0YJfKPKrRcZJHbSUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761328233; c=relaxed/simple;
-	bh=8qAR75JaH4mfH/My4QWqcxLHgY+ysFJl6KwuNGwLdMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uuf3EE4dRN1XVK5xXl1d/447s94oDlTe18No6XU0gYTJnQjHJAcM3WeUTuBELcTAkZw+dk3cEURwiKBJAItYtWTdpXK3FM2Vu34jCjsZ9Satp/tEPF5sFBHGA4CHihg+ziZOTr/20vn94z+wSU21qaPBVD4dOhM1zEI+bSV4ugA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=kspQttvv; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 1C8A8104CBB0
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 23:20:20 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 1C8A8104CBB0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1761328220; bh=8qAR75JaH4mfH/My4QWqcxLHgY+ysFJl6KwuNGwLdMM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kspQttvvSziCmmRXrxP7mW6eNaCxwso9OF7lTCOO/hBQ+tVBK+MDq3w7cOCPOIzBu
-	 y84LXezttbplIUEDIzoVG/+QzCMNVjG67OT4pHLaX9ocgD6VK6jsmBzP1/+cYxOHRg
-	 zfNm9CEUXwOJ9reEX/4mgGKSa4+u3olUMpoOcJ50=
-Received: (qmail 28386 invoked by uid 510); 24 Oct 2025 23:20:20 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 3.480435 secs; 24 Oct 2025 23:20:20 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
-  by ldns2.iitb.ac.in with SMTP; 24 Oct 2025 23:20:16 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns2.iitb.ac.in (Postfix) with ESMTP id A1A2E34150E;
-	Fri, 24 Oct 2025 23:20:15 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 644D11E815D7;
-	Fri, 24 Oct 2025 23:20:15 +0530 (IST)
-Date: Fri, 24 Oct 2025 23:20:10 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>, jic23@kernel.org,
-	dlechner@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, andy@kernel.org,
-	marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
-	salah.triki@gmail.com, skhan@linuxfoundation.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, akhileshpatilvnit@gmail.com
-Subject: Re: [PATCH 2/2] iio: pressure: adp810: Add driver for adp810 sensor
-Message-ID: <20251024-175010-876729@bhairav-test.ee.iitb.ac.in>
-References: <cover.1760184859.git.akhilesh@ee.iitb.ac.in>
- <8c202e7ccd332b26217d529a7a73b7a3ef0726ea.1760184859.git.akhilesh@ee.iitb.ac.in>
- <CAHp75VdGJfMALGOFvkOW=JZ0yHE2QbRSzNs2Xd42-Weec1GmQw@mail.gmail.com>
- <95c1ba99-510b-4efb-9b6d-4c1103fc43a5@kernel.org>
- <aPp5OYcPxNNIOgB6@smile.fi.intel.com>
- <c45309cf-bd2c-41fe-b893-7e0a91de84a8@kernel.org>
- <aPs6HAJabFMRzX9Y@smile.fi.intel.com>
- <aPs6raLIcM3QbQXJ@smile.fi.intel.com>
+	s=arc-20240116; t=1761328269; c=relaxed/simple;
+	bh=F6iAmNHD3Luf8UVaQkuxniLBvlzU+vxigo4O0hw+ZNM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TeX8Kmwx2Yos7I71zbmdgoIyqsI6NPjslrjn2A7YX86WSFihlMcRcdZSpGNrcVcdOOwBhN7vtz/cr9O5mf/QFUA6idOkOChvCJMlJxw3txHzUzWKf4TKvWLjNb+Eh27u9TjwEVzmOQxP6EF+dC+4Qe4oP2R26G1Nzo/S5saTLes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZSONfhXY; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-470ffbf2150so21739835e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:51:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761328264; x=1761933064; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3BkkNIM05MRslMrtDcvAYAmE9IErpoiznLkYTr/hTV8=;
+        b=ZSONfhXYHFqvqScUu1ShPmS1hfFl1XSlDM5cPdqXbPbNht2WcxYgAQcwXrPFAKjULG
+         FNVwxTQojKRyzQXPANUdmWozolqapWp7dtaxLGBdlfTBx/SeV3pihy3VoBTOv9fJLULl
+         r2PG7H7l7ZgBmgk+7u6fdE7k0vQvKTW7Bs1LpjdWdIilFy3TQsaZPca0FaMw+KuNJlS3
+         3l2epEn+zPHvYgONQ2u4SlnzZ/wSMUt2kDS5KtGgseVuB1UnptVvePRkaXk9c/6IqQBR
+         QZoFrk1TcF3ur4neB/m9x+42YKsTmuugq2k6tbMJ4EpfG8zvEY+8e7f4s8chycqH672P
+         C7AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761328264; x=1761933064;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3BkkNIM05MRslMrtDcvAYAmE9IErpoiznLkYTr/hTV8=;
+        b=u8NY1FzyabP+59sxML6MOBD2SO91p+ehDNcSSgZ0BMbea4aNCFmrYA2UuJZF6uv9fN
+         ts3ETE4MUlDgkWzfiH2l2j7C8IDNtka5irGKg4ymNWgShVr5g/9rOioQYAQJ+r5vyAAr
+         mNi6YzG6+8glu2FY3TJ5dwttiI+zDqk3v4jHbXMRRqWk+D52F8aKVF5j8ZahYJgOv7vp
+         kFBOaTFefH0nVFZP2C+YnvqvkbOaIqvoZut1g3UIAHW5xGxhxdBl+GtmI2qhwsQ9C6UN
+         HGhaRA1L0lLztU8Ipj03cK7ylY9moNbqbwQKWCDXBIWEiOsk5CZcaVVsbEI6VHtndeoQ
+         mIUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhTyHV1e6kBUCixQVFIhdizjNCOcFPUZbwKi8GfjT7u4n06I+Vfdhw6t7PZjxyUN+rDMieKBKsS8Tr15Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTHPLyY5BICOfb9qmB5D2/5XA9Pa9/lH/YMd3CmTNRxl+UweB1
+	CJcm8G4bF76z9RPIfXx+aFTCq720AmTIi65pUf1X7qnG21e1zwz/XMEVgEWbclavYtE=
+X-Gm-Gg: ASbGncvlbfhGivU6iQUKiNCUpIGUkfU+vyCl/RQ0O90JwDcKHp5WZvMsic+lxODqzhu
+	xYetY144e+PmR8OIgpsku3+jmUy6PSo+oldCRUvSskeGrmMINfgt5x5ydulrz1fMLnd7RV7PBLS
+	2ofL8CVdnLxGWT2lTzfvZz+ZRtPzvB+nqY3GJMTR0ebZXcPCsE7Zzfcim5vlbV4ZFLfnFElwX5v
+	WlKKBlPQPaP40JZ+ETZqVC0pZOmt6GB1qXjQ5G41kpySZ17N59d7QVYFAUqeoL8iDFU5AL0GPo4
+	nl/0wGgh4EfPWx+2QWzFlxgmEBRnhdKFkMT6bGCvQFr0N0PWh+Ec+jOKed++KgD05bpmcAb7to9
+	DR8xq7MDrpgFDY5qDudS85qlCScA7i8B1P5/4oqGG84yaLWG0SZBmWVMyTV8RYmmiCm2M+lVtnH
+	cx8l+fDNxWwQruDZ6rUV0HDTvXzvQVcKVbjy4KuglHRHb5OO742nGJLmYYfIiL9Ok=
+X-Google-Smtp-Source: AGHT+IGuCTB2VzxXr4BdWdJgj04b2GPHh8io8QNAnLWecfk99iG6qqbQtTimEzngfZJQ+vUUG31i1Q==
+X-Received: by 2002:a05:6000:4706:b0:3d3:b30:4cf2 with SMTP id ffacd0b85a97d-4298f5671c2mr3093463f8f.19.1761328264273;
+        Fri, 24 Oct 2025 10:51:04 -0700 (PDT)
+Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897e7622sm10321900f8f.8.2025.10.24.10.51.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 10:51:03 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v2 0/2] hwrng: exynos: enable GS101 TRNG support
+Date: Fri, 24 Oct 2025 17:50:59 +0000
+Message-Id: <20251024-gs101-trng-v2-0-c2bb81322da4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aPs6raLIcM3QbQXJ@smile.fi.intel.com>
+X-B4-Tracking: v=1; b=H4sIAIS8+2gC/22MQQrCMBAAv1L2bCS7pKZ48h/SQ2zTdEES2ZSgl
+ Pzd2LPHGZjZIXthn+Ha7SC+cOYUG9Cpg2l1MXjFc2MgTT1qIhUyalSbxKB687DN4WDIQAte4hd
+ +H7P72HjlvCX5HO+CP/t3U1BpNQxoPc3WXZbp9uToJJ2TBBhrrV+rSZYNpQAAAA==
+X-Change-ID: 20251022-gs101-trng-54b710218424
+To: =?utf-8?q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, 
+ Olivia Mackall <olivia@selenic.com>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, semen.protsenko@linaro.org, 
+ willmcvicker@google.com, kernel-team@android.com, 
+ linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761328263; l=2560;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=F6iAmNHD3Luf8UVaQkuxniLBvlzU+vxigo4O0hw+ZNM=;
+ b=ouVjCdPSl7fPMeHYeiWolPcUlNg12vHEoXqNjHhaXd63O9uks3zaSartd8eLZeXLkrXwT5cCY
+ XNmjsPndu2xBZSBSz3ao97449DqyuDNw4HpVv7szgd7EV/5zBSkdi4i
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-On Fri, Oct 24, 2025 at 11:37:01AM +0300, Andy Shevchenko wrote:
-> On Fri, Oct 24, 2025 at 11:34:37AM +0300, Andy Shevchenko wrote:
-> > On Fri, Oct 24, 2025 at 08:18:21AM +0200, Krzysztof Kozlowski wrote:
-> > > On 23/10/2025 20:51, Andy Shevchenko wrote:
-> > > > On Sun, Oct 12, 2025 at 05:12:26AM +0200, Krzysztof Kozlowski wrote:
-> > > >> On 11/10/2025 16:10, Andy Shevchenko wrote:
-> > > >>> On Sat, Oct 11, 2025 at 3:25 PM Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
-> 
-> ...
-> 
-> > > >>>> +F:     Documentation/devicetree/bindings/iio/pressure/aosong,adp810.yaml
-> > > >>>> +F:     drivers/iio/pressure/adp810.c
-> > > >>>
-> > > >>> Some tools will report an orphaned yaml file if you apply patch 1
-> > > >>> without patch 2.
-> > > >>
-> > > >> You mean checkpatch? That warning is not really relevant. Adding
-> > > >> maintainers entry here for both files is perfectly fine and correct.
-> > > > 
-> > > > It's relevant as long as I see (false positive) warnings from it. Can somebody
-> > > 
-> > > No, it is not relevant. Just because tool is inefficient does not allow
-> > > you to point such nitpicks. You as reviewer are supposed to find
-> > > difference which checkpatch warnings are important and which are not and
-> > > DO NOT bother contributors with useless points that there is some
-> > > orphaned file according to checkpatch.
-> > > 
-> > > > shut the checkpatch up about missing DT files in the MAINTAINERS?
-> > > 
-> > > That would be great but, if no one does it your comments on "orphaned
-> > > file" are counter productive.
-> > 
-> > Something like this?
-> > 
-> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> > index 6729f18e5654..818b49d314ce 100755
-> > --- a/scripts/checkpatch.pl
-> > +++ b/scripts/checkpatch.pl
-> > @@ -3441,11 +3441,17 @@ sub process {
-> >  		     ($line =~ /\{\s*([\w\/\.\-]*)\s*\=\>\s*([\w\/\.\-]*)\s*\}/ &&
-> >  		      (defined($1) || defined($2))))) {
-> >  			$is_patch = 1;
-> > -			$reported_maintainer_file = 1;
-> > -			WARN("FILE_PATH_CHANGES",
-> > -			     "added, moved or deleted file(s), does MAINTAINERS need updating?\n" . $herecurr);
-> > +			# DT bindings are incorporate maintainer information, no need to report
-> > +			if ($realfile !~ m@^Documentation/devicetree/bindings/@)) {
-> > +				$reported_maintainer_file = 1;
-> > +				WARN("FILE_PATH_CHANGES",
-> > +				     "added, moved or deleted file(s), does MAINTAINERS need updating?\n" . $herecurr);
-> > +			}
-> >  		}
-> 
-> > +		    ($realfile =~ m@^Documentation/devicetree/bindings/.*\.txt$@)) {
-> > +			if ($realfile =~ m@^include/asm/@) {
-> 
-> These two lines are leftovers that needs to be removed, of course.
-> 
-> Akhilesh, can you give a try of this change and see if the original DT schema
-> binding patch is not reported anymore?
+Hi,
 
-Hi Andy. I tested checkpatch.pl patch you suggested here. checkpatch
-does NOT show the warning now on my dt-bindings patch. Thanks for
-initiating this script improvement.
-I believe this is kernel wide script improvement and best to take
-independently if I understood correctly.
+I propose the bindings to go through the Samsung tree as well so that we
+can match the compatible with the schema when pulling the DT patch.
 
-Regards,
-Akhilesh
+Thanks!
+ta
 
-> 
-> >  # Check for adding new DT bindings not in schema format
-> >  		if (!$in_commit_log &&
-> >  		    ($line =~ /^new file mode\s*\d+\s*$/) &&
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
+---
+Enable GS101 TRNG support. It works well with the current Exynos850 TRNG
+support. Tested on pixel 6 like this:
+
+cat /sys/devices/virtual/misc/hw_random/rng_current
+10141400.rng
+
+dd if=/dev/hwrng bs=100000 count=1 > /dev/null
+1+0 records in
+1+0 records out
+100000 bytes (100 kB, 98 KiB) copied, 2.03619 s, 49.1 kB/s
+
+rngtest -c 1000 < /dev/hwrng
+rngtest 6.17
+...
+rngtest: starting FIPS tests...
+rngtest: bits received from input: 20000032
+rngtest: FIPS 140-2 successes: 1000
+rngtest: FIPS 140-2 failures: 0
+rngtest: FIPS 140-2(2001-10-10) Monobit: 0
+rngtest: FIPS 140-2(2001-10-10) Poker: 0
+rngtest: FIPS 140-2(2001-10-10) Runs: 0
+rngtest: FIPS 140-2(2001-10-10) Long run: 0
+rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+rngtest: input channel speed: (min=380.570; avg=385.422; max=386.964)Kibits/s
+rngtest: FIPS tests speed: (min=75.092; avg=81.784; max=84.771)Mibits/s
+rngtest: Program run time: 50908949 microseconds
+
+To: Łukasz Stelmach <l.stelmach@samsung.com>
+To: Olivia Mackall <olivia@selenic.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+To: Peter Griffin <peter.griffin@linaro.org>
+To: André Draszik <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: semen.protsenko@linaro.org
+Cc: willmcvicker@google.com
+Cc: kernel-team@android.com
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+
+---
+Changes in v2:
+- dt-bindings: add power-domains. Collect R-b.
+- Link to v1: https://lore.kernel.org/r/20251022-gs101-trng-v1-0-8817e2d7a6fc@linaro.org
+
+---
+Tudor Ambarus (2):
+      dt-bindings: rng: add google,gs101-trng compatible
+      arm64: dts: exynos: gs101: add TRNG node
+
+ .../devicetree/bindings/rng/samsung,exynos5250-trng.yaml    | 13 ++++++++++---
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi                |  9 +++++++++
+ 2 files changed, 19 insertions(+), 3 deletions(-)
+---
+base-commit: 73f7017e663620a616171cc80d62504a624dc4de
+change-id: 20251022-gs101-trng-54b710218424
+
+Best regards,
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
+
 
