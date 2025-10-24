@@ -1,258 +1,219 @@
-Return-Path: <linux-kernel+bounces-868533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2DEC05687
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:47:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C5AC05719
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 98F3B4E59EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:47:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E8B83BEA19
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA6130C636;
-	Fri, 24 Oct 2025 09:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3888530CDAA;
+	Fri, 24 Oct 2025 09:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aRz+AIt8"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="h0uSiWMa"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011016.outbound.protection.outlook.com [40.107.130.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB2C29293D;
-	Fri, 24 Oct 2025 09:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761299157; cv=none; b=MRcJRPOdvG7vU9mbZ7qBnMpAMmQbbD8OLuk5MN0pP9nm1sZwN8u/Lb0oIteuq5aGX3dSgCepEQNAPT/qug+P7VlRP0LjiMXJgAzdoP/MMHfUl7/FLoikObLIf8SmcJ6SdcvCRKrFD3iMHdwztp0XnXklcS3oWMtwB5aGQhBCP6c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761299157; c=relaxed/simple;
-	bh=5vm20h85K03C4kMvIssWzsO97pYAaqIGDGM2Vmjrduw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=U+tKUALOXjQk8fxddT7fvB6XY9OcYo3F9tMQhKLokVfMo+bRe+l223jbr0O5431ucigNsTy0nbZWNlwD/1B0R6qWmKTCEuFJJ+YCVtlsCOxx8igpnqXhofdE7dtNWuXTTGX0jenI5BKkv3C2z8xM36qxI27XtkQzv5emzb9PwvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aRz+AIt8; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761299149; h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type;
-	bh=8i7IvoUyLwZipphMmlbv7Bm0R6d4DUro9PNdCGClahw=;
-	b=aRz+AIt8JQnu0tLicYAm5LxSzSjux4OSWF+UAi5NZw1dem0rtNU6ik0Fuz9bu71+q6/cQrEH/E6lqnrtjvGBaMPVQQq4y25j9t43KwzHj35xqlwO9d9ZDR9f2/Ntx1RJEc33SF04i+7orFaufA2iE5Msqhc0FBucydVNwuTLdbs=
-Received: from 30.246.161.241(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0Wqu0ajN_1761299145 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 24 Oct 2025 17:45:47 +0800
-Message-ID: <d2550489-834c-4dcd-b41f-d22590880343@linux.alibaba.com>
-Date: Fri, 24 Oct 2025 17:45:45 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F10430C625;
+	Fri, 24 Oct 2025 09:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761299205; cv=fail; b=a4sRAg5RSN2yHjQ3gJsszQ5d8kty3uRoOGs7DKL+pQpL9Ox9G+AgbI1bXrL3s7q4YRYCbeSgvDu/mrqnPKiOz+4i9qUoB4+utai5KEZg9cavLrWyvz3JzGNOzr1fUg6rW2mU6P5pzlJIcVEUYhlfTwehZjEYNfS0rGZiX3uDNmc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761299205; c=relaxed/simple;
+	bh=OgNHrqX60ArzySYsdOcSFy4WPyCAPdiIQxrSVWRKtLo=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=o9/CuUljjUHLhWGIOvdWWvfuiopDKPbgr/8tQ0DZqqSIow9q7DrcyNaCyADGkHfyrhNPau34SHlusqIDh3Y1tSMkYicbyD+W7fGKmafKjYpf+spdvAdFmrMLbckIUhvtXWXbRxHofaTmLywzGCWHi5BBigFKMugoeoudbJZ9hLs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=h0uSiWMa; arc=fail smtp.client-ip=40.107.130.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZaMlK1/lCoZhkYrkHplrRD2EA2EqgVcSH241SmrDc6MYLXXAdaBYgNuHYZif1gPjiBlB543Sgd3Hs6wijHqfEmvCr5xmPPTCoyqUTt/mwJfhodsWggbcJabVrobKYi0SoOAM8YddwiQ0tOlpE7AnzugAiuI7jmAcspShdqeTWk5/K/tmxWCCCQJszTfdnlgP6MeDD6zstBBUW5/sdfmgcOVSNuL49jJlz3x6SEXaneCtfrIDAaKmBQG2CLFiOa04Gu7SRhzH5/lSvdZ7lmdvRFGnn0pAMYhDXkoemQYU2JlkyE1X0plrNMz2tJ6CDGOOvgdIXFXF/Rcu7ZU+fmxqrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DuzCz38hh1POUuywz+NctHzY1r7zMiY2Y0MwOQHcUfE=;
+ b=PHj26T6payyUB+NFLyO9APJWRyk/8fi8K84JdQi2arWRs8GSWcIJRYfjkwJfcVc/YHEjZtJ4MPwN1LR/q8x5QGkiapVkepUI0FOxk0q7mXSWW+N8ZjGYR1zOd54v3xaVYVb3mQMBQtz8II0z+Ct69m+Rlql0IJdV8Nf2z0EzG53xiUBY4qIkO4STyXvvk6v8gPAwQ1rhEjLOZIkXZGD4Q1zeRTGYGB6MbtwTk9Y8zyL0tWQIJOAuTvW96A48RHm0J8WmMto57mrdzst9TV9xiOKaAQ/tIKwnpSQYC7XS4IpSYj+DtH2nniHEY05w2G5+a8H8uUhgNdIpXum3KIvUag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DuzCz38hh1POUuywz+NctHzY1r7zMiY2Y0MwOQHcUfE=;
+ b=h0uSiWMaFsy/UtbwEwdIcfj4K2cqb+rdPyc4dc4ze4DV6TqKf4uz6NH8wIPKlPmghcr8xTB4SKpovG8his+/zufp0TGpWxBLj9ch/AKWCI43WiHCqakWFRG8lZwMv8SYSqXG+HL9p+LB3Q89IHbrCq29n1iHxeNmHtYaIY26nzajyOXY3B356BLJsVRyDmcY/KEb3GYxEw2RXJNqQ8lfZF/h+jxEj+GGvati6KVXsaTBpVrNSQOcVf0FqKZHrIYvrEm8CIsaZ6uyGXMqTFjotXmI6c6D3AKmlw78uF6VlFcdj1IH+IluxAkfkz8xIl2nyyPPuUx3pUPen5VWPZjhEQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB9089.eurprd04.prod.outlook.com (2603:10a6:102:225::22)
+ by DU4PR04MB11361.eurprd04.prod.outlook.com (2603:10a6:10:5cd::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 09:46:39 +0000
+Received: from PAXPR04MB9089.eurprd04.prod.outlook.com
+ ([fe80::7bfd:652a:2f5b:e488]) by PAXPR04MB9089.eurprd04.prod.outlook.com
+ ([fe80::7bfd:652a:2f5b:e488%4]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 09:46:38 +0000
+From: Guoniu Zhou <guoniu.zhou@oss.nxp.com>
+Subject: [PATCH 0/3] media: nxp: imx8-isi: Add ISI support for i.MX95
+Date: Fri, 24 Oct 2025 17:46:51 +0800
+Message-Id: <20251024-isi_imx95-v1-0-3ad1af7c3d61@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAtL+2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDS0NTXaCK+MzcCktTXcNUY0Mz47SUVEszIyWg+oKi1LTMCrBZ0bG1tQD
+ KZ6qtWwAAAA==
+X-Change-ID: 20250915-isi_imx95-1e3163fde962
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Guoniu Zhou <guoniu.zhou@nxp.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761299238; l=1018;
+ i=guoniu.zhou@nxp.com; s=20250815; h=from:subject:message-id;
+ bh=OgNHrqX60ArzySYsdOcSFy4WPyCAPdiIQxrSVWRKtLo=;
+ b=dmgkFfCEmV07Hufsl3UcGeF4WvFaWzVaQIwOk//xI5K8XaUNZF47xc9XtyJJgJ2c+m5Rzl2e7
+ aU1lgtrdGXwDQuhwxXLPOVQit4T5adJmmbDvmQd+RqjwH7ZcXpTHwhU
+X-Developer-Key: i=guoniu.zhou@nxp.com; a=ed25519;
+ pk=MM+/XICg5S78/gs+f9wtGP6yIvkyjTdZwfaxXeu5rlo=
+X-ClientProxiedBy: SI2PR01CA0030.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::15) To PAXPR04MB9089.eurprd04.prod.outlook.com
+ (2603:10a6:102:225::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-Subject: Re: [PATCH v3 1/3] mm: handle poisoning of pfn without struct pages
-To: ankita@nvidia.com, aniketa@nvidia.com, vsethi@nvidia.com, jgg@nvidia.com,
- mochs@nvidia.com, skolothumtho@nvidia.com, linmiaohe@huawei.com,
- nao.horiguchi@gmail.com, akpm@linux-foundation.org, david@redhat.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, tony.luck@intel.com,
- bp@alien8.de, rafael@kernel.org, guohanjun@huawei.com, mchehab@kernel.org,
- lenb@kernel.org, kevin.tian@intel.com, alex@shazbot.org
-Cc: cjia@nvidia.com, kwankhede@nvidia.com, targupta@nvidia.com,
- zhiw@nvidia.com, dnigam@nvidia.com, kjaju@nvidia.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-edac@vger.kernel.org, Jonathan.Cameron@huawei.com,
- ira.weiny@intel.com, Smita.KoralahalliChannabasappa@amd.com,
- u.kleine-koenig@baylibre.com, peterz@infradead.org,
- linux-acpi@vger.kernel.org, kvm@vger.kernel.org
-References: <20251021102327.199099-1-ankita@nvidia.com>
- <20251021102327.199099-2-ankita@nvidia.com>
-In-Reply-To: <20251021102327.199099-2-ankita@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9089:EE_|DU4PR04MB11361:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2471206f-f859-4edd-6854-08de12e23a72
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|52116014|19092799006|366016|376014|7416014|1800799024|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?R2NSa0M4VE9leDNUcjNVa2hFRmQwYmpqVWpBTnA1STFjQ041OWo2SEpXUGtR?=
+ =?utf-8?B?dTJ3NDZ6Z3dHcVlMNHB5LzgxemUxTjdNbGwwZi91WVJkaE9oSVZwSFU2MmV0?=
+ =?utf-8?B?UktyWGM3eExyZ1hzVmNNa2NhcWJLcENXcGt0Z3ppNlg5MHFvbWYrc2R4WG5o?=
+ =?utf-8?B?VXZON0Z0OFZ3UWpJWk95c2hPcW01Z2hiSkpHN2IwYWNrdHA3ZXpsVWFMaUJm?=
+ =?utf-8?B?dzU3RTUxL3NGZ0hpSjNHNEQ1OERoRFRyTTJDc2RRZnFFV09uaGNtTFN2ODZK?=
+ =?utf-8?B?SVBBR3o4eU5UbVM0OFByOHBJZjVRdUdxeDJGbkFxSlg3UFBWcGlNOE9ESUpo?=
+ =?utf-8?B?REVtTkpheTZZckxSNUpIbTY3dHpNUnFibHpUSTNocitXcml0SjJZSk9JSlZw?=
+ =?utf-8?B?NEh3VVJ3N1FrUUNVL2w1MFVRdW9tMUxEWWhzU3Y2d2ZhTzhWRnF2ME0xMlFn?=
+ =?utf-8?B?WHdINFdHSmx4NTVsdnFrTURYWDZBeUFvbHZ0YU4ySzY2YUlQWG5sOUpzVTFQ?=
+ =?utf-8?B?eWZ5cjJ0VDF2d0pLTThMVHZVa25wMnIvY0xuMnV1bkZGNyttL3djOXloMEpC?=
+ =?utf-8?B?bzZSaXZRSzhyZ3FHamdGRlc5QWo2dWxQL2NMcnVUTlo2dG9BcWx5UGlaUEx5?=
+ =?utf-8?B?TkR6aWRHYksrd0RKenByNTNrUlZWK1AvNDRScXBiZlVSb3dJdkY5V2sxNk5l?=
+ =?utf-8?B?SGE1a2dJdnNIcmNWRHBBS2taWWxtVnBrYWR1U0Uvcjh4Q3V0TUw0Zjc1Yys1?=
+ =?utf-8?B?UDNFaFRRMFZYbmV0dW9LbUpCT2N0elZ4anhucmRiQStPcnBHUHZLc1BZYWZa?=
+ =?utf-8?B?SmoxdmY4SGdpUGNMSVpNaXhYNk00ZDdCcDZwWnhHRXVKSThFc0haTHZmWGpa?=
+ =?utf-8?B?dHU1bnpycjVqY3RNMXFveU9kZ2tWVEhjVTB6clJnK25pVWpINnJwOEgzaGxx?=
+ =?utf-8?B?enVjcExPSlNXT1dPUndqMEhpUWd0bmRNaXgzdDBab2lGKzhCS0k1UlFiSDNm?=
+ =?utf-8?B?ekd2RzUvdVJxSjNnQU9kTzlkeHQrVWVobTZtQ2NGdlA0MmhVbjBXUWxhcDZU?=
+ =?utf-8?B?ODFtMDVSbnFqWmdab01hNVRvR3UwYjU5c0UyNjNIR25CRCtlZTA3YWRXYWwy?=
+ =?utf-8?B?MXFrN3dqM3BRYkhLdmhjWlFXZG8zeGtHbXZLSUdNZ1NRZVdVMUhzYUloSVRW?=
+ =?utf-8?B?cVQrMTRLb1RUSXp3dmJ1UlY3R1pXY3U5akNOZDFFYWM4OFZBQnIzOXgyVnRv?=
+ =?utf-8?B?RFBnc0FMZVJzb3l1Wk92c0NCbXAzYW9nODNNUFkrUVpWTlNROGgvaUdXeGI1?=
+ =?utf-8?B?M25MeFRublJoemJVNm1XbExqWmdYZVZxR1RhTENkOW5UbnBCSHA5d0JLRWRq?=
+ =?utf-8?B?bDdYRlhXcHk5blQzSENVd1JmMkR2cENUMmM2b2xZWE1mNkppQ1ZSamdIVG10?=
+ =?utf-8?B?UlhGVysvK200WVY3RDZEVWl1bXlPcWtMaTh1cHU4VXpwT0hRWVNNK1NqLzlP?=
+ =?utf-8?B?R3huaGpkakNVZHp6KzBrTXluRUVzWXhGZFpkK2Z4VzkrTlhsVTk5Ui92NFpF?=
+ =?utf-8?B?b3RadzZQQzlFMFFCR3JLNkFvRUxMcTFyRTdFT0FXWEtIcG9SQlN3N09oUGRU?=
+ =?utf-8?B?QWJCbGI4QXhTamdqN0EzZGs3dGFJOUJ0SlVGeTR3T25Vbk8waWN6RitMRnpT?=
+ =?utf-8?B?OU00bmxtbDFkYlZyWlR6cFhReFZITG9Oci9nVkdmQVFyMGY0LzlaMUlSVThW?=
+ =?utf-8?B?dnpNNGx5dGdYdmwwZ0VFWXI2UnB1R2Nja1VUZmxLT0JQRVozYUI5M2htN251?=
+ =?utf-8?B?aWtZK0ZnZGpzU0Y5OUVkclB6TjVxUkU0UzNYT2tGMGh1OW50dVFYRGZhVVMx?=
+ =?utf-8?B?bXVTWmFqQ2VGdkV5S3hJRXdIT0prdE5ZU2JScnZYbGVkcXAzSU1JWXhzRnEz?=
+ =?utf-8?B?T1R5NjBoMEVPZHBXRXZrR01CbU1OVGpaZnRDS1duaTBpZzJRRlBXejFoUGVC?=
+ =?utf-8?B?OEJUb1Vpa3NXbW9PZytOcVNQT0xaV1h2SFRZNHBCQU9IbHlZdVROT3BtRUJ6?=
+ =?utf-8?B?Qzhxb3pWVHdDWWJGc0xxWkozMW1qOEo1ZHhtUT09?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9089.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(19092799006)(366016)(376014)(7416014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?TC9YRTUwQnNkSlNyUjFsQllOUGc4aUlUQUkzVkxXWUszSXB5QmFmenZVY0d3?=
+ =?utf-8?B?MnJxS2N6R2RrdDhBNm1pUUNyNVoxN2ZnM1BBeU8zMm9nNVYzVStpaTI2QTgx?=
+ =?utf-8?B?ZGNaT1JqVmVvWjY4eEdsT09YQUxIM0UrWXJxWHgvRnA0eHhrNUdWbHhUWVNT?=
+ =?utf-8?B?ZTdscWdpMGNnMVZrSjRZaHdSS3o4OWs2cG5OeWIrOGo1eXhBOE53c042VzV3?=
+ =?utf-8?B?NGZxN1gwcjc1NEI4MmcyTEZ6MGI1dTBJZGxLcGg0bWs0OUVIWERKRkdTUFNY?=
+ =?utf-8?B?dDZmUDhPQUdFZUxVMUtCMzNyL0pORm5MYWxrcjZiVWVMdXQyL0hvNjF1U0Nk?=
+ =?utf-8?B?Y3F3SWFEamRsZjFnRDNEYnZFQUVYdk8zUllWN0lySVRRRDl5czdYR2tjYnlK?=
+ =?utf-8?B?K1pQalNGMEpiVEFTSjRoRmFZdkgxc2pQNHhNb053RkJJTmErdUxFbHpiU1pj?=
+ =?utf-8?B?eXIrVXlpbDRTZ2g1L1NzOEFEVHdWeXhnbGdnWmkzNHd6VzVNdFpHVFRWY0xL?=
+ =?utf-8?B?bEw0QVFjWHZzaHJIMisraFA2L2FnSFVkczBsSzlxODJjbnkwczc2QjQvQ3Aw?=
+ =?utf-8?B?ZnFJYlVjUThMcWpBMnE0QzluRjNrQ2FIcU9PUGRzZ0twN0c1Z1FpYUEwTU1a?=
+ =?utf-8?B?cmhOOGpzVkVKejF6V01KZXpSTUlHY05iaXN1a25wc1V2N0ZrTUhSdlRIa3Rl?=
+ =?utf-8?B?bU1kUkE5V20wSkt5Q1pxY3BScy9zUEVYVGo0TzNWeXdqYUppUjdRU29CWENB?=
+ =?utf-8?B?NThEYksrVGdZdEVRQmFaaTFweklpVVNCbmVBWUdWdEYySFJrL0s0OHJIRFpo?=
+ =?utf-8?B?QjFKQlRtRWdhaFkxYStkVnd4N1N0eFU3cUFha3ZxNmhFMEFqUUZnUkdvV2lV?=
+ =?utf-8?B?dTBKMmxZVyt3UnhNUHA0ZjRFMEhDNkRpOXFwRDJSczRnVGh4d3NUeHJsbUdM?=
+ =?utf-8?B?VHhnTmRadkplWDl1WXcvWnI4SW5uYU83dWw2KytWaGdGUnJHSFJVQ1h1NjZj?=
+ =?utf-8?B?cVJOckN5UlBUNWwyWkZ5QTN2WTZDTjU4WHdON0pyUk11WnVIMTdGbGtycjI4?=
+ =?utf-8?B?eFZrckZQYlFHWGdPbWpkVENBOFRKZ1BURnVhdXFDbFZ1aE1YY0xxT2JtZjcy?=
+ =?utf-8?B?TVRaQUI5dklvUkZtenBXYzFmaS94OU1VQXBoYWtGNUFlcXBGR1JaMFZFQnRy?=
+ =?utf-8?B?eFowSElmM0lHakh1TDBNb1dxZk1zTjRTbDJ4WnNlcXczWU5sZTEraktIa05y?=
+ =?utf-8?B?UFJIN0lKR0JGNVFNN2M4aDU5K2lYNElMZUNsM3FiR0RnUzFJeE1ybkhNUTVq?=
+ =?utf-8?B?OUo5c1NVUjI2MDRja0hwdmVEOHl6VGMrRnZFK2s1SFcya0NuQTRyTXI2WGph?=
+ =?utf-8?B?cUtoL0M0M3g3d2dBMUp3amVRKy9ndnE5VEdiZ1JGNmFCanczem42RXFkL1Ja?=
+ =?utf-8?B?bTFwb0tTcXNPVkdPRlRIQXlURFVFbWp5VGxuSTNEY3ZYRzNNTWxMRGRWOXI5?=
+ =?utf-8?B?UzRWSUc0UThkbzVmcERnMzhjS054dUpwVXlHQ1NzZmxRcDQzaUsrTy9Lekx3?=
+ =?utf-8?B?RmNaQy81c0dpb3l4azBqQ3h3ZnkveFkzL1U2R1B0WUxUN0ppT0syUUszc2NS?=
+ =?utf-8?B?WVIzNTlvZTFPM2EwM1NSTGJacHd4MldaYzRLWFRZUms1cllXZlRHOUN4azE0?=
+ =?utf-8?B?SGZmaXJJN0ZWTHo4MG1xRld6V0ZLdG9vQlZTZ2ZVWkJmMitVckVTSzFrTHp0?=
+ =?utf-8?B?WkdiQTlMYnNsbTFnSUNibDEwTzcyNlA5Vk04dVNRTW04eWFyL2U1TnpRT3cw?=
+ =?utf-8?B?N1dybmF1bHJnbWJsdGFGUnJDdEJkYVpWaHMrWWx5KzBtMk54bHFsdHQ3eHpX?=
+ =?utf-8?B?b0V2YURLTGFxbXlIMXdodFRSNnpadVMvbEsxRzdOSTltTnpqWU9GaVlMRXEx?=
+ =?utf-8?B?MkltZ014K0t1THh3UXBESGFVQXIyNDAvaXpWdml4em8xM0diSUM2em5RTDd4?=
+ =?utf-8?B?YlZsYTFlOVNSQ0Jubkp1KzFBSm5VUENlK2U2TDN5MTZnaWpSb09VVU41WWdF?=
+ =?utf-8?B?dlhuZGZwdHFjS09UeGhCS2I4U1MwUi9Qc2lISFUvU1dXbU5SQUdySUVDMVo4?=
+ =?utf-8?Q?n6EH6ljLojWoLknb3YIrKEtXE?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2471206f-f859-4edd-6854-08de12e23a72
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9089.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 09:46:38.8002
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zbKYuQ2L8/6iNVbnJ7ObgUeD8YDfJS6TmfdPOHaPHBZlsxg+7fVoprQ8lxqOr09mjePUINXBO7fQqK/CvhFbSg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB11361
 
+The series add ISI support for i.MX95.
 
+The ISI in i.MX95 supports eight channels and interface up to 4 pixel
+link sources to obtain the image data for processing in its pipelines.
 
-在 2025/10/21 18:23, ankita@nvidia.com 写道:
-> From: Ankit Agrawal <ankita@nvidia.com>
-> 
-> The kernel MM currently does not handle ECC errors / poison on a memory
-> region that is not backed by struct pages. If a memory region mapped
-> using remap_pfn_range() for example, but not added to the kernel, MM
-> will not have associated struct pages. Add a new mechanism to handle
-> memory failure on such memory.
-> 
-> Make kernel MM expose a function to allow modules managing the device
-> memory to register the device memory SPA and the address space associated
-> it. MM maintains this information as an interval tree. On poison, MM can
-> search for the range that the poisoned PFN belong and use the address_space
-> to determine the mapping VMA.
-> 
-> In this implementation, kernel MM follows the following sequence that is
-> largely similar to the memory_failure() handler for struct page backed
-> memory:
-> 1. memory_failure() is triggered on reception of a poison error. An
-> absence of struct page is detected and consequently memory_failure_pfn()
-> is executed. 
+Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+---
+Guoniu Zhou (3):
+      media: dt-bindings: nxp,imx8-isi: Add i.MX95 ISI compatible string
+      media: nxp: imx8-isi: Keep the default value for BLANK_PXL field
+      media: nxp: imx8-isi: Add ISI support for i.MX95
 
-This step depends on PATCH 2. I suggest reordering the patches so that
-PATCH 2 comes first, which would make the series easier to review and
-understand.
+ .../devicetree/bindings/media/nxp,imx8-isi.yaml    | 26 ++++++++++++-
+ .../media/platform/nxp/imx8-isi/imx8-isi-core.c    | 13 +++++++
+ .../media/platform/nxp/imx8-isi/imx8-isi-core.h    |  2 +
+ .../media/platform/nxp/imx8-isi/imx8-isi-gasket.c  | 44 ++++++++++++++++++++++
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-hw.c  |  6 +--
+ 5 files changed, 86 insertions(+), 5 deletions(-)
+---
+base-commit: 1fdb55ed40fa5ebe6934bd6b93036c714ebb5ef8
+change-id: 20250915-isi_imx95-1e3163fde962
 
-> 2. memory_failure_pfn() collects the processes mapped to the PFN.
-> 3. memory_failure_pfn() sends SIGBUS to all the processes mapping the
-> poisoned PFN using kill_procs().
-> 
-> Note that there is one primary difference versus the handling of the
-> poison on struct pages, which is to skip unmapping to the faulty PFN.
-> This is done to handle the huge PFNMAP support added recently [1] that
-> enables VM_PFNMAP vmas to map in either PMD level. Otherwise, a poison
-> to a PFN would need breaking the PMD mapping into PTEs to unmap only
-> the poisoned PFN. This will have a major performance impact.
-> 
-> Link: https://lore.kernel.org/all/20240826204353.2228736-1-peterx@redhat.com/ [1]
-> 
-> Signed-off-by: Ankit Agrawal <ankita@nvidia.com>
-> ---
->   MAINTAINERS                    |   1 +
->   include/linux/memory-failure.h |  17 +++++
->   include/linux/mm.h             |   1 +
->   include/ras/ras_event.h        |   1 +
->   mm/Kconfig                     |   1 +
->   mm/memory-failure.c            | 128 ++++++++++++++++++++++++++++++++-
->   6 files changed, 148 insertions(+), 1 deletion(-)
->   create mode 100644 include/linux/memory-failure.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 520fb4e379a3..463d062d0386 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11359,6 +11359,7 @@ M:	Miaohe Lin <linmiaohe@huawei.com>
->   R:	Naoya Horiguchi <nao.horiguchi@gmail.com>
->   L:	linux-mm@kvack.org
->   S:	Maintained
-> +F:	include/linux/memory-failure.h
->   F:	mm/hwpoison-inject.c
->   F:	mm/memory-failure.c
->   
-> diff --git a/include/linux/memory-failure.h b/include/linux/memory-failure.h
-> new file mode 100644
-> index 000000000000..bc326503d2d2
-> --- /dev/null
-> +++ b/include/linux/memory-failure.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _LINUX_MEMORY_FAILURE_H
-> +#define _LINUX_MEMORY_FAILURE_H
-> +
-> +#include <linux/interval_tree.h>
-> +
-> +struct pfn_address_space;
-> +
-> +struct pfn_address_space {
-> +	struct interval_tree_node node;
-> +	struct address_space *mapping;
-> +};
-> +
-> +int register_pfn_address_space(struct pfn_address_space *pfn_space);
-> +void unregister_pfn_address_space(struct pfn_address_space *pfn_space);
-> +
-> +#endif /* _LINUX_MEMORY_FAILURE_H */
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 1ae97a0b8ec7..0ab4ea82ce9e 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -4006,6 +4006,7 @@ enum mf_action_page_type {
->   	MF_MSG_DAX,
->   	MF_MSG_UNSPLIT_THP,
->   	MF_MSG_ALREADY_POISONED,
-> +	MF_MSG_PFN_MAP,
->   	MF_MSG_UNKNOWN,
->   };
->   
-> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-> index c8cd0f00c845..fecfeb7c8be7 100644
-> --- a/include/ras/ras_event.h
-> +++ b/include/ras/ras_event.h
-> @@ -375,6 +375,7 @@ TRACE_EVENT(aer_event,
->   	EM ( MF_MSG_DAX, "dax page" )					\
->   	EM ( MF_MSG_UNSPLIT_THP, "unsplit thp" )			\
->   	EM ( MF_MSG_ALREADY_POISONED, "already poisoned" )		\
-> +	EM ( MF_MSG_PFN_MAP, "non struct page pfn" )                    \
->   	EMe ( MF_MSG_UNKNOWN, "unknown page" )
->   
->   /*
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index e443fe8cd6cf..0b07219390b9 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -777,6 +777,7 @@ config MEMORY_FAILURE
->   	depends on ARCH_SUPPORTS_MEMORY_FAILURE
->   	bool "Enable recovery from hardware memory errors"
->   	select MEMORY_ISOLATION
-> +	select INTERVAL_TREE
->   	select RAS
->   	help
->   	  Enables code to recover from some memory failures on systems
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index df6ee59527dd..acfe5a9bde1d 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -38,6 +38,7 @@
->   
->   #include <linux/kernel.h>
->   #include <linux/mm.h>
-> +#include <linux/memory-failure.h>
->   #include <linux/page-flags.h>
->   #include <linux/sched/signal.h>
->   #include <linux/sched/task.h>
-> @@ -154,6 +155,10 @@ static const struct ctl_table memory_failure_table[] = {
->   	}
->   };
->   
-> +static struct rb_root_cached pfn_space_itree = RB_ROOT_CACHED;
-> +
-> +static DEFINE_MUTEX(pfn_space_lock);
-> +
->   /*
->    * Return values:
->    *   1:   the page is dissolved (if needed) and taken off from buddy,
-> @@ -957,6 +962,7 @@ static const char * const action_page_types[] = {
->   	[MF_MSG_DAX]			= "dax page",
->   	[MF_MSG_UNSPLIT_THP]		= "unsplit thp",
->   	[MF_MSG_ALREADY_POISONED]	= "already poisoned page",
-> +	[MF_MSG_PFN_MAP]                = "non struct page pfn",
->   	[MF_MSG_UNKNOWN]		= "unknown page",
->   };
->   
-> @@ -1349,7 +1355,7 @@ static int action_result(unsigned long pfn, enum mf_action_page_type type,
->   {
->   	trace_memory_failure_event(pfn, type, result);
->   
-> -	if (type != MF_MSG_ALREADY_POISONED) {
-> +	if (type != MF_MSG_ALREADY_POISONED && type != MF_MSG_PFN_MAP) {
->   		num_poisoned_pages_inc(pfn);
->   		update_per_node_mf_stats(pfn, result);
->   	}
-> @@ -2216,6 +2222,121 @@ static void kill_procs_now(struct page *p, unsigned long pfn, int flags,
->   	kill_procs(&tokill, true, pfn, flags);
->   }
->   
-> +int register_pfn_address_space(struct pfn_address_space *pfn_space)
+Best regards,
+-- 
+Guoniu Zhou <guoniu.zhou@nxp.com>
 
-I have a design consideration here. Non-struct page PFNs typically
-represent device memory managed by device drivers through their own
-memory allocators. These drivers are responsible for allocation and
-deallocation of this memory.
-
-Rather than having MM maintain metadata about these PFNs, have you
-considered adding an operation callback similar to
-dev_pagemap_ops->memory_failure? This would allow device memory
-allocators to:
-
-- Maintain their own metadata tracking poison status (similar to
-   TestSetPageHWPoison())
-- Handle device-specific requirements for memory failure
-- Provide more flexibility for different types of device memory
-
-Thanks.
-Shuai
 
