@@ -1,144 +1,85 @@
-Return-Path: <linux-kernel+bounces-869304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1373FC07911
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:44:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95FC0C0790E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 37DEC351A68
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:44:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6B433B991C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA6D33FE26;
-	Fri, 24 Oct 2025 17:43:55 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C4534676E;
-	Fri, 24 Oct 2025 17:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE54345CBF;
+	Fri, 24 Oct 2025 17:43:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF99932B997
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761327835; cv=none; b=Jr07w4QL5tdducZob8NWvdh9cupSlFwUE3RJXH6SJ/2x+sPpfVYjdDpC6RxcaZbyY4MJGcyFdb//Ty7J31K30hgVAGXJYTPQlOcd3V5jioVFeiZmDDGhiwfWxLUFEkq/i0wF0E2BiUSj/Y2jgmwpqMSb9spUzzIHgbw7+2OHWdI=
+	t=1761327830; cv=none; b=SDCC0xGJOFVTgKQukCeLe4+ndvRrksFva2sbGMn4nZTXXks1BRlIAukDvEhbSGkyhbpxcH34MsblIdGemXBpN0RDLNDJ1psJ0HQhceKrDUyYvAtwODn5cAC/lLSyOJo2kmBDWCQrIObGFzbe0aML6dTZ3UhhaA7L7k5dXktKrNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761327835; c=relaxed/simple;
-	bh=nIYcU9+iVlKq+1mnMaU+EQiYTTrzgETheBJ87OlM9AY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NAOJkli3df+4qlYdEcrbRJ4NEgAjVkk1PY8Ox/aQ1qSz7u4TOxkOxQO4Dn7EHLuDOIIrUk1BBXev0wyHyoU+gKbS0PZcrkBcsbhYK8LBeKHIRXrOXChcQ8ukly+5vckqYYnqJgpIimyERIYKzDl5cTMjYsJuFOlu8SKZlwdRC1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ctVbD5wFLz6L4yY;
-	Sat, 25 Oct 2025 01:42:16 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3E6FB14010C;
-	Sat, 25 Oct 2025 01:43:48 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 24 Oct
- 2025 18:43:46 +0100
-Date: Fri, 24 Oct 2025 18:43:44 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, Jeremy Linton <jeremy.linton@arm.com>,
-	Gavin Shan <gshan@redhat.com>
-Subject: Re: [PATCH v3 12/29] arm_mpam: Add helpers for managing the locking
- around the mon_sel registers
-Message-ID: <20251024184344.000036f6@huawei.com>
-In-Reply-To: <20251017185645.26604-13-james.morse@arm.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
-	<20251017185645.26604-13-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761327830; c=relaxed/simple;
+	bh=LgFukOtQTPGGHIyAFL4lEUVQQkSEGl2WwAap5Av3gaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uiFeFIDZA1nV4xPNMisuPkrZT+45SAmmYmD8xti5usEtU1NfYwNUIgw8JLx5BmJNPBHiZLANVrlWij+5i+weSB8Olojs9L6mXgWE0SSnvSbotrnZxZp0wJTKF8+SYNy2Pm7bCN773opHHDM8H/M2pedL8NjVPolnHmQX6+oPAM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B675175A;
+	Fri, 24 Oct 2025 10:43:39 -0700 (PDT)
+Received: from [10.122.4.147] (unknown [10.122.4.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 468093F63F;
+	Fri, 24 Oct 2025 10:43:47 -0700 (PDT)
+Message-ID: <e1d1ffc0-dda5-4501-8bd5-e4e7ea667f10@arm.com>
+Date: Fri, 24 Oct 2025 12:43:45 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Warning: drivers/char/tpm/tpm_crb.c:193 function parameter 'loc'
+ not described in '__crb_go_idle'
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <202510241542.hFrped3X-lkp@intel.com>
+Content-Language: en-US
+From: Stuart Yoder <stuart.yoder@arm.com>
+In-Reply-To: <202510241542.hFrped3X-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Fri, 17 Oct 2025 18:56:28 +0000
-James Morse <james.morse@arm.com> wrote:
+Hi Jarkko,
 
-> The MSC MON_SEL register needs to be accessed from hardirq for the overflow
-> interrupt, and when taking an IPI to access these registers on platforms
-> where MSC are not accessible from every CPU. This makes an irqsave
-> spinlock the obvious lock to protect these registers. On systems with SCMI
-> or PCC mailboxes it must be able to sleep, meaning a mutex must be used.
-> The SCMI or PCC platforms can't support an overflow interrupt, and
-> can't access the registers from hardirq context.
+I have sent a v2 of this patch that adds the missing kernel
+doc info that triggered this warning.
+
+Thanks,
+Stuart
+
+On 10/24/25 9:17 AM, kernel test robot wrote:
+
+On 10/24/25 9:17 AM, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   6fab32bb6508abbb8b7b1c5498e44f0c32320ed5
+> commit: dbfdaeb381a49a7bc753d18e2876bc56a15e01cc tpm_crb: Add idle support for the Arm FF-A start method
+> date:   6 days ago
+> config: x86_64-randconfig-2005-20250721 (https://download.01.org/0day-ci/archive/20251024/202510241542.hFrped3X-lkp@intel.com/config)
+> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510241542.hFrped3X-lkp@intel.com/reproduce)
 > 
-> Clearly these two can't exist for one MSC at the same time.
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202510241542.hFrped3X-lkp@intel.com/
 > 
-> Add helpers for the MON_SEL locking. For now, use a irqsave spinlock and
-> only support 'real' MMIO platforms.
+> All warnings (new ones prefixed by >>):
 > 
-> In the future this lock will be split in two allowing SCMI/PCC platforms
-> to take a mutex. Because there are contexts where the SCMI/PCC platforms
-> can't make an access, mpam_mon_sel_lock() needs to be able to fail. Do
-> this now, so that all the error handling on these paths is present. This
-> allows the relevant paths to fail if they are needed on a platform where
-> this isn't possible, instead of having to make explicit checks of the
-> interface type.
+>>> Warning: drivers/char/tpm/tpm_crb.c:193 function parameter 'loc' not described in '__crb_go_idle'
+>>> Warning: drivers/char/tpm/tpm_crb.c:246 function parameter 'loc' not described in '__crb_cmd_ready'
 > 
-> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
-> Change since v1:
->  * Made accesses to outer_lock_held READ_ONCE() for torn values in the failure
->    case.
-Guess that went away. I'd prune the old version log or add something to indicate
-it did in a later version log.
-
-One stray change inline otherwise seems fine
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
-
-> ---
->  drivers/resctrl/mpam_devices.c  |  3 ++-
->  drivers/resctrl/mpam_internal.h | 38 +++++++++++++++++++++++++++++++++
->  2 files changed, 40 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index 910bb6cd5e4f..35011d3e8f1e 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -738,6 +738,7 @@ static struct mpam_msc *do_mpam_msc_drv_probe(struct platform_device *pdev)
->  
->  	mutex_init(&msc->probe_lock);
->  	mutex_init(&msc->part_sel_lock);
-> +	mpam_mon_sel_lock_init(msc);
->  	msc->id = pdev->id;
->  	msc->pdev = pdev;
->  	INIT_LIST_HEAD_RCU(&msc->all_msc_list);
-> @@ -822,7 +823,7 @@ static void mpam_enable_once(void)
->  				      "mpam:online");
->  
->  	/* Use printk() to avoid the pr_fmt adding the function name. */
-> -	printk(KERN_INFO, "MPAM enabled with %u PARTIDs and %u PMGs\n",
-> +	printk(KERN_INFO "MPAM enabled with %u PARTIDs and %u PMGs\n",
-Move this to original patch.
-
->  	       mpam_partid_max + 1, mpam_pmg_max + 1);
->  }
 
 
