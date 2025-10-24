@@ -1,299 +1,265 @@
-Return-Path: <linux-kernel+bounces-869147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048A3C071AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:55:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28741C071B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5E061885A7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:54:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD49A1C267B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562B232B99B;
-	Fri, 24 Oct 2025 15:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FB832B99B;
+	Fri, 24 Oct 2025 15:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vRNGdf0j"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NE6w9z8Q"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010060.outbound.protection.outlook.com [52.101.201.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28D62F5B
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 15:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761321235; cv=none; b=GeRIr+mA0Jo9RNcKB159+69CeB00QHmekAOlitWjepAMDXTuwf6wx6XFCjP7Uo/OB6MLuXEoq6v+m8/YqCLpZwBPuiRhWDYTG4FrT5Oh8f/Ta6vFuFeU/DVPHY+idLMvVyWGEZduBBI9PaDIWNZZWvQMj1BgKkLnvDyQJakW900=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761321235; c=relaxed/simple;
-	bh=iOEJ6Tb/qB8BEb5/0ltf3QMXGEv2/IZUm7vtqa4NrTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=snWuPnLJPTLYmtjethRhDsFH4se53K6pkBl4wZIq6V/7SZc7iCbSboFUJ698iLRQGn0G3dsN4F8dtiPlvYnOWx1hsgbjqKZoNu3AtsQClXV1xL55/4UrpfmezPahB0G4wcAcOAiNPK2mX3yaVJAhqsQqgZsVcN3nh/uXLTi1ad0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vRNGdf0j; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b6ceba7c97eso2054405a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:53:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761321233; x=1761926033; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ykchracw+64FV50znwUKIsNmGJUvAyGYO9sAVqRHDLE=;
-        b=vRNGdf0jxqPHhRCQDdZ+x5myMVDSTc5V562Rga37JPwV7PflLDT7tHZHFhKBriGdW2
-         oh28EN82vQYD6WYObWSCtEciJxC6NeHyD/pHq6+VW03ged8kJLkT1CHvx2tLcnYUcmoW
-         KXzXAXx9lIVHc30bQmE2avA7IbIN68xnvcfuTWW4+r4MIUiwrYMk5jH5cZ01mTg8ttwC
-         wZ4W1VCW/DKZQUGamX7a34OuMZBDZ0xdPuoTp6b7cc5CwhyjcVo7ko7uk3IbugQli7dq
-         0OjlZ3AqeeQ3NR+2SyKO3FC6xugVNeOMdAmWodrxGLQ0bA16wzkGiPuIO/zrkUrxBXgE
-         GUBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761321233; x=1761926033;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ykchracw+64FV50znwUKIsNmGJUvAyGYO9sAVqRHDLE=;
-        b=UvYqAYV3wYcFoIGfwO18tEtpdkyRQYsPJHn7TEhQ+Sd8aUd2Jp1VWTvSC6PDKsRiQH
-         /L05PZtqSpLZPaSaadBpgzDU+t/FOm32OxNnugd4GmxWuz1ZZrg1yRnQ/emzTgTqlzr/
-         hpPWxRIYxZavPu9ADloAm/nfeFEcoNzPDeK+yg4aHNv/1Tv1BRm3ax5GMQ1Lr7rq8zzm
-         8xFbWMiGEIQGuWQoYviX81cMKJKt9KAAiioBev8TROmIIuIzNYPFtpKybxlKdZ0ez6+l
-         WjTPxZrZVI3A2OmOKsip+MXyvH/+s0+wUDrxlb0sBA1GQJYRD1WH8vnh3Wybl6ssBa+Q
-         5KcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxezDATj9+X2px3Y4ZstlZq7TrcNy4Ye568NeK+KRN+OvuInmieurHJ36ouOzA81pRD1IG+Nyf+VdlWnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNevkfQrM8tTuRlOy+88ys3jZVVfD46MlBu7boozLd03czwCu8
-	bPctMHgQ9H+iLBH/QCujqzaFmpJgXYbf2YP+1COffU3f/FRp/4akaZ1AtiASQDA7lQ==
-X-Gm-Gg: ASbGnct7o7bJIWApPyWlM3BdReGuXmJK7w8z0iQmnPs19NxsJMZQ2/lL/sYg89Tcpuo
-	CwBBjpgCtC2qJT9HF9KGIpQuBsz2hiIruCnJwqrQiBm1IDv8DLVgrh3jtaxHlEAPTrz6GhnBxF2
-	s1r4s0beJW6vLymY4/BNQ3CKesSnPSeiPyZ8gs9VFMErTTSO9+kw+++TVrSIOMCKgO3kjSSdr2F
-	xEhLCpRJOZ+jzmF+3UVOAOhfaAU2HFYFCL4VwXCLUnc7uEwFiVK0N2cdXmzHIyEAdHQhEb7zONb
-	rPmvc3E/HUS68Lxwi4wPFshiR791gslkC2tUZjrcol9pJuhWLmBI9YS5GNAT2xk3uybX9v1iYfk
-	dEvFvGTj3ypV84Vbz3n9d0FXgFlADFH3niM9712TjrNzOGXHl6mBoFc39egbYBhOvWcGJYKwl5e
-	k7lSh7kOPnH3kKIOpkFgP4I325+MeS1a79a38PFABM59VmVvBZ4G95PVOmAig=
-X-Google-Smtp-Source: AGHT+IE+x2HD+4rMk0jkd18ooIAbdLhaDO73LscS2bNI12WgQHcODQg8NS4kS+ef5tm44z2hD8HW3A==
-X-Received: by 2002:a17:902:ce81:b0:294:918e:d230 with SMTP id d9443c01a7336-294918ed5edmr16496605ad.56.1761321232883;
-        Fri, 24 Oct 2025 08:53:52 -0700 (PDT)
-Received: from google.com (80.88.82.34.bc.googleusercontent.com. [34.82.88.80])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946e241d65sm59444195ad.107.2025.10.24.08.53.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 08:53:52 -0700 (PDT)
-Date: Fri, 24 Oct 2025 15:53:48 +0000
-From: William McVicker <willmcvicker@google.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Youngmin Nam <youngmin.nam@samsung.com>,
-	Donghoon Yu <hoony.yu@samsung.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	John Stultz <jstultz@google.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 6/7] clocksource/drivers/exynos_mct: Add module support
-Message-ID: <aPuhDFKINM9iXOKb@google.com>
-References: <20251023205257.2029526-1-willmcvicker@google.com>
- <CGME20251023205319eucas1p24eb9821bbcb2d59e2cb1e01c4366faab@eucas1p2.samsung.com>
- <20251023205257.2029526-7-willmcvicker@google.com>
- <40d3f3c9-7526-440b-9dbd-7ead22c8562a@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC3B202C5C;
+	Fri, 24 Oct 2025 15:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761321261; cv=fail; b=edolTqWBXeV4+ddZdIMYnJZ+yL159chjZ6rf4JVXKxdwDOzuIVMTq4hWduUAefbtkUMob3ua/kCNKBU2ZYIK8MyHChQ4rsPXtzMr4W6kWRcJyCWNCXjAt2hXEuwohXGIcXJAGOS0JcGK0PvR9vfJncMKoBzgtQ5Prve/yebc6P8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761321261; c=relaxed/simple;
+	bh=p6F9ZoxvXYmPFe5e9visH2r4lmRazRqxDQlL8AIB0YE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qhBUseLM4mNUo88JWUP5y7oi6ny5Sd21/CFkYoYEruDhy4rZF08K93ATOyMx4BX5ObH/noUI786CEP2O3vkHLxFSH9XEJrdRPnx/3Wo7MIUwlZiv/tbtU3Ab14HKtt7ovpPn53np1uakRpZ2B6TJwpwEraO7YXMzCPukYIiH3Pc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NE6w9z8Q; arc=fail smtp.client-ip=52.101.201.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WIMDNPN//0APKZfmgqaqMjHVB54EBqnWholWFsvFHzFjD6zBivFpVJODbiHsr0mMMM7r2mWV/DDWO0aFkAWnWikRR2r7LFKnSKy8VHx2Co0pTlfI+07zix8BQdoQJYtdWHvLOxvNzCJM2omIeLMaQXaqQ3my16ARxb4odlOAIfnvAdHKGSisDuOmcSYKjJcVvUJ+ckNUkpgUCmwiHGi+doglyrkAP6F6FaSFK/guhbiUJo622d2zrTasnErf4VS2fkfVG1AH2XX4K9pXoutQd9kuw8bJE8K3kIbef/XNrxL8wyYvorB9Jg9jdyzUuuyHm42+0yOsFsjrfvSIFu2sBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MG8NdhVduVTqEuGupedkprRX9bGPvUu1hpT4KNQ11M4=;
+ b=h3Z0rfSZjdiUHoLJPy4/P4YCuCrR8VgO6eOvsLu96HS2y/UPUfQcXdHSop5DuBUcYM6Bev7hXvEqM5nNOFxy2xnhbt4x0N+/5+gATV8TbmcCKwZezD/zTERuzyjPx7C/ME/Cc5kjmllPFqq/S1I15qiECf1LTiGXezCJR/Np67RQGgtJ2qKkFg9Hr0WT9JnkRn3ptxg7XOfX2jSiWddkEyUBePAWKNilZ5L2fdlBLaLYVLr9zfPNZeeSopB54zNJHuisimYmJb6+J0tN2sOTeFl13P2dwjoSklDiW00M62dRGfifI5UiuSp4rGyrtbJH5F2ASolGlUOfqnxlcYsxHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MG8NdhVduVTqEuGupedkprRX9bGPvUu1hpT4KNQ11M4=;
+ b=NE6w9z8QcEk8IeAMCGF3le3yd3oZ7E/9ER6BrLAm/ZJwdWWcehdRVnEaCnp38LEEcW++bdaJkaZxqbHckA9kBNUhEzJ1vFRtjOMVct25iDlGXIFmAeoVetMPw65zZEVU/a86ln6D6RAGS9RDVh4Jbc3Wmet4xsD3QNTbfsxvdxU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by MW6PR12MB8707.namprd12.prod.outlook.com (2603:10b6:303:241::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 15:54:16 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 15:54:14 +0000
+Message-ID: <61da9864-b7c8-43f1-b437-36756077b545@amd.com>
+Date: Fri, 24 Oct 2025 10:54:12 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] drm/amdgpu: only send the SMU RLC notification on
+ S3
+To: Antheas Kapenekakis <lkml@antheas.dev>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Perry Yuan <perry.yuan@amd.com>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20251024152152.3981721-1-lkml@antheas.dev>
+ <20251024152152.3981721-4-lkml@antheas.dev>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20251024152152.3981721-4-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7P222CA0016.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:124::16) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40d3f3c9-7526-440b-9dbd-7ead22c8562a@samsung.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MW6PR12MB8707:EE_
+X-MS-Office365-Filtering-Correlation-Id: e87bb652-a966-485d-8675-08de131594f9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?STJwTUpSb3BPaUNuTXhlL2tlWHRhSVdHK1NxZHpVdkNDcmcxaGdJSG9SMnZY?=
+ =?utf-8?B?NVNRZ09Xa3crQWY5ODVBMTRqOW1tWHd3RHA2MzM3K3YzaS81anRmcm0zVmlW?=
+ =?utf-8?B?cXB2UStYNXAvQ0d4Uk81NkdZNTRJUERtY2pqSWJWdmRlQm1CMEVrakpzY2RV?=
+ =?utf-8?B?Q3BtRlVSZnhKYjd6SVZtelJZN1MwSEVQVFNJVFRTSUdXeElkZnZUZVhVTVgr?=
+ =?utf-8?B?cVpBdXBtOTM2T3BLT3hxYmNlTXpWekl6UzBIaHFpOTN6VnZCYlpkYlBaS3J2?=
+ =?utf-8?B?aGNVdnpyQU1pYXJjNWpTcnRGclRFaGR4NlNlV0I2MVZhQVNtWlAyelNNcWVF?=
+ =?utf-8?B?NE44ZGJYMnNpU0ZOdTdpWjNXQ0xuU0JKUUpvaXZackRXYW1qTklWeE1PeGlW?=
+ =?utf-8?B?UUFhdHJSTGRmL0ZOZjI1Mm1kV0F4Wk4xTXlMdTlZbUNaVUdxQjN4MUJ3NzZC?=
+ =?utf-8?B?VERRc3g0eDVOcVNMaGhLMS9NMUVoNjlpbUV1aTBRWFRudG9US05DaTNsRWRu?=
+ =?utf-8?B?M3kvQzJHTWdGRXQ5QXZjTlJKSnVoTW9pY2pCdW9RcFdHZVJSNHl1cTY0Nkk3?=
+ =?utf-8?B?bTBhdWhzZ2xFNXR3VFNaeXZtMnZSVU40cVpKelhCUHRRY0tPMnIxYWlSMG1B?=
+ =?utf-8?B?czM5c1VIQUVjRllBVngwVTA4STVwN21MR0VwZjlGc3VHUkhyZkN6c3c0WEpT?=
+ =?utf-8?B?SXd0clg3RVk5cE4xdXFDRHJrK1N1V3ZBd2VRdFB1WFVkN0sraldEdDJ3dG5s?=
+ =?utf-8?B?cnRmTFZyWXBObkNJL05MVERBM2pmTFdIUnptbFFzZVpEL09xLzA3U2ZRMVhB?=
+ =?utf-8?B?aEJRc3JlRWsvQ1EvUCtZNTBaTFhWS25zcGprbXRsS1lNRzJXVkpLS2dHOXVv?=
+ =?utf-8?B?SFRERDlBS0dJZEZDK2lpSnpFU1phUTlSRlJTTjI3TDZ2UnQ0d0M5cExzWWh3?=
+ =?utf-8?B?ZTRHeE5jV2Foa1lMMWNiTld5UFFwZHVhSmNmOWhVN1Vwd0t2Vk5UVlY2bWdR?=
+ =?utf-8?B?eWRxK0IwcUh6eGdCU09xS1JtV0VxdkRTSFpCSnBDaHJxenlZbUZ4dEdwOTEw?=
+ =?utf-8?B?cmVpb1Y0SGNMcXB0azlhQ3FPUTd5WjFEUFlBdmJOdHFJSUhBYUhkV0MxU3d4?=
+ =?utf-8?B?MVhJUjJTcGhoS3RMbEhoWlBvUEhJWVVtSDYxMmI4Qmp3R25jcFc1Sk5ET2J3?=
+ =?utf-8?B?R21iQVAwOXpqNkVsN3JWNGtBakhxN1JoZzlPclBhM0gvZURIRXJzL2tRd3A4?=
+ =?utf-8?B?Ty9UbE1JWVAzZEY3azFzQjE3WXFpdjdZRWt0cjdwV24vWHh5cjJQWXM2YWRn?=
+ =?utf-8?B?cVNwUU5OWHp6Tkx5RzdsNmZnNE4xcUw4bWpZZ2hMb3VNRHkxOVVNRDIrdkgr?=
+ =?utf-8?B?WGMvYjFBMlhTRDIzRlVmYWNDclE0Sm9JNXNaK2F2cC9mOUVBZzlSY08vNWlT?=
+ =?utf-8?B?UFRsYkttK2pIZlo2VFVWYmVDdzFBRDZCUmZJNGxMemR4Mnc5ZWhlOWt2RUxx?=
+ =?utf-8?B?MDZKR2FkbVVsTW5uWG41Z1JHd2t4cW9xdllJamtkbTVaMldiTHZwRzByK1N0?=
+ =?utf-8?B?ay82QmZWVGFEWlBnd1E2M055dUJHaGczUkVuUGdTUmZTSmhOU0NWeSs5eEVj?=
+ =?utf-8?B?N2habmZoajYveERYUnFBWm5nTmpwNDV0ckZpUU1QbWgrYzJLamNkMktzUm5D?=
+ =?utf-8?B?aGUwZFdvOEpoOHlMZENFQmVoRlZqQ1dlV2lkeVhheW9FWEdhdWFRM2FrRVZl?=
+ =?utf-8?B?ZEVENmhzZmd1RHFYLzllaXdXUzdFVGtYYjczMzdLQWhhS3YyUjFBeEpOZkI1?=
+ =?utf-8?B?MlZwQnZNbkxjTjdTUmJOS2lkMUxtUE5zOUZGWFVmckJSNENuRVJnUlp1bGx6?=
+ =?utf-8?B?WlJxTG5wK2dQWURzSE84R0pVRUcvNng4YTVIdjltVzd6L3c9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VGJmekZEMEJiUlcvV05TUjNybzBuakZWWXpSek5QN25laHk0eHFUTE5lYUxI?=
+ =?utf-8?B?QXJmVTVNcHlwLzZkRGcveVZybk9nSWpXWWlRRW5XYmVqdTdpcE1rcG8vTGFX?=
+ =?utf-8?B?MkdpdGk1TGNmUC9JU1ArRGU3MVMvWHBkemxHMktpRHpCZ3kwU0dxUkxoRmlY?=
+ =?utf-8?B?UTBGallSb2JadlJyeE93eVVCcmtYdHdoL3ZSVlVXblp1bnFJdTU2dHlGNWNK?=
+ =?utf-8?B?aDBMRitxNFliR3U0OXdjMlNFaE1PaUlvdGRncFhGNURrWUJZNkVIbmJnSEJk?=
+ =?utf-8?B?cTJzUXBiQ3YwYTlPdE9UMm1lbHB1eFVPV0IyMnlVMDU2eHhwVWJrRVhkVEVU?=
+ =?utf-8?B?c0hpSmVkSENFUllKSjdLYVlMYlVkdWJmMmtKSERiRnh4L25LallQenJnS0pw?=
+ =?utf-8?B?d3d6dXVJbFVTc1RSZEdoS2RabGYvaHJBODk4V3dUMW1CL1FsSUhVQkNaamxx?=
+ =?utf-8?B?L29yWHZ3aUJRUHlzV3VQdENmREFqLzFPM0x2YkMxNXM2WlFXenN1bEVDamh6?=
+ =?utf-8?B?R0NHZC95bENaYmI4UHluRTE4cmRKNkRGMmZiM09LNXk4SGNMdlhOZkJJaTZh?=
+ =?utf-8?B?L2JJRDhoVmR5NDNwbXI2YXBLN09mZUFZdFVhZkEvNTN1NnMzTnVuRksydVQz?=
+ =?utf-8?B?YlcybGJybGtPS29IOFZVN1V3L2ZtSTk3amlMYXhtcGdaVE9MWElRc2FEaXFP?=
+ =?utf-8?B?M0FaNnIyajZYcGtDSDN1UmVDeTRuUjNMelU2ZU1HQ3dXNnRtbklETEx6bWg4?=
+ =?utf-8?B?Z0tKVkQ5SEZmREJpdWg0NnEyb3ZSN1FvdzVORklqd08rNzB3OFFGRjdFOWhm?=
+ =?utf-8?B?djFNdEJMcm04V1ZhNkpwa2x6UUxzTGoyamQwbVRoTHJHU0ZtVXRkRGY0VkJj?=
+ =?utf-8?B?OGFCcTh5SDlwcStLaVRibU1aZ29Ockh4WFRuWjFxdDdtQkxqcXhqVTI5S0ZG?=
+ =?utf-8?B?TTFQTWp5YXppMFE1RlNsTldFMG5hNHJqdVVuNC92Tkt2UCtFdkpsWlhnME1L?=
+ =?utf-8?B?b3FlU0ZZZTNmYkNCeE5uOWRFaURwQmcrbmlFbXlVdVJQVGFKMytBSDF4STkr?=
+ =?utf-8?B?RE9UMjJ1NXVtb2Mvc1hZc2NWbEtUTW8xTTFPdWFxL2dwZk9vaGhRVGJoYjJX?=
+ =?utf-8?B?OVAxUHYzVEhyNnc2dzVHeXc2M2EvNXlIWVFneHpsK0V1TjEyLzkrbU45SUYv?=
+ =?utf-8?B?Q0QvSm5tOGY1VVdZSDJ5VmhPTllRYzZLVGUxMjhpS1JGaXkyM1dqWXppcDhZ?=
+ =?utf-8?B?TldYOVFGb0YzTDhiUWY2VGh6QWN1TkZYWlpDYllLODRSOHlGZWQxeFZab0N2?=
+ =?utf-8?B?RFVyRlRMenRaQUZkbkJ1elBDUWluNkxOMVRGaEpLN09XWHBHTlMzOWFRa2s5?=
+ =?utf-8?B?bFh4RGl2RWROSElsVWlyNnZBdy9DNjRsaEJlTzV6VE4yVWNOMkkzWVBLNnEy?=
+ =?utf-8?B?MnExcWpuSmF3S09SY3dOb1FqSE1pUFd0MThBWE9mS2VjMU5UcW96TkZhNk5Z?=
+ =?utf-8?B?YTlBOTkwc0hpUmlUWEg5VDI0ZmxkQ3FBWnNRSGgyMnRUSE5UMisxQ1lnOU03?=
+ =?utf-8?B?MVZ3UjB5MnNqejZEViswallna2hxVE9ETXhZU0RyL1dkY3NhckJpTGdtTnBs?=
+ =?utf-8?B?ZUxudVQ1K0RaYlZERTB0SUtQN2lOVkd0MFFBaEZCeTBCTWEwQnd6RWF1TEdz?=
+ =?utf-8?B?bWFCVzJtdlZ4STEyTGVqenVkeEhpeWtMRXB4UjJIemJlVFNpUDNra3EveUxZ?=
+ =?utf-8?B?bklrcWpvRk9JZ3RqNlEwMHhSZnlLYW9aSU4zWkRJZzZHSTBlZzlsRFpIVW81?=
+ =?utf-8?B?d1NCQUV3Nkt4ZGVIR0tOL2VKbjRXd0I2MVZDdUdxanVhaE45aWFMQWN2eW5C?=
+ =?utf-8?B?NEpYaHl0cHRKYUk0dWg0Qkt6b1h6QmFldTJJSUxJQnVET2M0UE9DMFA2TWE5?=
+ =?utf-8?B?ak93SHFGOXBRL041THExUnZscWZHZmNOc2l2VTJwTTRaQjIyVUhJa0ZCRXVl?=
+ =?utf-8?B?dlVDUE5PR1dVdERacnBDOEJCekFRVzFKQnhFQm9XOFRjMEF1VkwzdFNIQVdG?=
+ =?utf-8?B?RGc2SWt1b1NadGJIb1p4R2ZJVUd1ZThSUTVKcUxoVEVnYnJ3L1lpR2Z3SWRt?=
+ =?utf-8?Q?mvBcgdrWFqikpoFX7QtiMxHvi?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e87bb652-a966-485d-8675-08de131594f9
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 15:54:14.8966
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GLKg1AU/+2dOaeT70Sy8lsYd+Qzz0SJh+Ypy44EuD7q/zTb3UpvdFfxB4qmsiQ2VxhLgo18UXkcaUwP9gBLWJw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8707
 
-On 10/24/2025, Marek Szyprowski wrote:
-> On 23.10.2025 22:52, Will McVicker wrote:
-> > From: Donghoon Yu <hoony.yu@samsung.com>
-> >
-> > On Arm64 platforms the Exynos MCT driver can be built as a module. On
-> > boot (and even after boot) the arch_timer is used as the clocksource and
-> > tick timer. Once the MCT driver is loaded, it can be used as the wakeup
-> > source for the arch_timer.
-> >
-> > Signed-off-by: Donghoon Yu <hoony.yu@samsung.com>
-> > Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> > Signed-off-by: Will McVicker <willmcvicker@google.com>
-> > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> > [original commit from https://android.googlesource.com/kernel/gs/+/8a52a8288ec7d88ff78f0b37480dbb0e9c65bbfd]
-> > Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
-> > Tested-by: Youngmin Nam <youngmin.nam@samsung.com> # AOSP -> Linux port
-> > ---
-> >   drivers/clocksource/Kconfig      |  3 +-
-> >   drivers/clocksource/exynos_mct.c | 56 +++++++++++++++++++++++++++-----
-> >   2 files changed, 49 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> > index ffcd23668763..9450cfaf982f 100644
-> > --- a/drivers/clocksource/Kconfig
-> > +++ b/drivers/clocksource/Kconfig
-> > @@ -451,7 +451,8 @@ config ATMEL_TCB_CLKSRC
-> >   	  Support for Timer Counter Blocks on Atmel SoCs.
-> >   
-> >   config CLKSRC_EXYNOS_MCT
-> > -	bool "Exynos multi core timer driver" if COMPILE_TEST
-> > +	tristate "Exynos multi core timer driver" if ARM64
-> > +	default y if ARCH_EXYNOS || COMPILE_TEST
-> >   	depends on ARM || ARM64
-> >   	depends on ARCH_ARTPEC || ARCH_EXYNOS || COMPILE_TEST
-> >   	help
-> > diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> > index fece6bbc190e..a87caf3928ef 100644
-> > --- a/drivers/clocksource/exynos_mct.c
-> > +++ b/drivers/clocksource/exynos_mct.c
-> > @@ -15,9 +15,11 @@
-> >   #include <linux/cpu.h>
-> >   #include <linux/delay.h>
-> >   #include <linux/percpu.h>
-> > +#include <linux/module.h>
-> >   #include <linux/of.h>
-> >   #include <linux/of_irq.h>
-> >   #include <linux/of_address.h>
-> > +#include <linux/platform_device.h>
-> >   #include <linux/clocksource.h>
-> >   #include <linux/sched_clock.h>
-> >   
-> > @@ -217,6 +219,7 @@ static struct clocksource mct_frc = {
-> >   	.mask		= CLOCKSOURCE_MASK(32),
-> >   	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
-> >   	.resume		= exynos4_frc_resume,
-> > +	.owner		= THIS_MODULE,
-> >   };
-> >   
-> >   /*
-> > @@ -241,7 +244,7 @@ static cycles_t exynos4_read_current_timer(void)
-> >   }
-> >   #endif
-> >   
-> > -static int __init exynos4_clocksource_init(bool frc_shared)
-> > +static int exynos4_clocksource_init(bool frc_shared)
-> >   {
-> >   	/*
-> >   	 * When the frc is shared, the main processor should have already
-> > @@ -336,6 +339,7 @@ static struct clock_event_device mct_comp_device = {
-> >   	.set_state_oneshot	= mct_set_state_shutdown,
-> >   	.set_state_oneshot_stopped = mct_set_state_shutdown,
-> >   	.tick_resume		= mct_set_state_shutdown,
-> > +	.owner			= THIS_MODULE,
-> >   };
-> >   
-> >   static irqreturn_t exynos4_mct_comp_isr(int irq, void *dev_id)
-> > @@ -476,6 +480,7 @@ static int exynos4_mct_starting_cpu(unsigned int cpu)
-> >   	evt->features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT |
-> >   			CLOCK_EVT_FEAT_PERCPU;
-> >   	evt->rating = MCT_CLKEVENTS_RATING;
-> > +	evt->owner = THIS_MODULE;
-> >   
-> >   	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
-> >   
-> > @@ -511,7 +516,7 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
-> >   	return 0;
-> >   }
-> >   
-> > -static int __init exynos4_timer_resources(struct device_node *np)
-> > +static int exynos4_timer_resources(struct device_node *np)
-> >   {
-> >   	struct clk *mct_clk, *tick_clk;
-> >   
-> > @@ -539,7 +544,7 @@ static int __init exynos4_timer_resources(struct device_node *np)
-> >    * @local_idx: array mapping CPU numbers to local timer indices
-> >    * @nr_local: size of @local_idx array
-> >    */
-> > -static int __init exynos4_timer_interrupts(struct device_node *np,
-> > +static int exynos4_timer_interrupts(struct device_node *np,
-> >   					   unsigned int int_type,
-> >   					   const u32 *local_idx,
-> >   					   size_t nr_local)
-> > @@ -653,7 +658,7 @@ static int __init exynos4_timer_interrupts(struct device_node *np,
-> >   	return err;
-> >   }
-> >   
-> > -static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
-> > +static int mct_init_dt(struct device_node *np, unsigned int int_type)
-> >   {
-> >   	bool frc_shared = of_property_read_bool(np, "samsung,frc-shared");
-> >   	u32 local_idx[MCT_NR_LOCAL] = {0};
-> > @@ -701,15 +706,48 @@ static int __init mct_init_dt(struct device_node *np, unsigned int int_type)
-> >   	return exynos4_clockevent_init();
-> >   }
-> >   
-> > -
-> > -static int __init mct_init_spi(struct device_node *np)
-> > +static int mct_init_spi(struct device_node *np)
-> >   {
-> >   	return mct_init_dt(np, MCT_INT_SPI);
-> >   }
-> >   
-> > -static int __init mct_init_ppi(struct device_node *np)
-> > +static int mct_init_ppi(struct device_node *np)
-> >   {
-> >   	return mct_init_dt(np, MCT_INT_PPI);
-> >   }
-> > -TIMER_OF_DECLARE(exynos4210, "samsung,exynos4210-mct", mct_init_spi);
-> > -TIMER_OF_DECLARE(exynos4412, "samsung,exynos4412-mct", mct_init_ppi);
-> > +
-> > +static int exynos4_mct_probe(struct platform_device *pdev)
-> > +{
-> > +	struct device *dev = &pdev->dev;
-> > +	int (*mct_init)(struct device_node *np);
-> > +
-> > +	mct_init = of_device_get_match_data(dev);
-> > +	if (!mct_init)
-> > +		return -EINVAL;
-> > +
-> > +	return mct_init(dev->of_node);
-> > +}
-> > +
-> > +static const struct of_device_id exynos4_mct_match_table[] = {
-> > +	{ .compatible = "samsung,exynos4210-mct", .data = &mct_init_spi, },
-> > +	{ .compatible = "samsung,exynos4412-mct", .data = &mct_init_ppi, },
-> > +	{}
-> > +};
-> > +MODULE_DEVICE_TABLE(of, exynos4_mct_match_table);
-> > +
-> > +static struct platform_driver exynos4_mct_driver = {
-> > +	.probe		= exynos4_mct_probe,
-> > +	.driver		= {
-> > +		.name	= "exynos-mct",
-> > +		.of_match_table = exynos4_mct_match_table,
-> > +	},
-> > +};
-> > +
-> > +static __init int exynos_mct_init(void)
-> > +{
-> > +  return platform_driver_register(&exynos4_mct_driver);
-> > +}
-> > +module_init(exynos_mct_init);
-> > +
-> > +MODULE_DESCRIPTION("Exynos Multi Core Timer Driver");
-> > +MODULE_LICENSE("GPL");
+
+
+On 10/24/2025 10:21 AM, Antheas Kapenekakis wrote:
+> From: Alex Deucher <alexander.deucher@amd.com>
 > 
-> Sorry, but this still won't work on legacy ARM 32bit systems with MCT as 
-> the only clocksource, which needs a driver available very early (that's 
-> why it used TIMER_OF_DECLAREmacro). You need to make it conditional 
-> under CONFIG_ARM:
+> For S0ix, the RLC is not powered down. Rework the Van Gogh logic to
+> skip powering it down and skip part of post-init.
+> 
+> Fixes: 8c4e9105b2a8 ("drm/amdgpu: optimize RLC powerdown notification on Vangogh")
+> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4659
+> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+> Tested-by: Antheas Kapenekakis <lkml@antheas.dev>
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_device.c       | 8 +++++---
+>   drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c        | 6 ++++++
+>   drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c | 3 +++
+>   3 files changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> index 3d032c4e2dce..220b12d59795 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> @@ -5243,9 +5243,11 @@ int amdgpu_device_suspend(struct drm_device *dev, bool notify_clients)
+>   	if (amdgpu_sriov_vf(adev))
+>   		amdgpu_virt_release_full_gpu(adev, false);
+>   
+> -	r = amdgpu_dpm_notify_rlc_state(adev, false);
+> -	if (r)
+> -		return r;
+> +	if (!adev->in_s0ix) {
+> +		r = amdgpu_dpm_notify_rlc_state(adev, false);
+> +		if (r)
+> +			return r;
+> +	}
 
-Can we rely on the bootloader to setup the MCT timer and then hand-off at boot
-once the driver is initialized?
+Just FYI this is going to clash with my unwind failed suspend series [1].
 
-Daniel was working on a solution to transparently handle calling
-TIMER_OF_DECLARE() when a timer driver can be configured as both a module or
-built-in here:
+This is fine, just whichever "lands" first the other will need to rework 
+a little bit and I wanted to mention it.
 
-  https://lore.kernel.org/all/20250625085715.889837-1-daniel.lezcano@linaro.org/
+Link: 
+https://lore.kernel.org/amd-gfx/20251023165243.317153-2-mario.limonciello@amd.com/ 
+[1]
 
-Daniel, do you have plans to finish that? In the meantime, can we go with the
-`#if CONFIG_ARM` solution?
+This does have me wondering though why amdgpu_dpm_notify_rlc_state() is 
+even in amdgpu_device_suspend()?  This is only used on Van Gogh.
+Should we be pushing this deeper into amdgpu_device_ip_suspend_phase2()?
 
-Thanks,
-Will
+Or should we maybe overhaul this to move the RLC notification into a 
+.set_mp1_state callback instead so it's more similar to all the other ASICs?
 
-<snip>
+>   
+>   	return 0;
+>   }
+> diff --git a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
+> index fb8086859857..244b8c364d45 100644
+> --- a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
+> +++ b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
+> @@ -2040,6 +2040,12 @@ static int smu_disable_dpms(struct smu_context *smu)
+>   	    smu->is_apu && (amdgpu_in_reset(adev) || adev->in_s0ix))
+>   		return 0;
+>   
+> +	/* vangogh s0ix */
+> +	if ((amdgpu_ip_version(adev, MP1_HWIP, 0) == IP_VERSION(11, 5, 0) ||
+> +	     amdgpu_ip_version(adev, MP1_HWIP, 0) == IP_VERSION(11, 5, 2)) &&
+> +	    adev->in_s0ix)
+> +		return 0;
+> +
+
+How about for GPU reset, does PMFW handle this too?
+
+>   	/*
+>   	 * For gpu reset, runpm and hibernation through BACO,
+>   	 * BACO feature has to be kept enabled.
+> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
+> index 2c9869feba61..0708d0f0938b 100644
+> --- a/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
+> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.c
+> @@ -2217,6 +2217,9 @@ static int vangogh_post_smu_init(struct smu_context *smu)
+>   	uint32_t total_cu = adev->gfx.config.max_cu_per_sh *
+>   		adev->gfx.config.max_sh_per_se * adev->gfx.config.max_shader_engines;
+>   
+> +	if (adev->in_s0ix)
+> +		return 0;
+> +
+>   	/* allow message will be sent after enable message on Vangogh*/
+>   	if (smu_cmn_feature_is_enabled(smu, SMU_FEATURE_DPM_GFXCLK_BIT) &&
+>   			(adev->pg_flags & AMD_PG_SUPPORT_GFX_PG)) {
+
 
