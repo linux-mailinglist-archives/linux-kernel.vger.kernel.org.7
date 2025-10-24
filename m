@@ -1,144 +1,188 @@
-Return-Path: <linux-kernel+bounces-869311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98649C07979
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:52:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF5CC0798F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 775E31A62681
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:52:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2F4A4FBCF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB47346E56;
-	Fri, 24 Oct 2025 17:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2532441A6;
+	Fri, 24 Oct 2025 17:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mlTrcbAg"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="ZKb2rdBf"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E160343D87
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761328271; cv=none; b=X3bWDqcFZsjIpRi4Buq9xDk50Oi13O8SN/WEKyWVTAjM8ED2+SjLTzqVHqq7vUcD3m4uEANihxOuKmZ7AaEw68rdVfMi87IPwfvDKDFpX8UDprK0TEByB8ilSC4q0hAOlXGvptMehb0ZWADvM46koJoZMcSe3anOxkwV5r/kw3M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761328271; c=relaxed/simple;
-	bh=raBiU2TNdnYW5GXBQGKlY34qsI95KKrr7UkG+dolrPs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Kp9nTXepymjBuC8pMOKsGYS/1wYxwu4T/KBNmxHEuhpc1anIxzI26iJfbs1m4VxX+dnIlG/CAYQKWfzgnFxAijDTvG6prYpDIxVf38cwkuOykxRRa8rTUywIETxd2LUA86iI5P9T+QbmbQ/s+i6nBxeb4guHSV7C3Ctg2JDbl6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mlTrcbAg; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so1531425f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:51:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761328266; x=1761933066; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S1HvYCNLV5CI0boyLI+MOBTwgyqBxpYEqfcX5SoAEoA=;
-        b=mlTrcbAg88rvFSUlVUqQxfJFqv2xGpB0p23PZOYywlF52PN5KBGz9aHB5ezK8TveCD
-         G6HMV900q9myUo5JPKG+UeophXjrvB0zJiBp08QeULmgMWh7+YKCoA1MTy/SR0OIMZ9P
-         zQTIWmjUbWKz7Y3OqZTZwvEJcPSqA5LSk9q+A2ahbL9EGHoKoSmzCfA3oHfDg+oFwP7b
-         hI1wrufI7qpQEMqRxNo47BB7eT3s0q1Xrl15rdyzeIu761hUJ0ldxfJfc7nP5qGeqBSZ
-         qXE4qnuHNkm4WA+bq557JFq13idy7e2+nS/SXMCwZuQ+PipBONgfR84mvom7Exdm/68H
-         uKsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761328266; x=1761933066;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S1HvYCNLV5CI0boyLI+MOBTwgyqBxpYEqfcX5SoAEoA=;
-        b=cZnXRQoSCgc38vK/blc2/PYZRFItS9BtECGzxOxi4nscJA3+dCMK1mTNYbCaiQPCxd
-         E1QBK+KYDjBq9nDG/aIrjYVqeEBXQJ/b7t21ECit7e0aeR8gkP477LIzPcULfkYJ7FI3
-         9JvXA7h3Vt5gijfLCNhWX5B1dTK4N51y1A79LXcuPhXNPUd6p0OpOJTWkJhsF94KpMQK
-         vikUNwTI4jpzqSGm8NuCsdtOhtKS1IAwxj3zf6EOhbRe0XRaFiwfykrsgN2/QIQfdJs7
-         hGWCpLAmBZJg/y8sKmnR6Xy8byzW+LwB3RatEMF0NzvTH8lDk5hLjrh+IFHBV1ZHUBPV
-         699A==
-X-Forwarded-Encrypted: i=1; AJvYcCXD8aOkiSGkqeUu19rHn7xL1z5HGr3Jof98jzwpEtF+R+PIu/1eUE16u8YxNdlrhgXsoendSolk5as7orI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkEaJuSGWEbGvraxS5J/Itbzh2fWmPAEeHECb0NcJHdL4mZtyv
-	hqkfuaAe0t6ZZV0GuAxdJpu8kxr24NLv5tqzeuvz7lIk/aFZK1EkRU3uWDoOHiirzk0=
-X-Gm-Gg: ASbGncvWUEiICEHRC+wCNjB00fFZIwVL/Din/oT+RufNHvcZ9z3b1Trsd0SlFQ1YN6V
-	fqw2DJ7LN1TYtNjLtKe3baVGh/p9QCxFuR82WsxDZhxkL51QvSQb7rQpYeeLrgw7mnIhiRVCrFS
-	ilLdn+YG5kSXIGQX2MRm19o3/Ywfz1d66uAmJyDE6q4ZCh3gSTvWT7PWCgETHI44VK+4Eu8C92y
-	LlcPocgakF4EQK1VJFIczFtw2BM6o57+AN+McgtO23tWqGXAQGqhkhFwY2+UzXBNE8lfT0ZOoF/
-	dA3oXg3ligj4pMIm7pbYrV27kbYOQgPmQzVKsYybXjoe+VTBm6zbtM+HEFgDSAx7caCbrfCku1t
-	HhjKwTqVC7qDRWO0WdnFlizdlQF/cVvcQ+eTTEWbpbeNSXT2erghq9aqbsKir0PJP8Z3zktsSRJ
-	wbcFw+5erSalEFkoVJSqBDXcPrqnd27r8W5CJ/f2WIU3r+aIiv169uqtw2TP5/iS8=
-X-Google-Smtp-Source: AGHT+IG+eLRf8YPCXCIvX1Icim3foq9BCM0qVymaKl3/VkViHXuuqGJB+jB3dPU4X7R8xwku0ueZeA==
-X-Received: by 2002:a05:6000:2f85:b0:428:3bf5:b3b8 with SMTP id ffacd0b85a97d-429907467e1mr3127739f8f.44.1761328265663;
-        Fri, 24 Oct 2025 10:51:05 -0700 (PDT)
-Received: from ta2.c.googlers.com (213.53.77.34.bc.googleusercontent.com. [34.77.53.213])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429897e7622sm10321900f8f.8.2025.10.24.10.51.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 10:51:05 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Fri, 24 Oct 2025 17:51:01 +0000
-Subject: [PATCH v2 2/2] arm64: dts: exynos: gs101: add TRNG node
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4941F28314A;
+	Fri, 24 Oct 2025 17:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761328326; cv=pass; b=UU1CEjqDLfLyNBtvYvuuevzMzQPhGRxxhOr7KXl9z0D+ISY8ZV51ZwRhIuPWO6SfsK9ywxV7+3jEZb4BfzC1lPz6q6uugyGDhVmqKDfNOwkef4rUbaa+qUUQsmD0+o9Fmdx7/TNDYPbjD+7T615GOABpARGFH7u8IUwb6fBV6Ic=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761328326; c=relaxed/simple;
+	bh=E4AmDFRM7F5PSBy6yLUtj3LAsj32f1PjzdGf0UHDo+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CX+iFOETp20R17cLJGQeWq6nKbMbeLv3lvnxZviJwiHpdY+osb39yv1MBrFEeCweufh8cC50aakad8tiY2CVdBYfpmL/7ig/kVuh8wvzF1nsd4AFcO4eQP3w3S2+E0eSl7uph/yXbX3/w1Gdz1IMszbfBXfgiu10NnfBCCmp66o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=ZKb2rdBf; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1761328287; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=DiUyK8tdAupooswC4Sh2gsaGJwEarJ2aZRUjtIhDMxmxjnPCwSJRknW6FK7e104M3g/ENmJma3JrEma6BSWM8iTXHD3hRonO4QsrI45TwsKHlCiM2j5zsjTAMxTG2UycJQA8ITep5QRzANzyo1CGE3vSPesoum/GwvGkgdodCVw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1761328287; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=sCRi+ao+Y0H2VTsuR8VLPC8s6tkLiQZtynG9CySW2MU=; 
+	b=RThPz6TkUJ2jhE7s8OufEirmiTtnvWIxDI0UBi+jed1zfOjgC7eRCNTISyyxzyX62b8PwegmUaIsDgWYJT725GLk4M5aLHylcuWtS7dXik1RTvVlYTWOBI6CqtxT3bz9VYRimiKSd2TbHgmqc4Q6v+RECoH2PcPIlsnlozP48qY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1761328287;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=sCRi+ao+Y0H2VTsuR8VLPC8s6tkLiQZtynG9CySW2MU=;
+	b=ZKb2rdBffh4am/tRZLfrrSU3VWPizGpeEqiF3S7so4peQ3+FCRThFZJdvv8pSRFn
+	F0ikOoMjV24bWKPNFk4CoB5X+7yzxzwNZRWepd08Gj1lW5Su8OBONpJbXcc0s8JHWrY
+	yAaoi+kd4UPzNeYm8j+C5+cIzhfvtYqsBkAwnI2Y=
+Received: by mx.zohomail.com with SMTPS id 1761328284052701.9623815285279;
+	Fri, 24 Oct 2025 10:51:24 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Peter Wang <peter.wang@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, kernel@collabora.com,
+ linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org
+Subject:
+ Re: [PATCH v3 03/24] dt-bindings: ufs: mediatek,ufs: Add mt8196 variant
+Date: Fri, 24 Oct 2025 19:51:11 +0200
+Message-ID: <5617400.31r3eYUQgx@workhorse>
+In-Reply-To: <20251024-thrash-amid-d5af186c4319@spud>
+References:
+ <20251023-mt8196-ufs-v3-0-0f04b4a795ff@collabora.com>
+ <20251023-mt8196-ufs-v3-3-0f04b4a795ff@collabora.com>
+ <20251024-thrash-amid-d5af186c4319@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251024-gs101-trng-v2-2-c2bb81322da4@linaro.org>
-References: <20251024-gs101-trng-v2-0-c2bb81322da4@linaro.org>
-In-Reply-To: <20251024-gs101-trng-v2-0-c2bb81322da4@linaro.org>
-To: =?utf-8?q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, 
- Olivia Mackall <olivia@selenic.com>, 
- Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, semen.protsenko@linaro.org, 
- willmcvicker@google.com, kernel-team@android.com, 
- linux-samsung-soc@vger.kernel.org, linux-crypto@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761328263; l=1126;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=raBiU2TNdnYW5GXBQGKlY34qsI95KKrr7UkG+dolrPs=;
- b=e1UEZMWe5ikZ+mjOHJ6zxj4LdozzJBMXJBQkXRXZTR6davdh/DgSzg4n+2rpnv8ebPSQH3L5u
- GH+sVbHAu/sBN1oTyQY44OWkPjPvlcgeWGZUXH/mWGz27nhPuprVPia
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-Define the TRNG node. GS101 TRNG works well with the current
-Exynos850 TRNG support. Specify the Google specific compatible
-in front of the Exynos one.
+On Friday, 24 October 2025 19:13:36 Central European Summer Time Conor Dooley wrote:
+> On Thu, Oct 23, 2025 at 09:49:21PM +0200, Nicolas Frattaroli wrote:
+> 
+> >      };
+> > +  - |
+> > +    #include <dt-bindings/reset/mediatek,mt8196-resets.h>
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +
+> > +    ufshci@16810000 {
+> > +        compatible = "mediatek,mt8196-ufshci";
+> > +        reg = <0x16810000 0x2a00>;
+> > +        interrupts = <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>;
+> > +
+> > +        clocks = <&ufs_ao_clk 6>,
+> > +                 <&ufs_ao_clk 7>,
+> > +                 <&clk26m>,
+> > +                 <&ufs_ao_clk 3>,
+> > +                 <&clk26m>,
+> > +                 <&ufs_ao_clk 4>,
+> > +                 <&ufs_ao_clk 0>,
+> > +                 <&topckgen 7>,
+> > +                 <&topckgen 41>,
+> > +                 <&topckgen 105>,
+> > +                 <&topckgen 83>,
+> > +                 <&ufs_ao_clk 1>,
+> > +                 <&ufs_ao_clk 2>,
+> > +                 <&topckgen 42>,
+> > +                 <&topckgen 84>,
+> > +                 <&topckgen 102>;
+> 
+> This is absolutely a nitpick thing, but if you end up resubmitting, can
+> you pick a consistent format between the two examples your series adds
+> for the clocks/clock names?
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+No problem, will do. IIRC I kept them as a list like this so I could
+easily reorder things, but now that I'm fairly sure this order is the
+correct one, it's probably best to make this more compact.
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index d06d1d05f36408137a8acd98e43d48ea7d4f4292..380f7e70910ab8bcc28690782532fff87ca7e30b 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -630,6 +630,15 @@ watchdog_cl1: watchdog@10070000 {
- 			status = "disabled";
- 		};
- 
-+		trng: rng@10141400 {
-+			compatible = "google,gs101-trng",
-+				     "samsung,exynos850-trng";
-+			reg = <0x10141400 0x100>;
-+			clocks = <&cmu_misc CLK_GOUT_MISC_SSS_I_ACLK>,
-+				 <&cmu_misc CLK_GOUT_MISC_SSS_I_PCLK>;
-+			clock-names = "secss", "pclk";
-+		};
-+
- 		gic: interrupt-controller@10400000 {
- 			compatible = "arm,gic-v3";
- 			#address-cells = <0>;
+Also sorry for the numbers as clock IDs, but MediaTek clock headers
+have conflicting symbols and the dt schema example extractor dumps
+all examples into one dts file. :(
 
--- 
-2.51.1.851.g4ebd6896fd-goog
+Since this has bugged me in the past, and many schemas may rely on
+the concat behaviour now: would a patch in the distant future that
+prefixes all MediaTek clock binding headers with the SoC name be
+acceptable if it keeps the old names intact as aliases to them with
+a #ifndef guard?
+
+I should also think about some way we can avoid similar bindings
+symbol naming mishaps in the future.
+
+Thank you for pointing me in the right direction with regards to
+the binding!
+
+Kind regards,
+Nicolas Frattaroli
+
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> pw-bot: not-applicable
+> 
+> > +        clock-names = "ufs",
+> > +                      "ufs_aes",
+> > +                      "ufs_tick",
+> > +                      "unipro_sysclk",
+> > +                      "unipro_tick",
+> > +                      "unipro_mp_bclk",
+> > +                      "ufs_tx_symbol",
+> > +                      "ufs_mem_sub",
+> > +                      "crypt_mux",
+> > +                      "crypt_lp",
+> > +                      "crypt_perf",
+> > +                      "ufs_rx_symbol0",
+> > +                      "ufs_rx_symbol1",
+> > +                      "ufs_sel",
+> > +                      "ufs_sel_min_src",
+> > +                      "ufs_sel_max_src";
+> > +
+> > +        operating-points-v2 = <&ufs_opp_table>;
+> > +
+> > +        phys = <&ufsphy>;
+> > +
+> > +        avdd09-supply = <&mt6363_vsram_modem>;
+> > +        vcc-supply = <&mt6363_vemc>;
+> > +        vcc-supply-1p8;
+> > +        vccq-supply = <&mt6363_va12_2>;
+> > +        vccq2-supply = <&mt6363_vufs12>;
+> > +
+> > +        resets = <&ufs_ao_clk MT8196_UFSAO_RST1_UFS_UNIPRO>,
+> > +                 <&ufs_ao_clk MT8196_UFSAO_RST1_UFS_CRYPTO>,
+> > +                 <&ufs_ao_clk MT8196_UFSAO_RST1_UFSHCI>;
+> > +        reset-names = "unipro", "crypto", "hci";
+> > +        mediatek,ufs-disable-mcq;
+> > +    };
+> > 
+> 
+
+
+
 
 
