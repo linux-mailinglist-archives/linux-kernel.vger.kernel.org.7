@@ -1,166 +1,158 @@
-Return-Path: <linux-kernel+bounces-868409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 639C9C05220
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:45:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 844B8C0521D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF7B1508720
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:39:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BEA01AE6132
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E213A30AD0D;
-	Fri, 24 Oct 2025 08:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AC8307486;
+	Fri, 24 Oct 2025 08:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CO7pDRdU"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lankhorst.se header.i=@lankhorst.se header.b="E0g3wZpF"
+Received: from lankhorst.se (lankhorst.se [141.105.120.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F4130AAD4
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DA1305E14;
+	Fri, 24 Oct 2025 08:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761295035; cv=none; b=qJblFdgtUWN9MU1s0bM0dKlIHC+pM7Z5WCV5iXfw19MYc0pbb4yeJyQGE/DNKuurU7yFnnYK0qM/2fVM85AKzDxBnfvGy5zQdjtntBQz7RxGpIol2jqEb9Tp6+lIPGuOUagZbCHzpT6ZTtiWK6K3Ht4DYbpnRq4uKlkqAs2D1z0=
+	t=1761295479; cv=none; b=bnB7OEtTiIpr3m1cyk7XnWRz5KOh6qLHIi/tVG1Xq7Uec3N06o1WVPWpgGlsWIRf3mvjBDO+adENZt0doqoGcpZtq73Qdr5FusQU94zBuMmU7Eg9OwU8l63gfbpWn3M3HsI3+YmWpQxSvOM1eg3Q6hpKkgM93nEE8HinP5nQnS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761295035; c=relaxed/simple;
-	bh=GBY0sw1NoSYjfy/bezUKqsT9sskwBDR6r6B37VUaxUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D9UA4RVgKyuzuasu7Ysz/xy0x+b2R958scDPcBf9gHjEtXkPdEAUeTxDWWlj7SndA6brWTh++QadVhkqSL8fNsxAdW9RSqPeM73+xWlvDLXJdV6O8fosuZW0uZNSy4RjV3ZTCFSAIf5GikDp5guAR+pwPx/d1wR4zMPL5ZtLbcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CO7pDRdU; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so17503725e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:37:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761295032; x=1761899832; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tdNfS0VkNtf/A4DiiWq6jRJ/bzfHVZsAPk9jCmjWmOQ=;
-        b=CO7pDRdU+Ct3hLSi9uiz848CMAPEgsnMKZCgDJtU0o57sveI4DKSIIdTuDAU0NRWij
-         CBzkQ988gvHDw7bKcHssgZy6U4D/14b+N2x1OWqS7NCsNhbs5zBVpgTnpCplS+6zbHQN
-         peGTuIiRk0Evh52wUaAWZ5jbPiaFrC0eoGfqUxYMcWvqEEv0FU0ZQGq+yddZL8u7LPPk
-         FVa2Ky4dDNJVO5KmcFhFeqSv0nzfUKadpakYElQmT7gs3SEFikjGjvwCnzDm3eDVqdyT
-         pEj5BLZqxbPyn6qp6C61v9pDxHp0T+c5AgABg8u07k1CRVMte+oJGhbIe6f8P0InF7Ty
-         /hWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761295032; x=1761899832;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tdNfS0VkNtf/A4DiiWq6jRJ/bzfHVZsAPk9jCmjWmOQ=;
-        b=Pgp3n9GApE/ZCI3Sa00U0uj/lBrcHF7L75WJ7RRffJWT+4iqIkyIHTQUIbAw2pwEIl
-         M0TdAJiuxn0G66XN8ydMBkaFiUZtkM+uOVpa/UhU252jlJTMvp4QjpIWqaxvgnA8LPjP
-         N0X1PKT1ew+Y6TXYHIYxx1pr92qrXp6nvj4UmjIbNG3rucm6LkG/T9bESVKW1qTFf8dD
-         sGf7+RDZXpko9vruTEcMSh7iK+j1xx050GqGQbwZ7bRcb0Ymn8KYdt6Z7qQJK8L1G+M0
-         TsLddPCDoSsqYtwRJW93PjcoKDNzxj5rMO20kDoy/i3F+rW+WZKES4ln1HDlUV35Vgjw
-         +jig==
-X-Gm-Message-State: AOJu0YzXrcs2SnZmxMwFGBYPYLhdtGdiLCCw0ZERstMQpyPlNDqqWt7x
-	JvcAWsV3P7YmHhD2FM8od8Q5ju9YB9vzjBUsX0oiJXj9p46iYp692E89
-X-Gm-Gg: ASbGncudnM0PqdYz99jWm69mkoCM48f+agslwSkyWbaqfKD9p9S/3K0uzyK5q+/BvI0
-	5/O6+Z8gDB8OmFi4IcqQ42aP1JCLt2oEfEAiue1N4YkmlRaRz93F309H/ByGdtOUq7xDNrLJO7i
-	SoBr2qn7XSh/3RopZ2W+mt3w95Gg+P3fzicTdR3M17nuBzSKlpTnDm3mTEpwy9BYLNElEYANFX/
-	bRRdWSLNP6kQNhBqWSZYZ+TiqUtXKRTzzTiNGfamXKCkiY5vOY6q+QiYvNFVL4l7b+8vHRgvKU9
-	+XARol/iBtKHhYS41RfKkaSmvLzLBirgIj6qmO6Z9YJ9CvCMi9UhQhFZZdkeivLEaZr3rXr2qol
-	GPjvaYGScPJk0VFf4vgD7MR9Q/uaM6aDgTwKw4Sa/pYExulZiLPkGU4RV/9bJx2affpocoTYokC
-	KWA8OUwAkheH/0me6Wq0I6xKP5GgI7fla5GjyVxcVgjLuWWnj9gQEh
-X-Google-Smtp-Source: AGHT+IEA74edq3+dyMLlgmnCRuVmLBdYX6fNhM1QDtL9saT8iC2ai8pqYwcC3APkrPNud5im6U2udw==
-X-Received: by 2002:a05:600c:a214:b0:471:ff3:a7fe with SMTP id 5b1f17b1804b1-471179123b8mr141029385e9.19.1761295031346;
-        Fri, 24 Oct 2025 01:37:11 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475cae92067sm82671315e9.4.2025.10.24.01.37.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 01:37:10 -0700 (PDT)
-Date: Fri, 24 Oct 2025 09:37:09 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] replace strcpy with strscpy for safe copy
-Message-ID: <20251024093709.5115f8b0@pumpkin>
-In-Reply-To: <20251021145700.38374-1-biancaa2210329@ssn.edu.in>
-References: <20251021145700.38374-1-biancaa2210329@ssn.edu.in>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1761295479; c=relaxed/simple;
+	bh=TUoJkCQkDuWU8g1Ir6nd4exbmwFF4ybBTtmmLb5+OXk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xjmw5SFyYqqkseChjUBC7h/nrIZsJtKn6qdp5IV1oR900cq3X36HZxwpsB078oo4Y/VMqTpzccDDOhTD+lNQpjitQPhEPgl/Doo/2QMROXiV8GJqKYECEduKA2sIQTEVq0yS15NhAmTB16dvsxVXLTCoWZiBfDU2R+qm7epY0NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lankhorst.se; spf=pass smtp.mailfrom=lankhorst.se; dkim=pass (2048-bit key) header.d=lankhorst.se header.i=@lankhorst.se header.b=E0g3wZpF; arc=none smtp.client-ip=141.105.120.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lankhorst.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lankhorst.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lankhorst.se;
+	s=default; t=1761295055;
+	bh=TUoJkCQkDuWU8g1Ir6nd4exbmwFF4ybBTtmmLb5+OXk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=E0g3wZpFujOkzCt9XWuqS/dzfQB6Fja1x8+i2AzXY4LGFuYLe6PQ+BZfCio3HybKt
+	 Qn50n+s4ottnTd1eAQ+iMmkqoPzUfSBml+rZ/8z4G9ZXzVusfjg5cjHj5zykcOuKub
+	 TO1+O9m24UIsz4XOs/soybNOX/NRCXMFoj1IOzVv/topEbo8ZQPH63/cFNvAoeNCgk
+	 vMnC+TkVvxkgM7nV9TJpAZtgCTB97+QPoTU+2uZJXyGrPY3Zvaq2tGm/waZlYF1fKe
+	 LlWVYqXhqK/h7g86F2JxVWWnUbSfo0xvua6P/xqeyVP7EwOiqPajMJKcQTTa+P90jZ
+	 Qhc5XtqfsfCmQ==
+Message-ID: <c4bd0ddb-4104-4074-b04a-27577afeaa46@lankhorst.se>
+Date: Fri, 24 Oct 2025 10:37:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] devcoredump: Fix circular locking dependency with
+ devcd->mutex.
+To: Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org
+Cc: intel-xe@lists.freedesktop.org, Mukesh Ojha <quic_mojha@quicinc.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ stable@vger.kernel.org, Matthew Brost <matthew.brost@intel.com>
+References: <20250723142416.1020423-1-dev@lankhorst.se>
+ <e683355a9a9f700d98ae0a057063a975bb11fadc.camel@sipsolutions.net>
+Content-Language: en-US
+From: Maarten Lankhorst <dev@lankhorst.se>
+In-Reply-To: <e683355a9a9f700d98ae0a057063a975bb11fadc.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 21 Oct 2025 20:27:00 +0530
-Biancaa Ramesh <biancaa2210329@ssn.edu.in> wrote:
+Hey,
 
-A complete pile of bollocks....
-
-> Signed-off-by: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
-> ---
->  mm/shmem.c | 23 ++++++++++++-----------
->  1 file changed, 12 insertions(+), 11 deletions(-)
+Den 2025-10-24 kl. 10:12, skrev Johannes Berg:
+> On Wed, 2025-07-23 at 16:24 +0200, Maarten Lankhorst wrote:
+>>
+>> +static void __devcd_del(struct devcd_entry *devcd)
+>> +{
+>> +	devcd->deleted = true;
+>> +	device_del(&devcd->devcd_dev);
+>> +	put_device(&devcd->devcd_dev);
+>> +}
+>> +
+>>  static void devcd_del(struct work_struct *wk)
+>>  {
+>>  	struct devcd_entry *devcd;
+>> +	bool init_completed;
+>>  
+>>  	devcd = container_of(wk, struct devcd_entry, del_wk.work);
+>>  
+>> -	device_del(&devcd->devcd_dev);
+>> -	put_device(&devcd->devcd_dev);
+>> +	/* devcd->mutex serializes against dev_coredumpm_timeout */
+>> +	mutex_lock(&devcd->mutex);
+>> +	init_completed = devcd->init_completed;
+>> +	mutex_unlock(&devcd->mutex);
+>> +
+>> +	if (init_completed)
+>> +		__devcd_del(devcd);
 > 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index b9081b817d28..6e5a5d6fc7e9 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -657,17 +657,18 @@ static int shmem_parse_huge(const char *str)
->  	if (!str)
->  		return -EINVAL;
->  
-> -	if (!strcmp(str, "never"))
-> +	if (!strncmp(str,"never",strlen("never")+1)){
->  		huge = SHMEM_HUGE_NEVER;
-> -	else if (!strcmp(str, "always"))
-> +	}
-> +	else if (!strncmp(str, "always", strlen("always") + 1))
->  		huge = SHMEM_HUGE_ALWAYS;
-> -	else if (!strcmp(str, "within_size"))
-> +	else if (!strncmp(str, "within_size",strlen("Within_size")+1))
->  		huge = SHMEM_HUGE_WITHIN_SIZE;
-> -	else if (!strcmp(str, "advise"))
-> +	else if (!strncmp(str,"advise",strlen("advise")+1))
->  		huge = SHMEM_HUGE_ADVISE;
-> -	else if (!strcmp(str, "deny"))
-> +	else if (!strncmp(str,"deny",strlen("deny")+1))
->  		huge = SHMEM_HUGE_DENY;
-> -	else if (!strcmp(str, "force"))
-> +	else if (!strncmp(str,"force",strlen("force")+1))
->  		huge = SHMEM_HUGE_FORCE;
->  	else
->  		return -EINVAL;
-> @@ -5679,27 +5680,27 @@ static int __init setup_thp_shmem(char *str)
->  				goto err;
->  
->  			nr = end - start + 1;
-> -			if (!strcmp(policy, "always")) {
-> +			if (!strncmp(policy,"always",strlen("always")+1)){
->  				bitmap_set(&always, start, nr);
->  				bitmap_clear(&inherit, start, nr);
->  				bitmap_clear(&madvise, start, nr);
->  				bitmap_clear(&within_size, start, nr);
-> -			} else if (!strcmp(policy, "advise")) {
-> +			} else if (!strncmp(policy,"advise",strlen("advise")+1)){
->  				bitmap_set(&madvise, start, nr);
->  				bitmap_clear(&inherit, start, nr);
->  				bitmap_clear(&always, start, nr);
->  				bitmap_clear(&within_size, start, nr);
-> -			} else if (!strcmp(policy, "inherit")) {
-> +			} else if (!strncmp(policy,"inherit",strlen("inherit")+1)){
->  				bitmap_set(&inherit, start, nr);
->  				bitmap_clear(&madvise, start, nr);
->  				bitmap_clear(&always, start, nr);
->  				bitmap_clear(&within_size, start, nr);
-> -			} else if (!strcmp(policy, "within_size")) {
-> +			} else if (!strncmp(policy,"within_size",strlen("within_size")+1)){
->  				bitmap_set(&within_size, start, nr);
->  				bitmap_clear(&inherit, start, nr);
->  				bitmap_clear(&madvise, start, nr);
->  				bitmap_clear(&always, start, nr);
-> -			} else if (!strcmp(policy, "never")) {
-> +			} else if (!strncmp(policy,"never",strlen("never")+1)){
->  				bitmap_clear(&inherit, start, nr);
->  				bitmap_clear(&madvise, start, nr);
->  				bitmap_clear(&always, start, nr);
+> I'm not sure I understand this completely right now. I think you pull
+> this out of the mutex because otherwise the unlock could/would be UAF,
+> right?
+> 
+> But also we have this:
+> 
+>> @@ -151,11 +160,21 @@ static int devcd_free(struct device *dev, void *data)
+>>  {
+>>  	struct devcd_entry *devcd = dev_to_devcd(dev);
+>>  
+>> +	/*
+>> +	 * To prevent a race with devcd_data_write(), disable work and
+>> +	 * complete manually instead.
+>> +	 *
+>> +	 * We cannot rely on the return value of
+>> +	 * disable_delayed_work_sync() here, because it might be in the
+>> +	 * middle of a cancel_delayed_work + schedule_delayed_work pair.
+>> +	 *
+>> +	 * devcd->mutex here guards against multiple parallel invocations
+>> +	 * of devcd_free().
+>> +	 */
+>> +	disable_delayed_work_sync(&devcd->del_wk);
+>>  	mutex_lock(&devcd->mutex);
+>> -	if (!devcd->delete_work)
+>> -		devcd->delete_work = true;
+>> -
+>> -	flush_delayed_work(&devcd->del_wk);
+>> +	if (!devcd->deleted)
+>> +		__devcd_del(devcd);
+>>  	mutex_unlock(&devcd->mutex);
+> 
+> ^^^^
+> 
+> Which I _think_ is probably OK because devcd_free is only called with an
+> extra reference held (for each/find device.)
+> 
+> But ... doesn't that then still have unbalanced calls to __devcd_del()
+> and thus device_del()/put_device()?
+> 
+> CPU 0				CPU 1
+> 
+> dev_coredump_put()		devcd_del()
+>  -> devcd_free()
+>    -> locked
+>      -> !deleted
+>      -> __devcd_del()
+> 				-> __devcd_del()
+> 
+> no?
+> 
+> johannes
 
+
+Yeah don't you love the races in the design? All intricate and subtle.
+
+In this case it's handled by disable_delayed_work_sync(),
+which waits for devcd_del() to be completed. devcd_del is called from the workqueue,
+and the first step devcd_free does is calling disable_delayed_work_sync, which means
+devcd_del() either fully completed or was not run at all.
+
+Best regards,
+~Maarten
 
