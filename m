@@ -1,236 +1,184 @@
-Return-Path: <linux-kernel+bounces-868457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E86BC053C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:05:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FAEEC053D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FC1C4FA51B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B3371A08726
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEE73081DE;
-	Fri, 24 Oct 2025 09:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7FE3090CA;
+	Fri, 24 Oct 2025 09:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="ANiS5Erw";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Tlbb2HLV"
-Received: from flow-a8-smtp.messagingengine.com (flow-a8-smtp.messagingengine.com [103.168.172.143])
+	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="ctniuQxm"
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D12308F39;
-	Fri, 24 Oct 2025 09:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEAF3081DD;
+	Fri, 24 Oct 2025 09:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761296721; cv=none; b=ojKc0bAIcE71g3V6HUxEqyZm9ETYb83bsgiUet1/au0sgUxhSOjGw7bPsQEfqrL9JNa8hv/9IQARth1vehxKPqUmV0PXTx0Mu5X7tbBex+IMKg8Oq+ig0zDpV6X6g+n/jXAxanlviocRzg+CnI8Ip2tQjU+BWGX4jl8wNlMLC9w=
+	t=1761296743; cv=none; b=R93Fica7J0IBECTVdvAtfRQLUqONx1CSHoCAqyfEykw5G+VuzcOWahFlfwOR/owzzyyL+a6FsvU2GrEr9XxP2Haj6qCtUgcSjKMFzcGGMz0fGFeWls0OZ1KaJuLqS86+HDqROzYLEG7wYm6x1aRxgK5QUQzRKvc2ZY1cz/bqNrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761296721; c=relaxed/simple;
-	bh=dP5980YsRaLUhiroNTQesPNMylhYRYAU7PYAYKzy1E8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tlGHRxrGRKs/Cp6l6THyw7ESVPXuxqdSfemr2OVJPfZxTlBvrRVAzwwHWvt1tnJRtQWCnGQVHdWx+hJDbCn8aa6qARGZgOv5jvb2F5h8OEa44gqXCBrcqpGHpZ43kOcNAkmth9lOrrRc+Xltl7QDE80dSSupKaDsAar/2WvQoaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=ANiS5Erw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Tlbb2HLV; arc=none smtp.client-ip=103.168.172.143
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailflow.phl.internal (Postfix) with ESMTP id 65E981380333;
-	Fri, 24 Oct 2025 05:05:17 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Fri, 24 Oct 2025 05:05:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761296717; x=
-	1761303917; bh=LzxoOpuRHVLLxFPTQuj5Q9D1orPS20zYzzKfEt8tzg8=; b=A
-	NiS5ErwWj07SDbOX7wjxBWb9q9Gy18k1wlFyespmT6y7i78YixIe67iX6xAus+42
-	dKwoTJm3rEHg+N2tSW4/dnLGihhQvGqXzQsiIr0B/i8EhsGafADk7s+EOnOiZGz/
-	g25mTFNIEL85njmLOB6br8GiEza4+JI5Kl1mWkelPrRdoiui4hUwwTR8ondqozkH
-	yBxU1o40xDvJMKzkLL+68Dk+UpBEBETjseTQYDwD69lu3rKNJ8KrSCzjrtQ93OPK
-	l5lGqjx2llYIVym4iDsHfkEUVqPrFt3Lpi998s2SYHm5OLT/gzU7ZYNeUIeA81/e
-	bMkDzAYvzEsUuARwH0cig==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1761296717; x=1761303917; bh=LzxoOpuRHVLLxFPTQuj5Q9D1orPS20zYzzK
-	fEt8tzg8=; b=Tlbb2HLVyYS7KstUdegxMU7zEdNEa7N52WD4YLnYURYlpdyQQTc
-	c0J83zvzy3JzpIwg+h1I3TBTst6gR9U7qn14a4PfUEV4aflq9k+Y2xvYt5cnwcCW
-	nDQuawtKQSqjS4sYwbzbGYOaYOdfQxcU90SK0Fj/uozES4FU5J158KBoOMnUVIkt
-	IvFG0pYjek/QvtwMjCljmAoDcmN62kTompAmvIgxKz704SqW8/8ctZA6VDhPCvxa
-	KYI/0OxiER9nrnd4MSKS0bOGwvAj9xdMqYF+iBdk9WlI/rQaOXlPBhzOVrsDacB6
-	rOJS88/Dn+177BnxCUTRb+dLNRtDLLkRZcw==
-X-ME-Sender: <xms:S0H7aHL04JtqiuSargFb7zQJAxCpLHhAczxS72CAoPagNc7gcmbR2A>
-    <xme:S0H7aEOW8NTp8RxBicT8q61ykl6-kyA9HsqMozR6Su22VJiynieIW_V5hk-b9rkqs
-    Mf2esSAT6WU7UsRfm0v3EDuiR_rksm1CJ2_8LZVKWONGCfF2p3Zsg>
-X-ME-Received: <xmr:S0H7aCpD1WNKN8XVf1yqtLQ78p6E2Z7A67xQoTfj_lmd1ri0D7ljIjUq-uET1Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeekleefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepgeefheelvedvteffleeuffdtffelvdfgteehgeeiveetgfefhfei
-    jeehveekieegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghm
-    ohhvrdhnrghmvgdpnhgspghrtghpthhtohepgeegpdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghp
-    thhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhughhhugesgh
-    hoohhglhgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhr
-    ghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtg
-    hpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhorhgv
-    nhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhirghmrd
-    hhohiflhgvthhtsehorhgrtghlvgdrtghomhdprhgtphhtthhopehvsggrsghkrgesshhu
-    shgvrdgtii
-X-ME-Proxy: <xmx:S0H7aNdki9UJUz0NQesx9xxTyDsPWu4kz3OouIZBFGvZJCcu1qQ2LQ>
-    <xmx:S0H7aLae0FnbklGqvr3ErBnn_WMZkGG8niRmkyzB02Rg153NsKVAVQ>
-    <xmx:S0H7aACB0vysQ-M5-RkvyLNY2LXH1dkxsQEusVw75cPr9s9yLP-Tng>
-    <xmx:S0H7aGCiXudRcMIYBzADUv7SEN63WFVKILIuG87dZnH5nNRU0pIf8w>
-    <xmx:TUH7aNFSqtzaDOz-qPI1dGtn0qLQi1xryUp4aAbrWfAvhOkN2V1U5nWA>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 24 Oct 2025 05:05:14 -0400 (EDT)
-Date: Fri, 24 Oct 2025 10:05:11 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 2/2] mm/truncate: Unmap large folio on split failure
-Message-ID: <efm75n5srtb4xp5akp4x6sq6522p4hivzge7ufwnkodsw2yixt@ahntf6d2qe4h>
-References: <20251023093251.54146-1-kirill@shutemov.name>
- <20251023093251.54146-3-kirill@shutemov.name>
- <20251023135644.f955b3aa4b4df23f621087c4@linux-foundation.org>
+	s=arc-20240116; t=1761296743; c=relaxed/simple;
+	bh=UDrxfbNfMuvmybT6v67yaBFGtzSgDdt7UdublW9CJes=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZNQdSJ0zNjGCWPWeDNDBdIjC4fqiWtVzPxmoU/2GnkTEBmfSwIdnF581SOqHidIt62bnCx1Fkhc97TznyKaYKAmyz4e2P1uvSNAWkjzev4i1rsKJQ39bWn9LhpTTFK/wz7IgAVacMOFlPDixnFTD4xtD4qT5vr6yL6UchPL84rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=ctniuQxm; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59O50hRt1354560;
+	Fri, 24 Oct 2025 02:05:26 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	PPS06212021; bh=3k4BlGQ5x9MSwGyg0juXo0Qv3aQ5Xy11JMlksnMjaYQ=; b=
+	ctniuQxmGx7UEc3/y5Y55IlEqHslLaQGk1Z1FDfNLcYF9VazVMXFz6YeORYOw9v/
+	KHIkNVt4MPSYaQOFyq4b04d0yvZhm3i4IgQFRPJA4bP/4GvLCY39e/htT3yIUj4u
+	7muWfoULL4WETc3kbrS+MxD1GAXewsq3WFpPlllr36BGNLv+JPFXWYb12wkchLII
+	5ybkIAOHDHA9hIf0mPy6m4u4vuHc1E80aNacUc5+JlaNLZ8Zwq0r9DyS1sxlMMOA
+	375LiSuaiCrE6Fwx5uzMMvnjafpSDVsMUrld6awDuveK/ju3QKGvJ/C4wM0Gx21G
+	bZno6jVCgw6WaKp6QINzVg==
+Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 49ys00gnmk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 24 Oct 2025 02:05:26 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
+ ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.59; Fri, 24 Oct 2025 02:05:25 -0700
+Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
+ ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
+ 15.1.2507.59 via Frontend Transport; Fri, 24 Oct 2025 02:05:22 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <kuniyu@google.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
+        <jreuter@yaina.de>, <kuba@kernel.org>, <linux-hams@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+        <syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH] net: rose: Prevent the use of freed digipeat
+Date: Fri, 24 Oct 2025 17:05:21 +0800
+Message-ID: <20251024090521.1049558-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251024031801.35583-1-kuniyu@google.com>
+References: <20251024031801.35583-1-kuniyu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023135644.f955b3aa4b4df23f621087c4@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI0MDA3OSBTYWx0ZWRfX1uXN8Tsbb+du
+ vaeG0gNLCMroeNKBbdINoya2+mg+TFbDMiQtD7TEVtAIFGwWIPoRSUw0CneSwDX4ITeVUCHsVav
+ v+Ax0Wx/ZSBG2zQJSGIv83Qu1rwOWBvmrwkVsJjP0GWw+0TzBpkhed8WYj4KCHfuzTeJFLdMQax
+ UcnXyxQt3hCchLJF8X61UqVkspdApTj/LmyE3pu0wqPl0AMfEne3RL5zdzuoUXeE/gbXKQ8UlLk
+ MRZe1BSbyJT+lWBkxW98bNnCOn1RzShLNcXNFswL7VDCAndUIsRCFUIPuW4HXhcPfK8shkBfMpK
+ 30C52IPbwgko0+xmbl8NS5dyoy3MG9/aTTU74ILBiGg77xpK1PX1U/3ZKkmp4PqCEkIhL8ButdJ
+ NzdQfQz8/xH9VtDoLjdmCLBJm7U5GQ==
+X-Proofpoint-ORIG-GUID: OGIWkOzJod8E7h8k2dCTxdIB7_K-IwJh
+X-Proofpoint-GUID: OGIWkOzJod8E7h8k2dCTxdIB7_K-IwJh
+X-Authority-Analysis: v=2.4 cv=N/8k1m9B c=1 sm=1 tr=0 ts=68fb4156 cx=c_pps
+ a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8
+ a=YldpWyYv74S14SR9DysA:9 a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-23_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ suspectscore=0 bulkscore=0 malwarescore=0 adultscore=0 spamscore=0
+ clxscore=1011 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510020000
+ definitions=main-2510240079
 
-On Thu, Oct 23, 2025 at 01:56:44PM -0700, Andrew Morton wrote:
-> On Thu, 23 Oct 2025 10:32:51 +0100 Kiryl Shutsemau <kirill@shutemov.name> wrote:
-> 
-> > Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
-> > supposed to generate SIGBUS.
-> > 
-> > This behavior might not be respected on truncation.
-> > 
-> > During truncation, the kernel splits a large folio in order to reclaim
-> > memory. As a side effect, it unmaps the folio and destroys PMD mappings
-> > of the folio. The folio will be refaulted as PTEs and SIGBUS semantics
-> > are preserved.
-> > 
-> > However, if the split fails, PMD mappings are preserved and the user
-> > will not receive SIGBUS on any accesses within the PMD.
-> > 
-> > Unmap the folio on split failure. It will lead to refault as PTEs and
-> > preserve SIGBUS semantics.
-> 
-> This conflicts significantly with mm-hotfixes's
-> https://lore.kernel.org/all/20251017013630.139907-1-ziy@nvidia.com/T/#u,
-> whcih is cc:stable.
-> 
-> What do do here?
+There is no synchronization between the two timers, rose_t0timer_expiry
+and rose_timer_expiry.
+rose_timer_expiry() puts the neighbor when the rose state is ROSE_STATE_2.
+However, rose_t0timer_expiry() does initiate a restart request on the
+neighbor.
+When rose_t0timer_expiry() accesses the released neighbor member digipeat,
+a UAF is triggered.
 
-The patch below applies cleanly onto mm-everything.
+To avoid this UAF, defer the put operation to rose_t0timer_expiry() and
+stop restarting t0timer after putting the neighbor.
 
-Let me now if you want solve the conflict other way around. I can rebase
-Zi's patch on top my patchset.
+When putting the neighbor, set the neighbor to NULL. Setting neighbor to
+NULL prevents rose_t0timer_expiry() from restarting t0timer.
 
-From 3ebc2c6690928def2b123e5f44014c02011cfc65 Mon Sep 17 00:00:00 2001
-From: Kiryl Shutsemau <kas@kernel.org>
-Date: Mon, 20 Oct 2025 14:08:21 +0100
-Subject: [PATCH] mm/truncate: Unmap large folio on split failure
+syzbot reported a slab-use-after-free Read in ax25_find_cb.
+BUG: KASAN: slab-use-after-free in ax25_find_cb+0x3b8/0x3f0 net/ax25/af_ax25.c:237
+Read of size 1 at addr ffff888059c704c0 by task syz.6.2733/17200
+Call Trace:
+ ax25_find_cb+0x3b8/0x3f0 net/ax25/af_ax25.c:237
+ ax25_send_frame+0x157/0xb60 net/ax25/ax25_out.c:55
+ rose_send_frame+0xcc/0x2c0 net/rose/rose_link.c:106
+ rose_transmit_restart_request+0x1b8/0x240 net/rose/rose_link.c:198
+ rose_t0timer_expiry+0x1d/0x150 net/rose/rose_link.c:83
 
-Accesses within VMA, but beyond i_size rounded up to PAGE_SIZE are
-supposed to generate SIGBUS.
+Freed by task 17183:
+ kfree+0x2b8/0x6d0 mm/slub.c:6826
+ rose_neigh_put include/net/rose.h:165 [inline]
+ rose_timer_expiry+0x537/0x630 net/rose/rose_timer.c:183
 
-This behavior might not be respected on truncation.
-
-During truncation, the kernel splits a large folio in order to reclaim
-memory. As a side effect, it unmaps the folio and destroys PMD mappings
-of the folio. The folio will be refaulted as PTEs and SIGBUS semantics
-are preserved.
-
-However, if the split fails, PMD mappings are preserved and the user
-will not receive SIGBUS on any accesses within the PMD.
-
-Unmap the folio on split failure. It will lead to refault as PTEs and
-preserve SIGBUS semantics.
-
-Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+Fixes: d860d1faa6b2 ("net: rose: convert 'use' field to refcount_t")
+Reported-by: syzbot+caa052a0958a9146870d@syzkaller.appspotmail.com
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 ---
- mm/truncate.c | 32 ++++++++++++++++++++++++++------
- 1 file changed, 26 insertions(+), 6 deletions(-)
+V1 -> V2: Putting the neighbor stops t0timer from automatically starting
 
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 9210cf808f5c..6936b8e88e72 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -177,6 +177,29 @@ int truncate_inode_folio(struct address_space *mapping, struct folio *folio)
- 	return 0;
+ include/net/rose.h   | 1 +
+ net/rose/rose_link.c | 5 +++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/include/net/rose.h b/include/net/rose.h
+index 2b5491bbf39a..ecf37c8e24bb 100644
+--- a/include/net/rose.h
++++ b/include/net/rose.h
+@@ -164,6 +164,7 @@ static inline void rose_neigh_put(struct rose_neigh *rose_neigh)
+ 			ax25_cb_put(rose_neigh->ax25);
+ 		kfree(rose_neigh->digipeat);
+ 		kfree(rose_neigh);
++		rose_neigh = NULL;
+ 	}
  }
  
-+static int try_folio_split_or_unmap(struct folio *folio, struct page *split_at,
-+				    unsigned long min_order)
-+{
-+	enum ttu_flags ttu_flags =
-+		TTU_SYNC |
-+		TTU_SPLIT_HUGE_PMD |
-+		TTU_IGNORE_MLOCK;
-+	int ret;
-+
-+	ret = try_folio_split_to_order(folio, split_at, min_order);
-+
-+	/*
-+	 * If the split fails, unmap the folio, so it will be refaulted
-+	 * with PTEs to respect SIGBUS semantics.
-+	 */
-+	if (ret) {
-+		try_to_unmap(folio, ttu_flags);
-+		WARN_ON(folio_mapped(folio));
-+	}
-+
-+	return ret;
-+}
-+
- /*
-  * Handle partial folios.  The folio may be entirely within the
-  * range if a split has raced with us.  If not, we zero the part of the
-@@ -226,7 +249,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+diff --git a/net/rose/rose_link.c b/net/rose/rose_link.c
+index 7746229fdc8c..524e7935bd02 100644
+--- a/net/rose/rose_link.c
++++ b/net/rose/rose_link.c
+@@ -43,6 +43,9 @@ void rose_start_ftimer(struct rose_neigh *neigh)
  
- 	min_order = mapping_min_folio_order(folio->mapping);
- 	split_at = folio_page(folio, PAGE_ALIGN_DOWN(offset) / PAGE_SIZE);
--	if (!try_folio_split_to_order(folio, split_at, min_order)) {
-+	if (!try_folio_split_or_unmap(folio, split_at, min_order)) {
- 		/*
- 		 * try to split at offset + length to make sure folios within
- 		 * the range can be dropped, especially to avoid memory waste
-@@ -250,13 +273,10 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
- 		if (!folio_trylock(folio2))
- 			goto out;
+ static void rose_start_t0timer(struct rose_neigh *neigh)
+ {
++	if (!neigh)
++		return;
++
+ 	timer_delete(&neigh->t0timer);
  
--		/*
--		 * make sure folio2 is large and does not change its mapping.
--		 * Its split result does not matter here.
--		 */
-+		/* make sure folio2 is large and does not change its mapping */
- 		if (folio_test_large(folio2) &&
- 		    folio2->mapping == folio->mapping)
--			try_folio_split_to_order(folio2, split_at2, min_order);
-+			try_folio_split_or_unmap(folio2, split_at2, min_order);
+ 	neigh->t0timer.function = rose_t0timer_expiry;
+@@ -80,10 +83,12 @@ static void rose_t0timer_expiry(struct timer_list *t)
+ {
+ 	struct rose_neigh *neigh = timer_container_of(neigh, t, t0timer);
  
- 		folio_unlock(folio2);
- out:
++	rose_neigh_hold(neigh);
+ 	rose_transmit_restart_request(neigh);
+ 
+ 	neigh->dce_mode = 0;
+ 
++	rose_neigh_put(neigh);
+ 	rose_start_t0timer(neigh);
+ }
+ 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.43.0
+
 
