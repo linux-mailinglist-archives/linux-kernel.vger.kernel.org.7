@@ -1,185 +1,187 @@
-Return-Path: <linux-kernel+bounces-868077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C753C044C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:01:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C035C044BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 322693B729D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0753B63A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 04:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB0D27F017;
-	Fri, 24 Oct 2025 04:01:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA86279DB3;
+	Fri, 24 Oct 2025 04:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wv22Z3RW"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PVV0UcBm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068AD2690D5
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7DB267714
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761278469; cv=none; b=ShuAqPr9tI3v5A592dMmnF5t2IS+F0frkJ1fl6lExtYjknicKVo6xMUo2rXhl7GKGWv01UcCbLiW9ZmbLDs1PqE4srwN+HIsJl1K+YStJuWILvCzdaxbOsBmNxICtvTsR2dyiQ+DeTj8/hSgYxxqlLkVuRk6kQgMdYG5nb32pXM=
+	t=1761278468; cv=none; b=rNxwhlaKVPMZna/FGv3EGtDTUJbejt07Wqmi3I8dNEiM9BnK0CF1zEeoPsYWh1U2dFSRth6IH0VZpO5LvFLMq9YrwfrPG6UEAXYYexQP7VCn5owHpTsqLIY7BfhQeXNFVlklslLKekWC3VurzeIvvXIXXFC+EU+xrlUV7LM99w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761278469; c=relaxed/simple;
-	bh=V10J8FMQ/2czcpCw//K/+x+vSWrM+ulV22C6o6B0ctI=;
+	s=arc-20240116; t=1761278468; c=relaxed/simple;
+	bh=X/wg1dlOoOLJXddH9S/CU52E4bwolzQNRp0e2NEc/Io=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H8iNEs3LyfhKPG/B2Bh0O3X3UpXHPcEEoyHkxwCQ54tpzTydbUL3Q0bd4hzrS503zv0fux3423QZ17lW7CifLZbm4jqJUPG/p9fsqKS4mvQ+YBVudKXfHkLVKOMawXzf6Q3v5rh3wHVEHuZexhBj9Mc8jUSaRmAGtcrkConu3Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wv22Z3RW; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso2879667a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:01:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761278464; x=1761883264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bX+AGT1PAEb2wRzHRL+8B92/Z4uxx2bE66SuwJSj7jg=;
-        b=Wv22Z3RWn9GAhWb+ereUD8xrek7UWUNZEA8rYX9psbY1+q1IvDaKWBReyP740V0QLY
-         oculeB54tOBrIy56+LajplQlhljD7vRu6QwRCedu6iNMewYzgnrKh/vMgfNrXaNSYL6S
-         HfQMRLE3bHQiyFR1/mjmjrg1os8qqCnJP4U5STKEkrIwwNSIErW8N8UmAmXTz5A8X/oQ
-         EqnoqdTndxDIsrySee8ba0ixuUFdBORWmCB5q1xKfCqBkGOPAwYCo3WHvP4IuzVl5VDB
-         RA80Wy4l5rx8/nHQTiVMZ0D1LofLwOejHMEVaxcTlb91GRWJmHIQsNJiK5ZrJRBqzOPC
-         x1Sw==
+	 To:Cc:Content-Type; b=nxEwDhd/HF4mjRKElrwyNGpDKXVLOJC+zYCsZ7ukAm7IGplEmBW3ZL4tWvYlWAvFMyAYVQLOs/G/to0fhCHduIQM1f/cFtMEiXW0h7pl05HSzj4X45aSEEF8VAOPEe8GU8bFdypoMqBfNafIsGA+Yj6Mg49+QjFgNi/9DAzHvaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PVV0UcBm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761278466;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uOOkSkyc81lJ3YyAbSvfeo2EUEqU/zqat7/GCqLMidU=;
+	b=PVV0UcBmoxtD/LaJ0Cw0gzpy09UHUMbyOxz+FlnxnWVPYJuFcEq31MT2mzrKsBdfMAX8zo
+	flS5qRFNz2270y6RP0DBrSRaCkpVfqlzk2NfIPVUPCL/kSE8O2QwV7Aom/IvE3IBCanaTg
+	BaqTYH31gGy4sRJkQlyAeI7W4xexhRU=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-584-RzwBY7CgOpasvhopVFEGeA-1; Fri, 24 Oct 2025 00:01:04 -0400
+X-MC-Unique: RzwBY7CgOpasvhopVFEGeA-1
+X-Mimecast-MFC-AGG-ID: RzwBY7CgOpasvhopVFEGeA_1761278463
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7a285bb5376so243898b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 21:01:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761278464; x=1761883264;
+        d=1e100.net; s=20230601; t=1761278463; x=1761883263;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bX+AGT1PAEb2wRzHRL+8B92/Z4uxx2bE66SuwJSj7jg=;
-        b=hfy3y8nfoPnPusdJQo+XL/gw1XtV4+Ts4aE5+9WCWHYzmlE87QPimYgiOGldXjKQx3
-         FAGK6kISqRwVfQQBzjuOPmcpLuXuYYF3O58Q/WmyAKPQRhggouN7MZTbw/K5ScMHh2oF
-         Y5AISfW1hVx8WJ3RODqi2K39CT1bf7rPJAo60Id+ZU5T0PMtuMFD3HT+49Cu8orEEeVE
-         rFxNe7jjKsY+zSrt0s5ziCZYjgA+UiEOrdQ9e6BerywasomKbZpBDLRm92ByD7v3Euph
-         rnU4T7abcuh+r4qs6WJAFPxodsgFlEjs6CgnOYyPvR5V/r0d9sIRSK5jyu0vbf008SNH
-         32TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUduV3anqyNJhVAoAkjjXAlPxdenJ18d4YEyYpnMKsrxr6Tqpc/M9qddyyb4326GtZhHxA5+7c0tixMeFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysA38fDkvd8V7JH3sItRcFp4c41UtlkiplqKh001y/zcfqu+Fs
-	mP4V1ZAJ4uZgAFrWR5hx/LCIqgWvdLpnHp8UUIrwt0niVA6sOU64SWi/hgZEfO9gOCLK4MT2Ew+
-	g5Q3Jz9wVeQfXvFX4yrAYHlBnsWWNO6g=
-X-Gm-Gg: ASbGncu69Tdb6VolDu8Ri72aDK3lVhQIqv155WzF9CUQ/mydYW5UEPR7sJDeS5mMkKL
-	RSpSCEpQ6ujRURu+pMOylT24UufH0RvBSruuZ014/+hM1d6iSi873WrYn6EtXd13TzTqERonKN/
-	1eeo+uxBvl/LtguVHtJE7iUujGuEq0EjSH00Q56VIyKp/Noa/2IUT5IqO5ZbQ4jHmSwjMq83Oqk
-	oryt99Wt6OJTH9FekjmyUj/oHpMJb9movJBOWIKsF8JaC4/8mpsBw57kVo=
-X-Google-Smtp-Source: AGHT+IHncX413Zw579qxe0Qf5NgqYwOEtK2z/nG3SfbdqAmW/ND46AejAhP+66pY1PNOOUa4grOi1M19bZwDtf3Z0pg=
-X-Received: by 2002:a05:6402:1449:b0:63c:2d72:56e3 with SMTP id
- 4fb4d7f45d1cf-63e6007c37cmr933871a12.23.1761278463985; Thu, 23 Oct 2025
- 21:01:03 -0700 (PDT)
+        bh=uOOkSkyc81lJ3YyAbSvfeo2EUEqU/zqat7/GCqLMidU=;
+        b=CXC1ZFY3zQ4XbFQAkn48vL5/eXLud4U2I8nQ8cHDpSEf0ePhNr6gv8go8PhFXFq8Z4
+         yONn/A1OJvYva8Zl8AD+UoWgq4z8DJTF3wUAizxdfN87MtHL2RpdP+l9BM2wvqh55whO
+         159X02ahz1AK/y813fbNvZyPaXNLmjghhbd6MzMxSCISv/VzPD0Qy+vIiFqUjW+RKQNd
+         XMoGxr+b45EMUks/UZn3poxRpgYq500/x4OLqGmS+LRa5ZFByqrcY5jkhg74PFbov532
+         4XBoz6UfB38VeudY0H6vnP5pFOIHkTpYGO6N1eCvmDBok3J8jExCYL4rY6ysbyGXXEbi
+         YW8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUJo0gUQGt4jndx3D1y0rMVnjoqoKDsBKRtfUW4ZGCwYdLVtTr1xn/WI4qpa22tbDLTRAyhyoI+1x+IwXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9uFZqSS3CbahuHAnnLNSkWFL7gGrG5dywZtzbvnjaDkf8w5Tu
+	4MOg7AMaWXr8uNf8/Ygi+GWbpR0/aTHx+UNXGJGdJn3qe21fkAHJoIsBuMAZwhaWKc0OxcVJl5o
+	e72eIWgVfLtUdQzqR/uWoIj+YFCXQeEDOL23uD4hhWDe0tlTAXvg+QIDEhXlJOgJV+N0yah9Zpi
+	IrhV9Kxru1UVc27Dg7U22Xo57k5LzNxmT7map8ztiOSLn5W5/aOZA=
+X-Gm-Gg: ASbGncuGhsAKqkQLIGGKpZ6S0JDpK0BeGiS3owO29tkQPe0EOi07dodwPfrE6Eyadoy
+	DPNil5gVjhII7ct7TjlBJnxBfyxI7tp4a9mARAjVL9LXltfuH1fTUFHPDz7mnB6KFIe9t6aHlal
+	++jnsq0wEpKQHxepZQ4jOewSVD3RsMDOTc82dmtc+88TAvIqDu19ds
+X-Received: by 2002:a05:6a20:430e:b0:32d:a70e:120a with SMTP id adf61e73a8af0-334a8621362mr39016544637.45.1761278462687;
+        Thu, 23 Oct 2025 21:01:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHT9qDfEKW7XFhwtKdpNR4Y9NHxEu76SknfyjzYVTXZbUcA7HumVpwtuiBJtgQFk1iBURq/Ou36QzXQO1egdac=
+X-Received: by 2002:a05:6a20:430e:b0:32d:a70e:120a with SMTP id
+ adf61e73a8af0-334a8621362mr39016477637.45.1761278462047; Thu, 23 Oct 2025
+ 21:01:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
- <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com>
- <CACePvbWs3hFWt0tZc4jbvFN1OXRR5wvNXiMjBBC4871wQjtqMw@mail.gmail.com>
- <CAMgjq7BD6SOgALj2jv2SVtNjWLJpT=1UhuaL=qxvDCMKUy68Hw@mail.gmail.com>
- <CACePvbVEGgtTqkMPqsf69C7qUD52yVcC56POed8Pdt674Pn68A@mail.gmail.com>
- <CACePvbWu0P+8Sv-sS7AnG+ESdnJdnFE_teC9NF9Rkn1HegQ9_Q@mail.gmail.com>
- <CAMgjq7BJcxGzrnr+EeO6_ZC7dAn0_WmWn8DX8gSPfyYiY4S3Ug@mail.gmail.com>
- <CAMgjq7CsYhEjvtN85XGkrONYAJxve7gG593TFeOGV-oax++kWA@mail.gmail.com> <aPc3lmbJEVTXoV6h@yjaykim-PowerEdge-T330>
-In-Reply-To: <aPc3lmbJEVTXoV6h@yjaykim-PowerEdge-T330>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Fri, 24 Oct 2025 12:00:27 +0800
-X-Gm-Features: AWmQ_bkc9YwuZtUhzw52MpHd91KHJZxGIdtGa9Ii8w-Tgx94sUw-dZLiUembJcI
-Message-ID: <CAMgjq7CELW_s5ok-2NHSFzK3SQKQKHB3VRLGnFaGGxe5c-eCvA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] mm, swap: do not perform synchronous discard during allocation
-To: YoungJun Park <youngjun.park@lge.com>
-Cc: Chris Li <chrisl@kernel.org>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <CAP4dvsfZEo+1+O8tpLFFh=s-fEFaMRu2+mQ3F=LJmjoEHyZXMw@mail.gmail.com>
+ <20251022073015-mutt-send-email-mst@kernel.org> <CAP4dvsfXs7Do=9d_05tzU5FUuqfLnsFSpodSMDhv=FR2KYWh=w@mail.gmail.com>
+ <CACGkMEugHNb1QfG17sPzDfV8-W1mJQGX_cJQvDCoCVQ7axGRkQ@mail.gmail.com> <CAP4dvsc=LnwRvTFJ4mxCUAW6SApJ0eyvBVu+B58MDOWNCnRbow@mail.gmail.com>
+In-Reply-To: <CAP4dvsc=LnwRvTFJ4mxCUAW6SApJ0eyvBVu+B58MDOWNCnRbow@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 24 Oct 2025 12:00:50 +0800
+X-Gm-Features: AS18NWD10qpV7gYy9Z65QipXlCd7NAAm48IwhhsmLsT0neTIKZdV_Nv0uMx84wI
+Message-ID: <CACGkMEt41L4pmMcE9zSJ5tVU-Tj0zGEoLqvsktbKWf=gEGphww@mail.gmail.com>
+Subject: Re: [External] Re: virtio_pci: Question about virtio_pci kernel
+ module refcnt
+To: Zhang Tianci <zhangtianci.1997@bytedance.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
+	virtualization@lists.linux.dev, xieyongji@bytedance.com, 
+	gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, 
+	linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 21, 2025 at 3:34=E2=80=AFPM YoungJun Park <youngjun.park@lge.co=
-m> wrote:
+On Fri, Oct 24, 2025 at 10:34=E2=80=AFAM Zhang Tianci
+<zhangtianci.1997@bytedance.com> wrote:
 >
-> > > Thanks, I was composing a reply on this and just saw your new comment=
-.
-> > > I agree with this.
+> Hi, thanks for your reply
+>
+> On Fri, Oct 24, 2025 at 9:53=E2=80=AFAM Jason Wang <jasowang@redhat.com> =
+wrote:
 > >
-> > Hmm, it turns out modifying V1 to handle non-order 0 allocation
-> > failure also has some minor issues. Every mTHP SWAP allocation failure
-> > will have a slight higher overhead due to the discard check. V1 is
-> > fine since it only checks discard for order 0, and order 0 alloc
-> > failure is uncommon and usually means OOM already.
->
-> Looking at the original proposed patch.
->
->  +      spin_lock(&swap_avail_lock);
->  +      plist_for_each_entry_safe(si, next, &swap_avail_heads[nid], avail=
-_lists[nid]) {
->  +              spin_unlock(&swap_avail_lock);
->  +              if (get_swap_device_info(si)) {
->  +                      if (si->flags & SWP_PAGE_DISCARD)
->  +                              ret =3D swap_do_scheduled_discard(si);
->  +                      put_swap_device(si);
->  +              }
->  +              if (ret)
->  +                      break;
->
-> if ret is true and we break,
-> wouldn=E2=80=99t that cause spin_unlock to run without the lock being hel=
-d?
-
-Thanks for catching this! Right, I need to return directly instead of
-break. I've fixed that.
-
->
->  +              spin_lock(&swap_avail_lock);
->  +      }
->  +      spin_unlock(&swap_avail_lock); <- unlocked without lock grab.
->  +
->  +      return ret;
->  +}
->
-> > I'm not saying V1 is the final solution, but I think maybe we can just
-> > keep V1 as it is? That's easier for a stable backport too, and this is
-> > doing far better than what it was like. The sync discard was added in
-> > 2013 and the later added percpu cluster at the same year never treated
-> > it carefully. And the discard during allocation after recent swap
-> > allocator rework has been kind of broken for a while.
+> > On Thu, Oct 23, 2025 at 10:34=E2=80=AFAM Zhang Tianci
+> > <zhangtianci.1997@bytedance.com> wrote:
+> > >
+> > > Hi, thank you for your reply, but I still have a few questions:
+> > >
+> > > On Wed, Oct 22, 2025 at 7:31=E2=80=AFPM Michael S. Tsirkin <mst@redha=
+t.com> wrote:
+> > > >
+> > > > On Wed, Oct 22, 2025 at 07:21:45PM +0800, Zhang Tianci wrote:
+> > > > > Hi,
+> > > > > I noticed that the reference count of the virtio_pci kernel modul=
+e
+> > > > > in the VM is always 0, even though there are at least two
+> > > > > virtio block devices and one virtiofs device in the VM.
+> > > > >
+> > > > > Using rmmod virtio_pci can unload the virtio_pci module,
+> > > > > but this renders the virtio block devices unusable.
+> > > >
+> > > > it removes them. you can put it back in and you will
+> > > > get devices again.
+> > >
+> > > But I can't do it anymore because the rootfs is no longer available,
+> > > or rather, the OS is no longer available.
+> > >
+> > > >
+> > > > > I wonder if this result is expected? Why don't the virtio block d=
+evices
+> > > > > and virtiofs device hold a reference count to the virtio_pci kern=
+el module?
+> > > >
+> > > > because they don't have to.
+> > >
+> > > Is it due to design reasons or implementation reasons?
+> > > Is it because the semantics of kernel module refcnt does not include =
+such
+> > > logical dependency?
 > >
-> > To optimize it further in a clean way, we have to reverse the
-> > allocator's handling order of the plist and fast / slow path. Current
-> > order is local_lock -> fast -> slow (plist).
-> > We can walk the plist first, then do the fast / slow path: plist (or
-> > maybe something faster than plist but handles the priority) ->
-> > local_lock -> fast -> slow (bonus: this is more friendly to RT kernels
+> > Note that virito has a bus so it follows the device/driver model so if
+> > I was not wrong the refcnt was handled by the driver core.
 >
-> I think the idea is good, but when approaching it that way,
-> I am curious about rotation handling.
+> Let's look at an example:
 >
-> In the current code, rotation is always done when traversing the plist in=
- the slow path.
-> If we traverse the plist first, how should rotation be handled?
-
-That's a very good question, things always get tricky when it comes to
-the details...
-
-> 1. Do a naive rotation at plist traversal time.
-> (But then fast path might allocate from an si we didn=E2=80=99t select.)
-> 2. Rotate when allocating in the slow path.
-> (But between releasing swap_avail_lock, we might access an si that wasn=
-=E2=80=99t rotated.)
+> $ lsmod | grep virtio
+> virtio_balloon                 20480  0
+> virtio_console                40960  1
+> virtiofs                            32768  1  <-  one virtiofs
+> fuse                                172032  2 virtiofs
+> virtio_net                         73728  0
+> net_failover                     20480  1 virtio_net
+> virtio_blk                         32768  2  <- two block devices
+> virtio_pci                         24576  0
+> virtio_pci_legacy_dev     16384  1 virtio_pci
+> virtio_pci_modern_dev   16384  1 virtio_pci
+> virtio                                16384  6
+> virtio_console,virtio_balloon,virtiofs,virtio_pci,virtio_blk,virtio_net
+> virtio_ring                         49152  6
+> virtio_console,virtio_balloon,virtiofs,virtio_pci,virtio_blk,virtio_net
 >
-> Both cases could break rotation behavior =E2=80=94 what do you think?
+> There are two virtio_blk devices which are vda and vdb, and one virtiofs =
+device.
+> We can find the block device and fs instance are holding virtio_blk
+> and virtiofs' refcnts.
+> But they don't hold virtio_pci(pci bus) or virtio(virtio bus) refcnts
+> even though they logically depend on
+> them.
 
-I think cluster level rotating is better, it prevents things from
-going too fragmented and spreads the workload between devices in a
-helpful way, but just my guess.
+My understanding is the driver must be unregistered while the device
+is being unregistered.
 
-We can change the rotation behavior if the test shows some other
-strategy is better.
+> So I might need to consult the driver core maintainers?(I have cc'd
+> them in this email.)
+>
+> Thanks,
+> Tianci
+>
 
-Maybe we'll need something with a better design, like a alloc counter
-for rotation. And if we look at the plist before the fast path we may
-need to do some optimization for the plist lock too...
+Thanks
+
 
