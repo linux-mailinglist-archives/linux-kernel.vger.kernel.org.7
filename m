@@ -1,101 +1,101 @@
-Return-Path: <linux-kernel+bounces-869409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BE5C07CFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:50:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93DADC07CE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7E7B19A0266
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:49:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42303503DAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A922134BA54;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCB334BA3B;
 	Fri, 24 Oct 2025 18:48:31 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D639F3451C9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AA531A7F7
 	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 18:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761331711; cv=none; b=XTUDbTcVxYNlodGK3sS2KW9wUDmrzraEMhrHT5hTnVW6Gi8aUmThVNKoehvRdNijWRHd8cBD727Hhh4yJ9Gcn+edjTf9S7OkVha51nwNWVgep4fyy2bmMGc2d+aba+zGgPbrqgUiIG4qIki3HmogcC3buA54HBFczE7AjhulsQU=
+	t=1761331711; cv=none; b=fqET5WRDvLS54JtVYu3eEnaDkk/2wG2PbrNNLoHgDIEY+lv1xNa2/16OC86WFEW7ZNYoXPrzuOZrSYaiByUqFaaSzTsErf1xMtWv84IwmUPt717DJjxuTuHerfe5XuudzAzvKyGaAkeQ0OB9/7SiNJP+OG76V0hCBBKrr5xbjqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761331711; c=relaxed/simple;
-	bh=/sddA5GyOSu+NmzOtxnvdlpxCOa2Qap22t2nIUrTPsA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jUmVOUlICrtmAwDBvx/tEls7lzKcS+4OJALCI/0LOFHJT4Eyup6cF1Zzb8Fmi2yrFO3o+FooNNXZGeIB6YWtZOcbnlhTRbuvELO0JYxIFKJmOt2AclWXpf5J3VswIvHAy89li2Ng4CCgN8zTgIGOY9RJ4kpapaP0+w317FvvKAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+	bh=KBLeLG41Bh/MVHL9V2uUl2ZfABOg+r30DVrzzOZHkFI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=G1yqqyJwRF1f/VVdKW19fR4MpBRAR9QePFXpNYaOKueZpv/FhFi9Pohr5rp7YSU+ZqkK4VFRs9Y6hZmbHoHla2P4btPiYG9wSP3thL0Ky+VP2S1C4lWcABObUFp8j8EJ3rezP7rur9CV9u/aHoIBpAH8aAm+EisHX9A1/r4eyJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430da49fcbbso32356945ab.3
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-9435917adb9so5214839f.2
         for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:48:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761331709; x=1761936509;
+        d=1e100.net; s=20230601; t=1761331708; x=1761936508;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ibQ65fSRokqWgaG4QSVQy0ejGVCf8laCEnbWyhrOTSk=;
-        b=YJ6IHAoTIpMXgfFq/0vJWxO5RX0BogIodpzTF68Ji0F4NfCfWQfuqD6y4q4vvkjrye
-         EtC4+D2FoVwlPm6928e3kTKfX42ulWdYGsDZ2kPofQzZd/T9mEcOP24pze4u+2rJ/mcW
-         KZXcA6vPHsBpvHbO1BuBPMKhQpPUPOBctNDrTdlKEW/LS+WLusZ2FLkmvu5A0CWSs1BW
-         mXUgscEpHMaMYbvhDWVAralXODON09rINw3fjg0m2XGoF5pgzReyth9oLi1CzCSYyMXg
-         auqAfzPdmEcJvamy+6rejT2s8kgetmQZPcjLQh90ohIDov1bk9nahS0N1GjNddFTMbof
-         e8FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPobDyPEPm38BCsUIsvywrIzbkm+iHR8u0Vvftc5vUex++mm8QS4BVSNC0leArNTq88cLSClhoAkCig+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxShLBNR4Zq/pbfU/sC3Rd7E11sjCdxbZ1GsHJpyZn7+6IhAFLR
-	BV/bO54zEXK1VGvzYphMEpYW810oUJCn8/kybVKN9bcMH6G7mayL6SlNIMgy2vEiFZ7A7BTGX10
-	rGkaxdIO3GPEGdt7SfnZxrgAjRNuHPdQU7Hy71oummkw+KUEJQVW3aRXGKrw=
-X-Google-Smtp-Source: AGHT+IH+O+UM38jrvlTQkim2NlyJYSGcQATLCEzd55hx6zSrc+YvJa4mUwXl+bBJGkoyqEPkW5NmlRhuWZNrkEMCRYbzjBdn5uKI
+        bh=lBfBqOqMn2Xkfx9qgn+oZUwCAFfhzvzOwcf8bk39Klo=;
+        b=eAnSY9yX+51ZZZv+sT55buhAtJO8tstlePg/+/U2rYt6SMXPHrWDAR3Rz5AINqxmCz
+         Y5h1c1qCWMxKv8uS5/rWnaYSi538YCOwlmY8FPU8TLCShB5II7cZ3T/FWycUkRPwCWR8
+         mLOmp8D7EzSnSIaJi6/TYgJzHzWgXau3ji5j3Lo9hfEzXpn6wLZ68XLuHVNnoNGqBnHz
+         Nx+ZOzHafuVtA4M4x/yX+/LA/NtiQjXSJehYAz+r2LqGoRnhhmPF+MHkQ+nHK/udq36U
+         EgdF5D/ceZDzUSoxyFtiokPp83k0eBf6kWEZ63tQwiFC5OpsSCADUPcCDd4J51IX/nZK
+         Lurg==
+X-Forwarded-Encrypted: i=1; AJvYcCXT0UKMVOxG94DeRnyjDkQPRc8c8zD+aJpnJH6egVQamGNAezEyRMauNxxtG7TrWFktg3j15IvtucfE3Jk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8k237M9SaUQ2s2o3axmwYbWWx+pnK3tIGOwdDgQnbrHFuulyc
+	Lrhjt+yo3czNH3d1tqytflxEhOEqA8YsZE1MbbL/ueU0aRHnvHsahCDifUKr+oCKH92CAvornhc
+	0OVC7QhIMEc30M5KkhTJgaGnW6B3vtfjurT32d0ru6rUk4E5+TtNSxbGGDOs=
+X-Google-Smtp-Source: AGHT+IGbgpbcCCHuMaVv7XrmFkj3UPVQGYBnO2C78bxStPm7JW5ig1iMfR+5V0ZXA7AJKD5pTAXHXR1QjbJvz/aSGTxZCWdJuhWT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aaa:b0:430:b178:428a with SMTP id
- e9e14a558f8ab-430c52d7705mr393314925ab.22.1761331708962; Fri, 24 Oct 2025
+X-Received: by 2002:a05:6e02:480b:b0:431:d6fa:6c49 with SMTP id
+ e9e14a558f8ab-431d6fa6db1mr117527405ab.24.1761331708702; Fri, 24 Oct 2025
  11:48:28 -0700 (PDT)
 Date: Fri, 24 Oct 2025 11:48:28 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68fbc9fc.050a0220.346f24.0156.GAE@google.com>
-Subject: [syzbot] Monthly kernfs report (Oct 2025)
-From: syzbot <syzbot+liste96aba5955f514e24086@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org
+Message-ID: <68fbc9fc.050a0220.346f24.0155.GAE@google.com>
+Subject: [syzbot] Monthly jfs report (Oct 2025)
+From: syzbot <syzbot+list127cbbd529863072e782@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello kernfs maintainers/developers,
+Hello jfs maintainers/developers,
 
-This is a 31-day syzbot report for the kernfs subsystem.
+This is a 31-day syzbot report for the jfs subsystem.
 All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/kernfs
+https://syzkaller.appspot.com/upstream/s/jfs
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 26 issues are still open and 25 have already been fixed.
+During the period, 3 new issues were detected and 0 were fixed.
+In total, 55 issues are still open and 65 have already been fixed.
 
 Some of the still happening issues:
 
 Ref  Crashes Repro Title
-<1>  2087    Yes   possible deadlock in kernfs_iop_getattr
-                   https://syzkaller.appspot.com/bug?extid=4bb2305559463e8f6a2a
-<2>  504     Yes   WARNING in kernfs_remove_by_name_ns (3)
-                   https://syzkaller.appspot.com/bug?extid=93cbdd0ab421adc5275d
-<3>  500     Yes   WARNING in kernfs_get (5)
-                   https://syzkaller.appspot.com/bug?extid=2f44671e54488d20f0e6
-<4>  112     Yes   INFO: task hung in fdget_pos
-                   https://syzkaller.appspot.com/bug?extid=0ee1ef35cf7e70ce55d7
-<5>  78      No    possible deadlock in kernfs_fop_write_iter (2)
-                   https://syzkaller.appspot.com/bug?extid=1cfd86253864f61b533e
-<6>  65      No    possible deadlock in kernfs_fop_readdir
-                   https://syzkaller.appspot.com/bug?extid=8fd10d8928ed1f715290
-<7>  59      Yes   possible deadlock in walk_component (4)
-                   https://syzkaller.appspot.com/bug?extid=b4567a8b2d2ad5f9dd06
-<8>  42      Yes   INFO: rcu detected stall in hub_event (2)
-                   https://syzkaller.appspot.com/bug?extid=039eab266c6321a174bd
-<9>  30      Yes   INFO: task hung in kernfs_remove_by_name_ns (2)
-                   https://syzkaller.appspot.com/bug?extid=6d5664213a6db9a5a72c
-<10> 23      Yes   possible deadlock in kernfs_seq_start
-                   https://syzkaller.appspot.com/bug?extid=4c493dcd5a68168a94b2
+<1>  70381   Yes   kernel BUG in jfs_evict_inode
+                   https://syzkaller.appspot.com/bug?extid=9c0c58ea2e4887ab502e
+<2>  39568   Yes   WARNING in dbAdjTree
+                   https://syzkaller.appspot.com/bug?extid=ab18fa9c959320611727
+<3>  34245   Yes   kernel BUG in txUnlock
+                   https://syzkaller.appspot.com/bug?extid=a63afa301d1258d09267
+<4>  7355    Yes   general protection fault in lmLogSync (2)
+                   https://syzkaller.appspot.com/bug?extid=e14b1036481911ae4d77
+<5>  5013    Yes   kernel BUG in dbFindLeaf
+                   https://syzkaller.appspot.com/bug?extid=dcea2548c903300a400e
+<6>  4079    Yes   INFO: trying to register non-static key in txEnd (2)
+                   https://syzkaller.appspot.com/bug?extid=5b27962d84feb4acb5c1
+<7>  3712    Yes   INFO: task hung in lock_metapage
+                   https://syzkaller.appspot.com/bug?extid=1d84a1682e4673d5c4fb
+<8>  3569    Yes   KASAN: slab-use-after-free Write in dtSplitPage
+                   https://syzkaller.appspot.com/bug?extid=a939a1121380d3212940
+<9>  3395    Yes   KASAN: user-memory-access Write in __destroy_inode
+                   https://syzkaller.appspot.com/bug?extid=dcc068159182a4c31ca3
+<10> 2801    Yes   general protection fault in jfs_flush_journal
+                   https://syzkaller.appspot.com/bug?extid=194bfe3476f96782c0b6
 
 ---
 This report is generated by a bot. It may contain errors.
