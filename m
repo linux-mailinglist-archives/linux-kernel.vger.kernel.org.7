@@ -1,181 +1,496 @@
-Return-Path: <linux-kernel+bounces-868762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D15CBC060CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:42:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2267C060E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:43:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAC471A60B7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:38:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 661C418907A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 11:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC3D2FDC21;
-	Fri, 24 Oct 2025 11:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A09A2EBB89;
+	Fri, 24 Oct 2025 11:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Xoxyv3vF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IOipthyW"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012009.outbound.protection.outlook.com [40.93.195.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26FB275B16
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761305849; cv=none; b=X9xoMC/a1BkI0fmLLWjfQvpAY+oeUG40O80HYeFDgXAOMYUG/CMY26Ns1gpf9A1PbCBU/J2NZS0BF9T9D2cJkmElgbiKgTd1QphA0n57xykYIUwV7O5ma1ARjXPt2g/qX8Uei4xFr4ixgkAlZA5h59edvILj2yRk4W0LAkXx0cQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761305849; c=relaxed/simple;
-	bh=AegDV7IseewiNZScqyTokamJL+JGOkRVJ0CsWicKgK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=urwt1xZrwMCz2nHj35R83m6+jzf3hYR7+5ESaJWbeLXBDOCm4/TYmqSh3aDMGVF6QiPpnYglNN0let/a93mTnKue/s9wdqiwpGZDhMFNDg6ve+QTSWkI6CkJx7GYITqmmhkg9UmScW/cUV5kh3qp9qIgh8hcRI3oSRgQjyYjdzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Xoxyv3vF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59O3FE7k000371
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:37:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dbfGbR0kcMmEjjS0vTIRsRdJzggRoz88OyC/T39B8BY=; b=Xoxyv3vFFcGRreoB
-	Jpg4cG2pZknuWhO+R4y+49fe5zhstgEZ1O/Nl4aAQ1SyyynWhuxjWSUEV18+PkdZ
-	YS5/0b8fUgUoVwLHGfhW/+eU65abRj85AOeeu4IzFfKaQbhvpLBB4I5Or4qW98MO
-	Bdx+sWS9fY+qOJ8wnQ9uP0QRo0+LB8pXvli/BIT7YMRVmsPv6cC28CtAWLO2V2Zl
-	mniJZBtycbAyBUN7A2abuMTjxW3WgPLBE8fNV+gNeMRhec6yZk2qm/7j6KDzLlQl
-	KMdu6d1XJ8nluVnNutl47kpX3PBrBsxUMloJZqc9QqqLtS4PoaN1Jc8pRFy+er94
-	dxDh0g==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49ym9j3gpe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 11:37:26 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-792722e4ebeso1735707b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 04:37:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761305846; x=1761910646;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dbfGbR0kcMmEjjS0vTIRsRdJzggRoz88OyC/T39B8BY=;
-        b=vOC2Fcq9wgcMA8qmdsi7hVpYRy2PkGJy1fOCfgMuF3un2XwKlQ21F+TyG777XYwrTw
-         XtP7eEm6cJHKpkt/bzGtxkfMi6P3Yt94SU+YNyylLZl66oj3WB/qPj1k+mzKvd5a86+F
-         4bvOI8+EX0x8DMK3mZ8ORrEGtHxUltMIC3NoJK5Gi+mblUxytV5S+WduIvGSqGm9XUAW
-         RyNtaanglMOesZ/m17RokUQkUgQRhvPy6J8MxJITBplWIl0jm4fos7fJznAzLwJybWLz
-         5aW9w+W0Wvmx4n987vPPoILmj7a2SNTbUShkYsdq0JmU04/EnXUGd51uekhCOGzNjI0W
-         wdjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsgubsFDUKID0WIc/50Du2WfcN+afo7gMOFe3lmEbcbveZQw68eeAg1TKVCrNKFX+6stLM8gSUm3c+9cM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4ok0jh+7DQHSTrz1BnMLp8DaVC9DZX5QU7sjK0hNSMcYQNB5V
-	koG/QSUtP5AJb2g8RBwjCrRevpIq3YNqSHrZTk75esyoiSLZFDynY6Nrxu1ERucK+JgkAllmUU9
-	Y27PhaG+C4ijoT45YMu8bcgKcOGbGrGOm3rk5tuIuWNGBuqAva6s70U6aK9zl9oUZRHU=
-X-Gm-Gg: ASbGnctleNcioiTYc7i0tMHwCAZUdh4ePSSA66jH6FtldEwwqoTZ73+MuM99UZoEVgl
-	DKpTfFcvKcWWTRLqpMpT933xfmHWW986uw2n7rK5pdBIrc1dTLuX88ZCm+pANHD3x4zGoc16xdM
-	z8gpKhFtnYUJ3Jdu2gnb7ONQyvxsSb0pyfd4/4yF883rRNI1lsOonesH0sKLX+nIRmkJ+34RAds
-	81EqScPJa6J0rio6hoWIRrmNKTrZACi2c+kLwqmUTs7t6n2MMaLi8ZVOjr+7a8MRoXpUGcVKQkD
-	HHKXaML04H3Bxg5wA2GMdKhGeEj6yhkOiVl9WK9Js8nW9AKfeGVcKXQSDQeTy3M7IOavlENAwcB
-	nDkZGd586OOoC6KU6kIU+WQ9xbjUEh1M=
-X-Received: by 2002:aa7:9290:0:b0:7a2:6db4:4c7c with SMTP id d2e1a72fcca58-7a26db44dbdmr7396049b3a.30.1761305845892;
-        Fri, 24 Oct 2025 04:37:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGMJ9ddkiXbFe6TKK3Y2/fvEFeNAy844DzrGqnMtKaMiv58hmthIdtxkrHb9kI/TP2dxoiy9w==
-X-Received: by 2002:aa7:9290:0:b0:7a2:6db4:4c7c with SMTP id d2e1a72fcca58-7a26db44dbdmr7396019b3a.30.1761305845379;
-        Fri, 24 Oct 2025 04:37:25 -0700 (PDT)
-Received: from [10.218.4.221] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a274bb0c93sm5573663b3a.59.2025.10.24.04.37.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 04:37:24 -0700 (PDT)
-Message-ID: <f2ea3da2-4582-a2d7-9a90-8050b3e8a27f@oss.qualcomm.com>
-Date: Fri, 24 Oct 2025 17:07:20 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D069625A323;
+	Fri, 24 Oct 2025 11:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761305986; cv=fail; b=SO9DXJAzHG7rk9tKq8YYiOSYOFyrfLgwZx+rteTQjJI68wej5fi0iXHByNCtp8gLbXyfde48Hs744RoNiaGWMXNgoz5J9msfseo56q95acFnrDiQtlesjcteN1E32v/mojU2dR1ddUiLlm1R6xp4KUjYuHzQBCYnJ9ZABtlFbyw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761305986; c=relaxed/simple;
+	bh=zwdKaKqq6so5YRPZxP8nvttdw85O7T3Yjdc2dQDWShY=;
+	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
+	 In-Reply-To:MIME-Version; b=PVtbmsd8K3z+G3u2oec9x6b51R7Sj19r4/+RpvozQKbWNO0cXcunE513wXV9iUlsF/AdAs53hGKjhee598FIJxIXdgZ/nllf08wlA9FP5qcmmc/QH62zWivep6nYBfSHZLma79uWyZJmR2No+bi0MEk8cFVsTCpcozsj7h20pK0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IOipthyW; arc=fail smtp.client-ip=40.93.195.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iFV3vRxDjHm6REue0/yYkV9Os2uJzXECs5nPB1z+zHr/dNkLNWOYnX9GoxZ2GKSol9/iXcDRWNNhEcTPMtZpM2oQ7z92QthMpjVuUZ/IV7rCbu4NzSSpgX+gITs1ISJjWTsmeI3XZKUW75Xdtfoakf0y2Psd7MwXsGYpRLP3J/+UlAKo6YC0ol0QfTtz6C5K8Jg1awfoiCKEapErDxm5g48mZGGTs050Oetb/H+y0RLcHMHIkawea2PQalo+msm3JPhXg4ECTWaTakPkfMs6WOQmUQDaq4KOq3B6wnwRRTXEeMU/vc2Y1iUcif9ng2Nn2Vu1IiaVYrwOuc0GJCzpGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gWFRVIC+I77GHvHgUsNAMahcm6pLhhLlcow0MxTW/rs=;
+ b=k8hyLAg36JhuFDUnp8d2wnBpNNdoxyuuK7FWkeQHkmHCDG59jguDu2nYKbfanSD2PYyrOKmn5l+1pVXvLl73AsmzgS2YiAkNr25WIlYwsROKgkl1LTwGmidBuN7o/96TEpGHkCHnLLi6VV50GGWpOqrnC4ZapAQeD1t5jqhGL7AxCcGOKgvUfg0G4+XksTrYLdPIj6fR78et6Ib5osWpMl/9A+QZH/9nWD3GOI6l0hNxj9D/8JQAsIJDQ4Vfn2YZLCysE3YrgxwjVTDBYZciwtVAfuntQ3tkv/6FMhv/2MgvJPnY0Bgjx6o/j4euH2PFoNl61wdP0DUVxEBSTvJdAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gWFRVIC+I77GHvHgUsNAMahcm6pLhhLlcow0MxTW/rs=;
+ b=IOipthyWeDxNn2Ogh/O9BRNDLaWlWBqNGAF8Q3qilELfFhzWqaiUYIpP1bY2FZ/9F10elf7iGEZWN0JKsaABcYu+YJV1yAOT0ibyBKUyM/ItRdsZRe53T6Q/AwPzI0F7R7olhk+geQBTvKGF7EWeqWtWl/asK2/e0ws/52R/jlBimr8DBIopcm1qkk65+KDRd/+PnyLbvwGcRFVHRS3x/nXw8Mtot/iZ6sJBIkCGR83TW8eHzjNbp/Kn4vLScVZ0KtfHFVNZ38GS43hWY/S+LeV5IxrJeIGb//8vfuXCn3djX/cSbhdcHtaWsufhOJUyl58jEcB5n8myMCEnxnEuEw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by BY5PR12MB4113.namprd12.prod.outlook.com (2603:10b6:a03:207::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 11:39:40 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 11:39:40 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 24 Oct 2025 20:39:36 +0900
+Message-Id: <DDQIUZBMK5D1.7YYKEIN6HPNU@nvidia.com>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <dakr@kernel.org>
+Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
+ "Daniel Almeida" <daniel.almeida@collabora.com>,
+ <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH 6/7] nova-core: mm: Add support to use PRAMIN windows to
+ write to VRAM
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251020185539.49986-1-joelagnelf@nvidia.com>
+ <20251020185539.49986-7-joelagnelf@nvidia.com>
+ <DDOSD746PCSR.CNAYZSTFR9XR@nvidia.com>
+ <4b953fef-da09-4147-8a88-e16f326c7bdf@nvidia.com>
+In-Reply-To: <4b953fef-da09-4147-8a88-e16f326c7bdf@nvidia.com>
+X-ClientProxiedBy: TY4PR01CA0086.jpnprd01.prod.outlook.com
+ (2603:1096:405:37d::14) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v1] arm64: dts: qcom: monaco-evk: Add firmware-name to
- QUPv3 nodes
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: mukesh.savaliya@oss.qualcomm.com, anup.kulkarni@oss.qualcomm.com
-References: <20250925042605.1388951-1-viken.dadhaniya@oss.qualcomm.com>
- <9b887bc5-eaa4-4271-8770-3458efb528bf@oss.qualcomm.com>
- <f016d47f-919c-2944-ab8f-68e450e5836a@oss.qualcomm.com>
- <be816a6d-c4e6-4cf1-b5dd-fd59515a42ef@oss.qualcomm.com>
-Content-Language: en-US
-From: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-In-Reply-To: <be816a6d-c4e6-4cf1-b5dd-fd59515a42ef@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=CLknnBrD c=1 sm=1 tr=0 ts=68fb64f6 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=2qUNLLk1E6tSnZkWjjAA:9 a=QEXdDO2ut3YA:10
- a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDExMiBTYWx0ZWRfX5OROilHRwAWa
- NpfM79jp1ehRHCc4jSrlwQwBXUVHzHL5ch6AmNMexkUomWw8YNyT8kqS6b9gKmgZp+2pbrrKKpM
- qfZXwbyNBXFW4Hcq1wMKTfNZUvgygYvo4yyR6gbHeFZNKw8DHD/dwxulLg8TBoPjCcUFsVDkC0U
- qMIRh4cBiNzsOBcz0qFupS4yEtIkUzQ+YxzA5GaBootOxa5s47aK89xkAeNx0WE6+mGrS29tslL
- rG6aZ5vEj6VqeJK9i82403a5rYnQkP/HaFyPgmaELeTHyJBgpxeM8KT/0HhwSj6dwCnXNYm+jus
- w9HYfIGvecH9TFF+OXXQI4KPeM0pM6JPxsyv0wXJauJkrKr63nlXwRGAnISvInoBbOQ1SJpFg/G
- fxF3NDVUK93LD+gBcVDDeqZpk6t+lA==
-X-Proofpoint-GUID: Jotw-zKM77wsPeOda94gnjs8AL_1mx25
-X-Proofpoint-ORIG-GUID: Jotw-zKM77wsPeOda94gnjs8AL_1mx25
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-24_01,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 malwarescore=0
- suspectscore=0 clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510230112
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BY5PR12MB4113:EE_
+X-MS-Office365-Filtering-Correlation-Id: c519a10a-bf4c-4e04-9bed-08de12f20440
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S1lRbER6WTFNbWVNbi9hOUFVMzJqaFJtTUlTb2RRU1hHZWpFWlFZQXpVbHA2?=
+ =?utf-8?B?Tzlxay82VzVUTEtaWXpKYjlGdFZ3amcvUlFKMXRabGlNOE0xcWl0VUNZaUFj?=
+ =?utf-8?B?QkFhWVZIWHhJbWp6bEhoek01RGcrQVFtdit0RkFlaWpKd1F1QXA3dXN2eFpD?=
+ =?utf-8?B?b1NLL2VjS3RFSTNrK0VjMTNlL1dXTHAxMXlVb3JQWVdJTnB3Vm1hU3ZBYjM0?=
+ =?utf-8?B?LzV3cVAxMFE1Uy9KK01CZHJJSWRLTUFEQ3RPeE5EVkdsaXhiakNlRXk0WFRW?=
+ =?utf-8?B?SUVOT0Z2SkxUZGNJeEtZcnJrbUJXZW50LzFoNzNrc1VPS0ozREdScGQxRzhH?=
+ =?utf-8?B?THR3Rm9ZS281VC8xMmF0cFZuWmc4LzVXYTM5UG1GVnpRQVBSR2c0KytaSWtL?=
+ =?utf-8?B?MlpJclgza3NKVFNURWRGY08rb1o3Yjg3MzJRUVdxeDdLUjAwbnVjNWg1OHJq?=
+ =?utf-8?B?K2pZNUVCN3pVNDE3QjBnVHZRbnB3bVhKUCtVNWxTRkhvN3Zyd2x4cHY2Q0xJ?=
+ =?utf-8?B?Wk1JdENJL2FIbnZzb2ZRTlBTbjFpKzdHZTNQTWZhYml4dVJFSnEwSXovTnMy?=
+ =?utf-8?B?R1hMVFhNdHJWRE44R2JtZTBxSVNIcVA0MGI2Zm05d05OUk01WXV6Qit2RGU1?=
+ =?utf-8?B?YWR5eXc0SHIwd1hiL2hldEVJK21BbEtIRTYrNGhRMWk3djlFT1ZuSEM3c3F4?=
+ =?utf-8?B?VXZ1RGZrOC9NTGRYSlp6K0g3YUJ1V0ZnempacnZiYkVQWmVBbHBIYU9KTStE?=
+ =?utf-8?B?MzE0aFZNTTNDSjBQaDBTVWtYbHlXbndEbERqUkdQWDZwUWdaLzRhdVJhdUtm?=
+ =?utf-8?B?THdYZGJwSWJUM0ZHQlJlOGxyWHB1UjZXbkMwT2I2MFZGd1J5UXRHZ2pZcEhh?=
+ =?utf-8?B?MnBieTVyZVorY0tQelVIOEtSb0ZUS3FpMVJ4c0JjVG1nZjgrZkpPLzMwN1da?=
+ =?utf-8?B?blE2dWIwSWNuQzNON0FCclpiNG1TdVJxMU14Y1FoVTZCSTllc21GN3Nha0NJ?=
+ =?utf-8?B?VlFlancrTWp0VWRTWjBVYnpyckRWY280dmRLRVYvbllrcVhKcEFXWk1PYzlm?=
+ =?utf-8?B?bmVhOXBQSWF6TkVnN09JaFM4YksyaXlnUHpPRCtGWkdHTktPaUpQaWhGMkJI?=
+ =?utf-8?B?WFpHbFB6S3hHKzZwRE5WWHNER3F3ZEpabFpDTmdOWlV4VGx5cFlmVXhoR1Rq?=
+ =?utf-8?B?LzMzZTI2UU0xZTBYbEtSeGZuZzhTZnJGYTRwYmV1RTR1aWI4dFhicXpFeGcv?=
+ =?utf-8?B?Vm1sUXo1bEpDaUZjUVdYTi9YZFFMS1VlbmVXc21Td3Q2alFCUVJXSHN1bmhz?=
+ =?utf-8?B?S2Y3VEZtdWlhaXVEY29aRktUb2JPYlA0U0RxRzRHbVBMNS9scVFTZ3V0R3Ni?=
+ =?utf-8?B?L2o2eWhYRVQ1d0dLa084MHRVVEFJYUtGc1l0TXltWkpyVXZ4OXQrYXlFWGpj?=
+ =?utf-8?B?RFgzSkxkS1ZqbzdiTWFrV2VkVUlpRlhDY3VBVjRJTVB2SnFtRElIT3lsc2wz?=
+ =?utf-8?B?aTc5c1c5VDBLUHl0a0dXSTdNZHBWNDBEb3FJd3REUmNXamx4NFZvYnY4S0xP?=
+ =?utf-8?B?TllkeDZBNmRjdGpoTUxQVFpmcktFdE9lWkswOWhlYkd2emhocHZONmdJcHEr?=
+ =?utf-8?B?bjdLL3h4Y3lsMzVFV1Ryc050VUkvQmtZdjhRUkZQL0xBdVlXVUlMQmFmOStr?=
+ =?utf-8?B?LzB0eUlETHFsdjNPclpZU0o1bWtXblozdThXYUM5NnRST2lWVzAxNlUwT0JX?=
+ =?utf-8?B?WDI0TXo4OGdRZ2VjbS9uZEkyQkRuWlpmbS91aGpwbW03ZXN2NTRxNEJ2N0ZL?=
+ =?utf-8?B?NHhjSWwwclJ5clk4YlIxRm1EVVc5NGgyTVYvMTFtcjMxU2ZleWRqQzF5THhE?=
+ =?utf-8?B?UWU0eEg4R0taUmFQV3U5UVJWY0VJVVJUcExlaEg2TEdtQW1MNmM3K004cDNS?=
+ =?utf-8?Q?qKm/euSN0Ytzv5DFkMeIIk8VXMlcEPaR?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?andZWlF0ejNIeEY0RDA5MFBqREZaNEdVYWdCMkFCQUhhbUIzU1FUeDVIcTlz?=
+ =?utf-8?B?TGE5Z1N6bUpKVEZhN1BhaSt6LzJSK3V5clh2K09UTnF5T0ozWEh1a2lENFgz?=
+ =?utf-8?B?Vi9xd29IVkFqaDlpU1pha21SblhnZmNpRXpQdFRzM3ptTzI4eHN1YzdjZmc4?=
+ =?utf-8?B?K213bWpTRGcrelowbmpoQzd3RFdFS25QYVE5TVFkYkltclA5aVBkMFJ6czAw?=
+ =?utf-8?B?dEFybVI2SnMvcFJZcndES1p3ZG1mVHVIK2ZJY3FyUE5sZGd0RlVzQWtGdWMy?=
+ =?utf-8?B?RWtvVFNVckkwOVpoaFFpSjZ3N2trQ1NVUkRMai9nazhhQVNtL25PcStkMEYv?=
+ =?utf-8?B?eWozSEF1ekpETnFDd2MrQ0FkNitjRzlaRitYR1hKbUhOTWRtUk1wOXBFR0s4?=
+ =?utf-8?B?SWFFSnltM2NTQWdJUVIxYmIxdGtndCtTL2w0T1JHMEdueWdwSmFBSUxmQjRZ?=
+ =?utf-8?B?NmxSMnFPNFllV2VDRmkrOGxuWlpWK28wc08yd3NOQ2NPeUpMZzRtVy9lTm1z?=
+ =?utf-8?B?ZlR5SmZmVFdzUW5adEJaU1BBM0NvdENXblVUalZtNk5EYTNpMjZ3S0NyMVBy?=
+ =?utf-8?B?NWRNVDdFVEVPYzk1STVuSlVWZXZvV3FFMWZ3ZDl1N29QYnZFWkp0MXRIbjVF?=
+ =?utf-8?B?S0JCcTRFSERlUm9ZSFJzTTNLVUZ1MUM3bFpHaHVzUEk3V3dQOTdOb3hDbDZm?=
+ =?utf-8?B?MU1GOFdvVkxoT2FQTk1lUlV6VXNQOUFhaklLUDFyNFpkOWVzWG9NeTFnRXZj?=
+ =?utf-8?B?bHdUSmZDL2xYTWVmTWlXZWpGNGpoQ1paTGRHMWIwTG4zSWNNa0pwem5sc1l2?=
+ =?utf-8?B?ZnozT3RIOUovWlVvTXoxNTNMN3BKMzluN2xERGRyODl0emxTVU5tRFY3WnRn?=
+ =?utf-8?B?T2dXU0dxbDU5L0J5SW4wMkFXWWkzRDI2bmVLNW50RU9QcjVnZE1WUkZVQ2lV?=
+ =?utf-8?B?R1M0Wnp3Z3pmUzZoSWtVSjFvRVNqdXdpZlJKWnRnSTFyeG5EOVBWUUhnRS8y?=
+ =?utf-8?B?dStkRXZhcE9JTzZYK21QaTRKQ0tlcHNVQ1E1d1hQYTFLTm9FT1ZvQkxhZnE4?=
+ =?utf-8?B?eFp5N1NrWXhGT3RQVFB4Q1MxeEVTVzdwRVE3dmp2RzVTc1lncGhlZVFqMlhE?=
+ =?utf-8?B?MzBLbDY0SGx5S2xCL3RvcElSZ2NCZkZFMnFWMWZ0MmRYSm4rRDVua2xaZmVO?=
+ =?utf-8?B?MGJrMWNzaUhsOE5COWRuZHFUVU4wYjN4azBsbkpGSzhtZTB0QWpVT1RLb1M1?=
+ =?utf-8?B?VEE0SXo2MFRaeWorODBZZEJVUUZMTVNuL2JCNC9LejVmbGh3YVdOYnc1UTNu?=
+ =?utf-8?B?d0ZTTlJ1Zm1Cb29lMjNpUnpMb0k2eXZnWDh1THJaR1ZjeWczblI4cStoK09K?=
+ =?utf-8?B?YlVwQnBsSWU1cmpMZC9XWFNBYXZsOGd6OTJDNXk1OEQzbE1iYURZMmU2MGdT?=
+ =?utf-8?B?aGUyQ3IvV2MxS0lzVExLNUJJNXUyOUJ2UEpEenU5T3RZNktYc1oxRFFIR2JG?=
+ =?utf-8?B?c01tVCtqcFhNVE9GQWVpUVphYVBWYkhTdU9ML1lHQVVnd3JXWUswRDhWWm5r?=
+ =?utf-8?B?VC9SK3FuRWVTTkN4VEdxNDJFV0NDR3V3K3N6RGhMM1Yxbk5la3ZZMFhTN1oy?=
+ =?utf-8?B?L1ZRbloyT2dvSFZoNUZnaVRpQ3AvZ0dvdHNrUW1uSkFFTEFhc2RwNFRTYXMv?=
+ =?utf-8?B?STVXdjZQb2RFYTBVOFhTd0FMOFJoV2llTEZteEwrZW4waTVPTUhnYk83bm5t?=
+ =?utf-8?B?Tjg2T0txaXc4WFBMd0JDa0dkODFpN05WT2s3UEJtWVpvWnIySTE3Mk1EREtR?=
+ =?utf-8?B?MFJRVWk1dUhBZzBIck9jR0NtUk5RTUE1VG90M2NRM2tOUmZTeldTa1o5TllP?=
+ =?utf-8?B?cEpaUGFKRnRYNExtcDJPZEdpTTgyZ2lwN1FOZE84VVI0TlR5Z3JVV28rQUZk?=
+ =?utf-8?B?NTVSUlJMdzR3TWJuMG1zNjRMZmpmTkZaazNnRzVLUVkzTGRMZ0l2YkhyUGYw?=
+ =?utf-8?B?enUvWnd6MEc3QXorSS80NzE4SFhRTTM3VVpDc1dmeCtDbm5LZVRMd3M3OWNV?=
+ =?utf-8?B?NHpPbVZvbFZoZ1F1dWxoSVpYK0MxbEFab3YyVHFwVzhSY2ZTckh5cWsvNE8r?=
+ =?utf-8?B?b3UyTnFrUTZ5TXRQbEJLQ1g5eHhWZGRPa0ZmQjUvY1d2VzY5K0tHZno4ZzZK?=
+ =?utf-8?Q?wOVHKBThE9S+LBdgxz3vldqjgiW6OKDap5Etmu3ubxfN?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c519a10a-bf4c-4e04-9bed-08de12f20440
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 11:39:39.8933
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9Rpvb2ax1aP2S7I9pCKgy7z8RnOmx/zX3G64decqeh7mbuXLGw9PxqDqQ1d9CZ91zIaVxqeEp/SBD+UIrgdXeg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4113
 
-
-
-On 10/22/2025 10:30 PM, Konrad Dybcio wrote:
-> On 9/26/25 8:43 AM, Viken Dadhaniya wrote:
->>
->>
->> On 9/25/2025 2:22 PM, Konrad Dybcio wrote:
->>> On 9/25/25 6:26 AM, Viken Dadhaniya wrote:
->>>> Traditionally, firmware loading for Serial Engines (SE) in the QUP hardware
->>>> of Qualcomm SoCs has been managed by TrustZone (TZ). While this approach
->>>> ensures secure SE assignment and access control, it limits flexibility for
->>>> developers who need to enable various protocols on different SEs.
->>>>
->>>> Add the firmware-name property to QUPv3 nodes in the device tree to enable
->>>> firmware loading from the Linux environment. Handle SE assignments and
->>>> access control permissions directly within Linux, removing the dependency
->>>> on TrustZone.
->>>>
->>>> Signed-off-by: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
->>>> ---
+On Thu Oct 23, 2025 at 7:04 AM JST, Joel Fernandes wrote:
+> Hi Alex,
+>
+> On 10/22/2025 6:41 AM, Alexandre Courbot wrote:
+>> On Tue Oct 21, 2025 at 3:55 AM JST, Joel Fernandes wrote:
+>>> Required for writing page tables directly to VRAM physical memory,
+>>> before page tables and MMU are setup.
 >>>
->>> Viken, you've posted a lot of patches like these lately for
->>> specific boards.
+>>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+>>> ---
+>>>  drivers/gpu/nova-core/mm/mod.rs    |   3 +
+>>>  drivers/gpu/nova-core/mm/pramin.rs | 241 +++++++++++++++++++++++++++++
+>>>  drivers/gpu/nova-core/nova_core.rs |   1 +
+>>>  drivers/gpu/nova-core/regs.rs      |  29 +++-
+>>>  4 files changed, 273 insertions(+), 1 deletion(-)
+>>>  create mode 100644 drivers/gpu/nova-core/mm/mod.rs
+>>>  create mode 100644 drivers/gpu/nova-core/mm/pramin.rs
 >>>
->>> Should we instead push this to the SoC DTSI, to limit the boilerplate?
->>
->> The firmware load from Linux feature is applicable only to devkit boards
->> (RB3 Gen2 and EVK), and therefore, it is being added exclusively to the
->> board-specific device tree files.
-> 
-> Do we expect GENI_SE_INVALID_PROTO to ever show up on hardware that
-> can't make use of fw loading though?
+>>> diff --git a/drivers/gpu/nova-core/mm/mod.rs b/drivers/gpu/nova-core/mm=
+/mod.rs
+>>> new file mode 100644
+>>> index 000000000000..54c7cd9416a9
+>>> --- /dev/null
+>>> +++ b/drivers/gpu/nova-core/mm/mod.rs
+>>> @@ -0,0 +1,3 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +pub(crate) mod pramin;
+>>> diff --git a/drivers/gpu/nova-core/mm/pramin.rs b/drivers/gpu/nova-core=
+/mm/pramin.rs
+>>> new file mode 100644
+>>> index 000000000000..4f4e1b8c0b9b
+>>> --- /dev/null
+>>> +++ b/drivers/gpu/nova-core/mm/pramin.rs
+>>> @@ -0,0 +1,241 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +//! Direct VRAM access through PRAMIN window before page tables are se=
+t up.
+>>> +//! PRAMIN can also write to system memory, however for simplicty we o=
+nly
+>>=20
+>> s/simplicty/simplicity
+>
+> Ok.
+>
+>>> +//! support VRAM access.
+>>> +//!
+>>> +//! # Examples
+>>> +//!
+>>> +//! ## Writing u32 data to VRAM
+>>> +//!
+>>> +//! ```no_run
+>>> +//! use crate::driver::Bar0;
+>>> +//! use crate::mm::pramin::PraminVram;
+>>> +//!
+>>> +//! fn write_data_to_vram(bar: &Bar0) -> Result {
+>>> +//!     let pramin =3D PraminVram::new(bar);
+>>> +//!     // Write 4 32-bit words to VRAM at offset 0x10000
+>>> +//!     let data: [u32; 4] =3D [0xDEADBEEF, 0xCAFEBABE, 0x12345678, 0x=
+87654321];
+>>> +//!     pramin.write::<u32>(0x10000, &data)?;
+>>> +//!     Ok(())
+>>> +//! }
+>>> +//! ```
+>>> +//!
+>>> +//! ## Reading bytes from VRAM
+>>> +//!
+>>> +//! ```no_run
+>>> +//! use crate::driver::Bar0;
+>>> +//! use crate::mm::pramin::PraminVram;
+>>> +//!
+>>> +//! fn read_data_from_vram(bar: &Bar0, buffer: &mut KVec<u8>) -> Resul=
+t {
+>>> +//!     let pramin =3D PraminVram::new(bar);
+>>> +//!     // Read a u8 from VRAM starting at offset 0x20000
+>>> +//!     pramin.read::<u8>(0x20000, buffer)?;
+>>> +//!     Ok(())
+>>> +//! }
+>>> +//! ```
+>>> +
+>>> +#![expect(dead_code)]
+>>> +
+>>> +use crate::driver::Bar0;
+>>> +use crate::regs;
+>>> +use core::mem;
+>>> +use kernel::prelude::*;
+>>> +
+>>> +/// PRAMIN is a window into the VRAM (not a hardware block) that is us=
+ed to access
+>>> +/// the VRAM directly. These addresses are consistent across all GPUs.
+>>> +const PRAMIN_BASE: usize =3D 0x700000; // PRAMIN is always at BAR0 + 0=
+x700000
+>>=20
+>> This definition looks like it could be an array of registers - that way
+>> we could use its `BASE` associated constant and keep the hardware
+>> offsets into the `regs` module.
+>>=20
+>> Even if we don't use the array of registers for convenience, it is good
+>> to have it defined in `regs` for consistency.
+>
+> Ok, I wanted to do that, but I thought since these are registers, it is w=
+eird to
+> move it there.
 
-If TZ (TrustZone) does not load firmware for any SE, the SE protocol status will
-remain GENI_SE_INVALID_PROTO. In such cases, Linux can load the firmware to
-initialize the SE and set the required protocol.
+It's just that it looks like to keep all the layout in the same place.
 
-> 
->>> If I recall correctly, you said these ELFs are not vendor-signed, so
->>> it should be OK to have them be assigned globally
->>>
->>
->> This feature is intended solely for use with the development kit and is not
->> intended for commercialization. Therefore, vendor sign-off is currently not
->> applicable.
-> 
-> Well you conveniently never really mentioned this in the driver patchset..
-> 
-> Konrad
+>
+> Also we need byte-level access, register macro is u32. I don't think we s=
+hould
+> overload regs.rs just to store magic numbers, these are not registers rig=
+ht? We
+> have PRAM window configuration registers but that's different.
+
+The register macro just gained support for `u8` thanks to your work, I
+thought that would have been a good use-case. :)
+
+Also we don't need to use the register accessors for this - the idea was
+just to have the definition in `regs.rs`, and use the constant
+containing its address instead of the regular register accessors if they
+are not fit for this.
+
+I don't feel too strongly about this though.
+
+>
+>>=20
+>>> +const PRAMIN_SIZE: usize =3D 0x100000; // 1MB aperture - max access pe=
+r window position
+>>=20
+>> You can use `kernel::sizes::SZ_1M` here.
+>
+> Sure, will do.
+>
+>>> +
+>>> +/// Trait for types that can be read/written through PRAMIN.
+>>> +pub(crate) trait PraminNum: Copy + Default + Sized {
+>>> +    fn read_from_bar(bar: &Bar0, offset: usize) -> Result<Self>;
+>>> +
+>>> +    fn write_to_bar(self, bar: &Bar0, offset: usize) -> Result;
+>>> +
+>>> +    fn size_bytes() -> usize {
+>>> +        mem::size_of::<Self>()
+>>> +    }
+>>> +
+>>> +    fn alignment() -> usize {
+>>> +        Self::size_bytes()
+>>> +    }
+>>> +}
+>>=20
+>> Since this trait requires `Sized`, you can use `size_of` and `align_of`
+>> directly, making the `size_bytes` and `alignment` methods redundant.
+>> Only `write_to_bar` should remain.
+>
+> Sure, slightly poorer caller-side readability though but its fine with me=
+, I'll
+> do that.
+>
+>> I also wonder whether we couldn't get rid of this trait entirely by
+>> leveragin `FromBytes` and `AsBytes`. Since the size of the type is
+>> known, we could have read/write methods in Pramin that write its content
+>> by using Io accessors of decreasing size (first 64-bit, then 32, etc)
+>> until all the data is written.
+>
+> Ah great idea, I like this. Though per the other discussion with John on =
+keeping
+> it simple (not doing bulk I/O operations), maybe we wouldn't need a trait=
+ at
+> all. Let me see.
+
+Even better. :)
+
+>
+>>=20
+>>> +
+>>> +/// Macro to implement PraminNum trait for unsigned integer types.
+>>> +macro_rules! impl_pramin_unsigned_num {
+>>> +    ($bits:literal) =3D> {
+>>> +        ::kernel::macros::paste! {
+>>> +            impl PraminNum for [<u $bits>] {
+>>> +                fn read_from_bar(bar: &Bar0, offset: usize) -> Result<=
+Self> {
+>>> +                    bar.[<try_read $bits>](offset)
+>>> +                }
+>>> +
+>>> +                fn write_to_bar(self, bar: &Bar0, offset: usize) -> Re=
+sult {
+>>> +                    bar.[<try_write $bits>](self, offset)
+>>> +                }
+>>> +            }
+>>> +        }
+>>> +    };
+>>> +}
+>>> +
+>>> +impl_pramin_unsigned_num!(8);
+>>> +impl_pramin_unsigned_num!(16);
+>>> +impl_pramin_unsigned_num!(32);
+>>> +impl_pramin_unsigned_num!(64);
+>>> +
+>>> +/// Direct VRAM access through PRAMIN window before page tables are se=
+t up.
+>>> +pub(crate) struct PraminVram<'a> {
+>>=20
+>> Let's use the shorter name `Pramin` - the limitation to VRAM is a
+>> reasonable one (since the CPU can access its own system memory), it is
+>> not necessary to encode it into the name.
+> Sure, sounds good.
+>
+>>=20
+>>> +    bar: &'a Bar0,
+>>> +    saved_window_addr: usize,
+>>> +}
+>>> +
+>>> +impl<'a> PraminVram<'a> {
+>>> +    /// Create a new PRAMIN VRAM accessor, saving current window state=
+,
+>>> +    /// the state is restored when the accessor is dropped.
+>>> +    ///
+>>> +    /// The BAR0 window base must be 64KB aligned but provides 1MB of =
+VRAM access.
+>>> +    /// Window is repositioned automatically when accessing data beyon=
+d 1MB boundaries.
+>>> +    pub(crate) fn new(bar: &'a Bar0) -> Self {
+>>> +        let saved_window_addr =3D Self::get_window_addr(bar);
+>>> +        Self {
+>>> +            bar,
+>>> +            saved_window_addr,
+>>> +        }
+>>> +    }
+>>> +
+>>> +    /// Set BAR0 window to point to specific FB region.
+>>> +    ///
+>>> +    /// # Arguments
+>>> +    ///
+>>> +    /// * `fb_offset` - VRAM byte offset where the window should be po=
+sitioned.
+>>> +    ///                 Must be 64KB aligned (lower 16 bits zero).
+>>=20
+>> Let's follow the rust doccomment guidelines for the arguments.
+>
+> Ok, Sure.
+>>=20
+>>> +    fn set_window_addr(&self, fb_offset: usize) -> Result {
+>>> +        // FB offset must be 64KB aligned (hardware requirement for wi=
+ndow_base field)
+>>> +        // Once positioned, the window provides access to 1MB of VRAM =
+through PRAMIN aperture
+>>> +        if fb_offset & 0xFFFF !=3D 0 {
+>>> +            return Err(EINVAL);
+>>> +        }
+>>=20
+>> Since this method is private and called from controlled contexts for
+>> which `fb_offset` should always be valid, we can request callers to
+>> give us a "window index" (e.g. the `window_base` of the
+>> `NV_PBUS_BAR0_WINDOW` register) directly and remove this check. That
+>> will also let us remove the impl block on `NV_PBUS_BAR0_WINDOW`.
+>>=20
+>
+> The tradeoff being it may complicated callers of the function that deal p=
+urely
+> with addresses instead of window indices.
+
+Would it though? IIUC the two callers of this method are aligning the
+address already, so the internal check is superfluous. And this would
+also simplify `NV_PBUS_BAR0_WINDOW`.
+
+>
+>>> +    ///
+>>> +    /// The function automatically handles PRAMIN window repositioning=
+ when accessing
+>>> +    /// data that spans multiple 1MB windows.
+>>=20
+>> Inversely, this large method is under-documented. Understanding what
+>> `operation` is supposed to do would be helpful.
+>
+> I will skip these comments for now as we discussed dropping complexity in=
+ other
+> thread, but thanks for the review on this. This function should be likely
+> dropped in the next iteration.
+>
+>>> +
+>>> +    /// Sets the window address from a framebuffer offset.
+>>> +    /// The fb_offset must be 64KB aligned (lower bits discared).
+>>> +    pub(crate) fn set_window_addr(self, fb_offset: usize) -> Self {
+>>> +        // Calculate window base (bits 39:16 of FB address)
+>>> +        // The total FB address is 40 bits, mask anything above. Since=
+ we are
+>>> +        // right shifting the offset by 16 bits, the mask is only 24 b=
+its.
+>>> +        let mask =3D genmask_u32(0..=3D23) as usize;
+>>> +        let window_base =3D ((fb_offset >> 16) & mask) as u32;
+>>> +        self.set_window_base(window_base)
+>>> +    }
+>>> +}
+>>=20
+>> If you work directly with `window_base` as suggested above, this impl
+>> block can be dropped altogether.
+> But it will complicate callers. That's the tradeoff. I prefer to keep cal=
+ler
+> side simple and abstract away complexity. But to your point, this is an i=
+nternal
+> API so I can probably code it both ways and see what it looks like.
+
+I am not convinced that the callers would require extra complexity. If
+it turns out they do, let's weight the cost/benefit of both approaches.
 
