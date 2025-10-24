@@ -1,166 +1,166 @@
-Return-Path: <linux-kernel+bounces-868406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA50C0516D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:39:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 639C9C05220
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:45:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3E41889771
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:39:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF7B1508720
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58527309EF0;
-	Fri, 24 Oct 2025 08:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E213A30AD0D;
+	Fri, 24 Oct 2025 08:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mb772Lkp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CO7pDRdU"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19263093B5;
-	Fri, 24 Oct 2025 08:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F4130AAD4
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 08:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761295030; cv=none; b=eYFGavXSt3AIqqG9O96uOtX21jFXOKvMuQIiRZL+ACEIKDKcKR831mzbbAp0DhNqZhkotMIPapje2Ey9vWNTekYPzg9GSXp2Xea7/575UP6RP5HTjaZCV6oQsOm4ubeQC3L451p2WyPG51PUa3Ch/0hSmoovoP+JUfLVBwshKHw=
+	t=1761295035; cv=none; b=qJblFdgtUWN9MU1s0bM0dKlIHC+pM7Z5WCV5iXfw19MYc0pbb4yeJyQGE/DNKuurU7yFnnYK0qM/2fVM85AKzDxBnfvGy5zQdjtntBQz7RxGpIol2jqEb9Tp6+lIPGuOUagZbCHzpT6ZTtiWK6K3Ht4DYbpnRq4uKlkqAs2D1z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761295030; c=relaxed/simple;
-	bh=JtArdcsAGcyEA/bMgXb5uTz2YbzLj81+yDW1/qVTVzc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJwnXMklFWxRv7EgXwGlFBOiLo4fdIfnvFWsvz5E3/HCoET8NqNA0iooP70fIXYHw8RUn2keTQAbuPp/snCydOtpeOqNNLCzztfqF8wZgLBdsFLtKu+B4RFnqFocWLEsdRQr9LTYyBrmQmmDq3xXuaf67jQ71dMRdmd4fih1+2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mb772Lkp; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761295029; x=1792831029;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=JtArdcsAGcyEA/bMgXb5uTz2YbzLj81+yDW1/qVTVzc=;
-  b=mb772LkpFggH+atQsOTbVx6mK62R45P1Yphl1IzzqQ/zUS9kYEsbCzWX
-   2BWKo4HR4zQlCtrAX7LVKvJFRQrbm+pRSeUwoNkzPtdbe1pKHearseOVs
-   P3Lo2lJWKJDS5U2EStTaJhwbDS6A1sU/1zrxOsrQ3DCGjNGOLZUHcvZJY
-   pufrUL63ucjVMatEe47rC3Lkf/C6ckI/CvnM9ld221cQ9niXBmSeQ5mmA
-   MjMRBjYhqKWKblPn/GzP0+3J5upTut5X0yxasDZGCzYVN2nw+cUIj/bns
-   fpAD2zsvNf87lhBN6o1nM7/OjL/BwKcIC3o+6K5dJzw6Y4CYs7bcv+bCb
-   w==;
-X-CSE-ConnectionGUID: nKQ0bN8PSu61ycb0YhHbVw==
-X-CSE-MsgGUID: gX91Dji9Rt+ix5PxGMEKQw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62504398"
-X-IronPort-AV: E=Sophos;i="6.19,251,1754982000"; 
-   d="scan'208";a="62504398"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 01:37:08 -0700
-X-CSE-ConnectionGUID: F0C+QL8QTFCiKBQ47eivwA==
-X-CSE-MsgGUID: vB8owlCxR7CzMMWA9mVYhg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; 
-   d="scan'208";a="185152775"
-Received: from opintica-mobl1 (HELO ashevche-desk.local) ([10.245.245.60])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2025 01:37:04 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vCDID-000000026T5-3koM;
-	Fri, 24 Oct 2025 11:37:01 +0300
-Date: Fri, 24 Oct 2025 11:37:01 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Akhilesh Patil <akhilesh@ee.iitb.ac.in>, jic23@kernel.org,
-	dlechner@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, andy@kernel.org,
-	marcelo.schmitt1@gmail.com, vassilisamir@gmail.com,
-	salah.triki@gmail.com, skhan@linuxfoundation.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, akhileshpatilvnit@gmail.com
-Subject: Re: [PATCH 2/2] iio: pressure: adp810: Add driver for adp810 sensor
-Message-ID: <aPs6raLIcM3QbQXJ@smile.fi.intel.com>
-References: <cover.1760184859.git.akhilesh@ee.iitb.ac.in>
- <8c202e7ccd332b26217d529a7a73b7a3ef0726ea.1760184859.git.akhilesh@ee.iitb.ac.in>
- <CAHp75VdGJfMALGOFvkOW=JZ0yHE2QbRSzNs2Xd42-Weec1GmQw@mail.gmail.com>
- <95c1ba99-510b-4efb-9b6d-4c1103fc43a5@kernel.org>
- <aPp5OYcPxNNIOgB6@smile.fi.intel.com>
- <c45309cf-bd2c-41fe-b893-7e0a91de84a8@kernel.org>
- <aPs6HAJabFMRzX9Y@smile.fi.intel.com>
+	s=arc-20240116; t=1761295035; c=relaxed/simple;
+	bh=GBY0sw1NoSYjfy/bezUKqsT9sskwBDR6r6B37VUaxUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D9UA4RVgKyuzuasu7Ysz/xy0x+b2R958scDPcBf9gHjEtXkPdEAUeTxDWWlj7SndA6brWTh++QadVhkqSL8fNsxAdW9RSqPeM73+xWlvDLXJdV6O8fosuZW0uZNSy4RjV3ZTCFSAIf5GikDp5guAR+pwPx/d1wR4zMPL5ZtLbcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CO7pDRdU; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so17503725e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 01:37:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761295032; x=1761899832; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tdNfS0VkNtf/A4DiiWq6jRJ/bzfHVZsAPk9jCmjWmOQ=;
+        b=CO7pDRdU+Ct3hLSi9uiz848CMAPEgsnMKZCgDJtU0o57sveI4DKSIIdTuDAU0NRWij
+         CBzkQ988gvHDw7bKcHssgZy6U4D/14b+N2x1OWqS7NCsNhbs5zBVpgTnpCplS+6zbHQN
+         peGTuIiRk0Evh52wUaAWZ5jbPiaFrC0eoGfqUxYMcWvqEEv0FU0ZQGq+yddZL8u7LPPk
+         FVa2Ky4dDNJVO5KmcFhFeqSv0nzfUKadpakYElQmT7gs3SEFikjGjvwCnzDm3eDVqdyT
+         pEj5BLZqxbPyn6qp6C61v9pDxHp0T+c5AgABg8u07k1CRVMte+oJGhbIe6f8P0InF7Ty
+         /hWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761295032; x=1761899832;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tdNfS0VkNtf/A4DiiWq6jRJ/bzfHVZsAPk9jCmjWmOQ=;
+        b=Pgp3n9GApE/ZCI3Sa00U0uj/lBrcHF7L75WJ7RRffJWT+4iqIkyIHTQUIbAw2pwEIl
+         M0TdAJiuxn0G66XN8ydMBkaFiUZtkM+uOVpa/UhU252jlJTMvp4QjpIWqaxvgnA8LPjP
+         N0X1PKT1ew+Y6TXYHIYxx1pr92qrXp6nvj4UmjIbNG3rucm6LkG/T9bESVKW1qTFf8dD
+         sGf7+RDZXpko9vruTEcMSh7iK+j1xx050GqGQbwZ7bRcb0Ymn8KYdt6Z7qQJK8L1G+M0
+         TsLddPCDoSsqYtwRJW93PjcoKDNzxj5rMO20kDoy/i3F+rW+WZKES4ln1HDlUV35Vgjw
+         +jig==
+X-Gm-Message-State: AOJu0YzXrcs2SnZmxMwFGBYPYLhdtGdiLCCw0ZERstMQpyPlNDqqWt7x
+	JvcAWsV3P7YmHhD2FM8od8Q5ju9YB9vzjBUsX0oiJXj9p46iYp692E89
+X-Gm-Gg: ASbGncudnM0PqdYz99jWm69mkoCM48f+agslwSkyWbaqfKD9p9S/3K0uzyK5q+/BvI0
+	5/O6+Z8gDB8OmFi4IcqQ42aP1JCLt2oEfEAiue1N4YkmlRaRz93F309H/ByGdtOUq7xDNrLJO7i
+	SoBr2qn7XSh/3RopZ2W+mt3w95Gg+P3fzicTdR3M17nuBzSKlpTnDm3mTEpwy9BYLNElEYANFX/
+	bRRdWSLNP6kQNhBqWSZYZ+TiqUtXKRTzzTiNGfamXKCkiY5vOY6q+QiYvNFVL4l7b+8vHRgvKU9
+	+XARol/iBtKHhYS41RfKkaSmvLzLBirgIj6qmO6Z9YJ9CvCMi9UhQhFZZdkeivLEaZr3rXr2qol
+	GPjvaYGScPJk0VFf4vgD7MR9Q/uaM6aDgTwKw4Sa/pYExulZiLPkGU4RV/9bJx2affpocoTYokC
+	KWA8OUwAkheH/0me6Wq0I6xKP5GgI7fla5GjyVxcVgjLuWWnj9gQEh
+X-Google-Smtp-Source: AGHT+IEA74edq3+dyMLlgmnCRuVmLBdYX6fNhM1QDtL9saT8iC2ai8pqYwcC3APkrPNud5im6U2udw==
+X-Received: by 2002:a05:600c:a214:b0:471:ff3:a7fe with SMTP id 5b1f17b1804b1-471179123b8mr141029385e9.19.1761295031346;
+        Fri, 24 Oct 2025 01:37:11 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475cae92067sm82671315e9.4.2025.10.24.01.37.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 01:37:10 -0700 (PDT)
+Date: Fri, 24 Oct 2025 09:37:09 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] replace strcpy with strscpy for safe copy
+Message-ID: <20251024093709.5115f8b0@pumpkin>
+In-Reply-To: <20251021145700.38374-1-biancaa2210329@ssn.edu.in>
+References: <20251021145700.38374-1-biancaa2210329@ssn.edu.in>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aPs6HAJabFMRzX9Y@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 24, 2025 at 11:34:37AM +0300, Andy Shevchenko wrote:
-> On Fri, Oct 24, 2025 at 08:18:21AM +0200, Krzysztof Kozlowski wrote:
-> > On 23/10/2025 20:51, Andy Shevchenko wrote:
-> > > On Sun, Oct 12, 2025 at 05:12:26AM +0200, Krzysztof Kozlowski wrote:
-> > >> On 11/10/2025 16:10, Andy Shevchenko wrote:
-> > >>> On Sat, Oct 11, 2025 at 3:25 PM Akhilesh Patil <akhilesh@ee.iitb.ac.in> wrote:
+On Tue, 21 Oct 2025 20:27:00 +0530
+Biancaa Ramesh <biancaa2210329@ssn.edu.in> wrote:
 
-...
+A complete pile of bollocks....
 
-> > >>>> +F:     Documentation/devicetree/bindings/iio/pressure/aosong,adp810.yaml
-> > >>>> +F:     drivers/iio/pressure/adp810.c
-> > >>>
-> > >>> Some tools will report an orphaned yaml file if you apply patch 1
-> > >>> without patch 2.
-> > >>
-> > >> You mean checkpatch? That warning is not really relevant. Adding
-> > >> maintainers entry here for both files is perfectly fine and correct.
-> > > 
-> > > It's relevant as long as I see (false positive) warnings from it. Can somebody
-> > 
-> > No, it is not relevant. Just because tool is inefficient does not allow
-> > you to point such nitpicks. You as reviewer are supposed to find
-> > difference which checkpatch warnings are important and which are not and
-> > DO NOT bother contributors with useless points that there is some
-> > orphaned file according to checkpatch.
-> > 
-> > > shut the checkpatch up about missing DT files in the MAINTAINERS?
-> > 
-> > That would be great but, if no one does it your comments on "orphaned
-> > file" are counter productive.
+> Signed-off-by: Biancaa Ramesh <biancaa2210329@ssn.edu.in>
+> ---
+>  mm/shmem.c | 23 ++++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
 > 
-> Something like this?
-> 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 6729f18e5654..818b49d314ce 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -3441,11 +3441,17 @@ sub process {
->  		     ($line =~ /\{\s*([\w\/\.\-]*)\s*\=\>\s*([\w\/\.\-]*)\s*\}/ &&
->  		      (defined($1) || defined($2))))) {
->  			$is_patch = 1;
-> -			$reported_maintainer_file = 1;
-> -			WARN("FILE_PATH_CHANGES",
-> -			     "added, moved or deleted file(s), does MAINTAINERS need updating?\n" . $herecurr);
-> +			# DT bindings are incorporate maintainer information, no need to report
-> +			if ($realfile !~ m@^Documentation/devicetree/bindings/@)) {
-> +				$reported_maintainer_file = 1;
-> +				WARN("FILE_PATH_CHANGES",
-> +				     "added, moved or deleted file(s), does MAINTAINERS need updating?\n" . $herecurr);
-> +			}
->  		}
-
-> +		    ($realfile =~ m@^Documentation/devicetree/bindings/.*\.txt$@)) {
-> +			if ($realfile =~ m@^include/asm/@) {
-
-These two lines are leftovers that needs to be removed, of course.
-
-Akhilesh, can you give a try of this change and see if the original DT schema
-binding patch is not reported anymore?
-
->  # Check for adding new DT bindings not in schema format
->  		if (!$in_commit_log &&
->  		    ($line =~ /^new file mode\s*\d+\s*$/) &&
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index b9081b817d28..6e5a5d6fc7e9 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -657,17 +657,18 @@ static int shmem_parse_huge(const char *str)
+>  	if (!str)
+>  		return -EINVAL;
+>  
+> -	if (!strcmp(str, "never"))
+> +	if (!strncmp(str,"never",strlen("never")+1)){
+>  		huge = SHMEM_HUGE_NEVER;
+> -	else if (!strcmp(str, "always"))
+> +	}
+> +	else if (!strncmp(str, "always", strlen("always") + 1))
+>  		huge = SHMEM_HUGE_ALWAYS;
+> -	else if (!strcmp(str, "within_size"))
+> +	else if (!strncmp(str, "within_size",strlen("Within_size")+1))
+>  		huge = SHMEM_HUGE_WITHIN_SIZE;
+> -	else if (!strcmp(str, "advise"))
+> +	else if (!strncmp(str,"advise",strlen("advise")+1))
+>  		huge = SHMEM_HUGE_ADVISE;
+> -	else if (!strcmp(str, "deny"))
+> +	else if (!strncmp(str,"deny",strlen("deny")+1))
+>  		huge = SHMEM_HUGE_DENY;
+> -	else if (!strcmp(str, "force"))
+> +	else if (!strncmp(str,"force",strlen("force")+1))
+>  		huge = SHMEM_HUGE_FORCE;
+>  	else
+>  		return -EINVAL;
+> @@ -5679,27 +5680,27 @@ static int __init setup_thp_shmem(char *str)
+>  				goto err;
+>  
+>  			nr = end - start + 1;
+> -			if (!strcmp(policy, "always")) {
+> +			if (!strncmp(policy,"always",strlen("always")+1)){
+>  				bitmap_set(&always, start, nr);
+>  				bitmap_clear(&inherit, start, nr);
+>  				bitmap_clear(&madvise, start, nr);
+>  				bitmap_clear(&within_size, start, nr);
+> -			} else if (!strcmp(policy, "advise")) {
+> +			} else if (!strncmp(policy,"advise",strlen("advise")+1)){
+>  				bitmap_set(&madvise, start, nr);
+>  				bitmap_clear(&inherit, start, nr);
+>  				bitmap_clear(&always, start, nr);
+>  				bitmap_clear(&within_size, start, nr);
+> -			} else if (!strcmp(policy, "inherit")) {
+> +			} else if (!strncmp(policy,"inherit",strlen("inherit")+1)){
+>  				bitmap_set(&inherit, start, nr);
+>  				bitmap_clear(&madvise, start, nr);
+>  				bitmap_clear(&always, start, nr);
+>  				bitmap_clear(&within_size, start, nr);
+> -			} else if (!strcmp(policy, "within_size")) {
+> +			} else if (!strncmp(policy,"within_size",strlen("within_size")+1)){
+>  				bitmap_set(&within_size, start, nr);
+>  				bitmap_clear(&inherit, start, nr);
+>  				bitmap_clear(&madvise, start, nr);
+>  				bitmap_clear(&always, start, nr);
+> -			} else if (!strcmp(policy, "never")) {
+> +			} else if (!strncmp(policy,"never",strlen("never")+1)){
+>  				bitmap_clear(&inherit, start, nr);
+>  				bitmap_clear(&madvise, start, nr);
+>  				bitmap_clear(&always, start, nr);
 
 
