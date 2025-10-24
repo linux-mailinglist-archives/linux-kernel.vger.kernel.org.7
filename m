@@ -1,58 +1,64 @@
-Return-Path: <linux-kernel+bounces-869472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0A2C07F67
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:50:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A378BC07F7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B22AB1A64FE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:51:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74F391891CF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E0E2D24A5;
-	Fri, 24 Oct 2025 19:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A8E2D12EB;
+	Fri, 24 Oct 2025 19:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="I82LRSAv"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sFezRd/9"
+Received: from smtp.smtpout.orange.fr (smtp-75.smtpout.orange.fr [80.12.242.75])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096992DE71C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3128224AE8;
+	Fri, 24 Oct 2025 19:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761335396; cv=none; b=gkdTwpkPPQlVPbmkMG40MZGwhKSCVOK4vDr09+OIuEK/qOz+UO3v0VEPfiNP7+TVux83X+2mSRwsQTpCDOxAaTxKSHIjrE5pymIy6fsiTrRtWiOAU4iFKxHjyR2nMsxjjNDSIdwUutZLTJcqaV+kKu7TWf7iCZs5ccc/MPxAIvk=
+	t=1761335493; cv=none; b=i0JQ0n1J/xpOMwknih+hzCOe/FbS33h1Oz9/3G0Ez+6DefnWkQEL17TNHa6hc/m1FnzI9TCjmiOJHaHbTJ70C3DA0coP4QKd3Dy2lGm3VpwZ4mP/Cc333tS/N9p2YOFJxhDespob6uvC6cLwOxKVXy5QUhYsIFUrkTH/YHDftgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761335396; c=relaxed/simple;
-	bh=yyP+Tm7kJTp/FTPHWDY2cJ/4N/U3YBzgLhdCGhkG+P8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wiv+SbSEZTLeFFjHf//HAGA/fvfXaxllyMeCYbzL22B7KxuuTML1AIpUaV3cP/mHlh7oVZgN+x6F89GLeqDAA/rAroJk9AxkfaUVigg1m6/qK6omCYxcaw2xDKfUMUynUEGWbJRjy02t9ZyBu68nPv+QIGoC6tuCVzo1e1sW+5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=I82LRSAv; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761335392;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1D4C7XeA5DQr9nxyfEg72e4UDxEu6XdeNiVsHiBcXX8=;
-	b=I82LRSAvUCFKGjt9gSFfL4FntKtfgW+sRZuk/XVBPOYvpz05zbApt/aji7gANXKpuxMP3X
-	2kh7phvkrpKoFryGPhHLQXWagzM/r/KY0p44frp1OTsRShGmUC7s2YtfhyMgpxahMV+qk3
-	DecBd5ff/gRb3isDwKrkZB8DOLIP8O0=
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Jim Mattson <jmattson@google.com>,
-	kvm@vger.kernel.org,
+	s=arc-20240116; t=1761335493; c=relaxed/simple;
+	bh=TgoRAttjZrkjv9UEZTNrJN2o1wcIKakkLiYhp3V8ZaQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lcmz+6KDVwwRP0fQ3pgUdhnrOjgMnJtl4gmM44nL0zRuB4YH064zzn+oz+2zWH8o10ufiwNykzgoKOFBXhR/SzlhUdv0WM2/tZY8XAOZ8g9ptQz6jaBI4pXPQIzJ4VWCoFK54+qs6t9+9bPhtOkbggPQtOOAfWFg9oV3+nidC8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sFezRd/9; arc=none smtp.client-ip=80.12.242.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id CNonv9t11B8skCNonvL6bw; Fri, 24 Oct 2025 21:51:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1761335482;
+	bh=J8pEsRZprLFB+bgyN5+No3D9zQP7+K5GO7ykUh+mzRg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=sFezRd/9ma2NVFM5wG/ffEsx2ZbXxhNxAV/vrtZT+vSkPJ1fjul8C28dVh8eyYS3G
+	 28SXYdLPj2HOAkS6zIT5auN36sVfmNTo87Oxnm5fgr1t9uHLvGBvTUrY5gzB0x4bQG
+	 rsjzderLpJRhE4eDrgDC4VM/mx8f7BTbkz4K6/tgG4KZZuDJY8ZJhP7RzHYeJU0gyh
+	 My9XPVNv7KgVXGwKxH1io60i9WRSWScfVlqoJhRHdK8rp9hh1GSDsocEmk9v61X+78
+	 A9lgB6umdY04PJJor81CJoIHczYJ1U/t4mN+EgJHItj3r6L0iu1E5sMwCyYkQxjbwV
+	 psDZO6qKxJI/Q==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 24 Oct 2025 21:51:22 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: andrea.porta@suse.com,
 	linux-kernel@vger.kernel.org,
-	Yosry Ahmed <yosryahmed@google.com>
-Subject: [kvm-unit-tests 7/7] x86/svm: Add more selective CR0 write and LMSW test cases
-Date: Fri, 24 Oct 2025 19:49:25 +0000
-Message-ID: <20251024194925.3201933-8-yosry.ahmed@linux.dev>
-In-Reply-To: <20251024194925.3201933-1-yosry.ahmed@linux.dev>
-References: <20251024194925.3201933-1-yosry.ahmed@linux.dev>
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	devicetree@vger.kernel.org
+Subject: [PATCH] of: overlay: Avoid spurious error messages in of_overlay_remove()
+Date: Fri, 24 Oct 2025 21:50:58 +0200
+Message-ID: <f756e04e8bc239b33a0428c2dd055f202e214f0b.1761335298.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,151 +66,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: Yosry Ahmed <yosryahmed@google.com>
+Make of_overlay_remove() tolerate ovcs_id being 0 without logging an error.
 
-Add more test cases that cover:
-- The priority between selective and non-selective CR0 intercepts.
-- Writes to CR0 that should not intercept (e.g. CR0.MP).
-- Writes to CR0 using LMSW, which should always intercept (even when
-  updating CR0.MP).
-
-Emulator variants of all test cases are added as well.
-
-The new tests exercises bugs fixed by:
-https://lore.kernel.org/kvm/20251024192918.3191141-1-yosry.ahmed@linux.dev/.
-
-Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- x86/svm_tests.c | 76 ++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 72 insertions(+), 4 deletions(-)
+This is needed for drivers/misc/rp1/rp1_pci.c where things are taken from
+DT or at runtime. In the former case, ovcs_id is unused and left to 0.
+Being able to tolerate such cases simplify error handling.
 
-diff --git a/x86/svm_tests.c b/x86/svm_tests.c
-index 71afb38a..2981f459 100644
---- a/x86/svm_tests.c
-+++ b/x86/svm_tests.c
-@@ -129,20 +129,36 @@ static bool finished_rsm_intercept(struct svm_test *test)
+This was suggested by Dan as a reply to patch [1].
+
+[1]: https://lore.kernel.org/lkml/4e92a271fdb98560c4e659556a1f3e99e7d0d38e.1760987458.git.christophe.jaillet@wanadoo.fr/
+
+---
+ drivers/of/overlay.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index 255e8362f600..5b4f42230e6c 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -1190,6 +1190,9 @@ int of_overlay_remove(int *ovcs_id)
+ 	struct overlay_changeset *ovcs;
+ 	int ret, ret_apply, ret_tmp;
  
- static void prepare_sel_cr0_intercept(struct svm_test *test)
- {
-+	/* Clear CR0.MP and CR0.CD as the tests will set either of them */
-+	vmcb->save.cr0 &= ~X86_CR0_MP;
- 	vmcb->save.cr0 &= ~X86_CR0_CD;
- 	vmcb->control.intercept |= (1ULL << INTERCEPT_SELECTIVE_CR0);
- }
- 
-+static void prepare_sel_nonsel_cr0_intercepts(struct svm_test *test)
-+{
-+	/* Clear CR0.MP and CR0.CD as the tests will set either of them */
-+	vmcb->save.cr0 &= ~X86_CR0_MP;
-+	vmcb->save.cr0 &= ~X86_CR0_CD;
-+	vmcb->control.intercept_cr_write |= (1ULL << 0);
-+	vmcb->control.intercept |= (1ULL << INTERCEPT_SELECTIVE_CR0);
-+}
++	if (*ovcs_id == 0)
++		return 0;
 +
- static void __test_cr0_write_bit(struct svm_test *test, unsigned long bit,
--				 bool intercept, bool fep)
-+				 bool is_lmsw, bool intercept, bool fep)
- {
-+	unsigned short msw;
- 	unsigned long cr0;
- 
- 	cr0 = read_cr0();
- 	cr0 |= bit;
-+	msw = cr0 & 0xfUL;
- 	test->scratch = cr0;
- 
--	asm_conditional_fep_safe(fep, "mov %0,%%cr0", "r"(cr0));
-+	if (is_lmsw)
-+		asm_conditional_fep_safe(fep, "lmsw %0", "r"(msw));
-+	else
-+		asm_conditional_fep_safe(fep, "mov %0,%%cr0", "r"(cr0));
- 
- 	/* This code should be unreachable when an intercept is expected */
- 	report_svm_guest(!intercept, test, "Expected intercept on CR0 write");
-@@ -151,12 +167,34 @@ static void __test_cr0_write_bit(struct svm_test *test, unsigned long bit,
- /* MOV-to-CR0 updating CR0.CD is intercepted by the selective intercept */
- static void test_sel_cr0_write_intercept(struct svm_test *test)
- {
--	__test_cr0_write_bit(test, X86_CR0_CD, true, false);
-+	__test_cr0_write_bit(test, X86_CR0_CD, false, true, false);
- }
- 
- static void test_sel_cr0_write_intercept_emul(struct svm_test *test)
- {
--	__test_cr0_write_bit(test, X86_CR0_CD, true, true);
-+	__test_cr0_write_bit(test, X86_CR0_CD, false, true, true);
-+}
-+
-+/* MOV-to-CR0 updating CR0.MP is NOT intercepted by the selective intercept */
-+static void test_sel_cr0_write_nointercept(struct svm_test *test)
-+{
-+	__test_cr0_write_bit(test, X86_CR0_MP, false, false, false);
-+}
-+
-+static void test_sel_cr0_write_nointercept_emul(struct svm_test *test)
-+{
-+	__test_cr0_write_bit(test, X86_CR0_MP, false, false, true);
-+}
-+
-+/* LMSW updating CR0.MP is intercepted by the selective intercept */
-+static void test_sel_cr0_lmsw_intercept(struct svm_test *test)
-+{
-+	__test_cr0_write_bit(test, X86_CR0_MP, true, false, false);
-+}
-+
-+static void test_sel_cr0_lmsw_intercept_emul(struct svm_test *test)
-+{
-+	__test_cr0_write_bit(test, X86_CR0_MP, true, false, true);
- }
- 
- static bool check_sel_cr0_intercept(struct svm_test *test)
-@@ -165,6 +203,18 @@ static bool check_sel_cr0_intercept(struct svm_test *test)
- 		vmcb->save.cr0 != test->scratch;
- }
- 
-+static bool check_nonsel_cr0_intercept(struct svm_test *test)
-+{
-+	return vmcb->control.exit_code == SVM_EXIT_WRITE_CR0 &&
-+		vmcb->save.cr0 != test->scratch;
-+}
-+
-+static bool check_cr0_nointercept(struct svm_test *test)
-+{
-+	return vmcb->control.exit_code == SVM_EXIT_VMMCALL &&
-+		vmcb->save.cr0 == test->scratch;
-+}
-+
- static void prepare_cr3_intercept(struct svm_test *test)
- {
- 	default_prepare(test);
-@@ -3473,6 +3523,24 @@ struct svm_test svm_tests[] = {
- 	{ "sel cr0 write intercept emulate", fep_supported,
- 	  prepare_sel_cr0_intercept, default_prepare_gif_clear,
- 	  test_sel_cr0_write_intercept_emul, default_finished, check_sel_cr0_intercept},
-+	{ "sel cr0 write intercept priority", default_supported,
-+	  prepare_sel_nonsel_cr0_intercepts, default_prepare_gif_clear,
-+	  test_sel_cr0_write_intercept, default_finished, check_nonsel_cr0_intercept},
-+	{ "sel cr0 write intercept priority emulate", fep_supported,
-+	  prepare_sel_nonsel_cr0_intercepts, default_prepare_gif_clear,
-+	  test_sel_cr0_write_intercept_emul, default_finished, check_nonsel_cr0_intercept},
-+	{ "sel cr0 write nointercept", default_supported,
-+	  prepare_sel_cr0_intercept, default_prepare_gif_clear,
-+	  test_sel_cr0_write_nointercept, default_finished, check_cr0_nointercept},
-+	{ "sel cr0 write nointercept emulate", fep_supported,
-+	  prepare_sel_cr0_intercept, default_prepare_gif_clear,
-+	  test_sel_cr0_write_nointercept_emul, default_finished, check_cr0_nointercept},
-+	{ "sel cr0 lmsw intercept", default_supported,
-+	  prepare_sel_cr0_intercept, default_prepare_gif_clear,
-+	  test_sel_cr0_lmsw_intercept, default_finished, check_sel_cr0_intercept},
-+	{ "sel cr0 lmsw intercept emulate", fep_supported,
-+	  prepare_sel_cr0_intercept, default_prepare_gif_clear,
-+	  test_sel_cr0_lmsw_intercept_emul, default_finished, check_sel_cr0_intercept},
- 	{ "cr3 read intercept", default_supported,
- 	  prepare_cr3_intercept, default_prepare_gif_clear,
- 	  test_cr3_intercept, default_finished, check_cr3_intercept },
+ 	if (devicetree_corrupt()) {
+ 		pr_err("suspect devicetree state, refuse to remove overlay\n");
+ 		ret = -EBUSY;
 -- 
-2.51.1.821.gb6fe4d2222-goog
+2.51.0
 
 
