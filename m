@@ -1,151 +1,133 @@
-Return-Path: <linux-kernel+bounces-868796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E5E9C06294
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:06:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0855C06285
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BEB13BD195
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:00:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 581533B6C2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB223074A4;
-	Fri, 24 Oct 2025 12:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04F331280B;
+	Fri, 24 Oct 2025 12:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSe3k1NF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GA6beHVk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C467483;
-	Fri, 24 Oct 2025 12:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2144F30E0D9;
+	Fri, 24 Oct 2025 12:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761307200; cv=none; b=YhwALlILQDTWZbVxZpOxCJbOlcM3DTaij6r0BOKGdddyhIDAwGFvCOCyy/V3n90kGdlLYKiFnvJoZ1I9pYqAw8nT2Y6XDzgATAsopfTFU29yWRJzc/tHKSZokLzb4KqRn/c4owfgFegVOR9FxCOcBIvb8wnozO958A5fVvkLSH4=
+	t=1761307239; cv=none; b=PlC2vR7dgGb0C6+MxrHbOZWGYlwUpKXTgyV8xBKeyYoJ6jYcnopFDaFDH8ewgTKhidzG25JIN8KjhAKhMZWU+mUz6tqXEaFt9JMtM4aUsAupEfA11OIdqY8oHvZdYH8m5r2X3UuN27Gh4xGKo/fHT9yhqvMIjvklYFkf6fWkptg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761307200; c=relaxed/simple;
-	bh=mwXxLlHwcTHyM39SvUYMrdYLE2o4P2lXhNWijwv5uq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Noebst2DWrp6ItuTvYTwH0yESXN2GUQy3pu4mMJ0S2QUC8GqMkTmej7BlmmzYKyyOgFYsWqhP1fcutjlzXHZ83X8XxSXmZSDjO+3x5cyhyDbjvjUw4lyuRBhWWhY+xDErGSpW9Rm8pjO39UcBFcCxUBxaG/EotiQTuAHfw/jj3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSe3k1NF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE5EFC4CEF1;
-	Fri, 24 Oct 2025 11:59:54 +0000 (UTC)
+	s=arc-20240116; t=1761307239; c=relaxed/simple;
+	bh=mY0NKPFfmhr1T63HdffWMpcsFE4SlVTte2OxJPJe5q0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eOtnwqfkkY5kiOKe4dOUbPzfjjQVEXLGg0bAQ1Uw3AsfmUUzdWY8Mhj0E3k8ZSd0VBhwqqLLdnwQSqTpZrIdVmvjtuNbjGW1zjpxCsPiQ5w0+w8q0u2ufUuQ0LPCqi9gVe7WfxgHBL91Ne6K7RzajZfiycmakzxCb1ydp51Kf58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GA6beHVk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 551EAC4CEF1;
+	Fri, 24 Oct 2025 12:00:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761307200;
-	bh=mwXxLlHwcTHyM39SvUYMrdYLE2o4P2lXhNWijwv5uq8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FSe3k1NFXHPKQGhrD1pTPUz+eNo4YkXPh1bOXFukxY8C2TvbOhEbdv2AoPs2Qsbne
-	 NJkHZUvDBmKLslbfnBN3JgTveIzXRuroLurG3kH9dqPSJofu8F36qGRGI7coUoNyhf
-	 tQlpocd4JqT620SXPVx6TD/uk7fFHGVPZS8HcrGoi5ZQ0GJ/rxTGqzU12CPKL+g0jD
-	 bzsuNV+BeSGM4r5wcZVQj7U+EigEXJOVExaRGYfg1W/ZEnmTlT7skjPl2R33OLdK4X
-	 QnWboqn7EkTChJauIZ2+HqhnzHJwOQFV8M7yMuKfA+QGyx9+7Geoa4lhQEaP447R8+
-	 OxFCsgPjUJYew==
-Date: Fri, 24 Oct 2025 17:29:45 +0530
-From: "mani@kernel.org" <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Stefan Roese <stefan.roese@mailbox.org>, 
-	"Musham, Sai Krishna" <sai.krishna.musham@amd.com>, "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>, 
-	"Bandi, Ravi Kumar" <ravib@amazon.com>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>, 
-	"bhelgaas@google.com" <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
-	"kwilczynski@kernel.org" <kwilczynski@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"Simek, Michal" <michal.simek@amd.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, Sean Anderson <sean.anderson@linux.dev>, 
-	"Yeleswarapu, Nagaradhesh" <nagaradhesh.yeleswarapu@amd.com>
-Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-Message-ID: <ykzvrzxjv4pyosmz6nus4h35hpwcjt3kemugo3m5zl5g3xwbhb@ugcy2exwshi5>
-References: <9c7e43c3-24e9-4b08-a6ce-2035b50226f4@mailbox.org>
- <20251023161100.GA1297651@bhelgaas>
+	s=k20201202; t=1761307238;
+	bh=mY0NKPFfmhr1T63HdffWMpcsFE4SlVTte2OxJPJe5q0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GA6beHVk0T7eqma9TD1yfynJIZUzmhZWrQSGs2EbMYvTG0m96tG7jC1m+Z5Ic+igt
+	 29PmR2o/pGmZVtNu9HPB6Ye8/TIOIVlUq69IzYMuAOnOYK+YS4b4MKqlqMf37byeTh
+	 etMlzJbKT4JMLQN/4UCOOX+FpomsE8Sqpyf5/b4hIbPph51zoQc7tJ72o/dNRKvuUw
+	 d4SEjXTs9sB6ct0+ynRY0O/vMa26IBbUAUzzdmrsOPm8v1+9mhjyA/b+/OCH1tPqeg
+	 4aASNTRFCdlPi6DdWTdbxv4LbxaaRnI51ukDWFbj5KzDebv7Yk8PxrpM437HHEbHCk
+	 jnt3Lz5egnOmw==
+Message-ID: <b486bb52-7e95-44d3-ac65-1c28d4d0e40e@kernel.org>
+Date: Fri, 24 Oct 2025 07:00:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251023161100.GA1297651@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 06/10] arm64: dts: socfpga: agilex5: add dwxgmac
+ compatible
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Matthew Gerlach <matthew.gerlach@altera.com>
+Cc: kernel@pengutronix.de, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20251024-v6-12-topic-socfpga-agilex5-v5-0-4c4a51159eeb@pengutronix.de>
+ <20251024-v6-12-topic-socfpga-agilex5-v5-6-4c4a51159eeb@pengutronix.de>
+Content-Language: en-US
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <20251024-v6-12-topic-socfpga-agilex5-v5-6-4c4a51159eeb@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 23, 2025 at 11:11:00AM -0500, Bjorn Helgaas wrote:
-> On Thu, Oct 23, 2025 at 09:03:07AM +0200, Stefan Roese wrote:
-> > On 10/23/25 08:35, Musham, Sai Krishna wrote:
-> > > > -----Original Message-----
-> > > > From: Stefan Roese <stefan.roese@mailbox.org>
-> > > > On 10/22/25 14:48, Musham, Sai Krishna wrote:
-> > ...
+Hi Steffen,
+
+On 10/24/25 06:49, Steffen Trumtrar wrote:
+> The gmac0/1/2 are also compatible to the more generic "snps,dwxgmac"
+> compatible. The platform code checks this to decide if it is a GMAC or
+> GMAC4 compatible IP core.
 > 
-> > > > > > > We even don’t need ravi patch, as we have tested this at
-> > > > > > > our end it works fine by just updating interrupt-map
-> > > > > > > Property. We need to now understand the difference in
-> > > > > > > design.
-> > > > > > 
-> > > > > > Ok, please let us know with your findings. In the meantime,
-> > > > > > I'll keep Ravi's patch in tree, as it seems to be required
-> > > > > > on his setup.
-> > > > > 
-> > > > > We tested on Linux version 6.12.40 without applying either
-> > > > > Stefan's or Ravi's patches.  Instead, we applied only the
-> > > > > following interrupt-map property change (entries 0,1,2,3) and
-> > > > > verified that legacy interrupts are working correctly.
-> > > > > 
-> > > > > interrupt-map = <0 0 0 1 &pcie_intc_0 0>,
-> > > > > <0 0 0 2 &pcie_intc_0 1>,
-> > > > > <0 0 0 3 &pcie_intc_0 2>,
-> > > > > <0 0 0 4 &pcie_intc_0 3>;
-> > > > > 
-> > > > > 38:       1143          0  pl_dma:RC-Event  16 Level     80000000.axi-pcie
-> > > > > 39:       1143          0  pl_dma:INTx   0 Level     nvme0q0, nvme0q1
-> > > > 
-> > > > Okay. Same here. I don't need Ravi's patch for the INTx bit
-> > > > enabling.
-> > > > 
-> > > > I understand that you want us to change the interrupt map in the
-> > > > auto- generated device-tree from Vivado. Which is IMHO a bit
-> > > > "suboptimal".
-> > > > 
-> > > > I would prefer to have a solution which works out-of-the-box,
-> > > > w/o the need to manually change DT properties. Is it planned to
-> > > > change / fix this interrupt map in pl.dtsi generated with a
-> > > > newer version of Vivado?
-> > > 
-> > > Yes Stefan, this will be fixed in the newer versions and the
-> > > auto-generated device tree will include the correct interrupt-map
-> > > property entries.
-> > 
-> > Understood. And thanks the update on this.
-> > 
-> > @Bjorn & Mani, this patch can be dropped then.
+> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> ---
+>   arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
 > 
-> Just to confirm, we can drop both of these patches:
-> 
->   https://patch.msgid.link/20250920225232.18757-1-ravib@amazon.com
->   https://patch.msgid.link/20251021154322.973640-1-stefan.roese@mailbox.org
-> 
-> AND there are no DTs in the field that will need to be updated for
-> things to work?
+> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> index 4ccfebfd9d322..d0c139f03541e 100644
+> --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> @@ -536,7 +536,8 @@ qspi: spi@108d2000 {
+>   
+>   		gmac0: ethernet@10810000 {
+>   			compatible = "altr,socfpga-stmmac-agilex5",
+> -				     "snps,dwxgmac-2.10";
+> +				     "snps,dwxgmac-2.10",
+> +				     "snps,dwxgmac";
+>   			reg = <0x10810000 0x3500>;
+>   			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
+>   			interrupt-names = "macirq";
+> @@ -649,7 +650,8 @@ queue7 {
+>   
+>   		gmac1: ethernet@10820000 {
+>   			compatible = "altr,socfpga-stmmac-agilex5",
+> -				     "snps,dwxgmac-2.10";
+> +				     "snps,dwxgmac-2.10",
+> +				     "snps,dwxgmac";
+>   			reg = <0x10820000 0x3500>;
+>   			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
+>   			interrupt-names = "macirq";
+> @@ -762,7 +764,8 @@ queue7 {
+>   
+>   		gmac2: ethernet@10830000 {
+>   			compatible = "altr,socfpga-stmmac-agilex5",
+> -				     "snps,dwxgmac-2.10";
+> +				     "snps,dwxgmac-2.10",
+> +				     "snps,dwxgmac";
+>   			reg = <0x10830000 0x3500>;
+>   			interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
+>   			interrupt-names = "macirq";
 > 
 
-There are no upstream DTs making use of this driver. Also, the upstream binding
-example seems to be correct:
+I just sent a patch for this yesterday:
 
-            interrupt-map = <0 0 0 1 &pcie_intc_0 0>,
-                            <0 0 0 2 &pcie_intc_0 1>,
-                            <0 0 0 3 &pcie_intc_0 2>,
-                            <0 0 0 4 &pcie_intc_0 3>;
+https://lore.kernel.org/all/20251023214012.283600-1-dinguyen@kernel.org/
 
-Moreover, if any DTs were using different 'interrupt-map' property, then INTx
-wouldn't be working for them. So most likely they were all using MSIs as we
-haven't received any reports up until now.
+I'll make sure to include you on future submissions.
 
-Hence, IMO we should be good to ignore the patch from Stefan. Though, I still
-have a concern on whether the hardware is enabling INTx by default or not [1].
-Until that is concluded, we should keep Ravi's patch.
+I didn't add it to the bindings document though.
 
-- Mani
-
-[1] https://lore.kernel.org/linux-pci/DM4PR12MB6158C6E6D6CC8BBCD5F6C3B1CDF0A@DM4PR12MB6158.namprd12.prod.outlook.com/
-
--- 
-மணிவண்ணன் சதாசிவம்
+Dinh
 
