@@ -1,333 +1,232 @@
-Return-Path: <linux-kernel+bounces-868622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86431C05A3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:42:11 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680BFC05A55
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EE30189E625
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:42:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9EDF63550F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E2B3101D8;
-	Fri, 24 Oct 2025 10:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FBC30C363;
+	Fri, 24 Oct 2025 10:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f8SBe+CV"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J3aw87uT"
+Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80C7146585;
-	Fri, 24 Oct 2025 10:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A96E18FDDE
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761302506; cv=none; b=u12PPbqHCNLdU0SkaZsAl/0yFvZVrl3VF3PKc0pY7w+eD4SOl6EvTqmlyuA79/Wl0Hq7X+S3exqebZkFfY+dsS55M1gWp4wMUH+7UdVRCloDgRulQxQe7IJkHu17mIymc2s2QZnMFWnudyITfj8VMtd1D/uXDyUePS/2PEa8Fw8=
+	t=1761302679; cv=none; b=iiziBe8nUO8Na02N9VKvQ1zaK9abTYVFUS7b7vJTYJK1hEJ0kqPeLcrydg5UgxGKqy6H5/UApuJ49CZuJcMvQdF1FgOV1YAoxohs0qj30QJmj4ryiN72eBcpQbCidYncJItU3IkYQu3Crre7uCPo1yEVdgRqfIicMd2S88c3sMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761302506; c=relaxed/simple;
-	bh=fXL/XYAKyPRWPyekI6E49EFt8QJxlnZtekWFaIU9Yeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N+AzWEYKTBnkLpSrDEDoPKC/UXskhweo9Xxfypp8PLNALlG/Rov3PawiCSyHj6Nt4LjfxU+huRTYkuFtruWusf/GibDt3usZLWpfg0sy9iwnwrw6B5NKq7Rlk8LTED9Vp8EKP9bozveZfEq43vuTygfOM0tfVSAU4I1ZlqOK5E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f8SBe+CV; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Er4bARwpXMjZqI0mWGWcvCvZFUERMQG43Oiv5EcZcgA=; b=f8SBe+CV3BMAK4ghr54SE+SpLC
-	+gVTsUS3+wRihhplqA5eA2ATGVPTheQgcWNdoP653YNPWw5S0okwwA2pg+SnJpibrwr7h8antvYJV
-	XbgtgyOYh9sQpobuigPaFCtJ1gFBN2D5G/sFmz6ESkt482ul60Wi5XrwiI1lY66Hya08wfqYx4T4b
-	nMW+xOyOn2WWBBW23fQ74mI7+VZ1zop7/HYVw3WjoeZZm9ASAfR9C0uUj3MDnWFo1hwHso4fmwOX0
-	pTXto9hi9Lg4gUMoI8MVNZVhl6dv5EE+YrSCCZ8A0KUEPDqQ3owDxjbSk7Xih97mSNy92CuozGP5T
-	PO37CfEg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCFEV-0000000FRAD-3qyi;
-	Fri, 24 Oct 2025 10:41:21 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5FD6030023C; Fri, 24 Oct 2025 12:41:19 +0200 (CEST)
-Date: Fri, 24 Oct 2025 12:41:19 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@kernel.org>, jremus@linux.ibm.com
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, x86@kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
-	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
-Subject: Re: [PATCH v16 0/4] perf: Support the deferred unwinding
- infrastructure
-Message-ID: <20251024104119.GJ4068168@noisy.programming.kicks-ass.net>
-References: <20251007214008.080852573@kernel.org>
- <20251023150002.GR4067720@noisy.programming.kicks-ass.net>
- <20251024092926.GI4068168@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1761302679; c=relaxed/simple;
+	bh=jNa/J7SUUBl35Onjepv+If+zX8838Xw+hVVHMSn9p7o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lmae6wE1IqDchpuFs3u6kPnjG7EEQl4Bw7JoxrmeMvBeO3KQKHRnxrVWeieKivahn8SBXL4h8immT9M/WcnRauvJQ42kN85J3gOfX9lvr2mJfBc0BhGWYHOAFksyIUn/+kB3qNiuEY5UjRGiySaIHoCHeJo10Cxwk+Vs7aPL0BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J3aw87uT; arc=none smtp.client-ip=74.125.224.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-63e0dd765a0so1902655d50.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:44:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761302676; x=1761907476; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yDrc6GQPhYnDILV4Yve5gdN5tbHzw4YDRq3NBsINCC4=;
+        b=J3aw87uTECp5NSvsZCBWtjurBiKlmfvx5T21KVLpzsteszqyiTY4oqLKYezHo85YY7
+         FkaFPIrYsVSY3V2nD3wSccTNqGzUcc/KXz1qtOkfK84tZA4bTAyhwuwHaxxdsjgHtf94
+         GuC3yXpqGnFVdjJ0a4KLy2s/EquDS1zkfbTsm2VLVp7RC1NuAXlaAqM0SJAiPfoq6Pxt
+         iYGcrPaHti+AZcUM9GXXD6CF3kDaiRytKCkc/sFRAMjM7WltYNEsM68QetGEP+nMggj7
+         +41wzhL1gwLNGasspvWiWRmyffqbLCzsNGQzyRlwrOhnoEzhdEot84baZ6mwnoaPkKpf
+         emDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761302676; x=1761907476;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yDrc6GQPhYnDILV4Yve5gdN5tbHzw4YDRq3NBsINCC4=;
+        b=ifSJKWP+DbsYu3o6QKOcQAjXV6OoXsCdxSCwJQXD1h5uWHlaNnVq+pIEXnpyX9H8DI
+         engKtf0dDC0JWzcjy3NmPz3OjvHrUQIdy2uyhFgAltNuWN0R6KK6aNwOcyG1EYcKX7Y5
+         BOjv9V2YF9m/42Riw2jsiRcyDWokmiTIXY3xzH4jDxHmbc2ggXevFHuma56J5E57fGt2
+         1EjODgA8qEFSjR2c5df4CxGh2vKpoQ7hqnuOpLJTCJwooznSikvCaTCVSp8wGktksyFL
+         HzqBqIazpkbpQIjUVzE7Ha34TKYJVE+jrc5dPlegeldAxkVOw2xN7ZJhVVdKe0NRxAvf
+         MGQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIu0VIi2X3sGBSfxBYMmwbmrf0zDWnqxuPpvfmjz9gZiGVSM42iN3lNwXZpbUdAe4+PltoKLMSwiG3DVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+wU2S4peEcMVLlE5IJMp6DWNP11IF/uXmSSpPxNEWDUeSd8Kb
+	iTPT66id8tTSLEFAkdLJS39OqW+EUMYh/ujn7ZYybCOp0W7SOBF2pYh/Ar3qGkIInXTlX0Q6jJE
+	6+xli75gDxqzgY/BhydcdvBz1EupNg7qI35cnjAm4GA==
+X-Gm-Gg: ASbGncvZOfXSUJiAudHfACHstCqDn3TNAwjBzulrkiElUCihCXstv1J6zxhk2p9BqKP
+	doqFd8J53WarEotpsd5NYUq8LzIxaZqlOmxV7zWHWZZdeWm/HEvmi4yzYaRv4J9XQjlddnrS5vE
+	bAEpfKhDwuyon5IMvxQShgB1WuxF7eRDnSU8XZ6w0A9/hQzizPhT6ztk6Bhf5XigSRsrM4wGmtK
+	OhbTedpnvSUQbu05w97KmVUYnElj3QtSh0gslSK6v1JtGsBPU9grQBzKf/EGmnP6l8e3XKh
+X-Google-Smtp-Source: AGHT+IEk162CNV/HTeTP+EbQADVSjJepjQR6mTG44kaaL46hSa5PPLNcwyV02Tna+/k0FyPQLkha7E/815z4TlLX2p4=
+X-Received: by 2002:a05:690c:3203:b0:784:180e:fd49 with SMTP id
+ 00721157ae682-784180f0a97mr412861637b3.5.1761302676319; Fri, 24 Oct 2025
+ 03:44:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024092926.GI4068168@noisy.programming.kicks-ass.net>
+References: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
+ <CAPDyKFprP1d-9Ojwz7QaVBbdFumPmRoVnifrP8v+eL6FHR3Unw@mail.gmail.com> <7acba50b-8c1e-4509-8100-3a65467d2d87@oss.qualcomm.com>
+In-Reply-To: <7acba50b-8c1e-4509-8100-3a65467d2d87@oss.qualcomm.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 24 Oct 2025 12:44:00 +0200
+X-Gm-Features: AS18NWAv-FONlFrX1gjqXCW9VKk88FoqVyIeaznNcXjkVlZGoJBK2Lh8mAGu73k
+Message-ID: <CAPDyKFqVKWCApVFjYpgXa2x3N9F7O1bGBBPz0JfNrWBYtg=M0A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] PM QoS: Add CPU affinity latency QoS support and
+ resctrl integration
+To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Cc: Zhongqiu Han <quic_zhonhan@quicinc.com>, rafael@kernel.org, lenb@kernel.org, 
+	pavel@kernel.org, tony.luck@intel.com, reinette.chatre@intel.com, 
+	Dave.Martin@arm.com, james.morse@arm.com, amit.kucheria@linaro.org, 
+	christian.loehle@arm.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lukasz.luba@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 24, 2025 at 11:29:26AM +0200, Peter Zijlstra wrote:
-> On Thu, Oct 23, 2025 at 05:00:02PM +0200, Peter Zijlstra wrote:
-> 
-> > Trouble is, pretty much every unwind is 510 entries long -- this cannot
-> > be right. I'm sure there's a silly mistake in unwind/user.c but I'm too
-> > tired to find it just now. I'll try again tomorrow.
-> 
-> PEBKAC
+On Fri, 24 Oct 2025 at 10:40, Zhongqiu Han
+<zhongqiu.han@oss.qualcomm.com> wrote:
+>
+> On 10/23/2025 7:03 PM, Ulf Hansson wrote:
+> > On Mon, 21 Jul 2025 at 14:41, Zhongqiu Han <quic_zhonhan@quicinc.com> w=
+rote:
+> >>
+> >> Hi all,
+> >>
+> >> This patch series introduces support for CPU affinity-based latency
+> >> constraints in the PM QoS framework. The motivation is to allow
+> >> finer-grained power management by enabling latency QoS requests to tar=
+get
+> >> specific CPUs, rather than applying system-wide constraints.
+> >>
+> >> The current PM QoS framework supports global and per-device CPU latenc=
+y
+> >> constraints. However, in many real-world scenarios, such as IRQ affini=
+ty
+> >> or CPU-bound kernel threads, only a subset of CPUs are
+> >> performance-critical. Applying global constraints in such cases
+> >> unnecessarily prevents other CPUs from entering deeper C-states, leadi=
+ng
+> >> to increased power consumption.
+> >>
+> >> This series addresses that limitation by introducing a new interface t=
+hat
+> >> allows latency constraints to be applied to a CPU mask. This is
+> >> particularly useful on heterogeneous platforms (e.g., big.LITTLE) and
+> >> embedded systems where power efficiency is critical for example:
+> >>
+> >>                          driver A       rt kthread B      module C
+> >>    CPU IDs (mask):         0-3              2-5              6-7
+> >>    target latency(us):     20               30               100
+> >>                            |                |                |
+> >>                            v                v                v
+> >>                            +---------------------------------+
+> >>                            |        PM  QoS  Framework       |
+> >>                            +---------------------------------+
+> >>                            |                |                |
+> >>                            v                v                v
+> >>    CPU IDs (mask):        0-3            2-3,4-5            6-7
+> >>    runtime latency(us):   20             20, 30             100
+> >>
+> >> The current implementation includes only cpu_affinity_latency_qos_add(=
+)
+> >> and cpu_affinity_latency_qos_remove() interfaces. An update interface =
+is
+> >> planned for future submission, along with PM QoS optimizations in the =
+UFS
+> >> subsystem.
+> >
+> > My apologies for the very late reply.
+> >
+>
+> Hi Uffe,
+> I truly appreciate your review and discussion~
+>
+>
+> > To fully understand how this new QoS interface is going to be used, I
+> > really think we need to include a user of it, as part of the $subject
+> > series.
+>
+> Yes, Patch 5/5 using the cpu_affinity_latency_qos_* helper functions to
+> replace the logic in pseudo-locking that uses dev_pm_qos_request to
+> restrict CPU latency for known CPUs (via a mask). Actually, I'm also
+> looking for more users =E2=80=94 for example, we plan to use these interf=
+aces
+> in our UFS module in the future to implement optimizations. And I also
+> plan to support it in userspace on patch V3.
 
-Anyway, while staring at this, I noted that the perf userspace unwind
-code has a few bits that are missing from the new shiny thing.
+Right, in regards to the resctrl/pseudo-locking user of this new QoS
+interface, this whole series looks more like a refactoring to me.
 
-How about something like so? This add an optional arch specific unwinder
-at the very highest priority (bit 0) and uses that to do a few extra
-bits before disabling itself and falling back to whatever lower prio
-unwinder to do the actual unwinding.
+My point is, for this reason alone, I don't think it makes sense to
+introduce this new QoS interface. We need another user too, like UFS,
+to understand how this would work in real practice and to allow it to
+be merged.
 
----
- arch/x86/events/core.c             |   40 ---------------------------
- arch/x86/include/asm/unwind_user.h |    4 ++
- arch/x86/include/asm/uprobes.h     |    9 ++++++
- arch/x86/kernel/unwind_user.c      |   53 +++++++++++++++++++++++++++++++++++++
- arch/x86/kernel/uprobes.c          |   32 ++++++++++++++++++++++
- include/linux/unwind_user_types.h  |    5 ++-
- kernel/unwind/user.c               |    7 ++++
- 7 files changed, 109 insertions(+), 41 deletions(-)
+>
+> >
+> > Besides the comments from Rafael and Christian, I also wonder how the
+> > user of the interface should know what CPU-mask it should use? For
+> > example, how does it know the CPU-mask for the big-cores and for the
+> > little-cores? In particular as I assume the user isn't a platform
+> > specific driver, but rather a generic driver that should work across
+> > various platforms.
+>
+> This patch introduces cpu_affinity_latency_qos_* helper functions as an
+> extension to the kernel existing cpu_latency_qos_* interfaces. These new
+> helpers enable users to apply latency constraints to specific CPUs via a
+> mask, allowing for more precise power management when the target CPUs
+> are known in advance.
+> If the user is a generic driver, there are two options:
+>
+> 1.One is to use the existing cpu_latency_qos_* interfaces to directly
+> restrict all CPUs from entering idle, since the driver may not know
+> which specific CPUs need to be constrained.
 
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2845,46 +2845,6 @@ static unsigned long get_segment_base(un
- 	return get_desc_base(desc);
- }
- 
--#ifdef CONFIG_UPROBES
--/*
-- * Heuristic-based check if uprobe is installed at the function entry.
-- *
-- * Under assumption of user code being compiled with frame pointers,
-- * `push %rbp/%ebp` is a good indicator that we indeed are.
-- *
-- * Similarly, `endbr64` (assuming 64-bit mode) is also a common pattern.
-- * If we get this wrong, captured stack trace might have one extra bogus
-- * entry, but the rest of stack trace will still be meaningful.
-- */
--static bool is_uprobe_at_func_entry(struct pt_regs *regs)
--{
--	struct arch_uprobe *auprobe;
--
--	if (!current->utask)
--		return false;
--
--	auprobe = current->utask->auprobe;
--	if (!auprobe)
--		return false;
--
--	/* push %rbp/%ebp */
--	if (auprobe->insn[0] == 0x55)
--		return true;
--
--	/* endbr64 (64-bit only) */
--	if (user_64bit_mode(regs) && is_endbr((u32 *)auprobe->insn))
--		return true;
--
--	return false;
--}
--
--#else
--static bool is_uprobe_at_func_entry(struct pt_regs *regs)
--{
--	return false;
--}
--#endif /* CONFIG_UPROBES */
--
- #ifdef CONFIG_IA32_EMULATION
- 
- #include <linux/compat.h>
---- a/arch/x86/include/asm/unwind_user.h
-+++ b/arch/x86/include/asm/unwind_user.h
-@@ -8,4 +8,8 @@
- 	.fp_off		= -2*(ws),			\
- 	.use_fp		= true,
- 
-+#define HAVE_UNWIND_USER_ARCH 1
-+
-+extern int unwind_user_next_arch(struct unwind_user_state *state);
-+
- #endif /* _ASM_X86_UNWIND_USER_H */
---- a/arch/x86/include/asm/uprobes.h
-+++ b/arch/x86/include/asm/uprobes.h
-@@ -62,4 +62,13 @@ struct arch_uprobe_task {
- 	unsigned int			saved_tf;
- };
- 
-+#ifdef CONFIG_UPROBES
-+extern bool is_uprobe_at_func_entry(struct pt_regs *regs);
-+#else
-+static bool is_uprobe_at_func_entry(struct pt_regs *regs)
-+{
-+	return false;
-+}
-+#endif /* CONFIG_UPROBES */
-+
- #endif	/* _ASM_UPROBES_H */
---- /dev/null
-+++ b/arch/x86/kernel/unwind_user.c
-@@ -0,0 +1,53 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <linux/unwind_user.h>
-+#include <linux/uprobes.h>
-+#include <linux/uaccess.h>
-+#include <linux/sched/task_stack.h>
-+#include <asm/processor.h>
-+#include <asm/tlbflush.h>
-+
-+int unwind_user_next_arch(struct unwind_user_state *state)
-+{
-+	struct pt_regs *regs = task_pt_regs(current);
-+
-+	/* only once, on the first iteration */
-+	state->available_types &= ~UNWIND_USER_TYPE_ARCH;
-+
-+	/* We don't know how to unwind VM86 stacks. */
-+	if (regs->flags & X86_VM_MASK) {
-+		state->done = true;
-+		return 0;
-+	}
-+
-+	/*
-+	 * If we are called from uprobe handler, and we are indeed at the very
-+	 * entry to user function (which is normally a `push %rbp` instruction,
-+	 * under assumption of application being compiled with frame pointers),
-+	 * we should read return address from *regs->sp before proceeding
-+	 * to follow frame pointers, otherwise we'll skip immediate caller
-+	 * as %rbp is not yet setup.
-+	 */
-+	if (!is_uprobe_at_func_entry(regs))
-+		return -EINVAL;
-+
-+#ifdef CONFIG_COMPAT
-+	if (state->ws == sizeof(int)) {
-+		unsigned int retaddr;
-+		int ret = get_user(retaddr, (unsigned int __user *)regs->sp);
-+		if (ret)
-+			return ret;
-+
-+		state->ip = retaddr;
-+		return 0;
-+	}
-+#endif
-+	unsigned long retaddr;
-+	int ret = get_user(retaddr, (unsigned long __user *)regs->sp);
-+	if (ret)
-+		return ret;
-+
-+	state->ip = retaddr;
-+	return 0;
-+}
-+
---- a/arch/x86/kernel/uprobes.c
-+++ b/arch/x86/kernel/uprobes.c
-@@ -1791,3 +1791,35 @@ bool arch_uretprobe_is_alive(struct retu
- 	else
- 		return regs->sp <= ret->stack;
- }
-+
-+/*
-+ * Heuristic-based check if uprobe is installed at the function entry.
-+ *
-+ * Under assumption of user code being compiled with frame pointers,
-+ * `push %rbp/%ebp` is a good indicator that we indeed are.
-+ *
-+ * Similarly, `endbr64` (assuming 64-bit mode) is also a common pattern.
-+ * If we get this wrong, captured stack trace might have one extra bogus
-+ * entry, but the rest of stack trace will still be meaningful.
-+ */
-+bool is_uprobe_at_func_entry(struct pt_regs *regs)
-+{
-+	struct arch_uprobe *auprobe;
-+
-+	if (!current->utask)
-+		return false;
-+
-+	auprobe = current->utask->auprobe;
-+	if (!auprobe)
-+		return false;
-+
-+	/* push %rbp/%ebp */
-+	if (auprobe->insn[0] == 0x55)
-+		return true;
-+
-+	/* endbr64 (64-bit only) */
-+	if (user_64bit_mode(regs) && is_endbr((u32 *)auprobe->insn))
-+		return true;
-+
-+	return false;
-+}
---- a/include/linux/unwind_user_types.h
-+++ b/include/linux/unwind_user_types.h
-@@ -3,13 +3,15 @@
- #define _LINUX_UNWIND_USER_TYPES_H
- 
- #include <linux/types.h>
-+#include <linux/bits.h>
- 
- /*
-  * Unwind types, listed in priority order: lower numbers are attempted first if
-  * available.
-  */
- enum unwind_user_type_bits {
--	UNWIND_USER_TYPE_FP_BIT =		0,
-+	UNWIND_USER_TYPE_ARCH_BIT = 0,
-+	UNWIND_USER_TYPE_FP_BIT,
- 
- 	NR_UNWIND_USER_TYPE_BITS,
- };
-@@ -17,6 +19,7 @@ enum unwind_user_type_bits {
- enum unwind_user_type {
- 	/* Type "none" for the start of stack walk iteration. */
- 	UNWIND_USER_TYPE_NONE =			0,
-+	UNWIND_USER_TYPE_ARCH =			BIT(UNWIND_USER_TYPE_ARCH_BIT),
- 	UNWIND_USER_TYPE_FP =			BIT(UNWIND_USER_TYPE_FP_BIT),
- };
- 
---- a/kernel/unwind/user.c
-+++ b/kernel/unwind/user.c
-@@ -79,6 +79,10 @@ static int unwind_user_next(struct unwin
- 
- 		state->current_type = type;
- 		switch (type) {
-+		case UNWIND_USER_TYPE_ARCH:
-+			if (!unwind_user_next_arch(state))
-+				return 0;
-+			continue;
- 		case UNWIND_USER_TYPE_FP:
- 			if (!unwind_user_next_fp(state))
- 				return 0;
-@@ -107,6 +111,9 @@ static int unwind_user_start(struct unwi
- 		return -EINVAL;
- 	}
- 
-+	if (HAVE_UNWIND_USER_ARCH)
-+		state->available_types |= UNWIND_USER_TYPE_ARCH;
-+
- 	if (IS_ENABLED(CONFIG_HAVE_UNWIND_USER_FP))
- 		state->available_types |= UNWIND_USER_TYPE_FP;
- 
+Right, which is how UFS does it currently.
+
+>
+>
+> 2.However, for generic drivers with specific workload characteristics
+> such as the ufshcd driver in this patch:
+>
+> https://lore.kernel.org/all/20231213124353.16407-1
+> -quic_mnaresh@quicinc.com/
+> =E2=80=94 if a user knows exactly which CPUs should be restricted, they c=
+an
+> provide a custom mask via a hook function and use the extended API
+> accordingly. The default return value of the hook is the system-wide
+> possible CPUs, so it won't affect other users.
+
+Sorry, but I couldn't find in the above series how exactly UFS knows
+about which CPUs it should constrain.
+
+Again, please provide a user (UFS for example) of the new QoS
+interface as a part of the series.
+
+>
+> In summary, this patch is mainly intended for users who know which CPUs
+> they want to restrict. For users who don't, the extended API can still
+> be used by passing a system-wide CPU mask, or they can simply use the
+> existing cpu_latency_qos_* interfaces.
+
+I understand, thanks for clarifying.
+
+This all said, I have to admit that it kind of starts to worry me when
+I see the number of different users of cpu_latency_qos interface
+increasing in the kernel. To me, it feels like these are just papering
+of another real problem that ideally should be solved in a more
+central place, for everyone. But hey, that's another separate problem
+that we can discuss at some other point.
+
+Kind regards
+Uffe
 
