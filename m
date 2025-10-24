@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-869424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB474C07D98
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:10:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D87C07DA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 21:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E6644009DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:10:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E5719A7DB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38CB357A2A;
-	Fri, 24 Oct 2025 19:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE89357A3A;
+	Fri, 24 Oct 2025 19:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="YvjFzXO0"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="djkYqlQ2"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907342DF6F4
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A89335773C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 19:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761333003; cv=none; b=P+gu6vV3HnjQXa7+/z5NJZK8BcNsXKOZ7Yl4Szq1ESLqd9sIW3YnRjILMhgocJ0Qjby4ntEXs+H8EQDIc9pXVH8yKKKdbxWJYvom4EqnY81i9kr2XrlneEBbN5cxu8UlHUnewdjjGEPcBDGv7mDN2TYZrfSH2xUR6EES6s0Pk00=
+	t=1761333134; cv=none; b=mRlPcuSaoHXj7XARyl0CwH2L7iaE2TRoTlgPL/I7CJQexIUBDiGmFjJpoGcWvtXsQtAFzH36DjfIzykSgrucxUqWoEoj26eYzYcM1IDSGUJEc5wg5R9+eRwA1r10vCkFWEqMe/Z7RCbW+jSe3bUKp7eGTuK0brGzK+IJfrIARIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761333003; c=relaxed/simple;
-	bh=eOV8n3GyeI7NGmNQOPYmpec1MI+qOKDL2up+UvX3whg=;
+	s=arc-20240116; t=1761333134; c=relaxed/simple;
+	bh=1HPzzMYQqxXuYn0hH8eWdbKEvenGvJhB7Md6BvkK5BU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bxfDyOln6aqV4mOFZXZj9Q1g1+GVh+k8xw0INitSfN1ery0cSPSV9tOSVAT1COniF4qNk+NEQqvXSHamzYu2Ling5ssPXPIys537DlurPT2k+BlJRGT8SBNS/z6sfV/PujL7IXgeyoHQJ2CH1afCY1XID7fWjVUdkHg+Fw0l0xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=YvjFzXO0; arc=none smtp.client-ip=209.85.222.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=HSxFnF8hiTUWdhjEtHswDQepfmLyboyLr7TfQvktHdTU/Nyw9wq2Lp6m4EEQpB+E6eOzHR8kaR5wbighVhwMTJOX5QoanMlIRRDUk00O8hy5o937ENuvg9s7nhx2m2deq9pah4Vn71rEND/JZ7tTeddHB+wfYukyfjahE/ksYL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=djkYqlQ2; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-88ed6837e2eso356516085a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:10:01 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-8901a7d171bso237676285a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 12:12:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1761333000; x=1761937800; darn=vger.kernel.org;
+        d=gourry.net; s=google; t=1761333132; x=1761937932; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r4YhT6UkULx0zY0BI31WYEg/XWXtKp76n8KPsV3vFlM=;
-        b=YvjFzXO0J6h2ss5Sjx0x/YOHwNaZ4Tm+e+WqDpFH9ACMNz46aWXSiaQsQwolqekzQO
-         2buiBh7TWFig/XGHuU8xyyyCnwtmRTYFFY45EsAZmWULSomAfW1N2sgkiqXHUoHo6QTR
-         7CZ5LqV7OgWZGlcGb5jecQPrBWfpBrrsKfEN6nhZgnr0/mzyWb95v2Aoqltu98hD3TZk
-         IOG5fzcgJua53NNBnVpecM0fDkXU6wkdxKPJBexBF6Z3DCRjfkWDwMDZqWSMFu5PvSkZ
-         K75yKN3CZw31D88pNNMrUcdvvRHb3zV1rkpRutMPmDiSN1YLdM+henQF42C8jPnce2uU
-         k2Zw==
+        bh=BCR40IXSwb8+XBgjln+OQr+nWcDb8wZGch2v8uE7uTg=;
+        b=djkYqlQ2uBE1MVPYP1auCvtzMJ0Wu2EtdfpvkXLGD90SupS9f9s9/4rdKlaMhfEJox
+         DX/90A+NeF8nW1jkcJ3QJFRXNWojxQIuy6d97DSYvgLqJLVlDYpn0GN6Fo0WgvyM4pH8
+         Do0eRekndgYnh3AbtIMo0dTPH5EaHXWzEFzHMt3jiqHF5oFC2dS27VmhFEggEA5KM5xM
+         B5BT2gQH81z4fIfWm8uW8m/1Id4k3mjfbTaD9gvQUr+TESeom1DF+ui2wUjr/CgaY4+P
+         T16BZt1efnbfpsmkhUb4PW6+F3Fh55DVIgQNJJeehyKgzH6KB2UkkUuOSU0AjqDlm1V6
+         ebqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761333000; x=1761937800;
+        d=1e100.net; s=20230601; t=1761333132; x=1761937932;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r4YhT6UkULx0zY0BI31WYEg/XWXtKp76n8KPsV3vFlM=;
-        b=df3zAgfiiwa0FWJJNwleQCA9VDdoc0wEohDgpUQWb6po6Q5uqLzhGQcfKe6yco2Q7T
-         EokPEORh55Oh0QNx3XBbuEU/3dCBVWjeJVdwzTECuN0E/hkoBWnLpLmJZgpLDkEIeKUU
-         bN4LKPPy171zjMFiULKwDMdp9mysn+5WjU/5HOCjZy+Akz40DujArvYet+aRzmIJ5uoi
-         y5YwxV5O+QrVeJ5B1CDn93widcOD3IZo6G8jGDS2adzOaihZnRTEKrqUxUmtl/BqjCuB
-         iP4QWZih/MMEYC+a3HtnkizmnIgcerkn7BymMpnHeV49IPgkL/1GdqbQht8yYuNh/2P/
-         5UEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWC+i+2VuuNsAMfbniZUo50Adprupu+sNUlvK/Nj77nO/HPtfRHkED7bXJ0uqvx3F44ijXYk8MxZpcnHTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3NT2y7Lk/LkppeEAxwvMK9aiLgZuAb1Pvf8ZzGhp3zVzoSIoG
-	YV7nMoOKIGhJaU0cVi1RB2lXPyWDX7znKa9rcjPys85IcVprfqiPoPRjYy3Cou4PR0k=
-X-Gm-Gg: ASbGncuJRl8Ec12orpyBxD6PHrMG+/yfBpYSCnk8lD/HrIql39WoLkzcO8eYos9iBWV
-	efJfM1/NEF4i2pCqTsRY4xc6DZNVlYREBCgWS8B6wMqP+KucQdSMBAcSrm9PmEL0KmWlGPdH0B/
-	4Rhmdu++AmQxlq4mKoOQ97t771JdMHC63iWrcqSAw43IN941a25Jkq93Lkq7lnDrqUhklQ9zey3
-	XSB+o8GvpiwQu/bTKytJynKxFw6wayh9lvZ/EeL4B20JGrf9zzr15qQLGp/vVw9+lvFiPCekFqx
-	LbqBjGBe+Wfkbwf78BgX4w4OiNKKG1TCG5OgK2cFWjwT2JLLsk+qUFYvdXROfjItI/j2fjBbGYE
-	iRRJbci1ov1v9boxc4c9F5d16QHfPno9lBT77XY7aO6HkvbxGiKKbh0NyI15ISRZ3OL/jcz/jus
-	VRkof1v3mpfwENfLXEEOMK+kGEUGMPfOEjMORwcBUY4dJOaNutH5AkUp60c78=
-X-Google-Smtp-Source: AGHT+IHrkcPaJLyTM5pJbJ/XVcfel+4u6gv+3P752b0IEbbyKeVVUPlOZ4xL4VMnAte1FxD358/CqA==
-X-Received: by 2002:a05:620a:40c4:b0:85f:82c1:c8b1 with SMTP id af79cd13be357-8907011583dmr3539276185a.46.1761333000331;
-        Fri, 24 Oct 2025 12:10:00 -0700 (PDT)
+        bh=BCR40IXSwb8+XBgjln+OQr+nWcDb8wZGch2v8uE7uTg=;
+        b=LhGt+CXYU7J3V0lvF/cclH5HatxYE2Uh5eJ0Avy15LDZaJptSKPSa2cmDWCG0QdMQF
+         1LVwKX6B683wE519MBoWuZGjfdykuMXRROpNGTKxiXW3s6lTMvhmwLMSHKqhg8kA45ZL
+         AHkv2YkSdpvf1ZKMYU9mp3KVDrWLVjWzjbwvlbOL+Bvptc5LRqSQCBHBq7vNe4w3k0bs
+         n/DwsaIJXutGkJydgUYU3kN90Zza8DwOjgZ+mC9lpMyBjAaPeQTExwLzab1y0u+VqJrz
+         tzJCSoqjWJZmM517curc2+ATN6LTd9TGJSgEyrr9XJnXqt6apnlcqTBJ7RKR2N9obm1Z
+         QBLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEzH6CnfUHA9B1aielLRB6L/+szeDQrUZAO51viVnGUOnMD7cfPcF1sDiSii2S0eE9JShCeCwzs/pV1g4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr66xbPb0aok7BNrdCPvrI/ZnDJdyVlLWyBHvtQFQNcv31uku6
+	45JljunqTwiCpB2uoGRrcd8zON7lz9xR393NnILk3jefmtBYsrrNgxpdE5IAY1tENBY=
+X-Gm-Gg: ASbGncvcYrFB37tNrjYI5nWB3q75l91Y54GosGf4I1vzX5J7jeXPCR6zjaTetDFQ3bh
+	xSpZAgGQNXdmBXovws5em03cfQd4XZtJNS0DqUhtbKmCX1PXXYcXoNyW7OMU4366abrQ4p31Z2s
+	gLR6A80gLzsRSyhm+ki6/Njqnd4htdTLW/JbWQytC4rmgNoDfG491OnFr7zUWWl8oZYhCBHvoVX
+	6dO+suNCmLTlHBxN6CskZICwBW5FcNqKZVxCJzTikkeLGXmhDc5NfHeQQlpOR+U8nrzjxJv/CSj
+	pchg84gAuCGfjckiFNzPTHw/yfWWfOurED0WUkI9FOSxKwI/YNjWAgJRGM0cBURfFzJc31M26bm
+	qllaDawnUmXLOf9IU9ilto2Qob5Uc4OldH8rh2xl7DSXlI26J40I/js1bdvi2AQ+OxhiDOr0Icu
+	fT1353Ra9q1cintciuqYEzd9xd8jK/ZvzgHGDTl0Z/cAO46MgTU4a1qUDnO8E=
+X-Google-Smtp-Source: AGHT+IE/iLPq0l1+7yrz/BbyhVyC9k5N0OQCI/Q9HFSHISzKMdQEsDIOj6nKXRkCdZrjDczCxThRnw==
+X-Received: by 2002:a05:620a:178c:b0:892:eb85:53cd with SMTP id af79cd13be357-892eb855743mr2482012485a.42.1761333131934;
+        Fri, 24 Oct 2025 12:12:11 -0700 (PDT)
 Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89c11e631e4sm442634485a.44.2025.10.24.12.09.58
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eb805e0869sm40330861cf.1.2025.10.24.12.12.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 12:09:59 -0700 (PDT)
-Date: Fri, 24 Oct 2025 15:09:57 -0400
+        Fri, 24 Oct 2025 12:12:11 -0700 (PDT)
+Date: Fri, 24 Oct 2025 15:12:08 -0400
 From: Gregory Price <gourry@gourry.net>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -111,13 +111,12 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: Re: [RFC PATCH 09/12] mm/huge_memory: refactor change_huge_pmd()
- non-present logic
-Message-ID: <aPvPBS5H0E9OXEo1@gourry-fedora-PF4VCD3F>
+Subject: Re: [RFC PATCH 05/12] fs/proc/task_mmu: refactor pagemap_pmd_range()
+Message-ID: <aPvPiI4BxTIzasq1@gourry-fedora-PF4VCD3F>
 References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
- <282c5f993e61ca57a764a84d0abb96e355dee852.1761288179.git.lorenzo.stoakes@oracle.com>
- <aPvIPqEfnxxQ7duJ@gourry-fedora-PF4VCD3F>
- <2563f7e1-347c-4e62-9c03-98805c6aa446@lucifer.local>
+ <2ce1da8c64bf2f831938d711b047b2eba0fa9f32.1761288179.git.lorenzo.stoakes@oracle.com>
+ <aPu4LWGdGSQR_xY0@gourry-fedora-PF4VCD3F>
+ <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -126,18 +125,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2563f7e1-347c-4e62-9c03-98805c6aa446@lucifer.local>
+In-Reply-To: <76348b1f-2626-4010-8269-edd74a936982@lucifer.local>
 
-On Fri, Oct 24, 2025 at 07:44:41PM +0100, Lorenzo Stoakes wrote:
-> On Fri, Oct 24, 2025 at 02:41:02PM -0400, Gregory Price wrote:
+On Fri, Oct 24, 2025 at 07:19:11PM +0100, Lorenzo Stoakes wrote:
+> On Fri, Oct 24, 2025 at 01:32:29PM -0400, Gregory Price wrote:
 > 
-> You can see it's equivalent except we rely on compiler removing dead code when
-> we use thp_migration_supported() obviously (which is fine)
-> 
+> A next step will be to at least rename swp_entry_t to something else, because
+> every last remnant of this 'swap entries but not really' needs to be dealt
+> with...
+>
 
-derp - disregard.  End of the day friday is probably not the time to
-be doing core patch reviews :P.
+hah, was just complaining about this on the other patch.
 
-Cheers,
+ptleaf_entry_t?
+
+:shrug:
+
+keep fighting the good fight
 ~Gregory
 
