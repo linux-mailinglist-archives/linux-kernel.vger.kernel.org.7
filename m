@@ -1,54 +1,47 @@
-Return-Path: <linux-kernel+bounces-868806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF2CC062EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:12:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A44C062F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C95451B87AE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:12:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CAB6C4E0364
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3120430EF7C;
-	Fri, 24 Oct 2025 12:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3F5313539;
+	Fri, 24 Oct 2025 12:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JllN/EZ/"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKvfsL01"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A9E1DB127;
-	Fri, 24 Oct 2025 12:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D652D5924;
+	Fri, 24 Oct 2025 12:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761307931; cv=none; b=e8YQ5LJKdFr0C1AsrTRbRXaexhnS2bTFXSy1evlwlcAjQG5LDDXmvnw2zgoWCSmgxNxuTdHf6ADy2qiqb3yh1O6ym24neJrNNa0gJs6LFikqGU18/UEs2cb3fey7JRYX/UWk44J0HDvH9sjtmn9LSvKFi7At6asbB4JdV591JBc=
+	t=1761307980; cv=none; b=Cd1+GI4Q1+TQdVGjqeTiY23m8PdBUTDLrscoNTaDLZi77oB9NZX1T8mQQpj1eFlfkZyuNRmKFe9zlIhq5JSIkDiysZqbel+bDXcb4tUtA7gVlot6ocZfAPyS/+nPJJNEmQQIBkPRyZJW39Ss5tAlqovpfXRItE43OcNhVs02850=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761307931; c=relaxed/simple;
-	bh=/zFFutCPy+n8j87wgq9tHUe0ADsqAV6k9QBgeuL8/0o=;
+	s=arc-20240116; t=1761307980; c=relaxed/simple;
+	bh=OUk76ys6nMYdTGFO9m0BC6J/XiUc43vsBYgM5iphDsI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V3xGvqGjAG+8CAqccQHJ8vM+4JW+7AY19K7TjGRR3VAHFrWh0xfP4a8jyqBRjmi906ZN53Y/4yw9NmjyqmxKblKoBVxbo7/ZlokwNUupVxzVFF/ROdCD58038trBYuPX+PT2QXwUYtdb3m52bxm5EOrfCYtpf5ek69SBtJRmEn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JllN/EZ/; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id CBA701A1648;
-	Fri, 24 Oct 2025 12:12:01 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9BBC060703;
-	Fri, 24 Oct 2025 12:12:01 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 337CE102F248D;
-	Fri, 24 Oct 2025 14:11:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761307920; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=JEt/kqGoBRuvo1mSCkAMwChIUVantu5YXampMxAZaZY=;
-	b=JllN/EZ/YRLRi+nQ0w7t9ZcaWf1s409bOeKeWf7oYmIbrP/q6TGYFlW4m8WAQ6Nn/EhOt6
-	EeJFLluQLB/IQYHO1BxyBTNjXyOXt1abGjxziSrwMJBihy4k9eclU5c8qCDN/9/4VDvHsV
-	tyGnQnSP8t8s09/YzWXdsFJMbcivhgXrt1qsPvgF/1fk7bn9VcT+kQgywQ72DOXzErUFKT
-	E1cGoTWkUDSx8yYo/xysPbJ+5ISMb76ttfwNCgexU+f5iPXHEd64/I1Z7GttAb5JOm9foI
-	nKQWZZbJ0sGGsF0QfVjISMt/t8JnFpedYJRFSrTwUJXYAG6mfCcn3ypxj7reew==
-Message-ID: <92e953b8-4581-4647-8173-6c7fa05a7895@bootlin.com>
-Date: Fri, 24 Oct 2025 14:11:45 +0200
+	 In-Reply-To:Content-Type; b=PovncGRmmr8PLEKNY79XlOUvAy1gj2Hklp9HA4DUYiaJgl0Lmza8V0LvpcWMuRa9oHrAq4TDoenQiHrio4OpjnTT0qvAblYFdo8qGfJ0kLkKISQVscnDLX4sBegTMezmUoNtm+EgLCSMtortBwa5tUuu2QdiZ3Gwsbp85Q3v1qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKvfsL01; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D608AC4CEF1;
+	Fri, 24 Oct 2025 12:12:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761307979;
+	bh=OUk76ys6nMYdTGFO9m0BC6J/XiUc43vsBYgM5iphDsI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KKvfsL016APxbCetUhGFzBkdrNnbXJrbu9QqLvml7A0H5TmGT9VKfKC4Q4gOE1Ayu
+	 p0cFFzA087tdWMnri0ZNtgEE4Ly3eKBPEqM18dJuqOLZ0HPn/MhBql7M/s+329FFp8
+	 lcBpyXEULsBsrLvrasfRQSXvoJj2G2wm4BHKvkVGXCsGjcWWiNebbRy3zIkHEpi141
+	 onbxiNmYbmKPUBougQcJ9UwqDw7jp7Wg2jIdciYo3Z1qNwFO7eCyEKuHPJC3BX2JhD
+	 41BTg6sN6z4uUSTWMgGi1pItjxuKwVtp9LueSPyOumGdiizabputuHu+iVzmNedH27
+	 JP3ejm2KpXwEw==
+Message-ID: <89812f66-25a6-4f9e-aa4f-74adbf116db8@kernel.org>
+Date: Fri, 24 Oct 2025 14:12:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,66 +49,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 01/10] net: stmmac: dwmac-socfpga: don't set has_gmac
-To: Steffen Trumtrar <s.trumtrar@pengutronix.de>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Matthew Gerlach <matthew.gerlach@altera.com>
-Cc: kernel@pengutronix.de, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20251024-v6-12-topic-socfpga-agilex5-v5-0-4c4a51159eeb@pengutronix.de>
- <20251024-v6-12-topic-socfpga-agilex5-v5-1-4c4a51159eeb@pengutronix.de>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH] dma-fence: Correct return of dma_fence_driver_name()
+To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: phasta@kernel.org, Sumit Semwal <sumit.semwal@linaro.org>,
+ Gustavo Padovan <gustavo@padovan.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20251024075019.162351-2-phasta@kernel.org>
+ <11b7a8a5-170f-4815-a8ac-5dba2d8e67a1@igalia.com>
+ <5de88e79575e06c053f2d61f7bb58bf9cf5b556e.camel@mailbox.org>
+ <1d0bbdcf-f4d6-49c0-bbdf-364c2af80868@igalia.com>
+From: Danilo Krummrich <dakr@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20251024-v6-12-topic-socfpga-agilex5-v5-1-4c4a51159eeb@pengutronix.de>
+In-Reply-To: <1d0bbdcf-f4d6-49c0-bbdf-364c2af80868@igalia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-Hi Steffen
-
-On 24/10/2025 13:49, Steffen Trumtrar wrote:
-> Instead of setting the has_gmac or has_xgmac fields, let
-> stmmac_probe_config_dt()) fill these fields according to the more
-> generic compatibles.
+On 10/24/25 1:31 PM, Tvrtko Ursulin wrote:
+> Also, the short name can be reduced from a verbose starting point similar to yours:
 > 
-> Without setting the has_xgmac/has_gmac field correctly, even basic
-> functions will fail, because the register offsets are different.
+>  "unknown-driver-is-detached-from-the-signaled-fence"
+>  "driver-detached-from-the-fence"
+>  "driver-detached"
 > 
-> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-> index 354f01184e6cc..7ed125dcc73ea 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-> @@ -497,7 +497,6 @@ static int socfpga_dwmac_probe(struct platform_device *pdev)
->  	plat_dat->pcs_init = socfpga_dwmac_pcs_init;
->  	plat_dat->pcs_exit = socfpga_dwmac_pcs_exit;
->  	plat_dat->select_pcs = socfpga_dwmac_select_pcs;
-> -	plat_dat->has_gmac = true;
+> Or keep "detached-driver" as good enough. Mea culpa for typing it up transposed. :)
 
-Note that this field is now gone as per :
-
-  26ab9830beab ("net: stmmac: replace has_xxxx with core_type")
-
-You'll need to rebase the series :)
-
-Maxime
-
-
->  
->  	plat_dat->riwt_off = 1;
->  
-> 
-
+"detached-driver" is misleading, just because the fence is signaled it doesn't
+mean that the driver is detached.
 
