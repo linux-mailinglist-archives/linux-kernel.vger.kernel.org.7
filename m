@@ -1,98 +1,151 @@
-Return-Path: <linux-kernel+bounces-869288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 155F4C07893
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:28:09 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00671C0789C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 19:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B3743AC926
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:27:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79B874F0F7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 17:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C929D34320D;
-	Fri, 24 Oct 2025 17:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E85232F771;
+	Fri, 24 Oct 2025 17:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxDTzZAf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvekdrI1"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B64F280A29;
-	Fri, 24 Oct 2025 17:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C1033DED3
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 17:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761326863; cv=none; b=XeYuydYiw8KKVRiSuxLT7O+5rjqRA/WoGxbfkPK3sYdO/Btn++gfTEV0FIXbt8Bx4oWFRY6H7nNxPZA1k6gkGnJZJJXAiinbEvhVpz5qwIBL6kP+a/diL27zXJoTWLFZKFiywFJDm/lqr747RuEw23bxEz5JeVZcbPvAEi3PH7A=
+	t=1761326980; cv=none; b=hyd3aIWv5o8GBOkhhNOlJrgflchkuGCSBBfvqOiW02jK2X3S4gP/2dUjpf74KPR3oJtNGMjddFTvHKbmXKfT6rXCJG3Ujt7Tn7jKgqi6vXxyZODHCkkx6cBIZlSMwibWtUcH+fJjbNwieAP3qsz27twydjjVvd9w+4ZFyjEeI20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761326863; c=relaxed/simple;
-	bh=oiQZJQaA9tzYYyWvZEkw5psXk/MzntRZD/uGjLvb8ag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sT5C7kzhKQNaqfqR+H0HIcnwnHv8VmUumy5nPJxUPjJDOiONxvvTKYu12uAJyIXT2SXH2ur4R9R9OHumZvi1XPQ9NsFOWj7X2W4PIg7d4zIge7WJTxBzJhLHo3BrLWDhB7JLn2ofUXhE3GWIXaRZdJCFPaGQG4wlUA7ev6dNl8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxDTzZAf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 367FAC4CEF1;
-	Fri, 24 Oct 2025 17:27:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761326863;
-	bh=oiQZJQaA9tzYYyWvZEkw5psXk/MzntRZD/uGjLvb8ag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XxDTzZAfDIirGYnlZUSBVjNxANm/UANrYdEA+RtKfhd0zGqaqOmRbkjsjfV3Tjwbe
-	 EsJpkTngM1qhEUzPGaciyt17AAFGzR220uLscdbXGGKYdjtQ2aqNgovcEetAxAba3n
-	 Tgb26y2t4r6H+pjj3Vpc+sSVMZAvYJWfqvXY7qxG5Xv/kbgALb1BIDeLrHX2K+GU3A
-	 iUJonc/UsuiBQ52FijwCFsioN4gbIlS3AbMeUSW+lVyy2nTZxtRvqWahxI+Wy+cHvG
-	 lMKEkw+LkFicg1e179U2Mj+JYb0bYwbwjVWRkK5meuIOf5uqbwMkb6FChOaQqhkAVU
-	 i06emX40GiYtQ==
-Date: Fri, 24 Oct 2025 18:27:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: Chu Guangqing <chuguangqing@inspur.com>
-Cc: cooldavid@cooldavid.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH for-next 1/1] net: jme: migrate to dma_map_phys instead
- of map_page
-Message-ID: <aPu3C8QUYLYE8ZpG@horms.kernel.org>
-References: <20251024070734.34353-1-chuguangqing@inspur.com>
- <20251024070734.34353-2-chuguangqing@inspur.com>
+	s=arc-20240116; t=1761326980; c=relaxed/simple;
+	bh=tkAGkZZm4VXBDBIYaN4VChrZKvpzE6+s6VHxe8EmXVs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DXcnGoi8tALVsJ8BGtBkbOZylr/4elnPnDrpmFqJHVxUIdOUklQ6gTQSdcMDNdmNerxCmwPRDbBDDlVozcoqfFAqVhgWsaT4GpYzZHc2m1nxdQmMtt+T3nSxzSayCigFA83Kni19fWTEoQMc2FZ6LsmZ8cMNNKLnjmdY9HWdtxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvekdrI1; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-78118e163e5so3151360b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761326979; x=1761931779; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cN7ZMnvf82THEzrEsUSGywR0GGJwzb8nUT5u5I/IIf0=;
+        b=PvekdrI1sfGT/nnrDK/4lvinqsF0m20DVEwXO0UX9hqTyKcp4E4ARfEaUZvOvgYGQp
+         jk/ZQ3LAct8fwMMLSl66z6DoLfMgmF8H9m9cEO6sxxTAeN+z8GFitULOoQ57p+b3vf4T
+         tHq9PWml9e7wyq9dXJ79D6Wzm6lY8TrANZk+YaosMRIcNlMPadDItX7CbDeLlw38rmyl
+         FzAwqVcv/337/WLkbtEFKPCZhTfj/nsJzp3JDSwLu/lZPgrLi3422ojpckVRcml22Fcd
+         f+ccTzC3XmmBgelIAjKkLw8zk+Q7JA/ta/m5IWN+dXRuxI5FchvLRi256mQQL5a6POZn
+         LkIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761326979; x=1761931779;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cN7ZMnvf82THEzrEsUSGywR0GGJwzb8nUT5u5I/IIf0=;
+        b=A33YHDDA7acd2xGHzG3Yt+xdrC9kHq/tzcZKp4EJu1ajOFuCvjxukvUGU6TqcW4XnF
+         ESjEX3uOqpbTkgCU7Et/v6TjdHw9CKMss+1QTUyLgsfOb+8xa3B6aE5wktIpnM1N6efc
+         TaA1sl+3cP70Uf/TqKZt0zzMgmB5HmdnifKwH//r7vpQOVvJPjNV3Fgku3Vca317b2Zf
+         ohHDgQYRFxeMLTvTSjGhTrOnWYgje4vw26Jf4wBCsqEQGxrGKTB7KUy1hrJ+ouUpvaep
+         xMEit3UPDocdRkrmGltqMknMhcjdgcwRPWs0uokthsoTj3b5R4vTTCNsWFqXe9QJQAaP
+         N5ag==
+X-Forwarded-Encrypted: i=1; AJvYcCWM6G+HZvvCxVAgoxZXwn76H/GpSHar+TfJCE8ZNLZuqjsKwOPMExvJtdKbP2gDY3TJcp4FQCkaPXbQeiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJmVqLRxneXwkyi7pBtdzjkpoyREqk1e5M6Wx8SvbD/0zzEmkD
+	+zTLADVxRndwaUs55xY8c1sfze3nN8RINwXK0gbsV7k93aC18T1+htOG
+X-Gm-Gg: ASbGnctTZV+8RkE9uhOzkHePLV7ZnNRLUQMDj+pXWj5ak5u+6peo0q60UjTDeRitRVV
+	OxiSrnK3eEttmCcOkNDdTpGNOWQ6ODrpx22AxuIR+iCZsXEDsuAjqhM4XuBqY18HOEoOzzRJg8x
+	J8ZsKR+39doQgnt+wzHb6zBSHtOCBmzdyyejsfQk0mIGKdRQfnA7dZrUELcoqY1RVbYX7sNCx9I
+	I1KInLgS8JCZ270/9Prp9U6IwbiOAvCBCRRZmYC9Fhl0mjTe18wbr14GZ+U7e3NMV7x1590Bgq4
+	yig3QiBiql9iI+MgTmNSC+f+iZuBLtTGCpZ97owvK5OFSgDcF7MfrkCBGRhB5h+1/h4h5i5G+5L
+	z2HeVWQ41gsK8Jytoq9vGqMKrLn5FDXp7Q1I74HYnlLToN8sfgapCd549dH4RW5DTJc+ppXNERP
+	GsMefBQT7B2g==
+X-Google-Smtp-Source: AGHT+IExEqGK30pExEfkyV0gBzPWyWgac7N27+lB/OIuXkwNcep/BAxe9MOY1u0pDHlpOqqViu7rWw==
+X-Received: by 2002:a17:903:1aa4:b0:271:9b0e:54c7 with SMTP id d9443c01a7336-29489d970b9mr43892925ad.11.1761326978569;
+        Fri, 24 Oct 2025 10:29:38 -0700 (PDT)
+Received: from aheev.home ([2401:4900:88f6:d7b0:8f5e:ff90:677:7d74])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2946dda85e7sm61719615ad.11.2025.10.24.10.29.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Oct 2025 10:29:38 -0700 (PDT)
+From: Ally Heev <allyheev@gmail.com>
+Subject: [PATCH v2 0/2] checkpatch: add checks incorrectly initialized
+ pointers with __free attr
+Date: Fri, 24 Oct 2025 22:59:14 +0530
+Message-Id: <20251024-aheev-checkpatch-uninitialized-free-v2-0-16c0900e8130@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251024070734.34353-2-chuguangqing@inspur.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGq3+2gC/5WNQQ6CMBBFr0K6tqZTg6gr7mFYDGVKJ0IhLTYq4
+ e5WbmD+6v3Fe6uIFJiiuBWrCJQ48uQz6EMhjEPfk+Qus9BKl6A0SHRESRpH5jHjYpx8eva8MA7
+ 8oU7aQCRLc7raqiRQCCKb5kCWX3vl3mR2HJcpvPdogt/7nz+BzLvYVkFrzlhh3Y/Iw9FMo2i2b
+ fsCM2iMA9YAAAA=
+X-Change-ID: 20251021-aheev-checkpatch-uninitialized-free-5c39f75e10a1
+To: Dwaipayan Ray <dwaipayanray1@gmail.com>, 
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joe Perches <joe@perches.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Andy Whitcroft <apw@canonical.com>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, 
+ David Hunter <david.hunter.linux@gmail.com>, 
+ Shuah Khan <skhan@linuxfoundation.org>, Viresh Kumar <vireshk@kernel.org>, 
+ Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-pm <linux-pm@vger.kernel.org>, dan.j.williams@intel.com, 
+ Ally Heev <allyheev@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1425; i=allyheev@gmail.com;
+ h=from:subject:message-id; bh=tkAGkZZm4VXBDBIYaN4VChrZKvpzE6+s6VHxe8EmXVs=;
+ b=owGbwMvMwCU2zXbRFfvr1TKMp9WSGDJ+b69OE5hxadfN1B8RE+/t1/v38+M+v2mXV02b+ibwy
+ RTbqltrGDpKWRjEuBhkxRRZGEWl/PQ2SU2IO5z0DWYOKxPIEAYuTgGYSN98RobrNh8nPlTt+yIv
+ o7H05CzFCQ90xZUdSmK0pRZt61+9/ZYFI8PGVKNg1e3zBZY/XzH5WdJnhja9wN7oZ1abNCadFDc
+ 4ocEGAA==
+X-Developer-Key: i=allyheev@gmail.com; a=openpgp;
+ fpr=01151A4E2EB21A905EC362F6963DA2D43FD77B1C
 
-On Fri, Oct 24, 2025 at 03:07:34PM +0800, Chu Guangqing wrote:
-> After introduction of dma_map_phys(), there is no need to convert
-> from physical address to struct page in order to map page. So let's
-> use it directly.
-> 
-> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+Badly initialized pointers with __free attr can
+cause cleanup issues. So,
 
-Although there have been a number minor updates since, mainly for in-kernel
-API changes, it seems to me that the last change of substance to this
-driver - a feature or bug fix - was the following commit in 2016.
+Adding checks for
+- uninitialized pointers
+- initialized pointers with NULL
 
-commit 81422e672f81 ("jme: Fix device PM wakeup API usage")
+Testing:
+ran checkpatch.pl before and after the change on 
+crypto/asymmetric_keys/x509_public_key.c, which has
+both initialized with NULL and uninitialized pointers
 
-So, unless there is a tree-wide effort to move to the pattern you describe,
-I am wondering if it would be better to just leave this code as-is.
+---
+Changes in v2:
+- change cover letter and title to reflect new changes
+- fix regex to handle multiple declarations in a single line case
+- convert WARN to ERROR for uninitialized pointers
+- add a new WARN for pointers initialized with NULL 
+- NOTE: tried handling multiple declarations on a single line by splitting
+        them and matching the parts with regex, but, it turned out to be 
+	complex and overkill. Moreover, multi-line declarations pose a threat
+- Link to v1: https://lore.kernel.org/r/20251021-aheev-checkpatch-uninitialized-free-v1-1-18fb01bc6a7a@gmail.com
 
-Quoting documentation:
+---
+Ally Heev (2):
+      checkpatch: add uninitialized pointer with __free attribute check
+      add check for pointers with __free attribute initialized to NULL
 
-1.6.6. Clean-up patches¶
+ Documentation/dev-tools/checkpatch.rst | 11 +++++++++++
+ scripts/checkpatch.pl                  | 13 +++++++++++++
+ 2 files changed, 24 insertions(+)
+---
+base-commit: 6548d364a3e850326831799d7e3ea2d7bb97ba08
+change-id: 20251021-aheev-checkpatch-uninitialized-free-5c39f75e10a1
 
-Netdev discourages patches which perform simple clean-ups, which are not in the context of other work. For example:
+Best regards,
+-- 
+Ally Heev <allyheev@gmail.com>
 
-    Addressing checkpatch.pl, and other trivial coding style warnings
-
-    Addressing Local variable ordering issues
-
-    Conversions to device-managed APIs (devm_ helpers)
-
-This is because it is felt that the churn that such changes produce comes at a greater cost than the value of such clean-ups.
-
-Conversely, spelling and grammar fixes are not discouraged.
-
-https://docs.kernel.org/process/maintainer-netdev.html#clean-up-patches
 
