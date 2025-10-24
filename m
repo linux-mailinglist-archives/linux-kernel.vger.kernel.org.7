@@ -1,120 +1,150 @@
-Return-Path: <linux-kernel+bounces-868160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B50C0489F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:39:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1A6C048A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4F63A3545
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:39:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B41D71A60CF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5CB271446;
-	Fri, 24 Oct 2025 06:39:08 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847F3270552;
+	Fri, 24 Oct 2025 06:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="etfvjaQv"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFC618EB0;
-	Fri, 24 Oct 2025 06:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BCB1E990E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761287947; cv=none; b=MZANjrPsNw3GhZaM+qRV3fmzBs1U4D8tmGI2vGdM4uh2QVDcoca0XlwYrb2zfJSx67fEk538+Rf/4iJCxWCvmV8irbSnAjfM2G02r46slvJl0LRqowav6RBTNND6SEJ+jCA4XMitZL1Qao85deod5wbJaZ2sk/dH25a9oXkNTs8=
+	t=1761288217; cv=none; b=kAZ7vhu2jXb7vxH9iOynks6EgzueacYECrUd5wrGAWiizMdxLfSJlbiM8jOJJKhHdXt8jogrHo7qs1wnRQr8hb1spQz02iLdpY8AjFeyZb30lLh0trwzlZYL80t8q7rfTgEzcecoCgAgF2YUvPlaUEqU0g4HqkwdUcubfZz5Z/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761287947; c=relaxed/simple;
-	bh=RUHE8iJmBlRsQEc5EW4vCzzCdD+8XbCcV/ItdmFqlT0=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=U/ywqdadCuzbc0Q7M398eA34O5apF+6VBLHFpVDfLBazFz0VSjZddvdVNiNDr19Dk1OyaU88qmmy20Lzta1Qc4qroawPNQsdoW8bYTlhhPHwsUhGbpChPm7Ny83EzgM7f24asz5gKM7POKR5B3nUdgchn758Zk4Lh8V2A19zAkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ctCmC4hDyzxX6n;
-	Fri, 24 Oct 2025 14:34:03 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id F40E5180489;
-	Fri, 24 Oct 2025 14:39:01 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 24 Oct 2025 14:39:00 +0800
-Message-ID: <cc7362e8-e8ae-4813-a73b-d752b403332a@huawei.com>
-Date: Fri, 24 Oct 2025 14:39:00 +0800
+	s=arc-20240116; t=1761288217; c=relaxed/simple;
+	bh=IbkdvNYR2kCJyPzBt28BRC+IBfhLd6Bj/NrNmn8Y4EQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CTJxQPY6naTb46ZoUobOrkvascrQyR3zIxq9EB+YNUGovodfDG9gUBI7xVyS3FMf73VVF0KeAfBcyDX7pVg22/16/f6aubXJkEmkD3Hui4S2Tm5gzNnpkPuayBwsh1UuR+veIZUlUA7sUA00pz0MPtemvSTZ0eK7jC2M8PRR94Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=etfvjaQv; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761288214;
+	bh=IbkdvNYR2kCJyPzBt28BRC+IBfhLd6Bj/NrNmn8Y4EQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=etfvjaQvpQUkHyjN+yZXLyL7RO5hXRg2yLZ0BmgNuRC2wQ1IZ306phpplQh9Ttii/
+	 7ERQGs7zUZX0QoVHIc0dA8QKiK2cQfhqqb6lzDHLmvidl3R2PsGhh2dnFe1+OE5VAE
+	 f3D6RTM9pCP2D0DgAApiET832nATRRByTCwLtTF0jzVpV0+ay2enxhpvMtgm+4GLr/
+	 gsFIS6SXMTbYDM4XplpF+z9wW09MFcIcetz5nI9EO4eQYUTf7L+G+crVEuN0jrK41w
+	 tiJGA7MCWNoLaOtSkKZSjtCrS6cx8cRH4T7z21+yUHLLBLuLdMAtU0GbTBwRoAJPkY
+	 dwNxsaZ6QLYdg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8F1BD17E12DF;
+	Fri, 24 Oct 2025 08:43:33 +0200 (CEST)
+Date: Fri, 24 Oct 2025 08:43:27 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Karunika Choo <karunika.choo@arm.com>
+Cc: dri-devel@lists.freedesktop.org, nd@arm.com, Steven Price
+ <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 03/10] drm/panthor: Introduce framework for
+ architecture-specific features
+Message-ID: <20251024084327.3332d548@fedora>
+In-Reply-To: <20251014094337.1009601-4-karunika.choo@arm.com>
+References: <20251014094337.1009601-1-karunika.choo@arm.com>
+	<20251014094337.1009601-4-karunika.choo@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <lantao5@huawei.com>,
-	<huangdonghua3@h-partners.com>, <yangshuaisong@h-partners.com>,
-	<jonathan.cameron@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net 1/3] net: hibmcge: fix rx buf avl irq is not
- re-enabled in irq_handle issue
-To: Jacob Keller <jacob.e.keller@intel.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<andrew+netdev@lunn.ch>, <horms@kernel.org>
-References: <20251021140016.3020739-1-shaojijie@huawei.com>
- <20251021140016.3020739-2-shaojijie@huawei.com>
- <759b7628-76b2-4830-97b2-d3ef28830c08@intel.com>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <759b7628-76b2-4830-97b2-d3ef28830c08@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemk100013.china.huawei.com (7.202.194.61)
 
+On Tue, 14 Oct 2025 10:43:30 +0100
+Karunika Choo <karunika.choo@arm.com> wrote:
 
-on 2025/10/24 9:15, Jacob Keller wrote:
->
-> On 10/21/2025 7:00 AM, Jijie Shao wrote:
->> irq initialized with the macro HBG_ERR_IRQ_I will automatically
->> be re-enabled, whereas those initialized with the macro HBG_IRQ_I
->> will not be re-enabled.
->>
->> Since the rx buf avl irq is initialized using the macro HBG_IRQ_I,
->> it needs to be actively re-enabled.
->>
-> This seems like it would be quite a severe issue. Do you have
-> reproduction or example of what the failure state looks like?
+> Add a framework to support architecture-specific features. This allows
+> other parts of the driver to adjust their behaviour based on the feature
+> bits enabled for a given architecture.
 
-priv->stats.rx_fifo_less_empty_thrsld_cnt can only be increased to 1
-and cannot be increased further.
+I'm not convinced we need this just yet. AFAICT, the only feature flag
+being added in this patchset is PANTHOR_HW_FEATURE_PWR_CONTROL, and
+most of this is abstracted away with function pointers already. The
+only part that tests this FEATURE_PWR_CONTROL flag is the
+initialization, which could very much be abstracted away with a
+function pointer (NULL meaning no PWR block present). There might be
+other use cases you're planning to use this for, so I'd like to hear
+about them to make my final opinion on that.
 
-It is not a very serious issue, it affects the accuracy of a statistical item.
+> 
+> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_hw.c |  5 +++++
+>  drivers/gpu/drm/panthor/panthor_hw.h | 18 ++++++++++++++++++
+>  2 files changed, 23 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
+> index b6e7401327c3..34536526384d 100644
+> --- a/drivers/gpu/drm/panthor/panthor_hw.c
+> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
+> @@ -186,3 +186,8 @@ int panthor_hw_init(struct panthor_device *ptdev)
+>  
+>  	return 0;
+>  }
+> +
+> +bool panthor_hw_has_feature(struct panthor_device *ptdev, enum panthor_hw_feature feature)
+> +{
+> +	return test_bit(feature, ptdev->hw->features);
+> +}
+> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
+> index 39752de3e7ad..7a191e76aeec 100644
+> --- a/drivers/gpu/drm/panthor/panthor_hw.h
+> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
+> @@ -4,14 +4,32 @@
+>  #ifndef __PANTHOR_HW_H__
+>  #define __PANTHOR_HW_H__
+>  
+> +#include <linux/types.h>
+> +
+>  struct panthor_device;
+>  
+> +/**
+> + * enum panthor_hw_feature - Bit position of each HW feature
+> + *
+> + * Used to define GPU specific features based on the GPU architecture ID.
+> + * New feature flags will be added with support for newer GPU architectures.
+> + */
+> +enum panthor_hw_feature {
+> +	/** @PANTHOR_HW_FEATURES_END: Must be last. */
+> +	PANTHOR_HW_FEATURES_END
+> +};
+> +
+> +
+>  /**
+>   * struct panthor_hw - GPU specific register mapping and functions
+>   */
+>  struct panthor_hw {
+> +	/** @features: Bitmap containing panthor_hw_feature */
+> +	DECLARE_BITMAP(features, PANTHOR_HW_FEATURES_END);
+>  };
+>  
+>  int panthor_hw_init(struct panthor_device *ptdev);
+>  
+> +bool panthor_hw_has_feature(struct panthor_device *ptdev, enum panthor_hw_feature feature);
+> +
+>  #endif /* __PANTHOR_HW_H__ */
 
->
->  From the fixed commit, the RX_BUF_AVL used to be HBG_ERR_IRQ_I but now
-> it uses HBG_IRQ_I so that it can have its own custom handler.. but
-> HBG_IRQ_I doesn't set re_enable to true...
->
-> It seems like a better fix would be having an HBG_ERR_IRQ_I variant that
-> lets you pass your own function instead of making the handler have to do
-> the hbg_hw_irq_enable call in its handler?
-
-Currently, only the RX_BUF_AVL interrupt needs to be enabled separately.
-Personally, I think it is acceptable to temporarily not use the an HBG_ERR_IRQ_I variant.
-
->
->> Fixes: fd394a334b1c ("net: hibmcge: Add support for abnormal irq handling feature")
->> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
->> ---
->>   drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c
->> index 8af0bc4cca21..ae4cb35186d8 100644
->> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c
->> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c
->> @@ -32,6 +32,7 @@ static void hbg_irq_handle_rx_buf_val(struct hbg_priv *priv,
->>   				      const struct hbg_irq_info *irq_info)
->>   {
->>   	priv->stats.rx_fifo_less_empty_thrsld_cnt++;
->> +	hbg_hw_irq_enable(priv, irq_info->mask, true);
->>   }
->>   
->>   #define HBG_IRQ_I(name, handle) \
 
