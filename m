@@ -1,95 +1,134 @@
-Return-Path: <linux-kernel+bounces-868590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778E9C05961
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:31:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE62C05944
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 12:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1086E3B7EF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:24:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54E353B8EB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 10:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBBE30C36D;
-	Fri, 24 Oct 2025 10:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7IYKiHt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A102A30F946;
+	Fri, 24 Oct 2025 10:24:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7953730F943;
-	Fri, 24 Oct 2025 10:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F6730F814
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 10:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761301427; cv=none; b=D1Aq8ecefKP15pu4YdoYj/q2+hinX//zAFvS2GQQUQjF66bVmFCv/1LQVlK7a3dDU7zpaGJTfKwzIj6ZdKDgwfCBwP0OHMjF60/4G5qvfLIeoC3NRmxtxi0UKmnU3HV1QsrA3uUfVAZOxvb5cJ2FeTFs3Jmorv2wYJvX2pIg+Fs=
+	t=1761301445; cv=none; b=ANdF18LsNG0A0LrUx+Lkmy0s6+WCSagGynIPXgctlIXxFJAoGpnQFdfC/ungiGjxbEcE4zL5s4U/5J1I5Tx+jOYgqRJGN9y6mmYjYxH3V6tWgCwcvUZr0McAbuGciXimCF2bWFTKVhgR+nf4SfRP1VrjS6Rjo0aMY0kZuelpCJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761301427; c=relaxed/simple;
-	bh=Ljvetg2fVYvsV5S84YIrfw1dMOgbHyndFwdWVn8d3mg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=gLSeEpHpqRRdaPag04cLEG3TgenrMIcFJll0aia8njR1+ww1UePzXVKfdUVm53RFjDsU5hMvtfE9ep7RgbMyVt1mk9pdAPCkVbMTvz3rSgkE0niF/Je4BDdAH4oazsP2NYIoI7rHLMYRqOruWszW3Q9WTsp3GybIyjvdyAGzt7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7IYKiHt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECE4EC4CEF5;
-	Fri, 24 Oct 2025 10:23:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761301427;
-	bh=Ljvetg2fVYvsV5S84YIrfw1dMOgbHyndFwdWVn8d3mg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=P7IYKiHt9bKO6xANQumPQiKBSyuwZS6rgRk56fpsCRcYavXuyODYaXKRzaNbn1PyJ
-	 mSB+P0QEnf10WG5fgqxrzpY14nZXcH46+GcAZDeEKnexGx/A7/2n7scgy7/mCBULsx
-	 0r/1nH+Rz9ULKMg0TJM3c+FDTR+ELvFaP+enB2omwpGkz1fSJJIUbWHaAJhJkKWbbu
-	 iP+FteKzElN8XpUAVW7inGesCPX0EvpnqVXDLlXT6WROhKY+mfbrSKpfr/RZojxrc7
-	 bFlj6GYnCIavZSSojPtpTKbtOAeU10eiHm0sLvz8VZReZulCfDEOoGuOHSMMbMJy7+
-	 lAtRR/QdXE+LA==
-From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: yung-chuan.liao@linux.intel.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-In-Reply-To: <20251023110824.1587-1-rf@opensource.cirrus.com>
-References: <20251023110824.1587-1-rf@opensource.cirrus.com>
-Subject: Re: [PATCH] ASoC: soc_sdw_utils: add cs35l57 support
-Message-Id: <176130142568.10077.8554790639434736675.b4-ty@kernel.org>
-Date: Fri, 24 Oct 2025 11:23:45 +0100
+	s=arc-20240116; t=1761301445; c=relaxed/simple;
+	bh=SZLaot+Zw+HAD5eEvDVQNGQ44b1fOcUSvF+JGGYufh8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pm2yeQHJdlDAc1CnvMU8qK80TF0Co94wXIOU0/QCzUY2H5FlqOFC6d6vEk44lKpv2Q5gisThK9z7mWEYf611TNY9ZawqXh2JpbCB1INt3Gx9Q4DcbV4GejLncA/tvSO2N9tND275L0zQm4D8QS9zLRhrtWbZu/BOhx9OMuVjG4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430c8321bc1so24674355ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:24:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761301443; x=1761906243;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OBz4w+LXpnd8Z2sZGUiEqA5fHn9GVtfhHzSV+mtIt2o=;
+        b=astEYwC+E6BGoiBzQ/G+J/QHFWgJf+R2Zz1mpPTrN0o2NbqW11jjm2M+AJWh4fDhBg
+         e+BsmldRgJ/MwvTGV/B9qRZm0uw5JkCh6ExQ7EzjoozQNQ0F/J6UevEtNReqcVmF3V8+
+         YlFwriRDCanvtTgB3qR3mXkOFoz0Z65QqGFo5zHVm8M+C4wDCXJB1ALogisVSKtT0De6
+         Daml0dJvM8ECq9LwZ2CaA34DqoP1plR66C7vMKzOopJpv3ofSIEOUa7FynVDyry4R5iI
+         scJYxqiSZwYXZenn3eP9nHFyJ92KzMC/AgKWSyNV++CB18IC1qjMo7PIK2bGdTi4b90W
+         pLtw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/UlGZEpjpx7Qej4ghd46vlBcEz0zD7yShH2T4rOMJDMeIJj9i3+Vy6/7ghuFvJ37lVHupJBYzlLWixDE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmv90Oggg+A41ccf38MLdAXzH9MGVJPNR7+QtbiK7hlE3YZXeF
+	m8C46HPgICqeURFTB/4jsyTopJ43D1OqleK07+84ZnPhV602WhkkJvJu1RKetf0nXwk1mOBmBuw
+	AVYEdvgG0CFkFrNTwrTDBPW+YzPjsdB99EPG9MIphUiIIWLMLg4By6ljhD1s=
+X-Google-Smtp-Source: AGHT+IEngvZD1Cp+yWRHOkQ1udmpZsCSTqcwhHUp+7gzKuCwfvbYZpTTBN1WcKOsUxb3bd2EkQOAtiGFFgjUZ/ZlqvHjoBvRj5C6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-88d78
+X-Received: by 2002:a05:6e02:1a66:b0:42f:a7ee:4922 with SMTP id
+ e9e14a558f8ab-430c52b5af3mr362184515ab.16.1761301442831; Fri, 24 Oct 2025
+ 03:24:02 -0700 (PDT)
+Date: Fri, 24 Oct 2025 03:24:02 -0700
+In-Reply-To: <20251024071156.J2MZa%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fb53c2.a70a0220.3bf6c6.0192.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_commit_truncate
+From: syzbot <syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 23 Oct 2025 12:08:24 +0100, Richard Fitzgerald wrote:
-> cs35l57 uses the same codec driver as cs35l56.
-> 
-> 
+Hello,
 
-Applied to
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+UBSAN: signed-integer-overflow in ip_idents_reserve
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+================================================================================
+UBSAN: signed-integer-overflow in ./arch/x86/include/asm/atomic.h:165:11
+-498696627 + -2117033276 cannot be represented in type 'int'
+CPU: 1 PID: 33 Comm: kworker/u4:2 Not tainted syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Workqueue: wg-kex-wg0 wg_packet_handshake_send_worker
+Call Trace:
+ <IRQ>
+ dump_stack+0xfd/0x16e lib/dump_stack.c:118
+ ubsan_epilogue+0xa/0x30 lib/ubsan.c:148
+ handle_overflow+0x192/0x1b0 lib/ubsan.c:180
+ arch_atomic_add_return arch/x86/include/asm/atomic.h:165 [inline]
+ atomic_add_return include/asm-generic/atomic-instrumented.h:73 [inline]
+ ip_idents_reserve+0x14a/0x170 net/ipv4/route.c:521
+ __ip_select_ident+0xe4/0x1c0 net/ipv4/route.c:538
+ ip_select_ident_segs include/net/ip.h:525 [inline]
+ ip_select_ident include/net/ip.h:532 [inline]
+ __ip_make_skb+0xf78/0x19b0 net/ipv4/ip_output.c:1551
+ ip_finish_skb include/net/ip.h:244 [inline]
+ ip_push_pending_frames+0x2c/0x150 net/ipv4/ip_output.c:1606
+ __icmp_send+0xc22/0xf70 net/ipv4/icmp.c:776
+ icmp_send include/net/icmp.h:43 [inline]
+ __udp4_lib_rcv+0x14e9/0x2070 net/ipv4/udp.c:2438
+ ip_protocol_deliver_rcu+0x405/0x7e0 net/ipv4/ip_input.c:204
+ ip_local_deliver_finish+0x1d5/0x330 net/ipv4/ip_input.c:231
+ NF_HOOK+0x25a/0x2c0 include/linux/netfilter.h:296
+ NF_HOOK+0x25a/0x2c0 include/linux/netfilter.h:296
+ __netif_receive_skb_one_core net/core/dev.c:5395 [inline]
+ __netif_receive_skb+0x144/0x380 net/core/dev.c:5509
+ process_backlog+0x4ef/0x6e0 net/core/dev.c:6416
+ napi_poll net/core/dev.c:6867 [inline]
+ net_rx_action+0x4b1/0xc30 net/core/dev.c:6937
+ __do_softirq+0x267/0x92e kernel/softirq.c:298
+ asm_call_irq_on_stack+0xf/0x20
+ </IRQ>
+ __run_on_irqstack arch/x86/include/asm/irq_stack.h:26 [inline]
+ run_on_irqstack_cond arch/x86/include/asm/irq_stack.h:77 [inline]
+ do_softirq_own_stack+0x9b/0xe0 arch/x86/kernel/irq_64.c:77
+ do_softirq+0xc4/0x100 kernel/softirq.c:343
+ __local_bh_enable_ip+0x121/0x160 kernel/softirq.c:195
+ wg_socket_send_skb_to_peer+0x167/0x1c0 drivers/net/wireguard/socket.c:184
+ wg_packet_send_handshake_initiation drivers/net/wireguard/send.c:40 [inline]
+ wg_packet_handshake_send_worker+0x16b/0x280 drivers/net/wireguard/send.c:51
+ process_one_work+0x85b/0xfe0 kernel/workqueue.c:2282
+ worker_thread+0xa9b/0x1430 kernel/workqueue.c:2428
+ kthread+0x384/0x410 kernel/kthread.c:328
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
+================================================================================
 
-Thanks!
 
-[1/1] ASoC: soc_sdw_utils: add cs35l57 support
-      commit: 61eb4112a8fbed999e3906a6c35e0731cf688c43
+Tested on:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+commit:         d3d0b4e2 Linux 5.10.245
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=10f19be2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1734393bfd41d2b
+dashboard link: https://syzkaller.appspot.com/bug?extid=c16daba279a1161acfb0
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=151d0be2580000
 
 
