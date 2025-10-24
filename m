@@ -1,82 +1,75 @@
-Return-Path: <linux-kernel+bounces-869215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF86C074CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 630BBC07505
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 18:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC2E7189808C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:27:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D84119A24A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6FC33509F;
-	Fri, 24 Oct 2025 16:27:14 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D72C336EE2;
+	Fri, 24 Oct 2025 16:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b="dFkeTwAT"
+Received: from mx1.manguebit.org (mx1.manguebit.org [143.255.12.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073B024E4A1;
-	Fri, 24 Oct 2025 16:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54FC32C950;
+	Fri, 24 Oct 2025 16:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.255.12.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761323234; cv=none; b=qjxNId9TG8nUlYwzbbrhHw6hbcg3Xt90ZIG7WwZ3UmRRFEqGge7PGbfTYMPKuTWw1waBrcHY1zBm7bTjWGUtra5UCtyPTbPJTV4JZ4ZiA9g1rXfxZDdKw/MghnlJxpAAr2fq1OPDnX4wEij8nC1IZ2YFU7ujeg0ecgNAZ0tXunM=
+	t=1761323293; cv=none; b=qt19WD3EDH24TB0knyq5xogJQ8lOqjHax8QfFzOnPPrqbDA2zee6Uqzwk9vD37lYZGyhDck2PbC2B/T3m2aoFk7OrX7qMX1JFTh31anpiHZMz+qY4XRqGPGuEiD2zwqXH74VD+lSS99XNDafVZGfxRFRYVrY8ETvWrjk7Ui0Xl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761323234; c=relaxed/simple;
-	bh=FpRiRtMz4XD17hDc+TObHJ2svjHLAl5Cb2aeoQ5n4SM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IdxhZF54ELfk/tlKA38tp3HoQRjS3fWekPf6RLDlUEOrn/jjLZSnf7QbYv2B1qy9CwyAZkYj7tIvHKepKIPe+rRRMVNjgiju2i1OShe34v4Ph2eNTal75DxV1QacK38szTasAn3D+PYSV/iuZ6244Y6aBHj5wRfynKHmMCXyJlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: by Chamillionaire.breakpoint.cc (Postfix, from userid 1003)
-	id 84CE76017F; Fri, 24 Oct 2025 18:27:09 +0200 (CEST)
-Date: Fri, 24 Oct 2025 18:27:07 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Andrii Melnychenko <a.melnychenko@vyos.io>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, phil@nwl.cc,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/1] nft_ct: Added nfct_seqadj_ext_add() for DNAT'ed
- conntrack.
-Message-ID: <aPuo22KKi2CtD57q@strlen.de>
-References: <20251024162216.963891-1-a.melnychenko@vyos.io>
- <20251024162216.963891-2-a.melnychenko@vyos.io>
+	s=arc-20240116; t=1761323293; c=relaxed/simple;
+	bh=/wliLZvxICaQNx4AGi7HzPgavTLVmI3gz2pxhZpQUM4=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=unWHCY37AVR+WGoIf5vgp8e0HnqjGfShARjehb8ls5z0w1RnA6MWoNioSWOSk5bFUR2cEBlQdHAWtjgphA/D28LQY2ZGuOuufxcwyeyv8NtEzhuiScVA786B1s1Q1hA5hNrEwYCqC1WxRsX7mYALPTeIsvJbM12nuB4r13NJ2SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org; spf=pass smtp.mailfrom=manguebit.org; dkim=pass (2048-bit key) header.d=manguebit.org header.i=@manguebit.org header.b=dFkeTwAT; arc=none smtp.client-ip=143.255.12.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=manguebit.org; s=dkim; h=Content-Type:MIME-Version:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/wliLZvxICaQNx4AGi7HzPgavTLVmI3gz2pxhZpQUM4=; b=dFkeTwAT6A93si/lxGVbRGwzys
+	uDjd3BK+vEThMDmEIrIoReeSHgl91VuL5dl1s/febCYDausaDyDJl6g+ygR2vqASyWUEOTcIvRw4g
+	cvgArFccKnXH1Y2KSnr2fCmWH5aQki8s+67zqX9xEfzYJlcda/OskGr1tHxSkH8KldE+s2khiiEru
+	gezDW05zFwJOUZOpinLlK3sAmyLMBCCTDjPp55f0/KacoA1jlATpJclOUE68y6OrF3lB5TRHhQ97m
+	Qm94CG6Ane1koVwJq4GhIb8hi4eMMxQQ8gs7jTwDsdwJdL5u2IyLDnDWdUQyXlXNQ4uaRqsJRiOPq
+	Nerw7qIg==;
+Received: from pc by mx1.manguebit.org with local (Exim 4.98.2)
+	id 1vCKe9-00000000JTl-1bf8;
+	Fri, 24 Oct 2025 13:28:09 -0300
+Message-ID: <e6346ce513c44be5d4b02bc2a670ff75@manguebit.org>
+From: Paulo Alcantara <pc@manguebit.org>
+To: David Howells <dhowells@redhat.com>, Steve French <sfrench@samba.org>
+Cc: dhowells@redhat.com, linux-cifs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Call the smb3_read_* tracepoints from SMB1
+In-Reply-To: <2014675.1761320570@warthog.procyon.org.uk>
+References: <2014675.1761320570@warthog.procyon.org.uk>
+Date: Fri, 24 Oct 2025 13:28:09 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024162216.963891-2-a.melnychenko@vyos.io>
+Content-Type: text/plain
 
-Andrii Melnychenko <a.melnychenko@vyos.io> wrote:
-> There is an issue with the missed seqadj extension for NAT'ed
-> conntrack setup with nft. Sequence adjustment may be required
-> for FTP traffic with PASV/EPSV modes.
+David Howells <dhowells@redhat.com> writes:
 
-Patch looks good, thanks.
+> Call the smb3_read_* tracepoints from SMB1's cifs_async_readv() and
+> cifs_readv_callback().
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Steve French <sfrench@samba.org>
+> cc: Paulo Alcantara <pc@manguebit.org>
+> cc: linux-cifs@vger.kernel.org
+> cc: linux-fsdevel@vger.kernel.org
 
-> Oct 16 10:24:44 vyos kernel: Missing nfct_seqadj_ext_add() setup call
-> Oct 16 10:24:44 vyos kernel: WARNING: CPU: 1 PID: 0 at
-> net/netfilter/nf_conntrack_seqadj.c:41 nf_ct_seqadj_set+0xbf/0xe0
-> [nf_conntrack]
-
-This is useful.
-
-> configfs(E) virtio_rng(E) rng_core(E) ip_tables(E) x_tables(E)
-> autofs4(E) usb_storage(E) ohci_hcd(E) uhci_hcd(E) ehci_hcd(E) sd_mod(E)
-
-[..]
-
-For the future, please consider trimming this to the essentials.
-Loaded modules etc or date are not relevant info that needs to be in
-the changelog.
-
-I'll trim this before applying, no need to resend.
-
-Thanks for taking the time to track down the root cause of this bug.
+Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
 
