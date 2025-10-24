@@ -1,319 +1,182 @@
-Return-Path: <linux-kernel+bounces-869514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6878C080AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:23:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A265EC08080
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 22:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80C694E40FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9271C3A6934
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 20:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1C2B2EC564;
-	Fri, 24 Oct 2025 20:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3AA2F0C79;
+	Fri, 24 Oct 2025 20:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Re9SC8Z/";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Re9SC8Z/"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013054.outbound.protection.outlook.com [52.101.72.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WF7LjC75"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297712F362F
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 20:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.54
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761337336; cv=fail; b=mQUGiISnb8M0LAlEY6t6f/qnkYZfrIGhidzb+s0sdKEkeKmjHajclnXqs/+wgh4KTg9vNY3yh5wbbKBnFwLGoNCmZ3Twt7OztjQoECsz7VqdqbVBjObrfvihHcjVWXPoloAcSmazO25SsOExuh00XghzGIeMCTnOq5f91EqIG9w=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761337336; c=relaxed/simple;
-	bh=k6dyhztKv9fTa3I6SerC6Ado+vgeflcqLK70HRkF3Fk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VvhkjIZuMop0X/uDZECZqMhKtRQspp1GLImT5++HfmJtvF/A4O2nyrcxGxY0xDtno2CCTjlPy3xjxrZhVjW2FA8XueNJpl3Qt+Vaz5erbJrVi66IBhyjGe8noj914BwRln5Va7OP/vAbRYTuBFDafgqu5PBiT52qr1gsefI11T4=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Re9SC8Z/; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Re9SC8Z/; arc=fail smtp.client-ip=52.101.72.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=deM+9k7/C2bWhwPq3mCleNJtJ4DShZmZJYVdkKuZiGyox40G3S+WDUUDnOXYxQmjJK8NqRuLKs/Itvf1PKyQJf+Ts+YikaY41uV0rPwYoKlc5a6uvSaDeyCpo/zfJXZnixhri0/DaUeRFy0ci3eToJYKrg3gUhx66KAbdt7SwHA4afYiL8aPNC4Xbrz5td6EBK67iXgFVVqzRhS3LkLK3GZjSn2b1056SszXs+xmSoug++DyrSTSFNWy0we5ZwWe88QdzfRcG8SLcD2R/0r8bD0JQ17HC3OeDoP2sXhYek1QEYQ0ekJdodvyqvz+CVdAwPey4re+iYvYLvAo+qvveA==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uCDRmdbdCbdECXFPwUHuHAZk/hnTwJlbnZbnB2pkvtY=;
- b=LMNKZ1ws1eOWldA9/iXOpb7k5OoVtMBObQ2wU/Pp0zqc4FgIRTd1yEhPg61J8aucPyhwCBgKz3gs+2sAdM8sauu1E2xpmf6yMAbSw9EdZivSx2/jUpWGaF2pVuPCgCyrWyHWqjFzYo+F6rSo0Q43Bu2QYd1/ixqu8jHksw+lnz1BxokWz+YFAjYEIJI27v2vsrzdeFjcnX4JODyscf6Bbq4r0+NXLPwgVGXqlqCSCdAfcXnDTDQYcq8gO6i3008/97Suh+Z38LMBE/FniG7RwKd+t50I4tcc0vJbIhZwAEvBsTKetKZzyKYo71/lavtZjOwKA/yHvcFFyMGvgzKRjg==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uCDRmdbdCbdECXFPwUHuHAZk/hnTwJlbnZbnB2pkvtY=;
- b=Re9SC8Z/thdF77xWTGIiw1BDtJRuMdA1Um9vyVTaaRfNsTX24grf4RM9mJNwFQTdvjbe0JQ5nby72P8IaCWmD71kKOsItTdrQe4VrRJHhdGyLJjcWtkZuv2a+WGeJvcD34kNe7zcG5di980eLHFXLUGz+5JlEVrwwPHkbn4M2/A=
-Received: from AM5PR0601CA0074.eurprd06.prod.outlook.com (2603:10a6:206::39)
- by AM0PR08MB5411.eurprd08.prod.outlook.com (2603:10a6:208:181::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 20:22:09 +0000
-Received: from AMS0EPF0000019D.eurprd05.prod.outlook.com
- (2603:10a6:206:0:cafe::a2) by AM5PR0601CA0074.outlook.office365.com
- (2603:10a6:206::39) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.15 via Frontend Transport; Fri,
- 24 Oct 2025 20:22:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AMS0EPF0000019D.mail.protection.outlook.com (10.167.16.249) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.7
- via Frontend Transport; Fri, 24 Oct 2025 20:22:08 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tSSx9W6RhqY/6xjFGT+fD7GBIy8i15xvLk3xgyNU/vdfNvwU3m9SzCF9w5NangPZGw/H8rB+A7XQA/xMHKE++bOc3EuZ8Wojk523p10Dl9tnWRgGMtC3iylEgiZx/e5YzpvKDrG5/Qod7z+mIzKYTFI0iJCKtj7wAXAVHXnU2Ly5LsCFSL/V42ZkRnicB0iMxLlEQztsBSjHAZCz3acdXtTOGPWTMajCPMjkgQxaW3ak7fG7Tp5MPVhXDTN/2/h2l51EoAl0pTc01DlyARE2LnyvCteh9ByBm1BWr589/Y0sxFLkXUNHH8V0X/h5g+LwSWqn4+vQhfVVpzRkyvalxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uCDRmdbdCbdECXFPwUHuHAZk/hnTwJlbnZbnB2pkvtY=;
- b=qVEueNB3rOpHveMWXZ6HeoYWIOJj5OcVreCsF500n0TaFO0H/RALgFAKBtwFKENdDmFQauJFOupuL8ykEmxyAJyXICVRzQzgXY5DsaW0TFL9U/lcei7uH5QIqG/5+5cSRVA+fIh1861Ve3pTHSF3ZTWcNZwD/gfaBWE4yRvchKqZ1WtREhRXsqhX23jwEbLTQxrZGoY6mdUpe6xbR0RwaFRuRI1Q8DsF2tjmZRbQGT/UCbF+0X1Nt+ysjFytr34t3VgDohQaa+gPSdViwKPHRdJDKEgqGgVcOpkOBSQVC0Lv8rxr/+OG5FUOp64xgDxMAjeN71DQBL0mi2A+DeI0fg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uCDRmdbdCbdECXFPwUHuHAZk/hnTwJlbnZbnB2pkvtY=;
- b=Re9SC8Z/thdF77xWTGIiw1BDtJRuMdA1Um9vyVTaaRfNsTX24grf4RM9mJNwFQTdvjbe0JQ5nby72P8IaCWmD71kKOsItTdrQe4VrRJHhdGyLJjcWtkZuv2a+WGeJvcD34kNe7zcG5di980eLHFXLUGz+5JlEVrwwPHkbn4M2/A=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18) by DU0PR08MB8929.eurprd08.prod.outlook.com
- (2603:10a6:10:464::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
- 2025 20:21:36 +0000
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74]) by VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74%7]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
- 20:21:35 +0000
-From: Karunika Choo <karunika.choo@arm.com>
-To: dri-devel@lists.freedesktop.org
-Cc: nd@arm.com,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] drm/panthor: Add support for Mali-G1 GPUs
-Date: Fri, 24 Oct 2025 21:21:17 +0100
-Message-ID: <20251024202117.3241292-9-karunika.choo@arm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20251024202117.3241292-1-karunika.choo@arm.com>
-References: <20251024202117.3241292-1-karunika.choo@arm.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0516.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:272::9) To VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8AC2BEC2D
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 20:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761337322; cv=none; b=IyFOoChc2WELyBw06j0HmwQ64XuyXi5N/s6wlj0b1Q3pzCXaGjBfGTcievO/mHKDW1wIndDaEI+twqBdkZmgnst2rubCCQ3xyajjyj4DeXeUtQVMtHp8SGbBtTz9Sh5Dp7zLO2P15tJj95NDUjiiTO08Bv81A9ovTlk3+/GAOFA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761337322; c=relaxed/simple;
+	bh=HY8nu1msWSv3vWsJlzaBnXdb3YfJe10Pi+fsj+Y2l9Y=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KutFj1SL4BPMJQ4QyqV3DFffcXjyU2gwb0ushyGbdnbjUwyDwz6qhc1D3tq430HQ+trRwYICb1G4AF+RlDWxpfIjMIdmwMindyUcAmuIodoUMMbfUzK3m0t7mGU/jSHw9sSjeOXdu1QR9ArmBE3rf7qVH+6s90C9y1d+Qv4n/6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WF7LjC75; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee4998c50so1930899a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:22:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761337319; x=1761942119; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5zHb6xopGDOUshixziaB00gh3wd9KLy6Lm4iKOPdoOQ=;
+        b=WF7LjC75SoJmh4K72LWIgGjuN8o9UG3MBUiR7pPfapIAqsCHRwrDZ2itfQA2+x911m
+         V0qR38M7aRYasgASja9VVew/R/E4f+wtL+mHJCWOgjGc6zTWr6XAas0b/3sFxI7cLU+o
+         y8QlnHJEi1SrIMkgHuNL9mb2tHDLYooQnqVQetm3Qjk2Ujvm4Rgx9eskGckpPqJSAZOc
+         BKokRErN+QVGyMfsnfhfG/uBAMBznnx118arW8KjllcgCLFaEtHruWO690bG2MhCCI50
+         AXuiKw1hCYzQf9h3SaYLAKlzFK4s2/UL1zbLIILgBH3NjMAzJTFNY/UNMRU0p6HQXOw4
+         U6VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761337319; x=1761942119;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5zHb6xopGDOUshixziaB00gh3wd9KLy6Lm4iKOPdoOQ=;
+        b=RnMrIe04iELnXSCR87G5kgsNOuBrOWplcjQfbaKnSPsXTme0tR+zXSOG2JG4wml0Ek
+         bowDRgaPYL3clFiklqimCKYmsCs6CImC6PdI/8fCQdMiF89RoB0mHa5ove5x3iRDiApw
+         Chcui9ixZvyPmY5UC5ZviajUB2WtvcfWk0q4Cm10lPHkrt/M0eJjXLY9W6Yc8REOFZGu
+         fP1aOtCRXu7pqL0DZ6TOdcxy+/PVikrU9o3q6OGmuAigSUl7/97S4gpI94tC27DyQWXV
+         E03JEcwIYXbm8Nhxkkz2Fg1zqGpldgnRYxwnNK4UDjSzqsKFOsgvFJFT1KTfD95rAPbJ
+         9tGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfOJRWTjqroTURbG0690LXtOkxuIHr1hXvm4aFlegVv+n8RVN9NZZUciCkn/RwzSr0pjKNuyfeDZUPilk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc/ZNmHlumIYhigEDOE5k0TZvRuCJaIAejDo3PviVDdQ9SIHao
+	MIT3s8I5HJ7DcOkbcBDkSldxeKInNdzBKBGyhK34H31bMaWyAvX4EyFjhnHuFoe+em8w5+IUCRT
+	FVcn+Uw==
+X-Google-Smtp-Source: AGHT+IHmB/qAZY3JsYu7ONzAV1pNq7phirOTwfp9G6z952oHz03ayW0CdVlMOUoKTMDG6oVTUHYpNDRc+9w=
+X-Received: from pjbrs15.prod.google.com ([2002:a17:90b:2b8f:b0:33b:51fe:1a73])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3e43:b0:339:cece:a99
+ with SMTP id 98e67ed59e1d1-33bcf86c699mr42532689a91.13.1761337319524; Fri, 24
+ Oct 2025 13:21:59 -0700 (PDT)
+Date: Fri, 24 Oct 2025 13:21:57 -0700
+In-Reply-To: <B116CE75-43FD-41C4-BB3A-9B0A52FFD06B@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	VI0PR08MB11200:EE_|DU0PR08MB8929:EE_|AMS0EPF0000019D:EE_|AM0PR08MB5411:EE_
-X-MS-Office365-Filtering-Correlation-Id: b0fc139d-1b90-42c5-9257-08de133b01a7
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?KAOA6C/2jx0e0XpjgNcpVYlbLxpW7PBdK2hJqSbedMp0KsHKwsEyEnmvoBIM?=
- =?us-ascii?Q?ViTlXu07S0ASSmbxtpQxoquFsBziHnSPjlp6QfylYBWlbMda1oHWTVhT2xdA?=
- =?us-ascii?Q?aF1I8rrGj6iJO/T1A6hpx0PbGR4Krf1AbFi/iE1/QT+3Xyo9zhQBgaYgE0/r?=
- =?us-ascii?Q?g0J26D+j7fhvtcbUbaYuQY6PELAyd5SYmqGTAigXSL3vKIFFux1KoE9UmuoE?=
- =?us-ascii?Q?zAR/ac8bVKutwv680nj+2FJCdi21+HMBcOVGfC6LCqLzNaU+IKVQIeEUR7ah?=
- =?us-ascii?Q?O+UT6zh+rOs0tWBtf5YPo1vVjumJfQpT+U+63sDRvCyyqMOEJ/GEsdajvxw9?=
- =?us-ascii?Q?id7qqXg44gfFkRAz5S3SLUc2gkeE+0VfDqqDX2vn6LoR4o6aACcGPLhQs9If?=
- =?us-ascii?Q?MnCkQdEIY9FOIHxLqRYu0W9+2KKZWKfJWxseDg0QQ7hAv3PuwXUA9GMy3xiK?=
- =?us-ascii?Q?hGUTgSty3lWT2LjZ2HtR7q/aOVbx/TytJNrtSx9TRABrYpp0HiZE/tkQjODH?=
- =?us-ascii?Q?B6hpBquY7TdOhNfhmmU77Ff48/8+BlWEQ30/R5k9QlLYconLvCtP2/Afb2B+?=
- =?us-ascii?Q?oG/89myMvOH+31VsQ4h4/RC1/AH7CuPnVLhBTRvuOkAGRrh3IF89kkTs8Na3?=
- =?us-ascii?Q?/mS2EtLPsvDSZc7YmLn+nounKEiBeaO+02MAgZzFBMcwbWN4VSr590MLaSYN?=
- =?us-ascii?Q?DX+7t/F1w06qSS89Qdi+Y1lVGPmDbczx1+alPRCXRMMugbBFdkwH2Q9DTbZB?=
- =?us-ascii?Q?4QBcmiDhY2EY2rrgfU7zi82qD9xJui5i143X9F7GdWKTQu9+vqoCzRSODmx1?=
- =?us-ascii?Q?KW3zktVp+pxW6I2to2uU8LOgVesZywwBir41zQi5cAZC7hKUveiJ9lCKM+HZ?=
- =?us-ascii?Q?L2aDMh61lVWnN7CwIa25dQ+B7PsCrzRts6Cfm2bZqLML7/zjulkpGQtqcgfZ?=
- =?us-ascii?Q?rYX/Rr6q2OVVp5D9Z5M7UmH5+fmZX/U3HQoR2Lm8x/Rbt0wcSNN/5K0KyCKD?=
- =?us-ascii?Q?wrBFebUjl8htBI2+O6Y9kYoEBDwGof4hwpJFWZ9oXNx9+FOhitfcULWPRgrP?=
- =?us-ascii?Q?HYIOK16MV5jqav8B44ks15aj1MLZavid8KCm+NljkBktJURAxdE8uREATQJS?=
- =?us-ascii?Q?BawhAXOi3mm7GERSsSeNHkpBG/om1dM4PY4LEN5njeQbFq7QNleLuoOw2nrg?=
- =?us-ascii?Q?O+HMXyn2CjUZddOUs9YDqLjc2lsRzVI7mXGZ54pfiqyiOhUkcQ+XfSgRTi28?=
- =?us-ascii?Q?/UA5/1vBkmpUVAN1/n/WZUB4PZ4FY9iU+dzAS94ZPNNt4lnVPa1IwUSkaCts?=
- =?us-ascii?Q?EaWKInOX6Nvu4XFcoN1QJ4cXtprSbKPo6m/8zSnf0UKDI5ReZce8x7RNK1Bj?=
- =?us-ascii?Q?eEPZ5AsE6D26vBtyQjojeV6INuxHbiLjxAJX4vGz/RuDHdHsGwqQzFTrYQkX?=
- =?us-ascii?Q?iPXViVendjzXFYt+qZKHxflyfZ8ZRZuY?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0PR08MB11200.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB8929
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AMS0EPF0000019D.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	68866de7-213b-4442-9809-08de133aee13
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|35042699022|82310400026|14060799003|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DdlDKI7S2rvVp/Y76DluFLQ/Aab2JLvCXJlrRD45alk0cUg/uUM3EXilR09X?=
- =?us-ascii?Q?5366iUdghtKY9xc9bl9ag6a7c1QU3yjW6dF7/5pkXR+++Z04eNceudvskZ4c?=
- =?us-ascii?Q?I0puHlXDG5OS1DI3gBW7pm1pQjcBv39bA9iKiUynboo2iLyQaOQcB3mkaBa9?=
- =?us-ascii?Q?fK+X2PSnkIo78CiYJrFrwsJKJUGWHi8cIxIEqR9TR2+ccY6EOrJegAVT667g?=
- =?us-ascii?Q?azOGlwAQ6VohnozVxfZsLdAcV6UGDrWpsYJ1SL4eh1C/Q+Ew4zLnlM+tVJbK?=
- =?us-ascii?Q?PQmZho5xFo3J35d3VxYnz5vBb0rMYvlvy61+RKNQuM5CN0cK9525m1l/LNLe?=
- =?us-ascii?Q?cBafKflFqdCBkHneWuWuLUr5e2Rx2oO2pxQ9C1XuV9D8gTGdg5GUwrT9w1XJ?=
- =?us-ascii?Q?Im0v+Hxrj458lzH+mTi99+QRYcvfKH+/B3qX90RMwT7Mn2K8T1TgVv6M6EY9?=
- =?us-ascii?Q?SsKQ+4chXa0USa61jg5d/Pb1KLyuaU/Z8fGIrrNa5FAKOig1/SkK3Bc9Mxd7?=
- =?us-ascii?Q?aoU6zIODHPKADcHAeqCCLXGQEqgh0C8gZEYk8j2NXL1nO9SHKCbJ2+v0HFgb?=
- =?us-ascii?Q?tglAX+tPcpQPur2eykgDiiM73fy30AxfWimBPY4ADYoPtYTQiqzzhww0kzBH?=
- =?us-ascii?Q?CLkQCtxQO8FLdAutqUNa+GFoOwufcbZa4PBVOveXvaVIk4rB0aPxgV+SxSKy?=
- =?us-ascii?Q?8Pp0eLZCc7UIme4j+ObqgN8jchxPkh9GaWhzDEiEgneqdv9O8zPG5zf1K829?=
- =?us-ascii?Q?S1qWnUYDXTKaRRpiMWaXATLCSiZrHHba++EsbGgMK1CRM6Im0+UFAdOB1vqZ?=
- =?us-ascii?Q?VwaltrTO5iU6JEiKrupZP8XRsTTGEBKwCgL5P3On+hnu+oEb1T/93jpZ+9vl?=
- =?us-ascii?Q?2fqM/H5JMimGcZEr7mKlhoBmFVLezdqVjFXcPJTGndWIIjKIgrxuYGt7DcNK?=
- =?us-ascii?Q?tEdY0KWaViKldInrj6yliU5s8FtUYNqLKuZuPsOqzhnRAqf50u3mtIeloiMd?=
- =?us-ascii?Q?oc4qU6/1ADn9RRV532pNYCUv/DS/niRYVFAYaPqVP3Aa7G48HkqnYOtL52HJ?=
- =?us-ascii?Q?+WmRVczCfbvZQFYG+kWYYBu6nrzpzDAxu7UH8yVT2uWXJGD8srF5S1cnu8K5?=
- =?us-ascii?Q?6vITJuafSJZ/NsIfrZFr/Yfo5RWVnwv5rZr51vNIYUdMpIPgnJktyksX6p30?=
- =?us-ascii?Q?82ZY0Xtu4YNIFjO0cB9LMAC/FcyVZypNHC6INMizjcOs074ne6deJCl+1RZC?=
- =?us-ascii?Q?MJsqKUEar41QL/MRFfXSYHgfaOkt+qqoxPwOOy2st+JiXsm5AG/MrikulUTT?=
- =?us-ascii?Q?wB9j8rmqBc4yF33iKSIcVRBpmzIA8C3s0pUwJPAo74XV1Jj4mRFnsp0QFDIO?=
- =?us-ascii?Q?8EcvthDOacjQn564ny/om7wtV/HkIFDiKwV37BC9MyEB3yh3GK++FkdczEa3?=
- =?us-ascii?Q?lYfY/x4Xmgoc1xgQeCD9EEpPBpjmoUfkVbtat8Yy86wbjrKIDfKbPLQZy4NX?=
- =?us-ascii?Q?MsC737XpeiV/11UiZo0Xn5y6yBAJp2NJwBAJxdzeVWUfEG6ONt0W1/wm9Bge?=
- =?us-ascii?Q?H84IUbwBoNi41A6lmzw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(35042699022)(82310400026)(14060799003)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 20:22:08.4072
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0fc139d-1b90-42c5-9257-08de133b01a7
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF0000019D.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB5411
+Mime-Version: 1.0
+References: <20250918162529.640943-1-jon@nutanix.com> <aNHE0U3qxEOniXqO@google.com>
+ <7F944F65-4473-440A-9A2C-235C88672E36@nutanix.com> <B116CE75-43FD-41C4-BB3A-9B0A52FFD06B@nutanix.com>
+Message-ID: <aPvf5Y7qjewSVCom@google.com>
+Subject: Re: [PATCH] KVM: x86: skip userspace IOAPIC EOI exit when Directed
+ EOI is enabled
+From: Sean Christopherson <seanjc@google.com>
+To: Khushit Shah <khushit.shah@nutanix.com>
+Cc: Jon Kohler <jon@nutanix.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-Add support for Mali-G1 GPUs (CSF architecture v14), introducing a new
-panthor_hw_arch_v14 entry with reset and L2 power management operations
-via the PWR_CONTROL block.
+On Fri, Oct 03, 2025, Khushit Shah wrote:
+> Hi Sean,
+> 
+> Any updates on this?
 
-Mali-G1 introduces a dedicated PWR_CONTROL block for managing resets and
-power domains. panthor_gpu_info_init() is updated to use this block for
-L2, tiler, and shader domain present register reads.
+Sorry, fell into the classic pattern of "I'll do that one tomorrow...".
 
-Signed-off-by: Karunika Choo <karunika.choo@arm.com>
----
-v2:
- * Removed feature bits usage.
- * Check panthor_hw_has_pwr_ctrl() to read the correct *_PRESENT
-   registers instead of reading reserved registers on newer GPUs.
----
- drivers/gpu/drm/panthor/panthor_fw.c |  1 +
- drivers/gpu/drm/panthor/panthor_hw.c | 35 ++++++++++++++++++++++++----
- 2 files changed, 32 insertions(+), 4 deletions(-)
+> I suggest adding a new KVM capability that disables advertising support for EOI
+> broadcast suppression when using split-irqchip. It is similar in spirit to
+> KVM_CAP_X2APIC_API for x2APIC quirks.
+> 
+> By default, we still assume the userspace I/O APIC implements the EOI register.
+> If it does not, userspace can set a flag before vCPU creation (after selecting
+> split-irqchip mode) to disable EOI broadcast suppression. This should be a
+> per-VM flag, as all APICs will share the same behavior. I am sharing a
+> preliminary diff for discussion. The earlier fix can sit on top of this. This just 
+> allows disabling EOI broadcast suppression under split-irqchip.
+> 
+> What are your thoughts on this? If this seems reasonable, I can send a proper
+> patch.
 
-diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-index 9ba10ab1d7c0..031d23166c18 100644
---- a/drivers/gpu/drm/panthor/panthor_fw.c
-+++ b/drivers/gpu/drm/panthor/panthor_fw.c
-@@ -1500,3 +1500,4 @@ MODULE_FIRMWARE("arm/mali/arch10.12/mali_csffw.bin");
- MODULE_FIRMWARE("arm/mali/arch11.8/mali_csffw.bin");
- MODULE_FIRMWARE("arm/mali/arch12.8/mali_csffw.bin");
- MODULE_FIRMWARE("arm/mali/arch13.8/mali_csffw.bin");
-+MODULE_FIRMWARE("arm/mali/arch14.8/mali_csffw.bin");
-diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-index 09aef34a6ce7..29c7a6e60300 100644
---- a/drivers/gpu/drm/panthor/panthor_hw.c
-+++ b/drivers/gpu/drm/panthor/panthor_hw.c
-@@ -3,6 +3,7 @@
+Make it a quirk instead of a capability.  This is definitely a KVM bug, it's just
+unfortunately one that we can't fix without breaking userspace :-/
 
- #include "panthor_device.h"
- #include "panthor_gpu.h"
-+#include "panthor_pwr.h"
- #include "panthor_regs.h"
+And I'm pretty sure we want to quirk the exit to userspace, not the enumeration
+of and support for the feature, e.g. so that an updated userspace VMM can disable
+the quirk on a live update/migration and take advantage of the fanciness without
+having to wait for guests to reboot.
 
- #define GPU_PROD_ID_MAKE(arch_major, prod_major) \
-@@ -28,12 +29,25 @@ static struct panthor_hw panthor_hw_arch_v10 = {
- 	},
- };
+Can you also start with the below changelog+comment?  I massaged  in anticipation
+of applying v1 before I realized it would break userespace :-)
 
-+static struct panthor_hw panthor_hw_arch_v14 = {
-+	.ops = {
-+		.soft_reset = panthor_pwr_reset_soft,
-+		.l2_power_off = panthor_pwr_l2_power_off,
-+		.l2_power_on = panthor_pwr_l2_power_on,
-+	},
-+};
-+
- static struct panthor_hw_entry panthor_hw_match[] = {
- 	{
- 		.arch_min = 10,
- 		.arch_max = 13,
- 		.hwdev = &panthor_hw_arch_v10,
- 	},
-+	{
-+		.arch_min = 14,
-+		.arch_max = 14,
-+		.hwdev = &panthor_hw_arch_v14,
-+	},
- };
+E.g. with the quirk stubbed in (obviously not tested in any capacity):
 
- static char *get_gpu_model_name(struct panthor_device *ptdev)
-@@ -81,6 +95,12 @@ static char *get_gpu_model_name(struct panthor_device *ptdev)
- 		fallthrough;
- 	case GPU_PROD_ID_MAKE(13, 1):
- 		return "Mali-G625";
-+	case GPU_PROD_ID_MAKE(14, 0):
-+		return "Mali-G1-Ultra";
-+	case GPU_PROD_ID_MAKE(14, 1):
-+		return "Mali-G1-Premium";
-+	case GPU_PROD_ID_MAKE(14, 3):
-+		return "Mali-G1-Pro";
- 	}
-
- 	return "(Unknown Mali GPU)";
-@@ -107,12 +127,19 @@ static void panthor_gpu_info_init(struct panthor_device *ptdev)
-
- 	ptdev->gpu_info.as_present = gpu_read(ptdev, GPU_AS_PRESENT);
-
--	ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT);
--	ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT);
--	ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT);
--
- 	/* Introduced in arch 11.x */
- 	ptdev->gpu_info.gpu_features = gpu_read64(ptdev, GPU_FEATURES);
-+
-+	if (panthor_hw_has_pwr_ctrl(ptdev)) {
-+		/* Introduced in arch 14.x */
-+		ptdev->gpu_info.l2_present = gpu_read64(ptdev, PWR_L2_PRESENT);
-+		ptdev->gpu_info.tiler_present = gpu_read64(ptdev, PWR_TILER_PRESENT);
-+		ptdev->gpu_info.shader_present = gpu_read64(ptdev, PWR_SHADER_PRESENT);
-+	} else {
-+		ptdev->gpu_info.shader_present = gpu_read64(ptdev, GPU_SHADER_PRESENT);
-+		ptdev->gpu_info.tiler_present = gpu_read64(ptdev, GPU_TILER_PRESENT);
-+		ptdev->gpu_info.l2_present = gpu_read64(ptdev, GPU_L2_PRESENT);
-+	}
- }
-
- static void panthor_hw_info_init(struct panthor_device *ptdev)
 --
-2.49.0
+From: Khushit Shah <khushit.shah@nutanix.com>
+Date: Thu, 18 Sep 2025 09:25:28 -0700
+Subject: [PATCH] KVM: x86: Suppress EOI broadcasts with split IRQCHIP if
+ Directed EOI is enabled
 
+Do not generate a KVM_EXIT_IOAPIC_EOI exit to userspace when handling EOIs
+for a split IRQCHIP and the vCPU has enabled Directed EOIs in its local
+APIC, i.e. if the guest has set "Suppress EOI Broadcasts" in Intel
+parlance.
+
+Incorrectly broadcasting EOIs can lead to a potentially fatal interrupt
+storm if the IRQ line is still asserted and userspace reacts to the EOI by
+re-injecting the IRQ.  E.g. Windows with Hyper-V enabled gets stuck during
+boot when running under QEMU with a split IRQCHIP.
+
+Note, Suppress EOI Broadcasts is defined only in Intel's SDM, not in AMD's
+APM.  But the bit is writable on some AMD CPUs, e.g. Turin, and KVM's ABI
+is to support Directed EOI (KVM's name) irrespective of guest CPU vendor.
+
+Note #2, KVM doesn't support Directed EOIs for its in-kernel I/O APIC.
+See commit 0bcc3fb95b97 ("KVM: lapic: stop advertising DIRECTED_EOI when
+in-kernel IOAPIC is in use").
+
+Fixes: 7543a635aa09 ("KVM: x86: Add KVM exit for IOAPIC EOIs")
+Cc: stable@vger.kernel.org
+Closes: https://lore.kernel.org/kvm/7D497EF1-607D-4D37-98E7-DAF95F099342@nutanix.com
+Signed-off-by: Khushit Shah <khushit.shah@nutanix.com>
+Link: https://lore.kernel.org/r/20250918162529.640943-1-jon@nutanix.com
+[sean: rewrite changelog and comment]
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/lapic.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index 5fc437341e03..56542239cc6b 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -1429,6 +1429,17 @@ static void kvm_ioapic_send_eoi(struct kvm_lapic *apic, int vector)
+ 
+ 	/* Request a KVM exit to inform the userspace IOAPIC. */
+ 	if (irqchip_split(apic->vcpu->kvm)) {
++		/*
++		 * Don't exit to userspace if the guest has enabled Directed
++		 * EOI, a.k.a. Suppress EOI Broadcasts, in which case the local
++		 * APIC doesn't broadcast EOIs (the the guest must EOI the
++		 * target I/O APIC(s) directly).
++		 */
++		if ((kvm_lapic_get_reg(apic, APIC_SPIV) & APIC_SPIV_DIRECTED_EOI) &&
++		    !kvm_check_has_quirk(vcpu->kvm,
++					 KVM_X86_QUIRK_IGNORE_SUPPRESS_EOI_BROADCAST))
++			return;
++
+ 		apic->vcpu->arch.pending_ioapic_eoi = vector;
+ 		kvm_make_request(KVM_REQ_IOAPIC_EOI_EXIT, apic->vcpu);
+ 		return;
+
+base-commit: 07e27ad16399afcd693be20211b0dfae63e0615f
+-- 
 
