@@ -1,212 +1,231 @@
-Return-Path: <linux-kernel+bounces-869033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-869034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB222C06C44
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:48:07 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4768CC06C4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 16:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39DC11B86CC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:48:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 28BBF4E6204
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 14:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D328C238C23;
-	Fri, 24 Oct 2025 14:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5A4225408;
+	Fri, 24 Oct 2025 14:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IKkdLumc"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LkNjP4Bj"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D07225408;
-	Fri, 24 Oct 2025 14:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3344222580
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 14:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761317277; cv=none; b=BsTf/DlcXjBoon75UqRj8ilGkbWWPYka7eymKPicWsbJmN3GZs9+ZPDEsTPyG1VCZwakKO3sefLD5OHclAamg7zQgSOtEa3/Opa97/3RE10WzNgvtyzXLeqjSbqavmOMwNWH+LvfBhsMlKswXWXwaJ+hyz3oe1RL5Jz9tU7td+k=
+	t=1761317298; cv=none; b=ZsNaA2D1/W4BoXg5zKJE8PZpcGCg3nd7uMZpaiUe98yfB4qEWz0wgg2g2ddHbsNjUf6a0loXZHeRsfkMYYcVHAxk9Ae2WQPVcNPKMjaC7vSOyn1qeQyCaNtIvZlEj4XDVrGw0Z4AOsb3rrc9XaQqpBSpakNBeF7Qm8Atx2IA4GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761317277; c=relaxed/simple;
-	bh=vqFLBMeCF7CFCbe19l4VmgAvbXXScMbZ2sOBRvHUFps=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ohM1LG3Ba9q/UuMnrh8FM7qB2D1pNYvJ/xZJAB1SpfGmx8I3VsOLOx7RR4X8G/hrcLOgX1Abgrmpdx4Hx5/1JXa1eupo9b3KGWk0JM/hvyyuoyYiExN0POs2p0/Nn+XFb7Ez6Hy0QWxo3ApKnyQP9knWpJ0HM9NOaSTXb3qSyL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IKkdLumc; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vqFLBMeCF7CFCbe19l4VmgAvbXXScMbZ2sOBRvHUFps=; b=IKkdLumcFBTV2g740ImMBco/ao
-	zTxg88/C31loa/DvTJsAtejfRX51CjAeJWW/3zhHVaucxjAb1/O5wdm4k5Y/ZxKoyWOYrr/9qTAt0
-	mzxnbI3iirB6ReChD9/pYVynbQsaGsv0X/xel2wytNJG4Zm9FkbCx31Zuz752zr1TnJZU3ZxGFQm/
-	WU7s1ljot4DDGAldGT2wRQUQt3+LwfS22Czh25yAnm1XNj5HnjGeVq5W57wjo5Zz2odUTmZiDYYAp
-	UlKEch7rkUmGzu80YLM7Xt2Ws2NLsw3KhwANFV03LwYEzLJZp71LOGRBuz7HJgUhJ9CM8lYmRAvmM
-	/cnTMOvw==;
-Received: from [2001:8b0:10b:5:d8ad:45c0:47cf:4bed] (helo=u09cd745991455d.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vCJ4w-00000003ExO-3GpU;
-	Fri, 24 Oct 2025 14:47:44 +0000
-Message-ID: <348e5f1c5a90e4ab0f14b4d997baf7169745bf04.camel@infradead.org>
-Subject: Re: [PATCH v3 11/13] x86/xen: use lazy_mmu_state when
- context-switching
-From: David Woodhouse <dwmw2@infradead.org>
-To: David Hildenbrand <david@redhat.com>, Kevin Brodsky
- <kevin.brodsky@arm.com>,  linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev
- <agordeev@linux.ibm.com>,  Andreas Larsson <andreas@gaisler.com>, Andrew
- Morton <akpm@linux-foundation.org>, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Borislav Petkov <bp@alien8.de>, Catalin
- Marinas <catalin.marinas@arm.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>,  Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,  Juergen
- Gross <jgross@suse.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Madhavan Srinivasan
- <maddy@linux.ibm.com>,  Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko
- <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, Nicholas Piggin
- <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Ryan Roberts
- <ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>, Thomas
- Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>, Will
- Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-Date: Fri, 24 Oct 2025 15:47:43 +0100
-In-Reply-To: <f0067f35-1048-4788-8401-f71d297f56f3@redhat.com>
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
-	 <20251015082727.2395128-12-kevin.brodsky@arm.com>
-	 <f0067f35-1048-4788-8401-f71d297f56f3@redhat.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-KCNFYCezFnaGZQ+WN2tw"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1761317298; c=relaxed/simple;
+	bh=6FCvz4Pr8iy8SbSq47KBPpQDq+up64+6iZWhDBOaJ/U=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
+	 In-Reply-To:Content-Type; b=CS0tucTqzqi6Gw6hTZX9JQgLznUToKF70MATBrDSixHyv+ne+wf/peQcw5JhRfgwHn9QcaGXENfyjfMknWeGJ0f1O5MzE+3LhvHbNF6/MZ21rlmYBCvP+qOiCmSHaLZ4DsIf1EdLGF6m8DxKffJKdzX51+v2iCX1ErPXvuyh45Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LkNjP4Bj; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-471193a9d9eso24403305e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761317293; x=1761922093; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A1Hx5nLLV2Jg5MZCp9AF1ElKQLvEIm2+dthQoOXPOnI=;
+        b=LkNjP4Bjp4vcpX3h/ygVwepvc2dvVVX+hKTDZqCQiKC5aQVqoYr6vbnbYsMNsvhe57
+         2loHdYAn2zYIdVCmJNl8JEMDKpY5dGhw9nHjBJdkWzBZDRjQd0ncGAXUz9PuNt3T1hNl
+         /K07feD+pMDfSIXppRVWJVwl9AgHGQGVx8iC+9d7vKsmIlVjesy1WbAOJqcfLJ7Y5Jse
+         s2AJ8kfDLFUBSFSKHsU7wDAGCrvLSfsIWr+JPYDTmmcKxKMFpz6A84rO0HNgWElWoFXN
+         jjjaAP/18BOxA4J5F21bU0Erai0eaaL4JU4V8cB2yhbDQe0R5iECq/oXeS7bloynXR/X
+         dxRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761317293; x=1761922093;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=A1Hx5nLLV2Jg5MZCp9AF1ElKQLvEIm2+dthQoOXPOnI=;
+        b=qiLmY6N2MDOPKV15EaQHGu5Hcxj0KQBHC5WIyqlwZs2JzIkRpxLhbhWEF2/q5phDh1
+         OMsfTO+Bby5dsrR+BI37j+4HOwlz+lz6eSkOm+DnlCBI57g58V7AsMvg4s4gLzz8UmU/
+         Td5gW6GiNvKvB/s7NoDcJjuTJyBwAe73ngmbgwDLvlIENeYRMl0xk4MB3O/nJPDxPfvj
+         WtF6PJBrhJh8mUI3mMEXProiJap/YbIk2fnu1aAk7ae8mma7KX4vOzd3KfLTPPbPoj1C
+         fWgDt3n75RsBLr1qBUfhrXK/BAwi0PPGpO6kLZerZYUvTLjBdt/U1iX/J1I8FPL3kkIr
+         KGlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaFSzKrCh2kB8XkdepQ4nrau6O/2qizBBFf+TP0TYlt/eH1x4tCxqN/SVqTfDFNOazC1+KgA7vTQoAG2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsSBHOfFk0hLxHYa1pyVFM1wYNkWyveGtw05td7n3nwkibIR/c
+	5RsYUm6pu03EkHMgftz/J/gRe30c2NKqzsy5BRItUTkmIDtgTYz3mHlr2rz+3xcGhRI=
+X-Gm-Gg: ASbGncuNQONMS/qoIENVwQnNSqj0sq1VOy7cweIzAIOvYgN7/IMF9B6+L71KpzpfGwY
+	7/gA+FQveX95t56Qu1OcFmSul6J9H2rnzMPv4iHWNRh1NVfg6PplitPIsnkOpQgHN3qAbcoqBxu
+	fA3fRIeS/VW2pxBPyCQoHNj7VJ46o+qPFrFS1kwF1SEOed+QudfwTJ/s8i+NPeK5mPAx1fc7hb6
+	E40I6cvCAbRRw8m+Tty+CMgKwyAbdyzFGXaJU9YBSTn6JIAdPksAUUBIT4fuae7Uv4hj/CaOgCW
+	FtVUIGKeeX64GzmAeJvjl5VQp0HegUItqHw2Q13HQ/43Pju1njjPPdh5zX5DMbl70WjdeIg1nlv
+	2rs3bo7FcV8GWZtCZqOoU0waSs/Af2hyC1QPaEIVsLQRweyBRWfSMU+BXhc+E0ibMpDUbNWo8I7
+	1VdIJ2d+izJyczk6MNpTHg+kaspgF8hq8qojqjIUukEPl6dxFKpFupL3DGIg+S9yM=
+X-Google-Smtp-Source: AGHT+IEVOj5qtIK9SZlpsAuRM/0uGNxmJtS/Z+rrAuP/YjslZpEI5RN54V/lFTwvhArOAWWIiCnq5Q==
+X-Received: by 2002:a05:600c:6309:b0:46e:4499:ba30 with SMTP id 5b1f17b1804b1-475d2ed1ba5mr21582565e9.30.1761317293064;
+        Fri, 24 Oct 2025 07:48:13 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:b4ee:479d:354c:6970? ([2a01:e0a:3d9:2080:b4ee:479d:354c:6970])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475cae924a1sm120723715e9.2.2025.10.24.07.48.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Oct 2025 07:48:11 -0700 (PDT)
+Message-ID: <7d8e9395-d2e4-413c-9058-fe22e3d2d68f@linaro.org>
+Date: Fri, 24 Oct 2025 16:48:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v7] drm/msm/dsi/phy: Fix reading zero as PLL rates when
+ unprepared
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250908094950.72877-2-krzysztof.kozlowski@linaro.org>
+ <50a49d72-2b1e-471d-b0c4-d5a0b38b2a21@linaro.org>
+ <05d6ea2a-c1ae-422d-b178-5d2a306f3669@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <05d6ea2a-c1ae-422d-b178-5d2a306f3669@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 10/24/25 16:34, Krzysztof Kozlowski wrote:
+> On 24/10/2025 14:43, Neil Armstrong wrote:
+>> Hi,
+>>
+>> On 9/8/25 11:49, Krzysztof Kozlowski wrote:
+>>> Hardware Programming Guide for DSI PHY says that PLL_SHUTDOWNB and
+>>> DIGTOP_PWRDN_B have to be asserted for any PLL register access.
+>>> Whenever dsi_pll_7nm_vco_recalc_rate() or dsi_pll_7nm_vco_set_rate()
+>>> were called on unprepared PLL, driver read values of zero leading to all
+>>> sort of further troubles, like failing to set pixel and byte clock
+>>> rates.
+>>>
+>>> Asserting the PLL shutdown bit is done by dsi_pll_enable_pll_bias() (and
+>>> corresponding dsi_pll_disable_pll_bias()) which are called through the
+>>> code, including from PLL .prepare() and .unprepare() callbacks.
+>>>
+>>> The .set_rate() and .recalc_rate() can be called almost anytime from
+>>> external users including times when PLL is or is not prepared, thus
+>>> driver should not interfere with the prepare status.
+>>>
+>>> Implement simple reference counting for the PLL bias, so
+>>> set_rate/recalc_rate will not change the status of prepared PLL.
+>>>
+>>> Issue of reading 0 in .recalc_rate() did not show up on existing
+>>> devices, but only after re-ordering the code for SM8750.
+>>
+>> It happens this breaks the bonded DSI use-case, mainly because both PHYs
+>> uses the same PLL, and trying to enable the DSI0 PHY PLL from the DSI1
+>> PHY fails because the DSI0 PHY enable_count == 0.
+> 
+> 
+> If it is ==0, the check you removed would not be hit and enable would
+> work. I don't quite get the analysis.
+> 
+>>
+>> Reverting part the the patch makes the bonded work again:
+>> ===================><===============================
+>> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+>> index 32f06edd21a9..24811c52d34c 100644
+>> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+>> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+>> @@ -426,11 +426,8 @@ static void dsi_pll_enable_pll_bias(struct dsi_pll_7nm *pll)
+>>    	u32 data;
+>>
+>>    	spin_lock_irqsave(&pll->pll_enable_lock, flags);
+>> -	if (pll->pll_enable_cnt++) {
+>> -		spin_unlock_irqrestore(&pll->pll_enable_lock, flags);
+>> -		WARN_ON(pll->pll_enable_cnt == INT_MAX);
+>> -		return;
+>> -	}
+>> +	pll->pll_enable_cnt++;
+>> +	WARN_ON(pll->pll_enable_cnt == INT_MAX);
+>>
+>>    	data = readl(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0);
+>>    	data |= DSI_7nm_PHY_CMN_CTRL_0_PLL_SHUTDOWNB;
+>> @@ -965,10 +962,8 @@ static int dsi_7nm_phy_enable(struct msm_dsi_phy *phy,
+>>    	u32 const delay_us = 5;
+>>    	u32 const timeout_us = 1000;
+>>    	struct msm_dsi_dphy_timing *timing = &phy->timing;
+>> -	struct dsi_pll_7nm *pll = phy->pll_data;
+>>    	void __iomem *base = phy->base;
+>>    	bool less_than_1500_mhz;
+>> -	unsigned long flags;
+>>    	u32 vreg_ctrl_0, vreg_ctrl_1, lane_ctrl0;
+>>    	u32 glbl_pemph_ctrl_0;
+>>    	u32 glbl_str_swi_cal_sel_ctrl, glbl_hstx_str_ctrl_0;
+>> @@ -1090,13 +1085,10 @@ static int dsi_7nm_phy_enable(struct msm_dsi_phy *phy,
+>>    		glbl_rescode_bot_ctrl = 0x3c;
+>>    	}
+>>
+>> -	spin_lock_irqsave(&pll->pll_enable_lock, flags);
+> 
+> This should not be removed.
+> 
+>> -	pll->pll_enable_cnt = 1;
+> 
+> So you basically remoevd pll_enable_cnt everywhere and reverted entirely
+> my commit. How is this patch different than revert?
 
---=-KCNFYCezFnaGZQ+WN2tw
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+No I did not, I kept the dsi_pll_disable_pll_bias() refcounting and call from
+all the clock ops, which is basically needed here to never access PLL without
+PLL_SHUTDOWNB and DIGTOP_PWRDN_B being asserted.
 
-On Thu, 2025-10-23 at 22:06 +0200, David Hildenbrand wrote:
-> On 15.10.25 10:27, Kevin Brodsky wrote:
-> > We currently set a TIF flag when scheduling out a task that is in
-> > lazy MMU mode, in order to restore it when the task is scheduled
-> > again.
-> >=20
-> > The generic lazy_mmu layer now tracks whether a task is in lazy MMU
-> > mode in task_struct::lazy_mmu_state. We can therefore check that
-> > state when switching to the new task, instead of using a separate
-> > TIF flag.
-> >=20
-> > Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> > ---
->=20
->=20
-> Looks ok to me, but I hope we get some confirmation from x86 / xen
-> folks.
+I only removed the pll_enable_cnt from dsi_7nm_phy_enable/disable because the
+PHY code is designed to allow setting the PLL rate while the PHY is disabled.
+And the bonded DSI hits this use case by setting the DSI0 PHY PLL rate while
+configuring the PLL1 PHY.
 
+So I wonder why it was added in the beginning because since you call dsi_pll_disable_pll_bias()
+in each clk op, the Hardware Programming Guide for DSI PHY is satisfied ?
 
-I know tglx has shouted at me in the past for precisely this reminder,
-but you know you can test Xen guests under QEMU/KVM now and don't need
-to actually run Xen? Has this been boot tested?
+The commit message doesn't say anything related to dsi_7nm_phy_enable/disable.
 
---=-KCNFYCezFnaGZQ+WN2tw
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+Neil
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
-ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
-AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
-BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
-MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
-a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
-jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
-GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
-aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
-nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
-8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
-IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
-KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
-BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
-QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
-QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
-ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
-/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
-uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
-xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
-W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
-c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
-VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
-NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
-DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
-sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
-w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
-i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
-kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
-0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
-ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
-blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
-hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
-VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
-HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
-ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
-AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
-cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
-cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
-AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
-aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
-hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
-iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
-8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
-JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
-xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
-EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
-B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
-MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
-KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
-Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
-nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
-WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
-W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
-nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
-g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
-9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
-9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
-sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
-a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
-ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
-AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
-dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
-MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
-YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
-4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
-6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
-QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
-nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
-MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
-VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
-ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MTAyNDE0NDc0
-M1owLwYJKoZIhvcNAQkEMSIEIOfSUBE+nGvcCdS59evaaEUM6X0l1dKQqIR2JuhOpcoFMGQGCSsG
-AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
-cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
-VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
-cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAMciufJy9MYsd
-WDeEJi4N/JtJvd8gDYSUyaj83ryN94rodLX7VsGJV0GMY0I5t4a1loCRKuIWocUO7VMyQndw4FMK
-CD87Xv9h7CmQ6tnvJ3jx1pBPxCms8AMYDNO3psl26IMAf/pBtn2tK4o2ekbEydTz/HB5CU9eHPLV
-6hrsUsiw9ELTG53GPQJx+au2JS59MKinh3d+fnIF1uaAksAwrSkko1T1ycGhO0JpoVqvNH18S8aL
-lU1FZ6hXNw+0R/PrlIr7OgD2GxTw+5anbQS5kAAnRqarQ+T3tfm+Iv8kG8mJYVDmATySDmWyHl5V
-ICeY/G1bGQxQkdmqVQb4uCHVMVVX60TdQa7YCnM3VEDG0WLBjXMmXSykmDUImZEAAxYuYx/fejHB
-f6vXUJ6x33DqYjzS15hZExL2+alyKMf7Ib1A7i5kNgl84K4y4qsHU0Mm7ro71EXlbYYjgTR4FpoX
-dMp+UqZDufv2snXQ5Hy0XHc0aEC2YIMr1gbWIYdJfsAqXf+B8z8F/snlrvMO0egz0MX2A3TJQxyO
-++dEvJWyDBwCCn1+KreR8fCJQKqgZH1dpNtTLvcx1VM+WFzygiroB28JeYqGVmh6JdKQdCx9QJHU
-zoV58DbEVN3gjtbuo/9SxAVum5oqvEguswdV/Lbw4vyZtoOXKhyzgxoNJajSsTsAAAAAAAA=
+> 
+> Best regards,
+> Krzysztof
 
-
---=-KCNFYCezFnaGZQ+WN2tw--
 
