@@ -1,249 +1,194 @@
-Return-Path: <linux-kernel+bounces-868184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2135C04990
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 08:59:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FC3C049AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 292223A95E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 06:59:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C5464EB8F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471CC27AC21;
-	Fri, 24 Oct 2025 06:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B94A266581;
+	Fri, 24 Oct 2025 07:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cnkHuVoi"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Z5mXZSF3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zAbPRISG"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ED02749CE
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4543015E8B;
+	Fri, 24 Oct 2025 07:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761289152; cv=none; b=KCu91vL24lZBNCkrE7DnpAyJQLAEsTPlQAIq4+l1I8xUDr1/ilrwn2Y93KN5eH0h+ijm9K1wGgg0oDBGvDABVOuRVvQ/8a642ad6Qh8anzF/r7NrZDcwc6ppohumIVPv+/pHn+3bIhEDzjCfnYojNCKdJIdGiLQSZ4UaQGywnAI=
+	t=1761289382; cv=none; b=lv5GhU0UTT5/cpN/zMM+HOhS752Sop1PEqHDbkYlbGmULkY5hJU6Wu4l+nYzCDU0JcNn/A0hiCAiZ4UPMdzdXfH+wH7Vs7mjYT5RRJXag8R0CNlmZQNryqaPK7etH3FsCLfwKEdZYTNht69iUHH6TH0yvIkugRiNB2SO8H3df1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761289152; c=relaxed/simple;
-	bh=VGMnhyjAZP03c1OP/Kj3eN4sUi7Fp0RT19Yo6no/M6o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DXPoMakZbQNg3ZJk7C2i5anbd6jfiRcB5gcS6Zrr9St/yqTxe78rckHB41YXcfZpyjeDyr6MFZkflcvrZPOjbBrQ1np6czPs5VaSQ3YU45VOorErdpXRjwkUY7Hmpk10Ih0mBP99MtuoKaCoC3n6gORo813D09WbsnWMiiMXASo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cnkHuVoi; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63c4b5a1b70so3208091a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 23:59:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761289148; x=1761893948; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Ugqv1s44lLqcX4JmETo9JSdUQjRGtApJwylkT2MhNI=;
-        b=cnkHuVoi6trn7BgTCnZ2072RWjmYvJLg+HjNPcVD45bzQU1ITXZQAWHz258fKLbA5X
-         1UGIAm9gKdNXSDc7EgzjCRJHB3BmfUlOjPfvt/w/AMbeex8cTNVj4HF2S+CZB/2ayeBl
-         JlUCu5I1Sgun1nfLIxAwZDnhTKNqQxPp8TnPgZD8r+yFy3HxOH6I9viz9XaH8PHvvKVW
-         OCuUXJ1Z/oEdxdqJjySw6dx9DyLTZXRG1g+eQ5B49vLcM3601PZcBR1GKe9sMR+SK1j6
-         9AvwNf/eSObyC96YxMnnMG2XHiEM7U7aVI0oC52CENqs5wmKKA7gYDZODvCu889DpT1/
-         EwSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761289148; x=1761893948;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/Ugqv1s44lLqcX4JmETo9JSdUQjRGtApJwylkT2MhNI=;
-        b=NJRPmooPqjyrHfWgyWZShwxnLAL1nQB2vVxHkZAcT4imasXqU6ya4HHCI3Lhkw7mzc
-         NRBgOHtUTmp/LqIJS3j7itSqlHeKHlpdjNwooWS0bHIJRD9XI6mUPhbpbGuVLG5GC80y
-         xf0TKd1IHAyrIn8K03zkfgOUGoO6i6sSZHDzuosoP4Y743XwBIbOW/JCVqZ/IbFllH6G
-         vZWPp+2V1BQMkf20dqGKl8lsT2ZRHBXg3Agdp+nNZ1MCba2RW/hNsq0KmBC2hK9/yB3Z
-         DZBJ642lY7LhgC5ds/0MLfxWeENAJwhOxMB8nlGwMDACiB3Bmh8r2CQqoYhyC8RWEra8
-         QfmA==
-X-Forwarded-Encrypted: i=1; AJvYcCX07UXVZPZgWSg31Yh7HvjsugKwLdJkWvrpTV+eQZmmljf//SeuCPZRxoalI/l4+oTP40FbMTyUkKpR3O0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOlX8kv3Bg3kHb+H0vK4JYqbTda8Wi865SIxVFXHX9Orw7NsXv
-	Bk6p/0qUL7ABRqtxYFsjrk8Z8cBAU5qoAT3i9dA+zEazyVIuK+8QKWB6f4SZDa0KWMYJZ8c6CL3
-	meuvlHCVx2gaoifeIAW5mgJgLHWa41BM7fw6v8mTg1w==
-X-Gm-Gg: ASbGncuFa1YZ4MtB7oCey7sPiQ6kvECBTpVag/zN69vV6ZwZQg6HzFrdBf0m32Jup30
-	ZNkw0XlMwIJqLmyJtqYY5WVSqotUoNaFFfJKuve0pjChMYmiyG8FrYPAwn2YZPpLLC6W9v4qFw0
-	KAkZ6VovO/nLvE4/M6z7SA1QP0BYoIcE+xPh0YP+zHcgT3h3K6ZpzpHWpz7ySBk+lpZ8iP23aGw
-	NyRVLMdCQ5TLoBLCeR4N0AqxB+l+RjXplaWxtNvDk7RmeDQwktelg0+7AlEQY4JlGJAFnJCQBnk
-	Ve3IU2xckw4Q3Ok+asmkOtH7
-X-Google-Smtp-Source: AGHT+IFAhTtwkuQJ8tJVRO47CmkrlfK4n6utip+dcl9Wbc27L/1MyGaOtTTrwRtxBRNLnwzLIx8auf00o2MEwmZjM6I=
-X-Received: by 2002:a05:6402:304a:20b0:638:3f72:1266 with SMTP id
- 4fb4d7f45d1cf-63c1f640163mr23343462a12.16.1761289148308; Thu, 23 Oct 2025
- 23:59:08 -0700 (PDT)
+	s=arc-20240116; t=1761289382; c=relaxed/simple;
+	bh=Zc0WUF7othcaVHi7fGyfnH8q+HarWOJjAgEQJVdcEy8=;
+	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=BRwtjV1crLsbsQ2iqrTEGTd0kDKUPk01YgFECWxNOiX/eDvwgC728RyYyFQnG0KszJE89ysjdnAnH5vmIGLE1JZmZuntfR2i/hqYHRCG6RbXnrI/zd5UFM0FGNWyiVUggx2LIR+l6hMxuvqj9FDWk/5xBaDqgruPEzFUNs2T/vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Z5mXZSF3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zAbPRISG; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id D0BBF1D0016C;
+	Fri, 24 Oct 2025 03:02:57 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 24 Oct 2025 03:02:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1761289377;
+	 x=1761375777; bh=mac9tPA7fjXsKMTZ5o0W5XcYjwuuhxgWlzIaSPBWgTk=; b=
+	Z5mXZSF3chz/arWSZEIPGf+rfgYMBabszFcm0EoBuebIAyZgnuldhbmd3wVyJBT4
+	7fjVGgOtJu8xCJXD3Isa+gWn4TFjblgFvbs5HwBrDz0A99uSdzb2k0z7hBuK07ec
+	QIrDGu/I+S/eSsfSF9wAAl6k2mjp+7XgqfaRWISfmdsM20xXY9dMVBsU9dMId+r0
+	ZMD4UU3NRyugd4T7i2bffrUbtXONDtNtGWoyI6OSD1s5I53cfgIBKtTowoaB0ye9
+	RTSUEDkMPZHTI5tPiQdYTCwNVhB8nq+uXzaONeutekDvZ5fVX7mbepaB2lTg7+E9
+	YxH2QoA7fu/kTR7wo0wqXQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm2; t=1761289377; x=1761375777; bh=m
+	ac9tPA7fjXsKMTZ5o0W5XcYjwuuhxgWlzIaSPBWgTk=; b=zAbPRISGYs04ZgTVZ
+	els+9gdDIme18GEHUlNsuJztgHJetc999YVCvrq/PNrn7PVL1mvytGyLWFn5uIDB
+	vJzlEjFLBGAzAyrbRUQY2EQbroq9iVU78quJoKch7O38TlJaOymjhpcNr6DWX/7x
+	sME9HpPhb3oILSHGMeA1tEy/MVyh3AdI8SygN4AQmH1e+z3XUF5obXqC8UOKAll+
+	D/T/HOfp4fayovs4vfsAKzvfNW5vsi+H3LTDAMNYhDaBdI9+4gxJIS6HWR44sFMn
+	orrD7O+m3+uwBCuZOr+aptyTSeauXNdo4f+4c+bAfu+SYMZ2efySZLXTDkkM4d/6
+	/whyw==
+X-ME-Sender: <xms:niT7aNORl5OLs4fICcMOsJBHp8xqXwmEEd3y7gWTnmBrfeQCgYsvvQ>
+    <xme:niT7aKx8n0jC-0EeZgnAMNBykaU7uZwvkdPQn9ds6p_3UuA_hW1youPJTHqmmcTfp
+    3f8gXcJylAENNlmnIFQz2YupLFTvpnBSRWpR4ZGvU_XgaSXMWmzgZs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeekieelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvffkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpeehiefgudefheffieetudeikeehueeffedtheelteeuhffggfeihfelheettdevffen
+    ucffohhmrghinhepohiilhgrsghsrdhorhhgpdhgihhthhhusgdrtghomhenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgu
+    sgdruggvpdhnsggprhgtphhtthhopedvfedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopegs
+    mhgtqdhsfiesrghsphgvvgguthgvtghhrdgtohhmpdhrtghpthhtoheprhihrghnpggthh
+    gvnhesrghsphgvvgguthgvtghhrdgtohhmpdhrtghpthhtohepphhrrggshhgrkhgrrhdr
+    mhgrhhgruggvvhdqlhgrugdrrhhjsegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtth
+    hopegrnhgurhgvfiestghouggvtghonhhsthhruhgtthdrtghomhdrrghupdhrtghpthht
+    ohepjhhksegtohguvggtohhnshhtrhhutghtrdgtohhmrdgruhdprhgtphhtthhopehnfh
+    hrrghprhgrughosegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepjhhovghlsehj
+    mhhsrdhiugdrrghupdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:niT7aCHoTkH26y4HM0ap__KxzaoaaM1csgLdSkGRihkbg2o24M8xuA>
+    <xmx:niT7aPeqNKheIO1FTDxgLABGSHquDcvscBghb1Hggsy528lGU-uoYA>
+    <xmx:niT7aH8BBeY3n72QZvz7wQUQpC5otuUkz-xGTbthO0GpJJ9rP4-NnA>
+    <xmx:niT7aFZY6oU1lW4ltrcsZ62bMXuDjj---pt4fvPunstPkitM2p7lAg>
+    <xmx:oST7aFyotp38mE_UVArEvtRzxSdLeT9WZZ-t8kzbfLTzojk62SAN2Wwv>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B2295700054; Fri, 24 Oct 2025 03:02:54 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022174309.1180931-1-vincent.guittot@linaro.org>
- <20251022174309.1180931-2-vincent.guittot@linaro.org> <aPkt5sigtL/EN0A3@lizhi-Precision-Tower-5810>
-In-Reply-To: <aPkt5sigtL/EN0A3@lizhi-Precision-Tower-5810>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 24 Oct 2025 08:58:57 +0200
-X-Gm-Features: AWmQ_bk6VPRIEAG_QafjLl74cCVYdfxYgbB6ZD71K263u0GS0jqTcUigkEeIqKs
-Message-ID: <CAKfTPtAz_joc4KFnxypFXJQTPeRF5y5UKhRyoW6kcMrwQgu+7g@mail.gmail.com>
-Subject: Re: [PATCH 1/4 v3] dt-bindings: PCI: s32g: Add NXP PCIe controller
-To: Frank Li <Frank.li@nxp.com>
-Cc: chester62515@gmail.com, mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, 
-	s32@nxp.com, bhelgaas@google.com, jingoohan1@gmail.com, lpieralisi@kernel.org, 
-	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com, 
-	Ghennadi.Procopciuc@nxp.com, ciprianmarian.costea@nxp.com, 
-	bogdan.hamciuc@nxp.com, linux-arm-kernel@lists.infradead.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, cassel@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: AMptcG-LwCSF
+Date: Fri, 24 Oct 2025 09:02:34 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Ryan Chen" <ryan_chen@aspeedtech.com>, BMC-SW <BMC-SW@aspeedtech.com>,
+ "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Joel Stanley" <joel@jms.id.au>,
+ "Andrew Jeffery" <andrew@codeconstruct.com.au>,
+ "Jeremy Kerr" <jk@codeconstruct.com.au>, "Lee Jones" <lee@kernel.org>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Will Deacon" <will@kernel.org>,
+ "Bjorn Andersson" <bjorn.andersson@oss.qualcomm.com>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Nishanth Menon" <nm@ti.com>,
+ =?UTF-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>,
+ "Taniya Das" <quic_tdas@quicinc.com>, "Lad,
+ Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
+ "Eric Biggers" <ebiggers@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-Id: <66d0dc8f-553a-41b0-a9af-e058bc39dd94@app.fastmail.com>
+In-Reply-To: 
+ <TY2PPF5CB9A1BE6CF8336D211641A18E2DEF2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
+ <20251022070543.1169173-5-ryan_chen@aspeedtech.com>
+ <b5441728-06a7-44ea-8876-3a9fc3cf55be@app.fastmail.com>
+ <TY2PPF5CB9A1BE626A2F0F6307461D8F64BF2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <6a97fbb4-19c2-4ffa-9c73-26aea02c27e4@app.fastmail.com>
+ <TY2PPF5CB9A1BE6CF8336D211641A18E2DEF2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC device tree
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, 22 Oct 2025 at 21:18, Frank Li <Frank.li@nxp.com> wrote:
+On Fri, Oct 24, 2025, at 05:54, Ryan Chen wrote:
+>> Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC device
+>> tree
+>> On Thu, Oct 23, 2025, at 09:37, Ryan Chen wrote:
+>> >> > +	soc1: soc@14000000 {
+>> >> > +		compatible = "simple-bus";
+>> >> > +		#address-cells = <2>;
+>> >> > +		#size-cells = <2>;
+>> >> > +		ranges = <0x0 0x0 0x0 0x14000000 0x0 0x10000000>;
+>> >>
+>> >> This probably needs some explanation: why are there two 'soc@...'
+>> >> devices? Is this literally two chips in the system, or are you
+>> >> describing two buses inside of the same SoC?
+>> >
+>> > The AST2700 is two soc connection with a property bus.
+>> > Sharing some decode registers. Each have it own ahb bus.
+>> 
+>> I don't understand your explanation,
 >
-> On Wed, Oct 22, 2025 at 07:43:06PM +0200, Vincent Guittot wrote:
-> > Describe the PCIe host controller available on the S32G platforms.
-> >
-> > Co-developed-by: Ionut Vicovan <Ionut.Vicovan@nxp.com>
-> > Signed-off-by: Ionut Vicovan <Ionut.Vicovan@nxp.com>
-> > Co-developed-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> > Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> > Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
-> > Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
-> > Co-developed-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-> > Signed-off-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-> > Co-developed-by: Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
-> > Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
-> > Co-developed-by: Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> > Signed-off-by: Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >  .../bindings/pci/nxp,s32g-pcie.yaml           | 102 ++++++++++++++++++
-> >  1 file changed, 102 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml b/Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml
-> > new file mode 100644
-> > index 000000000000..2d8f7ad67651
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pci/nxp,s32g-pcie.yaml
-> > @@ -0,0 +1,102 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pci/nxp,s32g-pcie.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: NXP S32G2xxx/S32G3xxx PCIe Root Complex controller
-> > +
-> > +maintainers:
-> > +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> > +  - Ionut Vicovan <ionut.vicovan@nxp.com>
-> > +
-> > +description:
-> > +  This PCIe controller is based on the Synopsys DesignWare PCIe IP.
-> > +  The S32G SoC family has two PCIe controllers, which can be configured as
-> > +  either Root Complex or Endpoint.
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - enum:
-> > +          - nxp,s32g2-pcie
-> > +      - items:
-> > +          - const: nxp,s32g3-pcie
-> > +          - const: nxp,s32g2-pcie
-> > +
-> > +  reg:
-> > +    maxItems: 6
-> > +
-> > +  reg-names:
-> > +    items:
-> > +      - const: dbi
-> > +      - const: dbi2
-> > +      - const: atu
-> > +      - const: dma
-> > +      - const: ctrl
-> > +      - const: config
-> > +
-> > +  interrupts:
-> > +    maxItems: 2
-> > +
-> > +  interrupt-names:
-> > +    items:
-> > +      - const: dma
-> > +      - const: msi
->
-> Most likely dma irq is optional irq, seldom use built-in edma in RC mode.
-> so put msi to the first.
->
-> interrupt-names:
->   items:
->     - const: msi
->     - const: dma
->   minItems: 1
->
-> missed phys
->
-> phys:
->   maxItems: 1
+> Let me clarify more clearly:
+> The AST2700 is a dual-SoC architecture, consisting of two interconnected SoCs,
+> referred to as SoC0 and SoC1. Each SoC has its own clock/reset domains. 
+> They are connected through an internal "property bus", 
+> which is Aspeed's internal interconnect providing shared
+> address decoding and communication between the two SoCs.
 
-okay
+Makes sense. Since this is a fairly unusual design, I would suggest
+you add that explanation into the patch description for this
+patch as well, so readers have a chance to find it when they look
+at the file in the git history at a later point.
 
+>> Since there is no corresponding driver change, I would keep the binding change
+>> as a patch in this series.
 >
-> Frank
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - reg-names
-> > +  - interrupts
-> > +  - interrupt-names
-> > +  - ranges
-> > +  - phys
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +    #include <dt-bindings/phy/phy.h>
-> > +
-> > +    bus {
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> > +
-> > +        pcie@40400000 {
-> > +            compatible = "nxp,s32g3-pcie",
-> > +                         "nxp,s32g2-pcie";
-> > +            reg = <0x00 0x40400000 0x0 0x00001000>,   /* dbi registers */
-> > +                  <0x00 0x40420000 0x0 0x00001000>,   /* dbi2 registers */
-> > +                  <0x00 0x40460000 0x0 0x00001000>,   /* atu registers */
-> > +                  <0x00 0x40470000 0x0 0x00001000>,   /* dma registers */
-> > +                  <0x00 0x40481000 0x0 0x000000f8>,   /* ctrl registers */
-> > +                  <0x5f 0xffffe000 0x0 0x00002000>;  /* config space */
-> > +            reg-names = "dbi", "dbi2", "atu", "dma", "ctrl", "config";
-> > +            dma-coherent;
-> > +            #address-cells = <3>;
-> > +            #size-cells = <2>;
-> > +            device_type = "pci";
-> > +            ranges =
-> > +                     <0x81000000 0x0 0x00000000 0x5f 0xfffe0000 0x0 0x00010000>,
-> > +                     <0x82000000 0x0 0x00000000 0x58 0x00000000 0x0 0x80000000>,
-> > +                     <0x82000000 0x1 0x00000000 0x59 0x00000000 0x6 0xfffe0000>;
-> > +
-> > +            bus-range = <0x0 0xff>;
-> > +            interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-> > +                         <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
-> > +            interrupt-names = "dma", "msi";
-> > +            #interrupt-cells = <1>;
-> > +            interrupt-map-mask = <0 0 0 0x7>;
-> > +            interrupt-map = <0 0 0 1 &gic 0 0 GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
-> > +                            <0 0 0 2 &gic 0 0 GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-> > +                            <0 0 0 3 &gic 0 0 GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
-> > +                            <0 0 0 4 &gic 0 0 GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
-> > +
-> > +            phys = <&serdes0 PHY_TYPE_PCIE 0 0>;
-> > +        };
-> > +    };
-> > --
-> > 2.43.0
-> >
+> Sorry, I am wondering, I will follow Andrew advice. 
+> Submit ast2700-mdio to net-next go out another thread.
+> And put submit link in cover-letter in next version.
+> Is it ok?
+
+Yes
+
+>> The version of the driver you are linking does not appear to use syscon, maybe
+>> this is an artifact from a previous version?
+>> 
+>> If so, you can drop it. On the other hand, this does seem to be a classic syscon
+>> device and keeping it marked that way is not harmful, just redundant if you
+>> actually use the more specific compatible string.
+>
+> Sorry, I may not point right link
+> https://patchwork.ozlabs.org/project/linux-aspeed/patch/20250829073030.2749482-4-billy_tsai@aspeedtech.com/
+> aspeed_g7_soc0_pinctrl_probe -> aspeed_pinctrl_probe
+> https://github.com/torvalds/linux/blob/master/drivers/pinctrl/aspeed/pinctrl-aspeed.c#L456
+>
+> That will use syscon to regmap.
+
+Right, if that is the documented binding, I think keeping syscon in
+the compatible list makes sense.
+
+      Arnd
 
