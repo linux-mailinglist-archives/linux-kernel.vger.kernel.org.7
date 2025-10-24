@@ -1,161 +1,110 @@
-Return-Path: <linux-kernel+bounces-868938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578E6C0689F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:39:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874E2C068C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 15:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D6EA64F07BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDFB93ADCFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 13:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9749F3191D6;
-	Fri, 24 Oct 2025 13:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C484F31AF0A;
+	Fri, 24 Oct 2025 13:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TtxQh2r1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YOjznXwF"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F7A2DF122
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A5225C711
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 13:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761313168; cv=none; b=E0XQ9xrec9swxxLhAr7mu0/MAnJYnh7ydjKMAxOJk7DuQjyKJnLH0SE0Gbcz0RE2M0Qm36VsyvzaQF5rZdvYhN1awTXONbZYPgLePKVdObFsholZaaQI8BpFWfwcl2qJ0GoyRTzhVkF0V5jykaI1xMu4MKn0/rdZDQ2g9YVOSiY=
+	t=1761313233; cv=none; b=fi9cnK57G+t7GqH875/2nNRC//sQQfM6eYd+WHGl7bFMwULGkQfJxHlo4dhF4D4rrAaqPzlKkhtNn67qT+f7FmODp+3OUagoT3EhA/UdKgt/PA1GIbLo6/myBGwJNp5kZTmjd97vAMFmIhaEt8V/4hbht+qSLT4waNM2E7J29xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761313168; c=relaxed/simple;
-	bh=0a2kqt6iVxlZdKDlZmDEyPfN7lXlndVaRP9a7YHS/HI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LvgzWqBiGzufEkFym3QH9vGZqreDqbMrFbbdhBIEnkGqILqGKArNcdKqWXSFNmHvY+SfUj7pkd75fPBYPl+KQeCvnz4cbzYvBUQGZWLRYh1q46+CQFmAyrkV5SrOVWqi4dXtjxxUN8NSKy1ZwJB2HS6Qq9pXJ5nCoCLnANEpXD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TtxQh2r1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761313165;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fG1DHSPbDkPo2/41ZMex3EtNSlx98sY6rv/jsEJLq4g=;
-	b=TtxQh2r1NFV3DNZucgm1NsnviSFadvY3LdZhUVZ7KsAjS8BzUhaZMh65XyMBtlhF66RVvD
-	NlH9UwAt2DQbxlW+ryzV3+S6bqoT/JgHPzs6gTSzNCJ7LCWNXXijkLs7UuKFD3akK4D4JC
-	VGFf/f8UJIIMiw1TzSceKLFySJ6/+FQ=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-156-ywVYJffGMz647TzFQJ3pRA-1; Fri, 24 Oct 2025 09:39:21 -0400
-X-MC-Unique: ywVYJffGMz647TzFQJ3pRA-1
-X-Mimecast-MFC-AGG-ID: ywVYJffGMz647TzFQJ3pRA_1761313160
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b6d752b2891so37534066b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 06:39:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761313160; x=1761917960;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fG1DHSPbDkPo2/41ZMex3EtNSlx98sY6rv/jsEJLq4g=;
-        b=O/1pX/idlK5mVWiylxGFXlEmCVaQHfWMv3oTNdL7fRwqxyYdP7oqzRcYx74yFFKlg4
-         GvNR9nPp7MN08IU7SsG5bCE/kkftNW3lCACJkcl6kuqRM5s1XHg4QfmUzFCeRuj7lcGy
-         Xcn7b3z2pPZrPqWq2uN2lBDMvx9XeFcbjpufm+2FCjv/ps02YM2Hlyo8snI9zJEPPjgl
-         /nbXqUGkDlKs925Rgv2hZL0kH/OhIo7W/WxzTShshNyURIXBSOKcW2hA1WZUYMmcHrfQ
-         Rr0m1iLozEc3iAf3GcokWXzZ/7SYGduntRIdfZDoCJQtnPUHC0qeJ5QGG4xi7eGz+iPc
-         Alww==
-X-Forwarded-Encrypted: i=1; AJvYcCUUEF4yS2sdYOhkHwwVFuZVko2I7zrzuTQeRb72QUktiZiLCT3DD042SAvSiU4UXuQsCIjVMOpld8t0hpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaRbpZ0MbkASH8OK8LniOb/pYmm/l6Q/7r18CWzkLoEdqzUivF
-	B1AawHDoI4D6gA2p17TtnWcWB4mOTR3v5D7W2GhzEgbEyyxIQw2HbYSEWNvn2ECUAUID8wANtMK
-	qw9oinU6r44tyy8iRCvA/1GszD5RK3YIda/I4Slyn16uRBa4Hz2NPv5vvOrZutIHYSQ==
-X-Gm-Gg: ASbGncvzNFwoRBv6PXOO+9p0zx1gJNx5nr6vejsLZUVBOZoWqDwUg3uprUvYNkGcO9R
-	0sYyMNErAJiQuea4wg8cgg6dG2YSfbfGcayAQsXzqIBhmrhm9RFyPCozk86A373ScKoQq5Aet40
-	Gwnu5eAj5l87gGrhyemkwdl8a403dXly1F6MTbNYMC7qis+vSlejALzhyeNczuqVDtHoH5+F/Lw
-	z/iW9A0ojiu6WWXNzxfJGNhCUdt6rNZ4wiXkggCUEvFgMX54XMmT1Gm7/JY5diHGHpVCzAMGf2R
-	uf5uaJysVYR1jLSZ9/ymcnZpYAvxyqhyHjXdFqw3i0SLsecNU/fbI6aKCHH6LgcYvwB5vSgYoT7
-	BVLQBjRGiNZzlxX4iP7q56kvehA==
-X-Received: by 2002:a17:907:3e90:b0:b3f:ccac:af47 with SMTP id a640c23a62f3a-b6d6ffa8aedmr262717366b.31.1761313159938;
-        Fri, 24 Oct 2025 06:39:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH1Mowrct2anncqbgqXnkT9wHJ5bHC9THXx7DoXugw/+p5rNYtBxKqachux7PP31bYCorHybA==
-X-Received: by 2002:a17:907:3e90:b0:b3f:ccac:af47 with SMTP id a640c23a62f3a-b6d6ffa8aedmr262714066b.31.1761313159376;
-        Fri, 24 Oct 2025 06:39:19 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk (alrua-x1.borgediget.toke.dk. [2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d514172besm534099066b.46.2025.10.24.06.39.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Oct 2025 06:39:18 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 6ECCE2EA565; Fri, 24 Oct 2025 15:39:16 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Jesper Dangaard Brouer <hawk@kernel.org>, netdev@vger.kernel.org,
- makita.toshiaki@lab.ntt.co.jp
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, Eric Dumazet
- <eric.dumazet@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- ihor.solodrai@linux.dev, toshiaki.makita1@gmail.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
-Subject: Re: [PATCH net V1 1/3] veth: enable dev_watchdog for detecting
- stalled TXQs
-In-Reply-To: <176123157173.2281302.7040578942230212638.stgit@firesoul>
-References: <176123150256.2281302.7000617032469740443.stgit@firesoul>
- <176123157173.2281302.7040578942230212638.stgit@firesoul>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Fri, 24 Oct 2025 15:39:16 +0200
-Message-ID: <877bwkfmgr.fsf@toke.dk>
+	s=arc-20240116; t=1761313233; c=relaxed/simple;
+	bh=iRGB7KwxF+heWMfqHG+AJZi2NLuLRS3ljgXoZCP1T7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m+g/6hWmQTY02PhJIWqdmkQ1LcYb9WzTrcBYmGGCHF1mz2aKFQvhvluS2IK+3FnMg5fllQ1g5dFsVo9GsJxOHRZTKRGodD2VxS10y7DLBcNCJzNRFgIKh3S+74x9QCMC2VGL1/GP3joqCwUV84rOIruAg7ZssarEWElhgM1zTmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YOjznXwF; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eqIlbFIS1NrExPF+0T4MGwSwd18ATnESRaBZ3QjiXDA=; b=YOjznXwFR1FWIfwQXVIcQR6/xc
+	nGUFkoP8jUkymiGrc3rvJqH13WH40TDTz0+L7GSw/DFAR944I+zpLoxV6eI1GXdT7lu3H88CH6Luk
+	I+71rIVwOYvARtm/DarVu4j5nYSHKMUn0qqfMtYvXKFGwORZj9JavN9PYhzVDd9dIqvuGNvoNZ8Dj
+	vl+T+7wSImpU1pLx2DiuKtH7Lk0KseI+2ltaEejCpBv9S4YpFsG6eWvIW7lEgAsf9jfn+OHXETrqM
+	0w74y5HKTeFrgeF+cVd8X9qfpWOwM1EdehXWb9o4SmuD86BvL7IuyJ90ka8W4V6IwzHZShlOrnqxp
+	/CN9KGJQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vCHAC-00000002Irx-1TNu;
+	Fri, 24 Oct 2025 12:45:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D126E300323; Fri, 24 Oct 2025 15:40:24 +0200 (CEST)
+Date: Fri, 24 Oct 2025 15:40:24 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: jpoimboe@kernel.org, rostedt@kernel.org,
+	Indu Bhagat <indu.bhagat@oracle.com>, linux-kernel@vger.kernel.org,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH 11/12] unwind: Implement compat fp unwind
+Message-ID: <20251024134024.GT4067720@noisy.programming.kicks-ass.net>
+References: <20250924075948.579302904@infradead.org>
+ <20250924080119.613695709@infradead.org>
+ <bd9bac99-208c-426d-b828-e23188d93226@linux.ibm.com>
+ <cc6f34bb-7d05-4260-bc02-299fef2bcb01@linux.ibm.com>
+ <20251020103940.GP3419281@noisy.programming.kicks-ass.net>
+ <5bdb1c91-8862-44b1-9f12-c5afa9e1806c@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5bdb1c91-8862-44b1-9f12-c5afa9e1806c@linux.ibm.com>
 
-Jesper Dangaard Brouer <hawk@kernel.org> writes:
+On Wed, Oct 22, 2025 at 04:55:01PM +0200, Jens Remus wrote:
+> Hello Peter!
+> 
+> On 10/20/2025 12:39 PM, Peter Zijlstra wrote:
+> > On Mon, Oct 20, 2025 at 11:16:45AM +0200, Jens Remus wrote:
+> >> On 10/17/2025 5:47 PM, Jens Remus wrote:
+> 
+> >>> In SFrame the CFA, FP, and RA offsets are unscaled.  Would it be ok, if
+> >>> unwind user sframe would factor state->ws from those offset values?  What
+> >>> if they were not aligned?  unwind user sframe would then have to fail.
+> >>
+> >> Sorry that I did not immediately think about the most obvious solution
+> >> tho above issues:  to not factor out the word size from the frame CFA,
+> >> FP, and RA offsets.  What do you think about making the following
+> >> changes to this and giyour subsequent patch?  That would work nicely
+> >> with unwind user sframe.
+> > 
+> > 
+> > Yes, this should do nicely. I've made the changes, I'll do a test build
+> > and then push out to the robots.
+> 
+> Thanks!  Looking at your following updated patch I found that your
+> change from "pointer to const struct unwind_user_frame" to
+> "const struct unwind_user_frame" (done for obvious reasons) will require
+> unwind user sframe to undo this when refactoring unwind_user_next_fp()
+> into unwind_user_next_common().  Would that be the usual procedure or
+> could you leave it as "pointer to const struct unwind_user_frame" for
+> now?
 
-> The changes introduced in commit dc82a33297fc ("veth: apply qdisc
-> backpressure on full ptr_ring to reduce TX drops") have been found to cause
-> a race condition in production environments.
->
-> Under specific circumstances, observed exclusively on ARM64 (aarch64)
-> systems with Ampere Altra Max CPUs, a transmit queue (TXQ) can become
-> permanently stalled. This happens when the race condition leads to the TXQ
-> entering the QUEUE_STATE_DRV_XOFF state without a corresponding queue wake-up,
-> preventing the attached qdisc from dequeueing packets and causing the
-> network link to halt.
->
-> As a first step towards resolving this issue, this patch introduces a
-> failsafe mechanism. It enables the net device watchdog by setting a timeout
-> value and implements the .ndo_tx_timeout callback.
->
-> If a TXQ stalls, the watchdog will trigger the veth_tx_timeout() function,
-> which logs a warning and calls netif_tx_wake_queue() to unstall the queue
-> and allow traffic to resume.
->
-> The log message will look like this:
->
->  veth42: NETDEV WATCHDOG: CPU: 34: transmit queue 0 timed out 5393 ms
->  veth42: veth backpressure stalled(n:1) TXQ(0) re-enable
->
-> This provides a necessary recovery mechanism while the underlying race
-> condition is investigated further. Subsequent patches will address the root
-> cause and add more robust state handling in ndo_open/ndo_stop.
->
-> Fixes: dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to reduce TX drops")
-> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
-> ---
->  drivers/net/veth.c |   16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-> index a3046142cb8e..7b1a9805b270 100644
-> --- a/drivers/net/veth.c
-> +++ b/drivers/net/veth.c
-> @@ -959,8 +959,10 @@ static int veth_xdp_rcv(struct veth_rq *rq, int budget,
->  	rq->stats.vs.xdp_packets += done;
->  	u64_stats_update_end(&rq->stats.syncp);
->  
-> -	if (peer_txq && unlikely(netif_tx_queue_stopped(peer_txq)))
-> +	if (peer_txq && unlikely(netif_tx_queue_stopped(peer_txq))) {
-> +		txq_trans_cond_update(peer_txq);
->  		netif_tx_wake_queue(peer_txq);
-> +	}
+Ah, I see, that is here:
 
-Hmm, seems a bit weird that this call to txq_trans_cond_update() is only
-in veth_xdp_recv(). Shouldn't there (also?) be one in veth_xmit()?
+  https://lkml.kernel.org/r/20251022144326.4082059-9-jremus@linux.ibm.com
 
--Toke
+Yeah, just change it there. It is a bit weird to have this indirection
+at this point.
 
 
