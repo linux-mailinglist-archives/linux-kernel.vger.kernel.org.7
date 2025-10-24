@@ -1,240 +1,134 @@
-Return-Path: <linux-kernel+bounces-868309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD10C04D69
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:49:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7470C04D90
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 09:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4EF044FA52E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:49:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95C121895D31
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 07:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F9D2EE60F;
-	Fri, 24 Oct 2025 07:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RC4DlXk2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65CF2F6569;
+	Fri, 24 Oct 2025 07:48:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CF72ED14B
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F2F2F657E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 07:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761292056; cv=none; b=WzhSvcSxLH9fAk2vGzt8H7bTY/kF/2VOgolBXMshqd5U7G/VD8wQRHxGOlQ5P72fyzI7rp00+0srZ6mucXeM6GQ5d/QuUEmIcX66FMMzM7y+OLBEQaEI8NXqvpNVO0Ege4t16+FL+DGtmVdTtGo/HV6ashEU/+1QTJlfQAfeJro=
+	t=1761292086; cv=none; b=uZ3pSM0/gSTv4esQrpDU/fEp7H9MVhKQ1FHdmwYPqOpzCEhDNe8ah8kZ65NtZnHYCGz/4HwKE7dNKOCIZhC67hAny2OV3JOtO+XFDsYMSSoYQ87GQq95dDnGCUfdBZq+RwxNI5i2jatTQaCv+51V2ciHBKZ6EuYPE/5ltKZWA5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761292056; c=relaxed/simple;
-	bh=354Rzc8WGXE7NwaWZYUhPCTxpBFnARCx8ba66VokYak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZL3hqaLdPBhNHLZKTYq37Ha2fJqGow5oCzDvbM7YWXnEQ4fyRgvPG3VbL2R69eDR9BVSD+VgmM1HeMnaLXYvGk+WpPWTuUoOiZazVXakN+z+5F8dWnsol9E63M1riHR0yMoXv1e/QcgRRsMdfOwPf2nWKeZnGHacERj5ioDtPgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RC4DlXk2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761292053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5ecy7KW/4Q3PaNtjQEWD2FoEZh8uYi4fefNLgyAB9zU=;
-	b=RC4DlXk2k7Lbf14KKlQLA/ugjtDrz4ZDcy0FwCiHVMXHDwX2GUwBn0BtmlZFyIRFb0ZCmv
-	NXqycpyxKkhVDxBkqTzjfQJgGiZ+Mk6W3ePDP0e/+UuGfCLORgXiQUoKLFU+WMxONlEQpy
-	Vn9g048wctHv9HzCxF3/MD8PVfepIxc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-145-9D28MR5kP3CYU-Kr8-xc1Q-1; Fri, 24 Oct 2025 03:47:31 -0400
-X-MC-Unique: 9D28MR5kP3CYU-Kr8-xc1Q-1
-X-Mimecast-MFC-AGG-ID: 9D28MR5kP3CYU-Kr8-xc1Q_1761292050
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-471005f28d2so8800295e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:47:31 -0700 (PDT)
+	s=arc-20240116; t=1761292086; c=relaxed/simple;
+	bh=EKEQIMOrcb7Ztnps+pZI9ctc3VGwqQfG6yRSJonJUIQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=s9NVIh1k5nUg2FNt4pCVqJ8G9IxpSN+OtBenORx0wCLhubjG3cTiohgwIApTbObdEajoQq3zNezhzEsK4m56+fE/HDfIoCUYa3DQjdSYCiHQc5XabCq4tJ1aQZYZ51fnbmPtbah89iV5KGee1gy7VFYvCaepuqOdmDWgoq2ptdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430b0adb3e2so23085565ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 00:48:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761292050; x=1761896850;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5ecy7KW/4Q3PaNtjQEWD2FoEZh8uYi4fefNLgyAB9zU=;
-        b=AGIO83oW24T14sDrZkpNhcgHhUuv1FG7RFZsKxtgz1SdRuF1LtaMWCcc/0a88Pr7J9
-         SwBklJ3xhjBKWQm49Ntvr0pY5ego7T9BO4aGs/SWNbEbuQ2EyigtjEI//3bGEicGwp9a
-         JDlqEZk1PRF65uDkrye+qB1fNJ1qYSomaTDCKZQAXc47WuWGgr9lpuDkVsc+Kc59VlRg
-         7lI2dPX/1xd/Hn0Aa9BAytpkMVMUlNtbPPXe56uiad8H515hqpRiCQODYxoYYNy3GEAT
-         QD2lXCKft2g7oEojnUWzKVCZ5uEDMHwW+zyL6WaewkzG8k0bL7/Gn41v9YmvysXfO7sb
-         0i4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVvspETUdMZ4zXwkqq0Jl2qE2W6HtOhiUAZoUbOWI531jRFxcpQUF8TmsI8w47LezTd6rrm0D/LrsCcfLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl0ZntnBjbd2GNprGK0HcSlOcLoPuBzC1WW7Ki7WYOBgYiRzoT
-	KvrNvPRphKGKReiNdnrHRL7Hcbvul80w1brfKMmY2T902F3Yt0s1pI/Pw8Aq4vGa0iVkTZJxrph
-	uNQKBhlACTsMQsTzKuSKs8PEDp6ukZ8HlnN02q+C/NcltVjZfBLtQxDcfQhwc/2vi/A==
-X-Gm-Gg: ASbGncurO/mnZ/XcFLXbnJgR8Y9gmDYE2+w5sFI88iUQrpw6mV8yeqA5scKC126PXgs
-	FYDxqsR3HFRDkassEonvNP9qpH3gRn8uRnWmq75s6VW5ADN2lkhgSKXoULqxSETwehnI0eT063I
-	bH7TcRD3j2epq+QLchD5sXsTJeqnWEc04XYsmMKprwUhaKhOdg+hAvGEMjNSPtzaZpFrLsZemkp
-	dKdEmi6FR8bglGmWfDFmGVgZIDdIiXx3MmO3UQgffLlb4emgsEuz5So+O32TOUo9t+PAOLL33uW
-	3+Iqn696THa69oZClD1uAqb3jNkN3Cyw6LSfu5S1D468SuVoitDfmf8imqCOdzsM+lReFEi0XRx
-	hULVpG32lzKxWc7mtpnz06xKD8ISDBGAKbZJlZhgUmPsgdyj6gi7GZ0UFogQa/Y+vJtHyNKuwP6
-	zLhw8o2FAZeDWe4rZnJShc7AU+mfc=
-X-Received: by 2002:a05:600c:3b22:b0:471:989:9d85 with SMTP id 5b1f17b1804b1-471179122eemr199555045e9.19.1761292050460;
-        Fri, 24 Oct 2025 00:47:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFCk5knVvG9aEJVjQIGNEPj71HBH+RTp0yRPtlz2moXZyXlFUc8p92AbKQUvfwnx5Ns0MFGdw==
-X-Received: by 2002:a05:600c:3b22:b0:471:989:9d85 with SMTP id 5b1f17b1804b1-471179122eemr199554895e9.19.1761292050063;
-        Fri, 24 Oct 2025 00:47:30 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3? (p200300d82f4e3200c99da38b3f3ad4b3.dip0.t-ipconnect.de. [2003:d8:2f4e:3200:c99d:a38b:3f3a:d4b3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475cae9253bsm74552055e9.1.2025.10.24.00.47.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Oct 2025 00:47:29 -0700 (PDT)
-Message-ID: <9bfd8972-4111-4afb-b8a2-f514ae67f67f@redhat.com>
-Date: Fri, 24 Oct 2025 09:47:28 +0200
+        d=1e100.net; s=20230601; t=1761292084; x=1761896884;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=noK9cXL2MYi1dpu888y3aKP2nskMyrBvezjo9TBgU3g=;
+        b=jeeTXfQepE1xhPTMRqjqrst6eHgfRWB4pOhyOO+W9+s6aLTFKq07gqMbWrDOJQkIa7
+         MECc021lcsHxdK94iZTU5c73yOhxNe+L2Ozg7cGo+g71rhEz4a/FiNx1qOanqCYJ2f2M
+         8gZFLvFzCPOS0fC+nBcixTpfR2j1sIpSr/vc290Nhz5a7X0/kGOzFKRAMItY7T4zXOON
+         cN3UwI6L1qxlZWx/RiNG5tVsAeZ8GSYCwZqrtaGP5Q+gm5EnwBNOB/ET5EashDOU6CZ9
+         YQp85g+vWgaZv12Emtc+WZSkKuwzXO0st9vQRD2k+FLMJg09cbFjRN7QnwZHYID8VPtf
+         QN2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVShW6VQiliLJ1f1UgkgfbLPR5DCCjaqbtutQNTsHxcMoEI4ek6OfZ4WRB5r+itKxcXCJNuZn0ll2txODE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZaxB1q7G473k9VGz/O78rqpJLtpj7a7dQYZ3hNG7ElVVyz6Py
+	euLoozpK3qJk54PMd/SxXzkS9pyIq1ywta1M02P8FNCjzvdq7I0Fr7yReqEpfR4v419YJe7brhm
+	aswhzVZt7myJXXKvGcD+wJjuhK7HI6l5zhT97KHpDK6oyLKYhRI4RaZgyL6M=
+X-Google-Smtp-Source: AGHT+IHV+3tXYnybCMgpz3RYArbwmJN8nTfGofHxGY70QPVLkZQVFzRFHT030qm49UYN29RdHnGfMfzJnlrPU3j06FJiZa/2Iwyh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: do not install PMD mappings when handling a COW fault
-To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-mm@kvack.org
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, karol.wachowski@linux.intel.com,
- wangkefeng.wang@huawei.com, yangerkun@huawei.com
-References: <20251024015459.2824162-1-yi.zhang@huaweicloud.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <20251024015459.2824162-1-yi.zhang@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:b46:b0:430:e5a4:6f26 with SMTP id
+ e9e14a558f8ab-431eb5fe0ffmr24894245ab.6.1761292083970; Fri, 24 Oct 2025
+ 00:48:03 -0700 (PDT)
+Date: Fri, 24 Oct 2025 00:48:03 -0700
+In-Reply-To: <20251024071151.6PBhO%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68fb2f33.050a0220.346f24.00ae.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in __ocfs2_flush_truncate_log
+From: syzbot <syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 24.10.25 03:54, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> During the ping of user pages in FOLL_LONGTERM on a COW VMA and a
+Hello,
 
-s/ping/pin/ or better "When pinning a page with FOLL_LONGTERM in a CoW 
-VMA ..."
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+UBSAN: signed-integer-overflow in ip_idents_reserve
 
-> PMD-aligned (2MB on x86) large folio, follow_page_mask() failed to
-> obtain a valid anonymous page, resulting in an infinite loop issue.
-> The specific triggering process is as follows:
-> 
-> 1. User call mmap with a 2MB size in MAP_PRIVATE mode for a file that
->     has a 2MB large folio installed in the page cache.
-> 
->     addr = mmap(NULL, 2*1024*1024, PROT_READ, MAP_PRIVATE, file_fd, 0);
-> 
-> 2. The kernel driver pass this mapped address to pin_user_pages_fast()
->     in FOLL_LONGTERM mode.
-> 
->     pin_user_pages_fast(addr, 512, FOLL_LONGTERM, pages);
-> 
->    ->  pin_user_pages_fast()
->    |   gup_fast_fallback()
->    |    __gup_longterm_locked()
->    |     __get_user_pages_locked()
->    |      __get_user_pages()
->    |       follow_page_mask()
->    |        follow_p4d_mask()
->    |         follow_pud_mask()
->    |          follow_pmd_mask() //pmd_leaf(pmdval) is true because the
->    |                            //huge PMD is installed. This is normal
->    |                            //in the first round, but it shouldn't
->    |                            //happen in the second round.
->    |           follow_huge_pmd() //require an anonymous page
->    |            return -EMLINK;
->    |   faultin_page()
->    |    handle_mm_fault()
->    |     wp_huge_pmd() //remove PMD and fall back to PTE
->    |     handle_pte_fault()
->    |      do_pte_missing()
->    |       do_fault()
->    |        do_read_fault() //FAULT_FLAG_WRITE is not set
->    |         finish_fault()
->    |          do_set_pmd() //install a huge PMD again, this is wrong!!!
->    |      do_wp_page() //create private anonymous pages
->    <-    goto retry;
-> 
-> Due to an incorrectly large PMD set in do_read_fault(),
-> follow_pmd_mask() always returns -EMLINK, causing an infinite loop.
-> 
-> David pointed out that we can preallocate a page table and remap the PMD
-> to be mapped by a PTE table in wp_huge_pmd() in the future. But now we
-> can avoid this issue by not installing PMD mappings when handling a COW
-> and unshare fault in do_set_pmd().
-> 
-> Fixes: a7f226604170 ("mm/gup: trigger FAULT_FLAG_UNSHARE when R/O-pinning a possibly shared anonymous page")
-> Reported-by: Karol Wachowski <karol.wachowski@linux.intel.com>
-> Closes: https://lore.kernel.org/linux-ext4/844e5cd4-462e-4b88-b3b5-816465a3b7e3@linux.intel.com/
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
->   mm/memory.c | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 0ba4f6b71847..0748a31367df 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -5212,6 +5212,11 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct folio *folio, struct page *pa
->   	if (!thp_vma_suitable_order(vma, haddr, PMD_ORDER))
->   		return ret;
->   
-> +	/* We're about to trigger CoW, so never map it through a PMD. */
-> +	if (is_cow_mapping(vma->vm_flags) &&
-> +	    (vmf->flags & (FAULT_FLAG_WRITE|FAULT_FLAG_UNSHARE)))
-> +		return ret;
-> +
->   	if (folio_order(folio) != HPAGE_PMD_ORDER)
->   		return ret;
->   	page = &folio->page;
+================================================================================
+UBSAN: signed-integer-overflow in ./arch/x86/include/asm/atomic.h:165:11
+895131917 + 1491632920 cannot be represented in type 'int'
+CPU: 0 PID: 127 Comm: kworker/u4:3 Not tainted syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Workqueue: wg-kex-wg0 wg_packet_handshake_send_worker
+Call Trace:
+ <IRQ>
+ dump_stack+0xfd/0x16e lib/dump_stack.c:118
+ ubsan_epilogue+0xa/0x30 lib/ubsan.c:148
+ handle_overflow+0x192/0x1b0 lib/ubsan.c:180
+ arch_atomic_add_return arch/x86/include/asm/atomic.h:165 [inline]
+ atomic_add_return include/asm-generic/atomic-instrumented.h:73 [inline]
+ ip_idents_reserve+0x14a/0x170 net/ipv4/route.c:521
+ __ip_select_ident+0xe4/0x1c0 net/ipv4/route.c:538
+ ip_select_ident_segs include/net/ip.h:525 [inline]
+ ip_select_ident include/net/ip.h:532 [inline]
+ __ip_make_skb+0xf78/0x19b0 net/ipv4/ip_output.c:1551
+ ip_finish_skb include/net/ip.h:244 [inline]
+ ip_push_pending_frames+0x2c/0x150 net/ipv4/ip_output.c:1606
+ __icmp_send+0xc22/0xf70 net/ipv4/icmp.c:776
+ icmp_send include/net/icmp.h:43 [inline]
+ __udp4_lib_rcv+0x14e9/0x2070 net/ipv4/udp.c:2438
+ ip_protocol_deliver_rcu+0x405/0x7e0 net/ipv4/ip_input.c:204
+ ip_local_deliver_finish+0x1d5/0x330 net/ipv4/ip_input.c:231
+ NF_HOOK+0x258/0x2c0 include/linux/netfilter.h:296
+ NF_HOOK+0x258/0x2c0 include/linux/netfilter.h:296
+ __netif_receive_skb_one_core net/core/dev.c:5395 [inline]
+ __netif_receive_skb+0x144/0x380 net/core/dev.c:5509
+ process_backlog+0x4ef/0x6e0 net/core/dev.c:6416
+ napi_poll net/core/dev.c:6867 [inline]
+ net_rx_action+0x4b1/0xc30 net/core/dev.c:6937
+ __do_softirq+0x267/0x92e kernel/softirq.c:298
+ asm_call_irq_on_stack+0xf/0x20
+ </IRQ>
+ __run_on_irqstack arch/x86/include/asm/irq_stack.h:26 [inline]
+ run_on_irqstack_cond arch/x86/include/asm/irq_stack.h:77 [inline]
+ do_softirq_own_stack+0x9b/0xe0 arch/x86/kernel/irq_64.c:77
+ do_softirq+0xc4/0x100 kernel/softirq.c:343
+ __local_bh_enable_ip+0x121/0x160 kernel/softirq.c:195
+ wg_socket_send_skb_to_peer+0x167/0x1c0 drivers/net/wireguard/socket.c:184
+ wg_packet_send_handshake_initiation drivers/net/wireguard/send.c:40 [inline]
+ wg_packet_handshake_send_worker+0x16b/0x280 drivers/net/wireguard/send.c:51
+ process_one_work+0x85b/0xfe0 kernel/workqueue.c:2282
+ worker_thread+0xa9b/0x1430 kernel/workqueue.c:2428
+ kthread+0x384/0x410 kernel/kthread.c:328
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
+================================================================================
 
-Acked-by: David Hildenbrand <david@redhat.com>
 
-Thanks!
+Tested on:
 
--- 
-Cheers
-
-David / dhildenb
+commit:         d3d0b4e2 Linux 5.10.245
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=14627734580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf23b541eb2e03cb
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d55dad3a9e8e9f7d2b5
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11ba8c92580000
 
 
