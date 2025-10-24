@@ -1,199 +1,225 @@
-Return-Path: <linux-kernel+bounces-868037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-868038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1ADDC04353
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:05:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BD37C04358
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 05:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 78BCF4F3690
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E5E31A071D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 Oct 2025 03:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945C12609C5;
-	Fri, 24 Oct 2025 03:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973D2146D53;
+	Fri, 24 Oct 2025 03:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vr6iWYEZ"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="i1pNgha/"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazolkn19012053.outbound.protection.outlook.com [52.103.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1D9146D53
-	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761275097; cv=none; b=XnI1Ihkl7UD80RbZKFe/+EgAs9m1NRSKNwjA6DA/x4m5w+ML0mlza8umQCcDEcw46ioI4zecre7v20NPn8j8Pa76fBDMZbiBIuxbFKGLcYqPo1gTzljO1rEB8WkZcYYcMOOymRX+RU6wN+8FYG+ozHV8C2et2FqLOorYjFGB3B0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761275097; c=relaxed/simple;
-	bh=9qvwpdbG6zEDU8NOfGA49If3FN+HOu5UEImINHYPOas=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZYmIPg36GdlfAxD8SNhKfl1yX6FGLAgKAWzTkKkZ8hx5oJUtvJexV/2ZkJBR+Uf9DN1wSMotIXG2Rjyc7qDcAUOMVG59eGElAMtFWg77Xj8Mu7uZTfWgRzxFs8kslCSXzsvcM/1gdTkEgoUzrVg/shdirKtQn4ud8mDTaI9RxwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vr6iWYEZ; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-63bdfd73e6eso5169290a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Oct 2025 20:04:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761275094; x=1761879894; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OPUr1ujv1VAgrlSTn6U9qdaZAklVD4GTZntdmTR2xhA=;
-        b=Vr6iWYEZE8b5YV0dX1KnHxllBWKxm8apBTWHtWJAVimTEhONy6ShRJFncZa4/SInfM
-         vOrsZj+FnwbpOTfNMy2jFG8z4s/bnxkGZgj0X/bVifE4mGfsbIpFddrbOC+38QMoXTE2
-         fCN4IyZDuBOj3DJ5D5BCSYf6N5iWtZdzYVcmrpEdvUows8nid3UzD1CJdJHP3vRUoosQ
-         xLvalhb9XsiV5gfSXFYY8rrpZDpPqM+sv/cwuutcjeU62HZpek/WhyO6I5mXj8ljstBt
-         tDwWyBDKpFRarjGvdFsMMWuYMqoZ1Vy4ZtBdc9mRxFHkEu5NDp0bd4xnfN8dCogWoG4h
-         DIuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761275094; x=1761879894;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OPUr1ujv1VAgrlSTn6U9qdaZAklVD4GTZntdmTR2xhA=;
-        b=iQaaMY6c6uTsBsESu7q6srJ0YM31ZJPxz1Xlj+plXbzY42uwg/OXCENoW+b7ZNeFzn
-         S+tqAThCB7P17mje6fsogI5RG5jQvpUmPgoOlPvB3Fhy7kO6F/38TZzoqjy5+xUj9F/l
-         wWSG25VSu35rL1aCY6F5uDdAuPSLPXGPwNByJnMg7Y2IgFjNY9g/PuvERZC7xJLP1Qoj
-         JSEPSJP75XDhaJf6iz6COE849jq+PYERJVLxLMzEHm6k/fTYE7aWfm1u1OHs47KnLSQR
-         854cmgeu3w0KCQwyUKUbyDIJ9xSI7Q6m2PZSBixXEbA9NE/utdZFIMEgEDegnpwbpLoX
-         4DeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFtoS+0hKkIBnIEJhl544+X2rDYNMZ0ENeKTPozzFqrOIm4AnWxLyjQG0YSL0KkUprXPQy/p+ArbzppoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoQv+t1oTFoIcAAF8A7Nlr33Mz+6HdjCn2rohA9FlB3JQmhyV4
-	yzM8GuiF6f/ujNLKNvrlKI5CMLtg2PsZtyUflas2g0uOcV37m2FkI8OHSxtfOrZyqWSNbN+pZE7
-	DB6bvPcLzzGID972VtGoVdc9MMapsg70=
-X-Gm-Gg: ASbGncvchB5pYYJkG9gVLDJZ4k5soqGGRfnqd0JlJEJIfyW0p1vekdCxK40UV8koqIq
-	xK+qC6bd3yMBBro5VDJ+hhNCLnetZ2iSI1XJiNUAmgpctSEhKhDU9gExfX7KBcK0lZhoc25vG0G
-	s9pHWCQaTjOZ7RPTUOVP1rPqmIm5YOHDaCqNVwn5DJJomVgEK4b57M5pKFoXhVzXnqSqtgGQbv8
-	A/VWsD3nHE0pzrmnubes3wyaJXpXOtbvYWSn8sy/ukIWcrTIewsym7KiJVXdmc/gpc26v8B
-X-Google-Smtp-Source: AGHT+IFLGx1bMWOEh+6E7cuvAEG/Y+JZKAjZastrcZR//d17jCwFzXukweVlGVe7meHeLU/xts4ZS4gYTnL5zJWAVJE=
-X-Received: by 2002:a05:6402:2712:b0:63c:13b9:58b0 with SMTP id
- 4fb4d7f45d1cf-63e5eb076cbmr1048162a12.5.1761275094270; Thu, 23 Oct 2025
- 20:04:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82181F8724
+	for <linux-kernel@vger.kernel.org>; Fri, 24 Oct 2025 03:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761275113; cv=fail; b=BEBOMM2WsmcR91PfAcHfvsg/wUv9pEtjon2uIFFgvPNisyVd5fPKSf7EWB/PE1tNLhs7dd+l1+qETUH92miZFvv4k4rNO5xu5FuhVeK3aaZc7TYHRZ90THrfD6eQnuT9MK0tTdzr1Yz1sTLp4B37bZoqo8qgbRu6iKn0ZrZ7WUY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761275113; c=relaxed/simple;
+	bh=B8ts6Z88gEwtJ5SUv5QJxjns8S/jMat2IIkV1cK4GPs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HrzsRb/bcQIYJmBvI6S4+gAxgNlEL7GL8kYTWWHqxz8yeX9iA1J3lK9s3u6Xc+lN1a13ejE/sVFBDDhItN6LpkLbei4T2WMmOBziiSRhEE+hWk5w6Hl4xlVIab87mlOglOvQcXGujwnpk4YpMEorUqUAk6o9UsX0VOFrKLoLbxo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=i1pNgha/; arc=fail smtp.client-ip=52.103.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tDzbhdUo8DzMY/LkmCR6lTusmS7TdaoJLMTBDN6FvNmHH6b9nD8qY82gPk2p3Th1Rz7aBIY9BiHzncYjFBNtIMgv9KBpz3NoZxOHQCsrwel55a1giT//HM8Hq/U0fQZQ+MYgf5FAFgw5ZRg56H0+9sbm4Qk4MHNg6mrSrNVn/VMw4nAlDC42lpi+VnXBkYOuiahUlCL1OTtntFmIEukyjRiEfYD7hZWBfTc18+oOfF1LgSNN6CxpOHhHtm7o/A6virJFDybXglQMJF3qGNKuqFh0Lu7Ay9P34c6Nkx9pLgwkodyFXLlr6v01NnRtWRX+D7m2xh66xiuK27pxIczqCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ESK4Xz1JSrog1XGLNQ3YuYWaWD6y02YMpSy1BKQTTnM=;
+ b=JgEW7JAmFug14uNQ3cB+2En9IaIZDDrS5wLH7WPh+8YXLLvX7fF35p4+C/MAOrc3+T9FT5zn/d55+NGJu2pVQHFNTnDbiu9BlPWmuKGi7+N3EhgvddWqg3FV2aduhpOvMIxC3PiYL8N6tk0Fe4AJQy3dqUhJNiU181bSqzdb+apt1Kh8iITRlRVmM03yOuL90DHD5niNORlT9wRh+3nR2LJi8IUJwXVI7G5xldDNQw0UtJLRHZa/c43xKr5Q4adHi1Jn1efp9rUBEZMVQBw67zN1QrYWLW7boXKelNP4PxnLLb2MOFtN385PMpeyuL0xG1amjXLvzEUXad0MgJHsAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ESK4Xz1JSrog1XGLNQ3YuYWaWD6y02YMpSy1BKQTTnM=;
+ b=i1pNgha/qrZmUyZOEWVcpvisbVnEentAqBQaDC79G5U/eZ4TN9xm/GxYkkppy3ZJDZ311rIyncq33oJ06wwJzsUoptZ7fps9bwLFfcmF3ysWWEpLlRXtQFKRuAuamIpvWaqcN/x+cfocatgOqOCy70EilWGBKf6WpEitYYfLcEamil9Cr+vXGWea5nGrPqgAm7eFsyW08U5dEXajENpLbt+oQtgOb6QX7wrF1XRzfhhCpAW8GruLvpat56TiXMYe3YFuaBrd5L7FFIpilXyIpOcMdtHTvMC6vbgMxZl5OWiRnew0EYE6YWKMXfJ14OGSrXioqqjRUByRoaYAdJRRew==
+Received: from SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:1b0::7) by JH0PR01MB5947.apcprd01.prod.exchangelabs.com
+ (2603:1096:990:6e::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 03:05:05 +0000
+Received: from SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+ ([fe80::5e86:f04a:37e5:64f1]) by SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+ ([fe80::5e86:f04a:37e5:64f1%5]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 03:05:05 +0000
+From: Wei Wang <wei.w.wang@hotmail.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: "suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "joro@8bytes.org"
+	<joro@8bytes.org>, "kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
+Subject: RE: [PATCH v1] iommu/amd: Set C-bit only for RAM-backed PTEs in IOMMU
+ page tables
+Thread-Topic: [PATCH v1] iommu/amd: Set C-bit only for RAM-backed PTEs in
+ IOMMU page tables
+Thread-Index: AQHcRC/z/2IcAo5ooUGdDRtk1NmW6bTP5FMAgACWJjA=
+Date: Fri, 24 Oct 2025 03:05:05 +0000
+Message-ID:
+ <SI2PR01MB4393D52AD53469388BED8E6CDCF1A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+References:
+ <SI2PR01MB439358422CCAABADBEB21D7CDCF0A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+ <20251023160154.GM262900@nvidia.com>
+In-Reply-To: <20251023160154.GM262900@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SI2PR01MB4393:EE_|JH0PR01MB5947:EE_
+x-ms-office365-filtering-correlation-id: d7cb488f-73b1-4fd5-317d-08de12aa21f3
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|9112599006|31061999003|12121999013|15080799012|461199028|41001999006|19110799012|13091999003|8062599012|8060799015|102099032|51005399003|40105399003|3412199025|440099028|3420499032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?nOYHthZBKgElI8gPo4MiLXjwlBI5hpzisTl0KueoxryA/gXhNkUX7/xvcAy8?=
+ =?us-ascii?Q?ty0wiO7YtlTLneqYwADdcMG9Ab2z4stt2pNGJsMplrhn0c+dA3PgOW1hG9E8?=
+ =?us-ascii?Q?zJnpM+ZASiwOXEimiBKiYzFHLgFhGpcw6zkSa+IE33GVtjFbqWVD1Rww3dnK?=
+ =?us-ascii?Q?eNsBnh73kESxQq2w104U7YmWrNZPZnqgiCBf1q2LdrZ8fsJ2lg1+yt2QrDQZ?=
+ =?us-ascii?Q?AbI+xN/ZCB0Ly+MHS1MhBrTYJiGjhYZ8TWphf11aeLQqIsz3MsmRPCosvrbE?=
+ =?us-ascii?Q?CNq4YJmQbETGER7HFklWnxjbu6JMUsL0KlQGrchWI/mbgDu6j+jV9YBwQrO4?=
+ =?us-ascii?Q?x7HLRhvoOksJBr8IudrL0wS7CQ37SInhHy/Q50y8W1zG0ls1ooQtrMUrPYQX?=
+ =?us-ascii?Q?y/c1w7i9Ly2L7B6BwTTnrwvwBLjU0GGwnWifIt8QZcnGMXNFE/Axf8+c+NM6?=
+ =?us-ascii?Q?RB098VDxWaH5r6BUJrRsJxXZLLNiSUownYl1NVm8DgxiLu7hLgnFbOrs+ckK?=
+ =?us-ascii?Q?vMSSrVc1JiTYmEnO1+kfduAW1A9CJgxAb36mznXvzdMXq84RgQmZKc04v9wr?=
+ =?us-ascii?Q?P2yrZa41TQFDfxJ1V+bMAzOJ3v+WZicqnhS6fD3+XW1GhDanr0+uWcvc1ee5?=
+ =?us-ascii?Q?Ak3cY4RRkTWE1rl3acKrYPo9BODWNgEznSI28++1cveSoKvCxq+6pQCvcpSs?=
+ =?us-ascii?Q?TrmIypGiCLZl6IOU4m9czoBptCqVoqqZCovawkZrtz5KYg35t54PO2aNqP9l?=
+ =?us-ascii?Q?l2r/dHY9WTUPDStF4cwVQIYqlx9iDnrShZ5U4CfmlLe10CrJOxpnej3LgY89?=
+ =?us-ascii?Q?Ir1x+DxZdjw9Q7Y8R2h3Z31lAnAP8VXvikOdlUu3dlvcFsDL1aX81IoQv/X5?=
+ =?us-ascii?Q?kV4KnRHXYX6hdcPl1RxTrocxa3VQdVsnb1FSWRs/JVq8xo0+YhK9BTxYOt81?=
+ =?us-ascii?Q?8mUM7DMcDMt0aWLksyW0azXJVkjnAHyd+sHF7hhgdJCYB/b+5TfHCnS5+hUs?=
+ =?us-ascii?Q?dPGNe1KLubLv0IpdvXe1PMESbzcHUSgXAKbuMq0pF08tBCpMc31seBnqgUCh?=
+ =?us-ascii?Q?PGDDM+W231DBXlFDyitGnnG6ajWqIGY/VlhMYLb1YA5cRzTtXlTtKVER8rWJ?=
+ =?us-ascii?Q?0TKfJDx9pC8y09P4qrhC0pG1bPaUJ0ZF9yehaP92LtaU+vYSIQ5gpOuZVLOZ?=
+ =?us-ascii?Q?X5kIOuTYr1EKPG/DMadRHb2lGk3XqlxdUrNJL5e7Qm2tAwbJHh/kP9d7vZ+5?=
+ =?us-ascii?Q?tSw9KUbtnqAIrrZCQjGQPAVLPOnfhezsy+6VxXllCY1Lkif6IjoH0K99H8kB?=
+ =?us-ascii?Q?etI=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?qH2DtkHKMPAcGmStG5wYbK/2qsGe1kj0BR3KGeTXhmvzYX3zZsKCVlcQ4cX1?=
+ =?us-ascii?Q?f6tkJ6UJXS0UxUmo2aJ8lnk05qu5PYSuAHnGcMKx98opxa7WBIiraGQxZr+4?=
+ =?us-ascii?Q?BqDrDVeEZc0oTiWocqSTTm37EWSWhJyacL4X37UiCxTBEMPULLkU/bZGB5rd?=
+ =?us-ascii?Q?x3tmMd/+WGz2yq+FNOPVKgdn99xl1jBJnrb2KTU8x3wGT5EN0ssbJfPZvTmZ?=
+ =?us-ascii?Q?NtS5QVNqKdyTzoXmfd8KDongVOsm/wm3f/bYBfQZNEwHDUz1sNcTABD2Uc4t?=
+ =?us-ascii?Q?/u7XOhvhCBhpjze4h/KOMCEU0cxdCIWNj7mrAULudJHAZk6FbHNybFaYkvCi?=
+ =?us-ascii?Q?lBd4CQ9MC2onCMlmxMrdOJvUA+NbzIznER1bM+HyacVNvuD6rM+fFhhcPLE9?=
+ =?us-ascii?Q?abheDc/EFbQOhWDSK+h26QI829NCnmMRuuH4boZa6TkXFnT0QYmJ6GILkyc4?=
+ =?us-ascii?Q?lCN+kJSCZo4dh8aQ4OLeLzAkuhoZoOXUnXunLq/BcXz/VFxkqDCFrY4VksFw?=
+ =?us-ascii?Q?kqjVta8qiZ6SSkbxa5TB5fX1MWJtB3BkWt7zntNJPAa+jqABN1HFrA+99TSW?=
+ =?us-ascii?Q?0T+rwyxfyfhT6N7pvfVTJ2i2G0gQf8yCvnWKbJRux2X+a/0w/U8cdpl7GEk9?=
+ =?us-ascii?Q?+qHsVEuNFlYbjl+4G43hFa5GY9MeEqCi4Cx0WmaGV0QFxsiqq6dpw3+YmP7q?=
+ =?us-ascii?Q?IdS26D8QCUnioaexS3k1UGl7gTLjJkuaclXb7gm8XOGJti+4F49XGjwWNz40?=
+ =?us-ascii?Q?MZkhittUrmvWDaZm1+JbZmUCuOpgsN74zrN4xr2GpsNyz9SUTUmCt84zVgyf?=
+ =?us-ascii?Q?CnQlY0u0SGrSLR7tC6Ui3CkRKSJyn53+NG+9mfbikmgB3dvYdfJPll3Y5/FK?=
+ =?us-ascii?Q?KShYeGiYoEN9i73guM5Bw4DkNdG+h7ZbdOY7r027XIybdSkQqsywo9ZAJbKP?=
+ =?us-ascii?Q?e7EfTb6pC+iuJF1fASz9ZrDGI1IKVcIQp+tB9YtMTGHy+QqaQG8cW8fUN+nF?=
+ =?us-ascii?Q?w6YF/CNv1mvKshJcoEEI6E/+FrLyj4TMb13jDpWFuIhseeYmA4yqWg1KiDnf?=
+ =?us-ascii?Q?HKV4NBMKVffYwYzjaMgx99/CEMoAzn67cnURJukRLILn2hWztbTBW45fAtje?=
+ =?us-ascii?Q?YCICP3bEetf8++UH7U+pqeS++AflG5Lj0q7pme5SDCNrsyb3kEZ1eMrnMdmx?=
+ =?us-ascii?Q?R0C/KMACwVY5uVVRCAKXHS1uvW5OwpgXMvRaOxdToM+7pdgjjbpM/E1ZJ9g?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020093941.548058-1-dolinux.peng@gmail.com>
- <20251020093941.548058-3-dolinux.peng@gmail.com> <174642a334760af39a5e7bacdd8b977b392a82c7.camel@gmail.com>
- <CAErzpmusSgOaROhEO25fKenvxQJU1oSPKKzUA4h67ptdQxWM7A@mail.gmail.com>
- <7651ac9cc74e135f04ecfee8660bea0a0d3883ab.camel@gmail.com>
- <CAErzpmtWLLYuFk3npTiOgGOKcEcH1QUGGEHLvPncVT+z261C1A@mail.gmail.com>
- <CAADnVQKU0MnQHxxvnp9WCu_UO4fEtd_D6ckNmOd7pLg90ecF4A@mail.gmail.com>
- <CAEf4Bzajdv3Rd1xAxm_UZWBxPc8M0=VuUkfjJvOFSObOs19GbQ@mail.gmail.com>
- <CAADnVQJG_tK18oxmjW37cbrxF2zPKPk_dvqXUTnOjUue7J0tLQ@mail.gmail.com>
- <CAEf4BzYLyi6=Fyz9ziOAwkFOjUPyJmTj4c6g247XBwgwJ8m-qw@mail.gmail.com>
- <CAErzpmtMPuGBhisLOaZMyzM5u3=0QrmZcuWqNgbMrceEEPN3TA@mail.gmail.com>
- <CAErzpmsCJAWVjWnV2LWAnYCouynYZbUupS08LUuhixiT2do3sg@mail.gmail.com> <7d9e373c7f0f3b7a50ee6a719375410da452b7ba.camel@gmail.com>
-In-Reply-To: <7d9e373c7f0f3b7a50ee6a719375410da452b7ba.camel@gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Fri, 24 Oct 2025 11:04:41 +0800
-X-Gm-Features: AS18NWB4eCzmr0fFGv5HUOJe8WdIjkJQVvEoqeUUnF94s8F8X5qD_mJIkzaQnMo
-Message-ID: <CAErzpmtJmj-ZX+uL_N9e5-r1iL+kD=0vwM9BeDL3t4C2re261A@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/5] btf: sort BTF types by kind and name to enable
- binary search
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Alexei Starovoitov <ast@kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Song Liu <song@kernel.org>, pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: sct-15-20-9052-0-msonline-outlook-827b9.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7cb488f-73b1-4fd5-317d-08de12aa21f3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2025 03:05:05.6497
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR01MB5947
 
-On Fri, Oct 24, 2025 at 10:32=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.co=
-m> wrote:
->
-> On Fri, 2025-10-24 at 10:23 +0800, Donglin Peng wrote:
-> > On Fri, Oct 24, 2025 at 9:59=E2=80=AFAM Donglin Peng <dolinux.peng@gmai=
-l.com> wrote:
-> > >
-> > > On Fri, Oct 24, 2025 at 3:40=E2=80=AFAM Andrii Nakryiko
-> > > <andrii.nakryiko@gmail.com> wrote:
-> > > >
-> > > > On Thu, Oct 23, 2025 at 11:37=E2=80=AFAM Alexei Starovoitov
-> > > > <alexei.starovoitov@gmail.com> wrote:
-> > > > >
-> > > > > On Thu, Oct 23, 2025 at 9:28=E2=80=AFAM Andrii Nakryiko
-> > > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > >
-> > > > > >
-> > > > > > Speaking of flags, though. I think adding BTF_F_SORTED flag to
-> > > > > > btf_header->flags seems useful, as that would allow libbpf (and=
- user
-> > > > > > space apps working with BTF in general) to use more optimal
-> > > > > > find_by_name implementation. The only gotcha is that old kernel=
-s
-> > > > > > enforce this btf_header->flags to be zero, so pahole would need=
- to
-> > > > > > know not to emit this when building BTF for old kernels (or, ra=
-ther,
-> > > > > > we'll just teach pahole_flags in kernel build scripts to add th=
-is
-> > > > > > going forward). This is not very important for kernel, because =
-kernel
-> > > > > > has to validate all this anyways, but would allow saving time f=
-or user
-> > > > > > space.
-> > > > >
-> > > > > Thinking more about it... I don't think it's worth it.
-> > > > > It's an operational headache. I'd rather have newer pahole sort i=
-t
-> > > > > without on/off flags and detection, so that people can upgrade
-> > > > > pahole and build older kernels.
-> > > > > Also BTF_F_SORTED doesn't spell out the way it's sorted.
-> > > > > Things may change and we will need a new flag and so on.
-> > > > > I think it's easier to check in the kernel and libbpf whether
-> > > > > BTF is sorted the way they want it.
-> > > > > The check is simple, fast and done once. Then both (kernel and li=
-bbpf) can
-> > > > > set an internal flag and use different functions to search
-> > > > > within a given BTF.
-> > > >
-> > > > I guess that's fine. libbpf can do this check lazily on the first
-> > > > btf__find_by_name() to avoid unnecessary overhead. Agreed.
-> > >
-> > > Thank you for all the feedback. Based on the suggestions above, the s=
-orting
-> > > implementation will be redesigned in the next version as follows:
-> > >
-> > > 1. The sorting operation will be fully handled by pahole, with no dep=
-endency on
-> > > libbpf. This means users can benefit from sorting simply by upgrading=
- their
-> > > pahole version.
+On Friday, October 24, 2025 12:02 AM, Jason Gunthorpe wrote:
+> On Thu, Oct 23, 2025 at 11:15:43PM +0800, Wei Wang wrote:
+> > When SME is enabled, iommu_v1_map_pages() currently sets the C-bit for
+> > all physical addresses. This is correct for RAM, since the C-bit is
+> > required by SME to indicate encrypted memory and ensure proper
+> > encryption/decryption.
 > >
-> > I suggest that libbpf provides a sorting function, such as the
-> > btf__permute suggested
-> > by Andrii, for pahole to call. This approach allows pahole to leverage
-> > libbpf's existing
-> > helper functions and avoids code duplication.
->
-> Could you please enumerate the functions you'd have to reimplement in
-> pahole?
+> > However, applying the C-bit to MMIO addresses is incorrect. Devices
+> > and PCIe switches do not interpret the C-bit currently, and doing so
+> > can break PCIe peer-to-peer communication. To avoid this, only set the
+> > C-bit when the physical address is backed by RAM, and leave MMIO
+> mappings unchanged.
+> >
+> > Fixes: 2543a786aa25 ("iommu/amd: Allow the AMD IOMMU to work with
+> > memory encryption")
+> > Signed-off-by: Wei Wang <wei.w.wang@hotmail.com>
+> > ---
+> >  drivers/iommu/amd/io_pgtable.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/iommu/amd/io_pgtable.c
+> > b/drivers/iommu/amd/io_pgtable.c index 70c2f5b1631b..6f395940d0a4
+> > 100644
+> > --- a/drivers/iommu/amd/io_pgtable.c
+> > +++ b/drivers/iommu/amd/io_pgtable.c
+> > @@ -353,6 +353,9 @@ static int iommu_v1_map_pages(struct
+> io_pgtable_ops *ops, unsigned long iova,
+> >  	if (!(prot & IOMMU_PROT_MASK))
+> >  		goto out;
+> >
+> > +	if (sme_me_mask && page_is_ram(PHYS_PFN(paddr)))
+> > +		paddr =3D __sme_set(paddr);
+>=20
+> It needs to use the IOMMU_MMIO flag not page_is_ram, which I think got
+> mangled by the time it reached here..
 
-Yes. Once the BTF types are sorted, the type IDs in both the BTF and BTF ex=
-t
-sections must be remapped. Libbpf provides helper functions like
-btf_field_iter_init,
-btf_field_iter_next,
-btf_ext_visit_type_ids
-to iterate through the btf_field and btf_ext_info_sec entries that
-require updating.
-We will likely need to reimplement these three functions for this purpose.
+Could you please elaborate how page_is_ram() would be mangled when
+reaching here?
+(I might not have fully understood your point. My understanding was that
+the result from page_is_ram(), regarding whether a physical address
+corresponds to system RAM, is stable after the system boots. One exception
+would be RAM hotplug, but this is the same for the case using IOMMU_MMIO
+from callers. If the stability of this result is indeed problematic, then
+other users of page_is_ram() and /proc/iomem would also be at risk)
 
->
-> > >
-> > > 2. The kernel and libbpf will only be responsible for:
-> > >     2.1. Checking whether the BTF data is sorted
-> > >     2.2. Implementing binary search for sorted BTF
-> > >
-> > > Regarding the sorting check overhead: if the runtime cost is sufficie=
-ntly small,
-> > > it can be performed during BTF parsing. Based on my local testing wit=
-h vmlinux
-> > >  BTF (containing 143,484 btf_types), this check takes at most 1.5 mil=
-liseconds
-> > > during boot. Is this 1.5ms overhead acceptable?
-> > >
-> > > Are there any other suggestions?
+>=20
+> Though broadly this points to a larger problem, the iommu domain code
+> should not be trying to guess if a mapping is private or not, this needs =
+to be
+> passed in from higher level code which knows what state the PFN is..
+
+Please note that this patch is not intended to add an interface allowing us=
+ers
+to specify whether a requested physical address is expected to be mapped as
+Private or not. Instead, it implements a sanity or correctness check within=
+ the
+IOMMU driver to validate whether a user-supplied address _can_ be mapped
+with the Private bit (RAM is the case that "can" currently, and since the d=
+river
+can already determine whether a PFN is RAM or not, I'm not sure why it need=
+s
+an interface for users to tell the driver).
+
+Even if a need arises in the future to add a new interface for users to ind=
+icate
+that the IOVA->PA mapping expects a Private bit to PA, a new flag (e.g.,
+IOMMU_ENCRYPT) would be more semantically appropriate than IOMMU_MMIO.
+The validation introduced by this patch would still be necessary. I think t=
+his check
+Is essentially similar to other guardrails or gatekeeping functions at lowe=
+r driver
+layers.
 
